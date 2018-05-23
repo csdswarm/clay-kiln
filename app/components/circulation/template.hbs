@@ -1,0 +1,39 @@
+{{#*inline "editFormItem"}}
+  {{ set 'empty' '<span class="edit-form-item-empty">None</span>' }}
+  <li class="edit-form-item">
+    <h4 class="edit-form-item-title {{ if extraClass extraClass }}">{{ label }}</h4>
+    <p class="edit-form-item-data">{{{ default value empty }}}</p>
+  </li>
+{{/inline}}
+
+{{#if @root.locals.edit }}
+<div data-uri="{{ default _ref _self }}" class="circulation">
+  <section class="edit-form">
+    <section class="circulation">
+      <h2 class="edit-form-title">Circulation</h2>
+      <section class="edit-form-section" data-editable="headlines">
+        <h3 class="edit-form-subtitle edit-form">Headlines and Teasers</h3>
+        <ul class="edit-form-items">
+          {{> editFormItem label='Primary Title (Feeds/Facebook)' value=circPrimaryTitle extraClass='edit-form-required' }}
+          {{> editFormItem label='Description' value=circDescription extraClass='edit-form-required' }}
+        </ul>
+      </section>
+      <section class="edit-form-section" data-editable="feed">
+        <h3 class="edit-form-subtitle edit-form">Feeds</h3>
+        <ul class="edit-form-items">
+          <li class="edit-form-item">
+            <h4 class="edit-form-item-title edit-form-required">Feed Image</h4>
+            <p class="edit-form-item-data">
+            {{#if circFeedImage}}
+              <img class="edit-form-feedimg" src="{{ circFeedImage }}" alt=""/>
+            {{else}}
+              <div class="edit-form-empty-feedimg"></div>
+            {{/if}}
+            </p>
+          </li>
+        </ul>
+      </section>
+    </section>
+  </section>
+</div>
+{{/if}}

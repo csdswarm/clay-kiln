@@ -1,0 +1,5 @@
+_components:
+  follow:
+    socialNetwork: ''
+    handle: ''
+    buttonText: New Button

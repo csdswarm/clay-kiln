@@ -1,0 +1,31 @@
+<div data-uri="{{ default _ref self }}" class="generic-list{{#if variation}} generic-list-{{variation}}{{/if}}">
+  {{#if title}}
+  <div class="generic-list-hd">
+    <h2 class="generic-list-hd-title" data-editable="title">{{ title }}</h2>
+  </div>
+  {{else}}
+    <div data-editable="title"></div>
+  {{/if}}
+  <ol class="generic-list-list">
+    {{#each entries}}
+      <li class="generic-list-item">
+        <a class="generic-list-link" href="{{ canonicalUrl }}">
+          {{#ifAll ../toggleImages feedImgUrl}}
+          <div class="generic-list-item-img">
+            <img src="{{ feedImgUrl }}" />
+          </div>
+          {{/ifAll}}
+          <div class="generic-list-item-text">
+            <h3 class="generic-list-item-title">{{{ primaryHeadline }}}</h3>
+            {{#if ../toggleTeaser}}
+            <p class="generic-list-item-description">{{ teaser }}</p>
+            {{/if}}
+            {{#if ../toggleReadMore}}
+            <span class="generic-list-item-read-more">Read More &#187;</span>
+            {{/if}}
+          </div>
+        </a>
+      </li>
+    {{/each}}
+  </ol>
+</div>

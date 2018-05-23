@@ -1,0 +1,39 @@
+_pages:
+  # New Post Page
+  new-one-col:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+    main:
+      - /_components/article/instances/new
+    layout: /_components/one-column-layout/instances/general
+  new-two-col:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+    main:
+      - /_components/article/instances/new
+    layout: /_components/two-column-layout/instances/article
+  # Index Page
+  index:
+    head:
+      - /_components/meta-title/instances/general
+    main:
+      - /_components/generic-list/instances/index
+    layout: /_components/one-column-layout/instances/bare
+  # General Page
+  general:
+    head:
+      - /_components/meta-title/instances/general
+    main:
+      - /_components/general-content/instances/new
+    layout: /_components/one-column-layout/instances/general
+  # Index Page
+  tag:
+    head:
+      - /_components/meta-title/instances/general
+    main:
+      - /_components/tag-list/instances/default
+    layout: /_components/one-column-layout/instances/bare

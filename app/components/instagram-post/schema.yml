@@ -1,0 +1,23 @@
+_description: |
+  Embeds an Insagram via the 'gram's URL.
+
+url:
+  _label: URL
+  _has:
+    input: text
+    type: url
+    help: https://www.instagram.com/p/ID/
+
+showCaption:
+  _label: Show Caption
+  _has: checkbox
+
+_groups:
+  default:
+    fields:
+      - url
+      - showCaption
+    _label: Instagram Post
+    _placeholder:
+      height: 50px
+      ifEmpty: url

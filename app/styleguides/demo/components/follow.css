@@ -1,0 +1,124 @@
+/* stylelint-disable */
+@media screen and (min-width:0) and (max-width:1023.9px) {
+  .follow {
+    display: inline-block;
+    font-size: 13px;
+    min-width: 100px;
+    padding: 16px 0 15px 16px;
+    text-align: center;
+  }
+}
+
+.follow:before {
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: 22px;
+  content: '';
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 22px;
+}
+
+.follow {
+  background: 0 0;
+  border: none;
+  color: #111;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  margin: 0;
+  position: relative;
+  text-decoration: none;
+}
+
+@media print {
+  .follow {
+    display: none;
+    font-size: 11px;
+    line-height: 12px;
+  }
+}
+
+.follow.facebook:before {
+  background-image: url('/media/components/follow/facebook-square.svg');
+}
+
+.follow.twitter:before {
+  background-image: url('/media/components/follow/twitter.svg');
+  background-size: 22px 18px;
+}
+
+.follow.pinterest:before {
+  background-image: url('/media/components/follow/pinterest.svg');
+}
+
+.follow.instagram:before {
+  background-image: url('/media/components/follow/instagram.svg');
+}
+
+@media screen and (min-width:1024px) {
+  .follow {
+    cursor: pointer;
+    height: 22px;
+    padding: 2px 10px 0 22px;
+  }
+
+  .follow:before {
+    background-position: 0 50%;
+  }
+
+  .follow.facebook:before,
+  .follow.instagram:before,
+  .follow.pinterest:before {
+    background-size: 16px;
+  }
+
+  .follow.twitter:before {
+    background-size: 18px 14px;
+  }
+}
+
+.header-redesign .follow {
+  height: 38px;
+  margin: 24px 18px 0 0;
+  min-width: 38px;
+  vertical-align: top;
+  width: 38px;
+}
+
+.header-redesign .follow .button-text {
+  border: none;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.header-redesign .follow:before {
+  background-size: contain;
+  height: 100%;
+  width: 100%;
+}
+
+.header-redesign .follow.facebook:before {
+  background-image: url('/media/components/follow/facebook-black-background.svg');
+}
+
+.header-redesign .follow.twitter:before {
+  background-image: url('/media/components/follow/twitter-black-background.svg');
+}
+
+.header-redesign .follow.pinterest:before {
+  background-image: url('/media/components/follow/pinterest-black-background.svg');
+}
+
+.header-redesign .follow.instagram:before {
+  background-image: url('/media/components/follow/instagram-black-background.svg');
+}

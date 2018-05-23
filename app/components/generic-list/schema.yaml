@@ -1,0 +1,83 @@
+_description: |
+  A generic list that queries Elastic for documents with parameters defined by the user
+
+title:
+  _label: Title
+  _placeholder:
+    height: 25px
+    text: Title (Optional)
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+
+index:
+  _label: Index
+  _has:
+    input: radio
+    options:
+      -
+        name: Articles
+        value: published-articles
+      -
+        name: Videos (This does not exist, just an example)
+        value: published-videos
+
+toggleImages:
+  _label: Should images be shown?
+  _has: checkbox
+
+toggleReadMore:
+  _label: Should "Read More" links be shown?
+  _has: checkbox
+
+toggleTeaser:
+  _label: Should the article teaser be shown?
+  _has: checkbox
+
+orderBy:
+  _label: Order By
+  _has:
+    input: radio
+    options:
+      -
+        name: Publish Date
+        value: date
+
+variation:
+  _label: Component Variation
+  _has:
+    input: radio
+    options:
+      -
+        name: Large
+        value: large
+      -
+        name: Small
+        value: small
+
+size:
+  _label: Size
+  _has:
+    input: text
+    type: number
+    help: Choose how many items to display
+
+customQueries:
+  _label: Custom Queries
+  _has:
+    input: codemirror
+    mode: text/yaml
+
+_groups:
+  settings:
+    fields:
+      - index (Customize Query)
+      - orderBy (Customize Query)
+      - size (Customize Query)
+      - customQueries (Customize Query)
+      - variation (Customize Appearance)
+      - toggleImages (Customize Appearance)
+      - toggleTeaser (Customize Appearance)
+      - toggleReadMore (Customize Appearance)

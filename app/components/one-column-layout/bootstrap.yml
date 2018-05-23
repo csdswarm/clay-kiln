@@ -1,0 +1,10 @@
+_components:
+  one-column-layout:
+    head: head
+    headLayout: []
+    top: []
+    main: main
+    secondary: []
+    bottom: []
+    kilnInternals:
+      - _ref: /_components/clay-kiln/instances/general

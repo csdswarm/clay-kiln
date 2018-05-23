@@ -1,0 +1,12 @@
+_description: |
+  A component for embedding google fonts
+
+fonts:
+  _label: Fonts
+  _display: settings
+  _has:
+    - text
+    - label
+    -
+      fn: description
+      value: Paste the url for the <link> tag that Google Fonts gives you

@@ -1,0 +1,94 @@
+_description: |
+  This is the image component specific to New York Magazine.
+
+  * Only allows images from Mediaplay (our image server) to be added.
+  * This component automatically adjusts the width and height based on the size selected.
+  * Pulls in caption from Mediaplay if the user hits the magic button (note: changes made in this component _do not_ sync back to Mediaplay).
+  * Automatically pulls in credit from Mediaplay on save.
+
+url:
+  _label: URL
+  _has:
+    input: text
+    type: url
+caption:
+  _label: Caption
+  _has:
+    input: wysiwyg
+    buttons:
+      - link
+      - bold
+      - italic
+credit:
+  _label: Credit
+  _has:
+    help: Add in credit
+rendition:
+  _label: Size
+  _has:
+    input: segmented-button-group
+    options:
+      - title: All Layouts
+        values:
+          - icon: /media/components/image/icon-thumbnail.svg
+            value: thumb
+          - icon: /media/components/image/icon-square.svg
+            value: square-medium
+          - icon: /media/components/image/icon-vertical-small.svg
+            value: vertical-small
+          - icon: /media/components/image/icon-horizontal.svg
+            value: horizontal
+          - icon: /media/components/image/icon-flex.svg
+            value: flex
+      - title: Feature and One-Column Layouts Only
+        values:
+          - icon: /media/components/image/icon-flex-small.svg
+            value: flex-small
+      - title: One-Column Layouts Only
+        values:
+          - icon: /media/components/image/icon-flex-large.svg
+            value: flex-large
+          - icon: /media/components/image/icon-full-bleed.svg
+            value: full-bleed
+alt:
+  _label: Alt Text
+  _has:
+    input: text
+    help: Alternative text for screen readers
+creditOverride:
+  _label: Credit Override
+  _has:
+    input: wysiwyg
+    buttons:
+      - bold
+      - italic
+      - link
+imageLink:
+  _label: URL
+  _has:
+    input: text
+    type: url
+    help: Add a link to the image
+borderToggle:
+  _label: Show Borders
+  _has:
+    input: checkbox
+    help: Only applies to Flex Large and Full Bleed sizes
+
+_groups:
+  inlinestuff:
+    fields:
+      - url
+      - rendition
+      - caption
+      - alt
+      - borderToggle
+    _label: Image Image
+    _placeholder:
+      text: New Image
+      height: 250px
+      ifEmpty: url
+  settings:
+    fields:
+      - imageLink
+      - creditOverride

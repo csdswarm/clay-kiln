@@ -1,0 +1,12 @@
+_components:
+  header:
+    variation: header
+    position: right
+    tagline: ''
+    services: []
+    hasStrongSiteName: false
+    siteHomepage: ''
+    search: {}
+    hide-social: false
+    primaryLinks: []
+    secondaryLinks: []

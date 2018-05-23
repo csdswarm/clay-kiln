@@ -1,0 +1,65 @@
+_description: |
+  Share tools for articles. We recommend using `horizontal` for mobile and tablet, with `vertical` being reserved for use on desktop and in sidebars.
+
+enabled:
+  _label: Enabled Services
+  _has:
+    input: checkbox-group
+    options:
+      - facebook
+      - twitter
+      - pinterest
+      - comment
+    help: Choose which services are displayed
+
+url:
+  _label: URL
+  _subscribe: url
+  _has:
+      help: URL to share the article with. Automatically set when publishing
+
+title:
+  _label: Title
+  _subscribe: ogTitle
+  _has:
+    help: Title used when article is shared
+
+shortTitle:
+  _label: Short Title
+  _subscribe: twitterTitle
+  _has:
+    help: Used for Twitter. Falls back to using title for older articles
+
+twitterHandle:
+  _label: Twitter Handle
+  _has:
+    input: text
+    help: Twitter handle to include in tweet when sharing
+
+description:
+  _label: Description
+  _subscribe: socialDescription
+  _has:
+    help: Article's description to use when sharing
+
+pinImage:
+  _label: Pinterest Image
+  _subscribe: feedImgUrl
+  _has:
+    help: Image used on Pinterest when pinned
+
+orientation:
+  _label: Orientation
+  _has:
+    input: radio
+    options:
+      - vertical
+      - horizontal
+    help: How the component is displayed
+
+_groups:
+  settings:
+    fields:
+      - enabled
+      - twitterHandle
+      - orientation

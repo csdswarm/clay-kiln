@@ -1,0 +1,36 @@
+<div data-uri="{{ default _ref _self }}" class="image {{ ./rendition }} {{if borderToggle 'image-borders'}} {{#unless imageLink}}image-enlarge{{/unless}}" itemscope itemtype="http://schema.org/ImageObject" data-editable="inlinestuff">
+    {{#if ratio}}
+    {{! if ratio is available, set height of image }}
+        <style>
+          [data-uri="{{ default _ref _self }}"] {
+            height: {{ratio}}%;
+          }
+        </style>
+    {{/if}}
+
+    <div class="image-wrapper">
+      {{#if url}}
+        {{#if imageLink}}<a href="{{ fixScheme imageLink }}" target="_blank">{{/if}}
+          <img src="{{ url }}" alt="">
+        {{#if imageLink}}</a>{{/if}}
+      {{/if}}
+    </div>
+    {{#ifAny caption credit}}
+      <figcaption itemprop="caption" class="image-figcaption">
+        {{#if caption}}<span class="caption">{{{ caption }}}</span>{{/if}}
+        {{#ifAll caption credit}}<span class="buffer"></span>{{/ifAll}}
+        {{#if credit}}<cite class="credit">{{ capitalizeAll (if imageType imageType else='Photo') }}: {{{ credit }}}</cite>{{/if}}
+      </figcaption>
+    {{/ifAny}}
+
+    <script type="application/ld+json">
+    {
+      "@context": "http://schema.org",
+      "@type": "ImageObject",
+      {{#if credit}}"author": "{{{ credit }}}",{{/if}}
+        {{#if caption}}"caption": "{{{ caption }}}",{{/if}}
+      "contentUrl": "{{ url }}"
+    }
+  </script>
+</div>
+{{! todo: rename this file to .hbs after amphora is updated to support multiplex-templates v1.3.0 }}

@@ -1,0 +1,57 @@
+_description: |
+  A `Circulation` like component for publishing stuffs.
+
+circPrimaryTitle:
+  _label: Primary Title (Feeds/Facebook)
+  _subscribe: circPageTitle
+  _publish:
+    - pageTitle
+    - mainCmptTitle
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 80
+    help: Write your most shareable headline
+    attachedButton:
+      name: magic-button
+      component: [post]
+      store: components
+      property: primaryHeadline
+      tooltip: Use Post Headline
+
+circFeedImage:
+  _label: Image URL
+  _subscribe: circFeedImage
+  _publish:
+    - pageMetaImage
+    - mainCmptFeedImage
+  _has:
+    input: text
+    type: url
+    validate:
+      required: true
+
+circDescription:
+  _label: Description
+  _publish: circDescription
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 150
+
+_groups:
+  headlines:
+    fields:
+      - circPrimaryTitle
+      - circDescription
+  feed:
+    fields:
+      - circFeedImage

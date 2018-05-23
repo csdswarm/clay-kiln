@@ -1,0 +1,16 @@
+_components:
+  # Required to have a Kiln instance for edit mode
+  clay-kiln:
+    instances:
+      general:
+        enabled: true
+  follow:
+    instances:
+      facebook:
+        socialNetwork: facebook
+        handle: demo
+        buttonText: Like Us
+      twitter:
+        socialNetwork: twitter
+        handle: '@demo'
+        buttonText: Follow Us

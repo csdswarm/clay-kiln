@@ -1,0 +1,56 @@
+_description: |
+  A component that prompts users to follow us on various social media sites.
+
+  * Can promote Facebook, Twitter, Pinterest, or Instagram.
+  * Can be added to the [header](https://github.com/nymag/sites/blob/master/components/header/README.md) and other components.
+  * User can edit the social media username in the settings.
+
+socialNetwork:
+  _display: settings
+  _label: Social Network
+  _has:
+    -
+      fn: radio
+      options:
+        - facebook
+        - twitter
+        - pinterest
+        - instagram
+        - rss
+    - label
+    -
+      fn: description
+      value: Select the social media service for this follow button.
+
+handle:
+  _display: settings
+  _label: Social Media Handle
+  _has:
+    - text
+    - label
+
+buttonText:
+  _display: settings
+  _label: Button Text
+  _has:
+    - text
+    - label
+    -
+      fn: description
+      value: The text that's displayed in the follow button.
+  _placeholder:
+    height: 16px
+    text: Button Text
+
+variation:
+  _display: settings
+  _label: Variation
+  _has:
+    - label
+    -
+      fn: description
+      value: Set a style variation for this instance.
+    -
+      fn: select
+      options:
+        - black (wwwthecut)

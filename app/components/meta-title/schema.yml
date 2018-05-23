@@ -1,0 +1,40 @@
+_version: 1.1
+
+_description: |
+  Adds `<title>`, `twitter:title`, and `og:title` tags to the head.
+
+title:
+  _label: Title
+  _display: settings
+  _subscribe: pageTitle
+  _has:
+    - text
+    - label
+    - required
+    -
+      fn: description
+      value: Page title, used to populate all tags if ogTitle and twitterTitle don't exist. For articles, this is generated from the primary headline.
+
+ogTitle:
+  _label: Open Graph Title
+  _display: settings
+  _subscribe: ogTitle
+  _has:
+    - text
+    - label
+    -
+      fn: description
+      value: og:title, will fall back to regular title if it doesn't exist. For articles, this is generated from the SEO headline.
+
+kilnTitle:
+  _label: Kiln Title
+  _display: settings
+  _subscribe: pageListTitle
+  _publish: kilnTitle # set title of page in page list
+  _has:
+    - text
+    - label
+    - required
+    -
+      fn: description
+      value: Value is pulled from ogTitle but can be set manually or published too

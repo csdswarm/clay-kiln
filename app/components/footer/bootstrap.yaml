@@ -1,0 +1,7 @@
+_components:
+  footer:
+    linksEnabled: {}
+    socialEnabled:
+      newsletters: true
+      facebook: true
+      twitter: true

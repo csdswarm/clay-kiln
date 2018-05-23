@@ -1,0 +1,94 @@
+<div data-uri="{{ default _ref _self }}" class="header {{ variation }} header-{{ position }}" data-variation="{{ variation }}">
+  {{#compare ./variation 'header-redesign'}}
+    <div class="header-wrapper">
+      <button class="header-menu-button" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
+        {{{ read 'components/header/media/hamburger.svg' }}}
+        <span class="header-menu-button-text">Browse</span>
+      </button>
+      <div class="header-pane" tabindex="-1">
+        <button class="header-pane-close">
+          {{{ read 'components/header/media/close.svg' }}}
+        </button>
+        <nav class="header-pane-content">
+          {{#if primaryLinks.length}}
+          <ul class="header-pane-content-primary">
+            {{#each primaryLinks}}
+            <li class="header-pane-content-primary-item">
+              <a href="{{ url }}">{{ text }}</a>
+            </li>
+            {{/each}}
+          </ul>
+          {{/if}}
+          <div class="header-pane-content-social">
+            {{> component-list services }}
+            {{#if newsletterSignupUrl}}
+            <a href="{{ newsletterSignupUrl}}" class="newsletter-signup-link" target="_blank">
+              {{{ read 'components/header/media/newsletter.svg'}}}
+              <span class="newsletter-signup-link-text">Newsletter Signup</span>
+            </a>
+            {{/if}}
+          </div>
+          {{#if secondaryLinks.length}}
+            <ul class="header-pane-content-secondary">
+              {{#each secondaryLinks}}
+              <li class="header-pane-content-secondary-item">
+                <a href="{{ url }}">{{ text }}</a>
+              </li>
+              {{/each}}
+            </ul>
+          {{/if}}
+        </nav>
+      </div>
+      <div class="header-overlay"></div>
+    {{/compare}}
+    <div class="logo-wrapper">
+      <a class="logo" href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
+      {{#if hasStrongSiteName}}
+        <h1 class="site-name">{{ @root.locals.site.name }}</h1>
+      {{else}}
+        <span class="site-name">{{ @root.locals.site.name }}</span>
+      {{/if}}
+      {{{ read (concat 'public/media/sites/' @root.locals.site.slug '/logo.svg') }}}
+      {{#if tagline}}
+        <span class="tagline" data-editable="tagline">{{{ perWordClasses tagline perLetter=false }}}</span>
+      {{/if}}
+      </a>
+    </div>
+
+    {{#if search}}
+      <div class="header-search">
+        {{> search search }}
+      </div>
+    {{/if}}
+
+  {{#compare ./variation 'header-redesign'}}
+  </div>
+  {{/compare}}
+
+  {{#compare ./variation 'header'}}
+  <div data-editable="services" class="follow-list {{ if newsletter 'newsletter' }}">
+    {{> component-list services }}
+  </div>
+  <button class="nav-mobile" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
+    {{{ read 'components/header/media/menu-icon.svg' }}}
+  </button>
+  <nav class="primary-nav" aria-label="New York Magazine sites" id="primary-nav">
+    <ul class="sites">
+      <li class="site-list"><a class="nav-sites" href="//nymag.com/">NYMag.com</a></li>
+      <li class="site-list"><a class="nav-sites" href="//nymag.com/daily/intelligencer/">Daily Intelligencer</a></li>
+      <li class="site-list"><a class="nav-sites" href="//www.vulture.com">Vulture</a></li>
+      <li class="site-list"><a class="nav-sites" href="//www.thecut.com">The Cut</a></li>
+      <li class="site-list"><a class="nav-sites" href="//nymag.com/strategist/">The Strategist</a></li>
+      <li class="site-list"><a class="nav-sites" href="//nymag.com/selectall/">Select All</a></li>
+      <li class="site-list"><a class="nav-sites" href="//www.grubstreet.com/">Grub Street</a></li>
+      <li class="site-list"><a class="nav-sites" href="//bedfordandbowery.com/">Bedford &amp; Bowery</a></li>
+    </ul>
+    <div class="dropdown-section">
+      <div class="social {{#if hide-social}}hide-social{{/if}}">
+        {{> component-list services }}
+      </div>
+      <button class="end">Close menu</button>
+    </div>
+  </nav>
+  {{/compare}}
+</div>

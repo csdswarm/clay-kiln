@@ -1,0 +1,97 @@
+_components:
+  article:
+    primaryHeadline: ''
+    seoHeadline: ''
+    shortHeadline: ''
+    feedImgUrl: ''
+    siloImgUrl: ''
+    feedLayout: small
+    teaser: ''
+    authors: []
+    byline:
+      -
+        prefix: by
+        names: []
+    authorsAndMeta: []
+    secondaryBylineText: 'Photograph By'
+    secondaryAttribution: []
+    dateUpdated: false
+    rubric: ''
+    rubricMessage: ''
+    content: []
+    tags:
+      _ref: /_components/tags
+    sponsoredTag:
+      _ref: /_components/sponsored-tag
+    sideShare: {}
+    bottomShare: {}
+    feeds:
+      sitemaps: true
+      rss: true
+      most-popular: true
+      newsfeed: true
+      apple-news: true
+    featureTypes: {}
+    crosspost:
+      di: false
+      vulture: false
+      wwwthecut: false
+      scienceofus: false
+      grubstreet: false
+      selectall: false
+      strategist: false
+      vindicated: false
+      betamale: false
+      nyxny: false
+    syndicatedUrl: ''
+    syndicationStatus: original
+    dropCap: false
+    shouldHideAds: false
+    overflowHeader: false
+    slugLock: false
+    section: ''
+    isMovieReview: false
+    movieReviewName: ''
+    movieReviewUrl: ''
+    movieReviewSummary: ''
+    showSocial: true
+    adDummy:
+      _ref: /_components/ad-dummy/instances/general
+    instances:
+      test:
+        primaryHeadline: some headline
+        seoHeadline: ''
+        shortHeadline: ''
+        feedImgUrl: ''
+        siloImgUrl: ''
+        feedLayout: small
+        teaser: ''
+        authors: []
+        date: ''
+        rubric: ''
+        rubricMessage: ''
+        content: []
+        tags: ''
+        sponsoredTag: {}
+        sideShare: {}
+      section-test:
+        primaryHeadline: some headline
+        seoHeadline: ''
+        shortHeadline: ''
+        feedImgUrl: ''
+        siloImgUrl: ''
+        feedLayout: small
+        teaser: ''
+        authors: []
+        date: ''
+        rubric: ''
+        rubricMessage: ''
+        content: []
+        tags: ''
+        sponsoredTag: {}
+        sideShare: {}
+        section: 'some-section'
+    storyCharacteristics:
+      strong-visual: false
+      top-story: false
+    eligibleForGoogleStandout: false

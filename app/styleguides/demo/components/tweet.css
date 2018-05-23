@@ -1,0 +1,43 @@
+.tweet {
+  display: block;
+  margin: 16px 0;
+  width: 100%;
+}
+
+.tweet .twitter-tweet.twitter-tweet-rendered {
+  margin: 0 auto;
+}
+
+.tweet blockquote.twitter-tweet {
+  border-color: #eee #ddd #bbb;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+  display: inline-block;
+  font-family: 'Helvetica Neue', Roboto, 'Segoe UI', Calibri, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  margin: 10px 5px;
+  max-width: 468px;
+  padding: 0 16px 16px;
+}
+
+.tweet blockquote.twitter-tweet p {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.tweet blockquote.twitter-tweet a {
+  color: #1782a9;
+  font-weight: 400;
+  outline: 0;
+  text-decoration: none;
+}
+
+.tweet blockquote.twitter-tweet a:focus,
+.tweet blockquote.twitter-tweet a:hover {
+  text-decoration: underline;
+}

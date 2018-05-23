@@ -1,0 +1,26 @@
+_doc:
+  dynamic: false
+  properties:
+    displayHeadline:
+      type: text
+    plaintextDisplayHeadline:
+      type: text
+    authors:
+      type: keyword
+    date:
+      type: date
+      store: true
+    canonicalUrl:
+      type: keyword
+      store: true
+    feedImage:
+      type: keyword
+    tags:
+      type: keyword
+    teaser:
+      type: text
+    site:
+      type: keyword
+    pageUri:
+      type: keyword
+      store: true

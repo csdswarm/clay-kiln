@@ -1,0 +1,26 @@
+_description: |
+  A component to show off available components
+
+title:
+  _placeholder:
+    text: Add Title
+    height: 20px
+  _has:
+    input: text
+    validate:
+      required: true
+
+content:
+  _placeholder:
+    text: Add Content
+    height: 40px
+  _componentList:
+    include:
+      - image
+      - paragraph
+      - divider
+      - tweet
+      - instagram-post
+      - facebook-post
+      - blockquote
+      - subheader

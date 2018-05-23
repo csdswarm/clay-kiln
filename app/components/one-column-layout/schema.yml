@@ -1,0 +1,49 @@
+_description: |
+  A one-column layout for Clay.
+
+head:
+  _componentList:
+    page: true
+    include:
+      - clay-meta-site
+      - meta-image
+      - meta-icons
+
+headLayout:
+  _componentList:
+    include:
+      - clay-meta-title
+      - clay-meta-url
+      - clay-meta-description
+      - clay-meta-keywords
+      - meta-authors
+      - meta-image
+      - meta-icons
+      - google-fonts
+
+top:
+  _componentList:
+    include:
+      - header
+
+main:
+  _componentList:
+    page: true
+    include:
+      - post
+      - general-content
+secondary:
+  _componentList:
+    include:
+      - generic-list
+
+bottom:
+  _componentList:
+    include:
+      - footer
+
+kilnInternals:
+  _componentList:
+    internals: true
+    include:
+      - clay-kiln

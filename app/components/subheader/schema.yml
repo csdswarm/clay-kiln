@@ -1,0 +1,15 @@
+_description: |
+  A simple subheader component.
+
+text:
+  _publish:
+    - primaryHeadline
+    - slug
+    - pageTitle
+    - pageListTitle
+  _label: Subheader Text
+  _placeholder:
+    height: 20px
+    text: Subheader Text
+  _has:
+    input: inline

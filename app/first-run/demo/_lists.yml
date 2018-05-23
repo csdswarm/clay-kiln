@@ -1,0 +1,15 @@
+_lists:
+  tags: []
+  new-pages:
+    -
+      id: new-one-col
+      title: New One Column Article
+    -
+      id: new-two-col
+      title: New Two Column Article
+    -
+      id: general
+      title: New General Page
+    -
+      id: tag
+      title: Tag Page

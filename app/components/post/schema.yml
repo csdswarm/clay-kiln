@@ -1,0 +1,54 @@
+_description: |
+  An `article` like component, for demo purposes.
+
+displayHeadline:
+  _placeholder:
+    text: Add Headline
+    height: 100px
+    required: true
+  _label: Headline
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+
+authors:
+  _placeholder:
+    text: Authors
+    height: 40px
+    required: true
+  _label: Authors
+  _has:
+    input: simple-list
+
+socialShare:
+  _component:
+    include:
+      - share
+
+content:
+  _componentList:
+    include:
+      - image
+      - paragraph
+      - divider
+      - tweet
+      - instagram-post
+      - facebook-post
+      - blockquote
+
+date:
+  _has:
+    help: Date that is taken from the server
+
+primaryHeadline:
+  _publish: circPageTitle
+  _subscribe: mainCmptTitle
+
+feedImage:
+  _publish: circFeedImage
+  _subscribe: mainCmptFeedImage
+
+teaser:
+  _subscribe: circDescription

@@ -1,0 +1,308 @@
+<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="article{{ if featureTypes.[Sponsor Story] ' sponsored' }}{{ if dropCap ' drop-cap' }}{{ if @root.locals.edit ' editing' }}" itemscope itemtype="{{ if isMovieReview 'http://schema.org/Review' else='http://schema.org/Article' }}" data-content-channel="{{ contentChannel }}" data-crosspost="{{ commaSeparated crosspost }}" data-type="{{ commaSeparated featureTypes true }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags overrideHeadline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}" data-issue-date="{{ magazineIssueDate }}">
+  <header class="article-header {{if overflowHeader 'overflow-header'}}">
+    {{! article microdata }}
+    <meta itemprop="url" content="{{ @root.locals.url }}" />
+    <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
+    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="{{ @root.locals.site.name }}" />
+      <meta itemprop="sameAs" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}" />
+      <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+        <meta itemprop="url" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}/media/sites/{{ @root.locals.site.slug }}/logo.w600.h60.png" />
+        <meta itemprop="height" content="60" />
+        <meta itemprop="width" content="600" />
+      </div>
+    </div>
+    {{#if isMovieReview}}
+      <div itemprop="itemReviewed" itemscope itemtype="http://schema.org/Movie">
+        {{#if movieReviewName}}<meta itemprop="name" content="{{ movieReviewName }}" />{{/if}}
+        {{#if movieReviewUrl}}<meta itemprop="sameAs" content="{{ movieReviewUrl }}" />{{/if}}
+        <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+          <meta itemprop="url" content="{{ feedImgUrl }}" />
+          <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+          <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+        </div>
+      </div>
+      {{#if movieReviewSummary}}
+        <meta itemprop="description" content="{{ movieReviewSummary }}" />
+      {{/if}}
+    {{else}}
+      <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+        <meta itemprop="url" content="{{ feedImgUrl }}" />
+        <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+        <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+      </div>
+    {{/if}}
+
+    {{#ifAny sponsoredRubric graphicBrandingRubric rubric}}
+    <nav class="rubric-wrap">
+      {{! Sponsored Post specific rubric and tooltip }}
+      {{#if sponsoredRubric}}
+        {{> sponsored-tag sponsoredTag }}
+      {{/if}}
+      {{! Optional graphical branding rubric and  tag rubric }}
+      {{#if graphicBrandingRubric}}
+        {{ set 'hypenatedBrandingRubric' (replace (urlencode (replace (trim (lowercase graphicBrandingRubric)) ' ' '-')) "%2F" "/") }}
+        <a class="graphic-rubric graphic-rubric-{{ hypenatedBrandingRubric }}"
+          href="//{{ @root.locals.site.host }}{{ @root.locals.site.path }}/{{ if section (concat section '/') }}"
+          {{#unless isMovieReview}}itemprop="articleSection"{{/unless}}>
+          {{! TODO: Will need to figure out what to do with this dynamic file read, since it won't be rendered client-side}}
+          {{{ read graphicBrandingRubricMediaPath }}}
+          </a>
+      {{/if}}
+      {{#ifAll graphicBrandingRubric rubric}}
+        <span class="rubric-seperator">&#47;</span>
+      {{/ifAll}}
+      {{#if rubric}}
+        {{ set 'hypenatedTagRubric' (replace (urlencode (replace (trim (lowercase rubric)) ' ' '-')) "%2F" "/") }}
+        {{#if graphicTagRubricMediaPath}}
+          <a class="graphic-rubric graphic-rubric-{{ hypenatedTagRubric }}"
+            href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tags/{{ hypenatedTagRubric }}{{/if}}/"
+            {{#unless isMovieReview}}itemprop="articleSection"{{/unless}}>
+            {{{ read graphicTagRubricMediaPath }}}
+          </a>
+        {{else}}
+          <a class="rubric rubric-{{ hypenatedTagRubric }}"
+            href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tags/{{ hypenatedTagRubric }}{{/if}}/"
+            {{#unless isMovieReview}} itemprop="articleSection"{{/unless}}>{{ rubric }}</a>
+        {{/if}}
+      {{/if}}
+    </nav>
+    {{/ifAny}}
+
+    {{! date and time }}
+    <time class="article-timestamp" datetime="{{ date }}" itemprop="datePublished" data-editable="publishedDate">
+      {{#if date}}
+        {{#if dateUpdated}}
+          <span class="article-update">Updated on </span>
+        {{/if}}
+        <span class="article-date large-width-date">{{ formatLocalDate date 'MMMM D, YYYY' }}</span>
+        <span class="article-date small-width-date">{{ formatLocalDate date 'MM/DD/YYYY' }}</span>
+        <span class="article-time">{{ formatLocalDate date 'h:mm a' }}</span>
+      {{/if}}
+    </time>
+
+    {{! title }}
+    <h1 class="headline-primary" data-editable="overrideHeadline" itemprop="headline">{{{ overrideHeadline }}}</h1>
+
+    {{! authors }}
+    <span data-editable="bylines" class="by-authors">
+      {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
+    </span>
+
+    {{! secondary bylines }}
+    {{#if hasSecondaryBylines}}
+      <span data-editable="secondaryBylines" class="by-authors secondary-authors">
+        {{#if secondaryAttribution.length}}
+        <span>{{ secondaryBylineText }}</span>
+        {{{ byline bylines=secondaryAttribution authorHost=@root.locals.site.host showSocial=false simpleList=true }}}
+        {{/if}}
+      </span>
+    {{/if}}
+
+    {{! Side Share }}
+    {{> share sideShare }}
+  </header>
+
+  <section class="body">
+    <div class="article-content" data-editable="content" itemprop="{{ if isMovieReview 'reviewBody' else='articleBody' }}">
+      {{! don't display generated annotatedTextAria in edit mode. Replace all ad components with ad-dummies }}
+      {{> component-list content }}
+
+      {{#ifAll magazineIssueDate featureTypes.[New York Magazine Story]}}
+        <p class="magazine-issue">
+          *This article appears in the
+          {{#if magazineIssueUrl}}
+          <a href="{{magazineIssueUrl}}" target="_blank">{{ formatLocalDate magazineIssueDate 'MMMM D, YYYY' }}, issue</a>
+          {{ else }}
+          {{ formatLocalDate magazineIssueDate 'MMMM D, YYYY' }}, issue
+          {{/if}}
+          of
+          <span class="magazine-issue-new-york">
+            New York
+          </span>
+          Magazine.
+        </p>
+      {{/ifAll}}
+    </div>
+
+    {{! Tags }}
+    {{> tags tags}}
+
+    {{! word count }}
+    {{#if @root.locals.edit}}
+      <section class="word-count">Words: <span class="initializing">Initializing word count</span></section>
+    {{/if}}
+
+    {{! circulation area }}
+    {{#if @root.locals.edit }}
+      {{ set 'empty' '<span class="circulation-item-empty">None</span>' }}
+      <section class="circulation">
+        <h2 class="circulation-title">Article Circulation</h2>
+
+        <section class="circulation-section" data-editable="circHeadlines">
+          <h3 class="circulation-subtitle circ-edit">Headlines and Teasers</h3>
+          <ul class="circulation-items">
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Facebook Headline</h4>
+              <p class="circulation-item-data">{{{ default primaryHeadline empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Twitter/Short Headline</h4>
+              <p class="circulation-item-data">{{{ default shortHeadline empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Teaser</h4>
+              <p class="circulation-item-data">{{{ default teaser empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">SEO Headline</h4>
+              <p class="circulation-item-data">{{{ default seoHeadline empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">SEO Description</h4>
+              <p class="circulation-item-data">{{{ default seoDescription empty }}}</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation-section" data-editable="circSlug">
+          {{#if slugLock}}
+            <div class="alert alert-warning">
+                <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
+
+                Article Slug is locked. Unlock in Article Settings.
+            </div>
+          {{/if}}
+          <h3 class="circulation-subtitle circ-edit">Slug and URL</h3>
+          <ul class="circulation-items">
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Article Slug</h4>
+              <p class="circulation-item-data">
+                {{#if slug}}<span class="circulation-slug">{{ slug }}</span>{{else}}{{{ empty }}}{{/if}}
+              </p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Evergreen Treatment</h4>
+              <p class="circulation-item-data">
+                {{ if evergreenSlug 'Yes' else='No' }}
+              </p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation-section" data-editable="circFeeds">
+          <h3 class="circulation-subtitle circ-edit">Feeds</h3>
+          <ul class="circulation-items">
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Feed Image</h4>
+              <p class="circulation-item-data">
+                {{#if feedImgUrl}}
+                  <img class="circulation-feedimg" src="{{ feedImgUrl }}" alt="" />
+                {{else}}
+                  <div class="circulation-empty-feedimg"></div>
+                {{/if}}
+              </p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Silo Image</h4>
+              <p class="circulation-item-data">
+                {{#if siloImgUrl}}
+                  <img class="circulation-feedimg" src="{{ rendition siloImgUrl 'vertical-small' }}" alt="" />
+                {{else}}
+                  {{{empty}}}
+                {{/if}}
+              </p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Feed Layout</h4>
+              <p class="circulation-item-data">
+                <span class="circulation-feedlayout {{ if (compare feedLayout 'none') 'current' }}">{{{ read 'public/media/components/article/icon-feed-noimg.svg' }}} None</span>
+                <span class="circulation-feedlayout {{ if (compare feedLayout 'thumb') 'current' }}">{{{ read 'public/media/components/article/icon-feed-thumb.svg' }}} Thumb</span>
+                <span class="circulation-feedlayout {{ if (compare feedLayout 'small') 'current' }}">{{{ read 'public/media/components/article/icon-feed-square.svg' }}} Small</span>
+                <span class="circulation-feedlayout {{ if (compare feedLayout 'large') 'current' }}">{{{ read 'public/media/components/article/icon-feed-horizontal.svg' }}} Large</span>
+              </p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Crossposting</h4>
+              <p class="circulation-item-data">{{ if (commaSeparated crosspost) (slugToSiteName (commaSeparated crosspost)) else='Current site' }}</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation-section" data-editable="circMetadata">
+          <h3 class="circulation-subtitle circ-edit">Article Metadata</h3>
+          <ul class="circulation-items">
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Feature Types</h4>
+              <p class="circulation-item-data">{{{ if (commaSeparated featureTypes) (commaSeparated featureTypes true) else=empty}}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Story Characteristics</h4>
+              <p class="circulation-item-data">{{{ if (commaSeparated storyCharacteristics) (commaSeparated storyCharacteristics true) else=empty}}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Content Channel</h4>
+              <p class="circulation-item-data">{{{ if contentChannel (capitalizeAll contentChannel) else=empty }}}</p>
+            </li>
+            {{#if featureTypes.[New York Magazine Story] }}
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Magazine Issue Date</h4>
+              <p class="circulation-item-data">{{{ if magazineIssueDate magazineIssueDate else=empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Magazine Issue Section</h4>
+              <p class="circulation-item-data">{{{ if magazineIssueSection magazineIssueSection else=empty }}}</p>
+            </li>
+            {{/if}}
+          </ul>
+        </section>
+
+        {{#if eligibleForGoogleStandout}}
+          <section class="circulation-section" data-editable="googleStandoutMetadata">
+            <h3 class="circulation-subtitle circ-edit">Google Standout Metadata</h3>
+            <ul class="circulation-items">
+              <li class="circulation-item">
+                <h4 class="circulation-item-title">Standout Articles from past 7 days: {{rollingStandoutCount}}</h4>
+                <h4 class="circulation-item-title">{{ if shouldBeGoogleStandout 'Enabled' else='Disabled' }}</h4>
+                {{#unless articleWithinGoogleStandoutPublishDateLimit}}
+                  <div class="alert alert-warning">
+                      <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
+
+                      This article is not eligible to appear in Google News because its publish date is more than 2 days old. If this article was already published with the standout tag enabled, please note that disabling this tag will not affect its status in Google News.
+                    </div>
+                {{/unless}}
+                {{#unless availableStandoutArticleInventory}}
+                  <div class="alert alert-warning">
+                      <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
+
+                      This article is not eligible to appear in Google News because this site's domain has already marked seven standout posts in the past week.
+                    </div>
+                {{/unless}}
+              </li>
+            </ul>
+          </section>
+        {{/if}}
+
+        {{#if isMovieReview}}
+        <section class="circulation-section" data-editable="movieReview">
+          <h3 class="circulation-subtitle circ-edit">Review Metadata</h3>
+          <ul class="circulation-items">
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Movie Name</h4>
+              <p class="circulation-item-data">{{{ default movieReviewName empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">IMDb URL</h4>
+              <p class="circulation-item-data">{{{ default movieReviewUrl empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Movie Review Summary</h4>
+              <p class="circulation-item-data">{{{ default movieReviewSummary empty }}}</p>
+            </li>
+          </ul>
+        </section>
+        {{/if}}
+      </section>
+    {{/if}}
+  </section>
+</article>

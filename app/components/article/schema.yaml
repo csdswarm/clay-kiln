@@ -1,0 +1,419 @@
+_confirmRemoval: true
+
+primaryHeadline:
+  _label: Facebook Headline
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 80
+    help: Write your most shareable headline
+    attachedButton:
+      name: magic-button
+      component: article
+      store: components
+      property: overrideHeadline
+      tooltip: Use Article Headline
+shortHeadline:
+  _label: Twitter/Short Headline
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 60
+    help: Also used for Related Stories and some homepages
+    attachedButton:
+      name: magic-button
+      field: primaryHeadline
+      tooltip: Use Facebook Headline
+teaser:
+  _label: Teaser
+  _subscribe: articleTeaser
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 150
+    help: Appears in feeds and newsletters
+# this is the headline that displays on the article itself
+# note: it used to pull from primaryHeadline, hence the name "overrideHeadline"
+overrideHeadline:
+  _label: Headline
+  _subscribe: articleHeadline
+  _placeholder:
+    height: 40px
+    text: Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+seoHeadline:
+  _label: SEO Headline
+  _has:
+    input: text
+    help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
+    validate:
+      max: 60
+seoDescription:
+  _label: SEO Description
+  _has:
+    input: text
+    type: multi-line
+    help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 250 characters
+    validate:
+      min: 100
+      max: 250
+feedImgUrl:
+  _label: Image URL
+  _publish: feedImgUrl
+  _has:
+    input: text
+    type: url
+    help: Must be a image url
+    attachedButton:
+      - name: magic-button
+        component: image
+        transform: getComponentInstance
+        url: $SITE_PREFIX
+        property: url
+        tooltip: get the first image
+dropCap:
+  _label: Display Drop Cap
+  _has:
+    input: checkbox
+    help: Show the first character of the first paragraph as a drop cap (only applies to One Column articles)
+feedLayout:
+  _label: Layout in Feeds
+  _has:
+    input: segmented-button
+    options:
+      - icon: /media/components/article/icon-feed-noimg.svg
+        value: none
+      - icon: /media/components/article/icon-feed-thumb.svg
+        value: thumb
+      - icon: /media/components/article/icon-feed-square.svg
+        value: small
+      - icon: /media/components/article/icon-feed-horizontal.svg
+        value: large
+slug:
+  _label: Slug
+  _has:
+    input: text
+    validate:
+      required: true
+    attachedButton:
+      name: magic-button
+      component: article
+      transform: getComponentInstance
+      url: $SITE_PREFIX
+      property: shortHeadline
+      moreMagic:
+        - transform: toSlug
+      tooltip: Generate from Short Headline
+evergreenSlug:
+  _label: Evergreen Article
+  _has:
+    input: checkbox
+    help: Replaces /yyyy/mm/ with /article/ in the URL
+byline:
+  _label: Byline
+  _subscribe: authorBylines
+  _has:
+    input: complex-list
+    props:
+      -
+        prop: names
+        _label: Names
+        _has:
+          input: simple-list
+          autocomplete:
+            list: authors
+            allowRemove: true
+            allowCreate: true
+      -
+        prop: prefix
+        _label: Prefix
+        _has:
+          input: radio
+          options:
+            - by
+            - as told to
+authors:
+  _label: Authors
+  _publish: authors
+  _has:
+    help: An Array of Objects containing author names (without byline prefixes), for search.
+hasSecondaryBylines:
+  _label: Use Secondary Bylines
+  _has: checkbox
+secondaryAttribution:
+  _label: Secondary Bylines
+  _has:
+    input: simple-list
+    autocomplete:
+      list: authors
+      allowRemove: true
+secondaryBylineText:
+  _label: Text for Secondary Bylines
+  _has:
+    input: text
+    help: Text that appears before secondary bylines
+# note: date used to use datetime-local, which was deprecated in kiln 5.0
+# users edit the published date from the articleDate and articleTime fields
+date:
+  _label: Published Date
+  _publish: publishDate
+  _has:
+    help: Date that is generated from the articleDate and articleTime fields
+articleDate:
+  _label: First Published Date
+  _has:
+    input: datepicker
+    help: Custom published date, if it should be different than the actual date the article was first published
+articleTime:
+  _label: First Published Time
+  _has:
+    input: timepicker
+    help: Custom published time
+dateUpdated:
+  _label: Display Updated Date
+  _has:
+    input: checkbox
+    help: Display "Updated On" in the article with the latest published date
+rubric:
+  _label: Rubric
+  _subscribe: rubric
+  _has:
+    help: Feature Rubric is set by the tags component
+rubricMessage:
+  _label: Rubric Message
+  _has:
+    help: Feature Rubric Message can be used for displaying disclaimers or other additional info to the viewing audience. Set this content in the bootstrap
+content:
+  _label: Article Content
+  _placeholder:
+    text: Article Content
+    height: 600px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - paragraph
+      - subheader
+      - blockquote
+      - pull-quote
+      - image
+      - tweet
+      - facebook-post
+      - instagram
+feeds:
+  _label: Include in These Feeds
+  _has:
+    input: checkbox-group
+    options:
+      - name: Site Maps and Google Search
+        value: sitemaps
+      - name: RSS Feeds
+        value: rss
+      - name: Most Popular
+        value: most-popular
+      - name: Latest News and Newsfeed
+        value: newsfeed
+      - name: Apple News
+        value: apple-news
+    help: By default, articles are included in all of our feeds. Uncheck these if you don't want this article to appear in them, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
+featureTypes:
+  _label: Feature Types
+  _publish: featureTypes
+  _has:
+    input: select
+    multiple: true
+    search: true
+    options:
+      - News
+      - Advice
+      - Profile
+    validate:
+      required: true
+    help: Select at least 1 feature type
+contentChannel: # Please make sure your content channels are capitalized!
+  _label: Content Channel
+  _has:
+    input: select
+    search: true
+    options:
+      - One Channel
+      - Two Channel
+      - Three Channel
+    validate:
+      required: true
+section:
+  _label: Section
+  _has:
+    input: text
+    help: The section is used in the path and is currently maintained by devs as it relates to hard-coded routes, e.g. /bestofnewyork/
+    attachedButton: lock
+isMovieReview:
+  _label: Movie Review
+  _has:
+    input: checkbox
+    help: If this is a movie review, additional metadata should be entered for search engines
+movieReviewName:
+  _label: Movie Name
+  _has:
+    input: text
+    help: Name of the movie being reviewed
+movieReviewUrl:
+  _label: IMDb URL
+  _has:
+    input: text
+    type: url
+    validate:
+      pattern: .*(imdb\.com\/).*
+      patternMessage: Please enter an IMDb URL
+    help:  IMDb URL for the movie being reviewed
+movieReviewSummary:
+  _label: Movie Review Summary
+  _has:
+    input: text
+    type: multi-line
+    help: This must be an exact excerpt from the review that clearly indicates an opinion about the movie. It should not be the review headline, a question or a teaser and must make sense on its own
+    validate:
+      max: 200
+showSocial:
+  _label: Display Social Handle
+  _has:
+    input: checkbox
+    help: Author social handles are displayed by default. Unchecking this will hide handles on this article
+
+_groups:
+  publishedDate:
+    fields:
+      - articleDate
+      - articleTime
+      - dateUpdated
+    _placeholder:
+      text: Custom Published Date
+      height: 30px
+      ifEmpty: articleDate or articleTime
+  secondaryBylines:
+    fields:
+      - secondaryBylineText
+      - secondaryAttribution
+    _placeholder:
+      text: Secondary Bylines
+      height: 60px
+      ifEmpty: secondaryAttribution
+  circHeadlines:
+    fields:
+      - primaryHeadline
+      - shortHeadline
+      - teaser
+      - seoHeadline
+      - seoDescription
+  circFeeds:
+    fields:
+      - feedImgUrl
+      - feedLayout
+  circSlug:
+    fields:
+      - slug
+      - evergreenSlug
+  circMetadata:
+    fields:
+      - featureTypes
+      - storyCharacteristics
+      - contentChannel
+  bylines:
+    fields:
+      - byline
+    _placeholder:
+      text: Byline
+      height: 30px
+      ifEmpty: 'byline.names'
+
+  settings:
+    fields:
+      - feeds
+      - showSocial
+      - dropCap
+      - section
+      - hasSecondaryBylines
+
+# non-user-editable fields, set by model.js and used for pubsub
+eligibleForGoogleStandout:
+  _has:
+    help: Is this article eligible for the Google Standout tag
+canBeMarkedGoogleStandout:
+  _has:
+    help: Can this article be marked as Google Standout.
+rollingStandoutCount:
+  _has:
+    help: Rolling 7 day count of how many articles have been marked Standout on this domain.
+
+canonicalUrl:
+  _publish: url
+  _has:
+    help: Canonical URL of an article. Set when the article publishes.
+
+pageDescription:
+  _publish: pageDescription
+  _has:
+    help: Plaintext description for search engines, set by seoDescription or teaser.
+
+socialDescription:
+  _publish: socialDescription
+  _has:
+    help: Plaintext description for social media, set by teaser.
+
+pageTitle:
+  _publish: pageTitle
+  _has:
+    help: Plaintext page title, set by seoHeadline, shortHeadline, or primaryHeadline. Sponsored posts and certain sites will have extra sugar.
+
+plaintextPrimaryHeadline:
+  _publish:
+    - ogTitle
+    - pageListTitle
+  _has:
+    help: Plaintext title set by primaryHeadline. Used for facebook sharing.
+
+plaintextShortHeadline:
+  _publish: twitterTitle
+  _has:
+    help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
+
+storyCharacteristics:
+  _label: Story Characteristics
+  _has:
+    input:  checkbox-group
+    options:
+      - name: Strong Visual
+        value: strong-visual
+        sites: wwwthecut
+      - name: Top Story
+        value: top-story
+        sites: wwwthecut
+    help: Metadata about this article that affects how it's promoted across different pages
+
+# Component properties
+sideShare:
+  _component:
+    include:
+      - share
+tags:
+  _component:
+    include:
+      - tags

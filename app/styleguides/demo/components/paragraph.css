@@ -1,0 +1,105 @@
+/* stylelint-disable */
+.paragraph {
+  margin: 0 0 20px;
+}
+
+.paragraph a {
+  background: linear-gradient(to bottom, transparent 0, transparent 80%, #fcd400 80%, #fcd400 100%);
+  border-bottom: 2px solid #fcd400;
+  padding: 0;
+}
+
+.paragraph p {
+  margin: 0;
+}
+
+.paragraph + ul,
+.paragraph ul {
+  clear: both;
+  line-height: 23px;
+  margin: 0;
+  padding: 0 0 0 10px;
+}
+
+.paragraph + ul li,
+.paragraph ul li {
+  list-style: none;
+  margin: 0 0 20px;
+}
+
+.paragraph + ul li:before,
+.paragraph ul li:before {
+  color: #1782a9;
+  content: '•';
+  left: 0;
+  position: absolute;
+}
+
+.paragraph + ol,
+.paragraph ol {
+  clear: both;
+  counter-reset: list;
+  line-height: 23px;
+  margin: 30px 0;
+  padding: 0 0 0 20px;
+}
+
+.paragraph + ol li,
+.paragraph ol li {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.paragraph + ol li:before,
+.paragraph ol li:before {
+  color: #999;
+  content: counter(list);
+  counter-increment: list;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  left: 0;
+  position: absolute;
+}
+
+.paragraph,
+.paragraph ol li,
+.paragraph p,
+.paragraph ul li,
+.paragraph+ol li,
+.paragraph+ul li {
+  color: #111;
+  font-family: Georgia, serif;
+  font-size: 17px;
+  letter-spacing: .1px;
+  line-height: 27px;
+}
+
+.paragraph a,
+.paragraph a:active,
+.paragraph a:hover,
+.paragraph a:visited {
+  color: #111;
+  text-decoration: none;
+}
+
+.sponsored .paragraph {
+  margin-bottom: 20px;
+}
+
+@media print {
+  .paragraph {
+    margin: 0 auto 20px;
+    width: 80%;
+  }
+
+  .paragraph,
+  .paragraph ol li,
+  .paragraph p,
+  .paragraph ul li,
+  .paragraph+ol li,
+  .paragraph+ul li {
+    font-size: 11px;
+    line-height: 12px;
+  }
+}

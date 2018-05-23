@@ -1,0 +1,267 @@
+_components:
+  google-fonts:
+    instances:
+      default:
+        fonts: https://fonts.googleapis.com/css?family=Merriweather|Oswald:600
+
+  meta-title:
+    instances:
+      general:
+        title: ''
+        twitterTitle: ''
+        ogTitle: ''
+        kilnTitle: ''
+
+  meta-image:
+    instances:
+      general:
+        imageUrl: ''
+
+  meta-description:
+    instances:
+      general:
+        description: ''
+
+  paragraph:
+    instances:
+      new:
+        text: ''
+
+  image:
+    instances:
+      new:
+        url: ''
+  search:
+    instances:
+      global:
+        searchtext: Search
+  header:
+    instances:
+      default:
+        variation: header
+        position: right
+        search:
+          _ref: /_components/search/instances/global
+        services:
+          -
+            _ref: /_components/follow/instances/facebook
+          -
+            _ref: /_components/follow/instances/twitter
+
+
+  circulation:
+    instances:
+      new:
+        primaryHeadline: ''
+        feedImgUrl: ''
+        teaser: ''
+
+  generic-list:
+    instances:
+      index:
+        index: published-articles
+        toggleImages: true
+        toggleTeaser: true
+        toggleReadMore: true
+        variation: large
+        orderBy: date
+        size: 50
+      article:
+        index: published-articles
+        toggleImages: true
+        toggleTeaser: true
+        toggleReadMore: true
+        variation: large
+        orderBy: date
+        size: 50
+      recirc:
+        index: published-articles
+        toggleImages: true
+        toggleTeaser: true
+        toggleReadMore: true
+        variation: large
+        orderBy: date
+        title: Recent Articles
+        size: 50
+      tertiary:
+        index: published-articles
+        toggleImages: false
+        toggleTeaser: false
+        toggleReadMore: false
+        variation: small
+        orderBy: date
+        title: Recently Published
+        size: 3
+  tag-list:
+    instances:
+      default:
+        index: published-articles
+        toggleImages: true
+        toggleTeaser: true
+        toggleReadMore: true
+        variation: large
+        orderBy: date
+        title: Tag Page Title
+        size: 3
+
+  share:
+    instances:
+      new:
+        enabled:
+          facebook: true
+          twitter: true
+          linkedin: true
+          gplus: true
+          pinterest: true
+          tumblr: true
+          email: true
+          print: true
+          comment: true
+        url: ''
+        title: ''
+        twitterHandle: super_cool_twitter_handle
+        description: ''
+        pinImage: ''
+        orientation: vertical
+
+  tweet:
+    instances:
+      new:
+        url: ''
+        showThread: true
+        showMedia: true
+
+  instagram-post:
+    instances:
+      new:
+        url: ''
+        showCaption: true
+
+  facebook-post:
+    instances:
+      new:
+        url: ''
+
+  footer:
+    instances:
+      default:
+        linksEnabled: {}
+        services:
+          -
+            _ref: /_components/follow/instances/facebook
+          -
+            _ref: /_components/follow/instances/twitter
+
+  blockquote:
+    instances:
+      new:
+        text: ''
+
+  divider:
+    instances:
+      new:
+        title: ''
+
+  subheader:
+    instances:
+      new:
+        text: ''
+  tags:
+    instances:
+      new:
+        items: []
+
+  general-content:
+    instances:
+      new:
+        title: ''
+        content:
+          -
+            _ref: /_components/image/instances/new
+          -
+            _ref: /_components/paragraph/instances/new
+          -
+            _ref: /_components/divider/instances/new
+          -
+            _ref: /_components/tweet/instances/new
+          -
+            _ref: /_components/instagram-post/instances/new
+          -
+            _ref: /_components/facebook-post/instances/new
+          -
+            _ref: /_components/blockquote/instances/new
+          -
+            _ref: /_components/subheader/instances/new
+
+  post:
+    instances:
+      new:
+        socialShare:
+          _ref: /_components/share/instances/new
+        content:
+          -
+            _ref: /_components/image/instances/new
+          -
+            _ref: /_components/paragraph/instances/new
+          -
+            _ref: /_components/tweet/instances/new
+          -
+            _ref: /_components/instagram-post/instances/new
+          -
+            _ref: /_components/facebook-post/instances/new
+          -
+            _ref: /_components/blockquote/instances/new
+  article:
+      instances:
+        new:
+          primaryHeadline: ''
+          feedImgUrl: ''
+          feedLayout: small
+          teaser: ''
+          slug: ''
+          byline:
+            -
+              prefix: by
+              names: []
+          rubric: ''
+          rubricMessage: ''
+          syndicatedUrl: ''
+          syndicationStatus: original
+          dropCap: false
+          content:
+            -
+              _ref: /_components/image/instances/new
+            -
+              _ref: /_components/paragraph/instances/new
+          tags:
+            _ref: /_components/tags/instances/new
+          sideShare:
+            _ref: /_components/share/instances/new
+          # bottomShare:
+          #   _ref: /_components/bottom-share/instances/new
+          feeds:
+            sitemaps: true
+            rss: true
+            most-popular: true
+            newsfeed: true
+            apple-news: true
+          featureTypes:
+            News-Aggregation: false
+            News-Commentary and Analysis: false
+            News-Original Reporting: false
+            Advice: false
+            Cover Story Online: false
+            First-Person Essay: false
+            Interview or Profile: false
+            List or Roundup: false
+            Look Book: false
+            Review: false
+            Slideshow Intro: false
+            TV Recap: false
+            Other Feature or Column: false
+            New York Magazine Story: false
+            Sponsor Story: false
+          showSocial: true
+          storyCharacteristics:
+            strong-visual: false
+            top-story: false

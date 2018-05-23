@@ -1,0 +1,26 @@
+@import "_global/mixins";
+
+.footer {
+  font-family: Arial, sans-serif;
+  border-top: 2px solid #ccc;
+  max-width: 1000px;
+  margin: 20px auto 0;
+  padding: 2px 0 10px;
+  text-align: center;
+
+  .footer-social {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 0 10px;
+    padding: 10px 0 0;
+
+    a span {
+      @mixin hidden-content;
+    }
+  }
+
+  .footer-social-item + .footer-social-item {
+    margin: 0 0 0 10px;
+  }
+}

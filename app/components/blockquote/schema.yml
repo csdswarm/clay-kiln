@@ -1,0 +1,23 @@
+_description: |
+  The component for blockquote text style.
+
+  * You may use line breaks by pressing <kbd>shift + enter</kbd>
+  * You may create bullet points by pressing <kbd>tab</kbd>
+
+text:
+  _placeholder:
+    height: 50px
+    required: true
+    text: New Blockquote
+  _has:
+    input: inline
+    pseudoBullet: true
+    type: multi-line
+    styled: false
+    validate:
+      required: true
+    buttons:
+      - bold
+      - italic
+      - strike
+      - link

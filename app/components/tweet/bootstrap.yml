@@ -1,0 +1,5 @@
+_components:
+  tweet:
+    url: ''
+    showThread: true
+    showMedia: true

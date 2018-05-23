@@ -1,0 +1,33 @@
+<div data-uri="{{ default _ref self }}" class="post">
+  <div class="post-hd">
+    <div class="post-hd-title">
+      <h1 data-editable="displayHeadline">{{{ displayHeadline }}}</h1>
+    </div>
+    <div class="post-hd-authors" data-editable="authors">
+      {{! authors }}
+      {{#if authors.length}}
+      <span class="by-authors">
+        <span>By </span>
+        <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+          {{#each authors}}
+            <a href="//{{@root.locals.site.host}}/author/{{ urlencode this.text }}/" rel="author" class="article-author">
+              <span>{{ trim this.text }}</span>{{#ifNone @last (compare ../authors.length 2)}}<span>, </span>{{/ifNone}}
+              <meta itemprop="name" content="{{ this.text }}"/>
+              <link itemprop="sameAs" href="//{{@root.locals.site.host}}/author/{{ urlencode this.text }}/"/>
+            </a>
+            {{#if (compare (add @index 1) (subtract ../authors.length 1))}}
+              <span> and </span>
+            {{/if}}
+          {{/each}}
+        </span>
+      </span>
+      {{/if}}
+    </div>
+    <div class="post-hd-share">
+      {{> share socialShare }}
+    </div>
+  </div>
+  <div class="post-bd" data-editable="content">
+    {{> component-list content }}
+  </div>
+</div>

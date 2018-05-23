@@ -1,0 +1,17 @@
+_components:
+  two-column-layout:
+    head: 'head'
+    headLayout: []
+    top: []
+    pageHeader: []
+    adSplash: []
+    sectionHeader: []
+    main: 'main'
+    primary: []
+    secondary: []
+    tertiary: []
+    bottom: []
+    foot: []
+    kilnInternals:
+      -
+        _ref: /_components/clay-kiln

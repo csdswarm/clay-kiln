@@ -1,0 +1,19 @@
+_components:
+  share:
+    url: ''
+    title: ''
+    twitterHandle: ''
+    description: ''
+    pinImage: ''
+    emailPrefix: 'I saw this and thought you might be interested...'
+    orientation: 'horizontal'
+    enabled:
+      facebook: false
+      twitter: false
+      linkedin: false
+      gplus: false
+      pinterest: false
+      tumblr: false
+      email: false
+      print: false
+      comment: true

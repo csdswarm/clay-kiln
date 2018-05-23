@@ -1,0 +1,56 @@
+version: '3'
+services:
+
+  ################################################
+  ## Local Sites Setup:                         ##
+  ## Nginx, Elastic Search, Redis               ##
+  ################################################
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    links:
+      - clay
+    ports:
+      - "80:80"
+
+  clay:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    logging:
+      driver: json-file
+    links:
+      - redis
+      - elasticsearch
+    command: "npm run start-dev"
+    volumes:
+      - ./app/services:/usr/src/app/services
+      - ./app/components:/usr/src/app/components
+      - ./app/sites:/usr/src/app/sites
+      - ./app/public:/usr/src/app/public
+      - ./app/search:/usr/src/app/search
+    env_file:
+      - ./app/variables-local.env
+
+  redis:
+    image: redis
+    logging:
+      driver: none
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/data:/data
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.2
+    command: elasticsearch
+    logging:
+      driver: none
+    ports:
+      - "9200:9200"
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/config/logging.yml:/usr/share/elasticsearch/config/logging.yml
+      - ./elasticsearch/data:/usr/share/elasticsearch/data

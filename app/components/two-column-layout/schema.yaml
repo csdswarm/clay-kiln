@@ -1,0 +1,59 @@
+_version: 1.1
+_description: |
+  A two-column layout for Clay, used for non-article pages:
+
+  * homepages
+  * section pages
+  * index pages and archives
+  * tag pages
+  * author pages
+
+head:
+  _componentList:
+    page: true
+    include:
+      - meta-title
+      - meta-description
+      - meta-image
+headLayout:
+  _componentList:
+    include:
+      - meta-title
+      - meta-description
+      - meta-image
+top:
+  _componentList:
+    include:
+      - image
+pageHeader:
+  _componentList:
+    include:
+      - header
+sectionHeader:
+  _componentList:
+    include:
+      - subheader
+main:
+  _componentList:
+    page: true
+    include:
+      - article
+      - generic-list
+secondary:
+  _componentList:
+    include:
+      - generic-list
+tertiary:
+  _componentList:
+    include:
+      - image
+      - generic-list
+bottom:
+  _componentList:
+    include:
+      - footer
+kilnInternals:
+  _componentList:
+    internals: true
+    include:
+      - clay-kiln

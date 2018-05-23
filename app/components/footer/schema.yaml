@@ -1,0 +1,39 @@
+_description: |
+  Simplified version of `global-footer`.
+
+_confirmRemoval: true
+
+socialEnabled:
+  _label: Enable Social Media Links
+  _has:
+    -
+      fn: checkbox-group
+      options:
+        -
+          name: Newsletters
+          value: newsletters
+        -
+          name: Facebook
+          value: facebook
+        -
+          name: Twitter
+          value: twitter
+    - label
+    -
+      fn: description
+      value: Choose which social media links are displayed.
+
+services:
+  _label: Media Services
+  _placeholder:
+    height: 30px
+    text: Services
+  _componentList:
+    min: 1
+    include:
+      - follow
+
+_groups:
+  settings:
+    fields:
+      - socialEnabled

@@ -1,0 +1,24 @@
+_description: |
+  site-wide search component for headers
+
+searchtext:
+  _label: Placeholder Text
+  _display: settings
+  _has:
+    - text
+    - label
+    -
+      fn: description
+      value: The placeholder text
+
+searchURL:
+  _label: Search URL
+  _display: settings
+  _has:
+    -
+      fn: text
+      type: url
+    - label
+    -
+      fn: description
+      value: The URL of the search page to use, if different to the default NY Mag search
