@@ -35,12 +35,6 @@ $ gulp
 
 This is to make sure your `public` directory exists. Without it the site won't run.
 
-Add in a `local.yml` file to `app/sites/demo/` with the following:
-
-```yaml
-host: localhost.demo.com
-```
-
 This is the window where you'll re-run Gulp as you need to. Right now only the tasks for building model.js, template files and CSS.
 
 ### Termindal Window 2
@@ -78,6 +72,48 @@ $ make down
 $ make clear-data
 ```
 
+## Bootstrapping Data
+
+1. Install [claycli](https://github.com/clay/claycli)
+2. Configure your [`.clayconfig` file](https://github.com/clay/claycli#usage). It'll go at `~/.clayconfig` and you'll want to add the following:
+  ```
+  [keys]
+    demo = accesskey
+  [urls]
+    demosite = http://localhost.demo.com
+  ```
+3. Now you can run `make bootstrap` which will put the `app/first-run` data into your local instance.
+
+
+## Adding Users
+
+A bootstrap file for users looks like the following:
+
+```yaml
+_users:
+  -
+    username: <USER_EMAIL>
+    provider: <AUTH_PROVIDER>
+    auth: <AUTH_LEVEL>
+```
+
+- `USER_EMAIL`: the email address of the user
+- `AUTH_PROVIDER`: the OAuth/LDAP provider you're using. You're provider will require environment variables for configuration and those docs need to be written. When a more robust configuration is needed please reach out and we'll get that. This project is setup to use `google` as an auth provider by default.
+- `AUTH_LEVEL`: either `write` or `admin`
+
+Sample users might look like:
+
+```yaml
+_users:
+  -
+    username: jon.winton@nymag.com
+    provider: google
+    auth: admin
+  -
+    username: jwinton
+    provider: ldap
+    auth: write
+```
 
 ## Missed anything?
 That _should_ be it...if not, submit an issue or add something to this README.
