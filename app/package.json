@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "scripts/start-local.sh",
-    "start-dev": "nodemon --watch components --watch services --watch sites --watch search --watch app.js --watch styleguides --ext js,yaml,yml,handlebars,hbs,css --ignore '*.test.js' --max-old-space-size=256 --max-semi-space-size=2"
+    "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
+    "start-dev": "npm run check-elastic && nodemon --watch components --watch services --watch sites --watch search --watch app.js --watch styleguides --ext js,yaml,yml,handlebars,hbs,css --ignore '*.test.js' --max-old-space-size=256 --max-semi-space-size=2"
   },
   "author": "",
   "license": "MIT",

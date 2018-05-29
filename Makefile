@@ -1,10 +1,8 @@
 up:
-	docker-compose up -d nginx redis elasticsearch \
-		&& while ! curl -sSI -o /dev/null http://localhost:9200/_cat/indices; do sleep 5; done \
-		&& docker-compose up -d clay && make clay-logs
+	docker-compose up -d nginx redis elasticsearch clay && make clay-logs
 
 up-clay:
-	docker-compose up --build -d clay
+	docker-compose up --build -d clay && make clay-logs
 
 up-nginx:
 	docker-compose up --build -d nginx
