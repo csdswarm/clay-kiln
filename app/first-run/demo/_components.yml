@@ -101,7 +101,7 @@ _components:
         toggleReadMore: true
         variation: large
         orderBy: date
-        title: Tag Page Title
+        title: 'Articles Tagged: ${tagValue}'
         size: 3
 
   share:

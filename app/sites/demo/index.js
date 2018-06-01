@@ -3,18 +3,12 @@
 const publishing = require('../../services/publishing'),
   mainComponentRefs = ['/_components/article/instances'];
 
-module.exports = function (router, composer) {
-
-  router.get('/', composer);
-  router.get('/:section', composer);
-  router.get('/:year/:month/:name', composer);
-  router.get('/tags/:tag', composer);
-  router.get('/tags/:tag/', function (req,res) {
-    res.redirect(301, `/tags/${req.params.tag}`);
-  });
-
-  return router;
-};
+module.exports.routes = [
+  { path: '/'},
+  { path: '/:section'},
+  { path: '/:year/:month/:name' },
+  { path: '/tags/:tag.html', dynamicPage: 'tag' }
+];
 
 // Resolve the url to publish to
 module.exports.resolvePublishUrl = [

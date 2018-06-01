@@ -20,7 +20,8 @@ module.exports.render = (ref, data, locals) => {
       from: from,
       size: size
     }),
-    query = queryService(data.index, locals);
+    query = queryService(data.index, locals),
+    tagValue = locals.params.tag;
 
   query.body = _clone(body); // lose the reference
 
@@ -28,8 +29,9 @@ module.exports.render = (ref, data, locals) => {
     [`${data.orderBy}`]: 'desc'
   });
 
+
   if (locals.params.tag || overrideTag) {
-    queryService.addFilter(query, { term: { tags: locals.params.tag || overrideTag }});
+    queryService.addFilter(query, { term: { tags: tagValue }});
   }
 
   // Log the query
@@ -45,6 +47,16 @@ module.exports.render = (ref, data, locals) => {
       data.entries = _map(_get(results, 'hits.hits'), '_source');
       data.from = from;
       data.start = from + size;
+
+      if (!data.entries.length) {
+        let err = new Error('No results!');
+
+        err.status = 404;
+        throw err;
+      }
+
+      data.title = data.title.replace('${tagValue}', tagValue);
+
       return data;
     });
 };
