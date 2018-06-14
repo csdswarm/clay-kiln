@@ -33,6 +33,12 @@ Run Gulp
 $ gulp
 ```
 
+_If you already have Gulp installed globally and it's not Gulp 4.x, you'll want to run the following:_
+
+```bash
+$ node ./node_modules/.bin/gulp
+```
+
 This is to make sure your `public` directory exists. Without it the site won't run.
 
 This is the window where you'll re-run Gulp as you need to. Right now only the tasks for building model.js, template files and CSS.
@@ -116,10 +122,7 @@ _users:
 ```
 
 ## Missed anything?
-That _should_ be it...if not, submit an issue or add something to this README.
-
-
-
+That _should_ be it...if not, submit an issue or add something to this README.w
 
 ## TODO:
 - Demo user
