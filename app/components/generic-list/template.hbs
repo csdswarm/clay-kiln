@@ -1,88 +1,31 @@
-{{#*inline 'articleRenditionMediaBlock'}}
-  {{ selector }}.img {
-    background-image: url({{ rendition url name }});
-  }
-{{/inline}}
-
-<div data-uri="{{ default _ref _self }}" class="generic-list" data-editable="settings">
-  {{#if entries.length}}
-    <div class="generic-list-title">
-      {{#if title }}<span><h1>{{ title }}</h1></span>{{/if}}
-      <h2>Most Recent Entries</h2>
-    </div>
-    <ol class="generic-list-feed">
-      {{#each entries }}
-        <style>
-          {{~ set 'selector' (concat '.generic-list-feed-item .img-' @index) ~}}
-          {{> articleRenditionMediaBlock selector=selector name='square-xsmall' url=feedImgUrl }}
-
-          @media (min-width: 600px) and (max-width: 1023.9px) {
-            {{> articleRenditionMediaBlock selector=selector name='thumb-small' url=feedImgUrl }}
-          }
-
-          @media (min-width: 1024px) {
-            {{> articleRenditionMediaBlock selector=selector name='horizontal-tags' url=feedImgUrl }}
-          }
-        </style>
-
-        <li class="generic-list-feed-item" tabIndex="-1">
-          <a class="generic-list-entry-link {{#if (compare @index ../adIndex)}}border{{/if}}"
-            href="{{ fixScheme canonicalUrl }}"
-            data-track-type="entry-link"
-            data-track-component-name="newsfeed"
-            data-track-page-uri="{{ this.pageUri }}"
-            data-track-headline="{{ this.plaintextPrimaryHeadline }}"
-            data-track-authors="{{ this.authors }}"
-            data-track-index="{{ @index }}"
-            data-track-component-title=""
-            data-track-pagination={{ ../from }}>
-            {{! entry image }}
-            <div class="generic-list-image-wrapper">
-              {{~#if feedImgUrl ~}}<span class="img img-{{ @index }}"></span>{{~/if~}}
-              {{~#ifAny featureTypes.Video-Original featureTypes.Video-Aggregation
-                        featureTypes.[Video-Original News] ~}}
-                <span class="img video-signal">{{{ read 'public/media/components/newsfeed/play-icon.svg' }}}</span>
-              {{~/ifAny~}}
-            </div>
-            <div>
-              <div class="headline-wrapper">
-                <div class="headline-above">
-                  {{! publish date }}
-                  <time datetime="{{ date }}">{{ articleDate date }}</time>
-                  {{! entry rubric }}
-                  {{#if rubric }}<span class="rubric">{{{ rubric }}}</span>{{/if}}
-                </div>
-                {{! entry headline }}
-                <h3 class="headline">{{{ primaryHeadline }}}</h3>
-              </div>
-              {{! entry teaser }}
-              <p class="teaser">{{{ teaser }}}</p>
-              {{! authors }}
-              <span class="by-authors">
-                {{~#if authors.length ~}}
-                  {{#if byline}}
-                    {{{ byline bylines=byline hideLinks=true }}}
-                  {{else}}
-                    By {{{ byline bylines=authors hideLinks=true simpleList=true }}}
-                  {{/if}}
-                {{~/if~}}
-              </span>
-            </div>
-            {{! entry read more }}
-            <span class="read-more">Read More »</span>
-          </a>
-        </li>
-        {{#if (compare @index ../adIndex)}}
-          <li class="feed-ad">
-            {{> ad ../feedAdMobile }}
-            {{> ad ../feedAdTablet }}
-            {{> ad ../feedAdDesktop }}
-          </li>
-        {{/if}}
-      {{/each}}
-    </ol>
-    {{#if moreEntries}}
-      <a class="pagination more-entries" href="?start={{ start }}">MORE STORIES</a>
-    {{/if}}
+<div data-uri="{{ default _ref self }}" class="generic-list{{#if variation}} generic-list-{{variation}}{{/if}}">
+  {{#if title}}
+  <div class="generic-list-hd">
+    <h2 class="generic-list-hd-title" data-editable="title">{{ title }}</h2>
+  </div>
+  {{else}}
+    <div data-editable="title"></div>
   {{/if}}
+  <ol class="generic-list-list">
+    {{#each entries}}
+      <li class="generic-list-item">
+        <a class="generic-list-link" href="{{ canonicalUrl }}">
+          {{#ifAll ../toggleImages feedImgUrl}}
+          <div class="generic-list-item-img">
+            <img src="{{ feedImgUrl }}" />
+          </div>
+          {{/ifAll}}
+          <div class="generic-list-item-text">
+            <h3 class="generic-list-item-title">{{{ primaryHeadline }}}</h3>
+            {{#if ../toggleTeaser}}
+            <p class="generic-list-item-description">{{ teaser }}</p>
+            {{/if}}
+            {{#if ../toggleReadMore}}
+            <span class="generic-list-item-read-more">Read More &#187;</span>
+            {{/if}}
+          </div>
+        </a>
+      </li>
+    {{/each}}
+  </ol>
 </div>

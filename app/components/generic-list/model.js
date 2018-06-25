@@ -1,95 +1,67 @@
 'use strict';
 
-const _map = require('lodash/map'),
-  yaml = require('js-yaml'),
-  queryService = require('../../services/server/query'),
-  { sendError, elasticCatch } = require('../../services/universal/cmpt-error'),
-  { formatStart, isPublishedVersion } = require('../../services/universal/utils'),
-  { hypensToSpaces, titleCase } = require('../../services/universal/dynamic-route-param'),
-  TABS_RE = /\t/g;
+const queryService = require('../../services/server/query'),
+  formatStart = require('../../services/universal/utils').formatStart,
+  _pickBy = require('lodash/pickBy'),
+  _clone = require('lodash/clone'),
+  _assign = require('lodash/assign'),
+  _get = require('lodash/get'),
+  _set = require('lodash/set'),
+  _map = require('lodash/map'),
+  YAML = require('yamljs'),
+  log = require('../../services/universal/log').setup({
+    file: __filename,
+    component: 'newsfeed'
+  });
 
-/**
- * Builds and executes the query.
- * @param {object} data
- * @param {object} locals
- * @return {object}
- */
-function buildAndExecuteQuery(data, locals = {}) {
+module.exports.render = (ref, data, locals) => {
   const from = formatStart(parseInt(locals.start, 10)), // can be undefined or NaN,
-    query = queryService(data.index, locals),
-    size = data.size;
+    size = parseInt(locals.size, 10) || data.size || 10,
+    body = _pickBy({
+      from: from,
+      size: size
+    }),
+    query = queryService(data.index, locals);
 
-  query.body = {};
+  query.body = _clone(body); // lose the reference
 
-  if (data.query) {
-    query.body = data.jsonQuery;
+  queryService.addSort(query, {
+    [`${data.orderBy}`]: 'desc'
+  });
+
+  if (data.jsonCustomQueries) {
+    _set(query, 'body.query.bool', data.jsonCustomQueries);
   }
 
-  query.body.size = size;
-  query.body.from = from;
-  query.body._source = data._source;
+  // Log the query
+  log('debug', 'query for newsfeed cmpt', {
+    query,
+    ref
+  });
 
   return queryService.searchByQueryWithRawResult(query)
     .then(function (results) {
-      const { hits = {} } = results;
-
-      data.total = hits.total;
-      data.entries = _map(hits.hits, '_source');
+      _assign(data, body);
+      data.total = _get(results, 'hits.total');
+      data.entries = _map(_get(results, 'hits.hits'), '_source');
       data.from = from;
       data.start = from + size;
-      data.moreEntries = data.total > data.start;
-
       return data;
     });
-}
-/**
- * Gets the text value from a simple list
- * @param {Object[]} arr
- * @return {string[]}
- */
-function getSimpleListValues(arr = []) {
-  return arr.map(element => element.text);
-}
-
-function getEntries(ref, data, locals = {}) {
-  return buildAndExecuteQuery(data, locals)
-    .then(data => {
-      // If we're not in edit mode and
-      // the page is published and
-      // we've got no results, the page should 404
-      if (!data.entries.length && !locals.edit && isPublishedVersion(ref)) {
-        sendError('No results', 404);
-      }
-
-      return data;
-    })
-    .catch((e) =>{
-      if (!locals.edit) {
-        elasticCatch(e);
-      }
-
-      return data;
-    });
-}
-
-module.exports.render = (ref, data, locals) => {
-  return getEntries(ref, data, locals).then(data => data);
 };
 
-module.exports.save = (ref, data, locals) => {
-  data.index = data.index || 'published-articles';
-  data._source = data.source && data.source.length ? getSimpleListValues(data.source) : [];
-  data.title = data.index ? titleCase(hypensToSpaces(data.index)) : '';
-
+module.exports.save = function (ref, data) {
   // make sure all of the numbers we need to save aren't strings
-  data.size = parseInt(data.size, 10) || 10;
-  data.adIndex = parseInt(data.adIndex, 10) || 9;
-
-  if (data.query) {
-    // js-yaml doesn't like tabs so we replace them with 2 spaces
-    data.query = data.query.replace(TABS_RE, '  ');
-    data.jsonQuery = yaml.safeLoad(data.query);
+  if (data.size) {
+    data.size = parseInt(data.size, 10);
   }
 
-  return getEntries(ref, data, locals).then(data => data);
+  // Parse the yaml or zero it out
+  if (data.customQueries) {
+    data.jsonCustomQueries = YAML.parse(data.customQueries.trim().replace(/\t/g, '    '));
+  } else {
+    data.jsonCustomQueries = undefined;
+  }
+
+  return data;
 };

@@ -1,8 +1,5 @@
 _components:
   generic-list:
-    adIndex: 9
-    entries: []
+    title: ''
     index: ''
-    size: 10
-    source: []
-    yaml: ''
+    orderBy: ''
