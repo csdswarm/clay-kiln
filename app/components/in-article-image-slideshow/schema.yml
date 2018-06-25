@@ -1,0 +1,67 @@
+_version: 1.1
+_description:
+  Reusable component for slideshow of images. Parent of `in-article-image-slide`.
+
+allSlides:
+  _label: Slideshow Content
+  _placeholder:
+    text: Add images to your slideshow.
+    height: 200px
+  _componentList:
+    min: 1
+    include:
+      - in-article-image-slide
+
+slideshowWidth:
+  _label: Slideshow Width
+  _publish:
+    name: slideshowWidth
+    scope: children
+  _has:
+    input: select
+    options:
+      - small
+      - medium
+      - large
+      - extra-large
+      - super-extra-large
+    validate:
+      required: true
+    help: Choose the width of the slideshow. The small option will follow the width of the paragraphs. The medium option has a max width of 800px and the large option has a max width of 900px. Extra large has a width of 1200px. Super Extra Large has a width of 1600px.
+
+autoPlay:
+  _label: Auto Play Slideshow
+  _has:
+    input: checkbox
+    help: Photos will automatically slide once through.
+
+arrowColor:
+  _label: Arrow Color
+  _has:
+    input: radio
+    options:
+      - black
+      - white
+    validate:
+      required: true
+
+sass:
+  _label: Custom Styles
+  _has:
+    input: codemirror
+    mode: text/x-scss
+    help: Custom styles for this specific component, can be written in CSS/SASS.
+
+_groups:
+  settings:
+    fields:
+      - slideshowWidth
+      - autoPlay
+      - arrowColor
+      - sass
+    _placeholder:
+      height: 100px
+      permanent: true
+      text: In Article Slideshow
+
+

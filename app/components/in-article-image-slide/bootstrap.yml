@@ -1,0 +1,7 @@
+_components:
+  in-article-image-slide:
+    imageURL: ''
+    slideDisplay: 'horizontal'
+    imageCaption: ''
+    imageCredit: ''
+    slideWidth: ''

@@ -1,0 +1,4 @@
+_components:
+  dynamic-meta-title:
+    routeParam: ''
+    suffix: ''

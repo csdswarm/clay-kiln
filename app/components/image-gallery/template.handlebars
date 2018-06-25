@@ -1,0 +1,84 @@
+<div class="image-gallery" data-uri="{{default _ref _self}}">
+  {{#unless @root.locals.edit}}
+    <style class="grid-styles">
+      {{!-- should be empty --}}
+    </style>
+    <header class="nav-container">
+      <div class="image-gallery-nav" role="toolbar" tabindex="-1">
+        <div class="logo">
+          <a href="/">
+            {{{ read 'public/media/sites/wwwthecut/logo-bold.svg' }}}
+          </a>
+        </div>
+        <div class="controls">
+          {{#unless hideGrid}}
+            <span class="view-label">View</span>
+            <button data-view="list" class="gallery-toggle" aria-label="Toggle List Mode" aria-pressed="true">{{{ read 'public/media/components/image-gallery/list_icon.svg' }}}</button>
+            <button data-view="grid" class="gallery-toggle" aria-label="Toggle Grid Mode" aria-pressed="false">{{{ read 'public/media/components/image-gallery/grid_icon.svg' }}}</button>
+          {{/unless}}
+        </div>
+        <div class="position">
+          <span class="gal-position">1</span>
+          <span class="gal-slash">/</span>
+          <span class="gal-total">{{images.length}}</span>
+          <span class="photos-label">Photos</span>
+          <button class="to-top" aria-label="Go to Top">
+            {{{ read 'public/media/components/image-gallery/back-to-top.svg' }}}
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="gallery">
+      {{set 'mobileGridAdIndex' 0}}
+      {{set 'mobileListAdIndex' 0}}
+      {{#each images}}
+        {{!-- set the image-gallery-image's index so we know which image rendition to render --}}
+        {{ set this 'index' @index }}
+        {{> image-gallery-image this}}
+        {{#if (modulo @index 5 0)}}
+          <div id="image-gallery-mobile-list-ad-{{../mobileListAdIndex}}" class="image-gallery-mobile-list-ad">
+            {{> ad ../mobileAd}}
+            {{> ad ../tabletAd}}
+          </div>
+          {{set .. 'mobileListAdIndex' (add ../mobileListAdIndex 1)}}
+        {{/if}}
+        {{#if (modulo @index 12 11)}}
+          <div id="image-gallery-mobile-grid-ad-{{../mobileGridAdIndex}}" class="image-gallery-mobile-grid-ad">
+            {{> ad ../mobileAd}}
+            {{> ad ../tabletAd}}
+            {{> ad ../desktopGridAd}}
+          </div>
+          {{set .. 'mobileGridAdIndex' (add ../mobileGridAdIndex 1)}}
+        {{/if}}
+      {{/each}}
+    </div>
+    <div class="modal">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-container">
+              <div class="modal-header">
+                <div class="modal-counter">
+                  <span class="modal-counter-index">1</span>
+                  <span class="modal-counter-slash">/</span>
+                  <span class="modal-counter-total">{{images.length}}</span>
+                </div>
+                <button class="close-button" aria-label="Close Modal">
+                  <span class="button-text">Close Modal</span>
+                </button>
+              </div>
+              <div class="modal-body">
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  {{ else }}
+    {{!-- edit mode markup --}}
+    <p>Photo count: {{ images.length }}</p>
+    <div class="gallery-edit" data-editable="images">
+      {{#each images}}
+        {{> image-gallery-image this}}
+      {{/each}}
+    </div>
+  {{/unless}}
+</div>

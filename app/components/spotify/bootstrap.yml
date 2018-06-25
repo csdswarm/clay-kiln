@@ -1,0 +1,4 @@
+_components:
+  spotify:
+    url: ''
+    playerType: 'regular player'

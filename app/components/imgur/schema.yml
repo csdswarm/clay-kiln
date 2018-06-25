@@ -1,0 +1,17 @@
+_description: |
+  Embed an Imgur Album, Gallery, or Image with its url.
+
+  _Similar to: [clay-tweet](https://github.com/nymag/sites/blob/master/components/clay-tweet/README.md), [clay-facebook-post](https://github.com/nymag/sites/blob/master/components/clay-facebook-post/README.md), [clay-pinterest](https://github.com/nymag/sites/blob/master/components/clay-pinterest/README.md), [tumblr-post](https://github.com/nymag/sites/blob/master/components/tumblr-post/README.md)_
+
+url:
+  _label: Imgur Url
+  _display: inline
+  _placeholder:
+    height: 100px
+    text: Imgur Embed
+  _has:
+    -
+      fn: text
+      type: url
+      placeholder: http://imgur.com/id
+    - label

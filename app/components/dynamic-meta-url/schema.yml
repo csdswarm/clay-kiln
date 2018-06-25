@@ -1,0 +1,3 @@
+_description: |
+  Adds `<link rel="canonical">` and `og:url` tags to the head.
+  This component is meant to be dynamic so it will just it's value from whatever the url of the page is as defined in `locals`

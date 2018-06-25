@@ -1,0 +1,21 @@
+<aside data-uri="{{ default _ref _self }}" class="video-component {{ if @root.locals.edit 'edit-mode'}}" data-editable="url" data-origsrc="{{ url }}">
+  {{#unless videoValid}}
+    <div data-placeholder="videoValid"></div>
+  {{else}}
+    {{#ifAny html url}}
+      {{#unless @root.locals.edit}}
+      <!--
+      {{/unless}}
+      <div class="iframe-wrapper">
+        {{#if html}}
+          {{{ html }}}
+        {{ else if url }}
+          <iframe src="{{ url }}" frameborder="0" scrolling="no"></iframe>
+        {{/if}}
+      </div>
+      {{#unless @root.locals.edit}}
+      -->
+      {{/unless}}
+    {{/ifAny}}
+  {{/unless}}
+</aside>

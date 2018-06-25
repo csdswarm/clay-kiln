@@ -1,0 +1,9 @@
+<div data-uri="{{ default _ref _self }}" class="spotify" data-editable="embedInfo">
+  {{#if url}}
+    {{#if (compare embedType 'playlist')}}
+      <iframe class="spotify-embed" src="https://embed.spotify.com/?uri=spotify%3Auser%3A{{ playlistCreator }}%3Aplaylist%3A{{ spotifyUriCode }}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+    {{else}}
+      <iframe class="{{#if (compare playerType 'mini player')}}mini-player{{/if}} spotify-embed" src="https://embed.spotify.com/?uri=spotify%3A{{ embedType }}%3A{{ spotifyUriCode }}" width="300" height="380" frameborder="0" allowtransparency="true"></iframe>
+    {{/if}}
+  {{/if}}
+</div>

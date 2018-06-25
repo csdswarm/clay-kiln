@@ -1,43 +1,43 @@
-{{#*inline 'articleRenditionMediaBlock'}}
-  {{ selector }}.img {
-    background-image: url({{ rendition url name }});
-  }
-{{/inline}}
-
-<div data-uri="{{ default _ref _self }}" class="generic-list" data-editable="settings">
+<div data-uri="{{ default _ref _self }}" class="dynamic-list">
   {{#if entries.length}}
-    <div class="generic-list-title">
-      {{#if title }}<span><h1>{{ title }}</h1></span>{{/if}}
-      <h2>Most Recent Entries</h2>
-    </div>
-    <ol class="generic-list-feed">
-      {{#each entries }}
-        <style>
-          {{~ set 'selector' (concat '.generic-list-feed-item .img-' @index) ~}}
-          {{> articleRenditionMediaBlock selector=selector name='square-xsmall' url=feedImgUrl }}
+    {{! macro for background image renditions }}
+    {{#*inline 'renditionMediaBlock'}}
+      {{ selector }}.img {
+        background-image: url({{ rendition url name }});
+      }
+    {{/inline}}
+
+    <style>
+        {{~#each entries ~}}
+          {{~ set 'selector' (concat '.dynamic-list-feed-item .img-' @index) ~}}
+          {{> renditionMediaBlock selector=selector name='square-xsmall' url=feedImgUrl }}
 
           @media (min-width: 600px) and (max-width: 1023.9px) {
-            {{> articleRenditionMediaBlock selector=selector name='thumb-small' url=feedImgUrl }}
+            {{> renditionMediaBlock selector=selector name='thumb-small' url=feedImgUrl }}
           }
 
           @media (min-width: 1024px) {
-            {{> articleRenditionMediaBlock selector=selector name='horizontal-tags' url=feedImgUrl }}
+            {{> renditionMediaBlock selector=selector name='horizontal-tags' url=feedImgUrl }}
           }
-        </style>
+        {{/each}}
+    </style>
 
-        <li class="generic-list-feed-item" tabIndex="-1">
-          <a class="generic-list-entry-link {{#if (compare @index ../adIndex)}}border{{/if}}"
-            href="{{ fixScheme canonicalUrl }}"
-            data-track-type="entry-link"
-            data-track-component-name="newsfeed"
-            data-track-page-uri="{{ this.pageUri }}"
-            data-track-headline="{{ this.plaintextPrimaryHeadline }}"
-            data-track-authors="{{ this.authors }}"
-            data-track-index="{{ @index }}"
-            data-track-component-title=""
-            data-track-pagination={{ ../from }}>
+    <ol class="dynamic-list-feed">
+      {{~ set 'adIndex' 9 ~}}
+
+      {{#each entries}}
+        <li class="dynamic-list-feed-item" tabIndex="-1">
+          <a class="dynamic-list-entry-link {{ if (compare @index ../adIndex) 'border' }}" href="{{ fixScheme canonicalUrl }}"
+             data-track-type="entry-link"
+             data-track-component-name="newsfeed"
+             data-track-page-uri="{{ this.pageUri }}"
+             data-track-headline="{{ this.plaintextPrimaryHeadline }}"
+             data-track-authors="{{ this.authors }}"
+             data-track-index="{{ @index }}"
+             data-track-component-title=""
+             data-track-pagination={{ ../from }}>
             {{! entry image }}
-            <div class="generic-list-image-wrapper">
+            <div class="dynamic-list-image-wrapper">
               {{~#if feedImgUrl ~}}<span class="img img-{{ @index }}"></span>{{~/if~}}
               {{~#ifAny featureTypes.Video-Original featureTypes.Video-Aggregation
                         featureTypes.[Video-Original News] ~}}
@@ -74,13 +74,14 @@
         </li>
         {{#if (compare @index ../adIndex)}}
           <li class="feed-ad">
-            {{> ad ../feedAdMobile }}
-            {{> ad ../feedAdTablet }}
-            {{> ad ../feedAdDesktop }}
+            {{> ad ../feedAdMobile}}
+            {{> ad ../feedAdTablet}}
+            {{> ad ../feedAdDesktop}}
           </li>
         {{/if}}
       {{/each}}
     </ol>
+
     {{#if moreEntries}}
       <a class="pagination more-entries" href="?start={{ start }}">MORE STORIES</a>
     {{/if}}

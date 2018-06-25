@@ -1,0 +1,5 @@
+_components:
+  dynamic-list-title:
+    routeParam: ''
+    dynamicTitle: ''
+    preamble: ''

@@ -1,0 +1,28 @@
+_description: |
+  Image gallery
+
+images:
+  _label: Images
+  _placeholder:
+    text: Images
+    height: 600px
+    ifEmpty: images
+  _componentList:
+    include:
+      - image-gallery-image
+galleryLength:
+  _label: Gallery Length
+  _publish: imgGalleryLength
+
+hideGrid:
+  _label: Hide Grid Mode Toggle?
+  _has: checkbox
+
+_groups:
+  settings:
+    fields:
+      - hideGrid
+
+desktopGridAd: {}
+tabletAd: {}
+mobileAd: {}

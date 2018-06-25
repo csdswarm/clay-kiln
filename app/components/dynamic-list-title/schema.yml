@@ -1,0 +1,12 @@
+_description: |
+  Adds dynamic keywords
+
+routeParam:
+  _label: Route Param
+  _has:
+    input: text
+
+_groups:
+  settings:
+    fields:
+      - routeParam

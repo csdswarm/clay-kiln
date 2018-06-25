@@ -1,0 +1,39 @@
+_version: 1.1
+
+_description: |
+  Generic Embedly component. Use this to embed [anything Embedly supports](http://embed.ly/providers).
+
+  For **videos**, **tweets**, **pinterest** or **instagram** images, or **facebook posts**, please use the dedicated components.
+
+url:
+  _label: Embed Url
+  _placeholder:
+    text: Generic Embed (Embedly)
+    height: 200px
+  _has:
+    input: text
+    type: url
+    help: Embed anything embedly supports
+
+overrideHeight:
+  _label: Height Override
+  _has:
+    input: text
+    type: number
+    help: Height (in pixels) of the embed to use if embedly's calculation is incorrect
+
+# Non-editable fields
+html:
+  _label: HTML
+  _has:
+    help: HTML generated from the provided url
+
+lastGenerated:
+  _label: Last Generated
+  _has:
+    help: The URL that last generated the embed HTML. If the new url matches lastGenerated, the existing html will be trusted and will not be re-generated.
+
+_groups:
+  settings:
+    fields:
+      - overrideHeight

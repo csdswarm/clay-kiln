@@ -1,0 +1,67 @@
+{{#ifAll url (add index 1)}}
+  {{!-- set grid renditions based on index --}}
+  {{#ifAny (modulo index 4 0) (modulo index 4 3) }}
+    {{ set 'mobileGrid' (replace (rendition url 'img-gal-mobile-grid-lg') ' ' '%20') }}
+    {{ set 'tabletGrid' (replace (rendition url 'img-gal-tablet-grid-lg') ' ' '%20') }}
+  {{else}}
+    {{ set 'mobileGrid' (replace (rendition url 'img-gal-mobile-grid-sm') ' ' '%20') }}
+    {{ set 'tabletGrid' (replace (rendition url 'img-gal-tablet-grid-sm') ' ' '%20') }}
+  {{/ifAny}}
+  {{#if (modulo index 2 0)}}
+    {{ set 'desktopGrid' (replace (rendition url 'img-gal-desktop-grid-lg') ' ' '%20') }}
+  {{else}}
+    {{ set 'desktopGrid' (replace (rendition url 'img-gal-desktop-grid-sm') ' ' '%20') }}
+  {{/if}}
+  {{!-- set horizontal/vertical full img renditions for list view --}}
+  {{#if (compare width '>=' height)}}
+    {{!-- set dt horizontal rendition here --}}
+    {{ set 'mobileList' (replace (rendition url 'img-gal-mobile-list-square') ' ' '%20') }}
+    {{ set 'desktopList' (replace (rendition url 'img-gal-desktop-list-horizontal') ' ' '%20') }}
+    {{ set 'direction' 'horizontal' }}
+  {{else}}
+    {{ set 'mobileList' (replace (rendition url 'img-gal-mobile-list-vertical') ' ' '%20') }}
+    {{ set 'desktopList' (replace (rendition url 'img-gal-desktop-list-vertical') ' ' '%20') }}
+    {{ set 'direction' 'vertical' }}
+  {{/if}}
+{{/ifAll}}
+<figure class="image-gallery-image{{#if @root.locals.edit}} edit{{/if}} {{ direction }}{{#ifNone credit caption}} no-attribution{{/ifNone}}" data-uri="{{ default _ref _self }}" data-editable="settings"{{#if (add index 1)}} id="image-gallery-image-{{index}}"{{/if}}>
+{{#unless @root.locals.edit}}
+  {{#ifAll url (add index 1)}}
+    <button class="focus-trigger">Expand Photo</button>
+    <picture class="grid-img {{#if (compare index '<' 8)}} fade-in-element{{else}} hidden{{/if}}">
+      <source media="(min-resolution: 192dpi) and (min-width: 1180px), (-webkit-min-device-pixel-ratio:2) and (min-width: 1180px)" data-srcset="{{ desktopGrid }} 2x" />
+      <source media="(min-width: 1180px)" data-srcset="{{ withoutResolution desktopGrid }}" />
+      <source media="(min-resolution: 192dpi) and (min-width: 768px), (-webkit-min-device-pixel-ratio:2) and (min-width: 768px)" data-srcset="{{ tabletGrid }} 2x" />
+      <source media="(min-width: 768px)" data-srcset="{{ withoutResolution tabletGrid }}" />
+      <source media="(min-resolution: 192dpi), (-webkit-min-device-pixel-ratio: 2)" data-srcset="{{ mobileGrid }}" />
+      <img data-src="{{ withoutResolution mobileGrid }}" alt="{{ alt }}">
+    </picture>
+    <picture class="list-img {{#if (compare index 0)}} fade-in-element{{else}} hidden{{/if}}">
+      <source media="(min-resolution: 192dpi) and (min-width: 1180px), (-webkit-min-device-pixel-ratio:2) and (min-width: 1180px)" data-srcset="{{ desktopList }} 2x" />
+      <source media="(min-width: 1180px)" data-srcset="{{ withoutResolution desktopList }}" />
+      <source media="(min-resolution: 192dpi), (-webkit-min-device-pixel-ratio: 2)" data-srcset="{{ mobileList }}"/>
+      <img data-src="{{ withoutResolution mobileList }}" alt="{{ alt }}">
+    </picture>
+  {{/ifAll}}
+  {{#ifAny credit caption overrideCredit}}
+    {{set 'fullAttribution' caption}}
+    {{#ifAny credit overrideCredit}}
+      {{set 'fullAttribution' (concat fullAttribution ' <span class="credit">Photo: ' (default overrideCredit credit) '</span>')}}
+    {{/ifAny}}
+    {{{ truncateText fullAttribution 150 }}}
+  {{/ifAny}}
+{{else}}
+  <div class="image-info">
+    <div class="photo">
+      {{#if url}}
+        <img src="{{ rendition url 'square-xsmall' }}" alt="">
+      {{/if}}
+    </div>
+    <div class="details">
+      <p class="caption">{{{ caption }}}</p>
+      <span class="credit">{{{ default overrideCredit credit }}}</span>
+    </div>
+  </div>
+{{/unless}}
+</figure>
+

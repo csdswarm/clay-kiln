@@ -1,0 +1,24 @@
+_description: |
+  Embeds a Typekit kit from the specified URL. See [Typekit's embed code documentation](https://helpx.adobe.com/typekit/using/embed-codes.html).
+
+kitSrc:
+  _label: Typekit Javascript Source URL
+  _has:
+    input: text
+    type: url
+    validate:
+      required: true
+    help: URL to the Typekit kit SRC, e.g. `http://use.typekit.net/abc1def.js`
+
+ampKitSrc:
+  _label: Typekit CSS Source URL for AMP
+  _has:
+    input: text
+    type: url
+    help: URL to the AMP Typekit kit SRC, e.g. `http://use.typekit.net/abc1def.css`
+
+_groups:
+  settings:
+    fields:
+      - kitSrc
+      - ampKitSrc

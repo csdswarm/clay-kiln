@@ -1,0 +1,19 @@
+<aside data-uri="{{ default _ref _self }}" class="imgur" data-editable="url">
+  {{#unless @root.locals.edit}}
+    {{! outside edit mode, display the blockquote with the script }}
+    <blockquote class="imgur-embed-pub" lang="en" data-id="{{ id }}">
+      <a href="//imgur.com/{{ id }}">{{{ title }}}</a>
+    </blockquote>
+    <script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+  {{ else if url }}
+    {{! inside edit mode (if the url is set), display the first image in the imgur gallery or album }}
+    <div class="imgur-edit">
+      {{#if img}}
+        <img class="imgur-edit-img" src="{{ img }}" />
+      {{ else }}
+        <div class="imgur-edit-image-empty"></div>
+      {{/if}}
+      <p class="imgur-edit-title">{{{ title }}}</p>
+    </div>
+  {{/unless}}
+</aside>

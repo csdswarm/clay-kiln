@@ -1,0 +1,35 @@
+<li data-uri="{{ default _ref _self }}" class="in-article-image-slide{{ if @root.locals.edit ' edit-mode' }}" data-editable="slideDetails">
+  <div class="image-wrapper">
+    {{#if @root.locals.edit}}
+      <div class="edit-counter"></div>
+    {{/if}}
+    {{#if imageURL}}
+      <figure>
+        {{#ifAny (compare @index 0) @root.locals.edit}}
+          <img srcset="{{ fixScheme (replace imageURL '.2x.' '.') }} 1x, {{ fixScheme imageURL }} 2x" src="{{ fixScheme (replace imageURL '.2x.' '.') }}" class="slide-image" alt="">
+        {{else}}
+          <img data-image-src-set="{{ fixScheme (replace imageURL '.2x.' '.') }} 1x, {{ fixScheme imageURL }} 2x" data-image-src="{{ fixScheme (replace imageURL '.2x.' '.') }}" srcset="" src="" class="slide-image" alt="">
+        {{/ifAny}}
+        <figcaption class='slide-info'>
+          <div class="image-info">
+            {{#if imageCaption}}
+              <p class="caption">{{{ imageCaption }}}</p>
+            {{/if}}
+            {{#if imageCredit}}
+              <p class="image-credit">{{ imageCredit }}</p>
+            {{/if}}
+          </div>
+          {{#unless @root.locals.edit}}
+            <div class="counter hide-counter">
+              <span class="current-slide">{{add @index 1}}</span>
+              <span class="counter-slash">/</span>
+              <span class="total-slides"></span>
+            </div>
+          {{/unless}}
+        </figcaption>
+      </figure>
+    {{/if}}
+
+  </div>
+
+</li>

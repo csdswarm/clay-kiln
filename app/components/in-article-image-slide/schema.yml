@@ -1,0 +1,82 @@
+_version: 1.0
+_description: |
+  Individual slide component for a slideshow of images. Child of `in-article-image-slideshow`.
+
+imageURL:
+  _label: Image URL
+  _has:
+    input: text
+    type: url
+    attachedButton:
+      name: mediaplay-picker
+      multiple: true
+    help: Link to a mediaplay image. You will need to make sure that the image is large enough for the slideshow width that you select.
+    validate:
+      required: true
+      pattern: .*pixel\..* # only allow mediaplay images
+      patternMessage: Must be a Mediaplay URL
+
+slideDisplay:
+  _label: Slide Display
+  _has:
+    input: radio
+    options:
+      - vertical
+      - horizontal
+      - flex
+    validate:
+      required: true
+    help: Choose the display of the image. Vertical is for portrait-oriented images, and horizontal is for landscape-oriented images. Please don't use flex unless you are collaborating with design.
+
+slideWidth:
+  _label: Slide Width
+  _subscribe: slideshowWidth
+  _has:
+    help: Slide width is inherited from the slideshow, which helps pull the proper image sizes for the slideshow.
+
+imageCaption:
+  _label: Image Caption
+  _has:
+    input: wysiwyg
+    styled: true
+    buttons:
+      - bold
+      - italic
+      - link
+      - phrase:
+        class: clay-designed
+        button: De
+    attachedButton:
+      name: magic-button
+      field: imageURL
+      transform: mediaplayUrl
+      url: http://ambrose.prd.nymetro.com/v1/content/assets/images/
+      property: metadata.caption
+      tooltip: Fetch from Mediaplay
+
+imageCredit:
+  _label: Image Credit
+  _has:
+    input: text
+    attachedButton:
+      name: magic-button
+      field: imageURL
+      transform: mediaplayUrl
+      url: http://ambrose.prd.nymetro.com/v1/content/assets/images/
+      property: metadata.credit
+      tooltip: Fetch from Mediaplay
+
+_groups:
+  slideDetails:
+    fields:
+      - imageURL
+      - slideDisplay
+      - imageCaption
+      - imageCredit
+    _display: inline
+    _placeholder:
+      text: Slide Details
+      height: 50px
+      ifEmpty: imageURL
+
+
