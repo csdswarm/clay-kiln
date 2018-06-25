@@ -201,7 +201,7 @@ rubric:
 rubricMessage:
   _label: Rubric Message
   _has:
-    help: Feature Rubric Message can be used for displaying disclaimers or other additional info to the viewing audience. Set this content in the bootstrap
+    help: Feature Rubric Message can be used for displaying disclaimers or other additional info to the viewing audience. Set this  in the bootstrap
 content:
   _label: Article Content
   _placeholder:
@@ -218,6 +218,10 @@ content:
       - tweet
       - facebook-post
       - instagram
+      - spotify
+      - soundcloud
+      - youtube
+      - in-article-image-slideshow
 feeds:
   _label: Include in These Feeds
   _has:

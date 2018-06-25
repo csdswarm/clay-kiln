@@ -1,8 +1,9 @@
 'use strict';
 
-const dom = require('@nymag/dom');
+const dom = require('@nymag/dom'),
+  $visibility = require('../../services/client/visibility');
 
-DS.controller('image-gallery-image', ['lazyLoad', '$gtm', '$visibility', function (lazyLoad, $gtm, $visibility) {
+DS.controller('image-gallery-image', ['lazyLoad', '$visibility', function (lazyLoad, $visibility) {
   function Constructor(el) {
     var gridWrapper = dom.find(el, '.grid-img'),
       gridImg = dom.find(gridWrapper, 'img'),
@@ -22,23 +23,12 @@ DS.controller('image-gallery-image', ['lazyLoad', '$gtm', '$visibility', functio
     listLazy.init();
     gridLazy.init();
 
-    function reportImpression(view) {
-      $gtm.reportSoon({
-        event: 'imageGalleryView',
-        imageGalleryId: imageGalleryId,
-        imageGalleryIndex: index,
-        imageGalleryVariant: view
-      });
-    }
-
     listVisible.on('shown', function () {
-      reportImpression('list');
 
       listVisible.destroy();
     });
 
     gridVisible.on('shown', function () {
-      reportImpression('grid');
 
       gridVisible.destroy();
     });
@@ -57,4 +47,3 @@ DS.controller('image-gallery-image', ['lazyLoad', '$gtm', '$visibility', functio
 
   return Constructor;
 }]);
-

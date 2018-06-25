@@ -27,7 +27,7 @@
 
       {{#each entries}}
         <li class="dynamic-list-feed-item" tabIndex="-1">
-          <a class="dynamic-list-entry-link {{ if (compare @index ../adIndex) 'border' }}" href="{{ fixScheme canonicalUrl }}"
+          <a class="dynamic-list-entry-link {{ if (compare @index ../adIndex) 'border' }}" href="{{ canonicalUrl }}"
              data-track-type="entry-link"
              data-track-component-name="newsfeed"
              data-track-page-uri="{{ this.pageUri }}"
@@ -39,10 +39,6 @@
             {{! entry image }}
             <div class="dynamic-list-image-wrapper">
               {{~#if feedImgUrl ~}}<span class="img img-{{ @index }}"></span>{{~/if~}}
-              {{~#ifAny featureTypes.Video-Original featureTypes.Video-Aggregation
-                        featureTypes.[Video-Original News] ~}}
-                <span class="img video-signal">{{{ read 'public/media/components/newsfeed/play-icon.svg' }}}</span>
-              {{~/ifAny~}}
             </div>
             <div>
               <div class="headline-wrapper">

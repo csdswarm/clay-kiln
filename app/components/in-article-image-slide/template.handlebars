@@ -6,9 +6,9 @@
     {{#if imageURL}}
       <figure>
         {{#ifAny (compare @index 0) @root.locals.edit}}
-          <img srcset="{{ fixScheme (replace imageURL '.2x.' '.') }} 1x, {{ fixScheme imageURL }} 2x" src="{{ fixScheme (replace imageURL '.2x.' '.') }}" class="slide-image" alt="">
+          <img srcset="{{ replace imageURL '.2x.' '.' }} 1x, {{ imageURL }} 2x" src="{{ replace imageURL '.2x.' '.' }}" class="slide-image" alt="">
         {{else}}
-          <img data-image-src-set="{{ fixScheme (replace imageURL '.2x.' '.') }} 1x, {{ fixScheme imageURL }} 2x" data-image-src="{{ fixScheme (replace imageURL '.2x.' '.') }}" srcset="" src="" class="slide-image" alt="">
+          <img data-image-src-set="{{ replace imageURL '.2x.' '.' }} 1x, {{ imageURL }} 2x" data-image-src="{{ replace imageURL '.2x.' '.' }}" srcset="" src="" class="slide-image" alt="">
         {{/ifAny}}
         <figcaption class='slide-info'>
           <div class="image-info">

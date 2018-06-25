@@ -1,0 +1,116 @@
+/* stylelint-disable */ 
+.in-article-image-slide {
+  display: block;
+  flex: 0 0 100%;
+}
+
+.in-article-image-slide.edit-mode {
+  flex: 0 0 50%;
+  padding: 15px;
+}
+
+.in-article-image-slide .image-wrapper {
+  margin-bottom: 8px;
+}
+
+.in-article-image-slide .image-wrapper figure {
+  margin: 0;
+}
+
+.in-article-image-slide .image-wrapper .slide-info {
+  display: flex;
+  flex-direction: row;
+}
+
+.in-article-image-slide img {
+  display: block;
+  margin: 0 auto 10px;
+  max-width: 100%;
+}
+
+.in-article-image-slide .image-info {
+  width: 85%;
+}
+
+.in-article-image-slide .caption {
+  color: #5a5a5a;
+  font: 400 13px / 18px Arial, sans-serif;
+  margin: 0 0 10px;
+  position: relative;
+}
+
+.in-article-image-slide .caption .clay-designed {
+  color: #111;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@media screen and (min-width:600px) {
+  .in-article-image-slide .caption {
+    font-size: 14px;
+    line-height: 19px;
+  }
+
+  .in-article-image-slide .caption .clay-designed {
+    font-size: 15px;
+  }
+}
+
+.in-article-image-slide .caption a {
+  color: #1782a9;
+  text-decoration: none;
+}
+
+.in-article-image-slide .image-credit {
+  color: #adadad;
+  display: block;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  line-height: 13px;
+  margin: 0;
+}
+
+@media screen and (min-width:1024px) {
+  .in-article-image-slide .image-credit {
+    font-size: 12px;
+    right: 0;
+  }
+}
+
+.in-article-image-slide .counter {
+  color: #111;
+  font: 700 12px / 17px Arial, sans-serif;
+  text-align: right;
+  width: 15%;
+}
+
+.in-article-image-slide .hide-counter {
+  display: none;
+}
+
+.in-article-image-slide .counter-slash,
+.in-article-image-slide .total-slides {
+  color: #5a5a5a;
+  font-weight: 400;
+}
+
+.in-article-image-slide .current-slide {
+  margin-right: 3px;
+}
+
+.in-article-image-slide .total-slides {
+  margin-left: 3px;
+}
+
+.in-article-image-slide .edit-counter {
+  margin-bottom: 5px;
+}
+
+.in-article-image-slide .edit-counter::before {
+  color: #5a5a5a;
+  content: counter(slide-counter);
+  counter-increment: slide-counter;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  margin-bottom: 3px;
+}

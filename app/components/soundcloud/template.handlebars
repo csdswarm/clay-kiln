@@ -1,9 +1,9 @@
 <div data-uri="{{ default _ref _self }}" class="soundcloud" data-editable="embedInfo">
   {{#if embedCode}}
     {{#if (compare playerType 'visual player')}}
-      <iframe width="100%" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/{{ embedType }}/{{ soundcloudId }}&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
+      <iframe width="100%" height="450" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/{{ soundcloudId }}&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true"></iframe>
     {{else}}
-      <iframe width="100%" height="{{ if (compare embedType 'tracks') '166' else='450' }}" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/{{ embedType }}/{{ soundcloudId }}&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
+      <iframe width="100%" height="{{ if (compare embedType 'tracks') '166' else='450' }}" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/{{ soundcloudId }}&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
     {{/if}}
   {{/if}}
 </div>
