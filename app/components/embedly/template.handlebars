@@ -1,0 +1,31 @@
+{{#ifAny @root.locals.edit embedValid}}
+  <aside class="embedly" data-uri="{{ default _ref _self }}" data-editable="url">
+    {{#if html}}
+      {{ set 'uniqueClass' (randomString 'embedly-')}}
+
+      {{#ifAny padding overrideHeight}}
+        <style>
+          /* padding for responsive iframes */
+          .embedly .{{ uniqueClass }} {
+            padding-bottom: {{#if overrideHeight}}{{overrideHeight}}px{{else}}{{padding}}{{/if}};
+          }
+        </style>
+      {{/ifAny}}
+
+      {{#if embedValid}}
+        <div class="iframe-wrapper {{ if padding 'responsive-wrapper' }} {{ uniqueClass }}">
+          {{{ html }}}
+        </div>
+      {{else}}
+        <div data-placeholder="embedValid"></div>
+      {{/if}}
+      {{ else if url }}
+        <div class="unsupported">
+          <h2 class="unsupported-title">Unsupported Url</h2>
+          <p class="unsupported-description">Embedly cannot understand the url you entered. Please try again with a
+            different url, or use a specific embed component (for things like videos, tweets, facebook posts,
+            pinterest, instagram,&nbsp;etc).</p>
+        </div>
+      {{/if}}
+  </aside>
+{{/ifAny}}

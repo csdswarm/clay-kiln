@@ -1,0 +1,85 @@
+<div data-uri="{{ default _ref _self }}" class="dynamic-list">
+  {{#if entries.length}}
+    {{! macro for background image renditions }}
+    {{#*inline 'renditionMediaBlock'}}
+      {{ selector }}.img {
+        background-image: url({{ rendition url name }});
+      }
+    {{/inline}}
+
+    <style>
+        {{~#each entries ~}}
+          {{~ set 'selector' (concat '.dynamic-list-feed-item .img-' @index) ~}}
+          {{> renditionMediaBlock selector=selector name='square-xsmall' url=feedImgUrl }}
+
+          @media (min-width: 600px) and (max-width: 1023.9px) {
+            {{> renditionMediaBlock selector=selector name='thumb-small' url=feedImgUrl }}
+          }
+
+          @media (min-width: 1024px) {
+            {{> renditionMediaBlock selector=selector name='horizontal-tags' url=feedImgUrl }}
+          }
+        {{/each}}
+    </style>
+
+    <ol class="dynamic-list-feed">
+      {{~ set 'adIndex' 9 ~}}
+
+      {{#each entries}}
+        <li class="dynamic-list-feed-item" tabIndex="-1">
+          <a class="dynamic-list-entry-link {{ if (compare @index ../adIndex) 'border' }}" href="{{ canonicalUrl }}"
+             data-track-type="entry-link"
+             data-track-component-name="newsfeed"
+             data-track-page-uri="{{ this.pageUri }}"
+             data-track-headline="{{ this.plaintextPrimaryHeadline }}"
+             data-track-authors="{{ this.authors }}"
+             data-track-index="{{ @index }}"
+             data-track-component-title=""
+             data-track-pagination={{ ../from }}>
+            {{! entry image }}
+            <div class="dynamic-list-image-wrapper">
+              {{~#if feedImgUrl ~}}<span class="img img-{{ @index }}"></span>{{~/if~}}
+            </div>
+            <div>
+              <div class="headline-wrapper">
+                <div class="headline-above">
+                  {{! publish date }}
+                  <time datetime="{{ date }}">{{ articleDate date }}</time>
+                  {{! entry rubric }}
+                  {{#if rubric }}<span class="rubric">{{{ rubric }}}</span>{{/if}}
+                </div>
+                {{! entry headline }}
+                <h3 class="headline">{{{ primaryHeadline }}}</h3>
+              </div>
+              {{! entry teaser }}
+              <p class="teaser">{{{ teaser }}}</p>
+              {{! authors }}
+              <span class="by-authors">
+                {{~#if authors.length ~}}
+                  {{#if byline}}
+                    {{{ byline bylines=byline hideLinks=true }}}
+                  {{else}}
+                    By {{{ byline bylines=authors hideLinks=true simpleList=true }}}
+                  {{/if}}
+                {{~/if~}}
+              </span>
+            </div>
+            {{! entry read more }}
+            <span class="read-more">Read More »</span>
+          </a>
+        </li>
+        {{#if (compare @index ../adIndex)}}
+          <li class="feed-ad">
+            {{> ad ../feedAdMobile}}
+            {{> ad ../feedAdTablet}}
+            {{> ad ../feedAdDesktop}}
+          </li>
+        {{/if}}
+      {{/each}}
+    </ol>
+
+    {{#if moreEntries}}
+      <a class="pagination more-entries" href="?start={{ start }}">MORE STORIES</a>
+    {{/if}}
+  {{/if}}
+</div>

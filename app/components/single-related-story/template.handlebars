@@ -1,0 +1,11 @@
+{{#ifAny @root.locals.edit url}}
+<aside class="single-related-story" data-uri="{{ default _ref _self }}" data-editable="url" data-track-type="article-list">
+  {{#if url}}
+    <h2 class="single-related-story-label">Related</h2>
+    <a class="single-related-story-link" href="{{ url }}"
+      data-track-type="article-link" data-track-component-name="single-related-story" data-track-page-uri="{{ pageUri }}" data-track-headline="{{ plaintextTitle }}" data-track-component-title="related"
+    >{{{ title }}}</a>
+    {{#ifAny featureTypes.Video-Original featureTypes.Video-Aggregation featureTypes.[Video-Original News]}}<span class="video-signal">{{{ read 'public/media/components/single-related-story/play-icon.svg' }}}</span>{{/ifAny}}
+  {{/if}}
+</aside>
+{{/ifAny}}

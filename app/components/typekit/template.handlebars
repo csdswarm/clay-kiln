@@ -1,0 +1,19 @@
+<!-- data-uri="{{ default _ref _self }}" -->
+<script type="text/javascript">
+  (function() {
+    /* Pulls in Typekit font. Runs both in edit and published modes
+     * so fonts appear correctly in both. */
+    var tk = document.createElement('script'),
+      s = document.getElementsByTagName('script')[0];
+    tk.setAttribute('src', '{{kitSrc}}');
+    tk.setAttribute('async', true);
+    tk.setAttribute('type', 'text/javascript');
+    tk.onload = tk.onreadystatechange = function() {
+      var rs = this.readyState;
+
+      if (rs && rs != 'complete' && rs != 'loaded') return;
+      try { Typekit.load(); } catch (e) {}
+    };
+    s.parentNode.insertBefore(tk, s);
+  })();
+</script>

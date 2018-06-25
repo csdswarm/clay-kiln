@@ -1,0 +1,5 @@
+<!-- data-uri="{{ default _ref _self }}" -->
+{{#unless @root.locals.edit}}
+  <link rel="canonical" href="{{ @root.locals.url true }}">
+  <meta property="og:url" content="{{ @root.locals.url true }}">
+{{/unless}}

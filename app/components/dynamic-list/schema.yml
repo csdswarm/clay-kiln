@@ -1,0 +1,8 @@
+_description:
+  A generic list of items that match a query
+
+routeParam:
+  _label: Route Param
+  _has:
+    input: text
+    help: Define the route param whose value used for the title

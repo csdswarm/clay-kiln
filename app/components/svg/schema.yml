@@ -1,0 +1,16 @@
+_version: 1.0
+_description: |
+  Simple SVG upload. Useful for design to add non-interactive charts and graphs to articles.
+
+svgContent:
+  _label: SVG Content
+  _placeholder:
+    text: SVG Content
+    height: 200px
+  _has:
+    input: text
+    type: multi-line
+    validate:
+      required: true
+    help: Paste your SVG code here after minimizing it. It will be sanitized when uploading
+    # todo: allow dropping an svg file into the textarea (requires a new kiln behavior)

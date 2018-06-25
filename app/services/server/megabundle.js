@@ -45,6 +45,10 @@ function computeDependencies(entryIds, registry) {
     addDep = (dep) => {
       if (out[dep]) return;
       out[dep] = true;
+
+      if (!registry[dep]) {
+        console.log('\n\n', dep, registry, '\n\n');
+      }
       registry[dep].forEach(addDep);
     };
 

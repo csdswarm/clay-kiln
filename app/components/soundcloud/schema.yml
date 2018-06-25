@@ -1,0 +1,37 @@
+_description: |
+  Embed SoundCloud track, album or playlist
+
+embedCode:
+  _label: Embed Code 
+  _display: inline
+  _has: 
+    - text
+    - label
+    - required 
+    - 
+      fn: description
+      value: Use the <b>embed code</b> for any SoundCloud track, album or playlist
+playerType:
+  _label: Player Type
+  _display: inline
+  _has:
+    -
+      fn: radio
+      options: 
+        - visual player
+        - mini player
+    - label 
+    - 
+      fn: description
+      value: Mini players for tracks have a shorter height, and mini players for albums and playlists have smaller album art images
+_groups:
+  embedInfo:
+    _label: SoundCloud Embed
+    _display: inline
+    _placeholder:
+      height: 200px
+      text: SoundCloud Embed
+      ifEmpty: embedCode
+    fields:
+      - embedCode
+      - playerType

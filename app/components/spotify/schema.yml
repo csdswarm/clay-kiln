@@ -1,0 +1,41 @@
+_description: |
+  Embed Spotify songs, albums and playlists.
+
+url:
+  _label: Link 
+  _display: inline
+  _has: 
+    -
+      fn: text
+      type: url
+      pattern: (.*open\.spotify\.com\/.*)
+      placeholder: e.g. https://open.spotify.com/track/727m3vIFq13eATye5bvWlQ
+    - label
+    - required 
+    - 
+      fn: description
+      value: Spotify song, artist, album or playlist link (NOT the embed code).
+playerType:
+  _label: Player Size
+  _display: inline
+  _has:
+    -
+      fn: radio
+      options: 
+        - regular player
+        - mini player
+    - label 
+    -
+      fn: description
+      value: ONLY for song embeds
+_groups:
+  embedInfo:
+    _label: Spotify Embed
+    _display: inline
+    _placeholder:
+      height: 200px
+      text: Spotify Embed
+      ifEmpty: url
+    fields:
+      - url
+      - playerType

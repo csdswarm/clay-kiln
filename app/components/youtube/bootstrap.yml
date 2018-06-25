@@ -1,0 +1,14 @@
+_components:
+  youtube:
+    videoId: ''
+    videoSource: 'Video ID'
+    videoType: 'Editorial'
+    videoLocation: 'article'
+    playerCaption: ''
+    autoPlay: false
+    autoPlayNextVideo: true
+    videoPlaylist: ''
+    playerBorderTopCTA: 'Watch'
+    playerBorderTop: false
+    playerBorderBottom: false
+    previousTypeRelated: false

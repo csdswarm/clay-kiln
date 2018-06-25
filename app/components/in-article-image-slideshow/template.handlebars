@@ -1,0 +1,30 @@
+<div data-uri="{{ default _ref _self }}" class="in-article-image-slideshow {{ slideshowWidth }} {{ if @root.locals.edit 'edit-mode' }}">
+  <style>
+  {{{ ./css }}}
+  </style>
+
+  <div class="slide-container{{ if autoPlay ' autoplay' }}">
+    {{#if @root.locals.edit}}
+    <p data-editable="settings"></p>
+    {{/if}}
+
+    <ol data-editable="allSlides" class="slides slide-transition{{ if @root.locals.edit 'edit-slides' }}">
+      {{> component-list allSlides }}
+    </ol>
+
+    <button class="arrow right-arrow {{ arrowColor }} hide-arrow" aria-label="Next Slide">
+    	{{#if (compare @root.locals.site.slug 'wwwthecut')}}
+        {{{ read 'public/media/components/in-article-image-slideshow/cut-arrow-next.svg' }}}
+      {{else}}
+        {{{ read 'public/media/components/in-article-image-slideshow/image-next.svg' }}}
+      {{/if}}
+    </button>
+    <button class="arrow left-arrow {{ arrowColor }} hide-arrow" aria-label="Previous Slide">
+    	{{#if (compare @root.locals.site.slug 'wwwthecut')}}
+        {{{ read 'public/media/components/in-article-image-slideshow/cut-arrow-previous.svg' }}}
+      {{else}}
+        {{{ read 'public/media/components/in-article-image-slideshow/image-prev.svg' }}}
+      {{/if}}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+_description: |
+  Adds dynamic keywords
+
+routeParam:
+  _label: Route Param
+  _has:
+    input: text
+
+keywordVariations:
+  _label: Keyword Variations
+  _has:
+    input: simple-list
+    help: A list of modifiers to attach to to the end of the dynamic keyword
+
+additionalKeywords:
+  _label: Additional Keywords
+  _has:
+    input: simple-list
+
+_groups:
+  settings:
+    fields:
+      - routeParam
+      - keywordVariations
+      - additionalKeywords

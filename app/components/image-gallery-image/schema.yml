@@ -1,0 +1,83 @@
+_description: |
+  An individual image that's part of an image-gallery
+
+  * Only allows images from Mediaplay (our image server) to be added.
+  * Pulls in caption from Mediaplay if the user hits the magic button (note: changes made in this component _do not_ sync back to Mediaplay).
+  * Automatically pulls in credit from Mediaplay on save.
+
+url:
+  _label: URL
+  _has:
+    input: text
+    type: url
+    validate:
+      required: true
+      pattern: .*pixel\..* # only allow mediaplay images
+      patternMessage: Must be a Mediaplay URL
+    help: Must be a Mediaplay URL
+    attachedButton:
+      name: mediaplay-picker
+      multiple: true
+      overridePath: galleries/thecut
+caption:
+  _label: Caption
+  _has:
+    input: wysiwyg
+    buttons:
+      - link
+      - italic
+      - bold
+    attachedButton:
+      name: magic-button
+      field: url
+      transform: mediaplayUrl
+      url: http://ambrose.prd.nymetro.com/v1/content/assets/images/
+      property: metadata.caption
+      tooltip: Fetch From Mediaplay
+    help: Does not sync back to Mediaplay if edited
+overrideCredit:
+  _label: Credit Override
+  _has:
+    input: wysiwyg
+    buttons:
+      - bold
+      - italic
+      - link
+    help: Does not sync back to Mediaplay
+alt:
+  _label: Alt Text
+  _has:
+    input: text
+    help: Alternative text for screen readers.
+    attachedButton:
+      name: magic-button
+      field: caption
+      tooltip: Use Caption
+
+# generated in model.js
+credit:
+  _label: Credit
+  _has:
+    help: Credit is automatically pulled in from the mediaplay credit, credit url, and source on save. It can be overridden in the settings.
+width:
+  _label: Image Width
+  _has:
+    help: The width of the original image uploaded to Mediaplay
+height:
+  _label: Image Height
+  _has:
+    help: The height of the original image uploaded to Mediaplay
+
+_groups:
+  settings:
+    fields:
+      - url
+      - caption
+      - alt
+      - overrideCredit
+    _label: Image
+    _placeholder:
+      text: New Image
+      height: 126px
+      ifEmpty: url
+
