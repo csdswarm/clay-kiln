@@ -19,8 +19,6 @@ _components:
       bare:
         headLayout:
         top:
-          -
-            _ref: /_components/header/instances/default
         head: head
         main: main
         bottom:
