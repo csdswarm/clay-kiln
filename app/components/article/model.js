@@ -274,33 +274,6 @@ function getPublishedData(uri, data, locals) {
 }
 
 /**
- * get url to magazine issue archive, if magazine issue date is provided.
- * if url results in an error, the magazine issue date provided was likely
- * invalid and will be deleted.
- * @param {object} data
- * @param {object} locals
- * @return {Promise}
- */
-function getMagazineIssueUrl(data) {
-  const issueUrlPath = 'http://nymag.com/nymag/toc/';
-
-  if (has(data.magazineIssueDate)) {
-    let url = issueUrlPath + data.magazineIssueDate.split('-').join('');
-
-    return promises.timeout(rest.get(url).then(() => {
-      // set the magazine issue url if the fetch succeeds
-      data.magazineIssueUrl = url;
-    }), 1000).catch(() => {
-      // remove the magazine issue url if the fetch fails or times out
-      _unset(data, 'magazineIssueUrl');
-    });
-  } else {
-    // if the date is removed, remove the url
-    _unset(data, 'magazineIssueUrl');
-  }
-}
-
-/**
  * determine if user has manually updated the slug
  * note: manually removing the slug (setting it to emptystring)
  * is still considered manually updating the slug
@@ -414,30 +387,13 @@ function cleanSiloImageUrl(data) {
   }
 }
 
-
 /**
- * Gets the authorsAndMeta data if there exists any authors of the article
- * note: the template expects data.authorsAndMeta, so always populate it
- * @param  {Object} query
- * @param  {Object} data
- * @return {Promise}
+ * This is a NYMag legacy thing. We converted the original 
+ * `authors` array into a more complex `byline` structure, 
+ * but we still key a lot of things off the flatter `authors`
+ * array. That's why we're doing this work, but it's done
+ * on save as to not affect rendering
  */
-function getAuthorSocialData(query, data) {
-  const firstAuthorsList = _get(data, 'byline[0].names', []),
-    authorsList = _cloneDeep(_get(data, 'byline', []));
-
-  // if there is exactly one author
-  if (firstAuthorsList.length === 1 && authorsList.length === 1) {
-    return promises.timeout(getAuthorData(query, firstAuthorsList[0]).then((authorsAndMeta) => {
-      // set the authors & metadata property, using the metadata if it exists
-      if (authorsAndMeta.length > 0) {
-        authorsList[0].names = authorsAndMeta;
-      }
-      data.byline = authorsList;
-    }), 1000).catch(() => null);
-  }
-}
-
 function setPlainAuthorsList(data) {
   const bylineList = _get(data, 'byline', []),
     authors = [];
@@ -453,6 +409,19 @@ function setPlainAuthorsList(data) {
 
     data.authors = authors;
   }
+}
+
+/**
+ * Good for when you have a byline array but one
+ * of the objects inside the byline has no name.
+ * The byline formatter handlebars helper doesn't 
+ * like this usecase, so we should sanitize before
+ * it even has to deal with it.
+ */
+function sanitizeByline(data) {
+  const byline = _get(data, 'byline', []);
+  
+  data.byline = byline.filter(entry => !!entry.names);
 }
 
 module.exports.render = function (ref, data, locals) {
@@ -483,14 +452,13 @@ module.exports.save = function (uri, data, locals) {
   setRubrics(data, locals);
   cleanSiloImageUrl(data);
   setPlainAuthorsList(data);
+  sanitizeByline(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image
   return promises.props({
     prevData: getPrevData(uri, data, locals),
-    publishedData: getPublishedData(uri, data, locals),
-    magazineIssueUrl: getMagazineIssueUrl(data),
-    authorsAndMeta: getAuthorSocialData(query, data)
+    publishedData: getPublishedData(uri, data, locals)
   }).then(function (resolved) {
     // once async calls are done, use their resolved values to update some more data
     setSlugAndLock(data, resolved.prevData, resolved.publishedData);
