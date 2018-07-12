@@ -4,8 +4,6 @@ _components:
       general:
         headLayout:
         top:
-          -
-            _ref: /_components/header/instances/default
         head: head
         main: main
         secondary:
@@ -32,8 +30,6 @@ _components:
       article:
         headLayout:
         top:
-          -
-            _ref: /_components/header/instances/default
         head: head
         main: main
         tertiary:
