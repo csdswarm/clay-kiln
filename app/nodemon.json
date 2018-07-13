@@ -12,8 +12,7 @@
       "global/kiln-js",
       "search",
       "services",
-      "styleguides/_global/*.css",
-      "styleguides/**/components/*.css",
+      "styleguides",
       "sites"
     ]
   }
