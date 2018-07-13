@@ -27,6 +27,7 @@ services:
     volumes:
       - ./app/services:/usr/src/app/services
       - ./app/components:/usr/src/app/components
+      - ./app/styleguides:/usr/src/app/styleguides
       - ./app/sites:/usr/src/app/sites
       - ./app/public:/usr/src/app/public
       - ./app/search:/usr/src/app/search
