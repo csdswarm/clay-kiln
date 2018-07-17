@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="radio">
     <h1>Radio.com SPA Proof Of Concept</h1>
     <h2>Clay Handlebars Paragraph Template Example Below</h2>
     <ClayParagraph/>
