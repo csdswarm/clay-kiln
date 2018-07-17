@@ -1,0 +1,9 @@
+_users:
+  -
+    username: reid@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: shawn@swarmsolutions.com
+    provider: google
+    auth: admin
