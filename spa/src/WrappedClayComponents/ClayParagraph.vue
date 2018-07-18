@@ -20,14 +20,10 @@ export default {
 
         const template = hbs.template(window.kiln.componentTemplates.paragraph)
 
-        console.log(template, 'template')
-
         const html = template({
           _ref: 'localhost.demo.com/_components/paragraph/instances/new',
           text: 'Test data.'
         })
-
-        console.log(html, 'computed html')
 
         return html
 
