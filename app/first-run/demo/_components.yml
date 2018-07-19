@@ -142,6 +142,11 @@ _components:
       new:
         url: ''
 
+  youtube-player-head:
+    instances:
+      new:
+        allow: true
+
   footer:
     instances:
       default:
@@ -265,3 +270,5 @@ _components:
           storyCharacteristics:
             strong-visual: false
             top-story: false
+
+

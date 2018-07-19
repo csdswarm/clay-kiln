@@ -3,6 +3,8 @@ _components:
     instances:
       general:
         headLayout:
+          -
+            _ref: /_components/youtube-player-head/instances/new
         top:
         head: head
         main: main
@@ -16,6 +18,8 @@ _components:
           - _ref: /_components/clay-kiln/instances/general
       bare:
         headLayout:
+          -
+            _ref: /_components/youtube-player-head/instances/new
         top:
         head: head
         main: main

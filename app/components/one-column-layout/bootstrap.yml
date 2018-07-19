@@ -1,7 +1,8 @@
 _components:
   one-column-layout:
     head: head
-    headLayout: []
+    headLayout:
+      - _ref: /_components/youtube-player-head/instances/new
     top: []
     main: main
     secondary: []
