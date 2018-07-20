@@ -2,7 +2,8 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Radio</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about">About</router-link> | 
+      <router-link to="/hybrid">Hybrid</router-link>
     </div>
     <router-view/>
   </div>
