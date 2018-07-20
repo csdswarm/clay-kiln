@@ -19,13 +19,15 @@
     <!-- data-editable-end -->
   </head>
   <body>
-    <div class="top" data-editable="top">{{> component-list top }}</div>
-    <div class="wrapper">
-      <div class="main" data-editable="main">{{> component-list main }}</div>
-      <div class="secondary" data-editable="secondary">{{> component-list secondary }}</div>
+    <div id="vue-wrapper">
+      <div class="top" data-editable="top">{{> component-list top }}</div>
+      <div class="wrapper">
+        <div class="main" data-editable="main">{{> component-list main }}</div>
+        <div class="secondary" data-editable="secondary">{{> component-list secondary }}</div>
+      </div>
+      <footer class="bottom" data-editable="bottom">{{> component-list bottom }}</footer>
+      <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
     </div>
-    <footer class="bottom" data-editable="bottom">{{> component-list bottom }}</footer>
-    <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
     <div>{{{ attachSpaPayloadToWindow }}}</div>
     <div id="radio-spa-poc"></div>
     <script src="/dist/app.js"></script>

@@ -1,7 +1,12 @@
 <template>
-  <div class="vue-body">
-    <div class="top" data-editable="top">{{ this.componentList(this.spaPayload.top) }}</div>
-    <!-- <div class="top" data-editable="top">{{ this.spaPayload._self }}</div> -->
+  <div class="vue-wrapper">
+    <div class="top" data-editable="top"><div v-html="this.componentList('top')"></div></div>
+    <div class="wrapper">
+      <div class="main" data-editable="main"><div v-html="this.componentList('main')"></div></div>
+      <div class="secondary" data-editable="secondary"><div v-html="this.componentList('secondary')"></div></div>
+    </div>
+    <footer class="bottom" data-editable="bottom"><div v-html="this.componentList('bottom')"></div></footer>
+    <div class="kiln-internals" data-editable="kilnInternals"><div v-html="this.componentList('kilnInternals')"></div></div>
   </div>
 </template>
 
@@ -9,31 +14,9 @@
 
 import handlebarsVanilla from 'handlebars'
 import clayHBS from 'clayhandlebars'
-const handlebars = clayHBS(handlebarsVanilla) //NOTE: MUST COMMENT OUT FILESYSTEM CODE IN CLAYHANDLEBARS INDEX.JS FILE.
+const handlebars = clayHBS(handlebarsVanilla) //NOTE: MUST COMMENT OUT FILESYSTEM CODE IN CLAYHANDLEBARS INDEX.JS FILE. See /node_modules-clayhandlbars-index.js
 
-// Register Helper depedencies manually
-handlebars.registerHelper('getComponentName', function (ref) {
-  var result = /components\/(.+?)[\/\.]/.exec(ref) || /components\/(.*)/.exec(ref);
-
-  return result && result[1];
-});
-
-// Register Partials depedencies manually
-handlebars.registerPartial('TESTuserMessage','<div>By {{author.firstName}} {{author.lastName}}</div>');
-
-handlebars.registerPartial('component-list', `{{#each this~}}
-  {{~> (getComponentName _ref) ~}}
-{{~/each}}`);
-
-console.log(handlebars, 'HANDLEBARS INSTANCE')
-//console.log(clayHandlebarsInstance, 'CLAY HANDLEBARS INSTANCE')
-
-
-const hbsPartialWrapperTemplate = handlebars.compile(`<div class="handlebars-partial-include-wrapper>{{ testMsg }}</div><div>{{> TESTuserMessage partialPayload }}</div>`);
-
-
-
-
+console.log(handlebars, 'THE HANDLEBARS INSTANCE')
 
 export default {
   name: 'hybrid',
@@ -51,70 +34,27 @@ export default {
     }
 
   },
-  computed: {
-    wrappedClayTemplate: function () {
-      if (window.spaPayload) {
-
-        console.log(hbs, 'HBSSSSS')
-        
-
-        
-
-        return '<p>oh snap what up?</p>'
-
-      } else {
-        return '<p>SPA Payload not available.</p>'
-      }
-    }
-  },
+  computed: {},
   methods: {
-    componentList: function(state) {
+    componentList: function(stateSliceKey) {
 
-      console.log(state, 'INPUT')
-      console.log(this.spaPayload, 'data yo')
-
-      // Register partials from kiln
-      for (let key in window.kiln.componentTemplates) {
-        //console.log(window.kiln.componentTemplates[key], 'compiledtemplate');
-        handlebars.registerPartial(key, handlebars.template(window.kiln.componentTemplates[key]));
-        console.log(key, 'kiln partial registered!');
+      // Register partials from kiln - this has to happen here in order to not end up with a race condition error.
+      // For slightly better performance we'll only do this once by checking if the article partial has been loaded already.
+      if (!(handlebars.partials && handlebars.partials.article)) {
+        for (let key in window.kiln.componentTemplates) {
+          handlebars.registerPartial(key, handlebars.template(window.kiln.componentTemplates[key]));
+        }
       }
 
-      const handlebarsWrapper = handlebars.compile(`<div class="handlebars-wrapper">{{> component-list top }}</div>`);
+      // The handlebars wrapper template will basically just load the component-list partial and pass in the appropriate property/key on this.spaPayload.
+      const handlebarsWrapper = handlebars.compile(`{{> component-list ${stateSliceKey} }}`);
 
-      //hbs.partials['component-list'](state)
+      // Pass entire payload to wrapper template, template will pull correct data off it via stateSliceKey.
+      return handlebarsWrapper(this.spaPayload);
 
-      const partialPayload = {
-        author: {
-          firstName: 'Reid',
-          lastName: 'Masto'
-        }
-      };
-
-      console.log(hbsPartialWrapperTemplate({testMsg: 'REID', partialPayload}), 'handlebars compiled on fly');
-
-      console.log(handlebarsWrapper(this.spaPayload), 'please WORK');
-
-      // console.log(window.kiln.componentTemplates, 'blah');
-
-      // var partial = hbs.partials['component-list'];
-      // if (typeof partial !== 'function') {
-      //   partial = hbs.compile(partial);
-      // } else {
-      //   console.log('already a func')
-      // }
-      
-    },
-    logtest: function() {
-      console.log('TEST WAS LOGGED')
-    },
-    whatup: function() {
-      console.log('SUP DAWGGGG')
     }
   },
-  components: {
-    // HelloWorld
-  }
+  components: {}
 }
 
 </script>
