@@ -32,12 +32,8 @@ _components:
         top:
         head: head
         main: main
-        tertiary:
-          -
-            _ref: /_components/generic-list/instances/tertiary
-        secondary:
-          -
-            _ref: /_components/generic-list/instances/recirc
+        tertiary: tertiary
+        secondary: secondary
         bottom:
           -
             _ref: /_components/footer/instances/default
