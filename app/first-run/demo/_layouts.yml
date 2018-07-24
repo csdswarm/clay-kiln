@@ -6,9 +6,7 @@ _components:
         top:
         head: head
         main: main
-        secondary:
-          -
-            _ref: /_components/generic-list/instances/recirc
+        secondary: secondary
         bottom:
           -
             _ref: /_components/footer/instances/default
