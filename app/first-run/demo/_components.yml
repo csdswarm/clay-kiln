@@ -142,6 +142,16 @@ _components:
       new:
         url: ''
 
+  web-player:
+    instances:
+      new:
+        allow: true
+
+  web-player-head:
+    instances:
+      new:
+        allow: true
+
   footer:
     instances:
       default:

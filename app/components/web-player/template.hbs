@@ -1,0 +1,85 @@
+<div id="radioPlayerContainer"></div>
+<script>
+  window.onload = function () {
+    const stationObj = {
+      "data": {
+        "type": "station",
+        "id": 299,
+        "attributes": {
+          "id": 299,
+          "name": "KROQ",
+          "slogan": "The World Famous KROQ",
+          "description": "KROQ is a world famous Alternative station based in Los Angeles, CA.",
+          "format": "Alternative",
+          "website": "http://www.kroq.com",
+          "callsign": "KROQFM",
+          "slug": "kroq",
+          "category": "Music",
+          "bband": "FM",
+          "frequency": "106.7",
+          "listen_live_url": "http://player.radio.com/listen/station/kroq",
+          "stream_type": "Non-Interactive",
+          "partner": "CBS",
+          "status": 1,
+          "hero_image": "https://assets.radio.com/images/stations/kroq.jpg",
+          "square_logo_small": "https://s3.amazonaws.com/radioassets/images/stations/KROQ-FM.png",
+          "square_logo_large": "https://s3.amazonaws.com/radioassets/images/stations/KROQ-FM.png",
+          "triton_id": 402,
+          "triton_name": "KROQFM",
+          "city": "Los Angeles",
+          "state": "CA",
+          "country": "US",
+          "postal_code": "90034",
+          "gmt_offset": -8,
+          "observes_dst": true,
+          "latitude": 34.0306,
+          "longitude": -118.398,
+          "market_id": 11,
+          "doubleclick_prerolltag": "LA.MUSIC.KROQFM",
+          "doubleclick_bannertag": "LA.MUSIC.KROQFM",
+          "facebook": "https://www.facebook.com/worldfamouskroq",
+          "twitter": "kroq",
+          "tune_in_url": "http://tunein.com/radio/-s35088",
+          "popularity": 558466,
+          "primary_color": "#A71500",
+          "secondary_color": "#F5BA23",
+          "tag_station_id": 11121,
+          "nielsen_asset_id": "KROQ-FM",
+          "nielsen_station_type": "2",
+          "keywords": "KROQFM, Los Angeles",
+          "market_name": "Los Angeles, CA",
+          "market": {
+            "id": 11,
+            "name": "Los Angeles, CA"
+          },
+          "genre": [
+            {
+              "id": 7,
+              "name": "Alternative"
+            }
+          ],
+          "genre_name": [
+            "Alternative"
+          ],
+          "station_stream": [
+            {
+              "type": "mp3",
+              "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/KROQFM.mp3"
+            },
+            {
+              "type": "aac",
+              "url": "https://playerservices.streamtheworld.com/api/livestream-redirect/KROQFMAAC.aac"
+            }
+          ]
+        },
+        "links": {
+          "self": "http://stg-origin-api.radio.com/v1/stations/299"
+        }
+      }
+    };
+    window.RadioPlayer.initialize();
+    window.RadioPlayer.addStationsToPlaylist(stationObj);
+    window.RadioPlayer.play(0);
+  }
+</script>
+<script src="../web-player/chunk-vendors.d433cfa9.js"></script><script src="../web-player/app.f4f5612a.js"></script>
