@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "scripts/start-local.sh",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
-    "start-dev": "npm run check-elastic && nodemon -L app.js"
+    "start-dev": "npm run build-web-player && npm run check-elastic && nodemon -L app.js",
+    "build-web-player": "mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/"
   },
   "author": "",
   "license": "MIT",
@@ -90,6 +91,7 @@
     "postcss-mixins": "^6.2.0",
     "postcss-nested": "^3.0.0",
     "postcss-simple-vars": "^4.1.0",
+    "radio-web-player": "git+ssh://git@github.com/Entercom/radio-web-player.git#develop",
     "require-dir": "^1.0.0",
     "resolve": "^1.7.1",
     "through2": "^2.0.3",
