@@ -1,10 +1,5 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Radio</router-link> |
-      <router-link to="/about">About</router-link> | 
-      <router-link to="/hybrid">Hybrid</router-link>
-    </div>
+  <div id="vue-app-mount-point">
     <router-view/>
   </div>
 </template>

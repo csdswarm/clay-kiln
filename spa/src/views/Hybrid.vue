@@ -1,5 +1,7 @@
 <template>
   <div class="vue-wrapper">
+    <!-- <button v-on:click="greet">Greet</button>
+    <div>{{ testExec }}</div> -->
     <div class="top" data-editable="top"><div v-html="this.componentList('top')"></div></div>
     <div class="wrapper">
       <div class="main" data-editable="main"><div v-html="this.componentList('main')"></div></div>
@@ -23,6 +25,7 @@ export default {
   data: function () {
     return {
       spaPayload: {},
+      testExec: ''
     }
   },
   created: function () {
@@ -52,6 +55,11 @@ export default {
       // Pass entire payload to wrapper template, template will pull correct data off it via stateSliceKey.
       return handlebarsWrapper(this.spaPayload);
 
+    },
+    greet: function (event) {
+      // `this` inside methods points to the Vue instance
+      console.log('HELLO');
+      this.testExec = 'exec is working' + Math.random();
     }
   },
   components: {}

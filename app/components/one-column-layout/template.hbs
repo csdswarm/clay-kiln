@@ -17,19 +17,23 @@
     <!-- data-editable="headLayout" -->
       {{> component-list headLayout }}
     <!-- data-editable-end -->
+
+    <!-- Attach the context object to window so SPA has access to data on the frontend. -->
+    {{{ attachSpaPayloadToWindow }}}
+    <script src="/dist/app.js"></script>
+
   </head>
   <body>
-    <div id="vue-wrapper">
-      <div class="top" data-editable="top">{{> component-list top }}</div>
-      <div class="wrapper">
-        <div class="main" data-editable="main">{{> component-list main }}</div>
-        <div class="secondary" data-editable="secondary">{{> component-list secondary }}</div>
+    <div id="vue-app-mount-point">
+      <div id="vue-wrapper">
+        <div class="top" data-editable="top">{{> component-list top }}</div>
+        <div class="wrapper">
+          <div class="main" data-editable="main">{{> component-list main }}</div>
+          <div class="secondary" data-editable="secondary">{{> component-list secondary }}</div>
+        </div>
+        <footer class="bottom" data-editable="bottom">{{> component-list bottom }}</footer>
+        <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
       </div>
-      <footer class="bottom" data-editable="bottom">{{> component-list bottom }}</footer>
-      <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
     </div>
-    <div>{{{ attachSpaPayloadToWindow }}}</div>
-    <div id="radio-spa-poc"></div>
-    <script src="/dist/app.js"></script>
   </body>
 </html>
