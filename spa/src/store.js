@@ -6,10 +6,13 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    layout: null,
+    handlebars: null,
     spaPayload: {}
   },
   mutations: {
+    [mutationTypes.LOAD_HANDLEBARS]: (state, payload) => {
+      state.handlebars = payload.handlebars
+    },
     [mutationTypes.LOAD_INITIAL_SPA_PAYLOAD]: (state, payload) => {
       state.spaPayload = payload
     }

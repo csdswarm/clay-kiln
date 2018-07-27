@@ -3,6 +3,8 @@ In order to get this POC working:
 
 cd claydemo/spa 
 
+yarn install
+
 and run 
 
 yarn build
