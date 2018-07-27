@@ -14,6 +14,7 @@
 
 <script>
 
+import * as mutationTypes from '@/vuex/mutationTypes'
 import handlebarsVanilla from 'handlebars'
 import clayHBS from 'clayhandlebars'
 const handlebars = clayHBS(handlebarsVanilla) //NOTE: MUST COMMENT OUT FILESYSTEM CODE IN CLAYHANDLEBARS INDEX.JS FILE. See /node_modules-clayhandlbars-index.js
@@ -24,14 +25,13 @@ export default {
   name: 'hybrid',
   data: function () {
     return {
-      spaPayload: {},
       testExec: ''
     }
   },
   created: function () {
 
     if (window.spaPayload) {
-      this.spaPayload = window.spaPayload
+      this.$store.commit(mutationTypes.LOAD_INITIAL_SPA_PAYLOAD, window.spaPayload)
     } else {
       throw new Error('SPA Payload failed to load.')
     }
@@ -53,7 +53,7 @@ export default {
       const handlebarsWrapper = handlebars.compile(`{{> component-list ${stateSliceKey} }}`);
 
       // Pass entire payload to wrapper template, template will pull correct data off it via stateSliceKey.
-      return handlebarsWrapper(this.spaPayload);
+      return handlebarsWrapper(this.$store.state.spaPayload);
 
     },
     greet: function (event) {
