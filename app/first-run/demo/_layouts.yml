@@ -22,6 +22,21 @@ _components:
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
+      article:
+        headLayout:
+        top:
+          -
+            _ref: /_components/header/instances/default
+        head: head
+        main: main
+        secondary:
+          -
+            _ref: /_components/generic-list/instances/recirc
+        bottom:
+          -
+            _ref: /_components/footer/instances/default
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
 
   two-column-layout:
     instances:
