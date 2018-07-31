@@ -3,19 +3,15 @@ In order to get this POC working:
 
 cd claydemo/spa 
 
-yarn install
+npm install
 
 and run 
 
-yarn build
-
-then 
-
-cd claydemo
+npm run-script build -- --mode=development
 
 Then copy the built vue app.js file into the claydemo app public folder like so
 
-cp spa/dist/app.js app/public/dist/app.js
+mkdir -p ../app/public/dist && cp dist/app.js ../app/public/dist/app.js
 
 Then navigate to a page and make sure you are in edit mode
 
