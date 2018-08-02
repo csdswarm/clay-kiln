@@ -12,6 +12,7 @@
   "dependencies": {
     "clayhandlebars": "^3.2.3",
     "handlebars": "^4.0.11",
+    "handlebars-template-loader": "^1.0.0",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
@@ -34,5 +35,10 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "vuePlugins": {
+    "service": [
+      "./config/webpack/webpackConfigPlugin.js"
+    ]
+  }
 }
