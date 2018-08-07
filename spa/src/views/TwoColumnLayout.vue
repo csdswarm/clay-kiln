@@ -2,7 +2,7 @@
   <div class="vue-wrapper">
     <div class="top" data-editable="top"><div v-html="this.componentList('top')"></div></div>
     <div class="wrapper">
-      <h1>ONE COLUMN LAYOUT EXAMPLE</h1>
+      <h1>TWO COLUMN LAYOUT</h1>
       <div class="main" data-editable="main"><div v-html="this.componentList('main')"></div></div>
       <div class="secondary" data-editable="secondary"><div v-html="this.componentList('secondary')"></div></div>
     </div>
@@ -17,7 +17,7 @@ import BaseLayout from '@/views/mixins/BaseLayout'
 
 export default {
   mixins: [ BaseLayout ],
-  name: 'OneColumnLayout',
+  name: 'TwoColumnLayout',
   data: function () {
     return {}
   },

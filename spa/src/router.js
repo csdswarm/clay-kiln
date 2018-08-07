@@ -1,15 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import OneColumnLayout from './views/OneColumnLayout'
+import LayoutRouter from './LayoutRouter'
 
 Vue.use(Router)
 
+// NOTE: All routing logic is handled in LayoutRouter component method this.layoutRouter() instead of router.js
+// in order to support more advanced routing and a single entry point for navigation logic (including data fetching etc).
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'OneColumnLayout',
-      component: OneColumnLayout
+      path: '*',
+      name: 'LayoutRouter',
+      component: LayoutRouter
     }
   ]
 })
