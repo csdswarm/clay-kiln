@@ -147,6 +147,11 @@ _components:
       new:
         allow: true
 
+  html-embed:
+    instances:
+      new:
+        text: ''
+
   footer:
     instances:
       default:

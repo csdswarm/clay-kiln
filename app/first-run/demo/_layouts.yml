@@ -28,6 +28,8 @@ _components:
           - _ref: /_components/clay-kiln/instances/general
       article:
         headLayout:
+          -
+            _ref: /_components/youtube-player-head/instances/new
         top:
           -
             _ref: /_components/header/instances/default

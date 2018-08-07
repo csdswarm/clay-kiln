@@ -1,0 +1,7 @@
+_description: |
+  Generic HTML component
+
+text:
+  _label: HTML
+  _has:
+    input: text
