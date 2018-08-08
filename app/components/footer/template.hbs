@@ -1,4 +1,4 @@
-<div data-uri="{{ default _ref _self }}" class="footer" data-editable="settings">
+{{!-- <div data-uri="{{ default _ref _self }}" class="footer" data-editable="settings">
 
   <ul class="footer-social" data-editable="services">
     {{> component-list services }}
@@ -7,4 +7,56 @@
   <div class="copyright">
     Built in {{ moment 'now' 'YYYY' }} with Clay
   </div>
+</div> --}}
+
+<div class="radiocom-footer">
+	<div class="container">
+		<div class="radiocom-footer__social">
+			<a target="_blank" href="https://www.facebook.com/radiodotcom/">
+				{{{ read 'components/footer/media/facebook.svg' }}}
+			</a><a target="_blank" href="https://twitter.com/Radiodotcom?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">
+				{{{ read 'components/footer/media/twitter.svg' }}}
+			</a><a target="_blank" href="https://www.youtube.com/user/radiodotcom">
+				{{{ read 'components/footer/media/youtube.svg' }}}
+			</a><a target="_blank" href="https://www.instagram.com/radiodotcom/">
+				{{{ read 'components/footer/media/instagram.svg' }}}
+			</a>
+		</div>
+		<div class="radiocom-footer__download-app">
+			<a class="apple-app-store" target="_blank" href="https://itunes.apple.com/us/app/radio-com/id323701765?mt=8">
+				{{{ read 'components/footer/media/apple-app-store.svg' }}}
+			</a><a class="google-play-badge" target="_blank" href="https://play.google.com/store/apps/details?id=com.radiocom&hl=en">
+				{{{ read 'components/footer/media/google-play-badge.svg' }}}
+			</a>
+		</div>
+		<div class="radiocom-footer__section radiocom-footer__listen">
+			<h2>listen</h2>
+			<a target="_blank" href="http://player.radio.com/">listen live</a><!--
+			--><a target="_blank" href="https://itunes.apple.com/us/app/radio-com/id323701765?mt=8">mobile app</a>
+		</div>
+		<div class="radiocom-footer__section radiocom-footer__connect">
+			<h2>connect</h2>
+			<a target="_blank" href="http://1thingus.com/">1Thing</a><!--
+			--><a target="_blank" href="http://www.getmyperks.com/">get my PERKS</a><!--
+			--><a target="_blank" href="http://imlistening.org/">#ImListening</a><!--
+			--><a target="_blank" href="https://www.radio.com/contact-us">contact us</a>
+		</div>
+		<div class="radiocom-footer__section radiocom-footer__legal">
+			<h2>legal</h2>
+			<a target="_blank" href="https://publicfiles.fcc.gov/">public inspection file</a><!--
+			--><a target="_blank" href="http://entercom.com/careers/">careers</a><!--
+			--><a target="_blank" href="http://entercom.com/eeo/">EEO public files</a><!--
+			--><a target="_blank" href="https://www.radio.com/public-inspection-file-help">public file help</a><!--
+			--><a target="_blank" href="http://entercom.com/privacy-policy/">privacy policy</a><!--
+			--><a target="_blank" href="http://www.entercom.com/terms-and-conditions">terms of use</a><!--
+			--><a target="_blank" href="https://www.radio.com/rules">contest rules</a><!--
+			--><a target="_blank" href="http://www.entercom.com/wp-content/uploads/2016/01/Copyright_Notice2.pdf">copyright notice</a><!--
+			--><a target="_blank" href="http://www.entercom.com/music-submission-policy">music submission policy</a>
+		</div>
+		<span class="radiocom-footer__copyright">
+			&copy Entercom {{ moment 'now' 'YYYY' }} <a target="_blank" href="www.radio.com">Radio.com</a>
+		</span>
+	</div>
 </div>
+
+</style>
