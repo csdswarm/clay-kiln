@@ -21,4 +21,4 @@ Then navigate to a page and make sure you are in edit mode
 
 example
 
-http://localhost.demo.com/_pages/index.html?edit=true
+http://clay.radio.com/_pages/index.html?edit=true
