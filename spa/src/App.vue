@@ -15,7 +15,7 @@ export default {
 
     // Load SPA Payload
     if (window.spaPayload) {
-      this.$store.commit(mutationTypes.LOAD_INITIAL_SPA_PAYLOAD, window.spaPayload)
+      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, window.spaPayload)
     } else {
       throw new Error('SPA Payload failed to load.')
     }

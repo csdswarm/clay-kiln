@@ -5,6 +5,8 @@
 <script>
 
 import axios from 'axios'
+import URL from 'url-parse'
+import * as mutationTypes from '@/vuex/mutationTypes'
 import OneColumnLayout from '@/views/OneColumnLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 
@@ -23,17 +25,35 @@ export default {
   },
   computed: {},
   methods: {
-    layoutRouter (path) {
-
-      // Mock routing.
+    /**
+     * 
+     * Contains Layout template matching logic.
+     * 
+     * Match a given spa payload with a Vue layout component
+     * 
+     * @param {object} spaPayload - The handlebars context payload data.
+     * @returns {string} - Matched Layout component name.
+     */
+    layoutRouter (spaPayload) {
       let nextLayoutComponent = null
-      if (Math.random() >= 0.5) {
-        nextLayoutComponent = 'OneColumnLayout'
-      } else {
+
+      // Match to correct layout template by querying for existence of "tertiary" property on spa payload object.
+      if (spaPayload.tertiary) {
         nextLayoutComponent = 'TwoColumnLayout'
+      } else {
+        nextLayoutComponent = 'OneColumnLayout'
       }
 
       return nextLayoutComponent
+    },
+    getNextSpaPayload: async function getNextSpaPayload (uriId) {
+
+      const uriReqResult = await axios.get(`//${window.location.hostname}/_uris/${uriId}`)
+
+      const nextSpaPayloadResult = await axios.get(`//${uriReqResult.data}.json`)
+
+      return nextSpaPayloadResult.data
+
     }
   },
   components: {
@@ -41,14 +61,17 @@ export default {
     'TwoColumnLayout': TwoColumnLayout
   },
   watch: {
-    '$route' (to, from) {
+    '$route': async function (to, from) {
       
-      // TODO Fetch data for next "pageview" with axios
+      // Get SPA payload data for next path.
+      const uriId = btoa(window.location.hostname + to.path)
+      const spaPayload = await this.getNextSpaPayload(uriId)
 
       // Load matched Layout Component.
-      this.activeLayoutComponent = this.layoutRouter(to.path)
+      this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-      // TODO Commit fetched data after setting correct layout component to kick off re-rendering components.
+      // Commit next payload to store to kick off re-render.
+      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
     }
   }

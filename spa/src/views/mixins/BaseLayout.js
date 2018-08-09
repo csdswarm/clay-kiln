@@ -16,6 +16,12 @@ export default {
   },
   methods: {
     componentList: function (stateSliceKey) {
+
+      // Return early if data not set.
+      if (!this.$store.state.spaPayload[stateSliceKey]) {
+        return ''
+      }
+
       // The handlebars wrapper template will basically just load the component-list partial and pass in the appropriate property/key on this.spaPayload.
       const handlebarsWrapper = this.$store.state.handlebars.compile(`{{> component-list ${stateSliceKey} }}`);
 
