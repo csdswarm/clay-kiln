@@ -1,0 +1,11 @@
+_description: |
+  Brightcove video embed
+
+videoId:
+  _label: Video ID
+  _has:
+    input: text
+    type: text
+  _placeholder:
+    height: 30px
+    text: Brightcove Video

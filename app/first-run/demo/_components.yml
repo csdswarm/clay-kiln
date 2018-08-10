@@ -142,6 +142,11 @@ _components:
       new:
         url: ''
 
+  brightcove:
+    instances:
+      new:
+        videoId: ''
+
   footer:
     instances:
       default:
