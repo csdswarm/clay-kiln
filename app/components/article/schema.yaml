@@ -222,6 +222,7 @@ content:
       - soundcloud
       - youtube
       - in-article-image-slideshow
+      - html-embed
 feeds:
   _label: Include in These Feeds
   _has:
