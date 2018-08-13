@@ -3,13 +3,13 @@
     {{#if videoId}}
       <div class="player">
         <video data-video-id="{{ videoId }}"
-               data-account="1418490336"
-               data-player="default"
+               data-account="{{ @root.locals.site.brightcoveAccountId }}"
+               data-player="{{ @root.locals.site.brightcovePlayerId }}"
                data-embed="default"
                data-application-id
                class="video-js"
                controls></video>
-        <script src="//players.brightcove.net/1418490336/default_default/index.min.js"></script>
+        <script src="//players.brightcove.net/{{ @root.locals.site.brightcoveAccountId }}/{{ @root.locals.site.brightcovePlayerId }}_default/index.min.js"></script>
       </div>
     {{/if}}
   </div>

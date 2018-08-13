@@ -6,3 +6,5 @@ assetPath: ''
 port: 80
 protocol: http
 shortKey: ${CLAY_SITE_SHORTKEY}
+brightcoveAccountId: 1418490336
+brightcovePlayerId: 'default'
