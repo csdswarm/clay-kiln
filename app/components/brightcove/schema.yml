@@ -6,6 +6,18 @@ videoId:
   _has:
     input: text
     type: text
-  _placeholder:
-    height: 30px
-    text: Brightcove Video
+
+showTitle:
+  _label: Show video title?
+  _has: checkbox
+
+_groups:
+  video:
+    _label: Brightcove Video
+    _placeholder:
+      text: Brightcode Video
+      height: 30px;
+      ifEmpty: videoId
+    fields:
+      - videoId
+      - showTitle

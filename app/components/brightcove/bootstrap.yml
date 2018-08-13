@@ -1,3 +1,4 @@
 _components:
   brightcove:
     videoId: ''
+    showTitle: false
