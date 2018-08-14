@@ -19,5 +19,6 @@ module.exports = {
   secondsToISO: formatTime.secondsToISO,
   formatDateRange: formatTime.formatDateRange,
   truncateText: truncate,
-  calloutType: require('./callout')
+  calloutType: require('./callout'),
+  attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow')
 };

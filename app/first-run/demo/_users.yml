@@ -1,0 +1,25 @@
+_users:
+  -
+    username: reid@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: shawn@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: markham@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: nicholas.booth@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: ben.bonora@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: tiffany.chow@entercom.com
+    provider: google
+    auth: admin

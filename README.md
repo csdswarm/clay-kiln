@@ -7,7 +7,7 @@ A repo that contains a basic site and the necessary files to provision AWS resou
 Edit your `/etc/hosts` file to include the following:
 
 ```
-127.0.0.1 localhost.demo.com
+127.0.0.1 clay.radio.com
 
 ```
 
@@ -91,7 +91,7 @@ $ make clear-data
   [keys]
     demo = accesskey
   [urls]
-    demosite = http://localhost.demo.com
+    demosite = http://clay.radio.com
   ```
 3. Now you can run `make bootstrap` which will put the `app/first-run` data into your local instance.
 

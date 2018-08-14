@@ -36,4 +36,4 @@ clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data
 
 bootstrap:
-	cat ./app/first-run/**/* | clay import -k demo -y localhost.demo.com
+	cat ./app/first-run/**/* | clay import -k demo -y clay.radio.com
