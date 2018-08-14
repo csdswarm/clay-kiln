@@ -27,6 +27,11 @@ NPM install
 $ npm i
 ```
 
+Install `radio-web-player`
+```bash
+$ npm run build-web-player
+```
+
 Run Gulp
 
 ```bash
