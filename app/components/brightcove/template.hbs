@@ -1,9 +1,7 @@
 <div data-uri="{{ default _ref _self }}" class="brightcove" data-editable="video">
   <div class="player-wrapper">
     {{#if videoId}}
-      <div class="player"
-           data-show-title="{{ showTitle }}"
-           {{#unless showTitle}}class="hide-title"{{/unless}}>
+      <div class="player {{#unless showTitle}}hide-title{{/unless}}">
         <video data-video-id="{{ videoId }}"
                data-account="{{ @root.locals.site.brightcoveAccountId }}"
                data-player="{{ @root.locals.site.brightcovePlayerId }}"
