@@ -223,6 +223,7 @@ content:
       - youtube
       - in-article-image-slideshow
       - html-embed
+      - brightcove
 feeds:
   _label: Include in These Feeds
   _has:
