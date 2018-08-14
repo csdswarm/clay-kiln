@@ -1,4 +1,7 @@
-/* stylelint-disable */ 
+@import "_global/mixins";
+@import "_global/colors";
+
+/* stylelint-disable */
 .tags {
   clear: both;
   margin-bottom: 15px;
@@ -76,3 +79,18 @@
   margin: 0;
   padding: 0;
 }
+
+
+@define-mixin themed-tag-list $class, $color: $base {
+  .tags-list-item {
+    a.$(class) {
+    color: $color;
+  }
+  }
+}
+
+@mixin themed-tag-list tags-link;
+@mixin themed-tag-list entertainment, $entertainment;
+@mixin themed-tag-list news, $news;
+@mixin themed-tag-list sports, $sports;
+@mixin themed-tag-list podcasts, $podcasts;
