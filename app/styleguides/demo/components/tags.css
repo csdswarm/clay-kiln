@@ -89,7 +89,7 @@
 }
 
 /* Mixin to style tags based on theme colors */
-@define-mixin themed-tag-list $class, $color: $base {
+@define-mixin themed-tag-list $class, $color: $purple {
   .tags-list {
     > .$(class) {
       a {
@@ -117,7 +117,7 @@
 }
 
 @mixin themed-tag-list tags-list-item;
-@mixin themed-tag-list entertainment, $entertainment;
-@mixin themed-tag-list news, $news;
-@mixin themed-tag-list sports, $sports;
-@mixin themed-tag-list podcasts, $podcasts;
+@mixin themed-tag-list entertainment, $sunsetOrange;
+@mixin themed-tag-list news, $lightningYellow;
+@mixin themed-tag-list sports, $azureRadience;
+@mixin themed-tag-list podcasts, $robinsEgg;
