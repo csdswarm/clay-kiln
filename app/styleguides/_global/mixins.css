@@ -8,3 +8,53 @@
   position: absolute;
   width: 1px;
 }
+@define-mixin default-screen {
+  @media only screen and (min-width: 1280px) {
+    @mixin-content;
+  }
+}
+$default-screen-nav-width: 1100px;
+@define-mixin large-screen {
+  @media only screen and (max-width: 1279px) {
+    @mixin-content;
+  }
+}
+$large-screen-nav-width: 940px;
+@define-mixin medium-screen {
+  @media only screen and (max-width: 1023px) {
+    @mixin-content;
+  }
+}
+$medium-screen-nav-width: 728px;
+@define-mixin medium-small-screen {
+  @media only screen and (max-width: 480px) {
+    @mixin-content;
+  }
+}
+$medium-small-screen-nav-width: 440px;
+@define-mixin small-screen {
+  @media only screen and (max-width: 360px) {
+    @mixin-content;
+  }
+}
+$small-screen-nav-width: 320px;
+@define-mixin vertical-align $position: relative {
+  position: $position;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+@define-mixin inline-block {
+  display: inline-block;
+  vertical-align: top;
+}
+@define-mixin ul-columns $columns: 3, $gap: 100px {
+  -webkit-column-count: $columns;
+  -moz-column-count: $columns;
+  column-count: $columns;
+  -webkit-column-gap: $gap;
+  column-gap: $gap;
+  -moz-column-gap: $gap;
+  width: 100%;
+}

@@ -1,4 +1,4 @@
-<div data-uri="{{ default _ref _self }}" class="header {{ variation }} header-{{ position }}" data-variation="{{ variation }}">
+{{!-- <div data-uri="{{ default _ref _self }}" class="header {{ variation }} header-{{ position }}" data-variation="{{ variation }}">
   {{#compare ./variation 'header-redesign'}}
     <div class="header-wrapper">
       <button class="header-menu-button" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
@@ -92,3 +92,501 @@
   </nav>
   {{/compare}}
 </div>
+ --}}
+
+<header class="radiocom-nav-placeholder" data-uri="{{ default _ref _self }}">
+  <div class="radiocom-nav">
+    <div class="container">
+      <div id="hamburger" class="radiocom-nav__hamburger wrapper">
+        <div class="bar bar-1"></div>
+        <div class="bar bar-2"></div>
+        <div class="bar bar-3"></div>
+      </div>{{!--
+      --}}<button class="radiocom-nav__logo"><a href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
+        {{{ read 'components/header/media/radiocom_hz.svg' }}}
+      </a></button>{{!--
+      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--listen">
+        <button>
+              <a href="http://player.radio.com" target="_blank">
+                <h1>listen</h1>
+              </a>
+            </button>
+      </div>{{!--
+      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--entertainment">
+        <button>
+          <a href="/entertainment">
+            <h1>entertainment</h1>
+          </a>
+        </button>
+        <div class="nav-drawer nav-drawer--entertainment">
+          <div class="container">
+            <div class="nav-drawer__sub-nav">
+              <h2>categories</h2>
+              <ul class="nav-drawer__sub-nav--columns">
+                <li>
+                  <a href="/vertical/alternative">
+                    <h3 title="/vertical/alternative">alternative</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/vertical/pop">
+                    <h3 title="/vertical/pop">pop</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/vertical/country">
+                    <h3 title="/vertical/country">country</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/vertical/urban">
+                    <h3 title="/vertical/urban">urban</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/tag/GRAMMY-awards">
+                    <h3 title="/tag/GRAMMY-awards">GRAMMYs</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/tag/BET-awards">
+                    <h3 title="/tag/BET-awards">BET awards</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/tag/BTS">
+                    <h3 title="/tag/BTS">BTS</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/tag/in-Studio">
+                    <h3 title="/tag/in-Studio">in-Studio</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/search/node/video">
+                    <h3 title="/search/node/video">video</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/search/node/audio">
+                    <h3 title="/search/node/audio">audio</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/search/node/galleries">
+                    <h3 title="/search/node/galleries">galleries</h3>
+                  </a>
+                </li>
+              </ul>
+            </div>{{!--
+            --}}<div class="nav-drawer__sub-nav nav-drawer__sub-nav--1-col">
+              <h2>local stations</h2>
+              <ul>
+                <li>
+                  <a target="_blank" href="http://wcbsfm.radio.com/">
+                    <h3 title="http://wcbsfm.radio.com/">WCBS-FM</h3>
+                  </a>
+                </li>
+                <li>
+                  <a target="_blank" href="http://alt923.radio.com/">
+                    <h3 title="http://alt923.radio.com/">ALT 92.3</h3>
+                  </a>
+                </li>
+                <li>
+                  <a target="_blank" href="https://new1027.radio.com/">
+                    <h3 title="https://new1027.radio.com/">WNEW 102.7</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="http://player.radio.com/station-directory/music" target="_blank">
+                    <h2 class="find-station-link">Find a Station <span>&#8227</span></h2>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>{{!--
+      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--news">
+        <button>
+          <a href="/news">
+            <h1>news</h1>
+          </a>
+        </button>
+        <div class="nav-drawer nav-drawer--news">
+          <div class="container">
+            <div class="nav-drawer__sub-nav">
+              <h2>categories</h2>
+              <ul class="nav-drawer__sub-nav--columns">
+                <li>
+                  <a href="/categories/heartwarming">
+                    <h3 title="/categories/heartwarming">human interest</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/catgeories/must-see">
+                    <h3 title="/catgeories/must-see">conversation starters</h3>
+                  </a>
+                </li>
+              </ul>
+            </div>{{!--
+            --}}<div class="nav-drawer__sub-nav nav-drawer__sub-nav--1-col">
+              <h2>local stations</h2>
+              <ul>
+                <li>
+                  <a target="_blank" href="http://1010wins.radio.com/">
+                    <h3 title="http://1010wins.radio.com/">1010 WINS</h3>
+                  </a>
+                </li>
+                <li>
+                  <a target="_blank" href="http://wcbs880.radio.com/">
+                    <h3 title="http://wcbs880.radio.com/">WCBS NewsRadio 880</h3>
+                  </a>
+                </li>
+                <li>
+                  <a target="_blank" href="http://kcbs.radio.com/">
+                    <h3 title="http://kcbs.radio.com/">KCBS Radio News</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="http://player.radio.com/station-directory/newstalk" target="_blank">
+                    <h2 class="find-station-link">Find a Station <span>&#8227</span></h2>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>{{!--
+      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--sports">
+        <button>
+          <a href="/sports">
+            <h1>sports</h1>
+          </a>
+        </button>
+        <div class="nav-drawer nav-drawer--sports">
+          <div class="container">
+            <div class="nav-drawer__sub-nav">
+              <h2>local stations</h2>
+              <ul class="nav-drawer__sub-nav--columns">
+                <li>
+                  <a href="https://wfan.radio.com/">
+                    <h3 title="https://wfan.radio.com/">WFAN sports radio</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://weei.radio.com/">
+                    <h3 title="https://weei.radio.com/">WEEI 93.7</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://94wip.radio.com/">
+                    <h3 title="https://94wip.radio.com/">94 WIP</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://wgr550.radio.com/">
+                    <h3 title="https://wgr550.radio.com/">WGR 550</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://670thescore.radio.com/">
+                    <h3 title="https://670thescore.radio.com/">670 the score</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="https://cbssports.radio.com/">
+                    <h3 title="https://cbssports.radio.com/">CBS sports radio</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="http://player.radio.com/station-directory/newstalk" target="_blank">
+                    <h2 class="find-station-link">Find a Station <span>&#8227</span></h2>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>{{!--
+      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--podcasts">
+        <button>
+              <a href="/audio">
+                <h1>podcasts</h1>
+              </a>
+            </button>
+        <div class="nav-drawer nav-drawer--podcasts">
+          <div class="container">
+            <div class="nav-drawer__sub-nav">
+              <h2>categories</h2>
+              <ul class="nav-drawer__sub-nav--columns">
+                <li>
+                  <a href="/audio/categories/business-tech">
+                    <h3 title="/audio/categories/business-tech">business</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/category/comedy">
+                    <h3 title="/audio/category/comedy">comedy</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/category/games-and-hobbies">
+                    <h3 title="/audio/category/games-and-hobbies">games and hobbies</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/category/health">
+                    <h3 title="/audio/category/health">health</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/category/news-and-politics">
+                    <h3 title="/audio/category/news-and-politics">news and politics</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/category/society-and-culture">
+                    <h3 title="/audio/category/society-and-culture">society and culture</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/category/sports-and-recreation">
+                    <h3 title="/audio/category/sports-and-recreation">sports and recreation</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/categories/business-tech">
+                    <h3 title="/audio/categories/business-tech">technology</h3>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>{{!--
+      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--more">
+        <button>
+          <a href="https://radio.com/apps" target="_blank">
+            <h1>more</h1>
+          </a>
+        </button>
+        <div class="nav-drawer nav-drawer--podcasts">
+          <div class="container">
+            <div class="nav-drawer__sub-nav">
+              <h2>categories</h2>
+              <ul class="nav-drawer__sub-nav--columns">
+                <li>
+                  <a href="/audio/categories/business-tech">
+                    <h3 title="/audio/categories/business-tech">example link</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/category/comedy">
+                    <h3 title="/audio/category/comedy">example link</h3>
+                  </a>
+                </li>
+                <li>
+                  <a href="/audio/category/games-and-hobbies">
+                    <h3 title="/audio/category/games-and-hobbies">example link</h3>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>{{!--
+      --}}<div class="radiocom-nav__container--right">
+        <button class="account-btn">
+          {{{ read 'components/header/media/log-in.svg' }}}
+        </button>{{!--
+        --}}<button class="search-btn">
+          {{{ read 'components/header/media/search.svg' }}}
+        </button>
+      </div>
+      <div class="nav-drawer nav-drawer--mobile">
+        <div class="nav-drawer__sub-nav nav-drawer__listen">
+          <a href="http://player.radio.com" target="_blank">
+            <h2>Listen</h2>
+          </a>
+        </div>
+        <div class="nav-drawer__sub-nav nav-drawer__entertainment">
+          <h2>entertainment</h2>
+          <ul class="nav-drawer__sub-nav-links">
+            <li>
+              <a href="/vertical/alternative">
+                <h3 title="/vertical/alternative">alternative</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/vertical/pop">
+                <h3 title="/vertical/pop">pop</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/vertical/country">
+                <h3 title="/vertical/country">country</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/vertical/urban">
+                <h3 title="/vertical/urban">urban</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/tag/GRAMMY-awards">
+                <h3 title="/tag/GRAMMY-awards">GRAMMYs</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/tag/BET-awards">
+                <h3 title="/tag/BET-awards">BET awards</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/tag/BTS">
+                <h3 title="/tag/BTS">BTS</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/tag/in-Studio">
+                <h3 title="/tag/in-Studio">in-Studio</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/search/node/video">
+                <h3 title="/search/node/video">video</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/search/node/audio">
+                <h3 title="/search/node/audio">audio</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/search/node/galleries">
+                <h3 title="/search/node/galleries">galleries</h3>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-drawer__sub-nav nav-drawer__news">
+          <h2>news</h2>
+          <ul class="nav-drawer__sub-nav-links">
+            <li>
+              <a href="/categories/heartwarming">
+                <h3 title="/categories/heartwarming">human interest</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/catgeories/must-see">
+                <h3 title="/catgeories/must-see">conversation starters</h3>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-drawer__sub-nav nav-drawer__sports">
+          <h2>sports</h2>
+          <ul class="nav-drawer__sub-nav-links">
+            <li>
+              <a href="https://wfan.radio.com/">
+                <h3 title="https://wfan.radio.com/">WFAN sports radio</h3>
+              </a>
+            </li>
+            <li>
+              <a href="https://weei.radio.com/">
+                <h3 title="https://weei.radio.com/">WEEI 93.7</h3>
+              </a>
+            </li>
+            <li>
+              <a href="https://94wip.radio.com/">
+                <h3 title="https://94wip.radio.com/">94 WIP</h3>
+              </a>
+            </li>
+            <li>
+              <a href="https://wgr550.radio.com/">
+                <h3 title="https://wgr550.radio.com/">WGR 550</h3>
+              </a>
+            </li>
+            <li>
+              <a href="https://670thescore.radio.com/">
+                <h3 title="https://670thescore.radio.com/">670 the score</h3>
+              </a>
+            </li>
+            <li>
+              <a href="https://cbssports.radio.com/">
+                <h3 title="https://cbssports.radio.com/">CBS sports radio</h3>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-drawer__sub-nav nav-drawer__podcasts">
+          <h2>podcasts</h2>
+          <ul class="nav-drawer__sub-nav-links">
+            <li>
+              <a href="/audio/categories/business-tech">
+                <h3 title="/audio/categories/business-tech">business</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/audio/category/comedy">
+                <h3 title="/audio/category/comedy">comedy</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/audio/category/games-and-hobbies">
+                <h3 title="/audio/category/games-and-hobbies">games and hobbies</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/audio/category/health">
+                <h3 title="/audio/category/health">health</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/audio/category/news-and-politics">
+                <h3 title="/audio/category/news-and-politics">news and politics</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/audio/category/society-and-culture">
+                <h3 title="/audio/category/society-and-culture">society and culture</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/audio/category/sports-and-recreation">
+                <h3 title="/audio/category/sports-and-recreation">sports and recreation</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/audio/categories/business-tech">
+                <h3 title="/audio/categories/business-tech">technology</h3>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-drawer__sub-nav nav-drawer__more">
+          <h2>more</h2>
+          <ul class="nav-drawer__sub-nav-links">
+            <li>
+              <a href="/example-link">
+                <h3 title="example link">example link</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/example-link">
+                <h3 title="example link">example link</h3>
+              </a>
+            </li>
+            <li>
+              <a href="/example-link">
+                <h3 title="example link">example link</h3>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

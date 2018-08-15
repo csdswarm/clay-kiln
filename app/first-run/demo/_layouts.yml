@@ -5,6 +5,8 @@ _components:
         headLayout:
           - _ref: /_components/web-player-head/instances/new
         top:
+          -
+            _ref: /_components/header/instances/default
         head: head
         main: main
         secondary: secondary
@@ -19,6 +21,8 @@ _components:
         headLayout:
           - _ref: /_components/web-player-head/instances/new
         top:
+          -
+            _ref: /_components/header/instances/default
         head: head
         main: main
         bottom:
