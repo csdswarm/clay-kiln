@@ -1,4 +1,5 @@
 @import "_global/mixins";
+@import "_global/colors";
 
 /*.footer {
   font-family: Arial, sans-serif;
@@ -34,7 +35,7 @@
 @define-mixin font2 {
   font-family: CircularStd-Black, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   text-transform: uppercase;
   letter-spacing: -0.23px;
   line-height: 28px;
@@ -42,7 +43,7 @@
 @define-mixin font3 {
   font-family: ProximaNova-Medium, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   letter-spacing: -0.23px;
   line-height: 28px;
   text-transform: capitalize;
@@ -50,7 +51,7 @@
 @define-mixin font4 {
   font-family: ProximaNova-Light, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   letter-spacing: -0.23px;
   line-height: 22px;
   text-transform: capitalize;
@@ -65,7 +66,7 @@
 .radiocom-footer {
   margin-top: 40px;
   width: 100%;
-  background: #1F055E;
+  background: $parisPurple;
   position: relative;
   text-align: center;
   padding: 40px 20px;
@@ -95,7 +96,7 @@
         width: 120px;
         margin-right: 40px;
         path.st1 {
-          fill: #000001;
+          fill: $blackRussian;
         }
       }
       .google-play-badge {
@@ -123,7 +124,7 @@
       text-transform: none;
       text-decoration: none;
       vertical-align: top;
-      color: #FFF;
+      color: $white;
     }
   }
 }
