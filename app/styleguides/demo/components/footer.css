@@ -25,12 +25,6 @@
   }
 }*/
 
-@font-face {
-  font-family: CircularStd-Black;
-  src: url('~/assets/fonts/circularstd-black.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
 @define-mixin font2 {
   font-family: CircularStd-Black, sans-serif;
   font-size: 14px;
@@ -40,7 +34,7 @@
   line-height: 28px;
 }
 @define-mixin font3 {
-  font-family: ProximaNova-Medium, sans-serif;
+  font-family: ProximaNova-Regular, sans-serif;
   font-size: 14px;
   color: #FFFFFF;
   letter-spacing: -0.23px;
