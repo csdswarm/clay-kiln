@@ -80,16 +80,43 @@
   padding: 0;
 }
 
-
-@define-mixin themed-tag-list $class, $color: $base {
-  .tags-list-item {
-    a.$(class) {
-    color: $color;
-  }
+.tags {
+  .tags-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 }
 
-@mixin themed-tag-list tags-link;
+/* Mixin to style tags based on theme colors */
+@define-mixin themed-tag-list $class, $color: $base {
+  .tags-list {
+    > .$(class) {
+      a {
+        margin: 0 10px 10px 0;
+        padding: 0px 6px;
+        border: 2px solid $color;
+        font-family: CircularStd-Medium;
+        font-size: 14px;
+        letter-spacing: -0.23px;
+        line-height: 24px;
+        text-transform: capitalize;
+        color: $color;
+
+        &:after {
+          display: none;
+        }
+
+        &:hover {
+          background: $color;
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+@mixin themed-tag-list tags-list-item;
 @mixin themed-tag-list entertainment, $entertainment;
 @mixin themed-tag-list news, $news;
 @mixin themed-tag-list sports, $sports;

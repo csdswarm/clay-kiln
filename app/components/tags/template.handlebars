@@ -7,8 +7,8 @@
       {{~#each items as |tag| ~}}
         {{~#unless tag.invisible ~}}
           {{ set 'encodedTag' (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "%2F" "/") }}
-          <li class="tags-list-item">
-            <a aria-label="More articles tagged {{ tag.text }}" href="//{{ @root.locals.site.host }}/tags{{ if (compare @root.locals.site.path '/strategist') @root.locals.site.path }}/{{ encodedTag }}/"
+          <li class="tags-list-item {{ tag.text }}">
+            <a aria-label="More articles tagged" href="//{{ @root.locals.site.host }}/tags{{ if (compare @root.locals.site.path '/strategist') @root.locals.site.path }}/{{ encodedTag }}/"
               class="tags-link {{ tag.text }}{{~#ifAll (compare (subtract @index ../items.invisibleTagsCount) '>' 4) (compare (subtract ../items.length ../items.invisibleTagsCount) '>' 5)}} hidden{{/ifAll~}}"
               >{{ tag.text }}</a>
           </li>
