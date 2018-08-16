@@ -1,4 +1,6 @@
-/* stylelint-disable */ 
+@import "_global/mixins";
+
+/* stylelint-disable */
 .alert {
   border: 1px solid transparent;
   border-radius: 4px;
@@ -405,7 +407,7 @@
   }
 
   .article header h1 {
-    font-size: 34px;
+    @mixin em 34;
     line-height: 38px;
   }
 }
@@ -418,7 +420,7 @@
   }
 
   .article header h1 {
-    font-size: 34px;
+    @mixin em 34;
     line-height: 38px;
   }
 }
