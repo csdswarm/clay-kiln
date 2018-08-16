@@ -1,39 +1,114 @@
 _description: |
-  Simplified version of `global-footer`.
+  Global footer
 
 _confirmRemoval: true
 
-socialEnabled:
-  _label: Enable Social Media Links
+socialButtons:
+  _label: Social Buttons
   _has:
-    -
-      fn: checkbox-group
-      options:
-        -
-          name: Newsletters
-          value: newsletters
-        -
-          name: Facebook
-          value: facebook
-        -
-          name: Twitter
-          value: twitter
-    - label
-    -
-      fn: description
-      value: Choose which social media links are displayed.
+    props:
+      -
+        prop: show
+        _has:
+          _label: Should social buttons be shown?
+          input: checkbox
+          help: By default, social buttons are added to footer. Uncheck to remove.
+      -
+        prop: buttons
+        _has:
+          _label: Social buttons included
+          input: checkbox-group
+          options:
+            - name: Facebook
+              value: facebook
+            - name: Twitter
+              value: twitter
+            - name: Youtube
+              value: youtube
+            - name: Instagram
+              value: instagram
+            - name: Facebook
+              value: facebook
+          help: By default, facebook, twitter, youtube and instagram are included in the footer. Uncheck these if you don't want any of these social buttons to appear.
 
-services:
-  _label: Media Services
+appBadges:
+  _label: App Badges
+  _has:
+    props:
+      -
+        prop: show
+        _has:
+          _label: Should app download badges be shown?
+          input: checkbox
+          help: By default, app badges are added to footer. Uncheck to remove.
+      -
+        prop: buttons
+        _has:
+          _label: App badges included
+          input: checkbox-group
+          options:
+            - name: App Store Badge
+              value: app-store-badge
+            - name: Google Play Badge
+              value: google-play-badge
+          help: By default, app store badge and google play badge are included in the footer. Uncheck these if you don't want any of these app badges to appear.
+
+links:
+  _label: Footer Links
   _placeholder:
-    height: 30px
-    text: Services
-  _componentList:
-    min: 1
-    include:
-      - follow
+    text: Links
+    height: 100
+  _has:
+    input: complex-list
+    validate:
+      required: false
+    props:
+      -
+        prop: text
+        _label: Category Label
+        _has:
+          input: text
+          enforceMaxlength: true
+          validate:
+            required: true
+            max: 40
+            maxMessage: This field must be 40 or fewer characters long
+      -
+        prop: list
+        _label: Category's Links
+        _has:
+          input: complex-list
+          validate:
+            required: false
+          props:
+            -
+              prop: text
+              _label: Link Text
+              _has:
+                input: text
+                enforceMaxlength: true
+                validate:
+                  required: true
+                  max: 40
+                  maxMessage: This field must be 40 or fewer characters long
+            -
+              prop: url
+              _label: Link Url
+              _has:
+                input: text
+                type: url
+                validate:
+                  required: true
+            -
+              prop: newtab
+              _label: Open in new tab
+              _has:
+                input: checkbox
 
 _groups:
-  settings:
+  footer-settings:
+    _label: Footer Settings
     fields:
-      - socialEnabled
+      - socialButtons
+      - appBadges
+      - links
