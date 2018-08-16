@@ -75,9 +75,6 @@
       width: 100%;
       height: auto;
       vertical-align: -webkit-baseline-middle;
-      .st0 {
-        fill: $white;
-      }
     }
   }
   .radiocom-nav__category-button {
@@ -134,13 +131,19 @@
       vertical-align: middle;
       height: 30px;
       width: 30px;
-      margin: 0 20px 0 70px;
-      img, svg {
+      margin: 0 20px 0 42px;
+      div, img, svg {
         width: 100%;
         height: auto;
       }
+      .inactive {
+        display: none;
+      }
+      .active {
+        display: block;
+      }
       @mixin large-screen {
-        margin: 0 20px 0 37px;
+        margin: 0 20px 0 9px;
       }
       @mixin medium-screen {
         height: 24px;
@@ -155,9 +158,15 @@
       vertical-align: middle;
       height: 30px;
       width: 25px;
-      img, svg {
+      div, img, svg {
         width: 100%;
         height: auto;
+      }
+      .inactive {
+        display: none;
+      }
+      .active {
+        display: block;
       }
       @mixin medium-screen {
         height: 20px;
@@ -323,32 +332,29 @@
       display: block;
       text-align: left;
       width: 1100px;
-      .find-station-link {
-        cursor: pointer;
-        white-space: nowrap;
-        display: inline-block;
-        float: left;
-        margin-top: 40px;
-        span {
-          font: 500 30px/1em Arial, Helvetica, sans-serif;
-          @mixin inline-block;
-        }
-      }
       .nav-drawer__sub-nav {
         @mixin inline-block;
-        &.nav-drawer__sub-nav--1-col {
-          width: 160px;
-        }
         &:first-of-type {
-          margin-right: 320px;
+          margin-right: 100px;
+          .nav-drawer__sub-nav--columns {
+            @mixin ul-columns 3, 80px;
+          }
+        }
+        &:nth-of-type(2) {
+          margin-right: 100px;
+          .nav-drawer__sub-nav--columns {
+            @mixin ul-columns 2, 80px;
+          }
+        }
+        &:nth-of-type(3) {
+          .nav-drawer__sub-nav--columns {
+            @mixin ul-columns 1, 80px;
+          }
         }
         ul {
-          &.nav-drawer__sub-nav--columns {
-            @mixin ul-columns;
-          }
           li {
             display: block;
-            width: 140px;
+            width: 100px;
             cursor: pointer;
             white-space: nowrap;
             h3 {
@@ -359,6 +365,12 @@
               line-height: 28px;
               text-transform: capitalize;
             }
+          }
+        }
+        h2.find-station-link {
+          span {
+            font: 500 30px/1em Arial, Helvetica, sans-serif;
+            @mixin inline-block;
           }
         }
       }
@@ -434,9 +446,6 @@
       &.nav-drawer__sub-nav--active ul {
         display: block;
       }
-      ul {
-        margin-bottom: 40px;
-      }
       h3 {
         font-family: ProximaNova-Regular, sans-serif;
         font-size: 14px;
@@ -490,8 +499,27 @@
 }
 
 @media only screen and (max-width: 1279px) {
-  .nav-drawer:not(.nav-drawer--mobile) .container .nav-drawer__sub-nav:first-of-type {
-    margin-right: 160px;
+  .nav-drawer:not(.nav-drawer--mobile) .container .nav-drawer__sub-nav {
+    ul li {
+      width: 80px;
+    }
+    &:first-of-type {
+      margin-right: 80px;
+      .nav-drawer__sub-nav--columns {
+        @mixin ul-columns 3, 80px;
+      }
+    }
+    &:nth-of-type(2) {
+      margin-right: 80px;
+      .nav-drawer__sub-nav--columns {
+        @mixin ul-columns 2, 80px;
+      }
+    }
+    &:nth-of-type(3) {
+      .nav-drawer__sub-nav--columns {
+        @mixin ul-columns 1, 80px;
+      }
+    }
   }
 }
 

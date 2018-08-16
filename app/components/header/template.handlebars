@@ -1,100 +1,4 @@
-{{!-- <div data-uri="{{ default _ref _self }}" class="header {{ variation }} header-{{ position }}" data-variation="{{ variation }}">
-  {{#compare ./variation 'header-redesign'}}
-    <div class="header-wrapper">
-      <button class="header-menu-button" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
-        {{{ read 'components/header/media/hamburger.svg' }}}
-        <span class="header-menu-button-text">Browse</span>
-      </button>
-      <div class="header-pane" tabindex="-1">
-        <button class="header-pane-close">
-          {{{ read 'components/header/media/close.svg' }}}
-        </button>
-        <nav class="header-pane-content">
-          {{#if primaryLinks.length}}
-          <ul class="header-pane-content-primary">
-            {{#each primaryLinks}}
-            <li class="header-pane-content-primary-item">
-              <a href="{{ url }}">{{ text }}</a>
-            </li>
-            {{/each}}
-          </ul>
-          {{/if}}
-          <div class="header-pane-content-social">
-            {{> component-list services }}
-            {{#if newsletterSignupUrl}}
-            <a href="{{ newsletterSignupUrl}}" class="newsletter-signup-link" target="_blank">
-              {{{ read 'components/header/media/newsletter.svg'}}}
-              <span class="newsletter-signup-link-text">Newsletter Signup</span>
-            </a>
-            {{/if}}
-          </div>
-          {{#if secondaryLinks.length}}
-            <ul class="header-pane-content-secondary">
-              {{#each secondaryLinks}}
-              <li class="header-pane-content-secondary-item">
-                <a href="{{ url }}">{{ text }}</a>
-              </li>
-              {{/each}}
-            </ul>
-          {{/if}}
-        </nav>
-      </div>
-      <div class="header-overlay"></div>
-    {{/compare}}
-    <div class="logo-wrapper">
-      <a class="logo" href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
-      {{#if hasStrongSiteName}}
-        <h1 class="site-name">{{ @root.locals.site.name }}</h1>
-      {{else}}
-        <span class="site-name">{{ @root.locals.site.name }}</span>
-      {{/if}}
-      {{{ read (concat 'public/media/sites/' @root.locals.site.slug '/logo.svg') }}}
-      {{#if tagline}}
-        <span class="tagline" data-editable="tagline">{{{ perWordClasses tagline perLetter=false }}}</span>
-      {{/if}}
-      </a>
-    </div>
-
-    {{#if search}}
-      <div class="header-search">
-        {{> search search }}
-      </div>
-    {{/if}}
-
-  {{#compare ./variation 'header-redesign'}}
-  </div>
-  {{/compare}}
-
-  {{#compare ./variation 'header'}}
-  <div data-editable="services" class="follow-list {{ if newsletter 'newsletter' }}">
-    {{> component-list services }}
-  </div>
-  <button class="nav-mobile" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
-    {{{ read 'components/header/media/menu-icon.svg' }}}
-  </button>
-  <nav class="primary-nav" aria-label="New York Magazine sites" id="primary-nav">
-    <ul class="sites">
-      <li class="site-list"><a class="nav-sites" href="//nymag.com/">NYMag.com</a></li>
-      <li class="site-list"><a class="nav-sites" href="//nymag.com/daily/intelligencer/">Daily Intelligencer</a></li>
-      <li class="site-list"><a class="nav-sites" href="//www.vulture.com">Vulture</a></li>
-      <li class="site-list"><a class="nav-sites" href="//www.thecut.com">The Cut</a></li>
-      <li class="site-list"><a class="nav-sites" href="//nymag.com/strategist/">The Strategist</a></li>
-      <li class="site-list"><a class="nav-sites" href="//nymag.com/selectall/">Select All</a></li>
-      <li class="site-list"><a class="nav-sites" href="//www.grubstreet.com/">Grub Street</a></li>
-      <li class="site-list"><a class="nav-sites" href="//bedfordandbowery.com/">Bedford &amp; Bowery</a></li>
-    </ul>
-    <div class="dropdown-section">
-      <div class="social {{#if hide-social}}hide-social{{/if}}">
-        {{> component-list services }}
-      </div>
-      <button class="end">Close menu</button>
-    </div>
-  </nav>
-  {{/compare}}
-</div>
- --}}
-
-<header class="radiocom-nav-placeholder" data-uri="{{ default _ref _self }}">
+<header class="radiocom-nav-placeholder" data-uri="{{ default _ref _self }}" data-editable="primaryLinks">
   <div class="radiocom-nav">
     <div class="container">
       <div id="hamburger" class="radiocom-nav__hamburger wrapper">
@@ -105,487 +9,88 @@
       --}}<button class="radiocom-nav__logo"><a href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
         {{{ read 'components/header/media/radiocom_hz.svg' }}}
       </a></button>{{!--
-      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--listen">
-        <button>
-              <a href="http://player.radio.com" target="_blank">
-                <h1>listen</h1>
-              </a>
+      --}}{{#if primaryLinks.length}}
+        {{#each primaryLinks}}
+          <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}}">
+            <button>
+              {{#if url}}
+                <a href="{{url}}">
+                  <h1>{{text}}</h1>
+                </a>
+              {{ else }}
+                <h1>{{text}}</h1>
+              {{/if}}
             </button>
-      </div>{{!--
-      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--entertainment">
-        <button>
-          <a href="/entertainment">
-            <h1>entertainment</h1>
-          </a>
-        </button>
-        <div class="nav-drawer nav-drawer--entertainment">
-          <div class="container">
-            <div class="nav-drawer__sub-nav">
-              <h2>categories</h2>
-              <ul class="nav-drawer__sub-nav--columns">
-                <li>
-                  <a href="/vertical/alternative">
-                    <h3 title="/vertical/alternative">alternative</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/vertical/pop">
-                    <h3 title="/vertical/pop">pop</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/vertical/country">
-                    <h3 title="/vertical/country">country</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/vertical/urban">
-                    <h3 title="/vertical/urban">urban</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/tag/GRAMMY-awards">
-                    <h3 title="/tag/GRAMMY-awards">GRAMMYs</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/tag/BET-awards">
-                    <h3 title="/tag/BET-awards">BET awards</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/tag/BTS">
-                    <h3 title="/tag/BTS">BTS</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/tag/in-Studio">
-                    <h3 title="/tag/in-Studio">in-Studio</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/search/node/video">
-                    <h3 title="/search/node/video">video</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/search/node/audio">
-                    <h3 title="/search/node/audio">audio</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/search/node/galleries">
-                    <h3 title="/search/node/galleries">galleries</h3>
-                  </a>
-                </li>
-              </ul>
-            </div>{{!--
-            --}}<div class="nav-drawer__sub-nav nav-drawer__sub-nav--1-col">
-              <h2>local stations</h2>
-              <ul>
-                <li>
-                  <a target="_blank" href="http://wcbsfm.radio.com/">
-                    <h3 title="http://wcbsfm.radio.com/">WCBS-FM</h3>
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" href="http://alt923.radio.com/">
-                    <h3 title="http://alt923.radio.com/">ALT 92.3</h3>
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" href="https://new1027.radio.com/">
-                    <h3 title="https://new1027.radio.com/">WNEW 102.7</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="http://player.radio.com/station-directory/music" target="_blank">
-                    <h2 class="find-station-link">Find a Station <span>&#8227</span></h2>
-                  </a>
-                </li>
-              </ul>
-            </div>
+            {{#if list.length}}
+              <div class="nav-drawer nav-drawer--{{text}}">
+                <div class="container">
+                  {{#each list as |subnav| }}
+                    <div class="nav-drawer__sub-nav">
+                      {{#if subnav.list}}
+                        <h2>{{subnav.text}}</h2>
+                        <ul class="nav-drawer__sub-nav--columns">
+                          {{#each subnav.list as |subnavLink| }}
+                            <li>
+                              <a href="{{subnavLink.url}}">
+                                <h3 title="{{subnavLink.url}}">{{subnavLink.text}}</h3>
+                              </a>
+                            </li>
+                          {{/each}}
+                        </ul>
+                      {{ else }}
+                        {{#if subnav.url}}
+                          <a href="{{subnav.url}}" target="_blank">
+                            <h2 class="{{#if (compare subnav.text 'find a station')}}find-station-link{{/if}}">{{subnav.text}}{{#if (compare subnav.text 'find a station')}} <span>&#8227</span>{{/if}}</h2>
+                          </a>
+                        {{ else }}
+                          <h2>{{subnav.text}}</h2>
+                        {{/if}}
+                      {{/if}}
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            {{/if}}
           </div>
-        </div>
-      </div>{{!--
-      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--news">
-        <button>
-          <a href="/news">
-            <h1>news</h1>
-          </a>
-        </button>
-        <div class="nav-drawer nav-drawer--news">
-          <div class="container">
-            <div class="nav-drawer__sub-nav">
-              <h2>categories</h2>
-              <ul class="nav-drawer__sub-nav--columns">
-                <li>
-                  <a href="/categories/heartwarming">
-                    <h3 title="/categories/heartwarming">human interest</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/catgeories/must-see">
-                    <h3 title="/catgeories/must-see">conversation starters</h3>
-                  </a>
-                </li>
-              </ul>
-            </div>{{!--
-            --}}<div class="nav-drawer__sub-nav nav-drawer__sub-nav--1-col">
-              <h2>local stations</h2>
-              <ul>
-                <li>
-                  <a target="_blank" href="http://1010wins.radio.com/">
-                    <h3 title="http://1010wins.radio.com/">1010 WINS</h3>
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" href="http://wcbs880.radio.com/">
-                    <h3 title="http://wcbs880.radio.com/">WCBS NewsRadio 880</h3>
-                  </a>
-                </li>
-                <li>
-                  <a target="_blank" href="http://kcbs.radio.com/">
-                    <h3 title="http://kcbs.radio.com/">KCBS Radio News</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="http://player.radio.com/station-directory/newstalk" target="_blank">
-                    <h2 class="find-station-link">Find a Station <span>&#8227</span></h2>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>{{!--
-      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--sports">
-        <button>
-          <a href="/sports">
-            <h1>sports</h1>
-          </a>
-        </button>
-        <div class="nav-drawer nav-drawer--sports">
-          <div class="container">
-            <div class="nav-drawer__sub-nav">
-              <h2>local stations</h2>
-              <ul class="nav-drawer__sub-nav--columns">
-                <li>
-                  <a href="https://wfan.radio.com/">
-                    <h3 title="https://wfan.radio.com/">WFAN sports radio</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://weei.radio.com/">
-                    <h3 title="https://weei.radio.com/">WEEI 93.7</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://94wip.radio.com/">
-                    <h3 title="https://94wip.radio.com/">94 WIP</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://wgr550.radio.com/">
-                    <h3 title="https://wgr550.radio.com/">WGR 550</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://670thescore.radio.com/">
-                    <h3 title="https://670thescore.radio.com/">670 the score</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="https://cbssports.radio.com/">
-                    <h3 title="https://cbssports.radio.com/">CBS sports radio</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="http://player.radio.com/station-directory/newstalk" target="_blank">
-                    <h2 class="find-station-link">Find a Station <span>&#8227</span></h2>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>{{!--
-      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--podcasts">
-        <button>
-              <a href="/audio">
-                <h1>podcasts</h1>
-              </a>
-            </button>
-        <div class="nav-drawer nav-drawer--podcasts">
-          <div class="container">
-            <div class="nav-drawer__sub-nav">
-              <h2>categories</h2>
-              <ul class="nav-drawer__sub-nav--columns">
-                <li>
-                  <a href="/audio/categories/business-tech">
-                    <h3 title="/audio/categories/business-tech">business</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/category/comedy">
-                    <h3 title="/audio/category/comedy">comedy</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/category/games-and-hobbies">
-                    <h3 title="/audio/category/games-and-hobbies">games and hobbies</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/category/health">
-                    <h3 title="/audio/category/health">health</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/category/news-and-politics">
-                    <h3 title="/audio/category/news-and-politics">news and politics</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/category/society-and-culture">
-                    <h3 title="/audio/category/society-and-culture">society and culture</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/category/sports-and-recreation">
-                    <h3 title="/audio/category/sports-and-recreation">sports and recreation</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/categories/business-tech">
-                    <h3 title="/audio/categories/business-tech">technology</h3>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>{{!--
-      --}}<div class="radiocom-nav__category-button radiocom-nav__category-button--more">
-        <button>
-          <a href="https://radio.com/apps" target="_blank">
-            <h1>more</h1>
-          </a>
-        </button>
-        <div class="nav-drawer nav-drawer--podcasts">
-          <div class="container">
-            <div class="nav-drawer__sub-nav">
-              <h2>categories</h2>
-              <ul class="nav-drawer__sub-nav--columns">
-                <li>
-                  <a href="/audio/categories/business-tech">
-                    <h3 title="/audio/categories/business-tech">example link</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/category/comedy">
-                    <h3 title="/audio/category/comedy">example link</h3>
-                  </a>
-                </li>
-                <li>
-                  <a href="/audio/category/games-and-hobbies">
-                    <h3 title="/audio/category/games-and-hobbies">example link</h3>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>{{!--
+        {{/each}}
+      {{/if}}{{!--
       --}}<div class="radiocom-nav__container--right">
-        <button class="account-btn">
-          {{{ read 'components/header/media/log-in.svg' }}}
+        <button class="account-btn" id="account-btn">
+          <div class="active default">{{{ read 'components/header/media/log-in.svg' }}}</div>
+          <div class="inactive hover">{{{ read 'components/header/media/log-in_hover.svg' }}}</div>
         </button>{{!--
-        --}}<button class="search-btn">
-          {{{ read 'components/header/media/search.svg' }}}
+        --}}<button class="search-btn" id="search-btn">
+          <div class="active default">{{{ read 'components/header/media/search.svg' }}}</div>
+          <div class="inactive hover">{{{ read 'components/header/media/search_hover.svg' }}}</div>
         </button>
       </div>
       <div class="nav-drawer nav-drawer--mobile">
-        <div class="nav-drawer__sub-nav nav-drawer__listen">
-          <a href="http://player.radio.com" target="_blank">
-            <h2>Listen</h2>
-          </a>
-        </div>
-        <div class="nav-drawer__sub-nav nav-drawer__entertainment">
-          <h2>entertainment</h2>
-          <ul class="nav-drawer__sub-nav-links">
-            <li>
-              <a href="/vertical/alternative">
-                <h3 title="/vertical/alternative">alternative</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/vertical/pop">
-                <h3 title="/vertical/pop">pop</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/vertical/country">
-                <h3 title="/vertical/country">country</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/vertical/urban">
-                <h3 title="/vertical/urban">urban</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/tag/GRAMMY-awards">
-                <h3 title="/tag/GRAMMY-awards">GRAMMYs</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/tag/BET-awards">
-                <h3 title="/tag/BET-awards">BET awards</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/tag/BTS">
-                <h3 title="/tag/BTS">BTS</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/tag/in-Studio">
-                <h3 title="/tag/in-Studio">in-Studio</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/search/node/video">
-                <h3 title="/search/node/video">video</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/search/node/audio">
-                <h3 title="/search/node/audio">audio</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/search/node/galleries">
-                <h3 title="/search/node/galleries">galleries</h3>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="nav-drawer__sub-nav nav-drawer__news">
-          <h2>news</h2>
-          <ul class="nav-drawer__sub-nav-links">
-            <li>
-              <a href="/categories/heartwarming">
-                <h3 title="/categories/heartwarming">human interest</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/catgeories/must-see">
-                <h3 title="/catgeories/must-see">conversation starters</h3>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="nav-drawer__sub-nav nav-drawer__sports">
-          <h2>sports</h2>
-          <ul class="nav-drawer__sub-nav-links">
-            <li>
-              <a href="https://wfan.radio.com/">
-                <h3 title="https://wfan.radio.com/">WFAN sports radio</h3>
-              </a>
-            </li>
-            <li>
-              <a href="https://weei.radio.com/">
-                <h3 title="https://weei.radio.com/">WEEI 93.7</h3>
-              </a>
-            </li>
-            <li>
-              <a href="https://94wip.radio.com/">
-                <h3 title="https://94wip.radio.com/">94 WIP</h3>
-              </a>
-            </li>
-            <li>
-              <a href="https://wgr550.radio.com/">
-                <h3 title="https://wgr550.radio.com/">WGR 550</h3>
-              </a>
-            </li>
-            <li>
-              <a href="https://670thescore.radio.com/">
-                <h3 title="https://670thescore.radio.com/">670 the score</h3>
-              </a>
-            </li>
-            <li>
-              <a href="https://cbssports.radio.com/">
-                <h3 title="https://cbssports.radio.com/">CBS sports radio</h3>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="nav-drawer__sub-nav nav-drawer__podcasts">
-          <h2>podcasts</h2>
-          <ul class="nav-drawer__sub-nav-links">
-            <li>
-              <a href="/audio/categories/business-tech">
-                <h3 title="/audio/categories/business-tech">business</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/audio/category/comedy">
-                <h3 title="/audio/category/comedy">comedy</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/audio/category/games-and-hobbies">
-                <h3 title="/audio/category/games-and-hobbies">games and hobbies</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/audio/category/health">
-                <h3 title="/audio/category/health">health</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/audio/category/news-and-politics">
-                <h3 title="/audio/category/news-and-politics">news and politics</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/audio/category/society-and-culture">
-                <h3 title="/audio/category/society-and-culture">society and culture</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/audio/category/sports-and-recreation">
-                <h3 title="/audio/category/sports-and-recreation">sports and recreation</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/audio/categories/business-tech">
-                <h3 title="/audio/categories/business-tech">technology</h3>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="nav-drawer__sub-nav nav-drawer__more">
-          <h2>more</h2>
-          <ul class="nav-drawer__sub-nav-links">
-            <li>
-              <a href="/example-link">
-                <h3 title="example link">example link</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/example-link">
-                <h3 title="example link">example link</h3>
-              </a>
-            </li>
-            <li>
-              <a href="/example-link">
-                <h3 title="example link">example link</h3>
-              </a>
-            </li>
-          </ul>
-        </div>
+        {{#if primaryLinks.length}}
+          {{#each primaryLinks}}
+            <div class="nav-drawer__sub-nav nav-drawer__{{text}}">
+              {{#if (compare text 'listen')}}
+                <a href="{{url}}" target="_blank">
+                  <h2>{{text}}</h2>
+                </a>
+              {{ else }}
+                <h2>{{text}}</h2>
+                {{#if list.length}}
+                  <ul class="nav-drawer__sub-nav-links">
+                    {{#each list as |subnav|}}
+                      {{#each subnav.list as |link|}}
+                        <li>
+                          <a href="{{link.url}}">
+                            <h3 title="{{link.url}}">{{link.text}}</h3>
+                          </a>
+                        </li>
+                      {{/each}}
+                    {{/each}}
+                  </ul>
+                {{/if}}
+              {{/if}}
+            </div>
+          {{/each}}
+        {{/if}}
       </div>
     </div>
   </div>
