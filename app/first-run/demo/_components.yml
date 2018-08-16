@@ -38,148 +38,146 @@ _components:
   header:
     instances:
       default:
-        primaryLinks: [{
-          text: "listen",
-          url: "https://player.radio.com"
-        }, {
-          text: "entertainment",
-          url: "/entertainment",
-          list: [{
-            text: "categories",
-            list: [{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            }]
-          },{
-            text: "local stations",
-            list: [{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            }]
-          },{
-            text: "find a station",
-            url: "https://player.radio.com/stations-directory"
-          }]
-        }, {
-          text: "news",
-          url: "/news",
-          list: [{
-            text: "categories",
-            list: [{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            }]
-          }]
-        }, {
-          text: "sports",
-          url: "/sports",
-          list: [{
-            text: "categories",
-            list: [{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            }]
-          }]
-        }, {
-          text: "podcasts",
-          url: "/podcasts",
-          list: [{
-            text: "categories",
-            list: [{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            }]
-          }]
-        }, {
-          text: "more",
-          list: [{
-            text: "categories",
-            list: [{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            },{
-              text: "example link",
-              url: "/example link",
-            }]
-          }]
-        }]
-
-
+        headerLinks:
+          -
+            text: "listen"
+            url: "https://player.radio.com"
+          -
+            text: "entertainment"
+            url: "/entertainment"
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+              -
+                text: "local stations"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+              -
+                text: "find a station"
+                url: "https://player.radio.com/stations-directory"
+          -
+            text: "news"
+            url: "/news"
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "sports"
+            url: "/sports"
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "podcasts"
+            url: "/podcasts"
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "more"
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
   circulation:
     instances:
       new:
