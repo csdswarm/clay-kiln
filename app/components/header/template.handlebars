@@ -1,4 +1,4 @@
-<header class="radiocom-nav-placeholder" data-uri="{{ default _ref _self }}" data-editable="primaryLinks">
+<header class="radiocom-nav-placeholder" data-uri="{{ default _ref _self }}" data-editable="settings">
   <div class="radiocom-nav">
     <div class="container">
       <div id="hamburger" class="radiocom-nav__hamburger wrapper">
@@ -9,8 +9,8 @@
       --}}<button class="radiocom-nav__logo"><a href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
         {{{ read 'components/header/media/radiocom_hz.svg' }}}
       </a></button>{{!--
-      --}}{{#if primaryLinks.length}}
-        {{#each primaryLinks}}
+      --}}{{#if headerLinks.length}}
+        {{#each headerLinks}}
           <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}}">
             <button>
               {{#if url}}
@@ -65,8 +65,8 @@
         </button>
       </div>
       <div class="nav-drawer nav-drawer--mobile">
-        {{#if primaryLinks.length}}
-          {{#each primaryLinks}}
+        {{#if headerLinks.length}}
+          {{#each headerLinks}}
             <div class="nav-drawer__sub-nav nav-drawer__{{text}}">
               {{#if (compare text 'listen')}}
                 <a href="{{url}}" target="_blank">

@@ -2,7 +2,7 @@ _description: |
   This is the site header at the top of every page. It displays the site logo, navigational links, account button, and search button.
 _confirmRemoval: true
 
-primaryLinks:
+headerLinks:
   _label: Links
   _placeholder:
     text: Links
@@ -83,5 +83,6 @@ primaryLinks:
 
 _groups:
   settings:
+    _label: Header Links
     fields:
-      - primaryLinks
+      - headerLinks
