@@ -15,5 +15,6 @@ _components:
       pinterest: false
       tumblr: false
       email: false
+      link: false
       print: false
-      comment: true
+      comment: false

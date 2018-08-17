@@ -8,8 +8,10 @@ enabled:
     options:
       - facebook
       - twitter
-      - pinterest
-      - comment
+      # - pinterest
+      - email
+      - link
+      # - comment
     help: Choose which services are displayed
 
 url:
