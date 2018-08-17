@@ -10,7 +10,11 @@ const autoprefixer = require('autoprefixer'),
   nested = require('postcss-nested'),
   atImport = require('postcss-import'),
   simpleVars  = require('postcss-simple-vars'),
-  rename = require('gulp-rename');
+  rename = require('gulp-rename'),
+  postCssFunctions = require('../util/postcss-functions'),
+  functions = require('postcss-functions')({
+    functions: postCssFunctions
+  });
 
 function getVars() {
   return {
@@ -47,7 +51,8 @@ gulp.task('process-css', function () {
         mixins(),
         simpleVars(getVars()),
         nested(),
-        autoprefixer(prefixOptions)
+        autoprefixer(prefixOptions),
+        functions
       ]
     ))
     .pipe(cssmin())

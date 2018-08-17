@@ -8,8 +8,3 @@
   position: absolute;
   width: 1px;
 }
-
-$browser-context: 16;
-@define-mixin em $pixels, $context: $browser-context {
-  font-size: calc(calc($pixels/$context) * 1em);
-}
