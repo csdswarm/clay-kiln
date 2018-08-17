@@ -1,36 +1,6 @@
 @import "_global/mixins";
+@import "_global/colors";
 
-/*.footer {
-  font-family: Arial, sans-serif;
-  border-top: 2px solid #ccc;
-  max-width: 1000px;
-  margin: 20px auto 0;
-  padding: 2px 0 10px;
-  text-align: center;
-
-  .footer-social {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 0 10px;
-    padding: 10px 0 0;
-
-    a span {
-      @mixin hidden-content;
-    }
-  }
-
-  .footer-social-item + .footer-social-item {
-    margin: 0 0 0 10px;
-  }
-}*/
-
-@font-face {
-  font-family: CircularStd-Black;
-  src: url('~/assets/fonts/circularstd-black.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
 @define-mixin font2 {
   font-family: CircularStd-Black, sans-serif;
   font-size: 14px;
@@ -56,16 +26,11 @@
   text-transform: capitalize;
   text-align: center;
 }
-@define-mixin inline-block {
-  display: inline-block;
-  vertical-align: top;
-}
-
 
 .radiocom-footer {
   margin-top: 40px;
   width: 100%;
-  background: #1F055E;
+  background: $parisPurple;
   position: relative;
   text-align: center;
   padding: 40px 20px;
@@ -94,9 +59,6 @@
       .apple-app-store {
         width: 120px;
         margin-right: 40px;
-        path.st1 {
-          fill: #000001;
-        }
       }
       .google-play-badge {
         width: 135px;
@@ -123,7 +85,7 @@
       text-transform: none;
       text-decoration: none;
       vertical-align: top;
-      color: #FFF;
+      color: $white;
     }
   }
 }

@@ -37,13 +37,6 @@
   height: 60px;
   margin-bottom: 20px;
 }
-
-@media only screen and (max-width: 1023px) {
-  .radiocom-nav-placeholder {
-    height: 46px;
-  }
-}
-
 .radiocom-nav {
   background: $parisPurple;
   width: 100vw;
@@ -59,8 +52,56 @@
     height: 100%;
     width: 1100px;
   }
-  .radiocom-nav__hamburger {
+  .radiocom-nav__hamburger.wrapper {
     display: none;
+    position: relative;
+    vertical-align: top;
+    margin-right: 20px;
+    width: 20px;
+    height: 15px;
+    cursor: pointer;
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    .bar {
+      position: absolute;
+      top: 0;
+      left: 0px;
+      display: block;
+      font-size: 10px;
+      padding: 0;
+      -webkit-appearance: none;
+      color: $white;
+      width: 20px;
+      height: 3px;
+      border-radius: 7px;
+      background-color: white;
+      -webkit-transition: all 0.2s ease-in;
+      -webkit-transform: rotate(0deg);
+      &.bar-1.active {
+        top: 6px;
+        -webkit-transform: rotate(-135deg);
+        -webkit-transition: all 0.2s ease-in;
+      }
+      &.bar-2 {
+        top: 6px;
+        &.active {
+          right: 100px;
+          background-color: transparent;
+          -webkit-transition: all 0.2s ease-in;
+        }
+      }
+      &.bar-3 {
+        top: 12px;
+        &.active {
+          top: 6px;
+          -webkit-transform: rotate(135deg);
+          -webkit-transition: all 0.2s ease-in;
+        }
+      }
+    }
   }
   .radiocom-nav__logo {
     @mixin inline-block;
@@ -174,6 +215,156 @@
       }
     }
   }
+  .nav-drawer {
+    background: $purple;
+    position: fixed;
+    display: none;
+    top: 60px;
+    width: 100%;
+    left: 0;
+    padding: 50px;
+    color: $white;
+    cursor: default;
+    overflow: hidden;
+    &:not(.nav-drawer--mobile) {
+      justify-content: center;
+      .container {
+        display: block;
+        text-align: left;
+        width: 1100px;
+        .nav-drawer__sub-nav {
+          @mixin inline-block;
+          &:first-of-type {
+            margin-right: 100px;
+            .nav-drawer__sub-nav--columns {
+              @mixin ul-columns 3, 80px;
+            }
+          }
+          &:nth-of-type(2) {
+            margin-right: 100px;
+            .nav-drawer__sub-nav--columns {
+              @mixin ul-columns 2, 80px;
+            }
+          }
+          &:nth-of-type(3) {
+            .nav-drawer__sub-nav--columns {
+              @mixin ul-columns 1, 80px;
+            }
+          }
+          ul {
+            li {
+              display: block;
+              width: 100px;
+              cursor: pointer;
+              white-space: nowrap;
+              h3 {
+                font-family: ProximaNova-Regular, sans-serif;
+                font-size: 14px;
+                color: $white;
+                letter-spacing: -0.23px;
+                line-height: 28px;
+                text-transform: capitalize;
+              }
+            }
+          }
+          h2.find-station-link {
+            span {
+              font: 500 30px/1em Arial, Helvetica, sans-serif;
+              @mixin inline-block;
+            }
+          }
+        }
+      }
+    }
+    &.nav-drawer--active:not(.nav-drawer--mobile) {
+      display: flex;
+    }
+    &.nav-drawer--mobile:not(.nav-drawer--active) {
+      display: block;
+    }
+    &.nav-drawer--active.nav-drawer--mobile {
+      transform: translateX(0);
+    }
+    h2 {
+      font-family: CircularStd-Black, sans-serif;
+      font-size: 14px;
+      color: $white;
+      text-transform: uppercase;
+      letter-spacing: -0.23px;
+      line-height: 28px;
+      display: block;
+      text-align: left;
+    }
+    &.nav-drawer--mobile {
+      display: inline-block;
+      padding: 30px 0;
+      transform: translateX(-100%);
+      transition: all 100ms linear;
+      .nav-drawer__sub-nav {
+        margin: 0;
+        display: block;
+        a {
+          width: 100%;
+        }
+        &.nav-drawer__listen h2:hover,
+        &.nav-drawer__download h2:hover,
+        &.nav-drawer__more h2:hover {
+          background: $white;
+          color: $parisPurple;
+        }
+        &.nav-drawer__sub-nav--active.nav-drawer__entertainment h2,
+        &.nav-drawer__entertainment h2:hover {
+          background: $sunsetOrange;
+        }
+        &.nav-drawer__sub-nav--active.nav-drawer__news h2,
+        &.nav-drawer__news h2:hover {
+          background: $lightningYellow;
+        }
+        &.nav-drawer__sub-nav--active.nav-drawer__sports h2,
+        &.nav-drawer__sports h2:hover {
+          background: $azureRadience;
+        }
+        &.nav-drawer__sub-nav--active.nav-drawer__podcasts h2,
+        &.nav-drawer__podcasts h2:hover {
+          background: $robinsEgg;
+        }
+        h2 {
+          cursor: pointer;
+          text-align: left;
+          line-height: 30px;
+          display: inline-block;
+          width: 100%;
+        }
+        ul {
+          cursor: pointer;
+          text-align: left;
+          line-height: 30px;
+          display: inline-block;
+          width: 100%;
+          display: none;
+        }
+        &.nav-drawer__sub-nav--active ul {
+          display: block;
+        }
+        h3 {
+          font-family: ProximaNova-Regular, sans-serif;
+          font-size: 14px;
+          color: $white;
+          letter-spacing: -0.23px;
+          line-height: 28px;
+          text-transform: capitalize;
+        }
+        li {
+          display: block;
+        }
+      }
+      .find-station-link {
+        cursor: pointer;
+        line-height: 30px;
+        display: block;
+      }
+    }
+  }
 }
 .kiln-wrapper.view-mode {
   top: 46px !important;
@@ -184,29 +375,85 @@
   }
 }
 
-@media only screen and (max-width: 1023px) {
-  .radiocom-nav {
-    height: 46px;
-  }
-}
-
-@media only screen and (max-width: 1279px) {
+@mixin large-screen {
   .radiocom-nav .container {
     width: 940px;
   }
-}
-
-@media only screen and (max-width: 1023px) {
-  .radiocom-nav .container {
-    width: 728px;
-    text-align: left;
+  .radiocom-nav .radiocom-nav__logo {
+    width: 220px;
+    margin: 0 15px 0 0;
+  }
+  .radiocom-nav .radiocom-nav__category-button {
+    padding: 0 15px;
+  }
+  .nav-drawer:not(.nav-drawer--mobile) .container {
+    width: 940px;
+    .nav-drawer__sub-nav {
+      ul li {
+        width: 80px;
+      }
+      &:first-of-type {
+        margin-right: 80px;
+        .nav-drawer__sub-nav--columns {
+          @mixin ul-columns 3, 80px;
+        }
+      }
+      &:nth-of-type(2) {
+        margin-right: 80px;
+        .nav-drawer__sub-nav--columns {
+          @mixin ul-columns 2, 80px;
+        }
+      }
+      &:nth-of-type(3) {
+        .nav-drawer__sub-nav--columns {
+          @mixin ul-columns 1, 80px;
+        }
+      }
+    }
   }
 }
 
-@media only screen and (max-width: 480px) {
-  .radiocom-nav .container {
-    width: 440px;
-    text-align: center;
+@mixin medium-screen {
+  .radiocom-nav-placeholder {
+    height: 46px;
+  }
+  .radiocom-nav {
+    height: 46px;
+    .container {
+      width: 728px;
+      text-align: left;
+      .radiocom-nav__hamburger {
+        display: inline-block;
+      }
+      .radiocom-nav__logo {
+        width: 180px;
+      }
+      .radiocom-nav__category-button {
+        padding: 0;
+        background: transparent;
+        button {
+          display: none;
+        }
+      }
+      .nav-drawer {
+        height: calc(100vh - 46px);
+        top: 46px;
+        width: calc((100vw - 728px) / 2 + 20px + 20px + 180px);
+        &:not(.nav-drawer--mobile) .container {
+          width: 728px;
+        }
+        &.nav-drawer--mobile {
+          .nav-drawer__sub-nav {
+            h2, ul {
+              padding-left: calc((100vw - 728px) / 2);
+            }
+          }
+          .find-station-link {
+            padding-left: calc((100vw - 728px) / 2);
+          }
+        }
+      }
+    }
   }
 }
 
@@ -214,361 +461,49 @@
   .radiocom-nav .container {
     width: 100%;
     padding: 0 30px;
-  }
-}
-
-@media only screen and (max-width: 1023px) {
-  .radiocom-nav .radiocom-nav__hamburger {
-    display: inline-block;
-  }
-}
-
-@media only screen and (max-width: 1279px) {
-  .radiocom-nav .radiocom-nav__logo {
-    width: 220px;
-    margin: 0 15px 0 0;
-  }
-}
-
-@media only screen and (max-width: 1023px) {
-  .radiocom-nav .radiocom-nav__logo {
-    width: 180px;
-  }
-}
-
-@media only screen and (max-width: 1279px) {
-  .radiocom-nav .radiocom-nav__category-button {
-    padding: 0 15px;
-  }
-}
-
-@media only screen and (max-width: 1023px) {
-  .radiocom-nav .radiocom-nav__category-button {
-    padding: 0;
-    background: transparent;
-    button {
-      display: none;
-    }
-  }
-}
-
-.radiocom-nav__hamburger.wrapper {
-  position: relative;
-  vertical-align: top;
-  margin-right: 20px;
-  width: 20px;
-  height: 15px;
-  cursor: pointer;
-  position: relative;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
-
-@media only screen and (max-width: 480px) {
-  .radiocom-nav__hamburger.wrapper {
-    float: left;
-  }
-}
-
-.bar {
-  position: absolute;
-  top: 0;
-  left: 0px;
-  display: block;
-  font-size: 10px;
-  padding: 0;
-  -webkit-appearance: none;
-  color: $white;
-  width: 20px;
-  height: 3px;
-  border-radius: 7px;
-  background-color: white;
-  -webkit-transition: all 0.2s ease-in;
-  -webkit-transform: rotate(0deg);
-}
-
-.bar-2 {
-  top: 6px;
-}
-
-.bar-3 {
-  top: 12px;
-}
-
-.bar-1.active {
-  top: 6px;
-  -webkit-transform: rotate(-135deg);
-  -webkit-transition: all 0.2s ease-in;
-}
-
-.bar-2.active {
-  right: 100px;
-  background-color: transparent;
-  -webkit-transition: all 0.2s ease-in;
-}
-
-.bar-3.active {
-  top: 6px;
-  -webkit-transform: rotate(135deg);
-  -webkit-transition: all 0.2s ease-in;
-}
-
-.nav-drawer {
-  background: $purple;
-  position: fixed;
-  display: none;
-  top: 60px;
-  width: 100%;
-  left: 0;
-  padding: 50px;
-  color: $white;
-  cursor: default;
-  overflow: hidden;
-  &:not(.nav-drawer--mobile) {
-    justify-content: center;
-    .container {
-      display: block;
-      text-align: left;
-      width: 1100px;
-      .nav-drawer__sub-nav {
-        @mixin inline-block;
-        &:first-of-type {
-          margin-right: 100px;
-          .nav-drawer__sub-nav--columns {
-            @mixin ul-columns 3, 80px;
+    .nav-drawer {
+      &.nav-drawer--mobile {
+        width: calc(30px + 20px + 20px + 180px);
+        .nav-drawer__sub-nav {
+          h2, ul {
+            padding-left: 30px;
           }
         }
-        &:nth-of-type(2) {
-          margin-right: 100px;
-          .nav-drawer__sub-nav--columns {
-            @mixin ul-columns 2, 80px;
-          }
-        }
-        &:nth-of-type(3) {
-          .nav-drawer__sub-nav--columns {
-            @mixin ul-columns 1, 80px;
-          }
-        }
-        ul {
-          li {
-            display: block;
-            width: 100px;
-            cursor: pointer;
-            white-space: nowrap;
-            h3 {
-              font-family: ProximaNova-Regular, sans-serif;
-              font-size: 14px;
-              color: $white;
-              letter-spacing: -0.23px;
-              line-height: 28px;
-              text-transform: capitalize;
-            }
-          }
-        }
-        h2.find-station-link {
-          span {
-            font: 500 30px/1em Arial, Helvetica, sans-serif;
-            @mixin inline-block;
-          }
+        .find-station-link {
+          padding-left: 30px;
         }
       }
     }
   }
-  &.nav-drawer--active:not(.nav-drawer--mobile) {
-    display: flex;
-  }
-  &.nav-drawer--mobile:not(.nav-drawer--active) {
-    display: block;
-  }
-  &.nav-drawer--active.nav-drawer--mobile {
-    transform: translateX(0);
-  }
-  h2 {
-    font-family: CircularStd-Black, sans-serif;
-    font-size: 14px;
-    color: $white;
-    text-transform: uppercase;
-    letter-spacing: -0.23px;
-    line-height: 28px;
-    display: block;
-    text-align: left;
-  }
-  &.nav-drawer--mobile {
-    display: inline-block;
-    padding: 30px 0;
-    transform: translateX(-100%);
-    transition: all 100ms linear;
-    .nav-drawer__sub-nav {
-      margin: 0;
-      display: block;
-      a {
-        width: 100%;
-      }
-      &.nav-drawer__listen h2:hover,
-      &.nav-drawer__download h2:hover,
-      &.nav-drawer__more h2:hover {
-        background: $white;
-        color: $parisPurple;
-      }
-      &.nav-drawer__sub-nav--active.nav-drawer__entertainment h2,
-      &.nav-drawer__entertainment h2:hover {
-        background: $sunsetOrange;
-      }
-      &.nav-drawer__sub-nav--active.nav-drawer__news h2,
-      &.nav-drawer__news h2:hover {
-        background: $lightningYellow;
-      }
-      &.nav-drawer__sub-nav--active.nav-drawer__sports h2,
-      &.nav-drawer__sports h2:hover {
-        background: $azureRadience;
-      }
-      &.nav-drawer__sub-nav--active.nav-drawer__podcasts h2,
-      &.nav-drawer__podcasts h2:hover {
-        background: $robinsEgg;
-      }
-      h2 {
-        cursor: pointer;
-        text-align: left;
-        line-height: 30px;
-        display: inline-block;
-        width: 100%;
-      }
-      ul {
-        cursor: pointer;
-        text-align: left;
-        line-height: 30px;
-        display: inline-block;
-        width: 100%;
-        display: none;
-      }
-      &.nav-drawer__sub-nav--active ul {
-        display: block;
-      }
-      h3 {
-        font-family: ProximaNova-Regular, sans-serif;
-        font-size: 14px;
-        color: $white;
-        letter-spacing: -0.23px;
-        line-height: 28px;
-        text-transform: capitalize;
-      }
-      li {
-        display: block;
-      }
-    }
-    .find-station-link {
-      cursor: pointer;
-      line-height: 30px;
-      display: block;
-    }
-  }
 }
 
-@media only screen and (max-width: 1023px) {
-  .nav-drawer {
-    height: calc(100vh - 46px);
-    top: 46px;
-    width: calc((100vw - 728px) / 2 + 20px + 20px + 180px);
-  }
-}
-
-@media only screen and (max-width: 788px) {
-  .nav-drawer {
-    width: calc(30px + 20px + 20px + 180px);
-  }
-}
-
-@media only screen and (max-width: 480px) {
-  .nav-drawer {
-    width: 100%;
-  }
-}
-
-@media only screen and (max-width: 1279px) {
-  .nav-drawer:not(.nav-drawer--mobile) .container {
-    width: 940px;
-  }
-}
-
-@media only screen and (max-width: 1023px) {
-  .nav-drawer:not(.nav-drawer--mobile) .container {
-    width: 728px;
-  }
-}
-
-@media only screen and (max-width: 1279px) {
-  .nav-drawer:not(.nav-drawer--mobile) .container .nav-drawer__sub-nav {
-    ul li {
-      width: 80px;
-    }
-    &:first-of-type {
-      margin-right: 80px;
-      .nav-drawer__sub-nav--columns {
-        @mixin ul-columns 3, 80px;
-      }
-    }
-    &:nth-of-type(2) {
-      margin-right: 80px;
-      .nav-drawer__sub-nav--columns {
-        @mixin ul-columns 2, 80px;
-      }
-    }
-    &:nth-of-type(3) {
-      .nav-drawer__sub-nav--columns {
-        @mixin ul-columns 1, 80px;
-      }
-    }
-  }
-}
-
-@media only screen and (max-width: 1023px) {
-  .nav-drawer.nav-drawer--mobile .nav-drawer__sub-nav {
-    h2, ul {
-      padding-left: calc((100vw - 728px) / 2);
-    }
-  }
-}
-
-@media only screen and (max-width: 788px) {
-  .nav-drawer.nav-drawer--mobile .nav-drawer__sub-nav {
-    h2, ul {
-      padding-left: 30px;
-    }
-  }
-}
-
-@media only screen and (max-width: 480px) {
-  .nav-drawer.nav-drawer--mobile .nav-drawer__sub-nav {
-    h2, ul {
-      text-align: center;
-      margin: 0;
-      padding-left: 0;
-    }
-    h2 li, ul li {
-      width: auto;
-    }
-  }
-}
-
-@media only screen and (max-width: 1023px) {
-  .nav-drawer.nav-drawer--mobile .find-station-link {
-    padding-left: calc((100vw - 728px) / 2);
-  }
-}
-
-@media only screen and (max-width: 788px) {
-  .nav-drawer.nav-drawer--mobile .find-station-link {
-    padding-left: 30px;
-  }
-}
-
-@media only screen and (max-width: 480px) {
-  .nav-drawer.nav-drawer--mobile .find-station-link {
+@mixin medium-small-screen {
+  .radiocom-nav .container {
+    width: 440px;
     text-align: center;
-    margin: 0;
-    padding-left: 0;
-    width: auto;
+    .radiocom-nav__hamburger.wrapper {
+      float: left;
+    }
+    .nav-drawer {
+      &.nav-drawer--mobile {
+        width: 100%;
+        .nav-drawer__sub-nav {
+          h2, ul {
+            text-align: center;
+            margin: 0;
+            padding-left: 0;
+          }
+          h2 li, ul li {
+            width: auto;
+          }
+        }
+        .find-station-link {
+          text-align: center;
+          margin: 0;
+          padding-left: 0;
+          width: auto;
+        }
+      }
+    }
   }
 }
