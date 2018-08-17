@@ -1,56 +1,60 @@
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||||||||||||| Variables |||||||||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 const navSections = document.getElementsByClassName("radiocom-nav__category-button")
 const mobileNavSections = document.getElementsByClassName("nav-drawer__sub-nav")
 const mutableImages = ["account-btn", "search-btn"]
 let isMobile = false
 let activeHamburger = false
 
-
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||||||||||||| Functions |||||||||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-const toggleHamburger = function(toggleHamburgerOnly) {
+/**
+ * Toggle hamburger animation & mobile nav on click of hamburger
+ * @function toggleHamburger
+ * @param {boolean} toggleHamburgerOnly - Toggles hamburger without toggling mobile nav.
+ */
+const toggleHamburger = toggleHamburgerOnly => {
+  let bars = document.getElementsByClassName("bar")
+  let navDrawer = document.getElementsByClassName("nav-drawer--mobile")[0]
+  let activeHamburgerClass = "active"
+  let activeMobileNavClass = "nav-drawer--active"
   isMobile =
     document.getElementsByClassName("radiocom-nav-placeholder")[0].offsetWidth >
     1023
       ? false
       : true;
   activeHamburger = !activeHamburger
-  let bars = document.getElementsByClassName("bar")
-  let navDrawer = document.getElementsByClassName("nav-drawer--mobile")[0]
   if (activeHamburger && isMobile) {
-    for (let bar of bars) {
-      bar.classList.add("active")
-    }
-    navDrawer.classList.add("nav-drawer--active")
+    // Open mobile nav drawer & change hamburger styling
+    for (let bar of bars) bar.classList.add(activeHamburgerClass)
+    navDrawer.classList.add(activeMobileNavClass)
   } else {
-    for (let bar of bars) {
-      bar.classList.remove("active")
-    }
-    navDrawer.classList.remove("nav-drawer--active")
+    // Close mobile nav drawer & change hamburger styling
+    for (let bar of bars) bar.classList.remove(activeHamburgerClass)
+    navDrawer.classList.remove(activeMobileNavClass)
   }
-  if (!toggleHamburgerOnly) toggleDrawer(navDrawer, activeHamburger, true)
+  // Toggle Mobile Nav Drawer
+  if (!toggleHamburgerOnly) toggleNavDrawer(navDrawer, activeHamburger, true)
 }
-const toggleDrawer = function(event, show) {
+
+/**
+ * Toggle desktop or mobile nav drawer/dropdown.
+ * @function toggleNavDrawer
+ * @param {Object} event - Event from event listener.
+ * @param {boolean} show - Open or close drawer/dropdown.
+ */
+const toggleNavDrawer = (event, show) => {
   let navDrawer
+  let classes = ["nav-drawer--sub-nav-active", "nav-drawer--active"]
+  let navDrawers = document.getElementsByClassName("nav-drawer")
   isMobile =
     document.getElementsByClassName("radiocom-nav-placeholder")[0].offsetWidth >
     1023
       ? false
       : true;
-  let classes = ["nav-drawer--sub-nav-active", "nav-drawer--active"]
-  let navDrawers = document.getElementsByClassName("nav-drawer")
-  for (let drawer of navDrawers) {
-    drawer.classList.remove(...classes)
-  }
+  for (let drawer of navDrawers) drawer.classList.remove(...classes)
   if (!isMobile) {
+    // Toggle desktop nav drawer
     navDrawer = event.currentTarget.querySelector(".nav-drawer")
-    if (show && ["listen", "download"].indexOf(navDrawer.classList[1]) == -1) {
-      navDrawer.classList.add(...classes)
-    }
+    if (show) navDrawer.classList.add(...classes)
   } else {
+    // Toggle mobile nav drawer
     navDrawer = document.getElementsByClassName("nav-drawer--mobile")[0]
     if (show) {
       navDrawer.classList.add(...classes)
@@ -59,19 +63,33 @@ const toggleDrawer = function(event, show) {
     }
   }
 }
-const setCategory = function(event) {
-  // Add active class to section
+
+/**
+ * Toggle dropdown for nav categories on mobile on click of nav category
+ * @function toggleMobileCategoryDropdown
+ * @param {Object} event - Event from event listener.
+ */
+const toggleMobileCategoryDropdown = event => {
   const activeMobileClass = "nav-drawer__sub-nav--active";
   if (event.currentTarget.classList.contains(activeMobileClass)) {
+    // Close dropdown of clicked category if dropdown already open
     event.currentTarget.classList.remove(activeMobileClass)
   } else {
+    // Close dropdown of all categories
     for (let navSection of mobileNavSections) {
       navSection.classList.remove(activeMobileClass)
     }
+    // Open dropdown of clicked category
     event.currentTarget.classList.add(activeMobileClass)
   }
 }
-const toggleImage = function(event) {
+
+/**
+ * Toggle image source for those images that change on hover.
+ * @function toggleImage
+ * @param {Object} event - Event from event listener.
+ */
+const toggleImage = event => {
   const defaultImage = event.currentTarget.querySelector(".default")
   const hoveredImage = event.currentTarget.querySelector(".hover")
   if (event.type == 'mouseover') {
@@ -87,45 +105,43 @@ const toggleImage = function(event) {
   }
 }
 
-
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||||||||||| Event Listeners |||||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-document.getElementById("hamburger").addEventListener("click", toggleHamburger)
-for (let image of mutableImages) {
-  document.getElementById(image).addEventListener("mouseover", function(e) { toggleImage(e) })
-  document.getElementById(image).addEventListener("mouseout", function(e) { toggleImage(e) })
-}
-
-for (let navSection of mobileNavSections) {
-  // Toggle Mobile Section Navs
-  navSection.addEventListener("click", function(e) { setCategory(e) })
-}
-for (let navSection of navSections) {
-  const activeClass = "radiocom-nav__category-button--active"
-  // Highlight Section Button in Nav if on Section Page
-  // document.getElementsByClassName("radiocom-nav__category-button--entertainment")[0].classList.add(activeClass);
-
-  // Add Listeners to Section Buttons on Hover to Toggle Drawers
-  if (
-    !navSection.classList.contains("radiocom-nav__category-button--download") &&
-    !navSection.classList.contains("radiocom-nav__category-button--listen")
-  ) {
-    navSection.addEventListener("mouseover", function(e) { toggleDrawer(e, true) })
-    navSection.addEventListener("mouseout", function(e) { toggleDrawer(e, false) })
+/**
+ * Add event listeners to header elements to toggle drawers & images.
+ * @function addEventListeners
+ */
+const addEventListeners = () => {
+  // Toggle Mobile Nav
+  document.getElementById("hamburger").addEventListener("click", toggleHamburger)
+  // Toggle Images on Hover
+  for (let image of mutableImages) {
+    document.getElementById(image).addEventListener("mouseover", function(e) { toggleImage(e) })
+    document.getElementById(image).addEventListener("mouseout", function(e) { toggleImage(e) })
   }
-}
-// Add Listener on Window Resize to Remove Mobile Nav When Not on Mobile
-window.addEventListener("resize", function() {
-  let navDrawer = document.getElementsByClassName("nav-drawer--mobile")[0]
-  isMobile =
-    document.getElementsByClassName("radiocom-nav-placeholder")[0].offsetWidth >
-    1023
-      ? false
-      : true;
-  let classes = ["nav-drawer--active", "nav-drawer--sub-nav-active"]
-  if (!isMobile) {
-    navDrawer.classList.remove(...classes)
-    toggleHamburger(true)
+  // Toggle Dropdowns on Mobile Nav Categories
+  for (let navSection of mobileNavSections) {
+    navSection.addEventListener("click", function(e) { toggleMobileCategoryDropdown(e) })
   }
-})
+  // Toggle Nav Categories' Drawers
+  for (let navSection of navSections) {
+    if (navSection.classList.contains("radiocom-nav__category-button--drawer-enabled")) {
+      navSection.addEventListener("mouseover", function(e) { toggleNavDrawer(e, true) })
+      navSection.addEventListener("mouseout", function(e) { toggleNavDrawer(e, false) })
+    }
+  }
+  // Remove Mobile Nav When Not on Mobile on Resize of Window
+  window.addEventListener("resize", function() {
+    let navDrawer = document.getElementsByClassName("nav-drawer--mobile")[0]
+    let classes = ["nav-drawer--active", "nav-drawer--sub-nav-active"]
+    isMobile =
+      document.getElementsByClassName("radiocom-nav-placeholder")[0].offsetWidth >
+      1023
+        ? false
+        : true;
+    if (!isMobile) {
+      navDrawer.classList.remove(...classes)
+      toggleHamburger(true)
+    }
+  })
+}
+
+addEventListeners()

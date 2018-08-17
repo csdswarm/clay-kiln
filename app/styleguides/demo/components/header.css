@@ -118,39 +118,44 @@
       vertical-align: -webkit-baseline-middle;
     }
   }
-  .radiocom-nav__category-button {
+  $selector: radiocom-nav__category-button;
+  .$(selector) {
     @mixin inline-block;
     border: 0;
     height: 100%;
     background: transparent;
     padding: 0 20px;
     cursor: pointer;
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--entertainment, &:hover.radiocom-nav__category-button--entertainment {
+    &.$(selector)--active.$(selector)--entertainment,
+    &:hover.$(selector)--entertainment {
       background: $sunsetOrange;
     }
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--news, &:hover.radiocom-nav__category-button--news {
+    &.$(selector)--active.$(selector)--news,
+    &:hover.$(selector)--news {
       background: $lightningYellow;
     }
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--sports, &:hover.radiocom-nav__category-button--sports {
+    &.$(selector)--active.$(selector)--sports,
+    &:hover.$(selector)--sports {
       background: $azureRadience;
     }
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--podcasts, &:hover.radiocom-nav__category-button--podcasts {
+    &.$(selector)--active.$(selector)--podcasts,
+    &:hover.$(selector)--podcasts {
       background: $robinsEgg;
     }
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--listen,
-    &:hover.radiocom-nav__category-button--listen,
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--download,
-    &:hover.radiocom-nav__category-button--download,
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--more,
-    &:hover.radiocom-nav__category-button--more {
+    &.$(selector)--active.$(selector)--listen,
+    &:hover.$(selector)--listen,
+    &.$(selector)--active.$(selector)--download,
+    &:hover.$(selector)--download,
+    &.$(selector)--active.$(selector)--more,
+    &:hover.$(selector)--more {
       background: $white;
     }
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--listen h1,
-    &:hover.radiocom-nav__category-button--listen h1,
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--download h1,
-    &:hover.radiocom-nav__category-button--download h1,
-    &.radiocom-nav__category-button--active.radiocom-nav__category-button--more h1,
-    &:hover.radiocom-nav__category-button--more h1 {
+    &.$(selector)--active.$(selector)--listen h1,
+    &:hover.$(selector)--listen h1,
+    &.$(selector)--active.$(selector)--download h1,
+    &:hover.$(selector)--download h1,
+    &.$(selector)--active.$(selector)--more h1,
+    &:hover.$(selector)--more h1 {
       color: $parisPurple;
     }
     button h1 {
@@ -383,7 +388,7 @@
     width: 220px;
     margin: 0 15px 0 0;
   }
-  .radiocom-nav .radiocom-nav__category-button {
+  .radiocom-nav .$(selector) {
     padding: 0 15px;
   }
   .nav-drawer:not(.nav-drawer--mobile) .container {
@@ -428,7 +433,7 @@
       .radiocom-nav__logo {
         width: 180px;
       }
-      .radiocom-nav__category-button {
+      .$(selector) {
         padding: 0;
         background: transparent;
         button {

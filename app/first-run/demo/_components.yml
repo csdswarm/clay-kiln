@@ -42,9 +42,11 @@ _components:
           -
             text: "listen"
             url: "https://player.radio.com"
+            drawer: false
           -
             text: "entertainment"
             url: "/entertainment"
+            drawer: true
             list:
               -
                 text: "categories"
@@ -118,6 +120,7 @@ _components:
           -
             text: "news"
             url: "/news"
+            drawer: true
             list:
               -
                 text: "categories"
@@ -134,6 +137,7 @@ _components:
           -
             text: "sports"
             url: "/sports"
+            drawer: true
             list:
               -
                 text: "categories"
@@ -150,6 +154,7 @@ _components:
           -
             text: "podcasts"
             url: "/podcasts"
+            drawer: true
             list:
               -
                 text: "categories"
@@ -165,6 +170,7 @@ _components:
                     url: "/example link"
           -
             text: "more"
+            drawer: true
             list:
               -
                 text: "categories"

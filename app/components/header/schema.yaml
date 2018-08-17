@@ -19,6 +19,13 @@ headerLinks:
           validate:
             required: false
       -
+        prop: drawer
+        _label: Does this category have a drawer/tray/dropdown menu?
+        _has:
+          input: checkbox
+          validate:
+            required: true
+      -
         prop: text
         _label: Nav Top Categories Text
         _has:
@@ -83,6 +90,5 @@ headerLinks:
 
 _groups:
   settings:
-    _label: Header Links
     fields:
       - headerLinks
