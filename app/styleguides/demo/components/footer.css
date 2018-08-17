@@ -1,30 +1,5 @@
 @import "_global/mixins";
 
-/*.footer {
-  font-family: Arial, sans-serif;
-  border-top: 2px solid #ccc;
-  max-width: 1000px;
-  margin: 20px auto 0;
-  padding: 2px 0 10px;
-  text-align: center;
-
-  .footer-social {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 0 10px;
-    padding: 10px 0 0;
-
-    a span {
-      @mixin hidden-content;
-    }
-  }
-
-  .footer-social-item + .footer-social-item {
-    margin: 0 0 0 10px;
-  }
-}*/
-
 @define-mixin font2 {
   font-family: CircularStd-Black, sans-serif;
   font-size: 14px;
@@ -73,7 +48,7 @@
     }
     .radiocom-footer__social {
       margin-bottom: 30px;
-      svg {
+      object, svg {
         @mixin inline-block;
         height: 30px;
         margin: 0 10px;
@@ -81,18 +56,15 @@
     }
     .radiocom-footer__download-app {
       margin-bottom: 40px;
-      svg {
+      object, svg {
         @mixin inline-block;
         height: 40px;
       }
-      .apple-app-store {
+      a:first-of-type {
         width: 120px;
         margin-right: 40px;
-        path.st1 {
-          fill: #000001;
-        }
       }
-      .google-play-badge {
+      a:nth-of-type(2) {
         width: 135px;
       }
     }

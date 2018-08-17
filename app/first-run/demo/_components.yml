@@ -156,16 +156,28 @@ _components:
       default:
         socialButtons:
           show: true
-          buttons:
-            facebook: true
-            twitter: true
-            youtube: true
-            instagram: true
+          buttonURLs:
+              -
+                text: facebook
+                url: "https://www.facebook.com/radiodotcom/"
+              -
+                text: twitter
+                url: "https://twitter.com/Radiodotcom?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+              -
+                text: youtube
+                url: "https://www.youtube.com/user/radiodotcom"
+              -
+                text: instagram
+                url: "https://www.instagram.com/radiodotcom/"
         appBadges:
           show: true
-          buttons:
-            app-store-badge: true
-            google-play-badge: true
+          badgeURLs:
+            -
+              text: app store
+              url: "https://itunes.apple.com/us/app/radio-com/id323701765?mt=8"
+            -
+              text: google play
+              url: "https://play.google.com/store/apps/details?id=com.radiocom&hl=en"
         links:
           -
             text: "listen"

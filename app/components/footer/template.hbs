@@ -1,41 +1,25 @@
-<div class="radiocom-footer" data-uri="{{ default _ref _self }}" data-editable="footer-settings">
+<div class="radiocom-footer" data-uri="{{ default _ref _self }}">
 	<div class="container">
 		{{#if socialButtons.show}}
 			<div class="radiocom-footer__social">
-				{{#if socialButtons.buttons.facebook}}
-					<a target="_blank" href="https://www.facebook.com/radiodotcom/">
-						{{{ read 'components/footer/media/facebook.svg' }}}
+				{{#each socialButtons.buttonURLs as |button|}}
+					<a target="_blank" href="{{button.url}}">
+						<object type="image/svg+xml" data="/media/components/footer/{{button.text}}.svg">
+						  <img src="/media/components/footer/{{button.text}}.svg">
+						</object>
 					</a>
-				{{/if}}
-				{{#if socialButtons.buttons.twitter}}
-					<a target="_blank" href="https://twitter.com/Radiodotcom?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor">
-						{{{ read 'components/footer/media/twitter.svg' }}}
-					</a>
-				{{/if}}
-				{{#if socialButtons.buttons.youtube}}
-					<a target="_blank" href="https://www.youtube.com/user/radiodotcom">
-						{{{ read 'components/footer/media/youtube.svg' }}}
-					</a>
-				{{/if}}
-				{{#if socialButtons.buttons.instagram}}
-					<a target="_blank" href="https://www.instagram.com/radiodotcom/">
-						{{{ read 'components/footer/media/instagram.svg' }}}
-					</a>
-				{{/if}}
+				{{/each}}
 			</div>
 		{{/if}}
 		{{#if appBadges.show}}
 			<div class="radiocom-footer__download-app">
-				{{#if appBadges.buttons.app-store-badge}}
-					<a class="apple-app-store" target="_blank" href="https://itunes.apple.com/us/app/radio-com/id323701765?mt=8">
-						{{{ read 'components/footer/media/apple-app-store.svg' }}}
+				{{#each appBadges.badgeURLs as |badge|}}
+					<a target="_blank" href="{{badge.url}}">
+						<object type="image/svg+xml" data="/media/components/footer/{{badge.text}} badge.svg">
+						  <img src="/media/components/footer/{{badge.text}} badge.svg">
+						</object>
 					</a>
-				{{/if}}
-				{{#if appBadges.buttons.google-play-badge}}
-					<a class="google-play-badge" target="_blank" href="https://play.google.com/store/apps/details?id=com.radiocom&hl=en">
-						{{{ read 'components/footer/media/google-play-badge.svg' }}}
-					</a>
-				{{/if}}
+				{{/each}}
 			</div>
 		{{/if}}
 		{{#if links}}
