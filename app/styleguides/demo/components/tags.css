@@ -113,8 +113,8 @@
   }
 }
 
-@mixin themed-tag-list tags__list-item;
-@mixin themed-tag-list entertainment, $sunsetOrange;
-@mixin themed-tag-list news, $lightningYellow;
-@mixin themed-tag-list sports, $azureRadience;
-@mixin themed-tag-list podcasts, $robinsEgg;
+@mixin themed-tag-list tags__item;
+@mixin themed-tag-list tags__item--entertainment, $sunsetOrange;
+@mixin themed-tag-list tags__item--news, $lightningYellow;
+@mixin themed-tag-list tags__item--sports, $azureRadience;
+@mixin themed-tag-list tags__item--podcasts, $robinsEgg;
