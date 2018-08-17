@@ -13,7 +13,7 @@ gulp.registry(hub);
 // to render component templates, we need to run scripts AFTER media
 // note: you can run `scripts` or `media` independent of each other,
 // we just care about ordering when running the `default` task
-gulp.task('default', gulp.series('styles', 'media', 'scripts'));
+gulp.task('default', gulp.series('styles', 'media', 'fonts', 'scripts'));
 
 gulp.task('watch', function () {
 
