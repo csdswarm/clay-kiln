@@ -4,15 +4,15 @@
 @define-mixin font2 {
   font-family: CircularStd-Black, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   text-transform: uppercase;
   letter-spacing: -0.23px;
   line-height: 28px;
 }
 @define-mixin font3 {
-  font-family: ProximaNova-Medium, sans-serif;
+  font-family: ProximaNova-Regular, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   letter-spacing: -0.23px;
   line-height: 28px;
   text-transform: capitalize;
@@ -20,7 +20,7 @@
 @define-mixin font4 {
   font-family: ProximaNova-Light, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   letter-spacing: -0.23px;
   line-height: 22px;
   text-transform: capitalize;
