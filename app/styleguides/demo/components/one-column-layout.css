@@ -1,12 +1,7 @@
 @import '_global/reset.css';
 @import '_global/fonts.css';
 
-.top {
-  /*margin: 0 auto 20px;
-  max-width: 1000px;*/
-}
-
-.wrapper {
+.layout__content {
   max-width: 800px;
   margin: 0 auto;
 }
