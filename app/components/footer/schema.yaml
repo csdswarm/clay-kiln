@@ -1,39 +1,134 @@
 _description: |
-  Simplified version of `global-footer`.
+  Global footer
 
 _confirmRemoval: true
 
-socialEnabled:
-  _label: Enable Social Media Links
+socialButtons:
+  _label: Social Buttons
   _has:
-    -
-      fn: checkbox-group
-      options:
-        -
-          name: Newsletters
-          value: newsletters
-        -
-          name: Facebook
-          value: facebook
-        -
-          name: Twitter
-          value: twitter
-    - label
-    -
-      fn: description
-      value: Choose which social media links are displayed.
+    props:
+      -
+        prop: show
+        _has:
+          validate:
+            required: true
+          _label: Should social buttons be shown?
+          input: checkbox
+          help: By default, social buttons are added to footer. Uncheck to remove.
+      -
+        prop: buttonURLs
+        input: complex-list
+        _has:
+          validate:
+            required: false
+          props:
+            -
+              prop: text
+              _has:
+                validate:
+                  required: true
+                _label: Social Type
+                input: text
+                help: "facebook, twitter, instagram, or youtube"
+            -
+              prop: url
+              _has:
+                validate:
+                  required: true
+                _label: Social Page URL
+                input: text
+                type: url
 
-services:
-  _label: Media Services
+appBadges:
+  _label: App Badges
+  _has:
+    props:
+      -
+        prop: show
+        _has:
+          validate:
+            required: true
+          _label: Should app download badges be shown?
+          input: checkbox
+          help: By default, app badges are added to footer. Uncheck to remove.
+      -
+        prop: badgeURLs
+        input: complex-list
+        _has:
+          validate:
+            required: true
+          props:
+            -
+              prop: text
+              _has:
+                validate:
+                  required: true
+                _label: Social Type
+                input: text
+                help: "app store or google play"
+            -
+              prop: url
+              _has:
+                validate:
+                  required: true
+                _label: Badge URL
+                input: text
+                type: url
+links:
+  _label: Footer Links
   _placeholder:
-    height: 30px
-    text: Services
-  _componentList:
-    min: 1
-    include:
-      - follow
+    text: Links
+    height: 100
+  _has:
+    input: complex-list
+    validate:
+      required: false
+    props:
+      -
+        prop: text
+        _label: Category Label
+        _has:
+          input: text
+          enforceMaxlength: true
+          validate:
+            required: true
+            max: 40
+            maxMessage: This field must be 40 or fewer characters long
+      -
+        prop: list
+        _label: Category's Links
+        _has:
+          input: complex-list
+          validate:
+            required: false
+          props:
+            -
+              prop: text
+              _label: Link Text
+              _has:
+                input: text
+                enforceMaxlength: true
+                validate:
+                  required: true
+                  max: 40
+                  maxMessage: This field must be 40 or fewer characters long
+            -
+              prop: url
+              _label: Link Url
+              _has:
+                input: text
+                type: url
+                validate:
+                  required: true
+            -
+              prop: newtab
+              _label: Open in new tab
+              _has:
+                input: checkbox
 
 _groups:
   settings:
     fields:
-      - socialEnabled
+      - socialButtons (Social Buttons)
+      - appBadges (App Badges)
+      - links (Links)
