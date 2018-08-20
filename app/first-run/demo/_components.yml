@@ -38,17 +38,152 @@ _components:
   header:
     instances:
       default:
-        variation: header
-        position: right
-        search:
-          _ref: /_components/search/instances/global
-        services:
+        headerLinks:
           -
-            _ref: /_components/follow/instances/facebook
+            text: "listen"
+            url: "https://player.radio.com"
+            drawer: false
           -
-            _ref: /_components/follow/instances/twitter
-
-
+            text: "entertainment"
+            url: "/entertainment"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+              -
+                text: "local stations"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+              -
+                text: "find a station"
+                url: "https://player.radio.com/stations-directory"
+          -
+            text: "news"
+            url: "/news"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "sports"
+            url: "/sports"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "podcasts"
+            url: "/podcasts"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "more"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
   circulation:
     instances:
       new:
