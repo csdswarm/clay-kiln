@@ -2,6 +2,12 @@
 @import "_global/mixins";
 @import "_global/colors";
 
+$default-screen-nav-width: 1100px;
+$large-screen-nav-width: 940px;
+$medium-screen-nav-width: 728px;
+$medium-small-screen-nav-width: 440px;
+$small-screen-nav-width: 320px;
+
 .radiocom-nav-placeholder {
   button {
     @mixin inline-block;
@@ -50,7 +56,7 @@
     @mixin inline-block;
     text-align: left;
     height: 100%;
-    width: 1100px;
+    width: $default-screen-nav-width;
   }
   .radiocom-nav__hamburger.wrapper {
     display: none;
@@ -60,11 +66,7 @@
     width: 20px;
     height: 15px;
     cursor: pointer;
-    position: relative;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+    @mixin vertical-align;
     .bar {
       position: absolute;
       top: 0;
@@ -119,6 +121,12 @@
     }
   }
   $selector: radiocom-nav__category-button;
+  @define-mixin header-color $modifier, $color {
+    &.$(selector)--active.$(selector)--$(modifier),
+    &:hover.$(selector)--$(modifier) {
+      background: $color;
+    }
+  }
   .$(selector) {
     @mixin inline-block;
     border: 0;
@@ -126,30 +134,13 @@
     background: transparent;
     padding: 0 20px;
     cursor: pointer;
-    &.$(selector)--active.$(selector)--entertainment,
-    &:hover.$(selector)--entertainment {
-      background: $sunsetOrange;
-    }
-    &.$(selector)--active.$(selector)--news,
-    &:hover.$(selector)--news {
-      background: $lightningYellow;
-    }
-    &.$(selector)--active.$(selector)--sports,
-    &:hover.$(selector)--sports {
-      background: $azureRadience;
-    }
-    &.$(selector)--active.$(selector)--podcasts,
-    &:hover.$(selector)--podcasts {
-      background: $robinsEgg;
-    }
-    &.$(selector)--active.$(selector)--listen,
-    &:hover.$(selector)--listen,
-    &.$(selector)--active.$(selector)--download,
-    &:hover.$(selector)--download,
-    &.$(selector)--active.$(selector)--more,
-    &:hover.$(selector)--more {
-      background: $white;
-    }
+    @mixin header-color news, $lightningYellow;
+    @mixin header-color sports, $azureRadience;
+    @mixin header-color podcasts, $robinsEgg;
+    @mixin header-color entertainment, $sunsetOrange;
+    @mixin header-color listen, $white;
+    @mixin header-color download, $white;
+    @mixin header-color more, $white;
     &.$(selector)--active.$(selector)--listen h1,
     &:hover.$(selector)--listen h1,
     &.$(selector)--active.$(selector)--download h1,
@@ -236,7 +227,7 @@
       .container {
         display: block;
         text-align: left;
-        width: 1100px;
+        width: $default-screen-nav-width;
         .nav-drawer__sub-nav {
           @mixin inline-block;
           &:first-of-type {
@@ -382,36 +373,36 @@
 
 @mixin large-screen {
   .radiocom-nav .container {
-    width: 940px;
-  }
-  .radiocom-nav .radiocom-nav__logo {
-    width: 220px;
-    margin: 0 15px 0 0;
-  }
-  .radiocom-nav .$(selector) {
-    padding: 0 15px;
-  }
-  .nav-drawer:not(.nav-drawer--mobile) .container {
-    width: 940px;
-    .nav-drawer__sub-nav {
-      ul li {
-        width: 80px;
-      }
-      &:first-of-type {
-        margin-right: 80px;
-        .nav-drawer__sub-nav--columns {
-          @mixin ul-columns 3, 80px;
+    width: $large-screen-nav-width;
+    .radiocom-nav__logo {
+      width: 220px;
+      margin: 0 15px 0 0;
+    }
+    .$(selector) {
+      padding: 0 15px;
+    }
+    .nav-drawer:not(.nav-drawer--mobile) .container {
+      width: $large-screen-nav-width;
+      .nav-drawer__sub-nav {
+        ul li {
+          width: 80px;
         }
-      }
-      &:nth-of-type(2) {
-        margin-right: 80px;
-        .nav-drawer__sub-nav--columns {
-          @mixin ul-columns 2, 80px;
+        &:first-of-type {
+          margin-right: 80px;
+          .nav-drawer__sub-nav--columns {
+            @mixin ul-columns 3, 80px;
+          }
         }
-      }
-      &:nth-of-type(3) {
-        .nav-drawer__sub-nav--columns {
-          @mixin ul-columns 1, 80px;
+        &:nth-of-type(2) {
+          margin-right: 80px;
+          .nav-drawer__sub-nav--columns {
+            @mixin ul-columns 2, 80px;
+          }
+        }
+        &:nth-of-type(3) {
+          .nav-drawer__sub-nav--columns {
+            @mixin ul-columns 1, 80px;
+          }
         }
       }
     }
@@ -425,7 +416,7 @@
   .radiocom-nav {
     height: 46px;
     .container {
-      width: 728px;
+      width: $medium-screen-nav-width;
       text-align: left;
       .radiocom-nav__hamburger {
         display: inline-block;
@@ -443,18 +434,18 @@
       .nav-drawer {
         height: calc(100vh - 46px);
         top: 46px;
-        width: calc((100vw - 728px) / 2 + 20px + 20px + 180px);
+        width: calc((100vw - #{$medium-screen-nav-width}) / 2 + 20px + 20px + 180px);
         &:not(.nav-drawer--mobile) .container {
-          width: 728px;
+          width: $medium-screen-nav-width;
         }
         &.nav-drawer--mobile {
           .nav-drawer__sub-nav {
             h2, ul {
-              padding-left: calc((100vw - 728px) / 2);
+              padding-left: calc((100vw - #{$medium-screen-nav-width}) / 2);
             }
           }
           .find-station-link {
-            padding-left: calc((100vw - 728px) / 2);
+            padding-left: calc((100vw - #{$medium-screen-nav-width}) / 2);
           }
         }
       }
@@ -484,7 +475,7 @@
 
 @mixin medium-small-screen {
   .radiocom-nav .container {
-    width: 440px;
+    width: $medium-small-screen-nav-width;
     text-align: center;
     .radiocom-nav__hamburger.wrapper {
       float: left;

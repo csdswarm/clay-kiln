@@ -13,31 +13,26 @@
     @mixin-content;
   }
 }
-$default-screen-nav-width: 1100px;
 @define-mixin large-screen {
   @media only screen and (max-width: 1279px) {
     @mixin-content;
   }
 }
-$large-screen-nav-width: 940px;
 @define-mixin medium-screen {
   @media only screen and (max-width: 1023px) {
     @mixin-content;
   }
 }
-$medium-screen-nav-width: 728px;
 @define-mixin medium-small-screen {
   @media only screen and (max-width: 480px) {
     @mixin-content;
   }
 }
-$medium-small-screen-nav-width: 440px;
 @define-mixin small-screen {
   @media only screen and (max-width: 360px) {
     @mixin-content;
   }
 }
-$small-screen-nav-width: 320px;
 @define-mixin vertical-align $position: relative {
   position: $position;
   top: 50%;
