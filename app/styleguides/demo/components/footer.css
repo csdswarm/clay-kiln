@@ -26,11 +26,6 @@
   text-transform: capitalize;
   text-align: center;
 }
-@define-mixin inline-block {
-  display: inline-block;
-  vertical-align: top;
-}
-
 
 .radiocom-footer {
   margin-top: 40px;
