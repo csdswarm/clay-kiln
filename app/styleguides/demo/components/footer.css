@@ -44,7 +44,7 @@
     }
     .radiocom-footer__social {
       margin-bottom: 30px;
-      object, svg {
+      > a object {
         @mixin inline-block;
         height: 30px;
         margin: 0 10px;
@@ -52,7 +52,7 @@
     }
     .radiocom-footer__download-app {
       margin-bottom: 40px;
-      object, svg {
+      > a object {
         @mixin inline-block;
         height: 40px;
       }
