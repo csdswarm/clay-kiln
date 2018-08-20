@@ -8,10 +8,8 @@ enabled:
     options:
       - facebook
       - twitter
-      # - pinterest
       - email
       - link
-      # - comment
     help: Choose which services are displayed
 
 url:
@@ -30,7 +28,7 @@ shortTitle:
   _label: Short Title
   _subscribe: twitterTitle
   _has:
-    help: Used for Twitter. Falls back to using title for older articles
+    help: Used for Twitter and Email. Falls back to using title for older articles
 
 twitterHandle:
   _label: Twitter Handle

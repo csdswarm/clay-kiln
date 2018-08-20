@@ -14,14 +14,6 @@
       </li>
     {{/if}}
 
-    {{#ifAll enabled.pinterest }}
-      <li class="share-list-item">
-        <a target="_blank" href="http://pinterest.com/pin/create/button/?url={{ urlencode url }}%3Futm_source=pin%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;description={{{ urlencode title }}}&amp;media={{ urlencode pinImage }}" class="share-link pinterest" data-pin-custom="true" title="Pin it on Pinterest" aria-label="Pin it on Pinterest">
-          {{! media url needs to be hardcoded http, since mediaplay doesn't support https (and pinterest uses ssl) }}
-          {{{ read 'public/media/components/share/pinterest.svg' }}}</a>
-      </li>
-    {{/ifAll}}
-
     {{#if enabled.email }}
       <li class="share-list-item">
         <a href="mailto:?subject={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}" class="share-link email" title="Email" aria-label="Email">
@@ -31,15 +23,10 @@
 
     {{#if enabled.link }}
       <li class="share-list-item">
-        <a href="{{url}}" class="share-link link" title="Copy link" aria-label="Copy link">
-          {{{ read 'public/media/components/share/print.svg' }}}</a>
-      </li>
-    {{/if}}
-
-    {{#if enabled.comment }}
-      <li class="share-list-item">
-        <a href="#comments" class="share-link comment" title="View Comments" aria-label="View Comments">
-          {{{ read 'public/media/components/share/comment.svg' }}}</a>
+        {{!-- <a href="{{ url }}" class="share-link copy-link" title="Copy link" aria-label="Copy link">
+          {{{ read 'public/media/components/share/copy-link.svg' }}}</a> --}}
+        <button class="share-link copy-link" title="Copy link" aria-label="Copy link" onclick="copyToClipboard('{{url}}')">
+          {{{ read 'public/media/components/share/copy-link.svg' }}}</button>
       </li>
     {{/if}}
     </ul>
