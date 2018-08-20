@@ -1,94 +1,97 @@
-<div data-uri="{{ default _ref _self }}" class="header {{ variation }} header-{{ position }}" data-variation="{{ variation }}">
-  {{#compare ./variation 'header-redesign'}}
-    <div class="header-wrapper">
-      <button class="header-menu-button" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
-        {{{ read 'components/header/media/hamburger.svg' }}}
-        <span class="header-menu-button-text">Browse</span>
-      </button>
-      <div class="header-pane" tabindex="-1">
-        <button class="header-pane-close">
-          {{{ read 'components/header/media/close.svg' }}}
-        </button>
-        <nav class="header-pane-content">
-          {{#if primaryLinks.length}}
-          <ul class="header-pane-content-primary">
-            {{#each primaryLinks}}
-            <li class="header-pane-content-primary-item">
-              <a href="{{ url }}">{{ text }}</a>
-            </li>
-            {{/each}}
-          </ul>
-          {{/if}}
-          <div class="header-pane-content-social">
-            {{> component-list services }}
-            {{#if newsletterSignupUrl}}
-            <a href="{{ newsletterSignupUrl}}" class="newsletter-signup-link" target="_blank">
-              {{{ read 'components/header/media/newsletter.svg'}}}
-              <span class="newsletter-signup-link-text">Newsletter Signup</span>
-            </a>
+<header class="radiocom-nav-placeholder" data-uri="{{ default _ref _self }}" data-editable="settings">
+  <div class="radiocom-nav">
+    <div class="container">
+      <div id="hamburger" class="radiocom-nav__hamburger wrapper">
+        <div class="bar bar-1"></div>
+        <div class="bar bar-2"></div>
+        <div class="bar bar-3"></div>
+      </div>{{!--
+      --}}<button class="radiocom-nav__logo"><a href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
+        {{{ read 'components/header/media/radiocom_hz.svg' }}}
+      </a></button>{{!--
+      --}}{{#if headerLinks.length}}
+        {{#each headerLinks}}
+          <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}} {{#if drawer}}radiocom-nav__category-button--drawer-enabled{{/if}}">
+            <button>
+              {{#if url}}
+                <a href="{{url}}">
+                  <h1>{{text}}</h1>
+                </a>
+              {{ else }}
+                <h1>{{text}}</h1>
+              {{/if}}
+            </button>
+            {{#if list.length}}
+              <div class="nav-drawer nav-drawer--{{text}}">
+                <div class="container">
+                  {{#each list as |subnav| }}
+                    <div class="nav-drawer__sub-nav">
+                      {{#if subnav.list}}
+                        <h2>{{subnav.text}}</h2>
+                        <ul class="nav-drawer__sub-nav--columns">
+                          {{#each subnav.list as |subnavLink| }}
+                            <li>
+                              <a href="{{subnavLink.url}}">
+                                <h3 title="{{subnavLink.url}}">{{subnavLink.text}}</h3>
+                              </a>
+                            </li>
+                          {{/each}}
+                        </ul>
+                      {{ else }}
+                        {{#if subnav.url}}
+                          <a href="{{subnav.url}}" target="_blank">
+                            <h2 class="{{#if (compare subnav.text 'find a station')}}find-station-link{{/if}}">{{subnav.text}}{{#if (compare subnav.text 'find a station')}} <span>&#8227</span>{{/if}}</h2>
+                          </a>
+                        {{ else }}
+                          <h2>{{subnav.text}}</h2>
+                        {{/if}}
+                      {{/if}}
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
             {{/if}}
           </div>
-          {{#if secondaryLinks.length}}
-            <ul class="header-pane-content-secondary">
-              {{#each secondaryLinks}}
-              <li class="header-pane-content-secondary-item">
-                <a href="{{ url }}">{{ text }}</a>
-              </li>
-              {{/each}}
-            </ul>
-          {{/if}}
-        </nav>
+        {{/each}}
+      {{/if}}{{!--
+      --}}<div class="radiocom-nav__container--right">
+        <button class="account-btn" id="account-btn">
+          <div class="active default">{{{ read 'components/header/media/log-in.svg' }}}</div>
+          <div class="inactive hover">{{{ read 'components/header/media/log-in_hover.svg' }}}</div>
+        </button>{{!--
+        --}}<button class="search-btn" id="search-btn">
+          <div class="active default">{{{ read 'components/header/media/search.svg' }}}</div>
+          <div class="inactive hover">{{{ read 'components/header/media/search_hover.svg' }}}</div>
+        </button>
       </div>
-      <div class="header-overlay"></div>
-    {{/compare}}
-    <div class="logo-wrapper">
-      <a class="logo" href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
-      {{#if hasStrongSiteName}}
-        <h1 class="site-name">{{ @root.locals.site.name }}</h1>
-      {{else}}
-        <span class="site-name">{{ @root.locals.site.name }}</span>
-      {{/if}}
-      {{{ read (concat 'public/media/sites/' @root.locals.site.slug '/logo.svg') }}}
-      {{#if tagline}}
-        <span class="tagline" data-editable="tagline">{{{ perWordClasses tagline perLetter=false }}}</span>
-      {{/if}}
-      </a>
+      <div class="nav-drawer nav-drawer--mobile">
+        {{#if headerLinks.length}}
+          {{#each headerLinks}}
+            <div class="nav-drawer__sub-nav nav-drawer__{{text}}">
+              {{#if (compare text 'listen')}}
+                <a href="{{url}}" target="_blank">
+                  <h2>{{text}}</h2>
+                </a>
+              {{ else }}
+                <h2>{{text}}</h2>
+                {{#if list.length}}
+                  <ul class="nav-drawer__sub-nav-links">
+                    {{#each list as |subnav|}}
+                      {{#each subnav.list as |link|}}
+                        <li>
+                          <a href="{{link.url}}">
+                            <h3 title="{{link.url}}">{{link.text}}</h3>
+                          </a>
+                        </li>
+                      {{/each}}
+                    {{/each}}
+                  </ul>
+                {{/if}}
+              {{/if}}
+            </div>
+          {{/each}}
+        {{/if}}
+      </div>
     </div>
-
-    {{#if search}}
-      <div class="header-search">
-        {{> search search }}
-      </div>
-    {{/if}}
-
-  {{#compare ./variation 'header-redesign'}}
   </div>
-  {{/compare}}
-
-  {{#compare ./variation 'header'}}
-  <div data-editable="services" class="follow-list {{ if newsletter 'newsletter' }}">
-    {{> component-list services }}
-  </div>
-  <button class="nav-mobile" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="primary-nav">
-    {{{ read 'components/header/media/menu-icon.svg' }}}
-  </button>
-  <nav class="primary-nav" aria-label="New York Magazine sites" id="primary-nav">
-    <ul class="sites">
-      <li class="site-list"><a class="nav-sites" href="//nymag.com/">NYMag.com</a></li>
-      <li class="site-list"><a class="nav-sites" href="//nymag.com/daily/intelligencer/">Daily Intelligencer</a></li>
-      <li class="site-list"><a class="nav-sites" href="//www.vulture.com">Vulture</a></li>
-      <li class="site-list"><a class="nav-sites" href="//www.thecut.com">The Cut</a></li>
-      <li class="site-list"><a class="nav-sites" href="//nymag.com/strategist/">The Strategist</a></li>
-      <li class="site-list"><a class="nav-sites" href="//nymag.com/selectall/">Select All</a></li>
-      <li class="site-list"><a class="nav-sites" href="//www.grubstreet.com/">Grub Street</a></li>
-      <li class="site-list"><a class="nav-sites" href="//bedfordandbowery.com/">Bedford &amp; Bowery</a></li>
-    </ul>
-    <div class="dropdown-section">
-      <div class="social {{#if hide-social}}hide-social{{/if}}">
-        {{> component-list services }}
-      </div>
-      <button class="end">Close menu</button>
-    </div>
-  </nav>
-  {{/compare}}
-</div>
+</header>
