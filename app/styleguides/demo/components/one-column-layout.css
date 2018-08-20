@@ -1,7 +1,3 @@
-@import '_global/reset.css';
-@import '_global/fonts.css';
-
-.layout__content {
-  max-width: 800px;
-  margin: 0 auto;
-}
+@import '_global/reset';
+@import '_global/fonts';
+@import '_global/grid';
