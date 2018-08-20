@@ -44,7 +44,7 @@
     }
     .radiocom-footer__social {
       margin-bottom: 30px;
-      svg {
+      object, svg {
         @mixin inline-block;
         height: 30px;
         margin: 0 10px;
@@ -52,15 +52,15 @@
     }
     .radiocom-footer__download-app {
       margin-bottom: 40px;
-      svg {
+      object, svg {
         @mixin inline-block;
         height: 40px;
       }
-      .apple-app-store {
+      a:first-of-type {
         width: 120px;
         margin-right: 40px;
       }
-      .google-play-badge {
+      a:nth-of-type(2) {
         width: 135px;
       }
     }

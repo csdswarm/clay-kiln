@@ -184,6 +184,7 @@ _components:
                   -
                     text: "example link"
                     url: "/example link"
+                    
   circulation:
     instances:
       new:
@@ -290,12 +291,104 @@ _components:
   footer:
     instances:
       default:
-        linksEnabled: {}
-        services:
+        socialButtons:
+          show: true
+          buttonURLs:
+              -
+                text: facebook
+                url: "https://www.facebook.com/radiodotcom/"
+              -
+                text: twitter
+                url: "https://twitter.com/Radiodotcom?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+              -
+                text: youtube
+                url: "https://www.youtube.com/user/radiodotcom"
+              -
+                text: instagram
+                url: "https://www.instagram.com/radiodotcom/"
+        appBadges:
+          show: true
+          badgeURLs:
+            -
+              text: app store
+              url: "https://itunes.apple.com/us/app/radio-com/id323701765?mt=8"
+            -
+              text: google play
+              url: "https://play.google.com/store/apps/details?id=com.radiocom&hl=en"
+        links:
           -
-            _ref: /_components/follow/instances/facebook
+            text: "listen"
+            list:
+              -
+                text: "listen live"
+                url: "https://player.radio.com"
+                newtab: true
+              -
+                text: "mobile app"
+                url: "https://radio.com/apps"
+                newtab: true
           -
-            _ref: /_components/follow/instances/twitter
+            text: "connect"
+            list:
+              -
+                text: "FAQ"
+                url: "https://www.radio.com/how-to-listen-to-radio"
+                newtab: true
+              -
+                text: "1Thing"
+                url: "http://1thingus.com/"
+                newtab: true
+              -
+                text: "get my PERKS"
+                url: "http://www.getmyperks.com/"
+                newtab: true
+              -
+                text: "#ImListening"
+                url: "http://imlistening.org/"
+                newtab: true
+              -
+                text: "contact us"
+                url: "https://www.radio.com/contact-us"
+                newtab: true
+          -
+            text: "legal"
+            list:
+              -
+                text: "public inspection file"
+                url: "https://publicfiles.fcc.gov/"
+                newtab: true
+              -
+                text: "careers"
+                url: "http://entercom.com/careers/"
+                newtab: true
+              -
+                text: "EEO public files"
+                url: "http://entercom.com/eeo/"
+                newtab: true
+              -
+                text: "public file help"
+                url: "https://www.radio.com/public-inspection-file-help"
+                newtab: true
+              -
+                text: "privacy policy"
+                url: "http://entercom.com/privacy-policy/"
+                newtab: true
+              -
+                text: "terms of use"
+                url: "http://www.entercom.com/terms-and-conditions"
+                newtab: true
+              -
+                text: "contest rules"
+                url: "https://www.radio.com/rules"
+                newtab: true
+              -
+                text: "copyright notice"
+                url: "http://www.entercom.com/wp-content/uploads/2016/01/Copyright_Notice2.pdf"
+                newtab: true
+              -
+                text: "music submission policy"
+                url: "http://www.entercom.com/music-submission-policy"
+                newtab: true
 
   blockquote:
     instances:
