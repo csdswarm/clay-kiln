@@ -25,7 +25,7 @@
       <li class="share-list-item">
         {{!-- <a href="{{ url }}" class="share-link copy-link" title="Copy link" aria-label="Copy link">
           {{{ read 'public/media/components/share/copy-link.svg' }}}</a> --}}
-        <button class="share-link copy-link" title="Copy link" aria-label="Copy link" onclick="copyToClipboard('{{url}}')">
+        <button class="share-link copy-link" title="Copy link" aria-label="Copy link" formaction="{{ url }}">
           {{{ read 'public/media/components/share/copy-link.svg' }}}</button>
       </li>
     {{/if}}
