@@ -1,22 +1,22 @@
 <div class="radiocom-footer" data-uri="{{ default _ref _self }}">
 	<div class="container">
-		{{#if socialButtons.show}}
+		{{#if socialButtonsShow}}
 			<div class="radiocom-footer__social">
-				{{#each socialButtons.buttonURLs as |button|}}
+				{{#each socialButtonsURLs as |button|}}
 					<a target="_blank" href="{{button.url}}">
-						<object type="image/svg+xml" data="/media/components/footer/{{button.text}}.svg">
-						  <img src="/media/components/footer/{{button.text}}.svg">
+						<object type="image/svg+xml" data="/media/components/footer/{{button.type}}.svg">
+						  <img src="/media/components/footer/{{button.type}}.svg">
 						</object>
 					</a>
 				{{/each}}
 			</div>
 		{{/if}}
-		{{#if appBadges.show}}
+		{{#if appBadgesShow}}
 			<div class="radiocom-footer__download-app">
-				{{#each appBadges.badgeURLs as |badge|}}
+				{{#each appBadgesURLs as |badge|}}
 					<a target="_blank" href="{{badge.url}}">
-						<object type="image/svg+xml" data="/media/components/footer/{{badge.text}} badge.svg">
-						  <img src="/media/components/footer/{{badge.text}} badge.svg">
+						<object type="image/svg+xml" data="/media/components/footer/{{badge.type.value}}.svg">
+						  <img src="/media/components/footer/{{badge.type.value}}.svg">
 						</object>
 					</a>
 				{{/each}}

@@ -3,82 +3,86 @@ _description: |
 
 _confirmRemoval: true
 
-socialButtons:
-  _label: Social Buttons
+socialButtonsShow:
+  _label: Show social buttons?
   _has:
+    validate:
+      required: true
+    input: checkbox
+    help: By default, social buttons are added to footer. Uncheck to remove.
+
+socialButtonsURLs:
+  _label: Add Social Button
+  _has:
+    input: complex-list
     props:
       -
-        prop: show
+        prop: type
+        _label: Social Type
         _has:
           validate:
             required: true
-          _label: Should social buttons be shown?
-          input: checkbox
-          help: By default, social buttons are added to footer. Uncheck to remove.
+          input: radio
+          options:
+            - facebook
+            - twitter
+            - instagram
+            - youtube
       -
-        prop: buttonURLs
-        input: complex-list
+        prop: url
+        _label: Social Page URL
         _has:
           validate:
-            required: false
-          props:
-            -
-              prop: text
-              _has:
-                validate:
-                  required: true
-                _label: Social Type
-                input: text
-                help: "facebook, twitter, instagram, or youtube"
-            -
-              prop: url
-              _has:
-                validate:
-                  required: true
-                _label: Social Page URL
-                input: text
-                type: url
+            required: true
+          input: text
+          type: url
+  _reveal:
+    field: socialButtonsShow
+    operator: ===
+    value: true
 
-appBadges:
+appBadgesShow:
+  _label: Show app download badges?
+  _has:
+    validate:
+      required: true
+    input: checkbox
+    help: By default, app badges are added to footer. Uncheck to remove.
+
+appBadgesURLs:
   _label: App Badges
   _has:
+    input: complex-list
     props:
       -
-        prop: show
+        prop: type
+        _label: Badge Type
         _has:
           validate:
             required: true
-          _label: Should app download badges be shown?
-          input: checkbox
-          help: By default, app badges are added to footer. Uncheck to remove.
+          input: radio
+          options:
+            -
+              name: app store
+              value: app-store
+            -
+              name: google play
+              value: google-play
       -
-        prop: badgeURLs
-        input: complex-list
+        prop: url
+        _label: Badge URL
         _has:
           validate:
             required: true
-          props:
-            -
-              prop: text
-              _has:
-                validate:
-                  required: true
-                _label: Social Type
-                input: text
-                help: "app store or google play"
-            -
-              prop: url
-              _has:
-                validate:
-                  required: true
-                _label: Badge URL
-                input: text
-                type: url
+          input: text
+          type: url
+  _reveal:
+    field: appBadgesShow
+    operator: ===
+    value: true
+
 links:
   _label: Footer Links
-  _placeholder:
-    text: Links
-    height: 100
   _has:
     input: complex-list
     validate:
@@ -129,6 +133,8 @@ links:
 _groups:
   settings:
     fields:
-      - socialButtons (Social Buttons)
-      - appBadges (App Badges)
+      - socialButtonsShow (Social Buttons)
+      - socialButtonsURLs (Social Buttons)
+      - appBadgesShow (App Badges)
+      - appBadgesURLs (App Badges)
       - links (Links)
