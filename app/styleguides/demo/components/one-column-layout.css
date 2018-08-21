@@ -1,12 +1,3 @@
-@import '_global/reset.css';
-@import '_global/fonts.css';
-
-.top {
-  /*margin: 0 auto 20px;
-  max-width: 1000px;*/
-}
-
-.wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-}
+@import '_global/reset';
+@import '_global/fonts';
+@import '_global/grid';
