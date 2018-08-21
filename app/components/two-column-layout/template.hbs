@@ -15,17 +15,26 @@
     <!-- data-editable="headLayout" -->
       {{> component-list headLayout }}
     <!-- data-editable-end -->
+
+    <!-- Attach the context object to window so SPA has access to data on the frontend. -->
+    {{{ attachSpaPayloadToWindow }}}
+    <script src="/dist/app.js"></script>
+
   </head>
   <body class="layout layout--two-column">
-    <section class="layout__top" data-editable="top">{{> component-list top }}</section>
-    <header class="layout__page-header" data-editable="pageHeader">{{> component-list pageHeader }}</header>
-    <section class="layout__section-header" data-editable="sectionHeader">{{> component-list sectionHeader }}</section>
-    <section class="layout__content">
-      <section class="content__main" data-editable="main">{{> component-list main }}</section>
-      <section class="content__sidebar" data-editable="tertiary" data-track-zone="tertiary">{{> component-list tertiary }}</section>
-      <section class="content__secondary" data-editable="secondary" data-track-zone="secondary">{{> component-list secondary }}</section>
-    </section>
-    <footer class="layout__bottom" data-editable="bottom">{{> component-list bottom }}</footer>
+    <div id="vue-app-mount-point">
+      <div id="vue-wrapper">
+        <section class="layout__top" data-editable="top">{{> component-list top }}</section>
+        <header class="layout__page-header" data-editable="pageHeader">{{> component-list pageHeader }}</header>
+        <section class="layout__section-header" data-editable="sectionHeader">{{> component-list sectionHeader }}</section>
+        <section class="layout__content">
+          <section class="content__main" data-editable="main">{{> component-list main }}</section>
+          <section class="content__sidebar" data-editable="tertiary" data-track-zone="tertiary">{{> component-list tertiary }}</section>
+          <section class="content__secondary" data-editable="secondary" data-track-zone="secondary">{{> component-list secondary }}</section>
+        </section>
+        <footer class="layout__bottom" data-editable="bottom">{{> component-list bottom }}</footer>
+      </div>
+    </div>
     <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
   </body>
 </html>
