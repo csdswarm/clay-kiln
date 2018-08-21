@@ -439,7 +439,8 @@ $drawerSelector: nav-drawer;
       .$(drawerSelector) {
         height: calc(100vh - $(mini-nav-height));
         top: $mini-nav-height;
-        /* (100% view width - header container width) / 2 + hamburger width + hamburger margin + nav logo width */
+        /* (100% view width - header container width) / 2 
+        + hamburger width + hamburger margin + nav logo width */
         width: calc((100vw - $(medium-screen-nav-width)) / 2 + em(20) + em(20) + em(180));
         &:not(.$(drawerSelector)--mobile) .container {
           width: $medium-screen-nav-width;
@@ -469,7 +470,8 @@ $drawerSelector: nav-drawer;
     padding: 0 em(30);
     .$(drawerSelector) {
       &.$(drawerSelector)--mobile {
-        /* header container padding-left + hamburger width + hambruger margin + nav logo width */
+        /* header container padding-left + hamburger width
+        + hambruger margin + nav logo width */
         width: calc(em(30) + em(20) + em(20) + em(180));
         .$(drawerSelector)__sub-nav {
           h2, ul {
