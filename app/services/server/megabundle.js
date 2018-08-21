@@ -83,7 +83,12 @@ function getDeps(editMode, scripts, assetPath) {
       'postlude'
     ]).map(id => idToPublicPath(id, assetPath));;
   } else {
-    const entryIds = scripts.map(publicPathToId);
+    let entryIds = scripts.map(publicPathToId);
+
+    // we always want to push this service into the id array
+    // so we get the dependencies resolved for the client
+    // @TODO: Remove once solution is found for import/export vs require bug in webpack
+    entryIds.push('handlebars-helpers.service');
 
     return _.flatten([
       'prelude',
