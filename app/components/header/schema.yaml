@@ -1,72 +1,8 @@
 _description: |
-  This is the site header at the top of every page. It displays the site logo and various social media services.
+  This is the site header at the top of every page. It displays the site logo, navigational links, account button, and search button.
 _confirmRemoval: true
 
-variation:
-  _label: Component Variation
-  _has:
-    input: radio
-    options:
-      - header
-      - header-redesign
-
-position:
-  _label: Position
-  _has:
-    input: radio
-    options:
-      - right
-      - bottom
-    help: Where to position social media links relative to header
-  _reveal:
-    field: variation
-    operator: ===
-    value: header
-
-hasStrongSiteName:
-  _label: H1 Toggle
-  _has:
-    input: checkbox
-    help: Site title is the <h1>. According to SEO and accessibility experts, an &lt;h1&gt; tag should only appear once on a page. On pages with important content (like articles), the article component will handle it. On other pages (like homepages), this should be enabled so that the Simple Header can handle it
-
-tagline:
-  _label: Tagline
-  _has:
-    input: wysiwyg
-    styled: true
-    buttons:
-      - bold
-      - italic
-      - strike
-    help: A tagline to display with the site logo
-
-services:
-  _label: Media Services
-  _placeholder:
-    height: 30px
-    text: Services
-  _componentList:
-    min: 1
-    include:
-      - follow
-
-siteHomepage:
-  _label: Site Homepage
-  _has:
-    input: text
-    help: The relative path to the homepage for this site, e.g. '/offers'. Not editable in the UI, and almost always blank
-
-newsletterSignupUrl:
-  _label: Newsletter Signup Url
-  _has:
-    input: text
-    help: Add link (with icon) from the nav menu to the newsletter signup page
-  _reveal:
-    field: variation
-    operator: ===
-    value: header-redesign
-
-primaryLinks:
+headerLinks:
   _label: Links
   _placeholder:
     text: Links
@@ -76,57 +12,83 @@ primaryLinks:
     props:
       -
         prop: url
-        _label: Url
+        _label: Nav Top Categories Url
         _has:
           input: text
           type: url
           validate:
+            required: false
+      -
+        prop: drawer
+        _label: Does this category have a drawer/tray/dropdown menu?
+        _has:
+          input: checkbox
+          validate:
             required: true
       -
         prop: text
-        _label: Link Text
+        _label: Nav Top Categories Text
         _has:
           input: text
           enforceMaxlength: true
           validate:
             required: true
-            max: 40
-            maxMessage: This field must be 40 or fewer characters long
-
-secondaryLinks:
-  _label: Links
-  _placeholder:
-    text: Links
-    height: 100
-  _has:
-    input: complex-list
-    props:
+            max: 13
+            maxMessage: This field must be 13 or fewer characters long
       -
-        prop: url
-        _label: Url
+        prop: list
+        _label: Drawer Sub Nav
         _has:
-          input: text
-          type: url
+          input: complex-list
           validate:
-            required: true
-      -
-        prop: text
-        _label: Link Text
-        _has:
-          input: text
-          enforceMaxlength: true
-          validate:
-            required: true
-            max: 40
-            maxMessage: This field must be 40 or fewer characters long
+            required: false
+          props:
+            -
+              prop: text
+              _label: Drawer Sub Nav Text
+              _has:
+                input: text
+                enforceMaxlength: true
+                validate:
+                  required: true
+                  max: 20
+                  maxMessage: This field must be 20 or fewer characters long
+            -
+              prop: url
+              _label: Drawer Sub Nav Url
+              _has:
+                input: text
+                type: url
+                validate:
+                  required: false
+            -
+              prop: list
+              _label: Drawer Sub Nav Links
+              _has:
+                input: complex-list
+                validate:
+                  required: false
+                props:
+                  -
+                    prop: url
+                    _label: Drawer Sub Category Link Url
+                    _has:
+                      input: text
+                      type: url
+                      validate:
+                        required: true
+                  -
+                    prop: text
+                    _label: Drawer Sub Category Link Text
+                    _has:
+                      input: text
+                      enforceMaxlength: true
+                      validate:
+                        required: true
+                        max: 20
+                        maxMessage: This field must be 20 or fewer characters long
 
 _groups:
   settings:
     fields:
-      - variation
-      - position
-      - hasStrongSiteName
-      - tagline
-      - newsletterSignupUrl
-      - primaryLinks (primary nav links)
-      - secondaryLinks (secondary nav links)
+      - headerLinks

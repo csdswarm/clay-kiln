@@ -20,6 +20,6 @@ _users:
     provider: google
     auth: admin
   -
-    username: tiffany.chow@entercom.com
+    username: tiffachow@gmail.com
     provider: google
     auth: admin

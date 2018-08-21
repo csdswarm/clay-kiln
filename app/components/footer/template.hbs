@@ -1,10 +1,43 @@
-<div data-uri="{{ default _ref _self }}" class="footer" data-editable="settings">
-
-  <ul class="footer-social" data-editable="services">
-    {{> component-list services }}
-  </ul>
-
-  <div class="copyright">
-    Built in {{ moment 'now' 'YYYY' }} with Clay
-  </div>
+<div class="radiocom-footer" data-uri="{{ default _ref _self }}">
+	<div class="container">
+		{{#if socialButtons.show}}
+			<div class="radiocom-footer__social">
+				{{#each socialButtons.buttonURLs as |button|}}
+					<a target="_blank" href="{{button.url}}">
+						<object type="image/svg+xml" data="/media/components/footer/{{button.text}}.svg">
+						  <img src="/media/components/footer/{{button.text}}.svg">
+						</object>
+					</a>
+				{{/each}}
+			</div>
+		{{/if}}
+		{{#if appBadges.show}}
+			<div class="radiocom-footer__download-app">
+				{{#each appBadges.badgeURLs as |badge|}}
+					<a target="_blank" href="{{badge.url}}">
+						<object type="image/svg+xml" data="/media/components/footer/{{badge.text}} badge.svg">
+						  <img src="/media/components/footer/{{badge.text}} badge.svg">
+						</object>
+					</a>
+				{{/each}}
+			</div>
+		{{/if}}
+		{{#if links}}
+			{{#each links}}
+				<div class="radiocom-footer__section radiocom-footer__{{text}}">
+					<h2>{{text}}</h2>
+					{{#if list}}
+						{{#each list as |link|}}
+							<a {{#if link.newtab}}target="_blank"{{/if}} href="{{link.url}}">{{link.text}}</a>
+						{{/each}}
+					{{/if}}
+				</div>
+			{{/each}}
+		{{/if}}
+		<span class="radiocom-footer__copyright">
+			&copy Entercom {{ moment 'now' 'YYYY' }} <a target="_blank" href="www.radio.com">Radio.com</a>
+		</span>
+	</div>
 </div>
+
+</style>
