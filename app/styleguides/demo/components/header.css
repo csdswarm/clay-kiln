@@ -471,7 +471,7 @@ $drawerSelector: nav-drawer;
     .$(drawerSelector) {
       &.$(drawerSelector)--mobile {
         /* header container padding-left + hamburger width
-        + hambruger margin + nav logo width */
+        + hamburger margin + nav logo width */
         width: calc(em(30) + em(20) + em(20) + em(180));
         .$(drawerSelector)__sub-nav {
           h2, ul {
