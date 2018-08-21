@@ -29,17 +29,23 @@
 }
 
 .share-list {
-  display: inline;
+  height: 157px;
+  width: 40px;
   margin: 0;
   padding: 0;
 }
 
 .share-list-item {
-  display: inline;
+  border: 1px solid #D8D8D8;
+  border-width: 0px 1px 1px;
+}
+
+/* Enable top border on top element */
+.share-list-item:first-child {
+  border-width: 1px;
 }
 
 .share .share-link {
-  position: relative;
   text-decoration: none;
 }
 
@@ -62,6 +68,12 @@
 
 .share .share-link svg {
   height: 20px;
+  width: 20px;
+}
+
+/* Increase height of Facebook svg */
+.share .share-link.facebook svg {
+  height: 22px;
   width: 20px;
 }
 
@@ -285,21 +297,19 @@
   }
 
   .share .share-link {
-    border-top: 1px solid #eaeaea;
-    display: block;
-    font-size: 11px;
-    height: 26px;
-    margin: 0 0 9px;
-    padding: 11px 0 0 29px;
-    width: 109px;
+    display: flex;
+    width: 40px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
   }
 
-  .share .share-link svg {
-    height: 18px;
-    left: 5px;
-    position: absolute;
-    top: 7px;
-    width: 18px;
+  /* Clear button styling and use pointer cursor */
+  .share button {
+    border: none;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
   }
 
   .share .share-link.comment svg {
@@ -350,12 +360,13 @@
   }
 
   .share.vertical {
-    bottom: -410px;
+    bottom: -225px;
     left: -134px;
     margin: 0;
-    min-height: 340px;
     padding: 0;
     position: absolute;
+    height: 157px;
+    width: 40px;
   }
 
   .share.vertical .share-title + .share-list .share-link {

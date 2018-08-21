@@ -1,33 +1,33 @@
 <aside data-uri="{{ default _ref _self }}" class="share {{ orientation }}">
-    <ul class="share-list">
+  <div class="share-list">
     {{#if enabled.facebook }}
-      <li class="share-list-item">
+      <div class="share-list-item">
         <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u={{ url }}%3Futm_source=fb%26utm_medium=s3%26utm_campaign=sharebutton-t" class="share-link facebook" title="Share on Facebook" aria-label="Share on Facebook">
           {{{ read 'public/media/components/share/facebook.svg' }}}</a>
-      </li>
+      </div>
     {{/if}}
 
     {{#if enabled.twitter }}
-      <li class="share-list-item">
+      <div class="share-list-item">
         <a target="_blank" href="https://twitter.com/share?text={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}&amp;url={{ url }}%3Futm_source=tw%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;via={{ twitterHandle }}" class="share-link twitter" title="Share on Twitter" aria-label="Share on Twitter">
           {{{ read 'public/media/components/share/twitter.svg' }}}</a>
-      </li>
+      </div>
     {{/if}}
 
     {{#if enabled.email }}
-      <li class="share-list-item">
+      <div class="share-list-item">
         <a href="mailto:?subject={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}" class="share-link email" title="Email" aria-label="Email">
           {{{ read 'public/media/components/share/email.svg' }}}</a>
-      </li>
+      </div>
     {{/if}}
 
     {{#if enabled.link }}
-      <li class="share-list-item">
+      <div class="share-list-item">
         {{!-- <a href="{{ url }}" class="share-link copy-link" title="Copy link" aria-label="Copy link">
           {{{ read 'public/media/components/share/copy-link.svg' }}}</a> --}}
         <button class="share-link copy-link" title="Copy link" aria-label="Copy link" formaction="{{ url }}">
           {{{ read 'public/media/components/share/copy-link.svg' }}}</button>
-      </li>
+      </div>
     {{/if}}
-    </ul>
+  </div>
 </aside>

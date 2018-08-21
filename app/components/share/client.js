@@ -23,7 +23,7 @@ function copyToClipboard(e) {
   textArea.style.background = 'transparent';
 
   // Prepare text and textArea for copying
-  textArea.value = e.path[0].formAction; // get url from event
+  textArea.value = e.path[0].baseURI; // get url from event
   document.body.appendChild(textArea);
 
   textArea.focus();
