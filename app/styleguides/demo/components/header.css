@@ -2,11 +2,14 @@
 @import "_global/mixins";
 @import "_global/colors";
 
-$default-screen-nav-width: 1100px;
-$large-screen-nav-width: 940px;
-$medium-screen-nav-width: 728px;
-$medium-small-screen-nav-width: 440px;
-$small-screen-nav-width: 320px;
+$default-screen-nav-width: em(1100);
+$large-screen-nav-width: em(940);
+$medium-screen-nav-width: em(728);
+$medium-small-screen-nav-width: em(440);
+$small-screen-nav-width: em(320);
+
+$navButton: radiocom-nav__category-button;
+$drawerSelector: nav-drawer;
 
 .radiocom-nav-placeholder {
   button {
@@ -40,8 +43,8 @@ $small-screen-nav-width: 320px;
     text-transform: none;
     text-decoration: none;
   }
-  height: 60px;
-  margin-bottom: 20px;
+  height: em(60);
+  margin-bottom: em(20);
 }
 .radiocom-nav {
   background: $parisPurple;
@@ -51,7 +54,7 @@ $small-screen-nav-width: 320px;
   left: 0;
   text-align: center;
   z-index: 100;
-  height: 60px;
+  height: em(60);
   .container {
     @mixin inline-block;
     text-align: left;
@@ -62,15 +65,15 @@ $small-screen-nav-width: 320px;
     display: none;
     position: relative;
     vertical-align: top;
-    margin-right: 20px;
-    width: 20px;
-    height: 15px;
+    margin-right: em(20);
+    width: em(20);
+    height: em(15);
     cursor: pointer;
     @mixin vertical-align;
     .bar {
       position: absolute;
       top: 0;
-      left: 0px;
+      left: 0;
       display: block;
       font-size: 10px;
       padding: 0;
@@ -107,12 +110,13 @@ $small-screen-nav-width: 320px;
   }
   .radiocom-nav__logo {
     @mixin inline-block;
+    font-size: 16px;
     background: transparent;
     border: 0;
     height: 100%;
-    width: 260px;
+    width: em(260);
     padding: 0;
-    margin: 0 42px 0 0;
+    margin: 0 em(42) 0 0;
     cursor: pointer;
     img, svg {
       width: 100%;
@@ -120,35 +124,35 @@ $small-screen-nav-width: 320px;
       vertical-align: -webkit-baseline-middle;
     }
   }
-  $selector: radiocom-nav__category-button;
-  @define-mixin header-color $modifier, $color {
-    &.$(selector)--active.$(selector)--$(modifier),
-    &:hover.$(selector)--$(modifier) {
+  @define-mixin header-button-color $modifier, $color {
+    &.$(navButton)--active.$(navButton)--$(modifier),
+    &:hover.$(navButton)--$(modifier) {
       background: $color;
     }
   }
-  .$(selector) {
+  @define-mixin header-heading-color $modifier, $color {
+    &.$(navButton)--active.$(navButton)--$(modifier) h1,
+    &:hover.$(navButton)--$(modifier) h1 {
+      color: $color;
+    }
+  }
+  .$(navButton) {
     @mixin inline-block;
     border: 0;
     height: 100%;
     background: transparent;
-    padding: 0 20px;
+    padding: 0 em(20);
     cursor: pointer;
-    @mixin header-color news, $lightningYellow;
-    @mixin header-color sports, $azureRadience;
-    @mixin header-color podcasts, $robinsEgg;
-    @mixin header-color entertainment, $sunsetOrange;
-    @mixin header-color listen, $white;
-    @mixin header-color download, $white;
-    @mixin header-color more, $white;
-    &.$(selector)--active.$(selector)--listen h1,
-    &:hover.$(selector)--listen h1,
-    &.$(selector)--active.$(selector)--download h1,
-    &:hover.$(selector)--download h1,
-    &.$(selector)--active.$(selector)--more h1,
-    &:hover.$(selector)--more h1 {
-      color: $parisPurple;
-    }
+    @mixin header-button-color news, $lightningYellow;
+    @mixin header-button-color sports, $azureRadience;
+    @mixin header-button-color podcasts, $robinsEgg;
+    @mixin header-button-color entertainment, $sunsetOrange;
+    @mixin header-button-color listen, $white;
+    @mixin header-button-color download, $white;
+    @mixin header-button-color more, $white;
+    @mixin header-heading-color listen, $parisPurple;
+    @mixin header-heading-color download, $parisPurple;
+    @mixin header-heading-color more, $parisPurple;
     button h1 {
       font-family: CircularStd-Black, sans-serif;
       font-size: 15px;
@@ -165,10 +169,11 @@ $small-screen-nav-width: 320px;
       float: right;
     }
     .account-btn {
+      font-size: 16px;
       vertical-align: middle;
-      height: 30px;
-      width: 30px;
-      margin: 0 20px 0 42px;
+      height: em(30);
+      width: em(30);
+      margin: 0 em(20) 0 em(42);
       div, img, svg {
         width: 100%;
         height: auto;
@@ -180,21 +185,22 @@ $small-screen-nav-width: 320px;
         display: block;
       }
       @mixin large-screen {
-        margin: 0 20px 0 9px;
+        margin: 0 em(20) 0 em(9);
       }
       @mixin medium-screen {
-        height: 24px;
-        width: 24px;
-        margin: 0 20px 0 0;
+        height: em(24);
+        width: em(24);
+        margin: 0 em(20) 0 0;
       }
       @mixin medium-small-screen {
         display: none;
       }
     }
     .search-btn {
+      font-size: 16px;
       vertical-align: middle;
-      height: 30px;
-      width: 25px;
+      height: em(30);
+      width: em(25);
       div, img, svg {
         width: 100%;
         height: auto;
@@ -206,51 +212,51 @@ $small-screen-nav-width: 320px;
         display: block;
       }
       @mixin medium-screen {
-        height: 20px;
-        width: 20px;
+        height: em(20);
+        width: em(20);
       }
     }
   }
-  .nav-drawer {
+  .$(drawerSelector) {
     background: $purple;
     position: fixed;
     display: none;
-    top: 60px;
+    top: em(60);
     width: 100%;
     left: 0;
-    padding: 50px;
+    padding: em(50);
     color: $white;
     cursor: default;
     overflow: hidden;
-    &:not(.nav-drawer--mobile) {
+    &:not(.$(drawerSelector)--mobile) {
       justify-content: center;
       .container {
         display: block;
         text-align: left;
         width: $default-screen-nav-width;
-        .nav-drawer__sub-nav {
+        .$(drawerSelector)__sub-nav {
           @mixin inline-block;
           &:first-of-type {
-            margin-right: 100px;
-            .nav-drawer__sub-nav--columns {
-              @mixin ul-columns 3, 80px;
+            margin-right: em(100);
+            .$(drawerSelector)__sub-nav--columns {
+              @mixin ul-columns 3, em(80);
             }
           }
           &:nth-of-type(2) {
-            margin-right: 100px;
-            .nav-drawer__sub-nav--columns {
-              @mixin ul-columns 2, 80px;
+            margin-right: em(100);
+            .$(drawerSelector)__sub-nav--columns {
+              @mixin ul-columns 2, em(80);
             }
           }
           &:nth-of-type(3) {
-            .nav-drawer__sub-nav--columns {
-              @mixin ul-columns 1, 80px;
+            .$(drawerSelector)__sub-nav--columns {
+              @mixin ul-columns 1, em(80);
             }
           }
           ul {
             li {
               display: block;
-              width: 100px;
+              width: em(100);
               cursor: pointer;
               white-space: nowrap;
               h3 {
@@ -265,20 +271,20 @@ $small-screen-nav-width: 320px;
           }
           h2.find-station-link {
             span {
-              font: 500 30px/1em Arial, Helvetica, sans-serif;
+              font: 500 em(30)/1em Arial, Helvetica, sans-serif;
               @mixin inline-block;
             }
           }
         }
       }
     }
-    &.nav-drawer--active:not(.nav-drawer--mobile) {
+    &.$(drawerSelector)--active:not(.$(drawerSelector)--mobile) {
       display: flex;
     }
-    &.nav-drawer--mobile:not(.nav-drawer--active) {
+    &.$(drawerSelector)--mobile:not(.$(drawerSelector)--active) {
       display: block;
     }
-    &.nav-drawer--active.nav-drawer--mobile {
+    &.$(drawerSelector)--active.$(drawerSelector)--mobile {
       transform: translateX(0);
     }
     h2 {
@@ -291,55 +297,49 @@ $small-screen-nav-width: 320px;
       display: block;
       text-align: left;
     }
-    &.nav-drawer--mobile {
+    &.$(drawerSelector)--mobile {
       display: inline-block;
-      padding: 30px 0;
+      padding: em(30) 0;
       transform: translateX(-100%);
       transition: all 100ms linear;
-      .nav-drawer__sub-nav {
+      .$(drawerSelector)__sub-nav {
         margin: 0;
         display: block;
         a {
           width: 100%;
         }
-        &.nav-drawer__listen h2:hover,
-        &.nav-drawer__download h2:hover,
-        &.nav-drawer__more h2:hover {
+        &.$(drawerSelector)__listen h2:hover,
+        &.$(drawerSelector)__download h2:hover,
+        &.$(drawerSelector)__more h2:hover {
           background: $white;
           color: $parisPurple;
         }
-        &.nav-drawer__sub-nav--active.nav-drawer__entertainment h2,
-        &.nav-drawer__entertainment h2:hover {
-          background: $sunsetOrange;
+        @define-mixin drawer-header-color $modifier, $color {
+          &.$(drawerSelector)__sub-nav--active.$(drawerSelector)__$(modifier) h2,
+          &.$(drawerSelector)__$(modifier) h2:hover {
+            background: $color;
+          }
         }
-        &.nav-drawer__sub-nav--active.nav-drawer__news h2,
-        &.nav-drawer__news h2:hover {
-          background: $lightningYellow;
-        }
-        &.nav-drawer__sub-nav--active.nav-drawer__sports h2,
-        &.nav-drawer__sports h2:hover {
-          background: $azureRadience;
-        }
-        &.nav-drawer__sub-nav--active.nav-drawer__podcasts h2,
-        &.nav-drawer__podcasts h2:hover {
-          background: $robinsEgg;
-        }
+        @mixin drawer-header-color entertainment, $sunsetOrange;
+        @mixin drawer-header-color news, $lightningYellow;
+        @mixin drawer-header-color sports, $azureRadience;
+        @mixin drawer-header-color podcasts, $robinsEgg;
         h2 {
           cursor: pointer;
           text-align: left;
-          line-height: 30px;
+          line-height: em(30);
           display: inline-block;
           width: 100%;
         }
         ul {
           cursor: pointer;
           text-align: left;
-          line-height: 30px;
+          line-height: em(30);
           display: inline-block;
           width: 100%;
           display: none;
         }
-        &.nav-drawer__sub-nav--active ul {
+        &.$(drawerSelector)__sub-nav--active ul {
           display: block;
         }
         h3 {
@@ -356,18 +356,18 @@ $small-screen-nav-width: 320px;
       }
       .find-station-link {
         cursor: pointer;
-        line-height: 30px;
+        line-height: em(30);
         display: block;
       }
     }
   }
 }
 .kiln-wrapper.view-mode {
-  top: 46px !important;
+  top: em(46) !important;
 }
 .kiln-edit-mode {
   .radiocom-nav {
-    top: 56px;
+    top: em(56);
   }
 }
 
@@ -375,33 +375,33 @@ $small-screen-nav-width: 320px;
   .radiocom-nav .container {
     width: $large-screen-nav-width;
     .radiocom-nav__logo {
-      width: 220px;
-      margin: 0 15px 0 0;
+      width: em(220);
+      margin: 0 em(15) 0 0;
     }
-    .$(selector) {
-      padding: 0 15px;
+    .$(navButton) {
+      padding: 0 em(15);
     }
-    .nav-drawer:not(.nav-drawer--mobile) .container {
+    .$(drawerSelector):not(.$(drawerSelector)--mobile) .container {
       width: $large-screen-nav-width;
-      .nav-drawer__sub-nav {
+      .$(drawerSelector)__sub-nav {
         ul li {
-          width: 80px;
+          width: em(80);
         }
         &:first-of-type {
-          margin-right: 80px;
-          .nav-drawer__sub-nav--columns {
-            @mixin ul-columns 3, 80px;
+          margin-right: em(80);
+          .$(drawerSelector)__sub-nav--columns {
+            @mixin ul-columns 3, em(80);
           }
         }
         &:nth-of-type(2) {
-          margin-right: 80px;
-          .nav-drawer__sub-nav--columns {
-            @mixin ul-columns 2, 80px;
+          margin-right: em(80);
+          .$(drawerSelector)__sub-nav--columns {
+            @mixin ul-columns 2, em(80);
           }
         }
         &:nth-of-type(3) {
-          .nav-drawer__sub-nav--columns {
-            @mixin ul-columns 1, 80px;
+          .$(drawerSelector)__sub-nav--columns {
+            @mixin ul-columns 1, em(80);
           }
         }
       }
@@ -411,10 +411,10 @@ $small-screen-nav-width: 320px;
 
 @mixin medium-screen {
   .radiocom-nav-placeholder {
-    height: 46px;
+    height: em(46);
   }
   .radiocom-nav {
-    height: 46px;
+    height: em(46);
     .container {
       width: $medium-screen-nav-width;
       text-align: left;
@@ -422,30 +422,32 @@ $small-screen-nav-width: 320px;
         display: inline-block;
       }
       .radiocom-nav__logo {
-        width: 180px;
+        width: em(180);
       }
-      .$(selector) {
+      .$(navButton) {
         padding: 0;
         background: transparent;
         button {
           display: none;
         }
       }
-      .nav-drawer {
-        height: calc(100vh - 46px);
-        top: 46px;
-        width: calc((100vw - #{$medium-screen-nav-width}) / 2 + 20px + 20px + 180px);
-        &:not(.nav-drawer--mobile) .container {
+      .$(drawerSelector) {
+        height: calc(100vh - em(46));
+        top: em(46);
+        width: calc((100vw - $(medium-screen-nav-width)) / 2 + em(20) + em(20) + em(180));
+        &:not(.$(drawerSelector)--mobile) .container {
           width: $medium-screen-nav-width;
         }
-        &.nav-drawer--mobile {
-          .nav-drawer__sub-nav {
+        &.$(drawerSelector)--mobile {
+          .$(drawerSelector)__sub-nav {
             h2, ul {
-              padding-left: calc((100vw - #{$medium-screen-nav-width}) / 2);
+              font-size: 16px;
+              padding-left: calc((100vw - $(medium-screen-nav-width)) / 2);
             }
           }
           .find-station-link {
-            padding-left: calc((100vw - #{$medium-screen-nav-width}) / 2);
+            font-size: 16px;
+            padding-left: calc((100vw - $(medium-screen-nav-width)) / 2);
           }
         }
       }
@@ -453,20 +455,20 @@ $small-screen-nav-width: 320px;
   }
 }
 
-@media only screen and (max-width: 788px) {
+@media only screen and (max-width: em(788)) {
   .radiocom-nav .container {
     width: 100%;
-    padding: 0 30px;
-    .nav-drawer {
-      &.nav-drawer--mobile {
-        width: calc(30px + 20px + 20px + 180px);
-        .nav-drawer__sub-nav {
+    padding: 0 em(30);
+    .$(drawerSelector) {
+      &.$(drawerSelector)--mobile {
+        width: calc(em(30) + em(20) + em(20) + em(180));
+        .$(drawerSelector)__sub-nav {
           h2, ul {
-            padding-left: 30px;
+            padding-left: em(30);
           }
         }
         .find-station-link {
-          padding-left: 30px;
+          padding-left: em(30);
         }
       }
     }
@@ -480,10 +482,10 @@ $small-screen-nav-width: 320px;
     .radiocom-nav__hamburger.wrapper {
       float: left;
     }
-    .nav-drawer {
-      &.nav-drawer--mobile {
+    .$(drawerSelector) {
+      &.$(drawerSelector)--mobile {
         width: 100%;
-        .nav-drawer__sub-nav {
+        .$(drawerSelector)__sub-nav {
           h2, ul {
             text-align: center;
             margin: 0;
