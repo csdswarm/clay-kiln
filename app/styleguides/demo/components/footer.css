@@ -39,7 +39,7 @@
   .container {
     width: em(620);
 
-    @media screen and (max-width: em(660)) {
+    @media screen and (max-width: 660px) {
       width: 100%;
     }
     .radiocom-footer__social {
