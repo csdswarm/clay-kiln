@@ -45,8 +45,6 @@ _components:
             _ref: /_components/generic-list/instances/recirc
         bottom:
           -
-            _ref: /_components/web-player/instances/new
-          -
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
