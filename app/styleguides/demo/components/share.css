@@ -40,6 +40,27 @@
   border-width: 0px 1px 1px;
 }
 
+/* Remove border on hover */
+.share-list-item:hover,
+.share-list-item:active {
+  border: none;
+}
+
+/* Keep border for copy-link item */
+.share-list-item__copy-link:hover,
+.share-list-item__copy-linkitem:active {
+  border: 1px solid #D8D8D8;
+  border-width: 0px 1px 1px;
+}
+
+/* Hide bottom border of icon above hovered icon and move icon below up 1px */
+.share-list-item:not(:first-child):hover,
+.share-list-item:not(:first-child):active {
+  position: relative;
+  top: -1px;
+  margin-bottom: -1px;
+}
+
 /* Enable top border on top element */
 .share-list-item:first-child {
   border-width: 1px;
@@ -74,7 +95,37 @@
 /* Increase height of Facebook svg */
 .share .share-link.facebook svg {
   height: 22px;
-  width: 20px;
+}
+
+/* Dispaly config for hover/non-hover icons */
+.share-link .icon-hover {
+  display: none;
+}
+
+.share-link:hover .icon-hover,
+.share-link:active .icon-hover {
+  display: block;
+}
+
+.share-link:hover .icon-no-hover,
+.share-link:active .icon-no-hover {
+  display: none;
+}
+
+/* Background colors for hover */
+.share-link.facebook:hover,
+.share-link.facebook:active {
+  background-color: #3B5998;
+}
+
+.share-link.twitter:hover,
+.share-link.twitter:active {
+  background-color: #05AEEE;
+}
+
+.share-link.email:hover,
+.share-link.email:active {
+  background-color: #1F055E;
 }
 
 @media screen and (min-width:0) and (max-width:1023.9px) {
@@ -302,6 +353,18 @@
     height: 38px;
     align-items: center;
     justify-content: center;
+  }
+
+  /* Grow icon box by 2px on hover */
+  .share .share-link:hover,
+  .share .share-link:active {
+    height: 40px;
+  }
+
+  /* Grow copy-link by only 1px because of no hover change */
+  .share .share-link.copy-link:hover,
+  .share .share-link.copy-link:active {
+    height: 39px;
   }
 
   /* Clear button styling and use pointer cursor */
