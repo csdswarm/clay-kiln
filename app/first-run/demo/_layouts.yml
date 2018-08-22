@@ -12,11 +12,11 @@ _components:
         secondary: secondary
         bottom:
           -
-            _ref: /_components/web-player/instances/new
-          -
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
+        webPlayer:
+          - _ref: /_components/web-player/instances/new
       bare:
         headLayout:
           - _ref: /_components/web-player-head/instances/new
@@ -27,11 +27,11 @@ _components:
         main: main
         bottom:
           -
-            _ref: /_components/web-player/instances/new
-          -
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
+        webPlayer:
+          - _ref: /_components/web-player/instances/new
       article:
         headLayout:
           - _ref: /_components/web-player-head/instances/new
@@ -50,11 +50,14 @@ _components:
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
+        webPlayer:
+          - _ref: /_components/web-player/instances/new
 
   two-column-layout:
     instances:
       article:
         headLayout:
+          - _ref: /_components/web-player-head/instances/new
         top:
         head: head
         main: main
@@ -65,3 +68,5 @@ _components:
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
+        webPlayer:
+          - _ref: /_components/web-player/instances/new
