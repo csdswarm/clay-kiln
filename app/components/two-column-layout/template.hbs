@@ -22,9 +22,9 @@
     <script src="/dist/app.js"></script>
 
   </head>
-  <body class="layout layout--two-column">
+  <body>
     <div id="vue-app-mount-point">
-      <div id="vue-wrapper">
+      <section class="layout layout--two-column">
         <section class="layout__top" data-editable="top">{{> component-list top }}</section>
         <header class="layout__page-header" data-editable="pageHeader">{{> component-list pageHeader }}</header>
         <section class="layout__section-header" data-editable="sectionHeader">{{> component-list sectionHeader }}</section>
@@ -34,7 +34,7 @@
           <section class="content__secondary" data-editable="secondary" data-track-zone="secondary">{{> component-list secondary }}</section>
         </section>
         <footer class="layout__bottom" data-editable="bottom">{{> component-list bottom }}</footer>
-      </div>
+      </section>
     </div>
     <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
   </body>

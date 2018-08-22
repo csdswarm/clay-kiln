@@ -1,5 +1,5 @@
 <template>
-  <div class="vue-wrapper">
+  <section class="layout layout--two-column">
     <section class="layout__top" data-editable="top" v-html="this.componentList('top')"></section>
     <header class="layout__page-header" data-editable="pageHeader" v-html="this.componentList('pageHeader')"></header>
     <section class="layout__section-header" data-editable="sectionHeader" v-html="this.componentList('sectionHeader')"></section>
@@ -9,7 +9,7 @@
       <section class="content__secondary" data-editable="secondary" data-track-zone="secondary" v-html="this.componentList('secondary')"></section>
     </section>
     <footer class="layout__bottom" data-editable="bottom" v-html="this.componentList('bottom')"></footer>
-  </div>
+  </section>
 </template>
 
 <script>
