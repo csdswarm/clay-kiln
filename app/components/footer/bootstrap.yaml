@@ -1,5 +1,7 @@
 _components:
   footer:
-    socialButtons: {}
-    appBadges: {}
+    socialButtonsShow: true
+    socialButtonsURLs: []
+    appBadgesShow: true
+    appBadgesURLs: []
     links: []
