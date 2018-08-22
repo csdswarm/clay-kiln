@@ -43,6 +43,10 @@ function resolveMedia(media, locals) {
       `${assetPath}/js/view-after.js`
     ]);
   }
+
+  // Load all styles on initial page load so SPA doesn't break on navigation
+  media.styles = glob.sync(path.join('public', 'css', `*.${locals.site.slug}.css`))
+      .map(filepath => filepath.replace('public',''));
 };
 
 module.exports = resolveMedia;
