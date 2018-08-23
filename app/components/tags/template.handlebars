@@ -1,6 +1,6 @@
 <div class="component component--tags" data-uri="{{ default _ref _self }}" data-editable="items">
   {{~#if items.length ~}}
-    <ul class="tags tags--{{articleType}}">
+    <ul class="tags {{#if articleType}}tags--{{articleType}}{{/if}}">
       {{! visible tags }}
       {{! original nunjucks logic appears less verbose, moved some logic out of tag for clarity }}
       {{~#each items as |tag| ~}}
