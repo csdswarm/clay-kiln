@@ -17,7 +17,6 @@ const _get = require('lodash/get'),
   rest = require('../../services/universal/rest'),
   circulationService = require('../../services/universal/circulation'),
   mediaplay = require('../../services/universal/media-play'),
-  brandingRubricHandlers = require('./branding-rubric-handlers'),
   queryService = require('../../services/server/query'),
   QUERY_INDEX = 'authors';
 
@@ -38,16 +37,16 @@ function stripHeadlineTags(oldHeadline) {
  * @param  {object} data
  */
 function sanitizeInputs(data) {
-  if (has(data.primaryHeadline)) {
-    data.primaryHeadline = sanitize.toSmartHeadline(stripHeadlineTags(data.primaryHeadline));
+  if (has(data.socialHeadline)) {
+    data.socialHeadline = sanitize.toSmartHeadline(stripHeadlineTags(data.socialHeadline));
   }
 
   if (has(data.shortHeadline)) {
     data.shortHeadline = sanitize.toSmartHeadline(stripHeadlineTags(data.shortHeadline));
   }
 
-  if (has(data.overrideHeadline)) {
-    data.overrideHeadline = sanitize.toSmartHeadline(stripHeadlineTags(data.overrideHeadline));
+  if (has(data.headline)) {
+    data.headline = sanitize.toSmartHeadline(stripHeadlineTags(data.headline));
   }
 
   if (has(data.seoHeadline)) {
@@ -66,14 +65,14 @@ function sanitizeInputs(data) {
 }
 
 /**
- * generate the primary headline from the overrideHeadline
- * if the primary headline is empty and the overrideHeadline is less than 80 characters
+ * generate the social headline from the headline
+ * if the social headline is empty and the headline is less than 80 characters
  * @param  {object} data
  */
-function generatePrimaryHeadline(data) {
-  if (isFieldEmpty(data.primaryHeadline) && has(data.overrideHeadline) && data.overrideHeadline.length < 80) {
-    // note: this happens AFTER overrideHeadline is sanitized
-    data.primaryHeadline = data.overrideHeadline;
+function generateSocialHeadline(data) {
+  if (isFieldEmpty(data.socialHeadline) && has(data.headline) && data.headline.length < 80) {
+    // note: this happens AFTER headline is sanitized
+    data.socialHeadline = data.headline;
   }
 }
 
@@ -102,16 +101,16 @@ function addSiteTitle(title, locals) {
  * @param  {object} locals
  */
 function generatePageTitles(data, locals) {
-  if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.primaryHeadline)) {
-    const plaintextTitle = sanitize.toPlainText(data.seoHeadline || data.shortHeadline || data.primaryHeadline);
+  if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.socialHeadline)) {
+    const plaintextTitle = sanitize.toPlainText(data.seoHeadline || data.shortHeadline || data.socialHeadline);
 
     // published to pageTitle
     data.pageTitle = addSiteTitle(plaintextTitle, locals);
   }
 
-  if (has(data.primaryHeadline)) {
+  if (has(data.socialHeadline)) {
     // published to ogTitle
-    data.plaintextPrimaryHeadline = sanitize.toPlainText(data.primaryHeadline);
+    data.plaintextSocialHeadline = sanitize.toPlainText(data.socialHeadline);
   }
 
   if (has(data.shortHeadline)) {
@@ -180,35 +179,6 @@ function setCanonicalUrl(data, locals) {
   if (_get(locals, 'publishUrl')) {
     data.canonicalUrl = locals.publishUrl;
   }
-}
-
-/**
- * Calls a rubric handler for a page when certain conditions are met
- * Conditions are contained in an array iterated over in order
- * When the first condition is met, it will use that rubric and stop
- * @param {object} handlers
- * @param {object} data make sure to set a default, so handlers can assume it exists
- * @param {object} locals make sure to set a default, so handlers can assume it exists
- */
-function callRubricHandlers(handlers = [], data = {}, locals = {}) {
-  let handlerIndex;
-
-  for (handlerIndex = 0; handlerIndex < handlers.length; handlerIndex++) {
-    if (handlers[handlerIndex].when(data, locals)) {
-      handlers[handlerIndex].handler(data);
-      break;
-    }
-  }
-}
-
-/**
- * set graphical branding / tag rubrics
- * @param {object} data
- * @param {object} locals
- */
-function setRubrics(data, locals) {
-  // always check for the graphical branding rubric
-  callRubricHandlers(brandingRubricHandlers, data, locals);
 }
 
 /**
@@ -388,8 +358,8 @@ function cleanSiloImageUrl(data) {
 }
 
 /**
- * This is a NYMag legacy thing. We converted the original 
- * `authors` array into a more complex `byline` structure, 
+ * This is a NYMag legacy thing. We converted the original
+ * `authors` array into a more complex `byline` structure,
  * but we still key a lot of things off the flatter `authors`
  * array. That's why we're doing this work, but it's done
  * on save as to not affect rendering
@@ -410,17 +380,33 @@ function setPlainAuthorsList(data) {
     data.authors = authors;
   }
 }
+function setPlainSourcesList(data) {
+  const bylineList = _get(data, 'byline', []),
+    sources = [];
+
+  if (bylineList.length > 0) {
+    bylineList.forEach((byline) => {
+      if (byline.names) {
+        byline.names.forEach((name) => {
+          sources.push(name);
+        });
+      }
+    });
+
+    data.sources = sources;
+  }
+}
 
 /**
  * Good for when you have a byline array but one
  * of the objects inside the byline has no name.
- * The byline formatter handlebars helper doesn't 
+ * The byline formatter handlebars helper doesn't
  * like this usecase, so we should sanitize before
  * it even has to deal with it.
  */
 function sanitizeByline(data) {
   const byline = _get(data, 'byline', []);
-  
+
   data.byline = byline.filter(entry => !!entry.names);
 }
 
@@ -444,14 +430,14 @@ module.exports.save = function (uri, data, locals) {
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
-  generatePrimaryHeadline(data);
+  generateSocialHeadline(data);
   generatePageTitles(data, locals);
   generatePageDescription(data);
   formatDate(data, locals);
   setCanonicalUrl(data, locals);
-  setRubrics(data, locals);
   cleanSiloImageUrl(data);
   setPlainAuthorsList(data);
+  setPlainSourcesList(data);
   sanitizeByline(data);
 
   // now that we have some initial data (and inputs are sanitized),

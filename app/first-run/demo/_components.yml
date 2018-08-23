@@ -459,7 +459,9 @@ _components:
   article:
       instances:
         new:
-          primaryHeadline: ''
+          socialHeadline: ''
+          headline: ''
+          subHeadline: ''
           feedImgUrl: ''
           feedLayout: small
           teaser: ''
@@ -468,11 +470,21 @@ _components:
             -
               prefix: by
               names: []
-          rubric: ''
-          rubricMessage: ''
+              sources: []
           syndicatedUrl: ''
           syndicationStatus: original
           dropCap: false
+          lead:
+            -
+              _ref: /_components/image/instances/new
+            -
+              _ref: /_components/tweet/instances/new
+            -
+              _ref: /_components/facebook-post/instances/new
+            -
+              _ref: /_components/instagram/instances/new
+            -
+              _ref: /_components/youtube/instances/new
           content:
             -
               _ref: /_components/image/instances/new
@@ -490,22 +502,11 @@ _components:
             most-popular: true
             newsfeed: true
             apple-news: true
-          featureTypes:
-            News-Aggregation: false
-            News-Commentary and Analysis: false
-            News-Original Reporting: false
-            Advice: false
-            Cover Story Online: false
-            First-Person Essay: false
-            Interview or Profile: false
-            List or Roundup: false
-            Look Book: false
-            Review: false
-            Slideshow Intro: false
-            TV Recap: false
-            Other Feature or Column: false
-            New York Magazine Story: false
-            Sponsor Story: false
+          articleType:
+            Entertainment: false
+            News: false
+            Podcasts: false
+            Sports: false
           showSocial: true
           storyCharacteristics:
             strong-visual: false

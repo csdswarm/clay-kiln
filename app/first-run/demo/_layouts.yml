@@ -56,6 +56,8 @@ _components:
       article:
         headLayout:
         top:
+          -
+            _ref: /_components/header/instances/default
         head: head
         main: main
         tertiary: tertiary

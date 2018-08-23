@@ -1,3 +1,23 @@
+@import "_global/fonts";
+@import "_global/colors";
+
+@define-mixin font10 {
+  display: inline-block;
+  font-family: ProximaNova-Regular, sans-serif;
+  font-size: 12px;
+  color: $black;
+  letter-spacing: -0.3px;
+  line-height: 16px;
+}
+@define-mixin font11 {
+  display: inline-block;
+  font-family: ProximaNova-Regular, sans-serif;
+  font-size: 12px;
+  color: $boulderGrey;
+  letter-spacing: -0.3px;
+  line-height: 16px;
+}
+
 .image,
 .image .image-wrapper {
   position: relative;
@@ -10,21 +30,9 @@
   font-size: 11px;
   font-style: normal;
   line-height: 13px;
-  margin: 16px -20px;
-  width: calc(100% + 40px);
-}
-
-@media screen and (min-width:600px) {
-  .image {
-    margin: 16px 0;
-    width: 100%;
-  }
-}
-
-@media screen and (min-width:1024px) {
-  .image {
-    max-width: 100%;
-  }
+  width: 100%;
+  height: auto;
+  margin: 0 0 30px 0;
 }
 
 .image .img-data {
@@ -85,20 +93,24 @@
 }
 
 .image .image-figcaption {
-  color: #353535;
-  margin: 0;
-  padding: 4px 20px 0;
+  @mixin font10;
+  margin: 10px 0 0 0;
   text-align: left;
   width: 100%;
+  .credit {
+    @mixin font11;
+    a,
+    a:active,
+    a:hover,
+    a:visited {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
 }
 
 .image .image-figcaption .buffer {
   margin-right: 2px;
-}
-
-.image .image-figcaption .credit {
-  color: #888;
-  font-style: normal;
 }
 
 .image.square-medium,
@@ -170,9 +182,12 @@
 
 .image.horizontal {
   clear: both;
-  left: -20px;
-  margin: 5px 0 21px;
-  width: calc(100% + 40px);
+  left: 0;
+  width: 100%;
+  img {
+    width: 100%;
+    height: auto;
+  }
 }
 
 @media screen and (min-width:600px) {
@@ -186,10 +201,6 @@
   .image.vertical-small {
     margin: 5px 20px 10px 0;
     max-width: 215px;
-  }
-
-  .image.thumb .image-figcaption .credit {
-    display: inline;
   }
 
   .image.vertical-small .img-link-cta {
@@ -267,16 +278,10 @@
 
   .image.flex-small .image-figcaption {
     margin-bottom: 10px;
-    text-align: center;
   }
 
   .image.horizontal .img-link-cta {
     bottom: 18px;
-  }
-
-  .image.flex .image-figcaption,
-  .image.horizontal .image-figcaption {
-    text-align: center;
   }
 
   .image.flex-large {
@@ -390,11 +395,6 @@
     margin: 8px 0 15px;
   }
 
-  .image.flex-large .image-figcaption,
-  .image.full-bleed .image-figcaption {
-    text-align: center;
-  }
-
   .image.full-bleed.image-borders {
     margin: 8px 0 24px;
     padding: 22px 0 8px;
@@ -448,14 +448,6 @@
 
 .media-image-overlay.show-shade {
   opacity: 1;
-}
-
-.image .credit a,
-.image .credit a:active,
-.image .credit a:hover,
-.image .credit a:visited {
-  color: #111;
-  text-decoration: none;
 }
 
 .image a {
