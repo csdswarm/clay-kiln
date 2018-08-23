@@ -33,11 +33,24 @@
   width: 40px;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.share.horizontal > .share-list {
+  height: 40px;
+  width: 157px;
+  flex-direction: row;
 }
 
 .share-list-item {
   border: 1px solid #D8D8D8;
   border-width: 0px 1px 1px;
+}
+
+.horizontal .share-list-item {
+  border: 1px solid #D8D8D8;
+  border-width: 1px 1px 1px 0px;
 }
 
 /* Remove border on hover */
@@ -47,18 +60,32 @@
 }
 
 /* Keep border for copy-link item */
-.share-list-item__copy-link:hover,
-.share-list-item__copy-linkitem:active {
+.vertical .share-list-item__copy-link:hover,
+.vertical .share-list-item__copy-linkitem:active {
   border: 1px solid #D8D8D8;
   border-width: 0px 1px 1px;
 }
 
+.horizontal .share-list-item__copy-link:hover,
+.horizontal .share-list-item__copy-linkitem:active {
+  border: 1px solid #D8D8D8;
+  border-width: 1px 1px 1px 0px;
+}
+
 /* Hide bottom border of icon above hovered icon and move icon below up 1px */
-.share-list-item:not(:first-child):hover,
-.share-list-item:not(:first-child):active {
+.vertical .share-list-item:not(:first-child):hover,
+.vertical .share-list-item:not(:first-child):active {
   position: relative;
   top: -1px;
   margin-bottom: -1px;
+}
+
+/* Hide left border of icon to left and move icon to right over 1px */
+.horizontal .share-list-item:not(:first-child):hover,
+.horizontal .share-list-item:not(:first-child):active {
+  position: relative;
+  left: -1px;
+  margin-right: -1px;
 }
 
 /* Enable top border on top element */
@@ -347,7 +374,7 @@
     width: 110px;
   }
 
-  .share .share-link {
+  .share.vertical .share-link {
     display: flex;
     width: 40px;
     height: 38px;
@@ -356,14 +383,14 @@
   }
 
   /* Grow icon box by 2px on hover */
-  .share .share-link:hover,
-  .share .share-link:active {
+  .share.vertical .share-link:hover,
+  .share.vertical .share-link:active {
     height: 40px;
   }
 
   /* Grow copy-link by only 1px because of no hover change */
-  .share .share-link.copy-link:hover,
-  .share .share-link.copy-link:active {
+  .share.vertical .share-link.copy-link:hover,
+  .share.vertical .share-link.copy-link:active {
     height: 39px;
   }
 
@@ -380,13 +407,9 @@
   }
 
   .share.horizontal {
-    border-bottom: 1px solid #eaeaea;
-    border-top: 1px solid #eaeaea;
-    display: flex;
-    justify-content: flex-end;
     margin-bottom: 30px;
-    padding: 10px 0;
-    width: 100%;
+    width: 157px;
+    height: 40px;
   }
 
   .share.horizontal:after,
@@ -400,26 +423,23 @@
   }
 
   .share.horizontal .share-link {
-    background-position: 0;
-    border-right: 1px solid #dadada;
-    border-top: none;
-    float: left;
-    height: 18px;
-    margin: 0 10px 0 0;
-    padding: 4px 0 0 24px;
-    width: 65px;
+    display: flex;
+    width: 38px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
   }
 
-  .share.horizontal .share-link:last-of-type {
-    border-right: none;
+  /* Grow icon box by 2px on hover */
+  .share.horizontal .share-link:hover,
+  .share.horizontal .share-link:active {
+    width: 40px;
   }
 
-  .share.horizontal .share-link svg {
-    height: 18px;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 18px;
+  /* Grow copy-link by only 1px because of no hover change */
+  .share.horizontal .share-link.copy-link:hover,
+  .share.horizontal .share-link.copy-link:active {
+    width: 39px;
   }
 
   .share.vertical {
