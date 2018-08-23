@@ -17,7 +17,7 @@ const socialSvgs = require('./social-svgs'),
  * @return {String}
  */
 function formatSocialsByline(authorsAndMeta, options) {
-  var authorName = authorsAndMeta.length > 1 ? ' class="by-authors--multiple"' : ' class="by-authors--single"';
+  var authorName = authorsAndMeta.length > 1 ? '' : ' class="author-name"';
 
   return `<span itemprop="author" itemscope itemtype="http://schema.org/Person"${authorName}>${formatNumAuthors(authorsAndMeta, options)}</span>`;
 }
@@ -122,7 +122,7 @@ function createAuthorHtml(authorData, options) {
   var nameOrText = authorData.name || authorData.text;
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
-  return `<a href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}/" rel="author" class="${options.linkClass ? options.linkClass : 'by-authors__author'}">` +
+  return `<a href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}/" rel="author" class="${options.linkClass ? options.linkClass : 'article-author'}">` +
     `<span${options.nameClass ? ` class="${options.nameClass}"` : ''}>${nameOrText}</span>` +
     `<meta itemprop="name" content="${nameOrText}"/>` +
     `<link itemprop="sameAs" href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}"/></a>`;

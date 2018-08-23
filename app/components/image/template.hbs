@@ -19,7 +19,7 @@
       <figcaption itemprop="caption" class="image-figcaption">
         {{#if caption}}<span class="caption">{{{ caption }}}</span>{{/if}}
         {{#ifAll caption credit}}<span class="buffer"></span>{{/ifAll}}
-        {{#if credit}}<cite class="credit">{{if imageType imageType else='Photo credit'}} {{{ credit }}}</cite>{{/if}}
+        {{#if credit}}<cite class="credit">{{ capitalizeAll (if imageType imageType else='Photo') }}: {{{ credit }}}</cite>{{/if}}
       </figcaption>
     {{/ifAny}}
 

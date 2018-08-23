@@ -1,7 +1,6 @@
 _lists:
   tags: []
   authors: []
-  sources: []
   new-pages:
     -
       id: new-one-col

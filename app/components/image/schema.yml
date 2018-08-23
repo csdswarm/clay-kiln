@@ -22,11 +22,6 @@ caption:
 credit:
   _label: Credit
   _has:
-    input: wysiwyg
-    buttons:
-      - link
-      - bold
-      - italic
     help: Add in credit
 rendition:
   _label: Size
@@ -43,8 +38,6 @@ rendition:
             value: vertical-small
           - icon: /media/components/image/icon-horizontal.svg
             value: horizontal
-          - icon: /media/components/image/icon-vertical-small.svg
-            value: vertical
           - icon: /media/components/image/icon-flex.svg
             value: flex
       - title: Feature and One-Column Layouts Only
@@ -88,7 +81,6 @@ _groups:
       - url
       - rendition
       - caption
-      - credit
       - alt
       - borderToggle
     _label: Image Image

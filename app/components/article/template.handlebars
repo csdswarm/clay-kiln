@@ -1,5 +1,5 @@
-<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="article{{ if dropCap ' drop-cap' }}{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article" data-content-channel="{{ contentChannel }}" data-crosspost="{{ commaSeparated crosspost }}" data-article-type="{{ articleType }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}" data-issue-date="{{ magazineIssueDate }}">
-  <header class="article__header {{if overflowHeader 'overflow-header'}}">
+<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="article{{ if featureTypes.[Sponsor Story] ' sponsored' }}{{ if dropCap ' drop-cap' }}{{ if @root.locals.edit ' editing' }}" itemscope itemtype="{{ if isMovieReview 'http://schema.org/Review' else='http://schema.org/Article' }}" data-content-channel="{{ contentChannel }}" data-crosspost="{{ commaSeparated crosspost }}" data-type="{{ commaSeparated featureTypes true }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags overrideHeadline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}" data-issue-date="{{ magazineIssueDate }}">
+  <header class="article-header {{if overflowHeader 'overflow-header'}}">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
     <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
@@ -12,60 +12,121 @@
         <meta itemprop="width" content="600" />
       </div>
     </div>
-    <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
-      <meta itemprop="url" content="{{ feedImgUrl }}" />
-      <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
-      <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
-    </div>
+    {{#if isMovieReview}}
+      <div itemprop="itemReviewed" itemscope itemtype="http://schema.org/Movie">
+        {{#if movieReviewName}}<meta itemprop="name" content="{{ movieReviewName }}" />{{/if}}
+        {{#if movieReviewUrl}}<meta itemprop="sameAs" content="{{ movieReviewUrl }}" />{{/if}}
+        <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+          <meta itemprop="url" content="{{ feedImgUrl }}" />
+          <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+          <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+        </div>
+      </div>
+      {{#if movieReviewSummary}}
+        <meta itemprop="description" content="{{ movieReviewSummary }}" />
+      {{/if}}
+    {{else}}
+      <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+        <meta itemprop="url" content="{{ feedImgUrl }}" />
+        <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+        <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+      </div>
+    {{/if}}
+
+    {{#ifAny sponsoredRubric graphicBrandingRubric rubric}}
+    <nav class="rubric-wrap">
+      {{! Sponsored Post specific rubric and tooltip }}
+      {{#if sponsoredRubric}}
+        {{> sponsored-tag sponsoredTag }}
+      {{/if}}
+      {{! Optional graphical branding rubric and  tag rubric }}
+      {{#if graphicBrandingRubric}}
+        {{ set 'hypenatedBrandingRubric' (replace (urlencode (replace (trim (lowercase graphicBrandingRubric)) ' ' '-')) "%2F" "/") }}
+        <a class="graphic-rubric graphic-rubric-{{ hypenatedBrandingRubric }}"
+          href="//{{ @root.locals.site.host }}{{ @root.locals.site.path }}/{{ if section (concat section '/') }}"
+          {{#unless isMovieReview}}itemprop="articleSection"{{/unless}}>
+          {{! TODO: Will need to figure out what to do with this dynamic file read, since it won't be rendered client-side}}
+          {{{ read graphicBrandingRubricMediaPath }}}
+          </a>
+      {{/if}}
+      {{#ifAll graphicBrandingRubric rubric}}
+        <span class="rubric-seperator">&#47;</span>
+      {{/ifAll}}
+      {{#if rubric}}
+        {{ set 'hypenatedTagRubric' (replace (urlencode (replace (trim (lowercase rubric)) ' ' '-')) "%2F" "/") }}
+        {{#if graphicTagRubricMediaPath}}
+          <a class="graphic-rubric graphic-rubric-{{ hypenatedTagRubric }}"
+            href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tags/{{ hypenatedTagRubric }}{{/if}}/"
+            {{#unless isMovieReview}}itemprop="articleSection"{{/unless}}>
+            {{{ read graphicTagRubricMediaPath }}}
+          </a>
+        {{else}}
+          <a class="rubric rubric-{{ hypenatedTagRubric }}"
+            href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tags/{{ hypenatedTagRubric }}{{/if}}/"
+            {{#unless isMovieReview}} itemprop="articleSection"{{/unless}}>{{ rubric }}</a>
+        {{/if}}
+      {{/if}}
+    </nav>
+    {{/ifAny}}
+
+    {{! date and time }}
+    <time class="article-timestamp" datetime="{{ date }}" itemprop="datePublished" data-editable="publishedDate">
+      {{#if date}}
+        {{#if dateUpdated}}
+          <span class="article-update">Updated on </span>
+        {{/if}}
+        <span class="article-date large-width-date">{{ formatLocalDate date 'MMMM D, YYYY' }}</span>
+        <span class="article-date small-width-date">{{ formatLocalDate date 'MM/DD/YYYY' }}</span>
+        <span class="article-time">{{ formatLocalDate date 'h:mm a' }}</span>
+      {{/if}}
+    </time>
 
     {{! title }}
-    <h1 class="headline--primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
-    {{! subtitle }}
-    <span class="headline--secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    <h1 class="headline-primary" data-editable="overrideHeadline" itemprop="headline">{{{ overrideHeadline }}}</h1>
+
+    {{! authors }}
+    <span data-editable="bylines" class="by-authors">
+      {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
+    </span>
+
+    {{! secondary bylines }}
+    {{#if hasSecondaryBylines}}
+      <span data-editable="secondaryBylines" class="by-authors secondary-authors">
+        {{#if secondaryAttribution.length}}
+        <span>{{ secondaryBylineText }}</span>
+        {{{ byline bylines=secondaryAttribution authorHost=@root.locals.site.host showSocial=false simpleList=true }}}
+        {{/if}}
+      </span>
+    {{/if}}
+
+    {{! Side Share }}
+    {{> share sideShare }}
   </header>
 
-  <section class="article__body"
-    {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
-    {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
-  >
-    <div class="body__header">
-      {{! Lead }}
-      <div class="lead" data-editable="lead">
-        {{> component-list lead }}
-      </div>
-    </div>
-    <div class="body__info">
-      {{! authors }}
-      {{#each byline}}
-        {{byline}}
-        {{!-- , <span class="article-source">{{source}}</span> --}}
-      {{/each}}
-      <span data-editable="bylines" class="info__by-authors">
-        {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
-      </span>
-
-      {{! date and time }}
-      <time class="info__timestamp" datetime="{{ date }}" itemprop="datePublished" data-editable="publishedDate">
-        {{#if date}}
-          {{#if dateUpdated}}
-            <span class="timestamp__update">Updated on </span>
-          {{/if}}
-          <span class="timestamp__date timestamp__date--large">{{ formatLocalDate date 'MMMM D, YYYY' }}</span>
-          <span class="timestamp__date timestamp__date--small">{{ formatLocalDate date 'MM/DD/YYYY' }}</span>
-          <span class="timestamp__time">{{ formatLocalDate date 'h:mm a' }}</span>
-        {{/if}}
-      </time>
-
-      {{! Side Share }}
-      {{> share sideShare }}
-    </div>{{!--
-    --}}<div class="body__content" data-editable="content" itemprop="articleBody">
+  <section class="body">
+    <div class="article-content" data-editable="content" itemprop="{{ if isMovieReview 'reviewBody' else='articleBody' }}">
       {{! don't display generated annotatedTextAria in edit mode. Replace all ad components with ad-dummies }}
       {{> component-list content }}
 
-      {{! Tags }}
-      {{> tags tags}}
+      {{#ifAll magazineIssueDate featureTypes.[New York Magazine Story]}}
+        <p class="magazine-issue">
+          *This article appears in the
+          {{#if magazineIssueUrl}}
+          <a href="{{magazineIssueUrl}}" target="_blank">{{ formatLocalDate magazineIssueDate 'MMMM D, YYYY' }}, issue</a>
+          {{ else }}
+          {{ formatLocalDate magazineIssueDate 'MMMM D, YYYY' }}, issue
+          {{/if}}
+          of
+          <span class="magazine-issue-new-york">
+            New York
+          </span>
+          Magazine.
+        </p>
+      {{/ifAll}}
     </div>
+
+    {{! Tags }}
+    {{> tags tags}}
 
     {{! word count }}
     {{#if @root.locals.edit}}
@@ -83,7 +144,7 @@
           <ul class="circulation-items">
             <li class="circulation-item">
               <h4 class="circulation-item-title circulation-required">Facebook Headline</h4>
-              <p class="circulation-item-data">{{{ default socialHeadline empty }}}</p>
+              <p class="circulation-item-data">{{{ default primaryHeadline empty }}}</p>
             </li>
             <li class="circulation-item">
               <h4 class="circulation-item-title circulation-required">Twitter/Short Headline</h4>
@@ -173,7 +234,7 @@
           <ul class="circulation-items">
             <li class="circulation-item">
               <h4 class="circulation-item-title circulation-required">Feature Types</h4>
-              <p class="circulation-item-data">{{ articleType }}</p>
+              <p class="circulation-item-data">{{{ if (commaSeparated featureTypes) (commaSeparated featureTypes true) else=empty}}}</p>
             </li>
             <li class="circulation-item">
               <h4 class="circulation-item-title">Story Characteristics</h4>
@@ -183,6 +244,16 @@
               <h4 class="circulation-item-title circulation-required">Content Channel</h4>
               <p class="circulation-item-data">{{{ if contentChannel (capitalizeAll contentChannel) else=empty }}}</p>
             </li>
+            {{#if featureTypes.[New York Magazine Story] }}
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Magazine Issue Date</h4>
+              <p class="circulation-item-data">{{{ if magazineIssueDate magazineIssueDate else=empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title circulation-required">Magazine Issue Section</h4>
+              <p class="circulation-item-data">{{{ if magazineIssueSection magazineIssueSection else=empty }}}</p>
+            </li>
+            {{/if}}
           </ul>
         </section>
 
@@ -210,6 +281,26 @@
               </li>
             </ul>
           </section>
+        {{/if}}
+
+        {{#if isMovieReview}}
+        <section class="circulation-section" data-editable="movieReview">
+          <h3 class="circulation-subtitle circ-edit">Review Metadata</h3>
+          <ul class="circulation-items">
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Movie Name</h4>
+              <p class="circulation-item-data">{{{ default movieReviewName empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">IMDb URL</h4>
+              <p class="circulation-item-data">{{{ default movieReviewUrl empty }}}</p>
+            </li>
+            <li class="circulation-item">
+              <h4 class="circulation-item-title">Movie Review Summary</h4>
+              <p class="circulation-item-data">{{{ default movieReviewSummary empty }}}</p>
+            </li>
+          </ul>
+        </section>
         {{/if}}
       </section>
     {{/if}}

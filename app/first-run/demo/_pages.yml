@@ -30,7 +30,7 @@ _pages:
     main:
       - /_components/general-content/instances/new
     layout: /_components/one-column-layout/instances/general
-  # Tag Page
+  # Index Page
   tag:
     head:
       - /_components/meta-title/instances/general
