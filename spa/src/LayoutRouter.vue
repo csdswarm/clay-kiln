@@ -15,8 +15,7 @@ export default {
   created () {
 
     // Load initial layout. TODO - move this into vuex store?
-    this.activeLayoutComponent = this.layoutRouter(this.$route.path)
-    
+    this.activeLayoutComponent = this.layoutRouter(window.spaPayload)
   },
   data: function () {
     return {
@@ -38,6 +37,7 @@ export default {
       let nextLayoutComponent = null
 
       // Match to correct layout template by querying for existence of "tertiary" property on spa payload object.
+
       if (spaPayload.tertiary) {
         nextLayoutComponent = 'TwoColumnLayout'
       } else {
