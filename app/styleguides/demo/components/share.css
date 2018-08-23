@@ -1,31 +1,8 @@
 /* stylelint-disable */
 .share {
   display: block;
-}
-
-@media screen and (min-width:0) and (max-width:599.9px) {
-  .share {
-    background: 0 0;
-    cursor: pointer;
-    height: 37px;
-    margin: 0;
-    padding: 0;
-    position: relative;
-  }
-
-  .share-list-item:first-of-type .share-link {
-    margin-left: 5px;
-  }
-}
-
-.share .share-title {
-  color: #555;
-  display: inline-block;
-  font-family: Arial, sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0;
-  padding: 11px 0 0;
+  margin: 0 0 45px;
+  padding: 15px 0 0;
 }
 
 .share-list {
@@ -43,7 +20,7 @@
   flex-direction: row;
 }
 
-.share-list-item {
+.vertical .share-list-item {
   border: 1px solid #D8D8D8;
   border-width: 0px 1px 1px;
 }
@@ -51,6 +28,11 @@
 .horizontal .share-list-item {
   border: 1px solid #D8D8D8;
   border-width: 1px 1px 1px 0px;
+}
+
+/* Enable top/right border on top element for vert/horiz */
+.share-list-item:first-child {
+  border-width: 1px;
 }
 
 /* Remove border on hover */
@@ -88,30 +70,8 @@
   margin-right: -1px;
 }
 
-/* Enable top border on top element */
-.share-list-item:first-child {
-  border-width: 1px;
-}
-
 .share .share-link {
   text-decoration: none;
-}
-
-@media screen and (min-width:0) and (max-width:599.9px) {
-  .share .share-link {
-    color: transparent;
-    display: block;
-    float: left;
-    height: 33px;
-    margin: 0;
-    padding: 7px 3px 6px;
-    width: 27px;
-    z-index: -1;
-  }
-
-  .share.horizontal {
-    height: 35px;
-  }
 }
 
 .share .share-link svg {
@@ -155,10 +115,84 @@
   background-color: #1F055E;
 }
 
-@media screen and (min-width:0) and (max-width:1023.9px) {
-  .share .share-link.comment {
-    display: none;
-  }
+.share.vertical .share-link {
+  display: flex;
+  width: 40px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Grow icon box by 2px on hover */
+.share.vertical .share-link:hover,
+.share.vertical .share-link:active {
+  height: 40px;
+}
+
+/* Grow copy-link by only 1px because of no hover change */
+.share.vertical .share-link.copy-link:hover,
+.share.vertical .share-link.copy-link:active {
+  height: 39px;
+}
+
+/* Clear button styling and use pointer cursor */
+.share button {
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.share.horizontal {
+  margin-bottom: 30px;
+  width: 157px;
+  height: 40px;
+}
+
+.share.horizontal .share-link {
+  display: flex;
+  width: 38px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Grow icon box by 2px on hover */
+.share.horizontal .share-link:hover,
+.share.horizontal .share-link:active {
+  width: 40px;
+}
+
+/* Grow copy-link by only 1px because of no hover change */
+.share.horizontal .share-link.copy-link:hover,
+.share.horizontal .share-link.copy-link:active {
+  width: 39px;
+}
+
+.share.vertical {
+  bottom: -225px;
+  left: -134px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  height: 157px;
+  width: 40px;
+}
+
+/* Built-in Clay CSS from here down */
+
+.share.horizontal:after,
+.share.horizontal:before {
+  content: '';
+  display: table;
+}
+
+.share.horizontal:after {
+  clear: both;
+}
+
+.share.vertical .share-title + .share-list .share-link {
+  border: none;
 }
 
 .share .close,
@@ -251,10 +285,14 @@
   margin-top: -40px;
 }
 
-@media screen and (min-width:600px) and (max-width:1023.9px) and (min-width:600px) and (max-width:1023.9px) {
-  .has-splash-header .share .share-link:first-of-type {
-    padding-left: 30px;
-  }
+.one-column-layout .share.horizontal {
+  padding: 8px 0 0;
+}
+
+.one-column-layout .share.horizontal.share-overlay {
+  display: block;
+  height: auto;
+  padding: 39px 30px 30px;
 }
 
 .one-column-layout .share.horizontal {
@@ -265,233 +303,16 @@
   padding: 1px 0 0;
 }
 
-@media screen and (min-width:600px) {
-  .share .share-title {
-    border: none;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-  }
-
-  .share .share-link {
-    color: #555;
-    font-family: Arial, sans-serif;
-    font-style: normal;
-    font-weight: 400;
-  }
-
-  .one-column-layout .share.horizontal {
-    padding: 8px 0 0;
-  }
-}
-
-.one-column-layout .share.horizontal.share-overlay {
+.has-splash-header .share.vertical {
+  bottom: -390px;
   display: block;
-  height: auto;
-  padding: 39px 30px 30px;
 }
 
-@media screen and (min-width:600px) and (max-width:1023.9px) {
-  .share {
-    border-bottom: 1px solid #eaeaea;
-    margin: 0;
-    padding: 7px 0;
-    width: 100%;
-  }
-
-  .share:after,
-  .share:before {
-    content: '';
-    display: table;
-  }
-
-  .share:after {
-    clear: both;
-  }
-
-  .share-list-item:first-of-type .share-link {
-    padding-left: 30px;
-    width: 80px;
-  }
-
-  .share-list-item:first-of-type .share-link svg {
-    left: 0;
-    top: 0;
-  }
-
-  .share-list-item:last-of-type .share-link,
-  .share.horizontal .share-link:last-of-type {
-    border-right: none;
-    width: 30px;
-  }
-
-  .share .share-link {
-    border-right: 1px solid #dadada;
-    float: left;
-    font-size: 12px;
-    height: 21px;
-    margin: 0 10px 0 0;
-    padding: 4px 0 0 31px;
-    width: 79px;
-  }
-
-  .share .share-link svg {
-    height: 21px;
-    left: 3px;
-    position: absolute;
-    top: 0;
-    width: 21px;
-  }
-
-  .has-splash-header .share .share-link {
-    border: none;
-    color: transparent;
-    height: 33px;
-    margin: 0;
-    width: 27px;
-  }
-
-  .one-column-layout .share.horizontal .share-link {
-    border: none;
-    padding: 4px 0 0 31px;
-    width: 66px;
-  }
-
-  .one-column-layout .share.horizontal .email {
-    margin: 0;
-    width: initial;
-  }
+.has-splash-header .share.horizontal {
+  display: flex;
+  justify-content: flex-end;
 }
 
-@media screen and (min-width:1024px) {
-  .share {
-    margin: 0 0 45px;
-    padding: 14px 0 0;
-    width: 110px;
-  }
-
-  .share.vertical .share-link {
-    display: flex;
-    width: 40px;
-    height: 38px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Grow icon box by 2px on hover */
-  .share.vertical .share-link:hover,
-  .share.vertical .share-link:active {
-    height: 40px;
-  }
-
-  /* Grow copy-link by only 1px because of no hover change */
-  .share.vertical .share-link.copy-link:hover,
-  .share.vertical .share-link.copy-link:active {
-    height: 39px;
-  }
-
-  /* Clear button styling and use pointer cursor */
-  .share button {
-    border: none;
-    padding: 0;
-    background: transparent;
-    cursor: pointer;
-  }
-
-  .share .share-link.comment svg {
-    width: 17px;
-  }
-
-  .share.horizontal {
-    margin-bottom: 30px;
-    width: 157px;
-    height: 40px;
-  }
-
-  .share.horizontal:after,
-  .share.horizontal:before {
-    content: '';
-    display: table;
-  }
-
-  .share.horizontal:after {
-    clear: both;
-  }
-
-  .share.horizontal .share-link {
-    display: flex;
-    width: 38px;
-    height: 40px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* Grow icon box by 2px on hover */
-  .share.horizontal .share-link:hover,
-  .share.horizontal .share-link:active {
-    width: 40px;
-  }
-
-  /* Grow copy-link by only 1px because of no hover change */
-  .share.horizontal .share-link.copy-link:hover,
-  .share.horizontal .share-link.copy-link:active {
-    width: 39px;
-  }
-
-  .share.vertical {
-    bottom: -225px;
-    left: -134px;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    height: 157px;
-    width: 40px;
-  }
-
-  .share.vertical .share-title + .share-list .share-link {
-    border: none;
-  }
-
-  .has-splash-header .share.vertical {
-    bottom: -390px;
-    display: block;
-  }
-
-  .has-splash-header .share.horizontal {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .one-column-layout .share.horizontal {
-    padding: 10px 0 0;
-  }
-
-  .one-column-layout .share.horizontal .comment {
-    width: 85px;
-  }
-
-  .one-column-layout .share.horizontal .print {
-    display: block;
-    padding: 0 0 0 18px;
-    width: 0;
-  }
-
-  .one-column-layout .share.horizontal .email {
-    width: 64px;
-  }
-}
-
-@media screen and (min-width:0) and (max-width:599.9px) {
-  .share.vertical {
-    border-bottom: 1px solid #eaeaea;
-    display: block;
-  }
-
-  .one-column-layout .share.horizontal .share-title {
-    display: none;
-  }
+.one-column-layout .share.horizontal {
+  padding: 10px 0 0;
 }
