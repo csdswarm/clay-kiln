@@ -1,9 +1,4 @@
-/* stylelint-disable */
-.share {
-  display: block;
-  margin: 0 0 45px;
-  padding: 15px 0 0;
-}
+@import "_global/mixins";
 
 .share-list {
   height: 157px;
@@ -14,60 +9,28 @@
   flex-direction: column;
 }
 
-.share.horizontal > .share-list {
-  height: 40px;
-  width: 157px;
-  flex-direction: row;
-}
-
-.vertical .share-list-item {
+.share-list-item {
   border: 1px solid #D8D8D8;
   border-width: 0px 1px 1px;
 }
 
-.horizontal .share-list-item {
-  border: 1px solid #D8D8D8;
-  border-width: 1px 1px 1px 0px;
-}
-
-/* Enable top/right border on top element for vert/horiz */
+/* Enable top/right border on top element for vertical/horizontal */
 .share-list-item:first-child {
   border-width: 1px;
 }
 
 /* Remove border on hover */
-.share-list-item:hover,
-.share-list-item:active {
+.share-list-item:not(.share-list-item__copy-link):hover,
+.share-list-item:not(.share-list-item__copy-link):active {
   border: none;
 }
 
-/* Keep border for copy-link item */
-.vertical .share-list-item__copy-link:hover,
-.vertical .share-list-item__copy-linkitem:active {
-  border: 1px solid #D8D8D8;
-  border-width: 0px 1px 1px;
-}
-
-.horizontal .share-list-item__copy-link:hover,
-.horizontal .share-list-item__copy-linkitem:active {
-  border: 1px solid #D8D8D8;
-  border-width: 1px 1px 1px 0px;
-}
-
 /* Hide bottom border of icon above hovered icon and move icon below up 1px */
-.vertical .share-list-item:not(:first-child):hover,
-.vertical .share-list-item:not(:first-child):active {
+.share-list-item:not(:first-child):not(.share-list-item__copy-link):hover,
+.share-list-item:not(:first-child):not(.share-list-item__copy-link):active {
   position: relative;
   top: -1px;
   margin-bottom: -1px;
-}
-
-/* Hide left border of icon to left and move icon to right over 1px */
-.horizontal .share-list-item:not(:first-child):hover,
-.horizontal .share-list-item:not(:first-child):active {
-  position: relative;
-  left: -1px;
-  margin-right: -1px;
 }
 
 .share .share-link {
@@ -84,7 +47,7 @@
   height: 22px;
 }
 
-/* Dispaly config for hover/non-hover icons */
+/* Display config for hover/non-hover icons */
 .share-link .icon-hover {
   display: none;
 }
@@ -115,7 +78,7 @@
   background-color: #1F055E;
 }
 
-.share.vertical .share-link {
+.share .share-link {
   display: flex;
   width: 40px;
   height: 38px;
@@ -124,15 +87,9 @@
 }
 
 /* Grow icon box by 2px on hover */
-.share.vertical .share-link:hover,
-.share.vertical .share-link:active {
+.share .share-link:not(.copy-link):hover,
+.share .share-link:not(.copy-link):active {
   height: 40px;
-}
-
-/* Grow copy-link by only 1px because of no hover change */
-.share.vertical .share-link.copy-link:hover,
-.share.vertical .share-link.copy-link:active {
-  height: 39px;
 }
 
 /* Clear button styling and use pointer cursor */
@@ -143,33 +100,7 @@
   cursor: pointer;
 }
 
-.share.horizontal {
-  margin-bottom: 30px;
-  width: 157px;
-  height: 40px;
-}
-
-.share.horizontal .share-link {
-  display: flex;
-  width: 38px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Grow icon box by 2px on hover */
-.share.horizontal .share-link:hover,
-.share.horizontal .share-link:active {
-  width: 40px;
-}
-
-/* Grow copy-link by only 1px because of no hover change */
-.share.horizontal .share-link.copy-link:hover,
-.share.horizontal .share-link.copy-link:active {
-  width: 39px;
-}
-
-.share.vertical {
+.share {
   bottom: -225px;
   left: -134px;
   margin: 0;
@@ -179,21 +110,76 @@
   width: 40px;
 }
 
-/* Built-in Clay CSS from here down */
-
-.share.horizontal:after,
-.share.horizontal:before {
-  content: '';
-  display: table;
-}
-
-.share.horizontal:after {
-  clear: both;
-}
-
-.share.vertical .share-title + .share-list .share-link {
+.share .share-title + .share-list .share-link {
   border: none;
 }
+
+@mixin large-screen {
+  .share > .share-list {
+    height: 40px;
+    width: 157px;
+    flex-direction: row;
+  }
+
+  .share-list-item {
+    border: 1px solid #D8D8D8;
+    border-width: 1px 1px 1px 0px;
+  }
+
+  /* Clear vertical :hover and :active movement */
+  .share-list-item:hover,
+  .share-list-item:active {
+    top: 0;
+    margin-bottom: 0;
+  }
+
+  /* Hide left border of icon to left and move icon to right over 1px */
+  .share-list-item:not(:first-child):not(.share-list-item__copy-link):hover,
+  .share-list-item:not(:first-child):not(.share-list-item__copy-link):active {
+    position: relative;
+    left: -1px;
+    margin-right: -1px;
+  }
+
+  .share {
+    bottom: 0;
+    left: 0;
+    position: relative;
+    margin-bottom: 30px;
+    padding: 15px 0 0;
+    width: 157px;
+    height: 40px;
+    float: right;
+  }
+
+  .share .share-link {
+    display: flex;
+    width: 38px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Grow icon box by 2px on hover */
+  .share .share-link:not(.copy-link):hover,
+  .share .share-link:not(.copy-link):active {
+    height: 40px;
+    width: 40px;
+  }
+
+  .share:after,
+  .share:before {
+    content: '';
+    display: table;
+  }
+
+  .share:after {
+    clear: both;
+  }
+}
+
+
+/* Built-in Clay CSS from here down */
 
 .share .close,
 .share-overlay .share-text,

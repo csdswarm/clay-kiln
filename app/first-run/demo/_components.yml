@@ -184,7 +184,7 @@ _components:
                   -
                     text: "example link"
                     url: "/example link"
-                    
+
   circulation:
     instances:
       new:
@@ -259,7 +259,6 @@ _components:
         twitterHandle: Radiodotcom
         description: ''
         pinImage: ''
-        orientation: vertical
 
   tweet:
     instances:
