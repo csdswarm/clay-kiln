@@ -15,8 +15,8 @@ export default {
   created: function () {
     // Ensure that all handlebar helpers are available for rendering @TODO: Remove once solution is found for import/export vs require bug in webpack
     _.forOwn(window.kiln.helpers, (helperFn, helperName) => {
-      handlebars.registerHelper(helperName, helperFn);
-    });
+      handlebars.registerHelper(helperName, helperFn)
+    })
 
     // Load SPA Payload
     if (window.spaPayload) {
@@ -27,12 +27,9 @@ export default {
 
     // Init and load Handlebars instance
     this.$store.commit(mutationTypes.LOAD_HANDLEBARS, { handlebars })
-
   },
   computed: {},
-  methods: {
-    
-  },
+  methods: {},
   components: {}
 }
 

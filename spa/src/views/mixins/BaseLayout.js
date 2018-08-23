@@ -11,10 +11,29 @@ const vueTranspiler = new VueTranspiler()
 export default {
   mounted () {
     // Attach vue router listener on SPA links.
-    document.querySelectorAll('a.spa-link').forEach(link => {
+    this.$el.querySelectorAll('a.spa-link').forEach(link => {
       link.addEventListener('click', event => {
         this.onSpaLinkClick(event, link)
       })
+    })
+
+    // Loop over all components that were loaded and try to call any setup JS they have
+    this.$el.querySelectorAll('.component').forEach(component => {
+      let componentName = component.getAttribute('class').match(/component--(.*)/)[1] || ''
+      if (componentName) {
+        let event = new CustomEvent(`${componentName}Setup`)
+        document.dispatchEvent(event)
+      }
+    })
+  },
+  beforeDestroy () {
+    // Loop over all components that were loaded and try to call any cleanup JS they have
+    this.$el.querySelectorAll('.component').forEach(component => {
+      let componentName = component.getAttribute('class').match(/component--(.*)/)[1] || ''
+      if (componentName) {
+        let event = new CustomEvent(`${componentName}Cleanup`)
+        document.dispatchEvent(event)
+      }
     })
   },
   methods: {
@@ -26,10 +45,10 @@ export default {
       }
 
       // The handlebars wrapper template will basically just load the component-list partial and pass in the appropriate property/key on this.spaPayload.
-      const handlebarsWrapper = this.$store.state.handlebars.compile(`{{> component-list ${stateSliceKey} }}`);
+      const handlebarsWrapper = this.$store.state.handlebars.compile(`{{> component-list ${stateSliceKey} }}`)
 
       // Pass entire payload to wrapper template, template will pull correct data off it via stateSliceKey.
-      const handlebarsHtml = handlebarsWrapper(this.$store.state.spaPayload);
+      const handlebarsHtml = handlebarsWrapper(this.$store.state.spaPayload)
 
       // Transpile handlebars HTML to Vue templating HTML
       return vueTranspiler.transpile(handlebarsHtml)
