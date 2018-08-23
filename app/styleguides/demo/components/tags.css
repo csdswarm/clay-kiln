@@ -49,8 +49,8 @@
     .tags__link {
       display: inline-block;
       margin: 0 em(10, 14) em(10, 14) 0;
-      padding: 0px em(6, 14);
-      border: 2px solid $color;
+      padding: 0 em(6, 14);
+      border: em(2) solid $color;
       font-family: CircularStd-Medium;
       font-size: em(14);
       text-decoration: none;
