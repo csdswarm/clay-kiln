@@ -278,6 +278,11 @@ _components:
       new:
         url: ''
 
+  brightcove:
+    instances:
+      new:
+        videoId: ''
+
   web-player:
     instances:
       new:
