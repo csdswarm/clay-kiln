@@ -4,13 +4,13 @@
 /* stylelint-disable */
 .component--tags {
   clear: both;
-  margin-bottom: 15px;
+  margin-bottom: em(15);
 }
 
 @media screen and (min-width:600px) {
   .component--tags {
-    margin-bottom: 10px;
-    margin-top: 16px;
+    margin-bottom: em(10);
+    margin-top: em(16);
   }
 }
 
@@ -26,56 +26,13 @@
   display: none;
 }
 
-.component--tags .tags__link:after,
 .component--tags .tags,
 .component--tags .tags-item {
   display: inline-block;
 }
 
-.component--tags .tags__link {
-  color: #111;
-}
-
-.component--tags .tags__link:after {
-  color: #808080;
-  content: '|';
-  font-size: 8px;
-  padding: 0 5px;
-  position: relative;
-  top: -1px;
-}
-
 .component--tags .tags__link.invisible-in-edit-mode {
   color: #888;
-}
-
-.component--tags .tags__link:focus,
-.component--tags .tags__link:hover {
-  color: #1782a9;
-}
-
-.component--tags .tags__link:last-of-type:after {
-  content: '';
-}
-
-.component--tags .tags__link,
-.component--tags .title {
-  display: inline-block;
-  font-family: Arial, sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  text-decoration: none;
-}
-
-.component--tags .title {
-  color: #888;
-  margin-bottom: 0;
-  padding: 0 7.5px 0 0;
-}
-
-.component--tags .tags {
-  margin: 0;
-  padding: 0;
 }
 
 .component--tags {
@@ -88,33 +45,33 @@
 
 /* Mixin to style tags based on theme colors */
 @define-mixin themed-tag-list $class, $color: $purple {
-  .tags {
-    > .$(class) {
-      a {
-        margin: 0 10px 10px 0;
-        padding: 0px 6px;
-        border: 2px solid $color;
-        font-family: CircularStd-Medium;
-        font-size: 14px;
-        letter-spacing: -0.23px;
-        line-height: 24px;
-        color: $color;
+  .tags$(class) {
+    .tags__link {
+      display: inline-block;
+      margin: 0 em(10, 14) em(10, 14) 0;
+      padding: 0px em(6, 14);
+      border: 2px solid $color;
+      font-family: CircularStd-Medium;
+      font-size: em(14);
+      text-decoration: none;
+      letter-spacing: em(-0.23, 14);
+      line-height: em(22, 14);
+      color: $color;
 
-        &:after {
-          display: none;
-        }
+      &:after {
+        display: none;
+      }
 
-        &:hover {
-          background: $color;
-          color: $white;
-        }
+      &:hover {
+        background: $color;
+        color: $white;
       }
     }
   }
 }
 
-@mixin themed-tag-list tags__item;
-@mixin themed-tag-list tags__item--entertainment, $sunsetOrange;
-@mixin themed-tag-list tags__item--news, $lightningYellow;
-@mixin themed-tag-list tags__item--sports, $azureRadience;
-@mixin themed-tag-list tags__item--podcasts, $robinsEgg;
+@mixin themed-tag-list;
+@mixin themed-tag-list .tags--entertainment, $sunsetOrange;
+@mixin themed-tag-list .tags--news, $lightningYellow;
+@mixin themed-tag-list .tags--sports, $azureRadience;
+@mixin themed-tag-list .tags--podcasts, $robinsEgg;
