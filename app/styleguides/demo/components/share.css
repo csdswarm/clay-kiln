@@ -50,17 +50,17 @@
 }
 
 /* Display config for hover/non-hover icons */
-.share-link .icon-hover {
+.share-link .share-link--hover {
   display: none;
 }
 
-.share-link:hover .icon-hover,
-.share-link:active .icon-hover {
+.share-link:hover .share-link--hover,
+.share-link:active .share-link--hover {
   display: block;
 }
 
-.share-link:hover .icon-no-hover,
-.share-link:active .icon-no-hover {
+.share-link:hover .share-link--no-hover,
+.share-link:active .share-link--no-hover {
   display: none;
 }
 
