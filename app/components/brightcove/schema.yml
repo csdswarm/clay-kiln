@@ -1,0 +1,23 @@
+_description: |
+  Brightcove video embed
+
+videoId:
+  _label: Video ID
+  _has:
+    input: text
+    type: text
+
+showTitle:
+  _label: Show video title?
+  _has: checkbox
+
+_groups:
+  video:
+    _label: Brightcove Video
+    _placeholder:
+      text: Brightcode Video
+      height: 30px;
+      ifEmpty: videoId
+    fields:
+      - videoId
+      - showTitle

@@ -278,6 +278,11 @@ _components:
       new:
         url: ''
 
+  brightcove:
+    instances:
+      new:
+        videoId: ''
+
   web-player:
     instances:
       new:
@@ -291,30 +296,32 @@ _components:
   footer:
     instances:
       default:
-        socialButtons:
-          show: true
-          buttonURLs:
-              -
-                text: facebook
-                url: "https://www.facebook.com/radiodotcom/"
-              -
-                text: twitter
-                url: "https://twitter.com/Radiodotcom?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
-              -
-                text: youtube
-                url: "https://www.youtube.com/user/radiodotcom"
-              -
-                text: instagram
-                url: "https://www.instagram.com/radiodotcom/"
-        appBadges:
-          show: true
-          badgeURLs:
-            -
-              text: app store
-              url: "https://itunes.apple.com/us/app/radio-com/id323701765?mt=8"
-            -
-              text: google play
-              url: "https://play.google.com/store/apps/details?id=com.radiocom&hl=en"
+        socialButtonsShow: true
+        socialButtonsURLs:
+          -
+            type: facebook
+            url: "https://www.facebook.com/radiodotcom/"
+          -
+            type: twitter
+            url: "https://twitter.com/Radiodotcom?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+          -
+            type: youtube
+            url: "https://www.youtube.com/user/radiodotcom"
+          -
+            type: instagram
+            url: "https://www.instagram.com/radiodotcom/"
+        appBadgesShow: true
+        appBadgesURLs:
+          -
+            type:
+              name: app store
+              value: app-store
+            url: "https://itunes.apple.com/us/app/radio-com/id323701765?mt=8"
+          -
+            type:
+              name: google play
+              value: google-play
+            url: "https://play.google.com/store/apps/details?id=com.radiocom&hl=en"
         links:
           -
             text: "listen"
