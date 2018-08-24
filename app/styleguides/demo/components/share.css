@@ -1,10 +1,25 @@
 /* stylelint-disable */
 .share {
-  border-top: 1px solid #eaeaea;
-  display: block;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  @mixin default-screen {
+    margin-top: 40px;
+    width: 40px;
+    height: 157px;
+  }
+  @mixin large-screen {
+    margin-top: 0;
+    width: 157px;
+    height: 40px;
+    ul {
+      display: flex;
+    }
+  }
 }
 
-@media screen and (min-width:0) and (max-width:599.9px) {
+/*@media screen and (min-width:0) and (max-width:599.9px) {
   .share {
     background: 0 0;
     cursor: pointer;
@@ -402,3 +417,4 @@
     display: none;
   }
 }
+*/

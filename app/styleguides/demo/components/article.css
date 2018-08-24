@@ -124,6 +124,7 @@
   .headline--primary {
     @mixin font1;
     display: block;
+    margin-bottom: 15px;
   }
   .headline--secondary {
     @mixin font3;
@@ -149,6 +150,7 @@
     margin-top: 50px;
     .info__by-authors {
       @mixin font6;
+      display: block;
       .by-authors--single, .by-authors--multiple {
         @mixin font5;
         @define-mixin author-name-color $articleType, $color {
@@ -179,8 +181,8 @@
     }
     .info__timestamp {
       margin-top: 15px;
-      display: block;
       @mixin font9;
+      display: block;
       .timestamp__update {}
       .timestamp__date {
         &.timestamp__date--large {}
@@ -220,6 +222,80 @@
         }
         .timestamp__time {}
       }
+    }
+  }
+}
+
+@mixin default-screen {
+
+}
+@mixin large-screen {
+  .article__body,
+  .article__body[data-lead-type=instagram],
+  .article__body[data-lead-orientation=vertical] {
+    display: flex;
+    flex-direction: column;
+    .body__header,
+    .body__info,
+    .body__content {
+      width: 100%;
+    }
+    .body__info {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      .info__timestamp {
+        margin-top: 10px;
+        .timestamp__update {}
+        .timestamp__date {
+          .timestamp__date--large {}
+          .timestamp__date--small {}
+        }
+        .timestamp__time {}
+      }
+    }
+  }
+}
+@mixin medium-screen {
+  .article__header {
+    margin-bottom: 25px;
+    .headline--primary {
+      @mixin font2;
+    }
+    .headline--secondary {
+      @mixin font4;
+    }
+  }
+  .article__body,
+  .article__body[data-lead-type=instagram],
+  .article__body[data-lead-orientation=vertical] {
+    .body__info {
+      margin-top: 30px
+    }
+  }
+}
+@mixin medium-small-screen {
+  .article__body,
+  .article__body[data-lead-type=instagram],
+  .article__body[data-lead-orientation=vertical] {
+    .body__header {
+      width: calc(100% + 40px);
+      margin: 0 -20px;
+    }
+  }
+}
+@mixin small-screen {
+  .article__body,
+  .article__body[data-lead-type=instagram],
+  .article__body[data-lead-orientation=vertical] {
+    .body__info {
+      flex-direction: column;
+      .info--right-bottom {
+        margin-top: 30px;
+      }
+    }
+    .body__content {
+      margin-top: 30px;
     }
   }
 }
