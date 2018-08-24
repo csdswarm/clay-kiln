@@ -1,0 +1,15 @@
+<div data-uri="{{ default _ref _self }}" class="component component--brightcove" data-editable="video">
+  <div class="player">
+    {{#if videoId}}
+      <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
+        <video data-video-id="{{ videoId }}"
+               data-account="{{ @root.locals.site.brightcoveAccountId }}"
+               data-player="{{ @root.locals.site.brightcovePlayerId }}"
+               data-embed="default"
+               data-application-id
+               controls></video>
+        <script src="//players.brightcove.net/{{ @root.locals.site.brightcoveAccountId }}/{{ @root.locals.site.brightcovePlayerId }}_default/index.min.js"></script>
+      </div>
+    {{/if}}
+  </div>
+</div>
