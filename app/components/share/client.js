@@ -23,7 +23,7 @@ function copyToClipboard(e) {
   textArea.style.background = 'transparent';
 
   // Prepare text and textArea for copying
-  textArea.value = e.path[0].baseURI; // get url from event
+  textArea.value = e.target.baseURI; // get url from event
   document.body.appendChild(textArea);
 
   textArea.focus();
@@ -32,7 +32,6 @@ function copyToClipboard(e) {
   try {
     // Copy text
     const successful = document.execCommand('copy');
-    console.log('Copying successful?', successful);
   } catch (err) {
     console.log('Unable to copy');
   }
