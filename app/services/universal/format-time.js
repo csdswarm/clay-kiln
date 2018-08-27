@@ -29,5 +29,21 @@ function secondsToISO(seconds) {
   return moment.duration(seconds, 'seconds').toISOString();
 }
 
+function isPublished24HrsAgo(date) {
+	let pubWithin24Hrs = false;
+	let articleDate = moment(new Date(date)).valueOf();
+	let now = moment().valueOf();
+	if (now - articleDate <= (24 * 60 * 60 * 1000) ) {
+		pubWithin24Hrs = true;
+	}
+	return pubWithin24Hrs;
+}
+
+function hrsOnlyTimestamp(date) {
+	return (moment().format('H') - moment(date).format('H')) + ` hours ago`;
+}
+
 module.exports.formatDateRange = formatDateRange;
 module.exports.secondsToISO = secondsToISO;
+module.exports.isPublished24HrsAgo = isPublished24HrsAgo;
+module.exports.hrsOnlyTimestamp = hrsOnlyTimestamp;

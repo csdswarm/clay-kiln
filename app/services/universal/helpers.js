@@ -18,6 +18,8 @@ module.exports = {
   dynamicImage: require('./dynamic-image'),
   secondsToISO: formatTime.secondsToISO,
   formatDateRange: formatTime.formatDateRange,
+  isPublished24HrsAgo: formatTime.isPublished24HrsAgo,
+  hrsOnlyTimestamp: formatTime.hrsOnlyTimestamp,
   truncateText: truncate,
   calloutType: require('./callout'),
   attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow')

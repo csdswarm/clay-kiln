@@ -36,16 +36,14 @@
     </div>
     <div class="body__info">
       {{! authors }}
-      {{#each byline as |item|}}
-        {{#each item}}
-          {{#each item.sources}}
-          {{/each}}
-          {{!-- , <span class="article-source">{{source}}</span> --}}
-        {{/each}}
-      {{/each}}
       <div class="info--left-top">
         <span data-editable="bylines" class="info__by-authors">
           {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
+          {{#each byline}}
+            {{#each sources as |source|}}
+              <span class="separator">,&nbsp;</span><span class="by-sources">{{source.text}}</span>
+            {{/each}}
+          {{/each}}
         </span>
 
         {{! date and time }}
@@ -54,9 +52,13 @@
             {{#if dateUpdated}}
               <span class="timestamp__update">Updated on </span>
             {{/if}}
-            <span class="timestamp__date timestamp__date--large">{{ formatLocalDate date 'MMMM D, YYYY' }}</span>
-            <span class="timestamp__date timestamp__date--small">{{ formatLocalDate date 'MM/DD/YYYY' }}</span>
-            <span class="timestamp__time">{{ formatLocalDate date 'h:mm a' }}</span>
+            {{#if (isPublished24HrsAgo date) }}
+              <span class="timestamp__date timestamp__date--recent">{{{ hrsOnlyTimestamp date }}}</span>
+            {{else}}
+              <span class="timestamp__date timestamp__date--large">{{ formatLocalDate date 'MMMM D, YYYY' }}</span>
+              <span class="timestamp__date timestamp__date--small">{{ formatLocalDate date 'MM/DD/YYYY' }}</span>
+              <span class="timestamp__time">{{ formatLocalDate date 'h:mm a' }}</span>
+            {{/if}}
           {{/if}}
         </time>
       </div>

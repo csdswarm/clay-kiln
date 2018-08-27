@@ -146,13 +146,17 @@
   }
   .body__info {
     @mixin inline-block;
-    width: em(widthOnGrid(2, 2));
+    width: em(widthOnGrid(2, 1));
+    margin-right: em(widthOnGrid(0, 1));
     margin-top: 50px;
     .info__by-authors {
       @mixin font6;
-      display: block;
-      .by-authors--single, .by-authors--multiple {
+      display: flex;
+      flex-wrap: wrap;
+      .by-authors {
         @mixin font5;
+        display: inline-flex;
+        flex-wrap: wrap;
         @define-mixin author-name-color $articleType, $color {
           .article[data-article-type=$articleType] & a {
             color: $color;
@@ -171,12 +175,10 @@
           }
         }
       }
-      .by-authors--single {
-        align-items: center;
+      .by-sources {
+        @mixin font5;
+        color: $black;
         display: inline-flex;
-      }
-      .by-authors--multiple {
-        display: inline;
       }
     }
     .info__timestamp {
@@ -242,6 +244,7 @@
     }
     .body__info {
       margin-top: 20px;
+      margin-right: 0;
       display: flex;
       justify-content: space-between;
       .info__timestamp {
@@ -434,11 +437,6 @@
     margin-right: 10px;
     width: 30px;
   }
-}
-
-.article header time {
-  color: #999;
-  font-weight: 400;
 }
 
 .clay-annotated {
