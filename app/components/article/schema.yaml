@@ -105,11 +105,6 @@ feedImgUrl:
         url: $SITE_PREFIX
         property: url
         tooltip: get the first image
-dropCap:
-  _label: Display Drop Cap
-  _has:
-    input: checkbox
-    help: Show the first character of the first paragraph as a drop cap (only applies to One Column articles)
 feedLayout:
   _label: Layout in Feeds
   _has:
@@ -349,7 +344,6 @@ _groups:
     fields:
       - feeds
       - showSocial
-      - dropCap
       - section
       - hasSecondaryBylines
 

@@ -135,7 +135,7 @@
   .body__header {
     .lead {
       width: 100%;
-      .image {
+      .image, .instagram-post {
         margin: 0;
         img {
           width: 100%;

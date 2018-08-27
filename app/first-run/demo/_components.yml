@@ -489,7 +489,6 @@ _components:
             sources: []
         syndicatedUrl: ''
         syndicationStatus: original
-        dropCap: false
         lead: []
         content:
           -

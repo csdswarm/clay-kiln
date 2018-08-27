@@ -1,5 +1,5 @@
-<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="article{{ if dropCap ' drop-cap' }}{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article" data-crosspost="{{ commaSeparated crosspost }}" data-article-type="{{ articleType }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}" data-issue-date="{{ magazineIssueDate }}">
-  <header class="article__header {{if overflowHeader 'overflow-header'}}">
+<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article" data-crosspost="{{ commaSeparated crosspost }}" data-article-type="{{ articleType }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+  <header class="article__header">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
     <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
