@@ -28,44 +28,44 @@
 }
 
 .radiocom-footer {
-  margin-top: 40px;
+  margin-top: em(40);
   width: 100%;
   background: $parisPurple;
   position: relative;
   text-align: center;
-  padding: 40px 20px;
+  padding: em(40) em(20);
   display: flex;
   justify-content: center;
   .container {
-    width: 620px;
+    width: em(620);
 
     @media screen and (max-width: 660px) {
       width: 100%;
     }
     .radiocom-footer__social {
-      margin-bottom: 30px;
+      margin-bottom: em(30);
       > a object {
         @mixin inline-block;
-        height: 30px;
-        margin: 0 10px;
+        height: em(30);
+        margin: 0 em(10);
       }
     }
     .radiocom-footer__download-app {
-      margin-bottom: 40px;
+      margin-bottom: em(40);
       > a object {
         @mixin inline-block;
-        height: 40px;
+        height: em(40);
       }
       a:first-of-type {
-        width: 120px;
-        margin-right: 40px;
+        width: em(120);
+        margin-right: em(40);
       }
       a:nth-of-type(2) {
-        width: 135px;
+        width: em(135);
       }
     }
     .radiocom-footer__section {
-      margin-bottom: 30px;
+      margin-bottom: em(30);
       h2 {
         @mixin font2;
         display: block;
@@ -73,12 +73,12 @@
       a {
         @mixin font3;
         @mixin inline-block;
-        padding: 0 15px;
+        padding: 0 em(15);
         text-decoration: none;
       }
     }
     .radiocom-footer__copyright {
-      margin-top: 10px;
+      margin-top: em(10);
     }
     .radiocom-footer__copyright, & a {
       @mixin font4;
