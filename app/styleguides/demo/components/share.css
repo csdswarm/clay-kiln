@@ -1,120 +1,89 @@
 @import "_global/mixins";
 
+.component--share {
+  position: absolute;
+  bottom: -225px;
+  left: -134px;
+  margin: 0;
+  padding: 0;
+}
+
 .share-list {
-  height: 157px;
-  width: 40px;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
 }
 
+/* Set each item to constant 40x40px, including border */
 .share-list__item {
+  width: 40px;
+  height: 40px;
   border: 1px solid #D8D8D8;
-  border-width: 0px 1px 1px;
-}
-
-/* Enable top/right border on top element for vertical/horizontal */
-.share-list__item:first-child {
-  border-width: 1px;
-}
-
-/* Remove border on hover */
-.share-list__item:not(.share-list__item--copy-link):hover,
-.share-list__item:not(.share-list__item--copy-link):active {
-  border: none;
-}
-
-/* Hide bottom border of icon above hovered icon and move icon below up 1px */
-.share-list__item:not(:first-child):not(.share-list__item--copy-link):hover,
-.share-list__item:not(:first-child):not(.share-list__item--copy-link):active {
-  position: relative;
-  top: -1px;
-  margin-bottom: -1px;
-}
-
-.component--share .share-link {
-  text-decoration: none;
-}
-
-/* Center image, set size to 20px by 20px, and don't repeat it */
-.share-link {
+  box-sizing: border-box;
+  /* Center image, set size to 20x20px, and don't repeat it */
   background: center/20px 20px no-repeat;
 }
 
-/* Background images for each button */
-.share-link.facebook {
-  background-image: url("/media/components/share/facebook.svg");
-  background-size: auto 22px; /* Increase FB image height to 22px */
+/* Move each item but first up 1px to create 1px border */
+.share-list__item:not(:first-child) {
+  margin-top: -1px;
 }
 
-.share-link.twitter {
-  background-image: url("/media/components/share/twitter.svg");
-  background-size: auto 17px; /* FireFox scaling/bounding fix */
-}
-
-.share-link.email {
-  background-image: url("/media/components/share/email.svg");
-}
-
-.share-link.copy-link {
-  background-image: url("/media/components/share/copy-link.svg");
-}
-
-/* Background colors and images on hover */
-.share-link.facebook:hover,
-.share-link.facebook:active {
-  background-color: #3B5998;
-  background-image: url("/media/components/share/facebook--hover.svg");
-}
-
-.share-link.twitter:hover,
-.share-link.twitter:active {
-  background-color: #05AEEE;
-  background-image: url("/media/components/share/twitter--hover.svg");
-}
-
-.share-link.email:hover,
-.share-link.email:active {
-  background-color: #1F055E;
-  background-image: url("/media/components/share/email--hover.svg");
-}
-
-.component--share .share-link {
-  display: flex;
-  width: 40px;
-  height: 38px;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Grow icon box by 2px on hover */
-.component--share .share-link:not(.copy-link):hover,
-.component--share .share-link:not(.copy-link):active {
-  height: 40px;
+/* Show the item's border on hover so it can be recolored properly */
+.share-list__item:hover,
+.share-list__item:active {
+  z-index: 1;
 }
 
 /* Clear button styling and use pointer cursor */
-.component--share button {
-  border: none;
+.share-list button {
   padding: 0;
   cursor: pointer;
 }
 
-.component--share {
-  bottom: -225px;
-  left: -134px;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  height: 157px;
-  width: 40px;
+/* Background images for each button */
+.share-list__item.facebook {
+  background-image: url("/media/components/share/facebook.svg");
+  background-size: auto 22px; /* Increase FB image height to 22px */
 }
 
-.component--share .share-title + .share-list .share-link {
-  border: none;
+.share-list__item.twitter {
+  background-image: url("/media/components/share/twitter.svg");
+  background-size: auto 17px; /* Firefox scaling/bounding fix */
 }
 
+.share-list__item.email {
+  background-image: url("/media/components/share/email.svg");
+}
+
+.share-list__item.copy-link {
+  background-image: url("/media/components/share/copy-link.svg");
+}
+
+/* Background/border colors and images on hover */
+.share-list__item.facebook:hover,
+.share-list__item.facebook:active {
+  background-color: #3B5998;
+  border-color: #3B5998;
+  background-image: url("/media/components/share/facebook--hover.svg");
+}
+
+.share-list__item.twitter:hover,
+.share-list__item.twitter:active {
+  background-color: #05AEEE;
+  border-color: #05AEEE;
+  background-image: url("/media/components/share/twitter--hover.svg");
+}
+
+.share-list__item.email:hover,
+.share-list__item.email:active {
+  background-color: #1F055E;
+  border-color: #1F055E;
+  background-image: url("/media/components/share/email--hover.svg");
+}
+
+/* Clear all styling to hide copy-link textarea */
 .share__hidden-text-area {
   position: fixed;
   top: 0;
@@ -129,56 +98,30 @@
 }
 
 @mixin large-screen {
-  .component--share > .share-list {
-    height: 40px;
-    width: 157px;
-    flex-direction: row;
-  }
-
-  .share-list__item {
-    border: 1px solid #D8D8D8;
-    border-width: 1px 1px 1px 0px;
-  }
-
-  /* Clear vertical :hover and :active movement */
-  .share-list__item:hover,
-  .share-list__item:active {
-    top: 0;
-    margin-bottom: 0;
-  }
-
-  /* Hide left border of icon to left and move icon to right over 1px */
-  .share-list__item:not(:first-child):not(.share-list__item--copy-link):hover,
-  .share-list__item:not(:first-child):not(.share-list__item--copy-link):active {
-    position: relative;
-    left: -1px;
-    margin-right: -1px;
-  }
-
   .component--share {
+    /* Clear vertical positioning */
     bottom: 0;
     left: 0;
     position: relative;
     margin-bottom: 30px;
     padding: 15px 0 0;
-    width: 157px;
-    height: 40px;
     float: right;
   }
 
-  .component--share .share-link {
-    display: flex;
-    width: 38px;
-    height: 40px;
-    align-items: center;
-    justify-content: center;
+  /* Horizontal list on smaller screens */
+  .share-list {
+    flex-direction: row;
   }
 
-  /* Grow icon box by 2px on hover */
-  .component--share .share-link:not(.copy-link):hover,
-  .component--share .share-link:not(.copy-link):active {
-    height: 40px;
-    width: 40px;
+  /* Clear vertical margin-top */
+  .share-list__item,
+  .share-list__item:not(:first-child) {
+    margin-top: 0;
+  }
+
+  /* Instead, move items to the left on horizontal layout */
+  .share-list__item:not(:first-child) {
+    margin-left: -1px;
   }
 
   .share:after,
