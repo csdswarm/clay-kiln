@@ -2,50 +2,25 @@
   <div class="share-list">
     {{#if enabled.facebook }}
       <div class="share-list__item">
-        <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u={{ url }}%3Futm_source=fb%26utm_medium=s3%26utm_campaign=sharebutton-t" class="share-link facebook" title="Share on Facebook" aria-label="Share on Facebook">
-          <span class="share-link--no-hover">
-            <img src="/media/components/share/facebook.svg">
-          </span>
-          <span class="share-link--hover">
-            <img src="/media/components/share/facebook--hover.svg">
-          </span>
-        </a>
+        <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u={{ url }}%3Futm_source=fb%26utm_medium=s3%26utm_campaign=sharebutton-t" class="share-link facebook" title="Share on Facebook" aria-label="Share on Facebook"></a>
       </div>
     {{/if}}
 
     {{#if enabled.twitter }}
       <div class="share-list__item">
-        <a target="_blank" href="https://twitter.com/share?text={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}&amp;url={{ url }}%3Futm_source=tw%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;via={{ twitterHandle }}" class="share-link twitter" title="Share on Twitter" aria-label="Share on Twitter">
-          <span class="share-link--no-hover">
-            <img src="/media/components/share/twitter.svg">
-          </span>
-          <span class="share-link--hover">
-            <img src="/media/components/share/twitter--hover.svg">
-          </span>
-        </a>
+        <a target="_blank" href="https://twitter.com/share?text={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}&amp;url={{ url }}%3Futm_source=tw%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;via={{ twitterHandle }}" class="share-link twitter" title="Share on Twitter" aria-label="Share on Twitter"></a>
       </div>
     {{/if}}
 
     {{#if enabled.email }}
       <div class="share-list__item">
-        <a href="mailto:?subject={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}" class="share-link email" title="Email" aria-label="Email">
-          <span class="share-link--no-hover">
-            <img src="/media/components/share/email.svg">
-          </span>
-          <span class="share-link--hover">
-            <img src="/media/components/share/email--hover.svg">
-          </span>
-        </a>
+        <a href="mailto:?subject={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}" class="share-link email" title="Email" aria-label="Email"></a>
       </div>
     {{/if}}
 
     {{#if enabled.link }}
       <div class="share-list__item share-list__item--copy-link">
-        <button class="share-link copy-link" title="Copy link" aria-label="Copy link">
-          <span>
-            <img src="/media/components/share/copy-link.svg">
-          </span>
-        </button>
+        <button class="share-link copy-link" title="Copy link" aria-label="Copy link"></button>
       </div>
     {{/if}}
   </div>

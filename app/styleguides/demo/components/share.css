@@ -37,47 +37,47 @@
   text-decoration: none;
 }
 
-.component--share .share-link svg,
-.component--share .share-link img {
-  height: 20px;
-  width: 20px;
+/* Center image, set size to 20px by 20px, and don't repeat it */
+.share-link {
+  background: center/20px 20px no-repeat;
 }
 
-/* Increase height of Facebook svg */
-.component--share .share-link.facebook svg,
-.component--share .share-link.facebook img {
-  height: 22px;
+/* Background images for each button */
+.share-link.facebook {
+  background-image: url("/media/components/share/facebook.svg");
+  background-size: auto 22px; /* Increase FB image height to 22px */
 }
 
-/* Display config for hover/non-hover icons */
-.share-link .share-link--hover {
-  display: none;
+.share-link.twitter {
+  background-image: url("/media/components/share/twitter.svg");
+  background-size: auto 17px; /* FireFox scaling/bounding fix */
 }
 
-.share-link:hover .share-link--hover,
-.share-link:active .share-link--hover {
-  display: block;
+.share-link.email {
+  background-image: url("/media/components/share/email.svg");
 }
 
-.share-link:hover .share-link--no-hover,
-.share-link:active .share-link--no-hover {
-  display: none;
+.share-link.copy-link {
+  background-image: url("/media/components/share/copy-link.svg");
 }
 
-/* Background colors for hover */
+/* Background colors and images on hover */
 .share-link.facebook:hover,
 .share-link.facebook:active {
   background-color: #3B5998;
+  background-image: url("/media/components/share/facebook--hover.svg");
 }
 
 .share-link.twitter:hover,
 .share-link.twitter:active {
   background-color: #05AEEE;
+  background-image: url("/media/components/share/twitter--hover.svg");
 }
 
 .share-link.email:hover,
 .share-link.email:active {
   background-color: #1F055E;
+  background-image: url("/media/components/share/email--hover.svg");
 }
 
 .component--share .share-link {
@@ -98,7 +98,6 @@
 .component--share button {
   border: none;
   padding: 0;
-  background: transparent;
   cursor: pointer;
 }
 
@@ -110,10 +109,6 @@
   position: absolute;
   height: 157px;
   width: 40px;
-}
-
-.share-link span {
-  width: 20px;
 }
 
 .component--share .share-title + .share-list .share-link {
