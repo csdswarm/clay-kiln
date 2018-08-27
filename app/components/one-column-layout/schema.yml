@@ -48,3 +48,8 @@ kilnInternals:
     internals: true
     include:
       - clay-kiln
+
+webPlayer:
+  _componentList:
+    include:
+      - web-player
