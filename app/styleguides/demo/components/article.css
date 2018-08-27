@@ -158,7 +158,7 @@
       @mixin font6;
       display: flex;
       flex-wrap: wrap;
-      .by-authors {
+      .author {
         @mixin font5;
         display: inline-flex;
         flex-wrap: wrap;
@@ -171,7 +171,7 @@
         @mixin author-name-color News, $lightningYellow;
         @mixin author-name-color Sports, $azureRadience;
         @mixin author-name-color Podcasts, $robinsEgg;
-        .by-authors__author {
+        .author__anchor {
           color: inherit;
           text-decoration: none;
           white-space: nowrap;
@@ -180,7 +180,7 @@
           }
         }
       }
-      .by-sources {
+      .source {
         @mixin font5;
         color: $black;
         display: inline-flex;

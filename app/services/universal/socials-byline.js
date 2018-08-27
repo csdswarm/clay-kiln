@@ -105,8 +105,8 @@ function createAuthorHtml(authorData, options) {
   var nameOrText = authorData.name || authorData.text;
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
-  return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="by-authors">` +
-    `<a href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}/" rel="author" class="${options.linkClass ? options.linkClass : 'by-authors__author'}">` +
+  return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="author">` +
+    `<a href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}/" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
     `<span${options.nameClass ? ` class="${options.nameClass}"` : ''}>${nameOrText}</span>` +
     `<meta itemprop="name" content="${nameOrText}"/>` +
     `<link itemprop="sameAs" href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}"/></a></span>`;
