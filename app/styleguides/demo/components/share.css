@@ -120,6 +120,19 @@
   border: none;
 }
 
+.share__hidden-text-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2em;
+  height: 2em;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+}
+
 @mixin large-screen {
   .share > .share-list {
     height: 40px;

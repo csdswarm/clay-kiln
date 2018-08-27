@@ -16,18 +16,7 @@ Constructor.prototype = {
     const textArea = document.createElement("textarea");
 
     // Hide textArea
-    textArea.style.position = 'fixed';
-    textArea.top = 0;
-    textArea.left = 0;
-
-    textArea.width = '2em';
-    textArea.height = '2em';
-    textArea.style.padding = 0;
-
-    textArea.border = 'none';
-    textArea.outline = 'none';
-    textArea.boxShadow = 'none';
-    textArea.style.background = 'transparent';
+    textArea.className = 'share__hidden-text-area';
 
     // Prepare text and textArea for copying
     textArea.value = e.target.baseURI; // get url from event
