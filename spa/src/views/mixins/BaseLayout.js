@@ -71,21 +71,21 @@ export default {
       switch (type) {
         case 'mount':
           if (setupCalled) {
+            // Don't call setup as it's already been run in another call
             return
           } else {
-            // Call global dismount event
-            let event = new CustomEvent(type)
-            document.dispatchEvent(event)
-            setupCalled = true;
+            setupCalled = true
           }
           break
         case 'dismount':
           // Call global dismount event
-          let event = new CustomEvent(type)
-          document.dispatchEvent(event)
-          setupCalled = false;
+          setupCalled = false
           break
       }
+
+      // Call global mount event
+      let event = new CustomEvent(type)
+      document.dispatchEvent(event)
 
       // Loop over all components that were loaded and try to call any setup JS they have
       this.$el.querySelectorAll('.component').forEach(component => {
