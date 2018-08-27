@@ -103,7 +103,7 @@
 }
 
 .alert > p + p {
-  margin-top: 5px;
+  margin-top: em(5);
 }
 
 .alert-warning {
@@ -114,13 +114,13 @@
 
 .article {
   counter-reset: annotated;
-  padding-bottom: 20px;
+  padding-bottom: em(20);
   position: relative;
   word-wrap: break-word;
 }
 .article__header {
   display: inline-block;
-  margin-bottom: 30px;
+  margin-bottom: em(30);
   .headline--primary {
     @mixin font1;
     display: block;
@@ -135,7 +135,12 @@
   .body__header {
     .lead {
       width: 100%;
-      .image, .instagram-post {
+      display: flex;
+      justify-content: center;
+      .component--brightcove {
+        width: auto;
+      }
+      .image, .instagram-post, .tweet, .facebook-post {
         margin: 0;
         img {
           width: 100%;
@@ -148,7 +153,7 @@
     @mixin inline-block;
     width: em(widthOnGrid(2, 1));
     margin-right: em(widthOnGrid(0, 1));
-    margin-top: 50px;
+    margin-top: em(50);
     .info__by-authors {
       @mixin font6;
       display: flex;
@@ -182,8 +187,8 @@
       }
     }
     .info__timestamp {
-      margin-top: 15px;
       @mixin font9;
+      margin-top: 15px;
       display: block;
       .timestamp__update {}
       .timestamp__date {
@@ -202,7 +207,7 @@
   }
   .body__content {
     @mixin inline-block;
-    margin-top: 50px;
+    margin-top: em(50);
     width: calc(100% - em(widthOnGrid(2, 2)));
   }
 
@@ -216,20 +221,8 @@
     }
     .body__info {
       margin-top: 0;
-      .info__timestamp {
-        .timestamp__update {}
-        .timestamp__date {
-          .timestamp__date--large {}
-          .timestamp__date--small {}
-        }
-        .timestamp__time {}
-      }
     }
   }
-}
-
-@mixin default-screen {
-
 }
 @mixin large-screen {
   .article__body,
@@ -243,25 +236,22 @@
       width: 100%;
     }
     .body__info {
-      margin-top: 20px;
+      margin-top: em(20);
       margin-right: 0;
       display: flex;
       justify-content: space-between;
+      .info--left-top {
+        margin-right: em(20);
+      }
       .info__timestamp {
         margin-top: 10px;
-        .timestamp__update {}
-        .timestamp__date {
-          .timestamp__date--large {}
-          .timestamp__date--small {}
-        }
-        .timestamp__time {}
       }
     }
   }
 }
 @mixin medium-screen {
   .article__header {
-    margin-bottom: 25px;
+    margin-bottom: em(25);
     .headline--primary {
       @mixin font2;
     }
@@ -273,7 +263,7 @@
   .article__body[data-lead-type=instagram],
   .article__body[data-lead-orientation=vertical] {
     .body__info {
-      margin-top: 30px
+      margin-top: em(30)
     }
   }
 }
@@ -282,8 +272,8 @@
   .article__body[data-lead-type=instagram],
   .article__body[data-lead-orientation=vertical] {
     .body__header {
-      width: calc(100% + 40px);
-      margin: 0 -20px;
+      width: calc(100% + em(40));
+      margin: 0 em(-20);
     }
   }
 }
@@ -294,11 +284,11 @@
     .body__info {
       flex-direction: column;
       .info--right-bottom {
-        margin-top: 30px;
+        margin-top: em(30);
       }
     }
     .body__content {
-      margin-top: 30px;
+      margin-top: em(30);
     }
   }
 }
@@ -322,7 +312,7 @@
 .article .circulation {
   background: #f4f4f4;
   clear: both;
-  margin: 20px 0;
+  margin: em(20) 0;
   width: 100%;
   .circulation-item-empty {
     color: #999;
@@ -339,8 +329,8 @@
   }
 
   .circulation-section {
-    border-top: 1px solid #e8e8e8;
-    padding: 15px 20px;
+    border-top: em(1) solid #e8e8e8;
+    padding: em(15) em(20);
     .editor > form {
       background-color: #f4f4f4;
     }
@@ -350,9 +340,9 @@
     font-family: Helvetica, Arial, sans-serif;
     font-size: 16px;
     font-weight: 700;
-    line-height: 28px;
+    line-height: em(28);
     margin: 0;
-    padding: 0 0 10px;
+    padding: 0 0 em(10);
   }
 
   .circulation-subtitle.circ-edit:after {
@@ -361,8 +351,8 @@
     font-family: Helvetica, Arial, sans-serif;
     font-size: 16px;
     font-weight: 400;
-    line-height: 18px;
-    margin: 0 0 0 15px;
+    line-height: em(18);
+    margin: 0 0 0 em(15);
   }
 
   .circulation-items {
@@ -372,7 +362,7 @@
   }
 
   .circulation-item + .circulation-item {
-    margin-top: 20px;
+    margin-top: em(20);
   }
 
   .circulation-item-title {
@@ -401,29 +391,29 @@
     font-family: Helvetica, Arial, sans-serif;
     font-size: 14px;
     font-weight: 400;
-    line-height: 16px;
+    line-height: em(16);
     margin: 0;
     padding: 0;
   }
 
   .circulation-feedimg {
     height: auto;
-    width: 200px;
+    width: em(200);
   }
 
   .circulation-empty-feedimg {
     background-color: #d8d8d8;
-    border: 1px solid #999;
-    height: 150px;
-    width: 200px;
+    border: em(1) solid #999;
+    height: em(150);
+    width: em(200);
   }
 
   .circulation-feedlayout {
     align-items: center;
     display: none;
-    height: 28px;
+    height: em(28);
     justify-content: flex-start;
-    margin: 0 5px 0 0;
+    margin: 0 em(5) 0 0;
     padding: 0;
   }
 
@@ -434,13 +424,13 @@
   .circulation-feedlayout svg {
     display: block;
     height: auto;
-    margin-right: 10px;
-    width: 30px;
+    margin-right: em(10);
+    width: em(30);
   }
 }
 
 .clay-annotated {
-  border-bottom: 1px solid #1782a9;
+  border-bottom: em(1) solid #1782a9;
   border-color: #103cbc;
   counter-increment: annotated;
   cursor: pointer;
