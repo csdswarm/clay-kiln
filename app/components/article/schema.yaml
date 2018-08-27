@@ -222,6 +222,8 @@ content:
       - soundcloud
       - youtube
       - in-article-image-slideshow
+      - related
+      - package-list
 feeds:
   _label: Include in These Feeds
   _has:
