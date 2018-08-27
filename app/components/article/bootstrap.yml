@@ -83,7 +83,4 @@ _components:
         sponsoredTag: {}
         sideShare: {}
         section: 'some-section'
-    storyCharacteristics:
-      strong-visual: false
-      top-story: false
     eligibleForGoogleStandout: false

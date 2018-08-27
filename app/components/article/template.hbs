@@ -1,4 +1,4 @@
-<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article" data-crosspost="{{ commaSeparated crosspost }}" data-article-type="{{ articleType }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article" data-crosspost="{{ commaSeparated crosspost }}" data-article-type="{{ articleType }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
   <header class="article__header">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
@@ -19,9 +19,9 @@
     </div>
 
     {{! title }}
-    <h1 class="headline--primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+    <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
-    <span class="headline--secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
   </header>
 
   <section class="article__body"
@@ -77,42 +77,42 @@
 
     {{! word count }}
     {{#if @root.locals.edit}}
-      <section class="word-count">Words: <span class="initializing">Initializing word count</span></section>
+      <section class="body__word-count">Words: <span class="initializing">Initializing word count</span></section>
     {{/if}}
 
     {{! circulation area }}
     {{#if @root.locals.edit }}
-      {{ set 'empty' '<span class="circulation-item-empty">None</span>' }}
-      <section class="circulation">
-        <h2 class="circulation-title">Article Circulation</h2>
+      {{ set 'empty' '<span class="circulation--empty">None</span>' }}
+      <section class="body__circulation">
+        <h2 class="circulation__title">Article Circulation</h2>
 
-        <section class="circulation-section" data-editable="circHeadlines">
-          <h3 class="circulation-subtitle circ-edit">Headlines and Teasers</h3>
-          <ul class="circulation-items">
-            <li class="circulation-item">
-              <h4 class="circulation-item-title circulation-required">Facebook Headline</h4>
-              <p class="circulation-item-data">{{{ default socialHeadline empty }}}</p>
+        <section class="circulation__section" data-editable="circHeadlines">
+          <h3 class="subtitle circ-edit">Headlines and Teasers</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Facebook Headline</h4>
+              <p class="item-data">{{{ default socialHeadline empty }}}</p>
             </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title circulation-required">Twitter/Short Headline</h4>
-              <p class="circulation-item-data">{{{ default shortHeadline empty }}}</p>
+            <li class="item">
+              <h4 class="item-title required">Twitter/Short Headline</h4>
+              <p class="item-data">{{{ default shortHeadline empty }}}</p>
             </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title circulation-required">Teaser</h4>
-              <p class="circulation-item-data">{{{ default teaser empty }}}</p>
+            <li class="item">
+              <h4 class="item-title required">Teaser</h4>
+              <p class="item-data">{{{ default teaser empty }}}</p>
             </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title">SEO Headline</h4>
-              <p class="circulation-item-data">{{{ default seoHeadline empty }}}</p>
+            <li class="item">
+              <h4 class="item-title">SEO Headline</h4>
+              <p class="item-data">{{{ default seoHeadline empty }}}</p>
             </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title">SEO Description</h4>
-              <p class="circulation-item-data">{{{ default seoDescription empty }}}</p>
+            <li class="item">
+              <h4 class="item-title">SEO Description</h4>
+              <p class="item-data">{{{ default seoDescription empty }}}</p>
             </li>
           </ul>
         </section>
 
-        <section class="circulation-section" data-editable="circSlug">
+        <section class="circulation__section" data-editable="circSlug">
           {{#if slugLock}}
             <div class="alert alert-warning">
                 <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
@@ -120,101 +120,71 @@
                 Article Slug is locked. Unlock in Article Settings.
             </div>
           {{/if}}
-          <h3 class="circulation-subtitle circ-edit">Slug and URL</h3>
-          <ul class="circulation-items">
-            <li class="circulation-item">
-              <h4 class="circulation-item-title circulation-required">Article Slug</h4>
-              <p class="circulation-item-data">
+          <h3 class="subtitle circ-edit">Slug and URL</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Article Slug</h4>
+              <p class="item-data">
                 {{#if slug}}<span class="circulation-slug">{{ slug }}</span>{{else}}{{{ empty }}}{{/if}}
               </p>
             </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title">Evergreen Treatment</h4>
-              <p class="circulation-item-data">
+            <li class="item">
+              <h4 class="item-title">Evergreen Treatment</h4>
+              <p class="item-data">
                 {{ if evergreenSlug 'Yes' else='No' }}
               </p>
             </li>
           </ul>
         </section>
 
-        <section class="circulation-section" data-editable="circFeeds">
-          <h3 class="circulation-subtitle circ-edit">Feeds</h3>
-          <ul class="circulation-items">
-            <li class="circulation-item">
-              <h4 class="circulation-item-title circulation-required">Feed Image</h4>
-              <p class="circulation-item-data">
+        <section class="circulation__section" data-editable="circFeeds">
+          <h3 class="subtitle circ-edit">Feeds</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Feed Image</h4>
+              <p class="item-data">
                 {{#if feedImgUrl}}
-                  <img class="circulation-feedimg" src="{{ feedImgUrl }}" alt="" />
+                  <img class="feedimg" src="{{ feedImgUrl }}" alt="" />
                 {{else}}
-                  <div class="circulation-empty-feedimg"></div>
+                  <div class="empty-feedimg"></div>
                 {{/if}}
               </p>
             </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title">Silo Image</h4>
-              <p class="circulation-item-data">
+            <li class="item">
+              <h4 class="item-title">Silo Image</h4>
+              <p class="item-data">
                 {{#if siloImgUrl}}
-                  <img class="circulation-feedimg" src="{{ rendition siloImgUrl 'vertical-small' }}" alt="" />
+                  <img class="feedimg" src="{{ rendition siloImgUrl 'vertical-small' }}" alt="" />
                 {{else}}
                   {{{empty}}}
                 {{/if}}
               </p>
             </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title">Feed Layout</h4>
-              <p class="circulation-item-data">
-                <span class="circulation-feedlayout {{ if (compare feedLayout 'none') 'current' }}">{{{ read 'public/media/components/article/icon-feed-noimg.svg' }}} None</span>
-                <span class="circulation-feedlayout {{ if (compare feedLayout 'thumb') 'current' }}">{{{ read 'public/media/components/article/icon-feed-thumb.svg' }}} Thumb</span>
-                <span class="circulation-feedlayout {{ if (compare feedLayout 'small') 'current' }}">{{{ read 'public/media/components/article/icon-feed-square.svg' }}} Small</span>
-                <span class="circulation-feedlayout {{ if (compare feedLayout 'large') 'current' }}">{{{ read 'public/media/components/article/icon-feed-horizontal.svg' }}} Large</span>
+            <li class="item">
+              <h4 class="item-title">Feed Layout</h4>
+              <p class="item-data">
+                <span class="feedlayout {{ if (compare feedLayout 'none') 'current' }}">{{{ read 'public/media/components/article/icon-feed-noimg.svg' }}} None</span>
+                <span class="feedlayout {{ if (compare feedLayout 'thumb') 'current' }}">{{{ read 'public/media/components/article/icon-feed-thumb.svg' }}} Thumb</span>
+                <span class="feedlayout {{ if (compare feedLayout 'small') 'current' }}">{{{ read 'public/media/components/article/icon-feed-square.svg' }}} Small</span>
+                <span class="feedlayout {{ if (compare feedLayout 'large') 'current' }}">{{{ read 'public/media/components/article/icon-feed-horizontal.svg' }}} Large</span>
               </p>
             </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title">Crossposting</h4>
-              <p class="circulation-item-data">{{ if (commaSeparated crosspost) (slugToSiteName (commaSeparated crosspost)) else='Current site' }}</p>
+            <li class="item">
+              <h4 class="item-title">Crossposting</h4>
+              <p class="item-data">{{ if (commaSeparated crosspost) (slugToSiteName (commaSeparated crosspost)) else='Current site' }}</p>
             </li>
           </ul>
         </section>
 
-        <section class="circulation-section" data-editable="circMetadata">
-          <h3 class="circulation-subtitle circ-edit">Article Metadata</h3>
-          <ul class="circulation-items">
-            <li class="circulation-item">
-              <h4 class="circulation-item-title circulation-required">Feature Types</h4>
-              <p class="circulation-item-data">{{ articleType }}</p>
-            </li>
-            <li class="circulation-item">
-              <h4 class="circulation-item-title">Story Characteristics</h4>
-              <p class="circulation-item-data">{{{ if (commaSeparated storyCharacteristics) (commaSeparated storyCharacteristics true) else=empty}}}</p>
+        <section class="circulation__section" data-editable="circMetadata">
+          <h3 class="subtitle circ-edit">Article Metadata</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Article Type</h4>
+              <p class="item-data">{{ articleType }}</p>
             </li>
           </ul>
         </section>
-
-        {{#if eligibleForGoogleStandout}}
-          <section class="circulation-section" data-editable="googleStandoutMetadata">
-            <h3 class="circulation-subtitle circ-edit">Google Standout Metadata</h3>
-            <ul class="circulation-items">
-              <li class="circulation-item">
-                <h4 class="circulation-item-title">Standout Articles from past 7 days: {{rollingStandoutCount}}</h4>
-                <h4 class="circulation-item-title">{{ if shouldBeGoogleStandout 'Enabled' else='Disabled' }}</h4>
-                {{#unless articleWithinGoogleStandoutPublishDateLimit}}
-                  <div class="alert alert-warning">
-                      <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
-
-                      This article is not eligible to appear in Google News because its publish date is more than 2 days old. If this article was already published with the standout tag enabled, please note that disabling this tag will not affect its status in Google News.
-                    </div>
-                {{/unless}}
-                {{#unless availableStandoutArticleInventory}}
-                  <div class="alert alert-warning">
-                      <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
-
-                      This article is not eligible to appear in Google News because this site's domain has already marked seven standout posts in the past week.
-                    </div>
-                {{/unless}}
-              </li>
-            </ul>
-          </section>
-        {{/if}}
       </section>
     {{/if}}
   </section>

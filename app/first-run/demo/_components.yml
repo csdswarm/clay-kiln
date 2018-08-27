@@ -513,6 +513,3 @@ _components:
           Podcasts: false
           Sports: false
         showSocial: true
-        storyCharacteristics:
-          strong-visual: false
-          top-story: false

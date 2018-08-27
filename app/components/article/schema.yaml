@@ -330,8 +330,6 @@ _groups:
   circMetadata:
     fields:
       - articleType
-      - articleSource
-      - storyCharacteristics
   bylines:
     fields:
       - byline
@@ -389,19 +387,6 @@ plaintextShortHeadline:
   _publish: twitterTitle
   _has:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
-
-storyCharacteristics:
-  _label: Story Characteristics
-  _has:
-    input:  checkbox-group
-    options:
-      - name: Strong Visual
-        value: strong-visual
-        sites: wwwthecut
-      - name: Top Story
-        value: top-story
-        sites: wwwthecut
-    help: Metadata about this article that affects how it's promoted across different pages
 
 # Component properties
 sideShare:
