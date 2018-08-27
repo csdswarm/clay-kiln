@@ -91,7 +91,7 @@ export default {
       this.$el.querySelectorAll('.component').forEach(component => {
         let componentName = component.getAttribute('class').match(/component--(.*)/)[1] || ''
         if (componentName) {
-          let event = new CustomEvent(`${componentName}${type}`)
+          let event = new CustomEvent(`${componentName}-${type}`)
           document.dispatchEvent(event)
         }
       })
