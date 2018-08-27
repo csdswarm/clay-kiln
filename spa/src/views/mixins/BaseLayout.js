@@ -7,34 +7,22 @@
 import URL from 'url-parse'
 import VueTranspiler from '@/lib/VueTranspiler'
 const vueTranspiler = new VueTranspiler()
+let setupCalled = false;
 
 export default {
   mounted () {
-    // Attach vue router listener on SPA links.
-    this.$el.querySelectorAll('a.spa-link').forEach(link => {
-      link.addEventListener('click', event => {
-        this.onSpaLinkClick(event, link)
-      })
-    })
-
-    // Loop over all components that were loaded and try to call any setup JS they have
-    this.$el.querySelectorAll('.component').forEach(component => {
-      let componentName = component.getAttribute('class').match(/component--(.*)/)[1] || ''
-      if (componentName) {
-        let event = new CustomEvent(`${componentName}Setup`)
-        document.dispatchEvent(event)
-      }
-    })
+    this.onLayoutUpdate()
+  },
+  updated() {
+    this.onLayoutUpdate()
   },
   beforeDestroy () {
+    // Call global dismount event
+    let event = new CustomEvent(`dismount`)
+    document.dispatchEvent(event)
+
     // Loop over all components that were loaded and try to call any cleanup JS they have
-    this.$el.querySelectorAll('.component').forEach(component => {
-      let componentName = component.getAttribute('class').match(/component--(.*)/)[1] || ''
-      if (componentName) {
-        let event = new CustomEvent(`${componentName}Cleanup`)
-        document.dispatchEvent(event)
-      }
-    })
+    this.handleComponents('dismount')
   },
   methods: {
     componentList: function (stateSliceKey) {
@@ -61,6 +49,52 @@ export default {
 
       const linkParts = new URL(element.getAttribute('href'))
       this.$router.push(linkParts.pathname)
+    },
+    onLayoutUpdate: function() {
+      // Attach vue router listener on SPA links.
+      this.$el.querySelectorAll('a.spa-link').forEach(link => {
+        link.addEventListener('click', event => {
+          this.onSpaLinkClick(event, link)
+        })
+      })
+
+      // Loop over all components that were loaded and try to call any setup JS they have
+      this.handleComponents('mount')
+    },
+    /**
+     * Handle setup / cleanup of components
+     *
+     * @param el
+     * @param type
+     */
+    handleComponents: function (type) {
+      switch (type) {
+        case 'mount':
+          if (setupCalled) {
+            return
+          } else {
+            // Call global dismount event
+            let event = new CustomEvent(type)
+            document.dispatchEvent(event)
+            setupCalled = true;
+          }
+          break
+        case 'dismount':
+          // Call global dismount event
+          let event = new CustomEvent(type)
+          document.dispatchEvent(event)
+          setupCalled = false;
+          break
+      }
+
+      // Loop over all components that were loaded and try to call any setup JS they have
+      this.$el.querySelectorAll('.component').forEach(component => {
+        let componentName = component.getAttribute('class').match(/component--(.*)/)[1] || ''
+        if (componentName) {
+          let event = new CustomEvent(`${componentName}${type}`)
+          document.dispatchEvent(event)
+        }
+      })
     }
   }
 }
