@@ -9,43 +9,43 @@
   flex-direction: column;
 }
 
-.share-list-item {
+.share-list__item {
   border: 1px solid #D8D8D8;
   border-width: 0px 1px 1px;
 }
 
 /* Enable top/right border on top element for vertical/horizontal */
-.share-list-item:first-child {
+.share-list__item:first-child {
   border-width: 1px;
 }
 
 /* Remove border on hover */
-.share-list-item:not(.share-list-item__copy-link):hover,
-.share-list-item:not(.share-list-item__copy-link):active {
+.share-list__item:not(.share-list__item--copy-link):hover,
+.share-list__item:not(.share-list__item--copy-link):active {
   border: none;
 }
 
 /* Hide bottom border of icon above hovered icon and move icon below up 1px */
-.share-list-item:not(:first-child):not(.share-list-item__copy-link):hover,
-.share-list-item:not(:first-child):not(.share-list-item__copy-link):active {
+.share-list__item:not(:first-child):not(.share-list__item--copy-link):hover,
+.share-list__item:not(:first-child):not(.share-list__item--copy-link):active {
   position: relative;
   top: -1px;
   margin-bottom: -1px;
 }
 
-.share .share-link {
+.component--share .share-link {
   text-decoration: none;
 }
 
-.share .share-link svg,
-.share .share-link img {
+.component--share .share-link svg,
+.component--share .share-link img {
   height: 20px;
   width: 20px;
 }
 
 /* Increase height of Facebook svg */
-.share .share-link.facebook svg,
-.share .share-link.facebook img {
+.component--share .share-link.facebook svg,
+.component--share .share-link.facebook img {
   height: 22px;
 }
 
@@ -80,7 +80,7 @@
   background-color: #1F055E;
 }
 
-.share .share-link {
+.component--share .share-link {
   display: flex;
   width: 40px;
   height: 38px;
@@ -89,20 +89,20 @@
 }
 
 /* Grow icon box by 2px on hover */
-.share .share-link:not(.copy-link):hover,
-.share .share-link:not(.copy-link):active {
+.component--share .share-link:not(.copy-link):hover,
+.component--share .share-link:not(.copy-link):active {
   height: 40px;
 }
 
 /* Clear button styling and use pointer cursor */
-.share button {
+.component--share button {
   border: none;
   padding: 0;
   background: transparent;
   cursor: pointer;
 }
 
-.share {
+.component--share {
   bottom: -225px;
   left: -134px;
   margin: 0;
@@ -116,7 +116,7 @@
   width: 20px;
 }
 
-.share .share-title + .share-list .share-link {
+.component--share .share-title + .share-list .share-link {
   border: none;
 }
 
@@ -134,33 +134,33 @@
 }
 
 @mixin large-screen {
-  .share > .share-list {
+  .component--share > .share-list {
     height: 40px;
     width: 157px;
     flex-direction: row;
   }
 
-  .share-list-item {
+  .share-list__item {
     border: 1px solid #D8D8D8;
     border-width: 1px 1px 1px 0px;
   }
 
   /* Clear vertical :hover and :active movement */
-  .share-list-item:hover,
-  .share-list-item:active {
+  .share-list__item:hover,
+  .share-list__item:active {
     top: 0;
     margin-bottom: 0;
   }
 
   /* Hide left border of icon to left and move icon to right over 1px */
-  .share-list-item:not(:first-child):not(.share-list-item__copy-link):hover,
-  .share-list-item:not(:first-child):not(.share-list-item__copy-link):active {
+  .share-list__item:not(:first-child):not(.share-list__item--copy-link):hover,
+  .share-list__item:not(:first-child):not(.share-list__item--copy-link):active {
     position: relative;
     left: -1px;
     margin-right: -1px;
   }
 
-  .share {
+  .component--share {
     bottom: 0;
     left: 0;
     position: relative;
@@ -171,7 +171,7 @@
     float: right;
   }
 
-  .share .share-link {
+  .component--share .share-link {
     display: flex;
     width: 38px;
     height: 40px;
@@ -180,8 +180,8 @@
   }
 
   /* Grow icon box by 2px on hover */
-  .share .share-link:not(.copy-link):hover,
-  .share .share-link:not(.copy-link):active {
+  .component--share .share-link:not(.copy-link):hover,
+  .component--share .share-link:not(.copy-link):active {
     height: 40px;
     width: 40px;
   }
@@ -200,9 +200,9 @@
 
 /* Built-in Clay CSS from here down */
 
-.share .close,
+.component--share .close,
 .share-overlay .share-text,
-.has-splash-header .share .share-title,
+.has-splash-header .component--share .share-title,
 .one-column-layout .share.horizontal .print {
   display: none;
 }
@@ -258,7 +258,7 @@
   width: 20px;
 }
 
-.share-overlay .share-list-item:first-of-type .share-link {
+.share-overlay .share-list__item:first-of-type .share-link {
   margin-left: 0;
 }
 
