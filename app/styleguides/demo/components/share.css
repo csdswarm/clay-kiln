@@ -1,9 +1,10 @@
 @import "_global/mixins";
+@import "_global/colors";
 
 .component--share {
   position: absolute;
-  bottom: -225px;
-  left: -134px;
+  bottom: em(-225);
+  left: em(-134);
   margin: 0;
   padding: 0;
   display: flex;
@@ -11,22 +12,23 @@
 
   & button { /* Clear button styling and use pointer cursor */
     padding: 0;
+    font: inherit;
     cursor: pointer;
   }
 }
 
-[class^="share-link"] { /* Each class that starts with "shark-link" */
+.share-link {
   /* Set each item to constant 40x40px, including border */
-  width: 40px;
-  height: 40px;
-  border: 1px solid #D8D8D8;
+  width: em(40);
+  height: em(40);
+  border: em(1) solid $alto;
   box-sizing: border-box;
   /* Center image, set size to 20x20px, and don't repeat it */
-  background: center/20px 20px no-repeat;
+  background: center/em(20) em(20) no-repeat;
 
   /* Move each item but first up 1px to create 1px border */
   &:not(:first-child) {
-    margin-top: -1px;
+    margin-top: em(-1);
   }
   /* Show the item's border on hover so it can be recolored properly */
   &:hover,
@@ -39,22 +41,22 @@
 .share-link-- {
   &facebook {
     background-image: url("/media/components/share/facebook.svg");
-    background-size: auto 22px; /* Increase FB image height to 22px */
+    background-size: auto em(22); /* Increase FB image height to 22px */
     &:hover,
     &:active {
-      background-color: #3B5998;
-      border-color: #3B5998;
+      background-color: $chambray;
+      border-color: $chambray;
       background-image: url("/media/components/share/facebook--hover.svg");
     }
   }
 
   &twitter {
     background-image: url("/media/components/share/twitter.svg");
-    background-size: auto 17px; /* Firefox scaling/bounding fix */
+    background-size: auto em(17); /* Firefox scaling/bounding fix */
     &:hover,
     &:active {
-      background-color: #05AEEE;
-      border-color: #05AEEE;
+      background-color: $cerulean;
+      border-color: $cerulean;
       background-image: url("/media/components/share/twitter--hover.svg");
     }
   }
@@ -63,8 +65,8 @@
     background-image: url("/media/components/share/email.svg");
     &:hover,
     &:active {
-      background-color: #1F055E;
-      border-color: #1F055E;
+      background-color: $parisPurple;
+      border-color: $parisPurple;
       background-image: url("/media/components/share/email--hover.svg");
     }
   }
@@ -94,16 +96,16 @@
     bottom: 0;
     left: 0;
     position: relative;
-    margin-bottom: 30px;
-    padding: 15px 0 0;
+    margin-bottom: em(30);
+    padding: em(15) 0 0;
     float: right;
     flex-direction: row; /* Horizontal list on smaller screens */
   }
 
-  [class^="share-link"] {
+  .share-link {
     &:not(:first-child) {
       margin-top: 0; /* Clear vertical margin-top */
-      margin-left: -1px; /* Move items to the left on horizontal layout */
+      margin-left: em(-1); /* Move items to the left on horizontal layout */
     }
 
     /* Clearfix: https://stackoverflow.com/a/8933894. May or may not be needed */
