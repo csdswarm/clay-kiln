@@ -303,6 +303,11 @@ showSocial:
   _has:
     input: checkbox
     help: Author social handles are displayed by default. Unchecking this will hide handles on this article
+rubric:
+  _label: Rubric
+  _subscribe: rubric
+  _has:
+    help: Feature Rubric is set by the tags component
 
 _groups:
   publishedDate:
