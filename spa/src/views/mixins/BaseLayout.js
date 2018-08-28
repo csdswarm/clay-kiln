@@ -50,6 +50,9 @@ export default {
       const linkParts = new URL(element.getAttribute('href'))
       this.$router.push(linkParts.pathname)
     },
+    /**
+     * Handle any logic required to get a new vue render to function properly
+     */
     onLayoutUpdate: function() {
       // Attach vue router listener on SPA links.
       this.$el.querySelectorAll('a.spa-link').forEach(link => {
@@ -62,7 +65,7 @@ export default {
       this.handleComponents('mount')
     },
     /**
-     * Handle setup / cleanup of components
+     * Handle setup / cleanup of components and their required JS
      *
      * @param el
      * @param type
