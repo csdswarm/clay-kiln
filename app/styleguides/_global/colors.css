@@ -1,12 +1,28 @@
 /* Color Naming - http://chir.ag/projects/name-that-color/ */
 $alto: #d8d8d8;
-$azureRadience: #0099ff;
+$azureRadience: #0099FF; /*sports*/
+$azureRadienceRGB: 0, 153, 255;
+
+$black: #000;
 $blackRussian: #000001;
+$boulderGrey: #777;
+
 $cerulean: #05aeee; /* Twitter Blue */
 $chambray: #3b5998; /* Facebook Blue */
-$lightningYellow: #fec517;
-$parisPurple: #1f055e;
-$purple: #3c00b7;
-$robinsEgg: #00ccb7;
-$sunsetOrange: #ff4940;
-$white: #ffffff;
+
+$lightningYellow: #FEC517; /*news*/
+$lightningYellowRGB: 254, 197, 23;
+
+$parisPurple: #1F055E; /*primary dark*/
+$parisPurpleRGB: 31, 5, 94;
+
+$purple: #3C00B7; /*primary bright*/
+$purpleRGB: 60, 0, 183;
+
+$robinsEgg: #00CCB7; /*podcasts*/
+$robinsEggRGB: 0, 204, 183;
+
+$sunsetOrange: #FF4940; /*entertainment*/
+$sunsetOrangeRGB: 255, 73, 64;
+
+$white: #FFF;

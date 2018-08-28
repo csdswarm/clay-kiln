@@ -55,7 +55,11 @@ _components:
     instances:
       article:
         headLayout:
+          -
+            _ref: /_components/web-player-head/instances/new
         top:
+          -
+            _ref: /_components/header/instances/default
         head: head
         main: main
         tertiary: tertiary
