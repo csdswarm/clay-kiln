@@ -6,23 +6,6 @@ const socialSvgs = require('./social-svgs'),
   igHtml = (authorData) => `<a href="http://instagram.com/${authorData.instagram}" target='_blank' class="author-socials"><span class="author-socials-icon instagram">${socialSvgs.INSTAGRAM}</span><span>@${authorData.instagram}</span></a>`;
 
 /**
- * Add structured data for author pages for Google
- * to author HTML with socials
- * @param {Object[]} authorsAndMeta e.g. [{name: "Max Read", twitter:"max_read", facebook:"", instagram:""}]
- * @param {Object} options
- * @param {String} options.authorHost e.g. 'nymag.com'
- * @param {Boolean} options.showSocial
- * @param {String} [options.nameClass]
- * @param {String} [options.linkClass]
- * @return {String}
- */
-function formatSocialsByline(authorsAndMeta, options) {
-  var authorName = authorsAndMeta.length > 1 ? '' : ' class="author-name"';
-
-  return `<span itemprop="author" itemscope itemtype="http://schema.org/Person"${authorName}>${formatNumAuthors(authorsAndMeta, options)}</span>`;
-}
-
-/**
  * Comma separate authors
  * @param {Object[]} authorsAndMeta e.g. [{name: "Max Read", twitter:"max_read", facebook:"", instagram:""}]
  * @param {Object} options
@@ -122,13 +105,12 @@ function createAuthorHtml(authorData, options) {
   var nameOrText = authorData.name || authorData.text;
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
-  return `<a href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}/" rel="author" class="${options.linkClass ? options.linkClass : 'article-author'}">` +
+  return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="author">` +
+    `<a href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}/" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
     `<span${options.nameClass ? ` class="${options.nameClass}"` : ''}>${nameOrText}</span>` +
     `<meta itemprop="name" content="${nameOrText}"/>` +
-    `<link itemprop="sameAs" href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}"/></a>`;
+    `<link itemprop="sameAs" href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}"/></a></span>`;
 }
-
-module.exports.formatSocialsByline = formatSocialsByline;
 
 // For testing
 module.exports.formatNumAuthors = formatNumAuthors;

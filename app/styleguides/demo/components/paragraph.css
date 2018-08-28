@@ -1,105 +1,106 @@
 /* stylelint-disable */
-.paragraph {
-  margin: 0 0 20px;
-}
 
-.paragraph a {
-  background: linear-gradient(to bottom, transparent 0, transparent 80%, #fcd400 80%, #fcd400 100%);
-  border-bottom: 2px solid #fcd400;
-  padding: 0;
-}
-
-.paragraph p {
-  margin: 0;
-}
-
-.paragraph + ul,
-.paragraph ul {
-  clear: both;
-  line-height: 23px;
-  margin: 0;
-  padding: 0 0 0 10px;
-}
-
-.paragraph + ul li,
-.paragraph ul li {
-  list-style: none;
-  margin: 0 0 20px;
-}
-
-.paragraph + ul li:before,
-.paragraph ul li:before {
-  color: #1782a9;
-  content: '•';
-  left: 0;
-  position: absolute;
-}
-
-.paragraph + ol,
-.paragraph ol {
-  clear: both;
-  counter-reset: list;
-  line-height: 23px;
-  margin: 30px 0;
-  padding: 0 0 0 20px;
-}
-
-.paragraph + ol li,
-.paragraph ol li {
-  list-style: none;
-  margin: 0 0 20px;
-  padding: 0;
-}
-
-.paragraph + ol li:before,
-.paragraph ol li:before {
-  color: #999;
-  content: counter(list);
-  counter-increment: list;
-  font-family: Arial, sans-serif;
-  font-weight: 700;
-  left: 0;
-  position: absolute;
-}
+@import "_global/fonts";
+@import "_global/colors";
 
 .paragraph,
 .paragraph ol li,
 .paragraph p,
+.paragraph p a,
 .paragraph ul li,
 .paragraph+ol li,
 .paragraph+ul li {
-  color: #111;
-  font-family: Georgia, serif;
-  font-size: 17px;
-  letter-spacing: .1px;
-  line-height: 27px;
+  @mixin article-font7;
 }
-
-.paragraph a,
-.paragraph a:active,
-.paragraph a:hover,
-.paragraph a:visited {
-  color: #111;
-  text-decoration: none;
+.paragraph {
+  margin: 0 0 em(30, 18);
+  p {
+    margin: 0;
+  }
+  a {
+    background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(sunsetOrangeRGB), .50) 80%, rgba($(sunsetOrangeRGB), .50) 100%);
+    transition: all 300ms linear;
+    padding: 0;
+    &:hover {
+      background: linear-gradient(to bottom, rgba($(sunsetOrangeRGB), .50) 0, rgba($(sunsetOrangeRGB), .50) 100%);
+    }
+    &:link, &:visited, &:hover, &:active, &:focus, &:focus-within {
+      color: $black;
+      text-decoration: none;
+    }
+    @define-mixin article-link-color $category, $color {
+      .article[data-type=$(category)] & {
+        background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($($(color)RGB), .50) 80%, rgba($($(color)RGB), .50) 100%);
+        &:hover {
+          background: linear-gradient(to bottom, rgba($($(color)RGB), .50) 0, rgba($($(color)RGB), .50) 100%);
+        }
+      }
+    }
+    @mixin article-link-color Sports, azureRadience;
+    @mixin article-link-color News, lightningYellow;
+    @mixin article-link-color Podcasts, robinsEgg;
+    @mixin article-link-color Music, sunsetOrange;
+    @mixin article-link-color Entertainment, sunsetOrange;
+  }
+  strong {
+    @mixin article-font8;
+  }
+  + ul,
+  ul {
+    clear: both;
+    line-height: em(23, 18);
+    margin: 0;
+    padding: 0 0 0 em(10, 18);
+    li {
+      list-style: none;
+      margin: 0 0 em(20, 18);
+      &:before {
+        color: #1782a9;
+        content: '•';
+        left: 0;
+        position: absolute;
+      }
+    }
+  }
+  + ol,
+  ol {
+    clear: both;
+    counter-reset: list;
+    line-height: em(23, 18);
+    margin: em(30, 18) 0;
+    padding: 0 0 0 em(20, 18);
+    li {
+      list-style: none;
+      margin: 0 0 em(20, 18);
+      padding: 0;
+      &:before {
+        @mixin article-font7;
+        color: $boulderGrey;
+        content: counter(list);
+        counter-increment: list;
+        left: 0;
+        position: absolute;
+      }
+    }
+  }
 }
 
 .sponsored .paragraph {
-  margin-bottom: 20px;
+  margin-bottom: em(20, 18);
 }
 
 @media print {
   .paragraph {
-    margin: 0 auto 20px;
+    margin: 0 auto em(20, 18);
     width: 80%;
   }
-
   .paragraph,
   .paragraph ol li,
   .paragraph p,
   .paragraph ul li,
   .paragraph+ol li,
   .paragraph+ul li {
-    font-size: 11px;
-    line-height: 12px;
+    font-size: em(11, 16);
+    line-height: em(12, 11);
   }
 }

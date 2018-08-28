@@ -278,6 +278,22 @@ _components:
       new:
         url: ''
 
+  youtube:
+    instances:
+      new:
+        videoId: ''
+        videoSource: 'Video ID'
+        videoType: 'Editorial'
+        videoLocation: 'article'
+        playerCaption: ''
+        autoPlay: false
+        autoPlayNextVideo: true
+        videoPlaylist: ''
+        playerBorderTopCTA: 'Watch'
+        playerBorderTop: false
+        playerBorderBottom: false
+        previousTypeRelated: false
+
   brightcove:
     instances:
       new:
@@ -457,56 +473,43 @@ _components:
           -
             _ref: /_components/blockquote/instances/new
   article:
-      instances:
-        new:
-          primaryHeadline: ''
-          feedImgUrl: ''
-          feedLayout: small
-          teaser: ''
-          slug: ''
-          byline:
-            -
-              prefix: by
-              names: []
-          rubric: ''
-          rubricMessage: ''
-          syndicatedUrl: ''
-          syndicationStatus: original
-          dropCap: false
-          content:
-            -
-              _ref: /_components/image/instances/new
-            -
-              _ref: /_components/paragraph/instances/new
-          tags:
-            _ref: /_components/tags/instances/new
-          sideShare:
-            _ref: /_components/share/instances/new
-          # bottomShare:
-          #   _ref: /_components/bottom-share/instances/new
-          feeds:
-            sitemaps: true
-            rss: true
-            most-popular: true
-            newsfeed: true
-            apple-news: true
-          featureTypes:
-            News-Aggregation: false
-            News-Commentary and Analysis: false
-            News-Original Reporting: false
-            Advice: false
-            Cover Story Online: false
-            First-Person Essay: false
-            Interview or Profile: false
-            List or Roundup: false
-            Look Book: false
-            Review: false
-            Slideshow Intro: false
-            TV Recap: false
-            Other Feature or Column: false
-            New York Magazine Story: false
-            Sponsor Story: false
-          showSocial: true
-          storyCharacteristics:
-            strong-visual: false
-            top-story: false
+    instances:
+      new:
+        socialHeadline: ''
+        headline: ''
+        subHeadline: ''
+        feedImgUrl: ''
+        feedLayout: small
+        teaser: ''
+        slug: ''
+        byline:
+          -
+            prefix: by
+            names: []
+            sources: []
+        syndicatedUrl: ''
+        syndicationStatus: original
+        lead: []
+        content:
+          -
+            _ref: /_components/image/instances/new
+          -
+            _ref: /_components/paragraph/instances/new
+        tags:
+          _ref: /_components/tags/instances/new
+        sideShare:
+          _ref: /_components/share/instances/new
+        # bottomShare:
+        #   _ref: /_components/bottom-share/instances/new
+        feeds:
+          sitemaps: true
+          rss: true
+          most-popular: true
+          newsfeed: true
+          apple-news: true
+        articleType:
+          Entertainment: false
+          News: false
+          Podcasts: false
+          Sports: false
+        showSocial: true

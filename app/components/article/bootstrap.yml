@@ -1,6 +1,7 @@
 _components:
   article:
-    primaryHeadline: ''
+    headline: ''
+    socialHeadline: ''
     seoHeadline: ''
     shortHeadline: ''
     feedImgUrl: ''
@@ -12,12 +13,11 @@ _components:
       -
         prefix: by
         names: []
+        sources: []
     authorsAndMeta: []
     secondaryBylineText: 'Photograph By'
     secondaryAttribution: []
     dateUpdated: false
-    rubric: ''
-    rubricMessage: ''
     content: []
     tags:
       _ref: /_components/tags
@@ -31,7 +31,7 @@ _components:
       most-popular: true
       newsfeed: true
       apple-news: true
-    featureTypes: {}
+    articleType: ''
     crosspost:
       di: false
       vulture: false
@@ -45,21 +45,16 @@ _components:
       nyxny: false
     syndicatedUrl: ''
     syndicationStatus: original
-    dropCap: false
     shouldHideAds: false
-    overflowHeader: false
     slugLock: false
     section: ''
-    isMovieReview: false
-    movieReviewName: ''
-    movieReviewUrl: ''
-    movieReviewSummary: ''
     showSocial: true
     adDummy:
       _ref: /_components/ad-dummy/instances/general
     instances:
       test:
-        primaryHeadline: some headline
+        headline: ''
+        socialHeadline: some headline
         seoHeadline: ''
         shortHeadline: ''
         feedImgUrl: ''
@@ -68,14 +63,13 @@ _components:
         teaser: ''
         authors: []
         date: ''
-        rubric: ''
-        rubricMessage: ''
         content: []
         tags: ''
         sponsoredTag: {}
         sideShare: {}
       section-test:
-        primaryHeadline: some headline
+        headline: ''
+        socialHeadline: some headline
         seoHeadline: ''
         shortHeadline: ''
         feedImgUrl: ''
@@ -84,14 +78,9 @@ _components:
         teaser: ''
         authors: []
         date: ''
-        rubric: ''
-        rubricMessage: ''
         content: []
         tags: ''
         sponsoredTag: {}
         sideShare: {}
         section: 'some-section'
-    storyCharacteristics:
-      strong-visual: false
-      top-story: false
     eligibleForGoogleStandout: false
