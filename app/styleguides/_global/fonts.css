@@ -102,95 +102,49 @@ em, i {
   font-style: italic;
 }
 
+@define-mixin font $family, $size, $color, $letter-spacing, $line-height {
+  display: inline-block;
+  font-family: $family, sans-serif;
+  font-size: $size;
+  color: $color;
+  letter-spacing: $letter-spacing;
+  line-height: $line-height;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||||| Article Fonts Styleguide ||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 
 @define-mixin article-font1 {
-  display: inline-block;
-  font-family: CircularStd-Black, sans-serif;
-  font-size: 45px;
-  color: $black;
-  letter-spacing: -0.74px;
-  line-height: 52px;
+  @mixin font CircularStd-Black, 45px, $black, -0.74px, 52px;
 }
 @define-mixin article-font2 {
-  display: inline-block;
-  font-family: CircularStd-Black, sans-serif;
-  font-size: 35px;
-  color: $black;
-  letter-spacing: -0.58px;
-  line-height: 42px;
+  @mixin font CircularStd-Black, 35px, $black, -0.58px, 42px;
 }
 @define-mixin article-font3 {
-  display: inline-block;
-  font-family: ProximaNova-Light, sans-serif;
-  font-size: 22px;
-  color: $black;
-  letter-spacing: -0.36px;
-  line-height: 30px;
+  @mixin font ProximaNova-Light, 22px, $black, -0.36px, 30px;
 }
 @define-mixin article-font4 {
-  display: inline-block;
-  font-family: ProximaNova-Light, sans-serif;
-  font-size: 18px;
-  color: $black;
-  letter-spacing: -0.29px;
-  line-height: 24px;
+  @mixin font ProximaNova-Light, 18px, $black, -0.29px, 24px;
 }
 @define-mixin article-font5 {
-  display: inline-block;
-  font-family: CircularStd-Book, sans-serif;
-  font-size: 14px;
-  color: $black;
-  letter-spacing: -0.35px;
-  line-height: 18px;
+  @mixin font CircularStd-Book, 14px, $black, -0.35px, 18px;
 }
 @define-mixin article-font6 {
-  display: inline-block;
-  font-family: CircularStd-BookItalic, sans-serif;
-  font-size: 14px;
-  color: $black;
-  letter-spacing: -0.35px;
-  line-height: 18px;
+  @mixin font CircularStd-BookItalic, 14px, $black, -0.35px, 18px;
 }
 @define-mixin article-font7 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 18px;
-  color: $black;
-  letter-spacing: -0.36px;
-  line-height: 30px;
+  @mixin font ProximaNova-Regular, 18px, $black, -0.36px, 30px;
 }
 @define-mixin article-font8 {
-  display: inline-block;
-  font-family: ProximaNova-Bold, sans-serif;
-  font-size: 18px;
-  color: $black;
-  letter-spacing: -0.36px;
-  line-height: 30px;
+  @mixin font ProximaNova-Bold, 18px, $black, -0.36px, 30px;
 }
 @define-mixin article-font9 {
-  display: inline-block;
-  font-family: CircularStd-Medium, sans-serif;
-  font-size: 12px;
-  color: $boulderGrey;
-  letter-spacing: -0.3px;
-  line-height: 15px;
+  @mixin font CircularStd-Medium, 12px, $boulderGrey, -0.3px, 15px;
 }
 @define-mixin article-font10 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 12px;
-  color: $black;
-  letter-spacing: -0.3px;
-  line-height: 16px;
+  @mixin font ProximaNova-Regular, 12px, $black, -0.3px, 16px;
 }
 @define-mixin article-font11 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 12px;
-  color: $boulderGrey;
-  letter-spacing: -0.3px;
-  line-height: 16px;
+  @mixin font ProximaNova-Regular, 12px, $boulderGrey, -0.3px, 16px;
 }
