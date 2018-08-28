@@ -6,17 +6,12 @@
   left: -134px;
   margin: 0;
   padding: 0;
-}
-
-.share-list {
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
 }
 
 /* Set each item to constant 40x40px, including border */
-.share-list__item {
+.share-link {
   width: 40px;
   height: 40px;
   border: 1px solid #D8D8D8;
@@ -26,58 +21,58 @@
 }
 
 /* Move each item but first up 1px to create 1px border */
-.share-list__item:not(:first-child) {
+.share-link:not(:first-child) {
   margin-top: -1px;
 }
 
 /* Show the item's border on hover so it can be recolored properly */
-.share-list__item:hover,
-.share-list__item:active {
+.share-link:hover,
+.share-link:active {
   z-index: 1;
 }
 
 /* Clear button styling and use pointer cursor */
-.share-list button {
+.component--share button {
   padding: 0;
   cursor: pointer;
 }
 
 /* Background images for each button */
-.share-list__item.facebook {
+.share-link.facebook {
   background-image: url("/media/components/share/facebook.svg");
   background-size: auto 22px; /* Increase FB image height to 22px */
 }
 
-.share-list__item.twitter {
+.share-link.twitter {
   background-image: url("/media/components/share/twitter.svg");
   background-size: auto 17px; /* Firefox scaling/bounding fix */
 }
 
-.share-list__item.email {
+.share-link.email {
   background-image: url("/media/components/share/email.svg");
 }
 
-.share-list__item.copy-link {
+.share-link.copy-link {
   background-image: url("/media/components/share/copy-link.svg");
 }
 
 /* Background/border colors and images on hover */
-.share-list__item.facebook:hover,
-.share-list__item.facebook:active {
+.share-link.facebook:hover,
+.share-link.facebook:active {
   background-color: #3B5998;
   border-color: #3B5998;
   background-image: url("/media/components/share/facebook--hover.svg");
 }
 
-.share-list__item.twitter:hover,
-.share-list__item.twitter:active {
+.share-link.twitter:hover,
+.share-link.twitter:active {
   background-color: #05AEEE;
   border-color: #05AEEE;
   background-image: url("/media/components/share/twitter--hover.svg");
 }
 
-.share-list__item.email:hover,
-.share-list__item.email:active {
+.share-link.email:hover,
+.share-link.email:active {
   background-color: #1F055E;
   border-color: #1F055E;
   background-image: url("/media/components/share/email--hover.svg");
@@ -106,31 +101,23 @@
     margin-bottom: 30px;
     padding: 15px 0 0;
     float: right;
+    flex-direction: row; /* Horizontal list on smaller screens */
   }
 
-  /* Horizontal list on smaller screens */
-  .share-list {
-    flex-direction: row;
-  }
-
-  /* Clear vertical margin-top */
-  .share-list__item,
-  .share-list__item:not(:first-child) {
+  /* Clear vertical margin-top. Move items to the left on horizontal layout */
+  .share-link:not(:first-child) {
     margin-top: 0;
-  }
-
-  /* Instead, move items to the left on horizontal layout */
-  .share-list__item:not(:first-child) {
     margin-left: -1px;
   }
 
-  .share:after,
-  .share:before {
+  /* Clearfix: https://stackoverflow.com/a/8933894. May or may not be needed */
+  .share-link:after,
+  .share-link:before {
     content: '';
     display: table;
   }
 
-  .share:after {
+  .share-link:after {
     clear: both;
   }
 }
