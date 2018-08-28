@@ -2,11 +2,8 @@
 @import "_global/colors";
 
 .component--share {
-  position: absolute;
-  bottom: em(-225);
-  left: em(-134);
-  margin: 0;
-  padding: 0;
+  margin-top: em(30);
+  /* padding: 0; */
   display: flex;
   flex-direction: column;
 
@@ -92,30 +89,16 @@
 
 @mixin large-screen {
   .component--share {
-    /* Clear vertical positioning */
-    bottom: 0;
-    left: 0;
-    position: relative;
-    margin-bottom: em(30);
-    padding: em(15) 0 0;
+    /* Clear top-margin, float right, and change list to horizontal */
+    margin-top: 0;
     float: right;
-    flex-direction: row; /* Horizontal list on smaller screens */
+    flex-direction: row;
   }
 
   .share-link {
     &:not(:first-child) {
       margin-top: 0; /* Clear vertical margin-top */
       margin-left: em(-1); /* Move items to the left on horizontal layout */
-    }
-
-    /* Clearfix: https://stackoverflow.com/a/8933894. May or may not be needed */
-    &:after,
-    &:before {
-      content: '';
-      display: table;
-    }
-    &:after {
-      clear: both;
     }
   }
 }
