@@ -3,95 +3,6 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-@define-mixin font1 {
-  display: inline-block;
-  font-family: CircularStd-Black, sans-serif;
-  font-size: 45px;
-  color: $black;
-  letter-spacing: -0.74px;
-  line-height: 52px;
-}
-@define-mixin font2 {
-  display: inline-block;
-  font-family: CircularStd-Black, sans-serif;
-  font-size: 35px;
-  color: $black;
-  letter-spacing: -0.58px;
-  line-height: 42px;
-}
-@define-mixin font3 {
-  display: inline-block;
-  font-family: ProximaNova-Light, sans-serif;
-  font-size: 22px;
-  color: $black;
-  letter-spacing: -0.36px;
-  line-height: 30px;
-}
-@define-mixin font4 {
-  display: inline-block;
-  font-family: ProximaNova-Light, sans-serif;
-  font-size: 18px;
-  color: $black;
-  letter-spacing: -0.29px;
-  line-height: 24px;
-}
-@define-mixin font5 {
-  display: inline-block;
-  font-family: CircularStd-Book, sans-serif;
-  font-size: 14px;
-  color: $black;
-  letter-spacing: -0.35px;
-  line-height: 18px;
-}
-@define-mixin font6 {
-  display: inline-block;
-  font-family: CircularStd-BookItalic, sans-serif;
-  font-size: 14px;
-  color: $black;
-  letter-spacing: -0.35px;
-  line-height: 18px;
-}
-@define-mixin font7 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 18px;
-  color: $black;
-  letter-spacing: -0.36px;
-  line-height: 30px;
-}
-@define-mixin font8 {
-  display: inline-block;
-  font-family: ProximaNova-Bold, sans-serif;
-  font-size: 18px;
-  color: $black;
-  letter-spacing: -0.36px;
-  line-height: 30px;
-}
-@define-mixin font9 {
-  display: inline-block;
-  font-family: CircularStd-Medium, sans-serif;
-  font-size: 12px;
-  color: $boulderGrey;
-  letter-spacing: -0.3px;
-  line-height: 15px;
-}
-@define-mixin font10 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 12px;
-  color: $black;
-  letter-spacing: -0.3px;
-  line-height: 16px;
-}
-@define-mixin font11 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 12px;
-  color: $boulderGrey;
-  letter-spacing: -0.3px;
-  line-height: 16px;
-}
-
 .alert {
   border: 1px solid transparent;
   border-radius: 4px;
@@ -122,12 +33,12 @@
   display: inline-block;
   margin-bottom: em(30);
   .header__primary {
-    @mixin font1;
+    @mixin article-font1;
     display: block;
     margin-bottom: 15px;
   }
   .header__secondary {
-    @mixin font3;
+    @mixin article-font3;
     display: block;
   }
 }
@@ -155,11 +66,11 @@
     margin-right: em(widthOnGrid(0, 1));
     margin-top: em(50);
     .info__by-authors {
-      @mixin font6;
+      @mixin article-font6;
       display: flex;
       flex-wrap: wrap;
       .author {
-        @mixin font5;
+        @mixin article-font5;
         display: inline-flex;
         flex-wrap: wrap;
         @define-mixin author-name-color $articleType, $color {
@@ -181,13 +92,13 @@
         }
       }
       .source {
-        @mixin font5;
+        @mixin article-font5;
         color: $black;
         display: inline-flex;
       }
     }
     .info__timestamp {
-      @mixin font9;
+      @mixin article-font9;
       margin-top: 15px;
       display: block;
       .timestamp__update {}
@@ -253,10 +164,10 @@
   .article__header {
     margin-bottom: em(25);
     .header__primary {
-      @mixin font2;
+      @mixin article-font2;
     }
     .header__secondary {
-      @mixin font4;
+      @mixin article-font4;
     }
   }
   .article__body,

@@ -3,23 +3,6 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-@define-mixin font7 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 18px;
-  color: $black;
-  letter-spacing: -0.36px;
-  line-height: 30px;
-}
-@define-mixin font8 {
-  display: inline-block;
-  font-family: ProximaNova-Bold, sans-serif;
-  font-size: 18px;
-  color: $black;
-  letter-spacing: -0.36px;
-  line-height: 30px;
-}
-
 .paragraph,
 .paragraph ol li,
 .paragraph p,
@@ -27,7 +10,7 @@
 .paragraph ul li,
 .paragraph+ol li,
 .paragraph+ul li {
-  @mixin font7;
+  @mixin article-font7;
 }
 .paragraph {
   margin: 0 0 30px;
@@ -60,7 +43,7 @@
     @mixin article-link-color Entertainment, sunsetOrange;
   }
   strong {
-    @mixin font8;
+    @mixin article-font8;
   }
   + ul,
   ul {
@@ -91,7 +74,7 @@
       margin: 0 0 20px;
       padding: 0;
       &:before {
-        @mixin font7;
+        @mixin article-font7;
         color: $boulderGrey;
         content: counter(list);
         counter-increment: list;

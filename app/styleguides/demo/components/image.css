@@ -1,23 +1,6 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-@define-mixin font10 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 12px;
-  color: $black;
-  letter-spacing: -0.3px;
-  line-height: 16px;
-}
-@define-mixin font11 {
-  display: inline-block;
-  font-family: ProximaNova-Regular, sans-serif;
-  font-size: 12px;
-  color: $boulderGrey;
-  letter-spacing: -0.3px;
-  line-height: 16px;
-}
-
 .image,
 .image .image-wrapper {
   position: relative;
@@ -93,12 +76,12 @@
 }
 
 .image .image-figcaption {
-  @mixin font10;
+  @mixin article-font10;
   margin: 10px 0 0 0;
   text-align: left;
   width: 100%;
   .credit {
-    @mixin font11;
+    @mixin article-font11;
     a,
     a:active,
     a:hover,
