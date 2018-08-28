@@ -439,7 +439,7 @@ $drawerSelector: nav-drawer;
       .$(drawerSelector) {
         height: calc(100vh - $(mini-nav-height));
         top: $mini-nav-height;
-        /* (100% view width - header container width) / 2 
+        /* (100% view width - header container width) / 2
         + hamburger width + hamburger margin + nav logo width */
         width: calc((100vw - $(medium-screen-nav-width)) / 2 + em(20) + em(20) + em(180));
         &:not(.$(drawerSelector)--mobile) .container {
@@ -467,7 +467,7 @@ $drawerSelector: nav-drawer;
 @media only screen and (max-width: 788px) {
   .radiocom-nav .container {
     width: 100%;
-    padding: 0 em(30);
+    padding: 0 em(20);
     .$(drawerSelector) {
       &.$(drawerSelector)--mobile {
         /* header container padding-left + hamburger width
@@ -488,10 +488,14 @@ $drawerSelector: nav-drawer;
 
 @mixin medium-small-screen {
   .radiocom-nav .container {
-    width: $medium-small-screen-nav-width;
+    width: 100%;
+    padding: 0 em(widthOnGrid(0,1));
     text-align: center;
     .radiocom-nav__hamburger.wrapper {
       float: left;
+    }
+    .radiocom-nav__logo {
+      margin-right: 0;
     }
     .$(drawerSelector) {
       &.$(drawerSelector)--mobile {
