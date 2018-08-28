@@ -3,3 +3,4 @@ _components:
     items: []
     articleRubric: []
     headTags: []
+    articleType: ''
