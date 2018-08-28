@@ -96,7 +96,7 @@
     }
     .info__timestamp {
       @mixin article-font9;
-      display: inline-block;
+      display: block;
       margin-top: em(15, 12);
       .timestamp__update {}
       .timestamp__date {

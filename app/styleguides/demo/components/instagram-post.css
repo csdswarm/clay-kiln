@@ -5,6 +5,11 @@ $light-grey: #eee;
   display: block;
   margin: 16px 0;
   width: 100%;
+  .instagram-media-rendered {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 auto !important;
+  }
 
   blockquote {
     border-left: 4px solid $light-grey;

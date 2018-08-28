@@ -8,6 +8,9 @@
 .facebook-post .fb-post.fb_iframe_widget {
   display: flex;
   justify-content: center;
+  > span, > span iframe {
+    width: 100% !important;
+  }
 }
 
 .facebook-post blockquote.fb-xfbml-parse-ignore {
