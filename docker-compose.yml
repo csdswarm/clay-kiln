@@ -31,8 +31,6 @@ services:
       - ./app/sites:/usr/src/app/sites
       - ./app/public:/usr/src/app/public
       - ./app/search:/usr/src/app/search
-    env_file:
-      - ./app/variables-local.env
 
   redis:
     image: redis
