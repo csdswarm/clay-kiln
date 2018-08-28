@@ -1,5 +1,6 @@
 @import "_global/mixins";
 @import "_global/colors";
+@import "_global/fonts";
 
 /* stylelint-disable */
 .component--tags {
@@ -43,19 +44,21 @@
   }
 }
 
+.tags {
+  .tags__link {
+    display: inline-block;
+    margin: 0 em(10, 14) em(10, 14) 0;
+    padding: 0 em(6, 14);
+    text-decoration: none;
+    @mixin tags-font1;
+  }
+}
+
 /* Mixin to style tags based on theme colors */
 @define-mixin themed-tag-list $class, $color: $purple {
   .tags$(class) {
     .tags__link {
-      display: inline-block;
-      margin: 0 em(10, 14) em(10, 14) 0;
-      padding: 0 em(6, 14);
       border: em(2) solid $color;
-      font-family: CircularStd-Medium;
-      font-size: em(14);
-      text-decoration: none;
-      letter-spacing: em(-0.23, 14);
-      line-height: em(22, 14);
       color: $color;
 
       &:after {
