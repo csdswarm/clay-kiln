@@ -25,12 +25,12 @@ function formatNumAuthors(authorsAndMeta, options) {
     } else {
       if (index === authorsAndMeta.length - 1) {
         if (authorsAndMeta.length === 2) {
-          return `${acc}<span>&nbsp;and&nbsp;</span>${createAuthorHtml(item, options)}`;
+          return `${acc}<span> and </span>${createAuthorHtml(item, options)}`;
         } else {
-          return `${acc}<span>,&nbsp;</span> <span>&nbsp;and&nbsp;</span>${createAuthorHtml(item, options)}`;
+          return `${acc}<span>, </span> <span> and </span>${createAuthorHtml(item, options)}`;
         }
       } else if (index > 0 && index < authorsAndMeta.length - 1) {
-        return `${acc}<span>,&nbsp;</span>${createAuthorHtml(item, options)}`;
+        return `${acc}<span>, </span>${createAuthorHtml(item, options)}`;
       } else {
         return acc + createAuthorHtml(item, options);
       }

@@ -16,13 +16,13 @@ function formatSimpleByline(authorsList) {
   if (authors.length === 1) {
     return '<span>' + authors[0] + '</span>';
   } else if (authors.length === 2) {
-    return '<span>' + authors[0] + '</span><span class="and">&nbsp;and&nbsp;</span><span>' + authors[1] + '</span>';
+    return '<span>' + authors[0] + '</span><span class="and"> and </span><span>' + authors[1] + '</span>';
   } else {
     return _.join(_.map(authors, function (author, idx) {
       if (idx < authors.length - 1) {
-        return '<span>' + author + ',&nbsp;</span>';
+        return '<span>' + author + ', </span>';
       } else {
-        return '<span class="and">and&nbsp;</span><span>' + author + '</span>';
+        return '<span class="and">and </span><span>' + author + '</span>';
       }
     }), '');
   }
@@ -48,7 +48,7 @@ function complexByline(opts) {
     names = _.get(byline, 'names', []);
 
     if (names.length > 0) {
-      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix}&nbsp;</span> ${options.hideLinks ? formatSimpleByline(names) : socialsByline.formatNumAuthors(names, options)}`);
+      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(names) : socialsByline.formatNumAuthors(names, options)}`);
     }
 
     return acc;

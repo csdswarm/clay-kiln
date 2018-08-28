@@ -67,8 +67,9 @@
     margin-top: em(50);
     .info__by-authors {
       @mixin article-font6;
-      display: flex;
+      display: inline-flex;
       flex-wrap: wrap;
+      white-space: pre-wrap;
       .author {
         @mixin article-font5;
         display: inline-flex;
