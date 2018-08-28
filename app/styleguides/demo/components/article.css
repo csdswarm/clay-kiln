@@ -341,3 +341,37 @@
     top: em(-7, 10);
   }
 }
+
+.article__breadcrumb {
+  .breadcrumb__link {
+    display: inline-block;
+    @mixin article-font12;
+    text-transform: uppercase;
+    text-decoration: none;
+
+
+    &--home {
+      height: em(10, 14);
+      width: em(10, 14);
+      margin-right: em(13, 14);
+      line-height: em(14, 14);
+
+      &:before {
+        display: none;
+      }
+    }
+  }
+
+  @define-mixin seperator $articleType, $color: $purple {
+    .component--article[data-article-type=$articleType] & .breadcrumb__separator {
+      @mixin article-font12;
+      color: $color;
+    }
+  }
+
+  @mixin seperator;
+  @mixin seperator entertainment, $sunsetOrange;
+  @mixin seperator news, $lightningYellow;
+  @mixin seperator podcasts, $robinsEgg;
+  @mixin seperator sports, $azureRadience;
+}

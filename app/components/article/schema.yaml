@@ -278,10 +278,18 @@ articleType:
   _has:
     input: radio
     options:
-      - Entertainment
-      - News
-      - Podcasts
-      - Sports
+      -
+        name: Entertainment
+        value: entertainment
+      -
+        name: News
+        value: news
+      -
+        name: Podcasts
+        value: podcasts
+      -
+        name: Sports
+        value: sports
     validate:
       required: true
 section:
