@@ -3,7 +3,6 @@
 
 .component--share {
   margin-top: em(30);
-  /* padding: 0; */
   display: flex;
   flex-direction: column;
 
