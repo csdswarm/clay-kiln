@@ -8,74 +8,70 @@
   padding: 0;
   display: flex;
   flex-direction: column;
+
+  & button { /* Clear button styling and use pointer cursor */
+    padding: 0;
+    cursor: pointer;
+  }
 }
 
-/* Set each item to constant 40x40px, including border */
-.share-link {
+[class^="share-link"] { /* Each class that starts with "shark-link" */
+  /* Set each item to constant 40x40px, including border */
   width: 40px;
   height: 40px;
   border: 1px solid #D8D8D8;
   box-sizing: border-box;
   /* Center image, set size to 20x20px, and don't repeat it */
   background: center/20px 20px no-repeat;
+
+  /* Move each item but first up 1px to create 1px border */
+  &:not(:first-child) {
+    margin-top: -1px;
+  }
+  /* Show the item's border on hover so it can be recolored properly */
+  &:hover,
+  &:active {
+    z-index: 1;
+  }
 }
 
-/* Move each item but first up 1px to create 1px border */
-.share-link:not(:first-child) {
-  margin-top: -1px;
-}
+/* Background images for each button and bg/border colors and images on hover */
+.share-link-- {
+  &facebook {
+    background-image: url("/media/components/share/facebook.svg");
+    background-size: auto 22px; /* Increase FB image height to 22px */
+    &:hover,
+    &:active {
+      background-color: #3B5998;
+      border-color: #3B5998;
+      background-image: url("/media/components/share/facebook--hover.svg");
+    }
+  }
 
-/* Show the item's border on hover so it can be recolored properly */
-.share-link:hover,
-.share-link:active {
-  z-index: 1;
-}
+  &twitter {
+    background-image: url("/media/components/share/twitter.svg");
+    background-size: auto 17px; /* Firefox scaling/bounding fix */
+    &:hover,
+    &:active {
+      background-color: #05AEEE;
+      border-color: #05AEEE;
+      background-image: url("/media/components/share/twitter--hover.svg");
+    }
+  }
 
-/* Clear button styling and use pointer cursor */
-.component--share button {
-  padding: 0;
-  cursor: pointer;
-}
+  &email {
+    background-image: url("/media/components/share/email.svg");
+    &:hover,
+    &:active {
+      background-color: #1F055E;
+      border-color: #1F055E;
+      background-image: url("/media/components/share/email--hover.svg");
+    }
+  }
 
-/* Background images for each button */
-.share-link.facebook {
-  background-image: url("/media/components/share/facebook.svg");
-  background-size: auto 22px; /* Increase FB image height to 22px */
-}
-
-.share-link.twitter {
-  background-image: url("/media/components/share/twitter.svg");
-  background-size: auto 17px; /* Firefox scaling/bounding fix */
-}
-
-.share-link.email {
-  background-image: url("/media/components/share/email.svg");
-}
-
-.share-link.copy-link {
-  background-image: url("/media/components/share/copy-link.svg");
-}
-
-/* Background/border colors and images on hover */
-.share-link.facebook:hover,
-.share-link.facebook:active {
-  background-color: #3B5998;
-  border-color: #3B5998;
-  background-image: url("/media/components/share/facebook--hover.svg");
-}
-
-.share-link.twitter:hover,
-.share-link.twitter:active {
-  background-color: #05AEEE;
-  border-color: #05AEEE;
-  background-image: url("/media/components/share/twitter--hover.svg");
-}
-
-.share-link.email:hover,
-.share-link.email:active {
-  background-color: #1F055E;
-  border-color: #1F055E;
-  background-image: url("/media/components/share/email--hover.svg");
+  &copy-link {
+    background-image: url("/media/components/share/copy-link.svg");
+  }
 }
 
 /* Clear all styling to hide copy-link textarea */
@@ -104,20 +100,20 @@
     flex-direction: row; /* Horizontal list on smaller screens */
   }
 
-  /* Clear vertical margin-top. Move items to the left on horizontal layout */
-  .share-link:not(:first-child) {
-    margin-top: 0;
-    margin-left: -1px;
-  }
+  [class^="share-link"] {
+    &:not(:first-child) {
+      margin-top: 0; /* Clear vertical margin-top */
+      margin-left: -1px; /* Move items to the left on horizontal layout */
+    }
 
-  /* Clearfix: https://stackoverflow.com/a/8933894. May or may not be needed */
-  .share-link:after,
-  .share-link:before {
-    content: '';
-    display: table;
-  }
-
-  .share-link:after {
-    clear: both;
+    /* Clearfix: https://stackoverflow.com/a/8933894. May or may not be needed */
+    &:after,
+    &:before {
+      content: '';
+      display: table;
+    }
+    &:after {
+      clear: both;
+    }
   }
 }

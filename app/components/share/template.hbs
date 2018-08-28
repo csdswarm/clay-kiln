@@ -1,17 +1,17 @@
 <aside data-uri="{{ default _ref _self }}" class="component component--share">
   {{#if enabled.facebook }}
-    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u={{ url }}%3Futm_source=fb%26utm_medium=s3%26utm_campaign=sharebutton-t" class="share-link facebook" title="Share on Facebook" aria-label="Share on Facebook"></a>
+    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u={{ url }}%3Futm_source=fb%26utm_medium=s3%26utm_campaign=sharebutton-t" class="share-link--facebook" title="Share on Facebook" aria-label="Share on Facebook"></a>
   {{/if}}
 
   {{#if enabled.twitter }}
-    <a target="_blank" href="https://twitter.com/share?text={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}&amp;url={{ url }}%3Futm_source=tw%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;via={{ twitterHandle }}" class="share-link twitter" title="Share on Twitter" aria-label="Share on Twitter"></a>
+    <a target="_blank" href="https://twitter.com/share?text={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}&amp;url={{ url }}%3Futm_source=tw%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;via={{ twitterHandle }}" class="share-link--twitter" title="Share on Twitter" aria-label="Share on Twitter"></a>
   {{/if}}
 
   {{#if enabled.email }}
-    <a href="mailto:?subject={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}" class="share-link email" title="Email" aria-label="Email"></a>
+    <a href="mailto:?subject={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}" class="share-link--email" title="Email" aria-label="Email"></a>
   {{/if}}
 
   {{#if enabled.link }}
-    <button class="share-link copy-link" title="Copy link" aria-label="Copy link"></button>
+    <button class="share-link--copy-link" title="Copy link" aria-label="Copy link"></button>
   {{/if}}
 </aside>

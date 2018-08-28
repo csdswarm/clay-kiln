@@ -41,7 +41,7 @@ Constructor.prototype = {
   * @function addCopyEventListener
   */
   addCopyEventListener: function () {
-    const copyLinks = document.getElementsByClassName('copy-link');
+    const copyLinks = document.getElementsByClassName('share-link--copy-link');
 
     // Convert copyLinks to an array, and add a click event listener for each
     Array.from(copyLinks, cl => {
