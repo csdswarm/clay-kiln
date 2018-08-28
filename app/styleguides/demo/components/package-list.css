@@ -1,0 +1,36 @@
+.package-list {
+  margin: 0 0 20px;
+}
+
+.package-list .package-list-title {
+  color: #000;
+  font: 15px/1 Georgia, serif;
+  letter-spacing: 2px;
+  margin: 0 0 16px;
+  text-transform: uppercase;
+}
+
+.package-list .package-list-items {
+  margin: 0;
+  padding: 0;
+}
+
+.package-list .package-list-item:first-of-type {
+  padding: 0 0 8px;
+}
+
+.package-list .package-list-item:last-of-type {
+  border-bottom: none;
+}
+
+.package-list .package-list-item-link {
+  color: #000;
+  font: 21px/25px Georgia, sans-serif;
+  letter-spacing: -.01em;
+  text-decoration: none;
+}
+
+.package-list .package-list-item-link:hover .headline,
+.package-list .package-list-item-link:focus .headline {
+  box-shadow: 0 1px 0 #ec2c00;
+}
