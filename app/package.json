@@ -5,9 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "scripts/start-local.sh",
+    "start": "npm run check-elastic && nodemon -L --exec \"node -r dotenv/config\" app.js",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
-    "start-dev": "npm run check-elastic && nodemon -L app.js",
     "build-web-player": "npm install git+ssh://git@github.com/Entercom/radio-web-player.git#develop --no-save && mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/"
   },
   "author": "",
@@ -28,6 +27,7 @@
     "date-fns": "^1.29.0",
     "dollar-slice": "^2.2.0",
     "dompurify": "^1.0.5",
+    "dotenv": "^6.0.0",
     "eventify": "^2.0.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
