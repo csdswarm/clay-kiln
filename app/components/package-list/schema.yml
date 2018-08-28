@@ -1,0 +1,44 @@
+_description:
+  A tag-driven list of articles
+
+tag:
+  _label: Tag
+  _has:
+    input: text
+    validate:
+      required: true
+    help: Tag from which to pull articles
+
+title:
+  _label: Title
+  _has:
+    input: text
+    help: Title that should appear above the articles
+    validate:
+      required: true
+
+limit:
+  _label: Limit
+  _has:
+    input: text
+    type: number
+    help: Number of articles to include in the list. Defaults to 3
+
+seeAllLink:
+  _label: See All Link
+  _has:
+    input: text
+    type: url
+    help: URL for 'See All' link that appears if there are more than the above limit results in the tag. Defaults to the archive page of the given tag
+
+_groups:
+  settings:
+    fields:
+      - tag
+      - title
+      - limit
+      - seeAllLink
+    _placeholder:
+      height: 300px
+      ifEmpty: tag
+      required: true
