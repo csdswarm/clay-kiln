@@ -103,7 +103,6 @@ em, i {
 }
 
 @define-mixin font $family, $size, $color, $letter-spacing, $line-height {
-  display: inline-block;
   font-family: $family, sans-serif;
   font-size: $size;
   color: $color;

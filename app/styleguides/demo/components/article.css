@@ -32,12 +32,10 @@
   margin-bottom: em(30);
   .header__primary {
     @mixin article-font1;
-    display: block;
     margin-bottom: em(15, 45);
   }
   .header__secondary {
     @mixin article-font3;
-    display: block;
   }
 }
 .article__body {
@@ -98,8 +96,8 @@
     }
     .info__timestamp {
       @mixin article-font9;
+      display: inline-block;
       margin-top: em(15, 12);
-      display: block;
       .timestamp__update {}
       .timestamp__date {
         &.timestamp__date--small {
