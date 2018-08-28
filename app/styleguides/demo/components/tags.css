@@ -58,7 +58,7 @@
 @define-mixin themed-tag-list $class, $color: $purple {
   .tags$(class) {
     .tags__link {
-      border: em(2) solid $color;
+      border: em(2, 14) solid $color;
       color: $color;
 
       &:after {
