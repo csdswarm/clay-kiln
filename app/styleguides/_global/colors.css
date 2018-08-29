@@ -1,11 +1,14 @@
 /* Color Naming - http://chir.ag/projects/name-that-color/ */
-
+$alto: #d8d8d8;
 $azureRadience: #0099FF; /*sports*/
 $azureRadienceRGB: 0, 153, 255;
 
 $black: #000;
 $blackRussian: #000001;
 $boulderGrey: #777;
+
+$ceruleanBlue: #05aeee; /* Twitter Blue */
+$chambrayBlue: #3b5998; /* Facebook Blue */
 
 $lightningYellow: #FEC517; /*news*/
 $lightningYellowRGB: 254, 197, 23;
@@ -23,5 +26,3 @@ $sunsetOrange: #FF4940; /*entertainment*/
 $sunsetOrangeRGB: 255, 73, 64;
 
 $white: #FFF;
-
-

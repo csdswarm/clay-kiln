@@ -27,6 +27,8 @@ items:
       list: tags
       allowRemove: true
       allowCreate: true
+articleType:
+  _subscribe: articleType
 featureRubric:
   _publish: rubric
   _has:
