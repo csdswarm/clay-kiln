@@ -507,5 +507,5 @@ _components:
           most-popular: true
           newsfeed: true
           apple-news: true
-        articleType: Entertainment
+        articleType: entertainment
         showSocial: true
