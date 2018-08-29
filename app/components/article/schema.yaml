@@ -256,6 +256,7 @@ content:
       - related
       - package-list
       - brightcove
+      - inline-related
 feeds:
   _label: Include in These Feeds
   _has:
