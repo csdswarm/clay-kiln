@@ -1,12 +1,12 @@
 <div class="component component--tags" data-uri="{{ default _ref _self }}" data-editable="items">
   {{~#if items.length ~}}
-    <ul class="tags">
+    <ul class="tags {{#if articleType}}tags--{{articleType}}{{/if}}">
       {{! visible tags }}
       {{! original nunjucks logic appears less verbose, moved some logic out of tag for clarity }}
       {{~#each items as |tag| ~}}
         {{~#unless tag.invisible ~}}
           {{ set 'encodedTag' (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "%2F" "/") }}
-          <li class="tags__item tags__item--{{replace (trim (lowercase tag.text)) ' ' '-'}}">
+          <li class="tags__item">
             <a aria-label="More articles tagged" href="//{{ @root.locals.site.host }}/tags{{ if (compare @root.locals.site.path '/strategist') @root.locals.site.path }}/{{ encodedTag }}/"
               class="tags__link"
               >{{ tag.display }}</a>

@@ -147,3 +147,10 @@ em, i {
 @define-mixin article-font11 {
   @mixin font ProximaNova-Regular, 12px, $boulderGrey, -0.3px, 16px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||||| Tags Fonts Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin tags-font1 {
+  @mixin font CircularStd-Medium, 14px, $purple, -.23px, 22px;
+}
