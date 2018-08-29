@@ -40,8 +40,8 @@
     background-size: auto em(22); /* Increase FB image height to 22px */
     &:hover,
     &:active {
-      background-color: $chambray;
-      border-color: $chambray;
+      background-color: $chambrayBlue;
+      border-color: $chambrayBlue;
       background-image: url("/media/components/share/facebook--hover.svg");
     }
   }
@@ -51,8 +51,8 @@
     background-size: auto em(17); /* Firefox scaling/bounding fix */
     &:hover,
     &:active {
-      background-color: $cerulean;
-      border-color: $cerulean;
+      background-color: $ceruleanBlue;
+      border-color: $ceruleanBlue;
       background-image: url("/media/components/share/twitter--hover.svg");
     }
   }
