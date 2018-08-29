@@ -1,20 +1,103 @@
-/* stylelint-disable */
-.share {
-  display: inline-block;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  @mixin default-screen {
-    margin-top: em(40);
-    width: em(40);
-    height: em(157);
+@import "_global/mixins";
+@import "_global/colors";
+
+.component--share {
+  margin-top: em(30);
+  display: flex;
+  flex-direction: column;
+
+  & button { /* Clear button styling and use pointer cursor */
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
   }
-  @mixin large-screen {
+}
+
+.share-link {
+  /* Set each item to constant 40x40px, including border */
+  width: em(40);
+  height: em(40);
+  border: em(1) solid $alto;
+  box-sizing: border-box;
+  /* Center image, set size to 20x20px, and don't repeat it */
+  background: center/em(20) em(20) no-repeat;
+
+  /* Move each item but first up 1px to create 1px border */
+  &:not(:first-child) {
+    margin-top: em(-1);
+  }
+  /* Show the item's border on hover so it can be recolored properly */
+  &:hover,
+  &:active {
+    z-index: 1;
+  }
+}
+
+/* Background images for each button and bg/border colors and images on hover */
+.share-link-- {
+  &facebook {
+    background-image: url("/media/components/share/facebook.svg");
+    background-size: auto em(22); /* Increase FB image height to 22px */
+    &:hover,
+    &:active {
+      background-color: $chambrayBlue;
+      border-color: $chambrayBlue;
+      background-image: url("/media/components/share/facebook--hover.svg");
+    }
+  }
+
+  &twitter {
+    background-image: url("/media/components/share/twitter.svg");
+    background-size: auto em(17); /* Firefox scaling/bounding fix */
+    &:hover,
+    &:active {
+      background-color: $ceruleanBlue;
+      border-color: $ceruleanBlue;
+      background-image: url("/media/components/share/twitter--hover.svg");
+    }
+  }
+
+  &email {
+    background-image: url("/media/components/share/email.svg");
+    &:hover,
+    &:active {
+      background-color: $parisPurple;
+      border-color: $parisPurple;
+      background-image: url("/media/components/share/email--hover.svg");
+    }
+  }
+
+  &copy-link {
+    background-image: url("/media/components/share/copy-link.svg");
+  }
+}
+
+/* Clear all styling to hide copy-link textarea */
+.share__hidden-text-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2em;
+  height: 2em;
+  padding: 0;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background: transparent;
+}
+
+@mixin large-screen {
+  .component--share {
+    /* Clear top-margin, float right, and change list to horizontal */
     margin-top: 0;
-    width: em(157);
-    height: em(40);
-    ul {
-      display: flex;
+    float: right;
+    flex-direction: row;
+  }
+
+  .share-link {
+    &:not(:first-child) {
+      margin-top: 0; /* Clear vertical margin-top */
+      margin-left: em(-1); /* Move items to the left on horizontal layout */
     }
   }
 }

@@ -1,35 +1,17 @@
-<aside data-uri="{{ default _ref _self }}" class="share {{ orientation }}">
-  <div class="share-hd">
-    <h2 class="share-hd-title">Share</h2>
-  </div>
-    <ul class="share-list">
-    {{#if enabled.facebook }}
-      <li class="share-list-item">
-        <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u={{ url }}%3Futm_source=fb%26utm_medium=s3%26utm_campaign=sharebutton-t" class="share-link facebook" title="Share on Facebook" aria-label="Share on Facebook">
-          {{{ read 'public/media/components/share/facebook.svg' }}}<span>Share</span></a>
-      </li>
-    {{/if}}
+<aside data-uri="{{ default _ref _self }}" class="component component--share">
+  {{#if enabled.facebook }}
+    <a target="_blank" href="http://www.facebook.com/sharer/sharer.php?u={{ url }}%3Futm_source=fb%26utm_medium=s3%26utm_campaign=sharebutton-t" class="share-link share-link--facebook" title="Share on Facebook" aria-label="Share on Facebook"></a>
+  {{/if}}
 
-    {{#if enabled.twitter }}
-      <li class="share-list-item">
-        <a target="_blank" href="https://twitter.com/share?text={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}&amp;url={{ url }}%3Futm_source=tw%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;via={{ twitterHandle }}" class="share-link twitter" title="Share on Twitter" aria-label="Share on Twitter">
-          {{{ read 'public/media/components/share/twitter.svg' }}}<span>Tweet</span></a>
-      </li>
-    {{/if}}
+  {{#if enabled.twitter }}
+    <a target="_blank" href="https://twitter.com/share?text={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}&amp;url={{ url }}%3Futm_source=tw%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;via={{ twitterHandle }}" class="share-link share-link--twitter" title="Share on Twitter" aria-label="Share on Twitter"></a>
+  {{/if}}
 
-    {{#ifAll enabled.pinterest }}
-      <li class="share-list-item">
-        <a target="_blank" href="http://pinterest.com/pin/create/button/?url={{ urlencode url }}%3Futm_source=pin%26utm_medium=s3%26utm_campaign=sharebutton-t&amp;description={{{ urlencode title }}}&amp;media={{ urlencode pinImage }}" class="share-link pinterest" data-pin-custom="true" title="Pin it on Pinterest" aria-label="Pin it on Pinterest">
-          {{! media url needs to be hardcoded http, since mediaplay doesn't support https (and pinterest uses ssl) }}
-          {{{ read 'public/media/components/share/pinterest.svg' }}}<span>Pin It</span></a>
-      </li>
-    {{/ifAll}}
+  {{#if enabled.email }}
+    <a href="mailto:?subject={{#if shortTitle}}{{{ urlencode (striptags shortTitle) }}}{{else}}{{{ urlencode (striptags title) }}}{{/if}}" class="share-link share-link--email" title="Email" aria-label="Email"></a>
+  {{/if}}
 
-    {{#if enabled.comment }}
-      <li class="share-list-item">
-        <a href="#comments" class="share-link comment" title="View Comments" aria-label="View Comments">
-          {{{ read 'public/media/components/share/comment.svg' }}}<span>Comment</span></a>
-      </li>
-    {{/if}}
-    </ul>
+  {{#if enabled.link }}
+    <button class="share-link share-link--copy-link" title="Copy link" aria-label="Copy link"></button>
+  {{/if}}
 </aside>

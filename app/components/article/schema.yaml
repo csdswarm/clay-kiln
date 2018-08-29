@@ -1,6 +1,6 @@
 _confirmRemoval: true
 
-socialHeadline:
+primaryHeadline:
   _label: Facebook Headline
   _has:
     input: wysiwyg
@@ -30,7 +30,7 @@ shortHeadline:
     help: Also used for Related Stories and some homepages
     attachedButton:
       name: magic-button
-      field: socialHeadline
+      field: primaryHeadline
       tooltip: Use Facebook Headline
 teaser:
   _label: Teaser
@@ -279,10 +279,18 @@ articleType:
   _has:
     input: radio
     options:
-      - Entertainment
-      - News
-      - Podcasts
-      - Sports
+      -
+        name: Entertainment
+        value: entertainment
+      -
+        name: News
+        value: news
+      -
+        name: Podcasts
+        value: podcasts
+      -
+        name: Sports
+        value: sports
     validate:
       required: true
 section:
@@ -296,6 +304,11 @@ showSocial:
   _has:
     input: checkbox
     help: Author social handles are displayed by default. Unchecking this will hide handles on this article
+rubric:
+  _label: Rubric
+  _subscribe: rubric
+  _has:
+    help: Feature Rubric is set by the tags component
 
 _groups:
   publishedDate:
@@ -317,7 +330,7 @@ _groups:
       ifEmpty: secondaryAttribution
   circHeadlines:
     fields:
-      - socialHeadline
+      - primaryHeadline
       - shortHeadline
       - teaser
       - seoHeadline
@@ -377,14 +390,14 @@ socialDescription:
 pageTitle:
   _publish: pageTitle
   _has:
-    help: Plaintext page title, set by seoHeadline, shortHeadline, or socialHeadline. Sponsored posts and certain sites will have extra sugar.
+    help: Plaintext page title, set by seoHeadline, shortHeadline, or primaryHeadline. Sponsored posts and certain sites will have extra sugar.
 
-plaintextSocialHeadline:
+plaintextPrimaryHeadline:
   _publish:
     - ogTitle
     - pageListTitle
   _has:
-    help: Plaintext title set by socialHeadline. Used for facebook sharing.
+    help: Plaintext title set by primaryHeadline. Used for facebook sharing.
 
 plaintextShortHeadline:
   _publish: twitterTitle

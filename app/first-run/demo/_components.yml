@@ -246,19 +246,19 @@ _components:
         enabled:
           facebook: true
           twitter: true
-          linkedin: true
-          gplus: true
-          pinterest: true
-          tumblr: true
+          linkedin: false
+          gplus: false
+          pinterest: false
+          tumblr: false
           email: true
-          print: true
-          comment: true
+          link: true
+          print: false
+          comment: false
         url: ''
         title: ''
-        twitterHandle: super_cool_twitter_handle
+        twitterHandle: Radiodotcom
         description: ''
         pinImage: ''
-        orientation: vertical
 
   tweet:
     instances:
@@ -482,7 +482,7 @@ _components:
   article:
     instances:
       new:
-        socialHeadline: ''
+        primaryHeadline: ''
         headline: ''
         subHeadline: ''
         feedImgUrl: ''
@@ -514,9 +514,5 @@ _components:
           most-popular: true
           newsfeed: true
           apple-news: true
-        articleType:
-          Entertainment: false
-          News: false
-          Podcasts: false
-          Sports: false
+        articleType: entertainment
         showSocial: true

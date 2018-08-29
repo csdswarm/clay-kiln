@@ -1,4 +1,15 @@
 <article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article" data-crosspost="{{ commaSeparated crosspost }}" data-article-type="{{ articleType }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+  <nav class="article__breadcrumb">
+    <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/article/media/radiocom-purple-monogram.svg" }}}</a>
+    <span class="breadcrumb__separator">/</span>
+    <a href="//{{ @root.locals.site.host }}/tags/{{articleType}}" class="breadcrumb__link">{{articleType}}</a>
+    {{#if rubric}}
+      {{ set 'hypenatedTagRubric' (replace (urlencode (replace (trim (lowercase rubric)) ' ' '-')) "%2F" "/") }}
+      <span class="breadcrumb__separator">/</span>
+      <a class="breadcrumb__link"
+         href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tags/{{ hypenatedTagRubric }}{{/if}}/">{{ rubric }}</a>
+    {{/if}}
+  </nav>
   <header class="article__header">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
@@ -91,7 +102,7 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title required">Facebook Headline</h4>
-              <p class="item-data">{{{ default socialHeadline empty }}}</p>
+              <p class="item-data">{{{ default primaryHeadline empty }}}</p>
             </li>
             <li class="item">
               <h4 class="item-title required">Twitter/Short Headline</h4>

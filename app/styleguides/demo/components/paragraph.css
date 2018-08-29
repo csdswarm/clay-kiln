@@ -36,11 +36,11 @@
         }
       }
     }
-    @mixin article-link-color Sports, azureRadience;
-    @mixin article-link-color News, lightningYellow;
-    @mixin article-link-color Podcasts, robinsEgg;
-    @mixin article-link-color Music, sunsetOrange;
-    @mixin article-link-color Entertainment, sunsetOrange;
+    @mixin article-link-color sports, azureRadience;
+    @mixin article-link-color news, lightningYellow;
+    @mixin article-link-color podcasts, robinsEgg;
+    @mixin article-link-color music, sunsetOrange;
+    @mixin article-link-color entertainment, sunsetOrange;
   }
   strong {
     @mixin article-font8;
