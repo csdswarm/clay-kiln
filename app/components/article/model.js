@@ -37,8 +37,8 @@ function stripHeadlineTags(oldHeadline) {
  * @param  {object} data
  */
 function sanitizeInputs(data) {
-  if (has(data.socialHeadline)) {
-    data.socialHeadline = sanitize.toSmartHeadline(stripHeadlineTags(data.socialHeadline));
+  if (has(data.primaryHeadline)) {
+    data.primaryHeadline = sanitize.toSmartHeadline(stripHeadlineTags(data.primaryHeadline));
   }
 
   if (has(data.shortHeadline)) {
@@ -69,10 +69,10 @@ function sanitizeInputs(data) {
  * if the social headline is empty and the headline is less than 80 characters
  * @param  {object} data
  */
-function generateSocialHeadline(data) {
-  if (isFieldEmpty(data.socialHeadline) && has(data.headline) && data.headline.length < 80) {
+function generatePrimaryHeadline(data) {
+  if (isFieldEmpty(data.primaryHeadline) && has(data.headline) && data.headline.length < 80) {
     // note: this happens AFTER headline is sanitized
-    data.socialHeadline = data.headline;
+    data.primaryHeadline = data.headline;
   }
 }
 
@@ -101,16 +101,16 @@ function addSiteTitle(title, locals) {
  * @param  {object} locals
  */
 function generatePageTitles(data, locals) {
-  if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.socialHeadline)) {
-    const plaintextTitle = sanitize.toPlainText(data.seoHeadline || data.shortHeadline || data.socialHeadline);
+  if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.primaryHeadline)) {
+    const plaintextTitle = sanitize.toPlainText(data.seoHeadline || data.shortHeadline || data.primaryHeadline);
 
     // published to pageTitle
     data.pageTitle = addSiteTitle(plaintextTitle, locals);
   }
 
-  if (has(data.socialHeadline)) {
+  if (has(data.primaryHeadline)) {
     // published to ogTitle
-    data.plaintextSocialHeadline = sanitize.toPlainText(data.socialHeadline);
+    data.plaintextPrimaryHeadline = sanitize.toPlainText(data.primaryHeadline);
   }
 
   if (has(data.shortHeadline)) {
@@ -430,7 +430,7 @@ module.exports.save = function (uri, data, locals) {
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
-  generateSocialHeadline(data);
+  generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
   generatePageDescription(data);
   formatDate(data, locals);

@@ -475,7 +475,7 @@ _components:
   article:
     instances:
       new:
-        socialHeadline: ''
+        primaryHeadline: ''
         headline: ''
         subHeadline: ''
         feedImgUrl: ''

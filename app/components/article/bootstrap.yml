@@ -1,7 +1,7 @@
 _components:
   article:
     headline: ''
-    socialHeadline: ''
+    primaryHeadline: ''
     seoHeadline: ''
     shortHeadline: ''
     feedImgUrl: ''
@@ -54,7 +54,7 @@ _components:
     instances:
       test:
         headline: ''
-        socialHeadline: some headline
+        primaryHeadline: some headline
         seoHeadline: ''
         shortHeadline: ''
         feedImgUrl: ''
@@ -69,7 +69,7 @@ _components:
         sideShare: {}
       section-test:
         headline: ''
-        socialHeadline: some headline
+        primaryHeadline: some headline
         seoHeadline: ''
         shortHeadline: ''
         feedImgUrl: ''
