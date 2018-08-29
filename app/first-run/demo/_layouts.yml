@@ -58,8 +58,8 @@ _components:
     instances:
       article:
         headLayout:
-          -
-            _ref: /_components/web-player-head/instances/new
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/web-player-head/instances/new
         top:
           -
             _ref: /_components/header/instances/default
