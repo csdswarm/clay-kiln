@@ -278,10 +278,18 @@ articleType:
   _has:
     input: radio
     options:
-      - Entertainment
-      - News
-      - Podcasts
-      - Sports
+      -
+        name: Entertainment
+        value: entertainment
+      -
+        name: News
+        value: news
+      -
+        name: Podcasts
+        value: podcasts
+      -
+        name: Sports
+        value: sports
     validate:
       required: true
 section:
@@ -295,6 +303,11 @@ showSocial:
   _has:
     input: checkbox
     help: Author social handles are displayed by default. Unchecking this will hide handles on this article
+rubric:
+  _label: Rubric
+  _subscribe: rubric
+  _has:
+    help: Feature Rubric is set by the tags component
 
 _groups:
   publishedDate:
