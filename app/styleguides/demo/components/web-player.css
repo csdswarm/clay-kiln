@@ -1,0 +1,3 @@
+.component--web-player > div {
+  z-index: 1000;
+}

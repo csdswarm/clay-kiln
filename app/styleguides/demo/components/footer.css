@@ -1,48 +1,18 @@
 @import "_global/mixins";
+@import "_global/colors";
 
-/*.footer {
-  font-family: Arial, sans-serif;
-  border-top: 2px solid #ccc;
-  max-width: 1000px;
-  margin: 20px auto 0;
-  padding: 2px 0 10px;
-  text-align: center;
-
-  .footer-social {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 0 10px;
-    padding: 10px 0 0;
-
-    a span {
-      @mixin hidden-content;
-    }
-  }
-
-  .footer-social-item + .footer-social-item {
-    margin: 0 0 0 10px;
-  }
-}*/
-
-@font-face {
-  font-family: CircularStd-Black;
-  src: url('~/assets/fonts/circularstd-black.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
 @define-mixin font2 {
   font-family: CircularStd-Black, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   text-transform: uppercase;
   letter-spacing: -0.23px;
   line-height: 28px;
 }
 @define-mixin font3 {
-  font-family: ProximaNova-Medium, sans-serif;
+  font-family: ProximaNova-Regular, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   letter-spacing: -0.23px;
   line-height: 28px;
   text-transform: capitalize;
@@ -50,60 +20,52 @@
 @define-mixin font4 {
   font-family: ProximaNova-Light, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: $white;
   letter-spacing: -0.23px;
   line-height: 22px;
   text-transform: capitalize;
   text-align: center;
 }
-@define-mixin inline-block {
-  display: inline-block;
-  vertical-align: top;
-}
-
 
 .radiocom-footer {
-  margin-top: 40px;
+  margin-top: em(40);
   width: 100%;
-  background: #1F055E;
+  background: $parisPurple;
   position: relative;
   text-align: center;
-  padding: 40px 20px;
+  padding: em(40) em(20);
   display: flex;
   justify-content: center;
   .container {
-    width: 620px;
+    width: em(620);
 
     @media screen and (max-width: 660px) {
       width: 100%;
     }
     .radiocom-footer__social {
-      margin-bottom: 30px;
-      svg {
+      margin-bottom: em(30);
+      > a object {
         @mixin inline-block;
-        height: 30px;
-        margin: 0 10px;
+        height: em(30);
+        margin: 0 em(10);
       }
     }
     .radiocom-footer__download-app {
-      margin-bottom: 40px;
-      svg {
+      margin-bottom: em(40);
+      > a object {
         @mixin inline-block;
-        height: 40px;
+        height: em(40);
       }
-      .apple-app-store {
-        width: 120px;
-        margin-right: 40px;
-        path.st1 {
-          fill: #000001;
-        }
+      a:first-of-type {
+        width: em(120);
+        margin-right: em(40);
       }
-      .google-play-badge {
-        width: 135px;
+      a:nth-of-type(2) {
+        width: em(135);
       }
     }
     .radiocom-footer__section {
-      margin-bottom: 30px;
+      margin-bottom: em(30);
       h2 {
         @mixin font2;
         display: block;
@@ -111,19 +73,19 @@
       a {
         @mixin font3;
         @mixin inline-block;
-        padding: 0 15px;
+        padding: 0 em(15);
         text-decoration: none;
       }
     }
     .radiocom-footer__copyright {
-      margin-top: 10px;
+      margin-top: em(10);
     }
     .radiocom-footer__copyright, & a {
       @mixin font4;
       text-transform: none;
       text-decoration: none;
       vertical-align: top;
-      color: #FFF;
+      color: $white;
     }
   }
 }

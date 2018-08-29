@@ -3,33 +3,41 @@ _components:
     instances:
       general:
         headLayout:
-          -
-            _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/web-player-head/instances/new
         top:
+          -
+            _ref: /_components/header/instances/default
         head: head
         main: main
         secondary: secondary
         bottom:
+          -
+            _ref: /_components/web-player/instances/new
           -
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
       bare:
         headLayout:
-          -
-            _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/web-player-head/instances/new
         top:
+          -
+            _ref: /_components/header/instances/default
         head: head
         main: main
         bottom:
+          -
+            _ref: /_components/web-player/instances/new
           -
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
       article:
         headLayout:
-          -
-            _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/web-player-head/instances/new
         top:
           -
             _ref: /_components/header/instances/default
@@ -40,6 +48,8 @@ _components:
             _ref: /_components/generic-list/instances/recirc
         bottom:
           -
+            _ref: /_components/web-player/instances/new
+          -
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
@@ -48,7 +58,11 @@ _components:
     instances:
       article:
         headLayout:
+          -
+            _ref: /_components/web-player-head/instances/new
         top:
+          -
+            _ref: /_components/header/instances/default
         head: head
         main: main
         tertiary: tertiary

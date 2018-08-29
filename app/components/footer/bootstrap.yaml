@@ -1,7 +1,7 @@
 _components:
   footer:
-    linksEnabled: {}
-    socialEnabled:
-      newsletters: true
-      facebook: true
-      twitter: true
+    socialButtonsShow: true
+    socialButtonsURLs: []
+    appBadgesShow: true
+    appBadgesURLs: []
+    links: []

@@ -38,16 +38,152 @@ _components:
   header:
     instances:
       default:
-        variation: header
-        position: right
-        search:
-          _ref: /_components/search/instances/global
-        services:
+        headerLinks:
           -
-            _ref: /_components/follow/instances/facebook
+            text: "listen"
+            url: "https://player.radio.com"
+            drawer: false
           -
-            _ref: /_components/follow/instances/twitter
-
+            text: "entertainment"
+            url: "/entertainment"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+              -
+                text: "local stations"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+              -
+                text: "find a station"
+                url: "https://player.radio.com/stations-directory"
+          -
+            text: "news"
+            url: "/news"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "sports"
+            url: "/sports"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "podcasts"
+            url: "/podcasts"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "more"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
 
   circulation:
     instances:
@@ -110,19 +246,19 @@ _components:
         enabled:
           facebook: true
           twitter: true
-          linkedin: true
-          gplus: true
-          pinterest: true
-          tumblr: true
+          linkedin: false
+          gplus: false
+          pinterest: false
+          tumblr: false
           email: true
-          print: true
-          comment: true
+          link: true
+          print: false
+          comment: false
         url: ''
         title: ''
-        twitterHandle: super_cool_twitter_handle
+        twitterHandle: Radiodotcom
         description: ''
         pinImage: ''
-        orientation: vertical
 
   tweet:
     instances:
@@ -152,20 +288,140 @@ _components:
       new:
         text: ''
 
+  youtube:
+    instances:
+      new:
+        videoId: ''
+        videoSource: 'Video ID'
+        videoType: 'Editorial'
+        videoLocation: 'article'
+        playerCaption: ''
+        autoPlay: false
+        autoPlayNextVideo: true
+        videoPlaylist: ''
+        playerBorderTopCTA: 'Watch'
+        playerBorderTop: false
+        playerBorderBottom: false
+        previousTypeRelated: false
+
   brightcove:
     instances:
       new:
         videoId: ''
 
+  web-player:
+    instances:
+      new:
+        allow: true
+
+  web-player-head:
+    instances:
+      new:
+        allow: true
+
   footer:
     instances:
       default:
-        linksEnabled: {}
-        services:
+        socialButtonsShow: true
+        socialButtonsURLs:
           -
-            _ref: /_components/follow/instances/facebook
+            type: facebook
+            url: "https://www.facebook.com/radiodotcom/"
           -
-            _ref: /_components/follow/instances/twitter
+            type: twitter
+            url: "https://twitter.com/Radiodotcom?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+          -
+            type: youtube
+            url: "https://www.youtube.com/user/radiodotcom"
+          -
+            type: instagram
+            url: "https://www.instagram.com/radiodotcom/"
+        appBadgesShow: true
+        appBadgesURLs:
+          -
+            type:
+              name: app store
+              value: app-store
+            url: "https://itunes.apple.com/us/app/radio-com/id323701765?mt=8"
+          -
+            type:
+              name: google play
+              value: google-play
+            url: "https://play.google.com/store/apps/details?id=com.radiocom&hl=en"
+        links:
+          -
+            text: "listen"
+            list:
+              -
+                text: "listen live"
+                url: "https://player.radio.com"
+                newtab: true
+              -
+                text: "mobile app"
+                url: "https://radio.com/apps"
+                newtab: true
+          -
+            text: "connect"
+            list:
+              -
+                text: "FAQ"
+                url: "https://www.radio.com/how-to-listen-to-radio"
+                newtab: true
+              -
+                text: "1Thing"
+                url: "http://1thingus.com/"
+                newtab: true
+              -
+                text: "get my PERKS"
+                url: "http://www.getmyperks.com/"
+                newtab: true
+              -
+                text: "#ImListening"
+                url: "http://imlistening.org/"
+                newtab: true
+              -
+                text: "contact us"
+                url: "https://www.radio.com/contact-us"
+                newtab: true
+          -
+            text: "legal"
+            list:
+              -
+                text: "public inspection file"
+                url: "https://publicfiles.fcc.gov/"
+                newtab: true
+              -
+                text: "careers"
+                url: "http://entercom.com/careers/"
+                newtab: true
+              -
+                text: "EEO public files"
+                url: "http://entercom.com/eeo/"
+                newtab: true
+              -
+                text: "public file help"
+                url: "https://www.radio.com/public-inspection-file-help"
+                newtab: true
+              -
+                text: "privacy policy"
+                url: "http://entercom.com/privacy-policy/"
+                newtab: true
+              -
+                text: "terms of use"
+                url: "http://www.entercom.com/terms-and-conditions"
+                newtab: true
+              -
+                text: "contest rules"
+                url: "https://www.radio.com/rules"
+                newtab: true
+              -
+                text: "copyright notice"
+                url: "http://www.entercom.com/wp-content/uploads/2016/01/Copyright_Notice2.pdf"
+                newtab: true
+              -
+                text: "music submission policy"
+                url: "http://www.entercom.com/music-submission-policy"
+                newtab: true
 
   blockquote:
     instances:
@@ -227,58 +483,43 @@ _components:
           -
             _ref: /_components/blockquote/instances/new
   article:
-      instances:
-        new:
-          primaryHeadline: ''
-          feedImgUrl: ''
-          feedLayout: small
-          teaser: ''
-          slug: ''
-          byline:
-            -
-              prefix: by
-              names: []
-          rubric: ''
-          rubricMessage: ''
-          syndicatedUrl: ''
-          syndicationStatus: original
-          dropCap: false
-          content:
-            -
-              _ref: /_components/image/instances/new
-            -
-              _ref: /_components/paragraph/instances/new
-          tags:
-            _ref: /_components/tags/instances/new
-          sideShare:
-            _ref: /_components/share/instances/new
-          # bottomShare:
-          #   _ref: /_components/bottom-share/instances/new
-          feeds:
-            sitemaps: true
-            rss: true
-            most-popular: true
-            newsfeed: true
-            apple-news: true
-          featureTypes:
-            News-Aggregation: false
-            News-Commentary and Analysis: false
-            News-Original Reporting: false
-            Advice: false
-            Cover Story Online: false
-            First-Person Essay: false
-            Interview or Profile: false
-            List or Roundup: false
-            Look Book: false
-            Review: false
-            Slideshow Intro: false
-            TV Recap: false
-            Other Feature or Column: false
-            New York Magazine Story: false
-            Sponsor Story: false
-          showSocial: true
-          storyCharacteristics:
-            strong-visual: false
-            top-story: false
-
-
+    instances:
+      new:
+        socialHeadline: ''
+        headline: ''
+        subHeadline: ''
+        feedImgUrl: ''
+        feedLayout: small
+        teaser: ''
+        slug: ''
+        byline:
+          -
+            prefix: by
+            names: []
+            sources: []
+        syndicatedUrl: ''
+        syndicationStatus: original
+        lead: []
+        content:
+          -
+            _ref: /_components/image/instances/new
+          -
+            _ref: /_components/paragraph/instances/new
+        tags:
+          _ref: /_components/tags/instances/new
+        sideShare:
+          _ref: /_components/share/instances/new
+        # bottomShare:
+        #   _ref: /_components/bottom-share/instances/new
+        feeds:
+          sitemaps: true
+          rss: true
+          most-popular: true
+          newsfeed: true
+          apple-news: true
+        articleType:
+          Entertainment: false
+          News: false
+          Podcasts: false
+          Sports: false
+        showSocial: true

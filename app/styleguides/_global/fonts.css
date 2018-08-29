@@ -1,11 +1,149 @@
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||| Licensed Fonts |||||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@font-face {
+  font-family: CircularStd-Black;
+  src: url('/fonts/sites/demo/circularstd-black.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: CircularStd-BlackItalic;
+  src: url('/fonts/sites/demo/circularstd-blackitalic.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: CircularStd-Bold;
+  src: url('/fonts/sites/demo/circularstd-bold.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: CircularStd-BoldItalic;
+  src: url('/fonts/sites/demo/circularstd-bolditalic.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: CircularStd-Book;
+  src: url('/fonts/sites/demo/circularstd-book.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: CircularStd-BookItalic;
+  src: url('/fonts/sites/demo/circularstd-bookitalic.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: CircularStd-Medium;
+  src: url('/fonts/sites/demo/circularstd-medium.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: CircularStd-MediumItalic;
+  src: url('/fonts/sites/demo/circularstd-mediumitalic.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: ProximaNova-Bold;
+  src: url('/fonts/sites/demo/proximanova-bold-webfont.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: ProximaNova-BoldIt;
+  src: url('/fonts/sites/demo/proximanova-boldit-webfont.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: ProximaNova-Light;
+  src: url('/fonts/sites/demo/proximanova-light-webfont.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: ProximaNova-LightIt;
+  src: url('/fonts/sites/demo/proximanova-lightit-webfont.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: ProximaNova-Regular;
+  src: url('/fonts/sites/demo/proximanova-regular-webfont.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: ProximaNova-RegularIt;
+  src: url('/fonts/sites/demo/proximanova-regularit-webfont.woff2') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||| Fonts Styleguide |||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Oswald', sans-serif;
+  font-family: 'CircularStd-Black', sans-serif;
 }
 
 body {
-  font-family: 'Merriweather', serif;
+  font-family: 'ProximaNova-Regular', sans-serif;
 }
 
 em, i {
   font-style: italic;
+}
+
+@define-mixin font $family, $size, $color, $letter-spacing, $line-height {
+  font-family: $family, sans-serif;
+  font-size: $size;
+  color: $color;
+  letter-spacing: $letter-spacing;
+  line-height: $line-height;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||| Article Fonts Styleguide ||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+@define-mixin article-font1 {
+  @mixin font CircularStd-Black, 45px, $black, -0.74px, 52px;
+}
+@define-mixin article-font2 {
+  @mixin font CircularStd-Black, 35px, $black, -0.58px, 42px;
+}
+@define-mixin article-font3 {
+  @mixin font ProximaNova-Light, 22px, $black, -0.36px, 30px;
+}
+@define-mixin article-font4 {
+  @mixin font ProximaNova-Light, 18px, $black, -0.29px, 24px;
+}
+@define-mixin article-font5 {
+  @mixin font CircularStd-Book, 14px, $black, -0.35px, 18px;
+}
+@define-mixin article-font6 {
+  @mixin font CircularStd-BookItalic, 14px, $black, -0.35px, 18px;
+}
+@define-mixin article-font7 {
+  @mixin font ProximaNova-Regular, 18px, $black, -0.36px, 30px;
+}
+@define-mixin article-font8 {
+  @mixin font ProximaNova-Bold, 18px, $black, -0.36px, 30px;
+}
+@define-mixin article-font9 {
+  @mixin font CircularStd-Medium, 12px, $boulderGrey, -0.3px, 15px;
+}
+@define-mixin article-font10 {
+  @mixin font ProximaNova-Regular, 12px, $black, -0.3px, 16px;
+}
+@define-mixin article-font11 {
+  @mixin font ProximaNova-Regular, 12px, $boulderGrey, -0.3px, 16px;
 }

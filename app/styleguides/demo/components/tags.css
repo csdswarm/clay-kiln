@@ -1,39 +1,42 @@
-/* stylelint-disable */ 
-.tags {
+@import "_global/mixins";
+@import "_global/colors";
+
+/* stylelint-disable */
+.component--tags {
   clear: both;
   margin-bottom: 15px;
 }
 
 @media screen and (min-width:600px) {
-  .tags {
+  .component--tags {
     margin-bottom: 10px;
     margin-top: 16px;
   }
 }
 
 @media print {
-  .tags {
+  .component--tags {
     display: none;
   }
 }
 
-.tags .tags-link.hidden,
-.tags .tags-link.invisible,
+.component--tags .tags__link.hidden,
+.component--tags .tags__link.invisible,
 .tags.hidden {
   display: none;
 }
 
-.tags .tags-link:after,
-.tags .tags-list,
-.tags .tags-list-item {
+.component--tags .tags__link:after,
+.component--tags .tags,
+.component--tags .tags-item {
   display: inline-block;
 }
 
-.tags .tags-link {
+.component--tags .tags__link {
   color: #111;
 }
 
-.tags .tags-link:after {
+.component--tags .tags__link:after {
   color: #808080;
   content: '|';
   font-size: 8px;
@@ -42,37 +45,76 @@
   top: -1px;
 }
 
-.tags .tags-link.invisible-in-edit-mode {
+.component--tags .tags__link.invisible-in-edit-mode {
   color: #888;
 }
 
-.tags .tags-link:focus,
-.tags .tags-link:hover {
+.component--tags .tags__link:focus,
+.component--tags .tags__link:hover {
   color: #1782a9;
 }
 
-.tags .tags-link:last-of-type:after {
+.component--tags .tags__link:last-of-type:after {
   content: '';
 }
 
-.tags .tags-link,
-.tags .title {
+.component--tags .tags__link,
+.component--tags .title {
   display: inline-block;
   font-family: Arial, sans-serif;
   font-size: 10px;
   font-weight: 400;
   text-decoration: none;
-  text-transform: uppercase;
-  white-space: nowrap;
 }
 
-.tags .title {
+.component--tags .title {
   color: #888;
   margin-bottom: 0;
   padding: 0 7.5px 0 0;
 }
 
-.tags .tags-list {
+.component--tags .tags {
   margin: 0;
   padding: 0;
 }
+
+.component--tags {
+  .tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* Mixin to style tags based on theme colors */
+@define-mixin themed-tag-list $class, $color: $purple {
+  .tags {
+    > .$(class) {
+      a {
+        margin: 0 10px 10px 0;
+        padding: 0px 6px;
+        border: 2px solid $color;
+        font-family: CircularStd-Medium;
+        font-size: 14px;
+        letter-spacing: -0.23px;
+        line-height: 24px;
+        color: $color;
+
+        &:after {
+          display: none;
+        }
+
+        &:hover {
+          background: $color;
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+@mixin themed-tag-list tags__item;
+@mixin themed-tag-list tags__item--entertainment, $sunsetOrange;
+@mixin themed-tag-list tags__item--news, $lightningYellow;
+@mixin themed-tag-list tags__item--sports, $azureRadience;
+@mixin themed-tag-list tags__item--podcasts, $robinsEgg;

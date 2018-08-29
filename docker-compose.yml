@@ -9,6 +9,8 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
+    links:
+      - clay
     ports:
       - "80:80"
 
@@ -21,9 +23,7 @@ services:
     links:
       - redis
       - elasticsearch
-    depends_on:
-      - nginx
-    command: "npm run start-dev"
+    command: "npm start"
     volumes:
       - ./app/services:/usr/src/app/services
       - ./app/components:/usr/src/app/components
@@ -31,8 +31,6 @@ services:
       - ./app/sites:/usr/src/app/sites
       - ./app/public:/usr/src/app/public
       - ./app/search:/usr/src/app/search
-    env_file:
-      - ./app/variables-local.env
 
   redis:
     image: redis
