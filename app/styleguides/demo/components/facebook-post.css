@@ -11,30 +11,6 @@
       width: 100% !important;
     }
   }
-
-  blockquote {
-    &.fb-xfbml-parse-ignore {
-      font-size: em(12, 16);
-      background-color: #fff;
-      border: em(1, 12) solid #ccc;
-      color: #90949c;
-      font-family: Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: em(10, 12);
-      width: 100%;
-      p {
-        color: #4b4f56;
-        font-size: em(14, 16);
-        font-weight: 700;
-        line-height: em(21, 14);
-        padding: em(40, 14) em(10, 14);
-        text-align: center;
-      }
-      a {
-        color: #90949c;
-      }
-    }
-  }
 }
 
 @media print {
