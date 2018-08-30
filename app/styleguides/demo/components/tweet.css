@@ -1,44 +1,40 @@
-.tweet {
+.component--tweet {
   display: block;
-  margin: 16px 0;
+  margin: em(16) 0;
   width: 100%;
-}
+  .twitter-tweet.twitter-tweet-rendered {
+    margin: em(10) 0 !important;
+    width: 100% !important;
+  }
 
-.tweet .twitter-tweet.twitter-tweet-rendered {
-  margin: 10px 0 !important;
-  width: 100% !important;
-}
-
-.tweet blockquote.twitter-tweet {
-  border-color: #eee #ddd #bbb;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
-  display: inline-block;
-  font-family: 'Helvetica Neue', Roboto, 'Segoe UI', Calibri, sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 16px;
-  margin: 10px 5px;
-  max-width: 468px;
-  padding: 0 16px 16px;
-}
-
-.tweet blockquote.twitter-tweet p {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 20px;
-}
-
-.tweet blockquote.twitter-tweet a {
-  color: #1782a9;
-  font-weight: 400;
-  outline: 0;
-  text-decoration: none;
-}
-
-.tweet blockquote.twitter-tweet a:focus,
-.tweet blockquote.twitter-tweet a:hover {
-  text-decoration: underline;
+  blockquote{
+    &.twitter-tweet {
+      font-size: em(12, 16);
+      border-color: #eee #ddd #bbb;
+      border-radius: em(5, 12);
+      border-style: solid;
+      border-width: em(1, 12);
+      box-shadow: 0 em(1, 12) em(3, 12) rgba(0, 0, 0, .15);
+      display: inline-block;
+      line-height: em(16, 12);
+      margin: em(10, 12) em(5, 12);
+      max-width: em(468, 12);
+      padding: 0 em(16, 12) em(16, 12);
+      p {
+        font-size: em(16, 16);
+        font-weight: 400;
+        line-height: em(20);
+      }
+      a {
+        color: #1782a9;
+        font-weight: 400;
+        outline: 0;
+        text-decoration: none;
+        &:focus,
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }
