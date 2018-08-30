@@ -5,11 +5,13 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
+  tag = require('../tags/model.js'),
   elasticIndex = 'published-articles',
   elasticFields = [
-    'shortHeadline',
+    'primaryHeadline',
     'pageUri',
-    'canonicalUrl'
+    'canonicalUrl',
+    'feedImgUrl'
   ],
   maxItems = 2;
 
@@ -30,10 +32,11 @@ module.exports.save = (ref, data, locals) => {
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
       .then((result) => {
         const article = Object.assign(item, {
-          shortHeadline: item.overrideTitle || result.shortHeadline,
+          primaryHeadline: item.overrideTitle || result.primaryHeadline,
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
-          canonicalUrl: result.url
+          canonicalUrl: result.url,
+          feedImgUrl: result.feedImgUrl
         });
 
         if (article.title) {
@@ -64,6 +67,9 @@ module.exports.render = function (ref, data, locals) {
   if (!data.tag || !locals) {
     return data;
   }
+
+  // Clean based on tags and grab first as we only ever pass 1
+  data.tag = tag.clean([{text: data.tag}])[0].text || '';
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);

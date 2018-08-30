@@ -60,6 +60,8 @@ tag:
   _reveal:
     field: backfill
     operator: truthy
+articleType:
+  _subscribe: articleType
 
 _groups:
   inlineRelatedItems:
