@@ -1,7 +1,7 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.image {
+.component--image {
   @mixin article-font10;
   position: relative;
   clear: both;
@@ -173,7 +173,7 @@
   }
 }
 @media screen and (min-width:1024px) {
-  .image {
+  .component--image {
     &.thumb {
       max-width: em(188, 12);
       min-width: em(146, 12);
@@ -226,7 +226,7 @@
     }
   }
   .one-column-layout {
-    .image {
+    .component--image {
       &.flex-small {
         margin: em(10, 12) em(40, 12) em(10, 12) em(-134, 12);
       }
@@ -248,17 +248,17 @@
   }
 }
 @media screen and (min-width:0) and (max-width:1023.9px) {
-  .image.vertical-small .img-link-cta svg {
+  .component--image.vertical-small .img-link-cta svg {
     display: none;
   }
 }
 @media screen and (min-width:600px) and (max-width:1023.9px) {
-  .image.horizontal .image-figcaption {
+  .component--image.horizontal .image-figcaption {
     width: calc(100% - em(80, 12));
   }
 }
 @media screen and (min-width:600px) {
-  .image {
+  .component--image {
     .image-figcaption {
       margin: em(5, 12) 0 0;
       padding: 0;
@@ -323,44 +323,46 @@
   }
 }
 @media screen and (min-width:0) and (max-width:599.9px) {
-  .image.square-medium .image-figcaption,
-  .image.thumb .image-figcaption,
-  .image.vertical-small .image-figcaption {
-    padding: em(4, 12) 0 0;
-  }
-  .image.vertical-small .img-link-cta {
-    background: #111;
-    border: em(1, 13) solid #111;
-    border-radius: em(3, 13);
-    bottom: em(8, 13);
-    font-family: Arial, sans-serif;
-    font-size: em(11, 13);
-    font-weight: 700;
-    padding: em(7, 13) 0 em(6, 13);
-    width: 100%;
-  }
-  .image.horizontal .img-link-cta {
-    background: #111;
-    border: em(1, 13) solid #111;
-    border-radius: em(3, 13);
-    bottom: em(15, 13);
-    font-family: Arial, sans-serif;
-    font-weight: 700;
-    left: em(12, 13);
-  }
-  .image.flex .img-link-cta,
-  .image.flex-large .img-link-cta {
-    background: #111;
-    border: em(1, 13) solid #111;
-    border-radius: em(3, 13);
-    font-family: Arial, sans-serif;
-    font-weight: 700;
-    top: 0;
-    width: 100%;
+  .component--image {
+    &.square-medium .image-figcaption,
+    &.thumb .image-figcaption,
+    &.vertical-small .image-figcaption {
+      padding: em(4, 12) 0 0;
+    }
+    &.vertical-small .img-link-cta {
+      background: #111;
+      border: em(1, 13) solid #111;
+      border-radius: em(3, 13);
+      bottom: em(8, 13);
+      font-family: Arial, sans-serif;
+      font-size: em(11, 13);
+      font-weight: 700;
+      padding: em(7, 13) 0 em(6, 13);
+      width: 100%;
+    }
+    &.horizontal .img-link-cta {
+      background: #111;
+      border: em(1, 13) solid #111;
+      border-radius: em(3, 13);
+      bottom: em(15, 13);
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      left: em(12, 13);
+    }
+    &.flex .img-link-cta,
+    &.flex-large .img-link-cta {
+      background: #111;
+      border: em(1, 13) solid #111;
+      border-radius: em(3, 13);
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      top: 0;
+      width: 100%;
+    }
   }
 }
 @media print {
-  .image {
+  .component--image {
     display: block;
     margin: em(16, 12) auto em(20, 12);
     max-width: 80%;
