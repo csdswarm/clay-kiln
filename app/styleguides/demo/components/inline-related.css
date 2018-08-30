@@ -29,7 +29,7 @@
     text-decoration: none;
     display: inline-block;
 
-    &.related-link--main {
+    &.related__link--main {
       @mixin inline-related-font2;
 
       @mixin medium-small-screen {
@@ -37,7 +37,7 @@
       }
     }
 
-    &.related-link--secondary {
+    &.related__link--secondary {
       @mixin inline-related-font4;
       margin-top: em(6, 14);
     }
@@ -58,6 +58,19 @@
 
     img {
       width: widthOnGrid(3, 2);
+    }
+
+    @mixin medium-small-screen {
+      flex: 100%;
+      margin-right: 0px;
+
+      .related__link {
+        width: 100%;
+      }
+
+      img {
+        width: 100%;
+      }
     }
   }
 }
