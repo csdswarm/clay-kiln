@@ -3,6 +3,38 @@ _components:
     instances:
       general:
         headLayout:
+          - _ref: /_components/web-player-head/instances/new
+        top:
+          -
+            _ref: /_components/header/instances/default
+        head: head
+        main: main
+        secondary: secondary
+        bottom:
+          -
+            _ref: /_components/footer/instances/default
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
+        webPlayer:
+          - _ref: /_components/web-player/instances/new
+      bare:
+        headLayout:
+          - _ref: /_components/web-player-head/instances/new
+        top:
+          -
+            _ref: /_components/header/instances/default
+        head: head
+        main: main
+        bottom:
+          -
+            _ref: /_components/footer/instances/default
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
+        webPlayer:
+          - _ref: /_components/web-player/instances/new
+      article:
+        headLayout:
+          - _ref: /_components/web-player-head/instances/new
         top:
           -
             _ref: /_components/header/instances/default
@@ -16,36 +48,23 @@ _components:
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
-      bare:
-        headLayout:
-        top:
-          -
-            _ref: /_components/header/instances/default
-        head: head
-        main: main
-        bottom:
-          -
-            _ref: /_components/footer/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
+        webPlayer:
+          - _ref: /_components/web-player/instances/new
 
   two-column-layout:
     instances:
       article:
         headLayout:
+          - _ref: /_components/web-player-head/instances/new
         top:
-          -
-            _ref: /_components/header/instances/default
         head: head
         main: main
-        tertiary:
-          -
-            _ref: /_components/generic-list/instances/tertiary
-        secondary:
-          -
-            _ref: /_components/generic-list/instances/recirc
+        tertiary: tertiary
+        secondary: secondary
         bottom:
           -
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
+        webPlayer:
+          - _ref: /_components/web-player/instances/new

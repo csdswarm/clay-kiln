@@ -134,6 +134,19 @@ function getMediaMap() {
 }
 
 /**
+ * gets a map of fonts file globs, per component
+ * @return {{}}
+ */
+function getFontsMap() {
+  return _.reduce(components, function (result, name) {
+    var filePath = getComponentPath(name).substring(cwd.length + 1);
+
+    result[name] = filePath + '/fonts/**';
+    return result;
+  }, {});
+}
+
+/**
  * gets a list of css/js file globs for all components
  * @param  {string} type style/script
  * @return {[]}
@@ -147,6 +160,8 @@ function getList(type) {
     map = getBaseStylesMap();
   } else if (type === 'media') {
     map = getMediaMap();
+  } else if (type === 'fonts') {
+    map = getFontsMap();
   } else if (type === 'models') {
     map = getModelsMap();
   } else if (type === 'templates') {
@@ -161,4 +176,5 @@ exports.getScriptsMap = getScriptsMap;
 exports.getModelsMap = getModelsMap;
 exports.getTemplatesMap = getTemplatesMap;
 exports.getMediaMap = getMediaMap;
+exports.getFontsMap = getFontsMap;
 exports.getList = getList;

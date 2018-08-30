@@ -38,16 +38,152 @@ _components:
   header:
     instances:
       default:
-        variation: header
-        position: right
-        search:
-          _ref: /_components/search/instances/global
-        services:
+        headerLinks:
           -
-            _ref: /_components/follow/instances/facebook
+            text: "listen"
+            url: "https://player.radio.com"
+            drawer: false
           -
-            _ref: /_components/follow/instances/twitter
-
+            text: "entertainment"
+            url: "/entertainment"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+              -
+                text: "local stations"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+              -
+                text: "find a station"
+                url: "https://player.radio.com/stations-directory"
+          -
+            text: "news"
+            url: "/news"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "sports"
+            url: "/sports"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "podcasts"
+            url: "/podcasts"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+          -
+            text: "more"
+            drawer: true
+            list:
+              -
+                text: "categories"
+                list:
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
+                  -
+                    text: "example link"
+                    url: "/example link"
 
   circulation:
     instances:
@@ -142,15 +278,124 @@ _components:
       new:
         url: ''
 
+  brightcove:
+    instances:
+      new:
+        videoId: ''
+
+  web-player:
+    instances:
+      new:
+        allow: true
+
+  web-player-head:
+    instances:
+      new:
+        allow: true
+
   footer:
     instances:
       default:
-        linksEnabled: {}
-        services:
+        socialButtonsShow: true
+        socialButtonsURLs:
           -
-            _ref: /_components/follow/instances/facebook
+            type: facebook
+            url: "https://www.facebook.com/radiodotcom/"
           -
-            _ref: /_components/follow/instances/twitter
+            type: twitter
+            url: "https://twitter.com/Radiodotcom?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+          -
+            type: youtube
+            url: "https://www.youtube.com/user/radiodotcom"
+          -
+            type: instagram
+            url: "https://www.instagram.com/radiodotcom/"
+        appBadgesShow: true
+        appBadgesURLs:
+          -
+            type:
+              name: app store
+              value: app-store
+            url: "https://itunes.apple.com/us/app/radio-com/id323701765?mt=8"
+          -
+            type:
+              name: google play
+              value: google-play
+            url: "https://play.google.com/store/apps/details?id=com.radiocom&hl=en"
+        links:
+          -
+            text: "listen"
+            list:
+              -
+                text: "listen live"
+                url: "https://player.radio.com"
+                newtab: true
+              -
+                text: "mobile app"
+                url: "https://radio.com/apps"
+                newtab: true
+          -
+            text: "connect"
+            list:
+              -
+                text: "FAQ"
+                url: "https://www.radio.com/how-to-listen-to-radio"
+                newtab: true
+              -
+                text: "1Thing"
+                url: "http://1thingus.com/"
+                newtab: true
+              -
+                text: "get my PERKS"
+                url: "http://www.getmyperks.com/"
+                newtab: true
+              -
+                text: "#ImListening"
+                url: "http://imlistening.org/"
+                newtab: true
+              -
+                text: "contact us"
+                url: "https://www.radio.com/contact-us"
+                newtab: true
+          -
+            text: "legal"
+            list:
+              -
+                text: "public inspection file"
+                url: "https://publicfiles.fcc.gov/"
+                newtab: true
+              -
+                text: "careers"
+                url: "http://entercom.com/careers/"
+                newtab: true
+              -
+                text: "EEO public files"
+                url: "http://entercom.com/eeo/"
+                newtab: true
+              -
+                text: "public file help"
+                url: "https://www.radio.com/public-inspection-file-help"
+                newtab: true
+              -
+                text: "privacy policy"
+                url: "http://entercom.com/privacy-policy/"
+                newtab: true
+              -
+                text: "terms of use"
+                url: "http://www.entercom.com/terms-and-conditions"
+                newtab: true
+              -
+                text: "contest rules"
+                url: "https://www.radio.com/rules"
+                newtab: true
+              -
+                text: "copyright notice"
+                url: "http://www.entercom.com/wp-content/uploads/2016/01/Copyright_Notice2.pdf"
+                newtab: true
+              -
+                text: "music submission policy"
+                url: "http://www.entercom.com/music-submission-policy"
+                newtab: true
 
   blockquote:
     instances:

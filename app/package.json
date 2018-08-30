@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "scripts/start-local.sh",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
-    "start-dev": "npm run check-elastic && nodemon --watch components --watch services --watch sites --watch search --watch app.js --watch styleguides --ext js,yaml,yml,handlebars,hbs,css --ignore '*.test.js' --max-old-space-size=256 --max-semi-space-size=2"
+    "start-dev": "npm run check-elastic && nodemon -L app.js",
+    "build-web-player": "npm install git+ssh://git@github.com/Entercom/radio-web-player.git#develop --no-save && mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/"
   },
   "author": "",
   "license": "MIT",
@@ -86,6 +87,7 @@
     "gulp-uglify": "^3.0.0",
     "jsdom": "^11.8.0",
     "nodemon": "^1.17.3",
+    "postcss-functions": "^3.0.0",
     "postcss-import": "^11.1.0",
     "postcss-mixins": "^6.2.0",
     "postcss-nested": "^3.0.0",

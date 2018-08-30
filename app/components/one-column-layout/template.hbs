@@ -19,21 +19,23 @@
     <!-- data-editable-end -->
 
     <!-- Attach the context object to window so SPA has access to data on the frontend. -->
-    {{{ attachSpaPayloadToWindow }}}
+    <!-- @TODO: once solution is found for import/export vs require bug in webpack -->
+    <script>window.spaPayload = {{{ attachSpaPayloadToWindow }}};</script>
     <script src="/dist/app.js"></script>
 
   </head>
   <body>
     <div id="vue-app-mount-point">
-      <div id="vue-wrapper">
-        <div class="top" data-editable="top">{{> component-list top }}</div>
-        <div class="wrapper">
-          <div class="main" data-editable="main">{{> component-list main }}</div>
-          <div class="secondary" data-editable="secondary">{{> component-list secondary }}</div>
-        </div>
-        <footer class="bottom" data-editable="bottom">{{> component-list bottom }}</footer>
-        <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
-      </div>
+      <section class="layout layout--one-column">
+        <section class="layout__top" data-editable="top">{{> component-list top }}</section>
+        <section class="layout__content">
+          <section class="content__main" data-editable="main">{{> component-list main }}</section>
+          <section class="content__secondary" data-editable="secondary">{{> component-list secondary }}</section>
+        </section>
+        <footer class="layout__bottom" data-editable="bottom">{{> component-list bottom }}</footer>
+      </section>
     </div>
+    <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
+    <div class="web-player" data-editable="webPlayer">{{> component-list webPlayer }}</div>
   </body>
 </html>

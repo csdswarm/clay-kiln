@@ -1,14 +1,12 @@
 <template>
-  <div class="vue-wrapper">
-    <div class="top" data-editable="top"><div v-html="this.componentList('top')"></div></div>
-    <div class="wrapper">
-      <h1>ONE COLUMN LAYOUT EXAMPLE</h1>
-      <div class="main" data-editable="main"><div v-html="this.componentList('main')"></div></div>
-      <div class="secondary" data-editable="secondary"><div v-html="this.componentList('secondary')"></div></div>
-    </div>
-    <footer class="bottom" data-editable="bottom"><div v-html="this.componentList('bottom')"></div></footer>
-    <div class="kiln-internals" data-editable="kilnInternals"><div v-html="this.componentList('kilnInternals')"></div></div>
-  </div>
+  <section class="layout layout--one-column">
+    <section class="layout__top" data-editable="top" v-html="this.componentList('top')"></section>
+    <section class="layout__content">
+      <section class="content__main" data-editable="main" v-html="this.componentList('main')"></section>
+      <section class="content__secondary" data-editable="secondary" v-html="this.componentList('secondary')"></section>
+    </section>
+    <footer class="layout__bottom" data-editable="bottom" v-html="this.componentList('bottom')"></footer>
+  </section>
 </template>
 
 <script>
