@@ -56,13 +56,26 @@
     flex: 0 0 widthOnGrid(3, 2);
     margin-right: em(15);
 
+    &.related__item--mobile {
+      display: none;
+    }
+    &.related__item--non-mobile {
+      display: block;
+    }
+
     img {
       width: widthOnGrid(3, 2);
     }
 
     @mixin medium-small-screen {
       flex: 100%;
-      margin-right: 0px;
+      margin: em(17) 0 em(5) 0;
+      &.related__item--mobile {
+        display: block;
+      }
+      &.related__item--non-mobile {
+        display: none;
+      }
 
       .related__link {
         width: 100%;
