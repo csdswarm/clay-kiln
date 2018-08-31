@@ -66,6 +66,8 @@ _components:
         secondary: secondary
         bottom:
           -
+            _ref: /_components/web-player/instances/new
+          -
             _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
