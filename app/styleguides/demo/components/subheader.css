@@ -1,10 +1,6 @@
-.subheader {
-    padding: 20px 0;
-}
-
-.subheader .headline {
-    color: #111111;
-    font-family: Georgia, serif;
-    font-size: 28px;
-    line-height: 31px;
+.component--subheader {
+    padding: em(20, 16) 0;
+    .headline {
+   		/* to do later */
+    }
 }

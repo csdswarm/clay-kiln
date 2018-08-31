@@ -45,7 +45,8 @@
       display: flex;
       justify-content: center;
       .component--brightcove {
-        width: auto;
+        width: 100%;
+        height: auto;
       }
       .component--image,
       .component--instagram-post,
@@ -154,7 +155,7 @@
         margin-right: em(20);
       }
       .info__timestamp {
-        margin-top: em(10, 12);
+        margin-top: 0;
       }
     }
   }

@@ -1,6 +1,6 @@
 {{ set 'uniquePlayerID' (randomString 'youtube-player-') }}
 {{#ifAny @root.locals.edit videoValid}}
-<div data-uri="{{ default _ref _self }}" class="youtube{{if @root.locals.edit ' edit-mode'}}{{#ifAny (compare videoType 'Related') (compare videoType 'Sponsored')}} site-accents{{/ifAny}}{{ if playerBorderTop ' border-top' }}{{ if playerBorderBottom ' border-bottom' }}"
+<div data-uri="{{ default _ref _self }}" class="component component--youtube{{if @root.locals.edit ' edit-mode'}}{{#ifAny (compare videoType 'Related') (compare videoType 'Sponsored')}} site-accents{{/ifAny}}{{ if playerBorderTop ' border-top' }}{{ if playerBorderBottom ' border-bottom' }}"
      data-element-id="{{ uniquePlayerID }}"
      data-video-id="{{ videoId }}"
      data-autoplay-next-video="{{ autoPlayNextVideo }}"
@@ -26,9 +26,8 @@
 
   <div class="player-wrapper">
     {{#unless @root.locals.edit}}
-      <div class="player">
-        {{!-- The <iframe> (and video player) will replace this <div> tag. --}}
-        <div id="{{ uniquePlayerID }}"></div>
+      <div class="player" id="{{ uniquePlayerID }}">
+        <iframe width="100%" height="400" src="https://www.youtube.com/embed/{{ videoId }}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
       </div>
     {{else}}
       {{#unless videoValid}}
