@@ -87,9 +87,7 @@
 
 @mixin large-screen {
   .component--share {
-    /* Float right and change list to horizontal */
-    float: right;
-    flex-direction: row;
+    flex-direction: row; /* Change list to horizontal */
   }
 
   .share-link {
@@ -97,11 +95,5 @@
       margin-top: 0; /* Clear vertical margin-top */
       margin-left: em(-1); /* Move items to the left on horizontal layout */
     }
-  }
-}
-
-@mixin small-screen {
-  .component--share {
-    float: none;
   }
 }
