@@ -62,6 +62,7 @@
 
     .content__sidebar {
       width: em(300);
+      visibility: hidden;
     }
   }
 }
