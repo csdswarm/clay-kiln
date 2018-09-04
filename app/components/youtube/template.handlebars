@@ -26,8 +26,9 @@
 
   <div class="player-wrapper">
     {{#unless @root.locals.edit}}
-      <div class="player" id="{{ uniquePlayerID }}">
-        <iframe width="100%" height="400" src="https://www.youtube.com/embed/{{ videoId }}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div class="player">
+        {{!-- The <iframe> (and video player) will replace this <div> tag. --}}
+        <div id="{{ uniquePlayerID }}"></div>
       </div>
     {{else}}
       {{#unless videoValid}}
