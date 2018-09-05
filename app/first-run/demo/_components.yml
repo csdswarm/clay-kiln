@@ -301,13 +301,18 @@ _components:
 
   web-player:
     instances:
-      new:
-        allow: true
+      default:
+        allowed: true
 
   web-player-head:
     instances:
-      new:
-        allow: true
+      default:
+        allowed: true
+
+  chartbeat:
+    instances:
+      default:
+        allowed: true
 
   footer:
     instances:

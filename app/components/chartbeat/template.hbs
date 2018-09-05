@@ -1,0 +1,39 @@
+<script type="text/javascript">
+  var _sf_async_config = _sf_async_config || {};
+  /** CONFIGURATION START **/
+  _sf_async_config.uid = 65686;
+  _sf_async_config.domain = window.location.hostname;
+  _sf_async_config.useCanonical = true;
+  _sf_async_config.sections = ''; // 'Market, Category, Format, Callsign' ex: 'Los Angeles,Music,Alternative,KROQ-FM'
+  _sf_async_config.authors = '';
+  /** CONFIGURATION END **/
+  (function() {
+    function loadChartbeat() {
+      var e = document.createElement('script');
+      e.setAttribute('language', 'javascript');
+      e.setAttribute('type', 'text/javascript');
+      e.setAttribute('src', '//static.chartbeat.com/js/chartbeat.js');
+      document.body.appendChild(e);
+    }
+    var oldonload = window.onload;
+    window.onload = (typeof window.onload != 'function') ?
+        loadChartbeat : function() {
+          oldonload();
+          loadChartbeat();
+        };
+  })();
+
+  /**
+   * Create virtual page views for SPA
+   *
+   * Object passed in must contain path & title, authors and sections are optional
+   */
+  document.addEventListener('pageView', (event) => {
+    pSUPERFLY.virtualPage({
+      sections: event.section || '',
+      authors: event.authors || '',
+      path: event.path,
+      title: event.title
+    });
+  });
+</script>
