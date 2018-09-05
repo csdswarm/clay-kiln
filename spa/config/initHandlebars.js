@@ -4,14 +4,22 @@
  *
  */
 
+// Import dependencies.
 import vanillaHandlebars from 'handlebars'
 import clayHBS from 'clayhandlebars'
 import clayKilnPartial from '../../app/node_modules/clay-kiln/template.handlebars'
+import clayHelpers from '../../app/services/universal/helpers'
 
-// Attach Clay handlebars helper dependencies.
+// Attach handlebars helper dependencies from 'clayhandlebars'.
 const handlebars = clayHBS(vanillaHandlebars)
 
-// Attach Clay handlebars partials depedencies.
+// Attach Clay handlebars helpers dependencies.
+Object.keys(clayHelpers).forEach(helperName => {
+  const helperFn = clayHelpers[helperName]
+  handlebars.registerHelper(helperName, helperFn)
+})
+
+// Attach Clay handlebars partials dependencies.
 handlebars.registerPartial('clay-kiln', clayKilnPartial)
 
 // Note: require.context is proprietary to webpack.
