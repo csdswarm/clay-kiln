@@ -7,22 +7,24 @@
 import URL from 'url-parse'
 import VueTranspiler from '@/lib/VueTranspiler'
 const vueTranspiler = new VueTranspiler()
-let setupCalled = false;
 
 export default {
+  data: function () {
+    return {
+      setupCalled: false
+    }
+  },
   mounted () {
     this.onLayoutUpdate()
   },
   updated() {
     this.onLayoutUpdate()
   },
+  beforeUpdate () {
+    this.onLayoutDestroy()
+  },
   beforeDestroy () {
-    // Call global dismount event
-    let event = new CustomEvent(`dismount`)
-    document.dispatchEvent(event)
-
-    // Loop over all components that were loaded and try to call any cleanup JS they have
-    this.handleComponents('dismount')
+    this.onLayoutDestroy()
   },
   methods: {
     componentList: function (stateSliceKey) {
@@ -54,6 +56,13 @@ export default {
      * Handle any logic required to get a new vue render to function properly
      */
     onLayoutUpdate: function() {
+      if (this.setupCalled) {
+        // Don't call setup as it's already been run in another call
+        return
+      } else {
+        this.setupCalled = true
+      }
+
       // Attach vue router listener on SPA links.
       this.$el.querySelectorAll('a.spa-link').forEach(link => {
         link.addEventListener('click', event => {
@@ -61,8 +70,20 @@ export default {
         })
       })
 
-      // Loop over all components that were loaded and try to call any setup JS they have
       this.handleComponents('mount')
+    },
+    /**
+     * Handle any logic required to get a new vue render to function properly
+     */
+    onLayoutDestroy: function() {
+      this.setupCalled = false;
+
+      // Call global dismount event
+      let event = new CustomEvent(`dismount`)
+      document.dispatchEvent(event)
+
+      // Loop over all components that were loaded and try to call any cleanup JS they have
+      this.handleComponents('dismount')
     },
     /**
      * Handle setup / cleanup of components and their required JS
@@ -71,21 +92,6 @@ export default {
      * @param type
      */
     handleComponents: function (type) {
-      switch (type) {
-        case 'mount':
-          if (setupCalled) {
-            // Don't call setup as it's already been run in another call
-            return
-          } else {
-            setupCalled = true
-          }
-          break
-        case 'dismount':
-          // Call global dismount event
-          setupCalled = false
-          break
-      }
-
       // Call global mount event
       let event = new CustomEvent(type)
       document.dispatchEvent(event)
