@@ -515,4 +515,4 @@ _components:
       new:
         items: []
         tag: ''
-        populateBy: article type
+        populateBy: articleType

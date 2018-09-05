@@ -8,7 +8,9 @@ populateBy:
       required: true
     input: radio
     options:
-      - article type
+      -
+        name: Article Type
+        value: articleType
       - tag
       - manual
 

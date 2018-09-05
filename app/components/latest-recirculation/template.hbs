@@ -1,7 +1,7 @@
-<section class="component component--latest-recirc {{#if (compare populateBy 'article type')}}component--{{articleType}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
+<section class="component component--latest-recirc {{#if (compare populateBy 'articleType')}}component--{{articleType}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
   {{#ifAny articles.length @root.locals.edit}}
     <h2 class="latest-recirc__title">LATEST
-    {{#if (compare populateBy 'article type')}}
+    {{#if (compare populateBy 'articleType')}}
       in <span class="title">{{articleType}}</span>
     {{/if}}
     {{#if (compare populateBy 'tag')}}

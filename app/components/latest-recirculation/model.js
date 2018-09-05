@@ -2,7 +2,6 @@
  const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
-  toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
   elasticIndex = 'published-articles',
@@ -61,7 +60,7 @@ module.exports.render = function (ref, data, locals) {
      // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
     queryService.addShould(query, { match: { tags: data.tag }});
-  } else if (data.populateBy == 'article type') {
+  } else if (data.populateBy == 'articleType') {
     if (!data.articleType || !locals) {
       return data;
     }
