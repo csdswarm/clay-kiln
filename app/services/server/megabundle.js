@@ -81,8 +81,13 @@ function getDeps(editMode, scripts, assetPath) {
       'kiln-plugins',
       'models',
       'postlude'
-    ]).map(id => idToPublicPath(id, assetPath));;
+    ]).map(id => idToPublicPath(id, assetPath));
   } else {
+    // Get all scripts
+    scripts = glob.sync(path.join('public', 'js', '*.client.js'))
+      .map(filepath => filepath.replace('public',''));
+
+    // Get the entryIds
     let entryIds = scripts.map(publicPathToId);
 
     // we always want to push this service into the id array
