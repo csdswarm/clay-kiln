@@ -1,0 +1,7 @@
+.component--youtube {
+	margin: em(16px) 0;
+	.youtube-video-preview {
+		width: 100%;
+		height: auto;
+	}
+}
