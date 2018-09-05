@@ -60,8 +60,8 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  // Always get 1 more than the backfill to allow for removal of current page in results
-  const query = queryService.newQueryWithCount(elasticIndex, data.backfill, locals);
+  // Always get 1 more than the fill to allow for removal of current page in results
+  const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
   let cleanUrl;
 
   if (!data.tag || !locals) {
@@ -85,7 +85,7 @@ module.exports.render = function (ref, data, locals) {
 
   return queryService.searchByQuery(query)
     .then(function (results) {
-      const limit = data.backfill;
+      const limit = data.fill;
 
       data.articles = data.items.concat(_.take(results, limit)).slice(0, maxItems); // show a maximum of maxItems links
 
