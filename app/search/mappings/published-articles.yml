@@ -17,6 +17,8 @@ _doc:
       type: keyword
     tags:
       type: keyword
+    articleType:
+      type: keyword
     teaser:
       type: text
     site:

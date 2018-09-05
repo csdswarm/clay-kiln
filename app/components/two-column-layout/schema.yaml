@@ -46,8 +46,7 @@ secondary:
 tertiary:
   _componentList:
     include:
-      - image
-      - generic-list
+      - latest-recirculation
 bottom:
   _componentList:
     include:

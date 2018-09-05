@@ -509,3 +509,10 @@ _components:
           apple-news: true
         articleType: entertainment
         showSocial: true
+
+  latest-recirculation:
+    instances:
+      new:
+        items: []
+        tag: ''
+        populateBy: article type
