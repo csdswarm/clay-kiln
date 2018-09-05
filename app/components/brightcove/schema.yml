@@ -15,7 +15,7 @@ _groups:
   video:
     _label: Brightcove Video
     _placeholder:
-      text: Brightcode Video
+      text: Brightcove Video
       height: 30px;
       ifEmpty: videoId
     fields:
