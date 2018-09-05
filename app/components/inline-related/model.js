@@ -60,7 +60,6 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  // Always get 1 more than the fill to allow for removal of current page in results
   const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
   let cleanUrl;
 
