@@ -18,6 +18,6 @@ module.exports = function attachSpaPayloadToWindow(context) {
     payload = JSON.stringify(context);
   }
   
-  return `<script>window.spaPayload = ${payload}</script>`;
+  return payload;
 
 }

@@ -19,7 +19,7 @@
     <!-- data-editable-end -->
 
     <!-- Attach the context object to window so SPA has access to data on the frontend. -->
-    {{{ attachSpaPayloadToWindow }}}
+    <script>window.spaPayload = {{{ attachSpaPayloadToWindow }}};</script>
     <script src="/dist/app.js"></script>
 
   </head>
