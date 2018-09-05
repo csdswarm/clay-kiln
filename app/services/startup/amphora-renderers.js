@@ -12,7 +12,7 @@ amphoraHtml.configureRender({
 
 amphoraHtml.addResolveMedia(resolveMediaService);
 amphoraHtml.addHelpers(helpers);
-// amphoraHtml.addEnvVars(require('./client-env.json'));
+amphoraHtml.addEnvVars(require('../../client-env.json'));
 
 module.exports = {
   default: 'html',

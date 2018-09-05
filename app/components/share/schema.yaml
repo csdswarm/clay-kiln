@@ -8,8 +8,8 @@ enabled:
     options:
       - facebook
       - twitter
-      - pinterest
-      - comment
+      - email
+      - link
     help: Choose which services are displayed
 
 url:
@@ -28,7 +28,7 @@ shortTitle:
   _label: Short Title
   _subscribe: twitterTitle
   _has:
-    help: Used for Twitter. Falls back to using title for older articles
+    help: Used for Twitter and Email. Falls back to using title for older articles
 
 twitterHandle:
   _label: Twitter Handle
@@ -48,18 +48,8 @@ pinImage:
   _has:
     help: Image used on Pinterest when pinned
 
-orientation:
-  _label: Orientation
-  _has:
-    input: radio
-    options:
-      - vertical
-      - horizontal
-    help: How the component is displayed
-
 _groups:
   settings:
     fields:
       - enabled
       - twitterHandle
-      - orientation

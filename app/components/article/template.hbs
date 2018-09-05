@@ -1,0 +1,202 @@
+<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article" data-crosspost="{{ commaSeparated crosspost }}" data-article-type="{{ articleType }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+  <nav class="article__breadcrumb">
+    <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/article/media/radiocom-purple-monogram.svg" }}}</a>
+    <span class="breadcrumb__separator">/</span>
+    <a href="//{{ @root.locals.site.host }}/tags/{{articleType}}" class="breadcrumb__link">{{articleType}}</a>
+    {{#if rubric}}
+      {{ set 'hypenatedTagRubric' (replace (urlencode (replace (trim (lowercase rubric)) ' ' '-')) "%2F" "/") }}
+      <span class="breadcrumb__separator">/</span>
+      <a class="breadcrumb__link"
+         href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tags/{{ hypenatedTagRubric }}{{/if}}/">{{ rubric }}</a>
+    {{/if}}
+  </nav>
+  <header class="article__header">
+    {{! article microdata }}
+    <meta itemprop="url" content="{{ @root.locals.url }}" />
+    <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
+    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="{{ @root.locals.site.name }}" />
+      <meta itemprop="sameAs" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}" />
+      <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+        <meta itemprop="url" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}/media/sites/{{ @root.locals.site.slug }}/logo.w600.h60.png" />
+        <meta itemprop="height" content="60" />
+        <meta itemprop="width" content="600" />
+      </div>
+    </div>
+    <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+      <meta itemprop="url" content="{{ feedImgUrl }}" />
+      <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+      <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+    </div>
+
+    {{! title }}
+    <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+    {{! subtitle }}
+    <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+  </header>
+
+  <section class="article__body"
+    {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
+    {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
+  >
+    <div class="body__header">
+      {{! Lead }}
+      <div class="lead" data-editable="lead">
+        {{> component-list lead }}
+      </div>
+    </div>
+    <div class="body__info">
+      {{! authors }}
+      <div class="info--left-top">
+        <span data-editable="bylines" class="info__by-authors">
+          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
+          {{#each byline}}
+            {{#each sources as |source|}}
+              <span class="separator">, </span><span class="source">{{source.text}}</span>
+            {{/each}}
+          {{/each}}
+        </span>
+
+        {{! date and time }}
+        <time class="info__timestamp" datetime="{{ date }}" itemprop="datePublished" data-editable="publishedDate">
+          {{#if date}}
+            {{#if dateUpdated}}
+              <span class="timestamp__update">Updated on </span>
+            {{/if}}
+            {{#if (isPublished24HrsAgo date) }}
+              <span class="timestamp__date timestamp__date--recent">{{{ hrsOnlyTimestamp date }}}</span>
+            {{else}}
+              <span class="timestamp__date timestamp__date--large">{{ formatLocalDate date 'MMMM D, YYYY' }}</span>
+              <span class="timestamp__date timestamp__date--small">{{ formatLocalDate date 'MM/DD/YYYY' }}</span>
+              <span class="timestamp__time">{{ formatLocalDate date 'h:mm a' }}</span>
+            {{/if}}
+          {{/if}}
+        </time>
+      </div>
+      <div class="info--right-bottom">
+        {{! Side Share }}
+        {{> share sideShare }}
+      </div>
+    </div>{{!--
+    --}}<div class="body__content" data-editable="content" itemprop="articleBody">
+      {{! don't display generated annotatedTextAria in edit mode. Replace all ad components with ad-dummies }}
+      {{> component-list content }}
+
+      {{! Tags }}
+      {{> tags tags}}
+    </div>
+
+    {{! word count }}
+    {{#if @root.locals.edit}}
+      <section class="body__word-count">Words: <span class="initializing">Initializing word count</span></section>
+    {{/if}}
+
+    {{! circulation area }}
+    {{#if @root.locals.edit }}
+      {{ set 'empty' '<span class="circulation--empty">None</span>' }}
+      <section class="body__circulation">
+        <h2 class="circulation__title">Article Circulation</h2>
+
+        <section class="circulation__section" data-editable="circHeadlines">
+          <h3 class="subtitle circ-edit">Headlines and Teasers</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Facebook Headline</h4>
+              <p class="item-data">{{{ default primaryHeadline empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title required">Twitter/Short Headline</h4>
+              <p class="item-data">{{{ default shortHeadline empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title required">Teaser</h4>
+              <p class="item-data">{{{ default teaser empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">SEO Headline</h4>
+              <p class="item-data">{{{ default seoHeadline empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">SEO Description</h4>
+              <p class="item-data">{{{ default seoDescription empty }}}</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation__section" data-editable="circSlug">
+          {{#if slugLock}}
+            <div class="alert alert-warning">
+                <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
+
+                Article Slug is locked. Unlock in Article Settings.
+            </div>
+          {{/if}}
+          <h3 class="subtitle circ-edit">Slug and URL</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Article Slug</h4>
+              <p class="item-data">
+                {{#if slug}}<span class="circulation-slug">{{ slug }}</span>{{else}}{{{ empty }}}{{/if}}
+              </p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Evergreen Treatment</h4>
+              <p class="item-data">
+                {{ if evergreenSlug 'Yes' else='No' }}
+              </p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation__section" data-editable="circFeeds">
+          <h3 class="subtitle circ-edit">Feeds</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Feed Image</h4>
+              <p class="item-data">
+                {{#if feedImgUrl}}
+                  <img class="feedimg" src="{{ feedImgUrl }}" alt="" />
+                {{else}}
+                  <div class="empty-feedimg"></div>
+                {{/if}}
+              </p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Silo Image</h4>
+              <p class="item-data">
+                {{#if siloImgUrl}}
+                  <img class="feedimg" src="{{ rendition siloImgUrl 'vertical-small' }}" alt="" />
+                {{else}}
+                  {{{empty}}}
+                {{/if}}
+              </p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Feed Layout</h4>
+              <p class="item-data">
+                <span class="feedlayout {{ if (compare feedLayout 'none') 'current' }}">{{{ read 'public/media/components/article/icon-feed-noimg.svg' }}} None</span>
+                <span class="feedlayout {{ if (compare feedLayout 'thumb') 'current' }}">{{{ read 'public/media/components/article/icon-feed-thumb.svg' }}} Thumb</span>
+                <span class="feedlayout {{ if (compare feedLayout 'small') 'current' }}">{{{ read 'public/media/components/article/icon-feed-square.svg' }}} Small</span>
+                <span class="feedlayout {{ if (compare feedLayout 'large') 'current' }}">{{{ read 'public/media/components/article/icon-feed-horizontal.svg' }}} Large</span>
+              </p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Crossposting</h4>
+              <p class="item-data">{{ if (commaSeparated crosspost) (slugToSiteName (commaSeparated crosspost)) else='Current site' }}</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation__section" data-editable="circMetadata">
+          <h3 class="subtitle circ-edit">Article Metadata</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Article Type</h4>
+              <p class="item-data">{{ articleType }}</p>
+            </li>
+          </ul>
+        </section>
+      </section>
+    {{/if}}
+  </section>
+</article>

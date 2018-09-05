@@ -1,24 +1,13 @@
 $blue: #1782a9;
 $light-grey: #eee;
 
-.instagram-post {
+.component--instagram-post {
   display: block;
-  margin: 16px 0;
+  margin: em(16) 0;
   width: 100%;
-
-  blockquote {
-    border-left: 4px solid $light-grey;
-    font-family: Georgia, serif;
-    font-size: 18px;
-    line-height: 22px;
-    margin: 0;
-    padding: 0 0 0 10px;
-  }
-
-  a,
-  a:visited {
-    color: $blue;
-    padding: 0;
-    text-decoration: none;
+  .instagram-media-rendered {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 auto !important;
   }
 }
