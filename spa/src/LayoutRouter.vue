@@ -1,0 +1,80 @@
+<template>
+  <component v-bind:is="this.activeLayoutComponent"></component>
+</template>
+
+<script>
+
+import axios from 'axios'
+import URL from 'url-parse'
+import * as mutationTypes from '@/vuex/mutationTypes'
+import OneColumnLayout from '@/views/OneColumnLayout'
+import TwoColumnLayout from '@/views/TwoColumnLayout'
+
+export default {
+  name: 'LayoutRouter',
+  created () {
+
+    // Load initial layout. TODO - move this into vuex store?
+    this.activeLayoutComponent = this.layoutRouter(window.spaPayload)
+  },
+  data: function () {
+    return {
+      activeLayoutComponent: null // TODO - move this into vuex store?
+    }
+  },
+  computed: {},
+  methods: {
+    /**
+     * 
+     * Contains Layout template matching logic.
+     * 
+     * Match a given spa payload with a Vue layout component
+     * 
+     * @param {object} spaPayload - The handlebars context payload data.
+     * @returns {string} - Matched Layout component name.
+     */
+    layoutRouter (spaPayload) {
+      let nextLayoutComponent = null
+
+      // Match to correct layout template by querying for existence of "tertiary" property on spa payload object.
+
+      if (spaPayload.tertiary) {
+        nextLayoutComponent = 'TwoColumnLayout'
+      } else {
+        nextLayoutComponent = 'OneColumnLayout'
+      }
+
+      return nextLayoutComponent
+    },
+    getNextSpaPayload: async function getNextSpaPayload (uriId) {
+
+      const uriReqResult = await axios.get(`//${window.location.hostname}/_uris/${uriId}`)
+
+      const nextSpaPayloadResult = await axios.get(`//${uriReqResult.data}.json`)
+
+      return nextSpaPayloadResult.data
+
+    }
+  },
+  components: {
+    'OneColumnLayout': OneColumnLayout,
+    'TwoColumnLayout': TwoColumnLayout
+  },
+  watch: {
+    '$route': async function (to, from) {
+      
+      // Get SPA payload data for next path.
+      const uriId = btoa(window.location.hostname + to.path)
+      const spaPayload = await this.getNextSpaPayload(uriId)
+
+      // Load matched Layout Component.
+      this.activeLayoutComponent = this.layoutRouter(spaPayload)
+
+      // Commit next payload to store to kick off re-render.
+      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+
+    }
+  }
+}
+
+</script>

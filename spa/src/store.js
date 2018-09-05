@@ -13,7 +13,7 @@ export default new Vuex.Store({
     [mutationTypes.LOAD_HANDLEBARS]: (state, payload) => {
       state.handlebars = payload.handlebars
     },
-    [mutationTypes.LOAD_INITIAL_SPA_PAYLOAD]: (state, payload) => {
+    [mutationTypes.LOAD_SPA_PAYLOAD]: (state, payload) => {
       state.spaPayload = payload
     }
   },

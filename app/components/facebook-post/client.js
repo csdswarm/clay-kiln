@@ -11,10 +11,11 @@ const $visibility = require('../../services/client/visibility'),
 
   function Constructor(el) {
     this.visible = new $visibility.Visible(el, { shownThreshold: SHOWN_THRESHOLD });
-
     if (lazyLoadEmbeds) {
       this.hideContent(el);
       this.initializeVisible(el);
+    } else {
+      FB.XFBML.parse();
     }
   }
 
