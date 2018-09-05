@@ -35,7 +35,7 @@ module.exports.save = (ref, data, locals) => {
           primaryHeadline: item.overrideTitle || result.primaryHeadline,
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
-          canonicalUrl: result.url,
+          canonicalUrl: result.canonicalUrl,
           feedImgUrl: result.feedImgUrl
         });
 
@@ -63,6 +63,9 @@ module.exports.render = function (ref, data, locals) {
   // Always get 1 more than the fill to allow for removal of current page in results
   const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
   let cleanUrl;
+
+  // items are saved from form, articles are used on FE
+  data.articles = data.items;
 
   if (!data.tag || !locals) {
     return data;

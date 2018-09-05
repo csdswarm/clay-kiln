@@ -34,12 +34,6 @@ items:
         validate:
           max: 80
     -
-      prop: ignoreValidation
-      _label: Bypass URL Validation?
-      _has:
-        input: checkbox
-        help: Use this field if the destination of the URL entered is not a Clay page. If checked, Headline and/or Image override must be set manually.
-    -
       prop: urlIsValid
       _has:
         validate:
