@@ -31,18 +31,19 @@
 
 .layout--two-column .layout__content {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .layout--two-column .layout__content .content__main {
   order: 1;
 }
 
-.layout--two-column .layout__content .content__secondary {
+.layout--two-column .layout__content .content__sidebar {
   order: 2;
 }
 
-.layout--two-column .layout__content .content__sidebar {
+.layout--two-column .layout__content .content__secondary {
   order: 3;
 }
 
@@ -68,8 +69,7 @@
 @mixin default-screen {
   .layout--two-column {
     .layout__content {
-      .content__main,
-      .content__secondary {
+      .content__main {
         width: em(780);
         margin-right: em(20);
         .article__header {

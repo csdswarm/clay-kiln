@@ -249,9 +249,7 @@ content:
       - facebook-post
       - instagram-post
       - youtube
-      # - in-article-image-slideshow
-      # - related
-      # - package-list
+      - html-embed
       - brightcove
 feeds:
   _label: Include in These Feeds
