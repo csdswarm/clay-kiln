@@ -1,4 +1,4 @@
-<div data-uri="{{ default _ref _self }}" class="image {{ ./rendition }} {{if borderToggle 'image-borders'}} {{#unless imageLink}}image-enlarge{{/unless}}" itemscope itemtype="http://schema.org/ImageObject" data-editable="inlinestuff">
+<div data-uri="{{ default _ref _self }}" class="component component--image {{ ./rendition }} {{if borderToggle 'image-borders'}} {{#unless imageLink}}image-enlarge{{/unless}}" itemscope itemtype="http://schema.org/ImageObject" data-editable="inlinestuff">
     {{#if ratio}}
     {{! if ratio is available, set height of image }}
         <style>
@@ -19,7 +19,7 @@
       <figcaption itemprop="caption" class="image-figcaption">
         {{#if caption}}<span class="caption">{{{ caption }}}</span>{{/if}}
         {{#ifAll caption credit}}<span class="buffer"></span>{{/ifAll}}
-        {{#if credit}}<cite class="credit">{{ capitalizeAll (if imageType imageType else='Photo') }}: {{{ credit }}}</cite>{{/if}}
+        {{#if credit}}<cite class="credit">{{if imageType imageType else='Photo credit'}} {{{ credit }}}</cite>{{/if}}
       </figcaption>
     {{/ifAny}}
 

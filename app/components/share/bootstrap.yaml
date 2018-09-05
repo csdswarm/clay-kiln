@@ -6,7 +6,6 @@ _components:
     description: ''
     pinImage: ''
     emailPrefix: 'I saw this and thought you might be interested...'
-    orientation: 'horizontal'
     enabled:
       facebook: false
       twitter: false
@@ -15,5 +14,6 @@ _components:
       pinterest: false
       tumblr: false
       email: false
+      link: false
       print: false
-      comment: true
+      comment: false

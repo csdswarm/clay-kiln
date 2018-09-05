@@ -57,11 +57,15 @@ _components:
         headLayout:
           - _ref: /_components/web-player-head/instances/new
         top:
+          -
+            _ref: /_components/header/instances/default
         head: head
         main: main
         tertiary: tertiary
         secondary: secondary
         bottom:
+          -
+            _ref: /_components/web-player/instances/new
           -
             _ref: /_components/footer/instances/default
         kilnInternals:

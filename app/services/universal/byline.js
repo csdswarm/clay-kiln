@@ -41,14 +41,14 @@ function complexByline(opts) {
   let names;
 
   if (options.simpleList) {
-    return options.hideLinks ? formatSimpleByline(bylines) : socialsByline.formatSocialsByline(bylines, options);
+    return options.hideLinks ? formatSimpleByline(bylines) : socialsByline.formatNumAuthors(bylines, options);
   }
 
   return _.join(_.reduce(bylines, (acc, byline, idx) => {
     names = _.get(byline, 'names', []);
 
     if (names.length > 0) {
-      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix}</span> ${options.hideLinks ? formatSimpleByline(names) : socialsByline.formatSocialsByline(names, options)}`);
+      acc.push(`<span>${idx === 0 ? _.capitalize(byline.prefix) : byline.prefix} </span> ${options.hideLinks ? formatSimpleByline(names) : socialsByline.formatNumAuthors(names, options)}`);
     }
 
     return acc;
