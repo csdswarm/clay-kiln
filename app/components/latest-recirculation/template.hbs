@@ -1,14 +1,12 @@
 <section class="component component--latest-recirc {{#if (compare populateBy 'article type')}}component--{{articleType}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
   {{#ifAny articles.length @root.locals.edit}}
     <h2 class="latest-recirc__title">LATEST
-      <span class="title">
-      {{#if (compare populateBy 'article type')}}
-        &nbsp;in {{articleType}}
-      {{/if}}
-      {{#if (compare populateBy 'tag')}}
-        &nbsp;in {{tag}}
-      {{/if}}
-      </span>
+    {{#if (compare populateBy 'article type')}}
+      in <span class="title">{{articleType}}</span>
+    {{/if}}
+    {{#if (compare populateBy 'tag')}}
+      in <span class="title">{{tag}}</span>
+    {{/if}}
     </h2>
     <ul class="latest-recirc__links">
       {{#each articles as |article|}}

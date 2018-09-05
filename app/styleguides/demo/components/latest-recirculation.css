@@ -3,10 +3,9 @@
 @import "_global/colors";
 
 .component--latest-recirc {
-	height: em(465, 16);
+	position: relative;
 }
 .latest-recirc {
-	height: em(465, 16);
 	&__title {
 		@mixin latest-recirc-font1 $purple;
 		.component--entertainment & {
@@ -38,10 +37,10 @@
 	&__links {
 		width: 100%;
 		padding: em(20, 16) em(15, 16) em(15, 16) em(15, 16);
-		position: absolute;
+		position: relative;
 		z-index: 0;
 		@define-mixin latest-recirc-box $color {
-			outline: 1px solid $color;
+			outline: em(1,16) solid $color;
 		}
 		@mixin latest-recirc-box $purple;
 		.component--entertainment & {
