@@ -1,6 +1,12 @@
 _description: |
   A list of one or more related stories
 
+    * Maximum number of articles is 2
+
+    ** Can be any combination of manual selection and fill from a tag
+
+    * Set a fill if you prefer to automatically get articles from a specific tag
+
 items:
   _label: Items
   _has:
@@ -8,7 +14,7 @@ items:
     enforceMaxlength: true
     validate:
       required:
-        field: backfill
+        field: fill
         operator: falsy
       max: 2
     props:
@@ -38,8 +44,8 @@ items:
       _has:
         validate:
           required: true
-backfill:
-  _label: Backfill from tag
+fill:
+  _label: # of Articles to fill from a tag
   _has:
     input: select
     options:
@@ -54,11 +60,11 @@ tag:
     input: text
     validate:
       required:
-        field: backfill
+        field: fill
         operator: truthy
     help: Tag from which to pull articles
   _reveal:
-    field: backfill
+    field: fill
     operator: truthy
 articleType:
   _subscribe: articleType
@@ -67,9 +73,9 @@ _groups:
   inlineRelatedItems:
     fields:
     - items
-    - backfill
+    - fill
     - tag
     _placeholder:
-      ifEmpty: items.url and backfill
+      ifEmpty: items.url and fill
       height: 100px
       text: Related Story(s)

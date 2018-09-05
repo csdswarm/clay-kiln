@@ -86,6 +86,10 @@
       }
     }
   }
+
+  .kiln-placeholder {
+    order: 2;
+  }
 }
 
 @define-mixin themed-related $class, $color {
