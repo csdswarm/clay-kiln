@@ -17,8 +17,7 @@ module.exports = function attachSpaPayloadToWindow(context) {
   } else {
     payload = JSON.stringify(context);
   }
-
-  // @TODO: Undo once solution is found for import/export vs require bug in webpack
-  return payload;
+  
+  return `<script>window.spaPayload = ${payload}</script>`;
 
 }

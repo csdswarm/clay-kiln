@@ -87,13 +87,7 @@ function getDeps(editMode, scripts, assetPath) {
     scripts = glob.sync(path.join('public', 'js', '*.client.js'))
       .map(filepath => filepath.replace('public',''));
 
-    // Get the entryIds
-    let entryIds = scripts.map(publicPathToId);
-
-    // we always want to push this service into the id array
-    // so we get the dependencies resolved for the client
-    // @TODO: Remove once solution is found for import/export vs require bug in webpack
-    entryIds.push('handlebars-helpers.service');
+    const entryIds = scripts.map(publicPathToId);
 
     return _.flatten([
       'prelude',
