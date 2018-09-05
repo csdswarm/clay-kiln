@@ -253,6 +253,7 @@ content:
       - soundcloud
       - youtube
       - in-article-image-slideshow
+      - html-embed
       - related
       - package-list
       - brightcove
