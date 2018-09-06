@@ -1,0 +1,87 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--latest-recirc {
+	position: relative;
+}
+.latest-recirc {
+	&__title {
+		@mixin latest-recirc-font1 $purple;
+		.component--entertainment & {
+			@mixin latest-recirc-font1 $sunsetOrange;
+		}
+		.component--news & {
+			@mixin latest-recirc-font1 $lightningYellow;
+		}
+		.component--sports & {
+			@mixin latest-recirc-font1 $azureRadience;
+		}
+		.component--podcasts & {
+			@mixin latest-recirc-font1 $robinsEgg;
+		}
+		.component--tag & {
+			@mixin latest-recirc-font1 $purple;
+		}
+		left: em(15);
+		padding: 0 em(5);
+		top: em(-10.5);
+		background: $white;
+		z-index: 1;
+		display: inline-block;
+		position: absolute;
+		.title {
+			text-transform: uppercase;
+		}
+	}
+	&__links {
+		width: 100%;
+		padding: em(20) em(15) em(15) em(15);
+		position: relative;
+		z-index: 0;
+		@define-mixin latest-recirc-box $color {
+			outline: em(1,16) solid $color;
+		}
+		@mixin latest-recirc-box $purple;
+		.component--entertainment & {
+			@mixin latest-recirc-box $sunsetOrange;
+		}
+		.component--news & {
+			@mixin latest-recirc-box $lightningYellow;
+		}
+		.component--sports & {
+			@mixin latest-recirc-box $azureRadience;
+		}
+		.component--podcasts & {
+			@mixin latest-recirc-box $robinsEgg;
+		}
+		.component--tag & {
+			@mixin latest-recirc-box $purple;
+		}
+		li {
+			&:not(:last-of-type) {
+				margin-bottom: em(20);
+			}
+			height: em(70);
+			cursor: pointer;
+			a {
+				height: 100%;
+				display: inline-flex;
+				text-decoration: none;
+				text-transform: capitalize;
+				align-items: center;
+				.link__thumb {
+					width: em(70);
+					height: em(70);
+					margin-right: em(15);
+					background-size: cover;
+					background-position: center;
+				}
+				.link__headline {
+					@mixin latest-recirc-font2;
+					max-width: em(185, 14);
+				}
+			}
+		}
+	}
+}

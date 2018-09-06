@@ -62,7 +62,17 @@
 
     .content__sidebar {
       width: em(300);
+      visibility: hidden;
+      @mixin medium-screen {
+        display: none;
+      }
     }
+  }
+}
+
+.layout--two-column.kiln-edit-mode {
+  .content__sidebar {
+    visibility: visible;
   }
 }
 

@@ -1,0 +1,27 @@
+<section class="component component--latest-recirc {{#if (compare populateBy 'articleType')}}component--{{articleType}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
+  {{#ifAny articles.length @root.locals.edit}}
+    <h2 class="latest-recirc__title">LATEST
+    {{#if (compare populateBy 'articleType')}}
+      in <span class="title">{{articleType}}</span>
+    {{/if}}
+    {{#if (compare populateBy 'tag')}}
+      in <span class="title">{{tag}}</span>
+    {{/if}}
+    </h2>
+    <ul class="latest-recirc__links">
+      {{#each articles as |article|}}
+        <li>
+          <a href="{{ article.canonicalUrl }}"
+             data-track-type="article-link"
+             data-track-component-name="latest-recirculation"
+             data-track-page-uri="{{ article.pageUri }}"
+             data-track-headline="{{ article.primaryHeadline }}"
+             data-track-component-title="Latest Recirculation">
+            <div class="link__thumb" style="background-image:url({{ article.feedImgUrl }});"></div>
+            <span class="link__headline">{{{ article.primaryHeadline }}}</span>
+          </a>
+        </li>
+      {{/each}}
+    </ul>
+  {{/ifAny}}
+</section>

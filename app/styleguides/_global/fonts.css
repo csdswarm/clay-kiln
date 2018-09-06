@@ -158,6 +158,16 @@ em, i {
   @mixin font CircularStd-Medium, 14px, $purple, -.23px, 22px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||| Latest Recirculation Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin latest-recirc-font1 $color: $purple {
+  @mixin font CircularStd-Medium, 16px, $color, -.26px, 18px;
+}
+@define-mixin latest-recirc-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||| Inline-related Fonts Styleguide ||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/

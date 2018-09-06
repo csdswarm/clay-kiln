@@ -1,0 +1,5 @@
+_components:
+  latest-recirculation:
+    items: []
+    tag: ''
+    populateBy: articleType
