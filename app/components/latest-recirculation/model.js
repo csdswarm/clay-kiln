@@ -48,8 +48,7 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  // Always get 1 more than the backfill to allow for removal of current page in results
-  const query = queryService.newQueryWithCount(elasticIndex, (maxItems + 1), locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
   let cleanUrl;
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
