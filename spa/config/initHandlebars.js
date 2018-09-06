@@ -1,6 +1,6 @@
 /**
  *
- * This initializes handlebars with the helpers and partials required to use clay templates.
+ * This initializes handlebars with the helpers, partials, and SVG assets required to use clay templates.
  *
  */
 
@@ -28,5 +28,18 @@ morePartialsReq.keys().forEach(p => {
   const partialNameMatchResult = p.match(/^\.\/([a-z-]+)\/template\.(?:hbs|handlebars)$/)
   handlebars.registerPartial(partialNameMatchResult[1], morePartialsReq(p))
 })
+
+// Attach SVG asset dependencies.
+handlebars.svgAssets = {}
+const svgAssetsReq = require.context('../../app/components', true, /.svg$/)
+svgAssetsReq.keys().forEach(p => {
+  const mappedPath = p.replace('./', 'components/') // Translate webpack require path to path actually expected by "read" helper used in clay templates.
+  handlebars.svgAssets[mappedPath] = svgAssetsReq(p)
+})
+
+// Define clay handlebars "read" helper to reference attached SVGs.
+handlebars.registerHelper('read', function (svgPath) {
+  return this.svgAssets[svgPath]
+}.bind(handlebars))
 
 export { handlebars }

@@ -6,6 +6,9 @@
  *
  */
 
+// Require Dependencies
+const path = require('path')
+
 module.exports = (api, projectOptions) => {
 
   // Add handlebars partials loading support.
@@ -26,28 +29,26 @@ module.exports = (api, projectOptions) => {
     webpackConfigChain.module
       .rule('eslint')
       .include
-      .add('/spa')
+      .add(path.resolve(__dirname, '../../../spa'))
       .end()
   })
 
   // Scope Vue JS loaders to /spa directory.
   api.chainWebpack(webpackConfigChain => {
-    // Add the ability to require handlebars partials.
     webpackConfigChain.module
       .rule('js')
       .include
-      .add('/spa')
+      .add(path.resolve(__dirname, '../../../spa'))
       .end()
   })
 
   // Scope Clay JS loaders to /app directory.
   api.chainWebpack(webpackConfigChain => {
-    // Add the ability to require handlebars partials.
     webpackConfigChain.module
-      .rule('clayjs')
+      .rule('clayjs') // Tag rule with name 'clayjs' for easy future configuration.
       .test(/\.js$/)
       .include
-      .add('/app')
+      .add(path.resolve(__dirname, '../../../app'))
       .end()
       .exclude
       .add((filepath) => {
@@ -55,10 +56,37 @@ module.exports = (api, projectOptions) => {
         return /node_modules/.test(filepath)
       })
       .end()
-      .use('clayjs')
+      .use('clayjs') // Tag the loader with the name 'clayjs' for easy future configuration.
       .loader('babel-loader')
       .options({
         presets: ['@babel/preset-env']
       })
+  })
+
+  // Scope Vue SVG loaders to /spa directory.
+  api.chainWebpack(webpackConfigChain => {
+    webpackConfigChain.module
+      .rule('svg')
+      .include
+      .add(path.resolve(__dirname, '../../../spa'))
+      .end()
+  })
+
+  // Scope Clay SVG loaders to /app directory.
+  api.chainWebpack(webpackConfigChain => {
+    webpackConfigChain.module
+      .rule('claysvg') // Tag rule with name 'claysvg' for easy future configuration.
+      .test(/\.svg$/)
+      .include
+      .add(path.resolve(__dirname, '../../../app'))
+      .end()
+      .exclude
+      .add((filepath) => {
+        // Don't apply to anything in node_modules.
+        return /node_modules/.test(filepath)
+      })
+      .end()
+      .use('claysvg') // Tag the loader with the name 'claysvg' for easy future configuration.
+      .loader('raw-loader')
   })
 }
