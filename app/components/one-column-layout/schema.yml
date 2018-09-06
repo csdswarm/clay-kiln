@@ -48,8 +48,8 @@ kilnInternals:
     internals: true
     include:
       - clay-kiln
-
-webPlayer:
+static:
   _componentList:
     include:
       - web-player
+      - chartbeat
