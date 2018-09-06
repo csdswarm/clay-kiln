@@ -167,3 +167,19 @@ em, i {
 @define-mixin latest-recirc-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Inline-related Fonts Styleguide ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin inline-related-font1 {
+  @mixin font CircularStd-Medium, 16px, $black, -.26px, 20px;
+}
+@define-mixin inline-related-font2 {
+@mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin inline-related-font3 {
+@mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin inline-related-font4 {
+@mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}

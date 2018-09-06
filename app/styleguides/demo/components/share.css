@@ -2,7 +2,6 @@
 @import "_global/colors";
 
 .component--share {
-  margin-top: em(30);
   display: flex;
   flex-direction: column;
 
@@ -88,10 +87,7 @@
 
 @mixin large-screen {
   .component--share {
-    /* Clear top-margin, float right, and change list to horizontal */
-    margin-top: 0;
-    float: right;
-    flex-direction: row;
+    flex-direction: row; /* Change list to horizontal */
   }
 
   .share-link {

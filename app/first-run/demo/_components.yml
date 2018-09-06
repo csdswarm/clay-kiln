@@ -278,6 +278,16 @@ _components:
       new:
         url: ''
 
+  youtube-player-head:
+    instances:
+      new:
+        allow: true
+
+  html-embed:
+    instances:
+      new:
+        text: ''
+
   youtube:
     instances:
       new:
@@ -431,6 +441,13 @@ _components:
     instances:
       new:
         items: []
+
+  inline-related:
+    instances:
+      new:
+        items: []
+        fill: 0
+        tag: ''
 
   general-content:
     instances:

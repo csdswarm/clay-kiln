@@ -1,0 +1,12 @@
+_description: |
+  Generic HTML component
+
+text:
+  _label: HTML
+  _placeholder:
+    height: 30px
+    text: HTML Embed
+  _has:
+    input: text
+    type: multi-line
+    rows: 5
