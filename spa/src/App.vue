@@ -8,6 +8,7 @@
 
 import * as mutationTypes from '@/vuex/mutationTypes'
 import { handlebars } from '../config/initHandlebars'
+import { Base64 } from 'js-base64'
 
 export default {
   name: 'App',
@@ -15,7 +16,12 @@ export default {
 
     // Load SPA Payload
     if (window.spaPayload) {
-      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, window.spaPayload)
+
+      // Decode payload from base64 into JSON and parse for loading into store.
+      const jsonPayload = Base64.decode(window.spaPayload)
+      const payload = JSON.parse(jsonPayload)
+
+      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, payload)
     } else {
       throw new Error('SPA Payload failed to load.')
     }
