@@ -1,0 +1,109 @@
+@import "_global/fonts";
+@import "_global/colors";
+@import "_global/mixins";
+
+.component--related {
+  border-top: em(5) solid $purple;
+  padding-top: em(15);
+  margin-bottom: em(40);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+
+  h2 {
+    @mixin inline-related-font1;
+    text-transform: uppercase;
+    margin-bottom: em(10);
+    width: 100%;
+    order: 1;
+  }
+
+  .related__item {
+    @mixin inline-related-font4;
+    order: 3;
+    flex: 1;
+  }
+
+  .related__link {
+    text-decoration: none;
+    display: inline-block;
+
+    &.related__link--main {
+      @mixin inline-related-font2;
+
+      @mixin medium-small-screen {
+        @mixin inline-related-font3;
+      }
+    }
+
+    &.related__link--secondary {
+      @mixin inline-related-font4;
+      margin-top: em(6, 14);
+    }
+  }
+
+  .related__bullet {
+    width: em(8);
+    height: em(8);
+    margin-right: em(10);
+    display: inline-block;
+    background-color: $purple;
+  }
+
+  .related__item--image {
+    order: 2;
+    flex: 0 0 widthOnGrid(3, 2);
+    margin-right: em(15);
+
+    &.related__item--mobile {
+      display: none;
+    }
+    &.related__item--non-mobile {
+      display: block;
+    }
+
+    img {
+      width: widthOnGrid(3, 2);
+    }
+
+    @mixin medium-small-screen {
+      flex: 100%;
+      margin: em(17) 0 em(5) 0;
+      &.related__item--mobile {
+        display: block;
+      }
+      &.related__item--non-mobile {
+        display: none;
+      }
+
+      .related__link {
+        width: 100%;
+      }
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  .kiln-placeholder {
+    order: 2;
+  }
+}
+
+@define-mixin themed-related $class, $color {
+  .component--related.component--$class {
+    border-color: $color;
+
+    .related__item {
+      .related__bullet {
+        background-color: $color;
+      }
+    }
+  }
+}
+@mixin themed-related entertainment, $sunsetOrange;
+@mixin themed-related sports, $azureRadience;
+@mixin themed-related news, $lightningYellow;
+@mixin themed-related podcasts, $robinsEgg;

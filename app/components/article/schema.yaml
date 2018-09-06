@@ -251,6 +251,7 @@ content:
       - youtube
       - html-embed
       - brightcove
+      - inline-related
 feeds:
   _label: Include in These Feeds
   _has:

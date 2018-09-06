@@ -32,3 +32,4 @@ module.exports.save = function (uri, data) {
   data.featureRubric = getRubric(data.items); // also grab the feature rubric
   return data;
 };
+module.exports.clean = clean;

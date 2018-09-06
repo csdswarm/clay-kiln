@@ -447,6 +447,13 @@ _components:
       new:
         items: []
 
+  inline-related:
+    instances:
+      new:
+        items: []
+        fill: 0
+        tag: ''
+
   general-content:
     instances:
       new:
