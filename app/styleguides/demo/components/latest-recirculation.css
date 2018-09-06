@@ -4,6 +4,7 @@
 
 .component--latest-recirc {
 	position: relative;
+	margin-bottom: em(50);
 }
 .latest-recirc {
 	&__title {
