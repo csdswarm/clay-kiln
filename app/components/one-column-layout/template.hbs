@@ -19,21 +19,22 @@
     <!-- data-editable-end -->
 
     <!-- Attach the context object to window so SPA has access to data on the frontend. -->
-    {{{ attachSpaPayloadToWindow }}}
+    <script>window.spaPayload = {{{ attachSpaPayloadToWindow }}};</script>
     <script src="/dist/app.js"></script>
 
   </head>
-  <body class="layout layout--one-column">
+  <body>
     <div id="vue-app-mount-point">
-      <div id="vue-wrapper">
+      <section class="layout layout--one-column">
         <section class="layout__top" data-editable="top">{{> component-list top }}</section>
         <section class="layout__content">
           <section class="content__main" data-editable="main">{{> component-list main }}</section>
           <section class="content__secondary" data-editable="secondary">{{> component-list secondary }}</section>
         </section>
         <footer class="layout__bottom" data-editable="bottom">{{> component-list bottom }}</footer>
-        <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
-      </div>
+      </section>
     </div>
+    <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
+    <div class="web-player" data-editable="webPlayer">{{> component-list webPlayer }}</div>
   </body>
 </html>
