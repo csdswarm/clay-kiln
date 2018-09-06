@@ -40,6 +40,7 @@
 }
 .article__body {
   .body__header {
+    margin-bottom: em(50);
     .lead {
       width: 100%;
       display: flex;
@@ -64,12 +65,15 @@
     @mixin inline-block;
     width: em(widthOnGrid(2, 1));
     margin-right: em(widthOnGrid(0, 1));
-    margin-top: em(50);
+    .info--left-top {
+      margin-bottom: em(40);
+    }
     .info__by-authors {
       @mixin article-font6;
       display: inline-flex;
       flex-wrap: wrap;
       white-space: pre-wrap;
+      margin-bottom: em(15, 14);
       .author {
         @mixin article-font5;
         display: inline-flex;
@@ -101,7 +105,6 @@
     .info__timestamp {
       @mixin article-font9;
       display: block;
-      margin-top: em(15, 12);
       .timestamp__update {}
       .timestamp__date {
         &.timestamp__date--small {
@@ -118,7 +121,6 @@
   }
   .body__content {
     @mixin inline-block;
-    margin-top: em(50);
     width: calc(100% - em(widthOnGrid(2, 2)));
   }
 
@@ -129,9 +131,6 @@
     .body__content {
       width: calc(100% - em(widthOnGrid(2, 2)));
       float: right;
-    }
-    .body__info {
-      margin-top: 0;
     }
   }
 }
@@ -146,16 +145,20 @@
     .body__content {
       width: 100%;
     }
+    .body__header {
+      margin-bottom: em(20);
+    }
     .body__info {
-      margin-top: em(20);
+      margin-bottom: em(40);
       margin-right: 0;
       display: flex;
       justify-content: space-between;
+      .info__by-authors {
+        margin-bottom: em(10, 14);
+      }
       .info--left-top {
         margin-right: em(20);
-      }
-      .info__timestamp {
-        margin-top: 0;
+        margin-bottom: 0;
       }
     }
   }
@@ -165,6 +168,7 @@
     margin-bottom: em(25);
     .header__primary {
       @mixin article-font2;
+      margin-bottom: em(15, 35);
     }
     .header__secondary {
       @mixin article-font4;
@@ -174,7 +178,7 @@
   .article__body[data-lead-type=instagram],
   .article__body[data-lead-orientation=vertical] {
     .body__info {
-      margin-top: em(30)
+      margin-bottom: em(50);
     }
   }
 }
@@ -184,7 +188,10 @@
   .article__body[data-lead-orientation=vertical] {
     .body__header {
       width: calc(100% + em(40));
-      margin: 0 em(-20);
+      margin: 0 em(-20) em(30);
+    }
+    .body__info {
+      margin-bottom: em(40);
     }
   }
 }
@@ -194,12 +201,12 @@
   .article__body[data-lead-orientation=vertical] {
     .body__info {
       flex-direction: column;
-      .info--right-bottom {
-        margin-top: em(30);
+      .info--left-top {
+        margin-bottom: em(30);
       }
     }
-    .body__content {
-      margin-top: em(30);
+    .body__info {
+      margin-bottom: em(30);
     }
   }
 }
@@ -347,6 +354,7 @@
 }
 
 .article__breadcrumb {
+  margin-bottom: em(10);
   .breadcrumb__link {
     display: inline-block;
     @mixin article-font12;
