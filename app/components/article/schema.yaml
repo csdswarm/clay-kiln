@@ -243,16 +243,13 @@ content:
     include:
       - paragraph
       - subheader
-      - blockquote
-      - pull-quote
+      # - blockquote
       - image
       - tweet
       - facebook-post
       - instagram-post
-      - spotify
-      - soundcloud
       - youtube
-      - in-article-image-slideshow
+      - html-embed
       - brightcove
       - inline-related
 feeds:

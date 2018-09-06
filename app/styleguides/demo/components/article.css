@@ -45,9 +45,13 @@
       display: flex;
       justify-content: center;
       .component--brightcove {
-        width: auto;
+        width: 100%;
+        height: auto;
       }
-      .image, .instagram-post, .tweet, .facebook-post {
+      .component--image,
+      .component--instagram-post,
+      .component--tweet,
+      .component--facebook-post {
         margin: 0;
         img {
           width: 100%;
@@ -96,7 +100,7 @@
     }
     .info__timestamp {
       @mixin article-font9;
-      display: inline-block;
+      display: block;
       margin-top: em(15, 12);
       .timestamp__update {}
       .timestamp__date {
@@ -151,7 +155,7 @@
         margin-right: em(20);
       }
       .info__timestamp {
-        margin-top: em(10, 12);
+        margin-top: 0;
       }
     }
   }

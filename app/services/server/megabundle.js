@@ -81,8 +81,12 @@ function getDeps(editMode, scripts, assetPath) {
       'kiln-plugins',
       'models',
       'postlude'
-    ]).map(id => idToPublicPath(id, assetPath));;
+    ]).map(id => idToPublicPath(id, assetPath));
   } else {
+    // Get all scripts
+    scripts = glob.sync(path.join('public', 'js', '*.client.js'))
+      .map(filepath => filepath.replace('public',''));
+
     const entryIds = scripts.map(publicPathToId);
 
     return _.flatten([

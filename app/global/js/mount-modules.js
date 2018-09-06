@@ -17,10 +17,12 @@ function mountModules() {
     // (e.g. Dollar Slice registration)
     .forEach(moduleId => window.require(moduleId));
 
-  // Mount components
-  Object.keys(modules)
-    .filter(moduleId => _.endsWith(moduleId, '.client'))
-    .forEach(mountComponentModule);
+  document.addEventListener('mount', () => {
+    // Mount components
+    Object.keys(modules)
+      .filter(moduleId => _.endsWith(moduleId, '.client'))
+      .forEach(mountComponentModule);
+  });
 }
 
 /**
