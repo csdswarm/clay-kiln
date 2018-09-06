@@ -4,20 +4,25 @@
  * 
  */
 
- 'use strict';
+'use strict';
+
+const Base64 = require('js-base64').Base64;
 
 module.exports = function attachSpaPayloadToWindow(context) {
 
-  let payload = null;
+  let jsonPayload = null;
 
   // If no context is provided to helper, it defaults to context pointing towards the full helper object.
   // This can be determined by the name property.
   if (context.name && context.name == 'attachSpaPayloadToWindow') {
-    payload = JSON.stringify(context.data.root);
+    jsonPayload = JSON.stringify(context.data.root);
   } else {
-    payload = JSON.stringify(context);
+    jsonPayload = JSON.stringify(context);
   }
   
-  return payload;
+  // Base64 encode payload to avoid XSS issues related to inline JS.
+  const base64Payload = Base64.encode(jsonPayload);
+
+  return base64Payload;
 
 }

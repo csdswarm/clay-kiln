@@ -20,7 +20,7 @@
 
     <!-- Attach the context object to window so SPA has access to data on the frontend. -->
     {{#unless @root.locals.edit}}
-      <script>window.spaPayload = {{{ attachSpaPayloadToWindow }}};</script>
+      <script>window.spaPayload = '{{{ attachSpaPayloadToWindow }}}';</script>
       <script src="/dist/app.js"></script>
     {{/unless}}
 
