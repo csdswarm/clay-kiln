@@ -73,6 +73,9 @@ export default {
       // Commit next payload to store to kick off re-render.
       this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
+      // Call global pageView event: THIS MUST BE LAST IN FUNCTION AFTER META DATA UPDATES
+      let event = new CustomEvent(`pageView`)
+      document.dispatchEvent(event)
     }
   }
 }
