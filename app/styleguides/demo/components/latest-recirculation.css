@@ -23,9 +23,9 @@
 		.component--tag & {
 			@mixin latest-recirc-font1 $purple;
 		}
-		left: em(15, 16);
-		padding: 0 em(5, 16);
-		top: em(-10.5, 16);
+		left: em(15);
+		padding: 0 em(5);
+		top: em(-10.5);
 		background: $white;
 		z-index: 1;
 		display: inline-block;
@@ -36,7 +36,7 @@
 	}
 	&__links {
 		width: 100%;
-		padding: em(20, 16) em(15, 16) em(15, 16) em(15, 16);
+		padding: em(20) em(15) em(15) em(15);
 		position: relative;
 		z-index: 0;
 		@define-mixin latest-recirc-box $color {
@@ -60,9 +60,9 @@
 		}
 		li {
 			&:not(:last-of-type) {
-				margin-bottom: em(20, 16);
+				margin-bottom: em(20);
 			}
-			height: em(70, 16);
+			height: em(70);
 			cursor: pointer;
 			a {
 				height: 100%;
@@ -71,9 +71,9 @@
 				text-transform: capitalize;
 				align-items: center;
 				.link__thumb {
-					width: em(70, 16);
-					height: em(70, 16);
-					margin-right: em(15, 16);
+					width: em(70);
+					height: em(70);
+					margin-right: em(15);
 					background-size: cover;
 					background-position: center;
 				}
