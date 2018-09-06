@@ -1,3 +1,4 @@
+{{#unless @root.locals.edit}}
 <link rel="stylesheet" type="text/css" href="{{@root.locals.site.webPlayerHost}}/radio-player.min.css"></link>
 <script src="{{@root.locals.site.webPlayerHost}}/radio-player.min.js"></script>
 
@@ -8,4 +9,4 @@
     googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
     googletag.pubads().enableSingleRequest();
     googletag.enableServices();
-  });</script>
+  });</script>  {{/unless}}
