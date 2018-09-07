@@ -11,6 +11,6 @@ function repositionRightRail() {
 	sidebar.style.visibility = "visible"
 }
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('vueLayoutUpdated', function(){
 	repositionRightRail()
 }, false)

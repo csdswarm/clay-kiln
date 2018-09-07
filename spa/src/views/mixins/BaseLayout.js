@@ -7,6 +7,7 @@
 import URL from 'url-parse'
 import VueTranspiler from '@/lib/VueTranspiler'
 const vueTranspiler = new VueTranspiler()
+const vueLayoutUpdated = new Event('vueLayoutUpdated')
 
 export default {
   data: function () {
@@ -56,6 +57,7 @@ export default {
      * Handle any logic required to get a new vue render to function properly
      */
     onLayoutUpdate: function() {
+      document.dispatchEvent(vueLayoutUpdated)
       if (this.setupCalled) {
         // Don't call setup as it's already been run in another call
         return
