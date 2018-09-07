@@ -19,9 +19,9 @@ export default {
 
       // Decode payload from base64 into JSON and parse for loading into store.
       const jsonPayload = Base64.decode(window.spaPayload)
-      const payload = JSON.parse(jsonPayload)
+      window.spaPayload = JSON.parse(jsonPayload)
 
-      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, payload)
+      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, window.spaPayload)
     } else {
       throw new Error('SPA Payload failed to load.')
     }

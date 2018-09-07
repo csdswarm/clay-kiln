@@ -15,6 +15,7 @@ export default {
   created () {
 
     // Load initial layout. TODO - move this into vuex store?
+    console.log("initial layout payload - ", window.spaPayload);
     this.activeLayoutComponent = this.layoutRouter(window.spaPayload)
   },
   data: function () {
@@ -25,11 +26,11 @@ export default {
   computed: {},
   methods: {
     /**
-     * 
+     *
      * Contains Layout template matching logic.
-     * 
+     *
      * Match a given spa payload with a Vue layout component
-     * 
+     *
      * @param {object} spaPayload - The handlebars context payload data.
      * @returns {string} - Matched Layout component name.
      */
@@ -39,8 +40,10 @@ export default {
       // Match to correct layout template by querying for existence of "tertiary" property on spa payload object.
 
       if (spaPayload.tertiary) {
+        console.log("two col");
         nextLayoutComponent = 'TwoColumnLayout'
       } else {
+        console.log("one col");
         nextLayoutComponent = 'OneColumnLayout'
       }
 
@@ -62,12 +65,13 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
-      
+
       // Get SPA payload data for next path.
       const uriId = btoa(window.location.hostname + to.path)
       const spaPayload = await this.getNextSpaPayload(uriId)
 
       // Load matched Layout Component.
+      console.log("load layout payload - ", spaPayload.tertiary);
       this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
       // Commit next payload to store to kick off re-render.
