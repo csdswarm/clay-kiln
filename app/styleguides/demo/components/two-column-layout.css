@@ -70,7 +70,7 @@
   }
 }
 
-.layout--two-column.kiln-edit-mode {
+.kiln-edit-mode .layout--two-column {
   .content__sidebar {
     visibility: visible;
   }
