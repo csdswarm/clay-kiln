@@ -13,23 +13,22 @@ import TwoColumnLayout from '@/views/TwoColumnLayout'
 export default {
   name: 'LayoutRouter',
   created () {
-
-    // Load initial layout. TODO - move this into vuex store?
-    this.activeLayoutComponent = this.layoutRouter(window.spaPayload)
+    // Load initial layout.
+    this.activeLayoutComponent = this.layoutRouter(this.$store.state.spaPayload)
   },
   data: function () {
     return {
-      activeLayoutComponent: null // TODO - move this into vuex store?
+      activeLayoutComponent: null
     }
   },
   computed: {},
   methods: {
     /**
-     * 
+     *
      * Contains Layout template matching logic.
-     * 
+     *
      * Match a given spa payload with a Vue layout component
-     * 
+     *
      * @param {object} spaPayload - The handlebars context payload data.
      * @returns {string} - Matched Layout component name.
      */
@@ -62,7 +61,7 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
-      
+
       // Get SPA payload data for next path.
       const uriId = btoa(window.location.hostname + to.path)
       const spaPayload = await this.getNextSpaPayload(uriId)
