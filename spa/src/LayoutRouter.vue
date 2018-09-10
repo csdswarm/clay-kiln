@@ -13,14 +13,12 @@ import TwoColumnLayout from '@/views/TwoColumnLayout'
 export default {
   name: 'LayoutRouter',
   created () {
-
-    // Load initial layout. TODO - move this into vuex store?
-    console.log("initial layout payload - ", window.spaPayload);
-    this.activeLayoutComponent = this.layoutRouter(window.spaPayload)
+    // Load initial layout.
+    this.activeLayoutComponent = this.layoutRouter(this.$store.state.spaPayload)
   },
   data: function () {
     return {
-      activeLayoutComponent: null // TODO - move this into vuex store?
+      activeLayoutComponent: null
     }
   },
   computed: {},
@@ -40,10 +38,8 @@ export default {
       // Match to correct layout template by querying for existence of "tertiary" property on spa payload object.
 
       if (spaPayload.tertiary) {
-        console.log("two col");
         nextLayoutComponent = 'TwoColumnLayout'
       } else {
-        console.log("one col");
         nextLayoutComponent = 'OneColumnLayout'
       }
 
@@ -71,7 +67,6 @@ export default {
       const spaPayload = await this.getNextSpaPayload(uriId)
 
       // Load matched Layout Component.
-      console.log("load layout payload - ", spaPayload.tertiary);
       this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
       // Commit next payload to store to kick off re-render.
