@@ -7,13 +7,9 @@
 import URL from 'url-parse'
 import VueTranspiler from '@/lib/VueTranspiler'
 const vueTranspiler = new VueTranspiler()
+import * as mutationTypes from '../../vuex/mutationTypes'
 
 export default {
-  data: function () {
-    return {
-      setupCalled: false
-    }
-  },
   mounted () {
     this.onLayoutUpdate()
   },
@@ -56,11 +52,11 @@ export default {
      * Handle any logic required to get a new vue render to function properly
      */
     onLayoutUpdate: function() {
-      if (this.setupCalled) {
+      if (this.$store.state.setupRan) {
         // Don't call setup as it's already been run in another call
         return
       } else {
-        this.setupCalled = true
+        this.$store.commit(mutationTypes.FLAG_SETUP_RAN, true);
       }
 
       // Attach vue router listener on SPA links.
@@ -76,7 +72,7 @@ export default {
      * Handle any logic required to get a new vue render to function properly
      */
     onLayoutDestroy: function() {
-      this.setupCalled = false;
+      this.$store.commit(mutationTypes.FLAG_SETUP_RAN, false);
 
       // Call global dismount event
       let event = new CustomEvent(`dismount`)
