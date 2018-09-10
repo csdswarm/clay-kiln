@@ -102,6 +102,9 @@
         display: inline-flex;
       }
     }
+    .info__from-station {
+      @mixin article-font5;
+    }
     .info__timestamp {
       @mixin article-font9;
       display: block;

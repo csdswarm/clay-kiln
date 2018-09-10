@@ -57,6 +57,10 @@
           {{/each}}
         </span>
 
+        <span class="info__from-station" data-editable="stationSource">
+          <a href="{{ stationURL }}">{{ stationTitle }}</a>
+        </span>
+
         {{! date and time }}
         <time class="info__timestamp" datetime="{{ date }}" itemprop="datePublished" data-editable="publishedDate">
           {{#if date}}
@@ -77,8 +81,8 @@
         {{! Side Share }}
         {{> share sideShare }}
       </div>
-    </div>{{!--
-    --}}<div class="body__content" data-editable="content" itemprop="articleBody">
+    </div>
+    <div class="body__content" data-editable="content" itemprop="articleBody">
       {{! don't display generated annotatedTextAria in edit mode. Replace all ad components with ad-dummies }}
       {{> component-list content }}
 
