@@ -51,6 +51,8 @@ export default {
 
       const nextSpaPayloadResult = await axios.get(`//${uriReqResult.data}.json`)
 
+      nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals;
+
       return nextSpaPayloadResult.data
 
     }

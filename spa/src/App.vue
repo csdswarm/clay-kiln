@@ -21,6 +21,7 @@ export default {
       const jsonPayload = Base64.decode(window.spaPayload)
       const payload = JSON.parse(jsonPayload)
 
+      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD_LOCALS, payload.locals)
       this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, payload)
     } else {
       throw new Error('SPA Payload failed to load.')
