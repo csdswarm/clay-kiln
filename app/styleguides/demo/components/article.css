@@ -68,12 +68,14 @@
     .info--left-top {
       margin-bottom: em(40);
     }
+    .info__bylines {
+      margin-bottom: em(15);
+    }
     .info__by-authors {
       @mixin article-font6;
       display: inline-flex;
       flex-wrap: wrap;
       white-space: pre-wrap;
-      margin-bottom: em(15, 14);
       .author {
         @mixin article-font5;
         display: inline-flex;
@@ -156,8 +158,8 @@
       margin-right: 0;
       display: flex;
       justify-content: space-between;
-      .info__by-authors {
-        margin-bottom: em(10, 14);
+      .info__bylines {
+        margin-bottom: em(10);
       }
       .info--left-top {
         margin-right: em(20);

@@ -48,18 +48,20 @@
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
-        <span data-editable="bylines" class="info__by-authors">
-          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
-          {{#each byline}}
-            {{#each sources as |source|}}<span class="source">, {{source.text}}</span>{{/each}}
-          {{/each}}
-          {{#if stationTitle}}<span>,</span>{{/if}}
-        </span>
+        <div class="info__bylines">
+          <div data-editable="bylines" class="info__by-authors">
+            {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
+            {{#each byline}}
+              {{#each sources as |source|}}<span class="source">, {{source.text}}</span>{{/each}}
+            {{/each}}
+            {{#if stationTitle}}<span>,</span>{{/if}}
+          </div>
 
-        <div class="info__from-station" data-editable="stationSource">
-          {{#ifAll stationTitle stationURL}}<a href="{{ stationURL }}">{{ stationTitle }}</a>
-          {{else if stationTitle}}{{ stationTitle }}
-          {{/ifAll}}
+          <div class="info__from-station" data-editable="stationSource">
+            {{#ifAll stationTitle stationURL}}<a href="{{ stationURL }}">{{ stationTitle }}</a>
+            {{else if stationTitle}}{{ stationTitle }}
+            {{/ifAll}}
+          </div>
         </div>
 
         {{! date and time }}
