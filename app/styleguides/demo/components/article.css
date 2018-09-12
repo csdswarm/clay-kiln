@@ -106,6 +106,21 @@
     }
     .info__from-station {
       @mixin article-font5;
+      display: inline-flex;
+      flex-wrap: wrap;
+      @define-mixin station-source-color $articleType, $color {
+        .component--article[data-article-type=$articleType] & a {
+          color: $color;
+        }
+      }
+      @mixin station-source-color entertainment, $sunsetOrange;
+      @mixin station-source-color news, $lightningYellow;
+      @mixin station-source-color sports, $azureRadience;
+      @mixin station-source-color podcasts, $robinsEgg;
+      a {
+        text-decoration: none;
+        white-space: nowrap;
+      }
     }
     .info__timestamp {
       @mixin article-font9;

@@ -180,7 +180,6 @@ sources:
   _publish: sources
   _has:
     help: An Array of Objects containing sources names for search.
-
 stationTitle:
   _label: Station Title
   _has:
@@ -191,7 +190,6 @@ stationURL:
   _has:
     input: text
     help: URL of the station
-
 hasSecondaryBylines:
   _label: Use Secondary Bylines
   _has: checkbox
