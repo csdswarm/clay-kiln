@@ -244,6 +244,16 @@ function getPublishedData(uri, data, locals) {
 }
 
 /**
+ * determine if user has manually updated the slug on initial save
+ * @param  {object} data
+ * @param  {object|null} prevData
+ * @return {Boolean}
+ */
+function initialManualSlug(data, prevData) {
+  return !prevData ? data.slug !== '' : false;
+}
+
+/**
  * determine if user has manually updated the slug
  * note: manually removing the slug (setting it to emptystring)
  * is still considered manually updating the slug
@@ -297,7 +307,7 @@ function generateSlug(data) {
  * @param  {object} publishedData
  */
 function setSlugAndLock(data, prevData, publishedData) {
-  if (manualSlugUpdate(data, prevData)) {
+  if (initialManualSlug(data, prevData) || manualSlugUpdate(data, prevData)) {
     // if you manually updated the slug, sanitize and update it and lock the slug
     data.slug = sanitize.cleanSlug(data.slug);
     data.slugLock = true;
