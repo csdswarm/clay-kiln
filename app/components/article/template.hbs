@@ -48,7 +48,7 @@
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
-        <div data-editable="bylines" class="info__by-authors{{#unless stationTitle}} info--bylines-margin{{/unless}}">
+        <div data-editable="bylines" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
           {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
           {{#each byline}}
             {{#each sources as |source|}}

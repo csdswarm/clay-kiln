@@ -68,10 +68,6 @@
     .info--left-top {
       margin-bottom: em(40);
     }
-    .info--bylines-margin,
-    .info__from-station {
-      margin-bottom: em(15, 14);
-    }
     .info__by-authors {
       @mixin article-font6;
       display: inline-flex;
@@ -105,10 +101,14 @@
         display: inline-flex;
       }
     }
+    .info__by-authors--no-station {
+      margin-bottom: em(15, 14);
+    }
     .info__from-station {
       @mixin article-font5;
       display: inline-flex;
       flex-wrap: wrap;
+      margin-bottom: em(15, 14);
       @define-mixin station-source-color $articleType, $color {
         .component--article[data-article-type=$articleType] & a {
           color: $color;
@@ -174,7 +174,7 @@
       margin-right: 0;
       display: flex;
       justify-content: space-between;
-      .info--bylines-margin,
+      .info__by-authors--no-station,
       .info__from-station {
         margin-bottom: em(10, 14);
       }
