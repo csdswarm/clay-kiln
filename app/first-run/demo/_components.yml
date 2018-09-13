@@ -22,6 +22,11 @@ _components:
       general:
         description: ''
 
+  meta-url:
+    instances:
+      general:
+        url: ''
+
   paragraph:
     instances:
       new:

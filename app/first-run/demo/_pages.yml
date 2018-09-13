@@ -5,6 +5,7 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
     main:
       - /_components/article/instances/new
     layout: /_components/one-column-layout/instances/general
@@ -13,6 +14,7 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
     main:
       - /_components/article/instances/new
     tertiary:
