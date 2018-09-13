@@ -68,8 +68,9 @@
     .info--left-top {
       margin-bottom: em(40);
     }
-    .info__bylines {
-      margin-bottom: em(15);
+    .info--bylines-margin,
+    .info__from-station {
+      margin-bottom: em(15, 14);
     }
     .info__by-authors {
       @mixin article-font6;
@@ -173,8 +174,9 @@
       margin-right: 0;
       display: flex;
       justify-content: space-between;
-      .info__bylines {
-        margin-bottom: em(10);
+      .info--bylines-margin,
+      .info__from-station {
+        margin-bottom: em(10, 14);
       }
       .info--left-top {
         margin-right: em(20);
