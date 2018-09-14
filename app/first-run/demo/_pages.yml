@@ -16,7 +16,9 @@ _pages:
     main:
       - /_components/article/instances/new
     tertiary:
+      - /_components/google-ad-manager-slot/instances/default
       - /_components/latest-recirculation/instances/new
+      - /_components/google-ad-manager-slot/instances/default
     layout: /_components/two-column-layout/instances/article
   # Index Page
   index:

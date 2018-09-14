@@ -311,10 +311,20 @@ _components:
 
   web-player:
     instances:
-      default:
+      new:
         allowed: true
 
   web-player-head:
+    instances:
+      default:
+        allowed: true
+
+  google-ad-manager-slot:
+    instances:
+      default:
+        adSize: 300x250
+
+  google-ad-manager-head:
     instances:
       default:
         allowed: true

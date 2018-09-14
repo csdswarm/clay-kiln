@@ -1,0 +1,29 @@
+.component--google-ad-manager-slot {
+	background: lightblue;
+	width: em(300);
+	height: em(250);
+}
+.component--google-ad-manager-slot-728x90 {
+	width: em(728);
+	height: em(90);
+}
+.component--google-ad-manager-slot-970x250 {
+	width: em(970);
+	height: em(250);
+}
+.component--google-ad-manager-slot-970x90 {
+	width: em(970);
+	height: em(90);
+}
+.component--google-ad-manager-slot-300x250 {
+	width: em(300);
+	height: em(250);
+}
+.component--google-ad-manager-slot-300x600 {
+	width: em(300);
+	height: em(600);
+}
+.component--google-ad-manager-slot-100x35 {
+	width: em(100);
+	height: em(35);
+}

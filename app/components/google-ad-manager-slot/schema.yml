@@ -1,0 +1,29 @@
+_description: |
+  Google Ad Manager ad slots
+
+adSize:
+  _label: Ad Slot Size
+  _has:
+    input: radio
+    options:
+      -
+        name: leaderboard (728x90)
+        value: 728x90
+      -
+        name: preferred (970x250)
+        value: 970x250
+      -
+        name: large leaderboard (970x90)
+        value: 970x90
+      -
+        name: medium rectangle (300x250)
+        value: 300x250
+      -
+        name: half page (300x600)
+        value: 300x600
+      -
+        name: logo sponsorship (100x35)
+        value: 100x35
+    validate:
+      required: true
+    help: Choose the size of the Google Ad Manager ad slot in pixels
