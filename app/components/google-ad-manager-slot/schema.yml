@@ -3,6 +3,10 @@ _description: |
 
 adSize:
   _label: Ad Slot Size
+  _placeholder:
+    height: 40px
+    text: Ad Slot
+    required: true
   _has:
     input: radio
     options:

@@ -321,12 +321,12 @@ _components:
 
   google-ad-manager-slot:
     instances:
-      default:
+      new:
         adSize: 300x250
 
   google-ad-manager-head:
     instances:
-      default:
+      new:
         allowed: true
 
   chartbeat:
