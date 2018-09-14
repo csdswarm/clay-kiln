@@ -1,7 +1,11 @@
+@import "_global/colors";
+
 .component--google-ad-manager-slot {
-	background: lightblue;
 	width: em(300);
 	height: em(250);
+}
+.kiln-edit-mode .component--google-ad-manager-slot {
+	outline: 1px solid $boulderGrey;
 }
 .component--google-ad-manager-slot-728x90 {
 	width: em(728);
