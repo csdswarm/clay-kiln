@@ -319,7 +319,7 @@ _components:
       default:
         allowed: true
 
-  google-ad-manager-slot:
+  google-ad-manager:
     instances:
       new:
         adSize: ''

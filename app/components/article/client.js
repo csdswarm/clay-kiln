@@ -17,8 +17,6 @@ Constructor.prototype = {
   	sidebar.style.position = "relative"
   	sidebar.style.visibility = "visible"
   }
-};
+}
 
-console.log("article client.js")
-
-module.exports = () => new Constructor();
+module.exports = () => new Constructor()
