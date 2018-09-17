@@ -17,7 +17,7 @@ _components:
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
-          - _ref: /_components/web-player/instances/new
+          - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
       bare:
         headLayout:
@@ -34,7 +34,7 @@ _components:
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
-          - _ref: /_components/web-player/instances/new
+          - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
       article:
         headLayout:
@@ -54,7 +54,7 @@ _components:
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
-          - _ref: /_components/web-player/instances/new
+          - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
   two-column-layout:
     instances:
@@ -74,5 +74,5 @@ _components:
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
-          - _ref: /_components/web-player/instances/new
+          - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default

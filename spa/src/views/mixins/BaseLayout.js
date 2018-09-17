@@ -6,14 +6,13 @@
 
 import URL from 'url-parse'
 import VueTranspiler from '@/lib/VueTranspiler'
-const vueTranspiler = new VueTranspiler()
 import * as mutationTypes from '../../vuex/mutationTypes'
-
+const vueTranspiler = new VueTranspiler()
 export default {
   mounted () {
     this.onLayoutUpdate()
   },
-  updated() {
+  updated () {
     this.onLayoutUpdate()
   },
   beforeUpdate () {
@@ -24,7 +23,6 @@ export default {
   },
   methods: {
     componentList: function (stateSliceKey) {
-
       // Return early if data not set.
       if (!this.$store.state.spaPayload[stateSliceKey]) {
         return ''
@@ -51,12 +49,12 @@ export default {
     /**
      * Handle any logic required to get a new vue render to function properly
      */
-    onLayoutUpdate: function() {
+    onLayoutUpdate: function () {
       if (this.$store.state.setupRan) {
         // Don't call setup as it's already been run in another call
         return
       } else {
-        this.$store.commit(mutationTypes.FLAG_SETUP_RAN, true);
+        this.$store.commit(mutationTypes.FLAG_SETUP_RAN, true)
       }
 
       // Attach vue router listener on SPA links.
@@ -71,12 +69,8 @@ export default {
     /**
      * Handle any logic required to get a new vue render to function properly
      */
-    onLayoutDestroy: function() {
-      this.$store.commit(mutationTypes.FLAG_SETUP_RAN, false);
-
-      // Call global dismount event
-      let event = new CustomEvent(`dismount`)
-      document.dispatchEvent(event)
+    onLayoutDestroy: function () {
+      this.$store.commit(mutationTypes.FLAG_SETUP_RAN, false)
 
       // Loop over all components that were loaded and try to call any cleanup JS they have
       this.handleComponents('dismount')
@@ -92,12 +86,14 @@ export default {
       let event = new CustomEvent(type)
       document.dispatchEvent(event)
 
+      let setupComponents = []
       // Loop over all components that were loaded and try to call any setup JS they have
       this.$el.querySelectorAll('.component').forEach(component => {
-        let componentName = component.getAttribute('class').match(/component--(.*)/)[1] || ''
-        if (componentName) {
+        let componentName = component.getAttribute('class').match(/component--([^\s]+)/)[1] || ''
+        if (componentName && !setupComponents.includes(componentName)) {
           let event = new CustomEvent(`${componentName}-${type}`)
           document.dispatchEvent(event)
+          setupComponents.push(componentName)
         }
       })
     }
