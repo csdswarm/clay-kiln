@@ -70,6 +70,8 @@ _components:
           -
             _ref: /_components/header/instances/default
         head: head
+        pageHeader: pageHeader
+        sectionHeader: sectionHeader
         main: main
         tertiary: tertiary
         secondary: secondary

@@ -1,7 +1,9 @@
 <div
 	data-uri="{{ default _ref _self }}"
-	class="component component--google-ad-manager-slot component--google-ad-manager-slot-{{adSize}}"
+	class="component component--google-ad-manager google-ad-manager--{{adSize}}"
 	data-adSize="{{adSize}}"
 	data-editable="adSize"
-></div>
-{{!-- 728x90, 970x250, 970x90, 300x250, 300x600, 100x35 --}}
+>
+	<div class="google-ad-manager__slot google-ad-manager__slot--{{adSize}}"></div>
+</div>
+{{!-- 970x250, 970x90, 728x90, 300x600, 300x250, 320x50, 100x35 --}}

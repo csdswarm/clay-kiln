@@ -13,12 +13,14 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+    pageHeader:
+      - /_components/google-ad-manager-slot/instances/articleTop
     main:
       - /_components/article/instances/new
     tertiary:
-      - /_components/google-ad-manager-slot/instances/new
+      - /_components/google-ad-manager-slot/instances/rightRail
       - /_components/latest-recirculation/instances/new
-      - /_components/google-ad-manager-slot/instances/new
+      - /_components/google-ad-manager-slot/instances/rightRail
     layout: /_components/two-column-layout/instances/article
   # Index Page
   index:

@@ -323,6 +323,10 @@ _components:
     instances:
       new:
         adSize: ''
+      articleTop:
+        adSize: 970x250
+      rightRail:
+        adSize: 300x250
 
   google-ad-manager-head:
     instances:
@@ -547,4 +551,4 @@ _components:
       new:
         items: []
         tag: ''
-        populateBy: articleType
+        populateBy: ''
