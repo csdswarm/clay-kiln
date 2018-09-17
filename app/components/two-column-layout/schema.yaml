@@ -29,7 +29,7 @@ pageHeader:
   _componentList:
     include:
       - header
-      - google-ad-manager-slot
+      - google-ad-manager
 sectionHeader:
   _componentList:
     include:
@@ -47,9 +47,9 @@ secondary:
 tertiary:
   _componentList:
     include:
-      - google-ad-manager-slot
+      - google-ad-manager
       - latest-recirculation
-      - google-ad-manager-slot
+      - google-ad-manager
 bottom:
   _componentList:
     include:

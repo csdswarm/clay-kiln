@@ -311,7 +311,7 @@ _components:
 
   web-player:
     instances:
-      new:
+      default:
         allowed: true
 
   web-player-head:
@@ -330,7 +330,7 @@ _components:
 
   google-ad-manager-head:
     instances:
-      new:
+      default:
         allowed: true
 
   chartbeat:
