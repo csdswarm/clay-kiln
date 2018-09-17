@@ -27,7 +27,7 @@ remove-images:
 	docker rmi -f $$(docker images -q)
 
 clay-logs:
-	docker-compose logs -f clay
+	docker-compose logs -f clay 
 
 enter-clay:
 	docker-compose exec clay bash
