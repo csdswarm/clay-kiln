@@ -3,7 +3,6 @@
 const doubleclick_prefix = "21674100491"
 let refreshCount = 0
 const adRefreshInterval = "120000" // Time in milliseconds for ad refresh
-let adInterval = null, resetMargins
 const adSlots = document.getElementsByClassName("google-ad-manager__slot")
 const googleDefinedSlots = []
 const adSlotsFiltered = {
@@ -142,12 +141,11 @@ function setAds(){
 				siteZone,
 				slotSizes,
 				ad.id)
-				if (slot) {
-					slot.addService(googletag.pubads())
-						.setTargeting("refresh", (refreshCount).toString())
-					googleDefinedSlots.push(slot)
-				}
+				.addService(googletag.pubads())
+				.setTargeting("refresh", (refreshCount).toString())
+			googleDefinedSlots.push(slot)
 		}
+		googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
 		googletag.pubads().enableSingleRequest()
 		googletag.pubads().collapseEmptyDivs(true) //true = expand if ad, false = collapse if no ad. true fixes FOUC-like problem for spotlight/leaderboard at top of Station Page on init load
 		googletag.pubads().setCentering(true)
@@ -156,6 +154,7 @@ function setAds(){
 		for (let ad of adSlots) {
 			googletag.display(ad.id)
 		}
+		googletag.display("div-gpt-ad-1532458744047-0")
 		googletag.pubads().refresh(googleDefinedSlots)
 	})
 
