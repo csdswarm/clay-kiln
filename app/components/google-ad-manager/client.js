@@ -3,7 +3,6 @@
 const doubleclick_prefix = "21674100491"
 let refreshCount = 0
 const adRefreshInterval = "120000" // Time in milliseconds for ad refresh
-let adInterval = null, resetMargins
 const adSlots = document.getElementsByClassName("google-ad-manager__slot")
 const googleDefinedSlots = []
 const adSlotsFiltered = {
