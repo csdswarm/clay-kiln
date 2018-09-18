@@ -27,7 +27,7 @@ remove-images:
 	docker rmi -f $$(docker images -q)
 
 clay-logs:
-	docker-compose logs -f clay
+	docker-compose logs -f clay 
 
 enter-clay:
 	docker-compose exec clay bash
@@ -37,5 +37,6 @@ clear-data:
 
 bootstrap:
 	cat ./app/first-run/**/* | clay import -k demo -y clay.radio.com
+
 install:
 	cd app && npm i && npm run build-web-player && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none

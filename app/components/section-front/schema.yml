@@ -1,0 +1,6 @@
+_confirmRemoval: true
+
+title:
+  _label: Title
+  _has:
+    input: text

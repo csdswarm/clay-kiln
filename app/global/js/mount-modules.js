@@ -17,12 +17,10 @@ function mountModules() {
     // (e.g. Dollar Slice registration)
     .forEach(moduleId => window.require(moduleId));
 
-  document.addEventListener('mount', () => {
-    // Mount components
-    Object.keys(modules)
-      .filter(moduleId => _.endsWith(moduleId, '.client'))
-      .forEach(mountComponentModule);
-  });
+  // Mount components
+  Object.keys(modules)
+    .filter(moduleId => _.endsWith(moduleId, '.client'))
+    .forEach(mountComponentModule);
 }
 
 /**
@@ -33,17 +31,19 @@ function mountComponentModule(moduleName) {
   const cmptModule = window.require(moduleName);
 
   if (typeof cmptModule === 'function') {
-    const cmptName = moduleName.replace('.client', ''),
-      selector = `[data-uri*="_components/${cmptName}"]`,
-      els = document.querySelectorAll(selector);
+    document.addEventListener('mount', () => {
+      const cmptName = moduleName.replace('.client', ''),
+        selector = `[data-uri*="_components/${cmptName}"]`,
+        els = document.querySelectorAll(selector);
 
-    for (let el of els) {
-      try {
-        cmptModule(el);
-      } catch (err) {
-        logMountError(el, err);
+      for (let el of els) {
+        try {
+          cmptModule(el);
+        } catch (err) {
+          logMountError(el, err);
+        }
       }
-    }
+    });
   }
 }
 

@@ -7,7 +7,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     handlebars: null,
-    spaPayload: {}
+    spaPayload: {},
+    spaPayloadLocals: {},
+    setupRan: false
   },
   mutations: {
     [mutationTypes.LOAD_HANDLEBARS]: (state, payload) => {
@@ -15,6 +17,12 @@ export default new Vuex.Store({
     },
     [mutationTypes.LOAD_SPA_PAYLOAD]: (state, payload) => {
       state.spaPayload = payload
+    },
+    [mutationTypes.LOAD_SPA_PAYLOAD_LOCALS]: (state, payload) => {
+      state.spaPayloadLocals = payload
+    },
+    [mutationTypes.FLAG_SETUP_RAN]: (state, setupRan) => {
+      state.setupRan = setupRan
     }
   },
   actions: {
