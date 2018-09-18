@@ -1,22 +1,22 @@
 // // Allow this to pass eslint complexity rule
 // /* eslint complexity: ["error", 30] */
 // 'use strict';
-
+//
 // const dom = require('@nymag/dom'),
 //   Hammer = require('hammerjs');
-
+//
 // DS.controller('image-gallery', ['$window', '_', '$visibility', function ($window, _, $visibility) {
 //   var largeWidthBreakpoint = 1180,
 //     mediumWidthBreakpoint = 768,
 //     navHeight = 55,
 //     desktopListGutter = 116;
-
+//
 //   function Constructor(el) {
 //     var navWrapper = dom.find(el, '.nav-container'),
 //       nav = dom.find(el, '.image-gallery-nav'),
 //       mainContent = dom.find('section.main'),
 //       vm = this;
-
+//
 //     this.nav = nav;
 //     this.navWrapper = navWrapper;
 //     this.images = dom.findAll(el, '.image-gallery-image');
@@ -37,15 +37,15 @@
 //     this.pins = [];
 //     this.hammerTime.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
 //     this.hammerTime.on('swipeup', this.closeModal.bind(this));
-
+//
 //     function handleScroll() {
 //       if (!mainContent.classList.contains('hidden-component')) {
 //         nav.classList.toggle('sticky', navWrapper.getBoundingClientRect().top <= 0 && $window.scrollY < el.getBoundingClientRect().bottom + $window.scrollY);
-
+//
 //         this.updateCurrentImage();
 //       }
 //     }
-
+//
 //     function handleResize() {
 //       if (this.currentView === 'grid') {
 //         this.recalculateGrid();
@@ -54,10 +54,10 @@
 //           this.setPins();
 //         }
 //       }
-
+//
 //       this.updateCurrentImage();
 //     }
-
+//
 //     this.setView('list');
 //     $window.addEventListener('scroll', _.throttle(handleScroll.bind(this), 33)); // 30fps
 //     $window.addEventListener('resize', _.throttle(handleResize.bind(this), 33)); // 30fps
@@ -69,7 +69,7 @@
 //       }
 //     });
 //   }
-
+//
 //   Constructor.prototype = {
 //     events: {
 //       '.image-gallery-nav button.gallery-toggle click': 'toggleView',
@@ -83,7 +83,7 @@
 //     toggleView: function (e) {
 //       var el = dom.closest(e.target, 'button.gallery-toggle'),
 //         targetView = el.getAttribute('data-view');
-
+//
 //       if (targetView !== this.currentView) {
 //         this.setView(targetView);
 //       }
@@ -93,13 +93,13 @@
 //     },
 //     updateCurrentImage: function () {
 //       var closestIndex;
-
+//
 //       if (this.currentView === 'list') {
 //         closestIndex = this.getCurrentListImage();
 //       } else if (this.currentView === 'grid') {
 //         closestIndex = this.getCurrentGridImage();
 //       }
-
+//
 //       if (closestIndex != this.currentImageIndex) {
 //         if (this.currentImage) {
 //           this.currentImage.classList.remove('active');
@@ -112,7 +112,7 @@
 //     },
 //     getCurrentListImage: function () {
 //       var closestIndex = 0, i, image, rect, lastClosestDistance, distance;
-
+//
 //       for (i = 0; i < this.images.length; i++) {
 //         image = this.images[i];
 //         rect = image.getBoundingClientRect();
@@ -123,13 +123,13 @@
 //         lastClosestDistance = distance;
 //         closestIndex = i;
 //       }
-
+//
 //       return closestIndex;
 //     },
-
+//
 //     getCurrentGridImage: function () {
 //       var i, image, rect;
-
+//
 //       for (i = 0; i < this.images.length; i++) {
 //         image = this.images[i];
 //         rect = image.getBoundingClientRect();
@@ -137,16 +137,16 @@
 //           return i;
 //         }
 //       }
-
+//
 //       return this.images.length - 1; // return the last image if we're below the top of all the images
 //     },
-
+//
 //     isHorizontal: function (img) {
 //       return img.classList.contains('horizontal');
 //     },
 //     createPinnedAd: function (pin) {
 //       var ad = document.createElement('div');
-
+//
 //       ad.classList.add('ad', 'vp-1180-plus', 'gallery-list-ad');
 //       ad.setAttribute('data-name', '/4088/nym.thecut');
 //       ad.setAttribute('data-sizes', '300x600,300x250');
@@ -154,30 +154,30 @@
 //       ad.setAttribute('data-offload', true);
 //       ad.setAttribute('id', 'ad-cid-' + _.random(1000));
 //       ad.setAttribute('data-site', 'TheCut');
-
+//
 //       DS.get('ad', ad);
-
+//
 //       pin.adContainer = document.createElement('div');
 //       pin.adContainer.classList.add('image-gallery-desktop-list-ad');
 //       pin.adContainer.style.top = pin.relativeTop + 'px';
 //       pin.adContainer.style.height = pin.relativeBottom - pin.relativeTop + 'px';
 //       pin.adContainer.appendChild(ad);
-
+//
 //       this.gallery.appendChild(pin.adContainer);
 //     },
 //     setPins: function () {
 //       var currentPin = {},
 //         vm = this,
 //         img;
-
+//
 //       if (this.pins.length > 0) { // remove existing pins before setting new ones
 //         this.pins.forEach(function (pin) {
 //           vm.gallery.removeChild(pin.adContainer);
 //         });
-
+//
 //         this.pins = [];
 //       }
-
+//
 //       this.images.forEach(function (img, idx) {
 //         if (!vm.isHorizontal(img) && !currentPin.top) {
 //           if (idx === 0 || vm.isHorizontal(vm.images[idx - 1])) {
@@ -188,40 +188,40 @@
 //           currentPin.relativeBottom = img.offsetTop - desktopListGutter;
 //           currentPin.bottom = img.getBoundingClientRect().top + $window.scrollY;
 //           vm.pins.push(currentPin);
-
+//
 //           vm.createPinnedAd(currentPin);
 //           currentPin = {};
 //         }
 //       });
-
+//
 //       if (currentPin.top && !currentPin.bottom) { // if the last photo is vertical
 //         img = this.images[this.images.length - 1];
 //         currentPin.relativeBottom = img.offsetTop + img.offsetHeight;
 //         currentPin.bottom = img.getBoundingClientRect().bottom + $window.scrollY;
-
+//
 //         vm.pins.push(currentPin);
 //         vm.createPinnedAd(currentPin);
 //       }
 //     },
 //     setView: function (view) {
 //       var self = this, left, top;
-
+//
 //       this.currentView = view;
-
+//
 //       if (this.listButton && this.gridButton) {
 //         this.listButton.disabled = view === 'list';
 //         this.listButton.setAttribute('aria-pressed', view === 'list');
 //         this.gridButton.disabled = view === 'grid';
 //         this.gridButton.setAttribute('aria-pressed', view === 'grid');
 //       }
-
+//
 //       this.gallery.classList.toggle('grid', view === 'grid');
 //       this.nav.classList.toggle('grid', view === 'grid');
-
+//
 //       if (view === 'grid') {
 //         this.recalculateGrid();
 //       }
-
+//
 //       if (this.currentImage && this.el.getBoundingClientRect().top <= 0) {
 //         left = $window.scrollX;
 //         top = $visibility.getPageOffset(this.currentImage).top - navHeight;
@@ -235,9 +235,9 @@
 //         this.updateCurrentImage();
 //       }
 //     },
-//      Buckle up cause this one's a doozy.
+//     /* Buckle up cause this one's a doozy.
 //     Grid view for image galleries uses a pretty unique staggered layout as requested by design.  It goes a little something like this:
-
+//
 //     Mobile/Tablet (Small/Medium)
 //     *******  *******
 //     *     *  *     *
@@ -249,7 +249,7 @@
 //     *     *  *     *
 //     *     *  *     *
 //     *******  *******
-
+//
 //     Desktop (Large)
 //     *******  *******  *******
 //     *     *  *     *  *     *
@@ -261,10 +261,10 @@
 //     *     *  *     *  *     *
 //     *     *  *     *  *     *
 //     *******  *******  *******
-
+//
 //     Try as we might, we couldn't find a way to build this responsively using either floats, flexbox, or grid view.  So we've resorted to absolutely
 //     positioning elements using CSS we generate based on the viewport width.  If you're modifying or fixing a bug with this, I'd reccomend reaching out
-//     to Byron or Zoe to pair up.
+//     to Byron or Zoe to pair up.  */
 //     generateGridCSS: function (galleryWidth, breakpoint) {
 //       // Configurations for the layouts based for small, medium, and large breakpoints
 //       var gridConfigsByBreakpoint = {
@@ -303,7 +303,7 @@
 //         largeImageHeight = imageWidth / largeAspectRatio,
 //         cursorX = 0, // To generate our css we use a "cursor" which goes down the page, laying out each image from the top-left.
 //         cursorY = 0;
-
+//
 //       for (imagesIndex = 0; imagesIndex < this.images.length; imagesIndex++) {
 //         // Generate the CSS for an individual image
 //         newCSS += '.gallery.grid #image-gallery-image-' + imagesIndex + '{'
@@ -311,16 +311,16 @@
 //           + 'position: absolute; '
 //           + 'top: ' + cursorY + 'px;'
 //           + 'left: ' + cursorX + 'px; ';
-
+//
 //         // Determine whether it should be a small or a large image
 //         if (gridConfig.columns == 2 && gridConfig.imagesInGroup % 4 == 0) { // Mobile/Tablet
 //           newCSS += 'height: ' + (imagesIndex % 4 == 0 || imagesIndex % 4 == 3 ? largeImageHeight : smallImageHeight) + 'px; ';
 //         } else if (gridConfig.columns == 3 && gridConfig.imagesInGroup % 6 == 0) { // Desktop
 //           newCSS += 'height: ' + (imagesIndex % 2 == 0 ? largeImageHeight : smallImageHeight) + 'px; ';
 //         }
-
+//
 //         newCSS += '}';
-
+//
 //         // Now we need to move the cursor
 //         // First, if the viewport mobile or tablet
 //         if (this.images[imagesIndex + 1]) {
@@ -383,7 +383,7 @@
 //             }
 //           }
 //         }
-
+//
 //         // If we've inserted enough images that its time to put an ad there, do so!
 //         if (imagesIndex %  gridConfig.imagesPerAd == gridConfig.imagesPerAd - 1) {
 //           cursorY += gridConfig.adGutterSize - gridConfig.gutterSize;
@@ -391,7 +391,7 @@
 //           cursorY += gridConfig.adHeight + gridConfig.adGutterSize;
 //         }
 //       }
-
+//
 //       // Since all elements are absolutely positioned, we need to make sure the container is tall enough
 //       newCSS += '.gallery.grid { position: relative; height: ' + cursorY + 'px;}';
 //       return newCSS;
@@ -399,11 +399,11 @@
 //     recalculateGrid: function () {
 //       var galleryWidth = this.gallery.clientWidth,
 //         breakpoint;
-
+//
 //       if (this.lastGalleryWidth === galleryWidth) {
 //         return;
 //       }
-
+//
 //       if ($window.innerWidth >= largeWidthBreakpoint) {
 //         breakpoint = 'large';
 //       } else if ($window.innerWidth >= mediumWidthBreakpoint) {
@@ -411,7 +411,7 @@
 //       } else {
 //         breakpoint = 'small';
 //       }
-
+//
 //       if (!(galleryWidth in this.cachedGrids)) {
 //         this.cachedGrids[galleryWidth] = this.generateGridCSS(galleryWidth, breakpoint);
 //       }
@@ -421,7 +421,7 @@
 //     showModal: function () {
 //       this.modal.classList.add('visible', 'trans-element');
 //     },
-
+//
 //     openImageInModal: function (event) {
 //       var targetImageGalleryImage = dom.closest(event.target, '.image-gallery-image'),
 //         clonedImageGalleryImage,
@@ -429,13 +429,13 @@
 //         img,
 //         sources,
 //         attribution;
-
+//
 //       this.targetImageGalleryImage = targetImageGalleryImage;
-
+//
 //       if (this.currentView != 'grid') {
 //         return;
 //       }
-
+//
 //       // using removeChild is more performant than setting innerHTML to be empty
 //       // across all browsers https://jsperf.com/innerhtml-vs-removechild
 //       while (this.modalBody.firstChild) {
@@ -443,12 +443,12 @@
 //       }
 //       clonedImageGalleryImage = targetImageGalleryImage.cloneNode(true);
 //       attribution = dom.find(clonedImageGalleryImage, '.attribution');
-
+//
 //       // expand the attribution
 //       if (attribution) {
 //         attribution.classList.remove('truncated');
 //       }
-
+//
 //       // this short-circuits the lazy-loading behavior we use in image-gallery-image/client.js
 //       picture = dom.find(clonedImageGalleryImage, '.list-img');
 //       picture.classList.remove('fade-in-element');
@@ -459,18 +459,18 @@
 //       sources.forEach(function (source) {
 //         source.setAttribute('srcset', source.getAttribute('data-srcset'));
 //       });
-
+//
 //       // update current image in modal-counter
 //       this.modalCounter.innerHTML = Array.prototype.indexOf.call(this.images, targetImageGalleryImage) + 1;
 //       this.modalBody.appendChild(clonedImageGalleryImage);
 //       this.modal.focus();
 //       this.modalBody.scrollTop = 0;
 //       this.pageYOffset = $window.pageYOffset;
-
+//
 //       if ($window.innerWidth >= 1180) {
 //         this.noScroll.on();
 //       }
-
+//
 //       img.addEventListener('load', this.showModal.bind(this));
 //     },
 //     closeModal: function () {
@@ -485,13 +485,13 @@
 //     },
 //     handleModalKeydown: function (e) {
 //       const event = e || window.event;
-
+//
 //       // close modal with escape key press
 //       if (event.keyCode === 27) {
 //         this.closeModal();
 //       }
 //     }
 //   };
-
+//
 //   return Constructor;
 // }]);
