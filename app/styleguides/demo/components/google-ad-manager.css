@@ -39,25 +39,9 @@
 		width: em(970);
 		height: em(250);
 		margin: 0 auto;
-		@mixin large-screen {
-			width: em(728);
-			height: em(90);
-		}
-		@mixin medium-small-screen {
-			width: em(320);
-			height: em(50);
-		}
 		.kiln-edit-mode & {
 			width: em(970);
 			height: em(250);
-			@mixin large-screen {
-				width: em(728);
-				height: em(90);
-			}
-			@mixin medium-small-screen {
-				width: em(320);
-				height: em(50);
-			}
 		}
 	}
 }

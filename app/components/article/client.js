@@ -18,6 +18,5 @@ Constructor.prototype = {
   	sidebar.style.visibility = "visible"
   }
 }
-console.log("article client.js")
 
 module.exports = () => new Constructor()
