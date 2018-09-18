@@ -18,6 +18,14 @@ _pages:
     tertiary:
       - /_components/latest-recirculation/instances/new
     layout: /_components/two-column-layout/instances/article
+  section-front:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+    main:
+      - /_components/section-front/instances/new
+    layout: /_components/one-column-layout/instances/section-front
   # Index Page
   index:
     head:

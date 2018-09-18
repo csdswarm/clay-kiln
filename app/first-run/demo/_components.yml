@@ -532,6 +532,11 @@ _components:
         articleType: entertainment
         showSocial: true
 
+  section-front:
+    instances:
+      new:
+        title: ''
+
   latest-recirculation:
     instances:
       new:
