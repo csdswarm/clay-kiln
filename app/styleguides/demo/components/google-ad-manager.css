@@ -3,7 +3,7 @@
 
 .kiln-edit-mode .component--google-ad-manager {
 	width: 100%;
-	height: 250px;
+	height: em(250);
 	background: $alabasterGrey;
 	margin: 0 auto;
 	margin-bottom: em(50);
