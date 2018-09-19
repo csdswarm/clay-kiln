@@ -28,9 +28,9 @@ function generateFeedImage({ content }, locals) {
 
 /**
  * Sets props for published instances.
- * @param uri
- * @param data
- * @param locals
+ * @param {string} uri
+ * @param {object} data
+ * @param {object} locals
  */
 function setPublishedInstanceProps(uri, data, locals) {
   if (isPublishedVersion(uri) && locals) {

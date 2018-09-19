@@ -1,6 +1,6 @@
 'use strict';
 
-function Constructor(el) {
+function Constructor(el) {// eslint-disable-line no-unused-vars
   this.addCopyEventListener();
 }
 
@@ -27,7 +27,7 @@ Constructor.prototype = {
 
     try {
       // Copy text
-      const successful = document.execCommand('copy');
+      document.execCommand('copy');
     } catch (err) {
       console.log('Unable to copy');
     }

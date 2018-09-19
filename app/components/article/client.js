@@ -12,6 +12,8 @@ Constructor.prototype = {
    * Repositions the right rail under the article headline &
    * subheadline so that it is in line with the article body.
    * @function
+   * @param {object} sidebar
+   * @param {object} articleBody
    */
   repositionRightRail: function (sidebar, articleBody) {
   	sidebar.style.marginTop = articleBody.offsetTop + 'px';

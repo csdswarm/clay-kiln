@@ -33,6 +33,7 @@ function secondsToISO(seconds) {
  * Returns true if article was published within the past 24 hrs.
  * @function
  * @param {Object} date - The date the article was published.
+ * @returns {boolean}
  */
 function isPublished24HrsAgo(date) {
   let pubWithin24Hrs = false,
@@ -49,6 +50,7 @@ function isPublished24HrsAgo(date) {
  * Returns "X hours ago" timestamp of when article was published
  * @function
  * @param {Object} date - The date the article was published.
+ * @return {string}
  */
 function hrsOnlyTimestamp(date) {
   return moment().format('H') - moment(date).format('H') + ' hours ago';

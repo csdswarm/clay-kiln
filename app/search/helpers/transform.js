@@ -1,7 +1,7 @@
 'use strict';
 
 const h = require('highland'),
-  db = require('../../services/server/db'),
+  db = require('../../services/server/db'),// eslint-disable-line no-unused-vars
   { getPrefix } = require('clayutils'),
   { sites } = require('amphora'),
   { helpers } = require('amphora-search');

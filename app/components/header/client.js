@@ -1,3 +1,5 @@
+'use strict';
+
 const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
   mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
   mutableImages = ['account-btn', 'search-btn'];
@@ -9,7 +11,7 @@ let isMobile = false,
  * @function toggleHamburger
  * @param {boolean} toggleHamburgerOnly - Toggles hamburger without toggling mobile nav.
  */
-const toggleHamburger = toggleHamburgerOnly => {
+const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
     let bars = document.getElementsByClassName('bar'),
       navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0],
       activeHamburgerClass = 'active',
