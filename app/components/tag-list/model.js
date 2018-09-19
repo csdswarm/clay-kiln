@@ -6,7 +6,6 @@ const queryService = require('../../services/server/query'),
   _clone = require('lodash/clone'),
   _assign = require('lodash/assign'),
   _get = require('lodash/get'),
-  _set = require('lodash/set'),
   _map = require('lodash/map'),
   log = require('../../services/universal/log').setup({
     file: __filename,
@@ -30,7 +29,7 @@ module.exports.render = (ref, data, locals) => {
   });
 
 
-  if (locals.params.tag || overrideTag) {
+  if (locals.params.tag || overrideTag) {// eslint-disable-line no-undef
     queryService.addFilter(query, { term: { tags: tagValue }});
   }
 

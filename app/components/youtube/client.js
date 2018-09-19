@@ -24,7 +24,7 @@ function Constructor(el) {
       autoPlayNextVideo: el.getAttribute('data-autoplay-next-video').trim(),
       trackVideoType: el.getAttribute('data-track-video-type').trim()
     }
-  }
+  };
 
   if (videoConfig.customParams.trackVideoType === 'Sponsored') {
     videoConfig.playerParams.list = '';
@@ -36,7 +36,7 @@ function Constructor(el) {
     youtubeVideoPlayer.init(videoConfig);
   } else {
     // wait and listen for the YouTube api to be ready before loading the video(s)
-    document.addEventListener('clay-youtube-event:youtube-api-ready', function() {
+    document.addEventListener('clay-youtube-event:youtube-api-ready', function () {
       youtubeVideoPlayer.init(videoConfig);
     });
   }
@@ -47,7 +47,7 @@ function Constructor(el) {
    * we don't need to send an event here, updating the video id for posterity
    * also might be nice to send an event if we see the video id changed?
    */
-  document.addEventListener('player-start-' + videoConfig.videoContainerId, function(evt) {
+  document.addEventListener('player-start-' + videoConfig.videoContainerId, function (evt) {
     var hasChanged = el.getAttribute('data-video-id') !== evt.player.videoId;
 
     if (hasChanged) {

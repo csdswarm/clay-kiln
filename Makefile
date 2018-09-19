@@ -40,3 +40,6 @@ bootstrap:
 
 install:
 	cd app && npm i && npm run build-web-player && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
+
+lint:
+	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
