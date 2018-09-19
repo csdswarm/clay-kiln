@@ -1,19 +1,21 @@
 module.exports = {
-  em: function(pixels, browserContext) {
-    var browserContext = parseInt(browserContext, 10) || 16;
-    var pixels = parseFloat(pixels);
-    return (pixels / browserContext) + 'em';
+  em: function (pixels, browserContext) {
+    var browserContext = parseInt(browserContext, 10) || 16,
+      pixels = parseFloat(pixels);
+
+    return pixels / browserContext + 'em';
   },
-  widthOnGrid: function(columns, gutters, windowWidth) {
+  widthOnGrid: function (columns, gutters, windowWidth) {
   	var width;
+
   	switch (windowWidth) {
-  		case "medium-screen":
+  		case 'medium-screen':
   			width = columns * 101 + gutters * 20;
   			break;
-  		case "medium-small-screen":
+  		case 'medium-small-screen':
   			width = columns * 95 + gutters * 20;
   			break;
-  		case "small-screen":
+  		case 'small-screen':
   			width = columns * 65 + gutters * 20;
   			break;
   		default:

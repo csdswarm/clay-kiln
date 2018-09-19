@@ -22,7 +22,7 @@ function getVars() {
       'edit-ui-font': 'Helvetica,Arial,sans-serif',
       'edit-blue-2': '#8bc0d4'
     }
-  }
+  };
 }
 
 function renameFile(filepath) {

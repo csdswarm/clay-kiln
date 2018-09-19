@@ -5,7 +5,7 @@ const _ = require('lodash'),
 
 function Constructor(el) {
   this.el = el;
-  this.showAll = dom.find(this.el, '.more')
+  this.showAll = dom.find(this.el, '.more');
 
 }
 

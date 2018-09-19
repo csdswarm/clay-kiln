@@ -35,13 +35,14 @@ function secondsToISO(seconds) {
  * @param {Object} date - The date the article was published.
  */
 function isPublished24HrsAgo(date) {
-	let pubWithin24Hrs = false;
-	let articleDate = moment(new Date(date)).valueOf();
-	let now = moment().valueOf();
-	if (now - articleDate <= (24 * 60 * 60 * 1000) ) {
-		pubWithin24Hrs = true;
-	}
-	return pubWithin24Hrs;
+  let pubWithin24Hrs = false,
+	 articleDate = moment(new Date(date)).valueOf(),
+	 now = moment().valueOf();
+
+  if (now - articleDate <= 24 * 60 * 60 * 1000 ) {
+    pubWithin24Hrs = true;
+  }
+  return pubWithin24Hrs;
 }
 
 /**
@@ -50,7 +51,7 @@ function isPublished24HrsAgo(date) {
  * @param {Object} date - The date the article was published.
  */
 function hrsOnlyTimestamp(date) {
-	return (moment().format('H') - moment(date).format('H')) + ` hours ago`;
+  return moment().format('H') - moment(date).format('H') + ' hours ago';
 }
 
 module.exports.formatDateRange = formatDateRange;

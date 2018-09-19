@@ -150,7 +150,7 @@ var _initial = require('lodash/initial'),
     'flex-medium',
     'flex-medium-large',
     'flex-xlarge',
-    'vertical-small-variable',
+    'vertical-small-variable'
   ],
   originalRenditions = ['original', 'full-bleed'],
   defaultRendition = renditions.horizontal,
@@ -273,10 +273,10 @@ function getRendition(url, renditionName) {
 
 /**
  * get a url for an unnamed rendition by passing in the required dimensions
- * @param {string} url 
- * @param {number} width 
- * @param {number} height 
- * @param {boolean} doubleDensity 
+ * @param {string} url
+ * @param {number} width
+ * @param {number} height
+ * @param {boolean} doubleDensity
  * @returns {string}
  */
 function getDynamicRendition(url, width, height, doubleDensity) {

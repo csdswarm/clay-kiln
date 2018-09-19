@@ -61,7 +61,7 @@ module.exports.save = (uri, data, locals) => {
 
     // Only update feedImage if it is not set
     if (!data.feedImage) {
-      data.feedImage = data.firstImage
+      data.feedImage = data.firstImage;
     }
 
     return data;

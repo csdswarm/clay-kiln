@@ -13,7 +13,7 @@ Constructor.prototype = {
   */
   copyToClipboard: function (e) {
     // Create text area for copying
-    const textArea = document.createElement("textarea");
+    const textArea = document.createElement('textarea');
 
     // Hide textArea
     textArea.className = 'share__hidden-text-area';
@@ -48,6 +48,6 @@ Constructor.prototype = {
       cl.addEventListener('click', e => this.copyToClipboard(e));
     });
   }
-}
+};
 
 module.exports = el => new Constructor(el);
