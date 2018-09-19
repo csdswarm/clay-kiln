@@ -147,7 +147,7 @@ function setAds(){
 		}
 		googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
 		googletag.pubads().enableSingleRequest()
-		googletag.pubads().collapseEmptyDivs(true) //true = expand if ad, false = collapse if no ad. true fixes FOUC-like problem for spotlight/leaderboard at top of Station Page on init load
+		googletag.pubads().collapseEmptyDivs(true) //true = expand if ad, false = collapse if no ad. true fixes FOUC-like problem on init load
 		googletag.pubads().setCentering(true)
 		googletag.pubads().disableInitialLoad()
 		googletag.enableServices()
