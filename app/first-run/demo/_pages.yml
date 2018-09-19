@@ -14,13 +14,13 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
     pageHeader:
-      - /_components/google-ad-manager/instances/articleTop
+      - /_components/google-ad-manager/instances/preferred
     main:
       - /_components/article/instances/new
     tertiary:
-      - /_components/google-ad-manager/instances/rightRail
+      - /_components/google-ad-manager/instances/mediumRectangle
       - /_components/latest-recirculation/instances/new
-      - /_components/google-ad-manager/instances/rightRail
+      - /_components/google-ad-manager/instances/mediumRectangle
     layout: /_components/two-column-layout/instances/article
   section-front:
     head:

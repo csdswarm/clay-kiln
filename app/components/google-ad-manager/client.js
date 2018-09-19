@@ -1,6 +1,10 @@
 'use strict'
-
+let adSizeMappings = require('./adSizeMappings')
+let adSizes = adSizeMappings.adSizes
 const doubleclick_prefix = "21674100491"
+const doubleclick_bannerTag = "NTL.RADIO"
+const doubleclick_pageTypeTag_article = "article"
+const doubleclick_pageTypeTag_section = "sectionfront"
 let refreshCount = 0
 const adRefreshInterval = "120000" // Time in milliseconds for ad refresh
 const adSlots = document.getElementsByClassName("google-ad-manager__slot")
@@ -38,41 +42,27 @@ function clearAds(){
 function setAdsIDs() {
 	for (let slot of adSlots) {
 		switch (slot.classList[1]) {
-			case "google-ad-manager__slot--970x250":
-				if (window.innerWidth <= 480) {
-					slot.parentElement.classList.remove("google-ad-manager--970x250")
-					slot.parentElement.classList.add("google-ad-manager--320x50")
-					slot.classList.remove("google-ad-manager__slot--970x250")
-					slot.classList.add("google-ad-manager__slot--320x50")
-					adSlotsFiltered.mobile.push(slot)
-				} else if (window.innerWidth <= 1279) {
-					slot.parentElement.classList.remove("google-ad-manager--970x250")
-					slot.parentElement.classList.add("google-ad-manager--728x90")
-					slot.classList.remove("google-ad-manager__slot--970x250")
-					slot.classList.add("google-ad-manager__slot--728x90")
-					adSlotsFiltered.leaderboard.push(slot)
-				} else {
-					adSlotsFiltered.preferred.push(slot)
-				}
-				break;
-			case "google-ad-manager__slot--970x90":
+			case "google-ad-manager__slot--preferred":
+				adSlotsFiltered.preferred.push(slot)
+				break
+			case "google-ad-manager__slot--large-leaderboard":
 				adSlotsFiltered.largeLeaderboard.push(slot)
-				break;
-			case "google-ad-manager__slot--728x90":
+				break
+			case "google-ad-manager__slot--leaderboard":
 				adSlotsFiltered.leaderboard.push(slot)
-				break;
-			case "google-ad-manager__slot--300x600":
+				break
+			case "google-ad-manager__slot--half-page":
 				adSlotsFiltered.halfPage.push(slot)
-				break;
-			case "google-ad-manager__slot--300x250":
+				break
+			case "google-ad-manager__slot--medium-rectangle":
 				adSlotsFiltered.mediumRectangle.push(slot)
-				break;
-			case "google-ad-manager__slot--320x50":
+				break
+			case "google-ad-manager__slot--mobile":
 				adSlotsFiltered.mobile.push(slot)
-				break;
-			case "google-ad-manager__slot--100x35":
+				break
+			case "google-ad-manager__slot--logo-sponsorship":
 				adSlotsFiltered.logoSponsorship.push(slot)
-				break;
+				break
 		}
 	}
 	for (let slotFilter in adSlotsFiltered) {
@@ -89,7 +79,8 @@ function setAdsIDs() {
  * use ids of ad slots on page to create google ad slots and display them
  */
 function setAds(){
-	let page, articleType, siteZone;
+	let page, articleType,
+	siteZone = doubleclick_prefix.concat("/",doubleclick_bannerTag,"/");
 	if (document.getElementsByTagName("article").length > 0) {
 		page = "article"
 		articleType = document.getElementsByTagName("article")[0].getAttribute("data-article-type")
@@ -98,51 +89,35 @@ function setAds(){
 	}
 	switch (page) {
 		case "article":
-			siteZone = doubleclick_prefix.concat("/","NTL.RADIO","/",articleType,"/","article")
+			siteZone = siteZone.concat(articleType,"/",doubleclick_pageTypeTag_article)
 			break
 		case "homepage":
-			siteZone = doubleclick_prefix.concat("/","NTL.RADIO","/","home","/","sectionfront")
+			siteZone = siteZone.concat("home","/",doubleclick_pageTypeTag_section)
 			break
 		case "genrePage":
-			siteZone = doubleclick_prefix.concat("/","NTL.RADIO","/","categories","/","sectionfront")
+			siteZone = siteZone.concat("categories","/",doubleclick_pageTypeTag_section)
 			break
 		case "tagPage":
-			siteZone = doubleclick_prefix.concat("/","NTL.RADIO","/","tags","/","sectionfront")
+			siteZone = siteZone.concat("tags","/",doubleclick_pageTypeTag_section)
 			break
 	}
 	googletag.cmd.push(function(){
 		googletag.destroySlots()
 		for (let ad of adSlots) {
-			let slotSizes
-			switch (ad.classList[1]) {
-				case "google-ad-manager__slot--970x250":
-					slotSizes = [[970, 250]]
-					break
-				case "google-ad-manager__slot--970x90":
-					slotSizes = [[970, 90]]
-					break
-				case "google-ad-manager__slot--728x90":
-					slotSizes = [[728, 90]]
-					break
-				case "google-ad-manager__slot--300x600":
-					slotSizes = [[300, 600]]
-					break
-				case "google-ad-manager__slot--300x250":
-					slotSizes = [[300, 250]]
-					break
-				case "google-ad-manager__slot--320x50":
-					slotSizes = [[320, 100], [300, 100], [320, 50], [300, 50]]
-					break
-				case "google-ad-manager__slot--100x35":
-					slotSizes = [[100, 35]]
-					break
-			}
-			var slot = googletag.defineSlot(
+			let slot = googletag.defineSlot(
 				siteZone,
-				slotSizes,
+				adSizes[ad.getAttribute("data-adSize")].defaultSize,
 				ad.id)
 				.addService(googletag.pubads())
 				.setTargeting("refresh", (refreshCount).toString())
+				if (adSizes[ad.getAttribute("data-adSize")].responsiveMapping.length > 0) {
+					let mapping = googletag.sizeMapping()
+					for (let responsiveMap of adSizes[ad.getAttribute("data-adSize")].responsiveMapping) {
+						mapping.addSize(responsiveMap[0], responsiveMap[1])
+					}
+					mapping.build()
+					slot.defineSizeMapping(mapping)
+				}
 			googleDefinedSlots.push(slot)
 		}
 		googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
@@ -174,6 +149,3 @@ function refreshAds() {
 	})
 	setTimeout(refreshAds, adRefreshInterval)
 }
-
-function Constructor() {}
-module.exports = () => new Constructor()

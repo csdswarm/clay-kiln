@@ -323,10 +323,20 @@ _components:
     instances:
       new:
         adSize: ''
-      articleTop:
-        adSize: 970x250
-      rightRail:
-        adSize: 300x250
+      preferred:
+        adSize: preferred
+      largeLeaderboard:
+        adSize: large-leaderboard
+      leaderboard:
+        adSize: leaderboard
+      halfPage:
+        adSize: half-page
+      mediumRectangle:
+        adSize: medium-rectangle
+      mobile:
+        adSize: mobile
+      logoSponsorship:
+        adSize: logo-sponsorship
 
   google-ad-manager-head:
     instances:
