@@ -8,7 +8,7 @@
     "start": "npm run check-elastic && nodemon --exec \"node -r dotenv/config\" app.js",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
     "build-web-player": "npm install git+ssh://git@github.com/Entercom/radio-web-player.git#develop --no-save && mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/",
-    "lint-staged": "lint-staged"
+    "eslint": "eslint . --cache"
   },
   "author": "",
   "license": "MIT",
@@ -42,7 +42,6 @@
     "js-base64": "^2.4.9",
     "jsonp-client": "^1.1.1",
     "levelup": "^1.2.1",
-    "lint-staged": "^7.2.2",
     "lodash": "^4.17.5",
     "merge-stream": "^1.0.0",
     "no-scroll": "^2.1.1",
@@ -71,6 +70,14 @@
     "clayhandlebars": "^4.0.0",
     "concat": "^1.0.3",
     "escape-quotes": "^1.0.2",
+    "eslint": "^5.6.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-html": "^4.0.5",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-lodash": "^2.7.0",
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
     "fs-extra": "^5.0.0",
     "gaze": "^1.1.2",
     "glob": "^7.1.2",
@@ -95,23 +102,12 @@
     "postcss-mixins": "^6.2.0",
     "postcss-nested": "^3.0.0",
     "postcss-simple-vars": "^4.1.0",
-    "pre-commit": "^1.2.2",
     "require-dir": "^1.0.0",
     "resolve": "^1.7.1",
-    "standard": "^12.0.1",
     "through2": "^2.0.3",
     "uglify-js": "^2.8.29",
     "vinyl-map2": "^1.2.1",
     "vueify": "^9.4.1",
     "yargs": "^11.0.0"
-  },
-  "lint-staged": {
-    "linters": {
-      "*.js": "standard"
-    },
-    "ignore": [
-      "**/dist/*.js"
-    ]
-  },
-  "precommit": "lint-staged"
+  }
 }
