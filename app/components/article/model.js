@@ -177,7 +177,6 @@ function formatDate(data, locals) {
  */
 function setCanonicalUrl(data, locals) {
   if (_get(locals, 'publishUrl')) {
-    const testing = "blah";
     data.canonicalUrl = locals.publishUrl;
   }
 }
