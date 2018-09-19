@@ -1,0 +1,104 @@
+_description: |
+  A list of five latest related articles by article type, tag, or manually populated.
+
+populateBy:
+  _label: Populate content by section front or tag?
+  _has:
+    validate:
+      required: true
+    input: radio
+    options:
+      -
+        name: Section Front
+        value: sectionFront
+      - tag
+      - manual
+
+sectionFront:
+  _subscribe: sectionFront
+  _label: Section Front Category
+  _has:
+    help: Section Front Category from which to pull content
+
+tag:
+  _label: Tag
+  _reveal:
+    field: populateBy
+    operator: ===
+    value: tag
+  _has:
+    input: text
+    help: Tag from which to pull content
+    validate:
+      required:
+        field: populateBy
+        operator: ===
+        value: tag
+
+items:
+  _label: Items
+  _has:
+    input: complex-list
+    help: Manually choose content to include
+    props:
+    -
+      prop: url
+      _label: URL
+      _has:
+        input: text
+        type: url
+        validate:
+          required: true
+    -
+      prop: overrideTitle
+      _label: Headline Override
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
+      prop: overrideTeaser
+      _label: Teaser Override
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
+      prop: overrideImage
+      _label: Image Override
+      _has:
+        input: text
+        help: Image url for article thumbnail
+        type: url
+    -
+      prop: ignoreValidation
+      _label: Bypass URL Validation?
+      _has:
+        input: checkbox
+        help: Use this field if the destination of the URL entered is not a Clay page. If checked, Headline and/or Image override must be set manually.
+    -
+      prop: urlIsValid
+      _has:
+        validate:
+          required: true
+
+# Uncomment after ON-66 is merged
+# googleAdRightRail:
+#   _component:
+#     include:
+#       - google-ad-manager
+# googleAdTop:
+#   _component:
+#     include:
+#       - google-ad-manager
+
+_groups:
+  moreContentFeedItems:
+    fields:
+      - populateBy
+      - tag
+      - items
+    _placeholder:
+      required: true
+      height: 100px
+      text: More from Radio.com (Content Feed)

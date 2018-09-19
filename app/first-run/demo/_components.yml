@@ -536,6 +536,21 @@ _components:
     instances:
       new:
         title: ''
+        sectionFront: ''
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/new
+
+  more-content-feed:
+    instances:
+      new:
+        items: []
+        tag: ''
+        populateBy: sectionFront
+        # uncomment once ON-66 is merged
+        # googleAdRightRail:
+        #   _ref: /_components/google-ad-manager/instances/mediumRectangle
+        # googleAdTop:
+        #   _ref: /_components/google-ad-manager/instances/leaderboard
 
   latest-recirculation:
     instances:

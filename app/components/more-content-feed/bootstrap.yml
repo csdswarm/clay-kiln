@@ -1,0 +1,8 @@
+_components:
+  more-content-feed:
+    items: []
+    tag: ''
+    populateBy: sectionFront
+    # Uncomment once ON-66 is merged
+    # googleAdRightRail: {}
+    # googleAdTop: {}

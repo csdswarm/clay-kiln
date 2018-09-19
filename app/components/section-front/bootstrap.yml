@@ -1,3 +1,5 @@
 _components:
   section-front:
     title: ''
+    sectionFront: ''
+    moreContentFeed: {}

@@ -1,2 +1,3 @@
-<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--section{{ if @root.locals.edit ' editing' }}">
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--section section--{{sectionFront}}{{ if @root.locals.edit ' editing' }}">
+	{{> more-content-feed moreContentFeed }}
 </section>
