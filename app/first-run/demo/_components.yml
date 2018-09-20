@@ -552,6 +552,11 @@ _components:
         # googleAdTop:
         #   _ref: /_components/google-ad-manager/instances/leaderboard
 
+  homepage:
+    instances:
+      new:
+        title: ''
+
   latest-recirculation:
     instances:
       new:

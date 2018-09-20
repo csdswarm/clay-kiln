@@ -5,7 +5,7 @@ var gulp = require('gulp'),
   hasFolderChanged = require('gulp-folder-changed'),
   groupConcat = require('gulp-group-concat'),
   map = require('vinyl-map2'),
-  sourcemaps = require('gulp-sourcemaps'),
+  sourcemaps = require('gulp-sourcemaps'),// eslint-disable-line no-unused-vars
   uglify = require('gulp-uglify'),
   rawUglify = require('uglify-js'),
   gutil = require('gulp-util'),
@@ -125,7 +125,7 @@ gulp.task('component-templates', function () {
 
 gulp.task('view-before', function () {
   return gulp.src([
-    'global/js/view-before/**',
+    'global/js/view-before/**'
   ])
     .pipe(concat('view-before.js'))
     .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
