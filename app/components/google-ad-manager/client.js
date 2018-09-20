@@ -1,6 +1,7 @@
 'use strict';
-let adSizeMappings = require('./adSizeMappings');
-let adSizes = adSizeMappings.adSizes;
+
+let adMapping = require('./adMapping');
+let adSizes = adMapping.adSizes;
 const doubleclickPrefix = "21674100491";
 const doubleclickBannerTag = "NTL.RADIO";
 const doubleclickPageTypeTagArticle = "article";
@@ -9,6 +10,9 @@ let refreshCount = 0;
 const adRefreshInterval = "120000"; // Time in milliseconds for ad refresh
 const adSlots = document.getElementsByClassName("google-ad-manager__slot");
 const googleDefinedSlots = [];
+
+// On page load set up sizeMappings
+adMapping.setupSizeMapping();
 
 // mount listener for vue
 document.addEventListener('google-ad-manager-mount', function(event) {
@@ -73,37 +77,23 @@ function setAds(){
 	}
 	googletag.cmd.push(function(){
 		for (let ad of adSlots) {
-			let slotType = ad.getAttribute("data-adSize");
+			let adSize = ad.getAttribute("data-adSize");
+			let sizeMapping = adMapping.sizeMapping[adSize];
 			let slot = googletag.defineSlot(
 				siteZone,
-				adSizes[slotType].defaultSize,
+				[adSizes[adSize].defaultSize],
 				ad.id)
-				.addService(googletag.pubads())
+        .defineSizeMapping(sizeMapping)
+        .addService(googletag.pubads())
+        .setCollapseEmptyDiv(true)
 				.setTargeting("refresh", (refreshCount).toString());
-				if (adSizes[slotType].responsiveMapping.length > 0) {
-					let mapping = googletag.sizeMapping();
-					for (let responsiveMap of adSizes[slotType].responsiveMapping) {
-						mapping.addSize(responsiveMap[0], responsiveMap[1]);
-					}
-					mapping.build();
-					slot.defineSizeMapping(mapping);
-				}
 			googleDefinedSlots.push(slot);
+      googletag.display(ad.id);
 		}
 		googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
-		googletag.pubads().enableLazyLoad();
-		googletag.pubads().enableSingleRequest();
-		googletag.pubads().collapseEmptyDivs(true); //true = expand if ad, false = collapse if no ad. true fixes FOUC-like problem on init load
-		googletag.pubads().setCentering(true);
-		googletag.pubads().disableInitialLoad();
-		googletag.enableServices();
-		for (let ad of adSlots) {
-			googletag.display(ad.id);
-		}
 		googletag.display("div-gpt-ad-1532458744047-0");
-		googletag.pubads().refresh(googleDefinedSlots);
-	});
-
+		googletag.pubads().refresh(googleDefinedSlots)
+	})
 	setTimeout(refreshAds, adRefreshInterval);
 }
 
