@@ -231,8 +231,8 @@ lead:
       - youtube
       - html-embed
     validate:
-      min: 1
       max: 1
+      required: true
 content:
   _label: Article Content
   _placeholder:
