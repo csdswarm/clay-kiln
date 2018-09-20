@@ -1,6 +1,7 @@
 'use strict'
-let adSizeMappings = require('./adSizeMappings')
-let adSizes = adSizeMappings.adSizes
+
+let adMapping = require('./adMapping')
+let adSizes = adMapping.adSizes;
 const doubleclick_prefix = "21674100491"
 const doubleclick_bannerTag = "NTL.RADIO"
 const doubleclick_pageTypeTag_article = "article"
@@ -18,6 +19,9 @@ const adSlotsFiltered = {
 	mobile: [],
 	logoSponsorship: []
 }
+
+// On page load set up sizeMappings
+adMapping.setupSizeMapping();
 
 // mount listener for vue
 document.addEventListener('google-ad-manager-mount', function(event) {
@@ -40,38 +44,12 @@ function clearAds(){
  * create and add unique ids to each ad slot on page
  */
 function setAdsIDs() {
-	for (let slot of adSlots) {
-		switch (slot.classList[1]) {
-			case "google-ad-manager__slot--preferred":
-				adSlotsFiltered.preferred.push(slot)
-				break
-			case "google-ad-manager__slot--large-leaderboard":
-				adSlotsFiltered.largeLeaderboard.push(slot)
-				break
-			case "google-ad-manager__slot--leaderboard":
-				adSlotsFiltered.leaderboard.push(slot)
-				break
-			case "google-ad-manager__slot--half-page":
-				adSlotsFiltered.halfPage.push(slot)
-				break
-			case "google-ad-manager__slot--medium-rectangle":
-				adSlotsFiltered.mediumRectangle.push(slot)
-				break
-			case "google-ad-manager__slot--mobile":
-				adSlotsFiltered.mobile.push(slot)
-				break
-			case "google-ad-manager__slot--logo-sponsorship":
-				adSlotsFiltered.logoSponsorship.push(slot)
-				break
-		}
-	}
-	for (let slotFilter in adSlotsFiltered) {
-		let count = 0
-		for (let slot of adSlotsFiltered[slotFilter]) {
-			slot.id = slot.classList[1].concat("-", count)
-			count = count + 1
-		}
-	}
+  Object.keys(adSizes).forEach((adSize) => {
+    let adSlots = document.getElementsByClassName(`google-ad-manager__slot--${adSize}`);
+    [...adSlots].forEach((slot, index) => {
+      slot.id = slot.classList[1].concat('-', index);
+    });
+  });
 	setAds()
 }
 
@@ -102,34 +80,22 @@ function setAds(){
 			break
 	}
 	googletag.cmd.push(function(){
-		googletag.destroySlots()
 		for (let ad of adSlots) {
+			let adSize = ad.getAttribute("data-adSize");
+			let sizeMapping = adMapping.sizeMapping[adSize];
 			let slot = googletag.defineSlot(
 				siteZone,
-				adSizes[ad.getAttribute("data-adSize")].defaultSize,
+				[adSizes[adSize].defaultSize],
 				ad.id)
-				.addService(googletag.pubads())
-				.setTargeting("refresh", (refreshCount).toString())
-				if (adSizes[ad.getAttribute("data-adSize")].responsiveMapping.length > 0) {
-					let mapping = googletag.sizeMapping()
-					for (let responsiveMap of adSizes[ad.getAttribute("data-adSize")].responsiveMapping) {
-						mapping.addSize(responsiveMap[0], responsiveMap[1])
-					}
-					mapping.build()
-					slot.defineSizeMapping(mapping)
-				}
-			googleDefinedSlots.push(slot)
+        .defineSizeMapping(sizeMapping)
+        .addService(googletag.pubads())
+        .setCollapseEmptyDiv(true)
+				.setTargeting("refresh", (refreshCount).toString());
+			googleDefinedSlots.push(slot);
+      googletag.display(ad.id);
 		}
 		googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
-		googletag.pubads().enableSingleRequest()
-		googletag.pubads().collapseEmptyDivs(true) //true = expand if ad, false = collapse if no ad. true fixes FOUC-like problem on init load
-		googletag.pubads().setCentering(true)
-		googletag.pubads().disableInitialLoad()
-		googletag.enableServices()
-		for (let ad of adSlots) {
-			googletag.display(ad.id)
-		}
-		googletag.display("div-gpt-ad-1532458744047-0")
+		googletag.display("div-gpt-ad-1532458744047-0");
 		googletag.pubads().refresh(googleDefinedSlots)
 	})
 
