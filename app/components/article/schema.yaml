@@ -189,6 +189,8 @@ stationURL:
   _label: Station URL
   _has:
     input: text
+    # TODO: URL Validation. See https://entercomdigitalservices.atlassian.net/browse/ON-178
+    type: url
     help: URL of the station
 hasSecondaryBylines:
   _label: Use Secondary Bylines
