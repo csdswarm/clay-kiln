@@ -1,18 +1,21 @@
 'use strict';
 
 /**
- * Sets component canonical url if it's passed in through the locals
+ * set component canonical url and date if they're passed in through the locals
  * @param {object} data
  * @param {object} [locals]
  */
-function setUrl(data, locals) {
+function setFromLocals(data, locals) {
   if (locals && locals.publishUrl) {
     data.url = locals.publishUrl;
+  }
+
+  if (locals && locals.date) {
+    data.date = locals.date;
   }
 }
 
 module.exports.save = (ref, data, locals) => {
-  setUrl(data, locals); // Save the canonical url on PUT because on GET locals does not have canonicalUrl.
-
+  setFromLocals(data, locals);
   return data;
 };

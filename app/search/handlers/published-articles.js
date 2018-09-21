@@ -2,7 +2,7 @@
 
 const h = require('highland'),
   { logSuccess, logError } = require('../helpers/log-events'),
-  { addSiteAndNormalize, resolveTags } = require('../helpers/transform'),
+  { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
   INDEX = helpers.indexWithPrefix('published-articles', process.env.ELASTIC_PREFIX),

@@ -37,7 +37,7 @@ function initAmphora(app, search, sessionStore) {
     }));
 
     return router;
-  })
+  });
 }
 
 module.exports = initAmphora;

@@ -6,8 +6,8 @@ var htmlWordCount = require('html-word-count'),
     article: null, // just trigger recount
     'article-sidebar': null,
     blockquote: 'text', // trigger recount, AND count text in this property
-    'paragraph': 'text',
-    'subheader': 'text',
+    paragraph: 'text',
+    subheader: 'text',
     subsection: null
   },
   {getComponentName} = require('clayutils');
