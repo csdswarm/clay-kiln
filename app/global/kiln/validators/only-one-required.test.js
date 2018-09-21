@@ -28,7 +28,7 @@ describe(dirname, function () {
             components: {
               'www.url.com/_components/subscription-plan/instances/a': {isDefaultSelection: false},
               'www.url.com/_components/subscription-plan/instances/b': {isDefaultSelection: false},
-              'www.url.com/_components/subscription-plan/instances/c': {isDefaultSelection: false},
+              'www.url.com/_components/subscription-plan/instances/c': {isDefaultSelection: false}
             }
           },
           firstComponent = Object.keys(state.components)[0];
@@ -46,7 +46,7 @@ describe(dirname, function () {
             components: {
               'www.url.com/_components/subscription-plan/instances/a': {isDefaultSelection: true},
               'www.url.com/_components/subscription-plan/instances/b': {isDefaultSelection: true},
-              'www.url.com/_components/subscription-plan/instances/c': {isDefaultSelection: false},
+              'www.url.com/_components/subscription-plan/instances/c': {isDefaultSelection: false}
             }
           },
           subscriptionPlans = validations[0],

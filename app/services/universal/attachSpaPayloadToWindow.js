@@ -1,7 +1,7 @@
 /**
- * 
+ *
  * Handlebars helper that attaches the full handlerbars context to the browser window object for use by a front-end SPA.
- * 
+ *
  */
 
 'use strict';
@@ -19,10 +19,10 @@ module.exports = function attachSpaPayloadToWindow(context) {
   } else {
     jsonPayload = JSON.stringify(context);
   }
-  
+
   // Base64 encode payload to avoid XSS issues related to inline JS.
   const base64Payload = Base64.encode(jsonPayload);
 
   return base64Payload;
 
-}
+};

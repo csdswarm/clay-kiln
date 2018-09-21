@@ -13,6 +13,6 @@ function setUrl(data, locals) {
 
 module.exports.save = (ref, data, locals) => {
   setUrl(data, locals); // Save the canonical url on PUT because on GET locals does not have canonicalUrl.
-  
+
   return data;
 };
