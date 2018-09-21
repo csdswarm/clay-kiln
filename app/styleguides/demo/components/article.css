@@ -74,6 +74,7 @@
       flex-wrap: wrap;
       white-space: pre-wrap;
       margin-bottom: em(15, 14);
+      width: 100%;
       .author {
         @mixin article-font5;
         display: inline-flex;

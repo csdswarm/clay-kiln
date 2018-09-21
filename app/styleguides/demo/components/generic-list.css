@@ -1,5 +1,7 @@
 .generic-list {
 
+  margin-top: em(20);
+
   .generic-list-hd {
     border-bottom: 1px solid #ccc;
     margin: 0 0 20px 0;
