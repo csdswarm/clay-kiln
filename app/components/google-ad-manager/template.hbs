@@ -3,9 +3,11 @@
 	data-placeholder="adSize"
 	class="component component--google-ad-manager google-ad-manager--{{adSize}}"
 >
-	<div
-		class="google-ad-manager__slot google-ad-manager__slot--{{adSize}}"
-		data-adSize="{{adSize}}"
-	></div>
+	{{#unless @root.locals.edit}}
+		<div
+			class="google-ad-manager__slot google-ad-manager__slot--{{adSize}}"
+			data-adSize="{{adSize}}"
+		></div>
+	{{/unless}}
 </div>
 {{!-- 970x250, 970x90, 728x90, 300x600, 300x250, 320x50, 100x35 --}}

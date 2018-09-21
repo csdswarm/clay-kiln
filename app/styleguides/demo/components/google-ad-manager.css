@@ -2,14 +2,7 @@
 @import "_global/mixins";
 
 .kiln-edit-mode .component--google-ad-manager {
-	width: 100%;
-	height: em(250);
-	background: $alabasterGrey;
-	margin: 0 auto;
 	margin-bottom: em(50);
-	.google-ad-manager__slot {
-		display: none;
-	}
 }
 .component--google-ad-manager {
 	background: $alabasterGrey;
