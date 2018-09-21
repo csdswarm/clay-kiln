@@ -20,6 +20,6 @@ Constructor.prototype = {
   	sidebar.style.position = 'relative';
   	sidebar.style.visibility = 'visible';
   }
-}
+};
 
-module.exports = () => new Constructor()
+module.exports = () => new Constructor();
