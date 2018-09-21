@@ -73,8 +73,6 @@
       display: inline-flex;
       flex-wrap: wrap;
       white-space: pre-wrap;
-      margin-bottom: em(15, 14);
-      width: 100%;
       .author {
         @mixin article-font5;
         display: inline-flex;
@@ -101,6 +99,28 @@
         @mixin article-font5;
         color: $black;
         display: inline-flex;
+      }
+    }
+    .info__by-authors--no-station {
+      margin-bottom: em(15, 14);
+    }
+    .info__from-station {
+      @mixin article-font5;
+      display: inline-flex;
+      flex-wrap: wrap;
+      margin-bottom: em(15, 14);
+      @define-mixin station-source-color $articleType, $color {
+        .component--article[data-article-type=$articleType] & a {
+          color: $color;
+        }
+      }
+      @mixin station-source-color entertainment, $sunsetOrange;
+      @mixin station-source-color news, $lightningYellow;
+      @mixin station-source-color sports, $azureRadience;
+      @mixin station-source-color podcasts, $robinsEgg;
+      a {
+        text-decoration: none;
+        white-space: nowrap;
       }
     }
     .info__timestamp {
@@ -154,7 +174,8 @@
       margin-right: 0;
       display: flex;
       justify-content: space-between;
-      .info__by-authors {
+      .info__by-authors--no-station,
+      .info__from-station {
         margin-bottom: em(10, 14);
       }
       .info--left-top {
