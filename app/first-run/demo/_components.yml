@@ -319,6 +319,30 @@ _components:
       default:
         allowed: true
 
+  google-ad-manager:
+    instances:
+      new:
+        adSize: ''
+      billboard:
+        adSize: billboard
+      superLeaderboard:
+        adSize: super-leaderboard
+      leaderboard:
+        adSize: leaderboard
+      halfPage:
+        adSize: half-page
+      mediumRectangle:
+        adSize: medium-rectangle
+      mobile:
+        adSize: mobile
+      logoSponsorship:
+        adSize: logo-sponsorship
+
+  google-ad-manager-head:
+    instances:
+      default:
+        allowed: true
+
   chartbeat:
     instances:
       default:
@@ -537,9 +561,14 @@ _components:
       new:
         title: ''
 
+  homepage:
+    instances:
+      new:
+        title: ''
+
   latest-recirculation:
     instances:
       new:
         items: []
         tag: ''
-        populateBy: articleType
+        populateBy: ''
