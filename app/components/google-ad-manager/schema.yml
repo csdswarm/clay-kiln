@@ -5,8 +5,8 @@ adSize:
   _label: Ad Slot Size (Note** Responsive)
   _placeholder:
     height: 250px
-    text: Ad Slot
-    required: true
+    text: ${adSize} ad slot
+    permanent: true
   _has:
     input: radio
     help: Choose the size of the Google Ad Manager ad slot in pixels

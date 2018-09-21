@@ -8,9 +8,7 @@
 	margin: 0 auto;
 	margin-bottom: em(50);
 	.google-ad-manager__slot {
-		background: $hawkesBlue;
-		margin: 0 auto;
-		height: 100%;
+		display: none;
 	}
 }
 .component--google-ad-manager {
