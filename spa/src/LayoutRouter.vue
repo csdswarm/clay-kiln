@@ -5,7 +5,6 @@
 <script>
 
 import axios from 'axios'
-import URL from 'url-parse'
 import * as mutationTypes from '@/vuex/mutationTypes'
 import OneColumnLayout from '@/views/OneColumnLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
@@ -46,15 +45,13 @@ export default {
       return nextLayoutComponent
     },
     getNextSpaPayload: async function getNextSpaPayload (uriId) {
-
       const uriReqResult = await axios.get(`//${window.location.hostname}/_uris/${uriId}`)
 
       const nextSpaPayloadResult = await axios.get(`//${uriReqResult.data}.json`)
 
-      nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals;
+      nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
 
       return nextSpaPayloadResult.data
-
     }
   },
   components: {
@@ -63,7 +60,6 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
-
       // Get SPA payload data for next path.
       const uriId = btoa(window.location.hostname + to.path)
       const spaPayload = await this.getNextSpaPayload(uriId)

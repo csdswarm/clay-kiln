@@ -561,6 +561,11 @@ _components:
       new:
         title: ''
 
+  homepage:
+    instances:
+      new:
+        title: ''
+
   latest-recirculation:
     instances:
       new:
