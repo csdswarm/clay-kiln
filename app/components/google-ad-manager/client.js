@@ -84,6 +84,7 @@ function setAds() {
       googleDefinedSlots.push(slot);
       googletag.display(ad.id);
     }
+    // Slot for 100x35 on web player
     googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
     googletag.display('div-gpt-ad-1532458744047-0');
     googletag.pubads().refresh(googleDefinedSlots);
