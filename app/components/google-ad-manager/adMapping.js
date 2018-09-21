@@ -1,8 +1,8 @@
 const adSizes = {
-	"preferred": {
+	"billboard": {
 		defaultSize: [970,250]
 	},
-	"large-leaderboard": {
+	"super-leaderboard": {
 		defaultSize: [970,90]
 	},
 	"leaderboard": {
@@ -28,13 +28,13 @@ module.exports = {
 	setupSizeMapping: function() {
 		let sizeMapping = this.sizeMapping;
     googletag.cmd.push(function() {
-			sizeMapping['preferred'] = googletag.sizeMapping()
+			sizeMapping['billboard'] = googletag.sizeMapping()
 				.addSize([1279, 0], [[970, 250]])
 				.addSize([480, 0], [[728, 90]])
 				.addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50]])
 				.build();
 
-      sizeMapping['large-leaderboard'] = googletag.sizeMapping()
+      sizeMapping['super-leaderboard'] = googletag.sizeMapping()
         .addSize([1279, 0], [[970, 90]])
         .addSize([480, 0], [[728, 90]])
         .addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50]])

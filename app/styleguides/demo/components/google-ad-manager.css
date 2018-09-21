@@ -21,8 +21,8 @@
 		background: $alto;
 	}
 }
-.google-ad-manager--preferred,
-.google-ad-manager--large-leaderboard,
+.google-ad-manager--billboard,
+.google-ad-manager--super-leaderboard,
 .google-ad-manager--leaderboard,
 .google-ad-manager--mobile {
 	width: 100%;

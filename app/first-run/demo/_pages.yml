@@ -14,7 +14,7 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
     pageHeader:
-      - /_components/google-ad-manager/instances/preferred
+      - /_components/google-ad-manager/instances/billboard
     main:
       - /_components/article/instances/new
     tertiary:

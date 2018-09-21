@@ -12,11 +12,11 @@ adSize:
     help: Choose the size of the Google Ad Manager ad slot in pixels
     options:
       -
-        name: preferred (970x250)
-        value: preferred
+        name: billboard (970x250)
+        value: billboard
       -
-        name: large leaderboard (970x90)
-        value: large-leaderboard
+        name: super leaderboard (970x90)
+        value: super-leaderboard
       -
         name: leaderboard (728x90)
         value: leaderboard
@@ -27,7 +27,7 @@ adSize:
         name: medium rectangle (300x250)
         value: medium-rectangle
       -
-        name: mobile (320x50)
+        name: mobile (320x50 / 320x100 / 300x50 / 300x100)
         value: mobile
       -
         name: logo sponsorship (100x35)

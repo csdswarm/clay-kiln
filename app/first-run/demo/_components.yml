@@ -323,10 +323,10 @@ _components:
     instances:
       new:
         adSize: ''
-      preferred:
-        adSize: preferred
-      largeLeaderboard:
-        adSize: large-leaderboard
+      billboard:
+        adSize: billboard
+      superLeaderboard:
+        adSize: super-leaderboard
       leaderboard:
         adSize: leaderboard
       halfPage:
