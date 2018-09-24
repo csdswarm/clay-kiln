@@ -4,3 +4,29 @@ title:
   _label: Title
   _has:
     input: text
+
+sectionFront:
+  _label: Section Front Category
+  _publish: sectionFront
+  _has:
+    input: radio
+    options:
+      -
+        name: Entertainment
+        value: entertainment
+      -
+        name: News
+        value: news
+      -
+        name: Podcasts
+        value: podcasts
+      -
+        name: Sports
+        value: sports
+    validate:
+      required: true
+
+canonicalUrl:
+  _publish: url
+  _has:
+    help: Canonical URL of an article. Set when the article publishes.

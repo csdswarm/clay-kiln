@@ -26,7 +26,10 @@ top:
   _componentList:
     include:
       - header
-
+pageHeader:
+  _componentList:
+    include:
+      - google-ad-manager
 main:
   _componentList:
     page: true

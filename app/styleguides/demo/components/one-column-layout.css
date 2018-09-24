@@ -1,3 +1,9 @@
 @import '_global/reset';
 @import '_global/fonts';
 @import '_global/grid';
+
+.layout--one-column {
+	.layout__content {
+		margin-bottom: em(40);
+	}
+}

@@ -4,3 +4,8 @@ title:
   _label: Title
   _has:
     input: text
+
+canonicalUrl:
+  _publish: url
+  _has:
+    help: Canonical URL of an article. Set when the article publishes.

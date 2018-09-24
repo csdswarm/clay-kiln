@@ -560,6 +560,7 @@ _components:
     instances:
       new:
         title: ''
+        sectionFront: ''
 
   homepage:
     instances:
