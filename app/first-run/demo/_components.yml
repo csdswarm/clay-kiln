@@ -561,11 +561,26 @@ _components:
       new:
         title: ''
         sectionFront: ''
+        googleAdUnderStationsModule:
+          -
+            _ref: /_components/google-ad-manager/instances/leaderboard
+        googleAdRightRail:
+          -
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   homepage:
     instances:
       new:
         title: ''
+        googleAdUnderStationsModule:
+          -
+            _ref: /_components/google-ad-manager/instances/superLeaderboard
+        googleAdUnderLatestModule:
+          -
+            _ref: /_components/google-ad-manager/instances/billboard
+        googleAdRightRail:
+          -
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   latest-recirculation:
     instances:
