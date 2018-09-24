@@ -2,11 +2,8 @@ _components:
   homepage:
     title: ''
     googleAdUnderStationsModule:
-      -
         _ref: /_components/google-ad-manager/instances/superLeaderboard
     googleAdUnderLatestModule:
-      -
         _ref: /_components/google-ad-manager/instances/billboard
     googleAdRightRail:
-      -
         _ref: /_components/google-ad-manager/instances/mediumRectangle

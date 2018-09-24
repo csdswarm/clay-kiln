@@ -3,8 +3,6 @@ _components:
     title: ''
     sectionFront: ''
     googleAdUnderStationsModule:
-      -
         _ref: /_components/google-ad-manager/instances/leaderboard
     googleAdRightRail:
-      -
         _ref: /_components/google-ad-manager/instances/mediumRectangle
