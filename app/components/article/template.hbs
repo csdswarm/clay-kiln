@@ -48,14 +48,23 @@
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
-        <span data-editable="bylines" class="info__by-authors">
+        <div data-editable="bylines" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
           {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}
           {{#each byline}}
             {{#each sources as |source|}}
-              <span class="separator">, </span><span class="source">{{source.text}}</span>
+              <span class="source">, {{source.text}}</span>
             {{/each}}
           {{/each}}
-        </span>
+          {{#if stationTitle}}<span>,</span>{{/if}}
+        </div>
+
+        <div class="info__from-station" data-editable="stationSource">
+          {{#ifAll stationTitle stationURL}}
+            <a href="{{ urlencode (striptags stationURL) }}">{{ stationTitle }}</a>
+          {{else if stationTitle}}
+            {{ stationTitle }}
+          {{/ifAll}}
+        </div>
 
         {{! date and time }}
         <time class="info__timestamp" datetime="{{ date }}" itemprop="datePublished" data-editable="publishedDate">
@@ -77,8 +86,8 @@
         {{! Side Share }}
         {{> share sideShare }}
       </div>
-    </div>{{!--
-    --}}<div class="body__content" data-editable="content" itemprop="articleBody">
+    </div>
+    <div class="body__content" data-editable="content" itemprop="articleBody">
       {{! don't display generated annotatedTextAria in edit mode. Replace all ad components with ad-dummies }}
       {{> component-list content }}
 

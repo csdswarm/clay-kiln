@@ -86,6 +86,6 @@ _groups:
       - tag
       - items
     _placeholder:
-      ifEmpty: 'items.url'
-      height: 100px
+      ifEmpty: 'populateBy'
+      height: 500px
       text: Latest Story(s)

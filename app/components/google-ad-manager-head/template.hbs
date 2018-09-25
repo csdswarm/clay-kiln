@@ -1,0 +1,17 @@
+{{#unless @root.locals.edit}}
+  <script async src=https://www.googletagservices.com/tag/js/gpt.js></script>
+  <script>
+    var googletag = googletag || {};
+    googletag.cmd = googletag.cmd || [];
+  </script>
+  <script>
+    googletag.cmd.push(function() {
+      googletag.pubads().enableSingleRequest();
+      googletag.pubads().enableLazyLoad();
+      googletag.pubads().collapseEmptyDivs(true); //true = expand if ad, false = collapse if no ad. true fixes FOUC-like problem on init load
+      googletag.pubads().setCentering(true);
+      googletag.pubads().disableInitialLoad();
+      googletag.enableServices();
+    });
+  </script>
+{{/unless}}
