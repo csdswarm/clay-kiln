@@ -1,9 +1,7 @@
 _components:
   section-front:
-    title: ''
     sectionFront: ''
-    moreContentFeed: {}
+    moreContentFeed:
+      _ref: /_components/more-content-feed/instances/new
     googleAdUnderStationsModule:
       _ref: /_components/google-ad-manager/instances/leaderboard
-    googleAdRightRail:
-      _ref: /_components/google-ad-manager/instances/mediumRectangle

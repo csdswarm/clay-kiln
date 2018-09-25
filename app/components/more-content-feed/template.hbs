@@ -1,26 +1,29 @@
-<section class="component component--more-content-feed {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="more-content-feed" data-editable="moreContentFeedItems">
+<section class="component component--more-content-feed {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="more-content-feed">
   {{#ifAny content.length @root.locals.edit}}
-    <!-- Uncomment after ON-66 is merged -->
-    <!-- {{> google-ad-manager googleAdTop }} -->
-    <h2 class="more-content-feed__title">MORE from <span class="title">RADIO.COM</span></h2>
-    <ul class="more-content-feed__links">
-      {{#each content as |feedItem|}}
-        <li>
-          <a href="{{ feedItem.canonicalUrl }}"
-             data-track-type="feedItem-link"
-             data-track-component-name="more-content-feed"
-             data-track-page-uri="{{ feedItem.pageUri }}"
-             data-track-headline="{{ feedItem.primaryHeadline }}"
-             data-track-component-title="More Content Feed">
-            <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});"></div>
-            <span class="link__headline">{{{ feedItem.primaryHeadline }}}</span>
-          </a>
-        </li>
-      {{/each}}
-    </ul>
-    <aside class="right-rail">
-      <!-- Uncomment after ON-66 is merged -->
-      <!-- {{> google-ad-manager googleAdRightRail }} -->
-    </aside>
+    {{#if (compare locationOfContentFeed 'homepage') }}
+      <h2 class="more-content-feed__title">MORE from <span class="title">RADIO.COM</span></h2>
+    {{/if}}
+    <div class="section__content-feed-container">
+      <ul class="more-content-feed__links">
+        {{#each content as |feedItem|}}
+          <li>
+            <a href="{{ feedItem.canonicalUrl }}"
+               data-track-type="feedItem-link"
+               data-track-component-name="more-content-feed"
+               data-track-page-uri="{{ feedItem.pageUri }}"
+               data-track-headline="{{ feedItem.primaryHeadline }}"
+               data-track-component-title="More Content Feed">
+              <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});"></div>
+              <div>
+                <span class="link__headline">{{{ feedItem.primaryHeadline }}}</span>
+                <span class="link__teaser">teaser</span>
+                <span class="link__datetimePosted">7 hours ago</span>
+              </div>
+            </a>
+          </li>
+        {{/each}}
+      </ul>
+      {{> google-ad-manager googleAdRightRail}}
+    </div>
   {{/ifAny}}
 </section>

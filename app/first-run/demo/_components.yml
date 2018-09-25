@@ -559,32 +559,48 @@ _components:
   section-front:
     instances:
       new:
-        title: ''
         sectionFront: ''
         googleAdUnderStationsModule:
           _ref: /_components/google-ad-manager/instances/leaderboard
-        googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangle
         moreContentFeed:
-          _ref: /_components/more-content-feed/instances/new
+          _ref: /_components/more-content-feed/instances/section-front
 
   more-content-feed:
     instances:
-      new:
+      homepage:
         items: []
         tag: ''
-        populateBy: sectionFront
+        sectionFrontManual: ''
+        populateFrom: all
+        locationOfContentFeed: homepage
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+      section-front:
+        items: []
+        tag: ''
+        sectionFrontManual: entertainment
+        populateFrom: section-front
+        locationOfContentFeed: section-front
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+      tag-page:
+        items: []
+        tag: ''
+        sectionFrontManual: ''
+        populateFrom: tag
+        locationOfContentFeed: tag-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   homepage:
     instances:
       new:
-        title: ''
         googleAdUnderStationsModule:
-            _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
         googleAdUnderLatestModule:
-            _ref: /_components/google-ad-manager/instances/billboard
-        googleAdRightRail:
-            _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/billboard
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/homepage
 
   latest-recirculation:
     instances:

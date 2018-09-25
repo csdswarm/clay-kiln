@@ -1,18 +1,33 @@
 _description: |
   A list of five latest related articles by article type, tag, or manually populated.
 
-populateBy:
-  _label: Populate content by section front or tag?
+populateFrom:
+  _label: Populate content from?
   _has:
     validate:
       required: true
     input: radio
     options:
       -
+        name: All Content
+        value: all
+      -
         name: Section Front
-        value: sectionFront
+        value: section-front
       - tag
       - manual
+
+locationOfContentFeed:
+  _label: Content Feed is on Homepage
+  _has:
+    help: Indicates whether content feed is located on the homepage
+    validate:
+      required: true
+    input: radio
+    options:
+      - homepage
+      - section-front
+      - tag-page
 
 sectionFront:
   _subscribe: sectionFront
@@ -20,10 +35,38 @@ sectionFront:
   _has:
     help: Section Front Category from which to pull content
 
+sectionFrontManual:
+  _label: Section Front Category
+  _publish: sectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: section-front
+  _has:
+    input: radio
+    options:
+      -
+        name: Entertainment
+        value: entertainment
+      -
+        name: News
+        value: news
+      -
+        name: Podcasts
+        value: podcasts
+      -
+        name: Sports
+        value: sports
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        value: section-front
+
 tag:
   _label: Tag
   _reveal:
-    field: populateBy
+    field: populateFrom
     operator: ===
     value: tag
   _has:
@@ -31,7 +74,7 @@ tag:
     help: Tag from which to pull content
     validate:
       required:
-        field: populateBy
+        field: populateFrom
         operator: ===
         value: tag
 
@@ -82,23 +125,19 @@ items:
         validate:
           required: true
 
-# Uncomment after ON-66 is merged
-# googleAdRightRail:
-#   _component:
-#     include:
-#       - google-ad-manager
-# googleAdTop:
-#   _component:
-#     include:
-#       - google-ad-manager
+googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
 
 _groups:
-  moreContentFeedItems:
+  settings:
     fields:
-      - populateBy
+      - populateFrom
+      - sectionFrontManual
       - tag
       - items
     _placeholder:
-      required: true
       height: 100px
       text: More from Radio.com (Content Feed)
+      ifEmpty: populateFrom

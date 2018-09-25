@@ -1,10 +1,5 @@
 _confirmRemoval: true
 
-title:
-  _label: Title
-  _has:
-    input: text
-
 sectionFront:
   _label: Section Front Category
   _publish: sectionFront
@@ -41,7 +36,13 @@ googleAdUnderStationsModule:
     include:
       - google-ad-manager
 
-googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager
+_groups:
+  settings:
+    fields:
+      - sectionFront
+      - canonicalUrl
+    _placeholder:
+      text: Section Front
+      height: 500px
+      required: true
+      permanent: true

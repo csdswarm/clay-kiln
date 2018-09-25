@@ -27,14 +27,15 @@ module.exports.save = (ref, data, locals) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
     .then((result) => {
-      const article = Object.assign(item, {
+      console.log("result", result);
+      const content = Object.assign(item, {
         primaryHeadline: item.overrideTitle || result.primaryHeadline,
         pageUri: result.pageUri,
         urlIsValid: result.urlIsValid,
         canonicalUrl: item.url || result.canonicalUrl,
         feedImgUrl: item.overrideImage || result.feedImgUrl
       });
-      return article;
+      return content;
     });
   }))
   .then((items) => {
@@ -53,18 +54,25 @@ module.exports.render = function (ref, data, locals) {
   let cleanUrl;
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  if (data.populateBy == 'tag') {
+  if (data.populateFrom == 'tag') {
     if (!data.tag || !locals) {
       return data;
     }
+    console.log("pop from tag, tag: ", data.tag);
      // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
     queryService.addShould(query, { match: { tags: data.tag }});
-  } else if (data.populateBy == 'articleType') {
-    if (!data.articleType || !locals) {
+  } else if (data.populateFrom == 'section-front') {
+    if (!data.sectionFront || !locals) {
       return data;
     }
-    queryService.addShould(query, { match: { articleType: data.articleType }});
+    console.log("pop from sectionFront, sectionFront: ", data.sectionFront);
+    queryService.addShould(query, { match: { articleType: data.sectionFront }});
+  } else if (data.populateFrom == 'all') {
+    if (!locals) {
+      return data;
+    }
+    console.log("populate from all")
   }
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
@@ -77,7 +85,8 @@ module.exports.render = function (ref, data, locals) {
 
   return queryService.searchByQuery(query)
     .then(function (results) {
-      data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      console.log("results", results);
+      data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
       return data;
     })
     .catch(e => {

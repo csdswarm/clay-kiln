@@ -1,7 +1,4 @@
-<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--section section--{{sectionFront}}{{ if @root.locals.edit ' editing' }}">
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--section section--{{sectionFront}}{{ if @root.locals.edit ' editing' }}" data-placeholder="settings">
 	{{> google-ad-manager googleAdUnderStationsModule}}
-	<div class="section__content-feed-container">
-		{{> more-content-feed moreContentFeed }}
-		{{> google-ad-manager googleAdRightRail}}
-	</div>
+	{{> more-content-feed moreContentFeed }}
 </section>
