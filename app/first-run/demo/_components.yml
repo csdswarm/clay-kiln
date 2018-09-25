@@ -561,6 +561,10 @@ _components:
       new:
         title: ''
         sectionFront: ''
+        googleAdUnderStationsModule:
+          _ref: /_components/google-ad-manager/instances/leaderboard
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/new
 
@@ -570,16 +574,17 @@ _components:
         items: []
         tag: ''
         populateBy: sectionFront
-        # uncomment once ON-66 is merged
-        # googleAdRightRail:
-        #   _ref: /_components/google-ad-manager/instances/mediumRectangle
-        # googleAdTop:
-        #   _ref: /_components/google-ad-manager/instances/leaderboard
 
   homepage:
     instances:
       new:
         title: ''
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/superLeaderboard
+        googleAdUnderLatestModule:
+            _ref: /_components/google-ad-manager/instances/billboard
+        googleAdRightRail:
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   latest-recirculation:
     instances:
