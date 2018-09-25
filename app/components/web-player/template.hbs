@@ -1,6 +1,8 @@
 <div data-uri="{{ default _ref _self }}" class="component component--web-player">
   {{#unless @root.locals.edit}}
   <div id="playerContainer"></div>
+  <script src="//players.brightcove.net/{{ @root.locals.site.brightcoveAccountId }}/default_default/index.min.js"> </script> 
+  <script src="//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js"></script>
   <script>
     // @TODO: Dynamically populate data or pick appropriate default data
     window.onload = function () {
