@@ -1,9 +1,41 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
 .component--more-content-feed {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	.more-content-feed__title-line {
+	    border-bottom: em(1) solid $parisPurple;
+	    margin: em(25) 0;
+	    width: 100%;
+	    height: 0;
+	}
+	.more-content-feed__title {
+		@mixin more-content-feed-font1;
+		margin-top: em(12.5, 20);
+		background: #FFF;
+		display: inline-block;
+		position: absolute;
+	}
 	.section__content-feed-container {
 		display: flex;
 		.more-content-feed__links {
 			width: calc(100% - em(300));
 			margin-right: em(20);
+			.links__link {
+				display: inline-flex;
+				.link__thumb {
+					background-position: 0,0;
+					background-size: cover;
+					width: em(widthOnGrid(5,4));
+					height: em(214);
+				}
+				.link__info {
+					width: calc(100% - em(widthOnGrid(5,4)));
+				}
+			}
 		}
 	}
 }

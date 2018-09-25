@@ -1,5 +1,5 @@
 'use strict';
- const queryService = require('../../services/server/query'),
+const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
@@ -51,6 +51,7 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  console.log("data:", data);
   let cleanUrl;
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
@@ -63,11 +64,11 @@ module.exports.render = function (ref, data, locals) {
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
     queryService.addShould(query, { match: { tags: data.tag }});
   } else if (data.populateFrom == 'section-front') {
-    if (!data.sectionFront || !locals) {
+    if ((!data.sectionFront && !data.sectionFrontManual) || !locals) {
       return data;
     }
-    console.log("pop from sectionFront, sectionFront: ", data.sectionFront);
-    queryService.addShould(query, { match: { articleType: data.sectionFront }});
+    console.log("pop from sectionFront, sectionFront: ", data.sectionFront, data.sectionFrontManual);
+    queryService.addShould(query, { match: { articleType: (data.sectionFront || data.sectionFrontManual) }});
   } else if (data.populateFrom == 'all') {
     if (!locals) {
       return data;
