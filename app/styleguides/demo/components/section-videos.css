@@ -4,10 +4,6 @@
 @import "_global/colors";
 
 .component--section-videos {
-  .kiln-placeholder {
-    display: none;
-  }
-
   margin-bottom: em(40);
 
   h2 {
