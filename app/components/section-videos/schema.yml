@@ -45,6 +45,6 @@ _groups:
     - items
     - tag
     _placeholder:
-      ifEmpty: items.url and tag
+      ifEmpty: items.url and tag and sectionTitle
       height: 100px
-      text: Lead Story(s)
+      text: Section Videos

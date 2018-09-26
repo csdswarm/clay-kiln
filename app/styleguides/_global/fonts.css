@@ -191,7 +191,7 @@ em, i {
   @mixin font CircularStd-Black, 20px, $parisPurple, -.23px, 25px;
 }
 @define-mixin section-videos-font2 {
-  @mixin font CircularStd-Medium, 12px, $sunsetOrange, -.2px, 15px;
+  @mixin font CircularStd-Medium, 12px, $parisPurple, -.2px, 15px;
 }
 @define-mixin section-videos-font3 {
   @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
