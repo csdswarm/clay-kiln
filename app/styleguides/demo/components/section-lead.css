@@ -13,6 +13,12 @@
     width: 50%;
     position: relative;
 
+    .details__exclusive {
+      @mixin section-lead-font2;
+      display: block;
+      margin: em(15) 0 em(10);
+    }
+
     &:first-child {
       width: 100%;
       order: 0;
@@ -36,11 +42,6 @@
         width: em(300);
         background: $white;
         border-top: em(6) solid $black;
-      }
-      .details__exclusive {
-        @mixin section-lead-font2;
-        display: block;
-        margin: em(15) 0 em(10);
       }
       .details__title {
         @mixin section-lead-font1;
@@ -108,6 +109,10 @@
     .section-lead__article {
       width: 100%;
       margin-right: 0;
+
+      .details__exclusive {
+        @mixin section-lead-font4;
+      }
 
       &:first-child {
         width: 100%;
