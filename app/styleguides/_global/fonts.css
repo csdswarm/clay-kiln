@@ -196,6 +196,6 @@ em, i {
 @define-mixin section-lead-font3 {
   @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
 }
-@define-mixin section-lead-font2 {
+@define-mixin section-lead-font4 {
   @mixin font CircularStd-Medium, 14px, $parisPurple, -.2px, 18px;
 }
