@@ -560,6 +560,15 @@ _components:
     instances:
       new:
         title: ''
+        sectionVideos:
+          _ref: /_components/section-videos/instances/new
+
+  section-videos:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
 
   homepage:
     instances:

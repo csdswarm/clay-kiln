@@ -1,3 +1,5 @@
 _components:
   section-front:
     title: ''
+    sectionVideos:
+      _ref: /_components/section-video
