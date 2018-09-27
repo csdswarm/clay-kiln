@@ -519,8 +519,6 @@ _components:
         lead: []
         content:
           -
-            _ref: /_components/image/instances/new
-          -
             _ref: /_components/paragraph/instances/new
         tags:
           _ref: /_components/tags/instances/new
