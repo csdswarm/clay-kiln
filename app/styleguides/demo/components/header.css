@@ -47,7 +47,6 @@ $drawerSelector: nav-drawer;
     text-decoration: none;
   }
   height: $default-nav-height;
-  margin-bottom: em(20);
 }
 .radiocom-nav {
   background: $parisPurple;

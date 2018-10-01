@@ -47,9 +47,10 @@ function computeDependencies(entryIds, registry) {
       out[dep] = true;
 
       if (!registry[dep]) {
-        console.log('\n\n', dep, registry, '\n\n');
+        console.log('\n\n PUBLIC FILE NOT FOUND IN AMPHORA:', dep, '\n\n');
+      } else {
+        registry[dep].forEach(addDep);
       }
-      registry[dep].forEach(addDep);
     };
 
   entryIds.forEach(addDep);

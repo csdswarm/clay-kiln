@@ -180,6 +180,18 @@ sources:
   _publish: sources
   _has:
     help: An Array of Objects containing sources names for search.
+stationTitle:
+  _label: Station Title
+  _has:
+    input: text
+    help: Title of the station
+stationURL:
+  _label: Station URL
+  _has:
+    input: text
+    # TODO: URL Validation. See https://entercomdigitalservices.atlassian.net/browse/ON-178
+    type: url
+    help: URL of the station
 hasSecondaryBylines:
   _label: Use Secondary Bylines
   _has: checkbox
@@ -323,6 +335,14 @@ _groups:
       text: Secondary Bylines
       height: 60px
       ifEmpty: secondaryAttribution
+  stationSource:
+    fields:
+      - stationTitle
+      - stationURL
+    _placeholder:
+      text: Station Source
+      height: 30px
+      ifEmpty: stationTitle
   circHeadlines:
     fields:
       - primaryHeadline
