@@ -51,6 +51,7 @@
     "striptags": "^3.1.1",
     "typogr": "^0.6.7",
     "url-parse": "^1.4.0",
+    "validator": "^10.8.0",
     "xml-escape": "^1.1.0",
     "yamljs": "^0.3.0"
   },
@@ -98,6 +99,7 @@
     "through2": "^2.0.3",
     "uglify-js": "^2.8.29",
     "vinyl-map2": "^1.2.1",
+    "vue": "^2.5.16",
     "vueify": "^9.4.1",
     "yargs": "^11.0.0"
   }
