@@ -532,7 +532,21 @@ _components:
         articleType: entertainment
         showSocial: true
 
+  section-lead:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
+
   section-front:
+    instances:
+      new:
+        title: ''
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
+
+  homepage:
     instances:
       new:
         title: ''

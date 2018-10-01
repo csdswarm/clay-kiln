@@ -1,6 +1,31 @@
 _confirmRemoval: true
 
 title:
-  _label: Title
+  _label: Section Title
+  _publish: sectionTitle
   _has:
-    input: text
+    input: radio # @TODO: ON-156 make this static
+    options:
+      -
+        name: Entertainment
+        value: entertainment
+      -
+        name: News
+        value: news
+      -
+        name: Sports
+        value: sports
+      -
+        name: Podcasts
+        value: podcasts
+
+_groups:
+  settings:
+    fields:
+      - title
+
+# Component properties
+sectionLead:
+  _component:
+    include:
+    - section-lead

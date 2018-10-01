@@ -1,3 +1,5 @@
 _components:
   section-front:
     title: ''
+    sectionLead:
+      _ref: /_components/section-lead
