@@ -26,3 +26,5 @@ _doc:
     pageUri:
       type: keyword
       store: true
+    lead:
+      type: keyword
