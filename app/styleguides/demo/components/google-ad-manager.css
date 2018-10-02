@@ -40,6 +40,14 @@
 		margin: 0 auto;
 	}
 }
+.layout__bottom {
+	.google-ad-manager--billboard,
+	.google-ad-manager--super-leaderboard,
+	.google-ad-manager--leaderboard,
+	.google-ad-manager--mobile {
+		margin-bottom: 0;
+	}
+}
 .google-ad-manager--half-page,
 .google-ad-manager--medium-rectangle,
 .google-ad-manager--logo-sponsorship {

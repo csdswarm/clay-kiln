@@ -574,6 +574,10 @@ _components:
           _ref: /_components/section-lead/instances/new
         sectionVideos:
           _ref: /_components/section-videos/instances/new
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/leaderboard
+        googleAdRightRail:
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   section-videos:
     instances:
@@ -586,6 +590,12 @@ _components:
     instances:
       new:
         title: ''
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/superLeaderboard
+        googleAdUnderLatestModule:
+            _ref: /_components/google-ad-manager/instances/billboard
+        googleAdRightRail:
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   latest-recirculation:
     instances:
