@@ -26,25 +26,19 @@ items:
       _has:
         validate:
           required: true
-tag:
-  _label: Tag
-  _has:
-    input: text
-    validate:
-      required:
-        field: fill
-        operator: truthy
-    help: Tag from which to pull articles
 sectionTitle:
   _label: Section Title
   _subscribe: sectiontitle
+  _has:
+    input: static
+    text: ${sectionTitle}
 
 _groups:
   sectionLead:
     fields:
     - items
-    - tag
+    - sectionTitle
     _placeholder:
-      ifEmpty: items.url and tag
+      ifEmpty: sectionTitle
       height: 100px
       text: Lead Story(s)

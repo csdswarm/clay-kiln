@@ -19,7 +19,7 @@
       margin: em(15) 0 em(10);
     }
 
-    &:first-child {
+    &.section-lead__article--first {
       width: 100%;
       order: 0;
       margin-right: 0;
@@ -114,7 +114,7 @@
         @mixin section-lead-font4;
       }
 
-      &:first-child {
+      &.section-lead__article--first {
         width: 100%;
 
         .section-lead__link {
@@ -140,7 +140,7 @@
 @define-mixin lead-module-color $sectionTitle, $color {
   .component--section-lead[data-section=$sectionTitle] {
     .section-lead__article {
-      &:first-child {
+      &.section-lead__article--first {
         .section-lead__details {
           border-color: $color;
         }

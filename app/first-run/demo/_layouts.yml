@@ -61,6 +61,7 @@ _components:
           - _ref: /_components/chartbeat/instances/default
       section-front:
         headLayout:
+          - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
         top:
