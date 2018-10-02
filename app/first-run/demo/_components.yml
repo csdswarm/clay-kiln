@@ -572,6 +572,15 @@ _components:
         title: ''
         sectionLead:
           _ref: /_components/section-lead/instances/new
+        sectionVideos:
+          _ref: /_components/section-videos/instances/new
+
+  section-videos:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
 
   homepage:
     instances:
