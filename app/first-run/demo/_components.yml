@@ -563,8 +563,9 @@ _components:
     instances:
       new:
         items: []
-        tag: ''
         sectionTitle: ''
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   section-front:
     instances:
@@ -576,8 +577,6 @@ _components:
           _ref: /_components/section-videos/instances/new
         googleAdUnderStationsModule:
             _ref: /_components/google-ad-manager/instances/leaderboard
-        googleAdRightRail:
-            _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   section-videos:
     instances:

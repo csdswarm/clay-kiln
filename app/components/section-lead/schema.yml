@@ -42,3 +42,9 @@ _groups:
       ifEmpty: sectionTitle
       height: 100px
       text: Lead Story(s)
+
+# Component properties
+googleAdRightRail:
+  _component:
+    include:
+    - google-ad-manager

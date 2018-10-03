@@ -1,48 +1,51 @@
 <section data-uri="{{ default _ref _self }}" class="component component--section-lead{{ if @root.locals.edit ' editing' }}" data-section="{{ sectionTitle }}" data-editable="sectionLead">
-  {{#each articles as |article|}}
-    <div class="section-lead__article {{#unless @index}}section-lead__article--first{{/unless}}">
-      <a href="{{ article.canonicalUrl }}" class="section-lead__link">
-        {{! @TODO - ON-63 Lead type variations need to be completed }}
-        {{#if @index}}
-          <img
-            src="https://via.placeholder.com/220x124/666666/ffffff?text=Article%20Image%20Placeholder"
-            srcset="https://via.placeholder.com/140x79/666666/ffffff?text=Article%20Image%20Placeholder 140w,
-          https://via.placeholder.com/343x193/666666/ffffff?text=Article%20Image%20Placeholder 343w,
-          https://via.placeholder.com/440x248/666666/ffffff?text=Article%20Image%20Placeholder 440w"
-            sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
-            class="section-lead__image" />
-          {{! TODO: Once images are moved into new bucket behind fastly change to URL on article }}
-          {{!--<img
-            src="{{ feedImgUrl }}?width=220&height=124&fit=bounds"
-            srcset="{{ feedImgUrl }}?width=140&height=79&fit=bounds 140w,
-              {{ feedImgUrl }}?width=343&height=19&fit=bounds 343w,
-              {{ feedImgUrl }}?width=440&height=248&fit=bounds 440w"
-            sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
-            class="section-lead__image" />--}}
-        {{else}}
-          <img
-            src="https://via.placeholder.com/780x439/666666/ffffff?text=Article%20Image%20Placeholder"
-            srcset="https://via.placeholder.com/620x349/666666/ffffff?text=Article%20Image%20Placeholder 620w,
-          https://via.placeholder.com/706x397/666666/ffffff?text=Article%20Image%20Placeholder 706w,
-          https://via.placeholder.com/480x270/666666/ffffff?text=Article%20Image%20Placeholder 480w"
-            sizes="(max-width: 480px) 100vw, (max-width: 1023px) 80vw, (max-width: 1279px) 620px, 780px"
-            class="section-lead__image" />
-          {{! TODO: Once images are moved into new bucket behind fastly change to URL on article }}
-          {{!--<img
-            src="{{ feedImgUrl }}?width=780&height=439&fit=bounds"
-            srcset="{{ feedImgUrl }}?width=620&height=349&fit=bounds 620w,
-              {{ feedImgUrl }}?width=706&height=397&fit=bounds 706w,
-              {{ feedImgUrl }}?width=480&height=270&fit=bounds 480w"
-            sizes="(max-width: 480px) 100vw, (max-width: 1023px) 80vw, (max-width: 1279px) 620px, 780px"
-            class="section-lead__image" />--}}
-        {{/if}}
-        <div class="section-lead__details">
-          {{#unless @index}}
-            <span class="details__exclusive">Exclusive</span>
-          {{/unless}}
-          <h3 class="details__title">{{ article.primaryHeadline }}</h3>
-        </div>
-      </a>
-    </div>
-  {{/each}}
+  <div class="section-lead__articles">
+    {{#each articles as |article|}}
+      <div class="section-lead__article {{#unless @index}}section-lead__article--first{{/unless}}">
+        <a href="{{ article.canonicalUrl }}" class="section-lead__link">
+          {{! @TODO - ON-63 Lead type variations need to be completed }}
+          {{#if @index}}
+            <img
+              src="https://via.placeholder.com/220x124/666666/ffffff?text=Article%20Image%20Placeholder"
+              srcset="https://via.placeholder.com/140x79/666666/ffffff?text=Article%20Image%20Placeholder 140w,
+            https://via.placeholder.com/343x193/666666/ffffff?text=Article%20Image%20Placeholder 343w,
+            https://via.placeholder.com/440x248/666666/ffffff?text=Article%20Image%20Placeholder 440w"
+              sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
+              class="section-lead__image" />
+            {{! TODO: Once images are moved into new bucket behind fastly change to URL on article }}
+            {{!--<img
+              src="{{ feedImgUrl }}?width=220&height=124&fit=bounds"
+              srcset="{{ feedImgUrl }}?width=140&height=79&fit=bounds 140w,
+                {{ feedImgUrl }}?width=343&height=19&fit=bounds 343w,
+                {{ feedImgUrl }}?width=440&height=248&fit=bounds 440w"
+              sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
+              class="section-lead__image" />--}}
+          {{else}}
+            <img
+              src="https://via.placeholder.com/780x439/666666/ffffff?text=Article%20Image%20Placeholder"
+              srcset="https://via.placeholder.com/620x349/666666/ffffff?text=Article%20Image%20Placeholder 620w,
+            https://via.placeholder.com/706x397/666666/ffffff?text=Article%20Image%20Placeholder 706w,
+            https://via.placeholder.com/480x270/666666/ffffff?text=Article%20Image%20Placeholder 480w"
+              sizes="(max-width: 480px) 100vw, (max-width: 1023px) 80vw, (max-width: 1279px) 620px, 780px"
+              class="section-lead__image" />
+            {{! TODO: Once images are moved into new bucket behind fastly change to URL on article }}
+            {{!--<img
+              src="{{ feedImgUrl }}?width=780&height=439&fit=bounds"
+              srcset="{{ feedImgUrl }}?width=620&height=349&fit=bounds 620w,
+                {{ feedImgUrl }}?width=706&height=397&fit=bounds 706w,
+                {{ feedImgUrl }}?width=480&height=270&fit=bounds 480w"
+              sizes="(max-width: 480px) 100vw, (max-width: 1023px) 80vw, (max-width: 1279px) 620px, 780px"
+              class="section-lead__image" />--}}
+          {{/if}}
+          <div class="section-lead__details">
+            {{#unless @index}}
+              <span class="details__exclusive">Exclusive</span>
+            {{/unless}}
+            <h3 class="details__title">{{ article.primaryHeadline }}</h3>
+          </div>
+        </a>
+      </div>
+    {{/each}}
+  </div>
+  {{> google-ad-manager googleAdRightRail}}
 </section>

@@ -59,7 +59,6 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  console.log('test');
   const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
   let cleanUrl;
 
@@ -69,7 +68,7 @@ module.exports.render = function (ref, data, locals) {
   if (!data.sectionTitle || !locals) {
     return data;
   }
-console.log('hello');
+
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addShould(query, { match: { articleType: data.sectionTitle }});
@@ -86,7 +85,7 @@ console.log('hello');
     .then(function (results) {
 
       data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-      console.log(data.articles);
+
       return data;
     })
     .catch(e => {

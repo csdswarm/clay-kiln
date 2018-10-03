@@ -41,8 +41,3 @@ googleAdUnderStationsModule:
   _component:
     include:
       - google-ad-manager
-
-googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager

@@ -7,5 +7,3 @@ _components:
       _ref: /_components/section-video
     googleAdUnderStationsModule:
         _ref: /_components/google-ad-manager/instances/leaderboard
-    googleAdRightRail:
-        _ref: /_components/google-ad-manager/instances/mediumRectangle

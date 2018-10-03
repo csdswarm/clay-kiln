@@ -67,8 +67,9 @@ _components:
         top:
           - _ref: /_components/header/instances/default
         head: head
-        pageHeader: pageHeader
         main: main
+        pageHeader: pageHeader
+        secondary: secondary
         bottom:
           - _ref: /_components/google-ad-manager/instances/superLeaderboard
           - _ref: /_components/footer/instances/default
