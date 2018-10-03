@@ -43,6 +43,7 @@
 .google-ad-manager--medium-rectangle,
 .google-ad-manager--logo-sponsorship {
 	width: auto;
+	height: auto;
 	margin: 0 auto;
 	margin-bottom: em(50);
 	.google-ad-manager__slot {

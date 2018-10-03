@@ -94,14 +94,14 @@ items:
           required: true
     -
       prop: overrideTitle
-      _label: Headline Override
+      _label: Headline
       _has:
         input: text
         validate:
           max: 80
     -
       prop: overrideTeaser
-      _label: Teaser Override
+      _label: Teaser
       _has:
         input: text
         validate:
@@ -113,6 +113,47 @@ items:
         input: text
         help: Image url for article thumbnail
         type: url
+    -
+      prop: overrideDate
+      _label: Date content was first published
+      _has:
+        input: datepicker
+        help: Date article was first published
+    -
+      prop: overrideSectionFront
+      _label: Section Front
+      _has:
+        help: The section front this content is a part of
+        input: radio
+        options:
+          -
+            name: Entertainment
+            value: entertainment
+          -
+            name: News
+            value: news
+          -
+            name: Podcasts
+            value: podcasts
+          -
+            name: Sports
+            value: sports
+    -
+      prop: overrideContentType
+      _label: Content Type
+      _has:
+        help: The type of media on the lede of the page
+        input: radio
+        options:
+          - image
+          -
+            name: instagram
+            value: instagram-post
+          - brightcove
+          - youtube
+          -
+            name: html embed
+            value: html-embed
     -
       prop: ignoreValidation
       _label: Bypass URL Validation?
@@ -126,6 +167,11 @@ items:
           required: true
 
 googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
+
+googleAdTop:
   _component:
     include:
       - google-ad-manager

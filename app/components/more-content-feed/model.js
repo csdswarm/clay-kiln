@@ -10,7 +10,10 @@ const queryService = require('../../services/server/query'),
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'teaser'
+    'teaser',
+    'articleType',
+    'date',
+    'lead'
   ],
   maxItems = 10;
  /**
@@ -33,7 +36,11 @@ module.exports.save = (ref, data, locals) => {
         pageUri: result.pageUri,
         urlIsValid: result.urlIsValid,
         canonicalUrl: item.url || result.canonicalUrl,
-        feedImgUrl: item.overrideImage || result.feedImgUrl
+        feedImgUrl: item.overrideImage || result.feedImgUrl,
+        teaser: item.overrideTeaser || result.teaser,
+        sectionFront: item.overrideSectionFront || result.articleType,
+        date: item.overrideDate || result.date,
+        lede: item.overrideContentType || result.lead
       });
       return content;
     });
@@ -63,19 +70,21 @@ module.exports.render = function (ref, data, locals) {
      // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
     queryService.addShould(query, { match: { tags: data.tag }});
+    queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'section-front') {
     if ((!data.sectionFront && !data.sectionFrontManual) || !locals) {
       return data;
     }
     console.log("pop from sectionFront, sectionFront: ", data.sectionFront, data.sectionFrontManual);
     queryService.addShould(query, { match: { articleType: (data.sectionFront || data.sectionFrontManual) }});
+    queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'all') {
     if (!locals) {
+      console.log("populate from all -- no locals")
       return data;
     }
     console.log("populate from all")
   }
-  queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
 
    // exclude the current page in results

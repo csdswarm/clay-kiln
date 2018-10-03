@@ -1,5 +1,8 @@
 <section class="component component--more-content-feed {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="more-content-feed">
   {{#ifAny content.length @root.locals.edit}}
+    <div class="more-content-feed__top-ad">
+      {{> google-ad-manager googleAdTop}}
+    </div>
     {{#if (compare locationOfContentFeed 'homepage') }}
       <div class="more-content-feed__title-line"></div>
       <h2 class="more-content-feed__title">MORE from <span class="title">RADIO.COM</span></h2>
@@ -13,18 +16,28 @@
                data-track-component-name="more-content-feed"
                data-track-page-uri="{{ feedItem.pageUri }}"
                data-track-headline="{{ feedItem.primaryHeadline }}"
-               data-track-component-title="More Content Feed">
-              <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});"></div>
+               data-track-component-title="More Content Feed"
+               data-track-sectionFront="{{{ feedItem.sectionFront }}}">
+              <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});">
+                {{#if (compare populateBy 'all')}}
+                  <span class="thumb__sectionFront">{{{ feedItem.sectionFront }}}</span>
+                {{/if}}
+                {{#unless (compare locationOfContentFeed 'homepage') }}
+                  <span class="thumb__contentType">{{{ feedItem.lede }}}</span>
+                {{/unless}}
+                <span class="thumb__datetimePosted">{{{ feedItem.date }}}</span>
+              </div>
               <div class="link__info">
-                <span class="link__headline">{{{ feedItem.primaryHeadline }}}</span>
-                <span class="link__teaser">teaser</span>
-                <span class="link__datetimePosted">7 hours ago</span>
+                <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
+                <span class="info__teaser">{{{ feedItem.teaser }}}</span>
               </div>
             </a>
           </li>
         {{/each}}
       </ul>
-      {{> google-ad-manager googleAdRightRail}}
+      <div class="more-content-feed__right-ad">
+        {{> google-ad-manager googleAdRightRail}}
+      </div>
     </div>
   {{/ifAny}}
 </section>
