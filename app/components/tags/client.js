@@ -5,7 +5,7 @@ const _ = require('lodash'),
 
 function Constructor(el) {
   this.el = el;
-  this.showAll = dom.find(this.el, '.more')
+  this.showAll = dom.find(this.el, '.more');
 
 }
 
@@ -16,7 +16,7 @@ Constructor.prototype = {
   showAll: function (e) {
     var button = e.target;
 
-    _.forEach(hiddenTags, function (hiddenTag) {
+    _.forEach(hiddenTags, function (hiddenTag) {// eslint-disable-line no-undef
       hiddenTag.classList.remove('hidden');
     });
     button.parentNode.removeChild(button);

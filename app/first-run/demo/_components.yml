@@ -324,6 +324,30 @@ _components:
       default:
         allowed: true
 
+  google-ad-manager:
+    instances:
+      new:
+        adSize: ''
+      billboard:
+        adSize: billboard
+      superLeaderboard:
+        adSize: super-leaderboard
+      leaderboard:
+        adSize: leaderboard
+      halfPage:
+        adSize: half-page
+      mediumRectangle:
+        adSize: medium-rectangle
+      mobile:
+        adSize: mobile
+      logoSponsorship:
+        adSize: logo-sponsorship
+
+  google-ad-manager-head:
+    instances:
+      default:
+        allowed: true
+
   chartbeat:
     instances:
       default:
@@ -535,9 +559,39 @@ _components:
         articleType: entertainment
         showSocial: true
 
+  section-lead:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
+
+  section-front:
+    instances:
+      new:
+        title: ''
+        sectionFront: ''
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/leaderboard
+        googleAdRightRail:
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
+
+  homepage:
+    instances:
+      new:
+        title: ''
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/superLeaderboard
+        googleAdUnderLatestModule:
+            _ref: /_components/google-ad-manager/instances/billboard
+        googleAdRightRail:
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
+
   latest-recirculation:
     instances:
       new:
         items: []
         tag: ''
-        populateBy: articleType
+        populateBy: ''

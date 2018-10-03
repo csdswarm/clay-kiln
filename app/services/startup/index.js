@@ -26,8 +26,9 @@ function createSessionStore() {
 }
 
 function setupApp(app) {
-  var sessionStore
+  var sessionStore;
   // Enable GZIP
+
   if (process.env.ENABLE_GZIP) {
     app.use(compression());
   }

@@ -1,9 +1,7 @@
 'use strict';
 var _find = require('lodash/find'),
   _map = require('lodash/map'),
-  _assign = require('lodash/assign'),
-  _set = require('lodash/set'),
-  _includes = require('lodash/includes');
+  _assign = require('lodash/assign');
 
 /**
  * get the rubric from the items
