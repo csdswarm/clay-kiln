@@ -578,6 +578,13 @@ _components:
         sectionLead:
           _ref: /_components/section-lead/instances/new
 
+  section-videos:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
+
   homepage:
     instances:
       new:
