@@ -1,15 +1,10 @@
 _confirmRemoval: true
 
 title:
-  _label: Title
+  _label: Section Title
+  _publish: sectionTitle
   _has:
-    input: text
-
-sectionFront:
-  _label: Section Front Category
-  _publish: sectionFront
-  _has:
-    input: radio
+    input: radio # @TODO: ON-156 make this static
     options:
       -
         name: Entertainment
@@ -18,18 +13,26 @@ sectionFront:
         name: News
         value: news
       -
-        name: Podcasts
-        value: podcasts
-      -
         name: Sports
         value: sports
-    validate:
-      required: true
-
+      -
+        name: Podcasts
+        value: podcasts
 canonicalUrl:
   _publish: url
   _has:
     help: Canonical URL of an article. Set when the article publishes.
+        
+_groups:
+  settings:
+    fields:
+      - title
+
+# Component properties
+sectionLead:
+  _component:
+    include:
+    - section-lead
 
 googleAdUnderStationsModule:
   _component:
