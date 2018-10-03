@@ -9,7 +9,7 @@
           <li class="tags__item">
             <a aria-label="More articles tagged" href="//{{ @root.locals.site.host }}/tags{{ if (compare @root.locals.site.path '/strategist') @root.locals.site.path }}/{{ encodedTag }}/"
               class="tags__link"
-              >{{ tag.display }}</a>
+              >{{ tag.text }}</a>
           </li>
         {{~/unless~}}
       {{~/each~}}

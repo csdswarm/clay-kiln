@@ -1,3 +1,29 @@
+settings:
+  analysis:
+    analyzer:
+      tag_analyzer:
+        tokenizer: standard
+        filter:
+        - standard
+        - my_ascii_folding
+        - lowercase
+        char_filter:
+        - remove_whitespace
+        - remove_punctuation
+    filter:
+      my_ascii_folding:
+        type: asciifolding
+        preserve_original: true
+    char_filter:
+      remove_whitespace:
+        type: pattern_replace
+        pattern: "\\s+"
+        replacement: '-'
+      remove_punctuation:
+        type: pattern_replace
+        pattern: "[.,\/#!$%\\^&\\*;:{}=\\-_`~()']"
+        replacement: ''
+
 _doc:
   dynamic: false
   properties:
@@ -17,6 +43,10 @@ _doc:
       type: keyword
     tags:
       type: keyword
+      fields:
+        normalized:
+          type: text
+          analyzer: tag_analyzer
     articleType:
       type: keyword
     teaser:

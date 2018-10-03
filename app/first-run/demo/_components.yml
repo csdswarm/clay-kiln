@@ -22,6 +22,11 @@ _components:
       general:
         description: ''
 
+  meta-url:
+    instances:
+      general:
+        url: ''
+
   paragraph:
     instances:
       new:
@@ -537,8 +542,6 @@ _components:
         syndicationStatus: original
         lead: []
         content:
-          -
-            _ref: /_components/image/instances/new
           -
             _ref: /_components/paragraph/instances/new
         tags:

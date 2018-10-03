@@ -75,7 +75,7 @@ module.exports.render = function (ref, data, locals) {
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addShould(query, { match: { tags: data.tag }});
+  queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
 
