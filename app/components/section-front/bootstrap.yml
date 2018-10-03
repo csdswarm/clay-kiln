@@ -7,5 +7,3 @@ _components:
         _ref: /_components/google-ad-manager/instances/mediumRectangle
     sectionLead:
       _ref: /_components/section-lead
-    sectionVideos:
-      _ref: /_components/section-video
