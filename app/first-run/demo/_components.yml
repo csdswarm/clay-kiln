@@ -556,6 +556,13 @@ _components:
         articleType: entertainment
         showSocial: true
 
+  section-lead:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
+
   section-front:
     instances:
       new:
@@ -565,6 +572,8 @@ _components:
             _ref: /_components/google-ad-manager/instances/leaderboard
         googleAdRightRail:
             _ref: /_components/google-ad-manager/instances/mediumRectangle
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
 
   homepage:
     instances:
