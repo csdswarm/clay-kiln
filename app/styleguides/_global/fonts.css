@@ -211,3 +211,19 @@ em, i {
 @define-mixin more-content-feed-font8 {
   @mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||| Section-Lead Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin section-lead-font1 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin section-lead-font2 {
+  @mixin font CircularStd-Medium, 12px, $parisPurple, -.2px, 15px;
+}
+@define-mixin section-lead-font3 {
+  @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
+}
+@define-mixin section-lead-font4 {
+  @mixin font CircularStd-Medium, 14px, $parisPurple, -.2px, 18px;
+}

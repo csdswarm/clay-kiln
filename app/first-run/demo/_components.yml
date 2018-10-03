@@ -556,6 +556,13 @@ _components:
         articleType: entertainment
         showSocial: true
 
+  section-lead:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
+
   section-front:
     instances:
       new:
@@ -564,6 +571,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/leaderboard
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/section-front
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
 
   more-content-feed:
     instances:
@@ -607,6 +616,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/billboard
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/homepage
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
 
   latest-recirculation:
     instances:

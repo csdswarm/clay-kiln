@@ -19,3 +19,8 @@ moreContentFeed:
   _component:
     include:
       - more-content-feed
+
+sectionLead:
+  _component:
+    include:
+      - section-lead

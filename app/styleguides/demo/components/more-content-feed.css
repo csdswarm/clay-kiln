@@ -23,14 +23,16 @@
 	}
 	.more-content-feed__title {
 		@mixin more-content-feed-font1;
-		top: em(28, 20);
+		margin-top: em(28, 20);
 		background: #FFF;
 		display: inline-block;
 		position: absolute;
+		padding: 0 em(15, 20);
 	}
 	.section__content-feed-container {
 		display: inline-flex;
 	    align-items: start;
+	    min-width: 100%;
 		.more-content-feed__links {
 			width: calc(100% - em(300));
 			margin-right: em(20);
@@ -45,26 +47,26 @@
 				display: inline-flex;
 				text-decoration: none;
 				&[data-track-sectionFront=entertainment] {
-					.thumb__sectionFront,
-					.thumb__contentType {
+					.link__thumb .thumb__sectionFront,
+					.link__thumb .thumb__contentType {
 						background: $sunsetOrange;
 					}
 				}
 				&[data-track-sectionFront=news] {
-					.thumb__sectionFront,
-					.thumb__contentType {
+					.link__thumb .thumb__sectionFront,
+					.link__thumb .thumb__contentType {
 						background: $lightningYellow;
 					}
 				}
 				&[data-track-sectionFront=sports] {
-					.thumb__sectionFront,
-					.thumb__contentType {
+					.link__thumb .thumb__sectionFront,
+					.link__thumb .thumb__contentType {
 						background: $azureRadience;
 					}
 				}
 				&[data-track-sectionFront=podcasts] {
-					.thumb__sectionFront,
-					.thumb__contentType {
+					.link__thumb .thumb__sectionFront,
+					.link__thumb .thumb__contentType {
 						background: $robinsEgg;
 					}
 				}
@@ -92,12 +94,15 @@
 						position: absolute;
 						top: 0;
 						left: 0;
+						line-height: em(26, 14);
 						height: em(26, 14);
-						padding: em(6, 14);
+						padding: 0 em(6, 14);
+						text-transform: capitalize;
 						@mixin medium-small-screen {
 							@mixin more-content-feed-font8;
 							height: em(33, 18);
-							padding: em(6, 18);
+							line-height: em(33, 18);
+							padding: 0 em(6, 18);
 						}
 					}
 					.thumb__contentType {
@@ -107,6 +112,10 @@
 						left: 0;
 						height: em(30);
 						width: em(30);
+						svg {
+							width: 100%;
+							height: 100%;
+						}
 					}
 					.thumb__datetimePosted {
 						@mixin more-content-feed-font4;
