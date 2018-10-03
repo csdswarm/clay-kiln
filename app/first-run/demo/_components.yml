@@ -22,6 +22,11 @@ _components:
       general:
         description: ''
 
+  meta-url:
+    instances:
+      general:
+        url: ''
+
   paragraph:
     instances:
       new:
@@ -538,8 +543,6 @@ _components:
         lead: []
         content:
           -
-            _ref: /_components/image/instances/new
-          -
             _ref: /_components/paragraph/instances/new
         tags:
           _ref: /_components/tags/instances/new
@@ -556,12 +559,24 @@ _components:
         articleType: entertainment
         showSocial: true
 
+  section-lead:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
+
   section-front:
     instances:
       new:
         title: ''
-        sectionVideos:
-          _ref: /_components/section-videos/instances/new
+        sectionFront: ''
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/leaderboard
+        googleAdRightRail:
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
 
   section-videos:
     instances:
@@ -574,6 +589,12 @@ _components:
     instances:
       new:
         title: ''
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/superLeaderboard
+        googleAdUnderLatestModule:
+            _ref: /_components/google-ad-manager/instances/billboard
+        googleAdRightRail:
+            _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   latest-recirculation:
     instances:

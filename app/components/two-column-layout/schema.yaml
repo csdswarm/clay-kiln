@@ -15,12 +15,7 @@ head:
       - meta-title
       - meta-description
       - meta-image
-headLayout:
-  _componentList:
-    include:
-      - meta-title
-      - meta-description
-      - meta-image
+      - meta-url
 top:
   _componentList:
     include:
