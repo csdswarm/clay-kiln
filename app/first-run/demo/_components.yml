@@ -22,6 +22,11 @@ _components:
       general:
         description: ''
 
+  meta-url:
+    instances:
+      general:
+        url: ''
+
   paragraph:
     instances:
       new:
@@ -538,8 +543,6 @@ _components:
         lead: []
         content:
           -
-            _ref: /_components/image/instances/new
-          -
             _ref: /_components/paragraph/instances/new
         tags:
           _ref: /_components/tags/instances/new
@@ -606,6 +609,13 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangle
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
+
+  section-videos:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
 
   homepage:
     instances:

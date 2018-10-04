@@ -6,20 +6,20 @@ head:
   _componentList:
     page: true
     include:
-      - clay-meta-site
+      - meta-site
       - meta-image
       - meta-icons
+      - meta-url
 
 headLayout:
   _componentList:
     include:
-      - clay-meta-title
-      - clay-meta-url
-      - clay-meta-description
-      - clay-meta-keywords
-      - meta-authors
+      - meta-title
+      - meta-url
+      - meta-description
       - meta-image
       - meta-icons
+      - meta-url
       - google-fonts
 
 top:
