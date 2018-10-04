@@ -1,8 +1,8 @@
+<div class="more-content-feed__top-ad">
+  {{> google-ad-manager googleAdTop}}
+</div>
 <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}" data-track-populate-from="{{ populateFrom }}" data-track-location="{{ locationOfContentFeed }}" data-uri="{{ default _ref _self }}" data-track-type="more-content-feed">
   {{#ifAny content.length @root.locals.edit}}
-    <div class="more-content-feed__top-ad">
-      {{> google-ad-manager googleAdTop}}
-    </div>
     {{#if (compare locationOfContentFeed 'homepage') }}
       <div class="more-content-feed__title-line"></div>
       <h2 class="more-content-feed__title">MORE from <span class="title">RADIO.COM</span></h2>
@@ -46,6 +46,13 @@
               <div class="link__info">
                 <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
                 <span class="info__teaser">{{{ feedItem.teaser }}}</span>
+                <span class="info__datetimePosted">
+                  {{#if (isPublished24HrsAgo feedItem.date) }}
+                    {{{ hrsOnlyTimestamp feedItem.date }}}
+                  {{else}}
+                    {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
+                  {{/if}}
+                </span>
               </div>
             </a>
           </li>

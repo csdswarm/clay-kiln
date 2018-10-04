@@ -57,7 +57,7 @@
     .layout__section-header,
     .layout__content {
       width: calc(100% - em(40));
-      width: em(320);
+      max-width: em(320);
     }
   }
 }
