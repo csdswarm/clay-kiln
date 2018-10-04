@@ -1,0 +1,9 @@
+_components:
+  podcast-list:
+    items: [
+      { url: 'hello', title: 'Loveline With Amber Rose', imageUrl: '/media/components/podcast-list/pcast1.png' },
+      { url: 'world', title: 'Outside the Cage', imageUrl: '/media/components/podcast-list/pcast2.png' },
+      { url: 'hello2', title: 'Gut Wisdom', imageUrl: '/media/components/podcast-list/pcast3.png' },
+      { url: 'hello3', title: 'The Hard Truth', imageUrl: '/media/components/podcast-list/pcast4.png' }
+    ]
+
