@@ -1,0 +1,63 @@
+<div class="more-content-feed__top-ad--mobile">
+  {{> google-ad-manager googleAdTop}}
+</div>
+<section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}" data-track-populate-from="{{ populateFrom }}" data-track-location="{{ locationOfContentFeed }}" data-uri="{{ default _ref _self }}" data-track-type="more-content-feed">
+  {{#ifAny content.length @root.locals.edit}}
+    {{#if (compare locationOfContentFeed 'homepage') }}
+      <div class="more-content-feed__title-line"></div>
+      <h2 class="more-content-feed__title">MORE from <span class="title">RADIO.COM</span></h2>
+    {{/if}}
+    <div class="section__content-feed-container">
+      <ul class="more-content-feed__links">
+        {{#each content as |feedItem|}}
+          <li>
+            <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
+               data-track-type="feedItem-link"
+               data-track-component-name="more-content-feed"
+               data-track-page-uri="{{ feedItem.pageUri }}"
+               data-track-headline="{{ feedItem.primaryHeadline }}"
+               data-track-component-title="More Content Feed"
+               data-track-sectionFront="{{ feedItem.articleType }}">
+              <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});">
+                {{#if (compare ../populateFrom 'all')}}
+                  <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
+                {{/if}}
+                {{#unless (compare ../locationOfContentFeed 'homepage') }}
+                  <span class="thumb__content-type">
+                    {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
+                      {{{ read 'components/more-content-feed/media/watch.svg' }}}
+                    {{/ifAny}}
+                    {{#if (compare feedItem.lead 'audio')}}
+                      {{{ read 'components/more-content-feed/media/listen.svg' }}}
+                    {{/if}}
+                  </span>
+                {{/unless}}
+                <span class="thumb__datetime-posted">
+                  {{#if (isPublished24HrsAgo feedItem.date) }}
+                    {{{ hrsOnlyTimestamp feedItem.date }}}
+                  {{else}}
+                    {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
+                  {{/if}}
+                </span>
+              </div>
+              <div class="link__info">
+                <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
+                <span class="info__teaser">{{{ feedItem.teaser }}}</span>
+                <span class="info__datetime-posted">
+                  {{#if (isPublished24HrsAgo feedItem.date) }}
+                    {{{ hrsOnlyTimestamp feedItem.date }}}
+                  {{else}}
+                    {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
+                  {{/if}}
+                </span>
+              </div>
+            </a>
+          </li>
+        {{/each}}
+      </ul>
+      <div class="more-content-feed__right-ad--desktop">
+        {{> google-ad-manager googleAdRightRail}}
+      </div>
+    </div>
+  {{/ifAny}}
+</section>

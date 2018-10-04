@@ -6,4 +6,6 @@ _components:
     googleAdRightRail:
         _ref: /_components/google-ad-manager/instances/mediumRectangle
     sectionLead:
-      _ref: /_components/section-lead
+      _ref: /_components/section-lead/instances/new
+    moreContentFeed:
+      _ref: /_components/more-content-feed/instances/new

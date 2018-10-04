@@ -569,14 +569,46 @@ _components:
   section-front:
     instances:
       new:
-        title: ''
         sectionFront: ''
         googleAdUnderStationsModule:
-            _ref: /_components/google-ad-manager/instances/leaderboard
-        googleAdRightRail:
-            _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/leaderboard
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/section-front
         sectionLead:
           _ref: /_components/section-lead/instances/new
+
+  more-content-feed:
+    instances:
+      homepage:
+        items: []
+        tag: ''
+        sectionFrontManual: ''
+        populateFrom: all
+        locationOfContentFeed: homepage
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+      section-front:
+        items: []
+        tag: ''
+        sectionFrontManual: entertainment
+        populateFrom: section-front
+        locationOfContentFeed: section-front
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+      tag-page:
+        items: []
+        tag: ''
+        sectionFrontManual: ''
+        populateFrom: tag
+        locationOfContentFeed: tag-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
 
   section-videos:
     instances:
@@ -588,13 +620,14 @@ _components:
   homepage:
     instances:
       new:
-        title: ''
         googleAdUnderStationsModule:
-            _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
         googleAdUnderLatestModule:
-            _ref: /_components/google-ad-manager/instances/billboard
-        googleAdRightRail:
-            _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/billboard
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/homepage
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
 
   latest-recirculation:
     instances:
