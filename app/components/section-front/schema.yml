@@ -1,25 +1,11 @@
 _confirmRemoval: true
 
 title:
-  _label: Section Title
-  _publish: sectionTitle
+  _label: Title
+  _publish: sectionFront
   _has:
-    input: radio # @TODO: ON-156 make this static
-    options:
-      -
-        name: Entertainment
-        value: entertainment
-      -
-        name: News
-        value: news
-      -
-        name: Podcasts
-        value: podcasts
-      -
-        name: Sports
-        value: sports
-    validate:
-      required: true
+    input: static
+    text: ${title}
 
 moreContentFeed:
   _component:

@@ -26,9 +26,9 @@ items:
       _has:
         validate:
           required: true
-sectionTitle:
-  _label: Section Title
-  _subscribe: sectiontitle
+sectionFront:
+  _label: Section Front
+  _subscribe: sectionFront
   _has:
     input: static
     text: ${sectionTitle}
@@ -37,9 +37,9 @@ _groups:
   settings:
     fields:
     - items
-    - sectionTitle
+    - sectionFront
     _placeholder:
-      ifEmpty: sectionTitle
+      ifEmpty: sectionFront
       height: 100px
       text: Lead Story(s)
 
