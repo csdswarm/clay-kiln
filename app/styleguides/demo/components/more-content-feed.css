@@ -2,7 +2,7 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--homepage .more-content-feed__top-ad {
+.component--homepage .more-content-feed__top-ad--mobile {
   width: 100%;
   display: none;
   @mixin medium-screen {
@@ -15,7 +15,7 @@
     margin-bottom: 0;
   }
 }
-.component--section .more-content-feed__top-ad {
+.component--section .more-content-feed__top-ad--mobile {
   display: none;
 }
 .component--more-content-feed {
@@ -208,7 +208,7 @@
         }
       }
     }
-    .more-content-feed__right-ad {
+    .more-content-feed__right-ad--desktop {
       @mixin medium-screen {
         display: none;
       }

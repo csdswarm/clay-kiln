@@ -1,4 +1,4 @@
-<div class="more-content-feed__top-ad">
+<div class="more-content-feed__top-ad--mobile">
   {{> google-ad-manager googleAdTop}}
 </div>
 <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}" data-track-populate-from="{{ populateFrom }}" data-track-location="{{ locationOfContentFeed }}" data-uri="{{ default _ref _self }}" data-track-type="more-content-feed">
@@ -58,7 +58,7 @@
           </li>
         {{/each}}
       </ul>
-      <div class="more-content-feed__right-ad">
+      <div class="more-content-feed__right-ad--desktop">
         {{> google-ad-manager googleAdRightRail}}
       </div>
     </div>
