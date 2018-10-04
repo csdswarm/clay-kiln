@@ -4,7 +4,7 @@
 @import "_global/colors";
 
 .component--section-lead {
-  width: widthOnGrid(14, 13);
+  width: em(widthOnGrid(14, 13));
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -13,7 +13,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    width: widthOnGrid(10, 9);
+    width: em(widthOnGrid(10, 9));
     margin-right: em(20);
   }
 
@@ -92,14 +92,14 @@
   }
 
   .component--google-ad-manager {
-    width: widthOnGrid(4, 3);
+    width: em(widthOnGrid(4, 3));
   }
 
   @mixin large-screen {
     width: 100%;
 
     .section-lead__articles {
-      width: widthOnGrid(8, 7);
+      width: em(widthOnGrid(8, 7));
     }
   }
 
