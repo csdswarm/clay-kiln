@@ -1,5 +1,5 @@
 _description: |
-  A list of five latest related articles by article type, tag, or manually populated.
+  A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
 
 populateFrom:
   _label: Populate content from?
