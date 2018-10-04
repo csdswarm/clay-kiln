@@ -11,7 +11,7 @@
       <ul class="more-content-feed__links">
         {{#each content as |feedItem|}}
           <li>
-            <a class="links__link" href="{{ feedItem.canonicalUrl }}"
+            <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
                data-track-type="feedItem-link"
                data-track-component-name="more-content-feed"
                data-track-page-uri="{{ feedItem.pageUri }}"
@@ -20,10 +20,10 @@
                data-track-sectionFront="{{ feedItem.articleType }}">
               <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});">
                 {{#if (compare ../populateFrom 'all')}}
-                  <span class="thumb__sectionFront">{{{ feedItem.articleType }}}</span>
+                  <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
                 {{/if}}
                 {{#unless (compare ../locationOfContentFeed 'homepage') }}
-                  <span class="thumb__contentType">
+                  <span class="thumb__content-type">
                     {{#if (compare feedItem.lead 'image')}}
                       {{{ read 'components/more-content-feed/media/gallery.svg' }}}
                     {{/if}}
@@ -35,7 +35,7 @@
                     {{/if}}
                   </span>
                 {{/unless}}
-                <span class="thumb__datetimePosted">
+                <span class="thumb__datetime-posted">
                   {{#if (isPublished24HrsAgo feedItem.date) }}
                     {{{ hrsOnlyTimestamp feedItem.date }}}
                   {{else}}
@@ -46,7 +46,7 @@
               <div class="link__info">
                 <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
                 <span class="info__teaser">{{{ feedItem.teaser }}}</span>
-                <span class="info__datetimePosted">
+                <span class="info__datetime-posted">
                   {{#if (isPublished24HrsAgo feedItem.date) }}
                     {{{ hrsOnlyTimestamp feedItem.date }}}
                   {{else}}
