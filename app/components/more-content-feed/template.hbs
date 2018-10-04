@@ -24,9 +24,6 @@
                 {{/if}}
                 {{#unless (compare ../locationOfContentFeed 'homepage') }}
                   <span class="thumb__content-type">
-                    {{#if (compare feedItem.lead 'image')}}
-                      {{{ read 'components/more-content-feed/media/gallery.svg' }}}
-                    {{/if}}
                     {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
                       {{{ read 'components/more-content-feed/media/watch.svg' }}}
                     {{/ifAny}}
