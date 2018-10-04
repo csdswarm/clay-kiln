@@ -1,4 +1,4 @@
-<section data-uri="{{ default _ref _self }}" class="component component--section-lead{{ if @root.locals.edit ' editing' }}" data-section="{{ sectionTitle }}" data-editable="sectionLead">
+<section data-uri="{{ default _ref _self }}" class="component component--section-lead{{ if @root.locals.edit ' editing' }}" data-section="{{ sectionTitle }}">
   <div class="section-lead__articles">
     {{#each articles as |article|}}
       <div class="section-lead__article {{#unless @index}}section-lead__article--first{{/unless}}">

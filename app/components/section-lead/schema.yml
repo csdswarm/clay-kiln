@@ -34,7 +34,7 @@ sectionTitle:
     text: ${sectionTitle}
 
 _groups:
-  sectionLead:
+  settings:
     fields:
     - items
     - sectionTitle
