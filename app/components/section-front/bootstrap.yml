@@ -7,3 +7,5 @@ _components:
       _ref: /_components/section-video
     googleAdUnderStationsModule:
         _ref: /_components/google-ad-manager/instances/leaderboard
+    moreContentFeed:
+      _ref: /_components/more-content-feed/instances/new

@@ -1,10 +1,5 @@
 _confirmRemoval: true
 
-title:
-  _label: Title
-  _has:
-    input: text
-
 canonicalUrl:
   _publish: url
   _has:
@@ -20,7 +15,12 @@ googleAdUnderLatestModule:
     include:
       - google-ad-manager
 
-googleAdRightRail:
+moreContentFeed:
   _component:
     include:
-      - google-ad-manager
+      - more-content-feed
+
+sectionLead:
+  _component:
+    include:
+      - section-lead

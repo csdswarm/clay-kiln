@@ -52,7 +52,9 @@
       .component--image,
       .component--instagram-post,
       .component--tweet,
-      .component--facebook-post {
+      .component--facebook-post,
+      .component--youtube,
+      .component--brightcove {
         margin: 0;
         img {
           width: 100%;
