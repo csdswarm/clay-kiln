@@ -37,6 +37,19 @@ clear-data:
 
 bootstrap:
 	cat ./app/first-run/**/* | clay import -k demo -y clay.radio.com
+	@echo ""
+	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/section-front@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/homepage@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
 
 install:
 	cd app && npm i && npm run build-web-player && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none

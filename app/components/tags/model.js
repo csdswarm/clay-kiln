@@ -21,7 +21,7 @@ function getRubric(items) {
  */
 function clean(items) {
   return _map(items || [], function (item) {
-    return _assign({}, item, { text: item.text.toLowerCase().trim(), display: item.text.trim() });
+    return _assign({}, item, { text: item.text.trim() });
   });
 }
 
