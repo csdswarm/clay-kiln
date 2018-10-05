@@ -33,7 +33,7 @@ _pages:
       - /_components/google-ad-manager/instances/billboard
     main:
       - /_components/section-front/instances/new
-    layout: /_components/one-column-layout/instances/section-front
+    layout: /_components/one-column-layout/instances/general
   homepage:
     head:
       - /_components/meta-title/instances/general
@@ -43,7 +43,7 @@ _pages:
       - /_components/google-ad-manager/instances/billboard
     main:
       - /_components/homepage/instances/new
-    layout: /_components/one-column-layout/instances/homepage
+    layout: /_components/one-column-layout/instances/general
   # Index Page
   index:
     head:

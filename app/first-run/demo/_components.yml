@@ -563,19 +563,20 @@ _components:
     instances:
       new:
         items: []
-        tag: ''
-        sectionTitle: ''
+        sectionFront: ''
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
 
   section-front:
     instances:
       new:
-        sectionFront: ''
-        googleAdUnderStationsModule:
-          _ref: /_components/google-ad-manager/instances/leaderboard
-        moreContentFeed:
-          _ref: /_components/more-content-feed/instances/section-front
+        title: ''
         sectionLead:
           _ref: /_components/section-lead/instances/new
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/section-front
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/leaderboard
 
   more-content-feed:
     instances:

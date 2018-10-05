@@ -30,7 +30,7 @@ locationOfContentFeed:
       - tag-page
 
 sectionFront:
-  _subscribe: sectionTitle
+  _subscribe: sectionFront
   _label: Section Front Category
   _has:
     help: Section Front Category from which to pull content

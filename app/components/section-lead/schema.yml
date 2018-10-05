@@ -26,25 +26,25 @@ items:
       _has:
         validate:
           required: true
-tag:
-  _label: Tag
+sectionFront:
+  _label: Section Front
+  _subscribe: sectionFront
   _has:
-    input: text
-    validate:
-      required:
-        field: fill
-        operator: truthy
-    help: Tag from which to pull articles
-sectionTitle:
-  _label: Section Title
-  _subscribe: sectiontitle
+    input: static
+    text: ${sectionTitle}
 
 _groups:
-  sectionLead:
+  settings:
     fields:
     - items
-    - tag
+    - sectionFront
     _placeholder:
-      ifEmpty: items.url and tag
+      ifEmpty: sectionFront
       height: 100px
       text: Lead Story(s)
+
+# Component properties
+googleAdRightRail:
+  _component:
+    include:
+    - google-ad-manager
