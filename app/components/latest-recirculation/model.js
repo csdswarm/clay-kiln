@@ -77,6 +77,14 @@ module.exports.render = function (ref, data, locals) {
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
   }
 
+  // exclude the curated content from the results
+  if (data.items && !isComponent(locals.url)) {
+    data.items.forEach(item => {
+      cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+      queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+    });
+  }
+
   return queryService.searchByQuery(query)
     .then(function (results) {
       data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
