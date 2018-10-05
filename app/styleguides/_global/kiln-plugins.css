@@ -1,0 +1,20 @@
+@import "colors";
+
+.podcast-select {
+  .podcast-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    a {
+      color: $black;
+      margin: em(10);
+      text-decoration: none;
+    }
+
+    img {
+      width: em(200);
+      height: em(200);
+    }
+  }
+}

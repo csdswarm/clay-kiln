@@ -1,13 +1,11 @@
 <section class="component component--podcast-list" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
   {{#each items as |item|}}
     <div class="podcast-item">
-      <a href="{{ item.url }}">
-        <img src="{{ item.imageUrl }}">
+      <a href="{{ item.podcast.url }}">
+        <img src="{{ item.podcast.imageUrl }}">
       </a>
-      <h2>
-        {{ item.title }}
-      </h2>
-      <a class="see-all-episodes" href="{{ item.url }}">
+      <h2> {{ item.podcast.label }} </h2>
+      <a class="see-all-episodes" href="{{ item.podcast.url }}">
         See All Episodes {{{ read 'public/media/components/podcast-list/caret.svg' }}}
       </a>
     </div>

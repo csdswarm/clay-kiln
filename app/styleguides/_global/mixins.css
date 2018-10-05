@@ -1,3 +1,5 @@
+@import "kiln-plugins";
+
 @define-mixin hidden-content {
   border: none;
   clip: rect(0 0 0 0);
