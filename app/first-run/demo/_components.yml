@@ -245,6 +245,12 @@ _components:
         title: 'Articles Tagged: ${tagValue}'
         size: 3
 
+  dynamic-list:
+    instances:
+      default:
+        routeParam: ''
+        entries: []
+
   share:
     instances:
       new:
@@ -607,7 +613,7 @@ _components:
         populateFrom: tag
         locationOfContentFeed: tag-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/halfPage
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
 
@@ -620,7 +626,7 @@ _components:
 
   homepage:
     instances:
-      new:
+      default:
         googleAdUnderStationsModule:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
         googleAdUnderLatestModule:
@@ -629,6 +635,21 @@ _components:
           _ref: /_components/more-content-feed/instances/homepage
         sectionLead:
           _ref: /_components/section-lead/instances/new
+
+  tag-page:
+    instances:
+      new:
+        tag: ''
+        tagPageHeader:
+          _ref: /_components/tag-page-header/instances/new
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/tag-page
+
+  tag-page-header:
+    instances:
+      new:
+        tag: ''
+        image: ''
 
   latest-recirculation:
     instances:

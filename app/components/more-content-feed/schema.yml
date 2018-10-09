@@ -65,6 +65,16 @@ sectionFrontManual:
 
 tag:
   _label: Tag
+  _subscribe: tag
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: tag
+  _has:
+    help: Tag from which to pull content
+
+tagManual:
+  _label: Tag
   _reveal:
     field: populateFrom
     operator: ===
@@ -74,9 +84,8 @@ tag:
     help: Tag from which to pull content
     validate:
       required:
-        field: populateFrom
-        operator: ===
-        value: tag
+        field: tag
+        operator: empty
 
 items:
   _label: Items

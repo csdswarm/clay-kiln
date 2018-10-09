@@ -1,0 +1,70 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+$default-screen-nav-width: em(1100);
+$large-screen-nav-width: em(940);
+$medium-screen-nav-width: em(728);
+
+.component--tag-page-header {
+  width: 100%;
+  height: auto;
+  margin-top: em(22);
+  margin-bottom: calc(em(22) + em(50));
+  .tag__line {
+    border-bottom: em(1) solid $parisPurple;
+  }
+  h1 {
+    @mixin tag-page-font2;
+    text-transform: capitalize;
+    position: absolute;
+    top: calc(50% - em(22,35));
+    background: $white;
+    padding: 0 em(15,35) 0 0;
+  }
+  &.tag-page-header--image {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: em(250);
+    margin-top: 0;
+    margin-bottom: em(50);
+    width: 100vw;
+    margin-left: calc((-100vw + $default-screen-nav-width) / 2);
+    @mixin large-screen {
+      margin-left: calc((-100vw + $large-screen-nav-width) / 2);
+    }
+    @mixin medium-screen {
+      margin-left: calc((-100vw + $medium-screen-nav-width) / 2);
+    }
+    @mixin medium-small-screen {
+      margin-left: calc((-100vw + 100%) / 2);
+    }
+    .tag-page-header__tag {
+      height: 100%;
+      position: relative;
+      margin: auto;
+      width: $default-screen-nav-width;
+      @mixin large-screen {
+        width: $large-screen-nav-width;
+      }
+      @mixin medium-screen {
+        width: $medium-screen-nav-width;
+      }
+      @mixin medium-small-screen {
+        width: 100%;
+      }
+    }
+    .tag__line {
+      display: none;
+    }
+    h1 {
+      @mixin tag-page-font1;
+      position: absolute;
+      top: initial;
+      bottom: em(30,35);
+      background: none;
+      padding: 0 em(15,35) 0 0;
+    }
+  }
+}

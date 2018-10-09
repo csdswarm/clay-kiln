@@ -1,0 +1,5 @@
+_components:
+  tag-page:
+    tag: ''
+    moreContentFeed:
+      _ref: /_components/more-content-feed/instances/tag-page

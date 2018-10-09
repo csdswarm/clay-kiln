@@ -229,7 +229,7 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||| Section-Videos Fonts Styleguide |||||| */
+/* ||||| Section-Videos Fonts Styleguide ||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin section-videos-font1 {
   @mixin font CircularStd-Black, 20px, $parisPurple, -.23px, 25px;
@@ -245,4 +245,14 @@ em, i {
 }
 @define-mixin section-videos-font5 {
   @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Tag Page Header Fonts Styleguide ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin tag-page-font1 {
+  @mixin font CircularStd-Black, 35px, $white, -.55px, 44px;
+}
+@define-mixin tag-page-font2 {
+  @mixin font CircularStd-Black, 35px, $parisPurple, -.55px, 44px;
 }

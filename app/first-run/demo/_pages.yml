@@ -42,7 +42,7 @@ _pages:
     pageHeader:
       - /_components/google-ad-manager/instances/billboard
     main:
-      - /_components/homepage/instances/new
+      - /_components/homepage/instances/default
     layout: /_components/one-column-layout/instances/general
   # Index Page
   index:
@@ -62,6 +62,13 @@ _pages:
   tag:
     head:
       - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+    pageHeader:
+      - /_components/google-ad-manager/instances/leaderboard
     main:
-      - /_components/tag-list/instances/default
+      - /_components/tag-page/instances/new
+    bottom:
+      - /_components/google-ad-manager/instances/leaderboard
+      - /_components/footer/instances/default
     layout: /_components/one-column-layout/instances/bare

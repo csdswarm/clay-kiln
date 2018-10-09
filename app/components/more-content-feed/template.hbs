@@ -55,7 +55,10 @@
           </li>
         {{/each}}
       </ul>
-      <div class="more-content-feed__right-ad--desktop">
+      <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
+        {{#if (compare locationOfContentFeed 'tag-page') }}
+          <aside class="blurb"></aside>
+        {{/if}}
         {{> google-ad-manager googleAdRightRail}}
       </div>
     </div>
