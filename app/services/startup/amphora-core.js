@@ -4,14 +4,15 @@ const amphora = require('amphora'),
   renderers = require('./amphora-renderers'),
   healthCheck = require('@nymdev/health-check');
 
-function initAmphora(app, search, sessionStore) {
+function initAmphora(app, search, sessionStore, routes) {
   return amphora({
     app,
     renderers,
     providers: ['apikey', 'google'],
     sessionStore,
     plugins: [
-      search
+      search,
+      routes
     ],
     cacheControl: {}
   }).then(router => {

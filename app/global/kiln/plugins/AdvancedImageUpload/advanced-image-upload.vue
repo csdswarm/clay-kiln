@@ -19,37 +19,36 @@
 
 <template>
   <div class="advanced-image-upload">
-    <div v-if="imageUrl && imageStoredToS3">
-      <img alt="attached image" :src="imageUrl" style="width: 90%;" />
+    <div v-if="imageUrl">
+      <img alt="attached image" :src="imageUrl" style="width: 100%;" />
     </div>
     <div v-else>
       <div class="kiln-placeholder" style="min-height: 25px;">
         <div class="placeholder-label"><span class="placeholder-text">No Image</span><div class="ui-ripple-ink"></div></div>
       </div>
     </div>
+    <input :name="name" type="hidden" :value="value">
     <ui-textbox 
       style="margin: 0 0 16px 0;"
       :autosize="false"
-      :value="value"
+      :value="webFileUrl"
       :type="url"
       :multiLine="false"
-      :invalid="!urlFieldIsValid"
+      :invalid="!webFileUrlFieldIsValid"
       :label="args.webLabel"
       :floatingLabel="false"
       :help="args.webHelp"
-      @input="updateUrl"
-      @keydown-enter="closeFormOnEnter"
+      @input="updateWebFileUrl"
     ></ui-textbox>
     <ui-icon-button
       type="primary"
       :color="iconButtonColor"
       :disabled="iconButtonDisabled"
-      :loading="downloadingImageFile"
-      @click="downloadImage"
+      @click="webFileAttached"
       icon="cloud_download"
     ></ui-icon-button>
     <br /><!-- remove me after styling -->
-    <ui-fileupload color="accent" :name="name" :label="args.uploadLabel" accept="image/*" @change="update"></ui-fileupload>
+    <ui-fileupload ref="fileUploadButton" color="accent" :label="upperLabel" :disabled="fileUploadButtonDisabled" accept="image/*" @change="localFileAttached"></ui-fileupload>
     <div class="ui-textbox__feedback" v-if="args.uploadHelp">
       <div class="ui-textbox__feedback-text">{{ args.uploadHelp }}</div>
     </div>
@@ -58,8 +57,8 @@
 
 <script>
 
-import _ from 'lodash'
 import validator from 'validator'
+import axios from 'axios'
 
 const UiTextbox = window.kiln.utils.components.UiTextbox
 const UiIconButton = window.kiln.utils.components.UiIconButton
@@ -69,23 +68,25 @@ export default {
   props: ['name', 'data', 'schema', 'args'],
   data() {
     return {
-      imageUrl: this.data, // Set passed data "prop" as local value so it can be mutated. See https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
+      imageUrl: this.data || '', // Set passed data "prop" as local value so it can be mutated. See https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
+      webFileUrl: '',
+      fileUploadButtonDisabled: false
     };
   },
   computed: {
     value() {
       return this.imageUrl === null || typeof this.imageUrl === 'undefined' ? '' : String(this.imageUrl)
     },
-    urlFieldIsValid() {
+    webFileUrlFieldIsValid() {
 
       // Cachebusting dependencies
-      const imageUrl = this.imageUrl
+      const webFileUrl = this.webFileUrl
 
       // If url field is empty, that is valid. Else validate input as url.
-      if (!imageUrl) {
+      if (!webFileUrl) {
         return true
       } else {
-        return validator.isURL(this.imageUrl, {
+        return validator.isURL(webFileUrl, {
           protocols: ['http','https'],
           require_protocol: true
         })
@@ -95,75 +96,74 @@ export default {
     iconButtonColor() {
 
       // Cachebusting dependencies
-      const imageUrl = this.imageUrl
-      const validUrlField = this.urlFieldIsValid
+      const webFileUrl = this.webFileUrl
+      const webFileUrlFieldIsValid = this.webFileUrlFieldIsValid
 
-      if (!imageUrl) {
+      if (!webFileUrl) {
         return 'default'
       } else {
-        return validUrlField ? 'green' : 'default'
+        return webFileUrlFieldIsValid ? 'green' : 'default'
       }
 
     },
     iconButtonDisabled() {
 
       // Cachebusting dependencies
-      const imageUrl = this.imageUrl
-      const validUrlField = this.urlFieldIsValid
+      const webFileUrl = this.webFileUrl
+      const webFileUrlFieldIsValid = this.webFileUrlFieldIsValid
 
-      return (!imageUrl || !validUrlField) ? true : false
+      return (!webFileUrl || !webFileUrlFieldIsValid) ? true : false
 
-    },
-    imageStoredToS3() {
-
-      // TODO - this logic needs to be more advanced. 
-      // It should check if passed data prop matches imageUrl to see if imageUrl has mutated
-      // since we will need further logic in that scenario.
-
-      // Cachebusting dependencies
-      const imageUrl = this.imageUrl
-
-      return /amazonaws/.test(imageUrl) // TODO - update me to test against actual s3 bucket host.
-
-    },
-    downloadingImageFile() {
-      return false
     }
   },
   methods: {
-    updateUrl(input) {
-      console.log(input)
-      this.imageUrl = input
+    webFileAttached() {
+      this.imageUrl = this.webFileUrl;
+      this.webFileUrl = '';
+    },
+    updateWebFileUrl(input) {
+      this.webFileUrl = input
+    },
+    localFileAttached(files) {
 
-    },
-    downloadImage() {
-      console.log(`downloading: ${this.imageUrl}`)
-      this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.imageUrl })
-    },
-    closeFormOnEnter(e) {
-      console.log('ENTER WAS PRESSED')
+      this.fileUploadButtonDisabled = true;
+
+      const file = files[0];
+
+      if (file) {
+        this.prepareFileForUpload(file.name, file.type)
+          .then(data => {
+            return this.execFileUpload(data.s3SignedUrl, file, data.s3FileType).then(() => { return { bucket: data.s3Bucket, fileKey: data.s3FileKey }});
+          })
+          .then((s3) => {
+
+            // Set value of form to be the s3 file.
+            this.imageUrl = `https://${s3.bucket}.s3.amazonaws.com/${s3.fileKey}`;
+
+            // Reset web file attachment form
+            this.webFileUrl = '';
+            this.fileUploadButtonDisabled = false;
+
+          });
+      }
       
     },
-    update(files) {
+    prepareFileForUpload(fileName, fileType) {
 
-      console.log(files, 'files')
+      return axios.post('/AdvancedImageUpload', {
+        fileName: fileName,
+        fileType: fileType
+      }).then(result => result.data);
 
-      // const file = _.head(files),
-      //   reader = new FileReader(),
-      //   store = this.$store;
-      // reader.readAsText(file);
-      // reader.onload = (readEvent) => {
-      //   const csvData = _.get(readEvent, 'target.result'),
-      //     parsed = toObject(csvData, {
-      //       delimiter: this.args.delimiter || ',',
-      //       quote: this.args.quote || '"'
-      //     });
-      //   this.$store.commit(UPDATE_FORMDATA, { path: this.name, data: parsed });
-      //   this.buttonLabel = 'CSV File Uploaded';
-      // };
-      // reader.onerror = () => {
-      //   store.dispatch('showSnackbar', `Unable to read ${file.fileName}`);
-      // };
+    },
+    execFileUpload(s3SignedUrl, file, s3FileType) {
+
+      return axios.put(s3SignedUrl, file, {
+        headers: {
+          'Content-Type': s3FileType
+        }
+      });
+
     }
   },
   components: {
