@@ -51,6 +51,11 @@
     },
   },
   methods: {
+    /**
+     *  This function is both called when the component is mounted and when the "Search for a podcast" filter is modified.
+     *  It queries the api.radio.com for podcasts matching that API and sets them as selectable.
+     *  @param {boolean} reselect - Whether this invocation should undo any current podcast selection
+     */
     populatePodcasts(reselect = true) {
       if (reselect) {
         this.selectedPodcast = null;
@@ -78,13 +83,17 @@
               .replace(/\b(\a|an|as|at|before|but|by|for|from|is|in|into|like|of|off|on|onto|per|since|than|the|this|that|to|up|via|with)\b\ /gi, '')
               .replace(/\ +/g, '-')
               .replace(/-+/g, '-')
+            // pull down small images
+            const imageUrl = podcast.attributes.image
+              .toLowerCase()
+              .replace('medium', 'small')
 
             const url = `https://radio.com/media/podcast/${processedTitle}`
             return {
               label: podcast.attributes.title,
               title: podcast.attributes.title,
               url,
-              imageUrl: podcast.attributes.image,
+              imageUrl,
             }
           })
           self.cachedResults[self.filter] = self.podcastOptions
@@ -93,6 +102,9 @@
         })
     },
 
+    /**
+     *  This function is called when a podcast is selected from the dropdown. Sets it as currently selected.
+     */
     updateSelectedPodcast(input) {
       this.selectedPodcast = input;
       this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedPodcast })
