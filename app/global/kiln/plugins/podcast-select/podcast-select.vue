@@ -24,15 +24,12 @@
     </div>
 
     <div v-if="selectedPodcast" class="podcast-preview">
-      <a :href="selectedPodcast.url">{{ selectedPodcast.title }}</a>
-      <img class="podcast-preview" :src="selectedPodcast.imageUrl" />
+      <a class="podcast-preview__link" :href="selectedPodcast.url">{{ selectedPodcast.title }}</a>
+      <img class="podcast-preview__image" :src="selectedPodcast.imageUrl" />
     </div>
-
-    <br /><!-- remove me after styling -->
   </div>
 </template>
  <script>
- import _ from 'lodash'
  const UiSelect = window.kiln.utils.components.UiSelect
  const UiTextbox = window.kiln.utils.components.UiTextbox
  export default {
@@ -60,15 +57,15 @@
       }
       const self = this;
       if (self.cachedResults[self.filter]) {
-        self.podcastOptions = self.cachedResults[self.filter]
+        self.podcastOptions = self.cachedResults[self.filter];
       }
       const url = self.filter && self.filter.length
         ? `http://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
-        : 'http://api.radio.com/v1/podcasts'
+        : 'http://api.radio.com/v1/podcasts';
 
       fetch(url)
         .then(response => {
-          return response.json()
+          return response.json();
         })
         .then(podcastResponse => {
           self.podcastOptions = podcastResponse.data.map((podcast) => {
@@ -98,7 +95,6 @@
 
     updateSelectedPodcast(input) {
       this.selectedPodcast = input;
-      console.log('path', this.name, 'data', this.selectedPodcast)
       this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedPodcast })
      },
   },

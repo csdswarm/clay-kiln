@@ -4,7 +4,9 @@
       <a href="{{ item.podcast.url }}">
         <img class="podcast-list__image" src="{{ item.podcast.imageUrl }}">
       </a>
-      <h2 class="podcast-list__title"> {{ item.podcast.label }} </h2>
+      <a class="podcast-list__title" href="{{ item.podcast.url }}">
+        <h2> {{ item.podcast.label }} </h2>
+      </a>
       <a class="podcast-list__link" href="{{ item.podcast.url }}">
         See All Episodes {{{ read 'public/media/components/podcast-list/caret.svg' }}}
       </a>

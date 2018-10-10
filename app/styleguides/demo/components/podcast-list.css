@@ -2,6 +2,23 @@
 @import "_global/colors";
 @import "_global/mixins";
 
+.podcast-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.podcast-preview__link {
+  color: $black;
+  margin: em(10);
+  text-decoration: none;
+}
+
+.podcast-preview__image {
+  width: em(200);
+  height: em(200);
+}
+
 .component--podcast-list {
   display: flex;
   align-items: flex-start;
@@ -20,7 +37,8 @@
 }
 
 .podcast-list__title {
-  @mixin inline-related-font2;
+  @mixin podcast-list-font2;
+  text-decoration: none;
   margin-top: em(15);
 }
 
@@ -47,10 +65,10 @@
 
 .podcast-list__link {
   margin-top: em(10);
-  @mixin inline-related-font4;
+  @mixin podcast-list-font4;
   text-decoration: none;
   text-transform: uppercase;
-  color: #00CCB7;
+  color: $robinsEgg;
   svg {
     fill: #00CCB7;
     height: em(10);
