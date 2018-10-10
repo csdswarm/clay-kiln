@@ -4,14 +4,14 @@
  </docs>
  <template>
   <div class="podcast-select">
-    <div class="podcast-filter">
-      Filter podcasts:
-      <input
+    <div class="ui-textbox__input">
+      <ui-textbox
         v-model="filter"
+        :placeholder="'Search for a podcast'"
         @input="populatePodcasts"
       />
     </div>
-    <div v-if="podcastOptions">
+    <div v-if="podcastOptions && podcastOptions.length">
       <ui-select
         :search="true"
         :options="podcastOptions"
@@ -34,6 +34,7 @@
  <script>
  import _ from 'lodash'
  const UiSelect = window.kiln.utils.components.UiSelect
+ const UiTextbox = window.kiln.utils.components.UiTextbox
  export default {
   props: ['name', 'data', 'schema', 'args'],
   data() {
@@ -61,7 +62,7 @@
       if (self.cachedResults[self.filter]) {
         self.podcastOptions = self.cachedResults[self.filter]
       }
-      const url = self.filter && self.filter.length > 2
+      const url = self.filter && self.filter.length
         ? `http://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
         : 'http://api.radio.com/v1/podcasts'
 
@@ -102,7 +103,8 @@
      },
   },
   components: {
-    UiSelect
+    UiSelect,
+    UiTextbox
   }
 }
 </script>
