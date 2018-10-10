@@ -9,10 +9,9 @@ _lists:
     -
       id: new-two-col
       title: New Two Column Article
-    # @TODO: Remove section-front once ON-156 in worked on so that editors cannot create these pages
     -
-      id: section-front
-      title: New One Column Section Front
+      id: homepage
+      title: New One Column Homepage
     -
       id: general
       title: New General Page

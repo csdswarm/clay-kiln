@@ -55,6 +55,7 @@
   }
 
   .layout__content {
+    margin-bottom: em(40);
     .content__main,
     .content__secondary {
       width: 100%;
@@ -73,6 +74,7 @@
 .kiln-edit-mode .layout--two-column {
   .content__sidebar {
     visibility: visible;
+    margin-top: em(183);
   }
 }
 
