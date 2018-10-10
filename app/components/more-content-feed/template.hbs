@@ -2,12 +2,12 @@
   {{> google-ad-manager googleAdTop}}
 </div>
 <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}" data-track-populate-from="{{ populateFrom }}" data-track-location="{{ locationOfContentFeed }}" data-uri="{{ default _ref _self }}" data-track-type="more-content-feed">
-  {{#ifAny content.length @root.locals.edit}}
-    {{#if (compare locationOfContentFeed 'homepage') }}
-      <div class="more-content-feed__title-line"></div>
-      <h2 class="more-content-feed__title">MORE from <span class="title">RADIO.COM</span></h2>
-    {{/if}}
-    <div class="section__content-feed-container">
+  {{#if (compare locationOfContentFeed 'homepage') }}
+    <div class="more-content-feed__title-line"></div>
+    <h2 class="more-content-feed__title">MORE from <span class="title">RADIO.COM</span></h2>
+  {{/if}}
+  <div class="section__content-feed-container">
+    {{#ifAny content.length @root.locals.edit}}
       <ul class="more-content-feed__links">
         {{#each content as |feedItem|}}
           <li>
@@ -19,18 +19,20 @@
                data-track-component-title="More Content Feed"
                data-track-sectionFront="{{ feedItem.articleType }}">
               <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});">
-                {{#if (compare ../populateFrom 'all')}}
+                {{#ifAll (compare ../populateFrom 'all') feedItem.articleType}}
                   <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
-                {{/if}}
+                {{/ifAll}}
                 {{#unless (compare ../locationOfContentFeed 'homepage') }}
-                  <span class="thumb__content-type">
-                    {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
+                  {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
+                    <span class="thumb__content-type">
                       {{{ read 'components/more-content-feed/media/watch.svg' }}}
-                    {{/ifAny}}
-                    {{#if (compare feedItem.lead 'audio')}}
+                    </span>
+                  {{/ifAny}}
+                  {{#if (compare feedItem.lead 'audio')}}
+                    <span class="thumb__content-type">
                       {{{ read 'components/more-content-feed/media/listen.svg' }}}
-                    {{/if}}
-                  </span>
+                    </span>
+                  {{/if}}
                 {{/unless}}
                 <span class="thumb__datetime-posted">
                   {{#if (isPublished24HrsAgo feedItem.date) }}
@@ -55,12 +57,12 @@
           </li>
         {{/each}}
       </ul>
-      <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
-        {{#if (compare locationOfContentFeed 'tag-page') }}
-          <aside class="blurb"></aside>
-        {{/if}}
-        {{> google-ad-manager googleAdRightRail}}
-      </div>
+    {{/ifAny}}
+    <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
+      {{#ifAll tagInfo (compare locationOfContentFeed 'tag-page') }}
+        <aside class="blurb">{{ tagInfo }}</aside>
+      {{/ifAll}}
+      {{> google-ad-manager googleAdRightRail}}
     </div>
-  {{/ifAny}}
+  </div>
 </section>

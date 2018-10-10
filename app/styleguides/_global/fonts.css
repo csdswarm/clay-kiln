@@ -248,11 +248,14 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||| Tag Page Header Fonts Styleguide ||||| */
+/* |||||||| Tag Page Fonts Styleguide ||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin tag-page-font1 {
   @mixin font CircularStd-Black, 35px, $white, -.55px, 44px;
 }
 @define-mixin tag-page-font2 {
   @mixin font CircularStd-Black, 35px, $parisPurple, -.55px, 44px;
+}
+@define-mixin tag-page-font3 {
+  @mixin font CircularStd-Medium, 16px, $black, -.26px, 25px;
 }

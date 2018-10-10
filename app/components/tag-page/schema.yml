@@ -8,11 +8,10 @@ tag:
   _publish: tag
   _has:
     input: text
-
-tagPageHeader:
-  _component:
-    include:
-      - tag-page-header
+  _placeholder:
+    ifEmpty: tag
+    height: 100px
+    text: Tag Page
 
 moreContentFeed:
   _component:

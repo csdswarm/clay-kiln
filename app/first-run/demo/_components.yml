@@ -589,6 +589,9 @@ _components:
       homepage:
         items: []
         tag: ''
+        tagManual: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: ''
         populateFrom: all
         locationOfContentFeed: homepage
@@ -599,6 +602,9 @@ _components:
       section-front:
         items: []
         tag: ''
+        tagManual: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: entertainment
         populateFrom: section-front
         locationOfContentFeed: section-front
@@ -609,6 +615,9 @@ _components:
       tag-page:
         items: []
         tag: ''
+        tagManual: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: ''
         populateFrom: tag
         locationOfContentFeed: tag-page
@@ -628,7 +637,7 @@ _components:
     instances:
       default:
         googleAdUnderStationsModule:
-          _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/billboard
         googleAdUnderLatestModule:
           _ref: /_components/google-ad-manager/instances/billboard
         moreContentFeed:
@@ -640,8 +649,6 @@ _components:
     instances:
       new:
         tag: ''
-        tagPageHeader:
-          _ref: /_components/tag-page-header/instances/new
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/tag-page
 

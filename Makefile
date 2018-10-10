@@ -27,7 +27,7 @@ remove-images:
 	docker rmi -f $$(docker images -q)
 
 clay-logs:
-	docker-compose logs -f clay 
+	docker-compose logs -f clay
 
 enter-clay:
 	docker-compose exec clay bash
@@ -43,10 +43,6 @@ bootstrap:
 	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
-	@echo "\r\n\r\n"
-	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/section-front@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
-	@echo "\r\n\r\n"
-	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/homepage@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
