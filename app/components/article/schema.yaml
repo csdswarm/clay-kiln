@@ -189,8 +189,11 @@ stationURL:
   _label: Station URL
   _has:
     input: text
-    # TODO: URL Validation. See https://entercomdigitalservices.atlassian.net/browse/ON-178
     type: url
+    validate:
+      required: true
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
     help: URL of the station
 hasSecondaryBylines:
   _label: Use Secondary Bylines
