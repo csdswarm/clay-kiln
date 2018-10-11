@@ -101,6 +101,7 @@ export default {
       const webFileUrl = this.webFileUrl
       const webFileUrlFieldIsValid = this.webFileUrlFieldIsValid
 
+      // Only "activate" button with green color if field is filled with valid url.
       if (!webFileUrl) {
         return 'default'
       } else {
@@ -114,25 +115,36 @@ export default {
       const webFileUrl = this.webFileUrl
       const webFileUrlFieldIsValid = this.webFileUrlFieldIsValid
 
+      // If field is empty or invalid, disable "done" button.
       return (!webFileUrl || !webFileUrlFieldIsValid) ? true : false
 
     }
   },
   methods: {
     webFileAttached() {
+
+      // Use web file url field to set imageUrl then reset web file url field.
       this.imageUrl = this.webFileUrl;
       this.webFileUrl = '';
+
     },
     updateWebFileUrl(input) {
       this.webFileUrl = input
     },
     localFileAttached(files) {
 
+      // Disable file upload button while processing.
       this.fileUploadButtonDisabled = true;
 
       const file = files[0];
 
+      // If file attached, exec upload logic.
       if (file) {
+
+        // Send file name and type to backend so backend can generate aws pre-signed request url.
+        // This allows us to keep our aws secret on the backend, while still uploading directly 
+        // from the client to s3. Actual s3 file key (aka file name) will be built on backend by processing 
+        // attached filename and appending a UUID to ensure there are no file collisions in the s3 bucket.
         this.prepareFileForUpload(file.name, file.type)
           .then(data => {
             return this.execFileUpload(data.s3SignedUrl, file, data.s3FileType).then(() => { return { bucket: data.s3Bucket, fileKey: data.s3FileKey }});
@@ -142,9 +154,8 @@ export default {
             // Set value of form to be the s3 file.
             this.imageUrl = `https://${s3.bucket}.s3.amazonaws.com/${s3.fileKey}`;
 
-            // Reset web file attachment form
-            this.webFileUrl = '';
-            this.fileUploadButtonDisabled = false;
+            this.webFileUrl = ''; // Reset web file attachment field
+            this.fileUploadButtonDisabled = false; // Re-enable file upload button.
 
           });
       }
