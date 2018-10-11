@@ -53,7 +53,6 @@
     <div class="ui-textbox__feedback" v-if="args.uploadHelp">
       <div class="ui-textbox__feedback-text">{{ args.uploadHelp }}</div>
     </div>
-    <input :name="name" type="hidden" :value="value">
   </div>
 </template>
 
@@ -70,15 +69,12 @@ export default {
   props: ['name', 'data', 'schema', 'args'],
   data() {
     return {
-      imageUrl: this.data || '', // Set passed data "prop" as local value so it can be mutated. See https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
+      imageUrl: this.data || '', // Set passed data "prop" as local data so it can be mutated. See https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
       webFileUrl: '',
       fileUploadButtonDisabled: false
     };
   },
   computed: {
-    value() {
-      return this.imageUrl === null || typeof this.imageUrl === 'undefined' ? '' : String(this.imageUrl)
-    },
     webFileUrlFieldIsValid() {
 
       // Cachebusting dependencies
@@ -123,8 +119,13 @@ export default {
   methods: {
     webFileAttached() {
 
-      // Use web file url field to set imageUrl then reset web file url field.
+      // Use web file url field to set imageUrl.
       this.imageUrl = this.webFileUrl;
+
+      // Set value of form to be the web file url.
+      this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.webFileUrl });
+
+      // Reset web file url field
       this.webFileUrl = '';
 
     },
@@ -154,8 +155,14 @@ export default {
             // Use custom domain for s3 host else default to standard amazon host.
             const s3Host = (this.args.s3Host) ? this.args.s3Host : 's3.amazonaws.com';
 
+            // Build the full s3 resource url.
+            const s3FileUrl = `https://${s3.bucket}.${s3Host}/${s3.fileKey}`
+
+            // Update imageUrl to point to new s3 file.
+            this.imageUrl = s3FileUrl;
+
             // Set value of form to be the s3 file url.
-            this.imageUrl = `https://${s3.bucket}.${s3Host}/${s3.fileKey}`;
+            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: s3FileUrl });
 
             this.webFileUrl = ''; // Reset web file attachment field
             this.fileUploadButtonDisabled = false; // Re-enable file upload button.
