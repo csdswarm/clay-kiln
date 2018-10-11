@@ -27,31 +27,35 @@
         <div class="placeholder-label"><span class="placeholder-text">No Image</span><div class="ui-ripple-ink"></div></div>
       </div>
     </div>
-    <input :name="name" type="hidden" :value="value">
-    <ui-textbox 
-      style="margin: 0 0 16px 0;"
-      :autosize="false"
-      :value="webFileUrl"
-      :type="url"
-      :multiLine="false"
-      :invalid="!webFileUrlFieldIsValid"
-      :label="args.webLabel"
-      :floatingLabel="false"
-      :help="args.webHelp"
-      @input="updateWebFileUrl"
-    ></ui-textbox>
-    <ui-icon-button
-      type="primary"
-      :color="iconButtonColor"
-      :disabled="iconButtonDisabled"
-      @click="webFileAttached"
-      icon="cloud_download"
-    ></ui-icon-button>
-    <br /><!-- remove me after styling -->
-    <ui-fileupload ref="fileUploadButton" color="accent" :label="upperLabel" :disabled="fileUploadButtonDisabled" accept="image/*" @change="localFileAttached"></ui-fileupload>
+    <div class="web-file-container">
+      <div class="web-file-text-input">
+        <ui-textbox
+          :autosize="false"
+          :value="webFileUrl"
+          :type="url"
+          :multiLine="false"
+          :invalid="!webFileUrlFieldIsValid"
+          :label="args.webLabel"
+          :floatingLabel="true"
+          :help="args.webHelp"
+          @input="updateWebFileUrl"
+        ></ui-textbox>
+      </div>
+      <div class="web-file-done-button">
+        <ui-icon-button
+          type="primary"
+          :color="iconButtonColor"
+          :disabled="iconButtonDisabled"
+          @click="webFileAttached"
+          icon="done"
+        ></ui-icon-button>
+      </div>
+    </div>
+    <ui-fileupload ref="fileUploadButton" :label="args.uploadLabel" color="accent" :disabled="fileUploadButtonDisabled" accept="image/*" @change="localFileAttached"></ui-fileupload>
     <div class="ui-textbox__feedback" v-if="args.uploadHelp">
       <div class="ui-textbox__feedback-text">{{ args.uploadHelp }}</div>
     </div>
+    <input :name="name" type="hidden" :value="value">
   </div>
 </template>
 
@@ -173,7 +177,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

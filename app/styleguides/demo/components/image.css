@@ -384,3 +384,32 @@
     }
   }
 }
+
+.kiln-overlay-form {
+
+  .advanced-image-upload {
+
+    .kiln-placeholder {
+      cursor: default;
+    }
+
+    .web-file-container {
+      display: inline-flex;
+      width: 100%;
+      margin: 0 0 16px 0;
+    }
+    
+    .web-file-text-input {
+      display: flex;
+      width: 80%;
+    }
+    
+    .web-file-done-button {
+      display: flex;
+      width: 20%;
+      padding: 20px;
+    }
+
+  }
+
+}
