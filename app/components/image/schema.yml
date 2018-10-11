@@ -7,18 +7,13 @@ _description: |
   * Automatically pulls in credit from Mediaplay on save.
 
 url:
-  _label: URL
-  _has:
-    input: text
-    type: url
-advancedurl:
-  _label: Image Upload
   _has:
     input: advanced-image-upload
-    webLabel: Attach Image via Web
-    webHelp: Supply a valid url to an image file then click attach from web button
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
     uploadHelp: Choose an image file from your computer
+    s3Host: s3.amazonaws.com
 caption:
   _label: Caption
   _has:
@@ -93,8 +88,7 @@ borderToggle:
 _groups:
   inlinestuff:
     fields:
-      # - url
-      - advancedurl
+      - url
       - rendition
       - caption
       - credit

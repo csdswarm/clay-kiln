@@ -151,8 +151,11 @@ export default {
           })
           .then((s3) => {
 
-            // Set value of form to be the s3 file.
-            this.imageUrl = `https://${s3.bucket}.s3.amazonaws.com/${s3.fileKey}`;
+            // Use custom domain for s3 host else default to standard amazon host.
+            const s3Host = (this.args.s3Host) ? this.args.s3Host : 's3.amazonaws.com';
+
+            // Set value of form to be the s3 file url.
+            this.imageUrl = `https://${s3.bucket}.${s3Host}/${s3.fileKey}`;
 
             this.webFileUrl = ''; // Reset web file attachment field
             this.fileUploadButtonDisabled = false; // Re-enable file upload button.
