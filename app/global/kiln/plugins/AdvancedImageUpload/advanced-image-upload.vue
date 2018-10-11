@@ -3,13 +3,11 @@
 
   # Advanced Image Upload
 
-  This Vue single file component is a Clay Kiln input that allows advanced image upload capabilities.
+  This Vue single file component is a Clay Kiln input that allows the editor to upload an image
+  file directly to s3, or simply provide a url to a public image resource.
 
-  Using this component, an image file can be uploaded to a specific s3 bucket via either direct
-  file upload, or alternatively, supplying a url to a public image resource and clicking attach from web button. 
-  If a url is supplied, the linked image will be downloaded, then cached to the same specified s3 bucket.
-
-  The url to the uploaded s3 image resource will be stored in the "url" property of the component data.
+  The url that will be stored in the associated property of the component data, will be either
+  the public url provided, or the url to the newly uploaded resource hosted on s3.
 
   More info: 
   https://claycms.gitbook.io/kiln/kiln-fundamentals/components/inputs
@@ -20,10 +18,10 @@
 <template>
   <div class="advanced-image-upload">
     <div v-if="imageUrl">
-      <img alt="attached image" :src="imageUrl" style="width: 100%;" />
+      <img class="attached-image" alt="attached image" :src="imageUrl" />
     </div>
     <div v-else>
-      <div class="kiln-placeholder" style="min-height: 25px;">
+      <div class="kiln-placeholder">
         <div class="placeholder-label"><span class="placeholder-text">No Image</span><div class="ui-ripple-ink"></div></div>
       </div>
     </div>

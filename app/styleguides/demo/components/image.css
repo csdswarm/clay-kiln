@@ -389,7 +389,12 @@
 
   .advanced-image-upload {
 
+    .attached-image {
+      width: 100%;
+    }
+
     .kiln-placeholder {
+      min-height: 25px;
       cursor: default;
     }
 
