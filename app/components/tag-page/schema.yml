@@ -13,6 +13,16 @@ tag:
     height: 100px
     text: Tag Page
 
+googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
+
+googleAdTop:
+  _component:
+    include:
+      - google-ad-manager
+
 moreContentFeed:
   _component:
     include:

@@ -86,6 +86,7 @@ module.exports.render = (ref, data, locals) => {
   }
 
   routeParamValue = locals && locals.params ? locals.params.tag : '';
+  data.dynamicTag = routeParamValue;
 
   return buildAndExecuteQuery(ref, data, locals, routeParamValue)
     .then(data => {

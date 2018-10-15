@@ -62,6 +62,7 @@ _pages:
     layout: /_components/one-column-layout/instances/general
   # Tag Page
   tag:
+    _dynamic: true
     head:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general

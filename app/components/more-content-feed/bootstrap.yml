@@ -7,3 +7,5 @@ _components:
     locationOfContentFeed: ''
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/mediumRectangle
+    googleAdTop:
+      _ref: /_components/google-ad-manager/instances/superLeaderboard

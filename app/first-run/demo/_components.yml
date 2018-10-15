@@ -589,7 +589,6 @@ _components:
       homepage:
         items: []
         tag: ''
-        tagManual: ''
         tagInfo: ''
         sectionFront: ''
         sectionFrontManual: ''
@@ -602,7 +601,6 @@ _components:
       section-front:
         items: []
         tag: ''
-        tagManual: ''
         tagInfo: ''
         sectionFront: ''
         sectionFrontManual: entertainment
@@ -615,7 +613,6 @@ _components:
       tag-page:
         items: []
         tag: ''
-        tagManual: ''
         tagInfo: ''
         sectionFront: ''
         sectionFrontManual: ''
@@ -651,6 +648,10 @@ _components:
         tag: ''
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/tag-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPage
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
 
   tag-page-header:
     instances:

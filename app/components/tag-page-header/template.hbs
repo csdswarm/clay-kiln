@@ -8,8 +8,13 @@
     style="background-image:url({{ image }});"
   {{/if}}
 >
-  <div class="tag-page-header__tag">
+  <div class="tag-page-header__tag" data-editable="settings">
     <div class="tag__line"></div>
-    <h1>{{tag}}</h1>
+    {{#if dynamicTag}}
+      {{ set 'displayTag' (replace tag '-' ' ') }}
+      <h1>{{displayTag}}</h1>
+    {{else}}
+      <h1>{{tag}}</h1>
+    {{/if}}
   </div>
 </header>

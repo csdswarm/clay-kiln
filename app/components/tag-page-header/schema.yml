@@ -5,13 +5,12 @@ _confirmRemoval: true
 
 tag:
   _label: tag
-  _subscribe: tag
   _has:
     input: text
     validate:
       required: true
   _placeholder:
-    height: 250px
+    height: 500px
     text: Tag Header Title
     required: true
 
@@ -38,3 +37,7 @@ _groups:
     fields:
       - tag
       - image
+    _placeholder:
+      height: 250px
+      text: Tag Header
+      ifEmpty: tag

@@ -65,22 +65,10 @@ sectionFrontManual:
 
 tag:
   _label: Tag
-  _subscribe: tag
-  _has:
-    help: Tag from which to pull content
-
-tagInfo:
-  _label: Tag Info
-  _reveal:
-    field: populateFrom
-    operator: ===
-    value: tag
-  _has:
-    input: text
-    help: Tag Description / More Info
-
-tagManual:
-  _label: Tag
+  _placeholder:
+    height: 600px
+    text: Curated Category/Tag Page
+    required: true
   _reveal:
     field: populateFrom
     operator: ===
@@ -93,6 +81,20 @@ tagManual:
         field: populateFrom
         operator: ===
         value: tag
+
+tagInfo:
+  _label: Tag Info
+  _placeholder:
+    height: 274px
+    text: More Info on Tag
+    required: true
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: tag
+  _has:
+    input: text
+    help: Tag Description / More Info (Will be shown in right rail)
 
 items:
   _label: Items
@@ -197,10 +199,10 @@ _groups:
     fields:
       - populateFrom
       - sectionFrontManual
-      - tagManual
+      - tag
       - tagInfo
       - items
     _placeholder:
       height: 100px
       text: More from Radio.com (Content Feed)
-      ifEmpty: populateFrom
+      ifEmpty: tag
