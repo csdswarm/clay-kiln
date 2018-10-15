@@ -12,6 +12,11 @@ moreContentFeed:
     include:
       - more-content-feed
 
+stationsCarousel:
+  _component:
+    include:
+      - stations-carousel
+
 canonicalUrl:
   _publish: url
   _has:

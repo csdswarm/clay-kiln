@@ -20,6 +20,11 @@ moreContentFeed:
     include:
       - more-content-feed
 
+stationsCarousel:
+  _component:
+    include:
+      - stations-carousel
+
 sectionLead:
   _component:
     include:

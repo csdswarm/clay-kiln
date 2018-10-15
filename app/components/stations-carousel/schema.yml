@@ -1,0 +1,50 @@
+_description: |
+  A component that displays a list of local stations.
+
+overrideTitle:
+  _label: Override default title
+  _placeholder:
+    height: 61px
+    text: Title of Stations Module
+    required: true
+  _has:
+    input: inline
+    validate:
+      required: true
+
+sectionFront:
+  _label: Section Front
+  _subscribe: sectionFront
+  _has:
+    input: static
+    text: ${sectionTitle}
+
+filterStationsBy:
+  _label: Filter stations by?
+  _has:
+    validate:
+      required: true
+    input: radio
+    options:
+      -
+        name: Local Stations (filter by market)
+        value: market
+      -
+        name: Section Front
+        value: section-front
+      # -
+      #   name: Trending
+      #   value: trending
+      # -
+      #   name: Favorites
+      #   value: favorites
+
+_groups:
+  settings:
+    fields:
+      - filterStationsBy
+      - overrideTitle
+    _placeholder:
+      text: Stations Carousel
+      height: 315px
+      ifEmpty: filterStationsBy

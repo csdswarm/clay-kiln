@@ -1,0 +1,19 @@
+<div class="component component--stations-near-you" data-uri="{{ default _ref _self }}" data-editable="settings">
+  {{#if stations.length}}
+    <div class="stations-near-you__title-line"></div>
+    <h2>{{title}}</h2>
+    <div class="stations-near-you__carousel">
+      <div class="carousel__left-button"></div>
+      <ul>
+        {{#each stations as |station|}}
+          <li>
+            <div class="thumb" style="background-image: url({{station.image}});"></div>
+            <span>{{station.name}}</span>
+          </li>
+        {{/each}}
+      </ul>
+      <div class="carousel__right-button"></div>
+      <div class="carousel__pagination-dots"></div>
+    </div>
+  {{/if}}
+</div>

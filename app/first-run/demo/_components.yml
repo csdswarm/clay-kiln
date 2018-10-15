@@ -577,6 +577,26 @@ _components:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
             _ref: /_components/google-ad-manager/instances/leaderboard
+        stationsCarousel:
+          _ref: /_components/stations-carousel/instances/section-front
+
+  stations-carousel:
+    instances:
+      homepage:
+        overrideTitle: ''
+        filterStationsBy: market
+      section-front:
+        overrideTitle: ''
+        filterStationsBy: section-front
+      content-hub:
+        overrideTitle: ''
+        filterStationsBy: trending
+      station-page:
+        overrideTitle: ''
+        filterStationsBy: trending
+      article:
+        overrideTitle: ''
+        filterStationsBy: trending
 
   more-content-feed:
     instances:
@@ -629,6 +649,8 @@ _components:
           _ref: /_components/more-content-feed/instances/homepage
         sectionLead:
           _ref: /_components/section-lead/instances/new
+        stationsCarousel:
+          _ref: /_components/stations-carousel/instances/homepage
 
   latest-recirculation:
     instances:
