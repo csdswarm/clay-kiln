@@ -9,17 +9,9 @@ tag:
     input: text
     validate:
       required: true
-  _placeholder:
-    height: 500px
-    text: Tag Header Title
-    required: true
 
 image:
   _label: Image URL
-  _placeholder:
-    height: 250px
-    text: Tag Header Image
-    required: true
   _has:
     input: text
     type: url
