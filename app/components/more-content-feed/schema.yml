@@ -202,7 +202,3 @@ _groups:
       - tag
       - tagInfo
       - items
-    _placeholder:
-      height: 100px
-      text: More from Radio.com (Content Feed)
-      ifEmpty: tag
