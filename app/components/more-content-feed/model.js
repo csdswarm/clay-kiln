@@ -60,6 +60,13 @@ module.exports.render = function (ref, data, locals) {
   let cleanUrl;
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
+  if (locals && locals.page) {
+    // after the first 10 items, show N more at a time (pageLength defaults to 5)
+    // page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
+    const skip = maxItems + (parseInt(locals.page)- 1) * data.pageLength
+    queryService.addOffset(query, skip)
+    queryService.addSize(query, data.pageLength + 1)
+  }
   if (data.populateFrom == 'tag') {
     if (!data.tag || !locals) {
       return data;
@@ -89,7 +96,8 @@ module.exports.render = function (ref, data, locals) {
 
   // exclude the curated content from the results
   if (data.items && !isComponent(locals.url)) {
-    data.items.forEach(item => {
+    // this can be a bug when items dont have canonical urls
+    data.items.filter((item) => item.canonicalUrl).forEach(item => {
       cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     });
@@ -102,6 +110,8 @@ module.exports.render = function (ref, data, locals) {
         return content;
       });
       data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      data.rawQueryResults = results.slice(0, data.pageLength);
+      data.moreResults = results.length > data.pageLength
       return data;
     })
     .catch(e => {
