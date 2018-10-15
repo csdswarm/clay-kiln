@@ -61,12 +61,12 @@ module.exports.render = function (ref, data, locals) {
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (data.populateFrom == 'tag') {
-    if ((!data.tag && !data.tagManual) || !locals) {
+    if (!data.tag || !locals) {
       return data;
     }
      // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
-    queryService.addShould(query, { match: { 'tags.normalized': (data.tagManual || data.tag) }});
+    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'section-front') {
     if ((!data.sectionFront && !data.sectionFrontManual) || !locals) {
