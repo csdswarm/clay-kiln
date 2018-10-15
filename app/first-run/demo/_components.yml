@@ -245,12 +245,6 @@ _components:
         title: 'Articles Tagged: ${tagValue}'
         size: 3
 
-  dynamic-list:
-    instances:
-      default:
-        routeParam: ''
-        entries: []
-
   share:
     instances:
       new:

@@ -69,7 +69,6 @@ function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
     });
 }
 
-
 module.exports.render = (ref, data, locals) => {
   const reqUrl = locals.url;
   var routeParamValue;
