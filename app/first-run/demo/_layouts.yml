@@ -3,17 +3,19 @@ _components:
     instances:
       general:
         headLayout:
+          - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
         top:
           -
             _ref: /_components/header/instances/default
         head: head
+        pageHeader: pageHeader
         main: main
         secondary: secondary
         bottom:
-          -
-            _ref: /_components/footer/instances/default
+          - _ref: /_components/google-ad-manager/instances/superLeaderboard
+          - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
@@ -21,6 +23,7 @@ _components:
           - _ref: /_components/chartbeat/instances/default
       bare:
         headLayout:
+          - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
         top:
@@ -38,6 +41,7 @@ _components:
           - _ref: /_components/chartbeat/instances/default
       article:
         headLayout:
+          - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
         top:
@@ -56,37 +60,24 @@ _components:
         static:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
-      section-front:
-        headLayout:
-          - _ref: /_components/youtube-player-head/instances/new
-          - _ref: /_components/web-player-head/instances/default
-        top:
-          - _ref: /_components/header/instances/default
-        head: head
-        main: main
-        secondary:
-          - _ref: /_components/generic-list/instances/recirc
-        bottom:
-          - _ref: /_components/footer/instances/default
-        kilnInternals:
-          - _ref: /_components/clay-kiln/instances/general
-        static:
-          - _ref: /_components/web-player/instances/new
-          - _ref: /_components/chartbeat/instances/default
   two-column-layout:
     instances:
       article:
         headLayout:
+          - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
         top:
           -
             _ref: /_components/header/instances/default
         head: head
+        pageHeader: pageHeader
+        sectionHeader: sectionHeader
         main: main
         tertiary: tertiary
         secondary: secondary
         bottom:
+          - _ref: /_components/google-ad-manager/instances/billboard
           - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general

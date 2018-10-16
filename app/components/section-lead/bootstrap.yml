@@ -1,0 +1,6 @@
+_components:
+  section-lead:
+    items: []
+    sectionFront: ''
+    googleAdRightRail:
+      _ref: /_components/google-ad-manager/instances/mediumRectangle

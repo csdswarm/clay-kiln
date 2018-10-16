@@ -23,7 +23,7 @@ describe(dirname, function () {
         var state = {
           components: {
             'www.url.com/_components/interactive-homelessness-tab/instances/a': {},
-            'www.url.com/_components/interactive-homelessness-panel/instances/a': {},
+            'www.url.com/_components/interactive-homelessness-panel/instances/a': {}
           }
         };
 
@@ -35,7 +35,7 @@ describe(dirname, function () {
           components: {
             'www.url.com/_components/interactive-homelessness-tab/instances/a': { a: 'b' },
             'www.url.com/_components/interactive-homelessness-tab/instances/b': { a: 'b' },
-            'www.url.com/_components/interactive-homelessness-panel/instances/a': { a: 'b' },
+            'www.url.com/_components/interactive-homelessness-panel/instances/a': { a: 'b' }
           }
         };
 
@@ -52,7 +52,7 @@ describe(dirname, function () {
             'www.url.com/_components/interactive-homelessness-tab/instances/a': { a: 'b' },
             'www.url.com/_components/interactive-homelessness-tab/instances/b': { a: 'b' },
             'www.url.com/_components/interactive-homelessness-tab/instances/c': { a: 'b' },
-            'www.url.com/_components/interactive-homelessness-panel/instances/a': { a: 'b' },
+            'www.url.com/_components/interactive-homelessness-panel/instances/a': { a: 'b' }
           }
         };
 

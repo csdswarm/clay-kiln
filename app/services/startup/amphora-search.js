@@ -7,13 +7,13 @@ const amphora = require('amphora'),
 
 function setup() {
   return amphoraSearch.setup({
-      prefix: process.env.ELASTIC_PREFIX,
-      db: amphora.db,
-      sites: amphora.sites,
-      mappings: path.resolve('./search/mappings'),
-      handlers: path.resolve('./search/handlers'),
-      sitemaps: true
-    })
+    prefix: process.env.ELASTIC_PREFIX,
+    db: amphora.db,
+    sites: amphora.sites,
+    mappings: path.resolve('./search/mappings'),
+    handlers: path.resolve('./search/handlers'),
+    sitemaps: true
+  })
     .then(function () {
       log('info', `Using ElasticSearch at ${process.env.ELASTIC_HOST}`);
 

@@ -1,11 +1,8 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _filter = require('lodash/filter'),
-  _includes = require('lodash/includes'),
-  _find = require('lodash/find'),
-  _unset = require('lodash/unset'),
-  _cloneDeep = require('lodash/cloneDeep'),
+  // _includes = require('lodash/includes'),
+  // _find = require('lodash/find'),
   striptags = require('striptags'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
@@ -16,9 +13,9 @@ const _get = require('lodash/get'),
   promises = require('../../services/universal/promises'),
   rest = require('../../services/universal/rest'),
   circulationService = require('../../services/universal/circulation'),
-  mediaplay = require('../../services/universal/media-play'),
-  queryService = require('../../services/server/query'),
-  QUERY_INDEX = 'authors';
+  mediaplay = require('../../services/universal/media-play');
+  // queryService = require('../../services/server/query'),
+  // QUERY_INDEX = 'authors';
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -181,39 +178,39 @@ function setCanonicalUrl(data, locals) {
   }
 }
 
-/**
- * query elastic to get social media stuff for an author
- * @param {Object} query
- * @param {string} name
- * @returns {Promise}
- */
-function getAuthorData(query, name) {
-  queryService.addShould(query, { match : { name: name.text } });
-  queryService.addMinimumShould(query, 1);
-  return queryService.searchByQuery(query)
-    .catch(() => name)
-    .then( authors => {
-      authors.forEach((author) => {
-        author.text = author.name;
-      });
+// /**
+//  * query elastic to get social media stuff for an author
+//  * @param {Object} query
+//  * @param {string} name
+//  * @returns {Promise}
+//  */
+// function getAuthorData(query, name) {
+//   queryService.addShould(query, { match : { name: name.text } });
+//   queryService.addMinimumShould(query, 1);
+//   return queryService.searchByQuery(query)
+//     .catch(() => name)
+//     .then( authors => {
+//       authors.forEach((author) => {
+//         author.text = author.name;
+//       });
+//
+//       return authors;
+//     });
+// }
 
-      return authors;
-    });
-}
-
-/**
- * get data for first mediaplay image in an article, if it exists
- * @param  {object} data
- * @param {object} locals
- * @return {Promise}
- */
-function getMediaplayImage(data, locals) {
-  const firstMediaplayImage = has(data.content) && _find(data.content, (component) => _includes(component._ref, 'components/image/'));
-
-  if (firstMediaplayImage) {
-    return promises.timeout(rest.get(utils.uriToUrl(firstMediaplayImage._ref, locals)), 1000).catch(() => null); // fail gracefully
-  }
-}
+// /**
+//  * get data for first mediaplay image in an article, if it exists
+//  * @param  {object} data
+//  * @param {object} locals
+//  * @return {Promise}
+//  */
+// function getMediaplayImage(data, locals) {
+//   const firstMediaplayImage = has(data.content) && _find(data.content, (component) => _includes(component._ref, 'components/image/'));
+//
+//   if (firstMediaplayImage) {
+//     return promises.timeout(rest.get(utils.uriToUrl(firstMediaplayImage._ref, locals)), 1000).catch(() => null); // fail gracefully
+//   }
+// }
 
 /**
  * get article's previously-saved data, if it exists
@@ -241,6 +238,16 @@ function getPublishedData(uri, data, locals) {
   if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.slug)) {
     return promises.timeout(rest.get(utils.uriToUrl(utils.replaceVersion(uri, 'published'), locals)), 1000).catch(() => null); // fail gracefully
   }
+}
+
+/**
+ * determine if user has manually updated the slug on initial save
+ * @param  {object} data
+ * @param  {object|null} prevData
+ * @return {Boolean}
+ */
+function initialManualSlug(data, prevData) {
+  return !prevData ? data.slug !== '' : false;
 }
 
 /**
@@ -297,7 +304,7 @@ function generateSlug(data) {
  * @param  {object} publishedData
  */
 function setSlugAndLock(data, prevData, publishedData) {
-  if (manualSlugUpdate(data, prevData)) {
+  if (initialManualSlug(data, prevData) || manualSlugUpdate(data, prevData)) {
     // if you manually updated the slug, sanitize and update it and lock the slug
     data.slug = sanitize.cleanSlug(data.slug);
     data.slugLock = true;
@@ -363,6 +370,8 @@ function cleanSiloImageUrl(data) {
  * but we still key a lot of things off the flatter `authors`
  * array. That's why we're doing this work, but it's done
  * on save as to not affect rendering
+ *
+ * @param {object} data
  */
 function setPlainAuthorsList(data) {
   const bylineList = _get(data, 'byline', []),
@@ -403,6 +412,8 @@ function setPlainSourcesList(data) {
  * The byline formatter handlebars helper doesn't
  * like this usecase, so we should sanitize before
  * it even has to deal with it.
+ *
+ * @param {object} data
  */
 function sanitizeByline(data) {
   const byline = _get(data, 'byline', []);
@@ -425,7 +436,7 @@ module.exports.render = function (ref, data, locals) {
 };
 
 module.exports.save = function (uri, data, locals) {
-  var query = queryService(QUERY_INDEX, locals);
+  // var query = queryService(QUERY_INDEX, locals);
 
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc

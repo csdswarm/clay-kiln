@@ -4,6 +4,10 @@ _users:
     provider: google
     auth: admin
   -
+    username: nick@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
     username: shawn@swarmsolutions.com
     provider: google
     auth: admin

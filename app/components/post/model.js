@@ -28,9 +28,9 @@ function generateFeedImage({ content }, locals) {
 
 /**
  * Sets props for published instances.
- * @param uri
- * @param data
- * @param locals
+ * @param {string} uri
+ * @param {object} data
+ * @param {object} locals
  */
 function setPublishedInstanceProps(uri, data, locals) {
   if (isPublishedVersion(uri) && locals) {
@@ -61,7 +61,7 @@ module.exports.save = (uri, data, locals) => {
 
     // Only update feedImage if it is not set
     if (!data.feedImage) {
-      data.feedImage = data.firstImage
+      data.feedImage = data.firstImage;
     }
 
     return data;

@@ -25,7 +25,7 @@ describe(dirname, function () {
             'www.url.com/_components/clay-paragraph/instances/a': {
               text: 'foo'
             },
-            'www.url.com/_components/interactive-homelessness-panel/instances/a': { a: 'b' },
+            'www.url.com/_components/interactive-homelessness-panel/instances/a': { a: 'b' }
           }
         };
 
@@ -38,7 +38,7 @@ describe(dirname, function () {
             'www.url.com/_components/clay-paragraph/instances/a': {
               text: '<span class="clay-annotated kiln-phrase">foo</span>'
             },
-            'www.url.com/_components/annotation/instances/a': { a: 'b' },
+            'www.url.com/_components/annotation/instances/a': { a: 'b' }
           }
         };
 
@@ -54,7 +54,7 @@ describe(dirname, function () {
             'www.url.com/_components/clay-paragraph/instances/b': {
               text: '<span class="clay-annotated kiln-phrase">bar</span>'
             },
-            'www.url.com/_components/annotation/instances/a': { a: 'b' },
+            'www.url.com/_components/annotation/instances/a': { a: 'b' }
           }
         };
 
@@ -73,7 +73,7 @@ describe(dirname, function () {
               text: '<span class="clay-annotated kiln-phrase">foo</span>'
             },
             'www.url.com/_components/annotation/instances/a': { a: 'b' },
-            'www.url.com/_components/annotation/instances/b': { a: 'b' },
+            'www.url.com/_components/annotation/instances/b': { a: 'b' }
           }
         };
 
@@ -90,7 +90,7 @@ describe(dirname, function () {
             'www.url.com/_components/clay-paragraph/instances/a': {
               text: '<span class="clay-annotated kiln-phrase">foo</span><span class="clay-annotated kiln-phrase">bar</span>'
             },
-            'www.url.com/_components/annotation/instances/a': { a: 'b' },
+            'www.url.com/_components/annotation/instances/a': { a: 'b' }
           }
         };
 

@@ -6,9 +6,11 @@ $azureRadienceRGB: 0, 153, 255;
 $black: #000;
 $blackRussian: #000001;
 $boulderGrey: #777;
+$alabasterGrey: #F7F7F7; /* Ad Slot Container */
 
 $ceruleanBlue: #05aeee; /* Twitter Blue */
 $chambrayBlue: #3b5998; /* Facebook Blue */
+$hawkesBlue: #e3f2fd; /* Kiln Edit Mode Components */
 
 $lightningYellow: #FEC517; /*news*/
 $lightningYellowRGB: 254, 197, 23;

@@ -1,0 +1,9 @@
+_components:
+  more-content-feed:
+    items: []
+    tag: ''
+    sectionFrontManual: ''
+    populateFrom: ''
+    locationOfContentFeed: ''
+    googleAdRightRail:
+      _ref: /_components/google-ad-manager/instances/mediumRectangle
