@@ -13,6 +13,14 @@
   https://claycms.gitbook.io/kiln/kiln-fundamentals/components/inputs
   https://github.com/clay/clay-kiln/tree/cd2c1fe88c15d5f6eef3ea52b3395c28e8f617ea/inputs
 
+  ### Advanced Image Upload Arguments
+
+  * **webLabel** - Web File text input label.
+  * **webHelp** - Description / helper text for the web file text field.
+  * **uploadLabel** - File Upload Button label.
+  * **uploadHelp** - Description / helper text for the file upload button.
+  * **s3Host** - The s3 host used to build the image resource URL that is actually stored. This host will be used to render the image tag publicly.
+
 </docs>
 
 <template>
