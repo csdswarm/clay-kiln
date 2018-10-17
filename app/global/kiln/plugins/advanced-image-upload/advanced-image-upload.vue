@@ -83,6 +83,12 @@ export default {
     };
   },
   computed: {
+    /**
+     * 
+     * Validates string in web file text input as url.
+     * 
+     * @returns {boolean} If url in web file text input is a valid url string.
+     */
     webFileUrlFieldIsValid() {
 
       // Cachebusting dependencies
@@ -99,6 +105,12 @@ export default {
       }
 
     },
+    /**
+     * 
+     * Determines web file "done" button color.
+     * 
+     * @returns {string}
+     */
     iconButtonColor() {
 
       // Cachebusting dependencies
@@ -113,6 +125,12 @@ export default {
       }
 
     },
+    /**
+     * 
+     * Determines web file "done" button disabled/enabled.
+     * 
+     * @returns {boolean}
+     */
     iconButtonDisabled() {
 
       // Cachebusting dependencies
@@ -125,6 +143,14 @@ export default {
     }
   },
   methods: {
+    /**
+     * 
+     * Event handler that is fired when web file "done" button is pressed.
+     * 
+     * This simply takes the input of the web file text field, and saves it to
+     * the assigned component data property. Afterwards the web file text field is reset.
+     * 
+     */
     webFileAttached() {
 
       // Use web file url field to set imageUrl.
@@ -137,9 +163,31 @@ export default {
       this.webFileUrl = '';
 
     },
+    /**
+     * 
+     * Event handler that is fired when web file text field input is updated.
+     * 
+     * This simply maps the input of the text field to this component's appropriate data model.
+     * 
+     * @param {string} input - The contents of the web file text field.
+     */
     updateWebFileUrl(input) {
       this.webFileUrl = input
     },
+    /**
+     * 
+     * Event handler that is fired when an image file is attached via the file upload button.
+     * 
+     * Logic flow is: Filename and type of attached file is sent to backend in order to create
+     * a pre-signed request url associated with the file. Signed url is sent back as response,
+     * then signed url is used by client to directly upload attached file to s3. This client does
+     * not need access to AWS creds, as the signed url acts as temporary uploading credentials.
+     * 
+     * After file is uploaded, the new s3 resource url is saved to the assigned component data 
+     * property.
+     * 
+     * @param {array} files - FileList array of files.
+     */
     localFileAttached(files) {
 
       // Disable file upload button while processing.
@@ -179,6 +227,15 @@ export default {
       }
       
     },
+    /**
+     * 
+     * Send file name and mime type to backend so backend can use AWS creds to generate aws pre-signed request url
+     * associated with this file. This signed url will act as temporary AWS credentials that
+     * the client will use to directly upload the file to s3.
+     * 
+     * @param {string} fileName - filename of attached file.
+     * @param {string} fileType - MIME type of attached file.
+     */
     prepareFileForUpload(fileName, fileType) {
 
       return axios.post('/AdvancedImageUpload', {
@@ -187,6 +244,16 @@ export default {
       }).then(result => result.data);
 
     },
+    /**
+     * 
+     * Upload a file directly to s3 using a pre-signed request url.
+     * 
+     * File object: https://developer.mozilla.org/en-US/docs/Web/API/File
+     * 
+     * @param {string} s3SignedUrl - The signed url used as temporary aws creds to process the direct s3 upload.
+     * @param {File} file - File object associated with file upload input button.
+     * @param {string} s3FileType - MIME type of file.
+     */
     execFileUpload(s3SignedUrl, file, s3FileType) {
 
       return axios.put(s3SignedUrl, file, {
