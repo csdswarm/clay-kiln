@@ -37,7 +37,7 @@ module.exports.routes = (router) => {
    * used by the frontend to directly upload the file to s3.
    * 
    */
-  router.post('/AdvancedImageUpload', checkAuth, function (req, res) {
+  router.post('/advanced-image-upload', checkAuth, function (req, res) {
 
     // Set env vars
     const s3Bucket = process.env.AWS_S3_BUCKET;

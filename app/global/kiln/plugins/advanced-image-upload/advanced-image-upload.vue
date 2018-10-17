@@ -241,7 +241,7 @@ export default {
      */
     prepareFileForUpload(fileName, fileType) {
 
-      return axios.post('/AdvancedImageUpload', {
+      return axios.post('/advanced-image-upload', {
         fileName: fileName,
         fileType: fileType
       }).then(result => result.data);
