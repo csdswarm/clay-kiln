@@ -206,7 +206,8 @@ export default {
         */
         this.prepareFileForUpload(file.name, file.type)
           .then(data => {
-            return this.execFileUpload(data.s3SignedUrl, file, data.s3FileType).then(() => { return { bucket: data.s3Bucket, fileKey: data.s3FileKey }});
+            return this.execFileUpload(data.s3SignedUrl, file, data.s3FileType)
+              .then(() => { return { bucket: data.s3Bucket, fileKey: data.s3FileKey }});
           })
           .then((s3) => {
 
@@ -214,7 +215,7 @@ export default {
             const s3Host = (this.args.s3Host) ? this.args.s3Host : 's3.amazonaws.com';
 
             // Build the full s3 resource url.
-            const s3FileUrl = `https://${s3.bucket}.${s3Host}/${s3.fileKey}`
+            const s3FileUrl = `https://${s3.bucket}.${s3Host}/${s3.fileKey}`;
 
             // Update imageUrl to point to new s3 file.
             this.imageUrl = s3FileUrl;
