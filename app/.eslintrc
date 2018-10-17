@@ -65,7 +65,7 @@
     "lodash/chain-style": 0, // Non error until NYMag fixes lodash chain style problems
     "lodash/chaining": 0, // Non error until NYMag fixes lodash chain problems
     // possible errors
-    "no-extra-parens": 1,
+    "no-extra-parens": [1, "all", {"nestedBinaryExpressions": false}],
     "valid-jsdoc": [1, {
       "requireReturn": false,
       "requireParamDescription": false,
