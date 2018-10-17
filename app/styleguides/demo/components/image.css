@@ -389,27 +389,27 @@
 
   .advanced-image-upload {
 
-    .attached-image {
+    .advanced-image-upload__attached-image {
       width: 100%;
     }
 
-    .kiln-placeholder {
+    .advanced-image-upload__image-placeholder {
       min-height: 25px;
       cursor: default;
     }
 
-    .web-file-container {
+    .advanced-image-upload__web-file-container {
       display: inline-flex;
       width: 100%;
       margin: 0 0 16px 0;
     }
     
-    .web-file-text-input {
+    .advanced-image-upload__web-file-text-input {
       display: flex;
       width: 80%;
     }
     
-    .web-file-done-button {
+    .advanced-image-upload__web-file-done-button {
       display: flex;
       width: 20%;
       padding: 20px;

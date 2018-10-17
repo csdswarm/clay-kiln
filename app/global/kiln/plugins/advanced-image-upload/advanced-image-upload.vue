@@ -26,15 +26,15 @@
 <template>
   <div class="advanced-image-upload">
     <div v-if="imageUrl">
-      <img class="attached-image" alt="attached image" :src="imageUrl" />
+      <img class="advanced-image-upload__attached-image" alt="attached image" :src="imageUrl" />
     </div>
     <div v-else>
-      <div class="kiln-placeholder">
+      <div class="advanced-image-upload__image-placeholder kiln-placeholder">
         <div class="placeholder-label"><span class="placeholder-text">No Image</span><div class="ui-ripple-ink"></div></div>
       </div>
     </div>
-    <div class="web-file-container">
-      <div class="web-file-text-input">
+    <div class="advanced-image-upload__web-file-container">
+      <div class="advanced-image-upload__web-file-text-input">
         <ui-textbox
           :autosize="false"
           :value="webFileUrl"
@@ -47,7 +47,7 @@
           @input="updateWebFileUrl"
         ></ui-textbox>
       </div>
-      <div class="web-file-done-button">
+      <div class="advanced-image-upload__web-file-done-button">
         <ui-icon-button
           type="primary"
           :color="iconButtonColor"
