@@ -217,7 +217,7 @@ function addSize(query, size) {
 }
 
 function addOffset(query, offset) {
-  _.set(query, 'body.from', parseInt(offset))
+  _.set(query, 'body.from', parseInt(offset));
 }
 
 /**
