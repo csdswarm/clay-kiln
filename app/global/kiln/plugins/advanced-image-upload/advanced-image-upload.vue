@@ -198,10 +198,12 @@ export default {
       // If file attached, exec upload logic.
       if (file) {
 
-        // Send file name and type to backend so backend can generate aws pre-signed request url.
-        // This allows us to keep our aws secret on the backend, while still uploading directly 
-        // from the client to s3. Actual s3 file key (aka file name) will be built on backend by processing 
-        // attached filename and appending a UUID to ensure there are no file collisions in the s3 bucket.
+        /*
+        Send file name and type to backend so backend can generate aws pre-signed request url.
+        This allows us to keep our aws secret on the backend, while still uploading directly 
+        from the client to s3. Actual s3 file key (aka file name) will be built on backend by processing 
+        attached filename and appending a UUID to ensure there are no file collisions in the s3 bucket.
+        */
         this.prepareFileForUpload(file.name, file.type)
           .then(data => {
             return this.execFileUpload(data.s3SignedUrl, file, data.s3FileType).then(() => { return { bucket: data.s3Bucket, fileKey: data.s3FileKey }});
