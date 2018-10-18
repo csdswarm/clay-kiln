@@ -31,6 +31,7 @@ services:
       - ./app/sites:/usr/src/app/sites
       - ./app/public:/usr/src/app/public
       - ./app/search:/usr/src/app/search
+      - ./app/routes:/usr/src/app/routes
 
   redis:
     image: redis

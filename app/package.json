@@ -8,7 +8,7 @@
     "start": "npm run check-elastic && nodemon --exec \"node -r dotenv/config\" app.js",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
     "build-web-player": "npm install git+ssh://git@github.com/Entercom/radio-web-player.git#develop --no-save && mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/",
-    "eslint": "eslint . --cache"
+    "eslint": "./node_modules/.bin/eslint . --cache"
   },
   "author": "",
   "license": "MIT",
@@ -19,6 +19,8 @@
     "amphora-fs": "^0.1.0",
     "amphora-html": "^3.2.0",
     "amphora-search": "^6.1.1",
+    "aws-sdk": "^2.337.0",
+    "axios": "^0.18.0",
     "body-parser": "^1.18.2",
     "clay-kiln": "^6.3.3",
     "clay-log": "^1.3.0",
@@ -52,7 +54,9 @@
     "striptags": "^3.1.1",
     "typogr": "^0.6.7",
     "url-parse": "^1.4.0",
-    "vue": "^2.5.16",
+    "uuid": "^3.3.2",
+    "validator": "^10.8.0",
+    "vue": "^2.5.17",
     "vue-template-compiler": "^2.5.17",
     "vueify": "^9.4.1",
     "xml-escape": "^1.1.0",
