@@ -4,5 +4,6 @@
 module.exports = () => {
   window.kiln.helpers = require('../../services/universal/helpers');
   require('./plugins/word-count')();
+  require('./plugins/podcast-select')()
   require('./validators')();
 };

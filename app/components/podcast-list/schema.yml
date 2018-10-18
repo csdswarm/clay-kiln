@@ -1,0 +1,22 @@
+_description: |
+  A list of podcasts
+
+items:
+  _label: Items
+  _has:
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      required:
+        field: fill
+        operator: falsy
+      min: 4
+      max: 4
+    props:
+    -
+      prop: podcast
+      _label: URL
+      _has:
+        input: podcast-select
+        validate:
+          required: true
