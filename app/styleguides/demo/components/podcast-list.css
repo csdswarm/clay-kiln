@@ -70,7 +70,7 @@
   text-transform: uppercase;
   color: $robinsEgg;
   svg {
-    fill: #00CCB7;
+    fill: $robinsEgg;
     height: em(10);
     width: em(10);
   }
