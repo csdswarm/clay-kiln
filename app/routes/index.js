@@ -1,17 +1,19 @@
 /**
- * 
+ *
  * Proprietary routing logic.
- * 
+ *
  */
 
+'use strict';
+
 // Require Dependencies
-const AWS = require('aws-sdk');
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: 'us-east-1'
-});
-const uuidv4 = require('uuid/v4');
+const AWS = require('aws-sdk'),
+  s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'us-east-1'
+  }),
+  uuidv4 = require('uuid/v4');
 
 module.exports.routes = (router) => {
 
@@ -26,25 +28,27 @@ module.exports.routes = (router) => {
   }
 
   /**
-   * 
+   *
    * Advanced Image Upload
-   * 
+   *
    * This endpoint accepts a file name and mime type and uses that to generate
-   * a unique file key that preserves the SEO value of the original filename while 
+   * a unique file key that preserves the SEO value of the original filename while
    * allowing safe upload to s3.
-   * 
-   * This endpoint also uses AWS credentials to create a pre-signed url that can be 
+   *
+   * This endpoint also uses AWS credentials to create a pre-signed url that can be
    * used by the frontend to directly upload the file to s3.
-   * 
+   *
    */
   router.post('/advanced-image-upload', checkAuth, function (req, res) {
 
     // Set env vars
     const s3Bucket = process.env.AWS_S3_BUCKET;
+    let rawFileNameParts, rawFileName, processedFilename,
+      extension, newFileName, s3FileKey, params;
 
     // Validate input
     if (
-      !req.body.fileName 
+      !req.body.fileName
       || !/\.(jpg|jpeg|gif|png|JPG|JPEG|GIF|PNG)$/.test(req.body.fileName) // File name must include valid extension.
       || !req.body.fileType
       || !['image/jpeg', 'image/png', 'image/gif'].includes(req.body.fileType) // Only allow jpeg/png/gif images.
@@ -53,18 +57,17 @@ module.exports.routes = (router) => {
         code: 400,
         data: null,
         error: new Error('Invalid input.')
-      })
+      });
     }
 
     // Sanitize/process filename and add UUID to ensure file is unique within s3 bucket.
-    const rawFileNameParts = req.body.fileName.split('.');
+    rawFileNameParts = req.body.fileName.split('.');
     rawFileNameParts.pop();
-    const rawFileName = rawFileNameParts.join('.');
-    const processedFilename = rawFileName.replace(/[^A-Za-z0-9\s]/gi, '').replace(/[\s]/gi, '-');
+    rawFileName = rawFileNameParts.join('.');
+    processedFilename = rawFileName.replace(/[^A-Za-z0-9\s]/gi, '').replace(/[\s]/gi, '-');
 
     // Determine extension
-    let extension;
-    switch(req.body.fileType) {
+    switch (req.body.fileType) { // eslint-disable-line default-case
       case 'image/jpeg':
         extension = 'jpg';
         break;
@@ -76,34 +79,34 @@ module.exports.routes = (router) => {
     }
 
     // Build s3 file key
-    const newFileName = `${processedFilename}-${uuidv4()}.${extension}`;
-    const s3FileKey = `aiu-media/${newFileName}`
+    newFileName = `${processedFilename}-${uuidv4()}.${extension}`;
+    s3FileKey = `aiu-media/${newFileName}`;
 
     // Create pre-signed s3 upload url and respond.
-    var params = {
-        Bucket: s3Bucket,
-        Key: s3FileKey,
-        Expires: 60,
-        ContentType: req.body.fileType
+    params = {
+      Bucket: s3Bucket,
+      Key: s3FileKey,
+      Expires: 60,
+      ContentType: req.body.fileType
     };
 
-    s3.getSignedUrl('putObject', params, function(err, signedUrl) {
-        if (err) {
-          return res.status(500).json({
-            code: 500,
-            data: null,
-            error: new Error('Error generating signature.')
-          });
-        } else {
-          return res.json({
-            s3Bucket: s3Bucket,
-            s3FileKey: s3FileKey,
-            s3FileType: req.body.fileType,
-            s3SignedUrl: signedUrl
-          });
-        }
+    s3.getSignedUrl('putObject', params, function (err, signedUrl) {
+      if (err) {
+        return res.status(500).json({
+          code: 500,
+          data: null,
+          error: new Error('Error generating signature.')
+        });
+      } else {
+        return res.json({
+          s3Bucket: s3Bucket,
+          s3FileKey: s3FileKey,
+          s3FileType: req.body.fileType,
+          s3SignedUrl: signedUrl
+        });
+      }
     });
 
   });
 
-}
+};
