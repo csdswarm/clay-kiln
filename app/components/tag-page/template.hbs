@@ -1,13 +1,12 @@
 <section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--tag-page tag-page--{{tag}}{{ if @root.locals.edit ' editing' }}">
   {{#if dynamicTag}}
     {{!-- Dynamic Tag Page --}}
-    <div class="more-content-feed__top-ad--mobile">
+    <div class="tag-page__top-ad--mobile">
       {{> google-ad-manager googleAdTop}}
     </div>
-    <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}" data-track-populate-from="{{ populateFrom }}" data-track-location="{{ locationOfContentFeed }}" data-uri="{{ default _ref _self }}" data-track-type="more-content-feed">
-      <div class="section__content-feed-container">
+    <div class="tag-page-content-feed__container">
         {{#ifAny entries.length @root.locals.edit}}
-          <ul class="more-content-feed__links">
+          <ul class="container__links">
             {{#each entries as |feedItem|}}
               <li>
                 <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
@@ -21,12 +20,12 @@
                     <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
                     {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
                       <span class="thumb__content-type">
-                        {{{ read 'components/more-content-feed/media/watch.svg' }}}
+                        {{{ read 'components/tag-page/media/watch.svg' }}}
                       </span>
                     {{/ifAny}}
                     {{#if (compare feedItem.lead 'audio')}}
                       <span class="thumb__content-type">
-                        {{{ read 'components/more-content-feed/media/listen.svg' }}}
+                        {{{ read 'components/tag-page/media/listen.svg' }}}
                       </span>
                     {{/if}}
                     <span class="thumb__datetime-posted">
@@ -53,11 +52,10 @@
             {{/each}}
           </ul>
         {{/ifAny}}
-        <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
+        <div class="container__right-rail tag-page__right-ad--desktop">
           {{> google-ad-manager googleAdRightRail}}
         </div>
-      </div>
-    </section>
+    </div>
   {{else}}
     {{!-- Curated Tag Page --}}
     {{> more-content-feed moreContentFeed}}

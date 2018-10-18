@@ -12,6 +12,7 @@ module.exports.render = (ref, data, locals) => {
   }
 
   data.dynamicTag = locals && locals.params ? locals.params.tag : '';
+  console.log("dynamic tag: ", locals.params.tag);
   return data;
 };
 

@@ -39,7 +39,7 @@ function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
   }
 
   // Log the query
-  if (locals.params.log) {
+  if (locals.params && locals.params.log) {
     log('debug', 'tag', {
       tag: routeParamValue,
       ref
@@ -58,7 +58,7 @@ function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
       data.start = from + size;
       data.moreEntries = data.total > data.start;
 
-      if (locals.params.log) {
+      if (locals.params && locals.params.log) {
         log('debug', 'total hits', {
           hits: hits.total,
           ref
@@ -73,7 +73,7 @@ module.exports.render = (ref, data, locals) => {
   const reqUrl = locals.url;
   var routeParamValue;
 
-  if (locals.params.log) {
+  if (locals.params && locals.params.log) {
     log('debug', 'request URL', {
       hits: reqUrl,
       ref
