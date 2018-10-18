@@ -1,18 +1,9 @@
 'use strict';
 
-const { isPage, isComponent } = require('clayutils'),
-  log = require('../../services/universal/log').setup({
-    file: __filename,
-    component: 'newsfeed'
-  });
+const { isPage, isComponent } = require('clayutils');
 
 module.exports.render = (ref, data, locals) => {
   const reqUrl = locals.url;
-
-  log('debug', 'request URL', {
-    hits: reqUrl,
-    ref
-  });
 
   // If we're publishing for a dynamic page, rendering a component directly
   // or trying to render a page route we need a quick return

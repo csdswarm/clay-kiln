@@ -233,17 +233,6 @@ _components:
         orderBy: date
         title: Recently Published
         size: 3
-  tag-list:
-    instances:
-      default:
-        index: published-articles
-        toggleImages: true
-        toggleTeaser: true
-        toggleReadMore: true
-        variation: large
-        orderBy: date
-        title: 'Articles Tagged: ${tagValue}'
-        size: 3
 
   share:
     instances:

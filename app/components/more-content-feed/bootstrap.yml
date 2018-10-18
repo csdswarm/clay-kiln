@@ -3,6 +3,7 @@ _components:
     items: []
     tag: ''
     sectionFront: ''
+    sectionFrontManual: ''
     populateFrom: ''
     locationOfContentFeed: ''
     googleAdRightRail:
