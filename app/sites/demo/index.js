@@ -7,7 +7,7 @@ module.exports.routes = [
   { path: '/'},
   { path: '/:section'},
   { path: '/:year/:month/:name' },
-  { path: '/tags/:tag.html', dynamicPage: 'tag' }
+  { path: '/tags/:tag', dynamicPage: 'tag' }
 ];
 
 // Resolve the url to publish to

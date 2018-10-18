@@ -46,6 +46,9 @@ bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_pages/tag@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+
 
 install:
 	cd app && npm i && npm run build-web-player && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
