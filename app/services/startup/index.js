@@ -8,6 +8,7 @@ const pkg = require('../../package.json'),
   session = require('express-session'),
   RedisStore = require('connect-redis')(session),
   db = require('../server/db'),
+  canonicalJSON = require('./canonical-json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core');
 
@@ -55,6 +56,8 @@ function setupApp(app) {
     limit: '5mb',
     extended: true
   }));
+
+  app.use(canonicalJSON);
 
   db.setup();
   sessionStore = createSessionStore();
