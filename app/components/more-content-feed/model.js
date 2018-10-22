@@ -52,12 +52,13 @@ module.exports.save = (ref, data, locals) => {
       return data;
     });
 };
+
 /**
-* @param {string} ref
-* @param {object} data
-* @param {object} locals
-* @returns {Promise}
-*/
+ * @param {string} ref
+ * @param {object} data
+ * @param {object} locals
+ * @returns {Promise}
+ */
 module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
   let cleanUrl;

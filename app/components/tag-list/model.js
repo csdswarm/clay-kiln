@@ -2,61 +2,106 @@
 
 const queryService = require('../../services/server/query'),
   formatStart = require('../../services/universal/utils').formatStart,
-  _pickBy = require('lodash/pickBy'),
   _clone = require('lodash/clone'),
-  _assign = require('lodash/assign'),
-  _get = require('lodash/get'),
   _map = require('lodash/map'),
+  { isPage, isComponent } = require('clayutils'),
   log = require('../../services/universal/log').setup({
     file: __filename,
     component: 'newsfeed'
-  });
+  }),
+  index = 'published-articles';
 
-module.exports.render = (ref, data, locals) => {
+function removeNonAlphanumericCharacters(str = '') {
+  return str.replace(/[_\W]/g, '');
+}
+
+/**
+ * Builds and executes the query.
+ * @param {string} ref
+ * @param {object} data
+ * @param {object} locals
+ * @param {string} routeParamValue
+ * @return {object}
+ */
+function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
   const from = formatStart(parseInt(locals.start, 10)), // can be undefined or NaN,
-    size = parseInt(locals.size, 10) || data.size || 10,
-    body = _pickBy({
-      from: from,
-      size: size
-    }),
-    query = queryService(data.index, locals),
-    tagValue = locals.params.tag;
+    size = parseInt(locals.size, 10) || data.size || 20,
+    body = {
+      from,
+      size
+    },
+    query = queryService(index, locals);
+
+  let lowerCaseRouteParamValue = '';
 
   query.body = _clone(body); // lose the reference
 
-  queryService.addSort(query, {
-    [`${data.orderBy}`]: 'desc'
-  });
-
-
-  if (locals.params.tag || overrideTag) {// eslint-disable-line no-undef
-    queryService.addFilter(query, { term: { tags: tagValue }});
+  if (routeParamValue) {
+    lowerCaseRouteParamValue = removeNonAlphanumericCharacters(routeParamValue).toLowerCase();
+    queryService.addFilter(query, { match: { 'tags.normalized': lowerCaseRouteParamValue } });
   }
 
   // Log the query
-  log('debug', 'query for newsfeed cmpt', {
-    query,
+  log('debug', 'tag and normalized tag ', {
+    normalized: lowerCaseRouteParamValue,
+    tag: routeParamValue,
     ref
   });
 
+  queryService.addSort(query, { date: 'desc' });
+
   return queryService.searchByQueryWithRawResult(query)
     .then(function (results) {
-      _assign(data, body);
-      data.total = _get(results, 'hits.total');
-      data.entries = _map(_get(results, 'hits.hits'), '_source');
+      const { hits = {} } = results;
+
+      data.total = hits.total;
+      data.entries = _map(hits.hits, '_source');
       data.from = from;
       data.start = from + size;
+      data.moreEntries = data.total > data.start;
 
-      if (!data.entries.length) {
-        let err = new Error('No results!');
+      log('debug', 'total hits', {
+        hits: hits.total,
+        ref
+      });
+
+      return data;
+    });
+}
+
+
+module.exports.render = (ref, data, locals) => {
+  const reqUrl = locals.url;
+  var routeParamValue;
+
+  log('debug', 'request URL', {
+    hits: reqUrl,
+    ref
+  });
+
+  // If we're publishing for a dynamic page, rendering a component directly
+  // or trying to render a page route we need a quick return
+  if (locals.isDynamicPublishUrl || isComponent(reqUrl) || isPage(reqUrl)) {
+    return data;
+  }
+
+  routeParamValue = locals && locals.params ? locals.params.tag : '';
+
+  return buildAndExecuteQuery(ref, data, locals, routeParamValue)
+    .then(data => {
+      // If we're not in edit mode and we've
+      // got no results, the page should 404
+      if (!data.entries.length && !locals.edit) {
+        let err = new Error(`No results for tag: ${routeParamValue}`);
 
         err.status = 404;
         throw err;
       }
 
-      data.title = data.title.replace('${tagValue}', tagValue);
-
       return data;
+    })
+    .catch(err => {
+      throw err;
     });
 };
 
