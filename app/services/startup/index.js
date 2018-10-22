@@ -8,6 +8,7 @@ const pkg = require('../../package.json'),
   session = require('express-session'),
   RedisStore = require('connect-redis')(session),
   db = require('../server/db'),
+  routes = require('../../routes'),
   canonicalJSON = require('./canonical-json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core');
@@ -63,7 +64,7 @@ function setupApp(app) {
   sessionStore = createSessionStore();
 
   return initSearch()
-    .then(search => initCore(app, search, sessionStore));
+    .then(search => initCore(app, search, sessionStore, routes));
 
   return app;
 }
