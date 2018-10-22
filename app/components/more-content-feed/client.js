@@ -54,12 +54,17 @@ class MoreContentFeed {
     this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
   }
 
+  /**
+   * Click handler for the "load more" button.
+   * Pulls down N more articles from the API and renders them.
+   *
+   */
   handleLoadMoreContent() {
+    const template = Handlebars.compile(itemTemplate);
+
     fetch(`${this.moreContentUrl}?page=${this.currentPage++}`)
       .then((response) => response.json())
       .then((data) => {
-        const template = Handlebars.compile(itemTemplate);
-
         for (let feedItem of data.rawQueryResults) {
           const wrapper = document.createElement('div');
 

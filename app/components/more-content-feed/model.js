@@ -65,9 +65,10 @@ module.exports.render = function (ref, data, locals) {
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (locals && locals.page) {
-    // after the first 10 items, show N more at a time (pageLength defaults to 5)
-    // page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
-    // we return N + 1 items so we can let the frontend know if we have more data.
+    /* after the first 10 items, show N more at a time (pageLength defaults to 5)
+     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
+     * we return N + 1 items so we can let the frontend know if we have more data.
+     */
     if (!data.pageLength) { data.pageLength = 5; }
     const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
 
@@ -78,6 +79,7 @@ module.exports.render = function (ref, data, locals) {
     if (!data.tag || !locals) {
       return data;
     }
+
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
     queryService.addShould(query, { match: { tags: data.tag }});
