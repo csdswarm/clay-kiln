@@ -1,7 +1,6 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
-  itemTemplate = require('./item.hbs'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
@@ -121,10 +120,6 @@ module.exports.render = function (ref, data, locals) {
 
       // "more content" button passes page query param - render more content and return it
       data.rawQueryResults = results.slice(0, data.pageLength);
-      data.moreContent = results
-        .slice(0, data.pageLength)
-        .map(itemTemplate);
-
       data.moreResults = results.length > data.pageLength;
 
       return data;
