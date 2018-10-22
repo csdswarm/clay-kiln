@@ -2,6 +2,13 @@
 
 const pubUtils = require('./publish-utils');
 
+/**
+ * Return the url for a page based entirely on its slug, within the articles subdirectory
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
 function getUrlOptions(pageData, locals, mainComponentRefs) {
   const componentReference = pubUtils.getComponentReference(pageData, mainComponentRefs);
 
@@ -15,6 +22,13 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
     });
 }
 
+/**
+ * Return the url for a page based entirely on its slug, within the articles subdirectory
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
 function getYearMonthSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
