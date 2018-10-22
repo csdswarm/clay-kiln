@@ -209,7 +209,7 @@
         }
       }
     }
-    .section__content-feed-container__loadmore {
+    .more-content-feed__loadmore {
       cursor: pointer;
       height: em(50);
       text-transform: uppercase;
@@ -222,23 +222,23 @@
       display: flex;
       justify-content: center;
       @mixin default-screen {
-        width: em(780);
+        width: em(widthOnGrid(10,9));
       }
       @mixin large-screen {
-        width: em(620);
+        width: em(widthOnGrid(9,8));
       }
       @mixin medium-screen {
-        width: em(708);
+        width: em(widthOnGrid(6,5, 'medium-screen'));
       }
       @mixin medium-small-screen {
-        width: em(440);
+        width: em(widthOnGrid(4,3, 'medium-small-screen'));
       }
       @mixin small-screen {
-        width: em(360);
+        width: em(widthOnGrid(4,3, 'small-screen'));
       }
     }
 
-    .section__content-feed-container__loadmore__text {
+    .loadmore__text {
       align-self: center;
     }
     .more-content-feed__right-ad--desktop {

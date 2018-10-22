@@ -26,7 +26,9 @@ handlebars.registerPartial('clay-kiln', clayKilnPartial)
 const morePartialsReq = require.context('../../app/components', true, /^.*(\.hbs|\.handlebars)$/)
 morePartialsReq.keys().forEach(p => {
   const partialNameMatchResult = p.match(/^\.\/([a-z-]+)\/template\.(?:hbs|handlebars)$/)
-  handlebars.registerPartial(partialNameMatchResult[1], morePartialsReq(p))
+  if (partialNameMatchResult && partialNameMatchResult.length) {
+    handlebars.registerPartial(partialNameMatchResult[1], morePartialsReq(p))
+  }
 })
 
 // Attach SVG asset dependencies.

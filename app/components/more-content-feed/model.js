@@ -1,6 +1,7 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
+  itemTemplate = require('./item.hbs'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
@@ -67,6 +68,7 @@ module.exports.render = function (ref, data, locals) {
     // after the first 10 items, show N more at a time (pageLength defaults to 5)
     // page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
     // we return N + 1 items so we can let the frontend know if we have more data.
+    if (!data.pageLength) { data.pageLength = 5; }
     const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
 
     queryService.addOffset(query, skip);
@@ -115,8 +117,15 @@ module.exports.render = function (ref, data, locals) {
         return content;
       });
       data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+
+      // "more content" button passes page query param - render more content and return it
       data.rawQueryResults = results.slice(0, data.pageLength);
+      data.moreContent = results
+        .slice(0, data.pageLength)
+        .map(itemTemplate);
+
       data.moreResults = results.length > data.pageLength;
+
       return data;
     })
     .catch(e => {
