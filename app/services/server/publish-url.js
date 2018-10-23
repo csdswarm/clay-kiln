@@ -3,11 +3,12 @@
 const pubUtils = require('./publish-utils');
 
 /**
- * Return the url for a page based entirely on its slug, within the articles subdirectory
+ * Common functionality used for `getYearMonthSlugUrl` and `getArticleSlugUrl`
+ *
  * @param {object} pageData
  * @param {object} locals
  * @param {object} mainComponentRefs
- * @returns {Promise}
+ * @returns {Promise} returns an object to be consumed by url patterns.
  */
 function getUrlOptions(pageData, locals, mainComponentRefs) {
   const componentReference = pubUtils.getComponentReference(pageData, mainComponentRefs);
