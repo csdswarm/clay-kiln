@@ -264,6 +264,7 @@ content:
       - html-embed
       - brightcove
       - inline-related
+      - trending-recirculation
 feeds:
   _label: Include in These Feeds
   _has:

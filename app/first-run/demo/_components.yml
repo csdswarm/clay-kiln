@@ -483,6 +483,11 @@ _components:
         fill: 0
         tag: ''
 
+  trending-recirculation:
+    instances:
+      new:
+        items: []
+
   general-content:
     instances:
       new:

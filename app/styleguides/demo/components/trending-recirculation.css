@@ -1,0 +1,93 @@
+@import "_global/fonts";
+@import "_global/colors";
+@import "_global/mixins";
+
+.component--trending {
+  padding: 60px 0 80px 0;
+  max-width: 940px;
+
+  h2 {
+    @mixin trending-recirculation-font1;
+    order: 1;
+    display: table;
+    white-space: nowrap;
+    &:before, &:after {
+      border-top: 1px solid $parisPurple;
+      content: '';
+      display: table-cell;
+      position: relative;
+      top: 0.5em;
+      width: 45%;
+    }
+    &:before {
+       right: 15px;
+    }
+    &:after {
+       left: 15px;
+    }
+  }
+
+  .trending__data {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .trending__item {
+    order: 3;
+    padding: 20px 0;
+
+    .trending__item--link {
+      @mixin trending-recirculation-font3;
+      text-decoration: none;
+      display: inline-block;
+
+      order: 2;
+      width: widthOnGrid(4, 3);
+    }
+
+    .trending__item--image {
+      width: widthOnGrid(4, 3);
+      padding: 0 0 15px 0;
+
+      @mixin medium-small-screen {
+        flex: 100%;
+        margin: em(17) 0 em(5) 0;
+      &.trending__item--mobile {
+         display: block;
+       }
+      &.trending__item--non-mobile {
+         display: none;
+       }
+
+        .trending__link {
+          width: 100%;
+        }
+
+        img {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+
+
+  .kiln-placeholder {
+    order: 2;
+  }
+}
+
+@define-mixin themed-trending $class, $color {
+  .component--trending.component--$class {
+    border-color: $color;
+
+    .trending__item {
+      .trending__bullet {
+        background-color: $color;
+      }
+    }
+  }
+}

@@ -31,3 +31,7 @@ _users:
     username: nathanacarmine@gmail.com
     provider: google
     auth: admin
+  -
+    username: brien@swarmsolutions.com
+    provider: google
+    auth: admin
