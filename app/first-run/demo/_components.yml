@@ -585,18 +585,28 @@ _components:
       homepage:
         overrideTitle: ''
         filterStationsBy: market
+        sectionFront: ''
+        genre: ''
       section-front:
         overrideTitle: ''
         filterStationsBy: section-front
+        sectionFront: ''
+        genre: ''
       content-hub:
         overrideTitle: ''
-        filterStationsBy: trending
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
       station-page:
         overrideTitle: ''
-        filterStationsBy: trending
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
       article:
         overrideTitle: ''
-        filterStationsBy: trending
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
 
   more-content-feed:
     instances:

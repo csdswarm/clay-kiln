@@ -1,0 +1,168 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+$default-screen-nav-width: em(1100);
+$large-screen-nav-width: em(940);
+$medium-screen-nav-width: em(728);
+@define-mixin setFullBodyWidth {
+  margin: 0 auto;
+  width: $default-screen-nav-width;
+  @mixin large-screen {
+    width: $large-screen-nav-width;
+  }
+  @mixin medium-screen {
+    width: $medium-screen-nav-width;
+  }
+  @media only screen and (max-width: 788px) {
+    width: 100%;
+    padding: 0 em(20);
+  }
+}
+
+.component--stations-carousel {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100vw;
+  height: em(315);
+  @mixin medium-screen {
+    height: em(400);
+  }
+  background: $parisM;
+  .stations-carousel__arrow {
+    cursor: pointer;
+    width: em(40);
+    height: em(40);
+    @mixin large-screen {
+      width: em(30);
+      height: em(30);
+    }
+    @mixin medium-screen {
+      display: none;
+    }
+    &--right {
+      transform: rotate(180deg);
+    }
+  }
+  .stations-carousel__carousel {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    @mixin setFullBodyWidth;
+    .carousel__title {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      .title__line {
+        width: 100%;
+        border-bottom: em(1) solid #FFF;
+        margin: em(30) 0;
+        @mixin small-screen {
+          margin: em(30) 0 em(25) 0;
+        }
+      }
+      h2 {
+        @mixin section-videos-font1;
+        text-transform: uppercase;
+        padding: 0 em(15, 20);
+        background: $parisM;
+        top: em(18, 20);
+        position: absolute;
+        @mixin small-screen {
+          @mixin section-videos-font3;
+        }
+      }
+    }
+    ul {
+      display: inline-flex;
+      flex-direction: row;
+      transition: all 500ms linear;
+      width: 100%;
+      @mixin medium-screen {
+        justify-content: center;
+      }
+      li {
+        float: left;
+        margin-right: em(20);
+        cursor: pointer;
+        a {
+          text-decoration: none;
+          .thumb {
+            background-position: center;
+            background-size: cover;
+            width: em(140);
+            height: em(140);
+            @mixin medium-screen {
+              width: em(222);
+              height: em(222);
+            }
+            @mixin medium-small-screen {
+              width: em(209);
+              height: em(209);
+            }
+            @mixin small-screen {
+              width: em(150);
+              height: em(150);
+            }
+          }
+          span {
+            @mixin section-videos-font2;
+            display: inline-flex;
+            width: em(140, 14);
+            margin-top: em(15, 14);
+            @mixin medium-screen {
+              width: em(222, 14);
+            }
+            @mixin medium-small-screen {
+              width: em(209, 14);
+            }
+            @mixin small-screen {
+              width: em(150, 14);
+              margin-top: em(20, 14);
+            }
+            .caret {
+              margin: 0 0 0 em(5, 14);
+              width: auto;
+              svg {
+                width: em(8, 14);
+                height: em(18, 14);
+              }
+            }
+          }
+        }
+      }
+    }
+    .carousel__pagination-dots {
+      display: none;
+      @mixin medium-screen {
+        display: inline-flex;
+        flex-direction: row;
+        margin-bottom: em(20);
+      }
+      .pagination-dots__dot {
+        cursor: pointer;
+        background: rgba(255,255,255,0.6);
+        width: em(10);
+        height: em(10);
+        border-radius: 50%;
+        float: left;
+        margin-top: em(25);
+        @mixin small-screen {
+          width: em(8);
+          height: em(8);
+        }
+        &:not(:last-of-type) {
+          margin-right: em(10);
+        }
+        &.dot--active {
+          background: $white;
+        }
+      }
+    }
+  }
+}

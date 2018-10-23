@@ -1,29 +1,78 @@
 'use strict';
-const queryService = require('../../services/server/query'),
-  _ = require('lodash'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
-  { isComponent } = require('clayutils'),
-  tag = require('../tags/model.js'),
-  elasticIndex = 'published-articles',
-  elasticFields = [
-    'primaryHeadline',
-    'pageUri',
-    'canonicalUrl',
-    'feedImgUrl',
-    'teaser',
-    'articleType',
-    'date',
-    'lead'
-  ],
-  maxItems = 10;
- /**
+const rest = require('../../services/universal/rest'),
+  db = require('../../services/server/db'),
+  radioApi = 'https://api.radio.com/v1/';
+
+function getStationsByFilter(filterStationsBy, filterByValue) {
+  // Get stations from redis cache
+  return db.get(`stations_filterBy_${filterStationsBy}_${filterByValue}`)
+    .then(stationsData => {
+      // Update data if older than 5 minutes
+      if (stationsData.dateUpdated < Date.now() - 6 * 1000) {
+        return updateStationsObject(filterStationsBy, filterByValue, stationsData).then(newData => {
+          console.log('get updated stations from api: ', newData.data);
+          return newData.data;
+        });
+      } else {
+        console.log('get stored stations from redis: ', stationsData.data);
+        return stationsData.data;
+      }
+    }).catch(() => {
+      // No stations found in redis so get from API
+      return updateStationsObject(filterStationsBy, filterByValue);
+    });
+}
+
+function getFilteredStationsFromApi(filterStationsBy, filterByValue) {
+  let params = '?sort=-popularity';
+
+  switch (filterStationsBy) {
+    case 'section-front':
+      params += `&filter[category]=${filterByValue}`;
+      break;
+    case 'genre':
+      params += `&filter[genre_id]=${filterByValue}`;
+      break;
+    default:
+  }
+  console.log("params: ", params);
+  return rest.get(`${radioApi}stations${params}`).then(response => {
+    if (response.data) {
+      let newData = {
+        dateUpdated: Date.now(),
+        data: response.data.map(station => {
+          return station.attributes;
+        })
+      };
+
+      // Store stations in redis cache
+      db.put(`stations_filterBy_${filterStationsBy}_${filterByValue}`, JSON.stringify(newData));
+      return newData.data;
+    } else {
+      return Promise.reject();
+    }
+  });
+}
+
+function updateStationsObject(filterStationsBy, filterByValue, stationsData) {
+  // If stations object exists, update the timestamp so we dont make multiple API requests
+  if (stationsData) {
+    db.put(`stations_filterBy_${filterStationsBy}_${filterByValue}`, JSON.stringify(stationsData)).then(() => {
+      return getFilteredStationsFromApi(filterStationsBy, filterByValue);
+    });
+  } else {
+    return getFilteredStationsFromApi(filterStationsBy, filterByValue);
+  }
+}
+
+/**
  * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
 module.exports.save = (ref, data, locals) => {
-  if (!data.stations.length || !locals) {
+  if (data.stations && !data.stations.length || !locals) {
     return data;
   }
   switch (data.filterStationsBy) {
@@ -31,78 +80,47 @@ module.exports.save = (ref, data, locals) => {
       data.title = 'stations near you';
       break;
     case 'section-front':
-      data.title = '${data.sectionFront} stations near you';
+      if (data.sectionFront == 'entertainment') {
+        data.title = 'music stations near you';
+      } else {
+        data.title = `${data.sectionFront} stations near you`;
+      }
       break;
-    case 'trending':
-      data.title = 'trending stations';
-      break;
-    case 'favorites':
-      data.title = 'trending stations';
+    case 'genre':
+      data.title = `${data.genre} stations near you`;
       break;
     default:
-      break;
   }
   if (data.overrideTitle) data.title = data.overrideTitle;
+  console.log("return data in save:", data);
   return data;
 };
- /**
+
+/**
  * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  // const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
-  // let cleanUrl;
-  // queryService.withinThisSiteAndCrossposts(query, locals.site);
-  // queryService.onlyWithTheseFields(query, elasticFields);
-  // if (data.populateFrom == 'tag') {
-  //   if (!data.tag || !locals) {
-  //     return data;
-  //   }
-  //    // Clean based on tags and grab first as we only ever pass 1
-  //   data.tag = tag.clean([{text: data.tag}])[0].text || '';
-  //   queryService.addShould(query, { match: { tags: data.tag }});
-  //   queryService.addMinimumShould(query, 1);
-  // } else if (data.populateFrom == 'section-front') {
-  //   if ((!data.sectionFront && !data.sectionFrontManual) || !locals) {
-  //     return data;
-  //   }
-  //   queryService.addShould(query, { match: { articleType: (data.sectionFrontManual || data.sectionFront) }});
-  //   queryService.addMinimumShould(query, 1);
-  // } else if (data.populateFrom == 'all') {
-  //   if (!locals) {
-  //     return data;
-  //   }
-  // }
-  // queryService.addSort(query, {date: 'desc'});
+  console.log('ref: ', ref, 'data: ', data, 'locals: ', locals);
+  let filterByValue;
 
-  //  // exclude the current page in results
-  // if (locals.url && !isComponent(locals.url)) {
-  //   cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
-  //   queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-  // }
-
-  // // exclude the curated content from the results
-  // if (data.items && !isComponent(locals.url)) {
-  //   data.items.forEach(item => {
-  //     cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-  //     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-  //   });
-  // }
-
-  // return queryService.searchByQuery(query)
-  //   .then(function (results) {
-  //     results = results.map(content => {
-  //       content.lead = content.lead[0].split("/")[2];
-  //       return content;
-  //     });
-  //     data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-  //     return data;
-  //   })
-  //   .catch(e => {
-  //     queryService.logCatch(e, ref);
-  //     return data;
-  //   });
-  return data;
+  switch (data.filterStationsBy) {
+    case 'section-front':
+      filterByValue = data.sectionFront;
+      if (data.sectionFront == 'entertainment') filterByValue = 'music';
+      break;
+    case 'genre':
+      filterByValue = data.genre;
+      break;
+    default:
+  }
+  return getStationsByFilter(data.filterStationsBy, filterByValue).then(stationsData => {
+    data.stations = stationsData;
+    console.log("return stations in render:", data.stations);
+    return data;
+  }).catch((e) => {
+    console.log("Render error: ", e);
+  });
 };

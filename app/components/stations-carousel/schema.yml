@@ -3,14 +3,8 @@ _description: |
 
 overrideTitle:
   _label: Override default title
-  _placeholder:
-    height: 61px
-    text: Title of Stations Module
-    required: true
   _has:
     input: inline
-    validate:
-      required: true
 
 sectionFront:
   _label: Section Front
@@ -18,6 +12,13 @@ sectionFront:
   _has:
     input: static
     text: ${sectionTitle}
+
+genre:
+  _label: Genre
+  _subscribe: genre
+  _has:
+    input: static
+    text: ${genre}
 
 filterStationsBy:
   _label: Filter stations by?
@@ -30,20 +31,17 @@ filterStationsBy:
         name: Local Stations (filter by market)
         value: market
       -
-        name: Section Front
+        name: Section Front (Near You)
         value: section-front
-      # -
-      #   name: Trending
-      #   value: trending
-      # -
-      #   name: Favorites
-      #   value: favorites
+      -
+        name: Genre (Near You)
+        value: genre
 
 _groups:
   settings:
     fields:
-      - filterStationsBy
       - overrideTitle
+      - filterStationsBy
     _placeholder:
       text: Stations Carousel
       height: 315px

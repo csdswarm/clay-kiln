@@ -1,19 +1,44 @@
-<div class="component component--stations-near-you" data-uri="{{ default _ref _self }}" data-editable="settings">
-  {{#if stations.length}}
-    <div class="stations-near-you__title-line"></div>
-    <h2>{{title}}</h2>
-    <div class="stations-near-you__carousel">
-      <div class="carousel__left-button"></div>
+<div class='component component--stations-carousel stations-carousel--' data-uri='{{ default _ref _self }}' data-editable='settings' data-genre-track='{{genre}}' data-section-front-track='{{sectionFront}}' data-filter-stations-by-track='{{filterStationsBy}}'>
+  {{#ifAny stations.length @root.locals.edit}}
+    <div class='stations-carousel__arrow stations-carousel__arrow--left'>
+      {{#if (compare sectionFront 'news')}}
+        {{{ read 'public/media/components/stations-carousel/arrow_news.svg' }}}
+      {{else}}
+        {{{ read 'public/media/components/stations-carousel/arrow.svg' }}}
+      {{/if}}
+    </div>
+    <div class='stations-carousel__carousel'>
+      <div class='carousel__title'>
+        <div class='title__line'></div>
+        <h2>{{title}}</h2>
+      </div>
       <ul>
         {{#each stations as |station|}}
           <li>
-            <div class="thumb" style="background-image: url({{station.image}});"></div>
-            <span>{{station.name}}</span>
+            <a href='{{station.listen_live_url}}' target='_blank'>
+              <div class='thumb' style='background-image: url({{station.square_logo_large}});'></div>
+              <span>
+                {{station.name}}
+                <span class='caret'>
+                  {{#if (compare sectionFront 'news')}}
+                    {{{ read 'public/media/components/stations-carousel/caret_news.svg' }}}
+                  {{else}}
+                    {{{ read 'public/media/components/stations-carousel/caret.svg' }}}
+                  {{/if}}
+                </span>
+              </span>
+            </a>
           </li>
         {{/each}}
       </ul>
-      <div class="carousel__right-button"></div>
-      <div class="carousel__pagination-dots"></div>
+      <div class='carousel__pagination-dots'></div>
     </div>
-  {{/if}}
+    <div class='stations-carousel__arrow stations-carousel__arrow--right'>
+      {{#if (compare sectionFront 'news')}}
+        {{{ read 'public/media/components/stations-carousel/arrow_news.svg' }}}
+      {{else}}
+        {{{ read 'public/media/components/stations-carousel/arrow.svg' }}}
+      {{/if}}
+    </div>
+  {{/ifAny}}
 </div>
