@@ -6,7 +6,7 @@
 $default-screen-nav-width: em(1100);
 $large-screen-nav-width: em(940);
 $medium-screen-nav-width: em(728);
-@define-mixin setFullBodyWidth {
+@define-mixin set-full-body-width {
   margin: 0 auto;
   width: $default-screen-nav-width;
   @mixin large-screen {
@@ -17,7 +17,16 @@ $medium-screen-nav-width: em(728);
   }
   @media only screen and (max-width: 788px) {
     width: 100%;
-    padding: 0 em(20);
+    margin: 0 em(20);
+  }
+}
+@define-mixin carousel-height {
+  height: em(315);
+  @mixin medium-screen {
+    height: em(400);
+  }
+  @mixin small-screen {
+    height: em(295);
   }
 }
 
@@ -26,10 +35,8 @@ $medium-screen-nav-width: em(728);
   flex-direction: row;
   align-items: center;
   width: 100vw;
-  height: em(315);
-  @mixin medium-screen {
-    height: em(400);
-  }
+  margin-bottom: em(25);
+  @mixin carousel-height;
   background: $parisM;
   .stations-carousel__arrow {
     cursor: pointer;
@@ -47,11 +54,12 @@ $medium-screen-nav-width: em(728);
     }
   }
   .stations-carousel__carousel {
+    @mixin carousel-height;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     overflow: hidden;
-    @mixin setFullBodyWidth;
+    @mixin set-full-body-width;
     .carousel__title {
       display: inline-flex;
       flex-direction: column;
@@ -81,57 +89,49 @@ $medium-screen-nav-width: em(728);
     ul {
       display: inline-flex;
       flex-direction: row;
-      transition: all 500ms linear;
+      transition: all 400ms ease-in-out;
       width: 100%;
-      @mixin medium-screen {
-        justify-content: center;
-      }
       li {
         float: left;
-        margin-right: em(20);
         cursor: pointer;
+        &:not(:last-of-type) {
+          margin-right: em(20);
+        }
         a {
           text-decoration: none;
           .thumb {
-            background-position: center;
-            background-size: cover;
-            width: em(140);
-            height: em(140);
+            width: em(widthOnGrid(2,1));
+            height: em(widthOnGrid(2,1));
             @mixin medium-screen {
-              width: em(222);
-              height: em(222);
+              width: em(widthOnGrid(2,1,medium-screen));
+              height: em(widthOnGrid(2,1,medium-screen));
             }
             @mixin medium-small-screen {
-              width: em(209);
-              height: em(209);
+              width: em(widthOnGrid(2,1,medium-small-screen));
+              height: em(widthOnGrid(2,1,medium-small-screen));
             }
             @mixin small-screen {
-              width: em(150);
-              height: em(150);
+              width: em(widthOnGrid(2,1,small-screen));
+              height: em(widthOnGrid(2,1,small-screen));
             }
           }
           span {
             @mixin section-videos-font2;
             display: inline-flex;
-            width: em(140, 14);
+            width: em(widthOnGrid(2,1), 14);
             margin-top: em(15, 14);
+            &:hover {
+              text-decoration: underline;
+            }
             @mixin medium-screen {
-              width: em(222, 14);
+              width: em(widthOnGrid(2,1,medium-screen), 14);
             }
             @mixin medium-small-screen {
-              width: em(209, 14);
+              width: em(widthOnGrid(2,1,medium-small-screen), 14);
             }
             @mixin small-screen {
-              width: em(150, 14);
+              width: em(widthOnGrid(2,1,small-screen), 14);
               margin-top: em(20, 14);
-            }
-            .caret {
-              margin: 0 0 0 em(5, 14);
-              width: auto;
-              svg {
-                width: em(8, 14);
-                height: em(18, 14);
-              }
             }
           }
         }
