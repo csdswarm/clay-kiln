@@ -10,7 +10,7 @@ url:
   _has:
     input: advanced-image-upload
     webLabel: Insert Image via Web
-    webHelp: Supply a valid url to an image file then click "done" button
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
     uploadHelp: Choose an image file from your computer
 caption:

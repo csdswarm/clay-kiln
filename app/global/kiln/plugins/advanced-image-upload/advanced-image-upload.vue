@@ -98,7 +98,7 @@ export default {
         return true
       } else {
         return validator.isURL(webFileUrl, {
-          protocols: ['http','https'],
+          protocols: ['https'],
           require_protocol: true
         })
       }
