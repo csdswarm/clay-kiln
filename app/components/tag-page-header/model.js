@@ -5,14 +5,8 @@ const { isPage, isComponent } = require('clayutils');
 module.exports.render = (ref, data, locals) => {
   const reqUrl = locals.url;
 
-  // If we're publishing for a dynamic page, rendering a component directly
-  // or trying to render a page route we need a quick return
-  if (locals.isDynamicPublishUrl || isComponent(reqUrl) || isPage(reqUrl)) {
-    return data;
-  }
-
-  data.dynamicTag = locals && locals.params ? locals.params.tag : '';
-  console.log("dynamic tag: ", locals.params.tag);
+  // If we're publishing for a dynamic page, switch out -'s with spaces
+  data.tag = !data.tag && locals && locals.params && locals.params.tag ? locals.params.tag.replace('-',  ' ') : data.tag;
   return data;
 };
 

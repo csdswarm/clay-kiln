@@ -10,11 +10,6 @@
 >
   <div class="tag-page-header__tag" data-editable="settings">
     <div class="tag__line"></div>
-    {{#if dynamicTag}}
-      {{ set 'displayTag' (replace tag '-' ' ') }}
-      <h1>{{displayTag}}</h1>
-    {{else}}
-      <h1>{{tag}}</h1>
-    {{/if}}
+    <h1>{{tag}}</h1>
   </div>
 </header>

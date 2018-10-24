@@ -4,7 +4,7 @@ _description: |
 _confirmRemoval: true
 
 tag:
-  _label: tag
+  _label: Page Title
   _has:
     input: text
     validate:
