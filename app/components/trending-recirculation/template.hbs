@@ -2,21 +2,23 @@
          data-uri="{{ default _ref _self }}"
          data-track-type="trending-recirculation"
          data-editable="trendingItems">
-  <h2 class="trending__title">TRENDING on RADIO.com</h2>
+  <h2 class="trending__title">TRENDING on RADIO.COM</h2>
   {{#ifAny articles.length @root.locals.edit}}
     <div class="trending__data">
       {{#each articles}}
       <div class="trending__item">
         <a href="{{ canonicalUrl }}"
-           class="trending__item--link"
+           class="trending__item__link"
            data-track-type="article-link"
            data-track-component-name="trending"
            data-track-page-uri="{{ pageUri }}"
            data-track-headline="{{ primaryHeadline }}"
            data-track-component-title="Trending">
-          <img class="trending__item--image" src="{{ feedImgUrl }}"/>
-          <span class="trending__item--tag">{{ articleType }}</span>
-          {{ primaryHeadline }}
+          {{#if articleType}}
+          <div class="trending__item__tag">{{ articleType }}</div>
+          {{/if}}
+          <div class="trending__item__image" style="background-image:url({{ feedImgUrl }})"></div>
+          <div class="trending__item__label">{{ primaryHeadline }}</div>
         </a>
       </div>
       {{/each}}

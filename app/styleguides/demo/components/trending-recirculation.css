@@ -3,27 +3,28 @@
 @import "_global/mixins";
 
 .component--trending {
-  padding: 60px 0 80px 0;
-  max-width: 940px;
+  padding: em(60) 0 em(80) 0;
+  max-width: em(1100);
 
   h2 {
     @mixin trending-recirculation-font1;
     order: 1;
     display: table;
     white-space: nowrap;
+    overflow:hidden;
     &:before, &:after {
-      border-top: 1px solid $parisPurple;
+      border-top: em(1) solid $parisPurple;
       content: '';
       display: table-cell;
       position: relative;
-      top: 0.5em;
+      top: em(12);
       width: 45%;
     }
     &:before {
-       right: 15px;
+       right: em(15);
     }
     &:after {
-       left: 15px;
+       left: em(15);
     }
   }
 
@@ -33,49 +34,91 @@
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
+    padding-top: em(40);
+
+    @mixin medium-screen {
+      padding-bottom: em(10);
+    }
   }
 
   .trending__item {
     order: 3;
-    padding: 20px 0;
+    padding-bottom: em(40);
 
-    .trending__item--link {
-      @mixin trending-recirculation-font3;
+    @mixin medium-screen {
+      padding-bottom: em(30);
+      width: 100%;
+    }
+
+    .trending__item__tag {
+      @mixin trending-recirculation-font2;
+      height: em(26);
+      position: absolute;
+      background-color: $parisPurple;
+      padding: 0 em(6);
+      line-height: em(26);
+
+      &:first-letter {
+         text-transform: uppercase;
+      }
+
+      @mixin medium-small-screen {
+        height: em(33);
+        line-height: em(33);
+      }
+    }
+
+    .trending__item__link {
       text-decoration: none;
       display: inline-block;
 
       order: 2;
       width: widthOnGrid(4, 3);
-    }
 
-    .trending__item--image {
-      width: widthOnGrid(4, 3);
-      padding: 0 0 15px 0;
+      @mixin medium-screen {
+        width: 100%;
+        display: flex;
+      }
 
       @mixin medium-small-screen {
-        flex: 100%;
-        margin: em(17) 0 em(5) 0;
-      &.trending__item--mobile {
-         display: block;
-       }
-      &.trending__item--non-mobile {
-         display: none;
-       }
+        display: block;
+      }
+    }
 
-        .trending__link {
-          width: 100%;
-        }
+    .trending__item__label {
+      @mixin trending-recirculation-font3;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+    }
 
-        img {
-          width: 100%;
-        }
+    .trending__item__image {
+      width: em(300);
+      height: em(168);
+      margin-bottom: em(15);
+      background-size: cover;
+      background-position: center;
+      background-color: $boulderGrey;
+
+      @mixin medium-screen {
+        width: em(343);
+        height: em(193);
+        flex: none;
+        margin-right: em(20);
+      }
+
+      @mixin medium-small-screen {
+        width: em(440);
+        height: em(248);
+      }
+      @mixin small-screen {
+        width: em(320);
+        height: em(180);
       }
     }
   }
 
-
-
-  .kiln-placeholder {
+ .kiln-placeholder {
     order: 2;
   }
 }
