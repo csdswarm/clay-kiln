@@ -1,19 +1,15 @@
 'use strict';
 
-const queryService = require('../../services/server/query'),
-  _ = require('lodash'),
+const _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
-  { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
     'articleType'
-  ],
-  maxItems = 6;
+  ];
 
 /**
  * @param {string} ref
@@ -59,7 +55,7 @@ module.exports.save = (ref, data, locals) => {
  * @param {object} locals
  * @returns {Object}
  */
-module.exports.render = function (ref, data, locals) {
+module.exports.render = function (ref, data) {
   data.articles = data.items;
   return data;
 };
