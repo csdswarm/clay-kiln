@@ -1,46 +1,15 @@
 'use strict';
 const radioApi = 'https://api.radio.com/v1/',
+  rest = require('../../services/universal/rest'),
   geoApi = 'https://geo.radio.com/markets',
-  localStorage = window.localStorage,
-  _defaults = require('lodash/defaults');
-
-// global
-require('isomorphic-fetch');
-
-/**
- * check status after doing http calls
- * note: this is necessary because fetch doesn't reject on errors,
- * only on network failure or incomplete requests
- * @param  {object} res
- * @return {object}
- * @throws {Error} on non-2xx status
- */
-function restCheckStatus (res) {
-  if (res.status >= 200 && res.status < 300) {
-    return res;
-  } else {
-    const error = new Error(res.statusText);
-
-    error.response = res;
-    throw error;
-  }
-}
-/**
- * GET
- * @param {string} url
- * @param {object} opts See https://github.github.io/fetch/#options
- * @return {Promise}
- */
-function restGet (url, opts) {
-  const conf = _defaults({method: 'GET'}, opts);
-
-  return fetch(url, conf).then(restCheckStatus).then(function (res) { return res.json(); });
-};
+  localStorage = window.localStorage;
 
 function Constructor() {
   console.log("stations carousel client js works");
-  this.stationsCarousel = document.querySelector('.component--stations-carousel');
-  this.stationsList = this.stationsCarousel.querySelector('ul');
+  this.allStationsCount = 303;
+  this.stationsCarouselClass = '.component--stations-carousel';
+  this.stationsCarousel = document.querySelector(this.stationsCarouselClass);
+  this.stationsList = document.querySelector(`${this.stationsCarouselClass} ul`);
   this.filterStationsBy = this.stationsCarousel.getAttribute('data-filter-stations-by-track');
   this.genre = this.stationsCarousel.getAttribute('data-genre-track');
   this.sectionFront = this.stationsCarousel.getAttribute('data-section-front-track');
@@ -52,29 +21,9 @@ function Constructor() {
   this.marketID = localStorage.getItem('marketID');
   this.filterByValue = null;
   this.pageSize = 1; // Number of stations to move left/right when navigating
-  this.imageSize = 140 + 20;
+  this.gutterWidth = 20;
+  this.imageSize = 140 + this.gutterWidth;
   this.pageNum = 1;
-
-  if (this.windowWidth >= 1280) {
-    this.layoutWidth = '1100px';
-  } else if (this.windowWidth >= 1024) {
-    this.layoutWidth = '940px';
-  } else {
-    this.layoutWidth = '728px';
-    if (this.windowWidth < 788) {
-      this.layoutWidth = '100%';
-    }
-    if (this.windowWidth >= 481) {
-      this.pageSize = 3;
-      this.imageSize = 222 + 20;
-    } else if (this.windowWidth >= 361) {
-      this.pageSize = 2;
-      this.imageSize = 209 + 20;
-    } else {
-      this.pageSize = 2;
-      this.imageSize = 150 + 20;
-    }
-  }
 
   switch (this.filterStationsBy) {
     case 'section-front':
@@ -86,58 +35,102 @@ function Constructor() {
       break;
     default:
   }
-
-  this.stationsCarousel.setAttribute('style',`
-    width: ${document.body.clientWidth}px;
-    margin-left: calc((${document.body.clientWidth}px - ${this.layoutWidth}) / -2);
-  `);
   this.updateStations();
-  this.leftArrow.addEventListener('click', this.getPrevStation);
-  this.rightArrow.addEventListener('click', this.getNextStation);
   window.addEventListener('resize', function(e){this.restyleCarousel(e, this)}.bind(this));
 }
 
 Constructor.prototype = {
+  /**
+   * Set stations' image size and page size
+   * @function
+   */
+  setImageAndPageDims: function () {
+    if (this.windowWidth >= 1280) {
+      this.layoutWidth = '1100px';
+      this.stationsViewable = 7;
+    } else if (this.windowWidth >= 1024) {
+      this.layoutWidth = '940px';
+      this.stationsViewable = 6;
+    } else { // window width < 1024
+      this.layoutWidth = '728px';
+      this.gutterWidth = 31;
+      this.pageSize = 3;
+      this.stationsViewable = 3;
+      this.imageSize = 222 + this.gutterWidth;
+      if (this.windowWidth < 788) {
+        this.layoutWidth = '100%';
+        this.gutterWidth = 20;
+        if (this.windowWidth < 480) {
+          this.pageSize = 2;
+          this.stationsViewable = 2;
+        }
+        let calculatedImageSize = (document.body.clientWidth - 40 - this.gutterWidth * (this.stationsViewable - 1)) / this.stationsViewable;
+        console.log(calculatedImageSize, document.body.clientWidth, this.gutterWidth, this.stationsViewable);
+        this.imageSize = calculatedImageSize + this.gutterWidth;
+        console.log(this.stationsNodes);
+        for (let i = 0; i < this.stationsNodes.length; i++) {
+          this.stationsNodes[i].setAttribute('style', `width: ${calculatedImageSize}px; height: ${calculatedImageSize}px;`);
+        };
+      }
+    }
+    if (this.windowWidth >= 1024) {
+      // reset image size when resizing window after switching from small to large window widths
+      for (let i = 0; i < this.stationsNodes.length; i++) {
+        this.stationsNodes[i].setAttribute('style', '');
+      };
+    }
+  },
+  /**
+   * Set width of carousel to full window width
+   * @function
+   */
+  setCarouselWidth: function () {
+    this.stationsCarousel.setAttribute('style',`
+      display: inline-flex;
+      width: ${document.body.clientWidth}px;
+      margin-left: calc((${document.body.clientWidth}px - ${this.layoutWidth}) / -2);
+    `);
+  },
+  /**
+   * Reset vars to calculate and set new dimensions and pages of carousel on window resize
+   * @param {object} event
+   * @param {object} _this
+   * @function
+   */
   restyleCarousel: function (event, _this) {
     _this.windowWidth = window.outerWidth;
     _this.pageSize = 1; // Number of stations to move left/right when navigating
-    _this.imageSize = 140 + 20;
-    _this.pageNum = 1;
-
-    if (_this.windowWidth >= 1280) {
-      _this.layoutWidth = '1100px';
-    } else if (_this.windowWidth >= 1024) {
-      _this.layoutWidth = '940px';
-    } else {
-      _this.layoutWidth = '728px';
-      if (_this.windowWidth < 788) {
-        _this.layoutWidth = '100%';
-      }
-      if (_this.windowWidth >= 481) {
-        _this.pageSize = 3;
-        _this.imageSize = 222 + 20;
-      } else if (_this.windowWidth >= 361) {
-        _this.pageSize = 2;
-        _this.imageSize = 209 + 20;
+    _this.gutterWidth = 20;
+    _this.imageSize = 140 + _this.gutterWidth;
+    _this.setImageAndPageDims();
+    _this.totalPages = _this.stationsData.count / _this.pageSize;
+    _this.setCarouselWidth();
+    if (this.windowWidth <= 1023) _this.createPaginationDots();
+    _this.getPage(null, _this);
+  },
+  /**
+   * Hide or show navigation arrows if at the end or start of station results in carousel
+   * @function
+   */
+  hideOrShowEndArrows: function () {
+    if (this.windowWidth > 1023) {
+      if (this.pageNum <= 1) {
+        this.leftArrow.setAttribute('style', 'visibility: hidden;')
       } else {
-        _this.pageSize = 2;
-        _this.imageSize = 150 + 20;
+        this.leftArrow.setAttribute('style', 'visibility: visible;');
+        if (this.pageNum > this.totalPages - this.stationsViewable) {
+          this.rightArrow.setAttribute('style', 'visibility: hidden;')
+        } else {
+          this.rightArrow.setAttribute('style', 'visibility: visible;')
+        }
       }
     }
-    _this.stationsCarousel.setAttribute('style',`
-      width: ${document.body.clientWidth}px;
-      margin-left: calc((${document.body.clientWidth}px - ${_this.layoutWidth}) / -2);
-    `);
-    _this.createPaginationDots();
   },
-  getPrevStation: function () {
-
-  },
-  getNextStation: function () {
-    // transform: translateX(-160px);
-  },
+  /**
+   * Remove existing pagination dots and replace with newly created dots
+   * @function
+   */
   createPaginationDots: function () {
-    this.totalPages = this.stationsData.count / this.pageSize;
     while (this.paginationDots.lastChild) {
       this.paginationDots.removeChild(this.paginationDots.lastChild);
     }
@@ -150,6 +143,10 @@ Constructor.prototype = {
     }
     this.updatePaginationDots();
   },
+  /**
+   * Update style of dots and show new page results on click of arrows or pagination dots
+   * @function
+   */
   updatePaginationDots: function () {
     let allDots = document.querySelectorAll(`.${this.dotClass}`);
     for(let d = 0; d < allDots.length; d++) {
@@ -157,69 +154,62 @@ Constructor.prototype = {
     };
     document.querySelector(`.${this.dotClass}[data-page='${this.pageNum}']`).classList.add('dot--active');
   },
+  /**
+   * Show new page results on click of arrows or pagination dots
+   * @param {object} event
+   * @param {object} _this
+   * @function
+   */
   getPage: function (event, _this) {
-    _this.pageNum = event.currentTarget.getAttribute('data-page');
-    _this.updatePaginationDots();
-    let pageStationsLocation = (_this.pageNum - 1) * _this.pageSize * _this.imageSize;
-    if (this.windowWidth < 1024) {
-      this.stationsList.setAttribute('style',`transform: translateX(-${pageStationsLocation}px);`);
-    } else {
+    let pageStationsLocation;
 
+    if (_this.windowWidth < 1024) { // nav using pagination dots
+      if (event) _this.pageNum = event.currentTarget.getAttribute('data-page');
+      pageStationsLocation = (_this.pageNum - 1) * _this.pageSize * _this.imageSize;
+      _this.updatePaginationDots();
+    } else { // nav using left/right arrows
+      console.log('total pages: ', _this.totalPages, _this.stationsData.count, _this.pageSize);
+      // reset page number if on nonexistent page after switching from dots pagination to arrow navigation
+      if (_this.pageNum > _this.totalPages - _this.stationsViewable) _this.pageNum = 1;
+      if (event) {
+        if (event.currentTarget.getAttribute('data-direction') == 'left') {
+          if (_this.pageNum !== 1) _this.pageNum = _this.pageNum - 1;
+        } else {
+          if (_this.pageNum <= _this.totalPages - _this.stationsViewable) _this.pageNum = _this.pageNum + 1;
+        }
+      }
+      _this.hideOrShowEndArrows();
+      pageStationsLocation = (_this.pageNum - 1) * _this.pageSize * _this.imageSize;
     }
+    _this.stationsList.setAttribute('style',`transform: translateX(-${pageStationsLocation}px);`);
   },
   /**
    * Get user's local market ID with geo api & set in browser storage
    * @function
+   * @returns {Promise}
    */
   getMarket: function () {
     if (!this.marketID) {
-      return restGet(geoApi).then(marketData => {
-        if (marketData.Markets) {
+      return rest.get(geoApi).then(marketData => {
+        if (marketData.Markets.length > 0) {
           console.log("updated market in client:", marketData);
           localStorage.setItem('marketID', marketData.Markets[0].id);
           return marketData.Markets[0].id;
         } else {
-          return Promise.reject();
+          return 14; // national
         }
       });
     } else {
       return Promise.resolve(this.marketID);
     }
   },
-  updateStations: function () {
-    return this.getMarket().then(() => {
-      return this.getFilteredStationsFromApi().then(stationsData => {
-        console.log("updated stations in client:", stationsData);
-        this.stationsData = stationsData;
-        if (this.windowWidth <= 1023) this.createPaginationDots();
-        while (this.stationsList.lastChild) {
-          this.stationsList.removeChild(this.stationsList.lastChild);
-        }
-        for (let i = 0; i < stationsData.count; i++) {
-          let station = document.createElement('li'),
-            stationData = stationsData.stations[i];
-
-          station.innerHTML = `
-            <a href='${stationData.listen_live_url}' target='_blank'>
-              <img class='thumb'
-                  srcset='${stationData.square_logo_large}?width=222&dpr=1.5 1.5x,
-                    ${stationData.square_logo_large}?width=222&dpr=2 2x'
-                  src='${stationData.square_logo_large}?width=222'
-              />
-              <span>${stationData.name}</span>
-            </a>
-          `
-          this.stationsList.appendChild(station);
-        }
-      }).catch((e) => {
-        console.log("Update query error: ", e);
-      });
-    }).catch(e => {
-      console.log("Market query error: ", e);
-    });
-  },
+  /**
+   * Get stations from api using market ID and filters
+   * @function
+   * @returns {Promise}
+   */
   getFilteredStationsFromApi: function () {
-    let params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=300`;
+    let params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
 
     switch (this.filterStationsBy) {
       case 'section-front':
@@ -230,8 +220,7 @@ Constructor.prototype = {
         break;
       default:
     }
-    console.log("params: ", params);
-    return restGet(`${radioApi}stations${params}`).then(response => {
+    return rest.get(`${radioApi}stations${params}`).then(response => {
       if (response.data) {
         let stationsData = {
           stations: response.data.map(station => {
@@ -243,6 +232,61 @@ Constructor.prototype = {
       } else {
         return Promise.reject();
       }
+    });
+  },
+  /**
+   * Insert new payload of stations into DOM
+   * @function
+   * @returns {Promise}
+   */
+  updateStationsDOM: function () {
+    while (this.stationsList.lastChild) {
+      this.stationsList.removeChild(this.stationsList.lastChild);
+    }
+    for (let i = 0; i < this.stationsData.count; i++) {
+      let station = document.createElement('li'),
+        stationData = this.stationsData.stations[i];
+
+      station.innerHTML = `
+        <a href='${stationData.listen_live_url}' target='_blank'>
+          <img class='thumb'
+              srcset='${stationData.square_logo_large}?width=222&dpr=1.5 1.5x,
+                ${stationData.square_logo_large}?width=222&dpr=2 2x'
+              src='${stationData.square_logo_large}?width=222'
+          />
+          <span>${stationData.name}</span>
+        </a>
+      `;
+      this.stationsList.appendChild(station);
+    }
+    this.stationsNodes = document.querySelectorAll(`${this.stationsCarouselClass} .thumb`);
+  },
+  /**
+   * Initial function - retrieve new payload of stations into DOM and enable navigation
+   * @function
+   * @returns {Promise}
+   */
+  updateStations: function () {
+    return this.getMarket().then(() => {
+      return this.getFilteredStationsFromApi().then(stationsData => {
+        console.log("updated stations in client:", stationsData);
+        this.stationsData = stationsData;
+        this.updateStationsDOM();
+        this.setImageAndPageDims();
+        this.setCarouselWidth();
+        this.totalPages = this.stationsData.count / this.pageSize;
+        this.hideOrShowEndArrows();
+        if (this.windowWidth <= 1023) this.createPaginationDots();
+
+        this.leftArrow.addEventListener('click', function(e){this.getPage(e, this)}.bind(this));
+        this.rightArrow.addEventListener('click', function(e){this.getPage(e, this)}.bind(this));
+        return stationsData;
+      }).catch((e) => {
+        this.stationsData = [];
+        this.totalPages = 0;
+        this.hideOrShowEndArrows();
+        console.log("Update stations query error: ", e);
+      });
     });
   }
 };

@@ -31,7 +31,7 @@ $medium-screen-nav-width: em(728);
 }
 
 .component--stations-carousel {
-  display: inline-flex;
+  display: none;
   flex-direction: row;
   align-items: center;
   width: 100vw;
@@ -91,11 +91,37 @@ $medium-screen-nav-width: em(728);
       flex-direction: row;
       transition: all 400ms ease-in-out;
       width: 100%;
+      height: calc(100% - em(61));
+      @mixin medium-screen {
+        height: calc(100% - em(61) - em(55));
+      }
+      @mixin small-screen {
+        height: calc(100% - em(56) - em(53));
+      }
+      .loader-container {
+        width: 100%;
+        display: inline-flex;
+        justify-content: center;
+        svg {
+          width: em(50);
+          height: auto;
+        }
+      }
       li {
         float: left;
         cursor: pointer;
         &:not(:last-of-type) {
           margin-right: em(20);
+        }
+        @mixin medium-screen {
+          &:not(:last-of-type) {
+            margin-right: em(31);
+          }
+        }
+        @media all and (max-width: 788px) {
+          &:not(:last-of-type) {
+            margin-right: em(20);
+          }
         }
         a {
           text-decoration: none;
@@ -106,32 +132,14 @@ $medium-screen-nav-width: em(728);
               width: em(widthOnGrid(2,1,medium-screen));
               height: em(widthOnGrid(2,1,medium-screen));
             }
-            @mixin medium-small-screen {
-              width: em(widthOnGrid(2,1,medium-small-screen));
-              height: em(widthOnGrid(2,1,medium-small-screen));
-            }
-            @mixin small-screen {
-              width: em(widthOnGrid(2,1,small-screen));
-              height: em(widthOnGrid(2,1,small-screen));
-            }
           }
           span {
             @mixin section-videos-font2;
             display: inline-flex;
-            width: em(widthOnGrid(2,1), 14);
+            width: 100%;
             margin-top: em(15, 14);
             &:hover {
               text-decoration: underline;
-            }
-            @mixin medium-screen {
-              width: em(widthOnGrid(2,1,medium-screen), 14);
-            }
-            @mixin medium-small-screen {
-              width: em(widthOnGrid(2,1,medium-small-screen), 14);
-            }
-            @mixin small-screen {
-              width: em(widthOnGrid(2,1,small-screen), 14);
-              margin-top: em(20, 14);
             }
           }
         }

@@ -1,38 +1,28 @@
 <div class='component component--stations-carousel stations-carousel--' data-uri='{{ default _ref _self }}' data-editable='settings' data-genre-track='{{genre}}' data-section-front-track='{{sectionFront}}' data-filter-stations-by-track='{{filterStationsBy}}'>
-  {{#ifAny stations.length @root.locals.edit}}
-    <div class='stations-carousel__arrow stations-carousel__arrow--left'>
-      {{#if (compare sectionFront 'news')}}
-        {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}
-      {{else}}
-        {{{ read 'components/stations-carousel/media/arrow.svg' }}}
-      {{/if}}
+  <div class='stations-carousel__arrow stations-carousel__arrow--left' data-direction='left'>
+    {{#if (compare sectionFront 'news')}}
+      {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}
+    {{else}}
+      {{{ read 'components/stations-carousel/media/arrow.svg' }}}
+    {{/if}}
+  </div>
+  <div class='stations-carousel__carousel'>
+    <div class='carousel__title'>
+      <div class='title__line'></div>
+      <h2>{{title}}</h2>
     </div>
-    <div class='stations-carousel__carousel'>
-      <div class='carousel__title'>
-        <div class='title__line'></div>
-        <h2>{{title}}</h2>
+    <ul>
+      <div class="loader-container">
+        {{{ read 'components/stations-carousel/media/radiocom-monogram-loader.svg' }}}
       </div>
-      <ul>
-        {{#each stations as |station|}}
-          <li>
-            <a href='{{station.listen_live_url}}' target='_blank'>
-              <img class='thumb'
-                srcset='{{station.square_logo_large}}?width=222&dpr=1.5 1.5x,
-                  {{station.square_logo_large}}?width=222&dpr=2 2x'
-                src='{{station.square_logo_large}}?width=222'/>
-              <span>{{station.name}}</span>
-            </a>
-          </li>
-        {{/each}}
-      </ul>
-      <div class='carousel__pagination-dots'></div>
-    </div>
-    <div class='stations-carousel__arrow stations-carousel__arrow--right'>
-      {{#if (compare sectionFront 'news')}}
-        {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}
-      {{else}}
-        {{{ read 'components/stations-carousel/media/arrow.svg' }}}
-      {{/if}}
-    </div>
-  {{/ifAny}}
+    </ul>
+    <div class='carousel__pagination-dots'></div>
+  </div>
+  <div class='stations-carousel__arrow stations-carousel__arrow--right' data-direction='right'>
+    {{#if (compare sectionFront 'news')}}
+      {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}
+    {{else}}
+      {{{ read 'components/stations-carousel/media/arrow.svg' }}}
+    {{/if}}
+  </div>
 </div>
