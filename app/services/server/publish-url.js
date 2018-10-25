@@ -24,7 +24,7 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
 }
 
 /**
- * Return the url for a page based entirely on its slug, within the articles subdirectory
+ * Return the url for a page based off its year/month of publishing.
  * @param {object} pageData
  * @param {object} locals
  * @param {object} mainComponentRefs
