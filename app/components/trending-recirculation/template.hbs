@@ -6,7 +6,7 @@
   {{#ifAny articles.length @root.locals.edit}}
     <div class="trending__data">
       {{#each articles}}
-      <div class="trending__item">
+        <div class="trending__item{{#if @last}}{{#ifAny (compare ../articles.length 2) (compare ../articles.length 5)}} trending__item--filler{{/ifAny}}{{/if}}">
         <a href="{{ canonicalUrl }}"
            class="trending__item__link"
            data-track-type="article-link"

@@ -14,6 +14,7 @@ _components:
         main: main
         secondary: secondary
         bottom:
+          - _ref: /_components/trending-recirculation/instances/default
           - _ref: /_components/google-ad-manager/instances/superLeaderboard
           - _ref: /_components/footer/instances/default
         kilnInternals:
@@ -49,12 +50,9 @@ _components:
             _ref: /_components/header/instances/default
         head: head
         main: main
-        secondary:
-          -
-            _ref: /_components/generic-list/instances/recirc
         bottom:
-          -
-            _ref: /_components/footer/instances/default
+          - _ref: /_components/trending-recirculation/instances/default
+          - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
@@ -77,6 +75,7 @@ _components:
         tertiary: tertiary
         secondary: secondary
         bottom:
+          - _ref: /_components/trending-recirculation/instances/default
           - _ref: /_components/google-ad-manager/instances/billboard
           - _ref: /_components/footer/instances/default
         kilnInternals:

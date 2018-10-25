@@ -22,11 +22,6 @@ const queryService = require('../../services/server/query'),
  * @returns {Promise}
  */
 module.exports.save = (ref, data, locals) => {
-  console.log('save')
-  console.log('ref', ref);
-  console.log('data', data);
-  console.log('locals:', locals);
-
   if (!data.items.length || !locals) {
     return data;
   }
@@ -62,47 +57,9 @@ module.exports.save = (ref, data, locals) => {
  * @param {string} ref
  * @param {object} data
  * @param {object} locals
- * @returns {Promise}
+ * @returns {Object}
  */
 module.exports.render = function (ref, data, locals) {
-
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-  let cleanUrl;
-
-  // items are saved from form, articles are used on FE
   data.articles = data.items;
-
-  if (!data.tag || !locals) {
-    return data;
-  }
-  queryService.withinThisSiteAndCrossposts(query, locals.site);
-  queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addMinimumShould(query, 1);
-
-  // exclude the current page in results
-  if (locals.url && !isComponent(locals.url)) {
-    cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
-    queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-  }
-  //
-  // // exclude the curated content from the results
-  // if (data.items && !isComponent(locals.url)) {
-  //   data.items.forEach(item => {
-  //     cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-  //     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-  //   });
-  // }
-
-  return queryService.searchByQuery(query)
-    .then(function (results) {
-      const limit = data.fill;
-
-      data.articles = data.items.concat(_.take(results, limit)).slice(0, maxItems); // show a maximum of maxItems links
-
-      return data;
-    })
-    .catch(e => {
-      queryService.logCatch(e, ref);
-      return data;
-    });
+  return data;
 };

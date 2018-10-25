@@ -485,7 +485,7 @@ _components:
 
   trending-recirculation:
     instances:
-      new:
+      default:
         items: []
 
   general-content:

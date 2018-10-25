@@ -3,8 +3,10 @@
 @import "_global/mixins";
 
 .component--trending {
-  padding: em(60) 0 em(80) 0;
-  max-width: em(1100);
+  width: 100%;
+  padding: em(60) em(20) em(80) em(20);
+  max-width: em(980);
+  align-self: center;
 
   h2 {
     @mixin trending-recirculation-font1;
@@ -42,7 +44,7 @@
   }
 
   .trending__item {
-    order: 3;
+    order: 2;
     padding-bottom: em(40);
 
     @mixin medium-screen {
@@ -71,8 +73,6 @@
     .trending__item__link {
       text-decoration: none;
       display: inline-block;
-
-      order: 2;
       width: widthOnGrid(4, 3);
 
       @mixin medium-screen {
@@ -108,12 +108,20 @@
       }
 
       @mixin medium-small-screen {
-        width: em(440);
+        width: 100%;
         height: em(248);
       }
       @mixin small-screen {
-        width: em(320);
+        width: 100%;
         height: em(180);
+      }
+    }
+
+    &.trending__item--filler {
+      padding-right: em(320);
+
+      @mixin medium-screen {
+        padding-right: 0;
       }
     }
   }
