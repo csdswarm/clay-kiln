@@ -69,17 +69,27 @@ function setAds() {
   }
   googletag.cmd.push(function () {
     for (let ad of adSlots) {
-      let adSize = ad.getAttribute('data-adSize'),
-        sizeMapping = adMapping.sizeMapping[adSize],
+      let adSize = ad.getAttribute('data-adSize');
+
+      let slot;
+      if (adSize == 'outOfPage') {
+        slot = googletag.defineOutOfPageSlot(siteZone, ad.id)
+      } else {
         slot = googletag.defineSlot(
           siteZone,
           [adSizes[adSize].defaultSize],
           ad.id
         )
+        let sizeMapping = adMapping.sizeMapping[adSize]
+
+        slot
           .defineSizeMapping(sizeMapping)
-          .addService(googletag.pubads())
-          .setCollapseEmptyDiv(true)
-          .setTargeting('refresh', refreshCount.toString());
+      }
+
+      slot
+        .addService(googletag.pubads())
+        .setCollapseEmptyDiv(true)
+        .setTargeting('refresh', refreshCount.toString());
 
       googleDefinedSlots.push(slot);
       googletag.display(ad.id);

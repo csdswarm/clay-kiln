@@ -328,6 +328,8 @@ _components:
     instances:
       new:
         adSize: ''
+      oop:
+        adSize: outOfPage
       billboard:
         adSize: billboard
       superLeaderboard:
