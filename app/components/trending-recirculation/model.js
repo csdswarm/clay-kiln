@@ -22,40 +22,28 @@ module.exports.save = (ref, data, locals) => {
     return data;
   }
 
-  return Promise.all(_.map(data.items, (item) => {
+  return Promise.all(_.map(data.items, async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
-      .then((result) => {
-        const article = Object.assign(item, {
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl
-        });
+    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
+      article = {
+        ...item,
+        primaryHeadline: item.overrideTitle || result.primaryHeadline,
+        pageUri: result.pageUri,
+        urlIsValid: result.urlIsValid,
+        canonicalUrl: result.canonicalUrl,
+        feedImgUrl: result.feedImgUrl
+      };
 
-        if (article.title) {
-          article.plaintextTitle = toPlainText(article.title);
-        }
+    if (article.title) {
+      article.plaintextTitle = toPlainText(article.title);
+    }
 
-        return article;
-      });
+    return article;
   }))
     .then((items) => {
       data.items = items;
 
       return data;
     });
-};
-
-/**
- * @param {string} ref
- * @param {object} data
- * @param {object} locals
- * @returns {Object}
- */
-module.exports.render = function (ref, data) {
-  data.articles = data.items;
-  return data;
 };

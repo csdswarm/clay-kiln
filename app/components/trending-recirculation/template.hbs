@@ -1,27 +1,28 @@
-<section class="component component--trending"
-         data-uri="{{ default _ref _self }}"
-         data-track-type="trending-recirculation"
-         data-editable="trendingItems">
-  <h2 class="trending__title">TRENDING on RADIO.COM</h2>
-  {{#ifAny articles.length @root.locals.edit}}
-    <div class="trending__data">
-      {{#each articles}}
-        <div class="trending__item{{#if @last}}{{#ifAny (compare ../articles.length 2) (compare ../articles.length 5)}} trending__item--filler{{/ifAny}}{{/if}}">
-        <a href="{{ canonicalUrl }}"
-           class="trending__item__link"
-           data-track-type="article-link"
-           data-track-component-name="trending"
-           data-track-page-uri="{{ pageUri }}"
-           data-track-headline="{{ primaryHeadline }}"
-           data-track-component-title="Trending">
-          {{#if articleType}}
-          <div class="trending__item__tag">{{ articleType }}</div>
-          {{/if}}
-          <div class="trending__item__image" style="background-image:url({{ feedImgUrl }})"></div>
-          <div class="trending__item__label">{{ primaryHeadline }}</div>
-        </a>
+{{#ifAny items.length @root.locals.edit}}
+  <section class="component component--trending"
+           data-uri="{{ default _ref _self }}"
+           data-track-type="trending-recirculation"
+           data-editable="trendingItems">
+    <h2 class="trending__title"><span>TRENDING on RADIO.COM</span></h2>
+      <div class="trending__data">
+        {{#each items}}
+          <div class="trending__item">
+          <a href="{{ canonicalUrl }}"
+             class="trending__item__link"
+             data-track-type="article-link"
+             data-track-component-name="trending"
+             data-track-page-uri="{{ pageUri }}"
+             data-track-headline="{{ primaryHeadline }}"
+             data-track-component-title="Trending">
+            {{#if articleType}}
+              <div class="trending__item__tag">{{ articleType }}</div>
+            {{/if}}
+            <div class="trending__item__image" style="background-image:url({{ feedImgUrl }})"></div>
+            <div class="trending__item__label">{{ primaryHeadline }}</div>
+          </a>
+        </div>
+        {{/each}}
       </div>
-      {{/each}}
-    </div>
-  {{/ifAny}}
-</section>
+  </section>
+{{/ifAny}}
+
