@@ -277,7 +277,11 @@ function updateMegabundle(filepaths, opts) {
     // Transpile to ES5
     .transform(babelify.configure({
       presets: ['es2015'],
-      plugins: ['transform-es2015-modules-commonjs', 'transform-async-to-generator', 'transform-object-rest-spread']
+      plugins: ['transform-es2015-modules-commonjs', 'transform-async-to-generator', 'transform-object-rest-spread',
+        'transform-runtime', {
+            'polyfill': false,
+            'regenerator': true
+          }]
     }))
     // transform behavior and pane .vue files
     .transform(vueify, {
