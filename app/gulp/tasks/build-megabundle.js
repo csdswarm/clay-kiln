@@ -31,7 +31,8 @@ const fs = require('fs-extra'),
     './global/js/*.js',
     './global/kiln/index.js'
   ],
-  DEPS_PER_OUTFILE = 100;
+  DEPS_PER_OUTFILE = 100,
+  gutil = require('gulp-util');
 
 
 /**
@@ -270,7 +271,8 @@ function updateMegabundle(filepaths, opts) {
     pack: []
   });
 
-  if (opts.verbose) console.log('updating megabundle');
+  let startTime = Date.now();
+  gutil.log("Starting '" + gutil.colors.cyan('updateMegabundle') + "'...");
 
   bundler
     .require(entries)
@@ -354,7 +356,7 @@ function updateMegabundle(filepaths, opts) {
         fs.outputJsonSync(REGISTRY_PATH, cache.registry);
         fs.outputJsonSync(ENV_PATH, cache.env);
         fs.outputJsonSync(IDS_PATH, cache.ids);
-        if (opts.verbose) console.log('megabundle updated');
+        gutil.log("Finished '" + gutil.colors.cyan('updateMegabundle') + "' after " + gutil.colors.magenta((((Date.now() - startTime) / 1000) + ' s')));
         resolve();
       })
       .on('error', reject)
