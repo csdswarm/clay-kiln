@@ -103,18 +103,18 @@
       background-color: $boulderGrey;
 
       @mixin medium-screen {
-        width: widthOnGrid(3,2,'medium-screen');
+        width: widthOnGrid(3,2,medium-screen);
         height: em(193);
         flex: none;
         margin-right: em(20);
       }
 
       @mixin medium-small-screen {
-        width: widthOnGrid(4,3,'medium-small-screen');
+        width: widthOnGrid(4,3,medium-small-screen);
         height: em(248);
       }
       @mixin small-screen {
-        width: widthOnGrid(4,3,'small-screen');
+        width: widthOnGrid(4,3,small-screen);
         height: em(180);
       }
     }
