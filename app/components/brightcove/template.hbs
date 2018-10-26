@@ -3,7 +3,7 @@
     {{#if videoId}}
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
         <video id="video-{{ videoId }}"
-               class="video-js"
+               class="video-js vjs-16-9"
                data-video-id="{{ videoId }}"
                data-account="{{ @root.locals.site.brightcoveAccountId }}"
                data-player="{{ @root.locals.site.brightcovePlayerId }}"
