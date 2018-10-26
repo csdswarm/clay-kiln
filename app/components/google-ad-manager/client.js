@@ -5,11 +5,12 @@ let adMapping = require('./adMapping'),
   refreshCount = 0;
 const doubleclickPrefix = '21674100491',
   doubleclickBannerTag = 'NTL.RADIO',
+  rightRailAdSizes = ['medium-rectangle', 'half-page'],
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
   adRefreshInterval = '120000', // Time in milliseconds for ad refresh
   adSlots = document.getElementsByClassName('google-ad-manager__slot'),
-  googleDefinedSlots = [];
+  rightRailSlots = [];
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -69,32 +70,37 @@ function setAds() {
   }
   googletag.cmd.push(function () {
     for (let ad of adSlots) {
-      let adSize = ad.getAttribute('data-adSize');
+      const adSize = ad.getAttribute('data-adSize'),
+        pubAds = googletag.pubads();
+      let slot,
+        sizeMapping = adMapping.sizeMapping[adSize];
 
-      let slot;
       if (adSize == 'outOfPage') {
-        slot = googletag.defineOutOfPageSlot(siteZone, ad.id)
+        slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
       } else {
         slot = googletag.defineSlot(
           siteZone,
           [adSizes[adSize].defaultSize],
           ad.id
-        )
-        let sizeMapping = adMapping.sizeMapping[adSize]
+        );
 
         slot
-          .defineSizeMapping(sizeMapping)
+          .defineSizeMapping(sizeMapping);
       }
 
+      pubAds.setCentering(true);
       slot
-        .addService(googletag.pubads())
-        .setCollapseEmptyDiv(true)
-        .setTargeting('refresh', refreshCount.toString());
+        .addService(pubAds)
+        .setCollapseEmptyDiv(true);
 
-      googleDefinedSlots.push(slot);
+      // refresh only happens for right rail ads
+      slot.setTargeting('refresh', refreshCount.toString());
+      if (rightRailAdSizes.includes(adSize)) {
+        rightRailSlots.push(slot);
+      }
       googletag.display(ad.id);
     }
-    googletag.pubads().refresh(googleDefinedSlots);
+    googletag.pubads().refresh(rightRailSlots);
   });
   setTimeout(refreshAds, adRefreshInterval);
 }
@@ -105,12 +111,12 @@ function setAds() {
 function refreshAds() {
   refreshCount = refreshCount + 1;
   googletag.cmd.push(function () {
-    for (let i in googleDefinedSlots) {
-      if (googleDefinedSlots[i]) {
-        googleDefinedSlots[i].setTargeting('refresh', refreshCount.toString());
+    for (let i in rightRailSlots) {
+      if (rightRailSlots[i]) {
+        rightRailSlots[i].setTargeting('refresh', refreshCount.toString());
       }
     }
-    googletag.pubads().refresh(googleDefinedSlots);
+    googletag.pubads().refresh(rightRailSlots);
   });
   setTimeout(refreshAds, adRefreshInterval);
 }
