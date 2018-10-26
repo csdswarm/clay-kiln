@@ -98,6 +98,9 @@ $medium-screen-nav-width: em(728);
       @mixin small-screen {
         height: calc(100% - em(56) - em(53));
       }
+      &.align-center {
+        justify-content: center;
+      }
       .loader-container {
         width: 100%;
         display: inline-flex;
@@ -110,6 +113,8 @@ $medium-screen-nav-width: em(728);
       li {
         float: left;
         cursor: pointer;
+        width: min-content;
+        transition: all 400ms ease-in-out;
         &:not(:last-of-type) {
           margin-right: em(20);
         }
