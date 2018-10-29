@@ -278,10 +278,7 @@ function updateMegabundle(filepaths, opts) {
     .transform(babelify.configure({
       presets: ['es2015'],
       plugins: ['transform-es2015-modules-commonjs', 'transform-async-to-generator', 'transform-object-rest-spread',
-        'transform-runtime', {
-            'polyfill': false,
-            'regenerator': true
-          }]
+        'transform-runtime']
     }))
     // transform behavior and pane .vue files
     .transform(vueify, {
@@ -289,7 +286,8 @@ function updateMegabundle(filepaths, opts) {
         presets: ['es2015'],
         // Converts import / export syntax to CommonJS. Allows us to use that syntax if we want
         // but does NOT perform any tree-shaking
-        plugins: ['transform-es2015-modules-commonjs', 'transform-async-to-generator', 'transform-object-rest-spread']
+        plugins: ['transform-es2015-modules-commonjs', 'transform-async-to-generator', 'transform-object-rest-spread',
+          'transform-runtime']
       }
     })
     .plugin(extractCSS, {
