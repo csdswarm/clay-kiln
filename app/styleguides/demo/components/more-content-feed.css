@@ -15,8 +15,7 @@
     margin-bottom: em(40);
   }
 }
-.component--tag-page .more-content-feed__top-ad--mobile,
-.component--section-front .more-content-feed__top-ad--mobile {
+.more-content-feed__top-ad--mobile {
   display: none;
 }
 .component--more-content-feed {

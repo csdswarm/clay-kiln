@@ -64,6 +64,12 @@ sectionFrontManual:
         value: section-front
 
 tag:
+  _subscribe: tag
+  _label: tag
+  _has:
+    help: Tag from which to pull content
+
+tagManual:
   _label: Tag
   _placeholder:
     height: 600px
@@ -199,6 +205,6 @@ _groups:
     fields:
       - populateFrom
       - sectionFrontManual
-      - tag
+      - tagManual
       - tagInfo
       - items

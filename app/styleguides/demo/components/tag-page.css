@@ -2,7 +2,7 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--tag-page .tag-page__top-ad--mobile {
+.tag-page__top-ad--mobile {
   display: none;
 }
 .tag-page-content-feed__container {

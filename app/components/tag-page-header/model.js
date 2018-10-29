@@ -1,10 +1,6 @@
 'use strict';
 
-const { isPage, isComponent } = require('clayutils');
-
 module.exports.render = (ref, data, locals) => {
-  const reqUrl = locals.url;
-
   // If we're publishing for a dynamic page, switch out -'s with spaces
   data.tag = !data.tag && locals && locals.params && locals.params.tag ? locals.params.tag.replace('-',  ' ') : data.tag;
   return data;

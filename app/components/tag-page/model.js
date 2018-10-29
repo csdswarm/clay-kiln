@@ -11,10 +11,6 @@ const queryService = require('../../services/server/query'),
   }),
   index = 'published-articles';
 
-function removeNonAlphanumericCharacters(str = '') {
-  return str.replace(/[_\W]/g, '');
-}
-
 /**
  * Builds and executes the query.
  * @param {string} ref

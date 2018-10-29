@@ -2,6 +2,7 @@ _components:
   more-content-feed:
     items: []
     tag: ''
+    tagManual: ''
     sectionFront: ''
     sectionFrontManual: ''
     populateFrom: ''
