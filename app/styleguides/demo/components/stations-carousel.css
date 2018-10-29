@@ -29,15 +29,57 @@ $medium-screen-nav-width: em(728);
     height: em(295);
   }
 }
+@define-mixin carousel-colour $section-front, $color {
+  &.stations-carousel--$section-front {
+    background: $color;
+  }
+}
+@define-mixin section-front-colors $section-front, $color {
+  &.stations-carousel--$section-front .stations-carousel__carousel .carousel__title h2 {
+    background: $color;
+  }
+}
 
 .component--stations-carousel {
   display: none;
+  .kiln-edit-mode & {
+    display: inline-flex;
+  }
   flex-direction: row;
   align-items: center;
   width: 100vw;
   margin-bottom: em(25);
   @mixin carousel-height;
   background: $parisM;
+  @mixin carousel-colour entertainment, $sunsetOrange;
+  @mixin carousel-colour news, $lightningYellow;
+  @mixin carousel-colour sports, $azureRadience;
+  @mixin carousel-colour podcasts, $robinsEggBlue;
+  @mixin section-front-colors entertainment, $sunsetOrange;
+  @mixin section-front-colors news, $lightningYellow;
+  @mixin section-front-colors sports, $azureRadience;
+  @mixin section-front-colors podcasts, $robinsEggBlue;
+  &.stations-carousel--news {
+    .stations-carousel__carousel {
+      .carousel__title {
+        .title__line {
+          border-bottom-color: $tundora;
+        }
+        h2 {
+          @mixin section-videos-font1-news;
+        }
+      }
+      ul li a span {
+        @mixin section-videos-font2-news;
+      }
+      .carousel__pagination-dots .pagination-dots__dot {
+        background: rgba(68,68,68,0.6);
+        &.dot--active {
+          background: $tundora;
+        }
+      }
+    }
+  }
   .stations-carousel__arrow {
     cursor: pointer;
     width: em(40);

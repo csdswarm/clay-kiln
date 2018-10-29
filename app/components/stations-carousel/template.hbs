@@ -1,4 +1,4 @@
-<div class='component component--stations-carousel stations-carousel--' data-uri='{{ default _ref _self }}' data-editable='settings' data-genre-track='{{genre}}' data-section-front-track='{{sectionFront}}' data-filter-stations-by-track='{{filterStationsBy}}'>
+<div class='component component--stations-carousel{{#if sectionFront}} stations-carousel--{{sectionFront}}{{/if}}{{#if genre}} stations-carousel--{{genre}}{{/if}}' data-uri='{{ default _ref _self }}' data-editable='settings'{{#if genre}} data-genre-track='{{genre}}'{{/if}}{{#if sectionFront}} data-section-front-track='{{sectionFront}}'{{/if}} data-filter-stations-by-track='{{filterStationsBy}}'>
   <div class='stations-carousel__arrow stations-carousel__arrow--left' data-direction='left'>
     {{#if (compare sectionFront 'news')}}
       {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}
