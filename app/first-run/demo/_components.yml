@@ -348,6 +348,10 @@ _components:
       default:
         allowed: true
 
+  google-tag-manager:
+    instances:
+      default:
+
   chartbeat:
     instances:
       default:
