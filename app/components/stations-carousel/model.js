@@ -10,14 +10,14 @@ module.exports.save = (ref, data, locals) => {
   if (!locals) return data;
   switch (data.filterStationsBy) {
     case 'market':
-      data.title = 'stations near you' || data.overrideTitle;
+      data.title = data.overrideTitle || 'stations near you';
       break;
     case 'section-front':
-      if (data.sectionFront == 'entertainment') data.title = 'music stations near you' || data.overrideTitle;
-      else data.title = `${data.sectionFront} stations near you` || data.overrideTitle;
+      if (data.sectionFront == 'entertainment') data.title = data.overrideTitle || 'music stations near you';
+      else data.title = data.overrideTitle || `${data.sectionFront} stations near you`;
       break;
     case 'genre':
-      data.title = `${data.genre} stations near you` || data.overrideTitle;
+      data.title = data.overrideTitle || `${data.genre} stations near you`;
       break;
     default:
   }
