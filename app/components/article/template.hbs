@@ -49,10 +49,10 @@
       {{! authors }}
       <div class="info--left-top">
         <div data-editable="bylines" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
-          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
+          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE-->
           {{#each byline as |byline|}}
             {{#each sources as |source|}}
-              --><span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}}</span>
+              <span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}}</span>
             {{/each}}
           {{/each}}
           {{#if stationTitle}}<span>,</span>{{/if}}
