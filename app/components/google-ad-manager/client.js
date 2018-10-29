@@ -9,8 +9,7 @@ const doubleclickPrefix = '21674100491',
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
   adRefreshInterval = '120000', // Time in milliseconds for ad refresh
-  adSlots = document.getElementsByClassName('google-ad-manager__slot'),
-  rightRailSlots = [];
+  adSlots = document.getElementsByClassName('google-ad-manager__slot');
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -93,30 +92,25 @@ function setAds() {
         .addService(pubAds)
         .setCollapseEmptyDiv(true);
 
-      // refresh only happens for right rail ads
       slot.setTargeting('refresh', refreshCount.toString());
+
       if (rightRailAdSizes.includes(adSize)) {
-        rightRailSlots.push(slot);
+        slot.setTargeting('rightRail', true)
       }
       googletag.display(ad.id);
     }
-    googletag.pubads().refresh(rightRailSlots);
+    googletag.pubads().refresh();
   });
-  setTimeout(refreshAds, adRefreshInterval);
-}
 
-/**
- * refresh all ad slots on page every set interval in ms
- */
-function refreshAds() {
-  refreshCount = refreshCount + 1;
-  googletag.cmd.push(function () {
-    for (let i in rightRailSlots) {
-      if (rightRailSlots[i]) {
-        rightRailSlots[i].setTargeting('refresh', refreshCount.toString());
-      }
+  googletag.pubads().addEventListener('impressionViewable', function(event) {
+    const { slot } = event
+    const [ refresh ] = slot.getTargeting('refresh')
+    const [ rightRail ] = slot.getTargeting('rightRail')
+    if (refresh && rightRail) {
+      slot.setTargeting('refresh', (parseInt(refresh) + 1).toString());
+      setTimeout(function() {
+        googletag.pubads().refresh([slot]);
+      }, adRefreshInterval);
     }
-    googletag.pubads().refresh(rightRailSlots);
-  });
-  setTimeout(refreshAds, adRefreshInterval);
+  })
 }
