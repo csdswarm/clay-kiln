@@ -44,7 +44,7 @@ export default {
       element.removeEventListener('click', element.fn, false)
 
       const linkParts = new URL(element.getAttribute('href'))
-      this.$router.push(linkParts.pathname)
+      this.$router.push(linkParts.pathname || '/')
     },
     /**
      * Handle any logic required to get a new vue render to function properly
