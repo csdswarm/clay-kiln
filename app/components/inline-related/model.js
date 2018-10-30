@@ -11,7 +11,8 @@ const queryService = require('../../services/server/query'),
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'lead'
   ],
   maxItems = 2;
 
@@ -36,7 +37,8 @@ module.exports.save = (ref, data, locals) => {
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
           canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl
+          feedImgUrl: result.feedImgUrl,
+          lead: result.lead[0].split('/')[2]
         });
 
         if (article.title) {
@@ -98,7 +100,6 @@ module.exports.render = function (ref, data, locals) {
       const limit = data.fill;
 
       data.articles = data.items.concat(_.take(results, limit)).slice(0, maxItems); // show a maximum of maxItems links
-
       return data;
     })
     .catch(e => {
