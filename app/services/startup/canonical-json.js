@@ -7,9 +7,10 @@ const _ = require('lodash'),
 
 /**
  * Pulled from inside Amphora to fake locals
- * 
- * @param {Object} req 
- * @param {Object} res 
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Object} params
  */
 function fakeLocals(req, res, params) {
   _.each(sites.sites(), site => {
@@ -22,10 +23,11 @@ function fakeLocals(req, res, params) {
 /**
  * If you add the `X-Amphora-Page-JSON` header to a request
  * to a canonical url you can grab the page's JSON.
- * 
- * @param {Object} req 
- * @param {Object} res 
- * @param {Function} next 
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ * @returns {Function}
  */
 function middleware(req, res, next) {
   var promise, params = {};
@@ -43,7 +45,7 @@ function middleware(req, res, next) {
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(db.get);
   }
   // Set locals
-  fakeLocals(req, res, params)
+  fakeLocals(req, res, params);
   // Compose and respond
   promise.then(data => composer.composePage(data, res.locals))
     .then(composed => res.json(composed));
