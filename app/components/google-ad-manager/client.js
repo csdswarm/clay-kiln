@@ -95,22 +95,23 @@ function setAds() {
       slot.setTargeting('refresh', refreshCount.toString());
 
       if (rightRailAdSizes.includes(adSize)) {
-        slot.setTargeting('rightRail', true)
+        slot.setTargeting('rightRail', true);
       }
       googletag.display(ad.id);
     }
     googletag.pubads().refresh();
   });
 
-  googletag.pubads().addEventListener('impressionViewable', function(event) {
-    const { slot } = event
-    const [ refresh ] = slot.getTargeting('refresh')
-    const [ rightRail ] = slot.getTargeting('rightRail')
+  googletag.pubads().addEventListener('impressionViewable', function (event) {
+    const { slot } = event,
+      [ refresh ] = slot.getTargeting('refresh'),
+      [ rightRail ] = slot.getTargeting('rightRail');
+
     if (refresh && rightRail) {
       slot.setTargeting('refresh', (parseInt(refresh) + 1).toString());
-      setTimeout(function() {
+      setTimeout(function () {
         googletag.pubads().refresh([slot]);
       }, adRefreshInterval);
     }
-  })
+  });
 }
