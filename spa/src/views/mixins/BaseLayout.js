@@ -83,7 +83,9 @@ export default {
      */
     handleComponents: function (type) {
       // Call global mount event
-      let event = new CustomEvent(type)
+      let event = new CustomEvent(type, {
+        detail: JSON.stringify(this.$store.state.spaPayload)
+      })
       document.dispatchEvent(event)
 
       let setupComponents = []

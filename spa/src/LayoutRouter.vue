@@ -70,6 +70,10 @@ export default {
       // Commit next payload to store to kick off re-render.
       this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
+      // Set up listener to listen for response from client.js
+      // Use this listener to call pageview event to ensure DOM has been updated by client.js
+      // before calling pageview.
+
       // Call global pageView event: THIS MUST BE LAST IN FUNCTION AFTER META DATA UPDATES
       let event = new CustomEvent(`pageView`)
       document.dispatchEvent(event)
