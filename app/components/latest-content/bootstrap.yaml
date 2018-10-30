@@ -1,0 +1,9 @@
+_components:
+  latest-content:
+    sectionFront:  
+      - 'entertainment'
+      - 'sports'
+      - 'news'
+    entertainmentItems: []
+    sportsItems: []
+    newsItems: []

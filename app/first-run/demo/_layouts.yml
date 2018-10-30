@@ -48,7 +48,7 @@ _components:
           -
             _ref: /_components/header/instances/default
         head: head
-        main: main
+        main:  main
         secondary:
           -
             _ref: /_components/generic-list/instances/recirc

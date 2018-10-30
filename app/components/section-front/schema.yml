@@ -38,3 +38,8 @@ _groups:
     fields:
       - title
       - canonicalUrl
+      
+latestContent:
+  _component:
+    include:
+      - latest-content

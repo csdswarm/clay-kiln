@@ -7,3 +7,7 @@ _components:
         _ref: /_components/google-ad-manager/instances/leaderboard
     moreContentFeed:
       _ref: /_components/more-content-feed/instances/new
+    googleAdRightRail:
+        _ref: /_components/google-ad-manager/instances/mediumRectangle
+    latestContent:
+        _ref: /_components/latest-content/instances/new

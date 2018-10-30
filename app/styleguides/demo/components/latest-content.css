@@ -1,0 +1,17 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--latest-content {
+	position: relative;
+	margin-bottom: em(50);
+	z-index: 0;
+}
+.latest-content {
+	&__title{
+		text-transform: uppercase;
+	}
+}
+
+
+
