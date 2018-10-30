@@ -44,10 +44,12 @@ export default {
 
       return nextLayoutComponent
     },
-    getNextSpaPayload: async function getNextSpaPayload (uriId) {
-      const uriReqResult = await axios.get(`//${window.location.hostname}/_uris/${uriId}`)
-
-      const nextSpaPayloadResult = await axios.get(`//${uriReqResult.data}.json`)
+    getNextSpaPayload: async function getNextSpaPayload (destination) {
+      const nextSpaPayloadResult = await axios.get(`//${destination}`, {
+        headers: {
+          'x-amphora-page-json': true
+        }
+      })
 
       nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
 
@@ -61,8 +63,7 @@ export default {
   watch: {
     '$route': async function (to, from) {
       // Get SPA payload data for next path.
-      const uriId = btoa(window.location.hostname + to.path)
-      const spaPayload = await this.getNextSpaPayload(uriId)
+      const spaPayload = await this.getNextSpaPayload(window.location.hostname + to.path)
 
       // Load matched Layout Component.
       this.activeLayoutComponent = this.layoutRouter(spaPayload)
