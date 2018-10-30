@@ -4,14 +4,13 @@ const radioApi = 'https://api.radio.com/v1/',
   geoApi = 'https://geo.radio.com/markets',
   localStorage = window.localStorage;
 
-function Constructor() {
+function Constructor(element) {
   this.allStationsCount = 303;
-  this.stationsCarouselClass = '.component--stations-carousel';
-  this.stationsCarousel = document.querySelector(this.stationsCarouselClass);
+  this.stationsCarousel = element;
   this.filterStationsBy = this.stationsCarousel.getAttribute('data-filter-stations-by-track');
   this.genre = this.stationsCarousel.getAttribute('data-genre-track');
   this.sectionFront = this.stationsCarousel.getAttribute('data-section-front-track');
-  this.stationsList = this.stationsCarousel.querySelector(`${this.stationsCarouselClass} ul`);
+  this.stationsList = this.stationsCarousel.querySelector('ul');
   this.leftArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--left');
   this.rightArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--right');
   this.paginationDots = this.stationsCarousel.querySelector('.carousel__pagination-dots');
@@ -35,6 +34,7 @@ function Constructor() {
   } else if (this.filterStationsBy == 'genre') this.filterByValue = this.genre;
   this.updateStations();
 }
+
 
 Constructor.prototype = {
   /**
@@ -263,9 +263,9 @@ Constructor.prototype = {
       this.stationsList.appendChild(station);
     }
     // Store for stations centering when stations do not fill up page
-    this.stationsNodes = this.stationsCarousel.querySelectorAll(`${this.stationsCarouselClass} li`);
+    this.stationsNodes = this.stationsCarousel.querySelectorAll('li');
     // Store for image resizing when window width is medium or smaller
-    this.stationsNodes.thumbs = this.stationsCarousel.querySelectorAll(`${this.stationsCarouselClass} .thumb`);
+    this.stationsNodes.thumbs = this.stationsCarousel.querySelectorAll('.thumb');
   },
   /**
    * Initial function - retrieve new payload of stations into DOM and enable navigation
@@ -292,4 +292,4 @@ Constructor.prototype = {
   }
 };
 
-module.exports = () => new Constructor();
+module.exports = el => new Constructor(el);

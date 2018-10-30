@@ -13,12 +13,104 @@ sectionFront:
     input: static
     text: ${sectionTitle}
 
+sectionFrontManual:
+  _label: Section Front Category
+  _reveal:
+    field: filterStationsBy
+    operator: ===
+    value: section-front
+  _has:
+    input: radio
+    options:
+      -
+        name: Entertainment
+        value: entertainment
+      -
+        name: News
+        value: news
+      -
+        name: Podcasts
+        value: podcasts
+      -
+        name: Sports
+        value: sports
+
 genre:
   _label: Genre
   _subscribe: genre
   _has:
     input: static
     text: ${genre}
+
+genreManual:
+  _label: Genre
+  _reveal:
+    field: filterStationsBy
+    operator: ===
+    value: genre
+  _has:
+    input: radio
+    options:
+      -
+        name: Pop
+        value: 3
+      -
+        name: Christian/Gospel
+        value: 5
+      -
+        name: Alternative
+        value: 7
+      -
+        name: Jazz/Blues
+        value: 9
+      -
+        name: Sports
+        value: 11
+      -
+        name: Classic Hits
+        value: 13
+      -
+        name: Specialty Stations
+        value: 15
+      -
+        name: Urban
+        value: 17
+      -
+        name: Country
+        value: 21
+      -
+        name: Rock
+        value: 23
+      -
+        name: News & Talk
+        value: 25
+      -
+        name: Spanish
+        value: 39
+      -
+        name: Adult Contemporary
+        value: 40
+      -
+        name: Adult Rock
+        value: 41
+      -
+        name: Comedy
+        value: 42
+      -
+        name: Classic Rock
+        value: 43
+      -
+        name: Dance
+        value: 44
+      -
+        name: Rhythmic
+        value: 45
+      -
+        name: Holiday
+        value: 46
+      -
+        name: Hip-Hop
+        value: 47
 
 filterStationsBy:
   _label: Filter stations by?
@@ -42,6 +134,8 @@ _groups:
     fields:
       - overrideTitle
       - filterStationsBy
+      - sectionFrontManual
+      - genreManual
     _placeholder:
       text: Stations Carousel
       height: 315px

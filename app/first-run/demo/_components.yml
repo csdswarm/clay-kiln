@@ -587,26 +587,36 @@ _components:
         filterStationsBy: market
         sectionFront: ''
         genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
       section-front:
         overrideTitle: ''
         filterStationsBy: section-front
-        sectionFront: ''
+        sectionFront: '${sectionFront}'
         genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
       content-hub:
         overrideTitle: ''
         filterStationsBy: genre
         sectionFront: ''
         genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
       station-page:
         overrideTitle: ''
         filterStationsBy: genre
         sectionFront: ''
-        genre: ''
+        genre: '${genre}'
+        sectionFrontManual: ''
+        genreManual: ''
       article:
         overrideTitle: ''
         filterStationsBy: genre
         sectionFront: ''
         genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
 
   more-content-feed:
     instances:

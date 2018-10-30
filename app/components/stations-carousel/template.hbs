@@ -1,4 +1,10 @@
-<div class='component component--stations-carousel{{#if sectionFront}} stations-carousel--{{sectionFront}}{{/if}}{{#if genre}} stations-carousel--{{genre}}{{/if}}' data-uri='{{ default _ref _self }}' data-editable='settings'{{#if genre}} data-genre-track='{{genre}}'{{/if}}{{#if sectionFront}} data-section-front-track='{{sectionFront}}'{{/if}} data-filter-stations-by-track='{{filterStationsBy}}'>
+<div class='component component--stations-carousel
+{{#ifAny sectionFront sectionFrontManual}} stations-carousel--{{#if sectionFrontManual}}{{sectionFrontManual}}{{else}}{{sectionFront}}{{/if}}{{/ifAny}}
+{{#ifAny genre genreManual}} stations-carousel--{{#if genreManual}}{{genreManual}}{{else}}{{genre}}{{/if}}{{/ifAny}}'
+data-uri='{{ default _ref _self }}' data-editable='settings'
+{{#ifAny genre genreManual}} data-genre-track='{{#if genreManual}}{{genreManual}}{{else}}{{genre}}{{/if}}'{{/ifAny}}
+{{#ifAny sectionFront sectionFrontManual}} data-section-front-track='{{#if sectionFrontManual}}{{sectionFrontManual}}{{else}}{{sectionFront}}{{/if}}'{{/ifAny}}
+data-filter-stations-by-track='{{filterStationsBy}}'>
   <div class='stations-carousel__arrow stations-carousel__arrow--left' data-direction='left'>
     {{#if (compare sectionFront 'news')}}
       {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}

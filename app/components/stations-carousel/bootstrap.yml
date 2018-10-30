@@ -4,3 +4,5 @@ _components:
     filterStationsBy: market
     sectionFront: ''
     genre: ''
+    sectionFrontManual: ''
+    genreManual: ''
