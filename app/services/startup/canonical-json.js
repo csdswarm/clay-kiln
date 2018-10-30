@@ -7,9 +7,9 @@ const _ = require('lodash'),
 
 /**
  * Pulled from inside Amphora to fake locals
- * 
- * @param {Object} req 
- * @param {Object} res 
+ *
+ * @param {Object} req
+ * @param {Object} res
  */
 function fakeLocals(req, res) {
   _.each(sites.sites(), site => {
@@ -21,20 +21,21 @@ function fakeLocals(req, res) {
 /**
  * If you add the `X-Amphora-Page-JSON` header to a request
  * to a canonical url you can grab the page's JSON.
- * 
- * @param {Object} req 
- * @param {Object} res 
- * @param {Function} next 
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ * @return {undefined}
  */
 function middleware(req, res, next) {
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
   }
 
-  fakeLocals(req, res)
+  fakeLocals(req, res);
 
   const prefix = `${req.hostname}/_uris/`,
-    pageReference = `${prefix}${buffer.encode(req.hostname + req.baseUrl + req.path)}`
+    pageReference = `${prefix}${buffer.encode(req.hostname + req.baseUrl + req.path)}`;
 
   db.getUri(pageReference)
     .then(db.get)

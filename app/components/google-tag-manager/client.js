@@ -1,9 +1,34 @@
 'use strict';
 
-const googleContainerId = document.getElementById('google-tag-manager').getAttribute('data-container-id');
+/**
+ * Add Google Tag Manager script and setup dataLayer array on first page load
+ * @function
+ */
+(() => {
+  if (typeof window === 'undefined') {
+    return;
+  }
 
-(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer', `GTM-${googleContainerId}`);
+  const firstScript = document.getElementsByTagName('script')[0],
+    newScript = document.createElement('script'),
+    googleContainerId = document.getElementById('google-tag-manager').getAttribute('data-container-id');
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+
+  newScript.async = true;
+  newScript.src = `https://www.googletagmanager.com/gtm.js?id=GTM-${googleContainerId}`;
+  firstScript.parentNode.insertBefore(newScript, firstScript);
+})();
+
+/**
+ * Append each page view into dataLayer (assuming this is not being done via history)
+ */
+if (typeof document !== 'undefined') {
+  document.addEventListener('google-tag-manager-mount', () => {
+    window.dataLayer.push({
+      event: 'PageView',
+      url: window.location.pathname
+    });
+  });
+}

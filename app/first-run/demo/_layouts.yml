@@ -27,7 +27,6 @@ _components:
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
         top:
-          - _ref: /_components/google-tag-manager/instances/default
           - _ref: /_components/header/instances/default
         head: head
         main: main
@@ -45,7 +44,6 @@ _components:
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
         top:
-          - _ref: /_components/google-tag-manager/instances/default
           - _ref: /_components/header/instances/default
         head: head
         main: main
@@ -68,7 +66,6 @@ _components:
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
         top:
-          - _ref: /_components/google-tag-manager/instances/default
           - _ref: /_components/header/instances/default
         head: head
         pageHeader: pageHeader
