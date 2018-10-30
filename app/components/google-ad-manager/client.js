@@ -115,3 +115,7 @@ function setAds() {
     }
   });
 }
+
+function freq_dfp_takeover() {
+  console.log('TODO implement freq dfp takeover')
+}
