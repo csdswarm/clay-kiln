@@ -209,22 +209,6 @@
         }
       }
     }
-    .more-content-feed__loadmore {
-      cursor: pointer;
-      height: em(50);
-      text-transform: uppercase;
-      @mixin more-content-feed-font1;
-      background-color: $parisPurple;
-      color: $white;
-      width: 100%;
-      margin-top: em(60);
-      margin-bottom: em(80);
-      display: flex;
-      justify-content: center;
-    }
-    .loadmore__text {
-      align-self: center;
-    }
     .more-content-feed__right-ad--desktop {
       width: em(300);
       aside {
