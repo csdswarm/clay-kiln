@@ -11,10 +11,10 @@ function Constructor() {
   this.filterStationsBy = this.stationsCarousel.getAttribute('data-filter-stations-by-track');
   this.genre = this.stationsCarousel.getAttribute('data-genre-track');
   this.sectionFront = this.stationsCarousel.getAttribute('data-section-front-track');
-  this.stationsList = document.querySelector(`${this.stationsCarouselClass} ul`);
-  this.leftArrow = document.querySelector('.stations-carousel__arrow--left');
-  this.rightArrow = document.querySelector('.stations-carousel__arrow--right');
-  this.paginationDots = document.querySelector('.carousel__pagination-dots');
+  this.stationsList = this.stationsCarousel.querySelector(`${this.stationsCarouselClass} ul`);
+  this.leftArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--left');
+  this.rightArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--right');
+  this.paginationDots = this.stationsCarousel.querySelector('.carousel__pagination-dots');
   this.dotClass = 'pagination-dots__dot';
   this.marketID = localStorage.getItem('marketID');
   this.pageSize = 1; // Number of stations to move left/right when navigating
@@ -170,11 +170,11 @@ Constructor.prototype = {
    */
   updatePaginationDots: function () {
     if (this.totalPages > 1) {
-      let allDots = document.querySelectorAll(`.${this.dotClass}`);
+      let allDots = this.stationsCarousel.querySelectorAll(`.${this.dotClass}`);
 
       // Remove active styling for previous active page dot & set active class for currently active page dot
       for (let d = 0; d < allDots.length; d++) allDots[d].classList.remove('dot--active');
-      document.querySelector(`.${this.dotClass}[data-page='${this.pageNum}']`).classList.add('dot--active');
+      this.stationsCarousel.querySelector(`.${this.dotClass}[data-page='${this.pageNum}']`).classList.add('dot--active');
     }
   },
   /**
@@ -263,9 +263,9 @@ Constructor.prototype = {
       this.stationsList.appendChild(station);
     }
     // Store for stations centering when stations do not fill up page
-    this.stationsNodes = document.querySelectorAll(`${this.stationsCarouselClass} li`);
+    this.stationsNodes = this.stationsCarousel.querySelectorAll(`${this.stationsCarouselClass} li`);
     // Store for image resizing when window width is medium or smaller
-    this.stationsNodes.thumbs = document.querySelectorAll(`${this.stationsCarouselClass} .thumb`);
+    this.stationsNodes.thumbs = this.stationsCarousel.querySelectorAll(`${this.stationsCarouselClass} .thumb`);
   },
   /**
    * Initial function - retrieve new payload of stations into DOM and enable navigation
