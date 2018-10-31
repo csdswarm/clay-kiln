@@ -21,14 +21,3 @@
   firstScript.parentNode.insertBefore(newScript, firstScript);
 })();
 
-/**
- * Append each page view into dataLayer (assuming this is not being done via history)
- */
-if (typeof document !== 'undefined') {
-  document.addEventListener('google-tag-manager-mount', () => {
-    window.dataLayer.push({
-      event: 'PageView',
-      url: window.location.pathname
-    });
-  });
-}
