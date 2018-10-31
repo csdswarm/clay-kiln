@@ -1,6 +1,6 @@
 _components:
   latest-content:
-    sectionFront:  
+    sectionFronts:
       - 'entertainment'
       - 'sports'
       - 'news'
