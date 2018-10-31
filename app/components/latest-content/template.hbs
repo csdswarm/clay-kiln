@@ -1,37 +1,107 @@
-<section class="component component--latest-content" data-uri="{{ default _ref _self }}" data-track-type="latest-content"
-  data-editable="latestContentItems">
-  <div class="latest-content__title-line"></div>
-  <h2 class="latest-content__title">LATEST from <span class="title">RADIO.COM</span></h2>
-  <ul class="latest-content__links">
-    {{#each entertainmentArticles as |article|}}
-    <li class="component--{{articleType}}">
-      <a href="{{ article.canonicalUrl }}" data-track-type="article-link" data-track-component-name="latest-content"
-        data-track-page-uri="{{ article.pageUri }}" data-track-headline="{{ article.primaryHeadline }}"
-        data-track-component-title="Latest Content">
-        <div class="link__thumb" style="background-image:url({{ article.feedImgUrl }});"></div>
-        <span class="link__headline">{{{ article.primaryHeadline }}}</span>
-      </a>
-    </li>
-    {{/each}}
-    {{#each sportsArticles as |article|}}
-    <li class="component--{{articleType}}">
-      <a href="{{ article.canonicalUrl }}" data-track-type="article-link" data-track-component-name="latest-content"
-        data-track-page-uri="{{ article.pageUri }}" data-track-headline="{{ article.primaryHeadline }}"
-        data-track-component-title="Latest Content">
-        <div class="link__thumb" style="background-image:url({{ article.feedImgUrl }});"></div>
-        <span class="link__headline">{{{ article.primaryHeadline }}}</span>
-      </a>
-    </li>
-    {{/each}}
-    {{#each newsArticles as |article|}}
-    <li class="component--{{articleType}}">
-      <a href="{{ article.canonicalUrl }}" data-track-type="article-link" data-track-component-name="latest-content"
-        data-track-page-uri="{{ article.pageUri }}" data-track-headline="{{ article.primaryHeadline }}"
-        data-track-component-title="Latest Content">
-        <div class="link__thumb" style="background-image:url({{ article.feedImgUrl }});"></div>
-        <span class="link__headline">{{{ article.primaryHeadline }}}</span>
-      </a>
-    </li>
-    {{/each}}
-  </ul>
+<section class="component component--latest-content latest-content" data-uri="{{ default _ref _self }}" data-track-type="latest-content">
+	<h2 class="latest-content__title">LATEST on RADIO.COM</h2>
+	<div class="latest-content-sections">
+		<div class="latest-content-sections__articleList" data-editable="entertainmentItems">
+			{{#each entertainmentArticles as |article|}}
+			<a href="{{ article.canonicalUrl }}"
+				class="articleContainer"
+				data-track-type="article-link"
+				data-track-component-name="latest-content"
+				data-track-page-uri="{{ article.pageUri }}"
+				data-track-headline="{{ article.primaryHeadline }}"
+				data-track-component-title="Latest Content">
+				<div class="articleContainer__sectionContainer">
+					{{#if @first}}
+						<span class="articleContainer__sectionTitle articleContainer__sectionTitle--entertainment">Entertainment</span>
+					{{/if}}
+				</div>
+				<img
+					src="https://via.placeholder.com/220x124/666666/ffffff?text=Article%20Image%20Placeholder"
+					srcset="https://via.placeholder.com/140x79/666666/ffffff?text=Article%20Image%20Placeholder 140w,
+				https://via.placeholder.com/343x193/666666/ffffff?text=Article%20Image%20Placeholder 343w,
+				https://via.placeholder.com/440x248/666666/ffffff?text=Article%20Image%20Placeholder 440w"
+					sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
+					class="articleContainer__thumb" />
+				{{! TODO: Once images are moved into new bucket behind fastly change to URL on article }}
+				{{!--<img
+					src="{{ article.feedImgUrl }}?width=220&height=124&fit=bounds"
+					srcset="{{ article.feedImgUrl }}?width=140&height=79&fit=bounds 140w,
+						{{ article.feedImgUrl }}?width=343&height=19&fit=bounds 343w,
+						{{ article.feedImgUrl }}?width=440&height=248&fit=bounds 440w"
+					sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
+					class="articleContainer__thumb"/ >
+				/>--}}
+				<span class="articleContainer__headline">{{{ article.primaryHeadline }}}</span>
+			</a>
+			{{/each}}
+		</div>
+		<div class="latest-content-sections__articleList" data-editable="newsItems">
+			{{#each newsArticles as |article|}}
+			<a href="{{ article.canonicalUrl }}"
+				class="articleContainer"
+				data-track-type="article-link"
+				data-track-component-name="latest-content"
+				data-track-page-uri="{{ article.pageUri }}"
+				data-track-headline="{{ article.primaryHeadline }}"
+				data-track-component-title="Latest Content">
+				<div class="articleContainer__sectionContainer">
+					{{#if @first}}
+						<span class="articleContainer__sectionTitle articleContainer__sectionTitle--news">News</span>
+					{{/if}}
+				</div>
+				<img
+					src="https://via.placeholder.com/220x124/666666/ffffff?text=Article%20Image%20Placeholder"
+					srcset="https://via.placeholder.com/140x79/666666/ffffff?text=Article%20Image%20Placeholder 140w,
+				https://via.placeholder.com/343x193/666666/ffffff?text=Article%20Image%20Placeholder 343w,
+				https://via.placeholder.com/440x248/666666/ffffff?text=Article%20Image%20Placeholder 440w"
+					sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
+					class="articleContainer__thumb" />
+				{{! TODO: Once images are moved into new bucket behind fastly change to URL on article }}
+				{{!--<img
+					src="{{ article.feedImgUrl }}?width=220&height=124&fit=bounds"
+					srcset="{{ article.feedImgUrl }}?width=140&height=79&fit=bounds 140w,
+						{{ article.feedImgUrl }}?width=343&height=19&fit=bounds 343w,
+						{{ article.feedImgUrl }}?width=440&height=248&fit=bounds 440w"
+					sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
+					class="articleContainer__thumb"/ >
+				/>--}}
+				<span class="articleContainer__headline">{{{ article.primaryHeadline }}}</span>
+			</a>
+			{{/each}}
+		</div>
+		<div class="latest-content-sections__articleList" data-editable="sportsItems">
+			{{#each sportsArticles as |article|}}
+			<a href="{{ article.canonicalUrl }}"
+				class="articleContainer"
+				data-track-type="article-link"
+				data-track-component-name="latest-content"
+				data-track-page-uri="{{ article.pageUri }}"
+				data-track-headline="{{ article.primaryHeadline }}"
+				data-track-component-title="Latest Content">
+				<div class="articleContainer__sectionContainer">
+					{{#if @first}}
+						<span class="articleContainer__sectionTitle articleContainer__sectionTitle--sports">Sports</span>
+					{{/if}}
+				</div>
+				<img
+					src="https://via.placeholder.com/220x124/666666/ffffff?text=Article%20Image%20Placeholder"
+					srcset="https://via.placeholder.com/140x79/666666/ffffff?text=Article%20Image%20Placeholder 140w,
+				https://via.placeholder.com/343x193/666666/ffffff?text=Article%20Image%20Placeholder 343w,
+				https://via.placeholder.com/440x248/666666/ffffff?text=Article%20Image%20Placeholder 440w"
+					sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
+					class="articleContainer__thumb" />
+				{{! TODO: Once images are moved into new bucket behind fastly change to URL on article }}
+				{{!--<img
+					src="{{ article.feedImgUrl }}?width=220&height=124&fit=bounds"
+					srcset="{{ article.feedImgUrl }}?width=140&height=79&fit=bounds 140w,
+						{{ article.feedImgUrl }}?width=343&height=19&fit=bounds 343w,
+						{{ article.feedImgUrl }}?width=440&height=248&fit=bounds 440w"
+					sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
+					class="articleContainer__thumb"/ >
+				/>--}}
+				<span class="articleContainer__headline">{{{ article.primaryHeadline }}}</span>
+			</a>
+			{{/each}}
+		</div>
+	</div>
 </section>

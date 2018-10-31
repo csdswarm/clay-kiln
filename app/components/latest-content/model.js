@@ -58,7 +58,8 @@ module.exports.render = async function (ref, data, locals) {
       query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
       cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
 
-    queryService.withinThisSiteAndCrossposts(query, locals.site);
+    // TODO add this back btu ask what locals.site is
+    //queryService.withinThisSiteAndCrossposts(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});
@@ -79,6 +80,7 @@ module.exports.render = async function (ref, data, locals) {
       const results = await queryService.searchByQuery(query)
       data[`${section}Articles`] = items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
     } catch(e) {
+      data['error'] = 'test';
       queryService.logCatch(e, ref);
     }
   }

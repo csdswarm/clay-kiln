@@ -2,6 +2,7 @@ _description: |
   A list of five latest related articles by article type, tag, or manually populated.
 
 sportsItems:
+  _label: Sports Articles
   _placeholder:
     height: 150px;
     text: Sports Articles
@@ -47,6 +48,7 @@ sportsItems:
         validate:
           required: true
 entertainmentItems:
+  _label: Entertainment Articles
   _placeholder:
     height: 150px;
     text: Entertainment Articles
@@ -93,6 +95,7 @@ entertainmentItems:
           required: true
 
 newsItems:
+  _label: News Articles
   _placeholder:
     height: 150px;
     text: News Articles
@@ -139,12 +142,24 @@ newsItems:
           required: true
 
 _groups:
-  latestContentItems:
+  entertainmentItems:
     fields:
-      - newsItems
-      - sportsItems
       - entertainmentItems
     _placeholder:
-      ifEmpty: 'newsItems or sportsItems or entertainmentItems'
-      height: 400px
-      text: Latest Content
+      ifEmpty: 'entertainmentItems'
+      height: 200px
+      text: Entertainment Articles
+  newsItems:
+    fields:
+      - newsItems
+    _placeholder:
+      ifEmpty: 'newsItems'
+      height: 200px
+      text: News Articles
+  sportsItems:
+    fields:
+      - sportsItems
+    _placeholder:
+      ifEmpty: 'sportsItems'
+      height: 200px
+      text: Sports Articles
