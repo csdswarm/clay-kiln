@@ -629,6 +629,8 @@ _components:
           _ref: /_components/more-content-feed/instances/homepage
         sectionLead:
           _ref: /_components/section-lead/instances/new
+        podcastList:
+          _ref: /_components/podcast-list/instances/new
 
   latest-recirculation:
     instances:

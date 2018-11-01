@@ -15,6 +15,11 @@ googleAdUnderLatestModule:
     include:
       - google-ad-manager
 
+podcastList:
+  _component:
+    include:
+      - podcast-list
+
 moreContentFeed:
   _component:
     include:
