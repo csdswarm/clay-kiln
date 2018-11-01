@@ -29,12 +29,8 @@ $medium-screen-nav-width: em(728);
     height: em(295);
   }
 }
-@define-mixin carousel-colour $section-front, $color {
-  &.stations-carousel--$section-front {
-    background: $color;
-  }
-}
 @define-mixin section-front-colors $section-front, $color {
+  &.stations-carousel--$section-front,
   &.stations-carousel--$section-front .stations-carousel__carousel .carousel__title h2 {
     background: $color;
   }
@@ -51,10 +47,6 @@ $medium-screen-nav-width: em(728);
   margin-bottom: em(25);
   @mixin carousel-height;
   background: $parisM;
-  @mixin carousel-colour entertainment, $sunsetOrange;
-  @mixin carousel-colour news, $lightningYellow;
-  @mixin carousel-colour sports, $azureRadience;
-  @mixin carousel-colour podcasts, $robinsEggBlue;
   @mixin section-front-colors entertainment, $sunsetOrange;
   @mixin section-front-colors news, $lightningYellow;
   @mixin section-front-colors sports, $azureRadience;

@@ -1,16 +1,16 @@
 <div class='component component--stations-carousel
-{{#ifAny sectionFront sectionFrontManual}} stations-carousel--{{#if sectionFrontManual}}{{sectionFrontManual}}{{else}}{{sectionFront}}{{/if}}{{/ifAny}}
-{{#ifAny genre genreManual}} stations-carousel--{{#if genreManual}}{{genreManual}}{{else}}{{genre}}{{/if}}{{/ifAny}}'
+{{#ifAny sectionFront sectionFrontManual}} stations-carousel--{{ default sectionFrontManual sectionFront }}{{/ifAny}}
+{{#ifAny genre genreManual}} stations-carousel--{{ default genreManual genre }}{{/ifAny}}'
 data-uri='{{ default _ref _self }}' data-editable='settings'
-{{#ifAny genre genreManual}} data-genre-track='{{#if genreManual}}{{genreManual}}{{else}}{{genre}}{{/if}}'{{/ifAny}}
-{{#ifAny sectionFront sectionFrontManual}} data-section-front-track='{{#if sectionFrontManual}}{{sectionFrontManual}}{{else}}{{sectionFront}}{{/if}}'{{/ifAny}}
+{{#ifAny genre genreManual}} data-genre-track='{{ default genreManual genre }}'{{/ifAny}}
+{{#ifAny sectionFront sectionFrontManual}} data-section-front-track='{{ default sectionFrontManual sectionFront }}'{{/ifAny}}
 data-filter-stations-by-track='{{filterStationsBy}}'>
   <div class='stations-carousel__arrow stations-carousel__arrow--left' data-direction='left'>
-    {{#if (compare sectionFront 'news')}}
+    {{#ifAny (compare sectionFront 'news') (compare sectionFrontManual 'news')}}
       {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}
     {{else}}
       {{{ read 'components/stations-carousel/media/arrow.svg' }}}
-    {{/if}}
+    {{/ifAny}}
   </div>
   <div class='stations-carousel__carousel'>
     <div class='carousel__title'>
@@ -25,10 +25,10 @@ data-filter-stations-by-track='{{filterStationsBy}}'>
     <div class='carousel__pagination-dots'></div>
   </div>
   <div class='stations-carousel__arrow stations-carousel__arrow--right' data-direction='right'>
-    {{#if (compare sectionFront 'news')}}
+    {{#ifAny (compare sectionFront 'news') (compare sectionFrontManual 'news')}}
       {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}
     {{else}}
       {{{ read 'components/stations-carousel/media/arrow.svg' }}}
-    {{/if}}
+    {{/ifAny}}
   </div>
 </div>
