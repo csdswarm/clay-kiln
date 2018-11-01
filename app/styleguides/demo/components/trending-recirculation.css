@@ -75,7 +75,7 @@
     .trending__item__link {
       text-decoration: none;
       display: inline-block;
-      width: widthOnGrid(4, 3);
+      width: em(widthOnGrid(4, 3));
 
       @mixin medium-screen {
         width: 100%;
@@ -95,13 +95,13 @@
     }
 
     .trending__item__image {
-      width: widthOnGrid(4,3);
+      width: em(widthOnGrid(4,3));
       height: em(168);
       margin-bottom: em(15);
       object-fit: cover;
 
       @mixin medium-screen {
-        width: widthOnGrid(3,2,medium-screen);
+        width: em(widthOnGrid(3,2,medium-screen));
         height: em(193);
         flex: none;
         margin-right: em(20);
@@ -109,12 +109,12 @@
 
       @mixin medium-small-screen {
         width: 100%;
-        max-width: widthOnGrid(4,3,medium-small-screen);
+        max-width: em(widthOnGrid(4,3,medium-small-screen));
         height: em(248);
       }
       @mixin small-screen {
-        width: 100$;
-        max-width: widthOnGrid(4,3,small-screen);
+        width: 100%;
+        max-width: em(widthOnGrid(4,3,small-screen));
         height: em(180);
       }
     }
