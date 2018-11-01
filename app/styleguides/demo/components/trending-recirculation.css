@@ -98,9 +98,7 @@
       width: widthOnGrid(4,3);
       height: em(168);
       margin-bottom: em(15);
-      background-size: cover;
-      background-position: center;
-      background-color: $boulderGrey;
+      object-fit: cover;
 
       @mixin medium-screen {
         width: widthOnGrid(3,2,medium-screen);
@@ -110,11 +108,13 @@
       }
 
       @mixin medium-small-screen {
-        width: widthOnGrid(4,3,medium-small-screen);
+        width: 100%;
+        max-width: widthOnGrid(4,3,medium-small-screen);
         height: em(248);
       }
       @mixin small-screen {
-        width: widthOnGrid(4,3,small-screen);
+        width: 100$;
+        max-width: widthOnGrid(4,3,small-screen);
         height: em(180);
       }
     }

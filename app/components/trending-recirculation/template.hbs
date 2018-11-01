@@ -17,7 +17,13 @@
             {{#if articleType}}
               <div class="trending__item__tag">{{ articleType }}</div>
             {{/if}}
-            <div class="trending__item__image" style="background-image:url({{ feedImgUrl }})"></div>
+            <img
+              src="{{ feedImgUrl }}?width=300&height=169&fit=bounds&crop=16:9"
+              srcset="{{ feedImgUrl }}?width=300&height=169&fit=bounds&crop=16:9 300w,
+                {{ feedImgUrl }}?width=320&height=180&fit=bounds&crop=16:9 320w,
+                {{ feedImgUrl }}?width=343&height=193&fit=bounds&crop=16:9 343w,
+                {{ feedImgUrl }}?width=440&height=248&fit=bounds&crop=16:9 440w"
+              class="trending__item__image" />
             <div class="trending__item__label">{{ primaryHeadline }}</div>
           </a>
         </div>
@@ -25,4 +31,3 @@
       </div>
   </section>
 {{/ifAny}}
-
