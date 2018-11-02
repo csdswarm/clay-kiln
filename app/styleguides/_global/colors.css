@@ -33,3 +33,19 @@ $parisM: #1F055E; /* Primary Dark */
 $parisMRGB: 31, 5, 94;
 $purple: #3C00B7; /* Primary Bright */
 $purpleRGB: 60, 0, 183;
+
+________________
+
+/* OLD NAMING SYSTEM --- Remove once in staging */
+
+$boulderGrey: #777;
+$alabasterGrey: #F7F7F7; /* Ad Slot Container */
+
+$ceruleanBlue: #05aeee; /* Twitter Blue */
+$chambrayBlue: #3b5998; /* Facebook Blue */
+
+$parisPurple: #1F055E; /*primary dark*/
+$parisPurpleRGB: 31, 5, 94;
+
+$robinsEgg: #00CCB7; /*podcasts*/
+$robinsEggRGB: 0, 204, 183;
