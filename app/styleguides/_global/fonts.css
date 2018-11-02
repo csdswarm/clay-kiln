@@ -183,6 +183,15 @@ em, i {
 @define-mixin latest-content-font4 {
   @mixin font CircularStd-Medium, 14px, $white, -.23px, 18px;
 }
+@define-mixin latest-content-font5 {
+  @mixin font CircularStd-Medium, 12px, $robinsEgg, -.2px, 28px;
+}
+@define-mixin latest-content-font6 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin latest-content-font7 {
+  @mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
+}
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||| Inline-related Fonts Styleguide ||||| */
