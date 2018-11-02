@@ -170,6 +170,10 @@ $medium-screen-nav-width: em(728);
               width: em(widthOnGrid(2,1,medium-screen));
               height: em(widthOnGrid(2,1,medium-screen));
             }
+            @media all and (max-width: 1023px) and (min-width: 788px) {
+              width: em(222);
+              height: em(222);
+            }
           }
           span {
             @mixin section-videos-font2;
