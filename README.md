@@ -73,7 +73,7 @@ You can run this without stopping anything and it'll swap in a new container wit
 
 #### When do I need to rebuild the SPA?
 
-If you change any `template.hbs` files in the components or any files in `spa/`, you'll need to re-build the SPA. This has been captured in a Makefile command
+If you change any `template.hbs` files in the components or any files in `spa/`, add media elements or create new Handlebar helpers you'll need to re-build the SPA. This has been captured in a Makefile command
 
 ```bash
 $ make spa
