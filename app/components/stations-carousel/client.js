@@ -4,58 +4,60 @@ const radioApi = 'https://api.radio.com/v1/',
   geoApi = 'https://geo.radio.com/markets',
   localStorage = window.localStorage;
 
-function Constructor(element) {
-  this.allStationsCount = 303;
-  this.stationsCarousel = element;
-  this.filterStationsBy = this.stationsCarousel.getAttribute('data-filter-stations-by-track');
-  this.genre = this.stationsCarousel.getAttribute('data-genre-track');
-  this.sectionFront = this.stationsCarousel.getAttribute('data-section-front-track');
-  this.stationsList = this.stationsCarousel.querySelector('ul');
-  this.leftArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--left');
-  this.rightArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--right');
-  this.paginationDots = this.stationsCarousel.querySelector('.carousel__pagination-dots');
-  this.dotClass = 'pagination-dots__dot';
-  this.marketID = localStorage.getItem('marketID');
-  this.pageSize = 1; // Number of stations to move left/right when navigating
-  this.gutterWidth = 20;
-  this.imageSize = 140 + this.gutterWidth;
-  this.pageNum = 1;
-  this.windowWidth = window.outerWidth;
-  this.windowSizes = {
-    large: 1280,
-    medium: 1024,
-    beforeMediumSmall: 788,
-    mediumSmall: 480
-  };
+class StationsCarousel {
+  constructor(element) {
+    this.allStationsCount = 303;
+    this.stationsCarousel = element;
+    this.innerContainerClass = 'stations-carousel__carousel';
+    this.filterStationsBy = this.stationsCarousel.getAttribute('data-filter-stations-by-track');
+    this.genre = this.stationsCarousel.getAttribute('data-genre-track');
+    this.sectionFront = this.stationsCarousel.getAttribute('data-section-front-track');
+    this.stationsList = this.stationsCarousel.querySelector('ul');
+    this.leftArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--left');
+    this.rightArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--right');
+    this.paginationDots = this.stationsCarousel.querySelector('.carousel__pagination-dots');
+    this.dotClass = 'pagination-dots__dot';
+    this.marketID = localStorage.getItem('marketID');
+    this.pageSize = 1; // Number of stations to move left/right when navigating
+    this.gutterWidth = 20;
+    this.imageSize = 140 + this.gutterWidth;
+    this.pageNum = 1;
+    this.windowWidth = window.outerWidth;
+    this.windowSizes = {
+      large: 1280,
+      medium: 1024,
+      beforeMediumSmall: 788,
+      mediumSmall: 480
+    };
 
-  if (this.filterStationsBy == 'section-front') {
-    this.filterByValue = this.sectionFront;
-    if (this.sectionFront == 'entertainment') this.filterByValue = 'music';
-  } else if (this.filterStationsBy == 'genre') this.filterByValue = this.genre;
-  this.updateStations();
+    if (this.filterStationsBy == 'section-front') {
+      this.filterByValue = this.sectionFront;
+      if (this.sectionFront == 'entertainment') {
+        this.filterByValue = 'music';
+      }
+    } else if (this.filterStationsBy == 'genre') {
+      this.filterByValue = this.genre;
+    }
+    this.updateStations();
+  }
 }
-
-
-Constructor.prototype = {
+StationsCarousel.prototype = {
   /**
    * Set stations' image size and page size
    * @function
    */
   setImageAndPageDims: function () {
+    this.layoutWidth = this.stationsCarousel.querySelector(`.${this.innerContainerClass}`).offsetWidth + 'px';
     if (this.windowWidth >= this.windowSizes.large) {
-      this.layoutWidth = '1100px';
       this.stationsVisible = 7;
     } else if (this.windowWidth >= this.windowSizes.medium) {
-      this.layoutWidth = '940px';
       this.stationsVisible = 6;
     } else {
-      this.layoutWidth = '728px';
       this.gutterWidth = 31;
       this.pageSize = 3;
       this.stationsVisible = 3;
       this.imageSize = 222 + this.gutterWidth;
       if (this.windowWidth < this.windowSizes.beforeMediumSmall) {
-        this.layoutWidth = '100%';
         this.gutterWidth = 20;
         if (this.windowWidth < this.windowSizes.mediumSmall) {
           this.pageSize = 2;
@@ -65,11 +67,17 @@ Constructor.prototype = {
 
         this.imageSize = calculatedImageSize + this.gutterWidth;
         // set image size dependent on window size
-        for (let i = 0; i < this.stationsNodes.length; i++) this.stationsNodes.thumbs[i].setAttribute('style', `width: ${calculatedImageSize}px; height: ${calculatedImageSize}px;`);
+        for (let i = 0; i < this.stationsNodes.length; i++) {
+          this.stationsNodes.thumbs[i].setAttribute('style', `width: ${calculatedImageSize}px; height: ${calculatedImageSize}px;`);
+        }
       }
     }
     // reset image size style after switching to large window width (image sizes are fixed at this window width)
-    if (this.windowWidth >= this.windowSizes.medium) for (let i = 0; i < this.stationsNodes.length; i++) this.stationsNodes.thumbs[i].setAttribute('style', '');
+    if (this.windowWidth >= this.windowSizes.medium) {
+      for (let i = 0; i < this.stationsNodes.length; i++) {
+        this.stationsNodes.thumbs[i].setAttribute('style', '');
+      }
+    }
   },
   /**
    * Set width of carousel to full window width
@@ -97,7 +105,9 @@ Constructor.prototype = {
     _this.setImageAndPageDims();
     _this.totalPages = Math.ceil(_this.stationsData.count / _this.pageSize);
     _this.setCarouselWidth();
-    if (_this.windowWidth < _this.windowSizes.medium) _this.createPaginationDots();
+    if (_this.windowWidth < _this.windowSizes.medium) {
+      _this.createPaginationDots();
+    }
     _this.getPage(null, _this);
   },
   /**
@@ -116,7 +126,9 @@ Constructor.prototype = {
         this.leftArrow.setAttribute('style', visible);
         this.rightArrow.setAttribute('style', visible);
       }
-      if (this.pageNum > this.totalPages - this.stationsVisible) this.rightArrow.setAttribute('style', hidden);
+      if (this.pageNum > this.totalPages - this.stationsVisible) {
+        this.rightArrow.setAttribute('style', hidden);
+      }
     }
   },
   /**
@@ -128,11 +140,15 @@ Constructor.prototype = {
 
     if (this.totalPages * this.pageSize <= this.stationsVisible) { // Center stations if fills short of first page
       this.stationsList.classList.add('align-center');
-      for (let i = 0; i < this.stationsNodes.length - remainderStations; i++) this.stationsNodes[i].style.visibility = 'visible'; // reset visibility
+      for (let i = 0; i < this.stationsNodes.length - remainderStations; i++) {
+        this.stationsNodes[i].style.visibility = 'visible';
+      } // reset visibility
     } else if (this.pageNum == this.totalPages) { // Center stations if fill short of last page
       if (remainderStations > 0) {
         // hide previous page results
-        for (let i = 0; i < this.stationsNodes.length - remainderStations; i++) this.stationsNodes[i].style.visibility = 'hidden';
+        for (let i = 0; i < this.stationsNodes.length - remainderStations; i++) {
+          this.stationsNodes[i].style.visibility = 'hidden';
+        }
         // center stations on last page
         let centeredLocation = - (this.pageStationsLocation - (this.stationsVisible - remainderStations) * this.imageSize / 2);
 
@@ -140,7 +156,9 @@ Constructor.prototype = {
       }
     } else {
       // unhide other stations & unset centering if not on first/last page
-      for (let i = 0; i < this.stationsNodes.length - remainderStations; i++) this.stationsNodes[i].style.visibility = 'visible'; // reset visibility
+      for (let i = 0; i < this.stationsNodes.length - remainderStations; i++) {
+        this.stationsNodes[i].style.visibility = 'visible';
+      } // reset visibility
       this.stationsList.setAttribute('style',`transform: translateX(-${this.pageStationsLocation}px);`); // uncenter last page
       this.stationsList.classList.remove('align-center'); // uncenter first page
     }
@@ -151,14 +169,18 @@ Constructor.prototype = {
    */
   createPaginationDots: function () {
     // Remove existing pagination
-    while (this.paginationDots.lastChild) this.paginationDots.removeChild(this.paginationDots.lastChild);
+    while (this.paginationDots.lastChild) {
+      this.paginationDots.removeChild(this.paginationDots.lastChild);
+    }
     if (this.totalPages > 1) { // Create pagination dots if more than one page
       for (let page = 1; page <= this.totalPages; page++) {
         let dot = document.createElement('div');
 
         dot.setAttribute('class', this.dotClass);
         dot.setAttribute('data-page', page);
-        dot.addEventListener('click', function (e) { this.getPage(e, this); }.bind(this));
+        dot.addEventListener('click', function (e) {
+          this.getPage(e, this);
+        }.bind(this));
         this.paginationDots.appendChild(dot);
       }
     }
@@ -173,7 +195,9 @@ Constructor.prototype = {
       let allDots = this.stationsCarousel.querySelectorAll(`.${this.dotClass}`);
 
       // Remove active styling for previous active page dot & set active class for currently active page dot
-      for (let d = 0; d < allDots.length; d++) allDots[d].classList.remove('dot--active');
+      for (let d = 0; d < allDots.length; d++) {
+        allDots[d].classList.remove('dot--active');
+      }
       this.stationsCarousel.querySelector(`.${this.dotClass}[data-page='${this.pageNum}']`).classList.add('dot--active');
     }
   },
@@ -185,14 +209,21 @@ Constructor.prototype = {
    */
   getPage: function (event, _this) {
     if (_this.windowWidth < _this.windowSizes.medium) { // nav using pagination dots
-      if (event) _this.pageNum = Number(event.currentTarget.getAttribute('data-page')); // get page number of clicked dot
+      if (event) {
+        _this.pageNum = Number(event.currentTarget.getAttribute('data-page'));
+      } // get page number of clicked dot
       _this.updatePaginationDots();
     } else { // nav using left/right arrows
       // reset page number if on nonexistent page after switching from dots pagination to arrow navigation
-      if (_this.pageNum > _this.totalPages + 1 - _this.stationsVisible) _this.pageNum = 1;
+      if (_this.pageNum > _this.totalPages + 1 - _this.stationsVisible) {
+        _this.pageNum = 1;
+      }
       if (event) { // if arrow clicked, update page number
-        if (event.currentTarget.getAttribute('data-direction') == 'left') _this.pageNum = _this.pageNum - 1;
-        else if (_this.pageNum <= _this.totalPages - _this.stationsVisible) _this.pageNum = _this.pageNum + 1;
+        if (event.currentTarget.getAttribute('data-direction') == 'left') {
+          _this.pageNum = _this.pageNum - 1;
+        } else if (_this.pageNum <= _this.totalPages - _this.stationsVisible) {
+          _this.pageNum = _this.pageNum + 1;
+        }
       }
       _this.hideOrShowEndArrows();
     }
@@ -212,9 +243,13 @@ Constructor.prototype = {
         if (marketData.Markets.length > 0) {
           localStorage.setItem('marketID', marketData.Markets[0].id); // Store market in browser
           this.marketID = localStorage.getItem('marketID'); // Store market in var
-        } else this.marketID = 14; // National market if no results from geo API
+        } else {
+          this.marketID = 14;
+        } // National market if no results from geo API
       });
-    } else return Promise.resolve();
+    } else {
+      return Promise.resolve();
+    }
   },
   /**
    * Get stations from api using market ID and filters
@@ -222,11 +257,13 @@ Constructor.prototype = {
    * @returns {Promise}
    */
   getFilteredStationsFromApi: function () {
-    // let params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
-    let params = `?sort=-popularity&page[size]=${this.allStationsCount}`;
+    let params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
 
-    if (this.filterStationsBy == 'section-front') params += `&filter[category]=${this.filterByValue}`;
-    else if (this.filterStationsBy == 'genre') params += `&filter[genre_id]=${this.filterByValue}`;
+    if (this.filterStationsBy == 'section-front') {
+      params += `&filter[category]=${this.filterByValue}`;
+    } else if (this.filterStationsBy == 'genre') {
+      params += `&filter[genre_id]=${this.filterByValue}`;
+    }
 
     return rest.get(`${radioApi}stations${params}`).then(response => {
       if (response.data) {
@@ -238,7 +275,9 @@ Constructor.prototype = {
         };
 
         return stationsData;
-      } else return Promise.reject();
+      } else {
+        return Promise.reject();
+      }
     });
   },
   /**
@@ -246,23 +285,22 @@ Constructor.prototype = {
    * @function
    */
   updateStationsDOM: function () {
-    while (this.stationsList.lastChild) this.stationsList.removeChild(this.stationsList.lastChild); // Remove loader
-    for (let i = 0; i < this.stationsData.count; i++) { // Create & append station nodes into DOM
-      let station = document.createElement('li'),
-        stationData = this.stationsData.stations[i];
+    this.stationsList.removeChild(this.stationsList.querySelector('.loader-container'));// Remove loader
+    this.stationsData.stations.forEach(function (stationData) {
+      let station = document.createElement('li');
 
       station.innerHTML = `
-        <a href='${stationData.listen_live_url}' target='_blank'>
+        <a href='${stationData.listen_live_url ? stationData.listen_live_url : 'https://player.radio.com'}' target='_blank'>
           <img class='thumb'
-              srcset='${stationData.square_logo_large}?width=222&dpr=1.5 1.5x,
-                ${stationData.square_logo_large}?width=222&dpr=2 2x'
-              src='${stationData.square_logo_large}?width=222'
+              srcset='${stationData.square_logo_large ? stationData.square_logo_large : ''}?width=222&dpr=1.5 1.5x,
+                ${stationData.square_logo_large ? stationData.square_logo_large : ''}?width=222&dpr=2 2x'
+              src='${stationData.square_logo_large ? stationData.square_logo_large : ''}?width=222'
           />
-          <span>${stationData.name}</span>
+          <span>${stationData.name ? stationData.name : ''}</span>
         </a>
       `;
       this.stationsList.appendChild(station);
-    }
+    }.bind(this));
     // Store for stations centering when stations do not fill up page
     this.stationsNodes = this.stationsCarousel.querySelectorAll('li');
     // Store for image resizing when window width is medium or smaller
@@ -283,14 +321,22 @@ Constructor.prototype = {
         this.totalPages = Math.ceil(this.stationsData.count / this.pageSize);
         this.hideOrShowEndArrows();
         this.centerPageResults();
-        if (this.windowWidth < this.windowSizes.medium) this.createPaginationDots();
-        this.leftArrow.addEventListener('click', function (e) { this.getPage(e, this); }.bind(this));
-        this.rightArrow.addEventListener('click', function (e) { this.getPage(e, this); }.bind(this));
-        window.addEventListener('resize', function (e) { this.restyleCarousel(e, this); }.bind(this));
+        if (this.windowWidth < this.windowSizes.medium) {
+          this.createPaginationDots();
+        }
+        this.leftArrow.addEventListener('click', function (e) {
+          this.getPage(e, this);
+        }.bind(this));
+        this.rightArrow.addEventListener('click', function (e) {
+          this.getPage(e, this);
+        }.bind(this));
+        window.addEventListener('resize', function (e) {
+          this.restyleCarousel(e, this);
+        }.bind(this));
         return stationsData;
       });
     });
   }
 };
 
-module.exports = el => new Constructor(el);
+module.exports = el => new StationsCarousel(el);

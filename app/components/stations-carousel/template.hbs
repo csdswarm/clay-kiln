@@ -1,10 +1,4 @@
-<div class='component component--stations-carousel
-{{#ifAny sectionFront sectionFrontManual}} stations-carousel--{{ default sectionFrontManual sectionFront }}{{/ifAny}}
-{{#ifAny genre genreManual}} stations-carousel--{{ default genreManual genre }}{{/ifAny}}'
-data-uri='{{ default _ref _self }}' data-editable='settings'
-{{#ifAny genre genreManual}} data-genre-track='{{ default genreManual genre }}'{{/ifAny}}
-{{#ifAny sectionFront sectionFrontManual}} data-section-front-track='{{ default sectionFrontManual sectionFront }}'{{/ifAny}}
-data-filter-stations-by-track='{{filterStationsBy}}'>
+<div class='component component--stations-carousel{{#ifAny sectionFront sectionFrontManual}} stations-carousel--{{ default sectionFrontManual sectionFront }}{{/ifAny}}{{#ifAny genre genreManual}} stations-carousel--{{ default genreManual genre }}{{/ifAny}}' data-uri='{{ default _ref _self }}' data-editable='settings' {{#ifAny genre genreManual}} data-genre-track='{{ default genreManual genre }}'{{/ifAny}}{{#ifAny sectionFront sectionFrontManual}} data-section-front-track='{{ default sectionFrontManual sectionFront }}'{{/ifAny}} data-filter-stations-by-track='{{filterStationsBy}}'>
   <div class='stations-carousel__arrow stations-carousel__arrow--left' data-direction='left'>
     {{#ifAny (compare sectionFront 'news') (compare sectionFrontManual 'news')}}
       {{{ read 'components/stations-carousel/media/arrow_news.svg' }}}
@@ -18,9 +12,9 @@ data-filter-stations-by-track='{{filterStationsBy}}'>
       <h2>{{title}}</h2>
     </div>
     <ul>
-      <div class="loader-container">
+      <li class="loader-container">
         {{{ read 'components/stations-carousel/media/radiocom-monogram-loader.svg' }}}
-      </div>
+      </li>
     </ul>
     <div class='carousel__pagination-dots'></div>
   </div>
