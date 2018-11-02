@@ -578,7 +578,8 @@ _components:
         googleAdUnderStationsModule:
             _ref: /_components/google-ad-manager/instances/leaderboard
         stationsCarousel:
-          _ref: /_components/stations-carousel/instances/section-front
+          -
+            _ref: /_components/stations-carousel/instances/section-front
 
   stations-carousel:
     instances:
@@ -670,7 +671,8 @@ _components:
         sectionLead:
           _ref: /_components/section-lead/instances/new
         stationsCarousel:
-          _ref: /_components/stations-carousel/instances/homepage
+          -
+            _ref: /_components/stations-carousel/instances/homepage
 
   latest-recirculation:
     instances:

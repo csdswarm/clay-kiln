@@ -222,7 +222,8 @@ Constructor.prototype = {
    * @returns {Promise}
    */
   getFilteredStationsFromApi: function () {
-    let params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
+    // let params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
+    let params = `?sort=-popularity&page[size]=${this.allStationsCount}`;
 
     if (this.filterStationsBy == 'section-front') params += `&filter[category]=${this.filterByValue}`;
     else if (this.filterStationsBy == 'genre') params += `&filter[genre_id]=${this.filterByValue}`;
