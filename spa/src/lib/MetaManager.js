@@ -15,6 +15,12 @@ import QueryPayload from './QueryPayload'
 const queryPayload = new QueryPayload()
 
 export default class MetaManager {
+  /**
+   *
+   * On SPA navigation, update HTML tags that fall outside the SPA.
+   *
+   * @param {object} spaPayload - The handlebars context payload data.
+   */
   updateExternalTags (spaPayload) {
     // Update meta-title component tags.
     const metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
@@ -37,12 +43,26 @@ export default class MetaManager {
     }
   }
 
+  /**
+   *
+   * Update the page <title> tag.
+   *
+   * @param {string} newTitle - The new page title.
+   */
   updateTitleTag (newTitle) {
     const title = document.head.querySelector('title')
 
     title.textContent = newTitle
   }
 
+  /**
+   *
+   * Update a <meta> tag on the page by name or property attribute.
+   *
+   * @param {string} attributeType - Attribute to select by ("name" or "property").
+   * @param {string} attributeKey - Value of attribute to select for.
+   * @param {string} content - New content to be used in meta tag.
+   */
   updateMetaTag (attributeType, attributeKey, content) {
     if (attributeType !== 'property' && attributeType !== 'name') {
       throw new Error('invalid meta tag attribute.')

@@ -16,6 +16,19 @@
  */
 
 export default class QueryPayload {
+  /**
+   *
+   * Queries the SPA Payload object and extracts data associated with a specific component.
+   *
+   * You can either pass in the entire payload object, or pass in a component list (ie a
+   * top level property of the payload object like spaPayload.head).
+   *
+   * Note: This method will only return the first component data match found.
+   *
+   * @param {object|array} data - SPA Payload object OR a component-list pulled off of SPA Payload object.
+   * @param {string} componentName - Name of the component to extract.
+   * @returns {object} - The matched component data object.
+   */
   findComponent (data, componentName) {
     let component = null
 
@@ -45,6 +58,14 @@ export default class QueryPayload {
     return component
   }
 
+  /**
+   *
+   * Used to iterate over a component-list and extract a matched component data object.
+   *
+   * @param {array} componentList - An array of component data objects. Example spaPayload.head.
+   * @param {string} componentName - The name of the component to extract.
+   * @returns {object} - The matched component data object.
+   */
   extractComponentDataFromComponentList (componentList, componentName) {
     return componentList.find((component) => {
       const regEx = new RegExp(`_components/${componentName}/instances`)
