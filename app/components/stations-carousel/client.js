@@ -59,6 +59,7 @@ StationsCarousel.prototype = {
       this.imageSize = 222 + this.gutterWidth;
       if (this.windowWidth < this.windowSizes.beforeMediumSmall) {
         this.gutterWidth = 20;
+        this.layoutWidth = 100%;
         if (this.windowWidth < this.windowSizes.mediumSmall) {
           this.pageSize = 2;
           this.stationsVisible = 2;
