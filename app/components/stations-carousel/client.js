@@ -47,19 +47,22 @@ StationsCarousel.prototype = {
    * @function
    */
   setImageAndPageDims: function () {
-    this.layoutWidth = this.stationsCarousel.querySelector(`.${this.innerContainerClass}`).offsetWidth + 'px';
+    // this.layoutWidth = this.stationsCarousel.querySelector(`.${this.innerContainerClass}`).offsetWidth + 'px';
     if (this.windowWidth >= this.windowSizes.large) {
       this.stationsVisible = 7;
+      this.layoutWidth = '1100px';
     } else if (this.windowWidth >= this.windowSizes.medium) {
       this.stationsVisible = 6;
+      this.layoutWidth = '940px';
     } else {
+      this.layoutWidth = '728px';
       this.gutterWidth = 31;
       this.pageSize = 3;
       this.stationsVisible = 3;
       this.imageSize = 222 + this.gutterWidth;
       if (this.windowWidth < this.windowSizes.beforeMediumSmall) {
         this.gutterWidth = 20;
-        this.layoutWidth = 100%;
+        this.layoutWidth = "100%";
         if (this.windowWidth < this.windowSizes.mediumSmall) {
           this.pageSize = 2;
           this.stationsVisible = 2;
