@@ -49,7 +49,7 @@
   }
   &__articleList {
     width: 100%;
-    align-items: center;
+    align-items: flex-start;
     margin-left: em(20);
     @mixin medium-screen {
       margin-left: em(0);
