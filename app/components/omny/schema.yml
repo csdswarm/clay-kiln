@@ -1,0 +1,46 @@
+_description: |
+  Omny audio clip embed
+
+clipURL:
+  _label: Clip URL
+  _has:
+    input: text
+    type: url
+    validate:
+      required: true
+      # Using pattern from https://www.regextester.com/93652
+      # Detailed RegEx breakdown: https://regex101.com/r/hlIapc/1/
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+    help: https://omny.fm/shows/{show name}/{clip slug}
+
+embedSize:
+  _label: Size of embed
+  _has:
+    input: radio
+    options:
+      -
+        name: Wide Simple
+        value: wide-simple
+      -
+        name: Wide Image
+        value: wide-image
+      -
+        name: Square
+        value: square
+      -
+        name: '16:9'
+        value: default
+    validate:
+      required: true
+
+_groups:
+  audio:
+    _label: Omny Audio Embed
+    _placeholder:
+      text: Omny Audio Clip
+      height: 30px
+      ifEmpty: clipURL
+    fields:
+      - clipURL
+      - embedSize

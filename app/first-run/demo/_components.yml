@@ -314,6 +314,12 @@ _components:
       new:
         videoId: ''
 
+  omny:
+    instances:
+      new:
+        clipURL: ''
+        embedSize: default
+
   web-player:
     instances:
       default:

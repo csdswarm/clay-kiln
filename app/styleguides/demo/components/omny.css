@@ -1,0 +1,6 @@
+.component--omny {
+  display: inline-flex;
+  justify-content: center;
+  width: 100%;
+  margin: em(15) 0;
+}
