@@ -54,7 +54,7 @@ function setAds() {
   let page,
     pageName,
     siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-    urlPathname = window.location.pathname.replace(/\/$/, ''),
+    urlPathname = window.location.pathname.replace(/^\/|\/$/, ''),
     targetingTags = [],
     targetingPageId = '',
     targetingAuthors = [];
@@ -94,7 +94,7 @@ function setAds() {
     case 'genrePage':
       targetingTags = [doubleclickPageTypeTagArticle, `${pageName}`];
       targetingPageId = pageName;
-      siteZone = siteZone.concat(pageName, '/article');
+      siteZone = siteZone.concat('/', pageName, '/article');
       break;
     case 'tagPage':
       targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, `${pageName}`];
@@ -123,7 +123,9 @@ function setAds() {
           .setTargeting('genre', targetingGenre)
           .setTargeting('cat', targetingCategory)
           .setTargeting('tag', targetingTags)
-          .setTargeting('pid', targetingPageId);
+          .setTargeting('pid', targetingPageId)
+          .setTargeting('pos', ad.parentNode.getAttribute('data-ad-position'))
+          .setTargeting('loc', ad.parentNode.getAttribute('data-ad-location'));
 
       if (targetingAuthors.length) {
         slot.setTargeting('author', targetingAuthors);

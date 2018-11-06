@@ -77,7 +77,7 @@ _components:
         tertiary: tertiary
         secondary: secondary
         bottom:
-          - _ref: /_components/google-ad-manager/instances/billboard
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general

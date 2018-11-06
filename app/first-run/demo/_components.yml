@@ -328,16 +328,36 @@ _components:
     instances:
       new:
         adSize: ''
-      billboard:
+      billboardTop:
         adSize: billboard
-      superLeaderboard:
+        adPosition: top
+        adLocation: atf
+      billboardBottom:
+        adSize: billboard
+        adPosition: bottom
+        adLocation: btf
+      superLeaderboardTop:
         adSize: super-leaderboard
+        adPosition: top
+        adLocation: atf
+      superLeaderboardBottom:
+        adSize: super-leaderboard
+        adPosition: bottom
+        adLocation: btf
       leaderboard:
         adSize: leaderboard
+        adPosition: bottom
+        adLocation: btf
       halfPage:
         adSize: half-page
-      mediumRectangle:
+      mediumRectangleTop:
         adSize: medium-rectangle
+        adPosition: rec
+        adLocation: atf
+      mediumRectangleBottom:
+        adSize: medium-rectangle
+        adPosition: rec
+        adLocation: btf
       mobile:
         adSize: mobile
       logoSponsorship:
@@ -565,7 +585,7 @@ _components:
         items: []
         sectionFront: ''
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
 
   section-front:
     instances:
@@ -587,9 +607,9 @@ _components:
         populateFrom: all
         locationOfContentFeed: homepage
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
       section-front:
         items: []
         tag: ''
@@ -597,9 +617,9 @@ _components:
         populateFrom: section-front
         locationOfContentFeed: section-front
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
       tag-page:
         items: []
         tag: ''
@@ -607,9 +627,9 @@ _components:
         populateFrom: tag
         locationOfContentFeed: tag-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
 
   section-videos:
     instances:
@@ -622,9 +642,9 @@ _components:
     instances:
       new:
         googleAdUnderStationsModule:
-          _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/superLeaderboardBottom
         googleAdUnderLatestModule:
-          _ref: /_components/google-ad-manager/instances/billboard
+          _ref: /_components/google-ad-manager/instances/billboardBottom
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/homepage
         sectionLead:
