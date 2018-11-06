@@ -1,9 +1,13 @@
 @import '_global/reset';
 @import '_global/fonts';
 @import '_global/grid';
+@import "_global/colors";
 
 .layout--one-column {
-	.layout__content {
-		margin-bottom: em(40);
-	}
+  .layout__content {
+    z-index: 2;
+    position: relative;
+    background: $white;
+    margin-bottom: em(40);
+  }
 }

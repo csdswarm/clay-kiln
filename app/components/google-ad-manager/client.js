@@ -125,6 +125,11 @@ window.freq_dfp_takeover = function(i, l, c, p) {
       || document.documentElement.clientWidth
       || document.body.clientWidth;
 
+  // TODO remove these
+  //l = 'http://radio.com'
+  i = 'https://via.placeholder.com/1800x900/666666/ffffff?text=TAKEOVER%20PLACETHING'
+  p = 'fixed'
+
   // Include our default bg color
   if (typeof c == 'undefined') {
     c = '#FFF';
@@ -144,7 +149,7 @@ window.freq_dfp_takeover = function(i, l, c, p) {
     bgdiv.style.position = p;
     bgdiv.style.height = '100%';
     bgdiv.style.width = '100%';
-    bgdiv.style['z-index'] = 2;
+    bgdiv.style['z-index'] = 1;
 
     // If 'fixed', we need to add some scrolling treatment.
     if (p == 'fixed') {
@@ -169,12 +174,13 @@ window.freq_dfp_takeover = function(i, l, c, p) {
       var linkElem = document.createElement("a");
       linkElem.setAttribute("href", l);
       linkElem.setAttribute("target", "_new");
+      linkElem.style.height = '100%';
+      linkElem.style.width = '100%';
+      linkElem.style['z-index'] = 1;
     }
 
     // Does a takeover image exist?
     if (i) {
-      // TODO remove this line.
-      i = 'https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&h=350'
       var imgElem = document.createElement("div");
       cssbgtext += 'background-image: url(' + i + '); ';
 
@@ -208,12 +214,12 @@ window.freq_dfp_takeover = function(i, l, c, p) {
 
     // Prepend the full ad element to body.
     console.log('bgdiv', bgdiv)
-    document.body.prepend(bgdiv);
 
     // Add a background color to '#globalWrapper' div.
     var globalDiv =  document.getElementById('vue-app-mount-point');
     if (globalDiv) {
       globalDiv.style.backgroundColor = c;
+      document.body.prepend(bgdiv);
     }
 
     // now set top ad area to transparent
