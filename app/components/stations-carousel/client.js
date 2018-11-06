@@ -4,7 +4,7 @@ const radioApi = 'https://api.radio.com/v1/',
   geoApi = 'https://geo.radio.com/markets',
   localStorage = window.localStorage,
   Handlebars = require('handlebars'),
-  stationLI = `
+  stationLi = `
     <a href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
       <img class='thumb'
           srcset='{{ default square_logo_large "" }}?width=222&dpr=1.5 1.5x,
@@ -295,10 +295,10 @@ StationsCarousel.prototype = {
    * @function
    */
   updateStationsDOM: function () {
-    this.stationsList.removeChild(this.stationsList.querySelector('.loader-container'));// Remove loader
-    const template = Handlebars.compile(stationLI);
+    this.stationsList.removeChild(this.stationsList.querySelector('.loader-container')); // Remove loader
+    const template = Handlebars.compile(stationLi);
     this.stationsData.stations.forEach(function (stationData) {
-      const station = document.createElement('li');
+      let station = document.createElement('li');
 
       this.stationsList.appendChild(station);
       station.innerHTML = template(stationData);
