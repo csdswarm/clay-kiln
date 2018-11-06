@@ -1,5 +1,5 @@
 'use strict';
-const rest = require('./rest'),
+const rest = require('../universal/rest'),
   geoApi = 'https://geo.radio.com/markets',
   nationalMarketID = 14,
   localStorageKey = 'market',
@@ -8,25 +8,45 @@ const rest = require('./rest'),
 function getMarket() {
   if (!market) {
     return rest.get(geoApi).then(marketData => {
+      let market = {
+        id: nationalMarketID,
+        name: ''
+      };
+
       if (marketData.Markets.length > 0) {
-        localStorage.setItem('market', JSON.stringify(marketData.Markets[0])); // Store market in browser
-      } else {
-        localStorage.setItem('market', JSON.stringify({id: nationalMarketID})); // Store market in browser
+        market = marketData.Markets[0];
       }
 
-      return marketData.Markets;
+      localStorage.setItem('market', JSON.stringify(market)); // Store market in browser
+      return market;
     });
   } else {
-    return Promise.resolve(market);
+    return Promise.resolve(JSON.parse(market));
   }
 }
 
-async function getMarketID() {
-  return await getMarket()['id'];
+/**
+ * Get the id from the market
+ *
+ * @returns {Promise<*>}
+ */
+async function getID() {
+  let market = await getMarket();
+
+  return market.id;
 }
 
+/**
+ * Get the name from the market
+ * @returns {Promise<*>}
+ */
+async function getName() {
+  let market = await getMarket();
+
+  return market.name;
+}
 
 module.exports = {
-  getMarket: getMarket,
-  getMarketID: getMarketID
+  getID: getID,
+  getName: getName
 };
