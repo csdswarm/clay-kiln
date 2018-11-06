@@ -290,7 +290,7 @@ _components:
 
   comscore-head:
     instances:
-      new:
+      default:
         allow: true
 
   html-embed:
