@@ -6,7 +6,6 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
-      - /_components/google-tag-manager/instances/default
     main:
       - /_components/article/instances/new
     layout: /_components/one-column-layout/instances/general
@@ -16,7 +15,6 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
-      - /_components/google-tag-manager/instances/default
     pageHeader:
       - /_components/google-ad-manager/instances/billboard
     main:
@@ -31,7 +29,6 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-      - /_components/google-tag-manager/instances/default
     pageHeader:
       - /_components/google-ad-manager/instances/billboard
     main:
@@ -42,7 +39,6 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-      - /_components/google-tag-manager/instances/default
     pageHeader:
       - /_components/google-ad-manager/instances/billboard
     main:
@@ -52,7 +48,6 @@ _pages:
   index:
     head:
       - /_components/meta-title/instances/general
-      - /_components/google-tag-manager/instances/default
     main:
       - /_components/generic-list/instances/index
     layout: /_components/one-column-layout/instances/bare
@@ -60,7 +55,6 @@ _pages:
   general:
     head:
       - /_components/meta-title/instances/general
-      - /_components/google-tag-manager/instances/default
     main:
       - /_components/general-content/instances/new
     layout: /_components/one-column-layout/instances/general
@@ -68,7 +62,6 @@ _pages:
   tag:
     head:
       - /_components/meta-title/instances/general
-      - /_components/google-tag-manager/instances/default
     main:
       - /_components/tag-list/instances/default
     layout: /_components/one-column-layout/instances/bare
