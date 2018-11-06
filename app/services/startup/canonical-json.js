@@ -25,6 +25,7 @@ function fakeLocals(req, res) {
  * @param {Object} req
  * @param {Object} res
  * @param {Function} next
+ * @return {undefined}
  */
 function middleware(req, res, next) {
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
