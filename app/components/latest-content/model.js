@@ -8,7 +8,8 @@ const queryService = require('../../services/server/query'),
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'articleType'
   ],
   maxItems = 3;
 /**
@@ -55,6 +56,7 @@ module.exports.save = async function (ref, data, locals) {
  */
 module.exports.render = async function (ref, data, locals) {
   data.articles = [];
+
   for (let section of data.sectionFronts) {
     const items = data[`${section}Items`],
       query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
@@ -65,6 +67,7 @@ module.exports.render = async function (ref, data, locals) {
     queryService.onlyWithTheseFields(query, elasticFields);
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});
+    queryService.addShould(query, { match: { articleType: section }});
 
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {
@@ -80,7 +83,6 @@ module.exports.render = async function (ref, data, locals) {
 
     try {
       const results = await queryService.searchByQuery(query),
-
         // combine the curated articles (entertainmentItems, newsItems, sportsItems, etc.) with the query results
         articles = items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
       // data.articles = [{ entertainment: [...articles]}, {news: [...articles] }, ....]
