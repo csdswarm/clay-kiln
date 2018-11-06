@@ -52,7 +52,6 @@
         vertical-align: top;
         display: inline-block;
         width: calc(100% - em(30, 14) - em(10, 14));
-        float: left;
       }
     }
   }
@@ -64,7 +63,6 @@
     margin-right: em(10, 14);
     display: inline-block;
     background-color: $purple;
-    float: left;
   }
 
   .related__media-icon {
