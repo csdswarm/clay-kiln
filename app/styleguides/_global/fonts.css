@@ -227,6 +227,9 @@ em, i {
 @define-mixin more-content-feed-font8 {
   @mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
 }
+@define-mixin more-content-feed-font9 {
+  @mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
+}
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| Section-Lead Fonts Styleguide |||||| */

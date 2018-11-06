@@ -215,17 +215,16 @@
       text-transform: uppercase;
       @mixin more-content-feed-font1;
       background-color: $parisPurple;
-      color: $white;
-      width: 100%;
       margin-top: em(60);
       margin-bottom: em(80);
       display: flex;
       justify-content: center;
+      align-items: center;
       @mixin default-screen {
         width: em(widthOnGrid(10,9));
       }
       @mixin large-screen {
-        width: em(widthOnGrid(9,8));
+        width: em(widthOnGrid(8,7));
       }
       @mixin medium-screen {
         width: em(widthOnGrid(6,5, 'medium-screen'));
@@ -239,7 +238,7 @@
     }
 
     .loadmore__text {
-      align-self: center;
+      @mixin more-content-feed-font9;
     }
     .more-content-feed__right-ad--desktop {
       @mixin medium-screen {
