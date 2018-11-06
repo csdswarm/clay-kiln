@@ -3,7 +3,17 @@ const radioApi = 'https://api.radio.com/v1/',
   rest = require('../../services/universal/rest'),
   geoApi = 'https://geo.radio.com/markets',
   localStorage = window.localStorage,
-  Handlebars = require('handlebars');
+  Handlebars = require('handlebars'),
+  stationLI = `
+    <a href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
+      <img class='thumb'
+          srcset='{{ default square_logo_large "" }}?width=222&dpr=1.5 1.5x,
+            {{ default square_logo_large "" }}?width=222&dpr=2 2x'
+          src='{{ default square_logo_large "" }}?width=222'
+      />
+      <span>{{ default name '' }}</span>
+    </a>
+  `;
 
 require('clayhandlebars')(Handlebars);
 
@@ -286,21 +296,14 @@ StationsCarousel.prototype = {
    */
   updateStationsDOM: function () {
     this.stationsList.removeChild(this.stationsList.querySelector('.loader-container'));// Remove loader
+    const template = Handlebars.compile(stationLI);
     this.stationsData.stations.forEach(function (stationData) {
-      let station = document.createElement('li');
+      const station = document.createElement('li');
 
-      station.innerHTML = `
-        <a href='${stationData.listen_live_url ? stationData.listen_live_url : 'https://player.radio.com'}' target='_blank'>
-          <img class='thumb'
-              srcset='${stationData.square_logo_large ? stationData.square_logo_large : ''}?width=222&dpr=1.5 1.5x,
-                ${stationData.square_logo_large ? stationData.square_logo_large : ''}?width=222&dpr=2 2x'
-              src='${stationData.square_logo_large ? stationData.square_logo_large : ''}?width=222'
-          />
-          <span>${stationData.name ? stationData.name : ''}</span>
-        </a>
-      `;
       this.stationsList.appendChild(station);
+      station.innerHTML = template(stationData);
     }.bind(this));
+
     // Store for stations centering when stations do not fill up page
     this.stationsNodes = this.stationsCarousel.querySelectorAll('li');
     // Store for image resizing when window width is medium or smaller
