@@ -31,8 +31,6 @@ embedSize:
       -
         name: '16:9'
         value: default
-    validate:
-      required: true
 
 _groups:
   audio:

@@ -43,7 +43,7 @@ text:
           component: paragraph
           field: text
         -
-          match: (https?://omny\.fm/shows/[a-z0-9]+(?:-[a-z0-9]+)*/[a-z0-9]+(?:-[a-z0-9]+)*) # todo
+          match: (https?://omny\.fm/shows/[^\s]+) # to do
           matchLink: true
           component: omny
           field: clipURL

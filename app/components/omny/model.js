@@ -1,15 +1,18 @@
 'use strict';
 
 /**
- * Determine embed style from clip URL's params
+ * Determine embed style from clip URL's params. Override sizing from params if embedSize is manually chosen.
  * @param {object} data
  * @return {object} data
  */
 function setEmbedSize(data) {
+  if (data.embedSize) {
+    return data;
+  }
   if (data.clipURL) {
-    if (data.clipURL.split('style=')[1].indexOf('artwork') !== -1) {
+    if (data.clipURL.indexOf('style=artwork') !== -1) {
       data.embedSize = 'wide-simple';
-    } else if (data.clipURL.split('style=')[1].indexOf('cover') !== -1) {
+    } else if (data.clipURL.indexOf('style=cover') !== -1) {
       if (data.clipURL.indexOf('size=square') !== -1) {
         data.embedSize = 'square';
       } else {
@@ -28,7 +31,7 @@ function setEmbedSize(data) {
  * @return {object} data
  */
 function trimClipURL(data) {
-  data.clipURL = data.clipURL ? data.clipURL.split('/embed')[0].split('?')[0] : '';
+  data.clipSrc = data.clipURL ? data.clipURL.split('/embed')[0].split('?')[0] : '';
   return data;
 }
 
