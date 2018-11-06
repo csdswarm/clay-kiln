@@ -1,41 +1,37 @@
-<section class="component component--latest-content" data-uri="{{ default _ref _self }}" data-track-type="latest-content">
+<section class="component latest-content" data-uri="{{ default _ref _self }}" data-track-type="latest-content">
   <h2 class="latest-content__title"><span>LATEST on RADIO.COM</span></h2>
-  <div class="latest-content-sections">
+  <div class="latest-content-section">
     {{#each articles as |articleSection|}}
-      <div class="latest-content-sections__articleList" data-editable="{{articleSection.section}}Items">
+      <div class="latest-content-section__articleList" data-editable="{{articleSection.section}}Items">
         {{#each articleSection.articles as |article|}}
           <a href="{{ article.canonicalUrl }}"
-            class="articleContainer"
+            class="latest-content-article__link {{#unless @first}}latest-content-article__link--subsequent{{/unless}}"
             data-track-type="article-link"
             data-track-component-name="latest-content"
             data-track-page-uri="{{ article.pageUri }}"
             data-track-headline="{{ article.primaryHeadline }}"
             data-track-component-title="Latest Content">
             {{#if @first}}
-              <div class="articleContainer__sectionContainer">
-                <span class="articleContainer__sectionTitle articleContainer__sectionTitle--{{articleSection.section}}">{{capitalize articleSection.section}}</span>
-              </div>
+              <div class="latest-content-article__tag latest-content-article__tag--{{articleSection.section}}">{{ articleSection.section }}</div>
               <img
-                src="https://via.placeholder.com/300x168/666666/ffffff?text=Article%20Image%20Placeholder"
-                srcset="https://via.placeholder.com/343x192/666666/ffffff?text=Article%20Image%20Placeholder 343w,
-                  https://via.placeholder.com/300x168/666666/ffffff?text=Article%20Image%20Placeholder 300w,
-                  https://via.placeholder.com/440x248/666666/ffffff?text=Article%20Image%20Placeholder 440w,
-                  https://via.placeholder.com/320x180/666666/ffffff?text=Article%20Image%20Placeholder 320w"
+                src="{{ article.feedImgUrl }}?width=300&height=169&crop=16:9,smart"
+                srcset="{{ article.feedImgUrl }}?width=300&height=169&&crop=16:9 300w,
+                {{ article.feedImgUrl }}?width=320&height=180&crop=16:9,smart 320w,
+                {{ article.feedImgUrl }}?width=343&height=193&crop=16:9,smart 343w,
+                {{ article.feedImgUrl }}?width=440&height=248&crop=16:9,smart 440w"
                 sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, 300px"
-                class="articleContainer__thumb" />
+                class="latest-content-article__image" />
             {{else}}
-              <picture class="articleContainer__thumb">
-                <source media="(min-width: 1024px)" srcset="https://via.placeholder.com/80x80/666666/ffffff?text=Article%20Image%20Placeholder" />
-                <source media="(max-width: 1023px)" srcset="https://via.placeholder.com/343x192/666666/ffffff?text=Article%20Image%20Placeholder" />
-                <source media="(max-width: 480px)" srcset="https://via.placeholder.com/440x248/666666/ffffff?text=Article%20Image%20Placeholder" />
-                <source media="(max-width: 360px)" srcset="https://via.placeholder.com/320x180/666666/ffffff?text=Article%20Image%20Placeholder" />
-
-                <img
-                  src="https://via.placeholder.com/80x80/666666/ffffff?text=Article%20Image%20Placeholder"
-                   />
+              <picture>
+                <source media="(min-width: 1024px)" srcset="{{ article.feedImgUrl }}?width=80&height=80&crop=1:1,smart" />
+                <source media="(max-width: 1023px)" srcset="{{ article.feedImgUrl }}?width=343&height=193&crop=16:9,smart" />
+                <source media="(max-width: 480px)" srcset="{{ article.feedImgUrl }}?width=440&height=248&crop=16:9,smart" />
+                <source media="(max-width: 360px)" srcset="{{ article.feedImgUrl }}?width=320&height=180&crop=16:9,smart" />
+                <img src="{{ article.feedImgUrl }}?width=80&height=80&crop=1:1,smart"
+                     class="latest-content-article__image" />
               </picture>
             {{/if}}
-            <span class="articleContainer__headline">{{{ article.primaryHeadline }}}</span>
+            <div class="latest-content-article__label">{{ article.primaryHeadline }}</div>
           </a>
         {{/each}}
       </div>
