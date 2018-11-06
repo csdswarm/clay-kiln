@@ -1,7 +1,7 @@
 // This document provided by NYMag
 {
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 9,
     "ecmaFeatures": {
       "arrowFunctions": true,
       "blockBindings": true,
@@ -65,7 +65,7 @@
     "lodash/chain-style": 0, // Non error until NYMag fixes lodash chain style problems
     "lodash/chaining": 0, // Non error until NYMag fixes lodash chain problems
     // possible errors
-    "no-extra-parens": 1,
+    "no-extra-parens": [1, "all", {"nestedBinaryExpressions": false}],
     "valid-jsdoc": [1, {
       "requireReturn": false,
       "requireParamDescription": false,
@@ -103,7 +103,7 @@
     "newline-after-var": [2, "always"],
     "no-nested-ternary": 2,
     "no-spaced-func": 0,
-    "no-trailing-spaces": 2,
+    "no-trailing-spaces": [2, { "skipBlankLines": true}],
     "no-underscore-dangle": 0,
     "no-unneeded-ternary": 1,
     "one-var": 2,

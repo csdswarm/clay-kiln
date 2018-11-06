@@ -1,0 +1,9 @@
+.component--brightcove {
+  margin-bottom: em(20);
+}
+
+.player__video--hidden-title {
+  .vjs-dock-text {
+    display: none;
+  }
+}
