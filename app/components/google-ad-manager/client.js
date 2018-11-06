@@ -116,116 +116,94 @@ function setAds() {
   });
 }
 
-window.freq_dfp_takeover = function(i, l, c, p) {
-  var skinDiv = 'freq-dfp--bg-skin';
-  var mainDiv =  document.getElementById(skinDiv);
-  var skinClass = "advertisement--full";
-  var adType = 'fullpageBanner';
-  var width = window.innerWidth
-      || document.documentElement.clientWidth
-      || document.body.clientWidth;
+/**
+ * Legacy code ported over from frequency to implement the takeover.
+ *
+ * @param {string} imageUrl
+ * @param {string} linkUrl
+ * @param {string} backgroundColor
+ * @param {string} position
+ */
+window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, position) {
+  const skinDiv = 'freq-dfp--bg-skin',
+    skinClass = 'advertisement--full',
+    adType = 'fullpageBanner',
+    bgdiv = document.createElement('div'),
+    globalDiv = document.getElementsByClassName('layout')[0],
+    transparentSections = [].slice.call(document.getElementsByClassName('google-ad-manager__slot--billboard')).concat([].slice.call(document.getElementsByClassName('google-ad-manager--billboard')));
 
-  // TODO remove these
-  //l = 'http://radio.com'
-  i = 'https://via.placeholder.com/1800x900/666666/ffffff?text=TAKEOVER%20PLACETHING'
-  p = 'fixed'
+  /*
+  for testing
+  linkUrl = 'http://radio.com';
+  imageUrl = 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=b16763e034eaaf931f271fc16dd60069&auto=format&fit=crop&w=2213&q=80';
+  position = 'fixed';
+  */
 
   // Include our default bg color
-  if (typeof c == 'undefined') {
-    c = '#FFF';
+  if (typeof backgroundColor == 'undefined') {
+    backgroundColor = '#FFF';
   }
   // Include our default bg position
-  if (typeof p == 'undefined') {
-    p = 'absolute';
+  if (typeof position == 'undefined') {
+    position = 'absolute';
   }
 
-  // Only create div if it doesn't exist yet.
-  if (!mainDiv) {
-    var bgdiv = document.createElement("div");
-    var cssbgtext = '';
-    bgdiv.setAttribute("id", skinDiv);
-    bgdiv.setAttribute("class", skinClass);
-    bgdiv.setAttribute("data-ad-type", adType);
-    bgdiv.style.position = p;
-    bgdiv.style.height = '100%';
-    bgdiv.style.width = '100%';
-    bgdiv.style['z-index'] = 1;
 
-    // If 'fixed', we need to add some scrolling treatment.
-    if (p == 'fixed') {
-      window.onscroll = function (e) {
-        // Need browser compatibility checks.
-        var supportPageOffset = window.pageXOffset !== undefined;
-        var isCSS1Compat = ((document.compatMode || "") === "CSS1Compat");
-        var currentYscroll = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
-        var stickyTop = document.getElementsByClassName('radiocom-nav')[0].clientHeight;
+  bgdiv.setAttribute('id', skinDiv);
+  bgdiv.setAttribute('class', skinClass);
+  bgdiv.setAttribute('data-ad-type', adType);
+  bgdiv.style.position = position;
 
-        if (stickyTop && currentYscroll >= stickyTop) {
-          bgdiv.style.cssText = 'position: fixed; padding-top: 0px;';
-        } else {
-          bgdiv.style.cssText = 'position: absolute;';
-        }
-      };
-    }
+  // If 'fixed', we need to add some scrolling treatment.
+  if (position == 'fixed') {
+    window.onscroll = function () {
+      // Need browser compatibility checks.
+      const supportPageOffset = window.pageXOffset !== undefined,
+        isCSS1Compat = (document.compatMode || '') === 'CSS1Compat' ? document.documentElement.scrollTop : document.body.scrollTop,
+        currentYscroll = supportPageOffset ? window.pageYOffset : isCSS1Compat,
+        stickyTop = document.getElementsByClassName('radiocom-nav')[0].clientHeight;
 
-    // Does a link url exist?
-    if (l) {
-      // create our a tag with attributes
-      var linkElem = document.createElement("a");
-      linkElem.setAttribute("href", l);
-      linkElem.setAttribute("target", "_new");
-      linkElem.style.height = '100%';
-      linkElem.style.width = '100%';
-      linkElem.style['z-index'] = 1;
-    }
-
-    // Does a takeover image exist?
-    if (i) {
-      var imgElem = document.createElement("div");
-      cssbgtext += 'background-image: url(' + i + '); ';
-
-      cssbgtext += 'background-position: center top; ';
-      cssbgtext += 'background-repeat: no-repeat; ';
-      cssbgtext += 'width:100%; ';
-      imgElem.style.cssText = cssbgtext;
-      imgElem.setAttribute("class", 'dfp-takeover-skin');
-      imgElem.style.height = '1400px';
-      if (linkElem) {
-        // insert our bg image into our a tag.
-        linkElem.appendChild(imgElem);
-        bgdiv.appendChild(linkElem);
+      if (stickyTop && currentYscroll >= stickyTop) {
+        bgdiv.style.position = 'fixed';
+        bgdiv.style['padding-top'] = '0px';
       } else {
-        // no link so append img only.
-        bgdiv.appendChild(imgElem);
+        bgdiv.style.position = 'absolute';
       }
-
-      var bgImg = new Image();
-      bgImg.src = i;
-      bgImg.onload = function () {
-        // Only include background div if img is a takeover.
-        // DFP seems to include a 1x1 pixel image even with no takeover.
-        if (typeof bgImg.width !== 'undefined' && bgImg.width > 1) {
-          // Create our wrapper div element
-          mainDiv = document.getElementsByTagName("body")[0];
-          mainDiv.classList.add("has-fullpage-ad");
-        }
-      }
-    }
-
-    // Prepend the full ad element to body.
-    console.log('bgdiv', bgdiv)
-
-    // Add a background color to '#globalWrapper' div.
-    var globalDiv =  document.getElementById('vue-app-mount-point');
-    if (globalDiv) {
-      globalDiv.style.backgroundColor = c;
-      document.body.prepend(bgdiv);
-    }
-
-    // now set top ad area to transparent
-    var topAdArea = document.getElementsByClassName('advertisement--top')[0];
-    if (topAdArea) {
-      topAdArea.style.backgroundColor = 'transparent';
-    }
+    };
   }
+
+  if (linkUrl) {
+    bgdiv.onclick = window.open.bind(this, linkUrl, '_new');
+  }
+
+  // Does a takeover image exist?
+  if (imageUrl) {
+    const imgElem = document.createElement('div'),
+      bgImg = new Image(),
+      mainDiv = document.getElementsByTagName('body')[0];
+
+    imgElem.style['background-image'] = `url(${imageUrl})`;
+    imgElem.setAttribute('class', 'dfp-takeover-skin');
+    bgdiv.appendChild(imgElem);
+
+    bgImg.src = imageUrl;
+    bgImg.onload = function () {
+      // Only include background div if img is a takeover.
+      // DFP seems to include a 1x1 pixel image even with no takeover.
+      if (typeof bgImg.width !== 'undefined' && bgImg.width > 1) {
+        // Create our wrapper div element
+
+        mainDiv.classList.add('has-fullpage-ad');
+      }
+    };
+  }
+
+  if (globalDiv) {
+    document.body.style.backgroundColor = backgroundColor;
+    globalDiv.prepend(bgdiv);
+  }
+
+  transparentSections.forEach((section) => {
+    section.style.backgroundColor = 'transparent';
+  });
 };

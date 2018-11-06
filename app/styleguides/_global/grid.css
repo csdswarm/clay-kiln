@@ -8,6 +8,7 @@
 
 .layout__content {
   margin: 0 auto;
+  padding: em(30);
   .content__main,
   .content__secondary {
     width: 100%;
