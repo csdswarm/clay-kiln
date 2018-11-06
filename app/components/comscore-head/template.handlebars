@@ -1,0 +1,35 @@
+{{#unless @root.locals.edit}}
+<script>
+  var _comscore = _comscore || [];
+  _comscore.push({
+    "c1": "2",
+    "c2": "12963797",
+    "c3": "",
+    "c4": "https:\/\/www.radio.com\/",
+    "c5": "",
+    "c6": "",
+    "c15": ""
+  });
+  (function () {
+    var s = document.createElement("script"), el = document.getElementsByTagName("script")[0];
+    s.async = true;
+    s.src = (document.location.protocol == "https:" ? "https://sb" : "http://b") + ".scorecardresearch.com/beacon.js";
+    el.parentNode.insertBefore(s, el);
+  })();
+
+  document.addEventListener('pageView', (event) => {
+    let details = event.details || {};
+    const newLocation = "https:\/\/www.radio.com" + (details.path || window.location.pathname)
+    console.log('loc', newLocation)
+    _comscore.push({
+      "c1": "2",
+      "c2": "12963797",
+      "c3": "",
+      "c4": newLocation,
+      "c5": "",
+      "c6": "",
+      "c15": ""
+    });
+  });
+</script>
+{{/unless}}
