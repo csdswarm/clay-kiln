@@ -644,10 +644,10 @@ _components:
   latest-content:
     instances:
       new:
-    sectionFronts:
-      - 'entertainment'
-      - 'sports'
-      - 'news'
-      entertainmentItems: []
-      sportsItems: []
-      newsItems: []
+        sectionFronts:
+          - 'entertainment'
+          - 'sports'
+          - 'news'
+        entertainmentItems: []
+        sportsItems: []
+        newsItems: []
