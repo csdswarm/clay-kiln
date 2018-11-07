@@ -48,7 +48,7 @@ This is to make sure your `public` directory exists. Without it the site won't r
 
 This is the window where you'll re-run Gulp as you need to. Right now only the tasks for building model.js, template files and CSS.
 
-### Termindal Window 2
+### Terminal Window 2
 
 Navigate to the root of the project, where the `Makefile` exists.
 
@@ -87,12 +87,12 @@ $ make clear-data
 
 1. Install [claycli](https://github.com/clay/claycli)
 2. Configure your [`.clayconfig` file](https://github.com/clay/claycli#usage). It'll go at `~/.clayconfig` and you'll want to add the following:
-  ```
-  [keys]
-    demo = accesskey
-  [urls]
-    demosite = http://clay.radio.com
-  ```
+```
+[keys]
+  demo = accesskey
+[urls]
+  demosite = http://clay.radio.com
+```
 3. Now you can run `make bootstrap` which will put the `app/first-run` data into your local instance.
 
 
@@ -125,6 +125,25 @@ _users:
     provider: ldap
     auth: write
 ```
+
+## Running the importer
+
+You will need to run the importer (Will create pages and import 10 items from each content type (articles/blogs/etc))
+
+```bash
+git clone git@github.com:Entercom/frequency-clay-translator.git
+cd frequency-clay-translator
+npm run import-pages --silent
+npm run import-content --silent totalItems=10
+```
+
+For further instructions please see README.md in ```frequency-clay-translator```
+
+## Running the demo
+
+Now you can visit the following URL to get a list of test pages you can visit.
+
+http://clay.radio.com/_pages/index.html
 
 ## Missed anything?
 That _should_ be it...if not, submit an issue or add something to this README.w

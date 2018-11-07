@@ -1,0 +1,189 @@
+_description: |
+  A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
+
+populateFrom:
+  _label: Populate content from?
+  _has:
+    validate:
+      required: true
+    input: radio
+    options:
+      -
+        name: All Content
+        value: all
+      -
+        name: Section Front
+        value: section-front
+      - tag
+      - manual
+
+locationOfContentFeed:
+  _label: Content Feed is on Homepage
+  _has:
+    help: Indicates whether content feed is located on the homepage
+    validate:
+      required: true
+    input: radio
+    options:
+      - homepage
+      - section-front
+      - tag-page
+
+sectionFront:
+  _subscribe: sectionFront
+  _label: Section Front Category
+  _has:
+    help: Section Front Category from which to pull content
+
+sectionFrontManual:
+  _label: Section Front Category
+  _publish: sectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: section-front
+  _has:
+    input: radio
+    options:
+      -
+        name: Entertainment
+        value: entertainment
+      -
+        name: News
+        value: news
+      -
+        name: Podcasts
+        value: podcasts
+      -
+        name: Sports
+        value: sports
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        value: section-front
+
+tag:
+  _label: Tag
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: tag
+  _has:
+    input: text
+    help: Tag from which to pull content
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        value: tag
+
+items:
+  _label: Items
+  _has:
+    input: complex-list
+    help: Manually choose content to include
+    props:
+    -
+      prop: url
+      _label: URL
+      _has:
+        input: text
+        type: url
+        validate:
+          required: true
+    -
+      prop: overrideTitle
+      _label: Headline
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
+      prop: overrideTeaser
+      _label: Teaser
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
+      prop: overrideImage
+      _label: Image Override
+      _has:
+        input: text
+        help: Image url for article thumbnail
+        type: url
+    -
+      prop: overrideDate
+      _label: Date content was first published
+      _has:
+        input: datepicker
+        help: Date article was first published
+    -
+      prop: overrideSectionFront
+      _label: Section Front
+      _has:
+        help: The section front this content is a part of
+        input: radio
+        options:
+          -
+            name: Entertainment
+            value: entertainment
+          -
+            name: News
+            value: news
+          -
+            name: Podcasts
+            value: podcasts
+          -
+            name: Sports
+            value: sports
+    -
+      prop: overrideContentType
+      _label: Content Type
+      _has:
+        help: The type of media on the lede of the page
+        input: radio
+        options:
+          - image
+          -
+            name: instagram
+            value: instagram-post
+          - brightcove
+          - youtube
+          -
+            name: html embed
+            value: html-embed
+    -
+      prop: ignoreValidation
+      _label: Bypass URL Validation?
+      _has:
+        input: checkbox
+        help: Use this field if the destination of the URL entered is not a Clay page. If checked, Headline and/or Image override must be set manually.
+    -
+      prop: urlIsValid
+      _has:
+        validate:
+          required: true
+
+googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
+
+googleAdTop:
+  _component:
+    include:
+      - google-ad-manager
+
+_groups:
+  settings:
+    fields:
+      - populateFrom
+      - sectionFrontManual
+      - tag
+      - items
+    _placeholder:
+      height: 100px
+      text: More from Radio.com (Content Feed)
+      ifEmpty: populateFrom

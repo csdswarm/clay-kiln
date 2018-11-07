@@ -22,6 +22,11 @@ _components:
       general:
         description: ''
 
+  meta-url:
+    instances:
+      general:
+        url: ''
+
   paragraph:
     instances:
       new:
@@ -538,8 +543,6 @@ _components:
         lead: []
         content:
           -
-            _ref: /_components/image/instances/new
-          -
             _ref: /_components/paragraph/instances/new
         tags:
           _ref: /_components/tags/instances/new
@@ -556,15 +559,76 @@ _components:
         articleType: entertainment
         showSocial: true
 
+  section-lead:
+    instances:
+      new:
+        items: []
+        sectionFront: ''
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+
   section-front:
     instances:
       new:
         title: ''
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/section-front
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/leaderboard
+
+  more-content-feed:
+    instances:
+      homepage:
+        items: []
+        tag: ''
+        sectionFrontManual: ''
+        populateFrom: all
+        locationOfContentFeed: homepage
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+      section-front:
+        items: []
+        tag: ''
+        sectionFrontManual: entertainment
+        populateFrom: section-front
+        locationOfContentFeed: section-front
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+      tag-page:
+        items: []
+        tag: ''
+        sectionFrontManual: ''
+        populateFrom: tag
+        locationOfContentFeed: tag-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+
+  section-videos:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
 
   homepage:
     instances:
       new:
-        title: ''
+        googleAdUnderStationsModule:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+        googleAdUnderLatestModule:
+          _ref: /_components/google-ad-manager/instances/billboard
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/homepage
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
 
   latest-recirculation:
     instances:

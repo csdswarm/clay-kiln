@@ -13,4 +13,5 @@ function addLastModified(pageData) {
 }
 
 module.exports.getYearMonthSlugUrl = urlPub.getYearMonthSlugUrl;
+module.exports.getArticleSlugUrl = urlPub.getArticleSlugUrl;
 module.exports.addLastModified = addLastModified;

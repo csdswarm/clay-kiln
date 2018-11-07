@@ -4,6 +4,10 @@ _users:
     provider: google
     auth: admin
   -
+    username: nick@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
     username: shawn@swarmsolutions.com
     provider: google
     auth: admin
@@ -20,10 +24,26 @@ _users:
     provider: google
     auth: admin
   -
-    username: tiffachow@gmail.com
+    username: tiffany.chow@entercom.com
     provider: google
     auth: admin
   -
     username: nathanacarmine@gmail.com
+    provider: google
+    auth: admin
+  -
+    username: victoriya.polyakova@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: john.pacino@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: bill.difonzo@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: taryn.wood-norris@entercom.com
     provider: google
     auth: admin

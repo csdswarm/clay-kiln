@@ -243,13 +243,13 @@ lead:
     fuzzy: true # allows interactives, etc to add one-off components
     include:
       - image
-      - tweet
-      - facebook-post
       - instagram-post
       - brightcove
+      - youtube
+      - html-embed
     validate:
-      min: 1
       max: 1
+      required: true
 content:
   _label: Article Content
   _placeholder:

@@ -5,6 +5,7 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
     main:
       - /_components/article/instances/new
     layout: /_components/one-column-layout/instances/general
@@ -13,6 +14,7 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
     pageHeader:
       - /_components/google-ad-manager/instances/billboard
     main:
@@ -27,17 +29,21 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboard
     main:
       - /_components/section-front/instances/new
-    layout: /_components/one-column-layout/instances/section-front
+    layout: /_components/one-column-layout/instances/general
   homepage:
     head:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboard
     main:
       - /_components/homepage/instances/new
-    layout: /_components/one-column-layout/instances/homepage
+    layout: /_components/one-column-layout/instances/general
   # Index Page
   index:
     head:

@@ -1,6 +1,26 @@
 _confirmRemoval: true
 
-title:
-  _label: Title
+canonicalUrl:
+  _publish: url
   _has:
-    input: text
+    help: Canonical URL of an article. Set when the article publishes.
+
+googleAdUnderStationsModule:
+  _component:
+    include:
+      - google-ad-manager
+
+googleAdUnderLatestModule:
+  _component:
+    include:
+      - google-ad-manager
+
+moreContentFeed:
+  _component:
+    include:
+      - more-content-feed
+
+sectionLead:
+  _component:
+    include:
+      - section-lead

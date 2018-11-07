@@ -161,3 +161,4 @@ module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
 // URL patterns below need to be handled by the site's index.js
 module.exports.dateUrlPattern = o => `${o.prefix}/${o.yyyy}/${o.mm}/${o.slug}.html`; // e.g. http://vulture.com/2016/04/x.html
+module.exports.articleSlugPattern = o => `${o.prefix}/article/${o.slug}.html`; // e.g. http://radio.com.com/article/eminem-drops-new-album-and-its-fire.html
