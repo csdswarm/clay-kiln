@@ -6,6 +6,7 @@ _components:
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
         top:
           -
             _ref: /_components/header/instances/default
@@ -26,9 +27,9 @@ _components:
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
         top:
-          -
-            _ref: /_components/header/instances/default
+          - _ref: /_components/header/instances/default
         head: head
         main: main
         bottom:
@@ -44,9 +45,9 @@ _components:
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
         top:
-          -
-            _ref: /_components/header/instances/default
+          - _ref: /_components/header/instances/default
         head: head
         main: main
         secondary:
@@ -67,9 +68,9 @@ _components:
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
         top:
-          -
-            _ref: /_components/header/instances/default
+          - _ref: /_components/header/instances/default
         head: head
         pageHeader: pageHeader
         sectionHeader: sectionHeader

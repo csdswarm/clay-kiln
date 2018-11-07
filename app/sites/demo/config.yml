@@ -9,3 +9,5 @@ shortKey: ${CLAY_SITE_SHORTKEY}
 webPlayerHost: ${WEB_PLAYER_HOST}
 brightcoveAccountId: 1418490336
 brightcovePlayerId: 90eeiglcU
+googleContainerId: 'PN754S7'
+
