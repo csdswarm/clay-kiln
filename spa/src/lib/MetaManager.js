@@ -22,24 +22,31 @@ export default class MetaManager {
    * @param {object} spaPayload - The handlebars context payload data.
    */
   updateExternalTags (spaPayload) {
-    // Update meta-title component tags.
+    // Update or strip meta-title component tags (never delete <title> tag).
     const metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
     if (metaTitleData) {
       this.updateTitleTag(metaTitleData.title)
-      this.updateMetaTag('property', 'og:title', metaTitleData.ogTitle)
+      this.updateMetaTag('property', 'og:title', metaTitleData.ogTitle, true)
+    } else {
+      this.deleteMetaTag('property', 'og:title')
     }
 
-    // Update meta-description component tags.
+    // Update or strip meta-description component tags.
     const metaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
     if (metaDescriptionData) {
-      this.updateMetaTag('name', 'description', metaDescriptionData.description)
+      this.updateMetaTag('name', 'description', metaDescriptionData.description, true)
+    } else {
+      this.deleteMetaTag('name', 'description')
     }
 
-    // Update meta-image component tags.
+    // Update or strip meta-image component tags.
     const metaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
     if (metaImageData) {
-      this.updateMetaTag('name', 'twitter:image', metaImageData.imageUrl)
-      this.updateMetaTag('property', 'og:image', metaImageData.imageUrl)
+      this.updateMetaTag('name', 'twitter:image', metaImageData.imageUrl, true)
+      this.updateMetaTag('property', 'og:image', metaImageData.imageUrl, true)
+    } else {
+      this.deleteMetaTag('name', 'twitter:image')
+      this.deleteMetaTag('property', 'og:image')
     }
   }
 
@@ -52,7 +59,48 @@ export default class MetaManager {
   updateTitleTag (newTitle) {
     const title = document.head.querySelector('title')
 
-    title.textContent = newTitle
+    if (title) {
+      title.textContent = newTitle
+    }
+  }
+
+  /**
+   *
+   * Create a <meta> tag on the page by name or property attribute and assign content to it.
+   *
+   * @param {string} attributeType - Attribute to select by ("name" or "property").
+   * @param {string} attributeKey - Value of attribute to select for.
+   * @param {string} content - New content to be used in meta tag.
+   */
+  createMetaTag (attributeType, attributeKey, content) {
+    // Create <meta> tag element.
+    const meta = document.createElement('meta')
+    meta.setAttribute(attributeType, attributeKey)
+    meta.setAttribute('content', content)
+
+    // Insert <meta> tag into <head>
+    document.getElementsByTagName('head')[0].appendChild(meta)
+  }
+
+  /**
+   *
+   * Select a <meta> tag and delete it from the DOM.
+   *
+   * @param {string} attributeType - Attribute to select by ("name" or "property").
+   * @param {string} attributeKey - Value of attribute to select for.
+   */
+  deleteMetaTag (attributeType, attributeKey) {
+    if (attributeType !== 'property' && attributeType !== 'name') {
+      throw new Error('invalid meta tag attribute.')
+    }
+
+    // Select meta tag.
+    const metaTag = document.head.querySelector(`meta[${attributeType}='${attributeKey}']`)
+
+    // If tag exists, remove it from DOM.
+    if (metaTag) {
+      metaTag.parentNode.removeChild(metaTag)
+    }
   }
 
   /**
@@ -62,12 +110,21 @@ export default class MetaManager {
    * @param {string} attributeType - Attribute to select by ("name" or "property").
    * @param {string} attributeKey - Value of attribute to select for.
    * @param {string} content - New content to be used in meta tag.
+   * @param {boolean} createIfNotExist - Similar to database "upsert" functionality, create the meta tag with supplied values if it doesn't exist in DOM currently.
    */
-  updateMetaTag (attributeType, attributeKey, content) {
+  updateMetaTag (attributeType, attributeKey, content, createIfNotExist = false) {
     if (attributeType !== 'property' && attributeType !== 'name') {
       throw new Error('invalid meta tag attribute.')
     }
 
-    document.head.querySelector(`meta[${attributeType}='${attributeKey}']`).setAttribute('content', content)
+    // Select meta tag.
+    const metaTag = document.head.querySelector(`meta[${attributeType}='${attributeKey}']`)
+
+    // Update, or potentially "upsert" the meta tag.
+    if (metaTag) {
+      metaTag.setAttribute('content', content)
+    } else if (createIfNotExist) {
+      this.createMetaTag(attributeType, attributeKey, content)
+    }
   }
 }
