@@ -45,7 +45,6 @@ class MoreContentFeed {
   constructor(el) {
     this.moreContentFeed = el;
     this.loadMore = el.querySelector('.more-content-feed__loadmore');
-    this.linksSection = el.querySelector('.more-content-feed__links');
     this.moreContentUrl = this.moreContentFeed.getAttribute('data-uri').replace(/^.*\.com/, '');
 
     this.currentPage = 1;
@@ -69,7 +68,7 @@ class MoreContentFeed {
           const wrapper = document.createElement('div');
 
           data.feedItem = feedItem;
-          this.linksSection.appendChild(wrapper);
+          this.loadMore.before(wrapper);
           wrapper.outerHTML = template(data);
         }
         if (!data.moreResults) {
