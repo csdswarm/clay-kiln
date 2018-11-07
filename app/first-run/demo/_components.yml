@@ -592,7 +592,6 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangle
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
-
       section-front:
         items: []
         tag: ''
@@ -603,7 +602,6 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangle
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
-        
       tag-page:
         items: []
         tag: ''
@@ -621,7 +619,7 @@ _components:
         items: []
         tag: ''
         sectionTitle: ''
-      
+
   homepage:
     instances:
       new:
@@ -646,7 +644,10 @@ _components:
   latest-content:
     instances:
       new:
-        entertainmentItems: []
-        sportsItems: []
-        newsItems: []
-
+    sectionFronts:
+      - 'entertainment'
+      - 'sports'
+      - 'news'
+      entertainmentItems: []
+      sportsItems: []
+      newsItems: []

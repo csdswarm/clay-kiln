@@ -8,8 +8,7 @@ const queryService = require('../../services/server/query'),
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl',
-    'articleType'
+    'feedImgUrl'
   ],
   maxItems = 3;
 /**
@@ -23,7 +22,7 @@ const queryService = require('../../services/server/query'),
  */
 
 module.exports.save = async function (ref, data, locals) {
-  for (let section of data.sectionFronts) {
+  for (const section of data.sectionFronts) {
     const items = data[`${section}Items`];
 
     if (!items.length || !locals) {
@@ -57,10 +56,10 @@ module.exports.save = async function (ref, data, locals) {
 module.exports.render = async function (ref, data, locals) {
   data.articles = [];
 
-  for (let section of data.sectionFronts) {
+  for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
-      query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
       cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
+    let query = queryService.newQueryWithCount(elasticIndex, maxItems);
 
     queryService.withinThisSiteAndCrossposts(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
