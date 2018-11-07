@@ -4,19 +4,19 @@
       <div class="section-lead__article {{#unless @index}}section-lead__article--first{{/unless}}">
         <a href="{{ article.canonicalUrl }}" class="section-lead__link">
           {{#if @index}}
-            <img
-              src="{{ feedImgUrl }}?width=220&height=124&fit=bounds"
-              srcset="{{ feedImgUrl }}?width=140&height=79&fit=bounds 140w,
-                {{ feedImgUrl }}?width=343&height=19&fit=bounds 343w,
-                {{ feedImgUrl }}?width=440&height=248&fit=bounds 440w"
-              sizes="(max-width: 480px) 100vw, (max-width: 1023px) 343px, (max-width: 1279px) 140px, 220px"
-              class="section-lead__image" />
+            <picture class="section-lead__image">
+              <source media="(max-width: 480px)" srcset="{{ feedImgUrl }}?width=440&crop=16:9,smart" />
+              <source media="(max-width: 1023px)" srcset="{{ feedImgUrl }}?width=343&crop=16:9,smart" />
+              <source media="(max-width: 1279px)" srcset="{{ feedImgUrl }}?width=124&crop=1:1,smart" />
+              <source media="(min-width: 1280px)" srcset="{{ feedImgUrl }}?width=220&crop=16:9,smart" />
+              <img src="{{ feedImgUrl }}?width=220&crop=16:9,smart" />
+            </picture>
           {{else}}
             <img
-              src="{{ feedImgUrl }}?width=780&height=439&fit=bounds"
-              srcset="{{ feedImgUrl }}?width=620&height=349&fit=bounds 620w,
-                {{ feedImgUrl }}?width=706&height=397&fit=bounds 706w,
-                {{ feedImgUrl }}?width=480&height=270&fit=bounds 480w"
+              src="{{ feedImgUrl }}?width=780&crop=16:9,smart"
+              srcset="{{ feedImgUrl }}?width=620&crop=16:9,smart 620w,
+                {{ feedImgUrl }}?width=706&crop=16:9,smart 706w,
+                {{ feedImgUrl }}?width=480&crop=16:9,smart 480w"
               sizes="(max-width: 480px) 100vw, (max-width: 1023px) 80vw, (max-width: 1279px) 620px, 780px"
               class="section-lead__image" />
           {{/if}}
