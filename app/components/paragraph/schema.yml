@@ -27,6 +27,11 @@ text:
           component: facebook-post
           field: url
         -
+          match: (https?://omny\.fm/shows/[^\s]+)
+          matchLink: true
+          component: omny
+          field: clipURL
+        -
           match: <h[1-9]>(.*?)</h[1-9]>
           component: subheader
           field: text
@@ -42,8 +47,3 @@ text:
           match: (.*)
           component: paragraph
           field: text
-        -
-          match: (https?://omny\.fm/shows/[^\s]+) # to do
-          matchLink: true
-          component: omny
-          field: clipURL
