@@ -2,7 +2,7 @@
 
 module.exports.render = (ref, data, locals) => {
   // If we're publishing for a dynamic page, switch out -'s with spaces
-  data.tag = !data.tag && locals && locals.params && locals.params.tag ? locals.params.tag.replace('/-/g', ' ').replace('/\//g','') : data.tag;
+  data.tag = !data.tag && locals && locals.params && locals.params.tag ? locals.params.tag.replace(/-/g, ' ').replace(/\//g,'') : data.tag;
   return data;
 };
 
