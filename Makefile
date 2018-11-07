@@ -36,7 +36,7 @@ clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data
 
 bootstrap:
-	cat ./app/first-run/**/* | clay import -k demo -y clay.radio.com
+	cd ./app &&  cat ./first-run/**/* | clay import -k demo -y clay.radio.com
 	@echo ""
 	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
