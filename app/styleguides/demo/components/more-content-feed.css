@@ -47,7 +47,7 @@
   }
   .section__content-feed-container {
     display: inline-flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: start;
     width: 100%;
     .more-content-feed__links {
@@ -209,6 +209,7 @@
         }
       }
     }
+
     .more-content-feed__loadmore {
       cursor: pointer;
       height: em(50);
@@ -220,21 +221,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      @mixin default-screen {
-        width: em(widthOnGrid(10,9));
-      }
-      @mixin large-screen {
-        width: em(widthOnGrid(8,7));
-      }
-      @mixin medium-screen {
-        width: em(widthOnGrid(6,5, 'medium-screen'));
-      }
-      @mixin medium-small-screen {
-        width: em(widthOnGrid(4,3, 'medium-small-screen'));
-      }
-      @mixin small-screen {
-        width: em(widthOnGrid(4,3, 'small-screen'));
-      }
+      width: 100%;
     }
 
     .loadmore__text {
