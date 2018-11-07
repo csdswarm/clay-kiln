@@ -337,6 +337,11 @@ _components:
       default:
         allowed: true
 
+  google-tag-manager:
+    instances:
+      default:
+        allowed: true
+
   chartbeat:
     instances:
       default:
@@ -566,6 +571,47 @@ _components:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
             _ref: /_components/google-ad-manager/instances/leaderboard
+        stationsCarousel:
+          -
+            _ref: /_components/stations-carousel/instances/section-front
+
+  stations-carousel:
+    instances:
+      homepage:
+        overrideTitle: ''
+        filterStationsBy: market
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      section-front:
+        overrideTitle: ''
+        filterStationsBy: section-front
+        sectionFront: '${sectionFront}'
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      content-hub:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      station-page:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: '${genre}'
+        sectionFrontManual: ''
+        genreManual: ''
+      article:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
 
   more-content-feed:
     instances:
@@ -624,6 +670,9 @@ _components:
           _ref: /_components/more-content-feed/instances/homepage
         sectionLead:
           _ref: /_components/section-lead/instances/new
+        stationsCarousel:
+          -
+            _ref: /_components/stations-carousel/instances/homepage
 
   tag-page:
     instances:
