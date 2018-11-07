@@ -130,8 +130,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
     globalDiv = document.getElementsByClassName('layout')[0],
-    // converting HTML Element Lists to Arrays in the simplest way possible
-    transparentSections = [].slice.call(document.getElementsByClassName('google-ad-manager__slot--billboard')).concat([].slice.call(document.getElementsByClassName('google-ad-manager--billboard')));
+    transparentSections = [...document.getElementsByClassName('google-ad-manager__slot--billboard'), ...document.getElementsByClassName('google-ad-manager--billboard')]
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {
