@@ -118,20 +118,6 @@
     }
   }
 
-
-/*@mixin medium-small-screen {*/
-  /*width: 100%;*/
-  /*max-width: em(widthOnGrid(4,3,medium-small-screen));*/
-  /*height: em(248);*/
-/*}*/
-/*@mixin small-screen {*/
-  /*width: 100%;*/
-  /*max-width: em(widthOnGrid(4,3,small-screen));*/
-  /*height: em(180);*/
-/*}*/
-
-
-
   .latest-content-article__label {
     @mixin latest-content-font2;
     display: flex;
