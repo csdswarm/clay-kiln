@@ -109,6 +109,7 @@
     .section-lead__articles {
       width: 100%;
       justify-content: space-between;
+      margin-right: 0;
     }
 
     .component--google-ad-manager {
