@@ -233,17 +233,6 @@ _components:
         orderBy: date
         title: Recently Published
         size: 3
-  tag-list:
-    instances:
-      default:
-        index: published-articles
-        toggleImages: true
-        toggleTeaser: true
-        toggleReadMore: true
-        variation: large
-        orderBy: date
-        title: 'Articles Tagged: ${tagValue}'
-        size: 3
 
   share:
     instances:
@@ -629,6 +618,8 @@ _components:
       homepage:
         items: []
         tag: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: ''
         populateFrom: all
         locationOfContentFeed: homepage
@@ -639,6 +630,8 @@ _components:
       section-front:
         items: []
         tag: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: entertainment
         populateFrom: section-front
         locationOfContentFeed: section-front
@@ -649,11 +642,13 @@ _components:
       tag-page:
         items: []
         tag: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: ''
         populateFrom: tag
         locationOfContentFeed: tag-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/halfPage
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
 
@@ -666,9 +661,9 @@ _components:
 
   homepage:
     instances:
-      new:
+      default:
         googleAdUnderStationsModule:
-          _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/billboard
         googleAdUnderLatestModule:
           _ref: /_components/google-ad-manager/instances/billboard
         moreContentFeed:
@@ -678,6 +673,23 @@ _components:
         stationsCarousel:
           -
             _ref: /_components/stations-carousel/instances/homepage
+
+  tag-page:
+    instances:
+      new:
+        tag: ''
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/tag-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPage
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+
+  tag-page-header:
+    instances:
+      new:
+        tag: ''
+        image: ''
 
   latest-recirculation:
     instances:

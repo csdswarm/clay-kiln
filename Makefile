@@ -46,6 +46,10 @@ bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_pages/tag@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/tag-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
 
 dev-bootstrap:
 	cd ./app && cat ./first-run/**/* | clay import -k demo -y dev-clay.radio.com
@@ -74,6 +78,7 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT http://stg-clay.radio.com/_components/tag-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+
 
 install:
 	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
