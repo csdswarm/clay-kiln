@@ -32,6 +32,10 @@ _users:
     provider: google
     auth: admin
   -
+    username: brien@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
     username: victoriya.polyakova@entercom.com
     provider: google
     auth: admin
