@@ -60,7 +60,9 @@
     {{/ifAny}}
     <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
       {{#if @root.locals.edit}}
-        <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
+        {{#if (compare locationOfContentFeed 'tag-page')}}
+          <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
+        {{/if}}
       {{else}}
         {{#ifAll tagInfo (compare locationOfContentFeed 'tag-page') }}
           <aside class="blurb">{{ tagInfo }}</aside>
