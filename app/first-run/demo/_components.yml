@@ -337,8 +337,10 @@ _components:
         adSize: leaderboard
         adPosition: bottom
         adLocation: btf
-      halfPage:
+      halfPageTop:
         adSize: half-page
+        adPosition: top
+        adLocation: atf
       mediumRectangleTop:
         adSize: medium-rectangle
         adPosition: rec
@@ -673,7 +675,7 @@ _components:
         populateFrom: tag
         locationOfContentFeed: tag-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPage
+          _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
 
@@ -708,7 +710,7 @@ _components:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/tag-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPage
+          _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
 
