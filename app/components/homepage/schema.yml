@@ -15,10 +15,24 @@ googleAdUnderLatestModule:
     include:
       - google-ad-manager
 
+podcastList:
+  _component:
+    include:
+      - podcast-list
+
 moreContentFeed:
   _component:
     include:
       - more-content-feed
+
+stationsCarousel:
+  _placeholder:
+    text: Stations Carousel
+    height: 300px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - stations-carousel
 
 sectionLead:
   _component:
