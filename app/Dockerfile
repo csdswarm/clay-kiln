@@ -7,6 +7,7 @@ RUN apt-get -y install vim
 ENV HOME=/usr/src/app
 
 COPY package.json $HOME/
+COPY package-lock.json $HOME/
 
 WORKDIR $HOME/
 RUN npm install
