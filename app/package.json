@@ -18,7 +18,7 @@
     "amphora": "^6.9.0",
     "amphora-fs": "^0.1.0",
     "amphora-html": "^3.2.0",
-    "amphora-search": "^6.1.1",
+    "amphora-search": "^6.2.3",
     "aws-sdk": "^2.327.0",
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
