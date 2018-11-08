@@ -24,7 +24,7 @@
                   class="link__image" />
               {{else}}
                 <picture>
-                  <source media="(min-width: 1024px)" srcset="{{ article.feedImgUrl }}?width=80crop=1:1,smart" />
+                  <source media="(min-width: 1024px)" srcset="{{ article.feedImgUrl }}?width=80&crop=1:1,smart" />
                   <source media="(max-width: 1023px)" srcset="{{ article.feedImgUrl }}?width=343&crop=16:9,smart" />
                   <source media="(max-width: 480px)" srcset="{{ article.feedImgUrl }}?width=440&crop=16:9,smart" />
                   <source media="(max-width: 360px)" srcset="{{ article.feedImgUrl }}?width=320&crop=16:9,smart" />
