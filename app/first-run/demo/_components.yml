@@ -470,6 +470,11 @@ _components:
       new:
         items: []
 
+  podcast-list:
+    instances:
+      new:
+        items: []
+
   inline-related:
     instances:
       new:
