@@ -81,12 +81,16 @@ export default {
       metaManager.updateExternalTags(this.$store.state.spaPayload)
 
       // Build pageView event data
-      const nextTitleComponent = queryPayload.findComponent(spaPayload.head, 'meta-title')
+      const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
+      const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
+      const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
 
-      // Call global pageView event: THIS MUST BE LAST IN FUNCTION AFTER META DATA UPDATES
+      // Call global pageView event.
       let event = new CustomEvent(`pageView`, {
         detail: {
-          toTitle: nextTitleComponent.title,
+          toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
+          toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
+          toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
           toPath: to.path
         }
       })

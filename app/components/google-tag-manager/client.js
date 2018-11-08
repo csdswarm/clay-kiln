@@ -33,9 +33,13 @@ document.addEventListener('pageView', function (event) {
 
   // Build Data Layer event for new SPA pageview.
   const dataLayerEvent = {
-    event: 'pageview',
+    event: 'Pageview',
     title: event.detail.toTitle,
-    location: `${window.location.hostname}${event.detail.toPath}`
+    'og:title': event.detail.toTitle,
+    description: event.detail.toDescription,
+    'twitter:image': event.detail.toMetaImageUrl,
+    'og:image': event.detail.toMetaImageUrl,
+    url: `${window.location.protocol}//${window.location.hostname}${event.detail.toPath}`
   };
 
   // Push event onto Data Layer.
