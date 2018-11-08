@@ -4,6 +4,8 @@ _components:
       _ref: /_components/more-content-feed/instances/homepage
     googleAdUnderStationsModule:
       _ref: /_components/google-ad-manager/instances/superLeaderboard
+    podcastList:
+      _ref: /_components/podcast-list/instances/new
     googleAdUnderLatestModule:
       _ref: /_components/google-ad-manager/instances/billboard
     sectionLead:
