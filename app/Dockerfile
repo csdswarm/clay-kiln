@@ -10,7 +10,7 @@ COPY package.json $HOME/
 COPY package-lock.json $HOME/
 
 WORKDIR $HOME/
-RUN npm ci
+RUN npm i
 
 # Build application source into image and run container
 COPY . $HOME/
