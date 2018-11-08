@@ -209,6 +209,22 @@ em, i {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Podcast-List Fonts Styleguide ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin podcast-list-font1 {
+  @mixin font CircularStd-Medium, 16px, $black, -.26px, 20px;
+}
+@define-mixin podcast-list-font2 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin podcast-list-font3 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin podcast-list-font4 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| More Content Feed Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
