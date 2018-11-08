@@ -1,6 +1,13 @@
 _description: |
   A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
 
+pageLength:
+  _label: Page Size
+  _has:
+    help: Number of articles to load when "load more" is clicked
+    input: text
+    type: number
+
 populateFrom:
   _label: Populate content from?
   _has:
@@ -203,6 +210,7 @@ googleAdTop:
 _groups:
   settings:
     fields:
+      - pageLength
       - populateFrom
       - sectionFrontManual
       - tagManual
