@@ -712,7 +712,7 @@ _components:
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
 
   tag-page-header:
     instances:
