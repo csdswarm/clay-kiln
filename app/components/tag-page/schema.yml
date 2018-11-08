@@ -1,0 +1,38 @@
+_description: |
+  A dynamically created page containing a list of articles by tag.
+
+_confirmRemoval: true
+
+tag:
+  _label: tag
+  _publish: tag
+  _has:
+    input: text
+  _placeholder:
+    ifEmpty: tag
+    height: 100px
+    text: Tag Page
+
+googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
+
+googleAdTop:
+  _component:
+    include:
+      - google-ad-manager
+
+moreContentFeed:
+  _component:
+    include:
+      - more-content-feed
+
+_groups:
+  settings:
+    fields:
+    - tag
+    _placeholder:
+      ifEmpty: tag
+      height: 100px
+      text: Tag Page

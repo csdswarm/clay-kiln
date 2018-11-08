@@ -39,8 +39,8 @@
     background-size: auto em(22); /* Increase FB image height to 22px */
     &:hover,
     &:active {
-      background-color: $chambrayBlue;
-      border-color: $chambrayBlue;
+      background-color: $chambray;
+      border-color: $chambray;
       background-image: url("/media/components/share/facebook--hover.svg");
     }
   }
@@ -50,8 +50,8 @@
     background-size: auto em(17); /* Firefox scaling/bounding fix */
     &:hover,
     &:active {
-      background-color: $ceruleanBlue;
-      border-color: $ceruleanBlue;
+      background-color: $cerulean;
+      border-color: $cerulean;
       background-image: url("/media/components/share/twitter--hover.svg");
     }
   }
@@ -60,8 +60,8 @@
     background-image: url("/media/components/share/email.svg");
     &:hover,
     &:active {
-      background-color: $parisPurple;
-      border-color: $parisPurple;
+      background-color: $parisM;
+      border-color: $parisM;
       background-image: url("/media/components/share/email--hover.svg");
     }
   }

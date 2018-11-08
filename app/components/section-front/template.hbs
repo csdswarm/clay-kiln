@@ -1,5 +1,8 @@
 <section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--section-front{{ if @root.locals.edit ' editing' }}">
   {{> section-lead sectionLead }}
+  <div class="stations-carousel-container" data-editable="stationsCarousel">
+    {{> component-list stationsCarousel }}
+  </div>
   {{> google-ad-manager googleAdUnderStationsModule}}
   {{> latest-content latestContent}}
   {{> more-content-feed moreContentFeed }}

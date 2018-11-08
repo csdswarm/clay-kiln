@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-
+  margin-top: em(50);
   .section-lead__articles {
     display: flex;
     flex-direction: row;
@@ -178,4 +178,4 @@
 @mixin lead-module-color entertainment, $sunsetOrange;
 @mixin lead-module-color news, $lightningYellow;
 @mixin lead-module-color sports, $azureRadience;
-@mixin lead-module-color podcasts, $robinsEgg;
+@mixin lead-module-color podcasts, $robinsEggBlue;
