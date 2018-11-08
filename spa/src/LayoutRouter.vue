@@ -4,13 +4,17 @@
 
 <script>
 
+// Import dependencies.
 import axios from 'axios'
 import * as mutationTypes from '@/vuex/mutationTypes'
 import OneColumnLayout from '@/views/OneColumnLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
+import QueryPayload from '@/lib/QueryPayload'
 
+// Instantiate libraries.
 const metaManager = new MetaManager()
+const queryPayload = new QueryPayload()
 
 export default {
   name: 'LayoutRouter',
@@ -76,8 +80,16 @@ export default {
       // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
       metaManager.updateExternalTags(this.$store.state.spaPayload)
 
+      // Build pageView event data
+      const nextTitleComponent = queryPayload.findComponent(spaPayload.head, 'meta-title')
+
       // Call global pageView event: THIS MUST BE LAST IN FUNCTION AFTER META DATA UPDATES
-      let event = new CustomEvent(`pageView`)
+      let event = new CustomEvent(`pageView`, {
+        detail: {
+          toTitle: nextTitleComponent.title,
+          toPath: to.path
+        }
+      })
       document.dispatchEvent(event)
     }
   }

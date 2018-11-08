@@ -21,3 +21,24 @@
   firstScript.parentNode.insertBefore(newScript, firstScript);
 })();
 
+/**
+ *
+ * Update dataLayer on SPA navigation (ie send new data to GTM on new SPA "pageview").
+ *
+ */
+document.addEventListener('pageView', function (event) {
+
+  // Init Data Layer.
+  window.dataLayer = window.dataLayer || [];
+
+  // Build Data Layer event for new SPA pageview.
+  const dataLayerEvent = {
+    event: 'pageview',
+    title: event.detail.toTitle,
+    location: `${window.location.hostname}${event.detail.toPath}`
+  };
+
+  // Push event onto Data Layer.
+  window.dataLayer.push(dataLayerEvent);
+  
+});
