@@ -14,7 +14,8 @@ const doubleclickPrefix = '21674100491',
   targetingMarket = require('../../services/client/market'),
   targetingNationalRadioStation = 'natlrc',
   targetingGenre = 'aaa',
-  targetingCategory = 'music';
+  targetingCategory = 'music',
+  urlParse = require('url-parse');
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -105,6 +106,8 @@ function setAds() {
   }
 
   googletag.cmd.push(async function () {
+    const queryParams = urlParse(window.location, true).query;
+
     for (let ad of adSlots) {
       let marketName = await targetingMarket.getName(),
         adSize = ad.getAttribute('data-adSize'),
@@ -125,7 +128,8 @@ function setAds() {
           .setTargeting('tag', targetingTags)
           .setTargeting('pid', targetingPageId)
           .setTargeting('pos', ad.parentNode.getAttribute('data-ad-position'))
-          .setTargeting('loc', ad.parentNode.getAttribute('data-ad-location'));
+          .setTargeting('loc', ad.parentNode.getAttribute('data-ad-location'))
+          .setTargeting('adtest', queryParams.adTest || '');
 
       if (targetingAuthors.length) {
         slot.setTargeting('author', targetingAuthors);
