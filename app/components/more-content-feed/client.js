@@ -44,7 +44,7 @@ require('clayhandlebars')(Handlebars);
 class MoreContentFeed {
   constructor(el) {
     this.moreContentFeed = el;
-    this.loadMore = el.querySelector('.more-content-feed__loadmore');
+    this.loadMore = el.querySelector('.links__link--loadmore');
     this.moreContentUrl = this.moreContentFeed.getAttribute('data-uri').replace(/^.*\.com/, '');
 
     this.currentPage = 1;
