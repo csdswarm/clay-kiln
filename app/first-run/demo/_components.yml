@@ -233,17 +233,6 @@ _components:
         orderBy: date
         title: Recently Published
         size: 3
-  tag-list:
-    instances:
-      default:
-        index: published-articles
-        toggleImages: true
-        toggleTeaser: true
-        toggleReadMore: true
-        variation: large
-        orderBy: date
-        title: 'Articles Tagged: ${tagValue}'
-        size: 3
 
   share:
     instances:
@@ -346,6 +335,11 @@ _components:
         adSize: logo-sponsorship
 
   google-ad-manager-head:
+    instances:
+      default:
+        allowed: true
+
+  google-tag-manager:
     instances:
       default:
         allowed: true
@@ -478,6 +472,11 @@ _components:
       new:
         items: []
 
+  podcast-list:
+    instances:
+      new:
+        items: []
+
   inline-related:
     instances:
       new:
@@ -579,12 +578,55 @@ _components:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
             _ref: /_components/google-ad-manager/instances/leaderboard
+        stationsCarousel:
+          -
+            _ref: /_components/stations-carousel/instances/section-front
+
+  stations-carousel:
+    instances:
+      homepage:
+        overrideTitle: ''
+        filterStationsBy: market
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      section-front:
+        overrideTitle: ''
+        filterStationsBy: section-front
+        sectionFront: '${sectionFront}'
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      content-hub:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      station-page:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: '${genre}'
+        sectionFrontManual: ''
+        genreManual: ''
+      article:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
 
   more-content-feed:
     instances:
       homepage:
         items: []
         tag: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: ''
         populateFrom: all
         locationOfContentFeed: homepage
@@ -595,6 +637,8 @@ _components:
       section-front:
         items: []
         tag: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: entertainment
         populateFrom: section-front
         locationOfContentFeed: section-front
@@ -605,11 +649,13 @@ _components:
       tag-page:
         items: []
         tag: ''
+        tagInfo: ''
+        sectionFront: ''
         sectionFrontManual: ''
         populateFrom: tag
         locationOfContentFeed: tag-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangle
+          _ref: /_components/google-ad-manager/instances/halfPage
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
 
@@ -622,15 +668,37 @@ _components:
 
   homepage:
     instances:
-      new:
+      default:
         googleAdUnderStationsModule:
-          _ref: /_components/google-ad-manager/instances/superLeaderboard
+          _ref: /_components/google-ad-manager/instances/billboard
         googleAdUnderLatestModule:
           _ref: /_components/google-ad-manager/instances/billboard
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/homepage
         sectionLead:
           _ref: /_components/section-lead/instances/new
+        podcastList:
+          _ref: /_components/podcast-list/instances/new
+        stationsCarousel:
+          -
+            _ref: /_components/stations-carousel/instances/homepage
+
+  tag-page:
+    instances:
+      new:
+        tag: ''
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/tag-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPage
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+
+  tag-page-header:
+    instances:
+      new:
+        tag: ''
+        image: ''
 
   latest-recirculation:
     instances:

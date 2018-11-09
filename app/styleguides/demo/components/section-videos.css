@@ -12,12 +12,12 @@
     z-index: 1;
     margin-bottom: em(30);
     @mixin section-videos-font1;
-    color: $parisPurple;
+    color: $parisM;
     text-align: center;
     text-transform: uppercase;
 
     &:before {
-      border-top: em(1, 20) solid $parisPurple;
+      border-top: em(1, 20) solid $parisM;
       content: "";
       margin: 0 auto;
       position: absolute;
@@ -143,7 +143,7 @@
           position: absolute;
           width: 100%;
           z-index: 1;
-          border-top: em(6, 14) solid $parisPurple;
+          border-top: em(6, 14) solid $parisM;
         }
       }
 
@@ -227,7 +227,7 @@
           position: absolute;
           width: 100%;
           z-index: 1;
-          border-top: em(6, 14) solid $parisPurple;
+          border-top: em(6, 14) solid $parisM;
         }
 
         .section-lead__link {
@@ -323,4 +323,4 @@
 @mixin lead-module-color entertainment, $sunsetOrange;
 @mixin lead-module-color news, $lightningYellow;
 @mixin lead-module-color sports, $azureRadience;
-@mixin lead-module-color podcasts, $robinsEgg;
+@mixin lead-module-color podcasts, $robinsEggBlue;
