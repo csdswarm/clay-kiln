@@ -1,0 +1,15 @@
+<section class="component component--podcast-list" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
+  {{#each items as |item|}}
+    <div class="podcast-list__item">
+      <a href="{{ item.podcast.url }}">
+        <img class="podcast-list__image" src="{{ item.podcast.imageUrl }}">
+      </a>
+      <a class="podcast-list__title" href="{{ item.podcast.url }}">
+        <h2> {{ item.podcast.label }} </h2>
+      </a>
+      <a class="podcast-list__link" href="{{ item.podcast.url }}">
+        See All Episodes {{{ read 'public/media/components/podcast-list/caret.svg' }}}
+      </a>
+    </div>
+  {{/each}}
+</section>
