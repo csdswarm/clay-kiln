@@ -74,13 +74,8 @@
     }
     .info__by-authors {
       @mixin article-font6;
-      display: inline-flex;
-      flex-wrap: wrap;
-      white-space: pre-wrap;
       .author {
         @mixin article-font5;
-        display: inline-flex;
-        flex-wrap: wrap;
         @define-mixin author-name-color $articleType, $color {
           .component--article[data-article-type=$articleType] & a {
             color: $color;
@@ -93,7 +88,6 @@
         .author__anchor {
           color: inherit;
           text-decoration: none;
-          white-space: nowrap;
           &:first-child {
             padding-left: 0;
           }
@@ -102,7 +96,6 @@
       .source {
         @mixin article-font5;
         color: $black;
-        display: inline-flex;
       }
     }
     .info__by-authors--no-station {
@@ -110,8 +103,6 @@
     }
     .info__from-station {
       @mixin article-font5;
-      display: inline-flex;
-      flex-wrap: wrap;
       margin-bottom: em(15, 14);
       @define-mixin station-source-color $articleType, $color {
         .component--article[data-article-type=$articleType] & a {
@@ -124,7 +115,6 @@
       @mixin station-source-color podcasts, $robinsEggBlue;
       a {
         text-decoration: none;
-        white-space: nowrap;
       }
     }
     .info__timestamp {
