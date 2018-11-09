@@ -6,4 +6,6 @@ _components:
     googleAdUnderStationsModule:
         _ref: /_components/google-ad-manager/instances/leaderboard
     moreContentFeed:
-      _ref: /_components/more-content-feed/instances/new
+      _ref: /_components/more-content-feed/instances/section-front
+    stationsCarousel:
+      _ref: /_components/stations-carousel/instances/section-front

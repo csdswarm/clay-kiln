@@ -1,0 +1,8 @@
+_components:
+  stations-carousel:
+    overrideTitle: ''
+    filterStationsBy: market
+    sectionFront: ''
+    genre: ''
+    sectionFrontManual: ''
+    genreManual: ''
