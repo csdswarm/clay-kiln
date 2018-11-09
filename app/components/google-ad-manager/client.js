@@ -27,8 +27,6 @@ document.addEventListener('google-ad-manager-mount', function () {
 });
 
 document.addEventListener('google-ad-manager-dismount', function () {
-
-  googleDefinedSlots = [];
   googletag.cmd.push(function () {
     googletag.destroySlots();
   });
@@ -111,7 +109,8 @@ function setAds() {
     for (let ad of adSlots) {
       const adSize = ad.getAttribute('data-adSize'),
         pubAds = googletag.pubads();
-      let slot,
+      let marketName = await targetingMarket.getName(),
+        slot,
         sizeMapping = adMapping.sizeMapping[adSize];
 
       if (adSize == 'outOfPage') {
@@ -139,16 +138,16 @@ function setAds() {
       }
 
       slot.setCollapseEmptyDiv(true)
-          .setTargeting('refresh', refreshCount.toString())
-          .setTargeting('market', marketName.replace(' ','').split(',')[0].toLowerCase())
-          .setTargeting('station', targetingNationalRadioStation)
-          .setTargeting('genre', targetingGenre)
-          .setTargeting('cat', targetingCategory)
-          .setTargeting('tag', targetingTags)
-          .setTargeting('pid', targetingPageId)
-          .setTargeting('pos', ad.parentNode.getAttribute('data-ad-position'))
-          .setTargeting('loc', ad.parentNode.getAttribute('data-ad-location'))
-          .setTargeting('adtest', queryParams.adTest || '');
+        .setTargeting('refresh', refreshCount.toString())
+        .setTargeting('market', marketName.replace(' ','').split(',')[0].toLowerCase())
+        .setTargeting('station', targetingNationalRadioStation)
+        .setTargeting('genre', targetingGenre)
+        .setTargeting('cat', targetingCategory)
+        .setTargeting('tag', targetingTags)
+        .setTargeting('pid', targetingPageId)
+        .setTargeting('pos', ad.parentNode.getAttribute('data-ad-position'))
+        .setTargeting('loc', ad.parentNode.getAttribute('data-ad-location'))
+        .setTargeting('adtest', queryParams.adtest || '');
 
       if (targetingAuthors.length) {
         slot.setTargeting('author', targetingAuthors);
