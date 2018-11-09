@@ -3,8 +3,12 @@ _components:
     pageLength: 5
     items: []
     tag: ''
+    tagManual: ''
+    sectionFront: ''
     sectionFrontManual: ''
     populateFrom: ''
     locationOfContentFeed: ''
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/mediumRectangle
+    googleAdTop:
+      _ref: /_components/google-ad-manager/instances/superLeaderboard

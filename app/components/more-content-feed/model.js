@@ -76,13 +76,13 @@ module.exports.render = function (ref, data, locals) {
     queryService.addSize(query, data.pageLength + 1);
   }
   if (data.populateFrom == 'tag') {
-    if (!data.tag || !locals) {
+    if (!data.tag && !data.tagManual || !locals) {
       return data;
     }
 
     // Clean based on tags and grab first as we only ever pass 1
-    data.tag = tag.clean([{text: data.tag}])[0].text || '';
-    queryService.addShould(query, { match: { tags: data.tag }});
+    data.tag = tag.clean([{text: data.tagManual || data.tag}])[0].text || '';
+    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'section-front') {
     if (!data.sectionFront && !data.sectionFrontManual || !locals) {

@@ -12,18 +12,19 @@
     display: none;
   }
   .component--google-ad-manager {
-    margin-bottom: 0;
+    margin-bottom: em(40);
   }
 }
-.component--section-front .more-content-feed__top-ad--mobile {
+.more-content-feed__top-ad--mobile {
   display: none;
 }
 .component--more-content-feed {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: em(40);
   .more-content-feed__title-line {
-      border-bottom: em(1) solid $parisPurple;
+      border-bottom: em(1) solid $parisM;
       margin: em(40) 0;
       width: 100%;
       height: 0;
@@ -78,7 +79,7 @@
         @mixin labelBackground entertainment, $sunsetOrange;
         @mixin labelBackground news, $lightningYellow;
         @mixin labelBackground sports, $azureRadience;
-        @mixin labelBackground podcasts, $robinsEgg;
+        @mixin labelBackground podcasts, $robinsEggBlue;
         .link__thumb {
           background-position: 0,0;
           background-size: cover;
@@ -228,6 +229,13 @@
       @mixin more-content-feed-font9;
     }
     .more-content-feed__right-ad--desktop {
+      width: em(300);
+      aside {
+        border-top: 6px solid $parisPurple;
+        padding: em(20) 0;
+        margin-bottom: em(30);
+        @mixin tag-page-font3;
+      }
       @mixin medium-screen {
         display: none;
       }

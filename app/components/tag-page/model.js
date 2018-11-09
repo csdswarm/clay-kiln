@@ -11,10 +11,6 @@ const queryService = require('../../services/server/query'),
   }),
   index = 'published-articles';
 
-function removeNonAlphanumericCharacters(str = '') {
-  return str.replace(/[_\W]/g, '');
-}
-
 /**
  * Builds and executes the query.
  * @param {string} ref
@@ -32,21 +28,19 @@ function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
     },
     query = queryService(index, locals);
 
-  let lowerCaseRouteParamValue = '';
-
   query.body = _clone(body); // lose the reference
 
   if (routeParamValue) {
-    lowerCaseRouteParamValue = removeNonAlphanumericCharacters(routeParamValue).toLowerCase();
-    queryService.addFilter(query, { match: { 'tags.normalized': lowerCaseRouteParamValue } });
+    queryService.addFilter(query, { match: { 'tags.normalized': routeParamValue } });
   }
 
   // Log the query
-  log('debug', 'tag and normalized tag ', {
-    normalized: lowerCaseRouteParamValue,
-    tag: routeParamValue,
-    ref
-  });
+  if (locals.params && locals.params.log) {
+    log('debug', 'tag', {
+      tag: routeParamValue,
+      ref
+    });
+  }
 
   queryService.addSort(query, { date: 'desc' });
 
@@ -60,24 +54,27 @@ function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
       data.start = from + size;
       data.moreEntries = data.total > data.start;
 
-      log('debug', 'total hits', {
-        hits: hits.total,
-        ref
-      });
+      if (locals.params && locals.params.log) {
+        log('debug', 'total hits', {
+          hits: hits.total,
+          ref
+        });
+      }
 
       return data;
     });
 }
 
-
 module.exports.render = (ref, data, locals) => {
   const reqUrl = locals.url;
   var routeParamValue;
 
-  log('debug', 'request URL', {
-    hits: reqUrl,
-    ref
-  });
+  if (locals.params && locals.params.log) {
+    log('debug', 'request URL', {
+      hits: reqUrl,
+      ref
+    });
+  }
 
   // If we're publishing for a dynamic page, rendering a component directly
   // or trying to render a page route we need a quick return
@@ -86,6 +83,7 @@ module.exports.render = (ref, data, locals) => {
   }
 
   routeParamValue = locals && locals.params ? locals.params.tag : '';
+  data.dynamicTag = routeParamValue;
 
   return buildAndExecuteQuery(ref, data, locals, routeParamValue)
     .then(data => {

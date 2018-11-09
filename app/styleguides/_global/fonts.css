@@ -139,13 +139,13 @@ em, i {
   @mixin font ProximaNova-Bold, 18px, $black, -0.36px, 30px;
 }
 @define-mixin article-font9 {
-  @mixin font CircularStd-Medium, 12px, $boulderGrey, -0.3px, 15px;
+  @mixin font CircularStd-Medium, 12px, $boulder, -0.3px, 15px;
 }
 @define-mixin article-font10 {
   @mixin font ProximaNova-Regular, 12px, $black, -0.3px, 16px;
 }
 @define-mixin article-font11 {
-  @mixin font ProximaNova-Regular, 12px, $boulderGrey, -0.3px, 16px;
+  @mixin font ProximaNova-Regular, 12px, $boulder, -0.3px, 16px;
 }
 @define-mixin article-font12 {
   @mixin font CircularStd-Medium, 14px, $black, -.23, 14px;
@@ -204,7 +204,7 @@ em, i {
 /* |||||| More Content Feed Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin more-content-feed-font1 {
-  @mixin font CircularStd-Black, 20px, $parisPurple, -.32px, 25px;
+  @mixin font CircularStd-Black, 20px, $parisM, -.32px, 25px;
 }
 @define-mixin more-content-feed-font2 {
   @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
@@ -213,7 +213,7 @@ em, i {
   @mixin font ProximaNova-Light, 18px, $black, -.29px, 22px;
 }
 @define-mixin more-content-feed-font4 {
-  @mixin font CircularStd-Medium, 12px, $boulderGrey, -.3px, 15px;
+  @mixin font CircularStd-Medium, 12px, $boulder, -.3px, 15px;
 }
 @define-mixin more-content-feed-font5 {
   @mixin font CircularStd-Medium, 14px, $white, -.23px, 18px;
@@ -238,23 +238,23 @@ em, i {
   @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
 }
 @define-mixin section-lead-font2 {
-  @mixin font CircularStd-Medium, 12px, $parisPurple, -.2px, 15px;
+  @mixin font CircularStd-Medium, 12px, $parisM, -.2px, 15px;
 }
 @define-mixin section-lead-font3 {
   @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
 }
 @define-mixin section-lead-font4 {
-  @mixin font CircularStd-Medium, 14px, $parisPurple, -.2px, 18px;
+  @mixin font CircularStd-Medium, 14px, $parisM, -.2px, 18px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||| Section-Videos Fonts Styleguide |||||| */
+/* ||||| Section-Videos Fonts Styleguide ||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin section-videos-font1 {
-  @mixin font CircularStd-Black, 20px, $parisPurple, -.23px, 25px;
+  @mixin font CircularStd-Black, 20px, $parisM, -.23px, 25px;
 }
 @define-mixin section-videos-font2 {
-  @mixin font CircularStd-Medium, 12px, $parisPurple, -.2px, 15px;
+  @mixin font CircularStd-Medium, 12px, $parisM, -.2px, 15px;
 }
 @define-mixin section-videos-font3 {
   @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
@@ -264,4 +264,39 @@ em, i {
 }
 @define-mixin section-videos-font5 {
   @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||| Tag Page Fonts Styleguide ||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin tag-page-font1 {
+  @mixin font CircularStd-Black, 35px, $white, -.55px, 44px;
+}
+@define-mixin tag-page-font2 {
+  @mixin font CircularStd-Black, 35px, $parisPurple, -.55px, 44px;
+}
+@define-mixin tag-page-font3 {
+  @mixin font CircularStd-Medium, 16px, $black, -.26px, 25px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||| Stations Carousel Fonts Styleguide |||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin stations-carousel-font1 {
+  @mixin font CircularStd-Black, 20px, $white, -.32px, 25px;
+}
+@define-mixin stations-carousel-font1-news {
+  @mixin font CircularStd-Black, 20px, $tundora, -.32px, 25px;
+}
+@define-mixin stations-carousel-font2 {
+  @mixin font CircularStd-Black, 14px, $white, -.23px, 18px;
+}
+@define-mixin stations-carousel-font2-news {
+  @mixin font CircularStd-Black, 14px, $tundora, -.23px, 18px;
+}
+@define-mixin stations-carousel-font3 {
+  @mixin font CircularStd-Black, 18px, $white, -.32px, 25px;
+}
+@define-mixin stations-carousel-font3-news {
+  @mixin font CircularStd-Black, 18px, $tundora, -.32px, 25px;
 }
