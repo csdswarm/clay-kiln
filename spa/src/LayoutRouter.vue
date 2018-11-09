@@ -72,7 +72,7 @@ export default {
       this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
       // Call global pageView event: THIS MUST BE LAST IN FUNCTION AFTER META DATA UPDATES
-      let event = new CustomEvent(`pageView`)
+      let event = new CustomEvent(`pageView`, {detail: spaPayload})
       document.dispatchEvent(event)
     }
   }
