@@ -7,6 +7,7 @@
 }
 .tag-page-content-feed__container {
   display: inline-flex;
+  flex-direction: column;
   align-items: start;
   width: 100%;
   .container__links {

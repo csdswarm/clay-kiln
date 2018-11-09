@@ -118,10 +118,10 @@ module.exports.render = function (ref, data, locals) {
         content.lead = content.lead[0].split('/')[2];
         return content;
       });
-      data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      data.content = locals.page ? results.slice(0, data.pageLength) :
+        data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
       // "more content" button passes page query param - render more content and return it
-      data.rawQueryResults = results.slice(0, data.pageLength);
       data.moreResults = results.length > data.pageLength;
 
       return data;

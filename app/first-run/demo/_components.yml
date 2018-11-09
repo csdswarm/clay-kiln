@@ -632,6 +632,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangle
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
       section-front:
         items: []
         tag: ''
@@ -644,6 +646,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangle
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
       tag-page:
         items: []
         tag: ''
@@ -656,6 +660,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPage
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
 
   section-videos:
     instances:
@@ -680,6 +686,8 @@ _components:
         stationsCarousel:
           -
             _ref: /_components/stations-carousel/instances/homepage
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
 
   tag-page:
     instances:
@@ -691,6 +699,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPage
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboard
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
 
   tag-page-header:
     instances:
@@ -704,3 +714,8 @@ _components:
         items: []
         tag: ''
         populateBy: ''
+
+  load-more-content:
+    instances:
+      default:
+        pageLength: 5

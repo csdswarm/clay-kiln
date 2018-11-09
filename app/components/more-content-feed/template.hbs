@@ -1,3 +1,51 @@
+{{#*inline "more-content-feed-li"}}
+  <li>
+    <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
+       data-track-type="feedItem-link"
+       data-track-component-name="more-content-feed"
+       data-track-page-uri="{{ feedItem.pageUri }}"
+       data-track-headline="{{ feedItem.primaryHeadline }}"
+       data-track-component-title="More Content Feed"
+       data-track-sectionFront="{{ feedItem.articleType }}">
+      <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});">
+        {{#ifAll (compare ../populateFrom 'all') feedItem.articleType}}
+          <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
+        {{/ifAll}}
+        {{#unless (compare ../locationOfContentFeed 'homepage') }}
+          {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
+            <span class="thumb__content-type">
+              {{{ read 'components/more-content-feed/media/watch.svg' }}}
+            </span>
+          {{/ifAny}}
+          {{#if (compare feedItem.lead 'audio')}}
+            <span class="thumb__content-type">
+              {{{ read 'components/more-content-feed/media/listen.svg' }}}
+            </span>
+          {{/if}}
+        {{/unless}}
+        <span class="thumb__datetime-posted">
+          {{#if (isPublished24HrsAgo feedItem.date) }}
+            {{{ hrsOnlyTimestamp feedItem.date }}}
+          {{else}}
+            {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
+          {{/if}}
+        </span>
+      </div>
+      <div class="link__info">
+        <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
+        <span class="info__teaser">{{{ feedItem.teaser }}}</span>
+        <span class="info__datetime-posted">
+          {{#if (isPublished24HrsAgo feedItem.date) }}
+            {{{ hrsOnlyTimestamp feedItem.date }}}
+          {{else}}
+            {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
+          {{/if}}
+        </span>
+      </div>
+    </a>
+  </li>
+{{/inline}}
+
 <div class="more-content-feed__top-ad--mobile">
   {{> google-ad-manager googleAdTop}}
 </div>
@@ -10,55 +58,9 @@
     {{#ifAny content.length @root.locals.edit}}
       <ul class="more-content-feed__links" data-editable="tag">
         {{#each content as |feedItem|}}
-          <li>
-            <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
-               data-track-type="feedItem-link"
-               data-track-component-name="more-content-feed"
-               data-track-page-uri="{{ feedItem.pageUri }}"
-               data-track-headline="{{ feedItem.primaryHeadline }}"
-               data-track-component-title="More Content Feed"
-               data-track-sectionFront="{{ feedItem.articleType }}">
-              <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});">
-                {{#ifAll (compare ../populateFrom 'all') feedItem.articleType}}
-                  <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
-                {{/ifAll}}
-                {{#unless (compare ../locationOfContentFeed 'homepage') }}
-                  {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
-                    <span class="thumb__content-type">
-                      {{{ read 'components/more-content-feed/media/watch.svg' }}}
-                    </span>
-                  {{/ifAny}}
-                  {{#if (compare feedItem.lead 'audio')}}
-                    <span class="thumb__content-type">
-                      {{{ read 'components/more-content-feed/media/listen.svg' }}}
-                    </span>
-                  {{/if}}
-                {{/unless}}
-                <span class="thumb__datetime-posted">
-                  {{#if (isPublished24HrsAgo feedItem.date) }}
-                    {{{ hrsOnlyTimestamp feedItem.date }}}
-                  {{else}}
-                    {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
-                  {{/if}}
-                </span>
-              </div>
-              <div class="link__info">
-                <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
-                <span class="info__teaser">{{{ feedItem.teaser }}}</span>
-                <span class="info__datetime-posted">
-                  {{#if (isPublished24HrsAgo feedItem.date) }}
-                    {{{ hrsOnlyTimestamp feedItem.date }}}
-                  {{else}}
-                    {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
-                  {{/if}}
-                </span>
-              </div>
-            </a>
-          </li>
+          {{> more-content-feed-li feedItem=feedItem}}
         {{/each}}
-        <a class="more-content-feed__loadmore">
-          <div class="loadmore__text">Load More</div>
-        </a>
+        {{> load-more-content loadMoreContent loadMoreContentUri=_ref }}
       </ul>
     {{/ifAny}}
     <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
