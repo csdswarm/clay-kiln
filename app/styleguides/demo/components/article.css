@@ -40,6 +40,7 @@
   }
 }
 .article__body {
+  display: inline-block;
   .body__header {
     margin-bottom: em(50);
     .lead {

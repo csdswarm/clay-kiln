@@ -20,6 +20,12 @@ class NielsenMarketingCloud {
       ctg: '' // section front?
     };
   }
+  /**
+  * Process payload of components on page,
+  * pulling what we need into an updated object.
+  * @function
+  * @param {object} spaPayload
+  */
   parseSPAPayload(spaPayload) {
     let updatedData = {};
 
@@ -38,9 +44,14 @@ class NielsenMarketingCloud {
     } else if (spaPayload.main[0]['_ref'].indexOf('section-front') !== -1) {
       updatedData.format = updatedData.ctg = spaPayload.main[0].title;
     }
-    this.updatePixel(updatedData);
+    this.updateParams(updatedData);
   }
-  updatePixel(updatedData) {
+  /**
+  * Updates params to be appended to nielsen url.
+  * @function
+  * @param {object} updatedData
+  */
+  updateParams(updatedData) {
     this.params = this.initialParams;
     this.nielsenUrl = '//loadus.exelator.com/load/?';
     this.params = {
@@ -63,38 +74,41 @@ class NielsenMarketingCloud {
     this.nielsenUrl += Object.keys(this.params).map(function (paramName) {
       return encodeURIComponent(paramName) + '=' + encodeURIComponent(this.params[paramName]);
     }.bind(this)).join('&');
-    this.updateTag();
+    this.updatePixel();
   }
-  updateTag() {
-    console.log('update tag with url', this.nielsenUrl);
-    const nielsenHeadComponent = document.querySelector('.component--nielsen'),
-      footer = document.querySelector('footer');
+  /**
+  * Removes any existing nielsen pixel and
+  * replaces with new script with new src.
+  * @function
+  */
+  updatePixel() {
+    const nielsen = document.querySelector('.component--nielsen');
+    let nielsenPixel = nielsen.querySelector('.nielsen__marketing-cloud-pixel');
 
-    footer.setAttribute('test','hai');
-    let nielsenMarketingCloudTag = nielsenHeadComponent.querySelector('.nielsen__marketing-cloud-pixel');
-
-    if (nielsenMarketingCloudTag) {
-      nielsenHeadComponent.removeChild(nielsenMarketingCloudTag);
-      console.log('remove script');
+    if (nielsenPixel) {
+      nielsen.removeChild(nielsenPixel);
     }
-    nielsenMarketingCloudTag = document.createElement('script');
-    nielsenMarketingCloudTag.classList.add('nielsen__marketing-cloud-pixel');
-    nielsenMarketingCloudTag.setAttribute('src', this.nielsenUrl);
-    nielsenHeadComponent.appendChild(nielsenMarketingCloudTag);
-    console.log(nielsenHeadComponent, nielsenMarketingCloudTag);
+    if (nielsen) {
+      nielsenPixel = document.createElement('script');
+      nielsenPixel.classList.add('nielsen__marketing-cloud-pixel');
+      nielsenPixel.src = this.nielsenUrl;
+      nielsen.appendChild(nielsenPixel);
+    }
   }
 };
 
 const nielsen = new NielsenMarketingCloud();
 
 (()=>{
-  const jsonPayload = window.Base64.decode(window.spaPayload),
+  const jsonPayload = atob(window.spaPayload),
     spaPayload = JSON.parse(jsonPayload);
 
-  console.log('initial page load');
-  nielsen.parseSPAPayload(spaPayload);
+  document.addEventListener('nielsen-mount', function (event) {
+    nielsen.parseSPAPayload(spaPayload);
+  }, {once: true});
 })();
 document.addEventListener('pageView', function (event) {
-  console.log('page view event');
-  nielsen.parseSPAPayload(event.detail);
+  document.addEventListener('nielsen-mount', function (e) {
+    nielsen.parseSPAPayload(event.detail);
+  }, {once: true});
 });
