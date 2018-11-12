@@ -103,12 +103,12 @@ const nielsen = new NielsenMarketingCloud();
   const jsonPayload = atob(window.spaPayload),
     spaPayload = JSON.parse(jsonPayload);
 
-  document.addEventListener('nielsen-mount', function (event) {
+  document.addEventListener('nielsen-mount', function () {
     nielsen.parseSPAPayload(spaPayload);
   }, {once: true});
 })();
 document.addEventListener('pageView', function (event) {
-  document.addEventListener('nielsen-mount', function (e) {
+  document.addEventListener('nielsen-mount', function () {
     nielsen.parseSPAPayload(event.detail);
   }, {once: true});
 });
