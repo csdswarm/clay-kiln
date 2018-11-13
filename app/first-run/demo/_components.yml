@@ -34,8 +34,10 @@ _components:
 
   yieldmo:
     instances:
-      new:
+      placement1:
         placement: 1
+      placement2:
+        placement: 2
   image:
     instances:
       new:
@@ -531,6 +533,10 @@ _components:
   article:
     instances:
       new:
+        position1:
+          _ref: /_components/yieldmo/instances/placement1
+        position2:
+          _ref: /_components/yieldmo/instances/placement2
         primaryHeadline: ''
         headline: ''
         subHeadline: ''
