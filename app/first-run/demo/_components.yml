@@ -512,6 +512,11 @@ _components:
         fill: 0
         tag: ''
 
+  trending-recirculation:
+    instances:
+      default:
+        items: []
+
   general-content:
     instances:
       new:

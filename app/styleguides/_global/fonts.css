@@ -209,6 +209,22 @@ em, i {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Trending-recirculation Fonts Styleguide ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin trending-recirculation-font1 {
+  @mixin font CircularStd-Black, 20px, $parisPurple, -.32px, 25px;
+}
+@define-mixin trending-recirculation-font2 {
+  @mixin font CircularStd-Medium, 14px, $white, -.23px, 18px;
+}
+@define-mixin trending-recirculation-font3 {
+  @mixin font CircularStd-Black, 20px, $parisPurple, -.32px, 25px;
+}
+@define-mixin trending-recirculation-font4 {
+  @mixin font CircularStd-Medium, 18px, $white, -.3px, 25px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||| Podcast-List Fonts Styleguide ||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/

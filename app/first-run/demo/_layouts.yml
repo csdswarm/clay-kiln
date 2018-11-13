@@ -49,7 +49,7 @@ _components:
         top:
           - _ref: /_components/header/instances/default
         head: head
-        main:  main
+        main: main
         secondary:
           - _ref: /_components/generic-list/instances/recirc
         bottom:
@@ -77,6 +77,7 @@ _components:
         tertiary: tertiary
         secondary: secondary
         bottom:
+          - _ref: /_components/trending-recirculation/instances/default
           - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/footer/instances/default
