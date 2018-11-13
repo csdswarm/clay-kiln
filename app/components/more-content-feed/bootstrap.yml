@@ -1,5 +1,6 @@
 _components:
   more-content-feed:
+    pageLength: 5
     items: []
     tag: ''
     tagManual: ''
