@@ -30,7 +30,7 @@ class NielsenMarketingCloud {
     let updatedData = {};
 
     if (spaPayload.main[0]['_ref'].indexOf('article') !== -1) {
-      updatedData.tag = spaPayload.main[0].tags.items.map((tag)=>{return tag.text;}).join(',');
+      updatedData.tag = spaPayload.main[0].tags.items.map((tag) => {return tag.text;}).join(',');
       updatedData.author = spaPayload.main[0].authors.join(',');
       updatedData.format = updatedData.ctg = spaPayload.main[0].articleType;
     } else if (spaPayload.main[0]['_ref'].indexOf('station-detail') !== -1) {
@@ -99,7 +99,7 @@ class NielsenMarketingCloud {
 
 const nielsen = new NielsenMarketingCloud();
 
-(()=>{
+(() => {
   const jsonPayload = atob(window.spaPayload),
     spaPayload = JSON.parse(jsonPayload);
 
