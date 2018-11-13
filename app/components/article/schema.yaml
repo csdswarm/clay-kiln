@@ -247,6 +247,7 @@ lead:
       - brightcove
       - youtube
       - html-embed
+      - omny
     validate:
       max: 1
       required: true
@@ -269,6 +270,7 @@ content:
       - html-embed
       - brightcove
       - inline-related
+      - omny
 feeds:
   _label: Include in These Feeds
   _has:

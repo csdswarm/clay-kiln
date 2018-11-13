@@ -303,6 +303,12 @@ _components:
       new:
         videoId: ''
 
+  omny:
+    instances:
+      new:
+        clipURL: ''
+        embedSize: ''
+
   web-player:
     instances:
       default:
