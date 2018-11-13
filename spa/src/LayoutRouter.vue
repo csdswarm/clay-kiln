@@ -100,7 +100,7 @@ export default {
       metaManager.updateExternalTags(this.$store.state.spaPayload)
 
       // Build pageView event data
-      const pageViewEventData = this.buildPageViewEventData(to, spaPayload)
+      const pageViewEventData = this.buildPageViewEventData(to, this.$store.state.spaPayload)
 
       // Call global pageView event.
       let event = new CustomEvent(`pageView`, {
