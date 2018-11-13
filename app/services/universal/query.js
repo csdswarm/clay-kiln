@@ -216,6 +216,10 @@ function addSize(query, size) {
   return _.set(query, 'body.size', size);
 }
 
+function addOffset(query, offset) {
+  _.set(query, 'body.from', parseInt(offset));
+}
+
 /**
  * https://www.elastic.co/guide/en/elasticsearch/reference/2.4/search-request-source-filtering.html
  *
@@ -345,6 +349,7 @@ module.exports.addMustNot = addMustNot;
 module.exports.addMinimumShould = addMinimumShould;
 module.exports.addSort = addSort;
 module.exports.addSize = addSize;
+module.exports.addOffset = addOffset;
 module.exports.onlyWithTheseFields = onlyWithTheseFields;
 module.exports.onlyWithinThisSite = onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;

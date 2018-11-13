@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-
+  margin-top: em(50);
   .section-lead__articles {
     display: flex;
     flex-direction: row;
@@ -77,6 +77,11 @@
   .section-lead__image {
     display: inline-block;
     margin-right: em(20);
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+    }
   }
 
   .section-lead__article {
@@ -109,6 +114,7 @@
     .section-lead__articles {
       width: 100%;
       justify-content: space-between;
+      margin-right: 0;
     }
 
     .component--google-ad-manager {
@@ -178,4 +184,4 @@
 @mixin lead-module-color entertainment, $sunsetOrange;
 @mixin lead-module-color news, $lightningYellow;
 @mixin lead-module-color sports, $azureRadience;
-@mixin lead-module-color podcasts, $robinsEgg;
+@mixin lead-module-color podcasts, $robinsEggBlue;

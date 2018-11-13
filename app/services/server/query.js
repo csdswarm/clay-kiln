@@ -210,6 +210,7 @@ module.exports.addMustNot = universalQuery.addMustNot;
 module.exports.addMinimumShould = universalQuery.addMinimumShould;
 module.exports.addSort = universalQuery.addSort;
 module.exports.addSize = universalQuery.addSize;
+module.exports.addOffset = universalQuery.addOffset;
 module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
 module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
