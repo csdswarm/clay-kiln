@@ -32,6 +32,10 @@ _components:
       new:
         text: ''
 
+  yieldmo:
+    instances:
+      new:
+        placement: 1
   image:
     instances:
       new:
