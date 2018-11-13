@@ -16,6 +16,7 @@ _components:
         secondary: secondary
         bottom:
           - _ref: /_components/google-ad-manager/instances/superLeaderboard
+          - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
@@ -34,6 +35,7 @@ _components:
         head: head
         main: main
         bottom:
+          - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
@@ -50,11 +52,12 @@ _components:
         top:
           - _ref: /_components/header/instances/default
         head: head
-        main: main
+        main:  main
         secondary:
           - _ref: /_components/generic-list/instances/recirc
         bottom:
           - _ref: /_components/footer/instances/default
+          - _ref: /_components/google-ad-manager/instances/oop
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
@@ -79,6 +82,7 @@ _components:
         secondary: secondary
         bottom:
           - _ref: /_components/google-ad-manager/instances/billboard
+          - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general

@@ -322,6 +322,8 @@ _components:
     instances:
       new:
         adSize: ''
+      oop:
+        adSize: outOfPage
       billboard:
         adSize: billboard
       superLeaderboard:
@@ -581,6 +583,8 @@ _components:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
             _ref: /_components/google-ad-manager/instances/leaderboard
+        latestContent:
+          _ref: /_components/latest-content/instances/default
         stationsCarousel:
           -
             _ref: /_components/stations-carousel/instances/section-front
@@ -680,6 +684,8 @@ _components:
           _ref: /_components/more-content-feed/instances/homepage
         sectionLead:
           _ref: /_components/section-lead/instances/new
+        latestContent:
+          _ref: /_components/latest-content/instances/default
         podcastList:
           _ref: /_components/podcast-list/instances/new
         stationsCarousel:
@@ -709,3 +715,22 @@ _components:
         items: []
         tag: ''
         populateBy: ''
+
+  latest-content:
+    instances:
+      new:
+        sectionFronts:
+          - 'entertainment'
+          - 'sports'
+          - 'news'
+        entertainmentItems: []
+        sportsItems: []
+        newsItems: []
+      default:
+        sectionFronts:
+          - 'entertainment'
+          - 'sports'
+          - 'news'
+        entertainmentItems: []
+        sportsItems: []
+        newsItems: []
