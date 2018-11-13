@@ -1,0 +1,42 @@
+<section class="component component--latest-content" data-uri="{{ default _ref _self }}" data-track-type="latest-content">
+  <h2 class="latest-content__title"><span>LATEST on RADIO.COM</span></h2>
+  <div class="latest-content__section">
+    {{#each articles as |articleSection|}}
+      <ul class="section__articleList" data-editable="{{articleSection.section}}Items">
+        {{#each articleSection.articles as |article|}}
+          <li>
+            <a href="{{ article.canonicalUrl }}"
+              class="articleList__link {{#unless @first}}articleList__link--subsequent{{/unless}}"
+              data-track-type="article-link"
+              data-track-component-name="latest-content"
+              data-track-page-uri="{{ article.pageUri }}"
+              data-track-headline="{{ article.primaryHeadline }}"
+              data-track-component-title="Latest Content">
+              {{#if @first}}
+                <div class="link__tag link__tag--{{articleSection.section}}">{{ articleSection.section }}</div>
+                <img
+                  src="{{ article.feedImgUrl }}?width=300&crop=16:9,smart"
+                  srcset="{{ article.feedImgUrl }}?width=300&crop=16:9 300w,
+                  {{ article.feedImgUrl }}?width=320&crop=16:9,smart 320w,
+                  {{ article.feedImgUrl }}?width=343crop=16:9,smart 343w,
+                  {{ article.feedImgUrl }}?width=440crop=16:9,smart 440w"
+                  sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, 300px"
+                  class="link__image" />
+              {{else}}
+                <picture>
+                  <source media="(min-width: 1024px)" srcset="{{ article.feedImgUrl }}?width=80&crop=1:1,smart" />
+                  <source media="(max-width: 1023px)" srcset="{{ article.feedImgUrl }}?width=343&crop=16:9,smart" />
+                  <source media="(max-width: 480px)" srcset="{{ article.feedImgUrl }}?width=440&crop=16:9,smart" />
+                  <source media="(max-width: 360px)" srcset="{{ article.feedImgUrl }}?width=320&crop=16:9,smart" />
+                  <img src="{{ article.feedImgUrl }}?width=440&crop=16:9,smart"
+                       class="link__image" />
+                </picture>
+              {{/if}}
+              <div class="link__label">{{ article.primaryHeadline }}</div>
+            </a>
+          </li>
+        {{/each}}
+      </ul>
+    {{/each}}
+  </div>
+</section>

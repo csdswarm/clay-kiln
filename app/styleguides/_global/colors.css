@@ -1,30 +1,51 @@
 /* Color Naming - http://chir.ag/projects/name-that-color/ */
-$alto: #d8d8d8;
-$azureRadience: #0099FF; /*sports*/
-$azureRadienceRGB: 0, 153, 255;
 
+/* Neutrals */
 $black: #000;
 $blackRussian: #000001;
+$white: #FFF;
+
+/* Greys */
+$alabaster: #F7F7F7; /* Ad Slot Container */
+$alto: #d8d8d8;
+$boulder: #777;
+$tundora: #444;
+
+/* Oranges */
+$sunsetOrange: #FF4940; /* Entertainment */
+$sunsetOrangeRGB: 255, 73, 64;
+
+/* Yellows */
+$lightningYellow: #FEC517; /* News */
+$lightningYellowRGB: 254, 197, 23;
+
+/* Blues */
+$azureRadience: #0099FF; /* Sports */
+$azureRadienceRGB: 0, 153, 255;
+$cerulean: #05aeee; /* Twitter Blue */
+$chambray: #3b5998; /* Facebook Blue */
+$hawkesBlue: #e3f2fd; /* Kiln Edit Mode Components */
+$robinsEggBlue: #00CCB7; /* Podcasts */
+$robinsEggBlueRGB: 0, 204, 183;
+
+/* Purples */
+$parisM: #1F055E; /* Primary Dark */
+$parisMRGB: 31, 5, 94;
+$purple: #3C00B7; /* Primary Bright */
+$purpleRGB: 60, 0, 183;
+
+/* ---------------------------------------------------------- */
+/* ------ OLD NAMING SYSTEM --- Remove once in staging ------ */
+/* ---------------------------------------------------------- */
+
 $boulderGrey: #777;
 $alabasterGrey: #F7F7F7; /* Ad Slot Container */
 
 $ceruleanBlue: #05aeee; /* Twitter Blue */
 $chambrayBlue: #3b5998; /* Facebook Blue */
-$hawkesBlue: #e3f2fd; /* Kiln Edit Mode Components */
-
-$lightningYellow: #FEC517; /*news*/
-$lightningYellowRGB: 254, 197, 23;
 
 $parisPurple: #1F055E; /*primary dark*/
 $parisPurpleRGB: 31, 5, 94;
 
-$purple: #3C00B7; /*primary bright*/
-$purpleRGB: 60, 0, 183;
-
 $robinsEgg: #00CCB7; /*podcasts*/
 $robinsEggRGB: 0, 204, 183;
-
-$sunsetOrange: #FF4940; /*entertainment*/
-$sunsetOrangeRGB: 255, 73, 64;
-
-$white: #FFF;

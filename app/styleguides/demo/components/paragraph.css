@@ -38,7 +38,7 @@
     }
     @mixin article-link-color sports, azureRadience;
     @mixin article-link-color news, lightningYellow;
-    @mixin article-link-color podcasts, robinsEgg;
+    @mixin article-link-color podcasts, robinsEggBlue;
     @mixin article-link-color music, sunsetOrange;
     @mixin article-link-color entertainment, sunsetOrange;
   }
@@ -75,7 +75,7 @@
       padding: 0;
       &:before {
         @mixin article-font7;
-        color: $boulderGrey;
+        color: $boulder;
         content: counter(list);
         counter-increment: list;
         left: 0;
