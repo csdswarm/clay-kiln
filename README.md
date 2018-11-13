@@ -145,6 +145,11 @@ Now you can visit the following URL to get a list of test pages you can visit.
 
 http://clay.radio.com/_pages/index.html
 
+## Rebuild the SPA
+
+Anytime you change a `template.hbs` file  or modify the `spa` directory, run
+`npm run-script build -- --mode=none` from the `spa` directory.
+
 ## Missed anything?
 That _should_ be it...if not, submit an issue or add something to this README.w
 

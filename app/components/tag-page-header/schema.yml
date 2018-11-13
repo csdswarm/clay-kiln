@@ -1,0 +1,35 @@
+_description: |
+  A header for the tag page that may contain an image.
+
+_confirmRemoval: true
+
+tag:
+  _label: Page Title
+  _has:
+    input: text
+    validate:
+      required: true
+
+image:
+  _label: Image URL
+  _has:
+    input: text
+    type: url
+    help: Must be a image url
+    attachedButton:
+      - name: magic-button
+        component: image
+        transform: getComponentInstance
+        url: $SITE_PREFIX
+        property: url
+        tooltip: get the first image
+
+_groups:
+  settings:
+    fields:
+      - tag
+      - image
+    _placeholder:
+      height: 250px
+      text: Tag Header
+      ifEmpty: tag

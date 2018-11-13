@@ -2,7 +2,7 @@
 @import '_global/fonts';
 @import '_global/mixins';
 @import '_global/grid';
-
+@import "_global/colors";
 
 .layout--two-column {
   margin: 0;
@@ -33,6 +33,7 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  background: $white;
 }
 
 .layout--two-column .layout__content .content__main {
@@ -48,6 +49,13 @@
 }
 
 .layout--two-column {
+  .layout__page-header,
+  .layout__bottom,
+  .layout__content {
+    z-index: 2;
+    position: relative
+  }
+
   .layout__page-header,
   .layout__section-header,
   .layout__content {
