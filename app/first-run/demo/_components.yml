@@ -40,7 +40,7 @@ _components:
     instances:
       global:
         searchtext: Search
-  header:
+  top-nav:
     instances:
       default:
         headerLinks:
