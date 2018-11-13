@@ -60,7 +60,9 @@
         {{#each content as |feedItem|}}
           {{> more-content-feed-li feedItem=feedItem}}
         {{/each}}
-        {{> load-more-content loadMoreContent loadMoreContentUri=_ref }}
+        {{#if moreContent}}
+          {{> load-more-content loadMoreContent loadMoreContentUri=_ref }}
+        {{/if}}
       </ul>
     {{/ifAny}}
     <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">

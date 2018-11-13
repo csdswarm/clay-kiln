@@ -122,7 +122,7 @@ module.exports.render = function (ref, data, locals) {
         data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
       // "more content" button passes page query param - render more content and return it
-      data.moreResults = results.length > data.pageLength;
+      data.moreContent = results.length > data.pageLength;
 
       return data;
     })
