@@ -59,6 +59,25 @@ export default {
       nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
 
       return nextSpaPayloadResult.data
+    },
+    /**
+     * 
+     * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
+     * 
+     * @param {object} to - A Vue Router "to" object.
+     * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
+     */
+    buildPageViewEventData: function buildPageViewEventData (to, spaPayload) {
+      const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
+      const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
+      const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
+
+      return {
+        toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
+        toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
+        toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
+        toPath: to.path
+      }
     }
   },
   components: {
@@ -81,18 +100,11 @@ export default {
       metaManager.updateExternalTags(this.$store.state.spaPayload)
 
       // Build pageView event data
-      const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
-      const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
-      const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
+      const pageViewEventData = this.buildPageViewEventData(to, spaPayload)
 
       // Call global pageView event.
       let event = new CustomEvent(`pageView`, {
-        detail: {
-          toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
-          toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
-          toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
-          toPath: to.path
-        }
+        detail: pageViewEventData
       })
       document.dispatchEvent(event)
     }
