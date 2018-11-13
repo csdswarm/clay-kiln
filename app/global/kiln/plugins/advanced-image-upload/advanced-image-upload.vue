@@ -19,7 +19,6 @@
   * **webHelp** - Description / helper text for the web file text field.
   * **uploadLabel** - File Upload Button label.
   * **uploadHelp** - Description / helper text for the file upload button.
-  * **s3Host** - The s3 host used to build the image resource URL that is actually stored. This host will be used to render the image tag publicly.
 
 </docs>
 
@@ -99,7 +98,7 @@ export default {
         return true
       } else {
         return validator.isURL(webFileUrl, {
-          protocols: ['http','https'],
+          protocols: ['https'],
           require_protocol: true
         })
       }
@@ -207,21 +206,18 @@ export default {
         this.prepareFileForUpload(file.name, file.type)
           .then(data => {
             return this.execFileUpload(data.s3SignedUrl, file, data.s3FileType)
-              .then(() => { return { bucket: data.s3Bucket, fileKey: data.s3FileKey }});
+              .then(() => { return { host: data.s3CdnHost, fileKey: data.s3FileKey }});
           })
           .then((s3) => {
 
-            // Use custom domain for s3 host else default to standard amazon host.
-            const s3Host = (this.args.s3Host) ? this.args.s3Host : 's3.amazonaws.com';
-
-            // Build the full s3 resource url.
-            const s3FileUrl = `https://${s3.bucket}.${s3Host}/${s3.fileKey}`;
+            // Build the full s3 image url.
+            const s3ImageUrl = `https://${s3.host}/${s3.fileKey}`;
 
             // Update imageUrl to point to new s3 file.
-            this.imageUrl = s3FileUrl;
+            this.imageUrl = s3ImageUrl;
 
             // Set value of form to be the s3 file url.
-            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: s3FileUrl });
+            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: s3ImageUrl });
 
             this.webFileUrl = ''; // Reset web file attachment field
             this.fileUploadButtonDisabled = false; // Re-enable file upload button.
