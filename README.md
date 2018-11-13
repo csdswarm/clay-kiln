@@ -128,19 +128,27 @@ _users:
 
 ## Running the importer
 
-You will need to run the importer
+You will need to run the importer (Will create pages and import 10 items from each content type (articles/blogs/etc))
 
 ```bash
 git clone git@github.com:Entercom/frequency-clay-translator.git
 cd frequency-clay-translator
-npm install && node index.js | clay import -k demo --publish clay.radio.com
+npm run import-pages --silent
+npm run import-content --silent totalItems=10
 ```
+
+For further instructions please see README.md in ```frequency-clay-translator```
 
 ## Running the demo
 
 Now you can visit the following URL to get a list of test pages you can visit.
 
 http://clay.radio.com/_pages/index.html
+
+## Rebuild the SPA
+
+Anytime you change a `template.hbs` file  or modify the `spa` directory, run
+`npm run-script build -- --mode=none` from the `spa` directory.
 
 ## Missed anything?
 That _should_ be it...if not, submit an issue or add something to this README.w
