@@ -277,6 +277,11 @@ _components:
       new:
         allow: true
 
+  comscore-head:
+    instances:
+      default:
+        allow: true
+
   html-embed:
     instances:
       new:
