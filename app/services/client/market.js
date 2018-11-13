@@ -5,6 +5,11 @@ const rest = require('../universal/rest'),
   localStorageKey = 'market',
   market = localStorage.getItem(localStorageKey);
 
+/**
+ * Get the market from the geoAPI
+ *
+ * @returns {*}
+ */
 function getMarket() {
   if (!market) {
     return rest.get(geoApi).then(marketData => {
