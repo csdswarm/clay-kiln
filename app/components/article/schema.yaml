@@ -193,7 +193,7 @@ stationURL:
     validate:
       required: true
       # Using pattern from https://www.regextester.com/93652
-      # Detailed RegEx breakdown: https://regex101.com/r/hlIapc/1/ 
+      # Detailed RegEx breakdown: https://regex101.com/r/hlIapc/1/
       pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
       patternMessage: Must be a valid URL
     help: URL of the station
@@ -433,3 +433,11 @@ tags:
   _component:
     include:
       - tags
+position1:
+  _component:
+    include:
+      - yieldmo
+position2:
+  _component:
+    include:
+      - yieldmo

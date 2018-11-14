@@ -81,6 +81,8 @@ _components:
         tertiary: tertiary
         secondary: secondary
         bottom:
+          - _ref: /_components/yieldmo/instances/placement1
+          - _ref: /_components/yieldmo/instances/placement2
           - _ref: /_components/trending-recirculation/instances/default
           - _ref: /_components/google-ad-manager/instances/billboard
           - _ref: /_components/google-ad-manager/instances/oop

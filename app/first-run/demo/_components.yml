@@ -543,10 +543,6 @@ _components:
   article:
     instances:
       new:
-        position1:
-          _ref: /_components/yieldmo/instances/placement1
-        position2:
-          _ref: /_components/yieldmo/instances/placement2
         primaryHeadline: ''
         headline: ''
         subHeadline: ''
