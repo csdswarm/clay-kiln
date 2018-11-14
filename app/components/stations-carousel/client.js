@@ -69,6 +69,7 @@ StationsCarousel.prototype = {
     } else if (this.windowWidth >= this.windowSizes.medium) {
       this.stationsVisible = 6;
     } else {
+      this.layoutWidth = '100%';
       this.pageSize = 3;
       this.stationsVisible = 3;
       if (this.windowWidth < this.windowSizes.beforeMediumSmall) {
@@ -297,6 +298,7 @@ StationsCarousel.prototype = {
   updateStationsDOM: function () {
     this.stationsList.removeChild(this.stationsList.querySelector('.loader-container')); // Remove loader
     const template = Handlebars.compile(stationLi);
+
     this.stationsData.stations.forEach(function (stationData) {
       let station = document.createElement('li');
 

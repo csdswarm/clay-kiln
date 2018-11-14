@@ -81,7 +81,11 @@ stg-bootstrap:
 
 
 install:
-	cd app && npm ci && node ./node_modules/.bin/gulp && cd ../spa && npm ci && npm run-script build -- --mode=none
+	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
 
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
+
+.PHONY: spa
+spa:
+	cd spa && npm i && npm run-script build -- --mode=none
