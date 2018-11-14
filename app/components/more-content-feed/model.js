@@ -1,4 +1,7 @@
 'use strict';
+
+// @TODO ON-237 - ensure tag that when the tag is passed in the data is retrieved in the same was as tag-page
+
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),

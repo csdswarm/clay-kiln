@@ -1,5 +1,7 @@
 'use strict';
 
+// @TODO ON-237 - move this file to more-content-feed
+
 const helpers = require('../../services/universal/helpers'),
   Handlebars = require('Handlebars');
 
@@ -9,6 +11,7 @@ for (const helper in helpers) {
   }
 }
 
+// @TODO ON-237 - condense the handlebar template to a single template
 // eslint-disable-next-line one-var
 const ClayHandlebars = require('clayhandlebars')(Handlebars),
   templates = {
@@ -104,7 +107,7 @@ class LoadMoreContent {
   constructor(el) {
     this.loadMore = el;
     this.moreContentUrl = el.getAttribute('data-load-more-uri').replace(/^.*\.com/, '');
-    this.moreContentUrlParam = el.getAttribute('data-load-more-param').replace(/^.*\.com/, '');
+    this.moreContentUrlParam = el.getAttribute('data-load-more-param');
     this.currentPage = 1;
     this.template = templates[this.moreContentUrl.split('/')[2]];
 
