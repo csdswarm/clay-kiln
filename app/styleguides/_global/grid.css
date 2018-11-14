@@ -6,6 +6,10 @@
   .layout__page-header {
     width: 100%;
   }
+  .layout__bottom {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .layout__content {

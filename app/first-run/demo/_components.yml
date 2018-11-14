@@ -283,6 +283,11 @@ _components:
       new:
         allow: true
 
+  comscore-head:
+    instances:
+      default:
+        allow: true
+
   html-embed:
     instances:
       new:
@@ -489,6 +494,11 @@ _components:
         items: []
         fill: 0
         tag: ''
+
+  trending-recirculation:
+    instances:
+      default:
+        items: []
 
   general-content:
     instances:
