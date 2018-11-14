@@ -63,9 +63,9 @@ function setAds() {
   } else {
     if (urlPathname === '') {
       page = 'homepage';
-    } else if (urlPathname.indexOf('/tags/') !== -1) {
+    } else if (urlPathname.indexOf('tags/') !== -1) {
       page = 'tagPage';
-      pageName = urlPathname.replace('/tags/', '');
+      pageName = urlPathname.replace('tags/', '');
     } else {
       page = 'genrePage';
       pageName = urlPathname;
@@ -88,7 +88,7 @@ function setAds() {
     case 'homepage':
       targetingTags = [doubleclickPageTypeTagSection, page];
       targetingPageId = page;
-      siteZone = siteZone.concat('home', '/', doubleclickPageTypeTagSection);
+      siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
     case 'genrePage':
       targetingTags = [doubleclickPageTypeTagArticle, `${pageName}`];
@@ -98,7 +98,7 @@ function setAds() {
     case 'tagPage':
       targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, `${pageName}`];
       targetingPageId = doubleclickPageTypeTagTag + '_' + pageName;
-      siteZone = siteZone.concat('tags', '/', pageName, '/', doubleclickPageTypeTagSection);
+      siteZone = siteZone.concat('/', 'tags', '/', doubleclickPageTypeTagSection);
       break;
     default:
   }
