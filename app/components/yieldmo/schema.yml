@@ -1,22 +1,2 @@
 _description: |
   Yieldmo mobile ad integration
-
-placement:
-  _has:
-    input: select
-    options:
-      -
-        name: Placement #1
-        value: 1
-      -
-        name: Placement #2
-        value: 2
-
-_groups:
-  placementGroup:
-    fields:
-      - placement
-    _placeholder:
-      ifEmpty: 'placement'
-      height: 200px
-      text: Placement

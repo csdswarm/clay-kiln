@@ -34,10 +34,8 @@ _components:
 
   yieldmo:
     instances:
-      placement1:
-        placement: 1
-      placement2:
-        placement: 2
+      default:
+        allowed: true
   image:
     instances:
       new:
