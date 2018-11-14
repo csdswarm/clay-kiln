@@ -85,3 +85,7 @@ install:
 
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
+
+.PHONY: spa
+spa:
+	cd spa && npm i && npm run-script build -- --mode=none
