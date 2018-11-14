@@ -433,11 +433,3 @@ tags:
   _component:
     include:
       - tags
-position1:
-  _component:
-    include:
-      - yieldmo
-position2:
-  _component:
-    include:
-      - yieldmo
