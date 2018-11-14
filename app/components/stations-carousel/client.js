@@ -69,6 +69,7 @@ StationsCarousel.prototype = {
     } else if (this.windowWidth >= this.windowSizes.medium) {
       this.stationsVisible = 6;
     } else {
+      this.layoutWidth = '100%';
       this.pageSize = 3;
       this.stationsVisible = 3;
       if (this.windowWidth < this.windowSizes.beforeMediumSmall) {
