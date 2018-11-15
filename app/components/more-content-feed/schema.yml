@@ -221,3 +221,5 @@ _groups:
       - tagManual
       - tagInfo
       - items
+    _placeholder:
+      height: 100px

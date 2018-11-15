@@ -42,7 +42,8 @@ module.exports.routes = (router) => {
   router.post('/advanced-image-upload', checkAuth, function (req, res) {
 
     // Set env vars
-    const s3Bucket = process.env.AWS_S3_BUCKET;
+    const s3Bucket = process.env.AWS_S3_BUCKET,
+      s3CdnHost = process.env.AWS_S3_CDN_HOST || `${process.env.AWS_S3_BUCKET}.s3.amazonaws.com`; // If no CDN set, fallback to raw s3 host.
     let rawFileNameParts, rawFileName, processedFilename,
       extension, newFileName, s3FileKey, params;
 
@@ -102,7 +103,8 @@ module.exports.routes = (router) => {
           s3Bucket: s3Bucket,
           s3FileKey: s3FileKey,
           s3FileType: req.body.fileType,
-          s3SignedUrl: signedUrl
+          s3SignedUrl: signedUrl,
+          s3CdnHost: s3CdnHost
         });
       }
     });

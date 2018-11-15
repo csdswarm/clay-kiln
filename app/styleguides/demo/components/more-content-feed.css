@@ -48,9 +48,9 @@
   }
   .section__content-feed-container {
     display: inline-flex;
+    flex-direction: row;
     align-items: start;
     width: 100%;
-    flex-direction: row;
     .more-content-feed__links {
       width: calc(100% - em(300));
       margin-right: em(20);

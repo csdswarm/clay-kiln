@@ -168,6 +168,31 @@ em, i {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||| Latest Content Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin latest-content-font1 $color: $purple {
+  @mixin font CircularStd-Black, 20px, $color, -.32px, 25px;
+}
+@define-mixin latest-content-font2 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin latest-content-font3 {
+  @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
+}
+@define-mixin latest-content-font4 {
+  @mixin font CircularStd-Medium, 14px, $white, -.23px, 18px;
+}
+@define-mixin latest-content-font5 {
+  @mixin font CircularStd-Medium, 12px, $robinsEgg, -.2px, 28px;
+}
+@define-mixin latest-content-font6 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin latest-content-font7 {
+  @mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||| Inline-related Fonts Styleguide ||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -182,6 +207,22 @@ em, i {
 }
 @define-mixin inline-related-font4 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Trending-recirculation Fonts Styleguide ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin trending-recirculation-font1 {
+  @mixin font CircularStd-Black, 20px, $parisPurple, -.32px, 25px;
+}
+@define-mixin trending-recirculation-font2 {
+  @mixin font CircularStd-Medium, 14px, $white, -.23px, 18px;
+}
+@define-mixin trending-recirculation-font3 {
+  @mixin font CircularStd-Black, 20px, $parisPurple, -.32px, 25px;
+}
+@define-mixin trending-recirculation-font4 {
+  @mixin font CircularStd-Medium, 18px, $white, -.3px, 25px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
