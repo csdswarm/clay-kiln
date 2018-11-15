@@ -4,6 +4,8 @@
 
 .latest-content {
   width: 100%;
+  margin: 0 auto;
+  max-width: em(withOnGrid(21,11));
   padding-bottom: em(80);
   align-self: center;
 
