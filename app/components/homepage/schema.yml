@@ -38,3 +38,8 @@ sectionLead:
   _component:
     include:
       - section-lead
+
+latestContent:
+  _component:
+    include:
+    - latest-content

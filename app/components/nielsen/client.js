@@ -29,21 +29,40 @@ class NielsenMarketingCloud {
   parseSPAPayload(spaPayload) {
     let updatedData = {};
 
-    if (spaPayload.main[0]['_ref'].indexOf('article') !== -1) {
-      updatedData.tag = spaPayload.main[0].tags.items.map((tag) => {return tag.text;}).join(',');
-      updatedData.author = spaPayload.main[0].authors.join(',');
-      updatedData.format = updatedData.ctg = spaPayload.main[0].articleType;
-    } else if (spaPayload.main[0]['_ref'].indexOf('station-detail') !== -1) {
-      updatedData.station = spaPayload.main[0].station;
-      updatedData.keyword = spaPayload.main[0].keyword;
-      updatedData.mkt = spaPayload.main[0].market;
-      updatedData.genre = spaPayload.main[0].genre;
-      updatedData.format = updatedData.ctg = spaPayload.main[0].sectionFront;
-    } else if (spaPayload.main[0]['_ref'].indexOf('tag-page') !== -1) {
-      updatedData.tag = spaPayload.pageHeader[1].tag;
-    } else if (spaPayload.main[0]['_ref'].indexOf('section-front') !== -1) {
-      updatedData.format = updatedData.ctg = spaPayload.main[0].title;
+    if (spaPayload._self && spaPayload.main) { // payload from window
+      if (spaPayload.main[0]['_ref'].indexOf('article') !== -1) {
+        updatedData.tag = spaPayload.main[0].tags.items.map((tag) => {return tag.text;}).join(',');
+        updatedData.author = spaPayload.main[0].authors.map((author) => {return author.text}).join(',');
+        updatedData.format = updatedData.ctg = spaPayload.main[0].articleType;
+      } else if (spaPayload.main[0]['_ref'].indexOf('station-detail') !== -1) {
+        updatedData.station = spaPayload.main[0].station;
+        updatedData.keyword = spaPayload.main[0].keyword;
+        updatedData.mkt = spaPayload.main[0].market;
+        updatedData.genre = spaPayload.main[0].genre;
+        updatedData.format = updatedData.ctg = spaPayload.main[0].sectionFront;
+      } else if (spaPayload.main[0]['_ref'].indexOf('tag-page') !== -1) {
+        updatedData.tag = spaPayload.pageHeader[1].tag;
+      } else if (spaPayload.main[0]['_ref'].indexOf('section-front') !== -1) {
+        updatedData.format = updatedData.ctg = spaPayload.main[0].title;
+      }
+    } else { // payload from SPA store
+      if (spaPayload.toArticlePage._ref) {
+        updatedData.tag = spaPayload.toArticlePage.tags.items.map((tag) => {return tag.text;}).join(',');
+        updatedData.author = spaPayload.toArticlePage.authors.map((author) => {return author.text}).join(',');
+        updatedData.format = updatedData.ctg = spaPayload.toArticlePage.articleType;
+      } else if (spaPayload.toStationDetailPage._ref) { // todo: will need to update once station-detail component is created
+        updatedData.station = spaPayload.toStationDetailPage.station;
+        updatedData.keyword = spaPayload.toStationDetailPage.keyword;
+        updatedData.mkt = spaPayload.toStationDetailPage.market;
+        updatedData.genre = spaPayload.toStationDetailPage.genre;
+        updatedData.format = updatedData.ctg = spaPayload.toStationDetailPage.sectionFront;
+      } else if (spaPayload.toTagPage._ref) {
+        updatedData.tag = spaPayload.toTagPage.tag;
+      } else if (spaPayload.toSectionFrontPage._ref) {
+        updatedData.format = updatedData.ctg = spaPayload.toSectionFrontPage.title;
+      }
     }
+
     this.updateParams(updatedData);
   }
   /**

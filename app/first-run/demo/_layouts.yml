@@ -5,16 +5,18 @@ _components:
         headLayout:
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
           - _ref: /_components/web-player-head/instances/default
           - _ref: /_components/google-tag-manager/instances/default
         top:
-          - _ref: /_components/header/instances/default
+          - _ref: /_components/top-nav/instances/default
         head: head
         pageHeader: pageHeader
         main: main
         secondary: secondary
         bottom:
           - _ref: /_components/google-ad-manager/instances/superLeaderboard
+          - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/footer/instances/default
           - _ref: /_components/nielsen/instances/default
         kilnInternals:
@@ -26,13 +28,15 @@ _components:
         headLayout:
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
           - _ref: /_components/web-player-head/instances/default
           - _ref: /_components/google-tag-manager/instances/default
         top:
-          - _ref: /_components/header/instances/default
+          - _ref: /_components/top-nav/instances/default
         head: head
         main: main
         bottom:
+          - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/footer/instances/default
           - _ref: /_components/nielsen/instances/default
         kilnInternals:
@@ -44,10 +48,11 @@ _components:
         headLayout:
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
           - _ref: /_components/web-player-head/instances/default
           - _ref: /_components/google-tag-manager/instances/default
         top:
-          - _ref: /_components/header/instances/default
+          - _ref: /_components/top-nav/instances/default
         head: head
         main: main
         secondary:
@@ -55,6 +60,7 @@ _components:
         bottom:
           - _ref: /_components/footer/instances/default
           - _ref: /_components/nielsen/instances/default
+          - _ref: /_components/google-ad-manager/instances/oop
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
@@ -66,10 +72,11 @@ _components:
         headLayout:
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
           - _ref: /_components/web-player-head/instances/default
           - _ref: /_components/google-tag-manager/instances/default
         top:
-          - _ref: /_components/header/instances/default
+          - _ref: /_components/top-nav/instances/default
         head: head
         pageHeader: pageHeader
         sectionHeader: sectionHeader
@@ -77,7 +84,9 @@ _components:
         tertiary: tertiary
         secondary: secondary
         bottom:
+          - _ref: /_components/trending-recirculation/instances/default
           - _ref: /_components/google-ad-manager/instances/billboard
+          - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/footer/instances/default
           - _ref: /_components/nielsen/instances/default
         kilnInternals:

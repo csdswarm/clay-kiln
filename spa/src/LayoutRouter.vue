@@ -4,10 +4,17 @@
 
 <script>
 
+// Import dependencies.
 import axios from 'axios'
 import * as mutationTypes from '@/vuex/mutationTypes'
 import OneColumnLayout from '@/views/OneColumnLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
+import MetaManager from '@/lib/MetaManager'
+import QueryPayload from '@/lib/QueryPayload'
+
+// Instantiate libraries.
+const metaManager = new MetaManager()
+const queryPayload = new QueryPayload()
 
 export default {
   name: 'LayoutRouter',
@@ -54,6 +61,35 @@ export default {
       nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
 
       return nextSpaPayloadResult.data
+    },
+    /**
+     *
+     * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
+     *
+     * @param {object} to - A Vue Router "to" object.
+     * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
+     */
+    buildPageViewEventData: function buildPageViewEventData (to, spaPayload) {
+      const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
+      const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
+      const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
+      const nextArticleData = queryPayload.findComponent(spaPayload.main, 'article')
+      const nextHomepageData = queryPayload.findComponent(spaPayload.main, 'homepage')
+      const nextSectionFrontPageData = queryPayload.findComponent(spaPayload.main, 'section-front')
+      const nextTagPageData = queryPayload.findComponent(spaPayload.pageHeader, 'tag-page-header')
+      const nextStationDetailPageData = queryPayload.findComponent(spaPayload.main, 'station-detail')
+
+      return {
+        toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
+        toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
+        toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
+        toPath: to.path,
+        toArticlePage: nextArticleData ? nextArticleData : {},
+        toHomepage: nextHomepageData ? nextHomepageData : {},
+        toSectionFrontPage: nextSectionFrontPageData ? nextSectionFrontPageData : {},
+        toTagPage: nextTagPageData ? nextTagPageData : {},
+        toStationDetailPage: nextStationDetailPageData ? nextStationDetailPageData : {}
+      }
     }
   },
   components: {
@@ -71,8 +107,17 @@ export default {
       // Commit next payload to store to kick off re-render.
       this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-      // Call global pageView event: THIS MUST BE LAST IN FUNCTION AFTER META DATA UPDATES
-      let event = new CustomEvent(`pageView`, {detail: spaPayload})
+      // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+      metaManager.updateExternalTags(this.$store.state.spaPayload)
+
+      // Build pageView event data
+      const pageViewEventData = this.buildPageViewEventData(to, this.$store.state.spaPayload)
+
+      // Call global pageView event.
+      let event = new CustomEvent(`pageView`, {
+        detail: pageViewEventData
+      })
+
       document.dispatchEvent(event)
     }
   }

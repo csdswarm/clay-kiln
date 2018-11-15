@@ -21,3 +21,28 @@
   firstScript.parentNode.insertBefore(newScript, firstScript);
 })();
 
+/**
+ *
+ * Update dataLayer on SPA navigation (ie send new data to GTM on new SPA "pageview").
+ *
+ */
+document.addEventListener('pageView', function (event) {
+
+  // Init Data Layer.
+  window.dataLayer = window.dataLayer || [];
+
+  // Build Data Layer event for new SPA pageview.
+  const dataLayerEvent = {
+    event: 'Pageview',
+    title: event.detail.toTitle,
+    'og:title': event.detail.toTitle,
+    description: event.detail.toDescription,
+    'twitter:image': event.detail.toMetaImageUrl,
+    'og:image': event.detail.toMetaImageUrl,
+    url: `${window.location.protocol}//${window.location.hostname}${event.detail.toPath}`
+  };
+
+  // Push event onto Data Layer.
+  window.dataLayer.push(dataLayerEvent);
+  
+});

@@ -48,6 +48,7 @@
   }
   .section__content-feed-container {
     display: inline-flex;
+    flex-direction: row;
     align-items: start;
     width: 100%;
     .more-content-feed__links {
@@ -208,6 +209,24 @@
           }
         }
       }
+    }
+
+    .more-content-feed__loadmore {
+      cursor: pointer;
+      height: em(50);
+      text-transform: uppercase;
+      @mixin more-content-feed-font1;
+      background-color: $parisPurple;
+      margin-top: em(60);
+      margin-bottom: em(80);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .loadmore__text {
+      @mixin more-content-feed-font9;
     }
     .more-content-feed__right-ad--desktop {
       width: em(300);
