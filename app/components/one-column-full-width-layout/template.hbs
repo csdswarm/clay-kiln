@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-uri="{{ default _ref _self }}" data-layout-uri="{{ default _ref _layoutRef }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    {{#unless (includes (default _ref _self) "@published") }}
+      <meta name="robots" content="noindex">
+    {{/unless}}
+
+    {{! head components }}
+    <!-- data-editable="head" -->
+      {{> component-list head }}
+    <!-- data-editable-end -->
+
+    {{! headLayout components }}
+    <!-- data-editable="headLayout" -->
+      {{> component-list headLayout }}
+    <!-- data-editable-end -->
+
+    <!-- Attach the context object to window so SPA has access to data on the frontend. -->
+    {{#unless @root.locals.edit}}
+      <script>window.spaPayload = '{{{ attachSpaPayloadToWindow }}}';</script>
+      <script src="/dist/app.js"></script>
+    {{/unless}}
+
+  </head>
+  <body>
+    <div id="vue-app-mount-point">
+      <section class="layout layout--one-column">
+        <section class="layout__top" data-editable="top">{{> component-list top }}</section>
+        <header class="layout__page-header" data-editable="pageHeader">{{> component-list pageHeader }}</header>
+        <section class="layout__top">
+          <section class="content__main" data-editable="main">{{> component-list main }}</section>
+        </section>
+        <footer class="layout__bottom" data-editable="bottom">{{> component-list bottom }}</footer>
+      </section>
+    </div>
+    <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>
+    <div class="static" data-editable="static">{{> component-list static }}</div>
+  </body>
+</html>

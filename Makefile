@@ -44,6 +44,8 @@ bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/one-column-full-width-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_pages/tag@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
@@ -58,6 +60,8 @@ dev-bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT http://dev-clay.radio.com/_components/one-column-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+	curl -X PUT http://dev-clay.radio.com/_components/one-column-full-width-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
 	curl -X PUT http://dev-clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://dev-clay.radio.com/_pages/tag@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
@@ -71,6 +75,8 @@ stg-bootstrap:
 	curl -X PUT http://stg-clay.radio.com/_components/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://stg-clay.radio.com/_components/one-column-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://stg-clay.radio.com/_components/one-column-full-width-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://stg-clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
