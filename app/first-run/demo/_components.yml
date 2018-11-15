@@ -771,3 +771,8 @@ _components:
         entertainmentItems: []
         sportsItems: []
         newsItems: []
+
+  taboola:
+    instances:
+      default:
+        allowed: true
