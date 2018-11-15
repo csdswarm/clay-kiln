@@ -56,7 +56,7 @@ export default {
     },
     getNextSpaPayload: async function getNextSpaPayload (destination) {
       try {
-        const nextSpaPayloadResult = await axios.get(`//${destination}`, {
+        const nextSpaPayloadResult = await axios.get(`//${destination}?json`, {
           headers: {
             'x-amphora-page-json': true
           }
