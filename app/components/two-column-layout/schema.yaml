@@ -15,12 +15,7 @@ head:
       - meta-title
       - meta-description
       - meta-image
-headLayout:
-  _componentList:
-    include:
-      - meta-title
-      - meta-description
-      - meta-image
+      - meta-url
 top:
   _componentList:
     include:
@@ -29,6 +24,7 @@ pageHeader:
   _componentList:
     include:
       - header
+      - google-ad-manager
 sectionHeader:
   _componentList:
     include:
@@ -46,7 +42,9 @@ secondary:
 tertiary:
   _componentList:
     include:
+      - google-ad-manager
       - latest-recirculation
+      - google-ad-manager
 bottom:
   _componentList:
     include:

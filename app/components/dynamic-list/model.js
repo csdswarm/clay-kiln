@@ -28,7 +28,7 @@ function buildAndExecuteQuery(routeParamValue, data, locals) {
   queryService.withinThisSiteAndCrossposts(query, locals.site);
 
   if (routeParamValue) {
-    queryService.addShould(query, { match: { tags: routeParamValue } });
+    queryService.addShould(query, { match: { 'tags.normalized': routeParamValue } });
   }
 
   queryService.addMinimumShould(query, 1);

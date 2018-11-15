@@ -1,0 +1,16 @@
+_components:
+  homepage:
+    moreContentFeed:
+      _ref: /_components/more-content-feed/instances/homepage
+    googleAdUnderStationsModule:
+      _ref: /_components/google-ad-manager/instances/superLeaderboard
+    podcastList:
+      _ref: /_components/podcast-list/instances/new
+    googleAdUnderLatestModule:
+      _ref: /_components/google-ad-manager/instances/billboard
+    latestContent:
+      _ref: /_components/latest-content/instances/default
+    sectionLead:
+      _ref: /_components/section-lead/instances/new
+    stationsCarousel:
+      _ref: /_components/stations-carousel/instances/homepage

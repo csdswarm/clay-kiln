@@ -75,7 +75,7 @@ module.exports.render = function (ref, data, locals) {
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addShould(query, { match: { tags: data.tag }});
+  queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
 
@@ -83,6 +83,14 @@ module.exports.render = function (ref, data, locals) {
   if (locals.url && !isComponent(locals.url)) {
     cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+  }
+
+  // exclude the curated content from the results
+  if (data.items && !isComponent(locals.url)) {
+    data.items.forEach(item => {
+      cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+      queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+    });
   }
 
   return queryService.searchByQuery(query)

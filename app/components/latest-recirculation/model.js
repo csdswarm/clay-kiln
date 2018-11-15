@@ -61,7 +61,7 @@ module.exports.render = function (ref, data, locals) {
     }
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
-    queryService.addShould(query, { match: { tags: data.tag }});
+    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   } else if (data.populateBy == 'articleType') {
     if (!data.articleType || !locals) {
       return data;
@@ -75,6 +75,14 @@ module.exports.render = function (ref, data, locals) {
   if (locals.url && !isComponent(locals.url)) {
     cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+  }
+
+  // exclude the curated content from the results
+  if (data.items && !isComponent(locals.url)) {
+    data.items.forEach(item => {
+      cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+      queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+    });
   }
 
   return queryService.searchByQuery(query)

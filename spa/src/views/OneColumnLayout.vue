@@ -1,6 +1,7 @@
 <template>
   <section class="layout layout--one-column">
     <section class="layout__top" data-editable="top" v-html="this.componentList('top')"></section>
+    <header class="layout__page-header" data-editable="pageHeader" v-html="this.componentList('pageHeader')"></header>
     <section class="layout__content">
       <section class="content__main" data-editable="main" v-html="this.componentList('main')"></section>
       <section class="content__secondary" data-editable="secondary" v-html="this.componentList('secondary')"></section>

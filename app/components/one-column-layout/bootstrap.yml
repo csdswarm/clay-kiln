@@ -2,6 +2,7 @@ _components:
   one-column-layout:
     head: head
     headLayout: []
+    pageHeader: pageHeader
     top: []
     main: main
     secondary: []

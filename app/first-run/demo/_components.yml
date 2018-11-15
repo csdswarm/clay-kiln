@@ -22,6 +22,11 @@ _components:
       general:
         description: ''
 
+  meta-url:
+    instances:
+      general:
+        url: ''
+
   paragraph:
     instances:
       new:
@@ -35,7 +40,7 @@ _components:
     instances:
       global:
         searchtext: Search
-  header:
+  top-nav:
     instances:
       default:
         headerLinks:
@@ -228,17 +233,6 @@ _components:
         orderBy: date
         title: Recently Published
         size: 3
-  tag-list:
-    instances:
-      default:
-        index: published-articles
-        toggleImages: true
-        toggleTeaser: true
-        toggleReadMore: true
-        variation: large
-        orderBy: date
-        title: 'Articles Tagged: ${tagValue}'
-        size: 3
 
   share:
     instances:
@@ -283,6 +277,11 @@ _components:
       new:
         allow: true
 
+  comscore-head:
+    instances:
+      default:
+        allow: true
+
   html-embed:
     instances:
       new:
@@ -315,6 +314,37 @@ _components:
         allowed: true
 
   web-player-head:
+    instances:
+      default:
+        allowed: true
+
+  google-ad-manager:
+    instances:
+      new:
+        adSize: ''
+      oop:
+        adSize: outOfPage
+      billboard:
+        adSize: billboard
+      superLeaderboard:
+        adSize: super-leaderboard
+      leaderboard:
+        adSize: leaderboard
+      halfPage:
+        adSize: half-page
+      mediumRectangle:
+        adSize: medium-rectangle
+      mobile:
+        adSize: mobile
+      logoSponsorship:
+        adSize: logo-sponsorship
+
+  google-ad-manager-head:
+    instances:
+      default:
+        allowed: true
+
+  google-tag-manager:
     instances:
       default:
         allowed: true
@@ -459,6 +489,11 @@ _components:
         fill: 0
         tag: ''
 
+  trending-recirculation:
+    instances:
+      default:
+        items: []
+
   general-content:
     instances:
       new:
@@ -519,8 +554,6 @@ _components:
         lead: []
         content:
           -
-            _ref: /_components/image/instances/new
-          -
             _ref: /_components/paragraph/instances/new
         tags:
           _ref: /_components/tags/instances/new
@@ -537,14 +570,172 @@ _components:
         articleType: entertainment
         showSocial: true
 
+  section-lead:
+    instances:
+      new:
+        items: []
+        sectionFront: ''
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+
   section-front:
     instances:
       new:
         title: ''
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/section-front
+        googleAdUnderStationsModule:
+            _ref: /_components/google-ad-manager/instances/leaderboard
+        latestContent:
+          _ref: /_components/latest-content/instances/default
+        stationsCarousel:
+          -
+            _ref: /_components/stations-carousel/instances/section-front
+
+  stations-carousel:
+    instances:
+      homepage:
+        overrideTitle: ''
+        filterStationsBy: market
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      section-front:
+        overrideTitle: ''
+        filterStationsBy: section-front
+        sectionFront: '${sectionFront}'
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      content-hub:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+      station-page:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: '${genre}'
+        sectionFrontManual: ''
+        genreManual: ''
+      article:
+        overrideTitle: ''
+        filterStationsBy: genre
+        sectionFront: ''
+        genre: ''
+        sectionFrontManual: ''
+        genreManual: ''
+
+  more-content-feed:
+    instances:
+      homepage:
+        items: []
+        tag: ''
+        tagInfo: ''
+        sectionFront: ''
+        sectionFrontManual: ''
+        populateFrom: all
+        locationOfContentFeed: homepage
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+      section-front:
+        items: []
+        tag: ''
+        tagInfo: ''
+        sectionFront: ''
+        sectionFrontManual: entertainment
+        populateFrom: section-front
+        locationOfContentFeed: section-front
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/mediumRectangle
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+      tag-page:
+        items: []
+        tag: ''
+        tagInfo: ''
+        sectionFront: ''
+        sectionFrontManual: ''
+        populateFrom: tag
+        locationOfContentFeed: tag-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPage
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+
+  section-videos:
+    instances:
+      new:
+        items: []
+        tag: ''
+        sectionTitle: ''
+
+  homepage:
+    instances:
+      default:
+        googleAdUnderStationsModule:
+          _ref: /_components/google-ad-manager/instances/billboard
+        googleAdUnderLatestModule:
+          _ref: /_components/google-ad-manager/instances/billboard
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/homepage
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
+        latestContent:
+          _ref: /_components/latest-content/instances/default
+        podcastList:
+          _ref: /_components/podcast-list/instances/new
+        stationsCarousel:
+          -
+            _ref: /_components/stations-carousel/instances/homepage
+
+  tag-page:
+    instances:
+      new:
+        tag: ''
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/tag-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPage
+        googleAdTop:
+          _ref: /_components/google-ad-manager/instances/superLeaderboard
+
+  tag-page-header:
+    instances:
+      new:
+        tag: ''
+        image: ''
 
   latest-recirculation:
     instances:
       new:
         items: []
         tag: ''
-        populateBy: articleType
+        populateBy: ''
+
+  latest-content:
+    instances:
+      new:
+        sectionFronts:
+          - 'entertainment'
+          - 'sports'
+          - 'news'
+        entertainmentItems: []
+        sportsItems: []
+        newsItems: []
+      default:
+        sectionFronts:
+          - 'entertainment'
+          - 'sports'
+          - 'news'
+        entertainmentItems: []
+        sportsItems: []
+        newsItems: []

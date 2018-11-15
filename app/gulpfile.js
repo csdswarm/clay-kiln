@@ -17,6 +17,9 @@ gulp.task('default', gulp.series('styles', 'media', 'fonts', 'scripts'));
 
 gulp.task('watch', function () {
 
+  // styles
+  gulp.watch(['styleguides/**/*.css'], gulp.series('styles'));
+
   // scripts
   gulp.watch(['global/js/**', '!global/js/editor/*.js'], gulp.series('view-before', 'view-after'));
   gulp.watch(['global/kiln/**/*.js'], gulp.series('edit-before'));

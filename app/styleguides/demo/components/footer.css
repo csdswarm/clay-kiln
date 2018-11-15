@@ -28,9 +28,8 @@
 }
 
 .radiocom-footer {
-  margin-top: em(40);
   width: 100%;
-  background: $parisPurple;
+  background: $parisM;
   position: relative;
   text-align: center;
   padding: em(40) em(20);

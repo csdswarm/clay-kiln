@@ -2,5 +2,53 @@ _confirmRemoval: true
 
 title:
   _label: Title
+  _publish: sectionFront
   _has:
-    input: text
+    input: static
+    text: ${title}
+
+moreContentFeed:
+  _component:
+    include:
+      - more-content-feed
+
+stationsCarousel:
+  _placeholder:
+    text: Stations Carousel
+    height: 300px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - stations-carousel
+
+canonicalUrl:
+  _publish: url
+  _has:
+    help: Canonical URL of an article. Set when the article publishes.
+
+# Component properties
+sectionLead:
+  _component:
+    include:
+    - section-lead
+
+googleAdUnderStationsModule:
+  _component:
+    include:
+      - google-ad-manager
+
+googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
+
+_groups:
+  settings:
+    fields:
+      - title
+      - canonicalUrl
+      
+latestContent:
+  _component:
+    include:
+      - latest-content

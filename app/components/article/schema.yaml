@@ -26,7 +26,7 @@ shortHeadline:
       - strike
     validate:
       required: true
-      max: 60
+      max: 140
     help: Also used for Related Stories and some homepages
     attachedButton:
       name: magic-button
@@ -89,7 +89,7 @@ seoDescription:
     type: multi-line
     help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 250 characters
     validate:
-      min: 100
+      min: 50
       max: 250
 feedImgUrl:
   _label: Image URL
@@ -180,6 +180,23 @@ sources:
   _publish: sources
   _has:
     help: An Array of Objects containing sources names for search.
+stationTitle:
+  _label: Station Title
+  _has:
+    input: text
+    help: Title of the station
+stationURL:
+  _label: Station URL
+  _has:
+    input: text
+    type: url
+    validate:
+      required: true
+      # Using pattern from https://www.regextester.com/93652
+      # Detailed RegEx breakdown: https://regex101.com/r/hlIapc/1/ 
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+    help: URL of the station
 hasSecondaryBylines:
   _label: Use Secondary Bylines
   _has: checkbox
@@ -226,13 +243,13 @@ lead:
     fuzzy: true # allows interactives, etc to add one-off components
     include:
       - image
-      - tweet
-      - facebook-post
       - instagram-post
       - brightcove
+      - youtube
+      - html-embed
     validate:
-      min: 1
       max: 1
+      required: true
 content:
   _label: Article Content
   _placeholder:
@@ -323,6 +340,14 @@ _groups:
       text: Secondary Bylines
       height: 60px
       ifEmpty: secondaryAttribution
+  stationSource:
+    fields:
+      - stationTitle
+      - stationURL
+    _placeholder:
+      text: Station Source
+      height: 30px
+      ifEmpty: stationTitle
   circHeadlines:
     fields:
       - primaryHeadline

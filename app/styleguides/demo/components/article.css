@@ -26,6 +26,7 @@
   padding-bottom: em(20);
   position: relative;
   word-wrap: break-word;
+  margin-top: em(50);
 }
 .article__header {
   display: inline-block;
@@ -52,7 +53,9 @@
       .component--image,
       .component--instagram-post,
       .component--tweet,
-      .component--facebook-post {
+      .component--facebook-post,
+      .component--youtube,
+      .component--brightcove {
         margin: 0;
         img {
           width: 100%;
@@ -63,6 +66,7 @@
   }
   .body__info {
     @mixin inline-block;
+    float: left;
     width: em(widthOnGrid(2, 1));
     margin-right: em(widthOnGrid(0, 1));
     .info--left-top {
@@ -70,14 +74,8 @@
     }
     .info__by-authors {
       @mixin article-font6;
-      display: inline-flex;
-      flex-wrap: wrap;
-      white-space: pre-wrap;
-      margin-bottom: em(15, 14);
       .author {
         @mixin article-font5;
-        display: inline-flex;
-        flex-wrap: wrap;
         @define-mixin author-name-color $articleType, $color {
           .component--article[data-article-type=$articleType] & a {
             color: $color;
@@ -86,11 +84,10 @@
         @mixin author-name-color entertainment, $sunsetOrange;
         @mixin author-name-color news, $lightningYellow;
         @mixin author-name-color sports, $azureRadience;
-        @mixin author-name-color podcasts, $robinsEgg;
+        @mixin author-name-color podcasts, $robinsEggBlue;
         .author__anchor {
           color: inherit;
           text-decoration: none;
-          white-space: nowrap;
           &:first-child {
             padding-left: 0;
           }
@@ -99,7 +96,25 @@
       .source {
         @mixin article-font5;
         color: $black;
-        display: inline-flex;
+      }
+    }
+    .info__by-authors--no-station {
+      margin-bottom: em(15, 14);
+    }
+    .info__from-station {
+      @mixin article-font5;
+      margin-bottom: em(15, 14);
+      @define-mixin station-source-color $articleType, $color {
+        .component--article[data-article-type=$articleType] & a {
+          color: $color;
+        }
+      }
+      @mixin station-source-color entertainment, $sunsetOrange;
+      @mixin station-source-color news, $lightningYellow;
+      @mixin station-source-color sports, $azureRadience;
+      @mixin station-source-color podcasts, $robinsEggBlue;
+      a {
+        text-decoration: none;
       }
     }
     .info__timestamp {
@@ -121,6 +136,7 @@
   }
   .body__content {
     @mixin inline-block;
+    float: left;
     width: calc(100% - em(widthOnGrid(2, 2)));
   }
 
@@ -153,7 +169,8 @@
       margin-right: 0;
       display: flex;
       justify-content: space-between;
-      .info__by-authors {
+      .info__by-authors--no-station,
+      .info__from-station {
         margin-bottom: em(10, 14);
       }
       .info--left-top {
@@ -384,6 +401,6 @@
   @mixin seperator;
   @mixin seperator entertainment, $sunsetOrange;
   @mixin seperator news, $lightningYellow;
-  @mixin seperator podcasts, $robinsEgg;
+  @mixin seperator podcasts, $robinsEggBlue;
   @mixin seperator sports, $azureRadience;
 }
