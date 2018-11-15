@@ -240,6 +240,16 @@ em, i {
 @define-mixin podcast-list-font4 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
+@define-mixin podcast-list-font5 {
+  @mixin font CircularStd-Medium, 12px, $robinsEgg, -.2px, 28px;
+}
+@define-mixin podcast-list-font6 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin podcast-list-font7 {
+  @mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
+}
+
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| More Content Feed Fonts Styleguide |||||| */
