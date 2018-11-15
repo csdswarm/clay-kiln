@@ -41,7 +41,6 @@ function middleware(req, res, next) {
     params.tag = req.path.match(/tags\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/tag@published`);
   } else {
-    console.log('\n\n\nFOO')
     // Otherwise resolve the uri and page instance
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(db.get);
   }
@@ -51,7 +50,6 @@ function middleware(req, res, next) {
   promise.then(data => composer.composePage(data, res.locals))
     .then(composed => res.json(composed))
     .catch(err => {
-      console.log(err)
       res
         .status(404)
         .json({ status: 404, msg: err.message });
