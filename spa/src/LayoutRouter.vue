@@ -55,15 +55,20 @@ export default {
       return nextLayoutComponent
     },
     getNextSpaPayload: async function getNextSpaPayload (destination) {
-      const nextSpaPayloadResult = await axios.get(`//${destination}`, {
-        headers: {
-          'x-amphora-page-json': true
-        }
-      })
-
-      nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-
-      return nextSpaPayloadResult.data
+      try {
+        const nextSpaPayloadResult = await axios.get(`//${destination}`, {
+          headers: {
+            'x-amphora-page-json': true
+          }
+        })
+        nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+        return nextSpaPayloadResult.data
+      }
+      catch (e) {
+        const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
+        nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+        return nextSpaPayloadResult.data
+      }
     },
     /**
      * 
