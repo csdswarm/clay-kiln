@@ -22,6 +22,7 @@ $drawerSelector: nav-drawer;
     cursor: pointer;
     background: transparent;
     border: none;
+    height: 100%;
   }
   ul {
     display: inline-block;
@@ -49,7 +50,7 @@ $drawerSelector: nav-drawer;
   height: $default-nav-height;
 }
 .radiocom-nav {
-  background: $parisPurple;
+  background: $parisM;
   width: 100%;
   position: fixed;
   top: 0;
@@ -147,14 +148,14 @@ $drawerSelector: nav-drawer;
     cursor: pointer;
     @mixin header-button-color news, $lightningYellow;
     @mixin header-button-color sports, $azureRadience;
-    @mixin header-button-color podcasts, $robinsEgg;
+    @mixin header-button-color podcasts, $robinsEggBlue;
     @mixin header-button-color entertainment, $sunsetOrange;
     @mixin header-button-color listen, $white;
     @mixin header-button-color download, $white;
     @mixin header-button-color more, $white;
-    @mixin header-heading-color listen, $parisPurple;
-    @mixin header-heading-color download, $parisPurple;
-    @mixin header-heading-color more, $parisPurple;
+    @mixin header-heading-color listen, $parisM;
+    @mixin header-heading-color download, $parisM;
+    @mixin header-heading-color more, $parisM;
     button h1 {
       font-family: CircularStd-Black, sans-serif;
       font-size: 15px;
@@ -314,7 +315,7 @@ $drawerSelector: nav-drawer;
         &.$(drawerSelector)__download h2:hover,
         &.$(drawerSelector)__more h2:hover {
           background: $white;
-          color: $parisPurple;
+          color: $parisM;
         }
         @define-mixin drawer-header-color $modifier, $color {
           &.$(drawerSelector)__sub-nav--active.$(drawerSelector)__$(modifier) h2,
@@ -325,7 +326,7 @@ $drawerSelector: nav-drawer;
         @mixin drawer-header-color entertainment, $sunsetOrange;
         @mixin drawer-header-color news, $lightningYellow;
         @mixin drawer-header-color sports, $azureRadience;
-        @mixin drawer-header-color podcasts, $robinsEgg;
+        @mixin drawer-header-color podcasts, $robinsEggBlue;
         h2 {
           cursor: pointer;
           text-align: left;

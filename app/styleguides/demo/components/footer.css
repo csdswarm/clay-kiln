@@ -29,7 +29,7 @@
 
 .radiocom-footer {
   width: 100%;
-  background: $parisPurple;
+  background: $parisM;
   position: relative;
   text-align: center;
   padding: em(40) em(20);
@@ -47,20 +47,24 @@
         @mixin inline-block;
         height: em(30);
         margin: 0 em(10);
+        pointer-events: none;
       }
     }
     .radiocom-footer__download-app {
       margin-bottom: em(40);
+      display: inline-flex;
+      width: em(295);
+      justify-content: space-between;
       > a object {
         @mixin inline-block;
-        height: em(40);
+        height: em(40, 14);
+        pointer-events: none;
       }
       a:first-of-type {
-        width: em(120);
-        margin-right: em(40);
+        width: em(120, 14);
       }
       a:nth-of-type(2) {
-        width: em(135);
+        width: em(135, 14);
       }
     }
     .radiocom-footer__section {

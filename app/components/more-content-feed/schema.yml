@@ -1,6 +1,13 @@
 _description: |
   A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
 
+pageLength:
+  _label: Page Size
+  _has:
+    help: Number of articles to load when "load more" is clicked
+    input: text
+    type: number
+
 populateFrom:
   _label: Populate content from?
   _has:
@@ -64,7 +71,17 @@ sectionFrontManual:
         value: section-front
 
 tag:
+  _subscribe: tag
+  _label: tag
+  _has:
+    help: Tag from which to pull content
+
+tagManual:
   _label: Tag
+  _placeholder:
+    height: 600px
+    text: Curated Category/Tag Page
+    required: true
   _reveal:
     field: populateFrom
     operator: ===
@@ -77,6 +94,20 @@ tag:
         field: populateFrom
         operator: ===
         value: tag
+
+tagInfo:
+  _label: Tag Info
+  _placeholder:
+    height: 274px
+    text: More Info on Tag
+    required: true
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: tag
+  _has:
+    input: text
+    help: Tag Description / More Info (Will be shown in right rail)
 
 items:
   _label: Items
@@ -179,11 +210,11 @@ googleAdTop:
 _groups:
   settings:
     fields:
+      - pageLength
       - populateFrom
       - sectionFrontManual
-      - tag
+      - tagManual
+      - tagInfo
       - items
     _placeholder:
       height: 100px
-      text: More from Radio.com (Content Feed)
-      ifEmpty: populateFrom

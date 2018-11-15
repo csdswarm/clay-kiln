@@ -1,4 +1,4 @@
-<nav class="radiocom-nav-placeholder" data-uri="{{ default _ref _self }}" data-editable="settings">
+<nav class="component component--top-nav radiocom-nav-placeholder" data-uri="{{ default _ref _self }}" data-editable="settings">
   <div class="radiocom-nav">
     <div class="container">
       <div id="hamburger" class="radiocom-nav__hamburger wrapper">
@@ -6,21 +6,23 @@
         <div class="bar bar-2"></div>
         <div class="bar bar-3"></div>
       </div>{{!--
-      --}}<button class="radiocom-nav__logo"><a href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
-        {{{ read 'components/header/media/radiocom_hz.svg' }}}
-      </a></button>{{!--
+      --}}<a class="radiocom-nav__logo" href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}"><button>
+        {{{ read 'components/top-nav/media/radiocom_hz.svg' }}}
+      </button></a>{{!--
       --}}{{#if headerLinks.length}}
         {{#each headerLinks}}
           <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}} {{#if drawer}}radiocom-nav__category-button--drawer-enabled{{/if}}">
-            <button>
-              {{#if url}}
-                <a href="{{url}}">
+            {{#if url}}
+              <a href="{{url}}">
+                <button>
                   <h1>{{text}}</h1>
-                </a>
-              {{ else }}
+                </button>
+              </a>
+            {{ else }}
+              <button>
                 <h1>{{text}}</h1>
-              {{/if}}
-            </button>
+              </button>
+            {{/if}}
             {{#if list.length}}
               <div class="nav-drawer nav-drawer--{{text}}">
                 <div class="container">
@@ -40,7 +42,7 @@
                       {{ else }}
                         {{#if subnav.url}}
                           <a href="{{subnav.url}}" target="_blank">
-                            <h2 class="{{#if (compare subnav.text 'find a station')}}find-station-link{{/if}}">{{subnav.text}}{{#if (compare subnav.text 'find a station')}} <span>&#8227</span>{{/if}}</h2>
+                            <h2 class="{{#if (compare subnav.text 'find a station')}}find-station-link{{/if}}">{{subnav.text}}{{#if (compare subnav.text 'find a station')}} <span>&#8227;</span>{{/if}}</h2>
                           </a>
                         {{ else }}
                           <h2>{{subnav.text}}</h2>
@@ -56,12 +58,12 @@
       {{/if}}{{!--
       --}}<div class="radiocom-nav__container--right">
         <button class="account-btn" id="account-btn">
-          <div class="active default">{{{ read 'components/header/media/log-in.svg' }}}</div>
-          <div class="inactive hover">{{{ read 'components/header/media/log-in_hover.svg' }}}</div>
+          <div class="active default">{{{ read 'components/top-nav/media/log-in.svg' }}}</div>
+          <div class="inactive hover">{{{ read 'components/top-nav/media/log-in_hover.svg' }}}</div>
         </button>{{!--
         --}}<button class="search-btn" id="search-btn">
-          <div class="active default">{{{ read 'components/header/media/search.svg' }}}</div>
-          <div class="inactive hover">{{{ read 'components/header/media/search_hover.svg' }}}</div>
+          <div class="active default">{{{ read 'components/top-nav/media/search.svg' }}}</div>
+          <div class="inactive hover">{{{ read 'components/top-nav/media/search_hover.svg' }}}</div>
         </button>
       </div>
       <div class="nav-drawer nav-drawer--mobile">
