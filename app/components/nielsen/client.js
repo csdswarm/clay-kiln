@@ -98,17 +98,16 @@ class NielsenMarketingCloud {
 };
 
 const nielsen = new NielsenMarketingCloud();
+let spaPayload;
 
 (() => {
-  const jsonPayload = atob(window.spaPayload),
-    spaPayload = JSON.parse(jsonPayload);
+  const jsonPayload = atob(window.spaPayload);
 
+  spaPayload = JSON.parse(jsonPayload);
   document.addEventListener('nielsen-mount', function () {
     nielsen.parseSPAPayload(spaPayload);
-  }, {once: true});
+  });
 })();
 document.addEventListener('pageView', function (event) {
-  document.addEventListener('nielsen-mount', function () {
-    nielsen.parseSPAPayload(event.detail);
-  }, {once: true});
+  spaPayload = event.detail;
 });
