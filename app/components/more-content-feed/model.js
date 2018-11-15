@@ -16,13 +16,13 @@ const queryService = require('../../services/server/query'),
     'lead'
   ],
   maxItems = 10;
-/**
- * @param {string} ref
- * @param {object} data
- * @param {object} locals
- * @returns {Promise}
- */
 
+/**
+* @param {string} ref
+* @param {object} data
+* @param {object} locals
+* @returns {Promise}
+*/
 module.exports.save = (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
@@ -51,6 +51,7 @@ module.exports.save = (ref, data, locals) => {
       return data;
     });
 };
+
 /**
  * @param {string} ref
  * @param {object} data
@@ -63,16 +64,28 @@ module.exports.render = function (ref, data, locals) {
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
+  if (locals && locals.page) {
+    /* after the first 10 items, show N more at a time (pageLength defaults to 5)
+     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
+     * we return N + 1 items so we can let the frontend know if we have more data.
+     */
+    if (!data.pageLength) { data.pageLength = 5; }
+    const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
+
+    queryService.addOffset(query, skip);
+    queryService.addSize(query, data.pageLength + 1);
+  }
   if (data.populateFrom == 'tag') {
-    if (!data.tag || !locals) {
+    if (!data.tag && !data.tagManual || !locals) {
       return data;
     }
+
     // Clean based on tags and grab first as we only ever pass 1
-    data.tag = tag.clean([{text: data.tag}])[0].text || '';
-    queryService.addShould(query, { match: { tags: data.tag }});
+    data.tag = tag.clean([{text: data.tagManual || data.tag}])[0].text || '';
+    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'section-front') {
-    if ((!data.sectionFront && !data.sectionFrontManual) || !locals) {
+    if (!data.sectionFront && !data.sectionFrontManual || !locals) {
       return data;
     }
     queryService.addShould(query, { match: { articleType: data.sectionFrontManual || data.sectionFront }});
@@ -92,7 +105,8 @@ module.exports.render = function (ref, data, locals) {
 
   // exclude the curated content from the results
   if (data.items && !isComponent(locals.url)) {
-    data.items.forEach(item => {
+    // this can be a bug when items dont have canonical urls
+    data.items.filter((item) => item.canonicalUrl).forEach(item => {
       cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     });
@@ -105,6 +119,11 @@ module.exports.render = function (ref, data, locals) {
         return content;
       });
       data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+
+      // "more content" button passes page query param - render more content and return it
+      data.rawQueryResults = results.slice(0, data.pageLength);
+      data.moreResults = results.length > data.pageLength;
+
       return data;
     })
     .catch(e => {

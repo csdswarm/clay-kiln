@@ -145,4 +145,8 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
     });
   };
 
-addEventListeners();
+// mount listener for vue (optional)
+document.addEventListener('top-nav-mount', function () {
+  // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
+  addEventListeners();
+});

@@ -2,7 +2,7 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.latest-content {
+.component--latest-content {
   width: 100%;
   margin: 0 auto;
   max-width: em(withOnGrid(21,11));

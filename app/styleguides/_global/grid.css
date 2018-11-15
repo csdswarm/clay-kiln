@@ -1,13 +1,21 @@
+@import "colors";
+
 .layout {
   .layout__top,
   .layout__bottom,
   .layout__page-header {
     width: 100%;
   }
+  .layout__bottom {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .layout__content {
   margin: 0 auto;
+  padding: em(30);
+  $contentPadding: calc(em(30) * 2);
   .content__main,
   .content__secondary {
     width: 100%;
@@ -18,7 +26,7 @@
   .layout {
     .layout__section-header,
     .layout__content {
-      width: em(1100);
+      width: calc(em(1100) + $contentPadding);
     }
   }
 }
@@ -27,16 +35,18 @@
   .layout {
     .layout__section-header,
     .layout__content {
-      width: em(940);
+      width: calc(em(940) + $contentPadding);
     }
   }
 }
 
 @mixin medium-screen {
   .layout {
+    background-color: transparent;
+
     .layout__section-header,
     .layout__content {
-      width: calc(100% - em(40));
+      width: calc(100% - $contentPadding);
       max-width: em(728);
     }
   }
@@ -44,8 +54,11 @@
 
 @mixin medium-small-screen {
   .layout {
+    background-color: $white;
+
     .layout__section-header,
     .layout__content {
+      padding: 0;
       width: calc(100% - em(40));
       max-width: em(440);
     }
@@ -56,6 +69,7 @@
   .layout {
     .layout__section-header,
     .layout__content {
+      padding: 0;
       width: calc(100% - em(40));
       max-width: em(320);
     }

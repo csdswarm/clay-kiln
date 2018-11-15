@@ -20,7 +20,7 @@
 			@mixin latest-recirc-font1 $azureRadience;
 		}
 		.component--podcasts & {
-			@mixin latest-recirc-font1 $robinsEgg;
+			@mixin latest-recirc-font1 $robinsEggBlue;
 		}
 		.component--tag & {
 			@mixin latest-recirc-font1 $purple;
@@ -55,7 +55,7 @@
 			@mixin latest-recirc-box $azureRadience;
 		}
 		.component--podcasts & {
-			@mixin latest-recirc-box $robinsEgg;
+			@mixin latest-recirc-box $robinsEggBlue;
 		}
 		.component--tag & {
 			@mixin latest-recirc-box $purple;
