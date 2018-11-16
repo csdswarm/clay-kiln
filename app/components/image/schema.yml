@@ -7,10 +7,12 @@ _description: |
   * Automatically pulls in credit from Mediaplay on save.
 
 url:
-  _label: URL
   _has:
-    input: text
-    type: url
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
 caption:
   _label: Caption
   _has:

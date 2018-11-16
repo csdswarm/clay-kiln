@@ -24,10 +24,34 @@ _users:
     provider: google
     auth: admin
   -
-    username: tiffachow@gmail.com
+    username: tiffany.chow@entercom.com
     provider: google
     auth: admin
   -
     username: nathanacarmine@gmail.com
+    provider: google
+    auth: admin
+  -
+    username: aaron.m.ponce@gmail.com
+    provider: google
+    auth: admin
+  -
+    username: brien@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: victoriya.polyakova@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: john.pacino@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: bill.difonzo@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: taryn.wood-norris@entercom.com
     provider: google
     auth: admin

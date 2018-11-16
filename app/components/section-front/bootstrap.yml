@@ -1,9 +1,13 @@
 _components:
   section-front:
     title: ''
-    googleAdUnderStationsModule:
-        _ref: /_components/google-ad-manager/instances/leaderboard
-    googleAdRightRail:
-        _ref: /_components/google-ad-manager/instances/mediumRectangle
     sectionLead:
       _ref: /_components/section-lead
+    googleAdUnderStationsModule:
+        _ref: /_components/google-ad-manager/instances/leaderboard
+    moreContentFeed:
+      _ref: /_components/more-content-feed/instances/section-front
+    latestContent:
+        _ref: /_components/latest-content/instances/new
+    stationsCarousel:
+      _ref: /_components/stations-carousel/instances/section-front

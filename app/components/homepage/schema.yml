@@ -1,10 +1,5 @@
 _confirmRemoval: true
 
-title:
-  _label: Title
-  _has:
-    input: text
-
 canonicalUrl:
   _publish: url
   _has:
@@ -20,7 +15,31 @@ googleAdUnderLatestModule:
     include:
       - google-ad-manager
 
-googleAdRightRail:
+podcastList:
   _component:
     include:
-      - google-ad-manager
+      - podcast-list
+
+moreContentFeed:
+  _component:
+    include:
+      - more-content-feed
+
+stationsCarousel:
+  _placeholder:
+    text: Stations Carousel
+    height: 300px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - stations-carousel
+
+sectionLead:
+  _component:
+    include:
+      - section-lead
+
+latestContent:
+  _component:
+    include:
+    - latest-content

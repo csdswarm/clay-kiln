@@ -26,7 +26,7 @@ shortHeadline:
       - strike
     validate:
       required: true
-      max: 60
+      max: 140
     help: Also used for Related Stories and some homepages
     attachedButton:
       name: magic-button
@@ -89,7 +89,7 @@ seoDescription:
     type: multi-line
     help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 250 characters
     validate:
-      min: 100
+      min: 50
       max: 250
 feedImgUrl:
   _label: Image URL
@@ -185,12 +185,23 @@ stationTitle:
   _has:
     input: text
     help: Title of the station
+    validate:
+      required:
+        field: stationURL
+        operator: truthy
 stationURL:
   _label: Station URL
   _has:
     input: text
-    # TODO: URL Validation. See https://entercomdigitalservices.atlassian.net/browse/ON-178
     type: url
+    validate:
+      required:
+        field: stationTitle
+        operator: truthy
+      # Using pattern from https://www.regextester.com/93652
+      # Detailed RegEx breakdown: https://regex101.com/r/hlIapc/1/
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
     help: URL of the station
 hasSecondaryBylines:
   _label: Use Secondary Bylines
@@ -242,6 +253,7 @@ lead:
       - brightcove
       - youtube
       - html-embed
+      - omny
     validate:
       max: 1
       required: true
@@ -264,6 +276,7 @@ content:
       - html-embed
       - brightcove
       - inline-related
+      - omny
 feeds:
   _label: Include in These Feeds
   _has:

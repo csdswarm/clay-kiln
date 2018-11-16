@@ -13,6 +13,8 @@
     "search",
     "services",
     "styleguides",
-    "sites"
+    "sites",
+    "public",
+    "routes"
   ]
 }

@@ -71,6 +71,35 @@ $ make up-clay
 ```
 You can run this without stopping anything and it'll swap in a new container with the new image to all the services, but you'll need to get the logs back again by running the log command.
 
+#### When do I need to rebuild the SPA?
+
+If you change any `template.hbs` files in the components or any files in `spa/`, add media elements or create new Handlebar helpers you'll need to re-build the SPA. This has been captured in a Makefile command
+
+```bash
+$ make spa
+```
+
+#### When do I need to run gulp?
+
+If you change any files in the following (Pulled from `app/gulpfile.js`): 
+* `styleguides/**/*.css`
+* `global/js/**` (Not in `/global/js/editor` though)
+* `global/kiln/**/*.js`
+* `components/**/media/**`
+* `sites/**/media/**`
+* `sites/**/fonts/**`
+* `components/**/*.hbs` or `components/**/*.handlebars`
+
+Run the following command from inside the `app/` directory:
+```bash
+$ ./node_modules/.bin/gulp
+```
+
+Gulp can also be watched to automatically rebuild changes:
+```bash
+$ ./node_modules/.bin/gulp watch
+```
+
 ### If I want to stop dev?
 
 ```bash
@@ -128,19 +157,27 @@ _users:
 
 ## Running the importer
 
-You will need to run the importer
+You will need to run the importer (Will create pages and import 10 items from each content type (articles/blogs/etc))
 
 ```bash
 git clone git@github.com:Entercom/frequency-clay-translator.git
 cd frequency-clay-translator
-npm install && node index.js | clay import -k demo --publish clay.radio.com
+npm run import-pages --silent
+npm run import-content --silent totalItems=10
 ```
+
+For further instructions please see README.md in ```frequency-clay-translator```
 
 ## Running the demo
 
 Now you can visit the following URL to get a list of test pages you can visit.
 
 http://clay.radio.com/_pages/index.html
+
+## Rebuild the SPA
+
+Anytime you change a `template.hbs` file  or modify the `spa` directory, run
+`npm run-script build -- --mode=none` from the `spa` directory.
 
 ## Missed anything?
 That _should_ be it...if not, submit an issue or add something to this README.w

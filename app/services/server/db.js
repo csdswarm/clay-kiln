@@ -81,6 +81,7 @@ function get(ref) {
 }
 
 module.exports.setup = setup;
+module.exports.getUri = uri => db.get(uri);
 module.exports.get = get;
 module.exports.put = db.put;
 module.exports.list = db.list;
