@@ -703,12 +703,10 @@ _components:
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
 
-  section-videos:
+  latest-videos:
     instances:
-      new:
+      homepage:
         items: []
-        tag: ''
-        sectionTitle: ''
 
   homepage:
     instances:
@@ -728,6 +726,8 @@ _components:
         stationsCarousel:
           -
             _ref: /_components/stations-carousel/instances/homepage
+        latestVideos:
+          _ref: /_components/latest-videos/instances/homepage
 
   tag-page:
     instances:

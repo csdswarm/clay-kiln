@@ -1,0 +1,38 @@
+<section data-uri="{{ default _ref _self }}" class="component component--section-videos{{ if @root.locals.edit ' editing' }}" data-editable="sectionVideos">
+  <h2><span>Radio.com Video</span></h2>
+  <div class="section-lead__videos">
+    {{#each articles as |article|}}
+      <div class="section-lead__video section-lead__video--main section-lead__video--{{ article.articleType }}">
+        <a href="{{ article.canonicalUrl }}"
+           class="section-lead__link"
+           data-track-type="article-link"
+           data-track-component-name="latest-videos"
+           data-track-page-uri="{{ article.pageUri }}"
+           data-track-headline="{{ article.primaryHeadline }}"
+           data-track-component-title="Latest Videos">
+          <span class="section-lead__play-icon"></span>
+          <img
+            src="{{ article.feedImgUrl }}?width=780&crop=16:9,smart"
+            srcset="{{ article.feedImgUrl }}?width=706&crop=16:9,smart 706w,
+              {{ article.feedImgUrl }}?width=480&crop=16:9,smart 480w"
+            sizes="(max-width: 480px) 100vw, (max-width: 1023px) 80vw, 780px"
+            class="section-lead__image" />
+        </a>
+        <div class="section-lead__details">
+          {{#if @first }}
+            <span class="details__exclusive">Exclusive Video</span>
+          {{/if}}
+          <h3 class="details__title">
+            <a href="{{ article.canonicalUrl }}"
+               class="section-lead__link"
+               data-track-type="article-link"
+               data-track-component-name="latest-videos"
+               data-track-page-uri="{{ article.pageUri }}"
+               data-track-headline="{{ article.primaryHeadline }}"
+               data-track-component-title="Latest Videos">{{ article.primaryHeadline }}</a>
+          </h3>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</section>
