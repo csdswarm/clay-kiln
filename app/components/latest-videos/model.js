@@ -13,7 +13,7 @@ const queryService = require('../../services/server/query'),
     'feedImgUrl',
     'articleType'
   ],
-  maxItems = 2;
+  maxItems = 6;
 
 /**
  * @param {string} ref
