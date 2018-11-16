@@ -59,6 +59,7 @@
         @mixin inline-block;
         height: em(40, 14);
         pointer-events: none;
+        width: 100%;
       }
       a:first-of-type {
         width: em(120, 14);
