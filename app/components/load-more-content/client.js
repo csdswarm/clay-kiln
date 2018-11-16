@@ -3,7 +3,7 @@
 // @TODO ON-237 - move this file to more-content-feed
 
 const helpers = require('../../services/universal/helpers'),
-  Handlebars = require('Handlebars');
+  Handlebars = require('handlebars');
 
 for (const helper in helpers) {
   if (typeof helpers[helper] === 'function') {
