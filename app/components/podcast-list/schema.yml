@@ -5,7 +5,6 @@ items:
   _placeholder:
     height: 200px;
     text: Podcast List
-    ifEmpty: 'items'
   _has:
     input: complex-list
     enforceMaxlength: true
