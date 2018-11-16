@@ -105,14 +105,15 @@ const ClayHandlebars = require('clayhandlebars')(Handlebars),
 
 class LoadMoreContent {
   constructor(el) {
-    this.loadMore = el;
+    this.li = el.parentNode;
+    this.ul = this.li.parentNode;
     this.moreContentUrl = el.getAttribute('data-load-more-uri').replace(/^.*\.com/, '');
     this.moreContentUrlParam = el.getAttribute('data-load-more-param');
     this.currentPage = 1;
     this.template = templates[this.moreContentUrl.split('/')[2]];
 
     // load another page every time the load more button is clicked!
-    this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
+    el.onclick = this.handleLoadMoreContent.bind(this);
   }
 
   /**
@@ -125,14 +126,14 @@ class LoadMoreContent {
       .then((response) => response.json())
       .then((data) => {
         for (let feedItem of data.content) {
-          const wrapper = document.createElement('div');
+          const ul = document.createElement('ul');
 
           data.feedItem = feedItem;
-          this.loadMore.before(wrapper);
-          wrapper.outerHTML = this.template(data);
+          ul.innerHTML = this.template(data);
+          this.ul.insertBefore(ul.querySelector('li'), this.li);
         }
         if (!data.moreContent) {
-          this.loadMore.parentNode.removeChild(this.loadMore);
+          this.ul.removeChild(this.li);
         }
       });
   }
