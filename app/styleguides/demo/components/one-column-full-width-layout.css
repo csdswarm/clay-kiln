@@ -1,0 +1,11 @@
+@import '_global/reset';
+@import '_global/fonts';
+@import '_global/grid';
+@import "_global/colors";
+
+.layout.layout--one-column-full-width {
+  .layout__content {
+    width: 100%;
+    padding: 0px;
+  }
+}
