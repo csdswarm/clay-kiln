@@ -1,8 +1,9 @@
 'use strict';
 
 const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
-  mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
-  mutableImages = ['account-btn', 'search-btn'];
+  mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav');
+  // mutableImages = ['account-btn', 'search-btn'];
+
 let isMobile = false,
   activeHamburger = false;
 
@@ -90,22 +91,22 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
  * @function toggleImage
  * @param {Object} event - Event from event listener.
  */
-  toggleImage = event => {
-    const defaultImage = event.currentTarget.querySelector('.default'),
-      hoveredImage = event.currentTarget.querySelector('.hover');
+  // toggleImage = event => {
+  //   const defaultImage = event.currentTarget.querySelector('.default'),
+  //     hoveredImage = event.currentTarget.querySelector('.hover');
 
-    if (event.type == 'mouseover') {
-      defaultImage.classList.add('inactive');
-      defaultImage.classList.remove('active');
-      hoveredImage.classList.add('active');
-      hoveredImage.classList.remove('inactive');
-    } else {
-      defaultImage.classList.add('active');
-      defaultImage.classList.remove('inactive');
-      hoveredImage.classList.add('inactive');
-      hoveredImage.classList.remove('active');
-    }
-  },
+  //   if (event.type == 'mouseover') {
+  //     defaultImage.classList.add('inactive');
+  //     defaultImage.classList.remove('active');
+  //     hoveredImage.classList.add('active');
+  //     hoveredImage.classList.remove('inactive');
+  //   } else {
+  //     defaultImage.classList.add('active');
+  //     defaultImage.classList.remove('inactive');
+  //     hoveredImage.classList.add('inactive');
+  //     hoveredImage.classList.remove('active');
+  //   }
+  // },
 
   /**
  * Add event listeners to header elements to toggle drawers & images.
