@@ -85,9 +85,11 @@ stg-bootstrap:
 	curl -X PUT http://stg-clay.radio.com/_components/tag-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 
+install-dev:
+	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
 
 install:
-	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
+	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
 
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
