@@ -87,9 +87,7 @@ module.exports.render = function (ref, data, locals) {
 
   return queryService.searchByQuery(query)
     .then(function (results) {
-      const limit = data.fill;
-
-      data.articles = data.items.concat(_.take(results, limit)).slice(0, maxItems); // show a maximum of maxItems links
+      data.articles = data.items.concat(results).slice(0, maxItems); // show a maximum of maxItems links
 
       return data;
     })
