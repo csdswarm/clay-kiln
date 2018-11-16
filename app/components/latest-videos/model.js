@@ -61,11 +61,8 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems);
   let cleanUrl;
-
-  // items are saved from form, articles are used on FE
-  data.articles = data.items;
 
   if (!locals) {
     return data;
