@@ -56,16 +56,15 @@
           </div>
         {{/each}}
       {{/if}}{{!--
-      --}}<div class="radiocom-nav__container--right">
+      <div class="radiocom-nav__container--right">
         <button class="account-btn" id="account-btn">
           <div class="active default">{{{ read 'components/top-nav/media/log-in.svg' }}}</div>
           <div class="inactive hover">{{{ read 'components/top-nav/media/log-in_hover.svg' }}}</div>
-        </button>{{!--
-        --}}<button class="search-btn" id="search-btn">
+        </button><button class="search-btn" id="search-btn">
           <div class="active default">{{{ read 'components/top-nav/media/search.svg' }}}</div>
           <div class="inactive hover">{{{ read 'components/top-nav/media/search_hover.svg' }}}</div>
         </button>
-      </div>
+      </div> --}}
       <div class="nav-drawer nav-drawer--mobile">
         {{#if headerLinks.length}}
           {{#each headerLinks}}

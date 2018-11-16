@@ -115,10 +115,10 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
   // Toggle Mobile Nav
     document.getElementById('hamburger').addEventListener('click', toggleHamburger);
     // Toggle Images on Hover
-    for (let image of mutableImages) {
-      document.getElementById(image).addEventListener('mouseover', function (e) { toggleImage(e); });
-      document.getElementById(image).addEventListener('mouseout', function (e) { toggleImage(e); });
-    }
+    // for (let image of mutableImages) {
+    //   document.getElementById(image).addEventListener('mouseover', function (e) { toggleImage(e); });
+    //   document.getElementById(image).addEventListener('mouseout', function (e) { toggleImage(e); });
+    // }
     // Toggle Dropdowns on Mobile Nav Categories
     for (let navSection of mobileNavSections) {
       navSection.addEventListener('click', function (e) { toggleMobileCategoryDropdown(e); });
