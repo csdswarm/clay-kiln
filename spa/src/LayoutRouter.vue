@@ -66,9 +66,9 @@ export default {
       return nextSpaPayloadResult.data
     },
     /**
-     * 
+     *
      * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
-     * 
+     *
      * @param {object} to - A Vue Router "to" object.
      * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
      */
@@ -76,12 +76,22 @@ export default {
       const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
       const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
       const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
+      const nextArticleData = queryPayload.findComponent(spaPayload.main, 'article')
+      const nextHomepageData = queryPayload.findComponent(spaPayload.main, 'homepage')
+      const nextSectionFrontPageData = queryPayload.findComponent(spaPayload.main, 'section-front')
+      const nextTagPageData = queryPayload.findComponent(spaPayload.pageHeader, 'tag-page-header')
+      const nextStationDetailPageData = queryPayload.findComponent(spaPayload.main, 'station-detail')
 
       return {
         toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
         toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
         toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
-        toPath: to.path
+        toPath: to.path,
+        toArticlePage: nextArticleData ? nextArticleData : {},
+        toHomepage: nextHomepageData ? nextHomepageData : {},
+        toSectionFrontPage: nextSectionFrontPageData ? nextSectionFrontPageData : {},
+        toTagPage: nextTagPageData ? nextTagPageData : {},
+        toStationDetailPage: nextStationDetailPageData ? nextStationDetailPageData : {}
       }
     }
   },
@@ -111,6 +121,7 @@ export default {
       let event = new CustomEvent(`pageView`, {
         detail: pageViewEventData
       })
+
       document.dispatchEvent(event)
     }
   }
