@@ -256,7 +256,8 @@ function updateMegabundle(filepaths, opts) {
   const entries = filepaths.map(file => path.resolve(file)),
     bundler = browserify({dedupe: false}),
     subcache = {};
-  let cache;
+  let cache,
+    startTime = Date.now();
 
   _.defaults(opts, {
     compact: false,
@@ -271,7 +272,6 @@ function updateMegabundle(filepaths, opts) {
     pack: []
   });
 
-  let startTime = Date.now();
   gutil.log("Starting '" + gutil.colors.cyan('updateMegabundle') + "'...");
 
   bundler
@@ -356,7 +356,7 @@ function updateMegabundle(filepaths, opts) {
         fs.outputJsonSync(REGISTRY_PATH, cache.registry);
         fs.outputJsonSync(ENV_PATH, cache.env);
         fs.outputJsonSync(IDS_PATH, cache.ids);
-        gutil.log("Finished '" + gutil.colors.cyan('updateMegabundle') + "' after " + gutil.colors.magenta((((Date.now() - startTime) / 1000) + ' s')));
+        gutil.log("Finished '" + gutil.colors.cyan('updateMegabundle') + "' after " + gutil.colors.magenta(((Date.now() - startTime) / 1000) + ' s'));
         resolve();
       })
       .on('error', reject)
