@@ -227,7 +227,7 @@ $drawerSelector: nav-drawer;
     top: $default-nav-height;
     width: 100%;
     left: 0;
-    padding: em(50);
+    padding: em(20);
     color: $white;
     cursor: default;
     overflow: hidden;
