@@ -57,7 +57,7 @@
 
   .podcast-list__tag {
     @mixin podcast-list-font4;
-    height: em(26);
+    height: em(26, 14);
     position: absolute;
     background-color: $robinsEgg;
     padding: 0 em(6);
