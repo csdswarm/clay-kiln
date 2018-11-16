@@ -714,12 +714,10 @@ _components:
         loadMoreContent:
           _ref: /_components/load-more-content/instances/default
 
-  section-videos:
+  latest-videos:
     instances:
-      new:
+      homepage:
         items: []
-        tag: ''
-        sectionTitle: ''
 
   homepage:
     instances:
@@ -741,6 +739,8 @@ _components:
             _ref: /_components/stations-carousel/instances/homepage
         loadMoreContent:
           _ref: /_components/load-more-content/instances/default
+        latestVideos:
+          _ref: /_components/latest-videos/instances/homepage
 
   tag-page:
     instances:
