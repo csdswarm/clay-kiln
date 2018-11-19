@@ -2,56 +2,54 @@
   <li>
     <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
        data-track-type="feedItem-link"
-       data-track-component-name="more-content-feed"
+       data-track-component-name="tag-page"
        data-track-page-uri="{{ feedItem.pageUri }}"
        data-track-headline="{{ feedItem.primaryHeadline }}"
        data-track-component-title="More Content Feed"
        data-track-sectionFront="{{ feedItem.articleType }}">
-      <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});">
-        <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
-        {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
-          <span class="thumb__content-type">
-            {{{ read 'components/tag-page/media/watch.svg' }}}
-          </span>
-        {{/ifAny}}
-        {{#if (compare feedItem.lead 'audio')}}
-          <span class="thumb__content-type">
-            {{{ read 'components/tag-page/media/listen.svg' }}}
-          </span>
-        {{/if}}
-        <span class="thumb__datetime-posted">
-          {{#if (isPublished24HrsAgo feedItem.date) }}
-            {{{ hrsOnlyTimestamp feedItem.date }}}
-          {{else}}
-            {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
-          {{/if}}
-        </span>
+      <div class="thumb__container">
+        <span class="thumb__section-tag">{{{ feedItem.articleType }}}</span>
+        <img
+          src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,smart"
+          srcset="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,smart 300w,
+                    {{ feedItem.feedImgUrl }}?width=320&crop=16:9,smart 320w,
+                    {{ feedItem.feedImgUrl }}?width=343&crop=16:9,smart 343w,
+                    {{ feedItem.feedImgUrl }}?width=380&crop=16:9,smart 380w,
+                    {{ feedItem.feedImgUrl }}?width=440&crop=16:9,smart 440w"
+          sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, (max-width: 1279px) 300px, 380px"
+          class="link__thumb" />
       </div>
       <div class="link__info">
-        <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
-        <span class="info__teaser">{{{ feedItem.teaser }}}</span>
-        <span class="info__datetime-posted">
+        <div class="link__header">
+          <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
+          <span class="info__teaser">{{{ feedItem.teaser }}}</span>
+        </div>
+        <div class="info__datetime-posted">
           {{#if (isPublished24HrsAgo feedItem.date) }}
             {{{ hrsOnlyTimestamp feedItem.date }}}
           {{else}}
             {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
           {{/if}}
-        </span>
+        </div>
       </div>
     </a>
   </li>
 {{/inline}}
 
+{{#if dynamicTag}}
+{{!-- Dynamic Tag Page --}}
+  <div class="tag-page__top-ad--mobile">
+    {{> google-ad-manager googleAdTop}}
+  </div>
+{{/if}}
+
 <section role="main" data-track-type="section" data-uri="{{ default _ref _self }}"
-         class="component component--tag-page tag-page--{{tag}}{{ if @root.locals.edit ' editing' }}">
+         class="component component--tag-page {{ if @root.locals.edit ' editing' }}">
   {{#if dynamicTag}}
   {{!-- Dynamic Tag Page --}}
-    <div class="tag-page__top-ad--mobile">
-      {{> google-ad-manager googleAdTop}}
-    </div>
-    <div class="tag-page-content-feed__container">
+    <div class="section__content-feed-container">
       {{#ifAny content.length @root.locals.edit}}
-        <ul class="container__links">
+        <ul class="tag-page__links" data-editable="tag">
           {{#each content as |feedItem|}}
             {{> tag-page-li feedItem=feedItem }}
           {{/each}}
@@ -60,7 +58,7 @@
           {{/if}}
         </ul>
       {{/ifAny}}
-      <div class="container__right-rail tag-page__right-ad--desktop">
+      <div class="tag-page__right-rail tag-page__right-ad--desktop">
         {{> google-ad-manager googleAdRightRail}}
       </div>
     </div>

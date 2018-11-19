@@ -68,48 +68,26 @@
         @mixin medium-small-screen {
           flex-direction: column;
         }
-        @define-mixin labelBackground $sectionFront, $color: $purple {
-          &.links__link--$sectionFront {
-            .link__thumb .thumb__section-front,
-            .link__thumb .thumb__content-type {
-              background: $color;
+
+        .thumb__container {
+          display: flex;
+          position: relative;
+          @define-mixin labelBackground $sectionFront, $color: $purple {
+            &.links__link--$sectionFront {
+              .link__thumb .thumb__section-tag,
+              .link__thumb .thumb__content-type {
+                background: $color;
+              }
             }
           }
-        }
-        @mixin labelBackground entertainment, $sunsetOrange;
-        @mixin labelBackground news, $lightningYellow;
-        @mixin labelBackground sports, $azureRadience;
-        @mixin labelBackground podcasts, $robinsEggBlue;
-        .link__thumb {
-          background-position: 0,0;
-          background-size: cover;
-          position: relative;
-          width: em(widthOnGrid(5,4));
-          height: em(214);
-          @mixin large-screen {
-            width: em(widthOnGrid(4,3));
-            height: em(169);
-          }
-          @mixin medium-screen {
-            width: em(widthOnGrid(3,2,medium-screen));
-            height: em(193);
-          }
-          @mixin medium-small-screen {
-            width: em(widthOnGrid(4,3,medium-small-screen));
-            height: em(248);
-            margin-bottom: em(15);
-          }
-          @mixin small-screen {
-            width: em(widthOnGrid(4,3,small-screen));
-            height: em(180);
-            margin-bottom: em(15);
-          }
-          .thumb__section-front {
+          @mixin labelBackground entertainment, $sunsetOrange;
+          @mixin labelBackground news, $lightningYellow;
+          @mixin labelBackground sports, $azureRadience;
+          @mixin labelBackground podcasts, $robinsEggBlue;
+          .thumb__section-tag {
             background: $purple;
             @mixin more-content-feed-font5;
             position: absolute;
-            top: 0;
-            left: 0;
             line-height: em(26, 14);
             height: em(26, 14);
             padding: 0 em(6, 14);
@@ -124,8 +102,8 @@
           .thumb__content-type {
             background: $purple;
             position: absolute;
-            bottom: 0;
-            left: 0;
+            align-self: center;
+            right: 50%;
             height: em(30);
             width: em(30);
             svg {
@@ -133,77 +111,102 @@
               height: 100%;
             }
           }
-          .thumb__datetime-posted {
-            @mixin more-content-feed-font4;
-            position: absolute;
-            bottom: 0;
-            left: 100%;
-            width: 100%;
-            display: block;
-            margin-left: em(20, 12);
+          .link__thumb {
+            width: em(widthOnGrid(5,4));
+            height: em(214);
+            object-fit: cover;
+            @mixin large-screen {
+              width: em(widthOnGrid(4,3));
+              height: em(169);
+            }
+            @mixin medium-screen {
+              width: em(widthOnGrid(3,2,medium-screen));
+              height: em(193);
+            }
             @mixin medium-small-screen {
-              display: none;
+              width: 100%;
+              height: em(248);
+              max-width: em(440);
+              margin-bottom: em(15);
+            }
+            @mixin small-screen {
+              width: 100%;
+              height: em(180);
+              margin-bottom: em(15);
             }
           }
         }
+
         .link__info {
           width: calc(100% - em(widthOnGrid(4,3)));
           padding-left: em(20);
           position: relative;
           display: inline-flex;
           flex-direction: column;
-          align-self: center;
+          justify-content: center;
+          height: em(214);
+
+          @mixin large-screen {
+            height: em(169);
+          }
           @mixin medium-screen {
             width: calc(100% - em(widthOnGrid(3,2, medium-screen)));
+            height: em(193);
           }
           @mixin medium-small-screen {
             width: 100%;
+            height: auto;
             padding: 0;
           }
-          .info__headline {
-            @mixin more-content-feed-font2;
-            display: block;
-            margin-bottom: em(10, 22);
-            @mixin large-screen {
-              @mixin more-content-feed-font6;
-              margin-bottom: em(10, 18);
-            }
-            @mixin medium-small-screen {
+          .link__header {
+            margin-top: auto;
+            margin-bottom: auto;
+
+            .info__headline {
               @mixin more-content-feed-font2;
+              display: block;
               margin-bottom: em(10, 22);
+              @mixin large-screen {
+                @mixin more-content-feed-font6;
+                margin-bottom: em(10, 18);
+              }
+              @mixin medium-small-screen {
+                @mixin more-content-feed-font2;
+                margin-bottom: em(10, 22);
+              }
             }
-          }
-          .info__teaser {
-            @mixin more-content-feed-font3;
-            display: block;
-            @mixin large-screen {
-              @mixin more-content-feed-font7;
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
-            }
-            @mixin medium-screen {
-              text-overflow: unset;
-              overflow: visible;
-              white-space: normal;
-            }
-            @media all and (max-width: 700px) {
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
-            }
-            @mixin medium-small-screen {
-              margin-bottom: em(15, 16);
-              margin-top: 0;
-              text-overflow: unset;
-              overflow: visible;
-              white-space: normal;
+            .info__teaser {
+              @mixin more-content-feed-font3;
+              display: block;
+              @mixin large-screen {
+                @mixin more-content-feed-font7;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+              }
+              @mixin medium-screen {
+                text-overflow: unset;
+                overflow: visible;
+                white-space: normal;
+              }
+              @media all and (max-width: 700px) {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+              }
+              @mixin medium-small-screen {
+                margin-bottom: em(15, 16);
+                margin-top: 0;
+                text-overflow: unset;
+                overflow: visible;
+                white-space: normal;
+              }
             }
           }
           .info__datetime-posted {
-            display: none;
+            @mixin more-content-feed-font4;
+
             @mixin medium-small-screen {
-              display: block;
               @mixin more-content-feed-font4;
             }
           }
