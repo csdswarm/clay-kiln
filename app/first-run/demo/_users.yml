@@ -56,15 +56,15 @@ _users:
     provider: google
     auth: admin
   -
-    username: Amy.VanHook@entercom.com
+    username: amy.vanhook@entercom.com
     provider: google
     auth: admin
   -
-    username: Tony.Senes@entercom.com
+    username: tony.senes@entercom.com
     provider: google
     auth: admin
   -
-    username: Randall.Puterbaugh@entercom.com
+    username: randall.puterbaugh@entercom.com
     provider: google
     auth: admin
   -
@@ -93,5 +93,9 @@ _users:
     auth: admin
   -
     username: franco.duartedelarosa@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: brian.coursen@entercom.com
     provider: google
     auth: admin
