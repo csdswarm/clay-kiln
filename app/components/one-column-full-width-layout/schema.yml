@@ -1,0 +1,54 @@
+_layout: true
+_description: |
+  A one-column full-width layout for Clay.
+
+head:
+  _componentList:
+    page: true
+    include:
+      - meta-site
+      - meta-image
+      - meta-icons
+      - meta-url
+
+headLayout:
+  _componentList:
+    include:
+      - meta-title
+      - meta-url
+      - meta-description
+      - meta-image
+      - meta-icons
+      - meta-url
+      - google-fonts
+
+top:
+  _componentList:
+    include:
+      - header
+pageHeader:
+  _componentList:
+    include:
+      - google-ad-manager
+main:
+  _componentList:
+    page: true
+    include:
+      - post
+      - general-content
+
+bottom:
+  _componentList:
+    include:
+      - footer
+
+kilnInternals:
+  _componentList:
+    internals: true
+    include:
+      - clay-kiln
+static:
+  _componentList:
+    include:
+      - web-player
+      - chartbeat

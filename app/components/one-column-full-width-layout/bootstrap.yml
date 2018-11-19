@@ -1,0 +1,10 @@
+_components:
+  one-column-full-width-layout:
+    head: head
+    headLayout: []
+    pageHeader: pageHeader
+    top: []
+    main: main
+    bottom: []
+    kilnInternals:
+      - _ref: /_components/clay-kiln/instances/general
