@@ -16,15 +16,15 @@ _pages:
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
     pageHeader:
-      - /_components/google-ad-manager/instances/billboard
+      - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/article/instances/new
     secondary:
       - /_components/google-ad-manager/instances/billboard
     tertiary:
-      - /_components/google-ad-manager/instances/mediumRectangle
+      - /_components/google-ad-manager/instances/mediumRectangleBottom
       - /_components/latest-recirculation/instances/new
-      - /_components/google-ad-manager/instances/mediumRectangle
+      - /_components/google-ad-manager/instances/mediumRectangleBottom
     layout: /_components/two-column-layout/instances/article
   section-front:
     head:
@@ -32,7 +32,7 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
     pageHeader:
-      - /_components/google-ad-manager/instances/billboard
+      - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/section-front/instances/new
     layout: /_components/one-column-layout/instances/general
@@ -42,7 +42,7 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
     pageHeader:
-      - /_components/google-ad-manager/instances/billboard
+      - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/homepage/instances/default
     layout: /_components/one-column-layout/instances/general

@@ -6,7 +6,7 @@
       {{~#each items as |tag| ~}}
         {{~#unless tag.invisible ~}}
           {{ set 'encodedTag' (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "%2F" "/") }}
-          <li class="tags__item">
+          <li class="tags__item" data-tag="{{ replace (trim (lowercase tag.text)) ' ' '-' }}">
             <a aria-label="More articles tagged" href="//{{ @root.locals.site.host }}/tags{{ if (compare @root.locals.site.path '/strategist') @root.locals.site.path }}/{{ encodedTag }}/"
               class="tags__link"
               >{{ tag.text }}</a>

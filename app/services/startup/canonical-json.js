@@ -48,7 +48,12 @@ function middleware(req, res, next) {
   fakeLocals(req, res, params);
   // Compose and respond
   promise.then(data => composer.composePage(data, res.locals))
-    .then(composed => res.json(composed));
+    .then(composed => res.json(composed))
+    .catch(err => {
+      res
+        .status(404)
+        .json({ status: 404, msg: err.message });
+    });
 }
 
 module.exports = middleware;

@@ -18,7 +18,7 @@
                data-track-headline="{{ feedItem.primaryHeadline }}"
                data-track-component-title="More Content Feed"
                data-track-sectionFront="{{ feedItem.articleType }}">
-              <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }});">
+              <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }}?width=400);">
                 {{#ifAll (compare ../populateFrom 'all') feedItem.articleType}}
                   <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
                 {{/ifAll}}

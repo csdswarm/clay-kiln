@@ -1,7 +1,7 @@
 'use strict';
 const radioApi = 'https://api.radio.com/v1/',
   rest = require('../../services/universal/rest'),
-  geoApi = 'https://geo.radio.com/markets',
+  market = require('../../services/client/market'),
   localStorage = window.localStorage,
   Handlebars = require('handlebars'),
   stationLi = `
@@ -69,6 +69,7 @@ StationsCarousel.prototype = {
     } else if (this.windowWidth >= this.windowSizes.medium) {
       this.stationsVisible = 6;
     } else {
+      this.layoutWidth = '100%';
       this.pageSize = 3;
       this.stationsVisible = 3;
       if (this.windowWidth < this.windowSizes.beforeMediumSmall) {
@@ -243,25 +244,6 @@ StationsCarousel.prototype = {
     _this.centerPageResults();
   },
   /**
-   * Get user's local market ID with geo api & set in browser storage
-   * @function
-   * @returns {Promise}
-   */
-  getMarket: function () {
-    if (!this.marketID) {
-      return rest.get(geoApi).then(marketData => {
-        if (marketData.Markets.length > 0) {
-          localStorage.setItem('marketID', marketData.Markets[0].id); // Store market in browser
-          this.marketID = localStorage.getItem('marketID'); // Store market in var
-        } else {
-          this.marketID = 14; // National market if no results from geo API
-        }
-      });
-    } else {
-      return Promise.resolve();
-    }
-  },
-  /**
    * Get stations from api using market ID and filters
    * @function
    * @returns {Promise}
@@ -297,6 +279,7 @@ StationsCarousel.prototype = {
   updateStationsDOM: function () {
     this.stationsList.removeChild(this.stationsList.querySelector('.loader-container')); // Remove loader
     const template = Handlebars.compile(stationLi);
+
     this.stationsData.stations.forEach(function (stationData) {
       let station = document.createElement('li');
 
@@ -314,30 +297,29 @@ StationsCarousel.prototype = {
    * @function
    * @returns {Promise}
    */
-  updateStations: function () {
-    return this.getMarket().then(() => {
-      return this.getFilteredStationsFromApi().then(stationsData => {
-        this.stationsData = stationsData;
-        this.updateStationsDOM();
-        this.setImageAndPageDims();
-        this.setCarouselWidth();
-        this.totalPages = Math.ceil(this.stationsData.count / this.pageSize);
-        this.hideOrShowEndArrows();
-        this.centerPageResults();
-        if (this.windowWidth < this.windowSizes.medium) {
-          this.createPaginationDots();
-        }
-        this.leftArrow.addEventListener('click', function (e) {
-          this.getPage(e, this);
-        }.bind(this));
-        this.rightArrow.addEventListener('click', function (e) {
-          this.getPage(e, this);
-        }.bind(this));
-        window.addEventListener('resize', function (e) {
-          this.restyleCarousel(e, this);
-        }.bind(this));
-        return stationsData;
-      });
+  updateStations: async function () {
+    this.marketID = await market.getID();
+    return this.getFilteredStationsFromApi().then(stationsData => {
+      this.stationsData = stationsData;
+      this.updateStationsDOM();
+      this.setImageAndPageDims();
+      this.setCarouselWidth();
+      this.totalPages = Math.ceil(this.stationsData.count / this.pageSize);
+      this.hideOrShowEndArrows();
+      this.centerPageResults();
+      if (this.windowWidth < this.windowSizes.medium) {
+        this.createPaginationDots();
+      }
+      this.leftArrow.addEventListener('click', function (e) {
+        this.getPage(e, this);
+      }.bind(this));
+      this.rightArrow.addEventListener('click', function (e) {
+        this.getPage(e, this);
+      }.bind(this));
+      window.addEventListener('resize', function (e) {
+        this.restyleCarousel(e, this);
+      }.bind(this));
+      return stationsData;
     });
   }
 };

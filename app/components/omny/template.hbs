@@ -1,0 +1,20 @@
+<div data-uri="{{ default _ref _self }}" class="component component--omny" data-editable="audio">
+  {{#if clipURL}}
+    {{#if @root.locals.edit}}
+      {{clipSrc}}
+    {{else}}
+      {{#if (compare embedSize 'wide-simple') }}
+        <iframe src="{{{ clipSrc }}}/embed?style=artwork" frameborder="0" width="100%" height="180"></iframe>
+      {{/if}}
+      {{#if (compare embedSize 'wide-image') }}
+        <iframe src="{{{ clipSrc }}}/embed?style=cover" frameborder="0" width="100%" height="180"></iframe>
+      {{/if}}
+      {{#if (compare embedSize 'square') }}
+        <iframe src="{{{ clipSrc }}}/embed?style=cover&size=square" frameborder="0" width="620" height="620"></iframe>
+      {{/if}}
+      {{#if (compare embedSize 'default') }}
+        <iframe src="{{{ clipSrc }}}/embed?style=cover&size=square" frameborder="0" width="620" height="349"></iframe>
+      {{/if}}
+    {{/if}}
+  {{/if}}
+</div>
