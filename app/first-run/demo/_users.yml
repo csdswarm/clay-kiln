@@ -55,3 +55,43 @@ _users:
     username: taryn.wood-norris@entercom.com
     provider: google
     auth: admin
+  -
+    username: Amy.VanHook@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Tony.Senes@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Randall.Puterbaugh@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Andy.Drake@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: robert.mcewen@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: chelsea.johnston@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: daniella.mordehai@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: megan.smith@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: marco.lozada@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: franco.duartedelarosa@entercom.com
+    provider: google
+    auth: admin
