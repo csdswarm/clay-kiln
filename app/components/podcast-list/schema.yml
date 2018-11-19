@@ -1,8 +1,10 @@
 _description: |
-  A list of podcasts
-
+  A list of podcasts. (This module requires minimum of 4 podcast selections in the list.)
 items:
   _label: Items
+  _placeholder:
+    height: 200px;
+    text: Podcast List
   _has:
     input: complex-list
     enforceMaxlength: true
