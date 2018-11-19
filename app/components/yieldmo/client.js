@@ -11,7 +11,9 @@ function injectYieldmo() {
     yieldmo2 = document.getElementsByClassName('placement-2')[0];
 
   socialBar.appendChild(yieldmo1);
-  tagsSection.after(yieldmo2);
+  if (tagsSection) {
+    tagsSection.after(yieldmo2);
+  }
 
   // if the yieldmo script has already been loaded, request a spa pageview, else initialize it.
   if (window._ym) {
