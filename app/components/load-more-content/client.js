@@ -26,7 +26,7 @@ const ClayHandlebars = require('clayhandlebars')(Handlebars),
       <div class="thumb__container">
         {{#if feedItem.articleType}}
           {{#ifAny (compare ../populateFrom 'all') feedItem.showTag}}
-          <span class="thumb__section-tag">{{{ feedItem.articleType }}}</span>
+            <span class="thumb__section-tag">{{{ feedItem.articleType }}}</span>
           {{/ifAny}}
         {{/if}}
         {{#unless (compare ../locationOfContentFeed 'homepage') }}
@@ -44,10 +44,10 @@ const ClayHandlebars = require('clayhandlebars')(Handlebars),
         <img
           src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,smart"
           srcset="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,smart 300w,
-                    {{ feedItem.feedImgUrl }}?width=320&crop=16:9,smart 320w,
-                    {{ feedItem.feedImgUrl }}?width=343&crop=16:9,smart 343w,
-                    {{ feedItem.feedImgUrl }}?width=380&crop=16:9,smart 380w,
-                    {{ feedItem.feedImgUrl }}?width=440&crop=16:9,smart 440w"
+                      {{ feedItem.feedImgUrl }}?width=320&crop=16:9,smart 320w,
+                      {{ feedItem.feedImgUrl }}?width=343&crop=16:9,smart 343w,
+                      {{ feedItem.feedImgUrl }}?width=380&crop=16:9,smart 380w,
+                      {{ feedItem.feedImgUrl }}?width=440&crop=16:9,smart 440w"
           sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, (max-width: 1279px) 300px, 380px"
           class="link__thumb" />
       </div>
