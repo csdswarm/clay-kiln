@@ -16,10 +16,10 @@
                 <div class="link__tag link__tag--{{articleSection.section}}">{{ articleSection.section }}</div>
                 <img
                   src="{{ article.feedImgUrl }}?width=300&crop=16:9,smart"
-                  srcset="{{ article.feedImgUrl }}?width=300&crop=16:9 300w,
+                  srcset="{{ article.feedImgUrl }}?width=300&crop=16:9,smart 300w,
                   {{ article.feedImgUrl }}?width=320&crop=16:9,smart 320w,
-                  {{ article.feedImgUrl }}?width=343crop=16:9,smart 343w,
-                  {{ article.feedImgUrl }}?width=440crop=16:9,smart 440w"
+                  {{ article.feedImgUrl }}?width=343&crop=16:9,smart 343w,
+                  {{ article.feedImgUrl }}?width=440&crop=16:9,smart 440w"
                   sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, 300px"
                   class="link__image" />
               {{else}}
