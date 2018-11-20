@@ -141,4 +141,14 @@ gulp.task('view-after', function () {
     .pipe(gulp.dest('public/js'));
 });
 
-gulp.task('scripts', gulp.parallel(['view-before', 'view-after', 'component-js', 'component-templates']));
+gulp.task('polyfills', function () {
+  return gulp.src([
+      'global/polyfills.js',
+      'global/modernizr.js'
+    ])
+    .pipe(concat('polyfills.js'))
+    .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
+    .pipe(gulp.dest('public/js'));
+});
+
+gulp.task('scripts', gulp.parallel(['polyfills', 'view-before', 'view-after', 'component-js', 'component-templates']));

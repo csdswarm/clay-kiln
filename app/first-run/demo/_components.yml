@@ -371,11 +371,6 @@ _components:
       logoSponsorship:
         adSize: logo-sponsorship
 
-  polyfills:
-    instances:
-      default:
-        allowed: true
-
   google-ad-manager-head:
     instances:
       default:
