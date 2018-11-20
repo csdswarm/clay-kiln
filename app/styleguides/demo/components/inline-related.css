@@ -40,21 +40,43 @@
     &.related__link--secondary {
       @mixin inline-related-font4;
       margin-top: em(6, 14);
+      display: inline-flex;
+      align-items: center;
+      &.related__link--no-media {
+        align-items: baseline;
+        .related__headline {
+          width: calc(100% - em(8, 14) - em(10, 14));
+        }
+      }
+      .related__headline {
+        vertical-align: top;
+        display: inline-block;
+        width: calc(100% - em(30, 14) - em(10, 14));
+      }
     }
   }
 
-  .related__bullet {
-    width: em(8);
-    height: em(8);
-    margin-right: em(10);
+  .related__bullet,
+  .related__media-icon {
+    width: em(8, 14);
+    height: em(8, 14);
+    margin-right: em(10, 14);
     display: inline-block;
     background-color: $purple;
   }
 
+  .related__media-icon {
+    width: em(30, 14);
+    height: em(30, 14);
+  }
+
   .related__item--image {
     order: 2;
-    flex: 0 0 widthOnGrid(3, 2);
-    margin-right: em(15);
+    margin-right: em(20, 14);
+    flex: 0 0 em(widthOnGrid(3, 2), 14);
+    @mixin medium-screen {
+      flex: 0 0 em(widthOnGrid(2, 1, medium-screen), 14);
+    }
 
     &.related__item--mobile {
       display: none;
@@ -64,12 +86,15 @@
     }
 
     img {
-      width: widthOnGrid(3, 2);
+      width: em(widthOnGrid(3, 2), 14);
+      @mixin medium-screen {
+        width: em(widthOnGrid(2, 1, medium-screen), 14);
+      }
     }
 
     @mixin medium-small-screen {
       flex: 100%;
-      margin: em(17) 0 em(5) 0;
+      margin: em(17, 14) 0 em(5, 14) 0;
       &.related__item--mobile {
         display: block;
       }
@@ -97,7 +122,8 @@
     border-color: $color;
 
     .related__item {
-      .related__bullet {
+      .related__bullet,
+      .related__media-icon {
         background-color: $color;
       }
     }
@@ -106,4 +132,4 @@
 @mixin themed-related entertainment, $sunsetOrange;
 @mixin themed-related sports, $azureRadience;
 @mixin themed-related news, $lightningYellow;
-@mixin themed-related podcasts, $robinsEggBlue;
+@mixin themed-related podcasts, $robinsEgg;

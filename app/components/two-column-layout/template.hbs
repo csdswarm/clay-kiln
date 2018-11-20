@@ -19,7 +19,12 @@
     <!-- Attach the context object to window so SPA has access to data on the frontend. -->
     {{#unless @root.locals.edit}}
       <script>window.spaPayload = '{{{ attachSpaPayloadToWindow }}}';</script>
-      <script src="/dist/app.js"></script>
+      {{#if @root.locals.site.app }}
+        <script src="/dist/js/{{@root.locals.site.app}}"></script>
+        <script src="/dist/js/{{@root.locals.site.chunk-vendors}}"></script>
+      {{else}}
+        <script src="/dist/app.js"></script>
+      {{/if}}
     {{/unless}}
 
   </head>

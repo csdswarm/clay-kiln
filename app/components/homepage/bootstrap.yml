@@ -3,11 +3,11 @@ _components:
     moreContentFeed:
       _ref: /_components/more-content-feed/instances/homepage
     googleAdUnderStationsModule:
-      _ref: /_components/google-ad-manager/instances/superLeaderboard
+      _ref: /_components/google-ad-manager/instances/superLeaderboardBottom
     podcastList:
       _ref: /_components/podcast-list/instances/new
     googleAdUnderLatestModule:
-      _ref: /_components/google-ad-manager/instances/billboard
+      _ref: /_components/google-ad-manager/instances/billboardBottom
     latestContent:
       _ref: /_components/latest-content/instances/default
     sectionLead:
