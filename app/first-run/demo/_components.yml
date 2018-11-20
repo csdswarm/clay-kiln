@@ -350,7 +350,11 @@ _components:
         adSize: super-leaderboard
         adPosition: bottom
         adLocation: btf
-      leaderboard:
+      leaderboardTop:
+        adSize: leaderboard
+        adPosition: top
+        adLocation: atf
+      leaderboardBottom:
         adSize: leaderboard
         adPosition: bottom
         adLocation: btf
@@ -619,7 +623,7 @@ _components:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
-            _ref: /_components/google-ad-manager/instances/leaderboard
+            _ref: /_components/google-ad-manager/instances/leaderboardBottom
         latestContent:
           _ref: /_components/latest-content/instances/default
         stationsCarousel:
