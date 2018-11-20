@@ -19,6 +19,7 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/article/instances/new
+      - /_components/taboola/instances/default
     secondary:
       - /_components/google-ad-manager/instances/billboard
     tertiary:
