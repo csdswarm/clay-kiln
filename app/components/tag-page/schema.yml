@@ -9,11 +9,6 @@ tag:
   _has:
     input: text
 
-loadMoreContent:
-  _component:
-    include:
-      - load-more-content
-
 moreContentFeed:
   _component:
     include:

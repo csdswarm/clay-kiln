@@ -735,8 +735,6 @@ _components:
         stationsCarousel:
           -
             _ref: /_components/stations-carousel/instances/homepage
-        loadMoreContent:
-          _ref: /_components/load-more-content/instances/default
 
   tag-page:
     instances:
@@ -776,8 +774,3 @@ _components:
         entertainmentItems: []
         sportsItems: []
         newsItems: []
-
-  load-more-content:
-    instances:
-      default:
-        pageLength: 5
