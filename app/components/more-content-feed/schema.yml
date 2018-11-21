@@ -197,6 +197,15 @@ items:
         validate:
           required: true
 
+introComponents:
+  _label: Intro Components
+  _placeholder:
+    text: Intro Component
+    height: 100px
+  _componentList:
+    include:
+    - html-embed
+
 googleAdRightRail:
   _component:
     include:

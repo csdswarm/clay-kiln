@@ -11,80 +11,86 @@
       <div class="more-content-feed__title-line"></div>
       <h2 class="more-content-feed__title">MORE from <span class="title">RADIO.COM</span></h2>
     {{/if}}
-    <div class="section__content-feed-container">
-      {{#ifAny content.length @root.locals.edit}}
-        <ul class="more-content-feed__links" data-editable="tag">
-      {{/ifAny}}
+    <div class="more-content-feed__container">
+      <div class="more-content-feed__left">
+        <div class="more-content-feed__intro-components" data-editable="introComponents">
+          {{> component-list introComponents}}
+        </div>
+        {{#ifAny content.length @root.locals.edit}}
+          <ul class="more-content-feed__links" data-editable="tag">
+        {{/ifAny}}
 {{/if}}
-        {{#each content as |feedItem|}}
-          <li>
-            <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
-               data-track-type="feedItem-link"
-               data-track-component-name="more-content-feed"
-               data-track-page-uri="{{ feedItem.pageUri }}"
-               data-track-headline="{{ feedItem.primaryHeadline }}"
-               data-track-component-title="More Content Feed"
-               data-track-sectionFront="{{ feedItem.articleType }}">
-              <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }}?width=400);">
-                {{#ifAll (compare ../populateFrom 'all-content')  feedItem.articleType}}
-                  <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
-                {{/ifAll}}
-                {{#unless (compare ../locationOfContentFeed 'homepage') }}
-                  {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
-                    <span class="thumb__content-type">
-                      {{{ read 'components/more-content-feed/media/watch.svg' }}}
-                    </span>
-                  {{/ifAny}}
-                  {{#if (compare feedItem.lead 'audio')}}
-                    <span class="thumb__content-type">
-                      {{{ read 'components/more-content-feed/media/listen.svg' }}}
-                    </span>
-                  {{/if}}
-                {{/unless}}
-                <span class="thumb__datetime-posted">
-                  {{#if (isPublished24HrsAgo feedItem.date) }}
-                    {{{ hrsOnlyTimestamp feedItem.date }}}
-                  {{else}}
-                    {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
-                  {{/if}}
-                </span>
-              </div>
-              <div class="link__info">
-                <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
-                <span class="info__teaser">{{{ feedItem.teaser }}}</span>
-                <span class="info__datetime-posted">
-                  {{#if (isPublished24HrsAgo feedItem.date) }}
-                    {{{ hrsOnlyTimestamp feedItem.date }}}
-                  {{else}}
-                    {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
-                  {{/if}}
-                </span>
-              </div>
-            </a>
-          </li>
-        {{/each}}
-        {{#if moreResults}}
-          <li class="links__link--loadmore"
-              data-items-offset="{{ items.length }}"
-              {{#if tag}}data-tag="{{ tag }}"{{/if}}>
-            <a class="more-content-feed__loadmore">
-              <div class="loadmore__text">Load More</div>
-            </a>
-          </li>
-        {{/if}}
-{{#if initialLoad}}
-      </ul>
-      <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
-        {{#if @root.locals.edit}}
-          {{#if (compare locationOfContentFeed 'tag-page')}}
-            <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
+          {{#each content as |feedItem|}}
+            <li>
+              <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
+                 data-track-type="feedItem-link"
+                 data-track-component-name="more-content-feed"
+                 data-track-page-uri="{{ feedItem.pageUri }}"
+                 data-track-headline="{{ feedItem.primaryHeadline }}"
+                 data-track-component-title="More Content Feed"
+                 data-track-sectionFront="{{ feedItem.articleType }}">
+                <div class="link__thumb" style="background-image:url({{ feedItem.feedImgUrl }}?width=400);">
+                  {{#ifAll (compare ../populateFrom 'all-content')  feedItem.articleType}}
+                    <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
+                  {{/ifAll}}
+                  {{#unless (compare ../locationOfContentFeed 'homepage') }}
+                    {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/watch.svg' }}}
+                      </span>
+                    {{/ifAny}}
+                    {{#if (compare feedItem.lead 'audio')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/listen.svg' }}}
+                      </span>
+                    {{/if}}
+                  {{/unless}}
+                  <span class="thumb__datetime-posted">
+                    {{#if (isPublished24HrsAgo feedItem.date) }}
+                      {{{ hrsOnlyTimestamp feedItem.date }}}
+                    {{else}}
+                      {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
+                    {{/if}}
+                  </span>
+                </div>
+                <div class="link__info">
+                  <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
+                  <span class="info__teaser">{{{ feedItem.teaser }}}</span>
+                  <span class="info__datetime-posted">
+                    {{#if (isPublished24HrsAgo feedItem.date) }}
+                      {{{ hrsOnlyTimestamp feedItem.date }}}
+                    {{else}}
+                      {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
+                    {{/if}}
+                  </span>
+                </div>
+              </a>
+            </li>
+          {{/each}}
+          {{#if moreResults}}
+            <li class="links__link--loadmore"
+                data-items-offset="{{ items.length }}"
+                {{#if tag}}data-tag="{{ tag }}"{{/if}}>
+              <a class="more-content-feed__loadmore">
+                <div class="loadmore__text">Load More</div>
+              </a>
+            </li>
           {{/if}}
-        {{else}}
-          {{#ifAll tagInfo (compare locationOfContentFeed 'tag-page') }}
-            <aside class="blurb">{{ tagInfo }}</aside>
-          {{/ifAll}}
-        {{/if}}
-        {{> google-ad-manager googleAdRightRail}}
+{{#if initialLoad}}
+          </ul>
+        </div>
+        <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
+          {{#if @root.locals.edit}}
+            {{#if (compare locationOfContentFeed 'tag-page')}}
+              <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
+            {{/if}}
+          {{else}}
+            {{#ifAll tagInfo (compare locationOfContentFeed 'tag-page') }}
+              <aside class="blurb">{{ tagInfo }}</aside>
+            {{/ifAll}}
+          {{/if}}
+          {{> google-ad-manager googleAdRightRail}}
+        </div>
       </div>
     </div>
   </section>

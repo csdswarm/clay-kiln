@@ -682,6 +682,7 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        introComponents: []
       section-front:
         items: []
         tag: ''
@@ -694,6 +695,7 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        introComponents: []introComponents: []
       tag-page:
         items: []
         tag: ''
@@ -706,6 +708,7 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        introComponents: []
 
   section-videos:
     instances:
