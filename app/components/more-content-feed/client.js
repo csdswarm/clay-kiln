@@ -7,10 +7,13 @@ class MoreContentFeed {
     this.moreContentUrl = '//' + this.moreContentFeed.getAttribute('data-uri').replace('@published', '.html');
 
     this.currentPage = 1;
-    this.tag = this.loadMore ? this.loadMore.getAttribute('data-tag') : '';
+    this.tag = '';
 
     // load another page every time the load more button is clicked!
-    this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
+    if (this.loadMore) {
+      this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
+      this.tag = this.loadMore.getAttribute('data-tag') || '';
+    }
   }
 
   /**
@@ -18,9 +21,7 @@ class MoreContentFeed {
    * Pulls down N more articles from the API and renders them.
    *
    */
-  handleLoadMoreContent(event) {
-    event.preventDefault(); // Block default link event
-
+  handleLoadMoreContent() {
     let moreContentUrl = `${this.moreContentUrl}?ignore-resolve-media=true&page=${this.currentPage++}`;
 
     if (this.tag) {

@@ -8,6 +8,7 @@ module.exports.routes = [
   { path: '/:section'},
   { path: '/:year/:month/:name' },
   { path: '/article/:name' },
+  { path: '/tag/:tag'},
   { path: '/tag/:tag', dynamicPage: 'tag' }
 ];
 
