@@ -216,6 +216,11 @@ googleAdTop:
     include:
       - google-ad-manager
 
+loadMoreContent:
+  _component:
+    include:
+      - load-more-content
+
 _groups:
   settings:
     fields:

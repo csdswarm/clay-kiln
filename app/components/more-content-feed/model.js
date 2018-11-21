@@ -14,7 +14,8 @@ const queryService = require('../../services/server/query'),
     'date',
     'lead'
   ],
-  maxItems = 10;
+  maxItems = 5,
+  pageLength = 5;
 
 /**
 * @param {string} ref
@@ -58,8 +59,11 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  // take 1 more article than needed to know if there are more
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1);
   let cleanUrl;
+
+  if (!data.pageLength) { data.pageLength = pageLength; }
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
@@ -140,8 +144,7 @@ module.exports.render = function (ref, data, locals) {
       data.content = data.items.concat(_.take(results, maxItems)).slice(0, data.pageLength || maxItems); // show a maximum of maxItems links
 
       // "more content" button passes page query param - render more content and return it
-      data.rawQueryResults = results.slice(0, data.pageLength);
-      data.moreResults = results.length > data.pageLength;
+      data.moreContent = results.length > maxItems;
 
       return data;
     })

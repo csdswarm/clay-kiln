@@ -1,14 +1,22 @@
 <section class="component component--podcast-list" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
   {{#each items as |item|}}
     <div class="podcast-list__item">
-      <a href="{{ item.podcast.url }}">
-        <img class="podcast-list__image" src="{{ item.podcast.imageUrl }}">
-      </a>
-      <a class="podcast-list__title" href="{{ item.podcast.url }}">
-        <h2> {{ item.podcast.label }} </h2>
-      </a>
       <a class="podcast-list__link" href="{{ item.podcast.url }}">
-        See All Episodes {{{ read 'public/media/components/podcast-list/caret.svg' }}}
+        {{#if @first}}<div class="podcast-list__tag">Podcasts</div>{{/if}}
+        <img
+          src="{{ item.podcast.imageUrl }}?width=220&crop=1:1,smart"
+          srcset="{{ item.podcast.imageUrl }}?width=150&crop=1:1 150w,
+                  {{ item.podcast.imageUrl }}?width=201&crop=1:1,smart 210w,
+                  {{ item.podcast.imageUrl }}?width=220&crop=1:1,smart 220w,
+                  {{ item.podcast.imageUrl }}?width=343&crop=1:1,smart 343w"
+          sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 343px, 220px"
+          class="podcast-list__image" />
+        <div class="podcast-list__title">
+          {{ item.podcast.label }}
+        </div>
+        <div class="podcast-list__more">
+          See All Episodes {{{ read 'public/media/components/podcast-list/caret.svg' }}}
+        </div>
       </a>
     </div>
   {{/each}}
