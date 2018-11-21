@@ -14,7 +14,7 @@ const queryService = require('../../services/server/query'),
     'date',
     'lead'
   ],
-  maxItems = 5,
+  maxItems = 10,
   pageLength = 5;
 
 /**
@@ -63,8 +63,6 @@ module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1);
   let cleanUrl;
 
-  if (!data.pageLength) { data.pageLength = pageLength; }
-
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (locals && locals.page) {
@@ -73,19 +71,16 @@ module.exports.render = function (ref, data, locals) {
      * we return N + 1 items so we can let the frontend know if we have more data.
      */
     if (!data.pageLength) {
-      data.pageLength = 5;
+      data.pageLength = pageLength;
     }
+
     const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
 
     queryService.addOffset(query, skip);
   } else {
-    // Default shows maxItems
     data.pageLength = maxItems;
     data.initialLoad = true;
   }
-
-  // Always try and load one extra to know if we have more to show
-  queryService.addSize(query, data.pageLength + 1);
 
   if (data.populateFrom == 'tag') {
     // Clean based on tags and grab first as we only ever pass 1
@@ -113,7 +108,7 @@ module.exports.render = function (ref, data, locals) {
     }
     queryService.addShould(query, { match: { articleType: data.sectionFrontManual || data.sectionFront }});
     queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom == 'all') {
+  } else if (data.populateFrom == 'all-content') {
     if (!locals) {
       return data;
     }
@@ -141,10 +136,16 @@ module.exports.render = function (ref, data, locals) {
         content.lead = content.lead[0].split('/')[2];
         return content;
       });
-      data.content = data.items.concat(_.take(results, maxItems)).slice(0, data.pageLength || maxItems); // show a maximum of maxItems links
 
       // "more content" button passes page query param - render more content and return it
-      data.moreContent = results.length > maxItems;
+      data.moreContent = results.length > data.pageLength;
+
+      // On initial load we need to append curated items onto the list, otherwise skip
+      if (data.initialLoad) {
+        data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of maxItems links
+      } else {
+        data.content = results.slice(0, data.pageLength); // show a maximum of maxItems links
+      }
 
       return data;
     })
