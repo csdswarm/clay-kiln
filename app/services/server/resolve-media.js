@@ -49,7 +49,7 @@ function resolveMedia(media, locals) {
     .map(filepath => filepath.replace('public',''));
 
   // Check if we are loading a component directly
-  if (locals.url.indexOf('/_components/') !== -1 && locals.query['ignore-resolve-media'] === 'true') {
+  if (locals.url.indexOf('/_components/') !== -1 && locals.query['ignore_resolve_media'] === 'true') {
     media.styles = media.scripts = [];
   }
 };

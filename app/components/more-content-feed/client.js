@@ -22,7 +22,7 @@ class MoreContentFeed {
    *
    */
   handleLoadMoreContent() {
-    let moreContentUrl = `${this.moreContentUrl}?ignore-resolve-media=true&page=${this.currentPage++}`;
+    let moreContentUrl = `${this.moreContentUrl}?ignore_resolve_media=true&page=${this.currentPage++}`;
 
     if (this.tag) {
       moreContentUrl += `&tag=${this.tag}`;

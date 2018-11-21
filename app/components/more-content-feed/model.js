@@ -63,6 +63,8 @@ module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1);
   let cleanUrl;
 
+  data.initialLoad = false;
+
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (locals && locals.page) {
@@ -142,9 +144,9 @@ module.exports.render = function (ref, data, locals) {
 
       // On initial load we need to append curated items onto the list, otherwise skip
       if (data.initialLoad) {
-        data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of maxItems links
+        data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of pageLength links
       } else {
-        data.content = results.slice(0, data.pageLength); // show a maximum of maxItems links
+        data.content = results.slice(0, data.pageLength); // show a maximum of pageLength links
       }
 
       return data;
