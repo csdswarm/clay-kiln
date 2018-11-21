@@ -21,7 +21,7 @@ class MoreContentFeed {
   handleLoadMoreContent(event) {
     event.preventDefault(); // Block default link event
 
-    let moreContentUrl = `${this.moreContentUrl}?page=${this.currentPage++}`;
+    let moreContentUrl = `${this.moreContentUrl}?ignore-resolve-media=true&page=${this.currentPage++}`;
 
     if (this.tag) {
       moreContentUrl += `&tag=${this.tag}`;
