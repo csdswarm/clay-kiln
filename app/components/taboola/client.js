@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Add Google Tag Manager script and setup dataLayer array on first page load
+ * Add Taboola config on first page load
  * @function
  */
 

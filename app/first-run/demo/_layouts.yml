@@ -103,8 +103,7 @@ _components:
         sectionHeader: sectionHeader
         main: main
         tertiary: tertiary
-        secondary:
-          - _ref: /_components/taboola/instances/default
+        secondary: secondary
         bottom:
           - _ref: /_components/yieldmo/instances/default
           - _ref: /_components/trending-recirculation/instances/default
