@@ -8,8 +8,14 @@ const doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page'],
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
+  doubleclickPageTypeTagTag = 'tag',
   adRefreshInterval = '120000', // Time in milliseconds for ad refresh
-  adSlots = document.getElementsByClassName('google-ad-manager__slot');
+  adSlots = document.getElementsByClassName('google-ad-manager__slot'),
+  targetingMarket = require('../../services/client/market'),
+  targetingNationalRadioStation = 'natlrc',
+  targetingGenre = 'aaa',
+  targetingCategory = 'music',
+  urlParse = require('url-parse');
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -19,6 +25,7 @@ document.addEventListener('google-ad-manager-mount', function () {
   // code to run when vue mounts/updates
   setAdsIDs();
 });
+
 document.addEventListener('google-ad-manager-dismount', function () {
   googletag.cmd.push(function () {
     googletag.destroySlots();
@@ -43,35 +50,67 @@ function setAdsIDs() {
  * use ids of ad slots on page to create google ad slots and display them
  */
 function setAds() {
-  let page, articleType,
-    siteZone = doubleclickPrefix.concat('/',doubleclickBannerTag,'/');
+  let page,
+    pageName,
+    siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
+    urlPathname = window.location.pathname.replace(/^\/|\/$/, ''),
+    targetingTags = [],
+    targetingPageId = '',
+    targetingAuthors = [];
 
   if (document.getElementsByTagName('article').length > 0) {
-    page = 'article';
-    articleType = document.getElementsByTagName('article')[0].getAttribute('data-article-type');
+    page = pageName = 'article';
   } else {
-    page = 'homepage';
+    if (urlPathname === '') {
+      page = 'homepage';
+    } else if (urlPathname.indexOf('tags/') !== -1) {
+      page = 'tagPage';
+      pageName = urlPathname.replace('tags/', '');
+    } else {
+      page = 'genrePage';
+      pageName = urlPathname;
+    }
   }
+
+  // Set up targeting and ad paths based on current page
   switch (page) {
     case 'article':
-      siteZone = siteZone.concat(articleType,'/',doubleclickPageTypeTagArticle);
+      targetingTags = [doubleclickPageTypeTagArticle];
+      [...document.querySelectorAll('.component--tags .tags__item')].forEach(tag => {
+        targetingTags.push(tag.getAttribute('data-tag'));
+      });
+      targetingPageId = doubleclickPageTypeTagArticle + '_' + urlPathname.split('/').pop().substring(0, 35);
+      [...document.querySelectorAll('.component--article .author')].forEach(tag => {
+        targetingAuthors.push(tag.getAttribute('data-author').replace(/\s/, '-').toLowerCase());
+      });
+      siteZone = siteZone.concat('/', pageName, '/', doubleclickPageTypeTagArticle);
       break;
     case 'homepage':
-      siteZone = siteZone.concat('home','/',doubleclickPageTypeTagSection);
+      targetingTags = [doubleclickPageTypeTagSection, page];
+      targetingPageId = page;
+      siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
     case 'genrePage':
-      siteZone = siteZone.concat('categories','/',doubleclickPageTypeTagSection);
+      targetingTags = [doubleclickPageTypeTagArticle, `${pageName}`];
+      targetingPageId = pageName;
+      siteZone = siteZone.concat('/', pageName, '/article');
       break;
     case 'tagPage':
-      siteZone = siteZone.concat('tags','/',doubleclickPageTypeTagSection);
+      targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, `${pageName}`];
+      targetingPageId = doubleclickPageTypeTagTag + '_' + pageName;
+      siteZone = siteZone.concat('/', 'tags', '/', doubleclickPageTypeTagSection);
       break;
     default:
   }
-  googletag.cmd.push(function () {
+
+  googletag.cmd.push(async function () {
+    const queryParams = urlParse(window.location, true).query;
+
     for (let ad of adSlots) {
       const adSize = ad.getAttribute('data-adSize'),
         pubAds = googletag.pubads();
-      let slot,
+      let marketName = await targetingMarket.getName(),
+        slot,
         sizeMapping = adMapping.sizeMapping[adSize];
 
       if (adSize == 'outOfPage') {
@@ -97,6 +136,23 @@ function setAds() {
       if (rightRailAdSizes.includes(adSize)) {
         slot.setTargeting('rightRail', true);
       }
+
+      slot.setCollapseEmptyDiv(true)
+        .setTargeting('refresh', refreshCount.toString())
+        .setTargeting('market', marketName.replace(' ','').split(',')[0].toLowerCase())
+        .setTargeting('station', targetingNationalRadioStation)
+        .setTargeting('genre', targetingGenre)
+        .setTargeting('cat', targetingCategory)
+        .setTargeting('tag', targetingTags)
+        .setTargeting('pid', targetingPageId)
+        .setTargeting('pos', ad.parentNode.getAttribute('data-ad-position'))
+        .setTargeting('loc', ad.parentNode.getAttribute('data-ad-location'))
+        .setTargeting('adtest', queryParams.adtest || '');
+
+      if (targetingAuthors.length) {
+        slot.setTargeting('author', targetingAuthors);
+      }
+      
       googletag.display(ad.id);
     }
     googletag.pubads().refresh();
@@ -130,7 +186,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
     globalDiv = document.getElementsByClassName('layout')[0],
-    transparentSections = [...document.getElementsByClassName('google-ad-manager__slot--billboard'), ...document.getElementsByClassName('google-ad-manager--billboard')]
+    transparentSections = [...document.getElementsByClassName('google-ad-manager__slot--billboard'), ...document.getElementsByClassName('google-ad-manager--billboard')];
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {

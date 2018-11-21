@@ -4,7 +4,7 @@ _components:
     moreContentFeed:
       _ref: /_components/more-content-feed/instances/tag-page
     googleAdRightRail:
-      _ref: /_components/google-ad-manager/instances/halfPage
+      _ref: /_components/google-ad-manager/instances/halfPageTop
     googleAdTop:
       _ref: /_components/google-ad-manager/instances/superLeaderboard
     loadMoreContent:

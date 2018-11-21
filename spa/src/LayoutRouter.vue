@@ -8,6 +8,7 @@
 import axios from 'axios'
 import * as mutationTypes from '@/vuex/mutationTypes'
 import OneColumnLayout from '@/views/OneColumnLayout'
+import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
@@ -45,6 +46,8 @@ export default {
 
       if (spaPayload.tertiary) {
         nextLayoutComponent = 'TwoColumnLayout'
+      } else if (!spaPayload.secondary) {
+        nextLayoutComponent = 'OneColumnFullWidthLayout'
       } else {
         nextLayoutComponent = 'OneColumnLayout'
       }
@@ -84,6 +87,7 @@ export default {
   },
   components: {
     'OneColumnLayout': OneColumnLayout,
+    'OneColumnFullWidthLayout': OneColumnFullWidthLayout,
     'TwoColumnLayout': TwoColumnLayout
   },
   watch: {

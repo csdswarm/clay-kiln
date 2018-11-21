@@ -34,3 +34,18 @@ adSize:
         value: logo-sponsorship
     validate:
       required: true
+adPosition:
+  _label: Ad Slot Position Target (DFP)
+  _has:
+    input: text
+adLocation:
+  _label: Ad Slot Location Target (DFP)
+  _has:
+    input: radio
+    options:
+      -
+        name: Above The Fold
+        value: atf
+      -
+        name: Below The Fold
+        value: btf

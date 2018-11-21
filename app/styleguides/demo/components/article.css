@@ -46,7 +46,8 @@
       width: 100%;
       display: flex;
       justify-content: center;
-      .component--brightcove {
+      .component--brightcove,
+      .component--omny {
         width: 100%;
         height: auto;
       }
@@ -55,7 +56,8 @@
       .component--tweet,
       .component--facebook-post,
       .component--youtube,
-      .component--brightcove {
+      .component--brightcove,
+      .component--omny {
         margin: 0;
         img {
           width: 100%;
