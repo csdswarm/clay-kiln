@@ -3,7 +3,6 @@ const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
-  tag = require('../tags/model.js'),
   elasticIndex = 'published-articles',
   elasticFields = [
     'primaryHeadline',
@@ -69,19 +68,39 @@ module.exports.render = function (ref, data, locals) {
      * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
      * we return N + 1 items so we can let the frontend know if we have more data.
      */
-    if (!data.pageLength) { data.pageLength = 5; }
+    if (!data.pageLength) {
+      data.pageLength = 5;
+    }
     const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
 
     queryService.addOffset(query, skip);
-    queryService.addSize(query, data.pageLength + 1);
+  } else {
+    // Default shows maxItems
+    data.pageLength = maxItems;
+    data.initialLoad = true;
   }
+
+  // Always try and load one extra to know if we have more to show
+  queryService.addSize(query, data.pageLength + 1);
+
   if (data.populateFrom == 'tag') {
-    if (!data.tag && !data.tagManual || !locals) {
+    // Clean based on tags and grab first as we only ever pass 1
+    data.tag = data.tagManual || data.tag;
+
+    // Check if we are on a tag page and override the above
+    if (locals && locals.tag) {
+      // This is from load more on a tag page
+      data.tag = locals.tag;
+    } else if (locals && locals.params && locals.params.tag) {
+      // This is from a tag page
+      data.tag = locals.params.tag;
+    }
+
+    if (!data.tag) {
       return data;
     }
 
-    // Clean based on tags and grab first as we only ever pass 1
-    data.tag = tag.clean([{text: data.tagManual || data.tag}])[0].text || '';
+    // No need to clean the tag as the analyzer in elastic handles cleaning
     queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'section-front') {
@@ -118,7 +137,7 @@ module.exports.render = function (ref, data, locals) {
         content.lead = content.lead[0].split('/')[2];
         return content;
       });
-      data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      data.content = data.items.concat(_.take(results, maxItems)).slice(0, data.pageLength || maxItems); // show a maximum of maxItems links
 
       // "more content" button passes page query param - render more content and return it
       data.rawQueryResults = results.slice(0, data.pageLength);

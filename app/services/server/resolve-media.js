@@ -47,6 +47,11 @@ function resolveMedia(media, locals) {
   // Load all styles on initial page load so SPA doesn't break on navigation
   media.styles = glob.sync(path.join('public', 'css', `*.${locals.site.slug}.css`))
     .map(filepath => filepath.replace('public',''));
+
+  // Check if we are loading a component directly
+  if (locals.url.indexOf('/_components/') !== -1) {
+    media.styles = media.scripts = [];
+  }
 };
 
 module.exports = resolveMedia;

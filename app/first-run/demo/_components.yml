@@ -676,7 +676,7 @@ _components:
         tagInfo: ''
         sectionFront: ''
         sectionFrontManual: ''
-        populateFrom: all
+        populateFrom: all-content
         locationOfContentFeed: homepage
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop

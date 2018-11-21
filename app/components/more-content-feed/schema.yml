@@ -17,7 +17,7 @@ populateFrom:
     options:
       -
         name: All Content
-        value: all
+        value: all-content
       -
         name: Section Front
         value: section-front
