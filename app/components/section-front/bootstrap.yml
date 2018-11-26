@@ -4,7 +4,7 @@ _components:
     sectionLead:
       _ref: /_components/section-lead
     googleAdUnderStationsModule:
-        _ref: /_components/google-ad-manager/instances/leaderboard
+        _ref: /_components/google-ad-manager/instances/leaderboardBottom
     moreContentFeed:
       _ref: /_components/more-content-feed/instances/section-front
     latestContent:
