@@ -1,15 +1,15 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
-  formatStart = require('../../services/universal/utils').formatStart,
-  _clone = require('lodash/clone'),
   _map = require('lodash/map'),
   { isPage, isComponent } = require('clayutils'),
   log = require('../../services/universal/log').setup({
     file: __filename,
     component: 'newsfeed'
   }),
-  index = 'published-articles';
+  index = 'published-articles',
+  maxItems = 10,
+  pageLength = 5;
 
 /**
  * Builds and executes the query.
@@ -20,18 +20,24 @@ const queryService = require('../../services/server/query'),
  * @return {object}
  */
 function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
-  const from = formatStart(parseInt(locals.start, 10)), // can be undefined or NaN,
-    size = parseInt(locals.size, 10) || data.size || 20,
-    body = {
-      from,
-      size
-    },
-    query = queryService(index, locals);
-
-  query.body = _clone(body); // lose the reference
+  const query = queryService.newQueryWithCount(index, maxItems);
 
   if (routeParamValue) {
     queryService.addFilter(query, { match: { 'tags.normalized': routeParamValue } });
+  }
+
+  queryService.addSort(query, { date: 'desc' });
+
+  if (locals && locals.page ) {
+    /* after the first 10 items, show N more at a time (pageLength defaults to 5)
+     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
+     * we return N + 1 items so we can let the frontend know if we have more data.
+     */
+    if (!data.pageLength) { data.pageLength = pageLength; }
+    const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
+
+    queryService.addOffset(query, skip);
+    queryService.addSize(query, data.pageLength);
   }
 
   // Log the query
@@ -42,17 +48,17 @@ function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
     });
   }
 
-  queryService.addSort(query, { date: 'desc' });
-
   return queryService.searchByQueryWithRawResult(query)
     .then(function (results) {
-      const { hits = {} } = results;
+      const { hits = {} } = results,
+        // max number we could currently be displaying
+        offset = locals.page ? parseInt(locals.page) * data.pageLength : 0,
+        // added to the initial number items to display
+        currentDisplayed = maxItems + offset;
 
       data.total = hits.total;
-      data.entries = _map(hits.hits, '_source');
-      data.from = from;
-      data.start = from + size;
-      data.moreEntries = data.total > data.start;
+      data.content = _map(hits.hits, '_source');
+      data.moreContent = data.total > currentDisplayed;
 
       if (locals.params && locals.params.log) {
         log('debug', 'total hits', {
@@ -67,7 +73,6 @@ function buildAndExecuteQuery(ref, data, locals, routeParamValue) {
 
 module.exports.render = (ref, data, locals) => {
   const reqUrl = locals.url;
-  var routeParamValue;
 
   if (locals.params && locals.params.log) {
     log('debug', 'request URL', {
@@ -78,19 +83,19 @@ module.exports.render = (ref, data, locals) => {
 
   // If we're publishing for a dynamic page, rendering a component directly
   // or trying to render a page route we need a quick return
-  if (locals.isDynamicPublishUrl || isComponent(reqUrl) || isPage(reqUrl)) {
+  // unless it is for getting additional content
+  if (!locals.page && (locals.isDynamicPublishUrl || isComponent(reqUrl) || isPage(reqUrl))) {
     return data;
   }
 
-  routeParamValue = locals && locals.params ? locals.params.tag : '';
-  data.dynamicTag = routeParamValue;
+  data.dynamicTag = locals && locals.params ? locals.params.tag : locals.tag;
 
-  return buildAndExecuteQuery(ref, data, locals, routeParamValue)
+  return buildAndExecuteQuery(ref, data, locals, data.dynamicTag)
     .then(data => {
       // If we're not in edit mode and we've
       // got no results, the page should 404
-      if (!data.entries.length && !locals.edit) {
-        let err = new Error(`No results for tag: ${routeParamValue}`);
+      if (!data.content.length && !locals.edit) {
+        let err = new Error(`No results for tag: ${data.dynamicTag}`);
 
         err.status = 404;
         throw err;
