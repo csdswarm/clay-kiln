@@ -98,6 +98,9 @@ module.exports.render = function (ref, data, locals) {
     } else if (locals && locals.params && locals.params.tag) {
       // This is from a tag page
       data.tag = locals.params.tag;
+    } else if (locals && locals.params && locals.params.dynamicTag) {
+      // This is from a tag page
+      data.tag = locals.params.dynamicTag;
       data.dynamicTagPage = true;
     }
 
