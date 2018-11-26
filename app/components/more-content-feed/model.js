@@ -85,6 +85,9 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (data.populateFrom == 'tag') {
+    // If we're publishing for a dynamic page, alert the template
+    data.dynamicTagPage = false;
+
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = data.tagManual || data.tag;
 
@@ -95,6 +98,7 @@ module.exports.render = function (ref, data, locals) {
     } else if (locals && locals.params && locals.params.tag) {
       // This is from a tag page
       data.tag = locals.params.tag;
+      data.dynamicTagPage = true;
     }
 
     if (!data.tag) {

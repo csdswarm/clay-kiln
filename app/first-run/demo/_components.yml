@@ -695,7 +695,7 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
-        introComponents: []introComponents: []
+        introComponents: []
       tag-page:
         items: []
         tag: ''
