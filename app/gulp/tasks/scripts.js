@@ -143,9 +143,9 @@ gulp.task('view-after', function () {
 
 gulp.task('polyfills', function () {
   return gulp.src([
-      'global/polyfills.js',
-      'global/modernizr.js'
-    ])
+    'global/polyfills.js',
+    'global/modernizr.js'
+  ])
     .pipe(concat('polyfills.js'))
     .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
     .pipe(gulp.dest('public/js'));

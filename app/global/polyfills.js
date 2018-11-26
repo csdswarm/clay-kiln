@@ -1,27 +1,25 @@
 'use strict';
 
 (function () {
-  console.log('run polyfills');
   // window.CustomEvent -- https://gist.github.com/gt3/787767e8cbf0451716a189cdcb2a0d08
-  if (typeof window.CustomEvent === 'function') return false
+  if (typeof window.CustomEvent === 'function') return false;
   function CustomEvent(event, params) {
-    params = params || { bubbles: false, cancelable: false, detail: undefined }
-    var evt = document.createEvent('CustomEvent')
-    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail)
-    return evt
+    params = params || { bubbles: false, cancelable: false, detail: undefined };
+    let evt = document.createEvent('CustomEvent');
+
+    evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+    return evt;
   }
-  CustomEvent.prototype = window.Event.prototype
-  window.CustomEvent = window.Event = CustomEvent
+  CustomEvent.prototype = window.Event.prototype;
+  window.CustomEvent = window.Event = CustomEvent;
 
   // Array.forEach -- https://gist.github.com/githiro/5819142
   if (!Array.prototype.forEach) {
-    Array.prototype.forEach = function(fn, scope)
-    {
-      for(var i = 0, len = this.length; i < len; ++i)
-      {
+    Array.prototype.forEach = function (fn, scope) {
+      for (let i = 0, len = this.length; i < len; ++i) {
         fn.call(scope, this[i], i, this);
       }
-    }
+    };
   }
   if (typeof NodeList.prototype.forEach === 'function')
     return false;
@@ -44,6 +42,7 @@
 
           argArr.forEach(function (argItem) {
             var isNode = argItem instanceof Node;
+
             docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
           });
 
@@ -51,12 +50,13 @@
         }
       });
     });
-  })([Element.prototype, Document.prototype, DocumentFragment.prototype]);
+  }([Element.prototype, Document.prototype, DocumentFragment.prototype]));
 
   // querySelectorAll
   if (!document.querySelectorAll) {
     document.querySelectorAll = function (selectors) {
       var style = document.createElement('style'), elements = [], element;
+
       document.documentElement.firstChild.appendChild(style);
       document._qsa = [];
 
@@ -77,14 +77,14 @@
   if (!document.querySelector) {
     document.querySelector = function (selectors) {
       var elements = document.querySelectorAll(selectors);
-      return (elements.length) ? elements[0] : null;
+
+      return elements.length ? elements[0] : null;
     };
   }
 
   // includes
   if (!String.prototype.includes) {
-    String.prototype.includes = function(search, start) {
-      'use strict';
+    String.prototype.includes = function (search, start) {
       if (typeof start !== 'number') {
         start = 0;
       }
@@ -99,12 +99,13 @@
   if (!Array.prototype.includes) {
     Object.defineProperty(Array.prototype, 'includes', {
       enumerable: false,
-      value: function(obj) {
-          var newArr = this.filter(function(el) {
-            return el == obj;
-          });
-          return newArr.length > 0;
-        }
+      value: function (obj) {
+        var newArr = this.filter(function (el) {
+          return el == obj;
+        });
+
+        return newArr.length > 0;
+      }
     });
   }
 
@@ -124,6 +125,7 @@
 
           argArr.forEach(function (argItem) {
             var isNode = argItem instanceof Node;
+
             docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
           });
 
@@ -131,5 +133,5 @@
         }
       });
     });
-  })([Element.prototype, CharacterData.prototype, DocumentType.prototype]);
-})();
+  }([Element.prototype, CharacterData.prototype, DocumentType.prototype]));
+}());

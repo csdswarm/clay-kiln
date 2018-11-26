@@ -42,7 +42,6 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
  * @param {boolean} show - Open or close drawer/dropdown.
  */
   toggleNavDrawer = (event, show) => {
-    console.log("toggle drawer");
     let navDrawer,
       navDrawers = document.getElementsByClassName('nav-drawer');
 
@@ -159,5 +158,3 @@ document.addEventListener('top-nav-mount', function () {
   // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
   addEventListeners();
 });
-
-console.log('top nav js');
