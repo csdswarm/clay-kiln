@@ -11,7 +11,7 @@
       </button></a>{{!--
       --}}{{#if headerLinks.length}}
         {{#each headerLinks}}
-          <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}} {{#if drawer}}radiocom-nav__category-button--drawer-enabled{{/if}}">
+          <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}} {{#if current}}radiocom-nav__category-button--{{text}}--current{{/if}} {{#if drawer}}radiocom-nav__category-button--drawer-enabled{{/if}}">
             {{#if url}}
               <a href="{{url}}">
                 <button>
