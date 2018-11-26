@@ -45,7 +45,7 @@
     }
   }
 
-  .section__articleList {
+  .section__article-list {
     padding-bottom: em(15);
     padding-right: em(20);
     width: 100%; /* IE11 */
