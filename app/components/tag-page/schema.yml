@@ -8,25 +8,6 @@ tag:
   _publish: tag
   _has:
     input: text
-  _placeholder:
-    ifEmpty: tag
-    height: 100px
-    text: Tag Page
-
-googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager
-
-googleAdTop:
-  _component:
-    include:
-      - google-ad-manager
-
-loadMoreContent:
-  _component:
-    include:
-      - load-more-content
 
 moreContentFeed:
   _component:
