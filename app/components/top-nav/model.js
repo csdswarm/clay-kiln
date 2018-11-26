@@ -6,6 +6,6 @@ module.exports.render = (ref, data, locals) => {
       headerLink.current = true;
     }
     return headerLink;
-  })
+  });
   return data;
 };
