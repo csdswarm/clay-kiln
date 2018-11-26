@@ -1,8 +1,8 @@
 <section class="component component--latest-content" data-uri="{{ default _ref _self }}" data-track-type="latest-content">
   <h2 class="latest-content__title"><span>LATEST on RADIO.COM</span></h2>
-  <div class="latest-content__section ">
+  <div class="latest-content__section">
     {{#each articles as |articleSection|}}
-      <ul class="section__articleList {{articleSection.section}}" data-editable="{{articleSection.section}}Items">
+      <ul class="section__articleList section__article-list--{{articleSection.section}}" data-editable="{{articleSection.section}}Items">
         {{#each articleSection.articles as |article|}}
           <li>
             <a href="{{ article.canonicalUrl }}"

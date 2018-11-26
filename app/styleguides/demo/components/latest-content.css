@@ -60,15 +60,17 @@
       padding-right: 0;
     }
 
-    &.entertainment {
-      order: 1;
-    }
-    &.news {
-      order: 2;
-    }
-    &.sports {
-      order: 3;
-      padding-right: 0;
+    &.section__article-list-- {
+      &entertainment {
+        order: 1;
+      }
+      &news {
+        order: 2;
+      }
+      &sports {
+        order: 3;
+        padding-right: 0;
+      }
     }
   }
 
