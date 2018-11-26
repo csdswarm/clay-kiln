@@ -678,6 +678,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
       section-front:
         items: []
         tag: ''
@@ -690,6 +692,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
       tag-page:
         items: []
         tag: ''
@@ -702,6 +706,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
 
   section-videos:
     instances:
@@ -728,6 +734,8 @@ _components:
         stationsCarousel:
           -
             _ref: /_components/stations-carousel/instances/homepage
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
 
   tag-page:
     instances:
@@ -739,6 +747,8 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        loadMoreContent:
+          _ref: /_components/load-more-content/instances/default
 
   tag-page-header:
     instances:
@@ -771,3 +781,8 @@ _components:
         entertainmentItems: []
         sportsItems: []
         newsItems: []
+
+  load-more-content:
+    instances:
+      default:
+        pageLength: 5
