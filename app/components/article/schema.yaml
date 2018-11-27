@@ -92,32 +92,17 @@ seoDescription:
       min: 50
       max: 250
 feedImgUrl:
-  _label: Image URL
+  _label: Recirculation Image
   _publish: feedImgUrl
+  help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
   _has:
-    input: text
-    type: url
-    help: Must be a image url
-    attachedButton:
-      - name: magic-button
-        component: image
-        transform: getComponentInstance
-        url: $SITE_PREFIX
-        property: url
-        tooltip: get the first image
-feedLayout:
-  _label: Layout in Feeds
-  _has:
-    input: segmented-button
-    options:
-      - icon: /media/components/article/icon-feed-noimg.svg
-        value: none
-      - icon: /media/components/article/icon-feed-thumb.svg
-        value: thumb
-      - icon: /media/components/article/icon-feed-square.svg
-        value: small
-      - icon: /media/components/article/icon-feed-horizontal.svg
-        value: large
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    validate:
+      required: true
 slug:
   _label: Slug
   _has:
@@ -133,11 +118,6 @@ slug:
       moreMagic:
         - transform: toSlug
       tooltip: Generate from Short Headline
-evergreenSlug:
-  _label: Evergreen Article
-  _has:
-    input: checkbox
-    help: Replaces /yyyy/mm/ with /article/ in the URL
 byline:
   _label: Byline
   _subscribe: authorBylines
@@ -356,6 +336,9 @@ _groups:
       text: Station Source
       height: 30px
       ifEmpty: stationTitle
+  circFeeds:
+    fields:
+      - feedImgUrl
   circHeadlines:
     fields:
       - primaryHeadline
@@ -363,10 +346,6 @@ _groups:
       - teaser
       - seoHeadline
       - seoDescription
-  circFeeds:
-    fields:
-      - feedImgUrl
-      - feedLayout
   circSlug:
     fields:
       - slug

@@ -3,7 +3,6 @@ const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
-  tag = require('../tags/model.js'),
   elasticIndex = 'published-articles',
   elasticFields = [
     'primaryHeadline',
@@ -15,7 +14,8 @@ const queryService = require('../../services/server/query'),
     'date',
     'lead'
   ],
-  maxItems = 10;
+  maxItems = 10,
+  pageLength = 5;
 
 /**
 * @param {string} ref
@@ -59,8 +59,11 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  // take 1 more article than needed to know if there are more
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1);
   let cleanUrl;
+
+  data.initialLoad = false;
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
@@ -69,19 +72,43 @@ module.exports.render = function (ref, data, locals) {
      * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
      * we return N + 1 items so we can let the frontend know if we have more data.
      */
-    if (!data.pageLength) { data.pageLength = 5; }
+    if (!data.pageLength) {
+      data.pageLength = pageLength;
+    }
+
     const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
 
     queryService.addOffset(query, skip);
-    queryService.addSize(query, data.pageLength + 1);
+  } else {
+    data.pageLength = maxItems;
+    data.initialLoad = true;
   }
+
   if (data.populateFrom == 'tag') {
-    if (!data.tag && !data.tagManual || !locals) {
+    // If we're publishing for a dynamic page, alert the template
+    data.dynamicTagPage = false;
+
+    // Clean based on tags and grab first as we only ever pass 1
+    data.tag = data.tagManual || data.tag;
+
+    // Check if we are on a tag page and override the above
+    if (locals && locals.tag) {
+      // This is from load more on a tag page
+      data.tag = locals.tag;
+    } else if (locals && locals.params && locals.params.tag) {
+      // This is from a tag page
+      data.tag = locals.params.tag;
+    } else if (locals && locals.params && locals.params.dynamicTag) {
+      // This is from a tag page
+      data.tag = locals.params.dynamicTag;
+      data.dynamicTagPage = true;
+    }
+
+    if (!data.tag) {
       return data;
     }
 
-    // Clean based on tags and grab first as we only ever pass 1
-    data.tag = tag.clean([{text: data.tagManual || data.tag}])[0].text || '';
+    // No need to clean the tag as the analyzer in elastic handles cleaning
     queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'section-front') {
@@ -90,7 +117,7 @@ module.exports.render = function (ref, data, locals) {
     }
     queryService.addShould(query, { match: { articleType: data.sectionFrontManual || data.sectionFront }});
     queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom == 'all') {
+  } else if (data.populateFrom == 'all-content') {
     if (!locals) {
       return data;
     }
@@ -118,11 +145,16 @@ module.exports.render = function (ref, data, locals) {
         content.lead = content.lead[0].split('/')[2];
         return content;
       });
-      data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
       // "more content" button passes page query param - render more content and return it
-      data.rawQueryResults = results.slice(0, data.pageLength);
-      data.moreResults = results.length > data.pageLength;
+      data.moreContent = results.length > data.pageLength;
+
+      // On initial load we need to append curated items onto the list, otherwise skip
+      if (data.initialLoad) {
+        data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of pageLength links
+      } else {
+        data.content = results.slice(0, data.pageLength); // show a maximum of pageLength links
+      }
 
       return data;
     })

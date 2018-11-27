@@ -350,7 +350,11 @@ _components:
         adSize: super-leaderboard
         adPosition: bottom
         adLocation: btf
-      leaderboard:
+      leaderboardTop:
+        adSize: leaderboard
+        adPosition: top
+        adLocation: atf
+      leaderboardBottom:
         adSize: leaderboard
         adPosition: bottom
         adLocation: btf
@@ -619,7 +623,7 @@ _components:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
-            _ref: /_components/google-ad-manager/instances/leaderboard
+            _ref: /_components/google-ad-manager/instances/leaderboardBottom
         latestContent:
           _ref: /_components/latest-content/instances/default
         stationsCarousel:
@@ -672,12 +676,13 @@ _components:
         tagInfo: ''
         sectionFront: ''
         sectionFrontManual: ''
-        populateFrom: all
+        populateFrom: all-content
         locationOfContentFeed: homepage
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        introComponents: []
       section-front:
         items: []
         tag: ''
@@ -690,6 +695,7 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        introComponents: []
       tag-page:
         items: []
         tag: ''
@@ -702,6 +708,7 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+        introComponents: []
 
   section-videos:
     instances:
@@ -735,10 +742,6 @@ _components:
         tag: ''
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/tag-page
-        googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageTop
-        googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
 
   tag-page-header:
     instances:

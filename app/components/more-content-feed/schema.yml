@@ -17,7 +17,7 @@ populateFrom:
     options:
       -
         name: All Content
-        value: all
+        value: all-content
       -
         name: Section Front
         value: section-front
@@ -196,6 +196,15 @@ items:
       _has:
         validate:
           required: true
+
+introComponents:
+  _label: Intro Components
+  _placeholder:
+    text: Intro Component
+    height: 100px
+  _componentList:
+    include:
+    - html-embed
 
 googleAdRightRail:
   _component:
