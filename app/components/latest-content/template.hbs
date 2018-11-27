@@ -2,9 +2,9 @@
   <h2 class="latest-content__title"><span>LATEST on RADIO.COM</span></h2>
   <div class="latest-content__section">
     {{#each articles as |articleSection|}}
-      <div class="section__article-list section__article-list--{{articleSection.section}}">
+      <div class="section__container section__container--{{articleSection.section}}">
         <div data-editable="{{articleSection.section}}Items"></div>
-        <ul>
+        <ul class="container__article-list">
           {{#each articleSection.articles as |article|}}
             <li>
               <a href="{{ article.canonicalUrl }}"
