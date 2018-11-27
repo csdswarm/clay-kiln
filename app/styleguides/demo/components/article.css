@@ -41,6 +41,7 @@
 }
 .article__body {
   display: inline-block;
+  width: 100%;
   .body__header {
     margin-bottom: em(50);
     .lead {
