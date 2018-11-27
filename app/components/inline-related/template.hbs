@@ -39,17 +39,10 @@
            data-track-headline="{{ articles.1.primaryHeadline }}"
            data-track-component-title="Related"
            data-track-lead="{{ articles.1.lead }}">
-          {{#ifAny (compare articles.1.lead 'youtube') (compare articles.1.lead 'brightcove') (compare articles.1.lead 'omny') }}
-            {{#ifAny (compare articles.1.lead 'youtube') (compare articles.1.lead 'brightcove')}}
-              <span class="related__media-icon">
-                {{{ read 'components/inline-related/media/watch.svg' }}}
-              </span>
-            {{/ifAny}}
-            {{#if (compare articles.1.lead 'omny') }}
-              <span class="related__media-icon">
-                {{{ read 'components/inline-related/media/listen.svg' }}}
-              </span>
-            {{/if}}
+          {{#ifAny (compare articles.1.lead 'youtube') (compare articles.1.lead 'brightcove')}}
+            <span class="related__media-icon">
+            {{{ read 'components/inline-related/media/watch.svg' }}}
+            </span>
           {{else}}
             <span class="related__bullet"></span>
           {{/ifAny}}
