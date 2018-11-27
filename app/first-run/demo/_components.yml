@@ -608,7 +608,7 @@ _components:
           most-popular: true
           newsfeed: true
           apple-news: true
-        articleType: entertainment
+        articleType: 
         showSocial: true
 
   section-lead:
