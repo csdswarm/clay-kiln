@@ -15,6 +15,10 @@
     flex-wrap: wrap;
     width: em(widthOnGrid(10, 9));
     margin-right: em(20);
+    .kiln-placeholder {
+      height: 400px;
+      margin-bottom: 50px;
+    }
   }
 
   .section-lead__article {
