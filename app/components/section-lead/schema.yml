@@ -26,9 +26,7 @@ items:
         _has:
           validate:
             required: true
-    _placeholder:
-      height: 400px
-      text: Lead Story(s)
+
 sectionFront:
   _label: Section Front
   _subscribe: sectionFront
