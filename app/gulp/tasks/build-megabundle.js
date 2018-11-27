@@ -271,7 +271,6 @@ function updateMegabundle(filepaths, opts) {
     files: [],
     pack: []
   });
-
   gutil.log("Starting '" + gutil.colors.cyan('updateMegabundle') + "'...");
 
   bundler
@@ -356,7 +355,7 @@ function updateMegabundle(filepaths, opts) {
         fs.outputJsonSync(REGISTRY_PATH, cache.registry);
         fs.outputJsonSync(ENV_PATH, cache.env);
         fs.outputJsonSync(IDS_PATH, cache.ids);
-        gutil.log("Finished '" + gutil.colors.cyan('updateMegabundle') + "' after " + gutil.colors.magenta(((Date.now() - startTime) / 1000) + ' s'));
+        gutil.log("Finished '" + gutil.colors.cyan('updateMegabundle') + "' after " + gutil.colors.magenta((Date.now() - startTime) / 1000 + ' s'));
         resolve();
       })
       .on('error', reject)
