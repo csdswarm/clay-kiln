@@ -1,4 +1,7 @@
 'use strict';
+
+// @TODO ON-237 - ensure tag that when the tag is passed in the data is retrieved in the same was as tag-page
+
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
@@ -15,7 +18,8 @@ const queryService = require('../../services/server/query'),
     'date',
     'lead'
   ],
-  maxItems = 10;
+  maxItems = 5,
+  pageLength = 5;
 
 /**
 * @param {string} ref
@@ -59,8 +63,11 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  // take 1 more article than needed to know if there are more
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1);
   let cleanUrl;
+
+  if (!data.pageLength) { data.pageLength = pageLength; }
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
@@ -69,7 +76,6 @@ module.exports.render = function (ref, data, locals) {
      * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
      * we return N + 1 items so we can let the frontend know if we have more data.
      */
-    if (!data.pageLength) { data.pageLength = 5; }
     const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
 
     queryService.addOffset(query, skip);
@@ -118,11 +124,12 @@ module.exports.render = function (ref, data, locals) {
         content.lead = content.lead[0].split('/')[2];
         return content;
       });
-      data.content = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+
+      data.content = locals.page ? results.slice(0, data.pageLength) :
+        data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
       // "more content" button passes page query param - render more content and return it
-      data.rawQueryResults = results.slice(0, data.pageLength);
-      data.moreResults = results.length > data.pageLength;
+      data.moreContent = results.length > maxItems;
 
       return data;
     })

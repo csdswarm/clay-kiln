@@ -43,6 +43,9 @@
     }
     .radiocom-footer__social {
       margin-bottom: em(30);
+      > a {
+        display: inline-block;
+      }
       > a object {
         @mixin inline-block;
         height: em(30);

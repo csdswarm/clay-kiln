@@ -12,3 +12,5 @@ _components:
       _ref: /_components/google-ad-manager/instances/mediumRectangleBottom
     googleAdTop:
       _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+    loadMoreContent:
+      _ref: /_components/load-more-content/instances/default
