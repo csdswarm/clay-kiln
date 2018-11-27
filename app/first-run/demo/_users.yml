@@ -60,7 +60,7 @@ _users:
     provider: google
     auth: admin
   -
-    username: tony.senes@entercom.com
+    username: tsenes@entercom.com
     provider: google
     auth: admin
   -
@@ -97,5 +97,9 @@ _users:
     auth: admin
   -
     username: brian.coursen@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: irina.yekaterinoslavskaya@entercom.com
     provider: google
     auth: admin
