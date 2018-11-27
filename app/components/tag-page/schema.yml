@@ -23,6 +23,11 @@ googleAdTop:
     include:
       - google-ad-manager
 
+loadMoreContent:
+  _component:
+    include:
+      - load-more-content
+
 moreContentFeed:
   _component:
     include:

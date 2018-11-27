@@ -20,7 +20,7 @@ _pages:
     main:
       - /_components/article/instances/new
     secondary:
-      - /_components/google-ad-manager/instances/billboard
+      - /_components/google-ad-manager/instances/billboardBottom
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleBottom
       - /_components/latest-recirculation/instances/new
