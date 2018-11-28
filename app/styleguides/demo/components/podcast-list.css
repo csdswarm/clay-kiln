@@ -88,7 +88,7 @@
   .podcast-list__more {
     @mixin podcast-list-font5;
     text-transform: uppercase;
-    svg {
+    & .more__caret {
       fill: $robinsEggBlue;
       height: em(10, 12);
       width: em(10, 12);
