@@ -612,7 +612,7 @@ _components:
         items: []
         sectionFront: ''
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
 
   section-front:
     instances:
