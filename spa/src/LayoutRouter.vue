@@ -97,6 +97,10 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
+
+      // Start loading animation.
+      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+
       // Get SPA payload data for next path.
       const spaPayload = await this.getNextSpaPayload(window.location.hostname + to.path)
 
@@ -108,6 +112,9 @@ export default {
 
       // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
       metaManager.updateExternalTags(this.$store.state.spaPayload)
+
+      // Stop loading animation.
+      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
       // Build pageView event data
       const pageViewEventData = this.buildPageViewEventData(to, this.$store.state.spaPayload)

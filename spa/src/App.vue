@@ -1,5 +1,5 @@
 <template>
-  <div id="vue-app-mount-point">
+  <div id="vue-app-mount-point" v-bind:class="{ 'loading-spinner': loadingSpinnerActive }">
     <router-view/>
   </div>
 </template>
@@ -8,7 +8,11 @@
 
 export default {
   name: 'App',
-  computed: {},
+  computed: {
+    loadingSpinnerActive: function () {
+      return this.$store.state.loadingAnimation
+    }
+  },
   methods: {},
   components: {}
 }

@@ -6,13 +6,17 @@ import { Base64 } from 'js-base64'
 
 Vue.use(Vuex)
 
+// Set store default values.
+const vuexStoreDefaultState = {
+  handlebars: null,
+  spaPayload: {},
+  spaPayloadLocals: {},
+  setupRan: false,
+  loadingAnimation: false
+}
+
 export default new Vuex.Store({
-  state: {
-    handlebars: null,
-    spaPayload: {},
-    spaPayloadLocals: {},
-    setupRan: false
-  },
+  state: vuexStoreDefaultState,
   mutations: {
     [mutationTypes.LOAD_HANDLEBARS]: (state, payload) => {
       state.handlebars = payload.handlebars
@@ -25,6 +29,9 @@ export default new Vuex.Store({
     },
     [mutationTypes.FLAG_SETUP_RAN]: (state, setupRan) => {
       state.setupRan = setupRan
+    },
+    [mutationTypes.ACTIVATE_LOADING_ANIMATION]: (state, activate) => {
+      state.loadingAnimation = activate
     }
   },
   actions: {
@@ -34,7 +41,7 @@ export default new Vuex.Store({
 
 /**
  *
- * This sets the initial state of the vuex store before the
+ * This configures and sets the initial state of the vuex store before the
  * store is injected into a new Vue SPA instance.
  *
  * Content related data is pulled of of window.spaPayload, which is
@@ -54,13 +61,13 @@ export function setVuexStoreBaseState (store) {
     throw new Error('SPA Payload failed to load.')
   }
 
-  // Set base state data.
-  const baseState = {
-    handlebars: handlebars,
-    spaPayload: spaPayload,
-    spaPayloadLocals: JSON.parse(JSON.stringify(spaPayload.locals)),
-    setupRan: false
-  }
+  // Merge configured state with default state to create base state.
+  const baseState = Object.assign({}, vuexStoreDefaultState, {
+    handlebars,
+    spaPayload,
+    spaPayloadLocals: JSON.parse(JSON.stringify(spaPayload.locals))
+  })
 
+  // Set base state.
   store.replaceState(baseState)
 }
