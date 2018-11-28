@@ -370,6 +370,7 @@ _components:
         adSize: medium-rectangle
         adPosition: rec
         adLocation: btf
+        sticky: true
       mobile:
         adSize: mobile
       logoSponsorship:
