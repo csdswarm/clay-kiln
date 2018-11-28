@@ -38,6 +38,9 @@ adPosition:
   _label: Ad Slot Position Target (DFP)
   _has:
     input: text
+sticky: 
+  _label: Stick ad on Scroll
+  _input: checkbox
 adLocation:
   _label: Ad Slot Location Target (DFP)
   _has:
