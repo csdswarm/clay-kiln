@@ -144,7 +144,7 @@
       & .link__label {
         @mixin latest-content-font3;
         padding-top: 0;
-        padding-left: em(20);
+        padding-left: em(20, 14);
 
         @mixin medium-screen {
           @mixin latest-content-font2;
@@ -152,7 +152,7 @@
 
         @mixin medium-small-screen {
           @mixin latest-content-font6;
-          padding-top: em(15);
+          padding-top: em(15, 18);
           padding-left: 0;
         }
       }
@@ -173,18 +173,18 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    padding-top: em(15);
+    padding-top: em(15, 22);
     width: 100%; /* IE11 */
 
     @mixin medium-screen {
       @mixin latest-content-font2;
-      padding-left: em(20);
+      padding-left: em(20, 22);
       width: 50%;
     }
 
     @mixin medium-small-screen {
       @mixin latest-content-font6;
-      padding-top: em(15);
+      padding-top: em(15, 18);
       padding-left: 0;
       width: 100%;
     }
@@ -192,12 +192,12 @@
 
   .link__tag {
     @mixin latest-content-font4;
-    height: em(26);
+    height: em(26, 14);
     position: absolute;
     top: 0;
     background-color: $parisM;
-    padding: 0 em(6);
-    line-height: em(26);
+    padding: 0 em(6, 14);
+    line-height: em(26, 14);
 
     &:first-letter {
        text-transform: uppercase;
@@ -215,8 +215,8 @@
 
     @mixin medium-small-screen {
       @mixin latest-content-font7;
-      height: em(33);
-      line-height: em(33);
+      height: em(33, 18);
+      line-height: em(33, 18);
     }
   }
 
