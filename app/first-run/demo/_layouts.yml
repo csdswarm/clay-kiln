@@ -103,7 +103,6 @@ _components:
         secondary: secondary
         bottom:
           - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/trending-recirculation/instances/default
           - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/footer/instances/default
