@@ -1,5 +1,5 @@
 <template>
-  <div id="vue-app-mount-point" v-bind:class="{ 'loading-spinner': loadingSpinnerActive }">
+  <div id="vue-app-mount-point" v-bind:class="{ 'vue-app-mount-point--loading': loadingSpinnerActive }">
     <router-view/>
   </div>
 </template>
