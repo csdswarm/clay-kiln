@@ -25,13 +25,13 @@
                     class="link__image" />
                   <div class="link__tag link__tag--{{articleSection.section}}">{{ articleSection.section }}</div>
                 {{else}}
-                  <picture>
+                  <picture class="link__picture">
                     <source media="(min-width: 1024px)" srcset="{{ article.feedImgUrl }}?width=80&crop=1:1,smart" />
                     <source media="(max-width: 1023px)" srcset="{{ article.feedImgUrl }}?width=343&crop=16:9,smart" />
                     <source media="(max-width: 480px)" srcset="{{ article.feedImgUrl }}?width=440&crop=16:9,smart" />
                     <source media="(max-width: 360px)" srcset="{{ article.feedImgUrl }}?width=320&crop=16:9,smart" />
                     <img src="{{ article.feedImgUrl }}?width=80&crop=1:1,smart"
-                         class="link__image" />
+                       class="picture__image" />
                   </picture>
                 {{/if}}
                 <div class="link__label">{{ article.primaryHeadline }}</div>

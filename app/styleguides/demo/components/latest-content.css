@@ -1,3 +1,5 @@
+/* fix em with different font sizes */
+
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
@@ -6,8 +8,14 @@
   width: 100%;
   padding-bottom: em(80);
   align-self: center;
+  margin: 0 auto;
+  max-width: em(widthOnGrid(12,11));
 
-  h2 {
+  @mixin medium-small-screen {
+    padding-bottom: em(30);
+  }
+
+  .latest-content__title {
     @mixin latest-content-font1;
     width: 100%;
     position: relative;
@@ -36,8 +44,6 @@
   .latest-content__section {
     display: flex;
     padding-top: em(40);
-    margin: 0 auto;
-    max-width: em(widthOnGrid(12,11));
 
     @mixin medium-screen {
       flex-direction: column;
@@ -80,6 +86,7 @@
     }
   }
 
+
   .articleList__link {
     text-decoration: none;
     display: flex;
@@ -105,34 +112,45 @@
         flex-direction: column;
       }
 
-      & .link__image {
-        width: em(80);
-        height: em(80);
-        margin-right: em(20);
+      & .link__picture {
 
         @mixin medium-screen {
-          flex: none;
-          margin-right: em(20);
-          width: em(widthOnGrid(3,2,medium-screen));
-          height: em(193);
+          width: 50%;
         }
 
         @mixin medium-small-screen {
           width: 100%;
-          max-width: em(widthOnGrid(4,3,medium-small-screen));
-          height: em(248);
         }
 
-        @mixin small-screen {
-          width: 100%;
-          max-width: em(widthOnGrid(4,3,small-screen));
-          height: em(180);
+        & .picture__image {
+          width: em(80);
+          height: em(80);
+          object-fit: cover;
+
+          @mixin medium-screen {
+            flex: none;
+            width: 100%;
+            height: em(193);
+          }
+
+          @mixin medium-small-screen {
+            width: 100%;
+            max-width: em(widthOnGrid(4, 3, medium-small-screen));
+            height: em(248);
+          }
+
+          @mixin small-screen {
+            width: 100%;
+            max-width: em(widthOnGrid(4, 3, small-screen));
+            height: em(180);
+          }
         }
       }
 
       & .link__label {
         @mixin latest-content-font3;
         padding-top: 0;
+        padding-left: em(20, 14);
 
         @mixin medium-screen {
           @mixin latest-content-font2;
@@ -140,7 +158,8 @@
 
         @mixin medium-small-screen {
           @mixin latest-content-font6;
-          padding-top: em(15);
+          padding-top: em(15, 18);
+          padding-left: 0;
         }
       }
     }
@@ -160,27 +179,31 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    padding-top: em(15);
+    padding-top: em(15, 22);
     width: 100%; /* IE11 */
 
     @mixin medium-screen {
       @mixin latest-content-font2;
+      padding-left: em(20, 22);
+      width: 50%;
     }
 
     @mixin medium-small-screen {
       @mixin latest-content-font6;
-        padding-top: em(15);
-      }
+      padding-top: em(15, 18);
+      padding-left: 0;
+      width: 100%;
+    }
   }
 
   .link__tag {
     @mixin latest-content-font4;
-    height: em(26);
+    height: em(26, 14);
     position: absolute;
     top: 0;
     background-color: $parisM;
-    padding: 0 em(6);
-    line-height: em(26);
+    padding: 0 em(6, 14);
+    line-height: em(26, 14);
 
     &:first-letter {
        text-transform: uppercase;
@@ -198,8 +221,8 @@
 
     @mixin medium-small-screen {
       @mixin latest-content-font7;
-      height: em(33);
-      line-height: em(33);
+      height: em(33, 18);
+      line-height: em(33, 18);
     }
   }
 
@@ -209,26 +232,21 @@
     object-fit: cover;
 
     @mixin medium-screen {
-      width: em(widthOnGrid(3,2,medium-screen));
+      width: 50%;
       height: em(193);
       flex: none;
-      margin-right: em(20);
     }
 
     @mixin medium-small-screen {
       width: 100%;
-      max-width: em(widthOnGrid(4,3,medium-small-screen));
+      max-width: em(widthOnGrid(4, 3, medium-small-screen));
       height: em(248);
     }
 
     @mixin small-screen {
       width: 100%;
-      max-width: em(widthOnGrid(4,3,small-screen));
+      max-width: em(widthOnGrid(4, 3, small-screen));
       height: em(180);
     }
-  }
-
-  @mixin medium-small-screen {
-    padding-bottom: em(30);
   }
 }
