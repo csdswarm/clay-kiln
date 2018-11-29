@@ -28,7 +28,6 @@
 .google-ad-manager--super-leaderboard,
 .google-ad-manager--leaderboard,
 .google-ad-manager--mobile {
-  width: 100%;
   margin-bottom: em(50);
   &:last-of-type {
     margin-bottom: 0;
@@ -36,6 +35,12 @@
   &:first-of-type {
     margin-bottom: em(50);
   }
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
   .google-ad-manager__slot {
     width: auto;
     height: auto;
