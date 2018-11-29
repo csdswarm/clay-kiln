@@ -89,6 +89,7 @@
     position: relative;
 
     &:hover {
+      .picture__image,
       .link__image {
         opacity: 0.9;
       }
