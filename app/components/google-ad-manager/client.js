@@ -164,7 +164,7 @@ function setAds() {
         slot.setTargeting('rightRail', true);
       }
 
-      slot.setTargeting('refresh', refreshCount)
+      slot.setTargeting('refresh', refreshCount.toString())
         .setTargeting('market', marketName.replace(' ','').split(',')[0].toLowerCase())
         .setTargeting('station', targetingNationalRadioStation)
         .setTargeting('genre', targetingGenre)
@@ -200,7 +200,7 @@ function setAds() {
       rightRail = slot.getTargeting('rightRail');
 
     if (rightRail.length) {
-      slot.setTargeting('refresh', refreshCount++);
+      slot.setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
         googletag.pubads().refresh([slot]);
       }, adRefreshInterval);
