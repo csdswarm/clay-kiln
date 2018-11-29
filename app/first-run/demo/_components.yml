@@ -618,6 +618,7 @@ _components:
       new:
         items: []
         sectionFront: ''
+        filterBySection: ''
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
 
