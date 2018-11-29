@@ -40,6 +40,8 @@
   }
 }
 .article__body {
+  padding-bottom: em(50);
+
   .body__header {
     margin-bottom: em(50);
     .lead {
