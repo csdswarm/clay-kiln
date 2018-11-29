@@ -44,6 +44,9 @@
     margin: 0 auto;
   }
 }
+.google-ad-manager--billboard:first-of-type {
+  margin-bottom: 0;
+}
 .layout__bottom {
   .google-ad-manager--billboard,
   .google-ad-manager--super-leaderboard,

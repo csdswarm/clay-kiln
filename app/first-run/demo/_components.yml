@@ -680,8 +680,6 @@ _components:
         locationOfContentFeed: homepage
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
-        googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
       section-front:
         items: []
@@ -693,8 +691,6 @@ _components:
         locationOfContentFeed: section-front
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
-        googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
       tag-page:
         items: []
@@ -706,8 +702,6 @@ _components:
         locationOfContentFeed: tag-page
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
-        googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
 
   section-videos:
