@@ -5,13 +5,15 @@ const radioApi = 'https://api.radio.com/v1/',
   localStorage = window.localStorage,
   Handlebars = require('handlebars'),
   stationLi = `
-    <a href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
+    <a class="station-image" href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
       <img class='thumb'
           srcset='{{ default square_logo_large "" }}?width=222&dpr=1.5 1.5x,
             {{ default square_logo_large "" }}?width=222&dpr=2 2x'
           src='{{ default square_logo_large "" }}?width=222'
       />
-      <span>{{ default name '' }}</span>
+    </a>
+    <a href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
+      <span class='name'>{{ default name '' }}</span>
     </a>
   `;
 

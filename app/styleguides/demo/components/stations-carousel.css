@@ -26,7 +26,7 @@ $medium-screen-nav-width: em(728);
     height: em(400);
   }
   @mixin small-screen {
-    height: em(295);
+    height: em(360);
   }
 }
 @define-mixin section-front-colors $section-front, $color {
@@ -104,9 +104,9 @@ $medium-screen-nav-width: em(728);
       .title__line {
         width: 100%;
         border-bottom: em(1) solid #FFF;
-        margin: em(30) 0;
+        margin: em(45) 0;
         @mixin small-screen {
-          margin: em(30) 0 em(25) 0;
+          margin: em(40) 0 em(25) 0;
         }
       }
       h2 {
@@ -114,7 +114,7 @@ $medium-screen-nav-width: em(728);
         text-transform: uppercase;
         padding: 0 em(15, 20);
         background: $parisM;
-        top: em(18, 20);
+        top: em(33, 20);
         position: absolute;
         @mixin small-screen {
           @mixin stations-carousel-font3;
@@ -163,8 +163,20 @@ $medium-screen-nav-width: em(728);
           }
         }
         a {
+          position: relative;
           text-decoration: none;
-          .thumb {
+          &.station-image:hover:before {
+            content: " ";
+            z-index: 10;
+            display: block;
+            position: absolute;
+            height: em(widthOnGrid(2,1));
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+          }
+          &.station-image img {
+            position: relative;
             width: em(widthOnGrid(2,1));
             height: em(widthOnGrid(2,1));
             @mixin medium-screen {
@@ -176,11 +188,12 @@ $medium-screen-nav-width: em(728);
               height: em(222);
             }
           }
-          span {
+
+          .name {
             @mixin stations-carousel-font2;
             display: inline-flex;
             width: 100%;
-            margin-top: em(15, 14);
+            margin-top: em(14, 14);
             &:hover {
               text-decoration: underline;
             }
