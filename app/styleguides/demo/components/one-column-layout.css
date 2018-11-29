@@ -12,6 +12,6 @@
   }
   .layout__content {
     background: $white;
-    margin-bottom: em(40);
+    padding-bottom: 0;
   }
 }
