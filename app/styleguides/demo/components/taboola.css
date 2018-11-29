@@ -1,3 +1,3 @@
 .component--taboola {
-  padding-bottom: em(40); /* each ad has 30px bottom padding to total 70 */
+  margin-bottom: em(40); /* each ad has 30px bottom padding to total 70 */
 }
