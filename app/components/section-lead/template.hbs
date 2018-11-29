@@ -1,4 +1,4 @@
-<section data-uri="{{ default _ref _self }}" class="component component--section-lead{{ if @root.locals.edit ' editing' }}" data-section="{{ sectionFront }}">
+<section data-uri="{{ default _ref _self }}" class="component component--section-lead{{ if @root.locals.edit ' editing' }} section-lead--{{default sectionFront 'homepage'}}">
   <div class="section-lead__articles">
     {{#each articles as |article|}}
       <div class="section-lead__article {{#unless @index}}section-lead__article--first{{/unless}}">
@@ -7,18 +7,22 @@
             <picture class="section-lead__image">
               <source media="(max-width: 480px)" srcset="{{ feedImgUrl }}?width=440&crop=16:9,smart" />
               <source media="(max-width: 1023px)" srcset="{{ feedImgUrl }}?width=343&crop=16:9,smart" />
-              <source media="(max-width: 1279px)" srcset="{{ feedImgUrl }}?width=124&crop=1:1,smart" />
+              <source media="(max-width: 1279px)" srcset="{{ feedImgUrl }}?width=140&crop=140:121,smart" />
               <source media="(min-width: 1280px)" srcset="{{ feedImgUrl }}?width=220&crop=16:9,smart" />
               <img src="{{ feedImgUrl }}?width=220&crop=16:9,smart" />
+              <div class="image__hover-overlay"></div>
             </picture>
           {{else}}
-            <img
-              src="{{ feedImgUrl }}?width=780&crop=16:9,smart"
-              srcset="{{ feedImgUrl }}?width=620&crop=16:9,smart 620w,
-                {{ feedImgUrl }}?width=706&crop=16:9,smart 706w,
-                {{ feedImgUrl }}?width=480&crop=16:9,smart 480w"
-              sizes="(max-width: 480px) 100vw, (max-width: 1023px) 80vw, (max-width: 1279px) 620px, 780px"
-              class="section-lead__image" />
+            <picture>
+              <source media="(max-width: 480px)" srcset="{{ feedImgUrl }}?width=480&crop=16:9,smart" />
+              <source media="(max-width: 1023px)" srcset="{{ feedImgUrl }}?width=1023&crop=16:9,smart" />
+              <source media="(max-width: 1279px)" srcset="{{ feedImgUrl }}?width=620&crop=620:439,smart" />
+              <source media="(min-width: 1280px)" srcset="{{ feedImgUrl }}?width=780&crop=16:9,smart" />
+              <img
+                src="{{ feedImgUrl }}?width=780&crop=16:9,smart"
+                class="section-lead__image" />
+              <div class="image__hover-overlay"></div>
+            </picture>
           {{/if}}
           <div class="section-lead__details">
             {{#unless @index}}
