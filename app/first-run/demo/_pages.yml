@@ -68,7 +68,7 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
     pageHeader:
-      - /_components/google-ad-manager/instances/leaderboardTop
+      - /_components/google-ad-manager/instances/billboardTop
       - /_components/tag-page-header/instances/new
     main:
       - /_components/tag-page/instances/new

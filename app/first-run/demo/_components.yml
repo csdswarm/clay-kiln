@@ -623,7 +623,7 @@ _components:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
-            _ref: /_components/google-ad-manager/instances/leaderboardBottom
+            _ref: /_components/google-ad-manager/instances/billboardBottom
         latestContent:
           _ref: /_components/latest-content/instances/default
         stationsCarousel:
