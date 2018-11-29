@@ -211,11 +211,6 @@ googleAdRightRail:
     include:
       - google-ad-manager
 
-googleAdTop:
-  _component:
-    include:
-      - google-ad-manager
-
 _groups:
   settings:
     fields:

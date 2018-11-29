@@ -308,32 +308,8 @@ em, i {
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||||| Tag Page Fonts Styleguide ||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin tag-page-font1 {
-@mixin font CircularStd-Black, 20px, $parisM, -.32px, 25px;
-}
-@define-mixin tag-page-font2 {
-@mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
-}
-@define-mixin tag-page-font3 {
-@mixin font ProximaNova-Light, 18px, $black, -.29px, 22px;
-}
-@define-mixin tag-page-font4 {
-@mixin font CircularStd-Medium, 12px, $boulder, -.3px, 15px;
-}
-@define-mixin tag-page-font5 {
-@mixin font CircularStd-Medium, 14px, $white, -.23px, 18px;
-}
-@define-mixin tag-page-font6 {
-@mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
-}
-@define-mixin tag-page-font7 {
-@mixin font ProximaNova-Light, 16px, $black, -.26px, 20px;
-}
-@define-mixin tag-page-font8 {
-@mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
-}
-@define-mixin tag-page-font9 {
-@mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
+@define-mixin tag-page-header-font1 {
+@mixin font CircularStd-Black, 35px, $parisM, -.55px, 44px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
