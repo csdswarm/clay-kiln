@@ -20,8 +20,6 @@ _pages:
     main:
       - /_components/article/instances/new
       - /_components/taboola/instances/default
-    secondary:
-      - /_components/google-ad-manager/instances/billboardBottom
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
