@@ -1,5 +1,7 @@
 'use strict';
 
+require('intersection-observer');
+
 let adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   refreshCount = 0,
