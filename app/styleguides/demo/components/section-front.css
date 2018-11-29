@@ -1,7 +1,8 @@
 .component--section-front {
   margin-top: em(50);
   .component--google-ad-manager.google-ad-manager--billboard,
-  .component--google-ad-manager.google-ad-manager--leaderboard {
+  .component--google-ad-manager.google-ad-manager--leaderboard,
+  .component--google-ad-manager.google-ad-manager--super-leaderboard {
     width: 100vw;
     position: relative;
     left: 50%;
