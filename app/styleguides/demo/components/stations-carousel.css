@@ -173,7 +173,7 @@ $medium-screen-nav-width: em(728);
             height: em(widthOnGrid(2,1));
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba($(whiteRGB), 0.1);
           }
           &.station-image img {
             position: relative;
