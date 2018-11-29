@@ -29,8 +29,8 @@ const doubleclickPrefix = '21674100491',
 /**
  * Load ads when they come into view
  *
- * @param changes
- * @param observer
+ * @param {array} changes
+ * @param {IntersectionObserver} observer
  */
 function lazyLoadAd(changes, observer) {
   changes.forEach(change => {
