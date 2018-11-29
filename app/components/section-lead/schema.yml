@@ -33,7 +33,6 @@ sectionFront:
   _has:
     input: static
     text: ${sectionTitle}
-
 _groups:
   settings:
     fields:
