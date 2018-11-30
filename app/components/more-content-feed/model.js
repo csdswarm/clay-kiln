@@ -88,9 +88,6 @@ module.exports.render = function (ref, data, locals) {
     // If we're publishing for a dynamic page, alert the template
     data.dynamicTagPage = false;
 
-    // Clean based on tags and grab first as we only ever pass 1
-    data.tag = data.tagManual || data.tag;
-
     // Check if we are on a tag page and override the above
     if (locals && locals.tag) {
       // This is from load more on a tag page
@@ -103,6 +100,10 @@ module.exports.render = function (ref, data, locals) {
       data.tag = locals.params.dynamicTag;
       data.dynamicTagPage = true;
     }
+
+    // Clean based on tags and grab first as we only ever pass 1
+    // If we set a tag override the path
+    data.tag = data.tagManual || data.tag;
 
     if (!data.tag) {
       return data;
