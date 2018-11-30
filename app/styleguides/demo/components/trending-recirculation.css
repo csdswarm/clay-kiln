@@ -2,11 +2,12 @@
 @import "_global/colors";
 @import "_global/mixins";
 
-.component--trending {
+.component--trending-recirculation {
   width: 100%;
   padding: em(60) em(20) em(80) em(20);
   max-width: em(980);
   align-self: center;
+  margin: 0 auto;
 
   h2 {
     @mixin trending-recirculation-font1;
