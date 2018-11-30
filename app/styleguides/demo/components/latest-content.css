@@ -6,9 +6,8 @@
 
 .component--latest-content {
   width: 100%;
-  margin-bottom: em(80);
   align-self: center;
-  margin: 0 auto;
+  margin: 0 auto em(65) auto;
   max-width: em(widthOnGrid(12,11));
 
   @mixin medium-small-screen {
