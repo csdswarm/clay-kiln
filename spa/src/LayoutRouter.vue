@@ -71,9 +71,9 @@ export default {
       }
     },
     /**
-     * 
+     *
      * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
-     * 
+     *
      * @param {object} to - A Vue Router "to" object.
      * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
      */
