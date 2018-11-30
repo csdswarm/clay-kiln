@@ -1,11 +1,11 @@
+@import "_global/colors";
+
 .component--omny {
   display: inline-flex;
   justify-content: center;
   width: 100%;
   margin: em(15) 0;
-  .kiln-edit-mode .lead & {
-    outline: 1px solid gray;
-    height: 250px;
-    align-items: center;
+  .kiln-edit-mode .article__body .body__header .lead & {
+    height: 600px;
   }
 }
