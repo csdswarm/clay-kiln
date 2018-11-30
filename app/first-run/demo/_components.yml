@@ -366,11 +366,11 @@ _components:
         adSize: half-page
         adPosition: bottom
         adLocation: btf
-      halfPageTop:
+      mediumRectangleTop:
         adSize: medium-rectangle
         adPosition: rec
         adLocation: atf
-      halfPageBottom:
+      mediumRectangleBottom:
         adSize: medium-rectangle
         adPosition: rec
         adLocation: btf
