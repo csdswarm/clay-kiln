@@ -11,7 +11,7 @@
   max-width: em(widthOnGrid(12,11));
 
   @mixin medium-small-screen {
-    margin-bottom: em(30);
+    margin-bottom: em(10);
   }
 
   .latest-content__title {
