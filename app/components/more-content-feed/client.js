@@ -45,7 +45,6 @@ class MoreContentFeed {
 
         // Recreate the listener for the new button
         this.loadMore = this.moreContentFeed.querySelector('.links__link--loadmore');
-        console.log(this.loadMore);
         this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
       });
   }
