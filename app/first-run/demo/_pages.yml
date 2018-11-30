@@ -22,9 +22,9 @@ _pages:
     secondary:
       - /_components/google-ad-manager/instances/billboardBottom
     tertiary:
-      - /_components/google-ad-manager/instances/mediumRectangleBottom
+      - /_components/google-ad-manager/instances/halfPageTop
       - /_components/latest-recirculation/instances/new
-      - /_components/google-ad-manager/instances/mediumRectangleBottom
+      - /_components/google-ad-manager/instances/halfPageBottom
     layout: /_components/two-column-layout/instances/article
   section-front:
     head:
