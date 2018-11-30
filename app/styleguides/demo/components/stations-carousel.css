@@ -126,12 +126,12 @@ $medium-screen-nav-width: em(728);
       flex-direction: row;
       transition: all 400ms ease-in-out;
       width: 100%;
-      height: calc(100% - em(61));
+      max-height: calc(100% - (em(45) * 2 + 1px));
       @mixin medium-screen {
-        height: calc(100% - em(61) - em(55));
+        max-height: calc(100% - (em(45) * 2 + 1px) - em(55));
       }
       @mixin small-screen {
-        height: calc(100% - em(56) - em(53));
+        max-height: calc(100% - (em(40) * 2 + 1px) - em(53));
       }
       &.align-center {
         justify-content: center;
@@ -194,6 +194,14 @@ $medium-screen-nav-width: em(728);
             display: inline-flex;
             width: 100%;
             margin-top: em(14, 14);
+            max-height: 56px;
+            overflow: hidden;
+            @mixin medium-screen {
+              max-height: 38px;
+            }
+            @mixin small-screen {
+              max-height: 56px;
+            }
             &:hover {
               text-decoration: underline;
             }

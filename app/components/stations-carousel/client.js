@@ -225,11 +225,11 @@ StationsCarousel.prototype = {
    * @function
    */
   getPage: function (event, _this) {
-    const leftArrowEvent = event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'left',
-      rightArrowEvent = event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'right',
-      dotEvent = event.currentTarget && event.currentTarget.getAttribute('data-page') !== null,
-      swipeLeftEvent = event.type == 'swipeleft',
-      swipeRightEvent = event.type == 'swiperight';
+    const leftArrowEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'left',
+      rightArrowEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'right',
+      dotEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-page') !== null,
+      swipeLeftEvent = event ? event.type == 'swipeleft' : false,
+      swipeRightEvent = event ?  event.type == 'swiperight' : false;
 
     // within this context we navigate with dots and swipe gestures
     if (_this.windowWidth < _this.windowSizes.medium) {
