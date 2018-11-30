@@ -65,8 +65,8 @@
         self.podcastOptions = self.cachedResults[self.filter];
       }
       const url = self.filter && self.filter.length
-        ? `http://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
-        : 'http://api.radio.com/v1/podcasts';
+        ? `https://api.radio.com/v1/podcasts?q=${encodeURIComponent(self.filter)}`
+        : 'https://api.radio.com/v1/podcasts';
 
       fetch(url)
         .then(response => {
