@@ -106,6 +106,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
+    "intersection-observer": "^0.5.1",
     "jsdom": "^11.8.0",
     "nodemon": "^1.17.3",
     "postcss-functions": "^3.0.0",
