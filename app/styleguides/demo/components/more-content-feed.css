@@ -39,6 +39,7 @@
   .more-content-feed__left-content {
     width: calc(100% - em(300));
     padding-right: em(20);
+    min-height: em(600);
     @mixin medium-screen {
       width: 100%;
       padding-right: 0;
