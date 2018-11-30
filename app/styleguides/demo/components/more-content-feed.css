@@ -23,10 +23,10 @@
   flex-direction: column;
   align-items: center;
   margin-top: em(40);
-  padding-bottom: em(80);
+  margin-bottom: em(80);
 
   @mixin medium-small-screen {
-    padding-bottom: em(50);
+    margin-bottom: em(50);
   }
 
   .more-content-feed__title-line {
