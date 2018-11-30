@@ -4,7 +4,7 @@ class MoreContentFeed {
   constructor(el) {
     this.moreContentFeed = el;
     this.loadMore = el.querySelector('.links__link--loadmore');
-    this.moreContentUrl = '//' + this.moreContentFeed.getAttribute('data-uri').replace('@published', '.html');
+    this.moreContentUrl = '//' + this.moreContentFeed.getAttribute('data-uri').replace('@published', '') + '.html';
 
     this.currentPage = 1;
     this.tag = '';
@@ -45,6 +45,7 @@ class MoreContentFeed {
 
         // Recreate the listener for the new button
         this.loadMore = this.moreContentFeed.querySelector('.links__link--loadmore');
+        console.log(this.loadMore);
         this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
       });
   }
