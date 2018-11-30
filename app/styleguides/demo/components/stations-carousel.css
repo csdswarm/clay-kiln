@@ -165,45 +165,48 @@ $medium-screen-nav-width: em(728);
         a {
           position: relative;
           text-decoration: none;
-          &.station-image:hover:before {
-            content: " ";
-            z-index: 10;
-            display: block;
-            position: absolute;
-            height: em(widthOnGrid(2,1));
-            left: 0;
-            right: 0;
-            background: rgba($(whiteRGB), 0.1);
-          }
-          &.station-image img {
-            position: relative;
-            width: em(widthOnGrid(2,1));
-            height: em(widthOnGrid(2,1));
-            @mixin medium-screen {
-              width: em(widthOnGrid(2,1,medium-screen));
-              height: em(widthOnGrid(2,1,medium-screen));
+          &.station-card:hover {
+            &:before {
+              content: " ";
+              z-index: 10;
+              display: block;
+              position: absolute;
+              height: em(widthOnGrid(2,1));
+              left: 0;
+              right: 0;
+              background: rgba($(whiteRGB), 0.1);
             }
-            @media all and (max-width: 1023px) and (min-width: 788px) {
-              width: em(222);
-              height: em(222);
-            }
-          }
-
-          .name {
-            @mixin stations-carousel-font2;
-            display: inline-flex;
-            width: 100%;
-            margin-top: em(14, 14);
-            max-height: 56px;
-            overflow: hidden;
-            @mixin medium-screen {
-              max-height: 38px;
-            }
-            @mixin small-screen {
-              max-height: 56px;
-            }
-            &:hover {
+            .name {
               text-decoration: underline;
+            }
+          }
+          &.station-card {
+            img {
+              position: relative;
+              width: em(widthOnGrid(2,1));
+              height: em(widthOnGrid(2,1));
+              @mixin medium-screen {
+                width: em(widthOnGrid(2,1,medium-screen));
+                height: em(widthOnGrid(2,1,medium-screen));
+              }
+              @media all and (max-width: 1023px) and (min-width: 788px) {
+                width: em(222);
+                height: em(222);
+              }
+            }
+            .name {
+              @mixin stations-carousel-font2;
+              display: inline-flex;
+              width: 100%;
+              margin-top: em(14, 14);
+              max-height: 56px;
+              overflow: hidden;
+              @mixin medium-screen {
+                max-height: 38px;
+              }
+              @mixin small-screen {
+                max-height: 56px;
+              }
             }
           }
         }
