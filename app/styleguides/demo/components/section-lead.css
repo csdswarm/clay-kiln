@@ -9,6 +9,9 @@
   flex-direction: row;
   flex-wrap: wrap;
   margin-top: em(50);
+  .component--google-ad-manager {
+    background: none;
+  }
   .section-lead__articles {
     display: flex;
     flex-direction: row;
