@@ -30,35 +30,6 @@ credit:
       - bold
       - italic
     help: Add in credit
-rendition:
-  _label: Size
-  _has:
-    input: segmented-button-group
-    options:
-      - title: All Layouts
-        values:
-          - icon: /media/components/image/icon-thumbnail.svg
-            value: thumb
-          - icon: /media/components/image/icon-square.svg
-            value: square-medium
-          - icon: /media/components/image/icon-vertical-small.svg
-            value: vertical-small
-          - icon: /media/components/image/icon-horizontal.svg
-            value: horizontal
-          - icon: /media/components/image/icon-vertical-small.svg
-            value: vertical
-          - icon: /media/components/image/icon-flex.svg
-            value: flex
-      - title: Feature and One-Column Layouts Only
-        values:
-          - icon: /media/components/image/icon-flex-small.svg
-            value: flex-small
-      - title: One-Column Layouts Only
-        values:
-          - icon: /media/components/image/icon-flex-large.svg
-            value: flex-large
-          - icon: /media/components/image/icon-full-bleed.svg
-            value: full-bleed
 alt:
   _label: Alt Text
   _has:
@@ -78,11 +49,6 @@ imageLink:
     input: text
     type: url
     help: Add a link to the image
-borderToggle:
-  _label: Show Borders
-  _has:
-    input: checkbox
-    help: Only applies to Flex Large and Full Bleed sizes
 
 _groups:
   inlinestuff:

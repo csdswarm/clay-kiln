@@ -37,12 +37,12 @@ function middleware(req, res, next) {
   }
 
   // If it's a tag route att in the params and compose the page
-  if (req.path.indexOf('/tags/') === 0) {
-    params.tag = req.path.match(/tags\/(.+)\/?/)[1];
+  if (req.path.indexOf('/tag/') === 0) {
+    params.tag = req.path.match(/tag\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/tag@published`);
   } else {
     // Otherwise resolve the uri and page instance
-    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(db.get);
+    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
   }
   // Set locals
   fakeLocals(req, res, params);
