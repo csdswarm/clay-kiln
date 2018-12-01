@@ -152,7 +152,7 @@ function setAds() {
       if (targetingAuthors.length) {
         slot.setTargeting('author', targetingAuthors);
       }
-      
+
       googletag.display(ad.id);
     }
     googletag.pubads().refresh();
@@ -185,8 +185,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.getElementsByClassName('layout')[0],
-    transparentSections = [...document.getElementsByClassName('google-ad-manager__slot--billboard'), ...document.getElementsByClassName('google-ad-manager--billboard')];
+    globalDiv = document.getElementsByClassName('layout')[0];
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {
@@ -251,8 +250,4 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     document.body.style.backgroundColor = backgroundColor;
     globalDiv.prepend(bgdiv);
   }
-
-  transparentSections.forEach((section) => {
-    section.style.backgroundColor = 'transparent';
-  });
 };
