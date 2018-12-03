@@ -6,21 +6,23 @@
         <div class="bar bar-2"></div>
         <div class="bar bar-3"></div>
       </div>{{!--
-      --}}<button class="radiocom-nav__logo"><a href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}">
+      --}}<a class="radiocom-nav__logo" href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}"><button>
         {{{ read 'components/top-nav/media/radiocom_hz.svg' }}}
-      </a></button>{{!--
+      </button></a>{{!--
       --}}{{#if headerLinks.length}}
         {{#each headerLinks}}
           <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}} {{#if drawer}}radiocom-nav__category-button--drawer-enabled{{/if}}">
-            <button>
-              {{#if url}}
-                <a href="{{url}}">
+            {{#if url}}
+              <a href="{{url}}">
+                <button>
                   <h1>{{text}}</h1>
-                </a>
-              {{ else }}
+                </button>
+              </a>
+            {{ else }}
+              <button>
                 <h1>{{text}}</h1>
-              {{/if}}
-            </button>
+              </button>
+            {{/if}}
             {{#if list.length}}
               <div class="nav-drawer nav-drawer--{{text}}">
                 <div class="container">
@@ -54,16 +56,15 @@
           </div>
         {{/each}}
       {{/if}}{{!--
-      --}}<div class="radiocom-nav__container--right">
+      <div class="radiocom-nav__container--right">
         <button class="account-btn" id="account-btn">
           <div class="active default">{{{ read 'components/top-nav/media/log-in.svg' }}}</div>
           <div class="inactive hover">{{{ read 'components/top-nav/media/log-in_hover.svg' }}}</div>
-        </button>{{!--
-        --}}<button class="search-btn" id="search-btn">
+        </button><button class="search-btn" id="search-btn">
           <div class="active default">{{{ read 'components/top-nav/media/search.svg' }}}</div>
           <div class="inactive hover">{{{ read 'components/top-nav/media/search_hover.svg' }}}</div>
         </button>
-      </div>
+      </div> --}}
       <div class="nav-drawer nav-drawer--mobile">
         {{#if headerLinks.length}}
           {{#each headerLinks}}

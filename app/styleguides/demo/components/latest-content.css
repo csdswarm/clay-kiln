@@ -43,6 +43,8 @@
   }
 
   .section__articleList {
+    flex-grow: 1;
+    flex-basis: 0;
     padding-bottom: em(15);
 
     &:not(:last-child) {

@@ -9,6 +9,7 @@ _components:
     populateFrom: ''
     locationOfContentFeed: ''
     googleAdRightRail:
-      _ref: /_components/google-ad-manager/instances/mediumRectangle
+      _ref: /_components/google-ad-manager/instances/mediumRectangleBottom
     googleAdTop:
-      _ref: /_components/google-ad-manager/instances/superLeaderboard
+      _ref: /_components/google-ad-manager/instances/superLeaderboardTop
+    introComponents: []

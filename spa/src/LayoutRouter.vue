@@ -8,6 +8,7 @@
 import axios from 'axios'
 import * as mutationTypes from '@/vuex/mutationTypes'
 import OneColumnLayout from '@/views/OneColumnLayout'
+import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
@@ -45,6 +46,8 @@ export default {
 
       if (spaPayload.tertiary) {
         nextLayoutComponent = 'TwoColumnLayout'
+      } else if (!spaPayload.secondary) {
+        nextLayoutComponent = 'OneColumnFullWidthLayout'
       } else {
         nextLayoutComponent = 'OneColumnLayout'
       }
@@ -52,15 +55,20 @@ export default {
       return nextLayoutComponent
     },
     getNextSpaPayload: async function getNextSpaPayload (destination) {
-      const nextSpaPayloadResult = await axios.get(`//${destination}`, {
-        headers: {
-          'x-amphora-page-json': true
-        }
-      })
-
-      nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-
-      return nextSpaPayloadResult.data
+      try {
+        const nextSpaPayloadResult = await axios.get(`//${destination}?json`, {
+          headers: {
+            'x-amphora-page-json': true
+          }
+        })
+        nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+        return nextSpaPayloadResult.data
+      }
+      catch (e) {
+        const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
+        nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+        return nextSpaPayloadResult.data
+      }
     },
     /**
      *
@@ -94,6 +102,7 @@ export default {
   },
   components: {
     'OneColumnLayout': OneColumnLayout,
+    'OneColumnFullWidthLayout': OneColumnFullWidthLayout,
     'TwoColumnLayout': TwoColumnLayout
   },
   watch: {

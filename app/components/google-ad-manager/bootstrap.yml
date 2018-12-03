@@ -1,3 +1,5 @@
 _components:
   google-ad-manager:
     adSize: ''
+    adPosition: ''
+    adLocation: ''

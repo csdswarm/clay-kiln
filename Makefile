@@ -44,6 +44,8 @@ bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/one-column-full-width-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_pages/tag@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
@@ -57,6 +59,8 @@ dev-bootstrap:
 	curl -X PUT http://dev-clay.radio.com/_components/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://dev-clay.radio.com/_components/one-column-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://dev-clay.radio.com/_components/one-column-full-width-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://dev-clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
@@ -72,6 +76,8 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT http://stg-clay.radio.com/_components/one-column-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+	curl -X PUT http://stg-clay.radio.com/_components/one-column-full-width-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
 	curl -X PUT http://stg-clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://stg-clay.radio.com/_pages/tag@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
@@ -79,9 +85,11 @@ stg-bootstrap:
 	curl -X PUT http://stg-clay.radio.com/_components/tag-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 
+install-dev:
+	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
 
 install:
-	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
+	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
 
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix

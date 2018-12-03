@@ -48,7 +48,7 @@ module.exports = {
         .build();
 
       sizeMapping['half-page'] = googletag.sizeMapping()
-        .addSize([0, 0], [[300, 600]])
+        .addSize([0, 0], [[300, 600], [300, 250]])
         .build();
 
       sizeMapping['medium-rectangle'] = googletag.sizeMapping()

@@ -31,13 +31,28 @@
       </div>
       {{#if (compare articles.length 2) }}
         <a href="{{ articles.1.canonicalUrl }}"
-           class="related__link related__link--secondary"
+           class="related__link related__link--secondary
+           {{#ifNone (compare articles.1.lead 'youtube') (compare articles.1.lead 'brightcove')}} related__link--no-media{{/ifNone}}"
            data-track-type="article-link"
            data-track-component-name="related"
            data-track-page-uri="{{ articles.1.pageUri }}"
            data-track-headline="{{ articles.1.primaryHeadline }}"
-           data-track-component-title="Related">
-          <span class="related__bullet"></span>
+           data-track-component-title="Related"
+           data-track-lead="{{ articles.1.lead }}">
+          {{#ifAny (compare articles.1.lead 'youtube') (compare articles.1.lead 'brightcove') (compare articles.1.lead 'omny') }}
+            {{#ifAny (compare articles.1.lead 'youtube') (compare articles.1.lead 'brightcove')}}
+              <span class="related__media-icon">
+                {{{ read 'components/inline-related/media/watch.svg' }}}
+              </span>
+            {{/ifAny}}
+            {{#if (compare articles.1.lead 'omny') }}
+              <span class="related__media-icon">
+                {{{ read 'components/inline-related/media/listen.svg' }}}
+              </span>
+            {{/if}}
+          {{else}}
+            <span class="related__bullet"></span>
+          {{/ifAny}}
           <span class="related__headline">{{{ articles.1.primaryHeadline }}}</span>
         </a>
       {{/if}}

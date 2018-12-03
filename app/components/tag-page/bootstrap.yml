@@ -3,7 +3,3 @@ _components:
     tag: ''
     moreContentFeed:
       _ref: /_components/more-content-feed/instances/tag-page
-    googleAdRightRail:
-      _ref: /_components/google-ad-manager/instances/halfPage
-    googleAdTop:
-      _ref: /_components/google-ad-manager/instances/superLeaderboard

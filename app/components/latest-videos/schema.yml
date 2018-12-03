@@ -1,0 +1,28 @@
+items:
+  _label: Latest Videos
+  _has:
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      max: 6
+    props:
+    -
+      prop: url
+      _label: URL
+      _has:
+        input: text
+        type: url
+        validate:
+          required: true
+    -
+      prop: overrideTitle
+      _label: Headline Override
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
+      prop: urlIsValid
+      _has:
+        validate:
+          required: true

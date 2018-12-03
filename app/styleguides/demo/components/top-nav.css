@@ -22,6 +22,7 @@ $drawerSelector: nav-drawer;
     cursor: pointer;
     background: transparent;
     border: none;
+    height: 100%;
   }
   ul {
     display: inline-block;
@@ -226,7 +227,7 @@ $drawerSelector: nav-drawer;
     top: $default-nav-height;
     width: 100%;
     left: 0;
-    padding: em(50);
+    padding: em(20);
     color: $white;
     cursor: default;
     overflow: hidden;

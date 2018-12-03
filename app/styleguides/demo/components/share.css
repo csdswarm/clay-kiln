@@ -4,6 +4,7 @@
 .component--share {
   display: flex;
   flex-direction: column;
+  margin-bottom: em(8);
 
   & button { /* Clear button styling and use pointer cursor */
     padding: 0;

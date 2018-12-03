@@ -37,8 +37,8 @@ function middleware(req, res, next) {
   }
 
   // If it's a tag route att in the params and compose the page
-  if (req.path.indexOf('/tags/') === 0) {
-    params.tag = req.path.match(/tags\/(.+)\/?/)[1];
+  if (req.path.indexOf('/tag/') === 0) {
+    params.tag = req.path.match(/tag\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/tag@published`);
   } else {
     // Otherwise resolve the uri and page instance
@@ -48,7 +48,12 @@ function middleware(req, res, next) {
   fakeLocals(req, res, params);
   // Compose and respond
   promise.then(data => composer.composePage(data, res.locals))
-    .then(composed => res.json(composed));
+    .then(composed => res.json(composed))
+    .catch(err => {
+      res
+        .status(404)
+        .json({ status: 404, msg: err.message });
+    });
 }
 
 module.exports = middleware;
