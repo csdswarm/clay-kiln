@@ -55,7 +55,7 @@ class InstagramEmbeds {
      * it must be wrapped in a function.
      *
      */
-    newScript.onload = () => { 
+    newScript.onload = () => {
       this.process();
     };
     newScript.src = embedsLibraryUrl;
