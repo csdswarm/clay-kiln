@@ -27,7 +27,7 @@
      *
      * Object passed in must contain path & title, authors and sections are optional
      */
-    document.addEventListener('pageView', (event) => {
+    document.addEventListener('pageView', function (event) {
       let details = event.details || {};
       pSUPERFLY.virtualPage({
         sections: details.section || '',

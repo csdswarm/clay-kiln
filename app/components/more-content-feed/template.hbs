@@ -12,9 +12,9 @@
   {{/if}}
   <div class="more-content-feed__container">
   <div class="more-content-feed__left-content">
-    <div class="more-content-feed__intro-components" data-editable="introComponents">
+    {{#unless dynamicTagPage}}<div class="more-content-feed__intro-components" data-editable="introComponents">
       {{> component-list introComponents}}
-    </div>
+    </div>{{/unless}}
   {{#ifAny content.length @root.locals.edit}}
     <ul class="more-content-feed__links" data-editable="tag">
   {{/ifAny}}
@@ -38,7 +38,7 @@
                 {{{ read 'components/more-content-feed/media/watch.svg' }}}
               </span>
             {{/ifAny}}
-            {{#if (compare feedItem.lead 'audio')}}
+            {{#if (compare feedItem.lead 'omny')}}
               <span class="thumb__content-type">
                 {{{ read 'components/more-content-feed/media/listen.svg' }}}
               </span>
@@ -83,11 +83,11 @@
   </div>
     <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
       {{#if @root.locals.edit}}
-        {{#if (compare locationOfContentFeed 'tag-page')}}
+        {{#unless dynamicTagPage}}
           <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
-        {{/if}}
+        {{/unless}}
       {{else}}
-        {{#ifAll tagInfo (compare locationOfContentFeed 'tag-page') }}
+        {{#ifAll tagInfo (compare dynamicTagPage false) }}
           <aside class="blurb">{{ tagInfo }}</aside>
         {{/ifAll}}
       {{/if}}

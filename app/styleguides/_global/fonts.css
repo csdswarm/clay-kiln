@@ -3,85 +3,73 @@
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @font-face {
   font-family: CircularStd-Black;
-  src: url('/fonts/sites/demo/circularstd-black.woff2') format('opentype');
+  src: url('/fonts/sites/demo/circularstd-black.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: CircularStd-BlackItalic;
-  src: url('/fonts/sites/demo/circularstd-blackitalic.woff2') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: CircularStd-Bold;
-  src: url('/fonts/sites/demo/circularstd-bold.woff2') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: CircularStd-BoldItalic;
-  src: url('/fonts/sites/demo/circularstd-bolditalic.woff2') format('opentype');
+  src: url('/fonts/sites/demo/circularstd-blackitalic.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: CircularStd-Book;
-  src: url('/fonts/sites/demo/circularstd-book.woff2') format('opentype');
+  src: url('/fonts/sites/demo/circularstd-book.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: CircularStd-BookItalic;
-  src: url('/fonts/sites/demo/circularstd-bookitalic.woff2') format('opentype');
+  src: url('/fonts/sites/demo/circularstd-bookitalic.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: CircularStd-Medium;
-  src: url('/fonts/sites/demo/circularstd-medium.woff2') format('opentype');
+  src: url('/fonts/sites/demo/circularstd-medium.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: CircularStd-MediumItalic;
-  src: url('/fonts/sites/demo/circularstd-mediumitalic.woff2') format('opentype');
+  src: url('/fonts/sites/demo/circularstd-mediumitalic.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: ProximaNova-Bold;
-  src: url('/fonts/sites/demo/proximanova-bold-webfont.woff2') format('opentype');
+  src: url('/fonts/sites/demo/proximanova-bold-webfont.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: ProximaNova-BoldIt;
-  src: url('/fonts/sites/demo/proximanova-boldit-webfont.woff2') format('opentype');
+  src: url('/fonts/sites/demo/proximanova-boldit-webfont.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: ProximaNova-Light;
-  src: url('/fonts/sites/demo/proximanova-light-webfont.woff2') format('opentype');
+  src: url('/fonts/sites/demo/proximanova-light-webfont.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: ProximaNova-LightIt;
-  src: url('/fonts/sites/demo/proximanova-lightit-webfont.woff2') format('opentype');
+  src: url('/fonts/sites/demo/proximanova-lightit-webfont.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: ProximaNova-Regular;
-  src: url('/fonts/sites/demo/proximanova-regular-webfont.woff2') format('opentype');
+  src: url('/fonts/sites/demo/proximanova-regular-webfont.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: ProximaNova-RegularIt;
-  src: url('/fonts/sites/demo/proximanova-regularit-webfont.woff2') format('opentype');
+  src: url('/fonts/sites/demo/proximanova-regularit-webfont.woff') format('opentype');
   font-weight: normal;
   font-style: normal;
 }
@@ -299,21 +287,21 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||| Section-Videos Fonts Styleguide ||||| */
+/* ||||| Latest Videos Fonts Styleguide ||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin section-videos-font1 {
+@define-mixin latest-videos-font1 {
   @mixin font CircularStd-Black, 20px, $parisM, -.23px, 25px;
 }
-@define-mixin section-videos-font2 {
+@define-mixin latest-videos-font2 {
   @mixin font CircularStd-Medium, 12px, $parisM, -.2px, 15px;
 }
-@define-mixin section-videos-font3 {
+@define-mixin latest-videos-font3 {
   @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
 }
-@define-mixin section-videos-font4 {
+@define-mixin latest-videos-font4 {
   @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
 }
-@define-mixin section-videos-font5 {
+@define-mixin latest-videos-font5 {
   @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
 }
 

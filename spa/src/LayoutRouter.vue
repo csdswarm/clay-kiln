@@ -55,20 +55,25 @@ export default {
       return nextLayoutComponent
     },
     getNextSpaPayload: async function getNextSpaPayload (destination) {
-      const nextSpaPayloadResult = await axios.get(`//${destination}`, {
-        headers: {
-          'x-amphora-page-json': true
-        }
-      })
-
-      nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-
-      return nextSpaPayloadResult.data
+      try {
+        const nextSpaPayloadResult = await axios.get(`//${destination}?json`, {
+          headers: {
+            'x-amphora-page-json': true
+          }
+        })
+        nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+        return nextSpaPayloadResult.data
+      }
+      catch (e) {
+        const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
+        nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+        return nextSpaPayloadResult.data
+      }
     },
     /**
-     * 
+     *
      * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
-     * 
+     *
      * @param {object} to - A Vue Router "to" object.
      * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
      */

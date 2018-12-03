@@ -603,7 +603,7 @@ _components:
           most-popular: true
           newsfeed: true
           apple-news: true
-        articleType: entertainment
+        articleType: 
         showSocial: true
 
   section-lead:
@@ -611,8 +611,9 @@ _components:
       new:
         items: []
         sectionFront: ''
+        filterBySection: ''
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
 
   section-front:
     instances:
@@ -695,7 +696,7 @@ _components:
           _ref: /_components/google-ad-manager/instances/mediumRectangleTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
-        introComponents: []introComponents: []
+        introComponents: []
       tag-page:
         items: []
         tag: ''
@@ -710,12 +711,10 @@ _components:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
 
-  section-videos:
+  latest-videos:
     instances:
-      new:
+      homepage:
         items: []
-        tag: ''
-        sectionTitle: ''
 
   homepage:
     instances:
@@ -735,6 +734,8 @@ _components:
         stationsCarousel:
           -
             _ref: /_components/stations-carousel/instances/homepage
+        latestVideos:
+          _ref: /_components/latest-videos/instances/homepage
 
   tag-page:
     instances:
