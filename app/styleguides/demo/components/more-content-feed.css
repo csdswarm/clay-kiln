@@ -6,11 +6,33 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  .more-content-feed__title-line {
-    border-bottom: em(1) solid $parisM;
-    margin: em(40) 0;
+  margin-top: em(40);
+
+  h2 {
+    @mixin more-content-feed-font1;
     width: 100%;
-    height: 0;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: $parisM;
+
+    &:before {
+       border-top: em(1, 20) solid $parisM;
+       content: "";
+       margin: 0 auto;
+       position: absolute;
+       top: 50%;
+       left: 0;
+       right: 0;
+       bottom: 0;
+       width: 100%;
+       z-index: -1;
+     }
+    span {
+      background: $white;
+      padding: 0 em(15, 20);
+    }
+
     @mixin medium-screen {
       margin-bottom: em(30);
     }
@@ -18,28 +40,17 @@
       margin-top: em(30);
     }
   }
-  .more-content-feed__title {
-    @mixin more-content-feed-font1;
-    margin-top: em(28, 20);
-    background: #FFF;
-    display: inline-block;
-    position: absolute;
-    padding: 0 em(15, 20);
-    @mixin small-screen {
-      margin-top: em(18, 20);
-    }
-  }
+
   .more-content-feed__container {
     display: inline-flex;
     flex-direction: row;
     align-items: start;
     width: 100%;
     position: relative;
+    padding-top: em(40);
   }
   .more-content-feed__left-content {
-    width: calc(100% - em(300));
-    padding-right: em(20);
-    min-height: em(600);
+    margin-right: em(20);
     @mixin medium-screen {
       width: 100%;
       padding-right: 0;
@@ -51,6 +62,17 @@
       display: inline-flex;
       text-decoration: none;
       width: 100%;
+
+      &:hover {
+        .thumb__container {
+          opacity: 0.9;
+        }
+        .info__headline {
+          text-decoration: underline;
+          text-decoration-color: $black;
+        }
+      }
+
       @mixin medium-small-screen {
         flex-direction: column;
       }
@@ -58,6 +80,18 @@
       .thumb__container {
         display: flex;
         position: relative;
+
+        @mixin medium-screen {
+          max-width: em(widthOnGrid(3,2,medium-screen));
+          height: em(193);
+          width: 50%;
+        }
+
+        @mixin medium-small-screen {
+          max-width: inherit;
+          height: inherit;
+          width: inherit;
+        }
 
         .thumb__section-front {
           background: $purple;
@@ -96,8 +130,8 @@
             height: em(169);
           }
           @mixin medium-screen {
-            width: em(widthOnGrid(3,2,medium-screen));
-            height: em(193);
+            width: 100%;
+            height: 100%;
           }
           @mixin medium-small-screen {
             width: 100%;
@@ -127,20 +161,19 @@
       @mixin labelBackground podcasts, $robinsEggBlue;
 
       .link__info {
-        width: calc(100% - em(widthOnGrid(4,3)));
         padding-left: em(20);
-        position: relative;
-        display: inline-flex;
+        /*position: relative;*/
+        display: flex;
         flex-direction: column;
         justify-content: center;
-        height: em(214);
+        max-width: em(widthOnGrid(5,4));
 
         @mixin large-screen {
-          height: em(169);
+          width: em(widthOnGrid(4,3));
         }
         @mixin medium-screen {
-          width: calc(100% - em(widthOnGrid(3,2, medium-screen)));
-          height: em(193);
+          max-width: em(widthOnGrid(3,2,medium-screen));
+          width: 50%;
         }
         @mixin medium-small-screen {
           width: 100%;
@@ -148,8 +181,12 @@
           padding: 0;
         }
         .link__header {
-          margin-top: auto;
-          margin-bottom: auto;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-self: center;
 
           .info__headline {
             @mixin more-content-feed-font2;

@@ -362,6 +362,10 @@ _components:
         adSize: half-page
         adPosition: top
         adLocation: atf
+      halfPageBottom:
+        adSize: half-page
+        adPosition: bottom
+        adLocation: btf
       mediumRectangleTop:
         adSize: medium-rectangle
         adPosition: rec
@@ -381,6 +385,11 @@ _components:
         allowed: true
 
   google-tag-manager:
+    instances:
+      default:
+        allowed: true
+
+  nielsen:
     instances:
       default:
         allowed: true
@@ -603,7 +612,7 @@ _components:
           most-popular: true
           newsfeed: true
           apple-news: true
-        articleType: entertainment
+        articleType:
         showSocial: true
 
   section-lead:
@@ -612,7 +621,7 @@ _components:
         items: []
         sectionFront: ''
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
 
   section-front:
     instances:
@@ -623,7 +632,7 @@ _components:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
-            _ref: /_components/google-ad-manager/instances/leaderboardBottom
+            _ref: /_components/google-ad-manager/instances/billboardBottom
         latestContent:
           _ref: /_components/latest-content/instances/default
         stationsCarousel:
@@ -679,7 +688,7 @@ _components:
         populateFrom: all-content
         locationOfContentFeed: homepage
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
         introComponents: []
       section-front:
         items: []
@@ -690,7 +699,7 @@ _components:
         populateFrom: section-front
         locationOfContentFeed: section-front
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
         introComponents: []
       tag-page:
         items: []
@@ -704,12 +713,10 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         introComponents: []
 
-  section-videos:
+  latest-videos:
     instances:
-      new:
+      homepage:
         items: []
-        tag: ''
-        sectionTitle: ''
 
   homepage:
     instances:
@@ -729,6 +736,8 @@ _components:
         stationsCarousel:
           -
             _ref: /_components/stations-carousel/instances/homepage
+        latestVideos:
+          _ref: /_components/latest-videos/instances/homepage
 
   tag-page:
     instances:
