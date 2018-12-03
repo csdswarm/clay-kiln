@@ -364,7 +364,7 @@ _components:
         adLocation: atf
       halfPageBottom:
         adSize: half-page
-        adPosition: bottom
+        adPosition: rec
         adLocation: btf
       mediumRectangleTop:
         adSize: medium-rectangle
