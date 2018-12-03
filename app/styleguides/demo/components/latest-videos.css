@@ -3,7 +3,7 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--section-videos {
+.component--latest-videos {
   margin-bottom: em(40);
 
   h2 {
@@ -11,7 +11,7 @@
     position: relative;
     z-index: 1;
     margin-bottom: em(30);
-    @mixin section-videos-font1;
+    @mixin latest-videos-font1;
     color: $parisM;
     text-align: center;
     text-transform: uppercase;
@@ -35,20 +35,20 @@
     }
   }
 
-  .section-lead__videos {
+  .latest-videos__videos {
     width: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     height: em(483);
 
-    .section-lead__video {
+    .latest-videos__video {
       width: 100%;
       position: relative;
       margin-bottom: em(20);
 
       &:hover {
-        .section-lead__play-icon {
+        .latest-videos__play-icon {
           background: $purple;
         }
       }
@@ -57,20 +57,20 @@
         margin-bottom: 0;
       }
 
-      &.section-lead__video--main {
+      &.latest-videos__video--main {
         width: widthOnGrid(11, 10);
         order: 0;
         margin-right: em(20);
         margin-bottom: 0;
 
-        .section-lead__link {
+        .latest-videos__link {
           display: block;
         }
 
-        .section-lead__image {
+        .latest-videos__image {
           width: 100%;
         }
-        .section-lead__details {
+        .latest-videos__details {
           position: absolute;
           left: 0;
           bottom: 0;
@@ -81,23 +81,23 @@
           border-top: em(6) solid $black;
         }
         .details__exclusive {
-          @mixin section-videos-font2;
+          @mixin latest-videos-font2;
           display: block;
           margin: em(15) 0 em(10);
         }
         .details__title {
-          @mixin section-videos-font3;
+          @mixin latest-videos-font3;
         }
       }
     }
 
-    .section-lead__link {
-      @mixin section-videos-font3;
+    .latest-videos__link {
+      @mixin latest-videos-font3;
       text-decoration: none;
       display: inline-block;
       position: relative;
 
-      .section-lead__play-icon {
+      .latest-videos__play-icon {
         width: em(120, 22);
         height: em(120, 22);
         position: absolute;
@@ -124,20 +124,20 @@
       }
     }
 
-    .section-lead__image {
+    .latest-videos__image {
       display: inline-block;
     }
 
-    .section-lead__details {
+    .latest-videos__details {
       margin-top: em(7);
     }
 
-    .section-lead__rail {
+    .latest-videos__rail {
       width: widthOnGrid(3, 2);
       height: 100%;
       overflow-y: auto;
 
-      .section-lead__video {
+      .latest-videos__video {
         &:before {
           content: "";
           position: absolute;
@@ -147,10 +147,10 @@
         }
       }
 
-      .section-lead__link {
-        @mixin section-videos-font4;
+      .latest-videos__link {
+        @mixin latest-videos-font4;
 
-        .section-lead__play-icon {
+        .latest-videos__play-icon {
           width: em(60, 14);
           height: em(60, 14);
           margin-left: em(-30, 14);
@@ -169,11 +169,11 @@
 }
 
 @mixin large-screen {
-  .component--section-videos {
-    .section-lead__videos {
+  .component--latest-videos {
+    .latest-videos__videos {
       height: em(394);
 
-      .section-lead__video.section-lead__video--main {
+      .latest-videos__video.latest-videos__video--main {
         width: widthOnGrid(9, 8);
       }
     }
@@ -181,24 +181,24 @@
 }
 
 @mixin medium-screen {
-  .component--section-videos {
-    .section-lead__videos {
+  .component--latest-videos {
+    .latest-videos__videos {
       flex-direction: column;
       height: auto;
 
-      .section-lead__video.section-lead__video--main {
+      .latest-videos__video.latest-videos__video--main {
         width: 100%;
         margin-bottom: em(25);
       }
 
-      .section-lead__rail {
+      .latest-videos__rail {
         width: 100%;
         display: flex;
         flex-direction: row;
         overflow-x: auto;
         overflow-y: none;
 
-        .section-lead__video {
+        .latest-videos__video {
           width: widthOnGrid(2, 1, medium-screen);
           margin-right: em(20);
         }
@@ -208,18 +208,18 @@
 }
 
 @mixin medium-small-screen {
-  .component--section-videos {
-    .section-lead__videos {
+  .component--latest-videos {
+    .latest-videos__videos {
       flex-direction: column;
       height: auto;
 
-      .section-lead__video,
-      .section-lead__rail .section-lead__video {
+      .latest-videos__video,
+      .latest-videos__rail .latest-videos__video {
         width: 100%;
         margin-bottom: em(25);
       }
 
-      .section-lead__video.section-lead__video--main {
+      .latest-videos__video.latest-videos__video--main {
         margin-right: 0;
 
         &:before {
@@ -230,11 +230,11 @@
           border-top: em(6, 14) solid $parisM;
         }
 
-        .section-lead__link {
-          @mixin section-videos-font3;
+        .latest-videos__link {
+          @mixin latest-videos-font3;
           position: relative;
 
-          .section-lead__play-icon {
+          .latest-videos__play-icon {
             width: em(100, 22);
             height: em(100, 22);
             margin-left: em(-50, 22);
@@ -249,7 +249,7 @@
           }
         }
 
-        .section-lead__details {
+        .latest-videos__details {
           position: relative;
           left: auto;
           bottom: auto;
@@ -264,16 +264,16 @@
         }
       }
 
-      .section-lead__rail {
+      .latest-videos__rail {
         height: auto;
         display: block;
       }
 
-      .section-lead__rail {
-        .section-lead__link {
-          @mixin section-videos-font3;
+      .latest-videos__rail {
+        .latest-videos__link {
+          @mixin latest-videos-font3;
 
-          .section-lead__play-icon {
+          .latest-videos__play-icon {
             width: em(100, 22);
             height: em(100, 22);
             margin-left: em(-50, 22);
@@ -293,10 +293,10 @@
 }
 
 @define-mixin lead-module-color $sectionTitle, $color {
-  .component--section-videos {
-    .section-lead__video.section-lead__video--$(sectionTitle) {
+  .component--latest-videos {
+    .latest-videos__video.latest-videos__video--$(sectionTitle) {
       &:first-child {
-        .section-lead__details {
+        .latest-videos__details {
           border-color: $color;
         }
         .details__exclusive {
@@ -304,15 +304,15 @@
         }
       }
 
-      &.section-lead__video--main {
+      &.latest-videos__video--main {
         &:before {
           border-color: $color;
         }
       }
     }
 
-    .section-lead__rail {
-      .section-lead__video.section-lead__video--$(sectionTitle) {
+    .latest-videos__rail {
+      .latest-videos__video.latest-videos__video--$(sectionTitle) {
         &:before {
           border-color: $color;
         }

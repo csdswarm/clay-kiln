@@ -2,16 +2,17 @@
 const radioApi = 'https://api.radio.com/v1/',
   rest = require('../../services/universal/rest'),
   market = require('../../services/client/market'),
+  Hammer = require('hammerjs'),
   localStorage = window.localStorage,
   Handlebars = require('handlebars'),
   stationLi = `
-    <a href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
+    <a class="station-card" href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
       <img class='thumb'
           srcset='{{ default square_logo_large "" }}?width=222&dpr=1.5 1.5x,
             {{ default square_logo_large "" }}?width=222&dpr=2 2x'
           src='{{ default square_logo_large "" }}?width=222'
       />
-      <span>{{ default name '' }}</span>
+      <span class='name'>{{ default name '' }}</span>
     </a>
   `;
 
@@ -19,6 +20,7 @@ require('clayhandlebars')(Handlebars);
 
 class StationsCarousel {
   constructor(element) {
+    this.hammerTime = new Hammer(element);
     this.allStationsCount = 303;
     this.stationsCarousel = element;
     this.innerContainerClass = 'stations-carousel__carousel';
@@ -42,6 +44,8 @@ class StationsCarousel {
       beforeMediumSmall: 788,
       mediumSmall: 480
     };
+
+    this.hammerTime.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
 
     if (this.filterStationsBy == 'section-front') {
       this.filterByValue = this.sectionFront;
@@ -219,20 +223,36 @@ StationsCarousel.prototype = {
    * @function
    */
   getPage: function (event, _this) {
-    if (_this.windowWidth < _this.windowSizes.medium) { // nav using pagination dots
-      if (event) { // get page number of clicked dot
+    const leftArrowEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'left',
+      rightArrowEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'right',
+      dotEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-page') !== null,
+      swipeLeftEvent = event ? event.type == 'swipeleft' : false,
+      swipeRightEvent = event ?  event.type == 'swiperight' : false;
+
+    // within this context we navigate with dots and swipe gestures
+    if (_this.windowWidth < _this.windowSizes.medium) {
+      if (dotEvent) { // get page number of clicked dot
         _this.pageNum = Number(event.currentTarget.getAttribute('data-page'));
+      } else if (swipeLeftEvent) {
+        _this.pageNum -= 1;
+      } else if (swipeRightEvent) {
+        _this.pageNum += 1;
+      }
+      if (_this.pageNum > _this.totalPages) {
+        _this.pageNum = _this.totalPages;
+      } else if (_this.pageNum < 1) {
+        _this.pageNum = 1;
       }
       _this.updatePaginationDots();
-    } else { // nav using left/right arrows
+    } else { // within this context we navigate with left/right arrows
       // reset page number if on nonexistent page after switching from dots pagination to arrow navigation
       if (_this.pageNum > _this.totalPages + 1 - _this.stationsVisible) {
         _this.pageNum = 1;
       }
       if (event) { // if arrow clicked, update page number
-        if (event.currentTarget.getAttribute('data-direction') == 'left') {
+        if (leftArrowEvent) {
           _this.pageNum = _this.pageNum - 1;
-        } else if (_this.pageNum <= _this.totalPages - _this.stationsVisible) {
+        } else if (rightArrowEvent && _this.pageNum <= _this.totalPages - _this.stationsVisible) {
           _this.pageNum = _this.pageNum + 1;
         }
       }
@@ -310,6 +330,12 @@ StationsCarousel.prototype = {
       if (this.windowWidth < this.windowSizes.medium) {
         this.createPaginationDots();
       }
+      this.hammerTime.on('swipeleft', function (e) {
+        this.getPage(e, this);
+      }.bind(this));
+      this.hammerTime.on('swiperight', function (e) {
+        this.getPage(e, this);
+      }.bind(this));
       this.leftArrow.addEventListener('click', function (e) {
         this.getPage(e, this);
       }.bind(this));

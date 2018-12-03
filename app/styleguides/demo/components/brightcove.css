@@ -1,5 +1,12 @@
 .component--brightcove {
   margin-bottom: em(20);
+
+  .player__video {
+    video {
+      width: 100%;
+      height: auto;
+    }
+  }
 }
 
 .player__video--hidden-title {

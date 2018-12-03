@@ -1,4 +1,4 @@
-<div data-uri="{{ default _ref _self }}" class="component component--image {{ ./rendition }} {{if borderToggle 'image-borders'}} {{#unless imageLink}}image-enlarge{{/unless}}" itemscope itemtype="http://schema.org/ImageObject" data-editable="inlinestuff">
+<div data-uri="{{ default _ref _self }}" class="component component--image {{ ./rendition }} {{if borderToggle 'image-borders'}}" itemscope itemtype="http://schema.org/ImageObject" data-editable="inlinestuff">
     {{#if ratio}}
     {{! if ratio is available, set height of image }}
         <style>
@@ -11,7 +11,7 @@
     <div class="image-wrapper">
       {{#if url}}
         {{#if imageLink}}<a href="{{ imageLink }}" target="_blank">{{/if}}
-          <img src="{{ url }}" alt="">
+          <img src="{{ url }}?width=800" alt="">
         {{#if imageLink}}</a>{{/if}}
       {{/if}}
     </div>
