@@ -1,7 +1,5 @@
 'use strict';
 
-require('intersection-observer');
-
 let adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   refreshCount = 0,
@@ -18,29 +16,7 @@ const doubleclickPrefix = '21674100491',
   targetingNationalRadioStation = 'natlrc',
   targetingGenre = 'aaa',
   targetingCategory = 'music',
-  urlParse = require('url-parse'),
-  lazyLoadObserverConfig = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0
-  },
-  observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
-
-/**
- * Load ads when they come into view
- *
- * @param {array} changes
- * @param {IntersectionObserver} observer
- */
-function lazyLoadAd(changes, observer) {
-  changes.forEach(change => {
-    if (change.intersectionRatio > 0) {
-      // Stop watching and load the ad
-      googletag.pubads().refresh([allAdSlots[change.target.id]], {changeCorrelator: false});
-      observer.unobserve(change.target);
-    }
-  });
-};
+  urlParse = require('url-parse');
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
@@ -48,7 +24,6 @@ adMapping.setupSizeMapping();
 // Set up ads when navigating in SPA
 document.addEventListener('google-ad-manager-mount', function () {
   // code to run when vue mounts/updates
-  googletag.pubads().updateCorrelator(); // Force correlator update on new pages
   setAdsIDs();
 });
 
@@ -174,7 +149,7 @@ function setAds() {
       let slot,
         sizeMapping = adMapping.sizeMapping[adSize];
 
-      if (adSize === 'outOfPage') {
+      if (adSize == 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
       } else {
         slot = googletag.defineSlot(
@@ -207,10 +182,7 @@ function setAds() {
       if (targetingAuthors.length) {
         slot.setTargeting('author', targetingAuthors);
       }
-
-      // Attach to the global ads array
-      allAdSlots[ad.id] = slot;
-
+      
       googletag.display(ad.id);
 
       // 'atf' ads need to be requested together on page load, do not observe

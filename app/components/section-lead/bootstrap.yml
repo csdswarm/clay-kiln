@@ -2,6 +2,5 @@ _components:
   section-lead:
     items: []
     sectionFront: ''
-    filterBySection: ''
     googleAdRightRail:
-      _ref: /_components/google-ad-manager/instances/halfPageTop
+      _ref: /_components/google-ad-manager/instances/mediumRectangleTop

@@ -59,20 +59,20 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
   let cleanUrl;
 
   // items are saved from form, articles are used on FE
   data.articles = data.items;
 
-  if (!data.sectionFront || !locals) {
+  if (!data.sectionTitle || !locals) {
     return data;
   }
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (data.filterBySection) {
-    queryService.addShould(query, { match: { articleType: data.sectionFront }});
+    queryService.addShould(query, { match: { articleType: data.sectionTitle }});
   }
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});

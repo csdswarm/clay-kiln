@@ -15,7 +15,7 @@ _components:
         main: main
         secondary: secondary
         bottom:
-          - _ref: /_components/google-ad-manager/instances/superLeaderboardBottom
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/footer/instances/default

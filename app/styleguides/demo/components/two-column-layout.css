@@ -63,7 +63,6 @@
   }
 
   .layout__content {
-    margin-bottom: em(40);
     .content__main,
     .content__secondary {
       width: 100%;

@@ -14,7 +14,6 @@
 
 .layout__content {
   margin: 0 auto;
-  padding: em(30);
   $contentPadding: em(60);
   .content__main,
   .content__secondary {
