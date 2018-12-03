@@ -207,7 +207,7 @@ em, i {
   @mixin font CircularStd-Medium, 14px, $white, -.23px, 18px;
 }
 @define-mixin trending-recirculation-font3 {
-  @mixin font CircularStd-Black, 20px, $parisPurple, -.32px, 25px;
+  @mixin font CircularStd-Black, 20px, $black, -.32px, 25px;
 }
 @define-mixin trending-recirculation-font4 {
   @mixin font CircularStd-Medium, 18px, $white, -.3px, 25px;
