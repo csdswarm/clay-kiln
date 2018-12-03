@@ -26,7 +26,7 @@ $medium-screen-nav-width: em(728);
     height: em(400);
   }
   @mixin small-screen {
-    height: em(295);
+    height: em(360);
   }
 }
 @define-mixin section-front-colors $section-front, $color {
@@ -104,9 +104,9 @@ $medium-screen-nav-width: em(728);
       .title__line {
         width: 100%;
         border-bottom: em(1) solid #FFF;
-        margin: em(30) 0;
+        margin: em(45) 0;
         @mixin small-screen {
-          margin: em(30) 0 em(25) 0;
+          margin: em(40) 0 em(25) 0;
         }
       }
       h2 {
@@ -114,7 +114,7 @@ $medium-screen-nav-width: em(728);
         text-transform: uppercase;
         padding: 0 em(15, 20);
         background: $parisM;
-        top: em(18, 20);
+        top: em(33, 20);
         position: absolute;
         @mixin small-screen {
           @mixin stations-carousel-font3;
@@ -126,12 +126,12 @@ $medium-screen-nav-width: em(728);
       flex-direction: row;
       transition: all 400ms ease-in-out;
       width: 100%;
-      height: calc(100% - em(61));
+      max-height: calc(100% - (em(45) * 2 + 1px));
       @mixin medium-screen {
-        height: calc(100% - em(61) - em(55));
+        max-height: calc(100% - (em(45) * 2 + 1px) - em(55));
       }
       @mixin small-screen {
-        height: calc(100% - em(56) - em(53));
+        max-height: calc(100% - (em(40) * 2 + 1px) - em(53));
       }
       &.align-center {
         justify-content: center;
@@ -163,26 +163,50 @@ $medium-screen-nav-width: em(728);
           }
         }
         a {
+          position: relative;
           text-decoration: none;
-          .thumb {
-            width: em(widthOnGrid(2,1));
-            height: em(widthOnGrid(2,1));
-            @mixin medium-screen {
-              width: em(widthOnGrid(2,1,medium-screen));
-              height: em(widthOnGrid(2,1,medium-screen));
+          &.station-card:hover {
+            &:before {
+              content: " ";
+              z-index: 10;
+              display: block;
+              position: absolute;
+              height: em(widthOnGrid(2,1));
+              left: 0;
+              right: 0;
+              background: rgba($(whiteRGB), 0.1);
             }
-            @media all and (max-width: 1023px) and (min-width: 788px) {
-              width: em(222);
-              height: em(222);
+            .name {
+              text-decoration: underline;
             }
           }
-          span {
-            @mixin stations-carousel-font2;
-            display: inline-flex;
-            width: 100%;
-            margin-top: em(15, 14);
-            &:hover {
-              text-decoration: underline;
+          &.station-card {
+            img {
+              position: relative;
+              width: em(widthOnGrid(2,1));
+              height: em(widthOnGrid(2,1));
+              @mixin medium-screen {
+                width: em(widthOnGrid(2,1,medium-screen));
+                height: em(widthOnGrid(2,1,medium-screen));
+              }
+              @media all and (max-width: 1023px) and (min-width: 788px) {
+                width: em(222);
+                height: em(222);
+              }
+            }
+            .name {
+              @mixin stations-carousel-font2;
+              display: inline-flex;
+              width: 100%;
+              margin-top: em(14, 14);
+              max-height: 56px;
+              overflow: hidden;
+              @mixin medium-screen {
+                max-height: 38px;
+              }
+              @mixin small-screen {
+                max-height: 56px;
+              }
             }
           }
         }

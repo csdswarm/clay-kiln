@@ -10,9 +10,10 @@ const queryService = require('../../services/server/query'),
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'articleType'
   ],
-  maxItems = 3;
+  maxItems = 6;
 
 /**
  * @param {string} ref
@@ -35,7 +36,8 @@ module.exports.save = (ref, data, locals) => {
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
           canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl
+          feedImgUrl: result.feedImgUrl,
+          articleType: result.articleType
         });
 
         if (article.title) {
@@ -59,29 +61,18 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems);
   let cleanUrl;
 
-  // items are saved from form, articles are used on FE
-  data.articles = data.items;
-
-  if (!data.sectionFront || !locals) {
+  if (!locals) {
     return data;
   }
 
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  if (data.filterBySection) {
-    queryService.addShould(query, { match: { articleType: data.sectionFront }});
-  }
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
-
-  // exclude the current page in results
-  if (locals.url && !isComponent(locals.url)) {
-    cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
-    queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-  }
+  queryService.addShould(query, { regexp: { lead: process.env.CLAY_SITE_HOST + '\/_components\/brightcove\/instances.*' } });
 
   // exclude the curated content from the results
   if (data.items && !isComponent(locals.url)) {
@@ -93,8 +84,7 @@ module.exports.render = function (ref, data, locals) {
 
   return queryService.searchByQuery(query)
     .then(function (results) {
-
-      data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      data.articles = data.items.concat(results).slice(0, maxItems); // show a maximum of maxItems links
 
       return data;
     })

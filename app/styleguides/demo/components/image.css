@@ -91,6 +91,9 @@
   }
   .image-wrapper {
     position: relative;
+    img {
+      max-width: 100%;
+    }
   }
   .img-data {
     width: 100%;

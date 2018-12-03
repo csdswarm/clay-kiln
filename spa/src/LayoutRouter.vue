@@ -63,17 +63,16 @@ export default {
         })
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
         return nextSpaPayloadResult.data
-      }
-      catch (e) {
+      } catch (e) {
         const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
         return nextSpaPayloadResult.data
       }
     },
     /**
-     * 
+     *
      * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
-     * 
+     *
      * @param {object} to - A Vue Router "to" object.
      * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
      */
@@ -97,6 +96,9 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
+      // Start loading animation.
+      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+
       // Get SPA payload data for next path.
       const spaPayload = await this.getNextSpaPayload(window.location.hostname + to.path)
 
@@ -108,6 +110,9 @@ export default {
 
       // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
       metaManager.updateExternalTags(this.$store.state.spaPayload)
+
+      // Stop loading animation.
+      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
       // Build pageView event data
       const pageViewEventData = this.buildPageViewEventData(to, this.$store.state.spaPayload)
