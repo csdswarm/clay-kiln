@@ -19,8 +19,6 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/article/instances/new
-    secondary:
-      - /_components/google-ad-manager/instances/billboardBottom
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
