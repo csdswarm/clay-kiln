@@ -3,6 +3,7 @@
   data-placeholder="adSize"
   data-ad-position="{{ adPosition }}"
   data-ad-location="{{ adLocation }}"
+  data-ad-size="{{ adSize }}"
   class="component component--google-ad-manager google-ad-manager--{{adSize}}"
 >
   {{#unless @root.locals.edit}}
@@ -10,7 +11,6 @@
       <div
       class="google-ad-manager__slot google-ad-manager__slot--{{adSize}} dfp-tag-wrapper element-hidden"
         id="dfp-ad-takeover_skin_1800x1400_-wrapper_140328957"
-        data-adSize="{{adSize}}"
         >
         <div
           id="dfp-ad-takeover_skin_1800x1400__1753383032"
@@ -20,7 +20,6 @@
     {{else}}
       <div
         class="google-ad-manager__slot google-ad-manager__slot--{{adSize}}"
-        data-adSize="{{adSize}}"
       >
       </div>
     {{/if}}
