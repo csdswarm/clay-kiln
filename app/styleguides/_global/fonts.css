@@ -287,21 +287,21 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||| Latest Videos Fonts Styleguide ||||| */
+/* ||||| Section-Videos Fonts Styleguide ||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin latest-videos-font1 {
+@define-mixin section-videos-font1 {
   @mixin font CircularStd-Black, 20px, $parisM, -.23px, 25px;
 }
-@define-mixin latest-videos-font2 {
+@define-mixin section-videos-font2 {
   @mixin font CircularStd-Medium, 12px, $parisM, -.2px, 15px;
 }
-@define-mixin latest-videos-font3 {
+@define-mixin section-videos-font3 {
   @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
 }
-@define-mixin latest-videos-font4 {
+@define-mixin section-videos-font4 {
   @mixin font CircularStd-Black, 14px, $black, -.23px, 18px;
 }
-@define-mixin latest-videos-font5 {
+@define-mixin section-videos-font5 {
   @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
 }
 

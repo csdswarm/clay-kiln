@@ -1,10 +1,7 @@
 'use strict';
 
 function Constructor(el) {// eslint-disable-line no-unused-vars
-  this.url = window.location.href;
   this.addCopyEventListener();
-  this.addFacebookUrl();
-  this.addTwitterUrl();
 }
 
 Constructor.prototype = {
@@ -14,7 +11,7 @@ Constructor.prototype = {
   * @function copyToClipboard
   * @param {Object} e - HTML event emitted on button click
   */
-  copyToClipboard: function () {
+  copyToClipboard: function (e) {
     // Create text area for copying
     const textArea = document.createElement('textarea');
 
@@ -22,7 +19,7 @@ Constructor.prototype = {
     textArea.className = 'share__hidden-text-area';
 
     // Prepare text and textArea for copying
-    textArea.value = this.url;
+    textArea.value = e.target.baseURI; // get url from event
     document.body.appendChild(textArea);
 
     textArea.focus();
@@ -39,25 +36,6 @@ Constructor.prototype = {
     document.body.removeChild(textArea);
   },
 
-  addFacebookUrl: function () {
-    const facebook = document.getElementsByClassName('share-link--facebook');
-
-    Array.from(facebook, fb => {
-      fb.href = `http://www.facebook.com/sharer/sharer.php?u=${this.url}%3Futm_source=fb%26utm_medium=s3%26utm_campaign=sharebutton-t`;
-    });
-  },
-
-  /**
-   * If the URL isnt set on the twitter link, set it
-   */
-  addTwitterUrl: function () {
-    const twitter = document.getElementsByClassName('share-link--twitter');
-
-    Array.from(twitter, t => {
-      t.href = t.href.replace(/url=%3F/, `url=${this.url}%3F`);
-    });
-  },
-
   /**
   * Add event listener for all .copy-link elements
   * @function addCopyEventListener
@@ -71,4 +49,5 @@ Constructor.prototype = {
     });
   }
 };
+
 module.exports = el => new Constructor(el);

@@ -14,5 +14,3 @@ _components:
       _ref: /_components/section-lead/instances/new
     stationsCarousel:
       _ref: /_components/stations-carousel/instances/homepage
-    latestVideos:
-      _ref: /_component/latest-videos/instances/homepage

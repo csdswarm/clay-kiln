@@ -6,39 +6,33 @@ items:
     validate:
       max: 3
     props:
-      -
-        prop: url
-        _label: URL
-        _has:
-          input: text
-          type: url
-          validate:
-            required: true
-      -
-        prop: overrideTitle
-        _label: Headline Override
-        _has:
-          input: text
-          validate:
-            max: 80
-      -
-        prop: urlIsValid
-        _has:
-          validate:
-            required: true
-
+    -
+      prop: url
+      _label: URL
+      _has:
+        input: text
+        type: url
+        validate:
+          required: true
+    -
+      prop: overrideTitle
+      _label: Headline Override
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
+      prop: urlIsValid
+      _has:
+        validate:
+          required: true
 sectionFront:
   _label: Section Front
   _subscribe: sectionFront
   _has:
     input: static
     text: ${sectionTitle}
-filterBySection:
-  _label: Filter by Section Front
-  _subscribe: sectionFront
-  _has:
-    input: static
-    text: ${sectionTitle}
+
 _groups:
   settings:
     fields:
@@ -46,7 +40,7 @@ _groups:
     - sectionFront
     _placeholder:
       ifEmpty: sectionFront
-      height: 400px
+      height: 100px
       text: Lead Story(s)
 
 # Component properties

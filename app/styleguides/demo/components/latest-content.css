@@ -1,5 +1,3 @@
-/* fix em with different font sizes */
-
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
@@ -8,23 +6,16 @@
   width: 100%;
   padding-bottom: em(80);
   align-self: center;
-  margin: 0 auto;
-  max-width: em(widthOnGrid(12,11));
 
-  @mixin medium-small-screen {
-    padding-bottom: em(30);
-  }
-
-  .latest-content__title {
+  h2 {
     @mixin latest-content-font1;
     width: 100%;
     position: relative;
     z-index: 1;
     text-align: center;
-    color: $parisM;
 
     &:before {
-      border-top: em(1, 20) solid $parisM;
+      border-top: em(1, 20) solid $parisPurple;
       content: "";
       margin: 0 auto;
       position: absolute;
@@ -51,59 +42,25 @@
     }
   }
 
-  .section__container {
+  .section__articleList {
     flex-grow: 1;
     flex-basis: 0;
     padding-bottom: em(15);
-    padding-right: em(20);
-    width: 100%; /* IE11 */
 
-    @mixin medium-screen {
-      padding-right: 0;
-    }
+    &:not(:last-child) {
+      padding-right: em(20);
 
-    &.section__container-- {
-      &entertainment {
-         order: 1;
-       }
-      &news {
-         order: 2;
-       }
-      &sports {
-         order: 3;
-         padding-right: 0;
-       }
-    }
-
-    & .container__article-list {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-
-      & li:first-child {
-        flex-grow: 1;
+      @mixin medium-screen {
+        padding-right: 0;
       }
     }
   }
-
 
   .articleList__link {
     text-decoration: none;
     display: flex;
     flex-direction: column;
     padding-bottom: em(30);
-    position: relative;
-
-    &:hover {
-      .picture__image,
-      .link__image {
-        opacity: 0.9;
-      }
-      .link__label {
-        text-decoration: underline;
-        text-decoration-color: $black;
-      }
-    }
 
     &.articleList__link--subsequent {
       flex-direction: row;
@@ -113,45 +70,34 @@
         flex-direction: column;
       }
 
-      & .link__picture {
+      & .link__image {
+        width: em(80);
+        height: em(80);
+        margin-right: em(20);
 
         @mixin medium-screen {
-          width: 50%;
+          flex: none;
+          margin-right: em(20);
+          width: em(widthOnGrid(3,2,medium-screen));
+          height: em(193);
         }
 
         @mixin medium-small-screen {
           width: 100%;
+          max-width: em(widthOnGrid(4,3,medium-small-screen));
+          height: em(248);
         }
 
-        & .picture__image {
-          width: em(80);
-          height: em(80);
-          object-fit: cover;
-
-          @mixin medium-screen {
-            flex: none;
-            width: 100%;
-            height: em(193);
-          }
-
-          @mixin medium-small-screen {
-            width: 100%;
-            max-width: em(widthOnGrid(4, 3, medium-small-screen));
-            height: em(248);
-          }
-
-          @mixin small-screen {
-            width: 100%;
-            max-width: em(widthOnGrid(4, 3, small-screen));
-            height: em(180);
-          }
+        @mixin small-screen {
+          width: 100%;
+          max-width: em(widthOnGrid(4,3,small-screen));
+          height: em(180);
         }
       }
 
       & .link__label {
         @mixin latest-content-font3;
-        padding-top: 0;
-        padding-left: em(20, 14);
+        padding-top: em(15);
 
         @mixin medium-screen {
           @mixin latest-content-font2;
@@ -159,8 +105,7 @@
 
         @mixin medium-small-screen {
           @mixin latest-content-font6;
-          padding-top: em(15, 18);
-          padding-left: 0;
+          padding-top: em(15);
         }
       }
     }
@@ -180,31 +125,25 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    padding-top: em(15, 22);
-    width: 100%; /* IE11 */
+    padding-top: em(15);
 
     @mixin medium-screen {
       @mixin latest-content-font2;
-      padding-left: em(20, 22);
-      width: 50%;
     }
 
     @mixin medium-small-screen {
       @mixin latest-content-font6;
-      padding-top: em(15, 18);
-      padding-left: 0;
-      width: 100%;
-    }
+        padding-top: em(15);
+      }
   }
 
   .link__tag {
     @mixin latest-content-font4;
-    height: em(26, 14);
+    height: em(26);
     position: absolute;
-    top: 0;
-    background-color: $parisM;
-    padding: 0 em(6, 14);
-    line-height: em(26, 14);
+    background-color: $parisPurple;
+    padding: 0 em(6);
+    line-height: em(26);
 
     &:first-letter {
        text-transform: uppercase;
@@ -222,8 +161,8 @@
 
     @mixin medium-small-screen {
       @mixin latest-content-font7;
-      height: em(33, 18);
-      line-height: em(33, 18);
+      height: em(33);
+      line-height: em(33);
     }
   }
 
@@ -233,21 +172,26 @@
     object-fit: cover;
 
     @mixin medium-screen {
-      width: 50%;
+      width: em(widthOnGrid(3,2,medium-screen));
       height: em(193);
       flex: none;
+      margin-right: em(20);
     }
 
     @mixin medium-small-screen {
       width: 100%;
-      max-width: em(widthOnGrid(4, 3, medium-small-screen));
+      max-width: em(widthOnGrid(4,3,medium-small-screen));
       height: em(248);
     }
 
     @mixin small-screen {
       width: 100%;
-      max-width: em(widthOnGrid(4, 3, small-screen));
+      max-width: em(widthOnGrid(4,3,small-screen));
       height: em(180);
     }
+  }
+
+  @mixin medium-small-screen {
+    padding-bottom: em(30);
   }
 }

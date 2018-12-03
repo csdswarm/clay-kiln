@@ -5,7 +5,7 @@
   if (typeof window.CustomEvent === 'function') return false;
   function CustomEvent(event, params) {
     params = params || { bubbles: false, cancelable: false, detail: undefined };
-    var evt = document.createEvent('CustomEvent'); // eslint-disable-line vars-on-top
+    var evt = document.createEvent('CustomEvent');
 
     evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
     return evt;
@@ -16,7 +16,7 @@
   // Array.forEach -- https://gist.github.com/githiro/5819142
   if (!Array.prototype.forEach) {
     Array.prototype.forEach = function (fn, scope) {
-      for (var i = 0, len = this.length; i < len; ++i) {  // eslint-disable-line vars-on-top
+      for (var i = 0, len = this.length; i < len; ++i) {
         fn.call(scope, this[i], i, this);
       }
     };

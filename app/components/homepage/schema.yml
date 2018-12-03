@@ -42,9 +42,4 @@ sectionLead:
 latestContent:
   _component:
     include:
-      - latest-content
-
-latestVideos:
-  _component:
-    include:
-      - latest-videos
+    - latest-content

@@ -6,6 +6,7 @@ sportsItems:
   _placeholder:
     height: 150px;
     text: Sports Articles
+    ifEmpty: 'sportsItems'
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -51,6 +52,7 @@ entertainmentItems:
   _placeholder:
     height: 150px;
     text: Entertainment Articles
+    ifEmpty: 'entertainmentItems'
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -97,6 +99,7 @@ newsItems:
   _placeholder:
     height: 150px;
     text: News Articles
+    ifEmpty: 'newsItems'
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -142,9 +145,21 @@ _groups:
   entertainmentItems:
     fields:
       - entertainmentItems
+    _placeholder:
+      ifEmpty: 'entertainmentItems'
+      height: 200px
+      text: Entertainment Articles
   newsItems:
     fields:
       - newsItems
+    _placeholder:
+      ifEmpty: 'newsItems'
+      height: 200px
+      text: News Articles
   sportsItems:
     fields:
       - sportsItems
+    _placeholder:
+      ifEmpty: 'sportsItems'
+      height: 200px
+      text: Sports Articles

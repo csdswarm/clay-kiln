@@ -89,7 +89,6 @@ module.exports.render = function (ref, data, locals) {
     data.dynamicTagPage = false;
 
     // Clean based on tags and grab first as we only ever pass 1
-    // If we set a tag override the path
     data.tag = data.tagManual || data.tag;
 
     // Check if we are on a tag page and override the above
@@ -97,8 +96,8 @@ module.exports.render = function (ref, data, locals) {
       // This is from load more on a tag page
       data.tag = locals.tag;
     } else if (locals && locals.params && locals.params.tag) {
-      // This is from a tag page but do not override a manually set tag
-      data.tag = data.tag || locals.params.tag;
+      // This is from a tag page
+      data.tag = locals.params.tag;
     } else if (locals && locals.params && locals.params.dynamicTag) {
       // This is from a tag page
       data.tag = locals.params.dynamicTag;

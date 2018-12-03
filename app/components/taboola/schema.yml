@@ -1,7 +1,0 @@
-_description: |
-  A component for adding taboola content
-
-taboola:
-  _placeholder:
-    text: Taboola Content
-    height: 300px

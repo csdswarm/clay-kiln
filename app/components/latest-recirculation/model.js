@@ -97,20 +97,16 @@ module.exports.render = function (ref, data, locals) {
     // exclude the curated content from the results
     if (data.items && !isComponent(locals.url)) {
       data.items.forEach(item => {
-        if (item.canonicalUrl) {
-          cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-          queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-        }
+        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
       });
     }
 
     // exclude trending recirculation content from the results.
     if (trendingRecircItems.length && !isComponent(locals.url)) {
       trendingRecircItems.forEach(item => {
-        if (item.canonicalUrl) {
-          cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-          queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-        }
+        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
       });
     }
 

@@ -18,17 +18,11 @@
     flex-wrap: wrap;
     width: em(widthOnGrid(10, 9));
     margin-right: em(20);
-    margin-bottom: em(40);
-    height: em(600);
-    .kiln-placeholder {
-      height: 590px;
-    }
   }
 
   .section-lead__article {
-    width: calc(50% - 10px);
+    width: 50%;
     position: relative;
-    margin-right: em(20);
 
     .details__exclusive {
       @mixin section-lead-font2;
@@ -40,28 +34,25 @@
       width: 100%;
       order: 0;
       margin-right: 0;
-      margin-bottom: em(40);
 
       .section-lead__link {
         display: block;
-        position: relative;
         margin-right: 0;
       }
 
       .section-lead__image {
         width: 100%;
-        height: auto;
         margin: 0;
-        display: block;
       }
       .section-lead__details {
         position: absolute;
         left: 0;
         bottom: 0;
         padding: 0 em(20) 0 0;
+        margin-right: em(20);
         width: em(300);
         background: $white;
-        border-top: em(6) solid $parisM;
+        border-top: em(6) solid $black;
       }
       .details__title {
         @mixin section-lead-font1;
@@ -70,18 +61,6 @@
 
     &:last-child {
       margin-right: 0;
-    }
-    &:hover {
-      picture > div {
-        width: 100%;
-        height: 100%;
-        background: rgba(255,255,255,0.1);
-        position: absolute;
-        top: 0;
-      }
-      .details__title {
-        text-decoration: underline;
-      }
     }
   }
 
@@ -102,13 +81,15 @@
     display: inline-block;
     margin-right: em(20);
     flex-shrink: 0;
-    width: em(widthOnGrid(3, 2));
-    height: auto;
 
     img {
       width: 100%;
-      display: block;
     }
+  }
+
+  .section-lead__article {
+    width: 48%;
+    margin: 0 em(20) em(40) 0;
   }
   .section-lead__details {
     flex-shrink: 1;
@@ -128,9 +109,6 @@
     .section-lead__articles {
       width: em(widthOnGrid(8, 7));
     }
-    .section-lead__image {
-      width: em(widthOnGrid(2, 1));
-    }
   }
 
   @mixin medium-screen {
@@ -140,7 +118,6 @@
       width: 100%;
       justify-content: space-between;
       margin-right: 0;
-      height: auto;
     }
 
     .component--google-ad-manager {
@@ -148,14 +125,12 @@
     }
 
     .section-lead__article {
-      margin: 0;
-      &.section-lead__article--first {
-        margin-bottom: em(30);
-      }
+      margin: 0 0 em(30) 0;
     }
 
     .section-lead__link {
       flex-wrap: wrap;
+
       .section-lead__image {
         width: 100%;
         margin: 0 0 em(15);
@@ -167,12 +142,11 @@
     .section-lead__article {
       width: 100%;
       margin-right: 0;
+
       .details__exclusive {
         @mixin section-lead-font4;
       }
-      .section-lead__details .details__title {
-        @mixin section-lead-font1;
-      }
+
       &.section-lead__article--first {
         width: 100%;
 
@@ -190,14 +164,6 @@
           border-top: none;
           width: calc(100% - em(40));
           margin: 0 auto;
-          padding: 0;
-        }
-      }
-      &.section-lead__article:not(:first-of-type) {
-        &:not(:last-of-type) {
-          .section-lead__details {
-            margin-bottom: em(30);
-          }
         }
       }
     }
@@ -205,7 +171,7 @@
 }
 
 @define-mixin lead-module-color $sectionTitle, $color {
-  .component--section-lead.section-lead--$sectionTitle {
+  .component--section-lead[data-section=$sectionTitle] {
     .section-lead__article {
       &.section-lead__article--first {
         .section-lead__details {

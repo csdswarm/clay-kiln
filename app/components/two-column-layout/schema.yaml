@@ -38,8 +38,7 @@ main:
 secondary:
   _componentList:
     include:
-      - google-ad-manager
-      - trending-recirculation
+      - generic-list
 tertiary:
   _componentList:
     include:

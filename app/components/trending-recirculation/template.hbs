@@ -1,32 +1,34 @@
-<section class="component component--trending-recirculation"
-         data-uri="{{ default _ref _self }}"
-         data-track-type="trending-recirculation"
-         data-editable="trendingItems">
-  <h2 class="trending__title"><span>TRENDING on RADIO.COM</span></h2>
-  <div class="trending__data">
-    {{#each items}}
-      <div class="trending__item">
-        <a href="{{ canonicalUrl }}"
-           class="trending__item__link"
-           data-track-type="article-link"
-           data-track-component-name="trending"
-           data-track-page-uri="{{ pageUri }}"
-           data-track-headline="{{ primaryHeadline }}"
-           data-track-component-title="Trending">
-          {{#if articleType}}
-            <div class="trending__item__tag">{{ articleType }}</div>
-          {{/if}}
-          <img
-            src="{{ feedImgUrl }}?width=300&height=169&crop=16:9,smart"
-            srcset="{{ feedImgUrl }}?width=300&height=169&&crop=16:9 300w,
-              {{ feedImgUrl }}?width=320&height=180&crop=16:9,smart 320w,
-              {{ feedImgUrl }}?width=343&height=193&crop=16:9,smart 343w,
-              {{ feedImgUrl }}?width=440&height=248&crop=16:9,smart 440w"
-            sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, 300px"
-            class="trending__item__image" />
-          <div class="trending__item__label">{{ primaryHeadline }}</div>
-        </a>
-      </div>
-    {{/each}}
-  </div>
-</section>
+{{#ifAny items.length @root.locals.edit}}
+  <section class="component component--trending"
+           data-uri="{{ default _ref _self }}"
+           data-track-type="trending-recirculation"
+           data-editable="trendingItems">
+    <h2 class="trending__title"><span>TRENDING on RADIO.COM</span></h2>
+    <div class="trending__data">
+      {{#each items}}
+        <div class="trending__item">
+          <a href="{{ canonicalUrl }}"
+             class="trending__item__link"
+             data-track-type="article-link"
+             data-track-component-name="trending"
+             data-track-page-uri="{{ pageUri }}"
+             data-track-headline="{{ primaryHeadline }}"
+             data-track-component-title="Trending">
+            {{#if articleType}}
+              <div class="trending__item__tag">{{ articleType }}</div>
+            {{/if}}
+            <img
+              src="{{ feedImgUrl }}?width=300&height=169&crop=16:9,smart"
+              srcset="{{ feedImgUrl }}?width=300&height=169&&crop=16:9 300w,
+                {{ feedImgUrl }}?width=320&height=180&crop=16:9,smart 320w,
+                {{ feedImgUrl }}?width=343&height=193&crop=16:9,smart 343w,
+                {{ feedImgUrl }}?width=440&height=248&crop=16:9,smart 440w"
+              sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, 300px"
+              class="trending__item__image" />
+            <div class="trending__item__label">{{ primaryHeadline }}</div>
+          </a>
+        </div>
+      {{/each}}
+    </div>
+  </section>
+{{/ifAny}}

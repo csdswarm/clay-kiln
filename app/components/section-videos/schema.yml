@@ -1,5 +1,5 @@
 items:
-  _label: Latest Videos
+  _label: Items
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -26,3 +26,25 @@ items:
       _has:
         validate:
           required: true
+tag:
+  _label: Tag
+  _has:
+    input: text
+    validate:
+      required:
+        field: fill
+        operator: truthy
+    help: Tag from which to pull articles
+sectionTitle:
+  _label: Section Title
+  _subscribe: sectiontitle
+
+_groups:
+  sectionVideos:
+    fields:
+    - items
+    - tag
+    _placeholder:
+      ifEmpty: items.url and tag and sectionTitle
+      height: 100px
+      text: Section Videos
