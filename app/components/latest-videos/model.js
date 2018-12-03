@@ -5,16 +5,15 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
-  tag = require('../tags/model.js'),
   elasticIndex = 'published-articles',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'lead'
+    'articleType'
   ],
-  maxItems = 2;
+  maxItems = 6;
 
 /**
  * @param {string} ref
@@ -38,7 +37,7 @@ module.exports.save = (ref, data, locals) => {
           urlIsValid: result.urlIsValid,
           canonicalUrl: result.canonicalUrl,
           feedImgUrl: result.feedImgUrl,
-          lead: result.lead ? result.lead[0].split('/')[2] : null
+          articleType: result.articleType
         });
 
         if (article.title) {
@@ -62,46 +61,31 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems);
   let cleanUrl;
 
-  // items are saved from form, articles are used on FE
-  data.articles = data.items;
-
-  if (!data.tag || !locals) {
+  if (!locals) {
     return data;
   }
 
-  // Clean based on tags and grab first as we only ever pass 1
-  data.tag = tag.clean([{text: data.tag}])[0].text || '';
-
   queryService.withinThisSiteAndCrossposts(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
-
-  // exclude the current page in results
-  if (locals.url && !isComponent(locals.url)) {
-    cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
-    queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-  }
+  queryService.addShould(query, { regexp: { lead: process.env.CLAY_SITE_HOST + '\/_components\/brightcove\/instances.*' } });
 
   // exclude the curated content from the results
   if (data.items && !isComponent(locals.url)) {
     data.items.forEach(item => {
-      if (item.canonicalUrl) {
-        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-      }
+      cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+      queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     });
   }
 
   return queryService.searchByQuery(query)
     .then(function (results) {
-      const limit = data.fill;
+      data.articles = data.items.concat(results).slice(0, maxItems); // show a maximum of maxItems links
 
-      data.articles = data.items.concat(_.take(results, limit)).slice(0, maxItems); // show a maximum of maxItems links
       return data;
     })
     .catch(e => {
