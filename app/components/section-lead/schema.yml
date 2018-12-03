@@ -32,12 +32,7 @@ sectionFront:
   _has:
     input: static
     text: ${sectionTitle}
-filterBySection:
-  _label: Filter by Section Front
-  _subscribe: sectionFront
-  _has:
-    input: static
-    text: ${sectionTitle}
+
 _groups:
   settings:
     fields:
