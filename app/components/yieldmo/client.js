@@ -5,7 +5,7 @@
  * Inject those placements into the social bar and tags sections of the layout.
  */
 function injectYieldmo() {
-  const yieldmo1 = document.getElementsByClassName('placement-1')[0]
+  const yieldmo1 = document.getElementsByClassName('placement-1')[0],
     bodyContent = document.getElementsByClassName('body__content')[0],
     firstParagraph = bodyContent.querySelector('p'),
     secondParagraph = bodyContent.querySelector('p:nth-of-type(2)');
