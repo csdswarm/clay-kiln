@@ -389,6 +389,11 @@ _components:
       default:
         allowed: true
 
+  nielsen:
+    instances:
+      default:
+        allowed: true
+
   chartbeat:
     instances:
       default:
