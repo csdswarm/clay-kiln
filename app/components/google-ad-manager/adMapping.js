@@ -31,13 +31,13 @@ module.exports = {
 
     googletag.cmd.push(function () {
       sizeMapping['billboard'] = googletag.sizeMapping()
-        .addSize([1279, 0], [[970, 250]])
+        .addSize([1279, 0], [[970, 250], [970, 90], [728, 90]])
         .addSize([480, 0], [[728, 90]])
         .addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50]])
         .build();
 
       sizeMapping['super-leaderboard'] = googletag.sizeMapping()
-        .addSize([1279, 0], [[970, 90]])
+        .addSize([1279, 0], [[970, 90], [728, 90]])
         .addSize([480, 0], [[728, 90]])
         .addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50]])
         .build();
