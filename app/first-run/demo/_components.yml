@@ -366,6 +366,7 @@ _components:
         adSize: half-page
         adPosition: bottom
         adLocation: btf
+        sticky: true
       mediumRectangleTop:
         adSize: medium-rectangle
         adPosition: rec
@@ -374,6 +375,7 @@ _components:
         adSize: medium-rectangle
         adPosition: rec
         adLocation: btf
+        sticky: true
       mobile:
         adSize: mobile
       logoSponsorship:
@@ -620,6 +622,7 @@ _components:
       new:
         items: []
         sectionFront: ''
+        filterBySection: ''
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
 
@@ -783,3 +786,8 @@ _components:
         entertainmentItems: []
         sportsItems: []
         newsItems: []
+
+  taboola:
+    instances:
+      default:
+        allowed: true

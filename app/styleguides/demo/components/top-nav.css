@@ -129,12 +129,14 @@ $drawerSelector: nav-drawer;
   }
   @define-mixin header-button-color $modifier, $color {
     &.$(navButton)--active.$(navButton)--$(modifier),
+    &.$(navButton)--$(modifier).$(navButton)--current,
     &:hover.$(navButton)--$(modifier) {
       background: $color;
     }
   }
   @define-mixin header-heading-color $modifier, $color {
     &.$(navButton)--active.$(navButton)--$(modifier) h1,
+    &.$(navButton)--$(modifier).$(navButton)--current,
     &:hover.$(navButton)--$(modifier) h1 {
       color: $color;
     }

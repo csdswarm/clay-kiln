@@ -3,7 +3,7 @@
   data-placeholder="adSize"
   data-ad-position="{{ adPosition }}"
   data-ad-location="{{ adLocation }}"
-  class="component component--google-ad-manager google-ad-manager--{{adSize}}"
+  class="component component--google-ad-manager google-ad-manager--{{adSize}} {{#if sticky }}sticky{{/if}}"
 >
   {{#unless @root.locals.edit}}
     {{#if (compare adSize "outOfPage")}}
