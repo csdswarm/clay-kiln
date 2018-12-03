@@ -17,6 +17,7 @@ _components:
         bottom:
           - _ref: /_components/google-ad-manager/instances/superLeaderboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
@@ -36,6 +37,7 @@ _components:
         main: main
         bottom:
           - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
@@ -58,6 +60,7 @@ _components:
         bottom:
           - _ref: /_components/footer/instances/default
           - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
@@ -106,6 +109,7 @@ _components:
           - _ref: /_components/trending-recirculation/instances/default
           - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/footer/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general

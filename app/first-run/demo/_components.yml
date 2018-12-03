@@ -370,8 +370,10 @@ _components:
         adSize: medium-rectangle
         adPosition: rec
         adLocation: btf
-      mobile:
-        adSize: mobile
+      mobileAdhesion:
+        adSize: mobile-adhesion
+        adPosition: adhesion
+        adLocation: atf
       logoSponsorship:
         adSize: logo-sponsorship
 

@@ -12,25 +12,25 @@ adSize:
     help: Choose the size of the Google Ad Manager ad slot in pixels
     options:
       -
-        name: billboard (970x250)
+        name: Billboard (970x250)
         value: billboard
       -
-        name: super leaderboard (970x90)
+        name: Super Leaderboard (970x90)
         value: super-leaderboard
       -
-        name: leaderboard (728x90)
+        name: Leaderboard (728x90)
         value: leaderboard
       -
-        name: half page (300x600)
+        name: Half Page (300x600)
         value: half-page
       -
-        name: medium rectangle (300x250)
+        name: Medium Rectangle (300x250)
         value: medium-rectangle
       -
-        name: mobile (320x50 / 320x100 / 300x50 / 300x100)
-        value: mobile
+        name: Mobile Adhesion (320x50)
+        value: mobile-adhesion
       -
-        name: logo sponsorship (100x35)
+        name: Logo Sponsorship (100x35)
         value: logo-sponsorship
     validate:
       required: true
