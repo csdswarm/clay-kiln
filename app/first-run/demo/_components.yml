@@ -360,11 +360,11 @@ _components:
         adLocation: btf
       halfPageTop:
         adSize: half-page
-        adPosition: top
+        adPosition: rec
         adLocation: atf
       halfPageBottom:
         adSize: half-page
-        adPosition: bottom
+        adPosition: rec
         adLocation: btf
         sticky: true
       mediumRectangleTop:
@@ -376,8 +376,10 @@ _components:
         adPosition: rec
         adLocation: btf
         sticky: true
-      mobile:
-        adSize: mobile
+      mobileAdhesion:
+        adSize: mobile-adhesion
+        adPosition: adhesion
+        adLocation: atf
       logoSponsorship:
         adSize: logo-sponsorship
 
