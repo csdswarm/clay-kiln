@@ -6,7 +6,7 @@ let adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   refreshCount = 0,
   allAdSlots = {},
-  googleAdLyticsLoaded = true,
+  initialAdRequestComplete = true,
   initialPageAdSlots = [],
   numRightRail = 1;
 const doubleclickPrefix = '21674100491',
@@ -48,12 +48,12 @@ adMapping.setupSizeMapping();
 
 // Set up ads when navigating in SPA
 document.addEventListener('google-ad-manager-mount', function () {
-  if (googleAdLyticsLoaded) {
+  if (initialAdRequestComplete) {
     // code to run when vue mounts/updates
     if (googletag.pubadsReady) { // Only do this if the service was created
       googletag.pubads().updateCorrelator(); // Force correlator update on new pages
     }
-    setAdsIDs();
+    setAdsIDs(true);
   }
 });
 
@@ -100,8 +100,10 @@ googletag.cmd.push(() => {
 
 /**
  * create and add unique ids to each ad slot on page
+ *
+ * @param {boolean} initialRequest - Is this the first time through ad setup?
  */
-function setAdsIDs() {
+function setAdsIDs(initialRequest = false) {
   Object.keys(adSizes).forEach((adSize) => {
     let adSlots = document.getElementsByClassName(`google-ad-manager__slot--${adSize}`);
 
@@ -114,8 +116,10 @@ function setAdsIDs() {
 
 /**
  * use ids of ad slots on page to create google ad slots and display them
+ *
+ * @param {boolean} initialRequest - Is this the first time through ad setup?
  */
-function setAds() {
+function setAds(initialRequest = false) {
   let page,
     pageName,
     siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
@@ -232,6 +236,9 @@ function setAds() {
 
     // Refresh all initial page slots
     googletag.pubads().refresh(initialPageAdSlots);
+    if (initialRequest) {
+      initialAdRequestComplete = true;
+    }
   });
 }
 
