@@ -1,6 +1,7 @@
 @import '_global/reset';
 @import '_global/fonts';
 @import '_global/grid';
+@import '_global/spa';
 @import "_global/colors";
 
 .layout--one-column {
