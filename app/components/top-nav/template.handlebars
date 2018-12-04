@@ -69,11 +69,11 @@
         {{#if headerLinks.length}}
           {{#each headerLinks}}
             <div class="nav-drawer__sub-nav nav-drawer__{{text}}">
-              {{#if (compare text 'listen')}}
+              {{!-- {{#if (compare text 'listen')}} --}}
                 <a href="{{url}}" target="_blank">
                   <h2>{{text}}</h2>
                 </a>
-              {{ else }}
+              {{!-- {{ else }}
                 <h2>{{text}}</h2>
                 {{#if list.length}}
                   <ul class="nav-drawer__sub-nav-links">
@@ -88,7 +88,7 @@
                     {{/each}}
                   </ul>
                 {{/if}}
-              {{/if}}
+              {{/if}} --}}
             </div>
           {{/each}}
         {{/if}}
