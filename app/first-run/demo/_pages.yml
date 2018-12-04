@@ -19,8 +19,6 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/article/instances/new
-    secondary:
-      - /_components/google-ad-manager/instances/billboardBottom
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
@@ -31,7 +29,7 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-    pageHeader:
+    layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/section-front/instances/new
@@ -41,7 +39,7 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-    pageHeader:
+    layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/homepage/instances/default
@@ -67,8 +65,9 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-    pageHeader:
+    layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
+    pageHeader:
       - /_components/tag-page-header/instances/new
     main:
       - /_components/tag-page/instances/new

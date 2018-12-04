@@ -366,6 +366,7 @@ _components:
         adSize: half-page
         adPosition: bottom
         adLocation: btf
+        sticky: true
       mediumRectangleTop:
         adSize: medium-rectangle
         adPosition: rec
@@ -374,6 +375,7 @@ _components:
         adSize: medium-rectangle
         adPosition: rec
         adLocation: btf
+        sticky: true
       mobile:
         adSize: mobile
       logoSponsorship:
@@ -612,7 +614,7 @@ _components:
           most-popular: true
           newsfeed: true
           apple-news: true
-        articleType: 
+        articleType:
         showSocial: true
 
   section-lead:
@@ -620,6 +622,7 @@ _components:
       new:
         items: []
         sectionFront: ''
+        filterBySection: ''
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
 
@@ -689,8 +692,6 @@ _components:
         locationOfContentFeed: homepage
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
-        googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
       section-front:
         items: []
@@ -702,8 +703,6 @@ _components:
         locationOfContentFeed: section-front
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
-        googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
       tag-page:
         items: []
@@ -715,8 +714,6 @@ _components:
         locationOfContentFeed: tag-page
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
-        googleAdTop:
-          _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
 
   latest-videos:
@@ -783,3 +780,8 @@ _components:
         entertainmentItems: []
         sportsItems: []
         newsItems: []
+
+  taboola:
+    instances:
+      default:
+        allowed: true

@@ -2,27 +2,16 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--homepage .more-content-feed__top-ad--mobile {
-  width: 100%;
-  display: none;
-  @mixin medium-screen {
-    display: block;
-  }
-  @mixin small-screen {
-    display: none;
-  }
-  .component--google-ad-manager {
-    margin-bottom: em(40);
-  }
-}
-.more-content-feed__top-ad--mobile {
-  display: none;
-}
 .component--more-content-feed {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: em(40);
+  padding-bottom: em(80);
+
+  @mixin medium-small-screen {
+    padding-bottom: em(50);
+  }
 
   h2 {
     @mixin more-content-feed-font1;
@@ -62,13 +51,14 @@
     flex-direction: row;
     align-items: start;
     width: 100%;
+    position: relative;
     padding-top: em(40);
   }
   .more-content-feed__left-content {
     margin-right: em(20);
     @mixin medium-screen {
       width: 100%;
-      margin-right: 0;
+      padding-right: 0;
     }
     li:not(:last-of-type) {
       margin-bottom: em(30);
@@ -257,12 +247,10 @@
 
   .more-content-feed__loadmore {
     cursor: pointer;
-    height: em(50);
+    height: em(50, 20);
     text-transform: uppercase;
     @mixin more-content-feed-font1;
     background-color: $parisPurple;
-    margin-top: em(60);
-    margin-bottom: em(80);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -275,11 +263,14 @@
 
   .more-content-feed__right-ad--desktop {
     width: em(300);
+    height: 100%;
+    position: absolute;
+    right: 0;
     aside {
       border-top: 6px solid $parisPurple;
       padding: em(20) 0;
       margin-bottom: em(30);
-      @mixin tag-page-font3;
+      @mixin more-content-feed-font3;
     }
     @mixin medium-screen {
       display: none;

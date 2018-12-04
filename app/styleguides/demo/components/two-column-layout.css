@@ -2,6 +2,7 @@
 @import '_global/fonts';
 @import '_global/mixins';
 @import '_global/grid';
+@import '_global/spa';
 @import "_global/colors";
 
 .layout--two-column {
@@ -81,7 +82,7 @@
 .kiln-edit-mode .layout--two-column {
   .content__sidebar {
     visibility: visible;
-    margin-top: em(183);
+    margin-top: em(153);
   }
 }
 
