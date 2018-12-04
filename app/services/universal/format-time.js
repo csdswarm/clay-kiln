@@ -47,16 +47,19 @@ function isPublished24HrsAgo(date) {
 }
 
 /**
- * Returns "X hours ago" timestamp of when article was published
+ * Returns "X seconds/minutes/hours ago" timestamp of when article was published
+ *
+ * See: https://momentjscom.readthedocs.io/en/latest/moment/04-displaying/02-fromnow/
+ *
  * @function
  * @param {Object} date - The date the article was published.
  * @return {string}
  */
-function hrsOnlyTimestamp(date) {
-  return moment().format('H') - moment(date).format('H') + ' hours ago';
+function timeAgoTimestamp(date) {
+  return moment(date).fromNow();
 }
 
 module.exports.formatDateRange = formatDateRange;
 module.exports.secondsToISO = secondsToISO;
 module.exports.isPublished24HrsAgo = isPublished24HrsAgo;
-module.exports.hrsOnlyTimestamp = hrsOnlyTimestamp;
+module.exports.timeAgoTimestamp = timeAgoTimestamp;

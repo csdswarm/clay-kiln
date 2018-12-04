@@ -60,7 +60,7 @@
           </div>
           <div class="info__datetime-posted">
             {{#if (isPublished24HrsAgo feedItem.date) }}
-              {{{ hrsOnlyTimestamp feedItem.date }}}
+              {{{ timeAgoTimestamp feedItem.date }}}
             {{else}}
               {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
             {{/if}}
