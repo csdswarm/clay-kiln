@@ -62,9 +62,6 @@ document.addEventListener('google-ad-manager-dismount', function () {
   googletag.cmd.push(function () {
     googletag.destroySlots();
   });
-
-  // Remove event listeners so they don't double up
-  googletag.pubads().removeEventListener('slotRenderEnded');
 });
 
 // Handle right rail refresh via DFP event trigger
