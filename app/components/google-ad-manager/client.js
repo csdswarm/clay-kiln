@@ -56,8 +56,8 @@ document.addEventListener('google-ad-manager-mount', function () {
 document.addEventListener('google-ad-manager-dismount', function () {
   // Reset slot arrays/objects
   allAdSlots = {},
-    initialPageAdSlots = [],
-    numRightRail = 1;
+  initialPageAdSlots = [],
+  numRightRail = 1;
 
   googletag.cmd.push(function () {
     googletag.destroySlots();
