@@ -48,9 +48,9 @@ adMapping.setupSizeMapping();
 // Set up ads when navigating in SPA
 document.addEventListener('google-ad-manager-mount', function () {
   // code to run when vue mounts/updates
-  googletag.cmd.push(() => {
+  if (googletag.pubadsReady) { // Only do this if the service was created
     googletag.pubads().updateCorrelator(); // Force correlator update on new pages
-  });
+  }
   setAdsIDs();
 });
 
