@@ -15,8 +15,8 @@ const adSizes = {
   'medium-rectangle': {
     defaultSize: [300, 250]
   },
-  mobile: {
-    defaultSize: [320, 100]
+  'mobile-adhesion': {
+    defaultSize: [320, 50]
   },
   'logo-sponsorship': {
     defaultSize: [100, 35]
@@ -31,13 +31,13 @@ module.exports = {
 
     googletag.cmd.push(function () {
       sizeMapping['billboard'] = googletag.sizeMapping()
-        .addSize([1279, 0], [[970, 250]])
+        .addSize([1279, 0], [[970, 250], [970, 90], [728, 90]])
         .addSize([480, 0], [[728, 90]])
         .addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50]])
         .build();
 
       sizeMapping['super-leaderboard'] = googletag.sizeMapping()
-        .addSize([1279, 0], [[970, 90]])
+        .addSize([1279, 0], [[970, 90], [728, 90]])
         .addSize([480, 0], [[728, 90]])
         .addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50]])
         .build();
@@ -48,16 +48,17 @@ module.exports = {
         .build();
 
       sizeMapping['half-page'] = googletag.sizeMapping()
-        .addSize([0, 0], [[300, 600], [300, 250]])
+        .addSize([1023, 0], [[300, 600], [300, 250]])
+        .addSize([0, 0], [[300, 250]])
         .build();
 
       sizeMapping['medium-rectangle'] = googletag.sizeMapping()
         .addSize([0, 0], [[300, 250]])
         .build();
 
-      sizeMapping['mobile'] = googletag.sizeMapping()
+      sizeMapping['mobile-adhesion'] = googletag.sizeMapping()
         .addSize([480, 0], [])
-        .addSize([0, 0], [[320, 100], [300, 100], [320, 50], [300, 50]])
+        .addSize([0, 0], [[320, 50]])
         .build();
 
       sizeMapping['logo-sponsorship'] = googletag.sizeMapping()

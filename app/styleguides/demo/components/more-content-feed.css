@@ -94,8 +94,12 @@
 
         @mixin medium-small-screen {
           max-width: inherit;
-          height: inherit;
+          height: em(248);
           width: inherit;
+        }
+
+        @mixin small-screen {
+          height: em(180);
         }
 
         .thumb__section-front {
