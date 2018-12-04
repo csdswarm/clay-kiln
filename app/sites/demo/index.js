@@ -6,6 +6,10 @@ const publishing = require('../../services/publishing'),
 module.exports.routes = [
   { path: '/'},
   { path: '/:section'},
+  { path: '/blogs/:author/:title'}, // Frequency URL pattern
+  { path: '/blogs/:title'}, // Frequency URL pattern
+  { path: '/articles/:author/:title'}, // Frequency URL pattern
+  { path: '/articles/:title'}, // Frequency URL pattern
   { path: '/:year/:month/:name' },
   { path: '/article/:name' },
   { path: '/tag/:tag'},
