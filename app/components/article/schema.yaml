@@ -82,6 +82,7 @@ seoHeadline:
     help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
     validate:
       max: 60
+      required: true
 seoDescription:
   _label: SEO Description
   _has:
