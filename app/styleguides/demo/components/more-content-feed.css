@@ -7,6 +7,11 @@
   flex-direction: column;
   align-items: center;
   margin-top: em(40);
+  margin-bottom: em(80);
+
+  @mixin medium-small-screen {
+    margin-bottom: em(50);
+  }
 
   h2 {
     @mixin more-content-feed-font1;
@@ -242,12 +247,10 @@
 
   .more-content-feed__loadmore {
     cursor: pointer;
-    height: em(50);
+    height: em(50, 20);
     text-transform: uppercase;
     @mixin more-content-feed-font1;
     background-color: $parisPurple;
-    margin-top: em(60);
-    margin-bottom: em(80);
     display: flex;
     justify-content: center;
     align-items: center;
