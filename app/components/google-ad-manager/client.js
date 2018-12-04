@@ -48,7 +48,9 @@ adMapping.setupSizeMapping();
 // Set up ads when navigating in SPA
 document.addEventListener('google-ad-manager-mount', function () {
   // code to run when vue mounts/updates
-  googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+  googletag.cmd.push(() => {
+    googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+  });
   setAdsIDs();
 });
 
@@ -64,30 +66,33 @@ document.addEventListener('google-ad-manager-dismount', function () {
   });
 });
 
-// Handle right rail refresh via DFP event trigger
-googletag.pubads().addEventListener('impressionViewable', event => {
-  const { slot } = event,
-    rightRail = slot.getTargeting('rightRail');
+// Create listeners inside of the context of having googletag.pubads()
+googletag.cmd.push(() => {
+  // Handle right rail refresh via DFP event trigger
+  googletag.pubads().addEventListener('impressionViewable', event => {
+    const {slot} = event,
+      rightRail = slot.getTargeting('rightRail');
 
-  if (rightRail.length) {
-    slot.setTargeting('refresh', (refreshCount++).toString());
-    setTimeout(function () {
-      googletag.pubads().refresh([slot]);
-    }, adRefreshInterval);
-  }
-});
+    if (rightRail.length) {
+      slot.setTargeting('refresh', (refreshCount++).toString());
+      setTimeout(function () {
+        googletag.pubads().refresh([slot]);
+      }, adRefreshInterval);
+    }
+  });
 
-// Handle collapsing empty div manually as DFP collapseEmptyDiv doesn't work when lazy loading
-googletag.pubads().addEventListener('slotRenderEnded', event => {
-  let id = event.slot.getSlotElementId(),
-    adSlot = document.getElementById(id);
+  // Handle collapsing empty div manually as DFP collapseEmptyDiv doesn't work when lazy loading
+  googletag.pubads().addEventListener('slotRenderEnded', event => {
+    let id = event.slot.getSlotElementId(),
+      adSlot = document.getElementById(id);
 
-  if (event.isEmpty) {
-    adSlot.parentElement.style.display = 'none';
-  } else {
-    // Unhide parent incase this was a refresh after an empty response
-    adSlot.parentElement.style.display = 'block';
-  }
+    if (event.isEmpty) {
+      adSlot.parentElement.style.display = 'none';
+    } else {
+      // Unhide parent incase this was a refresh after an empty response
+      adSlot.parentElement.style.display = 'block';
+    }
+  });
 });
 
 /**
