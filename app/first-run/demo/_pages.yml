@@ -20,9 +20,9 @@ _pages:
     main:
       - /_components/article/instances/new
     tertiary:
-      - /_components/google-ad-manager/instances/mediumRectangleBottom
+      - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
-      - /_components/google-ad-manager/instances/mediumRectangleBottom
+      - /_components/google-ad-manager/instances/halfPageBottom
     layout: /_components/two-column-layout/instances/article
   section-front:
     head:
@@ -66,7 +66,7 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
     pageHeader:
-      - /_components/google-ad-manager/instances/leaderboardTop
+      - /_components/google-ad-manager/instances/billboardTop
       - /_components/tag-page-header/instances/new
     main:
       - /_components/tag-page/instances/new

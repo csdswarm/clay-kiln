@@ -362,6 +362,11 @@ _components:
         adSize: half-page
         adPosition: top
         adLocation: atf
+      halfPageBottom:
+        adSize: half-page
+        adPosition: bottom
+        adLocation: btf
+        sticky: true
       mediumRectangleTop:
         adSize: medium-rectangle
         adPosition: rec
@@ -370,6 +375,7 @@ _components:
         adSize: medium-rectangle
         adPosition: rec
         adLocation: btf
+        sticky: true
       mobile:
         adSize: mobile
       logoSponsorship:
@@ -381,6 +387,11 @@ _components:
         allowed: true
 
   google-tag-manager:
+    instances:
+      default:
+        allowed: true
+
+  nielsen:
     instances:
       default:
         allowed: true
@@ -624,7 +635,7 @@ _components:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/section-front
         googleAdUnderStationsModule:
-            _ref: /_components/google-ad-manager/instances/leaderboardBottom
+            _ref: /_components/google-ad-manager/instances/billboardBottom
         latestContent:
           _ref: /_components/latest-content/instances/default
         stationsCarousel:
@@ -680,7 +691,7 @@ _components:
         populateFrom: all-content
         locationOfContentFeed: homepage
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
@@ -693,7 +704,7 @@ _components:
         populateFrom: section-front
         locationOfContentFeed: section-front
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/mediumRectangleTop
+          _ref: /_components/google-ad-manager/instances/halfPageTop
         googleAdTop:
           _ref: /_components/google-ad-manager/instances/superLeaderboardTop
         introComponents: []
@@ -775,3 +786,8 @@ _components:
         entertainmentItems: []
         sportsItems: []
         newsItems: []
+
+  taboola:
+    instances:
+      default:
+        allowed: true
