@@ -125,7 +125,7 @@ _components:
                     url: "/example link"
               -
                 text: "find a station"
-                url: "https://player.radio.com/stations-directory"
+                url: "https://player.radio.com/station-directory"
           -
             text: "news"
             url: "/news"
