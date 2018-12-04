@@ -4,14 +4,8 @@
 
 .component--trending-recirculation {
   width: 100%;
-  margin: 0 auto em(40) auto;
   max-width: em(980);
-  align-self: center;
   margin: 0 auto;
-
-  @mixin medium-small-screen {
-    margin-bottom: em(30);
-  }
 
   h2 {
     @mixin trending-recirculation-font1;
