@@ -82,6 +82,7 @@ seoHeadline:
     help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
     validate:
       max: 60
+      required: true
 seoDescription:
   _label: SEO Description
   _has:
@@ -128,6 +129,7 @@ byline:
         prop: names
         _label: Names
         _has:
+          help: Press TAB or , after each name to save
           input: simple-list
           autocomplete:
             list: authors
@@ -226,7 +228,7 @@ lead:
     text: Article Lead
     height: 600px
   _componentList:
-    fuzzy: true # allows interactives, etc to add one-off components
+    fuzzy: false # allows interactives, etc to add one-off components
     include:
       - image
       - instagram-post

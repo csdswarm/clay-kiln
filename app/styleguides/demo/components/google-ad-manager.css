@@ -18,6 +18,11 @@
   margin-bottom: em(50);
 }
 .component--google-ad-manager {
+  &.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 100px;
+  }
   background: $alabaster;
   .google-ad-manager__slot {
     width: 100%;
@@ -47,6 +52,9 @@
     padding: em(20);
     margin: 0 auto;
   }
+}
+.google-ad-manager--billboard:first-of-type {
+  margin-bottom: 0;
 }
 .layout__bottom {
   .google-ad-manager--billboard,
