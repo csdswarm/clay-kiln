@@ -55,40 +55,14 @@
             {{/if}}
           </div>
         {{/each}}
-      {{/if}}{{!--
-      <div class="radiocom-nav__container--right">
-        <button class="account-btn" id="account-btn">
-          <div class="active default">{{{ read 'components/top-nav/media/log-in.svg' }}}</div>
-          <div class="inactive hover">{{{ read 'components/top-nav/media/log-in_hover.svg' }}}</div>
-        </button><button class="search-btn" id="search-btn">
-          <div class="active default">{{{ read 'components/top-nav/media/search.svg' }}}</div>
-          <div class="inactive hover">{{{ read 'components/top-nav/media/search_hover.svg' }}}</div>
-        </button>
-      </div> --}}
+      {{/if}}
       <div class="nav-drawer nav-drawer--mobile">
         {{#if headerLinks.length}}
           {{#each headerLinks}}
             <div class="nav-drawer__sub-nav nav-drawer__{{text}}">
-              {{!-- {{#if (compare text 'listen')}} --}}
-                <a href="{{url}}" target="_blank">
-                  <h2>{{text}}</h2>
-                </a>
-              {{!-- {{ else }}
+              <a href="{{url}}" target="_blank">
                 <h2>{{text}}</h2>
-                {{#if list.length}}
-                  <ul class="nav-drawer__sub-nav-links">
-                    {{#each list as |subnav|}}
-                      {{#each subnav.list as |link|}}
-                        <li>
-                          <a href="{{link.url}}">
-                            <h3 title="{{link.url}}">{{link.text}}</h3>
-                          </a>
-                        </li>
-                      {{/each}}
-                    {{/each}}
-                  </ul>
-                {{/if}}
-              {{/if}} --}}
+              </a>
             </div>
           {{/each}}
         {{/if}}
