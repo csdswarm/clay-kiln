@@ -26,7 +26,6 @@
   padding-bottom: em(20);
   position: relative;
   word-wrap: break-word;
-  margin-top: em(50);
 }
 .article__header {
   display: inline-block;
@@ -42,6 +41,7 @@
 .article__body {
   display: inline-block;
   width: 100%;
+
   .body__header {
     margin-bottom: em(50);
     .lead {

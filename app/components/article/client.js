@@ -16,7 +16,7 @@ Constructor.prototype = {
    * @param {object} articleBody
    */
   repositionRightRail: function (sidebar, articleBody) {
-  	sidebar.style.marginTop = articleBody.offsetTop + 50 + 'px'; // margin = 50
+  	sidebar.style.marginTop = articleBody.offsetTop + 'px';
   	sidebar.style.position = 'relative';
   	sidebar.style.visibility = 'visible';
   }

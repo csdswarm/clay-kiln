@@ -1,7 +1,4 @@
 {{#if initialLoad }}
-  <div class="more-content-feed__top-ad--mobile">
-    {{> google-ad-manager googleAdTop}}
-  </div>
   <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
            data-track-populate-from="{{ populateFrom }}"
            data-track-location="{{ locationOfContentFeed }}"

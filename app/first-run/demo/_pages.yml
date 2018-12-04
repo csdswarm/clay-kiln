@@ -19,18 +19,17 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/article/instances/new
-      - /_components/taboola/instances/default
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
-      - /_components/google-ad-manager/instances/mediumRectangleBottom
+      - /_components/google-ad-manager/instances/halfPageBottom
     layout: /_components/two-column-layout/instances/article
   section-front:
     head:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-    pageHeader:
+    layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/section-front/instances/new
@@ -40,7 +39,7 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-    pageHeader:
+    layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/homepage/instances/default
@@ -66,8 +65,9 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
-      - /_components/google-ad-manager/instances/leaderboardTop
       - /_components/tag-page-header/instances/new
     main:
       - /_components/tag-page/instances/new

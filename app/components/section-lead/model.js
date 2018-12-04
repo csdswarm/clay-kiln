@@ -47,6 +47,7 @@ module.exports.save = (ref, data, locals) => {
   }))
     .then((items) => {
       data.items = items;
+      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront;
 
       return data;
     });
@@ -97,6 +98,7 @@ module.exports.render = function (ref, data, locals) {
     .then(function (results) {
 
       data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront;
 
       return data;
     })
