@@ -11,7 +11,9 @@ _components:
         top:
           - _ref: /_components/top-nav/instances/default
         head: head
+        layoutHeader: layoutHeader
         pageHeader: pageHeader
+        fullWidthComponents:
         main: main
         secondary: secondary
         bottom:
