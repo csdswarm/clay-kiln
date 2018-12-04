@@ -111,7 +111,7 @@ function setAdsIDs(initialRequest = false) {
       slot.id = slot.classList[1].concat('-', index);
     });
   });
-  setAds();
+  setAds(initialRequest);
 }
 
 /**
