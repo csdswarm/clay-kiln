@@ -3,3 +3,4 @@ _components:
     adSize: ''
     adPosition: ''
     adLocation: ''
+    sticky: false

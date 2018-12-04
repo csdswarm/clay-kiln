@@ -1,3 +1,10 @@
+primaryStoryLabel:
+  _label: Primary Lede Label
+  _has:
+    input: text
+    validate:
+      max: 80
+    help: Label for the top lede story. Eg. 'Exclusive'
 items:
   _label: Items
   _has:
@@ -33,10 +40,16 @@ sectionFront:
   _has:
     input: static
     text: ${sectionTitle}
-
+filterBySection:
+  _label: Filter by Section Front
+  _subscribe: sectionFront
+  _has:
+    input: static
+    text: ${sectionTitle}
 _groups:
   settings:
     fields:
+    - primaryStoryLabel
     - items
     - sectionFront
     _placeholder:

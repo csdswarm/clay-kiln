@@ -42,7 +42,7 @@ function middleware(req, res, next) {
     promise = db.get(`${req.hostname}/_pages/tag@published`);
   } else {
     // Otherwise resolve the uri and page instance
-    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(db.get);
+    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
   }
   // Set locals
   fakeLocals(req, res, params);

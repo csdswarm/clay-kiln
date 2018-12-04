@@ -36,7 +36,10 @@
     <div id="vue-app-mount-point">
       <section class="layout layout--one-column">
         <section class="layout__top" data-editable="top">{{> component-list top }}</section>
-        <header class="layout__page-header" data-editable="pageHeader">{{> component-list pageHeader }}</header>
+        <header>
+          <div class="layout__layout-header" data-editable="layoutHeader">{{> component-list layoutHeader }}</div>
+          <div class="layout__page-header" data-editable="pageHeader">{{> component-list pageHeader }}</div>
+        </header>
         <section class="layout__content">
           <section class="content__main" data-editable="main">{{> component-list main }}</section>
           <section class="content__secondary" data-editable="secondary">{{> component-list secondary }}</section>

@@ -2,11 +2,10 @@
 @import "_global/colors";
 @import "_global/mixins";
 
-.component--trending {
+.component--trending-recirculation {
   width: 100%;
-  padding: em(60) em(20) em(80) em(20);
   max-width: em(980);
-  align-self: center;
+  margin: 0 auto;
 
   h2 {
     @mixin trending-recirculation-font1;
@@ -38,19 +37,29 @@
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
-    padding-top: em(40);
+    margin-top: em(30);
 
     @mixin medium-screen {
-      padding-bottom: em(10);
+      margin-bottom: em(10);
     }
   }
 
   .trending__item {
     order: 2;
-    padding-bottom: em(40);
+    margin-bottom: em(40);
+
+    &:hover {
+      .trending__item__image {
+        opacity: 0.9;
+      }
+      .trending__item__label {
+        text-decoration: underline;
+        text-decoration-color: $black;
+      }
+    }
 
     @mixin medium-screen {
-      padding-bottom: em(30);
+      margin-bottom: em(30);
       width: 100%;
     }
 
@@ -59,7 +68,7 @@
       height: em(26);
       position: absolute;
       background-color: $parisPurple;
-      padding: 0 em(6);
+      margin: 0 em(6);
       line-height: em(26);
 
       &:first-letter {
@@ -92,16 +101,24 @@
       display: flex;
       justify-content: center;
       flex-direction: column;
+
+      @mixin medium-screen {
+        width: 50%;
+      }
+
+      @mixin medium-small-screen {
+        width: 100%;
+      }
     }
 
     .trending__item__image {
       width: em(widthOnGrid(4,3));
       height: em(168);
-      margin-bottom: em(15);
+      margin-bottom: em(10);
       object-fit: cover;
 
       @mixin medium-screen {
-        width: em(widthOnGrid(3,2,medium-screen));
+        width: 50%;
         height: em(193);
         flex: none;
         margin-right: em(20);
@@ -111,9 +128,10 @@
         width: 100%;
         max-width: em(widthOnGrid(4,3,medium-small-screen));
         height: em(248);
+        margin-right: 0;
+        margin-bottom: 0;
       }
       @mixin small-screen {
-        width: 100%;
         max-width: em(widthOnGrid(4,3,small-screen));
         height: em(180);
       }

@@ -63,17 +63,16 @@ export default {
         })
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
         return nextSpaPayloadResult.data
-      }
-      catch (e) {
+      } catch (e) {
         const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
         return nextSpaPayloadResult.data
       }
     },
     /**
-     * 
+     *
      * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
-     * 
+     *
      * @param {object} to - A Vue Router "to" object.
      * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
      */
@@ -81,12 +80,22 @@ export default {
       const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
       const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
       const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
+      const nextArticleData = queryPayload.findComponent(spaPayload.main, 'article')
+      const nextHomepageData = queryPayload.findComponent(spaPayload.main, 'homepage')
+      const nextSectionFrontPageData = queryPayload.findComponent(spaPayload.main, 'section-front')
+      const nextTagPageData = queryPayload.findComponent(spaPayload.pageHeader, 'tag-page-header')
+      const nextStationDetailPageData = queryPayload.findComponent(spaPayload.main, 'station-detail')
 
       return {
         toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
         toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
         toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
-        toPath: to.path
+        toPath: to.path,
+        toArticlePage: nextArticleData ? nextArticleData : {},
+        toHomepage: nextHomepageData ? nextHomepageData : {},
+        toSectionFrontPage: nextSectionFrontPageData ? nextSectionFrontPageData : {},
+        toTagPage: nextTagPageData ? nextTagPageData : {},
+        toStationDetailPage: nextStationDetailPageData ? nextStationDetailPageData : {}
       }
     }
   },
@@ -97,6 +106,9 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
+      // Start loading animation.
+      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+
       // Get SPA payload data for next path.
       const spaPayload = await this.getNextSpaPayload(window.location.hostname + to.path)
 
@@ -109,6 +121,9 @@ export default {
       // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
       metaManager.updateExternalTags(this.$store.state.spaPayload)
 
+      // Stop loading animation.
+      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+
       // Build pageView event data
       const pageViewEventData = this.buildPageViewEventData(to, this.$store.state.spaPayload)
 
@@ -116,6 +131,7 @@ export default {
       let event = new CustomEvent(`pageView`, {
         detail: pageViewEventData
       })
+
       document.dispatchEvent(event)
     }
   }
