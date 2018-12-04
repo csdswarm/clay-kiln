@@ -7,7 +7,7 @@
       {{ set 'hypenatedTagRubric' (replace (urlencode (replace (trim (lowercase rubric)) ' ' '-')) "%2F" "/") }}
       <span class="breadcrumb__separator">/</span>
       <a class="breadcrumb__link"
-         href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tags/{{ hypenatedTagRubric }}{{/if}}/">{{ rubric }}</a>
+         href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tag/{{ hypenatedTagRubric }}{{/if}}/">{{ rubric }}</a>
     {{/if}}
   </nav>
   <header class="article__header">
@@ -117,7 +117,7 @@
               <p class="item-data">{{{ default teaser empty }}}</p>
             </li>
             <li class="item">
-              <h4 class="item-title">SEO Headline</h4>
+              <h4 class="item-title required">SEO Headline</h4>
               <p class="item-data">{{{ default seoHeadline empty }}}</p>
             </li>
             <li class="item">

@@ -10,6 +10,4 @@ _components:
     locationOfContentFeed: ''
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/mediumRectangleBottom
-    googleAdTop:
-      _ref: /_components/google-ad-manager/instances/superLeaderboardTop
     introComponents: []

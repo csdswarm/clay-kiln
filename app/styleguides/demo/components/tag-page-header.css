@@ -9,9 +9,9 @@ $medium-screen-nav-width: em(728);
 .component--tag-page-header {
   width: 100%;
   height: auto;
-  margin: calc(em(22) + em(50)) 0;
+  margin: calc(em(35) / 2 + em(50)) 0;
   @mixin medium-small-screen {
-    margin: calc(em(22) + em(30)) 0;
+    margin: calc(em(35) / 2 + em(30)) 0;
   }
   .tag-page-header__tag {
     height: 100%;
@@ -33,7 +33,7 @@ $medium-screen-nav-width: em(728);
       border-bottom: em(1) solid $parisPurple;
     }
     h1 {
-      @mixin tag-page-font2;
+      @mixin tag-page-header-font1;
       text-transform: capitalize;
       position: absolute;
       top: calc(50% - em(22,35));
@@ -56,7 +56,6 @@ $medium-screen-nav-width: em(728);
       display: none;
     }
     h1 {
-      @mixin tag-page-font1;
       position: absolute;
       top: initial;
       bottom: em(30,35);

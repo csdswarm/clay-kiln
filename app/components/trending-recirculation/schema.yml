@@ -1,5 +1,5 @@
 _description: |
-  A list of one or more trending stories
+  A list of 6 trending stories
 
 items:
   _label: Items
@@ -15,7 +15,7 @@ items:
     props:
     -
       prop: url
-      _label: URL
+      _label: URL -- Requires 6 Entries
       _has:
         input: text
         type: url
@@ -36,9 +36,10 @@ items:
 
 _groups:
   trendingItems:
-    fields:
-    - items
+    _label: hello
     _placeholder:
       ifEmpty: items.url and fill
       height: 100px
-      text: Trending Story(s)
+      text: Trending Stories -- Requires 6 Entries
+    fields:
+      - items

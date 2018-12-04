@@ -13,8 +13,8 @@
 }
 
 .layout__content {
-  margin: 0 auto;
   padding: em(30) em(30) 0 em(30);
+  margin: 0 auto;
   $contentPadding: em(60);
   .content__main,
   .content__secondary {

@@ -1,7 +1,13 @@
 <div data-uri="{{ default _ref _self }}" class="component component--omny" data-editable="audio">
   {{#if clipURL}}
     {{#if @root.locals.edit}}
-      {{clipSrc}}
+      <div class="kiln-inactive-placeholder">
+        <div class="placeholder-label">
+          <span class="placeholder-text">
+            Omny Embed<br>{{clipSrc}}
+          </span>
+        </div>
+      </div>
     {{else}}
       {{#if (compare embedSize 'wide-simple') }}
         <iframe src="{{{ clipSrc }}}/embed?style=artwork" frameborder="0" width="100%" height="180"></iframe>
