@@ -5,6 +5,7 @@ require('intersection-observer');
 let adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   refreshCount = 0,
+  googleAdLyticsLoaded = true,
   allAdSlots = {};
 const doubleclickPrefix = '21674100491',
   doubleclickBannerTag = 'NTL.RADIO',
@@ -48,7 +49,8 @@ adMapping.setupSizeMapping();
 
 // mount listener for vue
 document.addEventListener('google-ad-manager-mount', function () {
-  if (window.googleAdLytics) {
+  if (googleAdLyticsLoaded) {
+    googletag.pubads().updateCorrelator(); // Force correlator update on new pages
     // code to run when vue mounts/updates
     setAdsIDs();
   }
@@ -56,7 +58,7 @@ document.addEventListener('google-ad-manager-mount', function () {
 
 // listener to ensure lytics has been setup in GTM
 document.addEventListener('gtm-lytics-setup', function () {
-  window.googleAdLytics = true;
+  googleAdLyticsLoaded = true;
   setAdsIDs();
 }, false);
 
@@ -75,8 +77,6 @@ document.addEventListener('google-ad-manager-dismount', function () {
  * create and add unique ids to each ad slot on page
  */
 function setAdsIDs() {
-  googletag.pubads().updateCorrelator(); // Force correlator update on new pages
-
   Object.keys(adSizes).forEach((adSize) => {
     let adSlots = document.getElementsByClassName(`google-ad-manager__slot--${adSize}`);
 
