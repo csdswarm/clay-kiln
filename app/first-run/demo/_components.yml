@@ -68,10 +68,10 @@ _components:
                     url: "/tag/Television"
                   -
                     text: "Celebrity Gossip"
-                    url: "/tag/Celebrity%20Gossip"
+                    url: "/tag/Celebrity-Gossip"
                   -
                     text: "Viral Videos"
-                    url: "/tag/Viral%20Videos"
+                    url: "/tag/Viral-Videos"
               -
                 text: "music"
                 url: "/tag/music"
@@ -93,7 +93,7 @@ _components:
                     url: "/tag/Rock"
                   -
                     text: "Classic Rock"
-                    url: "/tag/Classic%20Rock"
+                    url: "/tag/Classic-Rock"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory"
@@ -107,13 +107,13 @@ _components:
                 list:
                   -
                     text: "Local News"
-                    url: "/tag/Local%20News"
+                    url: "/tag/Local-News"
                   -
                     text: "National News"
-                    url: "/tag/National%20News"
+                    url: "/tag/National-News"
                   -
                     text: "World News"
-                    url: "/tag/World%20News"
+                    url: "/tag/World-News"
                   -
                     text: "Politics"
                     url: "/tag/Politics"
@@ -142,7 +142,7 @@ _components:
                     url: "/tag/NHL"
                   -
                     text: "College Sports"
-                    url: "/tag/College%20Sports"
+                    url: "/tag/College-Sports"
           -
             text: "podcasts"
             url: "/audio"
