@@ -130,16 +130,16 @@ _components:
                 list:
                   -
                     text: "national"
-                    url: "/tag/local-news"
-                  -
-                    text: "politics"
                     url: "/tag/national-news"
                   -
+                    text: "politics"
+                    url: "/tag/politics"
+                  -
                     text: "watercooler"
-                    url: "/tag/world-news"
+                    url: "/tag/watercooler"
                   -
                     text: "heartwarming"
-                    url: "/tag/politics"
+                    url: "/tag/heartwarming"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/newstalk"
