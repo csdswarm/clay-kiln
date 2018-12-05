@@ -61,22 +61,6 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "movies"
-                    url: "/tag/movies"
-                  -
-                    text: "television"
-                    url: "/tag/television"
-                  -
-                    text: "celebrity gossip"
-                    url: "/tag/celebrity-gossip"
-                  -
-                    text: "viral videos"
-                    url: "/tag/viral-videos"
-              -
-                text: "music"
-                url: "/tag/music"
-                list:
-                  -
                     text: "pop"
                     url: "/tag/pop"
                   -
@@ -94,9 +78,48 @@ _components:
                   -
                     text: "classic rock"
                     url: "/tag/classic-rock"
+                  -
+                    text: "movies"
+                    url: "/tag/movies"
+                  -
+                    text: "television"
+                    url: "/tag/television"
+                  -
+                    text: "celebrity gossip"
+                    url: "/tag/celebrity-gossip"
+                  -
+                    text: "viral videos"
+                    url: "/tag/viral-videos"
+              -
+                text: "local stations"
+                list:
+                  -
+                    text: "pop"
+                    url: "https://player.radio.com/station-directory/pop"
+                  -
+                    text: "rock"
+                    url: "https://player.radio.com/station-directory/rock"
+                  -
+                    text: "holiday"
+                    url: "https://player.radio.com/station-directory/holiday"
+                  -
+                    text: "country"
+                    url: "https://player.radio.com/station-directory/country"
+                  -
+                    text: "classic hits"
+                    url: "https://player.radio.com/station-directory/classic hits"
+                  -
+                    text: "urban"
+                    url: "https://player.radio.com/station-directory/urban"
+                  -
+                    text: "alternative"
+                    url: "https://player.radio.com/station-directory/alternative"
+                  -
+                    text: "all"
+                    url: "https://player.radio.com/station-directory"
               -
                 text: "find a station"
-                url: "https://player.radio.com/station-directory"
+                url: "https://player.radio.com/station-directory/music"
           -
             text: "news"
             url: "/news"
@@ -106,20 +129,20 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "local news"
+                    text: "national"
                     url: "/tag/local-news"
                   -
-                    text: "national news"
+                    text: "politics"
                     url: "/tag/national-news"
                   -
-                    text: "world news"
+                    text: "watercooler"
                     url: "/tag/world-news"
                   -
-                    text: "politics"
+                    text: "heartwarming"
                     url: "/tag/politics"
-                  -
-                    text: "opinions"
-                    url: "/tag/opinions"
+              -
+                text: "find a station"
+                url: "https://player.radio.com/station-directory/newstalk"
           -
             text: "sports"
             url: "/sports"
@@ -139,10 +162,13 @@ _components:
                     url: "/tag/MLB"
                   -
                     text: "NHL"
-                    url: "/tag/NHL"
+                    url: "/tag/nhl-hockey"
                   -
                     text: "college sports"
                     url: "/tag/college-sports"
+              -
+                text: "find a station"
+                url: "https://player.radio.com/station-directory/sports"
           -
             text: "podcasts"
             url: "/audio"
@@ -153,7 +179,7 @@ _components:
             drawer: true
             list:
               -
-                text: "categories"
+                text: "find us"
                 list:
                   -
                     text: "about"
