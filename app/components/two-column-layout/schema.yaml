@@ -16,6 +16,19 @@ head:
       - meta-description
       - meta-image
       - meta-url
+
+headLayout:
+  _componentList:
+    include:
+      - favicon
+      - meta-title
+      - meta-url
+      - meta-description
+      - meta-image
+      - meta-icons
+      - meta-url
+      - google-fonts
+
 top:
   _componentList:
     include:
