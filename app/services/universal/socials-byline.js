@@ -101,7 +101,6 @@ function getSocialHtmlWithoutPreference(authorData) {
  * @return {String}
  */
 function createAuthorHtml(authorData, options) {
-  var byline = require('./byline');
   var nameOrText = authorData.name || authorData.text,
     link = nameOrText.replace(/\s/g, '-').replace(/%2F/g, '/').toLowerCase();
 
