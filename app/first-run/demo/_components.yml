@@ -133,7 +133,7 @@ _components:
                     url: "/tag/national-news"
                   -
                     text: "politics"
-                    url: "/tag/politics"
+                    url: "/tag/government-and-politics"
                   -
                     text: "watercooler"
                     url: "/tag/watercooler"
