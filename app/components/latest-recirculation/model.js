@@ -70,7 +70,7 @@ module.exports.render = function (ref, data, locals) {
       }
     }
 
-    queryService.withinThisSiteAndCrossposts(query, locals.site);
+    queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
     if (data.populateBy == 'tag') {
       if (!data.tag || !locals) {
