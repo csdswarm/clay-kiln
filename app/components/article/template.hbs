@@ -73,7 +73,7 @@
               <span class="timestamp__update">Updated on </span>
             {{/if}}
             {{#if (isPublished24HrsAgo date) }}
-              <span class="timestamp__date timestamp__date--recent">{{{ hrsOnlyTimestamp date }}}</span>
+              <span class="timestamp__date timestamp__date--recent">{{{ timeAgoTimestamp date }}}</span>
             {{else}}
               <span class="timestamp__date timestamp__date--large">{{ formatLocalDate date 'MMMM D, YYYY' }}</span>
               <span class="timestamp__date timestamp__date--small">{{ formatLocalDate date 'MM/DD/YYYY' }}</span>

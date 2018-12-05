@@ -5,7 +5,9 @@ require('intersection-observer');
 let adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   refreshCount = 0,
-  allAdSlots = {};
+  allAdSlots = {},
+  initialPageAdSlots = [],
+  numRightRail = 1;
 const doubleclickPrefix = '21674100491',
   doubleclickBannerTag = 'NTL.RADIO',
   rightRailAdSizes = ['medium-rectangle', 'half-page'],
@@ -13,8 +15,6 @@ const doubleclickPrefix = '21674100491',
   doubleclickPageTypeTagSection = 'sectionfront',
   doubleclickPageTypeTagTag = 'tag',
   adRefreshInterval = '120000', // Time in milliseconds for ad refresh
-  adSlots = document.getElementsByClassName('google-ad-manager__slot'),
-  targetingMarket = require('../../services/client/market'),
   targetingNationalRadioStation = 'natlrc',
   targetingGenre = 'aaa',
   targetingCategory = 'music',
@@ -45,21 +45,54 @@ function lazyLoadAd(changes, observer) {
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
 
-// mount listener for vue
+// Set up ads when navigating in SPA
 document.addEventListener('google-ad-manager-mount', function () {
   // code to run when vue mounts/updates
-  googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+  if (googletag.pubadsReady) { // Only do this if the service was created
+    googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+  }
   setAdsIDs();
 });
 
+// Reset data when navigating in SPA
 document.addEventListener('google-ad-manager-dismount', function () {
-  allAdSlots = {};
+  // Reset slot arrays/objects
+  allAdSlots = {},
+  initialPageAdSlots = [],
+  numRightRail = 1;
+
   googletag.cmd.push(function () {
     googletag.destroySlots();
   });
+});
 
-  // Remove event listeners so they don't double up
-  googletag.pubads().removeEventListener('slotRenderEnded');
+// Create listeners inside of the context of having googletag.pubads()
+googletag.cmd.push(() => {
+  // Handle right rail refresh via DFP event trigger
+  googletag.pubads().addEventListener('impressionViewable', event => {
+    const {slot} = event,
+      rightRail = slot.getTargeting('rightRail');
+
+    if (rightRail.length) {
+      slot.setTargeting('refresh', (refreshCount++).toString());
+      setTimeout(function () {
+        googletag.pubads().refresh([slot]);
+      }, adRefreshInterval);
+    }
+  });
+
+  // Handle collapsing empty div manually as DFP collapseEmptyDiv doesn't work when lazy loading
+  googletag.pubads().addEventListener('slotRenderEnded', event => {
+    let id = event.slot.getSlotElementId(),
+      adSlot = document.getElementById(id);
+
+    if (event.isEmpty) {
+      adSlot.parentElement.style.display = 'none';
+    } else {
+      // Unhide parent incase this was a refresh after an empty response
+      adSlot.parentElement.style.display = 'block';
+    }
+  });
 });
 
 /**
@@ -133,14 +166,17 @@ function setAds() {
     default:
   }
 
-  googletag.cmd.push(async function () {
+  googletag.cmd.push(function () {
     const queryParams = urlParse(window.location, true).query;
+    let adSlots = document.getElementsByClassName('component--google-ad-manager');
 
-    for (let ad of adSlots) {
-      const adSize = ad.getAttribute('data-adSize'),
+    for (let adSlot of adSlots) {
+      const ad = adSlot.querySelector('.google-ad-manager__slot'),
+        adSize = adSlot.getAttribute('data-ad-size'),
+        adPosition = adSlot.getAttribute('data-ad-position'),
+        adLocation = adSlot.getAttribute('data-ad-location'),
         pubAds = googletag.pubads();
-      let marketName = await targetingMarket.getName(),
-        slot,
+      let slot,
         sizeMapping = adMapping.sizeMapping[adSize];
 
       if (adSize === 'outOfPage') {
@@ -156,24 +192,22 @@ function setAds() {
           .defineSizeMapping(sizeMapping);
       }
 
-      pubAds.setCentering(true);
       slot
-        .addService(pubAds);
-
-      if (rightRailAdSizes.includes(adSize)) {
-        slot.setTargeting('rightRail', true);
-      }
-
-      slot.setTargeting('refresh', refreshCount.toString())
-        .setTargeting('market', marketName.replace(' ','').split(',')[0].toLowerCase())
+        .setTargeting('refresh', refreshCount.toString())
         .setTargeting('station', targetingNationalRadioStation)
         .setTargeting('genre', targetingGenre)
         .setTargeting('cat', targetingCategory)
         .setTargeting('tag', targetingTags)
         .setTargeting('pid', targetingPageId)
-        .setTargeting('pos', ad.parentNode.getAttribute('data-ad-position'))
-        .setTargeting('loc', ad.parentNode.getAttribute('data-ad-location'))
-        .setTargeting('adtest', queryParams.adtest || '');
+        .setTargeting('pos', adPosition)
+        .setTargeting('loc', adLocation)
+        .setTargeting('adtest', queryParams.adtest || '')
+        .addService(pubAds);
+
+      if (rightRailAdSizes.includes(adSize)) {
+        slot.setTargeting('rightRail', true);
+        slot.setTargeting('pos', adPosition + (numRightRail++).toString());
+      }
 
       if (targetingAuthors.length) {
         slot.setTargeting('author', targetingAuthors);
@@ -184,40 +218,17 @@ function setAds() {
 
       googletag.display(ad.id);
 
-      if (adSize === 'outOfPage') {
-        // OOP slots should refresh on page laod
-        googletag.pubads().refresh([slot]);
+      // 'atf' ads need to be requested together on page load, do not observe
+      if (adLocation === 'atf') {
+        initialPageAdSlots.push(slot);
       } else {
         // Attach the observer for lazy loading
         observer.observe(ad);
       }
     }
-  });
 
-  // Handle right rail refresh
-  googletag.pubads().addEventListener('impressionViewable', event => {
-    const { slot } = event,
-      rightRail = slot.getTargeting('rightRail');
-
-    if (rightRail.length) {
-      slot.setTargeting('refresh', (refreshCount++).toString());
-      setTimeout(function () {
-        googletag.pubads().refresh([slot]);
-      }, adRefreshInterval);
-    }
-  });
-
-  // Handle collapsing ads
-  googletag.pubads().addEventListener('slotRenderEnded', event => {
-    let id = event.slot.getSlotElementId(),
-      adSlot = document.getElementById(id);
-
-    if (event.isEmpty) {
-      adSlot.parentElement.style.display = 'none';
-    } else {
-      // Unhide parent incase this was a refresh after an empty response
-      adSlot.parentElement.style.display = 'block';
-    }
+    // Refresh all initial page slots
+    googletag.pubads().refresh(initialPageAdSlots);
   });
 }
 

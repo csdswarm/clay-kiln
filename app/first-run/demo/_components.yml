@@ -366,11 +366,11 @@ _components:
         adLocation: btf
       halfPageTop:
         adSize: half-page
-        adPosition: top
+        adPosition: rec
         adLocation: atf
       halfPageBottom:
         adSize: half-page
-        adPosition: bottom
+        adPosition: rec
         adLocation: btf
         sticky: true
       mediumRectangleTop:
@@ -382,8 +382,10 @@ _components:
         adPosition: rec
         adLocation: btf
         sticky: true
-      mobile:
-        adSize: mobile
+      mobileAdhesion:
+        adSize: mobile-adhesion
+        adPosition: adhesion
+        adLocation: atf
       logoSponsorship:
         adSize: logo-sponsorship
 
@@ -469,7 +471,7 @@ _components:
                 newtab: true
               -
                 text: "contact us"
-                url: "https://www.radio.com/contact-us"
+                url: "https://support.radio.com/hc/en-us"
                 newtab: true
           -
             text: "legal"
