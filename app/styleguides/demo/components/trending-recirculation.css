@@ -32,10 +32,6 @@
     }
   }
 
-  @mixin medium-screen {
-    min-width: initial;
-  }
-
   .trending__data {
     display: flex;
     flex-direction: row;
