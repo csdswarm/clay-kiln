@@ -46,6 +46,11 @@ function lazyLoadAd(changes, observer) {
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
 
+// listener to ensure lytics has been setup in GTM
+document.addEventListener('gtm-lytics-setup', function () {
+  setAdsIDs(true);
+}, false);
+
 // Set up ads when navigating in SPA
 document.addEventListener('google-ad-manager-mount', function () {
   if (initialAdRequestComplete) {
@@ -53,7 +58,7 @@ document.addEventListener('google-ad-manager-mount', function () {
     if (googletag.pubadsReady) { // Only do this if the service was created
       googletag.pubads().updateCorrelator(); // Force correlator update on new pages
     }
-    setAdsIDs(true);
+    setAdsIDs();
   }
 });
 
