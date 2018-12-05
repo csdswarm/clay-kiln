@@ -465,7 +465,7 @@ _components:
                 newtab: true
               -
                 text: "contact us"
-                url: "https://www.radio.com/contact-us"
+                url: "https://support.radio.com/hc/en-us"
                 newtab: true
           -
             text: "legal"

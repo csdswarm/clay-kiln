@@ -69,6 +69,12 @@
 
   &copy-link {
     background-image: url("/media/components/share/copy-link.svg");
+    &:hover,
+    &:active {
+      background-color: $dustyGray;
+      border-color: $dustyGray;
+      background-image: url("/media/components/share/copy-link--hover.svg");
+    }
   }
 }
 

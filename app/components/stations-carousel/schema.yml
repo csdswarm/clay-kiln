@@ -11,7 +11,7 @@ sectionFront:
   _subscribe: sectionFront
   _has:
     input: static
-    text: ${sectionTitle}
+    text: ${sectionFront}
 
 sectionFrontManual:
   _label: Section Front Category
