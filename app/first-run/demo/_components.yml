@@ -29,9 +29,8 @@ _components:
 
   favicon:
     instances:
-      general:
-        faviconImg: ''
-        appleTouchIconImg: ''
+      default:
+        allow: true
 
   paragraph:
     instances:
