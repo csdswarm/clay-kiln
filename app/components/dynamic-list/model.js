@@ -25,7 +25,7 @@ function buildAndExecuteQuery(routeParamValue, data, locals) {
 
   query.body = _clone(body); // lose the reference
 
-  queryService.withinThisSiteAndCrossposts(query, locals.site);
+  queryService.onlyWithinThisSite(query, locals.site);
 
   if (routeParamValue) {
     queryService.addShould(query, { match: { 'tags.normalized': routeParamValue } });

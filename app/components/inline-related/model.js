@@ -75,7 +75,7 @@ module.exports.render = function (ref, data, locals) {
   // Clean based on tags and grab first as we only ever pass 1
   data.tag = tag.clean([{text: data.tag}])[0].text || '';
 
-  queryService.withinThisSiteAndCrossposts(query, locals.site);
+  queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   queryService.addMinimumShould(query, 1);
