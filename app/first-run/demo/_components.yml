@@ -61,68 +61,39 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Movies"
+                    url: "/tag/Movies"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Television"
+                    url: "/tag/Television"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Celebrity Gossip"
+                    url: "/tag/Celebrity%20Gossip"
                   -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Viral Videos"
+                    url: "/tag/Viral%20Videos"
               -
-                text: "local stations"
+                text: "music"
+                url: "/tag/music"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Pop"
+                    url: "/tag/pop"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Alternative"
+                    url: "/tag/Alternative"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Country"
+                    url: "/tag/Country"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Urban"
+                    url: "/tag/Urban"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Rock"
+                    url: "/tag/Rock"
                   -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Classic Rock"
+                    url: "/tag/Classic%20Rock"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory"
@@ -135,14 +106,20 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Local News"
+                    url: "/tag/Local%20News"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "National News"
+                    url: "/tag/National%20News"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "World News"
+                    url: "/tag/World%20News"
+                  -
+                    text: "Politics"
+                    url: "/tag/Politics"
+                  -
+                    text: "Opinions"
+                    url: "/tag/Opinions"
           -
             text: "sports"
             url: "/sports"
@@ -152,31 +129,25 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "NFL"
+                    url: "/tag/NFL"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "NBA"
+                    url: "/tag/NBA"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "MLB"
+                    url: "/tag/MLB"
+                  -
+                    text: "NHL"
+                    url: "/tag/NHL"
+                  -
+                    text: "College Sports"
+                    url: "/tag/College%20Sports"
           -
             text: "podcasts"
-            url: "/podcasts"
-            drawer: true
-            list:
-              -
-                text: "categories"
-                list:
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
+            url: "/audio"
+            drawer: false
+            list: []
           -
             text: "more"
             drawer: true
@@ -185,14 +156,26 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "About"
+                    url: "/about"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Apps"
+                    url: "/apps"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "Sonos"
+                    url: "/sonos"
+                  -
+                    text: "Roku"
+                    url: "/roku"
+                  -
+                    text: "Alexa"
+                    url: "/alexa"
+                  -
+                    text: "Google Home"
+                    url: "/googlehome"
+                  -
+                    text: "Fire TV"
+                    url: "/firetv"
 
   circulation:
     instances:
