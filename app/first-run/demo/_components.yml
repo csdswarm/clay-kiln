@@ -771,7 +771,6 @@ _components:
   author-page:
     instances:
       new:
-        author: ''
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/author-page
 

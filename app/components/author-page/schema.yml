@@ -3,12 +3,6 @@ _description: |
 
 _confirmRemoval: true
 
-author:
-  _label: author
-  _publish: author
-  _has:
-    input: text
-
 moreContentFeed:
   _component:
     include:

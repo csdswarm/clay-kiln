@@ -55,5 +55,27 @@ function complexByline(opts) {
   }, []), ' ');
 }
 
+/**
+ * Generate slug from author name
+ *
+ * @param author
+ * @returns {string}
+ */
+function authorNameToSlug(author) {
+  return author.replace(' ', '-').replace('%2F', '/').toLowerCase();
+}
+
+/**
+ * Generate author name from slug
+ *
+ * @param author
+ * @returns {string}
+ */
+function slugToAuthorName(author) {
+  return author.replace(/-/g, ' ').replace(/\//g,'');
+}
+
 module.exports = complexByline;
 module.exports.byline = formatSimpleByline;
+module.exports.authorNameToSlug = authorNameToSlug;
+module.exports.slugToAuthorName = slugToAuthorName;

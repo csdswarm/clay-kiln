@@ -1,12 +1,8 @@
 'use strict';
 
-module.exports.render = (ref, data, locals) => {
-  // If we're publishing for a dynamic page, switch out -'s with spaces
-  let author = '';
+const byline = require('../../services/universal/byline');
 
-  if (locals && locals.params) {
-    author = locals.params.author || locals.params.dynamicAuthor;
-  }
-  data.author = !data.tag && locals && author ? author.replace(/-/g, ' ').replace(/\//g,'') : data.author;
+module.exports.render = (ref, data, locals) => {
+  data.author = byline.slugToAuthorName(locals.params.dynamicAuthor);
   return data;
 };

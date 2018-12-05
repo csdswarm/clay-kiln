@@ -1,6 +1,7 @@
 'use strict';
 
 const socialSvgs = require('./social-svgs'),
+  byline = require('./byline'),
   twitterHtml = (authorData) => `<a href="http://twitter.com/${authorData.twitter}" target='_blank' class="author-socials"><span class="author-socials-icon twitter">${socialSvgs.TWITTER}</span><span>@${authorData.twitter}</span></a>`,
   fbHtml = (authorData) => `<a href="http://facebook.com/${authorData.facebook}" target='_blank' class="author-socials"><span class="author-socials-icon facebook">${socialSvgs.FACEBOOK}</span><span>@${authorData.name.toLowerCase().replace(/\s/g, '')}</span></a>`,
   igHtml = (authorData) => `<a href="http://instagram.com/${authorData.instagram}" target='_blank' class="author-socials"><span class="author-socials-icon instagram">${socialSvgs.INSTAGRAM}</span><span>@${authorData.instagram}</span></a>`;
@@ -103,7 +104,7 @@ function getSocialHtmlWithoutPreference(authorData) {
  */
 function createAuthorHtml(authorData, options) {
   var nameOrText = authorData.name || authorData.text,
-    link = nameOrText.replace(' ', '-').replace('%2F', '/').toLowerCase();
+    link = byline.authorNameToSlug(nameOrText);
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
   return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="author" data-author="${nameOrText}">` +
