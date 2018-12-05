@@ -61,39 +61,39 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "Movies"
-                    url: "/tag/Movies"
+                    text: "movies"
+                    url: "/tag/movies"
                   -
-                    text: "Television"
-                    url: "/tag/Television"
+                    text: "television"
+                    url: "/tag/television"
                   -
-                    text: "Celebrity Gossip"
-                    url: "/tag/Celebrity-Gossip"
+                    text: "celebrity gossip"
+                    url: "/tag/celebrity-gossip"
                   -
-                    text: "Viral Videos"
-                    url: "/tag/Viral-Videos"
+                    text: "viral videos"
+                    url: "/tag/viral-videos"
               -
                 text: "music"
                 url: "/tag/music"
                 list:
                   -
-                    text: "Pop"
+                    text: "pop"
                     url: "/tag/pop"
                   -
-                    text: "Alternative"
-                    url: "/tag/Alternative"
+                    text: "alternative"
+                    url: "/tag/alternative"
                   -
-                    text: "Country"
-                    url: "/tag/Country"
+                    text: "country"
+                    url: "/tag/country"
                   -
-                    text: "Urban"
-                    url: "/tag/Urban"
+                    text: "urban"
+                    url: "/tag/urban"
                   -
-                    text: "Rock"
-                    url: "/tag/Rock"
+                    text: "rock"
+                    url: "/tag/rock"
                   -
-                    text: "Classic Rock"
-                    url: "/tag/Classic-Rock"
+                    text: "classic rock"
+                    url: "/tag/classic-rock"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory"
@@ -106,20 +106,20 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "Local News"
-                    url: "/tag/Local-News"
+                    text: "local news"
+                    url: "/tag/local-news"
                   -
-                    text: "National News"
-                    url: "/tag/National-News"
+                    text: "national news"
+                    url: "/tag/national-news"
                   -
-                    text: "World News"
-                    url: "/tag/World-News"
+                    text: "world news"
+                    url: "/tag/world-news"
                   -
-                    text: "Politics"
-                    url: "/tag/Politics"
+                    text: "politics"
+                    url: "/tag/politics"
                   -
-                    text: "Opinions"
-                    url: "/tag/Opinions"
+                    text: "opinions"
+                    url: "/tag/opinions"
           -
             text: "sports"
             url: "/sports"
@@ -141,8 +141,8 @@ _components:
                     text: "NHL"
                     url: "/tag/NHL"
                   -
-                    text: "College Sports"
-                    url: "/tag/College-Sports"
+                    text: "college sports"
+                    url: "/tag/college-sports"
           -
             text: "podcasts"
             url: "/audio"
@@ -156,25 +156,25 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "About"
+                    text: "about"
                     url: "/about"
                   -
-                    text: "Apps"
+                    text: "apps"
                     url: "/apps"
                   -
-                    text: "Sonos"
+                    text: "sonos"
                     url: "/sonos"
                   -
-                    text: "Roku"
+                    text: "roku"
                     url: "/roku"
                   -
-                    text: "Alexa"
+                    text: "alexa"
                     url: "/alexa"
                   -
-                    text: "Google Home"
+                    text: "google home"
                     url: "/googlehome"
                   -
-                    text: "Fire TV"
+                    text: "fire TV"
                     url: "/firetv"
 
   circulation:
