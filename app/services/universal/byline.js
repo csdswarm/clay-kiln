@@ -62,7 +62,7 @@ function complexByline(opts) {
  * @returns {string}
  */
 function authorNameToSlug(author) {
-  return author.replace(' ', '-').replace('%2F', '/').toLowerCase();
+  return author.replace(/\s/g, '-').replace(/%2F/g, '/').toLowerCase();
 }
 
 /**
