@@ -65,7 +65,7 @@ module.exports.render = function (ref, data, locals) {
 
   data.initialLoad = false;
 
-  queryService.withinThisSiteAndCrossposts(query, locals.site);
+  queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (locals && locals.page) {
     /* after the first 10 items, show N more at a time (pageLength defaults to 5)

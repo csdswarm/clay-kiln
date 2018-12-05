@@ -70,7 +70,7 @@ module.exports.render = function (ref, data, locals) {
     return data;
   }
 
-  queryService.withinThisSiteAndCrossposts(query, locals.site);
+  queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (data.filterBySection) {
     queryService.addShould(query, { match: { articleType: data.sectionFront }});
