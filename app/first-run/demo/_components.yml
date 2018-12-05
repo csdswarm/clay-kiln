@@ -61,71 +61,65 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "pop"
+                    url: "/tag/pop"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "alternative"
+                    url: "/tag/alternative"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "country"
+                    url: "/tag/country"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "urban"
+                    url: "/tag/urban"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "rock"
+                    url: "/tag/rock"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "classic rock"
+                    url: "/tag/classic-rock"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "movies"
+                    url: "/tag/movies"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "television"
+                    url: "/tag/television"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "celebrity gossip"
+                    url: "/tag/celebrity-gossip"
                   -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
+                    text: "viral videos"
+                    url: "/tag/viral-videos"
               -
                 text: "local stations"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "pop"
+                    url: "https://player.radio.com/station-directory/pop"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "rock"
+                    url: "https://player.radio.com/station-directory/rock"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "holiday"
+                    url: "https://player.radio.com/station-directory/holiday"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "country"
+                    url: "https://player.radio.com/station-directory/country"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "classic hits"
+                    url: "https://player.radio.com/station-directory/classic hits"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "urban"
+                    url: "https://player.radio.com/station-directory/urban"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "alternative"
+                    url: "https://player.radio.com/station-directory/alternative"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "all"
+                    url: "https://player.radio.com/station-directory"
               -
                 text: "find a station"
-                url: "https://player.radio.com/station-directory"
+                url: "https://player.radio.com/station-directory/music"
           -
             text: "news"
             url: "/news"
@@ -135,14 +129,20 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "national"
+                    url: "/tag/national-news"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "politics"
+                    url: "/tag/government-and-politics"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "watercooler"
+                    url: "/tag/watercooler"
+                  -
+                    text: "heartwarming"
+                    url: "/tag/heartwarming"
+              -
+                text: "find a station"
+                url: "https://player.radio.com/station-directory/newstalk"
           -
             text: "sports"
             url: "/sports"
@@ -152,47 +152,56 @@ _components:
                 text: "categories"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "NFL"
+                    url: "/tag/NFL"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "NBA"
+                    url: "/tag/NBA"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "MLB"
+                    url: "/tag/MLB"
+                  -
+                    text: "NHL"
+                    url: "/tag/nhl-hockey"
+                  -
+                    text: "college sports"
+                    url: "/tag/college-sports"
+              -
+                text: "find a station"
+                url: "https://player.radio.com/station-directory/sports"
           -
             text: "podcasts"
-            url: "/podcasts"
-            drawer: true
-            list:
-              -
-                text: "categories"
-                list:
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
-                  -
-                    text: "example link"
-                    url: "/example link"
+            url: "/audio"
+            drawer: false
+            list: []
           -
             text: "more"
             drawer: true
             list:
               -
-                text: "categories"
+                text: "find us"
                 list:
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "about"
+                    url: "/about"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "apps"
+                    url: "/apps"
                   -
-                    text: "example link"
-                    url: "/example link"
+                    text: "sonos"
+                    url: "/sonos"
+                  -
+                    text: "roku"
+                    url: "/roku"
+                  -
+                    text: "alexa"
+                    url: "/alexa"
+                  -
+                    text: "google home"
+                    url: "/googlehome"
+                  -
+                    text: "fire TV"
+                    url: "/firetv"
 
   circulation:
     instances:
