@@ -102,14 +102,15 @@ function getSocialHtmlWithoutPreference(authorData) {
  * @return {String}
  */
 function createAuthorHtml(authorData, options) {
-  var nameOrText = authorData.name || authorData.text;
+  var nameOrText = authorData.name || authorData.text,
+    link = nameOrText.replace(' ', '-').replace('%2F', '/').toLowerCase();
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
   return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="author" data-author="${nameOrText}">` +
-    `<a href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}/" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
+    `<a href="//${options.authorHost}/syndicated-authors/${encodeURIComponent(link)}/" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
     `<span${options.nameClass ? ` class="${options.nameClass}"` : ''}>${nameOrText}</span>` +
     `<meta itemprop="name" content="${nameOrText}"/>` +
-    `<link itemprop="sameAs" href="//${options.authorHost}/author/${encodeURIComponent(nameOrText)}"/></a></span>`;
+    `<link itemprop="sameAs" href="//${options.authorHost}/syndicated-authors/${encodeURIComponent(link)}"/></a></span>`;
 }
 
 // For testing

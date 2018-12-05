@@ -10,6 +10,15 @@ settings:
         char_filter:
         - remove_whitespace
         - remove_punctuation
+      author_analyzer:
+        tokenizer: standard
+        filter:
+        - standard
+        - my_ascii_folding
+        - lowercase
+        char_filter:
+        - remove_whitespace
+        - remove_punctuation
     filter:
       my_ascii_folding:
         type: asciifolding
@@ -33,6 +42,10 @@ _doc:
       type: text
     authors:
       type: keyword
+      fields:
+        normalized:
+          type: text
+          analyzer: author_analyzer
     date:
       type: date
       store: true

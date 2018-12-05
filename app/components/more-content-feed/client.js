@@ -8,11 +8,16 @@ class MoreContentFeed {
 
     this.currentPage = 1;
     this.tag = '';
+    this.author = '';
 
     // load another page every time the load more button is clicked!
     if (this.loadMore) {
       this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
-      this.tag = this.loadMore.getAttribute('data-tag') || '';
+      if (this.loadMore.getAttribute('data-tag')) {
+        this.tag = this.loadMore.getAttribute('data-tag') || '';
+      } else if (this.loadMore.getAttribute('data-author')) {
+        this.author = this.loadMore.getAttribute('data-author') || '';
+      }
     }
   }
 
@@ -26,6 +31,8 @@ class MoreContentFeed {
 
     if (this.tag) {
       moreContentUrl += `&tag=${this.tag}`;
+    } else if (this.author) {
+      moreContentUrl += `&author=${this.author}`;
     }
 
     fetch(moreContentUrl)

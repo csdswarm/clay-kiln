@@ -717,6 +717,17 @@ _components:
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         introComponents: []
+      author-page:
+        items: []
+        author: ''
+        authorInfo: ''
+        sectionFront: ''
+        sectionFrontManual: ''
+        populateFrom: author
+        locationOfContentFeed: author-page
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPageTop
+        introComponents: []
 
   latest-videos:
     instances:
@@ -756,6 +767,13 @@ _components:
       new:
         tag: ''
         image: ''
+
+  author-page:
+    instances:
+      new:
+        author: ''
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/author-page
 
   latest-recirculation:
     instances:

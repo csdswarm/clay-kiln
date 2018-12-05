@@ -1,0 +1,24 @@
+_description: |
+  A dynamically created page containing a list of articles by author.
+
+_confirmRemoval: true
+
+author:
+  _label: author
+  _publish: author
+  _has:
+    input: text
+
+moreContentFeed:
+  _component:
+    include:
+      - more-content-feed
+
+_groups:
+  settings:
+    fields:
+    - author
+    _placeholder:
+      ifEmpty: author
+      height: 100px
+      text: Author Page
