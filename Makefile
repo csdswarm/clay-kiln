@@ -91,6 +91,22 @@ stg-bootstrap:
 	curl -X PUT https://stg-clay.radio.com/_components/tag-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 
+prd-bootstrap:
+	cd ./app && cat ./first-run/**/* | clay import -k demo -y prd-clay.radio.com
+	@echo ""
+	curl -X PUT https://prd-clay.radio.com/_components/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT https://prd-clay.radio.com/_components/one-column-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT https://prd-clay.radio.com/_components/one-column-full-width-layout/instances/bare@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT https://prd-clay.radio.com/_components/two-column-layout/instances/article@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT https://prd-clay.radio.com/_pages/tag@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT https://prd-clay.radio.com/_components/tag-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+
 install-dev:
 	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
 

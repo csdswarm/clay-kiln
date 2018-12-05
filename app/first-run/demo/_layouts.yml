@@ -3,6 +3,7 @@ _components:
     instances:
       general:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -29,6 +30,7 @@ _components:
           - _ref: /_components/chartbeat/instances/default
       bare:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -50,6 +52,7 @@ _components:
           - _ref: /_components/chartbeat/instances/default
       article:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -75,6 +78,7 @@ _components:
     instances:
       bare:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -96,6 +100,7 @@ _components:
     instances:
       article:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default

@@ -39,13 +39,13 @@ sectionFront:
   _subscribe: sectionFront
   _has:
     input: static
-    text: ${sectionTitle}
+    text: ${sectionFront}
 filterBySection:
   _label: Filter by Section Front
   _subscribe: sectionFront
   _has:
     input: static
-    text: ${sectionTitle}
+    text: ${sectionFront}
 _groups:
   settings:
     fields:

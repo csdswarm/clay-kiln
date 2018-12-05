@@ -53,6 +53,15 @@
 
   .podcast-list__link {
     text-decoration: none;
+    &:hover{
+      .podcast-list__image {
+        opacity: 0.9;
+      }
+      .podcast-list__title {
+        text-decoration: underline;
+        text-decoration-color: $black;
+      }
+    }
   }
 
   .podcast-list__tag {
@@ -63,6 +72,7 @@
     padding: 0 em(6, 14);
     line-height: em(26, 14);
     color: $white;
+    z-index: 1;
 
     &:first-letter {
      text-transform: uppercase;
@@ -95,6 +105,5 @@
       width: em(10, 12);
     }
   }
-
 }
 
