@@ -1,5 +1,4 @@
 _components:
   author-page:
-    author: ''
     moreContentFeed:
       _ref: /_components/more-content-feed/instances/author-page

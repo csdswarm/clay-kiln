@@ -103,7 +103,7 @@ function getSocialHtmlWithoutPreference(authorData) {
 function createAuthorHtml(authorData, options) {
   var byline = require('./byline');
   var nameOrText = authorData.name || authorData.text,
-    link = byline.authorNameToSlug(nameOrText);
+    link = nameOrText.replace(/\s/g, '-').replace(/%2F/g, '/').toLowerCase();
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
   return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="author" data-author="${nameOrText}">` +
