@@ -61,7 +61,7 @@ module.exports.render = async function (ref, data, locals) {
       cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
     let query = queryService.newQueryWithCount(elasticIndex, maxItems);
 
-    queryService.withinThisSiteAndCrossposts(query, locals.site);
+    queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});
