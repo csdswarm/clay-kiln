@@ -1,7 +1,6 @@
 'use strict';
 
 const socialSvgs = require('./social-svgs'),
-  byline = require('./byline'),
   twitterHtml = (authorData) => `<a href="http://twitter.com/${authorData.twitter}" target='_blank' class="author-socials"><span class="author-socials-icon twitter">${socialSvgs.TWITTER}</span><span>@${authorData.twitter}</span></a>`,
   fbHtml = (authorData) => `<a href="http://facebook.com/${authorData.facebook}" target='_blank' class="author-socials"><span class="author-socials-icon facebook">${socialSvgs.FACEBOOK}</span><span>@${authorData.name.toLowerCase().replace(/\s/g, '')}</span></a>`,
   igHtml = (authorData) => `<a href="http://instagram.com/${authorData.instagram}" target='_blank' class="author-socials"><span class="author-socials-icon instagram">${socialSvgs.INSTAGRAM}</span><span>@${authorData.instagram}</span></a>`;
@@ -90,7 +89,6 @@ function getSocialHtmlWithoutPreference(authorData) {
 
   return '';
 }
-
 /**
  * Create HTML for the author, including
  * link to author page and meta-author tags
@@ -103,6 +101,7 @@ function getSocialHtmlWithoutPreference(authorData) {
  * @return {String}
  */
 function createAuthorHtml(authorData, options) {
+  var byline = require('./byline');
   var nameOrText = authorData.name || authorData.text,
     link = byline.authorNameToSlug(nameOrText);
 
