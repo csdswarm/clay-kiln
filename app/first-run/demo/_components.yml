@@ -27,6 +27,11 @@ _components:
       general:
         url: ''
 
+  favicon:
+    instances:
+      default:
+        allow: true
+
   paragraph:
     instances:
       new:
