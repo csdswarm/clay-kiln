@@ -38,8 +38,11 @@ function middleware(req, res, next) {
 
   // If it's a tag route att in the params and compose the page
   if (req.path.indexOf('/tag/') === 0) {
-    params.tag = req.path.match(/tag\/(.+)\/?/)[1];
+    params.dynamicTag = req.path.match(/tag\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/tag@published`);
+  } else if (req.path.indexOf('/syndicated-authors/') === 0) {
+    params.dynamicAuthor = req.path.match(/syndicated-authors\/(.+)\/?/)[1];
+    promise = db.get(`${req.hostname}/_pages/author@published`);
   } else {
     // Otherwise resolve the uri and page instance
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
