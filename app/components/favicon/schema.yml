@@ -1,0 +1,34 @@
+_description: |
+  Adds favicon and apple touch icons to the head.
+
+faviconImg:
+  _label: Favicon Image
+  _display: settings
+  help: Image used of radio.com for favicon. 96x96 and bigger PNG file recommended.
+  _has:
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    validate:
+      required: true
+
+appleTouchIconImg:
+  _label: Apple Touch Icon Image
+  _display: settings
+  help: Image used for icon of radio.com on apple devices. 180x180 and bigger PNG file recommended.
+  _has:
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    validate:
+      required: true
+
+_groups:
+  settings:
+    fields:
+      - faviconImg
+      - appleTouchIconImg

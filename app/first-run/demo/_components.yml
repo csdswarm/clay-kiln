@@ -27,6 +27,12 @@ _components:
       general:
         url: ''
 
+  favicon:
+    instances:
+      general:
+        faviconImg: ''
+        appleTouchIconImg: ''
+
   paragraph:
     instances:
       new:
