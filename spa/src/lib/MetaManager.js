@@ -22,8 +22,21 @@ export default class MetaManager {
    * @param {object} spaPayload - The handlebars context payload data.
    */
   updateExternalTags (spaPayload) {
+    // Get Meta Title Data.
+    let metaTitleData = null
+    const dynamicMetaTitleData = queryPayload.findComponent(spaPayload.head, 'dynamic-meta-title')
+    if (dynamicMetaTitleData) {
+      // Clone string transformation logic from dynamic-meta-title/client.js and dynamic-meta-title/template.hbs.
+      const title = `${dynamicMetaTitleData.paramValue.replace(/\b\w/g, l => l.toUpperCase())}${dynamicMetaTitleData.suffix}`
+      metaTitleData = {
+        title,
+        ogTitle: title
+      }
+    } else {
+      metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
+    }
+
     // Update or strip meta-title component tags (never delete <title> tag).
-    const metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
     if (metaTitleData) {
       this.updateTitleTag(metaTitleData.title)
       this.updateMetaTag('property', 'og:title', metaTitleData.ogTitle, true)
@@ -31,12 +44,26 @@ export default class MetaManager {
       this.deleteMetaTag('property', 'og:title')
     }
 
+    // Get Meta Description Data
+    let metaDescriptionData = null
+    const dynamicMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'dynamic-meta-description')
+    if (dynamicMetaDescriptionData) {
+      metaDescriptionData = {
+        description: dynamicMetaDescriptionData.description
+      }
+    } else {
+      metaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
+    }
+
     // Update or strip meta-description component tags.
-    const metaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
     if (metaDescriptionData) {
       this.updateMetaTag('name', 'description', metaDescriptionData.description, true)
+      this.updateMetaTag('name', 'twitter:description', metaDescriptionData.description, true)
+      this.updateMetaTag('property', 'og:description', metaDescriptionData.description, true)
     } else {
       this.deleteMetaTag('name', 'description')
+      this.deleteMetaTag('name', 'twitter:description')
+      this.deleteMetaTag('property', 'og:description')
     }
 
     // Update or strip meta-image component tags.
