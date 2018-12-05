@@ -5,6 +5,8 @@
 .component--trending-recirculation {
   width: 100%;
   max-width: em(980);
+  min-width: em(940);
+
   margin: 0 auto;
 
   h2 {
@@ -29,6 +31,10 @@
       background: $white;
       padding: 0 em(15, 20);
     }
+  }
+
+  @mixin medium-screen {
+    min-width: initial;
   }
 
   .trending__data {
