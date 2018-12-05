@@ -112,6 +112,23 @@ module.exports.render = function (ref, data, locals) {
     // No need to clean the tag as the analyzer in elastic handles cleaning
     queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     queryService.addMinimumShould(query, 1);
+  } else if (data.populateFrom == 'author') {
+    // Check if we are on an author page and override the above
+    if (locals && locals.author) {
+      // This is from load more on an author page
+      data.author = locals.author;
+    } else if (locals && locals.params) {
+      // This is from an author page
+      data.author = locals.params.dynamicAuthor;
+    }
+
+    if (!data.author) {
+      return data;
+    }
+
+    // No need to clean the author as the analyzer in elastic handles cleaning
+    queryService.addShould(query, { match: { 'authors.normalized': data.author }});
+    queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'section-front') {
     if (!data.sectionFront && !data.sectionFrontManual || !locals) {
       return data;
