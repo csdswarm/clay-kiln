@@ -4,6 +4,18 @@ _components:
       default:
         fonts: https://fonts.googleapis.com/css?family=Merriweather|Oswald:600
 
+  dynamic-meta-title:
+    instances:
+      tag:
+        routeParam: 'dynamicTag'
+        suffix: ' | RADIO.COM'
+
+  dynamic-meta-description:
+    instances:
+      tag:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'dynamicTag'
+
   meta-title:
     instances:
       general:
@@ -16,6 +28,8 @@ _components:
     instances:
       general:
         imageUrl: ''
+      tag:
+        imageUrl: 'http://s3.amazonaws.com/s3.radio.radio.com/og_775x515_0.jpg'
 
   meta-description:
     instances:

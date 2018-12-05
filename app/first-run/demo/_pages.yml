@@ -62,9 +62,9 @@ _pages:
   tag:
     _dynamic: true
     head:
-      - /_components/meta-title/instances/general
-      - /_components/meta-description/instances/general
-      - /_components/meta-image/instances/general
+      - /_components/dynamic-meta-title/instances/tag
+      - /_components/dynamic-meta-description/instances/tag
+      - /_components/meta-image/instances/tag
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
