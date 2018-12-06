@@ -33,13 +33,18 @@
 .google-ad-manager--super-leaderboard,
 .google-ad-manager--leaderboard,
 .google-ad-manager--mobile {
-  margin-bottom: em(35);
+  margin-bottom: em(50);
   width: 100vw;
   position: relative;
   left: 50%;
   right: 50%;
   margin-left: -50vw;
   margin-right: -50vw;
+
+  @mixin medium-small-screen {
+    margin-bottom: em(30);
+  }
+
   .google-ad-manager__slot {
     width: auto;
     height: auto;
