@@ -131,8 +131,8 @@ items:
         validate:
           max: 80
     -
-      prop: overrideTeaser
-      _label: Teaser
+      prop: overrideSubHeadline
+      _label: Sub-Headline
       _has:
         input: text
         validate:
