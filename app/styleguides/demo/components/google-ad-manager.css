@@ -33,13 +33,7 @@
 .google-ad-manager--super-leaderboard,
 .google-ad-manager--leaderboard,
 .google-ad-manager--mobile {
-  margin-bottom: em(50);
-  &:last-of-type {
-    margin-bottom: 0;
-  }
-  &:first-of-type {
-    margin-bottom: em(50);
-  }
+  margin-bottom: em(35);
   width: 100vw;
   position: relative;
   left: 50%;
@@ -50,12 +44,12 @@
     width: auto;
     height: auto;
     padding: em(20);
-    margin: 0 auto;
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
-.google-ad-manager--billboard:first-of-type {
-  margin-bottom: 0;
-}
+
 .layout__bottom {
   .google-ad-manager--billboard,
   .google-ad-manager--super-leaderboard,
