@@ -26,8 +26,8 @@ export default class MetaManager {
     let metaTitleData = null
     const dynamicMetaTitleData = queryPayload.findComponent(spaPayload.head, 'dynamic-meta-title')
     if (dynamicMetaTitleData) {
-      // Clone string transformation logic from dynamic-meta-title/client.js and dynamic-meta-title/template.hbs.
-      const title = `${dynamicMetaTitleData.paramValue.replace(/\b\w/g, l => l.toUpperCase())}${dynamicMetaTitleData.suffix}`
+      // Clone string concat logic from dynamic-meta-title/template.hbs.
+      const title = `${dynamicMetaTitleData.paramValue}${dynamicMetaTitleData.suffix}`
       metaTitleData = {
         title,
         ogTitle: title
