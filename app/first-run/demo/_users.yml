@@ -1,58 +1,6 @@
 _users:
   -
-    username: reid@swarmsolutions.com
-    provider: google
-    auth: admin
-  -
-    username: nick@swarmsolutions.com
-    provider: google
-    auth: admin
-  -
-    username: shawn@swarmsolutions.com
-    provider: google
-    auth: admin
-  -
-    username: markham@swarmsolutions.com
-    provider: google
-    auth: admin
-  -
-    username: nicholas.booth@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: ben.bonora@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: tiffany.chow@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: nathanacarmine@gmail.com
-    provider: google
-    auth: admin
-  -
     username: aaron.m.ponce@gmail.com
-    provider: google
-    auth: admin
-  -
-    username: brien@swarmsolutions.com
-    provider: google
-    auth: admin
-  -
-    username: victoriya.polyakova@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: john.pacino@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: bill.difonzo@entercom.com
-    provider: google
-    auth: admin
-  -
-    username: taryn.wood-norris@entercom.com
     provider: google
     auth: admin
   -
@@ -60,7 +8,47 @@ _users:
     provider: google
     auth: admin
   -
+    username: Andy.Drake@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: nicholas.booth@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: michael.cerio@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: tiffany.chow@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: robert.diehl@entercom.com
+    provider: google
+    auth: admin
+  -
     username: tsenes@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: robert.mcewen@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: jon.winton@nymag.com
+    provider: google
+    auth: admin
+  -
+    username: kyle.mccann@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: markham@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: victoriya.polyakova@entercom.com
     provider: google
     auth: admin
   -
@@ -68,11 +56,35 @@ _users:
     provider: google
     auth: admin
   -
-    username: Andy.Drake@entercom.com
+    username: shawn@swarmsolutions.com
     provider: google
     auth: admin
   -
-    username: robert.mcewen@entercom.com
+    username: tiana.timmerberg@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Meredith.ganzman@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: avinash.ramsadeen@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: ben.bonora@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: bill.difonzo@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: brian.coursen@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: brien@swarmsolutions.com
     provider: google
     auth: admin
   -
@@ -84,7 +96,19 @@ _users:
     provider: google
     auth: admin
   -
-    username: megan.smith@entercom.com
+    username: franco.duartedelarosa@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: irina.yekaterinoslavskaya@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: john.pacino@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: lauren.hoffman@entercom.com
     provider: google
     auth: admin
   -
@@ -92,14 +116,46 @@ _users:
     provider: google
     auth: admin
   -
-    username: franco.duartedelarosa@entercom.com
+    username: megan.smith@entercom.com
     provider: google
     auth: admin
   -
-    username: brian.coursen@entercom.com
+    username: nathanacarmine@gmail.com
     provider: google
     auth: admin
   -
-    username: irina.yekaterinoslavskaya@entercom.com
+    username: nick@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: reid@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: taryn.wood-norris@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: tony.senes@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Cory.Calhoun@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Jonathan.Lehman@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Morgan.Birman@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Ryan.Kroll@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: Andrew.Brill@entercom.com
     provider: google
     auth: admin
