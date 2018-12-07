@@ -29,7 +29,7 @@
       text-decoration: none;
     }
     @define-mixin article-link-color $category, $color {
-      .article[data-type=$(category)] & {
+      .component--article[data-article-type=$(category)] & {
         background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($($(color)RGB), .50) 80%, rgba($($(color)RGB), .50) 100%);
         &:hover {
           background: linear-gradient(to bottom, rgba($($(color)RGB), .50) 0, rgba($($(color)RGB), .50) 100%);
