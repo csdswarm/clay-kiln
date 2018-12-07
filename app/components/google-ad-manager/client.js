@@ -7,6 +7,7 @@ let adMapping = require('./adMapping'),
   refreshCount = 0,
   allAdSlots = {},
   initialAdRequestComplete = false,
+  adsRefreshing = false,
   initialPageAdSlots = [],
   numRightRail = 1;
 const doubleclickPrefix = '21674100491',
@@ -67,7 +68,8 @@ document.addEventListener('google-ad-manager-dismount', function () {
   // Reset slot arrays/objects
   allAdSlots = {},
   initialPageAdSlots = [],
-  numRightRail = 1;
+  numRightRail = 1,
+  refreshCount = 0;
 
   googletag.cmd.push(function () {
     googletag.destroySlots();
@@ -78,13 +80,18 @@ document.addEventListener('google-ad-manager-dismount', function () {
 googletag.cmd.push(() => {
   // Handle right rail refresh via DFP event trigger
   googletag.pubads().addEventListener('impressionViewable', event => {
-    const {slot} = event,
-      rightRail = slot.getTargeting('rightRail');
-
-    if (rightRail.length) {
-      slot.setTargeting('refresh', (refreshCount++).toString());
+    // Trigger the fresh once the first ad registers an impression
+    if (event.slot.getSlotElementId() === Object.keys(allAdSlots)[0] && !adsRefreshing) {
+      adsRefreshing = true;
+      googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
-        googletag.pubads().refresh([slot]);
+        // Refresh all ads
+        googletag.pubads().refresh(null, { changeCorrelator: false });
+        // Remove the observers
+        [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
+          observer.unobserve(adSlot);
+        });
+        adsRefreshing = false;
       }, adRefreshInterval);
     }
   });
@@ -182,6 +189,9 @@ function setAds(initialRequest = false) {
     const queryParams = urlParse(window.location, true).query;
     let adSlots = document.getElementsByClassName('component--google-ad-manager');
 
+    // Set refresh value on page level
+    googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
+
     for (let adSlot of adSlots) {
       const ad = adSlot.querySelector('.google-ad-manager__slot'),
         adSize = adSlot.getAttribute('data-ad-size'),
@@ -205,7 +215,6 @@ function setAds(initialRequest = false) {
       }
 
       slot
-        .setTargeting('refresh', refreshCount.toString())
         .setTargeting('station', targetingNationalRadioStation)
         .setTargeting('genre', targetingGenre)
         .setTargeting('cat', targetingCategory)
@@ -217,7 +226,6 @@ function setAds(initialRequest = false) {
         .addService(pubAds);
 
       if (rightRailAdSizes.includes(adSize)) {
-        slot.setTargeting('rightRail', true);
         slot.setTargeting('pos', adPosition + (numRightRail++).toString());
       }
 
