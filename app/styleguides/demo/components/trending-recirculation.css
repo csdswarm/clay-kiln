@@ -127,13 +127,12 @@
       @mixin medium-small-screen {
         width: 100%;
         max-width: em(widthOnGrid(4,3,medium-small-screen));
-        height: em(248);
+        height: 100%;
         margin-right: 0;
         margin-bottom: 0;
       }
       @mixin small-screen {
         max-width: em(widthOnGrid(4,3,small-screen));
-        height: em(180);
       }
     }
   }

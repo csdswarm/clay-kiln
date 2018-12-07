@@ -42,11 +42,10 @@
 
   .latest-content__section {
     display: flex;
-    margin-top: em(40);
+    margin-top: em(30);
 
     @mixin medium-screen {
       flex-direction: column;
-      margin-top: em(40);
     }
   }
 
@@ -136,13 +135,11 @@
           @mixin medium-small-screen {
             width: 100%;
             max-width: em(widthOnGrid(4, 3, medium-small-screen));
-            height: em(248);
+            height: 100%;
           }
 
           @mixin small-screen {
-            width: 100%;
             max-width: em(widthOnGrid(4, 3, small-screen));
-            height: em(180);
           }
         }
       }
@@ -191,7 +188,7 @@
     @mixin medium-small-screen {
       @mixin latest-content-font6;
       margin-top: em(15, 18);
-      margin-left: 0;
+      padding-left: 0;
       width: 100%;
     }
   }
@@ -240,13 +237,12 @@
     @mixin medium-small-screen {
       width: 100%;
       max-width: em(widthOnGrid(4, 3, medium-small-screen));
-      height: em(248);
+      height: 100%;
     }
 
     @mixin small-screen {
       width: 100%;
       max-width: em(widthOnGrid(4, 3, small-screen));
-      height: em(180);
     }
   }
 }
