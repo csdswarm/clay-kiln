@@ -6,6 +6,7 @@ const publishing = require('../../services/publishing'),
 module.exports.routes = [
   { path: '/'},
   { path: '/:section'},
+  { path: '/:category/:dynamicTag', dynamicPage: 'tag' },
   { path: '/blogs/:author/:title'}, // Frequency URL pattern
   { path: '/blogs/:title'}, // Frequency URL pattern
   { path: '/articles/:author/:title'}, // Frequency URL pattern
