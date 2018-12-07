@@ -85,16 +85,16 @@ _components:
                     url: "/music/classic-rock"
                   -
                     text: "movies"
-                    url: "/music/movies"
+                    url: "/entertainment/movies"
                   -
                     text: "television"
-                    url: "/music/television"
+                    url: "/entertainment/television"
                   -
                     text: "celebrity gossip"
-                    url: "/music/celebrity-gossip"
+                    url: "/entertainment/celebrity-gossip"
                   -
                     text: "viral videos"
-                    url: "/music/viral-videos"
+                    url: "/entertainment/viral-videos"
               -
                 text: "local stations"
                 list:
