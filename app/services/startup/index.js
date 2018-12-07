@@ -36,7 +36,7 @@ function setupApp(app) {
   }
 
   // set app settings
-  app.set('trust proxy', 1);
+  app.set('trust proxy', 0);
   app.set('strict routing', true);
   app.set('x-powered-by', false);
   app.use(function (req, res, next) {
