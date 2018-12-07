@@ -30,7 +30,7 @@
 .radiocom-footer {
   width: 100%;
   background: $parisM;
-  position: absolute;
+  /*position: absolute;*/
   text-align: center;
   padding: em(40) em(20);
   display: flex;
