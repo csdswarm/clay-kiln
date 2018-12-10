@@ -34,9 +34,6 @@
 .google-ad-manager--leaderboard,
 .google-ad-manager--mobile {
   margin-bottom: em(50);
-  &:last-of-type {
-    margin-bottom: 0;
-  }
   width: 100vw;
   position: relative;
   left: 50%;
