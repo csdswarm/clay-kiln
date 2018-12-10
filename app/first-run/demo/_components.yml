@@ -58,70 +58,43 @@ _components:
             url: "https://player.radio.com"
             drawer: false
           -
-            text: "entertainment"
-            url: "/entertainment"
+            text: "music"
+            url: "/music"
             drawer: true
             list:
               -
-                text: "categories"
+                text: "genres"
                 list:
                   -
                     text: "pop"
-                    url: "/tag/pop"
+                    url: "/music/pop"
                   -
                     text: "alternative"
-                    url: "/tag/alternative"
+                    url: "/music/alternative"
                   -
                     text: "country"
-                    url: "/tag/country"
-                  -
-                    text: "urban"
-                    url: "/tag/urban"
+                    url: "/music/country"
                   -
                     text: "rock"
-                    url: "/tag/rock"
+                    url: "/music/rock"
                   -
-                    text: "classic rock"
-                    url: "/tag/classic-rock"
+                    text: "icons"
+                    url: "/music/icons"
+                  -
+                    text: "latino"
+                    url: "/music/latino"
+              -
+                text: "entertainment"
+                list:
+                  -
+                    text: "entertainment news"
+                    url: "/entertainment"
                   -
                     text: "movies"
-                    url: "/tag/movies"
+                    url: "entertainment/movies"
                   -
                     text: "television"
-                    url: "/tag/television"
-                  -
-                    text: "celebrity gossip"
-                    url: "/tag/celebrity-gossip"
-                  -
-                    text: "viral videos"
-                    url: "/tag/viral-videos"
-              -
-                text: "local stations"
-                list:
-                  -
-                    text: "pop"
-                    url: "https://player.radio.com/station-directory/pop"
-                  -
-                    text: "rock"
-                    url: "https://player.radio.com/station-directory/rock"
-                  -
-                    text: "holiday"
-                    url: "https://player.radio.com/station-directory/holiday"
-                  -
-                    text: "country"
-                    url: "https://player.radio.com/station-directory/country"
-                  -
-                    text: "classic hits"
-                    url: "https://player.radio.com/station-directory/classic hits"
-                  -
-                    text: "urban"
-                    url: "https://player.radio.com/station-directory/urban"
-                  -
-                    text: "alternative"
-                    url: "https://player.radio.com/station-directory/alternative"
-                  -
-                    text: "all"
-                    url: "https://player.radio.com/station-directory"
+                    url: "/entertainment/television"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/music"
@@ -135,16 +108,13 @@ _components:
                 list:
                   -
                     text: "national"
-                    url: "/tag/national-news"
+                    url: "/news/national-news"
                   -
                     text: "politics"
-                    url: "/tag/government-and-politics"
+                    url: "/news/national"
                   -
-                    text: "watercooler"
-                    url: "/tag/watercooler"
-                  -
-                    text: "heartwarming"
-                    url: "/tag/heartwarming"
+                    text: "local politics"
+                    url: "/news/politics"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/newstalk"
@@ -158,19 +128,22 @@ _components:
                 list:
                   -
                     text: "NFL"
-                    url: "/tag/NFL"
-                  -
-                    text: "NBA"
-                    url: "/tag/NBA"
+                    url: "/sports/NFL"
                   -
                     text: "MLB"
-                    url: "/tag/MLB"
+                    url: "/sports/MLB"
+                  -
+                    text: "NBA"
+                    url: "/sports/NBA"
                   -
                     text: "NHL"
-                    url: "/tag/nhl-hockey"
+                    url: "/sports/nhl-hockey"
                   -
-                    text: "college sports"
-                    url: "/tag/college-sports"
+                    text: "NCAA Football"
+                    url: "/sports/ncaa-football"
+                  -
+                    text: "NCAA Basketball"
+                    url: "/sports/ncaa-backetball"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/sports"
