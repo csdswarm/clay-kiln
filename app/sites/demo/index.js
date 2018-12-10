@@ -12,8 +12,8 @@ module.exports.routes = [
   { path: '/articles/:title'}, // Frequency URL pattern
   { path: '/:year/:month/:name' },
   { path: '/article/:name' },
-  { path: '/tag/:tag'},
-  { path: '/tag/:dynamicTag', dynamicPage: 'tag' },
+  { path: '/topic/:tag'},
+  { path: '/topic/:dynamicTag', dynamicPage: 'topic' },
   { path: '/syndicated-authors/:dynamicAuthor', dynamicPage: 'author' }
 ];
 

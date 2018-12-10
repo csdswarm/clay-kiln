@@ -138,9 +138,9 @@ function setAds(initialRequest = false) {
   } else {
     if (urlPathname === '') {
       page = 'homepage';
-    } else if (urlPathname.indexOf('tags/') !== -1) {
-      page = 'tagPage';
-      pageName = urlPathname.replace('tags/', '');
+    } else if (urlPathname.indexOf('topic/') !== -1) {
+      page = 'topicPage';
+      pageName = urlPathname.replace('topic/', '');
     } else {
       page = 'genrePage';
       pageName = urlPathname;
@@ -170,10 +170,10 @@ function setAds(initialRequest = false) {
       targetingPageId = pageName;
       siteZone = siteZone.concat('/', pageName, '/article');
       break;
-    case 'tagPage':
+    case 'topicPage':
       targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, `${pageName}`];
       targetingPageId = doubleclickPageTypeTagTag + '_' + pageName;
-      siteZone = siteZone.concat('/', 'tags', '/', doubleclickPageTypeTagSection);
+      siteZone = siteZone.concat('/', 'topic', '/', doubleclickPageTypeTagSection);
       break;
     default:
   }
