@@ -44,8 +44,17 @@ function middleware(req, res, next) {
     params.dynamicAuthor = req.path.match(/syndicated-authors\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/author@published`);
   } else {
-    // Otherwise resolve the uri and page instance
-    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
+    _.each(process.env.SECTION_FRONTS.split(','), sectionFront => {
+      if (req.path.indexOf(`/${sectionFront}/`) === 0) {
+        let regExp = new RegExp(sectionFront + '\/(.+)\/?');
+        params.dynamicTag = req.path.match(regExp)[1];
+        promise = db.get(`${req.hostname}/_pages/topic@published`);
+      }
+    });
+    if (!promise) {
+      // Otherwise resolve the uri and page instance
+      promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
+    }
   }
   // Set locals
   fakeLocals(req, res, params);
