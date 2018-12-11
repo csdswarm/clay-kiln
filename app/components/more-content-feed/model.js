@@ -105,14 +105,8 @@ module.exports.render = function (ref, data, locals) {
       data.dynamicTagPage = true;
     }
 
-    if (locals && locals.url) {
-      if (locals.url.indexOf('music') !== -1) {
-        data.sectionFront = 'entertainment';
-      } else if (locals.url.indexOf('news') !== -1) {
-        data.sectionFront = 'news';
-      } else if (locals.url.indexOf('sports') !== -1) {
-        data.sectionFront = 'sports';
-      }
+    if (locals && locals.url && locals.url.split('radio.com/')[1] !== 'topic') {
+      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
     }
 
     if (!data.tag) {
