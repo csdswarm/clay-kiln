@@ -38,8 +38,30 @@ function middleware(req, res, next) {
 
   // If it's a tag route att in the params and compose the page
   if (req.path.indexOf('/tag/') === 0) {
-    params.dynamicTag = req.path.match(/tag\/([^/]+)\/?/)[1];
-    promise = db.get(`${req.hostname}/_pages/tag@published`);
+
+    /**
+     * We need logic to handle different routing between dynamic tag pages and curated,
+     * since both share the same slug prefix "/tag/".
+     */
+    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+      .then(tagPageKey => {
+        // Curated tag page found. Serve curated page.
+        params.tag = req.path.match(/tag\/([^/]+)\/?/)[1];
+        return db.get(`${tagPageKey}@published`);
+      })
+      .catch(error => {
+        // If error was a "not found" error, then fallback to serving dynamic tag page.
+        const notFoundErrorPrefix = 'Key not found in database';
+
+        if (error.message.substring(0, notFoundErrorPrefix.length) === notFoundErrorPrefix) {
+          params.dynamicTag = req.path.match(/tag\/([^/]+)\/?/)[1];
+          return db.get(`${req.hostname}/_pages/tag@published`);
+        } else {
+          throw error;
+        }
+
+      });
+
   } else if (req.path.indexOf('/syndicated-authors/') === 0) {
     params.dynamicAuthor = req.path.match(/syndicated-authors\/([^/]+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/author@published`);
@@ -47,10 +69,14 @@ function middleware(req, res, next) {
     // Otherwise resolve the uri and page instance
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
   }
-  // Set locals
-  fakeLocals(req, res, params);
+  
   // Compose and respond
-  promise.then(data => composer.composePage(data, res.locals))
+  promise
+    .then(data => {
+      // Set locals
+      fakeLocals(req, res, params);
+      return composer.composePage(data, res.locals);
+    })
     .then(composed => res.json(composed))
     .catch(err => {
       res

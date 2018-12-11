@@ -6,6 +6,9 @@ _components:
 
   dynamic-meta-title:
     instances:
+      curated-tag:
+        routeParam: 'tag'
+        suffix: ' | RADIO.COM'
       tag:
         routeParam: 'dynamicTag'
         suffix: ' | RADIO.COM'
@@ -15,6 +18,9 @@ _components:
 
   dynamic-meta-description:
     instances:
+      curated-tag:
+        description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
+        routeParam: 'tag'
       tag:
         description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
         routeParam: 'dynamicTag'
@@ -34,9 +40,7 @@ _components:
     instances:
       general:
         imageUrl: ''
-      tag:
-        imageUrl: 'http://s3.amazonaws.com/s3.radio.radio.com/og_775x515_0.jpg'
-      author:
+      og-logo:
         imageUrl: 'http://s3.amazonaws.com/s3.radio.radio.com/og_775x515_0.jpg'
 
   meta-description:

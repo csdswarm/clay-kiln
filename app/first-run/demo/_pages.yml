@@ -58,13 +58,26 @@ _pages:
     main:
       - /_components/general-content/instances/new
     layout: /_components/one-column-layout/instances/general
+  # Curated Tag Page
+  curated-tag:
+    head:
+      - /_components/dynamic-meta-title/instances/curated-tag
+      - /_components/dynamic-meta-description/instances/curated-tag
+      - /_components/meta-image/instances/og-logo
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    pageHeader:
+      - /_components/tag-page-header/instances/new
+    main:
+      - /_components/tag-page/instances/new
+    layout: /_components/one-column-layout/instances/general
   # Tag Page
   tag:
     _dynamic: true
     head:
       - /_components/dynamic-meta-title/instances/tag
       - /_components/dynamic-meta-description/instances/tag
-      - /_components/meta-image/instances/tag
+      - /_components/meta-image/instances/og-logo
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
@@ -78,7 +91,7 @@ _pages:
     head:
       - /_components/dynamic-meta-title/instances/author
       - /_components/dynamic-meta-description/instances/author
-      - /_components/meta-image/instances/author
+      - /_components/meta-image/instances/og-logo
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
