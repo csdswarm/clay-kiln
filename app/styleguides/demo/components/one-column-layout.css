@@ -5,6 +5,7 @@
 @import "_global/colors";
 
 .layout--one-column {
+  height: 100vh;
   .layout__page-header,
   .layout__bottom,
   .layout__content {
