@@ -42,7 +42,7 @@
   margin-right: -50vw;
 
   @mixin medium-small-screen {
-    margin-bottom: em(30);
+    margin-bottom: em(40);
   }
 
   .google-ad-manager__slot {
