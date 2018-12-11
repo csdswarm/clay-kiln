@@ -2,65 +2,78 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-$default-screen-nav-width: em(1100);
-$large-screen-nav-width: em(940);
-$medium-screen-nav-width: em(728);
-
 .component--tag-page-header {
-  width: 100%;
-  height: auto;
-  margin: calc(em(35) / 2 + em(50)) 0;
-  @mixin medium-small-screen {
-    margin: calc(em(35) / 2 + em(30)) 0;
-  }
-  .tag-page-header__tag {
-    height: 100%;
-    position: relative;
-    margin: auto;
-    max-width: 100%;
-    width: $default-screen-nav-width;
-    @mixin large-screen {
-      width: $large-screen-nav-width;
-    }
-    @mixin medium-screen {
-      width: $medium-screen-nav-width;
-    }
-    @media only screen and (max-width: 788px) {
+    .tag-page-header--banner {
+      height: em(250);
+
+    .image--container__gradient {
+      position: absolute;
       width: 100%;
-      padding: 0 em(20);
+      height: em(250);
+      background: linear-gradient(-180deg,  rgba(0,0,0,0.00)  0%,  $black  100%);
+      border: 0  solid  #979797;
+      z-index: 1;
     }
-    .tag__line {
-      border-bottom: em(1) solid $parisPurple;
+
+    .image--container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: em(250);
+      z-index: 0;
+
+      img{
+        position: absolute;
+        top: -9999px;
+        right: -9999px;
+        bottom: -9999px;
+        left: -9999px;
+        margin: auto;
+        min-width: 100%;
+        min-height: 100%;
+      }
     }
+
     h1 {
       @mixin tag-page-header-font1;
+      position: absolute;
+      z-index: 2;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin:0 auto em(30, 35) auto;
       text-transform: capitalize;
-      position: absolute;
-      top: calc(50% - em(22,35));
-      background: $white;
-      padding: 0 em(15,35) 0 0;
-    }
-  }
-  &.tag-page-header--image {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: em(250);
-    margin-top: 0;
-    margin-bottom: em(50);
-    @mixin medium-small-screen {
-      height: em(200);
-      margin-bottom: em(30);
-    }
-    .tag__line {
-      display: none;
-    }
-    h1 {
-      position: absolute;
-      top: initial;
-      bottom: em(30,35);
-      background: none;
-      padding: 0 em(15,35) 0 0;
+      display: table;
+      white-space: nowrap;
+      width: em(1100, 35);
+      padding-right: em(15, 35);
+
+      @mixin large-screen {
+        width: em(940, 35);
+      }
+
+      @mixin medium-screen {
+        width: calc(100% - em(60, 35));
+        max-width: em(728, 35);
+        padding-left: em(30, 35);
+        padding-right: em(45, 35);
+      }
+
+      @mixin medium-small-screen {
+        width: 100%;
+        padding-left: em(20, 35);
+        padding-right: em(36, 35);
+      }
+
+      &:after {
+        border-top: em(1, 35) solid $white;
+        content: '';
+        display: table-cell;
+        position: relative;
+        top: em(22, 35);
+        left: em(15, 35);
+        width: 100%;
+      }
     }
   }
 }
