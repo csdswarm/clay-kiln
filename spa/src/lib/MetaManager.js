@@ -40,8 +40,10 @@ export default class MetaManager {
     if (metaTitleData) {
       this.updateTitleTag(metaTitleData.title)
       this.updateMetaTag('property', 'og:title', metaTitleData.ogTitle, true)
+      this.updateMetaTag('name', 'twitter:title', metaTitleData.ogTitle, true)
     } else {
       this.deleteMetaTag('property', 'og:title')
+      this.deleteMetaTag('name', 'twitter:title')
     }
 
     // Get Meta Description Data
