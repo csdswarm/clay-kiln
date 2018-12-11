@@ -2,13 +2,13 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--tag-page-header {
+.component--topic-page-header {
 
-  .tag-page-header--banner {
+  .topic-page-header--banner {
     height: em(110);
 
     h1 {
-      @mixin tag-page-header-font2;
+      @mixin topic-page-header-font2;
       position: absolute;
       z-index: 2;
       bottom: 0;
@@ -50,7 +50,7 @@
     }
   }
 
-  .tag-page-header--banner__image {
+  .topic-page-header--banner__image {
     height: em(250);
 
     .image--container__gradient {
@@ -82,7 +82,7 @@
     }
 
     h1 {
-      @mixin tag-page-header-font1;
+      @mixin topic-page-header-font1;
       position: absolute;
       z-index: 2;
       bottom: 0;
