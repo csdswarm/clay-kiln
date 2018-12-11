@@ -323,8 +323,8 @@ secondaryArticleType:
       - NCAA Football
       - NCAA Basketball
       - 
-        name: MMA/WWE
-        value: MMA/WWE
+        name: MMA & WWE
+        value: MMA & WWE
     validate:
       required: true
 section:
