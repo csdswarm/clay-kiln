@@ -67,34 +67,34 @@ _components:
                 list:
                   -
                     text: "pop"
-                    url: "/tag/pop"
+                    url: "/music/pop"
                   -
                     text: "alternative"
-                    url: "/tag/alternative"
+                    url: "/music/alternative"
                   -
                     text: "country"
-                    url: "/tag/country"
+                    url: "/music/country"
                   -
                     text: "urban"
-                    url: "/tag/urban"
+                    url: "/music/urban"
                   -
                     text: "rock"
-                    url: "/tag/rock"
+                    url: "/music/rock"
                   -
                     text: "classic rock"
-                    url: "/tag/classic-rock"
+                    url: "/music/classic-rock"
                   -
                     text: "movies"
-                    url: "/tag/movies"
+                    url: "/entertainment/movies"
                   -
                     text: "television"
-                    url: "/tag/television"
+                    url: "/entertainment/television"
                   -
                     text: "celebrity gossip"
-                    url: "/tag/celebrity-gossip"
+                    url: "/entertainment/celebrity-gossip"
                   -
                     text: "viral videos"
-                    url: "/tag/viral-videos"
+                    url: "/entertainment/viral-videos"
               -
                 text: "local stations"
                 list:
@@ -135,16 +135,16 @@ _components:
                 list:
                   -
                     text: "national"
-                    url: "/tag/national-news"
+                    url: "/news/national-news"
                   -
                     text: "politics"
-                    url: "/tag/government-and-politics"
+                    url: "/news/government-and-politics"
                   -
                     text: "watercooler"
-                    url: "/tag/watercooler"
+                    url: "/news/watercooler"
                   -
                     text: "heartwarming"
-                    url: "/tag/heartwarming"
+                    url: "/news/heartwarming"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/newstalk"
@@ -158,19 +158,19 @@ _components:
                 list:
                   -
                     text: "NFL"
-                    url: "/tag/NFL"
+                    url: "/sports/NFL"
                   -
                     text: "NBA"
-                    url: "/tag/NBA"
+                    url: "/sports/NBA"
                   -
                     text: "MLB"
-                    url: "/tag/MLB"
+                    url: "/sports/MLB"
                   -
                     text: "NHL"
-                    url: "/tag/nhl-hockey"
+                    url: "/sports/nhl-hockey"
                   -
                     text: "college sports"
-                    url: "/tag/college-sports"
+                    url: "/sports/college-sports"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/sports"
@@ -718,14 +718,14 @@ _components:
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         introComponents: []
-      tag-page:
+      topic-page:
         items: []
         tag: ''
         tagInfo: ''
         sectionFront: ''
         sectionFrontManual: ''
         populateFrom: tag
-        locationOfContentFeed: tag-page
+        locationOfContentFeed: topic-page
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         introComponents: []
@@ -767,14 +767,14 @@ _components:
         latestVideos:
           _ref: /_components/latest-videos/instances/homepage
 
-  tag-page:
+  topic-page:
     instances:
       new:
         tag: ''
         moreContentFeed:
-          _ref: /_components/more-content-feed/instances/tag-page
+          _ref: /_components/more-content-feed/instances/topic-page
 
-  tag-page-header:
+  topic-page-header:
     instances:
       new:
         tag: ''

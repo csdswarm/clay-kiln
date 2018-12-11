@@ -306,7 +306,7 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||||| Tag Page Fonts Styleguide ||||||||| */
+/* |||||||| Topic Page Fonts Styleguide ||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin tag-page-header-font1 {
   @mixin font CircularStd-Black, 35px, $white, -.55px, 44px;

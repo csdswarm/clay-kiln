@@ -34,7 +34,7 @@ locationOfContentFeed:
     options:
       - homepage
       - section-front
-      - tag-page
+      - topic-page
 
 sectionFront:
   _subscribe: sectionFront
