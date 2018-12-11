@@ -9,10 +9,10 @@ const queryService = require('../../services/server/query'),
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'teaser',
     'articleType',
     'date',
-    'lead'
+    'lead',
+    'subHeadline'
   ],
   maxItems = 10,
   pageLength = 5;
@@ -33,11 +33,11 @@ module.exports.save = (ref, data, locals) => {
       .then((result) => {
         const content = Object.assign(item, {
           primaryHeadline: item.overrideTitle || result.primaryHeadline,
+          subHeadline: item.overrideSubHeadline || result.subHeadline,
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
           canonicalUrl: item.url || result.canonicalUrl,
           feedImgUrl: item.overrideImage || result.feedImgUrl,
-          teaser: item.overrideTeaser || result.teaser,
           articleType: item.overrideSectionFront || result.articleType,
           date: item.overrideDate || result.date,
           lead: item.overrideContentType || result.lead

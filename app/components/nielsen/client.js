@@ -40,7 +40,7 @@ class NielsenMarketingCloud {
         updatedData.mkt = spaPayload.main[0].market;
         updatedData.genre = spaPayload.main[0].genre;
         updatedData.format = updatedData.ctg = spaPayload.main[0].sectionFront;
-      } else if (spaPayload.main[0]['_ref'].indexOf('tag-page') !== -1) {
+      } else if (spaPayload.main[0]['_ref'].indexOf('topic-page') !== -1) {
         updatedData.tag = spaPayload.pageHeader[0].tag;
       } else if (spaPayload.main[0]['_ref'].indexOf('section-front') !== -1) {
         updatedData.format = updatedData.ctg = spaPayload.main[0].title;
@@ -56,8 +56,8 @@ class NielsenMarketingCloud {
         updatedData.mkt = spaPayload.toStationDetailPage.market;
         updatedData.genre = spaPayload.toStationDetailPage.genre;
         updatedData.format = updatedData.ctg = spaPayload.toStationDetailPage.sectionFront;
-      } else if (spaPayload.toTagPage._ref) {
-        updatedData.tag = spaPayload.toTagPage.tag;
+      } else if (spaPayload.toTopicPage._ref) {
+        updatedData.tag = spaPayload.toTopicPage.tag;
       } else if (spaPayload.toSectionFrontPage._ref) {
         updatedData.format = updatedData.ctg = spaPayload.toSectionFrontPage.title;
       }

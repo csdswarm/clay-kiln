@@ -83,7 +83,7 @@ export default {
       const nextArticleData = queryPayload.findComponent(spaPayload.main, 'article')
       const nextHomepageData = queryPayload.findComponent(spaPayload.main, 'homepage')
       const nextSectionFrontPageData = queryPayload.findComponent(spaPayload.main, 'section-front')
-      const nextTagPageData = queryPayload.findComponent(spaPayload.pageHeader, 'tag-page-header')
+      const nextTopicPageData = queryPayload.findComponent(spaPayload.pageHeader, 'topic-page-header')
       const nextStationDetailPageData = queryPayload.findComponent(spaPayload.main, 'station-detail')
 
       return {
@@ -94,7 +94,7 @@ export default {
         toArticlePage: nextArticleData ? nextArticleData : {},
         toHomepage: nextHomepageData ? nextHomepageData : {},
         toSectionFrontPage: nextSectionFrontPageData ? nextSectionFrontPageData : {},
-        toTagPage: nextTagPageData ? nextTagPageData : {},
+        toTopicPage: nextTopicPageData ? nextTopicPageData : {},
         toStationDetailPage: nextStationDetailPageData ? nextStationDetailPageData : {}
       }
     }

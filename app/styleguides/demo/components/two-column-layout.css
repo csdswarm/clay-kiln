@@ -103,8 +103,7 @@
 @mixin large-screen {
   .layout--two-column {
     .layout__content {
-      .content__main,
-      .content__secondary {
+      .content__main {
         width: em(620);
         margin-right: em(20);
         .article__header {
