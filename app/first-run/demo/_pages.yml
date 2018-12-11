@@ -89,8 +89,8 @@ _pages:
   author:
     _dynamic: true
     head:
-      - /_components/meta-title/instances/general
-      - /_components/meta-description/instances/general
+      - /_components/dynamic-meta-title/instances/author
+      - /_components/dynamic-meta-description/instances/author
       - /_components/meta-image/instances/og-logo
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop

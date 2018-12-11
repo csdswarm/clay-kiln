@@ -6,10 +6,10 @@ _components:
 
   dynamic-meta-title:
     instances:
-      curated-tag:
+      curated-topic:
         routeParam: 'tag'
         suffix: ' | RADIO.COM'
-      tag:
+      topic:
         routeParam: 'dynamicTag'
         suffix: ' | RADIO.COM'
       author:
@@ -18,10 +18,10 @@ _components:
 
   dynamic-meta-description:
     instances:
-      curated-tag:
+      curated-topic:
         description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
         routeParam: 'tag'
-      tag:
+      topic:
         description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
         routeParam: 'dynamicTag'
       author:
