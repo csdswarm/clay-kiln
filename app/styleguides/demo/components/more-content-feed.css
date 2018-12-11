@@ -167,7 +167,7 @@
           }
         }
       }
-      @mixin labelBackground entertainment, $sunsetOrange;
+      @mixin labelBackground music, $sunsetOrange;
       @mixin labelBackground news, $lightningYellow;
       @mixin labelBackground sports, $azureRadience;
       @mixin labelBackground podcasts, $robinsEggBlue;

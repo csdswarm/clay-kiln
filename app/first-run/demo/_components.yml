@@ -58,8 +58,8 @@ _components:
             url: "https://player.radio.com"
             drawer: false
           -
-            text: "entertainment"
-            url: "/entertainment"
+            text: "music"
+            url: "/music"
             drawer: true
             list:
               -
@@ -712,7 +712,7 @@ _components:
         tag: ''
         tagInfo: ''
         sectionFront: ''
-        sectionFrontManual: entertainment
+        sectionFrontManual: music
         populateFrom: section-front
         locationOfContentFeed: section-front
         googleAdRightRail:
@@ -797,17 +797,17 @@ _components:
     instances:
       new:
         sectionFronts:
-          - 'entertainment'
+          - 'music'
           - 'sports'
           - 'news'
-        entertainmentItems: []
+        musicItems: []
         sportsItems: []
         newsItems: []
       default:
         sectionFronts:
-          - 'entertainment'
+          - 'music'
           - 'sports'
           - 'news'
-        entertainmentItems: []
+        musicItems: []
         sportsItems: []
         newsItems: []

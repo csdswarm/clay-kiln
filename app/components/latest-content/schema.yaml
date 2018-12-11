@@ -46,11 +46,11 @@ sportsItems:
       _has:
         validate:
           required: true
-entertainmentItems:
-  _label: Entertainment Articles
+musicItems:
+  _label: Music Articles
   _placeholder:
     height: 150px;
-    text: Entertainment Articles
+    text: Music Articles
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -139,9 +139,9 @@ newsItems:
           required: true
 
 _groups:
-  entertainmentItems:
+  musicItems:
     fields:
-      - entertainmentItems
+      - musicItems
   newsItems:
     fields:
       - newsItems
