@@ -4,7 +4,8 @@
 
 .component--trending-recirculation {
   width: 100%;
-  max-width: em(980);
+  max-width: em(940);
+
   margin: 0 auto;
 
   h2 {

@@ -56,6 +56,9 @@
   }
   .more-content-feed__left-content {
     margin-right: em(20);
+    @mixin large-screen {
+      margin-right: 0;
+    }
     @mixin medium-screen {
       width: 100%;
       padding-right: 0;

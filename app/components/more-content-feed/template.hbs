@@ -56,7 +56,7 @@
         <div class="link__info">
           <div class="link__header">
             <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
-            <span class="info__teaser">{{{ feedItem.teaser }}}</span>
+            <span class="info__teaser">{{{ feedItem.subHeadline }}}</span>
           </div>
           <div class="info__datetime-posted">
             {{#if (isPublished24HrsAgo feedItem.date) }}
