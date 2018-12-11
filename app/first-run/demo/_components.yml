@@ -207,6 +207,9 @@ _components:
                   -
                     text: "fire TV"
                     url: "/firetv"
+                  -
+                    text: "Subscribe"
+                    url: "/newsletter/subscribe"
 
   circulation:
     instances:

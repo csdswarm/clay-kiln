@@ -14,7 +14,8 @@ module.exports.routes = [
   { path: '/article/:name' },
   { path: '/tag/:tag'},
   { path: '/tag/:dynamicTag', dynamicPage: 'tag' },
-  { path: '/syndicated-authors/:dynamicAuthor', dynamicPage: 'author' }
+  { path: '/syndicated-authors/:dynamicAuthor', dynamicPage: 'author' },
+  { path: '/newsletter/subscribe' }
 ];
 
 // Resolve the url to publish to
