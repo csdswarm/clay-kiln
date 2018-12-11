@@ -36,7 +36,7 @@ function save(stream) {
  * @return {Function}
  */
 function send([ op ]) {
-  return h(elastic.put(INDEX, op.key, op.value).then(() => op.key));
+  return h(elastic.update(INDEX, op.key, op.value, false, true).then(() => op.key));
 }
 
 /**
