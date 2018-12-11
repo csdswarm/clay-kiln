@@ -105,10 +105,13 @@ module.exports.render = function (ref, data, locals) {
       data.dynamicTagPage = true;
     }
 
-    if (locals && locals.params && locals.params.sectionFront) {
-      data.sectionFront = locals.params.sectionFront;
-      if (locals.params.sectionFront == 'music') {
+    if (locals && locals.url) {
+      if (locals.url.indexOf('music') !== -1) {
         data.sectionFront = 'entertainment';
+      } else if (locals.url.indexOf('news') !== -1) {
+        data.sectionFront = 'news';
+      } else if (locals.url.indexOf('sports') !== -1) {
+        data.sectionFront = 'sports';
       }
     }
 

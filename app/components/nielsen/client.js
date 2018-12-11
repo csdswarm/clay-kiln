@@ -41,7 +41,7 @@ class NielsenMarketingCloud {
         updatedData.genre = spaPayload.main[0].genre;
         updatedData.format = updatedData.ctg = spaPayload.main[0].sectionFront;
       } else if (spaPayload.main[0]['_ref'].indexOf('tag-page') !== -1) {
-        updatedData.tag = spaPayload.pageHeader[1].tag;
+        updatedData.tag = spaPayload.pageHeader[0].tag;
       } else if (spaPayload.main[0]['_ref'].indexOf('section-front') !== -1) {
         updatedData.format = updatedData.ctg = spaPayload.main[0].title;
       }
