@@ -7,7 +7,7 @@
       {{ set 'hypenatedSecondaryArticleType' (replace (replace (urlencode (replace (trim (lowercase secondaryArticleType)) ' ' '-')) "/" "%2F") "&" "%26") }}
       <span class="breadcrumb__separator">/</span>
       <a class="breadcrumb__link"
-         href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/tag/{{ hypenatedSecondaryArticleType }}{{/if}}/">{{ secondaryArticleType }}</a>
+         href="//{{ @root.locals.site.host }}{{#if section}}{{ @root.locals.site.path }}/{{ section }}{{else}}/topic/{{ hypenatedSecondaryArticleType }}{{/if}}/">{{ secondaryArticleType }}</a>
     {{/if}}
   </nav>
   <header class="article__header">
