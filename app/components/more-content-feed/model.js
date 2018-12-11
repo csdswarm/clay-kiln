@@ -105,8 +105,10 @@ module.exports.render = function (ref, data, locals) {
       data.dynamicTagPage = true;
     }
 
-    if (locals && locals.url && locals.url.split('radio.com/')[1] !== 'topic') {
+    data.sectionFront = null;
+    if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1) {
       data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
+      console.log("set section front");
     }
 
     if (!data.tag) {
