@@ -75,14 +75,14 @@ _components:
                     text: "country"
                     url: "/music/country"
                   -
+                    text: "Hip-Hop/R&B"
+                    url: "/music/hip-hop%2FR%26B"
+                  -
                     text: "rock"
                     url: "/music/rock"
                   -
                     text: "icons"
-                    url: "/music/icons"
-                  -
-                    text: "latino"
-                    url: "/music/latino"
+                    url: "/music/classic-rock"
               -
                 text: "entertainment"
                 list:
