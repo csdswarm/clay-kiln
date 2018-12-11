@@ -718,14 +718,14 @@ _components:
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         introComponents: []
-      tag-page:
+      topic-page:
         items: []
         tag: ''
         tagInfo: ''
         sectionFront: ''
         sectionFrontManual: ''
         populateFrom: tag
-        locationOfContentFeed: tag-page
+        locationOfContentFeed: topic-page
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         introComponents: []
@@ -767,14 +767,14 @@ _components:
         latestVideos:
           _ref: /_components/latest-videos/instances/homepage
 
-  tag-page:
+  topic-page:
     instances:
       new:
         tag: ''
         moreContentFeed:
-          _ref: /_components/more-content-feed/instances/tag-page
+          _ref: /_components/more-content-feed/instances/topic-page
 
-  tag-page-header:
+  topic-page-header:
     instances:
       new:
         tag: ''
