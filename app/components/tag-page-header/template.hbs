@@ -1,9 +1,7 @@
 <header
   data-uri="{{ default _ref _self }}"
-  class="component component--tag-page-header tag-page-header--{{tag}}
-    {{ if @root.locals.edit ' editing' }}
-  ">
-  <div {{#if image}}class="tag-page-header--banner"{{/if}}>
+  class="component component--tag-page-header tag-page-header--{{tag}} {{ if @root.locals.edit ' editing' }}">
+  <div class="tag-page-header--banner{{if image '__image'}}">
     {{#if image}}
       <div class="image--container">
         <div class="image--container__gradient"></div>
