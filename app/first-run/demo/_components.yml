@@ -76,7 +76,7 @@ _components:
                     url: "/music/country"
                   -
                     text: "Hip-Hop/R&B"
-                    url: "/music/hip-hop%2FR%26B"
+                    url: "/music/hip-hop-R%26B"
                   -
                     text: "rock"
                     url: "/music/rock"
@@ -144,6 +144,9 @@ _components:
                   -
                     text: "NCAA Basketball"
                     url: "/sports/ncaa-basketball"
+                  -
+                    text: "MMA & WWE"
+                    url: "/sports/mma-%26-wwe"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/sports"
