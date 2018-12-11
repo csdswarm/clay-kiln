@@ -105,13 +105,25 @@ module.exports.render = function (ref, data, locals) {
       data.dynamicTagPage = true;
     }
 
+    if (locals && locals.params && locals.params.sectionFront) {
+      data.sectionFront = locals.params.sectionFront;
+      if (locals.params.sectionFront == 'music') {
+        data.sectionFront = 'entertainment';
+      }
+    }
+
     if (!data.tag) {
       return data;
     }
 
     // No need to clean the tag as the analyzer in elastic handles cleaning
     queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
-    queryService.addMinimumShould(query, 1);
+    if (data.sectionFront) {
+      queryService.addShould(query, { match: { articleType: data.sectionFront }});
+      queryService.addMinimumShould(query, 2);
+    } else {
+      queryService.addMinimumShould(query, 1);
+    }
   } else if (data.populateFrom == 'author') {
     // Check if we are on an author page and override the above
     if (locals && locals.author) {
