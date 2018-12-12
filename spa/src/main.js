@@ -16,7 +16,7 @@ setVuexStoreBaseState(store)
 
 $(function () {
   const instantiateSpa = () => {
-    new Vue({
+    window.vueApp = new Vue({
       router,
       store,
       render: h => h(App)
