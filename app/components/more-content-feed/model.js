@@ -114,8 +114,28 @@ module.exports.render = function (ref, data, locals) {
       return data;
     }
 
-    // No need to clean the tag as the analyzer in elastic handles cleaning
-    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+    //normalize tag array (based on simple list input)
+    if(Array.isArray(data.tag)){
+      data.tag = data.tag.map(tag => tag.text);
+    }
+
+    //split comma seperated tags (for load-more get queries)
+    if(typeof data.tag == "string" && data.tag.indexOf(',') > -1) {
+      data.tag = data.tag.split(',');
+    }
+
+    //Handle querying an array of tags  
+    if(Array.isArray(data.tag)) { 
+      for (var tag of data.tag){
+        queryService.addShould(query, { match: { 'tags.normalized': tag }});
+      }
+    } else {
+      // No need to clean the tag as the analyzer in elastic handles cleaning
+      queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+    }
+
+
+
     if (data.sectionFront) {
       queryService.addShould(query, { match: { articleType: data.sectionFront }});
       queryService.addMinimumShould(query, 2);
