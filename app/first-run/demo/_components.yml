@@ -353,6 +353,8 @@ _components:
         adSize: ''
       oop:
         adSize: outOfPage
+        adPosition: skin
+        loc: atf
       billboardTop:
         adSize: billboard
         adPosition: top
