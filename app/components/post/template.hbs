@@ -11,10 +11,10 @@
         <span itemprop="author" itemscope itemtype="http://schema.org/Person">
           {{#each authors}}
            {{ set 'encodedAuthor' (replace (urlencode (replace (trim (lowercase this.text)) ' ' '-')) "%2F" "/") }}
-            <a href="//{{@root.locals.site.host}}/syndicated-authors/{{ encodedAuthor }}/" rel="author" class="article-author">
+            <a href="//{{@root.locals.site.host}}/authors/{{ encodedAuthor }}" rel="author" class="article-author">
               <span>{{ trim this.text }}</span>{{#ifNone @last (compare ../authors.length 2)}}<span>, </span>{{/ifNone}}
               <meta itemprop="name" content="{{ this.text }}"/>
-              <link itemprop="sameAs" href="//{{@root.locals.site.host}}/syndicated-authors/{{ encodedAuthor }}/"/>
+              <link itemprop="sameAs" href="//{{@root.locals.site.host}}/authors/{{ encodedAuthor }}"/>
             </a>
             {{#if (compare (add @index 1) (subtract ../authors.length 1))}}
               <span> and </span>
