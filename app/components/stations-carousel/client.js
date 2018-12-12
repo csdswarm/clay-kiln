@@ -230,9 +230,9 @@ StationsCarousel.prototype = {
     if (_this.windowWidth < _this.windowSizes.medium) {
       if (dotEvent) { // get page number of clicked dot
         _this.pageNum = Number(event.currentTarget.getAttribute('data-page'));
-      } else if (swipeLeftEvent) {
-        _this.pageNum -= 1;
       } else if (swipeRightEvent) {
+        _this.pageNum -= 1;
+      } else if (swipeLeftEvent) {
         _this.pageNum += 1;
       }
       if (_this.pageNum > _this.totalPages) {
