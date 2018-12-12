@@ -138,11 +138,11 @@ function setAds(initialRequest = false) {
   } else {
     if (urlPathname === '') {
       page = 'homepage';
-    } else if (urlPathname.indexOf('topic/') !== -1) {
+    } else if (document.querySelector('.component--topic-page')) {
       page = 'topicPage';
-      pageName = urlPathname.replace('topic/', '');
+      pageName = urlPathname.replace(/[^\/]+\//, '');
     } else {
-      page = 'genrePage';
+      page = 'sectionFront';
       pageName = urlPathname;
     }
   }
@@ -165,7 +165,7 @@ function setAds(initialRequest = false) {
       targetingPageId = page;
       siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
-    case 'genrePage':
+    case 'sectionFront':
       targetingTags = [doubleclickPageTypeTagArticle, `${pageName}`];
       targetingPageId = pageName;
       siteZone = siteZone.concat('/', pageName, '/article');
@@ -173,7 +173,8 @@ function setAds(initialRequest = false) {
     case 'topicPage':
       targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, `${pageName}`];
       targetingPageId = doubleclickPageTypeTagTag + '_' + pageName;
-      siteZone = siteZone.concat('/', 'topic', '/', doubleclickPageTypeTagSection);
+      // Must remain tag for targeting in DFP unless a change is made in the future to update it there
+      siteZone = siteZone.concat('/', 'tag', '/', doubleclickPageTypeTagSection);
       break;
     default:
   }
