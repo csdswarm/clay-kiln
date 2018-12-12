@@ -9,7 +9,7 @@
   align-self: center;
 
   @mixin medium-small-screen {
-    margin-bottom: em(30);
+    margin-bottom: em(40);
   }
 
   h2 {
