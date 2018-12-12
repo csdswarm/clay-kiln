@@ -67,11 +67,10 @@ class MoreContentFeed {
 
   onSpaLinkClick(event, element) {
     event.preventDefault();
-
-    // Remove the event listener
     element.removeEventListener('click', element.fn, false);
 
     const linkParts = new URL(element.getAttribute('href'));
+
     vueApp._router.push(linkParts.pathname || '/');
   }
 };
