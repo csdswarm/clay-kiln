@@ -6,7 +6,6 @@ sportsItems:
   _placeholder:
     height: 150px;
     text: Sports Articles
-    ifEmpty: 'sportsItems'
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -47,12 +46,11 @@ sportsItems:
       _has:
         validate:
           required: true
-entertainmentItems:
-  _label: Entertainment Articles
+musicItems:
+  _label: Music Articles
   _placeholder:
     height: 150px;
-    text: Entertainment Articles
-    ifEmpty: 'entertainmentItems'
+    text: Music Articles
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -99,7 +97,6 @@ newsItems:
   _placeholder:
     height: 150px;
     text: News Articles
-    ifEmpty: 'newsItems'
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -142,24 +139,12 @@ newsItems:
           required: true
 
 _groups:
-  entertainmentItems:
+  musicItems:
     fields:
-      - entertainmentItems
-    _placeholder:
-      ifEmpty: 'entertainmentItems'
-      height: 200px
-      text: Entertainment Articles
+      - musicItems
   newsItems:
     fields:
       - newsItems
-    _placeholder:
-      ifEmpty: 'newsItems'
-      height: 200px
-      text: News Articles
   sportsItems:
     fields:
       - sportsItems
-    _placeholder:
-      ifEmpty: 'sportsItems'
-      height: 200px
-      text: Sports Articles

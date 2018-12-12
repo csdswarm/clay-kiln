@@ -14,6 +14,7 @@ head:
 headLayout:
   _componentList:
     include:
+      - favicon
       - meta-title
       - meta-url
       - meta-description
@@ -26,10 +27,15 @@ top:
   _componentList:
     include:
       - header
-pageHeader:
+layoutHeader:
   _componentList:
     include:
       - google-ad-manager
+pageHeader:
+  _componentList:
+    page: true
+    include:
+      - topic-page-header
 main:
   _componentList:
     page: true

@@ -1,8 +1,15 @@
 'use strict';
 
+require('intersection-observer');
+
 let adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
-  refreshCount = 0;
+  refreshCount = 0,
+  allAdSlots = {},
+  initialAdRequestComplete = false,
+  adsRefreshing = false,
+  initialPageAdSlots = [],
+  numRightRail = 1;
 const doubleclickPrefix = '21674100491',
   doubleclickBannerTag = 'NTL.RADIO',
   rightRailAdSizes = ['medium-rectangle', 'half-page'],
@@ -10,32 +17,105 @@ const doubleclickPrefix = '21674100491',
   doubleclickPageTypeTagSection = 'sectionfront',
   doubleclickPageTypeTagTag = 'tag',
   adRefreshInterval = '120000', // Time in milliseconds for ad refresh
-  adSlots = document.getElementsByClassName('google-ad-manager__slot'),
-  targetingMarket = require('../../services/client/market'),
   targetingNationalRadioStation = 'natlrc',
   targetingGenre = 'aaa',
   targetingCategory = 'music',
-  urlParse = require('url-parse');
+  urlParse = require('url-parse'),
+  lazyLoadObserverConfig = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0
+  },
+  observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
+
+/**
+ * Load ads when they come into view
+ *
+ * @param {array} changes
+ * @param {IntersectionObserver} observer
+ */
+function lazyLoadAd(changes, observer) {
+  changes.forEach(change => {
+    if (change.intersectionRatio > 0) {
+      // Stop watching and load the ad
+      googletag.pubads().refresh([allAdSlots[change.target.id]], {changeCorrelator: false});
+      observer.unobserve(change.target);
+    }
+  });
+};
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
 
-// mount listener for vue
+// listener to ensure lytics has been setup in GTM
+document.addEventListener('gtm-lytics-setup', function () {
+  setAdsIDs(true);
+}, false);
+
+// Set up ads when navigating in SPA
 document.addEventListener('google-ad-manager-mount', function () {
-  // code to run when vue mounts/updates
-  setAdsIDs();
+  if (initialAdRequestComplete) {
+    // code to run when vue mounts/updates
+    if (googletag.pubadsReady) { // Only do this if the service was created
+      googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+    }
+    setAdsIDs();
+  }
 });
 
+// Reset data when navigating in SPA
 document.addEventListener('google-ad-manager-dismount', function () {
+  // Reset slot arrays/objects
+  allAdSlots = {},
+  initialPageAdSlots = [],
+  numRightRail = 1,
+  refreshCount = 0;
+
   googletag.cmd.push(function () {
     googletag.destroySlots();
   });
 });
 
+// Create listeners inside of the context of having googletag.pubads()
+googletag.cmd.push(() => {
+  // Handle right rail refresh via DFP event trigger
+  googletag.pubads().addEventListener('impressionViewable', event => {
+    // Trigger the fresh once the first ad registers an impression
+    if (event.slot.getSlotElementId() === Object.keys(allAdSlots)[0] && !adsRefreshing) {
+      adsRefreshing = true;
+      googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
+      setTimeout(function () {
+        // Refresh all ads
+        googletag.pubads().refresh(null, { changeCorrelator: false });
+        // Remove the observers
+        [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
+          observer.unobserve(adSlot);
+        });
+        adsRefreshing = false;
+      }, adRefreshInterval);
+    }
+  });
+
+  // Handle collapsing empty div manually as DFP collapseEmptyDiv doesn't work when lazy loading
+  googletag.pubads().addEventListener('slotRenderEnded', event => {
+    let id = event.slot.getSlotElementId(),
+      adSlot = document.getElementById(id);
+
+    if (event.isEmpty) {
+      adSlot.parentElement.style.display = 'none';
+    } else {
+      // Unhide parent incase this was a refresh after an empty response
+      adSlot.parentElement.style.display = 'flex';
+    }
+  });
+});
+
 /**
  * create and add unique ids to each ad slot on page
+ *
+ * @param {boolean} initialRequest - Is this the first time through ad setup?
  */
-function setAdsIDs() {
+function setAdsIDs(initialRequest = false) {
   Object.keys(adSizes).forEach((adSize) => {
     let adSlots = document.getElementsByClassName(`google-ad-manager__slot--${adSize}`);
 
@@ -43,13 +123,15 @@ function setAdsIDs() {
       slot.id = slot.classList[1].concat('-', index);
     });
   });
-  setAds();
+  setAds(initialRequest);
 }
 
 /**
  * use ids of ad slots on page to create google ad slots and display them
+ *
+ * @param {boolean} initialRequest - Is this the first time through ad setup?
  */
-function setAds() {
+function setAds(initialRequest = false) {
   let page,
     pageName,
     siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
@@ -63,11 +145,11 @@ function setAds() {
   } else {
     if (urlPathname === '') {
       page = 'homepage';
-    } else if (urlPathname.indexOf('tags/') !== -1) {
-      page = 'tagPage';
-      pageName = urlPathname.replace('tags/', '');
+    } else if (document.querySelector('.component--topic-page')) {
+      page = 'topicPage';
+      pageName = urlPathname.replace(/[^\/]+\//, '');
     } else {
-      page = 'genrePage';
+      page = 'sectionFront';
       pageName = urlPathname;
     }
   }
@@ -90,30 +172,37 @@ function setAds() {
       targetingPageId = page;
       siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
-    case 'genrePage':
+    case 'sectionFront':
       targetingTags = [doubleclickPageTypeTagArticle, `${pageName}`];
       targetingPageId = pageName;
       siteZone = siteZone.concat('/', pageName, '/article');
       break;
-    case 'tagPage':
+    case 'topicPage':
       targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, `${pageName}`];
       targetingPageId = doubleclickPageTypeTagTag + '_' + pageName;
-      siteZone = siteZone.concat('/', 'tags', '/', doubleclickPageTypeTagSection);
+      // Must remain tag for targeting in DFP unless a change is made in the future to update it there
+      siteZone = siteZone.concat('/', 'tag', '/', doubleclickPageTypeTagSection);
       break;
     default:
   }
 
-  googletag.cmd.push(async function () {
+  googletag.cmd.push(function () {
     const queryParams = urlParse(window.location, true).query;
+    let adSlots = document.getElementsByClassName('component--google-ad-manager');
 
-    for (let ad of adSlots) {
-      const adSize = ad.getAttribute('data-adSize'),
+    // Set refresh value on page level
+    googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
+
+    for (let adSlot of adSlots) {
+      const ad = adSlot.querySelector('.google-ad-manager__slot'),
+        adSize = adSlot.getAttribute('data-ad-size'),
+        adPosition = adSlot.getAttribute('data-ad-position'),
+        adLocation = adSlot.getAttribute('data-ad-location'),
         pubAds = googletag.pubads();
-      let marketName = await targetingMarket.getName(),
-        slot,
+      let slot,
         sizeMapping = adMapping.sizeMapping[adSize];
 
-      if (adSize == 'outOfPage') {
+      if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
       } else {
         slot = googletag.defineSlot(
@@ -126,48 +215,43 @@ function setAds() {
           .defineSizeMapping(sizeMapping);
       }
 
-      pubAds.setCentering(true);
       slot
-        .addService(pubAds)
-        .setCollapseEmptyDiv(true);
-
-      slot.setTargeting('refresh', refreshCount.toString());
-
-      if (rightRailAdSizes.includes(adSize)) {
-        slot.setTargeting('rightRail', true);
-      }
-
-      slot.setCollapseEmptyDiv(true)
-        .setTargeting('refresh', refreshCount.toString())
-        .setTargeting('market', marketName.replace(' ','').split(',')[0].toLowerCase())
         .setTargeting('station', targetingNationalRadioStation)
         .setTargeting('genre', targetingGenre)
         .setTargeting('cat', targetingCategory)
         .setTargeting('tag', targetingTags)
         .setTargeting('pid', targetingPageId)
-        .setTargeting('pos', ad.parentNode.getAttribute('data-ad-position'))
-        .setTargeting('loc', ad.parentNode.getAttribute('data-ad-location'))
-        .setTargeting('adtest', queryParams.adtest || '');
+        .setTargeting('pos', adPosition)
+        .setTargeting('loc', adLocation)
+        .setTargeting('adtest', queryParams.adtest || '')
+        .addService(pubAds);
+
+      if (rightRailAdSizes.includes(adSize)) {
+        slot.setTargeting('pos', adPosition + (numRightRail++).toString());
+      }
 
       if (targetingAuthors.length) {
         slot.setTargeting('author', targetingAuthors);
       }
-      
+
+      // Attach to the global ads array
+      allAdSlots[ad.id] = slot;
+
       googletag.display(ad.id);
+
+      // 'atf' ads need to be requested together on page load, do not observe
+      if (adLocation === 'atf') {
+        initialPageAdSlots.push(slot);
+      } else {
+        // Attach the observer for lazy loading
+        observer.observe(ad);
+      }
     }
-    googletag.pubads().refresh();
-  });
 
-  googletag.pubads().addEventListener('impressionViewable', function (event) {
-    const { slot } = event,
-      [ refresh ] = slot.getTargeting('refresh'),
-      [ rightRail ] = slot.getTargeting('rightRail');
-
-    if (refresh && rightRail) {
-      slot.setTargeting('refresh', (parseInt(refresh) + 1).toString());
-      setTimeout(function () {
-        googletag.pubads().refresh([slot]);
-      }, adRefreshInterval);
+    // Refresh all initial page slots
+    googletag.pubads().refresh(initialPageAdSlots);
+    if (initialRequest) {
+      initialAdRequestComplete = true;
     }
   });
 }
@@ -185,8 +269,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.getElementsByClassName('layout')[0],
-    transparentSections = [...document.getElementsByClassName('google-ad-manager__slot--billboard'), ...document.getElementsByClassName('google-ad-manager--billboard')];
+    globalDiv = document.getElementsByClassName('layout')[0];
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {
@@ -251,8 +334,4 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     document.body.style.backgroundColor = backgroundColor;
     globalDiv.prepend(bgdiv);
   }
-
-  transparentSections.forEach((section) => {
-    section.style.backgroundColor = 'transparent';
-  });
 };

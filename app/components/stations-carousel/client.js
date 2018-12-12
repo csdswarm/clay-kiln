@@ -49,9 +49,6 @@ class StationsCarousel {
 
     if (this.filterStationsBy == 'section-front') {
       this.filterByValue = this.sectionFront;
-      if (this.sectionFront == 'entertainment') {
-        this.filterByValue = 'music';
-      }
     } else if (this.filterStationsBy == 'genre') {
       this.filterByValue = this.genre;
     }

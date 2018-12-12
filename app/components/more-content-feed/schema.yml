@@ -34,7 +34,7 @@ locationOfContentFeed:
     options:
       - homepage
       - section-front
-      - tag-page
+      - topic-page
 
 sectionFront:
   _subscribe: sectionFront
@@ -53,8 +53,8 @@ sectionFrontManual:
     input: radio
     options:
       -
-        name: Entertainment
-        value: entertainment
+        name: Music
+        value: music
       -
         name: News
         value: news
@@ -131,8 +131,8 @@ items:
         validate:
           max: 80
     -
-      prop: overrideTeaser
-      _label: Teaser
+      prop: overrideSubHeadline
+      _label: Sub-Headline
       _has:
         input: text
         validate:
@@ -158,8 +158,8 @@ items:
         input: radio
         options:
           -
-            name: Entertainment
-            value: entertainment
+            name: Music
+            value: music
           -
             name: News
             value: news
@@ -207,11 +207,6 @@ introComponents:
     - html-embed
 
 googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager
-
-googleAdTop:
   _component:
     include:
       - google-ad-manager

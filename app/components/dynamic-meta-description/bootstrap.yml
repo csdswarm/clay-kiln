@@ -1,4 +1,4 @@
 _components:
-  clay-meta-description:
+  dynamic-meta-description:
     description: ''
     routeParam: ''

@@ -47,6 +47,7 @@ module.exports.save = (ref, data, locals) => {
   }))
     .then((items) => {
       data.items = items;
+      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront;
 
       return data;
     });
@@ -69,7 +70,7 @@ module.exports.render = function (ref, data, locals) {
     return data;
   }
 
-  queryService.withinThisSiteAndCrossposts(query, locals.site);
+  queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (data.filterBySection) {
     queryService.addShould(query, { match: { articleType: data.sectionFront }});
@@ -86,8 +87,10 @@ module.exports.render = function (ref, data, locals) {
   // exclude the curated content from the results
   if (data.items && !isComponent(locals.url)) {
     data.items.forEach(item => {
-      cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-      queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+      if (item.canonicalUrl) {
+        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+      }
     });
   }
 
@@ -95,6 +98,7 @@ module.exports.render = function (ref, data, locals) {
     .then(function (results) {
 
       data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront;
 
       return data;
     })

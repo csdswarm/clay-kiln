@@ -48,7 +48,7 @@ $medium-screen-nav-width: em(728);
   margin-bottom: em(25);
   @mixin carousel-height;
   background: $parisM;
-  @mixin section-front-colors entertainment, $sunsetOrange;
+  @mixin section-front-colors music, $sunsetOrange;
   @mixin section-front-colors news, $lightningYellow;
   @mixin section-front-colors sports, $azureRadience;
   @mixin section-front-colors podcasts, $robinsEggBlue;

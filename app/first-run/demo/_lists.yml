@@ -4,17 +4,8 @@ _lists:
   sources: []
   new-pages:
     -
-      id: new-one-col
-      title: New One Column Article
-    -
       id: new-two-col
-      title: New Two Column Article
+      title: New Article
     -
-      id: homepage
-      title: New One Column Homepage
-    -
-      id: general
-      title: New General Page
-    -
-      id: tag
-      title: New Content Hub Page
+      id: curated-topic
+      title: New Curated Page

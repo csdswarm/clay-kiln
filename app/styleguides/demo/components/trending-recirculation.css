@@ -2,11 +2,10 @@
 @import "_global/colors";
 @import "_global/mixins";
 
-.component--trending {
+.component--trending-recirculation {
   width: 100%;
-  margin: 0 auto em(40) auto;
-  max-width: em(980);
-  align-self: center;
+  max-width: em(940);
+  margin: 0 auto;
 
   @mixin medium-small-screen {
     margin-bottom: em(40);
@@ -132,13 +131,12 @@
       @mixin medium-small-screen {
         width: 100%;
         max-width: em(widthOnGrid(4,3,medium-small-screen));
-        height: em(248);
+        height: 100%;
         margin-right: 0;
         margin-bottom: 0;
       }
       @mixin small-screen {
         max-width: em(widthOnGrid(4,3,small-screen));
-        height: em(180);
       }
     }
   }

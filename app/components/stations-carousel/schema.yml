@@ -11,7 +11,7 @@ sectionFront:
   _subscribe: sectionFront
   _has:
     input: static
-    text: ${sectionTitle}
+    text: ${sectionFront}
 
 sectionFrontManual:
   _label: Section Front Category
@@ -23,8 +23,8 @@ sectionFrontManual:
     input: radio
     options:
       -
-        name: Entertainment
-        value: entertainment
+        name: Music
+        value: music
       -
         name: News
         value: news

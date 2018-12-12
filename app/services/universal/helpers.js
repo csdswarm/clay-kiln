@@ -19,7 +19,7 @@ module.exports = {
   secondsToISO: formatTime.secondsToISO,
   formatDateRange: formatTime.formatDateRange,
   isPublished24HrsAgo: formatTime.isPublished24HrsAgo,
-  hrsOnlyTimestamp: formatTime.hrsOnlyTimestamp,
+  timeAgoTimestamp: formatTime.timeAgoTimestamp,
   truncateText: truncate,
   calloutType: require('./callout'),
   attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow')

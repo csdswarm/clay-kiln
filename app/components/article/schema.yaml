@@ -82,15 +82,17 @@ seoHeadline:
     help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
     validate:
       max: 60
+      required: true
 seoDescription:
   _label: SEO Description
   _has:
     input: text
     type: multi-line
-    help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 250 characters
+    help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 200 characters
     validate:
       min: 50
-      max: 250
+      max: 200
+      required: true
 feedImgUrl:
   _label: Recirculation Image
   _publish: feedImgUrl
@@ -128,6 +130,7 @@ byline:
         prop: names
         _label: Names
         _has:
+          help: Press TAB or , after each name to save
           input: simple-list
           autocomplete:
             list: authors
@@ -226,7 +229,7 @@ lead:
     text: Article Lead
     height: 600px
   _componentList:
-    fuzzy: true # allows interactives, etc to add one-off components
+    fuzzy: false # allows interactives, etc to add one-off components
     include:
       - image
       - instagram-post
@@ -280,8 +283,8 @@ articleType:
     input: radio
     options:
       -
-        name: Entertainment
-        value: entertainment
+        name: Music
+        value: music
       -
         name: News
         value: news
@@ -291,6 +294,37 @@ articleType:
       -
         name: Sports
         value: sports
+    validate:
+      required: true
+secondaryArticleType:
+  _label: Secondary Article Type
+  _publish: secondaryArticleType
+  _has:
+    input: radio
+    options:
+      - Pop
+      - Alternative
+      - Country
+      - 
+        name: Hip-Hop R&B
+        value: Hip-Hop R&B
+      - Rock
+      - Icons
+      - Entertainment News
+      - Movies
+      - Television
+      - National News
+      - Politics
+      - Local Politics
+      - NFL
+      - MLB
+      - NBA
+      - NHL
+      - NCAA Football
+      - NCAA Basketball
+      - 
+        name: MMA & WWE
+        value: MMA & WWE
     validate:
       required: true
 section:
@@ -353,6 +387,7 @@ _groups:
   circMetadata:
     fields:
       - articleType
+      - secondaryArticleType
   bylines:
     fields:
       - byline

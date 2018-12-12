@@ -1,9 +1,11 @@
 @import '_global/reset';
 @import '_global/fonts';
 @import '_global/grid';
+@import '_global/spa';
 @import "_global/colors";
 
 .layout--one-column {
+  height: 100vh;
   .layout__page-header,
   .layout__bottom,
   .layout__content {
@@ -12,6 +14,5 @@
   }
   .layout__content {
     background: $white;
-    margin-bottom: em(40);
   }
 }

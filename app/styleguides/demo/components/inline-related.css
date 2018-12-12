@@ -129,7 +129,7 @@
     }
   }
 }
-@mixin themed-related entertainment, $sunsetOrange;
+@mixin themed-related music, $sunsetOrange;
 @mixin themed-related sports, $azureRadience;
 @mixin themed-related news, $lightningYellow;
 @mixin themed-related podcasts, $robinsEgg;

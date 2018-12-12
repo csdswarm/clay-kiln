@@ -3,6 +3,7 @@ _components:
     instances:
       general:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -11,13 +12,17 @@ _components:
         top:
           - _ref: /_components/top-nav/instances/default
         head: head
+        layoutHeader: layoutHeader
         pageHeader: pageHeader
+        fullWidthComponents:
         main: main
         secondary: secondary
         bottom:
-          - _ref: /_components/google-ad-manager/instances/superLeaderboardBottom
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
@@ -25,6 +30,7 @@ _components:
           - _ref: /_components/chartbeat/instances/default
       bare:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -36,7 +42,9 @@ _components:
         main: main
         bottom:
           - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
@@ -44,6 +52,7 @@ _components:
           - _ref: /_components/chartbeat/instances/default
       article:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -57,7 +66,9 @@ _components:
           - _ref: /_components/generic-list/instances/recirc
         bottom:
           - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
           - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
@@ -67,6 +78,7 @@ _components:
     instances:
       bare:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -88,6 +100,7 @@ _components:
     instances:
       article:
         headLayout:
+          - _ref: /_components/favicon/instances/default
           - _ref: /_components/google-ad-manager-head/instances/default
           - _ref: /_components/youtube-player-head/instances/new
           - _ref: /_components/comscore-head/instances/default
@@ -100,13 +113,16 @@ _components:
         sectionHeader: sectionHeader
         main: main
         tertiary: tertiary
-        secondary: secondary
+        secondary:
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/trending-recirculation/instances/default
         bottom:
           - _ref: /_components/yieldmo/instances/default
-          - _ref: /_components/trending-recirculation/instances/default
           - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
         kilnInternals:
           - _ref: /_components/clay-kiln/instances/general
         static:
