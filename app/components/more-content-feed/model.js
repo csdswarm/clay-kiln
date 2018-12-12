@@ -134,14 +134,10 @@ module.exports.render = function (ref, data, locals) {
       queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     }
 
-
-
     if (data.sectionFront) {
-      queryService.addShould(query, { match: { articleType: data.sectionFront }});
-      queryService.addMinimumShould(query, 2);
-    } else {
-      queryService.addMinimumShould(query, 1);
+      queryService.addMust(query, { match: { articleType: data.sectionFront }});
     }
+    queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'author') {
     // Check if we are on an author page and override the above
     if (locals && locals.author) {
