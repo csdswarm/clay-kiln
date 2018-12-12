@@ -6,14 +6,14 @@ $default-screen-nav-width: em(1100);
 $large-screen-nav-width: em(940);
 $medium-screen-nav-width: em(728);
 
-.component--tag-page-header {
+.component--topic-page-header {
   width: 100%;
   height: auto;
   margin: calc(em(35) / 2 + em(50)) 0;
   @mixin medium-small-screen {
     margin: calc(em(35) / 2 + em(30)) 0;
   }
-  .tag-page-header__tag {
+  .topic-page-header__tag {
     height: 100%;
     position: relative;
     margin: auto;
@@ -33,7 +33,7 @@ $medium-screen-nav-width: em(728);
       border-bottom: em(1) solid $parisPurple;
     }
     h1 {
-      @mixin tag-page-header-font1;
+      @mixin topic-page-header-font1;
       text-transform: capitalize;
       position: absolute;
       top: calc(50% - em(22,35));
@@ -41,7 +41,7 @@ $medium-screen-nav-width: em(728);
       padding: 0 em(15,35) 0 0;
     }
   }
-  &.tag-page-header--image {
+  &.topic-page-header--image {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

@@ -105,13 +105,23 @@ module.exports.render = function (ref, data, locals) {
       data.dynamicTagPage = true;
     }
 
+    data.sectionFront = null;
+    if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1) {
+      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
+    }
+
     if (!data.tag) {
       return data;
     }
 
     // No need to clean the tag as the analyzer in elastic handles cleaning
     queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
-    queryService.addMinimumShould(query, 1);
+    if (data.sectionFront) {
+      queryService.addShould(query, { match: { articleType: data.sectionFront }});
+      queryService.addMinimumShould(query, 2);
+    } else {
+      queryService.addMinimumShould(query, 1);
+    }
   } else if (data.populateFrom == 'author') {
     // Check if we are on an author page and override the above
     if (locals && locals.author) {

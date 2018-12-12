@@ -1,14 +1,14 @@
 <header
   data-uri="{{ default _ref _self }}"
-  class="component component--tag-page-header tag-page-header--{{tag}}
+  class="component component--topic-page-header topic-page-header--{{tag}}
     {{ if @root.locals.edit ' editing' }}
-    {{ if image ' tag-page-header--image'}}
+    {{ if image ' topic-page-header--image'}}
   "
   {{#if image}}
     style="background-image:url({{ image }});"
   {{/if}}
 >
-  <div class="tag-page-header__tag" data-editable="settings">
+  <div class="topic-page-header__tag" data-editable="settings">
     <div class="tag__line"></div>
     <h1>{{tag}}</h1>
   </div>

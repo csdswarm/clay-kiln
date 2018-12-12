@@ -7,5 +7,5 @@ _lists:
       id: new-two-col
       title: New Article
     -
-      id: tag
+      id: curated-topic
       title: New Curated Page
