@@ -42,6 +42,9 @@
     @mixin medium-screen {
       margin-bottom: em(10);
     }
+    @mixin medium-small-screen {
+      margin-bottom: em(20);
+    }
   }
 
   .trending__item {
