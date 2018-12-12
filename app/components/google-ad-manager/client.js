@@ -98,7 +98,7 @@ googletag.cmd.push(() => {
       adSlot.parentElement.style.display = 'none';
     } else {
       // Unhide parent incase this was a refresh after an empty response
-      adSlot.parentElement.style.display = 'block';
+      adSlot.parentElement.style.display = 'flex';
     }
   });
 });
