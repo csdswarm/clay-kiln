@@ -61,7 +61,7 @@
     }
 
     &.section__container-- {
-      &entertainment {
+      &music {
          order: 1;
        }
       &news {
@@ -209,7 +209,7 @@
     &--news {
        background-color: $lightningYellow;
      }
-    &--entertainment {
+    &--music {
        background-color: $sunsetOrange;
      }
     &--sports {

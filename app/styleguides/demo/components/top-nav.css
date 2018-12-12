@@ -151,7 +151,7 @@ $drawerSelector: nav-drawer;
     @mixin header-button-color news, $lightningYellow;
     @mixin header-button-color sports, $azureRadience;
     @mixin header-button-color podcasts, $robinsEggBlue;
-    @mixin header-button-color entertainment, $sunsetOrange;
+    @mixin header-button-color music, $sunsetOrange;
     @mixin header-button-color listen, $white;
     @mixin header-button-color download, $white;
     @mixin header-button-color more, $white;
@@ -325,7 +325,7 @@ $drawerSelector: nav-drawer;
             background: $color;
           }
         }
-        @mixin drawer-header-color entertainment, $sunsetOrange;
+        @mixin drawer-header-color music, $sunsetOrange;
         @mixin drawer-header-color news, $lightningYellow;
         @mixin drawer-header-color sports, $azureRadience;
         @mixin drawer-header-color podcasts, $robinsEggBlue;

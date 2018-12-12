@@ -283,8 +283,8 @@ articleType:
     input: radio
     options:
       -
-        name: Entertainment
-        value: entertainment
+        name: Music
+        value: music
       -
         name: News
         value: news

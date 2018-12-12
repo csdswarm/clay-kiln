@@ -74,7 +74,7 @@
 }
 
 @mixin themed-tag-list;
-@mixin themed-tag-list .tags--entertainment, $sunsetOrange;
+@mixin themed-tag-list .tags--music, $sunsetOrange;
 @mixin themed-tag-list .tags--news, $lightningYellow;
 @mixin themed-tag-list .tags--sports, $azureRadience;
 @mixin themed-tag-list .tags--podcasts, $robinsEggBlue;

@@ -81,7 +81,7 @@ module.exports.render = async function (ref, data, locals) {
 
     try {
       const results = await queryService.searchByQuery(query),
-        // combine the curated articles (entertainmentItems, newsItems, sportsItems, etc.) with the query results
+        // combine the curated articles (musicItems, newsItems, sportsItems, etc.) with the query results
         articles = items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
       data.articles.push({ section, articles });

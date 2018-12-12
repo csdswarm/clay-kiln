@@ -10,7 +10,7 @@
 .latest-recirc {
 	&__title {
 		@mixin latest-recirc-font1 $purple;
-		.component--entertainment & {
+		.component--music & {
 			@mixin latest-recirc-font1 $sunsetOrange;
 		}
 		.component--news & {
@@ -45,7 +45,7 @@
 			outline: em(1,16) solid $color;
 		}
 		@mixin latest-recirc-box $purple;
-		.component--entertainment & {
+		.component--music & {
 			@mixin latest-recirc-box $sunsetOrange;
 		}
 		.component--news & {

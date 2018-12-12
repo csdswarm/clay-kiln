@@ -16,11 +16,7 @@ module.exports.save = (ref, data, locals) => {
       data.title = data.overrideTitle || 'stations near you';
       break;
     case 'section-front':
-      if (data.sectionFront == 'entertainment' || data.sectionFrontManual == 'entertainment') {
-        data.title = data.overrideTitle || 'music stations near you';
-      } else {
-        data.title = data.overrideTitle || `${data.sectionFrontManual ? data.sectionFrontManual : data.sectionFront} stations near you`;
-      }
+      data.title = data.overrideTitle || `${data.sectionFrontManual ? data.sectionFrontManual : data.sectionFront} stations near you`;
       break;
     default:
   }

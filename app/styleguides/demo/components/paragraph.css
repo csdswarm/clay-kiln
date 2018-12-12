@@ -40,7 +40,6 @@
     @mixin article-link-color news, lightningYellow;
     @mixin article-link-color podcasts, robinsEggBlue;
     @mixin article-link-color music, sunsetOrange;
-    @mixin article-link-color entertainment, sunsetOrange;
   }
   strong {
     @mixin article-font8;
