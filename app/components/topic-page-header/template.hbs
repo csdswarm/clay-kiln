@@ -3,10 +3,10 @@
   class="component component--topic-page-header topic-page-header--{{tag}} {{ if @root.locals.edit ' editing' }}"
   data-editable="settings">
   {{#if tag}}
-    <div class="topic-page-header--banner{{if image '__image'}}">
+    <div class="topic-page-header__banner {{if image 'topic-page-header__banner--image'}}">
       {{#if image}}
-        <div class="image--container">
-          <div class="image--container__gradient"></div>
+        <div class="banner__image">
+          <div class="banner__gradient"></div>
           <img src="{{ image }}">
         </div>
       {{/if}}

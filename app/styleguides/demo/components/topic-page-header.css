@@ -45,28 +45,36 @@
    }
   }
 
-  .topic-page-header--banner {
+  .topic-page-header__banner {
     height: em(110);
   }
 
-  .topic-page-header--banner__image {
+  .topic-page-header__banner--image {
     height: em(250);
 
-    .image--container__gradient {
+    @mixin medium-small-screen {
+      height: em(200);
+    }
+
+    .banner__gradient {
       position: absolute;
       width: 100%;
       height: em(250);
-      background: linear-gradient(-180deg, rgba(0,0,0,0.00) 0%, $black 100%);
+      background: linear-gradient(-180deg, rgba($whiteRGB,0.00) 0%, $black 100%);
       border: 0  solid  #979797;
       z-index: 1;
     }
 
-    .image--container {
+    .banner__image {
       position: relative;
       overflow: hidden;
       width: 100%;
       height: em(250);
       z-index: 0;
+
+      @mixin medium-small-screen {
+        height: em(200);
+      }
 
       img{
         position: absolute;
