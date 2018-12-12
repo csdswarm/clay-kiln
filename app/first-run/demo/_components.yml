@@ -89,7 +89,7 @@ _components:
             drawer: true
             list:
               -
-                text: "categories"
+                text: "genres"
                 list:
                   -
                     text: "pop"
@@ -101,53 +101,26 @@ _components:
                     text: "country"
                     url: "/music/country"
                   -
-                    text: "urban"
-                    url: "/music/urban"
+                    text: "Hip-Hop/R&B"
+                    url: "/music/hip-hop-R%26B"
                   -
                     text: "rock"
                     url: "/music/rock"
                   -
-                    text: "classic rock"
+                    text: "icons"
                     url: "/music/classic-rock"
-                  -
-                    text: "movies"
-                    url: "/entertainment/movies"
-                  -
-                    text: "television"
-                    url: "/entertainment/television"
-                  -
-                    text: "celebrity gossip"
-                    url: "/entertainment/celebrity-gossip"
-                  -
-                    text: "viral videos"
-                    url: "/entertainment/viral-videos"
               -
-                text: "local stations"
+                text: "entertainment"
                 list:
                   -
-                    text: "pop"
-                    url: "https://player.radio.com/station-directory/pop"
+                    text: "entertainment news"
+                    url: "/music/entertainment"
                   -
-                    text: "rock"
-                    url: "https://player.radio.com/station-directory/rock"
+                    text: "movies"
+                    url: "/music/movies"
                   -
-                    text: "holiday"
-                    url: "https://player.radio.com/station-directory/holiday"
-                  -
-                    text: "country"
-                    url: "https://player.radio.com/station-directory/country"
-                  -
-                    text: "classic hits"
-                    url: "https://player.radio.com/station-directory/classic hits"
-                  -
-                    text: "urban"
-                    url: "https://player.radio.com/station-directory/urban"
-                  -
-                    text: "alternative"
-                    url: "https://player.radio.com/station-directory/alternative"
-                  -
-                    text: "all"
-                    url: "https://player.radio.com/station-directory"
+                    text: "television"
+                    url: "/music/television"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/music"
@@ -164,13 +137,10 @@ _components:
                     url: "/news/national-news"
                   -
                     text: "politics"
-                    url: "/news/government-and-politics"
+                    url: "/news/politics"
                   -
-                    text: "watercooler"
-                    url: "/news/watercooler"
-                  -
-                    text: "heartwarming"
-                    url: "/news/heartwarming"
+                    text: "local politics"
+                    url: "/news/local-politics"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/newstalk"
@@ -186,17 +156,23 @@ _components:
                     text: "NFL"
                     url: "/sports/NFL"
                   -
-                    text: "NBA"
-                    url: "/sports/NBA"
-                  -
                     text: "MLB"
                     url: "/sports/MLB"
+                  -
+                    text: "NBA"
+                    url: "/sports/NBA"
                   -
                     text: "NHL"
                     url: "/sports/nhl-hockey"
                   -
-                    text: "college sports"
-                    url: "/sports/college-sports"
+                    text: "NCAA Football"
+                    url: "/sports/ncaa-football"
+                  -
+                    text: "NCAA Basketball"
+                    url: "/sports/ncaa-basketball"
+                  -
+                    text: "MMA & WWE"
+                    url: "/sports/mma-%26-wwe"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/sports"
