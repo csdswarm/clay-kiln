@@ -723,7 +723,7 @@ _components:
         populateFrom: all-content
         locationOfContentFeed: homepage
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageBottom
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
         introComponents: []
       section-front:
         items: []
@@ -734,7 +734,7 @@ _components:
         populateFrom: section-front
         locationOfContentFeed: section-front
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageBottom
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
         introComponents: []
       topic-page:
         items: []
@@ -756,7 +756,7 @@ _components:
         populateFrom: author
         locationOfContentFeed: author-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageBottom
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
         introComponents: []
 
   latest-videos:
