@@ -24,6 +24,7 @@
     top: 100px;
   }
   background: $alabaster;
+  z-index: 0;
   .google-ad-manager__slot {
     width: 100%;
     height: 100%;
