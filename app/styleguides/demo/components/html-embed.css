@@ -1,3 +1,9 @@
 .component--html-embed {
   margin-bottom: em(30);
+  width: 100%;
+
+  iframe {
+    width: 100%;
+    height: auto;
+  }
 }
