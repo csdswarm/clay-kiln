@@ -38,10 +38,8 @@ function middleware(req, res, next) {
   }
 
   // Define Curated/Dynamic "tag" routes.
-  // Match against section-front slug prefixes
+  // Match against section-front and "topic" slug prefixes
   curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
-
-  // Match "topic" slug prefix as well.
   curatedOrDynamicRoutePrefixes.push('topic');
 
   // Define curated/dynamic routing logic
