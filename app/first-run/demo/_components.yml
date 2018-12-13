@@ -28,6 +28,11 @@ _components:
         description: '${paramValue} on RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
         routeParam: 'dynamicAuthor'
 
+  dynamic-meta-url:
+    instances:
+      general:
+        url: ''
+
   meta-title:
     instances:
       general:

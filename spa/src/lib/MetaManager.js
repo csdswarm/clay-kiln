@@ -77,6 +77,32 @@ export default class MetaManager {
       this.deleteMetaTag('name', 'twitter:image')
       this.deleteMetaTag('property', 'og:image')
     }
+
+    // Get Meta Url Data.
+    let metaUrlData = null
+    const dynamicMetaUrlData = queryPayload.findComponent(spaPayload.head, 'dynamic-meta-url')
+    if (dynamicMetaUrlData) {
+      metaUrlData = {
+        rel: dynamicMetaUrlData.url,
+        ogUrl: dynamicMetaUrlData.url
+      }
+    } else {
+      metaUrlData = queryPayload.findComponent(spaPayload.head, 'meta-url')
+      metaUrlData = {
+        // Clone string concat logic from meta-url/template.hbs.
+        rel: metaUrlData.syndicatedUrl || metaUrlData.url,
+        ogUrl: metaUrlData.url
+      }
+    }
+
+    // Update or strip rel component tag
+    if (metaUrlData) {
+      this.updateLinkTag(metaUrlData.rel)
+      this.updateMetaTag('property', 'og:url', metaUrlData.ogUrl)
+    } else {
+      this.deleteLinkTag()
+      this.deleteMetaTag('property', 'og:url')
+    }
   }
 
   /**
@@ -154,6 +180,55 @@ export default class MetaManager {
       metaTag.setAttribute('content', content)
     } else if (createIfNotExist) {
       this.createMetaTag(attributeType, attributeKey, content)
+    }
+  }
+
+  /**
+   *
+   * Create a <link> tag on the page by name or property attribute and assign content to it.
+   *
+   * @param {string} href - New href to be used in link tag.
+   */
+  createLinkTag (href) {
+    // Create <link> tag element.
+    const meta = document.createElement('link')
+    meta.setAttribute('rel', 'canonical')
+    meta.setAttribute('href', href)
+
+    // Insert <meta> tag into <head>
+    document.getElementsByTagName('head')[0].appendChild(meta)
+  }
+
+  /**
+   *
+   * Select a <link> tag and delete it from the DOM.
+   */
+  deleteLinkTag () {
+    // Select link tag.
+    const linkTag = document.head.querySelector(`link[rel='canonical']`)
+
+    // If tag exists, remove it from DOM.
+    if (linkTag) {
+      linkTag.parentNode.removeChild(linkTag)
+    }
+  }
+
+  /**
+   *
+   * Update a <link> tag on the page by name or property attribute.
+   *
+   * @param {string} href - New href to be used in link tag.
+   * @param {boolean} createIfNotExist - Similar to database "upsert" functionality, create the meta tag with supplied values if it doesn't exist in DOM currently.
+   */
+  updateLinkTag (href, createIfNotExist = false) {
+    // Select link tag.
+    const linkTag = document.head.querySelector(`link[rel='canonical']`)
+
+    // Update, or potentially "upsert" the meta tag.
+    if (linkTag) {
+      linkTag.setAttribute('href', href)
+    } else if (createIfNotExist) {
+      this.createLinkTag(href)
     }
   }
 }
