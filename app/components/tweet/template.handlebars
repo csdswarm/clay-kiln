@@ -1,8 +1,0 @@
-<aside data-uri="{{ default _ref _self }}" class="component component--tweet" data-editable="default">
-  {{{ html }}}
-  {{#unless @root.locals.edit}}
-    {{! don't add rich twitter script in edit mode }}
-    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-  {{/unless}}
-</aside>
-{{! todo: rename this file to .hbs after amphora is updated to support multiplex-templates v1.3.0 }}
