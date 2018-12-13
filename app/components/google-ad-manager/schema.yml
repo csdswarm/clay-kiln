@@ -24,6 +24,9 @@ adSize:
         name: Half Page (300x600)
         value: half-page
       -
+        name: Half Page Topic (300x600)
+        value: half-page-topic
+      -
         name: Medium Rectangle (300x250)
         value: medium-rectangle
       -
@@ -38,7 +41,7 @@ adPosition:
   _label: Ad Slot Position Target (DFP)
   _has:
     input: text
-sticky: 
+sticky:
   _label: Stick ad on Scroll
   _has:
     input: checkbox

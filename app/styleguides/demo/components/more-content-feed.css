@@ -275,6 +275,7 @@
   .more-content-feed__right-ad--desktop {
     width: em(300);
     height: 100%;
+    min-height: em(900);
     @mixin medium-screen {
       width: 100%;
     }
@@ -283,11 +284,6 @@
       padding: em(20) 0;
       margin-bottom: em(30);
       @mixin more-content-feed-font3;
-    }
-    .component--google-ad-manager {
-      @mixin medium-screen {
-        display: none !important;
-      }
     }
   }
 }
