@@ -106,10 +106,13 @@ module.exports.render = function (ref, data, locals) {
     }
 
     data.sectionFront = null;
-    if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1) {
-      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
-    }
 
+    if (locals && locals.sectionFront) {
+      data.sectionFront = locals.sectionFront;
+    } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
+      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
+    } 
+    
     if (!data.tag) {
       return data;
     }
@@ -182,7 +185,6 @@ module.exports.render = function (ref, data, locals) {
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     });
   }
-
   return queryService.searchByQuery(query)
     .then(function (results) {
       results = results.map(content => {
