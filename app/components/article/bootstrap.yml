@@ -85,3 +85,4 @@ _components:
         sideShare: {}
         section: 'some-section'
     eligibleForGoogleStandout: false
+    originUrl: ''

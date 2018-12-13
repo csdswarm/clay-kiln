@@ -29,6 +29,7 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
@@ -63,6 +64,7 @@ _pages:
     head:
       - /_components/dynamic-meta-title/instances/curated-topic
       - /_components/dynamic-meta-description/instances/curated-topic
+      - /_components/dynamic-meta-url/instances/general
       - /_components/meta-image/instances/og-logo
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
@@ -77,6 +79,7 @@ _pages:
     head:
       - /_components/dynamic-meta-title/instances/topic
       - /_components/dynamic-meta-description/instances/topic
+      - /_components/dynamic-meta-url/instances/general
       - /_components/meta-image/instances/og-logo
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
@@ -91,6 +94,7 @@ _pages:
     head:
       - /_components/dynamic-meta-title/instances/author
       - /_components/dynamic-meta-description/instances/author
+      - /_components/dynamic-meta-url/instances/general
       - /_components/meta-image/instances/og-logo
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
