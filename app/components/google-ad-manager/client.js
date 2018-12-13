@@ -16,6 +16,7 @@ const doubleclickPrefix = '21674100491',
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
   doubleclickPageTypeTagTag = 'tag',
+  doubleclickPageTypeTagAuthor = 'authors',
   adRefreshInterval = '120000', // Time in milliseconds for ad refresh
   targetingNationalRadioStation = 'natlrc',
   targetingGenre = 'aaa',
@@ -135,7 +136,7 @@ function setAds(initialRequest = false) {
   let page,
     pageName,
     siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-    urlPathname = window.location.pathname.replace(/^\/|\/$/, ''),
+    urlPathname = window.location.pathname.replace(/^\/|\/$/g, ''),
     targetingTags = [],
     targetingPageId = '',
     targetingAuthors = [];
@@ -148,6 +149,9 @@ function setAds(initialRequest = false) {
     } else if (document.querySelector('.component--topic-page')) {
       page = 'topicPage';
       pageName = urlPathname.replace(/[^\/]+\//, '');
+    } else if (document.querySelector('.component--author-page')) {
+      page = 'authorPage';
+      pageName = urlPathname.replace('/', '_');
     } else {
       page = 'sectionFront';
       pageName = urlPathname;
@@ -173,16 +177,20 @@ function setAds(initialRequest = false) {
       siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
     case 'sectionFront':
-      targetingTags = [doubleclickPageTypeTagArticle, `${pageName}`];
+      targetingTags = [doubleclickPageTypeTagArticle, pageName];
       targetingPageId = pageName;
       siteZone = siteZone.concat('/', pageName, '/article');
       break;
     case 'topicPage':
-      targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, `${pageName}`];
+      targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, pageName];
       targetingPageId = doubleclickPageTypeTagTag + '_' + pageName;
       // Must remain tag for targeting in DFP unless a change is made in the future to update it there
       siteZone = siteZone.concat('/', 'tag', '/', doubleclickPageTypeTagSection);
       break;
+    case 'authorPage':
+      targetingTags = [doubleclickPageTypeTagArticle, doubleclickPageTypeTagAuthor];
+      targetingPageId = pageName;
+      siteZone = siteZone.concat('/', 'show', '/', doubleclickPageTypeTagArticle);
     default:
   }
 

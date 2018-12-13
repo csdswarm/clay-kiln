@@ -5,8 +5,11 @@
 .component--trending-recirculation {
   width: 100%;
   max-width: em(940);
-
   margin: 0 auto;
+
+  @mixin medium-small-screen {
+    margin-bottom: em(30);
+  }
 
   h2 {
     @mixin trending-recirculation-font1;
@@ -42,6 +45,9 @@
 
     @mixin medium-screen {
       margin-bottom: em(10);
+    }
+    @mixin medium-small-screen {
+      margin-bottom: em(20);
     }
   }
 
@@ -130,7 +136,7 @@
         max-width: em(widthOnGrid(4,3,medium-small-screen));
         height: 100%;
         margin-right: 0;
-        margin-bottom: 0;
+        margin-bottom: em(10);
       }
       @mixin small-screen {
         max-width: em(widthOnGrid(4,3,small-screen));
