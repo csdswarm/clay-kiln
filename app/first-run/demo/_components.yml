@@ -388,6 +388,11 @@ _components:
         adPosition: rec
         adLocation: btf
         sticky: true
+      halfPageBottomTopic:
+        adSize: half-page-topic
+        adPosition: rec
+        adLocation: btf
+        sticky: true
       mediumRectangleTop:
         adSize: medium-rectangle
         adPosition: rec
@@ -713,7 +718,7 @@ _components:
         populateFrom: all-content
         locationOfContentFeed: homepage
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageTop
+          _ref: /_components/google-ad-manager/instances/halfPageBottom
         introComponents: []
       section-front:
         items: []
@@ -724,7 +729,7 @@ _components:
         populateFrom: section-front
         locationOfContentFeed: section-front
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageTop
+          _ref: /_components/google-ad-manager/instances/halfPageBottom
         introComponents: []
       topic-page:
         items: []
@@ -735,7 +740,7 @@ _components:
         populateFrom: tag
         locationOfContentFeed: topic-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageTop
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
         introComponents: []
       author-page:
         items: []
@@ -746,7 +751,7 @@ _components:
         populateFrom: author
         locationOfContentFeed: author-page
         googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageTop
+          _ref: /_components/google-ad-manager/instances/halfPageBottom
         introComponents: []
 
   latest-videos:

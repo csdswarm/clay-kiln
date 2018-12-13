@@ -309,7 +309,10 @@ em, i {
 /* |||||||| Topic Page Fonts Styleguide ||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin topic-page-header-font1 {
-@mixin font CircularStd-Black, 35px, $parisM, -.55px, 44px;
+  @mixin font CircularStd-Black, 35px, $white, -.55px, 44px;
+}
+@define-mixin topic-page-header-font2 {
+  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 44px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/

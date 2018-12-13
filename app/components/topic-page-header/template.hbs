@@ -1,15 +1,16 @@
 <header
   data-uri="{{ default _ref _self }}"
-  class="component component--topic-page-header topic-page-header--{{tag}}
-    {{ if @root.locals.edit ' editing' }}
-    {{ if image ' topic-page-header--image'}}
-  "
-  {{#if image}}
-    style="background-image:url({{ image }});"
+  class="component component--topic-page-header topic-page-header--{{tag}} {{ if @root.locals.edit ' editing' }}"
+  data-editable="settings">
+  {{#if tag}}
+    <div class="topic-page-header__banner {{if image 'topic-page-header__banner--image'}}">
+      {{#if image}}
+        <div class="banner__image">
+          <div class="banner__gradient"></div>
+          <img src="{{ image }}">
+        </div>
+      {{/if}}
+      <h1>{{tag}}</h1>
+    </div>
   {{/if}}
->
-  <div class="topic-page-header__tag" data-editable="settings">
-    <div class="tag__line"></div>
-    <h1>{{tag}}</h1>
-  </div>
 </header>

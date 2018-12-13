@@ -12,6 +12,9 @@ const adSizes = {
   'half-page': {
     defaultSize: [300, 600]
   },
+  'half-page-topic': {
+    defaultSize: [300, 600]
+  },
   'medium-rectangle': {
     defaultSize: [300, 250]
   },
@@ -50,6 +53,11 @@ module.exports = {
       sizeMapping['half-page'] = googletag.sizeMapping()
         .addSize([1023, 0], [[300, 600], [300, 250]])
         .addSize([0, 0], [[300, 250]])
+        .build();
+
+      sizeMapping['half-page-topic'] = googletag.sizeMapping()
+        .addSize([1023, 0], [[300, 600], [300, 250]])
+        .addSize([0, 0], [])
         .build();
 
       sizeMapping['medium-rectangle'] = googletag.sizeMapping()
