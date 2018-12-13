@@ -274,7 +274,7 @@
       width: 100%;
       position: relative;
       min-height: 0;
-      .google-ad-manager {
+      .component--google-ad-manager {
         display: none !important;
       }
     }
