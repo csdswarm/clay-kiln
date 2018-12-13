@@ -9,5 +9,5 @@ _components:
     populateFrom: ''
     locationOfContentFeed: ''
     googleAdRightRail:
-      _ref: /_components/google-ad-manager/instances/mediumRectangleBottom
+      _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
     introComponents: []
