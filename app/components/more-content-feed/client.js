@@ -47,6 +47,15 @@ class MoreContentFeed {
 
         // Append to the list
         for (let link of doc.body.childNodes) {
+          let anchor = link.querySelector('a');
+
+          anchor.classList.add('spa-link');
+
+          // Attach vue router listener on SPA links.
+          anchor.addEventListener('click', event => {
+            this.onSpaLinkClick(event, anchor);
+          });
+
           this.moreContentFeed.querySelector('ul').append(link);
         }
 
@@ -56,6 +65,14 @@ class MoreContentFeed {
       });
   }
 
+  onSpaLinkClick(event, element) {
+    event.preventDefault();
+    element.removeEventListener('click', element.fn, false);
+
+    const linkParts = new URL(element.getAttribute('href'));
+
+    vueApp._router.push(linkParts.pathname || '/');
+  }
 };
 
 module.exports = el => new MoreContentFeed(el);
