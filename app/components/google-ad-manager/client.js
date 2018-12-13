@@ -165,7 +165,7 @@ function setAds(initialRequest = false) {
       [...document.querySelectorAll('.component--tags .tags__item')].forEach(tag => {
         targetingTags.push(tag.getAttribute('data-tag'));
       });
-      targetingPageId = doubleclickPageTypeTagArticle + '_' + urlPathname.split('/').pop().substring(0, 35);
+      targetingPageId = (doubleclickPageTypeTagArticle + '_' + urlPathname.split('/').pop()).substring(0, 39);
       [...document.querySelectorAll('.component--article .author')].forEach(tag => {
         targetingAuthors.push(tag.getAttribute('data-author').replace(/\s/, '-').toLowerCase());
       });
