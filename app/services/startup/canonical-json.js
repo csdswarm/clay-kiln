@@ -62,13 +62,14 @@ function middleware(req, res, next) {
 
       });
 
-  } else if (req.path.indexOf('/syndicated-authors/') === 0) {
-    params.dynamicAuthor = req.path.match(/syndicated-authors\/(.+)\/?/)[1];
+  } else if (req.path.indexOf('/authors/') === 0) {
+    params.dynamicAuthor = req.path.match(/authors\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/author@published`);
   } else {
     _.each(process.env.SECTION_FRONTS.split(','), sectionFront => {
       if (req.path.indexOf(`/${sectionFront}/`) === 0) {
         let regExp = new RegExp(sectionFront + '\/(.+)\/?');
+
         params.dynamicTag = req.path.match(regExp)[1];
         promise = db.get(`${req.hostname}/_pages/topic@published`);
       }
