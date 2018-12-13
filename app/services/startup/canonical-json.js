@@ -31,30 +31,46 @@ function fakeLocals(req, res, params) {
  */
 function middleware(req, res, next) {
   var promise, params = {};
+  let curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, tagKeywordExtractor;
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
   }
 
-  // If it's a topic route att in the params and compose the page
-  if (req.path.indexOf('/topic/') === 0) {
+  // Define Curated/Dynamic "tag" routes.
+  // Match against section-front slug prefixes
+  curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+
+  // Match "topic" slug prefix as well.
+  curatedOrDynamicRoutePrefixes.push('topic');
+
+  // Define curated/dynamic routing logic
+  curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
+
+  // If it's a topic or section-front route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic tag page logic.
+  if (curatedOrDynamicRoutes.test(req.path)) {
+
+    // Define keyword extraction logic.
+    tagKeywordExtractor = new RegExp(`^\\/(?:${curatedOrDynamicRoutePrefixes.join('|')})\\/([^/]+)\\/?`);
 
     /**
-     * We need logic to handle different routing between dynamic topic pages and curated,
-     * since both share the same slug prefix "/topic/".
+     * We need logic to handle different routing between dynamic topic/section-front pages and curated,
+     * since both share the same slug prefixes.
      */
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
-      .then(topicPageKey => {
-        // Curated topic page found. Serve content collection.
-        params.tag = req.path.match(/topic\/([^/]+)\/?/)[1];
-        return db.get(`${topicPageKey}@published`);
+      .then(pageKey => {
+        // Curated topic/section-front page found. Serve content collection.
+        // Extract tag keyword and set it to params appropriately.
+        params.tag = req.path.match(tagKeywordExtractor)[1];
+        return db.get(`${pageKey}@published`);
       })
       .catch(error => {
-        // If error was a "not found" error, then fallback to serving dynamic topic page.
+        // If error was a "not found" error, then fallback to serving dynamic topic/section-front page.
         const notFoundErrorPrefix = 'Key not found in database';
 
         if (error.message.substring(0, notFoundErrorPrefix.length) === notFoundErrorPrefix) {
-          params.dynamicTag = req.path.match(/topic\/([^/]+)\/?/)[1];
+          // Extract tag keyword and set it to params appropriately.
+          params.dynamicTag = req.path.match(tagKeywordExtractor)[1];
           return db.get(`${req.hostname}/_pages/topic@published`);
         } else {
           throw error;
@@ -66,18 +82,8 @@ function middleware(req, res, next) {
     params.dynamicAuthor = req.path.match(/authors\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/author@published`);
   } else {
-    _.each(process.env.SECTION_FRONTS.split(','), sectionFront => {
-      if (req.path.indexOf(`/${sectionFront}/`) === 0) {
-        let regExp = new RegExp(sectionFront + '\/(.+)\/?');
-
-        params.dynamicTag = req.path.match(regExp)[1];
-        promise = db.get(`${req.hostname}/_pages/topic@published`);
-      }
-    });
-    if (!promise) {
-      // Otherwise resolve the uri and page instance
-      promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
-    }
+    // Otherwise resolve the uri and page instance
+    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
   }
   
   // Compose and respond
