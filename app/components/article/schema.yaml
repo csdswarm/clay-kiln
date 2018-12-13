@@ -325,8 +325,6 @@ secondaryArticleType:
       - 
         name: MMA & WWE
         value: MMA & WWE
-    validate:
-      required: true
 section:
   _label: Section
   _has:
