@@ -9,7 +9,7 @@ primaryHeadline:
       - strike
     validate:
       required: true
-      max: 80
+      max: 280
     help: Write your most shareable headline
     attachedButton:
       name: magic-button
@@ -90,8 +90,6 @@ seoDescription:
     type: multi-line
     help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 200 characters
     validate:
-      min: 50
-      max: 200
       required: true
 feedImgUrl:
   _label: Recirculation Image
