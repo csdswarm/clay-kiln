@@ -204,6 +204,7 @@ function setAds(initialRequest = false) {
     for (let adSlot of adSlots) {
       const ad = adSlot.querySelector('.google-ad-manager__slot'),
         adSize = adSlot.getAttribute('data-ad-size'),
+        billboard = document.querySelector('.google-ad-manager--billboard'),
         adPosition = adSlot.getAttribute('data-ad-position'),
         adLocation = adSlot.getAttribute('data-ad-location'),
         pubAds = googletag.pubads();
@@ -212,6 +213,8 @@ function setAds(initialRequest = false) {
 
       if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
+        billboard.style['background'] = 'transparent';
+        billboard.style['margin-bottom'] = '-0.875em';
       } else {
         slot = googletag.defineSlot(
           siteZone,
