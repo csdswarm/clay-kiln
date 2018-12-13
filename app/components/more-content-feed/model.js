@@ -106,22 +106,41 @@ module.exports.render = function (ref, data, locals) {
     }
 
     data.sectionFront = null;
-    if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1) {
-      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
-    }
 
+    if (locals && locals.sectionFront) {
+      data.sectionFront = locals.sectionFront;
+    } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
+      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
+    } 
+    
     if (!data.tag) {
       return data;
     }
 
-    // No need to clean the tag as the analyzer in elastic handles cleaning
-    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
-    if (data.sectionFront) {
-      queryService.addShould(query, { match: { articleType: data.sectionFront }});
-      queryService.addMinimumShould(query, 2);
-    } else {
-      queryService.addMinimumShould(query, 1);
+    // normalize tag array (based on simple list input)
+    if (Array.isArray(data.tag)) {
+      data.tag = data.tag.map(tag => tag.text);
     }
+
+    // split comma seperated tags (for load-more get queries)
+    if (typeof data.tag == 'string' && data.tag.indexOf(',') > -1) {
+      data.tag = data.tag.split(',');
+    }
+
+    // Handle querying an array of tags
+    if (Array.isArray(data.tag)) {
+      for (let tag of data.tag) {
+        queryService.addShould(query, { match: { 'tags.normalized': tag }});
+      }
+    } else {
+      // No need to clean the tag as the analyzer in elastic handles cleaning
+      queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+    }
+
+    if (data.sectionFront) {
+      queryService.addMust(query, { match: { articleType: data.sectionFront }});
+    }
+    queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'author') {
     // Check if we are on an author page and override the above
     if (locals && locals.author) {
@@ -166,7 +185,6 @@ module.exports.render = function (ref, data, locals) {
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     });
   }
-
   return queryService.searchByQuery(query)
     .then(function (results) {
       results = results.map(content => {

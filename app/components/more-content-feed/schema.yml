@@ -87,7 +87,11 @@ tagManual:
     operator: ===
     value: tag
   _has:
-    input: text
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
     help: Tag from which to pull content
     validate:
       required:

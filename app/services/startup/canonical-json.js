@@ -45,7 +45,7 @@ function middleware(req, res, next) {
      */
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
       .then(topicPageKey => {
-        // Curated topic page found. Serve curated page.
+        // Curated topic page found. Serve content collection.
         params.tag = req.path.match(/topic\/([^/]+)\/?/)[1];
         return db.get(`${topicPageKey}@published`);
       })

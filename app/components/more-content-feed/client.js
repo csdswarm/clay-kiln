@@ -18,6 +18,9 @@ class MoreContentFeed {
       } else if (this.loadMore.getAttribute('data-author')) {
         this.author = this.loadMore.getAttribute('data-author') || '';
       }
+      if (this.loadMore.getAttribute('data-section')) {
+        this.sectionFront = this.loadMore.getAttribute('data-section') || '';
+      }
     }
   }
 
@@ -33,6 +36,9 @@ class MoreContentFeed {
       moreContentUrl += `&tag=${this.tag}`;
     } else if (this.author) {
       moreContentUrl += `&author=${this.author}`;
+    }
+    if (this.sectionFront) {
+      moreContentUrl += `&sectionFront=${this.sectionFront}`;
     }
 
     fetch(moreContentUrl)

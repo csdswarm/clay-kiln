@@ -13,16 +13,11 @@ tag:
 image:
   _label: Image URL
   _has:
-    input: text
-    type: url
-    help: Must be a image url
-    attachedButton:
-      - name: magic-button
-        component: image
-        transform: getComponentInstance
-        url: $SITE_PREFIX
-        property: url
-        tooltip: get the first image
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
 
 _groups:
   settings:
