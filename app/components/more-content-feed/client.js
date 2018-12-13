@@ -39,7 +39,7 @@ class MoreContentFeed {
     }
     if (this.sectionFront) {
       moreContentUrl += `&sectionFront=${this.sectionFront}`;
-    } 
+    }
 
     fetch(moreContentUrl)
       .then((response) => response.text())

@@ -129,7 +129,7 @@ module.exports.render = function (ref, data, locals) {
 
     // Handle querying an array of tags
     if (Array.isArray(data.tag)) {
-      for (var tag of data.tag) {
+      for (let tag of data.tag) {
         queryService.addShould(query, { match: { 'tags.normalized': tag }});
       }
     } else {
