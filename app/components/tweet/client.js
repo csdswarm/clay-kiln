@@ -36,7 +36,7 @@ class TwitterEmbeds {
 
   /**
    *
-   * Synchronously include Instagram embeds library on page.
+   * Synchronously include Twitter embeds library on page.
    *
    * Note that there is no need to call this.process() after because the twitter
    * post init code is automatically called by the library when it finishes loading.
