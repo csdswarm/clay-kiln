@@ -4,11 +4,11 @@
       <a class="podcast-list__link" href="{{ item.podcast.url }}">
         {{#if @first}}<div class="podcast-list__tag">Podcasts</div>{{/if}}
         <img
-          src="{{ item.podcast.imageUrl }}?width=220&crop=1:1,smart"
+          src="{{ item.podcast.imageUrl }}?width=220&crop=1:1,offset-y0"
           srcset="{{ item.podcast.imageUrl }}?width=150&crop=1:1 150w,
-                  {{ item.podcast.imageUrl }}?width=201&crop=1:1,smart 210w,
-                  {{ item.podcast.imageUrl }}?width=220&crop=1:1,smart 220w,
-                  {{ item.podcast.imageUrl }}?width=343&crop=1:1,smart 343w"
+                  {{ item.podcast.imageUrl }}?width=201&crop=1:1,offset-y0 210w,
+                  {{ item.podcast.imageUrl }}?width=220&crop=1:1,offset-y0 220w,
+                  {{ item.podcast.imageUrl }}?width=343&crop=1:1,offset-y0 343w"
           sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 343px, 220px"
           class="podcast-list__image" />
         <div class="podcast-list__title">
