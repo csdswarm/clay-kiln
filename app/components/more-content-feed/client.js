@@ -88,6 +88,7 @@ class MoreContentFeed {
 
     const linkParts = new URL(element.getAttribute('href'));
 
+    // eslint-disable-next-line no-undef
     vueApp._router.push(linkParts.pathname || '/');
   }
 };
