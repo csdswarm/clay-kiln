@@ -177,7 +177,7 @@ function setAds(initialRequest = false) {
       siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
     case 'sectionFront':
-      targetingTags = [doubleclickPageTypeTagArticle, pageName];
+      targetingTags = [doubleclickPageTypeTagSection, pageName];
       targetingPageId = pageName;
       siteZone = siteZone.concat('/', pageName, '/article');
       break;
