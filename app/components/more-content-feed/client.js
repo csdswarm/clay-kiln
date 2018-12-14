@@ -55,12 +55,14 @@ class MoreContentFeed {
         for (let link of doc.body.childNodes) {
           let anchor = link.querySelector('a');
 
-          anchor.classList.add('spa-link');
+          if (anchor) {
+            anchor.classList.add('spa-link');
 
-          // Attach vue router listener on SPA links.
-          anchor.addEventListener('click', event => {
-            this.onSpaLinkClick(event, anchor);
-          });
+            // Attach vue router listener on SPA links.
+            anchor.addEventListener('click', event => {
+              this.onSpaLinkClick(event, anchor);
+            });
+          }
 
           this.moreContentFeed.querySelector('ul').append(link);
         }
@@ -68,7 +70,9 @@ class MoreContentFeed {
         // iOS doesn't play nice with srcset dynamically (https://github.com/metafizzy/infinite-scroll/issues/770)
         if (/iPhone/.test(navigator.userAgent)) {
           this.moreContentFeed.querySelectorAll('img').forEach((img) => {
-            img.outerHTML = img.outerHTML;
+            if (!img.height) {
+              img.outerHTML = img.outerHTML;
+            }
           });
         }
 
