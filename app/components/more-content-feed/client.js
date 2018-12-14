@@ -65,6 +65,13 @@ class MoreContentFeed {
           this.moreContentFeed.querySelector('ul').append(link);
         }
 
+        // iOS doesn't play nice with srcset dynamically (https://github.com/metafizzy/infinite-scroll/issues/770)
+        if (/iPhone/.test(navigator.userAgent)) {
+          this.moreContentFeed.querySelectorAll('img').forEach((img) => {
+            img.outerHTML = img.outerHTML;
+          });
+        }
+
         // Recreate the listener for the new button
         this.loadMore = this.moreContentFeed.querySelector('.links__link--loadmore');
         this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
