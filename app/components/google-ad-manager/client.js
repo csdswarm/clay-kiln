@@ -68,6 +68,8 @@ document.addEventListener('google-ad-manager-mount', function () {
 // Reset data when navigating in SPA
 document.addEventListener('google-ad-manager-dismount', function () {
   clearDfpTakeover();
+  // undo style changes to billboard
+
   // Reset slot arrays/objects
   allAdSlots = {},
   initialPageAdSlots = [],
@@ -91,7 +93,6 @@ googletag.cmd.push(() => {
         clearDfpTakeover();
         // Refresh all ads
         googletag.pubads().refresh(null, { changeCorrelator: false });
-        styleFixBillboard();
         // Remove the observers
         [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
           observer.unobserve(adSlot);
@@ -106,6 +107,11 @@ googletag.cmd.push(() => {
     let id = event.slot.getSlotElementId(),
       adSlot = document.getElementById(id);
 
+    const isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
+
+    if (isOOP) {
+      updateBillboardStyle(!event.isEmpty);
+    }
     if (event.isEmpty) {
       adSlot.parentElement.style.display = 'none';
     } else {
@@ -115,11 +121,22 @@ googletag.cmd.push(() => {
   });
 });
 
-function styleFixBillboard() {
+/**
+ * Update the billboard ad on the page to have a transparent or opaque white background
+ * Also change the bottom margin to -0.875em
+ *
+ * @param {boolean} transparent - Whether we want the top billboard to be transparent
+ */
+function updateBillboardStyle(transparent) {
   const billboard = document.querySelector('.google-ad-manager--billboard');
 
-  billboard.style['background'] = 'transparent';
-  billboard.style['margin-bottom'] = '-0.875em';
+  if (transparent) {
+    billboard.style['background'] = 'transparent';
+    billboard.style['margin-bottom'] = '-0.875em';
+  } else {
+    billboard.style['background'] = null;
+    billboard.style['margin-bottom'] = null;
+  }
 }
 
 /**
@@ -223,7 +240,7 @@ function setAds(initialRequest = false) {
 
       if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
-        styleFixBillboard();
+        updateBillboardStyle(true);
       } else {
         slot = googletag.defineSlot(
           siteZone,
@@ -354,6 +371,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     document.body.style.backgroundColor = backgroundColor;
     globalDiv.prepend(bgdiv);
   }
+
   clearDfpTakeover = () => {
     const mainDiv = document.getElementsByTagName('body')[0];
 
@@ -365,5 +383,6 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
       document.body.style.backgroundColor = null;
     }
 
+    updateBillboardStyle(false);
   };
 };
