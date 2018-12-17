@@ -1,6 +1,7 @@
 @import "_global/colors";
 @import "_global/mixins";
 
+
 .advertisement--full {
   position: absolute;
   height: 100%;
@@ -62,6 +63,11 @@
   .google-ad-manager--leaderboard,
   .google-ad-manager--mobile {
     margin-bottom: 0;
+
+    @mixin medium-small-screen {
+      margin-bottom: em(30);
+    }
+
   }
 }
 .google-ad-manager--half-page,
@@ -77,3 +83,8 @@
     margin: 0 auto;
   }
 }
+
+.google-ad-manager--mobile-adhesion  {
+  margin-bottom: em(30);
+}
+
