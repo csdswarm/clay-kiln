@@ -9,6 +9,7 @@ let adMapping = require('./adMapping'),
   initialAdRequestComplete = false,
   adsRefreshing = false,
   initialPageAdSlots = [],
+  clearDfpTakeover = () => {},
   numRightRail = 1;
 const doubleclickPrefix = '21674100491',
   doubleclickBannerTag = 'NTL.RADIO',
@@ -66,6 +67,7 @@ document.addEventListener('google-ad-manager-mount', function () {
 
 // Reset data when navigating in SPA
 document.addEventListener('google-ad-manager-dismount', function () {
+  clearDfpTakeover();
   // Reset slot arrays/objects
   allAdSlots = {},
   initialPageAdSlots = [],
@@ -82,12 +84,14 @@ googletag.cmd.push(() => {
   // Handle right rail refresh via DFP event trigger
   googletag.pubads().addEventListener('impressionViewable', event => {
     // Trigger the fresh once the first ad registers an impression
-    if (event.slot.getSlotElementId() === Object.keys(allAdSlots)[0] && !adsRefreshing) {
+    if (allAdSlots[event.slot.getSlotElementId()] && !adsRefreshing) {
       adsRefreshing = true;
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
+        clearDfpTakeover();
         // Refresh all ads
         googletag.pubads().refresh(null, { changeCorrelator: false });
+        styleFixBillboard();
         // Remove the observers
         [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
           observer.unobserve(adSlot);
@@ -110,6 +114,13 @@ googletag.cmd.push(() => {
     }
   });
 });
+
+function styleFixBillboard() {
+  const billboard = document.querySelector('.google-ad-manager--billboard');
+
+  billboard.style['background'] = 'transparent';
+  billboard.style['margin-bottom'] = '-0.875em';
+}
 
 /**
  * create and add unique ids to each ad slot on page
@@ -204,7 +215,6 @@ function setAds(initialRequest = false) {
     for (let adSlot of adSlots) {
       const ad = adSlot.querySelector('.google-ad-manager__slot'),
         adSize = adSlot.getAttribute('data-ad-size'),
-        billboard = document.querySelector('.google-ad-manager--billboard'),
         adPosition = adSlot.getAttribute('data-ad-position'),
         adLocation = adSlot.getAttribute('data-ad-location'),
         pubAds = googletag.pubads();
@@ -213,8 +223,7 @@ function setAds(initialRequest = false) {
 
       if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
-        billboard.style['background'] = 'transparent';
-        billboard.style['margin-bottom'] = '-0.875em';
+        styleFixBillboard();
       } else {
         slot = googletag.defineSlot(
           siteZone,
@@ -345,4 +354,16 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     document.body.style.backgroundColor = backgroundColor;
     globalDiv.prepend(bgdiv);
   }
+  clearDfpTakeover = () => {
+    const mainDiv = document.getElementsByTagName('body')[0];
+
+    bgdiv.remove();
+    if (mainDiv) {
+      mainDiv.classList.remove('has-fullpage-ad');
+    }
+    if (globalDiv) {
+      document.body.style.backgroundColor = null;
+    }
+
+  };
 };
