@@ -3,8 +3,8 @@
 /**
  * duplicates a script tag with data attributes
  *
- * @param {script object}
- * @return {script object}
+ * @param {object} script a script tag object
+ * @return {object} a script tag object
  */
 const duplicateScript = (script) => {
   const newScript = document.createElement('script'),
