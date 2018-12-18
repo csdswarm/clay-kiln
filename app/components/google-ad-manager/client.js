@@ -384,10 +384,6 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     if (mainDiv) {
       mainDiv.classList.remove('has-fullpage-ad');
     }
-    if (globalDiv) {
-      document.body.style.backgroundColor = null;
-    }
-
     updateBillboardStyle(false);
   };
 };
