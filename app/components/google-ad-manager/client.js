@@ -125,12 +125,12 @@ googletag.cmd.push(() => {
  * Update the billboard ad on the page to have a transparent or opaque white background
  * Also change the bottom margin to -0.875em
  *
- * @param {boolean} transparent - Whether we want the top billboard to be transparent
+ * @param {boolean} hasSkin - Whether we want the top billboard to be transparent
  */
-function updateBillboardStyle(transparent) {
+function updateBillboardStyle(hasSkin) {
   const billboard = document.querySelector('.google-ad-manager--billboard');
 
-  if (transparent) {
+  if (hasSkin) {
     billboard.style['background'] = 'transparent';
     billboard.style['margin-bottom'] = '-0.875em';
   } else {
