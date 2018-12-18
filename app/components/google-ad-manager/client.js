@@ -372,6 +372,11 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     globalDiv.prepend(bgdiv);
   }
 
+  /**
+   * Reverses changes done by dfp takeover. It's defined in this scope
+   * so it can have access to `bgdiv` and `globaldiv`
+   *
+   */
   clearDfpTakeover = () => {
     const mainDiv = document.getElementsByTagName('body')[0];
 
