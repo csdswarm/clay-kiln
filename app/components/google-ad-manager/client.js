@@ -99,17 +99,37 @@ googletag.cmd.push(() => {
 
   // Handle collapsing empty div manually as DFP collapseEmptyDiv doesn't work when lazy loading
   googletag.pubads().addEventListener('slotRenderEnded', event => {
-    let id = event.slot.getSlotElementId(),
-      adSlot = document.getElementById(id);
+    const id = event.slot.getSlotElementId(),
+      adSlot = document.getElementById(id).parentElement;
 
     if (event.isEmpty) {
-      adSlot.parentElement.style.display = 'none';
+      adSlot.style.display = 'none';
     } else {
       // Unhide parent incase this was a refresh after an empty response
-      adSlot.parentElement.style.display = 'flex';
+      adSlot.style.display = 'flex';
+    }
+
+    if (adSlot.classList.contains('google-ad-manager--mobile-adhesion')) {
+      addCloseOption(adSlot);
     }
   });
 });
+
+function addCloseOption(ad) {
+  const div = document.createElement('div');
+
+  div.innerHTML = '&#215';
+  div.classList.add('mobile-adhesion__close');
+  div.addEventListener('click', (event) => {
+    event.target.parentElement.style.display = 'none';
+  }, true);
+
+  ad.appendChild(div);
+}
+
+// add a close event to the X
+document.querySelectorAll('.google-ad-manager--mobile-adhesion').forEach(ad => addCloseOption(ad));
+
 
 /**
  * create and add unique ids to each ad slot on page

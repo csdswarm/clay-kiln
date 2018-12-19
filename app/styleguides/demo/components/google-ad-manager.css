@@ -79,10 +79,26 @@
 }
 
 .google-ad-manager--mobile-adhesion {
+  display: none;
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
   margin: 0 auto;
   z-index: 100;
+
+  .mobile-adhesion__close {
+    position: absolute;
+    color: $white;
+    background-color: $black;
+    border-radius: em(16);
+    right: 0;
+    padding-left: em(5);
+    padding-top: em(1);
+    height: em(20);
+    width: em(20);
+    cursor: pointer;
+    font-weight: 800;
+    border: em(1) solid $white;
+  }
 }
