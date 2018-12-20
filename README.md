@@ -1,4 +1,4 @@
-# Clay Starter
+#     Clay Starter
 
 A repo that contains a basic site and the necessary files to provision AWS resources for hosting the site.
 
