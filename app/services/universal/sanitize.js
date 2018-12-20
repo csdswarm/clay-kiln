@@ -16,7 +16,7 @@ const speakingurl = require('speakingurl'),
  * @returns {string}
  */
 function toSmartHeadline(text) {
-  return headQuotes(he.decode(text))
+ return he.decode(text)
     .replace('---', '—') // em-dash first
     .replace('--', '–')
     .replace('...', '…');
