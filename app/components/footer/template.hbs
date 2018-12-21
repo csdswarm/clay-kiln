@@ -28,7 +28,7 @@
 					<h2>{{text}}</h2>
 					{{#if list}}
 						{{#each list as |link|}}
-							<a {{#if link.newtab}}target="_blank"{{/if}} href="{{link.url}}">{{link.text}}</a>
+							<a class="outbound-link" {{#if link.newtab}}target="_blank"{{/if}} href="{{link.url}}">{{link.text}}</a>
 						{{/each}}
 					{{/if}}
 				</div>

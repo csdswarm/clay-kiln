@@ -17,11 +17,11 @@
             <div class="trending__item__tag">{{ articleType }}</div>
           {{/if}}
           <img
-            src="{{ feedImgUrl }}?width=300&height=169&crop=16:9,smart"
-            srcset="{{ feedImgUrl }}?width=300&height=169&&crop=16:9 300w,
-              {{ feedImgUrl }}?width=320&height=180&crop=16:9,smart 320w,
-              {{ feedImgUrl }}?width=343&height=193&crop=16:9,smart 343w,
-              {{ feedImgUrl }}?width=440&height=248&crop=16:9,smart 440w"
+            src="{{ feedImgUrl }}?width=300&height=169&crop=16:9,offset-y0"
+            srcset="{{ feedImgUrl }}?width=300&height=169&&crop=16:9,offset-y0 300w,
+              {{ feedImgUrl }}?width=320&height=180&crop=16:9,offset-y0 320w,
+              {{ feedImgUrl }}?width=343&height=193&crop=16:9,offset-y0 343w,
+              {{ feedImgUrl }}?width=440&height=248&crop=16:9,offset-y0 440w"
             sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, 300px"
             class="trending__item__image" />
           <div class="trending__item__label">{{ primaryHeadline }}</div>

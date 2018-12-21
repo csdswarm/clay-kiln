@@ -165,7 +165,7 @@ function setAds(initialRequest = false) {
       [...document.querySelectorAll('.component--tags .tags__item')].forEach(tag => {
         targetingTags.push(tag.getAttribute('data-tag'));
       });
-      targetingPageId = doubleclickPageTypeTagArticle + '_' + urlPathname.split('/').pop().substring(0, 35);
+      targetingPageId = (doubleclickPageTypeTagArticle + '_' + urlPathname.split('/').pop()).substring(0, 39);
       [...document.querySelectorAll('.component--article .author')].forEach(tag => {
         targetingAuthors.push(tag.getAttribute('data-author').replace(/\s/, '-').toLowerCase());
       });
@@ -177,7 +177,7 @@ function setAds(initialRequest = false) {
       siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
     case 'sectionFront':
-      targetingTags = [doubleclickPageTypeTagArticle, pageName];
+      targetingTags = [doubleclickPageTypeTagSection, pageName];
       targetingPageId = pageName;
       siteZone = siteZone.concat('/', pageName, '/article');
       break;
@@ -204,6 +204,7 @@ function setAds(initialRequest = false) {
     for (let adSlot of adSlots) {
       const ad = adSlot.querySelector('.google-ad-manager__slot'),
         adSize = adSlot.getAttribute('data-ad-size'),
+        billboard = document.querySelector('.google-ad-manager--billboard'),
         adPosition = adSlot.getAttribute('data-ad-position'),
         adLocation = adSlot.getAttribute('data-ad-location'),
         pubAds = googletag.pubads();
@@ -212,6 +213,8 @@ function setAds(initialRequest = false) {
 
       if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
+        billboard.style['background'] = 'transparent';
+        billboard.style['margin-bottom'] = '-0.875em';
       } else {
         slot = googletag.defineSlot(
           siteZone,

@@ -42,7 +42,9 @@ export default class {
       if ($href) {
         const linkParts = new URL($href)
         if (linkParts.hostname === window.location.hostname && linkParts.pathname !== '/audio') {
-          $link.addClass('spa-link')
+          if (!$link.hasClass('outbound-link')) {
+            $link.addClass('spa-link')
+          }
         } else {
           $link.addClass('outbound-link')
         }
