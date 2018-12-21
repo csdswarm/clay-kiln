@@ -107,28 +107,28 @@ googletag.cmd.push(() => {
     } else {
       // Unhide parent incase this was a refresh after an empty response
       adSlot.style.display = 'flex';
-    }
 
-    if (adSlot.classList.contains('google-ad-manager--mobile-adhesion')) {
-      addCloseOption(adSlot);
+      if (adSlot.classList.contains('google-ad-manager--mobile-adhesion')) {
+        addCloseEvent(adSlot);
+      }
     }
   });
 });
 
-function addCloseOption(ad) {
-  const div = document.createElement('div');
 
-  div.innerHTML = '&#215';
-  div.classList.add('mobile-adhesion__close');
-  div.addEventListener('click', (event) => {
+/**
+ * adds a listener to the x div to enable it to close the current ad
+ *
+ * @param {object} ad - a mobile adhesion ad object
+ */
+function addCloseEvent(ad) {
+  ad.querySelector('.mobile-adhesion__close').addEventListener('click', (event) => {
     event.target.parentElement.style.display = 'none';
   }, true);
-
-  ad.appendChild(div);
 }
 
 // add a close event to the X
-document.querySelectorAll('.google-ad-manager--mobile-adhesion').forEach(ad => addCloseOption(ad));
+document.querySelectorAll('.google-ad-manager--mobile-adhesion').forEach(ad => addCloseEvent(ad));
 
 
 /**
