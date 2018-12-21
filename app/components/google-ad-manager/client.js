@@ -110,7 +110,7 @@ googletag.cmd.push(() => {
     const isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
 
     if (isOOP) {
-      updateBillboardStyle(!event.isEmpty);
+      updateSkinStyles(!event.isEmpty);
     }
     if (event.isEmpty) {
       adSlot.parentElement.style.display = 'none';
@@ -127,7 +127,7 @@ googletag.cmd.push(() => {
  *
  * @param {boolean} hasSkin - Whether we want the top billboard to be transparent
  */
-function updateBillboardStyle(hasSkin) {
+function updateSkinStyles(hasSkin) {
   const billboard = document.querySelector('.google-ad-manager--billboard');
 
   if (hasSkin) {
@@ -136,6 +136,7 @@ function updateBillboardStyle(hasSkin) {
   } else {
     billboard.style['background'] = null;
     billboard.style['margin-bottom'] = null;
+    document.body.style.backgroundColor = null;
   }
 }
 
@@ -240,7 +241,7 @@ function setAds(initialRequest = false) {
 
       if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
-        updateBillboardStyle(true);
+        updateSkinStyles(true);
       } else {
         slot = googletag.defineSlot(
           siteZone,
@@ -385,10 +386,6 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
       mainDiv.classList.remove('has-fullpage-ad');
     }
 
-    if (globalDiv) {
-      document.body.style.backgroundColor = null;
-    }
-
-    updateBillboardStyle(false);
+    updateSkinStyles(false);
   };
 };
