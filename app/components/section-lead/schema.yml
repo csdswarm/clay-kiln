@@ -33,32 +33,31 @@ items:
         _has:
           validate:
             required: true
-
 sectionFront:
-  _label: Section Front
-  _subscribe: sectionFront
-  _has:
-    input: static
-    text: ${sectionFront}
-filterBySection:
   _label: Filter by Section Front
   _subscribe: sectionFront
   _has:
     input: static
     text: ${sectionFront}
-_groups:
-  settings:
-    fields:
-    - primaryStoryLabel
-    - items
-    - sectionFront
-    _placeholder:
-      ifEmpty: sectionFront
-      height: 400px
-      text: Lead Story(s)
+tag:
+  _label: Filter by Tag
+  _subscribe: tag
+  _has:
+    input: static
+    text: ${tag}
 
 # Component properties
 googleAdRightRail:
   _component:
     include:
     - google-ad-manager
+
+_groups:
+  settings:
+    fields:
+    - primaryStoryLabel
+    - items
+    _placeholder:
+      ifEmpty: sectionFront
+      height: 400px
+      text: Lead Story(s)
