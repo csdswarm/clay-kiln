@@ -32,6 +32,8 @@ _pages:
       - /_components/meta-url/instances/general
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
+    pageHeader:
+      - /_components/topic-page-header/instances/new
     main:
       - /_components/section-front/instances/new
     layout: /_components/one-column-layout/instances/general
