@@ -1,6 +1,7 @@
 _description: |
   A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
-  The articles will be filtered by the section of the URL.
+  The articles will be filtered by the section front of the URL, (ex: /sports/football with tags "NFL" and
+  "National News" will only show sports stories that have either of those tags).
 
 pageLength:
   _label: Page Size
