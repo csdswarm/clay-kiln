@@ -1,5 +1,6 @@
 _description: |
   A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
+  The articles will be filtered by the section of the Custom URL.
 
 pageLength:
   _label: Page Size
@@ -74,7 +75,7 @@ tag:
   _subscribe: tag
   _label: tag
   _has:
-    help: Tag from which to pull content
+    help: A subset of tags to include from inside the section set in the Custom URL
 
 tagManual:
   _label: Tag
@@ -92,7 +93,7 @@ tagManual:
       list: tags
       allowRemove: true
       allowCreate: true
-    help: Tag from which to pull content
+    help: A subset of tags to include from inside the section set in the Custom URL
     validate:
       required:
         field: populateFrom
