@@ -27,10 +27,10 @@ items:
       list: tags
       allowRemove: true
       allowCreate: true
-articleType:
-  _subscribe: articleType
+sectionFront:
+  _subscribe: sectionFront
 featureRubric:
   _publish: rubric
   _has:
     fn: description
-    value: Field used by model.js to inform the article feature rubric
+    value: Field used by model.js to inform the article/gallery feature rubric

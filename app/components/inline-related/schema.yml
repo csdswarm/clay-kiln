@@ -60,8 +60,8 @@ tag:
   _reveal:
     field: fill
     operator: truthy
-articleType:
-  _subscribe: articleType
+sectionFront:
+  _subscribe: sectionFront
 
 _groups:
   inlineRelatedItems:

@@ -13,7 +13,7 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   mediaplay = require('./media-play'),
   queryService = require('../server/query'),
-  PUBLISHED_ARTICLES_INDEX = 'published-articles';
+  PUBLISHED_ARTICLES_INDEX = 'published-content';
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines

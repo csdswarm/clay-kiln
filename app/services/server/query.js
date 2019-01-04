@@ -35,7 +35,7 @@ function prependPrefix(indexString) {
  * @param  {String} index
  * @param  {object} [locals] note: the client/query.js version requires `locals`, but this version does not
  * @return {Object}
- * @example newQueryWithPrefix('published-articles')
+ * @example newQueryWithPrefix('published-content')
  */
 function newQueryWithPrefix(index) {
   var query = universalQuery(index);
@@ -65,7 +65,7 @@ function newQueryWithCount(index, count) {
  * to only display array of results
  * @param  {Object} query
  * @return {Promise}
- * @example searchByQuery({"index":"local_published-articles","type":"_doc",
+ * @example searchByQuery({"index":"local_published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
 function searchByQuery(query) {
@@ -169,7 +169,7 @@ function executeMultipleSearchRequests(query) {
  * @returns {Promise}
  */
 function onePublishedArticleByUrl(url, fields) {
-  const query = newQueryWithCount('published-articles');
+  const query = newQueryWithCount('published-content');
 
   universalQuery.addFilter(query, {
     term: {

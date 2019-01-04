@@ -21,13 +21,15 @@
   color: #8a6d3b;
 }
 
-.component--article {
+.component--article,
+.component--gallery {
   counter-reset: annotated;
   padding-bottom: em(20);
   position: relative;
   word-wrap: break-word;
 }
-.article__header {
+.article__header,
+.gallery__header {
   display: inline-block;
   margin-bottom: em(30);
   .header__primary {
@@ -38,7 +40,8 @@
     @mixin article-font3;
   }
 }
-.article__body {
+.article__body,
+.gallery__body {
   display: inline-block;
   width: 100%;
 
@@ -80,8 +83,9 @@
       @mixin article-font6;
       .author {
         @mixin article-font5;
-        @define-mixin author-name-color $articleType, $color {
-          .component--article[data-article-type=$articleType] & a {
+        @define-mixin author-name-color $sectionFront, $color {
+          .component--article[data-section-front=$sectionFront] & a,
+          .component--gallery[data-section-front=$sectionFront] & a {
             color: $color;
           }
         }
@@ -108,8 +112,9 @@
     .info__from-station {
       @mixin article-font5;
       margin-bottom: em(15, 14);
-      @define-mixin station-source-color $articleType, $color {
-        .component--article[data-article-type=$articleType] & a {
+      @define-mixin station-source-color $sectionFront, $color {
+        .component--article[data-section-front=$sectionFront] & a,
+        .component--gallery[data-section-front=$sectionFront] & a {
           color: $color;
         }
       }
@@ -157,7 +162,10 @@
 @mixin large-screen {
   .article__body,
   .article__body[data-lead-type=instagram],
-  .article__body[data-lead-orientation=vertical] {
+  .article__body[data-lead-orientation=vertical],
+  .gallery__body,
+  .gallery__body[data-lead-type=instagram],
+  .gallery__body[data-lead-orientation=vertical] {
     display: flex;
     flex-direction: column;
     .body__header,
@@ -185,7 +193,8 @@
   }
 }
 @mixin medium-screen {
-  .article__header {
+  .article__header,
+  .gallery__header {
     margin-bottom: em(25);
     .header__primary {
       @mixin article-font2;
@@ -197,7 +206,10 @@
   }
   .article__body,
   .article__body[data-lead-type=instagram],
-  .article__body[data-lead-orientation=vertical] {
+  .article__body[data-lead-orientation=vertical],
+  .gallery__body,
+  .gallery__body[data-lead-type=instagram],
+  .gallery__body[data-lead-orientation=vertical] {
     .body__info {
       margin-bottom: em(50);
     }
@@ -206,7 +218,10 @@
 @mixin medium-small-screen {
   .article__body,
   .article__body[data-lead-type=instagram],
-  .article__body[data-lead-orientation=vertical] {
+  .article__body[data-lead-orientation=vertical],
+  .gallery__body,
+  .gallery__body[data-lead-type=instagram],
+  .gallery__body[data-lead-orientation=vertical] {
     .body__header {
       width: calc(100% + em(40));
       margin: 0 em(-20) em(30);
@@ -219,7 +234,10 @@
 @mixin small-screen {
   .article__body,
   .article__body[data-lead-type=instagram],
-  .article__body[data-lead-orientation=vertical] {
+  .article__body[data-lead-orientation=vertical],
+  .gallery__body,
+  .gallery__body[data-lead-type=instagram],
+  .gallery__body[data-lead-orientation=vertical] {
     .body__info {
       flex-direction: column;
       .info--left-top {
@@ -232,7 +250,8 @@
   }
 }
 
-.component--article {
+.component--article,
+.component--gallery {
   .body__word-count {
     background: #f4f4f4;
     clear: both;
@@ -374,7 +393,8 @@
   }
 }
 
-.article__breadcrumb {
+.article__breadcrumb,
+.gallery__breadcrumb {
   margin-bottom: em(10);
   .breadcrumb__link {
     display: inline-block;
@@ -395,8 +415,9 @@
     }
   }
 
-  @define-mixin seperator $articleType, $color: $purple {
-    .component--article[data-article-type=$articleType] & .breadcrumb__separator {
+  @define-mixin seperator $sectionFront, $color: $purple {
+    .component--article[data-section-front=$sectionFront] & .breadcrumb__separator,
+    .component--gallery[data-section-front=$sectionFront] & .breadcrumb__separator {
       @mixin article-font12;
       color: $color;
     }

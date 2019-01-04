@@ -5,12 +5,13 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'contentType'
   ],
   maxItems = 5;
 /**
@@ -79,11 +80,11 @@ module.exports.render = function (ref, data, locals) {
       // Clean based on tags and grab first as we only ever pass 1
       data.tag = tag.clean([{text: data.tag}])[0].text || '';
       queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
-    } else if (data.populateBy == 'articleType') {
-      if (!data.articleType || !locals) {
+    } else if (data.populateBy == 'sectionFront') {
+      if (!data.sectionFront || !locals) {
         return data;
       }
-      queryService.addShould(query, { match: { articleType: data.articleType }});
+      queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
     }
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});

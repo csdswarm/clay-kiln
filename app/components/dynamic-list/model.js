@@ -5,7 +5,7 @@ const _clone = require('lodash/clone'),
   queryService = require('../../services/server/query'),
   { sendError, elasticCatch } = require('../../services/universal/cmpt-error'),
   { formatStart } = require('../../services/universal/utils'),
-  index = 'published-articles';
+  index = 'published-content';
 
 /**
  * Builds and executes the query.

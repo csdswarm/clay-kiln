@@ -20,16 +20,16 @@
 {{/if}}
           {{#each content as |feedItem|}}
             <li>
-              <a class="links__link links__link--{{ feedItem.articleType }}" href="{{ feedItem.canonicalUrl }}"
+              <a class="links__link links__link--{{ feedItem.sectionFront }}" href="{{ feedItem.canonicalUrl }}"
                  data-track-type="feedItem-link"
                  data-track-component-name="more-content-feed"
                  data-track-page-uri="{{ feedItem.pageUri }}"
                  data-track-headline="{{ feedItem.primaryHeadline }}"
                  data-track-component-title="More Content Feed"
-                 data-track-sectionFront="{{ feedItem.articleType }}">
+                 data-track-sectionFront="{{ feedItem.sectionFront }}">
                 <div class="thumb__container">
-                  {{#ifAll (compare ../populateFrom 'all-content')  feedItem.articleType}}
-                    <span class="thumb__section-front">{{{ feedItem.articleType }}}</span>
+                  {{#ifAll (compare ../populateFrom 'all-content')  feedItem.sectionFront}}
+                    <span class="thumb__section-front">{{{ feedItem.sectionFront }}}</span>
                   {{/ifAll}}
                   {{#unless (compare ../locationOfContentFeed 'homepage') }}
                     {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
@@ -40,6 +40,11 @@
                     {{#if (compare feedItem.lead 'omny')}}
                       <span class="thumb__content-type">
                         {{{ read 'components/more-content-feed/media/listen.svg' }}}
+                      </span>
+                    {{/if}}
+                    {{#if (compare feedItem.contentType 'gallery')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/gallery.svg' }}}
                       </span>
                     {{/if}}
                   {{/unless}}

@@ -31,7 +31,8 @@ _components:
       most-popular: true
       newsfeed: true
       apple-news: true
-    articleType: ''
+    sectionFront: ''
+    contentType: 'article'
     secondaryArticleType: ''
     crosspost:
       di: false

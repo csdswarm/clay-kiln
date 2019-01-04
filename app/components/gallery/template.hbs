@@ -1,17 +1,17 @@
-<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
-  <nav class="article__breadcrumb">
-    <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/article/media/radiocom-purple-monogram.svg" }}}</a>
+<section role="main" data-track-type="gallery-detail" data-uri="{{ default _ref _self }}" class="component component--gallery{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Gallery"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+  <nav class="gallery__breadcrumb">
+    <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/gallery/media/radiocom-purple-monogram.svg" }}}</a>
     <span class="breadcrumb__separator">/</span>
     <a href="//{{ @root.locals.site.host }}/{{sectionFront}}" class="breadcrumb__link">{{sectionFront}}</a>
-    {{#if secondaryArticleType}}
-      {{ set 'hypenatedSecondaryArticleType' (replace (replace (urlencode (replace (trim (lowercase secondaryArticleType)) ' ' '-')) "/" "%2F") "&" "%26") }}
+    {{#if secondaryGalleryType}}
+      {{ set 'hypenatedSecondaryGalleryType' (replace (replace (urlencode (replace (trim (lowercase secondaryGalleryType)) ' ' '-')) "/" "%2F") "&" "%26") }}
       <span class="breadcrumb__separator">/</span>
       <a class="breadcrumb__link"
-         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryArticleType }}/">{{ secondaryArticleType }}</a>
+         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryGalleryType }}/">{{ secondaryGalleryType }}</a>
     {{/if}}
   </nav>
-  <header class="article__header">
-    {{! article microdata }}
+  <header class="gallery__header">
+    {{! gallery microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
     <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
     <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -35,7 +35,7 @@
     <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
   </header>
 
-  <section class="article__body"
+  <section class="gallery__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
   >
@@ -87,9 +87,21 @@
         {{> share sideShare }}
       </div>
     </div>
-    <div class="body__content" data-editable="content" itemprop="articleBody">
+    <div class="body__content" data-editable="content" itemprop="galleryBody">
       {{! don't display generated annotatedTextAria in edit mode. Replace all ad components with ad-dummies }}
       {{> component-list content }}
+
+      {{!-- todo
+      {{#if slides.length }}
+        {{#each slides }}
+          {{> gallery-slide slide }}
+
+          {{#ifAll includeInlineAds (modulo @index 5 0) }}
+            {{> google-ad-manager inlineAd }}
+            {{> google-ad-manager rightRailStickyAd }}
+          {{/ifAll}}
+        {{/each}}
+      {{/if}} --}}
 
       {{! Tags }}
       {{> tags tags}}
@@ -99,7 +111,7 @@
     {{#if @root.locals.edit }}
       {{ set 'empty' '<span class="circulation--empty">None</span>' }}
       <section class="body__circulation">
-        <h2 class="circulation__title">Article Circulation</h2>
+        <h2 class="circulation__title">Gallery Circulation</h2>
 
         <section class="circulation__section" data-editable="circHeadlines">
           <h3 class="subtitle circ-edit">Headlines and Teasers</h3>
@@ -138,15 +150,15 @@
         <section class="circulation__section" data-editable="circSlug">
           {{#if slugLock}}
             <div class="alert alert-warning">
-                <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
+                <span style="vertical-align: sub;">{{{ read 'public/media/components/gallery/warning.svg' }}}</span>
 
-                Article Slug is locked. Unlock in Article Settings.
+                Gallery Slug is locked. Unlock in Gallery Settings.
             </div>
           {{/if}}
           <h3 class="subtitle circ-edit">Slug and URL</h3>
           <ul class="items">
             <li class="item">
-              <h4 class="item-title required">Article Slug</h4>
+              <h4 class="item-title required">Gallery Slug</h4>
               <p class="item-data">
                 {{#if slug}}<span class="circulation-slug">{{ slug }}</span>{{else}}{{{ empty }}}{{/if}}
               </p>
@@ -177,19 +189,19 @@
         </section>
 
         <section class="circulation__section" data-editable="circMetadata">
-          <h3 class="subtitle circ-edit">Article Metadata</h3>
+          <h3 class="subtitle circ-edit">Gallery Metadata</h3>
           <ul class="items">
             <li class="item">
-              <h4 class="item-title required">Article Type</h4>
+              <h4 class="item-title required">Gallery Type</h4>
               <p class="item-data">{{ sectionFront }}</p>
             </li>
             <li class="item">
-              <h4 class="item-title">Secondary Article Type</h4>
-              <p class="item-data">{{ secondaryArticleType }}</p>
+              <h4 class="item-title">Secondary Gallery Type</h4>
+              <p class="item-data">{{ secondaryGalleryType }}</p>
             </li>
           </ul>
         </section>
       </section>
     {{/if}}
   </section>
-</article>
+</section>

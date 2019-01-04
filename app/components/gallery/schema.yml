@@ -13,10 +13,10 @@ primaryHeadline:
     help: Write your most shareable headline
     attachedButton:
       name: magic-button
-      component: article
+      component: gallery
       store: components
       property: headline
-      tooltip: Use Article Headline
+      tooltip: Use Gallery Headline
 shortHeadline:
   _label: Twitter/Short Headline
   _has:
@@ -34,7 +34,7 @@ shortHeadline:
       tooltip: Use Facebook Headline
 teaser:
   _label: Teaser
-  _subscribe: articleTeaser
+  _subscribe: galleryTeaser
   _has:
     input: wysiwyg
     buttons:
@@ -44,10 +44,10 @@ teaser:
       required: true
       max: 150
     help: Appears in feeds and newsletters
-# this is the headline that displays on the article itself
+# this is the headline that displays on the gallery itself
 headline:
   _label: Headline
-  _subscribe: articleHeadline
+  _subscribe: galleryHeadline
   _placeholder:
     height: 40px
     text: Headline
@@ -59,10 +59,10 @@ headline:
       - strike
     validate:
       required: true
-    help: Appears as article title
+    help: Appears as gallery title
 subHeadline:
   _label: Sub Headline
-  _subscribe: articleSubHeadline
+  _subscribe: gallerySubHeadline
   _placeholder:
     height: 40px
     text: Sub Headline
@@ -74,7 +74,7 @@ subHeadline:
       - strike
     validate:
       required: false
-    help: Appears under article title
+    help: Appears under gallery title
 seoHeadline:
   _label: SEO Headline
   _has:
@@ -111,7 +111,7 @@ slug:
       required: true
     attachedButton:
       name: magic-button
-      component: article
+      component: gallery
       transform: getComponentInstance
       url: $SITE_PREFIX
       property: shortHeadline
@@ -200,18 +200,18 @@ secondaryBylineText:
     input: text
     help: Text that appears before secondary bylines
 # note: date used to use datetime-local, which was deprecated in kiln 5.0
-# users edit the published date from the articleDate and articleTime fields
+# users edit the published date from the galleryDate and galleryTime fields
 date:
   _label: Published Date
   _publish: publishDate
   _has:
-    help: Date that is generated from the articleDate and articleTime fields
-articleDate:
+    help: Date that is generated from the galleryDate and galleryTime fields
+galleryDate:
   _label: First Published Date
   _has:
     input: datepicker
-    help: Custom published date, if it should be different than the actual date the article was first published
-articleTime:
+    help: Custom published date, if it should be different than the actual date the gallery was first published
+galleryTime:
   _label: First Published Time
   _has:
     input: timepicker
@@ -220,11 +220,11 @@ dateUpdated:
   _label: Display Updated Date
   _has:
     input: checkbox
-    help: Display "Updated On" in the article with the latest published date
+    help: Display "Updated On" in the gallery with the latest published date
 lead:
-  _label: Article Lead
+  _label: Gallery Lead
   _placeholder:
-    text: Article Lead
+    text: Gallery Lead
     height: 600px
   _componentList:
     fuzzy: false # allows interactives, etc to add one-off components
@@ -239,43 +239,44 @@ lead:
       max: 1
       required: true
 content:
-  _label: Article Content
+  _label: Gallery Content
   _placeholder:
-    text: Article Content
+    text: Gallery Content
     height: 600px
   _componentList:
     fuzzy: true # allows interactives, etc to add one-off components
     include:
       - paragraph
       - subheader
-      # - blockquote
-      - image
-      - tweet
-      - facebook-post
-      - instagram-post
-      - youtube
-      - html-embed
-      - brightcove
       - inline-related
-      - omny
-feeds:
-  _label: Include in These Feeds
-  _has:
-    input: checkbox-group
-    options:
-      - name: Site Maps and Google Search
-        value: sitemaps
-      - name: RSS Feeds
-        value: rss
-      - name: Most Popular
-        value: most-popular
-      - name: Latest News and Newsfeed
-        value: newsfeed
-      - name: Apple News
-        value: apple-news
-    help: By default, articles are included in all of our feeds. Uncheck these if you don't want this article to appear in them, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
+slides:
+  _label: Add slides to gallery
+  _placeholder:
+    text: Gallery Slides
+    height: 300px
+  _componentList:
+    include:
+      - gallery-slide
+slide:
+  _component:
+    include:
+      - gallery-slide
+slidesNumbered:
+  _label: Number the slides
+  _has: checkbox
+includeInlineAds:
+  _label: Break up slides with inline ads
+  _has: checkbox
+inlineAd:
+  _component:
+    include:
+      - google-ad-manager
+rightRailStickyAd:
+  _component:
+    include:
+      - google-ad-manager
 sectionFront:
-  _label: Section Front
+  _label: Gallery Section Front
   _publish: sectionFront
   _has:
     input: radio
@@ -294,15 +295,9 @@ sectionFront:
         value: sports
     validate:
       required: true
-contentType:
-  _label: Content Type
-  _publish: contentType
-  _has:
-    input: static
-    text: ${contentType}
-secondaryArticleType:
-  _label: Secondary Article Type
-  _publish: secondaryArticleType
+secondaryGalleryType:
+  _label: Secondary Gallery Type
+  _publish: secondaryGalleryType
   _has:
     input: radio
     options:
@@ -329,17 +324,17 @@ secondaryArticleType:
       -
         name: MMA & WWE
         value: MMA & WWE
-section:
-  _label: Section
+contentType:
+  _label: Content Type
+  _publish: contentType
   _has:
-    input: text
-    help: The section is used in the path and is currently maintained by devs as it relates to hard-coded routes, e.g. /bestofnewyork/
-    attachedButton: lock
+    input: static
+    text: ${contentType}
 showSocial:
   _label: Display Social Handle
   _has:
     input: checkbox
-    help: Author social handles are displayed by default. Unchecking this will hide handles on this article
+    help: Author social handles are displayed by default. Unchecking this will hide handles on this gallery
 rubric:
   _label: Rubric
   _subscribe: rubric
@@ -371,13 +366,13 @@ syndicatedUrl:
 _groups:
   publishedDate:
     fields:
-      - articleDate
-      - articleTime
+      - galleryDate
+      - galleryTime
       - dateUpdated
     _placeholder:
       text: Custom Published Date
       height: 30px
-      ifEmpty: articleDate or articleTime
+      ifEmpty: galleryDate or galleryTime
   secondaryBylines:
     fields:
       - secondaryBylineText
@@ -413,7 +408,7 @@ _groups:
   circMetadata:
     fields:
       - sectionFront
-      - secondaryArticleType
+      - secondaryGalleryType
   bylines:
     fields:
       - byline
@@ -424,26 +419,26 @@ _groups:
 
   settings:
     fields:
-      - feeds
       - showSocial
-      - section
       - hasSecondaryBylines
+      - slidesNumbered (Gallery Slides)
+      - includeInlineAds (Gallery Slides)
 
 # non-user-editable fields, set by model.js and used for pubsub
 eligibleForGoogleStandout:
   _has:
-    help: Is this article eligible for the Google Standout tag
+    help: Is this gallery eligible for the Google Standout tag
 canBeMarkedGoogleStandout:
   _has:
-    help: Can this article be marked as Google Standout.
+    help: Can this gallery be marked as Google Standout.
 rollingStandoutCount:
   _has:
-    help: Rolling 7 day count of how many articles have been marked Standout on this domain.
+    help: Rolling 7 day count of how many galleries have been marked Standout on this domain.
 
 canonicalUrl:
   _publish: url
   _has:
-    help: Canonical URL of an article. Set when the article publishes.
+    help: Canonical URL of an gallery. Set when the gallery publishes.
 
 pageDescription:
   _publish: pageDescription

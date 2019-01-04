@@ -3,12 +3,13 @@ const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'contentType'
   ],
   maxItems = 3;
 /**
@@ -65,7 +66,7 @@ module.exports.render = async function (ref, data, locals) {
     queryService.onlyWithTheseFields(query, elasticFields);
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});
-    queryService.addShould(query, { match: { articleType: section }});
+    queryService.addShould(query, { match: { sectionFront: section }});
 
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {

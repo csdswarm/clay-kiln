@@ -9,13 +9,13 @@ populateBy:
     input: radio
     options:
       -
-        name: Article Type
-        value: articleType
+        name: Section Front
+        value: sectionFront
       - tag
       - manual
 
-articleType:
-  _subscribe: articleType
+sectionFront:
+  _subscribe: sectionFront
   _label: Article Type
   _has:
     help: Article Type from which to pull articles
@@ -82,7 +82,7 @@ _groups:
   latestRecirculationItems:
     fields:
       - populateBy
-      - articleType
+      - sectionFront
       - tag
       - items
     _placeholder:
