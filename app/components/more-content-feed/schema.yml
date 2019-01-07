@@ -218,7 +218,8 @@ googleAdRightRail:
       - google-ad-manager
 
 _groups:
-  settings:
+  contentFeed:
+    _label: Content Feed
     fields:
       - pageLength
       - populateFrom
@@ -226,5 +227,3 @@ _groups:
       - tagManual
       - tagInfo
       - items
-    _placeholder:
-      height: 100px
