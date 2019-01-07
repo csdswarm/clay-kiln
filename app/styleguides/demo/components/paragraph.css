@@ -8,8 +8,8 @@
 .paragraph p,
 .paragraph p a,
 .paragraph ul li,
-.paragraph+ol li,
-.paragraph+ul li {
+.paragraph~ol li,
+.paragraph~ul li {
   @mixin article-font7;
 }
 .paragraph {
@@ -44,7 +44,7 @@
   strong {
     @mixin article-font8;
   }
-  + ul,
+  ~ ul,
   ul {
     clear: both;
     line-height: em(23, 18);
@@ -57,7 +57,7 @@
     margin-inline-end: 0px;
     padding-inline-start: em(40, 18);
   }
-  + ol,
+  ~ ol,
   ol {
     clear: both;
     counter-reset: list;
@@ -93,8 +93,8 @@
   .paragraph ol li,
   .paragraph p,
   .paragraph ul li,
-  .paragraph+ol li,
-  .paragraph+ul li {
+  .paragraph~ol li,
+  .paragraph~ul li {
     font-size: em(11, 16);
     line-height: em(12, 11);
   }
