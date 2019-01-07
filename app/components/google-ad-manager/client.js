@@ -110,7 +110,7 @@ googletag.cmd.push(() => {
     const isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
 
     if (isOOP) {
-      updateSkinStyles(!event.isEmpty);
+      updateSkinStyles(!(event.isEmpty));
     }
     if (event.isEmpty) {
       adSlot.parentElement.style.display = 'none';
@@ -303,6 +303,7 @@ function setAds(initialRequest = false) {
  * @param {string} position
  */
 window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, position) {
+  updateSkinStyles(true);
   const skinDiv = 'freq-dfp--bg-skin',
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
