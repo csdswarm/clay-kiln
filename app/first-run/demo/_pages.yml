@@ -33,7 +33,7 @@ _pages:
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
-      - /_components/topic-page-header/instances/new
+      - /_components/page-header/instances/new
     main:
       - /_components/section-front/instances/new
     layout: /_components/one-column-layout/instances/general
@@ -71,7 +71,7 @@ _pages:
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
-      - /_components/topic-page-header/instances/new
+      - /_components/page-header/instances/new
     main:
       - /_components/topic-page/instances/new
     layout: /_components/one-column-layout/instances/general
@@ -86,7 +86,7 @@ _pages:
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
-      - /_components/topic-page-header/instances/new
+      - /_components/page-header/instances/new
     main:
       - /_components/topic-page/instances/new
     layout: /_components/one-column-layout/instances/general

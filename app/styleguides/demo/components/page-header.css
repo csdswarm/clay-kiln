@@ -2,9 +2,9 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--topic-page-header {
+.component--page-header {
   h1 {
-    @mixin topic-page-header-font2;
+    @mixin page-header-font2;
     position: absolute;
     z-index: 2;
     bottom: 0;
@@ -45,11 +45,11 @@
    }
   }
 
-  .topic-page-header__banner {
+  .page-header__banner {
     height: em(110);
   }
 
-  .topic-page-header__banner--image {
+  .page-header__banner--image {
     height: em(250);
 
     @mixin medium-small-screen {
@@ -89,7 +89,7 @@
     }
 
     h1 {
-      @mixin topic-page-header-font1;
+      @mixin page-header-font1;
 
       &:after {
         border-top: em(1, 35) solid $white;
