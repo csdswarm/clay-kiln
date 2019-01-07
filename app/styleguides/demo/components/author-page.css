@@ -27,7 +27,7 @@ $medium-screen-nav-width: em(728);
       border-bottom: em(1) solid $parisPurple;
     }
     h1 {
-      @mixin topic-page-header-font1;
+      @mixin page-header-font1;
       text-transform: capitalize;
       position: absolute;
       top: calc(50% - em(22,35));
