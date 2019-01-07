@@ -1,0 +1,11 @@
+<section class="component component--redirects"
+         data-uri="{{ default _ref _self }}"
+         data-track-type="redirects"
+         data-editable="redirects">
+  <h2>Redirect Things that I want to be able to see</h2>
+    {{#each redirects}}
+      <div>
+        {{ url }} -> {{ redirect }}
+      </div>
+    {{/each}}
+</section>

@@ -3,7 +3,8 @@
 const _ = require('lodash'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
-  { sites, composer } = require('amphora');
+  { sites, composer } = require('amphora'),
+  handleRedirects = require('../../components/redirects/middleware');
 
 /**
  * Pulled from inside Amphora to fake locals
@@ -27,11 +28,13 @@ function fakeLocals(req, res, params) {
  * @param {Object} req
  * @param {Object} res
  * @param {Function} next
- * @returns {Function}
+ * @returns {Promise}
  */
 function middleware(req, res, next) {
-  var promise, params = {};
-  let curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, tagKeywordExtractor;
+  const params = {};
+  let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, tagKeywordExtractor;
+
+  handleRedirects(req, res);
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
@@ -71,6 +74,7 @@ function middleware(req, res, next) {
           params.dynamicTag = req.path.match(tagKeywordExtractor)[1];
           return db.get(`${req.hostname}/_pages/topic@published`);
         } else {
+
           throw error;
         }
 
@@ -83,7 +87,7 @@ function middleware(req, res, next) {
     // Otherwise resolve the uri and page instance
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
   }
-  
+
   // Compose and respond
   promise
     .then(data => {

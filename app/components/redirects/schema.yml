@@ -1,0 +1,37 @@
+_description: |
+  A group of redirect URL patterns to allow for something or another
+
+redirects:
+  _label: Redirect URL collection
+  _has:
+    input: complex-list
+    validate:
+      required:
+        field: fill
+        operator: falsy
+    props:
+    -
+      prop: url
+      _label: URL pattern
+      _has:
+        input: text
+        type: url
+        validate:
+          required: true
+    -
+      prop: redirect
+      _label: Redirect
+      _has:
+        input: text
+        type: url
+        validate:
+          required: true
+
+_groups:
+  redirects:
+    _label: Redirects
+    _placeholder:
+      height: 100px
+      text: Redirect URL collection
+    fields:
+      - redirects
