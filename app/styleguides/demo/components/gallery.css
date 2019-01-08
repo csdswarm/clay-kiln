@@ -35,4 +35,27 @@
       }
     }
   }
+  .content__ad-container {
+    margin-top: em(50);
+    width: calc(100% + em(320));
+    @mixin default-screen {
+      width: em(1100);
+      margin-left: em(-160);
+    }
+    @mixin large-screen {
+      width: em(940);
+    }
+    @mixin medium-screen {
+      width: 100%;
+      max-width: em(728);
+    }
+    @mixin medium-small-screen {
+      width: 100%;
+      max-width: em(440);
+    }
+    @mixin small-screen {
+      width: 100%;
+      max-width: em(320);
+    }
+  }
 }

@@ -115,8 +115,10 @@
               {{> (getComponentName this._ref) this }}
             </div>
             {{#ifAll ../includeInlineAds (modulo (add @index 1) 5 0) }}
-              {{> google-ad-manager inlineAd }}
-              {{> google-ad-manager rightRailStickyAd }}
+              <div class="content__ad-container">
+                {{> google-ad-manager ../inlineAd }}
+              </div>
+              {{> google-ad-manager ../rightRailStickyAd }}
             {{/ifAll}}
           {{/each}}
         {{/if}}
