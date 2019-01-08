@@ -17,7 +17,6 @@ _components:
     dateUpdated: false
     content: []
     slides: []
-    slide: /_components/gallery-slide/instances/new
     slidesNumbered: false
     includeInlineAds: false
     inlineAd:

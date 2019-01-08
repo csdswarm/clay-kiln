@@ -1,8 +1,8 @@
 'use strict';
 
-function Constructor() {
-  const sidebar = document.getElementsByClassName('content__sidebar')[0],
-    galleryBody = document.getElementsByClassName('gallery__body')[0];
+function Constructor(galleryPage) {
+  const sidebar = galleryPage.querySelector('.content__sidebar'),
+    galleryBody = galleryPage.querySelector('.gallery__body');
 
   this.repositionRightRail(sidebar, galleryBody);
 }
@@ -22,4 +22,4 @@ Constructor.prototype = {
   }
 };
 
-module.exports = () => new Constructor();
+module.exports = (el) => new Constructor();

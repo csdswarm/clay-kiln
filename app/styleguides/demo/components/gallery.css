@@ -1,0 +1,38 @@
+.component--gallery {
+  .content__slide-settings {
+    background: #f4f4f4;
+    clear: both;
+    margin: 1.25em 0;
+    width: 100%;
+    .slide-settings__title {
+      font-family: Helvetica,Arial,sans-serif;
+      font-size: 1.5em;
+      font-weight: 400;
+      line-height: 1.1666666666666667em;
+      margin: 0;
+      padding: .625em .8333333333333334em;
+    }
+    .slide-settings__items {
+      border-top: .0625em solid #e8e8e8;
+      padding: .9375em 1.25em;
+      .item-title {
+        color: #4d4d4d;
+        font-family: Helvetica,Arial,sans-serif;
+        font-size: .75em;
+        font-weight: 400;
+        line-height: 1.1666666666666667em;
+        margin: 0;
+        padding: 0 0 .4166666666666667em;
+        text-transform: uppercase;
+      }
+      .item-data {
+        font-family: Helvetica,Arial,sans-serif;
+        font-size: .875em;
+        font-weight: 400;
+        line-height: 1.1428571428571428em;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+}

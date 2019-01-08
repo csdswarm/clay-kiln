@@ -88,20 +88,39 @@
       </div>
     </div>
     <div class="body__content" data-editable="content" itemprop="galleryBody">
-      {{! don't display generated annotatedTextAria in edit mode. Replace all ad components with ad-dummies }}
       {{> component-list content }}
-
-      {{!-- todo
-      {{#if slides.length }}
-        {{#each slides }}
-          {{> gallery-slide slide }}
-
-          {{#ifAll includeInlineAds (modulo @index 5 0) }}
-            {{> google-ad-manager inlineAd }}
-            {{> google-ad-manager rightRailStickyAd }}
-          {{/ifAll}}
-        {{/each}}
-      {{/if}} --}}
+      {{#if @root.locals.edit}}
+        {{! Adding slides components }}
+        {{#if slides.length}}
+          <section class="content__slide-settings" data-editable="slidesSettings">
+            <h2 class="slide-settings__title">Gallery Slides Settings</h2>
+            <ul class="slide-settings__items">
+              <li class="item">
+                <h4 class="item-title">Number the slides?</h4>
+                <p class="item-data">{{ slidesNumbered }}</p>
+              </li>
+              <li class="item">
+                <h4 class="item-title">Add inline ads every 5 slides?</h4>
+                <p class="item-data">{{ includeInlineAds }}</p>
+              </li>
+            </ul>
+          </section>
+        {{/if}}
+        <div data-editable="slides">{{> component-list slides }}</div>
+      {{else}}
+        {{#if slides.length }}
+          {{#each slides }}
+            <div class="content__slide-container"{{#if ../slidesNumbered}} data-slide-number='{{add @index 1}}'{{/if}}>
+              {{! Rendered slides }}
+              {{> (getComponentName this._ref) this }}
+            </div>
+            {{#ifAll ../includeInlineAds (modulo (add @index 1) 5 0) }}
+              {{> google-ad-manager inlineAd }}
+              {{> google-ad-manager rightRailStickyAd }}
+            {{/ifAll}}
+          {{/each}}
+        {{/if}}
+      {{/if}}
 
       {{! Tags }}
       {{> tags tags}}

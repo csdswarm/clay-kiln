@@ -1,2 +1,19 @@
 _description: |
   A slide in a media gallery
+
+headline:
+  _label: Slide headline
+  _has:
+    input: text
+    validate:
+      max: 80
+      required: true
+
+_groups:
+  slide:
+    fields:
+      - headline
+    _placeholder:
+      ifEmpty: 'headline'
+      height: 50px
+      text: New Slide

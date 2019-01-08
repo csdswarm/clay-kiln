@@ -251,14 +251,7 @@ content:
       - inline-related
 slides:
   _label: Add slides to gallery
-  _placeholder:
-    text: Gallery Slides
-    height: 300px
   _componentList:
-    include:
-      - gallery-slide
-slide:
-  _component:
     include:
       - gallery-slide
 slidesNumbered:
@@ -416,7 +409,10 @@ _groups:
       text: Byline
       height: 30px
       ifEmpty: 'byline.names'
-
+  slidesSettings:
+    fields:
+      - slidesNumbered
+      - includeInlineAds
   settings:
     fields:
       - showSocial
