@@ -157,6 +157,16 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||| Redirects Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin redirects-font1 {
+  @mixin font CircularStd-Medium, 35px, $parisM, -.55px, 44px;
+}
+@define-mixin redirects-font2 {
+  @mixin font CircularStd-Medium, 20px, $black, -.32px, 25px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| Latest Content Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin latest-content-font1 $color: $purple {

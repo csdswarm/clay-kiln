@@ -829,3 +829,8 @@ _components:
         musicItems: []
         sportsItems: []
         newsItems: []
+
+  redirects:
+    instances:
+      default:
+        redirects: []

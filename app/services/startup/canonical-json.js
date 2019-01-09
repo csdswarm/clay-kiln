@@ -3,8 +3,7 @@
 const _ = require('lodash'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
-  { sites, composer } = require('amphora'),
-  handleRedirects = require('../../components/redirects/middleware');
+  { sites, composer } = require('amphora');
 
 /**
  * Pulled from inside Amphora to fake locals
@@ -33,8 +32,6 @@ function fakeLocals(req, res, params) {
 function middleware(req, res, next) {
   const params = {};
   let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, tagKeywordExtractor;
-
-  handleRedirects(req, res);
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();

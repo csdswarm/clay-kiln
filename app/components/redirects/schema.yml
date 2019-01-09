@@ -1,14 +1,13 @@
 _description: |
-  A group of redirect URL patterns to allow for something or another
+  A group of redirect URL patterns to force a page to redirect to a different url
 
 redirects:
   _label: Redirect URL collection
+  _placeholder:
+    height: 100px
+    text: Redirect URL collection
   _has:
     input: complex-list
-    validate:
-      required:
-        field: fill
-        operator: falsy
     props:
     -
       prop: url
@@ -16,6 +15,7 @@ redirects:
       _has:
         input: text
         type: url
+        help: Use * as a wildcard match
         validate:
           required: true
     -
@@ -30,8 +30,6 @@ redirects:
 _groups:
   redirects:
     _label: Redirects
-    _placeholder:
-      height: 100px
-      text: Redirect URL collection
+
     fields:
-      - redirects
+    - redirects

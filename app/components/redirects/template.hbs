@@ -1,11 +1,22 @@
-<section class="component component--redirects"
-         data-uri="{{ default _ref _self }}"
-         data-track-type="redirects"
-         data-editable="redirects">
-  <h2>Redirect Things that I want to be able to see</h2>
-    {{#each redirects}}
-      <div>
-        {{ url }} -> {{ redirect }}
-      </div>
-    {{/each}}
-</section>
+{{#if @root.locals.user.username}}
+  <section class="component component--redirects"
+           data-uri="{{ default _ref _self }}"
+           data-track-type="redirects"
+         {{#if (compare @root.locals.user.auth 'admin')}}
+           data-editable="redirects"
+         {{/if}}
+           >
+    <div class="redirects__container">
+      <h2><span>Redirects</span></h2>
+      <ul>
+      {{#each redirects}}
+        <li>
+          {{ url }} &rarr; {{ redirect }}
+        </li>
+      {{/each}}
+      </ul>
+    </div>
+  </section>
+{{else}}
+  <script>window.location.replace('/404');</script>
+{{/if}}
