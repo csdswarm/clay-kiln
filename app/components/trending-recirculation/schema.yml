@@ -1,6 +1,16 @@
 _description: |
   A list of 6 trending stories
 
+contentType:
+  _label: Content type
+  _has:
+    validate:
+      required: true
+    input: checkbox-group
+    options:
+      - article
+      - gallery
+
 items:
   _label: Items
   _has:
@@ -43,3 +53,6 @@ _groups:
       text: Trending Stories -- Requires 6 Entries
     fields:
       - items
+  settings:
+    fields:
+      - contentType

@@ -25,6 +25,7 @@ module.exports.save = (ref, data, locals) => {
     return data;
   }
 
+  // TODO use data.contentType = { article: true, gallery: true } to populate this
   return Promise.all(_.map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 

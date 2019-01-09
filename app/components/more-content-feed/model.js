@@ -29,6 +29,7 @@ module.exports.save = (ref, data, locals) => {
   }
   return Promise.all(_.map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+    // TODO use data.contentType = { article: true, gallery: true } to populate this
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
       .then((result) => {
         const content = Object.assign(item, {
@@ -111,8 +112,8 @@ module.exports.render = function (ref, data, locals) {
       data.sectionFront = locals.sectionFront;
     } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
       data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
-    } 
-    
+    }
+
     if (!data.tag) {
       return data;
     }

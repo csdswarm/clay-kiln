@@ -30,6 +30,7 @@ module.exports.save = async function (ref, data, locals) {
     }
 
     // for each item, look up the associated article and save that.
+    // TODO use data.contentType = { article: true, gallery: true } to populate this
     data[`${section}Items`] = await Promise.all(items.map(async (item) => {
       item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
       const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
