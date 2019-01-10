@@ -132,15 +132,17 @@ function getUrlPrefix(site) {
  * returns an object to be consumed by url patterns
  * @param {object} component
  * @param {object} locals
- * @returns {{prefix: string, section: string, yyyy: string, mm: string, slug: string, isEvergreen: boolean}}
+ * @returns {{prefix: string, sectionFront: string, contentType: string, yyyy: string, mm: string, slug: string, isEvergreen: boolean}}
  * @throws {Error} if there's no date, slug, or prefix
  */
 function getUrlOptions(component, locals) {
+  console.log('get url options');
   const urlOptions = {},
     date = moment(locals.date);
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.section = component.section;
+  urlOptions.sectionFront = component.sectionFront;
+  urlOptions.contentType = component.contentType;
   urlOptions.yyyy = date.format('YYYY');
   urlOptions.mm = date.format('MM');
   urlOptions.slug = component.slug || sanitize.cleanSlug(component.primaryHeadline);
@@ -161,4 +163,5 @@ module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
 // URL patterns below need to be handled by the site's index.js
 module.exports.dateUrlPattern = o => `${o.prefix}/${o.yyyy}/${o.mm}/${o.slug}.html`; // e.g. http://vulture.com/2016/04/x.html
-module.exports.articleSlugPattern = o => `${o.prefix}/article/${o.slug}.html`; // e.g. http://radio.com.com/article/eminem-drops-new-album-and-its-fire.html
+module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/article/${o.slug}`; // e.g. http://radio.com/music/article/eminem-drops-new-album-and-its-fire
+module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies

@@ -329,12 +329,6 @@ secondaryArticleType:
       -
         name: MMA & WWE
         value: MMA & WWE
-section:
-  _label: Section
-  _has:
-    input: text
-    help: The section is used in the path and is currently maintained by devs as it relates to hard-coded routes, e.g. /bestofnewyork/
-    attachedButton: lock
 showSocial:
   _label: Display Social Handle
   _has:
@@ -426,7 +420,7 @@ _groups:
     fields:
       - feeds
       - showSocial
-      - section
+      - sectionFront
       - hasSecondaryBylines
 
 # non-user-editable fields, set by model.js and used for pubsub

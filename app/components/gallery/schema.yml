@@ -273,6 +273,7 @@ sectionFront:
   _publish: sectionFront
   _has:
     input: radio
+    help: the Section Front that this gallery is categorized under
     options:
       -
         name: Music
@@ -417,6 +418,7 @@ _groups:
     fields:
       - showSocial
       - hasSecondaryBylines
+      - sectionFront
       - slidesNumbered (Gallery Slides)
       - includeInlineAds (Gallery Slides)
 

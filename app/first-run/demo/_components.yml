@@ -686,7 +686,7 @@ _components:
           _ref: /_components/tags/instances/new
         sideShare:
           _ref: /_components/share/instances/new
-        sectionFront:
+        sectionFront: ''
         secondaryGalleryType:
         contentType: 'gallery'
         showSocial: true
