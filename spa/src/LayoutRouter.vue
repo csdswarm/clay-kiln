@@ -12,6 +12,7 @@ import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
+import handleRedirects, { createRegExp } from './redirects'
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -54,6 +55,33 @@ export default {
 
       return nextLayoutComponent
     },
+    checkRedirects: async (to) => {
+      const req = {
+        protocol: window.location.protocol.replace(':', ''),
+        hostname: window.location.hostname,
+        originalUrl: to.path
+      };
+      const res = {
+        redirect: (redirect) => {
+          if (createRegExp(`${window.location.protocol}//${window.location.hostname}`, '').test(redirect)) {
+            const pathname = new URL(redirect).pathname
+
+            // we are returning the new path, so need to adjust the browser path
+            window.history.replaceState({ }, null, pathname)
+
+            return pathname
+          } else {
+            window.location.replace(redirect)
+            return null
+          }
+        }
+      };
+      const next = () => {
+          return to.path
+      };
+
+      return await handleRedirects(req, res, next, { client: axios, extract: (response) => response.data, modifier: '//' })
+    },
     getNextSpaPayload: async function getNextSpaPayload (destination) {
       try {
         const nextSpaPayloadResult = await axios.get(`//${destination}?json`, {
@@ -73,10 +101,10 @@ export default {
      *
      * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
      *
-     * @param {object} to - A Vue Router "to" object.
+     * @param {string} path - The path of the next route.
      * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
      */
-    buildPageViewEventData: function buildPageViewEventData (to, spaPayload) {
+    buildPageViewEventData: function buildPageViewEventData (path, spaPayload) {
       const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
       const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
       const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
@@ -90,7 +118,7 @@ export default {
         toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
         toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
         toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
-        toPath: to.path,
+        toPath: path,
         toArticlePage: nextArticleData ? nextArticleData : {},
         toHomepage: nextHomepageData ? nextHomepageData : {},
         toSectionFrontPage: nextSectionFrontPageData ? nextSectionFrontPageData : {},
@@ -109,30 +137,35 @@ export default {
       // Start loading animation.
       this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
-      // Get SPA payload data for next path.
-      const spaPayload = await this.getNextSpaPayload(window.location.hostname + to.path)
+      // Handle any redirects before attempting to load any data, null returned when a redirect has occurred
+      const path = await this.checkRedirects(to);
 
-      // Load matched Layout Component.
-      this.activeLayoutComponent = this.layoutRouter(spaPayload)
+      if (path) {
+          // Get SPA payload data for next path.
+          const spaPayload = await this.getNextSpaPayload(window.location.hostname + path)
 
-      // Commit next payload to store to kick off re-render.
-      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+          // Load matched Layout Component.
+          this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-      // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-      metaManager.updateExternalTags(this.$store.state.spaPayload)
+          // Commit next payload to store to kick off re-render.
+          this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-      // Stop loading animation.
-      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+          // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+          metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-      // Build pageView event data
-      const pageViewEventData = this.buildPageViewEventData(to, this.$store.state.spaPayload)
+          // Stop loading animation.
+          this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-      // Call global pageView event.
-      let event = new CustomEvent(`pageView`, {
-        detail: pageViewEventData
-      })
+          // Build pageView event data
+          const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-      document.dispatchEvent(event)
+          // Call global pageView event.
+          const event = new CustomEvent(`pageView`, {
+              detail: pageViewEventData
+          })
+
+          document.dispatchEvent(event)
+      }
     }
   }
 }
