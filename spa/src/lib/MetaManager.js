@@ -71,9 +71,13 @@ export default class MetaManager {
     // Update or strip meta-image component tags.
     const metaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
     if (metaImageData) {
+      this.updateMetaTag('name', 'twitter:card', 'summary_large_image', true)
+      this.updateMetaTag('name', 'twitter:site', '@radiodotcom', true)
       this.updateMetaTag('name', 'twitter:image', metaImageData.imageUrl, true)
       this.updateMetaTag('property', 'og:image', metaImageData.imageUrl, true)
     } else {
+      this.deleteMetaTag('name', 'twitter:card')
+      this.deleteMetaTag('name', 'twitter:site')
       this.deleteMetaTag('name', 'twitter:image')
       this.deleteMetaTag('property', 'og:image')
     }

@@ -15,12 +15,12 @@
             {{#if url}}
               <a href="{{url}}">
                 <button>
-                  <h1>{{text}}</h1>
+                  <span class="category-button__text">{{text}}</span>
                 </button>
               </a>
             {{ else }}
               <button>
-                <h1>{{text}}</h1>
+                <span class="category-button__text">{{text}}</span>
               </button>
             {{/if}}
             {{#if list.length}}
@@ -29,12 +29,12 @@
                   {{#each list as |subnav| }}
                     <div class="nav-drawer__sub-nav">
                       {{#if subnav.list}}
-                        <h2>{{subnav.text}}</h2>
+                        <span class="sub-nav__text">{{subnav.text}}</span>
                         <ul class="nav-drawer__sub-nav--columns">
                           {{#each subnav.list as |subnavLink| }}
                             <li>
                               <a href="{{subnavLink.url}}">
-                                <h3 title="{{subnavLink.url}}">{{subnavLink.text}}</h3>
+                                <span class="sub-nav-list-item__text" title="{{subnavLink.url}}">{{subnavLink.text}}</span>
                               </a>
                             </li>
                           {{/each}}
@@ -42,10 +42,10 @@
                       {{ else }}
                         {{#if subnav.url}}
                           <a href="{{subnav.url}}" target="_blank">
-                            <h2 class="{{#if (compare subnav.text 'find a station')}}find-station-link{{/if}}">{{subnav.text}}{{#if (compare subnav.text 'find a station')}} <span>&#8227;</span>{{/if}}</h2>
+                            <span class="sub-nav__text {{#if (compare subnav.text 'find a station')}}find-station-link{{/if}}">{{subnav.text}}{{#if (compare subnav.text 'find a station')}} <span>&#8227;</span>{{/if}}</span>
                           </a>
                         {{ else }}
-                          <h2>{{subnav.text}}</h2>
+                          <span class="sub-nav__text">{{subnav.text}}</span>
                         {{/if}}
                       {{/if}}
                     </div>
@@ -61,7 +61,7 @@
           {{#each headerLinks}}
             <div class="nav-drawer__sub-nav nav-drawer__{{text}}">
               <a href="{{url}}" target="_blank">
-                <h2>{{text}}</h2>
+                <span class="sub-nav__text">{{text}}</span>
               </a>
             </div>
           {{/each}}

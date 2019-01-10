@@ -5,21 +5,62 @@ const $visibility = require('../../services/client/visibility'),
   // Facebook cmpt's vertical space must be a certain distance from the viewport for the embed to load
   SHOWN_THRESHOLD = 0.01,
   totalEmbeds = document.querySelectorAll('.facebook-post').length,
-  lazyLoadEmbeds = totalEmbeds >= LAZY_LOAD_MINIMUM;
+  lazyLoadEmbeds = totalEmbeds >= LAZY_LOAD_MINIMUM,
+  fbSdkUrl = '//connect.facebook.net/en_US/all.js#xfbml=1&amp;version=v2.3';
   // The number of Facebook cmpts that must be on the page to activate lazy loading.
   // Without lazy loading, a high number of Facebook embeds may slow page load time tremendously.
 
 function Constructor(el) {
-  this.visible = new $visibility.Visible(el, { shownThreshold: SHOWN_THRESHOLD });
-  if (lazyLoadEmbeds) {
-    this.hideContent(el);
-    this.initializeVisible(el);
-  } else {
-    FB.XFBML.parse();
+
+  // Process FB post if SDK is available otherwise Mount FB SDK then process.
+  if (window.FB) {
+    this.processFbPost(el);
+  } else if (!document.querySelector(`script[src="${fbSdkUrl}"]`)) {
+    this.mountFacebookSdk((error) => {
+      if (error) {
+        throw error;
+      } else {
+        this.processFbPost(el);
+      }
+    });
   }
+  
 }
 
 Constructor.prototype = {
+  /**
+   * Includes the Facebook SDK on the page.
+   * @param {function} callback - FB SDK <script> loaded or errored callback.
+   */
+  mountFacebookSdk: function (callback) {
+    const firstScript = document.getElementsByTagName('script')[0],
+      newScript = document.createElement('script');
+
+    newScript.onload = () => {
+      return callback(null);
+    };
+    newScript.onerror = (error) => {
+      return callback(error);
+    };
+    newScript.src = fbSdkUrl;
+    
+    firstScript.parentNode.insertBefore(newScript, firstScript);
+  },
+
+  /**
+   * Initialize the FB post embed.
+   * @param {HtmlElement} el
+   */
+  processFbPost: function (el) {
+    this.visible = new $visibility.Visible(el, { shownThreshold: SHOWN_THRESHOLD });
+    if (lazyLoadEmbeds) {
+      this.hideContent(el);
+      this.initializeVisible(el);
+    } else {
+      FB.XFBML.parse();
+    }
+  },
+
   initializeVisible: function (el) {
     this.visible.on('shown', this.showContent.bind(this, el));
   },

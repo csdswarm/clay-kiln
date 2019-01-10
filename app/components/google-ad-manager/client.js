@@ -18,7 +18,7 @@ const doubleclickPrefix = '21674100491',
   doubleclickPageTypeTagSection = 'sectionfront',
   doubleclickPageTypeTagTag = 'tag',
   doubleclickPageTypeTagAuthor = 'authors',
-  adRefreshInterval = '45000', // Time in milliseconds for ad refresh
+  adRefreshInterval = '60000', // Time in milliseconds for ad refresh
   targetingNationalRadioStation = 'natlrc',
   targetingGenre = 'aaa',
   targetingCategory = 'music',
@@ -206,7 +206,7 @@ function setAds(initialRequest = false) {
       siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
     case 'sectionFront':
-      targetingTags = [doubleclickPageTypeTagArticle, pageName];
+      targetingTags = [doubleclickPageTypeTagSection, pageName];
       targetingPageId = pageName;
       siteZone = siteZone.concat('/', pageName, '/article');
       break;
