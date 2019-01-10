@@ -8,8 +8,6 @@ const h = require('highland'),
   INDEX = helpers.indexWithPrefix('published-articles', process.env.ELASTIC_PREFIX),
   CONTENT_FILTER = isOpForComponents(['article']);
 
-// Subscribe to the publish stream
-subscribe('publish').through(save);
 // Subscribe to the save stream
 subscribe('save').through(save);
 

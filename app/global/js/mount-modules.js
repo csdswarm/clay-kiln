@@ -10,13 +10,6 @@ const _ = require('lodash');
 function mountModules() {
   const modules = window.modules;
 
-  // Mount global services first
-  Object.keys(modules)
-    .filter(moduleId => _.endsWith(moduleId, '.service'))
-    // Require each service, executing anything outside its export
-    // (e.g. Dollar Slice registration)
-    .forEach(moduleId => window.require(moduleId));
-
   // Mount components
   Object.keys(modules)
     .filter(moduleId => _.endsWith(moduleId, '.client'))

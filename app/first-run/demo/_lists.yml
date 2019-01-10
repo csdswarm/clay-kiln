@@ -2,10 +2,15 @@ _lists:
   tags: []
   authors: []
   sources: []
+  bookmarks: []
   new-pages:
-    -
-      id: new-two-col
-      title: New Article
-    -
-      id: curated-topic
-      title: Content Collection
+    - id: articles-standard
+      title: '1. Articles: Standard'
+      children:
+        - id: new-two-col
+          title: New Article
+    - id: general-pages
+      title: '2. General Pages'
+      children:
+        - id: curated-topic
+          title: Content Collection

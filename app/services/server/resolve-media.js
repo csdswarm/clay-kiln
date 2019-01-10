@@ -3,10 +3,16 @@
 const _ = require('lodash'),
   glob = require('glob'),
   path = require('path'),
-  megabundle = require('./megabundle');
+  getDependencies = require('claycli/lib/cmd/compile/get-script-dependencies').getDependencies;
 
 let memoizedGetTemplates = _.memoize(getTemplates),
+  memoizedClientJS = _.memoize(getClientJS)(),
   componentTemplates = memoizedGetTemplates();
+
+function getClientJS() {
+  return glob.sync(path.join('public', 'js', '*.client.js'))
+    .map(filepath => filepath.replace('public/',''));
+}
 
 function getTemplates() {
   return glob.sync(path.join('public', 'js', 'templates-*.js'))
@@ -31,27 +37,20 @@ function resolveMedia(media, locals) {
   if (locals.edit) {
     // edit mode - whole page
     media.scripts = _.flatten([
-      megabundle.getDeps(true, media.scripts, assetPath),
-      componentTemplates.map(templatePath => `${assetPath}/${templatePath}`),
-      `${assetPath}/js/edit-after.js`
+      getDependencies(media.scripts, assetPath, { edit: true, minify: true }),
+      componentTemplates.map(templatePath => `${assetPath}/${templatePath}`)
     ]);
+    media.styles.unshift(assetPath + '/css/_kiln-plugins.css');
   } else {
     // view mode - whole page
     media.scripts = _.flatten([
-      `${assetPath}/js/view-before.js`,
-      megabundle.getDeps(false, media.scripts, assetPath),
-      `${assetPath}/js/view-after.js`
+      getDependencies(memoizedClientJS, assetPath) // Send through ALL client.js files
     ]);
   }
 
   // Load all styles on initial page load so SPA doesn't break on navigation
   media.styles = glob.sync(path.join('public', 'css', `*.${locals.site.slug}.css`))
     .map(filepath => filepath.replace('public',''));
-
-  // Check if we are loading a component directly
-  if (locals.url.indexOf('/_components/') !== -1 && locals.query['ignore_resolve_media'] === 'true') {
-    media.styles = media.scripts = [];
-  }
 };
 
 module.exports = resolveMedia;

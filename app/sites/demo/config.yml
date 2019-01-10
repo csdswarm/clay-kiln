@@ -10,3 +10,7 @@ webPlayerHost: ${WEB_PLAYER_HOST}
 brightcoveAccountId: 5757251889001
 brightcovePlayerId: 9klBjvbUGf
 googleContainerId: 5XL9KZ5
+
+app: 'app.de54bd13.js'
+
+chunk-vendors: 'chunk-vendors.2b185e7a.js'

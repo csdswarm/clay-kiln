@@ -8,7 +8,7 @@ _pages:
       - /_components/meta-url/instances/general
     main:
       - /_components/article/instances/new
-    layout: /_components/one-column-layout/instances/general
+    layout: /_layouts/one-column-layout/instances/general
   new-two-col:
     head:
       - /_components/meta-title/instances/general
@@ -23,7 +23,7 @@ _pages:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
       - /_components/google-ad-manager/instances/halfPageBottom
-    layout: /_components/two-column-layout/instances/article
+    layout: /_layouts/two-column-layout/instances/article
   section-front:
     head:
       - /_components/meta-title/instances/general
@@ -34,7 +34,7 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/section-front/instances/new
-    layout: /_components/one-column-layout/instances/general
+    layout: /_layouts/one-column-layout/instances/general
   homepage:
     head:
       - /_components/meta-title/instances/general
@@ -44,21 +44,21 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/homepage/instances/default
-    layout: /_components/one-column-layout/instances/general
+    layout: /_layouts/one-column-layout/instances/general
   # Index Page
   index:
     head:
       - /_components/meta-title/instances/general
     main:
       - /_components/generic-list/instances/index
-    layout: /_components/one-column-layout/instances/bare
+    layout: /_layouts/one-column-layout/instances/bare
   # General Page
   general:
     head:
       - /_components/meta-title/instances/general
     main:
       - /_components/general-content/instances/new
-    layout: /_components/one-column-layout/instances/general
+    layout: /_layouts/one-column-layout/instances/general
   # Curated Topic Page
   curated-topic:
     head:
@@ -72,7 +72,7 @@ _pages:
       - /_components/topic-page-header/instances/new
     main:
       - /_components/topic-page/instances/new
-    layout: /_components/one-column-layout/instances/general
+    layout: /_layouts/one-column-layout/instances/general
   # Topic Page
   topic:
     _dynamic: true
@@ -87,7 +87,7 @@ _pages:
       - /_components/topic-page-header/instances/new
     main:
       - /_components/topic-page/instances/new
-    layout: /_components/one-column-layout/instances/general
+    layout: /_layouts/one-column-layout/instances/general
   # Author Page
   author:
     _dynamic: true
@@ -100,4 +100,4 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/author-page/instances/new
-    layout: /_components/one-column-layout/instances/general
+    layout: /_layouts/one-column-layout/instances/general
