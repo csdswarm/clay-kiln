@@ -1,7 +1,7 @@
 'use strict';
 
 const publishing = require('../../services/publishing'),
-  mainComponentRefs = ['/_components/article/instances'];
+  mainComponentRefs = ['/_components/article/instances', '/_components/gallery/instances'];
 
 module.exports.routes = [
   { path: '/'},

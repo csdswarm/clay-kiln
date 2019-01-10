@@ -136,7 +136,6 @@ function getUrlPrefix(site) {
  * @throws {Error} if there's no date, slug, or prefix
  */
 function getUrlOptions(component, locals) {
-  console.log('get url options');
   const urlOptions = {},
     date = moment(locals.date);
 
