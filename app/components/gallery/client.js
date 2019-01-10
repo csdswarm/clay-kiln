@@ -22,4 +22,4 @@ Constructor.prototype = {
   }
 };
 
-module.exports = (el) => new Constructor();
+module.exports = (el) => new Constructor(el);
