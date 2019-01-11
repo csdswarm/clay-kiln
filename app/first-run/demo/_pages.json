@@ -1,0 +1,10 @@
+{
+  "/_pages/redirects": {
+    "head": [],
+    "pageHeader": [],
+    "main": ["/_components/redirects/instances/default"],
+    "secondary": [],
+    "layout": "/_components/one-column-full-width-layout/instances/bare",
+    "customUrl": "/redirects"
+  }
+}
