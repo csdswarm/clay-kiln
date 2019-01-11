@@ -30,6 +30,7 @@ module.exports.save = (ref, data, locals) => {
   }
   return Promise.all(_.map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+    // TODO use data.contentType = { article: true, gallery: true } to populate this
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
       .then((result) => {
         const content = Object.assign(item, {

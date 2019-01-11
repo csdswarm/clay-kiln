@@ -1,3 +1,4 @@
 _components:
   trending-recirculation:
+    contentType: { article: true, gallery: true }
     items: []

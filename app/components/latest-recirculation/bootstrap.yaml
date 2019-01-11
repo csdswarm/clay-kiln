@@ -3,3 +3,4 @@ _components:
     items: []
     tag: ''
     populateBy: sectionFront
+    contentType: { article: true, gallery: true }
