@@ -829,3 +829,11 @@ _components:
         musicItems: []
         sportsItems: []
         newsItems: []
+
+  gallery-slide:
+    instances:
+      new:
+        slideEmbed: null
+        title: ''
+        description: ''
+        hashLinkSuffixOverride: ''

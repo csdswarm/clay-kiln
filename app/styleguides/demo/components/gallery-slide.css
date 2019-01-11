@@ -1,0 +1,42 @@
+@import "_global/fonts";
+
+.component--gallery-slide {
+
+  .gallery-slide__text {
+    margin: 30px 0 40px 0;
+  }
+
+  .gallery-slide__title {
+    font-family: CircularStd-Black;
+    font-size: 20px;
+    color: #000000;
+    letter-spacing: -0.25px;
+    line-height: 25px;
+    margin: 0 0 15px 0;
+  }
+
+  .gallery-slide__description {
+    font-family: ProximaNova-Regular;
+    font-size: 15px;
+    color: #000000;
+    letter-spacing: -0.3px;
+    line-height: 20px;
+  }
+
+  /* If slide embed is an Image component, override standard credit text-alignment. */
+  .component--image {
+    margin: 0;
+
+    .image-figcaption {
+      text-align: right;
+      margin: 5px 0 -30px 0;
+    }
+  }
+
+}
+
+@media screen and (max-width:480px) {
+  .component--gallery-slide .gallery-slide__text {
+    margin: 30px 0 30px 0;
+  }
+}

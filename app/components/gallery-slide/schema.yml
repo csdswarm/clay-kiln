@@ -1,0 +1,59 @@
+_description: |
+  This is the Gallery Slide component.
+
+  * Used to create gallery slides.
+  * TODO - Actually complete this section.
+
+slideEmbed:
+  _label: Slide Embed
+  _placeholder:
+    text: Add Slide Embed
+    height: 200px
+  _componentList:
+    fuzzy: false # allows interactives, etc to add one-off components
+    include:
+      - image
+      - instagram-post
+      - brightcove
+      - youtube
+      - html-embed
+      - omny
+    validate:
+      max: 1
+      required: true
+title:
+  _label: Slide Title
+  _has:
+    input: text
+    help: Slide title text
+    validate:
+      required: true
+description:
+  _label: Slide Description
+  _has:
+    input: text
+    help: Slide description text
+hashLinkSuffixOverride:
+  _label: Hash Link Suffix Override
+  _has:
+    input: text
+    help: "The hashtag deep link suffix (defaults to slugified slide title)"
+  validate:
+      # Allow lowercase alphanumeric chars and also hyphens.
+      # Detailed RegEx breakdown: https://regex101.com/r/1Hh9QF/1
+      pattern: ^[a-z0-9-]+$
+      patternMessage: "Hash link must consist of lowercase alphanumeric characters and hyphens (Example: this-is-1-valid-custom-hash-link)"
+
+_groups:
+  slideText:
+    _label: Slide Details
+    _placeholder:
+      text: Edit Slide Details
+      height: 150px
+      ifEmpty: title
+    fields:
+      - title
+      - description
+  settings:
+      fields:
+        - hashLinkSuffixOverride

@@ -1,0 +1,9 @@
+<div id="Slide-{{ hashLinkSuffixOverride }}" data-uri="{{ default _ref _self }}" class="component component--gallery-slide">
+  <div class="slideEmbed" data-editable="slideEmbed">
+    {{> component-list slideEmbed }}
+  </div>
+  <div class="slideText gallery-slide__text" data-editable="slideText">
+    {{#if title }}<p class="gallery-slide__title">{{ title }}</p>{{/if}}
+    {{#if description }}<p class="gallery-slide__description">{{ description }}</p>{{/if}}
+  </div>
+</div>
