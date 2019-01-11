@@ -257,6 +257,13 @@ slides:
 slidesNumbered:
   _label: Number the slides
   _has: checkbox
+reverseOrder:
+  _label: Reverse number order of slides? (Count down eg -- 5, 4, 3...)
+  _has: checkbox
+  _reveal:
+    field: slidesNumbered
+    operator: ===
+    value: true
 includeInlineAds:
   _label: Break up slides with inline ads
   _has: checkbox
@@ -413,6 +420,7 @@ _groups:
   slidesSettings:
     fields:
       - slidesNumbered
+      - reverseOrder
       - includeInlineAds
   settings:
     fields:
@@ -420,6 +428,7 @@ _groups:
       - hasSecondaryBylines
       - sectionFront
       - slidesNumbered (Gallery Slides)
+      - reverseOrder (Gallery Slides)
       - includeInlineAds (Gallery Slides)
 
 # non-user-editable fields, set by model.js and used for pubsub
