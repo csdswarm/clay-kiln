@@ -18,6 +18,7 @@ _components:
     content: []
     slides: []
     slidesNumbered: false
+    reverseOrder: false
     includeInlineAds: false
     inlineAd:
       _ref: /_components/google-ad-manager/instances/billboardBottom

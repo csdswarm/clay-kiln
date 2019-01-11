@@ -102,6 +102,12 @@
                   <h4 class="item-title">Number the slides?</h4>
                   <p class="item-data">{{ slidesNumbered }}</p>
                 </li>
+                {{#if slidesNumbered}}
+                  <li class="item">
+                    <h4 class="item-title">Reverse number order? eg. 5, 4, 3...</h4>
+                    <p class="item-data">{{ reverseOrder }}</p>
+                  </li>
+                {{/if}}
                 <li class="item">
                   <h4 class="item-title">Add inline ads every 5 slides?</h4>
                   <p class="item-data">{{ includeInlineAds }}</p>
@@ -113,7 +119,7 @@
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
-              <div class="content__slide-container"{{#if ../slidesNumbered}} data-slide-number='{{add @index 1}}'{{/if}}>
+              <div class="content__slide-container"{{#if ../slidesNumbered}} {{#if ../reverseOrder}}data-slide-number='{{subtract ../slides.length @index}}'{{else}}data-slide-number='{{add @index 1}}'{{/if}}{{/if}}>
                 {{! Rendered slides }}
                 {{> (getComponentName this._ref) this }}
               </div>

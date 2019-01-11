@@ -677,6 +677,7 @@ _components:
           -
             _ref: /_components/gallery-slide/instances/new
         slidesNumbered: false
+        reverseOrder: false
         includeInlineAds: false
         inlineAd:
           _ref: /_components/google-ad-manager/instances/billboardBottom

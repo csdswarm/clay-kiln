@@ -1,8 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  // _includes = require('lodash/includes'),
-  // _find = require('lodash/find'),
   striptags = require('striptags'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
@@ -14,8 +12,6 @@ const _get = require('lodash/get'),
   rest = require('../../services/universal/rest'),
   circulationService = require('../../services/universal/circulation'),
   mediaplay = require('../../services/universal/media-play');
-  // queryService = require('../../services/server/query'),
-  // QUERY_INDEX = 'authors';
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -178,40 +174,6 @@ function setCanonicalUrl(data, locals) {
   }
 }
 
-// /**
-//  * query elastic to get social media stuff for an author
-//  * @param {Object} query
-//  * @param {string} name
-//  * @returns {Promise}
-//  */
-// function getAuthorData(query, name) {
-//   queryService.addShould(query, { match : { name: name.text } });
-//   queryService.addMinimumShould(query, 1);
-//   return queryService.searchByQuery(query)
-//     .catch(() => name)
-//     .then( authors => {
-//       authors.forEach((author) => {
-//         author.text = author.name;
-//       });
-//
-//       return authors;
-//     });
-// }
-
-// /**
-//  * get data for first mediaplay image in an gallery, if it exists
-//  * @param  {object} data
-//  * @param {object} locals
-//  * @return {Promise}
-//  */
-// function getMediaplayImage(data, locals) {
-//   const firstMediaplayImage = has(data.content) && _find(data.content, (component) => _includes(component._ref, 'components/image/'));
-//
-//   if (firstMediaplayImage) {
-//     return promises.timeout(rest.get(utils.uriToUrl(firstMediaplayImage._ref, locals)), 1000).catch(() => null); // fail gracefully
-//   }
-// }
-
 /**
  * get gallery's previously-saved data, if it exists
  * note: only grab the data if we're thinking of updating the slug
@@ -329,32 +291,6 @@ function setSlugAndLock(data, prevData, publishedData) {
 }
 
 /**
- * Generates feed image from resolved mediaplay-image data or from a lede component image.
- * If feed image hasn't already been set and a lede component publishes one,
- * the feed image will get updated based on that lede component.
- * if feed image hasn't already been set and mediaplay-image has a url, it will generate
- * the feed image based on the mediaplay-image.
- * note: this will only generate the feed image once. if you change the mediaplay-image url
- * or the lede component image, the feed image will not update.
- * You will have to update it manually (using the magic-button).
- * @param  {object} data
- * @param  {object|null} mediaplayImage
- */
-// function generateFeedImage(data, mediaplayImage) {
-//   mediaplayImage = mediaplayImage || {}; // will be null if no mediaplay image
-//   if (isFieldEmpty(data.feedImgUrl) && has(data.imageUrl)) {
-//     data.feedImgUrl = mediaplay.getRendition(data.imageUrl, 'og:image');
-//   } else if (isFieldEmpty(data.feedImgUrl) && has(mediaplayImage.url)) {
-//     // get the original rendition from the mediaplay url
-//     data.feedImgUrl = mediaplay.getRendition(mediaplayImage.url, 'og:image');
-//   } else if (has(data.feedImgUrl)) {
-//     // make sure the feed image is using the original rendition
-//     data.feedImgUrl = mediaplay.getRendition(data.feedImgUrl, 'og:image');
-//   }
-// }
-
-
-/**
  * Remove width, height, cropping, and resolution from silo image url.
  * @param  {object} data
  */
@@ -436,8 +372,6 @@ module.exports.render = function (ref, data, locals) {
 };
 
 module.exports.save = function (uri, data, locals) {
-  // var query = queryService(QUERY_INDEX, locals);
-
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
   sanitizeInputs(data); // do this before using any headline/teaser/etc data

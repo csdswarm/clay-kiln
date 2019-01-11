@@ -92,12 +92,12 @@ export default {
         toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
         toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
         toPath: to.path,
-        toArticlePage: nextArticleData ? nextArticleData : {},
-        toGalleryPage: nextGalleryData ? nextGalleryData : {},
-        toHomepage: nextHomepageData ? nextHomepageData : {},
-        toSectionFrontPage: nextSectionFrontPageData ? nextSectionFrontPageData : {},
-        toTopicPage: nextTopicPageData ? nextTopicPageData : {},
-        toStationDetailPage: nextStationDetailPageData ? nextStationDetailPageData : {}
+        toArticlePage: nextArticleData || {},
+        toGalleryPage: nextGalleryData || {},
+        toHomepage: nextHomepageData || {},
+        toSectionFrontPage: nextSectionFrontPageData || {},
+        toTopicPage: nextTopicPageData || {},
+        toStationDetailPage: nextStationDetailPageData || {}
       }
     }
   },
