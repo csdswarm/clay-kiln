@@ -60,7 +60,7 @@ export default {
         protocol: window.location.protocol.replace(':', ''),
         hostname: window.location.hostname,
         originalUrl: to.path
-      };
+      }
       const res = {
         redirect: (redirect) => {
           if (createRegExp(`${window.location.protocol}//${window.location.hostname}`, '').test(redirect)) {
@@ -75,10 +75,10 @@ export default {
             return null
           }
         }
-      };
+      }
       const next = () => {
-          return to.path
-      };
+        return to.path
+      }
 
       return await handleRedirects(req, res, next, { client: axios, extract: (response) => response.data, modifier: '//' })
     },
@@ -119,11 +119,11 @@ export default {
         toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
         toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
         toPath: path,
-        toArticlePage: nextArticleData ? nextArticleData : {},
-        toHomepage: nextHomepageData ? nextHomepageData : {},
-        toSectionFrontPage: nextSectionFrontPageData ? nextSectionFrontPageData : {},
-        toTopicPage: nextTopicPageData ? nextTopicPageData : {},
-        toStationDetailPage: nextStationDetailPageData ? nextStationDetailPageData : {}
+        toArticlePage: nextArticleData || {},
+        toHomepage: nextHomepageData || {},
+        toSectionFrontPage: nextSectionFrontPageData || {},
+        toTopicPage: nextTopicPageData || {},
+        toStationDetailPage: nextStationDetailPageData || {}
       }
     }
   },
@@ -138,33 +138,33 @@ export default {
       this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
       // Handle any redirects before attempting to load any data, null returned when a redirect has occurred
-      const path = await this.checkRedirects(to);
+      const path = await this.checkRedirects(to)
 
       if (path) {
-          // Get SPA payload data for next path.
-          const spaPayload = await this.getNextSpaPayload(window.location.hostname + path)
+        // Get SPA payload data for next path.
+        const spaPayload = await this.getNextSpaPayload(window.location.hostname + path)
 
-          // Load matched Layout Component.
-          this.activeLayoutComponent = this.layoutRouter(spaPayload)
+        // Load matched Layout Component.
+        this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-          // Commit next payload to store to kick off re-render.
-          this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+        // Commit next payload to store to kick off re-render.
+        this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-          // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-          metaManager.updateExternalTags(this.$store.state.spaPayload)
+        // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+        metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-          // Stop loading animation.
-          this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+        // Stop loading animation.
+        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-          // Build pageView event data
-          const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
+        // Build pageView event data
+        const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-          // Call global pageView event.
-          const event = new CustomEvent(`pageView`, {
-              detail: pageViewEventData
-          })
+        // Call global pageView event.
+        const event = new CustomEvent(`pageView`, {
+          detail: pageViewEventData
+        })
 
-          document.dispatchEvent(event)
+        document.dispatchEvent(event)
       }
     }
   }

@@ -36,7 +36,7 @@ const redirectDataURL = '/_components/redirects/instances/default@published',
 module.exports = async (req, res, next, { client, extract = (data) => data, modifier = '' }) => {
   try {
     const data = await client.get(`${modifier}${req.hostname}${redirectDataURL}`),
-      redirects = extract(data).redirects;
+      redirects = extract(data).redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*'));
 
     if (redirects && redirects.some(item => testURL(item.url, req))) {
       return res.redirect(redirects.filter(item => testURL(item.url, req))[0].redirect);

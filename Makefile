@@ -36,7 +36,7 @@ clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data
 
 bootstrap:
-	cd ./app &&  cat ./first-run/**/* | clay import -k demo -y clay.radio.com
+	cd ./app &&  cat ./first-run/**/*.yml | clay import -k demo -y clay.radio.com &&  cat ./first-run/**/*.json | tr -d '\n' | clay import -k demo -p clay.radio.com
 	@echo ""
 	curl -X PUT http://clay.radio.com/_components/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
@@ -56,7 +56,7 @@ bootstrap:
 	@echo "\r\n\r\n"
 
 dev-bootstrap:
-	cd ./app && cat ./first-run/**/* | clay import -k demo -y dev-clay.radio.com
+	cd ./app && cat ./first-run/**/* | clay import -k demo -y dev-clay.radio.com &&  cat ./first-run/**/*.json | tr -d '\n' | clay import -k demo -p dev-clay.radio.com
 	@echo ""
 	curl -X PUT https://dev-clay.radio.com/_components/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
@@ -74,7 +74,7 @@ dev-bootstrap:
 	@echo "\r\n\r\n"
 
 stg-bootstrap:
-	cd ./app && cat ./first-run/**/* | clay import -k demo -y stg-clay.radio.com
+	cd ./app && cat ./first-run/**/* | clay import -k demo -y stg-clay.radio.com &&  cat ./first-run/**/*.json | tr -d '\n' | clay import -k demo -p stg-clay.radio.com
 	@echo ""
 	curl -X PUT https://stg-clay.radio.com/_components/one-column-layout/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"

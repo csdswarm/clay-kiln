@@ -1,14 +1,14 @@
 // This logic is duplicated in the app because amphora doesn't support export
 
-const redirectDataURL = '/_components/redirects/instances/default@published',
-  /**
-   * determines if a url is inside an array of redirect objects
-   *
-   * @param {string} url
-   * @param {object} req
-   * @returns {boolean}
-   */
-  testURL = (url, req) => createRegExp(url).test(`${req.protocol}://${req.hostname}${req.originalUrl}`)
+const redirectDataURL = '/_components/redirects/instances/default@published'
+/**
+ * determines if a url is inside an array of redirect objects
+ *
+ * @param {string} url
+ * @param {object} req
+ * @returns {boolean}
+ */
+const testURL = (url, req) => createRegExp(url).test(`${req.protocol}://${req.hostname}${req.originalUrl}`)
 
 /**
  * converts a string into a regular expression * as a wildcard
@@ -35,8 +35,8 @@ export const createRegExp = (url, limit = '$') => {
  */
 export default async (req, res, next, { client, extract = (data) => data, modifier = '' }) => {
   try {
-    const data = await client.get(`${modifier}${req.hostname}${redirectDataURL}`);
-    const redirects = extract(data).redirects
+    const data = await client.get(`${modifier}${req.hostname}${redirectDataURL}`)
+    const redirects = extract(data).redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*'))
 
     if (redirects && redirects.some(item => testURL(item.url, req))) {
       return res.redirect(redirects.filter(item => testURL(item.url, req))[0].redirect)
