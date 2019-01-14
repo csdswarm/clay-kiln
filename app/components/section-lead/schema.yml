@@ -1,75 +1,75 @@
 primaryStoryLabel:
-	_label: Primary Lede Label
-	_has:
-		input: text
-		validate:
-			max: 80
-		help: Label for the top lede story. Eg. 'Exclusive'
+  _label: Primary Lede Label
+  _has:
+    input: text
+    validate:
+      max: 80
+    help: Label for the top lede story. Eg. 'Exclusive'
 
 contentType:
-	_label: Content type
-	_has:
-		validate:
-			required: true
-		input: checkbox-group
-		options:
-			- article
-			- gallery
+  _label: Content type
+  _has:
+    validate:
+      required: true
+    input: checkbox-group
+    options:
+      - article
+      - gallery
 items:
-	_label: Items
-	_has:
-		input: complex-list
-		enforceMaxlength: true
-		validate:
-			max: 3
-		props:
-			-
-				prop: url
-				_label: URL
-				_has:
-					input: text
-					type: url
-					validate:
-						required: true
-			-
-				prop: overrideTitle
-				_label: Headline Override
-				_has:
-					input: text
-					validate:
-						max: 80
-			-
-				prop: urlIsValid
-				_has:
-					validate:
-						required: true
+  _label: Items
+  _has:
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      max: 3
+    props:
+      -
+        prop: url
+        _label: URL
+        _has:
+          input: text
+          type: url
+          validate:
+            required: true
+      -
+        prop: overrideTitle
+        _label: Headline Override
+        _has:
+          input: text
+          validate:
+            max: 80
+      -
+        prop: urlIsValid
+        _has:
+          validate:
+            required: true
 
 sectionFront:
-	_label: Section Front
-	_subscribe: sectionFront
-	_has:
-		input: static
-		text: ${sectionFront}
+  _label: Section Front
+  _subscribe: sectionFront
+  _has:
+    input: static
+    text: ${sectionFront}
 filterBySection:
-	_label: Filter by Section Front
-	_subscribe: sectionFront
-	_has:
-		input: static
-		text: ${sectionFront}
+  _label: Filter by Section Front
+  _subscribe: sectionFront
+  _has:
+    input: static
+    text: ${sectionFront}
 _groups:
-	settings:
-		fields:
-		- primaryStoryLabel
-		- contentType
-		- items
-		- sectionFront
-		_placeholder:
-			ifEmpty: sectionFront
-			height: 400px
-			text: Lead Story(s)
+  settings:
+    fields:
+    - primaryStoryLabel
+    - contentType
+    - items
+    - sectionFront
+    _placeholder:
+      ifEmpty: sectionFront
+      height: 400px
+      text: Lead Story(s)
 
 # Component properties
 googleAdRightRail:
-	_component:
-		include:
-		- google-ad-manager
+  _component:
+    include:
+    - google-ad-manager
