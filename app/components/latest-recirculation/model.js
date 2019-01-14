@@ -72,6 +72,15 @@ module.exports.render = function (ref, data, locals) {
       }
     }
 
+    if (data.contentType) {
+      const should = Object.entries(data.contentType)
+        .map(([type, isIncluded]) => {
+          if (isIncluded)
+          return { match: { contentType: isIncluded } }
+        })
+        .filter((x) => x)
+      queryService.addShould(query, should)
+    }
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
     if (data.populateBy == 'tag') {
