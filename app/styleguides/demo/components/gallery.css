@@ -15,7 +15,7 @@
     width: 100%;
     .slide-settings__title {
       font-family: Helvetica,Arial,sans-serif;
-      font-size: 24px;
+      font-size: em(24);
       font-weight: 400;
       line-height: em(28, 24);
       margin: 0;
@@ -27,7 +27,7 @@
       .item-title {
         color: #4d4d4d;
         font-family: Helvetica,Arial,sans-serif;
-        font-size: 12px;
+        font-size: em(12);
         font-weight: 400;
         line-height: em(14, 12);
         margin: 0;
@@ -36,9 +36,9 @@
       }
       .item-data {
         font-family: Helvetica,Arial,sans-serif;
-        font-size: 14px;
+        font-size: em(14);
         font-weight: 400;
-        line-height: em(16, 14));
+        line-height: em(16, 14);
         margin: 0;
         padding: 0;
       }
