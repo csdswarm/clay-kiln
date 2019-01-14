@@ -1,3 +1,12 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+@import "_global/article-gallery";
+
+/* This file should only include gallery-specific styles.
+   Any styling that is shared by articles should be included in the global article-gallery stylesheet. */
+
 .component--gallery {
   .content__slide-settings {
     background: #f4f4f4;
