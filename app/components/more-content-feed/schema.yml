@@ -1,5 +1,7 @@
 _description: |
   A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
+  The articles will be filtered by the section front of the URL, (ex: /sports/football with tags "NFL" and
+  "National News" will only show sports stories that have either of those tags).
 
 contentType:
   _label: Content type
@@ -84,7 +86,7 @@ tag:
   _subscribe: tag
   _label: tag
   _has:
-    help: Tag from which to pull content
+    help: Includes content from all tags inside the section set in the URL
 
 tagManual:
   _label: Tag
@@ -102,7 +104,7 @@ tagManual:
       list: tags
       allowRemove: true
       allowCreate: true
-    help: Tag from which to pull content
+    help: Includes content from all tags inside the section set in the URL
     validate:
       required:
         field: populateFrom
@@ -226,7 +228,8 @@ googleAdRightRail:
       - google-ad-manager
 
 _groups:
-  settings:
+  contentFeed:
+    _label: Content Feed
     fields:
       - pageLength
       - populateFrom

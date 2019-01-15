@@ -35,7 +35,7 @@ $drawerSelector: nav-drawer;
     -webkit-padding-start: 0;
     float: left;
   }
-  h1, h2, h3, li {
+  .category-button__text, .sub-nav__text, .sub-nav-list-item__text, li {
     padding: 0;
     margin: 0;
     font-weight: normal;
@@ -135,9 +135,9 @@ $drawerSelector: nav-drawer;
     }
   }
   @define-mixin header-heading-color $modifier, $color {
-    &.$(navButton)--active.$(navButton)--$(modifier) h1,
+    &.$(navButton)--active.$(navButton)--$(modifier) .category-button__text,
     &.$(navButton)--$(modifier).$(navButton)--current,
-    &:hover.$(navButton)--$(modifier) h1 {
+    &:hover.$(navButton)--$(modifier) .category-button__text {
       color: $color;
     }
   }
@@ -158,7 +158,7 @@ $drawerSelector: nav-drawer;
     @mixin header-heading-color listen, $parisM;
     @mixin header-heading-color download, $parisM;
     @mixin header-heading-color more, $parisM;
-    button h1 {
+    button .category-button__text {
       font-family: CircularStd-Black, sans-serif;
       font-size: 15px;
       color: $white;
@@ -264,7 +264,7 @@ $drawerSelector: nav-drawer;
               width: em(100);
               cursor: pointer;
               white-space: nowrap;
-              h3 {
+              .sub-nav-list-item__text {
                 font-family: ProximaNova-Regular, sans-serif;
                 font-size: 14px;
                 color: $white;
@@ -274,7 +274,7 @@ $drawerSelector: nav-drawer;
               }
             }
           }
-          h2.find-station-link {
+          .sub-nav__text.find-station-link {
             span {
               font: 500 em(30)/1em Arial, Helvetica, sans-serif;
               @mixin inline-block;
@@ -292,7 +292,7 @@ $drawerSelector: nav-drawer;
     &.$(drawerSelector)--active.$(drawerSelector)--mobile {
       transform: translateX(0);
     }
-    h2 {
+    .sub-nav__text {
       font-family: CircularStd-Black, sans-serif;
       font-size: 14px;
       color: $white;
@@ -313,15 +313,15 @@ $drawerSelector: nav-drawer;
         a {
           width: 100%;
         }
-        &.$(drawerSelector)__listen h2:hover,
-        &.$(drawerSelector)__download h2:hover,
-        &.$(drawerSelector)__more h2:hover {
+        &.$(drawerSelector)__listen .sub-nav__text:hover,
+        &.$(drawerSelector)__download .sub-nav__text:hover,
+        &.$(drawerSelector)__more .sub-nav__text:hover {
           background: $white;
           color: $parisM;
         }
         @define-mixin drawer-header-color $modifier, $color {
-          &.$(drawerSelector)__sub-nav--active.$(drawerSelector)__$(modifier) h2,
-          &.$(drawerSelector)__$(modifier) h2:hover {
+          &.$(drawerSelector)__sub-nav--active.$(drawerSelector)__$(modifier) .sub-nav__text,
+          &.$(drawerSelector)__$(modifier) .sub-nav__text:hover {
             background: $color;
           }
         }
@@ -329,7 +329,7 @@ $drawerSelector: nav-drawer;
         @mixin drawer-header-color news, $lightningYellow;
         @mixin drawer-header-color sports, $azureRadience;
         @mixin drawer-header-color podcasts, $robinsEggBlue;
-        h2 {
+        .sub-nav__text {
           cursor: pointer;
           text-align: left;
           line-height: em(30);
@@ -347,7 +347,7 @@ $drawerSelector: nav-drawer;
         &.$(drawerSelector)__sub-nav--active ul {
           display: block;
         }
-        h3 {
+        .sub-nav-list-item__text {
           font-family: ProximaNova-Regular, sans-serif;
           font-size: 14px;
           color: $white;
@@ -449,7 +449,7 @@ $drawerSelector: nav-drawer;
         }
         &.$(drawerSelector)--mobile {
           .$(drawerSelector)__sub-nav {
-            h2, ul {
+            .sub-nav__text, ul {
               font-size: 16px;
               /* (100% view width - header container width) / 2 */
               padding-left: calc((100vw - $(medium-screen-nav-width)) / 2);
@@ -476,7 +476,7 @@ $drawerSelector: nav-drawer;
         + hamburger margin + nav logo width */
         width: calc(em(30) + em(20) + em(20) + em(180));
         .$(drawerSelector)__sub-nav {
-          h2, ul {
+          .sub-nav__text, ul {
             padding-left: em(30);
           }
         }
@@ -503,12 +503,12 @@ $drawerSelector: nav-drawer;
       &.$(drawerSelector)--mobile {
         width: 100%;
         .$(drawerSelector)__sub-nav {
-          h2, ul {
+          .sub-nav__text, ul {
             text-align: center;
             margin: 0;
             padding-left: 0;
           }
-          h2 li, ul li {
+          .sub-nav__text li, ul li {
             width: auto;
           }
         }

@@ -14,8 +14,19 @@
             {{> component-list introComponents}}
           </div>
         {{/unless}}
+        {{#unless content.length}}
+          {{#if @root.locals.edit}}
+            <div class="more-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
+              <div class="placeholder-label">
+                <span class="ui-icon placeholder-icon material-icons add">add</span>
+                <span class="placeholder-text">Content Feed</span>
+                <div class="ui-ripple-ink"></div>
+              </div>
+            </div>
+          {{/if}}
+        {{/unless}}
         {{#ifAny content.length @root.locals.edit}}
-          <ul class="more-content-feed__links" data-editable="tag">
+          <ul class="more-content-feed__links" data-editable="contentFeed">
         {{/ifAny}}
 {{/if}}
           {{#each content as |feedItem|}}

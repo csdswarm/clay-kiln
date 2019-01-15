@@ -19,6 +19,7 @@
   .podcast-list__item {
     margin-bottom: em(40);
     width: em(220);
+    max-width: em(220);
     flex: 1 0 em(220);
 
     &:not(:last-child) {
@@ -104,6 +105,26 @@
       height: em(10, 12);
       width: em(10, 12);
     }
+  }
+}
+
+.kiln-field {
+  .podcast-preview {
+    display: flex;
+    flex-direction: column;
+    max-width: em(220);
+  }
+
+  .podcast-preview__image {
+    display: block;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  .podcast-preview__link {
+    @mixin podcast-list-font2;
+    margin-top: em(15, 22);
+    text-decoration: none;
   }
 }
 

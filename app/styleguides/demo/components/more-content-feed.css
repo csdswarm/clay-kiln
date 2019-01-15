@@ -58,12 +58,19 @@
     width: calc(100% - em(300));
     padding-right: em(20);
     min-height: em(900);
+    position: relative;
     @mixin large-screen {
       margin-right: 0;
     }
     @mixin medium-screen {
       width: 100%;
       padding-right: 0;
+    }
+    .more-content-feed__placeholder.kiln-placeholder {
+      height: em(489);
+      position: absolute;
+      width: calc(100% - em(20));
+      margin: em(20) 0;
     }
     li:not(:last-of-type) {
       margin-bottom: em(30);
