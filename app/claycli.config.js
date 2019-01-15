@@ -1,5 +1,27 @@
 'use strict';
+
+var gulp = require('gulp'),
+  concat = require('gulp-concat'),
+  uglify = require('gulp-uglify'),
+  gutil = require('gulp-util'),
+  argv = require('yargs').argv,
+  gulpif = require('gulp-if');
+
 module.exports = {
+  customTasks: [
+    {
+      name: 'polyfills',
+      fn: () => {
+        return gulp.src([
+          'global/polyfills.js',
+          'global/modernizr.js'
+        ])
+          .pipe(concat('polyfills.js'))
+          .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
+          .pipe(gulp.dest('public/js'));
+      }
+    }
+  ],
   plugins: [
     require('postcss-functions')({
       functions: {
@@ -28,6 +50,6 @@ module.exports = {
       }
     })
   ],
-  babelTargets: { browsers: ['> 2%'] },
-  autoprefixerOptions: { browsers: ['> 2%'] }
+  babelTargets: '> 0.25%, not dead',
+  autoprefixerOptions: { browsers: ['last 2 versions', 'ie >= 9', 'ios >= 7', 'android >= 4.4.2'] }
 };

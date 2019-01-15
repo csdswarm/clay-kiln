@@ -32,21 +32,15 @@ Install `radio-web-player`
 $ npm run build-web-player
 ```
 
-Run Gulp
+Run Clay Compile
 
 ```bash
-$ gulp
-```
-
-_If you already have Gulp installed globally and it's not Gulp 4.x, you'll want to run the following:_
-
-```bash
-$ node ./node_modules/.bin/gulp
+$ npm run clay-compile
 ```
 
 This is to make sure your `public` directory exists. Without it the site won't run.
 
-This is the window where you'll re-run Gulp as you need to. Right now only the tasks for building model.js, template files and CSS.
+This is the window where you'll re-run clay compile as you need to. Right now only the tasks for building model.js, template files and CSS.
 
 ### Terminal Window 2
 
@@ -79,7 +73,7 @@ If you change any `template.hbs` files in the components or any files in `spa/`,
 $ make spa
 ```
 
-#### When do I need to run gulp?
+#### When do I need to run clay compile?
 
 If you change any files in the following (Pulled from `app/gulpfile.js`): 
 * `styleguides/**/*.css`
@@ -92,12 +86,12 @@ If you change any files in the following (Pulled from `app/gulpfile.js`):
 
 Run the following command from inside the `app/` directory:
 ```bash
-$ ./node_modules/.bin/gulp
+$ npm run clay-compile
 ```
 
 Gulp can also be watched to automatically rebuild changes:
 ```bash
-$ ./node_modules/.bin/gulp watch
+$ .npm run clay-watch
 ```
 
 ### If I want to stop dev?
