@@ -2,9 +2,13 @@
 
 function Constructor() {
   const sidebar = document.querySelector('.content__sidebar'),
-    galleryBody = document.querySelector('.gallery__body');
+    galleryBody = document.querySelector('.gallery__body'),
+    firstInlineAd = document.querySelector('.slides__ad-container');
 
   this.repositionRightRail(sidebar, galleryBody);
+  if (firstInlineAd) {
+    window.addEventListener('scroll', function() { this.hideTertiaryStickyAd(); }.bind(this) );
+  }
 }
 
 Constructor.prototype = {
@@ -19,6 +23,25 @@ Constructor.prototype = {
     sidebar.style.marginTop = galleryBody.offsetTop + 'px';
     sidebar.style.position = 'relative';
     sidebar.style.visibility = 'visible';
+  },
+  /**
+   * Hide tertiary sticky ad after user scrolls past the first inline ad
+   * so that it does not show up behind the inline right rail ads.
+   * @function
+   */
+  hideTertiaryStickyAd: function () {
+    const firstStickyAd = document.querySelector('.content__sidebar .sticky'),
+      firstInlineAd = document.querySelector('.slides__ad-container');
+
+    if (window.scrollY > firstInlineAd.offsetTop) {
+      if (firstStickyAd.style.visibility !== 'hidden') {
+        firstStickyAd.style.visibility = 'hidden';
+      }
+    } else {
+      if (firstStickyAd.style.visibility !== 'visible') {
+        firstStickyAd.style.visibility = 'visible';
+      }
+    }
   }
 };
 

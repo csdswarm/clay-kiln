@@ -44,9 +44,15 @@
       }
     }
   }
-  .content__ad-container {
+  .slides__slide-group {
+    position: relative;
+    min-height: em(600);
+  }
+  .slides__ad-container {
     margin-top: em(50);
     width: calc(100% + em(320));
+    position: relative;
+    z-index: 1;
     @mixin default-screen {
       width: em(1100);
       margin-left: em(-160);
@@ -65,6 +71,17 @@
     @mixin small-screen {
       width: 100%;
       max-width: em(320);
+    }
+  }
+  .slide-group__rr-ad-container {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    width: 300px;
+    margin-right: -320px;
+    z-index: 1;
+    .google-ad-manager--half-page {
+      margin-bottom: 0;
     }
   }
 }
