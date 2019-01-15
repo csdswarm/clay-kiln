@@ -33,12 +33,12 @@ description:
   _has:
     input: text
     help: Slide description text
-hashLinkSuffixOverride:
+hashLinkSuffix:
   _label: Hash Link Suffix Override
   _has:
     input: text
     help: "The hashtag deep link suffix (defaults to slugified slide title)"
-  validate:
+    validate:
       # Allow lowercase alphanumeric chars and also hyphens.
       # Detailed RegEx breakdown: https://regex101.com/r/1Hh9QF/1
       pattern: ^[a-z0-9-]+$
@@ -56,4 +56,4 @@ _groups:
       - description
   settings:
       fields:
-        - hashLinkSuffixOverride
+        - hashLinkSuffix
