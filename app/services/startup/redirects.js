@@ -53,7 +53,7 @@ module.exports = async (req, res, next) => {
         if (req.originalUrl.includes('?json')) {
           res.status(301).json({redirect});
         } else {
-          return res.redirect(redirect);
+          return res.redirect(301, redirect);
         }
       }
     }
