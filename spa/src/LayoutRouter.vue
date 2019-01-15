@@ -12,7 +12,6 @@ import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
-import handleRedirects, { createRegExp } from './redirects'
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -55,46 +54,53 @@ export default {
 
       return nextLayoutComponent
     },
-    checkRedirects: async (to) => {
-      const req = {
-        protocol: window.location.protocol.replace(':', ''),
-        hostname: window.location.hostname,
-        originalUrl: to.path
-      }
-      const res = {
-        redirect: (redirect) => {
-          if (createRegExp(`${window.location.protocol}//${window.location.hostname}`, '').test(redirect)) {
-            const pathname = new URL(redirect).pathname
+    /**
+     * converts a string into a regular expression * as a wildcard
+     *
+     * @param {string} url
+     * @returns {RegExp}
+     */
+    createRegExp: (url) => {
+      let regExp = url.replace(/\*/g, '.*')
 
-            // we are returning the new path, so need to adjust the browser path
-            window.history.replaceState({ }, null, pathname)
-
-            return pathname
-          } else {
-            window.location.replace(redirect)
-            return null
-          }
-        }
-      }
-      const next = () => {
-        return to.path
-      }
-
-      return await handleRedirects(req, res, next, { client: axios, extract: (response) => response.data, modifier: '//' })
+      return new RegExp(`^${regExp}`, 'i')
     },
+    /**
+     *
+     * Returns an object with all the JSON payload required for a page render.
+     *
+     * @param {string} destination - The URL being requested.
+     * @returns {object}  - The JSON payload
+     */
     getNextSpaPayload: async function getNextSpaPayload (destination) {
       try {
-        const nextSpaPayloadResult = await axios.get(`//${destination}?json`, {
+        const nextSpaPayloadResult = await axios.get(`${destination}?json`, {
           headers: {
             'x-amphora-page-json': true
           }
         })
+
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+        nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
         return nextSpaPayloadResult.data
       } catch (e) {
-        const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
-        nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-        return nextSpaPayloadResult.data
+        if (e.response.status === 301 && e.response.data.redirect) {
+          const redirect = e.response.data.redirect
+
+          if (this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(redirect)) {
+            // we are returning the new path, so need to adjust the browser path
+            window.history.replaceState({ }, null, redirect)
+            return this.getNextSpaPayload(redirect.replace(/^[^/]+/i, ''))
+          } else {
+            window.location.replace(redirect)
+            return null
+          }
+        } else {
+          const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
+          nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+          nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
+          return nextSpaPayloadResult.data
+        }
       }
     },
     /**
@@ -137,35 +143,31 @@ export default {
       // Start loading animation.
       this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
-      // Handle any redirects before attempting to load any data, null returned when a redirect has occurred
-      const path = await this.checkRedirects(to)
+      // Get SPA payload data for next path.
+      const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`)
+      const path = (new URL(spaPayload.url)).pathname
 
-      if (path) {
-        // Get SPA payload data for next path.
-        const spaPayload = await this.getNextSpaPayload(window.location.hostname + path)
+      // Load matched Layout Component.
+      this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-        // Load matched Layout Component.
-        this.activeLayoutComponent = this.layoutRouter(spaPayload)
+      // Commit next payload to store to kick off re-render.
+      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-        // Commit next payload to store to kick off re-render.
-        this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+      // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+      metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-        // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-        metaManager.updateExternalTags(this.$store.state.spaPayload)
+      // Stop loading animation.
+      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-        // Stop loading animation.
-        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+      // Build pageView event data
+      const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-        // Build pageView event data
-        const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
+      // Call global pageView event.
+      const event = new CustomEvent(`pageView`, {
+        detail: pageViewEventData
+      })
 
-        // Call global pageView event.
-        const event = new CustomEvent(`pageView`, {
-          detail: pageViewEventData
-        })
-
-        document.dispatchEvent(event)
-      }
+      document.dispatchEvent(event)
     }
   }
 }

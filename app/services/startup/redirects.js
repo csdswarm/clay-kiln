@@ -9,18 +9,17 @@ const redirectDataURL = '/_components/redirects/instances/default@published',
    * @param {object} req
    * @returns {boolean}
    */
-  testURL = (url, req) => createRegExp(url).test(`${req.protocol}://${req.hostname}${req.originalUrl}`),
+  testURL = (url, req) => createRegExp(url).test(`${req.protocol}://${req.hostname}${req.originalUrl.replace('?json', '')}`),
   /**
    * converts a string into a regular expression * as a wildcard
    *
    * @param {string} url
-   * @param {string} limit
    * @returns {RegExp}
    */
-  createRegExp = (url, limit = '$') => {
+  createRegExp = (url) => {
     let regExp = url.replace(/\*/g, '.*');
 
-    return new RegExp(`^${regExp}${limit}`, 'i');
+    return new RegExp(`^${regExp}$`, 'i');
   };
 
 /**
@@ -39,7 +38,14 @@ module.exports = async (req, res, next, { client, extract = (data) => data, modi
       redirects = extract(data).redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*'));
 
     if (redirects && redirects.some(item => testURL(item.url, req))) {
-      return res.redirect(redirects.filter(item => testURL(item.url, req))[0].redirect);
+      const redirect = redirects.filter(item => testURL(item.url, req))[0].redirect;
+
+      // request coming from SPA, 301 and send new URL
+      if (req.originalUrl.includes('?json')) {
+        res.status(301).json({ redirect });
+      } else {
+        return res.redirect(redirect);
+      }
     }
   } catch (e) {
   }
