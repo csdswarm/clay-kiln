@@ -119,15 +119,23 @@
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
-              <div class="content__slide-container"{{#if ../slidesNumbered}} {{#if ../reverseOrder}}data-slide-number='{{subtract ../slides.length @index}}'{{else}}data-slide-number='{{add @index 1}}'{{/if}}{{/if}}>
-                {{! Rendered slides }}
-                {{> (getComponentName this._ref) this }}
-              </div>
+              {{#ifAll ../includeInlineAds (modulo @index 5 0) }}
+                <div class="slides__slide-group">
+                  {{#if (compare @index '!==' 0) }}
+                    <div class="slide-group__rr-ad-container">
+                      {{> google-ad-manager ../rightRailStickyAd }}
+                    </div>
+                  {{/if}}
+              {{/ifAll}}
+                <div class="slide-group__slide-container"{{#if ../slidesNumbered}} {{#if ../reverseOrder}}data-slide-number='{{subtract ../slides.length @index}}'{{else}}data-slide-number='{{add @index 1}}'{{/if}}{{/if}}>
+                  {{! Rendered slides }}
+                  {{> (getComponentName this._ref) this }}
+                </div>
               {{#ifAll ../includeInlineAds (modulo (add @index 1) 5 0) }}
-                <div class="content__ad-container">
+                </div>
+                <div class="slides__ad-container">
                   {{> google-ad-manager ../inlineAd }}
                 </div>
-                {{> google-ad-manager ../rightRailStickyAd }}
               {{/ifAll}}
             {{/each}}
           {{/if}}
