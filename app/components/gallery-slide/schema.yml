@@ -37,7 +37,7 @@ hashLinkSuffix:
   _label: Hash Link Suffix Override
   _has:
     input: text
-    help: "The hashtag deep link suffix (defaults to slugified slide title)"
+    help: "The hashtag deep link suffix (defaults to slugified slide title). WARNING: Changing this post-publish can hurt SEO."
     validate:
       # Allow lowercase alphanumeric chars and also hyphens.
       # Detailed RegEx breakdown: https://regex101.com/r/1Hh9QF/1
