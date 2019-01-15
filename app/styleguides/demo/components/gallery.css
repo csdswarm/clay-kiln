@@ -77,8 +77,8 @@
     position: absolute;
     right: 0;
     height: 100%;
-    width: 300px;
-    margin-right: -320px;
+    width: em(300);
+    margin-right: em(-320);
     z-index: 1;
     .google-ad-manager--half-page {
       margin-bottom: 0;
