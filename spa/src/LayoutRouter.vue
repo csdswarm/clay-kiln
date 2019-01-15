@@ -84,7 +84,7 @@ export default {
         nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
         return nextSpaPayloadResult.data
       } catch (e) {
-        if (e.response.status === 301 && e.response.data.redirect) {
+          if (e.response.status === 301 && e.response.data.redirect) {
           const redirect = e.response.data.redirect
 
           if (this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(redirect)) {
@@ -145,29 +145,32 @@ export default {
 
       // Get SPA payload data for next path.
       const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`)
-      const path = (new URL(spaPayload.url)).pathname
 
-      // Load matched Layout Component.
-      this.activeLayoutComponent = this.layoutRouter(spaPayload)
+      if (spaPayload) {
+        const path = (new URL(spaPayload.url)).pathname
 
-      // Commit next payload to store to kick off re-render.
-      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+        // Load matched Layout Component.
+        this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-      // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-      metaManager.updateExternalTags(this.$store.state.spaPayload)
+        // Commit next payload to store to kick off re-render.
+        this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-      // Stop loading animation.
-      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+        // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+        metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-      // Build pageView event data
-      const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
+        // Stop loading animation.
+        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-      // Call global pageView event.
-      const event = new CustomEvent(`pageView`, {
-        detail: pageViewEventData
-      })
+        // Build pageView event data
+        const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-      document.dispatchEvent(event)
+        // Call global pageView event.
+        const event = new CustomEvent(`pageView`, {
+          detail: pageViewEventData
+        })
+
+        document.dispatchEvent(event)
+      }
     }
   }
 }

@@ -31,11 +31,6 @@ module.exports.save = (ref, data, locals) => {
   // do not allow any redirects that are direct preset routes
   data.redirects = data.redirects.filter(redirect => validPath(redirect.url, blockedPaths));
 
-
-  for (var i = 1; i<500; i++) {
-    data.redirects.push({ url: data.redirects[0].url+'/'+i, redirect: data.redirects[0].redirect })
-  }
-
   return Promise.resolve(data);
 };
 
