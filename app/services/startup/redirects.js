@@ -1,7 +1,7 @@
 'use strict';
-// This logic is duplicated in the spa because Vue doesn't support module.exports
 
-const redirectDataURL = '/_components/redirects/instances/default@published',
+const db = require('../server/db'),
+  redirectDataURL = '/_components/redirects/instances/default@published',
   /**
    * determines if a url is inside an array of redirect objects
    *
@@ -39,15 +39,12 @@ const redirectDataURL = '/_components/redirects/instances/default@published',
  * @param {object} req
  * @param {object} res
  * @param {function} next
- * @param {object} client
- * @param {function} extract
- * @param {string} modifier
  */
-module.exports = async (req, res, next, { client, extract = (data) => data, modifier = '' }) => {
+module.exports = async (req, res, next) => {
   try {
     if (possibleRedirect(req)) {
-      const data = await client.get(`${modifier}${req.hostname}${redirectDataURL}`),
-        redirects = extract(data).redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*'));
+      const data = await db.get(`${req.hostname}${redirectDataURL}`),
+        redirects = data.redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*'));
 
       if (redirects && redirects.some(item => testURL(item.url, req))) {
         const redirect = redirects.filter(item => testURL(item.url, req))[0].redirect;

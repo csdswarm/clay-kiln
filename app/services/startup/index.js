@@ -59,7 +59,7 @@ function setupApp(app) {
     extended: true
   }));
 
-  app.use((req, res, next) => handleRedirects(req, res, next, { client: db }));
+  app.use(handleRedirects);
 
   app.use(canonicalJSON);
 
