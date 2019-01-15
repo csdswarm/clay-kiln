@@ -7,8 +7,13 @@ function Constructor() {
 
   this.repositionRightRail(sidebar, galleryBody);
   if (firstInlineAd) {
-    window.addEventListener('scroll', function() { this.hideTertiaryStickyAd(); }.bind(this) );
+    window.addEventListener('scroll', this.hideTertiaryStickyAd );
   }
+
+  document.addEventListener('gallery-dismount', function(event) {
+    // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
+    window.removeEventListener('scroll', this.hideTertiaryStickyAd );
+  }.bind(this));
 }
 
 Constructor.prototype = {
