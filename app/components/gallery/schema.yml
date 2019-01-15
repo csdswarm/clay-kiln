@@ -256,9 +256,11 @@ slides:
       - gallery-slide
 slidesNumbered:
   _label: Number the slides
+  _publish: slidesNumbered
   _has: checkbox
 reverseOrder:
   _label: Reverse number order of slides? (Count down eg -- 5, 4, 3...)
+  _publish: reverseOrder
   _has: checkbox
   _reveal:
     field: slidesNumbered
