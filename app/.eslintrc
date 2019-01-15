@@ -33,8 +33,9 @@
     "DS": false,
     "FB": false,
     "YT": false, // YouTube library
-    "videojs": false ,// Brightcove library
-    "googletag": false // GPT
+    "videojs": false,// Brightcove library
+    "googletag": false, // GPT
+    "vueApp": false // SPA
   },
   "rules": {
     // lodash plugin rules
