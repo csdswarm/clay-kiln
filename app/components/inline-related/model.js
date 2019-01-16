@@ -49,6 +49,9 @@ module.exports.save = (ref, data, locals) => {
       });
   }))
     .then((items) => {
+      data.missingItems = data.items.some(item => {
+        return typeof item.feedImgUrl === 'undefined';
+      });
       data.items = items;
 
       return data;
