@@ -1,0 +1,14 @@
+_lists:
+  tags: []
+  authors: []
+  sources: []
+  new-pages:
+    -
+      id: new-two-col
+      title: New Article
+    -
+      id: curated-topic
+      title: Content Collection
+    -
+      id: gallery
+      title: New Gallery

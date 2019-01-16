@@ -91,6 +91,9 @@ stg-bootstrap:
 	curl -X PUT https://stg-clay.radio.com/_components/topic-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 
+bootstrap-gallery:
+	cd ./app && cat ./first-run/galleries-update/* | clay import -k demo -y radio.com
+
 install-dev:
 	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
 
