@@ -96,7 +96,7 @@ bootstrap-gallery:
 
 index-update:
 	@echo "Creating new index..."
-	curl -X PUT "clay.radio.com:9200/published-content_v1" -H 'Content-Type: application/json' -d'\
+	curl -X PUT "radio.com:9200/published-content_v1" -H 'Content-Type: application/json' -d'\
 	{\
 		"settings" : {\
 			"analysis": {\
@@ -211,7 +211,7 @@ index-update:
 	'/
 	@echo "\r\n\r\n"
 	@echo "Copying old index data to new index..."
-	curl -X POST "clay.radio.com:9200/_reindex" -H 'Content-Type: application/json' -d'\
+	curl -X POST "radio.com:9200/_reindex" -H 'Content-Type: application/json' -d'\
 	{\
 	  "source": {\
 	    "index": "published-articles_v1"\
@@ -223,7 +223,7 @@ index-update:
 	'/
 	@echo "\r\n\r\n"
 	@echo "Removing old alias and adding new..."
-	curl -X POST "clay.radio.com:9200/_aliases" -H 'Content-Type: application/json' -d'\
+	curl -X POST "radio.com:9200/_aliases" -H 'Content-Type: application/json' -d'\
 	{\
 	    "actions" : [\
 	        { "remove" : { "index" : "published-articles_v1", "alias" : "published-articles" } },\
@@ -232,7 +232,7 @@ index-update:
 	}\
 	'/
 	@echo "Deleting old index \r\n\r\n"
-	curl -X DELETE "clay.radio.com:9200/published-articles_v1"
+	curl -X DELETE "radio.com:9200/published-articles_v1"
 	@echo "\r\n\r\n"
 
 install-dev:
