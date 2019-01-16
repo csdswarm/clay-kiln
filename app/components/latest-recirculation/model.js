@@ -25,7 +25,6 @@ module.exports.save = (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
-  // TODO use data.contentType = { article: true, gallery: true } to populate this
   return Promise.all(_.map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
@@ -72,15 +71,6 @@ module.exports.render = function (ref, data, locals) {
       }
     }
 
-    if (data.contentType) {
-      const should = Object.entries(data.contentType)
-        .map(([type, isIncluded]) => {
-          if (isIncluded)
-          return { match: { contentType: isIncluded } }
-        })
-        .filter((x) => x)
-      queryService.addShould(query, should)
-    }
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
     if (data.populateBy == 'tag') {
@@ -96,8 +86,20 @@ module.exports.render = function (ref, data, locals) {
       }
       queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
     }
-    queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});
+
+    let includesContentTypeQuery = false;
+    Object.entries(data.contentType || {})
+      .forEach(([type, isIncluded]) => {
+        if (isIncluded) {
+          includesContentTypeQuery = true;
+          queryService.addShould(query, { match: { contentType: type } })
+        }
+      })
+
+    // if we specified a content type, at least one of them needs to match + the sectionFront needs to match.
+    const minimumShouldMatch = includesContentTypeQuery ? 2 : 1;
+    queryService.addMinimumShould(query, minimumShouldMatch);
 
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {
@@ -127,6 +129,8 @@ module.exports.render = function (ref, data, locals) {
 
     // hydrate item list.
     const hydrationResults = await queryService.searchByQuery(query);
+    data.hydrationResults = hydrationResults;
+    data.query = query;
 
     data.articles = data.items.concat(_.take(hydrationResults, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
