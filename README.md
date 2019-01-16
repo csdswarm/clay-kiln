@@ -32,10 +32,10 @@ Install `radio-web-player`
 $ npm run build-web-player
 ```
 
-Run Clay Compile
+Run the build script
 
 ```bash
-$ npm run clay-compile
+$ npm run build
 ```
 
 This is to make sure your `public` directory exists. Without it the site won't run.
@@ -86,12 +86,12 @@ If you change any files in the following (Pulled from `app/gulpfile.js`):
 
 Run the following command from inside the `app/` directory:
 ```bash
-$ npm run clay-compile
+$ npm run build
 ```
 
 Gulp can also be watched to automatically rebuild changes:
 ```bash
-$ .npm run clay-watch
+$ .npm run watch
 ```
 
 ### If I want to stop dev?
