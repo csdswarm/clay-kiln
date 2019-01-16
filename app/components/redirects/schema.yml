@@ -5,9 +5,10 @@ redirects:
   _label: Redirect URL collection
   _placeholder:
     height: 100px
-    text: Redirect URL collection
+    text: Add Redirects
   _has:
     input: complex-list
+    filter: true
     props:
     -
       prop: url
