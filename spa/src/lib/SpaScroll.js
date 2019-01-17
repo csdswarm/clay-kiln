@@ -5,8 +5,11 @@
  *  - Anchor text scrolling (example: #hash-link-urls)
  *  - "Saved position" scrolling (example: when you press back button in browser, browser
  *    places user on same position they were at when they left previous page)
+ *  - Dynamic slug when scrolling through Gallery slides.
  *
  */
+
+import debounce from 'lodash.debounce'
 
 const SpaScroll = {
   /**
@@ -86,7 +89,76 @@ const SpaScroll = {
         y: 0
       }
     }
+  },
+  /**
+   *
+   * Attaches a scroll event handler that dynamically updates the
+   * current SPA slug by adding a slide related direct hash link
+   * (Example: #Slide-cjqy94syi000a3g5vf6cw5try-example-slide-direct-link)
+   * to the slug when scrolling through a gallery.
+   *
+   * NOTE: The "this" context must be set to the Vue app itself when calling
+   * attachGallerySlideDynamicSlug. As such make sure you call it like:
+   *
+   * attachGallerySlideDynamicSlug.call(this)
+   *
+   * Where this refers to the Vue app.
+   *
+   */
+  attachGallerySlideDynamicSlug: function attachGallerySlideDynamicSlug () {
+
+    // Create gallery slide dynamic slug update handler.
+    // Debounce handler for performance since it will be attached to scroll event.
+    const slideScrollHandler = debounce(() => {
+      const slideNodeList = this.$el.querySelectorAll('.component--gallery-slide')
+
+      // If no gallery slides found, short circuit handler for performance.
+      if (!slideNodeList.length) {
+        return
+      }
+
+      // If slide is in viewport currently, match it.
+      // NodeLists are not JS arrays, so we will have to write a custom for loop that emulates .find() for performance.
+      // https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+      let matchedSlide = null
+      for (let i = 0; i < slideNodeList.length; i++) {
+        if (isElementInViewport(slideNodeList[i])) {
+          matchedSlide = slideNodeList[i]
+          break
+        }
+      }
+
+      // If slide is matched, update the url hash to point to the slide appropriately.
+      // If no slide matched, reset url to original url for this SPA route.
+      if (matchedSlide) {
+        history.replaceState(null, null, `#${matchedSlide.id}`)
+      } else {
+        history.replaceState(null, null, this.$route.fullPath)
+      }
+    }, 300)
+
+    // Attach the handler to scroll event.
+    window.addEventListener('scroll', slideScrollHandler)
   }
+}
+
+/**
+ *
+ * Helper function to determine if a DOM element is in the viewport.
+ *
+ * Logic inspired by: https://stackoverflow.com/a/7557433
+ *
+ * @param {object} el - DOM element.
+ */
+function isElementInViewport (el) {
+  const rect = el.getBoundingClientRect()
+
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  )
 }
 
 export default SpaScroll
