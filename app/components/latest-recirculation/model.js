@@ -53,7 +53,10 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
-    trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`;
+    trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`,
+    contentTypes = Object.entries(data.contentType || {})
+      .map(([type, isIncluded]) => isIncluded ? type : null)
+      .filter((x) => x);
   let cleanUrl, trendingRecircItems;
 
   return (async () => {
@@ -88,15 +91,11 @@ module.exports.render = function (ref, data, locals) {
     }
     queryService.addSort(query, {date: 'desc'});
 
-    const minimumShouldMatch = 1;
-    queryService.addMinimumShould(query, minimumShouldMatch);
 
-    // if we specified a content type, at least one of them needs to match + the sectionFront needs to match.
-    const contentTypes = Object.entries(data.contentType || {})
-      .map(([type, isIncluded]) => isIncluded ? type : null)
-      .filter((x) => x)
+    queryService.addMinimumShould(query, 1);
+
     if (contentTypes.length) {
-      queryService.addFilter(query, { terms: { contentType: contentTypes } })
+      queryService.addFilter(query, { terms: { contentType: contentTypes } });
     }
 
     // exclude the current page in results
@@ -127,6 +126,7 @@ module.exports.render = function (ref, data, locals) {
 
     // hydrate item list.
     const hydrationResults = await queryService.searchByQuery(query);
+
     data.articles = data.items.concat(_.take(hydrationResults, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
     return data;
