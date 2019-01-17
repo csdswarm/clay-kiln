@@ -14,8 +14,10 @@ slideEmbed:
     include:
       - image
       - instagram-post
+      - facebook-post
       - brightcove
       - youtube
+      - tweet
       - html-embed
       - omny
     validate:
