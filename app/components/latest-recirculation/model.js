@@ -88,18 +88,16 @@ module.exports.render = function (ref, data, locals) {
     }
     queryService.addSort(query, {date: 'desc'});
 
-    let includesContentTypeQuery = false;
-    Object.entries(data.contentType || {})
-      .forEach(([type, isIncluded]) => {
-        if (isIncluded) {
-          includesContentTypeQuery = true;
-          queryService.addShould(query, { match: { contentType: type } })
-        }
-      })
+    const minimumShouldMatch = 1;
+    queryService.addMinimumShould(query, minimumShouldMatch);
 
     // if we specified a content type, at least one of them needs to match + the sectionFront needs to match.
-    const minimumShouldMatch = includesContentTypeQuery ? 2 : 1;
-    queryService.addMinimumShould(query, minimumShouldMatch);
+    const contentTypes = Object.entries(data.contentType || {})
+      .map(([type, isIncluded]) => isIncluded ? type : null)
+      .filter((x) => x)
+    if (contentTypes.length) {
+      queryService.addFilter(query, { terms: { contentType: contentTypes } })
+    }
 
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {
@@ -129,9 +127,6 @@ module.exports.render = function (ref, data, locals) {
 
     // hydrate item list.
     const hydrationResults = await queryService.searchByQuery(query);
-    data.hydrationResults = hydrationResults;
-    data.query = query;
-
     data.articles = data.items.concat(_.take(hydrationResults, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
     return data;
