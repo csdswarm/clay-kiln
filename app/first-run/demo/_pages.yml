@@ -101,3 +101,12 @@ _pages:
     main:
       - /_components/author-page/instances/new
     layout: /_components/one-column-layout/instances/general
+
+  redirects:
+    head: head
+    pageHeader: pageHeader
+    main:
+      - /_components/redirects/instances/default
+    secondary: secondary
+    layout: /_components/one-column-full-width-layout/instances/bare
+    customUrl: /redirect
