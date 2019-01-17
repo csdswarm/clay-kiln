@@ -18,7 +18,7 @@ module.exports.save = (uri, data) => {
   
 };
 
-module.exports.render = (ref, data, locals) => {
+module.exports.render = (ref, data) => {
 
   // Create slide direct hash link by appending hashLinkSuffix to the slide instance cuid.
   data.hashLink = `Slide-${getComponentInstance(ref)}-${data.hashLinkSuffix}`;

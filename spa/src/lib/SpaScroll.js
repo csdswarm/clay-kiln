@@ -106,7 +106,6 @@ const SpaScroll = {
    *
    */
   attachGallerySlideDynamicSlug: function attachGallerySlideDynamicSlug () {
-
     // Create gallery slide dynamic slug update handler.
     // Debounce handler for performance since it will be attached to scroll event.
     const slideScrollHandler = debounce(() => {
