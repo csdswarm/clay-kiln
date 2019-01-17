@@ -5,7 +5,9 @@ var gulp = require('gulp'),
   uglify = require('gulp-uglify'),
   gutil = require('gulp-util'),
   argv = require('yargs').argv,
-  gulpif = require('gulp-if');
+  gulpif = require('gulp-if'),
+  babel = require('gulp-babel'),
+  rename = require('gulp-rename');
 
 module.exports = {
   customTasks: [
@@ -19,6 +21,28 @@ module.exports = {
           .pipe(concat('polyfills.js'))
           .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
           .pipe(gulp.dest('public/js'));
+      }
+    },
+    {
+      name: 'mount-modules',
+      fn: () => {
+        return gulp.src([
+          'global/js/mount-modules.js'
+        ])
+          .pipe(rename('_client-init.js'))
+          .pipe(babel({
+            presets: [
+              "@babel/env"
+            ],
+            plugins: [
+              "transform-es2015-modules-commonjs",
+              "@babel/plugin-transform-async-to-generator",
+              "@babel/plugin-proposal-object-rest-spread",
+              "@babel/plugin-transform-runtime"
+            ]
+          }))
+          .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
+          .pipe(gulp.dest('./public/js/', {overwrite: true}));
       }
     }
   ],
