@@ -51,7 +51,7 @@
     "html-word-count": "^2.0.0",
     "isomorphic-fetch": "^2.2.1",
     "js-base64": "^2.4.9",
-    "jsdom": "^11.8.0",
+    "jsdom": "^9.5.0",
     "jsonp-client": "^1.1.1",
     "levelup": "^1.2.1",
     "lodash": "^4.17.5",

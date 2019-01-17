@@ -27,9 +27,8 @@ module.exports = {
       name: 'mount-modules',
       fn: () => {
         return gulp.src([
-          'global/js/mount-modules.js'
+          'global/_client-init.js'
         ])
-          .pipe(rename('_client-init.js'))
           .pipe(babel({
             presets: [
               "@babel/env"
