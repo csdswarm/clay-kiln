@@ -5,13 +5,17 @@ const utils = require('../../services/universal/utils'),
 
 module.exports.save = (uri, data) => {
 
-  // Process hashLinkSuffix property.
+  // Process hashLinkSuffix input to lowercase alphanumeric chars with hyphenated spaces.
+  function hashLinkSuffixProcessor(input) {
+    return input.replace(/\W/g, '-').replace(/[^0-9a-z-]/gi, '').toLowerCase();
+  }
+
   if (utils.isFieldEmpty(data.hashLinkSuffix)) {
-    // If hashLinkSuffix not set, default hash link to lowercase alphanumeric hyphenated spaces version of title string.
-    data.hashLinkSuffix = data.title.replace(/\W/g, '-').replace(/[^0-9a-z-]/gi, '').toLowerCase();
+    // If hashLinkSuffix not set, use title string as input.
+    data.hashLinkSuffix = hashLinkSuffixProcessor(data.title);
   } else {
-    // Sanitize hashLinkSuffix as url safe lowercase alphanumeric hyphenated spaces
-    data.hashLinkSuffix = data.hashLinkSuffix.replace(/\W/g, '-').replace(/[^0-9a-z-]/gi, '').toLowerCase();
+    // If hashLinkSuffix set, process appropriately.
+    data.hashLinkSuffix = hashLinkSuffixProcessor(data.hashLinkSuffix);
   }
 
   return data;
