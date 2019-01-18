@@ -47,7 +47,7 @@ module.exports.save = (ref, data, locals) => {
   }))
     .then((items) => {
       data.items = items;
-      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
+      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront;
 
       return data;
     });
@@ -63,13 +63,17 @@ module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
   let cleanUrl;
 
+  // items are saved from form, articles are used on FE
+  data.articles = data.items;
+
+  if (!data.sectionFront || !locals) {
+    return data;
+  }
+
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  if (data.sectionFront) {
+  if (data.filterBySection) {
     queryService.addShould(query, { match: { articleType: data.sectionFront }});
-  }
-  if (data.tag) {
-    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   }
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
@@ -94,7 +98,7 @@ module.exports.render = function (ref, data, locals) {
     .then(function (results) {
 
       data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
+      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront;
 
       return data;
     })
