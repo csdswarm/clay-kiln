@@ -6,7 +6,7 @@ module.exports['1.0'] = function (uri, data, locals) {
     data.populateBy = 'sectionFront';
   }
   data.sectionFront = data.articleType;
-  data.articleType = '';
+  delete data.articleType;
 
   return data;
 };
