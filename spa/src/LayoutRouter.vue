@@ -83,7 +83,7 @@ export default {
       const nextArticleData = queryPayload.findComponent(spaPayload.main, 'article')
       const nextHomepageData = queryPayload.findComponent(spaPayload.main, 'homepage')
       const nextSectionFrontPageData = queryPayload.findComponent(spaPayload.main, 'section-front')
-      const nextTopicPageData = queryPayload.findComponent(spaPayload.pageHeader, 'page-header')
+      const nextTopicPageData = queryPayload.findComponent(spaPayload.pageHeader, 'topic-page-header')
       const nextStationDetailPageData = queryPayload.findComponent(spaPayload.main, 'station-detail')
 
       return {
