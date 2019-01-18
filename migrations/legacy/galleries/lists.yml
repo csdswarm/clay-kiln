@@ -1,9 +1,0 @@
-_lists:
-  new-pages:
-    - id: new-two-col
-      title: New Article
-    - id: curated-topic
-      title: New Curated Page
-    - id: gallery
-      title: New Gallery
-  

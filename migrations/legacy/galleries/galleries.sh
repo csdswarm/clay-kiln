@@ -12,6 +12,7 @@ printf "\n\nUpdating _lists new-pages...\n\n"
 clay export radio.com/_lists/new-pages -y > ./lists.yml;
 node ./lists-update.js;
 cat ./lists.yml | clay import -k demo -y radio.com
+rm ./lists.yml
 
 printf "\n\nCreating new index...\n\n"
 curl -X PUT "https://radio.com:9200/published-content_v1" -H 'Content-Type: application/json' -d'
