@@ -44,11 +44,10 @@ module.exports = async (req, res, next) => {
   try {
     if (possibleRedirect(req)) {
       const data = await db.get(`${req.hostname}${redirectDataURL}`),
-        redirects = data.redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*'));
+        redirects = data.redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*')),
+        redirect = redirects ? redirects.find(item => testURL(item.url, req)).redirect : null;
 
-      if (redirects && redirects.some(item => testURL(item.url, req))) {
-        const redirect = redirects.filter(item => testURL(item.url, req))[0].redirect;
-
+      if (redirects) {
         // request coming from SPA, 301 and send new URL
         if (req.originalUrl.includes('?json')) {
           res.status(301).json({redirect});
