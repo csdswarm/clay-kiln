@@ -268,7 +268,7 @@ function generateSlug(data) {
 function setSlugAndLock(data, prevData, publishedData) {
   if (initialManualSlug(data, prevData) || manualSlugUpdate(data, prevData)) {
     // if you manually updated the slug, sanitize and update it and lock the slug
-    data.slug = sanitize.cleanSlug(data.slug);
+    data.slug = data.slug ? sanitize.cleanSlug(data.slug) : data.slug;
     data.slugLock = true;
     data.manualSlugUnlock = false; // manually changing the slug ALWAYS locks it again
   } else if (manualSlugLock(data, prevData)) {
@@ -388,8 +388,8 @@ module.exports.save = function (uri, data, locals) {
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image
   return promises.props({
-    prevData: getPrevData(uri, data, locals),
-    publishedData: getPublishedData(uri, data, locals)
+    prevData: data ? getPrevData(uri, data, locals) : {},
+    publishedData: data ? getPublishedData(uri, data, locals) : {}
   }).then(function (resolved) {
     // once async calls are done, use their resolved values to update some more data
     setSlugAndLock(data, resolved.prevData, resolved.publishedData);

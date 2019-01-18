@@ -92,7 +92,19 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 bootstrap-gallery:
-	cd ./app && cat ./first-run/galleries-update/* | clay import -k demo -y radio.com
+	@echo "Creating page..."
+	cd ./app && cat ./first-run/galleries-update/_* | clay import -k demo -y radio.com
+	@echo "\r\n\r\n"
+	@echo "Creating component instance..."
+	curl -X PUT https://radio.com/_components/gallery/instances/new -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	@echo "Updating _lists new-pages..."
+	clay export radio.com/_lists/new-pages -y > ./app/first-run/galleries-update/lists.yml
+	@echo "\r\n\r\n"
+	node ./app/first-run/galleries-update/lists-update.js
+	@echo "\r\n\r\n"
+	cat ./app/first-run/galleries-update/lists.yml | clay import -k demo -y radio.com
+	@echo "\r\n\r\n"
 
 index-update:
 	@echo "Creating new index..."
