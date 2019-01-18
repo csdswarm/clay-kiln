@@ -1,5 +1,5 @@
 var fs = require('fs');
-const listPath = 'app/first-run/galleries-update/lists.yml';
+const listPath = './lists.yml';
 
 fs.readFile(listPath, 'utf-8', function(err, oldList) {
   console.log("Old List: ", oldList);
