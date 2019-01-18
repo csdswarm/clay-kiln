@@ -792,7 +792,7 @@ _components:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/topic-page
 
-  page-header:
+  topic-page-header:
     instances:
       new:
         tag: ''

@@ -35,7 +35,7 @@ pageHeader:
   _componentList:
     page: true
     include:
-      - page-header
+      - topic-page-header
 main:
   _componentList:
     page: true
