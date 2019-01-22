@@ -61,7 +61,7 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
   let cleanUrl;
 
   data.initialLoad = false;

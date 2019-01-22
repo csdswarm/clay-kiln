@@ -9,6 +9,7 @@ let adMapping = require('./adMapping'),
   initialAdRequestComplete = false,
   adsRefreshing = false,
   initialPageAdSlots = [],
+  clearDfpTakeover = () => {},
   numRightRail = 1;
 const doubleclickPrefix = '21674100491',
   doubleclickBannerTag = 'NTL.RADIO',
@@ -17,7 +18,7 @@ const doubleclickPrefix = '21674100491',
   doubleclickPageTypeTagSection = 'sectionfront',
   doubleclickPageTypeTagTag = 'tag',
   doubleclickPageTypeTagAuthor = 'authors',
-  adRefreshInterval = '120000', // Time in milliseconds for ad refresh
+  adRefreshInterval = '60000', // Time in milliseconds for ad refresh
   targetingNationalRadioStation = 'natlrc',
   targetingGenre = 'aaa',
   targetingCategory = 'music',
@@ -66,6 +67,9 @@ document.addEventListener('google-ad-manager-mount', function () {
 
 // Reset data when navigating in SPA
 document.addEventListener('google-ad-manager-dismount', function () {
+  clearDfpTakeover();
+  // undo style changes to billboard
+
   // Reset slot arrays/objects
   allAdSlots = {},
   initialPageAdSlots = [],
@@ -82,10 +86,11 @@ googletag.cmd.push(() => {
   // Handle right rail refresh via DFP event trigger
   googletag.pubads().addEventListener('impressionViewable', event => {
     // Trigger the fresh once the first ad registers an impression
-    if (event.slot.getSlotElementId() === Object.keys(allAdSlots)[0] && !adsRefreshing) {
+    if (allAdSlots[event.slot.getSlotElementId()] && !adsRefreshing) {
       adsRefreshing = true;
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
+        clearDfpTakeover();
         // Refresh all ads
         googletag.pubads().refresh(null, { changeCorrelator: false });
         // Remove the observers
@@ -102,6 +107,11 @@ googletag.cmd.push(() => {
     let id = event.slot.getSlotElementId(),
       adSlot = document.getElementById(id);
 
+    const isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
+
+    if (isOOP) {
+      updateSkinStyles(!(event.isEmpty));
+    }
     if (event.isEmpty) {
       adSlot.parentElement.style.display = 'none';
     } else {
@@ -110,6 +120,25 @@ googletag.cmd.push(() => {
     }
   });
 });
+
+/**
+ * Update the billboard ad on the page to have a transparent or opaque white background
+ * Also change the bottom margin to -0.875em
+ *
+ * @param {boolean} hasSkin - Whether we want the top billboard to be transparent
+ */
+function updateSkinStyles(hasSkin) {
+  const billboard = document.querySelector('.google-ad-manager--billboard');
+
+  if (hasSkin) {
+    billboard.style['background'] = 'transparent';
+    billboard.style['margin-bottom'] = '-0.875em';
+  } else {
+    billboard.style['background'] = null;
+    billboard.style['margin-bottom'] = null;
+    document.body.style.backgroundColor = null;
+  }
+}
 
 /**
  * create and add unique ids to each ad slot on page
@@ -204,7 +233,6 @@ function setAds(initialRequest = false) {
     for (let adSlot of adSlots) {
       const ad = adSlot.querySelector('.google-ad-manager__slot'),
         adSize = adSlot.getAttribute('data-ad-size'),
-        billboard = document.querySelector('.google-ad-manager--billboard'),
         adPosition = adSlot.getAttribute('data-ad-position'),
         adLocation = adSlot.getAttribute('data-ad-location'),
         pubAds = googletag.pubads();
@@ -213,8 +241,7 @@ function setAds(initialRequest = false) {
 
       if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
-        billboard.style['background'] = 'transparent';
-        billboard.style['margin-bottom'] = '-0.875em';
+        updateSkinStyles(true);
       } else {
         slot = googletag.defineSlot(
           siteZone,
@@ -276,6 +303,7 @@ function setAds(initialRequest = false) {
  * @param {string} position
  */
 window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, position) {
+  updateSkinStyles(true);
   const skinDiv = 'freq-dfp--bg-skin',
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
@@ -345,4 +373,20 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     document.body.style.backgroundColor = backgroundColor;
     globalDiv.prepend(bgdiv);
   }
+
+  /**
+   * Reverses changes done by dfp takeover. It's defined in this scope
+   * so it can have access to `bgdiv` and `globaldiv`
+   *
+   */
+  clearDfpTakeover = () => {
+    const mainDiv = document.getElementsByTagName('body')[0];
+
+    bgdiv.remove();
+    if (mainDiv) {
+      mainDiv.classList.remove('has-fullpage-ad');
+    }
+
+    updateSkinStyles(false);
+  };
 };

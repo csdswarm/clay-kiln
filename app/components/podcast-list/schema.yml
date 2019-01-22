@@ -9,10 +9,6 @@ items:
     input: complex-list
     enforceMaxlength: true
     validate:
-      required:
-        field: fill
-        operator: falsy
-      min: 4
       max: 4
     props:
     -
