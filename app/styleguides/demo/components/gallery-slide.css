@@ -3,24 +3,24 @@
 .component--gallery-slide {
 
   .gallery-slide__text {
-    margin: 30px 0 40px 0;
+    margin: em(30) 0 em(40) 0;
   }
 
   .gallery-slide__title {
     font-family: CircularStd-Black;
-    font-size: 20px;
+    font-size: em(20, 16);
     color: #000000;
-    letter-spacing: -0.25px;
-    line-height: 25px;
-    margin: 0 0 15px 0;
+    letter-spacing: em(-0.25, 20);
+    line-height: em(25, 20);
+    margin: 0 0 em(15, 20) 0;
   }
 
   .gallery-slide__description {
     font-family: ProximaNova-Regular;
-    font-size: 15px;
+    font-size: em(15, 16);
     color: #000000;
-    letter-spacing: -0.3px;
-    line-height: 20px;
+    letter-spacing: em(-0.3, 15);
+    line-height: em(20, 15);
   }
 
   /* If slide embed is an Image component, override standard credit text-alignment. */
@@ -29,7 +29,7 @@
 
     .image-figcaption {
       text-align: right;
-      margin: 5px 0 -30px 0;
+      margin: em(5, 12) 0 em(-30, 12) 0;
     }
   }
 
@@ -37,6 +37,6 @@
 
 @media screen and (max-width:480px) {
   .component--gallery-slide .gallery-slide__text {
-    margin: 30px 0 30px 0;
+    margin: em(30) 0 em(30) 0;
   }
 }
