@@ -1,21 +1,95 @@
 #! /bin/bash
 
+if [ "$1" != "" ]; then
+  if [ "$1" == "clay.radio.com" ]; then
+    http="http"
+  else
+    http="https"
+  fi
+  printf "Updating environment $http://$1\n"
+else
+  set "clay.radio.com" && http="http";
+  printf "No environment specified. Updating environment $http://$1\n"
+fi
+
 printf "\nCreating Galleries...\n\n\n"
 
-printf "Creating page...\n"
-cd ./migrations/legacy/galleries && cat ./_pages.yml | clay import -k demo -y radio.com
+printf "Publishing new layout...\n"
+curl -X PUT "$http://$1/_components/two-column-layout/instances/gallery@published" -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 
-printf "\n\nCreating component instance...\n\n"
-curl -X PUT https://radio.com/_components/gallery/instances/new -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+printf "Creating page...\n"
+cd ./migrations/legacy/galleries && cat ./_pages.yml | clay import -k demo -y $1
+
+printf "\n\nCreating gallery slide component instance...\n\n"
+curl -X PUT "$http://$1/_components/gallery-slide/instances/new" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
+{
+  "slideEmbed": null,
+  "title": "",
+  "description": "",
+  "hashLinkSuffix": ""
+}
+';
+
+printf "\n\nCreating gallery component instance...\n\n"
+curl -X PUT "$http://$1/_components/gallery/instances/new" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
+{
+  "headline": "",
+  "primaryHeadline": "",
+  "seoHeadline": "",
+  "shortHeadline": "",
+  "feedImgUrl": "",
+  "teaser": "",
+  "authors": [],
+  "byline": [
+    {
+      "prefix": "by",
+      "names": [],
+      "sources": []
+    }
+  ],
+  "secondaryBylineText": "Photograph By",
+  "secondaryAttribution": [],
+  "dateUpdated": false,
+  "content": [],
+  "slides": [
+    {
+      "_ref": "'$1'/_components/gallery-slide/instances/new"
+    }
+  ],
+  "slidesNumbered": false,
+  "reverseOrder": false,
+  "includeInlineAds": false,
+  "inlineAd": {
+    "_ref": "'$1'/_components/google-ad-manager/instances/billboardBottom"
+  },
+  "rightRailStickyAd": {
+    "_ref": "'$1'/_components/google-ad-manager/instances/halfPageBottom"
+  },
+  "tags": {
+    "_ref": "'$1'/_components/tags/instances/new"
+  },
+  "sideShare": {},
+  "sectionFront": "",
+  "secondaryGalleryType": "",
+  "contentType": "gallery",
+  "syndicatedUrl": "",
+  "syndicationStatus": "original",
+  "showSocial": true,
+  "eligibleForGoogleStandout": false,
+  "sources": [],
+  "slugLock": true,
+  "manualSlugUnlock": false
+}
+';
 
 printf "\n\nUpdating _lists new-pages...\n\n"
-clay export radio.com/_lists/new-pages -y > ./lists.yml;
+clay export "$1/_lists/new-pages" -y > ./lists.yml;
 node ./lists-update.js;
-cat ./lists.yml | clay import -k demo -y radio.com
+cat ./lists.yml | clay import -k demo -y $1
 rm ./lists.yml
 
 printf "\n\nCreating new index...\n\n"
-curl -X PUT "https://radio.com:9200/published-content_v1" -H 'Content-Type: application/json' -d'
+curl -X PUT "$http://$1:9200/published-content_v1" -H 'Content-Type: application/json' -d'
 {
   "settings" : {
     "analysis": {
@@ -130,7 +204,7 @@ curl -X PUT "https://radio.com:9200/published-content_v1" -H 'Content-Type: appl
 ';
 
 printf "\r\n\r\nCopying old index data to new index...\n\n"
-curl -X POST "https://radio.com:9200/_reindex" -H 'Content-Type: application/json' -d'
+curl -X POST "$http://$1:9200/_reindex" -H 'Content-Type: application/json' -d'
 {
   "source": {
     "index": "published-articles_v1"
@@ -141,7 +215,7 @@ curl -X POST "https://radio.com:9200/_reindex" -H 'Content-Type: application/jso
 }';
 
 printf "\n\nRemoving old alias and adding new...\n\n"
-curl -X POST "https://radio.com:9200/_aliases" -H 'Content-Type: application/json' -d'
+curl -X POST "$http://$1:9200/_aliases" -H 'Content-Type: application/json' -d'
 {
     "actions" : [
         { "remove" : { "index" : "published-articles_v1", "alias" : "published-articles" } },
@@ -151,6 +225,6 @@ curl -X POST "https://radio.com:9200/_aliases" -H 'Content-Type: application/jso
 '
 
 printf "\n\nDeleting old index\n\n"
-curl -X DELETE "https://radio.com:9200/published-articles_v1"
+curl -X DELETE "$http://$1:9200/published-articles_v1"
 
 printf "\n\n\n\n"
