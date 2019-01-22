@@ -9,5 +9,3 @@ _components:
       _ref: /_components/more-content-feed/instances/section-front
     stationsCarousel:
       _ref: /_components/stations-carousel/instances/section-front
-    pageHeader:
-      _ref: /_components/topic-page-header/instances/new
