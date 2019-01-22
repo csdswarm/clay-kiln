@@ -42,6 +42,11 @@ googleAdRightRail:
     include:
       - google-ad-manager
 
+pageHeader:
+  _componentList:
+    include:
+      - topic-page-header
+
 _groups:
   settings:
     fields:
