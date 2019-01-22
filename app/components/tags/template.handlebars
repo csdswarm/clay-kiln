@@ -7,7 +7,7 @@
         {{~#unless tag.invisible ~}}
           {{ set 'encodedTag' (replace (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "/" "%2F") "&" "%26") }}
           <li class="tags__item" data-tag="{{ replace (trim (lowercase tag.text)) ' ' '-' }}">
-            <a aria-label="More articles tagged" href="//{{ @root.locals.site.host }}/topic{{ if (compare @root.locals.site.path '/strategist') @root.locals.site.path }}/{{ encodedTag }}/"
+            <a aria-label="More articles tagged" href="//{{ @root.locals.site.host }}/topic{{ if (compare @root.locals.site.path '/strategist') @root.locals.site.path }}/{{ encodedTag }}"
               class="tags__link"
               >{{ tag.text }}</a>
           </li>
