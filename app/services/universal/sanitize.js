@@ -3,7 +3,6 @@
 const speakingurl = require('speakingurl'),
   he = require('he'),
   typogr = require('typogr'),
-  headQuotes = require('headline-quotes'),
   striptags = require('striptags'),
   _isString = require('lodash/isString'),
   _isPlainObject = require('lodash/isPlainObject'),
@@ -16,7 +15,7 @@ const speakingurl = require('speakingurl'),
  * @returns {string}
  */
 function toSmartHeadline(text) {
- return he.decode(text)
+  return he.decode(text)
     .replace('---', '—') // em-dash first
     .replace('--', '–')
     .replace('...', '…');

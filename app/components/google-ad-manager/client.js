@@ -110,7 +110,7 @@ googletag.cmd.push(() => {
     const isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
 
     if (isOOP) {
-      updateSkinStyles(!(event.isEmpty));
+      updateSkinStyles(!(event.isEmpty)); // eslint-disable no-extra-parens
     }
     if (event.isEmpty) {
       adSlot.parentElement.style.display = 'none';
