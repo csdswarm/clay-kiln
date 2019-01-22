@@ -2,8 +2,32 @@
   margin-bottom: em(30);
   width: 100%;
 
+  .html-embed__iframe-container {
+    position: relative;
+    display: block;
+    max-width: 100%;
+  }
+
+  .iframe-container__padded-container {
+    padding-top: 56.25%;
+
+    iframe {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   iframe {
     width: 100%;
     height: auto;
+  }
+
+  .lead & {
+    margin-bottom: 0;
   }
 }
