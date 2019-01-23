@@ -2,6 +2,7 @@
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  contentTypeService = require('../../services/server/content-type'),
   { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
   elasticFields = [
@@ -30,7 +31,6 @@ module.exports.save = (ref, data, locals) => {
   }
   return Promise.all(_.map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    // TODO use data.contentType = { article: true, gallery: true } to populate this
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
       .then((result) => {
         const content = Object.assign(item, {
@@ -63,9 +63,7 @@ module.exports.save = (ref, data, locals) => {
 module.exports.render = function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
-    contentTypes = Object.entries(data.contentType || {})
-      .map(([type, isIncluded]) => isIncluded ? type : null)
-      .filter((x) => x);
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl;
 
   data.initialLoad = false;

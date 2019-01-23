@@ -1,6 +1,7 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   db = require('../../services/server/db'),
+  contentTypeService = require('../../services/server/content-type'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
@@ -54,9 +55,7 @@ module.exports.save = (ref, data, locals) => {
 module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
     trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`,
-    contentTypes = Object.entries(data.contentType || {})
-      .map(([type, isIncluded]) => isIncluded ? type : null)
-      .filter((x) => x);
+    contentTypes = contentTypeService.parseFromData(data)
   let cleanUrl, trendingRecircItems;
 
   return (async () => {
