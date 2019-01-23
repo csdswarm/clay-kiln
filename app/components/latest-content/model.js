@@ -2,6 +2,7 @@
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  contentTypeService = require('../../services/server/content-type'),
   { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
   elasticFields = [
@@ -57,9 +58,7 @@ module.exports.save = async function (ref, data, locals) {
 module.exports.render = async function (ref, data, locals) {
   data.articles = [];
 
-  const contentTypes = Object.entries(data.contentType || {})
-    .map(([type, isIncluded]) => isIncluded ? type : null)
-    .filter((x) => x);
+  const contentTypes = contentTypeService.parseFromData(data)
 
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
