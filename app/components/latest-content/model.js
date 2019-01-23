@@ -58,8 +58,8 @@ module.exports.render = async function (ref, data, locals) {
   data.articles = [];
 
   const contentTypes = Object.entries(data.contentType || {})
-       .map(([type, isIncluded]) => isIncluded ? type : null)
-       .filter((x) => x);
+    .map(([type, isIncluded]) => isIncluded ? type : null)
+    .filter((x) => x);
 
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],

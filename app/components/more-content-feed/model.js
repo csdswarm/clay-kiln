@@ -64,8 +64,8 @@ module.exports.render = function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
     contentTypes = Object.entries(data.contentType || {})
-       .map(([type, isIncluded]) => isIncluded ? type : null)
-       .filter((x) => x);
+      .map(([type, isIncluded]) => isIncluded ? type : null)
+      .filter((x) => x);
   let cleanUrl;
 
   data.initialLoad = false;

@@ -63,8 +63,8 @@ module.exports.save = (ref, data, locals) => {
 module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
     contentTypes = Object.entries(data.contentType || {})
-       .map(([type, isIncluded]) => isIncluded ? type : null)
-       .filter((x) => x);
+      .map(([type, isIncluded]) => isIncluded ? type : null)
+      .filter((x) => x);
   let cleanUrl;
 
   // items are saved from form, articles are used on FE
