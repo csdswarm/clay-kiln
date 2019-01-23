@@ -59,6 +59,7 @@
       .lede__info {
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
         padding-left: em(widthOnGrid(0, 1));
         width: calc(100% - em(widthOnGrid(4, 3)));
         @mixin large-screen {
@@ -71,6 +72,9 @@
           .text__station-title {
             display: block;
             margin-bottom: em(30);
+            @mixin large-screen {
+              margin-bottom: em(15);
+            }
             @mixin medium-small-screen {
               margin-bottom: em(20);
             }
@@ -94,25 +98,31 @@
         }
         .info__links {
           height: calc(em(widthOnGrid(2, 0)) / 4 + em(10) + em(13));
+          display: flex;
+          flex-direction: row;
           .links__follow {
             span {
               @mixin station-detail-font10;
               text-transform: capitalize;
               margin-bottom: em(10, 11);
+              display: block;
             }
             display: inline-block;
             .follow__container {
               width: em(widthOnGrid(2, 0));
-              height: em(widthOnGrid(2, 0));
+              height: calc(em(widthOnGrid(2, 0)) / 4);
               margin-right: em(widthOnGrid(0, 2));
+              display: flex;
+              flex-direction: row;
+              outline: em(1) solid $alto;
               .follow-link {
-                height: calc(em(widthOnGrid(2, 0)) / 4);
-                width: calc(em(widthOnGrid(2, 0)) / 4);
-                outline: em(1) solid $alto;
+                height: 100%;
+                width: calc(100% / 4);
+                border-right: em(1) solid $alto;
                 background: center/em(20) em(20) no-repeat;
                 &--facebook {
                   background-image: url("/media/components/station-detail/facebook.svg");
-                  background-size: auto em(22); /* Increase FB image height to 22px */
+                  background-size: auto em(15);
                   &:hover,
                   &:active {
                     background-color: $chambray;
@@ -122,7 +132,7 @@
                 }
                 &--twitter {
                   background-image: url("/media/components/station-detail/twitter.svg");
-                  background-size: auto em(17); /* Firefox scaling/bounding fix */
+                  background-size: auto em(12); /* Firefox scaling/bounding fix */
                   &:hover,
                   &:active {
                     background-color: $cerulean;
@@ -132,6 +142,7 @@
                 }
                 &--website {
                   background-image: url("/media/components/station-detail/home.svg");
+                  background-size: auto em(14);
                   &:hover,
                   &:active {
                     background-color: $dustyGray;
@@ -140,7 +151,10 @@
                   }
                 }
                 &--more-btn {
+                  border: none;
+                  cursor: pointer;
                   background-image: url("/media/components/station-detail/ellipsis.svg");
+                  background-size: auto em(4);
                   &:hover,
                   &:active {
                     background-color: $dustyGray;
@@ -153,17 +167,21 @@
           }
           .links__email {
             height: calc(em(widthOnGrid(2, 0)) / 4 + em(10) + em(13));
+            display: block;
             span {
               @mixin station-detail-font10;
               text-transform: capitalize;
               margin-bottom: em(10, 11);
+              display: block;
             }
             a {
               width: calc(em(widthOnGrid(1, 0)) / 2);
               height: calc(em(widthOnGrid(1, 0)) / 2);
               outline: em(1) solid $alto;
+              display: block;
               background: center/em(20) em(20) no-repeat;
               background-image: url("/media/components/station-detail/email.svg");
+              background-size: auto em(11);
               &:hover,
               &:active {
                 background-color: $parisM;
