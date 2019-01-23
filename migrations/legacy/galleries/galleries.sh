@@ -18,9 +18,6 @@ fi
 
 printf "\nCreating Galleries...\n\n\n"
 
-printf "Publishing new layout...\n"
-curl -X PUT "$http://$1/_components/two-column-layout/instances/gallery@published" -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
-
 printf "Creating page...\n"
 cd ./migrations/legacy/galleries && cat ./_pages.yml | clay import -k demo -y $1
 
