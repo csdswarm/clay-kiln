@@ -8,8 +8,8 @@
  */
 function parseFromData(data) {
   return Object.entries(data.contentType || {})
-      .map(([type, isIncluded]) => isIncluded ? type : null)
-      .filter((x) => x);
+    .map(([type, isIncluded]) => isIncluded ? type : null)
+    .filter((x) => x);
 }
 
 module.exports.parseFromData = parseFromData;

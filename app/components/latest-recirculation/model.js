@@ -55,7 +55,7 @@ module.exports.save = (ref, data, locals) => {
 module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
     trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`,
-    contentTypes = contentTypeService.parseFromData(data)
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl, trendingRecircItems;
 
   return (async () => {
