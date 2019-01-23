@@ -4,8 +4,8 @@ module.exports['1.0'] = function (uri, data, locals) {
   // Replace articleType with sectionFront, add new contentType property
   data.sectionFront = data.articleType;
   data.contentType = 'article';
-  data.articleType = '';
-  data.section = '';
+  delete data.articleType;
+  delete data.section;
 
   return data;
 };
