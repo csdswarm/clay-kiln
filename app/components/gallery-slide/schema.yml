@@ -2,7 +2,6 @@ _description: |
   This is the Gallery Slide component.
 
   * Used to create gallery slides.
-  * TODO - Actually complete this section.
 
 slideEmbed:
   _label: Slide Embed
