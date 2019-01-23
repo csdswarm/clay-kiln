@@ -5,12 +5,13 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'contentType'
   ],
   maxItems = 3;
 
@@ -73,7 +74,7 @@ module.exports.render = function (ref, data, locals) {
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (data.filterBySection) {
-    queryService.addShould(query, { match: { articleType: data.sectionFront }});
+    queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
   }
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});

@@ -13,7 +13,7 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   mediaplay = require('./media-play'),
   queryService = require('../server/query'),
-  PUBLISHED_ARTICLES_INDEX = 'published-articles';
+  PUBLISHED_CONTENT_INDEX = 'published-content';
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -295,7 +295,7 @@ function setCanonicalUrl(data, locals) {
 }
 
 function getRollingStandoutArticles(locals) {
-  var rollingStandoutArticlesQuery = queryService(PUBLISHED_ARTICLES_INDEX, locals),
+  var rollingStandoutArticlesQuery = queryService(PUBLISHED_CONTENT_INDEX, locals),
     site = locals.site,
     uriPrefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}});
 

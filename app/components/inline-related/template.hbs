@@ -1,4 +1,4 @@
-<section class="component component--related {{#if articleType}}component--{{articleType}}{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="inline-related" data-editable="inlineRelatedItems">
+<section class="component component--related {{#if sectionFront}}component--{{sectionFront}}{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="inline-related" data-editable="inlineRelatedItems">
   <h2 class="related__title">Related</h2>
   {{#ifAny articles.length @root.locals.edit}}
     <div class="related__item related__item--image related__item--non-mobile">
@@ -48,6 +48,11 @@
             {{#if (compare articles.1.lead 'omny') }}
               <span class="related__media-icon">
                 {{{ read 'components/inline-related/media/listen.svg' }}}
+              </span>
+            {{/if}}
+            {{#if (compare articles.1.contentType 'gallery') }}
+              <span class="related__media-icon">
+                {{{ read 'components/inline-related/media/gallery.svg' }}}
               </span>
             {{/if}}
           {{else}}

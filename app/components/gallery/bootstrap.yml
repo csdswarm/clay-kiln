@@ -1,0 +1,36 @@
+_components:
+  gallery:
+    headline: ''
+    primaryHeadline: ''
+    seoHeadline: ''
+    shortHeadline: ''
+    feedImgUrl: ''
+    teaser: ''
+    authors: []
+    byline:
+      -
+        prefix: by
+        names: []
+        sources: []
+    secondaryBylineText: 'Photograph By'
+    secondaryAttribution: []
+    dateUpdated: false
+    content: []
+    slides: []
+    slidesNumbered: false
+    reverseOrder: false
+    includeInlineAds: false
+    inlineAd:
+      _ref: /_components/google-ad-manager/instances/billboardBottom
+    rightRailStickyAd:
+      _ref: /_components/google-ad-manager/instances/halfPageBottom
+    tags:
+      _ref: /_components/tags/instances/new
+    sideShare: {}
+    sectionFront: ''
+    secondaryGalleryType: ''
+    contentType: 'gallery'
+    syndicatedUrl: ''
+    syndicationStatus: original
+    showSocial: true
+    eligibleForGoogleStandout: false

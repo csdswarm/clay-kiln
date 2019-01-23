@@ -228,7 +228,7 @@ _components:
   generic-list:
     instances:
       index:
-        index: published-articles
+        index: published-content
         toggleImages: true
         toggleTeaser: true
         toggleReadMore: true
@@ -236,7 +236,7 @@ _components:
         orderBy: date
         size: 50
       article:
-        index: published-articles
+        index: published-content
         toggleImages: true
         toggleTeaser: true
         toggleReadMore: true
@@ -244,7 +244,7 @@ _components:
         orderBy: date
         size: 50
       recirc:
-        index: published-articles
+        index: published-content
         toggleImages: true
         toggleTeaser: true
         toggleReadMore: true
@@ -253,7 +253,7 @@ _components:
         title: Recent Articles
         size: 50
       tertiary:
-        index: published-articles
+        index: published-content
         toggleImages: false
         toggleTeaser: false
         toggleReadMore: false
@@ -647,9 +647,55 @@ _components:
           most-popular: true
           newsfeed: true
           apple-news: true
-        articleType:
+        sectionFront:
         secondaryArticleType:
+        contentType: 'article'
         showSocial: true
+
+  gallery:
+    instances:
+      new:
+        primaryHeadline: ''
+        headline: ''
+        subHeadline: ''
+        feedImgUrl: ''
+        feedLayout: small
+        teaser: ''
+        slug: ''
+        byline:
+          -
+            prefix: by
+            names: []
+            sources: []
+        syndicatedUrl: ''
+        syndicationStatus: original
+        lead: []
+        content:
+          -
+            _ref: /_components/paragraph/instances/new
+        slides:
+          -
+            _ref: /_components/gallery-slide/instances/new
+        slidesNumbered: false
+        reverseOrder: false
+        includeInlineAds: false
+        inlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        rightRailStickyAd:
+          _ref: /_components/google-ad-manager/instances/halfPageBottom
+        tags:
+          _ref: /_components/tags/instances/new
+        sideShare:
+          _ref: /_components/share/instances/new
+        sectionFront: ''
+        secondaryGalleryType:
+        contentType: 'gallery'
+        showSocial: true
+
+  gallery-slide:
+    instances:
+      new:
+        headline: ''
 
   section-lead:
     instances:

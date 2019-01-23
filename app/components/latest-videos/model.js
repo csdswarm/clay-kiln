@@ -5,13 +5,14 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'articleType'
+    'sectionFront',
+    'contentType'
   ],
   maxItems = 6;
 
@@ -37,7 +38,7 @@ module.exports.save = (ref, data, locals) => {
           urlIsValid: result.urlIsValid,
           canonicalUrl: result.canonicalUrl,
           feedImgUrl: result.feedImgUrl,
-          articleType: result.articleType
+          sectionFront: result.sectionFront
         });
 
         if (article.title) {

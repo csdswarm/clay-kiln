@@ -1,3 +1,11 @@
 <div data-uri="{{ default _ref self }}" data-editable="text" class="component component--html-embed">
-  {{{ text }}}
+  {{#if isIframe}}
+    <div class="html-embed__iframe-container">
+      <div class="iframe-container__padded-container">
+        {{{ text }}}
+      </div>
+    </div>
+  {{else}}
+    {{{ text }}}
+  {{/if}}
 </div>

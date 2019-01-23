@@ -15,7 +15,7 @@ var SITE_ENDPOINT;
  * @param  {String} index
  * @param {Object} locals
  * @return {Object}
- * @example newQueryWithLocals('published-articles', locals)
+ * @example newQueryWithLocals('published-content', locals)
  */
 function newQueryWithLocals(index, locals) {
   if (locals) {
@@ -46,7 +46,7 @@ function newQueryWithCount(index, count, locals) {
  * to only display array of results
  * @param  {Object} query
  * @return {Promise}
- * @example searchByQuery({"index":"published-articles","type":"_doc",
+ * @example searchByQuery({"index":"published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
 function searchByQuery(query) {
@@ -127,7 +127,7 @@ function executeMultipleSearchRequests(query) {
  * @returns {Promise}
  */
 function onePublishedArticleByUrl(url, fields, locals) {
-  const query = newQueryWithCount('published-articles', null, locals);
+  const query = newQueryWithCount('published-content', null, locals);
 
   universalQuery.addFilter(query, {term: {canonicalUrl: utils.urlToCanonicalUrl(url)}});
   if (fields) {

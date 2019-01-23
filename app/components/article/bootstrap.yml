@@ -31,7 +31,8 @@ _components:
       most-popular: true
       newsfeed: true
       apple-news: true
-    articleType: ''
+    sectionFront: ''
+    contentType: 'article'
     secondaryArticleType: ''
     crosspost:
       di: false
@@ -48,41 +49,8 @@ _components:
     syndicationStatus: original
     shouldHideAds: false
     slugLock: false
-    section: ''
     showSocial: true
     adDummy:
       _ref: /_components/ad-dummy/instances/general
-    instances:
-      test:
-        headline: ''
-        primaryHeadline: some headline
-        seoHeadline: ''
-        shortHeadline: ''
-        feedImgUrl: ''
-        siloImgUrl: ''
-        feedLayout: small
-        teaser: ''
-        authors: []
-        date: ''
-        content: []
-        tags: ''
-        sponsoredTag: {}
-        sideShare: {}
-      section-test:
-        headline: ''
-        primaryHeadline: some headline
-        seoHeadline: ''
-        shortHeadline: ''
-        feedImgUrl: ''
-        siloImgUrl: ''
-        feedLayout: small
-        teaser: ''
-        authors: []
-        date: ''
-        content: []
-        tags: ''
-        sponsoredTag: {}
-        sideShare: {}
-        section: 'some-section'
     eligibleForGoogleStandout: false
     originUrl: ''

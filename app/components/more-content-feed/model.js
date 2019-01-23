@@ -3,16 +3,17 @@ const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'articleType',
+    'sectionFront',
     'date',
     'lead',
-    'subHeadline'
+    'subHeadline',
+    'contentType'
   ],
   maxItems = 10,
   pageLength = 5;
@@ -38,7 +39,7 @@ module.exports.save = (ref, data, locals) => {
           urlIsValid: result.urlIsValid,
           canonicalUrl: item.url || result.canonicalUrl,
           feedImgUrl: item.overrideImage || result.feedImgUrl,
-          articleType: item.overrideSectionFront || result.articleType,
+          sectionFront: item.overrideSectionFront || result.sectionFront,
           date: item.overrideDate || result.date,
           lead: item.overrideContentType || result.lead
         });
@@ -60,7 +61,7 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
   let cleanUrl;
 
   data.initialLoad = false;
@@ -111,8 +112,8 @@ module.exports.render = function (ref, data, locals) {
       data.sectionFront = locals.sectionFront;
     } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
       data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
-    } 
-    
+    }
+
     if (!data.tag) {
       return data;
     }
@@ -138,7 +139,7 @@ module.exports.render = function (ref, data, locals) {
     }
 
     if (data.sectionFront) {
-      queryService.addMust(query, { match: { articleType: data.sectionFront }});
+      queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     }
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'author') {
@@ -162,7 +163,7 @@ module.exports.render = function (ref, data, locals) {
     if (!data.sectionFront && !data.sectionFrontManual || !locals) {
       return data;
     }
-    queryService.addShould(query, { match: { articleType: data.sectionFrontManual || data.sectionFront }});
+    queryService.addShould(query, { match: { sectionFront: data.sectionFrontManual || data.sectionFront }});
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'all-content') {
     if (!locals) {

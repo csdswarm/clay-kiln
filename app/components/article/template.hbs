@@ -1,13 +1,13 @@
-<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article"  data-article-type="{{ articleType }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
   <nav class="article__breadcrumb">
     <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/article/media/radiocom-purple-monogram.svg" }}}</a>
     <span class="breadcrumb__separator">/</span>
-    <a href="//{{ @root.locals.site.host }}/{{articleType}}" class="breadcrumb__link">{{articleType}}</a>
+    <a href="//{{ @root.locals.site.host }}/{{sectionFront}}" class="breadcrumb__link">{{sectionFront}}</a>
     {{#if secondaryArticleType}}
       {{ set 'hypenatedSecondaryArticleType' (replace (replace (urlencode (replace (trim (lowercase secondaryArticleType)) ' ' '-')) "/" "%2F") "&" "%26") }}
       <span class="breadcrumb__separator">/</span>
       <a class="breadcrumb__link"
-         href="//{{ @root.locals.site.host }}/{{ articleType }}/{{ hypenatedSecondaryArticleType }}/">{{ secondaryArticleType }}</a>
+         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryArticleType }}/">{{ secondaryArticleType }}</a>
     {{/if}}
   </nav>
   <header class="article__header">
@@ -181,7 +181,7 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title required">Article Type</h4>
-              <p class="item-data">{{ articleType }}</p>
+              <p class="item-data">{{ sectionFront }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Secondary Article Type</h4>

@@ -1,0 +1,246 @@
+<section role="main" data-track-type="gallery-detail" data-uri="{{ default _ref _self }}" class="component component--gallery{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Gallery"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+  <nav class="gallery__breadcrumb">
+    <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/gallery/media/radiocom-purple-monogram.svg" }}}</a>
+    <span class="breadcrumb__separator">/</span>
+    <a href="//{{ @root.locals.site.host }}/{{sectionFront}}" class="breadcrumb__link">{{sectionFront}}</a>
+    {{#if secondaryGalleryType}}
+      {{ set 'hypenatedSecondaryGalleryType' (replace (replace (urlencode (replace (trim (lowercase secondaryGalleryType)) ' ' '-')) "/" "%2F") "&" "%26") }}
+      <span class="breadcrumb__separator">/</span>
+      <a class="breadcrumb__link"
+         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryGalleryType }}/">{{ secondaryGalleryType }}</a>
+    {{/if}}
+  </nav>
+  <header class="gallery__header">
+    {{! gallery microdata }}
+    <meta itemprop="url" content="{{ @root.locals.url }}" />
+    <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
+    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="{{ @root.locals.site.name }}" />
+      <meta itemprop="sameAs" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}" />
+      <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+        <meta itemprop="url" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}/media/sites/{{ @root.locals.site.slug }}/logo.w600.h60.png" />
+        <meta itemprop="height" content="60" />
+        <meta itemprop="width" content="600" />
+      </div>
+    </div>
+    <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+      <meta itemprop="url" content="{{ feedImgUrl }}" />
+      <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+      <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+    </div>
+
+    {{! title }}
+    <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+    {{! subtitle }}
+    <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+  </header>
+
+  <section class="gallery__body"
+    {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
+    {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
+  >
+    <div class="body__header">
+      {{! Lead }}
+      <div class="lead" data-editable="lead">
+        {{> component-list lead }}
+      </div>
+    </div>
+    <div class="body__info">
+      {{! authors }}
+      <div class="info--left-top">
+        <div data-editable="bylines" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
+          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
+          -->{{#each byline as |byline|}}<!--
+            -->{{#each sources as |source|}}<!--
+              --><span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}}</span>
+            {{/each}}
+          {{/each}}
+          {{#if stationTitle}}<span>,</span>{{/if}}
+        </div>
+
+        <div class="info__from-station" data-editable="stationSource">
+          {{#ifAll stationTitle stationURL}}
+            <a href="{{ striptags stationURL }}" target="_blank">{{ stationTitle }}</a>
+          {{else if stationTitle}}
+            {{ stationTitle }}
+          {{/ifAll}}
+        </div>
+
+        {{! date and time }}
+        <time class="info__timestamp" datetime="{{ date }}" itemprop="datePublished" data-editable="publishedDate">
+          {{#if date}}
+            {{#if dateUpdated}}
+              <span class="timestamp__update">Updated on </span>
+            {{/if}}
+            {{#if (isPublished24HrsAgo date) }}
+              <span class="timestamp__date timestamp__date--recent">{{{ timeAgoTimestamp date }}}</span>
+            {{else}}
+              <span class="timestamp__date timestamp__date--large">{{ formatLocalDate date 'MMMM D, YYYY' }}</span>
+              <span class="timestamp__date timestamp__date--small">{{ formatLocalDate date 'MM/DD/YYYY' }}</span>
+              <span class="timestamp__time">{{ formatLocalDate date 'h:mm a' }}</span>
+            {{/if}}
+          {{/if}}
+        </time>
+      </div>
+      <div class="info--right-bottom">
+        {{! Side Share }}
+        {{> share sideShare }}
+      </div>
+    </div>
+    <div class="body__content">
+      <div class="content__info" data-editable="content">
+        {{> component-list content }}
+      </div>
+      <div class="content__slides">
+        {{#if @root.locals.edit}}
+          {{! Adding slides components }}
+          {{#if slides.length}}
+            <section class="content__slide-settings" data-editable="slidesSettings">
+              <h2 class="slide-settings__title">Gallery Slides Settings</h2>
+              <ul class="slide-settings__items">
+                <li class="item">
+                  <h4 class="item-title">Number the slides?</h4>
+                  <p class="item-data">{{ slidesNumbered }}</p>
+                </li>
+                {{#if slidesNumbered}}
+                  <li class="item">
+                    <h4 class="item-title">Reverse number order? eg. 5, 4, 3...</h4>
+                    <p class="item-data">{{ reverseOrder }}</p>
+                  </li>
+                {{/if}}
+                <li class="item">
+                  <h4 class="item-title">Add inline ads every 5 slides?</h4>
+                  <p class="item-data">{{ includeInlineAds }}</p>
+                </li>
+              </ul>
+            </section>
+          {{/if}}
+          <div data-editable="slides">{{> component-list slides }}</div>
+        {{else}}
+          {{#if slides.length }}
+            {{#each slides }}
+              {{#ifAll ../includeInlineAds (modulo @index 5 0) }}
+                <div class="slides__slide-group">
+                  {{#if (compare @index '!==' 0) }}
+                    <div class="slide-group__rr-ad-container">
+                      {{> google-ad-manager ../rightRailStickyAd }}
+                    </div>
+                  {{/if}}
+              {{/ifAll}}
+                <div class="slide-group__slide-container"{{#if ../slidesNumbered}} {{#if ../reverseOrder}}data-slide-number='{{subtract ../slides.length @index}}'{{else}}data-slide-number='{{add @index 1}}'{{/if}}{{/if}}>
+                  {{! Rendered slides }}
+                  {{> (getComponentName this._ref) this }}
+                </div>
+              {{#ifAll ../includeInlineAds (modulo (add @index 1) 5 0) }}
+                </div>
+                <div class="slides__ad-container">
+                  {{> google-ad-manager ../inlineAd }}
+                </div>
+              {{/ifAll}}
+            {{/each}}
+          {{/if}}
+        {{/if}}
+      </div>
+
+      {{! Tags }}
+      {{> tags tags}}
+    </div>
+
+    {{! circulation area }}
+    {{#if @root.locals.edit }}
+      {{ set 'empty' '<span class="circulation--empty">None</span>' }}
+      <section class="body__circulation">
+        <h2 class="circulation__title">Gallery Circulation</h2>
+
+        <section class="circulation__section" data-editable="circHeadlines">
+          <h3 class="subtitle circ-edit">Headlines and Teasers</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Facebook Headline</h4>
+              <p class="item-data">{{{ default primaryHeadline empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title required">Twitter/Short Headline</h4>
+              <p class="item-data">{{{ default shortHeadline empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title required">Teaser</h4>
+              <p class="item-data">{{{ default teaser empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title required">SEO Headline</h4>
+              <p class="item-data">{{{ default seoHeadline empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title required">SEO Description</h4>
+              <p class="item-data">{{{ default seoDescription empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title required">Syndication Status</h4>
+              <p class="item-data">{{{ default syndicationStatus empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title required">Syndicated URL</h4>
+              <p class="item-data">{{{ default syndicatedUrl empty }}}</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation__section" data-editable="circSlug">
+          {{#if slugLock}}
+            <div class="alert alert-warning">
+                <span style="vertical-align: sub;">{{{ read 'public/media/components/gallery/warning.svg' }}}</span>
+
+                Gallery Slug is locked. Unlock in Gallery Settings.
+            </div>
+          {{/if}}
+          <h3 class="subtitle circ-edit">Slug and URL</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Gallery Slug</h4>
+              <p class="item-data">
+                {{#if slug}}<span class="circulation-slug">{{ slug }}</span>{{else}}{{{ empty }}}{{/if}}
+              </p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Evergreen Treatment</h4>
+              <p class="item-data">
+                {{ if evergreenSlug 'Yes' else='No' }}
+              </p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation__section" data-editable="circFeeds">
+          <h3 class="subtitle circ-edit">Recirculation:</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Recirculation Image</h4>
+              <p class="item-data">
+                {{#if feedImgUrl}}
+                  <img class="feedimg" src="{{ feedImgUrl }}?width=300" alt="" />
+                {{else}}
+                  <div class="empty-feedimg"></div>
+                {{/if}}
+              </p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="circulation__section" data-editable="circMetadata">
+          <h3 class="subtitle circ-edit">Gallery Metadata</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title required">Gallery Type</h4>
+              <p class="item-data">{{ sectionFront }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Secondary Gallery Type</h4>
+              <p class="item-data">{{ secondaryGalleryType }}</p>
+            </li>
+          </ul>
+        </section>
+      </section>
+    {{/if}}
+  </section>
+</section>

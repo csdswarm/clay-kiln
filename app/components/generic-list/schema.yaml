@@ -18,8 +18,8 @@ index:
     input: radio
     options:
       -
-        name: Articles
-        value: published-articles
+        name: Articles & Galleries
+        value: published-content
       -
         name: Videos (This does not exist, just an example)
         value: published-videos

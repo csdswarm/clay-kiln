@@ -3,7 +3,7 @@
   <div class="latest-videos__videos">
     {{#each articles as |article|}}
       {{#if @first}}
-        <div class="latest-videos__video {{#if @first}}latest-videos__video--main{{/if}} latest-videos__video--{{ article.articleType }}">
+        <div class="latest-videos__video {{#if @first}}latest-videos__video--main{{/if}} latest-videos__video--{{ article.sectionFront }}">
           <a href="{{ article.canonicalUrl }}"
              class="latest-videos__link"
              data-track-type="article-link"

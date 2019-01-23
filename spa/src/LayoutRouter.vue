@@ -81,6 +81,7 @@ export default {
       const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
       const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
       const nextArticleData = queryPayload.findComponent(spaPayload.main, 'article')
+      const nextGalleryData = queryPayload.findComponent(spaPayload.main, 'gallery')
       const nextHomepageData = queryPayload.findComponent(spaPayload.main, 'homepage')
       const nextSectionFrontPageData = queryPayload.findComponent(spaPayload.main, 'section-front')
       const nextTopicPageData = queryPayload.findComponent(spaPayload.pageHeader, 'topic-page-header')
@@ -91,11 +92,12 @@ export default {
         toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
         toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
         toPath: to.path,
-        toArticlePage: nextArticleData ? nextArticleData : {},
-        toHomepage: nextHomepageData ? nextHomepageData : {},
-        toSectionFrontPage: nextSectionFrontPageData ? nextSectionFrontPageData : {},
-        toTopicPage: nextTopicPageData ? nextTopicPageData : {},
-        toStationDetailPage: nextStationDetailPageData ? nextStationDetailPageData : {}
+        toArticlePage: nextArticleData || {},
+        toGalleryPage: nextGalleryData || {},
+        toHomepage: nextHomepageData || {},
+        toSectionFrontPage: nextSectionFrontPageData || {},
+        toTopicPage: nextTopicPageData || {},
+        toStationDetailPage: nextStationDetailPageData || {}
       }
     }
   },
