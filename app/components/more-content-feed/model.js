@@ -67,6 +67,13 @@ module.exports.render = function (ref, data, locals) {
 
   data.initialLoad = false;
 
+  contentTypes = Object.entries(data.contentType || {})
+     .map(([type, isIncluded]) => isIncluded ? type : null)
+     .filter((x) => x);
+  if (contentTypes.length) {
+    queryService.addFilter(query, { terms: { contentType: contentTypes } });
+  }
+
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (locals && locals.page) {

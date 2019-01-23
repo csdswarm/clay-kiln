@@ -26,7 +26,6 @@ module.exports.save = (ref, data, locals) => {
     return data;
   }
 
-  // TODO use data.contentType = { article: true, gallery: true } to populate this
   return Promise.all(_.map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
@@ -71,6 +70,14 @@ module.exports.render = function (ref, data, locals) {
   if (!data.sectionFront || !locals) {
     return data;
   }
+
+  contentTypes = Object.entries(data.contentType || {})
+     .map(([type, isIncluded]) => isIncluded ? type : null)
+     .filter((x) => x);
+  if (contentTypes.length) {
+    queryService.addFilter(query, { terms: { contentType: contentTypes } });
+  }
+
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
