@@ -6,13 +6,32 @@
     margin: em(30) 0 em(40) 0;
   }
 
+  .gallery-slide__titlewrapper {
+    margin: 0 0 em(15) 0;
+  }
+
+  .gallery-slide__number {
+    display: inline-block;
+    font-family: CircularStd-Black;
+    font-size: em(18, 16);
+    color: #FFF;
+    letter-spacing: em(-0.22, 18);
+    line-height: em(25, 18);
+    width: em(25, 18);
+    height: em(25, 18);
+    border-radius: 50%;
+    text-align: center;
+    background: #3c00b7;
+    margin: 0 em(15, 18) 0 0;
+  }
+
   .gallery-slide__title {
+    display: inline-block;
     font-family: CircularStd-Black;
     font-size: em(20, 16);
     color: #000000;
     letter-spacing: em(-0.25, 20);
     line-height: em(25, 20);
-    margin: 0 0 em(15, 20) 0;
   }
 
   .gallery-slide__description {

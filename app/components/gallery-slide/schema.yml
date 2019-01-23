@@ -46,6 +46,10 @@ hashLinkSuffix:
       pattern: ^[a-z0-9-]+$
       patternMessage: "Hash link must consist of lowercase alphanumeric characters and hyphens (Example: this-is-1-valid-custom-hash-link)"
 
+# The following properties are inherited from the parent Gallery component.
+slidesNumbered:
+  _subscribe: slidesNumbered
+
 _groups:
   slideText:
     _label: Slide Details
