@@ -1,3 +1,14 @@
-<div data-uri="{{ default _ref self }}" class="component--gallery-slide" data-editable="slide">
-  {{headline}}
+<div id="{{ hashLink }}" data-uri="{{ default _ref _self }}" class="component component--gallery-slide {{ galleryTypeClass }}">
+  <div class="slideEmbed" data-editable="slideEmbed">
+    {{> component-list slideEmbed }}
+  </div>
+  <div class="slideText gallery-slide__text" data-editable="slideText">
+    {{#if title }}
+      <p class="gallery-slide__titlewrapper">
+        {{#if slidesNumbered}}<span class="gallery-slide__number">{{ oneBasedIndex @index }}</span>{{/if}}
+        <span class="gallery-slide__title">{{ title }}</span>
+      </p>
+    {{/if}}
+    {{#if description }}<p class="gallery-slide__description">{{ description }}</p>{{/if}}
+  </div>
 </div>

@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import SpaScroll from './lib/SpaScroll'
 
 export default {
   name: 'App',
@@ -14,7 +15,18 @@ export default {
     }
   },
   methods: {},
-  components: {}
+  components: {},
+  mounted () {
+    // If deep link hash exists in slug, handle scrolling to it on initial pageload/SPA mount.
+    if (this.$route.hash) {
+      this.$nextTick(() => {
+        SpaScroll.initialPageloadHashLinkScroll(this.$route.hash)
+      })
+    }
+
+    // Attach dynamic gallery slide slug logic to scroll event.
+    SpaScroll.attachGallerySlideDynamicSlug.call(this)
+  }
 }
 
 </script>

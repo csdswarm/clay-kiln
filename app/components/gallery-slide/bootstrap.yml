@@ -1,3 +1,6 @@
 _components:
   gallery-slide:
-    headline: ''
+    slideEmbed: null
+    title: ''
+    description: ''
+    hashLinkSuffix: ''

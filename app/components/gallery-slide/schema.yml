@@ -1,19 +1,66 @@
 _description: |
-  A slide in a media gallery
+  This is the Gallery Slide component.
 
-headline:
-  _label: Slide headline
+  * Used to create gallery slides.
+
+slideEmbed:
+  _label: Slide Embed
+  _placeholder:
+    text: Add Slide Embed
+    height: 200px
+  _componentList:
+    fuzzy: false # allows interactives, etc to add one-off components
+    include:
+      - image
+      - instagram-post
+      - facebook-post
+      - brightcove
+      - youtube
+      - tweet
+      - html-embed
+      - omny
+    validate:
+      max: 1
+      required: true
+title:
+  _label: Slide Title
   _has:
     input: text
+    help: Slide title text
     validate:
-      max: 80
       required: true
+description:
+  _label: Slide Description
+  _has:
+    input: text
+    help: Slide description text
+hashLinkSuffix:
+  _label: Hash Link Suffix Override
+  _has:
+    input: text
+    help: "The hashtag deep link suffix (defaults to slugified slide title). WARNING: Changing this post-publish can hurt SEO."
+    validate:
+      # Allow lowercase alphanumeric chars and also hyphens.
+      # Detailed RegEx breakdown: https://regex101.com/r/1Hh9QF/1
+      pattern: ^[a-z0-9-]+$
+      patternMessage: "Hash link must consist of lowercase alphanumeric characters and hyphens (Example: this-is-1-valid-custom-hash-link)"
+
+# The following properties are inherited from the parent Gallery component.
+slidesNumbered:
+  _subscribe: slidesNumbered
+sectionFront:
+  _subscribe: sectionFront
 
 _groups:
-  slide:
-    fields:
-      - headline
+  slideText:
+    _label: Slide Details
     _placeholder:
-      ifEmpty: 'headline'
-      height: 50px
-      text: New Slide
+      text: Edit Slide Details
+      height: 150px
+      ifEmpty: title
+    fields:
+      - title
+      - description
+  settings:
+      fields:
+        - hashLinkSuffix

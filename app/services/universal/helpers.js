@@ -22,5 +22,6 @@ module.exports = {
   timeAgoTimestamp: formatTime.timeAgoTimestamp,
   truncateText: truncate,
   calloutType: require('./callout'),
-  attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow')
+  attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow'),
+  oneBasedIndex: require('./oneBasedIndex')
 };
