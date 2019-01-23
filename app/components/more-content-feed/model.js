@@ -2,6 +2,7 @@
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  contentTypeService = require('../../services/server/content-type'),
   { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
   elasticFields = [
@@ -61,10 +62,15 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl;
 
   data.initialLoad = false;
+
+  if (contentTypes.length) {
+    queryService.addFilter(query, { terms: { contentType: contentTypes } });
+  }
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);

@@ -1,6 +1,7 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   db = require('../../services/server/db'),
+  contentTypeService = require('../../services/server/content-type'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
@@ -53,7 +54,8 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
-    trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`;
+    trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`,
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl, trendingRecircItems;
 
   return (async () => {
@@ -86,8 +88,14 @@ module.exports.render = function (ref, data, locals) {
       }
       queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
     }
-    queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});
+
+
+    queryService.addMinimumShould(query, 1);
+
+    if (contentTypes.length) {
+      queryService.addFilter(query, { terms: { contentType: contentTypes } });
+    }
 
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {

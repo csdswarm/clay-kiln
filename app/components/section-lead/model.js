@@ -3,6 +3,7 @@
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  contentTypeService = require('../../services/server/content-type'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
@@ -61,7 +62,8 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl;
 
   // items are saved from form, articles are used on FE
@@ -70,6 +72,11 @@ module.exports.render = function (ref, data, locals) {
   if (!data.sectionFront || !locals) {
     return data;
   }
+
+  if (contentTypes.length) {
+    queryService.addFilter(query, { terms: { contentType: contentTypes } });
+  }
+
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);

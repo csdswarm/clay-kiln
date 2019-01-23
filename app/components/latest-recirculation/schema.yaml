@@ -16,9 +16,16 @@ populateBy:
 
 sectionFront:
   _subscribe: sectionFront
-  _label: Article Type
+
+contentType:
+  _label: Content type
   _has:
-    help: Article Type from which to pull articles
+    validate:
+      required: true
+    input: checkbox-group
+    options:
+      - article
+      - gallery
 
 tag:
   _label: Tag
@@ -83,6 +90,7 @@ _groups:
     fields:
       - populateBy
       - sectionFront
+      - contentType
       - tag
       - items
     _placeholder:
