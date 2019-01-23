@@ -57,14 +57,15 @@ module.exports.save = async function (ref, data, locals) {
 module.exports.render = async function (ref, data, locals) {
   data.articles = [];
 
+  const contentTypes = Object.entries(data.contentType || {})
+       .map(([type, isIncluded]) => isIncluded ? type : null)
+       .filter((x) => x);
+
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
       cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
     let query = queryService.newQueryWithCount(elasticIndex, maxItems);
 
-    contentTypes = Object.entries(data.contentType || {})
-       .map(([type, isIncluded]) => isIncluded ? type : null)
-       .filter((x) => x);
     if (contentTypes.length) {
       queryService.addFilter(query, { terms: { contentType: contentTypes } });
     }
