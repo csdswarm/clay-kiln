@@ -336,3 +336,40 @@ em, i {
 @define-mixin stations-carousel-font3-news {
   @mixin font CircularStd-Black, 18px, $tundora, -.32px, 25px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||| Station Detail Fonts Styleguide ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin station-detail-font1 {
+  @mixin font CircularStd-Black, 35px, $black, -.58px, 42px;
+}
+@define-mixin station-detail-font2 {
+  @mixin font CircularStd-Black, 24px, $black, -.58px, 30px;
+}
+@define-mixin station-detail-font3 {
+  @mixin font ProximaNova-Light, 18px, $black, -.58px, 25px;
+}
+@define-mixin station-detail-font4 {
+  @mixin font CircularStd-Black, 16px, $black, -.58px, 16px;
+}
+@define-mixin station-detail-font5 {
+  @mixin font CircularStd-Medium, 14px, $black, -.58px, 20px;
+}
+@define-mixin station-detail-font6 {
+  @mixin font CircularStd-Black, 13px, $black, -.58px, 15px;
+}
+@define-mixin station-detail-font7 {
+  @mixin font CircularStd-Medium, 12px, $black, -.58px, 18px;
+}
+@define-mixin station-detail-font8 {
+  @mixin font CircularStd-Medium, 12px, #767676, -.58px, 14px;
+}
+@define-mixin station-detail-font9 {
+  @mixin font CircularStd-Book, 12px, $boulder, -.58px, 18px;
+}
+@define-mixin station-detail-font10 {
+  @mixin font CircularStd-Medium, 11px, $boulder, -.58px, 13px;
+}
+@define-mixin station-detail-font11 {
+  @mixin font CircularStd-Black, 18px, $black, -.43px, 20px;
+}

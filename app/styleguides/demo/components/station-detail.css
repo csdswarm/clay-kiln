@@ -1,0 +1,184 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--station-detail {
+  * {
+    outline: 1px dotted red;
+    * {
+      outline: 1px dotted blue;
+      * {
+        outline: 1px dotted pink;
+        * {
+          outline: 1px dotted green;
+        }
+      }
+    }
+  }
+  margin-top: em(30);
+  .station-detail__head {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: em(30);
+    .head__lede {
+      display: flex;
+      flex-direction: row;
+      height: em(widthOnGrid(4, 3));
+      @mixin large-screen {
+        height: em(widthOnGrid(3, 2));
+      }
+      @mixin medium-screen {
+        height: em(widthOnGrid(2, 1, medium-screen));
+      }
+      .lede__image {
+        position: relative;
+        outline: 1px solid $alto;
+        width: em(widthOnGrid(4, 3));
+        @mixin large-screen {
+          width: em(widthOnGrid(3, 2));
+        }
+        @mixin medium-screen {
+          width: em(widthOnGrid(2, 1, medium-screen));
+        }
+        height: 100%;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+        .image__play-btn {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          margin: 0 em(10) em(10) 0;
+          width: em(48);
+          height: em(48);
+        }
+      }
+      .lede__info {
+        display: flex;
+        flex-direction: column;
+        padding-left: em(widthOnGrid(0, 1));
+        width: calc(100% - em(widthOnGrid(4, 3)));
+        @mixin large-screen {
+          width: calc(100% - em(widthOnGrid(3, 2)));
+        }
+        @mixin medium-screen {
+          width: calc(100% - em(widthOnGrid(2, 1, medium-screen)));
+        }
+        .info__text {
+          .text__station-title {
+            display: block;
+            margin-bottom: em(30);
+            @mixin medium-small-screen {
+              margin-bottom: em(20);
+            }
+            .station-title__name {
+              overflow: hidden;
+              @mixin station-detail-font1;
+              max-height: em(84, 35);
+
+              @mixin medium-small-screen {
+                @mixin station-detail-font2;
+                max-height: em(84, 24);
+              }
+            }
+          }
+          .text__station-slogan {
+            @mixin medium-small-screen {
+              margin-bottom: em(20);
+            }
+            @mixin station-detail-font3;
+          }
+        }
+        .info__links {
+          height: calc(em(widthOnGrid(2, 0)) / 4 + em(10) + em(13));
+          .links__follow {
+            span {
+              @mixin station-detail-font10;
+              text-transform: capitalize;
+              margin-bottom: em(10, 11);
+            }
+            display: inline-block;
+            .follow__container {
+              width: em(widthOnGrid(2, 0));
+              height: em(widthOnGrid(2, 0));
+              margin-right: em(widthOnGrid(0, 2));
+              .follow-link {
+                height: calc(em(widthOnGrid(2, 0)) / 4);
+                width: calc(em(widthOnGrid(2, 0)) / 4);
+                outline: em(1) solid $alto;
+                background: center/em(20) em(20) no-repeat;
+                &--facebook {
+                  background-image: url("/media/components/station-detail/facebook.svg");
+                  background-size: auto em(22); /* Increase FB image height to 22px */
+                  &:hover,
+                  &:active {
+                    background-color: $chambray;
+                    border-color: $chambray;
+                    background-image: url("/media/components/station-detail/facebook--hover.svg");
+                  }
+                }
+                &--twitter {
+                  background-image: url("/media/components/station-detail/twitter.svg");
+                  background-size: auto em(17); /* Firefox scaling/bounding fix */
+                  &:hover,
+                  &:active {
+                    background-color: $cerulean;
+                    border-color: $cerulean;
+                    background-image: url("/media/components/station-detail/twitter--hover.svg");
+                  }
+                }
+                &--website {
+                  background-image: url("/media/components/station-detail/home.svg");
+                  &:hover,
+                  &:active {
+                    background-color: $dustyGray;
+                    border-color: $dustyGray;
+                    background-image: url("/media/components/station-detail/home--hover.svg");
+                  }
+                }
+                &--more-btn {
+                  background-image: url("/media/components/station-detail/ellipsis.svg");
+                  &:hover,
+                  &:active {
+                    background-color: $dustyGray;
+                    border-color: $dustyGray;
+                    background-image: url("/media/components/station-detail/ellipsis--hover.svg");
+                  }
+                }
+              }
+            }
+          }
+          .links__email {
+            height: calc(em(widthOnGrid(2, 0)) / 4 + em(10) + em(13));
+            span {
+              @mixin station-detail-font10;
+              text-transform: capitalize;
+              margin-bottom: em(10, 11);
+            }
+            a {
+              width: calc(em(widthOnGrid(1, 0)) / 2);
+              height: calc(em(widthOnGrid(1, 0)) / 2);
+              outline: em(1) solid $alto;
+              background: center/em(20) em(20) no-repeat;
+              background-image: url("/media/components/station-detail/email.svg");
+              &:hover,
+              &:active {
+                background-color: $parisM;
+                border-color: $parisM;
+                background-image: url("/media/components/station-detail/email--hover.svg");
+              }
+            }
+          }
+        }
+      }
+    }
+    .head__tags {
+      @mixin station-detail-font10;
+      text-transform: capitalize;
+      margin-top: em(10, 11);
+    }
+  }
+}

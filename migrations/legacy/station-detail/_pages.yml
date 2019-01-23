@@ -1,0 +1,44 @@
+_pages:
+  station:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-url/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/station-detail/instances/new
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+    layout: /_components/two-column-layout/instances/station
+
+_components:
+  two-column-layout:
+    instances:
+      station:
+        headLayout:
+          - _ref: /_components/favicon/instances/default
+          - _ref: /_components/google-ad-manager-head/instances/default
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
+          - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+        head: head
+        pageHeader: pageHeader
+        sectionHeader: sectionHeader
+        main: main
+        tertiary: tertiary
+        secondary: secondary
+        bottom:
+          - _ref: /_components/yieldmo/instances/default
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
+        static:
+          - _ref: /_components/web-player/instances/default
+          - _ref: /_components/chartbeat/instances/default

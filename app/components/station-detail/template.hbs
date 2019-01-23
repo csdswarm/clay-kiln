@@ -1,0 +1,52 @@
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--station-detail{{ if @root.locals.edit ' editing' }}">
+  <div class="station-detail__head">
+    <div class="head__lede">
+      <div class="lede__image">
+        <img src="{{station.square_logo_large}}" alt="{{station.name}}">
+        <div class="image__play-btn">
+          {{{ read 'components/station-detail/media/play.svg' }}}
+        </div>
+      </div>
+      <div class="lede__info">
+        <div class="info__text">
+          <div class="text__station-title">
+            {{!-- favorite btn here --}}
+            <h1 class="station-title__name">{{station.name}}</h1>
+          </div>
+          <p class="text__station-slogan">{{station.slogan}}</p>
+        </div>
+        <div class="info__links">
+          <div class="links__follow">
+            <span>follow</span>
+            <div class="follow__container">
+              {{#if station.website }}
+                <a target="_blank" href="{{station.website}}" class="follow-link follow-link--website" title="Follow on {{station.name}}'s Website" aria-label="Website"></a>
+              {{/if}}
+              {{#if station.facebook }}
+                <a target="_blank" href="{{station.facebook}}" class="follow-link follow-link--facebook" title="Follow on Facebook" aria-label="Follow on Facebook"></a>
+              {{/if}}
+              {{#if station.twitter }}
+                <a target="_blank" href="https://twitter.com/{{station.twitter}}" class="follow-link follow-link--twitter" title="Follow on Twitter" aria-label="Follow on Twitter"></a>
+              {{/if}}
+              <button class="follow-link follow-link--more-btn" title="More Socials" aria-label="More Socials"></button>
+            </div>
+          </div>
+          <div class="links__email">
+            <span>email</span>
+            <a href="mailto:?subject={{station.name}}" title="Email" aria-label="Email"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{!-- deduped category, genre (which could be multiple), and market.city --}}
+    <span class="head__tags">tags: {{station.tags}}</span>
+  </div>
+  <div class="station-detail__body">
+    <div class="tabs">
+      <!-- add tab for each component here -->
+    </div>
+    <div class="tabbed-content-container">
+      <!-- add components here -->
+    </div>
+  </div>
+</section>
