@@ -49,9 +49,6 @@ module.exports.save = (ref, data, locals) => {
       });
   }))
     .then((items) => {
-      data.missingItems = data.items.some(item => {
-        return typeof item.feedImgUrl === 'undefined';
-      });
       data.items = items;
 
       return data;
@@ -70,6 +67,9 @@ module.exports.render = function (ref, data, locals) {
 
   // items are saved from form, articles are used on FE
   data.articles = data.items;
+  data.missingItems = data.articles.some(item => {
+    return typeof item.feedImgUrl === 'undefined';
+  });
 
   if (!data.tag || !locals) {
     return data;
