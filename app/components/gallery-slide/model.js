@@ -27,6 +27,11 @@ module.exports.render = (ref, data) => {
   // Create slide direct hash link by appending hashLinkSuffix to the slide instance cuid.
   data.hashLink = `Slide-${getComponentInstance(ref)}-${data.hashLinkSuffix}`;
 
+  // Create Gallery Slide Type class
+  const galleryType = data.sectionFront ? data.sectionFront : 'default';
+  
+  data.galleryTypeClass = `component--gallery-slide__${galleryType}`;
+
   return data;
   
 };

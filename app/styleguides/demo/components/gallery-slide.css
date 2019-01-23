@@ -14,14 +14,12 @@
     display: inline-block;
     font-family: CircularStd-Black;
     font-size: em(18, 16);
-    color: #FFF;
     letter-spacing: em(-0.22, 18);
     line-height: em(25, 18);
     width: em(25, 18);
     height: em(25, 18);
     border-radius: 50%;
     text-align: center;
-    background: #3c00b7;
     margin: 0 em(15, 18) 0 0;
   }
 
@@ -50,6 +48,52 @@
       text-align: right;
       margin: em(5, 12) 0 em(-30, 12) 0;
     }
+  }
+
+}
+
+/* Individual Gallery Type Styles */
+.component--gallery-slide.component--gallery-slide__default {
+
+  .gallery-slide__number {
+    color: #FFFFFF;
+    background: #3c00b7;
+  }
+
+}
+
+.component--gallery-slide.component--gallery-slide__music {
+
+  .gallery-slide__number {
+    color: #FFFFFF;
+    background: #FF4940;
+  }
+
+}
+
+.component--gallery-slide.component--gallery-slide__news {
+
+  .gallery-slide__number {
+    color: #444444;
+    background: #FEC517;
+  }
+
+}
+
+.component--gallery-slide.component--gallery-slide__podcasts {
+
+  .gallery-slide__number {
+    color: #FFFFFF;
+    background: #00CCB7;
+  }
+
+}
+
+.component--gallery-slide.component--gallery-slide__sports {
+
+  .gallery-slide__number {
+    color: #FFFFFF;
+    background: #0099FF;
   }
 
 }
