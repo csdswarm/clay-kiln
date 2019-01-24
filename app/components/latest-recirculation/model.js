@@ -1,7 +1,7 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   db = require('../../services/server/db'),
-  contentTypeService = require('../../services/server/content-type'),
+  contentTypeService = require('../../services/universal/content-type'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
