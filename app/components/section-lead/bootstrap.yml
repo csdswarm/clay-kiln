@@ -3,5 +3,6 @@ _components:
     items: []
     sectionFront: ''
     filterBySection: ''
+    filterBySecondary: ''
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/halfPageTop

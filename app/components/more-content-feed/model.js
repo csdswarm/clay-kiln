@@ -169,6 +169,11 @@ module.exports.render = function (ref, data, locals) {
       return data;
     }
   }
+
+  if (data.filterBySecondary) {
+    queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});
+  }
+
   queryService.addSort(query, {date: 'desc'});
 
   // exclude the current page in results

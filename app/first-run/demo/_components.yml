@@ -146,6 +146,9 @@ _components:
                   -
                     text: "local politics"
                     url: "/news/local-politics"
+                  -
+                    text: "small business pulse"
+                    url: "/news/small-business-pulse"
               -
                 text: "find a station"
                 url: "https://player.radio.com/station-directory/newstalk"
