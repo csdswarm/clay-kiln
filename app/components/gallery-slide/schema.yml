@@ -48,8 +48,12 @@ hashLinkSuffix:
 # The following properties are inherited from the parent Gallery component.
 slidesNumbered:
   _subscribe: slidesNumbered
+reverseOrder:
+  _subscribe: reverseOrder
 sectionFront:
   _subscribe: sectionFront
+slides:
+  _subscribe: slides
 
 _groups:
   slideText:

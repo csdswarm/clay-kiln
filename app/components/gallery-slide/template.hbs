@@ -5,7 +5,8 @@
   <div class="slideText gallery-slide__text" data-editable="slideText">
     {{#if title }}
       <p class="gallery-slide__titlewrapper">
-        {{#if slidesNumbered}}<span class="gallery-slide__number">{{ oneBasedIndex @index }}</span>{{/if}}
+        {{#if slidesNumbered}}<span class="gallery-slide__number">{{ reversibleOneBasedIndex @index reverseOrder slides.length }}</span>
+        {{/if}}
         <span class="gallery-slide__title">{{ title }}</span>
       </p>
     {{/if}}

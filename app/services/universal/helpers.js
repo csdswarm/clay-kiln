@@ -23,5 +23,5 @@ module.exports = {
   truncateText: truncate,
   calloutType: require('./callout'),
   attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow'),
-  oneBasedIndex: require('./oneBasedIndex')
+  reversibleOneBasedIndex: require('./reversibleOneBasedIndex')
 };
