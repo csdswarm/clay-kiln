@@ -11,16 +11,20 @@ const duplicateScript = (script) => {
     attributes = script.outerHTML.match(/([^\s]+)=/g).map(attr => attr.replace('=', ''));
 
   attributes.forEach((attribute) => newScript.setAttribute(attribute, script.getAttribute(attribute)));
-  newScript.async = true;
+  newScript.setAttribute('async', '');
 
   return newScript;
 };
 
 document.addEventListener('html-embed-mount', () => {
-  document.querySelectorAll('.component--html-embed script').forEach((script) => {
-    const newScript = duplicateScript(script);
+  let count = 0;
 
-    document.write = (html) => { newScript.outerHTML += html; };
+  document.querySelectorAll('.component--html-embed script').forEach((script) => {
+    const newScript = duplicateScript(script),
+      id = `html-embed-${count++}`;
+
+    newScript.setAttribute('data-html-id', id);
+    document.write = (html) => { document.querySelector(`script[data-html-id="${id}"]`).insertAdjacentHTML('beforeend', html); };
 
     script.replaceWith(newScript);
   });
