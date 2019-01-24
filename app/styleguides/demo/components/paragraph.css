@@ -8,8 +8,8 @@
 .paragraph p,
 .paragraph p a,
 .paragraph ul li,
-.paragraph+ol li,
-.paragraph+ul li {
+.paragraph~ol li,
+.paragraph~ul li {
   @mixin article-font7;
 }
 .paragraph {
@@ -44,24 +44,20 @@
   strong {
     @mixin article-font8;
   }
-  + ul,
+  ~ ul,
   ul {
     clear: both;
     line-height: em(23, 18);
     margin: 0;
     padding: 0 0 0 em(10, 18);
-    li {
-      list-style: none;
-      margin: 0 0 em(20, 18);
-      &:before {
-        color: #1782a9;
-        content: '•';
-        left: 0;
-        position: absolute;
-      }
-    }
+    list-style: disc;
+    margin-block-start: em(1);
+    margin-block-end: em(1);
+    margin-inline-start: em(0);
+    margin-inline-end: 0px;
+    padding-inline-start: em(40, 18);
   }
-  + ol,
+  ~ ol,
   ol {
     clear: both;
     counter-reset: list;
@@ -97,8 +93,8 @@
   .paragraph ol li,
   .paragraph p,
   .paragraph ul li,
-  .paragraph+ol li,
-  .paragraph+ul li {
+  .paragraph~ol li,
+  .paragraph~ul li {
     font-size: em(11, 16);
     line-height: em(12, 11);
   }
