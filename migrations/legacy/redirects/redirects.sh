@@ -9,7 +9,7 @@ if [ "$#" -ne 2 ]; then
 else
     [[ $1 = "clay" ]] && http="http" || http="https"
     echo "Using $http://$1.radio.com"
-    if [[ $(curl "$http://$1.radio.com/_pages" 2>&1) == *"_pages/redirects3"* ]];
+    if [[ $(curl "$http://$1.radio.com/_pages" 2>&1) == *"_pages/redirects"* ]];
     then
         echo "Redirects page already exists";
     else
