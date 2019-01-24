@@ -3,7 +3,7 @@
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
-  contentTypeService = require('../../services/server/content-type'),
+  contentTypeService = require('../../services/universal/content-type'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
