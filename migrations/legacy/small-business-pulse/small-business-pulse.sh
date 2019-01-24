@@ -13,7 +13,7 @@ else
     [[ $1 = "clay" ]] && http="http" || http="https"
 
     if [ "$1" == "clay" ]; then
-    es="http://localhost" && http="http";
+        es="http://localhost";
     elif [ "$1" == "dev-clay" ]; then
         es="http://dev-es.radio-dev.com";
     elif [ "$1" == "stg-clay" ]; then
@@ -24,11 +24,12 @@ else
 
     echo "Using $http://$1.radio.com"
     if [[ $(curl "$http://$1.radio.com/_components/section-front/instances" 2>&1) == *"small-business-pulse"* ]];
-    then echo "Small Business Pulse page already exists";
+    then
+        echo "Small Business Pulse page already exists";
     else
-        cat "$(dirname "$0")/small-business-pulse.json" | clay import -k $2 --publish "$1.radio.com";
+        cat "$(dirname "$0")/small-business-pulse.json" | clay import -k $2 --publish "$http://$1.radio.com";
 
-        addIndex "$es" "secondaryArticle" "keyword"
+        addIndex "$es" "secondaryArticleType" "keyword"
    fi
 fi
 
