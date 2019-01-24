@@ -13,7 +13,8 @@ const AWS = require('aws-sdk'),
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     region: 'us-east-1'
   }),
-  uuidv4 = require('uuid/v4');
+  uuidv4 = require('uuid/v4'),
+  radioApi = require('../services/server/radioApi');
 
 module.exports.routes = (router) => {
 
@@ -109,6 +110,15 @@ module.exports.routes = (router) => {
       }
     });
 
+  });
+
+  /**
+   * Caching for api.radio.com endpoints
+   */
+  router.get('/api/v1/*', function (req, res) {
+    radioApi.get(req.params[0], req.query).then(function (data) {
+      return res.send(data);
+    });
   });
 
 };
