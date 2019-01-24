@@ -68,6 +68,9 @@ module.exports.render = function (ref, data, locals) {
   if (data.sectionFront) {
     queryService.addShould(query, { match: { articleType: data.sectionFront }});
   }
+  if (data.filterBySecondary) {
+    queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});
+  }
   if (data.tag) {
     queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   }
@@ -95,7 +98,6 @@ module.exports.render = function (ref, data, locals) {
 
       data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
       data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
-
       return data;
     })
     .catch(e => {
