@@ -23,6 +23,9 @@ const adSizes = {
   },
   'logo-sponsorship': {
     defaultSize: [100, 35]
+  },
+  'mobile-interstitial': {
+    defaultSize: [1, 7]
   }
 };
 
@@ -71,6 +74,10 @@ module.exports = {
 
       sizeMapping['logo-sponsorship'] = googletag.sizeMapping()
         .addSize([0, 0], [[100, 35]])
+        .build();
+
+      sizeMapping['mobile-interstitial'] = googletag.sizeMapping()
+        .addSize([0, 0], [[1, 7]])
         .build();
     });
   }
