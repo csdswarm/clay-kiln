@@ -38,7 +38,7 @@ Constructor.prototype = {
     const firstStickyAd = document.querySelector('.content__sidebar .sticky'),
       firstInlineAd = document.querySelector('.slides__ad-container');
 
-    if (window.scrollY > firstInlineAd.offsetTop) {
+    if (firstStickyAd.offsetTop + firstStickyAd.offsetHeight > firstInlineAd.offsetTop) {
       if (firstStickyAd.style.visibility !== 'hidden') {
         firstStickyAd.style.visibility = 'hidden';
       }

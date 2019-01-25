@@ -119,7 +119,7 @@
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
-              {{#ifAll ../includeInlineAds (modulo @index 5 0) }}
+              {{#ifAll ../includeInlineAds (modulo @index 5 0) (compare ../slides.length "!==" (add @index 1)) }}
                 <div class="slides__slide-group">
                   {{#if (compare @index '!==' 0) }}
                     <div class="slide-group__rr-ad-container">
@@ -131,7 +131,7 @@
                   {{! Rendered slides }}
                   {{> (getComponentName this._ref) this }}
                 </div>
-              {{#ifAll ../includeInlineAds (modulo (add @index 1) 5 0) }}
+              {{#ifAll ../includeInlineAds (modulo (add @index 1) 5 0) (compare ../slides.length "!==" (add @index 1)) }}
                 </div>
                 <div class="slides__ad-container">
                   {{> google-ad-manager ../inlineAd }}
