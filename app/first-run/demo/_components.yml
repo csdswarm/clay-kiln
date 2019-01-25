@@ -804,6 +804,11 @@ _components:
         moreContentFeed:
           _ref: /_components/more-content-feed/instances/author-page
 
+  station-detail:
+    instances:
+      new:
+        allowed: true
+
   latest-recirculation:
     instances:
       new:

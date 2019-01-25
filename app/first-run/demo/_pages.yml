@@ -101,3 +101,15 @@ _pages:
     main:
       - /_components/author-page/instances/new
     layout: /_components/one-column-layout/instances/general
+  # Station Detail Page
+  station:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-url/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/station-detail/instances/new
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+    layout: /_components/two-column-layout/instances/station
