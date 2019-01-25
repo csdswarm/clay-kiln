@@ -251,10 +251,11 @@ content:
       - inline-related
 slides:
   _label: Add slides to gallery
-  _publish: slides
   _componentList:
     include:
       - gallery-slide
+totalSlides:
+  _publish: totalSlides
 slidesNumbered:
   _label: Number the slides
   _publish: slidesNumbered
