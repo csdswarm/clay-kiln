@@ -1,5 +1,5 @@
 const fs = require('fs'),
-  layoutJSON = require('./layout.json'),
+  layoutJSON = require(`${__dirname}/layout.json`),
   host = process.argv.slice(2)[0],
   componentPath = process.argv.slice(2)[1];
 
