@@ -58,7 +58,7 @@ module.exports.save = async function (ref, data, locals) {
 module.exports.render = async function (ref, data, locals) {
   data.articles = [];
 
-  const contentTypes = contentTypeService.parseFromData(data)
+  const contentTypes = contentTypeService.parseFromData(data);
 
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
