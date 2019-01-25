@@ -19,6 +19,11 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-# List your script and any params it needs to run
-
-$mydir/7x1-ad-unit/migration.sh $1
+# Loop over all directories here and find .sh script to execute
+for dir in $mydir/*/; do
+    cd "$dir"
+    for filename in *.sh; do
+        source $filename $1 $http $es
+    done
+    cd ../../../
+done
