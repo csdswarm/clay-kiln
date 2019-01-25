@@ -1,3 +1,4 @@
+_version: 1.0
 _description: |
   A list of five latest related articles by article type, tag, or manually populated.
 contentType:
