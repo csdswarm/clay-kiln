@@ -8,11 +8,8 @@ const _uniq = require('lodash/uniq');
 function getStationTags(station) {
   let tags = [];
 
-  tags
-    .push(station.category)
-    .concat(station.genre_name)
-    .concat(station.market_name);
-
+  tags.push(station.category);
+  tags = tags.concat(station.genre_name).concat(station.market_name);
   tags = _uniq(tags);
 
   return tags;
@@ -74,13 +71,13 @@ module.exports.save = (uri, data, locals) => {
     "name": "New York, NY"
     },
     "genre": [
-    {
-    "id": 11,
-    "name": "Sports"
-    }
+      {
+        "id": 11,
+        "name": "Sports"
+      }
     ],
     "genre_name": [
-    "Sports"
+      "Sports"
     ],
     "mood": [],
     "mood_name": [],
@@ -99,6 +96,7 @@ module.exports.save = (uri, data, locals) => {
     "child_stations": [],
     "parent_stations": []
   }
+  data.tags = getStationTags(data.station);
 
   return data;
   };

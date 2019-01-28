@@ -16,13 +16,13 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "\nCreating Station Detail Page...\n\n\n"
+printf "\n\nCreating Station Detail Page...\n\n\n"
 
-printf "Publishing new layout...\n"
-curl -X PUT "$http://$1/_components/two-column-layout/instances/station@published" -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+printf "\n\nCreating page...\n\n"
+cd ./migrations/legacy/20190128124800-station-detail && cat ./_pages.yml | clay import -k demo -y $1
 
-printf "Creating page...\n"
-cd ./migrations/legacy/station-detail && cat ./_pages.yml | clay import -k demo -y $1
+printf "\n\nPublishing new page...\n\n"
+curl -X PUT "$http://$1/_pages/station@published" -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 
 printf "\n\nCreating station component instance...\n\n"
 curl -X PUT "$http://$1/_components/station-detail/instances/new" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'

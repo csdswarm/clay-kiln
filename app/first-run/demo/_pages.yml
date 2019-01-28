@@ -101,7 +101,6 @@ _pages:
     main:
       - /_components/author-page/instances/new
     layout: /_components/one-column-layout/instances/general
-  # Station Detail Page
   station:
     _dynamic: true
     head:
