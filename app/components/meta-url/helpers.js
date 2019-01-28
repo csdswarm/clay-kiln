@@ -5,7 +5,7 @@
  */
 function fixHttpUrl(data) {
   if (data.url) {
-    data.url.replace('http://', 'https://')
+    data.url = data.url.replace('http://', 'https://')
   }
 }
 

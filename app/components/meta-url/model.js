@@ -1,7 +1,8 @@
 'use strict';
 const helpers = require('./helpers')
 
-module.exports.save = (ref, data, locals) => {
+module.exports.render = (ref, data, locals) => {
+  helpers.fixSyndicatedUrl(data)
   helpers.fixHttpUrl(data)
   return data;
 };
