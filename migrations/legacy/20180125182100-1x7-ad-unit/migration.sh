@@ -21,7 +21,7 @@ curl -X PUT "$http://$1/_components/google-ad-manager/instances/mobileInterstiti
 {
     "adSize": "mobile-interstitial",
     "adPosition": "bottom",
-    "adLocation": "btf"
+    "adLocation": "atf"
 }
 ';
 
