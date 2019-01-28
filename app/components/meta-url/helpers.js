@@ -1,3 +1,4 @@
+'use strict';
 /**
  * ON-367 helper function for fixing http urls -
  * they need to be https
@@ -5,7 +6,7 @@
  */
 function fixHttpUrl(data) {
   if (data.url) {
-    data.url = data.url.replace('http://', 'https://')
+    data.url = data.url.replace('http://', 'https://');
   }
 }
 
