@@ -34,6 +34,16 @@ items:
           validate:
             required: true
 
+filterTags:
+  _label: Exclude Tags
+  _has:
+    input: simple-list
+    autocomplete:
+      list: filterTag
+      allowRemove: true
+      allowCreate: true
+    help: Exclude content from all tags
+
 sectionFront:
   _label: Section Front
   _subscribe: sectionFront
@@ -52,6 +62,7 @@ _groups:
     - primaryStoryLabel
     - items
     - sectionFront
+    - filterTags
     _placeholder:
       ifEmpty: sectionFront
       height: 400px

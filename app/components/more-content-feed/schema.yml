@@ -115,6 +115,16 @@ tagInfo:
     input: text
     help: Tag Description / More Info (Will be shown in right rail)
 
+filterTags:
+  _label: Exclude Tags
+  _has:
+    input: simple-list
+    autocomplete:
+      list: filterTag
+      allowRemove: true
+      allowCreate: true
+    help: Exclude content from all tags
+
 items:
   _label: Items
   _has:
@@ -227,3 +237,4 @@ _groups:
       - tagManual
       - tagInfo
       - items
+      - filterTags
