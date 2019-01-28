@@ -62,8 +62,6 @@ _doc:
           analyzer: tag_analyzer
     articleType:
       type: keyword
-    secondaryArticleType:
-      type: keyword
     teaser:
       type: text
     site:

@@ -76,7 +76,9 @@ function addIndex () {
           }
         }";
 
-    printf "\n\nRemoving old alias and adding new...\n\n"
+    sleep 5;
+
+    printf "\n\nRemoving old alias and adding new ($alias)...\n\n"
     curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
         {
             \"actions\" : [
