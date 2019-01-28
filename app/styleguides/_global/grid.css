@@ -9,6 +9,7 @@
   .layout__bottom {
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 }
 

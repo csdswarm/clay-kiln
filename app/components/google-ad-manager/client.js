@@ -104,8 +104,8 @@ googletag.cmd.push(() => {
 
   // Handle collapsing empty div manually as DFP collapseEmptyDiv doesn't work when lazy loading
   googletag.pubads().addEventListener('slotRenderEnded', event => {
-    let id = event.slot.getSlotElementId(),
-      adSlot = document.getElementById(id);
+    const id = event.slot.getSlotElementId(),
+      adSlot = document.getElementById(id).parentElement;
 
     const isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
 
@@ -113,13 +113,33 @@ googletag.cmd.push(() => {
       updateSkinStyles(!(event.isEmpty));
     }
     if (event.isEmpty) {
-      adSlot.parentElement.style.display = 'none';
+      adSlot.style.display = 'none';
     } else {
       // Unhide parent incase this was a refresh after an empty response
-      adSlot.parentElement.style.display = 'flex';
+      adSlot.style.display = 'flex';
+
+      if (adSlot.classList.contains('google-ad-manager--mobile-adhesion')) {
+        addCloseEvent(adSlot);
+      }
     }
   });
 });
+
+
+/**
+ * adds a listener to the x div to enable it to close the current ad
+ *
+ * @param {object} ad - a mobile adhesion ad object
+ */
+function addCloseEvent(ad) {
+  ad.querySelector('.mobile-adhesion__close').addEventListener('click', (event) => {
+    event.target.parentElement.style.display = 'none';
+  }, true);
+}
+
+// add a close event to the X
+document.querySelectorAll('.google-ad-manager--mobile-adhesion').forEach(ad => addCloseEvent(ad));
+
 
 /**
  * Update the billboard ad on the page to have a transparent or opaque white background
