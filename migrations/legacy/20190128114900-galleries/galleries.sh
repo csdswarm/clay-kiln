@@ -51,7 +51,11 @@ curl -X PUT "$http://$1/_components/gallery/instances/new" -H 'Authorization: to
   "secondaryBylineText": "Photograph By",
   "secondaryAttribution": [],
   "dateUpdated": false,
-  "content": [],
+  "content": [
+    {
+      "_ref": "'$1'/_components/paragraph/instances/new"
+    }
+  ],
   "slides": [
     {
       "_ref": "'$1'/_components/gallery-slide/instances/new"

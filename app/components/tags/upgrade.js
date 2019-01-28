@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports['1.0'] = function (uri, data, locals) {
+module.exports['1.0'] = function (uri, data) {
   // Replace articleType with sectionFront
   data.sectionFront = data.articleType;
   delete data.articleType;

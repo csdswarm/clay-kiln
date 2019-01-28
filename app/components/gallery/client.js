@@ -10,7 +10,7 @@ function Constructor() {
     window.addEventListener('scroll', this.hideTertiaryStickyAd );
   }
 
-  document.addEventListener('gallery-dismount', function(event) {
+  document.addEventListener('gallery-dismount', function () {
     // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
     window.removeEventListener('scroll', this.hideTertiaryStickyAd );
   }.bind(this));
@@ -38,7 +38,7 @@ Constructor.prototype = {
     const firstStickyAd = document.querySelector('.content__sidebar .sticky'),
       firstInlineAd = document.querySelector('.slides__ad-container');
 
-    if (window.scrollY > firstInlineAd.offsetTop) {
+    if (firstStickyAd.offsetTop + firstStickyAd.offsetHeight > firstInlineAd.offsetTop) {
       if (firstStickyAd.style.visibility !== 'hidden') {
         firstStickyAd.style.visibility = 'hidden';
       }
