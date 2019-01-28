@@ -1,21 +1,13 @@
 'use strict';
-
-/**
- * set component canonical url and date if they're passed in through the locals
- * @param {object} data
- * @param {object} [locals]
- */
-function setFromLocals(data, locals) {
-  if (locals && locals.publishUrl) {
-    data.url = locals.publishUrl;
-  }
-
-  if (locals && locals.date) {
-    data.date = locals.date;
-  }
-}
+const helpers = require('./helpers')
 
 module.exports.save = (ref, data, locals) => {
-  setFromLocals(data, locals);
+  helpers.fixHttpUrl(data)
+  return data;
+};
+
+module.exports.save = (ref, data, locals) => {
+  helpers.setFromLocals(data, locals);
+  helpers.fixHttpUrl(data)
   return data;
 };
