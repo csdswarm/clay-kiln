@@ -19,7 +19,7 @@ fi
 printf "\nCreating Galleries...\n\n\n"
 
 printf "Creating page...\n"
-cd ./migrations/legacy/galleries && cat ./_pages.yml | clay import -k demo -y $1
+cd ./migrations/legacy/20190128114900-galleries && cat ./_pages.yml | clay import -k demo -y $1
 
 printf "\n\nCreating gallery slide component instance...\n\n"
 curl -X PUT "$http://$1/_components/gallery-slide/instances/new" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
