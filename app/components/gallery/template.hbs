@@ -7,7 +7,7 @@
       {{ set 'hypenatedSecondaryGalleryType' (replace (replace (urlencode (replace (trim (lowercase secondaryGalleryType)) ' ' '-')) "/" "%2F") "&" "%26") }}
       <span class="breadcrumb__separator">/</span>
       <a class="breadcrumb__link"
-         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryGalleryType }}/">{{ secondaryGalleryType }}</a>
+         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryGalleryType }}">{{ secondaryGalleryType }}</a>
     {{/if}}
   </nav>
   <header class="gallery__header">
