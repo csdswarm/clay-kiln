@@ -7,7 +7,7 @@ if [ "$1" != "" ]; then
     es="http://dev-es.radio-dev.com" && http="https";
   elif [ "$1" == "stg-clay.radio.com" ]; then
     es="http://es.radio-stg.com" && http="https";
-  elif [ "$1" == "radio.com" ]; then
+  elif [ "$1" == "www.radio.com" ]; then
     es="http://es.radio-prd.com" && http="https";
   fi
   printf "Updating environment $http://$1\n"
@@ -18,16 +18,13 @@ fi
 
 printf "\n\nCreating Station Detail Page...\n\n\n"
 
-printf "\n\nCreating page...\n\n"
-cd ./migrations/legacy/20190128124800-station-detail && cat ./_pages.yml | clay import -k demo -y $1
-
-printf "\n\nPublishing new page...\n\n"
-curl -X PUT "$http://$1/_pages/station@published" -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
-
 printf "\n\nCreating station component instance...\n\n"
 curl -X PUT "$http://$1/_components/station-detail/instances/new" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
   "allowed": true
 }';
+
+printf "\n\nCreating page...\n\n"
+cat ./_pages.yml | clay import -k demo -y $1
 
 printf "\n\n\n\n"

@@ -16,30 +16,65 @@
           <p class="text__station-slogan">{{station.slogan}}</p>
         </div>
         <div class="info__links">
-          <div class="links__follow">
-            <span>follow</span>
-            <div class="follow__container">
-              {{#if station.website }}
-                <a target="_blank" href="{{station.website}}" class="follow-link follow-link--website" title="Follow on {{station.name}}'s Website" aria-label="Website"></a>
-              {{/if}}
-              {{#if station.facebook }}
-                <a target="_blank" href="{{station.facebook}}" class="follow-link follow-link--facebook" title="Follow on Facebook" aria-label="Follow on Facebook"></a>
-              {{/if}}
-              {{#if station.twitter }}
-                <a target="_blank" href="https://twitter.com/{{station.twitter}}" class="follow-link follow-link--twitter" title="Follow on Twitter" aria-label="Follow on Twitter"></a>
-              {{/if}}
-              <button class="follow-link follow-link--more-btn" title="More Socials" aria-label="More Socials"></button>
+          <div class="links__lede--mobile">
+            <div class="lede__image">
+              <img src="{{station.square_logo_large}}" alt="{{station.name}}">
+              <div class="image__play-btn">
+                {{{ read 'components/station-detail/media/play.svg' }}}
+              </div>
             </div>
           </div>
-          <div class="links__email">
-            <span>email</span>
-            <a href="mailto:?subject={{station.name}}" title="Email" aria-label="Email"></a>
+          <div class="links__section">
+            <div class="section__follow">
+              <span>follow</span>
+              <div class="follow__container">
+                {{#if station.website }}
+                  <a target="_blank" href="{{station.website}}" class="follow-link follow-link--website" title="Follow on {{station.name}}'s Website" aria-label="Website"></a>
+                {{/if}}
+                {{#if station.facebook }}
+                  <a target="_blank" href="{{station.facebook}}" class="follow-link follow-link--facebook" title="Follow on Facebook" aria-label="Follow on Facebook"></a>
+                {{/if}}
+                {{#if station.twitter }}
+                  <a target="_blank" href="https://twitter.com/{{station.twitter}}" class="follow-link follow-link--twitter" title="Follow on Twitter" aria-label="Follow on Twitter"></a>
+                {{/if}}
+                <button class="follow-link follow-link--more-btn" title="More Socials" aria-label="More Socials"></button>
+              </div>
+            </div>
+            <div class="section__email">
+              <span>email</span>
+              <a href="mailto:?subject={{station.name}}" title="Email" aria-label="Email"></a>
+            </div>
+            {{~#if tags.length ~}}
+              <div class="section__tags--mobile head__tags">
+                <span>tags: </span>
+                <ul>
+                  {{~#each tags as |tag| ~}}
+                      {{ set 'encodedTag' (replace (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "/" "%2F") "&" "%26") }}
+                      <li data-tag="{{ replace (trim (lowercase tag.text)) ' ' '-' }}">
+                        <a aria-label="More stations tagged" href="//{{ @root.locals.site.host }}/stations/{{ encodedTag }}/">{{ tag }}</a>
+                      </li>
+                  {{~/each~}}
+                </ul>
+              </div>
+            {{~/if~}}
           </div>
         </div>
       </div>
     </div>
     {{!-- deduped category, genre (which could be multiple), and market.city --}}
-    <span class="head__tags">tags: {{tags}}</span>
+    {{~#if tags.length ~}}
+      <div class="head__tags">
+        <span>tags: </span>
+        <ul>
+          {{~#each tags as |tag| ~}}
+              {{ set 'encodedTag' (replace (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "/" "%2F") "&" "%26") }}
+              <li data-tag="{{ replace (trim (lowercase tag.text)) ' ' '-' }}">
+                <a aria-label="More stations tagged" href="//{{ @root.locals.site.host }}/stations/{{ encodedTag }}/">{{ tag }}</a>
+              </li>
+          {{~/each~}}
+        </ul>
+      </div>
+    {{~/if~}}
   </div>
   <div class="station-detail__body">
     <div class="tabs">

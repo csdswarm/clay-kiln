@@ -4,24 +4,15 @@
 @import "_global/colors";
 
 .component--station-detail {
-  * {
-    outline: 1px dotted red;
-    * {
-      outline: 1px dotted blue;
-      * {
-        outline: 1px dotted pink;
-        * {
-          outline: 1px dotted green;
-        }
-      }
-    }
-  }
   margin-top: em(30);
   .station-detail__head {
     width: 100%;
     display: flex;
     flex-direction: column;
     margin-bottom: em(30);
+    @mixin medium-screen {
+      margin-bottom: em(20);
+    }
     .head__lede {
       display: flex;
       flex-direction: row;
@@ -30,17 +21,17 @@
         height: em(widthOnGrid(3, 2));
       }
       @mixin medium-screen {
-        height: em(widthOnGrid(2, 1, medium-screen));
+        height: auto;
       }
       .lede__image {
         position: relative;
-        outline: 1px solid $alto;
+        outline: em(1) solid $alto;
         width: em(widthOnGrid(4, 3));
         @mixin large-screen {
           width: em(widthOnGrid(3, 2));
         }
         @mixin medium-screen {
-          width: em(widthOnGrid(2, 1, medium-screen));
+          display: none;
         }
         height: 100%;
         img {
@@ -54,6 +45,10 @@
           margin: 0 em(10) em(10) 0;
           width: em(48);
           height: em(48);
+          svg {
+            width: 100%;
+            height: 100%;
+          }
         }
       }
       .lede__info {
@@ -66,7 +61,8 @@
           width: calc(100% - em(widthOnGrid(3, 2)));
         }
         @mixin medium-screen {
-          width: calc(100% - em(widthOnGrid(2, 1, medium-screen)));
+          padding-left: 0;
+          width: 100%;
         }
         .info__text {
           .text__station-title {
@@ -75,118 +71,182 @@
             @mixin large-screen {
               margin-bottom: em(15);
             }
-            @mixin medium-small-screen {
-              margin-bottom: em(20);
-            }
             .station-title__name {
               overflow: hidden;
               @mixin station-detail-font1;
               max-height: em(84, 35);
 
-              @mixin medium-small-screen {
+              @mixin medium-screen {
                 @mixin station-detail-font2;
                 max-height: em(84, 24);
               }
             }
           }
           .text__station-slogan {
-            @mixin medium-small-screen {
-              margin-bottom: em(20);
-            }
             @mixin station-detail-font3;
+            @mixin medium-screen {
+              margin-bottom: em(20, 18);
+            }
           }
         }
         .info__links {
           height: calc(em(widthOnGrid(2, 0)) / 4 + em(10) + em(13));
           display: flex;
           flex-direction: row;
-          .links__follow {
-            span {
-              @mixin station-detail-font10;
-              text-transform: capitalize;
-              margin-bottom: em(10, 11);
+          @mixin medium-screen {
+            height: em(widthOnGrid(2, 1, medium-screen));
+          }
+          @mixin medium-small-screen {
+            height: em(widthOnGrid(2, 1, medium-small-screen));
+          }
+          .links__lede--mobile .lede__image {
+            display: none;
+            @mixin medium-screen {
               display: block;
+              width: em(widthOnGrid(2, 1, medium-screen));
             }
-            display: inline-block;
-            .follow__container {
-              width: em(widthOnGrid(2, 0));
-              height: calc(em(widthOnGrid(2, 0)) / 4);
-              margin-right: em(widthOnGrid(0, 2));
-              display: flex;
-              flex-direction: row;
-              outline: em(1) solid $alto;
-              .follow-link {
-                height: 100%;
-                width: calc(100% / 4);
-                border-right: em(1) solid $alto;
-                background: center/em(20) em(20) no-repeat;
-                &--facebook {
-                  background-image: url("/media/components/station-detail/facebook.svg");
-                  background-size: auto em(15);
-                  &:hover,
-                  &:active {
-                    background-color: $chambray;
-                    border-color: $chambray;
-                    background-image: url("/media/components/station-detail/facebook--hover.svg");
-                  }
+            @mixin medium-small-screen {
+              width: em(widthOnGrid(2, 1, medium-small-screen));
+            }
+          }
+          .links__section {
+            display: flex;
+            flex-direction: row;
+            @mixin medium-screen {
+              flex-direction: column;
+              margin-left: em(widthOnGrid(0, 1));
+              width: 100%;
+            }
+            .section__follow {
+              span {
+                @mixin station-detail-font10;
+                text-transform: capitalize;
+                margin-bottom: em(10, 11);
+                display: block;
+              }
+              display: inline-block;
+              .follow__container {
+                width: em(widthOnGrid(2, 0));
+                height: calc(em(widthOnGrid(2, 0)) / 4);
+                margin-right: em(widthOnGrid(0, 2));
+                display: flex;
+                flex-direction: row;
+                outline: em(1) solid $alto;
+                @mixin medium-screen {
+                  margin-right: 0;
+                  width: em(widthOnGrid(1, 1, medium-screen));
+                  height: calc(em(widthOnGrid(1, 1, medium-screen)) / 4);
                 }
-                &--twitter {
-                  background-image: url("/media/components/station-detail/twitter.svg");
-                  background-size: auto em(12); /* Firefox scaling/bounding fix */
-                  &:hover,
-                  &:active {
-                    background-color: $cerulean;
-                    border-color: $cerulean;
-                    background-image: url("/media/components/station-detail/twitter--hover.svg");
-                  }
+                @mixin medium-small-screen {
+                  width: em(widthOnGrid(1, 1, medium-small-screen));
+                  height: calc(em(widthOnGrid(1, 1, medium-small-screen)) / 4);
                 }
-                &--website {
-                  background-image: url("/media/components/station-detail/home.svg");
-                  background-size: auto em(14);
-                  &:hover,
-                  &:active {
-                    background-color: $dustyGray;
-                    border-color: $dustyGray;
-                    background-image: url("/media/components/station-detail/home--hover.svg");
-                  }
+                @mixin small-screen {
+                  width: em(widthOnGrid(2, 0, small-screen));
+                  height: calc(em(widthOnGrid(2, 0, small-screen)) / 4);
                 }
-                &--more-btn {
-                  border: none;
-                  cursor: pointer;
-                  background-image: url("/media/components/station-detail/ellipsis.svg");
-                  background-size: auto em(4);
-                  &:hover,
-                  &:active {
-                    background-color: $dustyGray;
-                    border-color: $dustyGray;
-                    background-image: url("/media/components/station-detail/ellipsis--hover.svg");
+                .follow-link {
+                  height: 100%;
+                  width: calc(100% / 4);
+                  border-right: em(1) solid $alto;
+                  background: center/em(20) em(20) no-repeat;
+                  &--facebook {
+                    background-image: url("/media/components/station-detail/facebook.svg");
+                    background-size: auto em(15);
+                    &:hover,
+                    &:active {
+                      background-color: $chambray;
+                      border-color: $chambray;
+                      background-image: url("/media/components/station-detail/facebook--hover.svg");
+                    }
+                  }
+                  &--twitter {
+                    background-image: url("/media/components/station-detail/twitter.svg");
+                    background-size: auto em(12); /* Firefox scaling/bounding fix */
+                    &:hover,
+                    &:active {
+                      background-color: $cerulean;
+                      border-color: $cerulean;
+                      background-image: url("/media/components/station-detail/twitter--hover.svg");
+                    }
+                  }
+                  &--website {
+                    background-image: url("/media/components/station-detail/home.svg");
+                    background-size: auto em(14);
+                    &:hover,
+                    &:active {
+                      background-color: $dustyGray;
+                      border-color: $dustyGray;
+                      background-image: url("/media/components/station-detail/home--hover.svg");
+                    }
+                  }
+                  &--more-btn {
+                    border: none;
+                    cursor: pointer;
+                    background-image: url("/media/components/station-detail/ellipsis.svg");
+                    background-size: auto em(4);
+                    &:hover,
+                    &:active {
+                      background-color: $dustyGray;
+                      border-color: $dustyGray;
+                      background-image: url("/media/components/station-detail/ellipsis--hover.svg");
+                    }
                   }
                 }
               }
             }
-          }
-          .links__email {
-            height: calc(em(widthOnGrid(2, 0)) / 4 + em(10) + em(13));
-            display: block;
-            span {
-              @mixin station-detail-font10;
-              text-transform: capitalize;
-              margin-bottom: em(10, 11);
+            .section__email {
+              height: calc(em(widthOnGrid(2, 0)) / 4 + em(10) + em(13));
               display: block;
+              @mixin medium-screen {
+                margin-top: em(10);
+                height: calc(em(widthOnGrid(1, 1, medium-screen)) / 4 + em(10) + em(13));
+              }
+              @mixin medium-small-screen {
+                height: calc(em(widthOnGrid(1, 1, medium-small-screen)) / 4 + em(10) + em(13));
+              }
+              @mixin small-screen {
+                height: calc(em(widthOnGrid(2, 0, small-screen)) / 4 + em(10) + em(13));
+              }
+              span {
+                @mixin station-detail-font10;
+                text-transform: capitalize;
+                margin-bottom: em(10, 11);
+                display: block;
+              }
+              a {
+                width: calc(em(widthOnGrid(1, 0)) / 2);
+                height: calc(em(widthOnGrid(1, 0)) / 2);
+                outline: em(1) solid $alto;
+                display: block;
+                background: center/em(20) em(20) no-repeat;
+                background-image: url("/media/components/station-detail/email.svg");
+                background-size: auto em(11);
+                &:hover,
+                &:active {
+                  background-color: $parisM;
+                  border-color: $parisM;
+                  background-image: url("/media/components/station-detail/email--hover.svg");
+                }
+                @mixin medium-screen {
+                  width: calc(em(widthOnGrid(1, 1, medium-screen)) / 4);
+                  height: calc(em(widthOnGrid(1, 1, medium-screen)) / 4);
+                }
+                @mixin medium-small-screen {
+                  width: calc(em(widthOnGrid(1, 1, medium-small-screen)) / 4);
+                  height: calc(em(widthOnGrid(1, 1, medium-small-screen)) / 4);
+                }
+                @mixin small-screen {
+                  width: calc(em(widthOnGrid(2, 0, small-screen)) / 4);
+                  height: calc(em(widthOnGrid(2, 0, small-screen)) / 4);
+                }
+              }
             }
-            a {
-              width: calc(em(widthOnGrid(1, 0)) / 2);
-              height: calc(em(widthOnGrid(1, 0)) / 2);
-              outline: em(1) solid $alto;
-              display: block;
-              background: center/em(20) em(20) no-repeat;
-              background-image: url("/media/components/station-detail/email.svg");
-              background-size: auto em(11);
-              &:hover,
-              &:active {
-                background-color: $parisM;
-                border-color: $parisM;
-                background-image: url("/media/components/station-detail/email--hover.svg");
+            .section__tags--mobile {
+              display: none;
+              @mixin medium-screen {
+                display: block;
+                margin-top: em(10);
               }
             }
           }
@@ -194,9 +254,25 @@
       }
     }
     .head__tags {
-      @mixin station-detail-font10;
-      text-transform: capitalize;
       margin-top: em(10, 11);
+      @mixin medium-screen {
+        display: none;
+      }
+      span {
+        @mixin station-detail-font10;
+        text-transform: capitalize;
+      }
+      ul {
+        display: inline-block;
+        li {
+          display: inline;
+          a {
+            @mixin station-detail-font10;
+            text-transform: capitalize;
+            text-decoration: none;
+          }
+        }
+      }
     }
   }
 }
