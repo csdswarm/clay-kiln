@@ -182,6 +182,10 @@ module.exports.render = function (ref, data, locals) {
     }
   }
 
+  if (data.filterSecondaryArticleType) {
+    queryService.addMustNot(query, { match: { secondaryArticleType: data.filterSecondaryArticleType }});
+  }
+
   // exclude the current page in results
   if (locals.url && !isComponent(locals.url)) {
     cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
