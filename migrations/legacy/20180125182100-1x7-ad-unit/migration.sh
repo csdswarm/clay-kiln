@@ -7,7 +7,7 @@ if [ "$1" != "" ]; then
     es="http://dev-es.radio-dev.com" && http="https";
   elif [ "$1" == "stg-clay.radio.com" ]; then
     es="http://es.radio-stg.com" && http="https";
-  elif [ "$1" == "radio.com" ]; then
+  elif [ "$1" == "www.radio.com" ]; then
     es="http://es.radio-prd.com" && http="https";
   fi
   printf "Updating environment $http://$1\n"
