@@ -125,6 +125,36 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
+filterSecondaryArticleType:
+  _label: Exclude Secondary Article Type
+  _has:
+    input: radio
+    options:
+    - Pop
+    - Alternative
+    - Country
+    -
+      name: Hip-Hop R&B
+      value: Hip-Hop R&B
+    - Rock
+    - Icons
+    - Entertainment News
+    - Movies
+    - Television
+    - National News
+    - Politics
+    - Local Politics
+    - Small Business Pulse
+    - NFL
+    - MLB
+    - NBA
+    - NHL
+    - NCAA Football
+    - NCAA Basketball
+    -
+      name: MMA & WWE
+      value: MMA & WWE
+
 items:
   _label: Items
   _has:
@@ -238,3 +268,6 @@ _groups:
       - tagInfo
       - items
       - filterTags
+      - filterSecondaryArticleType
+    _placeholder:
+      height: 100px

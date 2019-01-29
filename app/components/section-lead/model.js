@@ -99,6 +99,10 @@ module.exports.render = function (ref, data, locals) {
     }
   }
 
+  if (data.filterSecondaryArticleType) {
+    queryService.addMustNot(query, { match: { secondaryArticleType: data.filterSecondaryArticleType }});
+  }
+
   return queryService.searchByQuery(query)
     .then(function (results) {
 
