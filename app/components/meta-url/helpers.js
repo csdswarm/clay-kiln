@@ -17,6 +17,9 @@ function fixHttpUrl(data) {
  * @param {object} data
  */
 function fixSyndicatedUrl(data) {
+  if (data.syndicatedUrl) {
+    data.syndicatedUrl = data.syndicatedUrl.replace('http://', 'https://');
+  }
   if (data.syndicatedUrl == '' ||
     data.syndicatedUrl.indexOf('.com/api/v1.0') !== -1) {
     data.syndicatedUrl = null;
