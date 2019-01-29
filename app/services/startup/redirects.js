@@ -9,7 +9,7 @@ const db = require('../server/db'),
    * @param {object} req
    * @returns {boolean}
    */
-  testURL = (url, req) => createRegExp(url).test(`${req.protocol}://${req.hostname}${req.originalUrl.replace('?json', '')}`),
+  testURL = (url, req) => createRegExp(url.replace(/https?:/, '')).test(`//${req.get('host')}${req.originalUrl.replace('?json', '')}`),
   /**
    * converts a string into a regular expression * as a wildcard
    *
