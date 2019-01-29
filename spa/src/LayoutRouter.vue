@@ -84,7 +84,7 @@ export default {
         nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
         return nextSpaPayloadResult.data
       } catch (e) {
-          if (e.response.status === 301 && e.response.data.redirect) {
+        if (e.response.status === 301 && e.response.data.redirect) {
           const redirect = e.response.data.redirect
 
           if (this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(redirect)) {

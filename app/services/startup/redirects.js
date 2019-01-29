@@ -30,7 +30,7 @@ const db = require('../server/db'),
   possibleRedirect = (req) => {
     const referrer = req.get('referrer');
 
-    return req.get('x-amphora-page-json') || !referrer || !referrer.includes(req.hostname);
+    return req.get('x-amphora-page-json') || !referrer || !referrer.includes(req.get('host'));
   };
 
 /**
@@ -43,20 +43,23 @@ const db = require('../server/db'),
 module.exports = async (req, res, next) => {
   try {
     if (possibleRedirect(req)) {
-      const data = await db.get(`${req.hostname}${redirectDataURL}`),
+      const data = await db.get(`${req.get('host')}${redirectDataURL}`),
         redirects = data.redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*')),
-        redirect = redirects ? redirects.find(item => testURL(item.url, req)).redirect : null;
+        redirectTo = redirects ? redirects.find(item => testURL(item.url, req)) : null;
 
-      if (redirects) {
+      if (redirectTo) {
         // request coming from SPA, 301 and send new URL
         if (req.originalUrl.includes('?json')) {
-          res.status(301).json({redirect});
+          res.status(301).json({ redirect: redirectTo.redirect });
         } else {
-          return res.redirect(301, redirect);
+          return res.redirect(301, redirectTo.redirect);
         }
       }
     }
   } catch (e) {
+    console.log('Error in redirects middleware:');
+    console.log(e);
   }
   return next();
 };
+
