@@ -271,3 +271,4 @@ _groups:
       - filterSecondaryArticleType
     _placeholder:
       height: 100px
+      ifEmpty: populateFrom
