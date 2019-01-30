@@ -24,15 +24,23 @@ slideEmbed:
       required: true
 title:
   _label: Slide Title
+  _placeholder:
+    height: 20px
+    text: Slide Title
+    required: true
   _has:
-    input: text
+    input: inline
     help: Slide title text
     validate:
       required: true
 description:
   _label: Slide Description
+  _placeholder:
+    height: 20px
+    text: Slide Description
   _has:
-    input: text
+    input: inline
+    type: multi-line
     help: Slide description text
 hashLinkSuffix:
   _label: Hash Link Suffix Override
@@ -56,15 +64,6 @@ sectionFront:
   _subscribe: sectionFront
 
 _groups:
-  slideText:
-    _label: Slide Details
-    _placeholder:
-      text: Edit Slide Details
-      height: 150px
-      ifEmpty: title
-    fields:
-      - title
-      - description
   settings:
       fields:
         - hashLinkSuffix
