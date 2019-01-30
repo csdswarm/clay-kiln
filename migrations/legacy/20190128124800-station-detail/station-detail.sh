@@ -18,13 +18,13 @@ fi
 
 printf "\n\nCreating Station Detail Page...\n\n\n"
 
+printf "\n\nCreating page...\n\n"
+cat ./_pages.yml | clay import -k demo -y $1
+
 printf "\n\nCreating station component instance...\n\n"
 curl -X PUT "$http://$1/_components/station-detail/instances/new" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
   "allowed": true
 }';
-
-printf "\n\nCreating page...\n\n"
-cat ./_pages.yml | clay import -k demo -y $1
 
 printf "\n\n\n\n"
