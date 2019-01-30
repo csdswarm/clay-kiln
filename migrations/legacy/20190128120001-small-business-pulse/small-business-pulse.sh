@@ -94,7 +94,7 @@ else
           }
         }";
 
-    sleep 5;
+    sleep 1;
 
     printf "\n\nRemoving old alias and adding new ($alias)...\n\n"
     curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
@@ -107,3 +107,4 @@ else
 
     printf "\n\nDeleting old index\n\n";
     curl -X DELETE "$es:9200/$index";
+fi
