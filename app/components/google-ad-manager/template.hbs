@@ -18,10 +18,10 @@
         ></div>
       </div>
     {{else}}
-      <div
-        class="google-ad-manager__slot google-ad-manager__slot--{{adSize}}"
-      >
-      </div>
+      <div class="google-ad-manager__slot google-ad-manager__slot--{{adSize}}"></div>
+      {{#if (compare adSize "mobile-adhesion")}}
+        <div class="mobile-adhesion__close">&#215</div>
+      {{/if}}
     {{/if}}
   {{/unless}}
 </div>
