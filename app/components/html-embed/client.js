@@ -24,7 +24,7 @@ document.addEventListener('html-embed-mount', () => {
       id = `html-embed-${count++}`;
 
     newScript.setAttribute('data-html-id', id);
-    document.write = (html) => { document.querySelector(`script[data-html-id="${id}"]`).insertAdjacentHTML('beforeend', html); };
+    document.write = (html) => { document.querySelector(`script[data-html-id="${id}"]`).insertAdjacentHTML('afterend', html); };
 
     script.replaceWith(newScript);
   });
