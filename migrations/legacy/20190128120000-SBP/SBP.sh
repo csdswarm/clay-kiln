@@ -21,7 +21,4 @@ printf "\nUpdating Section Fronts for Small Business Pulse...\n\n\n"
 printf "Updating page...\n"
 cat ./_pages.yml | clay import -k demo -y $1
 
-printf "\n\nUpdating component instance...\n\n"
-curl -X PUT $http://$1/_components/section-lead/instances/new -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
-
 printf "\n\n\n\n"
