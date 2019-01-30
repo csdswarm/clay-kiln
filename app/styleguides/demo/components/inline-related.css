@@ -11,6 +11,10 @@
   flex-wrap: wrap;
   align-items: center;
 
+  &.component--missing-items {
+    display: none;
+  }
+
   h2 {
     @mixin inline-related-font1;
     text-transform: uppercase;
