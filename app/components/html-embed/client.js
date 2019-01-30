@@ -20,7 +20,7 @@ document.addEventListener('html-embed-mount', () => {
   let count = 0;
 
   document.querySelectorAll('.component--html-embed script').forEach((script) => {
-    const newScript =   duplicateScript(script),
+    const newScript = duplicateScript(script),
       id = `html-embed-${count++}`;
 
     newScript.setAttribute('data-html-id', id);
