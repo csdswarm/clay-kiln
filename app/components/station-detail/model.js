@@ -17,9 +17,12 @@ function getStationTags(station) {
   return tags;
 }
 
-module.exports.save = (uri, data, locals) => {
+module.exports.render = (uri, data, locals) => {
+  if (!locals.params) {
+    return data;
+  }
+
   const route = `stations/${locals.params.dynamicStation}`;
-  // const route = `stations/417`;
 
   return radioApiService.get(route).then(response => {
     if (response.data) {
