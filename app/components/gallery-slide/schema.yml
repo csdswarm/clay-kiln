@@ -42,11 +42,11 @@ description:
     input: inline
     type: multi-line
     help: Slide description text
-hashLinkSuffix:
-  _label: Hash Link Suffix Override
+hashLinkPrefix:
+  _label: Hash Link Prefix Override
   _has:
     input: text
-    help: "The hashtag deep link suffix (defaults to slugified slide title). WARNING: Changing this post-publish can hurt SEO."
+    help: "The hashtag deep link prefix (defaults to slugified slide title). WARNING: Changing this post-publish can hurt SEO."
     validate:
       # Allow lowercase alphanumeric chars and also hyphens.
       # Detailed RegEx breakdown: https://regex101.com/r/1Hh9QF/1
@@ -66,4 +66,4 @@ sectionFront:
 _groups:
   settings:
       fields:
-        - hashLinkSuffix
+        - hashLinkPrefix

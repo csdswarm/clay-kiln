@@ -80,7 +80,7 @@ curl -X PUT "$http://$1/_components/gallery-slide/instances/new" -H 'Authorizati
   "slideEmbed": null,
   "title": "",
   "description": "",
-  "hashLinkSuffix": ""
+  "hashLinkPrefix": ""
 }
 ';
 
