@@ -20,7 +20,7 @@ function fixSyndicatedUrl(data) {
   if (data.syndicatedUrl) {
     data.syndicatedUrl = data.syndicatedUrl.replace('http://', 'https://');
   }
-  if (data.syndicatedUrl == '' ||
+  if (data.syndicatedUrl &&
     data.syndicatedUrl.indexOf('.com/api/v1.0') !== -1) {
     data.syndicatedUrl = null;
   }
