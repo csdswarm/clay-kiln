@@ -126,7 +126,7 @@
               }
               display: inline-block;
               .follow__container {
-                width: em(widthOnGrid(2, 0));
+                width: calc(em(widthOnGrid(2, 0)) * 3 / 4);
                 height: calc(em(widthOnGrid(2, 0)) / 4);
                 margin-right: em(widthOnGrid(0, 2));
                 display: flex;
@@ -134,22 +134,24 @@
                 outline: em(1) solid $alto;
                 @mixin medium-screen {
                   margin-right: 0;
-                  width: em(widthOnGrid(1, 1, medium-screen));
+                  width: calc(em(widthOnGrid(1, 1, medium-screen)) * 3 / 4);
                   height: calc(em(widthOnGrid(1, 1, medium-screen)) / 4);
                 }
                 @mixin medium-small-screen {
-                  width: em(widthOnGrid(1, 1, medium-small-screen));
+                  width: calc(em(widthOnGrid(1, 1, medium-small-screen)) * 3 / 4);
                   height: calc(em(widthOnGrid(1, 1, medium-small-screen)) / 4);
                 }
                 @mixin small-screen {
-                  width: em(widthOnGrid(2, 0, small-screen));
+                  width: calc(em(widthOnGrid(2, 0, small-screen)) * 3 / 4);
                   height: calc(em(widthOnGrid(2, 0, small-screen)) / 4);
                 }
                 .follow-link {
                   height: 100%;
-                  width: calc(100% / 4);
-                  border-right: em(1) solid $alto;
+                  width: calc(100% * 3 / 4);
                   background: center/em(20) em(20) no-repeat;
+                  &:not(:last-of-type) {
+                    border-right: em(1) solid $alto;
+                  }
                   &--facebook {
                     background-image: url("/media/components/station-detail/facebook.svg");
                     background-size: auto em(15);
@@ -178,18 +180,6 @@
                       background-color: $dustyGray;
                       border-color: $dustyGray;
                       background-image: url("/media/components/station-detail/home--hover.svg");
-                    }
-                  }
-                  &--more-btn {
-                    border: none;
-                    cursor: pointer;
-                    background-image: url("/media/components/station-detail/ellipsis.svg");
-                    background-size: auto em(4);
-                    &:hover,
-                    &:active {
-                      background-color: $dustyGray;
-                      border-color: $dustyGray;
-                      background-image: url("/media/components/station-detail/ellipsis--hover.svg");
                     }
                   }
                 }
