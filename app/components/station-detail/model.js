@@ -18,7 +18,7 @@ function getStationTags(station) {
 }
 
 module.exports.save = (uri, data, locals) => {
-  const route = `stations/{locals.params.dynamicStation}`;
+  const route = `stations/${locals.params.dynamicStation}`;
   // const route = `stations/417`;
 
   return radioApiService.get(route).then(response => {
