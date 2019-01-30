@@ -4,10 +4,10 @@
   </div>
   <div class="slideText gallery-slide__text">
     {{#ifAny title @root.locals.edit}}
-      <p data-editable="title" class="gallery-slide__titlewrapper">
+      <h2 data-editable="title" class="gallery-slide__titlewrapper">
         {{#if slidesNumbered}}<span class="gallery-slide__number">{{ reversibleOneBasedIndex @index reverseOrder totalSlides }}</span>{{/if}}
         <span class="gallery-slide__title">{{ title }}</span>
-      </p>
+      </h2>
     {{/ifAny}}
     {{#ifAny description @root.locals.edit}}<p data-editable="description" class="gallery-slide__description">{{striptags description}}</p>{{/ifAny}}
   </div>
