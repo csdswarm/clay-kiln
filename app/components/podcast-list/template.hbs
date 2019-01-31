@@ -1,7 +1,7 @@
 <section class="component component--podcast-list" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
   {{#each items as |item|}}
     <div class="podcast-list__item">
-      <a class="podcast-list__link" href="{{ item.podcast.url }}">
+      <a class="podcast-list__link outbound-link" href="{{ item.podcast.url }}">
         {{#if @first}}<div class="podcast-list__tag">Podcasts</div>{{/if}}
         <img
           src="{{ item.podcast.imageUrl }}?width=220&crop=1:1,offset-y0"
