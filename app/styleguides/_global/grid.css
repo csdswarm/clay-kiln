@@ -13,7 +13,10 @@
   }
 }
 
-.has-fullpage-ad .layout .layout__page-header,
+.has-fullpage-ad .layout .layout__page-header {
+  margin: 0 auto;
+}
+
 .layout__content {
   padding: em(30) em(30) 0 em(30);
   margin: 0 auto;
