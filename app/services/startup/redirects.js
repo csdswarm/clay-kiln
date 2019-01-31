@@ -9,7 +9,7 @@ const db = require('../server/db'),
    * @param {object} req
    * @returns {boolean}
    */
-  testURL = (url, req) => createRegExp(url.replace(/https?:/, '')).test(`//${req.get('host')}${req.originalUrl.replace('?json', '')}`),
+  testURL = (url, req) => createRegExp(url.replace(/^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,})/, '')).test(`${req.originalUrl.replace('?json', '')}`),
   /**
    * converts a string into a regular expression * as a wildcard
    *
@@ -44,8 +44,8 @@ module.exports = async (req, res, next) => {
   try {
     if (possibleRedirect(req)) {
       const data = await db.get(`${req.get('host')}${redirectDataURL}`),
-        redirects = data.redirects.sort((first, second) => first.url.indexOf('*') - second.url.indexOf('*')),
-        redirectTo = redirects ? redirects.find(item => testURL(item.url, req)) : null;
+        redirects = data.redirects.sort((first, second) => first.path.indexOf('*') - second.path.indexOf('*')),
+        redirectTo = redirects ? redirects.find(item => testURL(item.path, req)) : null;
 
       if (redirectTo) {
         // request coming from SPA, 301 and send new URL

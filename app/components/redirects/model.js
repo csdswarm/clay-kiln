@@ -8,7 +8,7 @@
  * @returns {boolean}
  */
 const validPath = (urlString, blockedPaths) => {
-  const path = `/${urlString.split('/').splice(3).join('/')}`;
+  const path = (/^http/).test(urlString) ? `/${urlString.split('/').splice(3).join('/')}` : urlString;
 
   return !blockedPaths.some(route => (new RegExp(`^${route}$`, 'i')).test(path));
 };
@@ -29,7 +29,7 @@ module.exports.save = (ref, data, locals) => {
     blockedPaths = Array.from(new Set(cleanRoutes));
 
   // do not allow any redirects that are direct preset routes
-  data.redirects = data.redirects.filter(redirect => validPath(redirect.url, blockedPaths));
+  data.redirects = data.redirects.filter(redirect => validPath(redirect.path, blockedPaths));
 
   return Promise.resolve(data);
 };

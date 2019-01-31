@@ -11,22 +11,25 @@ redirects:
     filter: true
     props:
     -
-      prop: url
-      _label: URL pattern
+      prop: path
+      _label: Incomming path
       _has:
         input: text
-        type: url
-        help: Use * as a wildcard match
+        help: e.g. /incomming-redirect (Use * as a wildcard match)
         validate:
           required: true
+          pattern: ^\/\b([-a-zA-Z0-9@:%_\+.~#?&//=\*]*)$
+          patternMessage: e.g. /incomming-redirect (Use * as a wildcard match)
     -
       prop: redirect
-      _label: Redirect
+      _label: Redirects to
       _has:
         input: text
-        type: url
+        help: e.g. /redirect-destination or http://www.domain.com/redirect-destination
         validate:
           required: true
+          pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+          patternMessage: e.g. http://domain.com/redirect-destination or /redirect-destination
 
 _groups:
   redirects:
