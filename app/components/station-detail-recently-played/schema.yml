@@ -1,0 +1,17 @@
+_description: |
+  A tab of the station detail page which contains the list of
+  recently played songs on that station
+
+stationId:
+  _label: Station ID
+  _has:
+    input: text
+
+_groups:
+  default:
+    fields:
+      - stationId
+    _placeholder:
+      height: 50px
+      text: Station ID
+      ifEmpty: stationId
