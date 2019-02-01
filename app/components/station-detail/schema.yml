@@ -1,0 +1,21 @@
+_description: |
+  Dynamic station detail page
+
+station:
+  _label: Station Object
+  _publish: station
+
+recentlyPlayedComponent:
+  _component:
+    include:
+      - station-recently-played
+
+scheduleComponent:
+  _component:
+    include:
+      - station-schedule
+
+discoverComponent:
+  _component:
+    include:
+      - station-discover
