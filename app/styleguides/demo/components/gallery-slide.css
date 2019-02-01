@@ -1,6 +1,18 @@
 @import "_global/fonts";
 
 .component--gallery-slide {
+  &.editing {
+    transition: all 200ms linear 250ms;
+    &:hover {
+      padding: 0 0 0 em(60);
+      outline: em(1) dashed black;
+      cursor: grab;
+      .gallery-slide__text {
+        padding-bottom: em(60);
+        transition: all 200ms linear 250ms;
+      }
+    }
+  }
 
   .gallery-slide__text {
     margin: em(30) 0 em(40) 0;
