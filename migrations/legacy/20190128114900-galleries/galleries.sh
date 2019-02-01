@@ -229,7 +229,4 @@ curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d'
 }
 '
 
-printf "\n\nDeleting old index\n\n"
-curl -X DELETE "$es:9200/published-articles_v1"
-
 printf "\n\n\n\n"
