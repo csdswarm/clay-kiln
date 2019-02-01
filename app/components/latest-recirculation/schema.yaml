@@ -1,4 +1,6 @@
 _version: 2.0
+_confirmRemoval: true
+
 _description: |
   A list of five latest related articles by article type, tag, or manually populated.
 
