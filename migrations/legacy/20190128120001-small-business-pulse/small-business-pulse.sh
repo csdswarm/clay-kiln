@@ -105,6 +105,4 @@ else
             ]
         }";
 
-    printf "\n\nDeleting old index\n\n";
-    curl -X DELETE "$es:9200/$index";
 fi
