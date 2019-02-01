@@ -176,6 +176,16 @@ module.exports.render = function (ref, data, locals) {
 
   queryService.addSort(query, {date: 'desc'});
 
+  if (data.filterTags) {
+    for (const tag of data.filterTags.map((tag) => tag.text)) {
+      queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
+    }
+  }
+
+  if (data.filterSecondaryArticleType) {
+    queryService.addMustNot(query, { match: { secondaryArticleType: data.filterSecondaryArticleType }});
+  }
+
   // exclude the current page in results
   if (locals.url && !isComponent(locals.url)) {
     cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
