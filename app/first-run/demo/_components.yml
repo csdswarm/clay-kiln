@@ -228,7 +228,7 @@ _components:
   generic-list:
     instances:
       index:
-        index: published-articles
+        index: published-content
         toggleImages: true
         toggleTeaser: true
         toggleReadMore: true
@@ -236,7 +236,7 @@ _components:
         orderBy: date
         size: 50
       article:
-        index: published-articles
+        index: published-content
         toggleImages: true
         toggleTeaser: true
         toggleReadMore: true
@@ -244,7 +244,7 @@ _components:
         orderBy: date
         size: 50
       recirc:
-        index: published-articles
+        index: published-content
         toggleImages: true
         toggleTeaser: true
         toggleReadMore: true
@@ -253,7 +253,7 @@ _components:
         title: Recent Articles
         size: 50
       tertiary:
-        index: published-articles
+        index: published-content
         toggleImages: false
         toggleTeaser: false
         toggleReadMore: false
@@ -647,8 +647,9 @@ _components:
           most-popular: true
           newsfeed: true
           apple-news: true
-        articleType:
+        sectionFront:
         secondaryArticleType:
+        contentType: 'article'
         showSocial: true
 
   section-lead:

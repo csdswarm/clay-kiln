@@ -1,0 +1,105 @@
+@import "_global/fonts";
+
+.component--gallery-slide {
+
+  .gallery-slide__text {
+    margin: em(30) 0 em(40) 0;
+  }
+
+  .gallery-slide__titlewrapper {
+    margin: 0 0 em(15) 0;
+  }
+
+  .gallery-slide__number {
+    display: inline-block;
+    font-family: CircularStd-Black;
+    font-size: em(18, 16);
+    letter-spacing: em(-0.22, 18);
+    line-height: em(25, 18);
+    width: em(25, 18);
+    height: em(25, 18);
+    border-radius: 50%;
+    text-align: center;
+    margin: 0 em(15, 18) 0 0;
+  }
+
+  .gallery-slide__title {
+    display: inline-block;
+    font-family: CircularStd-Black;
+    font-size: em(20, 16);
+    color: #000000;
+    letter-spacing: em(-0.25, 20);
+    line-height: em(25, 20);
+  }
+
+  .gallery-slide__description {
+    font-family: ProximaNova-Regular;
+    font-size: em(15, 16);
+    color: #000000;
+    letter-spacing: em(-0.3, 15);
+    line-height: em(20, 15);
+  }
+
+  /* If slide embed is an Image component, override standard credit text-alignment. */
+  .component--image {
+    margin: 0;
+
+    .image-figcaption {
+      text-align: right;
+      margin: em(5, 12) 0 em(-30, 12) 0;
+    }
+  }
+
+}
+
+/* Individual Gallery Type Styles */
+.component--gallery-slide.component--gallery-slide__default {
+
+  .gallery-slide__number {
+    color: #FFFFFF;
+    background: #3c00b7;
+  }
+
+}
+
+.component--gallery-slide.component--gallery-slide__music {
+
+  .gallery-slide__number {
+    color: #FFFFFF;
+    background: #FF4940;
+  }
+
+}
+
+.component--gallery-slide.component--gallery-slide__news {
+
+  .gallery-slide__number {
+    color: #444444;
+    background: #FEC517;
+  }
+
+}
+
+.component--gallery-slide.component--gallery-slide__podcasts {
+
+  .gallery-slide__number {
+    color: #FFFFFF;
+    background: #00CCB7;
+  }
+
+}
+
+.component--gallery-slide.component--gallery-slide__sports {
+
+  .gallery-slide__number {
+    color: #FFFFFF;
+    background: #0099FF;
+  }
+
+}
+
+@media screen and (max-width:480px) {
+  .component--gallery-slide .gallery-slide__text {
+    margin: em(30) 0 em(30) 0;
+  }
+}

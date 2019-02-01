@@ -157,7 +157,7 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||| Latest Content Fonts Styleguide |||||| */
+/* ||||||||| Latest Content Fonts Styleguide ||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin latest-content-font1 $color: $purple {
   @mixin font CircularStd-Black, 20px, $color, -.32px, 25px;
@@ -214,7 +214,7 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||| Podcast-List Fonts Styleguide ||||| */
+/* |||||| Podcast-List Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin podcast-list-font1 {
   @mixin font CircularStd-Medium, 16px, $black, -.26px, 20px;
@@ -287,7 +287,7 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||| Latest Videos Fonts Styleguide ||||| */
+/* ||||| Latest Videos Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin latest-videos-font1 {
   @mixin font CircularStd-Black, 20px, $parisM, -.23px, 25px;
@@ -306,7 +306,7 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||||| Topic Page Fonts Styleguide ||||||||| */
+/* |||||||| Topic Page Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin topic-page-header-font1 {
   @mixin font CircularStd-Black, 35px, $white, -.55px, 44px;
@@ -335,4 +335,26 @@ em, i {
 }
 @define-mixin stations-carousel-font3-news {
   @mixin font CircularStd-Black, 18px, $tundora, -.32px, 25px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Gallery Fonts Styleguide ||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin gallery-font1 {
+  @mixin font CircularStd-Black, 20px, $black, -.25px, 25px;
+}
+@define-mixin gallery-font2 {
+  @mixin font ProximaNova-Regular, 15px, $black, -.3px, 20px;
+}
+@define-mixin gallery-font3 {
+  @mixin font ProximaNova-Regular, 12px, $boulder, -.3px, 30px;
+}
+@define-mixin gallery-font4 {
+  @mixin font CircularStd-Black, 14px, $white, -.55px, 18px;
+}
+@define-mixin gallery-font5 {
+  @mixin font CircularStd-Black, 18px, $white, -.22px, 25px;
+}
+@define-mixin gallery-font6 {
+  @mixin font CircularStd-Black, 18px, $tundora, -.22px, 25px;
 }

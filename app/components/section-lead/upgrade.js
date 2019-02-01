@@ -5,5 +5,9 @@ module.exports['1.0'] = function (uri, data) {
   delete data.filterBySection;
   data.tag = '';
 
+  if (!data.contentType) {
+    data.contentType = { article: true, gallery: true };
+  }
+
   return data;
 };

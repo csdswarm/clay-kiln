@@ -47,9 +47,28 @@ function getYearMonthSlugUrl(pageData, locals, mainComponentRefs) {
 function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      return pubUtils.articleSlugPattern(urlOptions);
+      if (urlOptions.contentType == 'article') {
+        return pubUtils.articleSlugPattern(urlOptions);
+      }
+    });
+}
+
+/**
+ * Return the url for a page based entirely on its slug, within the gallery subdirectory
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.contentType == 'gallery') {
+        return pubUtils.gallerySlugPattern(urlOptions);
+      }
     });
 }
 
 module.exports.getYearMonthSlugUrl = getYearMonthSlugUrl;
 module.exports.getArticleSlugUrl = getArticleSlugUrl;
+module.exports.getGallerySlugUrl = getGallerySlugUrl;

@@ -2,4 +2,5 @@ _components:
   latest-recirculation:
     items: []
     tag: ''
-    populateBy: articleType
+    populateBy: sectionFront
+    contentType: { article: true, gallery: true }
