@@ -1,9 +1,12 @@
 'use strict';
 
 function Constructor() {
-  const sidebar = document.getElementsByClassName('content__sidebar')[0];
+  const sidebar = document.getElementsByClassName('content__sidebar')[0],
+    tabs = document.querySelectorAll('.component--station-detail .tabs li'),
+    content = document.querySelectorAll('.component--station-detail .tabbed-content__container');
 
   this.repositionRightRail(sidebar);
+  this.addTabNavigationListeners(tabs, content);
 }
 
 Constructor.prototype = {
@@ -15,6 +18,35 @@ Constructor.prototype = {
   repositionRightRail: function (sidebar) {
     sidebar.style.marginTop = '30px';
     sidebar.style.visibility = 'visible';
+  },
+  /**
+   * Add navigation listeners to tabs
+   * @function
+   * @param {string} tabs
+   */
+  addTabNavigationListeners: function (tabs, content) {
+    for (let tab of tabs) {
+      tab.addEventListener('click', function (e) { this.activateTab(e, tabs, content); }.bind(this));
+    }
+  },
+  /**
+   * Navigate between tabs
+   * @function
+   * @param {object} event
+   */
+  activateTab: function (event, tabs, content) {
+    for (let tab of tabs) {
+      tab.classList.remove('active');
+    }
+    const contentLabel = event.currentTarget.classList[0].replace('tabs__','');
+    event.currentTarget.classList.add('active');
+
+    for (let c of content) {
+      c.classList.remove('active');
+      if (c.classList.contains(`container--${contentLabel}`)) {
+        c.classList.add('active');
+      }
+    }
   }
 };
 

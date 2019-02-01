@@ -1,4 +1,4 @@
-<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--station-detail{{ if @root.locals.edit ' editing' }}">
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--station-detail{{ if @root.locals.edit ' editing' }} station-detail--{{category}}">
   <div class="station-detail__head">
     <div class="head__lede">
       <div class="lede__image">
@@ -78,12 +78,28 @@
   <div class="station-detail__body">
     <ul class="tabs">
       <!-- add tab for each component here -->
-      <li>recently played</li>
-      <li>schedule</li>
-      <li><span>discover {{{ read 'components/station-detail/media/chevron_down.svg' }}}</span></li>
+      <li class="tabs__recentlyPlayed">recently played</li>
+      <li class="tabs__schedule">schedule</li>
+      <li class="tabs__discover">
+        <span>discover {{{ read 'components/station-detail/media/chevron_down.svg' }}}</span>
+        <ul>
+          <li class="discover__tab discover__tab--recentStations">recent stations</li>
+          <li class="discover__tab discover__tab--localStations">local stations</li>
+          <li class="discover__tab discover__tab--genreStations">all {{station.genre_name}}</li>
+        </ul>
+      </li>
     </ul>
-    <div class="tabbed-content-container">
+    <div class="tabbed-content">
       <!-- add components here -->
+      <div class="tabbed-content__container container--recentlyPlayed">
+        {{!-- {{> station-recently-played recentlyPlayedComponent }} --}}
+      </div>
+      <div class="tabbed-content__container container--schedule">
+        {{!-- {{> station-schedule scheduleComponent }} --}}
+      </div>
+      <div class="tabbed-content__container container--discover">
+        {{!-- {{> station-discover discoverComponent }} --}}
+      </div>
     </div>
   </div>
 </section>

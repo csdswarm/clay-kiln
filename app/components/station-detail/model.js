@@ -11,7 +11,7 @@ function getStationTags(station) {
   let tags = [];
 
   tags.push(station.category);
-  tags = tags.concat(station.genre_name).concat(station.market_name);
+  tags = tags.concat(station.genre_name, station.market_name);
   tags = _uniq(tags);
 
   return tags;
@@ -26,8 +26,9 @@ module.exports.render = (uri, data, locals) => {
 
   return radioApiService.get(route).then(response => {
     if (response.data) {
-      data.station = response.data.attributes;
+      data.station = response.data.attributes || {};
       data.tags = getStationTags(response.data.attributes);
+      data.category = response.data.attributes.category.toLowerCase() || '';
 
       return data;
     } else {
