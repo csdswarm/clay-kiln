@@ -300,15 +300,6 @@
       &:not(:last-of-type) {
         margin-right: em(40, 14);
       }
-      span {
-        display: inline-flex;
-        flex-direction: row;
-        align-items: baseline;
-        svg {
-          height: em(6, 14);
-          margin-left: em(5, 14);
-        }
-      }
       &::after {
         height: em(2, 14);
         width: em(42, 14);
@@ -334,6 +325,18 @@
       }
     }
     > li.tabs__discover {
+      span {
+        display: inline-flex;
+        flex-direction: row;
+        align-items: baseline;
+        svg {
+          height: em(6, 14);
+          margin-left: em(5, 14);
+          @mixin medium-small-screen {
+            display: none;
+          }
+        }
+      }
       &:hover {
         align-items: flex-start;
         ul {
