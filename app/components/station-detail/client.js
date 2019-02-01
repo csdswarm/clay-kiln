@@ -22,7 +22,8 @@ Constructor.prototype = {
   /**
    * Add navigation listeners to tabs
    * @function
-   * @param {string} tabs
+   * @param {object[]} tabs
+   * @param {object[]} content
    */
   addTabNavigationListeners: function (tabs, content) {
     for (let tab of tabs) {
@@ -33,12 +34,15 @@ Constructor.prototype = {
    * Navigate between tabs
    * @function
    * @param {object} event
+   * @param {object[]} tabs
+   * @param {object[]} content
    */
   activateTab: function (event, tabs, content) {
     for (let tab of tabs) {
       tab.classList.remove('active');
     }
     const contentLabel = event.currentTarget.classList[0].replace('tabs__','');
+
     event.currentTarget.classList.add('active');
 
     for (let c of content) {
