@@ -1,6 +1,7 @@
 @import "_global/fonts";
 
 .component--gallery-slide {
+  margin: 0 0 em(40) 0;
   &.editing {
     transition: all 200ms linear 250ms;
     &:hover {
@@ -15,7 +16,8 @@
   }
 
   .gallery-slide__text {
-    margin: em(30) 0 em(40) 0;
+    /* margin: em(30) 0 em(40) 0; */
+    margin: em(30) 0 0 0; /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
   }
 
   .gallery-slide__titlewrapper {
@@ -45,6 +47,7 @@
   }
 
   .gallery-slide__description {
+    /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
     font-family: ProximaNova-Regular;
     font-size: em(15, 16);
     color: #000000;

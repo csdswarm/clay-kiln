@@ -10,6 +10,7 @@
  */
 
 import debounce from 'lodash.debounce'
+import $ from 'jquery'
 
 const SpaScroll = {
   /**
@@ -116,16 +117,11 @@ const SpaScroll = {
         return
       }
 
-      // If slide is in viewport currently, match it.
-      // NodeLists are not JS arrays, so we will have to write a custom for loop that emulates .find() for performance.
-      // https://developer.mozilla.org/en-US/docs/Web/API/NodeList
-      let matchedSlide = null
-      for (let i = 0; i < slideNodeList.length; i++) {
-        if (isElementInViewport(slideNodeList[i])) {
-          matchedSlide = slideNodeList[i]
-          break
-        }
-      }
+      // Calculate topBuffer (Because of floating nav we need to buffer a bit from the actual top of the window)
+      const topBuffer = calculateTopBuffer(this.$el)
+
+      // Attempt to match a gallery slide
+      const matchedSlide = getMatchedSlide(slideNodeList, topBuffer)
 
       // If slide is matched, update the url hash to point to the slide appropriately.
       // If no slide matched, reset url to original url for this SPA route.
@@ -143,21 +139,49 @@ const SpaScroll = {
 
 /**
  *
- * Helper function to determine if a DOM element is in the viewport.
- *
- * Logic inspired by: https://stackoverflow.com/a/7557433
+ * Helper function to calculate the buffer/padding we need from the top
+ * of the screen because of the floating navigation bar.
  *
  * @param {object} el - DOM element.
  */
-function isElementInViewport (el) {
-  const rect = el.getBoundingClientRect()
+function calculateTopBuffer (el) {
+  let topBuffer = 0
+  const navBar = el.querySelector('.radiocom-nav')
+  const navBarRect = navBar.getBoundingClientRect()
+  const navBarStyle = getComputedStyle(navBar)
 
-  return (
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-  )
+  if (navBarRect && navBarStyle && navBarStyle.position === 'fixed') {
+    topBuffer = navBarRect.height
+  }
+
+  topBuffer = topBuffer + 50 // Pad it a bit more than just the height of the floating navbar.
+
+  return topBuffer
+}
+
+/**
+ *
+ * Attempt to match a slide to be used to update dynamic slug.
+ *
+ * @param {NodeList} slideNodeList - NodeList of slide dom elements. See: https://developer.mozilla.org/en-US/docs/Web/API/NodeList.
+ * @param {number} topBuffer - Number of pixels to pad/buff matching logic from top of screen.
+ */
+function getMatchedSlide (slideNodeList, topBuffer) {
+  let matchedSlide = null
+  for (let i = 0; i < slideNodeList.length; i++) {
+    const slide = slideNodeList[i]
+    const slideRect = slide.getBoundingClientRect()
+    const slideHeight = $(slide).outerHeight(true)
+    const slideTopOffset = slideRect.top
+    const slideBottomOffset = slideRect.top + slideHeight
+
+    if (slideTopOffset - topBuffer <= 0 && slideBottomOffset - topBuffer > 0) {
+      matchedSlide = slide
+      break
+    }
+  }
+
+  return matchedSlide
 }
 
 export default SpaScroll
