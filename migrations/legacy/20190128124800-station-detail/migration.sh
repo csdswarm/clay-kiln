@@ -41,9 +41,9 @@ printf "\n\nCreating station detail component instance...\n\n"
 curl -X PUT "$http://$1/_components/station-detail/instances/new" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
   "allowed": true,
-  "recentlyPlayedComponent": _ref: /_components/station-recently-played/instances/new
-  "scheduleComponent": _ref: /_components/station-schedule/instances/new
-  "discoverComponent": _ref: /_components/station-discover/instances/new
+  "recentlyPlayedComponent": "_ref: /_components/station-recently-played/instances/new"
+  "scheduleComponent": "_ref: /_components/station-schedule/instances/new"
+  "discoverComponent": " _ref: /_components/station-discover/instances/new"
 }';
 
 printf "\n\nCreating page...\n\n"
