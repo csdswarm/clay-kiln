@@ -306,7 +306,6 @@
         display: none;
         position: relative;
         content: '';
-        background: red; //todo
         margin-top: em(3, 14);
         @mixin medium-small-screen {
           width: em(32, 14);

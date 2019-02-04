@@ -6,7 +6,7 @@ _pages:
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
-      - /_components/station-detail/instances/new
+      - /_components/station-detail/instances/default
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
     layout: /_components/two-column-layout/instances/station

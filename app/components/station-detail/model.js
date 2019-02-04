@@ -11,7 +11,7 @@ function getStationTags(station) {
 
   tags.push(station.category);
   tags = tags.concat(station.genre_name, station.market_name);
-  tags = Array.from(new Set(tags);
+  tags = Array.from(new Set(tags));
 
   return tags;
 }
