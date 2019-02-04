@@ -1,0 +1,70 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--station-schedule {
+  .station-schedule__select {
+  @mixin station-detail-font7;
+    margin-bottom: em(30);
+    width: em(116);
+    height: em(24);
+  }
+
+  .station-schedule__show {
+    display: flex;
+    align-items: center;
+    margin-right: em(20);
+    margin-bottom: em(15);
+    text-decoration: none;
+
+    .show__image {
+      width: em(65);
+      height: em(65);
+      margin-right: em(20);
+    }
+
+    .show__details {
+      display: flex;
+      flex-direction: column;
+
+      .details__time {
+        @mixin station-detail-font8;
+        margin-bottom: em(10);
+
+        &--on-air {
+           margin-right: em(5);
+         }
+        }
+
+      .details__title {
+        @mixin station-detail-font4;
+      }
+
+    }
+
+    .show__play {
+      width: em(32);
+      height: em(32);
+      border-radius: 50%;
+      border: em(1, 22) solid #767676;
+      margin-left: auto;
+
+      &:after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        border-top: em(13, 22) solid transparent;
+        border-bottom: em(13, 22) solid transparent;
+        border-left: em(18, 22) solid $purple;
+        margin-left: em(14, 22);
+        margin-top: em(9, 22);
+      }
+
+
+      &:hover {
+         opacity: 0.7;
+      }
+    }
+  }
+}
