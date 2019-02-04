@@ -27,6 +27,7 @@ module.exports.render = (uri, data, locals) => {
   return radioApiService.get(route).then(response => {
     if (response.data) {
       data.station = response.data.attributes || {};
+      locals.station = data.station
       data.tags = getStationTags(response.data.attributes);
       data.category = response.data.attributes.category.toLowerCase() || '';
 

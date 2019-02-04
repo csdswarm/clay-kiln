@@ -3,6 +3,7 @@ _description: |
   recently played songs on that station
 
 station:
+  _subscribe: station
   _label: Station
 
 _groups:
