@@ -24,6 +24,7 @@ module.exports.routes = [
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
   { path: '/newsletter/subscribe' },
   { path: '/news/small-business-pulse' }
+  { path: '/:dynamicStation/listen', dynamicPage: 'station' }
 ];
 
 // Resolve the url to publish to
