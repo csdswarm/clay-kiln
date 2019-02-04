@@ -43,12 +43,6 @@ curl -X PUT "$http://$1/_components/station-detail/instances/new" -H 'Authorizat
   "allowed": true,
   "recentlyPlayedComponent": {
     "_ref": "'$1'/_components/station-recently-played/instances/new"
-  },
-  "scheduleComponent": {
-    "_ref": "'$1'/_components/station-schedule/instances/new"
-  },
-  "discoverComponent": {
-    "_ref": "'$1'/_components/station-discover/instances/new"
   }
 }';
 
