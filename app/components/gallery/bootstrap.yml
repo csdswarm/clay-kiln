@@ -21,7 +21,7 @@ _components:
     reverseOrder: false
     includeInlineAds: false
     inlineAd:
-      _ref: /_components/google-ad-manager/instances/billboardBottom
+      _ref: /_components/google-ad-manager/instances/billboardGallery
     rightRailStickyAd:
       _ref: /_components/google-ad-manager/instances/halfPageBottom
     tags:
