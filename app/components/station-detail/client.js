@@ -2,10 +2,11 @@
 
 function Constructor() {
   const sidebar = document.getElementsByClassName('content__sidebar')[0],
-    tabs = document.querySelectorAll('.component--station-detail .tabs li'),
-    content = document.querySelectorAll('.component--station-detail .tabbed-content__container');
+    stationDetail = document.querySelector('.component--station-detail'),
+    tabs = stationDetail.querySelectorAll('.tabs li'),
+    content = stationDetail.querySelectorAll('.tabbed-content__container');
 
-  this.repositionRightRail(sidebar);
+  this.repositionRightRail(sidebar, stationDetail);
   this.addTabNavigationListeners(tabs, content);
 }
 
@@ -14,9 +15,10 @@ Constructor.prototype = {
    * Add margin top to right rail
    * @function
    * @param {object} sidebar
+   * @param {object} stationDetail
    */
-  repositionRightRail: function (sidebar) {
-    sidebar.style.marginTop = '30px';
+  repositionRightRail: function (sidebar, stationDetail) {
+    sidebar.style.marginTop = window.getComputedStyle(stationDetail).marginTop;
     sidebar.style.visibility = 'visible';
   },
   /**
