@@ -1,6 +1,5 @@
 'use strict';
-const radioApiService = require('../../services/server/radioApi'),
-  _uniq = require('lodash/uniq');
+const radioApiService = require('../../services/server/radioApi');
 
 /**
  * consolidate station data to form tags array
@@ -12,7 +11,7 @@ function getStationTags(station) {
 
   tags.push(station.category);
   tags = tags.concat(station.genre_name, station.market_name);
-  tags = _uniq(tags);
+  tags = Array.from(new Set(tags);
 
   return tags;
 }
