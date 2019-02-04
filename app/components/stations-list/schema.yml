@@ -1,0 +1,11 @@
+_description: |
+  Dynamic stations list
+
+filterBy:
+  _label: filter stations by
+  _has:
+    input: radio
+    options:
+      - recent
+      - location
+      - genre

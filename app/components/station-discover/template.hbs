@@ -1,0 +1,20 @@
+<section id="discover" role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--station-discover{{ if @root.locals.edit ' editing' }}">
+
+  <select class="station-discover__dropdown--mobile">
+    <option value="">Filter:</option>
+    <option value="recent-stations">Recent</option>
+    <option value="local-stations">Local</option>
+    <option value="all-genre-stations">All {{station.genre}}</option>
+  </select>
+
+  <div id="discover__recent-stations" class="station-discover__stations-list stations-list--recent-stations">
+    {{> stations-list recentStations }}
+  </div>
+  <div id="discover__local-stations" class="station-discover__stations-list stations-list--local-stations">
+    {{> stations-list localStations }}
+  </div>
+  <div id="discover__all-{{station.genre}}-stations" class="station-discover__stations-list stations-list--all-genre-stations">
+    {{> stations-list allGenreStations }}
+  </div>
+
+</section>

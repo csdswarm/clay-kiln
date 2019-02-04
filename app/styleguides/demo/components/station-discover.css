@@ -1,0 +1,19 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--station-discover {
+  .station-discover__dropdown--mobile {
+    display: none;
+    @mixin medium-small-screen {
+      display: block;
+    }
+  }
+  .station-discover__stations-list {
+    display: none;
+    &.active {
+      display: block;
+    }
+  }
+}

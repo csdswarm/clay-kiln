@@ -1,0 +1,17 @@
+_description: |
+  Dynamic station detail page -- discover stations section
+
+recentStations:
+  _component:
+    include:
+      - stations-list
+
+localStations:
+  _component:
+    include:
+      - stations-list
+
+allGenreStations:
+  _component:
+    include:
+      - stations-list
