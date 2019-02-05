@@ -2,14 +2,16 @@
 
 const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  contentTypeService = require('../../services/universal/content-type'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'contentType'
   ],
   maxItems = 3;
 
@@ -59,13 +61,25 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl;
+
+  // items are saved from form, articles are used on FE
+  data.articles = data.items;
+
+  if (!data.sectionFront || !locals) {
+    return data;
+  }
+
+  if (contentTypes.length) {
+    queryService.addFilter(query, { terms: { contentType: contentTypes } });
+  }
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (data.sectionFront) {
-    queryService.addShould(query, { match: { articleType: data.sectionFront }});
+    queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
   }
   if (data.filterBySecondary) {
     queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});

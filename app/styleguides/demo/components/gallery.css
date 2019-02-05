@@ -1,0 +1,87 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+@import "_global/article-gallery";
+
+/* This file should only include gallery-specific styles.
+   Any styling that is shared by articles should be included in the global article-gallery stylesheet. */
+
+.component--gallery {
+  .content__slide-settings {
+    background: #f4f4f4;
+    clear: both;
+    margin: em(20) 0;
+    width: 100%;
+    .slide-settings__title {
+      font-family: Helvetica,Arial,sans-serif;
+      font-size: em(24);
+      font-weight: 400;
+      line-height: em(28, 24);
+      margin: 0;
+      padding: em(15, 24) em(20, 24);
+    }
+    .slide-settings__items {
+      border-top: em(1) solid #e8e8e8;
+      padding: em(15) em(20);
+      .item-title {
+        color: #4d4d4d;
+        font-family: Helvetica,Arial,sans-serif;
+        font-size: em(12);
+        font-weight: 400;
+        line-height: em(14, 12);
+        margin: 0;
+        padding: 0 0 em(5, 12);
+        text-transform: uppercase;
+      }
+      .item-data {
+        font-family: Helvetica,Arial,sans-serif;
+        font-size: em(14);
+        font-weight: 400;
+        line-height: em(16, 14);
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+  .slides__slide-group {
+    position: relative;
+    min-height: em(600);
+  }
+  .slides__ad-container {
+    margin-top: em(50);
+    width: calc(100% + em(320));
+    position: relative;
+    z-index: 1;
+    @mixin default-screen {
+      width: em(1100);
+      margin-left: em(-160);
+    }
+    @mixin large-screen {
+      width: em(940);
+    }
+    @mixin medium-screen {
+      width: 100%;
+      max-width: em(728);
+    }
+    @mixin medium-small-screen {
+      width: 100%;
+      max-width: em(440);
+    }
+    @mixin small-screen {
+      width: 100%;
+      max-width: em(320);
+    }
+  }
+  .slide-group__rr-ad-container {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    width: em(300);
+    margin-right: em(-320);
+    z-index: 1;
+    .google-ad-manager--half-page {
+      margin-bottom: 0;
+    }
+  }
+}

@@ -5,8 +5,8 @@ const h = require('highland'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
-  INDEX = helpers.indexWithPrefix('published-articles', process.env.ELASTIC_PREFIX),
-  CONTENT_FILTER = isOpForComponents(['article']);
+  INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
+  CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
 
 // Subscribe to the publish stream
 subscribe('publish').through(save);
@@ -40,7 +40,7 @@ function send([ op ]) {
 }
 
 /**
- * Index articles on publish
+ * Index articles/galleries on publish
  * @param  {Object} args
  * @returns {Promise}
  */

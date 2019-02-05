@@ -2,17 +2,19 @@
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  contentTypeService = require('../../services/universal/content-type'),
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'articleType',
+    'sectionFront',
     'date',
     'lead',
-    'subHeadline'
+    'subHeadline',
+    'contentType'
   ],
   maxItems = 10,
   pageLength = 5;
@@ -38,7 +40,7 @@ module.exports.save = (ref, data, locals) => {
           urlIsValid: result.urlIsValid,
           canonicalUrl: item.url || result.canonicalUrl,
           feedImgUrl: item.overrideImage || result.feedImgUrl,
-          articleType: item.overrideSectionFront || result.articleType,
+          sectionFront: item.overrideSectionFront || result.sectionFront,
           date: item.overrideDate || result.date,
           lead: item.overrideContentType || result.lead
         });
@@ -60,10 +62,15 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl;
 
   data.initialLoad = false;
+
+  if (contentTypes.length) {
+    queryService.addFilter(query, { terms: { contentType: contentTypes } });
+  }
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
@@ -138,7 +145,7 @@ module.exports.render = function (ref, data, locals) {
     }
 
     if (data.sectionFront) {
-      queryService.addMust(query, { match: { articleType: data.sectionFront }});
+      queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     }
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'author') {
@@ -162,7 +169,7 @@ module.exports.render = function (ref, data, locals) {
     if (!data.sectionFront && !data.sectionFrontManual || !locals) {
       return data;
     }
-    queryService.addShould(query, { match: { articleType: data.sectionFrontManual || data.sectionFront }});
+    queryService.addShould(query, { match: { sectionFront: data.sectionFrontManual || data.sectionFront }});
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom == 'all-content') {
     if (!locals) {
