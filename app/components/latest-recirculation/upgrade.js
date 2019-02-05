@@ -8,7 +8,7 @@ module.exports['1.0'] = function (uri, data) {
   if (newData.populateBy == 'articleType') {
     newData.populateBy = 'sectionFront';
   }
-  newData.sectionFront = data.articleType;
+  newData.sectionFront = data.sectionFront || data.articleType;
   delete newData.articleType;
 
   return newData;
