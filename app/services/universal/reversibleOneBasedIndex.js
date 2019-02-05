@@ -10,9 +10,9 @@
 'use strict';
 
 module.exports = function reversibleOneBasedIndex(index, reverseOrder, totalSlides) {
-	if (reverseOrder) {
-		return totalSlides - index;
-	} else {
-		return index + 1;
-	}
+  if (reverseOrder) {
+    return totalSlides - index;
+  } else {
+    return index + 1;
+  }
 };
