@@ -11,6 +11,7 @@ module.exports.routes = [
   { path: '/articles/:author/:title'}, // Frequency URL pattern
   { path: '/articles/:title'}, // Frequency URL pattern
   { path: '/:year/:month/:name' },
+  { path: '/:year/:month/:day/:name' },
   { path: '/article/:name' },
   { path: '/music/article/:slug' },
   { path: '/news/article/:slug' },

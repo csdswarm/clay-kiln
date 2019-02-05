@@ -278,9 +278,9 @@ _groups:
       - tagManual
       - tagInfo
       - items
+      - contentType
       - filterTags
       - filterSecondaryArticleType
-      - contentType
     _placeholder:
       height: 100px
       ifEmpty: populateFrom
