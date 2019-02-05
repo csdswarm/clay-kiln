@@ -1,8 +1,8 @@
 'use strict';
 
 const rest = require('../universal/rest'),
-  querystring = require('querystring'),
   radioApi = 'api.radio.com/v1/',
+  qs = require('qs'),
   db = require('./db'),
   TTL = 300000;
 
@@ -14,7 +14,7 @@ const rest = require('../universal/rest'),
  * @return {Promise}
  */
 function get(route, params) {
-  const requestEndpoint = `${radioApi}${route}?${querystring.stringify(params)}`;
+  const requestEndpoint = `${radioApi}${route}?${qs.stringify(params)}`;
 
   return db.get(requestEndpoint)
     .then(function (data) {
