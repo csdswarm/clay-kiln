@@ -80,7 +80,7 @@ module.exports.render = function (ref, data, locals) {
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (data.sectionFront) {
-    queryService.addShould(query, { match: { articleType: data.sectionFront }});
+    queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
   }
   if (data.filterBySecondary) {
     queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});
