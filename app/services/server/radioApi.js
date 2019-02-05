@@ -19,7 +19,7 @@ function get(route, params) {
   return db.get(requestEndpoint)
     .then(function (data) {
       if (data.updated_at && (new Date() - new Date(data.updated_at) > TTL)) {
-        return getFromApi(requestEndpoint).catch(function () {
+        return getFromApi(decodeURIComponent(requestEndpoint)).catch(function () {
           // If API errors out, return stale data
           return data;
         });
@@ -45,7 +45,7 @@ function getFromApi(endpoint) {
   return rest.get(`https://${endpoint}`).then(response => {
     if (response.data) {
       response.updated_at = new Date();
-      return db.put(endpoint, JSON.stringify(response)).then(function () {
+      return db.put(decodeURIComponent(endpoint), JSON.stringify(response)).then(function () {
         return response;
       });
     } else {
