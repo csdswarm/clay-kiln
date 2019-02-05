@@ -1,14 +1,17 @@
 'use strict';
 
 module.exports['1.0'] = function (uri, data) {
-  // Replace articleType with sectionFront
-  if (data.populateBy == 'articleType') {
-    data.populateBy = 'sectionFront';
-  }
-  data.sectionFront = data.articleType;
-  delete data.articleType;
+  // Clone so we don't lose value by reference
+  let newData = Object.assign({}, data);
 
-  return data;
+  // Replace articleType with sectionFront
+  if (newData.populateBy == 'articleType') {
+    newData.populateBy = 'sectionFront';
+  }
+  newData.sectionFront = data.articleType;
+  delete newData.articleType;
+
+  return newData;
 };
 
 module.exports['2.0'] = function (uri, data) {
