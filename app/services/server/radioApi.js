@@ -1,8 +1,8 @@
 'use strict';
 
 const rest = require('../universal/rest'),
-  radioApi = 'https://api.radio.com/v1/',
   querystring = require('querystring'),
+  radioApi = 'api.radio.com/v1/',
   db = require('./db'),
   TTL = 300000;
 
@@ -42,7 +42,7 @@ function get(route, params) {
  * @throws {Error}
  */
 function getFromApi(endpoint) {
-  return rest.get(endpoint).then(response => {
+  return rest.get(`https://${endpoint}`).then(response => {
     if (response.data) {
       response.updated_at = new Date();
       return db.put(endpoint, JSON.stringify(response)).then(function () {
