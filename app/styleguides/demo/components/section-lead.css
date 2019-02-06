@@ -227,9 +227,9 @@
 /* |||||||||||| Sports Style Guide ||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 .section-lead--sports {
-  padding-top: em(72);
+  padding-top: em(60);
   background-image: url('/media/components/section-lead/sports_section_front_logo.png');
-  background-size: em(150) em(42);
+  background-size: em(140) em(40);
   background-repeat: no-repeat;
   background-position: top left;
 
