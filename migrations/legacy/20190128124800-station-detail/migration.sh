@@ -36,19 +36,21 @@ curl -X PUT "$http://$1/_components/station-discover/instances/default" -H 'Auth
   "allowed": true
 }';
 
+# TODO: PUT THIS BACK BEFORE MERGING
+#  "recentlyPlayedComponent": {
+#    "_ref": "'$1'/_components/station-recently-played/instances/default"
+#  },
+#,
+#  "discoverComponent": {
+#    "_ref": "'$1'/_components/station-discover/instances/default"
+#  }
 
 printf "\n\nCreating station detail component instance...\n\n"
 curl -X PUT "$http://$1/_components/station-detail/instances/default" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
   "allowed": true,
-  "recentlyPlayedComponent": {
-    "_ref": "'$1'/_components/station-recently-played/instances/default"
-  },
   "scheduleComponent": {
     "_ref": "'$1'/_components/station-schedule/instances/default"
-  },
-  "discoverComponent": {
-    "_ref": "'$1'/_components/station-discover/instances/default"
   }
 }';
 
