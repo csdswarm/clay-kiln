@@ -1,0 +1,41 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--redirects {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: em(16);
+  margin-top: em(10);
+
+  h2 {
+    @mixin redirects-font1;
+    width: 100%;
+    color: $parisM;
+    text-transform: capitalize;
+    display: table;
+    white-space: nowrap;
+
+    &:after {
+       border-top: em(1, 35) solid $parisM;
+       content: '';
+       display: table-cell;
+       position: relative;
+       top: em(22, 35);
+       left: em(15, 35);
+       width: 100%;
+    }
+  }
+
+  .redirects__container {
+    max-width: em(1100);
+    width: 100%;
+
+    li {
+      @mixin redirects-font2;
+      margin-top: em(8, 20);
+    }
+  }
+
+}
