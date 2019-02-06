@@ -522,3 +522,21 @@ $drawerSelector: nav-drawer;
     }
   }
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||||||| Sports Style Guide ||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+.nav-drawer--sports {
+  > .container {
+    padding-left: em(270);
+    background-image: url('/media/components/top-nav/sports_dropdown_logo.png');
+    background-size: em(150) em(42);
+    background-repeat: no-repeat;
+    background-position: 0 em(9);
+
+    @media (-webkit-min-device-pixel-ratio: 2),
+    (min-resolution: 192dpi) {
+      background-image: url('/media/components/top-nav/sports_dropdown_logo_2x.png');
+    }
+  }
+}
