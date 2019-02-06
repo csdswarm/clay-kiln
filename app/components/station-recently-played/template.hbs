@@ -1,3 +1,17 @@
 <aside data-uri="{{ default _ref _self }}" class="component component--station-recently-played" data-editable="default">
-  Test recently played
+	<select class="station-recently-played__select">
+	</select>
+	<ul>
+		{{#each playHistory}}
+			<li>
+				<img src="{{ imageUrl }}" class="show__image" />
+				<div class="show__details">
+					<div class="details__time">Played at {{ formatLocalDate timePlayedUtc 'h:mm A' }}</div>
+					<div class="details__title">{{ title }}</div>
+					<div class="details__artist">{{ artist }}</div>
+				</div>
+				<div class="show__play"></div>
+			</li>
+		{{/each}}
+	</ul>
 </aside>
