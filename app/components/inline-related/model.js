@@ -6,13 +6,14 @@ const queryService = require('../../services/server/query'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'lead'
+    'lead',
+    'contentType'
   ],
   maxItems = 2;
 
@@ -67,6 +68,9 @@ module.exports.render = function (ref, data, locals) {
 
   // items are saved from form, articles are used on FE
   data.articles = data.items;
+  data.missingItems = data.articles.some(item => {
+    return typeof item.feedImgUrl === 'undefined';
+  });
 
   if (!data.tag || !locals) {
     return data;

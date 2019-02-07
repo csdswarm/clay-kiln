@@ -13,6 +13,10 @@
   }
 }
 
+.has-fullpage-ad .layout .layout__page-header {
+  margin: 0 auto;
+}
+
 .layout__content {
   padding: em(30) em(30) 0 em(30);
   margin: 0 auto;
@@ -30,6 +34,9 @@
       width: calc(em(1100) + $contentPadding);
     }
   }
+  .has-fullpage-ad .layout .layout__page-header {
+    width: calc(em(1100) + $contentPadding);
+  }
 }
 
 @mixin large-screen {
@@ -38,6 +45,9 @@
     .layout__content {
       width: calc(em(940) + $contentPadding);
     }
+  }
+  .has-fullpage-ad .layout .layout__page-header {
+    width: calc(em(940) + $contentPadding);
   }
 }
 
@@ -50,6 +60,10 @@
       width: calc(100% - $contentPadding);
       max-width: em(728);
     }
+  }
+  .has-fullpage-ad .layout .layout__page-header {
+    width: calc(100% - $contentPadding);
+    max-width: em(728);
   }
 }
 
@@ -64,6 +78,11 @@
       max-width: em(440);
     }
   }
+  .has-fullpage-ad .layout .layout__page-header {
+    padding: 0;
+    width: calc(100% - em(40));
+    max-width: em(440);
+  }
 }
 
 @mixin small-screen {
@@ -74,5 +93,10 @@
       width: calc(100% - em(40));
       max-width: em(320);
     }
+  }
+  .has-fullpage-ad .layout .layout__page-header {
+    padding: 0;
+    width: calc(100% - em(40));
+    max-width: em(320);
   }
 }

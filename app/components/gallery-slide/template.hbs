@@ -1,0 +1,14 @@
+<div id="{{ hashLink }}" data-uri="{{ default _ref _self }}" class="component component--gallery-slide{{ if @root.locals.edit ' editing' }} {{ galleryTypeClass }}">
+  <div class="slideEmbed" data-editable="slideEmbed">
+    {{> component-list slideEmbed }}
+  </div>
+  <div class="slideText gallery-slide__text">
+    {{#ifAny title @root.locals.edit}}
+      <h2 data-editable="title" class="gallery-slide__titlewrapper">
+        {{#if slidesNumbered}}<span class="gallery-slide__number">{{ reversibleOneBasedIndex @index reverseOrder totalSlides }}</span>{{/if}}
+        <span class="gallery-slide__title">{{ title }}</span>
+      </h2>
+    {{/ifAny}}
+    {{#ifAny description @root.locals.edit}}<p data-editable="description" class="gallery-slide__description">{{striptags description}}</p>{{/ifAny}}
+  </div>
+</div>

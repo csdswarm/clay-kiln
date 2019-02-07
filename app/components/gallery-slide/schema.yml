@@ -1,0 +1,69 @@
+_description: |
+  This is the Gallery Slide component.
+
+  * Used to create gallery slides.
+
+slideEmbed:
+  _label: Slide Embed
+  _placeholder:
+    text: Add Slide Embed
+    height: 200px
+  _componentList:
+    fuzzy: false # allows interactives, etc to add one-off components
+    include:
+      - image
+      - instagram-post
+      - facebook-post
+      - brightcove
+      - youtube
+      - tweet
+      - html-embed
+      - omny
+    validate:
+      max: 1
+      required: true
+title:
+  _label: Slide Title
+  _placeholder:
+    height: 20px
+    text: Slide Title
+    required: true
+  _has:
+    input: inline
+    help: Slide title text
+    validate:
+      required: true
+description:
+  _label: Slide Description
+  _placeholder:
+    height: 20px
+    text: Slide Description
+  _has:
+    input: inline
+    type: multi-line
+    help: Slide description text
+hashLinkPrefix:
+  _label: Hash Link Prefix Override
+  _has:
+    input: text
+    help: "The hashtag deep link prefix (defaults to slugified slide title). WARNING: Changing this post-publish can hurt SEO."
+    validate:
+      # Allow lowercase alphanumeric chars and also hyphens.
+      # Detailed RegEx breakdown: https://regex101.com/r/1Hh9QF/1
+      pattern: ^[a-z0-9-]+$
+      patternMessage: "Hash link must consist of lowercase alphanumeric characters and hyphens (Example: this-is-1-valid-custom-hash-link)"
+
+# The following properties are inherited from the parent Gallery component.
+slidesNumbered:
+  _subscribe: slidesNumbered
+reverseOrder:
+  _subscribe: reverseOrder
+totalSlides:
+  _subscribe: totalSlides
+sectionFront:
+  _subscribe: sectionFront
+
+_groups:
+  settings:
+      fields:
+        - hashLinkPrefix

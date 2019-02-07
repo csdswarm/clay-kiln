@@ -1,16 +1,18 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   db = require('../../services/server/db'),
+  contentTypeService = require('../../services/universal/content-type'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'contentType'
   ],
   maxItems = 5;
 /**
@@ -52,7 +54,8 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
-    trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`;
+    trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`,
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl, trendingRecircItems;
 
   return (async () => {
@@ -79,14 +82,20 @@ module.exports.render = function (ref, data, locals) {
       // Clean based on tags and grab first as we only ever pass 1
       data.tag = tag.clean([{text: data.tag}])[0].text || '';
       queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
-    } else if (data.populateBy == 'articleType') {
-      if (!data.articleType || !locals) {
+    } else if (data.populateBy == 'sectionFront') {
+      if (!data.sectionFront || !locals) {
         return data;
       }
-      queryService.addShould(query, { match: { articleType: data.articleType }});
+      queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
     }
-    queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});
+
+
+    queryService.addMinimumShould(query, 1);
+
+    if (contentTypes.length) {
+      queryService.addFilter(query, { terms: { contentType: contentTypes } });
+    }
 
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {

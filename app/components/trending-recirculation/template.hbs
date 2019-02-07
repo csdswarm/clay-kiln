@@ -13,8 +13,8 @@
            data-track-page-uri="{{ pageUri }}"
            data-track-headline="{{ primaryHeadline }}"
            data-track-component-title="Trending">
-          {{#if articleType}}
-            <div class="trending__item__tag">{{ articleType }}</div>
+          {{#if sectionFront}}
+            <div class="trending__item__tag">{{ sectionFront }}</div>
           {{/if}}
           <img
             src="{{ feedImgUrl }}?width=300&height=169&crop=16:9,offset-y0"
