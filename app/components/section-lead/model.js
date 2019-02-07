@@ -121,6 +121,7 @@ module.exports.render = function (ref, data, locals) {
 
       data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
       data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
+
       return data;
     })
     .catch(e => {
