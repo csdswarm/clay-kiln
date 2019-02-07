@@ -46,4 +46,4 @@ _components:
   station-schedule:
     instance:
       default:
-        allow: true
+        allowed: true

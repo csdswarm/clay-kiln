@@ -59,20 +59,7 @@ function timeAgoTimestamp(date) {
   return moment(date).fromNow();
 }
 
-/**
- * Returns the timezone from the current user
- *
- * @function
- * @return {string}
- */
-function usersTimeZone() {
-  //TODO FIGURE OUT WHY THINGS EXPLODE WHEN moment = require('moment-timezone')
-  return '';
-  // return moment.tz(moment.tz.guess(true)).zoneAbbr();
-}
-
 module.exports.formatDateRange = formatDateRange;
 module.exports.secondsToISO = secondsToISO;
 module.exports.isPublished24HrsAgo = isPublished24HrsAgo;
 module.exports.timeAgoTimestamp = timeAgoTimestamp;
-module.exports.usersTimeZone = usersTimeZone;

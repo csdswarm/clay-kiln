@@ -5,46 +5,75 @@
  */
 class StationSchedule {
   constructor(el) {
-    this.lang = StationSchedule.getNavigatorLanguage();
-    this.select = el.querySelector('.station-schedule__select');
-    this.ul = el.querySelector('.station-schedule');
-    this.today = new Date();
+    this.timeZone = this.usersTimeZone();
+
+    const lang = this.getNavigatorLanguage(),
+      select = el.querySelector('.station-schedule__select'),
+      ul = el.querySelector('.station-schedule'),
+      today = new Date();
 
     // starting with today, add a week of days using the users locale
     for (let i = 0; i < 7; i++) {
-      const day = new Date(new Date().setDate(this.today.getDate() + i)),
+      const day = new Date(new Date().setDate(today.getDate() + i)),
         dayOfWeek = ((day.getDay() - 7) % 7 + 7) % 8,
-        option = new Option(day.toLocaleString(this.lang, {  weekday: 'long' }), dayOfWeek);
+        option = new Option(day.toLocaleString(lang, {  weekday: 'long' }), dayOfWeek);
 
       option.classList.add('select__option');
-      this.select.add(option);
+      select.add(option);
     }
 
-    this.select.addEventListener('change', (el) => StationSchedule.loadContent(el, this.ul));
+    this.showTimeZone(ul);
+    select.addEventListener('change', (el) => this.loadContent(el));
   }
   /**
-   * @param {object} event
-   * @param {object} ul
+   * load in new content from the api
+   * @param {Event} event
    * @returns {Promise}
    */
-  static async loadContent(event, ul) {
+  async loadContent(event) {
     // Initialize the DOM parser and set the HTML from the API call of the station-schedule
     const parser = new DOMParser(),
       endpoint = `//${window.location.hostname}/_components/station-schedule/instances/default.html`,
       response = await fetch(`${endpoint}?stationId=${event.target.getAttribute('data-station-id')}&dayOfWeek=${event.target.value}&gmt_offset=${event.target.getAttribute('data-gmt-offset')}`),
       html = await response.text(),
-      doc = parser.parseFromString(html, 'text/html');
+      doc = parser.parseFromString(html, 'text/html'),
+      content = doc.querySelector('.station-schedule'),
+      ul = document.querySelector('.station-schedule');
 
-    ul.innerHTML = doc.querySelector('#station-schedule').innerHTML;
+    this.showTimeZone(content);
+    ul.parentNode.replaceChild(content, ul);
   }
   /**
+   * extracts the users language
    * @returns {string} the users set language
    */
-  static getNavigatorLanguage() {
+  getNavigatorLanguage() {
     if (navigator.languages && navigator.languages.length) {
       return navigator.languages[0];
     }
     return navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en-US';
+  }
+  /**
+   * extracts the users timezone
+   * @returns {string} the users locale timezone
+   */
+  usersTimeZone() {
+    const dateArray = new Date().toLocaleTimeString(this.getNavigatorLanguage(),{timeZoneName:'short'}).split(' ');
+
+    return dateArray.pop();
+  }
+  /**
+   * adds the users timezone to the times displayed
+   * @param {Element} ul
+   */
+  showTimeZone(ul) {
+    const times = ul.querySelectorAll('.details__time');
+
+    times.forEach((time) => {
+      if (/\d/.test(time.innerText)) {
+        time.appendChild(document.createTextNode(this.timeZone));
+      }
+    });
   }
 }
 
