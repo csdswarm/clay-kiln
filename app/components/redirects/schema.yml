@@ -1,0 +1,39 @@
+_description: |
+  A group of redirect URL patterns to force a page to redirect to a different url
+
+redirects:
+  _label: Redirect URL collection
+  _placeholder:
+    height: 100px
+    text: Add Redirects
+  _has:
+    input: complex-list
+    filter: true
+    props:
+    -
+      prop: path
+      _label: Incomming path
+      _has:
+        input: text
+        help: e.g. /incomming-redirect (Use * as a wildcard match)
+        validate:
+          required: true
+          pattern: ^\/\b([-a-zA-Z0-9@:%_\+.~#?&//=\*]*)$
+          patternMessage: e.g. /incomming-redirect (Use * as a wildcard match)
+    -
+      prop: redirect
+      _label: Redirects to
+      _has:
+        input: text
+        help: e.g. /redirect-destination or http://www.domain.com/redirect-destination
+        validate:
+          required: true
+          pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+          patternMessage: e.g. http://domain.com/redirect-destination or /redirect-destination
+
+_groups:
+  redirects:
+    _label: Redirects
+
+    fields:
+    - redirects

@@ -8,7 +8,7 @@ const _ = require('lodash'),
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'articleType'
+    'sectionFront'
   ];
 
 /**

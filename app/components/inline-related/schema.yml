@@ -1,3 +1,4 @@
+_version: 1.0
 _description: |
   A list of one or more related stories
 
@@ -60,8 +61,8 @@ tag:
   _reveal:
     field: fill
     operator: truthy
-articleType:
-  _subscribe: articleType
+sectionFront:
+  _subscribe: sectionFront
 
 _groups:
   inlineRelatedItems:
