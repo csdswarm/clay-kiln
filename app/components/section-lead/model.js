@@ -87,12 +87,6 @@ module.exports.render = function (ref, data, locals) {
   if (data.tag) {
     queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   }
-  if (data.filterBySecondary) {
-    queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});
-  }
-  if (data.tag) {
-    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
-  }
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
 
