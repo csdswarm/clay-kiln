@@ -1,5 +1,7 @@
 'use strict';
 
+const isEmpty = require('lodash/isEmpty');
+
 /**
  * Add Google Tag Manager script and setup dataLayer array on first page load
  * @function
@@ -34,6 +36,7 @@ document.addEventListener('pageView', function (event) {
   // Build Data Layer event for new SPA pageview.
   const dataLayerEvent = {
     event: 'Pageview',
+    contentType: getContentType(event.detail),
     title: event.detail.toTitle,
     'og:title': event.detail.toTitle,
     description: event.detail.toDescription,
@@ -46,3 +49,25 @@ document.addEventListener('pageView', function (event) {
   window.dataLayer.push(dataLayerEvent);
   
 });
+
+function getContentType(eventPayload) {
+  let contentType = null;
+
+  if (!isEmpty(eventPayload.toArticlePage)) {
+    contentType = 'article';
+  } else if (!isEmpty(eventPayload.toGalleryPage)) {
+    contentType = 'gallery';
+  } else if (!isEmpty(eventPayload.toHomepage)) {
+    contentType = 'homepage';
+  } else if (!isEmpty(eventPayload.toSectionFrontPage)) {
+    contentType = 'sectionfront';
+  } else if (!isEmpty(eventPayload.toTopicPage)) {
+    contentType = 'topic';
+  } else if (!isEmpty(eventPayload.toStationDetailPage)) {
+    contentType = 'stationdetail';
+  } else {
+    contentType = 'page';
+  }
+  
+  return contentType;
+}

@@ -114,6 +114,9 @@ export default {
       // Get SPA payload data for next path.
       const spaPayload = await this.getNextSpaPayload(window.location.hostname + to.path)
 
+      // Reset/flush the pageCache
+      this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
+
       // Load matched Layout Component.
       this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
