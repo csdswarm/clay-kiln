@@ -9,3 +9,6 @@ _lists:
     -
       id: curated-topic
       title: Content Collection
+    -
+      id: gallery
+      title: New Gallery

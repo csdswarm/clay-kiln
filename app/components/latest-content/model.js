@@ -2,13 +2,15 @@
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  contentTypeService = require('../../services/universal/content-type'),
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'contentType'
   ],
   maxItems = 3;
 /**
@@ -56,16 +58,22 @@ module.exports.save = async function (ref, data, locals) {
 module.exports.render = async function (ref, data, locals) {
   data.articles = [];
 
+  const contentTypes = contentTypeService.parseFromData(data);
+
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
       cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
     let query = queryService.newQueryWithCount(elasticIndex, maxItems);
 
+    if (contentTypes.length) {
+      queryService.addFilter(query, { terms: { contentType: contentTypes } });
+    }
+
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, {date: 'desc'});
-    queryService.addShould(query, { match: { articleType: section }});
+    queryService.addShould(query, { match: { sectionFront: section }});
 
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {
