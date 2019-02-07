@@ -36,6 +36,7 @@ module.exports.render = (uri, data, locals) => {
 
   return radioApiService.get(route).then(response => {
     if (response.data) {
+      // station object is available to child components through locals.station
       data.station = locals.station = response.data.attributes || {};
       data.tags = getStationTags(response.data.attributes);
       data.category = response.data.attributes.category.toLowerCase() || '';

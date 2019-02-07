@@ -78,20 +78,20 @@
   <div class="station-detail__body">
     <ul class="tabs">
       <!-- add tab for each component here -->
-      <li class="tabs__recentlyPlayed">recently played</li>
+      <li class="tabs__recently-played">recently played</li>
       <li class="tabs__schedule">schedule</li>
       <li class="tabs__discover">
         <span>discover {{{ read 'components/station-detail/media/chevron_down.svg' }}}</span>
         <ul>
-          <li class="discover__tab discover__tab--recentStations">recent stations</li>
-          <li class="discover__tab discover__tab--localStations">local stations</li>
-          <li class="discover__tab discover__tab--genreStations">all {{station.genre_name}}</li>
+          <li class="discover__tab discover__tab--recent-stations">recent stations</li>
+          <li class="discover__tab discover__tab--market-stations">{{station.city}} stations</li>
+          <li class="discover__tab discover__tab--genre-stations">all {{station.genre_name}}</li>
         </ul>
       </li>
     </ul>
     <div class="tabbed-content">
       <!-- add components here -->
-      <div class="tabbed-content__container container--recentlyPlayed">
+      <div class="tabbed-content__container container--recently-played">
         {{!-- {{> station-recently-played recentlyPlayedComponent }} --}}
       </div>
       <div class="tabbed-content__container container--schedule">
