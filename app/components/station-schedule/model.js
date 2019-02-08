@@ -1,7 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
-  { getTime, currentlyBetween } = require('../../services/server/dateTime');
+  { getTime, currentlyBetween } = require('../../services/universal/dateTime');
 
 /**
  * @param {string} ref
