@@ -54,29 +54,63 @@ export default {
 
       return nextLayoutComponent
     },
+    /**
+     * converts a string into a regular expression * as a wildcard
+     *
+     * @param {string} url
+     * @returns {RegExp}
+     */
+    createRegExp: (url) => {
+      let regExp = url.replace(/\*/g, '.*')
+
+      return new RegExp(`^${regExp}`, 'i')
+    },
+    /**
+     *
+     * Returns an object with all the JSON payload required for a page render.
+     *
+     * @param {string} destination - The URL being requested.
+     * @returns {object}  - The JSON payload
+     */
     getNextSpaPayload: async function getNextSpaPayload (destination) {
       try {
-        const nextSpaPayloadResult = await axios.get(`//${destination}?json`, {
+        const nextSpaPayloadResult = await axios.get(`${destination}?json`, {
           headers: {
             'x-amphora-page-json': true
           }
         })
+
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+        nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
         return nextSpaPayloadResult.data
       } catch (e) {
-        const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
-        nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-        return nextSpaPayloadResult.data
+        if (e.response.status === 301 && e.response.data.redirect) {
+          const redirect = e.response.data.redirect
+
+          if (this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(redirect)) {
+            // we are returning the new path, so need to adjust the browser path
+            window.history.replaceState({ }, null, redirect)
+            return this.getNextSpaPayload(redirect.replace(/^[^/]+/i, ''))
+          } else {
+            window.location.replace(redirect)
+            return null
+          }
+        } else {
+          const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
+          nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
+          nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
+          return nextSpaPayloadResult.data
+        }
       }
     },
     /**
      *
      * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
      *
-     * @param {object} to - A Vue Router "to" object.
+     * @param {string} path - The path of the next route.
      * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
      */
-    buildPageViewEventData: function buildPageViewEventData (to, spaPayload) {
+    buildPageViewEventData: function buildPageViewEventData (path, spaPayload) {
       const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
       const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
       const nextMetaImageData = queryPayload.findComponent(spaPayload.head, 'meta-image')
@@ -91,7 +125,7 @@ export default {
         toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
         toDescription: (nextMetaDescriptionData && nextMetaDescriptionData.description) ? nextMetaDescriptionData.description : '',
         toMetaImageUrl: (nextMetaImageData && nextMetaImageData.imageUrl) ? nextMetaImageData.imageUrl : '',
-        toPath: to.path,
+        toPath: path,
         toArticlePage: nextArticleData || {},
         toGalleryPage: nextGalleryData || {},
         toHomepage: nextHomepageData || {},
@@ -112,32 +146,36 @@ export default {
       this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
       // Get SPA payload data for next path.
-      const spaPayload = await this.getNextSpaPayload(window.location.hostname + to.path)
+      const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`)
 
-      // Reset/flush the pageCache
-      this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
+      if (spaPayload) {
+        const path = (new URL(spaPayload.url)).pathname
 
-      // Load matched Layout Component.
-      this.activeLayoutComponent = this.layoutRouter(spaPayload)
+        // Load matched Layout Component.
+        this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-      // Commit next payload to store to kick off re-render.
-      this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+        // Reset/flush the pageCache
+        this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
 
-      // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-      metaManager.updateExternalTags(this.$store.state.spaPayload)
+        // Commit next payload to store to kick off re-render.
+        this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-      // Stop loading animation.
-      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+        // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+        metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-      // Build pageView event data
-      const pageViewEventData = this.buildPageViewEventData(to, this.$store.state.spaPayload)
+        // Stop loading animation.
+        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-      // Call global pageView event.
-      let event = new CustomEvent(`pageView`, {
-        detail: pageViewEventData
-      })
+        // Build pageView event data
+        const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-      document.dispatchEvent(event)
+        // Call global pageView event.
+        const event = new CustomEvent(`pageView`, {
+          detail: pageViewEventData
+        })
+
+        document.dispatchEvent(event)
+      }
     }
   }
 }
