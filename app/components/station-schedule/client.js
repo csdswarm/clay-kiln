@@ -34,7 +34,7 @@ class StationSchedule {
     // Initialize the DOM parser and set the HTML from the API call of the station-schedule
     const parser = new DOMParser(),
       endpoint = `//${window.location.hostname}/_components/station-schedule/instances/default.html`,
-      response = await fetch(`${endpoint}?stationId=${event.target.getAttribute('data-station-id')}&dayOfWeek=${event.target.value}&gmt_offset=${event.target.getAttribute('data-gmt-offset')}`),
+      response = await fetch(`${endpoint}?stationId=${event.target.getAttribute('data-station-id')}&dayOfWeek=${event.target.value}&gmt_offset=${event.target.getAttribute('data-gmt-offset')}&ignore_resolve_media=true`),
       html = await response.text(),
       doc = parser.parseFromString(html, 'text/html'),
       content = doc.querySelector('.station-schedule'),

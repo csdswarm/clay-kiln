@@ -1,31 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
-  /**
-   * @param {string} [string]
-   * @returns {number}
-   */
-  getTime = (string) => {
-    const now = new Date();
-
-    if (string) {
-      const arr = string.split(':');
-
-      now.setUTCHours(parseInt(arr[0]), parseInt(arr[1]), parseInt(arr[2]));
-    }
-
-    return now.getTime();
-  },
-  /**
-   * @param {string} start
-   * @param {string} end
-   * @returns {boolean}
-   */
-  currentlyPlaying = (start, end) => {
-    const now = getTime();
-
-    return getTime(start) <= now && getTime(end) > now;
-  };
+  { getTime, currentlyBetween } = require('../../services/server/dateTime');
 
 /**
  * @param {string} ref
@@ -63,7 +39,7 @@ module.exports.render = async function (ref, data, locals) {
           const item = schedule.attributes;
 
           return {
-            playing: dayOfWeek === stationDayOfWeek && currentlyPlaying(item.start_time, item.end_time),
+            playing: dayOfWeek === stationDayOfWeek && currentlyBetween(item.start_time, item.end_time),
             start_time: new Date(getTime(item.start_time)),
             end_time: new Date(getTime(item.end_time)),
             image: item.show.image,
