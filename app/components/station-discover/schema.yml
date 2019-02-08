@@ -6,12 +6,12 @@ recentStations:
     include:
       - stations-list
 
-localStations:
+marketStations:
   _component:
     include:
       - stations-list
 
-allGenreStations:
+genreStations:
   _component:
     include:
       - stations-list

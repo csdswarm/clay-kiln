@@ -85,7 +85,7 @@
         <ul>
           <li class="discover__tab discover__tab--recent-stations">recent stations</li>
           <li class="discover__tab discover__tab--market-stations">{{station.city}} stations</li>
-          <li class="discover__tab discover__tab--all-genre-stations">all {{station.genre_name}}</li>
+          <li class="discover__tab discover__tab--genre-stations">all {{station.genre_name}}</li>
         </ul>
       </li>
     </ul>
@@ -98,7 +98,7 @@
         {{!-- {{> station-schedule scheduleComponent }} --}}
       </div>
       <div class="tabbed-content__container container--discover">
-        {{!-- {{> station-discover discoverComponent }} --}}
+        {{> station-discover discoverComponent }}
       </div>
     </div>
   </div>

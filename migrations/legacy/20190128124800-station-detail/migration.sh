@@ -30,10 +30,40 @@ curl -X PUT "$http://$1/_components/station-schedule/instances/default" -H 'Auth
   "allowed": true
 }';
 
+printf "\n\nCreating stations list component instance...\n\n"
+curl -X PUT "$http://$1/_components/stations-list/instances/recent" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
+{
+  "filterBy": "recent"
+}';
+printf "\n\nCreating stations list component instance...\n\n"
+curl -X PUT "$http://$1/_components/stations-list/instances/market" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
+{
+  "filterBy": "market"
+}';
+printf "\n\nCreating stations list component instance...\n\n"
+curl -X PUT "$http://$1/_components/stations-list/instances/genre" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
+{
+  "filterBy": "genre"
+}';
+printf "\n\nCreating stations list component instance...\n\n"
+curl -X PUT "$http://$1/_components/stations-list/instances/local" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
+{
+  "filterBy": "local"
+}';
+
 printf "\n\nCreating station detail discover component instance...\n\n"
 curl -X PUT "$http://$1/_components/station-discover/instances/default" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
-  "allowed": true
+  "allowed": true,
+  "recentStations": {
+    "_ref": "'$1'/_components/stations-list/instances/recent"
+  },
+  "marketStations": {
+    "_ref": "'$1'/_components/stations-list/instances/market"
+  },
+  "genreStations": {
+    "_ref": "'$1'/_components/stations-list/instances/genre"
+  }
 }';
 
 

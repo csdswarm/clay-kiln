@@ -7,5 +7,6 @@ filterBy:
     input: radio
     options:
       - recent
-      - location
+      - local
+      - market
       - genre

@@ -1,39 +1,33 @@
 'use strict';
 
-function Constructor() {
-  const stationDiscover = document.querySelector('.component--station-discover'),
-    discoverTab = stationDiscover.querySelector('.component--station-detail .tabs__discover'),
-    dropdown = discoverTab.querySelectorAll('li'),
-    mobileDropdown = stationDiscover.querySelector('.station-discover__dropdown--mobile'),
-    stationLists = stationDiscover.querySelectorAll('.station-discover__stations-list');
+function Constructor(el) {
+  this.discoverTab = document.querySelector('.tabs__discover');
+  this.dropdown = document.querySelectorAll('.tabs__discover li');
+  this.mobileDropdown = el.querySelector('.station-discover__dropdown--mobile');
+  this.stationLists = el.querySelectorAll('.station-discover__stations-list');
 
-  this.addNavigationListeners(discoverTab, dropdown, mobileDropdown, stationLists);
+  this.addNavigationListeners();
 }
 
 Constructor.prototype = {
   /**
    * Add navigation listeners
    * @function
-   * @param {object} discoverTab
-   * @param {object[]} dropdown
-   * @param {object} mobileDropdown
-   * @param {object[]} stationLists
    */
-  addNavigationListeners: function (discoverTab, dropdown, mobileDropdown, stationLists) {
-    discoverTab.addEventListener('click', function () { this.activateAllLists(stationLists); }.bind(this));
-    mobileDropdown.addEventListener('change', function (e) { this.activateFilteredList(e, stationLists); }.bind(this));
+  addNavigationListeners: function () {
+    this.discoverTab.addEventListener('click', function () { this.activateAllLists(); }.bind(this));
+    this.mobileDropdown.addEventListener('change', function (e) { this.activateFilteredList(e); }.bind(this));
 
-    for (let option of dropdown) {
-      option.addEventListener('click', function (e) { this.activateFilteredList(e, stationLists); }.bind(this));
+    for (let option of this.dropdown) {
+      option.addEventListener('click', function (e) { this.activateFilteredList(e); }.bind(this));
     }
   },
   /**
      * Show all station lists in discover tab
      * @function
-     * @param {object[]} stationLists
      */
-  activateAllLists: function (stationLists) {
-    for (let list of stationLists) {
+  activateAllLists: function () {
+    for (let list of this.stationLists) {
       list.classList.add('active');
     }
   },
@@ -41,9 +35,8 @@ Constructor.prototype = {
      * Show filtered station list only
      * @function
      * @param {object} event
-     * @param {object[]} stationLists
      */
-  activateFilteredList: function (event, stationLists) {
+  activateFilteredList: function (event) {
     console.log(event);
     let filter;
 
@@ -54,7 +47,7 @@ Constructor.prototype = {
     }
 
     if (filter) {
-      for (let list of stationLists) {
+      for (let list of this.stationLists) {
         list.classList.remove('active');
         if (list.classList.contains(`stations-list--${filter}`)) {
           list.classList.add('active');
@@ -65,4 +58,4 @@ Constructor.prototype = {
   }
 };
 
-module.exports = () => new Constructor();
+module.exports = (el) => new Constructor(el);

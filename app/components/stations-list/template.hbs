@@ -1,19 +1,23 @@
-<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--stations-list{{ if @root.locals.edit ' editing' }}">
-  {{~#if stations.length ~}}
-    <ul>
+<section role="main" data-filter-stations-by-track="{{ filterBy }}" data-uri="{{ default _ref _self }}" class="component component--stations-list{{ if @root.locals.edit ' editing' }}">
+  <ul>
+    {{~#if stations.length ~}}
       {{~#each stations as |station| ~}}
         <li class="station">
           <a href="//{{ @root.locals.site.host }}/{{station.id}}/listen">
             <div class="station__lede">
-              <button class="lede__favorite-btn"><img src=""></button>
-              <img class="lede__image" src="">
-              <buttom class="lede__play-btn"><img src=""></buttom>
+              <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
+              <img class="lede__image" src="{{station.square_logo_large}}?">
+              <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
             </div>
             <span class="station__name">{{ station.name }}</span>
-            <span class="station__secondary-info">{{!-- {{ station.category }} {{ station.market_name }} or "info on what's playing" --}}</span>
+            <span class="station__secondary-info">{{ station.slogan }}</span>
           </a>
         </li>
       {{~/each~}}
-    </ul>
-  {{~/if~}}
+    {{~else ~}}
+      <li class="loader-container">
+        {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
+      </li>
+    {{~/if~}}
+  </ul>
 </section>
