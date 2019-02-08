@@ -40,6 +40,8 @@ function getGenreID(genreSlug) {
 
 module.exports.render = (uri, data, locals) => {
   if (data.filterBy == 'recent' || data.filterBy == 'local') { // stations will be populated client side
+    data.listTitle = data.listTitle || `${data.filterBy} stations`;
+
     return data;
   } else { // filter by market or genre
     const route = 'stations';
@@ -49,16 +51,20 @@ module.exports.render = (uri, data, locals) => {
 
     if (locals.params) {
       if (locals.params.dynamicMarket) {
+        data.listTitle = data.listTitle || `${locals.params.dynamicMarket} stations`;
         params['filter[market_id]'] = getMarketID(locals.params.dynamicMarket);
       } else if (locals.params.dynamicGenre) {
+        data.listTitle = data.listTitle || `${locals.params.dynamicGenre} stations`;
         params['filter[genre_id]'] = getGenreID(locals.params.dynamicGenre);
       }
     } else if (locals.station) {
       switch (data.filterBy) {
         case 'market':
           params['filter[market_id]'] = locals.station.market.id;
+          data.listTitle = data.listTitle || `${locals.station.city} stations`;
           break;
         case 'genre':
+          data.listTitle = data.listTitle || `${locals.station.genre[0].name} stations`;
           params['filter[genre_id]'] = locals.station.genre.id;
           break;
       }
@@ -66,7 +72,7 @@ module.exports.render = (uri, data, locals) => {
 
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        data.stations = response.data || [];
+        data.stations = response.data ? response.data.map((station) => station.attributes) : [];
 
         return data;
       } else {

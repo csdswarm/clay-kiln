@@ -10,3 +10,11 @@ filterBy:
       - local
       - market
       - genre
+    validate:
+      required: true
+
+listTitle:
+  _label: Title of stations list
+  _has:
+    validate:
+      required: true

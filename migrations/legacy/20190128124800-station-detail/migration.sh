@@ -33,22 +33,26 @@ curl -X PUT "$http://$1/_components/station-schedule/instances/default" -H 'Auth
 printf "\n\nCreating stations list component instance...\n\n"
 curl -X PUT "$http://$1/_components/stations-list/instances/recent" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
-  "filterBy": "recent"
+  "filterBy": "recent",
+  "listTitle": ""
 }';
 printf "\n\nCreating stations list component instance...\n\n"
 curl -X PUT "$http://$1/_components/stations-list/instances/market" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
-  "filterBy": "market"
+  "filterBy": "market",
+  "listTitle": ""
 }';
 printf "\n\nCreating stations list component instance...\n\n"
 curl -X PUT "$http://$1/_components/stations-list/instances/genre" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
-  "filterBy": "genre"
+  "filterBy": "genre",
+  "listTitle": ""
 }';
 printf "\n\nCreating stations list component instance...\n\n"
 curl -X PUT "$http://$1/_components/stations-list/instances/local" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
 {
-  "filterBy": "local"
+  "filterBy": "local",
+  "listTitle": ""
 }';
 
 printf "\n\nCreating station detail discover component instance...\n\n"

@@ -3,18 +3,7 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
-  Handlebars = require('handlebars'),
-  stationLi = `
-    <a href="//{{ @root.locals.site.host }}/{{id}}/listen">
-      <div class="station__lede">
-        <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
-        <img class="lede__image" src="{{square_logo_large}}">
-        <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
-      </div>
-      <span class="station__name">{{ name }}</span>
-      <span class="station__secondary-info">{{ slogan }}</span>
-    </a>
-  `;
+  Handlebars = require('handlebars');
 
 require('clayhandlebars')(Handlebars);
 
@@ -52,15 +41,44 @@ StationsList.prototype = {
       }
     });
   },
+  getButtonsHTML: async function () {
+    const parser = new DOMParser(),
+      listHTML = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html&ignore_resolve_media=true`),
+      htmlText = await listHTML.text(),
+      doc = parser.parseFromString(htmlText, 'text/html');
+
+    this.favoriteBtn = doc.querySelector('.lede__favorite-btn');
+    this.playBtn = doc.querySelector('.lede__play-btn');
+  },
   /**
    * Insert new payload of stations into DOM
    * @function
    */
   updateStationsDOM: function () {
+    this.getButtonsHTML();
+    const stationLi = `
+      <a href="//{{ @root.locals.site.host }}/{{ id }}/listen">
+        <div class="station__lede">
+          ${this.favoriteBtn}
+          <img class="lede__image"
+            src="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0"
+            srcset="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0 140w,
+              {{ square_logo_large }}?width=222&height=222&crop=1:1,offset-y0 222w,
+              {{ square_logo_large }}?width=210&height=210&crop=1:1,offset-y0 210w,
+              {{ square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150w"
+            sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
+          >
+          ${this.playBtn}
+        </div>
+        <span class="station__name">{{ name }}</span>
+        <span class="station__secondary-info">{{ slogan }}</span>
+      </a>
+    `;
+
     this.stationsList.removeChild(this.stationsList.querySelector('.loader-container')); // Remove loader
     const template = Handlebars.compile(stationLi);
 
-    this.stationsData.stations.forEach(function (stationData) {
+    this.stationsData.forEach(function (stationData) {
       let station = document.createElement('li');
 
       this.stationsList.appendChild(station);

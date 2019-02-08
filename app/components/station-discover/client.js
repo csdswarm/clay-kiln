@@ -6,6 +6,7 @@ function Constructor(el) {
   this.mobileDropdown = el.querySelector('.station-discover__dropdown--mobile');
   this.stationLists = el.querySelectorAll('.station-discover__stations-list');
 
+  this.activateAllLists();
   this.addNavigationListeners();
 }
 

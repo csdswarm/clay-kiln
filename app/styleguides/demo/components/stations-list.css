@@ -4,5 +4,13 @@
 @import "_global/colors";
 
 .component--stations-list {
-
+  .loader-container {
+    max-width: em(70);
+  }
+  .svg-container {
+    display: none;
+  }
+  h2.stations-list__title {
+    @mixin stations-list-font1;
+  }
 }

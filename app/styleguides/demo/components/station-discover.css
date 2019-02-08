@@ -15,5 +15,12 @@
     &.active {
       display: block;
     }
+    .component--stations-list {
+      h2.stations-list__title {
+        @mixin medium-small-screen {
+          @mixin station-detail-font4;
+        }
+      }
+    }
   }
 }

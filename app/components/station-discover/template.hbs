@@ -8,15 +8,12 @@
   </select>
 
   <div id="discover__recent-stations" class="station-discover__stations-list stations-list--recent-stations">
-    <h2>recent stations</h2>
     {{> stations-list recentStations }}
   </div>
   <div id="discover__market-stations" class="station-discover__stations-list stations-list--market-stations">
-    <h2>{{station.city}} stations</h2>
     {{> stations-list marketStations }}
   </div>
   <div id="discover__genre-stations" class="station-discover__stations-list stations-list--genre-stations">
-    <h2>all {{station.genre}}</h2>
     {{> stations-list genreStations }}
   </div>
 

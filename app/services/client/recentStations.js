@@ -5,16 +5,16 @@ const localStorageKey = 'recentStations',
 /**
  * Get recent stations from localStorage
  *
- * @returns {string}
+ * @returns {Object[]}
  */
-async function get() {
+function get() {
   let recentStations = localStorage.getItem(localStorageKey);
 
   if (!recentStations) {
-    return '[]';
+    return [];
+  } else {
+    return JSON.parse(recentStations);
   }
-
-  return recentStations;
 }
 
 /**
@@ -27,8 +27,8 @@ function add(station) {
     localStorage has a limit of 5 MB **/
 
   if (station) {
-    const recentStations = get(),
-      formattedStation = {
+    let recentStations = get();
+    const formattedStation = {
         id: station.id,
         name: station.name,
         slogan: station.slogan,
@@ -52,21 +52,23 @@ function add(station) {
         genre: station.genre,
         station_stream: station.station_stream
       };
-    let arrayOfRecentStations = JSON.parse(recentStations);
 
-    // dedupe stations stored
-    arrayOfRecentStations.forEach(function(station, i, stations) {
-      if (station.id == formattedStation.id) {
-        stations.splice(i, 1);
+    if (recentStations[0].id !== formattedStation.id) {
+
+      // dedupe stations stored
+      recentStations.forEach(function(station, i, stations) {
+        if (station.id == formattedStation.id || !station.id) {
+          stations.splice(i, 1);
+        }
+      });
+
+      recentStations.unshift(formattedStation);
+
+      try {
+        localStorage.setItem(localStorageKey, JSON.stringify(recentStations)); // Store recent stations in browser
+      } catch (e) {
+        console.log('error storing station: ', e);
       }
-    });
-
-    arrayOfRecentStations.unshift(formattedStation);
-
-    try {
-      localStorage.setItem(localStorageKey, JSON.stringify(arrayOfRecentStations)); // Store recent stations in browser
-    } catch (e) {
-      console.log('error storing station: ', e);
     }
   }
 }

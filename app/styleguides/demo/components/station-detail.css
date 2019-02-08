@@ -6,6 +6,9 @@
 .component--station-detail {
   margin-top: em(30);
 }
+.station-detail__data {
+  display: none;
+}
 .station-detail__head {
   width: 100%;
   display: flex;
