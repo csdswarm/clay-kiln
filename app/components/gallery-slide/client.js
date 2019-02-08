@@ -13,7 +13,7 @@ document.addEventListener('gallerySlidePageView', function (event) {
 
   // Build Data Layer event for new Slide pageview.
   const dataLayerEvent = {
-    event: 'Gallery Slide Pageview',
+    event: 'virtualPageview',
     title: event.detail.slideTitle,
     url: `${window.location.protocol}//${window.location.hostname}${event.detail.slideSlug}`
   };
