@@ -76,7 +76,28 @@ _components:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
 
+  # station-recently-played:
+  #   instances:
+  #     default:
+  #       allowed: true
+
   station-schedule:
-    instance:
+    instances:
       default:
         allowed: true
+
+  # station-discover:
+  #   instances:
+  #     default:
+  #       allowed: true
+
+  station-detail:
+    instances:
+      default:
+        allowed: true
+        # recentlyPlayedComponent:
+        #   _ref: /_components/station-recently-played/instances/default
+        scheduleComponent:
+          _ref: /_components/station-schedule/instances/default
+        # discoverComponent:
+        #   _ref: /_components/station-discover/instances/default
