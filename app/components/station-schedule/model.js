@@ -36,7 +36,7 @@ const radioAPI = require('../../services/server/radioApi'),
 module.exports.render = async function (ref, data, locals) {
   // ensure we have a stationid from the url or being passed from the station-detail
   if (!locals.stationId  && !locals.station) {
-    return {};
+    return data;
   }
 
   const stationId = locals.stationId ? locals.stationId : locals.station.id,
