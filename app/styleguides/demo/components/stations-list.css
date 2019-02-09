@@ -12,5 +12,122 @@
   }
   h2.stations-list__title {
     @mixin stations-list-font1;
+    text-transform: capitalize;
+    margin-bottom: em(20, 18);
+  }
+  ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    li.station {
+      width: em(widthOnGrid(2,1));
+      margin-bottom: em(50);
+      &:not(:last-of-type) {
+        margin-right: em(20);
+      }
+      @mixin medium-screen {
+        width: em(widthOnGrid(2,1,medium-screen));
+        margin-bottom: em(30);
+      }
+      @mixin medium-small-screen {
+        width: em(widthOnGrid(2,1,medium-small-screen));
+      }
+      @mixin small-screen {
+        width: em(widthOnGrid(2,1,small-screen));
+        margin-bottom: em(25);
+      }
+      a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        width: 100%;
+        .station__lede {
+          position: relative;
+          margin-bottom: em(5);
+          width: 100%;
+          height: 100%;
+          @mixin medium-small-screen {
+            margin-bottom: em(10);
+          }
+          button{
+            font-size: 16px;
+            position: absolute;
+            background: transparent;
+            border: none;
+            padding: 0;
+            svg {
+              width: 100%;
+              height: 100%;
+            }
+            &.lede__favorite-btn {
+              width: em(20);
+              height: em(20);
+              top: 0;
+              left: 0;
+              margin: em(5) 0 0 em(5);
+              @mixin medium-screen {
+                margin: em(10) 0 0 em(10);
+                width: em(37);
+                height: em(37);
+              }
+              @mixin medium-small-screen {
+                width: em(30);
+                height: em(30);
+              }
+              @mixin small-screen {
+                width: em(21);
+                height: em(21);
+              }
+            }
+            &.lede__play-btn {
+              width: em(23);
+              height: em(23);
+              bottom: 0;
+              right: 0;
+              margin: 0 em(5) em(5) 0;
+              @mixin medium-screen {
+                margin: 0 em(10) em(10) 0;
+                width: em(32);
+                height: em(32);
+              }
+              @mixin medium-small-screen {
+                width: em(35);
+                height: em(35);
+              }
+              @mixin small-screen {
+                width: em(25);
+                height: em(25);
+              }
+              &:hover {
+                opacity: 0.7;
+              }
+            }
+          }
+          img {
+            display: block;
+            width: 100%;
+            height: 100%;
+          }
+        }
+        span {
+          text-align: center;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          width: 100%;
+          &.station__name {
+            @mixin stations-list-font2;
+            margin-bottom: em(3, 13);
+            @mixin medium-small-screen {
+              margin-bottom: em(8, 13);
+            }
+          }
+          &.station__secondary-info {
+            @mixin stations-list-font3;
+          }
+        }
+      }
+    }
   }
 }

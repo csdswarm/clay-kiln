@@ -46,17 +46,15 @@ module.exports.render = (uri, data, locals) => {
   } else { // filter by market or genre
     const route = 'stations';
     let params = {
-      'page[size]': 313
+      'page[size]': 350
     };
 
-    if (locals.params) {
-      if (locals.params.dynamicMarket) {
-        data.listTitle = data.listTitle || `${locals.params.dynamicMarket} stations`;
-        params['filter[market_id]'] = getMarketID(locals.params.dynamicMarket);
-      } else if (locals.params.dynamicGenre) {
-        data.listTitle = data.listTitle || `${locals.params.dynamicGenre} stations`;
-        params['filter[genre_id]'] = getGenreID(locals.params.dynamicGenre);
-      }
+    if (locals.params.dynamicMarket) {
+      data.listTitle = data.listTitle || `${locals.params.dynamicMarket} stations`;
+      params['filter[market_id]'] = getMarketID(locals.params.dynamicMarket);
+    } else if (locals.params.dynamicGenre) {
+      data.listTitle = data.listTitle || `${locals.params.dynamicGenre} stations`;
+      params['filter[genre_id]'] = getGenreID(locals.params.dynamicGenre);
     } else if (locals.station) {
       switch (data.filterBy) {
         case 'market':
@@ -64,7 +62,7 @@ module.exports.render = (uri, data, locals) => {
           data.listTitle = data.listTitle || `${locals.station.city} stations`;
           break;
         case 'genre':
-          data.listTitle = data.listTitle || `${locals.station.genre[0].name} stations`;
+          data.listTitle = data.listTitle || `${locals.station.genre} stations`;
           params['filter[genre_id]'] = locals.station.genre.id;
           break;
       }

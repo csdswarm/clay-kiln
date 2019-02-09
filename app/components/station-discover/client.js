@@ -44,7 +44,7 @@ Constructor.prototype = {
     if (event.type == 'change') {
       filter = event.target.value;
     } else if (event.type == 'click') {
-      filter = event.currentTarget.classList[0].replace('discover__tab--','');
+      filter = event.target.classList[1].replace('discover__tab--','');
     }
 
     if (filter) {

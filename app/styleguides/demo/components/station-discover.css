@@ -6,6 +6,7 @@
 .component--station-discover {
   .station-discover__dropdown--mobile {
     display: none;
+    margin-bottom: em(30);
     @mixin medium-small-screen {
       display: block;
     }
