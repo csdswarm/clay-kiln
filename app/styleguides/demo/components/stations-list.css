@@ -22,8 +22,30 @@
     li.station {
       width: em(widthOnGrid(2,1));
       margin-bottom: em(50);
-      &:not(:last-of-type) {
-        margin-right: em(20);
+      .component--station-detail & {
+        @mixin default-screen {
+          &:not(:nth-of-type(5n)) {
+            margin-right: em(20);
+          }
+        }
+        @mixin large-screen {
+          &:not(:nth-of-type(4n)) {
+            margin-right: em(20);
+          }
+        }
+        @mixin medium-screen {
+          width: em(widthOnGrid(2,1,medium-screen));
+          margin-bottom: em(30);
+          &:not(:nth-of-type(3n)) {
+            margin-right: em(20);
+          }
+        }
+        @mixin medium-small-screen {
+          width: em(widthOnGrid(2,1,medium-small-screen));
+          &:not(:nth-of-type(2n)) {
+            margin-right: em(20);
+          }
+        }
       }
       @mixin medium-screen {
         width: em(widthOnGrid(2,1,medium-screen));

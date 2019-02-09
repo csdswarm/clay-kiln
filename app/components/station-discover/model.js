@@ -5,7 +5,6 @@ module.exports.render = (uri, data, locals) => {
     return data;
   }
   data.station = locals.station;
-  data.station.genre = data.station.genre_name.toString();
 
   return data;
 };

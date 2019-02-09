@@ -62,13 +62,14 @@ module.exports.render = (uri, data, locals) => {
           data.listTitle = data.listTitle || `${locals.station.city} stations`;
           break;
         case 'genre':
-          data.listTitle = data.listTitle || `${locals.station.genre} stations`;
-          params['filter[genre_id]'] = locals.station.genre.id;
+          data.listTitle = data.listTitle || `${locals.station.genre[0].name} stations`;
+          params['filter[genre_id]'] = locals.station.genre[0].id;
           break;
       }
     }
 
     return radioApiService.get(route, params).then(response => {
+      console.log(route, params, locals.station.genre);
       if (response.data) {
         data.stations = response.data ? response.data.map((station) => station.attributes) : [];
 
