@@ -1,5 +1,7 @@
 <div data-uri="{{ default _ref _self }}" class="component component--station-schedule">
-  <select class="station-schedule__select" data-station-id="{{ @root.locals.station.id }}" data-gmt-offset="{{ @root.locals.station.gmt_offset }}"></select>
+  <div class="station-schedule__day-of-week">
+    <select class="day-of-week__select" data-station-id="{{ @root.locals.station.id }}" data-gmt-offset="{{ @root.locals.station.gmt_offset }}"></select>
+  </div>
   <ul class="station-schedule">
     {{#each schedule}}
       <li>

@@ -4,13 +4,13 @@
 
 .component--station-schedule {
 
-  .station-schedule__select {
-    @mixin station-detail-font7;
-    margin-bottom: em(30);
-    width: em(116);
-    height: em(24);
-    border: em(1) solid #E1E1E1;
-    border-radius: 0;
+  .station-schedule__day-of-week {
+    margin-bottom: em(30, 12);
+    width: em(116, 12);
+
+    @mixin medium-screen {
+      width: em(142, 12);
+    }
   }
 
   .station-schedule__show, .show__link {
