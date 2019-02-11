@@ -21,7 +21,7 @@ const { apiDayOfWeek } = require('../../services/universal/dateTime'),
     return dateArray.pop();
   },
   /**
-   * Returns an array of text/value keys starting the the users current day with 7 days
+   * Returns an array of text/value keys starting the users current day with 7 days
    *
    * @returns {array}
    */
