@@ -47,6 +47,7 @@
     "levelup": "^1.2.1",
     "lodash": "^4.17.5",
     "merge-stream": "^1.0.0",
+    "mobius1-selectr": "^2.4.8",
     "no-scroll": "^2.1.1",
     "postcss-csso": "^3.0.0",
     "postcss-safe-parser": "^3.0.1",

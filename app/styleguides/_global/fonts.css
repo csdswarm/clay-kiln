@@ -405,3 +405,10 @@ em, i {
 @define-mixin station-detail-font11 {
   @mixin font CircularStd-Black, 18px, $black, -.43px, 20px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||       Selectr select box        ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin selectr-select-box-font1 {
+  @mixin font CircularStd-Medium, 12px, $black, -.58px, 14px;
+}

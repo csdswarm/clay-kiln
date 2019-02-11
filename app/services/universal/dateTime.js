@@ -28,7 +28,18 @@ const getTime = (string) => {
     const now = getTime();
 
     return getTime(start) <= now && getTime(end) > now;
-  };
+  },
+  /**
+   * Converts javascript day (0=Sunday, 6=Saturday) to api day (1=Monday, 7=Sunday)
+   *
+   * @param {number} day
+   * @returns {number}
+   */
+  apiDayOfWeek = (day) => ((day - 7) % 7 + 7) % 8;
 
 module.exports.getTime = getTime;
 module.exports.currentlyBetween = currentlyBetween;
+module.exports.apiDayOfWeek = apiDayOfWeek;
+
+
+
