@@ -10,7 +10,6 @@ const radioAPI = require('../../services/server/radioApi'),
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
-  locals.stationId = 373; locals.gmt_offset = -7;
   // ensure we have a stationid from the url or being passed from the station-detail
   if (!locals.stationId  && !locals.station) {
     return data;
