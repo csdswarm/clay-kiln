@@ -23,10 +23,10 @@
 .selectr-hidden {
   position: absolute;
   overflow: hidden;
-  clip: rect(0px, 0px, 0px, 0px);
-  width: 1px;
-  height: 1px;
-  margin: -1px;
+  clip: rect(em(0, 12), em(0, 12), em(0, 12), em(0, 12));
+  width: em(1, 12);
+  height: em(1, 12);
+  margin: -em(1, 12);
   padding: 0;
   border: 0 none;
 }
@@ -47,7 +47,7 @@
 
 .selectr-desktop.multiple.native-open .selectr-visible {
   top: 100%;
-  min-height: 200px !important;
+  min-height: em(200) !important;
   height: auto;
   opacity: 1;
   display: block;
@@ -62,33 +62,33 @@
   z-index: 1;
   box-sizing: border-box;
   width: 100%;
-  padding: 4px 5px;
+  padding: em(4, 12) em(5, 12);
   cursor: pointer;
   border: em(1) solid #E1E1E1;
   border-radius: 0;
   background-color: #fff;
 
   @mixin medium-small-screen {
-    padding: 8px 5px;
+    padding: em(8, 12) em(5, 12);
   }
 }
 
 .selectr-selected::before {
   position: absolute;
-  top: 5px;
-  right: 8px;
-  width: 8px;
-  height: 8px;
+  top: em(5, 12);
+  right: em(8, 12);
+  width: em(8, 12);
+  height: em(8, 12);
   content: '';
   transform: rotate(45deg);
-  border-width: 0 2px 2px 0;
+  border-width: 0 em(2, 12) em(2, 12) 0;
   border-style: solid;
   border-color: black;
   z-index: 2;
 
   @mixin medium-small-screen {
-    right: 10px;
-    top: 9px;
+    right: em(10, 12);
+    top: em(9, 12);
   }
 }
 
@@ -96,14 +96,14 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 24px;
-  height: 22px;
+  width: em(24, 12);
+  height: em(22, 12);
   content: '';
   background-color: #F5F5F5;
 
   @mixin medium-small-screen {
-    width: 28px;
-    height: 30px;
+    width: em(28, 12);
+    height: em(30, 12);
   }
 }
 
@@ -111,21 +111,21 @@
 
 .selectr-container.open .selectr-selected::before,
 .selectr-container.native-open .selectr-selected::before {
-  top: 8px;
-  border-width: 2px 0 0 2px;
+  top: em(8, 12);
+  border-width: em(2, 12) 0 0 em(2, 12);
 
   @mixin medium-small-screen {
-    top: 11px;
+    top: em(11, 12);
   }
 }
 
 
 .selectr-container.open .selectr-selected::after,
 .selectr-container.native-open .selectr-selected::after {
-  top: 11px;
+  top: em(11, 12);
 
   @mixin medium-small-screen {
-    top: 15px;
+    top: em(15, 12);
   }
 }
 
@@ -148,15 +148,15 @@
 }
 
 .has-selected .selectr-tags {
-  margin: 0 0 -2px;
+  margin: 0 0 em(-2, 12);
 }
 
 .selectr-tag {
   list-style: none;
   position: relative;
   float: left;
-  padding: 2px 25px 2px 8px;
-  margin: 0 2px 2px 0;
+  padding: em(2, 12) em(25, 12) em(2, 12) em(8, 12);
+  margin: 0 em(2, 12) em(2, 12) 0;
   cursor: default;
   color: #fff;
   border: medium none;
@@ -165,18 +165,18 @@
 }
 
 .selectr-container.multiple.has-selected .selectr-selected {
-  padding: 5px 28px 5px 5px;
+  padding: em(5, 12) em(28, 12) em(5, 12) em(5, 12);
 }
 
 .selectr-options-container {
   position: absolute;
   z-index: 10000;
-  top: calc(100% - 1px);
+  top: calc(100% - em(1, 12));
   left: 0;
   display: none;
   box-sizing: border-box;
   width: 100%;
-  border-width: 0 1px 1px;
+  border-width: 0 em(1, 12) em(1, 12);
   border-style: solid;
   border-color: transparent #999 #999;
   background-color: #fff;
@@ -196,12 +196,12 @@
 .selectr-tag-remove {
   position: absolute;
   top: 50%;
-  right: 22px;
-  width: 20px;
-  height: 20px;
+  right: em(22, 12);
+  width: em(20, 12);
+  height: em(20, 12);
   padding: 0;
   cursor: pointer;
-  transform: translate3d(0px, -50%, 0px);
+  transform: translate3d(em(0, 12), -50%, em(0, 12));
   border: medium none;
   background-color: transparent;
   z-index: 11;
@@ -218,7 +218,7 @@
 }
 
 .selectr-selected .selectr-tag-remove {
-  right: 2px;
+  right: em(2, 12);
 }
 
 .selectr-clear::before,
@@ -228,19 +228,19 @@
 .selectr-tag-remove::before,
 .selectr-tag-remove::after {
   position: absolute;
-  top: 5px;
-  left: 9px;
-  width: 2px;
-  height: 10px;
+  top: em(5, 12);
+  left: em(9, 12);
+  width: em(2, 12);
+  height: em(10, 12);
   content: ' ';
   background-color: #6c7a86;
 }
 
 .selectr-tag-remove::before,
 .selectr-tag-remove::after {
-  top: 4px;
-  width: 3px;
-  height: 12px;
+  top: em(4, 12);
+  width: em(3, 12);
+  height: em(12, 12);
   background-color: #fff;
 }
 
@@ -262,22 +262,22 @@
 }
 
 .selectr-input {
-  top: 5px;
-  left: 5px;
+  top: em(5, 12);
+  left: em(5, 12);
   box-sizing: border-box;
-  width: calc(100% - 30px);
-  margin: 10px 15px;
-  padding: 7px 30px 7px 9px;
-  border: 1px solid #999;
+  width: calc(100% - em(30, 12));
+  margin: em(10, 12) em(15, 12);
+  padding: em(7, 12) em(30, 12) em(7, 12) em(9, 12);
+  border: em(1, 12) solid #999;
 }
 
 .selectr-notice {
   display: none;
   box-sizing: border-box;
   width: 100%;
-  padding: 8px 16px;
-  border-top: 1px solid #999;
-  /*border-radius: 0 0 3px 3px;*/
+  padding: em(8, 12) em(16, 12);
+  border-top: em(1, 12) solid #999;
+  /*border-radius: 0 0 em(3, 12) em(3, 12);*/
   background-color: #fff;
 }
 
@@ -288,11 +288,11 @@
 
 .selectr-options {
   position: relative;
-  top: calc(100% + 2px);
+  top: calc(100% + em(2, 12));
   display: none;
   overflow-x: auto;
   overflow-y: scroll;
-  max-height: 200px;
+  max-height: em(200, 12);
   margin: 0;
   padding: 0;
 }
@@ -306,19 +306,19 @@
 .selectr-option {
   position: relative;
   display: block;
-  padding: 5px;
+  padding: em(5, 12);
   list-style: outside none none;
   cursor: pointer;
   font-weight: normal;
 
   @mixin medium-small-screen {
-    padding-top: 7px;
-    padding-bottom: 7px;
+    padding-top: em(7, 12);
+    padding-bottom: em(7, 12);
   }
 }
 
 .selectr-options.optgroups > .selectr-option {
-  padding-left: 25px;
+  padding-left: em(25, 12);
 }
 
 .selectr-optgroup {
@@ -328,8 +328,8 @@
 
 .selectr-optgroup--label {
   font-weight: bold;
-  margin-top: 10px;
-  padding: 5px 15px;
+  margin-top: em(10, 12);
+  padding: em(5, 12) em(15, 12);
 }
 
 .selectr-match {
@@ -358,7 +358,7 @@
 }
 
 .selectr-container.open .selectr-selected::after {
-  transform: rotate(180deg) translate3d(0px, 50%, 0px);
+  transform: rotate(180deg) translate3d(em(0, 12), 50%, em(0, 12));
 }
 
 .selectr-disabled {
@@ -376,7 +376,7 @@
 
 /* TAGGABLE */
 .taggable .selectr-selected {
-  padding: 4px 28px 4px 4px;
+  padding: em(4, 12) em(28, 12) em(4, 12) em(4, 12);
 }
 
 .taggable .selectr-selected::after {
@@ -400,13 +400,13 @@
 
 .input-tag {
   float: left;
-  min-width: 90px;
+  min-width: em(90, 12);
   width: auto;
 }
 
 .selectr-tag-input {
   border: medium none;
-  padding: 3px 10px;
+  padding: em(3, 12) em(10, 12);
   width: 100%;
   font-family: inherit;
   font-weight: inherit;
@@ -416,16 +416,16 @@
 .selectr-input-container.loading::after {
   position: absolute;
   top: 50%;
-  right: 20px;
-  width: 20px;
-  height: 20px;
+  right: em(20, 12);
+  width: em(20, 12);
+  height: em(20, 12);
   content: '';
-  transform: translate3d(0px, -50%, 0px);
+  transform: translate3d(em(0, 12), -50%, em(0, 12));
 
   transform-origin: 50% 0 0;
 
   animation: 500ms linear 0s normal forwards infinite running spin;
-  border-width: 3px;
+  border-width: em(3, 12);
   border-style: solid;
   border-color: #aaa #ddd #ddd;
   border-radius: 50%;
@@ -433,35 +433,35 @@
 
 @-webkit-keyframes spin {
   0% {
-    transform: rotate(0deg) translate3d(0px, -50%, 0px);
+    transform: rotate(0deg) translate3d(em(0, 12), -50%, em(0, 12));
   }
   100% {
-    transform: rotate(360deg) translate3d(0px, -50%, 0px);
+    transform: rotate(360deg) translate3d(em(0, 12), -50%, em(0, 12));
   }
 }
 @keyframes spin {
   0% {
-    transform: rotate(0deg) translate3d(0px, -50%, 0px);
+    transform: rotate(0deg) translate3d(em(0, 12), -50%, em(0, 12));
   }
   100% {
-    transform: rotate(360deg) translate3d(0px, -50%, 0px);
+    transform: rotate(360deg) translate3d(em(0, 12), -50%, em(0, 12));
   }
 }
 .selectr-container.open.inverted .selectr-selected {
   border-color: transparent #999 #999;
-  border-radius: 0 0 3px 3px;
+  border-radius: 0 0 em(3, 12) em(3, 12);
 }
 
 .selectr-container.inverted .selectr-options-container {
-  border-width: 1px 1px 0;
+  border-width: em(1, 12) em(1, 12) 0;
   border-color: #999 #999 transparent;
-  /*border-radius: 3px 3px 0 0;*/
+  /*border-radius: em(3, 12) em(3, 12) 0 0;*/
   background-color: #fff;
 }
 
 .selectr-container.inverted .selectr-options-container {
   top: auto;
-  bottom: calc(100% - 1px);
+  bottom: calc(100% - em(1, 12));
 }
 
 .selectr-container ::-webkit-input-placeholder {
