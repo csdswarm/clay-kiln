@@ -2,11 +2,19 @@
 
 function Constructor() {
   const sidebar = document.getElementsByClassName('content__sidebar')[0],
-    tabs = document.querySelectorAll('.component--station-detail .tabs li'),
-    content = document.querySelectorAll('.component--station-detail .tabbed-content__container');
+    stationDetail = document.querySelector('.component--station-detail'),
+    tabs = stationDetail.querySelectorAll('.tabs li'),
+    content = stationDetail.querySelectorAll('.tabbed-content__container'),
+    hash = window.location.hash.replace('#', '');
 
-  this.repositionRightRail(sidebar);
+  this.repositionRightRail(sidebar, stationDetail);
+  this.activateTab('recently-played', tabs, content);
   this.addTabNavigationListeners(tabs, content);
+
+  if (hash) {
+    this.activateTab(hash, tabs, content);
+    window.scrollTo(0, document.querySelector('.station-detail__body').offsetTop);
+  }
 }
 
 Constructor.prototype = {
@@ -14,9 +22,10 @@ Constructor.prototype = {
    * Add margin top to right rail
    * @function
    * @param {object} sidebar
+   * @param {object} stationDetail
    */
-  repositionRightRail: function (sidebar) {
-    sidebar.style.marginTop = '30px';
+  repositionRightRail: function (sidebar, stationDetail) {
+    sidebar.style.marginTop = window.getComputedStyle(stationDetail).marginTop;
     sidebar.style.visibility = 'visible';
   },
   /**
@@ -33,17 +42,30 @@ Constructor.prototype = {
   /**
    * Navigate between tabs
    * @function
-   * @param {object} event
+   * @param {object} event or tab name
    * @param {object[]} tabs
    * @param {object[]} content
    */
-  activateTab: function (event, tabs, content) {
-    for (let tab of tabs) {
-      tab.classList.remove('active');
-    }
-    const contentLabel = event.currentTarget.classList[0].replace('tabs__','');
+  activateTab: function (e, tabs, content) {
+    let contentLabel;
 
-    event.currentTarget.classList.add('active');
+    if (e.currentTarget) {
+      contentLabel = e.currentTarget.classList[0].replace('tabs__','');
+
+      for (let tab of tabs) {
+        tab.classList.remove('active');
+      }
+      e.currentTarget.classList.add('active');
+    } else {
+      contentLabel = e;
+
+      for (let tab of tabs) {
+        tab.classList.remove('active');
+        if (tab.classList.contains(`tabs__${contentLabel}`)) {
+          tab.classList.add('active');
+        }
+      }
+    }
 
     for (let c of content) {
       c.classList.remove('active');
@@ -51,6 +73,8 @@ Constructor.prototype = {
         c.classList.add('active');
       }
     }
+
+    history.pushState(null, null, `${window.location.origin}${window.location.pathname}#${contentLabel}`); // set hash without reloading page
   }
 };
 

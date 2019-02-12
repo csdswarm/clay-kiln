@@ -6,7 +6,7 @@ _pages:
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
-      - /_components/station-detail/instances/new
+      - /_components/station-detail/instances/default
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
     layout: /_components/two-column-layout/instances/station
@@ -25,6 +25,7 @@ _components:
         top:
           - _ref: /_components/top-nav/instances/default
         head: head
+        layoutHeader: layoutHeader
         pageHeader: pageHeader
         sectionHeader: sectionHeader
         main: main
@@ -35,6 +36,7 @@ _components:
           - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
           - _ref: /_components/footer/instances/default
           - _ref: /_components/nielsen/instances/default
         kilnInternals:
@@ -43,6 +45,10 @@ _components:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
   station-recently-played:
+    instance:
+      default:
+        allowed: true
+  station-schedule:
     instance:
       default:
         allowed: true

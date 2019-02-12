@@ -1,10 +1,6 @@
 _description: |
   Dynamic station detail page
 
-station:
-  _label: Station Object
-  _publish: station
-
 recentlyPlayedComponent:
   _component:
     include:

@@ -123,7 +123,7 @@ describe(dirname, function () {
     describe('executeMultipleSearchRequests', function () {
       var fn = lib[this.title];
       const respObj = {hits: {hits: ['hello']}},
-        query = [lib(INDEX), lib('published-articles')]; // create a query array with multiple queries
+        query = [lib(INDEX), lib('published-content')]; // create a query array with multiple queries
 
       it('hits the search endpoint', function () {
         lib.post.returns(Promise.resolve(respObj));
@@ -140,7 +140,7 @@ describe(dirname, function () {
       it('returns a query for a single published article', function () {
         const q = fn('http://page-url', [], locals);
 
-        expect(q.index).to.equal('published-articles');
+        expect(q.index).to.equal('published-content');
         expect(q.body.query.bool.filter.term).to.have.property('canonicalUrl');
       });
 

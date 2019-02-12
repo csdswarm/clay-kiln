@@ -2,6 +2,10 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+.component--topic-page .component--more-content-feed .more-content-feed__container {
+  margin-top: 0;
+}
+
 .component--more-content-feed {
   display: flex;
   flex-direction: column;

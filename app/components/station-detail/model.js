@@ -1,6 +1,5 @@
 'use strict';
-const radioApiService = require('../../services/server/radioApi'),
-  _uniq = require('lodash/uniq');
+const radioApiService = require('../../services/server/radioApi');
 
 /**
  * consolidate station data to form tags array
@@ -10,9 +9,20 @@ const radioApiService = require('../../services/server/radioApi'),
 function getStationTags(station) {
   let tags = [];
 
-  tags.push(station.category);
-  tags = tags.concat(station.genre_name, station.market_name);
-  tags = _uniq(tags);
+  tags.push({
+    text: station.category,
+    type: station.category
+  });
+  if (station.category !== station.genre_name.toString()) {
+    tags = tags.concat({
+      text: station.genre_name.toString(),
+      type: station.category
+    });
+  }
+  tags = tags.concat({
+    text: station.market_name,
+    type: "location"
+  });
 
   return tags;
 }
@@ -26,8 +36,8 @@ module.exports.render = (uri, data, locals) => {
 
   return radioApiService.get(route).then(response => {
     if (response.data) {
-      data.station = response.data.attributes || {};
-      locals.station = data.station
+      // station object is available to child components through locals.station
+      data.station = locals.station = response.data.attributes || {};
       data.tags = getStationTags(response.data.attributes);
       data.category = response.data.attributes.category.toLowerCase() || '';
 

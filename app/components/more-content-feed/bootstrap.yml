@@ -4,8 +4,10 @@ _components:
     items: []
     tag: ''
     tagManual: ''
+    contentType: { article: true, gallery: true }
     sectionFront: ''
     sectionFrontManual: ''
+    filterBySecondary: ''
     populateFrom: ''
     locationOfContentFeed: ''
     googleAdRightRail:

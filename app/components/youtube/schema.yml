@@ -70,12 +70,6 @@ videoPlaylist:
     operator: truthy
   _has:
     input: text
-    validate:
-      required:
-        field: autoPlayNextVideo
-        operator: truthy
-      requiredMessage: Video Player should contain video playlist
-    help: Playlists are used for auto playing additional videos in the YouTube component after the assigned video is finished. Only required for videos that are selected to automatically start next video above
 
 playerBorderTopCTA:
   _label: Top Border Title

@@ -60,7 +60,9 @@ _doc:
         normalized:
           type: text
           analyzer: tag_analyzer
-    articleType:
+    sectionFront:
+      type: keyword
+    contentType:
       type: keyword
     teaser:
       type: text
@@ -71,3 +73,7 @@ _doc:
       store: true
     lead:
       type: keyword
+
+
+
+
