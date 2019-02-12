@@ -17,42 +17,6 @@ else
 fi
 
 printf "\n\nCreating Station Detail Page...\n\n\n"
-
-printf "\n\nCreating station detail recently played component instance...\n\n"
-curl -X PUT "$http://$1/_components/station-recently-played/instances/default" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
-{
-  "allowed": true
-}';
-
-printf "\n\nCreating station detail schedule component instance...\n\n"
-curl -X PUT "$http://$1/_components/station-schedule/instances/default" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
-{
-  "allowed": true
-}';
-
-printf "\n\nCreating station detail discover component instance...\n\n"
-curl -X PUT "$http://$1/_components/station-discover/instances/default" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
-{
-  "allowed": true
-}';
-
-
-printf "\n\nCreating station detail component instance...\n\n"
-curl -X PUT "$http://$1/_components/station-detail/instances/default" -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d'
-{
-  "allowed": true,
-  "recentlyPlayedComponent": {
-    "_ref": "'$1'/_components/station-recently-played/instances/default"
-  },
-  "scheduleComponent": {
-    "_ref": "'$1'/_components/station-schedule/instances/default"
-  },
-  "discoverComponent": {
-    "_ref": "'$1'/_components/station-discover/instances/default"
-  }
-}';
-
-printf "\n\nCreating page...\n\n"
 cat ./_pages.yml | clay import -k demo -y -p $1
 
 printf "\n\n\n\n"

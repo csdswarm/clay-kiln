@@ -1,40 +1,43 @@
 'use strict';
 
+const Selectr = require('mobius1-selectr'),
+  { nextSevenDays, usersTimeZone } = require('../../services/client/dateTime');
+
 /*
  * Set the day of week select using the users locale language
  */
-class RecentlyPlayed {
+class StationRecentlyPlayed {
   constructor(el) {
-    this.timeZone = this.usersTimeZone();
+    this.timeZone = usersTimeZone();
 
-    const lang = this.getNavigatorLanguage(),
-      select = el.querySelector('.station-recently-played__select'),
-      ul = el.querySelector('.station-recently-played'),
-      today = new Date();
+    const select = el.querySelector('.day-of-week__select'),
+      stationId = parseInt(select.getAttribute('data-station-id')),
+      gmtOffset = parseInt(select.getAttribute('data-gmt-offset')),
+      ul = el.querySelector('.station-recently-played');
 
-    // starting with today, add a week of days using the users locale
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(new Date().setDate(today.getDate() + i)),
-        dayOfWeek = ((day.getDay() - 7) % 7 + 7) % 8,
-        option = new Option(day.toLocaleString(lang, {  weekday: 'long' }), dayOfWeek);
+    nextSevenDays().forEach((day) => select.add(new Option(day.text, day.value)));
 
-      option.classList.add('select__option');
-      select.add(option);
-    }
+    // eslint-disable-next-line one-var
+    const selectr = new Selectr(select, {
+      searchable: false
+    });
+
+    selectr.on('selectr.change', (option) => this.loadContent(stationId, gmtOffset, option.value));
 
     this.showTimeZone(ul);
-    select.addEventListener('change', (el) => this.loadContent(el));
   }
   /**
    * load in new content from the api
-   * @param {Event} event
+   * @param {number} stationId
+   * @param {number} gmtOffset
+   * @param {number} dayOfWeek
    * @returns {Promise}
    */
-  async loadContent(event) {
+  async loadContent(stationId, gmtOffset, dayOfWeek) {
     // Initialize the DOM parser and set the HTML from the API call of the station-recently-played
     const parser = new DOMParser(),
       endpoint = `//${window.location.hostname}/_components/station-recently-played/instances/default.html`,
-      response = await fetch(`${endpoint}?stationId=${event.target.getAttribute('data-station-id')}&dayOfWeek=${event.target.value}&gmt_offset=${event.target.getAttribute('data-gmt-offset')}`),
+      response = await fetch(`${endpoint}?stationId=${stationId}&dayOfWeek=${dayOfWeek}&gmt_offset=${gmtOffset}&ignore_resolve_media=true`),
       html = await response.text(),
       doc = parser.parseFromString(html, 'text/html'),
       content = doc.querySelector('.station-recently-played'),
@@ -42,25 +45,6 @@ class RecentlyPlayed {
 
     this.showTimeZone(content);
     ul.parentNode.replaceChild(content, ul);
-  }
-  /**
-   * extracts the users language
-   * @returns {string} the users set language
-   */
-  getNavigatorLanguage() {
-    if (navigator.languages && navigator.languages.length) {
-      return navigator.languages[0];
-    }
-    return navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en-US';
-  }
-  /**
-   * extracts the users timezone
-   * @returns {string} the users locale timezone
-   */
-  usersTimeZone() {
-    const dateArray = new Date().toLocaleTimeString(this.getNavigatorLanguage(),{timeZoneName:'short'}).split(' ');
-
-    return dateArray.pop();
   }
   /**
    * adds the users timezone to the times displayed
@@ -77,5 +61,4 @@ class RecentlyPlayed {
   }
 }
 
-module.exports = (el) => new RecentlyPlayed(el);
-
+module.exports = (el) => new StationRecentlyPlayed(el);

@@ -1,7 +1,9 @@
 <div data-uri="{{ default _ref _self }}" class="component component--station-recently-played">
-  <select class="station-recently-played__select" data-station-id="{{ @root.locals.station.id }}" data-gmt-offset="{{ @root.locals.station.gmt_offset }}"></select>
+  <div class="station-recently-played__day-of-week">
+    <select class="day-of-week__select" data-station-id="{{ @root.locals.station.id }}" data-gmt-offset="{{ @root.locals.station.gmt_offset }}"></select>
+  </div>
   <ul class="station-recently-played">
-    {{#each recent}}
+    {{#each schedule}}
       <li>
         <div class="station-recently-played__show">
           {{#if playing}}
