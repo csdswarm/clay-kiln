@@ -3,8 +3,8 @@
 const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
-  Redis = require('ioredis'),
-  redis = new Redis(process.env.REDIS_HOST),
+  ioredis = require('ioredis'),
+  redis = new ioredis(process.env.REDIS_HOST),
   TTL = 300000;
 
 /**
