@@ -93,18 +93,32 @@ _components:
         allowed: true
         filterBy: recent
         listTitle: ''
-      market:
-        allowed: true
-        filterBy: market
-        listTitle: ''
-      genre:
-        allowed: true
-        filterBy: genre
-        listTitle: ''
+        truncatedList: true
       local:
         allowed: true
         filterBy: local
         listTitle: ''
+        truncatedList: true
+      market:
+        allowed: true
+        filterBy: market
+        listTitle: ''
+        truncatedList: false
+      marketTruncated:
+        allowed: true
+        filterBy: market
+        listTitle: ''
+        truncatedList: true
+      genre:
+        allowed: true
+        filterBy: genre
+        listTitle: ''
+        truncatedList: false
+      genreTruncated:
+        allowed: true
+        filterBy: genre
+        listTitle: ''
+        truncatedList: true
 
   station-discover:
     instances:
@@ -113,9 +127,9 @@ _components:
         recentStations:
           _ref: /_components/stations-list/instances/recent
         marketStations:
-          _ref: /_components/stations-list/instances/market
+          _ref: /_components/stations-list/instances/marketTruncated
         genreStations:
-          _ref: /_components/stations-list/instances/genre
+          _ref: /_components/stations-list/instances/genreTruncated
 
   station-detail:
     instances:

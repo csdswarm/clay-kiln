@@ -1,7 +1,7 @@
 'use strict';
 
 function Constructor(el) {
-  this.discoverTab = document.querySelector('.tabs__discover');
+  this.discoverTab = document.querySelector('.tabs__discover span');
   this.dropdown = document.querySelectorAll('.tabs__discover li');
   this.mobileDropdown = el.querySelector('.station-discover__dropdown--mobile');
   this.stationLists = el.querySelectorAll('.station-discover__stations-list');
@@ -16,7 +16,7 @@ Constructor.prototype = {
    * @function
    */
   addNavigationListeners: function () {
-    this.discoverTab.addEventListener('click', function () { this.activateAllLists(); }.bind(this));
+    this.discoverTab.addEventListener('click', function (e) { this.activateAllLists(e); }.bind(this));
     this.mobileDropdown.addEventListener('change', function (e) { this.activateFilteredList(e); }.bind(this));
 
     for (let option of this.dropdown) {
@@ -27,9 +27,11 @@ Constructor.prototype = {
      * Show all station lists in discover tab
      * @function
      */
-  activateAllLists: function () {
-    for (let list of this.stationLists) {
-      list.classList.add('active');
+  activateAllLists: function (event) {
+    if (!event || event.target == this.discoverTab) {
+      for (let list of this.stationLists) {
+        list.classList.add('active');
+      };
     }
   },
   /**
@@ -38,7 +40,6 @@ Constructor.prototype = {
      * @param {object} event
      */
   activateFilteredList: function (event) {
-    console.log(event);
     let filter;
 
     if (event.type == 'change') {

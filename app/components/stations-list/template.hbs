@@ -1,10 +1,29 @@
 <section role="main"
-  data-truncate="{{ t }}"
+  data-truncate="{{ truncatedList }}"
   data-filter-stations-by-track="{{ filterBy }}"
   data-uri="{{ default _ref _self }}"
-  class="component component--stations-list{{ if @root.locals.edit ' editing' }}"
+  class="component component--stations-list{{ if @root.locals.edit ' editing' }}{{ if truncatedList ' stations-list--truncated' }}"
 >
-  <h2 class="stations-list__title">{{ listTitle }}</h2>
+  <div class="stations-list__header-row">
+    <h2 class="header-row__title">{{ listTitle }}</h2>
+    {{#ifAll truncatedList (compare filterBy 'market') }}
+      <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/location/{{ market }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
+    {{/ifAll}}
+    {{#ifAll truncatedList (compare filterBy 'genre') }}
+      {{!-- vvv TODO: Replace genre IDs with genre slugs once genre slug is surfaced in stations api vvv --}}
+      {{#ifAny (compare genre '11') (compare genre '25') }}
+        {{#if (compare genre '11') }} {{!-- Sports --}}
+          <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/sports">
+        {{/if}}
+        {{#if (compare genre '25') }} {{!-- News / Talk --}}
+          <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/news-talk">
+        {{/if}}
+      {{ else }} {{!-- Music --}}
+        <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/music/{{ genre }}">
+      {{/ifAny}}
+      See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
+    {{/ifAll}}
+  </div>
   <ul>
     {{~#if stations.length ~}}
       {{~#each stations as |station| ~}}
@@ -37,4 +56,5 @@
       </li>
     {{~/if~}}
   </ul>
+  <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
 </section>

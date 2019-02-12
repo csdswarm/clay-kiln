@@ -13,8 +13,10 @@ class StationsList {
     this.stationsList = element;
     this.filterStationsBy = this.stationsList.getAttribute('data-filter-stations-by-track');
     this.stationsList = this.stationsList.querySelector('ul');
+    this.loadMoreBtn = this.stationsList.querySelector('.stations-list__load-more');
 
     this.updateStations();
+    this.loadMoreBtn.addEventListener('click', function (e) { this.loadMoreStations(e); }.bind(this));
   }
 }
 StationsList.prototype = {
@@ -41,25 +43,30 @@ StationsList.prototype = {
       }
     });
   },
+  /**
+   * Insert new payload of stations into DOM
+   * @function
+   * @returns {Promise}
+   */
   getButtonsHTML: async function () {
     const parser = new DOMParser(),
-      listHTML = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html&ignore_resolve_media=true`),
+      listHTML = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html?ignore_resolve_media=true`),
       htmlText = await listHTML.text(),
       doc = parser.parseFromString(htmlText, 'text/html');
 
-    this.favoriteBtn = doc.querySelector('.lede__favorite-btn');
-    this.playBtn = doc.querySelector('.lede__play-btn');
+    return [doc.querySelector('.lede__favorite-btn'), doc.querySelector('.lede__play-btn')];
   },
   /**
    * Insert new payload of stations into DOM
    * @function
+   * @returns {Promise}
    */
-  updateStationsDOM: function () {
-    this.getButtonsHTML();
+  updateStationsDOM: async function () {
+    let buttons = await this.getButtonsHTML();
     const stationLi = `
       <a href="//{{ @root.locals.site.host }}/{{ id }}/listen">
         <div class="station__lede">
-          ${this.favoriteBtn}
+          ${buttons[0].outerHTML}
           <img class="lede__image"
             src="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0"
             srcset="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0 140w,
@@ -68,7 +75,7 @@ StationsList.prototype = {
               {{ square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150w"
             sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
           >
-          ${this.playBtn}
+          ${buttons[1].outerHTML}
         </div>
         <span class="station__name">{{ name }}</span>
         <span class="station__secondary-info">{{ slogan }}</span>
@@ -102,6 +109,21 @@ StationsList.prototype = {
       this.stationsData = recentStations.get();
       this.updateStationsDOM();
     }
+  },
+  /**
+   * Show x more stations in addition to current stations shown
+   * @function
+   * @param {object} event
+   * @param {number} pageSize
+   * @param {object[]} currentResults
+   * @returns {Promise}
+   */
+  loadMoreStations: async function (event, pageSize, currentResults) {
+    // get pageSize from page type (detail pg or directory) and breakpoint
+    // get current stations
+    // ???
+    // return
+
   }
 };
 

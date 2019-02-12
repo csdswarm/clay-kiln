@@ -3,13 +3,16 @@ const radioApiService = require('../../services/server/radioApi');
 
 /**
  * get market ID from market slug
- * @param {string} marketSlug
+ * @param {string} market
  * @returns {number}
  */
-function getMarketID(marketSlug) {
+function getMarketID(market) {
   const route = 'markets',
-    // params = {'filter[slug]': marketSlug}; // BLOCKED BY API WORK
-    params = {'filter[id]': marketSlug}; // temporarily filter by market ID
+    /* note: filter by slug needs to be added to market api
+    /* temporarily filter by market ID
+    */
+    // params = { 'filter[slug]': market };
+    params = { 'filter[id]': market };
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
@@ -22,12 +25,16 @@ function getMarketID(marketSlug) {
 
 /**
  * get genre ID from genre slug
- * @param {string} genreSlug
+ * @param {string} genre
  * @returns {number}
  */
-function getGenreID(genreSlug) {
+function getGenreID(genre) {
   const route = 'genres',
-    params = {'filter[slug]': genreSlug};
+    /* note: genre slug needs to be added to station api results
+    /* temporarily filter by genre ID
+    */
+    // params = { 'filter[slug]': genre };
+    params = { 'filter[id]': genre };
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
@@ -38,7 +45,7 @@ function getGenreID(genreSlug) {
   });
 }
 
-module.exports.render = (uri, data, locals) => {
+module.exports.render = async (uri, data, locals) => {
   if (data.filterBy == 'recent' || data.filterBy == 'local') { // stations will be populated client side
     data.listTitle = data.listTitle || `${data.filterBy} stations`;
 
@@ -46,22 +53,26 @@ module.exports.render = (uri, data, locals) => {
   } else { // filter by market or genre
     const route = 'stations';
     let params = {
-      'page[size]': 350
+      'page[size]': 350 // note: page[size]=all needs to be added
     };
 
-    if (locals.params.dynamicMarket) {
+    if (locals.params && locals.params.dynamicMarket) {
+      data.market = locals.params.dynamicMarket; // should be slug. temporarily using id
       data.listTitle = data.listTitle || `${locals.params.dynamicMarket} stations`;
-      params['filter[market_id]'] = getMarketID(locals.params.dynamicMarket);
-    } else if (locals.params.dynamicGenre) {
+      params['filter[market_id]'] = await getMarketID(locals.params.dynamicMarket);
+    } else if (locals.params && locals.params.dynamicGenre) {
+      data.genre = locals.params.dynamicGenre; // should be slug. temporarily using id
       data.listTitle = data.listTitle || `${locals.params.dynamicGenre} stations`;
-      params['filter[genre_id]'] = getGenreID(locals.params.dynamicGenre);
+      params['filter[genre_id]'] = await getGenreID(locals.params.dynamicGenre);
     } else if (locals.station) {
       switch (data.filterBy) {
         case 'market':
-          params['filter[market_id]'] = locals.station.market.id;
+          data.market = locals.station.market.slug || locals.station.market.id; // note: market slug needs to be added to stations api
           data.listTitle = data.listTitle || `${locals.station.city} stations`;
+          params['filter[market_id]'] = locals.station.market.id;
           break;
         case 'genre':
+          data.genre = locals.station.genre[0].slug || locals.station.genre[0].id; // note: genre slug needs to be added to stations api
           data.listTitle = data.listTitle || `${locals.station.genre[0].name} stations`;
           params['filter[genre_id]'] = locals.station.genre[0].id;
           break;
@@ -69,7 +80,6 @@ module.exports.render = (uri, data, locals) => {
     }
 
     return radioApiService.get(route, params).then(response => {
-      console.log(route, params, locals.station.genre);
       if (response.data) {
         data.stations = response.data ? response.data.map((station) => station.attributes) : [];
 

@@ -18,3 +18,7 @@ listTitle:
   _has:
     validate:
       required: true
+
+truncatedList:
+  _label: Truncate stations list?
+  _has: checkbox
