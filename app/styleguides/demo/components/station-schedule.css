@@ -86,6 +86,8 @@
       .details__title {
         @mixin station-detail-font4;
       }
+
+
     }
 
     .show__play {
@@ -111,6 +113,11 @@
         opacity: 0.7;
       }
     }
+  }
+
+  .station-schedule__no-results {
+    @mixin station-detail-font7;
+    margin-bottom: em(110);
   }
 }
 

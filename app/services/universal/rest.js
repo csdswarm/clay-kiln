@@ -47,7 +47,7 @@ function checkStatus(res) {
 /**
  * GET
  * @param {string} url
- * @param {object} opts See https://github.github.io/fetch/#options
+ * @param {object} [opts] See https://github.github.io/fetch/#options
  * @return {Promise}
  */
 module.exports.get = function (url, opts) {

@@ -1,6 +1,9 @@
 <div data-uri="{{ default _ref _self }}" class="component component--station-schedule">
   <div class="station-schedule__day-of-week">
-    <select class="day-of-week__select" data-station-id="{{ @root.locals.station.id }}" data-gmt-offset="{{ @root.locals.station.gmt_offset }}"></select>
+    <select class="day-of-week__select"
+            data-station-id="{{ station.id }}"
+            data-gmt-offset="{{ station.gmt_offset }}"
+            data-category="{{ station.category }}"></select>
   </div>
   <ul class="station-schedule">
     {{#each schedule}}
@@ -9,14 +12,17 @@
           {{#if playing}}
           <a href="{{ site_url }}" class="show__link">
           {{/if}}
-          <img src="{{ image }}?width=101&height=101&crop=1:1,offset-y0" class="show__image"/>
+          <img src="{{ image }}?width=101&height=101&crop=1:1,offset-y0" class="show__image"
+            onerror="this.onerror=null; this.src='/media/components/station-schedule/fallback.svg';"/>
           <div class="show__details">
             <div class="details__time
-                {{if playing (concat "details__time--on-air " (lowercase @root.locals.station.category))}}">
+                {{if playing (concat "details__time--on-air " ../station.category)}}">
               {{#if playing}}
                 ON-AIR
               {{else}}
-                {{ formatLocalDate start_time 'h:mm a' }} to {{ formatLocalDate end_time 'h:mm a' }}
+                {{ userLocalDate start_time 'h:mm a' }}
+                to
+                {{ userLocalDate end_time 'h:mm a' }}
               {{/if}}
             </div>
             <div class="details__title">{{ name }}</div>
@@ -27,6 +33,8 @@
           {{/if}}
         </div>
       </li>
+    {{else}}
+      <li class="station-schedule__no-results">No results.</li>
     {{/each}}
   </ul>
 </div>
