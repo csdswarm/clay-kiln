@@ -53,7 +53,7 @@ function add(station) {
         station_stream: station.station_stream
       };
 
-    if (recentStations[0].id !== formattedStation.id) {
+    if (recentStations.length == 0 || recentStations[0].id !== formattedStation.id) {
 
       // dedupe stations stored
       recentStations.forEach(function(station, i, stations) {

@@ -16,7 +16,9 @@ class StationsList {
     this.loadMoreBtn = this.stationsList.querySelector('.stations-list__load-more');
 
     this.updateStations();
-    this.loadMoreBtn.addEventListener('click', function (e) { this.loadMoreStations(e); }.bind(this));
+    if (this.loadMoreBtn) {
+      this.loadMoreBtn.addEventListener('click', (e) => this.loadMoreStations(e) );
+    }
   }
 }
 StationsList.prototype = {
@@ -106,7 +108,7 @@ StationsList.prototype = {
         this.updateStationsDOM();
       });
     } else if (this.filterStationsBy == 'recent') {
-      this.stationsData = recentStations.get();
+      this.stationsData = await recentStations.get();
       this.updateStationsDOM();
     }
   },
@@ -118,7 +120,7 @@ StationsList.prototype = {
    * @param {object[]} currentResults
    * @returns {Promise}
    */
-  loadMoreStations: async function (event, pageSize, currentResults) {
+  loadMoreStations: async function (event) {
     // get pageSize from page type (detail pg or directory) and breakpoint
     // get current stations
     // ???

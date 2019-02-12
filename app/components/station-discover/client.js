@@ -1,5 +1,7 @@
 'use strict';
 
+const Selectr = require('mobius1-selectr');
+
 function Constructor(el) {
   this.discoverTab = document.querySelector('.tabs__discover span');
   this.dropdown = document.querySelectorAll('.tabs__discover li');
@@ -16,11 +18,18 @@ Constructor.prototype = {
    * @function
    */
   addNavigationListeners: function () {
-    this.discoverTab.addEventListener('click', function (e) { this.activateAllLists(e); }.bind(this));
-    this.mobileDropdown.addEventListener('change', function (e) { this.activateFilteredList(e); }.bind(this));
+    this.discoverTab.addEventListener('click', (e) => this.activateAllLists(e) );
+    // this.mobileDropdown.addEventListener('change', (e) => this.activateFilteredList(e) );
+
+    const selectr = new Selectr(this.mobileDropdown, {
+      searchable: false,
+      customClass: 'station-discover__dropdown--mobile'
+    });
+
+    selectr.on('selectr.change', (option) => this.activateFilteredList(option) );
 
     for (let option of this.dropdown) {
-      option.addEventListener('click', function (e) { this.activateFilteredList(e); }.bind(this));
+      option.addEventListener('click', (e) => this.activateFilteredList(e) );
     }
   },
   /**
@@ -37,13 +46,13 @@ Constructor.prototype = {
   /**
      * Show filtered station list only
      * @function
-     * @param {object} event
+     * @param {object} event or option
      */
   activateFilteredList: function (event) {
     let filter;
 
-    if (event.type == 'change') {
-      filter = event.target.value;
+    if (event.value) {
+      filter = event.value;
     } else if (event.type == 'click') {
       filter = event.target.classList[1].replace('discover__tab--','');
     }
