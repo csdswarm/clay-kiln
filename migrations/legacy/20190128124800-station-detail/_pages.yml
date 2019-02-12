@@ -42,3 +42,7 @@ _components:
         static:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
+  station-recently-played:
+    instance:
+      default:
+        allowed: true
