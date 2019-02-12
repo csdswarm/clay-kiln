@@ -4,7 +4,7 @@ const mediaplay = require('./media-play'),
   responsiveImages = require('./responsive-images'),
   formatTime = require('./format-time'),
   dateTime = require('./dateTime'),
-  truncate = require('./truncate')
+  truncate = require('./truncate');
 
 module.exports = {
   byline: require('./byline'),
