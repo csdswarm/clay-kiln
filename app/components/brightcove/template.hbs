@@ -2,14 +2,14 @@
   <div class="player">
     {{#if videoId}}
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
-        <video id="video-{{ videoId }}"
+        <video-js id="video-{{ videoId }}"
                class="video-js vjs-16-9"
                data-video-id="{{ videoId }}"
                data-account="{{ @root.locals.site.brightcoveAccountId }}"
                data-player="{{ @root.locals.site.brightcovePlayerId }}"
                data-embed="default"
                data-application-id
-               controls></video>
+               controls></video-js>
       </div>
     {{/if}}
   </div>

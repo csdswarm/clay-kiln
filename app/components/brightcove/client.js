@@ -8,7 +8,7 @@ document.addEventListener('brightcove-dismount', () => {
 });
 
 function Constructor(el) {
-  let videoPlayer = el.querySelector('video'),
+  let videoPlayer = el.querySelector('video-js'),
     id = videoPlayer.getAttribute('id'),
     brightcoveAccount = videoPlayer.getAttribute('data-account'),
     brightcovePlayerId = videoPlayer.getAttribute('data-player');
@@ -20,7 +20,14 @@ function Constructor(el) {
   document.body.appendChild(s);
   // Call a function to play the video once player's JavaScript loaded
   s.onload = function () {
-    videos.push(videojs(id));
+    const player = bc(id);
+
+    // autoplay muted
+    player.on('loadedmetadata', () => {
+      player.muted(true);
+      player.play();
+    });
+    videos.push(player);
   };
 }
 
