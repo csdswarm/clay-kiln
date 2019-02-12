@@ -1,7 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
-  { getTime, currentlyBetween } = require('../../services/universal/dateTime');
+  { getTime, currentlyBetween, apiDayOfWeek } = require('../../services/universal/dateTime');
 
 /**
  * @param {string} ref
@@ -18,7 +18,7 @@ module.exports.render = async function (ref, data, locals) {
   const stationId = locals.stationId ? locals.stationId : locals.station.id,
     gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
     // using the station offset determine the current day 1 - 7 based
-    stationDayOfWeek = ((new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay() - 7) % 7 + 7) % 8,
+    stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
     dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
     json = await radioAPI.get('/schedules',
       {
