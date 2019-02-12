@@ -2,7 +2,7 @@
 
 const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
-  querystring = require('querystring'),
+  qs = require('qs'),
   Redis = require('ioredis'),
   redis = new Redis(process.env.REDIS_HOST),
   TTL = 300000;
@@ -15,12 +15,12 @@ const rest = require('../universal/rest'),
  * @return {Promise}
  */
 function get(route, params) {
-  const requestEndpoint = `${radioApi}${route}?${querystring.stringify(params)}`;
+  const requestEndpoint = `${radioApi}${route}?${qs.stringify(params)}`;
 
   return redis.get(requestEndpoint)
     .then(function (data) {
       if (data.updated_at && (new Date() - new Date(data.updated_at) > TTL)) {
-        return getFromApi(requestEndpoint).catch(function () {
+        return getFromApi(decodeURIComponent(requestEndpoint)).catch(function () {
           // If API errors out, return stale data
           return data;
         });
@@ -46,7 +46,7 @@ function getFromApi(endpoint) {
   return rest.get(`https://${endpoint}`).then(response => {
     if (response.data) {
       response.updated_at = new Date();
-      return redis.set(endpoint, JSON.stringify(response)).then(function () {
+      return redis.set(decodeURIComponent(endpoint), JSON.stringify(response)).then(function () {
         return response;
       });
     } else {
