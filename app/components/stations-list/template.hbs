@@ -6,45 +6,34 @@
 >
   <div class="stations-list__header-row">
     <h2 class="header-row__title">{{ listTitle }}</h2>
-    {{#ifAll truncatedList (compare filterBy 'market') }}
-      <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/location/{{ market }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
-    {{/ifAll}}
-    {{#ifAll truncatedList (compare filterBy 'genre') }}
-      {{!-- vvv TODO: Replace genre IDs with genre slugs once genre slug is surfaced in stations api vvv --}}
-      {{#ifAny (compare genre '11') (compare genre '25') }}
-        {{#if (compare genre '11') }} {{!-- Sports --}}
-          <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/sports">
-        {{/if}}
-        {{#if (compare genre '25') }} {{!-- News / Talk --}}
-          <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/news-talk">
-        {{/if}}
-      {{ else }} {{!-- Music --}}
-        <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/music/{{ genre }}">
-      {{/ifAny}}
-      See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
+    {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
+      <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
     {{/ifAll}}
   </div>
   <ul>
     {{~#if stations.length ~}}
-      {{~#each stations as |station| ~}}
-        <li class="station">
-          <a href="//{{ @root.locals.site.host }}/{{ station.id }}/listen">
-            <div class="station__lede">
-              <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
-              <img class="lede__image"
-                src="{{ station.square_logo_large }}?width=140&height=140&crop=1:1,offset-y0"
-                srcset="{{ station.square_logo_large }}?width=140&height=140&crop=1:1,offset-y0 140w,
-                  {{ station.square_logo_large }}?width=222&height=222&crop=1:1,offset-y0 222w,
-                  {{ station.square_logo_large }}?width=210&height=210&crop=1:1,offset-y0 210w,
-                  {{ station.square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150w"
-                sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
-              >
-              <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
-            </div>
-            <span class="station__name">{{ station.name }}</span>
-            <span class="station__secondary-info">{{ station.slogan }}</span>
-          </a>
-        </li>
+      {{~#each stations ~}}
+        {{#ifAll ../truncatedList (compare @index '<' 14) }}{{ set 'hideStations' true }}{{/ifAll}}
+        {{#ifAny (compare ../truncatedList false) hideStations }}
+          <li class="station">
+            <a href="//{{ @root.locals.site.host }}/{{ id }}/listen">
+              <div class="station__lede">
+                <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
+                <img class="lede__image"
+                  src="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0"
+                  srcset="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0 140w,
+                    {{ square_logo_large }}?width=222&height=222&crop=1:1,offset-y0 222w,
+                    {{ square_logo_large }}?width=210&height=210&crop=1:1,offset-y0 210w,
+                    {{ square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150w"
+                  sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
+                >
+                <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
+              </div>
+              <span class="station__name">{{ name }}</span>
+              <span class="station__secondary-info">{{ slogan }}</span>
+            </a>
+          </li>
+        {{/ifAny}}
       {{~/each~}}
     {{~else ~}}
       <li class="loader-container">

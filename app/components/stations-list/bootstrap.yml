@@ -2,5 +2,9 @@ _components:
   stations-list:
     allowed: true
     filterBy: ''
+    genre: ''
+    market: ''
+    category: ''
     listTitle: ''
     truncatedList: true
+    seeAllLink: ''

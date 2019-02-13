@@ -109,6 +109,7 @@ StationsList.prototype = {
       });
     } else if (this.filterStationsBy == 'recent') {
       this.stationsData = await recentStations.get();
+      this.stationsData.length = 7;
       this.updateStationsDOM();
     }
   },

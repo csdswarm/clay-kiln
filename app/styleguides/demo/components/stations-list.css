@@ -41,6 +41,84 @@
     li.station {
       width: em(widthOnGrid(2,1));
       margin-bottom: em(50);
+      .component--station-discover .stations-list--truncated& {
+        @mixin default-screen {
+          &:nth-of-type(n+6) {
+            display: none;
+          }
+          &:nth-of-type(-n+5) {
+            display: block;
+          }
+        }
+        @mixin large-screen {
+          &:nth-of-type(n+5) {
+            display: none;
+          }
+          &:nth-of-type(-n+4) {
+            display: block;
+          }
+        }
+        @mixin medium-screen {
+          &:nth-of-type(n+7) {
+            display: none;
+          }
+          &:nth-of-type(-n+6) {
+            display: block;
+          }
+        }
+      }
+      .component--stations-directory .stations-list--truncated& {
+        @mixin default-screen {
+          &:nth-of-type(n+8) {
+            display: none;
+          }
+          &:nth-of-type(-n+7) {
+            display: block;
+          }
+        }
+        @mixin large-screen {
+          &:nth-of-type(n+7) {
+            display: none;
+          }
+          &:nth-of-type(-n+6) {
+            display: block;
+          }
+        }
+        @mixin medium-screen {
+          &:nth-of-type(n+7) {
+            display: none;
+          }
+          &:nth-of-type(-n+6) {
+            display: block;
+          }
+        }
+      }
+      .component--stations-directory .stations-list--truncated[data-filter-stations-by-track='category']& {
+        @mixin default-screen {
+          &:nth-of-type(n+15) {
+            display: none;
+          }
+          &:nth-of-type(-n+14) {
+            display: block;
+          }
+        }
+        @mixin large-screen {
+          &:nth-of-type(n+13) {
+            display: none;
+          }
+          &:nth-of-type(-n+12) {
+            display: block;
+          }
+        }
+        @mixin medium-screen {
+          &:nth-of-type(n+7) {
+            display: none;
+          }
+          &:nth-of-type(-n+6) {
+            display: block;
+          }
+        }
+      }
       .component--station-detail & {
         @mixin default-screen {
           &:not(:nth-of-type(5n)) {

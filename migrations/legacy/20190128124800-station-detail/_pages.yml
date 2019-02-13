@@ -92,31 +92,52 @@ _components:
       recent:
         allowed: true
         filterBy: recent
-        listTitle: ''
+        listTitle: 'recent stations'
+        truncatedList: true
+      recentOnFeaturedStationsDirectory:
+        allowed: true
+        filterBy: recent
+        listTitle: "stations you've listened to"
         truncatedList: true
       local:
         allowed: true
         filterBy: local
-        listTitle: ''
+        listTitle: 'stations near you'
         truncatedList: true
       market:
         allowed: true
         filterBy: market
+        market: ''
         listTitle: ''
         truncatedList: false
       marketTruncated:
         allowed: true
         filterBy: market
+        market: ''
         listTitle: ''
         truncatedList: true
       genre:
         allowed: true
         filterBy: genre
+        genre: ''
         listTitle: ''
         truncatedList: false
       genreTruncated:
         allowed: true
         filterBy: genre
+        genre: ''
+        listTitle: ''
+        truncatedList: true
+      category:
+        allowed: true
+        filterBy: category
+        category: ''
+        listTitle: ''
+        truncatedList: false
+      categoryTruncated:
+        allowed: true
+        filterBy: category
+        category: ''
         listTitle: ''
         truncatedList: true
 
