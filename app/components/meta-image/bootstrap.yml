@@ -1,3 +1,4 @@
 _components:
   meta-image:
     imageUrl: ''
+    dataKey: ''
