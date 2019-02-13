@@ -42,7 +42,7 @@ Constructor.prototype = {
   /**
    * Navigate between tabs
    * @function
-   * @param {object} event or tab name
+   * @param {object} e event or tab name
    * @param {object[]} tabs
    * @param {object[]} content
    */

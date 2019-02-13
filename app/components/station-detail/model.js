@@ -21,7 +21,7 @@ function getStationTags(station) {
   }
   tags = tags.concat({
     text: station.market_name,
-    type: "location"
+    type: 'location'
   });
 
   return tags;
