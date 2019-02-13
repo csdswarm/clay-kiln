@@ -1,8 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
-  moment = require('moment'),
-  { getTime, currentlyBetween, apiDayOfWeek } = require('../../services/universal/dateTime');
+  moment = require('moment');
 
 /**
  * @param {string} ref
@@ -23,12 +22,14 @@ module.exports.render = async function (ref, data, locals) {
     beforeDate = dayOfWeek && hour ? moment().day(dayOfWeek).hour(hour).format('YYYY-MM-DDTHH:mm:ss') : moment().format('YYYY-MM-DDTHH:mm:ss'),
     json = await radioAPI.get(`/stations/${stationId}/play_history`,
       {
-        'event_count': 50,
-        'before_date': beforeDate,
+        event_count: 50,
+        before_date: beforeDate
       }
     );
+
   if (json.data && json.data.events && json.data.events.recent_events) {
     let first = true;
+
     data.schedule = json.data.events.recent_events
       .sort((item1, item2) => moment(item2.timePlayed) - moment(item1.timePlayed))
       .map((item) => {
@@ -38,11 +39,12 @@ module.exports.render = async function (ref, data, locals) {
           artist: item.artist,
           image: item.imageUrl,
           title: item.title,
-          site_url: '',
+          site_url: ''
         };
+
         first = false;
         return payload;
-      })
+      });
   }
   return data;
 };

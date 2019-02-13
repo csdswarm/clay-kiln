@@ -27,10 +27,11 @@ const { apiDayOfWeek } = require('../../services/universal/dateTime'),
    */
   todaysTimes = () => {
     const details = [],
-    clockHours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      clockHours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     for (let [index, hour] of Object.entries(clockHours)) {
       const displayHour = `${hour % 12 + 1}:00 ${index < 12 ? 'AM' : 'PM'}`;
+
       details.push({ text: displayHour, value: index });
     }
 
