@@ -94,10 +94,10 @@
 
 .selectr-selected::after {
   position: absolute;
-  top: 0;
+  top: em(1, 12);
   right: 0;
   width: em(24, 12);
-  height: em(22, 12);
+  height: em(21, 12);
   content: '';
   background-color: #F5F5F5;
 

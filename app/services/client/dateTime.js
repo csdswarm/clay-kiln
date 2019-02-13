@@ -1,6 +1,7 @@
 'use strict';
 
-const { apiDayOfWeek } = require('../../services/universal/dateTime'),
+const
+  { apiDayOfWeek } = require('../../services/universal/dateTime'),
   /**
    * extracts the users language
    * @returns {string} the users set language
@@ -21,7 +22,7 @@ const { apiDayOfWeek } = require('../../services/universal/dateTime'),
     return dateArray.pop();
   },
   /**
-   * Returns an array of text/value keys starting the users current day with 7 days
+   * Returns an array of text/value keys starting from the users current day with 7 days
    *
    * @returns {array}
    */
