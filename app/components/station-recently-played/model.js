@@ -19,13 +19,17 @@ module.exports.render = async function (ref, data, locals) {
     gmtOffset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
     dayOfWeek = locals.dayOfWeek ? locals.dayOfWeek : null,
     hour = locals.hour ? locals.hour : null,
-    beforeDate = dayOfWeek && hour ? moment().day(dayOfWeek).hour(hour).format('YYYY-MM-DDTHH:mm:ss') : moment().format('YYYY-MM-DDTHH:mm:ss'),
+    beforeDate = dayOfWeek && hour ? moment().day(dayOfWeek).hour(hour - gmtOffset).format('YYYY-MM-DDTHH:mm:ss') : moment().format('YYYY-MM-DDTHH:mm:ss'),
     json = await radioAPI.get(`/stations/${stationId}/play_history`,
       {
         event_count: 50,
         before_date: beforeDate
       }
     );
+  console.log('beforeDate', beforeDate)
+  console.log('beforeDate', beforeDate)
+  console.log('beforeDate', beforeDate)
+  console.log('beforeDate', beforeDate)
 
   if (json.data && json.data.events && json.data.events.recent_events) {
     let first = true;
