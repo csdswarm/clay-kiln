@@ -15,7 +15,7 @@ document.addEventListener('brightcove-dismount', () => {
 /**
  * Check if the video has gone out of view
  *
- * @param changes
+ * @param {array} changes
  */
 function videoIsInView(changes) {
   changes.forEach(change => {
@@ -28,7 +28,7 @@ function videoIsInView(changes) {
 /**
  * Pause the player
  *
- * @param player
+ * @param {object} player
  */
 function pausePlayer(player) {
   if (typeof player.ima3.adsManager !== 'undefined') {
@@ -39,8 +39,6 @@ function pausePlayer(player) {
 
 /**
  * Loop over all players on page and pause them if it's not the video in question
- *
- * @param player
  */
 function pauseOtherActivePlayers() {
   let player = this;
