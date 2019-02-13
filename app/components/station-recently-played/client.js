@@ -14,21 +14,20 @@ class StationRecentlyPlayed {
       timeSelect = el.querySelector('.time__select'),
       stationId = parseInt(select.getAttribute('data-station-id')),
       gmtOffset = parseInt(select.getAttribute('data-gmt-offset')),
-      ul = el.querySelector('.station-recently-played');
+      ul = el.querySelector('.station-recently-played'),
+      selectr = new Selectr(select, {
+        searchable: false
+      }),
+      timeSelectr = new Selectr(timeSelect, {
+        searchable: false
+      });
 
     nextSevenDays().forEach((day) => select.add(new Option(day.text, day.value)));
     todaysTimes().forEach((time) => timeSelect.add(new Option(time.text, time.value)));
 
-    // eslint-disable-next-line one-var
-    const selectr = new Selectr(select, {
-      searchable: false
-    });
     this.dayOfWeek = new Date().getDay();
     selectr.setValue(this.dayOfWeek);
 
-    const timeSelectr = new Selectr(timeSelect, {
-      searchable: false
-    });
     this.hour = new Date().getHours();
     timeSelectr.setValue(this.hour);
 
@@ -45,14 +44,14 @@ class StationRecentlyPlayed {
    * @param {number} stationId
    * @param {number} gmtOffset
    * @param {number} dayOfWeek
-   * @param {number} time
+   * @param {number} hour
    * @returns {Promise}
    */
   async loadContent(stationId, gmtOffset, dayOfWeek, hour) {
     if (dayOfWeek) {
-      this.dayOfWeek = dayOfWeek
+      this.dayOfWeek = dayOfWeek;
     } else {
-      dayOfWeek = this.dayOfWeek
+      dayOfWeek = this.dayOfWeek;
     }
     if (hour) {
       this.hour = hour;
