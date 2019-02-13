@@ -47,7 +47,6 @@ Constructor.prototype = {
    * @param {object[]} content
    */
   activateTab: function (e, tabs, content) {
-    console.log('activating tab', e)
     let contentLabel;
 
     if (e.currentTarget) {

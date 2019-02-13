@@ -1,6 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
+  moment = require('moment'),
   { getTime, currentlyBetween, apiDayOfWeek } = require('../../services/universal/dateTime');
 
 /**
@@ -16,37 +17,33 @@ module.exports.render = async function (ref, data, locals) {
   }
 
   const stationId = locals.stationId ? locals.stationId : locals.station.id,
-    gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
-    // using the station offset determine the current day 1 - 7 based
-    stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
-    dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
-    json = await radioAPI.get('/schedules',
+    gmtOffset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
+    dayOfWeek = locals.dayOfWeek ? locals.dayOfWeek : null,
+    hour = locals.hour ? locals.hour : null,
+    beforeDate = dayOfWeek && hour ? moment().day(dayOfWeek).hour(hour).format('YYYY-MM-DDTHH:mm:ss') : moment().format('YYYY-MM-DDTHH:mm:ss'),
+    json = await radioAPI.get(`/stations/${stationId}/play_history`,
       {
-        'page[size]': 50,
-        'page[number]':1,
-        'filter[day_of_week]': dayOfWeek,
-        'filter[station_id]': stationId
+        'event_count': 50,
+        'before_date': beforeDate,
       }
     );
-
-  return {
-    schedule: !json.data ? [] :
-      json.data
-      // sort by start date
-        .sort((item1, item2) => getTime(item1.attributes.start_time) > getTime(item2.attributes.start_time))
-        // extract only the content we need as a flat record
-        .map((schedule) => {
-          const item = schedule.attributes;
-
-          return {
-            playing: dayOfWeek === stationDayOfWeek && currentlyBetween(item.start_time, item.end_time),
-            start_time: new Date(getTime(item.start_time)),
-            end_time: new Date(getTime(item.end_time)),
-            image: item.show.image,
-            name: item.show.name,
-            site_url: item.show.site_url
-          };
-        })
-  };
+  if (json.data && json.data.events && json.data.events.recent_events) {
+    let first = true;
+    data.schedule = json.data.events.recent_events
+      .sort((item1, item2) => moment(item2.timePlayed) - moment(item1.timePlayed))
+      .map((item) => {
+        const payload = {
+          playing: first == true && moment().hour() == moment(item.timePlayedUtc).hour(),
+          start_time: item.timePlayedUtc,
+          artist: item.artist,
+          image: item.imageUrl,
+          title: item.title,
+          site_url: '',
+        };
+        first = false;
+        return payload;
+      })
+  }
+  return data;
 };
 

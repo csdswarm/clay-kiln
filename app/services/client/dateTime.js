@@ -21,6 +21,22 @@ const { apiDayOfWeek } = require('../../services/universal/dateTime'),
     return dateArray.pop();
   },
   /**
+   * Returns an array of text/value keys that contain times of the day for a select dropdown
+   *
+   * @returns {array}
+   */
+  todaysTimes = () => {
+    const details = [],
+    clockHours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    for (let [index, hour] of Object.entries(clockHours)) {
+      const displayHour = `${hour % 12 + 1}:00 ${index < 12 ? 'AM' : 'PM'}`;
+      details.push({ text: displayHour, value: index });
+    }
+
+    return details;
+  },
+  /**
    * Returns an array of text/value keys starting the users current day with 7 days
    *
    * @returns {array}
@@ -41,4 +57,5 @@ const { apiDayOfWeek } = require('../../services/universal/dateTime'),
   };
 
 module.exports.nextSevenDays = nextSevenDays;
+module.exports.todaysTimes = todaysTimes;
 module.exports.usersTimeZone = usersTimeZone;
