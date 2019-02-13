@@ -25,8 +25,10 @@ class StationSchedule {
     });
 
     // iOS crashes when method is directly called, using setTimeout to put it on a different thread fixes it
-    selectr.on('selectr.change', (option) => setTimeout(() => this.loadContent({ stationId, gmtOffset, category }, option.value)), 0);
-
+    selectr.on('selectr.change', (option) =>
+      setTimeout(() =>
+        this.loadContent({ stationId, gmtOffset, category }, option.value), 0)
+    );
     this.showTimeZone(ul);
   }
   /**
