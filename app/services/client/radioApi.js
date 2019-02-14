@@ -1,7 +1,7 @@
 'use strict';
 
 const rest = require('../universal/rest'),
-  moment = require('moment'),
+  { formatLocal } = require('../../services/universal/dateTime'),
   /**
    * Adjusts the document with any user specific local information required
    *
@@ -12,7 +12,7 @@ const rest = require('../universal/rest'),
     const userTimes = doc.querySelectorAll('userLocal') || [];
 
     userTimes.forEach((time) =>
-      time.replaceWith(document.createTextNode(moment(time.getAttribute('data-date')).format(time.getAttribute('data-format')))));
+      time.replaceWith(document.createTextNode(formatLocal(time.getAttribute('data-date'), time.getAttribute('data-format')))));
 
     return doc;
   },
