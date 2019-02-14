@@ -8,7 +8,6 @@ function Constructor() {
     hash = window.location.hash.replace('#', '');
 
   this.repositionRightRail(sidebar, stationDetail);
-  this.activateTab('recently-played', tabs, content);
   this.addTabNavigationListeners(tabs, content);
 
   if (hash) {
