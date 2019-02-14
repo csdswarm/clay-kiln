@@ -12,8 +12,8 @@ module.exports.render = (ref, data, locals) => {
       data.paramValue = hypensToSpaces(data.paramValue).replace(/\b\w/g, l => l.toUpperCase());
     }
 
-  } else if (data.dataKey && locals) {
-    const value = getKeysValue(locals, data.dataKey);
+  } else if (data.localsKey && locals) {
+    const value = getKeysValue(locals, data.localsKey);
 
     if (value) {
       data.paramValue = value;

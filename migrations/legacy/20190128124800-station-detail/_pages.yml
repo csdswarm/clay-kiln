@@ -110,16 +110,16 @@ _components:
     instances:
       station:
         imageUrl: '${paramValue}'
-        dataKey: 'station.square_logo_small'
+        localsKey: 'station.square_logo_small'
 
   dynamic-meta-description:
     instances:
       station:
         description: '${paramValue}'
-        dataKey: 'station.description'
+        localsKey: 'station.description'
 
   dynamic-meta-title:
     instances:
       station:
-        dataKey: 'station.name'
+        localsKey: 'station.name'
         suffix: ' | RADIO.COM'
