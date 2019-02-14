@@ -1,3 +1,9 @@
 _components:
   station-detail:
-    allowed: true
+    recentlyPlayedComponent:
+      _ref: /_components/station-recently-played/instances/default
+    scheduleComponent:
+      _ref: /_components/station-schedule/instances/default
+    discoverComponent:
+      _ref: /_components/station-discover/instances/default
+

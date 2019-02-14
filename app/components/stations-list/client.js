@@ -131,9 +131,6 @@ StationsList.prototype = {
    * @returns {Promise}
    */
   loadMoreStations: async function () {
-    // get current stations
-    // ???
-    // return
     this.pageNum++;
     this.stationsList.setAttribute('data-page-num', this.pageNum);
 

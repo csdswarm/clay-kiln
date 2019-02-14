@@ -90,52 +90,43 @@ _components:
   stations-list:
     instances:
       recent:
-        allowed: true
         filterBy: recent
         listTitle: 'recent stations'
         truncatedList: true
       recentOnFeaturedStationsDirectory:
-        allowed: true
         filterBy: recent
         listTitle: "stations you've listened to"
         truncatedList: true
       local:
-        allowed: true
         filterBy: local
         listTitle: 'stations near you'
         truncatedList: true
       market:
-        allowed: true
         filterBy: market
         market: ''
         listTitle: ''
         truncatedList: false
       marketTruncated:
-        allowed: true
         filterBy: market
         market: ''
         listTitle: ''
         truncatedList: true
       genre:
-        allowed: true
         filterBy: genre
         genre: ''
         listTitle: ''
         truncatedList: false
       genreTruncated:
-        allowed: true
         filterBy: genre
         genre: ''
         listTitle: ''
         truncatedList: true
       category:
-        allowed: true
         filterBy: category
         category: ''
         listTitle: ''
         truncatedList: false
       categoryTruncated:
-        allowed: true
         filterBy: category
         category: ''
         listTitle: ''
@@ -144,7 +135,6 @@ _components:
   station-discover:
     instances:
       default:
-        allowed: true
         recentStations:
           _ref: /_components/stations-list/instances/recent
         marketStations:
@@ -155,7 +145,6 @@ _components:
   station-detail:
     instances:
       default:
-        allowed: true
         # recentlyPlayedComponent:
         #   _ref: /_components/station-recently-played/instances/default
         scheduleComponent:
