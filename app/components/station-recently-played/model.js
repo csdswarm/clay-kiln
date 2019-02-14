@@ -26,10 +26,6 @@ module.exports.render = async function (ref, data, locals) {
         before_date: beforeDate
       }
     );
-  console.log('beforeDate', beforeDate)
-  console.log('beforeDate', beforeDate)
-  console.log('beforeDate', beforeDate)
-  console.log('beforeDate', beforeDate)
 
   if (json.data && json.data.events && json.data.events.recent_events) {
     let first = true;

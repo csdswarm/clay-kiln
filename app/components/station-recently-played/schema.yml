@@ -1,16 +1,3 @@
 _description: |
   A tab of the station detail page which contains the list of
   recently played songs on that station
-
-station:
-  _subscribe: station
-  _label: Station
-
-_groups:
-  default:
-    fields:
-      - station
-    _placeholder:
-      height: 50px
-      text: Station
-      ifEmpty: station
