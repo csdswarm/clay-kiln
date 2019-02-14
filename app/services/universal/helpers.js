@@ -3,6 +3,7 @@
 const mediaplay = require('./media-play'),
   responsiveImages = require('./responsive-images'),
   formatTime = require('./format-time'),
+  dateTime = require('./dateTime'),
   truncate = require('./truncate');
 
 module.exports = {
@@ -23,5 +24,6 @@ module.exports = {
   truncateText: truncate,
   calloutType: require('./callout'),
   attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow'),
-  reversibleOneBasedIndex: require('./reversibleOneBasedIndex')
+  reversibleOneBasedIndex: require('./reversibleOneBasedIndex'),
+  userLocalDate: dateTime.userLocalDate
 };

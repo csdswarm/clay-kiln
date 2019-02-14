@@ -1,19 +1,18 @@
 'use strict';
 
 const Selectr = require('mobius1-selectr'),
-  { nextSevenDays, usersTimeZone } = require('../../services/client/dateTime');
+  { nextSevenDays } = require('../../services/universal/dateTime'),
+  { fetchDOM } = require('../../services/client/radioApi');
 
 /*
  * Set the day of week select using the users locale language
  */
 class StationSchedule {
   constructor(el) {
-    this.timeZone = usersTimeZone();
-
     const select = el.querySelector('.day-of-week__select'),
       stationId = parseInt(select.getAttribute('data-station-id')),
       gmtOffset = parseInt(select.getAttribute('data-gmt-offset')),
-      ul = el.querySelector('.station-schedule');
+      category = select.getAttribute('data-category');
 
     nextSevenDays().forEach((day) => select.add(new Option(day.text, day.value)));
 
@@ -22,42 +21,32 @@ class StationSchedule {
       searchable: false
     });
 
-    selectr.on('selectr.change', (option) => this.loadContent(stationId, gmtOffset, option.value));
-
-    this.showTimeZone(ul);
+    // iOS crashes when method is directly called, using setTimeout to put it on a different thread fixes it
+    selectr.on('selectr.change', (option) =>
+      setTimeout(() =>
+        this.loadContent({ stationId, gmtOffset, category }, option.value), 0)
+    );
   }
   /**
+   @typedef {object} StationDetails
+   @property {number} stationId
+   @property {number} gmtOffset
+   @property {string} category
+  */
+  /**
    * load in new content from the api
-   * @param {number} stationId
-   * @param {number} gmtOffset
-   * @param {number} dayOfWeek
+   * @param {StationDetails} stationDetails
+   * @param {int} dayOfWeek
    * @returns {Promise}
    */
-  async loadContent(stationId, gmtOffset, dayOfWeek) {
-    // Initialize the DOM parser and set the HTML from the API call of the station-schedule
-    const parser = new DOMParser(),
+  async loadContent(stationDetails, dayOfWeek) {
+    const
       endpoint = `//${window.location.hostname}/_components/station-schedule/instances/default.html`,
-      response = await fetch(`${endpoint}?stationId=${stationId}&dayOfWeek=${dayOfWeek}&gmt_offset=${gmtOffset}&ignore_resolve_media=true`),
-      html = await response.text(),
-      doc = parser.parseFromString(html, 'text/html'),
+      doc = await fetchDOM(`${endpoint}?stationId=${stationDetails.stationId}&gmt_offset=${stationDetails.gmtOffset}&category=${stationDetails.category}&dayOfWeek=${dayOfWeek}`),
       content = doc.querySelector('.station-schedule'),
       ul = document.querySelector('.station-schedule');
 
-    this.showTimeZone(content);
     ul.parentNode.replaceChild(content, ul);
-  }
-  /**
-   * adds the users timezone to the times displayed
-   * @param {Element} ul
-   */
-  showTimeZone(ul) {
-    const times = ul.querySelectorAll('.details__time');
-
-    times.forEach((time) => {
-      if (/\d/.test(time.innerText)) {
-        time.appendChild(document.createTextNode(this.timeZone));
-      }
-    });
   }
 }
 

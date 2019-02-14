@@ -3,6 +3,9 @@
 @import "_global/colors";
 
 .component--station-schedule {
+  .station-schedule {
+    min-height: em(140);
+  }
 
   .station-schedule__day-of-week {
     margin-bottom: em(30, 12);
@@ -86,6 +89,8 @@
       .details__title {
         @mixin station-detail-font4;
       }
+
+
     }
 
     .show__play {
@@ -111,6 +116,10 @@
         opacity: 0.7;
       }
     }
+  }
+
+  .station-schedule__no-results {
+    @mixin station-detail-font7;
   }
 }
 
