@@ -4,7 +4,7 @@
 
 .component--station-schedule {
   .station-schedule {
-    min-height: em(120);
+    min-height: em(140);
   }
 
   .station-schedule__day-of-week {
