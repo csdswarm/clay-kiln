@@ -5,7 +5,15 @@
 
 .component--stations-list {
   .loader-container {
-    max-width: em(70);
+    display: none;
+    &.active {
+      display: block;
+    }
+    svg {
+      width: em(40);
+      margin: 0 auto em(30);
+      display: block;
+    }
   }
   .svg-container {
     display: none;
@@ -59,10 +67,10 @@
           }
         }
         @mixin medium-screen {
-          &:nth-of-type(n+7) {
+          &:nth-of-type(n) {
             display: none;
           }
-          &:nth-of-type(-n+6) {
+          &.active:nth-of-type(n) {
             display: block;
           }
         }
@@ -85,10 +93,10 @@
           }
         }
         @mixin medium-screen {
-          &:nth-of-type(n+7) {
+          &:nth-of-type(n) {
             display: none;
           }
-          &:nth-of-type(-n+6) {
+          &.active:nth-of-type(n) {
             display: block;
           }
         }
@@ -111,10 +119,10 @@
           }
         }
         @mixin medium-screen {
-          &:nth-of-type(n+7) {
+          &:nth-of-type(n) {
             display: none;
           }
-          &:nth-of-type(-n+6) {
+          &.active:nth-of-type(n) {
             display: block;
           }
         }
@@ -279,6 +287,7 @@
       margin-left: -50vw;
       margin-right: -50vw;
     }
+    cursor: pointer;
     font-size: 16px;
     height: em(43);
     background: $concrete;

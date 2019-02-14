@@ -37,15 +37,15 @@
         {{/ifAny}}
       {{~/each~}}
     {{~else ~}}
-      <li class="loader-container">
-        {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
-      </li>
       <li class="svg-container">
         <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
         <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
       </li>
     {{~/if~}}
   </ul>
+  <div class="loader-container">
+    {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
+  </div>
   {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
     <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
   {{/ifAll}}
