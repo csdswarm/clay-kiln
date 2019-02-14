@@ -23,7 +23,7 @@
               {{#if playing}}
                 ON-AIR
               {{else}}
-                Played at {{ formatLocalDate start_time 'h:mm a' }}
+                Played at {{ userLocalDate start_time 'h:mm a z' }}
               {{/if}}
             </div>
             <div class="details__title">{{ title }}</div>

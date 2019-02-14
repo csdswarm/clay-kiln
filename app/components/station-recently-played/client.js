@@ -34,7 +34,6 @@ class StationRecentlyPlayed {
     selectr.on('selectr.change', (option) => this.loadContent(stationId, gmtOffset, option.value, null));
     timeSelectr.on('selectr.change', (option) => this.loadContent(stationId, gmtOffset, null, option.value));
 
-    this.showTimeZone(ul);
   }
   /**
    * load in new content from the api
@@ -67,21 +66,7 @@ class StationRecentlyPlayed {
       content = doc.querySelector('.station-recently-played'),
       ul = document.querySelector('.station-recently-played');
 
-    this.showTimeZone(content);
     ul.parentNode.replaceChild(content, ul);
-  }
-  /**
-   * adds the users timezone to the times displayed
-   * @param {Element} ul
-   */
-  showTimeZone(ul) {
-    const times = ul.querySelectorAll('.details__time');
-
-    times.forEach((time) => {
-      if (/\d/.test(time.innerText)) {
-        time.appendChild(document.createTextNode(this.timeZone));
-      }
-    });
   }
 }
 
