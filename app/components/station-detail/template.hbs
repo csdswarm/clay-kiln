@@ -26,23 +26,25 @@
             </div>
           </div>
           <div class="links__section">
-            <div class="section__follow">
-              <span>follow</span>
-              <div class="follow__container">
-                {{#if station.website }}
-                  <a target="_blank" href="{{station.website}}" class="follow-link follow-link--website" title="Follow on {{station.name}}'s Website" aria-label="Website"></a>
-                {{/if}}
-                {{#if station.facebook }}
-                  <a target="_blank" href="{{station.facebook}}" class="follow-link follow-link--facebook" title="Follow on Facebook" aria-label="Follow on Facebook"></a>
-                {{/if}}
-                {{#if station.twitter }}
-                  <a target="_blank" href="https://twitter.com/{{station.twitter}}" class="follow-link follow-link--twitter" title="Follow on Twitter" aria-label="Follow on Twitter"></a>
-                {{/if}}
+            {{#ifAny station.website station.facebook station.twitter }}
+              <div class="section__follow">
+                <span>follow</span>
+                <div class="follow__container">
+                  {{#if station.website }}
+                    <a target="_blank" href="{{station.website}}" class="follow-link follow-link--website" title="Follow on {{station.name}}'s Website" aria-label="Website"></a>
+                  {{/if}}
+                  {{#if station.facebook }}
+                    <a target="_blank" href="{{station.facebook}}" class="follow-link follow-link--facebook" title="Follow on Facebook" aria-label="Follow on Facebook"></a>
+                  {{/if}}
+                  {{#if station.twitter }}
+                    <a target="_blank" href="https://twitter.com/{{station.twitter}}" class="follow-link follow-link--twitter" title="Follow on Twitter" aria-label="Follow on Twitter"></a>
+                  {{/if}}
+                </div>
               </div>
-            </div>
+            {{/ifAny}}
             <div class="section__email">
               <span>email</span>
-              <a href="mailto:?subject={{station.name}}" title="Email" aria-label="Email"></a>
+              <a href="mailto:?subject=Listen to {{station.name}} on radio.com." title="Email" aria-label="Email"></a>
             </div>
             {{~#if tags.length ~}}
               <div class="section__tags--mobile head__tags">

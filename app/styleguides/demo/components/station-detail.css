@@ -130,29 +130,35 @@
             }
             display: inline-block;
             .follow__container {
-              width: calc(em(widthOnGrid(2, 0)) * 3 / 4);
+              width: auto;
               height: calc(em(widthOnGrid(2, 0)) / 4);
               margin-right: em(widthOnGrid(0, 2));
-              display: flex;
+              display: inline-flex;
               flex-direction: row;
               outline: em(1) solid $alto;
               @mixin medium-screen {
                 margin-right: 0;
-                width: calc(em(widthOnGrid(1, 1, medium-screen)) * 3 / 4);
                 height: calc(em(widthOnGrid(1, 1, medium-screen)) / 4);
               }
               @mixin medium-small-screen {
-                width: calc(em(widthOnGrid(1, 1, medium-small-screen)) * 3 / 4);
                 height: calc(em(widthOnGrid(1, 1, medium-small-screen)) / 4);
               }
               @mixin small-screen {
-                width: calc(em(widthOnGrid(2, 0, small-screen)) * 3 / 4);
                 height: calc(em(widthOnGrid(2, 0, small-screen)) / 4);
               }
               .follow-link {
                 height: 100%;
-                width: calc(100% * 3 / 4);
+                width: calc(em(widthOnGrid(1, 0)) / 2);
                 background: center/em(20) em(20) no-repeat;
+                @mixin medium-screen {
+                  width: calc(em(widthOnGrid(1, 1, medium-screen)) / 4);
+                }
+                @mixin medium-small-screen {
+                  width: calc(em(widthOnGrid(1, 1, medium-small-screen)) / 4);
+                }
+                @mixin small-screen {
+                  width: calc(em(widthOnGrid(2, 0, small-screen)) / 4);
+                }
                 &:not(:last-of-type) {
                   border-right: em(1) solid $alto;
                 }
@@ -300,6 +306,10 @@
       flex-direction: column;
       align-items: center;
       white-space: nowrap;
+      @mixin medium-small-screen {
+        line-height: em(46, 14);
+        align-self: baseline;
+      }
       &:not(:last-of-type) {
         margin-right: em(40, 14);
       }
@@ -324,6 +334,9 @@
       }
       &.active::after{
         display: inline-block;
+        @mixin medium-small-screen {
+          margin-top: em(-11, 14);
+        }
       }
     }
     > li.tabs__discover {
@@ -343,6 +356,9 @@
         align-items: flex-start;
         ul {
           display: block;
+          @mixin medium-small-screen {
+            display: none;
+          }
         }
       }
       ul {
