@@ -1,3 +1,4 @@
+_version: 1.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -300,9 +301,9 @@ sectionFront:
         value: sports
     validate:
       required: true
-secondaryGalleryType:
+secondaryArticleType:
   _label: Secondary Gallery Type
-  _publish: secondaryGalleryType
+  _publish: secondaryArticleType
   _has:
     input: radio
     options:
@@ -413,7 +414,7 @@ _groups:
   circMetadata:
     fields:
       - sectionFront
-      - secondaryGalleryType
+      - secondaryArticleType
   bylines:
     fields:
       - byline
