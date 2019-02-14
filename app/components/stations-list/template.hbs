@@ -36,13 +36,12 @@
           </li>
         {{/ifAny}}
       {{~/each~}}
-    {{~else ~}}
-      <li class="svg-container">
-        <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
-        <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
-      </li>
     {{~/if~}}
   </ul>
+  <div class="svg-container">
+    <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
+    <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
+  </div>
   <div class="loader-container">
     {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
   </div>

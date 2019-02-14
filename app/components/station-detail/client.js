@@ -56,6 +56,7 @@ Constructor.prototype = {
    * @param {object} e event or tab name
    * @param {object[]} tabs
    * @param {object[]} content
+   * @param {boolean} useHash
    */
   activateTab: function (e, tabs, content, useHash) {
     let contentLabel;

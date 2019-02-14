@@ -18,7 +18,7 @@ class StationsList {
     this.loader = element.querySelector('.loader-container');
     this.pageNum = 1;
     this.pageSize = 6;
-    let stationsDataEl = element.querySelector('.stations-list__data');
+    const stationsDataEl = element.querySelector('.stations-list__data');
 
     this.stationsData = stationsDataEl ? JSON.parse(element.querySelector('.stations-list__data').innerText) : [];
     this.updateStations();
@@ -34,11 +34,11 @@ StationsList.prototype = {
    * @returns {Promise}
    */
   getLocalStationsFromApi: function () {
-    let params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
+    const params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
 
     return radioApiService.get(`${radioApi}stations${params}`).then(response => {
       if (response.data) {
-        let stationsData = {
+        const stationsData = {
           stations: response.data.map(station => {
             return station.attributes;
           }),
@@ -65,41 +65,29 @@ StationsList.prototype = {
    * @function
    * @returns {Promise}
    */
-  getButtonsSVGs: async function () {
+  getComponentTemplate: async function () {
     const parser = new DOMParser(),
       listHTML = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html?ignore_resolve_media=true`),
       htmlText = await listHTML.text(),
-      doc = parser.parseFromString(htmlText, 'text/html');
-
-    return [doc.querySelector('.lede__favorite-btn'), doc.querySelector('.lede__play-btn')];
-  },
-  /**
-   * Get stations template from component
-   * @function
-   * @returns {Promise}
-   */
-  getStationsTemplate: async function () {
-    if (!this.buttons) {
-      this.buttons = await this.getButtonsSVGs();
-    }
-    const stationLi = `
-    <a href="//{{ @root.locals.site.host }}/{{ id }}/listen">
-      <div class="station__lede">
-        ${this.buttons[0].outerHTML}
-        <img class="lede__image"
-          src="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0"
-          srcset="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0 140w,
-            {{ square_logo_large }}?width=222&height=222&crop=1:1,offset-y0 222w,
-            {{ square_logo_large }}?width=210&height=210&crop=1:1,offset-y0 210w,
-            {{ square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150w"
-          sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
-        >
-        ${this.buttons[1].outerHTML}
-      </div>
-      <span class="station__name">{{ name }}</span>
-      <span class="station__secondary-info">{{ slogan }}</span>
-    </a>
-    `;
+      doc = parser.parseFromString(htmlText, 'text/html'),
+      stationLi = `
+      <a href="//${ window.location.host }/{{ id }}/listen" class="spa-link">
+        <div class="station__lede">
+          ${doc.querySelector('.lede__favorite-btn').outerHTML}
+          <img class="lede__image"
+            src="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0"
+            srcset="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0 140w,
+              {{ square_logo_large }}?width=222&height=222&crop=1:1,offset-y0 222w,
+              {{ square_logo_large }}?width=210&height=210&crop=1:1,offset-y0 210w,
+              {{ square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150w"
+            sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
+          >
+          ${doc.querySelector('.lede__play-btn').outerHTML}
+        </div>
+        <span class="station__name">{{ name }}</span>
+        <span class="station__secondary-info">{{ slogan }}</span>
+      </a>
+      `;
 
     return stationLi;
   },
@@ -108,9 +96,9 @@ StationsList.prototype = {
    * @function
    */
   displayActiveStations: function () {
-    let stations = this.stationsList.querySelectorAll('li.station');
+    const stations = this.stationsList.querySelectorAll('li.station');
 
-    stations.forEach((station, i, stations) => {
+    stations.forEach((station, i) => {
       if (i < this.pageNum * this.pageSize) {
         station.classList.add('active');
       }
@@ -123,11 +111,14 @@ StationsList.prototype = {
    * @returns {Promise}
    */
   updateStationsDOM: async function (stationsData) {
-    let stationLi = Handlebars.compile(await this.getStationsTemplate());
+    if (!this.stationTemplate) {
+      this.stationTemplate = await this.getComponentTemplate();
+    }
+    const stationLi = Handlebars.compile(this.stationTemplate);
 
     this.toggleLoader();
-    stationsData.forEach(function (stationData, i) {
-      let station = document.createElement('li');
+    stationsData.forEach(function (stationData) {
+      const station = document.createElement('li');
 
       this.stationsList.appendChild(station);
       station.classList.add('station');
@@ -151,9 +142,8 @@ StationsList.prototype = {
       });
     } else if (this.filterStationsBy == 'recent') {
       this.toggleLoader();
-      let stationsData;
+      const stationsData = this.stationsData = await recentStations.get();
 
-      this.stationsData = stationsData = await recentStations.get();
       stationsData.length = 7;
       this.updateStationsDOM(stationsData);
     } else {
@@ -173,7 +163,7 @@ StationsList.prototype = {
       newNumOfStations = this.pageNum * this.pageSize;
 
     if (currentNumOfStationsShowing < this.stationsData.length) {
-      let stationsData = this.stationsData.slice(currentNumOfStationsShowing, newNumOfStations);
+      const stationsData = this.stationsData.slice(currentNumOfStationsShowing, newNumOfStations);
 
       if (stationsData.length) {
         this.toggleLoader();
