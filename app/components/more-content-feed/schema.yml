@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 2.0
 _description: |
   A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
   The articles will be filtered by the section front of the URL, (ex: /sports/football with tags "NFL" and
@@ -136,10 +136,10 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondaryArticleType:
+filterSecondaryArticleTypes:
   _label: Exclude Secondary Article Type
   _has:
-    input: radio
+    input: checkbox-group
     options:
     - Pop
     - Alternative
@@ -280,7 +280,7 @@ _groups:
       - items
       - contentType
       - filterTags
-      - filterSecondaryArticleType
+      - filterSecondaryArticleTypes
     _placeholder:
       height: 100px
       ifEmpty: populateFrom

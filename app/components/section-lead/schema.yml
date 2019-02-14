@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 3.0
 primaryStoryLabel:
   _label: Primary Lede Label
   _has:
@@ -55,10 +55,10 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondaryArticleType:
+filterSecondaryArticleTypes:
   _label: Exclude Secondary Article Type
   _has:
-    input: radio
+    input: checkbox-group
     options:
     - Pop
     - Alternative
@@ -112,7 +112,7 @@ _groups:
     - items
     - sectionFront
     - filterTags
-    - filterSecondaryArticleType
+    - filterSecondaryArticleTypes
     _placeholder:
       ifEmpty: sectionFront
       height: 400px
