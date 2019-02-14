@@ -67,7 +67,7 @@ module.exports.render = async (uri, data, locals) => {
 
     const route = 'stations';
     let params = {
-      'page[size]': 350, // note: page[size]=all needs to be added
+      'page[size]': 1000,
       sort: '-popularity'
     };
 
