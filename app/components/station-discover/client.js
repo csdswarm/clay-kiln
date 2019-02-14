@@ -35,6 +35,7 @@ Constructor.prototype = {
   /**
      * Show all station lists in discover tab
      * @function
+     * @param {object} event
      */
   activateAllLists: function (event) {
     if (!event || event.target == this.discoverTab) {

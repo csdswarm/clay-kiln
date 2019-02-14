@@ -262,6 +262,9 @@
         }
       }
     }
+    .stations-list__data {
+      display: none;
+    }
   }
   .stations-list__load-more {
     display: none;
@@ -294,9 +297,6 @@
     svg {
       height: em(18);
       margin-right: em(10);
-      #Shape {
-        stroke: $silverChalice;
-      }
     }
     span {
       @mixin stations-list-font5;

@@ -12,6 +12,7 @@
   </div>
   <ul>
     {{~#if stations.length ~}}
+      <pre class="stations-list__data">{{ stringify stations }}</pre>
       {{~#each stations ~}}
         {{#ifAll ../truncatedList (compare @index '<' 14) }}{{ set 'hideStations' true }}{{/ifAll}}
         {{#ifAny (compare ../truncatedList false) hideStations }}
@@ -45,5 +46,7 @@
       </li>
     {{~/if~}}
   </ul>
-  <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
+  {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
+    <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
+  {{/ifAll}}
 </section>

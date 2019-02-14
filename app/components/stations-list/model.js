@@ -94,8 +94,9 @@ module.exports.render = async (uri, data, locals) => {
 
       data.seeAllLink = `/stations/${ data.category }`;
       let listTitle;
+
       if (data.truncatedList) {
-        listTitle = `featured ${ data.category } stations`
+        listTitle = `featured ${ data.category } stations`;
       }
       data.listTitle = data.listTitle || listTitle || data.category;
       if (data.category == 'news-talk') {
@@ -122,6 +123,8 @@ module.exports.render = async (uri, data, locals) => {
           }
           data.listTitle = data.listTitle || `${ locals.station.genre[0].name } stations`;
           params['filter[genre_id]'] = locals.station.genre[0].id;
+          break;
+        default:
           break;
       }
     }

@@ -9,15 +9,21 @@ require('clayhandlebars')(Handlebars);
 
 class StationsList {
   constructor(element) {
-    this.allStationsCount = 313;
-    this.stationsList = element;
-    this.filterStationsBy = this.stationsList.getAttribute('data-filter-stations-by-track');
-    this.stationsList = this.stationsList.querySelector('ul');
-    this.loadMoreBtn = this.stationsList.querySelector('.stations-list__load-more');
+    this.allStationsCount = 350;
+    this.stationsListContainer = element;
+    this.page = document.querySelector('.content__main > section');
+    this.truncateStations = element.getAttribute('data-truncate');
+    this.filterStationsBy = element.getAttribute('data-filter-stations-by-track');
+    this.stationsList = element.querySelector('ul');
+    this.loadMoreBtn = element.querySelector('.stations-list__load-more');
+    this.pageNum = 1;
+    let stationsDataEl = element.querySelector('.stations-list__data');
+
+    this.stationsData = stationsDataEl ? JSON.parse(element.querySelector('.stations-list__data').innerText) : [];
 
     this.updateStations();
     if (this.loadMoreBtn) {
-      this.loadMoreBtn.addEventListener('click', (e) => this.loadMoreStations(e) );
+      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
   }
 }
@@ -61,10 +67,13 @@ StationsList.prototype = {
   /**
    * Insert new payload of stations into DOM
    * @function
+   * @param {object} stationsData
    * @returns {Promise}
    */
-  updateStationsDOM: async function () {
-    let buttons = await this.getButtonsHTML();
+  updateStationsDOM: async function (stationsData) {
+    let buttons = await this.getButtonsHTML(),
+      loader = this.stationsList.querySelector('.loader-container');
+
     const stationLi = `
       <a href="//{{ @root.locals.site.host }}/{{ id }}/listen">
         <div class="station__lede">
@@ -82,12 +91,13 @@ StationsList.prototype = {
         <span class="station__name">{{ name }}</span>
         <span class="station__secondary-info">{{ slogan }}</span>
       </a>
-    `;
+    `,
+      template = Handlebars.compile(stationLi);
 
-    this.stationsList.removeChild(this.stationsList.querySelector('.loader-container')); // Remove loader
-    const template = Handlebars.compile(stationLi);
-
-    this.stationsData.forEach(function (stationData) {
+    if (loader) {
+      this.stationsList.removeChild(loader); // Remove loader
+    }
+    stationsData.forEach(function (stationData) {
       let station = document.createElement('li');
 
       this.stationsList.appendChild(station);
@@ -105,28 +115,68 @@ StationsList.prototype = {
 
       this.getLocalStationsFromApi().then(stationsData => {
         this.stationsData = stationsData;
-        this.updateStationsDOM();
+        this.updateStationsDOM(stationsData);
       });
     } else if (this.filterStationsBy == 'recent') {
-      this.stationsData = await recentStations.get();
-      this.stationsData.length = 7;
-      this.updateStationsDOM();
+      let stationsData;
+
+      this.stationsData = stationsData = await recentStations.get();
+      stationsData.length = 7;
+      this.updateStationsDOM(stationsData);
     }
   },
   /**
    * Show x more stations in addition to current stations shown
    * @function
-   * @param {object} event
-   * @param {number} pageSize
-   * @param {object[]} currentResults
    * @returns {Promise}
    */
-  loadMoreStations: async function (event) {
-    // get pageSize from page type (detail pg or directory) and breakpoint
+  loadMoreStations: async function () {
     // get current stations
     // ???
     // return
+    this.pageNum++;
+    this.stationsList.setAttribute('data-page-num', this.pageNum);
 
+    const pageSize = 6,
+      currentNumOfStationsShowing = this.stationsList.querySelectorAll('li.station').length,
+      newNumOfStations = this.pageNum * pageSize;
+
+    if (currentNumOfStationsShowing < this.stationsData.length) {
+      let stationsData = this.stationsData.slice(currentNumOfStationsShowing, newNumOfStations);
+
+      if (stationsData.length) {
+        this.updateStationsDOM(stationsData);
+      }
+    }
+    if (newNumOfStations >= this.stationsData.length) {
+      this.loadMoreBtn.remove();
+    }
+
+    let listSelector = `.stations-list--truncated.component--stations-list ul[data-page-num='${this.pageNum}'] li.station:nth-of-type`,
+      newStyle = `
+      @media only screen and (max-width: 1023px) {
+        .component--station-discover ${listSelector}(n+${newNumOfStations + 1}),
+        .component--stations-directory ${listSelector}(n+${newNumOfStations + 1}),
+        .component--stations-directory .stations-list--truncated[data-filter-stations-by-track='category'].component--stations-list ul[data-page-num='${this.pageNum}'] li.station:nth-of-type(n+${newNumOfStations + 1}) {
+          display: none;
+        }
+        .component--station-discover ${listSelector}(-n+${newNumOfStations}),
+        .component--stations-directory ${listSelector}(-n+${newNumOfStations}),
+        .component--stations-directory .stations-list--truncated[data-filter-stations-by-track='category'].component--stations-list ul[data-page-num='${this.pageNum}'] li.station:nth-of-type(-n+${newNumOfStations}) {
+          display: block;
+        }
+      }
+      `,
+      prevStyle = this.stationsListContainer.querySelector('.pagination-style'),
+      styleEl = document.createElement('style');
+
+    if (prevStyle) {
+      this.stationsListContainer.removeChild(prevStyle); // Remove previous styles
+    }
+
+    this.stationsListContainer.appendChild(styleEl);
+    styleEl.classList.add('pagination-style');
+    styleEl.innerHTML = newStyle;
   }
 };
 
