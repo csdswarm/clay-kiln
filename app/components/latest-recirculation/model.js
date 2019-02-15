@@ -102,7 +102,7 @@ const queryService = require('../../services/server/query'),
       response = await radioApiService.get(route),
       feedUrl = `${response.data.attributes.website}/station_feed.json`,
       feed = await radioApiService.get(feedUrl, null, (response) => response.nodes),
-      nodes = feed.nodes.slice(0, 5);
+      nodes = feed.nodes ? feed.nodes.slice(0, 5) : [];
 
     data.station = response.data.attributes.name;
     data.articles = await Promise.all(nodes.map(async (item) => {
