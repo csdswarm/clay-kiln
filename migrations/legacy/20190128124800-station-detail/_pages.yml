@@ -77,7 +77,7 @@ _components:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
   station-recently-played:
-    instance:
+    instances:
       default:
         allowed: true
   station-schedule:

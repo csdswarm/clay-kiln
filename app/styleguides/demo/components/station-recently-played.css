@@ -5,20 +5,20 @@
 .component--station-recently-played {
 
   .station-recently-played__filters {
-    margin-bottom: em(30, 12);
+    margin-bottom: em(30);
     display: flex;
     flex-direction: row;
   }
 
   .filters__select {
-    width: em(116, 12);
+    width: em(116);
 
     @mixin medium-screen {
       width: em(142, 12);
     }
   }
   .filters__select:first-of-type {
-    margin-right: em(10, 12);
+    margin-right: em(10);
   }
 
   .station-recently-played__show, .show__link {
@@ -56,21 +56,21 @@
 
       .details__time {
         @mixin station-detail-font8;
-        margin-bottom: em(10);
+        margin-bottom: em(10, 12);
 
         &--on-air {
-          margin-left: em(5);
+          margin-left: em(5, 12);
 
           &:before {
             content: '';
             display: inline-block;
-            width: em(6);
-            height: em(6);
+            width: em(6, 12);
+            height: em(6, 12);
             border-radius: 50%;
             position: relative;
             top: em(-3);
             left: em(-3);
-            background-color: #767676;
+            background-color: $boulder;
           }
 
           &.news {
@@ -105,18 +105,18 @@
       height: em(32);
       border-radius: 50%;
       margin-left: auto;
-      box-shadow: 0 0 em(1, 22) em(1, 22) rgba(0,0,0,0.18), inset 0 0 em(4, 22) em(1, 22)  #F5F5F5;
+      box-shadow: 0 0 em(1) em(1) rgba(0,0,0,0.18), inset 0 0 em(4) em(1)  $concrete;
 
       &:after {
         content: '';
         display: block;
         width: 0;
         height: 0;
-        border-top: em(11, 22) solid transparent;
-        border-bottom: em(11, 22) solid transparent;
-        border-left: em(17, 22) solid $purple;
-        margin-left: em(17, 22);
-        margin-top: em(11, 22);
+        border-top: em(11) solid transparent;
+        border-bottom: em(11) solid transparent;
+        border-left: em(17) solid $purple;
+        margin-left: em(17);
+        margin-top: em(11);
       }
 
       &:hover {
