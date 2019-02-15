@@ -9,6 +9,7 @@ _pages:
       - /_components/station-detail/instances/default
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/station
     layout: /_components/two-column-layout/instances/station
 
 _components:
@@ -102,3 +103,12 @@ _components:
           _ref: /_components/station-schedule/instances/default
         # discoverComponent:
         #   _ref: /_components/station-discover/instances/default
+
+  latest-recirculation:
+    instances:
+      station:
+        items: []
+        tag: ''
+        populateBy: station
+        contentType: { article: false, gallery: false }
+        sectionFront: ''
