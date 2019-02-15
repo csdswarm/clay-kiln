@@ -31,7 +31,6 @@ module.exports.render = async function (ref, data, locals) {
     let first = true;
 
     data.schedule = json.data.events.recent_events
-      .sort((item1, item2) => moment(item2.timePlayed) - moment(item1.timePlayed))
       .map((item) => {
         const payload = {
           playing: first == true && moment().hour() == moment(item.timePlayedUtc).hour(),
