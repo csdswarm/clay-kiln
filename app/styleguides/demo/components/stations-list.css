@@ -15,7 +15,7 @@
       display: block;
     }
   }
-  .svg-container {
+  .template-container {
     display: none;
   }
   .stations-list__header-row {
@@ -191,6 +191,7 @@
             margin-bottom: em(10);
           }
           button{
+            cursor: pointer;
             font-size: 16px;
             position: absolute;
             background: transparent;

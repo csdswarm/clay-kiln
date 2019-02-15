@@ -2,10 +2,7 @@
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
-  radioApiService = require('../../services/client/radioApi'),
-  Handlebars = require('handlebars');
-
-require('clayhandlebars')(Handlebars);
+  radioApiService = require('../../services/client/radioApi');
 
 class StationsList {
   constructor(element) {
@@ -61,35 +58,40 @@ StationsList.prototype = {
     }
   },
   /**
-   * Get button svgs from component
+   * Get stations list template from component
    * @function
-   * @returns {Promise}
+   * @returns {object}
    */
   getComponentTemplate: async function () {
     const parser = new DOMParser(),
       listHTML = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html?ignore_resolve_media=true`),
       htmlText = await listHTML.text(),
-      doc = parser.parseFromString(htmlText, 'text/html'),
-      stationLi = `
-      <a href="//${ window.location.host }/{{ id }}/listen" class="spa-link">
-        <div class="station__lede">
-          ${doc.querySelector('.lede__favorite-btn').outerHTML}
-          <img class="lede__image"
-            src="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0"
-            srcset="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0 140w,
-              {{ square_logo_large }}?width=222&height=222&crop=1:1,offset-y0 222w,
-              {{ square_logo_large }}?width=210&height=210&crop=1:1,offset-y0 210w,
-              {{ square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150w"
-            sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
-          >
-          ${doc.querySelector('.lede__play-btn').outerHTML}
-        </div>
-        <span class="station__name">{{ name }}</span>
-        <span class="station__secondary-info">{{ slogan }}</span>
-      </a>
-      `;
+      doc = parser.parseFromString(htmlText, 'text/html');
 
-    return stationLi;
+    return doc.querySelector('li.station a');
+  },
+  /**
+   * Inject station data into station list template
+   * @function
+   * @param {object} station
+   * @returns {string}
+   */
+  getStationTemplateWithData: async function (station) {
+    if (!this.stationTemplate) {
+      this.stationTemplate = await this.getComponentTemplate();
+    }
+    this.stationTemplate.setAttribute('href', `${ window.location.origin }/${ station.id }/listen`);
+    this.stationTemplate.querySelector('.lede__image').setAttribute('src', `${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0`);
+    this.stationTemplate.querySelector('.lede__image').setAttribute('srcset', `
+      ${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0 140w,
+      ${ station.square_logo_large }?width=222&height=222&crop=1:1,offset-y0 222w,
+      ${ station.square_logo_large }?width=210&height=210&crop=1:1,offset-y0 210w,
+      ${ station.square_logo_large }?width=150&height=150&crop=1:1,offset-y0 150w
+    `);
+    this.stationTemplate.querySelector('.station__name').innerText = station.name;
+    this.stationTemplate.querySelector('.station__secondary-info').innerText = station.slogan;
+
+    return this.stationTemplate.outerHTML;
   },
   /**
    * Add active class to stations that should be visible
@@ -108,24 +110,21 @@ StationsList.prototype = {
    * Insert new payload of stations into DOM
    * @function
    * @param {object} stationsData
-   * @returns {Promise}
    */
-  updateStationsDOM: async function (stationsData) {
-    if (!this.stationTemplate) {
-      this.stationTemplate = await this.getComponentTemplate();
-    }
-    const stationLi = Handlebars.compile(this.stationTemplate);
-
+  updateStationsDOM: function (stationsData) {
     this.toggleLoader();
-    stationsData.forEach(function (stationData) {
+    stationsData.forEach(async (stationData) => {
       const station = document.createElement('li');
 
       this.stationsList.appendChild(station);
       station.classList.add('station');
+      station.innerHTML = await this.getStationTemplateWithData(stationData);
 
-      station.innerHTML = stationLi(stationData);
-    }.bind(this));
-
+      // Attach vue router listener on SPA links.
+      station.querySelector('a').addEventListener('click', event => {
+        this.onSpaLinkClick(event, station.querySelector('a'));
+      });
+    });
     this.displayActiveStations();
   },
   /**
@@ -177,6 +176,20 @@ StationsList.prototype = {
     if (newNumOfStations >= this.stationsData.length) {
       this.loadMoreBtn.remove();
     }
+  },
+  /**
+   * Navigate with vue on SPA links
+   * @function
+   * @param {object} event
+   * @param {object} element
+   */
+  onSpaLinkClick(event, element) {
+    event.preventDefault();
+    element.removeEventListener('click', element.fn, false);
+    const linkParts = new URL(element.getAttribute('href'));
+
+    // eslint-disable-next-line no-undef
+    vueApp._router.push(linkParts.pathname || '/');
   }
 };
 
