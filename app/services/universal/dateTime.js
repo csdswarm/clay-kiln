@@ -46,6 +46,22 @@ const moment = require('moment'),
    */
   formatUTC = (date) => `${moment(date).format('YYYY-MM-DDTHH:mm:ss.SSS')}Z`,
   /**
+   * formats a date with the give format with the ability to display the timezone
+   *
+   * @param {*} date - date object or integer from epoch
+   * @param {string} format - format string
+   * @returns {string}
+   */
+  formatLocal = (date, format) => {
+    let dateString = moment(date).format(format);
+
+    if (format.includes('z')) {
+      dateString += ` ${usersTimeZone()}`;
+    }
+
+    return dateString;
+  },
+  /**
    * displays the formatted date with the ability for it to be adjusted to the users locale when using radioAPI.fetchDOM
    *
    * @param {string} date
@@ -53,13 +69,58 @@ const moment = require('moment'),
    * @returns {object}
    */
   userLocalDate = (date, format) =>
-    new Handlebars.SafeString(`<userLocal data-date="${date}" data-format="${format}">${moment(date).format(format)}</userLocal>`);
+    new Handlebars.SafeString(`<userLocal data-date="${date}" data-format="${format}">${formatLocal(date, format)}</userLocal>`),
+  /**
+   * extracts the users language
+   * @returns {string} the users set language
+   */
+  getNavigatorLanguage = () => {
+    if (typeof navigator === 'undefined') {
+      return 'en-US';
+    }
+
+    if (navigator.languages && navigator.languages.length) {
+      return navigator.languages[0];
+    }
+    return navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en-US';
+  },
+  /**
+   * extracts the users timezone
+   * @returns {string} the users locale timezone
+   */
+  usersTimeZone = () => {
+    const dateArray = new Date().toLocaleTimeString(getNavigatorLanguage(),{timeZoneName:'short'}).split(' ');
+
+    return dateArray.pop();
+  },
+  /**
+   * Returns an array of text/value keys starting from the users current day with 7 days
+   *
+   * @returns {array}
+   */
+  nextSevenDays = () => {
+    const details = [],
+      lang = getNavigatorLanguage(),
+      today = new Date();
+
+    // starting with today, add a week of days using the users locale
+    for (let offset = 0; offset < 7; offset++) {
+      const day = new Date(new Date().setDate(today.getDate() + offset));
+
+      details.push({ text: day.toLocaleString(lang, {  weekday: 'long' }), value: apiDayOfWeek(day.getDay()) });
+    }
+
+    return details;
+  };
 
 module.exports.getTime = getTime;
 module.exports.currentlyBetween = currentlyBetween;
 module.exports.apiDayOfWeek = apiDayOfWeek;
 module.exports.formatUTC = formatUTC;
 module.exports.userLocalDate = userLocalDate;
+module.exports.formatLocal = formatLocal;
+module.exports.nextSevenDays = nextSevenDays;
+module.exports.usersTimeZone = usersTimeZone;
 
 
 
