@@ -1,21 +1,15 @@
 'use strict';
 
 const Selectr = require('mobius1-selectr'),
-  { nextSevenDays, usersTimeZone } = require('../../services/client/dateTime'),
+  { nextSevenDays } = require('../../services/universal/dateTime'),
   { fetchDOM } = require('../../services/client/radioApi');
 
-/*
- * Set the day of week select using the users locale language
- */
 class StationSchedule {
   constructor(el) {
-    this.timeZone = usersTimeZone();
-
     const select = el.querySelector('.day-of-week__select'),
       stationId = parseInt(select.getAttribute('data-station-id')),
       gmtOffset = parseInt(select.getAttribute('data-gmt-offset')),
-      category = select.getAttribute('data-category'),
-      ul = el.querySelector('.station-schedule');
+      category = select.getAttribute('data-category');
 
     nextSevenDays().forEach((day) => select.add(new Option(day.text, day.value)));
 
@@ -29,7 +23,6 @@ class StationSchedule {
       setTimeout(() =>
         this.loadContent({ stationId, gmtOffset, category }, option.value), 0)
     );
-    this.showTimeZone(ul);
   }
   /**
    @typedef {object} StationDetails
@@ -50,21 +43,7 @@ class StationSchedule {
       content = doc.querySelector('.station-schedule'),
       ul = document.querySelector('.station-schedule');
 
-    this.showTimeZone(content);
     ul.parentNode.replaceChild(content, ul);
-  }
-  /**
-   * adds the users timezone to the times displayed
-   * @param {Element} ul
-   */
-  showTimeZone(ul) {
-    const times = ul.querySelectorAll('.details__time');
-
-    times.forEach((time) => {
-      if (/\d/.test(time.innerText)) {
-        time.appendChild(document.createTextNode(this.timeZone));
-      }
-    });
   }
 }
 
