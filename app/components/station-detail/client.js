@@ -12,9 +12,16 @@ function Constructor() {
   this.addTabNavigationListeners(tabs, content);
 
   if (hash) {
-    this.activateTab(hash, tabs, content);
+    this.activateTab(hash, tabs, content, true);
     window.scrollTo(0, document.querySelector('.station-detail__body').offsetTop);
   }
+  window.onpopstate = () => {
+    if (window.location.hash) {
+      this.activateTab(window.location.hash.replace('#', ''), tabs, content);
+    } else {
+      this.activateTab('recently-played', tabs, content);
+    }
+  };
 }
 
 Constructor.prototype = {
@@ -36,7 +43,7 @@ Constructor.prototype = {
    */
   addTabNavigationListeners: function (tabs, content) {
     for (let tab of tabs) {
-      tab.addEventListener('click', function (e) { this.activateTab(e, tabs, content); }.bind(this));
+      tab.addEventListener('click', function (e) { this.activateTab(e, tabs, content, true); }.bind(this));
     }
   },
   /**
@@ -47,7 +54,7 @@ Constructor.prototype = {
    * @param {NodeListOf} content
    * @param {boolean} [useHash]
    */
-  activateTab: function (e, tabs, content) {
+  activateTab: function (e, tabs, content, useHash) {
     let contentLabel;
 
     if (e.currentTarget) {
@@ -75,7 +82,9 @@ Constructor.prototype = {
       }
     }
 
-    history.pushState(null, null, `${window.location.origin}${window.location.pathname}#${contentLabel}`); // set hash without reloading page
+    if (useHash) {
+      history.pushState(null, null, `${window.location.origin}${window.location.pathname}#${contentLabel}`); // set hash without reloading page
+    }
   }
 };
 
