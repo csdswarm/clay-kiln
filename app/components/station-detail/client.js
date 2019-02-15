@@ -8,13 +8,15 @@ function Constructor() {
     hash = window.location.hash.replace('#', '');
 
   this.repositionRightRail(sidebar, stationDetail);
-  this.activateTab('recently-played', tabs, content);
   this.addTabNavigationListeners(tabs, content);
 
   if (hash) {
     this.activateTab(hash, tabs, content, true);
     window.scrollTo(0, document.querySelector('.station-detail__body').offsetTop);
+  } else {
+    this.activateTab('recently-played', tabs, content);
   }
+
   window.onpopstate = () => {
     if (window.location.hash) {
       this.activateTab(window.location.hash.replace('#', ''), tabs, content);

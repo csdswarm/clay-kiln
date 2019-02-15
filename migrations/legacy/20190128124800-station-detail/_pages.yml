@@ -94,8 +94,8 @@ _components:
     instances:
       default:
         allowed: true
-        # recentlyPlayedComponent:
-        #   _ref: /_components/station-recently-played/instances/default
+        recentlyPlayedComponent:
+          _ref: /_components/station-recently-played/instances/default
         scheduleComponent:
           _ref: /_components/station-schedule/instances/default
         # discoverComponent:
