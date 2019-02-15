@@ -1,7 +1,7 @@
 'use strict';
 
 const Selectr = require('mobius1-selectr'),
-  { todaysTimes, nextSevenDays, usersTimeZone } = require('../../services/client/dateTime');
+  { todaysTimes, nextSevenDays, usersTimeZone } = require('../../services/universal/dateTime');
 
 /*
  * Set the day of week select using the users locale language
@@ -14,7 +14,6 @@ class StationRecentlyPlayed {
       timeSelect = el.querySelector('.time__select'),
       stationId = parseInt(select.getAttribute('data-station-id')),
       gmtOffset = parseInt(select.getAttribute('data-gmt-offset')),
-      ul = el.querySelector('.station-recently-played'),
       selectr = new Selectr(select, {
         searchable: false
       }),
