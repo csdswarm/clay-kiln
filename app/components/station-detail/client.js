@@ -8,6 +8,7 @@ function Constructor() {
     hash = window.location.hash.replace('#', '');
 
   this.repositionRightRail(sidebar, stationDetail);
+  this.activateTab('recently-played', tabs, content, false);
   this.addTabNavigationListeners(tabs, content);
 
   if (hash) {
@@ -44,8 +45,9 @@ Constructor.prototype = {
    * @param {object} e event or tab name
    * @param {object[]} tabs
    * @param {object[]} content
+   * @param {boolean} bHash
    */
-  activateTab: function (e, tabs, content) {
+  activateTab: function (e, tabs, content, bHash = true) {
     let contentLabel;
 
     if (e.currentTarget) {
@@ -73,7 +75,9 @@ Constructor.prototype = {
       }
     }
 
-    history.pushState(null, null, `${window.location.origin}${window.location.pathname}#${contentLabel}`); // set hash without reloading page
+    if (bHash) {
+      history.pushState(null, null, `${window.location.origin}${window.location.pathname}#${contentLabel}`); // set hash without reloading page
+    }
   }
 };
 
