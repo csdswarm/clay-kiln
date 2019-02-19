@@ -1,0 +1,67 @@
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--stations-directory{{ if @root.locals.edit ' editing' }}">
+
+  <ul class="stations-directory__tabs">
+    <li class="tabs__featured">
+      <a href="//{{ @root.locals.site.host }}/stations">featured</a>
+    </li>
+    <li class="tabs__location">
+      <a href="//{{ @root.locals.site.host }}/stations/location">
+        <span>location</span>
+      </a>
+      <ul>
+        {{~#each location ~}}
+          <li class="location__tab location__tab--{{ attributes.display_name }}">
+            <a href="//{{ @root.locals.site.host }}/stations/location/{{ default attributes.slug id }}">{{ attributes.display_name }}</a>
+          </li>
+        {{~/each ~}}
+      </ul>
+    </li>
+    <li class="tabs__music">
+      <a href="//{{ @root.locals.site.host }}/stations/music">
+        <span>music</span>
+      </a>
+      <ul>
+        {{~#each music ~}}
+          <li class="music__tab music__tab--{{ attributes.slug }}">
+            <a href="//{{ @root.locals.site.host }}/stations/music/{{ attributes.slug }}">{{ attributes.name }}</a>
+          </li>
+        {{~/each ~}}
+      </ul>
+    </li>
+    <li class="tabs__newstalk">
+      <a href="//{{ @root.locals.site.host }}/stations/news-talk">news &amp; talk</a>
+    </li>
+    <li class="tabs__sports">
+      <a href="//{{ @root.locals.site.host }}/stations/sports">sports</a>
+    </li>
+  </ul>
+
+  <div class="stations-directory__directory-body">
+    {{#if (compare pageActive 'featured') }}
+      <div id="stations-directory__featured" class="directory-body__directory-page directory-page--featured">
+        {{> directory-featured featuredDirectory }}
+      </div>
+    {{/if}}
+    {{#if (compare pageActive 'location') }}
+      <div id="stations-directory__location" class="directory-body__directory-page directory-page--location">
+        {{> directory-location locationDirectory }}
+      </div>
+    {{/if}}
+    {{#if (compare pageActive 'music') }}
+      <div id="stations-directory__music" class="directory-body__directory-page directory-page--music">
+        {{> directory-genre musicDirectory }}
+      </div>
+    {{/if}}
+    {{#if (compare pageActive 'news-talk') }}
+      <div id="stations-directory__news-talk" class="directory-body__directory-page directory-page--news-talk">
+        {{> directory-genre newsTalkDirectory }}
+      </div>
+    {{/if}}
+    {{#if (compare pageActive 'sports') }}
+      <div id="stations-directory__sports" class="directory-body__directory-page directory-page--sports">
+        {{> directory-genre sportsDirectory }}
+      </div>
+    {{/if}}
+  </div>
+
+</section>

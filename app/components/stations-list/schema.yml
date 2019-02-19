@@ -35,3 +35,8 @@ truncatedList:
 
 seeAllLink:
   _label: Link to show all stations of category/genre/market when list is truncated
+
+googleInlineAd:
+  _component:
+    include:
+      - google-ad-manager

@@ -80,6 +80,10 @@ function middleware(req, res, next) {
   } else if (req.path.indexOf('/authors/') === 0) {
     params.dynamicAuthor = req.path.match(/authors\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/author@published`);
+  } else if (req.path.indexOf('/stations/') === 0) {
+    params.dynamicMarket = req.path.match(/stations\/location\/(.+)/) ? req.path.match(/stations\/location\/(.+)/)[1] : '';
+    params.dynamicGenre = req.path.match(/stations\/music\/(.+)/) ? req.path.match(/stations\/music\/(.+)/)[1] : '';
+    promise = db.get(`${req.hostname}/_pages/stations-directory@published`);
   } else {
     // Otherwise resolve the uri and page instance
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));

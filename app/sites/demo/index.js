@@ -30,7 +30,14 @@ module.exports.routes = [
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
   { path: '/newsletter/subscribe' },
   { path: '/news/small-business-pulse' },
-  { path: '/:dynamicStation/listen', dynamicPage: 'station' }
+  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
+  { path: '/stations', dynamicPage: 'stations-directory' },
+  { path: '/stations/location', dynamicPage: 'stations-directory' },
+  { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
+  { path: '/stations/music', dynamicPage: 'stations-directory' },
+  { path: '/stations/music/:dynamicGenre', dynamicPage: 'stations-directory' },
+  { path: '/stations/news-talk', dynamicPage: 'stations-directory' },
+  { path: '/stations/sports', dynamicPage: 'stations-directory' }
 ];
 
 // Resolve the url to publish to
