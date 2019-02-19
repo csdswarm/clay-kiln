@@ -49,7 +49,6 @@ const rest = require('../universal/rest'),
    * @return {function}
    */
   defaultValidation = (route) => isRadioApiRoute(route) ? (response) => response.data : () => true,
-
   /**
    * Retrieve data from Redis or an endpoint
    *
@@ -83,7 +82,6 @@ const rest = require('../universal/rest'),
       }
     }
   },
-
   /**
    * Retrieve data from endpoint and save to db
    *
