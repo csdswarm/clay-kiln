@@ -48,66 +48,76 @@ const rest = require('../universal/rest'),
    * @param {string} route
    * @return {function}
    */
-  defaultValidation = (route) => isRadioApiRoute(route) ? (response) => response.data : () => true;
+  defaultValidation = (route) => isRadioApiRoute(route) ? (response) => response.data : () => true,
 
-/**
- * Retrieve data from Redis or an endpoint
- *
- * @param {string} route
- * @param {*} [params]
- * @param {function} [validate]
- * @return {Promise}
- */
-function get(route, params, validate = defaultValidation(route)) {
-  const dbKey = createKey(route, params),
-    requestEndpoint = createEndpoint(route, params);
+  /**
+   * Retrieve data from Redis or an endpoint
+   *
+   * @param {string} route
+   * @param {*} [params]
+   * @param {function} [validate]
+   * @return {Promise}
+   */
+  get = async (route, params, validate = defaultValidation(route)) => {
+    const dbKey = createKey(route, params),
+      requestEndpoint = createEndpoint(route, params);
 
-  return db.get(dbKey)
-    .then(function (data) {
+    try {
+      const data = await db.get(dbKey);
+
       if (data.updated_at && (new Date() - new Date(data.updated_at) > TTL)) {
-        return getAndSave(requestEndpoint, dbKey, validate).catch(function () {
-          // If API errors out, return stale data
-          return data;
-        });
+        try {
+          return await getAndSave(requestEndpoint, dbKey, validate);
+        } catch (e) {
+        }
       }
+      // If API errors out or within TTL, return existing data
       return data;
-    })
-    .catch(function (e) {
-      return getAndSave(requestEndpoint, dbKey, validate).catch(function () {
+    } catch (e) {
+      try {
+        // if an issue with getting the key, get the data
+        return await getAndSave(requestEndpoint, dbKey, validate);
+      } catch (e) {
         // If API errors out and we don't have stale data, return empty object
         return {};
-      });
-    });
-}
-
-/**
- * Retrieve data from endpoint and save to db
- *
- * @param {string} endpoint
- * @param {string} dbKey
- * @param {function} validate
- * @return {Promise}
- * @throws {Error}
- */
-function getAndSave(endpoint, dbKey, validate) {
-  return rest.get(endpoint).then(response => {
-    if (validate(response)) {
-      response.updated_at = new Date();
-      try {
-        return db.put(dbKey, JSON.stringify(response)).then(function () {
-          return response;
-        });
-      } catch (e) {
-        return response;
       }
-    } else {
-      // Throw an error if no data is returned in case there is stale data in redis that can be served
-      throw new Error('Validation of data failed');
     }
-  }).catch(() => {
-    // Throw an error if no data is returned in case there is stale data in redis that can be served
-    throw new Error('No data returned from endpoint');
-  });
-}
+  },
+
+  /**
+   * Retrieve data from endpoint and save to db
+   *
+   * @param {string} endpoint
+   * @param {string} dbKey
+   * @param {function} validate
+   * @return {Promise}
+   * @throws {Error}
+   */
+  getAndSave = async (endpoint, dbKey, validate) => {
+    try {
+      const response =  await rest.get(endpoint);
+
+      if (validate(response)) {
+        response.updated_at = new Date();
+
+        try {
+          db.put(dbKey, JSON.stringify(response));
+        } catch (e) {
+        }
+
+        return response;
+
+      } else {
+        // Throw an error if no data is returned in case there is stale data in redis that can be served
+        const err = new Error('Validation of data failed');
+
+        err.localError = true;
+        throw err;
+      }
+    } catch (e) {
+      // Throw an error if no data is returned in case there is stale data in redis that can be served
+      throw e.localError ? e : new Error('No data returned from endpoint');
+    }
+  };
 
 module.exports.get = get;
