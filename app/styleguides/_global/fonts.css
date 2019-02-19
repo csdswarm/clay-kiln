@@ -435,12 +435,12 @@ em, i {
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||| Station Directory Fonts Styleguide |||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin station-directory-font1 {
+@define-mixin stations-directory-font1 {
   @mixin font CircularStd-Medium, 14px, $black, -.58px, 20px;
 }
-@define-mixin station-directory-font2 {
+@define-mixin stations-directory-font2 {
   @mixin font CircularStd-Book, 12px, $black, -.58px, 18px;
 }
-@define-mixin station-directory-font3 {
+@define-mixin stations-directory-font3 {
   @mixin font CircularStd-Medium, 12px, $black, -.58px, 15px;
 }

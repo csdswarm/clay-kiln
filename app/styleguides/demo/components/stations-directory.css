@@ -1,0 +1,83 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--stations-directory {
+  margin-top: em(20);
+  ul.stations-directory__tabs {
+    margin-bottom: em(50);
+    > li {
+      a {
+        text-decoration: none;
+      }
+      @mixin stations-directory-font1;
+      text-transform: capitalize;
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      white-space: nowrap;
+      span {
+        display: inline-flex;
+        flex-direction: row;
+        align-items: baseline;
+      }
+      &:hover {
+        align-items: flex-start;
+        ul {
+          display: block;
+        }
+      }
+      ul {
+        display: none;
+        &:hover {
+          display: block;
+        }
+        columns: 2;
+        -webkit-columns: 2;
+        -moz-columns: 2;
+        z-index: 1;
+        position: absolute;
+        margin-top: calc(1em + em(5, 14));
+        border: em(1, 14) solid $mercury;
+        li {
+          @mixin stations-directory-font2;
+          display: block;
+          background: $white;
+          padding: em(5, 12);
+          min-width: em(128, 12);
+          &:hover {
+            background: $concrete;
+          }
+        }
+      }
+      &:not(:last-of-type) {
+        margin-right: em(40, 14);
+      }
+      &::after {
+        height: em(2, 14);
+        width: em(42, 14);
+        display: none;
+        position: relative;
+        content: '';
+        margin-top: em(3, 14);
+        background: $purple;
+        @mixin medium-small-screen {
+          width: em(32, 14);
+        }
+        @define-mixin underline-color $stationGenre, $color {
+          .tabs__$stationGenre& {
+            background: $color;
+          }
+        }
+        @mixin underline-color music, $sunsetOrange;
+        @mixin underline-color newstalk, $lightningYellow;
+        @mixin underline-color sports, $azureRadience;
+      }
+      &.active::after {
+        display: inline-block;
+      }
+    }
+  }
+}

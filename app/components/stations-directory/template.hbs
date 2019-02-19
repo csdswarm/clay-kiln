@@ -1,10 +1,10 @@
 <section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--stations-directory{{ if @root.locals.edit ' editing' }}">
 
   <ul class="stations-directory__tabs">
-    <li class="tabs__featured">
+    <li class="tabs__featured{{if (compare pageActive 'featured') ' active'}}">
       <a href="//{{ @root.locals.site.host }}/stations">featured</a>
     </li>
-    <li class="tabs__location">
+    <li class="tabs__location{{if (compare pageActive 'location') ' active'}}">
       <a href="//{{ @root.locals.site.host }}/stations/location">
         <span>location</span>
       </a>
@@ -16,7 +16,7 @@
         {{~/each ~}}
       </ul>
     </li>
-    <li class="tabs__music">
+    <li class="tabs__music{{if (compare pageActive 'music') ' active'}}">
       <a href="//{{ @root.locals.site.host }}/stations/music">
         <span>music</span>
       </a>
@@ -28,10 +28,10 @@
         {{~/each ~}}
       </ul>
     </li>
-    <li class="tabs__newstalk">
+    <li class="tabs__newstalk{{if (compare pageActive 'news-talk') ' active'}}">
       <a href="//{{ @root.locals.site.host }}/stations/news-talk">news &amp; talk</a>
     </li>
-    <li class="tabs__sports">
+    <li class="tabs__sports{{if (compare pageActive 'sports') ' active'}}">
       <a href="//{{ @root.locals.site.host }}/stations/sports">sports</a>
     </li>
   </ul>
