@@ -41,8 +41,8 @@ module.exports['3.0'] = function (uri, data) {
 module.exports['4.0'] = function (uri, data) {
   data.filterTags = data.filterTags || [];
 
-  // Only change the filter value for the HP instance
-  if (data.filterTags.filter(tag => tag.text === 'Radio.com Latino')) {
+  // Add tag if it's not already on the section lead
+  if (!data.filterTags.filter(tag => tag.text === 'Radio.com Latino').length) {
     data.filterTags.push({text: 'Radio.com Latino'});
   }
 
