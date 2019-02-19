@@ -24,10 +24,17 @@ module.exports['2.0'] = function (uri, data) {
 };
 
 module.exports['3.0'] = function (uri, data) {
-  data.filterTags = data.filterTags || [];
+  const sectionFronts = [
+      'news',
+      'sports',
+      'music',
+      'small-business-pulse'
+    ],
+    isSectionFront = sectionFronts.filter(sectionFront => uri.indexOf(`instances/${sectionFront}`) !== -1);
 
   // Only change the filter value for the HP instance
-  if (data.filterTags.filter(tag => tag.text === 'Radio.com Latino')) {
+  if (isSectionFront.length && data.filterTags.filter(tag => tag.text === 'Radio.com Latino')) {
+    data.filterTags = data.filterTags || [];
     data.filterTags.push({text: 'Radio.com Latino'});
   }
 
