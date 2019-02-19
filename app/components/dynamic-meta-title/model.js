@@ -1,7 +1,7 @@
 'use strict';
 
 const { hypensToSpaces } = require('../../services/universal/dynamic-route-param'),
-  { getKeysValue } = require('../../services/universal/object');
+  _get = require('lodash/get');
 
 module.exports.render = (ref, data, locals) => {
   if (data.routeParam && locals && locals.params) {
@@ -13,7 +13,7 @@ module.exports.render = (ref, data, locals) => {
     }
 
   } else if (data.localsKey && locals) {
-    const value = getKeysValue(locals, data.localsKey);
+    const value = _get(locals, data.localsKey);
 
     if (value) {
       data.paramValue = value;

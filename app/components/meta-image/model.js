@@ -1,10 +1,10 @@
 'use strict';
 
-const { getKeysValue } = require('../../services/universal/object');
+const _get = require('lodash/get');
 
 module.exports.render = (ref, data, locals) => {
   if (data.localsKey && locals) {
-    const value = getKeysValue(locals, data.localsKey);
+    const value = _get(locals, data.localsKey);
 
     if (value) {
       data.imageUrl = data.imageUrl.replace('${paramValue}', value);
