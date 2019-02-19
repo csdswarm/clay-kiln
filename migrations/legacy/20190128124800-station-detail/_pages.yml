@@ -2,7 +2,10 @@ _pages:
   station:
     _dynamic: true
     head:
+      - /_components/dynamic-meta-title/instances/station
+      - /_components/dynamic-meta-description/instances/station
       - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/station
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
@@ -100,3 +103,21 @@ _components:
           _ref: /_components/station-schedule/instances/default
         # discoverComponent:
         #   _ref: /_components/station-discover/instances/default
+
+  meta-image:
+    instances:
+      station:
+        imageUrl: '${paramValue}'
+        localsKey: 'station.square_logo_small'
+
+  dynamic-meta-description:
+    instances:
+      station:
+        description: '${paramValue}'
+        localsKey: 'station.description'
+
+  dynamic-meta-title:
+    instances:
+      station:
+        localsKey: 'station.name'
+        suffix: ' | RADIO.COM'
