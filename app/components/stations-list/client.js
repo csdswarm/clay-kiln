@@ -80,6 +80,8 @@ StationsList.prototype = {
     if (!this.stationTemplate) {
       this.stationTemplate = await this.getComponentTemplate();
     }
+
+    // @todo ON-552 Set up SPA holepunching for components
     this.stationTemplate.setAttribute('href', `${ window.location.origin }/${ station.id }/listen`);
     this.stationTemplate.querySelector('.lede__image').setAttribute('src', `${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0`);
     this.stationTemplate.querySelector('.lede__image').setAttribute('srcset', `
