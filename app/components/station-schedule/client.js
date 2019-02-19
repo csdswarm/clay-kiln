@@ -4,9 +4,6 @@ const Selectr = require('mobius1-selectr'),
   { nextSevenDays } = require('../../services/universal/dateTime'),
   { fetchDOM } = require('../../services/client/radioApi');
 
-/*
- * Set the day of week select using the users locale language
- */
 class StationSchedule {
   constructor(el) {
     const select = el.querySelector('.day-of-week__select'),

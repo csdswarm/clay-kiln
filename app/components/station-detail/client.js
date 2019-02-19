@@ -10,12 +10,13 @@ function Constructor() {
     hash = window.location.hash.replace('#', '');
 
   this.repositionRightRail(sidebar, stationDetail);
-  this.activateTab('recently-played', tabs, content);
   this.addTabNavigationListeners(tabs, content);
 
   if (hash) {
     this.activateTab(hash, tabs, content, true);
     window.scrollTo(0, document.querySelector('.station-detail__body').offsetTop);
+  } else {
+    this.activateTab('recently-played', tabs, content);
   }
 
   recentStations.add(stationData);
@@ -33,7 +34,7 @@ Constructor.prototype = {
    * Add margin top to right rail
    * @function
    * @param {object} sidebar
-   * @param {object} stationDetail
+   * @param {Element} stationDetail
    */
   repositionRightRail: function (sidebar, stationDetail) {
     sidebar.style.marginTop = window.getComputedStyle(stationDetail).marginTop;
@@ -42,8 +43,8 @@ Constructor.prototype = {
   /**
    * Add navigation listeners to tabs
    * @function
-   * @param {object[]} tabs
-   * @param {object[]} content
+   * @param {NodeListOf} tabs
+   * @param {NodeListOf} content
    */
   addTabNavigationListeners: function (tabs, content) {
     for (let tab of tabs) {
@@ -54,9 +55,9 @@ Constructor.prototype = {
    * Navigate between tabs
    * @function
    * @param {object} e event or tab name
-   * @param {object[]} tabs
-   * @param {object[]} content
-   * @param {boolean} useHash
+   * @param {NodeListOf} tabs
+   * @param {NodeListOf} content
+   * @param {boolean} [useHash]
    */
   activateTab: function (e, tabs, content, useHash) {
     let contentLabel;
