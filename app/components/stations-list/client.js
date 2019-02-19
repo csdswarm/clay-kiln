@@ -2,7 +2,8 @@
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
-  radioApiService = require('../../services/client/radioApi');
+  radioApiService = require('../../services/client/radioApi'),
+  spaLinkService = require('../../services/client/spaLink');
 
 class StationsList {
   constructor(element) {
@@ -121,11 +122,7 @@ StationsList.prototype = {
       this.stationsList.appendChild(station);
       station.classList.add('station');
       station.innerHTML = await this.getStationTemplateWithData(stationData);
-
-      // Attach vue router listener on SPA links.
-      station.querySelector('a').addEventListener('click', event => {
-        this.onSpaLinkClick(event, station.querySelector('a'));
-      });
+      spaLinkService(station.querySelector('a'));
     });
     this.displayActiveStations();
   },
@@ -178,20 +175,6 @@ StationsList.prototype = {
     if (newNumOfStations >= this.stationsData.length) {
       this.loadMoreBtn.remove();
     }
-  },
-  /**
-   * Navigate with vue on SPA links
-   * @function
-   * @param {object} event
-   * @param {object} element
-   */
-  onSpaLinkClick(event, element) {
-    event.preventDefault();
-    element.removeEventListener('click', element.fn, false);
-    const linkParts = new URL(element.getAttribute('href'));
-
-    // eslint-disable-next-line no-undef
-    vueApp._router.push(linkParts.pathname || '/');
   }
 };
 

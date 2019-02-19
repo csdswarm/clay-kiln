@@ -1,5 +1,7 @@
 'use strict';
-const radioApiService = require('../../services/server/radioApi');
+const radioApiService = require('../../services/server/radioApi'),
+  SPORTS_ID = '11',
+  NEWSTALK_ID = '25';
 
 /**
  * get market ID from market slug
@@ -82,7 +84,7 @@ module.exports.render = async (uri, data, locals) => {
       /** for stations lists on music, news & talk, and sports stations directory pages **/
 
       data.genre = data.genre || locals.params.dynamicGenre; // should be slug. temporarily using id
-      if (data.genre == '11' || data.genre == '25' || data.genre == 'sports' || data.genre == 'news-talk') {
+      if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == 'sports' || data.genre == 'news-talk') {
         data.seeAllLink = `/stations/${ data.genre }`;
       } else {
         data.seeAllLink = `/stations/music/${ data.genre }`;
@@ -116,7 +118,7 @@ module.exports.render = async (uri, data, locals) => {
           break;
         case 'genre':
           data.genre = locals.station.genre[0].slug || locals.station.genre[0].id; // note: genre slug needs to be added to stations api
-          if (data.genre == '11' || data.genre == '25' || data.genre == 'sports' || data.genre == 'news-talk') {
+          if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == 'sports' || data.genre == 'news-talk') {
             data.seeAllLink = `/stations/${ data.genre }`;
           } else {
             data.seeAllLink = `/stations/music/${ data.genre }`;
