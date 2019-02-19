@@ -22,3 +22,14 @@ module.exports['2.0'] = function (uri, data) {
 
   return newData;
 };
+
+module.exports['3.0'] = function (uri, data) {
+  data.filterTags = data.filterTags || [];
+
+  // Only change the filter value for the HP instance
+  if (data.filterTags.filter(tag => tag.text === 'Radio.com Latino')) {
+    data.filterTags.push({text: 'Radio.com Latino'});
+  }
+
+  return data;
+};
