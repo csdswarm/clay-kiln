@@ -10,7 +10,6 @@ const expect = require('chai').expect,
 
 describe(dirname, () => {
   let sandbox;
-  // post = sinon.stub();
 
   describe(filename, () => {
     beforeEach(() => {

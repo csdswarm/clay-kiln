@@ -26,7 +26,7 @@ module.exports.uploadImage = async (imgUrl) => {
     s3.headObject(s3Options, async (err) => {
       if (err && err.code === 'NotFound') {
         // return the original location instead of waiting for the image to be uploaded so users don't wait
-        resolve(`${imgUrl}`);
+        resolve(imgUrl);
 
         // Get image
         const response = await fetch(imgUrl);
