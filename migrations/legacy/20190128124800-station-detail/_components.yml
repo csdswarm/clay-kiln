@@ -67,15 +67,66 @@ _components:
     instances:
       default:
         allowed: true
+
   station-schedule:
     instances:
       default:
         allowed: true
 
-  # station-discover:
-  #   instances:
-  #     default:
-  #       allowed: true
+  stations-list:
+    instances:
+      recent:
+        filterBy: recent
+        listTitle: 'recent stations'
+        truncatedList: true
+      recentOnFeaturedStationsDirectory:
+        filterBy: recent
+        listTitle: "stations you've listened to"
+        truncatedList: true
+      local:
+        filterBy: local
+        listTitle: 'stations near you'
+        truncatedList: true
+      market:
+        filterBy: market
+        market: ''
+        listTitle: ''
+        truncatedList: false
+      marketTruncated:
+        filterBy: market
+        market: ''
+        listTitle: ''
+        truncatedList: true
+      genre:
+        filterBy: genre
+        genre: ''
+        listTitle: ''
+        truncatedList: false
+      genreTruncated:
+        filterBy: genre
+        genre: ''
+        listTitle: ''
+        truncatedList: true
+      category:
+        filterBy: category
+        category: ''
+        listTitle: ''
+        truncatedList: false
+      categoryTruncated:
+        filterBy: category
+        category: ''
+        listTitle: ''
+        truncatedList: true
+
+  station-discover:
+    instances:
+      default:
+        recentStations:
+          _ref: /_components/stations-list/instances/recent
+        marketStations:
+          _ref: /_components/stations-list/instances/marketTruncated
+        genreStations:
+          _ref: /_components/stations-list/instances/genreTruncated
 
   station-detail:
     instances:
@@ -85,8 +136,8 @@ _components:
           _ref: /_components/station-recently-played/instances/default
         scheduleComponent:
           _ref: /_components/station-schedule/instances/default
-        # discoverComponent:
-        #   _ref: /_components/station-discover/instances/default
+        discoverComponent:
+          _ref: /_components/station-discover/instances/default
 
   meta-image:
     instances:
@@ -105,3 +156,5 @@ _components:
       station:
         localsKey: 'station.name'
         suffix: ' | RADIO.COM'
+
+
