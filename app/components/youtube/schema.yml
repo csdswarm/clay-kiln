@@ -84,14 +84,6 @@ playerBorderBottom:
   _has: checkbox
 
 _groups:
-  settings:
-    fields:
-      - autoPlay (Autoplay)
-      - autoPlayNextVideo (Autoplay)
-      - videoPlaylist (Autoplay)
-      - playerBorderTopCTA (Borders and Border Title)
-      - playerBorderTop (Borders and Border Title)
-      - playerBorderBottom (Borders and Border Title)
   inline:
     fields:
       - videoSource
