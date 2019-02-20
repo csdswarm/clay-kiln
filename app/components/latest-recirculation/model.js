@@ -115,13 +115,13 @@ const queryService = require('../../services/server/query'),
 
     return data;
   };
+
 /**
  * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-
 module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
