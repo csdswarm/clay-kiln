@@ -1,7 +1,8 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   SPORTS_SLUG = 'sports',
-  NEWSTALK_SLUG = 'news-talk';
+  NEWSTALK_SLUG = 'news-talk',
+  url = require('url');
 
 function getAllMarkets() {
   const route = 'markets',
@@ -38,9 +39,7 @@ module.exports.render = async (uri, data, locals) => {
 
   data.location = await getAllMarkets();
   data.music = await getAllMusicGenres();
-  let path = locals.url.replace(`${locals.site.protocol}://${locals.site.host}`, '');
-
-  path = path.split('?')[0].split('#')[0];
+  let path = url.parse(locals.url).pathname;
 
   if (path.includes('location') || path.includes('music')) {
     path = path.replace(`/${path.split('/')[3]}`, '');
