@@ -64,37 +64,38 @@ StationsList.prototype = {
    * @returns {object}
    */
   getComponentTemplate: async function () {
-    const parser = new DOMParser(),
-      listHTML = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html?ignore_resolve_media=true`),
-      htmlText = await listHTML.text(),
-      doc = parser.parseFromString(htmlText, 'text/html');
+    const doc = await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html`);
 
-    return doc.querySelector('li.station a');
+    return doc.querySelector('li.station');
   },
   /**
    * Inject station data into station list template
    * @function
    * @param {object} station
-   * @returns {string}
+   * @returns {object}
    */
   getStationTemplateWithData: async function (station) {
     if (!this.stationTemplate) {
       this.stationTemplate = await this.getComponentTemplate();
     }
 
+    const anchor = this.stationTemplate.querySelector('a');
+      
     // @todo ON-552 Set up SPA holepunching for components
-    this.stationTemplate.setAttribute('href', `${ window.location.origin }/${ station.id }/listen`);
-    this.stationTemplate.querySelector('.lede__image').setAttribute('src', `${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0`);
-    this.stationTemplate.querySelector('.lede__image').setAttribute('srcset', `
+    anchor.setAttribute('href', `${ window.location.origin }/${ station.id }/listen`);
+    anchor.querySelector('.lede__image').setAttribute('src', `${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0`);
+    anchor.querySelector('.lede__image').setAttribute('srcset', `
       ${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0 140w,
       ${ station.square_logo_large }?width=222&height=222&crop=1:1,offset-y0 222w,
       ${ station.square_logo_large }?width=210&height=210&crop=1:1,offset-y0 210w,
       ${ station.square_logo_large }?width=150&height=150&crop=1:1,offset-y0 150w
     `);
-    this.stationTemplate.querySelector('.station__name').innerText = station.name;
-    this.stationTemplate.querySelector('.station__secondary-info').innerText = station.slogan;
+    anchor.querySelector('.station__name').innerText = station.name;
+    anchor.querySelector('.station__secondary-info').innerText = station.slogan;
 
-    return this.stationTemplate.outerHTML;
+    spaLinkService(anchor);
+
+    return this.stationTemplate;
   },
   /**
    * Add active class to stations that should be visible
@@ -117,12 +118,9 @@ StationsList.prototype = {
   updateStationsDOM: function (stationsData) {
     this.toggleLoader();
     stationsData.forEach(async (stationData) => {
-      const station = document.createElement('li');
+      const station = await this.getStationTemplateWithData(stationData);
 
       this.stationsList.appendChild(station);
-      station.classList.add('station');
-      station.innerHTML = await this.getStationTemplateWithData(stationData);
-      spaLinkService(station.querySelector('a'));
     });
     this.displayActiveStations();
   },
