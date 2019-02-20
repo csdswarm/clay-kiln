@@ -2,7 +2,10 @@ _pages:
   station:
     _dynamic: true
     head:
+      - /_components/dynamic-meta-title/instances/station
+      - /_components/dynamic-meta-description/instances/station
       - /_components/dynamic-meta-url/instances/general
+      - /_components/meta-image/instances/station
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
@@ -86,10 +89,10 @@ _components:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
 
-  # station-recently-played:
-  #   instances:
-  #     default:
-  #       allowed: true
+  station-recently-played:
+    instances:
+      default:
+        allowed: true
 
   station-schedule:
     instances:
@@ -160,8 +163,8 @@ _components:
   station-detail:
     instances:
       default:
-        # recentlyPlayedComponent:
-        #   _ref: /_components/station-recently-played/instances/default
+        recentlyPlayedComponent:
+          _ref: /_components/station-recently-played/instances/default
         scheduleComponent:
           _ref: /_components/station-schedule/instances/default
         discoverComponent:

@@ -1,0 +1,41 @@
+<div data-uri="{{ default _ref _self }}" class="component component--station-recently-played">
+  {{!--
+  @TODO ON-549 Unhide filters from Recently Played page of Station Detail
+  <div class="station-recently-played__filters">
+    <div class="filters__select">
+      <select class="day-of-week__select" data-station-id="{{ @root.locals.station.id }}" data-gmt-offset="{{ @root.locals.station.gmt_offset }}"></select>
+    </div>
+    <div class="filters__select">
+      <select class="time__select" data-station-id="{{ @root.locals.station.id }}" data-gmt-offset="{{ @root.locals.station.gmt_offset }}"></select>
+    </div>
+  </div>
+  --}}
+  <ul class="station-recently-played">
+    {{#each schedule}}
+      <li>
+        <div class="station-recently-played__show">
+          {{#if playing}}
+          <a href="{{ site_url }}" class="show__link">
+          {{/if}}
+          <img src="{{ image }}?width=101&height=101&crop=1:1,offset-y0" class="show__image"/>
+          <div class="show__details">
+            <div class="details__time
+                {{if playing (concat "details__time--on-air " (lowercase @root.locals.station.category))}}">
+              {{#if playing}}
+                ON-AIR
+              {{else}}
+                Played at {{ userLocalDate start_time 'h:mm a z' }}
+              {{/if}}
+            </div>
+            <div class="details__title">{{ title }}</div>
+            <div class="details__artist">{{ artist }}</div>
+          </div>
+          {{#if playing}}
+          </a>
+            <a href="{{ site_url }}" class="show__play"></a>
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+</div>
