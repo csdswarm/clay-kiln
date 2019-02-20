@@ -20,7 +20,7 @@ function getAllMusicGenres() {
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      let musicGenres = response.data.map(genre => { if (genre.attributes.slug !== 'sports' && genre.attributes.slug !== 'news-talk') {
+      let musicGenres = response.data.filter(genre => { if (genre.attributes.slug !== 'sports' && genre.attributes.slug !== 'news-talk') {
         return genre;
       }});
       return musicGenres || [];
