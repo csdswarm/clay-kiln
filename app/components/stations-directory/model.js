@@ -8,11 +8,7 @@ function getAllMarkets() {
     params = {'page[size]': 100};
 
   return radioApiService.get(route, params).then(response => {
-    if (response.data) {
-      return response.data || [];
-    } else {
-      return [];
-    }
+    return response.data || [];
   });
 }
 
@@ -28,7 +24,7 @@ function getAllMusicGenres() {
         }
       });
 
-      return musicGenres || [];
+      return musicGenres;
     } else {
       return [];
     }
