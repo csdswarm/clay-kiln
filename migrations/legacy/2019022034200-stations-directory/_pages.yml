@@ -1,0 +1,115 @@
+_pages:
+  stations-directory:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-url/instances/general
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/stations-directory/instances/default
+    layout: /_components/one-column-layout/instances/general
+
+_components:
+  stations-list:
+    instances:
+      recent:
+        filterBy: recent
+        listTitle: 'recent stations'
+        truncatedList: true
+      recentOnFeaturedStationsDirectory:
+        filterBy: recent
+        listTitle: "stations you've listened to"
+        truncatedList: true
+      local:
+        filterBy: local
+        listTitle: 'stations near you'
+        truncatedList: true
+      market:
+        filterBy: market
+        market: ''
+        listTitle: ''
+        truncatedList: false
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+      marketTruncated:
+        filterBy: market
+        market: ''
+        listTitle: ''
+        truncatedList: true
+      genre:
+        filterBy: genre
+        genre: ''
+        listTitle: ''
+        truncatedList: false
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+      genreTruncated:
+        filterBy: genre
+        genre: ''
+        listTitle: ''
+        truncatedList: true
+      category:
+        filterBy: category
+        category: ''
+        listTitle: ''
+        truncatedList: false
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+      categoryTruncated:
+        filterBy: category
+        category: ''
+        listTitle: ''
+        truncatedList: true
+
+  directory-featured:
+    instances:
+      default:
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        recentStations:
+          _ref: /_components/stations-list/instances/recentOnFeaturedStationsDirectory
+        stationsList:
+          _ref: /_components/stations-list/instances/category
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/categoryTruncated
+  directory-location:
+    instances:
+      default:
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        stationsList:
+          _ref: /_components/stations-list/instances/market
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/marketTruncated
+  directory-genre:
+    instances:
+      music:
+        genre: all
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/genreTruncated
+      news-talk:
+        genre: news-talk
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+      sports:
+        genre: sports
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+
+  stations-directory:
+    instances:
+      default:
+        featuredDirectory:
+          _ref: /_components/directory-featured/instances/default
+        locationDirectory:
+          _ref: /_components/directory-location/instances/default
+        musicDirectory:
+          _ref: /_components/directory-genre/instances/music
+        newsTalkDirectory:
+          _ref: /_components/directory-genre/instances/news-talk
+        sportsDirectory:
+          _ref: /_components/directory-genre/instances/sports
