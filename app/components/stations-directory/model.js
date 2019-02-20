@@ -4,6 +4,11 @@ const radioApiService = require('../../services/server/radioApi'),
   NEWSTALK_SLUG = 'news-talk',
   url = require('url');
 
+/**
+ * fetch all markets from
+ * radio api into an array
+ * @returns {array}
+ */
 function getAllMarkets() {
   const route = 'markets',
     params = {'page[size]': 100};
@@ -13,6 +18,11 @@ function getAllMarkets() {
   });
 }
 
+/**
+ * fetch all music genres from
+ * radio api into an array
+ * @returns {array}
+ */
 function getAllMusicGenres() {
   const route = 'genres',
     params = {'page[size]': 100};
