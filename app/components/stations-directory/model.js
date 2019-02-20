@@ -1,5 +1,7 @@
 'use strict';
-const radioApiService = require('../../services/server/radioApi');
+const radioApiService = require('../../services/server/radioApi'),
+  SPORTS_SLUG = 'sports',
+  NEWSTALK_SLUG = 'news-talk';
 
 function getAllMarkets() {
   const route = 'markets',
@@ -20,9 +22,12 @@ function getAllMusicGenres() {
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      let musicGenres = response.data.filter(genre => { if (genre.attributes.slug !== 'sports' && genre.attributes.slug !== 'news-talk') {
-        return genre;
-      }});
+      let musicGenres = response.data.filter(genre => {
+        if (genre.attributes.slug !== SPORTS_SLUG && genre.attributes.slug !== NEWSTALK_SLUG) {
+          return genre;
+        }
+      });
+
       return musicGenres || [];
     } else {
       return [];
@@ -46,9 +51,6 @@ module.exports.render = async (uri, data, locals) => {
   }
 
   switch (path) {
-    case '/stations':
-      data.pageActive = 'featured';
-      break;
     case '/stations/location':
       data.pageActive = 'location';
       break;
@@ -61,6 +63,7 @@ module.exports.render = async (uri, data, locals) => {
     case '/stations/sports':
       data.pageActive = 'sports';
       break;
+    case '/stations':
     default:
       data.pageActive = 'featured';
       break;
