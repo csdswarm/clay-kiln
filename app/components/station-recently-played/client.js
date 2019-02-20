@@ -1,14 +1,15 @@
 'use strict';
 
 const Selectr = require('mobius1-selectr'),
-  { todaysTimes, nextSevenDays, usersTimeZone } = require('../../services/universal/dateTime');
+  { todaysTimes, nextSevenDays } = require('../../services/universal/dateTime');
 
 /*
  * Set the day of week select using the users locale language
  */
 class StationRecentlyPlayed {
   constructor(el) {
-    this.timeZone = usersTimeZone();
+    // TODO ON-549 Utilize filters from Recently Played page of Station Detail
+    return;
 
     const select = el.querySelector('.day-of-week__select'),
       timeSelect = el.querySelector('.time__select'),
@@ -32,7 +33,6 @@ class StationRecentlyPlayed {
 
     selectr.on('selectr.change', (option) => this.loadContent(stationId, gmtOffset, option.value, null));
     timeSelectr.on('selectr.change', (option) => this.loadContent(stationId, gmtOffset, null, option.value));
-
   }
   /**
    * load in new content from the api
