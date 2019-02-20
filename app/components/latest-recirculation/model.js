@@ -102,14 +102,15 @@ const queryService = require('../../services/server/query'),
       response = await radioApiService.get(route),
       feedUrl = `${response.data.attributes.website}/station_feed.json`,
       feed = await radioApiService.get(feedUrl, null, (response) => response.nodes),
-      nodes = feed.nodes ? feed.nodes.slice(0, 5) : [];
+      nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
+      defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
 
     data.station = response.data.attributes.name;
     data.articles = await Promise.all(nodes.map(async (item) => {
       return {
-        feedImgUrl: await uploadImage(item.node['OG Image'].src),
+        feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
         externalUrl: item.node.URL,
-        primaryHeadline: item.node.title
+        primaryHeadline: item.node.field_engagement_title
       };
     }));
 
