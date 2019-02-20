@@ -32,9 +32,10 @@ module.exports['3.0'] = function (uri, data) {
     ],
     isSectionFront = sectionFronts.filter(sectionFront => uri.indexOf(`instances/${sectionFront}`) !== -1);
 
+  data.filterTags = data.filterTags || [];
+
   // Only change the filter value for the HP instance
-  if (isSectionFront.length && data.filterTags.filter(tag => tag.text === 'Radio.com Latino')) {
-    data.filterTags = data.filterTags || [];
+  if (isSectionFront.length && !data.filterTags.filter(tag => tag.text === 'Radio.com Latino').length) {
     data.filterTags.push({text: 'Radio.com Latino'});
   }
 
