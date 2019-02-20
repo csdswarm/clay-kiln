@@ -94,14 +94,6 @@
         @mixin medium-small-screen {
           width: em(32, 14);
         }
-        @define-mixin underline-color $stationGenre, $color {
-          .tab--$stationGenre& {
-            background: $color;
-          }
-        }
-        @mixin underline-color music, $sunsetOrange;
-        @mixin underline-color newstalk, $lightningYellow;
-        @mixin underline-color sports, $azureRadience;
       }
       &.active::after {
         display: inline-block;
@@ -109,3 +101,13 @@
     }
   }
 }
+@define-mixin underline-color $stationGenre, $color {
+  .component--stations-directory
+  ul.stations-directory__tabs >
+  li.tab--$stationGenre::after {
+    background: $color;
+  }
+}
+@mixin underline-color music, $sunsetOrange;
+@mixin underline-color newstalk, $lightningYellow;
+@mixin underline-color sports, $azureRadience;
