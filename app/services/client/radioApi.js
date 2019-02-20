@@ -23,7 +23,8 @@ const rest = require('../universal/rest'),
    * @returns {Promise} which returns {Document}
    */
   fetchDOM = async (route) => {
-    const response = await fetch(`${route}}&ignore_resolve_media=true`),
+    const separator = route.includes('?') ? '&' : '?',
+      response = await fetch(`${route}${separator}ignore_resolve_media=true`),
       html = await response.text(),
       doc = new DOMParser().parseFromString(html, 'text/html');
 
