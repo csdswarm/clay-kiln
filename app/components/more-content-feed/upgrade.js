@@ -35,7 +35,7 @@ module.exports['3.0'] = function (uri, data) {
   data.filterTags = data.filterTags || [];
 
   // Only change the filter value for the HP instance
-  if (isSectionFront.length && !data.filterTags.filter(tag => tag.text === 'Radio.com Latino').length) {
+  if ((isSectionFront.length && !data.filterTags.filter(tag => tag.text === 'Radio.com Latino'.length)) || uri.indexOf('homepage')) {
     data.filterTags.push({text: 'Radio.com Latino'});
   }
 
