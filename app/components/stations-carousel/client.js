@@ -1,7 +1,7 @@
 'use strict';
-const radioApi = 'https://api.radio.com/v1/',
-  rest = require('../../services/universal/rest'),
+const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
   market = require('../../services/client/market'),
+  radioApiService = require('../../services/client/radioApi'),
   Hammer = require('hammerjs'),
   localStorage = window.localStorage,
   Handlebars = require('handlebars'),
@@ -274,7 +274,7 @@ StationsCarousel.prototype = {
       params += `&filter[genre_id]=${this.filterByValue}`;
     }
 
-    return rest.get(`${radioApi}stations${params}`).then(response => {
+    return radioApiService.get(`${radioApi}stations${params}`).then(response => {
       if (response.data) {
         let stationsData = {
           stations: response.data.map(station => {
