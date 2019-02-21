@@ -34,7 +34,7 @@ function save(stream) {
           };
         });
         value.headline = 'Shawn' + value.headline;
-        param.value = JSON.stringify(value, null, 4);
+        param.value = JSON.stringify(value);
       }
       return param;
     })
