@@ -835,3 +835,27 @@ _components:
     instances:
       default:
         redirects: []
+        
+  feeds:
+    instances:
+      reversechron:
+        index: 'published-content'
+        query: {
+          'query': {
+            'match_all': {}
+          },
+          'size': 5,
+          'sort': {
+            'date': 'desc'
+          }
+        }
+        meta: {
+          renderer: 'rss',
+          contentType: 'application/rss+xml',
+          fileExtension: 'rss',
+          link: 'http://clay.radio.com',
+          title: 'Radio.com Reverse Chron Feed',
+          description: 'Most recent content from Radio.com'
+        }
+        transform: 'article'
+        results: []

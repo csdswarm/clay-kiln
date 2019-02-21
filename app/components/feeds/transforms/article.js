@@ -18,7 +18,7 @@ const _get = require('lodash/get'),
  */
 function addTeaser(paragraph, link, headline, transform) {
   const text = _get(paragraph, 'text', ''),
-    string = `${_truncate(text, { length: 300 })} <a href="${link.replace(/&/g, '&amp;')}" title="Click here to read more about ${headline}">More &raquo;</a>`;
+    string = `${_truncate(text, { length: 1000 })} <a href="${link.replace(/&/g, '&amp;')}" title="Click here to read more about ${headline}">More &raquo;</a>`;
 
   transform.push({
     'content:encoded': { _cdata: string }

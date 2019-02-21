@@ -5,6 +5,8 @@ const h = require('highland'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
+  ioredis = require('ioredis'),
+  redis = new ioredis(process.env.REDIS_HOST),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
   CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
 
@@ -20,6 +22,23 @@ function save(stream) {
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
+    .map((param) => {
+      if (param.key.indexOf('article') >= 0) {
+        let value = JSON.parse(param.value),
+          content = value.content;
+
+        value.content = content.map((component) => {
+          return {
+            _ref: component._ref,
+            data: 'Test'
+          };
+        });
+        value.headline = 'Shawn' + value.headline;
+        param.value = JSON.stringify(value);
+      }
+      console.log(param);
+      return param;
+    })
     .map(helpers.parseOpValue)
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline

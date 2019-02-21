@@ -29,7 +29,7 @@ function isOpForComponents(cmpts) {
  * @return {Object}
  */
 function stripPostProperties(op) {
-  op.value = _.omit(op.value, ['content']);
+  // op.value = _.omit(op.value, ['content']);
 
   return op;
 }
