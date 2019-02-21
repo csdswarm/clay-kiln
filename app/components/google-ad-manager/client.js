@@ -106,9 +106,8 @@ googletag.cmd.push(() => {
   // Handle collapsing empty div manually as DFP collapseEmptyDiv doesn't work when lazy loading
   googletag.pubads().addEventListener('slotRenderEnded', event => {
     const id = event.slot.getSlotElementId(),
-      adSlot = document.getElementById(id).parentElement;
-
-    const isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
+      adSlot = document.getElementById(id).parentElement,
+      isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
 
     if (isOOP) {
       updateSkinStyles(!(event.isEmpty)); // eslint-disable-line no-extra-parens
