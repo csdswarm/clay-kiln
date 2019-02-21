@@ -41,8 +41,6 @@ _components:
           _ref: /_components/google-ad-manager/instances/billboardBottom
         recentStations:
           _ref: /_components/stations-list/instances/recentOnFeaturedStationsDirectory
-        stationsList:
-          _ref: /_components/stations-list/instances/category
         stationsListTruncated:
           _ref: /_components/stations-list/instances/categoryTruncated
   directory-location:
