@@ -55,6 +55,7 @@ module.exports.render = async (uri, data, locals) => {
     'page[size]': 1000,
     sort: '-popularity'
   };
+
   if (locals.stationIDs) {
     params['filter[id]'] = locals.stationIDs;
 

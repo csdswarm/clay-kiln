@@ -2,8 +2,7 @@
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
-  radioApiService = require('../../services/client/radioApi'),
-  spaLinkService = require('../../services/client/spaLink');
+  radioApiService = require('../../services/client/radioApi');
 
 class StationsList {
   constructor(element) {
@@ -61,6 +60,7 @@ StationsList.prototype = {
   /**
    * Get stations list template from component
    * @function
+   * @param {object[]} stationIDs
    * @returns {object}
    */
   getComponentTemplate: async function (stationIDs) {
@@ -88,8 +88,8 @@ StationsList.prototype = {
    */
   updateStationsDOM: async function (stationsData) {
     const stationIDs = stationsData.map((station) => {
-      return station.id;
-    }),
+        return station.id;
+      }),
       newStations = await this.getComponentTemplate(stationIDs);
 
     newStations.forEach((newStation) => {
