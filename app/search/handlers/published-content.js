@@ -34,15 +34,19 @@ function save(stream) {
           };
         });
         value.headline = 'Shawn' + value.headline;
-        param.value = JSON.stringify(value);
+        param.value = JSON.stringify(value, null, 4);
       }
-      console.log(param);
       return param;
     })
     .map(helpers.parseOpValue)
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
-    .map(filters.filterRefs)
+    .tap(i => {
+      console.log('\n\nThis is the value about to be sent to elastic');
+      console.log(i[0].value);
+      console.log(i[0].value.content);
+      console.log('\n\n')
+    })
     .flatMap(send)
     .errors(logError)
     .each(logSuccess(INDEX));
