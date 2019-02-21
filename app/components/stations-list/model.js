@@ -115,7 +115,7 @@ module.exports.render = async (uri, data, locals) => {
         case 'market':
           data.market = locals.station.market.slug || locals.station.market.id; // note: market slug needs to be added to stations api
           data.seeAllLink = `/stations/location/${ data.market }`;
-          data.listTitle = data.listTitle || `${ locals.station.market.display_name || locals.station.city } stations`;
+          data.listTitle = data.listTitle || `${ locals.station.market.display_name || locals.station.city || locals.station.market.name } stations`;
           params['filter[market_id]'] = locals.station.market.id;
           break;
         case 'genre':
