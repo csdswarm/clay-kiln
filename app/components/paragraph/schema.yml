@@ -1,10 +1,10 @@
 _description: |
-  A simple paragraph component.
+  A simple ${type.toLowerCase()} component.
 
 text:
   _placeholder:
     height: 50px
-    text: New Paragraph
+    text: New ${type}
     required: true
   _has:
     input: inline

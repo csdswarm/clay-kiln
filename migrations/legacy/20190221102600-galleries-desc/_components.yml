@@ -1,0 +1,19 @@
+_components:
+  paragraph:
+    instances:
+      new:
+        text: ''
+        type: 'Paragraph'
+      description:
+        text: ''
+        type: 'Description'
+
+  gallery-slide:
+    instances:
+      new:
+        slideEmbed: null
+        title: ''
+        description:
+          -
+            _ref: /_components/paragraph/instances/description
+        hashLinkPrefix: ''

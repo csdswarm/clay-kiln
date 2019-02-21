@@ -33,15 +33,21 @@ title:
     help: Slide title text
     validate:
       required: true
+
 description:
   _label: Slide Description
   _placeholder:
     height: 20px
     text: Slide Description
+  _componentList:
+    fuzzy: false
+    include:
+      - paragraph
   _has:
     input: inline
-    type: multi-line
-    help: Slide description text
+    validate:
+      required: true
+
 hashLinkPrefix:
   _label: Hash Link Prefix Override
   _has:
