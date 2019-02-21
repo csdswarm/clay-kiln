@@ -50,7 +50,26 @@ function getGenreID(genre) {
 }
 
 module.exports.render = async (uri, data, locals) => {
-  if (data.filterBy == 'recent') {
+  const route = 'stations';
+  let params = {
+    'page[size]': 1000,
+    sort: '-popularity'
+  };
+  if (locals.stationIDs) {
+    params['filter[id]'] = locals.stationIDs;
+
+    return radioApiService.get(route, params).then(response => {
+      if (response.data) {
+        data.stations = response.data ? response.data.map((station) => station.attributes) : [];
+
+        return data;
+      } else {
+        return data;
+      }
+    });
+  }
+
+  if (data.filterBy === 'recent') {
     /** stations will be populated client side **/
 
     if (locals.station) {
@@ -60,20 +79,12 @@ module.exports.render = async (uri, data, locals) => {
     }
 
     return data;
-  } else if (data.filterBy == 'local') {
-    /** stations will be populated client side **/
-
+  } else if (data.filterBy === 'local') {
     data.listTitle = data.listTitle || 'stations you\'ve listened to';
 
     return data;
   } else {
     /** filter by market, genre, or category **/
-
-    const route = 'stations';
-    let params = {
-      'page[size]': 1000,
-      sort: '-popularity'
-    };
 
     if (data.market || locals.params && locals.params.dynamicMarket) {
       /** for stations lists on location stations directory page **/

@@ -41,21 +41,6 @@
   <div class="loader-container">
     {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
   </div>
-  {{#unless stations.length }}
-    <div class="template-container">
-      <li class="station">
-        <a class="spa-link">
-          <div class="station__lede">
-            <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
-            <img class="lede__image" sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px">
-            <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
-          </div>
-          <span class="station__name"></span>
-          <span class="station__secondary-info"></span>
-        </a>
-      </li>
-    </div>
-  {{/unless}}
   {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 5) }}
     <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
   {{/ifAll}}

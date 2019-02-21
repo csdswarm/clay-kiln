@@ -63,39 +63,10 @@ StationsList.prototype = {
    * @function
    * @returns {object}
    */
-  getComponentTemplate: async function () {
-    const doc = await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html`);
+  getComponentTemplate: async function (stationIDs) {
+    const doc = await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html?stationIDs=${stationIDs}`);
 
-    return doc.querySelector('li.station');
-  },
-  /**
-   * Inject station data into station list template
-   * @function
-   * @param {object} station
-   * @returns {object}
-   */
-  getStationTemplateWithData: async function (station) {
-    if (!this.stationTemplate) {
-      this.stationTemplate = await this.getComponentTemplate();
-    }
-
-    const anchor = this.stationTemplate.querySelector('a');
-
-    // @todo ON-552 Set up SPA holepunching for components
-    anchor.setAttribute('href', `${ window.location.origin }/${ station.id }/listen`);
-    anchor.querySelector('.lede__image').setAttribute('src', `${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0`);
-    anchor.querySelector('.lede__image').setAttribute('srcset', `
-      ${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0 140w,
-      ${ station.square_logo_large }?width=222&height=222&crop=1:1,offset-y0 222w,
-      ${ station.square_logo_large }?width=210&height=210&crop=1:1,offset-y0 210w,
-      ${ station.square_logo_large }?width=150&height=150&crop=1:1,offset-y0 150w
-    `);
-    anchor.querySelector('.station__name').innerText = station.name;
-    anchor.querySelector('.station__secondary-info').innerText = station.slogan;
-
-    spaLinkService(anchor);
-
-    return this.stationTemplate;
+    return doc.querySelectorAll('li.station');
   },
   /**
    * Add active class to stations that should be visible
@@ -115,21 +86,17 @@ StationsList.prototype = {
    * @function
    * @param {object} stationsData
    */
-  updateStationsDOM: function (stationsData) {
-    const observer = new MutationObserver( () => {
-      if (this.stationsList.querySelectorAll('li.station').length === this.pageNum * this.pageSize) {
-        observer.disconnect();
-        this.toggleLoader();
-        this.displayActiveStations();
-      }
-    } );
+  updateStationsDOM: async function (stationsData) {
+    const stationIDs = stationsData.map((station) => {
+      return station.id;
+    }),
+      newStations = await this.getComponentTemplate(stationIDs);
 
-    observer.observe(this.stationsList, {attributes: false, childList: true, characterData: false, subtree:true});
-    stationsData.forEach(async (stationData) => {
-      const station = await this.getStationTemplateWithData(stationData);
-
-      this.stationsList.appendChild(station);
+    newStations.forEach((newStation) => {
+      this.stationsList.appendChild(newStation);
     });
+    this.toggleLoader();
+    this.displayActiveStations();
   },
   /**
    * Initial function - retrieve new payload of stations into DOM
