@@ -6,6 +6,7 @@
 
 <script>
 import SpaScroll from './lib/SpaScroll'
+import PlayerInterface from './lib/PlayerInterface'
 
 export default {
   name: 'App',
@@ -26,6 +27,27 @@ export default {
 
     // Attach dynamic gallery slide slug logic to scroll event.
     SpaScroll.attachGallerySlideDynamicSlug.call(this)
+
+    // Lazy-Load web player POC
+    // TODO - This should only get called on a route that actually auto-plays 
+    // the player so we lazy-load in the player only when we actually need it.
+    PlayerInterface.loadPlayer.call(this)
+      .then(() => {
+        PlayerInterface.initializePlayer.call(this)
+        return PlayerInterface.loadStationByIdAndPlay.call(this, 417) // TODO - this station id should not be hard coded...
+      })
+      .then(() => {
+        console.log('the station should be loaded and playing.')
+
+
+
+        // Programattically control station via the following examples
+        // PlayerInterface.playerPlay.call(this)
+        // PlayerInterface.playerPause.call(this)
+
+      })
+
+
   }
 }
 

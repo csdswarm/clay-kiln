@@ -12,7 +12,8 @@ const vuexStoreDefaultState = {
   spaPayload: {},
   spaPayloadLocals: {},
   setupRan: false,
-  loadingAnimation: false
+  loadingAnimation: false,
+  radioPlayer: null
 }
 
 export default new Vuex.Store({
@@ -32,6 +33,9 @@ export default new Vuex.Store({
     },
     [mutationTypes.ACTIVATE_LOADING_ANIMATION]: (state, activate) => {
       state.loadingAnimation = activate
+    },
+    [mutationTypes.LOAD_RADIO_PLAYER]: (state, radioPlayer) => {
+      state.radioPlayer = radioPlayer
     }
   },
   actions: {
