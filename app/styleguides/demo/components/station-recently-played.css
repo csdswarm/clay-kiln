@@ -3,6 +3,7 @@
 @import "_global/colors";
 
 .component--station-recently-played {
+  min-height: em(210);
 
   .station-recently-played__filters {
     margin-bottom: em(30);
@@ -59,18 +60,18 @@
         margin-bottom: em(10, 12);
 
         &--on-air {
-          margin-left: em(5, 12);
+          margin-left: em(5);
 
           &:before {
             content: '';
             display: inline-block;
-            width: em(6, 12);
-            height: em(6, 12);
+            width: em(6);
+            height: em(6);
             border-radius: 50%;
             position: relative;
             top: em(-3);
             left: em(-3);
-            background-color: $boulder;
+            background-color: #767676;
           }
 
           &.news {
