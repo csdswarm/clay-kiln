@@ -64,9 +64,9 @@ StationsList.prototype = {
    * @returns {object}
    */
   getComponentTemplate: async function (stationIDs) {
-    const doc = await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html?stationIDs=${stationIDs}`);
+    let response = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html?stationIDs=${stationIDs}&ignore_resolve_media=true`);
 
-    return doc.querySelectorAll('li.station');
+    return await response.text();
   },
   /**
    * Add active class to stations that should be visible
@@ -92,9 +92,7 @@ StationsList.prototype = {
       }),
       newStations = await this.getComponentTemplate(stationIDs);
 
-    newStations.forEach((newStation) => {
-      this.stationsList.appendChild(newStation);
-    });
+    this.stationsList.innerHTML += newStations;
     this.toggleLoader();
     this.displayActiveStations();
   },
