@@ -8,7 +8,7 @@ const rest = require('../universal/rest'),
   httpRegEx = /^https?:\/\//,
 
   /**
-   * Creates a dbKey from a route and params
+   * Returns if the route passed in is for api.radio.com or a different location
    *
    * @param {string} route
    * @return {boolean}
