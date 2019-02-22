@@ -2,8 +2,7 @@
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
-  radioApiService = require('../../services/client/radioApi'),
-  spaLinkService = require('../../services/client/spaLink');
+  radioApiService = require('../../services/client/radioApi');
 
 class StationsList {
   constructor(element) {
@@ -11,6 +10,7 @@ class StationsList {
     this.stationsListContainer = element;
     this.truncateStations = element.getAttribute('data-truncate');
     this.filterStationsBy = element.getAttribute('data-filter-stations-by-track');
+    this.seeAllLink = element.querySelector('.header-row__see-all-link');
     this.stationsList = element.querySelector('ul');
     this.loadMoreBtn = element.querySelector('.stations-list__load-more');
     this.loader = element.querySelector('.loader-container');
@@ -50,6 +50,27 @@ StationsList.prototype = {
     });
   },
   /**
+   * Show/hide see all link depending on
+   * number of results and the page width
+   * @function
+   */
+  toggleSeeAllLink: function () {
+    let stationsShownOnLoad;
+
+    if (window.innerWidth >= 1280) {
+      stationsShownOnLoad = 10;
+    } else if (window.innerWidth >= 1024) {
+      stationsShownOnLoad = 8;
+    } else {
+      stationsShownOnLoad = 6;
+    }
+    if (this.stationsData.length <= stationsShownOnLoad || window.innerWidth < 480) {
+      this.seeAllLink.style.display = 'none';
+    } else {
+      this.seeAllLink.style.display = 'flex';
+    }
+  },
+  /**
    * Show or hide loader
    * @function
    */
@@ -61,41 +82,13 @@ StationsList.prototype = {
   /**
    * Get stations list template from component
    * @function
+   * @param {object[]} stationIDs
    * @returns {object}
    */
-  getComponentTemplate: async function () {
-    const doc = await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html`);
+  getComponentTemplate: async function (stationIDs) {
+    let response = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${this.filterStationsBy}.html?stationIDs=${stationIDs}&ignore_resolve_media=true`);
 
-    return doc.querySelector('li.station');
-  },
-  /**
-   * Inject station data into station list template
-   * @function
-   * @param {object} station
-   * @returns {object}
-   */
-  getStationTemplateWithData: async function (station) {
-    if (!this.stationTemplate) {
-      this.stationTemplate = await this.getComponentTemplate();
-    }
-
-    const anchor = this.stationTemplate.querySelector('a');
-
-    // @todo ON-552 Set up SPA holepunching for components
-    anchor.setAttribute('href', `${ window.location.origin }/${ station.id }/listen`);
-    anchor.querySelector('.lede__image').setAttribute('src', `${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0`);
-    anchor.querySelector('.lede__image').setAttribute('srcset', `
-      ${ station.square_logo_large }?width=140&height=140&crop=1:1,offset-y0 140w,
-      ${ station.square_logo_large }?width=222&height=222&crop=1:1,offset-y0 222w,
-      ${ station.square_logo_large }?width=210&height=210&crop=1:1,offset-y0 210w,
-      ${ station.square_logo_large }?width=150&height=150&crop=1:1,offset-y0 150w
-    `);
-    anchor.querySelector('.station__name').innerText = station.name;
-    anchor.querySelector('.station__secondary-info').innerText = station.slogan;
-
-    spaLinkService(anchor);
-
-    return this.stationTemplate;
+    return await response.text();
   },
   /**
    * Add active class to stations that should be visible
@@ -115,21 +108,15 @@ StationsList.prototype = {
    * @function
    * @param {object} stationsData
    */
-  updateStationsDOM: function (stationsData) {
-    const observer = new MutationObserver( () => {
-      if (this.stationsList.querySelectorAll('li.station').length === this.pageNum * this.pageSize) {
-        observer.disconnect();
-        this.toggleLoader();
-        this.displayActiveStations();
-      }
-    } );
+  updateStationsDOM: async function (stationsData) {
+    const stationIDs = stationsData.map((station) => {
+        return station.id;
+      }),
+      newStations = await this.getComponentTemplate(stationIDs);
 
-    observer.observe(this.stationsList, {attributes: false, childList: true, characterData: false, subtree:true});
-    stationsData.forEach(async (stationData) => {
-      const station = await this.getStationTemplateWithData(stationData);
-
-      this.stationsList.appendChild(station);
-    });
+    this.stationsList.innerHTML += newStations;
+    this.toggleLoader();
+    this.displayActiveStations();
   },
   /**
    * Initial function - retrieve new payload of stations into DOM
@@ -151,6 +138,10 @@ StationsList.prototype = {
       this.updateStationsDOM(stationsData);
     } else {
       // server side populated
+      window.addEventListener('resize', () => {
+        this.toggleSeeAllLink();
+      });
+      this.toggleSeeAllLink();
       this.displayActiveStations();
     }
   },

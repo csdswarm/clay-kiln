@@ -1,3 +1,4 @@
+{{#unless @root.locals.stationIDs}}
 <section role="main"
   data-truncate="{{ truncatedList }}"
   data-filter-stations-by-track="{{ filterBy }}"
@@ -6,13 +7,16 @@
 >
   <div class="stations-list__header-row">
     <h2 class="header-row__title">{{ listTitle }}</h2>
-    {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 5) }}
+    {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
       <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
     {{/ifAll}}
   </div>
   <ul>
+{{/unless}}
     {{~#if stations.length ~}}
-      <pre class="stations-list__data">{{ stringify stations }}</pre>
+      {{#unless @root.locals.stationIDs}}
+        <pre class="stations-list__data">{{ stringify stations }}</pre>
+      {{/unless}}
       {{~#each stations ~}}
         {{#ifAll ../truncatedList (compare @index '<' 14) }}{{ set 'hideStations' true }}{{/ifAll}}
         {{#ifAny (compare ../truncatedList false) hideStations }}
@@ -37,26 +41,13 @@
         {{/ifAny}}
       {{~/each~}}
     {{~/if~}}
+{{#unless @root.locals.stationIDs}}
   </ul>
   <div class="loader-container">
     {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
   </div>
-  {{#unless stations.length }}
-    <div class="template-container">
-      <li class="station">
-        <a class="spa-link">
-          <div class="station__lede">
-            <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
-            <img class="lede__image" sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px">
-            <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
-          </div>
-          <span class="station__name"></span>
-          <span class="station__secondary-info"></span>
-        </a>
-      </li>
-    </div>
-  {{/unless}}
-  {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 5) }}
+  {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 6) }}
     <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
   {{/ifAll}}
 </section>
+{{/unless}}
