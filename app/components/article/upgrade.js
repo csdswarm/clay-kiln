@@ -16,6 +16,7 @@ module.exports['1.0'] = function (uri, data) {
 module.exports['2.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
   let newData = Object.assign({}, data);
+
   if (!data.dateModified) {
     newData.dateModified = data.date;
   }
