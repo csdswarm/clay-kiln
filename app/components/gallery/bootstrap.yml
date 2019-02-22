@@ -19,7 +19,7 @@ _components:
     slides: []
     slidesNumbered: false
     reverseOrder: false
-    includeInlineAds: false
+    includeInlineAds: true
     inlineAd:
       _ref: /_components/google-ad-manager/instances/billboardGallery
     rightRailStickyAd:
