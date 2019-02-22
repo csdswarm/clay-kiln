@@ -46,7 +46,7 @@
     li.station {
       width: em(widthOnGrid(2,1));
       margin-bottom: em(50);
-      .component--station-discover .stations-list--truncated& {
+      .component--station-discover .stations-list--truncated[data-filter-stations-by-track=recent]& {
         @mixin default-screen {
           &:nth-of-type(n+6) {
             display: none;
@@ -60,6 +60,32 @@
             display: none;
           }
           &:nth-of-type(-n+4) {
+            display: block;
+          }
+        }
+        @mixin medium-screen {
+          &:nth-of-type(n) {
+            display: none;
+          }
+          &.active:nth-of-type(n) {
+            display: block;
+          }
+        }
+      }
+      .component--station-discover .stations-list--truncated& {
+        @mixin default-screen {
+          &:nth-of-type(n+11) {
+            display: none;
+          }
+          &:nth-of-type(-n+10) {
+            display: block;
+          }
+        }
+        @mixin large-screen {
+          &:nth-of-type(n+9) {
+            display: none;
+          }
+          &:nth-of-type(-n+8) {
             display: block;
           }
         }

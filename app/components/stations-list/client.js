@@ -10,6 +10,7 @@ class StationsList {
     this.stationsListContainer = element;
     this.truncateStations = element.getAttribute('data-truncate');
     this.filterStationsBy = element.getAttribute('data-filter-stations-by-track');
+    this.seeAllLink = element.querySelector('.header-row__see-all-link');
     this.stationsList = element.querySelector('ul');
     this.loadMoreBtn = element.querySelector('.stations-list__load-more');
     this.loader = element.querySelector('.loader-container');
@@ -47,6 +48,27 @@ StationsList.prototype = {
         return Promise.reject();
       }
     });
+  },
+  /**
+   * Show/hide see all link depending on
+   * number of results and the page width
+   * @function
+   */
+  toggleSeeAllLink: function () {
+    let stationsShownOnLoad;
+
+    if (window.innerWidth >= 1280) {
+      stationsShownOnLoad = 10;
+    } else if (window.innerWidth >= 1024) {
+      stationsShownOnLoad = 8;
+    } else {
+      stationsShownOnLoad = 6;
+    }
+    if (this.stationsData.length <= stationsShownOnLoad || window.innerWidth < 480) {
+      this.seeAllLink.style.display = 'none';
+    } else {
+      this.seeAllLink.style.display = 'flex';
+    }
   },
   /**
    * Show or hide loader
@@ -116,6 +138,10 @@ StationsList.prototype = {
       this.updateStationsDOM(stationsData);
     } else {
       // server side populated
+      window.addEventListener('resize', () => {
+        this.toggleSeeAllLink();
+      });
+      this.toggleSeeAllLink();
       this.displayActiveStations();
     }
   },

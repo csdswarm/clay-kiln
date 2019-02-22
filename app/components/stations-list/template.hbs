@@ -7,7 +7,7 @@
 >
   <div class="stations-list__header-row">
     <h2 class="header-row__title">{{ listTitle }}</h2>
-    {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 5) }}
+    {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
       <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
     {{/ifAll}}
   </div>
@@ -46,7 +46,7 @@
   <div class="loader-container">
     {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
   </div>
-  {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 5) }}
+  {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 6) }}
     <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
   {{/ifAll}}
 </section>

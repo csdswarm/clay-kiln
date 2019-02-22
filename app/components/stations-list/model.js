@@ -67,6 +67,7 @@ module.exports.render = async (uri, data, locals) => {
               return station;
             }
           });
+
           return station ? station.attributes : null;
         });
 
