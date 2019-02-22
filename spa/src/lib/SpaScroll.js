@@ -157,16 +157,6 @@ function processMatchedSlide (matchedSlide) {
   if (!this.$store.state.pageCache.gallerySlidePageviews[matchedSlide.id]) {
     // Track slide pageview in Vuex.
     this.$store.commit(mutationTypes.TRACK_GALLERY_SLIDE_PAGEVIEW, matchedSlide.id)
-
-    // Fire slide pageview event.
-    let event = new CustomEvent(`gallerySlidePageView`, {
-      detail: {
-        slideSlug: `${this.$route.path}#${matchedSlide.id}`,
-        slideId: matchedSlide.id,
-        slideTitle: matchedSlide.getAttribute('data-slide-title')
-      }
-    })
-    document.dispatchEvent(event)
   }
 }
 
