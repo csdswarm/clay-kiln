@@ -21,7 +21,7 @@ module.exports.render = async function (ref, data, locals) {
     // using the station offset determine the current day 1 - 7 based
     stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
     dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
-    json = await radioAPI.get('/schedules',
+    json = await radioAPI.get('schedules',
       {
         'page[size]': 50,
         'page[number]':1,

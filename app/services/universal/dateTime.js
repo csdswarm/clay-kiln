@@ -85,19 +85,19 @@ const moment = require('moment'),
     return navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en-US';
   },
   /**
-   * Returns an array of text/value keys that contain times of the day for a select dropdown
+   * Returns an array of text/value keys that contain hours of the day and their corresponding utc value
    *
    * @returns {array}
    */
-  todaysTimes = () => {
+  next24Hours = () => {
     const details = [],
-      clockHours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      currentHour = new Date().getHours();
 
-    for (let index = 0; index < clockHours.length; index++) {
-      const hour = clockHours[index],
-        displayHour = `${hour % 12 + 1}:00 ${index < 12 ? 'AM' : 'PM'}`;
+    for (let hour = currentHour; hour < currentHour + 24; hour++) {
+      const text = `${(((hour - 1) % 12) + 1) % 13}:00 ${(hour + 12) % 24 < 12 ? 'AM' : 'PM'}`,
+        value = parseInt(new Date(new Date().setHours(hour)).toISOString().split('T')[1].split(':')[0]);
 
-      details.push({ text: displayHour, value: index });
+      details.push({ text, value });
     }
 
     return details;
@@ -139,7 +139,7 @@ module.exports.userLocalDate = userLocalDate;
 module.exports.formatLocal = formatLocal;
 module.exports.nextSevenDays = nextSevenDays;
 module.exports.usersTimeZone = usersTimeZone;
-module.exports.todaysTimes = todaysTimes;
+module.exports.next24Hours = next24Hours;
 
 
 

@@ -15,9 +15,6 @@
       display: block;
     }
   }
-  .template-container {
-    display: none;
-  }
   .stations-list__header-row {
     display: flex;
     flex-direction: row;
@@ -129,10 +126,10 @@
       }
       .component--station-detail & {
         @mixin default-screen {
-          &:nth-of-type(n+6) {
+          &:nth-of-type(n+11) {
             display: none;
           }
-          &:nth-of-type(-n+5) {
+          &:nth-of-type(-n+10) {
             display: block;
           }
           &:not(:nth-of-type(5n)) {
@@ -143,10 +140,10 @@
           }
         }
         @mixin large-screen {
-          &:nth-of-type(n+5) {
+          &:nth-of-type(n+9) {
             display: none;
           }
-          &:nth-of-type(-n+4) {
+          &:nth-of-type(-n+8) {
             display: block;
           }
           &:not(:nth-of-type(4n)) {
@@ -157,14 +154,14 @@
           }
         }
         @mixin medium-screen {
+          width: calc((100% - 2 * em(20)) / 3);
+          margin-bottom: em(30);
           &:nth-of-type(n) {
             display: none;
           }
           &.active:nth-of-type(n) {
             display: block;
           }
-          width: calc((100% - 2 * em(20)) / 3);
-          margin-bottom: em(30);
           &:not(:nth-of-type(3n)) {
             margin-right: em(20);
           }
@@ -182,16 +179,31 @@
           }
         }
       }
-      @mixin medium-screen {
-        width: em(widthOnGrid(2,1,medium-screen));
-        margin-bottom: em(30);
-      }
-      @mixin medium-small-screen {
-        width: em(widthOnGrid(2,1,medium-small-screen));
-      }
-      @mixin small-screen {
-        width: em(widthOnGrid(2,1,small-screen));
-        margin-bottom: em(25);
+      .component--station-detail .stations-list--truncated[data-filter-stations-by-track=recent]& {
+        @mixin default-screen {
+          &:nth-of-type(n+6) {
+            display: none;
+          }
+          &:nth-of-type(-n+5) {
+            display: block;
+          }
+        }
+        @mixin large-screen {
+          &:nth-of-type(n+5) {
+            display: none;
+          }
+          &:nth-of-type(-n+4) {
+            display: block;
+          }
+        }
+        @mixin medium-screen {
+          &:nth-of-type(n) {
+            display: none;
+          }
+          &.active:nth-of-type(n) {
+            display: block;
+          }
+        }
       }
       a {
         display: flex;

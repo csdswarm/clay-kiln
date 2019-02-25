@@ -7,7 +7,8 @@ function Constructor() {
     stationData = JSON.parse(stationDetail.querySelector('.station-detail__data').innerText),
     tabs = stationDetail.querySelectorAll('.tabs li'),
     content = stationDetail.querySelectorAll('.tabbed-content__container'),
-    hash = window.location.hash.replace('#', '');
+    hash = window.location.hash.replace('#', ''),
+    firstTab = tabs[0].className.replace('tabs__', '');
 
   this.repositionRightRail(sidebar, stationDetail);
   this.addTabNavigationListeners(tabs, content);
@@ -16,7 +17,7 @@ function Constructor() {
     this.activateTab(hash, tabs, content, true);
     window.scrollTo(0, document.querySelector('.station-detail__body').offsetTop);
   } else {
-    this.activateTab('recently-played', tabs, content);
+    this.activateTab(firstTab, tabs, content);
   }
 
   recentStations.add(stationData);
@@ -24,7 +25,7 @@ function Constructor() {
     if (window.location.hash) {
       this.activateTab(window.location.hash.replace('#', ''), tabs, content);
     } else {
-      this.activateTab('recently-played', tabs, content);
+      this.activateTab(firstTab, tabs, content);
     }
   };
 }
