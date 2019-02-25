@@ -39,6 +39,9 @@
       }
     }
   }
+  .stations-list__data {
+    display: none;
+  }
   ul {
     display: flex;
     flex-direction: row;
@@ -46,6 +49,13 @@
     li.station {
       width: em(widthOnGrid(2,1));
       margin-bottom: em(50);
+      @mixin medium-screen {
+        width: calc((100% - 2 * em(20)) / 3);
+        margin-bottom: em(30);
+      }
+      @media all and (max-width: 600px) {
+        width: calc((100% - em(20)) / 2);
+      }
       .component--stations-directory & {
         @mixin default-screen {
           &:not(:nth-of-type(7n)) {
@@ -68,6 +78,14 @@
             margin-right: em(20);
           }
           &:nth-of-type(3n) {
+            margin-right: 0;
+          }
+        }
+        @media all and (max-width: 600px) {
+          &:not(:nth-of-type(2n)) {
+            margin-right: em(20);
+          }
+          &:nth-of-type(2n) {
             margin-right: 0;
           }
         }
@@ -154,8 +172,6 @@
           }
         }
         @mixin medium-screen {
-          width: calc((100% - 2 * em(20)) / 3);
-          margin-bottom: em(30);
           &:nth-of-type(n) {
             display: none;
           }
@@ -170,7 +186,6 @@
           }
         }
         @media all and (max-width: 600px) {
-          width: calc((100% - em(20)) / 2);
           &:not(:nth-of-type(2n)) {
             margin-right: em(20);
           }
@@ -300,9 +315,6 @@
           }
         }
       }
-    }
-    .stations-list__data {
-      display: none;
     }
   }
   .stations-list__load-more {

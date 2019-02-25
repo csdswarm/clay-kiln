@@ -11,12 +11,12 @@
       <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
     {{/ifAll}}
   </div>
+  {{~#if stations.length ~}}
+    <pre class="stations-list__data">{{ stringify stations }}</pre>
+  {{/if}}
   <ul>
 {{/unless}}
     {{~#if stations.length ~}}
-      {{#unless @root.locals.stationIDs}}
-        <pre class="stations-list__data">{{ stringify stations }}</pre>
-      {{/unless}}
       {{~#each stations ~}}
         {{#ifAll ../truncatedList (compare @index '<' 14) }}{{ set 'hideStations' true }}{{/ifAll}}
         {{#ifAny (compare ../truncatedList false) hideStations }}
@@ -43,9 +43,9 @@
     {{~/if~}}
 {{#unless @root.locals.stationIDs}}
   </ul>
-  <div class="loader-container">
-    {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
-  </div>
+    <div class="loader-container">
+      {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
+    </div>
   {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 6) }}
     <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
   {{/ifAll}}
