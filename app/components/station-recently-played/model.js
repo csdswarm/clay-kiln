@@ -26,15 +26,14 @@ module.exports.render = async function (ref, data, locals) {
     dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
     hour = locals.hour ? parseInt(locals.hour) : stationHour,
     beforeDate = moment().day(dayOfWeek).hour(hour).format('YYYY-MM-DDTHH:mm:ss'),
-    shows = await Promise.all([
-      rest.get(`${radioAPI}/stations/${stationId}/now_playing`),
-      rest.get(`${radioAPI}/stations/${stationId}/play_history?event_count=50&before_date=${encodeURIComponent(beforeDate)}`)
-    ]),
+    now_playing = rest.get(`${radioAPI}/stations/${stationId}/now_playing`).catch(() => {}),
+    play_history = rest.get(`${radioAPI}/stations/${stationId}/play_history?event_count=50&before_date=${encodeURIComponent(beforeDate)}`).catch(() => {}),
+    shows = await Promise.all([now_playing, play_history]),
     playing = shows[0],
     history = shows[1],
-    validHistory = history.data && history.data.events && history.data.events.recent_events,
+    validHistory = history && history.data && history.data.events && history.data.events.recent_events,
     currentHour = dayOfWeek === stationDayOfWeek && hour === stationHour,
-    validPlaying = currentHour && playing.data && shows[0].data.event && shows[0].data.event.current_event;
+    validPlaying = currentHour && playing && playing.data && shows[0].data.event && shows[0].data.event.current_event;
 
   if (validHistory || validPlaying) {
     if (validPlaying) {
