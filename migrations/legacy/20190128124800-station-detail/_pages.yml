@@ -12,4 +12,5 @@ _pages:
       - /_components/station-detail/instances/default
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/station
     layout: /_components/two-column-layout/instances/station

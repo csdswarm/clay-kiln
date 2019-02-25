@@ -50,7 +50,36 @@ function getGenreID(genre) {
 }
 
 module.exports.render = async (uri, data, locals) => {
-  if (data.filterBy == 'recent') {
+  const route = 'stations';
+  let params = {
+    'page[size]': 1000,
+    sort: '-popularity'
+  };
+
+  if (locals.stationIDs) {
+    params['filter[id]'] = locals.stationIDs;
+
+    return radioApiService.get(route, params).then(response => {
+      if (response.data) {
+        let stations = locals.stationIDs.split(',').map(stationID => {
+          let station = response.data.find(station => {
+            if (station.id === parseInt(stationID)) {
+              return station;
+            }
+          });
+
+          return station ? station.attributes : null;
+        });
+
+        data.stations = stations.filter(station => station);
+        return data;
+      } else {
+        return data;
+      }
+    });
+  }
+
+  if (data.filterBy === 'recent') {
     /** stations will be populated client side **/
 
     if (locals.station) {
@@ -60,20 +89,12 @@ module.exports.render = async (uri, data, locals) => {
     }
 
     return data;
-  } else if (data.filterBy == 'local') {
-    /** stations will be populated client side **/
-
+  } else if (data.filterBy === 'local') {
     data.listTitle = data.listTitle || 'stations you\'ve listened to';
 
     return data;
   } else {
     /** filter by market, genre, or category **/
-
-    const route = 'stations';
-    let params = {
-      'page[size]': 1000,
-      sort: '-popularity'
-    };
 
     if (data.market || locals.params && locals.params.dynamicMarket) {
       /** for stations lists on location stations directory page **/
@@ -115,7 +136,7 @@ module.exports.render = async (uri, data, locals) => {
         case 'market':
           data.market = locals.station.market.slug || locals.station.market.id; // note: market slug needs to be added to stations api
           data.seeAllLink = `/stations/location/${ data.market }`;
-          data.listTitle = data.listTitle || `${ locals.station.market.display_name || locals.station.city } stations`;
+          data.listTitle = data.listTitle || `${ locals.station.market.display_name || locals.station.city || locals.station.market.name } stations`;
           params['filter[market_id]'] = locals.station.market.id;
           break;
         case 'genre':

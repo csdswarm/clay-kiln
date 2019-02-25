@@ -1,7 +1,9 @@
 'use strict';
 
-const radioAPI = require('../../services/server/radioApi'),
-  moment = require('moment');
+const rest = require('../../services/universal/rest'),
+  { apiDayOfWeek } = require('../../services/universal/dateTime'),
+  moment = require('moment'),
+  radioAPI = 'https://api.radio.com/v1';
 
 /**
  * @param {string} ref
@@ -16,33 +18,45 @@ module.exports.render = async function (ref, data, locals) {
   }
 
   const stationId = locals.stationId ? locals.stationId : locals.station.id,
-    gmtOffset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
-    dayOfWeek = locals.dayOfWeek ? locals.dayOfWeek : null,
-    hour = locals.hour ? locals.hour : null,
-    beforeDate = dayOfWeek && hour ? moment().day(dayOfWeek).hour(hour - gmtOffset).format('YYYY-MM-DDTHH:mm:ss') : moment().format('YYYY-MM-DDTHH:mm:ss'),
-    json = await radioAPI.get(`/stations/${stationId}/play_history`,
-      {
-        event_count: 50,
-        before_date: beforeDate
+    gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
+    category = (locals.category ? locals.category : locals.station.category).toLowerCase(),
+    // using the station offset determine the current day 1 - 7 based
+    stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
+    stationHour = new Date(new Date().getTime() + gmt_offset * 60 * 1000).getHours(),
+    dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
+    hour = locals.hour ? parseInt(locals.hour) : stationHour,
+    beforeDate = moment().day(dayOfWeek).hour(hour).format('YYYY-MM-DDTHH:mm:ss'),
+    now_playing = rest.get(`${radioAPI}/stations/${stationId}/now_playing`).catch(() => {}),
+    play_history = rest.get(`${radioAPI}/stations/${stationId}/play_history?event_count=50&before_date=${encodeURIComponent(beforeDate)}`).catch(() => {}),
+    shows = await Promise.all([now_playing, play_history]),
+    playing = shows[0],
+    history = shows[1],
+    validHistory = history && history.data && history.data.events && history.data.events.recent_events,
+    currentHour = dayOfWeek === stationDayOfWeek && hour === stationHour,
+    validPlaying = currentHour && playing && playing.data && shows[0].data.event && shows[0].data.event.current_event;
+
+  if (validHistory || validPlaying) {
+    if (validPlaying) {
+      playing.data.event.current_event.playing = true;
+      // ensure what is currently playing is the same title
+      if (history.data.events.recent_events[0].title === playing.data.event.current_event.title) {
+        history.data.events.recent_events[0] = playing.data.event.current_event;
+      } else {
+        history.data.events.recent_events.unshift(playing.data.event.current_event);
       }
-    );
+    }
 
-  if (json.data && json.data.events && json.data.events.recent_events) {
-    let first = true;
-
-    data.schedule = json.data.events.recent_events
+    data.station = { category };
+    data.schedule = history.data.events.recent_events
       .map((item) => {
-        const payload = {
-          playing: first == true && moment().hour() == moment(item.timePlayedUtc).hour(),
+        return {
+          playing: item.playing,
           start_time: item.timePlayedUtc,
           artist: item.artist,
           image: item.imageUrl,
           title: item.title,
           site_url: ''
         };
-
-        first = false;
-        return payload;
       });
   }
   return data;
