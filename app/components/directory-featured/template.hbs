@@ -3,39 +3,63 @@
   <div class="directory-featured__stations-by-genre">
     <div class="stations-by-genre__header-row">
       <h2 class="header-row__title">stations by genre</h2>
-      <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/stations/music">See all {{{ read 'components/stations-directory/media/chevron_right.svg' }}}</a>
+      <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/stations/music">See all {{{ read 'components/directory-featured/media/chevron_right.svg' }}}</a>
     </div>
     <ul class="stations-by-genre__genre-list">
       <li class="genre-list__genre genre--pop">
-        <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Pop.jpg?width=140&height=140&crop=1:1,offset-y0">
+        <a href="//{{ @root.locals.site.host }}/stations/music/pop">
+          <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Pop.jpg?width=140&height=140&crop=1:1,offset-y0">
+          <span class="genre__label">pop</span>
+        </a>
       </li>
       <li class="genre-list__genre genre--sports">
-        <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Sports.jpg?width=140&height=140&crop=1:1,offset-y0">
+        <a href="//{{ @root.locals.site.host }}/stations/music/sports">
+          <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Sports.jpg?width=140&height=140&crop=1:1,offset-y0">
+          <span class="genre__label">sports</span>
+        </a>
       </li>
       <li class="genre-list__genre genre--country">
-        <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Country.jpg?width=140&height=140&crop=1:1,offset-y0">
+        <a href="//{{ @root.locals.site.host }}/stations/music/country">
+          <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Country.jpg?width=140&height=140&crop=1:1,offset-y0">
+          <span class="genre__label">country</span>
+        </a>
       </li>
       <li class="genre-list__genre genre--hip-hop">
-        <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Hip-Hop.jpg?width=140&height=140&crop=1:1,offset-y0">
+        <a href="//{{ @root.locals.site.host }}/stations/music/hiphop">
+          <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Hip-Hop.jpg?width=140&height=140&crop=1:1,offset-y0">
+          <span class="genre__label">hip hop</span>
+        </a>
       </li>
       <li class="genre-list__genre genre--news">
-        <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/News.jpg?width=140&height=140&crop=1:1,offset-y0">
+        <a href="//{{ @root.locals.site.host }}/stations/music/news-talk">
+          <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/News.jpg?width=140&height=140&crop=1:1,offset-y0">
+          <span class="genre__label">news</span>
+        </a>
       </li>
       <li class="genre-list__genre genre--rock">
-        <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Rock.jpg?width=140&height=140&crop=1:1,offset-y0">
+        <a href="//{{ @root.locals.site.host }}/stations/music/rock">
+          <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Rock.jpg?width=140&height=140&crop=1:1,offset-y0">
+          <span class="genre__label">rock</span>
+        </a>
       </li>
       <li class="genre-list__genre genre--alternative">
-        <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Alternative.jpg?width=140&height=140&crop=1:1,offset-y0">
+        <a href="//{{ @root.locals.site.host }}/stations/music/alternative">
+          <img src="https://s3.amazonaws.com/radioassets/images/brooklyn/Alternative.jpg?width=140&height=140&crop=1:1,offset-y0">
+          <span class="genre__label">alternative</span>
+        </a>
       </li>
     </ul>
   </div>
   {{> google-ad-manager googleInlineAd }}
-  {{!-- music --}}
-  {{> stations-list stationsListTruncated }}
+  <div class="directory-featured__stations-by-category" data-category="music">
+    {{> stations-list stationsListTruncated }}
+  </div>
   {{> google-ad-manager googleInlineAd }}
-  {{!-- news talk --}}
-  {{> stations-list stationsListTruncated }}
+  <div class="directory-featured__stations-by-category" data-category="news-talk">
+    {{> stations-list stationsListTruncated }}
+  </div>
   {{> google-ad-manager googleInlineAd }}
-  {{!-- sports --}}
-  {{> stations-list stationsListTruncated }}
+  <div class="directory-featured__stations-by-category" data-category="sports">
+    {{> stations-list stationsListTruncated }}
+  </div>
 </section>
