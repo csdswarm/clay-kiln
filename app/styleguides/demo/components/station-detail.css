@@ -364,7 +364,7 @@
         margin-top: em(3, 14);
         position: absolute;
         margin-top: calc(1em + em(5, 14));
-        z-index: 1;
+        z-index: 2;
         border: em(1, 14) solid $mercury;
         li {
           @mixin station-detail-font7;
