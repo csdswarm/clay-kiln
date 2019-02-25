@@ -222,10 +222,6 @@
   .gallery__body,
   .gallery__body[data-lead-type=instagram],
   .gallery__body[data-lead-orientation=vertical] {
-    .body__header {
-      width: calc(100% + em(40));
-      margin: 0 em(-20) em(30);
-    }
     .body__info {
       margin-bottom: em(40);
     }
