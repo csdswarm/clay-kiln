@@ -1,12 +1,8 @@
 _components:
-  paragraph:
+  description:
     instances:
-      new:
+      default:
         text: ''
-        type: 'Paragraph'
-      description:
-        text: ''
-        type: 'Description'
 
   gallery-slide:
     instances:
@@ -15,5 +11,7 @@ _components:
         title: ''
         description:
           -
-            _ref: /_components/paragraph/instances/description
+            _ref: /_components/description/instances/default
         hashLinkPrefix: ''
+
+

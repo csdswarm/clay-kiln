@@ -1,10 +1,10 @@
 _description: |
-  A simple paragraph component.
+  A simple description component.
 
 text:
   _placeholder:
     height: 50px
-    text: New Paragraph
+    text: New Description
     required: true
   _has:
     input: inline
@@ -45,5 +45,5 @@ text:
           field: text
         -
           match: (.*)
-          component: paragraph
+          component: description
           field: text
