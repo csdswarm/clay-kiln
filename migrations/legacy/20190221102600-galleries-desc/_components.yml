@@ -1,7 +1,7 @@
 _components:
   description:
     instances:
-      default:
+      new:
         text: ''
 
   gallery-slide:
@@ -11,7 +11,7 @@ _components:
         title: ''
         description:
           -
-            _ref: /_components/description/instances/default
+            _ref: /_components/description/instances/new
         hashLinkPrefix: ''
 
 

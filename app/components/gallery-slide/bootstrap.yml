@@ -2,5 +2,6 @@ _components:
   gallery-slide:
     slideEmbed: null
     title: ''
-    description: []
+    description:
+      _ref: /_components/description/instances/new
     hashLinkPrefix: ''

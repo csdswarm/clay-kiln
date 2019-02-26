@@ -1,6 +1,6 @@
 'use strict';
 
-const { putComponent } = require('../../services/server/publish-utils'),
+const { putComponentInstance } = require('../../services/server/publish-utils'),
   /**
    * removes the first open and last close tags from a html string
    *
@@ -22,8 +22,8 @@ module.exports['1.0'] = async (uri, data) => {
     descriptionData = { text: removeTag(data.description) };
 
   await Promise.all([
-    putComponent(descriptionUri, descriptionData),
-    putComponent(descriptionUriPublished, descriptionData)
+    putComponentInstance(descriptionUri, descriptionData),
+    putComponentInstance(descriptionUriPublished, descriptionData)
   ]);
 
   return {

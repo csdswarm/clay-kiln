@@ -44,10 +44,6 @@ description:
     fuzzy: false
     include:
       - paragraph
-  _has:
-    input: inline
-    validate:
-      required: true
 
 hashLinkPrefix:
   _label: Hash Link Prefix Override

@@ -11,13 +11,13 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   /**
-   * adds/updates a component
+   * adds/updates a component instance
    *
    * @param {string} uri
    * @param {object} body
    * @returns {Promise}
    */
-  putComponent = (uri, body) => rest.put(uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`), body, true);
+  putComponentInstance = (uri, body) => rest.put(uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`), body, true);
 
 /**
  * Checks provided ref to determine whether it is a main component (article or lede-video)
@@ -173,4 +173,4 @@ module.exports.getPublishDate = getPublishDate;
 module.exports.dateUrlPattern = o => `${o.prefix}/${o.yyyy}/${o.mm}/${o.slug}.html`; // e.g. http://vulture.com/2016/04/x.html
 module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/article/${o.slug}`; // e.g. http://radio.com/music/article/eminem-drops-new-album-and-its-fire
 module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
-module.exports.putComponent = putComponent;
+module.exports.putComponentInstance = putComponentInstance;
