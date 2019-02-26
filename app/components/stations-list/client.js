@@ -27,6 +27,11 @@ class StationsList {
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
+    window.addEventListener('resize', this.toggleSeeAllLink.bind(this) );
+    document.addEventListener('stations-list-dismount', () => {
+      // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
+      window.removeEventListener('resize', this.toggleSeeAllLink );
+    });
   }
 }
 StationsList.prototype = {
@@ -59,19 +64,21 @@ StationsList.prototype = {
    * @function
    */
   toggleSeeAllLink: function () {
-    let stationsShownOnLoad;
+    if (this.seeAllLink) {
+      let stationsShownOnLoad;
 
-    if (window.innerWidth >= 1280) {
-      stationsShownOnLoad = 10;
-    } else if (window.innerWidth >= 1024) {
-      stationsShownOnLoad = 8;
-    } else {
-      stationsShownOnLoad = 6;
-    }
-    if (this.stationsData.length <= stationsShownOnLoad || window.innerWidth < 480) {
-      this.seeAllLink.style.display = 'none';
-    } else {
-      this.seeAllLink.style.display = 'flex';
+      if (window.innerWidth >= 1280) {
+        stationsShownOnLoad = 10;
+      } else if (window.innerWidth >= 1024) {
+        stationsShownOnLoad = 8;
+      } else {
+        stationsShownOnLoad = 6;
+      }
+      if (this.stationsData.length <= stationsShownOnLoad || window.innerWidth < 480) {
+        this.seeAllLink.style.display = 'none';
+      } else {
+        this.seeAllLink.style.display = 'flex';
+      }
     }
   },
   /**
@@ -153,13 +160,8 @@ StationsList.prototype = {
     const stationsDataEl = this.parentElement.querySelector('.stations-list__data');
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
-
     this.seeAllLink = this.parentElement.querySelector('.header-row__see-all-link');
-    window.addEventListener('resize', () => {
-      this.toggleSeeAllLink();
-    });
     this.toggleSeeAllLink();
-
     this.loadMoreBtn = this.parentElement.querySelector('.stations-list__load-more');
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations(this.parentElement.querySelector('ul')) );
@@ -189,9 +191,6 @@ StationsList.prototype = {
         this.toggleLoader();
         this.updateStationsDOMFromFilterType();
       } else {
-        window.addEventListener('resize', () => {
-          this.toggleSeeAllLink();
-        });
         this.toggleSeeAllLink();
         this.displayActiveStations();
       }
