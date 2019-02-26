@@ -10,8 +10,6 @@ const { putComponent } = require('../../services/server/publish-utils'),
   removeTag = (html) => html.replace(/^<[^>]+>(.*)<\/[^>]+>$/, '$1');
 
 module.exports['1.0'] = async (uri, data) => {
-  console.log('UPGRADE:', data);
-
   if (typeof data.description !== 'string') {
     return {
       ...data,
