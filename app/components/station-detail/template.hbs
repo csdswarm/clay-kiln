@@ -81,9 +81,9 @@
   <div class="station-detail__body">
     <ul class="tabs">
       <!-- add tab for each component here -->
-      {{#if recentlyPlayedComponent.schedule}}
-        <li class="tabs__recently-played">recently played</li>
-      {{/if}}
+        {{#ifAll recentlyPlayedComponent.schedule (compare station.category "===" "Music")}}
+          <li class="tabs__recently-played">recently played</li>
+        {{/ifAll}}
       <li class="tabs__schedule">schedule</li>
       <li class="tabs__discover">
         <span>discover {{{ read 'components/station-detail/media/chevron_down.svg' }}}</span>
