@@ -3,11 +3,11 @@
 /**
  * Add SPA navigation listener to links
  * @function
- * @param {object} selector
+ * @param {object} anchorTagsContainer -- node that has anchor tag children
  */
-function apply(selector) {
+function apply(anchorTagsContainer) {
   // Attach vue router listener on SPA links.
-  const anchorTags = selector.querySelectorAll('a.spa-link');
+  const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link');
 
   anchorTags.forEach(anchor => {
     anchor.addEventListener('click', event => {
