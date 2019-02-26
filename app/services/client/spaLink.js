@@ -3,17 +3,21 @@
 /**
  * Add SPA navigation listener to links
  * @function
- * @param {object} selector
+ * @param {object} anchorTagsContainer -- node that has anchor tag children
  */
-function apply(selector) {
+function apply(anchorTagsContainer) {
   // Attach vue router listener on SPA links.
-  selector.addEventListener('click', event => {
-    event.preventDefault();
-    selector.removeEventListener('click', selector.fn, false);
-    const linkParts = new URL(selector.getAttribute('href'));
+  const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link');
 
-    // eslint-disable-next-line no-undef
-    vueApp._router.push(linkParts.pathname || '/');
+  anchorTags.forEach(anchor => {
+    anchor.addEventListener('click', event => {
+      event.preventDefault();
+      anchor.removeEventListener('click', anchor.fn, false);
+      const linkParts = new URL(window.location.protocol + anchor.getAttribute('href'));
+
+      // eslint-disable-next-line no-undef
+      vueApp._router.push(linkParts.pathname || '/');
+    });
   });
 }
 
