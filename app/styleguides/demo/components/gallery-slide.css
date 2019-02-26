@@ -16,8 +16,16 @@
   }
 
   .gallery-slide__text {
-    /* margin: em(30) 0 em(40) 0; */
-    margin: em(30) 0 0 0; /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
+    /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
+    margin: em(30) 0 0 0;
+
+    .paragraph {
+      font-family: ProximaNova-Regular;
+      font-size: em(15, 16);
+      color: #000000;
+      letter-spacing: em(-0.3, 15);
+      line-height: em(20, 15);
+    }
   }
 
   .gallery-slide__titlewrapper {
@@ -44,15 +52,6 @@
     color: #000000;
     letter-spacing: em(-0.25, 20);
     line-height: em(25, 20);
-  }
-
-  .gallery-slide__description {
-    /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
-    font-family: ProximaNova-Regular;
-    font-size: em(15, 16);
-    color: #000000;
-    letter-spacing: em(-0.3, 15);
-    line-height: em(20, 15);
   }
 
   /* If slide embed is an Image component, override standard credit text-alignment. */
