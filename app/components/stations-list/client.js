@@ -156,6 +156,7 @@ StationsList.prototype = {
 
     this.parentElement.innerHTML = newStations;
     this.stationsList = this.parentElement.querySelector('ul');
+    spaLinkService(this.stationsList);
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
 
