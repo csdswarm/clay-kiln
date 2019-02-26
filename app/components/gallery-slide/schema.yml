@@ -43,7 +43,7 @@ description:
   _componentList:
     fuzzy: false
     include:
-      - paragraph
+      - description
 
 hashLinkPrefix:
   _label: Hash Link Prefix Override
