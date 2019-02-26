@@ -30,6 +30,20 @@ module.exports.render = async function (ref, data, locals) {
       }
     );
 
+  // if there is no data for the current day, check to see if there is any data for this station
+  if (json.data && !json.data.length) {
+    const anySchedule = await radioAPI.get('schedules',
+      {
+        'page[size]': 1,
+        'page[number]':1,
+        'filter[station_id]': stationId
+      });
+
+    if (anySchedule.data && !anySchedule.data.length) {
+      return {};
+    }
+  }
+
   return {
     station: { category, id: stationId, gmt_offset },
     schedule: !json.data ? [] :

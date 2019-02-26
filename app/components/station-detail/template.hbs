@@ -84,7 +84,9 @@
       {{#if recentlyPlayedComponent.schedule}}
         <li class="tabs__recently-played">recently played</li>
       {{/if}}
-      <li class="tabs__schedule">schedule</li>
+      {{#if scheduleComponent.schedule}}
+        <li class="tabs__schedule">schedule</li>
+      {{/if}}
       <li class="tabs__discover">
         <span>discover {{{ read 'components/station-detail/media/chevron_down.svg' }}}</span>
         <ul>
