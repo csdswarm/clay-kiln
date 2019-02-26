@@ -7,13 +7,17 @@
  */
 function apply(selector) {
   // Attach vue router listener on SPA links.
-  selector.addEventListener('click', event => {
-    event.preventDefault();
-    selector.removeEventListener('click', selector.fn, false);
-    const linkParts = new URL(selector.getAttribute('href'));
+  const anchorTags = selector.querySelectorAll('a.spa-link');
 
-    // eslint-disable-next-line no-undef
-    vueApp._router.push(linkParts.pathname || '/');
+  anchorTags.forEach(anchor => {
+    anchor.addEventListener('click', event => {
+      event.preventDefault();
+      anchor.removeEventListener('click', anchor.fn, false);
+      const linkParts = new URL(window.location.protocol + anchor.getAttribute('href'));
+
+      // eslint-disable-next-line no-undef
+      vueApp._router.push(linkParts.pathname || '/');
+    });
   });
 }
 
