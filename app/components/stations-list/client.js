@@ -2,7 +2,8 @@
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
-  radioApiService = require('../../services/client/radioApi');
+  radioApiService = require('../../services/client/radioApi'),
+  spaLinkService = require('../../services/client/spaLink');
 
 class StationsList {
   constructor(element) {
@@ -141,6 +142,7 @@ StationsList.prototype = {
       newStations = await this.getComponentTemplate(stationIDs);
 
     this.stationsList.innerHTML += newStations;
+    spaLinkService(this.stationsList);
     this.toggleLoader();
     this.displayActiveStations();
   },
