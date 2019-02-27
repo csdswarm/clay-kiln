@@ -16,10 +16,7 @@ const { rendererPipeline } = require('./utils'),
 module.exports = (ref, data, locals) => {
   const { meta, attr } = data,
     utmParams = { utmSource: meta.utmSource || 'nym', utmMedium: meta.utmMedium || 'f1' },
-    // The mapper works on a single item, so we want to wrap the `feed` property in an array because those
-    // objects are all under the group of the single article. This is just to match the structure
-    // that https://www.npmjs.com/package/xml requires
-    mapper = (feed) => ({ meta: data.meta, feed: [ feed ], attr }),
+    mapper = (feed) => ({ meta: data.meta, feed, attr }),
     entryMapper = (entry) => Object.assign(entry, utmParams),
     errorHandler = (error) => {
       log('error', 'Error rendering RSS data', {

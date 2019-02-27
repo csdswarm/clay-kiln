@@ -67,5 +67,7 @@ module.exports = function (data) {
   // Add the image
   // return addRssMediaImage(firstAndParse(dataContent, 'image'), transform)
   //   .then(() => transform);
-  return transform;
+
+  // We HAVE to return a promise because of how NYMag setup the Highland render pipeline
+  return Promise.resolve(transform);
 };
