@@ -19,7 +19,7 @@ function getArticleContent(obj) {
   const content = obj.value.content;
 
   return h(content)
-    .map(({ _ref }) => h(redis.hget('mydb:h', _ref).then( data => ({ _ref, data: 'test' }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
+    .map(({ _ref }) => h(redis.hget('mydb:h', _ref).then( data => ({ _ref, data }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
     .mergeWithLimit(1) // Merge each individual stream into the bigger stream
     .collect() // Turn each individual object into an array of objects
     .map(resolvedContent => {
