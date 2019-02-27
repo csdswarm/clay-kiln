@@ -15,6 +15,19 @@ subscribe('publish').through(save);
 // Subscribe to the save stream
 subscribe('save').through(save);
 
+function getArticleContent(obj) {
+  const content = obj.value.content;
+
+  return h(content)
+    .map(({ _ref }) => h(redis.hget('mydb:h', _ref).then( data => ({ _ref, data: 'test' }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
+    .mergeWithLimit(1) // Merge each individual stream into the bigger stream
+    .collect() // Turn each individual object into an array of objects
+    .map(resolvedContent => {
+      obj.value.content = resolvedContent; // Assign the array of resolved objects to the original property
+      return obj; // Return the original, now modified object
+    });
+}
+
 function save(stream) {
   return stream
     .parallel(25)
@@ -22,23 +35,10 @@ function save(stream) {
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
-    .map((param) => {
-      if (param.key.indexOf('article') >= 0) {
-        let value = JSON.parse(param.value),
-          content = value.content;
-
-        value.content = content.map((component) => {
-          return {
-            _ref: component._ref,
-            data: 'Test'
-          };
-        });
-        value.headline = 'Shawn' + value.headline;
-        param.value = JSON.stringify(value);
-      }
-      return param;
-    })
-    .map(helpers.parseOpValue)
+    .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
+    // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
+    .map(param => param.key.indexOf('article') >= 0 ? getArticleContent(param) : h.of(param))
+    .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(i => {

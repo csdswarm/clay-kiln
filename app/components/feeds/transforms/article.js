@@ -61,10 +61,11 @@ module.exports = function (data) {
   // Add the tags
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
-  addArrayOfProps(data.authors, 'dc:creator', transform);
+  // addArrayOfProps(data.authors, 'dc:creator', transform);
   // Add the first clay paragraph
-  addTeaser(firstAndParse(dataContent, 'clay-paragraph'), link, plaintextPrimaryHeadline, transform);
+  // addTeaser(firstAndParse(dataContent, 'paragraph'), link, plaintextPrimaryHeadline, transform);
   // Add the image
-  return addRssMediaImage(firstAndParse(dataContent, 'mediaplay-image'), transform)
-    .then(() => transform);
+  // return addRssMediaImage(firstAndParse(dataContent, 'image'), transform)
+  //   .then(() => transform);
+  return transform;
 };
