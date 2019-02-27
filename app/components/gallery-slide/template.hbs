@@ -10,7 +10,7 @@
       </h2>
     {{/ifAny}}
     {{#ifAny description @root.locals.edit}}
-      {{> component-list description }}
+      <div data-editable="description">{{> component-list description }}</div>
     {{/ifAny}}
   </div>
 </div>
