@@ -1,3 +1,4 @@
+_version: 1.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -477,6 +478,21 @@ plaintextShortHeadline:
   _publish: twitterTitle
   _has:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
+
+footer:
+  _label: Gallery Footer
+  _placeholder:
+    text: Component
+    height: 200px
+  _componentList:
+    fuzzy: true
+    include:
+      - image
+      - instagram-post
+      - brightcove
+      - youtube
+      - html-embed
+      - omny
 
 # Component properties
 sideShare:

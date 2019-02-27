@@ -142,6 +142,12 @@
         {{/if}}
       </div>
 
+      {{#ifAny footer @root.locals.edit}}
+        <div class="content__footer" data-editable="footer">
+          {{> component-list footer }}
+        </div>
+      {{/ifAny}}
+
       {{! Tags }}
       {{> tags tags}}
     </div>
