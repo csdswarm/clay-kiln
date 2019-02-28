@@ -41,12 +41,6 @@ function save(stream) {
     .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
-    .tap(i => {
-      console.log('\n\nThis is the value about to be sent to elastic');
-      console.log(i[0].value);
-      console.log(i[0].value.content);
-      console.log('\n\n')
-    })
     .flatMap(send)
     .errors(logError)
     .each(logSuccess(INDEX));

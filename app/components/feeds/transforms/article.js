@@ -1,28 +1,35 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _truncate = require('lodash/truncate'),
+  _reduce = require('lodash/reduce'),
   format = require('date-fns/format'),
   parse = require('date-fns/parse'),
-  { firstAndParse, addArrayOfProps, addRssMediaImage } = require('./utils');
+  { addArrayOfProps } = require('./utils'),
+
+  render = {
+    paragraph: (data) => {
+      const text = _get(data, 'text', '');
+
+      return text ? `<p>${text}</p>` : '';
+    }
+  };
 
 /**
- * Given a clay-paragraph component, create an excerpt
- * that is limited to 300 characters of text and then
- * a readmore link
- *
- * @param {Object} paragraph
- * @param {String} link
- * @param {String} headline
- * @param {Array} transform
+ * Compose article content from select components
+ * @param {Object} data
+ * @returns {string}
  */
-function addTeaser(paragraph, link, headline, transform) {
-  const text = _get(paragraph, 'text', ''),
-    string = `${_truncate(text, { length: 1000 })} <a href="${link.replace(/&/g, '&amp;')}" title="Click here to read more about ${headline}">More &raquo;</a>`;
+function composeArticleContent(data) {
+  return _reduce(data.content, (res, cmpt) => {
+    const ref = _get(cmpt, '_ref', ''),
+      cmptData = JSON.parse(_get(cmpt, 'data', {}));
 
-  transform.push({
-    'content:encoded': { _cdata: string }
-  });
+    if (ref.includes('/paragraph/')) {
+      res += render.paragraph(cmptData);
+    }
+
+    return res;
+  }, '');
 }
 
 /**
@@ -34,8 +41,8 @@ function addTeaser(paragraph, link, headline, transform) {
  * @return {Array}
  */
 module.exports = function (data) {
-  const { canonicalUrl, content, relatedInfo, plaintextPrimaryHeadline, utmSource, utmMedium } = data,
-    link = `${canonicalUrl}?utm_source=${utmSource}&utm_medium=${utmMedium}&utm_campaign=feed-part`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
+  const { canonicalUrl, plaintextPrimaryHeadline } = data,
+    link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
       {
         title: { _cdata: plaintextPrimaryHeadline }
@@ -50,20 +57,17 @@ module.exports = function (data) {
         guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
       },
       {
-        comments: `${canonicalUrl}#comments`
+        description: { _cdata: data.socialDescription }
       },
       {
-        description: { _cdata: data.socialDescription }
+        'content:encoded': { _cdata: composeArticleContent(data)}
       }
-    ],
-    dataContent = content || relatedInfo;
+    ];
 
   // Add the tags
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
-  // addArrayOfProps(data.authors, 'dc:creator', transform);
-  // Add the first clay paragraph
-  // addTeaser(firstAndParse(dataContent, 'paragraph'), link, plaintextPrimaryHeadline, transform);
+  addArrayOfProps(data.authors, 'dc:creator', transform);
   // Add the image
   // return addRssMediaImage(firstAndParse(dataContent, 'image'), transform)
   //   .then(() => transform);

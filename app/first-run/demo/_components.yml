@@ -844,7 +844,7 @@ _components:
           'query': {
             'match_all': {}
           },
-          'size': 5,
+          'size': 20,
           'sort': {
             'date': 'desc'
           }
