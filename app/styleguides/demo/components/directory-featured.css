@@ -5,9 +5,6 @@
 
 .component--directory-featured {
   .directory-featured__stations-by-genre {
-    @mixin medium-screen {
-      display: none;
-    }
     .stations-by-genre__header-row {
       display: flex;
       flex-direction: row;
@@ -58,10 +55,29 @@
             margin-right: em(20);
           }
         }
+        @mixin medium-screen {
+          width: calc((100% - 2 * em(20)) / 3);
+          &:nth-of-type(3n) {
+            margin-right: 0;
+          }
+          &:not(:nth-of-type(3n)) {
+            margin-right: em(20);
+          }
+        }
+        @media all and (max-width: 600px) {
+          width: calc((100% - em(20)) / 2);
+          &:nth-of-type(2n) {
+            margin-right: 0;
+          }
+          &:not(:nth-of-type(2n)) {
+            margin-right: em(20);
+          }
+        }
         a {
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
           text-decoration: none;
           width: 100%;
           img {
