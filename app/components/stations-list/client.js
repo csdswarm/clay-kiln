@@ -136,7 +136,7 @@ StationsList.prototype = {
       this.toggleLoader();
       const stationsData = this.stationsData = await recentStations.get();
 
-      stationsData.length = 7;
+      stationsData.slice(0, 7);
       this.updateStationsDOM(stationsData);
     } else {
       // server side populated
