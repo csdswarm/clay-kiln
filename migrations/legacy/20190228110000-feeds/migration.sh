@@ -33,7 +33,7 @@ curl -X PUT "$http://$1/_components/feeds/instances/reversechron" -H 'Authorizat
         "renderer": "rss",
         "contentType": "application/rss+xml",
         "fileExtension": "rss",
-        "link": "http://clay.radio.com",
+        "link": "'$http'://'$1'",
         "title": "Radio.com Reverse Chron Feed",
         "description": "Most recent content from Radio.com"
     },
