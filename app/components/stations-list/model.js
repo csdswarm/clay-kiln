@@ -25,7 +25,7 @@ function getMarketData(market) {
     if (response.data) {
       return response.data[0] || {};
     } else {
-      console.log("error with request", response);
+      console.log('error with request', response);
       return {};
     }
   });
@@ -51,7 +51,7 @@ function getGenreData(genre) {
     if (response.data) {
       return response.data[0] || {};
     } else {
-      console.log("error with request", response);
+      console.log('error with request', response);
       return {};
     }
   });
