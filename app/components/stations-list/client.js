@@ -2,7 +2,8 @@
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
-  radioApiService = require('../../services/client/radioApi');
+  radioApiService = require('../../services/client/radioApi'),
+  spaLinkService = require('../../services/client/spaLink');
 
 class StationsList {
   constructor(element) {
@@ -115,6 +116,7 @@ StationsList.prototype = {
       newStations = await this.getComponentTemplate(stationIDs);
 
     this.stationsList.innerHTML += newStations;
+    spaLinkService(this.stationsList);
     this.toggleLoader();
     this.displayActiveStations();
   },
@@ -134,7 +136,7 @@ StationsList.prototype = {
       this.toggleLoader();
       const stationsData = this.stationsData = await recentStations.get();
 
-      stationsData.length = 7;
+      stationsData.slice(0, 7);
       this.updateStationsDOM(stationsData);
     } else {
       // server side populated
