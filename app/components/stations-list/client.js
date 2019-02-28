@@ -142,7 +142,7 @@ StationsList.prototype = {
       newStations = await this.getComponentTemplate(stationIDs);
 
     this.stationsList.innerHTML += newStations;
-    spaLinkService(this.stationsList);
+    spaLinkService.apply(this.stationsList);
     this.toggleLoader();
     this.displayActiveStations();
   },
@@ -156,7 +156,7 @@ StationsList.prototype = {
 
     this.parentElement.innerHTML = newStations;
     this.stationsList = this.parentElement.querySelector('ul');
-    spaLinkService(this.stationsList);
+    spaLinkService.apply(this.stationsList);
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
 
@@ -186,8 +186,13 @@ StationsList.prototype = {
       this.toggleLoader();
       const stationsData = this.stationsData = await recentStations.get();
 
+<<<<<<< HEAD
       stationsData.length = 7;
       this.updateStationsDOMWithIDs(stationsData);
+=======
+      stationsData.slice(0, 7);
+      this.updateStationsDOM(stationsData);
+>>>>>>> ON-480-Station-Directory-Page
     } else {
       // server side populated
       if (this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket) {

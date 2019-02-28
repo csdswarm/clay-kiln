@@ -1,3 +1,8 @@
 <section data-uri="{{ default _ref _self }}" class="component component--directory-location">
-
+  <select class="directory-location__dropdown--mobile">
+    <option value="">See all in location:</option>
+    {{#each @root.locals.allMarkets }}
+      <option value="{{ id }}">{{ attributes.display_name }}</option>
+    {{/each}}
+  </select>
 </section>
