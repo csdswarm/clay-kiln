@@ -1,7 +1,6 @@
 'use strict';
 
-const _ = require('lodash'),
-  { getComponentName } = require('clayutils');
+const { getComponentName } = require('clayutils');
 
 
 /**
