@@ -46,7 +46,7 @@ _components:
   directory-genre:
     instances:
       music:
-        genre: all
+        genre: all-music
         googleInlineAd:
           _ref: /_components/google-ad-manager/instances/billboardBottom
         stationsList:

@@ -13,12 +13,22 @@ function apply(anchorTagsContainer) {
     anchor.addEventListener('click', event => {
       event.preventDefault();
       anchor.removeEventListener('click', anchor.fn, false);
-      const linkParts = new URL(window.location.protocol + anchor.getAttribute('href'));
+      let link = anchor.getAttribute('href'),
+        path;
 
-      // eslint-disable-next-line no-undef
-      vueApp._router.push(linkParts.pathname || '/');
+      if (!link.includes('http')) {
+        link = window.location.protocol + link;
+      }
+      path = new URL(link).pathname;
+      navigateTo(path);
     });
   });
 }
 
-module.exports = apply;
+function navigateTo(path) {
+  // eslint-disable-next-line no-undef
+  vueApp._router.push(path || '/');
+}
+
+module.exports.apply = apply;
+module.exports.navigateTo = navigateTo;

@@ -116,7 +116,7 @@ StationsList.prototype = {
       newStations = await this.getComponentTemplate(stationIDs);
 
     this.stationsList.innerHTML += newStations;
-    spaLinkService(this.stationsList);
+    spaLinkService.apply(this.stationsList);
     this.toggleLoader();
     this.displayActiveStations();
   },
