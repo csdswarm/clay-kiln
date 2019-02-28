@@ -11,13 +11,21 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   /**
+   * returns a url to the server for a component
+   *
+   * @param {string} uri
+   * @returns {string}
+   */
+  componentUri = (uri) => Boolean(process.env.DOCKER_CONTAINER)
+    ? uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`) : `https://${uri}`,
+  /**
    * adds/updates a component instance
    *
    * @param {string} uri
    * @param {object} body
    * @returns {Promise}
    */
-  putComponentInstance = (uri, body) => rest.put(uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`), body, true);
+  putComponentInstance = (uri, body) => rest.put(componentUri(uri), body, true);
 
 /**
  * Checks provided ref to determine whether it is a main component (article or lede-video)
