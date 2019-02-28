@@ -2,8 +2,14 @@
   {{#if market }}
     {{> stations-list stationsList }}
   {{else}}
+    <select class="directory-location__dropdown--mobile">
+      <option value="">See all in location:</option>
+      {{#each @root.locals.allMarkets }}
+        <option value="{{ id }}">{{ attributes.display_name }}</option>
+      {{/each}}
+    </select>
     {{~#each @root.locals.allMarkets as |market| ~}}
-      <div class="directory-location__stations-by-market" data-market="{{ default market.attributes.slug market.id }}">
+      <div class="directory-location__stations-by-market" data-market="{{ market.id }}">
         {{> stations-list ../stationsListTruncated }}
       </div>
       {{#ifAll (modulo (add @index 1) 2 0) (compare @root.locals.allMarkets.length "!==" (add @index 1)) }}

@@ -128,13 +128,13 @@ module.exports.render = async (uri, data, locals) => {
       }
     } else if (data.filterBy === 'market') {
       /** for stations lists on location stations directory page **/
-
-      if (!locals.market && !locals.params.dynamicMarket) {
-        // handle populating stations in client side
-        return data;
-      } else if (locals.params.dynamicMarket && data.truncatedList) {
-        // fix for use case: both list components are rendering even when condition is met
-        return data;
+      if (locals.params) {
+        if (!locals.params.dynamicMarket && !locals.market
+          || locals.params.dynamicMarket && data.truncatedList ) {
+          // fix for use case: both list components are rendering even when condition is met
+          // handle populating stations in client side
+          return data;
+        }
       }
       data.market = locals.market || locals.params.dynamicMarket; // should be slug. temporarily using id
       const marketData = await getMarketData(data.market);
@@ -145,11 +145,13 @@ module.exports.render = async (uri, data, locals) => {
     } else if (data.filterBy === 'genre') {
       /** for stations lists on music, news & talk, and sports stations directory pages **/
 
-      if (!locals.genre && !locals.params.dynamicGenre) {
-        // handle populating stations in client side
-        return data;
-      } else if (locals.params.dynamicGenre && data.truncatedList) {
-        return data;
+      if (locals.params) {
+        if (!locals.params.dynamicGenre && !locals.genre
+          || locals.params.dynamicGenre && data.truncatedList ) {
+          // fix for use case: both list components are rendering even when condition is met
+          // handle populating stations in client side
+          return data;
+        }
       }
       data.genre = locals.genre || locals.params.dynamicGenre; // should be slug. temporarily using id
       const genreData = await getGenreData(data.genre);

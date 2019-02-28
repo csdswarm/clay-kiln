@@ -9,7 +9,7 @@
     <div class="stations-list__header-row">
       <h2 class="header-row__title">{{ listTitle }}</h2>
       {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
-        <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
+        <a class="header-row__see-all-link spa-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
       {{/ifAll}}
     </div>
   {{/ifAny}}

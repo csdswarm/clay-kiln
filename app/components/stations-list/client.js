@@ -162,7 +162,7 @@ StationsList.prototype = {
       newStations = await this.getComponentTemplate(stationIDs);
 
     this.stationsList.innerHTML += newStations;
-    spaLinkService(this.stationsList);
+    spaLinkService.apply(this.stationsList);
     this.toggleLoader();
     this.displayActiveStations();
   },
@@ -176,7 +176,7 @@ StationsList.prototype = {
 
     this.parentElement.innerHTML = newStations;
     this.stationsList = this.parentElement.querySelector('ul');
-    spaLinkService(this.stationsList);
+    spaLinkService.apply(this.parentElement);
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
 
@@ -206,7 +206,7 @@ StationsList.prototype = {
       this.toggleLoader();
       const stationsData = this.stationsData = await recentStations.get();
 
-      stationsData.length = 7;
+      stationsData.slice(0, 7);
       this.updateStationsDOMWithIDs(stationsData);
     } else {
       // server side populated
