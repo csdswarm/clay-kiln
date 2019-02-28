@@ -487,6 +487,7 @@ footer:
   _componentList:
     fuzzy: true
     include:
+      - paragraph
       - image
       - instagram-post
       - brightcove
