@@ -21,7 +21,15 @@ class StationsList {
     this.loader = element.querySelector('.loader-container');
     this.pageNum = 1;
     this.pageSize = 6;
-    const stationsDataEl = element.querySelector('.stations-list__data');
+    const page = document.body.querySelector('.content__main > section'),
+      stationsDataEl = element.querySelector('.stations-list__data');
+
+    if (page.classList.contains('component--stations-directory')) {
+      this.pageType = 'stations directory';
+      this.directoryType = page.querySelector('.directory-body__directory-page').getAttribute('id').replace('stations-directory__', '');
+    } else if (page.classList.contains('component--station-detail')) {
+      this.pageType = 'station detail';
+    }
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
     this.updateStations();
@@ -69,9 +77,21 @@ StationsList.prototype = {
       let stationsShownOnLoad;
 
       if (window.innerWidth >= 1280) {
-        stationsShownOnLoad = 10;
+        if (this.pageType === 'station detail') {
+          stationsShownOnLoad = 10;
+        } else if (this.directoryType === 'featured') {
+          stationsShownOnLoad = 14;
+        } else {
+          stationsShownOnLoad = 7;
+        }
       } else if (window.innerWidth >= 1024) {
-        stationsShownOnLoad = 8;
+        if (this.pageType === 'station detail') {
+          stationsShownOnLoad = 8;
+        } else if (this.directoryType === 'featured') {
+          stationsShownOnLoad = 12;
+        } else {
+          stationsShownOnLoad = 6;
+        }
       } else {
         stationsShownOnLoad = 6;
       }
@@ -190,6 +210,7 @@ StationsList.prototype = {
       this.updateStationsDOMWithIDs(stationsData);
     } else {
       // server side populated
+
       if (this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket) {
         this.toggleLoader();
         this.updateStationsDOMFromFilterType();

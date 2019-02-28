@@ -47,8 +47,8 @@ module.exports.render = async (uri, data, locals) => {
     return data;
   }
 
-  data.location = locals.location = await getAllMarkets();
-  data.music = locals.music = await getAllMusicGenres();
+  data.location = locals.allMarkets = await getAllMarkets();
+  data.music = locals.allMusic = await getAllMusicGenres();
   let path = url.parse(locals.url).pathname;
 
   if (path.includes('location') || path.includes('music')) {

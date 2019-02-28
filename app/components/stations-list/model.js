@@ -6,45 +6,53 @@ const radioApiService = require('../../services/server/radioApi'),
   NEWSTALK_ID = '25';
 
 /**
- * get market ID from market slug
+ * get market data from market slug
  * @param {string} market
- * @returns {number}
+ * @returns {object}
  */
-function getMarketID(market) {
+function getMarketData(market) {
   const route = 'markets',
     /* note: filter by slug needs to be added to market api
     /* temporarily filter by market ID
     */
-    // params = { 'filter[slug]': market };
-    params = { 'filter[id]': market };
+    // 'filter[slug]': market
+    params = {
+      'page[size]': 1000,
+      'filter[id]': market
+    };
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      return response.data.id || '';
+      return response.data[0] || {};
     } else {
-      return '';
+      console.log("error with request", response);
+      return {};
     }
   });
 }
 
 /**
- * get genre ID from genre slug
+ * get genre data from genre slug
  * @param {string} genre
- * @returns {number}
+ * @returns {object}
  */
-function getGenreID(genre) {
+function getGenreData(genre) {
   const route = 'genres',
     /* note: genre slug needs to be added to station api results
     /* temporarily filter by genre ID
     */
-    // params = { 'filter[slug]': genre };
-    params = { 'filter[id]': genre };
+    // 'filter[slug]': genre
+    params = {
+      'page[size]': 1000,
+      'filter[id]': genre
+    };
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      return response.data.id || '';
+      return response.data[0] || {};
     } else {
-      return '';
+      console.log("error with request", response);
+      return {};
     }
   });
 }
@@ -95,41 +103,7 @@ module.exports.render = async (uri, data, locals) => {
     return data;
   } else {
     /** filter by market, genre, or category **/
-
-    if (locals.market || locals.params && locals.params.dynamicMarket) {
-      /** for stations lists on location stations directory page **/
-
-      data.market = locals.market || locals.params.dynamicMarket; // should be slug. temporarily using id
-      data.seeAllLink = `/stations/location/${ data.market }`;
-      data.listTitle = data.listTitle || data.market;
-      params['filter[market_id]'] = await getMarketID(data.market);
-    } else if (locals.genre || locals.params && locals.params.dynamicGenre) {
-      /** for stations lists on music, news & talk, and sports stations directory pages **/
-
-      data.genre = locals.genre || locals.params.dynamicGenre; // should be slug. temporarily using id
-      if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
-        data.seeAllLink = `/stations/${ data.genre }`;
-      } else {
-        data.seeAllLink = `/stations/music/${ data.genre }`;
-      }
-      data.listTitle = data.listTitle || data.genre;
-      params['filter[genre_id]'] = await getGenreID(data.genre);
-    } else if (data.filterBy == 'category') {
-      /** for featured music, news talk, and sports stations list on featured stations directory page **/
-
-      if (!locals.category) {
-        return data;
-      }
-      data.category = locals.category;
-      data.seeAllLink = `/stations/${ data.category }`;
-      data.listTitle = `featured ${ data.category } stations`;
-      if (data.category == NEWSTALK_SLUG) {
-        data.listTitle = 'featured news & talk stations';
-        params['filter[category]'] = 'news,talk';
-      } else {
-        params['filter[category]'] = data.category;
-      }
-    } else if (locals.station) {
+    if (locals.station) {
       /** for stations lists on station detail page (discover tab) **/
 
       switch (data.filterBy) {
@@ -151,6 +125,56 @@ module.exports.render = async (uri, data, locals) => {
           break;
         default:
           break;
+      }
+    } else if (data.filterBy === 'market') {
+      /** for stations lists on location stations directory page **/
+
+      if (!locals.market && !locals.params.dynamicMarket) {
+        // handle populating stations in client side
+        return data;
+      } else if (locals.params.dynamicMarket && data.truncatedList) {
+        // fix for use case: both list components are rendering even when condition is met
+        return data;
+      }
+      data.market = locals.market || locals.params.dynamicMarket; // should be slug. temporarily using id
+      const marketData = await getMarketData(data.market);
+
+      data.seeAllLink = `/stations/location/${ data.market }`;
+      data.listTitle = marketData.attributes.display_name;
+      params['filter[market_id]'] = marketData.id;
+    } else if (data.filterBy === 'genre') {
+      /** for stations lists on music, news & talk, and sports stations directory pages **/
+
+      if (!locals.genre && !locals.params.dynamicGenre) {
+        // handle populating stations in client side
+        return data;
+      } else if (locals.params.dynamicGenre && data.truncatedList) {
+        return data;
+      }
+      data.genre = locals.genre || locals.params.dynamicGenre; // should be slug. temporarily using id
+      const genreData = await getGenreData(data.genre);
+
+      if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
+        data.seeAllLink = `/stations/${ data.genre }`;
+      } else {
+        data.seeAllLink = `/stations/music/${ data.genre }`;
+      }
+      data.listTitle = genreData.attributes.name;
+      params['filter[genre_id]'] = genreData.id;
+    } else if (data.filterBy === 'category') {
+      /** for featured music, news talk, and sports stations list on featured stations directory page **/
+
+      if (!locals.category) {
+        return data;
+      }
+      data.category = locals.category;
+      data.seeAllLink = `/stations/${ data.category }`;
+      data.listTitle = `featured ${ data.category } stations`;
+      if (data.category == NEWSTALK_SLUG) {
+        data.listTitle = 'featured news & talk stations';
+        params['filter[category]'] = 'news,talk';
+      } else {
+        params['filter[category]'] = data.category;
       }
     }
 

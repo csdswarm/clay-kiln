@@ -1,3 +1,14 @@
 <section data-uri="{{ default _ref _self }}" class="component component--directory-location">
-
+  {{#if market }}
+    {{> stations-list stationsList }}
+  {{else}}
+    {{~#each @root.locals.allMarkets as |market| ~}}
+      <div class="directory-location__stations-by-market" data-market="{{ default market.attributes.slug market.id }}">
+        {{> stations-list ../stationsListTruncated }}
+      </div>
+      {{#ifAll (modulo (add @index 1) 2 0) (compare @root.locals.allMarkets.length "!==" (add @index 1)) }}
+        {{> google-ad-manager ../googleInlineAd }}
+      {{/ifAll}}
+    {{~/each ~}}
+  {{/if}}
 </section>
