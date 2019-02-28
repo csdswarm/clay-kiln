@@ -2,6 +2,8 @@
 
 const db = require('../server/db'),
   redirectDataURL = '/_components/redirects/instances/default@published',
+  queryString = require('querystring'),
+
   /**
    * determines if a url is inside an array of redirect objects
    *
@@ -31,6 +33,28 @@ const db = require('../server/db'),
     const referrer = req.get('referrer');
 
     return req.get('x-amphora-page-json') || !referrer || !referrer.includes(req.get('host'));
+  },
+  /**
+   * Recursively get the latest URI for a URL
+   *
+   * @param {string} uri
+   */
+  getLatestUri = async (uri) => {
+    try {
+      const latestUri = await db.get(uri);
+
+      console.log(`Value: ${latestUri}`);
+      if (typeof latestUri === 'string' && latestUri.indexOf('/_uris') !== -1) {
+        console.log(`new path: ${latestUri}`);
+        return getLatestUri(latestUri);
+      } else {
+        console.log(`Found no redirect: ${uri}`);
+
+        return uri;
+      }
+    } catch (e) {
+      console.log(e.message);
+    }
   };
 
 /**
@@ -41,6 +65,9 @@ const db = require('../server/db'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
+  const spaRequest = req.originalUrl.includes('?json'),
+    redirectQueryString = Object.entries(req.query).length !== 0 ? '?' + queryString.stringify(req.query) : '';
+
   try {
     if (possibleRedirect(req)) {
       const data = await db.get(`${req.get('host')}${redirectDataURL}`),
@@ -49,13 +76,28 @@ module.exports = async (req, res, next) => {
 
       if (redirectTo) {
         // request coming from SPA, 301 and send new URL
-        if (req.originalUrl.includes('?json')) {
+        if (spaRequest) {
           res.status(301).json({ redirect: redirectTo.redirect });
         } else {
           return res.redirect(301, redirectTo.redirect);
         }
       }
+
+      // Handle Amphora redirects (Replicating https://github.com/clay/amphora/blob/6.x-lts/lib/render.js#L219)
+      if (spaRequest) {
+        console.log(`Get latest uri for: ${req.hostname}${req.path}`);
+        const encode64Buffer = Buffer.from(`${req.hostname}${req.path}`, 'utf8'),
+          latestUri = await getLatestUri(`${req.hostname}/_uris/${encode64Buffer.toString('base64')}`),
+          decode64Buffer = Buffer.from(latestUri.split('/').pop(), 'base64'),
+          redirectUrl = decode64Buffer.toString('utf8');
+
+        if ((req.hostname + req.path) !== redirectUrl) {
+          console.log('Redirect to', redirectUrl.replace(req.hostname, '') + redirectQueryString);
+          res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '') + redirectQueryString });
+        }
+      }
     }
+
   } catch (e) {
     console.log('Error in redirects middleware:');
     console.log(e);
