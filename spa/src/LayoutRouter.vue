@@ -66,31 +66,43 @@ export default {
       return new RegExp(`^${regExp}`, 'i')
     },
     /**
+     * determines if the url belongs to the spa
+     *
+     * @param {string} url
+     * @returns {boolean}
+     */
+    isLocalUrl: (url) => !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url),
+    /**
      *
      * Returns an object with all the JSON payload required for a page render.
      *
      * @param {string} destination - The URL being requested.
+     * @param {object} query - The query object
      * @returns {object}  - The JSON payload
      */
-    getNextSpaPayload: async function getNextSpaPayload (destination) {
+    getNextSpaPayload: async function getNextSpaPayload (destination, query) {
+      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
+      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}`
+      const newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
+
       try {
-        const nextSpaPayloadResult = await axios.get(`${destination}?json`, {
+        const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
             'x-amphora-page-json': true
           }
         })
 
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-        nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
+        nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPathNoJson}`
         return nextSpaPayloadResult.data
       } catch (e) {
         if (e.response.status === 301 && e.response.data.redirect) {
-          const redirect = e.response.data.redirect
-
-          if (this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(redirect)) {
+          const separator = e.response.data.redirect.indexOf('?') === -1 ? '?' : '&'
+          const redirect = `${e.response.data.redirect}${queryString ? `${separator}${queryString}` : ''}`
+          if (this.isLocalUrl(redirect)) {
             // we are returning the new path, so need to adjust the browser path
             window.history.replaceState({ }, null, redirect)
-            return this.getNextSpaPayload(redirect.replace(/^[^/]+/i, ''))
+            return this.getNextSpaPayload(redirect.replace(/^[^/]+/i, ''), query)
           } else {
             window.location.replace(redirect)
             return null
@@ -98,7 +110,7 @@ export default {
         } else {
           const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
           nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-          nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
+          nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPathNoJson}`
           return nextSpaPayloadResult.data
         }
       }
@@ -146,7 +158,7 @@ export default {
       this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
       // Get SPA payload data for next path.
-      const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`)
+      const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
 
       if (spaPayload) {
         const path = (new URL(spaPayload.url)).pathname
