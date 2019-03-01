@@ -2,7 +2,6 @@
 
 const db = require('../server/db'),
   redirectDataURL = '/_components/redirects/instances/default@published',
-  queryString = require('querystring'),
 
   /**
    * determines if a url is inside an array of redirect objects

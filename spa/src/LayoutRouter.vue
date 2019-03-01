@@ -71,7 +71,7 @@ export default {
      * @param {string} url
      * @returns {boolean}
      */
-    isLocalUrl: (url) => !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url)    ,
+    isLocalUrl: (url) => !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url),
     /**
      *
      * Returns an object with all the JSON payload required for a page render.
@@ -81,11 +81,11 @@ export default {
      * @returns {object}  - The JSON payload
      */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
-      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : '',
-        newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}`
+      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
+      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}`
 
       try {
-          const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
+        const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
             'x-amphora-page-json': true
           }
@@ -96,8 +96,8 @@ export default {
         return nextSpaPayloadResult.data
       } catch (e) {
         if (e.response.status === 301 && e.response.data.redirect) {
-          const separator = e.response.data.redirect.indexOf('?') === -1 ? '?' : '&',
-                  redirect = `${e.response.data.redirect}${queryString ? `${separator}${queryString}` : ''}`
+          const separator = e.response.data.redirect.indexOf('?') === -1 ? '?' : '&'
+          const redirect = `${e.response.data.redirect}${queryString ? `${separator}${queryString}` : ''}`
           if (this.isLocalUrl(redirect)) {
             // we are returning the new path, so need to adjust the browser path
             window.history.replaceState({ }, null, redirect)
@@ -153,7 +153,6 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
-      console.log(to);
       // Start loading animation.
       this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
