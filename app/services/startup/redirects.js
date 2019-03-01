@@ -65,8 +65,8 @@ const db = require('../server/db'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  const spaRequest = req.originalUrl.includes('?json'),
-    redirectQueryString = Object.entries(req.query).length !== 0 ? '?' + queryString.stringify(req.query) : '';
+  const spaRequest = req.originalUrl.includes('?json');
+  let runNext = true;
 
   try {
     if (possibleRedirect(req)) {
@@ -81,19 +81,18 @@ module.exports = async (req, res, next) => {
         } else {
           return res.redirect(301, redirectTo.redirect);
         }
+        runNext = false;
       }
-
       // Handle Amphora redirects (Replicating https://github.com/clay/amphora/blob/6.x-lts/lib/render.js#L219)
       if (spaRequest) {
-        console.log(`Get latest uri for: ${req.hostname}${req.path}`);
         const encode64Buffer = Buffer.from(`${req.hostname}${req.path}`, 'utf8'),
           latestUri = await getLatestUri(`${req.hostname}/_uris/${encode64Buffer.toString('base64')}`),
           decode64Buffer = Buffer.from(latestUri.split('/').pop(), 'base64'),
           redirectUrl = decode64Buffer.toString('utf8');
 
         if ((req.hostname + req.path) !== redirectUrl) {
-          console.log('Redirect to', redirectUrl.replace(req.hostname, '') + redirectQueryString);
-          res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '') + redirectQueryString });
+          res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '') });
+          runNext = false;
         }
       }
     }
@@ -102,6 +101,9 @@ module.exports = async (req, res, next) => {
     console.log('Error in redirects middleware:');
     console.log(e);
   }
-  return next();
+
+  if (runNext) {
+    next();
+  }
 };
 
