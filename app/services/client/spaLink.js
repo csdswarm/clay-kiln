@@ -25,6 +25,11 @@ function apply(anchorTagsContainer) {
   });
 }
 
+/**
+ * Navigate to path in SPA
+ * @function
+ * @param {string} path
+ */
 function navigateTo(path) {
   // eslint-disable-next-line no-undef
   vueApp._router.push(path || '/');
