@@ -41,3 +41,16 @@ module.exports['3.0'] = function (uri, data) {
 
   return data;
 };
+
+module.exports['4.0'] = function (uri, data) {
+  data.filterTags = data.filterTags || [];
+
+  console.log(typeof data.filterTags.find(tag => tag.text === 'Radio.com Latino') === 'undefined');
+
+  // Only change the filter value for the HP instance
+  if (uri.indexOf('instances/home') >= 0 && typeof data.filterTags.find(tag => tag.text === 'Radio.com Latino') === 'undefined') {
+    data.filterTags.push({text: 'Radio.com Latino'});
+  }
+
+  return data;
+};
