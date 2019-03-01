@@ -83,6 +83,7 @@ export default {
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
       const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
       const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}`
+      const newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
 
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
@@ -92,7 +93,7 @@ export default {
         })
 
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-        nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPath}`
+        nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPathNoJson}`
         return nextSpaPayloadResult.data
       } catch (e) {
         if (e.response.status === 301 && e.response.data.redirect) {
@@ -109,7 +110,7 @@ export default {
         } else {
           const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
           nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-          nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPath}`
+          nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPathNoJson}`
           return nextSpaPayloadResult.data
         }
       }
