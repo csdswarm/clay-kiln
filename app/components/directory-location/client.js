@@ -3,13 +3,15 @@
 const Selectr = require('mobius1-selectr'),
   spaLinkService = require('../../services/client/spaLink');
 
-function Constructor(el) {
-  this.mobileDropdown = el.querySelector('.directory-location__dropdown--mobile');
+class DirectoryLocation {
+  constructor(el) {
+    this.mobileDropdown = el.querySelector('.directory-location__dropdown--mobile');
 
-  this.addNavigationListener();
+    this.addNavigationListener();
+  }
 }
 
-Constructor.prototype = {
+DirectoryLocation.prototype = {
   /**
    * Add navigation listener to mobile dropdown
    * @function
@@ -24,4 +26,4 @@ Constructor.prototype = {
   }
 };
 
-module.exports = (el) => new Constructor(el);
+module.exports = (el) => new DirectoryLocation(el);

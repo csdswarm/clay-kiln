@@ -1,16 +1,19 @@
 'use strict';
 
-const Selectr = require('mobius1-selectr');
+const Selectr = require('mobius1-selectr'),
+  spaLinkService = require('../../services/client/spaLink');
 
-function Constructor(el) {
-  this.mobileDropdown = el.querySelector('.directory-genre__dropdown--mobile');
+class DirectoryGenre {
+  constructor(el) {
+    this.mobileDropdown = el.querySelector('.directory-genre__dropdown--mobile');
 
-  if (this.mobileDropdown) {
-    this.addNavigationListener();
+    if (this.mobileDropdown) {
+      this.addNavigationListener();
+    }
   }
 }
 
-Constructor.prototype = {
+DirectoryGenre.prototype = {
   /**
    * Add navigation listener to mobile dropdown
    * @function
@@ -25,4 +28,4 @@ Constructor.prototype = {
   }
 };
 
-module.exports = (el) => new Constructor(el);
+module.exports = el => new DirectoryGenre(el);
