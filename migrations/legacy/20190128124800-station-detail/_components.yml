@@ -157,4 +157,11 @@ _components:
         localsKey: 'station.name'
         suffix: ' | RADIO.COM'
 
-
+  latest-recirculation:
+    instances:
+      station:
+        items: []
+        tag: ''
+        populateBy: station
+        contentType: { article: false, gallery: false }
+        sectionFront: ''
