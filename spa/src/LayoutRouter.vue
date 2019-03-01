@@ -81,25 +81,35 @@ export default {
      * @returns {object}  - The JSON payload
      */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
+      delete query.json;
+      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : '',
+        newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}`
+      console.log(queryString);
+      console.log(`new url: ${window.location.protocol}${newSpaPayloadPath}`)
       try {
-        const nextSpaPayloadResult = await axios.get(`${destination}?json`, {
+          const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
             'x-amphora-page-json': true
           }
         })
 
         nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-        nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
+        nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPath}`
         return nextSpaPayloadResult.data
       } catch (e) {
         if (e.response.status === 301 && e.response.data.redirect) {
-            const separator = e.response.data.redirect.indexOf('?') === -1 ? '?' : '&',
-              queryString =  Object.keys(query).map((key) => key + '=' + query[key] ? query[key] : '').join('&'),
-              redirect = `${e.response.data.redirect}${queryString ? `${separator}${queryString}` : ''}`
-
-            if (this.isLocalUrl(redirect)) {
+            const separator = e.response.data.redirect.indexOf('?') === -1 ? '?' : '&'
+          console.log(separator)
+          console.log(`${separator}${queryString}`)
+          console.log(`${queryString ? `${separator}${queryString}` : ''}`);
+          console.log(e.response.data.redirect);
+          const redirect = `${e.response.data.redirect}${queryString ? `${separator}${queryString}` : ''}`
+console.log('redirect', redirect)
+          if (this.isLocalUrl(redirect)) {
             // we are returning the new path, so need to adjust the browser path
             window.history.replaceState({ }, null, redirect)
+            console.log('redirect:', redirect)
+            console.log('redirect replace:', redirect.replace(/^[^/]+/i));
             return this.getNextSpaPayload(redirect.replace(/^[^/]+/i, ''), query)
           } else {
             window.location.replace(redirect)
@@ -108,7 +118,7 @@ export default {
         } else {
           const nextSpaPayloadResult = await axios.get(`//${window.location.hostname}/_pages/404.json`)
           nextSpaPayloadResult.data.locals = this.$store.state.spaPayloadLocals
-          nextSpaPayloadResult.data.url = `${window.location.protocol}${destination}`
+          nextSpaPayloadResult.data.url = `${window.location.protocol}${newSpaPayloadPath}`
           return nextSpaPayloadResult.data
         }
       }
@@ -152,6 +162,7 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
+      console.log(to);
       // Start loading animation.
       this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
