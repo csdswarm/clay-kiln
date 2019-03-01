@@ -8,7 +8,6 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
 class StationsList {
   constructor(element) {
     this.allStationsCount = 1000;
-    this.stationsListContainer = element;
     this.truncateStations = element.getAttribute('data-truncate');
     this.filterStationsBy = element.getAttribute('data-filter-stations-by-track');
     this.parentElement = element.parentElement;
@@ -49,22 +48,12 @@ StationsList.prototype = {
    * @function
    * @returns {Promise}
    */
-  getLocalStationsFromApi: function () {
-    const params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
+  getLocalStationsFromApi: async function () {
+    const params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`,
+      stationsResponse = await radioApiService.get(`${radioApi}stations${params}`);
 
-    return radioApiService.get(`${radioApi}stations${params}`).then(response => {
-      if (response.data) {
-        const stationsData = {
-          stations: response.data.map(station => {
-            return station.attributes;
-          }),
-          count: response.data.length // Store total count of station results to determine pagination
-        };
-
-        return stationsData;
-      } else {
-        return Promise.reject();
-      }
+    return stationsResponse.map(station => {
+      return station.attributes;
     });
   },
   /**
@@ -172,7 +161,7 @@ StationsList.prototype = {
    * @function
    */
   updateStationsDOMFromFilterType: async function () {
-    let newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
+    const newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
 
     this.parentElement.innerHTML = newStations;
     this.stationsList = this.parentElement.querySelector('ul');
@@ -180,6 +169,7 @@ StationsList.prototype = {
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
 
+    // eslint-disable-next-line one-var
     const stationsDataEl = this.parentElement.querySelector('.stations-list__data');
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
@@ -198,10 +188,8 @@ StationsList.prototype = {
     if (this.filterStationsBy === 'local') {
       this.toggleLoader();
       this.marketID = await market.getID();
-      this.getLocalStationsFromApi().then(stationsData => {
-        this.stationsData = stationsData;
-        this.updateStationsDOMWithIDs(stationsData);
-      });
+      this.stationsData = await this.getLocalStationsFromApi();
+      this.updateStationsDOMWithIDs(this.stationsData);
     } else if (this.filterStationsBy === 'recent') {
       this.toggleLoader();
       const stationsData = this.stationsData = await recentStations.get();
