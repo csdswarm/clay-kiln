@@ -40,7 +40,7 @@ class StationsList {
     document.addEventListener('stations-list-dismount', () => {
       // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
       window.removeEventListener('resize', this.toggleSeeAllLink );
-    });
+    }, { once: true });
   }
 }
 StationsList.prototype = {
@@ -206,18 +206,8 @@ StationsList.prototype = {
       this.toggleLoader();
       const stationsData = this.stationsData = await recentStations.get();
 
-<<<<<<< HEAD
       stationsData.slice(0, 7);
       this.updateStationsDOMWithIDs(stationsData);
-=======
-<<<<<<< HEAD
-      stationsData.length = 7;
-      this.updateStationsDOMWithIDs(stationsData);
-=======
-      stationsData.slice(0, 7);
-      this.updateStationsDOM(stationsData);
->>>>>>> ON-480-Station-Directory-Page
->>>>>>> ON-481-Station-Directory-Featured
     } else {
       // server side populated
 
