@@ -2,17 +2,19 @@
 
 const Selectr = require('mobius1-selectr');
 
-function Constructor(el) {
-  this.discoverTab = document.querySelector('.tabs__discover span');
-  this.dropdown = document.querySelectorAll('.tabs__discover li');
-  this.mobileDropdown = el.querySelector('.station-discover__dropdown--mobile');
-  this.stationLists = el.querySelectorAll('.station-discover__stations-list');
+class StationDiscover {
+  constructor(el) {
+    this.discoverTab = document.querySelector('.tabs__discover span');
+    this.dropdown = document.querySelectorAll('.tabs__discover li');
+    this.mobileDropdown = el.querySelector('.station-discover__dropdown--mobile');
+    this.stationLists = el.querySelectorAll('.station-discover__stations-list');
 
-  this.activateAllLists();
-  this.addNavigationListeners();
+    this.activateAllLists();
+    this.addNavigationListeners();
+  }
 }
 
-Constructor.prototype = {
+StationDiscover.prototype = {
   /**
    * Add navigation listeners
    * @function
@@ -70,4 +72,4 @@ Constructor.prototype = {
   }
 };
 
-module.exports = (el) => new Constructor(el);
+module.exports = (el) => new StationDiscover(el);
