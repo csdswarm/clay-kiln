@@ -61,15 +61,11 @@ const db = require('../server/db'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  console.log(req.originalUrl);
-  delete req.query.json;
-  const spaRequest = req.originalUrl.includes('?json'),
-    redirectQueryString = queryString.stringify(req.query);
+  const spaRequest = req.originalUrl.includes('?json');
   let runNext = true;
-console.log('query string: ', redirectQueryString);
+
   try {
     if (possibleRedirect(req)) {
-      console.log('possible redirect');
       const data = await db.get(`${req.get('host')}${redirectDataURL}`),
         redirects = data.redirects.sort((first, second) => first.path.indexOf('*') - second.path.indexOf('*')),
         redirectTo = redirects ? redirects.find(item => testURL(item.path, req)) : null;
@@ -85,15 +81,13 @@ console.log('query string: ', redirectQueryString);
       }
       // Handle Amphora redirects (Replicating https://github.com/clay/amphora/blob/6.x-lts/lib/render.js#L219)
       if (spaRequest) {
-        console.log('check');
         const encode64Buffer = Buffer.from(`${req.hostname}${req.path}`, 'utf8'),
           latestUri = await getLatestUri(`${req.hostname}/_uris/${encode64Buffer.toString('base64')}`),
           decode64Buffer = Buffer.from(latestUri.split('/').pop(), 'base64'),
           redirectUrl = decode64Buffer.toString('utf8');
 
         if ((req.hostname + req.path) !== redirectUrl) {
-          console.log('Reidrect to', redirectUrl.replace(req.hostname, '') +  redirectQueryString);
-          res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '') +  redirectQueryString});
+          res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '')});
           runNext = false;
         }
       }
