@@ -150,6 +150,7 @@ StationsList.prototype = {
       }),
       newStations = await this.getComponentTemplate(stationIDs);
 
+    console.log("add new stations from IDs", newStations);
     this.stationsList.innerHTML += newStations;
     spaLinkService.apply(this.stationsList);
     this.toggleLoader();
@@ -164,6 +165,7 @@ StationsList.prototype = {
     const newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
 
     this.parentElement.innerHTML = newStations;
+    console.log("add new stations from filter type", newStations);
     this.stationsList = this.parentElement.querySelector('ul');
     spaLinkService.apply(this.parentElement);
     this.displayActiveStations();
