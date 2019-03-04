@@ -1,17 +1,6 @@
 _description: |
   Stations by genre directory page
 
-genre:
-  _label: Show genre(s)
-  _has:
-    input: radio
-    options:
-      - all-music
-      - news-talk
-      - sports
-    validate:
-      required: true
-
 googleInlineAd:
   _component:
     include:

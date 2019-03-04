@@ -44,7 +44,6 @@ _components:
   directory-genre:
     instances:
       music:
-        genre: all-music
         googleInlineAd:
           _ref: /_components/google-ad-manager/instances/billboardBottom
         stationsList:
@@ -52,11 +51,9 @@ _components:
         stationsListTruncated:
           _ref: /_components/stations-list/instances/genreTruncated
       news-talk:
-        genre: news-talk
         stationsList:
           _ref: /_components/stations-list/instances/genre
       sports:
-        genre: sports
         stationsList:
           _ref: /_components/stations-list/instances/genre
 
