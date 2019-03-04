@@ -1,3 +1,4 @@
+_version: 2.0
 primaryStoryLabel:
   _label: Primary Lede Label
   _has:
@@ -5,6 +6,16 @@ primaryStoryLabel:
     validate:
       max: 80
     help: Label for the top lede story. Eg. 'Exclusive'
+
+contentType:
+  _label: Content type
+  _has:
+    validate:
+      required: true
+    input: checkbox-group
+    options:
+      - article
+      - gallery
 items:
   _label: Items
   _has:
@@ -34,31 +45,75 @@ items:
           validate:
             required: true
 
-sectionFront:
-  _label: Section Front
-  _subscribe: sectionFront
+filterTags:
+  _label: Exclude Tags
   _has:
-    input: static
-    text: ${sectionFront}
-filterBySection:
+    input: simple-list
+    autocomplete:
+      list: filterTag
+      allowRemove: true
+      allowCreate: true
+    help: Exclude content from all tags
+
+filterSecondaryArticleType:
+  _label: Exclude Secondary Article Type
+  _has:
+    input: radio
+    options:
+    - Pop
+    - Alternative
+    - Country
+    -
+      name: Hip-Hop R&B
+      value: Hip-Hop R&B
+    - Rock
+    - Icons
+    - Entertainment News
+    - Movies
+    - Television
+    - National News
+    - Politics
+    - Local Politics
+    - Small Business Pulse
+    - NFL
+    - MLB
+    - NBA
+    - NHL
+    - NCAA Football
+    - NCAA Basketball
+    -
+      name: MMA & WWE
+      value: MMA & WWE
+
+sectionFront:
   _label: Filter by Section Front
   _subscribe: sectionFront
   _has:
     input: static
     text: ${sectionFront}
-_groups:
-  settings:
-    fields:
-    - primaryStoryLabel
-    - items
-    - sectionFront
-    _placeholder:
-      ifEmpty: sectionFront
-      height: 400px
-      text: Lead Story(s)
+tag:
+  _label: Filter by Tag
+  _subscribe: tag
+  _has:
+    input: static
+    text: ${tag}
 
 # Component properties
 googleAdRightRail:
   _component:
     include:
     - google-ad-manager
+
+_groups:
+  settings:
+    fields:
+    - primaryStoryLabel
+    - contentType
+    - items
+    - sectionFront
+    - filterTags
+    - filterSecondaryArticleType
+    _placeholder:
+      ifEmpty: sectionFront
+      height: 400px
+      text: Lead Story(s)

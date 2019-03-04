@@ -54,8 +54,11 @@ secondary:
       - trending-recirculation
 tertiary:
   _componentList:
+    page: true
+    validate:
+      max: 3
+      required: true
     include:
-      - google-ad-manager
       - latest-recirculation
       - google-ad-manager
 bottom:
@@ -72,3 +75,4 @@ static:
     include:
       - web-player
       - chartbeat
+

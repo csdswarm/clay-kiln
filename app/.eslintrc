@@ -35,7 +35,8 @@
     "YT": false, // YouTube library
     "videojs": false,// Brightcove library
     "googletag": false, // GPT
-    "vueApp": false // SPA
+    "vueApp": false, // SPA
+    "bc": false // Brightcove
   },
   "rules": {
     // lodash plugin rules

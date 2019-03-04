@@ -1,16 +1,17 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
-  _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  contentTypeService = require('../../services/universal/content-type'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
-  elasticIndex = 'published-articles',
+  elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
-    'feedImgUrl'
+    'feedImgUrl',
+    'contentType'
   ],
   maxItems = 3;
 
@@ -25,7 +26,7 @@ module.exports.save = (ref, data, locals) => {
     return data;
   }
 
-  return Promise.all(_.map(data.items, (item) => {
+  return Promise.all(data.items.map((item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
@@ -47,7 +48,7 @@ module.exports.save = (ref, data, locals) => {
   }))
     .then((items) => {
       data.items = items;
-      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront;
+      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
 
       return data;
     });
@@ -60,7 +61,8 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
+    contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl;
 
   // items are saved from form, articles are used on FE
@@ -70,10 +72,20 @@ module.exports.render = function (ref, data, locals) {
     return data;
   }
 
+  if (contentTypes.length) {
+    queryService.addFilter(query, { terms: { contentType: contentTypes } });
+  }
+
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  if (data.filterBySection) {
-    queryService.addShould(query, { match: { articleType: data.sectionFront }});
+  if (data.sectionFront) {
+    queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
+  }
+  if (data.filterBySecondary) {
+    queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});
+  }
+  if (data.tag) {
+    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
   }
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
@@ -94,11 +106,21 @@ module.exports.render = function (ref, data, locals) {
     });
   }
 
+  if (data.filterTags) {
+    for (const tag of data.filterTags.map((tag) => tag.text)) {
+      queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
+    }
+  }
+
+  if (data.filterSecondaryArticleType) {
+    queryService.addMustNot(query, { match: { secondaryArticleType: data.filterSecondaryArticleType }});
+  }
+
   return queryService.searchByQuery(query)
     .then(function (results) {
 
-      data.articles = data.items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront;
+      data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
 
       return data;
     })

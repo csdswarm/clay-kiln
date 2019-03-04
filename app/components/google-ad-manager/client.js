@@ -10,7 +10,8 @@ let adMapping = require('./adMapping'),
   adsRefreshing = false,
   initialPageAdSlots = [],
   clearDfpTakeover = () => {},
-  numRightRail = 1;
+  numRightRail = 1,
+  numGalleryInline = 1;
 const doubleclickPrefix = '21674100491',
   doubleclickBannerTag = 'NTL.RADIO',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
@@ -105,12 +106,11 @@ googletag.cmd.push(() => {
   // Handle collapsing empty div manually as DFP collapseEmptyDiv doesn't work when lazy loading
   googletag.pubads().addEventListener('slotRenderEnded', event => {
     const id = event.slot.getSlotElementId(),
-      adSlot = document.getElementById(id).parentElement;
-
-    const isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
+      adSlot = document.getElementById(id).parentElement,
+      isOOP = adSlot.classList.contains('google-ad-manager__slot--outOfPage');
 
     if (isOOP) {
-      updateSkinStyles(!(event.isEmpty)); // eslint-disable no-extra-parens
+      updateSkinStyles(!(event.isEmpty)); // eslint-disable-line no-extra-parens
     }
     if (event.isEmpty) {
       adSlot.style.display = 'none';
@@ -192,6 +192,9 @@ function setAds(initialRequest = false) {
 
   if (document.getElementsByTagName('article').length > 0) {
     page = pageName = 'article';
+
+  } else if (document.querySelector('.component--gallery')) {
+    page = pageName = 'vgallery';
   } else {
     if (urlPathname === '') {
       page = 'homepage';
@@ -210,15 +213,16 @@ function setAds(initialRequest = false) {
   // Set up targeting and ad paths based on current page
   switch (page) {
     case 'article':
-      targetingTags = [doubleclickPageTypeTagArticle];
+    case 'vgallery':
+      targetingTags = [pageName];
       [...document.querySelectorAll('.component--tags .tags__item')].forEach(tag => {
         targetingTags.push(tag.getAttribute('data-tag'));
       });
-      targetingPageId = (doubleclickPageTypeTagArticle + '_' + urlPathname.split('/').pop()).substring(0, 39);
+      targetingPageId = (pageName + '_' + urlPathname.split('/').pop()).substring(0, 39);
       [...document.querySelectorAll('.component--article .author')].forEach(tag => {
         targetingAuthors.push(tag.getAttribute('data-author').replace(/\s/, '-').toLowerCase());
       });
-      siteZone = siteZone.concat('/', pageName, '/', doubleclickPageTypeTagArticle);
+      siteZone = siteZone.concat('/', pageName, '/', pageName);
       break;
     case 'homepage':
       targetingTags = [doubleclickPageTypeTagSection, page];
@@ -284,8 +288,13 @@ function setAds(initialRequest = false) {
         .setTargeting('adtest', queryParams.adtest || '')
         .addService(pubAds);
 
+      // Right rail and inline gallery ads need unique names
       if (rightRailAdSizes.includes(adSize)) {
         slot.setTargeting('pos', adPosition + (numRightRail++).toString());
+      }
+
+      if (document.querySelector('.component--gallery') && adPosition === 'leader') {
+        slot.setTargeting('pos', adPosition + (numGalleryInline++).toString());
       }
 
       if (targetingAuthors.length) {

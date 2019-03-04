@@ -1,0 +1,16 @@
+_pages:
+  gallery:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/gallery/instances/new
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/new
+      - /_components/google-ad-manager/instances/halfPageBottom
+    layout: /_components/two-column-layout/instances/article

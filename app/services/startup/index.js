@@ -10,7 +10,9 @@ const pkg = require('../../package.json'),
   RedisStore = require('connect-redis')(session),
   routes = require('../../routes'),
   canonicalJSON = require('./canonical-json'),
+  initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
+  handleRedirects = require('./redirects'),
   log = require('../universal/log').setup({ file: __filename });
 
 function createSessionStore() {
@@ -57,6 +59,8 @@ function setupApp(app) {
     limit: '5mb',
     extended: true
   }));
+
+  app.use(handleRedirects);
 
   app.use(canonicalJSON);
 

@@ -33,7 +33,7 @@ class NielsenMarketingCloud {
       if (spaPayload.main[0]['_ref'].indexOf('article') !== -1) {
         updatedData.tag = spaPayload.main[0].tags.items.map((tag) => {return tag.text;}).join(',');
         updatedData.author = spaPayload.main[0].authors.map((author) => {return author.text;}).join(',');
-        updatedData.format = updatedData.ctg = spaPayload.main[0].articleType;
+        updatedData.format = updatedData.ctg = spaPayload.main[0].sectionFront;
       } else if (spaPayload.main[0]['_ref'].indexOf('station-detail') !== -1) {
         updatedData.station = spaPayload.main[0].station;
         updatedData.keyword = spaPayload.main[0].keyword;
@@ -49,7 +49,7 @@ class NielsenMarketingCloud {
       if (spaPayload.toArticlePage._ref) {
         updatedData.tag = spaPayload.toArticlePage.tags.items.map((tag) => {return tag.text;}).join(',');
         updatedData.author = spaPayload.toArticlePage.authors.map((author) => {return author.text;}).join(',');
-        updatedData.format = updatedData.ctg = spaPayload.toArticlePage.articleType;
+        updatedData.format = updatedData.ctg = spaPayload.toArticlePage.sectionFront;
       } else if (spaPayload.toStationDetailPage._ref) { // todo: will need to update once station-detail component is created
         updatedData.station = spaPayload.toStationDetailPage.station;
         updatedData.keyword = spaPayload.toStationDetailPage.keyword;

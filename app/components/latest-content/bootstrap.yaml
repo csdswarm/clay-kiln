@@ -1,5 +1,6 @@
 _components:
   latest-content:
+    contentType: { article: true, gallery: true }
     sectionFronts:
       - 'music'
       - 'sports'
