@@ -58,6 +58,7 @@ function getGenreData(genre) {
 }
 
 module.exports.render = async (uri, data, locals) => {
+  data.stations = [];
   const route = 'stations';
   let params = {
     'page[size]': 1000,
