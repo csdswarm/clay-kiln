@@ -2,7 +2,7 @@
 
 const _get = require('lodash/get'),
   clayutils = require('clayutils'),
-  rest = require('../../../../services/universal/rest');
+  rest = require('../../../universal/rest');
 
 let updatingPage = false,
   updatingComponent;
