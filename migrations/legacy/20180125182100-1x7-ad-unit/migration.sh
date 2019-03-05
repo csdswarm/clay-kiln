@@ -27,28 +27,28 @@ curl -X PUT "$http://$1/_components/google-ad-manager/instances/mobileInterstiti
 
 printf "\nUpdating Layouts...\n\n\n"
 
-layout="_components/one-column-layout/instances/general"
+layout="_layouts/one-column-layout/instances/general"
 printf "\n\nUpdating $layout...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/$layout > ./layout.json
 node ./layout-update.js "$1" "/$layout";
 curl -X PUT $http://$1/$layout -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./layout.json -o /dev/null -s
 curl -X PUT $http://$1/$layout@published -H 'Authorization: token accesskey' -o /dev/null -s
 
-layout="_components/one-column-layout/instances/bare"
+layout="_layouts/one-column-layout/instances/bare"
 printf "\n\nUpdating $layout...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/$layout > ./layout.json
 node ./layout-update.js "$1" "/$layout";
 curl -X PUT $http://$1/$layout -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./layout.json -o /dev/null -s
 curl -X PUT $http://$1/$layout@published -H 'Authorization: token accesskey' -o /dev/null -s
 
-layout="_components/one-column-layout/instances/article"
+layout="_layouts/one-column-layout/instances/article"
 printf "\n\nUpdating $layout...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/$layout > ./layout.json
 node ./layout-update.js "$1" "/$layout";
 curl -X PUT $http://$1/$layout -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./layout.json -o /dev/null -s
 curl -X PUT $http://$1/$layout@published -H 'Authorization: token accesskey' -o /dev/null -s
 
-layout="_components/two-column-layout/instances/article"
+layout="_layouts/two-column-layout/instances/article"
 printf "\n\nUpdating $layout...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/$layout > ./layout.json
 node ./layout-update.js "$1" "/$layout";
