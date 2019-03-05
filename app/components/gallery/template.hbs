@@ -3,11 +3,11 @@
     <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/gallery/media/radiocom-purple-monogram.svg" }}}</a>
     <span class="breadcrumb__separator">/</span>
     <a href="//{{ @root.locals.site.host }}/{{sectionFront}}" class="breadcrumb__link">{{sectionFront}}</a>
-    {{#if secondaryGalleryType}}
-      {{ set 'hypenatedSecondaryGalleryType' (replace (replace (urlencode (replace (trim (lowercase secondaryGalleryType)) ' ' '-')) "/" "%2F") "&" "%26") }}
+    {{#if secondaryArticleType}}
+      {{ set 'hypenatedSecondaryArticleType' (replace (replace (urlencode (replace (trim (lowercase secondaryArticleType)) ' ' '-')) "/" "%2F") "&" "%26") }}
       <span class="breadcrumb__separator">/</span>
       <a class="breadcrumb__link"
-         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryGalleryType }}">{{ secondaryGalleryType }}</a>
+         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryArticleType }}">{{ secondaryArticleType }}</a>
     {{/if}}
   </nav>
   <header class="gallery__header">
@@ -236,7 +236,7 @@
             </li>
             <li class="item">
               <h4 class="item-title">Secondary Gallery Type</h4>
-              <p class="item-data">{{ secondaryGalleryType }}</p>
+              <p class="item-data">{{ secondaryArticleType }}</p>
             </li>
           </ul>
         </section>

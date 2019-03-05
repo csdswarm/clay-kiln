@@ -7,7 +7,8 @@ _components:
     contentType: { article: true, gallery: true }
     sectionFront: ''
     sectionFrontManual: ''
-    filterBySecondary: ''
+    filterTags: []
+    filterSecondaryArticleTypes: []
     populateFrom: ''
     locationOfContentFeed: ''
     googleAdRightRail:
