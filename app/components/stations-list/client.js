@@ -35,10 +35,10 @@ class StationsList {
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
-    window.addEventListener('resize', this.toggleSeeAllLink.bind(this) );
+    window.addEventListener('resize', this.toggleSeeAllLinkAndAds.bind(this) );
     document.addEventListener('stations-list-dismount', () => {
       // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
-      window.removeEventListener('resize', this.toggleSeeAllLink );
+      window.removeEventListener('resize', this.toggleSeeAllLinkAndAds );
     }, { once: true });
   }
 }
@@ -61,35 +61,37 @@ StationsList.prototype = {
    * number of results and the page width
    * @function
    */
-  toggleSeeAllLink: function () {
-    if (this.seeAllLink) {
-      let stationsShownOnLoad;
-
-      if (window.innerWidth >= 1280) {
-        if (this.pageType === 'station detail') {
-          stationsShownOnLoad = 10;
-        } else if (this.directoryType === 'featured') {
-          stationsShownOnLoad = 14;
-        } else {
-          stationsShownOnLoad = 7;
-        }
-      } else if (window.innerWidth >= 1024) {
-        if (this.pageType === 'station detail') {
-          stationsShownOnLoad = 8;
-        } else if (this.directoryType === 'featured') {
-          stationsShownOnLoad = 12;
-        } else {
-          stationsShownOnLoad = 6;
-        }
+  toggleSeeAllLinkAndAds: function () {
+    if (window.innerWidth >= 1280) {
+      if (this.pageType === 'station detail') {
+        this.stationsShownOnLoad = this.stationsShownInTwoRows = 10;
+      } else if (this.directoryType === 'featured') {
+        this.stationsShownOnLoad = this.stationsShownInTwoRows = 14;
       } else {
-        stationsShownOnLoad = 6;
+        this.stationsShownOnLoad = 7;
+        this.stationsShownInTwoRows = 14;
       }
-      if (this.stationsData.length <= stationsShownOnLoad || window.innerWidth < 480) {
+    } else if (window.innerWidth >= 1024) {
+      if (this.pageType === 'station detail') {
+        this.stationsShownOnLoad = this.stationsShownInTwoRows = 8;
+      } else if (this.directoryType === 'featured') {
+        this.stationsShownOnLoad = this.stationsShownInTwoRows = 12;
+      } else {
+        this.stationsShownOnLoad = this.stationsShownInTwoRows = 12;
+      }
+    } else {
+      this.stationsShownOnLoad = this.stationsShownInTwoRows = 6;
+    }
+
+    if (this.seeAllLink) {
+      if (this.stationsData.length <= this.stationsShownOnLoad || window.innerWidth < 480) {
         this.seeAllLink.style.display = 'none';
       } else {
         this.seeAllLink.style.display = 'flex';
       }
     }
+
+    this.insertInlineAds();
   },
   /**
    * Show or hide loader
@@ -101,11 +103,45 @@ StationsList.prototype = {
     }
   },
   /**
+   * Get ad component template
+   * @function
+   * @returns {object}
+   */
+  getAdComponentTemplate: async function () {
+    const response = await fetch(`//${window.location.hostname}/_components/google-ad-manager/instances/billboardBottom.html?ignore_resolve_media=true`);
+
+    return await response.text();
+  },
+  /**
+   * Insert inline ad every two rows of results
+   * Rows are dynamic based on window width and page type
+   * @function
+   * @returns {string}
+   */
+  insertInlineAds: async function () {
+    if (!this.inlineAd) {
+      this.inlineAd = await this.getAdComponentTemplate();
+    }
+    this.stationsList.querySelectorAll('li.station').forEach((station, i) => {
+      if (station.nextElementSibling) {
+        if ((i + 1) % this.stationsShownInTwoRows === 0 &&
+          !station.nextElementSibling.classList.contains('component--google-ad-manager')
+        ) {
+          station.insertAdjacentHTML('afterend', this.inlineAd);
+        } else if ((i + 1) % this.stationsShownInTwoRows !== 0 &&
+          station.nextElementSibling.classList.contains('component--google-ad-manager')
+        ) {
+          station.nextElementSibling.remove();
+        }
+      }
+    });
+  },
+  /**
    * Get stations list template from component
    * @function
    * @param {object[]} stationIDs
    * @param {string} filter -- category, genre, or market type
-   * @returns {object}
+   * @returns {string}
    */
   getComponentTemplate: async function (stationIDs, filter) {
     let queryParamString = '?ignore_resolve_media=true',
@@ -174,7 +210,7 @@ StationsList.prototype = {
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
     this.seeAllLink = this.parentElement.querySelector('.header-row__see-all-link');
-    this.toggleSeeAllLink();
+    this.toggleSeeAllLinkAndAds();
     this.loadMoreBtn = this.parentElement.querySelector('.stations-list__load-more');
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations(this.parentElement.querySelector('ul')) );
@@ -203,7 +239,7 @@ StationsList.prototype = {
         this.toggleLoader();
         this.updateStationsDOMFromFilterType();
       } else {
-        this.toggleSeeAllLink();
+        this.toggleSeeAllLinkAndAds();
         this.displayActiveStations();
       }
     }

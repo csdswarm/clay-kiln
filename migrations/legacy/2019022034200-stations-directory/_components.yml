@@ -1,28 +1,4 @@
 _components:
-  stations-list:
-    instances:
-      market:
-        filterBy: market
-        market: ''
-        listTitle: ''
-        truncatedList: false
-        googleInlineAd:
-          _ref: /_components/google-ad-manager/instances/billboardBottom
-      genre:
-        filterBy: genre
-        genre: ''
-        listTitle: ''
-        truncatedList: false
-        googleInlineAd:
-          _ref: /_components/google-ad-manager/instances/billboardBottom
-      category:
-        filterBy: category
-        category: ''
-        listTitle: ''
-        truncatedList: false
-        googleInlineAd:
-          _ref: /_components/google-ad-manager/instances/billboardBottom
-
   directory-featured:
     instances:
       default:
