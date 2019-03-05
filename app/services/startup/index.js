@@ -12,7 +12,8 @@ const pkg = require('../../package.json'),
   canonicalJSON = require('./canonical-json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
-  handleRedirects = require('./redirects');
+  handleRedirects = require('./redirects'),
+  currentStation = require('./currentStation');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -62,6 +63,8 @@ function setupApp(app) {
   app.use(handleRedirects);
 
   app.use(canonicalJSON);
+
+  app.use(currentStation);
 
   db.setup();
   sessionStore = createSessionStore();

@@ -59,11 +59,19 @@
         </div>
 
         <div class="info__from-station" data-editable="stationSource">
-          {{#ifAll stationTitle stationURL}}
-            <a href="{{ striptags stationURL }}" target="_blank">{{ stationTitle }}</a>
-          {{else if stationTitle}}
-            {{ stationTitle }}
-          {{/ifAll}}
+          {{#ifAny stationLogoUrl stationTitle}}
+            {{#if stationURL}}
+              <a href="{{ striptags stationURL }}" target="_blank">
+            {{/if}}
+                {{#if stationLogoUrl}}
+                  <img class="from-station__logo" src="{{ stationLogoUrl }}?width=60&height=60&crop=1:1" />
+                {{else}}
+                  <div>{{ stationTitle }}</div>
+                {{/if}}
+            {{#if stationURL}}
+              </a>
+            {{/if}}
+          {{/ifAny}}
         </div>
 
         {{! date and time }}

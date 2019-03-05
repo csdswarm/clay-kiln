@@ -167,10 +167,14 @@ stationTitle:
   _has:
     input: text
     help: Title of the station
-    validate:
-      required:
-        field: stationURL
-        operator: truthy
+stationLogoUrl:
+  _has:
+    input: advanced-image-upload
+    webLabel: Staion Logo via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    help: LOGO of the station
 stationURL:
   _label: Station URL
   _has:
@@ -178,7 +182,7 @@ stationURL:
     type: url
     validate:
       required:
-        field: stationTitle
+        field: stationTitle xor stationLogoUrl
         operator: truthy
       # Using pattern from https://www.regextester.com/93652
       # Detailed RegEx breakdown: https://regex101.com/r/uh84QI/1
@@ -384,12 +388,13 @@ _groups:
       ifEmpty: secondaryAttribution
   stationSource:
     fields:
+      - stationLogoUrl
       - stationTitle
       - stationURL
     _placeholder:
       text: Station Source
       height: 30px
-      ifEmpty: stationTitle
+      ifEmpty: stationTitle and stationLogoUrl
   circFeeds:
     fields:
       - feedImgUrl

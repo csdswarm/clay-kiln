@@ -394,6 +394,7 @@
 
     .advanced-image-upload__attached-image {
       width: 100%;
+      margin-top: 16px;
     }
 
     .advanced-image-upload__image-placeholder {

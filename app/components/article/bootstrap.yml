@@ -1,5 +1,8 @@
 _components:
   article:
+    stationTitle: '${stationTitle}'
+    stationLogoUrl: '${stationLogoUrl}'
+    stationURL: '${stationURL}'
     headline: ''
     primaryHeadline: ''
     seoHeadline: ''
