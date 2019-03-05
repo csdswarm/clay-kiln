@@ -29,7 +29,8 @@ module.exports.routes = [
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
   { path: '/newsletter/subscribe' },
-  { path: '/news/small-business-pulse' }
+  { path: '/news/small-business-pulse' },
+  { path: '/small-business-pulse/:slug' }
 ];
 
 // Resolve the url to publish to
