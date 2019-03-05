@@ -4,8 +4,6 @@
  *
  */
 
-import debounce from 'lodash.debounce'
-import $ from 'jquery'
 import * as mutationTypes from '../vuex/mutationTypes'
 
 const PlayerInterface = {
@@ -15,10 +13,9 @@ const PlayerInterface = {
       // Throw timeout error to handle promise "reject" case if this hangs for whatever reason.
       setTimeout(() => {
         reject(new Error('Player JS bundle timed out during loading.'))
-      }, 1000)
+      }, 10000)
 
-      document.addEventListener('web-player-head/player-loaded', () => {
-
+      document.addEventListener('web-player/player-loaded', () => {
         // Store reference to the player in Vuex so we can interact with it appropriately in SPA.
         if (window.RadioPlayer) {
           this.$store.commit(mutationTypes.LOAD_RADIO_PLAYER, window.RadioPlayer)
@@ -26,12 +23,10 @@ const PlayerInterface = {
         } else {
           return reject(new Error('window.RadioPlayer failed to load correctly.'))
         }
-
       })
 
-      const event = new CustomEvent('web-player-head/load-player')
-      document.dispatchEvent(event)      
-
+      const event = new CustomEvent('web-player/load-player')
+      document.dispatchEvent(event)
     })
   },
   initializePlayer: function initializePlayer () {
@@ -40,10 +35,8 @@ const PlayerInterface = {
 
   },
   loadStationByIdAndPlay: function loadStationByIdAndPlay (stationId) {
-
     // NOTE - updateStationList() returns a promise.
     return this.$store.state.radioPlayer.updateStationList([stationId])
-
   },
   playerPlay: function playerPlay () {
     return this.$store.state.radioPlayer.play()

@@ -1,5 +1,5 @@
 {{#unless @root.locals.edit}}
-<div data-uri="{{ default _ref _self }}" class="component component--web-player"> 
+<div data-uri="{{ default _ref _self }}" data-web-player-host="{{@root.locals.site.webPlayerHost}}" data-brightcove-account-id="{{ @root.locals.site.brightcoveAccountId }}" class="component component--web-player"> 
   <div id="playerContainer"></div>
 </div>
 {{/unless}}

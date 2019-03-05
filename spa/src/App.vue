@@ -33,11 +33,12 @@ export default {
     // the player so we lazy-load in the player only when we actually need it.
     PlayerInterface.loadPlayer.call(this)
       .then(() => {
+        console.log('PLAYER LOADED!')
         PlayerInterface.initializePlayer.call(this)
         return PlayerInterface.loadStationByIdAndPlay.call(this, 417) // TODO - this station id should not be hard coded...
       })
       .then(() => {
-        console.log('the station should be loaded and playing.')
+        // console.log('the station should be loaded and playing.')
 
 
 
