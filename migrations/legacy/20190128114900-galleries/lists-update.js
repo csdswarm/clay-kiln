@@ -4,8 +4,8 @@ const listPath = './lists.yml';
 fs.readFile(listPath, 'utf-8', function(err, oldList) {
   console.log("Old List: ", oldList);
   let newList = oldList.concat(`\
-    - id: gallery
-      title: New Gallery
+        - id: gallery
+          title: New Gallery
   `);
   console.log("Updated List: ", newList);
   fs.writeFile(listPath, newList, 'utf-8', function (err) {

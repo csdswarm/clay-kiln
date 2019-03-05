@@ -4,12 +4,12 @@ _lists:
   sources: []
   bookmarks: []
   new-pages:
-    -
-      id: new-two-col
-      title: New Article
-    -
-      id: curated-topic
-      title: Content Collection
-    -
-      id: gallery
-      title: New Gallery
+    - id: general-content
+      title: '1. General Content'
+      children:
+        - id: new-two-col
+          title: New Article
+        - id: curated-topic
+          title: Content Collection
+        - id: gallery
+          title: New Gallery
