@@ -28,7 +28,7 @@
                     {{ square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150w"
                   sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
                 >
-                <button class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
+                <button data-play-station="{{ id }}" class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
               </div>
               <span class="station__name">{{ name }}</span>
               <span class="station__secondary-info">{{ slogan }}</span>
