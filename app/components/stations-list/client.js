@@ -111,7 +111,7 @@ StationsList.prototype = {
   /**
    * Get ad component template
    * @function
-   * @returns {object}
+   * @returns {string}
    */
   getAdComponentTemplate: async function () {
     const response = await fetch(`//${window.location.hostname}/_components/google-ad-manager/instances/billboardBottom.html?ignore_resolve_media=true`);
@@ -122,7 +122,6 @@ StationsList.prototype = {
    * Insert inline ad every two rows of results
    * Rows are dynamic based on window width and page type
    * @function
-   * @returns {string}
    */
   insertInlineAds: async function () {
     stationsListObserver.observe(this.stationsList, { attributes: false, childList: true, subtree: true });
