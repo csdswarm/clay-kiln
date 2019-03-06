@@ -8,12 +8,26 @@ if (!host) {
   throw new Error('Missing host');
 }
 
+let children = listJSON[0].children || listJSON;
+children.map(child => {
+  switch (child.title) {
+    case 'New Article':
+      child.title = 'Article';
+      break;
+    case 'New Gallery':
+      child.title = 'Gallery';
+      break;
+  }
+
+  return child;
+});
+
 newListJSON = {
   '_lists': {
     'new-pages': [{
       id: 'General-content',
       title: '1. General Content',
-      children: listJSON[0].children || listJSON
+      children: children
     }]
   }
 };
