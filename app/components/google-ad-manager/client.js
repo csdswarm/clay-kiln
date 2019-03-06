@@ -2,9 +2,7 @@
 
 require('intersection-observer');
 
-let adMapping = require('./adMapping'),
-  adSizes = adMapping.adSizes,
-  refreshCount = 0,
+let refreshCount = 0,
   allAdSlots = {},
   initialAdRequestComplete = false,
   adsRefreshing = false,
@@ -12,7 +10,9 @@ let adMapping = require('./adMapping'),
   clearDfpTakeover = () => {},
   numRightRail = 1,
   numGalleryInline = 1;
-const doubleclickPrefix = '21674100491',
+const adMapping = require('./adMapping'),
+  adSizes = adMapping.adSizes,
+  doubleclickPrefix = '21674100491',
   doubleclickBannerTag = 'NTL.RADIO',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   doubleclickPageTypeTagArticle = 'article',
@@ -55,19 +55,7 @@ document.addEventListener('gtm-lytics-setup', function () {
   setAdsIDs(true);
 }, false);
 
-// Set up ads when navigating in SPA
-document.addEventListener('google-ad-manager-mount', function () {
-  if (initialAdRequestComplete) {
-    // code to run when vue mounts/updates
-    if (googletag.pubadsReady) { // Only do this if the service was created
-      googletag.pubads().updateCorrelator(); // Force correlator update on new pages
-    }
-    setAdsIDs();
-  }
-});
-
-// Reset data when navigating in SPA
-document.addEventListener('google-ad-manager-dismount', function () {
+function resetAds(resetSetupAds) {
   clearDfpTakeover();
   // undo style changes to billboard
 
@@ -80,6 +68,30 @@ document.addEventListener('google-ad-manager-dismount', function () {
   googletag.cmd.push(function () {
     googletag.destroySlots();
   });
+
+  if (resetSetupAds) {
+    setupAds();
+  }
+}
+
+function setupAds() {
+  if (initialAdRequestComplete) {
+    // code to run when vue mounts/updates
+    if (googletag.pubadsReady) { // Only do this if the service was created
+      googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+    }
+    setAdsIDs();
+  }
+}
+
+// Set up ads when navigating in SPA
+document.addEventListener('google-ad-manager-mount', setupAds);
+document.addEventListener('inlineAdsInserted', resetAds);
+
+// Reset data when navigating in SPA
+document.addEventListener('google-ad-manager-dismount', function () {
+  document.removeEventListener('inlineAdsInserted', resetAds);
+  resetAds(false);
 });
 
 // Create listeners inside of the context of having googletag.pubads()

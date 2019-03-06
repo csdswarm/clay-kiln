@@ -3,7 +3,12 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
-  spaLinkService = require('../../services/client/spaLink');
+  spaLinkService = require('../../services/client/spaLink'),
+  insertInlineAdsEvent = new CustomEvent('inlineAdsInserted'),
+  stationsListObserver = new MutationObserver(() => {
+    document.dispatchEvent(insertInlineAdsEvent);
+    stationsListObserver.disconnect();
+  });
 
 class StationsList {
   constructor(element) {
@@ -90,8 +95,9 @@ StationsList.prototype = {
         this.seeAllLink.style.display = 'flex';
       }
     }
-
-    this.insertInlineAds();
+    if (this.pageType === 'stations directory') {
+      this.insertInlineAds();
+    }
   },
   /**
    * Show or hide loader
@@ -119,6 +125,8 @@ StationsList.prototype = {
    * @returns {string}
    */
   insertInlineAds: async function () {
+    stationsListObserver.observe(this.stationsList, { attributes: false, childList: true, subtree: true });
+
     if (!this.inlineAd) {
       this.inlineAd = await this.getAdComponentTemplate();
     }
@@ -135,6 +143,7 @@ StationsList.prototype = {
         }
       }
     });
+
   },
   /**
    * Get stations list template from component
