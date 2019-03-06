@@ -1,8 +1,5 @@
 _components:
   article:
-    stationTitle: '${stationTitle}'
-    stationLogoUrl: '${stationLogoUrl}'
-    stationURL: '${stationURL}'
     headline: ''
     primaryHeadline: ''
     seoHeadline: ''
@@ -16,7 +13,9 @@ _components:
       -
         prefix: by
         names: []
-        sources: []
+        sources: [{text: '$text'}]
+    stationLogoUrl: '${stationLogoUrl}'
+    stationURL: '${stationURL}'
     authorsAndMeta: []
     secondaryBylineText: 'Photograph By'
     secondaryAttribution: []

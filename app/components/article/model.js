@@ -10,15 +10,22 @@ const createContent = require('../../services/universal/create-content'),
    */
   defaultKeyValue = (obj, key, value) => {
     if (obj[key]) {
-      console.log(key, value, obj[key], obj[key].replace(`\${${key}}`, value || ''), value || '')
       obj[key] = obj[key].replace(`\${${key}}`, value || '');
     }
   };
 
 module.exports.render = function (ref, data, locals) {
-  defaultKeyValue(data, 'stationTitle', locals.station.name);
-  defaultKeyValue(data, 'stationLogoUrl', locals.station.square_logo_small);
-  defaultKeyValue(data, 'stationURL', locals.station.website);
+  const isStation = locals.station.slug !== 'www';
+
+  defaultKeyValue(data, 'stationLogoUrl', isStation ? locals.station.square_logo_small : '');
+  defaultKeyValue(data, 'stationURL', isStation ? locals.station.website : '');
+
+  if (data.byline && data.byline[0].sources.length) {
+    defaultKeyValue(data.byline[0].sources[0], 'text', isStation ? locals.station.name : '');
+    if (data.byline[0].sources[0].text === '') {
+      data.byline[0].sources.length = 0;
+    }
+  }
 
   return createContent.render(ref, data, locals);
 };

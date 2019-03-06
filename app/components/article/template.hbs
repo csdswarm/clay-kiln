@@ -48,32 +48,28 @@
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
-        <div data-editable="bylines" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
-          {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
+        <div data-editable="bylines">
+          <div class="info__by-authors{{#unless stationURL}} info__by-authors--no-station{{/unless}}">
+              {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
           -->{{#each byline as |byline|}}<!--
             -->{{#each sources as |source|}}<!--
               --><span class="source">{{#ifAny byline.names.length @index}},{{/ifAny}} {{source.text}}</span>
-            {{/each}}
           {{/each}}
-          {{#if stationTitle}}<span>,</span>{{/if}}
-        </div>
+          {{/each}}
+          </div>
 
-        <div class="info__from-station" data-editable="stationSource">
-          {{#ifAny stationLogoUrl stationTitle}}
-            {{#if stationURL}}
+          {{#if stationLogoUrl}}
+            <div class="info__from-station">
+              {{#if stationURL}}
               <a href="{{ striptags stationURL }}" target="_blank">
-            {{/if}}
-                {{#if stationLogoUrl}}
-                  <img class="from-station__logo" src="{{ stationLogoUrl }}?width=60&height=60&crop=1:1" />
-                {{else}}
-                  <div>{{ stationTitle }}</div>
-                {{/if}}
-            {{#if stationURL}}
+              {{/if}}
+              <img class="from-station__logo" src="{{ stationLogoUrl }}?width=60&height=60&crop=1:1" />
+              {{#if stationURL}}
               </a>
-            {{/if}}
-          {{/ifAny}}
+              {{/if}}
+            </div>
+          {{/if}}
         </div>
-
         {{! date and time }}
         <time class="info__timestamp" datetime="{{ date }}" itemprop="datePublished" data-editable="publishedDate">
           {{#if date}}
@@ -146,9 +142,9 @@
         <section class="circulation__section" data-editable="circSlug">
           {{#if slugLock}}
             <div class="alert alert-warning">
-                <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
+              <span style="vertical-align: sub;">{{{ read 'public/media/components/article/warning.svg' }}}</span>
 
-                Article Slug is locked. Unlock in Article Settings.
+              Article Slug is locked. Unlock in Article Settings.
             </div>
           {{/if}}
           <h3 class="subtitle circ-edit">Slug and URL</h3>
@@ -173,12 +169,12 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title required">Recirculation Image</h4>
-              <p class="item-data">
-                {{#if feedImgUrl}}
-                  <img class="feedimg" src="{{ feedImgUrl }}?width=300" alt="" />
-                {{else}}
-                  <div class="empty-feedimg"></div>
-                {{/if}}
+            <p class="item-data">
+              {{#if feedImgUrl}}
+                <img class="feedimg" src="{{ feedImgUrl }}?width=300" alt="" />
+              {{else}}
+                <div class="empty-feedimg"></div>
+              {{/if}}
               </p>
             </li>
           </ul>

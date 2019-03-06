@@ -162,11 +162,6 @@ sources:
   _publish: sources
   _has:
     help: An Array of Objects containing sources names for search.
-stationTitle:
-  _label: Station Title
-  _has:
-    input: text
-    help: Title of the station
 stationLogoUrl:
   _has:
     input: advanced-image-upload
@@ -175,6 +170,10 @@ stationLogoUrl:
     uploadLabel: Upload Image Attachment
     uploadHelp: Choose an image file from your computer
     help: LOGO of the station
+    validate:
+      required:
+        field: stationURL
+        operator: truthy
 stationURL:
   _label: Station URL
   _has:
@@ -182,7 +181,7 @@ stationURL:
     type: url
     validate:
       required:
-        field: stationTitle xor stationLogoUrl
+        field: stationLogoUrl
         operator: truthy
       # Using pattern from https://www.regextester.com/93652
       # Detailed RegEx breakdown: https://regex101.com/r/uh84QI/1
@@ -386,15 +385,6 @@ _groups:
       text: Secondary Bylines
       height: 60px
       ifEmpty: secondaryAttribution
-  stationSource:
-    fields:
-      - stationLogoUrl
-      - stationTitle
-      - stationURL
-    _placeholder:
-      text: Station Source
-      height: 30px
-      ifEmpty: stationTitle and stationLogoUrl
   circFeeds:
     fields:
       - feedImgUrl
@@ -418,10 +408,12 @@ _groups:
   bylines:
     fields:
       - byline
+      - stationLogoUrl
+      - stationURL
     _placeholder:
-      text: Byline
-      height: 30px
-      ifEmpty: 'byline.names'
+      text: Byline and Station Logo
+      height: 60px
+      ifEmpty: byline.names and byline.sources and stationLogoUrl
 
   settings:
     fields:
