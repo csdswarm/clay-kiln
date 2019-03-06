@@ -9,7 +9,11 @@ let refreshCount = 0,
   initialPageAdSlots = [],
   clearDfpTakeover = () => {},
   numRightRail = 1,
-  numGalleryInline = 1;
+  numGalleryInline = 1,
+  numStationsDirectoryInline = 1,
+  targetingRadioStation,
+  targetingGenre = 'aaa',
+  targetingCategory = 'music';
 const adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
@@ -17,12 +21,12 @@ const adMapping = require('./adMapping'),
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
+  doubleclickPageTypeTagStationsDirectory = 'stationsdirectory',
+  doubleclickPageTypeTagStationDetail = 'station',
   doubleclickPageTypeTagTag = 'tag',
   doubleclickPageTypeTagAuthor = 'authors',
   adRefreshInterval = '60000', // Time in milliseconds for ad refresh
   targetingNationalRadioStation = 'natlrc',
-  targetingGenre = 'aaa',
-  targetingCategory = 'music',
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
@@ -55,6 +59,11 @@ document.addEventListener('gtm-lytics-setup', function () {
   setAdsIDs(true);
 }, false);
 
+/**
+ * Reset ads settings
+ *
+ * @param {boolean} resetSetupAds
+ */
 function resetAds(resetSetupAds) {
   clearDfpTakeover();
   // undo style changes to billboard
@@ -63,6 +72,11 @@ function resetAds(resetSetupAds) {
   allAdSlots = {},
   initialPageAdSlots = [],
   numRightRail = 1,
+  numGalleryInline = 1,
+  numStationsDirectoryInline = 1,
+  targetingRadioStation = null,
+  targetingGenre = 'aaa',
+  targetingCategory = 'music',
   refreshCount = 0;
 
   googletag.cmd.push(function () {
@@ -74,6 +88,9 @@ function resetAds(resetSetupAds) {
   }
 }
 
+/**
+ * Render new ads
+ */
 function setupAds() {
   if (initialAdRequestComplete) {
     // code to run when vue mounts/updates
@@ -84,8 +101,8 @@ function setupAds() {
   }
 }
 
-// Set up ads when navigating in SPA
-document.addEventListener('google-ad-manager-mount', setupAds);
+// Set up ads when navigating in SPA or resizing window
+document.addEventListener('google-ad-manager-mount', resetAds);
 document.addEventListener('inlineAdsInserted', resetAds);
 
 // Reset data when navigating in SPA
@@ -202,24 +219,27 @@ function setAds(initialRequest = false) {
     targetingPageId = '',
     targetingAuthors = [];
 
-  if (document.getElementsByTagName('article').length > 0) {
+  if (urlPathname === '') {
+    page = 'homepage';
+  } else if (document.getElementsByTagName('article').length > 0) {
     page = pageName = 'article';
-
   } else if (document.querySelector('.component--gallery')) {
     page = pageName = 'vgallery';
+  } else if (document.querySelector('.component--stations-directory')) {
+    page = 'stationsDirectory';
+    pageName = urlPathname.replace('/', '_');
+  } else if (document.querySelector('.component--station-detail')) {
+    page = 'stationDetail';
+    pageName = urlPathname.split('/')[0];
+  } else if (document.querySelector('.component--topic-page')) {
+    page = 'topicPage';
+    pageName = urlPathname.replace(/[^\/]+\//, '');
+  } else if (document.querySelector('.component--author-page')) {
+    page = 'authorPage';
+    pageName = urlPathname.replace('/', '_');
   } else {
-    if (urlPathname === '') {
-      page = 'homepage';
-    } else if (document.querySelector('.component--topic-page')) {
-      page = 'topicPage';
-      pageName = urlPathname.replace(/[^\/]+\//, '');
-    } else if (document.querySelector('.component--author-page')) {
-      page = 'authorPage';
-      pageName = urlPathname.replace('/', '_');
-    } else {
-      page = 'sectionFront';
-      pageName = urlPathname;
-    }
+    page = 'sectionFront';
+    pageName = urlPathname;
   }
 
   // Set up targeting and ad paths based on current page
@@ -245,6 +265,31 @@ function setAds(initialRequest = false) {
       targetingTags = [doubleclickPageTypeTagSection, pageName];
       targetingPageId = pageName;
       siteZone = siteZone.concat('/', pageName, '/article');
+      break;
+    case 'stationsDirectory':
+      targetingTags = [doubleclickPageTypeTagStationsDirectory, pageName];
+      targetingPageId = pageName;
+      siteZone = siteZone.concat(`/${pageName}/${doubleclickPageTypeTagStationsDirectory}`);
+      if (document.querySelector('directory-page--music')) {
+        targetingCategory = 'music';
+        targetingGenre = urlPathname.replace('stations/music/', '');
+      } else if (document.querySelector('directory-page--news-talk')) {
+        targetingCategory = targetingGenre = 'news-talk';
+      } else if (document.querySelector('directory-page--sports')) {
+        targetingCategory = targetingGenre = 'sports';
+      }
+      break;
+    case 'stationDetail':
+      targetingTags = [doubleclickPageTypeTagStationDetail, pageName];
+      targetingPageId = pageName;
+      siteZone = siteZone.concat(`/${pageName}/${doubleclickPageTypeTagStationDetail}`);
+      const stationDetailComponent = document.querySelector('.component--station-detail');
+
+      targetingRadioStation = stationDetailComponent.getAttribute('data-station-slug');
+      targetingCategory = targetingGenre = stationDetailComponent.getAttribute('data-station-category');
+      if (targetingCategory == 'music') {
+        targetingGenre = stationDetailComponent.getAttribute('data-station-genre');
+      }
       break;
     case 'topicPage':
       targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, pageName];
@@ -290,7 +335,7 @@ function setAds(initialRequest = false) {
       }
 
       slot
-        .setTargeting('station', targetingNationalRadioStation)
+        .setTargeting('station', targetingRadioStation || targetingNationalRadioStation)
         .setTargeting('genre', targetingGenre)
         .setTargeting('cat', targetingCategory)
         .setTargeting('tag', targetingTags)
@@ -307,6 +352,8 @@ function setAds(initialRequest = false) {
 
       if (document.querySelector('.component--gallery') && adPosition === 'leader') {
         slot.setTargeting('pos', adPosition + (numGalleryInline++).toString());
+      } else if (document.querySelector('.component--stations-directory') && adPosition === 'leader') {
+        slot.setTargeting('pos', adPosition + (numStationsDirectoryInline++).toString());
       }
 
       if (targetingAuthors.length) {

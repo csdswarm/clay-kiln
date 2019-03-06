@@ -1,4 +1,6 @@
-<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--station-detail{{ if @root.locals.edit ' editing' }} station-detail--{{category}}">
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}"
+  class="component component--station-detail{{ if @root.locals.edit ' editing' }} station-detail--{{category}} data-station-slug={{station.slug}} data-station-category={{station.category}} data-station-genre={{station.genre_name}}"
+>
   <pre class="station-detail__data">{{{ stringify station }}}</pre>
   <div class="station-detail__head">
     <div class="head__lede">
