@@ -4,7 +4,7 @@
     <div class="head__lede">
       <div class="lede__image">
         <img src="{{station.square_logo_large}}" alt="{{station.name}}">
-        <div class="image__play-btn">
+        <div data-play-station="{{station.id}}" class="image__play-btn">
           {{{ read 'components/station-detail/media/play.svg' }}}
         </div>
       </div>
