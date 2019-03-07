@@ -51,7 +51,12 @@ alias=$(echo $index | sed 's/\(.*\)_.*/\1/g');
 mappings=$(curl -X GET "$es:9200/$index/_mappings" 2>/dev/null | sed -n "s/\"properties\":{/\"properties\":{$newProp,/p" | sed -n "s/{\"$index\":{\(.*\)}}/\1/p");
 
 printf "\n\nCreating new index ($newIndex)...\n\n"
+curl -X GET "$es:9200/$index/_settings" > ./settings.json;
+node ./settings-update.js "$1";
+settings=$(cat ./settings.txt);
 curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "{$settings,$mappings}";
+rm ./settings.json;
+rm ./settings.txt;
 
 printf "\r\n\r\nCopying old index data ($index) to new index ($newIndex)...\n\n"
 curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "
