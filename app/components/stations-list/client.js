@@ -8,7 +8,10 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   stationsListObserver = new MutationObserver(() => {
     document.dispatchEvent(insertInlineAdsEvent);
     stationsListObserver.disconnect();
-  });
+  }),
+  STATIONS_DIRECTORY = 'stations directory',
+  STATION_DETAIL = 'station detail',
+  FEATURED = 'featured';
 
 class StationsList {
   constructor(element) {
@@ -28,11 +31,11 @@ class StationsList {
     const page = document.body.querySelector('.content__main > section'),
       stationsDataEl = element.querySelector('.stations-list__data');
 
-    if (page.classList.contains('component--stations-directory')) {
-      this.pageType = 'stations directory';
+    if (page.getAttribute('data-inline-ads')) {
+      this.pageType = STATIONS_DIRECTORY;
       this.directoryType = page.querySelector('.directory-body__directory-page').getAttribute('id').replace('stations-directory__', '');
     } else if (page.classList.contains('component--station-detail')) {
-      this.pageType = 'station detail';
+      this.pageType = STATION_DETAIL;
     }
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
@@ -68,18 +71,18 @@ StationsList.prototype = {
    */
   toggleSeeAllLinkAndAds: function () {
     if (window.innerWidth >= 1280) {
-      if (this.pageType === 'station detail') {
+      if (this.pageType === STATION_DETAIL) {
         this.stationsShownOnLoad = this.stationsShownInTwoRows = 10;
-      } else if (this.directoryType === 'featured') {
+      } else if (this.directoryType === FEATURED) {
         this.stationsShownOnLoad = this.stationsShownInTwoRows = 14;
       } else {
         this.stationsShownOnLoad = 7;
         this.stationsShownInTwoRows = 14;
       }
     } else if (window.innerWidth >= 1024) {
-      if (this.pageType === 'station detail') {
+      if (this.pageType === STATION_DETAIL) {
         this.stationsShownOnLoad = this.stationsShownInTwoRows = 8;
-      } else if (this.directoryType === 'featured') {
+      } else if (this.directoryType === FEATURED) {
         this.stationsShownOnLoad = this.stationsShownInTwoRows = 12;
       } else {
         this.stationsShownOnLoad = this.stationsShownInTwoRows = 12;
@@ -95,7 +98,7 @@ StationsList.prototype = {
         this.seeAllLink.style.display = 'flex';
       }
     }
-    if (this.pageType === 'stations directory') {
+    if (this.pageType === STATIONS_DIRECTORY) {
       this.insertInlineAds();
     }
   },
@@ -116,7 +119,7 @@ StationsList.prototype = {
   getAdComponentTemplate: async function () {
     const response = await fetch(`//${window.location.hostname}/_components/google-ad-manager/instances/billboardBottom.html?ignore_resolve_media=true`);
 
-    return await response.text();
+    return response.text();
   },
   /**
    * Insert inline ad every two rows of results
@@ -124,19 +127,32 @@ StationsList.prototype = {
    * @function
    */
   insertInlineAds: async function () {
+    /* Observe when the inline ad has been inserted into the stations list
+    *  so that we can send an event for google-ad-manager client.js to listen to
+    *  and reset ad setup for these new ads
+    */
     stationsListObserver.observe(this.stationsList, { attributes: false, childList: true, subtree: true });
 
     if (!this.inlineAd) {
       this.inlineAd = await this.getAdComponentTemplate();
     }
+
+    const inlineAdClass = 'component--google-ad-manager';
+
+    /* insert new inline ad every 2 rows of stations
+    *  rows determined by page type & breakpoint set in toggleSeeAllLinkAndAds */
     this.stationsList.querySelectorAll('li.station').forEach((station, i) => {
+      /* check that station is not last in list so we
+      *  don't add an inline ad at the end of the list */
       if (station.nextElementSibling) {
+        // Add inline ad if it is the last station of the 2 rows and there is no inline ad already there
         if ((i + 1) % this.stationsShownInTwoRows === 0 &&
-          !station.nextElementSibling.classList.contains('component--google-ad-manager')
+          !station.nextElementSibling.classList.contains(inlineAdClass)
         ) {
           station.insertAdjacentHTML('afterend', this.inlineAd);
+        // Remove inline ad if it exists in the wrong location (from a previous window breakpoint)
         } else if ((i + 1) % this.stationsShownInTwoRows !== 0 &&
-          station.nextElementSibling.classList.contains('component--google-ad-manager')
+          station.nextElementSibling.classList.contains(inlineAdClass)
         ) {
           station.nextElementSibling.remove();
         }
@@ -167,7 +183,7 @@ StationsList.prototype = {
 
     response = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);
 
-    return await response.text();
+    return response.text();
   },
   /**
    * Add active class to stations that should be visible

@@ -2,18 +2,6 @@
 
 require('intersection-observer');
 
-let refreshCount = 0,
-  allAdSlots = {},
-  initialAdRequestComplete = false,
-  adsRefreshing = false,
-  initialPageAdSlots = [],
-  clearDfpTakeover = () => {},
-  numRightRail = 1,
-  numGalleryInline = 1,
-  numStationsDirectoryInline = 1,
-  targetingRadioStation,
-  targetingGenre = 'aaa',
-  targetingCategory = 'music';
 const adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
@@ -34,6 +22,25 @@ const adMapping = require('./adMapping'),
     threshold: 0
   },
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
+let refreshCount = 0,
+  allAdSlots = {},
+  initialAdRequestComplete = false,
+  adsRefreshing = false,
+  initialPageAdSlots = [],
+  clearDfpTakeover = () => {},
+  numRightRail = 1,
+  numGalleryInline = 1,
+  numStationsDirectoryInline = 1,
+  targetingRadioStation,
+  targetingGenre = 'aaa',
+  targetingCategory = 'music',
+  page,
+  pageName,
+  siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
+  urlPathname = window.location.pathname.replace(/^\/|\/$/g, ''),
+  targetingTags = [],
+  targetingPageId = '',
+  targetingAuthors = [];
 
 /**
  * Load ads when they come into view
@@ -56,7 +63,7 @@ adMapping.setupSizeMapping();
 
 // listener to ensure lytics has been setup in GTM
 document.addEventListener('gtm-lytics-setup', function () {
-  setAdsIDs(true);
+  setupAds();
 }, false);
 
 /**
@@ -69,15 +76,22 @@ function resetAds(resetSetupAds) {
   // undo style changes to billboard
 
   // Reset slot arrays/objects
-  allAdSlots = {},
-  initialPageAdSlots = [],
-  numRightRail = 1,
-  numGalleryInline = 1,
-  numStationsDirectoryInline = 1,
-  targetingRadioStation = null,
-  targetingGenre = 'aaa',
-  targetingCategory = 'music',
+  allAdSlots = {};
+  initialPageAdSlots = [];
+  numRightRail = 1;
+  numGalleryInline = 1;
+  numStationsDirectoryInline = 1;
+  targetingRadioStation = null;
+  targetingGenre = 'aaa';
+  targetingCategory = 'music';
   refreshCount = 0;
+  page = '';
+  pageName = '';
+  siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag);
+  urlPathname = window.location.pathname.replace(/^\/|\/$/g, '');
+  targetingTags = [];
+  targetingPageId = '';
+  targetingAuthors = [];
 
   googletag.cmd.push(function () {
     googletag.destroySlots();
@@ -88,25 +102,13 @@ function resetAds(resetSetupAds) {
   }
 }
 
-/**
- * Render new ads
- */
-function setupAds() {
-  if (initialAdRequestComplete) {
-    // code to run when vue mounts/updates
-    if (googletag.pubadsReady) { // Only do this if the service was created
-      googletag.pubads().updateCorrelator(); // Force correlator update on new pages
-    }
-    setAdsIDs();
-  }
-}
-
 // Set up ads when navigating in SPA or resizing window
 document.addEventListener('google-ad-manager-mount', resetAds);
 document.addEventListener('inlineAdsInserted', resetAds);
 
 // Reset data when navigating in SPA
 document.addEventListener('google-ad-manager-dismount', function () {
+  console.log("ad manager dismount");
   document.removeEventListener('inlineAdsInserted', resetAds);
   resetAds(false);
 });
@@ -194,15 +196,20 @@ function updateSkinStyles(hasSkin) {
  *
  * @param {boolean} initialRequest - Is this the first time through ad setup?
  */
-function setAdsIDs(initialRequest = false) {
-  Object.keys(adSizes).forEach((adSize) => {
-    let adSlots = document.getElementsByClassName(`google-ad-manager__slot--${adSize}`);
+function setupAds(initialRequest = false) {
+  if (initialAdRequestComplete) { // not working, set to false?
+    console.log("set up ads");
+    Object.keys(adSizes).forEach((adSize) => {
+      let adSlots = document.getElementsByClassName(`google-ad-manager__slot--${adSize}`);
 
-    [...adSlots].forEach((slot, index) => {
-      slot.id = slot.classList[1].concat('-', index);
+      [...adSlots].forEach((slot, index) => {
+        slot.id = slot.classList[1].concat('-', index);
+      });
     });
-  });
-  setAds(initialRequest);
+    setAds(initialRequest);
+  } else {
+    console.log("do not set up ads");
+  }
 }
 
 /**
@@ -211,14 +218,6 @@ function setAdsIDs(initialRequest = false) {
  * @param {boolean} initialRequest - Is this the first time through ad setup?
  */
 function setAds(initialRequest = false) {
-  let page,
-    pageName,
-    siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-    urlPathname = window.location.pathname.replace(/^\/|\/$/g, ''),
-    targetingTags = [],
-    targetingPageId = '',
-    targetingAuthors = [];
-
   if (urlPathname === '') {
     page = 'homepage';
   } else if (document.getElementsByTagName('article').length > 0) {
@@ -242,6 +241,16 @@ function setAds(initialRequest = false) {
     pageName = urlPathname;
   }
 
+  setTargeting(initialRequest);
+}
+
+/**
+ * Use page type and name to determine targeting
+ * values for setting up the ad
+ *
+ * @param {boolean} initialRequest - Is this the first time through ad setup?
+ */
+function setTargeting(initialRequest) {
   // Set up targeting and ad paths based on current page
   switch (page) {
     case 'article':
@@ -304,6 +313,15 @@ function setAds(initialRequest = false) {
     default:
   }
 
+  createAds(initialRequest);
+}
+
+/**
+ * Create ad slots with targeting
+ *
+ * @param {boolean} initialRequest - Is this the first time through ad setup?
+ */
+function createAds(initialRequest) {
   googletag.cmd.push(function () {
     const queryParams = urlParse(window.location, true).query;
     let adSlots = document.getElementsByClassName('component--google-ad-manager');
