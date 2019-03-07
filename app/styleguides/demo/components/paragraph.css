@@ -28,18 +28,6 @@
       color: $black;
       text-decoration: none;
     }
-    @define-mixin article-link-color $category, $color {
-      .component--article[data-article-type=$(category)] & {
-        background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($($(color)RGB), .50) 80%, rgba($($(color)RGB), .50) 100%);
-        &:hover {
-          background: linear-gradient(to bottom, rgba($($(color)RGB), .50) 0, rgba($($(color)RGB), .50) 100%);
-        }
-      }
-    }
-    @mixin article-link-color sports, azureRadience;
-    @mixin article-link-color news, lightningYellow;
-    @mixin article-link-color podcasts, robinsEggBlue;
-    @mixin article-link-color music, sunsetOrange;
   }
 
   strong {
@@ -101,26 +89,3 @@
   }
 }
 
-.news {
-  .paragraph {
-    a {
-      background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(lightningYellowRGB), .50) 80%, rgba($(lightningYellowRGB), .50) 100 %);
-
-      &:hover {
-        background: linear-gradient(to bottom, rgba($(lightningYellowRGB), .50) 0, rgba($(lightningYellowRGB), .50) 100 %);
-      }
-    }
-  }
-}
-
-.sports {
-  .paragraph {
-    a {
-      background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(azureRadienceRGB), .50) 80%, rgba($(azureRadienceRGB), .50) 100 %);
-
-      &:hover {
-        background: linear-gradient(to bottom, rgba($(azureRadienceRGB), .50) 0, rgba($(azureRadienceRGB), .50) 100 %);
-      }
-    }
-  }
-}
