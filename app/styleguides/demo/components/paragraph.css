@@ -41,6 +41,7 @@
     @mixin article-link-color podcasts, robinsEggBlue;
     @mixin article-link-color music, sunsetOrange;
   }
+
   strong {
     @mixin article-font8;
   }
@@ -97,5 +98,29 @@
   .paragraph~ul li {
     font-size: em(11, 16);
     line-height: em(12, 11);
+  }
+}
+
+.news {
+  .paragraph {
+    a {
+      background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(lightningYellowRGB), .50) 80%, rgba($(lightningYellowRGB), .50) 100 %);
+
+      &:hover {
+        background: linear-gradient(to bottom, rgba($(lightningYellowRGB), .50) 0, rgba($(lightningYellowRGB), .50) 100 %);
+      }
+    }
+  }
+}
+
+.sports {
+  .paragraph {
+    a {
+      background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(azureRadienceRGB), .50) 80%, rgba($(azureRadienceRGB), .50) 100 %);
+
+      &:hover {
+        background: linear-gradient(to bottom, rgba($(azureRadienceRGB), .50) 0, rgba($(azureRadienceRGB), .50) 100 %);
+      }
+    }
   }
 }
