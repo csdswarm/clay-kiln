@@ -4,6 +4,7 @@
 @import "_global/colors";
 
 .component--stations-directory {
+  min-height: em(800);
   @mixin medium-small-screen {
     margin-top: em(20);
   }

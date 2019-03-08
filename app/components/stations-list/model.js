@@ -147,7 +147,7 @@ module.exports.render = async (uri, data, locals) => {
       const marketData = await getMarketData(data.market);
 
       data.seeAllLink = `/stations/location/${ data.market }`;
-      data.listTitle = marketData.attributes.display_name;
+      data.listTitle = marketData.attributes ? marketData.attributes.display_name : '';
       params['filter[market_id]'] = marketData.id;
     } else if (data.filterBy === 'genre') {
       /** for stations lists on music, news & talk, and sports stations directory pages **/
@@ -168,7 +168,7 @@ module.exports.render = async (uri, data, locals) => {
       } else {
         data.seeAllLink = `/stations/music/${ data.genre }`;
       }
-      data.listTitle = genreData.attributes.name;
+      data.listTitle = genreData.attributes ? genreData.attributes.name : '';
       params['filter[genre_id]'] = genreData.id;
     } else if (data.filterBy === 'category') {
       /** for featured music, news talk, and sports stations list on featured stations directory page **/
