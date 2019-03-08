@@ -8,7 +8,24 @@ const _ = require('lodash'),
   log = require('../universal/log').setup({ file: __filename }),
   canonicalProtocol = 'http', // todo: this is a HUGE assumption, make it not be an assumption?
   canonicalPort = process.env.PORT || 3001,
-  bluebird = require('bluebird');
+  bluebird = require('bluebird'),
+  rest = require('../../services/universal/rest'),
+  /**
+   * returns a url to the server for a component
+   *
+   * @param {string} uri
+   * @returns {string}
+   */
+  componentUri = (uri) => Boolean(process.env.DOCKER_CONTAINER)
+    ? uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`) : `https://${uri}`,
+  /**
+   * adds/updates a component instance
+   *
+   * @param {string} uri
+   * @param {object} body
+   * @returns {Promise}
+   */
+  putComponentInstance = (uri, body) => rest.put(componentUri(uri), body, true);
 
 /**
  * Checks provided ref to determine whether it is a main component (article or lede-video)
@@ -164,3 +181,4 @@ module.exports.getPublishDate = getPublishDate;
 module.exports.dateUrlPattern = o => `${o.prefix}/${o.yyyy}/${o.mm}/${o.slug}.html`; // e.g. http://vulture.com/2016/04/x.html
 module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/article/${o.slug}`; // e.g. http://radio.com/music/article/eminem-drops-new-album-and-its-fire
 module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
+module.exports.putComponentInstance = putComponentInstance;
