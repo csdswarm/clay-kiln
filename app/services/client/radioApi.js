@@ -10,8 +10,6 @@ const rest = require('../universal/rest'),
    * @returns {Node}
    */
   userLocal = (doc) => {
-    console.log('user', doc)
-
     const userTimes = doc.querySelectorAll('userLocal') || [];
 
     if (userTimes) {
@@ -62,12 +60,11 @@ const rest = require('../universal/rest'),
       response = await fetch(`${route}${separator}ignore_resolve_media=true`),
       html = await response.text(),
       doc = new DOMParser().parseFromString(html, 'text/html'),
-      elements = doc.body.childElementCount === 1 ? doc.body.children[0]: Array.from(doc.body.children),
+      elements = doc.body.childElementCount === 1 ? doc.body.children[0] : Array.from(doc.body.children),
       frag = document.createDocumentFragment();
 
     if (Array.isArray(elements)) {
       elements.forEach((element) => frag.append(element));
-      console.log('frag', frag)
       return addSpaLinks(userLocal(frag));
     }
 
