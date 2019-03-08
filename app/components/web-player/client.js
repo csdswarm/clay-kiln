@@ -5,13 +5,13 @@ const ClientPlayerInterface = require('../../services/client/ClientPlayerInterfa
   clientPlayerInterface = new ClientPlayerInterface();
 
 // Listen for SPA event.
-document.addEventListener('client/web-player/mount-player', function () {
+document.addEventListener('clientWebPlayerMountPlayer', function () {
 
   clientPlayerInterface.mountPlayer()
     .then(() => {
 
       // Tell SPA the player is mounted.
-      const event = new CustomEvent('spa/web-player/player-mounted');
+      const event = new CustomEvent('spaWebPlayerPlayerMounted');
       
       document.dispatchEvent(event);
 

@@ -35,6 +35,12 @@ class ClientPlayerInterface {
     
   }
 
+  /**
+   * Lazy load the provided js file
+   *
+   * @param jsUrl
+   * @returns {Promise<any>}
+   */
   lazyLoadJsResource(jsUrl) {
     return new Promise((resolve, reject) => {
       const firstScript = document.getElementsByTagName('script')[0],
@@ -52,6 +58,12 @@ class ClientPlayerInterface {
     });
   }
 
+  /**
+   * Lazy load the provided CSS
+   *
+   * @param cssUrl
+   * @returns {Promise<any>}
+   */
   lazyLoadCssResource(cssUrl) {
     return new Promise((resolve, reject) => {
       const linkTag = document.createElement('link');
@@ -69,6 +81,9 @@ class ClientPlayerInterface {
     });
   }
 
+  /**
+   * Set up the google ad slot in the player
+   */
   initPlayerGoogleTags() {
     // Set up google tag in case it doesn't exist
     const googletag = googletag || {};
@@ -77,7 +92,7 @@ class ClientPlayerInterface {
     // Slot for 100x35 on web player
     // TODO: add slot in more coherent way
     googletag.cmd.push(() => {
-      googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
+      googletag.defineSlot('/21674100491/NTL.RADIO', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
       googletag.display('div-gpt-ad-1532458744047-0');
     });
   }

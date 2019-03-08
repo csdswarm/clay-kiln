@@ -80,7 +80,7 @@ class SpaPlayerInterface {
   mountPlayer () {
     return new Promise((resolve, reject) => {
       // Client.js will communicate that player has completed mounting via an event.
-      document.addEventListener('spa/web-player/player-mounted', () => {
+      document.addEventListener('spaWebPlayerPlayerMounted', () => {
         if (window.RadioPlayer) {
           return resolve(true)
         } else {
@@ -89,7 +89,7 @@ class SpaPlayerInterface {
       })
 
       // Kick-off mounting of player in web-player client.js
-      const event = new CustomEvent('client/web-player/mount-player')
+      const event = new CustomEvent('clientWebPlayerMountPlayer')
       document.dispatchEvent(event)
     })
   }
