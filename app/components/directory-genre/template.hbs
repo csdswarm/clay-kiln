@@ -1,14 +1,14 @@
 <section data-uri="{{ default _ref _self }}" class="component component--directory-genre">
   {{#if (compare genre '===' 'all-music') }}
+    <select class="directory-genre__dropdown--mobile">
+      <option value="">See all in genre:</option>
+      {{#each @root.locals.allMusic }}
+        <option value="{{ attributes.slug }}">{{ attributes.name }}</option>
+      {{/each}}
+    </select>
     {{#if dynamicGenre }}
       {{> stations-list stationsList }}
     {{else}}
-      <select class="directory-genre__dropdown--mobile">
-        <option value="">See all in genre:</option>
-        {{#each @root.locals.allMusic }}
-          <option value="{{ attributes.slug }}">{{ attributes.name }}</option>
-        {{/each}}
-      </select>
       {{~#each @root.locals.allMusic ~}}
         <div class="directory-location__stations-by-music-genre" data-genre="{{ attributes.slug }}">
           {{> stations-list ../stationsListTruncated }}
