@@ -9,20 +9,22 @@ function apply(anchorTagsContainer) {
   // Attach vue router listener on SPA links.
   const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link');
 
-  anchorTags.forEach(anchor => {
-    anchor.addEventListener('click', event => {
-      event.preventDefault();
-      anchor.removeEventListener('click', anchor.fn, false);
-      let link = anchor.getAttribute('href'),
-        path;
+  if (anchorTags) {
+    anchorTags.forEach(anchor => {
+      anchor.addEventListener('click', event => {
+        event.preventDefault();
+        anchor.removeEventListener('click', anchor.fn, false);
+        let link = anchor.getAttribute('href'),
+          path;
 
-      if (!link.includes('http')) {
-        link = window.location.protocol + link;
-      }
-      path = new URL(link).pathname;
-      navigateTo(path);
+        if (!link.includes('http')) {
+          link = window.location.protocol + link;
+        }
+        path = new URL(link).pathname;
+        navigateTo(path);
+      });
     });
-  });
+  }
 }
 
 /**

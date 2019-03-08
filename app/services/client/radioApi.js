@@ -2,17 +2,52 @@
 
 const rest = require('../universal/rest'),
   { formatLocal } = require('../../services/universal/dateTime'),
+  spaLinkService = require('./spaLink'),
   /**
    * Adjusts the document with any user specific local information required
    *
-   * @param {Document} doc
-   * @returns {Document}
+   * @param {Node} doc
+   * @returns {Node}
    */
   userLocal = (doc) => {
+    console.log('user', doc)
+
     const userTimes = doc.querySelectorAll('userLocal') || [];
 
-    userTimes.forEach((time) =>
-      time.replaceWith(document.createTextNode(formatLocal(time.getAttribute('data-date'), time.getAttribute('data-format')))));
+    if (userTimes) {
+      userTimes.forEach((time) =>
+        time.replaceWith(document.createTextNode(formatLocal(time.getAttribute('data-date'), time.getAttribute('data-format')))));
+    }
+
+    return doc;
+  },
+  /**
+   * returns boolean if it is a link inside the spa
+   *
+   * @param {string} uri
+   * @returns {boolean}
+   */
+  isSpaLink = (uri) => /https?:\/\/.*.radio.com/.test(uri) || uri.charAt(0) === '/',
+  /**
+   * Adds the click events for any links
+   *
+   * @param {Node} doc
+   * @returns {Node}
+   */
+  addSpaLinks = (doc) => {
+    const anchors = doc.querySelectorAll('a');
+
+    if (anchors) {
+      anchors.forEach((anchor) =>  {
+        const href = anchor.getAttribute('href');
+
+        if (isSpaLink(href) && !anchor.classList.contains('spa-link')) {
+          anchor.classList.add('spa-link');
+        }
+      });
+    }
+
+    spaLinkService.apply(doc);
 
     return doc;
   },
@@ -20,15 +55,23 @@ const rest = require('../universal/rest'),
    * Client side AJAX call to get the specified route and returns a DOM object
    *
    * @param {string} route
-   * @returns {Promise} which returns {Document}
+   * @returns {Promise} which returns {Node}
    */
   fetchDOM = async (route) => {
     const separator = route.includes('?') ? '&' : '?',
       response = await fetch(`${route}${separator}ignore_resolve_media=true`),
       html = await response.text(),
-      doc = new DOMParser().parseFromString(html, 'text/html');
+      doc = new DOMParser().parseFromString(html, 'text/html'),
+      elements = doc.body.childElementCount === 1 ? doc.body.children[0]: Array.from(doc.body.children),
+      frag = document.createDocumentFragment();
 
-    return userLocal(doc);
+    if (Array.isArray(elements)) {
+      elements.forEach((element) => frag.append(element));
+      console.log('frag', frag)
+      return addSpaLinks(userLocal(frag));
+    }
+
+    return addSpaLinks(userLocal(elements));
   },
   /**
    * Get data
