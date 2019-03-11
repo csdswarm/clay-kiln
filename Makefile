@@ -101,6 +101,15 @@ install:
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
 
+build-player:
+	if cd ./radio-web-player; then git pull; else git clone git+ssh://git@github.com/Entercom/radio-web-player.git ./; fi
+	pwd
+	cd ./radio-web-player && npm i && npm run build
+	pwd
+	mkdir -p ./app/public/web-player
+	cd ./radio-web-player/demo-site && npm i && npm run build
+	cp -r ./radio-web-player/demo-site/dist/* ./app/public/web-player/
+	
 .PHONY: spa
 spa:
 	cd spa && npm i && npm run-script build -- --mode=none
