@@ -19,8 +19,8 @@ class ClientPlayerInterface {
       parallelPromises = [];
     
     // Load independent player resources in parallel.
-    parallelPromises.push(this.lazyLoadCssResource(`//${window.location.hostname}${webPlayerHost}/radio-player.min.css`));
-    parallelPromises.push(this.lazyLoadJsResource(`//${window.location.hostname}${webPlayerHost}/radio-player.min.js`));
+    parallelPromises.push(this.lazyLoadCssResource(`${webPlayerHost}/radio-player.min.css`));
+    parallelPromises.push(this.lazyLoadJsResource(`${webPlayerHost}/radio-player.min.js`));
     parallelPromises.push(this.lazyLoadJsResource(`//players.brightcove.net/${brightcoveAccountId}/default_default/index.min.js`));
 
     return Promise.all(parallelPromises)
