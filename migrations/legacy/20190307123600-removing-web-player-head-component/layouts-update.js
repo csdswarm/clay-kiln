@@ -16,9 +16,6 @@ if (!instanceType) {
   throw new Error('Missing instance type.')
 }
 
-console.log(componentType, 'compent tpy')
-console.log(instanceType, 'instance typdpp')
-
 // Get current JSON
 let data = require(`${__dirname}/${componentType}-${instanceType}.json`)
 
