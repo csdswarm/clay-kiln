@@ -236,6 +236,7 @@ lead:
       - youtube
       - html-embed
       - omny
+      - verizon-media
     validate:
       max: 1
       required: true
@@ -259,6 +260,7 @@ content:
       - brightcove
       - inline-related
       - omny
+      - verizon-media
 feeds:
   _label: Include in These Feeds
   _has:
