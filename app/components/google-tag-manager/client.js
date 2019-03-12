@@ -46,3 +46,4 @@ document.addEventListener('pageView', function (event) {
   window.dataLayer.push(dataLayerEvent);
   
 });
+
