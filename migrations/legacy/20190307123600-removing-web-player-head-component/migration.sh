@@ -24,7 +24,7 @@ instanceType="general"
 printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
 node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
 rm ./$componentType-$instanceType.json
 rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
@@ -35,7 +35,7 @@ instanceType="bare"
 printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
 node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
 rm ./$componentType-$instanceType.json
 rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
@@ -47,7 +47,7 @@ instanceType="article"
 printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
 node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
 rm ./$componentType-$instanceType.json
 rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
@@ -58,7 +58,7 @@ instanceType="bare"
 printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
 node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
 rm ./$componentType-$instanceType.json
 rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
@@ -69,7 +69,7 @@ instanceType="article"
 printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
 node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
 rm ./$componentType-$instanceType.json
 rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
@@ -80,7 +80,7 @@ instanceType="station"
 printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
 node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
 rm ./$componentType-$instanceType.json
 rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
