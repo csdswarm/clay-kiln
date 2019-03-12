@@ -3,7 +3,6 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
-  spaLinkService = require('../../services/client/spaLink'),
   insertInlineAdsEvent = new CustomEvent('inlineAdsInserted'),
   stationsListObserver = new MutationObserver(() => {
     document.dispatchEvent(insertInlineAdsEvent);
@@ -114,12 +113,10 @@ StationsList.prototype = {
   /**
    * Get ad component template
    * @function
-   * @returns {string}
+   * @returns {Node}
    */
   getAdComponentTemplate: async function () {
-    const response = await fetch(`//${window.location.hostname}/_components/google-ad-manager/instances/billboardBottom.html?ignore_resolve_media=true`);
-
-    return response.text();
+    return await radioApiService.fetchDOM(`//${window.location.hostname}/_components/google-ad-manager/instances/billboardBottom.html`);
   },
   /**
    * Insert inline ad every two rows of results
@@ -149,8 +146,7 @@ StationsList.prototype = {
         if ((i + 1) % this.stationsShownInTwoRows === 0 &&
           !station.nextElementSibling.classList.contains(inlineAdClass)
         ) {
-          station.insertAdjacentHTML('afterend', this.inlineAd);
-        // Remove inline ad if it exists in the wrong location (from a previous window breakpoint)
+          station.insertAdjacentElement('afterend', this.inlineAd);
         } else if ((i + 1) % this.stationsShownInTwoRows !== 0 &&
           station.nextElementSibling.classList.contains(inlineAdClass)
         ) {
@@ -164,13 +160,12 @@ StationsList.prototype = {
    * Get stations list template from component
    * @function
    * @param {object[]} stationIDs
-   * @param {string} filter -- category, genre, or market type
-   * @returns {string}
+   * @param {string} [filter] -- category, genre, or market type
+   * @returns {Node}
    */
   getComponentTemplate: async function (stationIDs, filter) {
-    let queryParamString = '?ignore_resolve_media=true',
-      instance = this.filterStationsBy,
-      response;
+    let queryParamString = '?',
+      instance = this.filterStationsBy;
 
     if (stationIDs) {
       queryParamString += `&stationIDs=${stationIDs}`;
@@ -181,9 +176,7 @@ StationsList.prototype = {
       queryParamString += `&${this.filterStationsBy}=${filter}`;
     }
 
-    response = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);
-
-    return response.text();
+    return await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);
   },
   /**
    * Add active class to stations that should be visible
@@ -210,8 +203,7 @@ StationsList.prototype = {
       }),
       newStations = await this.getComponentTemplate(stationIDs);
 
-    this.stationsList.innerHTML += newStations;
-    spaLinkService.apply(this.stationsList);
+    this.stationsList.append(newStations);
     this.toggleLoader();
     this.displayActiveStations();
   },
@@ -223,9 +215,8 @@ StationsList.prototype = {
   updateStationsDOMFromFilterType: async function () {
     const newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
 
-    this.parentElement.innerHTML = newStations;
+    this.parentElement.append(newStations);
     this.stationsList = this.parentElement.querySelector('ul');
-    spaLinkService.apply(this.parentElement);
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
 
@@ -237,7 +228,7 @@ StationsList.prototype = {
     this.toggleSeeAllLinkAndAds();
     this.loadMoreBtn = this.parentElement.querySelector('.stations-list__load-more');
     if (this.loadMoreBtn) {
-      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations(this.parentElement.querySelector('ul')) );
+      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
   },
   /**
