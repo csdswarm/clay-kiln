@@ -178,7 +178,7 @@ module.exports.getUrlOptions = getUrlOptions;
 module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
 // URL patterns below need to be handled by the site's index.js
-module.exports.dateUrlPattern = o => `${o.prefix}/${o.yyyy}/${o.mm}/${o.slug}.html`; // e.g. http://vulture.com/2016/04/x.html
-module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/article/${o.slug}`; // e.g. http://radio.com/music/article/eminem-drops-new-album-and-its-fire
+module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.html`; // e.g. http://vulture.com/music/x.html - modified re: ON-333
+module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
 module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
 module.exports.putComponentInstance = putComponentInstance;
