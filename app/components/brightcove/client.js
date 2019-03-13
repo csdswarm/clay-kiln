@@ -20,8 +20,8 @@ class Brightcove extends Video {
    */
   createPlayer(component) {
     // eslint-disable-next-line no-undef
-    const player = bc(id),
-      id = component.getAttribute('id'),
+    const id = component.getAttribute('id'),
+      player = bc(id),
       node = player.el();
 
     return { id, player, node };
@@ -47,6 +47,17 @@ class Brightcove extends Video {
    */
   addEvent(object, type, listener) {
     object.on(type, listener);
+  }
+  /**
+   * start the player
+   *
+   * @param {object} player
+   */
+  play(player) {
+    if (player) {
+      player.muted(true);
+      player.play();
+    }
   }
 }
 

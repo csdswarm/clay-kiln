@@ -41,20 +41,16 @@ class Video {
 
       // Observe video for if it goes out of view
       videoObserver.observe(node);
-console.log(player)
+
       // // When a video begins playing trigger a stop on all others on page (must track video and ad events)
       this.addEvent(player, eventTypes.video_start, this.pauseOtherActivePlayers.bind(this));
-console.log('added start')
       this.addEvent(player, eventTypes.ad_start, this.pauseOtherActivePlayers.bind(this));
-console.log('added ad start')
+
       // autoplay muted else pause
       this.addEvent(player, eventTypes.video_ready, () => {
-        console.log('player video ready', !isMobileWidth(), player.closest('.body__header .lead'))
-        if (!isMobileWidth() && player.closest('.body__header .lead')) {
-          console.log('play')
+        if (!isMobileWidth() && node.closest('.body__header .lead')) {
           this.play(player);
         } else {
-          console.log('pause')
           this.pause(player);
         }
       });
@@ -138,7 +134,6 @@ console.log('added ad start')
    * @param {object} player
    */
   play(player) {
-    console.log('play', player)
     if (player) {
       player.play();
     }
