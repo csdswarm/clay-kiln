@@ -51,12 +51,10 @@ class VerizonMedia extends Video {
    *
    * @param {object} player
    */
-  play(player) {
+  async play(player) {
     if (player) {
-      setTimeout(() => {
-        player.mute();
-        player.play();
-      }, 500);
+      await player.mute();
+      player.play();
     }
   }
 }
