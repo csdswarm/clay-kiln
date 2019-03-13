@@ -2,7 +2,7 @@
 
 // Polyfill
 require('intersection-observer');
-const Video = require('../verizon-media/Video');
+const Video = require('../../global/js/classes/Video');
 
 class Brightcove extends Video {
   constructor(brightcoveComponent) {
@@ -22,7 +22,7 @@ class Brightcove extends Video {
     // eslint-disable-next-line no-undef
     const player = bc(id),
       id = component.getAttribute('id'),
-      node: player.el();
+      node = player.el();
 
     return { id, player, node };
   }

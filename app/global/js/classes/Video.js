@@ -2,7 +2,7 @@
 
 // Polyfill
 require('intersection-observer');
-const { isMobileWidth } = require('../../services/client/mobile'),
+const { isMobileWidth } = require('../../../services/client/mobile'),
   videoActivePlayers = [],
   clearActivePlayers = () => {
     // cleanup Listener
@@ -41,16 +41,20 @@ class Video {
 
       // Observe video for if it goes out of view
       videoObserver.observe(node);
-
+console.log(player)
       // // When a video begins playing trigger a stop on all others on page (must track video and ad events)
       this.addEvent(player, eventTypes.video_start, this.pauseOtherActivePlayers.bind(this));
+console.log('added start')
       this.addEvent(player, eventTypes.ad_start, this.pauseOtherActivePlayers.bind(this));
-
+console.log('added ad start')
       // autoplay muted else pause
       this.addEvent(player, eventTypes.video_ready, () => {
+        console.log('player video ready', !isMobileWidth(), player.closest('.body__header .lead'))
         if (!isMobileWidth() && player.closest('.body__header .lead')) {
-          this.play(player, true);
+          console.log('play')
+          this.play(player);
         } else {
+          console.log('pause')
           this.pause(player);
         }
       });
@@ -132,14 +136,10 @@ class Video {
    * start the player
    *
    * @param {object} player
-   * @param {boolean} mute
    */
-  play(player, mute = false) {
+  play(player) {
+    console.log('play', player)
     if (player) {
-      if ((mute && !player.isMuted()) || (!mute && player.isMuted())) {
-        player.toggleMuted();
-      }
-
       player.play();
     }
   }

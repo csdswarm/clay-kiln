@@ -2,7 +2,7 @@
 
 // Polyfill
 require('intersection-observer');
-const Video = require('./Video');
+const Video = require('../../global/js/classes/Video');
 
 class VerizonMedia extends Video {
   constructor(verizonMediaComponent) {
@@ -23,10 +23,16 @@ class VerizonMedia extends Video {
 
         // Optional - macros
         'm.playback': 'pause',
-        'm.responsive': 'true'
+        'm.responsive': 'true',
+        'm.initialVolume': 100
       }).load(),
       id = component.getAttribute('data-video-id'),
       node = player.sia;
+
+    ['PLAYER_READY','VIDEO_DATA_LOADED','CONTEXT_STARTED', 'VIDEO_START', 'VIDEO_PAUSE', 'VIDEO_PLAY', 'VIDEO_SELECTED', 'VIDEO_SEEKEND', 'VIDEO_END', 'AD_START', 'AD_END'].forEach((item) => {
+      console.log(item);
+      player.addEventListener(item, vidible[item], () => console.log(id, item));
+    });
 
     return { id, player, node };
   }
@@ -44,6 +50,20 @@ class VerizonMedia extends Video {
       // eslint-disable-next-line no-undef
       ad_start: vidible.AD_START
     };
+  }
+  /**
+   * start the player
+   *
+   * @param {object} player
+   */
+  play(player) {
+    console.log('play', player)
+    if (player) {
+      player.mute();
+      console.log('mute')
+      player.play();
+      console.log('play')
+    }
   }
 }
 

@@ -52,6 +52,7 @@
       display: flex;
       justify-content: center;
       .component--brightcove,
+      .component--verizon-media,
       .component--omny {
         width: 100%;
         height: auto;
@@ -62,6 +63,7 @@
       .component--facebook-post,
       .component--youtube,
       .component--brightcove,
+      .component--verizon-media,
       .component--omny {
         margin: 0;
         img {
