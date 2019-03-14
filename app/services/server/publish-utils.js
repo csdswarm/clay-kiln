@@ -16,8 +16,7 @@ const _ = require('lodash'),
    * @param {string} uri
    * @returns {string}
    */
-  componentUri = (uri) => Boolean(process.env.DOCKER_CONTAINER)
-    ? uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`) : `https://${uri}`,
+  componentUri = (uri) => uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`),
   /**
    * adds/updates a component instance
    *
