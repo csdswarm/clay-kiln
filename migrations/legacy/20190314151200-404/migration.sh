@@ -37,5 +37,9 @@ node ./page-update.js "$1" "/$page";
 curl -X PUT $http://$1/$page -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./page.json -o /dev/null -s
 curl -X PUT $http://$1/$page@published -H 'Authorization: token accesskey' -o /dev/null -s
 
+# update css to change margin under homepage button from 150px to 50px 
+curl -X PUT $http://$1/_components/html-embed/instances/static-404 -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./static-404.json -o /dev/null -s
+curl -X PUT $http://$1/_components/html-embed/instances/static-404@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./static-404.json -o /dev/null -s
+
 # delete temp file
 rm ./page.json
