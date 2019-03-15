@@ -479,6 +479,24 @@ plaintextShortHeadline:
   _has:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
 
+footer:
+  _label: Gallery Footer
+  _placeholder:
+    text: Component
+    height: 200px
+  _componentList:
+    fuzzy: true
+    include:
+      - paragraph
+      - image
+      - instagram-post
+      - brightcove
+      - youtube
+      - html-embed
+      - omny
+    validate:
+      max: 2
+
 # Component properties
 sideShare:
   _component:

@@ -10,3 +10,10 @@ module.exports['1.0'] = function (uri, data) {
 
   return newData;
 };
+
+module.exports['1.1'] = (uri, data) => {
+  return {
+    ...data,
+    footer: []
+  };
+};
