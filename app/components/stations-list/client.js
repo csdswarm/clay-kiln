@@ -3,6 +3,7 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
+  { isMobileWidth } = require('../../services/client/mobile'),
   insertInlineAdsEvent = new CustomEvent('inlineAdsInserted'),
   stationsListObserver = new MutationObserver(() => {
     document.dispatchEvent(insertInlineAdsEvent);
@@ -81,8 +82,6 @@ StationsList.prototype = {
     } else if (window.innerWidth >= 1024) {
       if (this.pageType === STATION_DETAIL) {
         this.stationsShownOnLoad = this.stationsShownInTwoRows = 8;
-      } else if (this.directoryType === FEATURED) {
-        this.stationsShownOnLoad = this.stationsShownInTwoRows = 12;
       } else {
         this.stationsShownOnLoad = this.stationsShownInTwoRows = 12;
       }
@@ -90,8 +89,9 @@ StationsList.prototype = {
       this.stationsShownOnLoad = this.stationsShownInTwoRows = 6;
     }
 
+    // Hide see all link if there aren't enough to fill the list or on mobile
     if (this.seeAllLink) {
-      if (this.stationsData.length <= this.stationsShownOnLoad || window.innerWidth < 480) {
+      if (this.stationsData.length <= this.stationsShownOnLoad || isMobileWidth) {
         this.seeAllLink.style.display = 'none';
       } else {
         this.seeAllLink.style.display = 'flex';
