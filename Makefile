@@ -55,7 +55,7 @@ bootstrap:
 	curl -X PUT http://clay.radio.com/_components/topic-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	if cd ../frequency-clay-translator; then npm run import-pages && cd ../clay-radio; fi
-    @echo "\r\n\r\n"
+	@echo "\r\n\r\n"
 	./migrations/legacy/run-legacy-scripts.sh
 
 dev-bootstrap:
