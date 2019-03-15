@@ -24,94 +24,35 @@ const adMapping = require('./adMapping'),
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
 let refreshCount = 0,
   allAdSlots = {},
-  initialAdRequestComplete = false,
   adsRefreshing = false,
   initialPageAdSlots = [],
   clearDfpTakeover = () => {},
   numRightRail = 1,
   numGalleryInline = 1,
   numStationsDirectoryInline = 1,
-  targetingRadioStation,
-  targetingGenre = 'aaa',
-  targetingCategory = 'music',
-  page,
-  pageName,
   siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-  urlPathname = window.location.pathname.replace(/^\/|\/$/g, ''),
-  targetingTags = [],
-  targetingPageId = '',
-  targetingAuthors = [];
-
-/**
- * Load ads when they come into view
- *
- * @param {array} changes
- * @param {IntersectionObserver} observer
- */
-function lazyLoadAd(changes, observer) {
-  changes.forEach(change => {
-    if (change.intersectionRatio > 0) {
-      // Stop watching and load the ad
-      googletag.pubads().refresh([allAdSlots[change.target.id]], {changeCorrelator: false});
-      observer.unobserve(change.target);
-    }
-  });
-};
+  adIndices = {};
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
 
-// listener to ensure lytics has been setup in GTM
+// Listener to ensure lytics has been setup in GTM (Google Tag Manager)
 document.addEventListener('gtm-lytics-setup', function () {
-  setupAds();
+  // Make sure all globals are reset
+  resetAds();
+  // Set up ads when navigating in SPA
+  document.addEventListener('google-ad-manager-mount', initializeAds);
 }, false);
-
-/**
- * Reset ads settings
- *
- * @param {boolean} resetSetupAds
- */
-function resetAds(resetSetupAds) {
-  clearDfpTakeover();
-  // undo style changes to billboard
-
-  // Reset slot arrays/objects
-  allAdSlots = {};
-  initialPageAdSlots = [];
-  numRightRail = 1;
-  numGalleryInline = 1;
-  numStationsDirectoryInline = 1;
-  targetingRadioStation = null;
-  targetingGenre = 'aaa';
-  targetingCategory = 'music';
-  refreshCount = 0;
-  page = '';
-  pageName = '';
-  siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag);
-  urlPathname = window.location.pathname.replace(/^\/|\/$/g, '');
-  targetingTags = [];
-  targetingPageId = '';
-  targetingAuthors = [];
-
-  googletag.cmd.push(function () {
-    googletag.destroySlots();
-  });
-
-  if (resetSetupAds) {
-    setupAds();
-  }
-}
-
-// Set up ads when navigating in SPA or resizing window
-document.addEventListener('google-ad-manager-mount', resetAds);
-document.addEventListener('inlineAdsInserted', resetAds);
 
 // Reset data when navigating in SPA
 document.addEventListener('google-ad-manager-dismount', function () {
-  console.log("ad manager dismount");
-  document.removeEventListener('inlineAdsInserted', resetAds);
-  resetAds(false);
+  googletag.cmd.push(function () {
+    googletag.destroySlots();
+  });
 });
+
+// Set up inline ads as they get appended to the page
+document.addEventListener('inlineAdsInserted', insertInlineAds);
 
 // Create listeners inside of the context of having googletag.pubads()
 googletag.cmd.push(() => {
@@ -156,6 +97,65 @@ googletag.cmd.push(() => {
   });
 });
 
+/**
+ * Set up all ads on the page
+ */
+function initializeAds() {
+  // Lytics will take care of initial set up but doesn't run after first page load
+  // code to run when vue mounts/updates
+  if (googletag.pubadsReady) { // Only do this if the service was created
+    googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+  }
+
+  // Set up ads when navigating in SPA
+  document.removeEventListener('google-ad-manager-mount', initializeAds);
+
+  setAdsIDs();
+}
+
+/**
+ * Reset all globals
+ */
+function resetAds() {
+  clearDfpTakeover();
+  // undo style changes to billboard
+
+  // Reset slot arrays/objects
+  allAdSlots = {};
+  initialPageAdSlots = [];
+  numRightRail = 1;
+  numGalleryInline = 1;
+  numStationsDirectoryInline = 1;
+  refreshCount = 0;
+  adIndices = {};
+
+}
+
+/**
+ * Initialize ad's that have been dynamically inserted
+ */
+function insertInlineAds() {
+  const adSlots = document.querySelectorAll('[data-inline="true"') || null;
+
+  setAdsIDs(adSlots);
+}
+
+/**
+ * Load ads when they come into view
+ *
+ * @param {array} changes
+ * @param {IntersectionObserver} observer
+ */
+function lazyLoadAd(changes, observer) {
+  changes.forEach(change => {
+    if (change.intersectionRatio > 0) {
+      // Stop watching and load the ad
+      googletag.pubads().refresh([allAdSlots[change.target.id]], {changeCorrelator: false});
+      observer.unobserve(change.target);
+    }
+  });
+};
+
 
 /**
  * adds a listener to the x div to enable it to close the current ad
@@ -192,140 +192,156 @@ function updateSkinStyles(hasSkin) {
 }
 
 /**
- * create and add unique ids to each ad slot on page
+ * Create and add unique ids to each ad slot on page
  *
- * @param {boolean} initialRequest - Is this the first time through ad setup?
+ * @param {array} adSlots - Specific ad slots to refresh
  */
-function setupAds(initialRequest = false) {
-  if (initialAdRequestComplete) { // not working, set to false?
-    console.log("set up ads");
-    Object.keys(adSizes).forEach((adSize) => {
-      let adSlots = document.getElementsByClassName(`google-ad-manager__slot--${adSize}`);
+function setAdsIDs(adSlots) {
+  const adSizeRegex = /google-ad-manager__slot--([^\s\"]+)/;
 
-      [...adSlots].forEach((slot, index) => {
-        slot.id = slot.classList[1].concat('-', index);
-      });
-    });
-    setAds(initialRequest);
-  } else {
-    console.log("do not set up ads");
-  }
+  adSlots = adSlots || document.getElementsByClassName('component--google-ad-manager');
+  // Loop over all slots and give them unique indexed ID's
+  [...adSlots].forEach((slot) => {
+    const dfpContainer = slot.querySelector('.google-ad-manager__slot');
+    let [, slotSize] = adSizeRegex.exec(dfpContainer.classList[1]);
+
+    if (typeof adIndices[slotSize] === 'undefined') {
+      adIndices[slotSize] = 1;
+    } else {
+      adIndices[slotSize]++;
+    }
+    dfpContainer.id = dfpContainer.classList[1].concat('-', adIndices[slotSize]);
+  });
+
+  createAds(adSlots);
 }
 
 /**
  * use ids of ad slots on page to create google ad slots and display them
  *
- * @param {boolean} initialRequest - Is this the first time through ad setup?
+ * @param {string} urlPathname
  */
-function setAds(initialRequest = false) {
+function getPageTargeting(urlPathname) {
+  let pageData = {};
+
   if (urlPathname === '') {
-    page = 'homepage';
+    pageData.page = 'homepage';
   } else if (document.getElementsByTagName('article').length > 0) {
-    page = pageName = 'article';
+    pageData.page = pageData.pageName = 'article';
   } else if (document.querySelector('.component--gallery')) {
-    page = pageName = 'vgallery';
+    pageData.page = pageData.pageName = 'vgallery';
   } else if (document.querySelector('.component--stations-directory')) {
-    page = 'stationsDirectory';
-    pageName = urlPathname.replace('/', '_');
+    pageData.page = 'stationsDirectory';
+    pageData.pageName = urlPathname.replace('/', '_');
   } else if (document.querySelector('.component--station-detail')) {
-    page = 'stationDetail';
-    pageName = urlPathname.split('/')[0];
+    pageData.page = 'stationDetail';
+    pageData.pageName = urlPathname.split('/')[0];
   } else if (document.querySelector('.component--topic-page')) {
-    page = 'topicPage';
-    pageName = urlPathname.replace(/[^\/]+\//, '');
+    pageData.page = 'topicPage';
+    pageData.pageName = urlPathname.replace(/[^\/]+\//, '');
   } else if (document.querySelector('.component--author-page')) {
-    page = 'authorPage';
-    pageName = urlPathname.replace('/', '_');
+    pageData.page = 'authorPage';
+    pageData.pageName = urlPathname.replace('/', '_');
   } else {
-    page = 'sectionFront';
-    pageName = urlPathname;
+    pageData.page = 'sectionFront';
+    pageData.pageName = urlPathname;
   }
 
-  setTargeting(initialRequest);
+  return pageData;
 }
 
 /**
  * Use page type and name to determine targeting
  * values for setting up the ad
  *
- * @param {boolean} initialRequest - Is this the first time through ad setup?
+ * @param {object} page
  */
-function setTargeting(initialRequest) {
+function getAdTargeting(pageData, urlPathname) {
+  let siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
+    adTargetingData = {
+      targetingRadioStation: null,
+      targetingGenre: 'aaa',
+      targetingCategory: 'music',
+      targetingAuthors: []
+    };
+
   // Set up targeting and ad paths based on current page
-  switch (page) {
+  switch (pageData.page) {
     case 'article':
     case 'vgallery':
-      targetingTags = [pageName];
+      adTargetingData.targetingTags = [pageData.pageName];
       [...document.querySelectorAll('.component--tags .tags__item')].forEach(tag => {
-        targetingTags.push(tag.getAttribute('data-tag'));
+        adTargetingData.targetingTags.push(tag.getAttribute('data-tag'));
       });
-      targetingPageId = (pageName + '_' + urlPathname.split('/').pop()).substring(0, 39);
+      adTargetingData.targetingPageId = (pageData.pageName + '_' + urlPathname.split('/').pop()).substring(0, 39);
       [...document.querySelectorAll('.component--article .author')].forEach(tag => {
-        targetingAuthors.push(tag.getAttribute('data-author').replace(/\s/, '-').toLowerCase());
+        adTargetingData.targetingAuthors.push(tag.getAttribute('data-author').replace(/\s/, '-').toLowerCase());
       });
-      siteZone = siteZone.concat('/', pageName, '/', pageName);
+      adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/', pageData.pageName);
       break;
     case 'homepage':
-      targetingTags = [doubleclickPageTypeTagSection, page];
-      targetingPageId = page;
-      siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
+      adTargetingData.targetingTags = [doubleclickPageTypeTagSection, pageData.page];
+      adTargetingData.targetingPageId = pageData.page;
+      adTargetingData.siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
       break;
     case 'sectionFront':
-      targetingTags = [doubleclickPageTypeTagSection, pageName];
-      targetingPageId = pageName;
-      siteZone = siteZone.concat('/', pageName, '/article');
+      adTargetingData.targetingTags = [doubleclickPageTypeTagSection, pageData.pageName];
+      adTargetingData.targetingPageId = pageData.pageName;
+      adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/article');
       break;
     case 'stationsDirectory':
-      targetingTags = [doubleclickPageTypeTagStationsDirectory, pageName];
-      targetingPageId = pageName;
-      siteZone = siteZone.concat(`/${pageName}/${doubleclickPageTypeTagStationsDirectory}`);
+      adTargetingData.targetingTags = [doubleclickPageTypeTagStationsDirectory, pageData.pageName];
+      adTargetingData.targetingPageId = pageData.pageName;
+      adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${doubleclickPageTypeTagStationsDirectory}`);
       if (document.querySelector('directory-page--music')) {
-        targetingCategory = 'music';
-        targetingGenre = urlPathname.replace('stations/music/', '');
+        adTargetingData.targetingCategory = 'music';
+        adTargetingData.targetingGenre = urlPathname.replace('stations/music/', '');
       } else if (document.querySelector('directory-page--news-talk')) {
-        targetingCategory = targetingGenre = 'news-talk';
+        adTargetingData.targetingCategory = adTargetingData.targetingGenre = 'news-talk';
       } else if (document.querySelector('directory-page--sports')) {
-        targetingCategory = targetingGenre = 'sports';
+        adTargetingData.targetingCategory = adTargetingData.targetingGenre = 'sports';
       }
       break;
     case 'stationDetail':
-      targetingTags = [doubleclickPageTypeTagStationDetail, pageName];
-      targetingPageId = pageName;
-      siteZone = siteZone.concat(`/${pageName}/${doubleclickPageTypeTagStationDetail}`);
+      adTargetingData.targetingTags = [doubleclickPageTypeTagStationDetail, pageData.pageName];
+      adTargetingData.targetingPageId = pageData.pageName;
+      adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${doubleclickPageTypeTagStationDetail}`);
       const stationDetailComponent = document.querySelector('.component--station-detail');
 
-      targetingRadioStation = stationDetailComponent.getAttribute('data-station-slug');
-      targetingCategory = targetingGenre = stationDetailComponent.getAttribute('data-station-category');
-      if (targetingCategory == 'music') {
-        targetingGenre = stationDetailComponent.getAttribute('data-station-genre');
+      adTargetingData.targetingRadioStation = stationDetailComponent.getAttribute('data-station-slug');
+      adTargetingData.targetingCategory = adTargetingData.targetingGenre = stationDetailComponent.getAttribute('data-station-category');
+      if (adTargetingData.targetingCategory == 'music') {
+        adTargetingData.targetingGenre = stationDetailComponent.getAttribute('data-station-genre');
       }
       break;
     case 'topicPage':
-      targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, pageName];
-      targetingPageId = doubleclickPageTypeTagTag + '_' + pageName;
+      adTargetingData.targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, pageData.pageName];
+      adTargetingData.targetingPageId = doubleclickPageTypeTagTag + '_' + pageData.pageName;
       // Must remain tag for targeting in DFP unless a change is made in the future to update it there
-      siteZone = siteZone.concat('/', 'tag', '/', doubleclickPageTypeTagSection);
+      adTargetingData.siteZone = siteZone.concat('/', 'tag', '/', doubleclickPageTypeTagSection);
       break;
     case 'authorPage':
-      targetingTags = [doubleclickPageTypeTagArticle, doubleclickPageTypeTagAuthor];
-      targetingPageId = pageName;
-      siteZone = siteZone.concat('/', 'show', '/', doubleclickPageTypeTagArticle);
+      adTargetingData.targetingTags = [doubleclickPageTypeTagArticle, doubleclickPageTypeTagAuthor];
+      adTargetingData.targetingPageId = pageData.pageName;
+      adTargetingData.siteZone = siteZone.concat('/', 'show', '/', doubleclickPageTypeTagArticle);
     default:
   }
 
-  createAds(initialRequest);
+  return adTargetingData;
 }
 
 /**
  * Create ad slots with targeting
  *
- * @param {boolean} initialRequest - Is this the first time through ad setup?
+ * @param {array} adSlots - Ad Slots to set up
  */
-function createAds(initialRequest) {
-  googletag.cmd.push(function () {
-    const queryParams = urlParse(window.location, true).query;
-    let adSlots = document.getElementsByClassName('component--google-ad-manager');
+function createAds(adSlots) {
+  const urlPathname = window.location.pathname.replace(/^\/|\/$/g, ''),
+    queryParams = urlParse(window.location, true).query,
+    pageData = getPageTargeting(urlPathname),
+    adTargetingData = getAdTargeting(pageData);
 
+  googletag.cmd.push(function () {
     // Set refresh value on page level
     googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
 
@@ -353,11 +369,11 @@ function createAds(initialRequest) {
       }
 
       slot
-        .setTargeting('station', targetingRadioStation || targetingNationalRadioStation)
-        .setTargeting('genre', targetingGenre)
-        .setTargeting('cat', targetingCategory)
-        .setTargeting('tag', targetingTags)
-        .setTargeting('pid', targetingPageId)
+        .setTargeting('station', adTargetingData.targetingRadioStation || targetingNationalRadioStation)
+        .setTargeting('genre', adTargetingData.targetingGenre)
+        .setTargeting('cat', adTargetingData.targetingCategory)
+        .setTargeting('tag', adTargetingData.targetingTags)
+        .setTargeting('pid', adTargetingData.targetingPageId)
         .setTargeting('pos', adPosition)
         .setTargeting('loc', adLocation)
         .setTargeting('adtest', queryParams.adtest || '')
@@ -374,8 +390,8 @@ function createAds(initialRequest) {
         slot.setTargeting('pos', adPosition + (numStationsDirectoryInline++).toString());
       }
 
-      if (targetingAuthors.length) {
-        slot.setTargeting('author', targetingAuthors);
+      if (adTargetingData.targetingAuthors.length) {
+        slot.setTargeting('author', adTargetingData.targetingAuthors);
       }
 
       // Attach to the global ads array
@@ -394,9 +410,6 @@ function createAds(initialRequest) {
 
     // Refresh all initial page slots
     googletag.pubads().refresh(initialPageAdSlots);
-    if (initialRequest) {
-      initialAdRequestComplete = true;
-    }
   });
 }
 

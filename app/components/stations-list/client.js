@@ -132,6 +132,7 @@ StationsList.prototype = {
 
     if (!this.inlineAd) {
       this.inlineAd = await this.getAdComponentTemplate();
+      this.inlineAd.setAttribute('data-inline', true);
     }
 
     const inlineAdClass = 'component--google-ad-manager';
