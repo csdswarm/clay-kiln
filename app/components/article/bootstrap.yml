@@ -54,3 +54,5 @@ _components:
       _ref: /_components/ad-dummy/instances/general
     eligibleForGoogleStandout: false
     originUrl: ''
+    htmlEmbed:
+      _ref: /_components/html-embed

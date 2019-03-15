@@ -477,3 +477,10 @@ tags:
   _component:
     include:
       - tags
+
+htmlEmbed:
+  _component:
+    include:
+      - html-embed
+
+

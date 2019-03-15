@@ -138,6 +138,10 @@ em, i {
 @define-mixin article-font12 {
   @mixin font CircularStd-Medium, 14px, $black, -.23, 14px;
 }
+@define-mixin article-font13 {
+  @mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
+}
+
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||||||| Tags Fonts Styleguide |||||||||| */

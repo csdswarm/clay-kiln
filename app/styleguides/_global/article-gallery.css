@@ -71,6 +71,25 @@
       }
     }
   }
+
+  .body__loadmore {
+    cursor: pointer;
+    height: em(50, 20);
+    text-transform: uppercase;
+    @mixin more-content-feed-font1;
+    background-color: $parisPurple;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border: none;
+    outline: none;
+
+    .loadmore__text {
+      @mixin article-font13;
+    }
+  }
+
   .body__info {
     @mixin inline-block;
     float: left;
@@ -369,6 +388,8 @@
         }
       }
     }
+
+
   }
 }
 .clay-annotated {
@@ -445,4 +466,3 @@
 @mixin article-link-color news, $lightningYellowRGB;
 @mixin article-link-color music, $sunsetOrangeRGB;
 @mixin article-link-color sports, $azureRadienceRGB;
-
