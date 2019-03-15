@@ -220,6 +220,7 @@ function setAdsIDs(adSlots) {
  * use ids of ad slots on page to create google ad slots and display them
  *
  * @param {string} urlPathname
+ * @returns {object} pageData
  */
 function getPageTargeting(urlPathname) {
   let pageData = {};
@@ -254,7 +255,9 @@ function getPageTargeting(urlPathname) {
  * Use page type and name to determine targeting
  * values for setting up the ad
  *
- * @param {object} page
+ * @param {object} pageData - Page data from getPageTargeting
+ * @param {string} urlPathname - Current Path
+ * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData, urlPathname) {
   let siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
