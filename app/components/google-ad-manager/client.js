@@ -296,12 +296,12 @@ function getAdTargeting(pageData, urlPathname) {
       adTargetingData.targetingTags = [doubleclickPageTypeTagStationsDirectory, pageData.pageName];
       adTargetingData.targetingPageId = pageData.pageName;
       adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${doubleclickPageTypeTagStationsDirectory}`);
-      if (document.querySelector('directory-page--music')) {
+      if (document.querySelector('.directory-page--music')) {
         adTargetingData.targetingCategory = 'music';
         adTargetingData.targetingGenre = urlPathname.replace('stations/music/', '');
-      } else if (document.querySelector('directory-page--news-talk')) {
+      } else if (document.querySelector('.directory-page--news-talk')) {
         adTargetingData.targetingCategory = adTargetingData.targetingGenre = 'news-talk';
-      } else if (document.querySelector('directory-page--sports')) {
+      } else if (document.querySelector('.directory-page--sports')) {
         adTargetingData.targetingCategory = adTargetingData.targetingGenre = 'sports';
       }
       break;
@@ -358,11 +358,11 @@ function createAds(adSlots) {
         sizeMapping = adMapping.sizeMapping[adSize];
 
       if (adSize === 'outOfPage') {
-        slot = googletag.defineOutOfPageSlot(siteZone, ad.id);
+        slot = googletag.defineOutOfPageSlot(adTargetingData.siteZone, ad.id);
         updateSkinStyles(true);
       } else {
         slot = googletag.defineSlot(
-          siteZone,
+          adTargetingData.siteZone,
           [adSizes[adSize].defaultSize],
           ad.id
         );
