@@ -22,7 +22,7 @@ const _get = require('lodash/get'),
 function composeArticleContent(data) {
   return _reduce(data.content, (res, cmpt) => {
     const ref = _get(cmpt, '_ref', ''),
-      cmptData = JSON.parse(_get(cmpt, 'data', {}));
+      cmptData = JSON.parse(_get(cmpt, 'data', '{}'));
 
     if (ref.includes('/paragraph/')) {
       res += render.paragraph(cmptData);
