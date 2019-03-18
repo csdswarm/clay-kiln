@@ -21,9 +21,6 @@ curl -X PUT "$http://$1/_components/feeds/instances/reversechron" -H 'Authorizat
 {
     "index": "published-content",
     "query": {
-        "query": {
-            "match_all": {}
-        },
         "size": 20,
         "sort": {
             "date": "desc"
