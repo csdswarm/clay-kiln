@@ -15,7 +15,7 @@ subscribe('publish').through(save);
 // Subscribe to the save stream
 subscribe('save').through(save);
 
-function getArticleContent(obj) {
+function getContent(obj) {
   const content = obj.value.content;
 
   return h(content)
@@ -37,7 +37,7 @@ function save(stream) {
     .filter(filters.isPublished)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
-    .map(param => param.key.indexOf('article') >= 0 ? getArticleContent(param) : h.of(param))
+    .map(param => param.key.indexOf('article') >= 0 || param.key.indexOf('gallery') >= 0 ? getContent(param) : h.of(param))
     .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
