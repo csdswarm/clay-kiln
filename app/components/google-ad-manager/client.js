@@ -342,7 +342,7 @@ function createAds(adSlots) {
   const urlPathname = window.location.pathname.replace(/^\/|\/$/g, ''),
     queryParams = urlParse(window.location, true).query,
     pageData = getPageTargeting(urlPathname),
-    adTargetingData = getAdTargeting(pageData);
+    adTargetingData = getAdTargeting(pageData, urlPathname);
 
   googletag.cmd.push(function () {
     // Set refresh value on page level

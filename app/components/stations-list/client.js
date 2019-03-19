@@ -220,6 +220,8 @@ StationsList.prototype = {
     this.stationsList = this.parentElement.querySelector('ul');
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
+    // Hide loaders once loaded
+    this.toggleLoader();
 
     // eslint-disable-next-line one-var
     const stationsDataEl = this.parentElement.querySelector('.stations-list__data');
@@ -250,7 +252,6 @@ StationsList.prototype = {
       this.updateStationsDOMWithIDs(stationsData);
     } else {
       // server side populated
-
       if (this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket) {
         this.toggleLoader();
         this.updateStationsDOMFromFilterType();
