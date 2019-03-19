@@ -2,6 +2,11 @@
   display: block;
   margin: em(16) 0;
   width: 100%;
+
+  &.component--missing-items {
+    display: none;
+  }
+
   .twitter-tweet.twitter-tweet-rendered {
     margin: em(10) 0 !important;
     width: 100% !important;

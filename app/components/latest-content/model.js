@@ -75,6 +75,24 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addSort(query, {date: 'desc'});
     queryService.addShould(query, { match: { sectionFront: section }});
 
+    // Filter out the following tags
+    if (data.filterTags) {
+      for (const tag of data.filterTags.map((tag) => tag.text)) {
+        queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
+      }
+    }
+
+    // Filter out the following secondary article type
+    if (data.filterSecondaryArticleTypes) {
+      Object.entries(data.filterSecondaryArticleTypes).forEach((secondaryArticleType) => {
+        let [ secondaryArticleTypeFilter, filterOut ] = secondaryArticleType;
+
+        if (filterOut) {
+          queryService.addMustNot(query, { match: { secondaryArticleType: secondaryArticleTypeFilter }});
+        }
+      });
+    }
+
     // exclude the current page in results
     if (locals.url && !isComponent(locals.url)) {
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
