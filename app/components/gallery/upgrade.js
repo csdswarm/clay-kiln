@@ -1,12 +1,6 @@
 'use strict';
 
-module.exports['1.0'] = (uri, data) => {
-  return {
-    ...data,
-    footer: []
-  };
-
-module.exports['2.0'] = function (uri, data) {
+module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
   let newData = Object.assign({}, data);
 
@@ -15,4 +9,11 @@ module.exports['2.0'] = function (uri, data) {
   delete newData.secondaryGalleryType;
 
   return newData;
+};
+
+module.exports['2.0'] = (uri, data) => {
+  return {
+    ...data,
+    footer: []
+  };
 };
