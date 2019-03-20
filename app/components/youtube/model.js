@@ -1,12 +1,12 @@
 'use strict';
 const _get = require('lodash/get'),
   _capitalize = require('lodash/capitalize'),
-  { getVideoDetails } = require('../../services/universal/youtube'),
+  {getVideoDetails} = require('../../services/universal/youtube'),
   defaultPlayerBorderTopCTA = 'Watch';
 
 /**
  * Override various settings by type of video
- * @param {object} data
+ * @param {object} data The data from the editor
  */
 function updateSettingsByType(data) {
   data.videoType = _capitalize(data.videoType); // ooyala-player imported components will have this lowercased and therefore will mess up the styling, so capitalize them
@@ -30,14 +30,25 @@ function updateSettingsByType(data) {
   }
 }
 
-function clearVideoId(data) {
-  data.videoId = (data.videoId || '').split('&')[0];
+/**
+ * Clears key data from the editor
+ * @param {object} data data from the editor
+ * @returns {*} the cleaned data object
+ */
+function clearContentId(data) {
+  data.contentId = (data.contentId || '').split('&')[0];
 
   return data;
 }
 
+/**
+ * sets the data to show in the player
+ * @param {object} data The data from the editor
+ * @param {object} videoDetails  The data from youtube
+ * @returns {object} The modified data object
+ */
 function setVideoDetails(data, videoDetails) {
-  var maxResThumb;
+  let maxResThumb;
 
   if (!videoDetails.title) {
     data.videoValid = false;
@@ -47,38 +58,42 @@ function setVideoDetails(data, videoDetails) {
 
   maxResThumb = _get(videoDetails, 'thumbnails.maxres.url');
 
-  data.videoValid = true;
-  data.channelName = videoDetails.channelTitle;
-  data.videoTitle = videoDetails.title;
-  data.videoThumbnail = maxResThumb ? maxResThumb : _get(videoDetails, 'thumbnails.high.url'); // get the maxres if available, otherwise get the high res which we know will be there
-  data.videoDuration = videoDetails.duration;
+  Object.assign(data, {
+    origSource: `https://www.youtube.com/${ data.isPlaylist ? 'playlist?list' : 'watch?v'}=${ data.contentId }`,
+    videoValid: true,
+    channelName: videoDetails.channelTitle,
+    videoTitle: videoDetails.title,
+    // We know high res will be there, if maxRes is not available
+    videoThumbnail: maxResThumb || _get(videoDetails, 'thumbnails.high.url')
+  });
+
+  if (videoDetails.duration) {
+    data.videoDuration = videoDetails.duration;
+  }
 
   return data;
 }
 
-function getDefaultPlaylistBySite(data, locals) {
-  switch (locals.site.slug) {
-    default:
-      return '';
-      break;
-  }
-}
+/**
+ * saves the changes from the editor
+ * @param {string} uri This is not used
+ * @param {object} data The data from the editor
+ * @param {object=} locals This is not used
+ * @returns {*}
+ */
+module.exports.save = (uri, data) => {
+  data.isPlaylist = data.videoSource === 'playlist';
 
-module.exports.save = (uri, data, locals) => {
-  clearVideoId(data);
+  clearContentId(data);
   updateSettingsByType(data);
 
-  if (data.videoId && !data.videoPlaylist) {
-    data.videoPlaylist = getDefaultPlaylistBySite(data, locals);
-  }
-
-  if (data.videoId) {
-    return getVideoDetails(data.videoId)
+  if (data.contentId) {
+    return getVideoDetails(data.contentId, data.isPlaylist)
       .then(videoDetails => setVideoDetails(data, videoDetails));
   }
 
-  data.videoValid = true; // technically not an invalid video because no videoId so we don't want to show an error message in edit mode
+  // Missing contentId is technically not invalid. Do not show an error.
+  data.videoValid = true;
 
   return data;
 };
-

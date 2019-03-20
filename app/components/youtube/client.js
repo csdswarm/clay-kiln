@@ -2,29 +2,44 @@
 
 function Constructor(el) {
   const videoConfig = {
-    videoContainerId: el.getAttribute('data-element-id').trim(),
-    videoId: el.getAttribute('data-video-id').trim()
-  };
+      videoContainerId: el.getAttribute('data-element-id').trim(),
+      contentId: el.getAttribute('data-content-id').trim(),
+      isPlaylist: el.getAttribute('data-is-playlist')
+    },
+
+    playerOptions = {
+      height: 'auto',
+      width: '100%'
+    };
+
+  if (videoConfig.isPlaylist) {
+    Object.assign(playerOptions, {
+      playerVars:{
+        listType: 'playlist',
+        list: videoConfig.contentId
+      }
+    });
+  } else {
+    Object.assign(playerOptions, {videoId: videoConfig.contentId});
+  }
 
   this.el = el;
 
-  // if the YouTube api is ready the videos(s) can be loaded
-  if (window.nymYTApiReady === true) {
-    this.player = new YT.Player(videoConfig.videoContainerId, { // eslint-disable-line no-unused-vars
-      videoId: videoConfig.videoId,
-      height: 'auto',
-      width: '100%'
-    });
+  if (window.nymYTApiReady) {
+    loadVideos(this)();
   } else {
-    // wait and listen for the YouTube api to be ready before loading the video(s)
-    document.addEventListener('clay-youtube-event:youtube-api-ready', function () {
-      this.player = new YT.Player(videoConfig.videoContainerId, { // eslint-disable-line no-unused-vars
-        videoId: videoConfig.videoId,
-        height: 'auto',
-        width: '100%'
-      });
-    });
+    document.addEventListener('clay-youtube-event:youtube-api-ready', loadVideos(this));
+  }
+
+  /**
+   * returns a function that loads the videos for the client
+   * @param {Constructor} client The client (Constructor) instance
+   * @returns {function(): YT.Player} a function that loads the video player
+   */
+  function loadVideos(client) {
+    return () => client.player = new YT.Player(videoConfig.videoContainerId, playerOptions);
   }
 }
 
 module.exports = el => new Constructor(el);
+

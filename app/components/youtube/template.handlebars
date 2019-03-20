@@ -2,7 +2,8 @@
 {{#ifAny @root.locals.edit videoValid}}
 <div data-uri="{{ default _ref _self }}" class="component component--youtube{{if @root.locals.edit ' edit-mode'}}{{#ifAny (compare videoType 'Related') (compare videoType 'Sponsored')}} site-accents{{/ifAny}}{{ if playerBorderTop ' border-top' }}{{ if playerBorderBottom ' border-bottom' }}"
      data-element-id="{{ uniquePlayerID }}"
-     data-video-id="{{ videoId }}"
+     data-content-id="{{ contentId }}"
+     data-is-playlist="{{ isPlaylist }}"
      data-autoplay-next-video="{{ autoPlayNextVideo }}"
      data-autoplay-video="{{ autoPlay }}"
      data-playlist="{{ videoPlaylist }}"
@@ -12,7 +13,7 @@
      data-track-video-duration="{{ videoDuration }}"
      data-track-channel-name="{{ channelName }}"
      data-editable="inline"
-     data-origsrc="https://www.youtube.com/watch?v={{ videoId }}">
+     data-origsrc="{{ origSource }}">
   {{#if playerBorderTopCTA }}
     <style>
       .youtube[data-uri="{{ default _ref _self }}"].border-top:before {
