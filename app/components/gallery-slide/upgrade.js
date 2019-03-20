@@ -10,7 +10,7 @@ const { putComponentInstance } = require('../../services/server/publish-utils'),
   removeTag = (html) => html.replace(/^<[^>]+>(.*)<\/[^>]+>$/, '$1');
 
 module.exports['1.0'] = async (uri, data) => {
-  if (typeof data.description !== 'string') {
+  if (typeof data.description !== 'string' || !data.description) {
     return {
       ...data,
       description: data.description ? data.description : []
