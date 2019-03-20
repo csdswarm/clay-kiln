@@ -38,7 +38,7 @@ class ClientPlayerInterface {
   /**
    * Lazy load the provided js file
    *
-   * @param jsUrl
+   * @param jsUrl {string} - URL of Js library to lazy load.
    * @returns {Promise<any>}
    */
   lazyLoadJsResource(jsUrl) {
@@ -61,7 +61,7 @@ class ClientPlayerInterface {
   /**
    * Lazy load the provided CSS
    *
-   * @param cssUrl
+   * @param cssUrl {string} - URL of CSS to lazy load.
    * @returns {Promise<any>}
    */
   lazyLoadCssResource(cssUrl) {
