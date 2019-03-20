@@ -2,17 +2,30 @@
 
 const _get = require('lodash/get'),
   _reduce = require('lodash/reduce'),
+  _each = require('lodash/each'),
   format = require('date-fns/format'),
   parse = require('date-fns/parse'),
   { addArrayOfProps } = require('./utils'),
-
+  fs = require('fs'),
   render = {
     paragraph: (data) => {
       const text = _get(data, 'text', '');
-
-      return text ? `<p>${text}</p>` : '';
+      return text ? hbs.partials.paragraph({ text }) : '';
     }
-  };
+  },
+  nymagHbs = require('clayhandlebars'), 
+  hbs = nymagHbs(), 
+  glob = require('glob'),
+  // searches the components directories for any feed.hbs files
+  templates = glob.sync('../../**/feed.hbs');
+
+// compile the feed.hbs files
+_each(templates, (template) => {
+  let match = template.match(/components\/([^\/]+)\//);
+  if (match) {
+    hbs.partials[`feed-${match[1]}`] = hbs.compile(`${fs.readFileSync(template)}`, { preventIndent: true });
+  }
+});
 
 /**
  * Compose article content from select components
@@ -22,10 +35,12 @@ const _get = require('lodash/get'),
 function composeArticleContent(data) {
   return _reduce(data.content, (res, cmpt) => {
     const ref = _get(cmpt, '_ref', ''),
-      cmptData = JSON.parse(_get(cmpt, 'data', '{}'));
-
-    if (ref.includes('/paragraph/')) {
-      res += render.paragraph(cmptData);
+      cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
+      match = ref.match(/_components\/([^\/]+)\//);
+      
+    if (match && cmptData && hbs.partials[`feed-${match[1]}`]) {
+      // render the component and add it to the response
+      res += hbs.partials[`feed-${match[1]}`](cmptData);
     }
 
     return res;
