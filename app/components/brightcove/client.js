@@ -33,9 +33,9 @@ class Brightcove extends Video {
    */
   getEventTypes() {
     return {
-      video_start: 'play',
-      video_ready: 'loadedmetadata',
-      ad_start: 'ads-play'
+      VIDEO_START: 'play',
+      VIDEO_READY: 'loadedmetadata',
+      AD_START: 'ads-play'
     };
   }
   /**

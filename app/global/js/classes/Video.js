@@ -42,12 +42,12 @@ class Video {
       // Observe video for if it goes out of view
       videoObserver.observe(node);
 
-      // // When a video begins playing trigger a stop on all others on page (must track video and ad events)
-      this.addEvent(player, eventTypes.video_start, this.pauseOtherActivePlayers.bind(this));
-      this.addEvent(player, eventTypes.ad_start, this.pauseOtherActivePlayers.bind(this));
+      // When a video begins playing trigger a stop on all others on page (must track video and ad events)
+      this.addEvent(player, eventTypes.VIDEO_START, this.pauseOtherActivePlayers.bind(this));
+      this.addEvent(player, eventTypes.AD_START, this.pauseOtherActivePlayers.bind(this));
 
       // autoplay muted else pause
-      this.addEvent(player, eventTypes.video_ready, () => {
+      this.addEvent(player, eventTypes.VIDEO_READY, () => {
         if (!isMobileWidth() && node.closest('.body__header .lead')) {
           this.play(player);
         } else {
@@ -91,9 +91,9 @@ class Video {
    */
   getEventTypes() {
     return {
-      video_start: '',
-      video_ready: '',
-      ad_start: ''
+      VIDEO_START: '',
+      VIDEO_READY: '',
+      AD_START: ''
     };
   }
   /**

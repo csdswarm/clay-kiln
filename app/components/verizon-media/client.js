@@ -39,11 +39,11 @@ class VerizonMedia extends Video {
   getEventTypes() {
     return {
       // eslint-disable-next-line no-undef
-      video_start: vidible.VIDEO_PLAY,
+      VIDEO_START: vidible.VIDEO_PLAY,
       // eslint-disable-next-line no-undef
-      video_ready: vidible.VIDEO_DATA_LOADED,
+      VIDEO_READY: vidible.VIDEO_DATA_LOADED,
       // eslint-disable-next-line no-undef
-      ad_start: vidible.AD_START
+      AD_START: vidible.AD_START
     };
   }
   /**
