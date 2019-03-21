@@ -30,22 +30,25 @@ let refreshCount = 0,
   numRightRail = 1,
   numGalleryInline = 1,
   numStationsDirectoryInline = 1,
-  siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-  adIndices = {};
+  adIndices = {},
+  adsMounted = false;
 
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
 
 // Listener to ensure lytics has been setup in GTM (Google Tag Manager)
-document.addEventListener('gtm-lytics-setup', function () {
-  // Make sure all globals are reset
-  resetAds();
-  // Set up ads when navigating in SPA
-  document.addEventListener('google-ad-manager-mount', initializeAds);
+document.addEventListener('gtm-lytics-setup', () => {
+  initializeAds();
 }, false);
 
+// Set up ads when navigating in SPA
+document.addEventListener('google-ad-manager-mount', () => {
+  // This will allow initializeAds to trigger ad refresh
+  adsMounted = true;
+});
+
 // Reset data when navigating in SPA
-document.addEventListener('google-ad-manager-dismount', function () {
+document.addEventListener('google-ad-manager-dismount', () => {
   googletag.cmd.push(function () {
     googletag.destroySlots();
   });
@@ -101,16 +104,21 @@ googletag.cmd.push(() => {
  * Set up all ads on the page
  */
 function initializeAds() {
-  // Lytics will take care of initial set up but doesn't run after first page load
-  // code to run when vue mounts/updates
-  if (googletag.pubadsReady) { // Only do this if the service was created
-    googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+  if (adsMounted) {
+    // Make sure all globals are reset
+    resetAds();
+
+    // Lytics will take care of initial set up but doesn't run after first page load
+    // code to run when vue mounts/updates
+    if (googletag.pubadsReady) { // Only do this if the service was created
+      googletag.pubads().updateCorrelator(); // Force correlator update on new pages
+    }
+
+    setAdsIDs();
+  } else {
+    // Retry loading ads every 100ms until they've been mounted
+    window.setTimeout(initializeAds, 100);
   }
-
-  // Set up ads when navigating in SPA
-  document.removeEventListener('google-ad-manager-mount', initializeAds);
-
-  setAdsIDs();
 }
 
 /**
@@ -128,7 +136,7 @@ function resetAds() {
   numStationsDirectoryInline = 1;
   refreshCount = 0;
   adIndices = {};
-
+  adsMounted = false;
 }
 
 /**
@@ -196,7 +204,7 @@ function updateSkinStyles(hasSkin) {
  *
  * @param {array} adSlots - Specific ad slots to refresh
  */
-function setAdsIDs(adSlots) {
+function setAdsIDs(adSlots = null) {
   const adSizeRegex = /google-ad-manager__slot--([^\s\"]+)/;
 
   adSlots = adSlots || document.getElementsByClassName('component--google-ad-manager');
