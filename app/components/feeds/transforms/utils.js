@@ -6,13 +6,13 @@ const _forEach = require('lodash/forEach'),
   mime = require('mime'),
   { getComponentName } = require('clayutils'),
   { getRawMetadata, getRenditionUrl, cleanUrl } = require('../../../services/universal/media-play'),
-  nymagHbs = require('clayhandlebars'), 
-  hbs = nymagHbs();
+  { hbs } = require('../../../services/startup/feed-components');
 
 /**
  * render a feed component from the name and data
- * @param {String} cmptName 
+ * @param {String} cmptName
  * @param {Object} cmptData
+ * @returns {String}
  */
 function renderComponent(cmptName, cmptData) {
   return hbs.partials[`feed-${cmptName}`] ? hbs.partials[`feed-${cmptName}`](cmptData) : '';
