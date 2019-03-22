@@ -1,5 +1,7 @@
 'use strict';
 
+const clientCommunicationBridge = require('./ClientCommunicationBridge')();
+
 /**
  *
  * ClientPlayerInterface library contains communications/management logic related to the radio-web-player.
@@ -95,6 +97,21 @@ class ClientPlayerInterface {
       googletag.defineSlot('/21674100491/NTL.RADIO', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
       googletag.display('div-gpt-ad-1532458744047-0');
     });
+  }
+
+  /**
+   *
+   * Begin player playback.
+   *
+   * If station param is supplied, this station will be loaded into
+   * the player before playback begins. Otherwise the player will begin
+   * playback with the currently loaded station.
+   *
+   * @param {number} stationId - The station to play
+   * @returns {Promise<any>} - Passed in stationId or null
+   */
+  play(stationId = null) {
+    return clientCommunicationBridge.sendMessage('spaPlayerInterfacePlay', { stationId });
   }
 
 }
