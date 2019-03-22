@@ -17,9 +17,9 @@ class ClientPlayerInterface {
     const webPlayerComponentDiv = document.body.querySelector('div.component--web-player'),
       webPlayerHost = webPlayerComponentDiv.dataset.webPlayerHost,
       brightcoveAccountId = webPlayerComponentDiv.dataset.brightcoveAccountId,
-      parallelPromises = [];
-    //load player by env if query parameter is set
-    let webPlayerEnv = /webplayer(-dev|-stg)/.exec(window.location.search) ? /webplayer(-dev|-stg)/.exec(window.location.search)[1] || '';
+      parallelPromises = [],
+      webPlayerEnv = this.getWebPlayerEnvironment();
+
     // Load independent player resources in parallel.
     parallelPromises.push(this.lazyLoadCssResource(`${webPlayerHost}${webPlayerEnv}/radio-player.min.css`));
     parallelPromises.push(this.lazyLoadJsResource(`${webPlayerHost}${webPlayerEnv}/radio-player.min.js`));
@@ -35,6 +35,22 @@ class ClientPlayerInterface {
         this.initPlayerGoogleTags();
       });
     
+  }
+
+  /**
+   *
+   * Load different player library depending on environment.
+   *
+   * @returns {string} - The web player environment namespace.
+   */
+  getWebPlayerEnvironment() {
+    if (window.location.search && window.location.search.includes('webplayer-dev')) {
+      return '-dev';
+    } else if (window.location.search && window.location.search.includes('webplayer-stg')) {
+      return '-stg';
+    } else {
+      return '';
+    }
   }
 
   /**
