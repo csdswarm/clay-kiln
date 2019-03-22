@@ -13,16 +13,16 @@ class ClientPlayerInterface {
 
   // Mount the player
   mountPlayer() {
-
     // Get data-attributes from hbs template.
     const webPlayerComponentDiv = document.body.querySelector('div.component--web-player'),
       webPlayerHost = webPlayerComponentDiv.dataset.webPlayerHost,
       brightcoveAccountId = webPlayerComponentDiv.dataset.brightcoveAccountId,
       parallelPromises = [];
-    
+    //load player by env if query parameter is set
+    let webPlayerEnv = /webplayer(-dev|-stg)/.exec(window.location.search) ? /webplayer(-dev|-stg)/.exec(window.location.search)[1] || '';
     // Load independent player resources in parallel.
-    parallelPromises.push(this.lazyLoadCssResource(`${webPlayerHost}/radio-player.min.css`));
-    parallelPromises.push(this.lazyLoadJsResource(`${webPlayerHost}/radio-player.min.js`));
+    parallelPromises.push(this.lazyLoadCssResource(`${webPlayerHost}${webPlayerEnv}/radio-player.min.css`));
+    parallelPromises.push(this.lazyLoadJsResource(`${webPlayerHost}${webPlayerEnv}/radio-player.min.js`));
     parallelPromises.push(this.lazyLoadJsResource(`//players.brightcove.net/${brightcoveAccountId}/default_default/index.min.js`));
 
     return Promise.all(parallelPromises)
