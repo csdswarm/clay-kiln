@@ -9,14 +9,17 @@ const _get = require('lodash/get'),
 /**
  * Compose article content from select components
  * @param {Object} data
+ * @param {Object} locals
  * @returns {string}
  */
-function composeArticleContent(data) {
+function composeArticleContent(data, locals) {
   return _reduce(data.content, (res, cmpt) => {
     const ref = _get(cmpt, '_ref', ''),
       cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
       match = ref.match(/_components\/([^\/]+)\//);
-      
+     
+    // TODO: figure out how to add locals to @root in hbs like the other components
+    cmptData.locals = locals;
     if (match && cmptData) {
       // render the component and add it to the response
       res += renderComponent(match[1], cmptData);
@@ -31,10 +34,12 @@ function composeArticleContent(data) {
  * data as it conforms to the `xml` package's API
  *
  * http://npmjs.com/package/xml
- * @param  {Object} data
+ * @param {Object} data
+ * @param {Object} locals
  * @return {Array}
  */
-module.exports = function (data) {
+module.exports = function (data, locals) {
+
   const { canonicalUrl, plaintextPrimaryHeadline } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
@@ -54,7 +59,7 @@ module.exports = function (data) {
         description: { _cdata: data.socialDescription }
       },
       {
-        'content:encoded': { _cdata: composeArticleContent(data)}
+        'content:encoded': { _cdata: composeArticleContent(data, locals)}
       }
     ];
 
