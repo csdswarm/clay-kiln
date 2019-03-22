@@ -2,7 +2,8 @@
 
 const amphora = require('amphora'),
   renderers = require('./amphora-renderers'),
-  healthCheck = require('@nymdev/health-check');
+  healthCheck = require('@nymdev/health-check'),
+  feedComponents = require('./feed-components');
 
 function initAmphora(app, search, sessionStore, routes) {
   return amphora({
@@ -17,6 +18,7 @@ function initAmphora(app, search, sessionStore, routes) {
     cacheControl: {}
   }).then(router => {
     amphora.schedule.startListening();
+    feedComponents.init();
 
     router.use(healthCheck({
       env: [

@@ -5,7 +5,18 @@ const _forEach = require('lodash/forEach'),
   _includes = require('lodash/includes'),
   mime = require('mime'),
   { getComponentName } = require('clayutils'),
-  { getRawMetadata, getRenditionUrl, cleanUrl } = require('../../../services/universal/media-play');
+  { getRawMetadata, getRenditionUrl, cleanUrl } = require('../../../services/universal/media-play'),
+  nymagHbs = require('clayhandlebars'), 
+  hbs = nymagHbs();
+
+/**
+ * render a feed component from the name and data
+ * @param {String} cmptName 
+ * @param {Object} cmptData
+ */
+function renderComponent(cmptName, cmptData) {
+  return hbs.partials[`feed-${cmptName}`] ? hbs.partials[`feed-${cmptName}`](cmptData) : '';
+}
 
 /**
  * Find the MIME type for a file
@@ -162,6 +173,7 @@ function getContent(data) {
   return data.content || data.relatedInfo || [];
 }
 
+module.exports.renderComponent = renderComponent;
 module.exports.getContent = getContent;
 module.exports.firstAndParse = firstAndParse;
 module.exports.addArrayOfProps = addArrayOfProps;
