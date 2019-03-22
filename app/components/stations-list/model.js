@@ -12,7 +12,7 @@ const radioApiService = require('../../services/server/radioApi'),
  */
 function getMarketData(market) {
   const route = 'markets',
-    /* note: filter by slug needs to be added to market api
+    /* @TODO ON-588: filter by slug needs to be added to market api
     /* temporarily filter by market ID
     */
     // 'filter[slug]': market
@@ -38,7 +38,7 @@ function getMarketData(market) {
  */
 function getGenreData(genre) {
   const route = 'genres',
-    /* note: genre slug needs to be added to station api results
+    /* @TODO ON-588: genre slug needs to be added to station api results
     /* temporarily filter by genre ID
     */
     // 'filter[slug]': genre
@@ -109,13 +109,13 @@ module.exports.render = async (uri, data, locals) => {
 
       switch (data.filterBy) {
         case 'market':
-          data.market = locals.station.market.slug || locals.station.market.id; // note: market slug needs to be added to stations api
+          data.market = locals.station.market.slug || locals.station.market.id; // @TODO ON-588: market slug needs to be added to stations api
           data.seeAllLink = `/stations/location/${ data.market }`;
           data.listTitle = data.listTitle || `${ locals.station.market.display_name || locals.station.city || locals.station.market.name } stations`;
           params['filter[market_id]'] = locals.station.market.id;
           break;
         case 'genre':
-          data.genre = locals.station.genre[0].slug || locals.station.genre[0].id; // note: genre slug needs to be added to stations api
+          data.genre = locals.station.genre[0].slug || locals.station.genre[0].id; // @TODO ON-588: genre slug needs to be added to stations api
           if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
             data.seeAllLink = `/stations/${ data.genre }`;
           } else {
@@ -137,7 +137,7 @@ module.exports.render = async (uri, data, locals) => {
           return data;
         }
       }
-      data.market = locals.market || locals.params.dynamicMarket; // should be slug. temporarily using id
+      data.market = locals.market || locals.params.dynamicMarket; // @TODO ON-588: should be slug. temporarily using id
       const marketData = await getMarketData(data.market);
 
       data.seeAllLink = `/stations/location/${ data.market }`;
@@ -154,7 +154,7 @@ module.exports.render = async (uri, data, locals) => {
           return data;
         }
       }
-      data.genre = locals.genre || locals.params.dynamicGenre; // should be slug. temporarily using id
+      data.genre = locals.genre || locals.params.dynamicGenre; // @TODO ON-588: should be slug. temporarily using id
       const genreData = await getGenreData(data.genre);
 
       if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
