@@ -23,12 +23,10 @@ function Constructor(el) {
     Object.assign(playerOptions, {videoId: videoConfig.contentId});
   }
 
-  this.el = el;
-
   if (window.nymYTApiReady) {
     loadVideos(this)();
   } else {
-    document.addEventListener('clay-youtube-event:youtube-api-ready', loadVideos(this));
+    document.addEventListener('clay-youtube-event:youtube-api-ready', loadVideos(this), {once: true});
   }
 
   /**

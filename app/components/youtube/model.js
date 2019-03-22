@@ -59,7 +59,6 @@ function setVideoDetails(data, videoDetails) {
   maxResThumb = _get(videoDetails, 'thumbnails.maxres.url');
 
   Object.assign(data, {
-    origSource: `https://www.youtube.com/${ data.isPlaylist ? 'playlist?list' : 'watch?v'}=${ data.contentId }`,
     videoValid: true,
     channelName: videoDetails.channelTitle,
     videoTitle: videoDetails.title,
@@ -73,6 +72,18 @@ function setVideoDetails(data, videoDetails) {
 
   return data;
 }
+
+/**
+ * renders data for view with programmatic modifications
+ * @param {string} ref This is not used
+ * @param {object} data Used to update data in the view
+ * @param {object=} locals This is not used
+ * @returns {*} data
+ */
+module.exports.render = (ref, data) => {
+  data.origSource = `https://www.youtube.com/${ data.isPlaylist ? 'playlist?list' : 'watch?v'}=${ data.contentId }`;
+  return data;
+};
 
 /**
  * saves the changes from the editor
