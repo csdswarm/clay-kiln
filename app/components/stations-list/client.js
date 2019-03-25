@@ -4,8 +4,7 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
   spaLinkService = require('../../services/client/spaLink'),
-  ClientPlayerInterface = require('../../services/client/ClientPlayerInterface'),
-  clientPlayerInterface = new ClientPlayerInterface();
+  clientPlayerInterface = require('../../services/client/ClientPlayerInterface')();
 
 class StationsList {
   constructor(element) {

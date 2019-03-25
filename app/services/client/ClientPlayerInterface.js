@@ -132,4 +132,7 @@ class ClientPlayerInterface {
 
 }
 
-module.exports = ClientPlayerInterface;
+// Export to factory to simplify standard import statements.
+module.exports = function () {
+  return new ClientPlayerInterface();
+};
