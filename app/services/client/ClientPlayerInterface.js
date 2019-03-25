@@ -127,7 +127,7 @@ class ClientPlayerInterface {
    * @returns {Promise<any>} - Passed in stationId or null
    */
   play(stationId = null) {
-    return clientCommunicationBridge.sendMessage('spaPlayerInterfacePlay', { stationId });
+    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlay', { stationId });
   }
 
 }

@@ -122,7 +122,7 @@ class SpaPlayerInterface {
    */
   attachClientEventListeners () {
     // Attach channel that listens for play button clicks.
-    spaCommunicationBridge.addChannel('spaPlayerInterfacePlay', async (payload) => {
+    spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
       const { stationId } = payload
 
       if (stationId) {

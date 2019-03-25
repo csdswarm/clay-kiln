@@ -17,7 +17,7 @@ const uuidv4 = require('uuid/v4');
 
 // Config settings.
 // eslint-disable-next-line one-var
-const LISTENER_TYPE_NAMESPACE = 'COMMUNICATION_BRIDGE'; // Shared namespace for Client/Spa CommunicationBridge listeners since we use global window as EventTarget.
+const LISTENER_TYPE_NAMESPACE = 'communicationBridge'; // Shared namespace for Client/Spa CommunicationBridge listeners since we use global window as EventTarget.
 // eslint-disable-next-line one-var
 const DEFAULT_MESSAGE_TIMEOUT = 5000; // How long in milliseconds before timing out messages.
 
@@ -54,7 +54,7 @@ class ClientCommunicationBridge {
 
       // Define temporary type for message event.
       // eslint-disable-next-line one-var
-      const messageType = `${LISTENER_TYPE_NAMESPACE}-client-message-${channelName}-${id}`;
+      const messageType = `${LISTENER_TYPE_NAMESPACE}ClientMessage${channelName}-${id}`;
 
       // Define message response listener.
       // eslint-disable-next-line one-var
@@ -82,7 +82,7 @@ class ClientCommunicationBridge {
 
       // Send SPA message event.
       // eslint-disable-next-line one-var
-      const spaMessageEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}-spa-channel-${channelName}`, {
+      const spaMessageEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}SpaChannel${channelName}`, {
         detail: {
           id,
           payload

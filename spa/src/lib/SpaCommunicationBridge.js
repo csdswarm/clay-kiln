@@ -16,7 +16,7 @@
 // import uuidv4 from 'uuid/v4' // TODO - Uncoment when sendMessage() is implemented.
 
 // Config settings.
-const LISTENER_TYPE_NAMESPACE = 'COMMUNICATION_BRIDGE' // Shared namespace for Client/Spa CommunicationBridge listeners since we use global window as EventTarget.
+const LISTENER_TYPE_NAMESPACE = 'communicationBridge' // Shared namespace for Client/Spa CommunicationBridge listeners since we use global window as EventTarget.
 // const DEFAULT_MESSAGE_TIMEOUT = 5000 // How long in milliseconds before timing out messages. TODO - Uncoment when sendMessage() is implemented.
 
 class SpaCommunicationBridge {
@@ -33,7 +33,7 @@ class SpaCommunicationBridge {
    * @param {function} handler - Handler function to execute when a message hits this channel.
    */
   addChannel (channelName, handler) {
-    const channel = `${LISTENER_TYPE_NAMESPACE}-spa-channel-${channelName}`
+    const channel = `${LISTENER_TYPE_NAMESPACE}SpaChannel${channelName}`
 
     if (this.channels[channel]) {
       throw new Error(`Channel ${channelName} already exists.`)
@@ -48,7 +48,7 @@ class SpaCommunicationBridge {
 
         // Send response
         // eslint-disable-next-line one-var
-        const responseEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}-client-message-${channelName}-${id}`, {
+        const responseEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}ClientMessage${channelName}-${id}`, {
           detail: { payload: responsePayload }
         })
 
