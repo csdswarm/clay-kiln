@@ -5,11 +5,6 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   radioApiService = require('../../services/client/radioApi'),
   spaLinkService = require('../../services/client/spaLink'),
   { isMobileWidth } = require('../../services/client/mobile'),
-  insertInlineAdsEvent = new CustomEvent('inlineAdsInserted'),
-  stationsListObserver = new MutationObserver(() => {
-    document.dispatchEvent(insertInlineAdsEvent);
-    stationsListObserver.disconnect();
-  }),
   STATIONS_DIRECTORY = 'stations directory',
   STATION_DETAIL = 'station detail',
   FEATURED = 'featured';
@@ -32,7 +27,7 @@ class StationsList {
     const page = document.body.querySelector('.content__main > section'),
       stationsDataEl = element.querySelector('.stations-list__data');
 
-    if (page.getAttribute('data-inline-ads')) {
+    if (page.classList.contains('component--stations-directory')) {
       this.pageType = STATIONS_DIRECTORY;
       this.directoryType = page.querySelector('.directory-body__directory-page').getAttribute('id').replace('stations-directory__', '');
     } else if (page.classList.contains('component--station-detail')) {
@@ -73,21 +68,20 @@ StationsList.prototype = {
   toggleSeeAllLinkAndAds: function () {
     if (window.innerWidth >= 1280) {
       if (this.pageType === STATION_DETAIL) {
-        this.stationsShownOnLoad = this.stationsShownInTwoRows = 10;
+        this.stationsShownOnLoad = 10;
       } else if (this.directoryType === FEATURED) {
-        this.stationsShownOnLoad = this.stationsShownInTwoRows = 14;
+        this.stationsShownOnLoad = 14;
       } else {
         this.stationsShownOnLoad = 7;
-        this.stationsShownInTwoRows = 14;
       }
     } else if (window.innerWidth >= 1024) {
       if (this.pageType === STATION_DETAIL) {
-        this.stationsShownOnLoad = this.stationsShownInTwoRows = 8;
+        this.stationsShownOnLoad = 8;
       } else {
-        this.stationsShownOnLoad = this.stationsShownInTwoRows = 12;
+        this.stationsShownOnLoad = 12;
       }
     } else {
-      this.stationsShownOnLoad = this.stationsShownInTwoRows = 6;
+      this.stationsShownOnLoad = 6;
     }
 
     // Hide see all link if there aren't enough to fill the list or on mobile
@@ -98,9 +92,6 @@ StationsList.prototype = {
         this.seeAllLink.style.display = 'flex';
       }
     }
-    if (this.pageType === STATIONS_DIRECTORY) {
-      this.insertInlineAds();
-    }
   },
   /**
    * Show or hide loader
@@ -110,53 +101,6 @@ StationsList.prototype = {
     if (this.loader) {
       this.loader.classList.toggle('active');
     }
-  },
-  /**
-   * Get ad component template
-   * @function
-   * @returns {Node}
-   */
-  getAdComponentTemplate: async function () {
-    return await radioApiService.fetchDOM(`//${window.location.hostname}/_components/google-ad-manager/instances/billboardBottom.html`);
-  },
-  /**
-   * Insert inline ad every two rows of results
-   * Rows are dynamic based on window width and page type
-   * @function
-   */
-  insertInlineAds: async function () {
-    /* Observe when the inline ad has been inserted into the stations list
-    *  so that we can send an event for google-ad-manager client.js to listen to
-    *  and reset ad setup for these new ads
-    */
-    stationsListObserver.observe(this.stationsList, { attributes: false, childList: true, subtree: true });
-
-    if (!this.inlineAd) {
-      this.inlineAd = await this.getAdComponentTemplate();
-      this.inlineAd.setAttribute('data-inline', true);
-    }
-
-    const inlineAdClass = 'component--google-ad-manager';
-
-    /* insert new inline ad every 2 rows of stations
-    *  rows determined by page type & breakpoint set in toggleSeeAllLinkAndAds */
-    this.stationsList.querySelectorAll('li.station').forEach((station, i) => {
-      /* check that station is not last in list so we
-      *  don't add an inline ad at the end of the list */
-      if (station.nextElementSibling) {
-        // Add inline ad if it is the last station of the 2 rows and there is no inline ad already there
-        if ((i + 1) % this.stationsShownInTwoRows === 0 &&
-          !station.nextElementSibling.classList.contains(inlineAdClass)
-        ) {
-          station.insertAdjacentElement('afterend', this.inlineAd);
-        } else if ((i + 1) % this.stationsShownInTwoRows !== 0 &&
-          station.nextElementSibling.classList.contains(inlineAdClass)
-        ) {
-          station.nextElementSibling.remove();
-        }
-      }
-    });
-
   },
   /**
    * Get stations list template from component

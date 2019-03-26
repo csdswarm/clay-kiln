@@ -54,9 +54,6 @@ document.addEventListener('google-ad-manager-dismount', () => {
   });
 });
 
-// Set up inline ads as they get appended to the page
-document.addEventListener('inlineAdsInserted', insertInlineAds);
-
 // Create listeners inside of the context of having googletag.pubads()
 googletag.cmd.push(() => {
   // Handle right rail refresh via DFP event trigger
@@ -137,15 +134,6 @@ function resetAds() {
   refreshCount = 0;
   adIndices = {};
   adsMounted = false;
-}
-
-/**
- * Initialize ad's that have been dynamically inserted
- */
-function insertInlineAds() {
-  const adSlots = document.querySelectorAll('[data-inline="true"') || null;
-
-  setAdsIDs(adSlots);
 }
 
 /**
