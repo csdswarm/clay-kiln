@@ -26,6 +26,18 @@ const adSizes = {
   },
   'mobile-interstitial': {
     defaultSize: [1, 7]
+  },
+  'global-logo-sponsorship': {
+    defaultSize: [100, 35]
+  },
+  'section-front-logo-sponsorship': {
+    defaultSize: [100, 35]
+  },
+  'content-collection-logo-sponsorship': {
+    defaultSize: [100, 35]
+  },
+  'content-page-logo-sponsorship': {
+    defaultSize: [100, 35]
   }
 };
 
@@ -79,6 +91,23 @@ module.exports = {
       sizeMapping['mobile-interstitial'] = googletag.sizeMapping()
         .addSize([0, 0], [[1, 7]])
         .build();
+
+      sizeMapping['global-logo-sponsorship'] = googletag.sizeMapping()
+        .addSize([0, 0], [[100, 35]])
+        .build();
+
+      sizeMapping['section-front-logo-sponsorship'] = googletag.sizeMapping()
+        .addSize([0, 0], [[100, 35]])
+        .build();
+
+      sizeMapping['content-collection-logo-sponsorship'] = googletag.sizeMapping()
+        .addSize([0, 0], [[100, 35]])
+        .build();
+
+      sizeMapping['content-page-logo-sponsorship'] = googletag.sizeMapping()
+        .addSize([0, 0], [[100, 35]])
+        .build();
+
     });
   }
 };

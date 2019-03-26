@@ -1,0 +1,67 @@
+_components:
+  one-column-layout:
+    instances:
+      general:
+        headLayout:
+          - _ref: /_components/favicon/instances/default
+          - _ref: /_components/google-ad-manager-head/instances/default
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
+          - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
+        head: head
+        layoutHeader: layoutHeader
+        pageHeader: pageHeader
+        fullWidthComponents:
+        main: main
+        secondary: secondary
+        bottom:
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
+          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
+        static:
+          - _ref: /_components/web-player/instances/default
+          - _ref: /_components/chartbeat/instances/default
+  two-column-layout:
+    instances:
+      article:
+        headLayout:
+          - _ref: /_components/favicon/instances/default
+          - _ref: /_components/google-ad-manager-head/instances/default
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
+          - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+          - _ref: /_components/google-ad-manager/instances/globalLogoSponsorship
+        head: head
+        pageHeader:
+          - _ref: /_components/google-ad-manager/instances/billboardTop
+        sectionHeader: []
+        main: main
+        tertiary: tertiary
+        secondary:
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/trending-recirculation/instances/default
+        bottom:
+          - _ref: /_components/yieldmo/instances/default
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
+          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
+        static:
+          - _ref: /_components/web-player/instances/default
+          - _ref: /_components/chartbeat/instances/default

@@ -17,3 +17,13 @@ module.exports['2.0'] = (uri, data) => {
     footer: []
   } : data;
 };
+
+module.exports['3.0'] = function (uri, data) {
+  // Clone so we don't lose value by reference
+  let newData = Object.assign({}, data);
+
+  if (!data.contentPageSponsorLogo) {
+    newData.contentPageSponsorLogo = '/_components/google-ad-manager/instances/contentPageLogoSponsorship';
+  }
+  return newData;
+};
