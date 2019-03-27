@@ -8,19 +8,18 @@ const radioApiService = require('../../services/server/radioApi'),
 /**
  * get market ID from market slug
  * @param {string} market
- * @returns {number}
+ * @returns {Promise<number>}
  */
 function getMarketID(market) {
   const route = 'markets',
     /* note: filter by slug needs to be added to market api
-    /* temporarily filter by market ID
     */
     // params = { 'filter[slug]': market };
-    params = { 'filter[id]': market };
+    params = {'page[size]': 100}
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      return response.data.id || '';
+      return response.data.find(({ attributes }) => attributes.display_name.toLowerCase() === market.toLowerCase()).id || '';
     } else {
       return '';
     }
