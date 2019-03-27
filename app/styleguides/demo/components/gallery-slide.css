@@ -1,4 +1,5 @@
 @import "_global/fonts";
+@import "_global/colors";
 
 .component--gallery-slide {
   margin: 0 0 em(40) 0;
@@ -16,8 +17,12 @@
   }
 
   .gallery-slide__text {
-    /* margin: em(30) 0 em(40) 0; */
-    margin: em(30) 0 0 0; /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
+    /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
+    margin: em(30) 0 0 0;
+
+    .paragraph {
+      @mixin gallery-font2;
+    }
   }
 
   .gallery-slide__titlewrapper {
@@ -25,11 +30,8 @@
   }
 
   .gallery-slide__number {
+    @mixin gallery-font5;
     display: inline-block;
-    font-family: CircularStd-Black;
-    font-size: em(18, 16);
-    letter-spacing: em(-0.22, 18);
-    line-height: em(25, 18);
     width: em(25, 18);
     height: em(25, 18);
     border-radius: 50%;
@@ -38,21 +40,8 @@
   }
 
   .gallery-slide__title {
+    @mixin gallery-font1;
     display: inline-block;
-    font-family: CircularStd-Black;
-    font-size: em(20, 16);
-    color: #000000;
-    letter-spacing: em(-0.25, 20);
-    line-height: em(25, 20);
-  }
-
-  .gallery-slide__description {
-    /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
-    font-family: ProximaNova-Regular;
-    font-size: em(15, 16);
-    color: #000000;
-    letter-spacing: em(-0.3, 15);
-    line-height: em(20, 15);
   }
 
   /* If slide embed is an Image component, override standard credit text-alignment. */
@@ -71,8 +60,8 @@
 .component--gallery-slide.component--gallery-slide__default {
 
   .gallery-slide__number {
-    color: #FFFFFF;
-    background: #3c00b7;
+    color: $white;
+    background: $purple;
   }
 
 }
@@ -80,8 +69,8 @@
 .component--gallery-slide.component--gallery-slide__music {
 
   .gallery-slide__number {
-    color: #FFFFFF;
-    background: #FF4940;
+    color: $white;
+    background: $sunsetOrange;
   }
 
 }
@@ -90,7 +79,7 @@
 
   .gallery-slide__number {
     color: #444444;
-    background: #FEC517;
+    background: $lightningYellow;
   }
 
 }
@@ -98,8 +87,8 @@
 .component--gallery-slide.component--gallery-slide__podcasts {
 
   .gallery-slide__number {
-    color: #FFFFFF;
-    background: #00CCB7;
+    color: $white;
+    background: $robinsEggBlue;
   }
 
 }
@@ -107,8 +96,8 @@
 .component--gallery-slide.component--gallery-slide__sports {
 
   .gallery-slide__number {
-    color: #FFFFFF;
-    background: #0099FF;
+    color: $white;
+    background: $azureRadience;
   }
 
 }

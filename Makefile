@@ -93,10 +93,10 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	make build-player && cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
+	make build-player && cd app && npm i && node -r dotenv/config ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
 
 install:
-	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
+	cd app && npm i && node -r dotenv/config ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
 
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
@@ -107,7 +107,7 @@ build-player:
 	mkdir -p ./app/public/web-player
 	cd ./radio-web-player/demo-site && npm i && npm run build
 	cp -r ./radio-web-player/demo-site/dist/* ./app/public/web-player/
-	
+
 .PHONY: spa
 spa:
 	cd spa && npm i && npm run-script build -- --mode=none
