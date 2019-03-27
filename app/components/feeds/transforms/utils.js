@@ -2,20 +2,33 @@
 
 const _forEach = require('lodash/forEach'),
   _find = require('lodash/find'),
+  _get = require('lodash/get'),
+  _reduce = require('lodash/reduce'),
   _includes = require('lodash/includes'),
   mime = require('mime'),
   { getComponentName } = require('clayutils'),
   { getRawMetadata, getRenditionUrl, cleanUrl } = require('../../../services/universal/media-play'),
-  { hbs } = require('../../../services/startup/feed-components');
+  { renderComponent } = require('../../../services/startup/feed-components');
 
 /**
- * render a feed component from the name and data
- * @param {String} cmptName
- * @param {Object} cmptData
- * @returns {String}
+ * 
+ * @param {*} cmptName 
+ * @param {*} cmptData 
  */
-function renderComponent(cmptName, cmptData) {
-  return hbs.partials[`feed-${cmptName}`] ? hbs.partials[`feed-${cmptName}`](cmptData) : '';
+function renderContent(content, locals) {
+  return _reduce(content, (res, cmpt) => {
+    const ref = _get(cmpt, '_ref', ''),
+      cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
+      match = ref.match(/_components\/([^\/]+)\//);
+
+    cmptData.locals = locals;
+    if (match && cmptData) {
+      // render the component and add it to the response
+      res += renderComponent(match[1], cmptData);
+    }
+
+    return res;
+  }, '');
 }
 
 /**
@@ -173,6 +186,7 @@ function getContent(data) {
   return data.content || data.relatedInfo || [];
 }
 
+module.exports.renderContent = renderContent;
 module.exports.renderComponent = renderComponent;
 module.exports.getContent = getContent;
 module.exports.firstAndParse = firstAndParse;

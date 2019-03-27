@@ -1,33 +1,8 @@
 'use strict';
 
-const _get = require('lodash/get'),
-  _reduce = require('lodash/reduce'),
-  format = require('date-fns/format'),
+const format = require('date-fns/format'),
   parse = require('date-fns/parse'),
-  { addArrayOfProps, renderComponent } = require('./utils');
-
-/**
- * Compose article content from select components
- * @param {Object} data
- * @param {Object} locals
- * @returns {string}
- */
-function composeArticleContent(data, locals) {
-  return _reduce(data.content, (res, cmpt) => {
-    const ref = _get(cmpt, '_ref', ''),
-      cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
-      match = ref.match(/_components\/([^\/]+)\//);
-     
-    // TODO: figure out how to add locals to @root in hbs like the other components
-    cmptData.locals = locals;
-    if (match && cmptData) {
-      // render the component and add it to the response
-      res += renderComponent(match[1], cmptData);
-    }
-
-    return res;
-  }, '');
-}
+  { addArrayOfProps, renderContent } = require('./utils');
 
 /**
  * Create an array who represents one article's
@@ -59,7 +34,7 @@ module.exports = function (data, locals) {
         description: { _cdata: data.socialDescription }
       },
       {
-        'content:encoded': { _cdata: composeArticleContent(data, locals)}
+        'content:encoded': { _cdata: renderContent(data.content, locals)}
       }
     ];
 
