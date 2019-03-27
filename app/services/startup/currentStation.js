@@ -47,7 +47,7 @@ const radioApiService = require('../../services/server/radioApi'),
 
 
 /**
- * redirects the current request when it matches an existing redirect rule
+ * obtain the current station details and store them for all components to access in locals
  *
  * @param {object} req
  * @param {object} res
@@ -55,16 +55,16 @@ const radioApiService = require('../../services/server/radioApi'),
  */
 module.exports = async (req, res, next) => {
   if (validPath(req)) {
-    const slug = getStationSlug(req.get('host'));
+    const site_slug = getStationSlug(req.get('host'));
 
-    if (useDefaultStation(slug)) {
-      res.locals.station = defaultStation.attributes;
-    } else {
+    res.locals.station = defaultStation.attributes;
+
+    if (!useDefaultStation(site_slug)) {
       try {
-        const response = await radioApiService.get('stations', { filter: { slug } });
+        const response = await radioApiService.get('stations', { filter: { site_slug } });
 
-        if (response.data) {
-          res.locals.station = response.data.attributes;
+        if (response.data && response.data.length) {
+          res.locals.station = response.data[0].attributes;
         }
       } catch (e) {
       }
