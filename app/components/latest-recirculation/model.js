@@ -98,7 +98,7 @@ const queryService = require('../../services/server/query'),
    * @returns {Promise}
    */
   renderStation = async (data, locals) => {
-    const response = await radioApiService.get('stations', { filter: { slug: locals.params.dynamicStation } }),
+    const response = await radioApiService.get('stations', { filter: { site_slug: locals.params.dynamicStation } }),
       feedUrl = `${response.data[0].attributes.website}/station_feed.json`,
       feed = await radioApiService.get(feedUrl, null, (response) => response.nodes),
       nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],

@@ -32,7 +32,7 @@ module.exports.render = (uri, data, locals) => {
     return data;
   }
 
-  return radioApiService.get('stations', { filter: { slug: locals.params.dynamicStation } }).then(response => {
+  return radioApiService.get('stations', { filter: { site_slug: locals.params.dynamicStation } }).then(response => {
     if (response.data) {
       // station object is available to child components through locals.station
       data.station = locals.station = response.data[0].attributes || {};
