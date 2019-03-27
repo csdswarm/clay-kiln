@@ -19,11 +19,10 @@ module.exports['2.0'] = (uri, data) => {
 };
 
 module.exports['3.0'] = function (uri, data) {
-  // Clone so we don't lose value by reference
-  let newData = Object.assign({}, data);
+  const contentLogoSponsorshipURIPublished = `${uri.split('gallery')[0]}google-ad-manager/instances/contentPageLogoSponsorship`;
 
-  if (!data.contentPageSponsorLogo) {
-    newData.contentPageSponsorLogo = '/_components/google-ad-manager/instances/contentPageLogoSponsorship';
-  }
-  return newData;
+  return {
+    ...data,
+    contentPageSponsorLogo: { _ref : contentLogoSponsorshipURIPublished }
+  };
 };

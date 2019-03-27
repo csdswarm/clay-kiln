@@ -11,7 +11,6 @@
   flex-direction: column;
   align-items: center;
   padding-bottom: em(80);
-  margin-top: em(10);
 
   @mixin medium-small-screen {
     padding-bottom: em(50);
@@ -287,7 +286,7 @@
       width: 100%;
       position: relative;
       min-height: 0;
-      .component--google-ad-manager {
+      .google-ad-manager--half-page-topic {
         display: none !important;
       }
     }

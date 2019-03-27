@@ -375,6 +375,3 @@ em, i {
 @define-mixin global-sponsor-logos-font1 {
   @mixin font ProximaNova-Regular, 14px, $black, -.22px, 17px;
 }
-@define-mixin global-sponsor-logos-font2 {
-  @mixin font ProximaNova-Bold, 14px, $white, -.22px, 17px;
-}

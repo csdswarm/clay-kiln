@@ -84,32 +84,3 @@ _pages:
     secondary: []
     layout: /_components/one-column-layout/instances/general
     customUrl: https://www.radio.com/small-business-pulse
-  curated-topic:
-    head:
-      - /_components/dynamic-meta-title/instances/curated-topic
-      - /_components/dynamic-meta-description/instances/curated-topic
-      - /_components/dynamic-meta-url/instances/general
-      - /_components/meta-image/instances/og-logo
-    layoutHeader:
-      - /_components/google-ad-manager/instances/billboardTop
-    pageHeader:
-      - /_components/topic-page-header/instances/new
-      - /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-    main:
-      - /_components/topic-page/instances/new
-    layout: /_components/one-column-layout/instances/general
-  topic:
-    _dynamic: true
-    head:
-      - /_components/dynamic-meta-title/instances/topic
-      - /_components/dynamic-meta-description/instances/topic
-      - /_components/dynamic-meta-url/instances/general
-      - /_components/meta-image/instances/og-logo
-    layoutHeader:
-      - /_components/google-ad-manager/instances/billboardTop
-    pageHeader:
-      - /_components/topic-page-header/instances/new
-      - /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-    main:
-      - /_components/topic-page/instances/new
-    layout: /_components/one-column-layout/instances/general

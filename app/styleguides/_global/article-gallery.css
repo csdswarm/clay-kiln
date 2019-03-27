@@ -31,13 +31,13 @@
 .article__header,
 .gallery__header {
   display: inline-block;
-  margin-bottom: em(30);
   .header__primary {
     @mixin article-font1;
-    margin-bottom: em(15, 45);
+    margin-bottom: em(25, 45);
   }
   .header__secondary {
     @mixin article-font3;
+    margin-bottom: em(25, 18);
   }
 }
 .article__body,
@@ -195,13 +195,13 @@
 @mixin medium-screen {
   .article__header,
   .gallery__header {
-    margin-bottom: em(25);
     .header__primary {
       @mixin article-font2;
-      margin-bottom: em(15, 35);
+      margin-bottom: em(25, 45);
     }
     .header__secondary {
       @mixin article-font4;
+      margin-bottom: em(25, 18);
     }
   }
   .article__body,
