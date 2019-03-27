@@ -1,4 +1,4 @@
-FROM node:8.9.0
+FROM node:8.9.0-stretch
 
 ###### For Dev
 RUN apt-get update
