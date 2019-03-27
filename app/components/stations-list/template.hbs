@@ -21,7 +21,7 @@
         {{#ifAll ../truncatedList (compare @index '<' 14) }}{{ set 'hideStations' true }}{{/ifAll}}
         {{#ifAny (compare ../truncatedList false) hideStations }}
           <li class="station">
-            <a href="//{{ @root.locals.site.host }}/{{ id }}/listen" class="spa-link">
+            <a href="//{{ @root.locals.site.host }}/{{ slug }}/listen" class="spa-link">
               <div class="station__lede">
                 <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
                 <img class="lede__image"

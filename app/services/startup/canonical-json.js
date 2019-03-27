@@ -79,8 +79,8 @@ function middleware(req, res, next) {
   } else if (req.path.indexOf('/authors/') === 0) {
     params.dynamicAuthor = req.path.match(/authors\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/author@published`);
-  } else if (/(.+)\/listen/.test(req.path)) {
-    params.dynamicStation = req.path.match(/(.+)\/listen/)[1];
+  } else if (/\/(.+)\/listen/.test(req.path)) {
+    params.dynamicStation = req.path.match(/\/(.+)\/listen/)[1];
     promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
     // Otherwise resolve the uri and page instance
