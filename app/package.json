@@ -119,6 +119,7 @@
     "resolve": "^1.7.1",
     "through2": "^2.0.3",
     "uglify-js": "^2.8.29",
+    "uglifyify": "^5.0.1",
     "vinyl-map2": "^1.2.1",
     "yargs": "^11.0.0"
   }

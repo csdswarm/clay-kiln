@@ -1,3 +1,4 @@
+_version: 1.0
 _description: |
   This is the Gallery Slide component.
 
@@ -33,15 +34,17 @@ title:
     help: Slide title text
     validate:
       required: true
+
 description:
   _label: Slide Description
   _placeholder:
     height: 20px
     text: Slide Description
-  _has:
-    input: inline
-    type: multi-line
-    help: Slide description text
+  _componentList:
+    fuzzy: false
+    include:
+      - description
+
 hashLinkPrefix:
   _label: Hash Link Prefix Override
   _has:
