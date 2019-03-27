@@ -152,7 +152,7 @@ class SpaPlayerInterface {
    * @param {string} path - url path.
    */
   extractStationIdFromStationDetailPath (path) {
-    return this.spa.$store.state.spaPayloadLocals.station.id;
+    return this.spa.$store.state.spaPayloadLocals.station.id
   }
 }
 
