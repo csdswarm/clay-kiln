@@ -15,7 +15,7 @@ function getMarketID(market) {
     /* note: filter by slug needs to be added to market api
     */
     // params = { 'filter[slug]': market };
-    params = {'page[size]': 100}
+    params = {'page[size]': 100};
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
