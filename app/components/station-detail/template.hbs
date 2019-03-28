@@ -5,6 +5,7 @@
       <div class="lede__image">
         <div itemscope itemtype="http://schema.org/ImageObject">
           <img src="{{station.square_logo_large}}" alt="{{station.name}}" itemprop="contentUrl">
+          <meta itemprop="thumbnailUrl" content="{{ station.square_logo_large }}?width=140&height=140&crop=1:1,offset-y0">
         </div>
         <div data-play-station="{{station.id}}" class="image__play-btn">
           {{{ read 'components/station-detail/media/play.svg' }}}
