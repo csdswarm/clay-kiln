@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="21px" viewBox="0 0 22 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>ic_favorite</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M9,2.50992489 C6.639,-1.66431709 0,-0.44573516 0,4.78481723 C0,8.38647252 4.17825,12.0692636 9,17 C13.8225,12.0692636 18,8.38647252 18,4.78481723 C18,-0.463507756 11.34375,-1.63340823 9,2.50992489 Z" id="path-1"></path>
+        <filter x="-12.5%" y="-13.2%" width="125.0%" height="129.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="0.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="0.25" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.311594203 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="icon-/-ic_favouriteEmpty" transform="translate(0.000000, -1.000000)" fill-rule="nonzero">
+            <g id="ic_favorite" transform="translate(2.000000, 3.000000)">
+                <g id="Shape" stroke="#d8d8d8" stroke-width="1">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use fill="#FFFFFF" xlink:href="#path-1"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

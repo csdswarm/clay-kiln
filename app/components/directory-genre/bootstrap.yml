@@ -1,0 +1,9 @@
+_components:
+  directory-genre:
+    genre: all
+    googleInlineAd:
+      _ref: /_components/google-ad-manager/instances/billboardBottom
+    stationsList:
+      _ref: /_components/stations-list/instances/genre
+    stationsListTruncated:
+      _ref: /_components/stations-list/instances/genreTruncated

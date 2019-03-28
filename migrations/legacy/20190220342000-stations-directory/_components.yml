@@ -1,0 +1,77 @@
+_components:
+  stations-list:
+    instances:
+      market:
+        filterBy: market
+        market: ''
+        listTitle: ''
+        truncatedList: false
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+      genre:
+        filterBy: genre
+        genre: ''
+        listTitle: ''
+        truncatedList: false
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+      category:
+        filterBy: category
+        category: ''
+        listTitle: ''
+        truncatedList: false
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+
+  directory-featured:
+    instances:
+      default:
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        recentStations:
+          _ref: /_components/stations-list/instances/recentOnFeaturedStationsDirectory
+        stationsList:
+          _ref: /_components/stations-list/instances/category
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/categoryTruncated
+  directory-location:
+    instances:
+      default:
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        stationsList:
+          _ref: /_components/stations-list/instances/market
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/marketTruncated
+  directory-genre:
+    instances:
+      music:
+        genre: all-music
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/genreTruncated
+      news-talk:
+        genre: news-talk
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+      sports:
+        genre: sports
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+
+  stations-directory:
+    instances:
+      default:
+        featuredDirectory:
+          _ref: /_components/directory-featured/instances/default
+        locationDirectory:
+          _ref: /_components/directory-location/instances/default
+        musicDirectory:
+          _ref: /_components/directory-genre/instances/music
+        newsTalkDirectory:
+          _ref: /_components/directory-genre/instances/news-talk
+        sportsDirectory:
+          _ref: /_components/directory-genre/instances/sports

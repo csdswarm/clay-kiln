@@ -1,0 +1,11 @@
+_components:
+  stations-list:
+    filterBy: ''
+    genre: ''
+    market: ''
+    category: ''
+    listTitle: ''
+    truncatedList: true
+    seeAllLink: ''
+    googleInlineAd:
+      _ref: /_components/google-ad-manager/instances/billboardBottom
