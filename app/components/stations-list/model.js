@@ -38,14 +38,16 @@ function getMarketData(market) {
  */
 function getGenreData(genre) {
   const route = 'genres',
-    /* @TODO ON-588: genre slug needs to be added to station api results
-    /* temporarily filter by genre ID
-    */
-    // 'filter[slug]': genre
     params = {
-      'page[size]': 1000,
-      'filter[id]': genre
+      'page[size]': 1000
     };
+
+  /* @TODO ON-588: genre slug needs to be added to station api results. For now, we take both id and slug. */
+  if (isNaN(genre)) {
+    params['filter[slug]'] = genre;
+  } else {
+    params['filter[id]'] = genre;
+  }
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
@@ -116,12 +118,16 @@ module.exports.render = async (uri, data, locals) => {
           break;
         case 'genre':
           data.genre = locals.station.genre[0].slug || locals.station.genre[0].id; // @TODO ON-588: genre slug needs to be added to stations api
-          if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
+          if (data.genre == SPORTS_ID) {
+            data.seeAllLink = `/stations/${ SPORTS_SLUG }`;
+          } else if (data.genre == NEWSTALK_ID) {
+            data.seeAllLink = `/stations/${ NEWSTALK_SLUG }`;
+          } else if (data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
             data.seeAllLink = `/stations/${ data.genre }`;
           } else {
             data.seeAllLink = `/stations/music/${ data.genre }`;
           }
-          data.listTitle = data.listTitle || `${ locals.station.genre[0].name } stations`;
+          data.listTitle = `${ locals.station.genre[0].name } stations`;
           params['filter[genre_id]'] = locals.station.genre[0].id;
           break;
         default:
@@ -157,7 +163,7 @@ module.exports.render = async (uri, data, locals) => {
       data.genre = locals.genre || locals.params.dynamicGenre; // @TODO ON-588: should be slug. temporarily using id
       const genreData = await getGenreData(data.genre);
 
-      if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
+      if (data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
         data.seeAllLink = `/stations/${ data.genre }`;
       } else {
         data.seeAllLink = `/stations/music/${ data.genre }`;
@@ -184,11 +190,11 @@ module.exports.render = async (uri, data, locals) => {
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
         data.stations = response.data ? response.data.map((station) => station.attributes) : [];
-
         return data;
       } else {
         return data;
       }
     });
+    return data;
   }
 };

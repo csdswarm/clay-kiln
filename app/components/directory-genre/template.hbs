@@ -3,9 +3,21 @@
     <select class="directory-genre__dropdown--mobile">
       <option value="">See all in genre:</option>
       {{#each @root.locals.allMusic }}
-        <option value="{{ id }}">{{ attributes.name }}</option>
+        <option value="{{ attributes.slug }}">{{ attributes.name }}</option>
       {{/each}}
     </select>
+    {{#if dynamicGenre }}
+      {{> stations-list stationsList }}
+    {{else}}
+      {{~#each @root.locals.allMusic ~}}
+        <div class="directory-location__stations-by-music-genre" data-genre="{{ attributes.slug }}">
+          {{> stations-list ../stationsListTruncated }}
+        </div>
+        {{#ifAll (modulo (add @index 1) 2 0) (compare @root.locals.allMusic.length "!==" (add @index 1)) }}
+          {{> google-ad-manager ../googleInlineAd }}
+        {{/ifAll}}
+      {{~/each ~}}
+    {{/if}}
   {{/if}}
   {{#if (compare genre '===' 'news-talk') }}
   {{/if}}
