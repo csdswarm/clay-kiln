@@ -1,0 +1,7 @@
+<nav class="component component--breadcrumb">
+  <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/breadcrumbs/media/radiocom-purple-monogram.svg" }}}</a>
+  {{#each crumbs}}
+    <span class="breadcrumb__separator">/</span>
+    <a href="{{ url }}" class="breadcrumb__link">{{ text }}</a>
+  {{/each}}
+</nav>

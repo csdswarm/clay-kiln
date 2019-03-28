@@ -1,0 +1,8 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+@import "_global/breadcrumbs";
+
+/* This file should only include article-specific styles.
+   Any styling that is shared by galleries should be included in the global article-gallery stylesheet. */

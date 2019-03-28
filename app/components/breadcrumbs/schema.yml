@@ -1,0 +1,2 @@
+_description: |
+  Generates a list of `Breadcrumbs` from an array of { url, text } objects
