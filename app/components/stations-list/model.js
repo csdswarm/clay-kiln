@@ -142,8 +142,8 @@ module.exports.render = async (uri, data, locals) => {
           // handle populating stations in client side
           return data;
         }
+        data.market = locals.market || locals.params.dynamicMarket; // should be slug. temporarily using id
       }
-      data.market = locals.market || locals.params.dynamicMarket; // @TODO ON-588: should be slug. temporarily using id
       const marketData = await getMarketData(data.market);
 
       data.seeAllLink = `/stations/location/${ data.market }`;
@@ -159,8 +159,8 @@ module.exports.render = async (uri, data, locals) => {
           // handle populating stations in client side
           return data;
         }
+        data.genre = locals.genre || locals.params.dynamicGenre; // @TODO ON-588: should be slug. temporarily using id
       }
-      data.genre = locals.genre || locals.params.dynamicGenre; // @TODO ON-588: should be slug. temporarily using id
       const genreData = await getGenreData(data.genre);
 
       if (data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
