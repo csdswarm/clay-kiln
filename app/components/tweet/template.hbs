@@ -1,3 +1,11 @@
-<aside data-uri="{{ default _ref _self }}" class="component component--tweet" data-editable="default">
-  {{{ html }}}
+<aside data-uri="{{ default _ref _self }}" class="component component--tweet {{#if error}}{{#unless @root.locals.edit}}component--missing-items{{/unless}}{{/if}}" data-editable="default">
+  {{#if error }}
+    {{#if @root.locals.edit}}
+      <p>MISSING TWEET - click to resolve:<br />
+      {{ url }}
+      </p>
+    {{/if}}
+  {{else}}
+    {{{ html }}}
+  {{/if}}
 </aside>

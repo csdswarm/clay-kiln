@@ -11,6 +11,7 @@
 
 import debounce from 'lodash.debounce'
 import $ from 'jquery'
+import * as mutationTypes from '../vuex/mutationTypes'
 
 const SpaScroll = {
   /**
@@ -123,17 +124,39 @@ const SpaScroll = {
       // Attempt to match a gallery slide
       const matchedSlide = getMatchedSlide(slideNodeList, topBuffer)
 
-      // If slide is matched, update the url hash to point to the slide appropriately.
-      // If no slide matched, reset url to original url for this SPA route.
+      // If slide is matched, update the url hash to point to the slide appropriately, and potentially fire slide pageview event.
+      // If no slide matched, reset url to original url for this Gallery SPA route.
       if (matchedSlide) {
-        history.replaceState(null, null, `#${matchedSlide.id}`)
+        processMatchedSlide.call(this, matchedSlide)
       } else {
-        history.replaceState(null, null, this.$route.fullPath)
+        history.replaceState(null, null, this.$route.path)
       }
     }, 300)
 
     // Attach the handler to scroll event.
     window.addEventListener('scroll', slideScrollHandler)
+  }
+}
+
+/**
+ *
+ * Update the browser slug to link directly to this matched slide and also
+ * fire slide pageview if not already fired on this unique Gallery view.
+ *
+ * processMatchedSlide must be executed via processMatchedSlide.call(vue) with the
+ * Vue app passed in as first parameter. The context of "this" in this function
+ * must be set to the vue app.
+ *
+ * @param {object} matchedSlide - matched slide DOM element.
+ */
+function processMatchedSlide (matchedSlide) {
+  // Update slug to link directly to slide
+  history.replaceState(null, null, `#${matchedSlide.id}`)
+
+  // If we haven't already for this unique Gallery view... fire slide pageview event to Client.js listener.
+  if (!this.$store.state.pageCache.gallerySlidePageviews[matchedSlide.id]) {
+    // Track slide pageview in Vuex.
+    this.$store.commit(mutationTypes.TRACK_GALLERY_SLIDE_PAGEVIEW, matchedSlide.id)
   }
 }
 

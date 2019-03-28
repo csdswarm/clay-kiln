@@ -22,3 +22,29 @@ module.exports['2.0'] = function (uri, data) {
 
   return newData;
 };
+
+module.exports['3.0'] = function (uri, data) {
+  // Clone so we don't lose value by reference
+  let newData = Object.assign({}, data);
+
+  newData.filterSecondaryArticleTypes = {};
+
+  // Replace articleType with sectionFront
+  if (data.filterSecondaryArticleType) {
+    newData.filterSecondaryArticleTypes[data.filterSecondaryArticleType] = true;
+  }
+  delete newData.filterSecondaryArticleType;
+
+  return newData;
+};
+
+module.exports['4.0'] = function (uri, data) {
+  data.filterTags = data.filterTags || [];
+
+  // Add tag if it's not already on the section lead
+  if (!data.filterTags.filter(tag => tag.text === 'Radio.com Latino').length) {
+    data.filterTags.push({text: 'Radio.com Latino'});
+  }
+
+  return data;
+};

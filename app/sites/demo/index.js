@@ -30,6 +30,9 @@ module.exports.routes = [
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
   { path: '/newsletter/subscribe' },
   { path: '/news/small-business-pulse' },
+  { path: '/small-business-pulse/:slug' },
+  { path: '/small-business-pulse/:year/:month/:name' },
+  { path: '/small-business-pulse/:year/:month/:day/:name' },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' }
 ];
 
