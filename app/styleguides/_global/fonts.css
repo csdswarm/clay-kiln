@@ -444,3 +444,6 @@ em, i {
 @define-mixin stations-directory-font3 {
   @mixin font CircularStd-Medium, 12px, $black, -.58px, 15px;
 }
+@define-mixin directory-featured-font1 {
+  @mixin font CircularStd-Black, 24px, $white, -.58px, 140px;
+}

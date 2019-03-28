@@ -1,0 +1,97 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--directory-featured {
+  .directory-featured__stations-by-genre {
+    .stations-by-genre__header-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      h2.header-row__title {
+        @mixin stations-list-font1;
+        text-transform: capitalize;
+        margin-bottom: em(20, 18);
+      }
+      a.header-row__see-all-link {
+        @mixin stations-list-font4;
+        text-decoration: none;
+        margin-bottom: em(20, 18);
+        display: flex;
+        align-items: center;
+        svg {
+          height: em(10, 12);
+          margin-left: em(5, 12);
+        }
+      }
+    }
+    ul {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      li.genre-list__genre {
+        width: em(140);
+        margin-bottom: em(40);
+        @mixin default-screen {
+          &:nth-of-type(n+8) {
+            display: none;
+          }
+          &:nth-of-type(-n+7) {
+            display: block;
+          }
+          &:not(:nth-of-type(7n)) {
+            margin-right: em(20);
+          }
+        }
+        @mixin large-screen {
+          &:nth-of-type(n+7) {
+            display: none;
+          }
+          &:nth-of-type(-n+6) {
+            display: block;
+          }
+          &:not(:nth-of-type(6n)) {
+            margin-right: em(20);
+          }
+        }
+        @mixin medium-screen {
+          width: calc((100% - 2 * em(20)) / 3);
+          &:nth-of-type(3n) {
+            margin-right: 0;
+          }
+          &:not(:nth-of-type(3n)) {
+            margin-right: em(20);
+          }
+        }
+        @media all and (max-width: 600px) {
+          width: calc((100% - em(20)) / 2);
+          &:nth-of-type(2n) {
+            margin-right: 0;
+          }
+          &:not(:nth-of-type(2n)) {
+            margin-right: em(20);
+          }
+        }
+        a {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          width: 100%;
+          img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+          }
+          .genre__label {
+            @mixin directory-featured-font1;
+            position: absolute;
+          }
+        }
+      }
+    }
+  }
+}
