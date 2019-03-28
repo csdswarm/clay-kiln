@@ -19,20 +19,14 @@
   .head__lede {
     display: flex;
     flex-direction: row;
-    height: em(widthOnGrid(4, 3));
-    @mixin large-screen {
-      height: em(widthOnGrid(3, 2));
-    }
+    height: em(widthOnGrid(3, 2));
     @mixin medium-screen {
       height: auto;
     }
     .lede__image {
       position: relative;
       outline: em(1) solid $alto;
-      width: em(widthOnGrid(4, 3));
-      @mixin large-screen {
-        width: em(widthOnGrid(3, 2));
-      }
+      width: em(widthOnGrid(3, 2));
       @mixin medium-screen {
         display: none;
       }
