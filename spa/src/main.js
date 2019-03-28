@@ -1,8 +1,11 @@
-import $ from 'jquery'
+import $ from 'jquery' // todo: remove jquery and switch to addeventlister
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store, { setVuexStoreBaseState } from './store'
+import VModal from 'vue-js-modal'
+
+Vue.use(VModal)
 
 Vue.config.productionTip = false
 

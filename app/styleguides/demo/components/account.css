@@ -1,0 +1,315 @@
+@import "_global/bootstrap.min";
+/*
+//
+//@font-face {
+//    font-family: "proxima";
+//src: url(../fonts/proximanova_regular.ttf) format("truetype");
+//}
+//
+//@font-face {
+//    font-family: "Circular";
+//src: url(../fonts/circularstd_black.ttf) format("truetype");
+//}
+//
+//@font-face {
+//    font-family: "CircularMed";
+//src: url(../fonts/circularstd_medium.ttf) format("truetype");
+//}
+*/
+
+.account {
+  font-family: 'proxima', sans-serif;
+  background: #fafafa;
+
+  a {
+    color: #1f055e;
+  }
+
+  a:hover,
+  a:focus {
+    color: #3c00b7;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 500;
+    font-family: 'Circular', sans-serif;
+    color: #1f055e;
+
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    color: #000000;
+    font-family: 'Circular', sans-serif;
+    font-size: 14px;
+    margin-bottom: 10px;
+
+  }
+
+  h3 {
+    font-size: 34px;
+    font-weight: 500;
+    font-family: 'Circular', sans-serif;
+    color: #1f055e;
+
+    margin-bottom: 20px;
+  }
+
+
+
+  p {
+    color: #000000;
+
+    font-size: 14px;
+    margin-bottom: 10px;
+
+  }
+
+
+  .error {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    border: 2px solid;
+    border-color: #ff0000;
+    font-size: 14px;
+    color: #ff0000;
+    font-family: 'CircularMed', sans-serif;
+  }
+
+
+  .confirmation {
+    display: inline-block;
+    width: 100%;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    border: 2px solid;
+    border-color: #50ae54;
+    font-size: 14px;
+    color: #50ae54;
+    font-family: 'CircularMed', sans-serif;
+  }
+
+  .image {
+
+    padding-top: 30px;
+    padding-bottom: 20px;
+    display: block;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+
+
+  }
+
+
+  .terms {
+    display: inline-block;
+    width: 100%;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: 2px solid;
+    border-color: #1f055e;
+    font-size: 14px;
+    color: #1f055e;
+    font-family: 'CircularMed', sans-serif;
+  }
+
+  .password{
+
+    font-family: 'CircularMed', sans-serif;
+    font-size: 12px;
+    color: #1f055e;
+    float: right;
+  }
+
+
+  .small{
+
+    font-family: 'CircularMed', sans-serif;
+    font-size: 14px;
+    color: #1f055e;
+
+  }
+
+
+  .footer {
+    font-family: 'proxima', sans-serif;
+    text-align: center;
+    font-size: 8px;
+    color: #000000;
+    line-height: 14px;
+  }
+
+
+  .light-bg {
+    background-color: #fafafa;
+
+
+  }
+
+
+
+
+  .loading
+  {
+    position: relative;
+    display: block;
+    padding: 12px 0px 12px 0px;
+    color: #FFF;
+    margin: 0 auto;
+    background: #1f055e;
+    width: 100%;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+
+  .section {
+    padding: 5px 0;
+  }
+
+  a.underline-link,
+  a.underline-link:link,
+  a.underline-link:hover,
+  a.underline-link:active,
+  a.underline-link:visited{
+    text-decoration: underline;
+  }
+
+
+
+  @media (max-width:767px) {
+    h1 {
+      font-size: 22px;
+    }
+
+  }
+
+  /*  FORM
+  ----------------------*/
+
+
+  .label {
+    display: inline-block;
+  }
+
+
+
+  .form-style-5{
+    min-width: 320px;
+    width: 48%;
+    padding: 10px 20px;
+    background: #f4f7f8;
+    margin: 10px auto;
+    padding: 20px;
+    border-radius: 8px;
+    font-family: 'CircularMed', sans-serif;
+  }
+  .form-style-5 fieldset{
+    border: none;
+
+  }
+
+  .form-style-5 input[type="text"],
+  .form-style-5 input[type="date"],
+  .form-style-5 input[type="datetime"],
+  .form-style-5 input[type="email"],
+  .form-style-5 input[type="number"],
+  .form-style-5 input[type="search"],
+  .form-style-5 input[type="password"],
+  .form-style-5 input[type="url"],
+  .form-style-5 textarea,
+  .form-style-5 select {
+    font-family: 'CircularMed', sans-serif;
+    border: none;
+    font-size: 14px;
+    margin: 0;
+    outline: 0;
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    background-color: #eeeeee;
+    color:#4C4C4C;
+    -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+    margin-bottom: 15px;
+
+  }
+  .form-style-5 input[type="text"]:focus,
+  .form-style-5 input[type="date"]:focus,
+  .form-style-5 input[type="datetime"]:focus,
+  .form-style-5 input[type="email"]:focus,
+  .form-style-5 input[type="number"]:focus,
+  .form-style-5 input[type="search"]:focus,
+  .form-style-5 input[type="time"]:focus,
+  .form-style-5 input[type="url"]:focus,
+  .form-style-5 textarea:focus,
+  .form-style-5 select:focus{
+    background: #d2d9dd;
+  }
+  .form-style-5 select{
+    -webkit-appearance: menulist-button;
+    height:35px;
+  }
+
+
+  .form-style-5 input[type="submit"],
+  .form-style-5 input[type="button"]
+  {
+    position: relative;
+    display: block;
+    padding: 19px 39px 18px 39px;
+    border: 0px;
+    color: #FFF;
+    margin: 0 auto;
+    font-family: 'Circular', sans-serif;
+    background: #1f055e;
+    font-size: 18px;
+    text-align: center;
+    font-style: normal;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    min-width: 220px;
+  }
+
+  .form-style-5 input[type="button2"]
+  {
+    position: relative;
+    float:left;
+    display: block;
+    padding: 19px 39px 18px 39px;
+    border: 0px;
+    color: #FFF;
+    margin: 0 auto;
+    font-family: 'Circular', sans-serif;
+    background: #1f055e;
+    font-size: 18px;
+    text-align: center;
+    font-style: normal;
+    width: 49%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right: 4px;
+    min-width: 225px;
+  }
+
+
+  .form-style-5 input[type="submit"]:hover,
+  .form-style-5 input[type="button"]:hover
+  {
+    background: #3c00b7;
+  }
+  .form-style-5 input[type="button2"]:hover
+  {
+    background: #3c00b7;
+  }
+
+}

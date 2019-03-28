@@ -4,6 +4,7 @@ const pkg = require('../../package.json'),
   amphoraPkg = require('amphora/package.json'),
   kilnPkg = require('clay-kiln/package.json'),
   bodyParser = require('body-parser'),
+  cookieParser = require('cookie-parser'),
   compression = require('compression'),
   session = require('express-session'),
   RedisStore = require('connect-redis')(session),
@@ -12,7 +13,9 @@ const pkg = require('../../package.json'),
   canonicalJSON = require('./canonical-json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
-  handleRedirects = require('./redirects');
+  handleRedirects = require('./redirects'),
+  user = require('./user'),
+  radiumApi = require('./radium');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -59,7 +62,23 @@ function setupApp(app) {
     extended: true
   }));
 
+  app.use(cookieParser());
+
   app.use(handleRedirects);
+
+  app.use(user);
+
+  /**
+   * Radium radium.radio.com endpoints
+   */
+  app.all('/radium/*', (req, res) => {
+    radiumApi.apply(req, res).then((data) => {
+      return res.json(data);
+    }).catch((e) => {
+      console.log(e);
+      res.status(500).json({ message: 'An unknown error has occurred.' });
+    });
+  });
 
   app.use(canonicalJSON);
 

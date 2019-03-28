@@ -16,7 +16,9 @@ const vuexStoreDefaultState = {
   // pageCache is reset/flushed every time the SPA navigates. It is used as storage associated with a single SPA "pageview"
   pageCache: {
     gallerySlidePageviews: {} // Used to track slide pageview events so slide pageviews are only counted once per SPA "pageview"
-  }
+  },
+  metadata: {},
+  accountComponent: null
 }
 
 export default new Vuex.Store({
@@ -50,11 +52,35 @@ export default new Vuex.Store({
         state.pageCache,
         { gallerySlidePageviews }
       )
+    },
+    [mutationTypes.ACCOUNT_MODAL_SHOW]: (state, component) => {
+      state.accountComponent = component
+    },
+    [mutationTypes.ACCOUNT_MODAL_HIDE]: (state) => {
+      state.accountComponent = null
+    },
+    SET_METADATA: (state, metadata) => { state.metadata = metadata },
+    SET_TOKENS: (state, tokens) => { state.tokens = tokens },
+    SET_REDIRECT_URI: (state, redirectUri) => { state.redirectUri = redirectUri },
+    SUCCESS_REDIRECT: (state, platform) => {
+      return state.redirectUri && platform !== 'webplayer'
+        ? window.open(state.redirectUri, '_self') : router.push({ path: `/account/success` })
+    },
+    REDIRECT_WITH_TOKENS: (state, platform) => {
+      debugLog('REDIRECT_WITH_TOKENS current state', state)
+
+      if (!state.redirectUri) {
+        return router.push({ path: `/account/error` })
+      }
+
+      const externalRedirectUri = new URL(state.redirectUri)
+      externalRedirectUri.search = new URLSearchParams({ authData: JSON.stringify(state.tokens) })
+
+      return window.open(externalRedirectUri.toString(), '_self')
     }
   },
-  actions: {
-
-  }
+  actions: {},
+  getters: {}
 })
 
 /**

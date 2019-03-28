@@ -1,5 +1,15 @@
 <template>
-  <component v-bind:is="this.activeLayoutComponent"></component>
+  <div>
+    <component v-bind:is="this.activeLayoutComponent"></component>
+    <modal name="account-modal"
+           :adaptive="true"
+           :scrollable="true"
+           width="400px"
+           height="auto"
+    >
+      <account/>
+    </modal>
+  </div>
 </template>
 
 <script>
@@ -12,6 +22,9 @@ import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
+import Account from '@/views/Account'
+import accountRoutes from '@/views/account/routes/'
+import { mapState } from 'vuex'
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -28,7 +41,11 @@ export default {
       activeLayoutComponent: null
     }
   },
-  computed: {},
+  computed: {
+    ...mapState([
+      'accountComponent'
+    ])
+  },
   methods: {
     /**
      *
@@ -64,6 +81,37 @@ export default {
       let regExp = url.replace(/\*/g, '.*')
 
       return new RegExp(`^${regExp}`, 'i')
+    },
+    /**
+     * shows the account the modal
+     *
+     */
+    modalShow () { this.$modal.show('account-modal') },
+    /**
+     * hides the account modal
+     *
+     */
+    modalHide () { this.$modal.hide('account-modal') },
+    /**
+     * if the path belongs to an account page, show modal and handle routing else hide the modal
+     *
+     * @returns {boolean}
+     */
+    accountRouteHandled () {
+      const path = this.$route.path
+
+      if (/^\/account\//.test(path)) {
+        const route = accountRoutes.find((route) => route.path === path)
+
+        if (route) {
+          this.modalShow()
+          this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, route.component)
+          return true
+        }
+      }
+      this.modalHide()
+
+      return false
     },
     /**
      * determines if the url belongs to the spa
@@ -148,48 +196,62 @@ export default {
     }
   },
   components: {
-    'OneColumnLayout': OneColumnLayout,
-    'OneColumnFullWidthLayout': OneColumnFullWidthLayout,
-    'TwoColumnLayout': TwoColumnLayout
+    OneColumnLayout,
+    OneColumnFullWidthLayout,
+    TwoColumnLayout,
+    Account
   },
   watch: {
     '$route': async function (to, from) {
-      // Start loading animation.
-      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+      if (!this.accountRouteHandled()) {
+        // Start loading animation.
+        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
-      // Get SPA payload data for next path.
-      const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
+        // Get SPA payload data for next path.
+        const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
 
-      if (spaPayload) {
-        const path = (new URL(spaPayload.url)).pathname
+        if (spaPayload) {
+          const path = (new URL(spaPayload.url)).pathname
 
-        // Load matched Layout Component.
-        this.activeLayoutComponent = this.layoutRouter(spaPayload)
+          // Load matched Layout Component.
+          this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-        // Reset/flush the pageCache
-        this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
+          // Reset/flush the pageCache
+          this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
 
-        // Commit next payload to store to kick off re-render.
-        this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+          // Commit next payload to store to kick off re-render.
+          this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-        // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-        metaManager.updateExternalTags(this.$store.state.spaPayload)
+          // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+          metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-        // Stop loading animation.
-        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+          // Stop loading animation.
+          this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-        // Build pageView event data
-        const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
+          // Build pageView event data
+          const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-        // Call global pageView event.
-        const event = new CustomEvent(`pageView`, {
-          detail: pageViewEventData
-        })
+          // Call global pageView event.
+          const event = new CustomEvent(`pageView`, {
+            detail: pageViewEventData
+          })
 
-        document.dispatchEvent(event)
+          document.dispatchEvent(event)
+        }
+      }
+    },
+    accountComponent (component) {
+      if (!component) {
+        this.modalHide()
       }
     }
+  },
+  mounted () {
+    this.accountRouteHandled()
   }
 }
 
 </script>
+
+// use a global bus for listening to events for closing the modal
+// use the global bus for emiting the event from inside the login.vue page
