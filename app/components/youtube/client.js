@@ -4,7 +4,7 @@ function Constructor(el) {
   const videoConfig = {
       videoContainerId: el.getAttribute('data-element-id').trim(),
       contentId: el.getAttribute('data-content-id').trim(),
-      isPlaylist: el.getAttribute('data-is-playlist')
+      isPlaylist: el.getAttribute('data-is-playlist') === 'true'
     },
 
     playerOptions = {

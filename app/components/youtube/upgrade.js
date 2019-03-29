@@ -16,7 +16,8 @@ module.exports['1.0'] = function (uri, data, locals) { // eslint-disable-line no
  */
 module.exports['2.0'] = function (uri, data) {
   data.videoPlaylist = '';
-  data.content = data.videoId;
+  data.contentId = data.videoId;
+  data.videoSource = data.videoSource === 'playlist' ? 'playlist' : 'video';
   delete data.videoId;
   return data;
 };

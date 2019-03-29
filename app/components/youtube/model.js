@@ -98,8 +98,8 @@ module.exports.save = (uri, data) => {
   clearContentId(data);
   updateSettingsByType(data);
 
-  if (data.contentId) {
-    return getVideoDetails(data.contentId, data.isPlaylist)
+  if (data.contentId || data.videoId) {
+    return getVideoDetails(data.contentId || data.videoId, data.isPlaylist)
       .then(videoDetails => setVideoDetails(data, videoDetails));
   }
 
