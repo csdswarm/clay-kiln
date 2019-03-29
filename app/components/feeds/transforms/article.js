@@ -1,46 +1,20 @@
 'use strict';
 
-const _get = require('lodash/get'),
-  _reduce = require('lodash/reduce'),
-  format = require('date-fns/format'),
+const format = require('date-fns/format'),
   parse = require('date-fns/parse'),
-  { addArrayOfProps } = require('./utils'),
-
-  render = {
-    paragraph: (data) => {
-      const text = _get(data, 'text', '');
-
-      return text ? `<p>${text}</p>` : '';
-    }
-  };
-
-/**
- * Compose article content from select components
- * @param {Object} data
- * @returns {string}
- */
-function composeArticleContent(data) {
-  return _reduce(data.content, (res, cmpt) => {
-    const ref = _get(cmpt, '_ref', ''),
-      cmptData = JSON.parse(_get(cmpt, 'data', '{}'));
-
-    if (ref.includes('/paragraph/')) {
-      res += render.paragraph(cmptData);
-    }
-
-    return res;
-  }, '');
-}
+  { addArrayOfProps, renderContent } = require('./utils');
 
 /**
  * Create an array who represents one article's
  * data as it conforms to the `xml` package's API
  *
  * http://npmjs.com/package/xml
- * @param  {Object} data
+ * @param {Object} data
+ * @param {Object} locals
  * @return {Array}
  */
-module.exports = function (data) {
+module.exports = function (data, locals) {
+
   const { canonicalUrl, plaintextPrimaryHeadline } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
@@ -60,7 +34,7 @@ module.exports = function (data) {
         description: { _cdata: data.socialDescription }
       },
       {
-        'content:encoded': { _cdata: composeArticleContent(data)}
+        'content:encoded': { _cdata: renderContent(data.content, locals)}
       }
     ];
 
