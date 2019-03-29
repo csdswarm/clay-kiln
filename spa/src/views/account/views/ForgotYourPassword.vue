@@ -33,12 +33,10 @@ export default {
 
   computed: {
     signUpLink () {
-      const platform = 'webplayer'
       return this.$route.query.redirect_uri ? `/account/signup?redirect_uri=${this.$route.query.redirect_uri}` : `/account/signup`
     },
 
     logInLink () {
-      const platform = 'webplayer'
       return this.$route.query.redirect_uri ? `/account/login?redirect_uri=${this.$route.query.redirect_uri}` : `/account/login`
     }
   },
@@ -65,7 +63,7 @@ export default {
 
       this.isLoading = true
       const { metadata } = this.$store.state
-      const platform = 'webplayer'
+
       service.forgotPassword(metadata.app.webplayer.clientId, this.email)
         .then(() => {
           this.isError = false

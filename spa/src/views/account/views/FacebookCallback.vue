@@ -5,11 +5,14 @@
 <script>
 import service from '@/services'
 import { debugLog, setToLocalStore } from '@/utils'
+import { isMobileDevice } from '../utils'
+
 export default {
   name: 'FacebookCallback',
   created () {
     const platform = 'webplayer'
-    const { code, error_description } = this.$route.query
+    const { code } = this.$route.query
+    const { errorDescription } = this.$route.query.error_description
     const { metadata } = this.$store.state
 
     debugLog('facebook callback query', this.$route.query)
@@ -28,23 +31,23 @@ export default {
      * Currently there is a bug in Cognito which returns AliasExistsException when merging a user
      * The workaround for this is to request Facebook link second time, so it would be successful
      */
-    if (error_description && error_description.includes(WORKAROUND_EXCEPTION)) {
+    if (errorDescription && errorDescription.includes(WORKAROUND_EXCEPTION)) {
       window.open(cognitoFacebookUrl, '_self')
       return
     }
 
-    if (error_description) {
-      this.$router.push({ path: `/account/error?error_description=${error_description}` })
+    if (errorDescription) {
+      this.$router.push({ path: `/account/error?error_description=${errorDescription}` })
       return
     }
 
     // Need to set external redirect uri
-    const { redirect_uri } = JSON.parse(redirectState)
-    this.$store.commit('SET_REDIRECT_URI', redirect_uri)
+    const { redirectUri } = JSON.parse(redirectState).redirect_uri
+    this.$store.commit('SET_REDIRECT_URI', redirectUri)
 
     const resolvePlatformFbLogin = async facebookCallbackResult => {
-      const tokens = facebookCallbackResult.data
-      this.$store.commit('SET_TOKENS', tokens)
+      const user = facebookCallbackResult.data
+      this.$store.commit('SET_USER', user)
 
       let hasProfile = false
       await service.getProfile()
@@ -56,10 +59,10 @@ export default {
         })
 
       if (platform === 'webplayer' && hasProfile) {
-        return setToLocalStore(tokens).then(() => this.$store.commit('SUCCESS_REDIRECT', platform))
-      } else if (platform === 'android' || platform === 'ios') {
+        return setToLocalStore(user).then(() => this.$store.commit('SUCCESS_REDIRECT', platform))
+      } else if (isMobileDevice()) {
         // ios and android handles profile in their own app
-        this.$store.commit('SET_TOKENS', { ...tokens, has_profile: hasProfile })
+        this.$store.commit('SET_USER', { ...user, has_profile: hasProfile })
         this.$store.commit('REDIRECT_WITH_TOKENS', platform)
       } else {
         this.$router.push({ path: `/account/profile` })
@@ -68,7 +71,7 @@ export default {
       return Promise.resolve(null)
     }
 
-    const fbServicePromise = service.facebookCallback(platform, code)
+    service.facebookCallback(platform, code)
       .then(resolvePlatformFbLogin)
       .catch(err => {
         debugLog('Could not login to Facebook', err)

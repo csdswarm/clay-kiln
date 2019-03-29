@@ -15,7 +15,7 @@
     <p align="center">
       <span class="small">
         <router-link :to="
-forgotPasswordLink">Forgot Password?</router-link>&nbsp | &nbsp<router-link :to="signUpLink">Create an Account</router-link>
+forgotPasswordLink">Forgot Password?</router-link>&nbsp; | &nbsp;<router-link :to="signUpLink">Create an Account</router-link>
       </span>
     </p>
     <div v-if="user.isLoading">
@@ -94,10 +94,9 @@ export default {
       const platform = 'webplayer'
 
       try {
-        await service.signIn(metadata.app.webplayer.clientId, this.user.email, this.user.password, getDeviceId(platform))
-          this.$store.commit('SET_TOKENS', { ...result.data })
-          this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
-
+        const result = await service.signIn(metadata.app.webplayer.clientId, this.user.email, this.user.password, getDeviceId(platform))
+        this.$store.commit('SET_USER', { ...result.data })
+        this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
         this.user.isLoading = false
       } catch (err) {
         this.user.isLoading = false

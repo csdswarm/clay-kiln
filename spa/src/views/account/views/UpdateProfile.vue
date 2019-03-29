@@ -104,13 +104,12 @@
 </template>
 
 <script>
-import jwt from 'jwt-simple'
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
-import { debugLog, isValidZipCode, isAccessTokenValid } from '@/utils'
+import { debugLog, isValidZipCode } from '@/utils'
 import Loader from '@/components/Loader'
-import store from '@/store'
 import service from '@/services'
+import { isMobileDevice } from '../utils'
 
 export default {
   name: 'CreateProfile',
@@ -122,7 +121,7 @@ export default {
 
   data () {
     const defaultData = {
-      mobile: this.$route.params.platform === 'ios' || this.$route.params.platform === 'android',
+      mobile: isMobileDevice(),
       user: {
         firstName: '',
         lastName: '',
@@ -139,15 +138,6 @@ export default {
   },
 
   created () {
-    const tokens = this.$route.query
-    if (!isAccessTokenValid(tokens.access_token)) {
-      this.isError = true
-      this.feedback = 'Something went wrong! Please contact support for help.'
-      return
-    }
-
-    this.$store.commit('SET_TOKENS', tokens)
-
     service.getProfile()
       .then((result) => {
         this.user.firstName = result.data.first_name
@@ -155,6 +145,8 @@ export default {
         this.user.gender = result.data.gender
         this.user.dateOfBirth = result.data.date_of_birth ? moment(result.data.date_of_birth) : ''
         this.user.zipCode = result.data.zip_code
+
+        this.$store.commit('SET_USER', result)
       })
       .catch((err) => {
         this.isLoading = false

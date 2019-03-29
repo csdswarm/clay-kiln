@@ -139,7 +139,7 @@ export default {
       service.signUp(metadata.app.webplayer.clientId, this.user.email, this.user.password)
         .then(() => service.signIn(metadata.app.webplayer.clientId, this.user.email, this.user.password, getDeviceId(platform)))
         .then((result) => {
-          this.$store.commit('SET_TOKENS', { ...result.data, access_token: true })
+          this.$store.commit('SET_USER', { ...result.data, cameFromCreate: true })
           this.user.isLoading = false
           this.$router.push({ path: `/account/profile` })
         })

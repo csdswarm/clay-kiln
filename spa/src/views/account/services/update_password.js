@@ -1,5 +1,4 @@
 import axios from 'axios'
-import store from '../../../store'
 import formatError from './format_error'
 
 function updatePassword (password, newPassword) {

@@ -117,11 +117,11 @@
 <script>
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
-import { debugLog, validateEmail, isValidZipCode, setToLocalStore } from '../utils'
+import { debugLog, validateEmail, isValidZipCode, isMobileDevice } from '../utils'
 import Loader from '../components/Loader'
 import store from '@/store'
 import service from '../services'
-import * as mutationTypes from "@/vuex/mutationTypes";
+import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
   name: 'CreateProfile',
@@ -130,11 +130,10 @@ export default {
     Datepicker,
     Loader
   },
-  // TODO since you removed the platform to make it always web determine something
+
   data () {
-    console.log('data')
     const defaultData = {
-      mobile: this.$route.params.platform === 'ios' || this.$route.params.platform === 'android',
+      mobile: isMobileDevice(),
       user: {
         email: '',
         disableEmailInput: false,
@@ -157,8 +156,7 @@ export default {
   created () {
     debugLog('profile store state', store.state)
 
-    // not logged in
-    if (!store.state.tokens || !store.state.tokens.access_token) {
+    if (!store.state.user.cameFromCreate) {
       this.$router.push({ path: '/' })
     }
   },
@@ -193,8 +191,8 @@ export default {
 
     prepopulateProfile (state) {
       return {
-          ...state.tokens,
-          disableEmailInput: !!(state.tokens.email),
+        ...state.user,
+        disableEmailInput: !!(state.user.email)
       }
     },
 
@@ -226,10 +224,10 @@ export default {
       if (!this.user.error) {
         this.user.isLoading = true
         service.createProfile(this.user)
-          .then(() => {
+          .then((result) => {
             this.user.isLoading = false
             // update the store with the user information
-            this.$store.commit('SET_TOKENS', { ...result.data })
+            this.$store.commit('SET_USER', { ...result.data })
             this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
           })
           .catch((err) => {

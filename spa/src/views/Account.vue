@@ -36,10 +36,13 @@ export default {
   },
   methods: {
     getMetadata () {
-      return axios.get('/radium/v1/app/metadata')
-        .then((result) => {
-          this.$store.commit('SET_METADATA', result.data)
-        })
+      // if this is the first time that the account page had loaded, get the meta data and profile of a user
+      if (!this.$store.state.metadata.app) {
+        axios.get('/radium/v1/app/metadata')
+          .then((result) => {
+            this.$store.commit('SET_METADATA', result.data)
+          })
+      }
     }
   },
   components: {

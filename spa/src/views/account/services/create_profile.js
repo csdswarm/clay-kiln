@@ -1,6 +1,5 @@
 import axios from 'axios'
 import formatError from './format_error'
-import store from '../../../store'
 import { debugLog } from '../utils'
 
 function createProfile (profileData) {

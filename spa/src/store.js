@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import * as mutationTypes from './vuex/mutationTypes'
 import { handlebars } from '../config/initHandlebars'
 import { Base64 } from 'js-base64'
+import { debugLog } from './views/account/utils'
 
 Vue.use(Vuex)
 
@@ -18,7 +19,8 @@ const vuexStoreDefaultState = {
     gallerySlidePageviews: {} // Used to track slide pageview events so slide pageviews are only counted once per SPA "pageview"
   },
   metadata: {},
-  accountComponent: null
+  accountComponent: null,
+  user: {}
 }
 
 export default new Vuex.Store({
@@ -60,17 +62,17 @@ export default new Vuex.Store({
       state.accountComponent = null
     },
     SET_METADATA: (state, metadata) => { state.metadata = metadata },
-    SET_TOKENS: (state, tokens) => { state.tokens = tokens },
+    SET_USER: (state, user) => { state.user = user },
     SET_REDIRECT_URI: (state, redirectUri) => { state.redirectUri = redirectUri },
     SUCCESS_REDIRECT: (state, platform) => {
       return state.redirectUri && platform !== 'webplayer'
-        ? window.open(state.redirectUri, '_self') : router.push({ path: `/account/success` })
+        ? window.open(state.redirectUri, '_self') : this.$router.push({ path: `/account/success` })
     },
     REDIRECT_WITH_TOKENS: (state, platform) => {
       debugLog('REDIRECT_WITH_TOKENS current state', state)
 
       if (!state.redirectUri) {
-        return router.push({ path: `/account/error` })
+        return this.$router.push({ path: `/account/error` })
       }
 
       const externalRedirectUri = new URL(state.redirectUri)

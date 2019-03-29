@@ -1,17 +1,17 @@
 import SignUp from '../views/SignUp'
-import CreateProfile from '../views/CreateProfile';
-// import UpdateProfile from '../views/UpdateProfile';
-// import GenericError from '../views/GenericError';
-// import Welcome from '../views/Welcome';
-// import FacebookCallback from '../views/FacebookCallback';
+import CreateProfile from '../views/CreateProfile'
+// import UpdateProfile from '../views/UpdateProfile'
+// import GenericError from '../views/GenericError'
+// import Welcome from '../views/Welcome'
+// import FacebookCallback from '../views/FacebookCallback'
 import Login from '../views/Login'
-// import GenericSuccess from '../views/GenericSuccess';
-// import ForgotYourPassword from '../views/ForgotYourPassword';
-// import ResetPassword from '../views/ResetPassword';
-// import UpdatePassword from '../views/UpdatePassword';
-// import ResetPasswordSuccess from '../views/ResetPasswordSuccess';
-// import EmailVerifiedSuccess from '../views/EmailVerifiedSuccess';
-// import Home from '../views/Home';
+// import GenericSuccess from '../views/GenericSuccess'
+// import ForgotYourPassword from '../views/ForgotYourPassword'
+// import ResetPassword from '../views/ResetPassword'
+// import UpdatePassword from '../views/UpdatePassword'
+// import ResetPasswordSuccess from '../views/ResetPasswordSuccess'
+// import EmailVerifiedSuccess from '../views/EmailVerifiedSuccess'
+// import Home from '../views/Home'
 
 const routes = [
   // {

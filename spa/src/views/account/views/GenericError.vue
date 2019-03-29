@@ -20,8 +20,6 @@ export default {
   name: 'GenericError',
   methods: {
     genericErrorGoBack () {
-      const platform = 'webplayer'
-
       debugLog('error page state', this.$store.state)
 
       if (this.$store.state.redirectUri) {

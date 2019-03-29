@@ -64,19 +64,20 @@ export default {
   },
 
   created () {
+    // NOTE: THIS WILL HAVE TO BE ADJUSTED
     const tokens = this.$route.query
     if (!isAccessTokenValid(tokens.access_token)) {
       this.isError = true
       this.feedback = 'Something went wrong! Please contact support for help.'
-      return
+      // return
     }
 
-    this.$store.commit('SET_TOKENS', tokens)
+    /// This has been altered
+    // this.$store.commit('SET_USER', tokens)
   },
 
   methods: {
     onFieldChange (event) {
-      console.log(event.target.name, event.target.value)
       this.user[event.target.name] = event.target.value
     },
 

@@ -8,8 +8,10 @@ const axios = require('axios'),
   jwt = require('jsonwebtoken'),
   moment = require('moment'),
   db = require('../server/db'),
-  tokenKeys = ['access_token', 'expires_in', 'refresh_token', 'id_token', 'device_key', 'token_type'],
-  excludeKeys = ['user_id', 'userId'],
+  excludeKeys = {
+    token: ['access_token', 'expires_in', 'refresh_token', 'id_token', 'device_key', 'token_type'],
+    profile: ['application_id', 'created_date', 'modified_date', 'tracking_id', 'user_id', 'userId']
+  },
   radiumApi = 'https://radium.radio.com/',
   privateKey = process.env.JWT_SECRET_KEY,
   profileExpires = 10 * 365 * 24 * 60 * 60,
@@ -44,7 +46,6 @@ const axios = require('axios'),
    * @param {object} response
    */
   addCookie = (name, data, expire, response) => {
-    // TODO: SHOULD WE BE EXPIRING THE COOKIES? I DO NOT BELIEVE SO SINCE THE AUTH TOKEN SHUOULD BE REFRESHED!!!!
     try {
       response.cookie(name, encodeCookie(data), { path: '/', httpOnly: true, expires: new Date(Date.now() + expire * 1000) });
     } catch (e) {
@@ -78,15 +79,16 @@ const axios = require('axios'),
   hasTokenKeys = (object) => {
     const keys = Object.keys(object);
 
-    return tokenKeys.filter((key) => keys.includes(key)).length === tokenKeys.length;
+    return excludeKeys.token.filter((key) => keys.includes(key)).length === excludeKeys.token.length;
   },
   /**
-   * removes keys that should never be sent back to the browser from the object
+   * removes keys from the object
    *
    * @param {object} object
+   * @param {array} keys
    * @return {object}
    */
-  excludeTokens = (object) => [ ...tokenKeys, ...excludeKeys ].forEach((key) => delete object[key]),
+  removeKeys = (object, keys) => keys.forEach((key) => delete object[key]),
   /**
    * obtain a new token
    *
@@ -149,8 +151,7 @@ const axios = require('axios'),
       const response = await call('GET', 'v1/profile', null, tokens.access_token);
 
       return {
-        firstName: response.data.first_name,
-        userId: response.data.user_id,
+        ...response.data,
         email: tokens.email,
         verified: tokens.verified
       };
@@ -178,17 +179,25 @@ const axios = require('axios'),
    */
   profileLogic = (response, req, res) => {
     const oldProfile = decodeCookie(COOKIES.profile, req.cookies),
+
       // email and verified do not come back from the profile API endpoints, so use them from the cookie
-      newProfile = {
+      // only setting the cookie for what is needed in clay
+      cookieProfile = {
         firstName: response.data.first_name,
         userId: response.data.user_id,
         email: oldProfile.email,
         verified: oldProfile.verified
+      },
+      fullProfile = {
+        ...response.data,
+        email: oldProfile.email,
+        verified: oldProfile.verified
       };
 
+    removeKeys(fullProfile, excludeKeys.profile);
     // save the response details
-    addCookie(COOKIES.profile, newProfile, profileExpires, res);
-    response.data = newProfile;
+    addCookie(COOKIES.profile, cookieProfile, profileExpires, res);
+    response.data = fullProfile;
   },
   /**
    * specific logic for sign in endpoint to add cookies to response
@@ -216,6 +225,9 @@ const axios = require('axios'),
         ...profile
       };
     }
+
+    // removes keys that should never be sent back to the browser from the object
+    removeKeys(response.data, [ ...excludeKeys.token, ...excludeKeys.profile ]);
   },
   /**
    * loop through all endpoints that require specific logic to modify the response
@@ -227,7 +239,8 @@ const axios = require('axios'),
   routeLogic = async (response, req, res) => {
     const routes = {
         'POST:/radium/v1/auth/signin': signInLogic,
-        'POST:/radium/v1/profile/create': profileLogic
+        'POST:/radium/v1/profile/create': profileLogic,
+        'GET:/radium/v1/profile': profileLogic
       },
       keys = Object.keys(routes),
       current = `${req.method}:${req.path}`;
@@ -246,7 +259,6 @@ const axios = require('axios'),
    */
   handleError = async (response, retry, req, res) => {
     // check to see if the authorization has expired
-    console.log(response.data);
     if (retry(response)) {
       try {
         // refresh and then make the call again
@@ -276,7 +288,6 @@ const axios = require('axios'),
 
       if (response.status < 400) {
         await routeLogic(response, req, res);
-        excludeTokens(response.data);
 
         return response.data;
       } else {
@@ -287,8 +298,6 @@ const axios = require('axios'),
       await handleError(e.response, retryFunction, req, res);
     }
   };
-
-'use strict';
 
 module.exports.apply = apply;
 module.exports.userFromCookie = userFromCookie;
