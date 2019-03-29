@@ -53,6 +53,8 @@ alt:
       name: magic-button
       field: caption
       tooltip: Use Caption
+    validate:
+      required: true
 
 # generated in model.js
 credit:
