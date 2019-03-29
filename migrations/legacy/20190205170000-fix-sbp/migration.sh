@@ -99,8 +99,3 @@ curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
             { \"add\" : { \"index\" : \"$newIndex\", \"alias\" : \"$alias\" } }
         ]
     }";
-
-
-curl 'http://clay.radio.com/radium/v1/auth/signin' -H 'Pragma: no-cache' -H 'Origin: http://clay.radio.com' -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-US,en;q=0.9' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36' -H 'Content-Type: application/json;charset=UTF-8' -H 'Accept: application/json, text/plain, */*' -H 'Cache-Control: no-cache' -H 'Referer: http://clay.radio.com/account/signup' -H 'Connection: keep-alive' -H 'DNT: 1' --data-binary '{"client_id":"63kk7rrpgfmrdkcndq5f11190r","email":"test4@here.com","password":"test123test","device_id":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36"}' --compressed
-
-curl 'http://clay.radio.com/radium/v1/auth/signin' -H 'origin: https://radium.radio.com' -H 'accept-encoding: gzip, deflate, br' -H 'accept-language: en-US,en;q=0.9'  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36' -H 'content-type: application/json;charset=UTF-8' -H 'accept: application/json, text/plain, */*' -H 'cache-control: no-cache' -H 'authority: radium.radio.com' -H 'referer: https://radium.radio.com/app/webplayer/signup/' -H 'dnt: 1' --data-binary '{"email":"test5@here.com","password":"password1","device_id":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36"}' --compressed

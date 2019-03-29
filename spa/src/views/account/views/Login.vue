@@ -95,7 +95,7 @@ export default {
 
       try {
         const result = await service.signIn(metadata.app.webplayer.clientId, this.user.email, this.user.password, getDeviceId(platform))
-        this.$store.commit('SET_USER', { ...result.data })
+        this.$store.commit(mutationTypes.SET_USER, { ...result.data })
         this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
         this.user.isLoading = false
       } catch (err) {

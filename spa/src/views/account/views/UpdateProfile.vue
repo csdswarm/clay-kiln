@@ -110,6 +110,7 @@ import { debugLog, isValidZipCode } from '@/utils'
 import Loader from '@/components/Loader'
 import service from '@/services'
 import { isMobileDevice } from '../utils'
+import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
   name: 'CreateProfile',
@@ -146,7 +147,7 @@ export default {
         this.user.dateOfBirth = result.data.date_of_birth ? moment(result.data.date_of_birth) : ''
         this.user.zipCode = result.data.zip_code
 
-        this.$store.commit('SET_USER', result)
+        this.$store.commit(mutationTypes.SET_USER, result)
       })
       .catch((err) => {
         this.isLoading = false

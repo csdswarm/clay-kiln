@@ -6,6 +6,7 @@
 import service from '@/services'
 import { debugLog, setToLocalStore } from '@/utils'
 import { isMobileDevice } from '../utils'
+import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
   name: 'FacebookCallback',
@@ -43,11 +44,11 @@ export default {
 
     // Need to set external redirect uri
     const { redirectUri } = JSON.parse(redirectState).redirect_uri
-    this.$store.commit('SET_REDIRECT_URI', redirectUri)
+    this.$store.commit(mutationTypes.SET_REDIRECT_URI, redirectUri)
 
     const resolvePlatformFbLogin = async facebookCallbackResult => {
       const user = facebookCallbackResult.data
-      this.$store.commit('SET_USER', user)
+      this.$store.commit(mutationTypes.SET_USER, user)
 
       let hasProfile = false
       await service.getProfile()
@@ -62,8 +63,8 @@ export default {
         return setToLocalStore(user).then(() => this.$store.commit('SUCCESS_REDIRECT', platform))
       } else if (isMobileDevice()) {
         // ios and android handles profile in their own app
-        this.$store.commit('SET_USER', { ...user, has_profile: hasProfile })
-        this.$store.commit('REDIRECT_WITH_TOKENS', platform)
+        this.$store.commit(mutationTypes.SET_USER, { ...user, has_profile: hasProfile })
+        this.$store.commit(mutationTypes.SUCCESS_REDIRECT, platform)
       } else {
         this.$router.push({ path: `/account/profile` })
       }

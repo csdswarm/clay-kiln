@@ -227,7 +227,7 @@ export default {
           .then((result) => {
             this.user.isLoading = false
             // update the store with the user information
-            this.$store.commit('SET_USER', { ...result.data })
+            this.$store.commit(mutationTypes.SET_USER, { ...result.data })
             this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
           })
           .catch((err) => {

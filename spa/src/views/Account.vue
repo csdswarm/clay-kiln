@@ -18,6 +18,7 @@ import RadioComHeader from './account/components/RadioComHeader'
 import RadioComForm from './account/components/RadioComForm'
 import Loader from './account/components/Loader'
 import { mapState } from 'vuex'
+import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
   name: 'Account',
@@ -40,7 +41,7 @@ export default {
       if (!this.$store.state.metadata.app) {
         axios.get('/radium/v1/app/metadata')
           .then((result) => {
-            this.$store.commit('SET_METADATA', result.data)
+            this.$store.commit(mutationTypes.SET_METADATA, result.data)
           })
       }
     }

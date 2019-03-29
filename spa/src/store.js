@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 import * as mutationTypes from './vuex/mutationTypes'
 import { handlebars } from '../config/initHandlebars'
 import { Base64 } from 'js-base64'
-import { debugLog } from './views/account/utils'
 
 Vue.use(Vuex)
 
@@ -61,24 +60,12 @@ export default new Vuex.Store({
     [mutationTypes.ACCOUNT_MODAL_HIDE]: (state) => {
       state.accountComponent = null
     },
-    SET_METADATA: (state, metadata) => { state.metadata = metadata },
-    SET_USER: (state, user) => { state.user = user },
-    SET_REDIRECT_URI: (state, redirectUri) => { state.redirectUri = redirectUri },
-    SUCCESS_REDIRECT: (state, platform) => {
+    [mutationTypes.SET_METADATA]: (state, metadata) => { state.metadata = metadata },
+    [mutationTypes.SET_USER]: (state, user) => { state.user = user },
+    [mutationTypes.SET_REDIRECT_URI]: (state, redirectUri) => { state.redirectUri = redirectUri },
+    [mutationTypes.SUCCESS_REDIRECT]: (state, platform) => {
       return state.redirectUri && platform !== 'webplayer'
         ? window.open(state.redirectUri, '_self') : this.$router.push({ path: `/account/success` })
-    },
-    REDIRECT_WITH_TOKENS: (state, platform) => {
-      debugLog('REDIRECT_WITH_TOKENS current state', state)
-
-      if (!state.redirectUri) {
-        return this.$router.push({ path: `/account/error` })
-      }
-
-      const externalRedirectUri = new URL(state.redirectUri)
-      externalRedirectUri.search = new URLSearchParams({ authData: JSON.stringify(state.tokens) })
-
-      return window.open(externalRedirectUri.toString(), '_self')
     }
   },
   actions: {},

@@ -73,7 +73,7 @@ export default {
     }
 
     /// This has been altered
-    // this.$store.commit('SET_USER', tokens)
+    // this.$store.commit(mutationTypes.SET_USER, tokens)
   },
 
   methods: {

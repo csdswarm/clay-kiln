@@ -1,4 +1,4 @@
-import $ from 'jquery' // todo: remove jquery and switch to addeventlister
+import $ from 'jquery'
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'

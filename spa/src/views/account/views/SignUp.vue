@@ -64,6 +64,7 @@ import FacebookButton from '../components/FacebookButton'
 import Loader from '../components/Loader'
 import { TERM_OF_USE, PRIVACY_POLICY } from '../constants'
 import service from '../services'
+import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
   name: 'SignUp',
@@ -139,7 +140,7 @@ export default {
       service.signUp(metadata.app.webplayer.clientId, this.user.email, this.user.password)
         .then(() => service.signIn(metadata.app.webplayer.clientId, this.user.email, this.user.password, getDeviceId(platform)))
         .then((result) => {
-          this.$store.commit('SET_USER', { ...result.data, cameFromCreate: true })
+          this.$store.commit(mutationTypes.SET_USER, { ...result.data, cameFromCreate: true })
           this.user.isLoading = false
           this.$router.push({ path: `/account/profile` })
         })
