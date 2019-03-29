@@ -27,6 +27,7 @@ function init () {
 
 /**
  * render a feed component from the name and data
+ * 
  * @param {String} cmptName
  * @param {Object} cmptData
  * @returns {String}
