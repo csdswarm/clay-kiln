@@ -30,7 +30,7 @@ function mountComponentModule(moduleName) {
   if (typeof cmptModule === 'function') {
     document.addEventListener('mount', () => {
       const cmptName = moduleName.replace('.client', ''),
-        selector = `[data-uri*="_components/${cmptName}"]`,
+        selector = `[data-uri*="_components/${cmptName}/"]`,
         els = document.querySelectorAll(selector);
 
       for (let el of els) {

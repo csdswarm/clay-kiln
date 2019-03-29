@@ -19,7 +19,7 @@ module.exports.save = (uri, data) => {
   }
 
   return data;
-  
+
 };
 
 module.exports.render = (ref, data) => {
@@ -29,9 +29,9 @@ module.exports.render = (ref, data) => {
 
   // Create Gallery Slide Type class
   const galleryType = data.sectionFront ? data.sectionFront : 'default';
-  
+
   data.galleryTypeClass = `component--gallery-slide__${galleryType}`;
 
   return data;
-  
+
 };

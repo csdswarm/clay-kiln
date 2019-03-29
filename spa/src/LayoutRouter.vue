@@ -166,6 +166,9 @@ export default {
         // Load matched Layout Component.
         this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
+        // Reset/flush the pageCache
+        this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
+
         // Commit next payload to store to kick off re-render.
         this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 

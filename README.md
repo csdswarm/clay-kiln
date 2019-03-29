@@ -18,24 +18,7 @@ You'll probably want to windows in your terminal open for now.
 ### Terminal Window 1
 
 ```bash
-$ cd app
-```
-
-NPM install
-
-```bash
-$ npm i
-```
-
-Install `radio-web-player`
-```bash
-$ npm run build-web-player
-```
-
-Run the build script
-
-```bash
-$ npm run build
+$ make install-dev
 ```
 
 This is to make sure your `public` directory exists. Without it the site won't run.

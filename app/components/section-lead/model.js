@@ -106,14 +106,22 @@ module.exports.render = function (ref, data, locals) {
     });
   }
 
+  // Filter out the following tags
   if (data.filterTags) {
     for (const tag of data.filterTags.map((tag) => tag.text)) {
       queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
     }
   }
 
-  if (data.filterSecondaryArticleType) {
-    queryService.addMustNot(query, { match: { secondaryArticleType: data.filterSecondaryArticleType }});
+  // Filter out the following secondary article type
+  if (data.filterSecondaryArticleTypes) {
+    Object.entries(data.filterSecondaryArticleTypes).forEach((secondaryArticleType) => {
+      let [ secondaryArticleTypeFilter, filterOut ] = secondaryArticleType;
+
+      if (filterOut) {
+        queryService.addMustNot(query, { match: { secondaryArticleType: secondaryArticleTypeFilter }});
+      }
+    });
   }
 
   return queryService.searchByQuery(query)
