@@ -1,0 +1,37 @@
+_description: |
+  Dynamic stations list
+
+filterBy:
+  _label: filter stations by
+  _has:
+    input: radio
+    options:
+      - recent
+      - local
+      - market
+      - genre
+      - category
+    validate:
+      required: true
+
+genre:
+  _label: filter by this genre
+
+market:
+  _label: filter by this market
+
+category:
+  _label: filter by this category (eg music, sports, news-talk)
+
+listTitle:
+  _label: Title of stations list
+  _has:
+    validate:
+      required: true
+
+truncatedList:
+  _label: Truncate stations list?
+  _has: checkbox
+
+seeAllLink:
+  _label: Link to show all stations of category/genre/market when list is truncated

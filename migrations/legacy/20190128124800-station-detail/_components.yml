@@ -1,0 +1,167 @@
+_components:
+  two-column-layout:
+    instances:
+      article:
+        headLayout:
+          - _ref: /_components/favicon/instances/default
+          - _ref: /_components/google-ad-manager-head/instances/default
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
+          - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+        head: head
+        layoutHeader: layoutHeader
+        pageHeader: pageHeader
+        sectionHeader: sectionHeader
+        main: main
+        tertiary: tertiary
+        secondary:
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/trending-recirculation/instances/default
+        bottom:
+          - _ref: /_components/yieldmo/instances/default
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
+          - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
+        static:
+          - _ref: /_components/web-player/instances/default
+          - _ref: /_components/chartbeat/instances/default
+      station:
+        headLayout:
+          - _ref: /_components/favicon/instances/default
+          - _ref: /_components/google-ad-manager-head/instances/default
+          - _ref: /_components/youtube-player-head/instances/new
+          - _ref: /_components/comscore-head/instances/default
+          - _ref: /_components/web-player-head/instances/default
+          - _ref: /_components/google-tag-manager/instances/default
+        top:
+          - _ref: /_components/top-nav/instances/default
+        head: head
+        layoutHeader: layoutHeader
+        pageHeader: pageHeader
+        sectionHeader: sectionHeader
+        main: main
+        tertiary: tertiary
+        secondary: secondary
+        bottom:
+          - _ref: /_components/yieldmo/instances/default
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/google-ad-manager/instances/oop
+          - _ref: /_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: /_components/google-ad-manager/instances/mobileInterstitial
+          - _ref: /_components/footer/instances/default
+          - _ref: /_components/nielsen/instances/default
+        kilnInternals:
+          - _ref: /_components/clay-kiln/instances/general
+        static:
+          - _ref: /_components/web-player/instances/default
+          - _ref: /_components/chartbeat/instances/default
+  station-recently-played:
+    instances:
+      default:
+        allowed: true
+
+  station-schedule:
+    instances:
+      default:
+        allowed: true
+
+  stations-list:
+    instances:
+      recent:
+        filterBy: recent
+        listTitle: 'recent stations'
+        truncatedList: true
+      recentOnFeaturedStationsDirectory:
+        filterBy: recent
+        listTitle: "stations you've listened to"
+        truncatedList: true
+      local:
+        filterBy: local
+        listTitle: 'stations near you'
+        truncatedList: true
+      market:
+        filterBy: market
+        market: ''
+        listTitle: ''
+        truncatedList: false
+      marketTruncated:
+        filterBy: market
+        market: ''
+        listTitle: ''
+        truncatedList: true
+      genre:
+        filterBy: genre
+        genre: ''
+        listTitle: ''
+        truncatedList: false
+      genreTruncated:
+        filterBy: genre
+        genre: ''
+        listTitle: ''
+        truncatedList: true
+      category:
+        filterBy: category
+        category: ''
+        listTitle: ''
+        truncatedList: false
+      categoryTruncated:
+        filterBy: category
+        category: ''
+        listTitle: ''
+        truncatedList: true
+
+  station-discover:
+    instances:
+      default:
+        recentStations:
+          _ref: /_components/stations-list/instances/recent
+        marketStations:
+          _ref: /_components/stations-list/instances/marketTruncated
+        genreStations:
+          _ref: /_components/stations-list/instances/genreTruncated
+
+  station-detail:
+    instances:
+      default:
+        allowed: true
+        recentlyPlayedComponent:
+          _ref: /_components/station-recently-played/instances/default
+        scheduleComponent:
+          _ref: /_components/station-schedule/instances/default
+        discoverComponent:
+          _ref: /_components/station-discover/instances/default
+
+  meta-image:
+    instances:
+      station:
+        imageUrl: '${paramValue}'
+        localsKey: 'station.square_logo_small'
+
+  dynamic-meta-description:
+    instances:
+      station:
+        description: '${paramValue}'
+        localsKey: 'station.description'
+
+  dynamic-meta-title:
+    instances:
+      station:
+        localsKey: 'station.name'
+        suffix: ' | RADIO.COM'
+
+  latest-recirculation:
+    instances:
+      station:
+        items: []
+        tag: ''
+        populateBy: station
+        contentType: { article: false, gallery: false }
+        sectionFront: ''

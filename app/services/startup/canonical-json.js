@@ -47,7 +47,6 @@ function middleware(req, res, next) {
 
   // If it's a topic or section-front route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic tag page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
-
     // Define keyword extraction logic.
     tagKeywordExtractor = new RegExp(`^\\/(?:${curatedOrDynamicRoutePrefixes.join('|')})\\/([^/]+)\\/?`);
 
@@ -80,6 +79,9 @@ function middleware(req, res, next) {
   } else if (req.path.indexOf('/authors/') === 0) {
     params.dynamicAuthor = req.path.match(/authors\/(.+)\/?/)[1];
     promise = db.get(`${req.hostname}/_pages/author@published`);
+  } else if (/(.+)\/listen/.test(req.path)) {
+    params.dynamicStation = req.path.match(/(.+)\/listen/)[1];
+    promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
     // Otherwise resolve the uri and page instance
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));

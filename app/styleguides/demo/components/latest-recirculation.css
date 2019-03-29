@@ -25,6 +25,9 @@
 		.component--tag & {
 			@mixin latest-recirc-font1 $purple;
 		}
+		.component--station & {
+			@mixin latest-recirc-font1 $parisM;
+		}
 		left: em(15);
 		padding: 0 em(5);
 		top: em(-10.5);
@@ -59,6 +62,9 @@
 		}
 		.component--tag & {
 			@mixin latest-recirc-box $purple;
+		}
+		.component--station & {
+			@mixin latest-recirc-box $parisM;
 		}
 		li {
 			&:not(:last-of-type) {

@@ -78,3 +78,6 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Web Player
+radio-web-player
