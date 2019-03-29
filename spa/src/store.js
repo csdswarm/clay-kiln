@@ -13,6 +13,10 @@ const vuexStoreDefaultState = {
   spaPayloadLocals: {},
   setupRan: false,
   loadingAnimation: false,
+  // pageCache is reset/flushed every time the SPA navigates. It is used as storage associated with a single SPA "pageview"
+  pageCache: {
+    gallerySlidePageviews: {} // Used to track slide pageview events so slide pageviews are only counted once per SPA "pageview"
+  },
   radioPlayer: null
 }
 
@@ -33,6 +37,20 @@ export default new Vuex.Store({
     },
     [mutationTypes.ACTIVATE_LOADING_ANIMATION]: (state, activate) => {
       state.loadingAnimation = activate
+    },
+    [mutationTypes.RESET_PAGE_CACHE]: (state) => {
+      state.pageCache = Object.assign({}, vuexStoreDefaultState.pageCache)
+    },
+    [mutationTypes.TRACK_GALLERY_SLIDE_PAGEVIEW]: (state, slideId) => {
+      // Update gallerySlidePageviews to track the new slide pageview.
+      const gallerySlidePageviews = Object.assign({}, state.pageCache.gallerySlidePageviews, { [slideId]: true })
+
+      // Recreate pageCache with new state.
+      state.pageCache = Object.assign(
+        {},
+        state.pageCache,
+        { gallerySlidePageviews }
+      )
     },
     [mutationTypes.LOAD_RADIO_PLAYER]: (state, radioPlayer) => {
       state.radioPlayer = radioPlayer

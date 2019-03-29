@@ -77,7 +77,15 @@ function isVersion(ref, version) {
  */
 function get(ref) {
   return db.get(ref)
-    .then(JSON.parse);
+    .then((result) => {
+      try {
+        const jsonResult = JSON.parse(result);
+
+        return jsonResult;
+      } catch (e) {
+        return result;
+      }
+    });
 }
 
 module.exports.setup = setup;

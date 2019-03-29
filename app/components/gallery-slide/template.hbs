@@ -1,4 +1,4 @@
-<div id="{{ hashLink }}" data-uri="{{ default _ref _self }}" class="component component--gallery-slide{{ if @root.locals.edit ' editing' }} {{ galleryTypeClass }}">
+<div id="{{ hashLink }}" data-slide-title="{{ title }}" data-uri="{{ default _ref _self }}" class="component component--gallery-slide{{ if @root.locals.edit ' editing' }} {{ galleryTypeClass }}">
   <div class="slideEmbed" data-editable="slideEmbed">
     {{> component-list slideEmbed }}
   </div>
@@ -9,6 +9,8 @@
         <span class="gallery-slide__title">{{ title }}</span>
       </h2>
     {{/ifAny}}
-    {{#ifAny description @root.locals.edit}}<p data-editable="description" class="gallery-slide__description">{{striptags description}}</p>{{/ifAny}}
+    {{#ifAny description @root.locals.edit}}
+      <div data-editable="description">{{> component-list description }}</div>
+    {{/ifAny}}
   </div>
 </div>
