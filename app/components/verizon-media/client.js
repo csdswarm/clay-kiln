@@ -32,7 +32,7 @@ class VerizonMedia extends Video {
     return { id, player, node };
   }
   /**
-   * Returns the start events for of player
+   * * Returns the event types for the video, should be overloaded
    *
    * @return {object}
    */

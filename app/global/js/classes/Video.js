@@ -85,7 +85,7 @@ class Video {
     return this.id;
   }
   /**
-   * Returns the start events for of player
+   * Returns the event types for the video, should be overloaded
    *
    * @return {object}
    */
@@ -97,7 +97,7 @@ class Video {
     };
   }
   /**
-   * Returns the start events for of player
+   * adds an event for the specific video type
    *
    * @param {Element} object
    * @param {string} type

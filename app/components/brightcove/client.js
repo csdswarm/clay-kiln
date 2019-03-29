@@ -27,7 +27,7 @@ class Brightcove extends Video {
     return { id, player, node };
   }
   /**
-   * Returns the start events for of player
+   * * Returns the event types for the video, should be overloaded
    *
    * @return {object}
    */
@@ -39,7 +39,7 @@ class Brightcove extends Video {
     };
   }
   /**
-   * Returns the start events for of player
+   * adds an event for the specific video type
    *
    * @param {Element} object
    * @param {string} type
