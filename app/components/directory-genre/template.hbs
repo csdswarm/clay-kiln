@@ -1,0 +1,28 @@
+<section data-uri="{{ default _ref _self }}" class="component component--directory-genre">
+  {{#if dynamicGenre }}
+    {{#ifAll (compare dynamicGenre "!==" "news-talk") (compare dynamicGenre "!==" "sports") }}
+      <select class="directory-genre__dropdown--mobile">
+        <option value="">See all in genre:</option>
+        {{#each @root.locals.allMusic }}
+          <option value="{{ attributes.slug }}">{{ attributes.name }}</option>
+        {{/each}}
+      </select>
+    {{/ifAll}}
+    {{> stations-list stationsList }}
+  {{else}}
+    <select class="directory-genre__dropdown--mobile">
+      <option value="">See all in genre:</option>
+      {{#each @root.locals.allMusic }}
+        <option value="{{ attributes.slug }}">{{ attributes.name }}</option>
+      {{/each}}
+    </select>
+    {{~#each @root.locals.allMusic ~}}
+      <div class="directory-location__stations-by-music-genre" data-genre="{{ attributes.slug }}">
+        {{> stations-list ../stationsListTruncated }}
+      </div>
+      {{#ifAll (modulo (add @index 1) 2 0) (compare @root.locals.allMusic.length "!==" (add @index 1)) }}
+        {{> google-ad-manager ../googleInlineAd }}
+      {{/ifAll}}
+    {{~/each ~}}
+  {{/if}}
+</section>

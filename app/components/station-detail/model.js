@@ -32,6 +32,7 @@ module.exports.render = (uri, data, locals) => {
     return data;
   }
 
+  // @TODO ON-561: Update radio api request to filter by slug
   const route = `stations/${locals.params.dynamicStation}`;
 
   return radioApiService.get(route).then(response => {
