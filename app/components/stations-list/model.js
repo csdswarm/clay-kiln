@@ -30,7 +30,7 @@ function getMarketData({ market, id }) {
       if (id) {
         return response.data.shift();
       }
-      return response.data.find(({ attributes }) => attributes.display_name.toLowerCase() === market.toLowerCase()) || {};
+      return response.data.find(({ attributes }) => attributes.display_name.toLowerCase() === decodeURI(market.toLowerCase())) || {};
     } else {
       console.log('error with request', response);
       return {};
