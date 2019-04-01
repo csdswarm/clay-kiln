@@ -1,5 +1,6 @@
 <section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--station-detail{{ if @root.locals.edit ' editing' }} station-detail--{{category}}">
   <pre class="station-detail__data">{{{ stringify station }}}</pre>
+  {{> breadcrumbs crumbs }}
   <div class="station-detail__head">
     <div class="head__lede">
       <div class="lede__image">
