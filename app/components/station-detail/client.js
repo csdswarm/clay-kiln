@@ -5,7 +5,7 @@ class StationDetail {
     const recentStations = require('../../services/client/recentStations'),
       sidebar = document.getElementsByClassName('content__sidebar')[0],
       stationDetail = document.querySelector('.component--station-detail'),
-      stationData = JSON.parse(stationDetail.querySelector('.station-detail__data').innerText),
+      stationData = stationDetail.querySelector('.station-detail__data').innerText ? JSON.parse(stationDetail.querySelector('.station-detail__data').innerText) : null,
       tabs = stationDetail.querySelectorAll('.tabs li'),
       content = stationDetail.querySelectorAll('.tabbed-content__container'),
       hash = window.location.hash.replace('#', ''),
