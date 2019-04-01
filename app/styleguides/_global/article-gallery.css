@@ -390,10 +390,10 @@
 }
 
 @define-mixin separator $sectionFront, $color: $purple {
-  /* adding .component to increase specificity to override breadcrumb default*/
+  /* adding .component to increase specificity to override breadcrumbs default*/
   .component.article--$sectionFront,
   .component.gallery--$sectionFront{
-    .breadcrumb__separator {
+    .breadcrumbs__separator {
       color: $color;
     }
   }

@@ -2,7 +2,30 @@
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
-@import "_global/breadcrumbs";
 
-/* This file should only include article-specific styles.
-   Any styling that is shared by galleries should be included in the global article-gallery stylesheet. */
+.component--breadcrumbs {
+  margin-bottom: em(10);
+
+  .breadcrumbs__link {
+    display: inline-block;
+    @mixin article-font12;
+    text-transform: uppercase;
+    text-decoration: none;
+
+    &--home {
+      height: em(10, 14);
+      width: em(10, 14);
+      margin-right: em(13, 14);
+      line-height: em(14, 14);
+
+      &:before {
+        display: none;
+      }
+    }
+  }
+
+  .breadcrumbs__separator {
+    @mixin article-font12;
+    color: $purple;
+  }
+}

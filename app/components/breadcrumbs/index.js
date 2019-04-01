@@ -40,20 +40,12 @@ function concatValues(arr, prop, separator = '/') {
  * @returns {function(string): {segment: string, text: string}}
  * @example
  * // returns a function that takes a property name as its only argument
- * toLinkSegments({p1:'stuff', myProp:'One & Two/Thirds'});
+ * const toSegments = toLinkSegments({p1:'stuff', myProp:'One & Two/Thirds'});
+ * // returns {segment: 'one-%26-two%2Fthirds', text: 'One & Two/Thirds'}
+ * toSegments('myProp')
  */
 function toLinkSegments(data) {
 
-  /**
-   * Used to map properties of data as an object containing the text to show in a link and it's slug
-   *
-   * @param {string} prop the name of the property to check
-   * @returns {{segment: string, text: string}} segment is the slug
-   * @example
-   * const toSegments = toLinkSegments({p1:'stuff', myProp:'One & Two/Thirds'});
-   * // returns {segment: 'one-%26-two%2Fthirds', text: 'One & Two/Thirds'}
-   * toSegments('myProp')
-   */
   return prop => {
     const text = data[prop];
 
@@ -71,23 +63,11 @@ function toLinkSegments(data) {
  * @example
  * // returns a function to use for mapping an array
  * const makeFullLink = toFullLinks('clay.radio.com');
+ * const arr = [{segment: 'first', text: 'First'},{segment: 'second', text: 'Second'}];
+ * // returns {url: '//clay.radio.com/first/second', text: 'Second'}
+ * makeFullLink(arr[1], 1, arr);
  */
 function toFullLinks(host) {
-
-  /**
-   * Used to map a list of objects in the form of {segment, text} to the form {link, text}, where link is
-   * the hostname plus all segments concatenated together
-   *
-   * @param {string} text the text of the link
-   * @param {number} index the current index of the mapping
-   * @param {{segment: string, text: string}[]} segments the entire array of segments
-   * @returns {{text: string, url: string}} the text and full url for each item in the segments array
-   * @example
-   * const makeFullLink = toFullLinks('clay.radio.com');
-   * const arr = [{segment: 'first', text: 'First'},{segment: 'second', text: 'Second'}];
-   * // returns {url: '//clay.radio.com/first/second', text: 'Second'}
-   * makeFullLink(arr[1], 1, arr);
-   */
   return ({text}, index, segments) => ({
     url: `//${host}/${concatValues(segments.slice(0, index + 1), 'segment')}`,
     text
@@ -95,31 +75,21 @@ function toFullLinks(host) {
 }
 
 
-/**
- * Automatically creates links based on data in the provided list of properties on the data context
- *
- * @param {Object} data the data context
- * @param {string[]} props list of properties on data to generate links from
- * @param {string} host the hostname of the site
- * @returns {{text: string, url: string}[]} An array of link objects
- */
-function autoLink(data, props, host) {
-  const onlyExistingItems = prop => data[prop];
-
-  return props
-    .filter(onlyExistingItems)
-    .map(toLinkSegments(data))
-    .map(toFullLinks(host));
-}
-
-
 module.exports = {
-  autoLink,
-  // export all internal functions so they can be tested individually
-  _internal:{
-    slugify,
-    concatValues,
-    toLinkSegments,
-    toFullLinks
+  /**
+   * Automatically creates links based on data in the provided list of properties on the data context
+   *
+   * @param {Object} data the data context
+   * @param {string[]} props list of properties on data to generate links from
+   * @param {string} host the hostname of the site
+   * @returns {{text: string, url: string}[]} An array of link objects
+   */
+  autoLink(data, props, host) {
+    const onlyExistingItems = prop => data[prop];
+
+    return props
+      .filter(onlyExistingItems)
+      .map(toLinkSegments(data))
+      .map(toFullLinks(host));
   }
 };

@@ -29,7 +29,7 @@ function getStationTags(station) {
 }
 
 /**
- * Adds station specific breadcrumb links to the data
+ * Adds station specific breadcrumbs links to the data
  *
  * @param {string} host the site hostname
  * @returns {function(data: Object): Object} The data object with the crumbs property appended

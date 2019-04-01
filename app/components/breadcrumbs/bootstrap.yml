@@ -1,3 +1,2 @@
 _components:
-  breadcrumbs:
-    allowed: true
+  breadcrumbs: []
