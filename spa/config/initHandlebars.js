@@ -26,7 +26,7 @@ handlebars.registerPartial('clay-kiln', clayKilnPartial)
 const morePartialsReq = require.context('../../app/components', true, /^.*(\.hbs|\.handlebars)$/)
 morePartialsReq.keys().forEach(p => {
   const partialNameMatchResult = p.match(/^\.\/([a-z-]+)\/template\.(?:hbs|handlebars)$/)
-  if (partialNameMatchResult && typeof partialNameMatchResult[1] !== 'undefined') {
+  if (partialNameMatchResult) {
     handlebars.registerPartial(partialNameMatchResult[1], morePartialsReq(p))
   }
 })
