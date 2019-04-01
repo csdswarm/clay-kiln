@@ -23,4 +23,9 @@
       }
     }
   }
+
+  .breadcrumb__separator {
+    @mixin article-font12;
+    color: $purple;
+  }
 }

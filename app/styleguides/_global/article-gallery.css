@@ -389,6 +389,21 @@
   }
 }
 
+@define-mixin separator $sectionFront, $color: $purple {
+  /* adding .component to increase specificity to override breadcrumb default*/
+  .component.article--$sectionFront,
+  .component.gallery--$sectionFront{
+    .breadcrumb__separator {
+      color: $color;
+    }
+  }
+}
+
+@mixin separator music, $sunsetOrange;
+@mixin separator news, $lightningYellow;
+@mixin separator podcasts, $robinsEggBlue;
+@mixin separator sports, $azureRadience;
+
 @define-mixin article-link-color $sectionFront, $color: $purple {
   .article--$sectionFront,
   .gallery--$sectionFront {
