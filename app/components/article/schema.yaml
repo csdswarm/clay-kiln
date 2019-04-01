@@ -165,7 +165,7 @@ sources:
 stationLogoUrl:
   _has:
     input: advanced-image-upload
-    webLabel: Staion Logo via Web
+    webLabel: Station Logo via Web
     webHelp: Supply a valid HTTPS url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
     uploadHelp: Choose an image file from your computer

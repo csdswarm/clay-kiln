@@ -8,7 +8,7 @@ const createContent = require('../../services/universal/create-content'),
    * @param {string} key
    * @param {string} value
    */
-  defaultKeyValue = (obj, key, value) => {
+  replaceDefaultKeyValue = (obj, key, value) => {
     if (obj[key]) {
       obj[key] = obj[key].replace(`\${${key}}`, value || '');
     }
@@ -21,11 +21,11 @@ module.exports.render = function (ref, data, locals) {
   }
   const isStation = locals.station.slug !== 'www';
 
-  defaultKeyValue(data, 'stationLogoUrl', isStation ? locals.station.square_logo_small : '');
-  defaultKeyValue(data, 'stationURL', isStation ? locals.station.website : '');
+  replaceDefaultKeyValue(data, 'stationLogoUrl', isStation ? locals.station.square_logo_small : '');
+  replaceDefaultKeyValue(data, 'stationURL', isStation ? locals.station.website : '');
 
   if (data.byline && data.byline[0].sources.length) {
-    defaultKeyValue(data.byline[0].sources[0], 'text', isStation ? locals.station.name : '');
+    replaceDefaultKeyValue(data.byline[0].sources[0], 'text', isStation ? locals.station.name : '');
     if (data.byline[0].sources[0].text === '') {
       data.byline[0].sources.length = 0;
     }
