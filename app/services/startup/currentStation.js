@@ -27,7 +27,7 @@ const radioApiService = require('../../services/server/radioApi'),
    * @param {string} host
    * @return {string}
    */
-  getStationSlug = (host) => host.split('.').shift().toLowerCase(),
+  getStationSlug = (host) => host.split('/').shift().toLowerCase(),
   /**
    * determines if the default station should be used
    *
@@ -55,6 +55,7 @@ const radioApiService = require('../../services/server/radioApi'),
  */
 module.exports = async (req, res, next) => {
   if (validPath(req)) {
+    // NOTE: this is currently setup for subdomain, but will eventually become path based in the future.
     const site_slug = getStationSlug(req.get('host'));
 
     res.locals.station = defaultStation.attributes;
@@ -64,7 +65,7 @@ module.exports = async (req, res, next) => {
         const response = await radioApiService.get('stations', { filter: { site_slug } });
 
         if (response.data && response.data.length) {
-          res.locals.station = response.data[0].attributes;
+          res.locals.currentstation = response.data[0].attributes;
         }
       } catch (e) {
       }
