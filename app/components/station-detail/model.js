@@ -3,6 +3,7 @@ const radioApiService = require('../../services/server/radioApi');
 
 /**
  * consolidate station data to form tags array
+ *
  * @param {object} station
  * @returns {array}
  */
@@ -27,6 +28,30 @@ function getStationTags(station) {
   return tags;
 }
 
+/**
+ * Adds station specific breadcrumb links to the data
+ *
+ * @param {string} host the site hostname
+ * @returns {function(data: Object): Object} The data object with the crumbs property appended
+ */
+function addBreadcrumbLinks(host) {
+
+  /**
+   * Takes a data object and adds a crumbs array of {url, text} objects to it that are specific to stations
+   *
+   * @param {Object} data The data object to extend
+   * @returns {Object} the extended data object
+   */
+  return data => {
+    data.crumbs = [
+      {url: `//${host}/stations`, text: 'stations'},
+      {url: `//${host}/${data.station.id}/listen`, text: data.station.name}
+    ];
+    return data;
+  };
+}
+
+
 module.exports.render = (uri, data, locals) => {
   if (!locals.params) {
     return data;
@@ -48,23 +73,3 @@ module.exports.render = (uri, data, locals) => {
     .then(addBreadcrumbLinks(locals.site.host));
 };
 
-/**
- * Adds station specific breadcrumb links to the data
- * @param {string} host the site hostname
- * @returns {function(data: Object): Object} The data object with the crumbs property appended
- */
-function addBreadcrumbLinks(host) {
-
-  /**
-   * Takes a data object and adds a crumbs array of {url, text} objects to it that are specific to stations
-   * @param {Object} data The data object to extend
-   * @returns {Object} the extended data object
-   */
-  return data => {
-    data.crumbs = [
-      {url: `//${host}/stations`, text: 'stations'},
-      {url: `//${host}/${data.station.id}/listen`, text: data.station.name}
-    ];
-    return data;
-  };
-}
