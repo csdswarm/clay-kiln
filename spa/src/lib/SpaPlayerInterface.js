@@ -54,8 +54,9 @@ class SpaPlayerInterface {
    */
   autoBootPlayer (path) {
     const matchedStationDetailRoute = path.match(/^\/([0-9]+)\/listen$/)
+    const matchedStationsDirectoryRoute = path.match(/^\/stations/)
 
-    if (matchedStationDetailRoute) {
+    if (matchedStationDetailRoute || matchedStationsDirectoryRoute) {
       return true
     } else {
       return false
