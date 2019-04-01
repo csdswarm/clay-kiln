@@ -13,6 +13,7 @@ const spaCommunicationBridge = SpaCommunicationBridge()
 class SpaPlayerInterface {
   constructor (spaApp) {
     this.spa = spaApp
+    this.attachClientEventListeners()
   }
 
   /**
@@ -72,7 +73,6 @@ class SpaPlayerInterface {
     if (!this.playerBooted()) {
       await this.mountPlayer()
       this.initializePlayerAndLoadIntoStore()
-      this.attachClientEventListeners()
     }
   }
 
@@ -121,16 +121,18 @@ class SpaPlayerInterface {
    *
    */
   attachClientEventListeners () {
-    // Attach channel that listens for play button clicks.
-    spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
-      const { stationId } = payload
+    // Add channel that listens for play button clicks.
+    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlay')) {
+      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
+        const { stationId } = payload
 
-      if (stationId) {
-        await this.play(stationId)
-      } else {
-        await this.play()
-      }
-    })
+        if (stationId) {
+          await this.play(stationId)
+        } else {
+          await this.play()
+        }
+      })
+    }
   }
 
   /**
