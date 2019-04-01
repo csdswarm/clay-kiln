@@ -7,6 +7,8 @@
  */
 
 import * as mutationTypes from '../vuex/mutationTypes'
+import SpaCommunicationBridge from './SpaCommunicationBridge'
+const spaCommunicationBridge = SpaCommunicationBridge()
 
 class SpaPlayerInterface {
   constructor (spaApp) {
@@ -61,14 +63,17 @@ class SpaPlayerInterface {
 
   /**
    *
-   * Mount, initialize, and store player in Vuex.
+   * Mount, initialize, store player in Vuex, and attach client.js event listeners.
    *
    * Player will be available throught the SPA afterwards via $store.state.radioPlayer.
    *
    */
   async bootPlayer () {
-    await this.mountPlayer()
-    this.initializePlayerAndLoadIntoStore()
+    if (!this.playerBooted()) {
+      await this.mountPlayer()
+      this.initializePlayerAndLoadIntoStore()
+      this.attachClientEventListeners()
+    }
   }
 
   /**
@@ -107,6 +112,25 @@ class SpaPlayerInterface {
     } else {
       throw new Error('Attempted to init and load player before it has been mounted.')
     }
+  }
+
+  /**
+   *
+   * Attach event listeners that allow client.js code to interact with
+   * the player.
+   *
+   */
+  attachClientEventListeners () {
+    // Attach channel that listens for play button clicks.
+    spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
+      const { stationId } = payload
+
+      if (stationId) {
+        await this.play(stationId)
+      } else {
+        await this.play()
+      }
+    })
   }
 
   /**

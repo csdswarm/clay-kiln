@@ -3,7 +3,8 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
-  spaLinkService = require('../../services/client/spaLink');
+  spaLinkService = require('../../services/client/spaLink'),
+  clientPlayerInterface = require('../../services/client/ClientPlayerInterface')();
 
 class StationsList {
   constructor(element) {
@@ -117,6 +118,16 @@ StationsList.prototype = {
 
     this.stationsList.innerHTML += newStations;
     spaLinkService(this.stationsList);
+
+    // Attach play button click handlers
+    this.stationsList.querySelectorAll('[data-play-station]').forEach(element => {
+      element.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        return clientPlayerInterface.play(element.dataset.playStation);
+      });
+    });
+
     this.toggleLoader();
     this.displayActiveStations();
   },
