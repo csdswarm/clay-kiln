@@ -6,49 +6,59 @@ const radioApiService = require('../../services/server/radioApi'),
   NEWSTALK_ID = '25';
 
 /**
- * get market ID from market slug
+ * get market data from market slug
  * @param {string} market
- * @returns {Promise<number>}
+ * @returns {object}
  */
-function getMarketID(market) {
+function getMarketData(market) {
   const route = 'markets',
-    /* note: filter by slug needs to be added to market api
+    /* @TODO ON-588: filter by slug needs to be added to market api
+    /* temporarily filter by market ID
     */
-    // params = { 'filter[slug]': market };
-    params = {'page[size]': 100};
+    // 'filter[slug]': market
+    params = {
+      'page[size]': 1000,
+      'filter[id]': market
+    };
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      return response.data.find(({ attributes }) => attributes.display_name.toLowerCase() === market.toLowerCase()).id || '';
+      return response.data[0] || {};
     } else {
-      return '';
+      console.log('error with request', response);
+      return {};
     }
   });
 }
 
 /**
- * get genre ID from genre slug
+ * get genre data from genre slug
  * @param {string} genre
- * @returns {number}
+ * @returns {object}
  */
-function getGenreID(genre) {
+function getGenreData(genre) {
   const route = 'genres',
-    /* note: genre slug needs to be added to station api results
+    /* @TODO ON-588: genre slug needs to be added to station api results
     /* temporarily filter by genre ID
     */
-    // params = { 'filter[slug]': genre };
-    params = { 'filter[id]': genre };
+    // 'filter[slug]': genre
+    params = {
+      'page[size]': 1000,
+      'filter[id]': genre
+    };
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      return response.data.id || '';
+      return response.data[0] || {};
     } else {
-      return '';
+      console.log('error with request', response);
+      return {};
     }
   });
 }
 
 module.exports.render = async (uri, data, locals) => {
+  data.stations = [];
   const route = 'stations';
   let params = {
     'page[size]': 1000,
@@ -94,52 +104,18 @@ module.exports.render = async (uri, data, locals) => {
     return data;
   } else {
     /** filter by market, genre, or category **/
-
-    if (data.market || locals.params && locals.params.dynamicMarket) {
-      /** for stations lists on location stations directory page **/
-
-      data.market = data.market || locals.params.dynamicMarket; // should be slug. temporarily using id
-      data.seeAllLink = `/stations/location/${ data.market }`;
-      data.listTitle = data.listTitle || data.market;
-      params['filter[market_id]'] = await getMarketID(data.market);
-    } else if (data.genre || locals.params && locals.params.dynamicGenre) {
-      /** for stations lists on music, news & talk, and sports stations directory pages **/
-
-      data.genre = data.genre || locals.params.dynamicGenre; // should be slug. temporarily using id
-      if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
-        data.seeAllLink = `/stations/${ data.genre }`;
-      } else {
-        data.seeAllLink = `/stations/music/${ data.genre }`;
-      }
-      data.listTitle = data.listTitle || data.genre;
-      params['filter[genre_id]'] = await getGenreID(data.genre);
-    } else if (data.filterBy == 'category') {
-      /** for featured music, news talk, and sports stations list on featured stations directory page **/
-
-      data.seeAllLink = `/stations/${ data.category }`;
-      let listTitle;
-
-      if (data.truncatedList) {
-        listTitle = `featured ${ data.category } stations`;
-      }
-      data.listTitle = data.listTitle || listTitle || data.category;
-      if (data.category == NEWSTALK_SLUG) {
-        params['filter[category]'] = 'news,talk';
-      } else {
-        params['filter[category]'] = data.category;
-      }
-    } else if (locals.station) {
+    if (locals.station) {
       /** for stations lists on station detail page (discover tab) **/
 
       switch (data.filterBy) {
         case 'market':
-          data.market = locals.station.market.slug || locals.station.market.id; // note: market slug needs to be added to stations api
+          data.market = locals.station.market.slug || locals.station.market.id; // @TODO ON-588: market slug needs to be added to stations api
           data.seeAllLink = `/stations/location/${ data.market }`;
           data.listTitle = data.listTitle || `${ locals.station.market.display_name || locals.station.city || locals.station.market.name } stations`;
           params['filter[market_id]'] = locals.station.market.id;
           break;
         case 'genre':
-          data.genre = locals.station.genre[0].slug || locals.station.genre[0].id; // note: genre slug needs to be added to stations api
+          data.genre = locals.station.genre[0].slug || locals.station.genre[0].id; // @TODO ON-588: genre slug needs to be added to stations api
           if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
             data.seeAllLink = `/stations/${ data.genre }`;
           } else {
@@ -150,6 +126,58 @@ module.exports.render = async (uri, data, locals) => {
           break;
         default:
           break;
+      }
+    } else if (data.filterBy === 'market') {
+      /** for stations lists on location stations directory page **/
+      if (locals.params) {
+        if (!locals.params.dynamicMarket && !locals.market
+          || locals.params.dynamicMarket && data.truncatedList ) {
+          // fix for use case: both list components are rendering even when condition is met
+          // handle populating stations in client side
+          return data;
+        }
+      }
+      data.market = locals.market || locals.params.dynamicMarket; // @TODO ON-588: should be slug. temporarily using id
+      const marketData = await getMarketData(data.market);
+
+      data.seeAllLink = `/stations/location/${ data.market }`;
+      data.listTitle = marketData.attributes ? marketData.attributes.display_name : '';
+      params['filter[market_id]'] = marketData.id;
+    } else if (data.filterBy === 'genre') {
+      /** for stations lists on music, news & talk, and sports stations directory pages **/
+
+      if (locals.params) {
+        if (!locals.params.dynamicGenre && !locals.genre
+          || locals.params.dynamicGenre && data.truncatedList ) {
+          // fix for use case: both list components are rendering even when condition is met
+          // handle populating stations in client side
+          return data;
+        }
+      }
+      data.genre = locals.genre || locals.params.dynamicGenre; // @TODO ON-588: should be slug. temporarily using id
+      const genreData = await getGenreData(data.genre);
+
+      if (data.genre == SPORTS_ID || data.genre == NEWSTALK_ID || data.genre == SPORTS_SLUG || data.genre == NEWSTALK_SLUG) {
+        data.seeAllLink = `/stations/${ data.genre }`;
+      } else {
+        data.seeAllLink = `/stations/music/${ data.genre }`;
+      }
+      data.listTitle = genreData.attributes ? genreData.attributes.name : '';
+      params['filter[genre_id]'] = genreData.id;
+    } else if (data.filterBy === 'category') {
+      /** for featured music, news talk, and sports stations list on featured stations directory page **/
+
+      if (!locals.category) {
+        return data;
+      }
+      data.category = locals.category;
+      data.seeAllLink = `/stations/${ data.category }`;
+      data.listTitle = `featured ${ data.category } stations`;
+      if (data.category == NEWSTALK_SLUG) {
+        data.listTitle = 'featured news & talk stations';
+        params['filter[category]'] = 'news,talk';
+      } else {
+        params['filter[category]'] = data.category;
       }
     }
 
