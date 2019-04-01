@@ -45,7 +45,6 @@ function getMarketData({ market, id }) {
  */
 function getGenreData(genre) {
   const route = 'genres',
-    /* @TODO ON-588: genre slug needs to be added to station api results
     /* temporarily filter by genre ID
     */
     // 'filter[slug]': genre
@@ -122,7 +121,7 @@ module.exports.render = async (uri, data, locals) => {
           params['filter[market_id]'] = locals.station.market.id;
           break;
         case 'genre':
-          data.genre = locals.station.genre[0].slug || locals.station.genre[0].id; // @TODO ON-588: genre slug needs to be added to stations api
+          data.genre = locals.station.genre[0].slug || locals.station.genre[0].id;
           if (data.genre === SPORTS_ID) {
             data.seeAllLink = `/stations/${ SPORTS_SLUG }`;
           } else if (data.genre === NEWSTALK_ID) {
@@ -168,7 +167,7 @@ module.exports.render = async (uri, data, locals) => {
           // handle populating stations in client side
           return data;
         }
-        data.genre = locals.genre || locals.params.dynamicGenre; // @TODO ON-588: should be slug. temporarily using id
+        data.genre = locals.genre || locals.params.dynamicGenre;
       }
       const genreData = await getGenreData(data.genre);
 
