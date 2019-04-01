@@ -12,14 +12,11 @@ class StationDiscover {
     this.activateAllLists();
     this.addNavigationListeners();
   }
-}
-
-StationDiscover.prototype = {
   /**
    * Add navigation listeners
    * @function
    */
-  addNavigationListeners: function () {
+  addNavigationListeners() {
     this.discoverTab.addEventListener('click', (e) => this.activateAllLists(e) );
     // this.mobileDropdown.addEventListener('change', (e) => this.activateFilteredList(e) );
 
@@ -33,30 +30,30 @@ StationDiscover.prototype = {
     for (let option of this.dropdown) {
       option.addEventListener('click', (e) => this.activateFilteredList(e) );
     }
-  },
+  }
   /**
      * Show all station lists in discover tab
      * @function
-     * @param {object} event
+     * @param {object} [event]
      */
-  activateAllLists: function (event) {
-    if (!event || event.target == this.discoverTab) {
+  activateAllLists(event) {
+    if (!event || event.target === this.discoverTab) {
       for (let list of this.stationLists) {
         list.classList.add('active');
-      };
+      }
     }
-  },
+  }
   /**
      * Show filtered station list only
      * @function
      * @param {object} event or option
      */
-  activateFilteredList: function (event) {
+  activateFilteredList(event) {
     let filter;
 
     if (event.value) {
       filter = event.value;
-    } else if (event.type == 'click') {
+    } else if (event.type === 'click') {
       filter = event.target.classList[1].replace('discover__tab--','');
     }
 
@@ -70,6 +67,6 @@ StationDiscover.prototype = {
     }
 
   }
-};
+}
 
 module.exports = (el) => new StationDiscover(el);
