@@ -109,7 +109,7 @@ const queryService = require('../../services/server/query'),
       return {
         feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
         externalUrl: item.node.URL,
-        primaryHeadline: item.node.field_engagement_title
+        primaryHeadline: item.node.field_engagement_title || item.node.title
       };
     }));
 

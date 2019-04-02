@@ -79,6 +79,7 @@ export default {
       this.$el.querySelectorAll('[data-play-station]').forEach(element => {
         element.addEventListener('click', (event) => {
           event.preventDefault()
+          event.stopPropagation()
           playerInterface.play(element.dataset.playStation)
         })
       })

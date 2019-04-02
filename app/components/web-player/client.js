@@ -1,8 +1,7 @@
 'use strict';
 
 // Instantiate player interface.
-const ClientPlayerInterface = require('../../services/client/ClientPlayerInterface'),
-  clientPlayerInterface = new ClientPlayerInterface();
+const clientPlayerInterface = require('../../services/client/ClientPlayerInterface')();
 
 // Listen for SPA event.
 document.addEventListener('clientWebPlayerMountPlayer', function () {
