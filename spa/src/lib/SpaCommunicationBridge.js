@@ -10,6 +10,17 @@
  * interoperability issues related to client.js using commonJS module format and the SPA
  * using es6 module format.
  *
+ * UPDATE: We may be able to unify SpaCommunicationBridge and ClientCommunicationBridge by implementing the
+ * @babel/runtime package. It may be an issue with how we use babel to bundle client.js code and also in our
+ * SPA bundle build - I'm thinking each babel build is transforming the module correctly but then putting it in a
+ * global namespace such that both bundles are colliding in that namespace at runtime thus causing the commonJS/ES6 module
+ * interoperability problems (That's the only explanation I can think of that would cause 2 discrete builds to use
+ * the same resource at runtime).
+ *
+ * @babel/runtime may add that missing method interopRequireDefault() which could resolve this issue.
+ *
+ * Unrelated but similar issue: https://github.com/facebook/react-native/issues/21310#issuecomment-424452875
+ *
  */
 
 // Require dependencies.
@@ -23,6 +34,17 @@ class SpaCommunicationBridge {
   constructor () {
     // Store of all active SPA channels.
     this.channels = {}
+  }
+
+  /**
+   *
+   * Use to determine if a channel has already been added.
+   *
+   * @param {string} channelName - Check if this channel is active
+   * @returns {boolean} - whether or not a channel with this name is active.
+   */
+  channelActive (channelName) {
+    return !!(this.channels[`${LISTENER_TYPE_NAMESPACE}SpaChannel${channelName}`])
   }
 
   /**
