@@ -99,12 +99,13 @@ StationsCarousel.prototype = {
    * @function
    */
   setCarouselWidth: function () {
-    // set width of carousel to full width and display it to prevent flashing
-    this.stationsCarousel.setAttribute('style',`
-      display: inline-flex;
-      width: ${document.body.clientWidth}px;
-      margin-left: calc((${document.body.clientWidth}px - ${this.layoutWidth}) / -2);
-    `);
+    let style = `display: inline-flex; width: ${document.body.clientWidth}px;`;
+    
+    if (this.stationsCarousel.closest('.layout--one-column')) {
+      // set width of carousel to full width and display it to prevent flashing
+      style += `margin-left: calc((${document.body.clientWidth}px - ${this.layoutWidth}) / -2);`;
+    }
+    this.stationsCarousel.setAttribute('style', style);
   },
   /**
    * Reset vars to calculate and set new dimensions and pages of carousel on window resize

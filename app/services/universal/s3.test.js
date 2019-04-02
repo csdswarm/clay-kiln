@@ -15,7 +15,7 @@ describe(dirname, () => {
     imageBody = 'imageBody',
     imagePath = `aiu-media/${imageName}`,
     imageUrl = `http://my.domain/${imageName}`,
-    radioImageUrl = `https://images.radio.com/${imagePath}`
+    radioImageUrl = `https://images.radio.com/${imagePath}`;
 
   describe(filename, () => {
     beforeEach(() => {
