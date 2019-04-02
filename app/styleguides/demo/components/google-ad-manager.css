@@ -102,3 +102,12 @@
     border: em(1) solid $white;
   }
 }
+
+#freq-dfp--bg-skin ~ .layout__content {
+  .google-ad-manager--billboard {
+    width: 100%;
+    margin: 0;
+    left: 0;
+    right: 0;
+  }
+}

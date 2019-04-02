@@ -323,6 +323,33 @@ function setAds(initialRequest = false) {
   });
 }
 
+function resizeForSkin() {
+  const contentDiv = document.getElementsByClassName('layout__content')[0],
+    stationCarousels = document.getElementsByClassName('component--stations-carousel');
+
+  let origCarouselStyles = [];
+      
+  // Shrink width of station-carousel components to display skin
+  Array.prototype.forEach.call(stationCarousels, function (elem) {
+    // Collect old styles if reset is needed
+    const {margin, width} = window.getComputedStyle(elem);
+        
+    origCarouselStyles.push({margin, width});
+        
+    elem.style['margin-left'] = `calc((100% - ${contentDiv.clientWidth}px)/2`;
+    elem.style.width = `${contentDiv.clientWidth}px`;
+  });
+
+  return function reset() {
+    Array.prototype.forEach.call(stationCarousels, function (elem, ind) {
+      const {margin, width} = origCarouselStyles[ind];
+
+      elem.style.margin = margin;
+      elem.style.width = width;
+    });
+  };
+}
+
 /**
  * Legacy code ported over from frequency to implement the takeover.
  *
@@ -337,7 +364,8 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.getElementsByClassName('layout')[0];
+    globalDiv = document.getElementsByClassName('layout')[0],
+    resetElements = resizeForSkin();
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {
@@ -415,6 +443,8 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     if (mainDiv) {
       mainDiv.classList.remove('has-fullpage-ad');
     }
+
+    resetElements();
 
     updateSkinStyles(false);
   };
