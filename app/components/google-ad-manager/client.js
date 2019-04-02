@@ -323,6 +323,11 @@ function setAds(initialRequest = false) {
   });
 }
 
+/**
+ * Resize the station-carousels if there is a skin
+ *
+ * @returns {function} function that resets elements to original styles
+ */
 function resizeForSkin() {
   const contentDiv = document.getElementsByClassName('layout__content')[0],
     stationCarousels = document.getElementsByClassName('component--stations-carousel');
