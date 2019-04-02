@@ -335,7 +335,7 @@ function resizeForSkin() {
   let origCarouselStyles = [];
       
   // Shrink width of station-carousel components to display skin
-  Array.prototype.forEach.call(stationCarousels, function (elem) {
+  Array.from(stationCarousels).forEach(function (elem) {
     // Collect old styles if reset is needed
     const {margin, width} = window.getComputedStyle(elem);
         
@@ -346,7 +346,7 @@ function resizeForSkin() {
   });
 
   return function reset() {
-    Array.prototype.forEach.call(stationCarousels, function (elem, ind) {
+    Array.from(stationCarousels).forEach(function (elem, ind) {
       const {margin, width} = origCarouselStyles[ind];
 
       elem.style.margin = margin;
