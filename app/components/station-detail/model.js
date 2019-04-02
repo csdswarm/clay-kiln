@@ -57,20 +57,16 @@ module.exports.render = (uri, data, locals) => {
     return data;
   }
 
-  // @TODO ON-561: Update radio api request to filter by slug
-  const route = `stations/${locals.params.dynamicStation}`;
+  return radioApiService.get('stations', { filter: { site_slug: locals.params.dynamicStation } }).then(response => {
+    if (response.data) {
+      // station object is available to child components through locals.station
+      data.station = locals.station = response.data[0].attributes || {};
+      data.tags = getStationTags(response.data[0].attributes);
+      data.category = response.data[0].attributes.category.toLowerCase() || '';
 
-  return radioApiService
-    .get(route)
-    .then(response => {
-      if (response.data) {
-        // station object is available to child components through locals.station
-        data.station = locals.station = response.data.attributes || {};
-        data.tags = getStationTags(response.data.attributes);
-        data.category = response.data.attributes.category.toLowerCase() || '';
-      }
       return data;
-    })
+    }
+  })
     .then(addBreadcrumbLinks(locals.site.host));
 };
 

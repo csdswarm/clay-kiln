@@ -52,7 +52,7 @@ class SpaPlayerInterface {
    * @returns {boolean} - whether or not to automatically boot the player.
    */
   autoBootPlayer (path) {
-    const matchedStationDetailRoute = path.match(/^\/([0-9]+)\/listen$/)
+    const matchedStationDetailRoute = path.match(/^\/(.+)\/listen$/)
 
     if (matchedStationDetailRoute) {
       return true
@@ -176,9 +176,7 @@ class SpaPlayerInterface {
    * @param {string} path - url path.
    */
   extractStationIdFromStationDetailPath (path) {
-    const match = path.match(/^\/([0-9]+)\/listen$/)
-
-    return (match) ? match[1] : null
+    return this.spa.$store.state.spaPayloadLocals.station.id
   }
 }
 
