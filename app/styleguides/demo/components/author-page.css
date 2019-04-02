@@ -9,7 +9,7 @@ $medium-screen-nav-width: em(728);
 .component--author-page {
   margin-top: em(-30); /* to offset margin top of layout__content */
   .author-page__author {
-    height: 100%;
+    height: em(110);
     position: relative;
     margin: auto;
     max-width: 100%;
