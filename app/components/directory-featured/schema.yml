@@ -1,0 +1,18 @@
+_description: |
+  Featured stations directory page
+
+googleInlineAd:
+  _component:
+    include:
+      - google-ad-manager
+
+recentStations:
+  _component:
+    include:
+      - stations-list
+
+stationsListTruncated:
+  _component:
+    include:
+      - stations-list
+

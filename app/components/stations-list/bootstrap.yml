@@ -7,3 +7,5 @@ _components:
     listTitle: ''
     truncatedList: true
     seeAllLink: ''
+    googleInlineAd:
+      _ref: /_components/google-ad-manager/instances/billboardBottom

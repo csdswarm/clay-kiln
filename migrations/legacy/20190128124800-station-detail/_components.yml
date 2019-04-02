@@ -107,11 +107,6 @@ _components:
         genre: ''
         listTitle: ''
         truncatedList: true
-      category:
-        filterBy: category
-        category: ''
-        listTitle: ''
-        truncatedList: false
       categoryTruncated:
         filterBy: category
         category: ''
