@@ -11,7 +11,10 @@ const radioApiService = require('../../services/server/radioApi'),
  */
 function getAllMarkets() {
   const route = 'markets',
-    params = {'page[size]': 100};
+    params = {
+      'page[size]': 100,
+      sort: 'name'
+    };
 
   return radioApiService.get(route, params).then(response => {
     return response.data || [];
@@ -25,7 +28,9 @@ function getAllMarkets() {
  */
 function getAllMusicGenres() {
   const route = 'genres',
-    params = {'page[size]': 100};
+    params = {
+      'page[size]': 100
+    };
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
