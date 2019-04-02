@@ -24,10 +24,37 @@ printf "Get existing instance and adding keys...\n"
 clay export -k demo -y $1/_components/article/instances/new > components.yml
 
 # find out where the version is for the article
-articleEnd=$(cat components.yml | grep -m1 -n '_version:' | cut -d: -f1)
+articleEnd=$(($(cat components.yml | grep -m1 -n 'paragraph:' | cut -d: -f1) - 1))
 
 # cut out the rest
 head -n $articleEnd components.yml > component.yml
+
+# default the byline source
+cat component.yml | sed "s/sources: \[\]/sources: [{ text: '\${text}' }]/" > _components.yml
+
+#append the new fields
+echo "        stationLogoUrl: '\${stationLogoUrl}'
+        stationURL: '\${stationURL}'
+" >> ./_components.yml
+
+printf "Importing component...\n"
+cat ./_components.yml | clay import -k demo -y $1
+
+# clean up
+rm ./*.yml
+
+printf "\n\nUpdating gallery new instance...\n"
+
+printf "Get existing instance and adding keys...\n"
+
+# export the existing, but that also gives sub instances
+clay export -k demo -y $1/_components/gallery/instances/new > components.yml
+
+# find out where the end is for the article
+galleryEnd=$(($(cat components.yml | grep -m1 -n 'paragraph:' | cut -d: -f1) - 1))
+
+# cut out the rest
+head -n $galleryEnd components.yml > component.yml
 
 # default the byline source
 cat component.yml | sed "s/sources: \[\]/sources: [{ text: '\${text}' }]/" > _components.yml

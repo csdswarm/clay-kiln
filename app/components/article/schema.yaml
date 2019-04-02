@@ -405,7 +405,7 @@ _groups:
     fields:
       - sectionFront
       - secondaryArticleType
-  bylines:
+  bylinesAndStationLogo:
     fields:
       - byline
       - stationLogoUrl

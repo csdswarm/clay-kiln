@@ -13,9 +13,7 @@ _components:
       -
         prefix: by
         names: []
-        sources: [{text: '$text'}]
-    stationLogoUrl: '${stationLogoUrl}'
-    stationURL: '${stationURL}'
+        sources: []
     authorsAndMeta: []
     secondaryBylineText: 'Photograph By'
     secondaryAttribution: []
