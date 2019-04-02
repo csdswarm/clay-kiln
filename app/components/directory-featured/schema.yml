@@ -11,11 +11,6 @@ recentStations:
     include:
       - stations-list
 
-stationsList:
-  _component:
-    include:
-      - stations-list
-
 stationsListTruncated:
   _component:
     include:

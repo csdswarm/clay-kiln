@@ -30,4 +30,12 @@
   .lead & {
     margin-bottom: 0;
   }
+
+  &.edit {
+    min-height: em(20);
+
+    &:hover {
+      border: em(1) solid #e3f2fd;
+    }
+  }
 }

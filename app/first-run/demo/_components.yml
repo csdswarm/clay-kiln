@@ -347,11 +347,6 @@ _components:
       default:
         allowed: true
 
-  web-player-head:
-    instances:
-      default:
-        allowed: true
-
   google-ad-manager:
     instances:
       new:

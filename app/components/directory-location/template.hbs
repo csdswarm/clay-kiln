@@ -5,4 +5,13 @@
       <option value="{{ id }}">{{ attributes.display_name }}</option>
     {{/each}}
   </select>
+  {{#if market }}
+    {{> stations-list stationsList }}
+  {{else}}
+    {{~#each @root.locals.allMarkets as |market| ~}}
+      <div class="directory-location__stations-by-market" data-market="{{ market.id }}">
+        {{> stations-list ../stationsListTruncated }}
+      </div>
+    {{~/each ~}}
+  {{/if}}
 </section>

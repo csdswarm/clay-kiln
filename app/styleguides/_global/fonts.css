@@ -363,7 +363,7 @@ em, i {
   @mixin font CircularStd-Black, 14px, $white, -.55px, 18px;
 }
 @define-mixin gallery-font5 {
-  @mixin font CircularStd-Black, 18px, $white, -.22px, 25px;
+  @mixin font CircularStd-Black, 18px, $black, -.22px, 25px;
 }
 @define-mixin gallery-font6 {
   @mixin font CircularStd-Black, 18px, $tundora, -.22px, 25px;
@@ -443,4 +443,7 @@ em, i {
 }
 @define-mixin stations-directory-font3 {
   @mixin font CircularStd-Medium, 12px, $black, -.58px, 15px;
+}
+@define-mixin directory-featured-font1 {
+  @mixin font CircularStd-Black, 24px, $white, -.58px, 140px;
 }

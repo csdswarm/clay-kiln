@@ -86,8 +86,8 @@ function middleware(req, res, next) {
       params.dynamicGenre = req.path.match(/stations\/music\/(.+)/)[1];
     }
     promise = db.get(`${req.hostname}/_pages/stations-directory@published`);
-  } else if (/(.+)\/listen/.test(req.path)) {
-    params.dynamicStation = req.path.match(/(.+)\/listen/)[1];
+  } else if (/\/(.+)\/listen/.test(req.path)) {
+    params.dynamicStation = req.path.match(/\/(.+)\/listen/)[1];
     promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
     // Otherwise resolve the uri and page instance

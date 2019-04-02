@@ -1,6 +1,5 @@
 _components:
   directory-genre:
-    genre: all
     googleInlineAd:
       _ref: /_components/google-ad-manager/instances/billboardBottom
     stationsList:

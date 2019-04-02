@@ -4,44 +4,54 @@
 @import "_global/colors";
 
 .component--stations-directory {
+  min-height: em(800);
   @mixin medium-small-screen {
     margin-top: em(20);
   }
+
   ul.stations-directory__tabs {
     margin-bottom: em(50);
     @mixin medium-small-screen {
       margin-bottom: em(25);
     }
+
     > li {
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-      @mixin stations-directory-font1;
-      @mixin medium-small-screen {
-        @mixin stations-directory-font3;
-      }
-      text-transform: capitalize;
-      cursor: pointer;
       display: inline-flex;
       flex-direction: column;
       align-items: center;
       white-space: nowrap;
+      cursor: pointer;
+      text-transform: capitalize;
+      @mixin stations-directory-font1;
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      @mixin medium-small-screen {
+        @mixin stations-directory-font3;
+      }
+
       span {
         display: inline-flex;
         flex-direction: row;
         align-items: baseline;
       }
+
       &.tab--dropdown:hover {
         align-items: flex-start;
+
         ul {
           display: block;
+
           @mixin medium-small-screen {
             align-items: center;
             display: none;
           }
         }
       }
+
       ul {
         display: none;
         columns: 2;
@@ -54,6 +64,7 @@
         position: absolute;
         margin-top: calc(1em + em(5, 14));
         border: em(1, 14) solid $mercury;
+
         li {
           @mixin stations-directory-font2;
           @mixin medium-small-screen {
@@ -67,9 +78,11 @@
           @mixin medium-small-screen {
             min-width: em(142, 12);
           }
+
           &:hover {
             background: $concrete;
           }
+
           a {
             width: 100%;
             height: 100%;
@@ -78,24 +91,29 @@
           }
         }
       }
+
       &:not(:last-of-type) {
         margin-right: em(40, 14);
         @mixin medium-small-screen {
           margin-right: em(25, 12);
         }
       }
+
       &::after {
         height: em(2, 14);
-        width: em(42, 14);
+        max-width: em(42, 14);
+        width: 100%;
         display: none;
         position: relative;
         content: '';
         margin-top: em(3, 14);
         background: $purple;
+
         @mixin medium-small-screen {
           width: em(32, 14);
         }
       }
+
       &.active::after {
         display: inline-block;
       }
@@ -103,9 +121,7 @@
   }
 }
 @define-mixin underline-color $stationGenre, $color {
-  .component--stations-directory
-  ul.stations-directory__tabs >
-  li.tab--$stationGenre::after {
+  .component--stations-directory ul.stations-directory__tabs > li.tab--$stationGenre::after {
     background: $color;
   }
 }
