@@ -3,7 +3,6 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
-  spaLinkService = require('../../services/client/spaLink'),
   { isMobileWidth } = require('../../services/client/mobile'),
   STATIONS_DIRECTORY = 'stations directory',
   STATION_DETAIL = 'station detail',
@@ -164,7 +163,6 @@ StationsList.prototype = {
 
     this.parentElement.append(newStations);
     this.stationsList = this.parentElement.querySelector('ul');
-    spaLinkService.apply(this.parentElement);
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
     // Hide loaders once loaded
