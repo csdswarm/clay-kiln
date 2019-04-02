@@ -7,7 +7,7 @@ const radioApiService = require('../../services/server/radioApi'),
 /**
  * fetch all markets from
  * radio api into an array
- * @returns {array}
+ * @returns {Promise<array>}
  */
 function getAllMarkets() {
   const route = 'markets',
@@ -21,7 +21,7 @@ function getAllMarkets() {
 /**
  * fetch all music genres from
  * radio api into an array
- * @returns {array}
+ * @returns {Promise<array>}
  */
 function getAllMusicGenres() {
   const route = 'genres',
@@ -29,13 +29,12 @@ function getAllMusicGenres() {
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      let musicGenres = response.data.filter(genre => {
+      return response.data.filter(genre => {
+
         if (genre.attributes.slug !== SPORTS_SLUG && genre.attributes.slug !== NEWSTALK_SLUG) {
           return genre;
         }
       });
-
-      return musicGenres;
     } else {
       return [];
     }
