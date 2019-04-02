@@ -7,12 +7,16 @@ $large-screen-nav-width: em(940);
 $medium-screen-nav-width: em(728);
 
 .component--author-page {
+  margin-top: em(-30); /* to offset margin top of layout__content */
   .author-page__author {
     height: 100%;
     position: relative;
     margin: auto;
     max-width: 100%;
     width: $default-screen-nav-width;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
     @mixin large-screen {
       width: $large-screen-nav-width;
     }
@@ -24,13 +28,14 @@ $medium-screen-nav-width: em(728);
       padding: 0 em(20);
     }
     .author__line {
+      width: 100%;
+      height: 0;
       border-bottom: em(1) solid $parisPurple;
     }
     h1 {
       @mixin topic-page-header-font2;
       text-transform: capitalize;
       position: absolute;
-      top: calc(50% - em(22,35));
       background: $white;
       padding: 0 em(15,35) 0 0;
     }
