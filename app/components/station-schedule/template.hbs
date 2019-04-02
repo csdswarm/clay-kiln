@@ -10,7 +10,7 @@
       <li>
         <div class="station-schedule__show">
           {{#if playing}}
-          <a href="{{ site_url }}" class="show__link">
+          <div data-play-station="{{ ../station.id }}" class="show__link">
           {{/if}}
           <img src="{{ image }}?width=101&height=101&crop=1:1,offset-y0" class="show__image"
             onerror="this.onerror=null; this.src='/media/components/station-schedule/fallback.svg';"/>
@@ -28,8 +28,8 @@
             <div class="details__title">{{ name }}</div>
           </div>
           {{#if playing}}
-          </a>
-            <a data-play-station="{{ ../station.id }}" href="{{ site_url }}" class="show__play"></a>
+          </div>
+            <div data-play-station="{{ ../station.id }}" class="show__play"></div>
           {{/if}}
         </div>
       </li>

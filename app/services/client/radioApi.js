@@ -3,22 +3,7 @@
 const rest = require('../universal/rest'),
   { formatLocal } = require('../../services/universal/dateTime'),
   spaLinkService = require('./spaLink'),
-  /**
-   * Adjusts the document with any user specific local information required
-   *
-   * @param {Node} doc
-   * @returns {Node}
-   */
-  userLocal = (doc) => {
-    const userTimes = doc.querySelectorAll('userLocal') || [];
-
-    if (userTimes) {
-      userTimes.forEach((time) =>
-        time.replaceWith(document.createTextNode(formatLocal(time.getAttribute('data-date'), time.getAttribute('data-format')))));
-    }
-
-    return doc;
-  },
+  clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
   /**
    * returns boolean if it is a link inside the spa
    *
@@ -26,16 +11,31 @@ const rest = require('../universal/rest'),
    * @returns {boolean}
    */
   isSpaLink = (uri) => /https?:\/\/.*.radio.com/.test(uri) || uri.charAt(0) === '/',
-  /**
-   * Adds the click events for any links
-   *
-   * @param {Node} doc
-   * @returns {Node}
-   */
-  addSpaLinks = (doc) => {
-    const anchors = doc.querySelectorAll('a');
+  // An array of functions that take in a node and return the mutated node with attached events or modifications to data
+  spaFunctions = [
+    /**
+     * Adjusts the document with any user specific local information required
+     *
+     * @param {Node} doc
+     * @returns {Node}
+     */
+    (doc) => {
+      const userTimes = doc.querySelectorAll('userLocal') || [];
 
-    if (anchors) {
+      userTimes.forEach((time) =>
+        time.replaceWith(document.createTextNode(formatLocal(time.getAttribute('data-date'), time.getAttribute('data-format')))));
+
+      return doc;
+    },
+    /**
+     * Adds the click events for any links
+     *
+     * @param {Node} doc
+     * @returns {Node}
+     */
+    (doc) => {
+      const anchors = doc.querySelectorAll('a');
+
       anchors.forEach((anchor) =>  {
         const href = anchor.getAttribute('href');
 
@@ -43,11 +43,37 @@ const rest = require('../universal/rest'),
           anchor.classList.add('spa-link');
         }
       });
+
+      spaLinkService.apply(doc);
+
+      return doc;
+    },
+    /**
+     * Adds the click events for any play button
+     *
+     * @param {Node} doc
+     * @returns {Node}
+     */
+    (doc) => {
+      // Attach play button click handlers
+      doc.querySelectorAll('[data-play-station]').forEach(element => {
+        element.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          return clientPlayerInterface.play(element.dataset.playStation);
+        });
+      });
+      return doc;
     }
-
-    spaLinkService.apply(doc);
-
-    return doc;
+  ],
+  /**
+   * Attaches all spa interfaces
+   *
+   * @param {Node} doc
+   * @returns {Node}
+   */
+  spaInterface = (doc) => {
+    return spaFunctions.reduce((node, func) => func(node), doc);
   },
   /**
    * Client side AJAX call to get the specified route and returns a DOM object
@@ -65,10 +91,10 @@ const rest = require('../universal/rest'),
 
     if (Array.isArray(elements)) {
       elements.forEach((element) => frag.append(element));
-      return addSpaLinks(userLocal(frag));
+      return spaInterface(frag);
     }
 
-    return addSpaLinks(userLocal(elements));
+    return spaInterface(elements);
   },
   /**
    * Get data
