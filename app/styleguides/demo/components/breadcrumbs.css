@@ -4,7 +4,7 @@
 @import "_global/colors";
 
 .component--breadcrumbs {
-  margin-bottom: em(10);
+  margin-bottom: em(20);
 
   .breadcrumbs__link {
     display: inline-block;
@@ -27,5 +27,9 @@
   .breadcrumbs__separator {
     @mixin article-font12;
     color: $purple;
+  }
+
+  @mixin medium-small-screen {
+    margin: em(20) 0 em(10);
   }
 }
