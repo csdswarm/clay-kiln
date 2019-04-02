@@ -9,14 +9,11 @@ class DirectoryLocation {
 
     this.addNavigationListener();
   }
-}
-
-DirectoryLocation.prototype = {
   /**
    * Add navigation listener to mobile dropdown
    * @function
    */
-  addNavigationListener: function () {
+  addNavigationListener() {
     const selectr = new Selectr(this.mobileDropdown, {
       searchable: false,
       customClass: 'directory-location__dropdown--mobile'
@@ -24,6 +21,6 @@ DirectoryLocation.prototype = {
 
     selectr.on('selectr.change', (option) => spaLinkService.navigateTo(`/stations/location/${option.value}`) );
   }
-};
+}
 
 module.exports = (el) => new DirectoryLocation(el);
