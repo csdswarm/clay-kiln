@@ -8,7 +8,9 @@
 
 import * as mutationTypes from '../vuex/mutationTypes'
 import SpaCommunicationBridge from './SpaCommunicationBridge'
+import QueryPayload from './QueryPayload'
 const spaCommunicationBridge = SpaCommunicationBridge()
+const queryPayload = new QueryPayload()
 
 class SpaPlayerInterface {
   constructor (spaApp) {
@@ -26,7 +28,7 @@ class SpaPlayerInterface {
       await this.bootPlayer()
 
       // If appropriate, pop the player bar onto the screen by loading a station.
-      const stationDetailPageStationId = this.extractStationIdFromStationDetailPath(this.spa.$route.path)
+      const stationDetailPageStationId = this.extractStationIdFromSpaPayload()
 
       if (stationDetailPageStationId) {
         await this.loadStation(stationDetailPageStationId)
@@ -54,9 +56,8 @@ class SpaPlayerInterface {
    */
   autoBootPlayer (path) {
     const matchedStationDetailRoute = path.match(/^\/(.+)\/listen$/)
-    const matchedStationsDirectoryRoute = path.match(/^\/stations/)
 
-    if (matchedStationDetailRoute || matchedStationsDirectoryRoute) {
+    if (matchedStationDetailRoute) {
       return true
     } else {
       return false
@@ -174,12 +175,17 @@ class SpaPlayerInterface {
 
   /**
    *
-   * Get a station ID related to a station detail page via url path.
+   * Attempt to get a station ID from a station detail page SPA payload.
    *
-   * @param {string} path - url path.
    */
-  extractStationIdFromStationDetailPath (path) {
-    return this.spa.$store.state.spaPayloadLocals.station.id
+  extractStationIdFromSpaPayload () {
+    const stationDetailData = queryPayload.findComponent(this.spa.$store.state.spaPayload.main, 'station-detail')
+
+    if (stationDetailData && stationDetailData.station) {
+      return stationDetailData.station.id
+    } else {
+      return null
+    }
   }
 }
 
