@@ -4,6 +4,10 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
   spaLinkService = require('../../services/client/spaLink'),
+  { isMobileWidth } = require('../../services/client/mobile'),
+  STATIONS_DIRECTORY = 'stations directory',
+  STATION_DETAIL = 'station detail',
+  FEATURED = 'featured',
   clientPlayerInterface = require('../../services/client/ClientPlayerInterface')();
 
 class StationsList {
@@ -25,10 +29,10 @@ class StationsList {
       stationsDataEl = element.querySelector('.stations-list__data');
 
     if (page.classList.contains('component--stations-directory')) {
-      this.pageType = 'stations directory';
+      this.pageType = STATIONS_DIRECTORY;
       this.directoryType = page.querySelector('.directory-body__directory-page').getAttribute('id').replace('stations-directory__', '');
     } else if (page.classList.contains('component--station-detail')) {
-      this.pageType = 'station detail';
+      this.pageType = STATION_DETAIL;
     }
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
@@ -36,10 +40,10 @@ class StationsList {
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
-    window.addEventListener('resize', this.toggleSeeAllLink.bind(this) );
+    window.addEventListener('resize', this.toggleSeeAllLinkAndAds.bind(this) );
     document.addEventListener('stations-list-dismount', () => {
       // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
-      window.removeEventListener('resize', this.toggleSeeAllLink );
+      window.removeEventListener('resize', this.toggleSeeAllLinkAndAds );
     }, { once: true });
   }
 }
@@ -62,30 +66,28 @@ StationsList.prototype = {
    * number of results and the page width
    * @function
    */
-  toggleSeeAllLink: function () {
-    if (this.seeAllLink) {
-      let stationsShownOnLoad;
-
-      if (window.innerWidth >= 1280) {
-        if (this.pageType === 'station detail') {
-          stationsShownOnLoad = 10;
-        } else if (this.directoryType === 'featured') {
-          stationsShownOnLoad = 14;
-        } else {
-          stationsShownOnLoad = 7;
-        }
-      } else if (window.innerWidth >= 1024) {
-        if (this.pageType === 'station detail') {
-          stationsShownOnLoad = 8;
-        } else if (this.directoryType === 'featured') {
-          stationsShownOnLoad = 12;
-        } else {
-          stationsShownOnLoad = 6;
-        }
+  toggleSeeAllLinkAndAds: function () {
+    if (window.innerWidth >= 1280) {
+      if (this.pageType === STATION_DETAIL) {
+        this.stationsShownOnLoad = 10;
+      } else if (this.directoryType === FEATURED) {
+        this.stationsShownOnLoad = 14;
       } else {
-        stationsShownOnLoad = 6;
+        this.stationsShownOnLoad = 7;
       }
-      if (this.stationsData.length <= stationsShownOnLoad || window.innerWidth < 480) {
+    } else if (window.innerWidth >= 1024) {
+      if (this.pageType === STATION_DETAIL) {
+        this.stationsShownOnLoad = 8;
+      } else {
+        this.stationsShownOnLoad = 12;
+      }
+    } else {
+      this.stationsShownOnLoad = 6;
+    }
+
+    // Hide see all link if there aren't enough to fill the list or on mobile
+    if (this.seeAllLink) {
+      if (this.stationsData.length <= this.stationsShownOnLoad || isMobileWidth) {
         this.seeAllLink.style.display = 'none';
       } else {
         this.seeAllLink.style.display = 'flex';
@@ -105,13 +107,12 @@ StationsList.prototype = {
    * Get stations list template from component
    * @function
    * @param {object[]} stationIDs
-   * @param {string} filter -- category, genre, or market type
-   * @returns {object}
+   * @param {string} [filter] -- category, genre, or market type
+   * @returns {Node}
    */
   getComponentTemplate: async function (stationIDs, filter) {
-    let queryParamString = '?ignore_resolve_media=true',
-      instance = this.filterStationsBy,
-      response;
+    let queryParamString = '?',
+      instance = this.filterStationsBy;
 
     if (stationIDs) {
       queryParamString += `&stationIDs=${stationIDs}`;
@@ -122,9 +123,7 @@ StationsList.prototype = {
       queryParamString += `&${this.filterStationsBy}=${filter}`;
     }
 
-    response = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);
-
-    return await response.text();
+    return await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);
   },
   /**
    * Add active class to stations that should be visible
@@ -151,7 +150,7 @@ StationsList.prototype = {
       }),
       newStations = await this.getComponentTemplate(stationIDs);
 
-    this.stationsList.innerHTML += newStations;
+    this.stationsList.append(newStations);
     spaLinkService.apply(this.stationsList);
 
     // Attach play button click handlers
@@ -174,21 +173,23 @@ StationsList.prototype = {
   updateStationsDOMFromFilterType: async function () {
     const newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
 
-    this.parentElement.innerHTML = newStations;
+    this.parentElement.append(newStations);
     this.stationsList = this.parentElement.querySelector('ul');
     spaLinkService.apply(this.parentElement);
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
+    // Hide loaders once loaded
+    this.toggleLoader();
 
     // eslint-disable-next-line one-var
     const stationsDataEl = this.parentElement.querySelector('.stations-list__data');
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
     this.seeAllLink = this.parentElement.querySelector('.header-row__see-all-link');
-    this.toggleSeeAllLink();
+    this.toggleSeeAllLinkAndAds();
     this.loadMoreBtn = this.parentElement.querySelector('.stations-list__load-more');
     if (this.loadMoreBtn) {
-      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations(this.parentElement.querySelector('ul')) );
+      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
   },
   /**
@@ -209,12 +210,11 @@ StationsList.prototype = {
       this.updateStationsDOMWithIDs(stationsData);
     } else {
       // server side populated
-
       if (this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket) {
         this.toggleLoader();
         this.updateStationsDOMFromFilterType();
       } else {
-        this.toggleSeeAllLink();
+        this.toggleSeeAllLinkAndAds();
         this.displayActiveStations();
       }
     }
