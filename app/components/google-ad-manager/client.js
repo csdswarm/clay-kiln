@@ -329,13 +329,13 @@ function setAds(initialRequest = false) {
  * @returns {function} function that resets elements to original styles
  */
 function resizeForSkin() {
-  const contentDiv = document.getElementsByClassName('layout__content')[0],
-    stationCarousels = document.getElementsByClassName('component--stations-carousel');
+  const contentDiv = document.querySelector('.layout__content'),
+    stationCarousels = document.querySelectorAll('.component--stations-carousel');
 
   let origCarouselStyles = [];
       
   // Shrink width of station-carousel components to display skin
-  Array.from(stationCarousels).forEach(function (elem) {
+  stationCarousels.forEach(function (elem) {
     // Collect old styles if reset is needed
     const {margin, width} = window.getComputedStyle(elem);
         
@@ -346,7 +346,7 @@ function resizeForSkin() {
   });
 
   return function reset() {
-    Array.from(stationCarousels).forEach(function (elem, ind) {
+    stationCarousels.forEach(function (elem, ind) {
       const {margin, width} = origCarouselStyles[ind];
 
       elem.style.margin = margin;
