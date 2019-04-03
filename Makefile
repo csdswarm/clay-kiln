@@ -35,6 +35,9 @@ enter-clay:
 clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data
 
+major-cleanup:
+	rm -rf app/node_modules && rm -rf app/public/js && rm -rf app/public/css && rm -rf app/browserify-cache.json
+
 bootstrap:
 	cd ./app &&  cat ./first-run/**/* | clay import -k demo -y clay.radio.com
 	@echo ""
