@@ -12,11 +12,17 @@ function getDurationInSeconds(duration) {
   return moment.duration(duration, moment.ISO_8601).asSeconds();
 }
 
-function getVideoDetails(videoId) {
-  const videoSearchUrl = `${YT_API}/videos`,
+/**
+ * Retrieve details for video or playlist from youtube api
+ * @param {string} contentId The videoId or playlist to get the details for
+ * @param {boolean} isPlaylist If true, youtube will query the contentId against play lists instead of videos
+ * @returns {Promise<object>} a data object containing the content details.
+ */
+function getVideoDetails(contentId, isPlaylist = false) {
+  const videoSearchUrl = `${YT_API}/${isPlaylist ? 'playlists' : 'videos' }`,
     qs = querystring.stringify({
       part: 'snippet,contentDetails',
-      id: videoId,
+      id: contentId,
       key: process.env.YOUTUBE_API_KEY
     });
 
@@ -25,7 +31,9 @@ function getVideoDetails(videoId) {
       _get(res, 'items[0].snippet', {}),
       { duration: getDurationInSeconds(_get(res, 'items[0].contentDetails.duration', 0)) }
     ))
-    .catch(err => log('error', `Error fetching video details for video id ${videoId}: ${err.message}`));
+    .catch(err =>
+      log('error', `Error fetching details for video or playlist with id ${contentId}: ${err.message}`)
+    );
 }
 
 module.exports.getVideoDetails = getVideoDetails;
