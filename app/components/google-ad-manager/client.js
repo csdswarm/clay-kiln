@@ -346,7 +346,7 @@ function resizeForSkin() {
   });
 
   return () => {
-    stationCarousels.forEach(function (elem, ind) {
+    stationCarousels.forEach((elem, ind) => {
       const {margin, width} = origCarouselStyles[ind];
 
       Object.assign(elem.style, {margin, width});
