@@ -152,7 +152,10 @@ module.exports.render = async (uri, data, locals) => {
           // handle populating stations in client side
           return data;
         }
+      } else {
+        return data;
       }
+      
       const market = {
           id: locals.market,
           market: locals.params.dynamicMarket
