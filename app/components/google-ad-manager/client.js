@@ -334,23 +334,19 @@ function resizeForSkin() {
 
   let origCarouselStyles = [];
       
-  // Shrink width of station-carousel components to display skin
-  stationCarousels.forEach(function (elem) {
-    // Collect old styles if reset is needed
+  stationCarousels.forEach((elem) => {
     const {margin, width} = window.getComputedStyle(elem);
         
     origCarouselStyles.push({margin, width});
         
-    elem.style['margin-left'] = `calc((100% - ${contentDiv.clientWidth}px)/2`;
-    elem.style.width = `${contentDiv.clientWidth}px`;
+    Object.assign(elem.style, {'margin-left': `calc((100% - ${contentDiv.clientWidth}px)/2`, width: `${contentDiv.clientWidth}px`});
   });
 
-  return function reset() {
+  return () => {
     stationCarousels.forEach(function (elem, ind) {
       const {margin, width} = origCarouselStyles[ind];
 
-      elem.style.margin = margin;
-      elem.style.width = width;
+      Object.assign(elem.style, {margin, width});
     });
   };
 }

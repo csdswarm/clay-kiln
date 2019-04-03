@@ -104,13 +104,15 @@
 }
 
 #freq-dfp--bg-skin ~ .layout__content {
-  .google-ad-manager--billboard,
-  .google-ad-manager--super-leaderboard,
-  .google-ad-manager--leaderboard,
-  .google-ad-manager--mobile {
-    width: 100%;
-    margin: 0;
-    left: 0;
-    right: 0;
+  .google-ad-manager-- {
+    &billboard,
+    &super-leaderboard,
+    &leaderboard,
+    &mobile {
+      width: 100%;
+      margin: 0;
+      left: 0;
+      right: 0;
+    }
   }
 }
