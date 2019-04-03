@@ -339,7 +339,10 @@ function resizeForSkin() {
         
     origCarouselStyles.push({margin, width});
         
-    Object.assign(elem.style, {'margin-left': `calc((100% - ${contentDiv.clientWidth}px)/2`, width: `${contentDiv.clientWidth}px`});
+    Object.assign(elem.style, {
+      'margin-left': `calc((100% - ${contentDiv.clientWidth}px)/2`, 
+      width: `${contentDiv.clientWidth}px`
+    });
   });
 
   return () => {
