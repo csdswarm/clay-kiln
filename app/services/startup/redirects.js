@@ -47,9 +47,7 @@ const db = require('../server/db'),
       } else {
         return uri;
       }
-    } catch (e) {
-      console.log(e.message);
-    }
+    } catch (e) { }
   };
 
 /**
@@ -92,10 +90,7 @@ module.exports = async (req, res, next) => {
       }
     }
 
-  } catch (e) {
-    console.log('Error in redirects middleware:');
-    console.log(e);
-  }
+  } catch (e) { }
 
   if (runNext) {
     next();
