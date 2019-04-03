@@ -144,15 +144,14 @@ module.exports.render = async (uri, data, locals) => {
           break;
       }
     } else if (data.filterBy === 'market') {
+      if (!locals.params) {
+        return data;
+      }
       /** for stations lists on location stations directory page **/
-      if (locals.params) {
-        if (!locals.params.dynamicMarket && !locals.market
-          || locals.params.dynamicMarket && data.truncatedList ) {
-          // fix for use case: both list components are rendering even when condition is met
-          // handle populating stations in client side
-          return data;
-        }
-      } else {
+      if (!locals.params.dynamicMarket && !locals.market
+        || locals.params.dynamicMarket && data.truncatedList ) {
+        // fix for use case: both list components are rendering even when condition is met
+        // handle populating stations in client side
         return data;
       }
       
