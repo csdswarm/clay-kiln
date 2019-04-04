@@ -10,7 +10,7 @@
       height="auto"
       :min-height="300"
     >
-      <account/>
+      <modalContent/>
     </modal>
   </div>
 </template>
@@ -25,8 +25,8 @@ import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
-import Account from '@/views/Account'
-import accountRoutes from '@/views/account/routes/'
+import ModalContent from '@/views/ModalContent'
+import modalRoutes from '@/views/routes/modal'
 import { mapState } from 'vuex'
 
 // Instantiate libraries.
@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'accountComponent'
+      'modalComponent'
     ])
   },
   methods: {
@@ -104,32 +104,39 @@ export default {
       this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
     },
     /**
+     * returns the component that should be rendered for a modal route
+     *
+     *  @param {string} path
+     *  @returns {boolean}
+     */
+    getModalRoute(path) {
+      return modalRoutes.find((route) => route.path === path)
+    },
+    /**
      * if the path belongs to an account page, show modal and handle routing else hide the modal
      *
-     * @param {string} to
+     * @param {component} route
      * @param {string} from
      * @returns {boolean}
      */
-    accountRouteHandled (to, from) {
-      if (/^\/account\//.test(to)) {
-        const route = accountRoutes.find((route) => route.path === to)
+    handleModalRoute (route, from) {
 
-        if (route) {
-          this.modalShow()
+      if (route) {
+        this.modalShow()
 
-          this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, route.component)
+        this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, route.component)
 
-          // set the current title and path for where to update history to when the modal changes
-          if (!this.redirectTo && from) {
-            this.redirectTo = {
-              url: from,
-              title: document.title
-            }
+        // set the current title and path for where to update history to when the modal changes
+        if (!this.redirectTo && from) {
+          this.redirectTo = {
+            url: from,
+            title: document.title
           }
-
-          return true
         }
+
+        return true
       }
+
       this.modalHide()
 
       return false
@@ -214,17 +221,13 @@ export default {
         toTopicPage: nextTopicPageData || {},
         toStationDetailPage: nextStationDetailPageData || {}
       }
-    }
-  },
-  components: {
-    OneColumnLayout,
-    OneColumnFullWidthLayout,
-    TwoColumnLayout,
-    Account
-  },
-  watch: {
-    '$route': async function (to, from) {
-      if (!this.accountRouteHandled(to.path, from.path)) {
+    },
+    /**
+     *
+     *  Handles the logic for rendering the page with data from clay and updates any required DOM elements
+     *
+     */
+    async handleSpaRoute (to) {
         // Start loading animation.
         this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
@@ -232,36 +235,52 @@ export default {
         const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
 
         if (spaPayload) {
-          const path = (new URL(spaPayload.url)).pathname
+            const path = (new URL(spaPayload.url)).pathname
 
-          // Load matched Layout Component.
-          this.activeLayoutComponent = this.layoutRouter(spaPayload)
+            // Load matched Layout Component.
+            this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-          // Reset/flush the pageCache
-          this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
+            // Reset/flush the pageCache
+            this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
 
-          // Commit next payload to store to kick off re-render.
-          this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+            // Commit next payload to store to kick off re-render.
+            this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-          // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-          metaManager.updateExternalTags(this.$store.state.spaPayload)
+            // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+            metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-          // Stop loading animation.
-          this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+            // Stop loading animation.
+            this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-          // Build pageView event data
-          const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
+            // Build pageView event data
+            const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-          // Call global pageView event.
-          const event = new CustomEvent(`pageView`, {
-            detail: pageViewEventData
-          })
+            // Call global pageView event.
+            const event = new CustomEvent(`pageView`, {
+                detail: pageViewEventData
+            })
 
-          document.dispatchEvent(event)
+            document.dispatchEvent(event)
         }
-      }
+    }
+  },
+  components: {
+    OneColumnLayout,
+    OneColumnFullWidthLayout,
+    TwoColumnLayout,
+    ModalContent
+  },
+  watch: {
+    '$route': async function (to, from) {
+        const modalRoute = this.getModalRoute(to.path)
+
+        if (modalRoute) {
+           await this.handleModalRoute(modalRoute, from.path)
+        } else {
+           await this.handleSpaRoute(to)
+        }
     },
-    accountComponent (component) {
+    modalComponent (component) {
       if (!component) {
         // no component, ensure that the modal is hidden
         this.modalHide()
@@ -276,7 +295,7 @@ export default {
           // update browser history
           window.history.pushState({}, null, window.location.pathname)
           // add the title back to the page we never left before the modal
-          document.title = this.redirectTo.title
+          metaManager.updateTitle(this.redirectTo.title)
           // now replace the new history with our old page and title
           window.history.replaceState({ }, null, this.redirectTo.url)
           // update vue history also
@@ -287,12 +306,12 @@ export default {
       } else {
         // since the modal is not updating the title, manually do it
         // if we need to update anything for meta data or additional tracking, it can be done here
-        document.title = `${component.name.replace(/([A-Z])/g, ' $1')} | RADIO.COM`
+        metaManager.updateTitle(`${component.name.replace(/([A-Z])/g, ' $1')} | RADIO.COM`)
       }
     }
   },
   mounted () {
-    this.accountRouteHandled(this.$route.path, '/')
+      this.handleModalRoute(this.getModalRoute(this.$route.path), '/')
   }
 }
 

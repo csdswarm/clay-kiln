@@ -19,7 +19,7 @@ export const vuexStoreDefaultState = {
     gallerySlidePageviews: {} // Used to track slide pageview events so slide pageviews are only counted once per SPA "pageview"
   },
   metadata: {},
-  accountComponent: null,
+  modalComponent: null,
   user: {},
   modalLoading: true,
   errorMessage: null

@@ -131,7 +131,8 @@ export default {
 
       try {
         await this.$store.dispatch(actionTypes.SIGN_UP, { email: this.user.email, password: this.user.password })
-        // when switching to the action, pushing to the router causes a conflict to the re-render
+        // when switching to the action, pushing to the router immediately causes a conflict during re-render
+        // Error: Failed to execute 'observe' on 'MutationObserver': parameter 1 is not of type 'Node'
         setTimeout(() => { this.$router.push({ path: `/account/profile` })}, 10)
       } catch(err) { }
     }

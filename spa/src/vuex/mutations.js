@@ -32,10 +32,10 @@ export default {
     )
   },
   [mutationTypes.ACCOUNT_MODAL_SHOW]: (state, component) => {
-    state.accountComponent = component
+    state.modalComponent = component
   },
   [mutationTypes.ACCOUNT_MODAL_HIDE]: (state) => {
-    state.accountComponent = null
+    state.modalComponent = null
   },
   [mutationTypes.SET_METADATA]: (state, metadata) => { state.metadata = metadata },
   [mutationTypes.SET_USER]: (state, user) => { state.user = user },

@@ -3,7 +3,7 @@
     <radio-com-header/>
     <div v-if="loaded">
       <radio-com-form>
-        <component v-bind:is="accountComponent"></component>
+        <component v-bind:is="modalComponent"></component>
       </radio-com-form>
     </div>
     <div v-if="modalLoading">
@@ -24,7 +24,7 @@ export default {
 
     computed: {
     ...mapState([
-      'accountComponent',
+      'modalComponent',
       'metadata',
       'modalLoading'
     ]),
