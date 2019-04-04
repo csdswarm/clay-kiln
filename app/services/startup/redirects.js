@@ -47,7 +47,9 @@ const db = require('../server/db'),
       } else {
         return uri;
       }
-    } catch (e) { }
+    } catch (e) {
+      // swallowing db error
+    }
   };
 
 /**
