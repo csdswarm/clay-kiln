@@ -18,7 +18,7 @@ class StationsList {
     this.filterStationsByGenre = this.parentElement.getAttribute('data-genre');
     this.filterStationsByMarket = this.parentElement.getAttribute('data-market');
     this.seeAllLink = element.querySelector('.header-row__see-all-link');
-    this.stationsList = element.querySelector('ul');
+    this.setStationList(element);
     this.loadMoreBtn = element.querySelector('.stations-list__load-more');
     this.loader = element.querySelector('.loader-container');
     this.pageNum = 1;
@@ -162,7 +162,7 @@ StationsList.prototype = {
     const newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
 
     this.parentElement.append(newStations);
-    this.stationsList = this.parentElement.querySelector('ul');
+    this.setStationList(this.parentElement);
     this.displayActiveStations();
     this.loader = this.parentElement.querySelector('.loader-container');
     // Hide loaders once loaded
@@ -178,6 +178,15 @@ StationsList.prototype = {
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
+  },
+  /**
+   * sets the station list locally from the dom
+   * @function
+   * @param {Element} node
+   */
+  setStationList: function (node) {
+    // there are multiple ul elements that get created, and we want the last one
+    this.stationsList = Array.from(node.querySelectorAll('ul')).slice(-1)[0];
   },
   /**
    * Initial function - retrieve new payload of stations into DOM
@@ -214,7 +223,7 @@ StationsList.prototype = {
   loadMoreStations: async function () {
     this.pageNum++;
 
-    const currentNumOfStationsShowing = this.stationsList.querySelectorAll('li.station').length,
+    const currentNumOfStationsShowing = this.stationsList.querySelectorAll('li.station.active').length,
       newNumOfStations = this.pageNum * this.pageSize;
 
     if (currentNumOfStationsShowing < this.stationsData.length) {
