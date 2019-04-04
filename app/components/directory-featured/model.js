@@ -25,6 +25,7 @@ module.exports = {
    * @returns {Object} the updated view model
    */
   render(ref, data) {
-    return data.genres = genres;
+    data.genres = genres;
+    return data;
   }
 };
