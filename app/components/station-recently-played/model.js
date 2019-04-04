@@ -30,7 +30,7 @@ module.exports.render = async function (ref, data, locals) {
     dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
     hour = locals.hour ? parseInt(locals.hour) : stationHour,
     offsetDayOfWeek = dayOfWeek - Math.floor((hour + parseInt(gmt_offset))/24),
-    beforeDate = moment().day(dayOfWeek > currentDayOfWeek ? offsetDayOfWeek - 7 : offsetDayOfWeek).hour(hour).format('YYYY-MM-DDTHH:mm:ss'),
+    beforeDate = moment().day(dayOfWeek > currentDayOfWeek ? offsetDayOfWeek - 7 : offsetDayOfWeek).hour(hour).minute(59).format('YYYY-MM-DDTHH:mm:ss'),
     now_playing = radioApi.get(`/stations/${stationId}/now_playing`).catch(() => {}),
     play_history = radioApi.get(`/stations/${stationId}/play_history?event_count=50&before_date=${encodeURIComponent(beforeDate)}`).catch(() => {}),
     shows = await Promise.all([now_playing, play_history]),
