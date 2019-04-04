@@ -5,64 +5,54 @@
         <facebook-button :link="facebookLink"/>
       </h1>
       <span
-              v-if="user.error"
+              v-if="errorMessage"
               class="error"
-              align="center">{{ user.error }}</span>
+              align="center">{{ errorMessage }}</span>
       <input type="email" placeholder="Email Address" name="email" @change="onFieldChange($event)"/>
       <input type="password" placeholder="Password" name="password" @change="onFieldChange($event)"/>
     </fieldset>
     <input type="submit" value="LOG IN" @click.prevent="onLogInSubmit()"/>
     <p align="center">
       <span class="small">
-        <router-link :to="
-forgotPasswordLink">Forgot Password?</router-link>&nbsp; | &nbsp;<router-link :to="signUpLink">Create an Account</router-link>
+        <router-link to="/account/password/forgot">Forgot Password?</router-link>
+        |
+        <router-link to="/account/signup">Create an Account</router-link>
       </span>
     </p>
-    <div v-if="user.isLoading">
-      <loader/>
-    </div>
   </div>
 </template>
 
 <script>
 import FacebookButton from '../components/FacebookButton'
-import Loader from '../components/Loader'
-import service from '../services/index'
-import { validateEmail, getDeviceId } from '../utils'
+import { validateEmail } from '../utils'
+import { mapState } from 'vuex'
+import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
   name: 'Login',
 
   components: {
-    FacebookButton,
-    Loader
+    FacebookButton
   },
 
   computed: {
+    ...mapState([
+      'errorMessage'
+    ]),
     facebookLink () {
       const { metadata } = this.$store.state
       const facebookRedirectUri = `${metadata.host}/account/facebook-callback`
       const redirect = { redirect_uri: this.$route.query.redirect_uri }
       return `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(JSON.stringify(redirect))}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
-    },
-
-    signUpLink () {
-      return this.$route.query.redirect_uri ? `/account/signup?redirect_uri=${this.$route.query.redirect_uri}` : `/account/signup`
-    },
-
-    forgotPasswordLink () {
-      return this.$route.query.redirect_uri ? `/account/password/forgot?redirect_uri=${this.$route.query.redirect_uri}` : `/account/password/forgot`
     }
   },
 
   data () {
     return {
       user: {
-        error: null,
         email: '',
-        password: '',
-        isLoading: false
+        password: ''
       }
     }
   },
@@ -73,35 +63,25 @@ export default {
     },
 
     async onLogInSubmit () {
-      this.user.error = null
+      this.$store.commit(mutationTypes.ERROR_MESSAGE, null)
       if (!this.user.email) {
-        this.user.error = 'Email address is missing.'
+        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is missing.')
         return
       }
 
       if (!validateEmail(this.user.email)) {
-        this.user.error = 'Email address is not valid.'
+        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is not valid.')
         return
       }
 
       if (!this.user.password) {
-        this.user.error = 'Password is missing.'
+        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Password is missing.')
         return
       }
 
-      this.user.isLoading = true
-      const { metadata } = this.$store.state
-      const platform = 'webplayer'
-
       try {
-        const result = await service.signIn(metadata.app.webplayer.clientId, this.user.email, this.user.password, getDeviceId(platform))
-        this.$store.commit(mutationTypes.SET_USER, { ...result.data })
-        this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
-        this.user.isLoading = false
-      } catch (err) {
-        this.user.isLoading = false
-        this.user.error = err.message
-      }
+        await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
+      } catch (err) { }
     }
   }
 }

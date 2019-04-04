@@ -17,7 +17,7 @@ const queryPayload = new QueryPayload()
 export default class MetaManager {
   /**
    *
-   * On SPA navigation, update HTML tags that fall outside the SPA.
+   * On SPA navigation, update HTML tags that fall outside the SPA.acoun
    *
    * @param {object} spaPayload - The handlebars context payload data.
    */

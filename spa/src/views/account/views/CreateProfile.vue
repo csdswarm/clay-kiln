@@ -5,9 +5,9 @@
               class="small"
               style="padding: 0px 10px 0px 10px;"/></h1>
       <span
-              v-if="user.error"
+              v-if="errorMessage"
               class="error"
-              align="center">{{ user.error }}</span>
+              align="center">{{ errorMessage }}</span>
       <input
               :value="user.email"
               :disabled="user.disableEmailInput"
@@ -108,9 +108,6 @@
               value="FINISH"
               @click.prevent="onProfileSubmit()">
     </div>
-    <div v-if="user.isLoading">
-      <loader/>
-    </div>
   </div>
 </template>
 
@@ -118,17 +115,22 @@
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
 import { debugLog, validateEmail, isValidZipCode, isMobileDevice } from '../utils'
-import Loader from '../components/Loader'
 import store from '@/store'
-import service from '../services'
+import { mapState } from 'vuex'
+import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
   name: 'CreateProfile',
 
   components: {
-    Datepicker,
-    Loader
+    Datepicker
+  },
+
+  computed: {
+    ...mapState([
+        'errorMessage'
+    ]),
   },
 
   data () {
@@ -141,9 +143,7 @@ export default {
         lastName: '',
         gender: '',
         dateOfBirth: '',
-        zipCode: '',
-        error: '',
-        isLoading: false
+        zipCode: ''
       }
     }
 
@@ -156,8 +156,8 @@ export default {
   created () {
     debugLog('profile store state', store.state)
 
-    if (!store.state.user.cameFromCreate) {
-      this.$router.push({ path: '/' })
+    if (!store.state.user.signUpComplete) {
+      this.$router.push({ path: '/account/signup' })
     }
   },
 
@@ -165,18 +165,6 @@ export default {
     onFieldChange (event) {
       debugLog('edit user', this.user)
       this.user[event.target.name] = event.target.value
-    },
-
-    convertDateFromCognitoToMoment (cognitoDate) {
-      return moment(cognitoDate, 'L').utc()
-    },
-
-    convertGenderFromCognito (cognitoGender) {
-      switch (cognitoGender) {
-        case 'male': return 'M'
-        case 'female': return 'F'
-        default: return ''
-      }
     },
 
     onHtml5DateChange (event) {
@@ -218,22 +206,15 @@ export default {
       return ''
     },
 
-    onProfileSubmit () {
-      this.user.error = this.validateProfileEntities(this.user)
+    async onProfileSubmit () {
+      const error = this.validateProfileEntities(this.user)
 
-      if (!this.user.error) {
-        this.user.isLoading = true
-        service.createProfile(this.user)
-          .then((result) => {
-            this.user.isLoading = false
-            // update the store with the user information
-            this.$store.commit(mutationTypes.SET_USER, { ...result.data })
-            this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
-          })
-          .catch((err) => {
-            this.user.isLoading = false
-            this.user.error = err.message
-          })
+      if (error) {
+        this.$store.commit(mutationTypes.ERROR_MESSAGE, error)
+      } else {
+        try {
+          await this.$store.dispatch(actionTypes.CREATE_PROFILE, this.user)
+        } catch(err) { }
       }
     }
   }

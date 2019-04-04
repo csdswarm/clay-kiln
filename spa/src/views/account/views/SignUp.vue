@@ -8,9 +8,9 @@
         <facebook-button :link="facebookLink"/>
       </h1>
       <span
-              v-if="user.error"
+              v-if="errorMessage"
               class="error"
-              align="center">{{ user.error }}</span>
+              align="center">{{ errorMessage }}</span>
       <input
               :value="user.email"
               type="email"
@@ -49,32 +49,31 @@
       <span
               class="small"
               style="padding-left: 4px">
-        <router-link :to="loginLink">Log In</router-link>
+        <router-link to="/account/login">Log In</router-link>
       </span>
     </p>
-    <div v-if="user.isLoading">
-      <loader/>
-    </div>
   </div>
 </template>
 
 <script>
-import { validateEmail, getDeviceId } from '../utils'
+import { validateEmail } from '../utils'
 import FacebookButton from '../components/FacebookButton'
-import Loader from '../components/Loader'
 import { TERM_OF_USE, PRIVACY_POLICY } from '../constants'
-import service from '../services'
+import { mapState } from 'vuex'
+import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
   name: 'SignUp',
 
   components: {
-    FacebookButton,
-    Loader
+    FacebookButton
   },
 
   computed: {
+    ...mapState([
+      'errorMessage'
+    ]),
     facebookLink () {
       const { metadata } = this.$store.state
       const facebookRedirectUri = `${metadata.host}/account/facebook-callback`
@@ -82,9 +81,6 @@ export default {
       return `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(JSON.stringify(redirect))}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
     },
 
-    loginLink () {
-      return this.$route.query.redirect_uri ? `/account/login?redirect_uri=${this.$route.query.redirect_uri}` : `/account/login`
-    },
 
     termOfUse () {
       return TERM_OF_USE
@@ -98,11 +94,9 @@ export default {
   data () {
     return {
       user: {
-        error: null,
         email: '',
         password: '',
-        confirmPassword: '',
-        isLoading: false
+        confirmPassword: ''
       }
     }
   },
@@ -112,42 +106,34 @@ export default {
       this.user[event.target.name] = event.target.value
     },
 
-    onSignUpSubmit () {
-      this.user.error = null
+    async onSignUpSubmit () {
+      this.$store.commit(mutationTypes.ERROR_MESSAGE, null)
+
       if (!this.user.email) {
-        this.user.error = 'Email address is missing.'
+        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is missing.')
         return
       }
 
       if (!validateEmail(this.user.email)) {
-        this.user.error = 'Email address is not valid.'
+        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is not valid.')
         return
       }
 
       if (!this.user.password) {
-        this.user.error = 'Password is missing.'
+        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Password is missing.')
         return
       }
 
       if (this.user.password !== this.user.confirmPassword) {
-        this.user.error = 'Passwords do not match.'
+        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Passwords do not match.')
         return
       }
 
-      this.user.isLoading = true
-      const { metadata } = this.$store.state
-      const platform = 'webplayer'
-      service.signUp(metadata.app.webplayer.clientId, this.user.email, this.user.password)
-        .then(() => service.signIn(metadata.app.webplayer.clientId, this.user.email, this.user.password, getDeviceId(platform)))
-        .then((result) => {
-          this.$store.commit(mutationTypes.SET_USER, { ...result.data, cameFromCreate: true })
-          this.user.isLoading = false
-          this.$router.push({ path: `/account/profile` })
-        })
-        .catch((err) => {
-          this.user.isLoading = false
-          this.user.error = err.message
-        })
+      try {
+        await this.$store.dispatch(actionTypes.SIGN_UP, { email: this.user.email, password: this.user.password })
+        // when switching to the action, pushing to the router causes a conflict to the re-render
+        setTimeout(() => { this.$router.push({ path: `/account/profile` })}, 10)
+      } catch(err) { }
     }
   }
 }
