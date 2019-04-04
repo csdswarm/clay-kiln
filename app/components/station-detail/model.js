@@ -10,21 +10,29 @@ const radioApiService = require('../../services/server/radioApi');
 function getStationTags(station) {
   let tags = [];
 
-  tags.push({
-    text: station.category,
-    type: station.category
-  });
-  if (station.category !== station.genre_name.toString()) {
-    tags = tags.concat({
-      text: station.genre_name.toString(),
-      type: station.category
+  if (station.category) {
+    tags.push({
+      text: null,
+      slug: null,
+      type: station.category.toLowerCase()
     });
   }
-  tags = tags.concat({
-    text: station.market_name,
-    type: 'location'
-  });
-
+  if (station.category !== station.genre_name.toString()) {
+    station.genre_name.forEach(genre => {
+      tags.push({
+        text: genre.toLowerCase(),
+        slug: genre.toLowerCase(), // todo: use slugify service
+        type: 'music'
+      });
+    });
+  }
+  if (station.market.display_name) {
+    tags.push({
+      text: station.market.display_name.toLowerCase(),
+      slug: station.market.display_name.toLowerCase(), // todo: use slugify service
+      type: 'location'
+    });
+  }
   return tags;
 }
 
