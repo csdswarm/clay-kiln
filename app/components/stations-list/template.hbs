@@ -5,14 +5,12 @@
   data-uri="{{ default _ref _self }}"
   class="component component--stations-list{{ if @root.locals.edit ' editing' }}{{ if truncatedList ' stations-list--truncated' }}"
 >
-  {{#ifAny stations.length (compare filterBy '===' 'local') (compare filterBy '===' 'recent') }}
-    <div class="stations-list__header-row">
-      <h2 class="header-row__title">{{ listTitle }}</h2>
-      {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
-        <a class="header-row__see-all-link spa-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
-      {{/ifAll}}
-    </div>
-  {{/ifAny}}
+  <div class="stations-list__header-row">
+    <h2 class="header-row__title">{{ listTitle }}</h2>
+    {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
+      <a class="header-row__see-all-link spa-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
+    {{/ifAll}}
+  </div>
   {{#if stations.length }}
     <pre class="stations-list__data">{{ stringify stations }}</pre>
   {{/if}}
@@ -44,6 +42,10 @@
           </li>
         {{/ifAny}}
       {{~/each~}}
+    {{else}}
+      {{#ifAll (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
+        <li class="stations-list__empty"><span>No stations.</span></li>
+      {{/ifAll}}
     {{~/if~}}
 {{#unless @root.locals.stationIDs}}
   </ul>

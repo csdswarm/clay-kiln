@@ -85,7 +85,7 @@ StationsList.prototype = {
 
     // Hide see all link if there aren't enough to fill the list or on mobile
     if (this.seeAllLink) {
-      if (this.stationsData.length <= this.stationsShownOnLoad || isMobileWidth) {
+      if (this.stationsData.length <= this.stationsShownOnLoad || isMobileWidth()) {
         this.seeAllLink.style.display = 'none';
       } else {
         this.seeAllLink.style.display = 'flex';
@@ -161,12 +161,15 @@ StationsList.prototype = {
   updateStationsDOMFromFilterType: async function () {
     const newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
 
+    // Hide loaders once loaded
+    this.toggleLoader();
+
+    while (this.parentElement.firstChild) {
+      this.parentElement.removeChild(this.parentElement.firstChild);
+    };
     this.parentElement.append(newStations);
     this.stationsList = this.parentElement.querySelector('ul');
     this.displayActiveStations();
-    this.loader = this.parentElement.querySelector('.loader-container');
-    // Hide loaders once loaded
-    this.toggleLoader();
 
     // eslint-disable-next-line one-var
     const stationsDataEl = this.parentElement.querySelector('.stations-list__data');
