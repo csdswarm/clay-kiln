@@ -84,21 +84,16 @@ class SpaPlayerInterface {
    * onto the page.
    *
    */
-  mountPlayer () {
-    return new Promise((resolve, reject) => {
-      // Client.js will communicate that player has completed mounting via an event.
-      document.addEventListener('spaWebPlayerPlayerMounted', () => {
-        if (window.RadioPlayer) {
-          return resolve(true)
-        } else {
-          return reject(new Error('Radio Player failed to mount correctly.'))
-        }
-      })
+  async mountPlayer () {
+    // Instruct web-player/client.js to mount the player.
+    const playerMounted = await spaCommunicationBridge.sendMessage('ClientWebPlayerMountPlayer')
 
-      // Kick-off mounting of player in web-player client.js
-      const event = new CustomEvent('clientWebPlayerMountPlayer')
-      document.dispatchEvent(event)
-    })
+    // Verify player is mounted.
+    if (playerMounted) {
+      return true
+    } else {
+      throw new Error('Radio Player failed to mount correctly.')
+    }
   }
 
   /**
@@ -135,6 +130,13 @@ class SpaPlayerInterface {
         }
       })
     }
+    // Add channel that communicates currently loaded station id.
+    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfaceGetCurrentStationId')) {
+      spaCommunicationBridge.addChannel('SpaPlayerInterfaceGetCurrentStationId', async () => {
+        const currentStation = this.getCurrentStation()
+        return currentStation.id
+      })
+    }
   }
 
   /**
@@ -161,6 +163,42 @@ class SpaPlayerInterface {
 
     // Begin playback of audio.
     this.spa.$store.state.radioPlayer.play()
+
+    // If stationId wasn't passed in, pull currently playing
+    // station from player to set stationId.
+    if (!stationId) {
+      const station = this.getCurrentStation()
+      if (station) {
+        stationId = station.id
+      } else {
+        throw new Error('Unable to determine playback station.')
+      }
+    }
+
+    // Comminucate play status to client.js
+    await spaCommunicationBridge.sendMessage('ClientWebPlayerStartPlayback', {
+      stationId
+    })
+  }
+
+  /**
+   *
+   * Get the station that is currently loaded in the player.
+   *
+   * TODO - replace this with call to actual RadioPlayer.getCurrentStationId()
+   * public method when it becomes available.
+   *
+   * See: https://bitbucket.org/entercom/rad-web-player/pull-requests/28/player-390-added-method-to-return-current/diff
+   *
+   */
+  getCurrentStation () {
+    return (
+      this.spa.$store.state.radioPlayer.stationDetails &&
+        this.spa.$store.state.radioPlayer.stationDetails.dataModel &&
+        this.spa.$store.state.radioPlayer.stationDetails.dataModel.currentStation
+    )
+      ? this.spa.$store.state.radioPlayer.stationDetails.dataModel.currentStation
+      : null
   }
 
   /**
