@@ -2,11 +2,7 @@
 
 const radioApi = require('../../services/server/radioApi'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
-  moment = require('moment'),
-  log = require('../../services/universal/log').setup({
-    file: __filename,
-    component: 'newsfeed'
-  });
+  moment = require('moment');
 
 /**
  * @param {string} ref
@@ -29,7 +25,7 @@ module.exports.render = async function (ref, data, locals) {
     currentDayOfWeek = new Date().getDay(),
     dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
     hour = locals.hour ? parseInt(locals.hour) : stationHour,
-    offsetDayOfWeek = dayOfWeek - Math.floor((hour + parseInt(gmt_offset))/24),
+    offsetDayOfWeek = dayOfWeek - Math.floor((hour + parseInt(gmt_offset)) / 24),
     beforeDate = moment().day(dayOfWeek > currentDayOfWeek ? offsetDayOfWeek - 7 : offsetDayOfWeek).hour(hour).minute(59).format('YYYY-MM-DDTHH:mm:ss'),
     now_playing = radioApi.get(`/stations/${stationId}/now_playing`).catch(() => {}),
     play_history = radioApi.get(`/stations/${stationId}/play_history?event_count=50&before_date=${encodeURIComponent(beforeDate)}`).catch(() => {}),
@@ -39,11 +35,6 @@ module.exports.render = async function (ref, data, locals) {
     validHistory = history && history.data && history.data.events && history.data.events.recent_events,
     currentHour = offsetDayOfWeek > stationDayOfWeek || (offsetDayOfWeek === stationDayOfWeek && hour >= stationHour),
     validPlaying = currentHour && playing && playing.data && shows[0].data.event && shows[0].data.event.current_event;
-
-  log('info', `Before Date ${beforeDate}`);
-  log('info', `OffsetDayOfWeek ${offsetDayOfWeek}`);
-  log('info', `hour + offset ${hour} + ${parseInt(gmt_offset)}`);
-  log('info', `Current hour ${currentHour}`);
 
   if (validHistory || validPlaying) {
     if (validPlaying) {
