@@ -1,5 +1,9 @@
 'use strict';
-const radioApiService = require('../../services/server/radioApi');
+const radioApiService = require('../../services/server/radioApi'),
+  slugifyService = require('../../services/universal/slugify'),
+  NEWS_TALK = 'News & Talk',
+  SPORTS = 'Sports',
+  LOCATION = 'location';
 
 /**
  * consolidate station data to form tags array
@@ -10,27 +14,28 @@ const radioApiService = require('../../services/server/radioApi');
 function getStationTags(station) {
   let tags = [];
 
-  if (station.category) {
-    tags.push({
-      text: null,
-      slug: null,
-      type: station.category.toLowerCase()
-    });
-  }
-  if (station.category !== station.genre_name.toString()) {
+  if (station.genre_name) {
     station.genre_name.forEach(genre => {
-      tags.push({
-        text: genre.toLowerCase(),
-        slug: genre.toLowerCase(), // todo: use slugify service
-        type: 'music'
-      });
+      if (genre === NEWS_TALK || genre === SPORTS) {
+        tags.push({
+          text: null,
+          slug: null,
+          type: slugifyService(genre)
+        });
+      } else {
+        tags.push({
+          text: genre.toLowerCase(),
+          slug: slugifyService(genre),
+          type: slugifyService(station.category)
+        });
+      }
     });
   }
   if (station.market.display_name) {
     tags.push({
       text: station.market.display_name.toLowerCase(),
-      slug: station.market.display_name.toLowerCase(), // todo: use slugify service
-      type: 'location'
+      slug: slugifyService(station.market.display_name),
+      type: LOCATION
     });
   }
   return tags;
