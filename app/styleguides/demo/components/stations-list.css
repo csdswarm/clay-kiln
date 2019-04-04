@@ -316,6 +316,9 @@
         }
       }
     }
+    li.stations-list__empty {
+      margin-bottom: em(50);
+    }
     .google-ad-manager--billboard,
     .google-ad-manager--leaderboard,
     .google-ad-manager--mobile,
