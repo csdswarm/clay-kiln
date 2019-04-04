@@ -2,14 +2,13 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { handlebars } from '../config/initHandlebars'
 import { Base64 } from 'js-base64'
-import axios from 'axios'
 import mutations from "./vuex/mutations";
 import actions from "./vuex/actions";
 
 Vue.use(Vuex)
 
 // Set store default values.
-const vuexStoreDefaultState = {
+export const vuexStoreDefaultState = {
   handlebars: null,
   spaPayload: {},
   spaPayloadLocals: {},

@@ -1,4 +1,5 @@
 import * as mutationTypes from './mutationTypes'
+import vuexStoreDefaultState from '@/store'
 
 export default {
   [mutationTypes.LOAD_HANDLEBARS]: (state, payload) => {
