@@ -69,8 +69,18 @@ function getGenreData({ slug, id }) {
   });
 }
 
+/**
+ * Strip data of stations array to signal original rendering before we have data
+ *
+ * @param data
+ * @return {*}
+ */
+function returnStationless(data) {
+  delete data.stations;
+  return data;
+}
+
 module.exports.render = async (uri, data, locals) => {
-  data.stations = [];
   const route = 'stations',
     params = {
       'page[size]': 1000,
@@ -95,7 +105,7 @@ module.exports.render = async (uri, data, locals) => {
         data.stations = stations.filter(station => station);
         return data;
       } else {
-        return data;
+        return returnStationless(data);
       }
     });
   }
@@ -141,14 +151,14 @@ module.exports.render = async (uri, data, locals) => {
       }
     } else if (data.filterBy === 'market') {
       if (!locals.params) {
-        return data;
+        return returnStationless(data);
       }
       /** for stations lists on location stations directory page **/
       if (!locals.params.dynamicMarket && !locals.market
         || locals.params.dynamicMarket && data.truncatedList ) {
         // fix for use case: both list components are rendering even when condition is met
         // handle populating stations in client side
-        return data;
+        return returnStationless(data);
       }
       
       const market = {
@@ -168,7 +178,7 @@ module.exports.render = async (uri, data, locals) => {
           || locals.params.dynamicGenre && data.truncatedList ) {
           // fix for use case: both list components are rendering even when condition is met
           // handle populating stations in client side
-          return data;
+          return returnStationless(data);
         }
       }
       const genre = {
@@ -189,7 +199,7 @@ module.exports.render = async (uri, data, locals) => {
       /** for featured music, news talk, and sports stations list on featured stations directory page **/
 
       if (!locals.category) {
-        return data;
+        return returnStationless(data);
       }
       data.category = locals.category;
       data.seeAllLink = `/stations/${ data.category }`;
