@@ -23,9 +23,8 @@ function getAllMarkets() {
         data.attributes.slug = slugifyService(data.attributes.display_name);
         return data;
       });
-    } else {
-      return [];
     }
+    return [];
   });
 }
 
@@ -42,19 +41,17 @@ function getAllMusicGenres() {
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      const onlyMusicGenres = response.data.filter(genre => {
-        if (genre.attributes.slug !== SPORTS_SLUG && genre.attributes.slug !== NEWSTALK_SLUG) {
-          return genre;
-        }
-      });
+      const onlyMusicGenres = genre => ![SPORTS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
+        addSlugAttribute = data => {
+          data.attributes.slug = slugifyService(data.attributes.name);
+          return data;
+        };
 
-      return onlyMusicGenres.map(data => {
-        data.attributes.slug = slugifyService(data.attributes.name);
-        return data;
-      });
-    } else {
-      return [];
+      return response.data
+        .filter(onlyMusicGenres)
+        .map(addSlugAttribute);
     }
+    return [];
   });
 }
 
