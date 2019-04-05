@@ -1,0 +1,118 @@
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}"
+  class="component component--station-detail{{ if @root.locals.edit ' editing' }} station-detail--{{category}} data-station-slug={{station.slug}} data-station-category={{station.category}} data-station-genre={{station.genre_name}}"
+>
+  <pre class="station-detail__data">{{{ stringify station }}}</pre>
+  {{> breadcrumbs crumbs }}
+  <div class="station-detail__head">
+    <div class="head__lede">
+      <div class="lede__image">
+        <div itemscope itemtype="http://schema.org/ImageObject">
+          <img src="{{station.square_logo_large}}?width=220&height=220&crop=1:1,offset-y0" alt="{{station.name}}" itemprop="thumbnailUrl">
+          <meta itemprop="contentUrl" content="{{ station.square_logo_large }}">
+        </div>
+        <div data-play-station="{{station.id}}" class="image__play-btn">
+          {{{ read 'components/station-detail/media/play.svg' }}}
+        </div>
+      </div>
+      <div class="lede__info">
+        <div class="info__text">
+          <div class="text__station-title">
+            {{!-- favorite btn here --}}
+            <h1 class="station-title__name">{{station.name}}</h1>
+          </div>
+          <p class="text__station-slogan">{{station.slogan}}</p>
+        </div>
+        <div class="info__links">
+          <div class="links__lede--mobile">
+            <div class="lede__image">
+              <img src="{{station.square_logo_large}}" alt="{{station.name}}">
+              <div class="image__play-btn">
+                {{{ read 'components/station-detail/media/play.svg' }}}
+              </div>
+            </div>
+          </div>
+          <div class="links__section">
+            {{#ifAny station.website station.facebook station.twitter }}
+              <div class="section__follow">
+                <span>follow</span>
+                <div class="follow__container">
+                  {{#if station.website }}
+                    <a target="_blank" href="{{station.website}}" class="follow-link follow-link--website" title="Follow on {{station.name}}'s Website" aria-label="Website"></a>
+                  {{/if}}
+                  {{#if station.facebook }}
+                    <a target="_blank" href="{{station.facebook}}" class="follow-link follow-link--facebook" title="Follow on Facebook" aria-label="Follow on Facebook"></a>
+                  {{/if}}
+                  {{#if station.twitter }}
+                    <a target="_blank" href="https://twitter.com/{{station.twitter}}" class="follow-link follow-link--twitter" title="Follow on Twitter" aria-label="Follow on Twitter"></a>
+                  {{/if}}
+                </div>
+              </div>
+            {{/ifAny}}
+            <div class="section__email">
+              <span>email</span>
+              <a href="mailto:?subject=Listen to {{station.name}} on radio.com." title="Email" aria-label="Email"></a>
+            </div>
+            {{~#if tags.length ~}}
+              <div class="section__tags--mobile head__tags">
+                <span>tags: </span>
+                <ul>
+                  {{~#each tags as |tag| ~}}
+                      {{ set 'encodedTag' (replace (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "/" "%2F") "&" "%26") }}
+                      <li data-tag="{{ replace (trim (lowercase tag.text)) ' ' '-' }}">
+                        <a aria-label="More stations tagged" href="//{{ @root.locals.site.host }}/stations/{{tag.type}}/{{ encodedTag }}/">{{{ tag.text }}}</a>
+                      </li>
+                  {{~/each~}}
+                </ul>
+              </div>
+            {{~/if~}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{!-- deduped category, genre (which could be multiple), and market.city --}}
+    {{~#if tags.length ~}}
+      <div class="head__tags">
+        <span>tags: </span>
+        <ul>
+          {{~#each tags as |tag| ~}}
+              {{ set 'encodedTag' (replace (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "/" "%2F") "&" "%26") }}
+              <li data-tag="{{ replace (trim (lowercase tag.text)) ' ' '-' }}">
+                <a aria-label="More stations tagged" href="//{{ @root.locals.site.host }}/stations/{{tag.type}}/{{ encodedTag }}/">{{ tag.text }}</a>
+              </li>
+          {{~/each~}}
+        </ul>
+      </div>
+    {{~/if~}}
+  </div>
+  <div class="station-detail__body">
+    <ul class="tabs">
+      <!-- add tab for each component here -->
+      {{#ifAll recentlyPlayedComponent.schedule (compare station.category "===" "Music")}}
+        <li class="tabs__recently-played">recently played</li>
+      {{/ifAll}}
+      {{#if scheduleComponent.schedule}}
+        <li class="tabs__schedule">schedule</li>
+      {{/if}}
+      <li class="tabs__discover">
+        <span>discover {{{ read 'components/station-detail/media/chevron_down.svg' }}}</span>
+        <ul>
+          <li class="discover__tab discover__tab--recent-stations">recent stations</li>
+          <li class="discover__tab discover__tab--market-stations">{{station.city}} stations</li>
+          <li class="discover__tab discover__tab--genre-stations">all {{station.genre_name}}</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="tabbed-content">
+      <!-- add components here -->
+      <div class="tabbed-content__container container--recently-played">
+        {{> station-recently-played recentlyPlayedComponent }}
+      </div>
+      <div class="tabbed-content__container container--schedule">
+        {{> station-schedule scheduleComponent }}
+      </div>
+      <div class="tabbed-content__container container--discover">
+        {{> station-discover discoverComponent }}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,130 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--station-recently-played {
+  min-height: em(210);
+
+  .station-recently-played__filters {
+    margin-bottom: em(30);
+    display: flex;
+    flex-direction: row;
+  }
+
+  .filters__select {
+    width: em(116);
+
+    @mixin medium-screen {
+      width: em(142, 12);
+    }
+  }
+  .filters__select:first-of-type {
+    margin-right: em(10);
+  }
+
+  .station-recently-played__show, .show__link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .station-recently-played__show {
+    margin-right: em(20);
+    margin-bottom: em(15);
+
+    .show__image {
+      width: em(widthOnGrid(1, 0));
+      height: em(widthOnGrid(1, 0));
+      margin-right: em(20);
+
+      @mixin medium-screen {
+        width: em(widthOnGrid(1, 0, 'medium-screen'));
+        height: em(widthOnGrid(1, 0, 'medium-screen'));
+      }
+      @mixin medium-small-screen {
+        width: em(widthOnGrid(1, 0, 'medium-small-screen'));
+        height: em(widthOnGrid(1, 0, 'medium-small-screen'));
+      }
+      @mixin small-screen {
+        width: em(widthOnGrid(1, 0, 'small-screen'));
+        height: em(widthOnGrid(1, 0, 'small-screen'));
+      }
+    }
+
+    .show__details {
+      display: flex;
+      flex-direction: column;
+
+      .details__time {
+        @mixin station-detail-font8;
+        margin-bottom: em(10, 12);
+
+        &--on-air {
+          margin-left: em(5);
+
+          &:before {
+            content: '';
+            display: inline-block;
+            width: em(6);
+            height: em(6);
+            border-radius: 50%;
+            position: relative;
+            top: em(-3);
+            left: em(-3);
+            background-color: #767676;
+          }
+
+          &.news {
+            &:before {
+              background-color: $lightningYellow;
+            }
+          }
+          &.music {
+            &:before {
+              background-color: $sunsetOrange;
+            }
+          }
+          &.sports {
+            &:before {
+              background-color: $azureRadience;
+            }
+          }
+        }
+      }
+
+      .details__title {
+        @mixin station-detail-font4;
+      }
+
+      .details__artist {
+        @mixin station-detail-font9;
+      }
+    }
+
+    .show__play {
+      width: em(32);
+      height: em(32);
+      border-radius: 50%;
+      margin-left: auto;
+      box-shadow: 0 0 em(1, 22) em(1, 22) rgba(0,0,0,0.18), inset 0 0 em(4, 22) em(1, 22)  #F5F5F5;
+
+      &:after {
+         content: '';
+         display: block;
+         width: 0;
+         height: 0;
+         border-top: em(11, 22) solid transparent;
+         border-bottom: em(11, 22) solid transparent;
+         border-left: em(17, 22) solid $purple;
+         margin-left: em(17, 22);
+         margin-top: em(11, 22);
+       }
+
+      &:hover {
+         opacity: 0.7;
+      }
+    }
+  }
+}
+
+
