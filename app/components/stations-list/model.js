@@ -205,6 +205,7 @@ module.exports.render = async (uri, data, locals) => {
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
         data.stations = response.data ? response.data.map((station) => station.attributes) : [];
+        data.stationIds = data.stations.map((station) => { return { id: station.id }; });
         return data;
       } else {
         return data;
