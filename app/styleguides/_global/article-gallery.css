@@ -37,6 +37,7 @@
   }
   .header__secondary {
     @mixin article-font3;
+    display: inline-block;
     margin-bottom: em(25, 18);
   }
 }

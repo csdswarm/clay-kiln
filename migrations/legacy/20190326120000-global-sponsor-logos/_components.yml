@@ -3,17 +3,17 @@ _components:
     instances:
       globalLogoSponsorship:
         adSize: global-logo-sponsorship
-        adPosition: top
+        adPosition: global-logo-sponsorship
         adLocation: atf
       homepageSectionFrontLogoSponsorship:
         adSize: section-front-logo-sponsorship
-        adPosition: top
+        adPosition: logo-sponsorship
         adLocation: atf
       contentCollectionLogoSponsorship:
         adSize: content-collection-logo-sponsorship
-        adPosition: top
+        adPosition: logo-sponsorship
         adLocation: atf
       contentPageLogoSponsorship:
         adSize: content-page-logo-sponsorship
-        adPosition: top
+        adPosition: logo-sponsorship
         adLocation: atf
