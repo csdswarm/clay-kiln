@@ -6,48 +6,14 @@
       <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/stations/music">See all {{{ read 'components/directory-featured/media/chevron_right.svg' }}}</a>
     </div>
     <ul class="stations-by-genre__genre-list">
-      <li class="genre-list__genre genre--pop">
-        <a href="//{{ @root.locals.site.host }}/stations/music/pop">
-          <img src="https://images.radio.com/aiu-media/Pop-4f2078aa-3ff5-4f65-b1a7-8fde547db31f.jpg?width=140&height=140&crop=1:1,offset-y0">
-          <span class="genre__label">pop</span>
-        </a>
-      </li>
-      <li class="genre-list__genre genre--sports">
-        <a href="//{{ @root.locals.site.host }}/stations/music/sports">
-          <img src="https://images.radio.com/aiu-media/Sports-38ff7af4-e9c8-431e-a9b6-5b731cb13f5a.jpg?width=140&height=140&crop=1:1,offset-y0">
-          <span class="genre__label">sports</span>
-        </a>
-      </li>
-      <li class="genre-list__genre genre--country">
-        <a href="//{{ @root.locals.site.host }}/stations/music/country">
-          <img src="https://images.radio.com/aiu-media/Country-cdd632d4-31f6-4f28-a13d-9503375ac921.jpg?width=140&height=140&crop=1:1,offset-y0">
-          <span class="genre__label">country</span>
-        </a>
-      </li>
-      <li class="genre-list__genre genre--hip-hop">
-        <a href="//{{ @root.locals.site.host }}/stations/music/hiphop">
-          <img src="https://images.radio.com/aiu-media/HipHop-23beb86f-0e55-4718-8f0d-11dc8832ef6a.jpg?width=140&height=140&crop=1:1,offset-y0">
-          <span class="genre__label">hip hop</span>
-        </a>
-      </li>
-      <li class="genre-list__genre genre--news">
-        <a href="//{{ @root.locals.site.host }}/stations/music/news-talk">
-          <img src="https://images.radio.com/aiu-media/News-b347c36d-2e68-4f51-8255-a2037b2fbe0d.jpg?width=140&height=140&crop=1:1,offset-y0">
-          <span class="genre__label">news</span>
-        </a>
-      </li>
-      <li class="genre-list__genre genre--rock">
-        <a href="//{{ @root.locals.site.host }}/stations/music/rock">
-          <img src="https://images.radio.com/aiu-media/Rock-20e0377b-bb12-4d4e-a2c6-0ed41bc601ec.jpg?width=140&height=140&crop=1:1,offset-y0">
-          <span class="genre__label">rock</span>
-        </a>
-      </li>
-      <li class="genre-list__genre genre--alternative">
-        <a href="//{{ @root.locals.site.host }}/stations/music/alternative">
-          <img src="https://images.radio.com/aiu-media/Alternative-2e1e0763-50f9-4e22-98c2-710a49f5a0b0.jpg?width=140&height=140&crop=1:1,offset-y0">
-          <span class="genre__label">alternative</span>
-        </a>
-      </li>
+      {{#each genres}}
+        <li class="genre-list__genre genre--{{ css }}">
+          <a href="//{{ @root.locals.site.host }}/stations/music/{{ ref }}">
+            <img src="https://images.radio.com/aiu-media/{{ img }}.jpg?width=140&height=140&crop=1:1,offset-y0">
+            <span class="genre__label">{{ label }}</span>
+          </a>
+        </li>
+      {{/each}}
     </ul>
   </div>
   <div class="directory-featured__stations-by-category" data-category="music">
