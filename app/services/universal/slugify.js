@@ -1,5 +1,5 @@
 'use strict';
-const _ = require('lodash');
+const _kebabCase = require('lodash/kebabCase');
 
 /**
  * Transform string into slug
@@ -12,7 +12,7 @@ function slugify(string) {
     return string;
   }
 
-  return _.kebabCase(string);
+  return _kebabCase(string);
 }
 
 module.exports = slugify;
