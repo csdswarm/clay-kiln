@@ -1,10 +1,10 @@
 'use strict';
 
 /**
- * Bug with Safari/iOS Mobile AJAX images
+ * Bug with Safari/iOS Mobile AJAX images, reset image HTML after it's been loaded
  *
- * @param  {String} string
- * @return {String}
+ * @function
+ * @param  {String} parentContainer
  */
 function fixAJAXImages(parentContainer) {
   // iOS doesn't play nice with srcset dynamically (https://github.com/metafizzy/infinite-scroll/issues/770)
