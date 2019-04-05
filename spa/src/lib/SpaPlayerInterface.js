@@ -8,11 +8,14 @@
 
 import * as mutationTypes from '../vuex/mutationTypes'
 import SpaCommunicationBridge from './SpaCommunicationBridge'
+import QueryPayload from './QueryPayload'
 const spaCommunicationBridge = SpaCommunicationBridge()
+const queryPayload = new QueryPayload()
 
 class SpaPlayerInterface {
   constructor (spaApp) {
     this.spa = spaApp
+    this.attachClientEventListeners()
   }
 
   /**
@@ -25,7 +28,7 @@ class SpaPlayerInterface {
       await this.bootPlayer()
 
       // If appropriate, pop the player bar onto the screen by loading a station.
-      const stationDetailPageStationId = this.extractStationIdFromStationDetailPath(this.spa.$route.path)
+      const stationDetailPageStationId = this.extractStationIdFromSpaPayload()
 
       if (stationDetailPageStationId) {
         await this.loadStation(stationDetailPageStationId)
@@ -72,7 +75,6 @@ class SpaPlayerInterface {
     if (!this.playerBooted()) {
       await this.mountPlayer()
       this.initializePlayerAndLoadIntoStore()
-      this.attachClientEventListeners()
     }
   }
 
@@ -121,16 +123,18 @@ class SpaPlayerInterface {
    *
    */
   attachClientEventListeners () {
-    // Attach channel that listens for play button clicks.
-    spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
-      const { stationId } = payload
+    // Add channel that listens for play button clicks.
+    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlay')) {
+      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
+        const { stationId } = payload
 
-      if (stationId) {
-        await this.play(stationId)
-      } else {
-        await this.play()
-      }
-    })
+        if (stationId) {
+          await this.play(stationId)
+        } else {
+          await this.play()
+        }
+      })
+    }
   }
 
   /**
@@ -171,12 +175,17 @@ class SpaPlayerInterface {
 
   /**
    *
-   * Get a station ID related to a station detail page via url path.
+   * Attempt to get a station ID from a station detail page SPA payload.
    *
-   * @param {string} path - url path.
    */
-  extractStationIdFromStationDetailPath (path) {
-    return this.spa.$store.state.spaPayloadLocals.station.id
+  extractStationIdFromSpaPayload () {
+    const stationDetailData = queryPayload.findComponent(this.spa.$store.state.spaPayload.main, 'station-detail')
+
+    if (stationDetailData && stationDetailData.station) {
+      return stationDetailData.station.id
+    } else {
+      return null
+    }
   }
 }
 

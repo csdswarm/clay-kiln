@@ -1,5 +1,7 @@
 'use strict';
 
+const urlParse = require('url-parse');
+
 /**
  * Add SPA navigation listener to links
  * @function
@@ -20,7 +22,7 @@ function apply(anchorTagsContainer) {
         if (!link.includes('http')) {
           link = window.location.protocol + link;
         }
-        path = new URL(link).pathname;
+        path = urlParse(link).pathname;
         navigateTo(path);
       });
     });
