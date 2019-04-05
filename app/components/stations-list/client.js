@@ -126,13 +126,12 @@ StationsList.prototype = {
   /**
    * Add active class to stations that should be visible
    * @function
-   * @param {number} [count]
    */
-  displayActiveStations: function (count = this.pageSize) {
-    const stations = this.stationsList.querySelectorAll('li.station:not(.active)');
+  displayActiveStations: function () {
+    const stations = this.stationsList.querySelectorAll('li.station');
 
     stations.forEach((station, i) => {
-      if (i < count) {
+      if (i < this.pageNum * this.pageSize) {
         station.classList.add('active');
       }
     });
@@ -152,7 +151,7 @@ StationsList.prototype = {
     this.stationsList.append(newStations);
 
     this.toggleLoader();
-    this.displayActiveStations(stationIDs.length);
+    this.displayActiveStations();
   },
   /**
    * Using filter by category, genre or market,
@@ -223,27 +222,18 @@ StationsList.prototype = {
    */
   loadMoreStations: async function () {
     this.pageNum++;
-    const newNumOfStations = this.pageNum * this.pageSize,
-      currentNumOfStationsHidden = this.stationsList.querySelectorAll('li.station:not(.active)').length;
 
-    let currentNumOfStationsShowing = this.stationsList.querySelectorAll('li.station.active').length;
+    const currentNumOfStationsShowing = this.stationsList.querySelectorAll('li.station.active').length,
+      newNumOfStations = this.pageNum * this.pageSize;
 
     if (currentNumOfStationsShowing < this.stationsData.length) {
-      if (currentNumOfStationsHidden) {
+      const stationsData = this.stationsData.slice(currentNumOfStationsShowing, newNumOfStations);
+
+      if (stationsData.length) {
+        this.toggleLoader();
+        this.updateStationsDOMWithIDs(stationsData);
+      } else {
         this.displayActiveStations();
-
-        currentNumOfStationsShowing += currentNumOfStationsHidden;
-      }
-
-      if (currentNumOfStationsShowing < newNumOfStations) {
-        const stationsData = this.stationsData.slice(currentNumOfStationsShowing, newNumOfStations);
-
-        if (stationsData.length) {
-          this.toggleLoader();
-          this.updateStationsDOMWithIDs(stationsData);
-        } else {
-          this.displayActiveStations();
-        }
       }
     } else {
       this.displayActiveStations();
