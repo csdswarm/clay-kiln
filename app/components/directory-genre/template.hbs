@@ -17,12 +17,9 @@
       {{/each}}
     </select>
     {{~#each @root.locals.allMusic ~}}
-      <div class="directory-location__stations-by-music-genre" data-genre="{{ attributes.slug }}">
+      <div class="directory-location__stations-by-music-genre" data-genre="{{ id }}">
         {{> stations-list ../stationsListTruncated }}
       </div>
-      {{#ifAll (modulo (add @index 1) 2 0) (compare @root.locals.allMusic.length "!==" (add @index 1)) }}
-        {{> google-ad-manager ../googleInlineAd }}
-      {{/ifAll}}
     {{~/each ~}}
   {{/if}}
 </section>

@@ -7,10 +7,15 @@
  */
 
 import * as mutationTypes from '../vuex/mutationTypes'
+import SpaCommunicationBridge from './SpaCommunicationBridge'
+import QueryPayload from './QueryPayload'
+const spaCommunicationBridge = SpaCommunicationBridge()
+const queryPayload = new QueryPayload()
 
 class SpaPlayerInterface {
   constructor (spaApp) {
     this.spa = spaApp
+    this.attachClientEventListeners()
   }
 
   /**
@@ -23,7 +28,7 @@ class SpaPlayerInterface {
       await this.bootPlayer()
 
       // If appropriate, pop the player bar onto the screen by loading a station.
-      const stationDetailPageStationId = this.extractStationIdFromStationDetailPath(this.spa.$route.path)
+      const stationDetailPageStationId = this.extractStationIdFromSpaPayload()
 
       if (stationDetailPageStationId) {
         await this.loadStation(stationDetailPageStationId)
@@ -50,7 +55,7 @@ class SpaPlayerInterface {
    * @returns {boolean} - whether or not to automatically boot the player.
    */
   autoBootPlayer (path) {
-    const matchedStationDetailRoute = path.match(/^\/([0-9]+)\/listen$/)
+    const matchedStationDetailRoute = path.match(/^\/(.+)\/listen$/)
 
     if (matchedStationDetailRoute) {
       return true
@@ -61,14 +66,16 @@ class SpaPlayerInterface {
 
   /**
    *
-   * Mount, initialize, and store player in Vuex.
+   * Mount, initialize, store player in Vuex, and attach client.js event listeners.
    *
    * Player will be available throught the SPA afterwards via $store.state.radioPlayer.
    *
    */
   async bootPlayer () {
-    await this.mountPlayer()
-    this.initializePlayerAndLoadIntoStore()
+    if (!this.playerBooted()) {
+      await this.mountPlayer()
+      this.initializePlayerAndLoadIntoStore()
+    }
   }
 
   /**
@@ -111,6 +118,27 @@ class SpaPlayerInterface {
 
   /**
    *
+   * Attach event listeners that allow client.js code to interact with
+   * the player.
+   *
+   */
+  attachClientEventListeners () {
+    // Add channel that listens for play button clicks.
+    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlay')) {
+      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
+        const { stationId } = payload
+
+        if (stationId) {
+          await this.play(stationId)
+        } else {
+          await this.play()
+        }
+      })
+    }
+  }
+
+  /**
+   *
    * Play radio station stream.
    *
    * If stationId is passed, player will load that station and then play.
@@ -147,14 +175,17 @@ class SpaPlayerInterface {
 
   /**
    *
-   * Get a station ID related to a station detail page via url path.
+   * Attempt to get a station ID from a station detail page SPA payload.
    *
-   * @param {string} path - url path.
    */
-  extractStationIdFromStationDetailPath (path) {
-    const match = path.match(/^\/([0-9]+)\/listen$/)
+  extractStationIdFromSpaPayload () {
+    const stationDetailData = queryPayload.findComponent(this.spa.$store.state.spaPayload.main, 'station-detail')
 
-    return (match) ? match[1] : null
+    if (stationDetailData && stationDetailData.station) {
+      return stationDetailData.station.id
+    } else {
+      return null
+    }
   }
 }
 

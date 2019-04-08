@@ -11,7 +11,7 @@
       <ul>
         {{~#each location ~}}
           <li class="location__tab location__tab--{{ attributes.display_name }}">
-            <a href="//{{ @root.locals.site.host }}/stations/location/{{ default attributes.slug id }}">{{ attributes.display_name }}</a>
+            <a href="//{{ @root.locals.site.host }}/stations/location/{{ attributes.slug }}">{{ attributes.display_name }}</a>
           </li>
         {{~/each ~}}
       </ul>

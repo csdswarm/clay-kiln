@@ -3,7 +3,10 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
-  spaLinkService = require('../../services/client/spaLink');
+  { isMobileWidth } = require('../../services/client/mobile'),
+  STATIONS_DIRECTORY = 'stations directory',
+  STATION_DETAIL = 'station detail',
+  FEATURED = 'featured';
 
 class StationsList {
   constructor(element) {
@@ -15,7 +18,7 @@ class StationsList {
     this.filterStationsByGenre = this.parentElement.getAttribute('data-genre');
     this.filterStationsByMarket = this.parentElement.getAttribute('data-market');
     this.seeAllLink = element.querySelector('.header-row__see-all-link');
-    this.stationsList = element.querySelector('ul');
+    this.setStationList(element);
     this.loadMoreBtn = element.querySelector('.stations-list__load-more');
     this.loader = element.querySelector('.loader-container');
     this.pageNum = 1;
@@ -24,10 +27,10 @@ class StationsList {
       stationsDataEl = element.querySelector('.stations-list__data');
 
     if (page.classList.contains('component--stations-directory')) {
-      this.pageType = 'stations directory';
+      this.pageType = STATIONS_DIRECTORY;
       this.directoryType = page.querySelector('.directory-body__directory-page').getAttribute('id').replace('stations-directory__', '');
     } else if (page.classList.contains('component--station-detail')) {
-      this.pageType = 'station detail';
+      this.pageType = STATION_DETAIL;
     }
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
@@ -35,82 +38,77 @@ class StationsList {
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
-    window.addEventListener('resize', this.toggleSeeAllLink.bind(this) );
+    window.addEventListener('resize', this.toggleSeeAllLinkAndAds.bind(this) );
     document.addEventListener('stations-list-dismount', () => {
       // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
-      window.removeEventListener('resize', this.toggleSeeAllLink );
+      window.removeEventListener('resize', this.toggleSeeAllLinkAndAds );
     }, { once: true });
   }
-}
-StationsList.prototype = {
   /**
    * Get local stations from api
    * @function
    * @returns {Promise}
    */
-  getLocalStationsFromApi: async function () {
+  async getLocalStationsFromApi() {
     const params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`,
       stationsResponse = await radioApiService.get(`${radioApi}stations${params}`);
 
     return stationsResponse.map(station => {
       return station.attributes;
     });
-  },
+  }
   /**
    * Show/hide see all link depending on
    * number of results and the page width
    * @function
    */
-  toggleSeeAllLink: function () {
-    if (this.seeAllLink) {
-      let stationsShownOnLoad;
-
-      if (window.innerWidth >= 1280) {
-        if (this.pageType === 'station detail') {
-          stationsShownOnLoad = 10;
-        } else if (this.directoryType === 'featured') {
-          stationsShownOnLoad = 14;
-        } else {
-          stationsShownOnLoad = 7;
-        }
-      } else if (window.innerWidth >= 1024) {
-        if (this.pageType === 'station detail') {
-          stationsShownOnLoad = 8;
-        } else if (this.directoryType === 'featured') {
-          stationsShownOnLoad = 12;
-        } else {
-          stationsShownOnLoad = 6;
-        }
+  toggleSeeAllLinkAndAds() {
+    if (window.innerWidth >= 1280) {
+      if (this.pageType === STATION_DETAIL) {
+        this.stationsShownOnLoad = 10;
+      } else if (this.directoryType === FEATURED) {
+        this.stationsShownOnLoad = 14;
       } else {
-        stationsShownOnLoad = 6;
+        this.stationsShownOnLoad = 7;
       }
-      if (this.stationsData.length <= stationsShownOnLoad || window.innerWidth < 480) {
+    } else if (window.innerWidth >= 1024) {
+      if (this.pageType === STATION_DETAIL) {
+        this.stationsShownOnLoad = 8;
+      } else {
+        this.stationsShownOnLoad = 12;
+      }
+    } else {
+      this.stationsShownOnLoad = 6;
+    }
+
+    // Hide see all link if there aren't enough to fill the list or on mobile
+    if (this.seeAllLink) {
+      if (this.stationsData.length <= this.stationsShownOnLoad || isMobileWidth()) {
         this.seeAllLink.style.display = 'none';
       } else {
         this.seeAllLink.style.display = 'flex';
       }
     }
-  },
+  }
   /**
    * Show or hide loader
    * @function
    */
-  toggleLoader: function () {
+  toggleLoader() {
     if (this.loader) {
       this.loader.classList.toggle('active');
     }
-  },
+  }
   /**
    * Get stations list template from component
    * @function
    * @param {object[]} stationIDs
-   * @param {string} filter -- category, genre, or market type
-   * @returns {object}
+   * @param {string} [filter] -- category, genre, or market type
+   * @returns {Node}
    */
-  getComponentTemplate: async function (stationIDs, filter) {
-    let queryParamString = '?ignore_resolve_media=true',
-      instance = this.filterStationsBy,
-      response;
+  async getComponentTemplate(stationIDs, filter) {
+    let queryParamString = '?',
+      instance = this.filterStationsBy;
 
     if (stationIDs) {
       queryParamString += `&stationIDs=${stationIDs}`;
@@ -121,15 +119,13 @@ StationsList.prototype = {
       queryParamString += `&${this.filterStationsBy}=${filter}`;
     }
 
-    response = await fetch(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);
-
-    return await response.text();
-  },
+    return await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);
+  }
   /**
    * Add active class to stations that should be visible
    * @function
    */
-  displayActiveStations: function () {
+  displayActiveStations() {
     const stations = this.stationsList.querySelectorAll('li.station');
 
     stations.forEach((station, i) => {
@@ -137,54 +133,68 @@ StationsList.prototype = {
         station.classList.add('active');
       }
     });
-  },
+  }
   /**
    * Using list of station IDs,
    * insert new payload of stations into DOM
+   * then display the stations, keeping more stations in the DOM than are being displayed
    * @function
    * @param {object} stationsData
    */
-  updateStationsDOMWithIDs: async function (stationsData) {
+  async updateStationsDOMWithIDs(stationsData) {
     const stationIDs = stationsData.map((station) => {
         return station.id;
       }),
       newStations = await this.getComponentTemplate(stationIDs);
 
-    this.stationsList.innerHTML += newStations;
-    spaLinkService.apply(this.stationsList);
+    this.stationsList.append(newStations);
+
     this.toggleLoader();
     this.displayActiveStations();
-  },
+  }
   /**
    * Using filter by category, genre or market,
    * insert new payload of stations into DOM
    * @function
    */
-  updateStationsDOMFromFilterType: async function () {
+  async updateStationsDOMFromFilterType() {
     const newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
 
-    this.parentElement.innerHTML = newStations;
-    this.stationsList = this.parentElement.querySelector('ul');
-    spaLinkService.apply(this.parentElement);
+    // Hide loaders once loaded
+    this.toggleLoader();
+
+    while (this.parentElement.firstChild) {
+      this.parentElement.removeChild(this.parentElement.firstChild);
+    };
+    this.parentElement.append(newStations);
+    this.setStationList(this.parentElement);
     this.displayActiveStations();
-    this.loader = this.parentElement.querySelector('.loader-container');
 
     // eslint-disable-next-line one-var
     const stationsDataEl = this.parentElement.querySelector('.stations-list__data');
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
     this.seeAllLink = this.parentElement.querySelector('.header-row__see-all-link');
-    this.toggleSeeAllLink();
+    this.toggleSeeAllLinkAndAds();
     this.loadMoreBtn = this.parentElement.querySelector('.stations-list__load-more');
     if (this.loadMoreBtn) {
-      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations(this.parentElement.querySelector('ul')) );
+      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
-  },
+  }
+  /**
+   * sets the station list locally from the dom
+   * @function
+   * @param {Element} node
+   */
+  setStationList(node) {
+    // there are multiple ul elements that get created, and we want the last one
+    this.stationsList = Array.from(node.querySelectorAll('ul')).slice(-1)[0];
+  }
   /**
    * Initial function - retrieve new payload of stations into DOM
    * @function
    */
-  updateStations: async function () {
+  async updateStations() {
     if (this.filterStationsBy === 'local') {
       this.toggleLoader();
       this.marketID = await market.getID();
@@ -198,29 +208,28 @@ StationsList.prototype = {
       this.updateStationsDOMWithIDs(stationsData);
     } else {
       // server side populated
-
       if (this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket) {
         this.toggleLoader();
         this.updateStationsDOMFromFilterType();
       } else {
-        this.toggleSeeAllLink();
+        this.toggleSeeAllLinkAndAds();
         this.displayActiveStations();
       }
     }
-  },
+  }
   /**
    * Show x more stations in addition to current stations shown
    * @function
    * @returns {Promise}
    */
-  loadMoreStations: async function () {
+  async loadMoreStations() {
     this.pageNum++;
 
-    const currentNumOfStationsShowing = this.stationsList.querySelectorAll('li.station').length,
+    const currentNumOfStationsAvailable = this.stationsList.querySelectorAll('li.station').length,
       newNumOfStations = this.pageNum * this.pageSize;
 
-    if (currentNumOfStationsShowing < this.stationsData.length) {
-      const stationsData = this.stationsData.slice(currentNumOfStationsShowing, newNumOfStations);
+    if (currentNumOfStationsAvailable < this.stationsData.length) {
+      const stationsData = this.stationsData.slice(currentNumOfStationsAvailable, newNumOfStations);
 
       if (stationsData.length) {
         this.toggleLoader();
@@ -235,6 +244,6 @@ StationsList.prototype = {
       this.loadMoreBtn.remove();
     }
   }
-};
+}
 
 module.exports = el => new StationsList(el);

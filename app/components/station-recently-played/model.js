@@ -46,7 +46,7 @@ module.exports.render = async function (ref, data, locals) {
       }
     }
 
-    data.station = { category };
+    data.station = { id: stationId, category };
     data.schedule = history.data.events.recent_events
       .map((item) => {
         return {

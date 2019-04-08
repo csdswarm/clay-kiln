@@ -1,5 +1,7 @@
 'use strict';
 
+const clientCommunicationBridge = require('./ClientCommunicationBridge')();
+
 /**
  *
  * ClientPlayerInterface library contains communications/management logic related to the radio-web-player.
@@ -11,16 +13,16 @@ class ClientPlayerInterface {
 
   // Mount the player
   mountPlayer() {
-
     // Get data-attributes from hbs template.
     const webPlayerComponentDiv = document.body.querySelector('div.component--web-player'),
       webPlayerHost = webPlayerComponentDiv.dataset.webPlayerHost,
       brightcoveAccountId = webPlayerComponentDiv.dataset.brightcoveAccountId,
-      parallelPromises = [];
-    
+      parallelPromises = [],
+      webPlayerEnv = this.getWebPlayerEnvironment();
+
     // Load independent player resources in parallel.
-    parallelPromises.push(this.lazyLoadCssResource(`${webPlayerHost}/radio-player.min.css`));
-    parallelPromises.push(this.lazyLoadJsResource(`${webPlayerHost}/radio-player.min.js`));
+    parallelPromises.push(this.lazyLoadCssResource(`${webPlayerHost}${webPlayerEnv}/radio-player.min.css`));
+    parallelPromises.push(this.lazyLoadJsResource(`${webPlayerHost}${webPlayerEnv}/radio-player.min.js`));
     parallelPromises.push(this.lazyLoadJsResource(`//players.brightcove.net/${brightcoveAccountId}/default_default/index.min.js`));
 
     return Promise.all(parallelPromises)
@@ -36,9 +38,25 @@ class ClientPlayerInterface {
   }
 
   /**
+   *
+   * Load different player library depending on environment.
+   *
+   * @returns {string} - The web player environment namespace.
+   */
+  getWebPlayerEnvironment() {
+    if (window.location.search && window.location.search.includes('webplayer-dev')) {
+      return '-dev';
+    } else if (window.location.search && window.location.search.includes('webplayer-stg')) {
+      return '-stg';
+    } else {
+      return '';
+    }
+  }
+
+  /**
    * Lazy load the provided js file
    *
-   * @param jsUrl
+   * @param {string} jsUrl - URL of Js library to lazy load.
    * @returns {Promise<any>}
    */
   lazyLoadJsResource(jsUrl) {
@@ -61,7 +79,7 @@ class ClientPlayerInterface {
   /**
    * Lazy load the provided CSS
    *
-   * @param cssUrl
+   * @param {string} cssUrl - URL of CSS to lazy load.
    * @returns {Promise<any>}
    */
   lazyLoadCssResource(cssUrl) {
@@ -97,6 +115,24 @@ class ClientPlayerInterface {
     });
   }
 
+  /**
+   *
+   * Begin player playback.
+   *
+   * If station param is supplied, this station will be loaded into
+   * the player before playback begins. Otherwise the player will begin
+   * playback with the currently loaded station.
+   *
+   * @param {number} stationId - The station to play
+   * @returns {Promise<any>} - Passed in stationId or null
+   */
+  play(stationId = null) {
+    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlay', { stationId });
+  }
+
 }
 
-module.exports = ClientPlayerInterface;
+// Export to factory to simplify standard import statements.
+module.exports = function () {
+  return new ClientPlayerInterface();
+};
