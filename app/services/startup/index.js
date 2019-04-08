@@ -62,9 +62,9 @@ function setupApp(app) {
 
   app.use(handleRedirects);
 
-  app.use(canonicalJSON);
-
   app.use(currentStation);
+
+  app.use(canonicalJSON);
 
   db.setup();
   sessionStore = createSessionStore();

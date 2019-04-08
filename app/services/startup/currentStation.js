@@ -1,6 +1,8 @@
 'use strict';
 
 const radioApiService = require('../../services/server/radioApi'),
+  { isEmpty } = require('lodash'),
+  allStations = {},
   defaultStation = {
     id: 0,
     attributes: {
@@ -22,19 +24,17 @@ const radioApiService = require('../../services/server/radioApi'),
     }
   },
   /**
-   * returns the slug of the site
+   * returns the slug of the site either from a subdomain or as the first element of the path
    *
-   * @param {string} host
+   * @param {object} req
    * @return {string}
    */
-  getStationSlug = (host) => host.split('/').shift().toLowerCase(),
-  /**
-   * determines if the default station should be used
-   *
-   * @param {string} slug
-   * @return {boolean}
-   */
-  useDefaultStation = (slug) => ['www', 'clay', 'dev-clay', 'stg-clay'].includes(slug),
+  getStationSlug = (req) => {
+    const [, stationPath] = req.originalUrl.split('/'),
+      stationHost = req.get('host').split('/').shift().split('.').shift().toLowerCase();
+
+    return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
+  },
   /**
    * determines if the path is valid for station information
    *
@@ -43,7 +43,30 @@ const radioApiService = require('../../services/server/radioApi'),
    */
   validPath = (req) => /^\/_/.test(req.originalUrl)
     || req.get('x-amphora-page-json')
-    || !req.get('referrer') || !req.get('referrer').includes(req.get('host'));
+    || !req.get('referrer') || !req.get('referrer').includes(req.get('host').split('.').slice(1,3).join('.')),
+  /**
+   * determines if the default station should be used
+   *
+   * @param {object} req
+   * @return {boolean}
+   */
+  getStation = async (req) => {
+    if (validPath(req)) {
+      const slug = getStationSlug(req),
+        response = await radioApiService.get('stations', {page: {size: 999}}, null, radioApiService.TTL.DAY);
+
+      // use the stations as a cached object so we don't have to run the same logic every request
+      if (!response.response_cached || isEmpty(allStations)) {
+        response.data.forEach((station) => allStations[station.attributes.site_slug] = station.attributes);
+      }
+
+      if (Object.keys(allStations).includes(slug)) {
+        return allStations[slug];
+      }
+
+      return defaultStation;
+    }
+  };
 
 
 /**
@@ -54,23 +77,7 @@ const radioApiService = require('../../services/server/radioApi'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  if (validPath(req)) {
-    // NOTE: this is currently setup for subdomain, but will eventually become path based in the future.
-    const site_slug = getStationSlug(req.get('host'));
-
-    res.locals.station = defaultStation.attributes;
-
-    if (!useDefaultStation(site_slug)) {
-      try {
-        const response = await radioApiService.get('stations', { filter: { site_slug } });
-
-        if (response.data && response.data.length) {
-          res.locals.currentstation = response.data[0].attributes;
-        }
-      } catch (e) {
-      }
-    }
-  }
+  res.locals.station = await getStation(req);
 
   return next();
 };
