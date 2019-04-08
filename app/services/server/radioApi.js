@@ -4,7 +4,7 @@ const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
   db = require('./db'),
-  TTL = 300000,
+  DEFAULT_TTL = 300000,
   httpRegEx = /^https?:\/\//,
 
   /**
@@ -55,9 +55,10 @@ const rest = require('../universal/rest'),
    * @param {string} route
    * @param {*} [params]
    * @param {function} [validate]
+   * @param {number} [TTL]
    * @return {Promise}
    */
-  get = async (route, params, validate = defaultValidation(route)) => {
+  get = async (route, params, validate = defaultValidation(route), TTL = DEFAULT_TTL ) => {
     const dbKey = createKey(route, params),
       requestEndpoint = createEndpoint(route, params);
 
