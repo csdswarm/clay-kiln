@@ -6,6 +6,7 @@ const rest = require('../universal/rest'),
   db = require('./db'),
   TTL = {
     DEFAULT: 300000,
+    MIN: 60000,
     HOUR: 3600000,
     DAY: 86400000
   },
