@@ -12,10 +12,8 @@ let adMapping = require('./adMapping'),
   clearDfpTakeover = () => {},
   numRightRail = 1,
   numGalleryInline = 1;
-const urlParse = require('url-parse'),
-  queryParams = urlParse(window.location, true).query;
-  doubleclickPrefix = '21674100491',
-  doubleclickBannerTag = queryParams.adtest ? 'ENT.TEST' : 'NTL.RADIO',
+const doubleclickPrefix = '21674100491',
+  doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
@@ -25,6 +23,7 @@ const urlParse = require('url-parse'),
   targetingNationalRadioStation = 'natlrc',
   targetingGenre = 'aaa',
   targetingCategory = 'music',
+  urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
     rootMargin: '0px',
@@ -249,6 +248,7 @@ function setAds(initialRequest = false) {
   }
 
   googletag.cmd.push(function () {
+    const queryParams = urlParse(window.location, true).query;
     let adSlots = document.getElementsByClassName('component--google-ad-manager');
 
     // Set refresh value on page level
