@@ -1,21 +1,4 @@
 @import "_global/bootstrap.min";
-/*
-//
-//@font-face {
-//    font-family: "proxima";
-//src: url(../fonts/proximanova_regular.ttf) format("truetype");
-//}
-//
-//@font-face {
-//    font-family: "Circular";
-//src: url(../fonts/circularstd_black.ttf) format("truetype");
-//}
-//
-//@font-face {
-//    font-family: "CircularMed";
-//src: url(../fonts/circularstd_medium.ttf) format("truetype");
-//}
-*/
 
 .account {
   font-family: 'proxima', sans-serif;
