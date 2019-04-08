@@ -144,15 +144,17 @@ module.exports.render = async (uri, data, locals) => {
           break;
       }
     } else if (data.filterBy === 'market') {
-      /** for stations lists on location stations directory page **/
-      if (locals.params) {
-        if (!locals.params.dynamicMarket && !locals.market
-          || locals.params.dynamicMarket && data.truncatedList ) {
-          // fix for use case: both list components are rendering even when condition is met
-          // handle populating stations in client side
-          return data;
-        }
+      if (!locals.params) {
+        return data;
       }
+      /** for stations lists on location stations directory page **/
+      if (!locals.params.dynamicMarket && !locals.market
+        || locals.params.dynamicMarket && data.truncatedList ) {
+        // fix for use case: both list components are rendering even when condition is met
+        // handle populating stations in client side
+        return data;
+      }
+      
       const market = {
           id: locals.market,
           market: locals.params.dynamicMarket
@@ -203,6 +205,7 @@ module.exports.render = async (uri, data, locals) => {
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
         data.stations = response.data ? response.data.map((station) => station.attributes) : [];
+        data.stationIds = data.stations.map((station) => { return { id: station.id }; });
         return data;
       } else {
         return data;
