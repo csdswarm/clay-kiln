@@ -12,6 +12,7 @@ import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
+import URL from 'url-parse'
 
 // Instantiate libraries.
 const metaManager = new MetaManager()

@@ -1,20 +1,24 @@
-_version: 1.0
+_version: 2.0
 _description: |
   Youtube video embed for Clay. Can only be used for Youtube videos hosted by NYMag or Vulture. For externally hosted videos, use the Video component.
   For technical reasons, YouTube embeds don't display a preview in edit mode. Preview the video by previewing the full page (from the Clay toolbar). Embeds can display a specific video ID.
 
-videoId:
-  _label: YouTube Video ID
+contentId:
+  _label: YouTube Video ID or Playlist ID
   _publish: videoPlayerId
   _reveal:
     field: videoSource
-    value: Video ID
+    values:
+      - video
+      - playlist
   _has:
     input: text
     validate:
       required:
         field: videoSource
-        value: Video ID
+        values:
+          - video
+          - playlist
 
 videoType:
   _label: Type
@@ -33,11 +37,16 @@ videoSource:
   _has:
     input: radio
     options:
-      - Video ID
+      -
+        name: Video ID
+        value: video
+      -
+        name: Playlist ID
+        value: playlist
     validate:
       required: true
-      requiredMessage: Please select "Video ID" to embed a specific YouTube video by id (e.g. "pHXVa0B6KFs")
-    help: Please select "Video ID" to embed a specific YouTube video by id (e.g. "pHXVa0B6KFs")
+      requiredMessage: Please select "Video ID" to embed a specific YouTube video by id (e.g. "pHXVa0B6KFs"). Select Playlist ID to embed a playlist by id.
+    help: Please select "Video ID" to embed a specific YouTube video by id (e.g. "pHXVa0B6KFs"). Select Playlist ID to embed a playlist by id.
 
 playerHeadline:
   _label: Video Headline
@@ -87,7 +96,7 @@ _groups:
   inline:
     fields:
       - videoSource
-      - videoId
+      - contentId
       - videoType
       - playerHeadline
       - playerCaption
@@ -95,7 +104,7 @@ _groups:
     _placeholder:
       text: Youtube Video Player
       height: 100px
-      ifEmpty: videoId
+      ifEmpty: contentId
 
 # set by bootstrap or first-run
 videoLocation:
@@ -107,7 +116,7 @@ previousTypeRelated:
 videoValid:
   help: Used to decide whether or not to display a video in the template
   _placeholder:
-    text: Invalid video id ${videoId}. This video will not display.
+    text: Invalid id ${contentId}. This video or playlist will not display.
     permanent: true
 channelName:
   help: Name of the channel the video comes from. Used to decide whether or not to listen to GTM triggers for this video

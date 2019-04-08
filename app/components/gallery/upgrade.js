@@ -11,9 +11,9 @@ module.exports['1.0'] = function (uri, data) {
   return newData;
 };
 
-module.exports['1.1'] = (uri, data) => {
-  return {
+module.exports['2.0'] = (uri, data) => {
+  return typeof data.footer === 'undefined' ? {
     ...data,
     footer: []
-  };
+  } : data;
 };

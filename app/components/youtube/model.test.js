@@ -1,6 +1,6 @@
 'use strict';
 
-var expect = require('chai').expect,
+const expect = require('chai').expect,
   dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
   lib = require('./' + filename);
@@ -12,10 +12,10 @@ describe(dirname, function () {
       const method = lib[this.title],
         mockLocals = { site: { slug: 'wwwthecut' } };
 
-      it('should the video id without extra parameters in the query string', function () {
-        method('some_ref', {videoId: 'bpOSxM0rNPM&t=97'}, mockLocals)
+      it('shows the video id without extra parameters in the query string', function () {
+        method('some_ref', {contentId: 'bpOSxM0rNPM&t=97'}, mockLocals)
           .then(data => {
-            expect(data.videoId).to.eql('bpOSxM0rNPM');
+            expect(data.contentId).to.eql('bpOSxM0rNPM');
           });
       });
 
@@ -42,11 +42,10 @@ describe(dirname, function () {
         expect(data.autoPlayNextVideo).to.be.false;
       });
 
-      it('should set playlist based on site if not set', () => {
-        method('some_ref', {videoId: 'bpOSxM0rNPM'}, mockLocals)
-          .then(data => {
-            expect(data.videoPlaylist).to.eql('PL4B448958847DA6FB');
-          });
+      it('sets isPlaylist to true when videoSource is playlist', () => {
+        const data = method('some_ref', {videoSource: 'playlist'}, mockLocals);
+
+        expect(data.isPlaylist).to.be.true;
       });
     });
 
