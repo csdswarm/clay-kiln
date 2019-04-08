@@ -35,6 +35,18 @@ enter-clay:
 clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data && rm -rf ./postgres/data
 
+clear-app:
+	rm -rf app/node_modules && ls -d ./app/public/* | grep -v dist | xargs rm -rf && rm -rf app/browserify-cache.json
+
+clear-spa:
+	rm -rf spa/node_modules  && rm -rf app/public/dist
+
+reset:
+	make burn && make clear-data
+
+nuke:
+	make reset && make clear-app && make clear-spa
+
 bootstrap:
 	cd ./app &&  cat ./first-run/**/* | clay import -k demo -y clay.radio.com
 	@echo ""
