@@ -126,8 +126,7 @@
     height: 0;
   }
 }
-.google-ad-manager--global-logo-sponsorship,
-.google-ad-manager--section-front-logo-sponsorship {
+.google-ad-manager--global-logo-sponsorship {
   position: absolute;
   width: 100%;
   height: em(43);

@@ -30,9 +30,6 @@ const adSizes = {
   'global-logo-sponsorship': {
     defaultSize: [100, 35]
   },
-  'section-front-logo-sponsorship': {
-    defaultSize: [100, 35]
-  },
   'content-collection-logo-sponsorship': {
     defaultSize: [100, 35]
   },
@@ -93,10 +90,6 @@ module.exports = {
         .build();
 
       sizeMapping['global-logo-sponsorship'] = googletag.sizeMapping()
-        .addSize([0, 0], [[100, 35]])
-        .build();
-
-      sizeMapping['section-front-logo-sponsorship'] = googletag.sizeMapping()
         .addSize([0, 0], [[100, 35]])
         .build();
 

@@ -5,10 +5,6 @@ _components:
         adSize: global-logo-sponsorship
         adPosition: global-logo-sponsorship
         adLocation: atf
-      homepageSectionFrontLogoSponsorship:
-        adSize: section-front-logo-sponsorship
-        adPosition: logo-sponsorship
-        adLocation: atf
       contentCollectionLogoSponsorship:
         adSize: content-collection-logo-sponsorship
         adPosition: logo-sponsorship

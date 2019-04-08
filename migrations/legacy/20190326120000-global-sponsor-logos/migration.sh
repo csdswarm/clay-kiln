@@ -16,10 +16,27 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "\n\nCreating Global Sponsor Logos & Updating Pages & Layouts...\n\n\n"
+printf "\n\nCreating Global Sponsor Logos & Updating Layouts...\n\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
-cat ./_layouts.yml | clay import -k demo -y -p $1
-cat ./_pages.yml | clay import -k demo -y -p $1
 
+# _components/one-column-layout/instances/general
+componentType="one-column-layout"
+instanceType="general"
+printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
+node ./layouts-update.js "$1" "$componentType" "$instanceType";
+cat ./$componentType-$instanceType.yml | clay import -k demo -y -p $1
+rm ./$componentType-$instanceType.json
+rm ./$componentType-$instanceType.yml
+printf "\n\n\n\n"
 
+# _components/two-column-layout/instances/article
+componentType="two-column-layout"
+instanceType="article"
+printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
+node ./layouts-update.js "$1" "$componentType" "$instanceType";
+cat ./$componentType-$instanceType.yml | clay import -k demo -y -p $1
+rm ./$componentType-$instanceType.json
+rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
