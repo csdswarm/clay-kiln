@@ -110,7 +110,7 @@ export default {
      *  @param {string} path
      *  @returns {boolean}
      */
-    getModalRoute(path) {
+    getModalRoute (path) {
       return modalRoutes.find((route) => route.path === path)
     },
     /**
@@ -121,7 +121,6 @@ export default {
      * @returns {boolean}
      */
     handleModalRoute (route, from) {
-
       if (route) {
         this.modalShow()
 
@@ -229,61 +228,61 @@ export default {
      *
      */
     async handleSpaRoute (to) {
-        // Start loading animation.
-        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+      // Start loading animation.
+      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
-        // Get SPA payload data for next path.
-        const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
+      // Get SPA payload data for next path.
+      const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
 
-        if (spaPayload) {
-            const path = (new URL(spaPayload.url)).pathname
+      if (spaPayload) {
+        const path = (new URL(spaPayload.url)).pathname
 
-            // Load matched Layout Component.
-            this.activeLayoutComponent = this.layoutRouter(spaPayload)
+        // Load matched Layout Component.
+        this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-            // Reset/flush the pageCache
-            this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
+        // Reset/flush the pageCache
+        this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
 
-            // Commit next payload to store to kick off re-render.
-            this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+        // Commit next payload to store to kick off re-render.
+        this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-            // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-            metaManager.updateExternalTags(this.$store.state.spaPayload)
+        // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+        metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-            // Stop loading animation.
-            this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+        // Stop loading animation.
+        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-            // Build pageView event data
-            const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
+        // Build pageView event data
+        const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-            // Call global pageView event.
-            const event = new CustomEvent(`pageView`, {
-                detail: pageViewEventData
-            })
+        // Call global pageView event.
+        const event = new CustomEvent(`pageView`, {
+          detail: pageViewEventData
+        })
 
-            document.dispatchEvent(event)
-        }
+        document.dispatchEvent(event)
+      }
     }
   },
   components: {
     OneColumnLayout,
     OneColumnFullWidthLayout,
     TwoColumnLayout,
-    ModalContent,
+    ModalContent
   },
   watch: {
     '$route': async function (to, from) {
-        console.log('watch', to)
-        const modalRoute = this.getModalRoute(to.path)
+      console.log('watch', to)
+      const modalRoute = this.getModalRoute(to.path)
 
-        if (modalRoute) {
-           await this.handleModalRoute(modalRoute, from.path)
-        } else {
-           await this.handleSpaRoute(to)
-        }
+      if (modalRoute) {
+        await this.handleModalRoute(modalRoute, from.path)
+      } else {
+        await this.handleSpaRoute(to)
+      }
     },
     routerPush (path) {
-        this.$router.push({ path })
+      this.$router.push({ path })
     },
     modalComponent (component) {
       if (!component) {
@@ -316,7 +315,7 @@ export default {
     }
   },
   mounted () {
-      this.handleModalRoute(this.getModalRoute(this.$route.path), '/')
+    this.handleModalRoute(this.getModalRoute(this.$route.path), '/')
   }
 }
 

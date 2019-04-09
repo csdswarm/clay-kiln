@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { handlebars } from '../config/initHandlebars'
 import { Base64 } from 'js-base64'
-import mutations from "./vuex/mutations";
-import actions from "./vuex/actions";
+import mutations from './vuex/mutations'
+import actions from './vuex/actions'
 
 Vue.use(Vuex)
 

@@ -129,8 +129,8 @@ export default {
 
   computed: {
     ...mapState([
-        'errorMessage'
-    ]),
+      'errorMessage'
+    ])
   },
 
   data () {
@@ -214,7 +214,7 @@ export default {
       } else {
         try {
           await this.$store.dispatch(actionTypes.CREATE_PROFILE, this.user)
-        } catch(err) { }
+        } catch (err) { }
       }
     }
   }

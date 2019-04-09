@@ -81,7 +81,6 @@ export default {
       return `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(JSON.stringify(redirect))}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
     },
 
-
     termOfUse () {
       return TERM_OF_USE
     },
