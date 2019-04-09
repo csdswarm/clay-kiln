@@ -79,9 +79,8 @@ export default {
         return
       }
 
-      try {
-        await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
-      } catch (err) { }
+      await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
+      this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
     }
   }
 }

@@ -20,9 +20,15 @@ import { mapState } from 'vuex'
 import * as actionTypes from '@/vuex/actionTypes'
 
 export default {
-  name: 'Account',
+  name: 'Modal',
 
-    computed: {
+  components: {
+    RadioComHeader,
+    RadioComForm,
+    Loader
+  },
+
+  computed: {
     ...mapState([
       'modalComponent',
       'metadata',
@@ -31,11 +37,6 @@ export default {
     loaded: (state) => Object.keys(state.metadata).length
   },
 
-  components: {
-    RadioComHeader,
-    RadioComForm,
-    Loader
-  },
   mounted () {
     this.$store.dispatch(actionTypes.GET_METADATA)
   }

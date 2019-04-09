@@ -22,7 +22,8 @@ export const vuexStoreDefaultState = {
   modalComponent: null,
   user: {},
   modalLoading: true,
-  errorMessage: null
+  errorMessage: null,
+  routerPush: null
 }
 
 export default new Vuex.Store({

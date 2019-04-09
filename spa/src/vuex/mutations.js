@@ -44,7 +44,8 @@ export default {
     return state.redirectUri && platform !== 'webplayer'
       ? window.open(state.redirectUri, '_self') : this.$router.push({ path: `/account/success` })
   },
-  [mutationTypes.SIGN_UP_COMPLETE]: (state) => { state.user = { ...state.user, signUpComplete: true } },
+  [mutationTypes.SIGN_UP_COMPLETE]: (state) => { state.user.signUpComplete = true },
   [mutationTypes.ACCOUNT_MODAL_LOADING]: (state, loading) => { state.modalLoading = loading },
-  [mutationTypes.ERROR_MESSAGE]: (state, message) => { state.errorMessage = message }
+  [mutationTypes.ERROR_MESSAGE]: (state, message) => { state.errorMessage = message },
+  [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path }
 }

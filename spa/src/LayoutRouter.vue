@@ -47,7 +47,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'modalComponent'
+      'modalComponent',
+      'routerPush'
     ])
   },
   methods: {
@@ -268,10 +269,11 @@ export default {
     OneColumnLayout,
     OneColumnFullWidthLayout,
     TwoColumnLayout,
-    ModalContent
+    ModalContent,
   },
   watch: {
     '$route': async function (to, from) {
+        console.log('watch', to)
         const modalRoute = this.getModalRoute(to.path)
 
         if (modalRoute) {
@@ -279,6 +281,9 @@ export default {
         } else {
            await this.handleSpaRoute(to)
         }
+    },
+    routerPush (path) {
+        this.$router.push({ path })
     },
     modalComponent (component) {
       if (!component) {

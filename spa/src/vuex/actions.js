@@ -39,7 +39,6 @@ export default {
       }})
 
     commit(mutationTypes.SET_USER, { ...result.data })
-    commit(mutationTypes.ACCOUNT_MODAL_HIDE)
   },
   async [actionTypes.SIGN_UP]  ({ commit, state, dispatch }, { email, password }) {
     await axiosCall({ commit, method: 'post', url: '/radium/v1/auth/signup', data: {
@@ -50,6 +49,7 @@ export default {
 
     await dispatch(actionTypes.SIGN_IN, { email, password })
     commit(mutationTypes.SIGN_UP_COMPLETE)
+    commit(mutationTypes.ROUTER_PUSH, '/account/profile')
   },
   async [actionTypes.CREATE_PROFILE]  ({ commit }, user) {
     const result = await axiosCall({ commit, method: 'post', url: '/radium/v1/profile/create', data: {
