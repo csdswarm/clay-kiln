@@ -1,0 +1,58 @@
+{{#unless @root.locals.stationIDs}}
+<section role="main"
+  data-truncate="{{ truncatedList }}"
+  data-filter-stations-by-track="{{ filterBy }}"
+  data-uri="{{ default _ref _self }}"
+  class="component component--stations-list{{ if @root.locals.edit ' editing' }}{{ if truncatedList ' stations-list--truncated' }}"
+>
+  <div class="stations-list__header-row">
+    <h2 class="header-row__title">{{ listTitle }}</h2>
+    {{#ifAll stations truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
+      <a class="header-row__see-all-link spa-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
+    {{/ifAll}}
+  </div>
+  {{#if stations.length }}
+    <pre class="stations-list__data">{{ stringify stationIds }}</pre>
+  {{/if}}
+  <ul>
+{{/unless}}
+    {{~#if stations.length ~}}
+      {{~#each stations ~}}
+        {{#ifAll ../truncatedList (compare @index '<' 14) }}{{ set 'hideStations' true }}{{/ifAll}}
+        {{#ifAny (compare ../truncatedList false) hideStations }}
+          <li class="station">
+            <a href="//{{ @root.locals.site.host }}/{{ site_slug }}/listen" class="spa-link">
+              <div class="station__lede" itemscope itemtype="http://schema.org/ImageObject">
+                <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
+                <img class="lede__image" src="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0"
+                     srcset="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0 138w,
+                    {{ square_logo_large }}?width=220&height=220&crop=1:1,offset-y0 220w,
+                    {{ square_logo_large }}?width=208&height=208&crop=1:1,offset-y0 208w,
+                    {{ square_logo_large }}?width=148&height=148&crop=1:1,offset-y0 148w"
+                     sizes="(max-width: 360px) 148px, (max-width: 480px) 208px, (max-width: 1023px) 220px, 138px"
+                  itemprop="thumbnailUrl"
+                >
+                <meta itemprop="contentUrl" content="{{ square_logo_large }}">
+                <button data-play-station="{{ id }}" class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
+              </div>
+              <span class="station__name">{{ name }}</span>
+              <span class="station__secondary-info">{{ slogan }}</span>
+            </a>
+          </li>
+        {{/ifAny}}
+      {{~/each~}}
+    {{else if stations}}
+      {{#ifAll (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
+        <li class="stations-list__empty"><span>No stations.</span></li>
+      {{/ifAll}}
+    {{~/if~}}
+{{#unless @root.locals.stationIDs}}
+  </ul>
+    <div class="loader-container">
+      {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
+    </div>
+  {{#ifAll stations truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 6) }}
+    <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
+  {{/ifAll}}
+</section>
+{{/unless}}
