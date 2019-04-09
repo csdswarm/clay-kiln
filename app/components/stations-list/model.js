@@ -72,8 +72,8 @@ function getGenreData({ slug, id }) {
 /**
  * Strip data of stations array to signal original rendering before we have data
  *
- * @param data
- * @return {*}
+ * @param {object} data
+ * @return {object}
  */
 function returnStationless(data) {
   delete data.stations;
@@ -160,7 +160,7 @@ module.exports.render = async (uri, data, locals) => {
         // handle populating stations in client side
         return returnStationless(data);
       }
-      
+
       const market = {
           id: locals.market,
           slug: locals.params.dynamicMarket
@@ -172,20 +172,28 @@ module.exports.render = async (uri, data, locals) => {
       params['filter[market_id]'] = marketData.id;
     } else if (data.filterBy === 'genre') {
       /** for stations lists on music, news & talk, and sports stations directory pages **/
+      const genre = {
+        id: locals.genre
+      };
 
       if (locals.params) {
-        if (!locals.params.dynamicGenre && !locals.genre
-          || locals.params.dynamicGenre && data.truncatedList ) {
+        if ((!locals.params.dynamicGenre && !locals.genre)
+          || (locals.params.dynamicGenre && data.truncatedList)) {
           // fix for use case: both list components are rendering even when condition is met
           // handle populating stations in client side
           return returnStationless(data);
         }
+
+        genre.slug = locals.params.dynamicGenre;
       }
-      const genre = {
-          id: locals.genre,
-          slug: locals.params.dynamicGenre
-        },
-        genreData = await getGenreData(genre);
+
+      // ensure there is one or the other required elements
+      if (!genre.id && !genre.slug) {
+        return returnStationless(data);
+      }
+
+      // eslint-disable-next-line one-var
+      const genreData = await getGenreData(genre);
 
       if (slugifyService(genreData.attributes.name) === SPORTS_SLUG ||
         slugifyService(genreData.attributes.name) === NEWSTALK_SLUG) {
