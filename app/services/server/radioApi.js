@@ -63,7 +63,7 @@ const rest = require('../universal/rest'),
       requestEndpoint = createEndpoint(route, params);
 
     try {
-      const data = await redis.get(dbKey);
+      const data = await JSON.parse(redis.get(dbKey));
 
       if (data.updated_at && (new Date() - new Date(data.updated_at) > TTL)) {
         try {

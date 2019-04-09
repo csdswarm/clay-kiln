@@ -31,7 +31,7 @@ function getMarketData({ slug, id }) {
       }
       return response.data.find(({ attributes }) => slugifyService(attributes.display_name) === slug) || {};
     } else {
-      console.log('error with request', response);
+      console.log('Error with getMarketData request', response);
       return {};
     }
   });
@@ -56,14 +56,14 @@ function getGenreData({ slug, id }) {
     params['filter[id]'] = id;
   }
 
-  return radioApiService.get(route, params).then(response => {
+  return radioApiService.get(route, params).then(response => {;
     if (response.data) {
       if (id) {
         return response.data.shift();
       }
       return response.data.find(({ attributes }) => slugifyService(attributes.name) === slug) || {};
     } else {
-      console.log('error with request', response);
+      console.log('Error with getGenreData request', response);
       return {};
     }
   });
