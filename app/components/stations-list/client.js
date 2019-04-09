@@ -105,9 +105,10 @@ class StationsList {
    * @function
    * @param {object[]} stationIDs
    * @param {string} [filter] -- category, genre, or market type
+   * @param {string} [instanceModifier] -- alter the current instance being used to get the stations list
    * @returns {Node}
    */
-  async getComponentTemplate(stationIDs, filter) {
+  async getComponentTemplate(stationIDs, filter, instanceModifier) {
     let queryParamString = '?',
       instance = this.filterStationsBy;
 
@@ -115,7 +116,10 @@ class StationsList {
       queryParamString += `&stationIDs=${stationIDs}`;
     } else if (filter) {
       if (this.truncateStations) {
-        instance += 'Truncated';
+        instanceModifier = 'Truncated';
+      }
+      if (instanceModifier) {
+        instance += instanceModifier;
       }
       queryParamString += `&${this.filterStationsBy}=${filter}`;
     }
@@ -141,12 +145,13 @@ class StationsList {
    * then display the stations, keeping more stations in the DOM than are being displayed
    * @function
    * @param {object} stationsData
+   * @param {string} [instanceModifier]
    */
-  async updateStationsDOMWithIDs(stationsData) {
+  async updateStationsDOMWithIDs(stationsData, instanceModifier) {
     const stationIDs = stationsData.map((station) => {
         return station.id;
       }),
-      newStations = await this.getComponentTemplate(stationIDs);
+      newStations = await this.getComponentTemplate(stationIDs, null, instanceModifier);
 
     this.stationsList.append(newStations);
     safari.fixAJAXImages(this.stationsList);
@@ -236,7 +241,7 @@ class StationsList {
 
       if (stationsData.length) {
         this.toggleLoader();
-        this.updateStationsDOMWithIDs(stationsData);
+        this.updateStationsDOMWithIDs(stationsData, 'Truncated');
       } else {
         this.displayActiveStations();
       }
