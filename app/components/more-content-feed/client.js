@@ -1,5 +1,6 @@
 'use strict';
-const { fetchDOM } = require('../../services/client/radioApi');
+const { fetchDOM } = require('../../services/client/radioApi'),
+  safari = require('../../services/client/safari');
 
 class MoreContentFeed {
   constructor(el) {
@@ -49,14 +50,7 @@ class MoreContentFeed {
 
     // Append to the list
     this.moreContentFeed.querySelector('ul').append(links);
-    // iOS doesn't play nice with srcset dynamically (https://github.com/metafizzy/infinite-scroll/issues/770)
-    if (/iPhone/.test(navigator.userAgent)) {
-      this.moreContentFeed.querySelectorAll('img').forEach((img) => {
-        if (!img.height) {
-          img.outerHTML = img.outerHTML;
-        }
-      });
-    }
+    safari.fixAJAXImages(this.moreContentFeed);
 
     // Recreate the listener for the new button
     this.loadMore = this.moreContentFeed.querySelector('.links__link--loadmore');
