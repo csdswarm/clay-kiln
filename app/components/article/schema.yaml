@@ -411,7 +411,7 @@ _groups:
       - sectionFront
       - secondaryArticleType
   bylines:
-    fields:-
+    fields:
       - byline
     _placeholder:
       text: Byline
