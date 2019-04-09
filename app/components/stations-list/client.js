@@ -6,7 +6,8 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   { isMobileWidth } = require('../../services/client/mobile'),
   STATIONS_DIRECTORY = 'stations directory',
   STATION_DETAIL = 'station detail',
-  FEATURED = 'featured';
+  FEATURED = 'featured',
+  safari = require('../../services/client/safari');
 
 class StationsList {
   constructor(element) {
@@ -148,6 +149,7 @@ class StationsList {
       newStations = await this.getComponentTemplate(stationIDs);
 
     this.stationsList.append(newStations);
+    safari.fixAJAXImages(this.stationsList);
 
     this.toggleLoader();
     this.displayActiveStations();
@@ -167,6 +169,7 @@ class StationsList {
       this.parentElement.removeChild(this.parentElement.firstChild);
     };
     this.parentElement.append(newStations);
+    safari.fixAJAXImages(this.parentElement);
     this.setStationList(this.parentElement);
     this.displayActiveStations();
 
