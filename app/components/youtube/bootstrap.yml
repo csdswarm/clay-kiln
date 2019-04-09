@@ -1,7 +1,7 @@
 _components:
   youtube:
-    videoId: ''
-    videoSource: 'Video ID'
+    contentId: ''
+    videoSource: 'video'
     videoType: 'Editorial'
     videoLocation: 'article'
     playerCaption: ''
