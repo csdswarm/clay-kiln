@@ -1,4 +1,4 @@
-_components:
+_layouts:
   two-column-layout:
     instances:
       article:
@@ -63,6 +63,8 @@ _components:
         static:
           - _ref: /_components/web-player/instances/default
           - _ref: /_components/chartbeat/instances/default
+
+_components:
   station-recently-played:
     instances:
       default:
