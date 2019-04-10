@@ -17,12 +17,14 @@ if (!instanceType) {
 }
 
 // Get current JSON
-let data = require(`${__dirname}/${componentType}-${instanceType}.json`)
+let data = require(`${__dirname}/${componentType}-${instanceType}.json`);
 
 // Add global logo sponsorship instance to 'top' area of layout.
-const globalLogoSponsorshipRef = `${host}/_components/google-ad-manager/instances/globalLogoSponsorship`
+const globalLogoSponsorshipRef = `${host}/_components/google-ad-manager/instances/globalLogoSponsorship`;
 
-data.top = [...data.top, {'_ref': globalLogoSponsorshipRef}];
+if (!data.top.find( topRef => topRef['_ref'] === globalLogoSponsorshipRef )) {
+  data.top = [...data.top, {'_ref': globalLogoSponsorshipRef}];
+}
 
 // Create correct clay data structure
 const payload = {
