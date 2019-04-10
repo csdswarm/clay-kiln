@@ -1,0 +1,485 @@
+/*!
+ * Selectr 2.4.8
+ * http://mobius.ovh/docs/selectr
+ *
+ * Released under the MIT license
+ *
+ * Customized to meet radio.com base specs
+ */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+
+.selectr-container {
+  @mixin selectr-select-box-font1;
+  position: relative;
+}
+
+.selectr-container li {
+  list-style: none;
+}
+
+.selectr-hidden {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(em(0, 12), em(0, 12), em(0, 12), em(0, 12));
+  width: em(1, 12);
+  height: em(1, 12);
+  margin: -em(1, 12);
+  padding: 0;
+  border: 0 none;
+}
+
+.selectr-visible {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 11;
+}
+
+.selectr-desktop.multiple .selectr-visible {
+  display: none;
+}
+
+.selectr-desktop.multiple.native-open .selectr-visible {
+  top: 100%;
+  min-height: em(200) !important;
+  height: auto;
+  opacity: 1;
+  display: block;
+}
+
+.selectr-container.multiple.selectr-mobile .selectr-selected {
+  z-index: 0;
+}
+
+.selectr-selected {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 100%;
+  padding: em(4, 12) em(5, 12);
+  cursor: pointer;
+  border: em(1) solid #E1E1E1;
+  border-radius: 0;
+  background-color: #fff;
+
+  @mixin medium-small-screen {
+    padding: em(8, 12) em(5, 12);
+  }
+}
+
+.selectr-selected::before {
+  position: absolute;
+  top: em(5, 12);
+  right: em(8, 12);
+  width: em(8, 12);
+  height: em(8, 12);
+  content: '';
+  transform: rotate(45deg);
+  border-width: 0 em(2, 12) em(2, 12) 0;
+  border-style: solid;
+  border-color: black;
+  z-index: 2;
+
+  @mixin medium-small-screen {
+    right: em(10, 12);
+    top: em(9, 12);
+  }
+}
+
+.selectr-selected::after {
+  position: absolute;
+  top: em(1, 12);
+  right: 0;
+  width: em(24, 12);
+  height: em(21, 12);
+  content: '';
+  background-color: #F5F5F5;
+
+  @mixin medium-small-screen {
+    width: em(28, 12);
+    height: em(30, 12);
+  }
+}
+
+
+
+.selectr-container.open .selectr-selected::before,
+.selectr-container.native-open .selectr-selected::before {
+  top: em(8, 12);
+  border-width: em(2, 12) 0 0 em(2, 12);
+
+  @mixin medium-small-screen {
+    top: em(11, 12);
+  }
+}
+
+
+.selectr-container.open .selectr-selected::after,
+.selectr-container.native-open .selectr-selected::after {
+  top: em(11, 12);
+
+  @mixin medium-small-screen {
+    top: em(15, 12);
+  }
+}
+
+.selectr-label {
+  display: none;
+  overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.selectr-placeholder {
+  color: #6c7a86;
+}
+
+.selectr-tags {
+  margin: 0;
+  padding: 0;
+  white-space: normal;
+}
+
+.has-selected .selectr-tags {
+  margin: 0 0 em(-2, 12);
+}
+
+.selectr-tag {
+  list-style: none;
+  position: relative;
+  float: left;
+  padding: em(2, 12) em(25, 12) em(2, 12) em(8, 12);
+  margin: 0 em(2, 12) em(2, 12) 0;
+  cursor: default;
+  color: #fff;
+  border: medium none;
+  border-radius: 0;
+  background: #acb7bf none repeat scroll 0 0;
+}
+
+.selectr-container.multiple.has-selected .selectr-selected {
+  padding: em(5, 12) em(28, 12) em(5, 12) em(5, 12);
+}
+
+.selectr-options-container {
+  position: absolute;
+  z-index: 10000;
+  top: calc(100% - em(1, 12));
+  left: 0;
+  display: none;
+  box-sizing: border-box;
+  width: 100%;
+  border-width: 0 em(1, 12) em(1, 12);
+  border-style: solid;
+  border-color: transparent #999 #999;
+  background-color: #fff;
+}
+
+.selectr-container.open .selectr-options-container {
+  display: block;
+}
+
+.selectr-input-container {
+  position: relative;
+  display: none;
+}
+
+.selectr-clear,
+.selectr-input-clear,
+.selectr-tag-remove {
+  position: absolute;
+  top: 50%;
+  right: em(22, 12);
+  width: em(20, 12);
+  height: em(20, 12);
+  padding: 0;
+  cursor: pointer;
+  transform: translate3d(em(0, 12), -50%, em(0, 12));
+  border: medium none;
+  background-color: transparent;
+  z-index: 11;
+}
+
+.selectr-clear,
+.selectr-input-clear {
+  display: none;
+}
+
+.selectr-container.has-selected .selectr-clear,
+.selectr-input-container.active .selectr-input-clear {
+  display: block;
+}
+
+.selectr-selected .selectr-tag-remove {
+  right: em(2, 12);
+}
+
+.selectr-clear::before,
+.selectr-clear::after,
+.selectr-input-clear::before,
+.selectr-input-clear::after,
+.selectr-tag-remove::before,
+.selectr-tag-remove::after {
+  position: absolute;
+  top: em(5, 12);
+  left: em(9, 12);
+  width: em(2, 12);
+  height: em(10, 12);
+  content: ' ';
+  background-color: #6c7a86;
+}
+
+.selectr-tag-remove::before,
+.selectr-tag-remove::after {
+  top: em(4, 12);
+  width: em(3, 12);
+  height: em(12, 12);
+  background-color: #fff;
+}
+
+.selectr-clear:before,
+.selectr-input-clear::before,
+.selectr-tag-remove::before {
+  transform: rotate(45deg);
+}
+
+.selectr-clear:after,
+.selectr-input-clear::after,
+.selectr-tag-remove::after {
+  transform: rotate(-45deg);
+}
+
+.selectr-input-container.active,
+.selectr-input-container.active .selectr-clear {
+  display: block;
+}
+
+.selectr-input {
+  top: em(5, 12);
+  left: em(5, 12);
+  box-sizing: border-box;
+  width: calc(100% - em(30, 12));
+  margin: em(10, 12) em(15, 12);
+  padding: em(7, 12) em(30, 12) em(7, 12) em(9, 12);
+  border: em(1, 12) solid #999;
+}
+
+.selectr-notice {
+  display: none;
+  box-sizing: border-box;
+  width: 100%;
+  padding: em(8, 12) em(16, 12);
+  border-top: em(1, 12) solid #999;
+  /*border-radius: 0 0 em(3, 12) em(3, 12);*/
+  background-color: #fff;
+}
+
+.selectr-container.notice .selectr-notice {
+  display: block;
+}
+
+
+.selectr-options {
+  position: relative;
+  top: calc(100% + em(2, 12));
+  display: none;
+  overflow-x: auto;
+  overflow-y: scroll;
+  max-height: em(200, 12);
+  margin: 0;
+  padding: 0;
+}
+
+.selectr-container.open .selectr-options,
+.selectr-container.open .selectr-input-container,
+.selectr-container.notice .selectr-options-container {
+  display: block;
+}
+
+.selectr-option {
+  position: relative;
+  display: block;
+  padding: em(5, 12);
+  list-style: outside none none;
+  cursor: pointer;
+  font-weight: normal;
+
+  @mixin medium-small-screen {
+    padding-top: em(7, 12);
+    padding-bottom: em(7, 12);
+  }
+}
+
+.selectr-options.optgroups > .selectr-option {
+  padding-left: em(25, 12);
+}
+
+.selectr-optgroup {
+  font-weight: bold;
+  padding: 0;
+}
+
+.selectr-optgroup--label {
+  font-weight: bold;
+  margin-top: em(10, 12);
+  padding: em(5, 12) em(15, 12);
+}
+
+.selectr-match {
+  text-decoration: underline;
+}
+
+.selectr-option.selected {
+  background-color: #ddd;
+}
+
+.selectr-option.active {
+  color: #fff;
+  background-color: $purple;
+}
+
+.selectr-option.disabled {
+  opacity: 0.4;
+}
+
+.selectr-option.excluded {
+  display: none;
+}
+
+.selectr-container.open .selectr-selected {
+  border-color: #999 #999 transparent #999;
+}
+
+.selectr-container.open .selectr-selected::after {
+  transform: rotate(180deg) translate3d(em(0, 12), 50%, em(0, 12));
+}
+
+.selectr-disabled {
+  opacity: .6;
+}
+
+.selectr-empty,
+.has-selected .selectr-placeholder {
+  display: none;
+}
+
+.has-selected .selectr-label {
+  display: block;
+}
+
+/* TAGGABLE */
+.taggable .selectr-selected {
+  padding: em(4, 12) em(28, 12) em(4, 12) em(4, 12);
+}
+
+.taggable .selectr-selected::after {
+  display: table;
+  content: " ";
+  clear: both;
+}
+
+.taggable .selectr-label {
+  width: auto;
+}
+
+.taggable .selectr-tags {
+  float: left;
+  display: block;
+}
+
+.taggable .selectr-placeholder {
+  display: none;
+}
+
+.input-tag {
+  float: left;
+  min-width: em(90, 12);
+  width: auto;
+}
+
+.selectr-tag-input {
+  border: medium none;
+  padding: em(3, 12) em(10, 12);
+  width: 100%;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.selectr-input-container.loading::after {
+  position: absolute;
+  top: 50%;
+  right: em(20, 12);
+  width: em(20, 12);
+  height: em(20, 12);
+  content: '';
+  transform: translate3d(em(0, 12), -50%, em(0, 12));
+
+  transform-origin: 50% 0 0;
+
+  animation: 500ms linear 0s normal forwards infinite running spin;
+  border-width: em(3, 12);
+  border-style: solid;
+  border-color: #aaa #ddd #ddd;
+  border-radius: 50%;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    transform: rotate(0deg) translate3d(em(0, 12), -50%, em(0, 12));
+  }
+  100% {
+    transform: rotate(360deg) translate3d(em(0, 12), -50%, em(0, 12));
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg) translate3d(em(0, 12), -50%, em(0, 12));
+  }
+  100% {
+    transform: rotate(360deg) translate3d(em(0, 12), -50%, em(0, 12));
+  }
+}
+.selectr-container.open.inverted .selectr-selected {
+  border-color: transparent #999 #999;
+  border-radius: 0 0 em(3, 12) em(3, 12);
+}
+
+.selectr-container.inverted .selectr-options-container {
+  border-width: em(1, 12) em(1, 12) 0;
+  border-color: #999 #999 transparent;
+  /*border-radius: em(3, 12) em(3, 12) 0 0;*/
+  background-color: #fff;
+}
+
+.selectr-container.inverted .selectr-options-container {
+  top: auto;
+  bottom: calc(100% - em(1, 12));
+}
+
+.selectr-container ::-webkit-input-placeholder {
+  color: #6c7a86;
+  opacity: 1;
+}
+
+.selectr-container ::-moz-placeholder {
+  color: #6c7a86;
+  opacity: 1;
+}
+
+.selectr-container :-ms-input-placeholder {
+  color: #6c7a86;
+  opacity: 1;
+}
+
+.selectr-container ::placeholder {
+  color: #6c7a86;
+  opacity: 1;
+}

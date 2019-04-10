@@ -16,7 +16,8 @@ const vuexStoreDefaultState = {
   // pageCache is reset/flushed every time the SPA navigates. It is used as storage associated with a single SPA "pageview"
   pageCache: {
     gallerySlidePageviews: {} // Used to track slide pageview events so slide pageviews are only counted once per SPA "pageview"
-  }
+  },
+  radioPlayer: null
 }
 
 export default new Vuex.Store({
@@ -50,6 +51,9 @@ export default new Vuex.Store({
         state.pageCache,
         { gallerySlidePageviews }
       )
+    },
+    [mutationTypes.LOAD_RADIO_PLAYER]: (state, radioPlayer) => {
+      state.radioPlayer = radioPlayer
     }
   },
   actions: {

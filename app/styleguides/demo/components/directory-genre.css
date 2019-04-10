@@ -1,0 +1,11 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.directory-genre__dropdown--mobile {
+  display: none;
+  margin-bottom: em(30);
+  @mixin medium-small-screen {
+    display: block;
+  }
+}

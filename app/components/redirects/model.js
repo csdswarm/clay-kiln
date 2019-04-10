@@ -20,7 +20,7 @@ const validPath = (urlString, blockedPaths) => {
  * @returns {Promise}
  */
 module.exports.save = (ref, data, locals) => {
-  if (!locals.user.auth.includes('admin')) {
+  if (!locals || !locals.user || !locals.user.auth.includes('admin')) {
     return Promise.resolve(data);
   }
 

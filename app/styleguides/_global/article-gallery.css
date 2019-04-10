@@ -27,6 +27,10 @@
   padding-bottom: em(20);
   position: relative;
   word-wrap: break-word;
+
+  .component--breadcrumbs {
+    margin-bottom: em(10);
+  }
 }
 .article__header,
 .gallery__header {
@@ -390,42 +394,20 @@
   }
 }
 
-.article__breadcrumb,
-.gallery__breadcrumb {
-  margin-bottom: em(10);
-  .breadcrumb__link {
-    display: inline-block;
-    @mixin article-font12;
-    text-transform: uppercase;
-    text-decoration: none;
-
-
-    &--home {
-      height: em(10, 14);
-      width: em(10, 14);
-      margin-right: em(13, 14);
-      line-height: em(14, 14);
-
-      &:before {
-        display: none;
-      }
-    }
-  }
-
-  @define-mixin seperator $sectionFront, $color: $purple {
-    .component--article[data-section-front=$sectionFront] & .breadcrumb__separator,
-    .component--gallery[data-section-front=$sectionFront] & .breadcrumb__separator {
-      @mixin article-font12;
+@define-mixin separator $sectionFront, $color: $purple {
+  /* adding .component to increase specificity to override breadcrumbs default*/
+  .component.article--$sectionFront,
+  .component.gallery--$sectionFront{
+    .breadcrumbs__separator {
       color: $color;
     }
   }
-
-  @mixin seperator;
-  @mixin seperator music, $sunsetOrange;
-  @mixin seperator news, $lightningYellow;
-  @mixin seperator podcasts, $robinsEggBlue;
-  @mixin seperator sports, $azureRadience;
 }
+
+@mixin separator music, $sunsetOrange;
+@mixin separator news, $lightningYellow;
+@mixin separator podcasts, $robinsEggBlue;
+@mixin separator sports, $azureRadience;
 
 @define-mixin article-link-color $sectionFront, $color: $purple {
   .article--$sectionFront,
