@@ -36,4 +36,4 @@ _components:
     eligibleForGoogleStandout: false
     footer: []
     featured: false
-    taxonomy: {}
+    editorialFeeds: {}

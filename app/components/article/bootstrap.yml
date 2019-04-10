@@ -55,4 +55,4 @@ _components:
     eligibleForGoogleStandout: false
     originUrl: ''
     featured: false
-    taxonomy: {}
+    editorialFeeds: {}

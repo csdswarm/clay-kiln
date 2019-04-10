@@ -73,7 +73,7 @@ _doc:
       store: true
     lead:
       type: keyword
-    taxonomy:
+    editorialFeeds:
       type: keyword
     featured:
       type: keyword

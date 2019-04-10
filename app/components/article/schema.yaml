@@ -366,18 +366,17 @@ syndicatedUrl:
 featured:
   _label: Is this a featured article?
   _has: checkbox
-taxonomy:
-  _label: Article Taxonomy for Editorial Feeds
+editorialFeeds:
+  _label: Article terms for Editorial Feeds
   _has:
     input: select
     multiple: true
     search: true
-    list: freq_taxonomy
-    # keys: {label: 'name', value: 'value'}
-    help: Select all taxonomy terms for syndication
+    list: freq_editorial_feeds
+    help: Select all editorial feeds terms for syndication
     validate:
       required: true
-      requiredMessage: Please select at least one taxonomy term
+      requiredMessage: Please select at least one term
 
 _groups:
   publishedDate:

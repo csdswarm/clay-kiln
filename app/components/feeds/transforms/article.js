@@ -35,6 +35,9 @@ module.exports = function (data, locals) {
       },
       {
         'content:encoded': { _cdata: renderContent(data.content, locals)}
+      },
+      {
+        featured: { _cdata: data.featured }
       }
     ];
 
@@ -45,6 +48,12 @@ module.exports = function (data, locals) {
   // Add the image
   // return addRssMediaImage(firstAndParse(dataContent, 'image'), transform)
   //   .then(() => transform);
+
+  // Convert editorialFeeds object with terms as keys with boolean values into array of truthy terms
+  const editorialFeeds = Object.keys(data.editorialFeeds).filter(term => {return data.editorialFeeds[term]});
+
+  // Add the editorial feeds terms
+  addArrayOfProps(editorialFeeds, 'editorialFeeds', transform);
 
   // We HAVE to return a promise because of how NYMag setup the Highland render pipeline
   return Promise.resolve(transform);
