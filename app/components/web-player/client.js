@@ -11,10 +11,10 @@ clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
 });
 
 // Listen for player to start playback.
-clientCommunicationBridge.addChannel('ClientWebPlayerStartPlayback', async (payload) => {
-  const { stationId: currentlyPlayingStationId } = payload;
+clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (payload) => {
+  const { stationId: currentlyPlayingStationId, playbackStatus } = payload;
 
-  syncPlayerButtons(currentlyPlayingStationId, 'play');
+  syncPlayerButtons(currentlyPlayingStationId, playbackStatus);
 });
 
 /**
@@ -51,10 +51,14 @@ function syncPlayerButtons(currentStationId, playbackStatus) {
   playerButtons.forEach((element) => {
     const buttonStationId = element.dataset.playStation;
 
-    if (buttonStationId === currentStationId) {
-      console.log(element, `ACTIVE STATION BTN. SET THIS BUTTON TO PLAY, PAUSE or STOP depending on ${playbackStatus}.`);
+    if (playbackStatus === 'play') {
+      if (buttonStationId == currentStationId) {
+        element.classList.replace('show__play', 'show__pause');
+      } else {
+        element.classList.replace('show__pause', 'show__play');
+      }
     } else {
-      console.log(element, `INACTIVE STATION BTN. SET THIS BUTTON TO PLAY, PAUSE or STOP depending on ${playbackStatus}.`);
+      element.classList.replace('show__pause', 'show__play');
     }
   });
 }
