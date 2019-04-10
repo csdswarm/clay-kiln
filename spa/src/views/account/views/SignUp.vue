@@ -7,10 +7,7 @@
                 style="padding:0px 10px 0px 10px;">or</span>
         <facebook-button :link="facebookLink"/>
       </h1>
-      <span
-              v-if="errorMessage"
-              class="error"
-              align="center">{{ errorMessage }}</span>
+      <message></message>
       <input
               :value="user.email"
               type="email"
@@ -58,8 +55,8 @@
 <script>
 import { validateEmail } from '../utils'
 import FacebookButton from '../components/FacebookButton'
+import Message from '../components/Message'
 import { TERM_OF_USE, PRIVACY_POLICY } from '../constants'
-import { mapState } from 'vuex'
 import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
@@ -67,13 +64,11 @@ export default {
   name: 'SignUp',
 
   components: {
-    FacebookButton
+    FacebookButton,
+      Message
   },
 
   computed: {
-    ...mapState([
-      'errorMessage'
-    ]),
     facebookLink () {
       const { metadata } = this.$store.state
       const facebookRedirectUri = `${metadata.host}/account/facebook-callback`
@@ -106,25 +101,25 @@ export default {
     },
 
     async onSignUpSubmit () {
-      this.$store.commit(mutationTypes.ERROR_MESSAGE, null)
+      this.$store.commit(mutationTypes.MODAL_ERROR, null)
 
       if (!this.user.email) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is missing.')
+        this.$store.commit(mutationTypes.MODAL_ERROR, 'Email address is missing.')
         return
       }
 
       if (!validateEmail(this.user.email)) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is not valid.')
+        this.$store.commit(mutationTypes.MODAL_ERROR, 'Email address is not valid.')
         return
       }
 
       if (!this.user.password) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Password is missing.')
+        this.$store.commit(mutationTypes.MODAL_ERROR, 'Password is missing.')
         return
       }
 
       if (this.user.password !== this.user.confirmPassword) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Passwords do not match.')
+        this.$store.commit(mutationTypes.MODAL_ERROR, 'Passwords do not match.')
         return
       }
 

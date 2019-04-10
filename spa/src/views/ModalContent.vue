@@ -1,14 +1,13 @@
 <template>
   <div class="account">
+    <button class="closeModal" @click="$modal.hide('modal')"></button>
     <radio-com-header/>
     <div v-if="loaded">
       <radio-com-form>
         <component v-bind:is="modalComponent"></component>
       </radio-com-form>
     </div>
-    <div v-if="modalLoading">
-      <loader/>
-    </div>
+    <loader/>
   </div>
 </template>
 
@@ -31,8 +30,7 @@ export default {
   computed: {
     ...mapState([
       'modalComponent',
-      'metadata',
-      'modalLoading'
+      'metadata'
     ]),
     loaded: (state) => Object.keys(state.metadata).length
   },

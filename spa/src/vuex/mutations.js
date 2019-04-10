@@ -46,6 +46,7 @@ export default {
   },
   [mutationTypes.SIGN_UP_COMPLETE]: (state) => { state.user.signUpComplete = true },
   [mutationTypes.ACCOUNT_MODAL_LOADING]: (state, loading) => { state.modalLoading = loading },
-  [mutationTypes.ERROR_MESSAGE]: (state, message) => { state.errorMessage = message },
+  [mutationTypes.MODAL_ERROR]: (state, message) => { state.modalMessage = { type: 'error', message } },
+  [mutationTypes.MODAL_SUCCESS]: (state, message) => { state.modalMessage = { type: 'success', message } },
   [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path }
 }

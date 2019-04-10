@@ -1,26 +1,24 @@
 <template>
   <div class="create-profile">
-    <fieldset>
+    <fieldset v-if="hasUserData">
       <h1 align="center"> Update Your Profile<span
         class="small"
         style="padding: 0px 10px 0px 10px;"/></h1>
-      <div v-if="isError !== null">
-        <span :class="isError ? 'error' : 'confirmation'" align="center">{{feedback}}</span>
-      </div>
+      <message></message>
       <input
-        :value="user.firstName"
+        :value="user.first_name"
         type="text"
         placeholder="First Name"
         size="30"
-        name="firstName"
+        name="first_name"
         @change="onFieldChange($event)"
       >
       <input
-        :value="user.lastName"
+        :value="user.last_name"
         type="text"
         placeholder="Last Name"
         size="30"
-        name="lastName"
+        name="last_name"
         @change="onFieldChange($event)"
       >
       <div class="gender-box">
@@ -65,9 +63,9 @@
       </div>
       <div v-if="mobile">
         <input
-          :value="user.dateOfBirth ? user.dateOfBirth.format('YYYY-MM-DD') : user.dateOfBirth"
+          :value="user.date_of_birth ? user.date_of_birth.format('YYYY-MM-DD') : user.date_of_birth"
           type="date"
-          name="dateOfBirth"
+          name="date_of_birth"
           class="dateclass placeholderclass dob"
           data-placeholder="Date of Birth"
           required
@@ -77,17 +75,17 @@
       </div>
       <div v-else>
         <datepicker
-          :value="user.dateOfBirth ? user.dateOfBirth.toDate() : user.dateOfBirth"
+          :value="user.date_of_birth"
           placeholder="Date of Birth"
           format="yyyy-MM-dd"
           @selected="onVueDatepickerChange($event)"
         />
       </div>
       <input
-        :value="user.zipCode"
+        :value="user.zip_code"
         type="text"
         placeholder="Zip Code"
-        name="zipCode"
+        name="zip_code"
         @change="onFieldChange($event)"
       >
     </fieldset>
@@ -97,63 +95,46 @@
         value="SAVE"
         @click.prevent="onProfileSubmit()">
     </div>
-    <div v-if="isLoading">
-      <loader/>
-    </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
-import { debugLog, isValidZipCode } from '@/utils'
-import Loader from '@/components/Loader'
-import service from '@/services'
-import { isMobileDevice } from '../utils'
+import Message from '../components/Message'
+import { isMobileDevice, isValidZipCode, debugLog } from '../utils'
+import { mapState } from 'vuex'
+import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
-  name: 'CreateProfile',
+  name: 'UpdateProfile',
 
   components: {
     Datepicker,
-    Loader
+    Message
+  },
+
+  computed: {
+    ...mapState([
+      'user'
+    ]),
+    hasUserData: (state) => Object.keys(state.user).length
   },
 
   data () {
-    const defaultData = {
-      mobile: isMobileDevice(),
-      user: {
-        firstName: '',
-        lastName: '',
-        gender: '',
-        dateOfBirth: '',
-        zipCode: ''
-      },
-      isLoading: false,
-      isError: null,
-      feedback: ''
+    return {
+      mobile: isMobileDevice()
     }
-
-    return defaultData
   },
 
-  created () {
-    service.getProfile()
-      .then((result) => {
-        this.user.firstName = result.data.first_name
-        this.user.lastName = result.data.last_name
-        this.user.gender = result.data.gender
-        this.user.dateOfBirth = result.data.date_of_birth ? moment(result.data.date_of_birth) : ''
-        this.user.zipCode = result.data.zip_code
-
-        this.$store.commit(mutationTypes.SET_USER, result)
-      })
-      .catch((err) => {
-        this.isLoading = false
-        this.isError = true
-        this.feedback = err.message
-      })
+  async created () {
+    try {
+      await this.$store.dispatch(actionTypes.GET_PROFILE)
+    } catch (e) {
+      this.$store.commit(mutationTypes.MODAL_ERROR, null)
+      this.$router.push({ path: '/account/login' })
+    }
   },
 
   methods: {
@@ -164,22 +145,22 @@ export default {
 
     onHtml5DateChange (event) {
       debugLog('html5 date change', event)
-      this.user.dateOfBirth = moment(event.target.value, 'YYYY-MM-DD').utc()
+      this.user.date_of_birth = moment(event.target.value, 'YYYY-MM-DD').utc()
     },
 
     onVueDatepickerChange (dateObj) {
       debugLog('on vuejs datepicker change without time', moment.utc(dateObj).startOf('day').toISOString())
-      this.user.dateOfBirth = moment.utc(dateObj).startOf('day')
+      this.user.date_of_birth = moment.utc(dateObj).startOf('day')
     },
 
     validateProfileEntities (userData) {
       if (!userData.gender) {
         return 'Gender is missing.'
       }
-      if (!userData.dateOfBirth) {
+      if (!userData.date_of_birth) {
         return 'Date of birth is missing.'
       }
-      if (!isValidZipCode(userData.zipCode)) {
+      if (!isValidZipCode(userData.zip_code)) {
         return 'Zip code is not valid.'
       }
 
@@ -187,28 +168,12 @@ export default {
     },
 
     onProfileSubmit () {
-      this.isError = null
-      this.feedback = ''
-
       const error = this.validateProfileEntities(this.user)
-      if (error) {
-        this.isError = true
-        this.feedback = error
-      }
 
-      if (!this.feedback) {
-        this.isLoading = true
-        service.updateProfile(this.user)
-          .then(() => {
-            this.isLoading = false
-            this.isError = false
-            this.feedback = 'This profile has been updated successfully!'
-          })
-          .catch((err) => {
-            this.isLoading = false
-            this.isError = true
-            this.feedback = err.message
-          })
+      if (error) {
+        this.$store.commit(mutationTypes.MODAL_ERROR, error)
+      } else {
+        this.$store.dispatch(actionTypes.UPDATE_PROFILE, this.user)
       }
     }
   }

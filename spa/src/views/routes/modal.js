@@ -1,6 +1,6 @@
 import SignUp from '../account/views/SignUp'
 import CreateProfile from '../account/views/CreateProfile'
-// import UpdateProfile from '../views/UpdateProfile'
+import UpdateProfile from '../account/views/UpdateProfile'
 // import GenericError from '../views/GenericError'
 // import Welcome from '../views/Welcome'
 // import FacebookCallback from '../views/FacebookCallback'
@@ -26,12 +26,12 @@ const routes = [
     component: CreateProfile,
     props: true
   },
-  // {
-  //   path: '/account/profile/update',
-  //   name: 'UpdateProfile',
-  //   component: UpdateProfile,
-  //   props: true,
-  // },
+  {
+    path: '/account/profile/update',
+    name: 'UpdateProfile',
+    component: UpdateProfile,
+    props: true
+  },
   // {
   //   path: '/account/facebook-callback',
   //   name: 'FacebookCallback',

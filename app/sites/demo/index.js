@@ -33,7 +33,8 @@ module.exports.routes = [
   { path: '/small-business-pulse/:slug' },
   { path: '/small-business-pulse/:year/:month/:name' },
   { path: '/small-business-pulse/:year/:month/:day/:name' },
-  { path: '/account/:dynamicPage', dynamicPage: 'home'  }
+  { path: '/account/:dynamicPage', dynamicPage: 'home'  },
+  { path: '/account/:dynamicPage/:mode', dynamicPage: 'home'  }
 ];
 
 // Resolve the url to publish to

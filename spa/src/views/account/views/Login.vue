@@ -4,10 +4,7 @@
       <h1 class="h1-login" align="center"> <span>Log In</span> <span class="small" style=" padding:0px 10px 0px 10px">or</span>
         <facebook-button :link="facebookLink"/>
       </h1>
-      <span
-              v-if="errorMessage"
-              class="error"
-              align="center">{{ errorMessage }}</span>
+      <message></message>
       <input type="email" placeholder="Email Address" name="email" @change="onFieldChange($event)"/>
       <input type="password" placeholder="Password" name="password" @change="onFieldChange($event)"/>
     </fieldset>
@@ -24,8 +21,8 @@
 
 <script>
 import FacebookButton from '../components/FacebookButton'
+import Message from '../components/Message'
 import { validateEmail } from '../utils'
-import { mapState } from 'vuex'
 import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
@@ -33,13 +30,11 @@ export default {
   name: 'Login',
 
   components: {
-    FacebookButton
+    FacebookButton,
+      Message
   },
 
   computed: {
-    ...mapState([
-      'errorMessage'
-    ]),
     facebookLink () {
       const { metadata } = this.$store.state
       const facebookRedirectUri = `${metadata.host}/account/facebook-callback`
@@ -63,24 +58,28 @@ export default {
     },
 
     async onLogInSubmit () {
-      this.$store.commit(mutationTypes.ERROR_MESSAGE, null)
+      this.$store.commit(mutationTypes.MODAL_ERROR, null)
       if (!this.user.email) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is missing.')
+        this.$store.commit(mutationTypes.MODAL_ERROR, 'Email address is missing.')
         return
       }
 
       if (!validateEmail(this.user.email)) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is not valid.')
+        this.$store.commit(mutationTypes.MODAL_ERROR, 'Email address is not valid.')
         return
       }
 
       if (!this.user.password) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Password is missing.')
+        this.$store.commit(mutationTypes.MODAL_ERROR, 'Password is missing.')
         return
       }
 
-      await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
-      this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+      try {
+        await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
+        this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+      } catch (e) {
+        // error handled inside of dispatch
+      }
     }
   }
 }

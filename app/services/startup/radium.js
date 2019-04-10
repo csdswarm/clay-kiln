@@ -294,7 +294,6 @@ const axios = require('axios'),
         await handleError(response, retryFunction, req, res);
       }
     } catch (e) {
-      console.log('error', e);
       await handleError(e.response, retryFunction, req, res);
     }
   };

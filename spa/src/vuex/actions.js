@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as mutationTypes from './mutationTypes'
 import * as actionTypes from './actionTypes'
 import formatError from '../views/account/services/format_error'
-import { getDeviceId } from '../views/account/utils'
+import {debugLog, getDeviceId} from '../views/account/utils'
 
 const axiosCall = async ({ method, url, data, commit }) => {
   try {
@@ -13,7 +13,7 @@ const axiosCall = async ({ method, url, data, commit }) => {
     return result
   } catch (err) {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, false)
-    commit(mutationTypes.ERROR_MESSAGE, formatError(err).message)
+    commit(mutationTypes.MODAL_ERROR, formatError(err).message)
     throw formatError(err)
   }
 }
@@ -72,5 +72,30 @@ export default {
 
     commit(mutationTypes.SET_USER, { ...result.data })
     commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+  },
+  async [actionTypes.GET_PROFILE]  ({ commit }) {
+    const result = await axiosCall({ commit,
+      method: 'get',
+      url: '/radium/v1/profile'
+    })
+
+    commit(mutationTypes.SET_USER, { ...result.data })
+  },
+  async [actionTypes.UPDATE_PROFILE]  ({ commit }, user) {
+    console.log(user)
+    const result = await axiosCall({ commit,
+      method: 'post',
+      url: '/radium/v1/profile/update',
+      data: {
+        first_name: user.firstName,
+        last_name: user.lastName,
+        gender: user.gender,
+        date_of_birth: user.dateOfBirth,
+        zip_code: user.zipCode
+      }
+    })
+
+    commit(mutationTypes.SET_USER, { ...result.data })
+    commit(mutationTypes.MODAL_SUCCESS, 'Your profile has been updated successfully!')
   }
 }

@@ -4,10 +4,7 @@
       <h1 align="center"> Create Your Profile<span
               class="small"
               style="padding: 0px 10px 0px 10px;"/></h1>
-      <span
-              v-if="errorMessage"
-              class="error"
-              align="center">{{ errorMessage }}</span>
+      <message></message>
       <input
               :value="user.email"
               :disabled="user.disableEmailInput"
@@ -114,9 +111,9 @@
 <script>
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
+import Message from '../components/Message'
 import { debugLog, validateEmail, isValidZipCode, isMobileDevice } from '../utils'
 import store from '@/store'
-import { mapState } from 'vuex'
 import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
@@ -124,13 +121,8 @@ export default {
   name: 'CreateProfile',
 
   components: {
-    Datepicker
-  },
-
-  computed: {
-    ...mapState([
-      'errorMessage'
-    ])
+    Datepicker,
+        Message
   },
 
   data () {
@@ -210,7 +202,7 @@ export default {
       const error = this.validateProfileEntities(this.user)
 
       if (error) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, error)
+        this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {
         try {
           await this.$store.dispatch(actionTypes.CREATE_PROFILE, this.user)
