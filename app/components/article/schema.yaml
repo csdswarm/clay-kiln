@@ -438,7 +438,7 @@ _groups:
   syndication:
     fields:
       - featured
-      - taxonomy
+      - editorialFeeds
       - syndicationStatus
       - syndicatedUrl
 
