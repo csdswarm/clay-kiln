@@ -183,15 +183,7 @@
             </li>
             <li class="item">
               <h4 class="item-title required">Taxonomy Term(s)</h4>
-              <ul>
-              {{~#if taxonomy.length ~}}
-                {{~#each taxonomy~}}
-                  <li><p class="item-data">{{ taxonomy.value }}</p></li>
-                {{~/each~}}
-              {{ else }}
-                <p class="item-data">None</p>
-              {{~/if~}}
-              </ul>
+              <p class="item-data">{{ default (commaSeparated taxonomy false) "None" }}</p>
             </li>
             <li class="item">
               <h4 class="item-title required">Syndication Status</h4>
