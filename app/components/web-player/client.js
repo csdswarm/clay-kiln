@@ -49,7 +49,12 @@ function syncPlayerButtons(currentStationId, playbackStatus) {
 
   // Synchronize player buttons.
   playerButtons.forEach((element) => {
-    const buttonStationId = element.dataset.playStation;
+    const buttonStationId = element.dataset.playStation,
+      isIRE = element.dataset;
+
+    if (isIRE === 'true') {
+      console.log({isIRE});
+    }
 
     if (playbackStatus === 'play') {
       if (buttonStationId == currentStationId) {
