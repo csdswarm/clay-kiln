@@ -12,7 +12,7 @@ down:
 
 rm-all:
 	@echo "Removing all stopped containers..."
-	docker rm $$(DOCKER ps -aq)
+	docker rm $$(docker ps -aq --filter name=^$$(basename $$(pwd)))
 
 burn:
 	@echo "Stopping and removing all containers..."
