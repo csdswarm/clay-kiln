@@ -104,7 +104,7 @@ function middleware(req, res, next) {
     })
     .then(composed => res.json(composed))
     .catch(err => {
-      log('error', err.stack);
+      log('error', '404', { stack: err.stack });
       res
         .status(404)
         .json({ status: 404, msg: err.message});
