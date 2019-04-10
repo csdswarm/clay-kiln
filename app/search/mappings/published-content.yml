@@ -73,6 +73,10 @@ _doc:
       store: true
     lead:
       type: keyword
+    taxonomy:
+      type: keyword
+    featured:
+      type: keyword
 
 
 
