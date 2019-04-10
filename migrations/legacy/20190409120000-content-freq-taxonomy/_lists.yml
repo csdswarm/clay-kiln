@@ -1,44 +1,16 @@
 _lists:
   freq_taxonomy:
-    -
-        name: Sports
-        value: sports
-    -
-        name: Country
-        value: country
-    -
-        name: Classic Rock
-        value: classic-rock
-    -
-        name: Alternative
-        value: alternative
-    -
-        name: Hot AC / Top 40 / CHR
-        value: hot-ac-top-40-chr
-    -
-        name: CHR / Top 40
-        value: chr-top-40
-    -
-        name: Hot AC
-        value: hot-ac
-    -
-        name: News/Talk
-        value: news-talk
-    -
-        name: AC
-        value: ac
-    -
-        name: Rock
-        value: rock
-    -
-        name: Urban
-        value: urban
-    -
-        name: Throwbacks
-        value: throwbacks
-    -
-        name: R and B
-        value: r-and-b
-    -
-        name: Hip Hop
-        value: hip-hop
+    - Sports
+    - Country
+    - Classic Rock
+    - Alternative
+    - Hot AC / Top 40 / CHR
+    - CHR / Top 40
+    - Hot AC
+    - News/Talk
+    - AC
+    - Rock
+    - Urban
+    - Throwbacks
+    - R and B
+    - Hip Hop
