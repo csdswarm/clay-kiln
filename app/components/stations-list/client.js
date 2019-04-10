@@ -118,10 +118,11 @@ class StationsList {
       if (this.truncateStations) {
         instanceModifier = 'Truncated';
       }
-      if (instanceModifier) {
-        instance += instanceModifier;
-      }
       queryParamString += `&${this.filterStationsBy}=${filter}`;
+    }
+
+    if (instanceModifier) {
+      instance += instanceModifier;
     }
 
     return await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);

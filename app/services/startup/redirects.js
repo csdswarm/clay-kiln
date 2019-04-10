@@ -48,7 +48,7 @@ const db = require('../server/db'),
         return uri;
       }
     } catch (e) {
-      console.log(e.message);
+      // swallowing db error
     }
   };
 
@@ -65,7 +65,7 @@ module.exports = async (req, res, next) => {
 
   try {
     if (possibleRedirect(req)) {
-      const data = await db.get(`${req.get('host')}${redirectDataURL}`),
+      const data = await db.get(`${req.get('host')}${redirectDataURL}`).catch(() => { return { redirects: [] }; }),
         redirects = data.redirects.sort((first, second) => first.path.indexOf('*') - second.path.indexOf('*')),
         redirectTo = redirects ? redirects.find(item => testURL(item.path, req)) : null;
 
@@ -93,8 +93,7 @@ module.exports = async (req, res, next) => {
     }
 
   } catch (e) {
-    console.log('Error in redirects middleware:');
-    console.log(e);
+    console.log('Error in redirects middleware:', e);
   }
 
   if (runNext) {
