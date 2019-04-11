@@ -1,5 +1,5 @@
 _description: |
-  Brightcove video embed
+  Verizon Media video embed
 
 videoId:
   _label: Video ID
@@ -15,9 +15,9 @@ showTitle:
 
 _groups:
   video:
-    _label: Brightcove Video
+    _label: Verizon Media Video
     _placeholder:
-      text: Brightcove Video
+      text: Verizon Media Video
       height: 30px;
       ifEmpty: videoId
     fields:
