@@ -183,4 +183,7 @@
   .google-ad-manager__slot {
     @mixin creative-styles;
   }
+  .kiln-permanent-placeholder {
+    min-height: 0 !important;
+  }
 }
