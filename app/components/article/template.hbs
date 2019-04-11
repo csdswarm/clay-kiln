@@ -23,7 +23,9 @@
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
-    <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{#if subHeadline}}
+      <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{/if}}
   </header>
 
   {{> google-ad-manager contentPageSponsorLogo }}
