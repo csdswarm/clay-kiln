@@ -56,7 +56,7 @@ function getGenreData({ slug, id }) {
     params['filter[id]'] = id;
   }
 
-  return radioApiService.get(route, params).then(response => {;
+  return radioApiService.get(route, params).then(response => {
     if (response.data) {
       if (id) {
         return response.data.shift();
