@@ -7,8 +7,8 @@
     "test": "mocha \"./{,!(node_modules)/**/}*.test.js\"",
     "start": "npm run check-elastic && nodemon --delay 2 --exec \"node -r dotenv/config\" app.js",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
-    "build": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true npx clay compile --globs 'global/js/**/!(*.test).js' --inlined --linked --reporter pretty && npx clay compile custom-tasks",
-    "watch": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true npx clay compile --globs 'global/js/**/!(*.test).js' --inlined --linked --watch",
+    "build": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true clay compile --globs 'global/js/**/!(*.test).js' --inlined --linked --reporter pretty && clay compile custom-tasks",
+    "watch": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true clay compile --globs 'global/js/**/!(*.test).js' --inlined --linked --watch",
     "build-web-player": "npm install git+ssh://git@github.com/Entercom/radio-web-player.git#develop --no-save && mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/",
     "eslint": "npx eslint . --cache"
   },
