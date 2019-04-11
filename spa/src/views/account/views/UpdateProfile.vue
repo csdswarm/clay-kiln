@@ -5,23 +5,32 @@
               class="small"
               style="padding: 0px 10px 0px 10px;"/></h1>
       <message></message>
-      <input
-              :value="user.first_name"
-              type="text"
-              placeholder="First Name"
-              size="30"
-              name="first_name"
-              @change="onFieldChange($event)"
-      >
-      <input
-              :value="user.last_name"
-              type="text"
-              placeholder="Last Name"
-              size="30"
-              name="last_name"
-              @change="onFieldChange($event)"
-      >
+      <div class="floating-label">
+        <input
+                :value="user.first_name"
+                type="text"
+                placeholder="First Name"
+                size="30"
+                name="first_name"
+                id="first_name"
+                @change="onFieldChange($event)"
+        >
+        <label for="first_name">First Name</label>
+      </div>
+      <div class="floating-label">
+        <input
+                :value="user.last_name"
+                type="text"
+                placeholder="Last Name"
+                size="30"
+                name="last_name"
+                id="last_name"
+                @change="onFieldChange($event)"
+        >
+        <label for="last_name">Last Name</label>
+      </div>
       <div class="gender-box">
+        <label>Gender</label>
         <div class="radio-item">
           <input
                   id="radio-1"
@@ -61,17 +70,20 @@
                   class="radio-label">Other</label>
         </div>
       </div>
+      <div class="floating-label">
       <div v-if="mobile">
         <input
-                :value="user.date_of_birth ? user.date_of_birth.format('YYYY-MM-DD') : user.date_of_birth"
+                :value="user.date_of_birth"
                 type="date"
                 name="date_of_birth"
+                id="date_of_birth"
                 class="dateclass placeholderclass dob"
                 data-placeholder="Date of Birth"
                 required
                 aria-required="true"
                 @change="onHtml5DateChange($event)"
         >
+        <label for="date_of_birth">Date of Birth</label>
       </div>
       <div v-else>
         <datepicker
@@ -79,15 +91,24 @@
                 placeholder="Date of Birth"
                 format="yyyy-MM-dd"
                 @selected="onVueDatepickerChange($event)"
-        />
+                id="date_of_birth"
+        >
+          <label slot="afterDateInput" for="date_of_birth">Date of Birth</label>
+        </datepicker>
       </div>
-      <input
-              :value="user.zip_code"
-              type="text"
-              placeholder="Zip Code"
-              name="zip_code"
-              @change="onFieldChange($event)"
-      >
+      </div>
+
+      <div class="floating-label">
+        <input
+                :value="user.zip_code"
+                type="text"
+                placeholder="Zip Code"
+                name="zip_code"
+                id="zip_code"
+                @change="onFieldChange($event)"
+        >
+        <label for="zip_code">Zip Code</label>
+      </div>
     </fieldset>
     <div>
       <input
@@ -220,9 +241,6 @@ export default {
   input[type="date"]:focus::before,
   input[type="date"]:valid::before { display: none }
 
-  .gender-box {
-    margin-bottom: 20px;
-  }
 
   /* Radio buttons */
   .radio-item {

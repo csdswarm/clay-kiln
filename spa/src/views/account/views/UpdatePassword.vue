@@ -4,13 +4,17 @@
     <fieldset>
       <h1 align="center">Change Your Password</h1>
       <message></message>
-      <input
+      <div class="floating-label">
+        <input
               :value="currentPassword"
               type="password"
               placeholder="Current Password"
               name="currentPassword"
               @change="onFieldChange($event)"
       >
+        <label>Current Password</label>
+      </div>
+      <div class="floating-label">
       <input
               :value="newPassword"
               type="password"
@@ -18,6 +22,9 @@
               name="newPassword"
               @change="onFieldChange($event)"
       >
+        <label>Nee Password</label>
+      </div>
+      <div class="floating-label">
       <input
               :value="confirmNewPassword"
               type="password"
@@ -25,6 +32,8 @@
               name="confirmNewPassword"
               @change="onFieldChange($event)"
       >
+        <label>Confirm New Password</label>
+      </div>
     </fieldset>
     <input
             type="submit"

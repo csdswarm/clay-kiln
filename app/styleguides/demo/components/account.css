@@ -324,4 +324,47 @@
   .closeModal::after {
     transform: rotate(45deg);
   }
+
+
+  label {
+    position: absolute;
+    left: 0;
+    font-size: 12px;
+    opacity: .7;
+  }
+
+  .radio-label {
+    position: static;
+    left: auto;
+    font-size: 16px;
+    opacity: 1;
+  }
+
+  .floating-label {
+    position:  relative;
+    margin-bottom:  10px;
+    width:  100%;
+    label {
+      position:  absolute;
+      left:  0;
+      top: calc(50% - 12px);
+      opacity:  0;
+      transition:  all .3s ease;
+      font-size: 12px;
+    }
+    input {
+      display:  flex;
+    }
+    input:not(:placeholder-shown) + label {
+      transform:  translateY(-10px);
+      opacity:  .7;
+    }
+  }
+  .gender-box {
+    padding-bottom: 15px;
+    padding-left: 10px;
+    background-color: #eee;
+    margin-bottom: 15px;
+  }
 }
+

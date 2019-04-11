@@ -240,6 +240,7 @@ const axios = require('axios'),
     const routes = {
         'POST:/radium/v1/auth/signin': signInLogic,
         'POST:/radium/v1/profile/create': profileLogic,
+        'POST:/radium/v1/profile/update': profileLogic,
         'GET:/radium/v1/profile': profileLogic
       },
       keys = Object.keys(routes),

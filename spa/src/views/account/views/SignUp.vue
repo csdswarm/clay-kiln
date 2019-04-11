@@ -8,6 +8,7 @@
         <facebook-button :link="facebookLink"/>
       </h1>
       <message></message>
+      <div class="floating-label">
       <input
               :value="user.email"
               type="email"
@@ -16,6 +17,9 @@
               autofocus
               @change="onFieldChange($event)"
       >
+        <label>Email Address</label>
+      </div>
+      <div class="floating-label">
       <input
               :value="user.password"
               type="password"
@@ -23,6 +27,9 @@
               name="password"
               @change="onFieldChange($event)"
       >
+        <label>Password</label>
+      </div>
+      <div class="floating-label">
       <input
               :value="user.confirmPassword"
               type="password"
@@ -30,6 +37,8 @@
               name="confirmPassword"
               @change="onFieldChange($event)"
       >
+        <label>Confirm Password</label>
+      </div>
     </fieldset>
     <span class="terms">
       <span>By proceeding, you agree to the </span>

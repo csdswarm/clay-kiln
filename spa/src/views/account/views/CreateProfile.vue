@@ -5,6 +5,7 @@
               class="small"
               style="padding: 0px 10px 0px 10px;"/></h1>
       <message></message>
+      <div class="floating-label">
       <input
               :value="user.email"
               :disabled="user.disableEmailInput"
@@ -15,6 +16,9 @@
               :class="user.disableEmailInput ? 'disabled-ui' : 'enabled-ui'"
               @change="onFieldChange($event)"
       >
+        <label>Email Address</label>
+      </div>
+      <div class="floating-label">
       <input
               :value="user.firstName"
               type="text"
@@ -23,6 +27,9 @@
               name="firstName"
               @change="onFieldChange($event)"
       >
+        <label>First Name</label>
+      </div>
+      <div class="floating-label">
       <input
               :value="user.lastName"
               type="text"
@@ -31,7 +38,10 @@
               name="lastName"
               @change="onFieldChange($event)"
       >
+        <label>Last Name</label>
+      </div>
       <div class="gender-box">
+        <label>Gender</label>
         <div class="radio-item">
           <input
                   id="radio-1"
@@ -71,7 +81,9 @@
                   class="radio-label">Other</label>
         </div>
       </div>
-      <div v-if="mobile">
+
+  <div class="floating-label">
+  <div v-if="mobile">
         <input
                 :value="user.dateOfBirth ? user.dateOfBirth.format('YYYY-MM-DD') : user.dateOfBirth"
                 type="date"
@@ -82,6 +94,7 @@
                 aria-required="true"
                 @change="onHtml5DateChange($event)"
         >
+        <label>Date of Birth</label>
       </div>
       <div v-else>
         <datepicker
@@ -89,8 +102,12 @@
                 placeholder="Date of Birth"
                 format="yyyy-MM-dd"
                 @selected="onVueDatepickerChange($event)"
-        />
+        >
+          <label slot="afterDateInput">Date of Birth</label>
+        </datepicker>
       </div>
+  </div>
+  <div class="floating-label">
       <input
               :value="user.zipCode"
               type="text"
@@ -98,6 +115,8 @@
               name="zipCode"
               @change="onFieldChange($event)"
       >
+    <label>Zip Code</label>
+  </div>
     </fieldset>
     <div>
       <input
@@ -250,10 +269,6 @@ export default {
    */
   input[type="date"]:focus::before,
   input[type="date"]:valid::before { display: none }
-
-  .gender-box {
-    margin-bottom: 20px;
-  }
 
   /* Radio buttons */
   .radio-item {

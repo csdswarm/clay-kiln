@@ -3,6 +3,7 @@ import * as mutationTypes from './mutationTypes'
 import * as actionTypes from './actionTypes'
 import formatError from '../views/account/services/format_error'
 import { getDeviceId } from '../views/account/utils'
+import moment from "moment";
 
 const axiosCall = async ({ method, url, data, commit }) => {
   try {
@@ -15,6 +16,13 @@ const axiosCall = async ({ method, url, data, commit }) => {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, false)
     commit(mutationTypes.MODAL_ERROR, formatError(err).message)
     throw formatError(err)
+  }
+}
+
+const formatProfile = (profile) => {
+  return {
+    ...profile,
+    date_of_birth: profile.date_of_birth ? moment(profile.date_of_birth).format('YYYY-MM-DD')  : ''
   }
 }
 
@@ -70,7 +78,7 @@ export default {
       }
     })
 
-    commit(mutationTypes.SET_USER, { ...result.data })
+    commit(mutationTypes.SET_USER, formatProfile(result.data))
     commit(mutationTypes.ACCOUNT_MODAL_HIDE)
   },
   async [actionTypes.GET_PROFILE]  ({ commit }) {
@@ -79,7 +87,7 @@ export default {
       url: '/v1/profile'
     })
 
-    commit(mutationTypes.SET_USER, { ...result.data })
+    commit(mutationTypes.SET_USER, formatProfile(result.data))
   },
   async [actionTypes.UPDATE_PROFILE]  ({ commit }, user) {
     const result = await axiosCall({ commit,
@@ -94,7 +102,7 @@ export default {
       }
     })
 
-    commit(mutationTypes.SET_USER, { ...result.data })
+    commit(mutationTypes.SET_USER, formatProfile(result.data))
     commit(mutationTypes.MODAL_SUCCESS, 'Your profile has been updated successfully!')
   },
   async [actionTypes.UPDATE_PASSWORD]  ({ commit }, passwords) {
