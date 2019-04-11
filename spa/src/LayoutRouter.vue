@@ -300,7 +300,7 @@ export default {
           // update browser history
           window.history.pushState({}, null, window.location.pathname)
           // add the title back to the page we never left before the modal
-          metaManager.updateTitle(this.redirectTo.title)
+          metaManager.updateTitleTag(this.redirectTo.title)
           // now replace the new history with our old page and title
           window.history.replaceState({ }, null, this.redirectTo.url)
           // update vue history also
@@ -311,7 +311,7 @@ export default {
       } else {
         // since the modal is not updating the title, manually do it
         // if we need to update anything for meta data or additional tracking, it can be done here
-        metaManager.updateTitle(`${component.name.replace(/([A-Z])/g, ' $1')} | RADIO.COM`)
+        metaManager.updateTitleTag(`${component.name.replace(/([A-Z])/g, ' $1')} | RADIO.COM`)
       }
     }
   },

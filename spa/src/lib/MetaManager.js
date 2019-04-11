@@ -235,13 +235,4 @@ export default class MetaManager {
       this.createLinkTag(href)
     }
   }
-  /**
-   *
-   * Update the document <title> tag on the page.
-   *
-   * @param {string} title - New title to be used in title tag.
-   */
-  updateTitle (title) {
-
-  }
 }
