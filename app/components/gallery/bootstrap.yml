@@ -31,10 +31,12 @@ _components:
     sideShare:
       _ref: /_components/share/instances/new
     sectionFront: ''
-    secondaryArticleType: ''
     contentType: 'gallery'
     syndicatedUrl: ''
     syndicationStatus: original
     showSocial: true
     eligibleForGoogleStandout: false
+    sources: []
+    secondaryArticleType: ''
     footer: []
+    crumbs: []
