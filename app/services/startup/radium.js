@@ -215,7 +215,7 @@ const axios = require('axios'),
       addCookie(COOKIES.profile, profile, profileExpires, res);
       addCookie(COOKIES.accessToken, response.data.access_token, accessExpires, res);
       // since sending all of the tokens will be more than 4,096 bytes, store the refresh
-      db.put(`token-${profile.userId}`, JSON.stringify({
+      db.put(`token-${profile.user_id}`, JSON.stringify({
         refreshToken: response.data.refresh_token
       }));
 
