@@ -8,7 +8,7 @@ import Login from '../account/views/Login'
 // import GenericSuccess from '../views/GenericSuccess'
 // import ForgotYourPassword from '../views/ForgotYourPassword'
 // import ResetPassword from '../views/ResetPassword'
-// import UpdatePassword from '../views/UpdatePassword'
+import UpdatePassword from '../account/views/UpdatePassword'
 // import ResetPasswordSuccess from '../views/ResetPasswordSuccess'
 // import EmailVerifiedSuccess from '../views/EmailVerifiedSuccess'
 // import Home from '../views/Home'
@@ -50,12 +50,12 @@ const routes = [
   //   component: ResetPassword,
   //   props: true,
   // },
-  // {
-  //   path: '/account/password/update',
-  //   name: 'UpdatePassword',
-  //   component: UpdatePassword,
-  //   props: true,
-  // },
+  {
+    path: '/account/password/update',
+    name: 'UpdatePassword',
+    component: UpdatePassword,
+    props: true
+  },
   // {
   //   path: '/account/reset-password/success',
   //   name: 'ResetPasswordSuccess',

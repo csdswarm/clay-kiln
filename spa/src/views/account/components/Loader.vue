@@ -6,19 +6,18 @@
   </div>
 </template>
 
-
 <script>
-    import { mapState } from 'vuex'
+import { mapState } from 'vuex'
 
-    export default {
-        name: 'Loader',
+export default {
+  name: 'Loader',
 
-        computed: {
-            ...mapState([
-                'modalLoading'
-            ])
-        }
-    }
+  computed: {
+    ...mapState([
+      'modalLoading'
+    ])
+  }
+}
 </script>
 
 <style>

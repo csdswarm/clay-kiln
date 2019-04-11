@@ -122,7 +122,7 @@ export default {
 
   components: {
     Datepicker,
-        Message
+    Message
   },
 
   data () {

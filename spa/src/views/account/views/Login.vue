@@ -31,7 +31,7 @@ export default {
 
   components: {
     FacebookButton,
-      Message
+    Message
   },
 
   computed: {
