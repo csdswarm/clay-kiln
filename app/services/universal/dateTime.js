@@ -93,9 +93,10 @@ const moment = require('moment'),
     const details = [],
       currentHour = new Date().getHours();
 
-    for (let hour = 24; hour > 0; hour--) {
-      const text = `${(((hour - 1) % 12) + 1) % 13}:00 ${(hour + 12) % 24 < 12 ? 'PM' : 'AM'}`,
-        value = parseInt(new Date(new Date().setHours(hour)).toISOString().split('T')[1].split(':')[0]);
+    for (let hour = 23; hour >= 0; hour--) {
+      const time = new Date(new Date().setHours(hour)).toISOString(),
+        text = moment(time).startOf('hour').format('h:mm A'),
+        value = parseInt(time.split('T')[1].split(':')[0]);
 
       details.push({
         text,
@@ -118,7 +119,7 @@ const moment = require('moment'),
   /**
    * Returns an array of text/value keys starting from the users current day with 7 days
    *
-   * @param {boolean} reverse
+   * @param {boolean} [reverse]
    * @returns {array}
    */
   nextSevenDays = (reverse) => {

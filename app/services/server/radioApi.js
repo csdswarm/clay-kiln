@@ -65,15 +65,15 @@ const rest = require('../universal/rest'),
    */
   get = async (route, params, validate, ttl = TTL.DEFAULT ) => {
     const dbKey = createKey(route, params),
-      requestEndpoint = createEndpoint(route, params),
-      validateResponse = validate ? validate : defaultValidation(route);
+      validateFn = validate || defaultValidation(route),
+      requestEndpoint = createEndpoint(route, params);
 
     try {
       const data = await db.get(dbKey);
 
       if (data.updated_at && (new Date() - new Date(data.updated_at) > ttl)) {
         try {
-          return await getAndSave(requestEndpoint, dbKey, validateResponse);
+          return await getAndSave(requestEndpoint, dbKey, validateFn);
         } catch (e) {
         }
       }
@@ -83,7 +83,7 @@ const rest = require('../universal/rest'),
     } catch (e) {
       try {
         // if an issue with getting the key, get the data
-        return await getAndSave(requestEndpoint, dbKey, validateResponse);
+        return await getAndSave(requestEndpoint, dbKey, validateFn);
       } catch (e) {
         // If API errors out and we don't have stale data, return empty object
         return {};
