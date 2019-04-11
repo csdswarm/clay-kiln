@@ -50,20 +50,17 @@ function syncPlayerButtons(currentStationId, playbackStatus) {
   // Synchronize player buttons.
   playerButtons.forEach((element) => {
     const buttonStationId = element.dataset.playStation,
-      isIRE = element.dataset;
-
-    if (isIRE === 'true') {
-      console.log({isIRE});
-    }
+      isIRE = element.dataset.ire === 'true',
+      notPlayingClass = `show__${isIRE ? 'stop' : 'pause'}`;
 
     if (playbackStatus === 'play') {
       if (buttonStationId == currentStationId) {
-        element.classList.replace('show__play', 'show__pause');
+        element.classList.replace('show__play', notPlayingClass);
       } else {
-        element.classList.replace('show__pause', 'show__play');
+        element.classList.replace(notPlayingClass, 'show__play');
       }
     } else {
-      element.classList.replace('show__pause', 'show__play');
+      element.classList.replace(notPlayingClass, 'show__play');
     }
   });
 }
