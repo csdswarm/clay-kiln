@@ -1,0 +1,12 @@
+_components:
+  stations-directory:
+    featuredDirectory:
+      _ref: /_components/directory-featured/instances/default
+    locationDirectory:
+      _ref: /_components/directory-location/instances/default
+    musicDirectory:
+      _ref: /_components/directory-genre/instances/music
+    newsTalkDirectory:
+      _ref: /_components/directory-genre/instances/news-talk
+    sportsDirectory:
+      _ref: /_components/directory-genre/instances/sports

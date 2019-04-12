@@ -1,0 +1,9 @@
+_components:
+  stations-list:
+    filterBy: ''
+    genre: ''
+    market: ''
+    category: ''
+    listTitle: ''
+    truncatedList: true
+    seeAllLink: ''

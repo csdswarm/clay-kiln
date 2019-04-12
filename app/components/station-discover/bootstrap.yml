@@ -1,0 +1,8 @@
+_components:
+  station-discover:
+    recentStations:
+      _ref: /_components/stations-list/instances/recent
+    marketStations:
+      _ref: /_components/stations-list/instances/marketTruncated
+    genreStations:
+      _ref: /_components/stations-list/instances/genreTruncated

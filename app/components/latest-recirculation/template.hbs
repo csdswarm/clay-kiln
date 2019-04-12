@@ -1,4 +1,4 @@
-<section class="component component--latest-recirc {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
+<section class="component component--latest-recirc {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}{{#if (compare populateBy 'station')}}component--station{{/if}}{{#if (compare articles.length 0)}} component--empty{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
   {{#ifAny articles.length @root.locals.edit}}
     <h2 class="latest-recirc__title">LATEST
     {{#if (compare populateBy 'sectionFront')}}
@@ -7,17 +7,21 @@
     {{#if (compare populateBy 'tag')}}
       in <span class="title">{{tag}}</span>
     {{/if}}
+    {{#if (compare populateBy 'station')}}
+      from <span class="title">{{station}}</span>
+    {{/if}}
     </h2>
     <ul class="latest-recirc__links">
       {{#each articles as |article|}}
         <li>
-          <a href="{{ article.canonicalUrl }}"
+          <a href="{{if article.canonicalUrl article.canonicalUrl else=article.externalUrl}}"
+             target="{{if article.canonicalUrl "_self" else="_blank"}}"
              data-track-type="article-link"
              data-track-component-name="latest-recirculation"
              data-track-page-uri="{{ article.pageUri }}"
              data-track-headline="{{ article.primaryHeadline }}"
              data-track-component-title="Latest Recirculation">
-            <div class="link__thumb" style="background-image:url({{ article.feedImgUrl }}?width=400);"></div>
+            <div class="link__thumb" style="background-image:url({{ article.feedImgUrl }}?width=70&crop=1:1,offset-y0);"></div>
             <span class="link__headline">{{{ article.primaryHeadline }}}</span>
           </a>
         </li>

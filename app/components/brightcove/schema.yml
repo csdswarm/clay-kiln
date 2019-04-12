@@ -6,6 +6,8 @@ videoId:
   _has:
     input: text
     type: text
+    validate:
+      required: true
 
 showTitle:
   _label: Show video title?

@@ -127,12 +127,9 @@ export default {
 
         this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, route.component)
 
-        // set the current title and path for where to update history to when the modal changes
+        // set the current path for where to update history to when the modal changes
         if (!this.redirectTo && from) {
-          this.redirectTo = {
-            url: from,
-            title: document.title
-          }
+          this.redirectTo = from
         }
 
         return true
@@ -290,27 +287,16 @@ export default {
         this.modalHide()
 
         if (this.redirectTo) {
-          // the modal has closed but if re just push to the next route in Vue, it forces a refresh of the components
-          // on the page, there is discussion https://github.com/vuejs/vue-router/issues/703 with a proposed workaround
-          // but to keep rework to a minimum, we can update the browser history to add the last route from the modal
-          // then also tap into the router history to change what it thinks the current page is so routing will work
-          // correctly in Vue
+            const path = this.redirectTo
 
-          // update browser history
-          window.history.pushState({}, null, window.location.pathname)
-          // add the title back to the page we never left before the modal
-          metaManager.updateTitle(this.redirectTo.title)
-          // now replace the new history with our old page and title
-          window.history.replaceState({ }, null, this.redirectTo.url)
-          // update vue history also
-          this.$router.history.current = { ...this.$router.history.current, path: this.redirectTo.url }
-          // reset our redirect
-          this.redirectTo = null
+            this.redirectTo = null
+
+            this.$router.push(path)
         }
       } else {
         // since the modal is not updating the title, manually do it
         // if we need to update anything for meta data or additional tracking, it can be done here
-        metaManager.updateTitle(`${component.name.replace(/([A-Z])/g, ' $1')} | RADIO.COM`)
+        metaManager.updateTitleTag(`${component.name.replace(/([A-Z])/g, ' $1')} | RADIO.COM`)
       }
     }
   },

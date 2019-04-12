@@ -1,0 +1,28 @@
+<section data-uri="{{ default _ref _self }}" class="component component--directory-featured">
+  {{> stations-list recentStations }}
+  <div class="directory-featured__stations-by-genre">
+    <div class="stations-by-genre__header-row">
+      <h2 class="header-row__title">stations by genre</h2>
+      <a class="header-row__see-all-link" href="//{{ @root.locals.site.host }}/stations/music">See all {{{ read 'components/directory-featured/media/chevron_right.svg' }}}</a>
+    </div>
+    <ul class="stations-by-genre__genre-list">
+      {{#each genres}}
+        <li class="genre-list__genre genre--{{ css }}">
+          <a href="//{{ @root.locals.site.host }}/stations/music/{{ ref }}">
+            <img src="https://images.radio.com/aiu-media/{{ img }}.jpg?width=140&height=140&crop=1:1,offset-y0">
+            <span class="genre__label">{{ label }}</span>
+          </a>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+  <div class="directory-featured__stations-by-category" data-category="music">
+    {{> stations-list stationsListTruncated }}
+  </div>
+  <div class="directory-featured__stations-by-category" data-category="news-talk">
+    {{> stations-list stationsListTruncated }}
+  </div>
+  <div class="directory-featured__stations-by-category" data-category="sports">
+    {{> stations-list stationsListTruncated }}
+  </div>
+</section>

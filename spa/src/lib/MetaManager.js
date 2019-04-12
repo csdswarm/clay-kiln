@@ -17,7 +17,7 @@ const queryPayload = new QueryPayload()
 export default class MetaManager {
   /**
    *
-   * On SPA navigation, update HTML tags that fall outside the SPA.acoun
+   * On SPA navigation, update HTML tags that fall outside the SPA.
    *
    * @param {object} spaPayload - The handlebars context payload data.
    */
@@ -234,14 +234,5 @@ export default class MetaManager {
     } else if (createIfNotExist) {
       this.createLinkTag(href)
     }
-  }
-  /**
-   *
-   * Update the document <title> tag on the page.
-   *
-   * @param {string} title - New title to be used in title tag.
-   */
-  updateTitle (title) {
-
   }
 }

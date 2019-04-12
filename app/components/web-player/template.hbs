@@ -1,22 +1,5 @@
-{{!-- <div data-uri="{{ default _ref _self }}" class="component component--web-player">
-  {{#unless @root.locals.edit}}
+{{#unless @root.locals.edit}}
+<div data-uri="{{ default _ref _self }}" data-web-player-host="{{@root.locals.site.webPlayerHost}}" data-brightcove-account-id="{{ @root.locals.site.brightcoveAccountId }}" class="component component--web-player"> 
   <div id="playerContainer"></div>
-  <script src="//players.brightcove.net/{{ @root.locals.site.brightcoveAccountId }}/default_default/index.min.js"> </script> 
-  <script src="//players.brightcove.net/videojs-ima3/3/videojs.ima3.min.js"></script>
-  <script>
-    // @TODO: Dynamically populate data or pick appropriate default data
-    window.onload = function () {
-      window.RadioPlayer.initialize();
-      window.RadioPlayer.addStationToPlaylistById(1005, true);
-      //Set up google tag in case it doesn't exist
-      var googletag = googletag || {};
-      googletag.cmd = googletag.cmd || [];
-      // Slot for 100x35 on web player
-      //TODO: add slot in more coherent way
-      googletag.cmd.push(function() {
-        googletag.defineSlot('/21674100491/ENT.TEST', [100, 35], 'div-gpt-ad-1532458744047-0').addService(googletag.pubads());
-        googletag.display('div-gpt-ad-1532458744047-0');
-      });
-    }
-  </script> {{/unless}}
-</div> --}}
+</div>
+{{/unless}}

@@ -18,6 +18,7 @@ export const vuexStoreDefaultState = {
   pageCache: {
     gallerySlidePageviews: {} // Used to track slide pageview events so slide pageviews are only counted once per SPA "pageview"
   },
+  radioPlayer: null,
   metadata: {},
   modalComponent: null,
   user: {},
