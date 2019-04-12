@@ -1,0 +1,5 @@
+components:
+  verizon-media:
+    instances:
+      new:
+        videoId: ''
