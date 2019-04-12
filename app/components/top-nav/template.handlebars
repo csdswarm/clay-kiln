@@ -57,8 +57,8 @@
         {{/each}}
       {{/if}}
       <div class="radiocom-nav__radium radium">
-        {{#if @root.locals.radiumUser }}
-          <span class="radium__text radium__user">{{@root.locals.radiumUser.first_name}} {{@root.locals.radiumUser.last_name}}<twisty /></span>
+        {{#if radiumUser }}
+          <span class="radium__text radium__user">{{radiumUser.first_name}} {{radiumUser.last_name}}<twisty /></span>
           <div class="radium__nav-drawer">
             <div class="radium__container">
               <ul class="radium__sub-list">
@@ -87,7 +87,7 @@
         {{/if}}
         <div class="nav-drawer__radium-mobile radium-mobile">
           <ul class="radium-mobile__list">
-            {{#if @root.locals.radiumUser }}
+            {{#if radiumUser }}
               <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="account/profile/update">Manage Profile</a></li>
               <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="account/password/update">Change Password</a></li>
               <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="account/logout">Log Out</a></li>

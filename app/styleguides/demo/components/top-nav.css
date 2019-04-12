@@ -74,6 +74,9 @@ $drawerSelector: nav-drawer;
     height: 100%;
     width: $default-screen-nav-width;
     position: relative;
+
+    /* override bootstrap.min.css max-width for container */
+    max-width: none;
   }
 
   .radiocom-nav__hamburger.wrapper {
