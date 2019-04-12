@@ -7,6 +7,7 @@ $large-screen-nav-width: em(940);
 $medium-screen-nav-width: em(728);
 $medium-small-screen-nav-width: em(440);
 $small-screen-nav-width: em(320);
+$default-radium-width: em(150);
 
 $default-nav-height: em(60);
 $mini-nav-height: em(46);
@@ -15,6 +16,8 @@ $navButton: radiocom-nav__category-button;
 $drawerSelector: nav-drawer;
 
 .radiocom-nav-placeholder {
+  height: $default-nav-height;
+
   button {
     @mixin inline-block;
     padding: 0;
@@ -24,6 +27,7 @@ $drawerSelector: nav-drawer;
     border: none;
     height: 100%;
   }
+
   ul {
     display: inline-block;
     list-style-type: none;
@@ -35,20 +39,25 @@ $drawerSelector: nav-drawer;
     -webkit-padding-start: 0;
     float: left;
   }
-  .category-button__text, .sub-nav__text, .sub-nav-list-item__text, li {
+
+  .category-button__text,
+  .sub-nav__text,
+  .sub-nav-list-item__text,
+  li {
     padding: 0;
     margin: 0;
     font-weight: normal;
     @mixin inline-block;
   }
+
   a {
     @mixin inline-block;
     color: #000;
     text-transform: none;
     text-decoration: none;
   }
-  height: $default-nav-height;
 }
+
 .radiocom-nav {
   background: $parisM;
   width: 100%;
@@ -58,12 +67,15 @@ $drawerSelector: nav-drawer;
   text-align: center;
   z-index: 100;
   height: $default-nav-height;
+
   .container {
     @mixin inline-block;
     text-align: left;
     height: 100%;
     width: $default-screen-nav-width;
+    position: relative;
   }
+
   .radiocom-nav__hamburger.wrapper {
     display: none;
     position: relative;
@@ -73,6 +85,7 @@ $drawerSelector: nav-drawer;
     height: em(15);
     cursor: pointer;
     @mixin vertical-align;
+
     .bar {
       position: absolute;
       top: 0;
@@ -88,21 +101,26 @@ $drawerSelector: nav-drawer;
       background-color: white;
       -webkit-transition: all 0.2s ease-in;
       -webkit-transform: rotate(0deg);
+
       &.bar-1.active {
         top: 6px;
         -webkit-transform: rotate(-135deg);
         -webkit-transition: all 0.2s ease-in;
       }
+
       &.bar-2 {
         top: 6px;
+
         &.active {
           right: 100px;
           background-color: transparent;
           -webkit-transition: all 0.2s ease-in;
         }
       }
+
       &.bar-3 {
         top: 12px;
+
         &.active {
           top: 6px;
           -webkit-transform: rotate(135deg);
@@ -111,6 +129,7 @@ $drawerSelector: nav-drawer;
       }
     }
   }
+
   .radiocom-nav__logo {
     @mixin inline-block;
     font-size: 16px;
@@ -121,12 +140,15 @@ $drawerSelector: nav-drawer;
     padding: 0;
     margin: 0 em(42) 0 0;
     cursor: pointer;
-    img, svg {
+
+    img,
+    svg {
       width: 100%;
       height: auto;
       vertical-align: -webkit-baseline-middle;
     }
   }
+
   @define-mixin header-button-color $modifier, $color {
     &.$(navButton)--active.$(navButton)--$(modifier),
     &.$(navButton)--$(modifier).$(navButton)--current,
@@ -134,6 +156,7 @@ $drawerSelector: nav-drawer;
       background: $color;
     }
   }
+
   @define-mixin header-heading-color $modifier, $color {
     &.$(navButton)--active.$(navButton)--$(modifier) .category-button__text,
     &.$(navButton)--$(modifier).$(navButton)--current,
@@ -141,6 +164,7 @@ $drawerSelector: nav-drawer;
       color: $color;
     }
   }
+
   .$(navButton) {
     @mixin inline-block;
     border: 0;
@@ -158,6 +182,7 @@ $drawerSelector: nav-drawer;
     @mixin header-heading-color listen, $parisM;
     @mixin header-heading-color download, $parisM;
     @mixin header-heading-color more, $parisM;
+
     button .category-button__text {
       font-family: CircularStd-Black, sans-serif;
       font-size: 15px;
@@ -167,61 +192,181 @@ $drawerSelector: nav-drawer;
       vertical-align: bottom;
     }
   }
+
+  &__radium {
+    display: block;
+    position: absolute;
+    height:100%;
+    top: 0;
+    left: calc($default-screen-nav-width - $default-radium-width);
+    width: $default-radium-width;
+
+    .radium {
+      &__text,
+      &__sub-text {
+        color: $white;
+        font-size: em(12);
+      }
+
+      &__text {
+        text-transform : uppercase;
+      }
+
+      &__user {
+        cursor: default;
+
+        > twisty {
+          transform: translate(0, -20%) scale(1.5, 1) rotate(0.5turn);
+          margin-left: em(10);
+          display: inline-block;
+          &::after {
+            content: '^';
+            font-weight: 900;
+          }
+        }
+      }
+
+      &__user,
+      &__sign-in-up {
+        @mixin vertical-align absolute;
+      }
+
+      &__link {
+        display: inline-block;
+        position: relative;
+        padding: 0 em(20);
+
+        &:hover::after {
+          content: '';
+          display: block;
+          width: 40%;
+          position: absolute;
+          left: 30%;
+          top: em(18);
+          height: em(3);
+          background-color: $white;
+        }
+      }
+
+      &__nav-drawer {
+        background: $purple;
+        position: fixed;
+        top: $default-nav-height;
+        left: 0;
+        height: em(120);
+        width: 100%;
+        cursor: default;
+        display: none;
+      }
+
+      &__container {
+        @mixin inline-block;
+        position:relative;
+        text-align: left;
+        height: 100%;
+        width: $default-screen-nav-width;
+        margin: 0 auto;
+      }
+
+      &__sub-list {
+        width: $default-radium-width;
+        display: block;
+        position: absolute;
+        top: em(20);
+        right: 0;
+
+        &-item {
+          display: list-item;
+          margin: em(7) 0;
+        }
+      }
+    }
+
+    &:hover {
+      .radium {
+        &__user > twisty{
+          transform: translate(0, 20%) scale(1.5, 1);
+        }
+
+        &__nav-drawer {
+          display: flex;
+        }
+      }
+    }
+  }
+
   .radiocom-nav__container--right {
     @mixin inline-block;
     @mixin vertical-align;
     @mixin medium-screen {
       float: right;
     }
+
     .account-btn {
       font-size: 16px;
       vertical-align: middle;
       height: em(30);
       width: em(30);
       margin: 0 em(20) 0 em(42);
-      div, img, svg {
+
+      div,
+      img,
+      svg {
         width: 100%;
         height: auto;
       }
+
       .inactive {
         display: none;
       }
+
       .active {
         display: block;
       }
+
       @mixin large-screen {
         margin: 0 em(20) 0 em(9);
       }
+
       @mixin medium-screen {
         height: em(24);
         width: em(24);
         margin: 0 em(20) 0 0;
       }
+
       @mixin medium-small-screen {
         display: none;
       }
     }
+
     .search-btn {
       font-size: 16px;
       vertical-align: middle;
       height: em(30);
       width: em(25);
-      div, img, svg {
+
+      div,
+      img,
+      svg {
         width: 100%;
         height: auto;
       }
+
       .inactive {
         display: none;
       }
+
       .active {
         display: block;
       }
+
       @mixin medium-screen {
         height: em(20);
         width: em(20);
       }
     }
   }
+
   .$(drawerSelector) {
     background: $purple;
     position: fixed;
@@ -233,37 +378,47 @@ $drawerSelector: nav-drawer;
     color: $white;
     cursor: default;
     overflow: hidden;
+
     &:not(.$(drawerSelector)--mobile) {
       justify-content: center;
+
       .container {
         display: block;
         text-align: left;
         width: $default-screen-nav-width;
+
         .$(drawerSelector)__sub-nav {
           @mixin inline-block;
+
           &:first-of-type {
             margin-right: em(100);
+
             .$(drawerSelector)__sub-nav--columns {
               @mixin ul-columns 3, em(80);
             }
           }
+
           &:nth-of-type(2) {
             margin-right: em(100);
+
             .$(drawerSelector)__sub-nav--columns {
               @mixin ul-columns 2, em(80);
             }
           }
+
           &:nth-of-type(3) {
             .$(drawerSelector)__sub-nav--columns {
               @mixin ul-columns 1, em(80);
             }
           }
+
           ul {
             li {
               display: block;
               width: em(100);
               cursor: pointer;
               white-space: nowrap;
+
               .sub-nav-list-item__text {
                 font-family: ProximaNova-Regular, sans-serif;
                 font-size: 14px;
@@ -274,6 +429,7 @@ $drawerSelector: nav-drawer;
               }
             }
           }
+
           .sub-nav__text.find-station-link {
             span {
               font: 500 em(30)/1em Arial, Helvetica, sans-serif;
@@ -283,15 +439,19 @@ $drawerSelector: nav-drawer;
         }
       }
     }
+
     &.$(drawerSelector)--active:not(.$(drawerSelector)--mobile) {
       display: flex;
     }
+
     &.$(drawerSelector)--mobile:not(.$(drawerSelector)--active) {
       display: block;
     }
+
     &.$(drawerSelector)--active.$(drawerSelector)--mobile {
       transform: translateX(0);
     }
+
     .sub-nav__text {
       font-family: CircularStd-Black, sans-serif;
       font-size: 14px;
@@ -302,33 +462,39 @@ $drawerSelector: nav-drawer;
       display: block;
       text-align: left;
     }
+
     &.$(drawerSelector)--mobile {
       display: inline-block;
       padding: em(30) 0;
       transform: translateX(-100%);
       transition: all 100ms linear;
+
       .$(drawerSelector)__sub-nav {
         margin: 0;
         display: block;
         a {
           width: 100%;
         }
+
         &.$(drawerSelector)__listen .sub-nav__text:hover,
         &.$(drawerSelector)__download .sub-nav__text:hover,
         &.$(drawerSelector)__more .sub-nav__text:hover {
           background: $white;
           color: $parisM;
         }
+
         @define-mixin drawer-header-color $modifier, $color {
           &.$(drawerSelector)__sub-nav--active.$(drawerSelector)__$(modifier) .sub-nav__text,
           &.$(drawerSelector)__$(modifier) .sub-nav__text:hover {
             background: $color;
           }
         }
+
         @mixin drawer-header-color music, $sunsetOrange;
         @mixin drawer-header-color news, $lightningYellow;
         @mixin drawer-header-color sports, $azureRadience;
         @mixin drawer-header-color podcasts, $robinsEggBlue;
+
         .sub-nav__text {
           cursor: pointer;
           text-align: left;
@@ -336,6 +502,7 @@ $drawerSelector: nav-drawer;
           display: inline-block;
           width: 100%;
         }
+
         ul {
           cursor: pointer;
           text-align: left;
@@ -344,9 +511,11 @@ $drawerSelector: nav-drawer;
           width: 100%;
           display: none;
         }
+
         &.$(drawerSelector)__sub-nav--active ul {
           display: block;
         }
+
         .sub-nav-list-item__text {
           font-family: ProximaNova-Regular, sans-serif;
           font-size: 14px;
@@ -355,10 +524,12 @@ $drawerSelector: nav-drawer;
           line-height: 28px;
           text-transform: capitalize;
         }
+
         li {
           display: block;
         }
       }
+
       .find-station-link {
         cursor: pointer;
         line-height: em(30);
@@ -367,42 +538,53 @@ $drawerSelector: nav-drawer;
     }
   }
 }
+
 .kiln-wrapper.view-mode {
     top: $default-nav-height !important;
   }
+
 .kiln-edit-mode {
   .radiocom-nav {
     top: em(56);
   }
 }
+
 @mixin large-screen {
   .radiocom-nav .container {
     width: $large-screen-nav-width;
+
     .radiocom-nav__logo {
       width: em(220);
       margin: 0 em(15) 0 0;
     }
+
     .$(navButton) {
       padding: 0 em(15);
     }
     .$(drawerSelector):not(.$(drawerSelector)--mobile) .container {
       width: $large-screen-nav-width;
+
       .$(drawerSelector)__sub-nav {
         ul li {
           width: em(80);
         }
+
         &:first-of-type {
           margin-right: em(80);
+
           .$(drawerSelector)__sub-nav--columns {
             @mixin ul-columns 3, em(80);
           }
         }
+
         &:nth-of-type(2) {
           margin-right: em(80);
+
           .$(drawerSelector)__sub-nav--columns {
             @mixin ul-columns 2, em(80);
           }
         }
+
         &:nth-of-type(3) {
           .$(drawerSelector)__sub-nav--columns {
             @mixin ul-columns 1, em(80);
@@ -411,26 +593,40 @@ $drawerSelector: nav-drawer;
       }
     }
   }
+
+  .radiocom-nav__radium {
+    left     : calc($large-screen-nav-width - $default-radium-width);
+
+    .radium__container {
+      width: $large-screen-nav-width;
+    }
+  }
 }
 
 @mixin medium-screen {
   .kiln-wrapper.view-mode {
     top: $mini-nav-height !important;
   }
+
   .radiocom-nav-placeholder {
     height: $mini-nav-height;
   }
+
   .radiocom-nav {
     height: $mini-nav-height;
+
     .container {
       width: $medium-screen-nav-width;
       text-align: left;
+
       .radiocom-nav__hamburger {
         display: inline-block;
       }
+
       .radiocom-nav__logo {
         width: em(180);
       }
+
       .$(navButton) {
         padding: 0;
         background: transparent;
@@ -444,23 +640,55 @@ $drawerSelector: nav-drawer;
         /* (100% view width - header container width) / 2
         + hamburger width + hamburger margin + nav logo width */
         width: calc((100vw - $(medium-screen-nav-width)) / 2 + em(20) + em(20) + em(180));
+
         &:not(.$(drawerSelector)--mobile) .container {
           width: $medium-screen-nav-width;
         }
+
         &.$(drawerSelector)--mobile {
           .$(drawerSelector)__sub-nav {
-            .sub-nav__text, ul {
+            .sub-nav__text,
+            ul {
               font-size: 16px;
               /* (100% view width - header container width) / 2 */
               padding-left: calc((100vw - $(medium-screen-nav-width)) / 2);
             }
           }
+
           .find-station-link {
             font-size: 16px;
             /* (100% view width - header container width) / 2 */
             padding-left: calc((100vw - $(medium-screen-nav-width)) / 2);
           }
         }
+      }
+    }
+
+    &__radium {
+      display : none;
+    }
+  }
+
+  .radium-mobile {
+    padding-left: calc((100vw - $(medium-screen-nav-width)) / 2);
+
+    & &__text,
+    & &__text--signed-in {
+      font-size: em(12);
+      color: $white;
+    }
+
+    & &__text {
+      text-transform: uppercase;
+    }
+
+    &__list {
+      padding-top: em(20);
+      display: inline-block;
+
+      & &-item {
+        display: list-item;
+        padding: em(5) 0;
       }
     }
   }
@@ -470,20 +698,28 @@ $drawerSelector: nav-drawer;
   .radiocom-nav .container {
     width: 100%;
     padding: 0 em(20);
+
     .$(drawerSelector) {
       &.$(drawerSelector)--mobile {
         /* header container padding-left + hamburger width
         + hamburger margin + nav logo width */
         width: calc(em(30) + em(20) + em(20) + em(180));
+
         .$(drawerSelector)__sub-nav {
-          .sub-nav__text, ul {
+          .sub-nav__text,
+          ul {
             padding-left: em(30);
           }
         }
+
         .find-station-link {
           padding-left: em(30);
         }
       }
+    }
+
+    .radium-mobile {
+      padding-left: em(30);
     }
   }
 }
@@ -493,29 +729,49 @@ $drawerSelector: nav-drawer;
     width: 100%;
     padding: 0 em(widthOnGrid(0,1));
     text-align: center;
+
     .radiocom-nav__hamburger.wrapper {
       float: left;
     }
+
     .radiocom-nav__logo {
       margin-right: 0;
     }
     .$(drawerSelector) {
       &.$(drawerSelector)--mobile {
         width: 100%;
+
         .$(drawerSelector)__sub-nav {
-          .sub-nav__text, ul {
+          .sub-nav__text,
+          ul {
             text-align: center;
             margin: 0;
             padding-left: 0;
           }
-          .sub-nav__text li, ul li {
+
+          .sub-nav__text li,
+          ul li {
             width: auto;
           }
         }
+
         .find-station-link {
           text-align: center;
           margin: 0;
           padding-left: 0;
+          width: auto;
+        }
+      }
+    }
+
+    .radium-mobile {
+      padding-left: 0;
+
+      &__list {
+        width: 100%;
+        text-align: center;
+
+        &-item {
           width: auto;
         }
       }

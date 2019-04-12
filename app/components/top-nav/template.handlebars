@@ -56,12 +56,24 @@
           </div>
         {{/each}}
       {{/if}}
-      <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}} {{#if current}}radiocom-nav__category-button--current{{/if}} {{#if drawer}}radiocom-nav__category-button--drawer-enabled{{/if}}">
-        <a href="/account/login">Sign In</a>
-        <a href="/account/signup">Sign Up</a>
-        <div>
-          {{ radiumUser.email }}
-        </div>
+      <div class="radiocom-nav__radium radium">
+        {{#if @root.locals.radiumUser }}
+          <span class="radium__text radium__user">{{@root.locals.radiumUser.first_name}} {{@root.locals.radiumUser.last_name}}<twisty /></span>
+          <div class="radium__nav-drawer">
+            <div class="radium__container">
+              <ul class="radium__sub-list">
+                <li class="radium__sub-list-item"><a class="radium__sub-text" href="account/profile/update">Manage Profile</a></li>
+                <li class="radium__sub-list-item"><a class="radium__sub-text" href="account/password/update">Change Password</a></li>
+                <li class="radium__sub-list-item"><a class="radium__sub-text" href="account/logout">Logout</a></li>
+              </ul>
+            </div>
+          </div>
+        {{else}}
+          <span class="radium__sign-in-up">
+            <a class="radium__text radium__link" href="/account/login">Log In</a>
+            <a class="radium__text radium__link" href="/account/signup">Sign Up</a>
+          </span>
+        {{/if}}
       </div>
       <div class="nav-drawer nav-drawer--mobile">
         {{#if headerLinks.length}}
@@ -73,8 +85,19 @@
             </div>
           {{/each}}
         {{/if}}
+        <div class="nav-drawer__radium-mobile radium-mobile">
+          <ul class="radium-mobile__list">
+            {{#if @root.locals.radiumUser }}
+              <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="account/profile/update">Manage Profile</a></li>
+              <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="account/password/update">Change Password</a></li>
+              <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="account/logout">Log Out</a></li>
+            {{else}}
+              <li class="radium-mobile__list-item"><a class="radium-mobile__text" href="/account/login">Log In</a></li>
+              <li class="radium-mobile__list-item"><a class="radium-mobile__text" href="/account/signup">Sign Up</a></li>
+            {{/if}}
+          </ul>
+        </div>
       </div>
-
     </div>
   </div>
 </nav>

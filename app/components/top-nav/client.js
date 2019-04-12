@@ -1,8 +1,19 @@
 'use strict';
 
 const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
-  mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav');
-  // mutableImages = ['account-btn', 'search-btn'];
+  mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
+  MEDIUM_SCREEN_WIDTH = 1023;
+
+// mutableImages = ['account-btn', 'search-btn'];
+
+
+/**
+ * Checks to see if the screen width is small enough to be mobile
+ * @returns {boolean}
+ */
+function inMobile() {
+  return window.matchMedia(`(max-width: ${MEDIUM_SCREEN_WIDTH}px)`).matches;
+}
 
 let isMobile = false,
   activeHamburger = false;
@@ -18,49 +29,46 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
       activeHamburgerClass = 'active',
       activeMobileNavClass = 'nav-drawer--active';
 
-    isMobile =
-    !(document.getElementsByClassName('radiocom-nav-placeholder')[0].offsetWidth >
-    1023);
-    activeHamburger = !activeHamburger;
+    isMobile = inMobile();
+    activeHamburger = isMobile && !activeHamburger;
+
     if (activeHamburger && isMobile) {
-    // Open mobile nav drawer & change hamburger styling
+      // Open mobile nav drawer & change hamburger styling
       for (let bar of bars) bar.classList.add(activeHamburgerClass);
       navDrawer.classList.add(activeMobileNavClass);
     } else {
-    // Close mobile nav drawer & change hamburger styling
+      // Close mobile nav drawer & change hamburger styling
       for (let bar of bars) bar.classList.remove(activeHamburgerClass);
       navDrawer.classList.remove(activeMobileNavClass);
     }
     // Toggle Mobile Nav Drawer
-    if (!toggleHamburgerOnly) toggleNavDrawer(navDrawer, activeHamburger, true);
+    if (!toggleHamburgerOnly) toggleNavDrawer(navDrawer, activeHamburger);
   },
 
   /**
- * Toggle desktop or mobile nav drawer/dropdown.
- * @function toggleNavDrawer
- * @param {Object} event - Event from event listener.
- * @param {boolean} show - Open or close drawer/dropdown.
- */
+   * Toggle desktop or mobile nav drawer/dropdown.
+   * @function toggleNavDrawer
+   * @param {Object} event - Event from event listener.
+   * @param {boolean} show - Open or close drawer/dropdown.
+   */
   toggleNavDrawer = (event, show) => {
     let navDrawer,
       navDrawers = document.getElementsByClassName('nav-drawer');
 
-    isMobile =
-    !(document.getElementsByClassName('radiocom-nav-placeholder')[0].offsetWidth >
-    1023);
+    isMobile = inMobile();
     for (let drawer of navDrawers) {
       drawer.classList.remove('nav-drawer--sub-nav-active');
       drawer.classList.remove('nav-drawer--active');
     }
     if (!isMobile) {
-    // Toggle desktop nav drawer
+      // Toggle desktop nav drawer
       navDrawer = event.currentTarget.querySelector('.nav-drawer');
       if (show) {
         navDrawer.classList.add('nav-drawer--sub-nav-active');
         navDrawer.classList.add('nav-drawer--active');
       }
     } else {
-    // Toggle mobile nav drawer
+      // Toggle mobile nav drawer
       navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
       if (show) {
         navDrawer.classList.add('nav-drawer--sub-nav-active');
@@ -73,18 +81,18 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
   },
 
   /**
- * Toggle dropdown for nav categories on mobile on click of nav category
- * @function toggleMobileCategoryDropdown
- * @param {Object} event - Event from event listener.
- */
+   * Toggle dropdown for nav categories on mobile on click of nav category
+   * @function toggleMobileCategoryDropdown
+   * @param {Object} event - Event from event listener.
+   */
   toggleMobileCategoryDropdown = event => {
     const activeMobileClass = 'nav-drawer__sub-nav--active';
 
     if (event.currentTarget.classList.contains(activeMobileClass)) {
-    // Close dropdown of clicked category if dropdown already open
+      // Close dropdown of clicked category if dropdown already open
       event.currentTarget.classList.remove(activeMobileClass);
     } else {
-    // Close dropdown of all categories
+      // Close dropdown of all categories
       for (let navSection of mobileNavSections) {
         navSection.classList.remove(activeMobileClass);
       }
@@ -94,10 +102,10 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
   },
 
   /**
- * Toggle image source for those images that change on hover.
- * @function toggleImage
- * @param {Object} event - Event from event listener.
- */
+   * Toggle image source for those images that change on hover.
+   * @function toggleImage
+   * @param {Object} event - Event from event listener.
+   */
   // toggleImage = event => {
   //   const defaultImage = event.currentTarget.querySelector('.default'),
   //     hoveredImage = event.currentTarget.querySelector('.hover');
@@ -116,41 +124,70 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
   // },
 
   /**
- * Add event listeners to header elements to toggle drawers & images.
- * @function addEventListeners
- */
-  addEventListeners = () => {
-  // Toggle Mobile Nav
-    document.getElementById('hamburger').addEventListener('click', toggleHamburger);
-    // Toggle Images on Hover
-    // for (let image of mutableImages) {
-    //   document.getElementById(image).addEventListener('mouseover', function (e) { toggleImage(e); });
-    //   document.getElementById(image).addEventListener('mouseout', function (e) { toggleImage(e); });
-    // }
-    // Toggle Dropdowns on Mobile Nav Categories
+   * Toggle Mobile Nav
+   */
+  toggleMobileOnClick = () => {
+    document
+      .getElementById('hamburger')
+      .addEventListener('click', toggleHamburger);
+  },
+
+  /**
+   * Toggle Dropdowns on Mobile Nav Categories
+   */
+  toggleMobileDropdownOnClick = () => {
     for (let navSection of mobileNavSections) {
-      navSection.addEventListener('click', function (e) { toggleMobileCategoryDropdown(e); });
+      navSection.addEventListener('click', e => {
+        toggleMobileCategoryDropdown(e);
+      });
     }
-    // Toggle Nav Categories' Drawers
+  },
+
+  /**
+   * Toggle Nav Categories' Drawers
+   */
+  toggleDrawersOnCategoryHover = () => {
     for (let navSection of navSections) {
       if (navSection.classList.contains('radiocom-nav__category-button--drawer-enabled')) {
-        navSection.addEventListener('mouseover', function (e) { toggleNavDrawer(e, true); });
-        navSection.addEventListener('mouseout', function (e) { toggleNavDrawer(e, false); });
+        navSection.addEventListener('mouseover', e => {
+          toggleNavDrawer(e, true);
+        });
+        navSection.addEventListener('mouseout', e => {
+          toggleNavDrawer(e, false);
+        });
       }
     }
-    // Remove Mobile Nav When Not on Mobile on Resize of Window
-    window.addEventListener('resize', function () {
+  },
+
+  /**
+   * Remove Mobile Nav When Not on Mobile on Resize of Window
+   */
+  setMobileNavOnResize = () => {
+    window.addEventListener('resize', () => {
       let navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
 
-      isMobile =
-      !(document.getElementsByClassName('radiocom-nav-placeholder')[0].offsetWidth >
-      1023);
+      isMobile = inMobile();
       if (!isMobile) {
         navDrawer.classList.remove('nav-drawer--active');
         navDrawer.classList.remove('nav-drawer--sub-nav-active');
         toggleHamburger(true);
       }
     });
+  },
+  /**
+   * Add event listeners to header elements to toggle drawers & images.
+   * @function addEventListeners
+   */
+  addEventListeners = () => {
+    toggleMobileOnClick();
+    // Toggle Images on Hover
+    // for (let image of mutableImages) {
+    //   document.getElementById(image).addEventListener('mouseover', function (e) { toggleImage(e); });
+    //   document.getElementById(image).addEventListener('mouseout', function (e) { toggleImage(e); });
+    // }
+    toggleMobileDropdownOnClick();
+    toggleDrawersOnCategoryHover();
+    setMobileNavOnResize();
   };
 
 // mount listener for vue (optional)
