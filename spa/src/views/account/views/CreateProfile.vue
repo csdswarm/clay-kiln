@@ -2,127 +2,127 @@
   <div class="create-profile">
     <fieldset>
       <h1 align="center"> Create Your Profile<span
-              class="small"
-              style="padding: 0px 10px 0px 10px;"/></h1>
+        class="small"
+        style="padding: 0px 10px 0px 10px;"/></h1>
       <message></message>
       <div class="floating-label">
-      <input
-              :value="user.email"
-              :disabled="user.disableEmailInput"
-              type="text"
-              placeholder="Email Address"
-              size="30"
-              name="email"
-              :class="user.disableEmailInput ? 'disabled-ui' : 'enabled-ui'"
-              @change="onFieldChange($event)"
-      >
+        <input
+          :value="user.email"
+          :disabled="user.disableEmailInput"
+          type="text"
+          placeholder="Email Address"
+          size="30"
+          name="email"
+          :class="user.disableEmailInput ? 'disabled-ui' : 'enabled-ui'"
+          @change="onFieldChange($event)"
+        >
         <label>Email Address</label>
       </div>
       <div class="floating-label">
-      <input
-              :value="user.firstName"
-              type="text"
-              placeholder="First Name"
-              size="30"
-              name="firstName"
-              @change="onFieldChange($event)"
-      >
+        <input
+          :value="user.firstName"
+          type="text"
+          placeholder="First Name"
+          size="30"
+          name="firstName"
+          @change="onFieldChange($event)"
+        >
         <label>First Name</label>
       </div>
       <div class="floating-label">
-      <input
-              :value="user.lastName"
-              type="text"
-              placeholder="Last Name"
-              size="30"
-              name="lastName"
-              @change="onFieldChange($event)"
-      >
+        <input
+          :value="user.lastName"
+          type="text"
+          placeholder="Last Name"
+          size="30"
+          name="lastName"
+          @change="onFieldChange($event)"
+        >
         <label>Last Name</label>
       </div>
       <div class="gender-box">
         <label>Gender</label>
         <div class="radio-item">
           <input
-                  id="radio-1"
-                  :checked="user.gender === 'M'"
-                  name="gender"
-                  value="M"
-                  type="radio"
-                  @change="onFieldChange($event)">
+            id="radio-1"
+            :checked="user.gender === 'M'"
+            name="gender"
+            value="M"
+            type="radio"
+            @change="onFieldChange($event)">
           <label
-                  for="radio-1"
-                  class="radio-label">Male</label>
+            for="radio-1"
+            class="radio-label">Male</label>
         </div>
 
         <div class="radio-item">
           <input
-                  id="radio-2"
-                  :checked="user.gender === 'F'"
-                  name="gender"
-                  value="F"
-                  type="radio"
-                  @change="onFieldChange($event)">
+            id="radio-2"
+            :checked="user.gender === 'F'"
+            name="gender"
+            value="F"
+            type="radio"
+            @change="onFieldChange($event)">
           <label
-                  for="radio-2"
-                  class="radio-label">Female</label>
+            for="radio-2"
+            class="radio-label">Female</label>
         </div>
 
         <div class="radio-item">
           <input
-                  id="radio-3"
-                  :checked="user.gender === 'O'"
-                  name="gender"
-                  value="O"
-                  type="radio"
-                  @change="onFieldChange($event)">
+            id="radio-3"
+            :checked="user.gender === 'O'"
+            name="gender"
+            value="O"
+            type="radio"
+            @change="onFieldChange($event)">
           <label
-                  for="radio-3"
-                  class="radio-label">Other</label>
+            for="radio-3"
+            class="radio-label">Other</label>
         </div>
       </div>
 
-  <div class="floating-label">
-  <div v-if="mobile">
+      <div class="floating-label">
+        <div v-if="mobile">
+          <input
+            :value="user.dateOfBirth ? user.dateOfBirth.format('YYYY-MM-DD') : user.dateOfBirth"
+            type="date"
+            name="dateOfBirth"
+            class="dateclass placeholderclass dob"
+            data-placeholder="Date of Birth"
+            required
+            aria-required="true"
+            @change="onHtml5DateChange($event)"
+          >
+          <label>Date of Birth</label>
+        </div>
+        <div v-else>
+          <datepicker
+            :value="user.dateOfBirth ? user.dateOfBirth.toDate() : user.dateOfBirth"
+            placeholder="Date of Birth"
+            format="yyyy-MM-dd"
+            @selected="onVueDatepickerChange($event)"
+          >
+            <label slot="afterDateInput">Date of Birth</label>
+          </datepicker>
+        </div>
+      </div>
+      <div class="floating-label">
         <input
-                :value="user.dateOfBirth ? user.dateOfBirth.format('YYYY-MM-DD') : user.dateOfBirth"
-                type="date"
-                name="dateOfBirth"
-                class="dateclass placeholderclass dob"
-                data-placeholder="Date of Birth"
-                required
-                aria-required="true"
-                @change="onHtml5DateChange($event)"
+          :value="user.zipCode"
+          type="text"
+          placeholder="Zip Code"
+          name="zipCode"
+          @change="onFieldChange($event)"
         >
-        <label>Date of Birth</label>
+        <label>Zip Code</label>
       </div>
-      <div v-else>
-        <datepicker
-                :value="user.dateOfBirth ? user.dateOfBirth.toDate() : user.dateOfBirth"
-                placeholder="Date of Birth"
-                format="yyyy-MM-dd"
-                @selected="onVueDatepickerChange($event)"
-        >
-          <label slot="afterDateInput">Date of Birth</label>
-        </datepicker>
-      </div>
-  </div>
-  <div class="floating-label">
-      <input
-              :value="user.zipCode"
-              type="text"
-              placeholder="Zip Code"
-              name="zipCode"
-              @change="onFieldChange($event)"
-      >
-    <label>Zip Code</label>
-  </div>
     </fieldset>
     <div>
       <input
-              type="submit"
-              value="FINISH"
-              @click.prevent="onProfileSubmit()">
+        type="submit"
+        value="FINISH"
+        @click.prevent="onProfileSubmit()">
     </div>
   </div>
 </template>

@@ -6,39 +6,39 @@
       <message></message>
       <div class="floating-label">
         <input
-              :value="currentPassword"
-              type="password"
-              placeholder="Current Password"
-              name="currentPassword"
-              @change="onFieldChange($event)"
-      >
+          :value="currentPassword"
+          type="password"
+          placeholder="Current Password"
+          name="currentPassword"
+          @change="onFieldChange($event)"
+        >
         <label>Current Password</label>
       </div>
       <div class="floating-label">
-      <input
-              :value="newPassword"
-              type="password"
-              placeholder="New Password"
-              name="newPassword"
-              @change="onFieldChange($event)"
-      >
+        <input
+          :value="newPassword"
+          type="password"
+          placeholder="New Password"
+          name="newPassword"
+          @change="onFieldChange($event)"
+        >
         <label>Nee Password</label>
       </div>
       <div class="floating-label">
-      <input
-              :value="confirmNewPassword"
-              type="password"
-              placeholder="Confirm New Password"
-              name="confirmNewPassword"
-              @change="onFieldChange($event)"
-      >
+        <input
+          :value="confirmNewPassword"
+          type="password"
+          placeholder="Confirm New Password"
+          name="confirmNewPassword"
+          @change="onFieldChange($event)"
+        >
         <label>Confirm New Password</label>
       </div>
     </fieldset>
     <input
-            type="submit"
-            value="SAVE"
-            @click.prevent="onUpdatePasswordSubmit()" >
+      type="submit"
+      value="SAVE"
+      @click.prevent="onUpdatePasswordSubmit()" >
   </div>
 </template>
 

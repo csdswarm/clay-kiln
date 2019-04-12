@@ -2,30 +2,30 @@
   <div class="create-profile">
     <fieldset v-if="hasUserData">
       <h1 align="center"> Update Your Profile<span
-              class="small"
-              style="padding: 0px 10px 0px 10px;"/></h1>
+        class="small"
+        style="padding: 0px 10px 0px 10px;"/></h1>
       <message></message>
       <div class="floating-label">
         <input
-                :value="user.first_name"
-                type="text"
-                placeholder="First Name"
-                size="30"
-                name="first_name"
-                id="first_name"
-                @change="onFieldChange($event)"
+          :value="user.first_name"
+          type="text"
+          placeholder="First Name"
+          size="30"
+          name="first_name"
+          id="first_name"
+          @change="onFieldChange($event)"
         >
         <label for="first_name">First Name</label>
       </div>
       <div class="floating-label">
         <input
-                :value="user.last_name"
-                type="text"
-                placeholder="Last Name"
-                size="30"
-                name="last_name"
-                id="last_name"
-                @change="onFieldChange($event)"
+          :value="user.last_name"
+          type="text"
+          placeholder="Last Name"
+          size="30"
+          name="last_name"
+          id="last_name"
+          @change="onFieldChange($event)"
         >
         <label for="last_name">Last Name</label>
       </div>
@@ -33,88 +33,88 @@
         <label>Gender</label>
         <div class="radio-item">
           <input
-                  id="radio-1"
-                  :checked="user.gender === 'M'"
-                  name="gender"
-                  value="M"
-                  type="radio"
-                  @change="onFieldChange($event)">
+            id="radio-1"
+            :checked="user.gender === 'M'"
+            name="gender"
+            value="M"
+            type="radio"
+            @change="onFieldChange($event)">
           <label
-                  for="radio-1"
-                  class="radio-label">Male</label>
+            for="radio-1"
+            class="radio-label">Male</label>
         </div>
 
         <div class="radio-item">
           <input
-                  id="radio-2"
-                  :checked="user.gender === 'F'"
-                  name="gender"
-                  value="F"
-                  type="radio"
-                  @change="onFieldChange($event)">
+            id="radio-2"
+            :checked="user.gender === 'F'"
+            name="gender"
+            value="F"
+            type="radio"
+            @change="onFieldChange($event)">
           <label
-                  for="radio-2"
-                  class="radio-label">Female</label>
+            for="radio-2"
+            class="radio-label">Female</label>
         </div>
 
         <div class="radio-item">
           <input
-                  id="radio-3"
-                  :checked="user.gender === 'O'"
-                  name="gender"
-                  value="O"
-                  type="radio"
-                  @change="onFieldChange($event)">
+            id="radio-3"
+            :checked="user.gender === 'O'"
+            name="gender"
+            value="O"
+            type="radio"
+            @change="onFieldChange($event)">
           <label
-                  for="radio-3"
-                  class="radio-label">Other</label>
+            for="radio-3"
+            class="radio-label">Other</label>
         </div>
       </div>
       <div class="floating-label">
-      <div v-if="mobile">
-        <input
-                :value="user.date_of_birth"
-                type="date"
-                name="date_of_birth"
-                id="date_of_birth"
-                class="dateclass placeholderclass dob"
-                data-placeholder="Date of Birth"
-                required
-                aria-required="true"
-                @change="onHtml5DateChange($event)"
-        >
-        <label for="date_of_birth">Date of Birth</label>
-      </div>
-      <div v-else>
-        <datepicker
-                :value="user.date_of_birth"
-                placeholder="Date of Birth"
-                format="yyyy-MM-dd"
-                @selected="onVueDatepickerChange($event)"
-                id="date_of_birth"
-        >
-          <label slot="afterDateInput" for="date_of_birth">Date of Birth</label>
-        </datepicker>
-      </div>
+        <div v-if="mobile">
+          <input
+            :value="user.date_of_birth"
+            type="date"
+            name="date_of_birth"
+            id="date_of_birth"
+            class="dateclass placeholderclass dob"
+            data-placeholder="Date of Birth"
+            required
+            aria-required="true"
+            @change="onHtml5DateChange($event)"
+          >
+          <label for="date_of_birth">Date of Birth</label>
+        </div>
+        <div v-else>
+          <datepicker
+            :value="user.date_of_birth"
+            placeholder="Date of Birth"
+            format="yyyy-MM-dd"
+            @selected="onVueDatepickerChange($event)"
+            id="date_of_birth"
+          >
+            <label slot="afterDateInput" for="date_of_birth">Date of Birth</label>
+          </datepicker>
+        </div>
       </div>
 
       <div class="floating-label">
         <input
-                :value="user.zip_code"
-                type="text"
-                placeholder="Zip Code"
-                name="zip_code"
-                id="zip_code"
-                @change="onFieldChange($event)"
+          :value="user.zip_code"
+          type="text"
+          placeholder="Zip Code"
+          name="zip_code"
+          id="zip_code"
+          @change="onFieldChange($event)"
         >
         <label for="zip_code">Zip Code</label>
       </div>
     </fieldset>
     <div>
       <input
-              type="submit"
-              value="SAVE"
-              @click.prevent="onProfileSubmit()">
+        type="submit"
+        value="SAVE"
+        @click.prevent="onProfileSubmit()">
     </div>
   </div>
 </template>
@@ -240,7 +240,6 @@ export default {
    */
   input[type="date"]:focus::before,
   input[type="date"]:valid::before { display: none }
-
 
   /* Radio buttons */
   .radio-item {

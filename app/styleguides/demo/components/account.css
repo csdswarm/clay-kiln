@@ -1,3 +1,4 @@
+@import "_global/mixins";
 @import "_global/bootstrap.min";
 
 .account {
@@ -223,8 +224,11 @@
     -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
     box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
     margin-bottom: 15px;
-
+    @mixin medium-small-screen {
+      font-size: 16px;
+    }
   }
+
   .form-style-5 input[type="text"]:focus,
   .form-style-5 input[type="date"]:focus,
   .form-style-5 input[type="datetime"]:focus,
@@ -331,6 +335,8 @@
     left: 0;
     font-size: 12px;
     opacity: .7;
+    padding-left: 3px;
+    padding-top: 2px;
   }
 
   .radio-label {
@@ -338,6 +344,8 @@
     left: auto;
     font-size: 16px;
     opacity: 1;
+    padding-left: 0;
+    padding-top: 0;
   }
 
   .floating-label {
@@ -347,17 +355,20 @@
     label {
       position:  absolute;
       left:  0;
-      top: calc(50% - 12px);
+      top: calc(50% - 5px);
       opacity:  0;
       transition:  all .3s ease;
-      font-size: 12px;
+      font-size: 14px;
+      padding-left: 15px;
     }
     input {
       display:  flex;
     }
     input:not(:placeholder-shown) + label {
-      transform:  translateY(-10px);
+      transform:  translateY(-18px);
       opacity:  .7;
+      font-size: 12px;
+      padding-left: 2px;
     }
   }
   .gender-box {

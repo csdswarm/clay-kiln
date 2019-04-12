@@ -3,7 +3,7 @@ import * as mutationTypes from './mutationTypes'
 import * as actionTypes from './actionTypes'
 import formatError from '../views/account/services/format_error'
 import { getDeviceId } from '../views/account/utils'
-import moment from "moment";
+import moment from 'moment'
 
 const axiosCall = async ({ method, url, data, commit }) => {
   try {
@@ -22,7 +22,7 @@ const axiosCall = async ({ method, url, data, commit }) => {
 const formatProfile = (profile) => {
   return {
     ...profile,
-    date_of_birth: profile.date_of_birth ? moment(profile.date_of_birth).format('YYYY-MM-DD')  : ''
+    date_of_birth: profile.date_of_birth ? moment(profile.date_of_birth).format('YYYY-MM-DD') : ''
   }
 }
 

@@ -6,11 +6,11 @@
       </h1>
       <message></message>
       <div class="floating-label">
-      <input type="email" placeholder="Email Address" name="email" @change="onFieldChange($event)"/>
+        <input type="email" placeholder="Email Address" name="email" @change="onFieldChange($event)"/>
         <label>Email Address</label>
       </div>
       <div class="floating-label">
-      <input type="password" placeholder="Password" name="password" @change="onFieldChange($event)"/>
+        <input type="password" placeholder="Password" name="password" @change="onFieldChange($event)"/>
         <label>Password</label>
       </div>
     </fieldset>
@@ -62,29 +62,33 @@ export default {
     onFieldChange (event) {
       this.user[event.target.name] = event.target.value
     },
-
-    async onLogInSubmit () {
-      this.$store.commit(mutationTypes.MODAL_ERROR, null)
+    validateForm () {
       if (!this.user.email) {
-        this.$store.commit(mutationTypes.MODAL_ERROR, 'Email address is missing.')
-        return
+        return 'Email address is missing.'
       }
 
       if (!validateEmail(this.user.email)) {
-        this.$store.commit(mutationTypes.MODAL_ERROR, 'Email address is not valid.')
-        return
+        return 'Email address is not valid.'
       }
 
       if (!this.user.password) {
-        this.$store.commit(mutationTypes.MODAL_ERROR, 'Password is missing.')
-        return
+        return 'Password is missing.'
       }
+    },
+    async onLogInSubmit () {
+      this.$store.commit(mutationTypes.MODAL_ERROR, null)
 
-      try {
-        await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
-        this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
-      } catch (e) {
-        // error handled inside of dispatch
+      const error = this.validateForm()
+
+      if (error) {
+        this.$store.commit(mutationTypes.MODAL_ERROR, error)
+      } else {
+        try {
+          await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
+          this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+        } catch (e) {
+          // error handled inside of dispatch
+        }
       }
     }
   }
