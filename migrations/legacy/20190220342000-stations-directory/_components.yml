@@ -1,0 +1,48 @@
+_components:
+  directory-featured:
+    instances:
+      default:
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        recentStations:
+          _ref: /_components/stations-list/instances/recentOnFeaturedStationsDirectory
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/categoryTruncated
+  directory-location:
+    instances:
+      default:
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        stationsList:
+          _ref: /_components/stations-list/instances/market
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/marketTruncated
+  directory-genre:
+    instances:
+      music:
+        googleInlineAd:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+        stationsListTruncated:
+          _ref: /_components/stations-list/instances/genreTruncated
+      news-talk:
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+      sports:
+        stationsList:
+          _ref: /_components/stations-list/instances/genre
+
+  stations-directory:
+    instances:
+      default:
+        featuredDirectory:
+          _ref: /_components/directory-featured/instances/default
+        locationDirectory:
+          _ref: /_components/directory-location/instances/default
+        musicDirectory:
+          _ref: /_components/directory-genre/instances/music
+        newsTalkDirectory:
+          _ref: /_components/directory-genre/instances/news-talk
+        sportsDirectory:
+          _ref: /_components/directory-genre/instances/sports
