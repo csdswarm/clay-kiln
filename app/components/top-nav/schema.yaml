@@ -19,6 +19,11 @@ headerLinks:
           validate:
             required: false
       -
+        prop: externalLink
+        _label: Is this an external link?
+        _has:
+          input: checkbox
+      -
         prop: drawer
         _label: Does this category have a drawer/tray/dropdown menu?
         _has:
@@ -62,6 +67,11 @@ headerLinks:
                 validate:
                   required: false
             -
+              prop: externalLink
+              _label: Is this an external link?
+              _has:
+                input: checkbox
+            -
               prop: list
               _label: Drawer Sub Nav Links
               _has:
@@ -77,6 +87,11 @@ headerLinks:
                       type: url
                       validate:
                         required: true
+                  -
+                    prop: externalLink
+                    _label: Is this an external link?
+                    _has:
+                      input: checkbox
                   -
                     prop: text
                     _label: Drawer Sub Category Link Text

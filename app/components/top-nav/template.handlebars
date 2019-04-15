@@ -13,7 +13,7 @@
         {{#each headerLinks}}
           <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}} {{#if current}}radiocom-nav__category-button--current{{/if}} {{#if drawer}}radiocom-nav__category-button--drawer-enabled{{/if}}">
             {{#if url}}
-              <a href="{{url}}">
+              <a href="{{url}}"{{#if externalLink}} target="_blank"{{/if}}>
                 <button>
                   <span class="category-button__text">{{text}}</span>
                 </button>
@@ -33,7 +33,7 @@
                         <ul class="nav-drawer__sub-nav--columns">
                           {{#each subnav.list as |subnavLink| }}
                             <li>
-                              <a href="{{subnavLink.url}}">
+                              <a href="{{subnavLink.url}}"{{#if subnavLink.externalLink}} target="_blank"{{/if}}>
                                 <span class="sub-nav-list-item__text" title="{{subnavLink.url}}">{{subnavLink.text}}</span>
                               </a>
                             </li>
@@ -41,7 +41,7 @@
                         </ul>
                       {{ else }}
                         {{#if subnav.url}}
-                          <a href="{{subnav.url}}" target="_blank">
+                          <a href="{{subnav.url}}"{{#if subnav.externalLink}} target="_blank"{{/if}}>
                             <span class="sub-nav__text {{#if (compare subnav.text 'find a station')}}find-station-link{{/if}}">{{subnav.text}}{{#if (compare subnav.text 'find a station')}} <span>&#8227;</span>{{/if}}</span>
                           </a>
                         {{ else }}
