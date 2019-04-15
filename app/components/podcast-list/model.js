@@ -4,6 +4,7 @@ const queryService = require('../../services/server/query'),
   utils = require('../../services/universal/podcast'),
   podcastByPopularity = 'http://api.radio.com/v1/podcasts?sort=popularity',
   maxItems = 4,
+  SPORTS = 'sports',
   /**
    * determines if the array of podcast items contains a url
    * @param {object} arr
@@ -19,11 +20,18 @@ const queryService = require('../../services/server/query'),
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
+  console.log("items length:", data.items.length);
+
   if (data.items.length === maxItems || !locals || locals.edit) {
     return new Promise((resolve) => resolve(data));
   }
 
-  return fetch(podcastByPopularity)
+  let podcastsRequest = podcastByPopularity;
+  if (data.category === SPORTS) {
+    podcastsRequest += '&filter[category_id]=31';
+  }
+
+  return fetch(podcastsRequest)
     .then((response) => response.json())
     .then((json) => {
 
