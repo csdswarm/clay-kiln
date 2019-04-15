@@ -22,9 +22,9 @@
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
-    {{#if subHeadline}}
+    {{#ifAny @root.locals.edit subHeadline}}
       <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
-    {{/if}}
+    {{/ifAny}}
   </header>
 
   {{> google-ad-manager contentPageSponsorLogo }}
