@@ -1,0 +1,8 @@
+_components:
+  directory-location:
+    googleInlineAd:
+      _ref: /_components/google-ad-manager/instances/billboardBottom
+    stationsList:
+      _ref: /_components/stations-list/instances/market
+    stationsListTruncated:
+      _ref: /_components/stations-list/instances/marketTruncated

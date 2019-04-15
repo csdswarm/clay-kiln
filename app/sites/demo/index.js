@@ -29,7 +29,18 @@ module.exports.routes = [
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
   { path: '/newsletter/subscribe' },
-  { path: '/news/small-business-pulse' }
+  { path: '/news/small-business-pulse' },
+  { path: '/small-business-pulse/:slug' },
+  { path: '/small-business-pulse/:year/:month/:name' },
+  { path: '/small-business-pulse/:year/:month/:day/:name' },
+  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
+  { path: '/stations', dynamicPage: 'stations-directory' },
+  { path: '/stations/location', dynamicPage: 'stations-directory' },
+  { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
+  { path: '/stations/music', dynamicPage: 'stations-directory' },
+  { path: '/stations/music/:dynamicGenre', dynamicPage: 'stations-directory' },
+  { path: '/stations/news-talk', dynamicPage: 'stations-directory' },
+  { path: '/stations/sports', dynamicPage: 'stations-directory' }
 ];
 
 // Resolve the url to publish to

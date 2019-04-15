@@ -1,0 +1,27 @@
+_description: |
+  Dynamic stations directory page
+
+featuredDirectory:
+  _component:
+    include:
+      - directory-featured
+
+locationDirectory:
+  _component:
+    include:
+      - directory-location
+
+musicDirectory:
+  _component:
+    include:
+      - directory-genre
+
+newsTalkDirectory:
+  _component:
+    include:
+      - directory-genre
+
+sportsDirectory:
+  _component:
+    include:
+      - directory-genre

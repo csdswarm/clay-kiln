@@ -1,0 +1,17 @@
+_components:
+  description:
+    instances:
+      new:
+        text: ''
+
+  gallery-slide:
+    instances:
+      new:
+        slideEmbed: null
+        title: ''
+        description:
+          -
+            _ref: /_components/description/instances/new
+        hashLinkPrefix: ''
+
+

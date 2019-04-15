@@ -1,3 +1,4 @@
+_version: 2.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -235,6 +236,7 @@ lead:
       - youtube
       - html-embed
       - omny
+      - verizon-media
     validate:
       max: 1
       required: true
@@ -300,9 +302,9 @@ sectionFront:
         value: sports
     validate:
       required: true
-secondaryGalleryType:
+secondaryArticleType:
   _label: Secondary Gallery Type
-  _publish: secondaryGalleryType
+  _publish: secondaryArticleType
   _has:
     input: radio
     options:
@@ -413,7 +415,7 @@ _groups:
   circMetadata:
     fields:
       - sectionFront
-      - secondaryGalleryType
+      - secondaryArticleType
   bylines:
     fields:
       - byline
@@ -477,6 +479,24 @@ plaintextShortHeadline:
   _publish: twitterTitle
   _has:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
+
+footer:
+  _label: Gallery Footer
+  _placeholder:
+    text: Component
+    height: 200px
+  _componentList:
+    fuzzy: true
+    include:
+      - paragraph
+      - image
+      - instagram-post
+      - brightcove
+      - youtube
+      - html-embed
+      - omny
+    validate:
+      max: 2
 
 # Component properties
 sideShare:

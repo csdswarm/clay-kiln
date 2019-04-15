@@ -35,6 +35,18 @@ enter-clay:
 clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data
 
+clear-app:
+	rm -rf app/node_modules && ls -d ./app/public/* | grep -v dist | xargs rm -rf && rm -rf app/browserify-cache.json
+
+clear-spa:
+	rm -rf spa/node_modules  && rm -rf app/public/dist
+
+reset:
+	make burn && make clear-data
+
+nuke:
+	make reset && make clear-app && make clear-spa
+
 bootstrap:
 	cd ./app &&  cat ./first-run/**/* | clay import -k demo -y clay.radio.com
 	@echo ""
@@ -53,6 +65,8 @@ bootstrap:
 	curl -X PUT http://clay.radio.com/_pages/topic@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/topic-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	if cd ../frequency-clay-translator; then npm run import-pages && cd ../clay-radio; fi
 	@echo "\r\n\r\n"
 	./migrations/legacy/run-legacy-scripts.sh
 
@@ -93,13 +107,20 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
+	make build-player && cd app && npm i && node -r dotenv/config ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
 
 install:
-	cd app && npm i && node ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
+	cd app && npm i && node -r dotenv/config ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
 
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
+
+build-player:
+	if cd ./radio-web-player; then git pull; else git clone git+ssh://git@github.com/Entercom/radio-web-player.git ./radio-web-player; fi
+	cd ./radio-web-player && npm i && npm run build
+	mkdir -p ./app/public/web-player
+	cd ./radio-web-player/demo-site && npm i && npm run build
+	cp -r ./radio-web-player/demo-site/dist/* ./app/public/web-player/
 
 .PHONY: spa
 spa:

@@ -1,0 +1,27 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--station-discover {
+  .station-discover__dropdown--mobile {
+    display: none;
+    margin-bottom: em(30);
+    @mixin medium-small-screen {
+      display: block;
+    }
+  }
+  .station-discover__stations-list {
+    display: none;
+    &.active {
+      display: block;
+    }
+    .component--stations-list {
+      h2.stations-list__title {
+        @mixin medium-small-screen {
+          @mixin station-detail-font4;
+        }
+      }
+    }
+  }
+}
