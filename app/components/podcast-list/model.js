@@ -20,13 +20,12 @@ const queryService = require('../../services/server/query'),
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  console.log("items length:", data.items.length);
-
   if (data.items.length === maxItems || !locals || locals.edit) {
     return new Promise((resolve) => resolve(data));
   }
 
   let podcastsRequest = podcastByPopularity;
+
   if (data.category === SPORTS) {
     podcastsRequest += '&filter[category_id]=31';
   }
