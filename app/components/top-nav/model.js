@@ -6,6 +6,7 @@ const externalLinkReg = /player.radio.com|\/audio/;
  * Determine whether links are external -- recursive for lists within lists
  * @function setExternalLinks
  * @param {Object[]} linkList - Array of objects containing link data
+ * @return {Object[]}
  */
 function setExternalLinks(linkList) {
   return linkList.map((link) => {
@@ -14,7 +15,7 @@ function setExternalLinks(linkList) {
     }
 
     if (link.list) {
-      link.list = setExternalLinks(link.list); //recursive
+      link.list = setExternalLinks(link.list);
     }
 
     return link;
