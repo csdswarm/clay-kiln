@@ -385,4 +385,7 @@
       @mixin stations-list-font5;
     }
   }
+  &.no__stations {
+    display: none;
+  }
 }

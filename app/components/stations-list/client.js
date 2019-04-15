@@ -11,6 +11,7 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
 
 class StationsList {
   constructor(element) {
+    this.el = element;
     this.allStationsCount = 1000;
     this.truncateStations = element.getAttribute('data-truncate');
     this.filterStationsBy = element.getAttribute('data-filter-stations-by-track');
@@ -214,7 +215,11 @@ class StationsList {
       const stationsData = this.stationsData = await recentStations.get();
 
       stationsData.slice(0, 7);
-      this.updateStationsDOMWithIDs(stationsData);
+      if (stationsData.length) {
+        this.updateStationsDOMWithIDs(stationsData);
+      } else {
+        this.el.classList.add('no__stations');
+      }
     } else {
       // server side populated
       if (this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket) {
