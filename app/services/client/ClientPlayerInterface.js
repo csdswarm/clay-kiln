@@ -127,7 +127,17 @@ class ClientPlayerInterface {
    * @returns {Promise<any>} - Passed in stationId or null
    */
   play(stationId = null) {
-    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlay', { stationId });
+    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlaybackStatus', { stationId, playbackStatus: 'play' });
+  }
+
+  /**
+   *
+   * Pause player playback.
+   *
+   * @returns {Promise<any>} - Passed in stationId or null
+   */
+  pause() {
+    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlaybackStatus', { playbackStatus: 'pause' });
   }
 
 }

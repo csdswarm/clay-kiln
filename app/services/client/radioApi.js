@@ -60,7 +60,9 @@ const rest = require('../universal/rest'),
         element.addEventListener('click', (event) => {
           event.preventDefault();
           event.stopPropagation();
-          return clientPlayerInterface.play(element.dataset.playStation);
+          const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
+
+          return clientPlayerInterface[playbackStatus](element.dataset.playStation);
         });
       });
       return doc;

@@ -118,15 +118,15 @@ class SpaPlayerInterface {
    *
    */
   attachClientEventListeners () {
-    // Add channel that listens for play button clicks.
-    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlay')) {
-      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
-        const { stationId } = payload
+    // Add channel that listens for play/pause button clicks.
+    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlaybackStatus')) {
+      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlaybackStatus', async (payload) => {
+        const { stationId, playbackStatus } = payload
 
         if (stationId) {
           await this.play(stationId)
         } else {
-          await this.play()
+          await this[playbackStatus]()
         }
       })
     }
@@ -156,28 +156,38 @@ class SpaPlayerInterface {
       await this.bootPlayer()
     }
 
+    const currentStation = this.getCurrentStation()
+
     // Set station.
-    if (stationId) {
+    if (stationId && (!currentStation || currentStation.id !== stationId)) {
       await this.loadStation(stationId)
     }
-
-    // Begin playback of audio.
-    this.spa.$store.state.radioPlayer.play()
 
     // If stationId wasn't passed in, pull currently playing
     // station from player to set stationId.
     if (!stationId) {
-      const station = this.getCurrentStation()
-      if (station) {
-        stationId = station.id
+      if (currentStation) {
+        stationId = currentStation.id
       } else {
         throw new Error('Unable to determine playback station.')
       }
     }
 
     // Comminucate play status to client.js
-    await spaCommunicationBridge.sendMessage('ClientWebPlayerStartPlayback', {
-      stationId
+    await spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', {
+      stationId,
+      playbackStatus: 'play'
+    })
+  }
+
+  /**
+   * Pause radio station stream
+   */
+  async pause () {
+    await this.spa.$store.state.radioPlayer.playerControls.pause()
+
+    await spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', {
+      playbackStatus: 'pause'
     })
   }
 
