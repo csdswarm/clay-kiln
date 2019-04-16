@@ -38,6 +38,12 @@ module.exports = function (data, locals) {
       }
     ];
 
+  if (data.slides) {
+    transform.push({
+      'slides': { _cdata: renderContent(data.slides, locals)}
+    });
+  }
+
   // Add the tags
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
