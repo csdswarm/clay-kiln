@@ -6,11 +6,12 @@
   </div>
   <div class="slideText gallery-slide__text">
     {{#if title}}
-      <h2 data-editable="title" class="gallery-slide__titlewrapper">
-        {{#if slidesNumbered}}<span class="gallery-slide__number">{{ reversibleOneBasedIndex @index reverseOrder totalSlides }}</span>{{/if}}
+      <h2 class="gallery-slide__titlewrapper">
+        {{!-- removed because @index isn't available here --}}
+        {{!-- {{#if slidesNumbered}}<span class="gallery-slide__number">{{ reversibleOneBasedIndex @index reverseOrder totalSlides }}</span>{{/if}} --}}
         <span class="gallery-slide__title">{{ title }}</span>
       </h2>
     {{/if}}
-    {{#if description}}<p data-editable="description" class="gallery-slide__description">{{striptags description}}</p>{{/if}}
+    {{#if description}}<p class="gallery-slide__description">{{striptags description}}</p>{{/if}}
   </div>
 </div>
