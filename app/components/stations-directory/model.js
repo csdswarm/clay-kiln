@@ -1,5 +1,6 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
+  slugifyService = require('../../services/universal/slugify'),
   SPORTS_SLUG = 'sports',
   NEWSTALK_SLUG = 'news-talk',
   url = require('url');
@@ -17,7 +18,13 @@ function getAllMarkets() {
     };
 
   return radioApiService.get(route, params).then(response => {
-    return response.data || [];
+    if (response.data) {
+      return response.data.map(data => {
+        data.attributes.slug = slugifyService(data.attributes.display_name);
+        return data;
+      });
+    }
+    return [];
   });
 }
 
@@ -34,15 +41,17 @@ function getAllMusicGenres() {
 
   return radioApiService.get(route, params).then(response => {
     if (response.data) {
-      return response.data.filter(genre => {
+      const onlyMusicGenres = genre => ![SPORTS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
+        addSlugAttribute = data => {
+          data.attributes.slug = slugifyService(data.attributes.name);
+          return data;
+        };
 
-        if (genre.attributes.slug !== SPORTS_SLUG && genre.attributes.slug !== NEWSTALK_SLUG) {
-          return genre;
-        }
-      });
-    } else {
-      return [];
+      return response.data
+        .filter(onlyMusicGenres)
+        .map(addSlugAttribute);
     }
+    return [];
   });
 }
 

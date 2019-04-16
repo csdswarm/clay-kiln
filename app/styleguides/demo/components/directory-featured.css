@@ -33,6 +33,7 @@
       li.genre-list__genre {
         width: em(140);
         margin-bottom: em(40);
+        position:relative;
         @mixin default-screen {
           &:nth-of-type(n+8) {
             display: none;
@@ -89,6 +90,10 @@
           .genre__label {
             @mixin directory-featured-font1;
             position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
           }
         }
       }
