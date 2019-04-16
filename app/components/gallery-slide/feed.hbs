@@ -1,6 +1,8 @@
 <div id="{{ hashLink }}" class="component component--gallery-slide">
-  <div class="slideEmbed" data-editable="slideEmbed">
-    {{> component-list slideEmbed }}
+  <div class="slideEmbed">
+    {{#each slideEmbed~}}
+      {{~> (getComponentName _ref) this.data ~}}
+    {{~/each}}
   </div>
   <div class="slideText gallery-slide__text">
     {{#if title}}

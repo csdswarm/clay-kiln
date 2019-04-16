@@ -17,10 +17,10 @@ subscribe('save').through(save);
 
 /**
  * Takes an Article obj and attaches the data attribute for each _ref for a given parameter
- * 
- * @param {Object} obj 
- * @param {String} param 
- * 
+ *
+ * @param {Object} obj
+ * @param {String} param
+ *
  * @returns {Stream}
  */
 function getContent(obj, param) {
@@ -40,14 +40,15 @@ function getSlideEmbed(slides) {
   return h(slides)
     .map( slide => {
       let slideData = JSON.parse(slide.data);
+
       return h(slideData.slideEmbed)
         .map(({ _ref }) => h(redis.hget('mydb:h', _ref).then( data => ({ _ref, data: JSON.parse(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
         .mergeWithLimit(1)
         .collect()
         .map(resolvedContent => {
           slideData.slideEmbed = resolvedContent;
-          slide.data = slideData;
-          // slide.data.slideEmbed = resolvedContent;
+          // data for some reason needs to be a string or elasticsearch throws a parse error
+          slide.data = JSON.stringify(slideData);
           return slide;
         });
     })
@@ -61,18 +62,13 @@ function getSlideEmbed(slides) {
 
 function getSlides(obj) {
   return getContent(obj, 'slides')
-    // .tap(i => { console.log('hello world'); console.log(i); })
-    // .mergeWithLimit(25)
+    // doesn't make sense why getContent is returning an object and not stream
     .map( ({ value }) => getSlideEmbed(value.slides))
-    // .tap(i => { console.log(i); })
     .mergeWithLimit(1)
-    .collect()
     .map( resolvedContent => {
       obj.value.slides = resolvedContent;
       return obj;
     });
-    // .mergeWithLimit(25)
-    // .map( slides => { console.log(slides); obj.slides = slides; return h.of(param) });
 }
 
 function save(stream) {
@@ -91,7 +87,6 @@ function save(stream) {
     .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
-    .tap(i => { console.log('hello world'); console.log(i); })
     .flatMap(send)
     .errors(logError)
     .each(logSuccess(INDEX));

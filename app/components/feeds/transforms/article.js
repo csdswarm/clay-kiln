@@ -40,7 +40,7 @@ module.exports = function (data, locals) {
 
   if (data.slides) {
     transform.push({
-      'slides': { _cdata: renderContent(data.slides, locals)}
+      slides: { _cdata: renderContent(data.slides, locals)}
     });
   }
 
