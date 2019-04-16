@@ -17,7 +17,7 @@
       {{/each}}
     </select>
     {{~#each @root.locals.allMusic ~}}
-      <div class="directory-location__stations-by-music-genre" data-genre="{{ attributes.slug }}">
+      <div class="directory-location__stations-by-music-genre" data-genre="{{ id }}">
         {{> stations-list ../stationsListTruncated }}
       </div>
     {{~/each ~}}

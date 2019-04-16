@@ -6,7 +6,8 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   { isMobileWidth } = require('../../services/client/mobile'),
   STATIONS_DIRECTORY = 'stations directory',
   STATION_DETAIL = 'station detail',
-  FEATURED = 'featured';
+  FEATURED = 'featured',
+  safari = require('../../services/client/safari');
 
 class StationsList {
   constructor(element) {
@@ -83,7 +84,7 @@ class StationsList {
 
     // Hide see all link if there aren't enough to fill the list or on mobile
     if (this.seeAllLink) {
-      if (this.stationsData.length <= this.stationsShownOnLoad || isMobileWidth) {
+      if (this.stationsData.length <= this.stationsShownOnLoad || isMobileWidth()) {
         this.seeAllLink.style.display = 'none';
       } else {
         this.seeAllLink.style.display = 'flex';
@@ -104,9 +105,10 @@ class StationsList {
    * @function
    * @param {object[]} stationIDs
    * @param {string} [filter] -- category, genre, or market type
+   * @param {string} [instanceModifier] -- alter the current instance being used to get the stations list
    * @returns {Node}
    */
-  async getComponentTemplate(stationIDs, filter) {
+  async getComponentTemplate(stationIDs, filter, instanceModifier) {
     let queryParamString = '?',
       instance = this.filterStationsBy;
 
@@ -114,9 +116,13 @@ class StationsList {
       queryParamString += `&stationIDs=${stationIDs}`;
     } else if (filter) {
       if (this.truncateStations) {
-        instance += 'Truncated';
+        instanceModifier = 'Truncated';
       }
       queryParamString += `&${this.filterStationsBy}=${filter}`;
+    }
+
+    if (instanceModifier) {
+      instance += instanceModifier;
     }
 
     return await radioApiService.fetchDOM(`//${window.location.hostname}/_components/stations-list/instances/${instance}.html${queryParamString}`);
@@ -140,14 +146,16 @@ class StationsList {
    * then display the stations, keeping more stations in the DOM than are being displayed
    * @function
    * @param {object} stationsData
+   * @param {string} [instanceModifier]
    */
-  async updateStationsDOMWithIDs(stationsData) {
+  async updateStationsDOMWithIDs(stationsData, instanceModifier) {
     const stationIDs = stationsData.map((station) => {
         return station.id;
       }),
-      newStations = await this.getComponentTemplate(stationIDs);
+      newStations = await this.getComponentTemplate(stationIDs, null, instanceModifier);
 
     this.stationsList.append(newStations);
+    safari.fixAJAXImages(this.stationsList);
 
     this.toggleLoader();
     this.displayActiveStations();
@@ -160,12 +168,16 @@ class StationsList {
   async updateStationsDOMFromFilterType() {
     const newStations = await this.getComponentTemplate(null, this.filterStationsByCategory || this.filterStationsByGenre || this.filterStationsByMarket);
 
-    this.parentElement.append(newStations);
-    this.setStationList(this.parentElement);
-    this.displayActiveStations();
-    this.loader = this.parentElement.querySelector('.loader-container');
     // Hide loaders once loaded
     this.toggleLoader();
+
+    while (this.parentElement.firstChild) {
+      this.parentElement.removeChild(this.parentElement.firstChild);
+    };
+    this.parentElement.append(newStations);
+    safari.fixAJAXImages(this.parentElement);
+    this.setStationList(this.parentElement);
+    this.displayActiveStations();
 
     // eslint-disable-next-line one-var
     const stationsDataEl = this.parentElement.querySelector('.stations-list__data');
@@ -230,7 +242,7 @@ class StationsList {
 
       if (stationsData.length) {
         this.toggleLoader();
-        this.updateStationsDOMWithIDs(stationsData);
+        this.updateStationsDOMWithIDs(stationsData, 'Truncated');
       } else {
         this.displayActiveStations();
       }

@@ -239,6 +239,7 @@ lead:
       - youtube
       - html-embed
       - omny
+      - verizon-media
     validate:
       max: 1
       required: true

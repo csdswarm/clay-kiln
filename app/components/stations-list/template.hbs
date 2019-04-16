@@ -5,14 +5,12 @@
   data-uri="{{ default _ref _self }}"
   class="component component--stations-list{{ if @root.locals.edit ' editing' }}{{ if truncatedList ' stations-list--truncated' }}"
 >
-  {{#ifAny stations.length (compare filterBy '===' 'local') (compare filterBy '===' 'recent') }}
-    <div class="stations-list__header-row">
-      <h2 class="header-row__title">{{ listTitle }}</h2>
-      {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
-        <a class="header-row__see-all-link spa-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
-      {{/ifAll}}
-    </div>
-  {{/ifAny}}
+  <div class="stations-list__header-row">
+    <h2 class="header-row__title">{{ listTitle }}</h2>
+    {{#ifAll stations truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
+      <a class="header-row__see-all-link spa-link" href="//{{ @root.locals.site.host }}{{ seeAllLink }}">See all {{{ read 'components/stations-list/media/chevron_right.svg' }}}</a>
+    {{/ifAll}}
+  </div>
   {{#if stations.length }}
     <pre class="stations-list__data">{{ stringify stationIds }}</pre>
   {{/if}}
@@ -26,13 +24,12 @@
             <a href="//{{ @root.locals.site.host }}/{{ site_slug }}/listen" class="spa-link">
               <div class="station__lede" itemscope itemtype="http://schema.org/ImageObject">
                 <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
-                <img class="lede__image"
-                  src="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0"
-                  srcset="{{ square_logo_large }}?width=140&height=140&crop=1:1,offset-y0 140px,
-                    {{ square_logo_large }}?width=222&height=222&crop=1:1,offset-y0 222px,
-                    {{ square_logo_large }}?width=210&height=210&crop=1:1,offset-y0 210px,
-                    {{ square_logo_large }}?width=150&height=150&crop=1:1,offset-y0 150px"
-                  sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
+                <img class="lede__image" src="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0"
+                     srcset="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0 138w,
+                    {{ square_logo_large }}?width=220&height=220&crop=1:1,offset-y0 220w,
+                    {{ square_logo_large }}?width=208&height=208&crop=1:1,offset-y0 208w,
+                    {{ square_logo_large }}?width=148&height=148&crop=1:1,offset-y0 148w"
+                     sizes="(max-width: 360px) 148px, (max-width: 480px) 208px, (max-width: 1023px) 220px, 138px"
                   itemprop="thumbnailUrl"
                 >
                 <meta itemprop="contentUrl" content="{{ square_logo_large }}">
@@ -44,13 +41,17 @@
           </li>
         {{/ifAny}}
       {{~/each~}}
+    {{else if stations}}
+      {{#ifAll (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') }}
+        <li class="stations-list__empty"><span>No stations.</span></li>
+      {{/ifAll}}
     {{~/if~}}
 {{#unless @root.locals.stationIDs}}
   </ul>
     <div class="loader-container">
       {{{ read 'components/stations-list/media/radiocom-monogram-loader.svg' }}}
     </div>
-  {{#ifAll truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 6) }}
+  {{#ifAll stations truncatedList (compare filterBy '!==' 'local') (compare filterBy '!==' 'recent') (compare stations.length '>' 6) }}
     <button class="stations-list__load-more">{{{ read 'components/stations-list/media/loadmore_white.svg' }}} <span>Load more</span></button>
   {{/ifAll}}
 </section>
