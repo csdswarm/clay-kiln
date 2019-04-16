@@ -229,6 +229,10 @@ const axios = require('axios'),
     // removes keys that should never be sent back to the browser from the object
     removeKeys(response.data, [ ...excludeKeys.token, ...excludeKeys.profile ]);
   },
+  signOutLogic = async (response, req, res) => {
+    deleteCookie(COOKIES.profile, res);
+    deleteCookie(COOKIES.accessToken, res);
+  },
   /**
    * loop through all endpoints that require specific logic to modify the response
    *
@@ -239,6 +243,7 @@ const axios = require('axios'),
   routeLogic = async (response, req, res) => {
     const routes = {
         'POST:/radium/v1/auth/signin': signInLogic,
+        'POST:/radium/v1/auth/signout/all': signOutLogic,
         'POST:/radium/v1/profile/create': profileLogic,
         'GET:/radium/v1/profile': profileLogic
       },
@@ -265,6 +270,7 @@ const axios = require('axios'),
         await refreshAuthToken(req, res);
       } catch (e) {
         deleteCookie(COOKIES.accessToken, res);
+        deleteCookie(COOKIES.profile, res);
       }
       return await apply(req, res, false);
     }

@@ -28,7 +28,10 @@ import QueryPayload from '@/lib/QueryPayload'
 import URL from 'url-parse'
 import ModalContent from '@/views/ModalContent'
 import modalRoutes from '@/views/routes/modal'
+import actionRoutes from '@/views/routes/action'
 import { mapState } from 'vuex'
+
+const interceptRoutes = [].concat(modalRoutes, actionRoutes)
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -111,21 +114,24 @@ export default {
      *  @param {string} path
      *  @returns {boolean}
      */
-    getModalRoute (path) {
-      return modalRoutes.find((route) => route.path === path)
+    getInterceptRoute (path) {
+      return interceptRoutes.find((route) => route.path === path)
     },
     /**
      * if the path belongs to an account page, show modal and handle routing else hide the modal
      *
-     * @param {component} route
+     * @param {{path: string, name: string, component: [object], action: [string], props: [boolean]}} [route]
      * @param {string} from
-     * @returns {boolean}
+     * @returns {Promise} with boolean resolve
      */
-    handleModalRoute (route, from) {
-      if (route) {
+    async handleIntercept (route, from) {
+      const {component, action} = route || {}
+
+      if (component) {
+
         this.modalShow()
 
-        this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, route.component)
+        this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, component)
 
         // set the current path for where to update history to when the modal changes
         if (!this.redirectTo && from) {
@@ -134,8 +140,15 @@ export default {
 
         return true
       }
+      else {
+        this.modalHide()
+      }
 
-      this.modalHide()
+      if (action) {
+        await this.$store.dispatch(action)
+        this.$router.push(from)
+        return true
+      }
 
       return false
     },
@@ -270,10 +283,10 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
-      const modalRoute = this.getModalRoute(to.path)
+      const intercept = this.getInterceptRoute(to.path)
 
-      if (modalRoute) {
-        await this.handleModalRoute(modalRoute, from.path)
+      if (intercept) {
+        await this.handleIntercept(intercept, from.path)
       } else {
         await this.handleSpaRoute(to)
       }
@@ -301,7 +314,7 @@ export default {
     }
   },
   mounted () {
-    this.handleModalRoute(this.getModalRoute(this.$route.path), '/')
+    this.handleIntercept(this.getInterceptRoute(this.$route.path), '/')
   }
 }
 
