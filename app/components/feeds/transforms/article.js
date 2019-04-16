@@ -14,7 +14,6 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = function (data, locals) {
-  console.log(data);
   const { canonicalUrl, primaryHeadline, seoDescription, stationURL, stationTitle, subHeadline } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
