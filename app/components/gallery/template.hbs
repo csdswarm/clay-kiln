@@ -105,7 +105,11 @@
               </ul>
             </section>
           {{/if}}
-          <div data-editable="slides">{{> component-list slides }}</div>
+          {{#each slides }}
+            <div data-editable="slides">
+              {{> (getComponentName this._ref) this }}
+            </div>
+          {{/each}}
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
