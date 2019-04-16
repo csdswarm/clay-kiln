@@ -385,7 +385,8 @@
       @mixin stations-list-font5;
     }
   }
-  &.no__stations {
+
+  &.component--empty {
     display: none;
   }
 }

@@ -218,7 +218,7 @@ class StationsList {
       if (stationsData.length) {
         this.updateStationsDOMWithIDs(stationsData);
       } else {
-        this.el.classList.add('no__stations');
+        this.el.classList.add('component--empty');
       }
     } else {
       // server side populated
