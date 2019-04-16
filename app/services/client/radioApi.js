@@ -6,7 +6,6 @@ const rest = require('../universal/rest'),
   clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
   // https://regex101.com/r/gDfIxb/1
   spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
-  isAudioUriRegex = /^\/audio$/g,
   /**
    * returns boolean of whether it is a link within the SPA
    * return true if link is on current URL host or
@@ -15,7 +14,7 @@ const rest = require('../universal/rest'),
    * @param {string} uri
    * @returns {boolean}
    */
-  isSpaLink = (uri) => spaLinkRegex.test(uri) || ( uri.charAt(0) === '/' && !isAudioUriRegex.test(uri) ),
+  isSpaLink = (uri) => spaLinkRegex.test(uri) || ( uri.charAt(0) === '/' && uri !== '/audio' ),
   // An array of functions that take in a node and return the mutated node with attached events or modifications to data
   spaFunctions = [
     /**
