@@ -36,6 +36,13 @@ function getContent(obj, param) {
     });
 }
 
+/**
+ * attaches data for each _ref in slideEmbed
+ *
+ * @param {Object} slides
+ *
+ * @returns {Stream}
+ */
 function getSlideEmbed(slides) {
   return h(slides)
     .map( slide => {
@@ -60,6 +67,13 @@ function getSlideEmbed(slides) {
     });
 }
 
+/**
+ * Takes an Article obj and attaches the data attribute for each _ref for each slide and also slideEmbed
+ *
+ * @param {Object} obj
+ *
+ * @returns {Stream}
+ */
 function getSlides(obj) {
   return getContent(obj, 'slides')
     // doesn't make sense why getContent is returning an object and not stream
