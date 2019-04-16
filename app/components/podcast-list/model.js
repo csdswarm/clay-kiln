@@ -1,17 +1,28 @@
 'use strict';
 
-const queryService = require('../../services/server/query'),
+const radioApiService = require('../../services/server/radioApi'),
   utils = require('../../services/universal/podcast'),
-  podcastByPopularity = 'http://api.radio.com/v1/podcasts?sort=popularity',
   maxItems = 4,
-  SPORTS = 'sports',
   /**
    * determines if the array of podcast items contains a url
    * @param {object} arr
    * @param {string} url
    * @returns {boolean}
    */
-  containsUrl = (arr, url) => arr.some(item => item.podcast.url === url);
+  containsUrl = (arr, url) => arr.some(item => item.podcast.url === url),
+  /**
+   * get podcast category ID
+   * @param {string} categoryName
+   * @returns {number}
+   */
+  getPodcastCategoryID = async (categoryName) => {
+    const podcastCategories = await radioApiService.get('categories', { page: { size: 20 } }),
+      [ podcastCategory ] = podcastCategories.data.filter(category => {
+        return category.attributes.slug.includes(categoryName);
+      });
+
+    return podcastCategory.id;
+  };
 
 /**
  * @param {string} ref
@@ -19,22 +30,26 @@ const queryService = require('../../services/server/query'),
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = function (ref, data, locals) {
+module.exports.render = async function (ref, data, locals) {
   if (data.items.length === maxItems || !locals || locals.edit) {
     return new Promise((resolve) => resolve(data));
   }
 
-  let podcastsRequest = podcastByPopularity;
+  let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
 
-  if (data.category === SPORTS) {
-    podcastsRequest += '&filter[category_id]=31';
+  if (locals.sectionFront) {
+    const podcastCategoryID = await getPodcastCategoryID(locals.sectionFront);
+
+    if (podcastCategoryID) {
+      podcastsFilter = {...podcastsFilter, filter: { category_id: podcastCategoryID } };
+    }
   }
 
-  return fetch(podcastsRequest)
-    .then((response) => response.json())
-    .then((json) => {
+  try {
+    const podcasts = await radioApiService.get('podcasts', podcastsFilter);
 
-      json.data.splice(0, maxItems).forEach((podcast) => {
+    if (podcasts) {
+      podcasts.data.splice(0, maxItems).forEach((podcast) => {
         const url = utils.createUrl(podcast.attributes.title);
 
         if (data.items.length !== maxItems && !containsUrl(data.items, url)) {
@@ -48,11 +63,12 @@ module.exports.render = function (ref, data, locals) {
           });
         }
       });
-
       return data;
-    })
-    .catch(e => {
-      queryService.logCatch(e, ref);
+    } else {
       return data;
-    });
+    }
+  } catch (e) {
+    console.log(e);
+    return data;
+  }
 };

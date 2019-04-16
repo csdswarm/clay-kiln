@@ -2,11 +2,10 @@ _components:
   podcast-list:
     instances:
       sports:
-        category: 'sports'
-        items: []
-      news:
         items: []
       music:
+        items: []
+      news:
         items: []
       small-business-pulse:
         items: []

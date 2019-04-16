@@ -17,7 +17,8 @@ if (!instanceType) {
 }
 
 // Get current JSON
-let data = require(`${__dirname}/${componentType}-${instanceType}.json`)
+const data = require(`${__dirname}/${componentType}-${instanceType}.json`)
+
 data.podcastList = { '_ref': `${host}/_components/podcast-list/instances/${data.title}`};
 
 // Create correct clay data structure
