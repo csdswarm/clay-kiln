@@ -4,13 +4,17 @@ const rest = require('../universal/rest'),
   { formatLocal } = require('../../services/universal/dateTime'),
   spaLinkService = require('./spaLink'),
   clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
+  // https://regex101.com/r/gDfIxb/1
+  spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
   /**
-   * returns boolean if it is a link inside the spa
+   * returns boolean of whether it is a link within the SPA
+   * return true if link is on current URL host or
+   * starts with '/' and is not '/audio'
    *
    * @param {string} uri
    * @returns {boolean}
    */
-  isSpaLink = (uri) => /https?:\/\/.*.radio.com/.test(uri) || uri.charAt(0) === '/',
+  isSpaLink = (uri) => spaLinkRegex.test(uri) || ( uri.charAt(0) === '/' && !/^\/audio$/g.test(uri) ),
   // An array of functions that take in a node and return the mutated node with attached events or modifications to data
   spaFunctions = [
     /**

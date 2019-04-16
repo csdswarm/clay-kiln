@@ -47,6 +47,7 @@ export default class {
           }
         } else {
           $link.addClass('outbound-link')
+          $link.attr('target', '_blank')
         }
       }
     })
