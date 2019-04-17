@@ -141,16 +141,3 @@ export default {
   }
 }
 </script>
-
-<style>
-  .h1-signup {
-    line-height: 180%;
-  }
-
-  .sign-up {
-    position: relative;
-  }
-  .terms{
-    text-align:center;
-  }
-</style>
