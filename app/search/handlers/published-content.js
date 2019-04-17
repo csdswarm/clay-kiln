@@ -78,6 +78,7 @@ function getSlides(obj) {
   return getContent(obj, 'slides')
     // returns an object because we're still part of the stream created in getContent, no parent stream to merge into
     .map( ({ value }) => getSlideEmbed(value.slides))
+    // merge stream from getSlideEmbed into getContent stream
     .mergeWithLimit(1)
     .map( resolvedContent => {
       obj.value.slides = resolvedContent;
@@ -95,9 +96,11 @@ function save(stream) {
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
     .map(param => param.key.indexOf('article') >= 0 || param.key.indexOf('gallery') >= 0 ? getContent(param, 'content') : h.of(param))
+    // merge all content streams into main stream
     .mergeWithLimit(25) // Merge each individual stream into the bigger stream --> this turns the stream back into the article obj
     // get data content for slides
     .map(param => param.key.indexOf('gallery') >= 0 ? getSlides(param) : h.of(param))
+    // merge all slides streams into main stream
     .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
