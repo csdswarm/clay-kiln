@@ -63,12 +63,10 @@ module.exports.render = async function (ref, data, locals) {
           });
         }
       });
-      return data;
-    } else {
-      return data;
     }
   } catch (e) {
     console.log(e);
-    return data;
   }
+
+  return data;
 };
