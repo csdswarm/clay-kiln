@@ -4,9 +4,6 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
   mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
   MEDIUM_SCREEN_WIDTH = 1023;
 
-// mutableImages = ['account-btn', 'search-btn'];
-
-
 /**
  * Checks to see if the screen width is small enough to be mobile
  * @returns {boolean}
@@ -102,28 +99,6 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
   },
 
   /**
-   * Toggle image source for those images that change on hover.
-   * @function toggleImage
-   * @param {Object} event - Event from event listener.
-   */
-  // toggleImage = event => {
-  //   const defaultImage = event.currentTarget.querySelector('.default'),
-  //     hoveredImage = event.currentTarget.querySelector('.hover');
-
-  //   if (event.type == 'mouseover') {
-  //     defaultImage.classList.add('inactive');
-  //     defaultImage.classList.remove('active');
-  //     hoveredImage.classList.add('active');
-  //     hoveredImage.classList.remove('inactive');
-  //   } else {
-  //     defaultImage.classList.add('active');
-  //     defaultImage.classList.remove('inactive');
-  //     hoveredImage.classList.add('inactive');
-  //     hoveredImage.classList.remove('active');
-  //   }
-  // },
-
-  /**
    * Toggle Mobile Nav
    */
   toggleMobileOnClick = () => {
@@ -180,11 +155,6 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
    */
   addEventListeners = () => {
     toggleMobileOnClick();
-    // Toggle Images on Hover
-    // for (let image of mutableImages) {
-    //   document.getElementById(image).addEventListener('mouseover', function (e) { toggleImage(e); });
-    //   document.getElementById(image).addEventListener('mouseout', function (e) { toggleImage(e); });
-    // }
     toggleMobileDropdownOnClick();
     toggleDrawersOnCategoryHover();
     setMobileNavOnResize();
