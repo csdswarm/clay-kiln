@@ -167,3 +167,7 @@ _users:
     username: chris.strolia-davis@swarmsolutions.com
     provider: google
     auth: admin
+  -
+    username: ricky.harkins@swarmsolutions.com
+    provider: google
+    auth: admin
