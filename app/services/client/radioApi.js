@@ -14,7 +14,7 @@ const rest = require('../universal/rest'),
    * @param {string} uri
    * @returns {boolean}
    */
-  isSpaLink = (uri) => spaLinkRegex.test(uri) || ( uri.charAt(0) === '/' && uri !== '/audio' ),
+  isSpaLink = (uri) => spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' ),
   // An array of functions that take in a node and return the mutated node with attached events or modifications to data
   spaFunctions = [
     /**
