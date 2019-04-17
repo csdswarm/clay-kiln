@@ -31,6 +31,9 @@ export default {
       { gallerySlidePageviews }
     )
   },
+  [mutationTypes.LOAD_RADIO_PLAYER]: (state, radioPlayer) => {
+      state.radioPlayer = radioPlayer
+  },
   [mutationTypes.ACCOUNT_MODAL_SHOW]: (state, component) => {
     state.modalComponent = component
   },
