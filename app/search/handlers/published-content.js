@@ -46,7 +46,7 @@ function getContent(obj, param) {
 function getSlideEmbed(slides) {
   return h(slides)
     .map( slide => {
-      let slideData = JSON.parse(slide.data);
+      const slideData = JSON.parse(slide.data);
 
       return h(slideData.slideEmbed)
         .map(({ _ref }) => h(redis.hget('mydb:h', _ref).then( data => ({ _ref, data: JSON.parse(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
@@ -76,7 +76,7 @@ function getSlideEmbed(slides) {
  */
 function getSlides(obj) {
   return getContent(obj, 'slides')
-    // doesn't make sense why getContent is returning an object and not stream
+    // returns an object because we're still part of the stream created in getContent, no parent stream to merge into
     .map( ({ value }) => getSlideEmbed(value.slides))
     .mergeWithLimit(1)
     .map( resolvedContent => {
