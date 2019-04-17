@@ -23,15 +23,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.facebook-button {
-  cursor: pointer;
-  opacity: 0.9;
-  transition: opacity 50ms;
-}
-
-.facebook-button:hover{
-  opacity: 1;
-}
-</style>

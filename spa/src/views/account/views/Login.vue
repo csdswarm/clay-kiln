@@ -85,17 +85,3 @@ export default {
   }
 }
 </script>
-
-<style>
-  .h1-login {
-    line-height: 180%
-  }
-
-  .sign-in {
-    position: relative
-  }
-
-  .error{
-    text-align:center
-  }
-</style>
