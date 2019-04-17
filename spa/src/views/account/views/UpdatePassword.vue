@@ -108,9 +108,3 @@ export default {
   }
 }
 </script>
-
-<style>
-  .update-password {
-    position: relative;
-  }
-</style>

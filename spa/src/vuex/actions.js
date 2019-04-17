@@ -97,7 +97,7 @@ export default {
         first_name: user.first_name,
         last_name: user.last_name,
         gender: user.gender,
-        date_of_birth: user.date_of_birth.toISOString(),
+        date_of_birth: (new Date(user.date_of_birth)).toISOString(),
         zip_code: user.zip_code
       }
     })
