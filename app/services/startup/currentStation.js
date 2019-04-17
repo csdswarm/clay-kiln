@@ -5,22 +5,19 @@ const radioApiService = require('../../services/server/radioApi'),
   allStations = {},
   defaultStation = {
     id: 0,
-    attributes: {
-      id: 0,
-      name: 'Radio.com',
-      callsign: 'NATL-RC',
-      website: 'https://www.radio.com',
-      slug: 'www',
-      square_logo_small: 'http://images.radio.com/aiu-media/og_775x515_0.jpg',
-      square_logo_large: 'http://images.radio.com/aiu-media/og_775x515_0.jpg',
-      city: 'New York',
-      state: 'NY',
-      country: 'US',
-      gmt_offset: -5,
-      market: {
-        id: 15,
-        name: 'New York, NY'
-      }
+    name: 'Radio.com',
+    callsign: 'NATL-RC',
+    website: 'https://www.radio.com',
+    slug: 'www',
+    square_logo_small: 'http://images.radio.com/aiu-media/og_775x515_0.jpg',
+    square_logo_large: 'http://images.radio.com/aiu-media/og_775x515_0.jpg',
+    city: 'New York',
+    state: 'NY',
+    country: 'US',
+    gmt_offset: -5,
+    market: {
+      id: 15,
+      name: 'New York, NY'
     }
   },
   /**
