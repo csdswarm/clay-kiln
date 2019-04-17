@@ -127,7 +127,8 @@
   }
 }
 .google-ad-manager--global-logo-sponsorship {
-  position: absolute;
+  position: relative;
+  margin-bottom: 0;
   width: 100%;
   height: em(43);
   background: $alto;
