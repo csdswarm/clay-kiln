@@ -118,13 +118,25 @@ export default {
       return interceptRoutes.find((route) => route.path === path)
     },
     /**
+     * Provides metadata about routes that should invoke a modal
+     * @typedef {{path: string, name: string, component: object, props: [boolean]}} ModalRoute
+     */
+    /**
+     * Provides metadata about routes that should invoke an action
+     * @typedef {{path: string, name: string, action: string, props: [boolean]}} ActionRoute
+     */
+    /**
+     * Provides metadata for routes to be intercepted
+     * @typedef {(ModalRoute|ActionRoute)} InterceptRoute
+     */
+    /**
      * if the path belongs to an account page, show modal and handle routing else hide the modal
      *
-     * @param {{path: string, name: string, component: [object], action: [string], props: [boolean]}} [route]
+     * @param {InterceptRoute} [route]
      * @param {string} from
-     * @returns {Promise} with boolean resolve
+     * @returns {boolean}
      */
-    async handleIntercept (route, from) {
+    handleIntercept (route, from) {
       const {component, action} = route || {}
 
       if (component) {
@@ -140,15 +152,16 @@ export default {
 
         return true
       }
-      else {
-        this.modalHide()
-      }
-
-      if (action) {
-        await this.$store.dispatch(action)
-        this.$router.push(from)
+      else if (action) {
+        this.$store
+                .dispatch(action)
+                .then(() => {
+                  this.$router.push(from)
+                })
         return true
       }
+
+      this.modalHide()
 
       return false
     },

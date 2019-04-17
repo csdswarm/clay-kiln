@@ -43,9 +43,13 @@ export default {
     commit(mutationTypes.SET_USER, { ...result.data })
   },
   async [actionTypes.SIGN_OUT] ({ commit }) {
-    await axiosCall({ commit,
+    const val = await axiosCall({ commit,
       method: 'post',
-      url: '/radium/v1/auth/signout/all'
+      url: '/radium/v1/auth/signout',
+      data: {
+        // device key set on the server
+        device_key: null
+      }
     })
     commit(mutationTypes.SET_USER, { })
   },

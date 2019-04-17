@@ -209,10 +209,11 @@ const axios = require('axios'),
   signInLogic = async (response, req, res) => {
     if (hasTokenKeys(response.data)) {
       // get profile for the user so it can be accessed in clay
-      const profile = await getProfile(response.data);
+      const {device_key} = response.data,
+        profile = await getProfile(response.data);
 
       // save the response details
-      addCookie(COOKIES.profile, profile, profileExpires, res);
+      addCookie(COOKIES.profile, {...profile, device_key}, profileExpires, res);
       addCookie(COOKIES.accessToken, response.data.access_token, accessExpires, res);
       // since sending all of the tokens will be more than 4,096 bytes, store the refresh
       db.put(`token-${profile.user_id}`, JSON.stringify({
@@ -243,7 +244,7 @@ const axios = require('axios'),
   routeLogic = async (response, req, res) => {
     const routes = {
         'POST:/radium/v1/auth/signin': signInLogic,
-        'POST:/radium/v1/auth/signout/all': signOutLogic,
+        'POST:/radium/v1/auth/signout': signOutLogic,
         'POST:/radium/v1/profile/create': profileLogic,
         'GET:/radium/v1/profile': profileLogic
       },
@@ -286,11 +287,16 @@ const axios = require('axios'),
    * @return {Promise<Object>}
    */
   apply = async (req, res, retry = true) => {
-    const retryFunction = retry ? tokenExpired : () => false;
+    const data = req.body,
+      retryFunction = retry ? tokenExpired : () => false;
+
+    if (data && data.hasOwnProperty('device_key')) {
+      data.device_key = decodeCookie(COOKIES.profile, req.cookies).device_key;
+    }
 
     try {
       const authToken = decodeCookie(COOKIES.accessToken, req.cookies),
-        response = await call(req.method.toUpperCase(), req.params[0], req.body, authToken);
+        response = await call(req.method.toUpperCase(), req.params[0], data, authToken);
 
       if (response.status < 400) {
         await routeLogic(response, req, res);
