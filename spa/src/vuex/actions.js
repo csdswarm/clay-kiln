@@ -50,7 +50,7 @@ export default {
 
     commit(mutationTypes.SET_USER, { ...result.data })
   },
-  async [actionTypes.SIGN_UP]  ({ commit, state, dispatch }, { email, password }) {
+  async [actionTypes.SIGN_UP] ({ commit, state, dispatch }, { email, password }) {
     await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/signup',
@@ -64,7 +64,7 @@ export default {
     commit(mutationTypes.SIGN_UP_COMPLETE)
     commit(mutationTypes.ROUTER_PUSH, '/account/profile')
   },
-  async [actionTypes.CREATE_PROFILE]  ({ commit }, user) {
+  async [actionTypes.CREATE_PROFILE] ({ commit }, user) {
     const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/profile/create',
@@ -81,7 +81,7 @@ export default {
     commit(mutationTypes.SET_USER, formatProfile(result.data))
     commit(mutationTypes.ACCOUNT_MODAL_HIDE)
   },
-  async [actionTypes.GET_PROFILE]  ({ commit }) {
+  async [actionTypes.GET_PROFILE] ({ commit }) {
     const result = await axiosCall({ commit,
       method: 'get',
       url: '/v1/profile'
@@ -89,7 +89,7 @@ export default {
 
     commit(mutationTypes.SET_USER, formatProfile(result.data))
   },
-  async [actionTypes.UPDATE_PROFILE]  ({ commit }, user) {
+  async [actionTypes.UPDATE_PROFILE] ({ commit }, user) {
     const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/profile/update',
@@ -105,7 +105,7 @@ export default {
     commit(mutationTypes.SET_USER, formatProfile(result.data))
     commit(mutationTypes.MODAL_SUCCESS, 'Your profile has been updated successfully!')
   },
-  async [actionTypes.UPDATE_PASSWORD]  ({ commit }, passwords) {
+  async [actionTypes.UPDATE_PASSWORD] ({ commit }, passwords) {
     await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/password/update',
