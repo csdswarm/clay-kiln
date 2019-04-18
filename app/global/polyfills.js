@@ -1,5 +1,5 @@
+/* eslint-disable */
 'use strict';
-
 (function () {
   // window.CustomEvent -- https://gist.github.com/gt3/787767e8cbf0451716a189cdcb2a0d08
   if (typeof window.CustomEvent === 'function') return false;
@@ -149,5 +149,63 @@
         } while ((i < 0) && (el = el.parentElement));
         return el;
       };
+  }
+
+  // ParentNode.append - https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/append#Polyfill
+  // Source: https://github.com/jserz/js_piece/blob/master/DOM/ParentNode/append()/append().md
+  (function (arr) {
+    arr.forEach(function (item) {
+      if (item.hasOwnProperty('append')) {
+        return;
+      }
+      Object.defineProperty(item, 'append', {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: function append() {
+          var argArr = Array.prototype.slice.call(arguments),
+            docFrag = document.createDocumentFragment();
+
+          argArr.forEach(function (argItem) {
+            var isNode = argItem instanceof Node;
+            docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
+          });
+
+          this.appendChild(docFrag);
+        }
+      });
+    });
+  })([Element.prototype, Document.prototype, DocumentFragment.prototype]);
+
+  // Object.prototype.assign -
+  //   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#Polyfill
+  if (typeof Object.assign != 'function') {
+    // Must be writable: true, enumerable: false, configurable: true
+    Object.defineProperty(Object, "assign", {
+      value: function assign(target, varArgs) { // .length of function is 2
+        'use strict';
+        if (target == null) { // TypeError if undefined or null
+          throw new TypeError('Cannot convert undefined or null to object');
+        }
+
+        var to = Object(target);
+
+        for (var index = 1; index < arguments.length; index++) {
+          var nextSource = arguments[index];
+
+          if (nextSource != null) { // Skip over if undefined or null
+            for (var nextKey in nextSource) {
+              // Avoid bugs when hasOwnProperty is shadowed
+              if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                to[nextKey] = nextSource[nextKey];
+              }
+            }
+          }
+        }
+        return to;
+      },
+      writable: true,
+      configurable: true
+    });
   }
 }());

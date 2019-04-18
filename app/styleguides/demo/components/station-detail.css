@@ -51,6 +51,9 @@
         &.show__stop {
           @mixin show__stop
         }
+        &:hover {
+          opacity: 0.7;
+        }
       }
     }
     .lede__info {
