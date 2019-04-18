@@ -153,11 +153,10 @@ export default {
         return true
       }
       else if (action) {
+        const returnToPage = () => { this.$router.push(from) }
         this.$store
                 .dispatch(action)
-                .then(() => {
-                  this.$router.push(from)
-                })
+                .then(returnToPage)
         return true
       }
 
