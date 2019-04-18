@@ -287,11 +287,11 @@ export default {
         this.modalHide()
 
         if (this.redirectTo) {
-            const path = this.redirectTo
+          const path = this.redirectTo
 
-            this.redirectTo = null
+          this.redirectTo = null
 
-            this.$router.push(path)
+          this.$router.push(path)
         }
       } else {
         // since the modal is not updating the title, manually do it

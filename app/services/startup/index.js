@@ -69,7 +69,10 @@ function setupApp(app) {
   app.use(user);
 
   /**
-   * Radium radium.radio.com endpoints
+   * radium.radio.com endpoints
+   *
+   * This is not in the routes/index.js file because you are forced to be logged in to access any route at that level
+   * There is a tech debt item to investigate with NYM why all routes added by kiln require authentication
    */
   app.all('/radium/*', (req, res) => {
     radiumApi.apply(req, res).then((data) => {
