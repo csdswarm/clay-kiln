@@ -156,7 +156,7 @@ export default {
         const returnToPage = () => { this.$router.push(from) }
         this.$store
                 .dispatch(action)
-                .then(returnToPage)
+                .finally(returnToPage)
         return true
       }
 
@@ -298,6 +298,10 @@ export default {
       const intercept = this.getInterceptRoute(to.path)
 
       if (intercept) {
+        if(to.path.toLocaleLowerCase() === from.path.toLocaleLowerCase()){
+          // to prevent looping go to home page
+          from.path = '/';
+        }
         await this.handleIntercept(intercept, from.path)
       } else {
         await this.handleSpaRoute(to)
