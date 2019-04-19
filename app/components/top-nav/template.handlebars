@@ -56,8 +56,9 @@
           </div>
         {{/each}}
       {{/if}}
-      <div class="radiocom-nav__radium radium">
+      <div class="radiocom-nav__radium">
         {{#if radiumUser }}
+          {{!-- twisty is a custom tag for CSS purposes --}}
           <span class="radium__text radium__user">{{accountUser}}<twisty /></span>
           <div class="radium__nav-drawer">
             <div class="radium__container">
@@ -88,9 +89,19 @@
         <div class="nav-drawer__radium-mobile radium-mobile">
           <ul class="radium-mobile__list">
             {{#if radiumUser }}
-              <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="/account/profile/update">Manage Profile</a></li>
-              <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="/account/password/update">Change Password</a></li>
-              <li class="radium-mobile__list-item"><a class="radium-mobile__text--signed-in" href="/account/logout">Log Out</a></li>
+              <li class="radium-mobile__list-item">
+                <a
+                  class="radium-mobile__text radium-mobile__text--signed-in"
+                  href="/account/profile/update">Manage Profile</a>
+              </li>
+              <li class="radium-mobile__list-item">
+                <a
+                  class="radium-mobile__text radium-mobile__text--signed-in"
+                  href="/account/password/update">Change Password</a></li>
+              <li class="radium-mobile__list-item">
+                <a
+                  class="radium-mobile__text radium-mobile__text--signed-in"
+                  href="/account/logout">Log Out</a></li>
             {{else}}
               <li class="radium-mobile__list-item"><a class="radium-mobile__text" href="/account/login">Log In</a></li>
               <li class="radium-mobile__list-item"><a class="radium-mobile__text" href="/account/signup">Sign Up</a></li>
