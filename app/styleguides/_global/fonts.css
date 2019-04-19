@@ -451,3 +451,11 @@ em, i {
 @define-mixin directory-featured-font1 {
   @mixin font CircularStd-Black, 24px, $white, -.58px, 140px;
 }
+
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Radium Fonts Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin radium-font1 {
+  @mixin font ProximaNova-Regular, 12px, $white, normal, 12px;
+}

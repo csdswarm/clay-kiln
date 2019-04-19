@@ -1,35 +1,33 @@
 'use strict';
 
-const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
-  mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
-  MEDIUM_SCREEN_WIDTH = 1023;
-
-/**
- * Checks to see if the screen width is small enough to be mobile
- * @returns {boolean}
- */
-function inMobile() {
-  return window.matchMedia(`(max-width: ${MEDIUM_SCREEN_WIDTH}px)`).matches;
-}
-
-let isMobile = false,
+let isNotDesktop = false,
   activeHamburger = false;
 
-/**
- * Toggle hamburger animation & mobile nav on click of hamburger
- * @function toggleHamburger
- * @param {boolean} toggleHamburgerOnly - Toggles hamburger without toggling mobile nav.
- */
-const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
+const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
+  mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
+  MEDIUM_SCREEN_WIDTH = 1023,
+
+  /**
+   * Checks to see if the screen width is small enough to be considered not a desktop view
+   * @returns {boolean}
+   */
+  notDesktop = () => { return window.matchMedia(`(max-width: ${MEDIUM_SCREEN_WIDTH}px)`).matches; },
+
+  /**
+   * Toggle hamburger animation & mobile nav on click of hamburger
+   * @function toggleHamburger
+   * @param {boolean} toggleHamburgerOnly - Toggles hamburger without toggling mobile nav.
+   */
+  toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
     let bars = document.getElementsByClassName('bar'),
       navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0],
       activeHamburgerClass = 'active',
       activeMobileNavClass = 'nav-drawer--active';
 
-    isMobile = inMobile();
-    activeHamburger = isMobile && !activeHamburger;
+    isNotDesktop = notDesktop();
+    activeHamburger = isNotDesktop && !activeHamburger;
 
-    if (activeHamburger && isMobile) {
+    if (activeHamburger && isNotDesktop) {
       // Open mobile nav drawer & change hamburger styling
       for (let bar of bars) bar.classList.add(activeHamburgerClass);
       navDrawer.classList.add(activeMobileNavClass);
@@ -52,19 +50,12 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
     let navDrawer,
       navDrawers = document.getElementsByClassName('nav-drawer');
 
-    isMobile = inMobile();
+    isNotDesktop = notDesktop();
     for (let drawer of navDrawers) {
       drawer.classList.remove('nav-drawer--sub-nav-active');
       drawer.classList.remove('nav-drawer--active');
     }
-    if (!isMobile) {
-      // Toggle desktop nav drawer
-      navDrawer = event.currentTarget.querySelector('.nav-drawer');
-      if (show) {
-        navDrawer.classList.add('nav-drawer--sub-nav-active');
-        navDrawer.classList.add('nav-drawer--active');
-      }
-    } else {
+    if (isNotDesktop) {
       // Toggle mobile nav drawer
       navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
       if (show) {
@@ -73,6 +64,13 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
       } else {
         navDrawer.classList.remove('nav-drawer--sub-nav-active');
         navDrawer.classList.remove('nav-drawer--active');
+      }
+    } else {
+      // Toggle desktop nav drawer
+      navDrawer = event.currentTarget.querySelector('.nav-drawer');
+      if (show) {
+        navDrawer.classList.add('nav-drawer--sub-nav-active');
+        navDrawer.classList.add('nav-drawer--active');
       }
     }
   },
@@ -141,8 +139,7 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
     window.addEventListener('resize', () => {
       let navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
 
-      isMobile = inMobile();
-      if (!isMobile) {
+      if (!notDesktop()) {
         navDrawer.classList.remove('nav-drawer--active');
         navDrawer.classList.remove('nav-drawer--sub-nav-active');
         toggleHamburger(true);

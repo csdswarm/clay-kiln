@@ -207,8 +207,7 @@ $drawerSelector: nav-drawer;
     .radium {
       &__text,
       &__sub-text {
-        color: $white;
-        font-size: em(12);
+        @mixin radium-font1;
       }
 
       &__text {
@@ -677,12 +676,15 @@ $drawerSelector: nav-drawer;
 
     & &__text,
     & &__text--signed-in {
-      font-size: em(12);
-      color: $white;
+      @mixin radium-font1;
     }
 
     & &__text {
       text-transform: uppercase;
+    }
+
+    & &__text--signed-in {
+      text-transform: initial;
     }
 
     &__list {
