@@ -20,6 +20,6 @@ const getSpaState = () => {
     return {
       currentlyPlaying
     };
-  }
+  };
 
 module.exports.getLocals = getLocals;
