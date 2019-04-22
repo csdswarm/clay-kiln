@@ -1,7 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
-  clientPlayer = require('../../services/client/ClientPlayerInterface')(),
+  { playingClass } = require('../../services/server/locals'),
   SPORTS_SLUG = 'sports',
   NEWSTALK_SLUG = 'news-talk';
 
@@ -88,7 +88,7 @@ function returnStationless(data) {
  * @param {object} station
  */
 function addPlayingClass(locals, station) {
-  station.playingClass = clientPlayer.playingClass(locals, station.id);
+  station.playingClass = playingClass(locals, station.id);
 }
 
 module.exports.render = async (uri, data, locals) => {

@@ -139,18 +139,6 @@ class ClientPlayerInterface {
   pause() {
     return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlaybackStatus', { playbackStatus: 'pause' });
   }
-
-  /**
-   *
-   * Get the class that represents the icon to display
-   *
-   * @param {Object} locals
-   * @param {Number} stationId
-   * @returns {String} - the class to display
-   */
-  playingClass(locals, stationId) {
-    return locals.currentlyPlaying && locals.currentlyPlaying.id === stationId ? locals.currentlyPlaying.playingClass : 'show__play';
-  }
 }
 
 // Export to factory to simplify standard import statements.

@@ -1,7 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
-  clientPlayer = require('../../services/client/ClientPlayerInterface')(),
+  { playingClass } = require('../../services/server/locals'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime');
 
 /**
@@ -49,7 +49,7 @@ module.exports.render = async function (ref, data, locals) {
       category,
       id: stationId,
       gmt_offset,
-      playingClass: clientPlayer.playingClass(locals, stationId)
+      playingClass: playingClass(locals, stationId)
     },
     schedule: !json.data ? [] :
       json.data

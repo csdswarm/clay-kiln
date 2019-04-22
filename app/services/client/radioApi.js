@@ -2,6 +2,7 @@
 
 const rest = require('../universal/rest'),
   { formatLocal } = require('../../services/universal/dateTime'),
+  { getLocals } = require('../../services/client/locals'),
   spaLinkService = require('./spaLink'),
   clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
   /**
@@ -76,27 +77,6 @@ const rest = require('../universal/rest'),
    */
   spaInterface = (doc) => {
     return spaFunctions.reduce((node, func) => func(node), doc);
-  },
-  /**
-   * Returns the state object from the Spa
-   *
-   * @returns {Object}
-   */
-  getSpaState = () => {
-    return window.vueApp.$store.state;
-  },
-  /**
-   * Returns the locals required for the rendering of the html in clay
-   *
-   * @returns {Object}
-   */
-  getLocals = () => {
-    const state = getSpaState(),
-      currentlyPlaying = state.spaPayloadLocals.currentlyPlaying;
-
-    return {
-      currentlyPlaying
-    };
   },
   /**
    * Client side AJAX call to get the specified route and returns a DOM object

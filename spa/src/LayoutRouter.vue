@@ -13,6 +13,7 @@ import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
 import URL from 'url-parse'
+import { getLocals } from '../../app/services/client/locals'
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -89,7 +90,8 @@ export default {
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
-            'x-amphora-page-json': true
+            'x-amphora-page-json': true,
+            'x-locals': JSON.stringify(getLocals(this.$store.state))
           }
         })
 

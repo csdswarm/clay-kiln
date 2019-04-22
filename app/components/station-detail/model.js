@@ -1,7 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
-  clientPlayer = require('../../services/client/ClientPlayerInterface')(),
+  { playingClass } = require('../../services/server/locals'),
   NEWS_TALK = 'News & Talk',
   SPORTS = 'Sports',
   LOCATION = 'location';
@@ -77,7 +77,7 @@ module.exports.render = (uri, data, locals) => {
       if (response.data) {
         // station object is available to child components through locals.station
         locals.station = response.data[0].attributes || {};
-        locals.station.playingClass = clientPlayer.playingClass(locals, locals.station.id);
+        locals.station.playingClass = playingClass(locals, locals.station.id);
 
         data.station = locals.station;
         data.tags = getStationTags(response.data[0].attributes);

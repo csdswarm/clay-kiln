@@ -185,6 +185,12 @@ class SpaPlayerInterface {
 
     const currentStation = this.getCurrentStation()
 
+    // If stationId wasn't passed in, pull currently playing
+    // station from player to set stationId.
+    if (!stationId && currentStation) {
+      stationId = currentStation.id
+    }
+
     // Set station.
     if (stationId && (!currentStation || currentStation.id !== stationId)) {
       await this.loadStation(stationId)
@@ -204,7 +210,11 @@ class SpaPlayerInterface {
    *
    */
   getCurrentStation () {
-    return window.RadioPlayer.getCurrentStationId()
+    try {
+      return window.RadioPlayer.getCurrentStationId()
+    } catch (e) {
+      // the getCurrentStationId method will error out if there is no current station
+    }
   }
 
   /**
