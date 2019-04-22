@@ -80,6 +80,22 @@ class SpaPlayerInterface {
 
   /**
    *
+   * get the next type of button based off of the current state
+   * @param {string } current
+   * @return {string}
+   */
+  getPlayState (current) {
+    const interactive = window.RadioPlayer.stationDetails.dataModel.currentStation.attributes.interactive
+
+    if (current === 'play') {
+      return interactive ? 'pause' : 'stop'
+    }
+
+    return 'play'
+  }
+
+  /**
+   *
    * Lazy-load the player libraries and assets into the DOM, and mount player
    * onto the page.
    *
@@ -90,6 +106,17 @@ class SpaPlayerInterface {
 
     // Verify player is mounted.
     if (playerMounted) {
+      window.addEventListener('playbackStateChange', e => {
+        const nextState = this.getPlayState(e.detail.playerState)
+        const payload = {
+          id: e.detail.stationId,
+          playingClass: `show__${nextState}`
+        }
+
+        spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', payload)
+        this.spa.$store.commit(mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS, { currentlyPlaying: payload })
+      })
+
       return true
     } else {
       throw new Error('Radio Player failed to mount correctly.')
@@ -162,22 +189,6 @@ class SpaPlayerInterface {
     if (stationId && (!currentStation || currentStation.id !== stationId)) {
       await this.loadStation(stationId)
     }
-
-    // If stationId wasn't passed in, pull currently playing
-    // station from player to set stationId.
-    if (!stationId) {
-      if (currentStation) {
-        stationId = currentStation.id
-      } else {
-        throw new Error('Unable to determine playback station.')
-      }
-    }
-
-    // Comminucate play status to client.js
-    await spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', {
-      stationId,
-      playbackStatus: 'play'
-    })
   }
 
   /**
@@ -185,30 +196,15 @@ class SpaPlayerInterface {
    */
   async pause () {
     await this.spa.$store.state.radioPlayer.playerControls.pause()
-
-    await spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', {
-      playbackStatus: 'pause'
-    })
   }
 
   /**
    *
    * Get the station that is currently loaded in the player.
    *
-   * TODO - replace this with call to actual RadioPlayer.getCurrentStationId()
-   * public method when it becomes available.
-   *
-   * See: https://bitbucket.org/entercom/rad-web-player/pull-requests/28/player-390-added-method-to-return-current/diff
-   *
    */
   getCurrentStation () {
-    return (
-      this.spa.$store.state.radioPlayer.stationDetails &&
-        this.spa.$store.state.radioPlayer.stationDetails.dataModel &&
-        this.spa.$store.state.radioPlayer.stationDetails.dataModel.currentStation
-    )
-      ? this.spa.$store.state.radioPlayer.stationDetails.dataModel.currentStation
-      : null
+    return window.RadioPlayer.getCurrentStationId()
   }
 
   /**

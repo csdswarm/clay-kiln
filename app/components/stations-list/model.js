@@ -1,6 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
+  clientPlayer = require('../../services/client/ClientPlayerInterface')(),
   SPORTS_SLUG = 'sports',
   NEWSTALK_SLUG = 'news-talk';
 
@@ -80,6 +81,16 @@ function returnStationless(data) {
   return data;
 }
 
+/**
+ * mutates the station adding playing class to show the correct playing state
+ *
+ * @param {object} locals
+ * @param {object} station
+ */
+function addPlayingClass(locals, station) {
+  station.playingClass = clientPlayer.playingClass(locals, station.id);
+}
+
 module.exports.render = async (uri, data, locals) => {
   const route = 'stations',
     params = {
@@ -92,9 +103,10 @@ module.exports.render = async (uri, data, locals) => {
 
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        let stations = locals.stationIDs.split(',').map(stationID => {
-          let station = response.data.find(station => {
+        const stations = locals.stationIDs.split(',').map(stationID => {
+          const station = response.data.find(station => {
             if (station.id === parseInt(stationID)) {
+              addPlayingClass(locals, station.attributes);
               return station;
             }
           });
@@ -222,7 +234,10 @@ module.exports.render = async (uri, data, locals) => {
 
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        data.stations = response.data ? response.data.map((station) => station.attributes) : [];
+        data.stations = response.data ? response.data.map((station) => {
+          addPlayingClass(locals, station.attributes);
+          return station.attributes;
+        }) : [];
         data.stationIds = data.stations.map((station) => { return { id: station.id }; });
         return data;
       } else {

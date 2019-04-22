@@ -12,55 +12,21 @@ clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
 
 // Listen for player to start playback.
 clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (payload) => {
-  const { stationId: currentlyPlayingStationId, playbackStatus } = payload;
+  const { id, playingClass } = payload;
 
-  syncPlayerButtons(currentlyPlayingStationId, playbackStatus);
+  syncPlayerButtons(id, playingClass);
 });
 
-/**
- *
- * Add player main button click event delegation to document so we can
- * capture main player button clicks as well for play button sync.
- *
- */
-document.addEventListener('click', async (event) => {
-  if (event.target.id === 'playButton') {
-
-    const currentStationId = await clientCommunicationBridge.sendMessage('SpaPlayerInterfaceGetCurrentStationId');
-
-    /**
-     * TODO
-     *
-     * We need a public API added to RadioPlayer similar to RadioPlayer.getCurrentStationId()
-     * but it should return playback status. Even something like RadioPlayer.isPlaying() returning
-     * true/false would be much better than determining play status via css class...
-     *
-     * https://entercomdigitalservices.atlassian.net/browse/PLAYER-390
-     */
-    // eslint-disable-next-line one-var
-    const playbackStatus = (event.target.classList.contains('stop')) ? 'stop' : 'play';
-
-    syncPlayerButtons(currentStationId, playbackStatus);
-  }
-});
-
-function syncPlayerButtons(currentStationId, playbackStatus) {
+function syncPlayerButtons(currentStationId, playingClass) {
   const playerButtons = window.document.querySelectorAll('[data-play-station]');
 
   // Synchronize player buttons.
   playerButtons.forEach((element) => {
-    const buttonStationId = element.dataset.playStation,
-      isIRE = element.dataset.ire === 'true',
-      notPlayingClass = `show__${isIRE ? 'stop' : 'pause'}`;
+    element.classList.replace('show__pause', 'show__play');
+    element.classList.replace('show__stop', 'show__play');
 
-    if (playbackStatus === 'play') {
-      if (buttonStationId == currentStationId) {
-        element.classList.replace('show__play', notPlayingClass);
-      } else {
-        element.classList.replace(notPlayingClass, 'show__play');
-      }
-    } else {
-      element.classList.replace(notPlayingClass, 'show__play');
+    if (parseInt(element.dataset.playStation) === parseInt(currentStationId)) {
+      element.classList.replace('show__play', playingClass);
     }
   });
 }

@@ -294,22 +294,22 @@
               font-size: 12px;
               @mixin show__play;
               &::after {
-                margin-top: 0em;
+                margin-top: 0;
               }
             }
             &.show__pause {
               font-size: 12px;
               @mixin show__pause;
               &::after {
-                margin-top: 0em;
+                margin-top: 0;
               }
-            } 
+            }
 
-            .show__stop {
+            &.show__stop {
               font-size: 12px;
               @mixin show__stop;
               &::after {
-                margin-top: 0em;
+                margin-top: 0;
               }
             }
           }

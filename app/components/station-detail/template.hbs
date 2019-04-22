@@ -10,7 +10,7 @@
           <img src="{{station.square_logo_large}}?width=220&height=220&crop=1:1,offset-y0" alt="{{station.name}}" itemprop="thumbnailUrl">
           <meta itemprop="contentUrl" content="{{ station.square_logo_large }}">
         </div>
-        <div data-play-station="{{station.id}}" data-ire={{ @root.locals.station.interactive }} class="image__play-btn show__play"></div>
+        <div data-play-station="{{station.id}}" class="image__play-btn {{station.playingClass}}"></div>
         </div>
       </div>
       <div class="lede__info">
@@ -25,7 +25,7 @@
           <div class="links__lede--mobile">
             <div class="lede__image">
               <img src="{{station.square_logo_large}}" alt="{{station.name}}">
-              <div class="image__play-btn show__play"></div>
+              <div class="image__play-btn {{station.playingClass}}"></div>
             </div>
           </div>
           <div class="links__section">

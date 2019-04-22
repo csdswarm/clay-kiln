@@ -92,8 +92,8 @@ class SpaCommunicationBridge {
    * Send a message to a Client.js channel.
    *
    * @param {string} channelName - Client.js channel to recieve message.
-   * @param {*} payload - data payload associated with message.
-   * @param {*} timeout - timeout in ms.
+   * @param {*} [payload] - data payload associated with message.
+   * @param {*} [timeout] - timeout in ms.
    * @returns {Promise<any>} - Response payload from Client.js channel.
    */
   sendMessage (channelName, payload, timeout = null) {

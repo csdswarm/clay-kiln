@@ -62,7 +62,7 @@ const rest = require('../universal/rest'),
           event.stopPropagation();
           const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
 
-          return clientPlayerInterface[playbackStatus](element.dataset.playStation);
+          clientPlayerInterface[playbackStatus](element.dataset.playStation);
         });
       });
       return doc;
@@ -78,6 +78,27 @@ const rest = require('../universal/rest'),
     return spaFunctions.reduce((node, func) => func(node), doc);
   },
   /**
+   * Returns the state object from the Spa
+   *
+   * @returns {Object}
+   */
+  getSpaState = () => {
+    return window.vueApp.$store.state;
+  },
+  /**
+   * Returns the locals required for the rendering of the html in clay
+   *
+   * @returns {Object}
+   */
+  getLocals = () => {
+    const state = getSpaState(),
+      currentlyPlaying = state.spaPayloadLocals.currentlyPlaying;
+
+    return {
+      currentlyPlaying
+    };
+  },
+  /**
    * Client side AJAX call to get the specified route and returns a DOM object
    *
    * @param {string} route
@@ -85,7 +106,10 @@ const rest = require('../universal/rest'),
    */
   fetchDOM = async (route) => {
     const separator = route.includes('?') ? '&' : '?',
-      response = await fetch(`${route}${separator}ignore_resolve_media=true`),
+      options = {
+        headers: new Headers({ 'x-locals': JSON.stringify(getLocals()) })
+      },
+      response = await fetch(`${route}${separator}ignore_resolve_media=true`, options),
       html = await response.text(),
       doc = new DOMParser().parseFromString(html, 'text/html'),
       elements = doc.body.childElementCount === 1 ? doc.body.children[0] : Array.from(doc.body.children),

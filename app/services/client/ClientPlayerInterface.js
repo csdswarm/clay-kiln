@@ -34,7 +34,7 @@ class ClientPlayerInterface {
         // Initialize Player Google tags
         this.initPlayerGoogleTags();
       });
-    
+
   }
 
   /**
@@ -63,7 +63,7 @@ class ClientPlayerInterface {
     return new Promise((resolve, reject) => {
       const firstScript = document.getElementsByTagName('script')[0],
         newScript = document.createElement('script');
-      
+
       newScript.onload = () => {
         return resolve();
       };
@@ -94,7 +94,7 @@ class ClientPlayerInterface {
         return reject(new Error(`CSS library failed to lazy-load: ${cssUrl}`));
       };
       linkTag.href = cssUrl;
-      
+
       document.head.appendChild(linkTag);
     });
   }
@@ -140,6 +140,17 @@ class ClientPlayerInterface {
     return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlaybackStatus', { playbackStatus: 'pause' });
   }
 
+  /**
+   *
+   * Get the class that represents the icon to display
+   *
+   * @param {Object} locals
+   * @param {Number} stationId
+   * @returns {String} - the class to display
+   */
+  playingClass(locals, stationId) {
+    return locals.currentlyPlaying && locals.currentlyPlaying.id === stationId ? locals.currentlyPlaying.playingClass : 'show__play';
+  }
 }
 
 // Export to factory to simplify standard import statements.

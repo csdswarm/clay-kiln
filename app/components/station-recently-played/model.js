@@ -2,6 +2,7 @@
 
 const rest = require('../../services/universal/rest'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
+  clientPlayer = require('../../services/client/ClientPlayerInterface')(),
   moment = require('moment'),
   radioAPI = 'https://api.radio.com/v1';
 
@@ -20,6 +21,7 @@ module.exports.render = async function (ref, data, locals) {
   const stationId = locals.stationId ? locals.stationId : locals.station.id,
     gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
     category = (locals.category ? locals.category : locals.station.category).toLowerCase(),
+    playingClass = clientPlayer.playingClass(locals, stationId),
     // using the station offset determine the current day 1 - 7 based
     stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
     stationHour = new Date(new Date().getTime() + gmt_offset * 60 * 1000).getHours(),
@@ -46,7 +48,7 @@ module.exports.render = async function (ref, data, locals) {
       }
     }
 
-    data.station = { id: stationId, category };
+    data.station = { id: stationId, category, playingClass };
     data.schedule = history.data.events.recent_events
       .map((item) => {
         return {
