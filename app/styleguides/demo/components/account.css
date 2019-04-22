@@ -489,6 +489,9 @@
     margin-bottom:  10px;
     width:  100%;
     label {
+      height: 0;
+      width: 0;
+      overflow: hidden;
       position:  absolute;
       left:  0;
       top: calc(50% - 5px);
@@ -501,6 +504,8 @@
       display:  flex;
     }
     input:not(:placeholder-shown) + label {
+      height: auto;
+      width: auto;
       transform:  translateY(-18px);
       opacity:  .7;
       font-size: 12px;
