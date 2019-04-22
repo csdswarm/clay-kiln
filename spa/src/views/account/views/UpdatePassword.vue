@@ -22,7 +22,7 @@
           name="newPassword"
           @change="onFieldChange($event)"
         >
-        <label>Nee Password</label>
+        <label>New Password</label>
       </div>
       <div class="floating-label">
         <input
