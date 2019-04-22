@@ -308,7 +308,11 @@ export default {
       }
     },
     routerPush (path) {
-      this.$router.push({ path })
+      if(path){
+        this.$router.push({ path })
+        // reset routerPush so that future values set on it always trigger a change and consequently, this method
+        this.$store.state.routerPush = null
+      }
     },
     modalComponent (component) {
       if (!component) {
