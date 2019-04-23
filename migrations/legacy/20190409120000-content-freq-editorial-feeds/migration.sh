@@ -24,30 +24,44 @@ printf "\n\n\n\n"
 # Updating existing field mappings
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#_updating_existing_field_mappings
 
-newProps="\"featured\": {\"type\": \"boolean\"}, \"editorialFeeds\": {\"type\": \"object\", \"dynamic\": \"true\"}";
+# find out which index is currently being used 
+printf "\nmaking curl GET to $es:9200/published-content/_alias\n";
+curl -X GET "$es:9200/published-content/_alias" > ./aliases.json;
+currentIndex=$(node alias "$1");
+rm ./aliases.json
 
-index=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null | sed -n 's/.*\(published-content[^ \n]*\).*/\1/p' | sed q);
-mappings=$(curl -X GET "$es:9200/$index/_mappings");
+mappings=$(curl -X GET "$es:9200/$currentIndex/_mappings");
 
 if [[ $mappings != *"featured"* && $mappings != *"editorialFeeds"* ]]; then
-  num=$(echo $index | sed 's/[^0-9]*//g');
-  newIndex="$(echo $index | sed 's/[0-9]*//g')$((num+1))";
-  alias=$(echo $index | sed 's/\(.*\)_.*/\1/g');
-  newMappings=$(curl -X GET "$es:9200/$index/_mappings" 2>/dev/null | sed -n "s/\"properties\":{/\"properties\":{$newProps,/p" | sed -n "s/{\"$index\":{\(.*\)}}/\1/p");
+  printf "\nmaking curl GET to $es:9200/_cat/indices?pretty&s=index:desc\n";
+  indices=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null);
+  # sometimes the currentIndex isn't necessarily the largest. and query brings back in alphabetical order, so 2 > 10
+  largestIndex=$(node largest-index "$1" "$indices");
+
+  # increment largetIndex by 1 to create newIndex
+  num=$(echo $largestIndex | sed 's/[^0-9]*//g');
+  newIndex="$(echo $largestIndex | sed 's/[0-9]*//g')$((num+1))";
+
+  # add featured and editorialFeeds properties to mapping
+  newProps="\"featured\": {\"type\": \"boolean\"}, \"editorialFeeds\": {\"type\": \"object\", \"dynamic\": \"true\"}";
+
+  # assuming this is fixed
+  alias="published-content";
+  newMappings=$(curl -X GET "$es:9200/$currentIndex/_mappings" 2>/dev/null | sed -n "s/\"properties\":{/\"properties\":{$newProps,/p" | sed -n "s/{\"$currentIndex\":{\(.*\)}}/\1/p");
 
   printf "\n\nCreating new index ($newIndex)...\n\n"
-  curl -X GET "$es:9200/$index/_settings" > ./settings.json;
+  curl -X GET "$es:9200/$currentIndex/_settings" > ./settings.json;
   node ./settings-update.js "$1";
   settings=$(cat ./settings.txt);
   curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "{$settings,$newMappings}";
   rm ./settings.json;
   rm ./settings.txt;
 
-  printf "\r\n\r\nCopying old index data ($index) to new index ($newIndex)...\n\n"
+  printf "\r\n\r\nCopying old index data ($currentIndex) to new index ($newIndex)...\n\n"
   curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "
   {
     \"source\": {
-      \"index\": \"$index\"
+      \"index\": \"$currentIndex\"
     },
     \"dest\": {
       \"index\": \"$newIndex\"
@@ -60,7 +74,7 @@ if [[ $mappings != *"featured"* && $mappings != *"editorialFeeds"* ]]; then
   curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
   {
       \"actions\" : [
-          { \"remove\" : { \"index\" : \"$index\", \"alias\" : \"$alias\" } },
+          { \"remove\" : { \"index\" : \"$currentIndex\", \"alias\" : \"$alias\" } },
           { \"add\" : { \"index\" : \"$newIndex\", \"alias\" : \"$alias\" } }
       ]
   }";
