@@ -2,7 +2,7 @@
 
 const radioApiService = require('../../services/server/radioApi'),
   { isEmpty } = require('lodash'),
-  { parse } = require('url'),
+  { extname } = require('path'),
   allStations = {},
   defaultStation = {
     id: 0,
@@ -34,23 +34,17 @@ const radioApiService = require('../../services/server/radioApi'),
     return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
   },
   /**
-   * determines if the url passed in belongs to a component (has a slash then underscore)
-   *
-   * @param {string} uri
-   * @return {boolean}
-   */
-  isComponent = (uri) => uri && /^\/_/.test(parse(uri).pathname),
-  /**
    * determines if the path is valid for station information
    *
    * @param {object} req
    * @return {boolean}
    */
-  validPath = (req) => req.get('x-amphora-page-json')
-    || isComponent(req.originalUrl)
-    || isComponent(req.get('referrer'))
-    || !req.get('referrer')
-    || !req.get('referrer').includes(req.get('host').split('.').slice(1,3).join('.')),
+  validPath = (req) => {
+    const excludeExt = ['js', 'css', 'svg', 'woff', 'woff2', 'png', 'jpg', 'jpeg', 'gif', 'ico'],
+      ext = extname(req.path);
+
+    return !(ext && !excludeExt.includes(ext));
+  },
   /**
    * determines if the default station should be used
    *
