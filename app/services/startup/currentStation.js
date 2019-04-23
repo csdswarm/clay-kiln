@@ -2,6 +2,7 @@
 
 const radioApiService = require('../../services/server/radioApi'),
   { isEmpty } = require('lodash'),
+  { parse } = require('url'),
   allStations = {},
   defaultStation = {
     id: 0,
@@ -33,14 +34,23 @@ const radioApiService = require('../../services/server/radioApi'),
     return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
   },
   /**
+   * determines if the url passed in belongs to a component (has a slash then underscore)
+   *
+   * @param {string} uri
+   * @return {boolean}
+   */
+  isComponent = (uri) => /^\/_/.test(parse(uri).pathname),
+  /**
    * determines if the path is valid for station information
    *
    * @param {object} req
    * @return {boolean}
    */
-  validPath = (req) => /^\/_/.test(req.originalUrl)
-    || req.get('x-amphora-page-json')
-    || !req.get('referrer') || !req.get('referrer').includes(req.get('host').split('.').slice(1,3).join('.')),
+  validPath = (req) => req.get('x-amphora-page-json')
+    || isComponent(req.originalUrl)
+    || isComponent(req.get('referrer'))
+    || !req.get('referrer')
+    || !req.get('referrer').includes(req.get('host').split('.').slice(1,3).join('.')),
   /**
    * determines if the default station should be used
    *
