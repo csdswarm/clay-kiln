@@ -95,6 +95,7 @@ function save(stream) {
     .filter(filters.isPublished)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
+    .tap(param => console.log(param.value.lead))
     .map(param => param.key.indexOf('article') >= 0 || param.key.indexOf('gallery') >= 0 ? getContent(param, 'content') : h.of(param))
     // merge all content streams into main stream
     .mergeWithLimit(25) // Merge each individual stream into the bigger stream --> this turns the stream back into the article obj
@@ -102,6 +103,9 @@ function save(stream) {
     .map(param => param.key.indexOf('gallery') >= 0 ? getSlides(param) : h.of(param))
     // merge all slides streams into main stream
     .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
+    // add data for lead
+    .map(param => getContent(param, 'lead'))
+    .mergeWithLimit(25)
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .flatMap(send)
