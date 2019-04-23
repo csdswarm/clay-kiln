@@ -154,9 +154,11 @@ export default {
       }
       else if (action) {
         const returnToPage = () => { this.$router.push(from) }
+        console.log('DISPATCH:', action, 'THEN RETURN TO:', from)
         this.$store
                 .dispatch(action)
-                .finally(returnToPage)
+                .then(returnToPage)
+                .catch(returnToPage)
         return true
       }
 
