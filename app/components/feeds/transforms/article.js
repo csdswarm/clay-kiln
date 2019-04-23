@@ -49,11 +49,13 @@ module.exports = function (data, locals) {
   // return addRssMediaImage(firstAndParse(dataContent, 'image'), transform)
   //   .then(() => transform);
 
-  // Convert editorialFeeds object with terms as keys with boolean values into array of truthy terms
-  const editorialFeeds = Object.keys(data.editorialFeeds).filter(term => {return data.editorialFeeds[term]});
+  if (data.editorialFeeds) {
+    // Convert editorialFeeds object with terms as keys with boolean values into array of truthy terms
+    const editorialFeeds = Object.keys(data.editorialFeeds).filter(term => {return data.editorialFeeds[term]});
 
-  // Add the editorial feeds terms
-  addArrayOfProps(editorialFeeds, 'editorialFeeds', transform);
+    // Add the editorial feeds terms
+    addArrayOfProps(editorialFeeds, 'editorialFeeds', transform);
+  }
 
   // We HAVE to return a promise because of how NYMag setup the Highland render pipeline
   return Promise.resolve(transform);
