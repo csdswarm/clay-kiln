@@ -51,7 +51,7 @@ module.exports = function (data, locals) {
 
   if (data.editorialFeeds) {
     // Convert editorialFeeds object with terms as keys with boolean values into array of truthy terms
-    const editorialFeeds = Object.keys(data.editorialFeeds).filter(term => {return data.editorialFeeds[term]});
+    const editorialFeeds = Object.keys(data.editorialFeeds).filter(term => {return data.editorialFeeds[term];});
 
     // Add the editorial feeds terms
     addArrayOfProps(editorialFeeds, 'editorialFeeds', transform);
