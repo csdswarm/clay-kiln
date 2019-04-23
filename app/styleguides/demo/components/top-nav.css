@@ -79,7 +79,7 @@ $drawerSelector: nav-drawer;
     max-width: none;
   }
 
-  .radiocom-nav__hamburger.wrapper {
+  &__hamburger.wrapper {
     display: none;
     position: relative;
     vertical-align: top;
@@ -133,7 +133,7 @@ $drawerSelector: nav-drawer;
     }
   }
 
-  .radiocom-nav__logo {
+  &__logo {
     @mixin inline-block;
     font-size: 16px;
     background: transparent;
@@ -196,108 +196,7 @@ $drawerSelector: nav-drawer;
     }
   }
 
-  &__radium {
-    display: block;
-    position: absolute;
-    height:100%;
-    top: 0;
-    left: calc($default-screen-nav-width - $default-radium-width);
-    width: $default-radium-width;
-
-    .radium {
-      &__text,
-      &__sub-text {
-        @mixin radium-font1;
-      }
-
-      &__text {
-        text-transform : uppercase;
-      }
-
-      &__user {
-        cursor: default;
-
-        > twisty {
-          transform: translate(0, -20%) scale(1.5, 1) rotate(0.5turn);
-          margin-left: em(10);
-          display: inline-block;
-          &::after {
-            content: '^';
-            font-weight: 900;
-          }
-        }
-      }
-
-      &__user,
-      &__sign-in-up {
-        @mixin vertical-align absolute;
-      }
-
-      &__link {
-        display: inline-block;
-        position: relative;
-        padding: 0 em(20);
-
-        &:hover::after {
-          content: '';
-          display: block;
-          width: 40%;
-          position: absolute;
-          left: 30%;
-          top: em(18);
-          height: em(3);
-          background-color: $white;
-        }
-      }
-
-      &__nav-drawer {
-        background: $purple;
-        position: fixed;
-        top: $default-nav-height;
-        left: 0;
-        height: em(120);
-        width: 100%;
-        cursor: default;
-        display: none;
-      }
-
-      &__container {
-        @mixin inline-block;
-        position:relative;
-        text-align: left;
-        height: 100%;
-        width: $default-screen-nav-width;
-        margin: 0 auto;
-      }
-
-      &__sub-list {
-        width: $default-radium-width;
-        display: block;
-        position: absolute;
-        top: em(20);
-        right: 0;
-
-        &-item {
-          display: list-item;
-          margin: em(7) 0;
-        }
-      }
-    }
-
-    &:hover {
-      .radium {
-        &__user > twisty{
-          transform: translate(0, 20%) scale(1.5, 1);
-        }
-
-        &__nav-drawer {
-          display: flex;
-        }
-      }
-    }
-  }
-
-  .radiocom-nav__container--right {
+  &__container--right {
     @mixin inline-block;
     @mixin vertical-align;
     @mixin medium-screen {
@@ -541,9 +440,128 @@ $drawerSelector: nav-drawer;
   }
 }
 
-.kiln-wrapper.view-mode {
-    top: $default-nav-height !important;
+.radium {
+  &__nav-header {
+    @mixin vertical-align absolute;
   }
+
+  &__twisty {
+    cursor: default;
+  }
+
+  &__nav-drawer {
+    background: $purple;
+    position: fixed;
+    top: $default-nav-height;
+    left: 0;
+    height: em(120);
+    width: 100%;
+    cursor: default;
+    display: none;
+  }
+
+  &__container {
+    @mixin inline-block;
+    position:relative;
+    text-align: left;
+    height: 100%;
+    width: $default-screen-nav-width;
+    margin: 0 auto;
+  }
+
+  &__twisty-twister {
+    transform: translate(0, -20%) scale(1.5, 1) rotate(0.5turn);
+    margin-left: em(10);
+    display: inline-block;
+
+    &::after {
+      content: '^';
+      font-weight: 900;
+    }
+  }
+
+  &:hover &__twisty-twister{
+    transform: translate(0, 20%) scale(1.5, 1);
+  }
+}
+
+.radium--top-nav {
+  display: block;
+  position: absolute;
+  height:100%;
+  top: 0;
+  left: calc($default-screen-nav-width - $default-radium-width);
+  width: $default-radium-width;
+
+  &:hover .radium__nav-drawer {
+    display: flex;
+  }
+
+  .radium {
+    &__text {
+     @mixin radium-font1;
+    }
+
+    &__link--signed-out {
+      text-transform: uppercase;
+      display: inline-block;
+      position: relative;
+      padding: 0 em(20);
+
+      &:hover::after {
+        content: '';
+        display: block;
+        width: 40%;
+        position: absolute;
+        left: 30%;
+        top: em(18);
+        height: em(3);
+        background-color: $white;
+      }
+    }
+
+    &__list {
+      width: $default-radium-width;
+      display: block;
+      position: absolute;
+      top: em(20);
+      right: 0;
+
+      &-item {
+        display: list-item;
+        margin: em(7) 0;
+      }
+    }
+  }
+}
+
+.radium--mobile {
+  padding-left: calc((100vw - $(medium-screen-nav-width)) / 2);
+
+  .radium {
+    &__text {
+      @mixin radium-font1;
+    }
+
+    &__link--signed-out {
+      text-transform: uppercase;
+    }
+
+    &__list {
+      padding-top: em(20);
+      display: inline-block;
+
+      &-item {
+        display: list-item;
+        padding: em(5) 0
+      }
+    }
+  }
+}
+
+.kiln-wrapper.view-mode {
+  top: $default-nav-height !important;
+}
 
 .kiln-edit-mode {
   .radiocom-nav {
@@ -553,7 +571,7 @@ $drawerSelector: nav-drawer;
 
 @mixin large-screen {
   .radiocom-nav .container {
-    width: $large-screen-nav-width;
+     width: $large-screen-nav-width;
 
     .radiocom-nav__logo {
       width: em(220);
@@ -563,6 +581,7 @@ $drawerSelector: nav-drawer;
     .$(navButton) {
       padding: 0 em(15);
     }
+
     .$(drawerSelector):not(.$(drawerSelector)--mobile) .container {
       width: $large-screen-nav-width;
 
@@ -596,8 +615,8 @@ $drawerSelector: nav-drawer;
     }
   }
 
-  .radiocom-nav__radium {
-    left     : calc($large-screen-nav-width - $default-radium-width);
+  .radium--top-nav {
+    left: calc($large-screen-nav-width - $default-radium-width);
 
     .radium__container {
       width: $large-screen-nav-width;
@@ -636,6 +655,7 @@ $drawerSelector: nav-drawer;
           display: none;
         }
       }
+
       .$(drawerSelector) {
         height: calc(100vh - $(mini-nav-height));
         top: $mini-nav-height;
@@ -665,37 +685,10 @@ $drawerSelector: nav-drawer;
         }
       }
     }
-
-    &__radium {
-      display : none;
-    }
   }
 
-  .radium-mobile {
-    padding-left: calc((100vw - $(medium-screen-nav-width)) / 2);
-
-    & &__text,
-    & &__text--signed-in {
-      @mixin radium-font1;
-    }
-
-    & &__text {
-      text-transform: uppercase;
-    }
-
-    & &__text--signed-in {
-      text-transform: initial;
-    }
-
-    &__list {
-      padding-top: em(20);
-      display: inline-block;
-
-      & &-item {
-        display: list-item;
-        padding: em(5) 0;
-      }
-    }
+  .radium--top-nav {
+    display : none;
   }
 }
 
@@ -722,10 +715,10 @@ $drawerSelector: nav-drawer;
         }
       }
     }
+  }
 
-    .radium-mobile {
-      padding-left: em(30);
-    }
+  .radium--mobile {
+    padding-left: em(30);
   }
 }
 
@@ -742,6 +735,7 @@ $drawerSelector: nav-drawer;
     .radiocom-nav__logo {
       margin-right: 0;
     }
+
     .$(drawerSelector) {
       &.$(drawerSelector)--mobile {
         width: 100%;
@@ -768,17 +762,17 @@ $drawerSelector: nav-drawer;
         }
       }
     }
+  }
 
-    .radium-mobile {
-      padding-left: 0;
+  .radium--mobile {
+    padding-left: 0;
 
-      &__list {
-        width: 100%;
-        text-align: center;
+    .radium__list {
+      width: 100%;
+      text-align: center;
 
-        &-item {
-          width: auto;
-        }
+      &-item {
+        width: auto;
       }
     }
   }
