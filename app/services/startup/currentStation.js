@@ -39,7 +39,7 @@ const radioApiService = require('../../services/server/radioApi'),
    * @param {string} uri
    * @return {boolean}
    */
-  isComponent = (uri) => /^\/_/.test(parse(uri).pathname),
+  isComponent = (uri) => uri && /^\/_/.test(parse(uri).pathname),
   /**
    * determines if the path is valid for station information
    *
