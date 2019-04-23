@@ -40,10 +40,10 @@ const radioApiService = require('../../services/server/radioApi'),
    * @return {boolean}
    */
   validPath = (req) => {
-    const excludeExt = ['js', 'css', 'svg', 'woff', 'woff2', 'png', 'jpg', 'jpeg', 'gif', 'ico'],
+    const excludeExt = ['.js', '.css', '.svg', '.woff', '.woff2', '.png', '.jpg', '.jpeg', '.gif', '.ico'],
       ext = extname(req.path);
 
-    return !(ext && !excludeExt.includes(ext));
+    return !ext || !excludeExt.includes(ext);
   },
   /**
    * determines if the default station should be used
