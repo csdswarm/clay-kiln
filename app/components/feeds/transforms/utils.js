@@ -12,11 +12,12 @@ const _forEach = require('lodash/forEach'),
 
 /**
  * takes in an array of content objects ({ data: JSON, _ref: componentUrl })
- * and creates the html for that component. finds the 
+ * and creates the html for that component. finds the
  * component type from parsing the componentUrl from _ref
- * 
- * @param {Array[Object]} content 
- * @param {Object} locals 
+ *
+ * @param {Array} content
+ * @param {Object} locals
+ * @returns {String}
  */
 function renderContent(content, locals) {
   return _reduce(content, (res, cmpt) => {
