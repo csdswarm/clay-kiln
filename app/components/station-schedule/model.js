@@ -1,7 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
-  { playingClass } = require('../../services/server/locals'),
+  { playingClass } = require('../../services/server/spaLocals'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime');
 
 /**

@@ -12,7 +12,7 @@ const pkg = require('../../package.json'),
   canonicalJSON = require('./canonical-json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
-  locals = require('./locals'),
+  locals = require('./spaLocals'),
   handleRedirects = require('./redirects');
 
 function createSessionStore() {

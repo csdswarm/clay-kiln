@@ -2,7 +2,7 @@
 
 const rest = require('../universal/rest'),
   { formatLocal } = require('../../services/universal/dateTime'),
-  { getLocals } = require('../../services/client/locals'),
+  { getLocals } = require('./spaLocals'),
   spaLinkService = require('./spaLink'),
   clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
   /**

@@ -2,7 +2,7 @@
 
 const rest = require('../../services/universal/rest'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
-  { playingClass } = require('../../services/server/locals'),
+  { playingClass } = require('../../services/server/spaLocals'),
   moment = require('moment'),
   radioAPI = 'https://api.radio.com/v1';
 

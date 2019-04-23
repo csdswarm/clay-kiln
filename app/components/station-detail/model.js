@@ -1,7 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
-  { playingClass } = require('../../services/server/locals'),
+  { playingClass } = require('../../services/server/spaLocals'),
   NEWS_TALK = 'News & Talk',
   SPORTS = 'Sports',
   LOCATION = 'location';

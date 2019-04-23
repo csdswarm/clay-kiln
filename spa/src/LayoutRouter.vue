@@ -13,7 +13,7 @@ import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
 import URL from 'url-parse'
-import { getLocals } from '../../app/services/client/locals'
+import { getLocals } from '../../app/services/client/spaLocals'
 
 // Instantiate libraries.
 const metaManager = new MetaManager()

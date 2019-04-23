@@ -17,6 +17,12 @@ clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (pay
   syncPlayerButtons(id, playingClass);
 });
 
+/**
+ * defaults the class of all data-play-station elements to show__play unless it's the current station then it uses playingClass
+ *
+ * @param {number} currentStationId
+ * @param {string} playingClass
+ */
 function syncPlayerButtons(currentStationId, playingClass) {
   const playerButtons = window.document.querySelectorAll('[data-play-station]');
 

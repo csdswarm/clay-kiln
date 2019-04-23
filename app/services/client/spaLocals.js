@@ -15,10 +15,8 @@ const getSpaState = () => {
    * @returns {Object}
    */
   getLocals = (state = getSpaState()) => {
-    const currentlyPlaying = state.spaPayloadLocals ? state.spaPayloadLocals.currentlyPlaying : {};
-
     return {
-      currentlyPlaying
+      currentlyPlaying: state.spaPayloadLocals ? state.spaPayloadLocals.currentlyPlaying : {}
     };
   };
 

@@ -68,8 +68,8 @@
   height: em(32);
   border-radius: 50%;
   margin-left: auto;
-  box-shadow: 0 0 em(1) em(1) rgba(0,0,0,0.18), inset 0 0 em(4) em(1) #F5F5F5;
-  background-color: white;
+  box-shadow: 0 0 em(1) em(1) rgba(0,0,0,0.18), inset 0 0 em(4) em(1) $wildSand;
+  background-color: $white;
   outline:0;
 
   &:after {
@@ -100,12 +100,14 @@
   @mixin show__button;
 
   &:after {
-    margin-top: .6em;
-    margin-left: .75em;
-    height: .8em;
-    width: .5em;
-    border: 0 double $purple;
-    border-left-width: .5em;
+    margin-top: em(9);
+    margin-left: em(10);
+    height: em(14);
+    width: em(12);
+    border: em(5) solid $purple;
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: em(1);
   }
 }
 
@@ -113,10 +115,10 @@
   @mixin show__button;
 
   &:after {
-     margin-top: .65em;
-     margin-left: .65em;
-     height: .8em;
-     width: .8em;
+     margin-top: em(10);
+     margin-left: em(10);
+     height: em(12);
+     width: em(12);
      background-color: $purple;
    }
 }
