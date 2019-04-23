@@ -154,7 +154,6 @@ export default {
       }
       else if (action) {
         const returnToPage = () => { this.$router.push(from) }
-        console.log('DISPATCH:', action, 'THEN RETURN TO:', from)
         this.$store
                 .dispatch(action)
                 .then(returnToPage)
@@ -183,7 +182,7 @@ export default {
      */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
       const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
-      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}`
+      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}&cb=${(new Date()).getTime()}`
       const newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
 
       try {
