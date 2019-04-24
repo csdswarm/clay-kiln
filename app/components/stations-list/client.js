@@ -1,6 +1,5 @@
 'use strict';
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
-  market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
   { isMobileWidth } = require('../../services/client/mobile'),
@@ -241,6 +240,7 @@ class StationsList {
         const stationsIDs = stationsData.map((station) => {
           return station.id;
         });
+
         this.updateStationsDOMWithIDs(stationsIDs, 'Truncated');
       } else {
         this.displayActiveStations();

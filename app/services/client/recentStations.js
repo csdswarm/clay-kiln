@@ -25,7 +25,7 @@ function get() {
 function add(stationID) {
   if (stationID) {
     const recentStationsIDs = this.get().filter(recentStationID => { // dedupe
-      return recentStationID !== stationID;
+      return parseInt(recentStationID) !== stationID;
     }).slice(0, maxRecentStations); // limit stations stored
 
     recentStationsIDs.unshift(stationID); // add new

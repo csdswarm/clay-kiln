@@ -14,7 +14,6 @@ clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
 // Listen for player to start playback.
 clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (payload) => {
   const { id, playingClass, playerState } = payload;
-  console.log("player state: ", playerState);
 
   if (playerState === 'play') {
     recentStations.add(id);
