@@ -73,7 +73,28 @@ module.exports.render = function (ref, data, locals) {
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
-  queryService.addShould(query, { regexp: { lead: process.env.CLAY_SITE_HOST + '\/_components\/brightcove\/instances.*' } });
+  // queryService.addShould(query, { 
+  //   regexp: { 
+  //     lead: process.env.CLAY_SITE_HOST + '\/_components\/brightcove\/instances.*' 
+  //   } 
+  // });
+
+  queryService.addShould(query, { 
+    nested: {
+      path: "lead",
+      query: {
+        bool: {
+          should: [
+            {
+              regexp: {
+                "lead._ref": `${process.env.CLAY_SITE_HOST}\/_components\/brightcove\/instances.*`
+              }
+            }
+          ]
+        }
+      }
+    }
+  });
 
   // exclude the curated content from the results
   if (data.items && !isComponent(locals.url)) {
@@ -84,6 +105,8 @@ module.exports.render = function (ref, data, locals) {
       }
     });
   }
+
+  console.log(JSON.stringify(query));
 
   return queryService.searchByQuery(query)
     .then(function (results) {

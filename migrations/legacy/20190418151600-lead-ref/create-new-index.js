@@ -22,22 +22,11 @@ if (mappingsJSON[alias].mappings._doc.properties.lead.type != "nested") {
     dynamic: "true",
     properties: {
       _ref: {
-        type: "text",
-        fields: {
-          keyword: {
-            type: "keyword",
-            ignore_above: 256
-          }
-        }
+        type: "keyword",
+        ignore_above: 256
       },
       data: {
-        type: "text",
-        fields: {
-          keyword: {
-            type: "keyword",
-            ignore_above: 256
-          }
-        }
+        type: "text"
       }
     }
   };
