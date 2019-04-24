@@ -110,7 +110,8 @@ class SpaPlayerInterface {
         const nextState = this.getPlayState(e.detail.playerState)
         const payload = {
           id: e.detail.stationId,
-          playingClass: `show__${nextState}`
+          playingClass: `show__${nextState}`,
+          nextState
         }
 
         spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', payload)
