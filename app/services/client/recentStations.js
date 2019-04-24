@@ -1,6 +1,7 @@
 'use strict';
 const localStorageKey = 'recentStations',
-  maxRecentStations = 49;
+  maxRecentStations = 49,
+  log = require('../universal/log').setup({ file: __filename, context: 'client' });
 
 /**
  * Get IDs of recent stations from localStorage
@@ -33,7 +34,7 @@ function add(stationID) {
     try {
       localStorage.setItem(localStorageKey, recentStationsIDs.join()); // Store recent stations in browser
     } catch (e) {
-      console.log('error storing station: ', e);
+      log('error', `Error storing station ${stationID}: ${e}`);
     }
   }
 }
