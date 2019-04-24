@@ -153,7 +153,7 @@ export default {
   async created () {
     try {
       await this.$store.dispatch(actionTypes.GET_PROFILE)
-        console.log(this.$store.state.user.date_of_birth)
+      console.log(this.$store.state.user.date_of_birth)
       this.updatedUser = { ...this.$store.state.user }
     } catch (e) {
       this.$store.commit(mutationTypes.MODAL_ERROR, null)
@@ -172,7 +172,7 @@ export default {
     },
 
     onVueDatepickerChange (dateObj) {
-        console.log(dateObj)
+      console.log(dateObj)
       this.updatedUser.date_of_birth = moment(dateObj, 'MM-DD-YYYY')
     },
 
