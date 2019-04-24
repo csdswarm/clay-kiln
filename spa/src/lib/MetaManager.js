@@ -116,11 +116,9 @@ export default class MetaManager {
    * @param {string} newTitle - The new page title.
    */
   updateTitleTag (newTitle) {
-    const title = document.head.querySelector('title')
+    let title = document.head.querySelector('title') || document.head.appendChild(document.createElement('title'))
 
-    if (title) {
-      title.textContent = newTitle
-    }
+    title.textContent = newTitle
   }
 
   /**

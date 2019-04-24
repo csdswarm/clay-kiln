@@ -15,9 +15,15 @@ module.exports.render = (ref, data, locals) => {
     const value = _get(locals, data.localsKey);
 
     if (value) {
-      data.description = data.description
+      const description = data.description
         .replace('${paramValue}', hypensToSpaces(value))
         .replace(/\b\w/g, l => l.toUpperCase());
+
+      if (locals.station) {
+        data.description = `Listen to ${description} Live. Anytime. Anywhere`;
+      } else {
+        data.description = description;
+      }
     }
   }
 
