@@ -14,40 +14,43 @@ if (!alias) {
   throw new Error('Missing alias');
 }
 
-// update lead to be dynamic so it has a _ref and data
-mappingsJSON[alias].mappings._doc.properties.lead = {
-  type: "nested",
-  dynamic: "true",
-  properties: {
-    _ref: {
-      type: "text",
-      fields: {
-        keyword: {
-          type: "keyword",
-          ignore_above: 256
+// only make changes if needed --> if new-index.json doesn't exist, reindex doesn't need to happen
+if (mappingsJSON[alias].mappings._doc.properties.lead.type != "nested") {
+  // update lead to be dynamic so it has a _ref and data
+  mappingsJSON[alias].mappings._doc.properties.lead = {
+    type: "nested",
+    dynamic: "true",
+    properties: {
+      _ref: {
+        type: "text",
+        fields: {
+          keyword: {
+            type: "keyword",
+            ignore_above: 256
+          }
         }
-      }
-    },
-    data: {
-      type: "text",
-      fields: {
-        keyword: {
-          type: "keyword",
-          ignore_above: 256
+      },
+      data: {
+        type: "text",
+        fields: {
+          keyword: {
+            type: "keyword",
+            ignore_above: 256
+          }
         }
       }
     }
-  }
-};
+  };
 
-const newIndex = {
-  mappings: mappingsJSON[alias].mappings,
-  settings: {
-    analysis: settingsJSON[alias].settings.index.analysis
+  const newIndex = {
+    mappings: mappingsJSON[alias].mappings,
+    settings: {
+      analysis: settingsJSON[alias].settings.index.analysis
+    }
   }
+
+  fs.writeFile(`${__dirname}/new-index.json`, JSON.stringify(newIndex), 'utf8', function(err) {
+      if (err) throw err;
+    }
+  );
 }
-
-fs.writeFile(`${__dirname}/new-index.json`, JSON.stringify(newIndex), 'utf8', function(err) {
-    if (err) throw err;
-  }
-);

@@ -40,35 +40,44 @@ curl -X GET "$es:9200/$currentIndex/_mappings" > ./mappings.json;
 printf "\ncreating new index settings & mappings\n";
 node create-new-index "$1" "$currentIndex";
 
-# increment largetIndex by 1 to create newIndex
-num=$(echo $largestIndex | sed 's/[^0-9]*//g');
-newIndex="$(echo $largestIndex | sed 's/[0-9]*//g')$((num+1))";
+# file only exists if a reindex needs to occur
+if [ -f ./new-index.json ]
+then
+  echo "Reindexing..."
+  # increment largetIndex by 1 to create newIndex
+  num=$(echo $largestIndex | sed 's/[^0-9]*//g');
+  newIndex="$(echo $largestIndex | sed 's/[0-9]*//g')$((num+1))";
 
-printf "largestIndex: $largestIndex\n";
-printf "currentIndex: $currentIndex\n";
-printf "newIndex: $newIndex\n";
+  printf "largestIndex: $largestIndex\n";
+  printf "currentIndex: $currentIndex\n";
+  printf "newIndex: $newIndex\n";
 
-# create new index and remove all temp files needed to create it
-curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d @./new-index.json -o /dev/null -s;
+  # create new index and remove all temp files needed to create it
+  curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d @./new-index.json -o /dev/null -s;
+
+  # reindex, converting lead from Array[String] to Array[{_ref, data}]
+  reindex=$(sed s/currentIndex/$currentIndex/ ./reindex.json | sed s/newIndex/$newIndex/)
+  printf "\nreindex: $reindex";
+
+  curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "$reindex"
+
+  sleep 1;
+
+  # update alias to make published-content point to our new index
+  printf "\n\nRemoving old alias and adding new (published-content)...\n\n"
+  curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
+      {
+          \"actions\" : [
+              { \"remove\" : { \"index\" : \"$currentIndex\", \"alias\" : \"published-content\" } },
+              { \"add\" : { \"index\" : \"$newIndex\", \"alias\" : \"published-content\" } }
+          ]
+      }";
+  
+  rm ./new-index.json;
+else
+  echo "Skipping reindex, mapping for lead already exists.";
+fi
+
 rm ./settings.json;
 rm ./aliases.json;
-rm ./new-index.json;
 rm ./mappings.json;
-
-# reindex, converting lead from Array[String] to Array[{_ref, data}]
-reindex=$(sed s/currentIndex/$currentIndex/ ./reindex.json | sed s/newIndex/$newIndex/)
-printf "\nreindex: $reindex";
-
-curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "$reindex"
-
-sleep 1;
-
-# update alias to make published-content point to our new index
-printf "\n\nRemoving old alias and adding new (published-content)...\n\n"
-curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
-    {
-        \"actions\" : [
-            { \"remove\" : { \"index\" : \"$currentIndex\", \"alias\" : \"published-content\" } },
-            { \"add\" : { \"index\" : \"$newIndex\", \"alias\" : \"published-content\" } }
-        ]
-    }";
