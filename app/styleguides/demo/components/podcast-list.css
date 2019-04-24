@@ -5,7 +5,7 @@
 .component--podcast-list {
   max-width: em(widthOnGrid(12, 11));
   display: flex;
-  margin: 0 auto;
+  margin: 0 auto em(30, 11) auto;
   flex-wrap: wrap;
 
   .podcast-list__item {
@@ -36,11 +36,6 @@
 
     @mixin medium-screen {
       flex: 1 0 50%;
-      margin-bottom: em(60);
-    }
-
-    @mixin medium-small-screen {
-      margin-bottom: em(15);
     }
   }
 
