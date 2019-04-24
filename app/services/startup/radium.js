@@ -21,11 +21,7 @@ const axios = require('axios'),
    * @param {string} authToken the access_token from the client
    * @returns {string} The device_key value from the authToken payload
    */
-  getDeviceKey = authToken => {
-    const payload = jwt.decode(authToken);
-
-    return (payload || {}).device_key;
-  },
+  getDeviceKey = authToken => (jwt.decode(authToken) || {}).device_key,
   /**
    * decodes the cookie and verifies it is valid
    *
@@ -190,7 +186,7 @@ const axios = require('axios'),
   profileLogic = (response, req, res) => {
     const oldProfile = decodeCookie(COOKIES.profile, req.cookies),
       // email and verified do not come back from the profile API endpoints, so use them from the cookie
-      newProfile = Object.assign({}, oldProfile, {...response.data});
+      newProfile = {...oldProfile, ...response.data};
 
     removeKeys(newProfile, excludeKeys.profile);
     // save the response details
@@ -290,7 +286,9 @@ const axios = require('axios'),
       retryFunction = retry ? tokenExpired : () => false,
       authToken = decodeCookie(COOKIES.accessToken, req.cookies);
 
-    if (data && data.hasOwnProperty('device_key')) {
+    if (data && data.includeDeviceKey) {
+      delete data.includeDeviceKey;
+      // for extra security, only decode access token on server
       data.device_key = getDeviceKey(authToken);
     }
 

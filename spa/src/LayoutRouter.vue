@@ -181,9 +181,10 @@ export default {
      * @returns {object}  - The JSON payload
      */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
-      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
-      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}&cb=${(new Date()).getTime()}`
-      const newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
+      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : '',
+         ieCacheBuster = (new Date()).getTime(), // force reload of app components on IE11
+         newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}&cb=${ieCacheBuster}`,
+         newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
 
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {

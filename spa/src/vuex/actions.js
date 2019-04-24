@@ -47,8 +47,7 @@ export default {
       method: 'post',
       url: '/radium/v1/auth/signout',
       data: {
-        // device key set on the server
-        device_key: null
+        includeDeviceKey: true
       }
     })
     commit(mutationTypes.SET_USER, { })
