@@ -110,7 +110,7 @@
     &leaderboard,
     &mobile {
       width: 100%;
-      margin: 0;
+      margin: 0 0 50px;
       left: 0;
       right: 0;
     }
