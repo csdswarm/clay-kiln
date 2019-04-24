@@ -16,7 +16,7 @@ clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (pay
   const { id, playingClass, nextState } = payload;
   console.log("player nextState: ", nextState);
 
-  if (currentState !== 'play') {
+  if (nextState !== 'play') {
     recentStations.add(id);
   }
   syncPlayerButtons(id, playingClass);
