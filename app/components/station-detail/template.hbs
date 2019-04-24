@@ -10,7 +10,7 @@
           <img src="{{station.square_logo_large}}?width=220&height=220&crop=1:1,offset-y0" alt="{{station.name}}" itemprop="thumbnailUrl">
           <meta itemprop="contentUrl" content="{{ station.square_logo_large }}">
         </div>
-        <div data-play-station="{{station.id}}" class="image__play-btn">
+        <div data-play-station="{{station.id}}" class="image__play-btn {{station.playingClass}}">
         </div>
       </div>
       <div class="lede__info">
@@ -25,8 +25,7 @@
           <div class="links__lede--mobile">
             <div class="lede__image">
               <img src="{{station.square_logo_large}}" alt="{{station.name}}">
-              <div class="image__play-btn">
-              </div>
+              <div class="image__play-btn {{station.playingClass}}"></div>
             </div>
           </div>
           <div class="links__section">
@@ -55,9 +54,10 @@
                 <span>tags: </span>
                 <ul>
                   {{~#each tags as |tag| ~}}
-                    <li data-tag="{{ default tag.text tag.type }}">
-                      <a aria-label="More stations tagged" href="//{{ @root.locals.site.host }}/stations/{{tag.type}}{{ if tag.slug (concat '/' tag.slug) }}">{{ default tag.text tag.type }}</a>
-                    </li>
+                      {{ set 'encodedTag' (replace (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "/" "%2F") "&" "%26") }}
+                      <li data-tag="{{ replace (trim (lowercase tag.text)) ' ' '-' }}">
+                        <a aria-label="More stations tagged" href="//{{ @root.locals.site.host }}/stations/{{tag.type}}/{{ encodedTag }}/">{{{ tag.text }}}</a>
+                      </li>
                   {{~/each~}}
                 </ul>
               </div>
@@ -72,9 +72,10 @@
         <span>tags: </span>
         <ul>
           {{~#each tags as |tag| ~}}
-            <li data-tag="{{ default tag.text tag.type }}">
-              <a aria-label="More stations tagged" href="//{{ @root.locals.site.host }}/stations/{{tag.type}}{{ if tag.slug (concat '/' tag.slug) }}">{{ default tag.text tag.type }}</a>
-            </li>
+              {{ set 'encodedTag' (replace (replace (urlencode (replace (trim (lowercase tag.text)) ' ' '-')) "/" "%2F") "&" "%26") }}
+              <li data-tag="{{ replace (trim (lowercase tag.text)) ' ' '-' }}">
+                <a aria-label="More stations tagged" href="//{{ @root.locals.site.host }}/stations/{{tag.type}}/{{ encodedTag }}/">{{ tag.text }}</a>
+              </li>
           {{~/each~}}
         </ul>
       </div>

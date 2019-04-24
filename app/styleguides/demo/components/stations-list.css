@@ -270,8 +270,8 @@
             &.lede__play-btn {
               width: em(23);
               height: em(23);
-              bottom: 0;
-              right: 0;
+              bottom: em(.15);
+              right: em(.1);
               margin: 0 em(5) em(5) 0;
               @mixin medium-screen {
                 margin: 0 em(10) em(10) 0;
@@ -288,6 +288,28 @@
               }
               &:hover {
                 opacity: 0.7;
+              }
+            }
+            &.show__play {
+              font-size: 12px;
+              @mixin show__play;
+              &::after {
+                margin-top: 0;
+              }
+            }
+            &.show__pause {
+              font-size: 12px;
+              @mixin show__pause;
+              &::after {
+                margin-top: 0;
+              }
+            }
+
+            &.show__stop {
+              font-size: 12px;
+              @mixin show__stop;
+              &::after {
+                margin-top: 0;
               }
             }
           }

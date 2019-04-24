@@ -80,25 +80,47 @@ class SpaPlayerInterface {
 
   /**
    *
+   * get the next type of button based off of the current state
+   * @param {string } current
+   * @return {string}
+   */
+  getPlayState (current) {
+    const interactive = window.RadioPlayer.stationDetails.dataModel.currentStation.attributes.interactive
+
+    if (current === 'play') {
+      return interactive ? 'pause' : 'stop'
+    }
+
+    return 'play'
+  }
+
+  /**
+   *
    * Lazy-load the player libraries and assets into the DOM, and mount player
    * onto the page.
    *
    */
-  mountPlayer () {
-    return new Promise((resolve, reject) => {
-      // Client.js will communicate that player has completed mounting via an event.
-      document.addEventListener('spaWebPlayerPlayerMounted', () => {
-        if (window.RadioPlayer) {
-          return resolve(true)
-        } else {
-          return reject(new Error('Radio Player failed to mount correctly.'))
+  async mountPlayer () {
+    // Instruct web-player/client.js to mount the player.
+    const playerMounted = await spaCommunicationBridge.sendMessage('ClientWebPlayerMountPlayer')
+
+    // Verify player is mounted.
+    if (playerMounted) {
+      window.addEventListener('playbackStateChange', e => {
+        const nextState = this.getPlayState(e.detail.playerState)
+        const payload = {
+          id: e.detail.stationId,
+          playingClass: `show__${nextState}`
         }
+
+        spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', payload)
+        this.spa.$store.commit(mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS, { currentlyPlaying: payload })
       })
 
-      // Kick-off mounting of player in web-player client.js
-      const event = new CustomEvent('clientWebPlayerMountPlayer')
-      document.dispatchEvent(event)
-    })
+      return true
+    } else {
+      throw new Error('Radio Player failed to mount correctly.')
+    }
   }
 
   /**
@@ -123,16 +145,23 @@ class SpaPlayerInterface {
    *
    */
   attachClientEventListeners () {
-    // Add channel that listens for play button clicks.
-    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlay')) {
-      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlay', async (payload) => {
-        const { stationId } = payload
+    // Add channel that listens for play/pause button clicks.
+    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlaybackStatus')) {
+      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlaybackStatus', async (payload) => {
+        const { stationId, playbackStatus } = payload
 
         if (stationId) {
           await this.play(stationId)
         } else {
-          await this.play()
+          await this[playbackStatus]()
         }
+      })
+    }
+    // Add channel that communicates currently loaded station id.
+    if (!spaCommunicationBridge.channelActive('SpaPlayerInterfaceGetCurrentStationId')) {
+      spaCommunicationBridge.addChannel('SpaPlayerInterfaceGetCurrentStationId', async () => {
+        const currentStation = this.getCurrentStation()
+        return currentStation.id
       })
     }
   }
@@ -154,13 +183,38 @@ class SpaPlayerInterface {
       await this.bootPlayer()
     }
 
-    // Set station.
-    if (stationId) {
-      await this.loadStation(stationId)
+    const currentStation = this.getCurrentStation()
+
+    // If stationId wasn't passed in, pull currently playing
+    // station from player to set stationId.
+    if (!stationId && currentStation) {
+      stationId = currentStation.id
     }
 
-    // Begin playback of audio.
-    this.spa.$store.state.radioPlayer.play()
+    // Set station.
+    if (stationId && (!currentStation || currentStation.id !== stationId)) {
+      await this.loadStation(stationId)
+    }
+  }
+
+  /**
+   * Pause radio station stream
+   */
+  async pause () {
+    await this.spa.$store.state.radioPlayer.playerControls.pause()
+  }
+
+  /**
+   *
+   * Get the station that is currently loaded in the player.
+   *
+   */
+  getCurrentStation () {
+    try {
+      return window.RadioPlayer.getCurrentStationId()
+    } catch (e) {
+      // the getCurrentStationId method will error out if there is no current station
+    }
   }
 
   /**
