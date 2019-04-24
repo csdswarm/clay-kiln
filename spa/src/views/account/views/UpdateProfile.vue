@@ -89,7 +89,7 @@
           <datepicker
             :value="user.date_of_birth"
             placeholder="Date of Birth"
-            format="yyyy-MM-dd"
+            format="MM-dd-yyyy"
             @selected="onVueDatepickerChange($event)"
             id="date_of_birth"
           >
@@ -153,6 +153,7 @@ export default {
   async created () {
     try {
       await this.$store.dispatch(actionTypes.GET_PROFILE)
+        console.log(this.$store.state.user.date_of_birth)
       this.updatedUser = { ...this.$store.state.user }
     } catch (e) {
       this.$store.commit(mutationTypes.MODAL_ERROR, null)
@@ -167,13 +168,12 @@ export default {
     },
 
     onHtml5DateChange (event) {
-      debugLog('html5 date change', event)
-      this.updatedUser.date_of_birth = moment(event.target.value, 'YYYY-MM-DD').utc()
+      this.updatedUser.date_of_birth = moment(event.target.value, 'MM-DD-YYYY')
     },
 
     onVueDatepickerChange (dateObj) {
-      debugLog('on vuejs datepicker change without time', moment.utc(dateObj).startOf('day').toISOString())
-      this.updatedUser.date_of_birth = moment.utc(dateObj).startOf('day')
+        console.log(dateObj)
+      this.updatedUser.date_of_birth = moment(dateObj, 'MM-DD-YYYY')
     },
 
     validateProfileEntities (userData) {

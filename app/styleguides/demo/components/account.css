@@ -1,7 +1,7 @@
 @import "_global/mixins";
 
 .account {
-  font-family: 'proxima', sans-serif;
+  font-family: 'ProximaNova-Regular', sans-serif;
   background: #fafafa;
 
   a {
@@ -16,7 +16,7 @@
   h1 {
     font-size: 22px;
     font-weight: 500;
-    font-family: 'Circular', sans-serif;
+    font-family: 'CircularStd-Black', sans-serif;
     color: #1f055e;
 
     margin-bottom: 20px;
@@ -24,7 +24,7 @@
 
   h2 {
     color: #000000;
-    font-family: 'Circular', sans-serif;
+    font-family: 'CircularStd-Black', sans-serif;
     font-size: 14px;
     margin-bottom: 10px;
 
@@ -33,7 +33,7 @@
   h3 {
     font-size: 34px;
     font-weight: 500;
-    font-family: 'Circular', sans-serif;
+    font-family: 'CircularStd-Black', sans-serif;
     color: #1f055e;
 
     margin-bottom: 20px;
@@ -60,7 +60,7 @@
     border-color: #ff0000;
     font-size: 14px;
     color: #ff0000;
-    font-family: 'CircularMed', sans-serif;
+    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
   }
 
 
@@ -74,7 +74,7 @@
     border-color: #50ae54;
     font-size: 14px;
     color: #50ae54;
-    font-family: 'CircularMed', sans-serif;
+    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
   }
 
   .image {
@@ -100,12 +100,12 @@
     border-color: #1f055e;
     font-size: 14px;
     color: #1f055e;
-    font-family: 'CircularMed', sans-serif;
+    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
   }
 
   .password{
 
-    font-family: 'CircularMed', sans-serif;
+    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
     font-size: 12px;
     color: #1f055e;
     float: right;
@@ -114,7 +114,7 @@
 
   .small{
 
-    font-family: 'CircularMed', sans-serif;
+    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
     font-size: 14px;
     color: #1f055e;
 
@@ -122,7 +122,7 @@
 
 
   .footer {
-    font-family: 'proxima', sans-serif;
+    font-family: 'ProximaNova-Regular', sans-serif;
     text-align: center;
     font-size: 8px;
     color: #000000;
@@ -191,7 +191,7 @@
     margin: 10px auto;
     padding: 20px;
     border-radius: 8px;
-    font-family: 'CircularMed', sans-serif;
+    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
   }
   .form-style-5 fieldset{
     border: none;
@@ -208,7 +208,7 @@
   .form-style-5 input[type="url"],
   .form-style-5 textarea,
   .form-style-5 select {
-    font-family: 'CircularMed', sans-serif;
+    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
     border: none;
     font-size: 14px;
     margin: 0;
@@ -255,7 +255,7 @@
     border: 0px;
     color: #FFF;
     margin: 0 auto;
-    font-family: 'Circular', sans-serif;
+    font-family: 'CircularStd-Black', sans-serif;
     background: #1f055e;
     font-size: 18px;
     text-align: center;
@@ -275,7 +275,7 @@
     border: 0px;
     color: #FFF;
     margin: 0 auto;
-    font-family: 'Circular', sans-serif;
+    font-family: 'CircularStd-Black', sans-serif;
     background: #1f055e;
     font-size: 18px;
     text-align: center;
@@ -345,6 +345,10 @@
   }
 
   /* Desktop datepicker */
+  .vdp-datepicker__calendar {
+    position: static;
+    width: auto;
+  }
   .vdp-datepicker__calendar .cell.selected {
     background-color: #1f055e !important;
     color:#FAFAFA;
@@ -510,6 +514,8 @@
       opacity:  .7;
       font-size: 12px;
       padding-left: 2px;
+      position: absolute;
+      top: 18px;
     }
   }
   .gender-box {

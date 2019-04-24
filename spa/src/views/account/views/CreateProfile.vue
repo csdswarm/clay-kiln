@@ -85,7 +85,7 @@
       <div class="floating-label">
         <div v-if="mobile">
           <input
-            :value="user.dateOfBirth ? user.dateOfBirth.format('YYYY-MM-DD') : user.dateOfBirth"
+            :value="user.dateOfBirth"
             type="date"
             name="dateOfBirth"
             class="dateclass placeholderclass dob"
@@ -98,9 +98,9 @@
         </div>
         <div v-else>
           <datepicker
-            :value="user.dateOfBirth ? user.dateOfBirth.toDate() : user.dateOfBirth"
+            :value="user.dateOfBirth"
             placeholder="Date of Birth"
-            format="yyyy-MM-dd"
+            format="MM-dd-yyyy"
             @selected="onVueDatepickerChange($event)"
           >
             <label slot="afterDateInput">Date of Birth</label>
@@ -180,12 +180,12 @@ export default {
 
     onHtml5DateChange (event) {
       debugLog('html5 date change', event)
-      this.user.dateOfBirth = moment(event.target.value, 'YYYY-MM-DD').utc()
+      this.user.dateOfBirth = moment(event.target.value, 'MM-DD-YYYY')
     },
 
     onVueDatepickerChange (dateObj) {
       debugLog('on vuejs datepicker change without time', moment.utc(dateObj).startOf('day').toISOString())
-      this.user.dateOfBirth = moment.utc(dateObj).startOf('day')
+      this.user.dateOfBirth = moment(dateObj, 'MM-DD-YYYY')
     },
 
     prepopulateProfile (state) {

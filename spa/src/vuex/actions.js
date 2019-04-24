@@ -22,7 +22,7 @@ const axiosCall = async ({ method, url, data, commit }) => {
 const formatProfile = (profile) => {
   return {
     ...profile,
-    date_of_birth: profile.date_of_birth ? moment(profile.date_of_birth).format('YYYY-MM-DD') : ''
+    date_of_birth: profile.date_of_birth ? moment.utc(profile.date_of_birth).local().format('MM-DD-YYYY') : ''
   }
 }
 
@@ -72,7 +72,7 @@ export default {
         first_name: user.firstName,
         last_name: user.lastName,
         gender: user.gender,
-        date_of_birth: user.dateOfBirth.toISOString(),
+        date_of_birth: moment(user.dateOfBirth).toISOString(),
         zip_code: user.zipCode,
         email: user.email
       }
@@ -97,7 +97,7 @@ export default {
         first_name: user.first_name,
         last_name: user.last_name,
         gender: user.gender,
-        date_of_birth: (new Date(user.date_of_birth)).toISOString(),
+        date_of_birth: moment(user.date_of_birth).toISOString(),
         zip_code: user.zip_code
       }
     })
