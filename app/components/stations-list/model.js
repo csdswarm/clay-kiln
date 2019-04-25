@@ -81,16 +81,6 @@ function returnStationless(data) {
   return data;
 }
 
-/**
- * mutates the station adding playing class to show the correct playing state
- *
- * @param {object} locals
- * @param {object} station
- */
-function addPlayingClass(locals, station) {
-  station.playingClass = playingClass(locals, station.id);
-}
-
 module.exports.render = async (uri, data, locals) => {
   const route = 'stations',
     params = {
@@ -106,12 +96,16 @@ module.exports.render = async (uri, data, locals) => {
         const stations = locals.stationIDs.split(',').map(stationID => {
           const station = response.data.find(station => {
             if (station.id === parseInt(stationID)) {
-              addPlayingClass(locals, station.attributes);
               return station;
             }
           });
 
-          return station ? station.attributes : null;
+          if (station) {
+            station.attributes.playingClass = playingClass(locals, station.attributes.id);
+            return station.attributes;
+          }
+
+          return null;
         });
 
         data.stations = stations.filter(station => station);
@@ -235,7 +229,7 @@ module.exports.render = async (uri, data, locals) => {
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
         data.stations = response.data ? response.data.map((station) => {
-          addPlayingClass(locals, station.attributes);
+          station.attributes.playingClass = playingClass(locals, station.attributes.id);
           return station.attributes;
         }) : [];
         data.stationIds = data.stations.map((station) => { return { id: station.id }; });

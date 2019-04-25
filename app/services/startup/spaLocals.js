@@ -1,5 +1,6 @@
 'use strict';
 
+const log = require('../universal/log').setup({ file: __filename });
 
 /**
  * grabs locals from the header and adds to the req.locals
@@ -18,7 +19,7 @@ module.exports = async (req, res, next) => {
       ...locals
     } : locals;
   } catch (e) {
-    console.error('Error in locals middleware:', e);
+    log('error', 'Error in locals middleware:', e);
   }
 
   next();
