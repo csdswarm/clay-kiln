@@ -17,6 +17,12 @@ const axios = require('axios'),
   profileExpires = 10 * 365 * 24 * 60 * 60,
   accessExpires = 10 * 365 * 24 * 60 * 60,
   /**
+   * Parses the device_key value from the client authToken cookie
+   * @param {string} authToken the access_token from the client
+   * @returns {string} The device_key value from the authToken payload
+   */
+  getDeviceKey = authToken => (jwt.decode(authToken) || {}).device_key,
+  /**
    * decodes the cookie and verifies it is valid
    *
    * @param {string} name
@@ -160,12 +166,12 @@ const axios = require('axios'),
       const idProfile = jwt.decode(tokens.id_token, '', true);
 
       return {
-        userId: tokens.user_id,
+        user_id: tokens.user_id,
         email: idProfile.email || '',
-        firstName: idProfile.given_name || '',
-        lastName: idProfile.family_name || '',
+        first_name: idProfile.given_name || '',
+        last_name: idProfile.family_name || '',
         gender: idProfile.gender ? idProfile.gender.charAt(0).toUpperCase() : '',
-        dateOfBirth: idProfile.birthdate ? moment(idProfile.birthdate, 'L').utc() : '',
+        date_of_birth: idProfile.birthdate ? moment(idProfile.birthdate, 'L').utc() : '',
         verified: false
       };
     }
@@ -179,25 +185,13 @@ const axios = require('axios'),
    */
   profileLogic = (response, req, res) => {
     const oldProfile = decodeCookie(COOKIES.profile, req.cookies),
-
       // email and verified do not come back from the profile API endpoints, so use them from the cookie
-      // only setting the cookie for what is needed in clay
-      cookieProfile = {
-        firstName: response.data.first_name,
-        userId: response.data.user_id,
-        email: oldProfile.email,
-        verified: oldProfile.verified
-      },
-      fullProfile = {
-        ...response.data,
-        email: oldProfile.email,
-        verified: oldProfile.verified
-      };
+      newProfile = {...oldProfile, ...response.data};
 
-    removeKeys(fullProfile, excludeKeys.profile);
+    removeKeys(newProfile, excludeKeys.profile);
     // save the response details
-    addCookie(COOKIES.profile, cookieProfile, profileExpires, res);
-    response.data = fullProfile;
+    addCookie(COOKIES.profile, newProfile, profileExpires, res);
+    response.data = newProfile;
   },
   /**
    * specific logic for sign in endpoint to add cookies to response
@@ -207,6 +201,7 @@ const axios = require('axios'),
    * @param {object} res
    */
   signInLogic = async (response, req, res) => {
+
     if (hasTokenKeys(response.data)) {
       // get profile for the user so it can be accessed in clay
       const profile = await getProfile(response.data);
@@ -214,6 +209,7 @@ const axios = require('axios'),
       // save the response details
       addCookie(COOKIES.profile, profile, profileExpires, res);
       addCookie(COOKIES.accessToken, response.data.access_token, accessExpires, res);
+
       // since sending all of the tokens will be more than 4,096 bytes, store the refresh
       db.put(`token-${profile.user_id}`, JSON.stringify({
         refreshToken: response.data.refresh_token
@@ -229,6 +225,10 @@ const axios = require('axios'),
     // removes keys that should never be sent back to the browser from the object
     removeKeys(response.data, [ ...excludeKeys.token, ...excludeKeys.profile ]);
   },
+  signOutLogic = async (response, req, res) => {
+    deleteCookie(COOKIES.profile, res);
+    deleteCookie(COOKIES.accessToken, res);
+  },
   /**
    * loop through all endpoints that require specific logic to modify the response
    *
@@ -239,6 +239,7 @@ const axios = require('axios'),
   routeLogic = async (response, req, res) => {
     const routes = {
         'POST:/radium/v1/auth/signin': signInLogic,
+        'POST:/radium/v1/auth/signout': signOutLogic,
         'POST:/radium/v1/profile/create': profileLogic,
         'GET:/radium/v1/profile': profileLogic
       },
@@ -265,6 +266,7 @@ const axios = require('axios'),
         await refreshAuthToken(req, res);
       } catch (e) {
         deleteCookie(COOKIES.accessToken, res);
+        deleteCookie(COOKIES.profile, res);
       }
       return await apply(req, res, false);
     }
@@ -280,11 +282,18 @@ const axios = require('axios'),
    * @return {Promise<Object>}
    */
   apply = async (req, res, retry = true) => {
-    const retryFunction = retry ? tokenExpired : () => false;
+    const data = req.body,
+      retryFunction = retry ? tokenExpired : () => false,
+      authToken = decodeCookie(COOKIES.accessToken, req.cookies);
+
+    if (data && data.includeDeviceKey) {
+      delete data.includeDeviceKey;
+      // for extra security, only decode access token on server
+      data.device_key = getDeviceKey(authToken);
+    }
 
     try {
-      const authToken = decodeCookie(COOKIES.accessToken, req.cookies),
-        response = await call(req.method.toUpperCase(), req.params[0], req.body, authToken);
+      const response = await call(req.method.toUpperCase(), req.params[0], data, authToken);
 
       if (response.status < 400) {
         await routeLogic(response, req, res);

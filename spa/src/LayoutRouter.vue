@@ -28,7 +28,10 @@ import QueryPayload from '@/lib/QueryPayload'
 import URL from 'url-parse'
 import ModalContent from '@/views/ModalContent'
 import modalRoutes from '@/views/routes/modal'
+import actionRoutes from '@/views/routes/action'
 import { mapState } from 'vuex'
+
+const interceptRoutes = [].concat(modalRoutes, actionRoutes)
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -111,27 +114,50 @@ export default {
      *  @param {string} path
      *  @returns {boolean}
      */
-    getModalRoute (path) {
-      return modalRoutes.find((route) => route.path === path)
+    getInterceptRoute (path) {
+      return interceptRoutes.find((route) => route.path === path)
     },
+    /**
+     * Provides metadata about routes that should invoke a modal
+     * @typedef {{path: string, name: string, component: object, props: [boolean]}} ModalRoute
+     */
+    /**
+     * Provides metadata about routes that should invoke an action
+     * @typedef {{path: string, name: string, action: string, props: [boolean]}} ActionRoute
+     */
+    /**
+     * Provides metadata for routes to be intercepted
+     * @typedef {(ModalRoute|ActionRoute)} InterceptRoute
+     */
     /**
      * if the path belongs to an account page, show modal and handle routing else hide the modal
      *
-     * @param {component} route
+     * @param {InterceptRoute} [route]
      * @param {string} from
      * @returns {boolean}
      */
-    handleModalRoute (route, from) {
-      if (route) {
+    handleIntercept (route, from) {
+      const {component, action} = route || {}
+
+      if (component) {
+
         this.modalShow()
 
-        this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, route.component)
+        this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, component)
 
         // set the current path for where to update history to when the modal changes
         if (!this.redirectTo && from) {
           this.redirectTo = from
         }
 
+        return true
+      }
+      else if (action) {
+        const returnToPage = () => { this.$router.push(from) }
+        this.$store
+                .dispatch(action)
+                .then(returnToPage)
+                .catch(returnToPage)
         return true
       }
 
@@ -155,9 +181,10 @@ export default {
      * @returns {object}  - The JSON payload
      */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
-      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
-      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}`
-      const newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
+      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : '',
+         ieCacheBuster = (new Date()).getTime(), // force reload of app components on IE11
+         newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}&cb=${ieCacheBuster}`,
+         newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
 
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
@@ -270,16 +297,24 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
-      const modalRoute = this.getModalRoute(to.path)
+      const intercept = this.getInterceptRoute(to.path)
 
-      if (modalRoute) {
-        await this.handleModalRoute(modalRoute, from.path)
+      if (intercept) {
+        if(to.path.toLocaleLowerCase() === from.path.toLocaleLowerCase()){
+          // to prevent looping go to home page
+          from.path = '/';
+        }
+        await this.handleIntercept(intercept, from.path)
       } else {
         await this.handleSpaRoute(to)
       }
     },
     routerPush (path) {
-      this.$router.push({ path })
+      if(path){
+        this.$router.push({ path })
+        // reset routerPush so that future values set on it always trigger a change and consequently, this method
+        this.$store.state.routerPush = null
+      }
     },
     modalComponent (component) {
       if (!component) {
@@ -301,7 +336,7 @@ export default {
     }
   },
   mounted () {
-    this.handleModalRoute(this.getModalRoute(this.$route.path), '/')
+    this.handleIntercept(this.getInterceptRoute(this.$route.path), '/')
   }
 }
 
