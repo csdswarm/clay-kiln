@@ -77,7 +77,7 @@ const SpaScroll = {
         setTimeout(() => {
           // Prioritize hash link positions over savedPosition.
           if (to.hash) {
-            return resolve({selector: to.hash})
+            return resolve({ selector: to.hash })
           } else {
             return resolve(savedPosition)
           }
