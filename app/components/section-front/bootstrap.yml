@@ -5,6 +5,8 @@ _components:
       _ref: /_components/section-lead
     googleAdUnderStationsModule:
         _ref: /_components/google-ad-manager/instances/leaderboardBottom
+    podcastList:
+      _ref: /_components/podcast-list/instances/new
     moreContentFeed:
       _ref: /_components/more-content-feed/instances/section-front
     stationsCarousel:

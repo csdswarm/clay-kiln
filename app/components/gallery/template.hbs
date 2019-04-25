@@ -22,8 +22,12 @@
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
-    <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{#ifAny @root.locals.edit subHeadline}}
+      <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{/ifAny}}
   </header>
+
+  {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="gallery__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
@@ -105,7 +109,11 @@
               </ul>
             </section>
           {{/if}}
-          <div data-editable="slides">{{> component-list slides }}</div>
+          {{#each slides }}
+            <div data-editable="slides">
+              {{> (getComponentName this._ref) this }}
+            </div>
+          {{/each}}
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
