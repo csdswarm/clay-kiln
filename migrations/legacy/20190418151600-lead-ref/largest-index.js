@@ -22,9 +22,7 @@ versions.sort((a,b) => {
   const versionA = parseInt(a.match(/published-content_v(\d+)/)[1]);
   const versionB = parseInt(b.match(/published-content_v(\d+)/)[1]);
 
-  if (versionA > versionB) return 1;
-  if (versionB > versionA) return -1;
-  else return 0;
+  return versionA - versionB;
 });
 
 console.log(versions[versions.length-1]);
