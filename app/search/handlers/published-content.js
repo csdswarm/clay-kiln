@@ -8,7 +8,8 @@ const h = require('highland'),
   ioredis = require('ioredis'),
   redis = new ioredis(process.env.REDIS_HOST),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
-  CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
+  CONTENT_FILTER = isOpForComponents(['article', 'gallery']),
+  REDIS_HASH = process.env.REDIS_HASH;
 
 // Subscribe to the publish stream
 subscribe('publish').through(save);
@@ -27,7 +28,7 @@ function getContent(obj, param) {
   const content = obj.value[param];
 
   return h(content)
-    .map(({ _ref }) => h(redis.hget('mydb:h', _ref).then( data => ({ _ref, data }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
+    .map(({ _ref }) => h(redis.hget(REDIS_HASH, _ref).then( data => ({ _ref, data }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
     .mergeWithLimit(1) // Merge each individual stream into the bigger stream
     .collect() // Turn each individual object into an array of objects
     .map(resolvedContent => {
@@ -49,7 +50,7 @@ function getSlideEmbed(slides) {
       const slideData = JSON.parse(slide.data);
 
       return h(slideData.slideEmbed)
-        .map(({ _ref }) => h(redis.hget('mydb:h', _ref).then( data => ({ _ref, data: JSON.parse(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
+        .map(({ _ref }) => h(redis.hget(REDIS_HASH, _ref).then( data => ({ _ref, data: JSON.parse(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
         .mergeWithLimit(1)
         .collect()
         .map(resolvedContent => {
