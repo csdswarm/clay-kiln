@@ -56,6 +56,13 @@
           </div>
         {{/each}}
       {{/if}}
+      <div class="radiocom-nav__category-button radiocom-nav__category-button--{{text}} {{#if current}}radiocom-nav__category-button--current{{/if}} {{#if drawer}}radiocom-nav__category-button--drawer-enabled{{/if}}">
+        <a href="/account/login">Sign In</a>
+        <a href="/account/signup">Sign Up</a>
+        <div>
+          {{ radiumUser.email }}
+        </div>
+      </div>
       <div class="nav-drawer nav-drawer--mobile">
         {{#if headerLinks.length}}
           {{#each headerLinks}}
@@ -67,10 +74,7 @@
           {{/each}}
         {{/if}}
       </div>
-      <div>
-        <a href="/account/login">Sign In</a>
-        <a href="/account/signup">Sign Up</a>
-      </div>
+
     </div>
   </div>
 </nav>
