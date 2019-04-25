@@ -1,6 +1,6 @@
 'use strict';
 
-const Selectr = require('mobius1-selectr'),
+const SelectBox = require('../../services/client/selectbox'),
   { nextSevenDays } = require('../../services/universal/dateTime'),
   { fetchDOM } = require('../../services/client/radioApi');
 
@@ -14,15 +14,11 @@ class StationSchedule {
     nextSevenDays().forEach((day) => select.add(new Option(day.text, day.value)));
 
     // eslint-disable-next-line one-var
-    const selectr = new Selectr(select, {
+    const selectBox = new SelectBox(select, {
       searchable: false
     });
 
-    // iOS crashes when method is directly called, using setTimeout to put it on a different thread fixes it
-    selectr.on('selectr.change', (option) =>
-      setTimeout(() =>
-        this.loadContent({ stationId, gmtOffset, category }, option.value), 0)
-    );
+    selectBox.addEventListener('change', (option) => this.loadContent({ stationId, gmtOffset, category }, option.value));
   }
   /**
    @typedef {object} StationDetails
