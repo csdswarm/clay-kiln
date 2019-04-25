@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as mutationTypes from './mutationTypes'
 import * as actionTypes from './actionTypes'
 import formatError from '../views/account/services/format_error'
-import { getDeviceId } from '../views/account/utils'
+import {getDeviceId, isMobileDevice} from '../views/account/utils'
 import moment from 'moment'
 
 const axiosCall = async ({ method, url, data, commit }) => {
@@ -20,9 +20,11 @@ const axiosCall = async ({ method, url, data, commit }) => {
 }
 
 const formatProfile = (profile) => {
+  const dateFormat = isMobileDevice() ? 'YYYY-MM-DD' : 'MM-DD-YYYY'
+
   return {
     ...profile,
-    date_of_birth: profile.date_of_birth ? moment.utc(profile.date_of_birth).local().format('MM-DD-YYYY') : ''
+    date_of_birth: profile.date_of_birth ? moment.utc(profile.date_of_birth).local().format(dateFormat) : ''
   }
 }
 
@@ -72,7 +74,7 @@ export default {
         first_name: user.firstName,
         last_name: user.lastName,
         gender: user.gender,
-        date_of_birth: moment(user.dateOfBirth).toISOString(),
+        date_of_birth: moment(user.dateOfBirth, 'MM-DD-YYYY').toISOString(),
         zip_code: user.zipCode,
         email: user.email
       }

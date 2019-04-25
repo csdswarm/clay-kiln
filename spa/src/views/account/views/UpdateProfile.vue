@@ -72,18 +72,22 @@
       </div>
       <div class="floating-label">
         <div v-if="mobile">
-          <input
-            :value="user.date_of_birth"
-            type="date"
-            name="date_of_birth"
-            id="date_of_birth"
-            class="dateclass placeholderclass dob"
-            data-placeholder="Date of Birth"
-            required
-            aria-required="true"
-            @change="onHtml5DateChange($event)"
-          >
-          <label for="date_of_birth">Date of Birth</label>
+          <div class="input">
+            <input
+              :value="user.date_of_birth"
+              type="date"
+              name="date_of_birth"
+              id="date_of_birth"
+              class="dob"
+              style="width: 250px;"
+              data-placeholder="Date of Birth"
+              required
+              aria-required="true"
+              @change="onHtml5DateChange($event)"
+            >
+            <label for="date_of_birth">Date of Birth</label>
+            {{updatedUser.date_of_birth}}
+          </div>
         </div>
         <div v-else>
           <datepicker
@@ -120,7 +124,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
 import Message from '../components/Message'
 import { isMobileDevice, isValidZipCode, debugLog } from '../utils'
@@ -153,8 +156,7 @@ export default {
   async created () {
     try {
       await this.$store.dispatch(actionTypes.GET_PROFILE)
-      console.log(this.$store.state.user.date_of_birth)
-      this.updatedUser = { ...this.$store.state.user }
+        this.updatedUser = { ...this.$store.state.user }
     } catch (e) {
       this.$store.commit(mutationTypes.MODAL_ERROR, null)
       this.$router.push({ path: '/account/login' })
@@ -168,12 +170,11 @@ export default {
     },
 
     onHtml5DateChange (event) {
-      this.updatedUser.date_of_birth = moment(event.target.value, 'MM-DD-YYYY')
+      this.updatedUser.date_of_birth = event.target.value
     },
 
     onVueDatepickerChange (dateObj) {
-      console.log(dateObj)
-      this.updatedUser.date_of_birth = moment(dateObj, 'MM-DD-YYYY')
+      this.updatedUser.date_of_birth = dateObj
     },
 
     validateProfileEntities (userData) {
@@ -192,7 +193,7 @@ export default {
 
     onProfileSubmit () {
       const error = this.validateProfileEntities(this.updatedUser)
-
+console.log(this.updatedUser)
       if (error) {
         this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {

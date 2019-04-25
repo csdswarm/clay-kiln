@@ -199,7 +199,6 @@
   }
 
   .form-style-5 input[type="text"],
-  .form-style-5 input[type="date"],
   .form-style-5 input[type="datetime"],
   .form-style-5 input[type="email"],
   .form-style-5 input[type="number"],
@@ -207,9 +206,11 @@
   .form-style-5 input[type="password"],
   .form-style-5 input[type="url"],
   .form-style-5 textarea,
-  .form-style-5 select {
+  .form-style-5 select,
+  .input{
     font-family: 'CircularStd-BlackStd-Medium', sans-serif;
     border: none;
+    height: 46px;
     font-size: 14px;
     margin: 0;
     outline: 0;
@@ -229,7 +230,6 @@
   }
 
   .form-style-5 input[type="text"]:focus,
-  .form-style-5 input[type="date"]:focus,
   .form-style-5 input[type="datetime"]:focus,
   .form-style-5 input[type="email"]:focus,
   .form-style-5 input[type="number"]:focus,
@@ -245,6 +245,13 @@
     height:35px;
   }
 
+
+  /* Mobile datepicker */
+  .form-style-5 .dob {
+    opacity: 0;
+    position: absolute;
+    font-size: 16px;
+  }
 
   .form-style-5 input[type="submit"],
   .form-style-5 input[type="button"]
@@ -356,22 +363,6 @@
   .vdp-datepicker__calendar .cell:hover {
     border-color: #1f055e !important;
   }
-
-  /* Mobile datepicker */
-  .dob {
-    opacity: 0.8;
-  }
-
-  input[type="date"]::before {
-    content: attr(data-placeholder);
-    width: 100%;
-  }
-
-  /* hide our custom/fake placeholder text when in focus to show the default
-   * 'mm/dd/yyyy' value and when valid to show the users' date of birth value.
-   */
-  input[type="date"]:focus::before,
-  input[type="date"]:valid::before { display: none }
 
   .gender-box {
     margin-bottom: 20px;
@@ -546,21 +537,6 @@
     border-color: #1f055e !important;
   }
 
-  /* Mobile datepicker */
-  .dob {
-    opacity: 0.8;
-  }
-
-  input[type="date"]::before {
-    content: attr(data-placeholder);
-    width: 100%;
-  }
-
-  /* hide our custom/fake placeholder text when in focus to show the default
-   * 'mm/dd/yyyy' value and when valid to show the users' date of birth value.
-   */
-  input[type="date"]:focus::before,
-  input[type="date"]:valid::before { display: none }
 
   /* Radio buttons */
   .radio-item {
