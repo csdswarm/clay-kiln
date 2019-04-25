@@ -1263,7 +1263,7 @@ data.text = `
       <input type="tel" id="phone" name="phone" pattern="\\(*[0-9]{3}\\)*[\\s\\D]*[0-9]{3}[\\s\\D]*[0-9]{4}" placeholder="(123) 123-1234" required>
       <button type="submit"><span>SEND LINK</span><img src="https://images.radio.com/aiu-media/submittextarrow-baa4df8d-45ae-4b40-b61e-a738108ec6ff.png" alt="->"/></button>
     </form>
-    <p><small>Message and data rates may apply</small></p>
+    <p><small>Message and data rates may apply.</small></p>
   </div>
   <div class="apps-block features">
     <div class="description">
