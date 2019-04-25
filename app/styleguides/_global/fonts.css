@@ -458,3 +458,11 @@ em, i {
 @define-mixin global-sponsor-logos-font1 {
   @mixin font ProximaNova-Regular, 14px, $black, -.22px, 17px;
 }
+
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Radium Fonts Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin radium-font1 {
+  @mixin font ProximaNova-Regular, 12px, $white, normal, 12px;
+}
