@@ -16,10 +16,10 @@ module.exports.render = (ref, data, locals) => {
     const value = _get(locals, data.localsKey);
 
     if (value) {
+      data.paramValue = value;
+      data.metaValue = value;
       if (locals.station) {
-        data.paramValue = `Listen to ${value} Online`;
-      } else {
-        data.paramValue = value;
+        data.metaValue = `Listen to ${value} Online`;
       }
     }
   }

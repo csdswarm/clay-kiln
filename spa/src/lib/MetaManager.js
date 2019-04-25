@@ -28,9 +28,11 @@ export default class MetaManager {
     if (dynamicMetaTitleData) {
       // Clone string concat logic from dynamic-meta-title/template.hbs.
       const title = `${dynamicMetaTitleData.paramValue}${dynamicMetaTitleData.suffix}`
+      const metaTitle = `${dynamicMetaTitleData.metaValue}${dynamicMetaTitleData.suffix}`
+
       metaTitleData = {
         title,
-        ogTitle: title
+        ogTitle: metaTitle
       }
     } else {
       metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
