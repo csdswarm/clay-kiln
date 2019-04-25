@@ -156,7 +156,7 @@ export default {
   async created () {
     try {
       await this.$store.dispatch(actionTypes.GET_PROFILE)
-        this.updatedUser = { ...this.$store.state.user }
+      this.updatedUser = { ...this.$store.state.user }
     } catch (e) {
       this.$store.commit(mutationTypes.MODAL_ERROR, null)
       this.$router.push({ path: '/account/login' })
@@ -193,7 +193,7 @@ export default {
 
     onProfileSubmit () {
       const error = this.validateProfileEntities(this.updatedUser)
-console.log(this.updatedUser)
+      console.log(this.updatedUser)
       if (error) {
         this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {

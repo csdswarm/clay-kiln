@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as mutationTypes from './mutationTypes'
 import * as actionTypes from './actionTypes'
 import formatError from '../views/account/services/format_error'
-import {getDeviceId, isMobileDevice} from '../views/account/utils'
+import { getDeviceId, isMobileDevice } from '../views/account/utils'
 import moment from 'moment'
 
 const axiosCall = async ({ method, url, data, commit }) => {
