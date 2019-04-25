@@ -412,8 +412,9 @@ data.text = `
     line-height: 40px;
   }
   form#branch-app-text-cta button img {
-    width: 19px;
-    height: 17px;
+    width: 20px;
+    height: 18px;
+    margin-left: 2px;
   }
   @media screen and (max-width: 480px) {
     .apps-block.branch {
