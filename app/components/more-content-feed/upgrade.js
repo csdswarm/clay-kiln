@@ -52,3 +52,12 @@ module.exports['4.0'] = function (uri, data) {
 
   return data;
 };
+
+module.exports['5.0'] = function (uri, data) {
+  const contentCollectionLogoSponsorshipURIPublished = `${uri.split('more-content-feed')[0]}google-ad-manager/instances/contentCollectionLogoSponsorship`;
+
+  return {
+    ...data,
+    contentCollectionLogoSponsorship: { _ref : contentCollectionLogoSponsorshipURIPublished }
+  };
+};

@@ -55,6 +55,7 @@
 
   .topic-page-header__banner--image {
     height: em(250);
+    position: relative;
 
     @mixin medium-small-screen {
       height: em(200);

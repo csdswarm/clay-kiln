@@ -286,7 +286,7 @@
       width: 100%;
       position: relative;
       min-height: 0;
-      .component--google-ad-manager {
+      .google-ad-manager--half-page-topic {
         display: none !important;
       }
     }
