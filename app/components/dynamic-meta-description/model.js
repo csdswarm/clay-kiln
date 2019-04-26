@@ -20,7 +20,7 @@ module.exports.render = (ref, data, locals) => {
       } else {
         data.description = data.description
           .replace('${paramValue}', hypensToSpaces(value))
-          .replace(/\b\w/g, l => l.toUpperCase());;
+          .replace(/\b\w/g, l => l.toUpperCase());
       }
     }
   }
