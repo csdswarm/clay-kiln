@@ -15,7 +15,7 @@ module.exports.render = (ref, data, locals) => {
     const value = _get(locals, data.localsKey);
 
     if (value) {
-      if (locals.station) {
+      if (ref.includes('/station@published')) {
         data.description = `Listen to ${locals.station.name} - ${locals.station.slogan}. Live. Anytime. Anywhere.`;
       } else {
         data.description = data.description

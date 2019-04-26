@@ -18,7 +18,7 @@ module.exports.render = (ref, data, locals) => {
     if (value) {
       data.paramValue = value;
       data.metaValue = value;
-      if (locals.station) {
+      if (ref.includes('/station@published')) {
         data.metaValue = `Listen to ${value} Online`;
       }
     }
