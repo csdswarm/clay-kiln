@@ -8,7 +8,7 @@
     <ul class="stations-by-genre__genre-list">
       {{#each genres}}
         <li class="genre-list__genre genre--{{ css }}">
-          <a href="//{{ @root.locals.site.host }}/stations/music/{{ ref }}">
+          <a href="//{{ @root.locals.site.host }}/stations/{{ path }}">
             <img src="https://images.radio.com/aiu-media/{{ img }}.jpg?width=140&height=140&crop=1:1,offset-y0">
             <span class="genre__label">{{ label }}</span>
           </a>

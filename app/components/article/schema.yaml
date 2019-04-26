@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 3.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -471,6 +471,11 @@ plaintextShortHeadline:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
 
 # Component properties
+contentPageSponsorLogo:
+  _component:
+    include:
+      - google-ad-manager
+
 sideShare:
   _component:
     include:

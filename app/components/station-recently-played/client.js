@@ -1,6 +1,6 @@
 'use strict';
 
-const Selectr = require('mobius1-selectr'),
+const SelectBox = require('../../services/client/selectbox'),
   { get24Hours, nextSevenDays } = require('../../services/universal/dateTime'),
   { fetchDOM } = require('../../services/client/radioApi');
 
@@ -17,17 +17,17 @@ class StationRecentlyPlayed {
       category = select.getAttribute('data-category');
 
     // eslint-disable-next-line one-var
-    const selectr = new Selectr(select, {
+    const selectBox = new SelectBox(select, {
         searchable: false,
         data: nextSevenDays(true)
       }),
-      timeSelectr = new Selectr(timeSelect, {
+      timeSelectBox = new SelectBox(timeSelect, {
         searchable: false,
         data: get24Hours()
       });
 
-    selectr.on('selectr.change', (option) => this.loadContent({ stationId, gmtOffset, category }, option.value, timeSelectr.getValue()));
-    timeSelectr.on('selectr.change', (option) => this.loadContent({ stationId, gmtOffset, category }, selectr.getValue(), option.value));
+    selectBox.addEventListener('change', (option) => this.loadContent({ stationId, gmtOffset, category }, option.value, timeSelectBox.getValue()));
+    timeSelectBox.addEventListener('change', (option) => this.loadContent({ stationId, gmtOffset, category }, selectBox.getValue(), option.value));
   }
   /**
    @typedef {object} StationDetails

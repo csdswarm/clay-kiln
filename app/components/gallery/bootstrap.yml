@@ -20,18 +20,23 @@ _components:
     slidesNumbered: false
     reverseOrder: false
     includeInlineAds: true
+    contentPageSponsorLogo:
+      _ref: /_components/google-ad-manager/instances/contentPageLogoSponsorship
     inlineAd:
       _ref: /_components/google-ad-manager/instances/billboardGallery
     rightRailStickyAd:
       _ref: /_components/google-ad-manager/instances/halfPageBottom
     tags:
       _ref: /_components/tags/instances/new
-    sideShare: {}
+    sideShare:
+      _ref: /_components/share/instances/new
     sectionFront: ''
-    secondaryArticleType: ''
     contentType: 'gallery'
     syndicatedUrl: ''
     syndicationStatus: original
     showSocial: true
     eligibleForGoogleStandout: false
+    sources: []
+    secondaryArticleType: ''
     footer: []
+    crumbs: []

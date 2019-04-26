@@ -1,6 +1,6 @@
 'use strict';
 
-const Selectr = require('mobius1-selectr');
+const SelectBox = require('../../services/client/selectbox');
 
 class StationDiscover {
   constructor(el) {
@@ -18,14 +18,13 @@ class StationDiscover {
    */
   addNavigationListeners() {
     this.discoverTab.addEventListener('click', (e) => this.activateAllLists(e) );
-    // this.mobileDropdown.addEventListener('change', (e) => this.activateFilteredList(e) );
 
-    const selectr = new Selectr(this.mobileDropdown, {
+    const select = new SelectBox(this.mobileDropdown, {
       searchable: false,
       customClass: 'station-discover__dropdown--mobile'
     });
 
-    selectr.on('selectr.change', (option) => this.activateFilteredList(option) );
+    select.addEventListener('change', (e) => this.activateFilteredList(e) );
 
     for (let option of this.dropdown) {
       option.addEventListener('click', (e) => this.activateFilteredList(e) );

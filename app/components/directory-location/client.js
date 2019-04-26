@@ -1,6 +1,6 @@
 'use strict';
 
-const Selectr = require('mobius1-selectr'),
+const SelectBox = require('../../services/client/selectbox'),
   spaLinkService = require('../../services/client/spaLink');
 
 class DirectoryLocation {
@@ -14,12 +14,12 @@ class DirectoryLocation {
    * @function
    */
   addNavigationListener() {
-    const selectr = new Selectr(this.mobileDropdown, {
+    const select = new SelectBox(this.mobileDropdown, {
       searchable: false,
       customClass: 'directory-location__dropdown--mobile'
     });
 
-    selectr.on('selectr.change', (option) => spaLinkService.navigateTo(`/stations/location/${option.value}`) );
+    select.addEventListener('change', (option) => spaLinkService.navigateTo(`/stations/location/${option.value}`) );
   }
 }
 
