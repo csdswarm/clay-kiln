@@ -71,5 +71,12 @@ _doc:
     pageUri:
       type: keyword
       store: true
-    # lead:
-    #   type: keyword
+    lead:
+      type: nested
+      dynamic: true
+      properties:
+        _ref:
+          type: keyword
+          ignore_above: 256
+        data:
+          type: text
