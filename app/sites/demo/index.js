@@ -41,7 +41,8 @@ module.exports.routes = [
   { path: '/stations/music/:dynamicGenre', dynamicPage: 'stations-directory' },
   { path: '/stations/news-talk', dynamicPage: 'stations-directory' },
   { path: '/stations/sports', dynamicPage: 'stations-directory' },
-  { path: '/account/:dynamicPage', dynamicPage: 'home'  }
+  { path: '/account/:dynamicPage', dynamicPage: 'home'  },
+  { path: '/account/:dynamicPage/:mode', dynamicPage: 'home'  }
 ];
 
 // Resolve the url to publish to
