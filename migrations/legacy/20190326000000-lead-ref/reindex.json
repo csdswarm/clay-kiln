@@ -7,6 +7,6 @@
   },
   "script": {
     "lang": "painless",
-    "source": "ctx._source.lead[0]=[\"_ref\": ctx._source.lead[0]]"
+    "source": "if(ctx._source.lead?.size() == 1) { ctx._source.lead[0]=[\"_ref\": ctx._source.lead[0]] }"
   }
 }
