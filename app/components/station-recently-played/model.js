@@ -49,7 +49,7 @@ module.exports.render = async function (ref, data, locals) {
       }
     }
 
-    data.station = { id: stationId, category };
+    data.station = { id: stationId, category, gmt_offset };
     data.schedule = history.data.events.recent_events
       .map((item) => {
         return {
