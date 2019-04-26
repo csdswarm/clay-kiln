@@ -193,7 +193,7 @@ export default {
 
     onProfileSubmit () {
       const error = this.validateProfileEntities(this.updatedUser)
-      console.log(this.updatedUser)
+
       if (error) {
         this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {
