@@ -22,16 +22,14 @@ function init(version, browser) {
     instanceMeta.browserVersion = navigatorReference.userAgent;
   }
 
-  let clayLogOptions = {
+  const clayLogOptions = {
       name: 'clay',
       meta: instanceMeta
     },
     clayLogPretty = process && process.env ? { pretty: true } : null;
 
-  clayLogOptions = {...clayLogOptions, ...clayLogPretty};
-
   // Initialize the logger
-  clayLog.init(clayLogOptions);
+  clayLog.init({...clayLogOptions, ...clayLogPretty});
 
   sitesLogInstance = clayLog.getLogger();
 }
