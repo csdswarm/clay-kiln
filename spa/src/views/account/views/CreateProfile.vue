@@ -228,9 +228,7 @@ export default {
       if (error) {
         this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {
-        try {
-          await this.$store.dispatch(actionTypes.CREATE_PROFILE, this.user)
-        } catch (err) { }
+        this.$store.dispatch(actionTypes.CREATE_PROFILE, this.user)
       }
     }
   }

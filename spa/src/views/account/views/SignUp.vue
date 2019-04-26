@@ -135,7 +135,7 @@ export default {
       if (error) {
         this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {
-        await this.$store.dispatch(actionTypes.SIGN_UP, { email: this.user.email, password: this.user.password })
+        this.$store.dispatch(actionTypes.SIGN_UP, { email: this.user.email, password: this.user.password })
       }
     }
   }

@@ -83,12 +83,7 @@ export default {
       if (error) {
         this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {
-        try {
-          await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
-          this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
-        } catch (e) {
-          // error handled inside of dispatch
-        }
+        this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
       }
     }
   }

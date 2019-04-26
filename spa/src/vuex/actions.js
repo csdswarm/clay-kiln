@@ -4,6 +4,12 @@ import * as actionTypes from './actionTypes'
 import formatError from '../views/account/services/format_error'
 import { getDeviceId, isMobileDevice } from '../views/account/utils'
 import moment from 'moment'
+import {
+  FORGOT_PASSWORD_SUCCESS,
+  RESET_PASSWORD_SUCCESS,
+  UPDATE_PASSWORD_SUCCESS,
+  UPDATE_PROFILE_SUCCESS
+} from '../views/account/constants'
 
 const axiosCall = async ({ method, url, data, commit }) => {
   try {
@@ -15,7 +21,6 @@ const axiosCall = async ({ method, url, data, commit }) => {
   } catch (err) {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, false)
     commit(mutationTypes.MODAL_ERROR, formatError(err).message)
-    throw formatError(err)
   }
 }
 
@@ -51,9 +56,10 @@ export default {
       } })
 
     commit(mutationTypes.SET_USER, { ...result.data })
+    commit(mutationTypes.ACCOUNT_MODAL_HIDE)
   },
   async [actionTypes.SIGN_OUT] ({ commit }) {
-    const val = await axiosCall({ commit,
+    await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/signout',
       data: {
@@ -62,7 +68,6 @@ export default {
     })
     commit(mutationTypes.SET_USER, { })
   },
-  async [actionTypes.SIGN_UP]  ({ commit, state, dispatch }, { email, password }) {
   async [actionTypes.SIGN_UP] ({ commit, state, dispatch }, { email, password }) {
     await axiosCall({ commit,
       method: 'post',
@@ -116,7 +121,7 @@ export default {
     })
 
     commit(mutationTypes.SET_USER, formatProfile(result.data))
-    commit(mutationTypes.MODAL_SUCCESS, 'Your profile has been updated successfully!')
+    commit(mutationTypes.MODAL_SUCCESS, UPDATE_PROFILE_SUCCESS)
   },
   async [actionTypes.UPDATE_PASSWORD] ({ commit }, passwords) {
     await axiosCall({ commit,
@@ -125,6 +130,30 @@ export default {
       data: passwords
     })
 
-    commit(mutationTypes.MODAL_SUCCESS, 'Your password has been updated successfully!')
+    commit(mutationTypes.MODAL_SUCCESS, UPDATE_PASSWORD_SUCCESS)
+  },
+  async [actionTypes.FORGOT_PASSWORD] ({ commit, state }, email) {
+    await axiosCall({ commit,
+      method: 'put',
+      url: '/v1/auth/password/forgot',
+      data: {
+        email
+      }
+    })
+
+    commit(mutationTypes.MODAL_SUCCESS, FORGOT_PASSWORD_SUCCESS)
+  },
+  async [actionTypes.RESET_PASSWORD] ({ commit, state }, { email, authCode, password }) {
+    await axiosCall({ commit,
+      method: 'post',
+      url: '/v1/auth/password/reset',
+      data: {
+        email,
+        auth_code: authCode,
+        password
+      }
+    })
+
+    commit(mutationTypes.MODAL_SUCCESS, RESET_PASSWORD_SUCCESS)
   }
 }
