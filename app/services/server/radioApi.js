@@ -4,7 +4,7 @@ const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
   db = require('./db'),
-  TTL = 300000,
+  DEFAULT_TTL = 300000,
   httpRegEx = /^https?:\/\//,
 
   /**
@@ -55,10 +55,12 @@ const rest = require('../universal/rest'),
    * @param {string} route
    * @param {*} [params]
    * @param {function} [validate]
+   * @param {number} [TTL]
    * @return {Promise}
    */
-  get = async (route, params, validate = defaultValidation(route)) => {
+  get = async (route, params, validate, TTL = DEFAULT_TTL ) => {
     const dbKey = createKey(route, params),
+      validateFn = validate || defaultValidation(route),
       requestEndpoint = createEndpoint(route, params);
 
     try {
@@ -66,7 +68,7 @@ const rest = require('../universal/rest'),
 
       if (data.updated_at && (new Date() - new Date(data.updated_at) > TTL)) {
         try {
-          return await getAndSave(requestEndpoint, dbKey, validate);
+          return await getAndSave(requestEndpoint, dbKey, validateFn);
         } catch (e) {
         }
       }
@@ -75,7 +77,7 @@ const rest = require('../universal/rest'),
     } catch (e) {
       try {
         // if an issue with getting the key, get the data
-        return await getAndSave(requestEndpoint, dbKey, validate);
+        return await getAndSave(requestEndpoint, dbKey, validateFn);
       } catch (e) {
         // If API errors out and we don't have stale data, return empty object
         return {};
