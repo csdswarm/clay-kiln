@@ -137,10 +137,9 @@ export default {
      * @returns {boolean}
      */
     handleIntercept (route, from) {
-      const {component, action} = route || {}
+      const { component, action } = route || {}
 
       if (component) {
-
         this.modalShow()
 
         this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, component)
@@ -151,13 +150,12 @@ export default {
         }
 
         return true
-      }
-      else if (action) {
+      } else if (action) {
         const returnToPage = () => { this.$router.push(from) }
         this.$store
-                .dispatch(action)
-                .then(returnToPage)
-                .catch(returnToPage)
+          .dispatch(action)
+          .then(returnToPage)
+          .catch(returnToPage)
         return true
       }
 
@@ -181,10 +179,10 @@ export default {
      * @returns {object}  - The JSON payload
      */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
-      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : '',
-         ieCacheBuster = (new Date()).getTime(), // force reload of app components on IE11
-         newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}&cb=${ieCacheBuster}`,
-         newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
+      const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
+      const ieCacheBuster = (new Date()).getTime() // force reload of app components on IE11
+      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}&cb=${ieCacheBuster}`
+      const newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
 
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
@@ -300,9 +298,9 @@ export default {
       const intercept = this.getInterceptRoute(to.path)
 
       if (intercept) {
-        if(to.path.toLocaleLowerCase() === from.path.toLocaleLowerCase()){
+        if (to.path.toLocaleLowerCase() === from.path.toLocaleLowerCase()) {
           // to prevent looping go to home page
-          from.path = '/';
+          from.path = '/'
         }
         await this.handleIntercept(intercept, from.path)
       } else {
@@ -310,7 +308,7 @@ export default {
       }
     },
     routerPush (path) {
-      if(path){
+      if (path) {
         this.$router.push({ path })
         // reset routerPush so that future values set on it always trigger a change and consequently, this method
         this.$store.state.routerPush = null
