@@ -14,7 +14,10 @@ function get() {
   if (!recentStationsIDs) {
     return [];
   } else {
-    return recentStationsIDs.split(',');
+    return recentStationsIDs.split(',').filter(function(stationID) {
+      // Remove stored station objects
+      return !isNaN(parseInt(stationID));
+    });
   }
 }
 
@@ -34,7 +37,7 @@ function add(stationID) {
     try {
       localStorage.setItem(localStorageKey, recentStationsIDs.join()); // Store recent stations in browser
     } catch (e) {
-      log('error', `Error storing station ${stationID}: ${e}`);
+      console.log(`Error storing station ${stationID}: ${e}`);
     }
   }
 }
