@@ -1,0 +1,15 @@
+_components:
+  google-ad-manager:
+    instances:
+      globalLogoSponsorship:
+        adSize: global-logo-sponsorship
+        adPosition: global-logo-sponsorship
+        adLocation: atf
+      contentCollectionLogoSponsorship:
+        adSize: content-collection-logo-sponsorship
+        adPosition: logo-sponsorship
+        adLocation: atf
+      contentPageLogoSponsorship:
+        adSize: content-page-logo-sponsorship
+        adPosition: logo-sponsorship
+        adLocation: atf

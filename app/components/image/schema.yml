@@ -35,6 +35,8 @@ alt:
   _has:
     input: text
     help: Alternative text for screen readers
+    validate:
+      required: true
 creditOverride:
   _label: Credit Override
   _has:

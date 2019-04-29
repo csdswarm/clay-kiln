@@ -5,19 +5,11 @@
 .component--podcast-list {
   max-width: em(widthOnGrid(12, 11));
   display: flex;
-  margin: 0 auto em(40);
+  margin: 0 auto em(30, 11) auto;
   flex-wrap: wrap;
 
-  @mixin medium-screen {
-    margin-bottom: 0;
-  }
-
-  @mixin medium-small-screen {
-    margin-bottom: em(35);
-  }
-
   .podcast-list__item {
-    margin-bottom: em(40);
+    margin-bottom: em(20);
     width: em(220);
     max-width: em(220);
     flex: 1 0 em(220);
@@ -44,11 +36,6 @@
 
     @mixin medium-screen {
       flex: 1 0 50%;
-      margin-bottom: em(60);
-    }
-
-    @mixin medium-small-screen {
-      margin-bottom: em(25);
     }
   }
 

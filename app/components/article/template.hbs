@@ -1,15 +1,5 @@
-<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/Article"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
-  <nav class="article__breadcrumb">
-    <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/article/media/radiocom-purple-monogram.svg" }}}</a>
-    <span class="breadcrumb__separator">/</span>
-    <a href="//{{ @root.locals.site.host }}/{{sectionFront}}" class="breadcrumb__link">{{sectionFront}}</a>
-    {{#if secondaryArticleType}}
-      {{ set 'hypenatedSecondaryArticleType' (replace (replace (urlencode (replace (trim (lowercase secondaryArticleType)) ' ' '-')) "/" "%2F") "&" "%26") }}
-      <span class="breadcrumb__separator">/</span>
-      <a class="breadcrumb__link"
-         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryArticleType }}">{{ secondaryArticleType }}</a>
-    {{/if}}
-  </nav>
+<article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }} article--{{sectionFront}}" itemscope itemtype="http://schema.org/Article"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+  {{> breadcrumbs crumbs }}
   <header class="article__header">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
@@ -28,12 +18,17 @@
       <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
       <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
     </div>
+    <meta itemprop="dateModified" content="{{ dateModified }}" />
 
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
-    <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{#ifAny @root.locals.edit subHeadline}}
+      <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{/ifAny}}
   </header>
+
+  {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="article__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}

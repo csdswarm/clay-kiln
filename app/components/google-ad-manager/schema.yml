@@ -37,6 +37,15 @@ adSize:
       -
         name: Logo Sponsorship (100x35)
         value: logo-sponsorship
+      -
+        name: Global Logo Sponsorship (100x35)
+        value: global-logo-sponsorship
+      -
+        name: Content Collection / Topic Page / Author Page Logo Sponsorship (100x35)
+        value: content-collection-logo-sponsorship
+      -
+        name: Article / Gallery Page Logo Sponsorship (100x35)
+        value: content-page-logo-sponsorship
     validate:
       required: true
 adPosition:

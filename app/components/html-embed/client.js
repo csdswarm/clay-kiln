@@ -8,7 +8,7 @@
  */
 const duplicateScript = (script) => {
   const newScript = document.createElement('script'),
-    attributes = script.outerHTML.match(/([^\s]+)=/g).map(attr => attr.replace('=', ''));
+    attributes = script.outerHTML.match(/([^\s]+)=/g).map(attr => attr.split('=').shift());
 
   attributes.forEach((attribute) => newScript.setAttribute(attribute, script.getAttribute(attribute)));
   newScript.setAttribute('async', '');

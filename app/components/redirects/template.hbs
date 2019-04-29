@@ -1,4 +1,4 @@
-{{#if @root.locals.user.username}}
+{{#ifAll @root.locals @root.locals.user @root.locals.user.username}}
   <section class="component component--redirects"
            data-uri="{{ default _ref _self }}"
            data-track-type="redirects"
@@ -19,4 +19,4 @@
   </section>
 {{else}}
   <script>window.location.replace('/404');</script>
-{{/if}}
+{{/ifAll}}

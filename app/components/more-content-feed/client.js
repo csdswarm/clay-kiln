@@ -1,4 +1,6 @@
 'use strict';
+const { fetchDOM } = require('../../services/client/radioApi'),
+  safari = require('../../services/client/safari');
 
 class MoreContentFeed {
   constructor(el) {
@@ -29,8 +31,8 @@ class MoreContentFeed {
    * Pulls down N more articles from the API and renders them.
    *
    */
-  handleLoadMoreContent() {
-    let moreContentUrl = `${this.moreContentUrl}?ignore_resolve_media=true&page=${this.currentPage++}`;
+  async handleLoadMoreContent() {
+    let moreContentUrl = `${this.moreContentUrl}?page=${this.currentPage++}`;
 
     if (this.tag) {
       moreContentUrl += `&tag=${this.tag}`;
@@ -41,55 +43,20 @@ class MoreContentFeed {
       moreContentUrl += `&sectionFront=${this.sectionFront}`;
     }
 
-    fetch(moreContentUrl)
-      .then((response) => response.text())
-      .then((html) => {
-        // Initialize the DOM parser
-        const parser = new DOMParser(),
-          doc = parser.parseFromString(html, 'text/html');
+    const links = await fetchDOM(moreContentUrl) ;
 
-        // Remove the load more button as it's included in the returned result
-        this.loadMore.parentNode.removeChild(this.loadMore);
+    // Remove the load more button as it's included in the returned result
+    this.loadMore.parentNode.removeChild(this.loadMore);
 
-        // Append to the list
-        for (let link of doc.body.childNodes) {
-          let anchor = link.querySelector('a');
+    // Append to the list
+    this.moreContentFeed.querySelector('ul').append(links);
+    safari.fixAJAXImages(this.moreContentFeed);
 
-          if (anchor) {
-            anchor.classList.add('spa-link');
-
-            // Attach vue router listener on SPA links.
-            anchor.addEventListener('click', event => {
-              this.onSpaLinkClick(event, anchor);
-            });
-          }
-
-          this.moreContentFeed.querySelector('ul').append(link);
-        }
-
-        // iOS doesn't play nice with srcset dynamically (https://github.com/metafizzy/infinite-scroll/issues/770)
-        if (/iPhone/.test(navigator.userAgent)) {
-          this.moreContentFeed.querySelectorAll('img').forEach((img) => {
-            if (!img.height) {
-              img.outerHTML = img.outerHTML;
-            }
-          });
-        }
-
-        // Recreate the listener for the new button
-        this.loadMore = this.moreContentFeed.querySelector('.links__link--loadmore');
-        this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
-      });
-  }
-
-  onSpaLinkClick(event, element) {
-    event.preventDefault();
-    element.removeEventListener('click', element.fn, false);
-
-    const linkParts = new URL(element.getAttribute('href'));
-
-    // eslint-disable-next-line no-undef
-    vueApp._router.push(linkParts.pathname || '/');
+    // Recreate the listener for the new button
+    this.loadMore = this.moreContentFeed.querySelector('.links__link--loadmore');
+    if (this.loadMore) {
+      this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
+    }
   }
 };
 

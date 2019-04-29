@@ -18,30 +18,7 @@ You'll probably want to windows in your terminal open for now.
 ### Terminal Window 1
 
 ```bash
-$ cd app
-```
-
-NPM install
-
-```bash
-$ npm i
-```
-
-Install `radio-web-player`
-```bash
-$ npm run build-web-player
-```
-
-Run Gulp
-
-```bash
-$ gulp
-```
-
-_If you already have Gulp installed globally and it's not Gulp 4.x, you'll want to run the following:_
-
-```bash
-$ node ./node_modules/.bin/gulp
+$ make install-dev
 ```
 
 This is to make sure your `public` directory exists. Without it the site won't run.
@@ -92,12 +69,12 @@ If you change any files in the following (Pulled from `app/gulpfile.js`):
 
 Run the following command from inside the `app/` directory:
 ```bash
-$ ./node_modules/.bin/gulp
+$  npx gulp
 ```
 
 Gulp can also be watched to automatically rebuild changes:
 ```bash
-$ ./node_modules/.bin/gulp watch
+$ npx gulp watch
 ```
 
 ### If I want to stop dev?

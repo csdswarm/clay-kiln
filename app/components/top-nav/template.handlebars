@@ -41,7 +41,7 @@
                         </ul>
                       {{ else }}
                         {{#if subnav.url}}
-                          <a href="{{subnav.url}}" target="_blank">
+                          <a href="{{subnav.url}}">
                             <span class="sub-nav__text {{#if (compare subnav.text 'find a station')}}find-station-link{{/if}}">{{subnav.text}}{{#if (compare subnav.text 'find a station')}} <span>&#8227;</span>{{/if}}</span>
                           </a>
                         {{ else }}
