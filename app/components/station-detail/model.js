@@ -1,6 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
+  { addCrumb } = require('../breadcrumbs'),
   NEWS_TALK = 'News & Talk',
   SPORTS = 'Sports',
   LOCATION = 'location';
@@ -50,16 +51,15 @@ function getStationTags(station) {
 function addBreadcrumbLinks(host) {
 
   /**
-   * Takes a data object and adds a crumbs array of {url, text} objects to it that are specific to stations
+   * Takes a data object and adds a crumbs to it that are specific to stations
    *
    * @param {Object} data The data object to extend
    * @returns {Object} the extended data object
    */
   return data => {
-    data.crumbs = [
-      {url: `//${host}/stations`, text: 'stations'},
-      {url: `//${host}/${data.station.site_slug}/listen`, text: data.station.name}
-    ];
+    addCrumb(data, `//${host}/stations`, 'stations');
+    addCrumb(data, `//${host}/${data.station.site_slug}/listen`, data.station.name);
+
     return data;
   };
 }

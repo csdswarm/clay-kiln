@@ -3,7 +3,7 @@ const createContent = require('../../services/universal/create-content'),
   {autoLink} = require('../breadcrumbs');
 
 module.exports.render = function (ref, data, locals) {
-  data.crumbs = autoLink(data, ['sectionFront', 'secondaryArticleType'], locals.site.host);
+  autoLink(data, ['sectionFront', 'secondaryArticleType'], locals.site.host);
   // set to published date if before the publish date.
   if (!data.dateModified || data.dateModified < data.date) {
     data.dateModified = data.date;
