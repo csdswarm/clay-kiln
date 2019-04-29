@@ -1,7 +1,6 @@
 'use strict';
 const localStorageKey = 'recentStations',
-  maxRecentStations = 49,
-  log = require('../universal/log').setup({ file: __filename, context: 'client' });
+  maxRecentStations = 49;
 
 /**
  * Get IDs of recent stations from localStorage
