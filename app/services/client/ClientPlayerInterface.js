@@ -34,7 +34,7 @@ class ClientPlayerInterface {
         // Initialize Player Google tags
         this.initPlayerGoogleTags();
       });
-    
+
   }
 
   /**
@@ -63,7 +63,7 @@ class ClientPlayerInterface {
     return new Promise((resolve, reject) => {
       const firstScript = document.getElementsByTagName('script')[0],
         newScript = document.createElement('script');
-      
+
       newScript.onload = () => {
         return resolve();
       };
@@ -94,7 +94,7 @@ class ClientPlayerInterface {
         return reject(new Error(`CSS library failed to lazy-load: ${cssUrl}`));
       };
       linkTag.href = cssUrl;
-      
+
       document.head.appendChild(linkTag);
     });
   }
@@ -127,9 +127,18 @@ class ClientPlayerInterface {
    * @returns {Promise<any>} - Passed in stationId or null
    */
   play(stationId = null) {
-    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlay', { stationId });
+    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlaybackStatus', { stationId, playbackStatus: 'play' });
   }
 
+  /**
+   *
+   * Pause player playback.
+   *
+   * @returns {Promise<any>} - Passed in stationId or null
+   */
+  pause() {
+    return clientCommunicationBridge.sendMessage('SpaPlayerInterfacePlaybackStatus', { playbackStatus: 'pause' });
+  }
 }
 
 // Export to factory to simplify standard import statements.
