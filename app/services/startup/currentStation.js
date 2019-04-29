@@ -19,7 +19,8 @@ const radioApiService = require('../../services/server/radioApi'),
     market: {
       id: 15,
       name: 'New York, NY'
-    }
+    },
+    category: ''
   },
   /**
    * returns the slug of the site either from a subdomain or as the first element of the path
