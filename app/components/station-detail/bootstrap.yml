@@ -6,4 +6,6 @@ _components:
       _ref: /_components/station-schedule/instances/default
     discoverComponent:
       _ref: /_components/station-discover/instances/default
+    favoritesComponent:
+      _ref: /_components/station-favorites/instances/default
 

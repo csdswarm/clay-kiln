@@ -110,6 +110,31 @@ module.exports.render = async (uri, data, locals) => {
     });
   }
 
+  if (data.filterBy === 'favorites') {
+    const favorites = ['337', '443', '319', '320', '321', '322', '323', '333', '334', '335', '665'].join();
+
+    params['filter[id]'] = favorites;
+
+    return radioApiService.get(route, params).then(response => {
+      if (response.data) {
+        let stations = favorites.split(',').map(stationID => {
+          let station = response.data.find(station => {
+            if (station.id === parseInt(stationID)) {
+              return station;
+            }
+          });
+
+          return station ? station.attributes : null;
+        });
+
+        data.stations = stations.filter(station => station);
+        return data;
+      } else {
+        return returnStationless(data);
+      }
+    });
+  }
+
   if (data.filterBy === 'recent') {
     /** stations will be populated client side **/
 
@@ -128,6 +153,7 @@ module.exports.render = async (uri, data, locals) => {
     /** filter by market, genre, or category **/
     if (locals.station) {
       /** for stations lists on station detail page (discover tab) **/
+      console.log(data);
 
       switch (data.filterBy) {
         case 'market':
