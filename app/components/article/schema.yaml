@@ -374,9 +374,6 @@ editorialFeeds:
     search: true
     list: freq_editorial_feeds
     help: Select all editorial feeds terms for syndication
-    validate:
-      required: true
-      requiredMessage: Please select at least one term
 
 _groups:
   publishedDate:
