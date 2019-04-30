@@ -79,7 +79,7 @@ Navigate to the root of the project, where the `Makefile` exists.
 
 This is the window where you'll re-run Gulp as you need to. Right now only the tasks for building model.js, template files and CSS.
 
-If this the initial set up of clay you'll need to populate content by running (more detail is found below)
+If this the initial set up of clay you'll need to populate content by running the bootstrapping data steps below:
 
 #### Bootstrapping Data
 
