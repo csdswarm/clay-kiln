@@ -65,7 +65,7 @@ function getSlideEmbed(slides) {
       const slideData = JSON.parse(slide.data);
 
       // description is an empty array if there isn't anything
-      return (slideData.description && slideData.description.length > 0) ? h(slideData.description)
+      return slideData.description && slideData.description.length > 0 ? h(slideData.description)
         .map(({ _ref }) => h(redis.hget(REDIS_HASH, _ref).then( data => ({ _ref, data: JSON.parse(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
         .mergeWithLimit(1)
         .collect()
