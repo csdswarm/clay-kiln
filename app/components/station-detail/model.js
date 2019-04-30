@@ -42,6 +42,23 @@ function getStationTags(station) {
 }
 
 /**
+ * Add meta-title and meta-description to station object
+ *
+ * @param {object} station
+ * @returns {object}
+ */
+function addMetaData(station) {
+  if (!station) {
+    return {};
+  }
+  return {
+    ...station,
+    metaTitle: `Listen to ${station.name} Online`,
+    metaDescription: `Listen to ${station.name} - ${station.slogan}. Live. Anytime. Anywhere`
+  };
+}
+
+/**
  * Adds station specific breadcrumbs links to the data
  *
  * @param {string} host the site hostname
@@ -75,7 +92,7 @@ module.exports.render = (uri, data, locals) => {
     .then(response => {
       if (response.data) {
         // station object is available to child components through locals.station
-        data.station = locals.station = response.data[0].attributes || {};
+        data.station = locals.station = addMetaData(response.data[0].attributes);
         data.tags = getStationTags(response.data[0].attributes);
         data.category = response.data[0].attributes.category.toLowerCase() || '';
       }

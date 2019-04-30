@@ -9,18 +9,16 @@ module.exports.render = (ref, data, locals) => {
 
     // Set first character of each word to upper case.
     if (data.paramValue && data.paramValue.length) {
-      data.paramValue = hypensToSpaces(data.paramValue).replace(/\b\w/g, l => l.toUpperCase());
+      data.paramValue = data.metaValue = hypensToSpaces(data.paramValue).replace(/\b\w/g, l => l.toUpperCase());
     }
 
   } else if (data.localsKey && locals) {
-    const value = _get(locals, data.localsKey);
+    const value = _get(locals, data.localsKey),
+      metaValue = data.metaLocalsKey ? _get(locals, data.metaLocalsKey) : value;
 
     if (value) {
       data.paramValue = value;
-      data.metaValue = value;
-      if (ref.includes('/station@published')) {
-        data.metaValue = `Listen to ${value} Online`;
-      }
+      data.metaValue = metaValue;
     }
   }
 

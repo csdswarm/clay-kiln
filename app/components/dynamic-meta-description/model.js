@@ -15,13 +15,9 @@ module.exports.render = (ref, data, locals) => {
     const value = _get(locals, data.localsKey);
 
     if (value) {
-      if (ref.includes('/station@published')) {
-        data.description = `Listen to ${locals.station.name} - ${locals.station.slogan}. Live. Anytime. Anywhere.`;
-      } else {
-        data.description = data.description
-          .replace('${paramValue}', hypensToSpaces(value))
-          .replace(/\b\w/g, l => l.toUpperCase());
-      }
+      data.description = data.description
+        .replace('${paramValue}', hypensToSpaces(value))
+        .replace(/\b\w/g, l => l.toUpperCase());
     }
   }
 
