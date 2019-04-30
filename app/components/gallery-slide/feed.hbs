@@ -10,6 +10,12 @@
         <span class="gallery-slide__title">{{ title }}</span>
       </h2>
     {{/if}}
-    {{#if description}}<p class="gallery-slide__description">{{striptags description}}</p>{{/if}}
+    {{#ifAll description description.length }}
+      <p class="gallery-slide__description">
+        {{#each description~}}
+          {{~> (getComponentName _ref) this.data ~}}
+        {{~/each}}
+      </p>
+    {{/ifAll}}
   </div>
 </div>

@@ -60,12 +60,24 @@ function getSlideEmbed(slides) {
           return slide;
         });
     })
-    .mergeWithLimit(1) // Merge each individual stream into the bigger stream
-    .collect() // Turn each individual object into an array of objects
-    .map(resolvedContent => {
-      slides = resolvedContent; // Assign the array of resolved objects to the original property
-      return slides; // Return the original, now modified object
-    });
+    .mergeWithLimit(25) // Merge back so we can use map again
+    .map( slide => {
+      const slideData = JSON.parse(slide.data);
+
+      // description is an empty array if there isn't anything
+      return (slideData.description && slideData.description.length > 0) ? h(slideData.description)
+        .map(({ _ref }) => h(redis.hget(REDIS_HASH, _ref).then( data => ({ _ref, data: JSON.parse(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
+        .mergeWithLimit(1)
+        .collect()
+        .map(resolvedContent => {
+          slideData.description = resolvedContent;
+          // data for some reason needs to be a string or elasticsearch throws a parse error
+          slide.data = JSON.stringify(slideData);
+          return slide;
+        }) : h.of(slide);
+    })
+    .mergeWithLimit(25) // Merge each slide (up to 25) into stream
+    .collect(); // Turn back into an array of slides
 }
 
 /**
