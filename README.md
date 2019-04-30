@@ -27,7 +27,7 @@ You'll probably want two windows in your terminal open for now.
 
 ### Terminal Window 1
 
-In the directory where you would like to serve the project clone the following repos:
+In the directory where you would like to serve the project, clone the following repos:
 ```
 git clone git@bitbucket.org:entercom/frequency-clay-translator.git
 ```
