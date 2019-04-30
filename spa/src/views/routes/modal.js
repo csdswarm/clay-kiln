@@ -1,6 +1,6 @@
 import SignUp from '../account/views/SignUp'
 import CreateProfile from '../account/views/CreateProfile'
-// import UpdateProfile from '../views/UpdateProfile'
+import UpdateProfile from '../account/views/UpdateProfile'
 // import GenericError from '../views/GenericError'
 // import Welcome from '../views/Welcome'
 // import FacebookCallback from '../views/FacebookCallback'
@@ -8,7 +8,7 @@ import Login from '../account/views/Login'
 // import GenericSuccess from '../views/GenericSuccess'
 // import ForgotYourPassword from '../views/ForgotYourPassword'
 // import ResetPassword from '../views/ResetPassword'
-// import UpdatePassword from '../views/UpdatePassword'
+import UpdatePassword from '../account/views/UpdatePassword'
 // import ResetPasswordSuccess from '../views/ResetPasswordSuccess'
 // import EmailVerifiedSuccess from '../views/EmailVerifiedSuccess'
 // import Home from '../views/Home'
@@ -26,12 +26,12 @@ const routes = [
     component: CreateProfile,
     props: true
   },
-  // {
-  //   path: '/account/profile/update',
-  //   name: 'UpdateProfile',
-  //   component: UpdateProfile,
-  //   props: true,
-  // },
+  {
+    path: '/account/profile/update',
+    name: 'UpdateProfile',
+    component: UpdateProfile,
+    props: true
+  },
   // {
   //   path: '/account/facebook-callback',
   //   name: 'FacebookCallback',
@@ -50,12 +50,12 @@ const routes = [
   //   component: ResetPassword,
   //   props: true,
   // },
-  // {
-  //   path: '/account/password/update',
-  //   name: 'UpdatePassword',
-  //   component: UpdatePassword,
-  //   props: true,
-  // },
+  {
+    path: '/account/password/update',
+    name: 'UpdatePassword',
+    component: UpdatePassword,
+    props: true
+  },
   // {
   //   path: '/account/reset-password/success',
   //   name: 'ResetPasswordSuccess',

@@ -241,6 +241,7 @@ const axios = require('axios'),
         'POST:/radium/v1/auth/signin': signInLogic,
         'POST:/radium/v1/auth/signout': signOutLogic,
         'POST:/radium/v1/profile/create': profileLogic,
+        'POST:/radium/v1/profile/update': profileLogic,
         'GET:/radium/v1/profile': profileLogic
       },
       keys = Object.keys(routes),
@@ -303,7 +304,6 @@ const axios = require('axios'),
         await handleError(response, retryFunction, req, res);
       }
     } catch (e) {
-      console.log('error', e);
       await handleError(e.response, retryFunction, req, res);
     }
   };

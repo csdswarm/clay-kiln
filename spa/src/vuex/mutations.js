@@ -1,6 +1,8 @@
 import * as mutationTypes from './mutationTypes'
 import vuexStoreDefaultState from '@/store'
 
+const createModalMessage = (type, message) => { return { type, message } }
+
 export default {
   [mutationTypes.LOAD_HANDLEBARS]: (state, payload) => {
     state.handlebars = payload.handlebars
@@ -32,13 +34,14 @@ export default {
     )
   },
   [mutationTypes.LOAD_RADIO_PLAYER]: (state, radioPlayer) => {
-      state.radioPlayer = radioPlayer
+    state.radioPlayer = radioPlayer
   },
   [mutationTypes.ACCOUNT_MODAL_SHOW]: (state, component) => {
     state.modalComponent = component
   },
   [mutationTypes.ACCOUNT_MODAL_HIDE]: (state) => {
     state.modalComponent = null
+    state.modalMessage = createModalMessage()
   },
   [mutationTypes.SET_METADATA]: (state, metadata) => { state.metadata = metadata },
   [mutationTypes.SET_USER]: (state, user) => { state.user = user },
@@ -49,6 +52,7 @@ export default {
   },
   [mutationTypes.SIGN_UP_COMPLETE]: (state) => { state.user.signUpComplete = true },
   [mutationTypes.ACCOUNT_MODAL_LOADING]: (state, loading) => { state.modalLoading = loading },
-  [mutationTypes.ERROR_MESSAGE]: (state, message) => { state.errorMessage = message },
+  [mutationTypes.MODAL_ERROR]: (state, message) => { state.modalMessage = createModalMessage('error', message) },
+  [mutationTypes.MODAL_SUCCESS]: (state, message) => { state.modalMessage = createModalMessage('success', message) },
   [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path }
 }
