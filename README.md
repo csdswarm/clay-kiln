@@ -4,26 +4,68 @@ A repo that contains a basic site and the necessary files to provision AWS resou
 
 ## To Start
 
+Make sure you have docker installed.
+
+Install claycli
+
+```bash
+npm install -g claycli
+```
+
 Edit your `/etc/hosts` file to include the following:
 
 ```
 127.0.0.1 clay.radio.com
-
 ```
 
+Create a .clayconfig file in your home folder
+
+Add the following to the file and save
+```
+[keys]
+  demo = accesskey
+[urls]
+  demosite = http://clay.radio.com
+```
 ## Local Development
 
 You'll probably want to windows in your terminal open for now.
 
 ### Terminal Window 1
+Create a unity folder where your project live.
+
+Within the unity folder clone the frequency converter and the clay repos
+```
+git clone git@bitbucket.org:entercom/frequency-clay-translator.git
+```
+```
+git clone git@bitbucket.org:entercom/clay-radio.git
+```
+
+Within the unity/frequency-clay-translator run
+```
+npm install
+``` 
+Within the unity/clay-radio folder run
 
 ```bash
-$ make install-dev
+make install-dev
 ```
 
 This is to make sure your `public` directory exists. Without it the site won't run.
 
 This is the window where you'll re-run Gulp as you need to. Right now only the tasks for building model.js, template files and CSS.
+
+Initially you'll need to build the clay image and you'll run it any time node packages are updated
+```
+make up-clay
+```
+When this completes and you see something similar to this:
+```
+INFO [2019-04-30T15:06:08.577Z] (clay/48 on 88d11227ae33): Clay listening on 0.0.0.0:3001 (process 48)
+```
+
+Kill the process (ctrl-c)
 
 ### Terminal Window 2
 
@@ -32,13 +74,22 @@ Navigate to the root of the project, where the `Makefile` exists.
 This is where the app will actually be run from. Make sure you're not runnning `sites` Clay instance.
 
 ```bash
-$ make up
+make up
 ```
 
 This is going to spin up a Redis, ElasticSearch and Clay instance. The Clay image will be built using the `Dockerfile` in the `app/` directory. The directories for `components`, `sites`, `services` and `public` are mounted into the container, which is why you'll run Gulp from your host machine.
 
 The container should be running `nodemon`, so changes to files will be detected. You MAY have to restart your container when adding a new component, but maybe not. If that's the case, submit an issue.
 
+When you see something like this your server should be running locally
+```
+INFO [2019-04-30T15:06:08.577Z] (clay/48 on 88d11227ae33): Clay listening on 0.0.0.0:3001 (process 48)
+```
+
+If this the initial set up of clay you'll need to populate content by running (more detail is found below)
+```
+make bootstrap
+```
 #### When do I need to restart?
 
 If you `npm install` a new package, you'll need to build a new image. This has been captured in a Makefile command
@@ -137,7 +188,7 @@ _users:
 You will need to run the importer (Will create pages and import 10 items from each content type (articles/blogs/etc))
 
 ```bash
-git clone git@github.com:Entercom/frequency-clay-translator.git
+git clone git@bitbucket.org:entercom/frequency-clay-translator.git
 cd frequency-clay-translator
 npm run import-pages --silent
 npm run import-content --silent totalItems=10
