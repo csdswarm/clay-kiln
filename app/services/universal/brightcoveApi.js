@@ -40,13 +40,13 @@ const log = require('./log').setup({file: __filename}),
         method: 'POST',
         credentials: 'include',
         headers: {
-          'Authorization': `Basic ${base64EncodedCreds}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Basic ${base64EncodedCreds}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
         }
       });
 
     if (response.access_token) {
-      accessTokenUpdated = new Date().getTime()/1000; // current time in seconds
+      accessTokenUpdated = new Date().getTime() / 1000; // current time in seconds
       return response;
     } else {
       const e = new Error(`Failed to request access token. Error: ${response.response.statusText}`);
@@ -63,16 +63,15 @@ const log = require('./log').setup({file: __filename}),
    * @param {string} route
    * @param {object} params
    * @param {object} [data]
-   * @param {boolean} [updateAccessToken]
    * @return {Promise}
    * @throws {Error}
    */
-  request = async (method, route, params, data, updateAccessToken = false) => {
+  request = async (method, route, params, data) => {
     try {
       const endpoint = createEndpoint(route, params),
-        currentTime = new Date().getTime()/1000;
+        currentTime = new Date().getTime() / 1000;
 
-      if (updateAccessToken || !access_token || (accessTokenUpdated && currentTime >= accessTokenUpdated + expires_in)) {
+      if (!access_token || (accessTokenUpdated && currentTime >= accessTokenUpdated + expires_in)) {
         ({ access_token, expires_in } = await getAccessToken());
       }
 
@@ -80,16 +79,14 @@ const log = require('./log').setup({file: __filename}),
         return null;
       }
 
-      const response = await rest.get(endpoint, {
+      return await rest.get(endpoint, {
         method: method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET',
         body: data ? JSON.stringify(data) : '',
         credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${ access_token }`
+          Authorization: `Bearer ${ access_token }`
         }
       });
-
-      return response;
     } catch (e) {
       log('error', e.response.statusText);
       return null;
