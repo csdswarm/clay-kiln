@@ -36,7 +36,7 @@ const log = require('./log').setup({file: __filename}),
    */
   getAccessToken = async () => {
     const base64EncodedCreds = Buffer.from(`${process.env.BRIGHTCOVE_CLIENT_ID}:${process.env.BRIGHTCOVE_CLIENT_SECRET}`).toString('base64'),
-      response = await rest.get(brightcoveOAuthApi, {
+      response = await rest.request(brightcoveOAuthApi, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -78,7 +78,7 @@ const log = require('./log').setup({file: __filename}),
         return null;
       }
 
-      return await rest.get(endpoint, {
+      return await rest.request(endpoint, {
         method: method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET',
         body: data ? JSON.stringify(data) : '',
         credentials: 'include',

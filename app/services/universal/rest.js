@@ -45,17 +45,25 @@ function checkStatus(res) {
 }
 
 /**
+ * REQUEST
+ * @param {string} url
+ * @param {object} [opts] See https://github.github.io/fetch/#options
+ * @return {Promise}
+ */
+module.exports.request = function (url, opts) {
+  return fetch(url, opts).then(checkStatus).then(function (res) { return res.json(); });
+};
+
+/**
  * GET
  * @param {string} url
  * @param {object} [opts] See https://github.github.io/fetch/#options
  * @return {Promise}
  */
 module.exports.get = function (url, opts) {
-  if (!opts.method) {
-    opts = _defaults({method: 'GET'}, opts);
-  }
+  const conf = _defaults({method: 'GET'}, opts);
 
-  return fetch(url, opts).then(checkStatus).then(function (res) { return res.json(); });
+  return fetch(url, conf).then(checkStatus).then(function (res) { return res.json(); });
 };
 
 /**
