@@ -13,7 +13,8 @@ const pkg = require('../../package.json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
   handleRedirects = require('./redirects'),
-  currentStation = require('./currentStation');
+  currentStation = require('./currentStation'),
+  redirectTrailingSlash = require('./trailing-slash');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -49,6 +50,8 @@ function setupApp(app) {
     ].join('; '));
     next();
   });
+
+  app.use(redirectTrailingSlash);
 
   // nginx limit is also 1mb, so can't go higher without upping nginx
   app.use(bodyParser.json({
