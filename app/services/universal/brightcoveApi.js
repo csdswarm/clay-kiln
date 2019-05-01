@@ -53,7 +53,6 @@ const log = require('./log').setup({file: __filename}),
 
       log('error', e.message);
       return null;
-      throw e;
     }
   },
   /**
@@ -90,7 +89,6 @@ const log = require('./log').setup({file: __filename}),
     } catch (e) {
       log('error', e.response.statusText);
       return null;
-      throw e;
     }
   };
 
