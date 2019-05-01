@@ -51,7 +51,7 @@ function getSlideEmbed(slides) {
 
       return h(slideData.slideEmbed)
         .map(({ _ref }) => h(redis.hget(REDIS_HASH, _ref).then( data => ({ _ref, data: JSON.parse(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
-        .mergeWithLimit(1)
+        .parallel(1) // make sure embeds come back in order
         .collect()
         .map(resolvedContent => {
           slideData.slideEmbed = resolvedContent;
@@ -60,14 +60,14 @@ function getSlideEmbed(slides) {
           return slide;
         });
     })
-    .mergeWithLimit(25) // Merge back so we can use map again
+    .parallel(1) // bring all slides back together, parallel ensures order
     .map( slide => {
       const slideData = JSON.parse(slide.data);
 
       // description is an empty array if there isn't anything
       return slideData.description && slideData.description.length > 0 ? h(slideData.description)
         .map(({ _ref }) => h(redis.hget(REDIS_HASH, _ref).then( data => ({ _ref, data: JSON.parse(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
-        .mergeWithLimit(1)
+        .parallel(1) // make sure descriptions come back in order
         .collect()
         .map(resolvedContent => {
           slideData.description = resolvedContent;
@@ -76,7 +76,7 @@ function getSlideEmbed(slides) {
           return slide;
         }) : h.of(slide);
     })
-    .mergeWithLimit(25) // Merge each slide (up to 25) into stream
+    .parallel(1) // bring all slides back together, 1 at a time, but parallel ensures order
     .collect(); // Turn back into an array of slides
 }
 
