@@ -1,5 +1,9 @@
-.component--brightcove {
+.component--verizon-media {
   margin-bottom: em(20);
+
+  .video-js.vjs-16-9 {
+    padding-top: 0;
+  }
 
   .player__video {
     video {
