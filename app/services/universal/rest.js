@@ -34,7 +34,7 @@ function addFakeCallback() {
  * @throws {Error} on non-2xx status
  */
 function checkStatus(res) {
-  if (res.status >= 200 && res.status < 300) {
+  if (res.ok) {
     return res;
   } else {
     const error = new Error(res.statusText);
@@ -51,9 +51,11 @@ function checkStatus(res) {
  * @return {Promise}
  */
 module.exports.get = function (url, opts) {
-  const conf = _defaults({method: 'GET'}, opts);
+  if (!opts.method) {
+    opts = _defaults({method: 'GET'}, opts);
+  }
 
-  return fetch(url, conf).then(checkStatus).then(function (res) { return res.json(); });
+  return fetch(url, opts).then(checkStatus).then(function (res) { return res.json(); });
 };
 
 /**
