@@ -90,12 +90,10 @@
 
           .station-title__favorite-btn--{
             &not-active {
-              @mixin favorite-btn;
-              background: transparent url("/media/components/station-detail/favorite.svg");
+              @mixin favorite-not-active;
             }
             &active {
-              @mixin favorite-btn;
-              background: transparent url("/media/components/station-detail/favorite--active.svg");
+              @mixin favorite-active;
             }
           }
         }

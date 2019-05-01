@@ -252,6 +252,8 @@
                 top: 0;
                 left: 0;
                 margin: em(5) 0 0 em(5);
+                @mixin favorite-not-active
+
                 @mixin medium-screen {
                   margin: em(10) 0 0 em(10);
                   width: em(37);
@@ -265,8 +267,6 @@
                   width: em(21);
                   height: em(21);
                 }
-                @mixin favorite-btn;
-                background: transparent url("/media/components/station-detail/favorite.svg");
               }
               &active {
                 position: absolute;
@@ -275,6 +275,8 @@
                 top: 0;
                 left: 0;
                 margin: em(5) 0 0 em(5);
+                @mixin favorite-active;
+
                 @mixin medium-screen {
                   margin: em(10) 0 0 em(10);
                   width: em(37);
@@ -288,8 +290,7 @@
                   width: em(21);
                   height: em(21);
                 }
-                @mixin favorite-btn;
-                background: transparent url("/media/components/station-detail/favorite--active.svg");
+
               }
             }
 
