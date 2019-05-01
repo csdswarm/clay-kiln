@@ -235,39 +235,66 @@
           @mixin medium-small-screen {
             margin-bottom: em(10);
           }
+
+
           button{
             cursor: pointer;
-            font-size: 16px;
             position: absolute;
             background: transparent;
             border: none;
             padding: 0;
-            svg {
-              width: 100%;
-              height: 100%;
+
+            &.lede__favorite-btn-- {
+              &not-active {
+                position: absolute;
+                width: em(20);
+                height: em(20);
+                top: 0;
+                left: 0;
+                margin: em(5) 0 0 em(5);
+                @mixin medium-screen {
+                  margin: em(10) 0 0 em(10);
+                  width: em(37);
+                  height: em(37);
+                }
+                @mixin medium-small-screen {
+                  width: em(30);
+                  height: em(30);
+                }
+                @mixin small-screen {
+                  width: em(21);
+                  height: em(21);
+                }
+                @mixin favorite-btn;
+                background: transparent url("/media/components/station-detail/favorite.svg");
+              }
+              &active {
+                position: absolute;
+                width: em(20);
+                height: em(20);
+                top: 0;
+                left: 0;
+                margin: em(5) 0 0 em(5);
+                @mixin medium-screen {
+                  margin: em(10) 0 0 em(10);
+                  width: em(37);
+                  height: em(37);
+                }
+                @mixin medium-small-screen {
+                  width: em(30);
+                  height: em(30);
+                }
+                @mixin small-screen {
+                  width: em(21);
+                  height: em(21);
+                }
+                @mixin favorite-btn;
+                background: transparent url("/media/components/station-detail/favorite--active.svg");
+              }
             }
-            &.lede__favorite-btn {
-              display: none; // hide until favoriting is available
-              width: em(20);
-              height: em(20);
-              top: 0;
-              left: 0;
-              margin: em(5) 0 0 em(5);
-              @mixin medium-screen {
-                margin: em(10) 0 0 em(10);
-                width: em(37);
-                height: em(37);
-              }
-              @mixin medium-small-screen {
-                width: em(30);
-                height: em(30);
-              }
-              @mixin small-screen {
-                width: em(21);
-                height: em(21);
-              }
-            }
+
             &.lede__play-btn {
+              font-size: 16px;
               transform: scale(0.65);
               bottom: em(0);
               right: em(0);

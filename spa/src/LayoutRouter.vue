@@ -31,6 +31,7 @@ import ModalContent from '@/views/ModalContent'
 import modalRoutes from '@/views/routes/modal'
 import actionRoutes from '@/views/routes/action'
 import { mapState } from 'vuex'
+import * as actionTypes from "./vuex/actionTypes";
 
 const interceptRoutes = [].concat(modalRoutes, actionRoutes)
 
@@ -40,8 +41,11 @@ const queryPayload = new QueryPayload()
 
 export default {
   name: 'LayoutRouter',
-  created () {
-    // Load initial layout.
+  async created () {
+    //see if the user is logged in and populate the store
+    await this.$store.dispatch(actionTypes.GET_PROFILE, true)
+
+      // Load initial layout.
     this.activeLayoutComponent = this.layoutRouter(this.$store.state.spaPayload)
   },
   data: function () {

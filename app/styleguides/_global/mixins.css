@@ -122,3 +122,12 @@
      background-color: $purple;
    }
 }
+
+@define-mixin favorite-btn {
+  cursor: pointer;
+  outline: none;
+  height: em(32);
+  width: em(32);
+  border: 0;
+  background-repeat: no-repeat;
+}

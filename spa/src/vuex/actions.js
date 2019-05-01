@@ -5,7 +5,7 @@ import formatError from '../views/account/services/format_error'
 import { getDeviceId, isMobileDevice } from '../views/account/utils'
 import moment from 'moment'
 
-const axiosCall = async ({ method, url, data, commit }) => {
+const axiosCall = async ({ method, url, data, commit }, ignoreError) => {
   try {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, true)
     const result = await axios({ method, url: `/radium${url}`, data })
@@ -14,8 +14,10 @@ const axiosCall = async ({ method, url, data, commit }) => {
     return result
   } catch (err) {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, false)
-    commit(mutationTypes.MODAL_ERROR, formatError(err).message)
-    throw formatError(err)
+    if (!ignoreError) {
+      commit(mutationTypes.MODAL_ERROR, formatError(err).message)
+      throw formatError(err)
+    }
   }
 }
 
@@ -93,13 +95,15 @@ export default {
     commit(mutationTypes.SET_USER, formatProfile(result.data))
     commit(mutationTypes.ACCOUNT_MODAL_HIDE)
   },
-  async [actionTypes.GET_PROFILE] ({ commit }) {
+  async [actionTypes.GET_PROFILE] ({ commit }, ignoreError = false) {
     const result = await axiosCall({ commit,
       method: 'get',
       url: '/v1/profile'
-    })
+    }, ignoreError)
 
-    commit(mutationTypes.SET_USER, formatProfile(result.data))
+    if (result) {
+      commit(mutationTypes.SET_USER, formatProfile(result.data))
+    }
   },
   async [actionTypes.UPDATE_PROFILE] ({ commit }, user) {
     const result = await axiosCall({ commit,
@@ -125,5 +129,27 @@ export default {
     })
 
     commit(mutationTypes.MODAL_SUCCESS, 'Your password has been updated successfully!')
+  },
+  async [actionTypes.FAVORITE_STATIONS_ADD] ({ commit }, station_id) {
+    const result = await axiosCall({ commit,
+      method: 'patch',
+      url: '/v1/favorites/stations/add',
+      data: {
+        station_id: parseInt(station_id)
+      }
+    })
+
+    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+  },
+  async [actionTypes.FAVORITE_STATIONS_REMOVE] ({ commit }, station_id) {
+    const result = await axiosCall({ commit,
+      method: 'patch',
+      url: '/v1/favorites/stations/remove',
+      data: {
+        station_id: parseInt(station_id)
+      }
+    })
+
+    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
   }
 }

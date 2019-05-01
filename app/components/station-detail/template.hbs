@@ -16,7 +16,7 @@
       <div class="lede__info">
         <div class="info__text">
           <div class="text__station-title">
-            {{!-- favorite btn here --}}
+            <button data-fav-station="{{station.id}}" class="station-title__favorite-btn{{station.favoriteModifier}}"></button>
             <h1 class="station-title__name">{{station.name}}</h1>
           </div>
           <p class="text__station-slogan">{{station.slogan}}</p>

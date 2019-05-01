@@ -13,6 +13,9 @@ export default {
   [mutationTypes.LOAD_SPA_PAYLOAD_LOCALS]: (state, payload) => {
     state.spaPayloadLocals = payload
   },
+  [mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS]: (state, payload) => {
+    state.spaPayloadLocals = { ...state.spaPayloadLocals, ...payload }
+  },
   [mutationTypes.FLAG_SETUP_RAN]: (state, setupRan) => {
     state.setupRan = setupRan
   },
@@ -54,5 +57,6 @@ export default {
   [mutationTypes.ACCOUNT_MODAL_LOADING]: (state, loading) => { state.modalLoading = loading },
   [mutationTypes.MODAL_ERROR]: (state, message) => { state.modalMessage = createModalMessage('error', message) },
   [mutationTypes.MODAL_SUCCESS]: (state, message) => { state.modalMessage = createModalMessage('success', message) },
-  [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path }
+  [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path },
+  [mutationTypes.SET_USER_STATIONS]: (state, stations) => state.user.favoriteStations = stations
 }

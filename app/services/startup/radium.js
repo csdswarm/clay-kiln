@@ -128,7 +128,8 @@ const axios = require('axios'),
    * @param {String} method
    * @param {String} url
    * @param {Object} data
-   * @param {Object} [accessToken]
+   * @param {String} [accessToken]
+   * @param {Boolean} [intercepted]
    * @return {Promise<Object>}
    */
   call = async (method, url, data, accessToken) => {
@@ -154,12 +155,16 @@ const axios = require('axios'),
    */
   getProfile = async (tokens) => {
     try {
-      const response = await call('GET', 'v1/profile', null, tokens.access_token);
+      const [profile, favorites] = await Promise.all([
+        call('GET', 'v1/profile', null, tokens.access_token),
+        call('GET', 'v1/favorites/stations', null, tokens.access_token)
+      ]);
 
       return {
-        ...response.data,
+        ...profile.data,
         email: tokens.email,
-        verified: tokens.verified
+        verified: tokens.verified,
+        favoriteStations: favorites.data.station_ids
       };
     } catch (e) {
       // no profile stored, extract what you can from the id token
@@ -183,10 +188,19 @@ const axios = require('axios'),
    * @param {object} req
    * @param {object} res
    */
-  profileLogic = (response, req, res) => {
+  profileLogic = async (response, req, res) => {
     const oldProfile = decodeCookie(COOKIES.profile, req.cookies),
       // email and verified do not come back from the profile API endpoints, so use them from the cookie
-      newProfile = {...oldProfile, ...response.data};
+      newProfile = { ...oldProfile, ...response.data };
+
+    try {
+      const authToken = decodeCookie(COOKIES.accessToken, req.cookies),
+        favorites = await call('GET', 'v1/favorites/stations', null, authToken);
+
+      newProfile.favoriteStations = favorites.data.station_ids;
+    } catch (e) {
+      // the user has no favorites
+    }
 
     removeKeys(newProfile, excludeKeys.profile);
     // save the response details
@@ -225,9 +239,30 @@ const axios = require('axios'),
     // removes keys that should never be sent back to the browser from the object
     removeKeys(response.data, [ ...excludeKeys.token, ...excludeKeys.profile ]);
   },
+  /**
+   * specific logic for sign out endpoint to delete cookies
+   *
+   * @param {object} response
+   * @param {object} req
+   * @param {object} res
+   */
   signOutLogic = async (response, req, res) => {
     deleteCookie(COOKIES.profile, res);
     deleteCookie(COOKIES.accessToken, res);
+  },
+  /**
+   * specific logic for favorite endpoints to update profile cookie
+   *
+   * @param {object} response
+   * @param {object} req
+   * @param {object} res
+   */
+  favoriteLogic = async (response, req, res) => {
+    // decode cookie and add updated stations
+    const newProfile = userFromCookie(req);
+
+    newProfile.favoriteStations = response.data.station_ids;
+    addCookie(COOKIES.profile, newProfile, profileExpires, res);
   },
   /**
    * loop through all endpoints that require specific logic to modify the response
@@ -242,7 +277,9 @@ const axios = require('axios'),
         'POST:/radium/v1/auth/signout': signOutLogic,
         'POST:/radium/v1/profile/create': profileLogic,
         'POST:/radium/v1/profile/update': profileLogic,
-        'GET:/radium/v1/profile': profileLogic
+        'GET:/radium/v1/profile': profileLogic,
+        'PATCH:/radium/v1/favorites/stations/remove': favoriteLogic,
+        'PATCH:/radium/v1/favorites/stations/add': favoriteLogic
       },
       keys = Object.keys(routes),
       current = `${req.method}:${req.path}`;
@@ -286,6 +323,7 @@ const axios = require('axios'),
     const data = req.body,
       retryFunction = retry ? tokenExpired : () => false,
       authToken = decodeCookie(COOKIES.accessToken, req.cookies);
+    console.log('authToken', authToken)
 
     if (data && data.includeDeviceKey) {
       delete data.includeDeviceKey;

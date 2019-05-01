@@ -1,6 +1,7 @@
 'use strict';
 
-const log = require('../universal/log').setup({ file: __filename });
+const log = require('../universal/log').setup({ file: __filename }),
+  deepmerge = require('deepmerge');
 
 /**
  * grabs locals from the header and adds to the req.locals
@@ -13,11 +14,13 @@ module.exports = async (req, res, next) => {
   try {
     const header = req.header('x-locals'),
       locals = header ? JSON.parse(header) : null;
+    //
+    // console.log('local', res.locals.radiumUser)
+    // console.log('local headers', locals)
 
-    res.locals = res.locals ? {
-      ...res.locals,
-      ...locals
-    } : locals;
+    if (locals) {
+      res.locals = deepmerge(res.locals, locals);
+    }
   } catch (e) {
     log('error', 'Error in locals middleware:', e);
   }
