@@ -80,7 +80,9 @@ export default {
         element.addEventListener('click', (event) => {
           event.preventDefault()
           event.stopPropagation()
-          playerInterface.play(element.dataset.playStation)
+          const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause'
+
+          playerInterface[playbackStatus](element.dataset.playStation)
         })
       })
 

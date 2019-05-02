@@ -2,6 +2,7 @@
 
 const radioApi = require('../../services/server/radioApi'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
+  { playingClass } = require('../../services/server/spaLocals'),
   moment = require('moment');
 
 /**
@@ -49,7 +50,7 @@ module.exports.render = async function (ref, data, locals) {
       }
     }
 
-    data.station = { id: stationId, category };
+    data.station = { id: stationId, category, playingClass: playingClass(locals, stationId) };
     data.schedule = history.data.events.recent_events
       .map((item) => {
         return {

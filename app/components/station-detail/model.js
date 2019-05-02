@@ -1,5 +1,6 @@
 'use strict';
 const slugifyService = require('../../services/universal/slugify'),
+  { playingClass } = require('../../services/server/spaLocals'),
   NEWS_TALK = 'News & Talk',
   SPORTS = 'Sports',
   LOCATION = 'location';
@@ -61,6 +62,7 @@ module.exports.render = (uri, data, locals) => {
     return data;
   }
 
+  locals.station.playingClass = playingClass(locals, locals.station.id);
   data.station = locals.station;
   data.tags = getStationTags(locals.station);
   data.category = locals.station.category.toLowerCase() || '';

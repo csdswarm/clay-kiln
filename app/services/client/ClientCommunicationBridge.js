@@ -10,6 +10,8 @@
  * interoperability issues related to client.js using commonJS module format and the SPA
  * using es6 module format.
  *
+ * UPDATE: It may be possible with @babel/runtime library. See SpaCommunicationBridge for more.
+ *
  */
 
 // Require dependencies.
@@ -28,9 +30,50 @@ class ClientCommunicationBridge {
     this.channels = {};
   }
 
-  addChannel() {
-    // TODO: Add a client.js channel. This is stubbed out. It will be completed as part of tech debt "SPA events accessible from client.js files".
-    // https://entercomdigitalservices.atlassian.net/wiki/spaces/UNITY/pages/204701707/Tech+Debt
+  /**
+   *
+   * Use to determine if a channel has already been added.
+   *
+   * @param {string} channelName - Check if this channel is active
+   * @returns {boolean} - whether or not a channel with this name is active.
+   */
+  channelActive(channelName) {
+    return !!this.channels[`${LISTENER_TYPE_NAMESPACE}ClientChannel${channelName}`];
+  }
+
+  /**
+   *
+   * Add a Client.js channel that listens for messages from SPA code.
+   *
+   * @param {string} channelName - Recieve messages sent to this channel name.
+   * @param {function} handler - Handler function to execute when a message hits this channel.
+   */
+  addChannel(channelName, handler) {
+    const channel = `${LISTENER_TYPE_NAMESPACE}ClientChannel${channelName}`;
+
+    if (this.channels[channel]) {
+      throw new Error(`Channel ${channelName} already exists.`);
+    } else {
+      const channelListener = async (event) => {
+        // Extract data from message event detail.
+        const { id, payload: messagePayload } = event.detail;
+
+        // Execute the handler callback.
+        // eslint-disable-next-line one-var
+        const responsePayload = await handler(messagePayload);
+
+        // Send response
+        // eslint-disable-next-line one-var
+        const responseEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}SpaMessage${channelName}-${id}`, {
+          detail: { payload: responsePayload }
+        });
+
+        document.dispatchEvent(responseEvent);
+      };
+
+      document.addEventListener(channel, channelListener);
+      this.channels[channel] = channelListener;
+    }
   }
 
   removeChannel() {

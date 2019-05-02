@@ -36,7 +36,8 @@
           </div>
           {{#if playing}}
           </a>
-            <a data-play-station="{{ ../station.id }}" href="{{ site_url }}" class="show__play"></a>
+            <a data-play-station="{{ ../station.id }}" href="{{ site_url }}"
+               class="{{../station.playingClass}}"></a>
           {{/if}}
         </div>
       </li>

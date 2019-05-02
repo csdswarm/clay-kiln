@@ -12,6 +12,7 @@ const pkg = require('../../package.json'),
   canonicalJSON = require('./canonical-json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
+  locals = require('./spaLocals'),
   handleRedirects = require('./redirects'),
   currentStation = require('./currentStation');
 
@@ -62,6 +63,8 @@ function setupApp(app) {
 
   app.use(handleRedirects);
 
+  app.use(locals);
+  
   app.use(currentStation);
 
   app.use(canonicalJSON);
@@ -71,8 +74,6 @@ function setupApp(app) {
 
   return initSearch()
     .then(search => initCore(app, search, sessionStore, routes));
-
-  return app;
 }
 
 module.exports = setupApp;
