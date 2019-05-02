@@ -58,5 +58,6 @@ export default {
   [mutationTypes.MODAL_ERROR]: (state, message) => { state.modalMessage = createModalMessage('error', message) },
   [mutationTypes.MODAL_SUCCESS]: (state, message) => { state.modalMessage = createModalMessage('success', message) },
   [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path },
-  [mutationTypes.SET_USER_STATIONS]: (state, stations) => { state.user.favoriteStations = stations }
+  [mutationTypes.SET_USER_STATIONS]: (state, stations) => { state.user.favoriteStations = stations },
+  [mutationTypes.SET_FAVORITE_STATIONS_SYNC]: (state, handle) => { state.favoriteStationSync = handle }
 }

@@ -41,7 +41,7 @@ export default {
       return result
     }
   },
-  async [actionTypes.SIGN_IN] ({ commit, state }, { email, password }) {
+  async [actionTypes.SIGN_IN] ({ commit, state, dispatch }, { email, password }) {
     const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/signin',
@@ -53,16 +53,18 @@ export default {
       } })
 
     commit(mutationTypes.SET_USER, { ...result.data })
+    dispatch(actionTypes.FAVORITE_STATIONS_SYNC, 'start')
   },
-  async [actionTypes.SIGN_OUT] ({ commit }) {
+  async [actionTypes.SIGN_OUT] ({ commit, dispatch }) {
     await axiosCall({ commit,
       method: 'post',
-      url: '/radium/v1/auth/signout',
+      url: '/v1/auth/signout',
       data: {
         includeDeviceKey: true
       }
     })
     commit(mutationTypes.SET_USER, { })
+    dispatch(actionTypes.FAVORITE_STATIONS_SYNC, 'stop')
   },
   async [actionTypes.SIGN_UP] ({ commit, state, dispatch }, { email, password }) {
     await axiosCall({ commit,
@@ -151,5 +153,27 @@ export default {
     })
 
     commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+  },
+  [actionTypes.FAVORITE_STATIONS_SYNC] ({ commit }, action) {
+    if (action === 'start') {
+      const syncFavorites = async () => {
+        const result = await axiosCall({
+          commit,
+          method: 'GET',
+          url: '/v1/favorites/stations'
+        }, true)
+
+        if (result) {
+          commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+        }
+      }
+
+      commit(mutationTypes.SET_FAVORITE_STATIONS_SYNC, setInterval(syncFavorites, 60000))
+    } else {
+      if (state.favoriteStationSync) {
+        clearInterval(state.favoriteStationSync)
+      }
+    }
+
   }
 }

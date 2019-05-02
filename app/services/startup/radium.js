@@ -279,7 +279,8 @@ const axios = require('axios'),
         'POST:/radium/v1/profile/update': profileLogic,
         'GET:/radium/v1/profile': profileLogic,
         'PATCH:/radium/v1/favorites/stations/remove': favoriteLogic,
-        'PATCH:/radium/v1/favorites/stations/add': favoriteLogic
+        'PATCH:/radium/v1/favorites/stations/add': favoriteLogic,
+        'GET:/radium/v1/favorites/stations': favoriteLogic
       },
       keys = Object.keys(routes),
       current = `${req.method}:${req.path}`;
