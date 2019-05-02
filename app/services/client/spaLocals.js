@@ -16,8 +16,7 @@ const getSpaState = () => {
    */
   getLocals = (state = getSpaState()) => {
     return {
-      currentlyPlaying: state.spaPayloadLocals ? state.spaPayloadLocals.currentlyPlaying : {},
-      radiumUser: { favoriteStations: state.user ? state.user.favoriteStations : [] }
+      currentlyPlaying: state.spaPayloadLocals ? state.spaPayloadLocals.currentlyPlaying : {}
     };
   };
 
