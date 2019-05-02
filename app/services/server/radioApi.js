@@ -4,7 +4,12 @@ const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
   db = require('./db'),
-  DEFAULT_TTL = 300000,
+  TTL = {
+    DEFAULT: 300000,
+    MIN: 60000,
+    HOUR: 3600000,
+    DAY: 86400000
+  },
   httpRegEx = /^https?:\/\//,
 
   /**
@@ -55,10 +60,10 @@ const rest = require('../universal/rest'),
    * @param {string} route
    * @param {*} [params]
    * @param {function} [validate]
-   * @param {number} [TTL]
+   * @param {number} [ttl]
    * @return {Promise}
    */
-  get = async (route, params, validate, TTL = DEFAULT_TTL ) => {
+  get = async (route, params, validate, ttl = TTL.DEFAULT ) => {
     const dbKey = createKey(route, params),
       validateFn = validate || defaultValidation(route),
       requestEndpoint = createEndpoint(route, params);
@@ -66,13 +71,14 @@ const rest = require('../universal/rest'),
     try {
       const data = await db.get(dbKey);
 
-      if (data.updated_at && (new Date() - new Date(data.updated_at) > TTL)) {
+      if (data.updated_at && (new Date() - new Date(data.updated_at) > ttl)) {
         try {
           return await getAndSave(requestEndpoint, dbKey, validateFn);
         } catch (e) {
         }
       }
       // If API errors out or within TTL, return existing data
+      data.response_cached = true;
       return data;
     } catch (e) {
       try {
@@ -121,3 +127,4 @@ const rest = require('../universal/rest'),
   };
 
 module.exports.get = get;
+module.exports.TTL = TTL;

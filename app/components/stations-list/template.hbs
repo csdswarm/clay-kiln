@@ -33,7 +33,8 @@
                   itemprop="thumbnailUrl"
                 >
                 <meta itemprop="contentUrl" content="{{ square_logo_large }}">
-                <button data-play-station="{{ id }}" class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
+                <button data-play-station="{{ id }}"
+                        class="lede__play-btn {{ playingClass }}"></button>
               </div>
               <span class="station__name">{{ name }}</span>
               <span class="station__secondary-info">{{ slogan }}</span>

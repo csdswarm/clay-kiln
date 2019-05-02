@@ -2,6 +2,7 @@
 
 const rest = require('../universal/rest'),
   { formatLocal } = require('../../services/universal/dateTime'),
+  { getLocals } = require('./spaLocals'),
   spaLinkService = require('./spaLink'),
   clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
   // https://regex101.com/r/gDfIxb/1
@@ -64,7 +65,9 @@ const rest = require('../universal/rest'),
         element.addEventListener('click', (event) => {
           event.preventDefault();
           event.stopPropagation();
-          return clientPlayerInterface.play(element.dataset.playStation);
+          const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
+
+          clientPlayerInterface[playbackStatus](element.dataset.playStation);
         });
       });
       return doc;
@@ -87,7 +90,10 @@ const rest = require('../universal/rest'),
    */
   fetchDOM = async (route) => {
     const separator = route.includes('?') ? '&' : '?',
-      response = await fetch(`${route}${separator}ignore_resolve_media=true`),
+      options = {
+        headers: new Headers({ 'x-locals': JSON.stringify(getLocals()) })
+      },
+      response = await fetch(`${route}${separator}ignore_resolve_media=true`, options),
       html = await response.text(),
       doc = new DOMParser().parseFromString(html, 'text/html'),
       elements = doc.body.childElementCount === 1 ? doc.body.children[0] : Array.from(doc.body.children),

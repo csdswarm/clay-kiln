@@ -2,6 +2,7 @@
 
 const radioApi = require('../../services/server/radioApi'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
+  { playingClass } = require('../../services/server/spaLocals'),
   moment = require('moment');
 
 /**
@@ -30,8 +31,8 @@ module.exports.render = async function (ref, data, locals) {
     offsetDayOfWeek = dayOfWeek - Math.floor((hour + parseInt(gmt_offset)) / 24),
     beforeDate = moment().day(dayOfWeek > currentDayOfWeek ? offsetDayOfWeek - 7 : offsetDayOfWeek).hour(hour).minute(59),
     formattedBeforeDate = beforeDate.format('YYYY-MM-DDTHH:mm:ss'),
-    now_playing = radioApi.get(`/stations/${stationId}/now_playing`, null, null, 120000).catch(() => {}),
-    play_history = radioApi.get(`/stations/${stationId}/play_history?event_count=${HISTORY_LIMIT}&before_date=${encodeURIComponent(formattedBeforeDate)}`, null, null, 120000).catch(() => {}),
+    now_playing = radioApi.get(`/stations/${stationId}/now_playing`, null, null, radioApi.TTL.MIN * 3).catch(() => {}),
+    play_history = radioApi.get(`/stations/${stationId}/play_history?event_count=${HISTORY_LIMIT}&before_date=${encodeURIComponent(formattedBeforeDate)}`, null, null, radioApi.TTL.MIN * 3).catch(() => {}),
     shows = await Promise.all([now_playing, play_history]),
     playing = shows[0],
     history = shows[1],
@@ -50,7 +51,7 @@ module.exports.render = async function (ref, data, locals) {
       }
     }
 
-    data.station = { id: stationId, category, gmt_offset };
+    data.station = { id: stationId, category, gmt_offset, playingClass: playingClass(locals, stationId) };
     data.schedule = history.data.events.recent_events
       .map((item) => {
         return {
