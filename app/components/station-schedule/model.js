@@ -41,7 +41,7 @@ module.exports.render = async function (ref, data, locals) {
       });
 
     if (anySchedule.data && !anySchedule.data.length) {
-      return {};
+      return data;
     }
   }
   return {

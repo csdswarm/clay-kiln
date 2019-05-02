@@ -1,6 +1,6 @@
 'use strict';
 
-const Selectr = require('mobius1-selectr'),
+const SelectBox = require('../../services/client/selectbox'),
   spaLinkService = require('../../services/client/spaLink');
 
 class DirectoryGenre {
@@ -11,21 +11,18 @@ class DirectoryGenre {
       this.addNavigationListener();
     }
   }
-}
-
-DirectoryGenre.prototype = {
   /**
    * Add navigation listener to mobile dropdown
    * @function
    */
-  addNavigationListener: function () {
-    const selectr = new Selectr(this.mobileDropdown, {
+  addNavigationListener() {
+    const select = new SelectBox(this.mobileDropdown, {
       searchable: false,
       customClass: 'directory-genre__dropdown--mobile'
     });
 
-    selectr.on('selectr.change', (option) => spaLinkService.navigateTo(`/stations/music/${option.value}`) );
+    select.addEventListener('change', (option) => spaLinkService.navigateTo(`/stations/music/${option.value}`) );
   }
-};
+}
 
 module.exports = el => new DirectoryGenre(el);

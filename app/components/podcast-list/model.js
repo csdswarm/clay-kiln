@@ -1,8 +1,7 @@
 'use strict';
 
-const queryService = require('../../services/server/query'),
+const radioApiService = require('../../services/server/radioApi'),
   utils = require('../../services/universal/podcast'),
-  podcastByPopularity = 'http://api.radio.com/v1/podcasts?sort=popularity',
   maxItems = 4,
   /**
    * determines if the array of podcast items contains a url
@@ -10,7 +9,19 @@ const queryService = require('../../services/server/query'),
    * @param {string} url
    * @returns {boolean}
    */
-  containsUrl = (arr, url) => arr.some(item => item.podcast.url === url);
+  containsUrl = (arr, url) => arr.some(item => item.podcast.url === url),
+  /**
+   * get podcast category ID
+   * @param {string} categoryName
+   * @returns {number}
+   */
+  getPodcastCategoryID = async (categoryName) => {
+    const podcastCategories = await radioApiService.get('categories', { page: { size: 20 } });
+
+    return podcastCategories.data.find(category => {
+      return category.attributes.slug.includes(categoryName);
+    }).id;
+  };
 
 /**
  * @param {string} ref
@@ -18,16 +29,26 @@ const queryService = require('../../services/server/query'),
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = function (ref, data, locals) {
+module.exports.render = async function (ref, data, locals) {
   if (data.items.length === maxItems || !locals || locals.edit) {
     return new Promise((resolve) => resolve(data));
   }
 
-  return fetch(podcastByPopularity)
-    .then((response) => response.json())
-    .then((json) => {
+  let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
 
-      json.data.splice(0, maxItems).forEach((podcast) => {
+  if (locals.sectionFront) {
+    const podcastCategoryID = await getPodcastCategoryID(locals.sectionFront);
+
+    if (podcastCategoryID) {
+      podcastsFilter = {...podcastsFilter, filter: { category_id: podcastCategoryID } };
+    }
+  }
+
+  try {
+    const podcasts = await radioApiService.get('podcasts', podcastsFilter);
+
+    if (podcasts) {
+      podcasts.data.splice(0, maxItems).forEach((podcast) => {
         const url = utils.createUrl(podcast.attributes.title);
 
         if (data.items.length !== maxItems && !containsUrl(data.items, url)) {
@@ -41,11 +62,10 @@ module.exports.render = function (ref, data, locals) {
           });
         }
       });
+    }
+  } catch (e) {
+    console.log(e);
+  }
 
-      return data;
-    })
-    .catch(e => {
-      queryService.logCatch(e, ref);
-      return data;
-    });
+  return data;
 };

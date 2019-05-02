@@ -66,6 +66,8 @@ bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT http://clay.radio.com/_components/topic-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
 	if cd ../frequency-clay-translator; then npm run import-pages && cd ../clay-radio; fi
 	@echo "\r\n\r\n"
 	./migrations/legacy/run-legacy-scripts.sh
@@ -87,6 +89,8 @@ dev-bootstrap:
 	@echo "\r\n\r\n"
 	curl -X PUT https://dev-clay.radio.com/_components/topic-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
 
 stg-bootstrap:
 	cd ./app && cat ./first-run/**/* | clay import -k demo -y stg-clay.radio.com
@@ -104,6 +108,8 @@ stg-bootstrap:
 	curl -X PUT https://stg-clay.radio.com/_pages/topic@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 	curl -X PUT https://stg-clay.radio.com/_components/topic-page-header/instances/new@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+	@echo "\r\n\r\n"
+	curl -X PUT http://clay.radio.com/_components/google-ad-manager/instances/contentCollectionLogoSponsorship -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 	@echo "\r\n\r\n"
 
 install-dev:

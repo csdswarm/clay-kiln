@@ -403,4 +403,8 @@
       @mixin stations-list-font5;
     }
   }
+
+  &.component--empty {
+    display: none;
+  }
 }

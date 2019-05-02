@@ -16,6 +16,12 @@ class Gallery {
     this.trackedPageviews = [];
 
     this.repositionRightRail();
+    this.logoSponsorship = document.querySelector('.google-ad-manager--content-page-logo-sponsorship');
+    setTimeout(() => {
+      if (this.logoSponsorship.clientHeight === 0) {
+        this.repositionRightRail();
+      }
+    }, 3000);
 
     if (this.firstInlineAd) {
       window.addEventListener('scroll', () => {
