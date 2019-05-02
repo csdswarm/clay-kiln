@@ -2,10 +2,10 @@ _confirmRemoval: true
 
 title:
   _label: Title
-  _publish: sectionFront
   _has:
-    input: static
-    text: ${title}
+    input: text
+    validate:
+      required: true
 
 podcastList:
   _component:

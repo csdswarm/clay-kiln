@@ -1,0 +1,20 @@
+_lists:
+  primary-section-fronts:
+    -
+      name: Music
+      value: music
+    -
+      name: News
+      value: news
+    -
+      name: Sports
+      value: sports
+    -
+      name: Podcasts
+      value: podcasts
+    -
+      name: Cities
+      value: cities
+    -
+      name: Culture
+      value: culture
