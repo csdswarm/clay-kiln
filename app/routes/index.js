@@ -14,7 +14,9 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
-  radioApi = require('../services/server/radioApi');
+  radioApi = require('../services/server/radioApi'),
+  slugifyService = require('../services/universal/slugify'),
+  xml = require('xml');
 
 module.exports.routes = (router) => {
 
@@ -121,4 +123,49 @@ module.exports.routes = (router) => {
     });
   });
 
+  /**
+   * Sitemap for stations directories and station detail pages
+   */
+  router.get('/sitemap-stations.xml', async function (req, res) {
+    const urlSet = [
+      { _attr: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' } },
+      { url: [{ loc: 'https://www.radio.com/stations' }] },
+      { url: [{ loc: 'https://www.radio.com/stations/location' }] },
+      { url: [{ loc: 'https://www.radio.com/stations/music' }] },
+      { url: [{ loc: 'https://www.radio.com/stations/news-talk' }] },
+      { url: [{ loc: 'https://www.radio.com/stations/sports' }] }
+    ];
+
+    // Location station directory pages
+    await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }).then(function (markets) {
+      markets.data.forEach(market => {
+        urlSet.push({ url:
+          [{ loc: `https://www.radio.com/stations/location/${slugifyService(market.attributes.display_name)}` }]
+        });
+      });
+    });
+
+    // Music station directory pages
+    await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }).then(function (genres) {
+      genres.data.forEach(genre => {
+        if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
+          urlSet.push({ url:
+            [{ loc: `https://www.radio.com/stations/music/${slugifyService(genre.attributes.name)}` }]
+          });
+        }
+      });
+    });
+
+    // Station detail pages
+    await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }).then(function (stations) {
+      stations.data.forEach(station => {
+        urlSet.push({ url:
+          [{ loc: `https://www.radio.com/${station.attributes.site_slug}/listen` }]
+        });
+      });
+    });
+
+    res.type('application/xml');
+    return res.send( xml( { urlset: urlSet }, { declaration: true } ) );
+  });
 };
