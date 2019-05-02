@@ -16,7 +16,6 @@ const pkg = require('../../package.json'),
   handleRedirects = require('./redirects'),
   currentStation = require('./currentStation'),
   locals = require('./spaLocals'),
-  handleRedirects = require('./redirects'),
   user = require('./user'),
   radiumApi = require('./radium');
 

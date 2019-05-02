@@ -14,9 +14,6 @@ module.exports = async (req, res, next) => {
   try {
     const header = req.header('x-locals'),
       locals = header ? JSON.parse(header) : null;
-    //
-    // console.log('local', res.locals.radiumUser)
-    // console.log('local headers', locals)
 
     if (locals) {
       res.locals = deepmerge(res.locals, locals);

@@ -107,7 +107,7 @@ class ClientCommunicationBridge {
 
         // Detach temporary message event listener associated with this message.
         document.removeEventListener(messageType, listener);
-console.log('sendmessage resolved', payload, event)
+
         return resolve(payload);
       };
 

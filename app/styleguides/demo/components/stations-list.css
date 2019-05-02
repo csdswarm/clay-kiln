@@ -244,15 +244,18 @@
             border: none;
             padding: 0;
 
+            @define-mixin favorite {
+              position: absolute;
+              width: em(20);
+              height: em(20);
+              top: 0;
+              left: 0;
+              margin: em(5) 0 0 em(5);
+            }
             &.lede__favorite-btn-- {
               &not-active {
-                position: absolute;
-                width: em(20);
-                height: em(20);
-                top: 0;
-                left: 0;
-                margin: em(5) 0 0 em(5);
-                @mixin favorite-not-active
+                @mixin favorite;
+                @mixin favorite-not-active;
 
                 @mixin medium-screen {
                   margin: em(10) 0 0 em(10);
@@ -269,12 +272,7 @@
                 }
               }
               &active {
-                position: absolute;
-                width: em(20);
-                height: em(20);
-                top: 0;
-                left: 0;
-                margin: em(5) 0 0 em(5);
+                @mixin favorite;
                 @mixin favorite-active;
 
                 @mixin medium-screen {

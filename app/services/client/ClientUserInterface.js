@@ -48,7 +48,6 @@ class ClientUserInterface {
    * @returns {Promise<any>} - Passed in stationId or null
    */
   async addFavorite(stationId) {
-    console.log('clientstation', stationId)
     return await clientCommunicationBridge.sendMessage('SpaUserFavorite', {  action: 'addFavorite', stationId });
   }
 

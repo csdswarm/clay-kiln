@@ -126,11 +126,12 @@
 @define-mixin favorite-btn {
   cursor: pointer;
   outline: none;
-  height: em(28);
-  width: em(28);
   border: 0;
   background-repeat: no-repeat;
   background-size: cover;
+  font-size: em(16);
+  height: em(28);
+  width: em(28);
 }
 
 @define-mixin favorite-not-active {

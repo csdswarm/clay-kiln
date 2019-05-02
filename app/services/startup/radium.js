@@ -323,7 +323,6 @@ const axios = require('axios'),
     const data = req.body,
       retryFunction = retry ? tokenExpired : () => false,
       authToken = decodeCookie(COOKIES.accessToken, req.cookies);
-    console.log('authToken', authToken)
 
     if (data && data.includeDeviceKey) {
       delete data.includeDeviceKey;

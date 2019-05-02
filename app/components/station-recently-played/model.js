@@ -3,8 +3,7 @@
 const radioApi = require('../../services/server/radioApi'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
   { playingClass } = require('../../services/server/spaLocals'),
-  moment = require('moment'),
-  radioAPI = 'https://api.radio.com/v1';
+  moment = require('moment');
 
 /**
  * @param {string} ref

@@ -21,7 +21,6 @@ const playingClass = (locals, stationId) => {
    */
 
   favoriteClass = (locals, stationId) => {
-    //TODO : just make IT active or blank... easier and stuff
     const favorites = locals.radiumUser && locals.radiumUser.favoriteStations;
 
     return favorites && favorites.includes(stationId) ? '--active' : '--not-active';

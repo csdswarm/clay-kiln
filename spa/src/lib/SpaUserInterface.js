@@ -7,7 +7,7 @@
  */
 
 import SpaCommunicationBridge from './SpaCommunicationBridge'
-import * as actionTypes from "../vuex/actionTypes";
+import * as actionTypes from '../vuex/actionTypes'
 const spaCommunicationBridge = SpaCommunicationBridge()
 
 class SpaUserInterface {
@@ -24,7 +24,7 @@ class SpaUserInterface {
    *
    */
   attachClientEventListeners () {
-     // Add channel for favoriting stations
+    // Add channel for favoriting stations
     if (!spaCommunicationBridge.channelActive('SpaUserFavorite')) {
       spaCommunicationBridge.addChannel('SpaUserFavorite', (payload) => {
         const { action, stationId } = payload
@@ -47,16 +47,15 @@ class SpaUserInterface {
         event.stopPropagation()
 
         const currentClass = Array.from(element.classList).find((className) => /-active$/i.test(className))
-          const nextClass = currentClass.includes('--active')
-            ? currentClass.replace('--active', '--not-active')
-            : currentClass.replace('--not-active', '--active')
-          const func = currentClass.includes('--active') ? 'removeFavorite' : 'addFavorite'
+        const nextClass = currentClass.includes('--active')
+          ? currentClass.replace('--active', '--not-active')
+          : currentClass.replace('--not-active', '--active')
+        const func = currentClass.includes('--active') ? 'removeFavorite' : 'addFavorite'
 
         if (this[func](element.dataset.favStation)) {
           document.querySelectorAll(`[data-fav-station="${element.dataset.favStation}"]`).forEach(station =>
             station.classList.replace(currentClass, nextClass)
-          );
-
+          )
         }
       })
     })
@@ -71,7 +70,6 @@ class SpaUserInterface {
   addFavorite (stationId) {
     if (this.spa.$store.state.user.email) {
       this.spa.$store.dispatch(actionTypes.FAVORITE_STATIONS_ADD, stationId)
-      console.log('spa add return true')
       return true
     } else {
       this.spa.$router.push('/account/login')
@@ -87,11 +85,8 @@ class SpaUserInterface {
    */
   removeFavorite (stationId) {
     this.spa.$store.dispatch(actionTypes.FAVORITE_STATIONS_REMOVE, stationId)
-    console.log('spa remove return true')
     return true
   }
 }
 
 export default SpaUserInterface
-
-

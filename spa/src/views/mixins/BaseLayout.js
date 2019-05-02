@@ -68,8 +68,10 @@ export default {
       })
 
       // Create Spa/Client interfaces
-      new SpaPlayerInterface(this)
-      new SpaUserInterface(this)
+      this.interfaces = {
+        player: new SpaPlayerInterface(this),
+        user: new SpaUserInterface(this)
+      }
 
       this.handleComponents('mount')
     },

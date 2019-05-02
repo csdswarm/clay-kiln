@@ -55,7 +55,7 @@ export default {
     commit(mutationTypes.SET_USER, { ...result.data })
   },
   async [actionTypes.SIGN_OUT] ({ commit }) {
-    const val = await axiosCall({ commit,
+    await axiosCall({ commit,
       method: 'post',
       url: '/radium/v1/auth/signout',
       data: {
@@ -130,23 +130,23 @@ export default {
 
     commit(mutationTypes.MODAL_SUCCESS, 'Your password has been updated successfully!')
   },
-  async [actionTypes.FAVORITE_STATIONS_ADD] ({ commit }, station_id) {
+  async [actionTypes.FAVORITE_STATIONS_ADD] ({ commit }, stationId) {
     const result = await axiosCall({ commit,
       method: 'patch',
       url: '/v1/favorites/stations/add',
       data: {
-        station_id: parseInt(station_id)
+        station_id: parseInt(stationId)
       }
     })
 
     commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
   },
-  async [actionTypes.FAVORITE_STATIONS_REMOVE] ({ commit }, station_id) {
+  async [actionTypes.FAVORITE_STATIONS_REMOVE] ({ commit }, stationId) {
     const result = await axiosCall({ commit,
       method: 'patch',
       url: '/v1/favorites/stations/remove',
       data: {
-        station_id: parseInt(station_id)
+        station_id: parseInt(stationId)
       }
     })
 

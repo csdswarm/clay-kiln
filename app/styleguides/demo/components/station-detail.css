@@ -91,9 +91,19 @@
           .station-title__favorite-btn--{
             &not-active {
               @mixin favorite-not-active;
+
+              @mixin medium-screen {
+                height: em(24);
+                width: em(24);
+              }
             }
             &active {
               @mixin favorite-active;
+
+              @mixin medium-screen {
+                height: em(24);
+                width: em(24);
+              }
             }
           }
         }

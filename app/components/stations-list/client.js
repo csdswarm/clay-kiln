@@ -25,6 +25,7 @@ class StationsList {
     this.loader = element.querySelector('.loader-container');
     this.pageNum = 1;
     this.pageSize = 6;
+
     const page = document.body.querySelector('.content__main > section'),
       stationsDataEl = element.querySelector('.stations-list__data');
 
@@ -36,15 +37,19 @@ class StationsList {
     }
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
-    this.updateStations();
-    if (this.loadMoreBtn) {
-      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
+
+    // if we go to a modal route, the constructor will run again when we close the modal
+    if (this.parentElement.querySelector('ul').childElementCount === 0) {
+      this.updateStations();
+      if (this.loadMoreBtn) {
+        this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
+      }
+      window.addEventListener('resize', this.toggleSeeAllLinkAndAds.bind(this) );
+      document.addEventListener('stations-list-dismount', () => {
+        // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
+        window.removeEventListener('resize', this.toggleSeeAllLinkAndAds );
+      }, { once: true });
     }
-    window.addEventListener('resize', this.toggleSeeAllLinkAndAds.bind(this) );
-    document.addEventListener('stations-list-dismount', () => {
-      // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
-      window.removeEventListener('resize', this.toggleSeeAllLinkAndAds );
-    }, { once: true });
   }
   /**
    * Get local stations from api
