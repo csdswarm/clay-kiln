@@ -92,17 +92,25 @@
             &not-active {
               @mixin favorite-not-active;
 
+              top: em(2);
+              position: relative;
+
               @mixin medium-screen {
                 height: em(24);
                 width: em(24);
+                top: em(4);
               }
             }
             &active {
               @mixin favorite-active;
 
+              top: em(2);
+              position: relative;
+
               @mixin medium-screen {
                 height: em(24);
                 width: em(24);
+                top: em(4);
               }
             }
           }
