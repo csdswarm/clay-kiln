@@ -13,6 +13,8 @@ const pkg = require('../../package.json'),
   canonicalJSON = require('./canonical-json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
+  handleRedirects = require('./redirects'),
+  currentStation = require('./currentStation'),
   locals = require('./spaLocals'),
   handleRedirects = require('./redirects'),
   user = require('./user'),
@@ -70,6 +72,8 @@ function setupApp(app) {
   app.use(user);
 
   app.use(locals);
+
+  app.use(currentStation);
 
   /**
    * radium.radio.com endpoints

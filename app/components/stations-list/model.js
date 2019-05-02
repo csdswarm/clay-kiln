@@ -86,7 +86,8 @@ module.exports.render = async (uri, data, locals) => {
     params = {
       'page[size]': 1000,
       sort: '-popularity'
-    };
+    },
+    isStation = locals.station.slug !== 'www';
 
   if (locals.stationIDs) {
     params['filter[id]'] = locals.stationIDs;
@@ -121,7 +122,7 @@ module.exports.render = async (uri, data, locals) => {
   if (data.filterBy === 'recent') {
     /** stations will be populated client side **/
 
-    if (locals.station) {
+    if (isStation) {
       data.listTitle = data.listTitle || `${ data.filterBy } stations`;
     } else {
       data.listTitle = data.listTitle || 'stations you\'ve listened to';
@@ -134,9 +135,8 @@ module.exports.render = async (uri, data, locals) => {
     return data;
   } else {
     /** filter by market, genre, or category **/
-    if (locals.station) {
+    if (isStation) {
       /** for stations lists on station detail page (discover tab) **/
-
       switch (data.filterBy) {
         case 'market':
           data.market = slugifyService(locals.station.market.display_name);
