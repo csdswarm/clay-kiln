@@ -16,7 +16,7 @@ module.exports.render = (ref, data, locals) => {
 
     if (value) {
       data.description = data.description
-        .replace('${paramValue}', hypensToSpaces(value))
+        .replace('${paramValue}', value)
         .replace(/\b\w/g, l => l.toUpperCase());
     }
   }
