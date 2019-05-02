@@ -24,11 +24,11 @@
  */
 
 // Require dependencies.
-// import uuidv4 from 'uuid/v4' // TODO - Uncoment when sendMessage() is implemented.
+import uuidv4 from 'uuid/v4'
 
 // Config settings.
 const LISTENER_TYPE_NAMESPACE = 'communicationBridge' // Shared namespace for Client/Spa CommunicationBridge listeners since we use global window as EventTarget.
-// const DEFAULT_MESSAGE_TIMEOUT = 5000 // How long in milliseconds before timing out messages. TODO - Uncoment when sendMessage() is implemented.
+const DEFAULT_MESSAGE_TIMEOUT = 5000 // How long in milliseconds before timing out messages.
 
 class SpaCommunicationBridge {
   constructor () {
@@ -87,9 +87,59 @@ class SpaCommunicationBridge {
     // https://entercomdigitalservices.atlassian.net/wiki/spaces/UNITY/pages/204701707/Tech+Debt
   }
 
-  sendMessage () {
-    // TODO: Send a message to a client.js channel. This is stubbed out. It will be completed as part of tech debt "SPA events accessible from client.js files".
-    // https://entercomdigitalservices.atlassian.net/wiki/spaces/UNITY/pages/204701707/Tech+Debt
+  /**
+   *
+   * Send a message to a Client.js channel.
+   *
+   * @param {string} channelName - Client.js channel to recieve message.
+   * @param {*} [payload] - data payload associated with message.
+   * @param {*} [timeout] - timeout in ms.
+   * @returns {Promise<any>} - Response payload from Client.js channel.
+   */
+  sendMessage (channelName, payload, timeout = null) {
+    return new Promise((resolve, reject) => {
+      // Generate unique id used to track this message.
+      const id = uuidv4()
+
+      // Define temporary type for message event.
+      // eslint-disable-next-line one-var
+      const messageType = `${LISTENER_TYPE_NAMESPACE}SpaMessage${channelName}-${id}`
+
+      // Define message response listener.
+      // eslint-disable-next-line one-var
+      const listener = (event) => {
+        // Extract data from event detail
+        const { payload } = event.detail
+
+        // Detach temporary message event listener associated with this message.
+        document.removeEventListener(messageType, listener)
+
+        return resolve(payload)
+      }
+
+      // Attach temporary message response event listener.
+      document.addEventListener(messageType, listener)
+
+      // Message timeout logic.
+      timeout = timeout || DEFAULT_MESSAGE_TIMEOUT
+      setTimeout(() => {
+        // Detach temporary message event listener associated with this message.
+        document.removeEventListener(messageType, listener)
+        // Timeout promise.
+        return reject(new Error(`Message to ${channelName} with id:${id} timed out in ${timeout} ms.`))
+      }, timeout)
+
+      // Send Client.js message event.
+      // eslint-disable-next-line one-var
+      const clientMessageEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}ClientChannel${channelName}`, {
+        detail: {
+          id,
+          payload
+        }
+      })
+
+      document.dispatchEvent(clientMessageEvent)
+    })
   }
 }
 

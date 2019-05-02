@@ -228,13 +228,13 @@
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 .section-lead--sports {
   padding-top: em(60);
-  background-image: url('/media/components/section-lead/sports_section_front_logo_mb.png');
-  background-size: em(206) em(40);
+  background-image: url('/media/components/section-lead/sports_section_front_logo.png');
+  background-size: em(140) em(40);
   background-repeat: no-repeat;
   background-position: top left;
 
   @media (-webkit-min-device-pixel-ratio: 2),
   (min-resolution: 192dpi) {
-    background-image: url('/media/components/section-lead/sports_section_front_logo_mb_2x.png');
+    background-image: url('/media/components/section-lead/sports_section_front_logo_2x.png');
   }
 }

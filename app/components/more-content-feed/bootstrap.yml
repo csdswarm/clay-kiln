@@ -11,6 +11,8 @@ _components:
     filterSecondaryArticleTypes: []
     populateFrom: ''
     locationOfContentFeed: ''
+    contentCollectionLogoSponsorship:
+      _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
     introComponents: []

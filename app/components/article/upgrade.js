@@ -22,3 +22,12 @@ module.exports['2.0'] = function (uri, data) {
   }
   return newData;
 };
+
+module.exports['3.0'] = function (uri, data) {
+  const contentLogoSponsorshipURIPublished = `${uri.split('article')[0]}google-ad-manager/instances/contentPageLogoSponsorship`;
+
+  return {
+    ...data,
+    contentPageSponsorLogo: { _ref : contentLogoSponsorshipURIPublished }
+  };
+};
