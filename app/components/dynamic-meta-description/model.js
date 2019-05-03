@@ -9,7 +9,7 @@ module.exports.render = (ref, data, locals) => {
 
     // Set first character of each word to upper case.
     if (data.description && data.description.length) {
-      data.description = data.description.replace(/\b\w/g, l => l.toUpperCase());
+      data.description = data.description.replace(/\w[^\s\-]*/g, l => l.charAt(0).toUpperCase() + l.substr(1));
     }
   } else if (data.localsKey && locals) {
     const value = _get(locals, data.localsKey);
@@ -17,7 +17,7 @@ module.exports.render = (ref, data, locals) => {
     if (value) {
       data.description = data.description
         .replace('${paramValue}', value)
-        .replace(/\b\w/g, l => l.toUpperCase());
+        .replace(/\w[^\s\-]*/g, l => l.charAt(0).toUpperCase() + l.substr(1));
     }
   }
 

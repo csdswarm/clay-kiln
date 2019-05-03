@@ -9,7 +9,7 @@ module.exports.render = (ref, data, locals) => {
 
     // Set first character of each word to upper case.
     if (data.paramValue && data.paramValue.length) {
-      data.paramValue = data.metaValue = hypensToSpaces(data.paramValue).replace(/\b\w/g, l => l.toUpperCase());
+      data.paramValue = data.metaValue = hypensToSpaces(data.paramValue).replace(/\w[^\s\-]*/g, l => l.charAt(0).toUpperCase() + l.substr(1));
     }
 
   } else if (data.localsKey && locals) {
