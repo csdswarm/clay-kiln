@@ -2,10 +2,8 @@
 
 class StationDetail {
   constructor() {
-    const recentStations = require('../../services/client/recentStations'),
-      sidebar = document.getElementsByClassName('content__sidebar')[0],
+    const sidebar = document.querySelector('.content__sidebar'),
       stationDetail = document.querySelector('.component--station-detail'),
-      stationData = stationDetail.querySelector('.station-detail__data').innerText ? JSON.parse(stationDetail.querySelector('.station-detail__data').innerText) : null,
       tabs = stationDetail.querySelectorAll('.tabs li'),
       content = stationDetail.querySelectorAll('.tabbed-content__container'),
       hash = window.location.hash.replace('#', ''),
@@ -21,7 +19,6 @@ class StationDetail {
       this.activateTab(firstTab, tabs, content);
     }
 
-    recentStations.add(stationData);
     window.onpopstate = () => {
       if (window.location.hash) {
         this.activateTab(window.location.hash.replace('#', ''), tabs, content);
