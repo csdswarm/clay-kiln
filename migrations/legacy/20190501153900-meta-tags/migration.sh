@@ -28,23 +28,30 @@ curl -X PUT $http://$1/_components/meta-tags/instances/general -H 'Authorization
 }'
 curl -X PUT $http://$1/_components/meta-tags/instances/general@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -o /dev/null -s
 
-# update /_pages/new-two-col
-printf "\n\nTwo Col Layout - $http://$1/_pages/new-two-col\n\n"
-page="new-two-col"
-printf "\n\nUpdating $page...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_pages/$page > ./$page.json
+for page in "new-two-col" "gallery" "station"
+do
+  printf "\n\nGET $http://$1/_pages/$page...\n\n"
+  curl -X GET -H "Accept: application/json" $http://$1/_pages/$page > ./$page.json
 
-# if necessary, adds metatags instance to page head and saves new json to $page-done.json
-node ./update-page-head.js "$1" "$page";
-# file only exists if a reindex needs to occur
-if [ -f ./$page-done.json ]
-then
-  curl -X PUT $http://$1/_pages/$page -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./$page-done.json -o /dev/null -s
-  curl -X PUT $http://$1/_pages/$page@published -H 'Authorization: token accesskey' -o /dev/null -s
-  rm ./$page-done.json
-fi
+  # if necessary, adds metatags instance to page head and saves new json to $page-done.json
+  dynamic=$(node ./update-page-head.js "$1" "$page");
+  # file only exists if a reindex needs to occur
+  if [ -f ./$page-done.json ]
+  then
+    printf "\n\nPUT $http://$1/_pages/$page...\n\n"
+    curl -X PUT $http://$1/_pages/$page -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./$page-done.json -o /dev/null -s
+    rm ./$page-done.json
+  fi
 
-rm ./$page.json
+  # dynamic pages need a PUT to @published
+  if [ "$dynamic" = "true" ];
+  then
+    printf "\n\nPUT $http://$1/_pages/$page@published...\n\n"
+    curl -X PUT $http://$1/_pages/$page@published -H 'Authorization: token accesskey' -o /dev/null -s
+  fi
+
+  rm ./$page.json
+done
 
 # update /_pages/new-one-col
 # update /_pages/section-front

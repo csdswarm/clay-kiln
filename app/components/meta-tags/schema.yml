@@ -1,2 +1,17 @@
 _description: |
   Generates a list of meta tags
+
+authors:
+  _subscribe: authors
+
+publishDate:
+  _subscribe: publishDate
+
+contentType:
+ _subscribe: contentType
+
+sectionFront:
+  _subscribe: sectionFront
+
+secondaryArticleType:
+  _subscribe: secondaryArticleType

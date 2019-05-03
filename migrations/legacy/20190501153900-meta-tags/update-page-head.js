@@ -22,3 +22,5 @@ if (!pageJSON.head.includes(metaTagsComponent)) {
     }
   );
 }
+
+console.log(!!pageJSON._dynamic);

@@ -1,3 +1,7 @@
 _components:
   meta-tags:
-    metaTags: []
+    contentType: ""
+    authors: []
+    publishDate: ""
+    sectionFront: ""
+    secondaryArticleType: ""

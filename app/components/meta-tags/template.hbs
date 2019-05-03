@@ -1,7 +1,6 @@
-  {{#each metaTags}}
-    <meta
-      {{#each this}}
-        {{~@key}}="{{this~}}"
-      {{/each}}
-    >
-  {{/each}}
+<!-- meta-tags template --> 
+{{#each metaTags}}
+  <meta
+    {{~#each this}} {{@key}}="{{this}}"{{/each~}}
+  >
+{{/each}}
