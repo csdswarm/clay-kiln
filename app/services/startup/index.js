@@ -14,6 +14,8 @@ const pkg = require('../../package.json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
   handleRedirects = require('./redirects'),
+  currentStation = require('./currentStation'),
+  handleRedirects = require('./redirects'),
   user = require('./user'),
   radiumApi = require('./radium');
 
@@ -67,6 +69,8 @@ function setupApp(app) {
   app.use(handleRedirects);
 
   app.use(user);
+
+  app.use(currentStation);
 
   /**
    * radium.radio.com endpoints
