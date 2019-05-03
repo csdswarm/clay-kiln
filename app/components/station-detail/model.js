@@ -47,15 +47,13 @@ function getStationTags(station) {
  *
  * @param {Object} data The data object to extend
  * @param {string} host the site hostname
- * @returns {function(data: Object): Object} The data object with the crumbs property appended
+ * @returns {Object} The data object with the crumbs property appended
  */
 function addBreadcrumbLinks(data, host) {
-  return data => {
-    addCrumb(data, `//${host}/stations`, 'stations');
-    addCrumb(data, `//${host}/${data.station.site_slug}/listen`, data.station.name);
+  addCrumb(data, `//${host}/stations`, 'stations');
+  addCrumb(data, `//${host}/${data.station.site_slug}/listen`, data.station.name);
 
-    return data;
-  };
+  return data;
 }
 
 
