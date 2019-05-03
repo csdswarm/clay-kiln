@@ -1,6 +1,7 @@
 'use strict';
 const slugifyService = require('../../services/universal/slugify'),
   { playingClass } = require('../../services/server/spaLocals'),
+  { addCrumb } = require('../breadcrumbs'),
   NEWS_TALK = 'News & Talk',
   SPORTS = 'Sports',
   LOCATION = 'location';
@@ -46,14 +47,15 @@ function getStationTags(station) {
  *
  * @param {Object} data The data object to extend
  * @param {string} host the site hostname
- * @returns {Object} the extended data object
+ * @returns {function(data: Object): Object} The data object with the crumbs property appended
  */
 function addBreadcrumbLinks(data, host) {
-  data.crumbs = [
-    {url: `//${host}/stations`, text: 'stations'},
-    {url: `//${host}/${data.station.site_slug}/listen`, text: data.station.name}
-  ];
-  return data;
+  return data => {
+    addCrumb(data, `//${host}/stations`, 'stations');
+    addCrumb(data, `//${host}/${data.station.site_slug}/listen`, data.station.name);
+
+    return data;
+  };
 }
 
 
