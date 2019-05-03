@@ -15,7 +15,6 @@ const pkg = require('../../package.json'),
   initCore = require('./amphora-core'),
   handleRedirects = require('./redirects'),
   currentStation = require('./currentStation'),
-  handleRedirects = require('./redirects'),
   user = require('./user'),
   radiumApi = require('./radium');
 

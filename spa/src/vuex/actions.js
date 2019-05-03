@@ -143,7 +143,7 @@ export default {
 
     commit(mutationTypes.MODAL_SUCCESS, FORGOT_PASSWORD_SUCCESS)
   },
-  async [actionTypes.RESET_PASSWORD] ({ commit, state }, { email, authCode, password }) {
+  async [actionTypes.RESET_PASSWORD] ({ commit, dispatch }, { email, authCode, password }) {
     await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/password/reset',
@@ -154,6 +154,7 @@ export default {
       }
     })
 
+    dispatch(actionTypes.SIGN_IN, { email, password })
     commit(mutationTypes.MODAL_SUCCESS, RESET_PASSWORD_SUCCESS)
   }
 }
