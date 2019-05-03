@@ -47,7 +47,7 @@ export default {
     state.modalMessage = createModalMessage()
   },
   [mutationTypes.SET_METADATA]: (state, metadata) => { state.metadata = metadata },
-  [mutationTypes.SET_USER]: (state, user) => { state.user = user },
+  [mutationTypes.SET_USER]: (state, user) => { state.user = { ...user, savedTimeStamp: new Date().getTime() } },
   [mutationTypes.SET_REDIRECT_URI]: (state, redirectUri) => { state.redirectUri = redirectUri },
   [mutationTypes.SUCCESS_REDIRECT]: (state, platform) => {
     return state.redirectUri && platform !== 'webplayer'
@@ -58,6 +58,8 @@ export default {
   [mutationTypes.MODAL_ERROR]: (state, message) => { state.modalMessage = createModalMessage('error', message) },
   [mutationTypes.MODAL_SUCCESS]: (state, message) => { state.modalMessage = createModalMessage('success', message) },
   [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path },
-  [mutationTypes.SET_USER_STATIONS]: (state, stations) => { state.user.favoriteStations = stations },
-  [mutationTypes.SET_FAVORITE_STATIONS_SYNC]: (state, handle) => { state.favoriteStationSync = handle }
+  [mutationTypes.SET_USER_STATIONS]: (state, stations) => {
+    state.user.favoriteStations = stations
+    state.user.savedTimeStamp = new Date().getTime()
+  }
 }

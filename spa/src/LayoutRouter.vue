@@ -257,8 +257,8 @@ export default {
      *
      */
     async handleSpaRoute (to) {
-      // Start loading animation.
-      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+      // run any spa actions before getting data for a new page render
+      await this.$store.dispatch(actionTypes.ROUTE_CHANGE, to)
 
       // Get SPA payload data for next path.
       const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)

@@ -41,7 +41,7 @@ export default {
       return result
     }
   },
-  async [actionTypes.SIGN_IN] ({ commit, state, dispatch }, { email, password }) {
+  async [actionTypes.SIGN_IN] ({ commit, state }, { email, password }) {
     const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/signin',
@@ -53,9 +53,8 @@ export default {
       } })
 
     commit(mutationTypes.SET_USER, { ...result.data })
-    dispatch(actionTypes.FAVORITE_STATIONS_SYNC, 'start')
   },
-  async [actionTypes.SIGN_OUT] ({ commit, dispatch }) {
+  async [actionTypes.SIGN_OUT] ({ commit }) {
     await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/signout',
@@ -64,7 +63,6 @@ export default {
       }
     })
     commit(mutationTypes.SET_USER, { })
-    dispatch(actionTypes.FAVORITE_STATIONS_SYNC, 'stop')
   },
   async [actionTypes.SIGN_UP] ({ commit, state, dispatch }, { email, password }) {
     await axiosCall({ commit,
@@ -154,26 +152,25 @@ export default {
 
     commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
   },
-  [actionTypes.FAVORITE_STATIONS_SYNC] ({ commit }, action) {
-    if (action === 'start') {
-      const syncFavorites = async () => {
-        const result = await axiosCall({
-          commit,
-          method: 'GET',
-          url: '/v1/favorites/stations'
-        }, true)
+  async [actionTypes.FAVORITE_STATIONS_GET] ({ commit }) {
+    const result = await axiosCall({
+      commit,
+      method: 'GET',
+      url: '/v1/favorites/stations'
+    }, true)
 
-        if (result) {
-          commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
-        }
-      }
+    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+  },
+  async [actionTypes.ROUTE_CHANGE] ({ commit, dispatch, state }, route) {
+    const favoritesExpiredTime = 1000 * 60 * 5
+    const isStationRoute = () => route.path.includes('/stations') || route.path.includes('/listen')
+    const favoritesExpired = () => new Date().getTime() - state.user.savedTimeStamp > favoritesExpiredTime
 
-      commit(mutationTypes.SET_FAVORITE_STATIONS_SYNC, setInterval(syncFavorites, 60000))
-    } else {
-      if (state.favoriteStationSync) {
-        clearInterval(state.favoriteStationSync)
-      }
+    // Start loading animation.
+    commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+
+    if (isStationRoute() && favoritesExpired()) {
+      await dispatch(actionTypes.FAVORITE_STATIONS_GET)
     }
-
   }
 }
