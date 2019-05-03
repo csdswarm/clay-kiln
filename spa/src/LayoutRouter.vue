@@ -193,7 +193,7 @@ export default {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
             'x-amphora-page-json': true,
-            'x-locals': JSON.stringify(getLocals(this.$store.state))
+            'x-locals': JSON.stringify(await getLocals(this.$store.state))
           }
         })
 

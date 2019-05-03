@@ -9,6 +9,7 @@ import VueTranspiler from '@/lib/VueTranspiler'
 import * as mutationTypes from '../../vuex/mutationTypes'
 import SpaPlayerInterface from '../../lib/SpaPlayerInterface'
 import SpaUserInterface from '../../lib/SpaUserInterface'
+import SpaStateInterface from '../../lib/SpaStateInterface'
 const vueTranspiler = new VueTranspiler()
 
 export default {
@@ -70,7 +71,8 @@ export default {
       // Create Spa/Client interfaces
       this.interfaces = {
         player: new SpaPlayerInterface(this),
-        user: new SpaUserInterface(this)
+        user: new SpaUserInterface(this),
+        state: new SpaStateInterface(this)
       }
 
       this.handleComponents('mount')

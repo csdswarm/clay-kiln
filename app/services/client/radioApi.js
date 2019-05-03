@@ -6,6 +6,7 @@ const rest = require('../universal/rest'),
   spaLinkService = require('./spaLink'),
   clientPlayerInterface = require('./ClientPlayerInterface')(),
   clientUserInterface = require('./ClientUserInterface')(),
+  clientStateInterface = require('./clientStateInterface')(),
   // https://regex101.com/r/gDfIxb/1
   spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
   /**
@@ -85,9 +86,10 @@ const rest = require('../universal/rest'),
    * @returns {Promise} which returns {Node}
    */
   fetchDOM = async (route) => {
-    const separator = route.includes('?') ? '&' : '?',
+    const state = await clientStateInterface.getState(),
+      separator = route.includes('?') ? '&' : '?',
       options = {
-        headers: new Headers({ 'x-locals': JSON.stringify(getLocals()) })
+        headers: new Headers({ 'x-locals': JSON.stringify(getLocals(state)) })
       },
       response = await fetch(`${route}${separator}ignore_resolve_media=true`, options),
       html = await response.text(),
