@@ -1,6 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
+  { playingClass } = require('../../services/server/spaLocals'),
   SPORTS_SLUG = 'sports',
   NEWSTALK_SLUG = 'news-talk';
 
@@ -93,14 +94,19 @@ module.exports.render = async (uri, data, locals) => {
 
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        let stations = locals.stationIDs.split(',').map(stationID => {
-          let station = response.data.find(station => {
+        const stations = locals.stationIDs.split(',').map(stationID => {
+          const station = response.data.find(station => {
             if (station.id === parseInt(stationID)) {
               return station;
             }
           });
 
-          return station ? station.attributes : null;
+          if (station) {
+            station.attributes.playingClass = playingClass(locals, station.attributes.id);
+            return station.attributes;
+          }
+
+          return null;
         });
 
         data.stations = stations.filter(station => station);
@@ -222,7 +228,10 @@ module.exports.render = async (uri, data, locals) => {
 
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        data.stations = response.data ? response.data.map((station) => station.attributes) : [];
+        data.stations = response.data ? response.data.map((station) => {
+          station.attributes.playingClass = playingClass(locals, station.attributes.id);
+          return station.attributes;
+        }) : [];
         data.stationIds = data.stations.map((station) => { return { id: station.id }; });
         return data;
       } else {

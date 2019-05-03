@@ -10,6 +10,9 @@ export default {
   [mutationTypes.LOAD_SPA_PAYLOAD]: (state, payload) => {
     state.spaPayload = payload
   },
+  [mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS]: (state, payload) => {
+    state.spaPayloadLocals = { ...state.spaPayloadLocals, ...payload }
+  },
   [mutationTypes.LOAD_SPA_PAYLOAD_LOCALS]: (state, payload) => {
     state.spaPayloadLocals = payload
   },

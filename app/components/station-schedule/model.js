@@ -1,6 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
+  { playingClass } = require('../../services/server/spaLocals'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime');
 
 /**
@@ -15,7 +16,7 @@ module.exports.render = async function (ref, data, locals) {
     return data;
   }
 
-  const stationId = locals.stationId ? locals.stationId : locals.station.id,
+  const stationId = parseInt(locals.stationId ? locals.stationId : locals.station.id),
     gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
     category = (locals.category ? locals.category : locals.station.category).toLowerCase(),
     // using the station offset determine the current day 1 - 7 based
@@ -43,9 +44,13 @@ module.exports.render = async function (ref, data, locals) {
       return data;
     }
   }
-
   return {
-    station: { category, id: stationId, gmt_offset },
+    station: {
+      category,
+      id: stationId,
+      gmt_offset,
+      playingClass: playingClass(locals, stationId)
+    },
     schedule: !json.data ? [] :
       json.data
       // sort by start date
