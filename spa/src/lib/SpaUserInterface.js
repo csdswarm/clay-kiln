@@ -7,23 +7,26 @@
  */
 
 import SpaCommunicationBridge from './SpaCommunicationBridge'
+import ClientUserInterface from '../../../app/services/client/ClientUserInterface'
 import * as actionTypes from '../vuex/actionTypes'
 const spaCommunicationBridge = SpaCommunicationBridge()
 
 class SpaUserInterface {
   constructor (spaApp) {
     this.spa = spaApp
-    this.attachClientEventListeners()
-    this.attachDOMEventListeners()
+    this.attachClientCommunication()
+
+      // Attach event listeners to DOM
+      ClientUserInterface().addEventListener(this.spa.$el)
   }
 
   /**
    *
    * Attach event listeners that allow client.js code to interact with
-   * the player.
+   * the client.
    *
    */
-  attachClientEventListeners () {
+  attachClientCommunication () {
     // Add channel for favoriting stations
     if (!spaCommunicationBridge.channelActive('SpaUserFavorite')) {
       spaCommunicationBridge.addChannel('SpaUserFavorite', (payload) => {
@@ -32,33 +35,6 @@ class SpaUserInterface {
         return this[action](stationId)
       })
     }
-  }
-
-  /**
-   *
-   * Attach event listeners to DOM
-   * the player.
-   *
-   */
-  attachDOMEventListeners () {
-    this.spa.$el.querySelectorAll('[data-fav-station]').forEach(element => {
-      element.addEventListener('click', (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-
-        const currentClass = Array.from(element.classList).find((className) => /-active$/i.test(className))
-        const nextClass = currentClass.includes('--active')
-          ? currentClass.replace('--active', '--not-active')
-          : currentClass.replace('--not-active', '--active')
-        const func = currentClass.includes('--active') ? 'removeFavorite' : 'addFavorite'
-
-        if (this[func](element.dataset.favStation)) {
-          document.querySelectorAll(`[data-fav-station="${element.dataset.favStation}"]`).forEach(station =>
-            station.classList.replace(currentClass, nextClass)
-          )
-        }
-      })
-    })
   }
 
   /**
