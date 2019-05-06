@@ -2,111 +2,132 @@
   <div class="create-profile">
     <fieldset>
       <h1 align="center"> Create Your Profile<span
-              class="small"
-              style="padding: 0px 10px 0px 10px;"/></h1>
-      <span
-              v-if="errorMessage"
-              class="error"
-              align="center">{{ errorMessage }}</span>
-      <input
-              :value="user.email"
-              :disabled="user.disableEmailInput"
-              type="text"
-              placeholder="Email Address"
-              size="30"
-              name="email"
-              :class="user.disableEmailInput ? 'disabled-ui' : 'enabled-ui'"
-              @change="onFieldChange($event)"
-      >
-      <input
-              :value="user.firstName"
-              type="text"
-              placeholder="First Name"
-              size="30"
-              name="firstName"
-              @change="onFieldChange($event)"
-      >
-      <input
-              :value="user.lastName"
-              type="text"
-              placeholder="Last Name"
-              size="30"
-              name="lastName"
-              @change="onFieldChange($event)"
-      >
-      <div class="gender-box">
-        <div class="radio-item">
-          <input
-                  id="radio-1"
-                  :checked="user.gender === 'M'"
-                  name="gender"
-                  value="M"
-                  type="radio"
-                  @change="onFieldChange($event)">
-          <label
-                  for="radio-1"
-                  class="radio-label">Male</label>
-        </div>
-
-        <div class="radio-item">
-          <input
-                  id="radio-2"
-                  :checked="user.gender === 'F'"
-                  name="gender"
-                  value="F"
-                  type="radio"
-                  @change="onFieldChange($event)">
-          <label
-                  for="radio-2"
-                  class="radio-label">Female</label>
-        </div>
-
-        <div class="radio-item">
-          <input
-                  id="radio-3"
-                  :checked="user.gender === 'O'"
-                  name="gender"
-                  value="O"
-                  type="radio"
-                  @change="onFieldChange($event)">
-          <label
-                  for="radio-3"
-                  class="radio-label">Other</label>
-        </div>
-      </div>
-      <div v-if="mobile">
+        class="small"
+        style="padding: 0px 10px 0px 10px;"/></h1>
+      <message></message>
+      <div class="floating-label">
         <input
-                :value="user.dateOfBirth ? user.dateOfBirth.format('YYYY-MM-DD') : user.dateOfBirth"
-                type="date"
-                name="dateOfBirth"
-                class="dateclass placeholderclass dob"
-                data-placeholder="Date of Birth"
-                required
-                aria-required="true"
-                @change="onHtml5DateChange($event)"
+          :value="user.email"
+          :disabled="user.disableEmailInput"
+          type="text"
+          placeholder="Email Address"
+          size="30"
+          name="email"
+          :class="user.disableEmailInput ? 'disabled-ui' : 'enabled-ui'"
+          @change="onFieldChange($event)"
         >
+        <label>Email Address</label>
       </div>
-      <div v-else>
-        <datepicker
-                :value="user.dateOfBirth ? user.dateOfBirth.toDate() : user.dateOfBirth"
-                placeholder="Date of Birth"
-                format="yyyy-MM-dd"
-                @selected="onVueDatepickerChange($event)"
-        />
+      <div class="floating-label">
+        <input
+          :value="user.firstName"
+          type="text"
+          placeholder="First Name"
+          size="30"
+          name="firstName"
+          @change="onFieldChange($event)"
+        >
+        <label>First Name</label>
       </div>
-      <input
-              :value="user.zipCode"
-              type="text"
-              placeholder="Zip Code"
-              name="zipCode"
-              @change="onFieldChange($event)"
-      >
+      <div class="floating-label">
+        <input
+          :value="user.lastName"
+          type="text"
+          placeholder="Last Name"
+          size="30"
+          name="lastName"
+          @change="onFieldChange($event)"
+        >
+        <label>Last Name</label>
+      </div>
+      <div class="gender-box">
+        <label>Gender</label>
+        <div class="radio-item">
+          <input
+            id="radio-1"
+            :checked="user.gender === 'M'"
+            name="gender"
+            value="M"
+            type="radio"
+            @change="onFieldChange($event)">
+          <label
+            for="radio-1"
+            class="radio-label">Male</label>
+        </div>
+
+        <div class="radio-item">
+          <input
+            id="radio-2"
+            :checked="user.gender === 'F'"
+            name="gender"
+            value="F"
+            type="radio"
+            @change="onFieldChange($event)">
+          <label
+            for="radio-2"
+            class="radio-label">Female</label>
+        </div>
+
+        <div class="radio-item">
+          <input
+            id="radio-3"
+            :checked="user.gender === 'O'"
+            name="gender"
+            value="O"
+            type="radio"
+            @change="onFieldChange($event)">
+          <label
+            for="radio-3"
+            class="radio-label">Other</label>
+        </div>
+      </div>
+
+      <div class="floating-label">
+        <div v-if="mobile">
+          <div class="input">
+            <input
+              :value="user.dateOfBirth"
+              type="date"
+              name="dateOfBirth"
+              id="dateOfBirth"
+              class="dob"
+              style="width: 250px;"
+              data-placeholder="Date of Birth"
+              required
+              aria-required="true"
+              @change="onHtml5DateChange($event)"
+            >
+            <label for="dateOfBirth">Date of Birth</label>
+            {{user.dateOfBirth}}
+          </div>
+        </div>
+        <div v-else>
+          <datepicker
+            :value="user.dateOfBirth"
+            placeholder="Date of Birth"
+            format="MM-dd-yyyy"
+            @selected="onVueDatepickerChange($event)"
+          >
+            <label slot="afterDateInput">Date of Birth</label>
+          </datepicker>
+        </div>
+      </div>
+      <div class="floating-label">
+        <input
+          :value="user.zipCode"
+          type="text"
+          placeholder="Zip Code"
+          name="zipCode"
+          @change="onFieldChange($event)"
+        >
+        <label>Zip Code</label>
+      </div>
     </fieldset>
     <div>
       <input
-              type="submit"
-              value="FINISH"
-              @click.prevent="onProfileSubmit()">
+        type="submit"
+        value="FINISH"
+        @click.prevent="onProfileSubmit()">
     </div>
   </div>
 </template>
@@ -114,9 +135,9 @@
 <script>
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
+import Message from '../components/Message'
 import { debugLog, validateEmail, isValidZipCode, isMobileDevice } from '../utils'
 import store from '@/store'
-import { mapState } from 'vuex'
 import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
@@ -124,13 +145,8 @@ export default {
   name: 'CreateProfile',
 
   components: {
-    Datepicker
-  },
-
-  computed: {
-    ...mapState([
-      'errorMessage'
-    ])
+    Datepicker,
+    Message
   },
 
   data () {
@@ -169,12 +185,12 @@ export default {
 
     onHtml5DateChange (event) {
       debugLog('html5 date change', event)
-      this.user.dateOfBirth = moment(event.target.value, 'YYYY-MM-DD').utc()
+      this.user.dateOfBirth = moment(event.target.value).format('MM-DD-YYYY')
     },
 
     onVueDatepickerChange (dateObj) {
       debugLog('on vuejs datepicker change without time', moment.utc(dateObj).startOf('day').toISOString())
-      this.user.dateOfBirth = moment.utc(dateObj).startOf('day')
+      this.user.dateOfBirth = dateObj
     },
 
     prepopulateProfile (state) {
@@ -210,7 +226,7 @@ export default {
       const error = this.validateProfileEntities(this.user)
 
       if (error) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, error)
+        this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {
         try {
           await this.$store.dispatch(actionTypes.CREATE_PROFILE, this.user)
@@ -220,4 +236,3 @@ export default {
   }
 }
 </script>
-

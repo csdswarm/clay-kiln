@@ -4,12 +4,15 @@
       <h1 class="h1-login" align="center"> <span>Log In</span> <span class="small" style=" padding:0px 10px 0px 10px">or</span>
         <facebook-button :link="facebookLink"/>
       </h1>
-      <span
-              v-if="errorMessage"
-              class="error"
-              align="center">{{ errorMessage }}</span>
-      <input type="email" placeholder="Email Address" name="email" @change="onFieldChange($event)"/>
-      <input type="password" placeholder="Password" name="password" @change="onFieldChange($event)"/>
+      <message></message>
+      <div class="floating-label">
+        <input type="email" placeholder="Email Address" name="email" @change="onFieldChange($event)"/>
+        <label>Email Address</label>
+      </div>
+      <div class="floating-label">
+        <input type="password" placeholder="Password" name="password" @change="onFieldChange($event)"/>
+        <label>Password</label>
+      </div>
     </fieldset>
     <input type="submit" value="LOG IN" @click.prevent="onLogInSubmit()"/>
     <p align="center">
@@ -24,8 +27,8 @@
 
 <script>
 import FacebookButton from '../components/FacebookButton'
+import Message from '../components/Message'
 import { validateEmail } from '../utils'
-import { mapState } from 'vuex'
 import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
@@ -33,13 +36,11 @@ export default {
   name: 'Login',
 
   components: {
-    FacebookButton
+    FacebookButton,
+    Message
   },
 
   computed: {
-    ...mapState([
-      'errorMessage'
-    ]),
     facebookLink () {
       const { metadata } = this.$store.state
       const facebookRedirectUri = `${metadata.host}/account/facebook-callback`
@@ -61,26 +62,34 @@ export default {
     onFieldChange (event) {
       this.user[event.target.name] = event.target.value
     },
-
-    async onLogInSubmit () {
-      this.$store.commit(mutationTypes.ERROR_MESSAGE, null)
+    validateForm () {
       if (!this.user.email) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is missing.')
-        return
+        return 'Email address is missing.'
       }
 
       if (!validateEmail(this.user.email)) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Email address is not valid.')
-        return
+        return 'Email address is not valid.'
       }
 
       if (!this.user.password) {
-        this.$store.commit(mutationTypes.ERROR_MESSAGE, 'Password is missing.')
-        return
+        return 'Password is missing.'
       }
+    },
+    async onLogInSubmit () {
+      this.$store.commit(mutationTypes.MODAL_ERROR, null)
 
-      await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
-      this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+      const error = this.validateForm()
+
+      if (error) {
+        this.$store.commit(mutationTypes.MODAL_ERROR, error)
+      } else {
+        try {
+          await this.$store.dispatch(actionTypes.SIGN_IN, { email: this.user.email, password: this.user.password })
+          this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+        } catch (e) {
+          // error handled inside of dispatch
+        }
+      }
     }
   }
 }

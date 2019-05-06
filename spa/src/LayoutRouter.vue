@@ -2,7 +2,7 @@
   <div>
     <component v-bind:is="this.activeLayoutComponent"></component>
     <modal
-      name="account-modal"
+      name="modal"
       @closed="modalClosed"
       :adaptive="true"
       :scrollable="true"
@@ -95,12 +95,12 @@ export default {
      * shows the account the modal
      *
      */
-    modalShow () { this.$modal.show('account-modal') },
+    modalShow () { this.$modal.show('modal') },
     /**
      * hides the account modal
      *
      */
-    modalHide () { this.$modal.hide('account-modal') },
+    modalHide () { this.$modal.hide('modal') },
     /**
      * keep state in sync
      *
