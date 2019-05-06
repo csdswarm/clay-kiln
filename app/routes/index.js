@@ -127,20 +127,21 @@ module.exports.routes = (router) => {
    * Sitemap for stations directories and station detail pages
    */
   router.get('/sitemap-stations.xml', async function (req, res) {
-    const urlset = [
+    const baseUrl = `${req.headers['x-forwarded-proto']}://${req.headers.host}`,
+      urlset = [
       { _attr: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' } },
-      { url: [{ loc: 'https://www.radio.com/stations' }] },
-      { url: [{ loc: 'https://www.radio.com/stations/location' }] },
-      { url: [{ loc: 'https://www.radio.com/stations/music' }] },
-      { url: [{ loc: 'https://www.radio.com/stations/news-talk' }] },
-      { url: [{ loc: 'https://www.radio.com/stations/sports' }] }
+      { url: [{ loc: `${baseUrl}/stations` }] },
+      { url: [{ loc: `${baseUrl}/stations/location` }] },
+      { url: [{ loc: `${baseUrl}/stations/music` }] },
+      { url: [{ loc: `${baseUrl}/stations/news-talk` }] },
+      { url: [{ loc: `${baseUrl}/stations/sports` }] }
     ];
 
     // Location station directory pages
     await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }).then(function (markets) {
       markets.data.forEach(market => {
         urlset.push({ url:
-          [{ loc: `https://www.radio.com/stations/location/${slugifyService(market.attributes.display_name)}` }]
+          [{ loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}` }]
         });
       });
     });
@@ -150,7 +151,7 @@ module.exports.routes = (router) => {
       genres.data.forEach(genre => {
         if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
           urlset.push({ url:
-            [{ loc: `https://www.radio.com/stations/music/${slugifyService(genre.attributes.name)}` }]
+            [{ loc: `${baseUrl}/stations/music/${slugifyService(genre.attributes.name)}` }]
           });
         }
       });
@@ -160,7 +161,7 @@ module.exports.routes = (router) => {
     await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }).then(function (stations) {
       stations.data.forEach(station => {
         urlset.push({ url:
-          [{ loc: `https://www.radio.com/${station.attributes.site_slug}/listen` }]
+          [{ loc: `${baseUrl}/${station.attributes.site_slug}/listen` }]
         });
       });
     });
