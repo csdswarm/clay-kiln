@@ -138,6 +138,10 @@ em, i {
 @define-mixin article-font12 {
   @mixin font CircularStd-Medium, 14px, $black, -.23, 14px;
 }
+@define-mixin article-font13 {
+  @mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
+}
+
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||||||| Tags Fonts Styleguide |||||||||| */
@@ -446,4 +450,11 @@ em, i {
 }
 @define-mixin directory-featured-font1 {
   @mixin font CircularStd-Black, 24px, $white, -.58px, 140px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Global Sponsor Logos Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin global-sponsor-logos-font1 {
+  @mixin font ProximaNova-Regular, 14px, $black, -.22px, 17px;
 }

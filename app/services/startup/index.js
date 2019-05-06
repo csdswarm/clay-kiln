@@ -11,7 +11,9 @@ const pkg = require('../../package.json'),
   routes = require('../../routes'),
   canonicalJSON = require('./canonical-json'),
   initCore = require('./amphora-core'),
+  locals = require('./spaLocals'),
   handleRedirects = require('./redirects'),
+  currentStation = require('./currentStation'),
   log = require('../universal/log').setup({ file: __filename });
 
 function createSessionStore() {
@@ -60,6 +62,10 @@ function setupApp(app) {
   }));
 
   app.use(handleRedirects);
+
+  app.use(locals);
+  
+  app.use(currentStation);
 
   app.use(canonicalJSON);
 
