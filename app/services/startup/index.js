@@ -13,7 +13,8 @@ const pkg = require('../../package.json'),
   initCore = require('./amphora-core'),
   locals = require('./spaLocals'),
   handleRedirects = require('./redirects'),
-  currentStation = require('./currentStation'),
+  currentStation = require('./currentStation');
+  // redirectTrailingSlash = require('./trailing-slash'),
   log = require('../universal/log').setup({ file: __filename });
 
 function createSessionStore() {
@@ -51,6 +52,9 @@ function setupApp(app) {
     next();
   });
 
+  // Page Editing problems
+  //app.use(redirectTrailingSlash);
+
   // nginx limit is also 1mb, so can't go higher without upping nginx
   app.use(bodyParser.json({
     limit: '5mb'
@@ -64,7 +68,7 @@ function setupApp(app) {
   app.use(handleRedirects);
 
   app.use(locals);
-  
+
   app.use(currentStation);
 
   app.use(canonicalJSON);
