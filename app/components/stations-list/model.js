@@ -1,6 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
+  _get = require('lodash/get'),
   SPORTS_SLUG = 'sports',
   NEWSTALK_SLUG = 'news-talk';
 
@@ -88,10 +89,10 @@ module.exports.render = async (uri, data, locals) => {
     };
 
   if (locals.stationIDs || data.filterBy === 'favorites') {
-    const stationIDs = locals.stationIDs || (locals.radiumUser.favorites || ['337', '323']).join();
+    const stationIDs = locals.stationIDs || _get(locals, 'radiumUser.favoriteStations', []).join();
 
     params['filter[id]'] = stationIDs;
-
+    
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
         let stations = stationIDs.split(',').map(stationID => {
