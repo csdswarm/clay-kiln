@@ -16,8 +16,8 @@ class SpaUserInterface {
     this.spa = spaApp
     this.attachClientCommunication()
 
-      // Attach event listeners to DOM
-      ClientUserInterface().addEventListener(this.spa.$el)
+    // Attach event listeners to DOM
+    ClientUserInterface().addEventListener(this.spa.$el)
   }
 
   /**
