@@ -26,7 +26,7 @@ function init(version, browser) {
       name: 'clay',
       meta: instanceMeta
     },
-    clayLogPretty = process && process.env ? { pretty: true } : null;
+    clayLogPretty = process && process.env && !browser ? { pretty: true } : null;
 
   // Initialize the logger
   clayLog.init({...clayLogOptions, ...clayLogPretty});
