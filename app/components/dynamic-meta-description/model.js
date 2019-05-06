@@ -1,23 +1,17 @@
 'use strict';
-
-const { hypensToSpaces } = require('../../services/universal/dynamic-route-param'),
+const { toTitleCase } = require('../../services/universal/utils'),
+  { hypensToSpaces } = require('../../services/universal/dynamic-route-param'),
+  _flow = require('lodash/flow'),
   _get = require('lodash/get');
 
 module.exports.render = (ref, data, locals) => {
   if (data.routeParam && locals && locals.params) {
-    data.description = data.description.replace('${paramValue}', hypensToSpaces(locals.params[data.routeParam]));
-
-    // Set first character of each word to upper case.
-    if (data.description && data.description.length) {
-      data.description = data.description.replace(/\w[^\s\-]*/g, l => l.charAt(0).toUpperCase() + l.substr(1));
-    }
+    data.description = data.description.replace('${paramValue}', _flow(hypensToSpaces, toTitleCase)(locals.params[data.routeParam]));
   } else if (data.localsKey && locals) {
     const value = _get(locals, data.localsKey);
 
     if (value) {
-      data.description = data.description
-        .replace('${paramValue}', value)
-        .replace(/\w[^\s\-]*/g, l => l.charAt(0).toUpperCase() + l.substr(1));
+      data.description = data.description.replace('${paramValue}', toTitleCase(value));
     }
   }
 

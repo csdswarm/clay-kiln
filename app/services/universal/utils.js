@@ -104,6 +104,21 @@ function formatStart(n) {
     return n;
   }
 }
+
+/**
+ * Make the start of every word capitalized
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function toTitleCase(str) {
+  if (!str) {
+    return str;
+  }
+
+  return str.replace(/\w[^\s\-]*/g, l => l.charAt(0).toUpperCase() + l.substr(1));
+}
+
 /*
  *
  * @param {object} locals
@@ -175,6 +190,7 @@ module.exports.replaceVersion = replaceVersion;
 module.exports.uriToUrl = uriToUrl;
 module.exports.urlToUri = urlToUri;
 module.exports.formatStart = formatStart;
+module.exports.toTitleCase = toTitleCase;
 module.exports.getSiteBaseUrl = getSiteBaseUrl;
 module.exports.isPublishedVersion = isPublishedVersion;
 module.exports.ensurePublishedVersion = ensurePublishedVersion;
