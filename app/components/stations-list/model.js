@@ -95,8 +95,8 @@ module.exports.render = async (uri, data, locals) => {
     
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        let stations = stationIDs.split(',').map(stationID => {
-          let station = response.data.find(station => {
+        const stations = stationIDs.split(',').map(stationID => {
+          const station = response.data.find(station => {
             if (station.id === parseInt(stationID)) {
               return station;
             }
