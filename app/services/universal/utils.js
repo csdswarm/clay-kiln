@@ -112,11 +112,7 @@ function formatStart(n) {
  * @returns {string}
  */
 function toTitleCase(str) {
-  if (!str) {
-    return str;
-  }
-
-  return str.replace(/\w[^\s\-]*/g, l => l.charAt(0).toUpperCase() + l.substr(1));
+  return str && str.replace(/\w[^\s\-]*/g, l => l.charAt(0).toUpperCase() + l.substr(1));
 }
 
 /*
