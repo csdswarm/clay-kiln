@@ -6,6 +6,7 @@ const adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
+  environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
@@ -306,9 +307,12 @@ function getAdTargeting(pageData, urlPathname) {
       adTargetingData.targetingPageId = pageData.pageName;
       const stationDetailComponent = document.querySelector('.component--station-detail'),
         stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
-        station = stationDetailEl ? JSON.parse(stationDetailEl.innerHTML) : {};
+        station = stationDetailEl ? JSON.parse(stationDetailEl.innerHTML) : {},
+        // NEEDS TO BE SWITCHED AFTER TESTING FOR ON-654
+        // stationBannerTag = environment !== 'prod' ? doubleclickBannerTag : station.doubleclick_bannertag;
+        stationBannerTag = station.doubleclick_bannertag;
 
-      adTargetingData.siteZone = `${doubleclickPrefix}/${station.doubleclick_bannertag}/${doubleclickPageTypeTagStationDetail}`;
+      adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${doubleclickPageTypeTagStationDetail}`;
       adTargetingData.targetMarket = station.market_name;
       adTargetingData.targetingRadioStation = station.callsign;
       adTargetingData.targetingCategory = adTargetingData.targetingGenre = station.category.toLowerCase();
