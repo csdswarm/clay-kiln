@@ -5,7 +5,16 @@ title:
   _has:
     input: text
     validate:
-      required: true
+      required:
+        field: titleLocked
+        operator: falsy
+  _reveal:
+    field: titleLocked
+    operator: falsy
+
+titleLocked:
+  _label: Is title locked?
+  _has: checkbox
 
 podcastList:
   _component:

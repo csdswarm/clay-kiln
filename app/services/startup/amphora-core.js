@@ -14,6 +14,7 @@ function initAmphora(app, search, sessionStore, routes) {
       search,
       routes
     ],
+    eventBus: require('amphora-event-bus-redis'),
     cacheControl: {}
   }).then(router => {
     amphora.schedule.startListening();
