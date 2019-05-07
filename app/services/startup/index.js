@@ -13,7 +13,7 @@ const pkg = require('../../package.json'),
   initCore = require('./amphora-core'),
   locals = require('./spaLocals'),
   handleRedirects = require('./redirects'),
-  currentStation = require('./currentStation');
+  currentStation = require('./currentStation'),
   // redirectTrailingSlash = require('./trailing-slash'),
   log = require('../universal/log').setup({ file: __filename });
 
