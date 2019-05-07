@@ -1,5 +1,5 @@
 <section role="main" data-track-type="section" data-uri="{{ default _ref _self }}"
-  class="component component--station-detail{{ if @root.locals.edit ' editing' }} station-detail--{{category}} data-station-slug={{station.slug}} data-station-category={{station.category}} data-station-genre={{station.genre_name}}"
+  class="component component--station-detail{{ if @root.locals.edit ' editing' }} station-detail--{{category}}"
 >
   <pre class="station-detail__data">{{{ stringify station }}}</pre>
   {{> breadcrumbs this }}

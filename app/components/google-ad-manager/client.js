@@ -10,7 +10,7 @@ const adMapping = require('./adMapping'),
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
   doubleclickPageTypeTagStationsDirectory = 'stationsdirectory',
-  doubleclickPageTypeTagStationDetail = 'station',
+  doubleclickPageTypeTagStationDetail = 'livestreamplayer',
   doubleclickPageTypeTagTag = 'tag',
   doubleclickPageTypeTagAuthor = 'authors',
   adRefreshInterval = '60000', // Time in milliseconds for ad refresh
@@ -302,15 +302,18 @@ function getAdTargeting(pageData, urlPathname) {
       }
       break;
     case 'stationDetail':
-      adTargetingData.targetingTags = [doubleclickPageTypeTagStationDetail, pageData.pageName];
+      adTargetingData.targetingTags = [doubleclickPageTypeTagStationDetail, 'unity'];
       adTargetingData.targetingPageId = pageData.pageName;
-      adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${doubleclickPageTypeTagStationDetail}`);
-      const stationDetailComponent = document.querySelector('.component--station-detail');
+      const stationDetailComponent = document.querySelector('.component--station-detail'),
+        stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
+        station = stationDetailEl ? JSON.parse(stationDetailEl.innerHTML) : {};
 
-      adTargetingData.targetingRadioStation = stationDetailComponent.getAttribute('data-station-slug');
-      adTargetingData.targetingCategory = adTargetingData.targetingGenre = stationDetailComponent.getAttribute('data-station-category');
-      if (adTargetingData.targetingCategory == 'music') {
-        adTargetingData.targetingGenre = stationDetailComponent.getAttribute('data-station-genre');
+      adTargetingData.siteZone = `${doubleclickPrefix}/${station.doubleclick_bannertag}/${doubleclickPageTypeTagStationDetail}`;
+      adTargetingData.targetMarket = station.market_name;
+      adTargetingData.targetingRadioStation = station.callsign;
+      adTargetingData.targetingCategory = adTargetingData.targetingGenre = station.category.toLowerCase();
+      if (adTargetingData.targetingCategory == 'music' && station.genre_name.length) {
+        adTargetingData.targetingGenre = station.genre_name[0].toLowerCase();
       }
       break;
     case 'topicPage':
@@ -370,6 +373,7 @@ function createAds(adSlots) {
       slot
         .setTargeting('station', adTargetingData.targetingRadioStation || targetingNationalRadioStation)
         .setTargeting('genre', adTargetingData.targetingGenre)
+        .setTargeting('market', adTargetingData.targetMarket)
         .setTargeting('cat', adTargetingData.targetingCategory)
         .setTargeting('tag', adTargetingData.targetingTags)
         .setTargeting('pid', adTargetingData.targetingPageId)
