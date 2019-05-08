@@ -26,7 +26,7 @@ componentType="section-front"
 instanceType="sports"
 printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./section-fronts-update.js "$1" "$componentType" "$instanceType";
+node ./section-front-update.js "$1" "$componentType" "$instanceType";
 cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
 rm ./$componentType-$instanceType.json
 rm ./$componentType-$instanceType.yml

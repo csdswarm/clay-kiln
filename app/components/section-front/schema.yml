@@ -64,4 +64,4 @@ _groups:
   settings:
     fields:
       - title
-      - canonicalUrl
+      - includePodcastModule

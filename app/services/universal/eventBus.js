@@ -17,7 +17,6 @@ function setEventCallback(channel, callback) {
  * @param  {Object[]} payload
  */
 function triggerCallback(channel, payload) {
-  console.log(`Channel: ${channel}\n\n\n${payload}`);
   if (callbacks[channel]) {
     (callbacks[channel])(payload);
   }
