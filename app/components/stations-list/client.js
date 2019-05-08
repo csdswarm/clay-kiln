@@ -38,18 +38,25 @@ class StationsList {
 
     this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
 
-    // if we go to a modal route, the constructor will run again when we close the modal
-    if (this.parentElement.querySelector('ul').childElementCount === 0) {
-      this.updateStations();
-      if (this.loadMoreBtn) {
-        this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
-      }
-      window.addEventListener('resize', this.toggleSeeAllLinkAndAds.bind(this) );
-      document.addEventListener('stations-list-dismount', () => {
-        // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
-        window.removeEventListener('resize', this.toggleSeeAllLinkAndAds );
-      }, { once: true });
+    this.resetStationsList();
+    this.updateStations();
+    if (this.loadMoreBtn) {
+      this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
     }
+    window.addEventListener('resize', this.toggleSeeAllLinkAndAds.bind(this) );
+    document.addEventListener('stations-list-dismount', () => {
+      // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
+      window.removeEventListener('resize', this.toggleSeeAllLinkAndAds );
+    }, { once: true });
+  }
+  /**
+   * Removes previous content if any exists (if returning from a modal route)
+   */
+  resetStationsList() {
+    const range = document.createRange();
+
+    range.selectNodeContents(this.stationsList);
+    range.deleteContents();
   }
   /**
    * Get local stations from api
