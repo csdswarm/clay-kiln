@@ -6,7 +6,7 @@ const rest = require('../universal/rest'),
   spaLinkService = require('./spaLink'),
   clientPlayerInterface = require('./ClientPlayerInterface')(),
   clientUserInterface = require('./ClientUserInterface')(),
-  clientStateInterface = require('./clientStateInterface')(),
+  clientStateInterface = require('./ClientStateInterface')(),
   // https://regex101.com/r/gDfIxb/1
   spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
   /**
