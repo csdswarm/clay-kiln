@@ -59,7 +59,8 @@ export default class MetaManager {
         })
       }
     } else {
-      // if we missed adding meta-tags to a page, at least delete the initial tags
+      // every page should have meta-tags component but
+      // if we missed a page, at least delete the initial tags
       this.deleteMetaTag('property', 'og:type')
       this.deleteMetaTag('property', 'article:author:name')
       this.deleteMetaTag('property', 'article:published_time')
