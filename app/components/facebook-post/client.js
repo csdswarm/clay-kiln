@@ -1,52 +1,20 @@
 'use strict';
 
 const $visibility = require('../../services/client/visibility'),
+  { ensureFBExists } = require('../../services/client/facebook'),
   LAZY_LOAD_MINIMUM = 3,
   // Facebook cmpt's vertical space must be a certain distance from the viewport for the embed to load
   SHOWN_THRESHOLD = 0.01,
   totalEmbeds = document.querySelectorAll('.facebook-post').length,
-  lazyLoadEmbeds = totalEmbeds >= LAZY_LOAD_MINIMUM,
-  fbSdkUrl = '//connect.facebook.net/en_US/all.js#xfbml=1&amp;version=v2.3';
+  lazyLoadEmbeds = totalEmbeds >= LAZY_LOAD_MINIMUM;
   // The number of Facebook cmpts that must be on the page to activate lazy loading.
   // Without lazy loading, a high number of Facebook embeds may slow page load time tremendously.
 
 function Constructor(el) {
-
-  // Process FB post if SDK is available otherwise Mount FB SDK then process.
-  if (window.FB) {
-    this.processFbPost(el);
-  } else if (!document.querySelector(`script[src="${fbSdkUrl}"]`)) {
-    this.mountFacebookSdk((error) => {
-      if (error) {
-        throw error;
-      } else {
-        this.processFbPost(el);
-      }
-    });
-  }
-  
+  ensureFBExists(() => this.processFbPost(el));
 }
 
 Constructor.prototype = {
-  /**
-   * Includes the Facebook SDK on the page.
-   * @param {function} callback - FB SDK <script> loaded or errored callback.
-   */
-  mountFacebookSdk: function (callback) {
-    const firstScript = document.getElementsByTagName('script')[0],
-      newScript = document.createElement('script');
-
-    newScript.onload = () => {
-      return callback(null);
-    };
-    newScript.onerror = (error) => {
-      return callback(error);
-    };
-    newScript.src = fbSdkUrl;
-    
-    firstScript.parentNode.insertBefore(newScript, firstScript);
-  },
-
   /**
    * Initialize the FB post embed.
    * @param {HtmlElement} el
