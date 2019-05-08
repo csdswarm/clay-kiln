@@ -10,7 +10,6 @@ const clientCommunicationBridge = require('./ClientCommunicationBridge')();
  *
  */
 class ClientPlayerInterface {
-
   // Mount the player
   mountPlayer() {
     // Get data-attributes from hbs template.
@@ -34,7 +33,6 @@ class ClientPlayerInterface {
         // Initialize Player Google tags
         this.initPlayerGoogleTags();
       });
-
   }
 
   /**
@@ -44,13 +42,22 @@ class ClientPlayerInterface {
    * @returns {string} - The web player environment namespace.
    */
   getWebPlayerEnvironment() {
-    if (window.location.search && window.location.search.includes('webplayer-dev')) {
-      return '-dev';
-    } else if (window.location.search && window.location.search.includes('webplayer-stg')) {
-      return '-stg';
-    } else {
-      return '';
+    const param = new URLSearchParams(window.location.search).get('webplayer');
+    let env = '';
+
+    if (param && param.length) {
+      switch (param) {
+        case 'dev':
+          env += '-dev';
+          break;
+        case 'stg':
+          env = '-stg';
+          break;
+        default:
+          env = `-branches/PLAYER-${param}`;
+      }
     }
+    return env;
   }
 
   /**
