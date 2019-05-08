@@ -2,9 +2,30 @@
 
 const amphora = require('amphora'),
   renderers = require('./amphora-renderers'),
-  healthCheck = require('@nymdev/health-check');
+  healthCheck = require('@nymdev/health-check'),
+  eventBusService = require('../../services/universal/eventBus'),
+  redis = require('redis'),
+  SUBSCRIBER = redis.createClient(process.env.CLAY_BUS_HOST),
+  CLAY_TOPICS = [
+    'publishLayout',
+    'publishPage',
+    'unpublishPage',
+    'createPage',
+    'schedulePage',
+    'unschedulePage',
+    'save',
+    'delete'
+  ];
 
 function initAmphora(app, search, sessionStore, routes) {
+  for (let i = 0; i < CLAY_TOPICS.length; i++) {
+    SUBSCRIBER.subscribe(`clay:${CLAY_TOPICS[i]}`);
+  }
+
+  SUBSCRIBER.on('message', (channel, payload) => {
+    eventBusService.triggerCallback(channel, payload);
+  });
+
   return amphora({
     app,
     renderers,
@@ -14,7 +35,6 @@ function initAmphora(app, search, sessionStore, routes) {
       search,
       routes
     ],
-    eventBus: require('amphora-event-bus-redis'),
     cacheControl: {}
   }).then(router => {
     amphora.schedule.startListening();
