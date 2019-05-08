@@ -314,7 +314,7 @@ function getAdTargeting(pageData, urlPathname) {
         stationBannerTag = station.doubleclick_bannertag;
 
       adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${doubleclickPageTypeTagStationDetail}`;
-      adTargetingData.targetMarket = station.market_name;
+      adTargetingData.targetingMarket = station.market_name;
       adTargetingData.targetingRadioStation = station.callsign;
       adTargetingData.targetingCategory = adTargetingData.targetingGenre = station.category.toLowerCase();
       if (adTargetingData.targetingCategory == 'music' && station.genre_name.length) {
@@ -378,7 +378,6 @@ function createAds(adSlots) {
       slot
         .setTargeting('station', adTargetingData.targetingRadioStation || targetingNationalRadioStation)
         .setTargeting('genre', adTargetingData.targetingGenre)
-        .setTargeting('market', adTargetingData.targetMarket)
         .setTargeting('cat', adTargetingData.targetingCategory)
         .setTargeting('tag', adTargetingData.targetingTags)
         .setTargeting('pid', adTargetingData.targetingPageId)
@@ -386,6 +385,10 @@ function createAds(adSlots) {
         .setTargeting('loc', adLocation)
         .setTargeting('adtest', queryParams.adtest || '')
         .addService(pubAds);
+
+      if (adTargetingData.targetingMarket) {
+        slot.setTargeting('market', adTargetingData.targetingMarket);
+      }
 
       // Right rail and inline gallery ads need unique names
       if (rightRailAdSizes.includes(adSize)) {
