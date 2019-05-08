@@ -16,6 +16,10 @@ titleLocked:
   _label: Is title locked?
   _has: checkbox
 
+includePodcastModule:
+  _label: Include podcast module on page?
+  _has: checkbox
+
 podcastList:
   _component:
     include:
