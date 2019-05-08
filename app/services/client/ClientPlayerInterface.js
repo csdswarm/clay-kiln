@@ -42,11 +42,20 @@ class ClientPlayerInterface {
    * @returns {string} - The web player environment namespace.
    */
   getWebPlayerEnvironment() {
-    const param = new URLSearchParams(window.location.search).get('webplayer');
+    const  qs = window.location.search;
+    let  webPlayerParam = '';
+
+    if (qs.includes('webplayer')) {
+      const params = qs.substring(1).split('&');
+      const webPlayer = params.filter(item => item.includes('webplayer')) ;
+
+      webPlayerParam = webPlayer[0].split('=')[1];
+    }
+
     let env = '';
 
-    if (param && param.length) {
-      switch (param) {
+    if (webPlayerParam.length) {
+      switch (webPlayerParam) {
         case 'dev':
           env += '-dev';
           break;
@@ -54,7 +63,7 @@ class ClientPlayerInterface {
           env = '-stg';
           break;
         default:
-          env = `-branches/PLAYER-${param}`;
+          env = `-branches/PLAYER-${webPlayerParam}`;
       }
     }
     return env;
