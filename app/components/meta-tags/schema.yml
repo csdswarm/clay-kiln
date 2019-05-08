@@ -7,6 +7,10 @@ authors:
 publishDate:
   _subscribe: publishDate
 
+automatedPublishDate:
+  _has:
+    help: Date that is automatically generated when article is published
+
 contentType:
  _subscribe: contentType
 

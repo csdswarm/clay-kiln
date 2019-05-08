@@ -22,6 +22,7 @@ curl -X PUT $http://$1/_components/meta-tags/instances/general -H 'Authorization
 {
   "authors": [],
   "publishDate": "",
+  "automatedPublishDate": "",
   "contentType": "",
   "sectionFront": "",
   "secondaryArticleType": ""
