@@ -58,6 +58,13 @@ export default class MetaManager {
           this.deleteMetaTag(tag.type, tag[tag.type])
         })
       }
+    } else {
+      // if we missed adding meta-tags to a page, at least delete the initial tags
+      this.deleteMetaTag('property', 'og:type')
+      this.deleteMetaTag('property', 'article:author:name')
+      this.deleteMetaTag('property', 'article:published_time')
+      this.deleteMetaTag('name', 'cXenseParse:recs:category')
+      this.deleteMetaTag('name', 'station-call-letters')
     }
 
     // Update or strip meta-title component tags (never delete <title> tag).
