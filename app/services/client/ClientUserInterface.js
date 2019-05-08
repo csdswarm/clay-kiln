@@ -14,8 +14,8 @@ class ClientUserInterface {
    *
    * Adds events related to users
    *
-   * @param {Node} doc
-   * @returns {Node} - document with events attached
+   * @param {Document} doc
+   * @returns {Document} - document with events attached
    */
   addEventListener(doc) {
     // Attach favorite button click handlers
