@@ -115,10 +115,10 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	make build-player && cd app && npm i && node -r dotenv/config ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=none
+	make build-player && cd spa && npm i && npm run-script build -- --mode=none && cd ../app && npm i && node -r dotenv/config ./node_modules/.bin/gulp
 
 install:
-	cd app && npm i && node -r dotenv/config ./node_modules/.bin/gulp && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
+	cd spa && npm i && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm i && node -r dotenv/config ./node_modules/.bin/gulp
 
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
@@ -133,3 +133,6 @@ build-player:
 .PHONY: spa
 spa:
 	cd spa && npm i && npm run-script build -- --mode=none
+
+spa-dev:
+	cd spa && npm i && npm run-script build -- --mode=none --watch

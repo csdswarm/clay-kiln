@@ -4,6 +4,7 @@ const pkg = require('../../package.json'),
   amphoraPkg = require('amphora/package.json'),
   kilnPkg = require('clay-kiln/package.json'),
   bodyParser = require('body-parser'),
+  cookieParser = require('cookie-parser'),
   compression = require('compression'),
   session = require('express-session'),
   RedisStore = require('connect-redis')(session),
@@ -14,6 +15,8 @@ const pkg = require('../../package.json'),
   initCore = require('./amphora-core'),
   locals = require('./spaLocals'),
   handleRedirects = require('./redirects'),
+  user = require('./user'),
+  radiumApi = require('./radium'),
   currentStation = require('./currentStation');
   // redirectTrailingSlash = require('./trailing-slash');
 
@@ -65,11 +68,30 @@ function setupApp(app) {
     extended: true
   }));
 
+  app.use(cookieParser());
+
   app.use(handleRedirects);
+
+  app.use(user);
 
   app.use(locals);
 
   app.use(currentStation);
+
+  /**
+   * radium.radio.com endpoints
+   *
+   * This is not in the routes/index.js file because you are forced to be logged in to access any route at that level
+   * There is a tech debt item to investigate with NYM why all routes added by kiln require authentication
+   */
+  app.all('/radium/*', (req, res) => {
+    radiumApi.apply(req, res).then((data) => {
+      return res.json(data);
+    }).catch((e) => {
+      console.log(e);
+      res.status(500).json({ message: 'An unknown error has occurred.' });
+    });
+  });
 
   app.use(canonicalJSON);
 

@@ -39,5 +39,14 @@ gulp.task('site-media', function () {
     .pipe(gulp.dest('public/media'));
 });
 
+gulp.task('spa-media', function () {
+  return gulp.src('public/dist/**/*.+(jpg|jpeg|png|gif|webp|svg|ico)')
+    .pipe(gulp.dest('public'));
+});
+
 // combine them into a media task
-gulp.task('media', gulp.parallel('site-media', 'component-media'));
+gulp.task('media', gulp.parallel('site-media', 'component-media', 'spa-media'));
+
+
+
+
