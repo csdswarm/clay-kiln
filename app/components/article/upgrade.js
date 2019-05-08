@@ -1,5 +1,7 @@
 'use strict';
 
+const { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils');
+
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
   let newData = Object.assign({}, data);
@@ -30,4 +32,42 @@ module.exports['3.0'] = function (uri, data) {
     ...data,
     contentPageSponsorLogo: { _ref : contentLogoSponsorshipURIPublished }
   };
+};
+
+// new-two-col layout was updated to add meta-tags component
+module.exports['4.0'] = async (uri, data) => {
+  const hash = uri.match(/instances\/(.+)/);
+
+  // new pages already have this stuff
+  if (hash && hash[1] != 'new') {
+    const metaTagsData = {
+        authors: data.authors,
+        publishDate: data.date,
+        automatedPublishDate: data.dateModified,
+        contentType: data.contentType,
+        sectionFront: data.sectionFront,
+        secondaryArticleType: data.secondaryArticleType,
+        metaTags: []
+      },
+      metaTagsUriPublished = uri.replace('article', 'meta-tags'),
+      metaTagsUri = metaTagsUriPublished.replace('@published', ''),
+      pageUriPublished = uri.replace('_components/article/instances', '_pages'),
+      pageUri = pageUriPublished.replace('@published', ''),
+      page = await getComponentInstance(pageUri);
+
+    if (page && page.head && !page.head.includes(metaTagsUri)) {
+
+      page.head.push(metaTagsUri);
+
+      // create meta-tags component instance
+      await Promise.all([
+        putComponentInstance(metaTagsUri, metaTagsData),
+        putComponentInstance(metaTagsUriPublished, metaTagsData),
+        putComponentInstance(pageUri, page),
+        putComponentInstance(pageUriPublished, page)
+      ]);
+    }
+  }
+
+  return data;
 };
