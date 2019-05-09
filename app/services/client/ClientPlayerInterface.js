@@ -46,27 +46,23 @@ class ClientPlayerInterface {
     let  webPlayerParam = '';
 
     if (qs.includes('webplayer')) {
-      const params = qs.substring(1).split('&');
-      const webPlayer = params.filter(item => item.includes('webplayer')) ;
-
-      webPlayerParam = webPlayer[0].split('=')[1];
+      const params = qs.substring(1).split('&'),
+        webPlayer = params.find(item => item.includes('webplayer'));
+      webPlayerParam = webPlayer.split('=')[1];
     }
 
-    let env = '';
-
-    if (webPlayerParam.length) {
+    if (webPlayerParam) {
       switch (webPlayerParam) {
         case 'dev':
-          env += '-dev';
-          break;
+          return '-dev';
         case 'stg':
-          env = '-stg';
-          break;
+          return '-stg';
         default:
-          env = `-branches/PLAYER-${webPlayerParam}`;
+          return `-branches/PLAYER-${webPlayerParam}`;
       }
+    } else {
+      return '';
     }
-    return env;
   }
 
   /**
