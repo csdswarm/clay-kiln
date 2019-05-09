@@ -31,10 +31,11 @@ module.exports['3.0'] = function (uri, data) {
 
 // gallery layout was updated to add meta-tags component
 module.exports['4.0'] = async (uri, data) => {
-  const hash = uri.match(/instances\/(.+)/);
+  const hash = uri.match(/instances\/(\d+)/);
 
-  // new pages already have this stuff
-  if (hash && hash[1] != 'new') {
+  // only works for imported pages, migration should take care of Unity pages, new pages are already ok
+  // Unity pages don't have the same hash for page and article/gallery component
+  if (hash) {
     const metaTagsData = {
         authors: data.authors,
         publishDate: data.date,
