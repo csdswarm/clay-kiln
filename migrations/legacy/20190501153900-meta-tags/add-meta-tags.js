@@ -59,7 +59,8 @@ async function letsDoThis() {
     automatedPublishDate: '',
     contentType: '',
     sectionFront: '',
-    secondaryArticleType: ''
+    secondaryArticleType: '',
+    metaTags: []
   });
   await makeRequest('/_components/meta-tags/instances/general@published', 'PUT');
 
@@ -129,14 +130,30 @@ async function addMetaTags(page, published, hash = 'general') {
 
     // /_components/meta-tags/instances/general has already been created and published
     if (hash != 'general') {
-      await makeRequest(metaTagsComponent, 'PUT', {
+      const metaTags = {
         authors: [],
         publishDate: '',
         automatedPublishDate: '',
         contentType: '',
         sectionFront: '',
-        secondaryArticleType: ''
-      });
+        secondaryArticleType: '',
+        metaTags: []
+      };
+
+      // if this is an article or gallery, we have to modify the metaTags obj since it's only updated on kiln pub/sub
+      if (page.main && page.main.length == 1 && (page.main[0].includes('/article/') || page.main[0].includes('/gallery/'))) {
+        const content = await makeRequest(page.main[0].replace(host, ''), 'GET');
+        if (content) {
+          const contentObj = JSON.parse(content);
+          metaTags.authors = contentObj.authors || [];
+          metaTags.publishDate = contentObj.date || '';
+          metaTags.automatedPublishDate = contentObj.dateModified || '';
+          metaTags.contentType = contentObj.contentType || '';
+          metaTags.sectionFront = contentObj.sectionFront || '';
+          metaTags.secondaryArticleType = contentObj.secondaryArticleType || '';
+        }
+      }
+      await makeRequest(metaTagsComponent, 'PUT', metaTags);
 
       if (published) {
         await makeRequest(`${metaTagsComponent}@published`, 'PUT');
