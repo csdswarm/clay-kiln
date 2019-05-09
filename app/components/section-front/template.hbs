@@ -2,9 +2,9 @@
   {{#if @root.locals.edit }}
     <div class="section-front__settings" data-editable="settings">
       <h1>Section Front Settings:</h1>
-      <span>Title <span class="warn">*required</span>: {{ default title 'None' }}</span>
+      <span>Title <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
       {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
-      <span>Include podcast module? {{ includePodcastModule }}</span>
+      <span>Include podcast module? : {{ default includePodcastModule 'False' }}</span>
     </div>
   {{/if}}
   {{> section-lead sectionLead }}
