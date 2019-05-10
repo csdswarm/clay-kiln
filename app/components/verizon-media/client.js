@@ -1,7 +1,5 @@
 'use strict';
 
-// Polyfill
-require('intersection-observer');
 const Video = require('../../global/js/classes/Video');
 
 class VerizonMedia extends Video {
@@ -11,50 +9,62 @@ class VerizonMedia extends Video {
   /**
    * Construct the player
    *
+   * @override
    * @param {Element} component
    * @return {object}
    */
-  createPlayer(component) {
+  createMedia(component) {
     // eslint-disable-next-line no-undef
-    const player = vidible.player(component.getAttribute('id')).setup({
+    const media = vidible.player(component.getAttribute('id')).setup({
         bcid: component.getAttribute('data-company'),
         pid: component.getAttribute('data-player'),
         videos: component.getAttribute('data-video-id'),
 
         // Optional - macros
         'm.playback': 'pause',
-        'm.responsive': 'true',
-        'm.initialVolume': 100
+        'm.responsive': 'true'
       }).load(),
       id = component.getAttribute('data-video-id'),
-      node = player.sia;
+      node = component;
 
-    return { id, player, node };
+    return { id, media, node };
   }
   /**
    * * Returns the event types for the video, should be overloaded
    *
+   * @override
    * @return {object}
    */
   getEventTypes() {
     return {
       // eslint-disable-next-line no-undef
-      VIDEO_START: vidible.VIDEO_PLAY,
+      MEDIA_PLAY: vidible.VIDEO_PLAY,
       // eslint-disable-next-line no-undef
-      VIDEO_READY: vidible.VIDEO_DATA_LOADED,
+      MEDIA_READY: vidible.VIDEO_DATA_LOADED,
       // eslint-disable-next-line no-undef
-      AD_START: vidible.AD_START
+      AD_PLAY: vidible.AD_PLAY,
+      // eslint-disable-next-line no-undef
+      MEDIA_VOLUME: vidible.VIDEO_VOLUME_CHANGED
     };
   }
   /**
-   * start the player
+   * mute the player
    *
-   * @param {object} player
+   * @override
    */
-  async play(player) {
-    if (player) {
-      await player.mute();
-      player.play();
+  async mute() {
+    await this.getMedia().mute();
+  }
+  /**
+   * unmute the player
+   *
+   * @override
+   */
+  async unmute() {
+    const media = this.getMedia();
+
+    if (await media.isMuted()) {
+      await media.toggleMute();
     }
   }
 }

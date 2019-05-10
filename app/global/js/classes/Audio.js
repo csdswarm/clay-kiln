@@ -2,12 +2,12 @@
 
 const Media = require('./Media');
 
-class Video extends Media {
+class Audio extends Media {
   constructor(el, options) {
     super(el, options);
 
-    this.setType('video');
+    this.setType('audio');
   }
 }
 
-module.exports = Video;
+module.exports = Audio;

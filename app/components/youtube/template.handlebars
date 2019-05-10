@@ -32,13 +32,11 @@
         <div id="{{ uniquePlayerID }}"></div>
       </div>
     {{else}}
-      {{#unless videoValid}}
-        <div data-placeholder="videoValid"></div>
-      {{else}}
-        {{#if videoThumbnail}}
-          <img class="youtube-video-preview" src="{{ videoThumbnail }}" alt="">
-        {{/if}}
-      {{/unless}}
+      <div class="kiln-placeholder" style="min-height: 20px; margin-bottom: 20px;">
+        <div class="placeholder-label">
+          <span class="placeholder-text">Youtube {{if playlist "Playlist" "Video"}} ID: {{ video }}{{ playlist }}</span>
+        </div>
+      </div>
     {{/unless}}
   </div>
 

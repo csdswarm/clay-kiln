@@ -12,14 +12,13 @@
                  data-application-id
                  controls></video-js>
         {{else}}
-          {{! @TODO: ON-38 Show thumbnail from video, get it during save in model.js and store on the component }}
           <div class="kiln-placeholder" style="min-height: 20px; margin-bottom: 20px;">
-            <div class="placeholder-label"><span class="placeholder-text">Verizon Media Video ID: {{ videoId }}</span>
+            <div class="placeholder-label">
+              <span class="placeholder-text">Verizon Media Video ID: {{ videoId }}</span>
             </div>
           </div>
         {{/unless}}
-      </p>
+      </div>
     {{/if}}
   </div>
 </div>
-

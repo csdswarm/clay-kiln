@@ -3,11 +3,77 @@
 // Instantiate player interface.
 const clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
   clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')(),
-  recentStations = require('../../services/client/recentStations');
+  recentStations = require('../../services/client/recentStations'),
+  Audio = require('../../global/js/classes/Audio');
+
+let webPlayer = null;
+
+class WebPlayer extends Audio {
+  constructor(component) {
+    super(component);
+  }
+  /**
+   * @override
+   */
+  createMedia(component) {
+    const media = { };
+
+    return { id: component.id, media, node: component, persistent: true };
+  }
+  /**
+   * adds an event for the specific video type
+   *
+   * @override
+   * @param {string} type
+   * @param {function} listener
+   */
+  addEvent(type, listener) {
+    this.getNode().addEventListener(type, listener);
+  }
+  /**
+   * Pause the media
+   * @override
+   */
+  async pause() {
+    console.log('web-player PAUSE')
+
+    await clientPlayerInterface.pause();
+  }
+  /**
+   * start the media (can be overridden)
+   * @override
+   */
+  async play() {
+    console.log('web-player PLAY')
+    await clientPlayerInterface.play();
+  }
+  /**
+   * mute the player
+   *
+   * @override
+   */
+  async mute() {
+    // web-player is not allowed to be muted
+  }
+  /**
+   * unmute the player
+   *
+   * @override
+   */
+  async unmute() {
+    // web-player is not allowed to be muted
+  }
+}
 
 // Add player mount channel.
 clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
   await clientPlayerInterface.mountPlayer();
+
+  const dumbComponent = document.createElement('div');
+
+  dumbComponent.id = 'radio-web-player';
+  webPlayer = new WebPlayer(dumbComponent);
+
   return true;
 });
 
@@ -19,6 +85,15 @@ clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (pay
     recentStations.add(id);
   }
   syncPlayerButtons(id, playingClass);
+
+  console.log('dispatching media ', playerState)
+  if (playerState === 'play') {
+    // since events are being added to the component node, use them to dispatch the event
+    webPlayer.getNode().dispatchEvent(new CustomEvent(webPlayer.getEventTypes().MEDIA_PLAY));
+  } else {
+    webPlayer.getNode().dispatchEvent(new CustomEvent(webPlayer.getEventTypes().MEDIA_STOP));
+  }
+
 });
 
 /**

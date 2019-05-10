@@ -1,7 +1,6 @@
 'use strict';
 
 // Polyfill
-require('intersection-observer');
 const Video = require('../../global/js/classes/Video');
 
 class Brightcove extends Video {
@@ -15,49 +14,59 @@ class Brightcove extends Video {
   /**
    * Construct the player
    *
+   * @override
    * @param {Element} component
    * @return {object}
    */
-  createPlayer(component) {
+  createMedia(component) {
     // eslint-disable-next-line no-undef
     const id = component.getAttribute('id'),
-      player = bc(id),
-      node = player.el();
+      media = bc(id),
+      node = media.el();
 
-    return { id, player, node };
+    return { id, media, node };
   }
   /**
-   * * Returns the event types for the video, should be overloaded
+   * Returns the event types for the video, should be overloaded
    *
+   * @override
    * @return {object}
    */
   getEventTypes() {
     return {
-      VIDEO_START: 'play',
-      VIDEO_READY: 'loadedmetadata',
-      AD_START: 'ads-play'
+      MEDIA_PLAY: 'play',
+      MEDIA_READY: 'loadedmetadata',
+      AD_PLAY: 'ads-play',
+      MEDIA_VOLUME: 'volumechange'
     };
   }
   /**
    * adds an event for the specific video type
    *
-   * @param {Element} object
+   * @override
    * @param {string} type
    * @param {function} listener
    */
-  addEvent(object, type, listener) {
-    object.on(type, listener);
+  addEvent(type, listener) {
+    this.getMedia().on(type, listener);
   }
   /**
-   * start the player
+   * mute the player
    *
-   * @param {object} player
+   * @override
    */
-  play(player) {
-    if (player) {
-      player.muted(true);
-      player.play();
-    }
+  async mute() {
+    console.log('brightcove mute')
+    await this.getMedia().muted(true);
+  }
+  /**
+   * unmute the player
+   *
+   * @override
+   */
+  async unmute() {
+    console.log('brightcove unmute')
+    await this.getMedia().muted(false);
   }
 }
 
