@@ -81,7 +81,7 @@ async function updatePages(pages, publishedPages) {
     // other - layout level pages use /_components/meta-tags/instances/general
     let hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
     if (hash) {
-      if (hash.groups.unity == 'cjvfme79q0000joo1twbi8ne5') {
+      if (hash.groups.unity) {
         const pageUri = `/_pages/${hash.groups.unity}`;
 
         let pageJsonRes = await makeRequest(pageUri, 'GET'),
