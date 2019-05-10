@@ -50,13 +50,29 @@ class StationsList {
     }, { once: true });
   }
   /**
-   * Removes previous content if any exists (if returning from a modal route)
+   * Keep track of how many elements initially exist and ensure that many exist the next call
+   * since returning from a modal route run this again but data is not cleared
    */
   resetStationsList() {
-    const range = document.createRange();
+    let initialCount = this.stationsList.getAttribute('data-initial-count');
+    const currentCount = this.stationsList.childElementCount;
 
-    range.selectNodeContents(this.stationsList);
-    range.deleteContents();
+    if (initialCount === null) {
+      initialCount = currentCount;
+      this.stationsList.setAttribute('data-initial-count', initialCount);
+    }
+    initialCount = parseInt(initialCount);
+
+    if (initialCount < currentCount) {
+      const range = document.createRange();
+
+      range.selectNodeContents(this.stationsList);
+      if (initialCount !== 0) {
+        range.setStartAfter(this.stationsList.children[initialCount - 1]);
+      }
+      range.deleteContents();
+    }
+
   }
   /**
    * Get local stations from api
