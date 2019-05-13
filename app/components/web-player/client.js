@@ -9,6 +9,9 @@ const clientPlayerInterface = require('../../services/client/ClientPlayerInterfa
 let webPlayer = null;
 
 class WebPlayer extends Audio {
+  /**
+   * @override
+   */
   constructor(component) {
     super(component);
   }
@@ -21,47 +24,36 @@ class WebPlayer extends Audio {
     return { id: component.id, media, node: component, persistent: true };
   }
   /**
-   * adds an event for the specific video type
+   * proxy events through the node
    *
    * @override
-   * @param {string} type
-   * @param {function} listener
    */
   addEvent(type, listener) {
     this.getNode().addEventListener(type, listener);
   }
   /**
-   * Pause the media
    * @override
    */
   async pause() {
-    console.log('web-player PAUSE')
-
     await clientPlayerInterface.pause();
   }
   /**
-   * start the media (can be overridden)
    * @override
    */
   async play() {
-    console.log('web-player PLAY')
     await clientPlayerInterface.play();
   }
   /**
-   * mute the player
-   *
    * @override
    */
   async mute() {
-    // web-player is not allowed to be muted
+    // web-player is not allowed to be muted only paused
   }
   /**
-   * unmute the player
-   *
    * @override
    */
   async unmute() {
-    // web-player is not allowed to be muted
+    // web-player is not allowed to be muted only paused
   }
 }
 
@@ -69,6 +61,7 @@ class WebPlayer extends Audio {
 clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
   await clientPlayerInterface.mountPlayer();
 
+  // create an element that can represent the web player
   const dumbComponent = document.createElement('div');
 
   dumbComponent.id = 'radio-web-player';
@@ -86,14 +79,10 @@ clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (pay
   }
   syncPlayerButtons(id, playingClass);
 
-  console.log('dispatching media ', playerState)
   if (playerState === 'play') {
     // since events are being added to the component node, use them to dispatch the event
     webPlayer.getNode().dispatchEvent(new CustomEvent(webPlayer.getEventTypes().MEDIA_PLAY));
-  } else {
-    webPlayer.getNode().dispatchEvent(new CustomEvent(webPlayer.getEventTypes().MEDIA_STOP));
   }
-
 });
 
 /**

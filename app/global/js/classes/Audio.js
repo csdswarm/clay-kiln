@@ -3,11 +3,12 @@
 const Media = require('./Media');
 
 class Audio extends Media {
+  /**
+   * @override
+   *
+   */
   constructor(el, options) {
-    const audioOptions = { type: 'Audio' },
-      superOptions =  options ? { ...options, ...audioOptions } : audioOptions;
-
-    super(el, superOptions);
+    super(el, options);
   }
 }
 

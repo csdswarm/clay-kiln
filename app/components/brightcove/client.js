@@ -4,6 +4,9 @@
 const Video = require('../../global/js/classes/Video');
 
 class Brightcove extends Video {
+  /**
+   * @override
+   */
   constructor(brightcoveComponent) {
     const videoPlayer = brightcoveComponent.querySelector('video-js'),
       brightcoveAccount = videoPlayer.getAttribute('data-account'),
@@ -12,14 +15,9 @@ class Brightcove extends Video {
     super(videoPlayer, { script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js` });
   }
   /**
-   * Construct the player
-   *
    * @override
-   * @param {Element} component
-   * @return {object}
    */
   createMedia(component) {
-    // eslint-disable-next-line no-undef
     const id = component.getAttribute('id'),
       media = bc(id),
       node = media.el();
@@ -27,10 +25,7 @@ class Brightcove extends Video {
     return { id, media, node };
   }
   /**
-   * Returns the event types for the video, should be overloaded
-   *
    * @override
-   * @return {object}
    */
   getEventTypes() {
     return {
@@ -41,31 +36,23 @@ class Brightcove extends Video {
     };
   }
   /**
-   * adds an event for the specific video type
+   * use the brightcove event listener
    *
    * @override
-   * @param {string} type
-   * @param {function} listener
    */
   addEvent(type, listener) {
     this.getMedia().on(type, listener);
   }
   /**
-   * mute the player
-   *
    * @override
    */
   async mute() {
-    // console.log('brightcove mute')
     await this.getMedia().muted(true);
   }
   /**
-   * unmute the player
-   *
    * @override
    */
   async unmute() {
-    // console.log('brightcove unmute')
     await this.getMedia().muted(false);
   }
 }

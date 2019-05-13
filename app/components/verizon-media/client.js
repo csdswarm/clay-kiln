@@ -3,15 +3,14 @@
 const Video = require('../../global/js/classes/Video');
 
 class VerizonMedia extends Video {
+  /**
+   * @override
+   */
   constructor(verizonMediaComponent) {
     super(verizonMediaComponent.querySelector('video-js'), { script: '//cdn.vidible.tv/prod/player/js/latest/vidible-min.js' });
   }
   /**
-   * Construct the player
-   *
    * @override
-   * @param {Element} component
-   * @return {object}
    */
   createMedia(component) {
     // eslint-disable-next-line no-undef
@@ -24,16 +23,12 @@ class VerizonMedia extends Video {
         'm.playback': 'pause',
         'm.responsive': 'true'
       }).load(),
-      id = component.getAttribute('data-video-id'),
-      node = component;
+      id = component.getAttribute('data-video-id');
 
-    return { id, media, node };
+    return { id, media, node: component };
   }
   /**
-   * * Returns the event types for the video, should be overloaded
-   *
    * @override
-   * @return {object}
    */
   getEventTypes() {
     return {
@@ -48,16 +43,12 @@ class VerizonMedia extends Video {
     };
   }
   /**
-   * mute the player
-   *
    * @override
    */
   async mute() {
     await this.getMedia().mute();
   }
   /**
-   * unmute the player
-   *
    * @override
    */
   async unmute() {

@@ -2,12 +2,10 @@
 
 // Polyfill
 require('intersection-observer');
-let availableMedia = [];
+let currentMedia = [];
 
-const clearAvailableMedia = () => {
-  //TODO delete the reference from the global variable?
-    availableMedia = availableMedia.filter(media => media.persistent);
-    console.log('DESTROY availableMedia', availableMedia);
+const clearCurrentMedia = () => {
+    currentMedia = currentMedia.filter(media => media.persistent);
   },
   callbacks = {},
   defaultOptions = {
@@ -15,10 +13,11 @@ const clearAvailableMedia = () => {
     callback: null,
     type: 'Media',
     config: {}
-  };
+  },
+  CALLBACK_COMPLETE = 'COMPLETE';
 
 // Listener for dismount to delete medias
-document.addEventListener('dismount', clearAvailableMedia);
+document.addEventListener('dismount', clearCurrentMedia);
 
 class Media {
   /**
@@ -35,7 +34,7 @@ class Media {
 
     this.options = options;
 
-    if (this.options.script && (!this.options.callback || callbacks[this.options.callback] !== 'COMPLETE')) {
+    if (this.options.script && (!this.options.callback || callbacks[this.options.callback] !== CALLBACK_COMPLETE)) {
       const script = document.createElement('script');
 
       script.src = this.options.script;
@@ -50,30 +49,30 @@ class Media {
         window[this.options.callback] = () => this.processCallbacks(this.options.callback);
       } else {
         // Call a function to process the media once media's JavaScript loaded
-        script.onload = () => this.whenMediaReady(component);
+        script.onload = () => this.whenScriptsLoaded(component);
       }
 
       // Add the script tag
       document.head.appendChild(script);
     } else {
-      this.whenMediaReady(component);
+      this.whenScriptsLoaded(component);
     }
   }
   /**
-   * run all callbacks that have been added
+   * run all callbacks that have been added and mark this callback has having been run
    *
    * @param {string} key
    */
   processCallbacks(key) {
-    callbacks[key].forEach(item => item.instance.whenMediaReady(item.component));
-    callbacks[key] = 'COMPLETE';
+    callbacks[key].forEach(item => item.instance.whenScriptsLoaded(item.component));
+    callbacks[key] = CALLBACK_COMPLETE;
   }
   /**
-   * process the media once it is ready
+   * process the media once the scripts have been loaded
    *
    * @param {Element} component
    */
-  whenMediaReady(component) {
+  whenScriptsLoaded(component) {
     const { id, media, node, persistent } = this.createMedia(component);
 
     this.id = id;
@@ -83,37 +82,23 @@ class Media {
 
     this.prepareMedia();
   }
+  /**
+   * add the events to pause media when required
+   *
+   */
   prepareMedia() {
     const mediaObserver = new IntersectionObserver(this.mediaIsNotInView.bind(this), {threshold: 0}),
       eventTypes = this.getEventTypes();
 
     // When a media begins playing trigger a stop on all others on page (must track media and ad events)
-    this.addEvent(eventTypes.MEDIA_PLAY, () =>{ console.log('MEDIA PLAY'); this.pauseOtherActiveMedia(); });
-    this.addEvent(eventTypes.AD_PLAY, () =>{ console.log('AD PLAY'); this.pauseOtherActiveMedia(); });
+    this.addEvent(eventTypes.MEDIA_PLAY, () => this.pauseOtherActiveMedia());
+    this.addEvent(eventTypes.AD_PLAY, () => this.pauseOtherActiveMedia());
 
     // Observe media for if it goes out of view
     mediaObserver.observe(this.getNode());
 
     // Once completely setup, add it to the list of media on the page
-    availableMedia.push(this);
-    console.log('AVAIlABLE MEDIA ADDED', availableMedia);
-  }
-  /**
-   * get the base type of media
-   *
-   * @return {string}
-   */
-  getType() {
-    return this.options.type;
-  }
-  /**
-   * Construct the media (needs to be overridden)
-   *
-   * @param {Element} component
-   * @return {object}
-   */
-  createMedia(component) {
-    return { id: component.id, media: component.media, node: component.node, persistent: component.persistent };
+    currentMedia.push(this);
   }
   /**
    * Returns the node
@@ -140,6 +125,48 @@ class Media {
     return this.id;
   }
   /**
+   * Check if the media has gone out of view
+   *
+   * @param {array} changes
+   */
+  mediaIsNotInView(changes) {
+    changes.forEach(change => {
+      if (change.intersectionRatio === 0) {
+        this.pause();
+      }
+    });
+  }
+  /**
+   * Loop over all media on page and pause them if it's not this media
+   */
+  pauseOtherActiveMedia() {
+    const excludeMediaId = this.getMediaId();
+
+    // Loop over all media on the current page
+    currentMedia.forEach((mediaOnPage) => {
+      if (excludeMediaId !== mediaOnPage.id) {
+        mediaOnPage.pause();
+      }
+    });
+  }
+  /**
+   * if debugging is enabled for this instance, log the arguments
+   */
+  log() {
+    if (this.options.debug) {
+      console.log.apply(this, arguments);
+    }
+  }
+  /**
+   * Construct the media (must to be overridden)
+   *
+   * @param {Element} component
+   * @return {object}
+   */
+  createMedia(component) {
+    return { id: component.id, media: component.media, node: component.node, persistent: component.persistent };
+  }
+  /**
    * Returns the event types for the media (can be overridden)
    *
    * @return {object}
@@ -153,75 +180,37 @@ class Media {
     };
   }
   /**
-   * adds an event for the specific media type
+   * adds an event for the specific media type (can be overridden)
    *
    * @param {string} type
    * @param {function} listener
-   * @param {object} [options]
    */
-  addEvent(type, listener, options) {
-    this.getMedia().addEventListener(type, listener, options);
-  }
-  /**
-   * Check if the media has gone out of view
-   *
-   * @param {array} changes
-   */
-  mediaIsNotInView(changes) {
-    changes.forEach(change => {
-      if (change.intersectionRatio === 0) {
-        console.log('MEDIA NOT IN VIEW PAUSE', this)
-        this.pause();
-      }
-    });
+  addEvent(type, listener) {
+    this.getMedia().addEventListener(type, listener);
   }
   /**
    * Pause the media (can be overridden)
    */
   async pause() {
-    // this.log('MEDIA PAUSE', this.media)
     await this.getMedia().pause();
   }
   /**
    * start the media (can be overridden)
    */
   async play() {
-    // this.log('MEDIA PLAY', this.media)
     await this.getMedia().play();
   }
   /**
    * mute the media (can be overridden)
    */
   async mute() {
-    // this.log('media mute', this.media)
     this.getMedia().muted = true;
   }
   /**
    * unmute the media (can be overridden)
    */
   async unmute() {
-    // this.log('media unmute', this.media)
     this.getMedia().muted = false;
-  }
-  /**
-   * Loop over all medias on page and pause them if it's not the media in question
-   */
-  pauseOtherActiveMedia() {
-    const excludeMediaId = this.getMediaId();
-    debugger;
-    this.log('PAUSE ALL:', excludeMediaId)
-    // Loop over all media on the current page
-    availableMedia.forEach((mediaOnPage) => {
-      if (excludeMediaId !== mediaOnPage.id) {
-        this.log('PAUSING:', mediaOnPage.constructor.name)
-        mediaOnPage.pause();
-      }
-    });
-  }
-  log() {
-    if (this.options.debug) {
-      console.log.apply(this, arguments);
-    }
   }
 }
 

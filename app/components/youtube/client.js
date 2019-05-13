@@ -13,13 +13,22 @@ class YouTube extends Video {
   }
 
   /**
+   * dispatch an event from the node
+   *
+   * @param {string} event
+   */
+  dispatchEvent(event) {
+    this.getNode().dispatchEvent(new Event(event));
+  }
+
+  /**
    * responds to the player state changes dispatching the events
    *
    * @param {Event} event
    */
   onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
-      this.getNode().dispatchEvent(new Event(this.getEventTypes().MEDIA_PLAY));
+      this.dispatchEvent(this.getEventTypes().MEDIA_PLAY);
     }
   }
 
@@ -28,7 +37,7 @@ class YouTube extends Video {
    *
    */
   onPlayerReady() {
-    this.getNode().dispatchEvent(new Event(this.getEventTypes().MEDIA_READY));
+    this.dispatchEvent(this.getEventTypes().MEDIA_READY);
   }
 
   /**
@@ -36,7 +45,7 @@ class YouTube extends Video {
    *
    */
   onPlayerVolumeChange() {
-    this.getNode().dispatchEvent(new Event(this.getEventTypes().MEDIA_VOLUME));
+    this.dispatchEvent(this.getEventTypes().MEDIA_VOLUME);
   }
 
   /**
@@ -52,7 +61,7 @@ class YouTube extends Video {
       playerOptions: {
         height: 'auto',
         width: '100%',
-        // relay events back to the class
+        // relay events back to the super class
         events: {
           onReady: () => this.onPlayerReady(),
           onStateChange: (event) => this.onPlayerStateChange(event),
@@ -75,12 +84,12 @@ class YouTube extends Video {
         videoId: config.videoConfig.contentId
       };
     }
-    console.log('YOUTUBE create', component)
 
-    const media = new YT.Player(config.videoConfig.videoContainerId, config.playerOptions);
-
-window.youtube = media;
-    return { id: component.dataset.elementId, media, node: component };
+    return {
+      id: component.dataset.elementId,
+      media: new YT.Player(config.videoConfig.videoContainerId, config.playerOptions),
+      node: component
+    };
   }
   /**
    * proxy events through the node
@@ -88,42 +97,30 @@ window.youtube = media;
    * @override
    */
   addEvent(type, listener) {
-    console.log('ADD EVENT', type, this.getNode())
     this.getNode().addEventListener(type, listener);
   }
   /**
-   * Pause the media
    * @override
    */
   async pause() {
-    console.log('youtube PAUSE', this, this.getMedia(), this.getMedia().pauseVideo, this.getMedia().playVideo)
-
     await this.getMedia().pauseVideo();
   }
   /**
-   * start the media (can be overridden)
    * @override
    */
   async play() {
-    // console.log('youtube PLAY')
     await this.getMedia().playVideo();
   }
   /**
-   * mute the player
-   *
    * @override
    */
   async mute() {
-    // console.log('youtube MUTE')
     await this.getMedia().mute();
   }
   /**
-   * unmute the player
-   *
    * @override
    */
   async unmute() {
-    // console.log('youtube UNMUTE')
     await this.getMedia().unMute();
   }
 }
