@@ -4,7 +4,7 @@ const Video = require('../../global/js/classes/Video');
 
 class VerizonMedia extends Video {
   constructor(verizonMediaComponent) {
-    super(verizonMediaComponent.querySelector('video-js'), '//cdn.vidible.tv/prod/player/js/latest/vidible-min.js');
+    super(verizonMediaComponent.querySelector('video-js'), { script: '//cdn.vidible.tv/prod/player/js/latest/vidible-min.js' });
   }
   /**
    * Construct the player

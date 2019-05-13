@@ -9,7 +9,7 @@ class Brightcove extends Video {
       brightcoveAccount = videoPlayer.getAttribute('data-account'),
       brightcovePlayerId = videoPlayer.getAttribute('data-player');
 
-    super(videoPlayer, `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`);
+    super(videoPlayer, { script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js` });
   }
   /**
    * Construct the player
@@ -56,7 +56,7 @@ class Brightcove extends Video {
    * @override
    */
   async mute() {
-    console.log('brightcove mute')
+    // console.log('brightcove mute')
     await this.getMedia().muted(true);
   }
   /**
@@ -65,7 +65,7 @@ class Brightcove extends Video {
    * @override
    */
   async unmute() {
-    console.log('brightcove unmute')
+    // console.log('brightcove unmute')
     await this.getMedia().muted(false);
   }
 }

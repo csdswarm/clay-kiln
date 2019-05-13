@@ -2,48 +2,12 @@
 
 const Video = require('../../global/js/classes/Video');
 
-//TODO do we need ad_play and ad_volumne also?
-
-
 class YouTube extends Video {
   constructor(el) {
-    console.log('WAT', el);
     const options = {
       script: 'https://www.youtube.com/player_api',
-      callback: 'onYouTubePlayerAPIReady',
-      config: {
-        videoConfig: {
-          videoContainerId: el.getAttribute('data-element-id').trim(),
-          contentId: el.getAttribute('data-content-id').trim(),
-          isPlaylist: el.getAttribute('data-is-playlist') === 'true'
-        },
-        playerOptions: {
-          height: 'auto',
-          width: '100%',
-          // relay events back to the class
-          events: {
-            onReady: () => this.onPlayerReady(),
-            onStateChange: (event) => this.onPlayerStateChange(event),
-            onVolumeChange: () => this.onPlayerVolumeChange()
-          }
-        }
-      }
+      callback: 'onYouTubePlayerAPIReady'
     };
-
-    if (options.config.videoConfig.isPlaylist) {
-      options.config.playerOptions = {
-        ...options.config.playerOptions,
-        playerVars:{
-          listType: 'playlist',
-          list: options.config.videoConfig.contentId
-        }
-      };
-    } else {
-      options.config.playerOptions = {
-        ...options.config.playerOptions,
-        videoId: options.config.videoConfig.contentId
-      };
-    }
 
     super(el, options);
   }
@@ -54,7 +18,6 @@ class YouTube extends Video {
    * @param {Event} event
    */
   onPlayerStateChange(event) {
-    console.log(event.data, this)
     if (event.data === YT.PlayerState.PLAYING) {
       this.getNode().dispatchEvent(new Event(this.getEventTypes().MEDIA_PLAY));
     }
@@ -65,7 +28,6 @@ class YouTube extends Video {
    *
    */
   onPlayerReady() {
-    console.log('onPlayerReady')
     this.getNode().dispatchEvent(new Event(this.getEventTypes().MEDIA_READY));
   }
 
@@ -74,19 +36,50 @@ class YouTube extends Video {
    *
    */
   onPlayerVolumeChange() {
-    console.log('onPlayerVolumeChange')
-
     this.getNode().dispatchEvent(new Event(this.getEventTypes().MEDIA_VOLUME));
   }
 
   /**
    * @override
    */
-  createMedia(component, config) {
+  createMedia(component) {
+    const config = {
+      videoConfig: {
+        videoContainerId: component.getAttribute('data-element-id').trim(),
+        contentId: component.getAttribute('data-content-id').trim(),
+        isPlaylist: component.getAttribute('data-is-playlist') === 'true'
+      },
+      playerOptions: {
+        height: 'auto',
+        width: '100%',
+        // relay events back to the class
+        events: {
+          onReady: () => this.onPlayerReady(),
+          onStateChange: (event) => this.onPlayerStateChange(event),
+          onVolumeChange: () => this.onPlayerVolumeChange()
+        }
+      }
+    };
+
+    if (config.videoConfig.isPlaylist) {
+      config.playerOptions = {
+        ...config.playerOptions,
+        playerVars:{
+          listType: 'playlist',
+          list: config.videoConfig.contentId
+        }
+      };
+    } else {
+      config.playerOptions = {
+        ...config.playerOptions,
+        videoId: config.videoConfig.contentId
+      };
+    }
+    console.log('YOUTUBE create', component)
+
     const media = new YT.Player(config.videoConfig.videoContainerId, config.playerOptions);
 
 window.youtube = media;
-console.log('create', component)
     return { id: component.dataset.elementId, media, node: component };
   }
   /**
@@ -95,6 +88,7 @@ console.log('create', component)
    * @override
    */
   addEvent(type, listener) {
+    console.log('ADD EVENT', type, this.getNode())
     this.getNode().addEventListener(type, listener);
   }
   /**
@@ -102,7 +96,7 @@ console.log('create', component)
    * @override
    */
   async pause() {
-    console.log('youtube PAUSE', this.getMedia())
+    console.log('youtube PAUSE', this, this.getMedia(), this.getMedia().pauseVideo, this.getMedia().playVideo)
 
     await this.getMedia().pauseVideo();
   }
@@ -111,7 +105,7 @@ console.log('create', component)
    * @override
    */
   async play() {
-    console.log('youtube PLAY')
+    // console.log('youtube PLAY')
     await this.getMedia().playVideo();
   }
   /**
@@ -120,7 +114,7 @@ console.log('create', component)
    * @override
    */
   async mute() {
-    console.log('youtube MUTE')
+    // console.log('youtube MUTE')
     await this.getMedia().mute();
   }
   /**
@@ -129,7 +123,7 @@ console.log('create', component)
    * @override
    */
   async unmute() {
-    console.log('youtube UNMUTE')
+    // console.log('youtube UNMUTE')
     await this.getMedia().unMute();
   }
 }
