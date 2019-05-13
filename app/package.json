@@ -24,7 +24,7 @@
     "amphora-html": "^4.0.2",
     "amphora-schedule": "^1.0.2",
     "amphora-search": "^7.3.0",
-    "amphora-storage-postgres": "^1.2.0",
+    "amphora-storage-postgres": "^1.2.1",
     "aws-sdk": "^2.403.0",
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
