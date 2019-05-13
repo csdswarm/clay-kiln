@@ -2,7 +2,7 @@
   <div class="sign-in">
     <fieldset>
       <h1 class="h1-login" align="center"> <span>Log In</span> <span class="small" style=" padding:0px 10px 0px 10px">or</span>
-        <facebook-button :link="facebookLink"/>
+        <facebook-button :link="facebookLink" @loggedin="closeModal"/>
       </h1>
       <message></message>
       <div class="floating-label">
@@ -43,7 +43,7 @@ export default {
   computed: {
     facebookLink () {
       const { metadata } = this.$store.state
-      const facebookRedirectUri = `https://clay.radio.com/account/facebook-callback`
+      const facebookRedirectUri = `https://clay.radio.com/account/facebook-callback`;
       const redirect = { redirect_uri: this.$route.query.redirect_uri }
       return `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(JSON.stringify(redirect))}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
     }
@@ -61,6 +61,9 @@ export default {
   methods: {
     onFieldChange (event) {
       this.user[event.target.name] = event.target.value
+    },
+    closeModal () {
+      this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
     },
     validateForm () {
       if (!this.user.email) {

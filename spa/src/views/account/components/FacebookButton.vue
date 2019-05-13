@@ -18,7 +18,10 @@ export default {
 
   methods: {
     onClick () {
-      return window.open(this.link, '_blank')
+      const win = window.open(this.link, '_blank')
+      win.onbeforeunload = () => {
+        this.$emit('loggedin');
+      }
     }
   }
 }

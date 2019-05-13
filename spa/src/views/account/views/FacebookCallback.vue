@@ -33,7 +33,7 @@ export default {
      * The workaround for this is to request Facebook link second time, so it would be successful
      */
     if (errorDescription && errorDescription.includes(WORKAROUND_EXCEPTION)) {
-      window.open(cognitoFacebookUrl, '_self')
+      window.open(cognitoFacebookUrl, '_blank')
       return
     }
 
@@ -57,6 +57,9 @@ export default {
 
     service.facebookCallback(platform, code, facebookRedirectUri)
       .then(resolvePlatformFbLogin)
+      .then(() => {
+        window.close();
+      })
       .catch(err => {
         debugLog('Could not login to Facebook', err)
         this.$router.push({ path: `/account/error` })

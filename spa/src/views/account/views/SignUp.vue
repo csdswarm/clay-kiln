@@ -5,7 +5,7 @@
         <span
           class="small"
           style="padding:0px 10px 0px 10px;">or</span>
-        <facebook-button :link="facebookLink"/>
+        <facebook-button :link="facebookLink" @loggedin="closeModal"/>
       </h1>
       <message></message>
       <div class="floating-label">
@@ -107,6 +107,10 @@ export default {
   methods: {
     onFieldChange (event) {
       this.user[event.target.name] = event.target.value
+    },
+
+    closeModal () {
+      this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
     },
 
     validateForm () {
