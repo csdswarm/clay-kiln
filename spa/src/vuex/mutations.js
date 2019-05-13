@@ -1,5 +1,6 @@
 import * as mutationTypes from './mutationTypes'
 import vuexStoreDefaultState from '@/store'
+import router from '../router'
 
 const createModalMessage = (type, message) => { return { type, message } }
 
@@ -46,9 +47,8 @@ export default {
   [mutationTypes.SET_METADATA]: (state, metadata) => { state.metadata = metadata },
   [mutationTypes.SET_USER]: (state, user) => { state.user = user },
   [mutationTypes.SET_REDIRECT_URI]: (state, redirectUri) => { state.redirectUri = redirectUri },
-  [mutationTypes.SUCCESS_REDIRECT]: (state, platform) => {
-    return state.redirectUri && platform !== 'webplayer'
-      ? window.open(state.redirectUri, '_self') : this.$router.push({ path: `/account/success` })
+  [mutationTypes.SUCCESS_REDIRECT]: (state) => {
+    return state.redirectUri ? window.open(state.redirectUri, '_self') : router.push({ path: `/account/success` })
   },
   [mutationTypes.SIGN_UP_COMPLETE]: (state) => { state.user.signUpComplete = true },
   [mutationTypes.ACCOUNT_MODAL_LOADING]: (state, loading) => { state.modalLoading = loading },

@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import service from '@/services'
-import { debugLog, setToLocalStore } from '@/utils'
+import service from '../services'
+import { debugLog } from '../utils'
 import { isMobileDevice } from '../utils'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
@@ -13,15 +13,15 @@ export default {
   created () {
     const platform = 'webplayer'
     const { code } = this.$route.query
-    const { errorDescription } = this.$route.query.error_description
+    const errorDescription = this.$route.query.error_description
     const { metadata } = this.$store.state
-
-    debugLog('facebook callback query', this.$route.query)
-
-    const facebookRedirectUri = `${metadata.host}/account/facebook-callback`
 
     // Facebook adds '\' character when it redirects back
     const redirectState = this.$route.query.state.replace(/\\/g, '')
+
+    debugLog('facebook callback query', this.$route.query)
+
+    const facebookRedirectUri = `https://clay.radio.com/account/facebook-callback`
 
     const cognitoFacebookUrl = `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(redirectState)}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
 
@@ -43,36 +43,19 @@ export default {
     }
 
     // Need to set external redirect uri
-    const { redirectUri } = JSON.parse(redirectState).redirect_uri
+    const { redirectUri } = JSON.parse(redirectState)
     this.$store.commit(mutationTypes.SET_REDIRECT_URI, redirectUri)
 
     const resolvePlatformFbLogin = async facebookCallbackResult => {
       const user = facebookCallbackResult.data
+
       this.$store.commit(mutationTypes.SET_USER, user)
-
-      let hasProfile = false
-      await service.getProfile()
-        .then(() => {
-          hasProfile = true
-        })
-        .catch((e) => {
-          hasProfile = false
-        })
-
-      if (platform === 'webplayer' && hasProfile) {
-        return setToLocalStore(user).then(() => this.$store.commit('SUCCESS_REDIRECT', platform))
-      } else if (isMobileDevice()) {
-        // ios and android handles profile in their own app
-        this.$store.commit(mutationTypes.SET_USER, { ...user, has_profile: hasProfile })
-        this.$store.commit(mutationTypes.SUCCESS_REDIRECT, platform)
-      } else {
-        this.$router.push({ path: `/account/profile` })
-      }
+      this.$store.commit(mutationTypes.SUCCESS_REDIRECT, platform)
 
       return Promise.resolve(null)
     }
 
-    service.facebookCallback(platform, code)
+    service.facebookCallback(platform, code, facebookRedirectUri)
       .then(resolvePlatformFbLogin)
       .catch(err => {
         debugLog('Could not login to Facebook', err)

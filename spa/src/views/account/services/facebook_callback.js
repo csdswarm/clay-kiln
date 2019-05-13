@@ -2,13 +2,14 @@ import axios from 'axios'
 import formatError from './format_error'
 import { debugLog } from '../utils'
 
-function facebookCallback (platform, code) {
-  const url = '/radium/v1/app/facebook_callback'
+function facebookCallback (platform, code, redirectUri) {
+  const url = '/radium/facebook_callback'
   const options = {
     method: 'POST',
     data: {
       platform,
-      code
+      code,
+      redirectUri
     },
     url
   }

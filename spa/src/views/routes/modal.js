@@ -3,9 +3,9 @@ import CreateProfile from '../account/views/CreateProfile'
 import UpdateProfile from '../account/views/UpdateProfile'
 // import GenericError from '../views/GenericError'
 // import Welcome from '../views/Welcome'
-// import FacebookCallback from '../views/FacebookCallback'
+import FacebookCallback from '../account/views/FacebookCallback'
 import Login from '../account/views/Login'
-// import GenericSuccess from '../views/GenericSuccess'
+import GenericSuccess from '../account/views/GenericSuccess'
 // import ForgotYourPassword from '../views/ForgotYourPassword'
 // import ResetPassword from '../views/ResetPassword'
 import UpdatePassword from '../account/views/UpdatePassword'
@@ -32,12 +32,12 @@ const routes = [
     component: UpdateProfile,
     props: true
   },
-  // {
-  //   path: '/account/facebook-callback',
-  //   name: 'FacebookCallback',
-  //   component: FacebookCallback,
-  //   props: true,
-  // },
+  {
+    path: '/account/facebook-callback',
+    name: 'FacebookCallback',
+    component: FacebookCallback,
+    props: true
+  },
   {
     path: '/account/signup',
     name: 'SignUp',
@@ -71,17 +71,17 @@ const routes = [
     path: '/account/login',
     name: 'Login',
     component: Login
-  }
+  },
   // {
   //   path: '/account/password/forgot',
   //   name: 'ForgotYourPassword',
   //   component: ForgotYourPassword,
   // },
-  // {
-  //   path: '/account/success',
-  //   name: 'GenericSuccess',
-  //   component: GenericSuccess,
-  // },
+  {
+    path: '/account/success',
+    name: 'GenericSuccess',
+    component: GenericSuccess
+  }
   // {
   //   path: '/',
   //   name: 'Home',
