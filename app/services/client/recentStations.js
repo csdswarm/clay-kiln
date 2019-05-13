@@ -13,7 +13,7 @@ function get() {
   if (!recentStationsIDs) {
     return [];
   } else {
-    return recentStationsIDs.split(',').filter(function(stationID) {
+    return recentStationsIDs.split(',').filter(function (stationID) {
       // Remove stored station objects
       return !isNaN(parseInt(stationID));
     });
