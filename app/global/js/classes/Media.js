@@ -44,7 +44,7 @@ class Media {
         if (!callbacks[options.callback]) {
           callbacks[this.options.callback] = [];
         }
-        callbacks[this.options.callback].push({component, instance: this})
+        callbacks[this.options.callback].push({ component, instance: this });
 
         window[this.options.callback] = () => this.processCallbacks(this.options.callback);
       } else {
@@ -87,7 +87,7 @@ class Media {
    *
    */
   prepareMedia() {
-    const mediaObserver = new IntersectionObserver(this.mediaIsNotInView.bind(this), {threshold: 0}),
+    const mediaObserver = new IntersectionObserver((change) => this.mediaIsNotInView(change), {threshold: 0}),
       eventTypes = this.getEventTypes();
 
     // When a media begins playing trigger a stop on all others on page (must track media and ad events)
@@ -150,7 +150,7 @@ class Media {
     });
   }
   /**
-   * if debugging is enabled for this instance, log the arguments
+   * helper method to log if debugging is enabled for this instance
    */
   log() {
     if (this.options.debug) {
@@ -184,9 +184,10 @@ class Media {
    *
    * @param {string} type
    * @param {function} listener
+   * @param {object} [options]
    */
-  addEvent(type, listener) {
-    this.getMedia().addEventListener(type, listener);
+  addEvent(type, listener, options) {
+    this.getMedia().addEventListener(type, listener, options);
   }
   /**
    * Pause the media (can be overridden)

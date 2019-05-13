@@ -16,6 +16,14 @@ class WebPlayer extends Audio {
     super(component);
   }
   /**
+   * dispatch an event from the node
+   *
+   * @param {string} event
+   */
+  dispatchEvent(event) {
+    this.getNode().dispatchEvent(new Event(event));
+  }
+  /**
    * @override
    */
   createMedia(component) {
@@ -81,7 +89,7 @@ clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (pay
 
   if (playerState === 'play') {
     // since events are being added to the component node, use them to dispatch the event
-    webPlayer.getNode().dispatchEvent(new CustomEvent(webPlayer.getEventTypes().MEDIA_PLAY));
+    webPlayer.dispatchEvent(webPlayer.getEventTypes().MEDIA_PLAY);
   }
 });
 
