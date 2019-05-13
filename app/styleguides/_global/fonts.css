@@ -452,9 +452,32 @@ em, i {
   @mixin font CircularStd-Black, 24px, $white, -.58px, 140px;
 }
 
-/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||||| Global Sponsor Logos Styleguide |||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Global Sponsor Logos Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin global-sponsor-logos-font1 {
   @mixin font ProximaNova-Regular, 14px, $black, -.22px, 17px;
+}
+
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||||| Legal Fonts Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin static-page-font1 {
+  @mixin font CircularStd-Black, 45px, $black, -.32px, 25px;
+}
+@define-mixin static-page-font2 {
+  @mixin font CircularStd-Black, 35px, $black, -.23px, 18px;
+}
+@define-mixin static-page-font3 {
+  @mixin font CircularStd-Black, 24px, $black, -.23px, 18px;
+}
+@define-mixin static-page-font4 {
+  @mixin font ProximaNova-Light, 18px, $white, -.36px, 30px;
+}
+@define-mixin static-page-font5 {
+  @mixin font ProximaNova-Regular, 18px, $white, -.36px, 30px;
+}
+@define-mixin static-page-font6 {
+  @mixin font ProximaNova-Bold, 18px, $white, -.36px, 30px;
 }

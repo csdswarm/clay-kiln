@@ -1,0 +1,52 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.fonts {
+  @mixin static-page-font1;
+  @mixin static-page-font2;
+  @mixin static-page-font3;
+  @mixin static-page-font4;
+  @mixin static-page-font5;
+  @mixin static-page-font6;
+}
+
+.static-page {
+  @mixin static-page-font5;
+
+  &__header {
+  }
+
+    &__headline {
+      @mixin static-page-font1;
+
+      @mixin medium-small-screen {
+        @mixin static-page-font2;
+      }
+    }
+
+
+  &__body {
+
+  }
+
+    &__content {
+
+    }
+
+  @mixin default-screen {
+  }
+
+  @mixin large-screen {
+  }
+
+  @mixin medium-screen {
+  }
+
+  @mixin medium-small-screen {
+  }
+
+  @mixin small-screen {
+  }
+}
+

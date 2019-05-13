@@ -1,0 +1,31 @@
+_version: 1.0
+_confirmRemoval: true
+
+headline:
+  _label: Headline
+  _subscribe: articleHeadline #is this needed? do I need to create a pageHeadline? What does this do?
+  _placeholder:
+    height: 40px
+    text: Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+    help: Appears as page title
+
+content:
+  _label: Page Content
+  _placeholder:
+    text: Page Content
+    height: 600px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - image
+      - html-embed
+      - subheader
+      - paragraph
