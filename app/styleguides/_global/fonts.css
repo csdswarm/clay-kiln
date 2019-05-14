@@ -138,6 +138,10 @@ em, i {
 @define-mixin article-font12 {
   @mixin font CircularStd-Medium, 14px, $black, -.23, 14px;
 }
+@define-mixin article-font13 {
+  @mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
+}
+
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||||||| Tags Fonts Styleguide |||||||||| */
@@ -367,4 +371,90 @@ em, i {
 }
 @define-mixin gallery-font6 {
   @mixin font CircularStd-Black, 18px, $tundora, -.22px, 25px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||| Station Detail Fonts Styleguide ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin station-detail-font1 {
+  @mixin font CircularStd-Black, 35px, $black, -.58px, 42px;
+}
+@define-mixin station-detail-font2 {
+  @mixin font CircularStd-Black, 24px, $black, -.58px, 30px;
+}
+@define-mixin station-detail-font3 {
+  @mixin font ProximaNova-Light, 18px, $black, -.58px, 25px;
+}
+@define-mixin station-detail-font4 {
+  @mixin font CircularStd-Black, 16px, $black, -.58px, 16px;
+}
+@define-mixin station-detail-font5 {
+  @mixin font CircularStd-Medium, 14px, $black, -.58px, 20px;
+}
+@define-mixin station-detail-font6 {
+  @mixin font CircularStd-Black, 13px, $black, -.58px, 15px;
+}
+@define-mixin station-detail-font7 {
+  @mixin font CircularStd-Medium, 12px, $black, -.58px, 14px;
+}
+@define-mixin station-detail-font8 {
+  @mixin font CircularStd-Medium, 12px, #767676, -.58px, 14px;
+}
+@define-mixin station-detail-font9 {
+  @mixin font CircularStd-Book, 12px, $boulder, -.58px, 18px;
+}
+@define-mixin station-detail-font10 {
+  @mixin font CircularStd-Medium, 11px, $boulder, -.58px, 13px;
+}
+@define-mixin station-detail-font11 {
+  @mixin font CircularStd-Black, 18px, $black, -.43px, 20px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||| Stations List Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin stations-list-font1 {
+  @mixin font CircularStd-Black, 18px, $black, -.43px, 20px;
+}
+@define-mixin stations-list-font2 {
+  @mixin font CircularStd-Black, 13px, $black, -.43px, 15px;
+}
+@define-mixin stations-list-font3 {
+  @mixin font CircularStd-Medium, 12px, $boulder, -.43px, 18px;
+}
+@define-mixin stations-list-font4 {
+  @mixin font CircularStd-Medium, 12px, $black, -.43px, 15px;
+}
+@define-mixin stations-list-font5 {
+  @mixin font CircularStd-Black, 14px, $silverChalice, -.43px, 18px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||       Selectr select box        ||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin selectr-select-box-font1 {
+  @mixin font CircularStd-Medium, 12px, $black, -.58px, 14px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||| Station Directory Fonts Styleguide |||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin stations-directory-font1 {
+  @mixin font CircularStd-Medium, 14px, $black, -.58px, 20px;
+}
+@define-mixin stations-directory-font2 {
+  @mixin font CircularStd-Book, 12px, $black, -.58px, 18px;
+}
+@define-mixin stations-directory-font3 {
+  @mixin font CircularStd-Medium, 12px, $black, -.58px, 15px;
+}
+@define-mixin directory-featured-font1 {
+  @mixin font CircularStd-Black, 24px, $white, -.58px, 140px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Global Sponsor Logos Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin global-sponsor-logos-font1 {
+  @mixin font ProximaNova-Regular, 14px, $black, -.22px, 17px;
 }

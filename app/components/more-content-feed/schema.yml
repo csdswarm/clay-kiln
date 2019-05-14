@@ -1,4 +1,4 @@
-_version: 4.0
+_version: 5.0
 _description: |
   A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
   The articles will be filtered by the section front of the URL, (ex: /sports/football with tags "NFL" and
@@ -239,6 +239,7 @@ items:
             value: instagram-post
           - brightcove
           - youtube
+          - verizon-media
           -
             name: html embed
             value: html-embed
@@ -262,6 +263,11 @@ introComponents:
   _componentList:
     include:
     - html-embed
+
+contentCollectionLogoSponsorship:
+  _component:
+    include:
+      - google-ad-manager
 
 googleAdRightRail:
   _component:

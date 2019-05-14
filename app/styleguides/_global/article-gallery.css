@@ -27,17 +27,22 @@
   padding-bottom: em(20);
   position: relative;
   word-wrap: break-word;
+
+  .component--breadcrumbs {
+    margin-bottom: em(10);
+  }
 }
 .article__header,
 .gallery__header {
   display: inline-block;
-  margin-bottom: em(30);
   .header__primary {
     @mixin article-font1;
-    margin-bottom: em(15, 45);
+    margin-bottom: em(25, 45);
   }
   .header__secondary {
     @mixin article-font3;
+    display: inline-block;
+    margin-bottom: em(25, 18);
   }
 }
 .article__body,
@@ -52,6 +57,7 @@
       display: flex;
       justify-content: center;
       .component--brightcove,
+      .component--verizon-media,
       .component--omny {
         width: 100%;
         height: auto;
@@ -62,6 +68,7 @@
       .component--facebook-post,
       .component--youtube,
       .component--brightcove,
+      .component--verizon-media,
       .component--omny {
         margin: 0;
         img {
@@ -71,6 +78,25 @@
       }
     }
   }
+
+  .body__loadmore {
+    cursor: pointer;
+    height: em(50, 20);
+    text-transform: uppercase;
+    @mixin more-content-feed-font1;
+    background-color: $parisPurple;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border: none;
+    outline: none;
+
+    .loadmore__text {
+      @mixin article-font13;
+    }
+  }
+
   .body__info {
     @mixin inline-block;
     float: left;
@@ -195,13 +221,13 @@
 @mixin medium-screen {
   .article__header,
   .gallery__header {
-    margin-bottom: em(25);
     .header__primary {
       @mixin article-font2;
-      margin-bottom: em(15, 35);
+      margin-bottom: em(25, 45);
     }
     .header__secondary {
       @mixin article-font4;
+      margin-bottom: em(25, 18);
     }
   }
   .article__body,
@@ -369,6 +395,8 @@
         }
       }
     }
+
+
   }
 }
 .clay-annotated {
@@ -389,42 +417,20 @@
   }
 }
 
-.article__breadcrumb,
-.gallery__breadcrumb {
-  margin-bottom: em(10);
-  .breadcrumb__link {
-    display: inline-block;
-    @mixin article-font12;
-    text-transform: uppercase;
-    text-decoration: none;
-
-
-    &--home {
-      height: em(10, 14);
-      width: em(10, 14);
-      margin-right: em(13, 14);
-      line-height: em(14, 14);
-
-      &:before {
-        display: none;
-      }
-    }
-  }
-
-  @define-mixin seperator $sectionFront, $color: $purple {
-    .component--article[data-section-front=$sectionFront] & .breadcrumb__separator,
-    .component--gallery[data-section-front=$sectionFront] & .breadcrumb__separator {
-      @mixin article-font12;
+@define-mixin separator $sectionFront, $color: $purple {
+  /* adding .component to increase specificity to override breadcrumbs default*/
+  .component.article--$sectionFront,
+  .component.gallery--$sectionFront{
+    .breadcrumbs__separator {
       color: $color;
     }
   }
-
-  @mixin seperator;
-  @mixin seperator music, $sunsetOrange;
-  @mixin seperator news, $lightningYellow;
-  @mixin seperator podcasts, $robinsEggBlue;
-  @mixin seperator sports, $azureRadience;
 }
+
+@mixin separator music, $sunsetOrange;
+@mixin separator news, $lightningYellow;
+@mixin separator podcasts, $robinsEggBlue;
+@mixin separator sports, $azureRadience;
 
 @define-mixin article-link-color $sectionFront, $color: $purple {
   .article--$sectionFront,
@@ -445,4 +451,3 @@
 @mixin article-link-color news, $lightningYellowRGB;
 @mixin article-link-color music, $sunsetOrangeRGB;
 @mixin article-link-color sports, $azureRadienceRGB;
-

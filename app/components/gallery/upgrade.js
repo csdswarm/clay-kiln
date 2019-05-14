@@ -17,3 +17,12 @@ module.exports['2.0'] = (uri, data) => {
     footer: []
   } : data;
 };
+
+module.exports['3.0'] = function (uri, data) {
+  const contentLogoSponsorshipURIPublished = `${uri.split('gallery')[0]}google-ad-manager/instances/contentPageLogoSponsorship`;
+
+  return {
+    ...data,
+    contentPageSponsorLogo: { _ref : contentLogoSponsorshipURIPublished }
+  };
+};

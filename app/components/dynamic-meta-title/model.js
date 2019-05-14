@@ -1,6 +1,7 @@
 'use strict';
 
-const { hypensToSpaces } = require('../../services/universal/dynamic-route-param');
+const { hypensToSpaces } = require('../../services/universal/dynamic-route-param'),
+  _get = require('lodash/get');
 
 module.exports.render = (ref, data, locals) => {
   if (data.routeParam && locals && locals.params) {
@@ -11,6 +12,12 @@ module.exports.render = (ref, data, locals) => {
       data.paramValue = hypensToSpaces(data.paramValue).replace(/\b\w/g, l => l.toUpperCase());
     }
 
+  } else if (data.localsKey && locals) {
+    const value = _get(locals, data.localsKey);
+
+    if (value) {
+      data.paramValue = value;
+    }
   }
 
   return data;
