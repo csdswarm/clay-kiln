@@ -89,15 +89,20 @@ const moment = require('moment'),
    *
    * @returns {array}
    */
-  next24Hours = () => {
+  get24Hours = () => {
     const details = [],
       currentHour = new Date().getHours();
 
-    for (let hour = currentHour; hour < currentHour + 24; hour++) {
-      const text = `${(((hour - 1) % 12) + 1) % 13}:00 ${(hour + 12) % 24 < 12 ? 'AM' : 'PM'}`,
-        value = parseInt(new Date(new Date().setHours(hour)).toISOString().split('T')[1].split(':')[0]);
+    for (let hour = 23; hour >= 0; hour--) {
+      const time = new Date(new Date().setHours(hour)).toISOString(),
+        text = moment(time).startOf('hour').format('h:mm A'),
+        value = parseInt(time.split('T')[1].split(':')[0]);
 
-      details.push({ text, value });
+      details.push({
+        text,
+        value,
+        selected: hour === currentHour
+      });
     }
 
     return details;
@@ -114,16 +119,17 @@ const moment = require('moment'),
   /**
    * Returns an array of text/value keys starting from the users current day with 7 days
    *
+   * @param {boolean} [reverse]
    * @returns {array}
    */
-  nextSevenDays = () => {
+  nextSevenDays = (reverse) => {
     const details = [],
       lang = getNavigatorLanguage(),
       today = new Date();
 
     // starting with today, add a week of days using the users locale
     for (let offset = 0; offset < 7; offset++) {
-      const day = new Date(new Date().setDate(today.getDate() + offset));
+      const day = new Date(new Date().setDate(today.getDate() + (reverse ? offset * -1 : offset)));
 
       details.push({ text: day.toLocaleString(lang, {  weekday: 'long' }), value: apiDayOfWeek(day.getDay()) });
     }
@@ -139,7 +145,7 @@ module.exports.userLocalDate = userLocalDate;
 module.exports.formatLocal = formatLocal;
 module.exports.nextSevenDays = nextSevenDays;
 module.exports.usersTimeZone = usersTimeZone;
-module.exports.next24Hours = next24Hours;
+module.exports.get24Hours = get24Hours;
 
 
 

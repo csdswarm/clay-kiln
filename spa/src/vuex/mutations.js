@@ -13,6 +13,9 @@ export default {
   [mutationTypes.LOAD_SPA_PAYLOAD_LOCALS]: (state, payload) => {
     state.spaPayloadLocals = payload
   },
+  [mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS]: (state, payload) => {
+    state.spaPayloadLocals = { ...state.spaPayloadLocals, ...payload }
+  },
   [mutationTypes.FLAG_SETUP_RAN]: (state, setupRan) => {
     state.setupRan = setupRan
   },
