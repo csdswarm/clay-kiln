@@ -53,6 +53,17 @@ function toLinkSegments(data) {
   };
 }
 
+/**
+ * Creates a single crumb object
+ *
+ * @param {string} url
+ * @param {string} text
+ * @return {object}
+ */
+function createCrumb(url, text) {
+  return {url, text};
+}
+
 
 /**
  * Returns a function intended to use with an Array.prototype.map method that converts a list of {text, segment}
@@ -68,12 +79,8 @@ function toLinkSegments(data) {
  * makeFullLink(arr[1], 1, arr);
  */
 function toFullLinks(host) {
-  return ({text}, index, segments) => ({
-    url: `//${host}/${concatValues(segments.slice(0, index + 1), 'segment')}`,
-    text
-  });
+  return ({text}, index, segments) => createCrumb(`//${host}/${concatValues(segments.slice(0, index + 1), 'segment')}`, text);
 }
-
 
 module.exports = {
   /**
@@ -82,14 +89,28 @@ module.exports = {
    * @param {Object} data the data context
    * @param {string[]} props list of properties on data to generate links from
    * @param {string} host the hostname of the site
-   * @returns {{text: string, url: string}[]} An array of link objects
    */
   autoLink(data, props, host) {
     const onlyExistingItems = prop => data[prop];
 
-    return props
+    data.breadcrumbs = props
       .filter(onlyExistingItems)
       .map(toLinkSegments(data))
       .map(toFullLinks(host));
+  },
+
+  /**
+   * Adds a breadcrumbs to the data object
+   *
+   * @param {Object} data the data context
+   * @param {string} url
+   * @param {string} text
+   */
+  addCrumb(data, url, text) {
+    if (!data.breadcrumbs) {
+      data.breadcrumbs = [];
+    }
+
+    data.breadcrumbs.push(createCrumb(url, text));
   }
 };
