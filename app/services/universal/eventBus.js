@@ -18,7 +18,7 @@ function setEventCallback(channel, callback) {
  */
 function triggerCallback(channel, payload) {
   if (callbacks[channel]) {
-    (callbacks[channel])(payload);
+    callbacks[channel](payload);
   }
 }
 

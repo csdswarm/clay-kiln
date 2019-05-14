@@ -7,11 +7,10 @@ const db = require('../../services/server/db'),
 let primarySectionFrontsList,
   sectionFrontRef;
 
-eventBusService.setEventCallback('clay:publishPage', async payload => {
+eventBusService.setEventCallback('clay:publishPage', async () => {
   try {
     const data = await db.get(sectionFrontRef);
 
-    console.log('publish page: ', data, sectionFrontRef, primarySectionFrontsList);
     if (data.title && !data.titleLocked) {
       const primarySectionFronts = await db.get(primarySectionFrontsList),
         sectionFrontValues = primarySectionFronts.map(sectionFront => sectionFront.value);
@@ -24,8 +23,6 @@ eventBusService.setEventCallback('clay:publishPage', async payload => {
         await db.put(primarySectionFrontsList, JSON.stringify(primarySectionFronts));
         data.titleLocked = true;
         await db.put(sectionFrontRef, JSON.stringify(data));
-        console.log('updated list to add: ', data.title, data.titleLocked);
-        // @todo: rerender kiln
       }
     }
   } catch (e) {
@@ -33,11 +30,10 @@ eventBusService.setEventCallback('clay:publishPage', async payload => {
   }
 });
 
-eventBusService.setEventCallback('clay:unpublishPage', async payload => {
+eventBusService.setEventCallback('clay:unpublishPage', async () => {
   try {
     const data = await db.get(sectionFrontRef);
 
-    console.log('unpublish page: ', data, sectionFrontRef, primarySectionFrontsList);
     if (data.title) {
       const primarySectionFronts = await db.get(primarySectionFrontsList),
         updatedSectionFronts = primarySectionFronts.filter(sectionFront => {
@@ -47,8 +43,6 @@ eventBusService.setEventCallback('clay:unpublishPage', async payload => {
       await db.put(primarySectionFrontsList, JSON.stringify(updatedSectionFronts));
       data.titleLocked = false;
       await db.put(sectionFrontRef, JSON.stringify(data));
-      console.log('updated list to remove: ', data.title, data.titleLocked);
-      // @todo: rerender kiln
     }
   } catch (e) {
     console.log(e);
@@ -61,14 +55,14 @@ module.exports.render = (uri, data, locals) => {
   }
 
   sectionFrontRef = uri.replace('@published','');
-  primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts`: '';
+  primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
 
   return data;
 };
 
 module.exports.save = (uri, data, locals) => {
   sectionFrontRef = uri.replace('@published','');
-  primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts`: '';
+  primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
 
   return data;
 };
