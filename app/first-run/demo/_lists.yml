@@ -12,6 +12,3 @@ _lists:
     -
       id: gallery
       title: New Gallery
-    -
-      id: section-front
-      title: Section Front

@@ -61,14 +61,14 @@ module.exports.render = (uri, data, locals) => {
   }
 
   sectionFrontRef = uri.replace('@published','');
-  primarySectionFrontsList = `${locals.site.host}/_lists/primary-section-fronts`;
+  primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts`: '';
 
   return data;
 };
 
 module.exports.save = (uri, data, locals) => {
   sectionFrontRef = uri.replace('@published','');
-  primarySectionFrontsList = `${locals.site.host}/_lists/primary-section-fronts`;
+  primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts`: '';
 
   return data;
 };

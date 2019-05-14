@@ -25,7 +25,7 @@ function initAmphora(app, search, sessionStore, routes) {
   SUBSCRIBER.on('message', (channel, payload) => {
     eventBusService.triggerCallback(channel, payload);
   });
-
+  
   return amphora({
     app,
     renderers,
