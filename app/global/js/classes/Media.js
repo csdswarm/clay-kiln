@@ -90,7 +90,6 @@ class Media {
    *
    */
   prepareMedia() {
-    this.log('PREPARING MEDIA')
     const mediaObserver = new IntersectionObserver((change) => this.mediaIsNotInView(change), {threshold: 0}),
       eventTypes = this.getEventTypes();
 
