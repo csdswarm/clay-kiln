@@ -2,6 +2,7 @@ _confirmRemoval: true
 
 title:
   _label: Title
+  _publish: sectionFront
   _has:
     input: text
     validate:
