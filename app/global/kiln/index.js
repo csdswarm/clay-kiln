@@ -7,5 +7,6 @@ module.exports = () => {
   require('./plugins/advanced-image-upload')();
   require('./plugins/podcast-select')();
   require('./plugins/instagram')();
+  require('./plugins/subscriptions')();
   require('./validators')();
 };

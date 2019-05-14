@@ -1,0 +1,9 @@
+_lists:
+  primary-section-fronts:
+  secondary-section-fronts:
+    -
+      name: Boston
+      value: boston
+    -
+      name: Culinary
+      value: culinary
