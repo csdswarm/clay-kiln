@@ -15,7 +15,7 @@ export default {
   computed: {
     link () {
       const { metadata } = this.$store.state
-      const facebookRedirectUri = `https://clay.radio.com/account/facebook-callback`;
+      const facebookRedirectUri = `${window.location.origin}/account/facebook-callback`;
       const redirect = { redirect_uri: this.$route.query.redirect_uri }
       return `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(JSON.stringify(redirect))}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
     }

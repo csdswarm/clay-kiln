@@ -21,7 +21,7 @@ export default {
 
     debugLog('facebook callback query', this.$route.query)
 
-    const facebookRedirectUri = `https://clay.radio.com/account/facebook-callback`
+    const facebookRedirectUri = `${window.location.origin}/account/facebook-callback`
 
     const cognitoFacebookUrl = `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(redirectState)}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
 
