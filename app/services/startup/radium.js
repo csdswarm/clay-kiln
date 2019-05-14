@@ -19,7 +19,17 @@ const axios = require('axios'),
   cognitoClientId = '63kk7rrpgfmrdkcndq5f11190r',
   profileExpires = 10 * 365 * 24 * 60 * 60,
   accessExpires = 10 * 365 * 24 * 60 * 60,
+  /**
+   * standardized way of printing out method and url
+   * @param {object} request
+   * @returns {string} method:url
+   */
   currentRoute = (req) => `${req.method.toUpperCase()}:${req.url}`,
+  /**
+   * determines if a user is attempting to log out
+   * @param {object} request
+   * @returns {boolean}
+   */
   isLogoutRoute = req => currentRoute(req) === 'POST:/radium/v1/auth/signout',
   /**
    * Parses the device_key value from the client authToken cookie
@@ -27,7 +37,12 @@ const axios = require('axios'),
    * @returns {string} The device_key value from the authToken payload
    */
   getDeviceKey = authToken => (jwt.decode(authToken) || {}).device_key,
-  isFacebookUser = () => true,
+  /**
+   * determines of the response is coming from a user signed in with facebook
+   * @param {object} response
+   * @returns {boolean} whether or not the user is signed in with facebook
+   */
+  isFacebookUser = (response) => response && response.config && response.config.facebookUser,
   /**
    * decodes the cookie and verifies it is valid
    *
@@ -86,6 +101,7 @@ const axios = require('axios'),
    * does the object contain the token information
    *
    * @param {object} object
+   * @param {array} ignoreKeys keys to ignore when determining if token keys exist
    * @return {boolean}
    */
   hasTokenKeys = (object, ignoreKeys = []) => {
@@ -150,6 +166,7 @@ const axios = require('axios'),
    * obtain the users profile
    *
    * @param {object} tokens
+   * @param {boolean} facebookUser
    * @return {Promise<Object>}
    */
   getProfile = async (tokens, facebookUser) => {
@@ -322,6 +339,8 @@ const axios = require('axios'),
     }
   };
 
+
+// intercept requests to direct to correct url.  If radium updates their routes, this can be removed.
 radiumAxios.interceptors.request.use(config => {
   switch (`${config.method.toUpperCase()}:${config.url}`) {
     case 'POST:facebook_callback':
