@@ -7,7 +7,9 @@ class VerizonMedia extends Video {
    * @override
    */
   constructor(verizonMediaComponent) {
-    super(verizonMediaComponent.querySelector('video-js'), { script: '//cdn.vidible.tv/prod/player/js/latest/vidible-min.js' });
+    super(verizonMediaComponent.querySelector('video-js'), {
+      script: '//cdn.vidible.tv/prod/player/js/latest/vidible-min.js'
+    });
   }
   /**
    * @override
@@ -57,6 +59,13 @@ class VerizonMedia extends Video {
     if (await media.isMuted()) {
       await media.toggleMute();
     }
+  }
+  /**
+   * @override
+   */
+  unmuteOnPlay(eventTypes) {
+    // once the media has played once, add an event for the next time it plays
+    this.addEvent(eventTypes.MEDIA_PLAY, () => super.unmuteOnPlay(eventTypes), { once: true });
   }
 }
 

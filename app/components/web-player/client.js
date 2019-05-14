@@ -36,8 +36,8 @@ class WebPlayer extends Audio {
    *
    * @override
    */
-  addEvent(type, listener) {
-    this.getNode().addEventListener(type, listener);
+  addEvent(type, listener, options) {
+    this.getNode().addEventListener(type, listener, options);
   }
   /**
    * @override

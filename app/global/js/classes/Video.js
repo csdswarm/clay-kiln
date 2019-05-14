@@ -17,9 +17,26 @@ class Video extends Media {
     const eventTypes = this.getEventTypes();
 
     // autoplay muted else pause for videos once it is ready
-    this.addEvent(eventTypes.MEDIA_READY, async () => {
-      await this.autoPlayOrPause();
-    });
+    this.addEvent(eventTypes.MEDIA_READY, () => this.autoPlayOrPause(), { once: true });
+  }
+
+  /**
+   * add event to unmute the video if the user clicks play
+   *
+   * @param {object} eventTypes
+   */
+  unmuteOnPlay(eventTypes) {
+    this.addEvent(eventTypes.MEDIA_PLAY, () => this.unmute(), { once: true });
+  }
+
+  /**
+   * add the event to pause other media on volume change
+   *
+   * @param {object} eventTypes
+   */
+  pauseOnUnmute(eventTypes) {
+    // the volume watcher since some videos change volume on play/pause causing things to pause
+    this.addEvent(eventTypes.MEDIA_VOLUME, () => this.pauseOtherActiveMedia('VOLUME'));
   }
   /**
    * automatically play the lede video while muted, otherwise unmute and pause the video
@@ -27,15 +44,7 @@ class Video extends Media {
    * @return {Promise<void>}
    */
   async autoPlayOrPause() {
-    const eventTypes = this.getEventTypes(),
-      nextPlayEvent = () => {
-        // if the video started out muted, unmute it now since the user made it play
-        this.addEvent(eventTypes.MEDIA_PLAY, () => this.unmute(), { once: true });
-        if (eventTypes.MEDIA_VOLUME) {
-          // the volume watcher since some videos change volume on play/pause causing things to pause
-          this.addEvent(eventTypes.MEDIA_VOLUME, () => this.pauseOtherActiveMedia());
-        }
-      };
+    const eventTypes = this.getEventTypes();
 
     // auto play muted the video if it is the main lede
     if (!isMobileWidth() && this.getNode().closest('.body__header .lead')) {
@@ -52,9 +61,8 @@ class Video extends Media {
       super.prepareMedia();
     }
 
-
-    // once the media has played once, add an event for the next time it plays
-    this.addEvent(eventTypes.MEDIA_PLAY, nextPlayEvent, { once: true });
+    this.unmuteOnPlay(eventTypes);
+    this.pauseOnUnmute(eventTypes);
   }
 }
 

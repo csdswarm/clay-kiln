@@ -16,6 +16,9 @@ const clearCurrentMedia = () => {
   },
   CALLBACK_COMPLETE = 'COMPLETE';
 
+
+window.currentMedia = currentMedia;
+
 // Listener for dismount to delete medias
 document.addEventListener('dismount', clearCurrentMedia);
 
@@ -87,6 +90,7 @@ class Media {
    *
    */
   prepareMedia() {
+    this.log('PREPARING MEDIA')
     const mediaObserver = new IntersectionObserver((change) => this.mediaIsNotInView(change), {threshold: 0}),
       eventTypes = this.getEventTypes();
 
@@ -199,6 +203,7 @@ class Media {
    * start the media (can be overridden)
    */
   async play() {
+
     await this.getMedia().play();
   }
   /**

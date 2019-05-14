@@ -12,7 +12,9 @@ class Brightcove extends Video {
       brightcoveAccount = videoPlayer.getAttribute('data-account'),
       brightcovePlayerId = videoPlayer.getAttribute('data-player');
 
-    super(videoPlayer, { script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js` });
+    super(videoPlayer, {
+      script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`
+    });
   }
   /**
    * @override
@@ -40,8 +42,12 @@ class Brightcove extends Video {
    *
    * @override
    */
-  addEvent(type, listener) {
-    this.getMedia().on(type, listener);
+  addEvent(type, listener, options) {
+    if (options && options.once) {
+      this.getMedia().one(type, listener);
+    } else {
+      this.getMedia().on(type, listener);
+    }
   }
   /**
    * @override

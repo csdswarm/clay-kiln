@@ -96,8 +96,8 @@ class YouTube extends Video {
    *
    * @override
    */
-  addEvent(type, listener) {
-    this.getNode().addEventListener(type, listener);
+  addEvent(type, listener, options) {
+    this.getNode().addEventListener(type, listener, options);
   }
   /**
    * @override
@@ -122,6 +122,22 @@ class YouTube extends Video {
    */
   async unmute() {
     await this.getMedia().unMute();
+  }
+
+  /**
+   * @override
+   */
+  unmuteOnPlay(eventTypes) {
+    // once the media has played once, add an event for the next time it plays
+    this.addEvent(eventTypes.MEDIA_PLAY, () => super.unmuteOnPlay(eventTypes), { once: true });
+  }
+
+  /**
+   * @override
+   */
+  pauseOnUnmute(eventTypes) {
+    // once the youtube has played once, add an event for the next time it plays
+    this.addEvent(eventTypes.MEDIA_PLAY, () => super.pauseOnUnmute(eventTypes), { once: true });
   }
 }
 
