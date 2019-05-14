@@ -2,7 +2,7 @@
   <div class="sign-in">
     <fieldset>
       <h1 class="h1-login" align="center"> <span>Log In</span> <span class="small" style=" padding:0px 10px 0px 10px">or</span>
-        <facebook-button :link="facebookLink" @loggedin="closeModal"/>
+        <facebook-button @loggedin="closeModal"/>
       </h1>
       <message></message>
       <div class="floating-label">
@@ -38,15 +38,6 @@ export default {
   components: {
     FacebookButton,
     Message
-  },
-
-  computed: {
-    facebookLink () {
-      const { metadata } = this.$store.state
-      const facebookRedirectUri = `https://clay.radio.com/account/facebook-callback`;
-      const redirect = { redirect_uri: this.$route.query.redirect_uri }
-      return `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(JSON.stringify(redirect))}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
-    }
   },
 
   data () {
