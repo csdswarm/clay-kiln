@@ -11,8 +11,8 @@ module.exports = {
       switch(mutation.type) {
         case 'PAGE_PUBLSIH':
         case 'PAGE_UNPUBLISH':
-            location.reload();
-            break;
+          location.reload();
+          break;
         default:
 
       }
