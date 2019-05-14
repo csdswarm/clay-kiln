@@ -1,6 +1,7 @@
 'use strict';
 
 const pkg = require('../../package.json'),
+  axios = require('axios'),
   amphoraPkg = require('amphora/package.json'),
   kilnPkg = require('clay-kiln/package.json'),
   bodyParser = require('body-parser'),
@@ -94,6 +95,8 @@ function setupApp(app) {
   });
 
   app.use(canonicalJSON);
+
+  app.use('/account/facebook-callback', radiumApi.facebookCallback);
 
   db.setup();
   sessionStore = createSessionStore();

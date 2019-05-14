@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import * as mutationTypes from '@/vuex/mutationTypes'
+
 export default {
   name: 'FacebookButton',
 
@@ -23,10 +25,15 @@ export default {
 
   methods: {
     onClick () {
-      const win = window.open(this.link, '_blank')
-      win.onbeforeunload = () => {
-        this.$emit('loggedin');
-      }
+      const win = window.open(this.link, '_blank'),
+        handlePostBack = ({data, origin, source}) => {
+          if (source === win && origin === window.location.origin) {
+            this.$store.commit(mutationTypes.SET_USER, data);
+            this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+            window.removeEventListener('message', handlePostBack);
+          }
+        }
+      window.addEventListener('message', handlePostBack)
     }
   }
 }

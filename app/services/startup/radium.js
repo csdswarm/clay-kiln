@@ -154,11 +154,13 @@ const axios = require('axios'),
    * @param {Object} [accessToken]
    * @return {Promise<Object>}
    */
-  call = async (config, accessToken) => {
+  call = async (method, url, data, accessToken) => {
     const headers = {...(accessToken ? {authorization: `Bearer ${accessToken}`} : {})};
      
     return await radiumAxios({
-      ...config,
+      method,
+      url: `${radiumApi}${url}`,
+      data,
       headers
     });
   },
@@ -171,7 +173,7 @@ const axios = require('axios'),
    */
   getProfile = async (tokens, facebookUser) => {
     try {
-      const response = await call({method: 'GET', url: 'v1/profile'}, tokens.access_token);
+      const response = await call('GET', 'v1/profile', null, tokens.access_token);
 
       return {
         ...response.data,
@@ -259,7 +261,6 @@ const axios = require('axios'),
    */
   routeLogic = async (response, req, res) => {
     const routes = {
-        'POST:/radium/facebook_callback': signInLogic,
         'POST:/radium/v1/auth/signin': signInLogic,
         'POST:/radium/v1/auth/signout': signOutLogic,
         'POST:/radium/v1/profile/create': profileLogic,
@@ -324,7 +325,7 @@ const axios = require('axios'),
       if (facebookLogout) {
         await signOutLogic(null, req, res);
       } else {
-        const response = await call({method, url, data}, authToken);
+        const response = await call(method, url, data, authToken);
 
         if (response.status < 400) {
           await routeLogic(response, req, res);
@@ -337,29 +338,41 @@ const axios = require('axios'),
     } catch (e) {
       await handleError(e.response, retryFunction, req, res);
     }
-  };
-
-
-// intercept requests to direct to correct url.  If radium updates their routes, this can be removed.
-radiumAxios.interceptors.request.use(config => {
-  switch (`${config.method.toUpperCase()}:${config.url}`) {
-    case 'POST:facebook_callback':
-      return {
-        ...config,
+  },
+  /**
+   * Signin for facebook
+   *
+   * @param {object} req
+   * @param {object} res
+   * @return {Promise<Object>}
+   */
+  facebookCallback = async (req, res) => {
+    const { code } = req.query,
+      redirectUri = `https://${process.env.CLAY_SITE_HOST}/account/facebook-callback`,
+      data = `code=${code}&client_id=${cognitoClientId}&redirect_uri=${redirectUri}&grant_type=authorization_code`,
+      options = {
+        method: 'post',
         url: facebookCallbackUrL,
-        data: `code=${config.data.code}&client_id=${cognitoClientId}&redirect_uri=${config.data.redirectUri}&grant_type=authorization_code`,
-        headers: { ...config.headers, 'Content-Type': 'application/x-www-form-urlencoded' },
+        data,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         crossdomain: true,
         withCredentials: true,
         facebookUser: true
       };
-    default:
-      return {
-        ...config,
-        url: `${radiumApi}${config.url}`
-      };
-  }
-});
+
+    return axios(options).then(async response => {
+      await signInLogic(response, req, res);
+      return response.data;
+    }).then((data) => {
+      return res.send(
+        `<script>window.opener.postMessage(${JSON.stringify(data)}); window.close();</script>`
+      );
+    }).catch((e) => {
+      console.log(e);
+      res.status(500).json({message: 'An unknown error has occurred'});
+    });
+  };
 
 module.exports.apply = apply;
+module.exports.facebookCallback = facebookCallback;
 module.exports.userFromCookie = userFromCookie;

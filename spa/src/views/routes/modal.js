@@ -3,7 +3,6 @@ import CreateProfile from '../account/views/CreateProfile'
 import UpdateProfile from '../account/views/UpdateProfile'
 // import GenericError from '../views/GenericError'
 // import Welcome from '../views/Welcome'
-import FacebookCallback from '../account/views/FacebookCallback'
 import Login from '../account/views/Login'
 import GenericSuccess from '../account/views/GenericSuccess'
 // import ForgotYourPassword from '../views/ForgotYourPassword'
@@ -30,12 +29,6 @@ const routes = [
     path: '/account/profile/update',
     name: 'UpdateProfile',
     component: UpdateProfile,
-    props: true
-  },
-  {
-    path: '/account/facebook-callback',
-    name: 'FacebookCallback',
-    component: FacebookCallback,
     props: true
   },
   {
