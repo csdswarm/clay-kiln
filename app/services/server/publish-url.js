@@ -1,6 +1,11 @@
 'use strict';
 
-const pubUtils = require('./publish-utils');
+const pubUtils = require('./publish-utils'),
+  pageTypes = {
+    ARTICLE: 'article',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front'
+  };
 
 /**
  * Common functionality used for `getYearMonthSlugUrl` and `getArticleSlugUrl`
@@ -18,8 +23,8 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
   }
 
   return pubUtils.getMainComponentFromRef(componentReference, locals)
-    .then(mainComponent => {
-      return pubUtils.getUrlOptions(mainComponent, locals);
+    .then(({component, pageType}) => {
+      return pubUtils.getUrlOptions(component, locals, pageType);
     });
 }
 
@@ -47,7 +52,7 @@ function getYearMonthSlugUrl(pageData, locals, mainComponentRefs) {
 function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      if (urlOptions.contentType == 'article') {
+      if (urlOptions.contentType === pageTypes.ARTICLE) {
         return pubUtils.articleSlugPattern(urlOptions);
       }
     });
@@ -63,8 +68,24 @@ function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
 function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      if (urlOptions.contentType == 'gallery') {
+      if (urlOptions.contentType === pageTypes.GALLERY) {
         return pubUtils.gallerySlugPattern(urlOptions);
+      }
+    });
+}
+
+/**
+ * Return the url for a section front based on its primary title
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === pageTypes.SECTIONFRONT) {
+        return pubUtils.sectionFrontSlugPattern(urlOptions);
       }
     });
 }
@@ -72,3 +93,4 @@ function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
 module.exports.getYearMonthSlugUrl = getYearMonthSlugUrl;
 module.exports.getArticleSlugUrl = getArticleSlugUrl;
 module.exports.getGallerySlugUrl = getGallerySlugUrl;
+module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
