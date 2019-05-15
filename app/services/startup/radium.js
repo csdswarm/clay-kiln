@@ -364,7 +364,12 @@ const axios = require('axios'),
       await signInLogic(response, req, res);
       // Returns a script that passes a message to the origin tab, and then immediately closes the opened tab.
       return res.send(
-        `<script>window.opener.postMessage(${JSON.stringify(data)}, location.protocol + '//' + location.hostname); window.close();</script>`
+        `<html>
+          <head>
+            <script>window.opener.postMessage(${JSON.stringify(data)}, location.protocol + '//' + location.hostname); window.close();</script>
+          </head>
+          <body></body>
+        </html>`
       );
     } catch (e) {
       console.log(e);
