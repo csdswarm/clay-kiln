@@ -14,12 +14,11 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = function (data, locals) {
-
-  const { canonicalUrl, plaintextPrimaryHeadline } = data,
+  const { canonicalUrl, primaryHeadline, seoDescription, stationURL, stationTitle, subHeadline } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
       {
-        title: { _cdata: plaintextPrimaryHeadline }
+        title: { _cdata: primaryHeadline }
       },
       {
         link
@@ -31,10 +30,19 @@ module.exports = function (data, locals) {
         guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
       },
       {
-        description: { _cdata: data.socialDescription }
+        description: { _cdata: seoDescription }
       },
       {
         'content:encoded': { _cdata: renderContent(data.content, locals)}
+      },
+      {
+        stationUrl: stationURL
+      },
+      {
+        stationTitle
+      },
+      {
+        subHeadline
       }
     ];
 

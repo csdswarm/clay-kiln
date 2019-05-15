@@ -11,7 +11,7 @@ const fs = require('fs'),
 /**
  * init hbs partials for feed components
  */
-function init () {
+function init() {
   // searches the components directories for any feed.hbs files -- was having weird behavior when using relative path.. was starting in /app
   let templates = glob.sync(path.join(__dirname, '..', '..', 'components', '**', 'feed.hbs'));
 
@@ -27,7 +27,7 @@ function init () {
 
 /**
  * render a feed component from the name and data
- * 
+ *
  * @param {String} cmptName
  * @param {Object} cmptData
  * @returns {String}
