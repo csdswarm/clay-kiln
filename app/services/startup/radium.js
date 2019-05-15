@@ -399,6 +399,11 @@ const axios = require('axios'),
       </html>`
     );
   },
+  /**
+   * Setup radium routes
+   *
+   * @param {object} app Express app
+   */
   inject = (app) => {
     app.all('/radium/*', (req, res) => {
       apply(req, res).then((data) => {
