@@ -366,7 +366,7 @@ const axios = require('axios'),
       return res.send(
         `<html>
           <head>
-            <script>window.opener.postMessage(${JSON.stringify(data)}, location.protocol + '//' + location.hostname); window.close();</script>
+            <script>window.opener.postMessage(${JSON.stringify(data)}, window.location.protocol + '//' + window.location.hostname); window.close();</script>
           </head>
           <body></body>
         </html>`

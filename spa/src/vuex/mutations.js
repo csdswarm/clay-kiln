@@ -1,6 +1,5 @@
 import * as mutationTypes from './mutationTypes'
 import vuexStoreDefaultState from '@/store'
-import router from '../router'
 
 const createModalMessage = (type, message) => { return { type, message } }
 
