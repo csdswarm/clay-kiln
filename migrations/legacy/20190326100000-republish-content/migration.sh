@@ -30,7 +30,7 @@ cat published-content-urls.txt
 
 printf "\n\nRepublishing each URL...\n\n"
 while read URL
-    do curl -X PUT $URL -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+    do curl -X PUT $http://$URL -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
 done < published-content-urls.txt
 
 rm ./published-content.txt ./published-content-urls.txt ./package-lock.json
