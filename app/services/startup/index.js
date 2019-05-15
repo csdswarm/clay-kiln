@@ -16,7 +16,7 @@ const pkg = require('../../package.json'),
   locals = require('./spaLocals'),
   handleRedirects = require('./redirects'),
   user = require('./user'),
-  radiumApi = require('./radium'),
+  radium = require('./radium'),
   currentStation = require('./currentStation');
   // redirectTrailingSlash = require('./trailing-slash');
 
@@ -78,24 +78,9 @@ function setupApp(app) {
 
   app.use(currentStation);
 
-  /**
-   * radium.radio.com endpoints
-   *
-   * This is not in the routes/index.js file because you are forced to be logged in to access any route at that level
-   * There is a tech debt item to investigate with NYM why all routes added by kiln require authentication
-   */
-  app.all('/radium/*', (req, res) => {
-    radiumApi.apply(req, res).then((data) => {
-      return res.json(data);
-    }).catch((e) => {
-      console.log(e);
-      res.status(500).json({ message: 'An unknown error has occurred.' });
-    });
-  });
+  radium.inject(app);
 
   app.use(canonicalJSON);
-
-  app.use('/account/facebook-callback', radiumApi.facebookCallback);
 
   db.setup();
   sessionStore = createSessionStore();

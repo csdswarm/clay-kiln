@@ -339,6 +339,16 @@ const axios = require('axios'),
     }
   },
   /**
+   * handling uncaught errors
+   *
+   * @param {error} error
+   * @param {object} res
+   */
+  catchError = (error, res) => {
+    console.log(error);
+    res.status(500).json({ message: 'An unknown error has occurred.' });
+  },
+  /**
    * Signin for facebook
    *
    * @param {object} req
@@ -346,37 +356,42 @@ const axios = require('axios'),
    * @return {Promise<Object>}
    */
   facebookCallback = async (req, res) => {
-    try {
-      const { code } = req.query,
-        redirectUri = `https://${process.env.CLAY_SITE_HOST}/account/facebook-callback`,
-        data = `code=${code}&client_id=${cognitoClientId}&redirect_uri=${redirectUri}&grant_type=authorization_code`,
-        options = {
-          method: 'post',
-          url: facebookCallbackUrL,
-          data,
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          crossdomain: true,
-          withCredentials: true,
-          facebookUser: true
-        },
-        response = await axios(options);
+    const { code } = req.query,
+      redirectUri = `https://${process.env.CLAY_SITE_HOST}/account/facebook-callback`,
+      data = `code=${code}&client_id=${cognitoClientId}&redirect_uri=${redirectUri}&grant_type=authorization_code`,
+      options = {
+        method: 'post',
+        url: facebookCallbackUrL,
+        data,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        crossdomain: true,
+        withCredentials: true,
+        facebookUser: true
+      },
+      response = await axios(options);
 
-      await signInLogic(response, req, res);
-      // Returns a script that passes a message to the origin tab, and then immediately closes the opened tab.
-      return res.send(
-        `<html>
-          <head>
-            <script>window.opener.postMessage(${JSON.stringify(data)}, window.location.protocol + '//' + window.location.hostname); window.close();</script>
-          </head>
-          <body></body>
-        </html>`
-      );
-    } catch (e) {
-      console.log(e);
-      res.status(500).json({message: 'An unknown error has occurred'});
-    }
+    await signInLogic(response, req, res);
+    // Returns a script that passes a message to the origin tab, and then immediately closes the opened tab.
+    return res.send(
+      `<html>
+        <head>
+          <script>window.opener.postMessage(${JSON.stringify(data)}, window.location.protocol + '//' + window.location.hostname); window.close();</script>
+        </head>
+        <body></body>
+      </html>`
+    );
+  },
+  inject = (app) => {
+    app.all('/radium/*', (req, res) => {
+      apply(req, res).then((data) => {
+        return res.json(data);
+      }).catch(e => catchError(e, res));
+    });
+
+    app.use('/account/facebook-callback', (req, res) => {
+      facebookCallback(res, res).catch(e => catchError(e, res));
+    });
   };
 
-module.exports.apply = apply;
-module.exports.facebookCallback = facebookCallback;
+module.exports.inject = inject;
 module.exports.userFromCookie = userFromCookie;
