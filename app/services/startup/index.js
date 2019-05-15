@@ -1,7 +1,6 @@
 'use strict';
 
 const pkg = require('../../package.json'),
-  axios = require('axios'),
   amphoraPkg = require('amphora/package.json'),
   kilnPkg = require('clay-kiln/package.json'),
   bodyParser = require('body-parser'),
@@ -57,7 +56,7 @@ function setupApp(app) {
   });
 
   // Page Editing problems
-  //app.use(redirectTrailingSlash);
+  // app.use(redirectTrailingSlash);
 
   // nginx limit is also 1mb, so can't go higher without upping nginx
   app.use(bodyParser.json({

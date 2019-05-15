@@ -17,7 +17,7 @@ export default {
   computed: {
     link () {
       const { metadata } = this.$store.state
-      const facebookRedirectUri = `${window.location.origin}/account/facebook-callback`;
+      const facebookRedirectUri = `${window.location.origin}/account/facebook-callback`
       const redirect = { redirect_uri: this.$route.query.redirect_uri }
       return `${metadata.cognito.domain}/authorize?response_type=code&client_id=${metadata.app.webplayer.clientId}&state=${encodeURI(JSON.stringify(redirect))}&redirect_uri=${facebookRedirectUri}&identity_provider=Facebook`
     }
@@ -25,14 +25,14 @@ export default {
 
   methods: {
     onClick () {
-      const win = window.open(this.link, '_blank'),
-        handlePostBack = ({data, origin, source}) => {
-          if (source === win && origin === window.location.origin) {
-            this.$store.commit(mutationTypes.SET_USER, data);
-            this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
-            window.removeEventListener('message', handlePostBack);
-          }
+      const win = window.open(this.link, '_blank')
+      const handlePostBack = ({ data, origin, source }) => {
+        if (source === win && origin === window.location.origin) {
+          this.$store.commit(mutationTypes.SET_USER, data)
+          this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+          window.removeEventListener('message', handlePostBack)
         }
+      }
       window.addEventListener('message', handlePostBack)
     }
   }

@@ -21,13 +21,13 @@ const axios = require('axios'),
   accessExpires = 10 * 365 * 24 * 60 * 60,
   /**
    * standardized way of printing out method and url
-   * @param {object} request
+   * @param {object} req
    * @returns {string} method:url
    */
   currentRoute = (req) => `${req.method.toUpperCase()}:${req.url}`,
   /**
    * determines if a user is attempting to log out
-   * @param {object} request
+   * @param {object} req
    * @returns {boolean}
    */
   isLogoutRoute = req => currentRoute(req) === 'POST:/radium/v1/auth/signout',
@@ -155,7 +155,7 @@ const axios = require('axios'),
    * @return {Promise<Object>}
    */
   call = async (method, url, data, accessToken) => {
-    const headers = {...(accessToken ? {authorization: `Bearer ${accessToken}`} : {})};
+    const headers = {...accessToken ? {authorization: `Bearer ${accessToken}`} : {}};
      
     return await radiumAxios({
       method,
@@ -311,7 +311,7 @@ const axios = require('axios'),
       method = req.method.toUpperCase(),
       url = req.params[0],
       authToken = decodeCookie(COOKIES.accessToken, req.cookies),
-      { facebookUser } = decodeCookie(COOKIES.profile, req.cookies)|| {},
+      { facebookUser } = decodeCookie(COOKIES.profile, req.cookies) || {},
       logoutRoute = isLogoutRoute(req),
       facebookLogout = facebookUser && logoutRoute;
 
