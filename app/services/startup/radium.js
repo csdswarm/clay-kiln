@@ -19,18 +19,6 @@ const axios = require('axios'),
   profileExpires = 10 * 365 * 24 * 60 * 60,
   accessExpires = 10 * 365 * 24 * 60 * 60,
   /**
-   * standardized way of printing out method and url
-   * @param {object} req
-   * @returns {string} method:url
-   */
-  currentRoute = (req) => `${req.method.toUpperCase()}:${req.url}`,
-  /**
-   * determines if a user is attempting to log out
-   * @param {object} req
-   * @returns {boolean}
-   */
-  isLogoutRoute = req => currentRoute(req) === 'POST:/radium/v1/auth/signout',
-  /**
    * Parses the device_key value from the client authToken cookie
    * @param {string} authToken the access_token from the client
    * @returns {string} The device_key value from the authToken payload
@@ -247,9 +235,44 @@ const axios = require('axios'),
     // removes keys that should never be sent back to the browser from the object
     removeKeys(response.data, [ ...excludeKeys.token, ...excludeKeys.profile ]);
   },
+  /**
+   * determine preRoute logic
+   *
+   * @param {object} req
+   * @param {object} res
+   * @param {boolean} continue whether the flow should continue or not
+   */
+  preSignOutLogic = async (req, res) => {
+    const { facebookUser } = decodeCookie(COOKIES.profile, req.cookies) || {};
+
+    if (facebookUser) {
+      await signOutLogic(null, req, res);
+      return false;
+    }
+    return true;
+  },
   signOutLogic = async (response, req, res) => {
     deleteCookie(COOKIES.profile, res);
     deleteCookie(COOKIES.accessToken, res);
+    console.log('just signed out');
+  },
+  /**
+   * determine preRoute logic
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {boolean} continue whether the flow should continue or not
+   */
+  preRouteLogic = async (req, res) => {
+    const routes = {
+        'POST:/radium/v1/auth/signout': preSignOutLogic
+      },
+      keys = Object.keys(routes),
+      current = `${req.method}:${req.path}`;
+  
+    if (keys.includes(current)) {
+      await routes[current](req, res);
+    }
   },
   /**
    * loop through all endpoints that require specific logic to modify the response
@@ -309,10 +332,7 @@ const axios = require('axios'),
       retryFunction = retry ? tokenExpired : () => false,
       method = req.method.toUpperCase(),
       url = req.params[0],
-      authToken = decodeCookie(COOKIES.accessToken, req.cookies),
-      { facebookUser } = decodeCookie(COOKIES.profile, req.cookies) || {},
-      logoutRoute = isLogoutRoute(req),
-      facebookLogout = facebookUser && logoutRoute;
+      authToken = decodeCookie(COOKIES.accessToken, req.cookies);
 
     if (data && data.includeDeviceKey) {
       delete data.includeDeviceKey;
@@ -321,9 +341,7 @@ const axios = require('axios'),
     }
 
     try {
-      if (facebookLogout) {
-        await signOutLogic(null, req, res);
-      } else {
+      if (await preRouteLogic(req, res)) {
         const response = await call(method, url, data, authToken);
 
         if (response.status < 400) {
@@ -389,7 +407,7 @@ const axios = require('axios'),
     });
 
     app.use('/account/facebook-callback', (req, res) => {
-      facebookCallback(res, res).catch(e => catchError(e, res));
+      facebookCallback(req, res).catch(e => catchError(e, res));
     });
   };
 
