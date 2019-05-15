@@ -1,0 +1,41 @@
+_description: The purpose of the feeds component is to expose collections of articles/videos/etc to different renderers. For example, if you need an RSS feed of latest videos, you could make a feed instance that specifies how to render the content in an RSS format. If you need a feed of articles for Amazon's Alexa to read, you make a feed component that aggregates and formats the data.
+
+enabled: true
+index:
+  _label: index
+  _has:
+    help: Which ElasticSearch index should we build out a query against
+    validate:
+      required: true
+query:
+  _label: query
+  _has:
+    help: A full ElasticSearch query object
+    validate:
+      required: true
+meta:
+  _label: meta
+  _has:
+    help: |
+      This property takes the form of a JSON Object with the following properties:
+
+      * `renderer` [String, required]: indicates the extension to use when requesting the feed. Set to any value where we have a supported renderer (`.alexa`, `.rss`, etc.)
+      * `contentType` [String, required]: the value of the `Content-Type` header that S3 should send when serving the file
+      * `fileExtension` [String, required]: can be confused with `type`, but this is the extension the the scraped file should be save with when storing in S3. Should only be the extension value without the `.` preceeding it.
+      * `s3_directory` [String]: specifies the S3 directory the feed will fall into. The scraper already has logic to determine the bucket, but if you need the scraped file placed in a specific directory you'll need to define the path in this property. It should not have a `/` at the beginning.
+      * `rawQuery` [Boolean]: specifies if we want raw results from the query (i.e. should we run the queryService autoformatter or not)
+      * `utmSource` [String]: the value of `utm_source` query param on article links (defaults to `nym`)
+      * `utmMedium` [String]: the value of `utm_medium` query param on article links (defaults to `f1`)
+
+    validate:
+      required: true
+transform:
+  _label: transform
+  _has:
+    help: Which Feed Transform should we use.  See `sites/components/feeds/transforms` for all available transformations
+    validate:
+      required: true
+results:
+  _label: results
+  _has:
+    help: Cached results from ElasticSearch after running the query to support this feed, allows the feed to be rendered without redoing the ElasticSearch query

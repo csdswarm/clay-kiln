@@ -5,6 +5,8 @@ const h = require('highland'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
+  ioredis = require('ioredis'),
+  redis = new ioredis(process.env.REDIS_HOST),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
   CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
 
@@ -13,6 +15,19 @@ subscribe('publish').through(save);
 // Subscribe to the save stream
 subscribe('save').through(save);
 
+function getContent(obj) {
+  const content = obj.value.content;
+
+  return h(content)
+    .map(({ _ref }) => h(redis.hget('mydb:h', _ref).then( data => ({ _ref, data }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
+    .mergeWithLimit(1) // Merge each individual stream into the bigger stream
+    .collect() // Turn each individual object into an array of objects
+    .map(resolvedContent => {
+      obj.value.content = resolvedContent; // Assign the array of resolved objects to the original property
+      return obj; // Return the original, now modified object
+    });
+}
+
 function save(stream) {
   return stream
     .parallel(25)
@@ -20,10 +35,12 @@ function save(stream) {
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
-    .map(helpers.parseOpValue)
+    .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
+    // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
+    .map(param => param.key.indexOf('article') >= 0 || param.key.indexOf('gallery') >= 0 ? getContent(param) : h.of(param))
+    .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
-    .map(filters.filterRefs)
     .flatMap(send)
     .errors(logError)
     .each(logSuccess(INDEX));
