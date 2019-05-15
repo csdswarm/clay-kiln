@@ -2,7 +2,8 @@
 
 // Instantiate player interface.
 const clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
-  clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')();
+  clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')(),
+  recentStations = require('../../services/client/recentStations');
 
 // Add player mount channel.
 clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
@@ -12,8 +13,11 @@ clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
 
 // Listen for player to start playback.
 clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (payload) => {
-  const { id, playingClass } = payload;
+  const { id, playingClass, playerState } = payload;
 
+  if (playerState === 'play') {
+    recentStations.add(id);
+  }
   syncPlayerButtons(id, playingClass);
 });
 
