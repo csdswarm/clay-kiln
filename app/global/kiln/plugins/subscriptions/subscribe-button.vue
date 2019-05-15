@@ -1,4 +1,4 @@
-<template><span>TEST SUBSCRIBE BUTTON</span></template>
+<template><span></span></template>
 
 <script>
 'use strict';

@@ -12,9 +12,3 @@ _lists:
     -
       name: Podcasts
       value: podcasts
-    -
-      name: Cities
-      value: cities
-    -
-      name: Culture
-      value: culture
