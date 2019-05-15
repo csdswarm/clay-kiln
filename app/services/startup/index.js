@@ -12,9 +12,10 @@ const pkg = require('../../package.json'),
   canonicalJSON = require('./canonical-json'),
   initCore = require('./amphora-core'),
   locals = require('./spaLocals'),
-  handleRedirects = require('./redirects'),
   currentStation = require('./currentStation'),
   // redirectTrailingSlash = require('./trailing-slash'),
+  feedComponents = require('./feed-components'),
+  handleRedirects = require('./redirects'),
   log = require('../universal/log').setup({ file: __filename });
 
 function createSessionStore() {
@@ -53,7 +54,7 @@ function setupApp(app) {
   });
 
   // Page Editing problems
-  //app.use(redirectTrailingSlash);
+  // app.use(redirectTrailingSlash);
 
   // nginx limit is also 1mb, so can't go higher without upping nginx
   app.use(bodyParser.json({
@@ -74,6 +75,8 @@ function setupApp(app) {
   app.use(canonicalJSON);
 
   sessionStore = createSessionStore();
+
+  feedComponents.init();
 
   return amphoraSearch()
     .then(searchPlugin => {

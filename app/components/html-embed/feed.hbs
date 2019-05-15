@@ -1,0 +1,11 @@
+<div class="component--html-embed">
+  {{#if isIframe}}
+    <div class="html-embed__iframe-container">
+      <div class="iframe-container__padded-container">
+        {{{ text }}}
+      </div>
+    </div>
+  {{else}}
+    {{{ text }}}
+  {{/if}}
+</div>

@@ -1,0 +1,27 @@
+{{ set 'uniquePlayerID' (randomString 'youtube-player-') }}
+{{#if videoValid}}
+  <div class="component--youtube"
+      data-element-id="{{ uniquePlayerID }}"
+      data-video-id="{{ videoId }}"
+      data-autoplay-next-video="{{ autoPlayNextVideo }}"
+      data-autoplay-video="{{ autoPlay }}"
+      data-playlist="{{ videoPlaylist }}"
+      data-track-video-type="{{ videoType }}"
+      data-track-video-location="{{ videoLocation }}"
+      data-track-video-title="{{ videoTitle }}"
+      data-track-video-duration="{{ videoDuration }}"
+      data-track-channel-name="{{ channelName }}"
+      data-editable="inline"
+      data-origsrc="https://www.youtube.com/watch?v={{ videoId }}">
+
+    {{#ifAll playerHeadline (compare videoType 'Related')}}
+      <h2 class="youtube-headline">{{ playerHeadline }}</h2>
+    {{/ifAll}}
+    <iframe id="{{ uniquePlayerID }}" type="text/html" width="640" height="360"
+      src="https://www.youtube.com/embed/{{ videoId }}?autoplay={{#if autoplay }}1{{else}}0{{/if}}&origin=https://www.youtube.com/watch?v={{ videoId }}"
+      frameborder="0"></iframe>
+    {{#if playerCaption}}
+      <p class="youtube-caption">{{ playerCaption }}</p>
+    {{/if}}
+  </div>
+{{/if}}
