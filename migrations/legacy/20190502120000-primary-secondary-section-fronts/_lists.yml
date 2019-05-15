@@ -1,9 +1,15 @@
 _lists:
   primary-section-fronts:
-  secondary-section-fronts:
     -
-      name: Boston
-      value: boston
+      name: Music
+      value: music
     -
-      name: Culinary
-      value: culinary
+      name: News
+      value: news
+    -
+      name: Sports
+      value: sports
+    -
+      name: Podcasts
+      value: podcasts
+  secondary-section-fronts: []

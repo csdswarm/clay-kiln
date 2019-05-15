@@ -20,6 +20,24 @@ titleLocked:
 primary:
   _label: Is this a primary section front?
   _has: checkbox
+  _reveal:
+    field: titleLocked
+    operator: falsy
+
+primarySectionFront:
+  _reveal:
+    field: primary
+    operator: falsy
+  _label: 'Primary Section Front:'
+  _has:
+    help: Choose the primary section front if this is a secondary section front
+    input: select
+    search: true
+    list: primary-section-fronts
+    validate:
+      required:
+        field: primary
+        operator: falsy
 
 podcastList:
   _component:
@@ -64,5 +82,6 @@ googleAdRightRail:
 _groups:
   settings:
     fields:
-      - title
       - primary
+      - primarySectionFront
+      - title

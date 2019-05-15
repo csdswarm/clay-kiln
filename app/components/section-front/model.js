@@ -4,7 +4,8 @@ const db = require('../../services/server/db'),
   slugifyService = require('../../services/universal/slugify'),
   eventBusService = require('../../services/universal/eventBus');
 
-let primarySectionFrontsList,
+let primary,
+  primarySectionFrontsList,
   secondarySectionFrontsList,
   sectionFrontRef;
 
@@ -57,6 +58,7 @@ module.exports.render = (uri, data, locals) => {
     locals.sectionFront = data.title;
   }
 
+  primary = data.primary;
   sectionFrontRef = uri.replace('@published','');
   primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
   secondarySectionFrontsList = locals ? `${locals.site.host}/_lists/secondary-section-fronts` : '';
@@ -65,6 +67,7 @@ module.exports.render = (uri, data, locals) => {
 };
 
 module.exports.save = (uri, data, locals) => {
+  primary = data.primary;
   sectionFrontRef = uri.replace('@published','');
   primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
   secondarySectionFrontsList = locals ? `${locals.site.host}/_lists/secondary-section-fronts` : '';

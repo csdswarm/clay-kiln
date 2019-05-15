@@ -3,6 +3,7 @@ _components:
     title: ''
     titleLocked: false
     primary: false
+    primarySectionFront: ''
     sectionLead:
       _ref: /_components/section-lead
     googleAdUnderStationsModule:
