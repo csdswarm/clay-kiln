@@ -1,0 +1,116 @@
+_components:
+  meta-title:
+    instances:
+      contest-rules:
+        title: Contest Rules | RADIO.COM
+        twitterTitle: Contest Rules
+        ogTitle: Contest Rules
+        kilnTitle: Contest Rules
+        componentVariation: meta-title
+  meta-description:
+    instances:
+      contest-rules:
+        description: Contest Rules
+        componentVariation: meta-description
+  meta-image:
+    instances:
+      contest-rules:
+        imageUrl: ''
+  meta-url:
+    instances:
+      contest-rules:
+        url: ''
+        _version: 1
+  google-ad-manager:
+    instances:
+      cjvpdhcqc000r9sqssgdgdet6:
+        adSize: billboard
+        adPosition: top
+        adLocation: atf
+        doubleclickBannerTag: ENT.TEST
+      cjvpdhcqc000s9sqs0i541i1a:
+        adSize: medium-rectangle
+        adPosition: rec
+        adLocation: atf
+        doubleclickBannerTag: ENT.TEST
+      cjvpdhcqd000t9sqs9lyvtjry:
+        adSize: half-page
+        adPosition: rec
+        adLocation: btf
+        sticky: true
+        doubleclickBannerTag: ENT.TEST
+  static-page:
+    instances:
+      contest-rules:
+        headline: Contest Rules
+        content:
+          - _ref: /_components/paragraph/instances/cjvpdhcqf000v9sqs8v8w9xt8
+          - _ref: /_components/paragraph/instances/cjvpe0zou000l3h5xzdbtzs5y
+          - _ref: /_components/subheader/instances/cjvpdkbnz000b3h5xj8be46qy
+          - _ref: /_components/paragraph/instances/cjvpdmbvc000e3h5x1y758ge0
+          - _ref: /_components/subheader/instances/cjvpdp1ql000g3h5xisycm39y
+          - _ref: /_components/paragraph/instances/cjvpdpwbr000j3h5x1jqr5keh
+        pageTitle: Contest Rules
+        byline: []
+        slugLock: true
+        manualSlugUnlock: false
+        componentVariation: static-page
+        primaryHeadline: Contest Rules
+        plaintextPrimaryHeadline: Contest Rules
+  paragraph:
+    instances:
+      cjvpdhcqf000v9sqs8v8w9xt8:
+        text: >-
+          Unless otherwise indicated below, RADIO.COM’s general contest rules
+          apply to RADIO.COM contests. For the specific terms and conditions
+          applicable to a particular RADIO.COM contest, please see below.
+        componentVariation: paragraph
+      cjvpe0zou000l3h5xzdbtzs5y:
+        text: >-
+          You can also view RADIO.COM's&nbsp;<a
+          href="http://clay.radio.com/general-contest-rules"
+          target="_blank">General Contest Rules</a>&nbsp;or review
+          Entercom's&nbsp;<a href="http://www.entercom.com/privacy-policy"
+          target="_blank">Privacy Policy.</a>
+      cjvpdmbvc000e3h5x1y758ge0:
+        text: 'Contest Rules: Florida Hockey Flyaway 12.14.18 - 1.15.19'
+      cjvpdpwbr000j3h5x1jqr5keh:
+        text: 'Contest Rules: 12.4.18 - 12.16.18'
+  subheader:
+    instances:
+      cjvpdkbnz000b3h5xj8be46qy:
+        text: Enter to Win a Sand &amp; Ice Winter Getaway
+        anchorId: ''
+        _version: 1
+      cjvpdp1ql000g3h5xisycm39y:
+        text: The American Cancer Society 12 Days of Chrismas Giveaway
+        anchorId: ''
+        _version: 1
+  latest-recirculation:
+    instances:
+      contest-rules:
+        items: []
+        tag: ''
+        populateBy: sectionFront
+        articles: []
+        contentType:
+          article: true
+          gallery: true
+        _version: 2
+_pages:
+  contest-rules:
+    head:
+      - /_components/meta-title/instances/contest-rules
+      - /_components/meta-description/instances/contest-rules
+      - /_components/meta-image/instances/contest-rules
+      - /_components/meta-url/instances/contest-rules
+    pageHeader:
+      - /_components/google-ad-manager/instances/cjvpdhcqc000r9sqssgdgdet6
+    main:
+      - /_components/static-page/instances/contest-rules
+    tertiary:
+      - /_components/google-ad-manager/instances/cjvpdhcqc000s9sqs0i541i1a
+      - /_components/latest-recirculation/instances/contest-rules
+      - /_components/google-ad-manager/instances/cjvpdhcqd000t9sqs9lyvtjry
+    layout: /_components/two-column-layout/instances/static-page
+    customUrl: /contest-rules

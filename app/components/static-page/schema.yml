@@ -3,7 +3,6 @@ _confirmRemoval: true
 
 headline:
   _label: Headline
-  _subscribe: articleHeadline #is this needed? do I need to create a pageHeadline? What does this do?
   _placeholder:
     height: 40px
     text: Headline

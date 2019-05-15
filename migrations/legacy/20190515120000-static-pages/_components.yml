@@ -21,7 +21,7 @@ _components:
           - _ref: /_components/top-nav/instances/default
         head: head
         pageHeader: pageHeader
-#        sectionHeader: sectionHeader # might need to stay
+        sectionHeader: sectionHeader
         main: main
         tertiary: tertiary
         secondary:
@@ -29,7 +29,7 @@ _components:
           - _ref: /_components/trending-recirculation/instances/default
         bottom:
           - _ref: /_components/yieldmo/instances/default
-#          - _ref: /_components/google-ad-manager/instances/billboardBottom
+          - _ref: /_components/google-ad-manager/instances/billboardBottom
           - _ref: /_components/google-ad-manager/instances/oop
           - _ref: /_components/google-ad-manager/instances/mobileAdhesion
           - _ref: /_components/footer/instances/default

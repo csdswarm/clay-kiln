@@ -473,11 +473,11 @@ em, i {
   @mixin font CircularStd-Black, 24px, $black, -.23px, 18px;
 }
 @define-mixin static-page-font4 {
-  @mixin font ProximaNova-Light, 18px, $white, -.36px, 30px;
+  @mixin font ProximaNova-Light, 18px, $black, -.36px, 30px;
 }
 @define-mixin static-page-font5 {
-  @mixin font ProximaNova-Regular, 18px, $white, -.36px, 30px;
+  @mixin font ProximaNova-Regular, 18px, $black, -.36px, 30px;
 }
 @define-mixin static-page-font6 {
-  @mixin font ProximaNova-Bold, 18px, $white, -.36px, 30px;
+  @mixin font ProximaNova-Bold, 18px, $black, -.36px, 30px;
 }

@@ -1,3 +1,5 @@
+_version: 1.0 #TODO: determine if we need to do anything in the migration.sh for this component
+
 _description: |
   A simple subheader component.
 
@@ -13,3 +15,10 @@ text:
     text: Subheader Text
   _has:
     input: inline
+
+# TODO: Find out how to make this visible/editable.
+anchorId:
+  _label: Anchor Id (will prepend "ip-") # prepending `ip-` to ensure no id conflicts in page TODO: create model.js to prepend ip-
+  _has:
+    input: text
+    help: Id for hyperlink targeting within the page (use hash syntax \#ip-anchor-id-name)

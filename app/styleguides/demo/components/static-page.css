@@ -11,10 +11,16 @@
   @mixin static-page-font6;
 }
 
+.component--static-page {
+  .component--subheader {
+    @mixin static-page-font3;
+  }
+}
+
 .static-page {
-  @mixin static-page-font5;
 
   &__header {
+    margin-bottom: 20px;
   }
 
     &__headline {
@@ -31,7 +37,12 @@
   }
 
     &__content {
-
+      a {
+        background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(purpleRGB), .50) 80%, rgba($(purpleRGB), .50) 100%);
+        &:hover {
+          background: linear-gradient(to bottom, rgba($(purpleRGB), .50) 0, rgba($(purpleRGB), .50) 100%);
+        }
+      }
     }
 
   @mixin default-screen {
@@ -48,5 +59,5 @@
 
   @mixin small-screen {
   }
-}
 
+}

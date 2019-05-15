@@ -4,7 +4,7 @@ const fetch = require('../../../app/node_modules/node-fetch')
 const [url] = process.argv.slice(2)
 
 if (!url) {
-  throw new Error('Missing url');
+  throw new Error('Missing url')
 }
 
 const logAndContinue = message => value => {
@@ -12,11 +12,13 @@ const logAndContinue = message => value => {
   return value
 }
 
-const handleError = err => { if (err) throw new Error(err) }
+const handleError = err => {
+  if (err) throw new Error(err)
+}
 
 const getPagesFromClay = async ({url}) => {
   const response = await fetch(url)
-  return  response.json()
+  return response.json()
 }
 
 // prevents duplication by id
@@ -35,7 +37,7 @@ const saveToFile = pagesYml => {
   return pagesYml
 }
 
-getPagesFromClay({ url })
+getPagesFromClay({url})
   .then(pageArrayToObj)
   .then(addNewListItem)
   .then(objToPageArray)
