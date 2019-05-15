@@ -254,7 +254,6 @@ const axios = require('axios'),
   signOutLogic = async (response, req, res) => {
     deleteCookie(COOKIES.profile, res);
     deleteCookie(COOKIES.accessToken, res);
-    console.log('just signed out');
   },
   /**
    * determine preRoute logic
@@ -271,7 +270,9 @@ const axios = require('axios'),
       current = `${req.method}:${req.path}`;
   
     if (keys.includes(current)) {
-      await routes[current](req, res);
+      return await routes[current](req, res);
+    } else {
+      return true;
     }
   },
   /**
