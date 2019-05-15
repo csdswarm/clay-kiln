@@ -13,7 +13,6 @@ const axios = require('axios'),
     profile: ['application_id', 'created_date', 'modified_date', 'tracking_id', 'user_id', 'userId']
   },
   radiumApi = 'https://radium.radio.com/',
-  radiumAxios = axios.create(),
   facebookCallbackUrL = process.env.FACEBOOK_CALLBACK_URL,
   privateKey = process.env.JWT_SECRET_KEY,
   cognitoClientId = process.env.COGNITO_CLIENT_ID,
@@ -157,7 +156,7 @@ const axios = require('axios'),
   call = async (method, url, data, accessToken) => {
     const headers = {...accessToken ? {authorization: `Bearer ${accessToken}`} : {}};
      
-    return await radiumAxios({
+    return await axios({
       method,
       url: `${radiumApi}${url}`,
       data,
@@ -347,31 +346,30 @@ const axios = require('axios'),
    * @return {Promise<Object>}
    */
   facebookCallback = async (req, res) => {
-    const { code } = req.query,
-      redirectUri = `https://${process.env.CLAY_SITE_HOST}/account/facebook-callback`,
-      data = `code=${code}&client_id=${cognitoClientId}&redirect_uri=${redirectUri}&grant_type=authorization_code`,
-      options = {
-        method: 'post',
-        url: facebookCallbackUrL,
-        data,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        crossdomain: true,
-        withCredentials: true,
-        facebookUser: true
-      };
+    try {
+      const { code } = req.query,
+        redirectUri = `https://${process.env.CLAY_SITE_HOST}/account/facebook-callback`,
+        data = `code=${code}&client_id=${cognitoClientId}&redirect_uri=${redirectUri}&grant_type=authorization_code`,
+        options = {
+          method: 'post',
+          url: facebookCallbackUrL,
+          data,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          crossdomain: true,
+          withCredentials: true,
+          facebookUser: true
+        },
+        response = await axios(options);
 
-    return axios(options).then(async response => {
       await signInLogic(response, req, res);
-      return response.data;
-    }).then((data) => {
       // Returns a script that passes a message to the origin tab, and then immediately closes the opened tab.
       return res.send(
         `<script>window.opener.postMessage(${JSON.stringify(data)}, location.protocol + '//' + location.hostname); window.close();</script>`
       );
-    }).catch((e) => {
+    } catch (e) {
       console.log(e);
       res.status(500).json({message: 'An unknown error has occurred'});
-    });
+    }
   };
 
 module.exports.apply = apply;

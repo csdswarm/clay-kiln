@@ -2,7 +2,7 @@
   <div class="sign-in">
     <fieldset>
       <h1 class="h1-login" align="center"> <span>Log In</span> <span class="small" style=" padding:0px 10px 0px 10px">or</span>
-        <facebook-button @loggedin="closeModal"/>
+        <facebook-button/>
       </h1>
       <message></message>
       <div class="floating-label">
@@ -52,9 +52,6 @@ export default {
   methods: {
     onFieldChange (event) {
       this.user[event.target.name] = event.target.value
-    },
-    closeModal () {
-      this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
     },
     validateForm () {
       if (!this.user.email) {
