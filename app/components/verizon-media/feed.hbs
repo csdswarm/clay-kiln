@@ -1,0 +1,16 @@
+<div class="component--verizon-media">
+  <div class="player">
+    {{#if videoId}}
+      <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
+        <video-js id="video-{{ videoId }}"
+                class="video-js vjs-16-9"
+                data-video-id="{{ videoId }}"
+                data-company="{{ locals.site.verizonMediaCompanyId }}"
+                data-player="{{ locals.site.verizonMediaPlayerId }}"
+                data-embed="default"
+                data-application-id
+                controls></video-js>
+      </div>
+    {{/if}}
+  </div>
+</div>
