@@ -10,7 +10,6 @@ const callbacks = {};
 function addEventCallback(channel, callback) {
   callbacks[channel] = callbacks[channel] || [];
   callbacks[channel].push(callback);
-  console.log("Callbacks: ", callbacks);
 }
 
 /**
