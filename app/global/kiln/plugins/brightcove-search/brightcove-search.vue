@@ -12,11 +12,14 @@
 
                 :suggestions="searchResults"
                 @input="populateBrightcove"
-                v-model="selectedVideo"
+                v-model="query"
             ></ui-autocomplete>
     </div>
 </template>
 <script>
+
+    import axios from 'axios';
+
     const UiAutocomplete = window.kiln.utils.components.UiAutocomplete;
     export default {
         props: ['name', 'data', 'schema', 'args'],
@@ -24,13 +27,16 @@
             return {
                 videoName: '',
                 searchResults: ['something', 'something else'],
-                selectedVideo: ''
+                query: ''
             };
         },
         methods: {
             populateBrightcove() {
-                console.log('this is where I need to do the search')
-                console.log(this.selectedVideo);
+                const params = {query: this.query};
+                
+                axios.get('/brightcove/search', {params}).then(response => {
+                    console.log(response);
+                });
             }
         },
         components: {
