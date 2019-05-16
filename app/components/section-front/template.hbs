@@ -6,7 +6,7 @@
       {{#unless primary}}
         <span>Primary section front <span class="warn">*required</span> : {{ primarySectionFront }}</span>
       {{/unless}}
-      <span>Title <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
+      <span>Title {{#unless primary}} (Secondary Section Front){{/unless}} <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
       {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
     </div>
   {{/if}}
