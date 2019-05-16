@@ -21,8 +21,7 @@ addEventCallback('clay:publishPage', async () => {
           value: slugifyService(data.title)
         });
         await db.put(primarySectionFrontsList, JSON.stringify(primarySectionFronts));
-        data.titleLocked = true;
-        await db.put(sectionFrontRef, JSON.stringify(data));
+        await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: true}));
       }
     }
   } catch (e) {
@@ -41,8 +40,7 @@ addEventCallback('clay:unpublishPage', async () => {
         });
 
       await db.put(primarySectionFrontsList, JSON.stringify(updatedSectionFronts));
-      data.titleLocked = false;
-      await db.put(sectionFrontRef, JSON.stringify(data));
+      await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: false}));
     }
   } catch (e) {
     console.log(e);
