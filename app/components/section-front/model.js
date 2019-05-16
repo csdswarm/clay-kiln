@@ -1,7 +1,6 @@
 'use strict';
 
 const db = require('../../services/server/db'),
-  slugifyService = require('../../services/universal/slugify'),
   { addEventCallback } = require('../../services/universal/eventBus');
 
 let primary,
@@ -18,10 +17,10 @@ addEventCallback('clay:publishPage', async () => {
       const sectionFronts = await db.get(sectionFrontsList),
         sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
 
-      if (!sectionFrontValues.includes(slugifyService(data.title))) {
+      if (!sectionFrontValues.includes(data.title)) {
         sectionFronts.push({
           name: data.title,
-          value: slugifyService(data.title)
+          value: data.title
         });
         await db.put(sectionFrontsList, JSON.stringify(sectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: true}));
@@ -40,7 +39,7 @@ addEventCallback('clay:unpublishPage', async () => {
     if (data.title) {
       const sectionFronts = await db.get(sectionFrontsList),
         updatedSectionFronts = sectionFronts.filter(sectionFront => {
-          return sectionFront.value !== slugifyService(data.title);
+          return sectionFront.value !== data.title;
         });
 
       await db.put(sectionFrontsList, JSON.stringify(updatedSectionFronts));
