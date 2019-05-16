@@ -44,7 +44,7 @@ addEventCallback('clay:unpublishPage', async () => {
         });
 
       await db.put(sectionFrontsList, JSON.stringify(updatedSectionFronts));
-      await db.put(sectionFrontRef, JSON.stringify({data, titleLocked: false}));
+      await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: false}));
     }
   } catch (e) {
     console.log(e);
