@@ -41,8 +41,8 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondaryArticleTypes:
-  _label: Exclude Secondary Article Types
+filterSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
   _has:
     input: checkbox-group
     options:
@@ -75,4 +75,4 @@ _groups:
   settings:
     fields:
       - filterTags
-      - filterSecondaryArticleTypes
+      - filterSecondarySectionFronts

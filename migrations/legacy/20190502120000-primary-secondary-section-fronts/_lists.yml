@@ -1,0 +1,75 @@
+_lists:
+  primary-section-fronts:
+    -
+      name: Music
+      value: Music
+    -
+      name: News
+      value: News
+    -
+      name: Sports
+      value: Sports
+    -
+      name: Podcasts
+      value: Podcasts
+  secondary-section-fronts:
+    - 
+      name: Pop
+      value: Pop
+    - 
+      name: Alternative
+      value: Alternative
+    - 
+      name: Country
+      value: Country
+    -
+      name: Hip-Hop R&B
+      value: Hip-Hop R&B
+    - 
+      name: Rock
+      value: Rock
+    - 
+      name: Icons
+      value: Icons
+    - 
+      name: Entertainment News
+      value: Entertainment News
+    - 
+      name: Movies
+      value: Movies
+    - 
+      name: Television
+      value: Television
+    - 
+      name: National News
+      value: National News
+    - 
+      name: Politics
+      value: Politics
+    - 
+      name: Local Politics
+      value: Local Politics
+    - 
+      name: Small Business Pulse
+      value: Small Business Pulse
+    - 
+      name: NFL
+      value: NFL
+    - 
+      name: MLB
+      value: MLB
+    - 
+      name: NBA
+      value: NBA
+    - 
+      name: NHL
+      value: NHL
+    - 
+      name: NCAA Football
+      value: NCAA Football
+    - 
+      name: NCAA Basketball
+      value: NCAA Basketball
+    -
+      name: MMA & WWE
+      value: MMA & WWE

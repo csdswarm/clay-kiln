@@ -8,7 +8,7 @@ _components:
     sectionFront: ''
     sectionFrontManual: ''
     filterTags: []
-    filterSecondaryArticleTypes: []
+    filterSecondarySectionFronts: []
     populateFrom: ''
     locationOfContentFeed: ''
     contentCollectionLogoSponsorship:
