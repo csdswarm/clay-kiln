@@ -1,7 +1,6 @@
 'use strict';
 
-const _ = require('lodash'),
-  { getComponentName } = require('clayutils');
+const { getComponentName } = require('clayutils');
 
 
 /**
@@ -29,7 +28,7 @@ function isOpForComponents(cmpts) {
  * @return {Object}
  */
 function stripPostProperties(op) {
-  op.value = _.omit(op.value, ['content']);
+  // op.value = _.omit(op.value, ['content']);
 
   return op;
 }
