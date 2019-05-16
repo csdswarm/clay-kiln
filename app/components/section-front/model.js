@@ -62,7 +62,7 @@ module.exports.render = (uri, data, locals) => {
   sectionFrontRef = uri.replace('@published','');
   primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
   secondarySectionFrontsList = locals ? `${locals.site.host}/_lists/secondary-section-fronts` : '';
-
+  
   return data;
 };
 
