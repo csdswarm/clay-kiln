@@ -3,24 +3,28 @@
 const callbacks = {};
 
 /**
- * Define callback for event
+ * Define callback(s) for event
  * @param  {string} channel
  * @param  {Function} callback
  */
-function setEventCallback(channel, callback) {
-  callbacks[channel] = callback;
+function addEventCallback(channel, callback) {
+  callbacks[channel] = callbacks[channel] || [];
+  callbacks[channel].push(callback);
+  console.log("Callbacks: ", callbacks);
 }
 
 /**
- * Trigger callback on sub of message from event bus
+ * Trigger callback(s) on sub of message from event bus
  * @param  {string} channel
  * @param  {Object[]} payload
  */
 function triggerCallback(channel, payload) {
-  if (callbacks[channel]) {
-    callbacks[channel](payload);
+  if (callbacks[channel] && callbacks[channel].length) {
+    callbacks[channel].forEach(callback => {
+      callback(payload);
+    });
   }
 }
 
-module.exports.setEventCallback = setEventCallback;
+module.exports.addEventCallback = addEventCallback;
 module.exports.triggerCallback = triggerCallback;
