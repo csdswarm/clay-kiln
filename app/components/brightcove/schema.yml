@@ -9,6 +9,12 @@ videoId:
     validate:
       required: true
 
+videoName:
+  _label: Video Name
+  _has:
+    input: brightcove-search
+    webLabel: Video Search
+
 showTitle:
   _label: Show video title?
   _has: checkbox
@@ -22,4 +28,5 @@ _groups:
       ifEmpty: videoId
     fields:
       - videoId
+      - videoName
       - showTitle
