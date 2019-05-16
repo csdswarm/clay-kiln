@@ -2,14 +2,14 @@
 
 const db = require('../../services/server/db'),
   slugifyService = require('../../services/universal/slugify'),
-  eventBusService = require('../../services/universal/eventBus');
+  { addEventCallback } = require('../../services/universal/eventBus');
 
 let primary,
   primarySectionFrontsList,
   secondarySectionFrontsList,
   sectionFrontRef;
 
-eventBusService.setEventCallback('clay:publishPage', async () => {
+addEventCallback('clay:publishPage', async () => {
   try {
     const data = await db.get(sectionFrontRef),
       sectionFrontsList = primary ? primarySectionFrontsList : secondarySectionFrontsList;
@@ -32,7 +32,7 @@ eventBusService.setEventCallback('clay:publishPage', async () => {
   }
 });
 
-eventBusService.setEventCallback('clay:unpublishPage', async () => {
+addEventCallback('clay:unpublishPage', async () => {
   try {
     const data = await db.get(sectionFrontRef),
       sectionFrontsList = primary ? primarySectionFrontsList : secondarySectionFrontsList;
