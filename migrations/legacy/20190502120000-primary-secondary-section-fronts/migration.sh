@@ -16,7 +16,7 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "Add new podcast module instances...\n"
+printf "Add new section front lists...\n"
 cat ./_lists.yml | clay import -k demo -y $1
 
 printf "\n\n\n\n"
@@ -32,9 +32,9 @@ curl -X GET "$es:9200/published-content/_alias" > ./aliases.json;
 currentIndex=$(node alias "$1");
 rm ./aliases.json
 
-mappings=$(curl -X GET "$es:9200/$currentIndex/_mappings");
+mappings=$(curl -X GET "$es:9200/$currentIndex/_mappings" 2>/dev/null | sed -n "s/{\"$currentIndex\":{\(.*\)}}/\1/p");
 
-if [[ $mappings == *"secondaryArticleType"* ]]; then
+if [[ $mappings == *"secondaryArticleType"* && $mappings != *"secondarySectionFront"* ]]; then
   printf "\nmaking curl GET to $es:9200/_cat/indices?pretty&s=index:desc\n";
   indices=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null);
   # sometimes the currentIndex isn't necessarily the largest. and query brings back in alphabetical order, so 2 > 10
@@ -58,12 +58,12 @@ if [[ $mappings == *"secondaryArticleType"* ]]; then
   # new prop name secondarySectionFront to replace secondaryArticleType
   currentKey="secondaryArticleType";
   newKey="secondarySectionFront";
-  pipeline = "rename_${currentKey}_to_${newKey}_pipeline";
+  pipeline="rename_${currentKey}_to_${newKey}_pipeline";
 
-  printf "\r\n\r\nRenaming old mapping key ($currentKey) to new mapping key ($newKey)...\n\n"
+  printf "\r\n\r\nRenaming old mapping key ($currentKey) to new mapping key ($newKey) using pipeline $pipeline...\n\n"
   curl -X PUT "$es:9200/_ingest/pipeline/$pipeline" -H 'Content-Type: application/json' -d "
   {
-    \"description\" : \"rename secondaryArticleType to secondarySectionFront\",
+    \"description\" : \"rename $currentKey to $newKey\",
     \"processors\" : [
       {
         \"rename\": {
@@ -81,7 +81,7 @@ if [[ $mappings == *"secondaryArticleType"* ]]; then
       \"index\": \"$currentIndex\"
     },
     \"dest\": {
-      \"index\": \"$newIndex\"
+      \"index\": \"$newIndex\",
       \"pipeline\": \"$pipeline\"
     }
   }";
