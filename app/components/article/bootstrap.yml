@@ -28,8 +28,6 @@ _components:
       most-popular: true
       newsfeed: true
       apple-news: true
-    secondaryArticleType: ''
-    showSocial: true
     authors: []
     sources: []
     canBeMarkedGoogleStandout: true
@@ -42,3 +40,24 @@ _components:
     plaintextPrimaryHeadline: ''
     sectionFront: ''
     contentType: 'article'
+    secondaryArticleType: ''
+    crosspost:
+      di: false
+      vulture: false
+      wwwthecut: false
+      scienceofus: false
+      grubstreet: false
+      selectall: false
+      strategist: false
+      vindicated: false
+      betamale: false
+      nyxny: false
+    shouldHideAds: false
+    slugLock: false
+    showSocial: true
+    adDummy:
+      _ref: /_components/ad-dummy/instances/general
+    eligibleForGoogleStandout: false
+    originUrl: ''
+    featured: false
+    editorialFeeds: {}
