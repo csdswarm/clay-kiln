@@ -43,6 +43,23 @@ function getStationTags(station) {
 }
 
 /**
+ * Add meta-title and meta-description to station object
+ *
+ * @param {object} station
+ * @returns {object}
+ */
+function addMetaData(station) {
+  if (!station) {
+    return {};
+  }
+  return {
+    ...station,
+    metaTitle: `Listen to ${station.name} Online`,
+    metaDescription: `Listen to ${station.name} - ${station.slogan}. Live. Anytime. Anywhere`
+  };
+}
+
+/**
  * Adds station specific breadcrumbs links to the data
  *
  * @param {Object} data The data object to extend
@@ -63,7 +80,7 @@ module.exports.render = (uri, data, locals) => {
   }
 
   locals.station.playingClass = playingClass(locals, locals.station.id);
-  data.station = locals.station;
+  data.station = locals.station = addMetaData(locals.station);
   data.tags = getStationTags(locals.station);
   data.category = locals.station.category.toLowerCase() || '';
   addBreadcrumbLinks(data, locals.site.host);
