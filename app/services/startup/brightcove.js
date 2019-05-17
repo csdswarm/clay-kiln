@@ -2,9 +2,11 @@
 
 const brightcoveApi = require('../universal/brightcoveApi'),
   _get = require('lodash/get'),
+  buildQuery = (query) => {
+    return `id:${query}%20name:${query}`;
+  },
   transformSearchResults = (results = []) => {
     return results.map(({name, images, id}) => {
-      console.log({name, id, imageUrl: _get(images, 'thumbnail.src', '')});
       return {name, id, imageUrl: _get(images, 'thumbnail.src', '')};
     });
   },
@@ -12,7 +14,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     try {
       const { query } = req.query;
  
-      return brightcoveApi.request('GET', 'videos', {q: query, id: query, name: query, tags: query, limit: 10})
+      return brightcoveApi.request('GET', 'videos', {q: buildQuery(query), limit: 10})
         .then(transformSearchResults)
         .then((tResults => {
           return res.send(tResults);

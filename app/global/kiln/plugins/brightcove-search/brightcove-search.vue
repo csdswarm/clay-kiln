@@ -7,7 +7,7 @@
         <div v-if="video.id" class="brightcove-video-preview">
             <div class="brightcove-video-preview__info">
                 <strong>{{video.name}}</strong>
-                <i>{{video.id}}</i>
+                <i>ID: {{video.id}}</i>
             </div>
             <img class="brightcove-video-preview__image" :src="video.imageUrl" />
         </div>
@@ -49,7 +49,7 @@
                     const results = await axios.get('/brightcove/search', {params: { query: this.data }});
                     this.video = results.data[0];
                 } catch (e) {
-                    console.error('Error retrieving video infor');
+                    console.error('Error retrieving video info');
                 }
             }
         },
@@ -59,7 +59,6 @@
                 
                 axios.get('/brightcove/search', {params}).then(response => {
                     this.searchResults = response.data;
-                    console.log('Results:', this.searchResults.length);
                 });
             },
             selectBrightcove(suggestion) {
