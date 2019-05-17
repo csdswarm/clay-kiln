@@ -12,25 +12,43 @@ function formatSearchResult(result) {
 }
 
 /**
+ * Returns the root key where additional properties should be added
+ *
+ * @param {Object} query
+ * @return {string}
+ */
+function getRoot(query) {
+  return query.nested ? 'nested' : 'body';
+}
+
+/**
  * Start a new query with the specified index
  * and types for the query
  * https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-bool-query.html
  *
  * @param  {String} index
- * @param  {String} type
+ * @param  {Object} query
  * @return {Object}
  */
-function newQuery(index) {
+function newQuery(index, query) {
   if (!index) {
     throw new Error('An `index` is required to construct a query');
+  }
+
+  if (typeof query === 'undefined') {
+    query = {};
+  }
+
+  const body = {};
+
+  if (query !== null) {
+    body.query = query;
   }
 
   return {
     index: index,
     type: '_doc',
-    body: {
-      query: {}
-    }
+    body
   };
 }
 
@@ -43,21 +61,22 @@ function newQuery(index) {
  * @return {Object}
  */
 function addShould(query, item) {
-  var should = _.get(query, 'body.query.bool.should', undefined),
+  const key = `${getRoot(query)}.query.bool.should`,
+    should = _.get(query, key, undefined),
     itemIsArray = _.isArray(item);
 
   if (should) {
     if (itemIsArray) {
-      _.set(query, 'body.query.bool.should', should.concat(item));
+      _.set(query, key, should.concat(item));
     } else {
       should.push(item);
-      _.set(query, 'body.query.bool.should', should);
+      _.set(query, key, should);
     }
   } else {
     if (itemIsArray) {
-      _.set(query, 'body.query.bool.should', item);
+      _.set(query, key, item);
     } else {
-      _.set(query, 'body.query.bool.should', [item]);
+      _.set(query, key, [item]);
     }
   }
 
@@ -73,21 +92,22 @@ function addShould(query, item) {
  * @return {Object}
  */
 function addMust(query, item) {
-  var must = _.get(query, 'body.query.bool.must', undefined),
+  const key = `${getRoot(query)}.query.bool.must`,
+    must = _.get(query, key, undefined),
     itemIsArray = _.isArray(item);
 
   if (must) {
     if (itemIsArray) {
-      _.set(query, 'body.query.bool.must', must.concat(item));
+      _.set(query, key, must.concat(item));
     } else {
       must.push(item);
-      _.set(query, 'body.query.bool.must', must);
+      _.set(query, key, must);
     }
   } else {
     if (itemIsArray) {
-      _.set(query, 'body.query.bool.must', item);
+      _.set(query, key, item);
     } else {
-      _.set(query, 'body.query.bool.must', [item]);
+      _.set(query, key, [item]);
     }
   }
 
@@ -102,21 +122,22 @@ function addMust(query, item) {
  * @return {Object}
  */
 function addMustNot(query, item) {
-  var mustNot = _.get(query, 'body.query.bool.must_not', undefined),
+  const key = `${getRoot(query)}.query.bool.must_not`,
+    mustNot = _.get(query, key, undefined),
     itemIsArray = _.isArray(item);
 
   if (mustNot) {
     if (itemIsArray) {
-      _.set(query, 'body.query.bool.must_not', mustNot.concat(item));
+      _.set(query, key, mustNot.concat(item));
     } else {
       mustNot.push(item);
-      _.set(query, 'body.query.bool.must_not', mustNot);
+      _.set(query, key, mustNot);
     }
   } else {
     if (itemIsArray) {
-      _.set(query, 'body.query.bool.must_not', item);
+      _.set(query, key, item);
     } else {
-      _.set(query, 'body.query.bool.must_not', [item]);
+      _.set(query, key, [item]);
     }
   }
 
@@ -134,7 +155,8 @@ function addMustNot(query, item) {
  * @return {Object}
  */
 function addFilter(query, item) {
-  var filter = _.get(query, 'body.query.bool.filter', undefined),
+  const key = `${getRoot(query)}.query.bool.filter`,
+    filter = _.get(query, key, undefined),
     itemIsObject = _.isObject(item);
 
   if (!itemIsObject) {
@@ -144,12 +166,12 @@ function addFilter(query, item) {
   if (filter) {
     if (_.isArray(filter)) {
       filter.push(item);
-      _.set(query, 'body.query.bool.filter', filter);
+      _.set(query, key, filter);
     } else {
-      _.set(query, 'body.query.bool.filter', [ _.cloneDeep(filter), item ] );
+      _.set(query, key, [ _.cloneDeep(filter), item ] );
     }
   } else {
-    _.set(query, 'body.query.bool.filter', item);
+    _.set(query, key, item);
   }
 
   return query;
@@ -167,11 +189,13 @@ function addFilter(query, item) {
  * @return {Object}
  */
 function addMinimumShould(query, num) {
+  const key = `${getRoot(query)}.query.bool.minimum_should_match`;
+
   if (typeof num !== 'number') {
     throw new Error('A number is required as the second argument');
   }
 
-  _.set(query, 'body.query.bool.minimum_should_match', num);
+  _.set(query, key, num);
 
   return query;
 }
@@ -216,6 +240,12 @@ function addSize(query, size) {
   return _.set(query, 'body.size', size);
 }
 
+/**
+ * Add a from property to the query body
+ *
+ * @param {Object} query
+ * @param {String} offset
+ */
 function addOffset(query, offset) {
   _.set(query, 'body.from', parseInt(offset));
 }
@@ -340,6 +370,25 @@ function formatAggregationResults(aggregationName = '', field = '', skipEmpty = 
   };
 }
 
+/**
+ * Create a nested query object
+ *
+ * @param {String} path
+ * @return {Object}
+ */
+function newNestedQuery(path) {
+  if (!path) {
+    throw new Error('A `path` is required to create a new nested query');
+  }
+
+  return {
+    nested: {
+      path,
+      query: { }
+    }
+  };
+}
+
 module.exports = newQuery;
 module.exports.addAggregation = addAggregation;
 module.exports.addShould = addShould;
@@ -356,3 +405,4 @@ module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = formatAggregationResults;
 module.exports.formatSearchResult = formatSearchResult;
 module.exports.moreLikeThis = moreLikeThis;
+module.exports.newNestedQuery = newNestedQuery;

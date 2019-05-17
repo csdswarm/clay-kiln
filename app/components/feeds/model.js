@@ -46,12 +46,9 @@ module.exports.save = function (uri, data) {
  * @param  {Object} locals
  * @return {Promise|Object}
  */
-module.exports.render = function (ref, data, locals) {
-  let ES_QUERY,
-    { meta } = data;
-
+module.exports.render = async (ref, data, locals) => {
   if (!data.index) {
-    log('error', 'Feed cmpt requires an `index` and `transform` property in the data');
+    log('error', 'Feed component requires an `index` and `transform` property in the data');
     return data;
   }
 
@@ -61,23 +58,71 @@ module.exports.render = function (ref, data, locals) {
     return data;
   }
 
-  ES_QUERY = queryService(data.index, locals); // Build the appropriate query obj for the env
-  ES_QUERY.body.query = data.query.query; // Just replace all the properties in query with the data
-  ES_QUERY.body.size = data.query.size;
-  ES_QUERY.body.sort = data.query.sort;
-  ES_QUERY.body._source = data.query._source;
+  const { meta } = data,
+    getVar = (variable) => locals.query[variable].replace(/^\[(.*)]$/, '$1').split(','),
+    query = queryService(data.index, data.query.query ? data.query.query : null); // Build the appropriate query obj for the env,
 
-  if (meta.rawQuery) {
-    return queryService.searchByQueryWithRawResult(ES_QUERY)
-      .then((results) => {
-        data.results = results.hits.hits; // Attach results and return data
-        return data;
-      });
-  } else {
-    return queryService.searchByQuery(ES_QUERY)
-      .then((results) => {
-        data.results = results; // Attach results and return data
-        return data;
-      });
+  queryService.addSize(query, locals.query.size ? locals.query.size : data.query.size);
+  queryService.addSort(query, data.query.sort);
+  if (data.query._source) {
+    queryService.onlyWithTheseFields(query, data.query._source);
   }
+console.log(locals.query)
+  //vertical (sectionfront) and/or exclude tags
+  if (locals.query.vertical) {
+    const tags = getVar('vertical');
+
+    tags.forEach(vertical => queryService.addShould(query, { match: { sectionFront: vertical }}));
+    queryService.addMinimumShould(query, 1);
+
+  }
+  // tags
+  if (locals.query.tag) {
+    const tags = getVar('tag');
+
+    tags.forEach(tag => queryService.addShould(query, { match: { 'tags.normalized': tag }}));
+    queryService.addMinimumShould(query, 1);
+  }
+  // subcategory (secondary article type)
+  if (locals.query.subcategory) {
+    const subcategories = getVar('subcategory');
+
+    subcategories.forEach(subcategory => queryService.addShould(query, { match: { secondaryArticleType: subcategory }}));
+    queryService.addMinimumShould(query, 1);
+  }
+  // editorial feed (grouped stations)
+  if (locals.query.editorial) {
+    const editorials = getVar('editorial');
+
+    editorials.forEach(editorial => queryService.addMust(query, { match: { [`editorialFeeds.${editorial}`]: true }}));
+    queryService.addMinimumShould(query, 1);
+  }
+  // stations
+  if (locals.query.station) {
+    const nestedQuery = queryService.newNestedQuery('byline'),
+      stations = getVar('station');
+
+    stations.forEach(station => queryService.addShould(nestedQuery, { match: { 'byline.sources.text': station }}));
+    queryService.addMinimumShould(nestedQuery, 1);
+
+    queryService.addMust(query, nestedQuery);
+  }
+
+console.log(JSON.stringify(query))
+  try {
+    if (meta.rawQuery) {
+      const results = await queryService.searchByQueryWithRawResult(query);
+
+      data.results = results.hits.hits; // Attach results and return data
+      return data;
+    } else {
+      data.results = await queryService.searchByQuery(query); // Attach results and return data
+
+      return data;
+    }
+  } catch (e) {
+    queryService.logCatch(e, 'feeds.model');
+    return data;
+  }
+
 };
