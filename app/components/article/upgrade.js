@@ -31,3 +31,10 @@ module.exports['3.0'] = function (uri, data) {
     contentPageSponsorLogo: { _ref : contentLogoSponsorshipURIPublished }
   };
 };
+
+module.exports['4.0'] = function (uri, data) {
+  return {
+    ...data,
+    secondarySectionFront: data.secondaryArticleType || ''
+  };
+}

@@ -1,6 +1,10 @@
 'use strict';
 
-const pubUtils = require('./publish-utils');
+const pubUtils = require('./publish-utils'),
+  pageTypes = {
+    ARTICLE: 'article',
+    GALLERY: 'gallery'
+  };
 
 /**
  * Common functionality used for `getYearMonthSlugUrl` and `getArticleSlugUrl`
@@ -47,7 +51,10 @@ function getYearMonthSlugUrl(pageData, locals, mainComponentRefs) {
 function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      if (urlOptions.contentType == 'article') {
+      if (urlOptions.contentType === pageTypes.ARTICLE) {
+        if (urlOptions.secondarySectionFront) {
+          return pubUtils.articleSecondarySectionFrontSlugPattern(urlOptions);
+        }
         return pubUtils.articleSlugPattern(urlOptions);
       }
     });
@@ -63,7 +70,10 @@ function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
 function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      if (urlOptions.contentType == 'gallery') {
+      if (urlOptions.contentType === pageTypes.GALLERY) {
+        if (urlOptions.secondarySectionFront) {
+          return pubUtils.gallerySecondarySectionFrontSlugPattern(urlOptions);
+        }
         return pubUtils.gallerySlugPattern(urlOptions);
       }
     });
