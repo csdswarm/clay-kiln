@@ -52,25 +52,28 @@ function newQuery(index, query) {
   };
 }
 
+
+
 /**
- * Adds a `should` property to the query.
- * https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-bool-query.html
+ * Adds a property to the query based on the action provided.
  *
  * @param {Object} query
  * @param {Array|Object} item
+ * @param {String} action
+ *
  * @return {Object}
  */
-function addShould(query, item) {
-  const key = `${getRoot(query)}.query.bool.should`,
-    should = _.get(query, key, undefined),
+function createAction(query, item, action) {
+  const key = `${getRoot(query)}.query.bool.${action}`,
+    data = _.get(query, key, undefined),
     itemIsArray = _.isArray(item);
 
-  if (should) {
+  if (data) {
     if (itemIsArray) {
-      _.set(query, key, should.concat(item));
+      _.set(query, key, data.concat(item));
     } else {
-      should.push(item);
-      _.set(query, key, should);
+      data.push(item);
+      _.set(query, key, data);
     }
   } else {
     if (itemIsArray) {
@@ -81,6 +84,18 @@ function addShould(query, item) {
   }
 
   return query;
+}
+
+/**
+ * Adds a `should` property to the query.
+ * https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-bool-query.html
+ *
+ * @param {Object} query
+ * @param {Array|Object} item
+ * @return {Object}
+ */
+function addShould(query, item) {
+  return createAction(query, item, 'should');
 }
 
 /**
@@ -92,26 +107,7 @@ function addShould(query, item) {
  * @return {Object}
  */
 function addMust(query, item) {
-  const key = `${getRoot(query)}.query.bool.must`,
-    must = _.get(query, key, undefined),
-    itemIsArray = _.isArray(item);
-
-  if (must) {
-    if (itemIsArray) {
-      _.set(query, key, must.concat(item));
-    } else {
-      must.push(item);
-      _.set(query, key, must);
-    }
-  } else {
-    if (itemIsArray) {
-      _.set(query, key, item);
-    } else {
-      _.set(query, key, [item]);
-    }
-  }
-
-  return query;
+  return createAction(query, item, 'must');
 }
 
 /**
@@ -122,26 +118,7 @@ function addMust(query, item) {
  * @return {Object}
  */
 function addMustNot(query, item) {
-  const key = `${getRoot(query)}.query.bool.must_not`,
-    mustNot = _.get(query, key, undefined),
-    itemIsArray = _.isArray(item);
-
-  if (mustNot) {
-    if (itemIsArray) {
-      _.set(query, key, mustNot.concat(item));
-    } else {
-      mustNot.push(item);
-      _.set(query, key, mustNot);
-    }
-  } else {
-    if (itemIsArray) {
-      _.set(query, key, item);
-    } else {
-      _.set(query, key, [item]);
-    }
-  }
-
-  return query;
+  return createAction(query, item, 'must_not');
 }
 
 /**
