@@ -14,12 +14,11 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = function (data, locals) {
-
-  const { canonicalUrl, plaintextPrimaryHeadline, featured } = data,
+  const { canonicalUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
       {
-        title: { _cdata: plaintextPrimaryHeadline }
+        title: { _cdata: headline }
       },
       {
         link
@@ -31,15 +30,36 @@ module.exports = function (data, locals) {
         guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
       },
       {
-        description: { _cdata: data.socialDescription }
+        description: { _cdata: seoDescription }
       },
       {
         'content:encoded': { _cdata: renderContent(data.content, locals)}
       },
       {
+        stationUrl: stationURL
+      },
+      {
+        stationTitle
+      },
+      {
+        subHeadline
+      },
+      {
+        seoHeadline: { _cdata: seoHeadline }
+      },
+      {
+        coverImage: feedImgUrl
+      },
+      {
         featured
       }
     ];
+
+  if (data.slides) {
+    transform.push({
+      slides: { _cdata: renderContent(data.slides, locals)}
+    });
+  }
 
   // Add the tags
   addArrayOfProps(data.tags, 'category', transform);

@@ -3,7 +3,8 @@
 const _ = require('lodash'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
-  { sites, composer } = require('amphora');
+  { sites, composer } = require('amphora'),
+  log = require('../universal/log').setup({ file: __filename });
 
 /**
  * Pulled from inside Amphora to fake locals
@@ -86,8 +87,8 @@ function middleware(req, res, next) {
       params.dynamicGenre = req.path.match(/stations\/music\/(.+)/)[1];
     }
     promise = db.get(`${req.hostname}/_pages/stations-directory@published`);
-  } else if (/\/(.+)\/listen/.test(req.path)) {
-    params.dynamicStation = req.path.match(/\/(.+)\/listen/)[1];
+  } else if (/\/(.+)\/listen$/.test(req.path)) {
+    params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1];
     promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
     // Otherwise resolve the uri and page instance
@@ -103,9 +104,10 @@ function middleware(req, res, next) {
     })
     .then(composed => res.json(composed))
     .catch(err => {
+      log('error', '404', { stack: err.stack });
       res
         .status(404)
-        .json({ status: 404, msg: err.message });
+        .json({ status: 404, msg: err.message});
     });
 }
 

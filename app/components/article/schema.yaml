@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 3.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -162,11 +162,14 @@ sources:
   _publish: sources
   _has:
     help: An Array of Objects containing sources names for search.
-stationTitle:
-  _label: Station Title
+stationLogoUrl:
   _has:
-    input: text
-    help: Title of the station
+    input: advanced-image-upload
+    webLabel: Station Logo via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    help: LOGO of the station
     validate:
       required:
         field: stationURL
@@ -178,7 +181,7 @@ stationURL:
     type: url
     validate:
       required:
-        field: stationTitle
+        field: stationLogoUrl
         operator: truthy
       # Using pattern from https://www.regextester.com/93652
       # Detailed RegEx breakdown: https://regex101.com/r/uh84QI/1
@@ -236,6 +239,7 @@ lead:
       - youtube
       - html-embed
       - omny
+      - verizon-media
     validate:
       max: 1
       required: true
@@ -259,6 +263,7 @@ content:
       - brightcove
       - inline-related
       - omny
+      - verizon-media
 feeds:
   _label: Include in These Feeds
   _has:
@@ -393,14 +398,6 @@ _groups:
       text: Secondary Bylines
       height: 60px
       ifEmpty: secondaryAttribution
-  stationSource:
-    fields:
-      - stationTitle
-      - stationURL
-    _placeholder:
-      text: Station Source
-      height: 30px
-      ifEmpty: stationTitle
   circFeeds:
     fields:
       - feedImgUrl
@@ -419,13 +416,16 @@ _groups:
     fields:
       - sectionFront
       - secondaryArticleType
-  bylines:
+  bylinesAndStationLogo:
     fields:
       - byline
+      - stationLogoUrl
+      - stationURL
     _placeholder:
-      text: Byline
-      height: 30px
-      ifEmpty: 'byline.names'
+      text: Byline and Station Logo
+      height: 60px
+      ifEmpty: byline.names and byline.sources and stationLogoUrl
+
   settings:
     fields:
       - feeds
@@ -477,6 +477,11 @@ plaintextShortHeadline:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
 
 # Component properties
+contentPageSponsorLogo:
+  _component:
+    include:
+      - google-ad-manager
+
 sideShare:
   _component:
     include:

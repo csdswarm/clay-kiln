@@ -24,14 +24,6 @@
 
 <template>
   <div class="advanced-image-upload">
-    <div v-if="imageUrl">
-      <img class="advanced-image-upload__attached-image" alt="attached image" :src="imageUrl" />
-    </div>
-    <div v-else>
-      <div class="advanced-image-upload__image-placeholder kiln-placeholder">
-        <div class="placeholder-label"><span class="placeholder-text">No Image</span><div class="ui-ripple-ink"></div></div>
-      </div>
-    </div>
     <div class="advanced-image-upload__web-file-container">
       <div class="advanced-image-upload__web-file-text-input">
         <ui-textbox
@@ -59,6 +51,14 @@
     <ui-fileupload ref="fileUploadButton" :label="args.uploadLabel" color="accent" :disabled="fileUploadButtonDisabled" accept="image/*" @change="localFileAttached"></ui-fileupload>
     <div class="ui-textbox__feedback" v-if="args.uploadHelp">
       <div class="ui-textbox__feedback-text">{{ args.uploadHelp }}</div>
+    </div>
+    <div v-if="imageUrl">
+      <img class="advanced-image-upload__attached-image" alt="attached image" :src="imageUrl" />
+    </div>
+    <div v-else>
+      <div class="advanced-image-upload__image-placeholder kiln-placeholder">
+        <div class="placeholder-label"><span class="placeholder-text">No Image</span><div class="ui-ripple-ink"></div></div>
+      </div>
     </div>
   </div>
 </template>

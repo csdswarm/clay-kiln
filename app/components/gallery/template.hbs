@@ -1,5 +1,5 @@
 <section role="main" data-track-type="gallery-detail" data-uri="{{ default _ref _self }}" class="component component--gallery{{ if @root.locals.edit ' editing' }} gallery--{{sectionFront}}" itemscope itemtype="http://schema.org/CollectionPage"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
-  {{> breadcrumbs crumbs }}
+  {{> breadcrumbs this }}
   <header class="gallery__header">
     {{! gallery microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
@@ -22,8 +22,12 @@
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
-    <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{#ifAny @root.locals.edit subHeadline}}
+      <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{/ifAny}}
   </header>
+
+  {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="gallery__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
@@ -38,7 +42,7 @@
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
-        <div data-editable="bylines" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
+        <div data-editable="bylinesAndStationLogo" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
           {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
           -->{{#each byline as |byline|}}<!--
             -->{{#each sources as |source|}}<!--
@@ -46,14 +50,14 @@
             {{/each}}
           {{/each}}
           {{#if stationTitle}}<span>,</span>{{/if}}
-        </div>
 
-        <div class="info__from-station" data-editable="stationSource">
-          {{#ifAll stationTitle stationURL}}
-            <a href="{{ striptags stationURL }}" target="_blank">{{ stationTitle }}</a>
-          {{else if stationTitle}}
-            {{ stationTitle }}
-          {{/ifAll}}
+          {{#if stationLogoUrl}}
+            <div class="info__from-station">
+              <a href="{{ striptags stationURL }}" target="_blank">
+                <img class="from-station__logo" src="{{ stationLogoUrl }}?width=60&height=60&crop=1:1" />
+              </a>
+            </div>
+          {{/if}}
         </div>
 
         {{! date and time }}
@@ -105,7 +109,11 @@
               </ul>
             </section>
           {{/if}}
-          <div data-editable="slides">{{> component-list slides }}</div>
+          {{#each slides }}
+            <div data-editable="slides">
+              {{> (getComponentName this._ref) this }}
+            </div>
+          {{/each}}
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
