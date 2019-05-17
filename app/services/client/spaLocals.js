@@ -9,7 +9,8 @@ const
    */
   getLocals = (state) => {
     return {
-      currentlyPlaying: state.spaPayloadLocals ? state.spaPayloadLocals.currentlyPlaying : {}
+      currentlyPlaying: state.spaPayloadLocals ? state.spaPayloadLocals.currentlyPlaying : {},
+      radiumUser: { favoriteStations: state.user ? state.user.favoriteStations : [] }
     };
   };
 
