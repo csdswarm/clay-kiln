@@ -14,3 +14,28 @@
     display: none;
   }
 }
+
+.kiln-field {
+  .brightcove-video-preview {
+    display: flex;
+
+    &__image {
+      display: flex;
+      height: 50%;
+      width: 50%;
+    }
+         
+    &__info {
+      display: flex;
+      flex-direction: column;
+      padding: em(32) em(12);
+      font-size: em(18);
+      text-align: center;
+      justify-content: space-around;
+
+      i {
+        color: grey;
+      }
+    }
+  }
+}

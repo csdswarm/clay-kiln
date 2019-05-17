@@ -14,7 +14,6 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
-  brightcove = require('../services/server/brightcoveApi'),
   radioApi = require('../services/server/radioApi');
 
 module.exports.routes = (router) => {
@@ -111,8 +110,6 @@ module.exports.routes = (router) => {
       }
     });
   });
-
-  brightcove.inject(router);
 
   /**
    * Caching for api.radio.com endpoints

@@ -4,16 +4,10 @@ _description: |
 videoId:
   _label: Video ID
   _has:
-    input: text
-    type: text
-    validate:
-      required: true
-
-videoName:
-  _label: Video Name
-  _has:
     input: brightcove-search
     webLabel: Video Search
+    validate:
+      required: true
 
 showTitle:
   _label: Show video title?
@@ -28,5 +22,4 @@ _groups:
       ifEmpty: videoId
     fields:
       - videoId
-      - videoName
       - showTitle

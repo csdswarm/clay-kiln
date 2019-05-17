@@ -15,7 +15,8 @@ const pkg = require('../../package.json'),
   locals = require('./spaLocals'),
   currentStation = require('./currentStation'),
   feedComponents = require('./feed-components'),
-  handleRedirects = require('./redirects');
+  handleRedirects = require('./redirects'),
+  brightcove = require('./brightcove');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -72,6 +73,8 @@ function setupApp(app) {
   app.use(currentStation);
 
   app.use(canonicalJSON);
+
+  brightcove.inject(app);
 
   db.setup();
   sessionStore = createSessionStore();
