@@ -37,4 +37,4 @@ module.exports['4.0'] = function (uri, data) {
     ...data,
     secondarySectionFront: data.secondaryArticleType || ''
   };
-}
+};

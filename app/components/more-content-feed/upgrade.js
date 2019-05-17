@@ -67,4 +67,4 @@ module.exports['6.0'] = function (uri, data) {
     ...data,
     filterSecondarySectionFronts: data.filterSecondaryArticleTypes || {}
   };
-}
+};

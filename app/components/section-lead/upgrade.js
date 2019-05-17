@@ -55,4 +55,4 @@ module.exports['5.0'] = function (uri, data) {
     ...data,
     filterSecondarySectionFronts: data.filterSecondaryArticleTypes || {}
   };
-}
+};
