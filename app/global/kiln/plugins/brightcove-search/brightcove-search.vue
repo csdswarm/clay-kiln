@@ -36,6 +36,7 @@
                 
                 axios.get('/brightcove/search', {params}).then(response => {
                     console.log(response);
+                    this.searchResults = response.data;
                 });
             }
         },

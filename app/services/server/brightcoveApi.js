@@ -3,7 +3,9 @@
 const rest = require('../universal/rest'),
   search = (req, res) => {
     console.log(req.query);
-    res.send({...req.query, message: 'This is working'});
+    const results = ['something new', 'something else new', 'another new'];
+
+    res.send(results);
   },
   inject = (router) => {
     router.get('/brightcove/search', search);
