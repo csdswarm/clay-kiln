@@ -23,11 +23,14 @@ _lists:
       name: Country
       value: Country
     -
-      name: Hip-Hop R&B
-      value: Hip-Hop R&B
+      name: Urban
+      value: Hip Hop R&B
     - 
       name: Rock
       value: Rock
+    - 
+      name: Classic Rock
+      value: Classic Rock
     - 
       name: Icons
       value: Icons
@@ -73,3 +76,6 @@ _lists:
     -
       name: MMA & WWE
       value: MMA & WWE
+    -
+      name: Small Business Pulse
+      value: Small Business Pulse
