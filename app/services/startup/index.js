@@ -70,9 +70,9 @@ function setupApp(app) {
 
   app.use(user);
 
-  app.use(locals);
-
   app.use(currentStation);
+
+  app.use(locals);
 
   /**
    * radium.radio.com endpoints

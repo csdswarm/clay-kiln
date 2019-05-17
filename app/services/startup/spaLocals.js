@@ -13,10 +13,11 @@ const log = require('../universal/log').setup({ file: __filename }),
 module.exports = async (req, res, next) => {
   try {
     const header = req.header('x-locals'),
-      locals = header ? JSON.parse(header) : null;
+      locals = header ? JSON.parse(header) : null,
+      options = { arrayMerge: (destinationArray, sourceArray) => sourceArray};
 
     if (locals) {
-      res.locals = deepmerge(res.locals, locals);
+      res.locals = deepmerge(res.locals, locals, options);
     }
   } catch (e) {
     log('error', 'Error in locals middleware:', e);
