@@ -28,8 +28,6 @@ _components:
       most-popular: true
       newsfeed: true
       apple-news: true
-    secondaryArticleType: ''
-    showSocial: true
     authors: []
     sources: []
     canBeMarkedGoogleStandout: true
@@ -54,8 +52,6 @@ _components:
       vindicated: false
       betamale: false
       nyxny: false
-    syndicatedUrl: ''
-    syndicationStatus: original
     shouldHideAds: false
     slugLock: false
     showSocial: true
