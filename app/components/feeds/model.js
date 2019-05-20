@@ -59,51 +59,74 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   const { meta } = data,
-    getVar = (variable) => locals.query[variable].replace(/^\[(.*)]$/, '$1').split(','),
-    query = queryService(data.index, data.query.query ? data.query.query : null); // Build the appropriate query obj for the env,
+    filters = locals.query.filter || {},
+    excludes = locals.query.exclude || {},
+    query = queryService(data.index, data.query.query ? data.query.query : null), // Build the appropriate query obj for the env
+    /**
+     * add a condition to the query
+     *
+     * @param {String} item - a string of items to apply add to the query condition
+     * @param {Function} createObj - a function that take the value and returns the object representation
+     * @param {String} condition  - possible options addShould/addMust/addMustNot
+     */
+    addCondition = (item, createObj, condition) => {
+      if (item) {
+        const items = item.split(',');
 
-  queryService.addSize(query, locals.query.size ? locals.query.size : data.query.size);
+        items.forEach(instance => queryService[condition](query, { match: createObj(instance)}));
+        if (condition === 'addShould') {
+          queryService.addMinimumShould(query, 1);
+        }
+      }
+    },
+    /**
+     * add filter and exclude conditions to the query
+     *
+     * @param {String} key
+     * @param {Function} createObj
+     */
+    addFilterAndExclude = (key, createObj) => {
+      addCondition(filters[key], createObj, 'addShould');
+      addCondition(excludes[key], createObj, 'addMustNot');
+    },
+    genericItems = {
+      // vertical (sectionfront) and/or exclude tags
+      vertical: sectionFront => ({ sectionFront }),
+      // tags
+      tag: tag => ({ 'tags.normalized': tag }),
+      // subcategory (secondary article type)
+      subcategory: secondaryArticleType => ({ secondaryArticleType }),
+      // editorial feed (grouped stations)
+      editorial: editorial => ({ [`editorialFeeds.${editorial}`]: true })
+    };
+
+  queryService.addSize(query, filters.size ? filters.size : data.query.size);
   queryService.addSort(query, data.query.sort);
   if (data.query._source) {
     queryService.onlyWithTheseFields(query, data.query._source);
   }
-console.log(locals.query)
-  //vertical (sectionfront) and/or exclude tags
-  if (locals.query.vertical) {
-    const tags = getVar('vertical');
+console.log('filters',filters)
+console.log('excludes',excludes)
 
-    tags.forEach(vertical => queryService.addShould(query, { match: { sectionFront: vertical }}));
-    queryService.addMinimumShould(query, 1);
+  // Loop through all the generic items and add any filter/exclude conditions that are needed
+  Object.entries(genericItems).forEach(([key, createObj]) => addFilterAndExclude(key, createObj))
 
-  }
-  // tags
-  if (locals.query.tag) {
-    const tags = getVar('tag');
-
-    tags.forEach(tag => queryService.addShould(query, { match: { 'tags.normalized': tag }}));
-    queryService.addMinimumShould(query, 1);
-  }
-  // subcategory (secondary article type)
-  if (locals.query.subcategory) {
-    const subcategories = getVar('subcategory');
-
-    subcategories.forEach(subcategory => queryService.addShould(query, { match: { secondaryArticleType: subcategory }}));
-    queryService.addMinimumShould(query, 1);
-  }
-  // editorial feed (grouped stations)
-  if (locals.query.editorial) {
-    const editorials = getVar('editorial');
-
-    editorials.forEach(editorial => queryService.addMust(query, { match: { [`editorialFeeds.${editorial}`]: true }}));
-    queryService.addMinimumShould(query, 1);
-  }
-  // stations
-  if (locals.query.station) {
+  // special case logic filter/excludes
+  // stations (nested object search)
+  if (filters.station) {
     const nestedQuery = queryService.newNestedQuery('byline'),
-      stations = getVar('station');
+      stations = filters.station.split(',');
 
     stations.forEach(station => queryService.addShould(nestedQuery, { match: { 'byline.sources.text': station }}));
     queryService.addMinimumShould(nestedQuery, 1);
+
+    queryService.addMust(query, nestedQuery);
+  }
+  if (excludes.station) {
+    const nestedQuery = queryService.newNestedQuery('byline'),
+      stations = excludes.station.split(',');
+
+    stations.forEach(station => queryService.addMustNot(nestedQuery, { match: { 'byline.sources.text': station }}));
 
     queryService.addMust(query, nestedQuery);
   }
@@ -121,8 +144,101 @@ console.log(JSON.stringify(query))
       return data;
     }
   } catch (e) {
+    console.log(e)
     queryService.logCatch(e, 'feeds.model');
     return data;
   }
 
 };
+
+
+//{
+// 	"_index": "published-content_v4",
+// 	"_type": "_doc",
+// 	"_id": "clay.radio.com/_components/article/instances/cjvs8rp5e000r1gp4hgact2tz@published",
+// 	"_score": 1,
+// 	"_source": {
+// 		"primaryHeadline": "syndication",
+// 		"headline": "syndication",
+// 		"subHeadline": "",
+// 		"feedImgUrl": "https://stg-images.radio.com/aiu-media/Brien-06c86d93-0db0-41cc-ac2c-55f2e812ce36.png",
+// 		"feedLayout": "small",
+// 		"teaser": "asd",
+// 		"slug": "asd",
+// 		"byline": [{
+// 			"names": [],
+// 			"sources": [],
+// 			"prefix": "by"
+// 		}],
+// 		"syndicatedUrl": "",
+// 		"syndicationStatus": "original",
+// 		"lead": [
+// 			"clay.radio.com/_components/html-embed/instances/cjvs8xazc000z3h5yqbo4ilvx@published"
+// 		],
+// 		"content": [{
+// 			"data": "{\"text\":\"\"}",
+// 			"_ref": "clay.radio.com/_components/paragraph/instances/cjvs8rp5e000q1gp4dwgtayb9@published"
+// 		}],
+// 		"tags": [],
+// 		"sideShare": {
+// 			"_ref": "clay.radio.com/_components/share/instances/cjvs8rp5d000o1gp4n5filzzb@published"
+// 		},
+// 		"feeds": {
+// 			"sitemaps": true,
+// 			"rss": true,
+// 			"most-popular": true,
+// 			"newsfeed": true,
+// 			"apple-news": true
+// 		},
+// 		"sectionFront": "news",
+// 		"secondaryArticleType": "Politics",
+// 		"contentType": "article",
+// 		"showSocial": true,
+// 		"dateModified": "2019-05-17T16:49:20.046Z",
+// 		"authors": [],
+// 		"sources": [],
+// 		"contentPageSponsorLogo": {
+// 			"_ref": "clay.radio.com/_components/google-ad-manager/instances/cjvs8rp5d000p1gp4e46reebl@published"
+// 		},
+// 		"_version": 3,
+// 		"breadcrumbs": [{
+// 				"text": "news",
+// 				"url": "//clay.radio.com/news"
+// 			},
+// 			{
+// 				"text": "Politics",
+// 				"url": "//clay.radio.com/news/politics"
+// 			}
+// 		],
+// 		"stationLogoUrl": "",
+// 		"stationURL": "",
+// 		"canBeMarkedGoogleStandout": true,
+// 		"availableStandoutArticleInventory": true,
+// 		"articleWithinGoogleStandoutPublishDateLimit": true,
+// 		"rollingStandoutCount": 0,
+// 		"componentVariation": "article",
+// 		"empty": "<span class=\"circulation--empty\">None</span>",
+// 		"featured": false,
+// 		"editorialFeeds": {
+// 			"Sports": true,
+// 			"Country": false,
+// 			"Classic Rock": true,
+// 			"CHR / Top 40": true,
+// 			"Hot AC / Top 40 / CHR": true
+// 		},
+// 		"shortHeadline": "asd",
+// 		"seoHeadline": "asd",
+// 		"seoDescription": "ads",
+// 		"pageTitle": "asd",
+// 		"plaintextPrimaryHeadline": "syndication",
+// 		"plaintextShortHeadline": "asd",
+// 		"pageDescription": "ads",
+// 		"socialDescription": "asd",
+// 		"date": "2019-05-17T15:37:39.465+00:00",
+// 		"canonicalUrl": "http://clay.radio.com/news/asd",
+// 		"slugLock": true,
+// 		"manualSlugUnlock": false,
+// 		"site": "demo",
+// 		"pageUri": "clay.radio.com/_pages/cjvs8rp50000e1gp4lqn2dylo@published"
+// 	}
+// }
