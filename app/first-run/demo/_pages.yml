@@ -6,7 +6,6 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
-      - /_components/meta-tags/instances/general
     main:
       - /_components/article/instances/new
     layout: /_components/one-column-layout/instances/general
@@ -16,7 +15,6 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
-      - /_components/meta-tags/instances/general
     pageHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
@@ -32,7 +30,6 @@ _pages:
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
       - /_components/meta-url/instances/general
-      - /_components/meta-tags/instances/general
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
@@ -45,7 +42,6 @@ _pages:
       - /_components/meta-title/instances/general
       - /_components/meta-description/instances/general
       - /_components/meta-image/instances/general
-      - /_components/meta-tags/instances/general
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
@@ -55,7 +51,6 @@ _pages:
   index:
     head:
       - /_components/meta-title/instances/general
-      - /_components/meta-tags/instances/general
     main:
       - /_components/generic-list/instances/index
     layout: /_components/one-column-layout/instances/bare
@@ -73,7 +68,6 @@ _pages:
       - /_components/dynamic-meta-description/instances/curated-topic
       - /_components/dynamic-meta-url/instances/general
       - /_components/meta-image/instances/og-logo
-      - /_components/meta-tags/instances/general
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
@@ -89,7 +83,6 @@ _pages:
       - /_components/dynamic-meta-description/instances/topic
       - /_components/dynamic-meta-url/instances/general
       - /_components/meta-image/instances/og-logo
-      - /_components/meta-tags/instances/general
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     pageHeader:
@@ -105,7 +98,6 @@ _pages:
       - /_components/dynamic-meta-description/instances/author
       - /_components/dynamic-meta-url/instances/general
       - /_components/meta-image/instances/og-logo
-      - /_components/meta-tags/instances/general
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:

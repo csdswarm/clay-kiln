@@ -23,7 +23,6 @@ async function makeRequest(path, method, data) {
       if (data) {
         requestOptions.headers['Content-Type'] = 'application/json';
         dataStr = JSON.stringify(data);
-        // requestOptions.headers['Content-Length'] = dataStr.length;
       }
     }
 
@@ -38,7 +37,7 @@ async function makeRequest(path, method, data) {
     let req = http.request(requestOptions, handleResponse);
     
     req.on('error', (e) => {
-      console.log(e);
+      console.error(e);
       reject(e);
     });
 
