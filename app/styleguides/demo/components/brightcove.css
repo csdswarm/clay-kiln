@@ -16,8 +16,42 @@
 }
 
 .kiln-field {
+  .brightcove-search {
+    .ui-textbox {
+      margin-bottom: em(16);
+    }
+
+    &__date-range {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+
+      .ui-datepicker {
+        width: 100%;
+      }
+    }
+
+    &__search-results {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: em(20);
+    }
+
+    &__search-result {
+      padding: em(4);
+      cursor: pointer;
+
+      &:hover {
+        background-color: lightgrey;
+      }
+    }
+  }
+
   .brightcove-video-preview {
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
     &__image {
       display: flex;
@@ -28,6 +62,7 @@
     &__info {
       display: flex;
       flex-direction: column;
+      width: 100%;
       padding: em(32) em(12);
       font-size: em(18);
       text-align: center;
