@@ -72,11 +72,11 @@ function setupApp(app) {
 
   app.use(handleRedirects);
 
-  app.use(locals);
+  app.use(user);
 
   app.use(currentStation);
 
-  app.use(user);
+  app.use(locals);
 
   /**
    * radium.radio.com endpoints
