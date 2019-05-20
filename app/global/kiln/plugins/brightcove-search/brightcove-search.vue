@@ -42,9 +42,9 @@
         </div>
         <div v-if="showResults" class="brightcove-search__search-results">
             <ul v-if="!loading">
-                <li :key="result.id"
+                <li v-for="result in searchResults"
+                    :key="result.id"
                     class="brightcove-search__search-result"
-                    v-for="result in searchResults"
                     @click="selectBrightcove(result)">
                     {{ result.name }}
                 </li>
@@ -133,7 +133,6 @@
             },
             selectBrightcove(suggestion) {
                 this.video = suggestion;
-                this.query = ''
                 this.searchResults = [];
                 this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.video.id })
             }

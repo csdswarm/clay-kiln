@@ -37,9 +37,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     try {
       return brightcoveApi.request('GET', 'videos', {q: buildQuery(req.query), limit: 10})
         .then(transformSearchResults)
-        .then(results => {
-          return res.send(results);
-        })
+        .then(results => res.send(results))
         .catch(e => {
           console.error(e);
           res.send(e);
