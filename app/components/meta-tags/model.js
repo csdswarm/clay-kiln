@@ -39,9 +39,18 @@ module.exports.render = (ref, data, locals) => {
   }
 
   // normalizing categories to be lowercase (sectionFront is usally already lowercase)
-  if (data.sectionFront) categories.push(data.sectionFront.toLowerCase());
-  if (data.secondaryArticleType) categories.push(data.secondaryArticleType.toLowerCase());
-  if (locals.station && locals.station.category) categories.push(locals.station.category.toLowerCase());
+  if (data.sectionFront) {
+    categories.push(data.sectionFront.toLowerCase());
+  }
+
+  if (data.secondaryArticleType) {
+    categories.push(data.secondaryArticleType.toLowerCase());
+  }
+
+  if (locals.station && locals.station.category) {
+    categories.push(locals.station.category.toLowerCase());
+  }
+
   if (categories.length > 0) {
     data.metaTags.push({ name: CATEGORY, content: categories.join(', ') });
   } else {

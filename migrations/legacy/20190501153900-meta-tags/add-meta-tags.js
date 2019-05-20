@@ -76,36 +76,19 @@ async function updatePages(pages, publishedPages) {
     const published = publishedPages.includes(`${page}@published`);
 
     // unity created pages are alpha-numeric 25 chars
-    // imported (sbp were imported) content is a number --> handled by upgrade
-    // other - layout level pages use /_components/meta-tags/instances/general
+    // imported (sbp were imported) content is a number --> handled by upgrade, do nothing
+    // other - layout level pages (new-two-col, gallery, etc) use /_components/meta-tags/instances/general
     let hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
     if (hash) {
-      if (hash.groups.unity) {
-        const pageUri = `/_pages/${hash.groups.unity}`;
+      // we don't need to do this for imported content, upgrade scripts handle this
+      const slug = hash.groups.unity || hash.groups.other;
 
-        let pageJsonRes = await makeRequest(pageUri, 'GET'),
-          pageJson = JSON.parse(pageJsonRes);
-
-        let addedMetaTags = await addMetaTags(pageJson, published, hash.groups.unity);
-        if (addedMetaTags) {
-          await makeRequest(pageUri, 'PUT', pageJson);
-          if (published) {
-            await makeRequest(`${pageUri}@published`, 'PUT');
-          }
-        }
-      } else if (hash.groups.imported) {
-        // do a get to make sure upgrade occurred (does this need to be @published?)
-        await makeRequest(`/_components/article/instances/${hash.groups.imported}`, 'GET');
-        if (published) {
-          await makeRequest(`/_components/article/instances/${hash.groups.imported}@published`, 'GET');
-        }
-      } else if (hash.groups.other) {
-        const pageUri = `/_pages/${hash.groups.other}`;
-
-        let pageJsonRes = await makeRequest(pageUri, 'GET'),
-          pageJson = JSON.parse(pageJsonRes);
-        
-        let addedMetaTags = await addMetaTags(pageJson, published);
+      if (slug) {
+        const pageUri = `/_pages/${slug}`,
+          pageJsonRes = await makeRequest(pageUri, 'GET'),
+          pageJson = JSON.parse(pageJsonRes),
+          // send in unity hash -- "other" pages default to meta-tags general instance
+          addedMetaTags = await addMetaTags(pageJson, published, hash.groups.unity);
 
         if (addedMetaTags) {
           await makeRequest(pageUri, 'PUT', pageJson);
