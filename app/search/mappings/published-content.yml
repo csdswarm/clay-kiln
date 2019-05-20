@@ -73,7 +73,3 @@ _doc:
       store: true
     lead:
       type: keyword
-    editorialFeeds:
-      type: object
-    featured:
-      type: boolean
