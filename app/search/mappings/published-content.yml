@@ -72,11 +72,4 @@ _doc:
       type: keyword
       store: true
     lead:
-      type: nested
-      dynamic: true
-      properties:
-        _ref:
-          type: keyword
-          ignore_above: 256
-        data:
-          type: text
+      type: keyword
