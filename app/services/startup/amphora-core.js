@@ -18,9 +18,9 @@ const amphora = require('amphora'),
   ];
 
 function initAmphora(app, search, sessionStore, routes) {
-  for (let i = 0; i < CLAY_TOPICS.length; i++) {
-    SUBSCRIBER.subscribe(`clay:${CLAY_TOPICS[i]}`);
-  }
+  CLAY_TOPICS.forEach(topic => {
+    SUBSCRIBER.subscribe(`clay:${topic}`);
+  });
 
   SUBSCRIBER.on('message', (channel, payload) => {
     eventBusService.triggerCallback(channel, payload);

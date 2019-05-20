@@ -1,15 +1,17 @@
 'use strict';
 
 const db = require('../../services/server/db'),
-  { addEventCallback } = require('../../services/universal/eventBus');
+  { addEventCallback } = require('../../services/universal/eventBus'),
+  log = require('../../services/universal/log').setup({ file: __filename });
 
 let primary,
   primarySectionFrontsList,
   secondarySectionFrontsList,
   sectionFrontRef;
 
-addEventCallback('clay:publishPage', async () => {
+addEventCallback('clay:publishPage', async payload => {
   try {
+    sectionFrontRef = JSON.parse(payload).data.main[0].replace('@published','');
     const data = await db.get(sectionFrontRef),
       sectionFrontsList = primary ? primarySectionFrontsList : secondarySectionFrontsList;
 
@@ -27,7 +29,7 @@ addEventCallback('clay:publishPage', async () => {
       }
     }
   } catch (e) {
-    console.log(e);
+    log('error', e);
   }
 });
 
@@ -46,7 +48,7 @@ addEventCallback('clay:unpublishPage', async () => {
       await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: false}));
     }
   } catch (e) {
-    console.log(e);
+    log('error', e);
   }
 });
 
