@@ -105,11 +105,9 @@ module.exports.render = async (ref, data, locals) => {
   if (data.query._source) {
     queryService.onlyWithTheseFields(query, data.query._source);
   }
-console.log('filters',filters)
-console.log('excludes',excludes)
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
-  Object.entries(genericItems).forEach(([key, createObj]) => addFilterAndExclude(key, createObj))
+  Object.entries(genericItems).forEach(([key, createObj]) => addFilterAndExclude(key, createObj));
 
   // special case logic filter/excludes
   // stations (nested object search)
@@ -131,7 +129,6 @@ console.log('excludes',excludes)
     queryService.addMust(query, nestedQuery);
   }
 
-console.log(JSON.stringify(query))
   try {
     if (meta.rawQuery) {
       const results = await queryService.searchByQueryWithRawResult(query);
@@ -144,101 +141,8 @@ console.log(JSON.stringify(query))
       return data;
     }
   } catch (e) {
-    console.log(e)
     queryService.logCatch(e, 'feeds.model');
     return data;
   }
 
 };
-
-
-//{
-// 	"_index": "published-content_v4",
-// 	"_type": "_doc",
-// 	"_id": "clay.radio.com/_components/article/instances/cjvs8rp5e000r1gp4hgact2tz@published",
-// 	"_score": 1,
-// 	"_source": {
-// 		"primaryHeadline": "syndication",
-// 		"headline": "syndication",
-// 		"subHeadline": "",
-// 		"feedImgUrl": "https://stg-images.radio.com/aiu-media/Brien-06c86d93-0db0-41cc-ac2c-55f2e812ce36.png",
-// 		"feedLayout": "small",
-// 		"teaser": "asd",
-// 		"slug": "asd",
-// 		"byline": [{
-// 			"names": [],
-// 			"sources": [],
-// 			"prefix": "by"
-// 		}],
-// 		"syndicatedUrl": "",
-// 		"syndicationStatus": "original",
-// 		"lead": [
-// 			"clay.radio.com/_components/html-embed/instances/cjvs8xazc000z3h5yqbo4ilvx@published"
-// 		],
-// 		"content": [{
-// 			"data": "{\"text\":\"\"}",
-// 			"_ref": "clay.radio.com/_components/paragraph/instances/cjvs8rp5e000q1gp4dwgtayb9@published"
-// 		}],
-// 		"tags": [],
-// 		"sideShare": {
-// 			"_ref": "clay.radio.com/_components/share/instances/cjvs8rp5d000o1gp4n5filzzb@published"
-// 		},
-// 		"feeds": {
-// 			"sitemaps": true,
-// 			"rss": true,
-// 			"most-popular": true,
-// 			"newsfeed": true,
-// 			"apple-news": true
-// 		},
-// 		"sectionFront": "news",
-// 		"secondaryArticleType": "Politics",
-// 		"contentType": "article",
-// 		"showSocial": true,
-// 		"dateModified": "2019-05-17T16:49:20.046Z",
-// 		"authors": [],
-// 		"sources": [],
-// 		"contentPageSponsorLogo": {
-// 			"_ref": "clay.radio.com/_components/google-ad-manager/instances/cjvs8rp5d000p1gp4e46reebl@published"
-// 		},
-// 		"_version": 3,
-// 		"breadcrumbs": [{
-// 				"text": "news",
-// 				"url": "//clay.radio.com/news"
-// 			},
-// 			{
-// 				"text": "Politics",
-// 				"url": "//clay.radio.com/news/politics"
-// 			}
-// 		],
-// 		"stationLogoUrl": "",
-// 		"stationURL": "",
-// 		"canBeMarkedGoogleStandout": true,
-// 		"availableStandoutArticleInventory": true,
-// 		"articleWithinGoogleStandoutPublishDateLimit": true,
-// 		"rollingStandoutCount": 0,
-// 		"componentVariation": "article",
-// 		"empty": "<span class=\"circulation--empty\">None</span>",
-// 		"featured": false,
-// 		"editorialFeeds": {
-// 			"Sports": true,
-// 			"Country": false,
-// 			"Classic Rock": true,
-// 			"CHR / Top 40": true,
-// 			"Hot AC / Top 40 / CHR": true
-// 		},
-// 		"shortHeadline": "asd",
-// 		"seoHeadline": "asd",
-// 		"seoDescription": "ads",
-// 		"pageTitle": "asd",
-// 		"plaintextPrimaryHeadline": "syndication",
-// 		"plaintextShortHeadline": "asd",
-// 		"pageDescription": "ads",
-// 		"socialDescription": "asd",
-// 		"date": "2019-05-17T15:37:39.465+00:00",
-// 		"canonicalUrl": "http://clay.radio.com/news/asd",
-// 		"slugLock": true,
-// 		"manualSlugUnlock": false,
-// 		"site": "demo",
-// 		"pageUri": "clay.radio.com/_pages/cjvs8rp50000e1gp4lqn2dylo@published"
-// 	}
-// }
