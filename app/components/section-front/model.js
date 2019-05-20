@@ -1,13 +1,15 @@
 'use strict';
 
 const db = require('../../services/server/db'),
-  { addEventCallback } = require('../../services/universal/eventBus');
+  { addEventCallback } = require('../../services/universal/eventBus'),
+  log = require('../../services/universal/log').setup({ file: __filename });
 
 let primarySectionFrontsList,
   sectionFrontRef;
 
-addEventCallback('clay:publishPage', async () => {
+addEventCallback('clay:publishPage', async payload => {
   try {
+    sectionFrontRef = JSON.parse(payload).data.main[0].replace('@published','');
     const data = await db.get(sectionFrontRef);
 
     if (data.title && !data.titleLocked) {
@@ -24,7 +26,7 @@ addEventCallback('clay:publishPage', async () => {
       }
     }
   } catch (e) {
-    console.log(e);
+    log('error', e);
   }
 });
 
@@ -42,7 +44,7 @@ addEventCallback('clay:unpublishPage', async () => {
       await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: false}));
     }
   } catch (e) {
-    console.log(e);
+    log('error', e);
   }
 });
 
