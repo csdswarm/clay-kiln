@@ -48,9 +48,6 @@ const queryService = require('../../services/server/query'),
 
       queryService.addSort(query, {date: 'desc'});
 
-
-      queryService.addMinimumShould(query, 1);
-
       if (contentTypes.length) {
         queryService.addFilter(query, {terms: {contentType: contentTypes}});
       }
@@ -159,7 +156,7 @@ module.exports.render = function (ref, data, locals) {
 
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
-    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+    queryService.addMust(query, { match: { 'tags.normalized': data.tag }});
 
     return renderDefault(ref, data, locals, query);
   }

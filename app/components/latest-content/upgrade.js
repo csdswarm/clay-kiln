@@ -20,8 +20,11 @@ module.exports['2.0'] = function (uri, data) {
 };
 
 module.exports['3.0'] = function (uri, data) {
-  return {
+  const newData = {
     ...data,
     filterSecondarySectionFronts: data.filterSecondaryArticleTypes || {}
   };
+
+  delete newData.filterSecondaryArticleTypes;
+  return newData;
 };
