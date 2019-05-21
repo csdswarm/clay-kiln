@@ -9,7 +9,7 @@
             :label="args.webLabel"
             name="brightcove-search"
             placeholder="Search Text"
-            help="Use quotes to match whole phrases, and + to indicate required words"
+            help="Use quotes to match whole phrases, and + to indicate required words or phrases"
 
             @input="populateSearchResults"
             v-model="query"
@@ -42,21 +42,24 @@
         </div>
         <div v-if="showResults" class="brightcove-search__search-results">
             <ul v-if="!loading">
+                <li class="search-results__header">
+                    <div>Brightcove Video Name</div><div>Updated On</div>
+                </li>
                 <li v-for="result in searchResults"
                     :key="result.id"
-                    class="brightcove-search__search-result"
+                    class="search-results__item"
                     @click="selectBrightcove(result)">
-                    {{ result.name }}
+                    <div>{{ result.name }}</div><div>{{ new Date(result.updated_at).toLocaleDateString('en-US') }}</div>
                 </li>
             </ul>
             <ui-progress-circular v-show="loading"></ui-progress-circular>
         </div>
         <div v-if="video.id" class="brightcove-video-preview">
-            <div class="brightcove-video-preview__info">
+            <div class="video-preview__info">
                 <strong>{{video.name}}</strong>
                 <i>ID: {{video.id}}</i>
             </div>
-            <img class="brightcove-video-preview__image" :src="video.imageUrl" />
+            <img class="video-preview__image" :src="video.imageUrl" />
         </div>
     </div>
 </template>

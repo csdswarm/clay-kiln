@@ -23,8 +23,8 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @param {Array} results array of video objects
    * @returns {Array} an array of video objects with only needed fields
    */
-  transformSearchResults = (results) => (results || []).map(({name, images, id}) => {
-    return {name, id, imageUrl: _get(images, 'thumbnail.src', '')};
+  transformSearchResults = (results) => (results || []).map(({name, images, id, updated_at}) => {
+    return {name, id, imageUrl: _get(images, 'thumbnail.src', ''), updated_at};
   }),
   /**
    * Returns an array of Brightcove videos based on the provided query
