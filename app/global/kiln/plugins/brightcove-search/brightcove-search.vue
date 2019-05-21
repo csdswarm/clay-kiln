@@ -57,7 +57,7 @@
         <div v-if="video.id" class="brightcove-video-preview">
             <div class="video-preview__info">
                 <strong>{{video.name}}</strong>
-                <i>ID: {{video.id}}</i>
+                <i class="video-preview__id">ID: {{video.id}}</i>
             </div>
             <img class="video-preview__image" :src="video.imageUrl" />
         </div>
