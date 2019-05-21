@@ -63,25 +63,27 @@ sectionFrontManual:
     operator: ===
     value: section-front
   _has:
-    input: radio
-    options:
-      -
-        name: Music
-        value: music
-      -
-        name: News
-        value: news
-      -
-        name: Podcasts
-        value: podcasts
-      -
-        name: Sports
-        value: sports
-    validate:
-      required:
-        field: populateFrom
-        operator: ===
-        value: section-front
+    input: select
+    search: true
+    list: primary-section-fronts
+
+secondarySectionFront:
+  _subscribe: secondarySectionFront
+  _label: Secondary Section Front
+  _has:
+    help: Secondary Section Front from which to pull content
+
+secondarySectionFrontManual:
+  _label: Secondary Section Front Category
+  _publish: secondarySectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    value: section-front
+  _has:
+    input: select
+    search: true
+    list: secondary-section-fronts
 
 tag:
   _subscribe: tag
@@ -139,32 +141,10 @@ filterTags:
 filterSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
-    input: checkbox-group
-    options:
-    - Pop
-    - Alternative
-    - Country
-    -
-      name: Hip-Hop R&B
-      value: Hip-Hop R&B
-    - Rock
-    - Icons
-    - Entertainment News
-    - Movies
-    - Television
-    - National News
-    - Politics
-    - Local Politics
-    - Small Business Pulse
-    - NFL
-    - MLB
-    - NBA
-    - NHL
-    - NCAA Football
-    - NCAA Basketball
-    -
-      name: MMA & WWE
-      value: MMA & WWE
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
 
 items:
   _label: Items
@@ -211,21 +191,9 @@ items:
       prop: overrideSectionFront
       _label: Section Front
       _has:
-        help: The section front this content is a part of
-        input: radio
-        options:
-          -
-            name: Music
-            value: music
-          -
-            name: News
-            value: news
-          -
-            name: Podcasts
-            value: podcasts
-          -
-            name: Sports
-            value: sports
+        input: select
+        search: true
+        list: primary-section-fronts
     -
       prop: overrideContentType
       _label: Content Type
@@ -281,6 +249,7 @@ _groups:
       - pageLength
       - populateFrom
       - sectionFrontManual
+      - secondarySectionFrontManual
       - tagManual
       - tagInfo
       - items

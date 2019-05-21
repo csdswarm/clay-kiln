@@ -91,7 +91,7 @@ module.exports.render = function (ref, data, locals) {
     data.initialLoad = true;
   }
 
-  if (data.populateFrom == 'tag') {
+  if (data.populateFrom === 'tag') {
     // If we're publishing for a dynamic page, alert the template
     data.dynamicTagPage = false;
 
@@ -148,7 +148,7 @@ module.exports.render = function (ref, data, locals) {
       queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     }
     queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom == 'author') {
+  } else if (data.populateFrom === 'author') {
     // Check if we are on an author page and override the above
     if (locals && locals.author) {
       // This is from load more on an author page
@@ -165,13 +165,18 @@ module.exports.render = function (ref, data, locals) {
     // No need to clean the author as the analyzer in elastic handles cleaning
     queryService.addShould(query, { match: { 'authors.normalized': data.author }});
     queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom == 'section-front') {
-    if (!data.sectionFront && !data.sectionFrontManual || !locals) {
+  } else if (data.populateFrom === 'section-front') {
+    if (!data.sectionFront && !data.sectionFrontManual &&
+    !data.secondarySectionFront && !data.secondarySectionFrontManual
+    || !locals) {
       return data;
     }
-    queryService.addShould(query, { match: { sectionFront: data.sectionFrontManual || data.sectionFront }});
-    queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom == 'all-content') {
+    if (data.secondarySectionFront || data.secondarySectionFrontManual) {
+      queryService.addMust(query, { match: { secondarySectionFront: data.secondarySectionFrontManual || data.secondarySectionFront }});
+    } else if (data.sectionFront || data.sectionFrontManual) {
+      queryService.addMust(query, { match: { sectionFront: data.sectionFrontManual || data.sectionFront }});
+    }
+  } else if (data.populateFrom === 'all-content') {
     if (!locals) {
       return data;
     }

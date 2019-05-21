@@ -36,8 +36,8 @@ module.exports.render = async function (ref, data, locals) {
 
   let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
 
-  if (locals.sectionFront) {
-    const podcastCategoryID = await getPodcastCategoryID(locals.sectionFront);
+  if (locals.sectionFront || locals.secondarySectionFront) {
+    const podcastCategoryID = locals.secondarySectionFront ? await getPodcastCategoryID(locals.secondarySectionFront) : await getPodcastCategoryID(locals.sectionFront);
 
     if (podcastCategoryID) {
       podcastsFilter = {...podcastsFilter, filter: { category_id: podcastCategoryID } };

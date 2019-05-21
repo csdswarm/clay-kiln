@@ -2,7 +2,7 @@ _components:
   section-lead:
     items: []
     sectionFront: ''
-    filterBySection: ''
+    secondarySectionFront: ''
     filterTags: []
     filterSecondarySectionFronts: []
     contentType: { article: true, gallery: true }

@@ -166,9 +166,8 @@ module.exports.render = function (ref, data, locals) {
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
     const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-
-    queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
-
+    
+    queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     return renderDefault(ref, data, locals, query);
   }
 

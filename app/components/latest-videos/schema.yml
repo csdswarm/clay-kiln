@@ -44,32 +44,10 @@ filterTags:
 filterSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
-    input: checkbox-group
-    options:
-      - Pop
-      - Alternative
-      - Country
-      -
-        name: Hip-Hop R&B
-        value: Hip-Hop R&B
-      - Rock
-      - Icons
-      - Entertainment News
-      - Movies
-      - Television
-      - National News
-      - Politics
-      - Local Politics
-      - Small Business Pulse
-      - NFL
-      - MLB
-      - NBA
-      - NHL
-      - NCAA Football
-      - NCAA Basketball
-      -
-        name: MMA & WWE
-        value: MMA & WWE
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
 
 _groups:
   settings:
