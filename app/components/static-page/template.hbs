@@ -1,20 +1,14 @@
-<div {{! TODO: does this need to be an "article"? }}
+<div
   data-uri="{{ default _ref _self }}"
-  class="component component--static-page static-page{{ if inEdit ' static-page--editing' }}"
+  class="component component--static-page"
   role="main"
   itemscope itemtype="http://schema.org/WebPage"
 >
-  <header class="static-page__header">
-    {{! title }}
-    <h1
-      class="static-page__headline"
-      data-editable="headline"
-      itemprop="headline">{{{ headline }}}</h1>
+  <header class="component__header">
+    <h1 data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
   </header>
 
-  <section class="static-page__body" itemprop="mainEntity">
-    <div class="static-page__content"
-         data-editable="content"
-         itemprop="text">{{> component-list content }}</div>
+  <section itemprop="mainEntity">
+    <div data-editable="content" itemprop="text">{{> component-list content }}</div>
   </section>
 </div>

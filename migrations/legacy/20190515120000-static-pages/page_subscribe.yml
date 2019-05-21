@@ -1,47 +1,5 @@
+# Only keeping parts that are specific to subscribe, will merge in script
 _components:
-  meta-title:
-    instances:
-      newsletter-subscribe:
-        title: Radio.com Newsletters and Contests | Subscribe To RADIO.COM
-        twitterTitle: Radio.com Newsletters and Contests | Subscribe To RADIO.COM
-        kilnTitle: Radio.com Newsletters and Contests | Subscribe To RADIO.COM
-        ogTitle: Radio.com Newsletters and Contests | Subscribe To RADIO.COM
-        componentVariation: meta-title
-  meta-description:
-    instances:
-      newsletter-subscribe:
-        description: >-
-          Subscribe to RADIO.com - Gain access to the latest music news, music,
-          and radio online with RADIO.com's newsletter. Get a first listen to
-          RADIO.com exclusives and enter RADIO.com contests!
-        componentVariation: meta-description
-  meta-image:
-    instances:
-      newsletter-subscribe:
-        imageUrl: ''
-  meta-url:
-    instances:
-      newsletter-subscribe:
-        url: ''
-        _version: 1
-  google-ad-manager:
-    instances:
-      cjvpais1s000g9sqsejil81r8:
-        adSize: billboard
-        adPosition: top
-        adLocation: atf
-        doubleclickBannerTag: ENT.TEST
-      cjvpais1t000h9sqsn61fb2ig:
-        adSize: medium-rectangle
-        adPosition: rec
-        adLocation: atf
-        doubleclickBannerTag: ENT.TEST
-      cjvpais1u000i9sqswq1p4md1:
-        adSize: half-page
-        adPosition: rec
-        adLocation: btf
-        sticky: true
-        doubleclickBannerTag: ENT.TEST
   static-page:
     instances:
       newsletter-subscribe:
@@ -52,10 +10,6 @@ _components:
           - _ref: /_components/paragraph/instances/cjvpakgz9000c3h5xvrluiyrk
           - _ref: /_components/html-embed/instances/static-newsletter-subscribe
         pageTitle: Subscribe
-        byline: []
-        slugLock: true
-        manualSlugUnlock: false
-        componentVariation: static-page
         primaryHeadline: Subscribe
         plaintextPrimaryHeadline: Subscribe
   paragraph:
@@ -80,31 +34,3 @@ _components:
             src="https://embed-515031.secondstreetapp.com/embed/8dc333ac-f895-4115-836d-b7ec41705cc2/"
             style="background-color: transparent; border: 0px none transparent; padding: 0px; overflow: hidden; min-width: 100%; width: 100px; height: 874px;"></iframe>
         isIframe: true
-  latest-recirculation:
-    instances:
-      newsletter-subscribe:
-        items: []
-        tag: ''
-        populateBy: sectionFront
-        articles: []
-        contentType:
-          article: true
-          gallery: true
-        _version: 2
-_pages:
-  newsletter-subscribe:
-    head:
-      - /_components/meta-title/instances/newsletter-subscribe
-      - /_components/meta-description/instances/newsletter-subscribe
-      - /_components/meta-image/instances/newsletter-subscribe
-      - /_components/meta-url/instances/newsletter-subscribe
-    pageHeader:
-      - /_components/google-ad-manager/instances/cjvpais1s000g9sqsejil81r8
-    main:
-      - /_components/static-page/instances/newsletter-subscribe
-    tertiary:
-      - /_components/google-ad-manager/instances/cjvpais1t000h9sqsn61fb2ig
-      - /_components/latest-recirculation/instances/newsletter-subscribe
-      - /_components/google-ad-manager/instances/cjvpais1u000i9sqswq1p4md1
-    layout: /_components/two-column-layout/instances/static-page
-    customUrl: /newsletter/subscribe

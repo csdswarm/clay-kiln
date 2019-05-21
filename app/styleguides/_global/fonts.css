@@ -461,16 +461,16 @@ em, i {
 
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* |||||||||| Legal Fonts Styleguide |||||||||| */
+/* ||||||| Static Page Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin static-page-font1 {
-  @mixin font CircularStd-Black, 45px, $black, -.32px, 25px;
+  @mixin font CircularStd-Black, 45px, $black, -.32px, 52px;
 }
 @define-mixin static-page-font2 {
-  @mixin font CircularStd-Black, 35px, $black, -.23px, 18px;
+  @mixin font CircularStd-Black, 35px, $black, -.23px, 40px;
 }
 @define-mixin static-page-font3 {
-  @mixin font CircularStd-Black, 24px, $black, -.23px, 18px;
+  @mixin font CircularStd-Black, 24px, $black, -.23px, 35px;
 }
 @define-mixin static-page-font4 {
   @mixin font ProximaNova-Light, 18px, $black, -.36px, 30px;

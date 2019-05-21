@@ -1,3 +1,4 @@
+# Only keeping parts that are specific to legal, will merge in script
 _components:
   meta-title:
     instances:
@@ -6,39 +7,10 @@ _components:
         twitterTitle: Entercom Legal | RADIO.COM
         ogTitle: Entercom Legal | RADIO.COM
         kilnTitle: Entercom Legal | RADIO.COM
-        componentVariation: meta-title
   meta-description:
     instances:
       legal:
         description: entercom-legal | RADIO.COM
-        componentVariation: meta-description
-  meta-image:
-    instances:
-      legal:
-        imageUrl: ''
-  meta-url:
-    instances:
-      legal:
-        url: ''
-        _version: 1
-  google-ad-manager:
-    instances:
-      cjvp74lw300057gqsxj72omwh:
-        adSize: billboard
-        adPosition: top
-        adLocation: atf
-        doubleclickBannerTag: ENT.TEST
-      cjvp74lw400067gqsghf5g4g2:
-        adSize: medium-rectangle
-        adPosition: rec
-        adLocation: atf
-        doubleclickBannerTag: ENT.TEST
-      cjvp74lw400077gqsc0jfj5tz:
-        adSize: half-page
-        adPosition: rec
-        adLocation: btf
-        sticky: true
-        doubleclickBannerTag: ENT.TEST
   static-page:
     instances:
       legal:
@@ -47,72 +19,51 @@ _components:
           - _ref: /_components/paragraph/instances/cjvp74lw700097gqsl3x4b9bb
           - _ref: /_components/subheader/instances/cjvp7svor000a3h5xxfojflso
           - _ref: /_components/paragraph/instances/cjvp7t8iq000d3h5xwd2pjn3w
+          - _ref: /_components/paragraph/instances/cjvs4w0ra00073r63h0i5q6fc
           - _ref: /_components/subheader/instances/cjvp7v4rz000f3h5xkjd0hhib
           - _ref: /_components/paragraph/instances/cjvp7veey000i3h5xjieed7fw
+          - _ref: /_components/paragraph/instances/cjvs4w41500083r63ukn5nyu2
         pageTitle: Entercom Legal
-        byline: []
-        slugLock: true
-        manualSlugUnlock: false
-        componentVariation: static-page
         primaryHeadline: Entercom Legal
         plaintextPrimaryHeadline: Entercom Legal
+        twitterTitle: Entercom Legal
+        ogTitle:  Entercom Legal
+        kilnTitle: Entercom Legal
   paragraph:
     instances:
       cjvp74lw700097gqsl3x4b9bb:
         text: >-
-          <a href="#ip-contact-us-and-support"><strong>Contact Us &amp;
-          Support</strong></a><strong> | </strong><a
-          href="#ip-public-file"><strong>Public File</strong></a><strong> |
+          <a href="#ip-contact-us-and-support"><strong
+          >Contact&nbsp;Us&nbsp;&amp;&nbsp;Support</strong></a><strong> |
           </strong><a
-          href="http://www.entercom.com/terms-and-conditions"><strong>Terms of
-          Service</strong></a>
+          href="#ip-public-file"><strong>Public&nbsp;File</strong></a><strong >
+          | </strong><a
+          href="http://www.entercom.com/terms-and-conditions"><strong
+          >Terms&nbsp;of&nbsp;Service</strong></a>
         componentVariation: paragraph
       cjvp7t8iq000d3h5xwd2pjn3w:
+        text: RADIO.COM App &amp; Player - Contact and Support
+        componentVariation: paragraph
+      cjvs4w0ra00073r63h0i5q6fc:
         text: >-
-          RADIO.COM App &amp; Player - Contact and Support<br />If you are
-          experiencing any issues and need support for the RADIO.COM app or
-          desktop player, please reach out to us at <a
-          href="mailto:support@radio.com">support@radio.com</a>.
+          If you are experiencing any issues and need support for the RADIO.COM
+          app or desktop player, please reach out to us at <a
+          href="mailto:support@radio.com" target="_blank">support@radio.com</a>.
       cjvp7veey000i3h5xjieed7fw:
+        text: Public Inspection File - Help
+        componentVariation: paragraph
+      cjvs4w41500083r63ukn5nyu2:
         text: >-
-          Public Inspection File - Help<br />If you need help accessing the file
-          due to a disability, please contact <a
-          href="mailto:publicfileinfo@entercom.com">publicfileinfo@entercom.com</a>
+          If you need help accessing the file due to a disability, please
+          contact <a href="mailto:publicfileinfo@entercom.com"
+          target="_blank">publicfileinfo@entercom.com</a>
   subheader:
     instances:
       cjvp7svor000a3h5xxfojflso:
         text: Contact Us &amp; Support
-        anchorId: ip-contact-us-and-support
+        anchorId: contact-us-and-support
         _version: 1
       cjvp7v4rz000f3h5xkjd0hhib:
         text: Public File
-        anchorId: ip-public-file
+        anchorId: public-file
         _version: 1
-  latest-recirculation:
-    instances:
-      legal:
-        items: []
-        tag: ''
-        populateBy: sectionFront
-        articles: []
-        contentType:
-          article: true
-          gallery: true
-        _version: 2
-_pages:
-  legal:
-    head:
-      - /_components/meta-title/instances/legal
-      - /_components/meta-description/instances/legal
-      - /_components/meta-image/instances/legal
-      - /_components/meta-url/instances/legal
-    pageHeader:
-      - /_components/google-ad-manager/instances/cjvp74lw300057gqsxj72omwh
-    main:
-      - /_components/static-page/instances/legal
-    tertiary:
-      - /_components/google-ad-manager/instances/cjvp74lw400067gqsghf5g4g2
-      - /_components/latest-recirculation/instances/legal
-      - /_components/google-ad-manager/instances/cjvp74lw400077gqsc0jfj5tz
-    layout: /_components/two-column-layout/instances/static-page
-    customUrl: /legal

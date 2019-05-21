@@ -1,24 +1,39 @@
-_version: 1.0 #TODO: determine if we need to do anything in the migration.sh for this component
+_version: 1.0
 
 _description: |
   A simple subheader component.
 
 text:
-  _publish:
-    - primaryHeadline
-    - slug
-    - pageTitle
-    - pageListTitle
   _label: Subheader Text
   _placeholder:
     height: 20px
     text: Subheader Text
   _has:
     input: inline
+    buttons:
+      - link
+      - italic
+      - underline
 
-# TODO: Find out how to make this visible/editable.
 anchorId:
-  _label: Anchor Id (will prepend "ip-") # prepending `ip-` to ensure no id conflicts in page TODO: create model.js to prepend ip-
+  _label: Anchor Id (will prepend "ip-") # prepending `ip-` reduces chance for id conflict in page
+  _placeholder:
+    height: 20px
+    text: 'your-in-page-link-target-id'
   _has:
     input: text
-    help: Id for hyperlink targeting within the page (use hash syntax \#ip-anchor-id-name)
+    help: Id for hyperlink targeting within the page. This will prepend 'ip-' to your id (use hash syntax \#ip-anchor-id-name to reference in links)
+    validate:
+      pattern: ^[\w\-]*$
+      patternMessage: Anchor name must only contain letters, numbers, dashes or underscores
+
+_groups:
+  info:
+    _label: Subheader Info
+    _placeholder:
+      text: Subheader Text
+      height: 20px
+      ifEmpty: text
+    fields:
+      - text
+      - anchorId
