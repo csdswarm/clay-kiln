@@ -61,11 +61,9 @@ module.exports.render = (ref, data, locals) => {
   if (locals.station && locals.station.callsign) {
     data.metaTags.push({ name: STATION_CALL_LETTERS, content: locals.station.callsign });
   } else {
-    data.unusedTags.push({ type: 'name', name: STATION_CALL_LETTERS });
+    // ON-543: Yes, on every page in www.radio.com unless it's a station page.
+    data.metaTags.push({ name: STATION_CALL_LETTERS, content: 'NATL-RC' });
   }
-
-  // add editorial radio
-  // only pass NATL-RC on radio.com pages?
 
   return data;
 };
