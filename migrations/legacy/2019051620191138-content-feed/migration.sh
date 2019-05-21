@@ -16,43 +16,52 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-index=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null | sed -n 's/.*\(published-content[^ \n]*\).*/\1/p' | sed q);
-mappings=$(curl -X GET "$es:9200/$index/_mappings");
+printf "\nContent feed migration\n"
+
+# Updating existing field mappings
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#_updating_existing_field_mappings
+
+# find out which index is currently being used
+printf "\nmaking curl GET to $es:9200/published-content/_alias\n";
+aliases=$(curl -X GET "$es:9200/published-content/_alias" 2>/dev/null);
+IFS=', ' read -r -a array <<< $(node alias "$aliases")
+currentIndex="${array[0]}";
+alias="${array[1]}";
+
+mappings=$(curl -X GET "$es:9200/$currentIndex/_mappings") 2>/dev/null;
 
 if [[ $mappings != *"byline"* ]]; then
-    newProp="\"byline\": {\"type\": \"nested\", \"dynamic\": \"true\"}";
-    num=$(echo $index | sed 's/[^0-9]*//g');
-    newIndex="$(echo $index | sed 's/[0-9]*//g')$((num+1))";
-    alias=$(echo $index | sed 's/\(.*\)_.*/\1/g');
-    mappings=$(curl -X GET "$es:9200/$index/_mappings" 2>/dev/null | sed -n "s/\"properties\":{/\"properties\":{$newProp,/p" | sed -n "s/{\"$index\":{\(.*\)}}/\1/p");
+  printf "\nmaking curl GET to $es:9200/_cat/indices?pretty&s=index:desc\n";
+  indices=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null);
+  # sometimes the currentIndex isn't necessarily the largest. and query brings back in alphabetical order, so 2 > 10
+  newIndex=$(node largest-index "$indices");
+  setting=$(curl -X GET "$es:9200/$currentIndex/_settings") 2>/dev/null;
 
-    printf "\n\nCreating new index ($newIndex)...\n\n"
-    curl -X GET "$es:9200/$index/_settings" > ./settings.json;
-    node ./settings-update.js "$1";
-    settings=$(cat ./settings.txt);
-    curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "{$settings,$mappings}";
-    rm ./settings.json;
-    rm ./settings.txt;
+  # add byline properties to mapping
+  indexPayload=$(node index-payload "$mappings" "$setting");
 
-    printf "\r\n\r\nCopying old index data ($index) to new index ($newIndex)...\n\n"
-    curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "
-        {
-          \"source\": {
-            \"index\": \"$index\"
-          },
-          \"dest\": {
-            \"index\": \"$newIndex\"
-          }
-        }";
+  printf "\n\nCreating new index ($newIndex)...\n\n"
+  curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "$indexPayload";
 
-    sleep 1;
+  printf "\r\n\r\nCopying old index data ($currentIndex) to new index ($newIndex)...\n\n"
+  curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "
+  {
+    \"source\": {
+      \"index\": \"$currentIndex\"
+    },
+    \"dest\": {
+      \"index\": \"$newIndex\"
+    }
+  }";
 
-    printf "\n\nRemoving old alias and adding new ($alias)...\n\n"
-    curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
-        {
-            \"actions\" : [
-                { \"remove\" : { \"index\" : \"$index\", \"alias\" : \"$alias\" } },
-                { \"add\" : { \"index\" : \"$newIndex\", \"alias\" : \"$alias\" } }
-            ]
-        }";
+  sleep 1;
+
+  printf "\n\nRemoving old alias and adding new ($alias)...\n\n"
+  curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
+  {
+      \"actions\" : [
+          { \"remove\" : { \"index\" : \"$currentIndex\", \"alias\" : \"$alias\" } },
+          { \"add\" : { \"index\" : \"$newIndex\", \"alias\" : \"$alias\" } }
+      ]
+  }"
 fi
