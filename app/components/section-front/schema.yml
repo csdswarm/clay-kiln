@@ -1,11 +1,44 @@
+_version: 1.0
 _confirmRemoval: true
 
 title:
   _label: Title
   _publish: sectionFront
   _has:
-    input: static
-    text: ${title}
+    input: text
+    validate:
+      required:
+        field: titleLocked
+        operator: falsy
+  _reveal:
+    field: titleLocked
+    operator: falsy
+
+titleLocked:
+  _label: Is title locked?
+  _has: checkbox
+
+primary:
+  _label: Is this a primary section front?
+  _has: checkbox
+  _reveal:
+    field: titleLocked
+    operator: falsy
+
+primarySectionFront:
+  _reveal:
+    field: primary
+    operator: falsy
+  _label: 'Primary Section Front:'
+  _has:
+    help: Choose the primary section front if this is a secondary section front
+    input: select
+    search: true
+    list: primary-section-fronts
+    validate:
+      required:
+        field: primary
+        operator: falsy
 
 podcastList:
   _component:
