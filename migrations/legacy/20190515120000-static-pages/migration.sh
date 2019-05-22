@@ -17,3 +17,16 @@ else
 fi
 
 node ./template.js $http://$1
+printf "Importing updates to clay"
+clay import -k demo -y $1 < ./_update.yml
+rm ./_update.yml
+
+printf "\nPublishing static-page layout\n\n"
+curl -X PUT $http://$1/_components/two-column-layout/instances/static-page@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+printf "\n\nPublishing new legal page\n\n"
+curl -X PUT $http://$1/_pages/legal@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+printf "\n\nPublishing new contest rules page\n\n"
+curl -X PUT $http://$1/_pages/contest-rules@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+printf "\n\nPublishing updated subscribe page\n\n"
+curl -X PUT $http://$1/_pages/newsletter-subscribe@published -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
+printf "\n\nDone creating static pages\n\n\n\n"
