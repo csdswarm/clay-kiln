@@ -19,13 +19,6 @@ fi
 printf "Add new section front lists...\n"
 cat ./_lists.yml | clay import -k demo -y $1
 
-printf "\n\n\n\n"
-
-# Updating existing field mappings
-# https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#_updating_existing_field_mappings
-# Renaming mapping key
-# https://www.elastic.co/guide/en/elasticsearch/reference/7.0/rename-processor.html
-
 # find out which index is currently being used 
 printf "\nmaking curl GET to $es:9200/published-content/_alias\n";
 curl -X GET "$es:9200/published-content/_alias" > ./aliases.json;
@@ -51,28 +44,14 @@ if [[ $mappings == *"secondaryArticleType"* && $mappings != *"secondarySectionFr
   curl -X GET "$es:9200/$currentIndex/_settings" > ./settings.json;
   node ./settings-update.js "$1";
   settings=$(cat ./settings.txt);
-  curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "{$settings,$mappings}";
-  rm ./settings.json;
-  rm ./settings.txt;
 
-  # new prop name secondarySectionFront to replace secondaryArticleType
+  echo $mappings > ./mappings.json;
   currentKey="secondaryArticleType";
   newKey="secondarySectionFront";
-  pipeline="rename_${currentKey}_to_${newKey}_pipeline";
-
-  printf "\r\n\r\nRenaming old mapping key ($currentKey) to new mapping key ($newKey) using pipeline $pipeline...\n\n"
-  curl -X PUT "$es:9200/_ingest/pipeline/$pipeline" -H 'Content-Type: application/json' -d "
-  {
-    \"description\" : \"rename $currentKey to $newKey\",
-    \"processors\" : [
-      {
-        \"rename\": {
-          \"field\": \"$currentKey\",
-          \"target_field\": \"$newKey\"
-        }
-      }
-    ]
-  }";
+  newMappings=$(sed s/$currentKey/$newKey/ ./mappings.json);
+  
+  curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "{$settings,$newMappings}";
+  rm ./settings.json ./settings.txt ./mappings.json;
 
   printf "\r\n\r\nCopying old index data ($currentIndex) to new index ($newIndex)...\n\n"
   curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "
@@ -81,8 +60,7 @@ if [[ $mappings == *"secondaryArticleType"* && $mappings != *"secondarySectionFr
       \"index\": \"$currentIndex\"
     },
     \"dest\": {
-      \"index\": \"$newIndex\",
-      \"pipeline\": \"$pipeline\"
+      \"index\": \"$newIndex\"
     }
   }";
 
@@ -96,4 +74,6 @@ if [[ $mappings == *"secondaryArticleType"* && $mappings != *"secondarySectionFr
           { \"add\" : { \"index\" : \"$newIndex\", \"alias\" : \"$alias\" } }
       ]
   }";
+else
+  printf "\n\nNo need to reindex. Field $newKey exists.\n\n\n\n";
 fi
