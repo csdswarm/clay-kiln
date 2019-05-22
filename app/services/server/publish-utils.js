@@ -170,8 +170,8 @@ function getUrlOptions(component, locals, pageType) {
     
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = component.sectionFront || slugifyService(component.title);
-  urlOptions.primarySectionFront = component.primary ? null : slugifyService(component.primarySectionFront);
+  urlOptions.sectionFront = slugifyService(component.sectionFront || component.title);
+  urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
