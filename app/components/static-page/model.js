@@ -16,7 +16,7 @@ module.exports.save = function (uri, data, locals) {
 
   Object.assign(data, {
     shortHeadline: data.pageTitle,
-    primaryHeadline: data.pageTitle,
+    primaryHeadline: data.pageTitle
   });
 
   return createContent.save(uri, data, locals);
