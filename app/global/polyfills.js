@@ -151,6 +151,16 @@
       };
   }
 
+  // endsWith - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
+  if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function (search, this_len) {
+      if (this_len === undefined || this_len > this.length) {
+        this_len = this.length;
+      }
+      return this.substring(this_len - search.length, this_len) === search;
+    };
+  }
+
   // ParentNode.append - https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/append#Polyfill
   // Source: https://github.com/jserz/js_piece/blob/master/DOM/ParentNode/append()/append().md
   (function (arr) {
