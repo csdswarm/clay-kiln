@@ -16,7 +16,7 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "Add new podcast module instances...\n"
+printf "Add new section front lists...\n"
 cat ./_lists.yml | clay import -k demo -y $1
 
 printf "\nUpdating Section Fronts to Add Podcast Modules...\n\n"
