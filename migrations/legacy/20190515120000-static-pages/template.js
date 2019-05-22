@@ -41,7 +41,7 @@ function parseReferenceUrl(ref) {
   const url = refParts.slice(1).join('/')
   const componentName = refParts[2]
   const instanceName = refParts[4]
-  return { url, componentName, instanceName}
+  return {url, componentName, instanceName}
 }
 
 /**
@@ -52,10 +52,11 @@ function parseReferenceUrl(ref) {
  * @returns {Promise<void>}
  */
 async function storeData(url, data) {
-  if(data){
+  //console.log({url, data: YAML.stringify(data, 6, 2)})
+  if (data) {
     // was originally saving this data, but that wasn't working, so pretend we did
     // by adding to memoized data
-    memoized[url] = data;
+    memoized[url] = data
     _set(final, url.split('/'), data)
   }
 }
@@ -110,7 +111,7 @@ async function addStaticPageComponent() {
  * @param value
  * @returns {string}
  */
-function removeRoot(value){
+function removeRoot(value) {
   return '/' + value.split('/').slice(1).join('/')
 }
 
@@ -122,7 +123,7 @@ function removeRoot(value){
  * @param useRefs
  * @param props
  */
-function removeEnvironmentRoots(obj, useRefs, ...props){
+function removeEnvironmentRoots(obj, useRefs, ...props) {
   const mapWithoutRoot = useRefs ? (({_ref}) => ({_ref: removeRoot(_ref)})) : removeRoot
 
   props.forEach(prop => {
@@ -143,12 +144,12 @@ async function composeNewStaticPageInst() {
  * @returns {Promise<void>}
  */
 async function addStaticPageLayoutInstance() {
-  const newStaticPageLayout = await getMemoizedData('_components/two-column-layout/instances/article')
-  if(newStaticPageLayout.secondary && Array.isArray(newStaticPageLayout.secondary)){
+  const newStaticPageLayout = await getMemoizedData('_layouts/two-column-layout/instances/article')
+  if (newStaticPageLayout.secondary && Array.isArray(newStaticPageLayout.secondary)) {
     newStaticPageLayout.secondary = newStaticPageLayout.secondary.filter(({_ref}) => !_ref.includes('recirculation'))
   }
-  removeEnvironmentRoots(newStaticPageLayout, true,'headLayout', 'top', 'secondary', 'bottom', 'kilnInternals', 'static')
-  await storeData('_components/two-column-layout/instances/static-page', newStaticPageLayout)
+  removeEnvironmentRoots(newStaticPageLayout, true, 'headLayout', 'top', 'secondary', 'bottom', 'kilnInternals', 'static')
+  await storeData('_layouts/two-column-layout/instances/static-page', newStaticPageLayout)
 }
 
 /**
@@ -158,11 +159,11 @@ async function addStaticPageLayoutInstance() {
 async function addNewStaticPage() {
   const newStaticPage = await getMemoizedData('_pages/new-two-col')
   newStaticPage.layout = removeRoot(newStaticPage.layout).replace(/instances\/.*$/, 'instances/static-page')
-  if(newStaticPage.tertiary && Array.isArray(newStaticPage.tertiary)){
+  if (newStaticPage.tertiary && Array.isArray(newStaticPage.tertiary)) {
     newStaticPage.tertiary = newStaticPage.tertiary.filter(i => !i.includes('recirculation'))
   }
   const articleInst = newStaticPage.main.findIndex(i => i.includes('article'))
-  if(articleInst !== -1){
+  if (articleInst !== -1) {
     newStaticPage.main[articleInst] = newStaticPage.main[articleInst].replace('article', 'static-page')
   }
   removeEnvironmentRoots(newStaticPage, false, 'head', 'pageHeader', 'main', 'tertiary')
@@ -177,15 +178,19 @@ async function addNewStaticPage() {
  * @returns {Promise<void>}
  */
 async function addStaticPageTemplateToLists() {
-  const pages = await getMemoizedData('_lists/new-pages')
-  const newPage = {id: 'new-static-page', title: 'New Static Page'}
+  const newPages = await getMemoizedData('_lists/new-pages')
+  const newStaticPage = {id: 'new-static-page', title: 'New Static Page'}
   const pagesArrToObj = (obj, {id, title}) => ({...obj, [id]: title})
-  pages.push(newPage)
-  const pagesWithoutDuplicates = Object
-    .entries(pages.reduce(pagesArrToObj, {}))
-    .map(([id, title]) => ({id, title}))
+  const generalContent = newPages.find(({id}) => id === 'General-content')
+  const dedupPages = arr => Object.entries(arr
+      .reduce(pagesArrToObj, {}))
+      .map(([id, title]) => ({id, title})
+    )
+  const pages = generalContent.children
+  pages.push(newStaticPage)
+  generalContent.children = dedupPages(pages)
 
-  await storeData('_lists/new-pages', pagesWithoutDuplicates)
+  await storeData('_lists/new-pages', newPages)
 }
 
 /**
@@ -209,7 +214,7 @@ async function addNewStaticPageTemplate() {
  * @param data
  * @returns {Function}
  */
-function createNewSubComponentsFromRef(data){
+function createNewSubComponentsFromRef(data) {
   return async ref => {
     const {url} = parseReferenceUrl(ref)
     const newSubComponent = _get(data, url.split('/'))
@@ -226,8 +231,8 @@ function createNewSubComponentsFromRef(data){
  * @param instanceName
  * @returns {string}
  */
-function createNewReferenceIdForPageComponents(name, componentName, instanceName){
-  if(instanceName.includes(name)){
+function createNewReferenceIdForPageComponents(name, componentName, instanceName) {
+  if (instanceName.includes(name)) {
     return `_components/${componentName}/instances/${instanceName}`
   }
   const newInstanceName = (componentName === 'google-ad-manager')
@@ -255,8 +260,8 @@ function createNewComponentsFromRef(name, data) {
     const newComponent = (preExistingComponent && preExistingComponent.code !== 404)
       ? {...existingComponent, ...preExistingComponent, ...compUpdates}
       : {...existingComponent, ...compUpdates}
-    if(componentName === 'static-page'){
-      for(const contentRef of compUpdates.content){
+    if (componentName === 'static-page') {
+      for (const contentRef of compUpdates.content) {
         await createSubComponents(contentRef._ref)
       }
     }
@@ -278,7 +283,7 @@ function mergeUpdatesIntoPageProperties(pageTemplate, name, data) {
   return async prop => {
     const newRefs = []
     const createNewComponentFromRef = createNewComponentsFromRef(name, data)
-    for(const ref of pageTemplate[prop]){
+    for (const ref of pageTemplate[prop]) {
       newRefs.push(await createNewComponentFromRef(ref))
     }
     pageTemplate[prop] = newRefs
@@ -348,13 +353,13 @@ async function updateSubscriptionPage() {
  * Composing the YAML and importing with clay cli seems to do the
  * trick.
  */
-function writeOutFinalResult(){
+function writeOutFinalResult() {
   const yaml = YAML.stringify(final, 8, 2)
   console.log('Saving page and component definitions:\n')
   console.log(yaml)
-  fs.writeFile(`${__dirname}/_update.yml`, yaml, 'utf8', function(err) {
-      if (err) throw err;
-    })
+  fs.writeFile(`${__dirname}/_update.yml`, yaml, 'utf8', function (err) {
+    if (err) throw err
+  })
   console.log('\n')
 }
 
