@@ -13,9 +13,9 @@ const pkg = require('../../package.json'),
   initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
   locals = require('./spaLocals'),
-  handleRedirects = require('./redirects'),
-  currentStation = require('./currentStation');
-  // redirectTrailingSlash = require('./trailing-slash');
+  currentStation = require('./currentStation'),
+  feedComponents = require('./feed-components'),
+  handleRedirects = require('./redirects');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -75,6 +75,8 @@ function setupApp(app) {
 
   db.setup();
   sessionStore = createSessionStore();
+
+  feedComponents.init();
 
   return initSearch()
     .then(search => initCore(app, search, sessionStore, routes));
