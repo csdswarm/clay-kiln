@@ -40,3 +40,5 @@ _components:
     secondaryArticleType: ''
     footer: []
     crumbs: []
+    featured: false
+    editorialFeeds: {}
