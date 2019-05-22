@@ -31,3 +31,15 @@ cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
 rm ./$componentType-$instanceType.json
 rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
+
+printf "\nUpdating New Pages to Add Section Front...\n\n"
+
+# _lists/new-pages
+listType="new-pages"
+printf "\n\nUpdating _lists instance $listType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_lists/$listType > ./lists-$listType.json
+node ./new-pages-update.js "$1" "$listType";
+cat ./lists-$listType.yml | clay import -k demo -y $1
+rm ./lists-$listType.json
+rm ./lists-$listType.yml
+printf "\n\n\n\n"
