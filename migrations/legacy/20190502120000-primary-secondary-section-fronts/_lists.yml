@@ -9,7 +9,4 @@ _lists:
     -
       name: Sports
       value: sports
-    -
-      name: Podcasts
-      value: podcasts
   secondary-section-fronts: []
