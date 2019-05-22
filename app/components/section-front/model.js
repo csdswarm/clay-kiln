@@ -19,10 +19,10 @@ addEventCallback('clay:publishPage', async payload => {
       const sectionFronts = await db.get(sectionFrontsList),
         sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
 
-      if (!sectionFrontValues.includes(data.title)) {
+      if (!sectionFrontValues.includes(data.title.toLowerCase())) {
         sectionFronts.push({
           name: data.title,
-          value: data.title
+          value: data.title.toLowerCase()
         });
         await db.put(sectionFrontsList, JSON.stringify(sectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: true}));
@@ -41,7 +41,7 @@ addEventCallback('clay:unpublishPage', async () => {
     if (data.title) {
       const sectionFronts = await db.get(sectionFrontsList),
         updatedSectionFronts = sectionFronts.filter(sectionFront => {
-          return sectionFront.value !== data.title;
+          return sectionFront.value !== data.title.toLowerCase();
         });
 
       await db.put(sectionFrontsList, JSON.stringify(updatedSectionFronts));
@@ -54,7 +54,11 @@ addEventCallback('clay:unpublishPage', async () => {
 
 module.exports.render = (uri, data, locals) => {
   if (data.title) {
-    locals.sectionFront = data.title;
+    if (data.primary) {
+      locals.sectionFront = data.title.toLowerCase();
+    } else {
+      locals.secondarySectionFront = data.title.toLowerCase();
+    }
   }
 
   primary = data.primary;
