@@ -52,7 +52,6 @@ function parseReferenceUrl(ref) {
  * @returns {Promise<void>}
  */
 async function storeData(url, data) {
-  //console.log({url, data: YAML.stringify(data, 6, 2)})
   if (data) {
     // was originally saving this data, but that wasn't working, so pretend we did
     // by adding to memoized data
