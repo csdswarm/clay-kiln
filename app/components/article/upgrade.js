@@ -33,8 +33,11 @@ module.exports['3.0'] = function (uri, data) {
 };
 
 module.exports['4.0'] = function (uri, data) {
-  return {
+  const newData = {
     ...data,
     secondarySectionFront: data.secondaryArticleType || ''
   };
+
+  delete newData.secondaryArticleType;
+  return newData;
 };
