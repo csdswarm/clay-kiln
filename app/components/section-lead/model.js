@@ -68,7 +68,7 @@ module.exports.render = function (ref, data, locals) {
   // items are saved from form, articles are used on FE
   data.articles = data.items;
 
-  if (!locals || !locals.sectionFront || !locals.secondarySectionFront) {
+  if (!locals || !locals.sectionFront && !locals.secondarySectionFront) {
     return data;
   }
 
@@ -126,7 +126,6 @@ module.exports.render = function (ref, data, locals) {
 
       data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
       data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
-
       return data;
     })
     .catch(e => {
