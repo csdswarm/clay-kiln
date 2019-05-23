@@ -364,7 +364,7 @@ const axios = require('axios'),
    * @param {object} res
    */
   catchError = (error, res) => {
-    console.log(error);
+    console.error(error.message);
     res.status(500).json({ message: 'An unknown error has occurred.' });
   },
   /**
@@ -375,7 +375,7 @@ const axios = require('axios'),
    * @return {Promise<Object>}
    */
   facebookCallback = async (req, res) => {
-    const { code } = req.query,
+    const { code, error_description } = req.query,
       redirectUri = `https://${process.env.CLAY_SITE_HOST}/account/facebook-callback`,
       data = `code=${code}&client_id=${cognitoClientId}&redirect_uri=${redirectUri}&grant_type=authorization_code`,
       options = {
@@ -386,15 +386,19 @@ const axios = require('axios'),
         crossdomain: true,
         withCredentials: true,
         facebookUser: true
-      },
-      response = await axios(options);
+      };
 
-    await signInLogic(response, req, res);
+    if (!error_description) {
+      const response = await axios(options);
+  
+      await signInLogic(response, req, res);
+    }
+
     // Returns a script that passes a message to the origin tab, and then immediately closes the opened tab.
     return res.send(
       `<html>
         <head>
-          <script>window.opener.postMessage(${JSON.stringify(data)}, window.location.protocol + '//' + window.location.hostname); window.close();</script>
+          <script>window.opener.postMessage(${JSON.stringify({error_description})}, window.location.protocol + '//' + window.location.hostname); window.close();</script>
         </head>
         <body></body>
       </html>`

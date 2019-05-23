@@ -28,7 +28,6 @@ export default {
       const win = window.open(this.link, '_blank')
       const handlePostBack = ({ data, origin, source }) => {
         if (source === win && origin === `${location.protocol}//${location.host}`) {
-          this.$store.commit(mutationTypes.SET_USER, data)
           this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
           window.removeEventListener('message', handlePostBack)
         }
