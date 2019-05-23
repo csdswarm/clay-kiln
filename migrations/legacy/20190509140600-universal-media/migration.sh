@@ -16,71 +16,70 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "Delete youtube-player-head component from layouts."
+printf "Delete youtube-player-head layout from layouts."
 
-# _components/one-column-layout/instances/general
-componentType="one-column-layout"
+# _layouts/one-column-layout/instances/general
+layoutType="one-column-layout"
 instanceType="general"
-printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
-rm ./$componentType-$instanceType.json
-rm ./$componentType-$instanceType.yml
+printf "\n\nUpdating layout $layoutType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_layouts/$layoutType/instances/$instanceType > ./$layoutType-$instanceType.json
+node ./layouts-update.js "$1" "$layoutType" "$instanceType";
+cat ./$layoutType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$layoutType-$instanceType.json
+rm ./$layoutType-$instanceType.yml
 printf "\n\n\n\n"
 
-# _components/one-column-layout/instances/bare
-componentType="one-column-layout"
+# _layouts/one-column-layout/instances/bare
+layoutType="one-column-layout"
 instanceType="bare"
-printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
-rm ./$componentType-$instanceType.json
-rm ./$componentType-$instanceType.yml
+printf "\n\nUpdating layout $layoutType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_layouts/$layoutType/instances/$instanceType > ./$layoutType-$instanceType.json
+node ./layouts-update.js "$1" "$layoutType" "$instanceType";
+cat ./$layoutType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$layoutType-$instanceType.json
+rm ./$layoutType-$instanceType.yml
 printf "\n\n\n\n"
 
-
-# _components/one-column-layout/instances/article
-componentType="one-column-layout"
+# _layouts/one-column-layout/instances/article
+layoutType="one-column-layout"
 instanceType="article"
-printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
-rm ./$componentType-$instanceType.json
-rm ./$componentType-$instanceType.yml
+printf "\n\nUpdating layout $layoutType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_layouts/$layoutType/instances/$instanceType > ./$layoutType-$instanceType.json
+node ./layouts-update.js "$1" "$layoutType" "$instanceType";
+cat ./$layoutType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$layoutType-$instanceType.json
+rm ./$layoutType-$instanceType.yml
 printf "\n\n\n\n"
 
-# _components/one-column-full-width-layout/instances/bare
-componentType="one-column-full-width-layout"
+# _layouts/one-column-full-width-layout/instances/bare
+layoutType="one-column-full-width-layout"
 instanceType="bare"
-printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
-rm ./$componentType-$instanceType.json
-rm ./$componentType-$instanceType.yml
+printf "\n\nUpdating layout $layoutType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_layouts/$layoutType/instances/$instanceType > ./$layoutType-$instanceType.json
+node ./layouts-update.js "$1" "$layoutType" "$instanceType";
+cat ./$layoutType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$layoutType-$instanceType.json
+rm ./$layoutType-$instanceType.yml
 printf "\n\n\n\n"
 
-# _components/two-column-layout/instances/article
-componentType="two-column-layout"
+# _layouts/two-column-layout/instances/article
+layoutType="two-column-layout"
 instanceType="article"
-printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
-rm ./$componentType-$instanceType.json
-rm ./$componentType-$instanceType.yml
+printf "\n\nUpdating layout $layoutType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_layouts/$layoutType/instances/$instanceType > ./$layoutType-$instanceType.json
+node ./layouts-update.js "$1" "$layoutType" "$instanceType";
+cat ./$layoutType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$layoutType-$instanceType.json
+rm ./$layoutType-$instanceType.yml
 printf "\n\n\n\n"
 
-# _components/two-column-layout/instances/station
-componentType="two-column-layout"
+# _layouts/two-column-layout/instances/station
+layoutType="two-column-layout"
 instanceType="station"
-printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
-rm ./$componentType-$instanceType.json
-rm ./$componentType-$instanceType.yml
+printf "\n\nUpdating layout $layoutType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_layouts/$layoutType/instances/$instanceType > ./$layoutType-$instanceType.json
+node ./layouts-update.js "$1" "$layoutType" "$instanceType";
+cat ./$layoutType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$layoutType-$instanceType.json
+rm ./$layoutType-$instanceType.yml
 printf "\n\n\n\n"
