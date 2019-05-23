@@ -66,16 +66,21 @@ module.exports.render = async (ref, data, locals) => {
      * add a condition to the query
      *
      * @param {String} item - a string of items to apply add to the query condition
+     * @param {String} nested - a key to be used as a nested query if needed
      * @param {Function} createObj - a function that take the value and returns the object representation
-     * @param {String} condition  - possible options addShould/addMust/addMustNot
+     * @param {String} condition - possible options addShould/addMust/addMustNot
      */
-    addCondition = (item, createObj, condition) => {
+    addCondition = (item, nested, createObj, condition) => {
       if (item) {
-        const items = item.split(',');
+        const localQuery = nested ? queryService.newNestedQuery(nested) : query,
+          items = item.split(',');
 
-        items.forEach(instance => queryService[condition](query, { match: createObj(instance)}));
+        items.forEach(instance => queryService[condition](localQuery, { match: createObj(instance)}));
         if (condition === 'addShould') {
-          queryService.addMinimumShould(query, 1);
+          queryService.addMinimumShould(localQuery, 1);
+        }
+        if (nested) {
+          queryService.addMust(query, localQuery);
         }
       }
     },
@@ -83,21 +88,24 @@ module.exports.render = async (ref, data, locals) => {
      * add filter and exclude conditions to the query
      *
      * @param {String} key
+     * @param {String} nested
      * @param {Function} createObj
      */
-    addFilterAndExclude = (key, createObj) => {
-      addCondition(filters[key], createObj, 'addShould');
-      addCondition(excludes[key], createObj, 'addMustNot');
+    addFilterAndExclude = (key, nested, createObj) => {
+      addCondition(filters[key], nested, createObj, 'addShould');
+      addCondition(excludes[key], nested, createObj, 'addMustNot');
     },
-    genericItems = {
+    queryFilters = {
       // vertical (sectionfront) and/or exclude tags
-      vertical: sectionFront => ({ sectionFront }),
+      vertical: { createObj: sectionFront => ({ sectionFront }) },
       // tags
-      tag: tag => ({ 'tags.normalized': tag }),
+      tag: { createObj: tag => ({ 'tags.normalized': tag }) },
       // subcategory (secondary article type)
-      subcategory: secondaryArticleType => ({ secondaryArticleType }),
+      subcategory: { createObj: secondaryArticleType => ({ secondaryArticleType }) },
       // editorial feed (grouped stations)
-      editorial: editorial => ({ [`editorialFeeds.${editorial}`]: true })
+      editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
+      // stations (nested object search)
+      station: { createObj: station => ({ 'byline.sources.text': station }), nested: 'byline' }
     };
 
   queryService.addSize(query, filters.size ? filters.size : data.query.size);
@@ -107,27 +115,7 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
-  Object.entries(genericItems).forEach(([key, createObj]) => addFilterAndExclude(key, createObj));
-
-  // special case logic filter/excludes
-  // stations (nested object search)
-  if (filters.station) {
-    const nestedQuery = queryService.newNestedQuery('byline'),
-      stations = filters.station.split(',');
-
-    stations.forEach(station => queryService.addShould(nestedQuery, { match: { 'byline.sources.text': station }}));
-    queryService.addMinimumShould(nestedQuery, 1);
-
-    queryService.addMust(query, nestedQuery);
-  }
-  if (excludes.station) {
-    const nestedQuery = queryService.newNestedQuery('byline'),
-      stations = excludes.station.split(',');
-
-    stations.forEach(station => queryService.addMustNot(nestedQuery, { match: { 'byline.sources.text': station }}));
-
-    queryService.addMust(query, nestedQuery);
-  }
+  Object.entries(queryFilters).forEach(([key, { nested, createObj }]) => addFilterAndExclude(key, nested, createObj));
 
   try {
     if (meta.rawQuery) {
