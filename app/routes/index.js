@@ -14,9 +14,11 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
-  radioApi = require('../services/server/radioApi');
+  radioApi = require('../services/server/radioApi'),
+  slugifyService = require('../services/universal/slugify'),
+  xml = require('xml');
 
-module.exports.routes = (router) => {
+module.exports = router => {
 
   // Auth Middleware
   // Add this middleware to a route if the route requires authentication.
@@ -121,4 +123,52 @@ module.exports.routes = (router) => {
     });
   });
 
+  /**
+   * Sitemap for stations directories and station detail pages
+   */
+  router.get('/sitemap-stations.xml', async function (req, res) {
+    const baseUrl = `${req.headers['x-forwarded-proto']}://${req.headers.host}`,
+      urlset = [
+        { _attr: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' } },
+        { url: [{ loc: `${baseUrl}/stations` }] },
+        { url: [{ loc: `${baseUrl}/stations/location` }] },
+        { url: [{ loc: `${baseUrl}/stations/music` }] },
+        { url: [{ loc: `${baseUrl}/stations/news-talk` }] },
+        { url: [{ loc: `${baseUrl}/stations/sports` }] }
+      ];
+
+    // Location station directory pages
+    await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }).then(function (markets) {
+      markets.data.forEach(market => {
+        urlset.push({ url:
+          [{ loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}` }]
+        });
+      });
+    });
+
+    // Music station directory pages
+    await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }).then(function (genres) {
+      genres.data.forEach(genre => {
+        if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
+          urlset.push({ url:
+            [{ loc: `${baseUrl}/stations/music/${slugifyService(genre.attributes.name)}` }]
+          });
+        }
+      });
+    });
+
+    // Station detail pages
+    await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }).then(function (stations) {
+      stations.data.forEach(station => {
+        if (station.attributes.site_slug) {
+          urlset.push({ url:
+            [{ loc: `${baseUrl}/${station.attributes.site_slug}/listen` }]
+          });
+        }
+      });
+    });
+
+    res.type('application/xml');
+    return res.send( xml( { urlset }, { declaration: true } ) );
+  });
 };
