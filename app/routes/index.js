@@ -129,13 +129,13 @@ module.exports = router => {
   router.get('/sitemap-stations.xml', async function (req, res) {
     const baseUrl = `${req.headers['x-forwarded-proto']}://${req.headers.host}`,
       urlset = [
-      { _attr: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' } },
-      { url: [{ loc: `${baseUrl}/stations` }] },
-      { url: [{ loc: `${baseUrl}/stations/location` }] },
-      { url: [{ loc: `${baseUrl}/stations/music` }] },
-      { url: [{ loc: `${baseUrl}/stations/news-talk` }] },
-      { url: [{ loc: `${baseUrl}/stations/sports` }] }
-    ];
+        { _attr: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' } },
+        { url: [{ loc: `${baseUrl}/stations` }] },
+        { url: [{ loc: `${baseUrl}/stations/location` }] },
+        { url: [{ loc: `${baseUrl}/stations/music` }] },
+        { url: [{ loc: `${baseUrl}/stations/news-talk` }] },
+        { url: [{ loc: `${baseUrl}/stations/sports` }] }
+      ];
 
     // Location station directory pages
     await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }).then(function (markets) {
