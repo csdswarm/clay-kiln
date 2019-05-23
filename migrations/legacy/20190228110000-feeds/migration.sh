@@ -39,7 +39,7 @@ curl -X PUT "$http://$1/_components/feeds/instances/reversechron" -H 'Authorizat
 }
 ';
 
-newProp="\"content\": {\"type\": \"nested\", \"dynamic\": \"true\"}";
+newProp="\"content\":{\"type\":\"nested\",\"dynamic\":\"true\",\"properties\":{\"_ref\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}},\"data\":{\"type\":\"text\",\"fields\":{\"keyword\":{\"type\":\"keyword\",\"ignore_above\":256}}}}}";
 
 index=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null | sed -n 's/.*\(published-content[^ \n]*\).*/\1/p' | sed q);
 num=$(echo $index | sed 's/[^0-9]*//g');

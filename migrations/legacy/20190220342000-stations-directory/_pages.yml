@@ -7,4 +7,4 @@ _pages:
       - /_components/google-ad-manager/instances/billboardTop
     main:
       - /_components/stations-directory/instances/default
-    layout: /_components/one-column-layout/instances/general
+    layout: /_layouts/one-column-layout/instances/general

@@ -1,14 +1,19 @@
-_layout: true
 _description: |
-  A one-column full-width layout for Clay.
+  A two-column layout for Clay, used for non-article pages:
+
+  * homepages
+  * section pages
+  * index pages and archives
+  * tag pages
+  * author pages
 
 head:
   _componentList:
     page: true
     include:
-      - meta-site
+      - meta-title
+      - meta-description
       - meta-image
-      - meta-icons
       - meta-url
 
 headLayout:
@@ -26,23 +31,46 @@ headLayout:
 top:
   _componentList:
     include:
-      - header
-pageHeader:
+      - image
+
+layoutHeader:
   _componentList:
     include:
       - google-ad-manager
+
+pageHeader:
+  _componentList:
+    include:
+      - header
+      - google-ad-manager
+sectionHeader:
+  _componentList:
+    include:
+      - subheader
 main:
   _componentList:
     page: true
     include:
-      - post
-      - general-content
-
+      - article
+      - generic-list
+secondary:
+  _componentList:
+    include:
+      - google-ad-manager
+      - trending-recirculation
+tertiary:
+  _componentList:
+    page: true
+    validate:
+      max: 3
+      required: true
+    include:
+      - latest-recirculation
+      - google-ad-manager
 bottom:
   _componentList:
     include:
       - footer
-
 kilnInternals:
   _componentList:
     internals: true
@@ -53,3 +81,4 @@ static:
     include:
       - web-player
       - chartbeat
+
