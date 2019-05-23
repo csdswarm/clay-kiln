@@ -18,7 +18,7 @@ const AWS = require('aws-sdk'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml');
 
-module.exports.routes = (router) => {
+module.exports = router => {
 
   // Auth Middleware
   // Add this middleware to a route if the route requires authentication.
