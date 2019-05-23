@@ -1,4 +1,4 @@
-_components:
+_layouts:
   two-column-layout:
     head: 'head'
     headLayout: []

@@ -114,7 +114,7 @@ If you change any `template.hbs` files in the components or any files in `spa/`,
 make spa
 ```
 
-#### When do I need to run gulp?
+#### When do I need to run clay compile?
 
 If you change any files in the following (Pulled from `app/gulpfile.js`): 
 * `styleguides/**/*.css`
@@ -122,17 +122,17 @@ If you change any files in the following (Pulled from `app/gulpfile.js`):
 * `global/kiln/**/*.js`
 * `components/**/media/**`
 * `sites/**/media/**`
-* `sites/**/fonts/**`
+* `services/**/fonts/**`
 * `components/**/*.hbs` or `components/**/*.handlebars`
 
 Run the following command from inside the `app/` directory:
 ```bash
-npx gulp
+$ npm run build
 ```
 
-Gulp can also be watched to automatically rebuild changes:
+Clay can also be watched to automatically rebuild changes:
 ```bash
-npx gulp watch
+$ npm run watch
 ```
 
 ### If I want to stop dev?

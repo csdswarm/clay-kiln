@@ -1,4 +1,4 @@
-_components:
+_layouts:
   one-column-full-width-layout:
     head: head
     headLayout: []

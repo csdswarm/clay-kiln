@@ -16,8 +16,12 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "\n\nCreating Station Detail Page...\n\n\n"
-cat ./_layouts.yml | clay import -k demo -y -p $1
-cat ./_pages.yml | clay import -k demo -y -p $1
+list="_lists/new-pages"
+printf "\n\nUpdating $list...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/$list > ./list.json
+node ./lists-update.js "$1";
+cat ./list.yml | clay import -k demo -y $1
+rm ./list.json
+rm ./list.yml
 
 printf "\n\n\n\n"
