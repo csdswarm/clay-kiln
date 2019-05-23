@@ -77,7 +77,6 @@ function setupApp(app) {
 
   brightcove.inject(app);
 
-  db.setup();
   sessionStore = createSessionStore();
 
   feedComponents.init();
