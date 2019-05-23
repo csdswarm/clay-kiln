@@ -19,24 +19,24 @@ fi
 printf "\n\nCreating Global Sponsor Logos & Updating Layouts...\n\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
 
-# _components/one-column-layout/instances/general
-componentType="one-column-layout"
+# _layouts/one-column-layout/instances/general
+layoutType="one-column-layout"
 instanceType="general"
-printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y -p $1
-rm ./$componentType-$instanceType.json
-rm ./$componentType-$instanceType.yml
+printf "\n\nUpdating component $layoutType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_layouts/$layoutType/instances/$instanceType > ./$layoutType-$instanceType.json
+node ./layouts-update.js "$1" "$layoutType" "$instanceType";
+cat ./$layoutType-$instanceType.yml | clay import -k demo -y -p $1
+rm ./$layoutType-$instanceType.json
+rm ./$layoutType-$instanceType.yml
 printf "\n\n\n\n"
 
-# _components/two-column-layout/instances/article
-componentType="two-column-layout"
+# _layouts/two-column-layout/instances/article
+layoutType="two-column-layout"
 instanceType="article"
-printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
-node ./layouts-update.js "$1" "$componentType" "$instanceType";
-cat ./$componentType-$instanceType.yml | clay import -k demo -y -p $1
-rm ./$componentType-$instanceType.json
-rm ./$componentType-$instanceType.yml
+printf "\n\nUpdating component $layoutType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_layouts/$layoutType/instances/$instanceType > ./$layoutType-$instanceType.json
+node ./layouts-update.js "$1" "$layoutType" "$instanceType";
+cat ./$layoutType-$instanceType.yml | clay import -k demo -y -p $1
+rm ./$layoutType-$instanceType.json
+rm ./$layoutType-$instanceType.yml
 printf "\n\n\n\n"

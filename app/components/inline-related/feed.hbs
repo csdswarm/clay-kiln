@@ -1,0 +1,44 @@
+<section class="component component--related">
+    <h2 class="related__title">Related</h2>
+    {{#if articles.length}}
+      <div class="related__item related__item--image related__item--non-mobile">
+        <a href="{{ articles.0.canonicalUrl }}"
+           class="related__link"></a><img src="{{ articles.0.feedImgUrl }}"/></a>
+      </div>
+      <div class="related__item">
+        <a href="{{ articles.0.canonicalUrl }}"
+           class="related__link related__link--main">
+          <span class="related__headline">{{{ articles.0.primaryHeadline }}}</span>
+        </a>
+        <div class="related__item related__item--image related__item--mobile">
+          <a href="{{ articles.0.canonicalUrl }}"
+             class="related__link"><img src="{{ articles.0.feedImgUrl }}"/></a>
+        </div>
+        {{#if (compare articles.length 2) }}
+          <a href="{{ articles.1.canonicalUrl }}"
+             class="related__link related__link--secondary">
+            {{#ifAny (compare articles.1.lead 'youtube') (compare articles.1.lead 'brightcove') (compare articles.1.lead 'omny') }}
+              {{#ifAny (compare articles.1.lead 'youtube') (compare articles.1.lead 'brightcove')}}
+                <span class="related__media-icon">
+                  {{{ read 'components/inline-related/media/watch.svg' }}}
+                </span>
+              {{/ifAny}}
+              {{#if (compare articles.1.lead 'omny') }}
+                <span class="related__media-icon">
+                  {{{ read 'components/inline-related/media/listen.svg' }}}
+                </span>
+              {{/if}}
+              {{#if (compare articles.1.contentType 'gallery') }}
+                <span class="related__media-icon">
+                  {{{ read 'components/inline-related/media/gallery.svg' }}}
+                </span>
+              {{/if}}
+            {{else}}
+              <span class="related__bullet"></span>
+            {{/ifAny}}
+            <span class="related__headline">{{{ articles.1.primaryHeadline }}}</span>
+          </a>
+        {{/if}}
+      </div>
+    {{/if}}
+</section>

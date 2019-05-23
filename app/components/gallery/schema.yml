@@ -372,6 +372,17 @@ syndicatedUrl:
       # Detailed RegEx breakdown: https://regex101.com/r/uh84QI/1
       pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
       patternMessage: Must be a valid URL
+featured:
+  _label: Is this a featured gallery?
+  _has: checkbox
+editorialFeeds:
+  _label: Gallery Terms for Editorial Feeds
+  _has:
+    input: select
+    multiple: true
+    search: true
+    list: freq_editorial_feeds
+    help: Select all editorial feeds terms for syndication
 
 _groups:
   publishedDate:
@@ -409,8 +420,6 @@ _groups:
       - teaser
       - seoHeadline
       - seoDescription
-      - syndicationStatus
-      - syndicatedUrl
   circSlug:
     fields:
       - slug
@@ -441,6 +450,12 @@ _groups:
       - slidesNumbered (Gallery Slides)
       - reverseOrder (Gallery Slides)
       - includeInlineAds (Gallery Slides)
+  syndication:
+    fields:
+      - featured
+      - editorialFeeds
+      - syndicationStatus
+      - syndicatedUrl
 
 # non-user-editable fields, set by model.js and used for pubsub
 eligibleForGoogleStandout:
@@ -452,39 +467,32 @@ canBeMarkedGoogleStandout:
 rollingStandoutCount:
   _has:
     help: Rolling 7 day count of how many galleries have been marked Standout on this domain.
-
 canonicalUrl:
   _publish: url
   _has:
     help: Canonical URL of an gallery. Set when the gallery publishes.
-
 pageDescription:
   _publish: pageDescription
   _has:
     help: Plaintext description for search engines, set by seoDescription or teaser.
-
 socialDescription:
   _publish: socialDescription
   _has:
     help: Plaintext description for social media, set by teaser.
-
 pageTitle:
   _publish: pageTitle
   _has:
     help: Plaintext page title, set by seoHeadline, shortHeadline, or primaryHeadline. Sponsored posts and certain sites will have extra sugar.
-
 plaintextPrimaryHeadline:
   _publish:
     - ogTitle
     - pageListTitle
   _has:
     help: Plaintext title set by primaryHeadline. Used for facebook sharing.
-
 plaintextShortHeadline:
   _publish: twitterTitle
   _has:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
-
 footer:
   _label: Gallery Footer
   _placeholder:
