@@ -1,21 +1,22 @@
 'use strict';
 
 const pkg = require('../../package.json'),
+  amphoraSearch = require('amphora-search'),
   amphoraPkg = require('amphora/package.json'),
   kilnPkg = require('clay-kiln/package.json'),
   bodyParser = require('body-parser'),
   compression = require('compression'),
   session = require('express-session'),
   RedisStore = require('connect-redis')(session),
-  db = require('../server/db'),
   routes = require('../../routes'),
   canonicalJSON = require('./canonical-json'),
-  initSearch = require('./amphora-search'),
   initCore = require('./amphora-core'),
   locals = require('./spaLocals'),
+  currentStation = require('./currentStation'),
+  // redirectTrailingSlash = require('./trailing-slash'),
+  feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
-  currentStation = require('./currentStation');
-  // redirectTrailingSlash = require('./trailing-slash');
+  log = require('../universal/log').setup({ file: __filename });
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -40,7 +41,7 @@ function setupApp(app) {
   }
 
   // set app settings
-  app.set('trust proxy', 0);
+  app.set('trust proxy', 1);
   app.set('strict routing', true);
   app.set('x-powered-by', false);
   app.use(function (req, res, next) {
@@ -53,7 +54,7 @@ function setupApp(app) {
   });
 
   // Page Editing problems
-  //app.use(redirectTrailingSlash);
+  // app.use(redirectTrailingSlash);
 
   // nginx limit is also 1mb, so can't go higher without upping nginx
   app.use(bodyParser.json({
@@ -73,11 +74,15 @@ function setupApp(app) {
 
   app.use(canonicalJSON);
 
-  db.setup();
   sessionStore = createSessionStore();
 
-  return initSearch()
-    .then(search => initCore(app, search, sessionStore, routes));
+  feedComponents.init();
+
+  return amphoraSearch()
+    .then(searchPlugin => {
+      log('info', `Using ElasticSearch at ${process.env.ELASTIC_HOST}`);
+      return initCore(app, searchPlugin, sessionStore, routes);
+    });
 }
 
 module.exports = setupApp;
