@@ -1,8 +1,12 @@
 'use strict';
 
-// Required and executed by view-after.js
+/**
+ * THIS FILE IS OVERRIDING THE _client-init.js FILE PROVIDED IN node_modules/claycli/lib/cmd/compile/
+ *
+ * The default setup is that _client-init.js is put into public/js when running `claycli compile`
+ */
 
-const _ = require('lodash');
+// Required and executed by view-after.js
 
 /**
  * Mount all megabundle modules on the page.
@@ -10,16 +14,9 @@ const _ = require('lodash');
 function mountModules() {
   const modules = window.modules;
 
-  // Mount global services first
-  Object.keys(modules)
-    .filter(moduleId => _.endsWith(moduleId, '.service'))
-    // Require each service, executing anything outside its export
-    // (e.g. Dollar Slice registration)
-    .forEach(moduleId => window.require(moduleId));
-
   // Mount components
   Object.keys(modules)
-    .filter(moduleId => _.endsWith(moduleId, '.client'))
+    .filter(moduleId => moduleId.endsWith('.client'))
     .forEach(mountComponentModule);
 }
 
@@ -60,4 +57,4 @@ function logMountError(el, error) {
   console.error('Error attaching controller to ' + elementTag, error);
 }
 
-module.exports = () => mountModules();
+mountModules();
