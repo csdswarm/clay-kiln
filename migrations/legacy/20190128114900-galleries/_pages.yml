@@ -13,4 +13,4 @@ _pages:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new
       - /_components/google-ad-manager/instances/halfPageBottom
-    layout: /_components/two-column-layout/instances/article
+    layout: /_layouts/two-column-layout/instances/article

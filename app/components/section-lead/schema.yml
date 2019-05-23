@@ -51,7 +51,7 @@ filterTags:
   _has:
     input: simple-list
     autocomplete:
-      list: filterTag
+      list: tags
       allowRemove: true
       allowCreate: true
     help: Exclude content from all tags

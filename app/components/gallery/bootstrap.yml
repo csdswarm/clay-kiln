@@ -40,3 +40,5 @@ _components:
     secondarySectionFront: ''
     footer: []
     crumbs: []
+    featured: false
+    editorialFeeds: {}
