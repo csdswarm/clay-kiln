@@ -17,7 +17,7 @@ const pkg = require('../../package.json'),
   // redirectTrailingSlash = require('./trailing-slash'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
-  log = require('../universal/log').setup({ file: __filename });
+  log = require('../universal/log').setup({ file: __filename }),
   user = require('./user'),
   radiumApi = require('./radium');
 

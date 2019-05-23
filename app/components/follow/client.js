@@ -1,5 +1,4 @@
 /* jshint strict: true, browser: true */
-/* global DS */
 'use strict';
 
 const $popup = require('../../services/client/popup'),
