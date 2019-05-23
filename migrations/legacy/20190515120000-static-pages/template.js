@@ -131,14 +131,6 @@ function removeEnvironmentRoots(obj, useRefs, ...props) {
 }
 
 /**
- * Creates a new "static-page" instance based on the two-column-layout - article instance
- * removing unnecessary parts
- * @returns {Promise<any>}
- */
-async function composeNewStaticPageInst() {
-}
-
-/**
  * Creates a new "static-page" two-column-layout based on the article instance
  * @returns {Promise<void>}
  */
