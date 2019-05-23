@@ -23,7 +23,9 @@ fi
 for dir in $mydir/*/; do
     cd "$dir"
     for filename in *.sh; do
-        source $filename $1 $http $es
+        # Don't pass variables between scripts
+        # https://stackoverflow.com/questions/9772036/pass-all-variables-from-one-shell-script-to-another/28490273#28490273
+        (source $filename $1 $http $es)
     done
     cd ../../../
 done
