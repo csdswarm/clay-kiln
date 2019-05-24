@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
 
 export default {
@@ -28,6 +29,7 @@ export default {
       const win = window.open(this.link, '_blank')
       const handlePostBack = ({ data, origin, source }) => {
         if (source === win && origin === `${location.protocol}//${location.host}`) {
+          this.$store.dispatch(actionTypes.GET_PROFILE)
           this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
           window.removeEventListener('message', handlePostBack)
         }
