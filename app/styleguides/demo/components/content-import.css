@@ -1,0 +1,14 @@
+.content-import {
+    min-width: em(400);
+
+    &__input {
+        display: flex;
+        flex-direction: row;
+        margin: em(16);
+        align-items: center;
+
+        &-textbox {
+            flex-grow: 1;
+        }
+    }
+}

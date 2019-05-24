@@ -1,14 +1,17 @@
-<!-- Article Import Content -->
+<!-- Content Import Content -->
 <template>
-    <div>
-        <ui-textbox
-            floating-label
-            label="Import Content"
-            placeholder="Import Url"
+    <div class="content-import">
+        <div class="content-import__input">
+            <ui-textbox
+                floating-label
+                label="Import Content"
+                placeholder="Import Url"
+                class="content-import__input-textbox"
 
-            v-model="contentUrl"
-        ></ui-textbox>
-        <ui-icon-button icon="check" @click="importContent"></ui-icon-button>
+                v-model="contentUrl"
+            ></ui-textbox>
+            <ui-icon-button icon="check" @click="importContent"></ui-icon-button>
+        </div>
         {{ contentUrl }}
     </div>
 </template>

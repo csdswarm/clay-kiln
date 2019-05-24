@@ -1,7 +1,7 @@
 <!-- Article Import -->
 <template>
     <nav-menu-button :id="id" @nav-click="toggleDrawer">
-        <span>Testing Menu Item</span>
+        <span>Import Content</span>
     </nav-menu-button>
 </template>
 
@@ -11,7 +11,7 @@ const navMenuButton = window.kiln.utils.components.navMenuButton;
 export default {
     data() {
         return {
-            id: 'article-import'
+            id: 'content-import'
         }
     },
     methods: {
