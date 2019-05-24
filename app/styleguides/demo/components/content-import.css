@@ -1,5 +1,5 @@
 .content-import {
-    min-width: em(400);
+    min-width: em(600);
 
     &__input {
         display: flex;

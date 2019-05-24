@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import contentImport from '../../../client/contentImportApi';
+
 const UiIconButton = window.kiln.utils.components.UiIconButton;
 const UiTextbox = window.kiln.utils.components.UiTextbox;
 
@@ -27,8 +29,9 @@ export default {
         }
     },
     methods: {
-        importContent() {
-            console.log('contentUrl', this.contentUrl);
+        async importContent() {
+            const result = await contentImport(this.contentUrl);
+            console.log('contentUrl', result);
         }
     },
     components: {
