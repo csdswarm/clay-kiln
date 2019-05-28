@@ -1,70 +1,69 @@
 @import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
 
 .account {
-  font-family: 'ProximaNova-Regular', sans-serif;
-  background: #fafafa;
+  @mixin radium-form-font4;
+  background: $alabaster;
 
   a {
-    color: #1f055e;
-  }
+    color: $parisM;
 
-  a:hover,
-  a:focus {
-    color: #3c00b7;
+    &:hover,
+    &:focus {
+      color: $purple;
+    }
+
+    &.underline-link{
+      text-decoration: underline;
+      &:link,
+      &:hover,
+      &:active,
+      &:visited {
+        text-decoration: underline;
+      }
+    }
   }
 
   h1 {
-    font-size: 22px;
-    font-weight: 500;
-    font-family: 'CircularStd-Black', sans-serif;
-    color: #1f055e;
+    @mixin radium-form-font2;
+    font-weight: 900;
     margin-bottom: 20px;
   }
 
   h2 {
-    color: #000000;
-    font-family: 'CircularStd-Black', sans-serif;
-    font-size: 14px;
+    @mixin radium-form-font5;
     margin-bottom: 10px;
   }
 
   h3 {
-    font-size: 34px;
-    font-weight: 500;
-    font-family: 'CircularStd-Black', sans-serif;
-    color: #1f055e;
+    @mixin radium-form-font1;
     margin-bottom: 20px;
   }
 
   p {
-    color: #000000;
-    font-size: 14px;
+    @mixin radium-form-font8;
     margin-bottom: 10px;
   }
 
-  .error {
+  @define-mixin message $color, $pad, $bottomMargin {
     display: inline-block;
     width: 100%;
-    padding: 10px;
+    padding: $pad;
     margin-top: 10px;
-    margin-bottom: 30px;
-    border: 2px solid;
-    border-color: #ff0000;
-    font-size: 14px;
-    color: #ff0000;
-    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
+    margin-bottom: $bottomMargin;
+    border: 2px solid $color;
+  }
+
+  .error {
+    @mixin message $red, 10px, 30px;
+    @mixin radium-form-font9;
+    text-align: center;
   }
 
   .success {
-    display: inline-block;
-    width: 100%;
-    padding: 5px;
-    margin-top: 10px;
-    margin-bottom: 30px;
-    border: 2px solid #50ae54;
-    font-size: 14px;
-    color: #50ae54;
-    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
+    @mixin message $darkModerateLimeGreen, 5px, 30px;
+    @mixin radium-form-font10;
   }
 
   .image {
@@ -77,48 +76,30 @@
   }
 
   .terms {
-    display: inline-block;
-    width: 100%;
-    padding: 5px;
-    margin-top: 10px;
-    margin-bottom: 15px;
-    border: 2px solid #1f055e;
-    font-size: 14px;
-    color: #1f055e;
-    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
+    @mixin message $parisM, 5px, 15px;
+    @mixin radium-form-font6;
+    text-align: center;
   }
 
   .password {
-    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
-    font-size: 12px;
-    color: #1f055e;
+    @mixin radium-form-font-11;
     float: right;
   }
 
   .small {
-    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
-    font-size: 14px;
-    color: #1f055e;
-  }
-
-  .footer {
-    font-family: 'ProximaNova-Regular', sans-serif;
-    text-align: center;
-    font-size: 8px;
-    color: #000000;
-    line-height: 14px;
+    @mixin radium-form-font6;
   }
 
   .light-bg {
-    background-color: #fafafa;
+    background-color: $alabaster;
   }
 
   .loading {
     position: relative;
     display: block;
-    padding: 12px 0px 12px 0px;
-    color: #FFF;
-    background: #1f055e;
+    padding: 12px 0 12px 0;
+    color: $white;
+    background: $parisM;
     width: 100%;
     margin: 5px auto;
   }
@@ -127,64 +108,22 @@
     padding: 5px 0;
   }
 
-  a.underline-link,
-  a.underline-link:link,
-  a.underline-link:hover,
-  a.underline-link:active,
-  a.underline-link:visited {
-    text-decoration: underline;
-  }
-
-  @media (max-width: 767px) {
-    h1 {
-      font-size: 22px;
-    }
-  }
 
   /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
   /* ||||||||||||||||||| FORM ||||||||||||||||||| */
   /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 
-  .label {
-    display: inline-block;
-  }
-
-  .form-style-5 {
-    min-width: 320px;
-    width: 48%;
-    background: #f4f7f8;
-    margin: 10px auto;
-    padding: 20px;
-    border-radius: 8px;
-    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
-  }
-
-  .form-style-5 fieldset {
-    border: none;
-  }
-
-  .form-style-5 input[type="text"],
-  .form-style-5 input[type="datetime"],
-  .form-style-5 input[type="email"],
-  .form-style-5 input[type="number"],
-  .form-style-5 input[type="search"],
-  .form-style-5 input[type="password"],
-  .form-style-5 input[type="url"],
-  .form-style-5 textarea,
-  .form-style-5 select,
-  .input {
-    font-family: 'CircularStd-BlackStd-Medium', sans-serif;
+  @define-mixin _input {
+    @mixin radium-form-font7;
     border: none;
     height: 46px;
-    font-size: 14px;
     outline: 0;
     padding: 15px;
     width: 100%;
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
-    background-color: #eeeeee;
-    color: #4C4C4C;
+    background-color: $mercury;
     -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
     margin: 0 0 15px;
@@ -193,98 +132,130 @@
     }
   }
 
-  .form-style-5 input[type="text"]:focus,
-  .form-style-5 input[type="datetime"]:focus,
-  .form-style-5 input[type="email"]:focus,
-  .form-style-5 input[type="number"]:focus,
-  .form-style-5 input[type="search"]:focus,
-  .form-style-5 input[type="time"]:focus,
-  .form-style-5 input[type="url"]:focus,
-  .form-style-5 textarea:focus,
-  .form-style-5 select:focus {
-    background: #d2d9dd;
+  .input {
+    @mixin _input;
   }
 
-  .form-style-5 select {
-    -webkit-appearance: menulist-button;
-    height: 35px;
+  .form-style-5 {
+    min-width: 320px;
+    width: 48%;
+    background: $alabaster;
+    margin: 10px auto;
+    padding: 20px;
+    border-radius: 8px;
+    @mixin radium-form-font5;
+
+    fieldset {
+      border: none;
+    }
+
+    input[type="text"],
+    input[type="datetime"],
+    input[type="email"],
+    input[type="number"],
+    input[type="search"],
+    input[type="password"],
+    input[type="url"],
+    textarea,
+    select {
+      @mixin _input;
+    }
+
+    input[type="text"]:focus,
+    input[type="datetime"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus,
+    input[type="search"]:focus,
+    input[type="time"]:focus,
+    input[type="url"]:focus,
+    textarea:focus,
+    select:focus {
+      background: $alto;
+    }
+
+    select {
+      -webkit-appearance: menulist-button;
+      height: 35px;
+    }
+
+    /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+    /* ||||||||||||| Mobile Datepicker |||||||||||| */
+    /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+    .dob {
+      opacity: 0;
+      position: absolute;
+    }
+
+    input[type="submit"],
+    input[type="button"] {
+      position: relative;
+      display: block;
+      padding: 19px 39px 18px 39px;
+      border: 0;
+      background: $parisM;
+      @mixin radium-form-font3;
+      text-align: center;
+      font-style: normal;
+      width: 100%;
+      margin: 10px auto;
+      min-width: 220px;
+    }
+
+    input[type="button2"] {
+      position: relative;
+      float: left;
+      display: block;
+      padding: 19px 39px 18px 39px;
+      border: 0;
+      @mixin radium-form-font3;
+      background: $parisM;
+      text-align: center;
+      font-style: normal;
+      width: 49%;
+      margin: 10px 4px 10px auto;
+      min-width: 225px;
+    }
+
+    input[type="submit"]:hover,
+    input[type="button"]:hover,
+    input[type="button2"]:hover {
+      background: $purple;
+    }
   }
 
   /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
   /* ||||||||||||| Mobile Datepicker |||||||||||| */
   /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 
-  .form-style-5 .dob {
-    opacity: 0;
-    position: absolute;
-    font-size: 16px;
-  }
-
-  .form-style-5 input[type="submit"],
-  .form-style-5 input[type="button"] {
-    position: relative;
-    display: block;
-    padding: 19px 39px 18px 39px;
-    border: 0;
-    color: #FFF;
-    font-family: 'CircularStd-Black', sans-serif;
-    background: #1f055e;
-    font-size: 18px;
-    text-align: center;
-    font-style: normal;
-    width: 100%;
-    margin: 10px auto;
-    min-width: 220px;
-  }
-
-  .form-style-5 input[type="button2"] {
-    position: relative;
-    float: left;
-    display: block;
-    padding: 19px 39px 18px 39px;
-    border: 0;
-    color: #FFF;
-    font-family: 'CircularStd-Black', sans-serif;
-    background: #1f055e;
-    font-size: 18px;
-    text-align: center;
-    font-style: normal;
-    width: 49%;
-    margin: 10px 4px 10px auto;
-    min-width: 225px;
-  }
-
-  .form-style-5 input[type="submit"]:hover,
-  .form-style-5 input[type="button"]:hover {
-    background: #3c00b7;
-  }
-
-  .form-style-5 input[type="button2"]:hover {
-    background: #3c00b7;
-  }
-
-  a, a:visited {
+  a {
     text-decoration: none;
-    color: #1f055e;
-  }
+    color: $parisM;
 
-  a:hover {
-    color: #0056b3;
-    text-decoration: underline
-  }
+    &:visited {
+      text-decoration: none;
+      color: $parisM;
+    }
 
-  a:not([href]):not([tabindex]) {
-    color: inherit;
-    text-decoration: none
-  }
+    &:hover {
+      color: $strongBlue;
+      text-decoration: underline;
+    }
 
-  a:not([href]):not([tabindex]):focus, a:not([href]):not([tabindex]):hover {
-    color: inherit;
-    text-decoration: none
-  }
+    &:not([href]):not([tabindex]) {
+      color: inherit;
+      text-decoration: none;
 
-  a:not([href]):not([tabindex]):focus {
-    outline: 0
+      &:focus,
+      &:hover {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      &:focus {
+        outline: 0;
+      }
+    }
   }
 
   .form-loading {
@@ -310,24 +281,11 @@
     cursor: pointer;
     opacity: 0.9;
     transition: opacity 50ms;
-  }
 
-  .facebook-button:hover {
-    opacity: 1;
+    &:hover {
+      opacity: 1;
+    }
   }
-
-  .create-profile {
-    position: relative;
-  }
-
-  .disabled-ui {
-    opacity: 0.5;
-  }
-
-  .enabled-ui {
-    opacity: 1.0;
-  }
-
 
   /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
   /* |||||||||||| Desktop Datepicker |||||||||||| */
@@ -336,89 +294,30 @@
   .vdp-datepicker__calendar {
     position: static;
     width: auto;
+
+    .cell {
+      &.selected {
+        background-color: $parisM !important;
+        color: $alabaster;
+      }
+
+      &:hover {
+        border-color: $parisM !important;
+      }
+    }
   }
 
-  .vdp-datepicker__calendar .cell.selected {
-    background-color: #1f055e !important;
-    color: #FAFAFA;
-  }
-
-  .vdp-datepicker__calendar .cell:hover {
-    border-color: #1f055e !important;
-  }
-
-  .gender-box {
-    margin-bottom: 20px;
-  }
-
-  .vdp-datepicker__calendar .cell.selected {
-    background-color: #1f055e !important;
-    color: #FAFAFA;
-  }
-
-  .vdp-datepicker__calendar .cell:hover {
-    border-color: #1f055e !important;
-  }
 
   /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
   /* ||||||||||||||| Radio Buttons |||||||||||||| */
   /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 
-  .radio-item {
-    display: inline-block;
-    position: relative;
-    padding: 0 6px;
-    margin: 10px 0 0;
-  }
-
-  .radio-item input[type='radio'] {
-    display: none;
-  }
-
-  .radio-item label {
-    color: #666;
-    font-weight: normal;
-  }
-
-  .radio-item label:before {
-    content: " ";
-    display: inline-block;
-    position: relative;
-    top: 5px;
-    margin: 0 5px 0 0;
-    width: 20px;
-    height: 20px;
-    border-radius: 11px;
-    border: 2px solid #1f055e;
-    background-color: transparent;
-  }
-
-  .radio-item input[type=radio]:checked + label:after {
-    border-radius: 11px;
-    width: 12px;
-    height: 12px;
-    position: absolute;
-    top: 9px;
-    left: 10px;
-    content: " ";
-    display: block;
-    background: #1f055e;
-  }
-
-  .error {
-    text-align: center;
-  }
-
   .h1-login {
-    line-height: 180%
+    line-height: 180%;
   }
 
   .sign-in {
-    position: relative
-  }
-
-  .error {
-    text-align: center
+    position: relative;
   }
 
   .h1-signup {
@@ -427,10 +326,6 @@
 
   .sign-up {
     position: relative;
-  }
-
-  .terms {
-    text-align: center;
   }
 
   .closeModal {
@@ -442,30 +337,32 @@
     border-radius: 50%;
     cursor: pointer;
     right: 0;
-  }
 
-  .closeModal::before, .closeModal::after {
-    position: absolute;
-    top: 8px;
-    left: 3px;
-    width: 13px;
-    height: 3px;
-    content: "";
-    background-color: #1f055e;
-  }
+    &::before, &::after {
+      position: absolute;
+      top: 8px;
+      left: 3px;
+      width: 13px;
+      height: 3px;
+      content: "";
+      background-color: $parisM;
+    }
 
-  .closeModal::before {
-    transform: rotate(-45deg);
-  }
+    &::before {
+      transform: rotate(-45deg);
+    }
 
-  .closeModal::after {
-    transform: rotate(45deg);
+    &::after {
+      transform: rotate(45deg);
+    }
   }
 
   label {
+    display: inline-block;
     position: absolute;
     left: 0;
     font-size: 12px;
+    line-height: 12px;
     opacity: .7;
     padding-left: 3px;
     padding-top: 2px;
@@ -500,25 +397,18 @@
 
     input {
       display: flex;
-    }
 
-    input:not(:placeholder-shown) + label {
-      height: auto;
-      width: auto;
-      transform: translateY(-18px);
-      opacity: .7;
-      font-size: 12px;
-      padding-left: 2px;
-      position: absolute;
-      top: 18px;
+      &:not(:placeholder-shown) + label {
+        height: auto;
+        width: auto;
+        transform: translateY(-18px);
+        opacity: .7;
+        font-size: 12px;
+        padding-left: 2px;
+        position: absolute;
+        top: 18px;
+      }
     }
-  }
-
-  .gender-box {
-    padding-bottom: 15px;
-    padding-left: 10px;
-    background-color: #eee;
-    margin-bottom: 15px;
   }
 
   .create-profile {
@@ -538,40 +428,47 @@
     position: relative;
     padding: 0 6px;
     margin: 10px 0 0;
+
+    input[type='radio'] {
+      display: none;
+
+      &:checked + label:after {
+        border-radius: 11px;
+        width: 12px;
+        height: 12px;
+        position: absolute;
+        top: 9px;
+        left: 10px;
+        content: " ";
+        display: block;
+        background: $parisM;
+      }
+    }
+
+    label {
+      color: $veryDarkGray;
+      font-weight: normal;
+
+      &:before {
+        content: " ";
+        display: inline-block;
+        position: relative;
+        top: 5px;
+        margin: 0 5px 0 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 11px;
+        border: 2px solid $parisM;
+        background-color: transparent;
+      }
+    }
   }
 
-  .radio-item input[type='radio'] {
-    display: none;
-  }
-
-  .radio-item label {
-    color: #666;
-    font-weight: normal;
-  }
-
-  .radio-item label:before {
-    content: " ";
-    display: inline-block;
-    position: relative;
-    top: 5px;
-    margin: 0 5px 0 0;
-    width: 20px;
-    height: 20px;
-    border-radius: 11px;
-    border: 2px solid #1f055e;
-    background-color: transparent;
-  }
-
-  .radio-item input[type=radio]:checked + label:after {
-    border-radius: 11px;
-    width: 12px;
-    height: 12px;
-    position: absolute;
-    top: 9px;
-    left: 10px;
-    content: " ";
-    display: block;
-    background: #1f055e;
+  .gender-box {
+    padding-bottom: 15px;
+    padding-left: 10px;
+    background-color: $mercury;
+    margin-bottom: 15px;
   }
 
   .update-password {

@@ -16,7 +16,6 @@
           :class="user.disableEmailInput ? 'disabled-ui' : 'enabled-ui'"
           @change="onFieldChange($event)"
         >
-        <label>Email Address</label>
       </div>
       <div class="floating-label">
         <input

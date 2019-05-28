@@ -12,7 +12,6 @@
           name="currentPassword"
           @change="onFieldChange($event)"
         >
-        <label>Current Password</label>
       </div>
       <div class="floating-label">
         <input
@@ -22,7 +21,6 @@
           name="newPassword"
           @change="onFieldChange($event)"
         >
-        <label>New Password</label>
       </div>
       <div class="floating-label">
         <input
@@ -32,7 +30,6 @@
           name="confirmNewPassword"
           @change="onFieldChange($event)"
         >
-        <label>Confirm New Password</label>
       </div>
     </fieldset>
     <input

@@ -466,3 +466,47 @@ em, i {
 @define-mixin radium-font1 {
   @mixin font ProximaNova-Regular, 12px, $white, normal, 12px;
 }
+
+@define-mixin radium-form-font1 {
+  @mixin font CircularStd-BlackStd-Medium, 35px, $parisM, -.55px, 44px;
+}
+
+@define-mixin radium-form-font2 {
+  @mixin font CircularStd-Black, 22px, $parisM, -.55px, 28px;
+}
+
+@define-mixin radium-form-font3 {
+  @mixin font CircularStd-Medium, 18px, $white, -.3, 23px;
+}
+
+@define-mixin radium-form-font4 {
+  @mixin font CircularStd-Medium, 16px, $black, -.26, 20px;
+}
+
+@define-mixin radium-form-font5 {
+  @mixin font CircularStd-BlackStd-Medium, 14px, $black, -.23, 18px;
+}
+
+@define-mixin radium-form-font6 {
+  @mixin font CircularStd-BlackStd-Medium, 14px, $parisM, -.23, 18px;
+}
+
+@define-mixin radium-form-font7 {
+  @mixin font CircularStd-BlackStd-Medium, 14px, $tundora, -.23, 18px;
+}
+
+@define-mixin radium-form-font8 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23, 18px;
+}
+
+@define-mixin radium-form-font9 {
+  @mixin font CircularStd-Medium, 14px, $red, -.23, 18px;
+}
+
+@define-mixin radium-form-font10 {
+  @mixin font CircularStd-Medium, 14px, $darkModerateLimeGreen, -.23, 18px;
+}
+
+@define-mixin radium-form-font-11 {
+  @mixin font CircularStd-BlackStd-Medium, 12px, $parisM, -.3, 15px;
+}

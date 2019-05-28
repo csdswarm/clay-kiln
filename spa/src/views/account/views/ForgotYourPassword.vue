@@ -5,7 +5,6 @@
       <message></message>
       <div class="floating-label">
       <input name="email" type="email" placeholder="Email Address" :value="email" @change="onFieldChange($event)">
-        <label>Email Address</label>
       </div>
     </fieldset>
     <input type="submit" value="SUBMIT" @click.prevent="onForgotPasswordSubmit()"/>

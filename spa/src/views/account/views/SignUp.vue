@@ -17,7 +17,6 @@
           autofocus
           @change="onFieldChange($event)"
         >
-        <label>Email Address</label>
       </div>
       <div class="floating-label">
         <input
@@ -27,7 +26,6 @@
           name="password"
           @change="onFieldChange($event)"
         >
-        <label>Password</label>
       </div>
       <div class="floating-label">
         <input
@@ -37,7 +35,6 @@
           name="confirmPassword"
           @change="onFieldChange($event)"
         >
-        <label>Confirm Password</label>
       </div>
     </fieldset>
     <span class="terms">
