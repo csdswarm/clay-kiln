@@ -2,6 +2,7 @@ _lists:
   tags: []
   authors: []
   sources: []
+  bookmarks: []
   new-pages:
     -
       id: new-two-col
@@ -9,6 +10,3 @@ _lists:
     -
       id: curated-topic
       title: Content Collection
-    -
-      id: gallery
-      title: New Gallery

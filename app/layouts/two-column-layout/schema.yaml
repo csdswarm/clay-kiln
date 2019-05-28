@@ -1,0 +1,84 @@
+_description: |
+  A two-column layout for Clay, used for non-article pages:
+
+  * homepages
+  * section pages
+  * index pages and archives
+  * tag pages
+  * author pages
+
+head:
+  _componentList:
+    page: true
+    include:
+      - meta-title
+      - meta-description
+      - meta-image
+      - meta-url
+
+headLayout:
+  _componentList:
+    include:
+      - favicon
+      - meta-title
+      - meta-url
+      - meta-description
+      - meta-image
+      - meta-icons
+      - meta-url
+      - google-fonts
+
+top:
+  _componentList:
+    include:
+      - image
+
+layoutHeader:
+  _componentList:
+    include:
+      - google-ad-manager
+
+pageHeader:
+  _componentList:
+    include:
+      - header
+      - google-ad-manager
+sectionHeader:
+  _componentList:
+    include:
+      - subheader
+main:
+  _componentList:
+    page: true
+    include:
+      - article
+      - generic-list
+secondary:
+  _componentList:
+    include:
+      - google-ad-manager
+      - trending-recirculation
+tertiary:
+  _componentList:
+    page: true
+    validate:
+      max: 3
+      required: true
+    include:
+      - latest-recirculation
+      - google-ad-manager
+bottom:
+  _componentList:
+    include:
+      - footer
+kilnInternals:
+  _componentList:
+    internals: true
+    include:
+      - clay-kiln
+static:
+  _componentList:
+    include:
+      - web-player
+      - chartbeat
+

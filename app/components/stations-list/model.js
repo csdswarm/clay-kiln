@@ -32,7 +32,7 @@ function getMarketData({ slug, id }) {
       }
       return response.data.find(({ attributes }) => slugifyService(attributes.display_name) === slug) || {};
     } else {
-      console.log('error with request', response);
+      console.log('Error with getMarketData request', response);
       return {};
     }
   });
@@ -64,7 +64,7 @@ function getGenreData({ slug, id }) {
       }
       return response.data.find(({ attributes }) => slugifyService(attributes.name) === slug) || {};
     } else {
-      console.log('error with request', response);
+      console.log('Error with getGenreData request', response);
       return {};
     }
   });
