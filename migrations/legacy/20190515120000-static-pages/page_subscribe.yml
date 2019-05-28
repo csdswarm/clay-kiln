@@ -5,27 +5,27 @@ _components:
       newsletter-subscribe:
         headline: Subscribe
         content:
-          - _ref: /_components/paragraph/instances/cjvpais1w000k9sqsaasbiu77
-          - _ref: /_components/paragraph/instances/cjvpawd7k000g3h5xwfgz6h4p
-          - _ref: /_components/paragraph/instances/cjvpakgz9000c3h5xvrluiyrk
-          - _ref: /_components/html-embed/instances/static-newsletter-subscribe
+          - _ref: /_components/paragraph/instances/newsletter-subscribe-1
+          - _ref: /_components/paragraph/instances/newsletter-subscribe-2
+          - _ref: /_components/paragraph/instances/newsletter-subscribe-3
+          - _ref: /_components/html-embed/instances/newsletter-subscribe-4
         pageTitle: Subscribe
         primaryHeadline: Subscribe
         plaintextPrimaryHeadline: Subscribe
   paragraph:
     instances:
-      cjvpais1w000k9sqsaasbiu77:
+      newsletter-subscribe-1:
         text: ''
         componentVariation: paragraph
-      cjvpawd7k000g3h5xwfgz6h4p:
+      newsletter-subscribe-2:
         text: Subscribe to RADIO.COM emails.
-      cjvpakgz9000c3h5xvrluiyrk:
+      newsletter-subscribe-3:
         text: >-
           You'll receive updates on stations, content, new app features,
           contests, shows and more from RADIO.COM.
   html-embed:
     instances:
-      static-newsletter-subscribe:
+      newsletter-subscribe-4:
         text: |-
           <iframe
             allowfullscreen=""

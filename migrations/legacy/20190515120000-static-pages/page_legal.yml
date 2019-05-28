@@ -16,13 +16,13 @@ _components:
       legal:
         headline: Entercom Legal
         content:
-          - _ref: /_components/paragraph/instances/cjvp74lw700097gqsl3x4b9bb
-          - _ref: /_components/subheader/instances/cjvp7svor000a3h5xxfojflso
-          - _ref: /_components/paragraph/instances/cjvp7t8iq000d3h5xwd2pjn3w
-          - _ref: /_components/paragraph/instances/cjvs4w0ra00073r63h0i5q6fc
-          - _ref: /_components/subheader/instances/cjvp7v4rz000f3h5xkjd0hhib
-          - _ref: /_components/paragraph/instances/cjvp7veey000i3h5xjieed7fw
-          - _ref: /_components/paragraph/instances/cjvs4w41500083r63ukn5nyu2
+          - _ref: /_components/paragraph/instances/legal-1
+          - _ref: /_components/subheader/instances/legal-2
+          - _ref: /_components/paragraph/instances/legal-3
+          - _ref: /_components/paragraph/instances/legal-4
+          - _ref: /_components/subheader/instances/legal-5
+          - _ref: /_components/paragraph/instances/legal-6
+          - _ref: /_components/paragraph/instances/legal-7
         pageTitle: Entercom Legal
         primaryHeadline: Entercom Legal
         plaintextPrimaryHeadline: Entercom Legal
@@ -31,7 +31,7 @@ _components:
         kilnTitle: Entercom Legal
   paragraph:
     instances:
-      cjvp74lw700097gqsl3x4b9bb:
+      legal-1:
         text: >-
           <a href="#ip-contact-us-support"><strong
           >Contact&nbsp;Us&nbsp;&amp;&nbsp;Support</strong></a><strong> |
@@ -41,27 +41,27 @@ _components:
           href="http://www.entercom.com/terms-and-conditions"><strong
           >Terms&nbsp;of&nbsp;Service</strong></a>
         componentVariation: paragraph
-      cjvp7t8iq000d3h5xwd2pjn3w:
+      legal-3:
         text: RADIO.COM App &amp; Player - Contact and Support
         componentVariation: paragraph
-      cjvs4w0ra00073r63h0i5q6fc:
+      legal-4:
         text: >-
           If you are experiencing any issues and need support for the RADIO.COM
           app or desktop player, please reach out to us at <a
           href="mailto:support@radio.com" target="_blank">support@radio.com</a>.
-      cjvp7veey000i3h5xjieed7fw:
+      legal-6:
         text: Public Inspection File - Help
         componentVariation: paragraph
-      cjvs4w41500083r63ukn5nyu2:
+      legal-7:
         text: >-
           If you need help accessing the file due to a disability, please
           contact <a href="mailto:publicfileinfo@entercom.com"
           target="_blank">publicfileinfo@entercom.com</a>
   subheader:
     instances:
-      cjvp7svor000a3h5xxfojflso:
+      legal-2:
         text: Contact Us &amp; Support
         anchorId: ip-contact-us-support
-      cjvp7v4rz000f3h5xkjd0hhib:
+      legal-5:
         text: Public File
         anchorId: ip-public-file
