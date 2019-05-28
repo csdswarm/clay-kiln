@@ -1,0 +1,8 @@
+{
+  "source": {
+    "index": "currentIndex"
+  },
+  "dest": {
+    "index": "newIndex"
+  }
+}
