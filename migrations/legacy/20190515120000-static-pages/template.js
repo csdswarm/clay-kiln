@@ -69,12 +69,16 @@ async function storeData(url, data) {
 async function getData(url, context) {
   try {
     const response = await fetch(`${host}/${url}`)
-    return response.json()
+    if(response.status === 404){
+      return null
+    }
+    const jsonValue = await response.json()
+    return jsonValue
   } catch (e) {
     const message = `There was a problem getting data for ${url}.\nContext: ${context}\n`
     console.log(message, e)
-    throw e
   }
+  return null
 }
 
 /**
@@ -86,7 +90,7 @@ async function getData(url, context) {
  */
 async function getMemoizedData(url) {
   if (!memoized[url]) {
-    memoized[url] = await getData(url, `getInstance:  ${url}`)
+    memoized[url] = await getData(url, `getMemoizedData:  ${url}`)
   }
   return JSON.parse(JSON.stringify(memoized[url]))
 }
@@ -247,8 +251,8 @@ function createNewComponentsFromRef(name, data) {
     const newRoute = createNewReferenceIdForPageComponents(name, componentName, instanceName)
     const newRef = `/${newRoute}`
     const compUpdates = _get(data, newRoute.split('/'), {})
-    const preExistingComponent = await getMemoizedData(newRoute)
-    const newComponent = (preExistingComponent && preExistingComponent.code !== 404)
+    const preExistingComponent = await getMemoizedData(newRoute).catch(e => console.log)
+    const newComponent = preExistingComponent
       ? {...existingComponent, ...preExistingComponent, ...compUpdates}
       : {...existingComponent, ...compUpdates}
     if (componentName === 'static-page') {
