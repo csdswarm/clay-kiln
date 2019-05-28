@@ -1,5 +1,3 @@
-_version: 1.0
-
 _description: |
   A simple subheader component.
 
@@ -14,26 +12,5 @@ text:
       - link
       - italic
       - underline
-
-anchorId:
-  _label: Anchor Id (will prepend "ip-") # prepending `ip-` reduces chance for id conflict in page
-  _placeholder:
-    height: 20px
-    text: 'your-in-page-link-target-id'
-  _has:
-    input: text
-    help: Id for hyperlink targeting within the page. This will prepend 'ip-' to your id (use hash syntax \#ip-anchor-id-name to reference in links)
     validate:
-      pattern: ^[\w\-]*$
-      patternMessage: Anchor name must only contain letters, numbers, dashes or underscores
-
-_groups:
-  info:
-    _label: Subheader Info
-    _placeholder:
-      text: Subheader Text
-      height: 20px
-      ifEmpty: text
-    fields:
-      - text
-      - anchorId
+      required: true

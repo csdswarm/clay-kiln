@@ -33,7 +33,7 @@ _components:
     instances:
       cjvp74lw700097gqsl3x4b9bb:
         text: >-
-          <a href="#ip-contact-us-and-support"><strong
+          <a href="#ip-contact-us-support"><strong
           >Contact&nbsp;Us&nbsp;&amp;&nbsp;Support</strong></a><strong> |
           </strong><a
           href="#ip-public-file"><strong>Public&nbsp;File</strong></a><strong >
@@ -61,9 +61,7 @@ _components:
     instances:
       cjvp7svor000a3h5xxfojflso:
         text: Contact Us &amp; Support
-        anchorId: contact-us-and-support
-        _version: 1
+        anchorId: ip-contact-us-support
       cjvp7v4rz000f3h5xkjd0hhib:
         text: Public File
-        anchorId: public-file
-        _version: 1
+        anchorId: ip-public-file
