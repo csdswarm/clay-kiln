@@ -16,6 +16,15 @@ class SpaPlayerInterface {
   constructor (spaApp) {
     this.spa = spaApp
     this.attachClientEventListeners()
+    this.attachDOMEventListeners()
+    /**
+     * Execute web player "routing" logic (determines whether to lazy-load player and auto-initialize player bar).
+     *
+     * NOTE: router() is async and returns a promise, but onLayoutUpdate() must be synchronous (because Vue lifecycle methods
+     * must be synchronous). Since the player exists outside of the slice of DOM managed by the SPA, playerInterface.router() is safe to call
+     * as if it was "synchronous" and there is no need to block further execution of onLayoutUpdate() until playerInterface.router() resolves.
+     */
+    this.router()
   }
 
   /**
@@ -110,8 +119,7 @@ class SpaPlayerInterface {
         const nextState = this.getPlayState(e.detail.playerState)
         const payload = {
           id: e.detail.stationId,
-          playingClass: `show__${nextState}`,
-          playerState: e.detail.playerState
+          playingClass: `show__${nextState}`
         }
 
         spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', payload)
@@ -165,6 +173,24 @@ class SpaPlayerInterface {
         return currentStation.id
       })
     }
+  }
+
+  /**
+   *
+   * Attach event listeners to the DOM
+   *
+   */
+  attachDOMEventListeners () {
+    // Attach player play listener on play buttons/elements.
+    this.spa.$el.querySelectorAll('[data-play-station]').forEach(element => {
+      element.addEventListener('click', (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause'
+
+        this[playbackStatus](element.dataset.playStation)
+      })
+    })
   }
 
   /**
