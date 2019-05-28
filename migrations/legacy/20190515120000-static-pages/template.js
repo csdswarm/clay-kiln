@@ -251,7 +251,7 @@ function createNewComponentsFromRef(name, data) {
     const newRoute = createNewReferenceIdForPageComponents(name, componentName, instanceName)
     const newRef = `/${newRoute}`
     const compUpdates = _get(data, newRoute.split('/'), {})
-    const preExistingComponent = await getMemoizedData(newRoute).catch(e => console.log)
+    const preExistingComponent = await getMemoizedData(newRoute)
     const newComponent = preExistingComponent
       ? {...existingComponent, ...preExistingComponent, ...compUpdates}
       : {...existingComponent, ...compUpdates}
