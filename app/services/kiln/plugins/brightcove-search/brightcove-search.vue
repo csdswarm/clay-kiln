@@ -104,7 +104,9 @@
             if (this.data) {
                 try {
                     const results = await axios.get('/brightcove/search', {params: { query: this.data }});
-                    this.video = results.data[0];
+                    if (results.data[0]) {
+                        this.video = results.data[0];
+                    }
                 } catch (e) {
                     console.error('Error retrieving video info');
                 }
