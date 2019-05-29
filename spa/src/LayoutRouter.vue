@@ -62,7 +62,7 @@ export default {
      * @param {string} url
      * @returns {RegExp}
      */
-    createRegExp: function (url) {
+    createRegExp (url) {
       const regExp = url.replace(/\*/g, '.*')
 
       return new RegExp(`^${regExp}`, 'i')
@@ -73,7 +73,7 @@ export default {
      * @param {string} url
      * @returns {boolean}
      */
-    isLocalUrl: function (url) {
+    isLocalUrl (url) {
       return !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url)
     },
     /**
