@@ -40,8 +40,8 @@ module.exports['4.0'] = async (uri, data) => {
 
   // only works for imported pages, migration should take care of Unity pages, new pages are already ok
   // Unity pages don't have the same hash for page and article/gallery component
-  // only run on pages that already are published -- importer already has meta-tags
-  if (hash && uri.includes('@published')) {
+  // only run on existing pages. importer doesn't send a version
+  if (hash && data._version) {
     const metaTagsData = {
         authors: data.authors,
         publishDate: data.date,
@@ -51,6 +51,7 @@ module.exports['4.0'] = async (uri, data) => {
         secondaryArticleType: data.secondaryArticleType,
         metaTags: []
       },
+      published = uri.includes('@published'),
       metaTagsUriPublished = uri.replace('article', 'meta-tags'),
       metaTagsUri = metaTagsUriPublished.replace('@published', ''),
       pageUriPublished = uri.replace('_components/article/instances', '_pages'),
@@ -62,9 +63,21 @@ module.exports['4.0'] = async (uri, data) => {
       page.head.push(metaTagsUri);
       // create meta-tags component instance
       await putComponentInstance(metaTagsUri, metaTagsData)
-        .then(putComponentInstance(metaTagsUriPublished, metaTagsData))
+        .then(() => {
+          if (published) {
+            return putComponentInstance(metaTagsUriPublished, metaTagsData);
+          } else {
+            return;
+          }
+        })
         .then(putComponentInstance(pageUri, page))
-        .then(putComponentInstance(pageUriPublished, page))
+        .then(() => {
+          if (published) {
+            return putComponentInstance(pageUriPublished, page);
+          } else {
+            return;
+          }
+        });
     }
   }
 
