@@ -2,7 +2,30 @@
 
 const db = require('../server/db'),
   redirectDataURL = '/_components/redirects/instances/default@published',
+  querystring = require('querystring'),
 
+  /**
+   * Removes variables that are passed by the spa from the query string
+   *
+   * @param {string} url
+   * @returns {string}
+   */
+  stripUrl = (url) => {
+    const uri = url.split('?');
+
+    if (uri[1]) {
+      const params = querystring.parse(uri[1]);
+
+      delete params.json;
+      delete params.cb;
+
+      if (Object.keys(params).length) {
+        return `${uri[0]}?${querystring.stringify(params)}`;
+      }
+    }
+
+    return uri[0];
+  },
   /**
    * determines if a url is inside an array of redirect objects
    *
@@ -10,7 +33,7 @@ const db = require('../server/db'),
    * @param {object} req
    * @returns {boolean}
    */
-  testURL = (url, req) => createRegExp(url.replace(/^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,})/, '')).test(`${req.originalUrl.replace('?json', '')}`),
+  testURL = (url, req) => createRegExp(url.replace(/^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,})/, '')).test(stripUrl(req.originalUrl)),
   /**
    * converts a string into a regular expression * as a wildcard
    *
