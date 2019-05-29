@@ -33,8 +33,11 @@ addEventCallback('clay:publishPage', async payload => {
   }
 });
 
-addEventCallback('clay:unpublishPage', async () => {
+addEventCallback('clay:unpublishPage', async payload => {
+  const pageData = await db.get(JSON.parse(payload).uri);
+
   try {
+    sectionFrontRef = pageData.main[0];
     const data = await db.get(sectionFrontRef),
       sectionFrontsList = primary ? primarySectionFrontsList : secondarySectionFrontsList;
 
@@ -62,7 +65,6 @@ module.exports.render = (uri, data, locals) => {
   }
 
   primary = data.primary;
-  sectionFrontRef = uri.replace('@published','');
   primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
   secondarySectionFrontsList = locals ? `${locals.site.host}/_lists/secondary-section-fronts` : '';
   
@@ -71,7 +73,6 @@ module.exports.render = (uri, data, locals) => {
 
 module.exports.save = (uri, data, locals) => {
   primary = data.primary;
-  sectionFrontRef = uri.replace('@published','');
   primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
   secondarySectionFrontsList = locals ? `${locals.site.host}/_lists/secondary-section-fronts` : '';
 
