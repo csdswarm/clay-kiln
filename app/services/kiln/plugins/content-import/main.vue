@@ -8,6 +8,7 @@
                 placeholder="Import Url"
                 class="content-import__input-textbox"
 
+                @keydown-enter="importContent"
                 v-model="contentUrl"
             ></ui-textbox>
             <ui-icon-button icon="check" @click="importContent"></ui-icon-button>
@@ -31,7 +32,9 @@ export default {
     methods: {
         async importContent() {
             const result = await contentImport(this.contentUrl);
-            console.log('contentUrl', result);
+            if (result) {
+                window.location.href = `${result}?edit=true`;
+            }
         }
     },
     components: {
