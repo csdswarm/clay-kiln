@@ -2,6 +2,8 @@
 
 <script>
 'use strict';
+const PUBLISHED = 'publish',
+  UNPUBLISHED = 'unpublish';
 
 module.exports = {
   mounted() {
@@ -9,9 +11,10 @@ module.exports = {
       // mutation has two properties, the type and the payload
       // state contains the mutated state
       switch(mutation.type) {
-        case 'PAGE_PUBLSIH':
-        case 'PAGE_UNPUBLISH':
-          setTimeout(() => { location.reload(); }, 200);
+        case 'UPDATE_PAGE_STATE':
+          if ([PUBLISHED, UNPUBLISHED].includes(mutation.payload.history[mutation.payload.history.length - 1].action)) {
+            setTimeout(() => { location.reload(); }, 200);
+          }
           break;
         default:
 

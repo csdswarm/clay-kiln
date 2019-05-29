@@ -15,7 +15,11 @@ if (!listType) {
 const data = require(`${__dirname}/lists-${listType}.json`),
   sectionFrontOption = {
     id: 'section-front',
-    title: '2. Section Front'
+    title: '2. Section Front',
+    children: [{
+      id: 'section-front',
+      title: 'Section Front'
+    }]
   };
 let newData;
 

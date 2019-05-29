@@ -16,10 +16,10 @@ addEventCallback('clay:publishPage', async payload => {
       const primarySectionFronts = await db.get(primarySectionFrontsList),
         sectionFrontValues = primarySectionFronts.map(sectionFront => sectionFront.value);
 
-      if (!sectionFrontValues.includes(data.title)) {
+      if (!sectionFrontValues.includes(data.title.toLowerCase())) {
         primarySectionFronts.push({
           name: data.title,
-          value: data.title
+          value: data.title.toLowerCase()
         });
         await db.put(primarySectionFrontsList, JSON.stringify(primarySectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: true}));
@@ -30,14 +30,17 @@ addEventCallback('clay:publishPage', async payload => {
   }
 });
 
-addEventCallback('clay:unpublishPage', async () => {
+addEventCallback('clay:unpublishPage', async payload => {
+  const pageData = await db.get(JSON.parse(payload).uri);
+
   try {
+    sectionFrontRef = pageData.main[0];
     const data = await db.get(sectionFrontRef);
 
     if (data.title) {
       const primarySectionFronts = await db.get(primarySectionFrontsList),
         updatedSectionFronts = primarySectionFronts.filter(sectionFront => {
-          return sectionFront.value !== data.title;
+          return sectionFront.value !== data.title.toLowerCase();
         });
 
       await db.put(primarySectionFrontsList, JSON.stringify(updatedSectionFronts));
@@ -50,17 +53,15 @@ addEventCallback('clay:unpublishPage', async () => {
 
 module.exports.render = (uri, data, locals) => {
   if (data.title) {
-    locals.sectionFront = data.title;
+    locals.sectionFront = data.title.toLowerCase();
   }
 
-  sectionFrontRef = uri.replace('@published','');
   primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
 
   return data;
 };
 
 module.exports.save = (uri, data, locals) => {
-  sectionFrontRef = uri.replace('@published','');
   primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
 
   return data;
