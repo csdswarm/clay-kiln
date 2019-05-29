@@ -105,6 +105,20 @@
   }
 }
 
+#freq-dfp--bg-skin ~ .layout__content {
+  .google-ad-manager-- {
+    &billboard,
+    &super-leaderboard,
+    &leaderboard,
+    &mobile {
+      width: 100%;
+      margin: 0 0 em(50);
+      left: 0;
+      right: 0;
+    }
+  }
+}
+
 /*>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<*/
 /*>>> GLOBAL LOGO SPONSORSHIP STYLES <<<*/
 /*>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<*/

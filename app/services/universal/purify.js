@@ -2,7 +2,7 @@
 
 const jsdom = require('jsdom'), // will be rewritten to `jsdom = false` on client
   createDOMPurify = require('dompurify'),
-  dom = jsdom ? new jsdom.JSDOM('', {
+  dom = jsdom ? new jsdom.jsdom('', {
     features: {
       FetchExternalResources: false, // disables resource loading over HTTP / filesystem
       ProcessExternalResources: false // do not execute JS within script blocks

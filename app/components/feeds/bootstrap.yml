@@ -1,0 +1,10 @@
+_components:
+  feeds:
+    index: published-content
+    query: {}
+    meta:
+      renderer: rss
+      contentType: rss
+      fileExtension: rss
+    transform: article
+    results: []

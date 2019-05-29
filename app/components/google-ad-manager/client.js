@@ -425,6 +425,37 @@ function createAds(adSlots) {
 }
 
 /**
+ * Resize the station-carousels if there is a skin
+ *
+ * @returns {function} function that resets elements to original styles
+ */
+function resizeForSkin() {
+  const contentDiv = document.querySelector('.layout__content'),
+    stationCarousels = document.querySelectorAll('.component--stations-carousel');
+
+  let origCarouselStyles = [];
+      
+  stationCarousels.forEach((elem) => {
+    const {margin, width} = window.getComputedStyle(elem);
+        
+    origCarouselStyles.push({margin, width});
+        
+    Object.assign(elem.style, {
+      'margin-left': `calc((100% - ${contentDiv.clientWidth}px)/2)`,
+      width: `${contentDiv.clientWidth}px`
+    });
+  });
+
+  return () => {
+    stationCarousels.forEach((elem, ind) => {
+      const {margin, width} = origCarouselStyles[ind];
+
+      Object.assign(elem.style, {margin, width});
+    });
+  };
+}
+
+/**
  * Legacy code ported over from frequency to implement the takeover.
  *
  * @param {string} imageUrl
@@ -438,7 +469,8 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.getElementsByClassName('layout')[0];
+    globalDiv = document.getElementsByClassName('layout')[0],
+    resetElements = resizeForSkin();
 
   // Include our default bg color
   if (typeof backgroundColor == 'undefined') {
@@ -516,6 +548,8 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     if (mainDiv) {
       mainDiv.classList.remove('has-fullpage-ad');
     }
+
+    resetElements();
 
     updateSkinStyles(false);
   };
