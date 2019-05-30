@@ -202,3 +202,4 @@ module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug
 module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.putComponentInstance = putComponentInstance;
+module.exports.pageTypes = pageTypes;

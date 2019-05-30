@@ -1,11 +1,7 @@
 'use strict';
 
 const pubUtils = require('./publish-utils'),
-  pageTypes = {
-    ARTICLE: 'article',
-    GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
-  };
+  { pageTypes } = pubUtils;
 
 /**
  * Common functionality used for `getYearMonthSlugUrl` and `getArticleSlugUrl`

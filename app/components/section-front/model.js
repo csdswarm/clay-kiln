@@ -4,13 +4,12 @@ const db = require('../../services/server/db'),
   { addEventCallback } = require('../../services/universal/eventBus'),
   log = require('../../services/universal/log').setup({ file: __filename });
 
-let primarySectionFrontsList,
-  sectionFrontRef;
+let primarySectionFrontsList;
 
 addEventCallback('clay:publishPage', async payload => {
   try {
-    sectionFrontRef = JSON.parse(payload).data.main[0].replace('@published','');
-    const data = await db.get(sectionFrontRef);
+    const sectionFrontRef = JSON.parse(payload).data.main[0].replace('@published',''),
+      data = await db.get(sectionFrontRef);
 
     if (data.title && !data.titleLocked) {
       const primarySectionFronts = await db.get(primarySectionFrontsList),
@@ -31,11 +30,10 @@ addEventCallback('clay:publishPage', async payload => {
 });
 
 addEventCallback('clay:unpublishPage', async payload => {
-  const pageData = await db.get(JSON.parse(payload).uri);
-
   try {
-    sectionFrontRef = pageData.main[0];
-    const data = await db.get(sectionFrontRef);
+    const pageData = await db.get(JSON.parse(payload).uri),
+      sectionFrontRef = pageData.main[0],
+      data = await db.get(sectionFrontRef);
 
     if (data.title) {
       const primarySectionFronts = await db.get(primarySectionFrontsList),
