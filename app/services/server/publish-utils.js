@@ -205,3 +205,4 @@ module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
 module.exports.putComponentInstance = putComponentInstance;
+module.exports.pageTypes = pageTypes;
