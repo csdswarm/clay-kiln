@@ -15,7 +15,7 @@
             <ui-select
               :placeholder="'Select Station(s)'"
               :hasSearch="true"
-              :help="'Select multiple by holding down cmd or ctl key'"
+              :help="'Select station(s) to syndicate out to'"
               :multiple="true"
               :options="stationOptions"
               :value="value"
@@ -45,7 +45,7 @@
         },
         computed: {
             value() {
-                return this.selectedStation ?  this.selectedStation : { label: 'Select a station...'  }
+                return this.selectedStation || [];
             },
         },
         methods: {
@@ -55,52 +55,55 @@
              *  @param {boolean} reselect - Whether this invocation should undo any current station selection
              */
             async populateStations(reselect = true) {
-                console.log(radioApi.get);
                 try {
                     if (reselect) {
-                        this.selectedStation = null;
+                        console.log("reset selections");
+                        this.selectedStation = [];
                     }
-                    const self = this;
-                    if (self.cachedResults[self.filter]) {
-                        self.stationOptions = self.cachedResults[self.filter];
+                    if (this.cachedResults[this.filter]) {
+                        this.stationOptions = this.cachedResults[this.filter];
                     } else {
                         let apiRequest = 'https://api.radio.com/v1/stations?page[size]=1000&sort=name';
 
-                        if (self.filter && self.filter.length) {
-                            apiRequest += `&q=${encodeURIComponent(self.filter)}`;
+                        if (this.filter && this.filter.length) {
+                            apiRequest += `&q=${encodeURIComponent(this.filter)}`;
                         }
 
                         const stationsResponse = await radioApi.get(apiRequest);
                         console.log('response', stationsResponse)
                         
                         if (stationsResponse) {
-                            self.stationOptions = stationsResponse.data.map(station => {
-                                return {
-                                    label: station.attributes.name,
-                                    value: station.attributes.name,
-                                    slug: station.attributes.slug,
-                                    site_slug: station.attributes.site_slug,
-                                    id: station.attributes.id,
-                                    name: station.attributes.name,
-                                    callsign: station.attributes.callsign,
-                                }
+                            this.stationOptions = stationsResponse.data.map(station => {
+                                return station.attributes.name;
+                                // return {
+                                //     label: station.attributes.name,
+                                //     slug: station.attributes.slug,
+                                //     site_slug: station.attributes.site_slug,
+                                //     id: station.attributes.id,
+                                //     name: station.attributes.name,
+                                //     callsign: station.attributes.callsign,
+                                // }
                             });
-                            self.cachedResults[self.filter] = self.stationOptions
+                            this.cachedResults[this.filter] = this.stationOptions;
                         }
                     }
-                    console.log(self);
+                    console.log(this);
                 } catch (e) {
                     console.log(e);
                 }
             },
-
             /**
              *  This function is called when a station is selected from the dropdown. Sets it as currently selected.
              * @param {Object} input
              */
             updateSelectedStation(input) {
-                this.selectedStation = input;
-                this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedStation })
+                console.log('update selected station');
+                try {
+                    this.selectedStation = input;
+                    this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedStation })
+                } catch (e) {
+                    console.log("error updating selection: ", e);
+                }
             },
         },
         components: {
