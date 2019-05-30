@@ -57,7 +57,8 @@ module.exports['4.0'] = async (uri, data) => {
 
       page.head.push(metaTagsUri);
       // create meta-tags component instance
-      await putComponentInstance(metaTagsUri, metaTagsData)
+      // don't wait for it, let it run and it should be updated by the next page load.
+      putComponentInstance(metaTagsUri, metaTagsData)
         .then(() => {
           if (published) {
             return putComponentInstance(metaTagsUriPublished, metaTagsData);
