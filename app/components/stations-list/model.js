@@ -1,6 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
+  { playingClass } = require('../../services/server/spaLocals'),
   SPORTS_SLUG = 'sports',
   NEWSTALK_SLUG = 'news-talk';
 
@@ -31,7 +32,7 @@ function getMarketData({ slug, id }) {
       }
       return response.data.find(({ attributes }) => slugifyService(attributes.display_name) === slug) || {};
     } else {
-      console.log('error with request', response);
+      console.log('Error with getMarketData request', response);
       return {};
     }
   });
@@ -63,7 +64,7 @@ function getGenreData({ slug, id }) {
       }
       return response.data.find(({ attributes }) => slugifyService(attributes.name) === slug) || {};
     } else {
-      console.log('error with request', response);
+      console.log('Error with getGenreData request', response);
       return {};
     }
   });
@@ -85,21 +86,27 @@ module.exports.render = async (uri, data, locals) => {
     params = {
       'page[size]': 1000,
       sort: '-popularity'
-    };
+    },
+    isStation = locals.station.slug !== 'www';
 
   if (locals.stationIDs) {
     params['filter[id]'] = locals.stationIDs;
 
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        let stations = locals.stationIDs.split(',').map(stationID => {
-          let station = response.data.find(station => {
+        const stations = locals.stationIDs.split(',').map(stationID => {
+          const station = response.data.find(station => {
             if (station.id === parseInt(stationID)) {
               return station;
             }
           });
 
-          return station ? station.attributes : null;
+          if (station) {
+            station.attributes.playingClass = playingClass(locals, station.attributes.id);
+            return station.attributes;
+          }
+
+          return null;
         });
 
         data.stations = stations.filter(station => station);
@@ -113,7 +120,7 @@ module.exports.render = async (uri, data, locals) => {
   if (data.filterBy === 'recent') {
     /** stations will be populated client side **/
 
-    if (locals.station) {
+    if (isStation) {
       data.listTitle = data.listTitle || `${ data.filterBy } stations`;
     } else {
       data.listTitle = data.listTitle || 'stations you\'ve listened to';
@@ -126,9 +133,8 @@ module.exports.render = async (uri, data, locals) => {
     return data;
   } else {
     /** filter by market, genre, or category **/
-    if (locals.station) {
+    if (isStation) {
       /** for stations lists on station detail page (discover tab) **/
-
       switch (data.filterBy) {
         case 'market':
           data.market = slugifyService(locals.station.market.display_name);
@@ -222,7 +228,10 @@ module.exports.render = async (uri, data, locals) => {
 
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        data.stations = response.data ? response.data.map((station) => station.attributes) : [];
+        data.stations = response.data ? response.data.map((station) => {
+          station.attributes.playingClass = playingClass(locals, station.attributes.id);
+          return station.attributes;
+        }) : [];
         data.stationIds = data.stations.map((station) => { return { id: station.id }; });
         return data;
       } else {

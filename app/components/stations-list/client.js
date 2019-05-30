@@ -1,6 +1,5 @@
 'use strict';
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
-  market = require('../../services/client/market'),
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
   { isMobileWidth } = require('../../services/client/mobile'),
@@ -146,18 +145,14 @@ class StationsList {
    * insert new payload of stations into DOM
    * then display the stations, keeping more stations in the DOM than are being displayed
    * @function
-   * @param {object} stationsData
+   * @param {Object[]} stationsIDs
    * @param {string} [instanceModifier]
    */
-  async updateStationsDOMWithIDs(stationsData, instanceModifier) {
-    const stationIDs = stationsData.map((station) => {
-        return station.id;
-      }),
-      newStations = await this.getComponentTemplate(stationIDs, null, instanceModifier);
+  async updateStationsDOMWithIDs(stationsIDs, instanceModifier) {
+    const newStations = this.stationsData = await this.getComponentTemplate(stationsIDs, null, instanceModifier);
 
     this.stationsList.append(newStations);
     safari.fixAJAXImages(this.stationsList);
-
     this.toggleLoader();
     this.displayActiveStations();
   }
@@ -205,18 +200,13 @@ class StationsList {
    * @function
    */
   async updateStations() {
-    if (this.filterStationsBy === 'local') {
+    if (this.filterStationsBy === 'recent') {
       this.toggleLoader();
-      this.marketID = await market.getID();
-      this.stationsData = await this.getLocalStationsFromApi();
-      this.updateStationsDOMWithIDs(this.stationsData);
-    } else if (this.filterStationsBy === 'recent') {
-      this.toggleLoader();
-      const stationsData = this.stationsData = await recentStations.get();
+      const stationsIDs = await recentStations.get();
 
-      stationsData.slice(0, 7);
-      if (stationsData.length) {
-        this.updateStationsDOMWithIDs(stationsData);
+      stationsIDs.slice(0, 7);
+      if (stationsIDs.length) {
+        this.updateStationsDOMWithIDs(stationsIDs);
       } else {
         this.el.classList.add('component--empty');
       }
@@ -247,7 +237,11 @@ class StationsList {
 
       if (stationsData.length) {
         this.toggleLoader();
-        this.updateStationsDOMWithIDs(stationsData, 'Truncated');
+        const stationsIDs = stationsData.map((station) => {
+          return station.id;
+        });
+
+        this.updateStationsDOMWithIDs(stationsIDs, 'Truncated');
       } else {
         this.displayActiveStations();
       }

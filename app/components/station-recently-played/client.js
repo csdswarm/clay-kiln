@@ -1,7 +1,7 @@
 'use strict';
 
 const SelectBox = require('../../services/client/selectbox'),
-  { next24Hours, nextSevenDays } = require('../../services/universal/dateTime'),
+  { get24Hours, nextSevenDays } = require('../../services/universal/dateTime'),
   { fetchDOM } = require('../../services/client/radioApi');
 
 /*
@@ -9,8 +9,6 @@ const SelectBox = require('../../services/client/selectbox'),
  */
 class StationRecentlyPlayed {
   constructor(el) {
-    // @TODO ON-549 Utilize filters from Recently Played page of Station Detail
-    return;
 
     const select = el.querySelector('.day-of-week__select'),
       timeSelect = el.querySelector('.time__select'),
@@ -18,15 +16,14 @@ class StationRecentlyPlayed {
       gmtOffset = parseInt(select.getAttribute('data-gmt-offset')),
       category = select.getAttribute('data-category');
 
-    nextSevenDays().forEach((day) => select.add(new Option(day.text, day.value)));
-    next24Hours().forEach((time) => timeSelect.add(new Option(time.text, time.value)));
-
     // eslint-disable-next-line one-var
     const selectBox = new SelectBox(select, {
-        searchable: false
+        searchable: false,
+        data: nextSevenDays(true)
       }),
       timeSelectBox = new SelectBox(timeSelect, {
-        searchable: false
+        searchable: false,
+        data: get24Hours()
       });
 
     selectBox.addEventListener('change', (option) => this.loadContent({ stationId, gmtOffset, category }, option.value, timeSelectBox.getValue()));

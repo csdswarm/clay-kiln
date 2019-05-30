@@ -18,7 +18,7 @@
             <div class="details__time
                 {{if playing (concat "details__time--on-air " ../station.category)}}">
               {{#if playing}}
-                ON-AIR
+                ON AIR
               {{else}}
                 {{ userLocalDate start_time 'h:mm a' }}
                 to
@@ -29,7 +29,7 @@
           </div>
           {{#if playing}}
           </div>
-            <div data-play-station="{{ ../station.id }}" class="show__play"></div>
+            <div data-play-station="{{ ../station.id }}" class="{{ ../station.playingClass }}"></div>
           {{/if}}
         </div>
       </li>
