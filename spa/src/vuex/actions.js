@@ -11,7 +11,7 @@ import {
   UPDATE_PROFILE_SUCCESS
 } from '../views/account/constants'
 
-const axiosCall = async ({ method, url, data, commit }) => {
+const axiosCall = async ({ method, url, data, commit }, ignoreError) => {
   try {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, true)
     const result = await axios({ method, url: `/radium${url}`, data })
@@ -20,7 +20,10 @@ const axiosCall = async ({ method, url, data, commit }) => {
     return result
   } catch (err) {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, false)
-    commit(mutationTypes.MODAL_ERROR, formatError(err).message)
+    if (!ignoreError) {
+      commit(mutationTypes.MODAL_ERROR, formatError(err).message)
+      throw formatError(err)
+    }
   }
 }
 
@@ -99,13 +102,15 @@ export default {
     commit(mutationTypes.SET_USER, formatProfile(result.data))
     commit(mutationTypes.ACCOUNT_MODAL_HIDE)
   },
-  async [actionTypes.GET_PROFILE] ({ commit }) {
+  async [actionTypes.GET_PROFILE] ({ commit }, ignoreError = false) {
     const result = await axiosCall({ commit,
       method: 'get',
       url: '/v1/profile'
-    })
+    }, ignoreError)
 
-    commit(mutationTypes.SET_USER, formatProfile(result.data))
+    if (result) {
+      commit(mutationTypes.SET_USER, formatProfile(result.data))
+    }
   },
   async [actionTypes.UPDATE_PROFILE] ({ commit }, user) {
     const result = await axiosCall({ commit,
@@ -156,5 +161,49 @@ export default {
 
     dispatch(actionTypes.SIGN_IN, { email, password })
     commit(mutationTypes.MODAL_SUCCESS, RESET_PASSWORD_SUCCESS)
+    commit(mutationTypes.MODAL_SUCCESS, 'Your password has been updated successfully!')
+  },
+  async [actionTypes.FAVORITE_STATIONS_ADD] ({ commit }, stationId) {
+    const result = await axiosCall({ commit,
+      method: 'patch',
+      url: '/v1/favorites/stations/add',
+      data: {
+        station_id: parseInt(stationId)
+      }
+    })
+
+    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+  },
+  async [actionTypes.FAVORITE_STATIONS_REMOVE] ({ commit }, stationId) {
+    const result = await axiosCall({ commit,
+      method: 'patch',
+      url: '/v1/favorites/stations/remove',
+      data: {
+        station_id: parseInt(stationId)
+      }
+    })
+
+    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+  },
+  async [actionTypes.FAVORITE_STATIONS_GET] ({ commit }) {
+    const result = await axiosCall({
+      commit,
+      method: 'GET',
+      url: '/v1/favorites/stations'
+    }, true)
+
+    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+  },
+  async [actionTypes.ROUTE_CHANGE] ({ commit, dispatch, state }, route) {
+    const favoritesExpiredTime = 1000 * 60 * 5
+    const isStationRoute = () => route.path.includes('/stations') || route.path.includes('/listen')
+    const favoritesExpired = () => new Date().getTime() - state.user.savedTimeStamp > favoritesExpiredTime
+
+    // Start loading animation.
+    commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+
+    if (isStationRoute() && favoritesExpired()) {
+      await dispatch(actionTypes.FAVORITE_STATIONS_GET)
+    }
   }
 }

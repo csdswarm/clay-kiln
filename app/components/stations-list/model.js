@@ -1,7 +1,7 @@
 'use strict';
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
-  { playingClass } = require('../../services/server/spaLocals'),
+  { playingClass, favoriteModifier } = require('../../services/server/spaLocals'),
   SPORTS_SLUG = 'sports',
   NEWSTALK_SLUG = 'news-talk';
 
@@ -103,6 +103,8 @@ module.exports.render = async (uri, data, locals) => {
 
           if (station) {
             station.attributes.playingClass = playingClass(locals, station.attributes.id);
+            station.attributes.favoriteModifier = favoriteModifier(locals, station.attributes.id);
+
             return station.attributes;
           }
 
@@ -230,6 +232,8 @@ module.exports.render = async (uri, data, locals) => {
       if (response.data) {
         data.stations = response.data ? response.data.map((station) => {
           station.attributes.playingClass = playingClass(locals, station.attributes.id);
+          station.attributes.favoriteModifier = favoriteModifier(locals, station.attributes.id);
+
           return station.attributes;
         }) : [];
         data.stationIds = data.stations.map((station) => { return { id: station.id }; });

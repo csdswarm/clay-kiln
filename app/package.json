@@ -39,6 +39,7 @@
     "connect-redis": "^3.3.3",
     "cookie-parser": "^1.4.4",
     "date-fns": "^1.29.0",
+    "deepmerge": "^3.2.0",
     "dollar-slice": "^2.2.0",
     "dompurify": "^1.0.5",
     "dotenv": "^6.0.0",

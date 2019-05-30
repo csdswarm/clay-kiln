@@ -8,7 +8,10 @@ import URL from 'url-parse'
 import VueTranspiler from '@/lib/VueTranspiler'
 import * as mutationTypes from '../../vuex/mutationTypes'
 import SpaPlayerInterface from '../../lib/SpaPlayerInterface'
+import SpaUserInterface from '../../lib/SpaUserInterface'
+import SpaStateInterface from '../../lib/SpaStateInterface'
 const vueTranspiler = new VueTranspiler()
+
 export default {
   mounted () {
     this.onLayoutUpdate()
@@ -65,26 +68,12 @@ export default {
         })
       })
 
-      /**
-       * Execute web player "routing" logic (determines whether to lazy-load player and auto-initialize player bar).
-       *
-       * NOTE: playerInterface.router() is async and returns a promise, but onLayoutUpdate() must be synchronous (because Vue lifecycle methods
-       * must be synchronous). Since the player exists outside of the slice of DOM managed by the SPA, playerInterface.router() is safe to call
-       * as if it was "synchronous" and there is no need to block further execution of onLayoutUpdate() until playerInterface.router() resolves.
-       */
-      const playerInterface = new SpaPlayerInterface(this)
-      playerInterface.router()
-
-      // Attach player play listener on play buttons/elements.
-      this.$el.querySelectorAll('[data-play-station]').forEach(element => {
-        element.addEventListener('click', (event) => {
-          event.preventDefault()
-          event.stopPropagation()
-          const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause'
-
-          playerInterface[playbackStatus](element.dataset.playStation)
-        })
-      })
+      // Create Spa/Client interfaces
+      this.interfaces = {
+        player: new SpaPlayerInterface(this),
+        user: new SpaUserInterface(this),
+        state: new SpaStateInterface(this)
+      }
 
       this.handleComponents('mount')
     },

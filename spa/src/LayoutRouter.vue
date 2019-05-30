@@ -31,6 +31,7 @@ import ModalContent from '@/views/ModalContent'
 import modalRoutes from '@/views/routes/intercept'
 import actionRoutes from '@/views/routes/action'
 import { mapState } from 'vuex'
+import * as actionTypes from './vuex/actionTypes'
 
 const interceptRoutes = [].concat(modalRoutes, actionRoutes)
 
@@ -40,7 +41,10 @@ const queryPayload = new QueryPayload()
 
 export default {
   name: 'LayoutRouter',
-  created () {
+  async created () {
+    // see if the user is logged in and populate the store
+    await this.$store.dispatch(actionTypes.GET_PROFILE, true)
+
     // Load initial layout.
     this.activeLayoutComponent = this.layoutRouter(this.$store.state.spaPayload)
   },
@@ -189,7 +193,7 @@ export default {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
             'x-amphora-page-json': true,
-            'x-locals': JSON.stringify(getLocals(this.$store.state))
+            'x-locals': JSON.stringify(await getLocals(this.$store.state))
           }
         })
 
@@ -253,8 +257,8 @@ export default {
      *
      */
     async handleSpaRoute (to) {
-      // Start loading animation.
-      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+      // run any spa actions before getting data for a new page render
+      await this.$store.dispatch(actionTypes.ROUTE_CHANGE, to)
 
       // Get SPA payload data for next path.
       const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)

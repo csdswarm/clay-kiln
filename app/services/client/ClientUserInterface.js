@@ -14,6 +14,20 @@ class ClientUserInterface {
    *
    * Adds events related to users
    *
+   * @param {Document} doc
+   * @returns {Document} - document with events attached
+   */
+  addEventListener(doc) {
+    const findActiveClass = (element) => Array.from(element.classList).find((className) => /-active$/i.test(className)),
+      toggleActiveClass = (element) => {
+        const currentClass = findActiveClass(element),
+          nextClass = currentClass.includes('--active')
+            ? currentClass.replace('--active', '--not-active')
+            : currentClass.replace('--not-active', '--active');
+
+        element.classList.replace(currentClass, nextClass);
+      };
+
    * @param {Node} doc
    * @returns {Node} - document with events attached
    */
@@ -24,16 +38,11 @@ class ClientUserInterface {
         event.preventDefault();
         event.stopPropagation();
 
-        const currentClass = Array.from(element.classList).find((className) => /-active$/i.test(className)),
-          nextClass = currentClass.includes('--active')
-            ? currentClass.replace('--active', '--not-active')
-            : currentClass.replace('--not-active', '--active'),
-          func = currentClass.includes('--active') ? 'removeFavorite' : 'addFavorite';
+        const func = findActiveClass(element).includes('--active') ? 'removeFavorite' : 'addFavorite';
 
         if (await this[func](element.dataset.favStation)) {
-          document.querySelectorAll(`[data-fav-station="${element.dataset.favStation}"]`).forEach(station =>
-            station.classList.replace(currentClass, nextClass)
-          );
+          document.querySelectorAll(`[data-fav-station="${element.dataset.favStation}"]`)
+            .forEach(station => toggleActiveClass(station));
         }
       });
     });

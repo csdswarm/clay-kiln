@@ -9,14 +9,18 @@
 import * as mutationTypes from '../vuex/mutationTypes'
 import SpaCommunicationBridge from './SpaCommunicationBridge'
 import QueryPayload from './QueryPayload'
+import ClientPlayerInterface from '../../../app/services/client/ClientPlayerInterface'
 const spaCommunicationBridge = SpaCommunicationBridge()
 const queryPayload = new QueryPayload()
 
 class SpaPlayerInterface {
   constructor (spaApp) {
     this.spa = spaApp
-    this.attachClientEventListeners()
-    this.attachDOMEventListeners()
+    this.attachClientCommunication()
+
+    // Attach event listeners to DOM
+    ClientPlayerInterface().addEventListener(this.spa.$el)
+
     /**
      * Execute web player "routing" logic (determines whether to lazy-load player and auto-initialize player bar).
      *
@@ -153,7 +157,7 @@ class SpaPlayerInterface {
    * the player.
    *
    */
-  attachClientEventListeners () {
+  attachClientCommunication () {
     // Add channel that listens for play/pause button clicks.
     if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlaybackStatus')) {
       spaCommunicationBridge.addChannel('SpaPlayerInterfacePlaybackStatus', async (payload) => {
@@ -173,24 +177,6 @@ class SpaPlayerInterface {
         return currentStation.id
       })
     }
-  }
-
-  /**
-   *
-   * Attach event listeners to the DOM
-   *
-   */
-  attachDOMEventListeners () {
-    // Attach player play listener on play buttons/elements.
-    this.spa.$el.querySelectorAll('[data-play-station]').forEach(element => {
-      element.addEventListener('click', (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause'
-
-        this[playbackStatus](element.dataset.playStation)
-      })
-    })
   }
 
   /**

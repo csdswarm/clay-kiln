@@ -4,7 +4,9 @@ const rest = require('../universal/rest'),
   { formatLocal } = require('../../services/universal/dateTime'),
   { getLocals } = require('./spaLocals'),
   spaLinkService = require('./spaLink'),
-  clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
+  clientPlayerInterface = require('./ClientPlayerInterface')(),
+  clientUserInterface = require('./ClientUserInterface')(),
+  clientStateInterface = require('./ClientStateInterface')(),
   // https://regex101.com/r/gDfIxb/1
   spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
   /**
@@ -59,19 +61,14 @@ const rest = require('../universal/rest'),
      * @param {Node} doc
      * @returns {Node}
      */
-    (doc) => {
-      // Attach play button click handlers
-      doc.querySelectorAll('[data-play-station]').forEach(element => {
-        element.addEventListener('click', (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
-
-          clientPlayerInterface[playbackStatus](element.dataset.playStation);
-        });
-      });
-      return doc;
-    }
+    (doc) => clientPlayerInterface.addEventListener(doc),
+    /**
+     * Adds the click events for users
+     *
+     * @param {Node} doc
+     * @returns {Node}
+     */
+    (doc) => clientUserInterface.addEventListener(doc)
   ],
   /**
    * Attaches all spa interfaces
@@ -89,9 +86,10 @@ const rest = require('../universal/rest'),
    * @returns {Promise} which returns {Node}
    */
   fetchDOM = async (route) => {
-    const separator = route.includes('?') ? '&' : '?',
+    const state = await clientStateInterface.getState(),
+      separator = route.includes('?') ? '&' : '?',
       options = {
-        headers: new Headers({ 'x-locals': JSON.stringify(getLocals()) })
+        headers: new Headers({ 'x-locals': JSON.stringify(getLocals(state)) })
       },
       response = await fetch(`${route}${separator}ignore_resolve_media=true`, options),
       html = await response.text(),

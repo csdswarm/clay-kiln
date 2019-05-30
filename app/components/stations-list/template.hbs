@@ -23,7 +23,7 @@
           <li class="station">
             <a href="//{{ @root.locals.site.host }}/{{ site_slug }}/listen" class="spa-link">
               <div class="station__lede" itemscope itemtype="http://schema.org/ImageObject">
-                <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
+                <button data-fav-station="{{id}}" class="lede__favorite-btn{{favoriteModifier}}"></button>
                 <img class="lede__image" src="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0"
                      srcset="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0 138w,
                     {{ square_logo_large }}?width=220&height=220&crop=1:1,offset-y0 220w,
