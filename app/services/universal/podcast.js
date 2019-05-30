@@ -24,4 +24,8 @@ module.exports.createUrl = (title) => {
  * @param {string} image
  * @returns {string}
  */
-module.exports.createImageUrl = (image) => image.toLowerCase().replace(/size=medium|size=large/i, 'size=small');
+module.exports.createImageUrl = image => {
+  const smallImage = image.toLowerCase().replace(/size=medium|size=large/i, 'size=small');
+  
+  return smallImage.includes('?') ? `${ smallImage }&` : `${ smallImage }?`;
+};
