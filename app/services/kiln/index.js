@@ -6,6 +6,7 @@ module.exports = () => {
   require('./plugins/word-count')();
   require('./plugins/advanced-image-upload')();
   require('./plugins/podcast-select')();
+  require('./plugins/content-syndication')();
   require('./plugins/instagram')();
   require('./validators')();
 };

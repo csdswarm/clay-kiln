@@ -379,6 +379,21 @@ editorialFeeds:
     search: true
     list: freq_editorial_feeds
     help: Select all editorial feeds terms for syndication
+stationSyndication:
+  _label: Syndicate to station(s)
+  _placeholder:
+    height: 200px;
+    text: Stations List
+  _has:
+    input: complex-list
+    props:
+    -
+      prop: station
+      _label: Station
+      _has:
+        input: station-select
+        validate:
+          required: true
 
 _groups:
   publishedDate:
@@ -436,6 +451,7 @@ _groups:
     fields:
       - featured
       - editorialFeeds
+      - stationSyndication
       - syndicationStatus
       - syndicatedUrl
 
