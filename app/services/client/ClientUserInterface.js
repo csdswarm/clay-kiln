@@ -28,10 +28,6 @@ class ClientUserInterface {
         element.classList.replace(currentClass, nextClass);
       };
 
-   * @param {Node} doc
-   * @returns {Node} - document with events attached
-   */
-  addEventListener(doc) {
     // Attach favorite button click handlers
     doc.querySelectorAll('[data-fav-station]').forEach(element => {
       element.addEventListener('click', async (event) => {
@@ -58,7 +54,7 @@ class ClientUserInterface {
    */
   async addFavorite(stationId) {
     return await clientCommunicationBridge.sendMessage('SpaUserFavorite', {  action: 'addFavorite', stationId });
-  }
+  }p
 
   /**
    *
