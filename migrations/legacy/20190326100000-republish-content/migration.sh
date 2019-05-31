@@ -16,22 +16,5 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-npm i highland
-
-printf "\n\nRepublishing all published content...\n\n"
-
-printf "\n\nDumping elasticsearch to file...\n\n"
-../../../app/node_modules/.bin/ess get $es:9200/published-content --search '{"storedFields": "_id"}' > ./published-content.txt
-
-printf "\n\nConverting elasticsearch to list of URLs...\n\n"
-node ./json-parsing.js;
-
-cat published-content-urls.txt
-
-printf "\n\nRepublishing each URL...\n\n"
-while read URL
-    do curl -X PUT $http://$URL -H 'Authorization: token accesskey' -H 'Content-Type: application/json'
-done < published-content-urls.txt
-
-rm ./published-content.txt ./published-content-urls.txt ./package-lock.json
-rm -rf ./node_modules
+res=$(node ./publish-pages.js $http $1)
+echo "\n\n$res\n\n"
