@@ -77,7 +77,7 @@ do
               ]
           }";
 
-      #rm ./new-index.json;
+      rm ./new-index.json;
     else
       echo "Skipping reindex, mapping already updated.";
     fi
