@@ -8,6 +8,7 @@
       {{/unless}}
       <span>Title {{#unless primary}} (Secondary Section Front){{/unless}} <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
       {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
+      <span>Include podcast module? : {{ default includePodcastModule 'False' }}</span>
     </div>
   {{/if}}
   {{> section-lead sectionLead }}
@@ -15,8 +16,8 @@
     {{> component-list stationsCarousel }}
   </div>
   {{> google-ad-manager googleAdUnderStationsModule}}
-  {{#compare title 'sports' }}
+  {{#if includePodcastModule }}
     {{> podcast-list podcastList }}
-  {{/compare}}
+  {{/if}}
   {{> more-content-feed moreContentFeed }}
 </section>

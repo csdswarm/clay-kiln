@@ -2,20 +2,19 @@
 
 const db = require('../../services/server/db'),
   { addEventCallback } = require('../../services/universal/eventBus'),
-  log = require('../../services/universal/log').setup({ file: __filename });
-
-let primary,
-  primarySectionFrontsList,
-  secondarySectionFrontsList;
+  log = require('../../services/universal/log').setup({ file: __filename }),
+  primarySectionFrontsList = '/_lists/primary-section-fronts',
+  secondarySectionFrontsList = '/_lists/secondary-section-fronts';
 
 addEventCallback('clay:publishPage', async payload => {
   try {
-    const sectionFrontRef = JSON.parse(payload).data.main[0].replace('@published',''),
+    const host = JSON.parse(payload).uri.split('/')[0],
+      sectionFrontRef = JSON.parse(payload).data.main[0].replace('@published',''),
       data = await db.get(sectionFrontRef),
-      sectionFrontsList = primary ? primarySectionFrontsList : secondarySectionFrontsList;
+      sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
 
     if (data.title && !data.titleLocked) {
-      const sectionFronts = await db.get(sectionFrontsList),
+      const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
         sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
 
       if (!sectionFrontValues.includes(data.title.toLowerCase())) {
@@ -23,7 +22,7 @@ addEventCallback('clay:publishPage', async payload => {
           name: data.title,
           value: data.title.toLowerCase()
         });
-        await db.put(sectionFrontsList, JSON.stringify(sectionFronts));
+        await db.put(`${host}${sectionFrontsList}`, JSON.stringify(sectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: true}));
       }
     }
@@ -34,18 +33,19 @@ addEventCallback('clay:publishPage', async payload => {
 
 addEventCallback('clay:unpublishPage', async payload => {
   try {
-    const pageData = await db.get(JSON.parse(payload).uri),
+    const host = JSON.parse(payload).uri.split('/')[0],
+      pageData = await db.get(JSON.parse(payload).uri),
       sectionFrontRef = pageData.main[0],
       data = await db.get(sectionFrontRef),
-      sectionFrontsList = primary ? primarySectionFrontsList : secondarySectionFrontsList;
+      sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
 
     if (data.title) {
-      const sectionFronts = await db.get(sectionFrontsList),
+      const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
         updatedSectionFronts = sectionFronts.filter(sectionFront => {
           return sectionFront.value !== data.title.toLowerCase();
         });
 
-      await db.put(sectionFrontsList, JSON.stringify(updatedSectionFronts));
+      await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
       await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: false}));
     }
   } catch (e) {
@@ -62,17 +62,5 @@ module.exports.render = (uri, data, locals) => {
     }
   }
 
-  primary = data.primary;
-  primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
-  secondarySectionFrontsList = locals ? `${locals.site.host}/_lists/secondary-section-fronts` : '';
-  
   return data;
-};
-
-module.exports.save = (uri, data, locals) => {
-  primary = data.primary;
-  primarySectionFrontsList = locals ? `${locals.site.host}/_lists/primary-section-fronts` : '';
-  secondarySectionFrontsList = locals ? `${locals.site.host}/_lists/secondary-section-fronts` : '';
-
-  return data;
-};
+}

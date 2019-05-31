@@ -40,6 +40,10 @@ primarySectionFront:
         field: primary
         operator: falsy
 
+includePodcastModule:
+  _label: Include podcast module on page?
+  _has: checkbox
+
 podcastList:
   _component:
     include:
@@ -86,3 +90,4 @@ _groups:
       - primary
       - primarySectionFront
       - title
+      - includePodcastModule

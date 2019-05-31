@@ -4,6 +4,7 @@ _components:
     titleLocked: false
     primary: false
     primarySectionFront: ''
+    includePodcastModule: false
     sectionLead:
       _ref: /_components/section-lead
     googleAdUnderStationsModule:
