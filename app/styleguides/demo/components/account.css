@@ -62,7 +62,7 @@
   }
 
   .success {
-    @mixin message $darkModerateLimeGreen, 5px, 30px;
+    @mixin message $fruitSalad, 5px, 30px;
     @mixin radium-form-font10;
   }
 
@@ -238,7 +238,7 @@
     }
 
     &:hover {
-      color: $strongBlue;
+      color: $endeavor;
       text-decoration: underline;
     }
 
@@ -446,7 +446,7 @@
     }
 
     label {
-      color: $veryDarkGray;
+      color: $doveGray;
       font-weight: normal;
 
       &:before {

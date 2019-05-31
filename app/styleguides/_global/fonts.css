@@ -504,7 +504,7 @@ em, i {
 }
 
 @define-mixin radium-form-font10 {
-  @mixin font CircularStd-Medium, 14px, $darkModerateLimeGreen, -.23, 18px;
+  @mixin font CircularStd-Medium, 14px, $fruitSalad, -.23, 18px;
 }
 
 @define-mixin radium-form-font-11 {
