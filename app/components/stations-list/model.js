@@ -2,6 +2,7 @@
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
   { playingClass, favoriteModifier } = require('../../services/server/spaLocals'),
+  _get = require('lodash/get'),
   SPORTS_SLUG = 'sports',
   NEWSTALK_SLUG = 'news-talk';
 
@@ -89,12 +90,14 @@ module.exports.render = async (uri, data, locals) => {
     },
     isStation = locals.station.slug !== 'www';
 
-  if (locals.stationIDs) {
-    params['filter[id]'] = locals.stationIDs;
+  if (locals.stationIDs || data.filterBy === 'favorites') {
+    const stationIDs = locals.stationIDs || _get(locals, 'radiumUser.favoriteStations', []).join();
 
+    params['filter[id]'] = stationIDs;
+    
     return radioApiService.get(route, params).then(response => {
       if (response.data) {
-        const stations = locals.stationIDs.split(',').map(stationID => {
+        const stations = stationIDs.split(',').map(stationID => {
           const station = response.data.find(station => {
             if (station.id === parseInt(stationID)) {
               return station;

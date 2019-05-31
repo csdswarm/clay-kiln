@@ -35,9 +35,7 @@ class StationsList {
       this.pageType = STATION_DETAIL;
     }
 
-    this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
-
-    this.resetStationsList();
+    this.stationsData = stationsDataEl && stationsDataEl.innerText ? JSON.parse(stationsDataEl.innerText) : [];
     this.updateStations();
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
