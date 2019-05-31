@@ -72,8 +72,9 @@ async function letsDoThis() {
 }
 
 async function updatePages(pages, publishedPages) {
-  pages.forEach(async function(page) {
-    const published = publishedPages.includes(`${page}@published`);
+  for (let i = 0; i < pages.length; i++) {
+    const page = pages[i], 
+      published = publishedPages.includes(`${page}@published`);
 
     // unity created pages are alpha-numeric 25 chars
     // imported (sbp were imported) content is a number --> handled by upgrade, do nothing
@@ -98,7 +99,7 @@ async function updatePages(pages, publishedPages) {
         }
       }
     }
-  });
+  };
 }
 
 async function addMetaTags(page, published, hash = 'general') {
