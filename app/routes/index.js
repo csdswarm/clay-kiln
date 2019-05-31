@@ -129,7 +129,7 @@ module.exports = router => {
   router.get('/sitemap-stations.xml', async function (req, res) {
     const baseUrl = `https://${req.headers.host}`,
       urlset = [
-        { _attr: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' } },
+        { _attr: { xmlns: 'https://www.sitemaps.org/schemas/sitemap/0.9' } },
         { url: [{ loc: `${baseUrl}/stations` }] },
         { url: [{ loc: `${baseUrl}/stations/location` }] },
         { url: [{ loc: `${baseUrl}/stations/music` }] },
