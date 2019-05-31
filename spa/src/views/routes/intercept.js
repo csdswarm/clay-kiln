@@ -2,10 +2,10 @@ import SignUp from '../account/views/SignUp'
 import CreateProfile from '../account/views/CreateProfile'
 import UpdateProfile from '../account/views/UpdateProfile'
 // import Welcome from '../views/Welcome'
-// import FacebookCallback from '../views/FacebookCallback'
 import Login from '../account/views/Login'
 import ForgotYourPassword from '../account/views/ForgotYourPassword'
 import ResetPassword from '../account/views/ResetPassword'
+// import GenericSuccess from '../account/views/GenericSuccess'
 import UpdatePassword from '../account/views/UpdatePassword'
 // import EmailVerifiedSuccess from '../views/EmailVerifiedSuccess'
 // import Home from '../views/Home'
@@ -26,12 +26,6 @@ const routes = [
     name: 'UpdateProfile',
     component: UpdateProfile
   },
-  // {
-  //   path: '/account/facebook-callback',
-  //   name: 'FacebookCallback',
-  //   component: FacebookCallback,
-  //   props: true,
-  // },
   {
     path: '/account/signup',
     name: 'SignUp',

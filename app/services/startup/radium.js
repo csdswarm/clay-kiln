@@ -13,7 +13,9 @@ const axios = require('axios'),
     profile: ['application_id', 'created_date', 'modified_date', 'tracking_id', 'user_id', 'userId']
   },
   radiumApi = 'https://radium.radio.com/',
+  facebookCallbackUrL = process.env.FACEBOOK_CALLBACK_URL,
   privateKey = process.env.JWT_SECRET_KEY,
+  cognitoClientId = process.env.COGNITO_CLIENT_ID,
   profileExpires = 10 * 365 * 24 * 60 * 60,
   accessExpires = 10 * 365 * 24 * 60 * 60,
   /**
@@ -22,6 +24,12 @@ const axios = require('axios'),
    * @returns {string} The device_key value from the authToken payload
    */
   getDeviceKey = authToken => (jwt.decode(authToken) || {}).device_key,
+  /**
+   * determines of the response is coming from a user signed in with facebook
+   * @param {object} response
+   * @returns {boolean} whether or not the user is signed in with facebook
+   */
+  isFacebookUser = (response) => response && response.config && response.config.facebookUser,
   /**
    * decodes the cookie and verifies it is valid
    *
@@ -80,12 +88,14 @@ const axios = require('axios'),
    * does the object contain the token information
    *
    * @param {object} object
+   * @param {array} ignoreKeys keys to ignore when determining if token keys exist
    * @return {boolean}
    */
-  hasTokenKeys = (object) => {
-    const keys = Object.keys(object);
+  hasTokenKeys = (object, ignoreKeys = []) => {
+    const keys = Object.keys(object),
+      tokenKeys = excludeKeys.token.filter(key => !ignoreKeys.includes(key));
 
-    return excludeKeys.token.filter((key) => keys.includes(key)).length === excludeKeys.token.length;
+    return tokenKeys.filter((key) => keys.includes(key)).length === tokenKeys.length;
   },
   /**
    * removes keys from the object
@@ -133,27 +143,23 @@ const axios = require('axios'),
    * @return {Promise<Object>}
    */
   call = async (method, url, data, accessToken) => {
-    const options = {
+    const headers = {...accessToken ? {authorization: `Bearer ${accessToken}`} : {}};
+     
+    return await axios({
       method,
       url: `${radiumApi}${url}`,
-      data
-    };
-
-    // add Bearer to all requests if we have a token
-    if (accessToken) {
-      options.headers = {
-        authorization: `Bearer ${accessToken}`
-      };
-    }
-    return await axios(options);
+      data,
+      headers
+    });
   },
   /**
    * obtain the users profile
    *
    * @param {object} tokens
+   * @param {boolean} facebookUser
    * @return {Promise<Object>}
    */
-  getProfile = async (tokens) => {
+  getProfile = async (tokens, facebookUser) => {
     try {
       const [profile, favorites] = await Promise.all([
         call('GET', 'v1/profile', null, tokens.access_token),
@@ -164,7 +170,8 @@ const axios = require('axios'),
         ...profile.data,
         email: tokens.email,
         verified: tokens.verified,
-        favoriteStations: favorites.data.station_ids
+        favoriteStations: favorites.data.station_ids,
+        facebookUser
       };
     } catch (e) {
       // no profile stored, extract what you can from the id token
@@ -177,7 +184,8 @@ const axios = require('axios'),
         last_name: idProfile.family_name || '',
         gender: idProfile.gender ? idProfile.gender.charAt(0).toUpperCase() : '',
         date_of_birth: idProfile.birthdate ? moment(idProfile.birthdate, 'L').utc() : '',
-        verified: false
+        verified: false,
+        facebookUser
       };
     }
   },
@@ -215,10 +223,12 @@ const axios = require('axios'),
    * @param {object} res
    */
   signInLogic = async (response, req, res) => {
+    const facebookUser = isFacebookUser(response),
+      ignoreTokenKeys = facebookUser ? ['device_key'] : [];
 
-    if (hasTokenKeys(response.data)) {
+    if (hasTokenKeys(response.data, ignoreTokenKeys)) {
       // get profile for the user so it can be accessed in clay
-      const profile = await getProfile(response.data);
+      const profile = await getProfile(response.data, facebookUser);
 
       // save the response details
       addCookie(COOKIES.profile, profile, profileExpires, res);
@@ -240,6 +250,22 @@ const axios = require('axios'),
     removeKeys(response.data, [ ...excludeKeys.token, ...excludeKeys.profile ]);
   },
   /**
+    * determine preRoute logic
+    *
+    * @param {object} req
+    * @param {object} res
+    * @param {boolean} continue whether the flow should continue or not
+    */
+  preSignOutLogic = async (req, res) => {
+    const { facebookUser } = decodeCookie(COOKIES.profile, req.cookies) || {};
+
+    if (facebookUser) {
+      await signOutLogic(null, req, res);
+      return false;
+    }
+    return true;
+  },
+  /**
    * specific logic for sign out endpoint to delete cookies
    *
    * @param {object} response
@@ -249,6 +275,26 @@ const axios = require('axios'),
   signOutLogic = async (response, req, res) => {
     deleteCookie(COOKIES.profile, res);
     deleteCookie(COOKIES.accessToken, res);
+  },
+  /**
+    * determine preRoute logic
+    *
+    * @param {object} req
+    * @param {object} res
+    * @returns {boolean} continue whether the flow should continue or not
+    */
+  preRouteLogic = async (req, res) => {
+    const routes = {
+        'POST:/radium/v1/auth/signout': preSignOutLogic
+      },
+      keys = Object.keys(routes),
+      current = `${req.method}:${req.path}`;
+  
+    if (keys.includes(current)) {
+      return await routes[current](req, res);
+    } else {
+      return true;
+    }
   },
   /**
    * specific logic for favorite endpoints to update profile cookie
@@ -323,6 +369,8 @@ const axios = require('axios'),
   apply = async (req, res, retry = true) => {
     const data = req.body,
       retryFunction = retry ? tokenExpired : () => false,
+      method = req.method.toUpperCase(),
+      url = req.params[0],
       authToken = decodeCookie(COOKIES.accessToken, req.cookies);
 
     if (data && data.includeDeviceKey) {
@@ -332,19 +380,84 @@ const axios = require('axios'),
     }
 
     try {
-      const response = await call(req.method.toUpperCase(), req.params[0], data, authToken);
+      if (await preRouteLogic(req, res)) {
+        const response = await call(method, url, data, authToken);
 
-      if (response.status < 400) {
-        await routeLogic(response, req, res);
+        if (response.status < 400) {
+          await routeLogic(response, req, res);
 
-        return response.data;
-      } else {
-        await handleError(response, retryFunction, req, res);
+          return response.data;
+        } else {
+          await handleError(response, retryFunction, req, res);
+        }
       }
     } catch (e) {
       await handleError(e.response, retryFunction, req, res);
     }
+  },
+  /**
+   * handling uncaught errors
+   *
+   * @param {error} error
+   * @param {object} res
+   */
+  catchError = (error, res) => {
+    console.error(error.message);
+    res.status(500).json({ message: 'An unknown error has occurred.' });
+  },
+  /**
+   * Signin for facebook
+   *
+   * @param {object} req
+   * @param {object} res
+   * @return {Promise<Object>}
+   */
+  facebookCallback = async (req, res) => {
+    const { code, error_description } = req.query,
+      redirectUri = `https://${process.env.CLAY_SITE_HOST}/account/facebook-callback`,
+      data = `code=${code}&client_id=${cognitoClientId}&redirect_uri=${redirectUri}&grant_type=authorization_code`,
+      options = {
+        method: 'post',
+        url: facebookCallbackUrL,
+        data,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        crossdomain: true,
+        withCredentials: true,
+        facebookUser: true
+      };
+
+    if (!error_description) {
+      const response = await axios(options);
+  
+      await signInLogic(response, req, res);
+    }
+
+    // Returns a script that passes a message to the origin tab, and then immediately closes the opened tab.
+    return res.send(
+      `<html>
+        <head>
+          <script>window.opener.postMessage(${JSON.stringify({error_description})}, window.location.protocol + '//' + window.location.hostname); window.close();</script>
+        </head>
+        <body></body>
+      </html>`
+    );
+  },
+  /**
+   * Setup radium routes
+   *
+   * @param {object} app Express app
+   */
+  inject = (app) => {
+    app.all('/radium/*', (req, res) => {
+      apply(req, res).then((data) => {
+        return res.json(data);
+      }).catch(e => catchError(e, res));
+    });
+
+    app.use('/account/facebook-callback', (req, res) => {
+      facebookCallback(req, res).catch(e => catchError(e, res));
+    });
   };
 
-module.exports.apply = apply;
+module.exports.inject = inject;
 module.exports.userFromCookie = userFromCookie;

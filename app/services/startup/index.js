@@ -19,7 +19,7 @@ const pkg = require('../../package.json'),
   handleRedirects = require('./redirects'),
   log = require('../universal/log').setup({ file: __filename }),
   user = require('./user'),
-  radiumApi = require('./radium');
+  radium = require('./radium');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -75,24 +75,11 @@ function setupApp(app) {
 
   app.use(user);
 
-  app.use(currentStation);
-
   app.use(locals);
 
-  /**
-   * radium.radio.com endpoints
-   *
-   * This is not in the routes/index.js file because you are forced to be logged in to access any route at that level
-   * There is a tech debt item to investigate with NYM why all routes added by kiln require authentication
-   */
-  app.all('/radium/*', (req, res) => {
-    radiumApi.apply(req, res).then((data) => {
-      return res.json(data);
-    }).catch((e) => {
-      console.log(e);
-      res.status(500).json({ message: 'An unknown error has occurred.' });
-    });
-  });
+  app.use(currentStation);
+
+  radium.inject(app);
 
   app.use(canonicalJSON);
 
