@@ -59,8 +59,8 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   const { meta } = data,
-    filters = locals.query.filter || {},
-    excludes = locals.query.exclude || {},
+    filters = locals.filter || {},
+    excludes = locals.exclude || {},
     query = queryService(data.index, data.query.query ? data.query.query : null), // Build the appropriate query obj for the env
     /**
      * add a condition to the query
