@@ -63,4 +63,4 @@ module.exports.render = (uri, data, locals) => {
   }
 
   return data;
-}
+};
