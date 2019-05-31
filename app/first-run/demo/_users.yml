@@ -159,3 +159,15 @@ _users:
     username: Andrew.Brill@entercom.com
     provider: google
     auth: admin
+  -
+    username: jeff.pope@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: chris.strolia-davis@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: ricky.harkins@swarmsolutions.com
+    provider: google
+    auth: admin

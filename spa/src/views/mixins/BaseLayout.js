@@ -7,6 +7,7 @@
 import URL from 'url-parse'
 import VueTranspiler from '@/lib/VueTranspiler'
 import * as mutationTypes from '../../vuex/mutationTypes'
+import SpaPlayerInterface from '../../lib/SpaPlayerInterface'
 const vueTranspiler = new VueTranspiler()
 export default {
   mounted () {
@@ -44,7 +45,7 @@ export default {
       element.removeEventListener('click', element.fn, false)
 
       const linkParts = new URL(element.getAttribute('href'))
-      this.$router.push(linkParts.pathname || '/')
+      this.$router.push(`${linkParts.pathname}${linkParts.query}` || '/')
     },
     /**
      * Handle any logic required to get a new vue render to function properly
@@ -61,6 +62,27 @@ export default {
       this.$el.querySelectorAll('a.spa-link').forEach(link => {
         link.addEventListener('click', event => {
           this.onSpaLinkClick(event, link)
+        })
+      })
+
+      /**
+       * Execute web player "routing" logic (determines whether to lazy-load player and auto-initialize player bar).
+       *
+       * NOTE: playerInterface.router() is async and returns a promise, but onLayoutUpdate() must be synchronous (because Vue lifecycle methods
+       * must be synchronous). Since the player exists outside of the slice of DOM managed by the SPA, playerInterface.router() is safe to call
+       * as if it was "synchronous" and there is no need to block further execution of onLayoutUpdate() until playerInterface.router() resolves.
+       */
+      const playerInterface = new SpaPlayerInterface(this)
+      playerInterface.router()
+
+      // Attach player play listener on play buttons/elements.
+      this.$el.querySelectorAll('[data-play-station]').forEach(element => {
+        element.addEventListener('click', (event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause'
+
+          playerInterface[playbackStatus](element.dataset.playStation)
         })
       })
 

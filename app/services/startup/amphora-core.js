@@ -12,18 +12,18 @@ function initAmphora(app, search, sessionStore, routes) {
     sessionStore,
     plugins: [
       search,
-      routes
+      routes,
+      require('amphora-schedule')
     ],
-    cacheControl: {}
+    storage: require('amphora-storage-postgres')
   }).then(router => {
-    amphora.schedule.startListening();
-
     router.use(healthCheck({
       env: [
         'AMBROSE_HOST',
         'REDIS_HOST',
         'ELASTIC_HOST',
-        'MASTERMIND'
+        'CLAY_STORAGE_POSTGRES_HOST',
+        'CLAY_BUS_HOST'
       ],
       stats: {
         searchExists: function () {
@@ -33,7 +33,9 @@ function initAmphora(app, search, sessionStore, routes) {
       required: [
         'searchExists',
         'REDIS_HOST',
-        'ELASTIC_HOST'
+        'ELASTIC_HOST',
+        'CLAY_BUS_HOST',
+        'CLAY_STORAGE_POSTGRES_HOST'
       ]
     }));
 

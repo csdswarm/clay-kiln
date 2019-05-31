@@ -51,8 +51,8 @@ headerLinks:
                 enforceMaxlength: true
                 validate:
                   required: true
-                  max: 20
-                  maxMessage: This field must be 20 or fewer characters long
+                  max: 25
+                  maxMessage: This field must be 25 or fewer characters long
             -
               prop: url
               _label: Drawer Sub Nav Url
@@ -85,8 +85,8 @@ headerLinks:
                       enforceMaxlength: true
                       validate:
                         required: true
-                        max: 20
-                        maxMessage: This field must be 20 or fewer characters long
+                        max: 25
+                        maxMessage: This field must be 25 or fewer characters long
 
 _groups:
   settings:

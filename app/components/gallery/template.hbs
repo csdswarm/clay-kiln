@@ -1,15 +1,5 @@
-<section role="main" data-track-type="gallery-detail" data-uri="{{ default _ref _self }}" class="component component--gallery{{ if @root.locals.edit ' editing' }}" itemscope itemtype="http://schema.org/CollectionPage"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
-  <nav class="gallery__breadcrumb">
-    <a href="//{{ @root.locals.site.host }}" class="breadcrumb__link breadcrumb__link--home">{{{ read "components/gallery/media/radiocom-purple-monogram.svg" }}}</a>
-    <span class="breadcrumb__separator">/</span>
-    <a href="//{{ @root.locals.site.host }}/{{sectionFront}}" class="breadcrumb__link">{{sectionFront}}</a>
-    {{#if secondaryGalleryType}}
-      {{ set 'hypenatedSecondaryGalleryType' (replace (replace (urlencode (replace (trim (lowercase secondaryGalleryType)) ' ' '-')) "/" "%2F") "&" "%26") }}
-      <span class="breadcrumb__separator">/</span>
-      <a class="breadcrumb__link"
-         href="//{{ @root.locals.site.host }}/{{ sectionFront }}/{{ hypenatedSecondaryGalleryType }}">{{ secondaryGalleryType }}</a>
-    {{/if}}
-  </nav>
+<section role="main" data-track-type="gallery-detail" data-uri="{{ default _ref _self }}" class="component component--gallery{{ if @root.locals.edit ' editing' }} gallery--{{sectionFront}}" itemscope itemtype="http://schema.org/CollectionPage"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
+  {{> breadcrumbs this }}
   <header class="gallery__header">
     {{! gallery microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
@@ -32,8 +22,12 @@
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
-    <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{#ifAny @root.locals.edit subHeadline}}
+      <span class="header__secondary" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+    {{/ifAny}}
   </header>
+
+  {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="gallery__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
@@ -48,7 +42,7 @@
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
-        <div data-editable="bylines" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
+        <div data-editable="bylinesAndStationLogo" class="info__by-authors{{#unless stationTitle}} info__by-authors--no-station{{/unless}}">
           {{{ byline bylines=byline authorHost=@root.locals.site.host showSocial=./showSocial }}}<!-- THIS IS TO ALLOW THE COMMA (Line 55) TO APPEAR INLINE WITHOUT WHITESPACE
           -->{{#each byline as |byline|}}<!--
             -->{{#each sources as |source|}}<!--
@@ -56,14 +50,14 @@
             {{/each}}
           {{/each}}
           {{#if stationTitle}}<span>,</span>{{/if}}
-        </div>
 
-        <div class="info__from-station" data-editable="stationSource">
-          {{#ifAll stationTitle stationURL}}
-            <a href="{{ striptags stationURL }}" target="_blank">{{ stationTitle }}</a>
-          {{else if stationTitle}}
-            {{ stationTitle }}
-          {{/ifAll}}
+          {{#if stationLogoUrl}}
+            <div class="info__from-station">
+              <a href="{{ striptags stationURL }}" target="_blank">
+                <img class="from-station__logo" src="{{ stationLogoUrl }}?width=60&height=60&crop=1:1" />
+              </a>
+            </div>
+          {{/if}}
         </div>
 
         {{! date and time }}
@@ -115,7 +109,11 @@
               </ul>
             </section>
           {{/if}}
-          <div data-editable="slides">{{> component-list slides }}</div>
+          {{#each slides }}
+            <div data-editable="slides">
+              {{> (getComponentName this._ref) this }}
+            </div>
+          {{/each}}
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
@@ -141,6 +139,12 @@
           {{/if}}
         {{/if}}
       </div>
+
+      {{#ifAny footer @root.locals.edit}}
+        <div class="content__footer" data-editable="footer">
+          {{> component-list footer }}
+        </div>
+      {{/ifAny}}
 
       {{! Tags }}
       {{> tags tags}}
@@ -175,12 +179,26 @@
               <h4 class="item-title required">SEO Description</h4>
               <p class="item-data">{{{ default seoDescription empty }}}</p>
             </li>
+          </ul>
+        </section>
+
+        <section class="circulation__section" data-editable="syndication">
+          <h3 class="subtitle circ-edit">Syndication</h3>
+          <ul class="items">
             <li class="item">
-              <h4 class="item-title required">Syndication Status</h4>
+              <h4 class="item-title">Featured</h4>
+              <p class="item-data">{{ if featured 'Yes' else='No' }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Editorial Feeds Term(s)</h4>
+              <p class="item-data">{{{ default (commaSeparated editorialFeeds false) empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Syndication Status</h4>
               <p class="item-data">{{{ default syndicationStatus empty }}}</p>
             </li>
             <li class="item">
-              <h4 class="item-title required">Syndicated URL</h4>
+              <h4 class="item-title">Syndicated URL</h4>
               <p class="item-data">{{{ default syndicatedUrl empty }}}</p>
             </li>
           </ul>
@@ -236,7 +254,7 @@
             </li>
             <li class="item">
               <h4 class="item-title">Secondary Gallery Type</h4>
-              <p class="item-data">{{ secondaryGalleryType }}</p>
+              <p class="item-data">{{ secondaryArticleType }}</p>
             </li>
           </ul>
         </section>

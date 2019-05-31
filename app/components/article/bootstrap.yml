@@ -1,56 +1,46 @@
 _components:
   article:
-    headline: ''
     primaryHeadline: ''
-    seoHeadline: ''
-    shortHeadline: ''
+    headline: ''
+    subHeadline: ''
     feedImgUrl: ''
-    siloImgUrl: ''
     feedLayout: small
     teaser: ''
-    authors: []
+    slug: ''
     byline:
       -
         prefix: by
         names: []
         sources: []
-    authorsAndMeta: []
-    secondaryBylineText: 'Photograph By'
-    secondaryAttribution: []
-    dateUpdated: false
-    content: []
+    syndicatedUrl: ''
+    syndicationStatus: original
+    lead: []
+    content:
+      - _ref: /_components/paragraph/instances/new
     tags:
-      _ref: /_components/tags
-    sponsoredTag:
-      _ref: /_components/sponsored-tag
-    sideShare: {}
-    bottomShare: {}
+      _ref: /_components/tags/instances/new
+    contentPageSponsorLogo:
+      _ref: /_components/google-ad-manager/instances/contentPageLogoSponsorship
+    sideShare: /_components/share/instances/new
     feeds:
       sitemaps: true
       rss: true
       most-popular: true
       newsfeed: true
       apple-news: true
+    secondaryArticleType: ''
+    showSocial: true
+    authors: []
+    sources: []
+    canBeMarkedGoogleStandout: true
+    availableStandoutArticleInventory: true
+    articleWithinGoogleStandoutPublishDateLimit: true
+    rollingStandoutCount: 0
+    componentVariation: article
+    empty: <span class=\"circulation--empty\">None</span>
+    pageTitle: ''
+    plaintextPrimaryHeadline: ''
     sectionFront: ''
     contentType: 'article'
-    secondaryArticleType: ''
-    crosspost:
-      di: false
-      vulture: false
-      wwwthecut: false
-      scienceofus: false
-      grubstreet: false
-      selectall: false
-      strategist: false
-      vindicated: false
-      betamale: false
-      nyxny: false
-    syndicatedUrl: ''
-    syndicationStatus: original
-    shouldHideAds: false
-    slugLock: false
-    showSocial: true
-    adDummy:
-      _ref: /_components/ad-dummy/instances/general
-    eligibleForGoogleStandout: false
-    originUrl: ''
+    featured: false
+    editorialFeeds: {}
