@@ -54,7 +54,7 @@ class ClientUserInterface {
    */
   async addFavorite(stationId) {
     return await clientCommunicationBridge.sendMessage('SpaUserFavorite', {  action: 'addFavorite', stationId });
-  }p
+  }
 
   /**
    *
