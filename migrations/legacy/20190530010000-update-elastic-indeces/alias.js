@@ -1,10 +1,10 @@
 'use strict';
 
 const aliasesJSON = require(`${__dirname}/aliases.json`),
-  host = process.argv.slice(2)[0];
+  indexPrefix = process.argv.slice(2)[0];
 
-if (!host) {
-  throw new Error('Missing host');
+if (!indexPrefix) {
+  throw new Error('Missing indexPrefix');
 }
 
 const keys = Object.keys(aliasesJSON);

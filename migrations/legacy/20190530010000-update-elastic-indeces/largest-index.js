@@ -1,11 +1,11 @@
 'use strict';
 
-const host = process.argv.slice(2)[0],
+const indexPrefix = process.argv.slice(2)[0],
   indices = process.argv.slice(3)[0];
 
-if (!host) {
+if (!indexPrefix) {
   console.log(process.argv);
-  throw new Error('Missing host');
+  throw new Error('Missing indexPrefix');
 }
 
 if (!indices) {
@@ -13,14 +13,16 @@ if (!indices) {
   throw new Error('Missing indices');
 }
 
-const versions = indices.match(/pages_v(\d+)/g);
+let indexRegexGlobal = new RegExp(`${indexPrefix}_v(\\d+)`, 'g');
+let indexRegexSingle = new RegExp(`${indexPrefix}_v(\\d+)`, '');
+const versions = indices.match(indexRegexGlobal);
 if (!versions) {
-  throw new Error('Cannot find any indices matching: pages_v(\\d+)');
+  throw new Error(`Cannot find any indices matching: ${indexPrefix}_v(\\d+)`);
 }
 
 versions.sort((a,b) => {
-  const versionA = parseInt(a.match(/pages_v(\d+)/)[1]);
-  const versionB = parseInt(b.match(/pages_v(\d+)/)[1]);
+  const versionA = parseInt(a.match(indexRegexSingle)[1]);
+  const versionB = parseInt(b.match(indexRegexSingle)[1]);
 
   return versionA - versionB;
 });
