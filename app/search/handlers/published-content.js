@@ -29,7 +29,6 @@ function getContent(obj, param) {
     .parallel(1) // Merge each individual stream into the bigger stream
     .collect() // Turn each individual object into an array of objects
     .map(resolvedContent => {
-      log('info', `PUB-TEST: In resolvedContent`, {resolvedContent})
       obj.value[param] = resolvedContent; // Assign the array of resolved objects to the original property
       return obj; // Return the original, now modified object
     });
@@ -127,7 +126,7 @@ function save(stream) {
 /**
  * Send the data to Elastic
  *
- * @param  {Array} ops
+ * @param  {Object} op
  * @return {Function}
  */
 function send(op) {
