@@ -16,5 +16,9 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-res=$(node ./publish-pages.js $http $1)
-echo "\n\n$res\n\n"
+npm i
+
+node ./publish-pages.js $http $1
+
+rm ./package-lock.json
+rm -rf ./node_modules

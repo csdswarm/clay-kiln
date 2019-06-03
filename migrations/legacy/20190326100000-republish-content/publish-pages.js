@@ -1,6 +1,8 @@
 'use strict';
 
-const httpOrHttps = process.argv.slice(2)[0],
+
+const h = require('highland'),
+  httpOrHttps = process.argv.slice(2)[0],
   host = process.argv.slice(2)[1],
   http = httpOrHttps == 'http' ? require('http') : require('https'),
   options = {
@@ -52,19 +54,21 @@ async function republishPages() {
   const publishedPagesRes = await makeRequest('/_pages/@published', 'GET'),
     publishedPages = JSON.parse(publishedPagesRes);
 
-  for (let i = 0; i < publishedPages.length; i++) {
-    let page = publishedPages[i],
-      hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
+  return h(publishedPages)
+    .map((page) => {
+      let hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
 
-    if (hash) {
       // only republish content, skip other pages
-      const slug = hash.groups.unity || hash.groups.imported;
-
-      if (slug) {
-        await makeRequest(`/_pages/${slug}@published`, 'PUT');
+      if (hash && (hash.groups.unity || hash.groups.imported)) {
+        const slug = hash.groups.unity || hash.groups.imported;
+        return h(makeRequest(`/_pages/${slug}@published`, 'PUT'));
+      } else {
+        return h.of(page);
       }
-    }
-  }
+    })
+    .parallel(4)
+    // for some reason it doesn't run the map fn unless this each is here after
+    .each(() => {});
 }
 
 republishPages();
