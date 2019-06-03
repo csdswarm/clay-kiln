@@ -129,3 +129,9 @@ build-player:
 .PHONY: spa
 spa:
 	cd spa && npm i && npm run-script build -- --mode=none
+
+spa-dev:
+	cd spa && npm i && npm run-script build -- --mode=none --watch
+
+app-dev:
+	cd app && npm i && npm run watch

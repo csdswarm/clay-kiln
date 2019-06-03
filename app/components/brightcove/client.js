@@ -59,7 +59,19 @@ class Brightcove extends Video {
    * @override
    */
   async unmute() {
-    await this.getMedia().muted(false);
+    // only unmute if the user has actually interacted with the player
+    if (this.getMedia().userActive()) {
+      await this.getMedia().muted(false);
+    }
+  }
+  /**
+   * @override
+   */
+  pauseOtherActiveMedia() {
+    // only pause if the user has actually interacted with the player
+    if (this.getMedia().userActive()) {
+      return super.pauseOtherActiveMedia();
+    }
   }
 }
 

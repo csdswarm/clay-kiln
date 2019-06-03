@@ -27,7 +27,7 @@ class VerizonMedia extends Video {
       }).load(),
       id = component.getAttribute('data-video-id');
 
-    return { id, media, node: component };
+    return { id, media, node: component.querySelector('div') };
   }
   /**
    * @override

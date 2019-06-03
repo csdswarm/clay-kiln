@@ -76,32 +76,32 @@ class Media {
    * @param {Element} component
    */
   whenScriptsLoaded(component) {
-    const { id, media, node, persistent } = this.createMedia(component);
+    const { id, media, node, persistent } = this.createMedia(component),
+      mediaObserver = new IntersectionObserver((change) => this.mediaIsNotInView(change), {threshold: 0});
 
     this.id = id;
     this.media = media;
     this.node = node;
     this.persistent = Boolean(persistent);
 
+    // Observe media for if it goes out of view
+    mediaObserver.observe(this.getNode());
+
     this.prepareMedia();
+
+    // Once setup, add it to the list of media on the page
+    currentMedia.push(this);
   }
   /**
    * add the events to pause media when required
    *
    */
   prepareMedia() {
-    const mediaObserver = new IntersectionObserver((change) => this.mediaIsNotInView(change), {threshold: 0}),
-      eventTypes = this.getEventTypes();
+    const eventTypes = this.getEventTypes();
 
     // When a media begins playing trigger a stop on all others on page (must track media and ad events)
     this.addEvent(eventTypes.MEDIA_PLAY, () => this.pauseOtherActiveMedia());
     this.addEvent(eventTypes.AD_PLAY, () => this.pauseOtherActiveMedia());
-
-    // Observe media for if it goes out of view
-    mediaObserver.observe(this.getNode());
-
-    // Once completely setup, add it to the list of media on the page
-    currentMedia.push(this);
   }
   /**
    * Returns the node

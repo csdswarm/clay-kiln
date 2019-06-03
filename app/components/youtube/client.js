@@ -103,7 +103,9 @@ class YouTube extends Video {
    * @override
    */
   async pause() {
-    await this.getMedia().pauseVideo();
+    if (this.getMedia().pauseVideo) {
+      await this.getMedia().pauseVideo();
+    }
   }
   /**
    * @override
