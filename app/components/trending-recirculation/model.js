@@ -1,6 +1,9 @@
 'use strict';
 
-const _ = require('lodash'),
+const _get = require('lodash/get'),
+  _map = require('lodash/map'),
+  abTest = require('../../services/universal/a-b-test'),
+  lyticsApi = require('../../services/universal/lyticsApi'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   elasticFields = [
@@ -22,7 +25,7 @@ module.exports.save = (ref, data, locals) => {
     return data;
   }
 
-  return Promise.all(_.map(data.items, async (item) => {
+  return Promise.all(_map.map(data.items, async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
     const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
@@ -46,4 +49,19 @@ module.exports.save = (ref, data, locals) => {
 
       return data;
     });
+};
+
+module.exports.render = async (ref, data, locals) => {
+  const lyticsId = _get(locals, 'lytics.uid'),
+    recommendations = await lyticsApi.recommend(lyticsId);
+
+  console.log({recommendations});
+
+  if (lyticsId && abTest()) {
+    console.log('should get lytics articles');
+  } else {
+    console.log('continue');
+  }
+
+  return data;
 };
