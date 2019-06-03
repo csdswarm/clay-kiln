@@ -64,3 +64,11 @@ module.exports.render = (uri, data, locals) => {
 
   return data;
 };
+
+module.exports.save = (uri, data, locals) => {
+  data.pageTitle = data.title;
+  data.ogTitle = data.title;
+  data.pageListTitle = data.title;
+
+  return data;
+};
