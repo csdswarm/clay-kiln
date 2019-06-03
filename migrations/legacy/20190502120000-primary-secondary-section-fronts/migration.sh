@@ -19,7 +19,32 @@ fi
 printf "Add new section front lists...\n"
 cat ./_lists.yml | clay import -k demo -y $1
 
-# find out which index is currently being used 
+printf "\nUpdating Section Fronts to Add Podcast Modules...\n\n"
+
+# _components/section-front/instances/sports
+componentType="section-front"
+instanceType="sports"
+printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
+node ./section-front-update.js "$1" "$componentType" "$instanceType";
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$componentType-$instanceType.json
+rm ./$componentType-$instanceType.yml
+printf "\n\n\n\n"
+
+printf "\nUpdating New Pages to Add Section Front...\n\n"
+
+# _lists/new-pages
+listType="new-pages"
+printf "\n\nUpdating _lists instance $listType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_lists/$listType > ./lists-$listType.json
+node ./new-pages-update.js "$1" "$listType";
+cat ./lists-$listType.yml | clay import -k demo -y $1
+rm ./lists-$listType.json
+rm ./lists-$listType.yml
+printf "\n\n\n\n"
+
+# find out which index is currently being used
 printf "\nmaking curl GET to $es:9200/published-content/_alias\n";
 curl -X GET "$es:9200/published-content/_alias" > ./aliases.json;
 currentIndex=$(node alias "$1");
@@ -49,7 +74,7 @@ if [[ $mappings == *"secondaryArticleType"* && $mappings != *"secondarySectionFr
   currentKey="secondaryArticleType";
   newKey="secondarySectionFront";
   newMappings=$(sed s/$currentKey/$newKey/ ./mappings.json);
-  
+
   curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "{$settings,$newMappings}";
   rm ./settings.json ./settings.txt ./mappings.json;
 
