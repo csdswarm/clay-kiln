@@ -53,14 +53,19 @@ module.exports.save = (ref, data, locals) => {
 
 module.exports.render = async (ref, data, locals) => {
   const lyticsId = _get(locals, 'lytics.uid'),
-    recommendations = await lyticsApi.recommend(lyticsId);
+    useLytics = lyticsId && abTest();
+  
+  if (useLytics) {
+    const recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, visited: true}),
+      articles = recommendations.data.map(upd => ({
+        url: `https://${upd.url}`,
+        canonicalUrl: `https://${upd.url}`,
+        primaryHeadline: upd.title,
+        feedImgUrl: upd.primary_image
+      }));
 
-  console.log({recommendations});
-
-  if (lyticsId && abTest()) {
-    console.log('should get lytics articles');
-  } else {
-    console.log('continue');
+    data.items = articles;
+    data.lytics = true;
   }
 
   return data;
