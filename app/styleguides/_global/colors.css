@@ -10,12 +10,12 @@ $whiteRGB: 255, 255, 255;
 $alabaster: #F7F7F7; /* Ad Slot Container */
 $alto: #d8d8d8;
 $boulder: #777;
-$doveGray: #666;
-$tundora: #444;
-$dustyGray: #9B9B9B;
 $concrete: #F3F3F3;
+$doveGray: #666;
+$dustyGray: #9B9B9B;
 $mercury: #E1E1E1;
 $silverChalice: #A6A6A6;
+$tundora: #444;
 $wildSand: #F5F5F5;
 
 /* Reds */
@@ -37,10 +37,10 @@ $azureRadience: #0099FF; /* Sports */
 $azureRadienceRGB: 0, 153, 255;
 $cerulean: #05aeee; /* Twitter Blue */
 $chambray: #3b5998; /* Facebook Blue */
+$endeavor: #0056b3;
 $hawkesBlue: #e3f2fd; /* Kiln Edit Mode Components */
 $robinsEggBlue: #00CCB7; /* Podcasts */
 $robinsEggBlueRGB: 0, 204, 183;
-$endeavor: #0056b3;
 
 /* Purples */
 $parisM: #1F055E; /* Primary Dark */
