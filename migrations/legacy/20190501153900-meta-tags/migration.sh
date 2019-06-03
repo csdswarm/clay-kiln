@@ -16,5 +16,4 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-res=$(node ./add-meta-tags.js $http $1)
-printf "\n\n$res\n\n"
+node ./add-meta-tags.js $http $1
