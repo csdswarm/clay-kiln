@@ -70,24 +70,14 @@
                         }
 
                         const stationsResponse = await radioApi.get(apiRequest);
-                        console.log('response', stationsResponse)
-                        
+
                         if (stationsResponse) {
                             this.stationOptions = stationsResponse.data.map(station => {
                                 return station.attributes.name;
-                                // return {
-                                //     label: station.attributes.name,
-                                //     slug: station.attributes.slug,
-                                //     site_slug: station.attributes.site_slug,
-                                //     id: station.attributes.id,
-                                //     name: station.attributes.name,
-                                //     callsign: station.attributes.callsign,
-                                // }
                             });
                             this.cachedResults[this.filter] = this.stationOptions;
                         }
                     }
-                    console.log(this);
                 } catch (e) {
                     console.log(e);
                 }
@@ -97,7 +87,6 @@
              * @param {Object} input
              */
             updateSelectedStation(input) {
-                console.log('update selected station');
                 try {
                     this.selectedStation = input;
                     this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedStation })
