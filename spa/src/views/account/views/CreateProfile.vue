@@ -26,7 +26,6 @@
           name="firstName"
           @change="onFieldChange($event)"
         >
-        <label>First Name</label>
       </div>
       <div class="floating-label">
         <input
@@ -37,7 +36,6 @@
           name="lastName"
           @change="onFieldChange($event)"
         >
-        <label>Last Name</label>
       </div>
       <div class="gender-box">
         <label>Gender</label>
@@ -96,7 +94,6 @@
               aria-required="true"
               @change="onHtml5DateChange($event)"
             >
-            <label for="dateOfBirth">Date of Birth</label>
             {{user.dateOfBirth}}
           </div>
         </div>
@@ -107,7 +104,6 @@
             format="MM-dd-yyyy"
             @selected="onVueDatepickerChange($event)"
           >
-            <label slot="afterDateInput">Date of Birth</label>
           </datepicker>
         </div>
       </div>
@@ -119,7 +115,6 @@
           name="zipCode"
           @change="onFieldChange($event)"
         >
-        <label>Zip Code</label>
       </div>
     </fieldset>
     <div>

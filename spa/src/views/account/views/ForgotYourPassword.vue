@@ -13,7 +13,6 @@
         <router-link to="/account/login">Log In</router-link>
         |
         <router-link to="/account/signup">Create an Account</router-link>
-
       </span>
     </p>
   </div>
