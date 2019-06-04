@@ -8,7 +8,7 @@
       <ui-select
         :placeholder="'Select Categor(ies)'"
         :hasSearch="true"
-        :help="'Select categor(ies) to syndicate out to'"
+        :help="'Select categor(ies) to syndicate out to. You may search within the dropdown as well.'"
         :multiple="true"
         :options="categoryOptions"
         :value="value"
@@ -63,7 +63,6 @@
          * @param {Object} input
          */
         updateSelectedCategory(input) {
-          console.log('update selected category');
           try {
             this.selectedCategory = input;
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedCategory })

@@ -8,7 +8,7 @@
       <ui-select
         :placeholder="'Select Genre(s)'"
         :hasSearch="true"
-        :help="'Select genre(s) to syndicate out to'"
+        :help="'Select genre(s) to syndicate out to. You may search within the dropdown as well.'"
         :multiple="true"
         :options="genreOptions"
         :value="value"
@@ -63,7 +63,6 @@
          * @param {Object} input
          */
         updateSelectedGenre(input) {
-          console.log('update selected genre');
           try {
             this.selectedGenre = input;
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedGenre })

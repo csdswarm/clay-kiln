@@ -1,7 +1,7 @@
 'use strict';
 
 // Require depedencies.
-const stationSelect = require('./station-select.vue');
+const stationSelect = require('./station-select.vue'),
   categorySelect = require('./category-select.vue'),
   genreSelect = require('./genre-select.vue');
 

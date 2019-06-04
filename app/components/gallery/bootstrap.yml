@@ -32,6 +32,9 @@ _components:
       _ref: /_components/share/instances/new
     sectionFront: ''
     contentType: 'gallery'
+    stationSyndication: []
+    categorySyndication: []
+    genreSyndication: []
     syndicatedUrl: ''
     syndicationStatus: original
     showSocial: true
