@@ -55,8 +55,8 @@ module.exports.save = (ref, data, locals) => {
 module.exports.render = async (ref, data, locals) => {
   if (abTest()) {
     const lyticsId = _get(locals, 'lytics.uid'),
-      userDefinedParams = lyticsId ? {contentsegment: 'recommended_for_you', url: locals.url} : {},
-      recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, ...userDefinedParams}),
+      noUserParams = lyticsId ? {} : {contentsegment: 'recommended_for_you', url: locals.url},
+      recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, ...noUserParams}),
       articles = recommendations.data.map(upd => ({
         url: `https://${upd.url}`,
         canonicalUrl: `https://${upd.url}`,
