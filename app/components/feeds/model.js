@@ -70,12 +70,18 @@ module.exports.render = async (ref, data, locals) => {
      * @param {Function} createObj - a function that take the value and returns the object representation
      * @param {String} condition - possible options addShould/addMust/addMustNot
      */
-    addCondition = (item, nested, createObj, condition) => {
+    addCondition = (item, nested, createObj, condition, boolMatch) => {
       if (item) {
         const localQuery = nested ? queryService.newNestedQuery(nested) : query,
           items = item.split(',');
 
-        items.forEach(instance => queryService[condition](localQuery, { match: createObj(instance)}));
+        items.forEach(instance => {
+          if (boolMatch) {
+            queryService[condition](localQuery, createObj(instance));
+          } else {
+            queryService[condition](localQuery, { match: createObj(instance)});
+          }
+        });
         if (condition === 'addShould') {
           queryService.addMinimumShould(localQuery, 1);
         }
@@ -91,9 +97,9 @@ module.exports.render = async (ref, data, locals) => {
      * @param {String} nested
      * @param {Function} createObj
      */
-    addFilterAndExclude = (key, nested, createObj) => {
-      addCondition(filters[key], nested, createObj, 'addShould');
-      addCondition(excludes[key], nested, createObj, 'addMustNot');
+    addFilterAndExclude = (key, nested, createObj, boolMatch) => {
+      addCondition(filters[key], nested, createObj, 'addShould', boolMatch);
+      addCondition(excludes[key], nested, createObj, 'addMustNot', boolMatch);
     },
     queryFilters = {
       // vertical (sectionfront) and/or exclude tags
@@ -104,8 +110,18 @@ module.exports.render = async (ref, data, locals) => {
       subcategory: { createObj: secondaryArticleType => ({ secondaryArticleType }) },
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
-      // stations (nested object search)
-      station: { createObj: station => ({ 'byline.sources.text': station }), nested: 'byline' }
+      // stations (bool search of nested bylines & stationSyndication fields)
+      station: { createObj: station => ([
+          { match: { 'byline.sources.text': station }},
+          { match: { 'stationSyndication.normalized': station }},
+        ]),
+        nested: 'byline',
+        boolMatch: true,
+      },
+      // categories syndicated to (categorySyndication)
+      category: { createObj: categorySyndication => ({ 'categorySyndication.normalized': categorySyndication }) },
+      // genres syndicated to (genreSyndication)
+      genre: { createObj: genreSyndication => ({ 'genreSyndication.normalized': genreSyndication }) }
     };
 
   queryService.addSize(query, filters.size ? filters.size : data.query.size);
@@ -115,7 +131,7 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
-  Object.entries(queryFilters).forEach(([key, { nested, createObj }]) => addFilterAndExclude(key, nested, createObj));
+  Object.entries(queryFilters).forEach(([key, { nested, createObj, boolMatch }]) => addFilterAndExclude(key, nested, createObj, boolMatch));
 
   try {
     if (meta.rawQuery) {
