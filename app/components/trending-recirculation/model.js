@@ -12,7 +12,8 @@ const _get = require('lodash/get'),
     'canonicalUrl',
     'feedImgUrl',
     'sectionFront'
-  ];
+  ],
+  defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 /**
  * @param {string} ref
@@ -52,16 +53,15 @@ module.exports.save = (ref, data, locals) => {
 };
 
 module.exports.render = async (ref, data, locals) => {
-  const lyticsId = _get(locals, 'lytics.uid'),
-    useLytics = lyticsId && abTest();
-  
-  if (useLytics) {
-    const recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, visited: true}),
+  if (abTest()) {
+    const lyticsId = _get(locals, 'lytics.uid'),
+      userDefinedParams = lyticsId ? {contentsegment: 'recommended_for_you', url: locals.url} : {},
+      recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, ...userDefinedParams}),
       articles = recommendations.data.map(upd => ({
         url: `https://${upd.url}`,
         canonicalUrl: `https://${upd.url}`,
         primaryHeadline: upd.title,
-        feedImgUrl: upd.primary_image
+        feedImgUrl: upd.primary_image || defaultImage
       }));
 
     data.items = articles;

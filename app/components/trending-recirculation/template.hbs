@@ -3,9 +3,10 @@
          data-track-type="trending-recirculation"
          data-editable="trendingItems">
   <h2 class="trending__title">
-    <span>TRENDING on RADIO.COM</span>
     {{#if lytics}}
-      <span>(from Lytics)</span>
+      <span>You Might Like...</span>
+    {{else}}
+      <span>TRENDING on RADIO.COM</span>
     {{/if}}
   </h2>
   <div class="trending__data">
