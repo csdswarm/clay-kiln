@@ -11,14 +11,8 @@ const _forEach = require('lodash/forEach'),
   { renderComponent } = require('../../../services/startup/feed-components');
 
 /**
-<<<<<<< HEAD
  * takes in an array of content objects ({ data: JSON, _ref: componentUrl }) and creates the html for that component.
  * finds the component type from parsing the componentUrl from _ref
-=======
- * takes in an array of content objects ({ data: JSON, _ref: componentUrl })
- * and creates the html for that component. finds the
- * component type from parsing the componentUrl from _ref
->>>>>>> ON-617-Syndication-Taxonomy
  *
  * @param {Array} content
  * @param {Object} locals
