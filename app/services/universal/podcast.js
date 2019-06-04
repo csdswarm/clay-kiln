@@ -31,8 +31,9 @@ module.exports.createImageUrl = image => {
   const baseImage = urlParse(image, true),
     parsedParams = baseImage.query;
     
-    parsedParams['size'] = 'small';
-    const stringParams = querystring.stringify(parsedParams);
+  parsedParams['size'] = 'small';
+  // eslint-disable-next-line one-var
+  const stringParams = querystring.stringify(parsedParams);
 
   return `${baseImage.origin}${baseImage.pathname}?${stringParams}&`;
 };
