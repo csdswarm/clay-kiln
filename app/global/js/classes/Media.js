@@ -101,7 +101,9 @@ class Media {
 
     // When a media begins playing trigger a stop on all others on page (must track media and ad events)
     this.addEvent(eventTypes.MEDIA_PLAY, () => this.pauseOtherActiveMedia());
-    this.addEvent(eventTypes.AD_PLAY, () => this.pauseOtherActiveMedia());
+    if (eventTypes.AD_PLAY) {
+      this.addEvent(eventTypes.AD_PLAY, () => this.pauseOtherActiveMedia());
+    }
   }
   /**
    * Returns the node
@@ -179,7 +181,8 @@ class Media {
       MEDIA_PLAY: 'play',
       MEDIA_VOLUME: 'volume',
       MEDIA_READY: 'ready',
-      AD_PLAY: 'ad_play'
+      AD_PLAY: 'ad_play',
+      AD_VOLUME: 'ad_volume'
     };
   }
   /**

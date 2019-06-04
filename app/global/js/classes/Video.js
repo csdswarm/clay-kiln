@@ -36,7 +36,10 @@ class Video extends Media {
    */
   pauseOnUnmute(eventTypes) {
     // the volume watcher since some videos change volume on play/pause causing things to pause
-    this.addEvent(eventTypes.MEDIA_VOLUME, () => this.pauseOtherActiveMedia('VOLUME'));
+    this.addEvent(eventTypes.MEDIA_VOLUME, () => this.pauseOtherActiveMedia());
+    if (eventTypes.AD_VOLUME) {
+      this.addEvent(eventTypes.AD_VOLUME, () => this.pauseOtherActiveMedia());
+    }
   }
   /**
    * automatically play the lede video while muted, otherwise unmute and pause the video

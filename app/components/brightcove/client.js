@@ -34,7 +34,8 @@ class Brightcove extends Video {
       MEDIA_PLAY: 'play',
       MEDIA_READY: 'loadedmetadata',
       AD_PLAY: 'ads-play',
-      MEDIA_VOLUME: 'volumechange'
+      MEDIA_VOLUME: 'volumechange',
+      AD_VOLUME: 'ads-volumechange'
     };
   }
   /**
