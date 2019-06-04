@@ -26,7 +26,7 @@ module.exports.save = (ref, data, locals) => {
     return data;
   }
 
-  return Promise.all(_map.map(data.items, async (item) => {
+  return Promise.all(_map(data.items, async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
     const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
@@ -52,6 +52,12 @@ module.exports.save = (ref, data, locals) => {
     });
 };
 
+/**
+ * @param {string} ref
+ * @param {object} data
+ * @param {object} locals
+ * @returns {Promise}
+ */
 module.exports.render = async (ref, data, locals) => {
   if (abTest()) {
     const lyticsId = _get(locals, 'lytics.uid'),
