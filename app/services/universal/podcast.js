@@ -1,5 +1,8 @@
 'use strict';
 
+const urlParse = require('url-parse'),
+  querystring = require('query-string');
+
 /**
  * returns a url for a podcast based on the title
  * @param {string} title
@@ -25,7 +28,11 @@ module.exports.createUrl = (title) => {
  * @returns {string}
  */
 module.exports.createImageUrl = image => {
-  const smallImage = image.toLowerCase().replace(/size=medium|size=large/i, 'size=small');
-  
-  return smallImage.includes('?') ? `${ smallImage }&` : `${ smallImage }?`;
+  const baseImage = urlParse(image, true),
+    parsedParams = baseImage.query;
+    
+    parsedParams['size'] = 'small';
+    const stringParams = querystring.stringify(parsedParams);
+
+  return `${baseImage.origin}${baseImage.pathname}?${stringParams}&`;
 };
