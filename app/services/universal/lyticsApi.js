@@ -47,4 +47,3 @@ const accessToken = process.env.LYTICS_API_KEY,
   };
 
 module.exports.recommend = recommend;
-module.exports.request = request;

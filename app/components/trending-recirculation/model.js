@@ -1,7 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _map = require('lodash/map'),
   abTest = require('../../services/universal/a-b-test'),
   lyticsApi = require('../../services/universal/lyticsApi'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
@@ -26,7 +25,7 @@ module.exports.save = (ref, data, locals) => {
     return data;
   }
 
-  return Promise.all(_map(data.items, async (item) => {
+  return Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
     const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
