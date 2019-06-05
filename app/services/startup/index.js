@@ -13,7 +13,7 @@ const pkg = require('../../package.json'),
   initCore = require('./amphora-core'),
   locals = require('./spaLocals'),
   currentStation = require('./currentStation'),
-  // redirectTrailingSlash = require('./trailing-slash'),
+  redirectTrailingSlash = require('./trailing-slash'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
   log = require('../universal/log').setup({ file: __filename });
@@ -53,8 +53,7 @@ function setupApp(app) {
     next();
   });
 
-  // Page Editing problems
-  // app.use(redirectTrailingSlash);
+  app.use(redirectTrailingSlash);
 
   // nginx limit is also 1mb, so can't go higher without upping nginx
   app.use(bodyParser.json({
