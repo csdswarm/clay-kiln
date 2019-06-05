@@ -21,11 +21,6 @@ newsTalkDirectory:
     include:
       - directory-genre
 
-newsDirectory:
-  _component:
-    include:
-      - directory-genre
-
 sportsDirectory:
   _component:
     include:
