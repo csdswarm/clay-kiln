@@ -91,8 +91,8 @@ export default {
      * @param {string} url
      * @returns {RegExp}
      */
-    createRegExp: (url) => {
-      let regExp = url.replace(/\*/g, '.*')
+    createRegExp (url) {
+      const regExp = url.replace(/\*/g, '.*')
 
       return new RegExp(`^${regExp}`, 'i')
     },
@@ -174,7 +174,9 @@ export default {
      * @param {string} url
      * @returns {boolean}
      */
-    isLocalUrl: (url) => !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url),
+    isLocalUrl (url) {
+      return !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url)
+    },
     /**
      *
      * Returns an object with all the JSON payload required for a page render.
