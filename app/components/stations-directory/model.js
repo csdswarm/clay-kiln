@@ -35,7 +35,7 @@ function getAllMarkets() {
  * @param {boolean} newsTalk
  * @returns {Promise<array>}
  */
-function getAllMusicGenres(newsTalk) {
+function getAllGenres(newsTalk) {
   const route = 'genres',
     params = {
       'page[size]': 100
@@ -68,8 +68,8 @@ module.exports.render = async (uri, data, locals) => {
   }
 
   data.location = locals.allMarkets = await getAllMarkets();
-  data.music = locals.allMusic = await getAllMusicGenres();
-  locals.allNewsTalk = await getAllMusicGenres(true);
+  data.music = locals.allMusic = await getAllGenres();
+  locals.allNewsTalk = await getAllGenres(true);
   let path = url.parse(locals.url).pathname;
 
   if (path.includes('location') || path.includes('music')) {
