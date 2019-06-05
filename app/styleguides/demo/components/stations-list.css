@@ -194,6 +194,9 @@
           }
         }
       }
+      .component--station-detail .container--favorites & {
+        display: block;
+      }
       .component--station-detail .stations-list--truncated[data-filter-stations-by-track=recent]& {
         @mixin default-screen {
           &:nth-of-type(n+6) {
