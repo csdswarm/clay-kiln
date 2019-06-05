@@ -81,8 +81,8 @@ module.exports.render = (uri, data, locals) => {
 
   locals.station.playingClass = playingClass(locals, locals.station.id);
   locals.station.favoriteModifier = favoriteModifier(locals, locals.station.id);
-
   data.station = locals.station = addMetaData(locals.station);
+
   data.tags = getStationTags(locals.station);
   data.category = locals.station.category.toLowerCase() || '';
   addBreadcrumbLinks(data, locals.site.host);

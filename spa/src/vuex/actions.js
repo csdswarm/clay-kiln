@@ -161,7 +161,6 @@ export default {
 
     dispatch(actionTypes.SIGN_IN, { email, password })
     commit(mutationTypes.MODAL_SUCCESS, RESET_PASSWORD_SUCCESS)
-    commit(mutationTypes.MODAL_SUCCESS, 'Your password has been updated successfully!')
   },
   async [actionTypes.FAVORITE_STATIONS_ADD] ({ commit }, stationId) {
     const result = await axiosCall({ commit,
