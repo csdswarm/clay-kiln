@@ -15,21 +15,23 @@
   }
 }
 
-.lead {
-  .component--brightcove {
-    min-width: 1px;
-    min-height: 1px;
+@media screen and (min-width:1023px) {
+  .lead {
+    .component--brightcove {
+      min-width: 1px;
+      min-height: 1px;
 
-    .video-js.out-of-view{
-      width: 445px;
-      height: 260px;
-      position: fixed;
-      right: 0px;
-      bottom: 0px;
-      background-color: #fafafa;
-      border: 1px solid #e1e1e1;
-      padding: 10px;
-      z-index: 1001;
+      .video-js.out-of-view{
+        width: 445px;
+        height: 260px;
+        position: fixed;
+        right: 0px;
+        bottom: 0px;
+        background-color: #fafafa;
+        border: 1px solid #e1e1e1;
+        padding: 10px;
+        z-index: 1001;
+      }
     }
   }
 }
