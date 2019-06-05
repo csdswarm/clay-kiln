@@ -11,6 +11,10 @@ class Brightcove extends Video {
       brightcovePlayerId = videoPlayer.getAttribute('data-player');
 
     super(videoPlayer, `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`);
+
+    this.setObserver(brightcoveComponent);
+
+    this.videoPlayer = videoPlayer;
   }
   /**
    * Construct the player
@@ -47,6 +51,49 @@ class Brightcove extends Video {
    */
   addEvent(object, type, listener) {
     object.on(type, listener);
+  }
+  /**
+   * Initialize an intersectionObserver to watch if the brightcove container is no longer in view
+   *
+   * @param {component} brightcoveComponent
+   */
+  setObserver(brightcoveComponent) {
+    const brightcoveObserver = new IntersectionObserver(this.containerIsInView.bind(this), {threshold: 0});
+    
+    brightcoveObserver.observe(brightcoveComponent);
+  }
+  /**
+   * Check if the container has gone out of view
+   *
+   * @param {array} changes
+   */
+  containerIsInView(changes) {
+    changes.forEach(change => {
+      if (change.intersectionRatio === 0) {
+        this.videoPlayer.classList.add('out-of-view');
+        this.mute(this.getPlayer(this.getPlayerId()));
+      } else {
+        this.videoPlayer.classList.remove('out-of-view');
+      }
+    });
+  }
+  /**
+   * Check if the video has gone out of view
+   *
+   * @param {array} changes
+   */
+  videoIsInView() {
+    // Don't run super videoIsInView
+  }
+  /**
+   * mute the player
+   *
+   * @param {object} player
+   */
+  mute(player) {
+    if (player) {
+      player.muted(true);
+    }
   }
   /**
    * start the player
