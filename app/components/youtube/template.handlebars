@@ -33,11 +33,13 @@
         <div id="{{ uniquePlayerID }}"></div>
       </div>
     {{else}}
-      <div class="kiln-placeholder" style="min-height: 20px; margin-bottom: 20px;">
-        <div class="placeholder-label">
-          <span class="placeholder-text">Youtube {{if isPlaylist "Playlist" else="Video"}} ID: {{ contentId }}</span>
+      {{#if contentId}}
+        <div class="kiln-placeholder" style="min-height: 20px; margin-bottom: 20px;">
+          <div class="placeholder-label">
+            <span class="placeholder-text">Youtube {{if isPlaylist "Playlist" else="Video"}} ID: {{ contentId }}</span>
+          </div>
         </div>
-      </div>
+      {{/if}}
     {{/unless}}
   </div>
 

@@ -2,11 +2,19 @@
 
 const Video = require('../../global/js/classes/Video');
 
+
+let callback = 'onYouTubePlayerAPIReady';
+
+// if something else has loaded the youtube library, then don't rely on the callback
+if (!(window.YT && window.YT.Player)) {
+  callback = null;
+}
+
 class YouTube extends Video {
   constructor(el) {
     const options = {
       script: 'https://www.youtube.com/player_api',
-      callback: 'onYouTubePlayerAPIReady'
+      callback
     };
 
     super(el, options);
