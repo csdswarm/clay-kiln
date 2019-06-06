@@ -7,7 +7,8 @@ const h = require('highland'),
   http = httpOrHttps == 'http' ? require('http') : require('https'),
   options = {
     host
-  };
+  },
+  failedRequests = [];
 
 async function makeRequest(path, method, data) {
   return new Promise((resolve, reject) => {
@@ -31,7 +32,27 @@ async function makeRequest(path, method, data) {
       let rawData = '';
       res.on('data', chunk => { rawData += chunk; });
       res.on('end', () => {
-        resolve(rawData);
+        // if a response has a "code", then something went wrong. log it so we can know what failed
+        // don't fail the response, just log it for awareness
+        if (res.statusCode != 200) {
+          try {
+            const jsonResponse = JSON.parse(rawData);
+            if (jsonResponse.code) {
+              // logging so we're aware at runtime, but storing so i can remind after done
+              console.log(`Request failed for: ${path} with response: ${rawData}`);
+              failedRequests.push(`Request failed for: ${path} with response: ${rawData}`);
+            }
+            resolve(rawData);
+          } catch (e) {
+            // weird non-json response, log as well
+            // logging so we're aware at runtime, but storing so i can remind after done
+            console.log(`Request failed for: ${path} with response: ${rawData}`);
+            failedRequests.push(`Request failed for: ${path} with response: ${rawData}`);
+            resolve(rawData);
+          }
+        } else {
+          resolve(rawData);
+        }
       });
     }
     let req = http.request(requestOptions, handleResponse);
@@ -45,6 +66,7 @@ async function makeRequest(path, method, data) {
       req.write(dataStr);
     }
 
+    // log for progress
     console.log(`${method} to ${httpOrHttps}://${requestOptions.host}${requestOptions.path}`);
     req.end();
   });
@@ -68,8 +90,13 @@ async function republishPages() {
       return h(makeRequest(uri, 'PUT'));
     })
     .parallel(4)
-    // for some reason it doesn't run the map fn unless this each is here after
-    .each(() => {});
+    // consume stream
+    .done(() => {
+      console.log(`Republish finished with ${failedRequests.length} failed requests.`);
+      failedRequests.forEach( error => {
+        console.log(error);
+      });
+    });
 }
 
 republishPages();
