@@ -1,7 +1,7 @@
 'use strict';
 
-const Selectr = require('mobius1-selectr'),
-  { next24Hours, nextSevenDays } = require('../../services/universal/dateTime'),
+const SelectBox = require('../../services/client/selectbox'),
+  { get24Hours, nextSevenDays } = require('../../services/universal/dateTime'),
   { fetchDOM } = require('../../services/client/radioApi');
 
 /*
@@ -9,8 +9,6 @@ const Selectr = require('mobius1-selectr'),
  */
 class StationRecentlyPlayed {
   constructor(el) {
-    // @TODO ON-549 Utilize filters from Recently Played page of Station Detail
-    return;
 
     const select = el.querySelector('.day-of-week__select'),
       timeSelect = el.querySelector('.time__select'),
@@ -18,19 +16,18 @@ class StationRecentlyPlayed {
       gmtOffset = parseInt(select.getAttribute('data-gmt-offset')),
       category = select.getAttribute('data-category');
 
-    nextSevenDays().forEach((day) => select.add(new Option(day.text, day.value)));
-    next24Hours().forEach((time) => timeSelect.add(new Option(time.text, time.value)));
-
     // eslint-disable-next-line one-var
-    const selectr = new Selectr(select, {
-        searchable: false
+    const selectBox = new SelectBox(select, {
+        searchable: false,
+        data: nextSevenDays(true)
       }),
-      timeSelectr = new Selectr(timeSelect, {
-        searchable: false
+      timeSelectBox = new SelectBox(timeSelect, {
+        searchable: false,
+        data: get24Hours()
       });
 
-    selectr.on('selectr.change', (option) => this.loadContent({ stationId, gmtOffset, category }, option.value, timeSelectr.getValue()));
-    timeSelectr.on('selectr.change', (option) => this.loadContent({ stationId, gmtOffset, category }, selectr.getValue(), option.value));
+    selectBox.addEventListener('change', (option) => this.loadContent({ stationId, gmtOffset, category }, option.value, timeSelectBox.getValue()));
+    timeSelectBox.addEventListener('change', (option) => this.loadContent({ stationId, gmtOffset, category }, selectBox.getValue(), option.value));
   }
   /**
    @typedef {object} StationDetails

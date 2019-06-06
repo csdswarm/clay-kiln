@@ -13,6 +13,7 @@ import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
 import URL from 'url-parse'
+import { getLocals } from '../../app/services/client/spaLocals'
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -61,8 +62,8 @@ export default {
      * @param {string} url
      * @returns {RegExp}
      */
-    createRegExp: (url) => {
-      let regExp = url.replace(/\*/g, '.*')
+    createRegExp (url) {
+      const regExp = url.replace(/\*/g, '.*')
 
       return new RegExp(`^${regExp}`, 'i')
     },
@@ -72,7 +73,9 @@ export default {
      * @param {string} url
      * @returns {boolean}
      */
-    isLocalUrl: (url) => !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url),
+    isLocalUrl (url) {
+      return !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url)
+    },
     /**
      *
      * Returns an object with all the JSON payload required for a page render.
@@ -89,7 +92,8 @@ export default {
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
-            'x-amphora-page-json': true
+            'x-amphora-page-json': true,
+            'x-locals': JSON.stringify(getLocals(this.$store.state))
           }
         })
 

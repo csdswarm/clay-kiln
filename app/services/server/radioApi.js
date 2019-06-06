@@ -3,8 +3,14 @@
 const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
-  db = require('./db'),
-  TTL = 300000,
+  ioredis = require('ioredis'),
+  redis = new ioredis(process.env.REDIS_HOST),
+  TTL = {
+    DEFAULT: 300000,
+    MIN: 60000,
+    HOUR: 3600000,
+    DAY: 86400000
+  },
   httpRegEx = /^https?:\/\//,
 
   /**
@@ -55,27 +61,30 @@ const rest = require('../universal/rest'),
    * @param {string} route
    * @param {*} [params]
    * @param {function} [validate]
+   * @param {number} [ttl]
    * @return {Promise}
    */
-  get = async (route, params, validate = defaultValidation(route)) => {
+  get = async (route, params, validate, ttl = TTL.DEFAULT ) => {
     const dbKey = createKey(route, params),
+      validateFn = validate || defaultValidation(route),
       requestEndpoint = createEndpoint(route, params);
 
     try {
-      const data = await db.get(dbKey);
+      const data = await JSON.parse(redis.get(dbKey));
 
-      if (data.updated_at && (new Date() - new Date(data.updated_at) > TTL)) {
+      if (data.updated_at && (new Date() - new Date(data.updated_at) > ttl)) {
         try {
-          return await getAndSave(requestEndpoint, dbKey, validate);
+          return await getAndSave(requestEndpoint, dbKey, validateFn);
         } catch (e) {
         }
       }
       // If API errors out or within TTL, return existing data
+      data.response_cached = true;
       return data;
     } catch (e) {
       try {
         // if an issue with getting the key, get the data
-        return await getAndSave(requestEndpoint, dbKey, validate);
+        return await getAndSave(requestEndpoint, dbKey, validateFn);
       } catch (e) {
         // If API errors out and we don't have stale data, return empty object
         return {};
@@ -99,7 +108,7 @@ const rest = require('../universal/rest'),
         response.updated_at = new Date();
 
         try {
-          db.put(dbKey, JSON.stringify(response));
+          redis.set(dbKey, JSON.stringify(response));
         } catch (e) {
         }
 
@@ -119,3 +128,4 @@ const rest = require('../universal/rest'),
   };
 
 module.exports.get = get;
+module.exports.TTL = TTL;
