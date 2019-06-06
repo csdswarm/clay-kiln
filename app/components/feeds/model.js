@@ -66,11 +66,12 @@ module.exports.render = async (ref, data, locals) => {
      * add a condition to the query
      *
      * @param {String} item - a string of items to apply add to the query condition
-     * @param {String} nested - a key to be used as a nested query if needed
-     * @param {Function} createObj - a function that take the value and returns the object representation
-     * @param {String} condition - possible options addShould/addMust/addMustNot
+     * @param {Object} conditions - object or array that contains query conditions
+     * @param {String} conditionType - possible options addShould/addMust/addMustNot
      */
-    addCondition = (item, nested, createObj, condition, multiQuery) => {
+    addCondition = (item, conditions, conditionType) => {
+      const { nested, multiQuery, createObj } = conditions;
+
       if (item) {
         const localQuery = nested ? queryService.newNestedQuery(nested) : query,
           items = item.split(',');
@@ -79,17 +80,17 @@ module.exports.render = async (ref, data, locals) => {
           if (multiQuery) {
             createObj(instance).forEach(cond => {
               if (cond.nested) {
-                const newNestedQuery = queryService[condition](queryService.newNestedQuery(cond.nested), { match: cond.match });
+                const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), { match: cond.match });
 
-                queryService[condition](localQuery, newNestedQuery);
+                queryService[conditionType](localQuery, newNestedQuery);
               } else {
-                queryService[condition](localQuery, { match: cond.match });
+                queryService[conditionType](localQuery, { match: cond.match });
               }
             });
           } else {
-            queryService[condition](localQuery, { match: createObj(instance)});
+            queryService[conditionType](localQuery, { match: createObj(instance)});
           }
-          if (condition === 'addShould') {
+          if (conditionType === 'addShould') {
             queryService.addMinimumShould(localQuery, 1);
           }
         });
@@ -99,12 +100,11 @@ module.exports.render = async (ref, data, locals) => {
      * add filter and exclude conditions to the query
      *
      * @param {String} key
-     * @param {String} nested
-     * @param {Function} createObj
+     * @param {Object} conditions
      */
-    addFilterAndExclude = (key, nested, createObj, multiQuery) => {
-      addCondition(filters[key], nested, createObj, 'addShould', multiQuery);
-      addCondition(excludes[key], nested, createObj, 'addMustNot', multiQuery);
+    addFilterAndExclude = (key, conditions) => {
+      addCondition(filters[key], conditions, 'addShould');
+      addCondition(excludes[key], conditions, 'addMustNot');
     },
     queryFilters = {
       // vertical (sectionfront) and/or exclude tags
@@ -116,15 +116,16 @@ module.exports.render = async (ref, data, locals) => {
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
       // stations (bool search of nested bylines & stationSyndication fields)
-      station: { createObj: station => ([
-        { 
-          match: { 'byline.sources.text': station },
-          nested: 'byline',
-        },
-        { match: { 'stationSyndication': station }},
-        { match: { 'stationSyndication.normalized': station }}
-        ]),
-        multiQuery: true,
+      station: {
+        createObj: station => [
+          {
+            match: { 'byline.sources.text': station },
+            nested: 'byline'
+          },
+          { match: { stationSyndication: station } },
+          { match: { 'stationSyndication.normalized': station } }
+        ],
+        multiQuery: true
       },
       // categories syndicated to (categorySyndication)
       category: { createObj: categorySyndication => ({ 'categorySyndication.normalized': categorySyndication }) },
@@ -139,7 +140,7 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
-  Object.entries(queryFilters).forEach(([key, { nested, createObj, multiQuery }]) => addFilterAndExclude(key, nested, createObj, multiQuery));
+  Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
 
   try {
     if (meta.rawQuery) {
