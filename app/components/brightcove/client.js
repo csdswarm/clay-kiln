@@ -19,7 +19,9 @@ class Brightcove extends Video {
 
     window.addEventListener('playbackStateChange', (e) => {
       this.webPlayerPlaybackState = e.detail.playerState;
-      this.removeStickyPlayer();
+      if (this.webPlayerPlaybackState === 'play') {
+        this.removeStickyPlayer();
+      }
     });
   }
   /**
@@ -83,6 +85,9 @@ class Brightcove extends Video {
     });
   }
   addStickyPlayer() {
+    if (window.RadioPlayer) {
+      this.videoPlayer.classList.add('web-player-exists');
+    }
     if (this.webPlayerPlaybackState !== 'play') {
       this.videoPlayer.classList.add('out-of-view');
     }
