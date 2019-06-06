@@ -8,13 +8,14 @@ const _get = require('lodash/get'),
 class Brightcove extends Video {
   constructor(brightcoveComponent) {
     const videoPlayer = brightcoveComponent.querySelector('video-js'),
+      videoPlayerWrapper = brightcoveComponent.querySelector('.player__video'),
       brightcoveAccount = videoPlayer.getAttribute('data-account'),
       brightcovePlayerId = videoPlayer.getAttribute('data-player');
 
     super(videoPlayer, `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`);
 
     this.setObserver(brightcoveComponent);
-    this.videoPlayer = videoPlayer;
+    this.videoPlayerWrapper = videoPlayerWrapper;
     this.webPlayerPlaybackState = _get(window, 'RadioPlayer.playerControls.playbackState');
 
     window.addEventListener('playbackStateChange', (e) => {
@@ -86,15 +87,15 @@ class Brightcove extends Video {
   }
   addStickyPlayer() {
     if (window.RadioPlayer) {
-      this.videoPlayer.classList.add('web-player-exists');
+      this.videoPlayerWrapper.classList.add('web-player-exists');
     }
     if (this.webPlayerPlaybackState !== 'play') {
-      this.videoPlayer.classList.add('out-of-view');
+      this.videoPlayerWrapper.classList.add('out-of-view');
     }
     this.mute(this.getPlayer(this.getPlayerId()));
   }
   removeStickyPlayer() {
-    this.videoPlayer.classList.remove('out-of-view');
+    this.videoPlayerWrapper.classList.remove('out-of-view');
   }
   /**
    * Check if the video has gone out of view

@@ -21,7 +21,7 @@
       min-width: 1px;
       min-height: 1px;
 
-      .video-js.out-of-view{
+      .player__video.out-of-view{
         width: 445px;
         height: 260px;
         position: fixed;
@@ -34,11 +34,6 @@
 
         &.web-player-exists{
           bottom: 78px;
-        }
-
-        video {
-          width: calc(100% - em(20));
-          margin: em(10);
         }
       }
     }
