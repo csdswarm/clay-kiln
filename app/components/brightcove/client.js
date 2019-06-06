@@ -2,7 +2,8 @@
 
 // Polyfill
 require('intersection-observer');
-const Video = require('../../global/js/classes/Video');
+const _get = require('lodash/get'),
+  Video = require('../../global/js/classes/Video');
 
 class Brightcove extends Video {
   constructor(brightcoveComponent) {
@@ -13,8 +14,13 @@ class Brightcove extends Video {
     super(videoPlayer, `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`);
 
     this.setObserver(brightcoveComponent);
-
     this.videoPlayer = videoPlayer;
+    this.webPlayerPlaybackState = _get(window, 'RadioPlayer.playerControls.playbackState');
+
+    window.addEventListener('playbackStateChange', (e) => {
+      this.webPlayerPlaybackState = e.detail.playerState;
+      this.removeStickyPlayer();
+    });
   }
   /**
    * Construct the player
@@ -70,12 +76,20 @@ class Brightcove extends Video {
   containerIsInView(changes) {
     changes.forEach(change => {
       if (change.intersectionRatio === 0) {
-        this.videoPlayer.classList.add('out-of-view');
-        this.mute(this.getPlayer(this.getPlayerId()));
+        this.addStickyPlayer();
       } else {
-        this.videoPlayer.classList.remove('out-of-view');
+        this.removeStickyPlayer();
       }
     });
+  }
+  addStickyPlayer() {
+    if (this.webPlayerPlaybackState !== 'play') {
+      this.videoPlayer.classList.add('out-of-view');
+    }
+    this.mute(this.getPlayer(this.getPlayerId()));
+  }
+  removeStickyPlayer() {
+    this.videoPlayer.classList.remove('out-of-view');
   }
   /**
    * Check if the video has gone out of view
