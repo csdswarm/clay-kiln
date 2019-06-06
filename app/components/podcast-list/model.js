@@ -1,6 +1,7 @@
 'use strict';
 
 const radioApiService = require('../../services/server/radioApi'),
+  slugifyService = require('../../services/universal/slugify'),
   utils = require('../../services/universal/podcast'),
   maxItems = 4,
   /**
@@ -16,11 +17,12 @@ const radioApiService = require('../../services/server/radioApi'),
    * @returns {number}
    */
   getPodcastCategoryID = async (categoryName) => {
-    const podcastCategories = await radioApiService.get('categories', { page: { size: 20 } });
+    const podcastCategories = await radioApiService.get('categories', { page: { size: 20 } }),
+      podcastCategory = podcastCategories.data.find(category => {
+        return category.attributes.slug.includes(slugifyService(categoryName));
+      });
 
-    return podcastCategories.data.find(category => {
-      return category.attributes.slug.includes(categoryName);
-    }).id;
+    return podcastCategory ? podcastCategory.id : null;
   };
 
 /**
