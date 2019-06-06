@@ -68,7 +68,7 @@ function addMetaData(station) {
  */
 function addBreadcrumbLinks(data, host) {
   addCrumb(data, `//${host}/stations`, 'stations');
-  addCrumb(data, `//${host}/${ data.station.site_slug || data.station.slug || data.station.id }/listen`, data.station.name);
+  addCrumb(data, `//${host}/${ data.station.site_slug || data.station.callsign || data.station.id }/listen`, data.station.name);
 
   return data;
 }

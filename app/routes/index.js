@@ -160,9 +160,9 @@ module.exports = router => {
     // Station detail pages
     await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }).then(function (stations) {
       stations.data.forEach(station => {
-        if (station.attributes.site_slug || station.attributes.slug || station.id) {
+        if (station.attributes.site_slug || station.attributes.callsign || station.id) {
           urlset.push({ url:
-            [{ loc: `${baseUrl}/${ station.attributes.site_slug || station.attributes.slug || station.id }/listen` }]
+            [{ loc: `${baseUrl}/${ station.attributes.site_slug || station.attributes.callsign || station.id }/listen` }]
           });
         }
       });

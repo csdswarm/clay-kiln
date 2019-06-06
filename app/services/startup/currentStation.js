@@ -60,7 +60,7 @@ const radioApiService = require('../../services/server/radioApi'),
       // use the stations as a cached object so we don't have to run the same logic every request
       if (!response.response_cached || isEmpty(allStations)) {
         response.data.forEach((station) => {
-          const slug = station.attributes.site_slug || station.attributes.slug || station.id;
+          const slug = station.attributes.site_slug || station.attributes.callsign || station.id;
 
           allStations[slug] = station.attributes;
         });
