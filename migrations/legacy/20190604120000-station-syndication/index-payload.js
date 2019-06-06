@@ -64,21 +64,13 @@ const newSettings = {
     analysis: settings[settingsKey].settings.index.analysis
   }
 };
-
-const newMappings = {
-  mappings: {
-    _doc: {
-      properties: {
-        ...mapping[mapKey].mappings._doc.properties,
-        ...newProps      
-      }
-    }
-  }
+mapping[mapKey].mappings._doc.properties = {
+  ...mapping[mapKey].mappings._doc.properties,
+  ...newProps      
 };
-
 const payload = JSON.stringify({
   ...newSettings,
-  ...newMappings
+  ...mapping[mapKey]
 });
 
 console.log(payload);

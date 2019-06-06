@@ -70,24 +70,29 @@ module.exports.render = async (ref, data, locals) => {
      * @param {Function} createObj - a function that take the value and returns the object representation
      * @param {String} condition - possible options addShould/addMust/addMustNot
      */
-    addCondition = (item, nested, createObj, condition, boolMatch) => {
+    addCondition = (item, nested, createObj, condition, multiQuery) => {
       if (item) {
         const localQuery = nested ? queryService.newNestedQuery(nested) : query,
           items = item.split(',');
 
         items.forEach(instance => {
-          if (boolMatch) {
-            queryService[condition](localQuery, createObj(instance));
+          if (multiQuery) {
+            createObj(instance).forEach(cond => {
+              if (cond.nested) {
+                const newNestedQuery = queryService[condition](queryService.newNestedQuery(cond.nested), { match: cond.match });
+
+                queryService[condition](localQuery, newNestedQuery);
+              } else {
+                queryService[condition](localQuery, { match: cond.match });
+              }
+            });
           } else {
             queryService[condition](localQuery, { match: createObj(instance)});
           }
+          if (condition === 'addShould') {
+            queryService.addMinimumShould(localQuery, 1);
+          }
         });
-        if (condition === 'addShould') {
-          queryService.addMinimumShould(localQuery, 1);
-        }
-        if (nested) {
-          queryService.addMust(query, localQuery);
-        }
       }
     },
     /**
@@ -97,9 +102,9 @@ module.exports.render = async (ref, data, locals) => {
      * @param {String} nested
      * @param {Function} createObj
      */
-    addFilterAndExclude = (key, nested, createObj, boolMatch) => {
-      addCondition(filters[key], nested, createObj, 'addShould', boolMatch);
-      addCondition(excludes[key], nested, createObj, 'addMustNot', boolMatch);
+    addFilterAndExclude = (key, nested, createObj, multiQuery) => {
+      addCondition(filters[key], nested, createObj, 'addShould', multiQuery);
+      addCondition(excludes[key], nested, createObj, 'addMustNot', multiQuery);
     },
     queryFilters = {
       // vertical (sectionfront) and/or exclude tags
@@ -112,11 +117,14 @@ module.exports.render = async (ref, data, locals) => {
       editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
       // stations (bool search of nested bylines & stationSyndication fields)
       station: { createObj: station => ([
-          { match: { 'byline.sources.text': station }},
-          { match: { 'stationSyndication.normalized': station }},
+        { 
+          match: { 'byline.sources.text': station },
+          nested: 'byline',
+        },
+        { match: { 'stationSyndication': station }},
+        { match: { 'stationSyndication.normalized': station }}
         ]),
-        nested: 'byline',
-        boolMatch: true,
+        multiQuery: true,
       },
       // categories syndicated to (categorySyndication)
       category: { createObj: categorySyndication => ({ 'categorySyndication.normalized': categorySyndication }) },
@@ -131,7 +139,7 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
-  Object.entries(queryFilters).forEach(([key, { nested, createObj, boolMatch }]) => addFilterAndExclude(key, nested, createObj, boolMatch));
+  Object.entries(queryFilters).forEach(([key, { nested, createObj, multiQuery }]) => addFilterAndExclude(key, nested, createObj, multiQuery));
 
   try {
     if (meta.rawQuery) {
