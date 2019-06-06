@@ -20,8 +20,11 @@ module.exports['2.0'] = function (uri, data) {
 };
 
 module.exports['3.0'] = function (uri, data) {
-  return {
-    ...data,
-    filterSecondarySectionFronts: data.filterSecondaryArticleTypes || {}
-  };
+  let newData = Object.assign({}, data);
+
+  newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
+  
+  delete newData.filterSecondaryArticleTypes;
+  
+  return newData;
 };
