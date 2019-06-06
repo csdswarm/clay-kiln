@@ -18,6 +18,7 @@ class Brightcove extends Video {
     this.videoPlayerWrapper = videoPlayerWrapper;
     this.webPlayerPlaybackState = _get(window, 'RadioPlayer.playerControls.playbackState');
 
+    // can be updated to use playback stored in sessionStorage once available
     window.addEventListener('playbackStateChange', (e) => {
       this.webPlayerPlaybackState = e.detail.playerState;
       if (this.webPlayerPlaybackState === 'play') {
@@ -85,6 +86,9 @@ class Brightcove extends Video {
       }
     });
   }
+  /**
+   * add brightcove sticky player if web player is paused or not on page
+   */
   addStickyPlayer() {
     if (window.RadioPlayer) {
       this.videoPlayerWrapper.classList.add('web-player-exists');
@@ -94,10 +98,14 @@ class Brightcove extends Video {
     }
     this.mute(this.getPlayer(this.getPlayerId()));
   }
+  /**
+   * hide the brightcove sticky player
+   */
   removeStickyPlayer() {
     this.videoPlayerWrapper.classList.remove('out-of-view');
   }
   /**
+   * @override
    * Check if the video has gone out of view
    *
    * @param {array} changes

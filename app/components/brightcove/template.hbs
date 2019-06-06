@@ -3,7 +3,6 @@
     {{#if videoId}}
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
         {{#unless @root.locals.edit}}
-          <a class="player__video--close-button" type="button" aria-label="Close"></a>
           <video-js id="video-{{ videoId }}"
             class="video-js vjs-16-9"
             data-video-id="{{ videoId }}"
