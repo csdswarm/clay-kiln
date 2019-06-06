@@ -19,7 +19,8 @@ if (!instanceType) {
 // Get current JSON
 const data = require(`${__dirname}/${componentType}-${instanceType}.json`)
 
-data.includePodcastModule = true;
+data.podcastList = { '_ref': `${host}/_components/podcast-list/instances/${instanceType}`};
+data.includePodcastModule = instanceType === 'sports';
 
 // Create correct clay data structure
 const payload = {
