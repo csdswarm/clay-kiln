@@ -5,7 +5,8 @@ const httpOrHttps = process.argv.slice(2)[0],
   http = httpOrHttps == 'http' ? require('http') : require('https'),
   options = {
     host
-  };
+  },
+  failedRequests = [];
 
 console.log('running unity-pages');
 
@@ -31,7 +32,29 @@ async function makeRequest(path, method, data) {
       let rawData = '';
       res.on('data', chunk => { rawData += chunk; });
       res.on('end', () => {
-        resolve(rawData);
+        // if a response has a "code", then something went wrong. log it so we can know what failed
+        // don't fail the response, just log it for awareness
+        if (res.statusCode != 200) {
+          try {
+            const jsonResponse = JSON.parse(rawData);
+            if (jsonResponse.code) {
+              // logging so we're aware at runtime, but storing so i can remind after done
+              console.log(`Request failed for: ${path} with response: ${rawData}`);
+              failedRequests.push(`Request failed for: ${path} with response: ${rawData}`);
+            } else {
+              console.log(`Non-200 status for ${path}: ${res.statusCode}`);
+            }
+            resolve(rawData);
+          } catch (e) {
+            // weird non-json response, log as well
+            // logging so we're aware at runtime, but storing so i can remind after done
+            console.log(`Request failed for: ${path} with response: ${rawData}`);
+            failedRequests.push(`Request failed for: ${path} with response: ${rawData}`);
+            resolve(rawData);
+          }
+        } else {
+          resolve(rawData);
+        }
       });
     }
     let req = http.request(requestOptions, handleResponse);
@@ -79,17 +102,21 @@ async function updatePages(pages, publishedPages) {
     // unity created pages are alpha-numeric 25 chars
     // imported (sbp were imported) content is a number --> handled by upgrade, do nothing
     // other - layout level pages (new-two-col, gallery, etc) use /_components/meta-tags/instances/general
-    let hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
+    // keeping named-groups as comment for clarity on which group is which
+    // let hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
+    let hash = page.match(/_pages\/([a-zA-Z0-9]{25})?(\d+|sbp-\d+)?(.+)?/);
     if (hash) {
-      // we don't need to do this for imported content, upgrade scripts handle this
-      const slug = hash.groups.unity || hash.groups.other;
+      const unity = hash[1],
+        other = hash[3],
+        // we don't need to do this for imported content, upgrade scripts handle this
+        slug = unity || other;
 
       if (slug) {
         const pageUri = `/_pages/${slug}`,
           pageJsonRes = await makeRequest(pageUri, 'GET'),
           pageJson = JSON.parse(pageJsonRes),
           // send in unity hash -- "other" pages default to meta-tags general instance
-          addedMetaTags = await addMetaTags(pageJson, published, hash.groups.unity);
+          addedMetaTags = await addMetaTags(pageJson, published, unity);
 
         if (addedMetaTags) {
           await makeRequest(pageUri, 'PUT', pageJson);
@@ -100,6 +127,10 @@ async function updatePages(pages, publishedPages) {
       }
     }
   };
+
+  failedRequests.forEach(failure => {
+    console.log(failure);
+  });
 }
 
 async function addMetaTags(page, published, hash = 'general') {
