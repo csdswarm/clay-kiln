@@ -3,7 +3,11 @@ _confirmRemoval: true
 
 title:
   _label: Title
-  _publish: sectionFront
+  _publish:
+    - sectionFront
+    - ogTitle
+    - pageListTitle
+    - pageTitle
   _has:
     input: text
     validate:

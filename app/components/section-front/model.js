@@ -55,20 +55,13 @@ addEventCallback('clay:unpublishPage', async payload => {
 
 module.exports.render = (uri, data, locals) => {
   if (data.title) {
+
     if (data.primary) {
       locals.sectionFront = data.title.toLowerCase();
     } else {
       locals.secondarySectionFront = data.title.toLowerCase();
     }
   }
-
-  return data;
-};
-
-module.exports.save = (uri, data, locals) => {
-  data.pageTitle = data.title;
-  data.ogTitle = data.title;
-  data.pageListTitle = data.title;
 
   return data;
 };
