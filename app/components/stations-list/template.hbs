@@ -21,7 +21,7 @@
         {{#ifAll ../truncatedList (compare @index '<' 14) }}{{ set 'hideStations' true }}{{/ifAll}}
         {{#ifAny (compare ../truncatedList false) hideStations }}
           <li class="station">
-            <a href="//{{ @root.locals.site.host }}/{{ site_slug }}/listen" class="spa-link">
+            <a href="//{{ @root.locals.site.host }}/{{ default (default site_slug callsign) id }}/listen" class="spa-link">
               <div class="station__lede" itemscope itemtype="http://schema.org/ImageObject">
                 <button class="lede__favorite-btn">{{{ read 'components/stations-list/media/favorite.svg' }}}</button>
                 <img class="lede__image" src="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0"
@@ -33,7 +33,8 @@
                   itemprop="thumbnailUrl"
                 >
                 <meta itemprop="contentUrl" content="{{ square_logo_large }}">
-                <button data-play-station="{{ id }}" class="lede__play-btn">{{{ read 'components/stations-list/media/play.svg' }}}</button>
+                <button data-play-station="{{ id }}"
+                        class="lede__play-btn {{ playingClass }}"></button>
               </div>
               <span class="station__name">{{ name }}</span>
               <span class="station__secondary-info">{{ slogan }}</span>

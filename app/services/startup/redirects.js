@@ -2,7 +2,30 @@
 
 const db = require('../server/db'),
   redirectDataURL = '/_components/redirects/instances/default@published',
+  querystring = require('querystring'),
 
+  /**
+   * Removes variables that are passed by the spa from the query string
+   *
+   * @param {string} url
+   * @returns {string}
+   */
+  stripUrl = (url) => {
+    const uri = url.split('?');
+
+    if (uri[1]) {
+      const params = querystring.parse(uri[1]);
+
+      delete params.json;
+      delete params.cb;
+
+      if (Object.keys(params).length) {
+        return `${uri[0]}?${querystring.stringify(params)}`;
+      }
+    }
+
+    return uri[0];
+  },
   /**
    * determines if a url is inside an array of redirect objects
    *
@@ -10,7 +33,7 @@ const db = require('../server/db'),
    * @param {object} req
    * @returns {boolean}
    */
-  testURL = (url, req) => createRegExp(url.replace(/^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,})/, '')).test(`${req.originalUrl.replace('?json', '')}`),
+  testURL = (url, req) => createRegExp(url.replace(/^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,})/, '')).test(stripUrl(req.originalUrl)),
   /**
    * converts a string into a regular expression * as a wildcard
    *
@@ -18,7 +41,7 @@ const db = require('../server/db'),
    * @returns {RegExp}
    */
   createRegExp = (url) => {
-    let regExp = url.replace(/\*/g, '.*');
+    const regExp = url.replace(/\*/g, '.*');
 
     return new RegExp(`^${regExp}$`, 'i');
   },
@@ -50,6 +73,28 @@ const db = require('../server/db'),
     } catch (e) {
       // swallowing db error
     }
+  },
+  /**
+   * Handle Amphora redirects (Replicating https://github.com/clay/amphora/blob/6.x-lts/lib/render.js#L219)
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {boolean}
+   */
+  amphoraRedirects = async (req, res) => {
+    const encode64Buffer = Buffer.from(`${req.hostname}${req.path}`, 'utf8'),
+      latestUri = await getLatestUri(`${req.hostname}/_uris/${encode64Buffer.toString('base64')}`);
+
+    if (latestUri) {
+      const decode64Buffer = Buffer.from(latestUri.split('/').pop(), 'base64'),
+        redirectUrl = decode64Buffer.toString('utf8');
+
+      if ((req.hostname + req.path) !== redirectUrl) {
+        res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '')});
+        return false;
+      }
+    }
+    return true;
   };
 
 /**
@@ -78,17 +123,9 @@ module.exports = async (req, res, next) => {
         }
         runNext = false;
       }
-      // Handle Amphora redirects (Replicating https://github.com/clay/amphora/blob/6.x-lts/lib/render.js#L219)
-      if (spaRequest) {
-        const encode64Buffer = Buffer.from(`${req.hostname}${req.path}`, 'utf8'),
-          latestUri = await getLatestUri(`${req.hostname}/_uris/${encode64Buffer.toString('base64')}`),
-          decode64Buffer = Buffer.from(latestUri.split('/').pop(), 'base64'),
-          redirectUrl = decode64Buffer.toString('utf8');
 
-        if ((req.hostname + req.path) !== redirectUrl) {
-          res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '')});
-          runNext = false;
-        }
+      if (runNext && spaRequest) {
+        runNext = await amphoraRedirects(req, res);
       }
     }
 

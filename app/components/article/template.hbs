@@ -1,5 +1,5 @@
 <article role="main" data-track-type="article-detail" data-uri="{{ default _ref _self }}" class="component component--article{{ if @root.locals.edit ' editing' }} article--{{sectionFront}}" itemscope itemtype="http://schema.org/Article"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
-  {{> breadcrumbs crumbs }}
+  {{> breadcrumbs this }}
   <header class="article__header">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
@@ -119,12 +119,26 @@
               <h4 class="item-title required">SEO Description</h4>
               <p class="item-data">{{{ default seoDescription empty }}}</p>
             </li>
+          </ul>
+        </section>
+
+        <section class="circulation__section" data-editable="syndication">
+          <h3 class="subtitle circ-edit">Syndication</h3>
+          <ul class="items">
             <li class="item">
-              <h4 class="item-title required">Syndication Status</h4>
+              <h4 class="item-title">Featured</h4>
+              <p class="item-data">{{ if featured 'Yes' else='No' }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Editorial Feeds Term(s)</h4>
+              <p class="item-data">{{{ default (commaSeparated editorialFeeds false) empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Syndication Status</h4>
               <p class="item-data">{{{ default syndicationStatus empty }}}</p>
             </li>
             <li class="item">
-              <h4 class="item-title required">Syndicated URL</h4>
+              <h4 class="item-title">Syndicated URL</h4>
               <p class="item-data">{{{ default syndicatedUrl empty }}}</p>
             </li>
           </ul>

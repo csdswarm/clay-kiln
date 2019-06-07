@@ -3,7 +3,8 @@
 const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
-  db = require('./db'),
+  ioredis = require('ioredis'),
+  redis = new ioredis(process.env.REDIS_HOST),
   TTL = {
     DEFAULT: 300000,
     MIN: 60000,
@@ -69,7 +70,7 @@ const rest = require('../universal/rest'),
       requestEndpoint = createEndpoint(route, params);
 
     try {
-      const data = await db.get(dbKey);
+      const data = await JSON.parse(redis.get(dbKey));
 
       if (data.updated_at && (new Date() - new Date(data.updated_at) > ttl)) {
         try {
@@ -107,7 +108,7 @@ const rest = require('../universal/rest'),
         response.updated_at = new Date();
 
         try {
-          db.put(dbKey, JSON.stringify(response));
+          redis.set(dbKey, JSON.stringify(response));
         } catch (e) {
         }
 

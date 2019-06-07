@@ -42,3 +42,5 @@ _components:
     plaintextPrimaryHeadline: ''
     sectionFront: ''
     contentType: 'article'
+    featured: false
+    editorialFeeds: {}

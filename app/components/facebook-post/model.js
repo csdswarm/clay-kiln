@@ -5,7 +5,7 @@ const rest = require('../../services/universal/rest'),
   FACEBOOK_ENDPOINT = 'https://www.facebook.com/plugins/post/oembed.json';
 
 function getRequestUrl(data) {
-  return `${FACEBOOK_ENDPOINT}?url=${encodeURI(data.url)}&omitscript=true`;
+  return `${FACEBOOK_ENDPOINT}?url=${encodeURIComponent(data.url)}&omitscript=true`;
 }
 
 module.exports.save = (uri, data) => {
