@@ -19,6 +19,9 @@ fi
 printf "Add new section front lists...\n"
 cat ./_lists.yml | clay import -k demo -y $1
 
+printf "\n\Resetting data for new instance of podcast list"
+curl -X PUT $http://$1/_components/podcast-list/instances/new -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -o /dev/null -s -d '{ "items": [{}] }'
+
 printf "\nUpdating Section Fronts to Add Podcast Modules...\n\n"
 
 # _components/section-front/instances/new
