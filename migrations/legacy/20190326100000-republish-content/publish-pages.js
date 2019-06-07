@@ -73,10 +73,10 @@ async function makeRequest(path, method, data) {
 }
 
 function isContent(page) {
-  const hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
+  const hash = page.match(/_pages\/([a-zA-Z0-9]{25})?(\d+|sbp-\d+)?(.+)?/);
 
   // only republish content, skip other pages
-  return hash && (hash.groups.unity || hash.groups.imported);
+  return hash && (hash[1] || hash[2]);
 }
 
 async function republishPages() {
