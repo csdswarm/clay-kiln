@@ -2,6 +2,7 @@
 
 // Polyfill
 require('intersection-observer');
+require('core-js/modules/es.symbol');
 const _get = require('lodash/get'),
   Video = require('../../global/js/classes/Video');
 
