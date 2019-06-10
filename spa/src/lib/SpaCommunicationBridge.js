@@ -37,13 +37,30 @@ class SpaCommunicationBridge {
   }
 
   /**
-   * Create application specific channelName
+   * Get namespace specific id
    *
    * @param {string} channelName
+   * @returns {string} channelId
+   */
+  getChannelId (channelName) {
+    return `${LISTENER_TYPE_NAMESPACE}SpaChannel${channelName}`
+  }
+
+  /**
+   * Return channel or create a new one
+   *
+   * @param {string} channelName
+   * @param {boolean} [createIfUndefined]
    * @returns {string}
    */
-  getChannelName (channelName) {
-    return `${LISTENER_TYPE_NAMESPACE}SpaChannel${channelName}`
+  getChannel (channelName, createIfUndefined) {
+    const channelId = this.getChannelId(channelName)
+
+    if (!this.channels[channelId] && createIfUndefined) {
+      this.channels[channelId] = {listeners: []}
+    }
+
+    return this.channels[channelId]
   }
 
   /**
@@ -54,7 +71,25 @@ class SpaCommunicationBridge {
    * @returns {boolean} - whether or not a channel with this name is active.
    */
   channelActive (channelName) {
-    return !!(this.channels[this.getChannelName(channelName)])
+    return !!(this.getChannel(channelName))
+  }
+
+  /**
+   * Return the last payload returned in the channel
+   *
+   * @param {*} channelName
+   * @param {boolean} [ifUndefined]
+   *
+   * @returns {object} latest channel state
+   */
+  getLatest (channelName, ifUndefined) {
+    const channel = this.getChannel(channelName)
+
+    if (!channel) {
+      throw new Error(`Channel ${channelName} does not exist.`)
+    }
+
+    return channel.state || ifUndefined
   }
 
   /**
@@ -65,30 +100,28 @@ class SpaCommunicationBridge {
    * @param {function} handler - Handler function to execute when a message hits this channel.
    */
   subscribe (channelName, handler) {
-    const channel = this.getChannelName(channelName)
+    const channel = this.getChannel(channelName, true)
+    const channelId = this.getChannelId(channelName)
+    const channelListener = async (event) => {
+      // Extract data from message event detail.
+      const { id, payload: messagePayload } = event.detail
 
-    if (!this.channels[channel]) {
-      this.channels[channel] = []
+      channel.state = messagePayload
 
-      const channelListener = async (event) => {
-        // Extract data from message event detail.
-        const { id, payload: messagePayload } = event.detail
+      // Execute the handler callback.
+      const responsePayload = await Promise.all(channel.listeners.map(func => func(messagePayload)))
 
-        // Execute the handler callback.
-        const responsePayload = await Promise.all(this.channels[channel].map(func => func(messagePayload)))
+      // Send response
+      const responseEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}ClientMessage${channelName}-${id}`, {
+        detail: { payload: responsePayload }
+      })
 
-        // Send response
-        const responseEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}ClientMessage${channelName}-${id}`, {
-          detail: { payload: responsePayload }
-        })
-
-        document.dispatchEvent(responseEvent)
-      }
-
-      document.addEventListener(channel, channelListener)
+      document.dispatchEvent(responseEvent)
     }
 
-    this.channels[channel].push(handler)
+    document.addEventListener(channelId, channelListener)
+
+    channel.listeners.push(handler)
 
     return () => this.unsubscribe(channelName, handler)
   }
@@ -101,9 +134,13 @@ class SpaCommunicationBridge {
    * @param {function} handler - Handler function to execute when a message hits this channel.
    */
   unsubscribe (channelName, handler) {
-    const channel = this.getChannelName(channelName)
+    const channel = this.getChannel(channelName)
 
-    this.channels[channel] = this.channels[channel].filter(listener => listener !== handler)
+    if (!channel) {
+      throw new Error(`Channel ${channelName} does not exist.`)
+    } else {
+      this.channels[channel] = channel.filter(listener => listener !== handler)
+    }
   }
 
   /**

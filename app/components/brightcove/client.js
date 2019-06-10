@@ -3,8 +3,8 @@
 // Polyfill
 require('intersection-observer');
 require('core-js/modules/es6.symbol');
-const _get = require('lodash/get'),
-  Video = require('../../global/js/classes/Video');
+const Video = require('../../global/js/classes/Video'),
+  clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')();
 
 class Brightcove extends Video {
   constructor(brightcoveComponent) {
@@ -17,11 +17,10 @@ class Brightcove extends Video {
 
     this.setObserver(brightcoveComponent);
     this.videoPlayerWrapper = videoPlayerWrapper;
-    this.webPlayerPlaybackState = _get(window, 'RadioPlayer.playerControls.playbackState');
+    this.webPlayerPlaybackState = clientCommunicationBridge.getLatest('ClientWebPlayerPlaybackStatus', {}).playerState;
 
-    // can be updated to use playback stored in sessionStorage once available
-    window.addEventListener('playbackStateChange', (e) => {
-      this.webPlayerPlaybackState = e.detail.playerState;
+    clientCommunicationBridge.subscribe('ClientWebPlayerPlaybackStatus', async ({playerState}) => {
+      this.webPlayerPlaybackState = playerState;
       if (this.webPlayerPlaybackState === 'play') {
         this.removeStickyPlayer();
       }
@@ -91,7 +90,7 @@ class Brightcove extends Video {
    * add brightcove sticky player if web player is paused or not on page
    */
   addStickyPlayer() {
-    if (window.RadioPlayer) {
+    if (clientCommunicationBridge.getLatest('ClientWebPlayerMountPlayer')) {
       this.videoPlayerWrapper.classList.add('web-player-exists');
     }
     if (this.webPlayerPlaybackState !== 'play') {

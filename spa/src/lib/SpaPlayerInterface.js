@@ -102,7 +102,7 @@ class SpaPlayerInterface {
    */
   async mountPlayer () {
     // Instruct web-player/client.js to mount the player.
-    const playerMounted = await spaCommunicationBridge.sendMessage('ClientWebPlayerMountPlayer')
+    const playerMounted = await spaCommunicationBridge.sendMessage('ClientWebPlayerMountPlayer', true)
 
     // Verify player is mounted.
     if (playerMounted) {

@@ -31,13 +31,30 @@ class ClientCommunicationBridge {
   }
 
   /**
-   * Create application specific channelName
+   * Get namespace specific id
    *
    * @param {string} channelName
+   * @returns {string} channelId
+   */
+  getChannelId(channelName) {
+    return `${LISTENER_TYPE_NAMESPACE}ClientChannel${channelName}`;
+  }
+
+  /**
+   * Return channel or create a new one
+   *
+   * @param {string} channelName
+   * @param {boolean} [createIfUndefined]
    * @returns {string}
    */
-  getChannelName(channelName) {
-    return `${LISTENER_TYPE_NAMESPACE}ClientChannel${channelName}`;
+  getChannel(channelName, createIfUndefined) {
+    const channelId = this.getChannelId(channelName);
+
+    if (!this.channels[channelId] && createIfUndefined) {
+      this.channels[channelId] = {listeners: []};
+    }
+
+    return this.channels[channelId];
   }
 
   /**
@@ -48,7 +65,25 @@ class ClientCommunicationBridge {
    * @returns {boolean} - whether or not a channel with this name is active.
    */
   channelActive(channelName) {
-    return !!this.channels[this.getChannelName(channelName)];
+    return !!(this.getChannel(channelName));
+  }
+
+  /**
+   * Return the last payload returned in the channel
+   *
+   * @param {*} channelName
+   * @param {boolean} [ifUndefined]
+   *
+   * @returns {object} latest channel state
+   */
+  getLatest(channelName, ifUndefined) {
+    const channel = this.getChannel(channelName);
+
+    if (!channel) {
+      throw new Error(`Channel ${channelName} does not exist.`);
+    }
+
+    return channel.state || ifUndefined;
   }
 
   /**
@@ -60,18 +95,17 @@ class ClientCommunicationBridge {
    * @returns {function} unsubscribe
    */
   subscribe(channelName, handler) {
-    const channel = this.getChannelName(channelName);
-
-    if (!this.channels[channel]) {
-      this.channels[channel] = [];
-
-      const channelListener = async (event) => {
+    const channel = this.getChannel(channelName, true),
+      channelId = this.getChannelId(channelName),
+      channelListener = async (event) => {
         // Extract data from message event detail.
         const { id, payload: messagePayload } = event.detail;
 
+        channel.state = messagePayload;
+
         // Execute the handler callback.
         // eslint-disable-next-line one-var
-        const responsePayload = await Promise.all(this.channels[channel].map(func => func(messagePayload)));
+        const responsePayload = await Promise.all(channel.listeners.map(func => func(messagePayload)));
 
         // Send response
         // eslint-disable-next-line one-var
@@ -82,10 +116,9 @@ class ClientCommunicationBridge {
         document.dispatchEvent(responseEvent);
       };
 
-      document.addEventListener(channel, channelListener);
-    }
+    document.addEventListener(channelId, channelListener);
 
-    this.channels[channel].push(handler);
+    channel.listeners.push(handler);
 
     return () => this.unsubscribe(channelName, handler);
   }
@@ -98,9 +131,9 @@ class ClientCommunicationBridge {
    * @param {function} handler - Handler function to execute when a message hits this channel.
    */
   unsubscribe(channelName, handler) {
-    const channel = this.getChannelName(channelName);
+    const channel = this.getChannel(channelName);
 
-    this.channels[channel] = this.channels[channel].filter(listener => listener !== handler);
+    this.channels[channel] = channel.listeners.filter(listener => listener !== handler);
   }
 
   /**
