@@ -18,22 +18,22 @@
 @media screen and (min-width:1023px) {
   .lead {
     .component--brightcove {
-      min-width: 1px;
-      min-height: 1px;
+      min-width: em(1);
+      min-height: em(1);
 
       .player__video.player__video--out-of-view{
-        width: 445px;
-        height: 260px;
+        width: em(445);
+        height: em(260);
         position: fixed;
-        right: 10px;
-        bottom: 10px;
+        right: em(10);
+        bottom: em(10);
         background-color: #fafafa;
-        border: 1px solid #e1e1e1;
-        padding: 10px;
+        border: em(1) solid #e1e1e1;
+        padding: em(10);
         z-index: 1001;
 
         &.web-player-exists{
-          bottom: 78px;
+          bottom: em(78);
         }
       }
     }
