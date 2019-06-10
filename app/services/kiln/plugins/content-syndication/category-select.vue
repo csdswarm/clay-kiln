@@ -20,7 +20,8 @@
 </template>
 <script>
   const radioApi = require('../../../../services/client/radioApi'),
-    UiSelect = window.kiln.utils.components.UiSelect;
+    UiSelect = window.kiln.utils.components.UiSelect,
+    log = require('../../../../services/universal/log');
 
   export default {
       props: ['name', 'data', 'schema', 'args'],
@@ -45,8 +46,8 @@
          */
         async populateCategories() {
           try {
-            let apiRequest = 'https://api.radio.com/v1/categories?page[size]=100&sort=name';
-            const categoriesResponse = await radioApi.get(apiRequest);
+            const apiRequest = 'https://api.radio.com/v1/categories?page[size]=100&sort=name',
+              categoriesResponse = await radioApi.get(apiRequest);
 
             if (categoriesResponse) {
               this.categoryOptions = categoriesResponse.data.map(category => {
@@ -54,7 +55,7 @@
               });
             }
           } catch (e) {
-            console.log(e);
+            log('error', e);
           }
         },
         /**
@@ -67,7 +68,7 @@
             this.selectedCategory = input;
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedCategory })
           } catch (e) {
-            console.log("error updating selection: ", e);
+            log('error', `error updating selection: ${e}`);
           }
         },
     },
