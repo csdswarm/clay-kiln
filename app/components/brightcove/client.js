@@ -2,7 +2,7 @@
 
 // Polyfill
 require('intersection-observer');
-require('core-js/modules/es.symbol');
+require('core-js/modules/es6.symbol');
 const _get = require('lodash/get'),
   Video = require('../../global/js/classes/Video');
 
@@ -95,7 +95,7 @@ class Brightcove extends Video {
       this.videoPlayerWrapper.classList.add('web-player-exists');
     }
     if (this.webPlayerPlaybackState !== 'play') {
-      this.videoPlayerWrapper.classList.add('out-of-view');
+      this.videoPlayerWrapper.classList.add('player__video--out-of-view');
     }
     this.mute(this.getPlayer(this.getPlayerId()));
   }
@@ -103,7 +103,7 @@ class Brightcove extends Video {
    * hide the brightcove sticky player
    */
   removeStickyPlayer() {
-    this.videoPlayerWrapper.classList.remove('out-of-view');
+    this.videoPlayerWrapper.classList.remove('player__video--out-of-view');
   }
   /**
    * @override

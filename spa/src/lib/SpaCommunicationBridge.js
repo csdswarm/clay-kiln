@@ -37,6 +37,16 @@ class SpaCommunicationBridge {
   }
 
   /**
+   * Create application specific channelName
+   *
+   * @param {string} channelName
+   * @returns {string}
+   */
+  getChannelName (channelName) {
+    return `${LISTENER_TYPE_NAMESPACE}SpaChannel${channelName}`
+  }
+
+  /**
    *
    * Use to determine if a channel has already been added.
    *
@@ -44,32 +54,30 @@ class SpaCommunicationBridge {
    * @returns {boolean} - whether or not a channel with this name is active.
    */
   channelActive (channelName) {
-    return !!(this.channels[`${LISTENER_TYPE_NAMESPACE}SpaChannel${channelName}`])
+    return !!(this.channels[this.getChannelName(channelName)])
   }
 
   /**
    *
-   * Add a SPA channel that listens for messages from client.js code.
+   * Subscribe to a SPA channel that listens for messages from client.js code.
    *
    * @param {string} channelName - Recieve messages sent to this channel name.
    * @param {function} handler - Handler function to execute when a message hits this channel.
    */
-  addChannel (channelName, handler) {
-    const channel = `${LISTENER_TYPE_NAMESPACE}SpaChannel${channelName}`
+  subscribe (channelName, handler) {
+    const channel = this.getChannelName(channelName)
 
-    if (this.channels[channel]) {
-      throw new Error(`Channel ${channelName} already exists.`)
-    } else {
+    if (!this.channels[channel]) {
+      this.channels[channel] = []
+
       const channelListener = async (event) => {
         // Extract data from message event detail.
         const { id, payload: messagePayload } = event.detail
 
         // Execute the handler callback.
-        // eslint-disable-next-line one-var
-        const responsePayload = await handler(messagePayload)
+        const responsePayload = await Promise.all(this.channels[channel].map(func => func(messagePayload)))
 
         // Send response
-        // eslint-disable-next-line one-var
         const responseEvent = new CustomEvent(`${LISTENER_TYPE_NAMESPACE}ClientMessage${channelName}-${id}`, {
           detail: { payload: responsePayload }
         })
@@ -78,13 +86,24 @@ class SpaCommunicationBridge {
       }
 
       document.addEventListener(channel, channelListener)
-      this.channels[channel] = channelListener
     }
+
+    this.channels[channel].push(handler)
+
+    return () => this.unsubscribe(channelName, handler)
   }
 
-  removeChannel () {
-    // TODO: Remove a SPA channel. This is stubbed out. It will be completed as part of tech debt "SPA events accessible from client.js files".
-    // https://entercomdigitalservices.atlassian.net/wiki/spaces/UNITY/pages/204701707/Tech+Debt
+  /**
+   *
+   * Unsubscribe from a SPA channel
+   *
+   * @param {string} channelName - Channel that needs to be unsubscribed from
+   * @param {function} handler - Handler function to execute when a message hits this channel.
+   */
+  unsubscribe (channelName, handler) {
+    const channel = this.getChannelName(channelName)
+
+    this.channels[channel] = this.channels[channel].filter(listener => listener !== handler)
   }
 
   /**

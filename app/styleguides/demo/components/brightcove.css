@@ -21,7 +21,7 @@
       min-width: 1px;
       min-height: 1px;
 
-      .player__video.out-of-view{
+      .player__video.player__video--out-of-view{
         width: 445px;
         height: 260px;
         position: fixed;
