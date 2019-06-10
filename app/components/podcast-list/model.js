@@ -32,7 +32,7 @@ const radioApiService = require('../../services/server/radioApi'),
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
-  if (data.items.length === maxItems || !locals || locals.edit) {
+  if (data.items.length === maxItems || !locals || locals.edit || ref.includes('/instances/new')) {
     return new Promise((resolve) => resolve(data));
   }
 
