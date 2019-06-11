@@ -21,7 +21,7 @@
 <script>
   const radioApi = require('../../../../services/client/radioApi'),
     UiSelect = window.kiln.utils.components.UiSelect,
-    log = require('../../../../services/universal/log');
+    log = require('../../../../services/universal/log').setup({file: __filename});
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -54,9 +54,7 @@
               return station.attributes.name;
             });
           }
-        } catch (e) {
-          log('error', e);
-        }
+        } catch (e) {}
       },
       /**
        *  This function is called when a station is selected from the dropdown. Sets it as currently selected.
@@ -66,9 +64,7 @@
         try {
           this.selectedStation = input;
           this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedStation })
-        } catch (e) {
-          log('error', `error updating selection: ${e}`);
-        }
+        } catch (e) {}
       },
     },
     components: {

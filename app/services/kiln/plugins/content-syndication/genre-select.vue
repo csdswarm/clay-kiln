@@ -20,8 +20,7 @@
 </template>
 <script>
   const radioApi = require('../../../../services/client/radioApi'),
-    UiSelect = window.kiln.utils.components.UiSelect,
-    log = require('../../../../services/universal/log');
+    UiSelect = window.kiln.utils.components.UiSelect;
 
   export default {
       props: ['name', 'data', 'schema', 'args'],
@@ -54,9 +53,7 @@
                 return genre.attributes.name;
               });
             }
-          } catch (e) {
-            log('error', e);
-          }
+          } catch (e) {}
         },
         /**
          * This function is called when a genre is selected from the dropdown.
@@ -67,9 +64,7 @@
           try {
             this.selectedGenre = input;
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedGenre })
-          } catch (e) {
-            log('error', `error updating selection: ${e}`);
-          }
+          } catch (e) {}
         },
     },
     components: {
