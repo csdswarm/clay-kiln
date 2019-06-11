@@ -21,7 +21,7 @@ class WebPlayer extends Audio {
    * @param {string} event
    */
   dispatchEvent(event) {
-    this.getNode().dispatchEvent(new Event(event));
+    this.getNode().dispatchEvent(new CustomEvent(event));
   }
   /**
    * @override

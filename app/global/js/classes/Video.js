@@ -26,7 +26,7 @@ class Video extends Media {
    * @param {object} eventTypes
    */
   unmuteOnPlay(eventTypes) {
-    this.addEvent(eventTypes.MEDIA_PLAY, () => this.unmute(), { once: true });
+    this.addEvent(eventTypes.MEDIA_PLAY, () => this.unmute());
   }
 
   /**
