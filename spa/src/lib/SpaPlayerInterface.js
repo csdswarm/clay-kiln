@@ -118,6 +118,10 @@ class SpaPlayerInterface {
         this.spa.$store.commit(mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS, { currentlyPlaying: payload })
       })
 
+      window.addEventListener('stationIdClick', e => {
+        this.redirectToSDP(e.detail.siteSlug, e.detail.id, e.detail.callsign)
+      })
+
       return true
     } else {
       throw new Error('Radio Player failed to mount correctly.')
@@ -196,6 +200,17 @@ class SpaPlayerInterface {
     if (stationId && (!currentStation || currentStation.id !== stationId)) {
       await this.loadStation(stationId)
     }
+  }
+
+  /**
+   +   * Redirect to Station Detail Page by using siteSlug, callsign or id
+   +   * @param { string } siteSlug
+   +   * @param { number } id
+   +   * @param { string } callsign
+   +   */
+  redirectToSDP (siteSlug, id, callsign) {
+    const value = siteSlug || callsign || id
+    this.spa.$router.push(`/${value}/listen`)
   }
 
   /**
