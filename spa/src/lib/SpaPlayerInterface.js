@@ -203,11 +203,11 @@ class SpaPlayerInterface {
   }
 
   /**
-   +   * Redirect to Station Detail Page by using siteSlug, callsign or id
-   +   * @param { string } siteSlug
-   +   * @param { number } id
-   +   * @param { string } callsign
-   +   */
+   * Redirect to Station Detail Page by using siteSlug, callsign or id
+   * @param { string } siteSlug
+   * @param { number } id
+   * @param { string } callsign
+   */
   redirectToSDP (siteSlug, id, callsign) {
     const value = siteSlug || callsign || id
     this.spa.$router.push(`/${value}/listen`)
