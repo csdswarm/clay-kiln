@@ -1,4 +1,6 @@
 .content-import {
+    display: flex;
+    flex-direction: column;
     min-width: em(600);
 
     &__input {
@@ -10,5 +12,14 @@
         &-textbox {
             flex-grow: 1;
         }
+    }
+
+    &__error {
+        color: red;
+        align-self: center
+    }
+
+    .ui-progress-circular {
+        align-self: center;
     }
 }

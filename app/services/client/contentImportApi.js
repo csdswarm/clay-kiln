@@ -1,14 +1,12 @@
 'use strict';
 
-// const rest = require('../universal/rest'),
-//   importContentUrl = 'some url';
+const rest = require('../universal/rest');
 
-module.exports = async (contentUrl) => {
+module.exports = async (content) => {
   try {
-    // TODO connect to actual import url
-    // await rest.get(importContentUrl);
-    
-    return contentUrl;
+    const [results] = await rest.post('/import-content', content);
+
+    return results;
   } catch (e) {
     console.error(e);
     return null;
