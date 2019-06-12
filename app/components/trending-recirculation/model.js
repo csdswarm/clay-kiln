@@ -12,6 +12,10 @@ const _get = require('lodash/get'),
     'feedImgUrl',
     'sectionFront'
   ],
+  log = require('../../services/universal/log').setup({
+    file: __filename,
+    component: 'trending-recirculation'
+  }),
   defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 /**
@@ -59,18 +63,22 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = async (ref, data, locals) => {
   if (abTest()) {
-    const lyticsId = _get(locals, 'lytics.uid'),
-      noUserParams = lyticsId ? {} : {url: locals.url},
-      recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, contentsegment: 'recommended_for_you', ...noUserParams}),
-      articles = recommendations.data.map(upd => ({
-        url: `https://${upd.url}`,
-        canonicalUrl: `https://${upd.url}`,
-        primaryHeadline: upd.title,
-        feedImgUrl: upd.primary_image || defaultImage
-      }));
+    try {
+      const lyticsId = _get(locals, 'lytics.uid'),
+        noUserParams = lyticsId ? {} : {url: locals.url},
+        recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, contentsegment: 'recommended_for_you', ...noUserParams}),
+        articles = recommendations.data.map(upd => ({
+          url: `https://${upd.url}`,
+          canonicalUrl: `https://${upd.url}`,
+          primaryHeadline: upd.title,
+          feedImgUrl: upd.primary_image || defaultImage
+        }));
 
-    data.items = articles;
-    data.lytics = true;
+      data.items = articles;
+      data.lytics = true;
+    } catch (e) {
+      log('error', 'There was an error getting recommendations from Lytics', e);
+    }
   }
 
   (data.items || []).map(item => {
