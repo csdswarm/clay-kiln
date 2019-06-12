@@ -5,5 +5,5 @@ _components:
     market: ''
     category: ''
     listTitle: ''
-    truncatedList: true
+    truncatedList: false
     seeAllLink: ''
