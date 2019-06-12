@@ -30,7 +30,7 @@ module.exports = function (data, locals) {
         guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
       },
       {
-        syndicatedUrl: syndicatedUrl || null
+        syndicatedUrl
       },
       {
         description: { _cdata: seoDescription }
