@@ -65,7 +65,7 @@ class ClientCommunicationBridge {
    * @returns {boolean} - whether or not a channel with this name is active.
    */
   channelActive(channelName) {
-    return !!(this.getChannel(channelName));
+    return !!this.getChannel(channelName);
   }
 
   /**
