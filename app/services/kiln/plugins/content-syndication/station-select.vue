@@ -46,12 +46,12 @@
        */
       async populateStations() {
         try {
-          const apiRequest = 'https://api.radio.com/v1/stations?page[size]=1000&sort=name',
+          const apiRequest = 'https://api.radio.com/v1/stations?page[size]=1000&sort=callsign',
             stationsResponse = await radioApi.get(apiRequest);
 
           if (stationsResponse) {
             this.stationOptions = stationsResponse.data.map(station => {
-              return station.attributes.name;
+              return station.attributes.callsign;
             });
           }
         } catch (e) {}
