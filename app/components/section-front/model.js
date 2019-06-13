@@ -54,18 +54,21 @@ async function handleUnpublish(page) {
   try {
     const host = page.uri.split('/')[0],
       pageData = await db.get(page.uri),
-      sectionFrontRef = pageData.main[0],
-      data = await db.get(sectionFrontRef),
-      sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
+      mainRef = pageData.main[0];
 
-    if (data.title) {
-      const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
-        updatedSectionFronts = sectionFronts.filter(sectionFront => {
-          return sectionFront.value !== data.title.toLowerCase();
-        });
+    if (mainRef.includes('/_components/section-front/instances/')) {
+      const data = await db.get(mainRef),
+        sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
+      
+      if (data.title) {
+        const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
+          updatedSectionFronts = sectionFronts.filter(sectionFront => {
+            return sectionFront.value !== data.title.toLowerCase();
+          });
 
-      await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
-      await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: false}));
+        await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
+        await db.put(mainRef, JSON.stringify({...data, titleLocked: false}));
+      }
     }
   } catch (e) {
     log('error', e);
