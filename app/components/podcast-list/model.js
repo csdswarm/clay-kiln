@@ -32,11 +32,12 @@ const radioApiService = require('../../services/server/radioApi'),
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
-  if (data.items.length === maxItems || !locals || locals.edit) {
+  if (data.items.length === maxItems || !locals || locals.edit || ref.includes('/instances/new')) {
     return new Promise((resolve) => resolve(data));
   }
 
   let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
+
   if (locals.sectionFront) {
     const podcastCategoryID = await getPodcastCategoryID(locals.sectionFront);
 
@@ -47,6 +48,7 @@ module.exports.render = async function (ref, data, locals) {
 
   try {
     const podcasts = await radioApiService.get('podcasts', podcastsFilter);
+    
     if (podcasts) {
       podcasts.data.splice(0, maxItems).forEach((podcast) => {
         const url = utils.createUrl(podcast.attributes.title);
