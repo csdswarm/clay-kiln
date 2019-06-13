@@ -23,7 +23,7 @@ async function handlePublish(page) {
     const host = page.uri.split('/')[0],
       sectionFrontRef = page.data.main[0].replace('@published',''),
       data = await db.get(sectionFrontRef),
-      sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;;
+      sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
     
     if (data.title && !data.titleLocked) {
       const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
