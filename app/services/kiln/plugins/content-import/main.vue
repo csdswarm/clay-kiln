@@ -19,7 +19,6 @@
 </template>
 
 <script>
-    import contentImport from '../../../client/contentImportApi';
     import rest from '../../../universal/rest';
     import urlParse from 'url-parse';
 
@@ -46,11 +45,14 @@
                 try {
                     const [result] = await rest.post('/import-content', {domain: host, filter: {slug: pathname}});
                     if (result && result.success) {
-                        window.location.href = `${window.location.protocol}//${window.location.hostname}${result.url}`;
+                        window.location.href = `${window.location.protocol}//${window.location.hostname}${result.url}?edit=true`;
+                    } else {
+                        throw new Error('Content import returned without a successful result');
                     }
                 } catch (e) {
                     this.loading = false;
-                    this.error = 'There was an error importing this content.  Please try again.';
+                    this.error = 'An unexpected error has occurred.';
+                    console.error(e.message);
                 }
             }
         },
