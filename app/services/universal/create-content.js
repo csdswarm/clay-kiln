@@ -373,7 +373,9 @@ function setNoIndexNoFollow(data) {
     .some(({sources = []}) =>
       sources.some(({text}) => text === 'The Associated Press'));
 
-  data.noIndexNoFollow = isContentFromAP;
+  data.isContentFromAP = isContentFromAP;
+  data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;
+
   return data;
 }
 

@@ -450,6 +450,8 @@ _groups:
       - slidesNumbered (Gallery Slides)
       - reverseOrder (Gallery Slides)
       - includeInlineAds (Gallery Slides)
+      - apContent
+      - noIndexNoFollow
   syndication:
     fields:
       - featured
@@ -525,5 +527,20 @@ tags:
   _component:
     include:
       - tags
+
+apContent:
+  _label: [No Index / No Follow is always ON for AP]
+  _has: static
+  _reveal:
+    field: isContentFromAP
+    operator: ===
+    value: true
+
 noIndexNoFollow:
   _publish: noIndexNoFollow
+  _label: No Index / No Follow
+  _has: checkbox
+  _reveal:
+    field: isContentFromAP
+    operator: ===
+    value: false
