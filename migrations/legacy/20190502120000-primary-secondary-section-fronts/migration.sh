@@ -86,6 +86,9 @@ if [[ $mappings == *"secondaryArticleType"* && $mappings != *"secondarySectionFr
     },
     \"dest\": {
       \"index\": \"$newIndex\"
+    },
+    \"script\": {
+      \"inline\": \"ctx._source['secondarySectionFront'] = ctx._source.remove('secondaryArticleType');\"
     }
   }";
 
