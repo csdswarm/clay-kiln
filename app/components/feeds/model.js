@@ -81,8 +81,8 @@ module.exports.render = async (ref, data, locals) => {
             createObj(instance).forEach(cond => {
               if (cond.nested) {
                 const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), { match: cond.match });
-
-                queryService[conditionType](localQuery, newNestedQuery);
+                
+                queryService[conditionType === 'addMustNot' ? 'addMust' : conditionType](localQuery, newNestedQuery);
               } else {
                 queryService[conditionType](localQuery, { match: cond.match });
               }
@@ -118,10 +118,6 @@ module.exports.render = async (ref, data, locals) => {
       // stations (bool search of nested bylines & stationSyndication fields)
       station: {
         createObj: station => [
-          {
-            match: { 'byline.sources.text': station },
-            nested: 'byline'
-          },
           { match: { stationSyndication: station } },
           { match: { 'stationSyndication.normalized': station } }
         ],
