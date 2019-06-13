@@ -3,12 +3,10 @@
 const qs = require('qs'),
   rest = require('../universal/rest'),
   log = require('../universal/log').setup({ file: __filename }),
-  importContentUrl = 'https://ztgezbix26.execute-api.us-east-1.amazonaws.com/Stage/import-content',
+  importContentUrl = process.env.IMPORT_CONTENT_URL,
   importContent = async (req, res) => {
-    console.log('body', req.body);
     try {
-      // Need to pass in req.body instead
-      const params = qs.stringify({filter: {id: 3251}, publish: false}),
+      const params = qs.stringify({...req.body, publish: false}),
         {results} = await rest.get(`${importContentUrl}?${params}`);
 
       res.send(results);
