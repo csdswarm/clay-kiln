@@ -115,7 +115,7 @@ module.exports.render = async (ref, data, locals) => {
       subcategory: { createObj: secondaryArticleType => ({ secondaryArticleType }) },
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
-      // stations (bool search of nested bylines & stationSyndication fields)
+      // stations (stationSyndication)
       station: {
         createObj: station => [
           { match: { stationSyndication: station } },
