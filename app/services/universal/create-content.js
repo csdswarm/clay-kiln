@@ -363,6 +363,20 @@ function sanitizeByline(data) {
   data.byline = byline.filter(entry => !!entry.names);
 }
 
+/**
+ * Set's noIndexNoFollow for meta tag based on information in the component
+ * @param {Object} data
+ * @returns {Object}
+ */
+function setNoIndexNoFollow(data) {
+  const isContentFromAP = _get(data, 'byline', [])
+    .some(({sources = []}) =>
+      sources.some(({text}) => text === 'The Associated Press'));
+
+  data.noIndexNoFollow = isContentFromAP;
+  return data;
+}
+
 function render(ref, data, locals) {
   if (locals && !locals.edit) {
     return data;
@@ -375,7 +389,7 @@ function render(ref, data, locals) {
     circulationService.setGoogleStandoutHelpers(data, resolved.publishedData, resolved.past.length);
     return data;
   });
-};
+}
 
 function save(uri, data, locals) {
   // first, let's get all the synchronous stuff out of the way:
@@ -390,6 +404,7 @@ function save(uri, data, locals) {
   setPlainAuthorsList(data);
   setPlainSourcesList(data);
   sanitizeByline(data);
+  setNoIndexNoFollow(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image

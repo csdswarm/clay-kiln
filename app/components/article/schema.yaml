@@ -490,3 +490,5 @@ tags:
   _component:
     include:
       - tags
+noIndexNoFollow:
+  _publish: noIndexNoFollow

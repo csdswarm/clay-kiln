@@ -42,3 +42,4 @@ _components:
     crumbs: []
     featured: false
     editorialFeeds: {}
+    noIndexNoFollow: false

@@ -44,3 +44,4 @@ _components:
     contentType: 'article'
     featured: false
     editorialFeeds: {}
+    noIndexNoFollow: false
