@@ -7,16 +7,26 @@ const db = require('../../services/server/db'),
   
 subscribe('publishPage').through(publishPage);
 
+/**
+* @param {Object} stream - publish page event payload
+*/
 function publishPage(stream) {
   stream
     .filter( filterNonSectionFront )
     .each( handlePublish );
 }
 
+/**
+* @param {Object} page - publish page event payload
+* @returns {boolean}
+*/
 function filterNonSectionFront(page) {
   return page.data && page.data.main && page.data.main[0].includes('/_components/section-front/instances/');
 }
 
+/**
+* @param {page} page - publish page event payload
+*/
 async function handlePublish(page) {
   try {
     const host = page.uri.split('/')[0],
@@ -43,11 +53,17 @@ async function handlePublish(page) {
 
 subscribe('unpublishPage').through(unpublishPage);
 
+/**
+* @param {Object} stream - unpublish page event payload
+*/
 function unpublishPage(stream) {
   stream
     .each( handleUnpublish );
 }
  
+/**
+* @param {Object} page - unpublish page event payload
+*/
 async function handleUnpublish(page) {
   try {
     const host = page.uri.split('/')[0],
