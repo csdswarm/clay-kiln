@@ -52,17 +52,20 @@ async function handleUnpublish(page) {
   try {
     const host = page.uri.split('/')[0],
       pageData = await db.get(page.uri),
-      sectionFrontRef = pageData.main[0],
-      data = await db.get(sectionFrontRef);
+      mainRef = pageData.main[0];
 
-    if (data.title) {
-      const primarySectionFronts = await db.get(`${host}${primarySectionFrontsList}`),
-        updatedSectionFronts = primarySectionFronts.filter(sectionFront => {
-          return sectionFront.value !== data.title.toLowerCase();
-        });
+    if (mainRef.includes('/_components/section-front/instances/')) {
+      const data = await db.get(mainRef);
 
-      await db.put(`${host}${primarySectionFrontsList}`, JSON.stringify(updatedSectionFronts));
-      await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: false}));
+      if (data.title) {
+        const primarySectionFronts = await db.get(`${host}${primarySectionFrontsList}`),
+          updatedSectionFronts = primarySectionFronts.filter(sectionFront => {
+            return sectionFront.value !== data.title.toLowerCase();
+          });
+
+        await db.put(`${host}${primarySectionFrontsList}`, JSON.stringify(updatedSectionFronts));
+        await db.put(mainRef, JSON.stringify({...data, titleLocked: false}));
+      }
     }
   } catch (e) {
     log('error', e);
