@@ -40,6 +40,10 @@ primarySectionFront:
         field: primary
         operator: falsy
 
+includePodcastModule:
+  _label: Include podcast module on page?
+  _has: checkbox
+
 podcastList:
   _component:
     include:
@@ -83,5 +87,7 @@ googleAdRightRail:
 _groups:
   settings:
     fields:
+      - primary
+      - primarySectionFront
       - title
-      - canonicalUrl
+      - includePodcastModule

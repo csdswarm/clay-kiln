@@ -67,7 +67,7 @@ function getComponentReference(page, mainComponentRefs) {
         return value;
       } else if (_.isObject(value)) {
         let result = _.isArray(value) ? _.find(value, function (o) { return isMainComponentReference(o, mainComponentRefs); }) : getComponentReference(value, mainComponentRefs);
-        
+
         if (result) {
           return result;
         }
@@ -138,7 +138,7 @@ function getMainComponentFromRef(componentReference, locals) {
       guaranteePrimaryHeadline(component);
       guaranteeLocalDate(component, publishedComponent, locals);
     }
-    
+
     return {component, pageType};
   });
 }
@@ -167,7 +167,8 @@ function getUrlPrefix(site) {
 function getUrlOptions(component, locals, pageType) {
   const urlOptions = {},
     date = moment(locals.date);
-    
+
+
 
   urlOptions.prefix = getUrlPrefix(locals.site);
   urlOptions.sectionFront = slugifyService(component.sectionFront || component.title) || null;
@@ -208,3 +209,4 @@ module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.s
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
 module.exports.putComponentInstance = putComponentInstance;
+module.exports.pageTypes = pageTypes;

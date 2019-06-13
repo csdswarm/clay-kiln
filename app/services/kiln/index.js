@@ -8,5 +8,6 @@ module.exports = () => {
   require('./plugins/podcast-select')();
   require('./plugins/brightcove-search')();
   require('./plugins/instagram')();
+  require('./plugins/subscriptions')();
   require('./validators')();
 };

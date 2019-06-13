@@ -63,11 +63,11 @@ module.exports['5.0'] = function (uri, data) {
 };
 
 module.exports['6.0'] = function (uri, data) {
-  const newData = {
-    ...data,
-    filterSecondarySectionFronts: data.filterSecondaryArticleTypes || {}
-  };
+  let newData = Object.assign({}, data);
 
+  newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
+  
   delete newData.filterSecondaryArticleTypes;
+  
   return newData;
 };
