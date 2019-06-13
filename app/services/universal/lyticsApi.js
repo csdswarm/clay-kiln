@@ -31,7 +31,7 @@ const accessToken = process.env.LYTICS_API_KEY,
       return await rest.get(endpoint);
     } catch (e) {
       log('error', e);
-      throw Error(e);
+      return null;
     }
   },
   /**
@@ -43,7 +43,8 @@ const accessToken = process.env.LYTICS_API_KEY,
    * @return {array}
    */
   recommend = async (fieldValue, params, fieldName = '_uid') => {
-    return await request(`/content/recommend/user/${fieldName}/${fieldValue}`, params);
+    return await request(`/content/recommend/user/${fieldName}/${fieldValue}`, params)
+      .then(recommendations => recommendations ? recommendations.data : []);
   };
 
 module.exports.recommend = recommend;
