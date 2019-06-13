@@ -95,13 +95,12 @@ const queryService = require('../../services/server/query'),
    * @returns {Promise}
    */
   renderStation = async (data, locals) => {
-    const response = await radioApiService.get('stations', { filter: { site_slug: locals.params.dynamicStation } }),
-      feedUrl = `${response.data[0].attributes.website}/station_feed.json`,
+    const feedUrl = `${locals.station.website}/station_feed.json`,
       feed = await radioApiService.get(feedUrl, null, (response) => response.nodes),
       nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
       defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
 
-    data.station = response.data[0].attributes.name;
+    data.station = locals.station.name;
     data.articles = await Promise.all(nodes.map(async (item) => {
       return {
         feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,

@@ -4,8 +4,8 @@ _description: |
 videoId:
   _label: Video ID
   _has:
-    input: text
-    type: text
+    input: brightcove-search
+    webLabel: Search
     validate:
       required: true
 
