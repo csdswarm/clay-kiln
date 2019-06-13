@@ -8,8 +8,8 @@ const db = require('../../services/server/db'),
 subscribe('publishPage').through(publishPage);
 
 /**
-* @param {Object} stream - publish page event payload
-*/
+ * @param {Object} stream - publish page event payload
+ */
 function publishPage(stream) {
   stream
     .filter( filterNonSectionFront )
@@ -17,16 +17,20 @@ function publishPage(stream) {
 }
 
 /**
-* @param {Object} page - publish page event payload
-* @returns {boolean}
-*/
+ * @param {Object} page - publish page event payload
+ * @returns {boolean}
+ */
 function filterNonSectionFront(page) {
   return page.data && page.data.main && page.data.main[0].includes('/_components/section-front/instances/');
 }
 
 /**
-* @param {page} page - publish page event payload
-*/
+ * Upon publish, add new section front title to primary or secondary 
+ * section front _lists instance if it does not already exist.
+ * Note: Locks title field to prevent breaking article breadcrumbs
+ * when a section front title is changed
+ * @param {page} page - publish page event payload
+ **/
 async function handlePublish(page) {
   try {
     const host = page.uri.split('/')[0],
@@ -54,16 +58,19 @@ async function handlePublish(page) {
 subscribe('unpublishPage').through(unpublishPage);
 
 /**
-* @param {Object} stream - unpublish page event payload
-*/
+ * @param {Object} stream - unpublish page event payload
+ */
 function unpublishPage(stream) {
   stream
     .each( handleUnpublish );
 }
  
 /**
-* @param {Object} page - unpublish page event payload
-*/
+ * Upon unpublish, remove section front title from primary or secondary 
+ * section front _lists instance if it exists.
+ * Note: Unlocks title field
+ * @param {Object} page - unpublish page event payload
+ */
 async function handleUnpublish(page) {
   try {
     const host = page.uri.split('/')[0],
