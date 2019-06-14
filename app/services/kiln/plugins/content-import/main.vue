@@ -47,7 +47,8 @@
                     if (result && result.success) {
                         window.location.href = `${window.location.protocol}//${window.location.hostname}${result.url}?edit=true`;
                     } else {
-                        throw new Error('Content import returned without a successful result');
+                        this.loading = false;
+                        this.error = `This content failed to import.  Please log an error ticket with the error "${result.message}`
                     }
                 } catch (e) {
                     this.loading = false;
