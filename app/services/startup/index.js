@@ -16,7 +16,6 @@ const pkg = require('../../package.json'),
   // redirectTrailingSlash = require('./trailing-slash'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
-  contentSharing = require('./contentSharing'),
   log = require('../universal/log').setup({ file: __filename });
 
 function createSessionStore() {
@@ -74,8 +73,6 @@ function setupApp(app) {
   app.use(currentStation);
 
   app.use(canonicalJSON);
-
-  contentSharing.inject(app);
 
   sessionStore = createSessionStore();
 

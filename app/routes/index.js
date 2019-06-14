@@ -14,6 +14,7 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
+  importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml');
@@ -122,6 +123,11 @@ module.exports = router => {
       return res.send(data);
     });
   });
+
+  /**
+   * Use import-content here to grab amphora user
+   */
+  router.post('/import-content', importContent);
 
   /**
    * Sitemap for stations directories and station detail pages

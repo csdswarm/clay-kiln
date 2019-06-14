@@ -6,6 +6,10 @@ const qs = require('qs'),
   importContentUrl = process.env.IMPORT_CONTENT_URL,
   importContent = async (req, res) => {
     try {
+      if (!req.user || !req.user.auth) {
+        res.status(401).send('You are not authorized to perform this action');
+      }
+
       const params = qs.stringify({...req.body, publish: false}),
         {results} = await rest.get(`${importContentUrl}?${params}`);
 
@@ -16,6 +20,4 @@ const qs = require('qs'),
     }
   };
 
-module.exports.inject = (app) => {
-  app.post('/import-content', importContent);
-};
+module.exports = importContent;
