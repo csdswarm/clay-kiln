@@ -53,7 +53,6 @@
                 } catch (e) {
                     this.loading = false;
                     this.error = 'An unexpected error has occurred.';
-                    console.error(e.message);
                 }
             }
         },
