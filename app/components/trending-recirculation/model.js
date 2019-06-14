@@ -74,7 +74,7 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   (data.items || []).map(item => {
-    item.params = `?utm_source=${data.lytics ? 'recommended' : 'curated'}`;
+    item.params = `?article=${data.lytics ? 'recommended' : 'curated'}`;
   });
 
   return data;
