@@ -12,10 +12,6 @@ const _get = require('lodash/get'),
     'feedImgUrl',
     'sectionFront'
   ],
-  log = require('../../services/universal/log').setup({
-    file: __filename,
-    component: 'trending-recirculation'
-  }),
   defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 /**
