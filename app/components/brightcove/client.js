@@ -21,10 +21,12 @@ class Brightcove extends Video {
   createPlayer(component) {
     // eslint-disable-next-line no-undef
     const id = component.getAttribute('id'),
+      autoplayUnmuted = component.getAttribute('data-autoplay-unmuted'),
+      clickToPlay = component.getAttribute('data-click-to-play'),
       player = bc(id),
       node = player.el();
 
-    return { id, player, node };
+    return { id, player, node, autoplayUnmuted, clickToPlay };
   }
   /**
    * * Returns the event types for the video, should be overloaded

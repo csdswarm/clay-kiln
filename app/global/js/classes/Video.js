@@ -25,7 +25,7 @@ class Video {
     document.body.appendChild(s);
     // Call a function to play the video once player's JavaScript loaded
     s.onload = () => {
-      const { id, player, node } = this.createPlayer(component),
+      const { id, player, node, autoplayUnmuted, clickToPlay } = this.createPlayer(component),
         eventTypes = this.getEventTypes();
 
       this.id = id;
@@ -47,9 +47,13 @@ class Video {
       this.addEvent(player, eventTypes.AD_START, this.pauseOtherActivePlayers.bind(this));
 
       // autoplay muted else pause
-      this.addEvent(player, eventTypes.VIDEO_READY, () => {
-        if (!isMobileWidth() && node.closest('.body__header .lead')) {
+      this.addEvent(player, eventTypes.VIDEO_READY, async () => {
+        if (!isMobileWidth() && node.closest('.body__header .lead') && !clickToPlay) {
           this.play(player);
+          
+          if (autoplayUnmuted) {
+            await this.unmute();
+          }
         } else {
           this.pause(player);
         }
