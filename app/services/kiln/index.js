@@ -7,6 +7,7 @@ module.exports = () => {
   require('./plugins/advanced-image-upload')();
   require('./plugins/podcast-select')();
   require('./plugins/content-syndication')();
+  require('./plugins/brightcove-search')();
   require('./plugins/instagram')();
   require('./validators')();
 };
