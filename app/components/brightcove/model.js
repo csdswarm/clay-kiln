@@ -1,44 +1,35 @@
 'use strict';
 
-const brightcoveApi = require('../../services/universal/brightcoveApi'),
-  log = require('../../services/universal/log').setup({file: __filename});
-
-module.exports.save = (ref, data, locals) => {
-  let { videoId, playerId, accountId } = data;
-
-  // https://docs.brightcove.com/cms-api/v1/doc/index.html#operation/GetVideos
-  // need to get: /accounts/{account_id}/videos/{videoId}
-  // name: data.name
-  // description: data.description | data.long_description
-  // thumbnailUrl: data.images.thumbnail.src
-  // uploadDate: data.created_at | data.published_at | data.updated_at
-  // contentUrl: ''
-  // duration: data.duration
-  // embedUrl: ''
-  // interactionCount: 0
-
-  return data;
-};
+const brightcoveApi = require('../../services/universal/brightcoveApi');
 
 // just to test
 module.exports.render = async (ref, data, locals) => {
-  const { videoId, playerId, accountId } = data;
+  const { videoId } = data,
+    // cache this response for 5-10 min
+    res = await brightcoveApi.request('GET', `videos/${videoId}`),
+    params = { 
+      dimensions: 'video',
+      where: `video==${videoId}`
+    },
+    // cache this response for 5-10 min
+    analyticsData = await brightcoveApi.request('GET', ``, params, null, 'analytics');
 
-  // do a call for interactionCount
-  let res = await brightcoveApi.request('GET', `videos/${videoId}`);
-  log('info', `brightcoveApiResponse: ${JSON.stringify(res)}`);
+  if (res) {
+    data.name = res.name;
+    data.description = res.description;
+    data.longDescription = res.long_description;
+    data.thumbnailUrl = res.images && res.images.thumbnail && res.images.thumbnail.src;
+    data.createdAt = res.created_at;
+    data.publishedAt = res.published_at;
+    data.updatedAt = res.updated_at;
+    data.duration = res.duration;
+  }
 
+  if (analyticsData && analyticsData.items && analyticsData.items.length == 1) {
+    data.views = analyticsData.items[0].video_view;
+  }
 
-  // https://docs.brightcove.com/cms-api/v1/doc/index.html#operation/GetVideos
-  // need to get: /accounts/{account_id}/videos/{videoId}
-  // name: data.name
-  // description: data.description | data.long_description
-  // thumbnailUrl: data.images.thumbnail.src
-  // uploadDate: data.created_at | data.published_at | data.updated_at
-  // contentUrl: ''
-  // duration: 0
-  // embedUrl: ''
-  // interactionCount: 0
+  // TODO: still need contentUrl & embedUrl
 
   return data;
 };

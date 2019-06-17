@@ -5,7 +5,8 @@ let access_token,
   accessTokenUpdated = null;
 const log = require('./log').setup({file: __filename}),
   rest = require('./rest'),
-  brightcoveApi = `cms.api.brightcove.com/v1/accounts/${process.env.BRIGHTCOVE_ACCOUNT_ID}/`,
+  brightcoveCmsApi = `cms.api.brightcove.com/v1/accounts/${process.env.BRIGHTCOVE_ACCOUNT_ID}/`,
+  brightcoveAnalyticsApi = `analytics.api.brightcove.com/v1/data`,
   brightcoveOAuthApi = 'https://oauth.brightcove.com/v4/access_token?grant_type=client_credentials',
   qs = require('qs'),
   methods = [
@@ -23,10 +24,26 @@ const log = require('./log').setup({file: __filename}),
    * @param {object} params
    * @return {string}
    */
-  createEndpoint = (route, params) => {
+  createEndpoint = (route, params, api = 'cms') => {
+
+    let apiUrl;
+    switch (api) {
+      case 'cms': 
+        apiUrl = brightcoveCmsApi;
+        break;
+      // analytics data endpoint is odd... "accounts" is a param
+      // https://analytics.api.brightcove.com/v1/data?accounts=account_id(s)&dimensions=video&where=video==video_id
+      case 'analytics': 
+        apiUrl = brightcoveAnalyticsApi;
+        params = params || {};
+        params.accounts = process.env.BRIGHTCOVE_ACCOUNT_ID;
+        route = '';
+        break;
+    }
+
     const decodeParams =  params ? `?${decodeURIComponent(qs.stringify(params))}` : '';
 
-    return `https://${brightcoveApi}${route}${decodeParams}`;
+    return `https://${apiUrl}${route}${decodeParams}`;
   },
   /**
    * Retrieve access token and expiry time from oauth
@@ -65,9 +82,9 @@ const log = require('./log').setup({file: __filename}),
    * @return {Promise}
    * @throws {Error}
    */
-  request = async (method, route, params, data) => {
+  request = async (method, route, params, data, api = 'cms') => {
     try {
-      const endpoint = createEndpoint(route, params),
+      const endpoint = createEndpoint(route, params, api),
         currentTime = new Date().getTime() / 1000;
 
       if (!access_token || (accessTokenUpdated && currentTime >= accessTokenUpdated + expires_in)) {

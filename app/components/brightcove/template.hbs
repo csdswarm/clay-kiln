@@ -1,5 +1,5 @@
 <div data-uri="{{ default _ref _self }}" class="component component--brightcove" data-editable="video">
-  <div class="player">
+  <div class="player" itemscope itemtype="https://schema.org/VideoObject">
     {{#if videoId}}
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
         {{#unless @root.locals.edit}}
