@@ -7,8 +7,7 @@ const h = require('highland'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
   db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
-  CONTENT_FILTER = isOpForComponents(['article', 'gallery']),
-  log = require('../../services/universal/log').setup({ file: __filename });
+  CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
 
 // Subscribe to the save stream
 subscribe('save').through(save);
@@ -130,7 +129,6 @@ function save(stream) {
  * @return {Function}
  */
 function send(op) {
-  log('info', `PUB-TEST: sending update to elastic: ${INDEX}, ${op.key}`);
   return h(elastic.update(INDEX, op.key, op.value, false, true).then(() => op.key));
 }
 
