@@ -31,7 +31,7 @@ function filterNonSectionFront(page) {
 }
 
 /**
- * Upon publish, add new section front title to primary or secondary 
+ * Upon publish, add new section front title to primary or secondary
  * section front _lists instance if it does not already exist.
  * Note: Locks title field to prevent breaking article breadcrumbs
  * when a section front title is changed
@@ -62,7 +62,7 @@ async function handlePublishSectionFront(page) {
 };
  
 /**
- * Upon unpublish, remove section front title from primary or secondary 
+ * Upon unpublish, remove section front title from primary or secondary
  * section front _lists instance if it exists.
  * Note: Unlocks title field
  * @param {Object} page - unpublish page event payload
