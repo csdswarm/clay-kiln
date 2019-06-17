@@ -387,10 +387,6 @@ stationSyndication:
   _label: Syndicate to station(s)
   _has:
     input: station-select
-categorySyndication:
-  _label: Syndicate to categor(ies)
-  _has:
-    input: category-select
 genreSyndication:
   _label: Syndicate to genre(s)
   _has:
@@ -467,7 +463,6 @@ _groups:
       - featured
       - editorialFeeds
       - stationSyndication
-      - categorySyndication
       - genreSyndication
       - syndicationStatus
       - syndicatedUrl
