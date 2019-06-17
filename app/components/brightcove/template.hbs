@@ -1,5 +1,5 @@
 <div data-uri="{{ default _ref _self }}" class="component component--brightcove" data-editable="video">
-  <div class="player" itemscope itemtype="https://schema.org/VideoObject">
+  <div class="player" itemscope itemtype="http://schema.org/VideoObject">
     {{#if videoId}}
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
         {{#unless @root.locals.edit}}
@@ -11,6 +11,19 @@
             data-embed="default"
             data-application-id
             controls></video-js>
+
+            <meta itemprop="headline" content="{{ name }}">
+            <meta itemprop="description" content="{{ description }}">
+            <meta itemprop="thumbnail" content="{{ thumbnailUrl }}">
+            <meta itemprop="uploadDate" content="{{ createdAt }}">
+            <meta itemprop="contentUrl" content="">
+            <meta itemprop="duration" content="{{ duration }}">
+            <meta itemprop="embedUrl" content="">
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/ViewAction">
+              <meta itemprop="userInteractionCount" content="{{ views }}">
+            </div>
         {{else}}
           {{! @TODO: ON-38 Show thumbnail from video, get it during save in model.js and store on the component }}
           <div class="kiln-placeholder" style="min-height: 20px; margin-bottom: 20px;">
