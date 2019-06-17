@@ -1,8 +1,6 @@
 'use strict';
 
-const rest = require('../../services/universal/rest'),
-  getComponentInstance = (uri, opts) => rest.get(`http://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`http://${uri}`, body, true);
+const { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
