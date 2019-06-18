@@ -38,6 +38,30 @@ export default class MetaManager {
       metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
     }
 
+    // meta-tags component needs to be added to every page
+    const metaTagsData = queryPayload.findComponent(spaPayload.head, 'meta-tags')
+    if (metaTagsData) {
+      if (metaTagsData.metaTags) {
+        metaTagsData.metaTags.forEach(tag => {
+          if (tag.name) {
+            this.updateMetaTag('name', tag.name, tag.content, true)
+          } else if (tag.property) {
+            this.updateMetaTag('property', tag.property, tag.content, true)
+          }
+        })
+      }
+
+      // lets us only have to update meta-tags component when adding / removing meta tags
+      if (metaTagsData.unusedTags) {
+        // tag will be of schema
+        // { type: 'property', property: 'some:property' }
+        // { type: 'name', name: 'some:name' }
+        metaTagsData.unusedTags.forEach(tag => {
+          this.deleteMetaTag(tag.type, tag[tag.type])
+        })
+      }
+    }
+
     // Update or strip meta-title component tags (never delete <title> tag).
     if (metaTitleData) {
       this.updateTitleTag(metaTitleData.title)

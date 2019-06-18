@@ -5,6 +5,7 @@
   data-ad-location="{{ adLocation }}"
   data-ad-size="{{ adSize }}"
   data-doubleclick-banner-tag="{{ doubleclickBannerTag }}"
+  data-environment="{{ environment }}"
   class="component component--google-ad-manager google-ad-manager--{{adSize}} {{#if sticky }}sticky{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
 >
   {{#unless @root.locals.edit}}

@@ -38,7 +38,7 @@
         {{#if (compare @index 1)}}
           <div class="latest-videos__rail">
         {{/if}}
-        <div class="latest-videos__video latest-videos__video--news">
+        <div class="latest-videos__video latest-videos__video--{{ article.sectionFront }}">
           <a href="{{ article.canonicalUrl }}"
              class="latest-videos__link"
              data-track-type="article-link"

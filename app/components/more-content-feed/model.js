@@ -218,7 +218,7 @@ module.exports.render = function (ref, data, locals) {
   return queryService.searchByQuery(query)
     .then(function (results) {
       results = results.map(content => {
-        content.lead = content.lead[0].split('/')[2];
+        content.lead = content.lead[0]._ref.split('/')[2];
         return content;
       });
 

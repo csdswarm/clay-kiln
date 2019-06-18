@@ -24,6 +24,14 @@ const _ = require('lodash'),
    */
   componentUri = (uri) => uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`),
   /**
+   * gets a component instance
+   *
+   * @param {string} uri
+   * @param {object} opts
+   * @returns {Promise}
+   */
+  getComponentInstance = (uri, opts) => rest.get(componentUri(uri), opts),
+  /**
    * adds/updates a component instance
    *
    * @param {string} uri
@@ -209,4 +217,5 @@ module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.s
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
 module.exports.putComponentInstance = putComponentInstance;
+module.exports.getComponentInstance = getComponentInstance;
 module.exports.pageTypes = pageTypes;
