@@ -4,7 +4,7 @@ const
   fs = require('fs'),
   {
     parseHost, clayExport, esQuery, clayImport, httpGet,
-    _get, _chunk, clone, prettyJSON
+    republish, _get, _chunk, clone, prettyJSON
   } = require('../migration-utils').v1,
   host = process.argv[2],
   { es, url, http, message: envMessage } = parseHost(host),
@@ -145,15 +145,27 @@ function fixNoIndexNoFollow(componentInstances) {
     }), {})
 }
 
-async function applyUpdates(updates) {
+async function republishAffectedPages(ids){
+  for (const id in ids) {
+    republish({hostname: host, http, path: `/_pages/${id}`})
+      .then(() => console.log('republished: ', id))
+      .catch(error => logError('Problem trying to republish:', error));
+    await wait(DEFAULT_PAUSE);
+  }
+}
+
+function applyUpdates(updates) {
   const payload = {
     _components: {
       ...updates,
     },
   };
 
-  await wait(DEFAULT_PAUSE);
-  return clayImport({ payload, hostUrl: url, publish: true });
+  const result = clayImport({ payload, hostUrl: url, publish: true });
+
+  result.then(() => republishAffectedPages(Object.keys(updates[METATAGS].instances)));
+
+  return result;
 }
 
 function logResult(result) {

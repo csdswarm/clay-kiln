@@ -29,7 +29,6 @@ const clone = obj => obj && JSON.parse(JSON.stringify(obj));
 
 /**
  * given a host, attempts to get the configured values for that host
- * TODO: extract the data for this to a separate JSON or other config file - CSD
  * @param {string} host
  * @returns {{http: string, es: {http: string, hostname: string}}}
  */
@@ -226,13 +225,12 @@ function clayExport(params) {
  * @returns {Promise<string>}
  */
 function httpGet(params) {
-  const {url, http} = params;
+  const { url, http } = params;
   return new Promise((resolve, reject) => {
     try {
       const conn = require(http);
 
-      // TODO: fix assumption that protocol will not be in URL - CSD
-      const req = conn.get(`${http}://${url}`, res=> {
+      const req = conn.get(`${http}://${url.replace(/^https?:\/\//, '')}`, res => {
         const chunks = [];
 
         res.on('data', function (chunk) {
@@ -248,12 +246,60 @@ function httpGet(params) {
 
       req.on('error', error => reject({ result: 'fail', params, error }))
 
-    }
-    catch (error) {
+    } catch (error) {
       reject({ result: 'fail', params, error });
     }
   });
 }
+
+/**
+ * Performs a general httpRequest, with much of the error handling built in
+ * @param {Object} params
+ * @param {('http'|'https')} params.http
+ * @param {ClientRequestArgs|Object} params.options
+ * @returns {Promise<{result: ('success'|'fail'), data: string, params: Object}>}
+ */
+function httpRequest(params) {
+  const { http, options } = params;
+  return new Promise((resolve, reject) => {
+    try {
+      const conn = require(http);
+
+      const req = conn.request(options, res => {
+        const data = [];
+        res.on('data', chunk => data.push(chunk));
+        res.on('end', () => resolve({ result: 'success', data: Buffer.concat(data).toString(), params }));
+        res.on('error', error => reject({ result: 'fail', params, error }));
+      });
+      req.on('error', error => reject({ result: 'fail', params, error }));
+
+      req.end();
+
+    } catch (error) {
+      reject({ result: 'fail', params, error })
+    }
+  });
+}
+
+/**
+ * Does a basic republish of the page or component
+ * @param {Object} params
+ */
+function republish(params) {
+  const { hostname, http, path, headers = {} } = params;
+  const options = {
+    method: 'PUT',
+    path: path.replace(/@published$/, '') + '@published',
+    hostname,
+    headers: {
+      Authorization: 'token accesskey',
+      ...headers,
+    }
+  };
+
+  return httpRequest({http, options});
+}
+
 
 /*******************************************************************************************
  *                                     Version 1.0                                         *
@@ -269,6 +315,8 @@ const v1 = {
   clayImport,
   clayExport,
   httpGet,
+  republish,
+  httpRequest,
 };
 
 module.exports = {
