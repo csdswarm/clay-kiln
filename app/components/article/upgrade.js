@@ -1,6 +1,7 @@
 'use strict';
 
-const { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils');
+const { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+ { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -83,4 +84,8 @@ module.exports['4.0'] = async (uri, data) => {
   }
 
   return data;
+};
+
+module.exports['5.0'] = (uri, data) => {
+  return setNoIndexNoFollow(data);
 };

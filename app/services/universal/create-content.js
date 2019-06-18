@@ -418,7 +418,9 @@ function save(uri, data, locals) {
     setSlugAndLock(data, resolved.prevData, resolved.publishedData);
     return data;
   });
-};
+}
+
+module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
 
 module.exports.render = render;
 module.exports.save = save;
