@@ -58,7 +58,7 @@ async function makeRequest(path, method, data) {
       });
     }
     let req = http.request(requestOptions, handleResponse);
-    
+
     req.on('error', (e) => {
       console.error(e);
       reject(e);
@@ -81,7 +81,7 @@ async function letsDoThis() {
     automatedPublishDate: '',
     contentType: '',
     sectionFront: '',
-    secondaryArticleType: '',
+    secondarySectionFront: '',
     metaTags: []
   });
   await makeRequest('/_components/meta-tags/instances/general@published', 'PUT');
@@ -96,7 +96,7 @@ async function letsDoThis() {
 
 async function updatePages(pages, publishedPages) {
   for (let i = 0; i < pages.length; i++) {
-    const page = pages[i], 
+    const page = pages[i],
       published = publishedPages.includes(`${page}@published`);
 
     // unity created pages are alpha-numeric 25 chars
@@ -150,7 +150,7 @@ async function addMetaTags(page, published, hash = 'general') {
         automatedPublishDate: '',
         contentType: '',
         sectionFront: '',
-        secondaryArticleType: '',
+        secondarySectionFront: '',
         metaTags: []
       };
 
@@ -164,7 +164,7 @@ async function addMetaTags(page, published, hash = 'general') {
           metaTags.automatedPublishDate = contentObj.dateModified || '';
           metaTags.contentType = contentObj.contentType || '';
           metaTags.sectionFront = contentObj.sectionFront || '';
-          metaTags.secondaryArticleType = contentObj.secondaryArticleType || '';
+          metaTags.secondarySectionFront = contentObj.secondarySectionFront || '';
         }
       }
       await makeRequest(metaTagsComponent, 'PUT', metaTags);
