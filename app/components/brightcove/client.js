@@ -21,8 +21,8 @@ class Brightcove extends Video {
   createPlayer(component) {
     // eslint-disable-next-line no-undef
     const id = component.getAttribute('id'),
-      autoplayUnmuted = component.getAttribute('data-autoplay-unmuted'),
-      clickToPlay = component.getAttribute('data-click-to-play'),
+      autoplayUnmuted = component.getAttribute('data-autoplay-unmuted') === 'true',
+      clickToPlay = component.getAttribute('data-click-to-play') === 'true',
       player = bc(id),
       node = player.el();
 
