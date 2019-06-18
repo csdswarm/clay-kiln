@@ -133,17 +133,31 @@ async function updatePages(pages, publishedPages) {
   });
 }
 
+function hasMetaTagsComponent(head) {
+  let contains = false;
+
+  // content created since this migration was ran can already have meta-tags with a random hash
+  for (let i = 0; i < head.length; i++) {
+    if (head[i].includes('/_components/meta-tags/instances/')) {
+      contains = true;
+      break;
+    }
+  }
+
+  return contains;
+}
+
 async function addMetaTags(page, published, hash = 'general') {
   const metaTagsComponent = `/_components/meta-tags/instances/${hash}`,
     metaTagsComponentWHost = `${host}${metaTagsComponent}`;
 
   let added = false;
-  if (page && page.head && !page.head.includes(metaTagsComponentWHost)) {
+  if (page && page.head && !(hasMetaTagsComponent(page.head))) {
     page.head.push(metaTagsComponentWHost);
     added = true;
 
     // /_components/meta-tags/instances/general has already been created and published
-    if (hash != 'general') {
+    if (hash != 'general' && hash != '404') {
       const metaTags = {
         authors: [],
         publishDate: '',
