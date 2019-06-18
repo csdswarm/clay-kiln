@@ -64,6 +64,12 @@ module.exports = function (data, locals) {
     });
   }
 
+  if (data.lead) {
+    transform.push({
+      lead: { _cdata: renderContent(data.lead, locals)}
+    });
+  }
+
   // Add the tags
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
