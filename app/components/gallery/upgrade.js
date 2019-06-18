@@ -1,6 +1,9 @@
 'use strict';
 
-const { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils');
+const { isEmpty } = require('lodash');
+const cuid = require('cuid');
+const publishUtils = require('../../services/server/publish-utils');
+const { getComponentInstance, getComponentVersion } = require('clayutils');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -51,25 +54,25 @@ module.exports['4.0'] = async (uri, data) => {
       metaTagsUri = metaTagsUriPublished.replace('@published', ''),
       pageUriPublished = uri.replace('_components/gallery/instances', '_pages'),
       pageUri = pageUriPublished.replace('@published', ''),
-      page = await getComponentInstance(pageUri);
+      page = await publishUtils.getComponentInstance(pageUri);
 
     if (page && page.head && !page.head.includes(metaTagsUri)) {
 
       page.head.push(metaTagsUri);
       // create meta-tags component instance
       // don't wait for it, let it run and it should be updated by the next page load.
-      putComponentInstance(metaTagsUri, metaTagsData)
+      publishUtils.putComponentInstance(metaTagsUri, metaTagsData)
         .then(() => {
           if (published) {
-            return putComponentInstance(metaTagsUriPublished, metaTagsData);
+            return publishUtils.putComponentInstance(metaTagsUriPublished, metaTagsData);
           } else {
             return;
           }
         })
-        .then(putComponentInstance(pageUri, page))
+        .then(publishUtils.putComponentInstance(pageUri, page))
         .then(() => {
           if (published) {
-            return putComponentInstance(pageUriPublished, page);
+            return publishUtils.putComponentInstance(pageUriPublished, page);
           } else {
             return;
           }
@@ -78,4 +81,44 @@ module.exports['4.0'] = async (uri, data) => {
   }
 
   return data;
+};
+
+module.exports['5.0'] = async function (uri, data) {
+  if (!isEmpty(data.sideShare)) {
+    return data;
+  }
+
+  const galleryInstanceId = getComponentInstance(uri),
+    newShareUri = uri.replace(/\/gallery\/instances\/.*/, '/share/instances/new');
+
+  if (galleryInstanceId === 'new') {
+    return {
+      ...data,
+      sideShare: { _ref: newShareUri }
+    };
+  }
+
+  // these shouldn't be declared above the 'new' short-circuit
+  // eslint-disable-next-line one-var
+  const isPublished = getComponentVersion(uri) === 'published',
+    newShareData = await publishUtils.getComponentInstance(newShareUri),
+    shareInstanceData = Object.assign(newShareData, {
+      pinImage: data.feedImgUrl,
+      title: data.headline
+    });
+
+  let shareInstanceUri = newShareUri.replace('/instances/new', `/instances/${cuid()}`);
+
+  if (isPublished) {
+    shareInstanceUri += '@published';
+  }
+
+  await publishUtils.putComponentInstance(shareInstanceUri, shareInstanceData);
+
+  return {
+    ...data,
+    sideShare: {
+      _ref: shareInstanceUri
+    }
+  };
 };
