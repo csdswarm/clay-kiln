@@ -10,11 +10,11 @@ videoId:
       required: true
 
 autoplayUnmuted:
-  _label: Autoplay video unmuted? (Happy Birthday Videos Only)
+  _label: Autoplay / unmuted (Happy Birthday Videos Only)
   _has: checkbox
 
 clickToPlay:
-  _label: Click to play?
+  _label: Click to play
   _has: checkbox
 
 showTitle:
