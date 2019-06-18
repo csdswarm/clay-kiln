@@ -6,7 +6,8 @@ let access_token,
 const log = require('./log').setup({file: __filename}),
   rest = require('./rest'),
   brightcoveCmsApi = `cms.api.brightcove.com/v1/accounts/${process.env.BRIGHTCOVE_ACCOUNT_ID}/`,
-  brightcoveAnalyticsApi = `analytics.api.brightcove.com/v1/data`,
+  brightcoveAnalyticsApi = 'analytics.api.brightcove.com/v1/data',
+  brightcovePlaybackApi = `edge.api.brightcove.com/playback/v1/accounts/${process.env.BRIGHTCOVE_ACCOUNT_ID}/`,
   brightcoveOAuthApi = 'https://oauth.brightcove.com/v4/access_token?grant_type=client_credentials',
   qs = require('qs'),
   methods = [
@@ -38,6 +39,10 @@ const log = require('./log').setup({file: __filename}),
         params = params || {};
         params.accounts = process.env.BRIGHTCOVE_ACCOUNT_ID;
         route = '';
+        break;
+      // https://support.brightcove.com/overview-playback-api#Get_video_by_id
+      case 'playback':
+        apiUrl = brightcovePlaybackApi;
         break;
     }
 
