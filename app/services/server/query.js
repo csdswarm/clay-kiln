@@ -33,15 +33,15 @@ function prependPrefix(indexString) {
  * Prepends local prefix for Elastic Search client
  *
  * @param  {String} index
- * @param  {object} [locals] note: the client/query.js version requires `locals`, but this version does not
+ * @param  {Object} [query] note: the client/query.js version has a different second parameter
  * @return {Object}
  * @example newQueryWithPrefix('published-content')
  */
-function newQueryWithPrefix(index) {
-  var query = universalQuery(index);
+function newQueryWithPrefix(index, query) {
+  const uniQuery = universalQuery(index, query);
 
-  query.index = prependPrefix(index);
-  return query;
+  uniQuery.index = prependPrefix(index);
+  return uniQuery;
 }
 
 /**
@@ -211,9 +211,12 @@ module.exports.addMinimumShould = universalQuery.addMinimumShould;
 module.exports.addSort = universalQuery.addSort;
 module.exports.addSize = universalQuery.addSize;
 module.exports.addOffset = universalQuery.addOffset;
+module.exports.addSource = universalQuery.addSource;
 module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
 module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
 module.exports.formatSearchResult = universalQuery.formatSearchResult;
 module.exports.moreLikeThis = universalQuery.moreLikeThis;
+module.exports.moreLikeThis = universalQuery.moreLikeThis;
+module.exports.newNestedQuery = universalQuery.newNestedQuery;
