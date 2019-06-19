@@ -4,7 +4,7 @@ path: ''
 assetDir: public
 assetPath: ''
 port: 80
-protocol: http
+protocol: ${CLAY_SITE_PROTOCOL}
 shortKey: ${CLAY_SITE_SHORTKEY}
 webPlayerHost: ${WEB_PLAYER_HOST}
 brightcoveAccountId: ${BRIGHTCOVE_ACCOUNT_ID}
