@@ -134,17 +134,7 @@ async function updatePages(pages, publishedPages) {
 }
 
 function hasMetaTagsComponent(head) {
-  let contains = false;
-
-  // content created since this migration was ran can already have meta-tags with a random hash
-  for (let i = 0; i < head.length; i++) {
-    if (head[i].includes('/_components/meta-tags/instances/')) {
-      contains = true;
-      break;
-    }
-  }
-
-  return contains;
+  return Boolean(head.find(instance => instance.includes('/_components/meta-tags/instances/')));
 }
 
 async function addMetaTags(page, published, hash = 'general') {
