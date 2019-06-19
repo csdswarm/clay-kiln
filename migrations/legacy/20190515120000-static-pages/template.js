@@ -1,7 +1,7 @@
 const fs = require('fs')
 const YAML = require('../../../app/node_modules/yamljs')
 const fetch = require('../../../app/node_modules/node-fetch')
-const {get: _get, set: _set} = require('../../../app/node_modules/lodash')
+const { get: _get, set: _set } = require('../../../app/node_modules/lodash')
 const [host] = process.argv.slice(2)
 const memoized = {}
 const final = {}
@@ -41,7 +41,7 @@ function parseReferenceUrl(ref) {
   const url = refParts.slice(1).join('/')
   const componentName = refParts[2]
   const instanceName = refParts[4]
-  return {url, componentName, instanceName}
+  return { url, componentName, instanceName }
 }
 
 /**
@@ -69,7 +69,7 @@ async function storeData(url, data) {
 async function getData(url, context) {
   try {
     const response = await fetch(`${host}/${url}`)
-    if(response.status === 404){
+    if (response.status === 404) {
       return null
     }
     const jsonValue = await response.json()
@@ -102,7 +102,7 @@ async function getMemoizedData(url) {
 async function addStaticPageComponent() {
   return await storeData('_components/static-page/instances/new', {
     headline: '',
-    content: [{_ref: '/_components/paragraph/instances/new'}],
+    content: [{ _ref: '/_components/paragraph/instances/new' }],
     pageTitle: ''
   })
 }
@@ -127,7 +127,7 @@ function removeRoot(value) {
  * @param props
  */
 function removeEnvironmentRoots(obj, useRefs, ...props) {
-  const mapWithoutRoot = useRefs ? (({_ref}) => ({_ref: removeRoot(_ref)})) : removeRoot
+  const mapWithoutRoot = useRefs ? (({ _ref }) => ({ _ref: removeRoot(_ref) })) : removeRoot
 
   props.forEach(prop => {
     obj[prop] = obj[prop].map(mapWithoutRoot)
@@ -141,9 +141,10 @@ function removeEnvironmentRoots(obj, useRefs, ...props) {
 async function addStaticPageLayoutInstance() {
   const newStaticPageLayout = await getMemoizedData('_layouts/two-column-layout/instances/article')
   if (newStaticPageLayout.secondary && Array.isArray(newStaticPageLayout.secondary)) {
-    newStaticPageLayout.secondary = newStaticPageLayout.secondary.filter(({_ref}) => !_ref.includes('recirculation'))
+    newStaticPageLayout.secondary = newStaticPageLayout.secondary.filter(({ _ref }) => !_ref.includes('recirculation'))
   }
-  removeEnvironmentRoots(newStaticPageLayout, true, 'headLayout', 'top', 'secondary', 'bottom', 'kilnInternals', 'static')
+  removeEnvironmentRoots(newStaticPageLayout, true, 'headLayout', 'top', 'secondary', 'bottom', 'kilnInternals',
+    'static')
   await storeData('_layouts/two-column-layout/instances/static-page', newStaticPageLayout)
 }
 
@@ -174,12 +175,12 @@ async function addNewStaticPage() {
  */
 async function addStaticPageTemplateToLists() {
   const newPages = await getMemoizedData('_lists/new-pages')
-  const newStaticPage = {id: 'new-static-page', title: 'New Static Page'}
-  const pagesArrToObj = (obj, {id, title}) => ({...obj, [id]: title})
-  const generalContent = newPages.find(({id}) => id === 'General-content')
+  const newStaticPage = { id: 'new-static-page', title: 'New Static Page' }
+  const pagesArrToObj = (obj, { id, title }) => ({ ...obj, [id]: title })
+  const generalContent = newPages.find(({ id }) => id === 'General-content')
   const dedupPages = arr => Object.entries(arr
-      .reduce(pagesArrToObj, {}))
-      .map(([id, title]) => ({id, title})
+    .reduce(pagesArrToObj, {}))
+    .map(([id, title]) => ({ id, title })
     )
   const pages = generalContent.children
   pages.push(newStaticPage)
@@ -211,7 +212,7 @@ async function addNewStaticPageTemplate() {
  */
 function createNewSubComponentsFromRef(data) {
   return async ref => {
-    const {url} = parseReferenceUrl(ref)
+    const { url } = parseReferenceUrl(ref)
     const newSubComponent = _get(data, url.split('/'))
     await storeData(url, newSubComponent)
   }
@@ -230,10 +231,7 @@ function createNewReferenceIdForPageComponents(name, componentName, instanceName
   if (instanceName.includes(name)) {
     return `_components/${componentName}/instances/${instanceName}`
   }
-  const newInstanceName = (componentName === 'google-ad-manager')
-    ? `${name}-${instanceName}`
-    : name
-  return `_components/${componentName}/instances/${newInstanceName}`
+  return `_components/${componentName}/instances/${name}`
 }
 
 /**
@@ -246,15 +244,18 @@ function createNewReferenceIdForPageComponents(name, componentName, instanceName
 function createNewComponentsFromRef(name, data) {
   const createSubComponents = createNewSubComponentsFromRef(data)
   return async ref => {
-    const {url, componentName, instanceName} = parseReferenceUrl(ref)
+    const { url, componentName, instanceName } = parseReferenceUrl(ref)
+    if (componentName === 'google-ad-manager') {
+      return ref;
+    }
     const existingComponent = await getMemoizedData(url)
     const newRoute = createNewReferenceIdForPageComponents(name, componentName, instanceName)
     const newRef = `/${newRoute}`
     const compUpdates = _get(data, newRoute.split('/'), {})
     const preExistingComponent = await getMemoizedData(newRoute)
     const newComponent = preExistingComponent
-      ? {...existingComponent, ...preExistingComponent, ...compUpdates}
-      : {...existingComponent, ...compUpdates}
+      ? { ...existingComponent, ...preExistingComponent, ...compUpdates }
+      : { ...existingComponent, ...compUpdates }
     if (componentName === 'static-page') {
       for (const contentRef of compUpdates.content) {
         await createSubComponents(contentRef._ref)
@@ -293,7 +294,7 @@ function mergeUpdatesIntoPageProperties(pageTemplate, name, data) {
  * @param data
  * @returns {Promise<void>}
  */
-async function createNewStaticPageFromTemplate({name, customUrl, data}) {
+async function createNewStaticPageFromTemplate({ name, customUrl, data }) {
   const pageTemplate = await getMemoizedData('_pages/new-static-page')
   const updateProps = mergeUpdatesIntoPageProperties(pageTemplate, name, data)
   for (const prop of pageMultiValueProps) {
@@ -361,7 +362,7 @@ function writeOutFinalResult() {
 
 // Start here. names pretty much describe what's happening
 addNewStaticPageTemplate()
-  .then(addNewLegalPage)
   .then(addNewContestRulesPage)
+  .then(addNewLegalPage)
   .then(updateSubscriptionPage)
   .then(writeOutFinalResult)
