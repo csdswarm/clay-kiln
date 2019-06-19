@@ -1,8 +1,8 @@
 'use strict';
 
 const rest = require('../../services/universal/rest'),
-  getComponentInstance = (uri, opts) => rest.get(`https://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`https://${uri}`, body, true);
+  getComponentInstance = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
+  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
