@@ -27,7 +27,7 @@ function getRoot(query) {
  * https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-bool-query.html
  *
  * @param  {String} index
- * @param  {Object} query
+ * @param  {Object} [query]
  * @return {Object}
  */
 function newQuery(index, query) {
