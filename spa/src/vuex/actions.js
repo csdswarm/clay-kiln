@@ -84,9 +84,9 @@ export default {
         password
       } })
 
-    // For the sign up process, we want to keep the modal open when we sign in
-    // so that the create profile modal can be displayed without any issues
-    await dispatch(actionTypes.SIGN_IN, { email, password, 'hideModal': false })
+    // For the sign up process, we want to keep the modal open so
+    // that the create profile modal can be displayed without any issues
+    await dispatch(actionTypes.SIGN_IN, { email, password, hideModal: false })
     commit(mutationTypes.SIGN_UP_COMPLETE)
     commit(mutationTypes.ROUTER_PUSH, '/account/profile')
   },
