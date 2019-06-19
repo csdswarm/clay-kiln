@@ -47,7 +47,7 @@ export default {
       return result
     }
   },
-  async [actionTypes.SIGN_IN] ({ commit, state }, { email, password }) {
+  async [actionTypes.SIGN_IN] ({ commit, state }, { email, password, hideModal = true }) {
     const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/signin',
@@ -59,7 +59,10 @@ export default {
       } })
 
     commit(mutationTypes.SET_USER, { ...result.data })
-    commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+
+    if (hideModal) {
+      commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+    }
   },
   async [actionTypes.SIGN_OUT] ({ commit }) {
     await axiosCall({ commit,
@@ -81,7 +84,9 @@ export default {
         password
       } })
 
-    await dispatch(actionTypes.SIGN_IN, { email, password })
+    // For the sign up process, we want to keep the modal open so
+    // that the create profile modal can be displayed without any issues
+    await dispatch(actionTypes.SIGN_IN, { email, password, hideModal: false })
     commit(mutationTypes.SIGN_UP_COMPLETE)
     commit(mutationTypes.ROUTER_PUSH, '/account/profile')
   },
