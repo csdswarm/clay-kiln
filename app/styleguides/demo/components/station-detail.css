@@ -296,6 +296,7 @@
     }
     > li {
       @mixin station-detail-font5;
+      position: relative;
       text-transform: capitalize;
       cursor: pointer;
       display: inline-flex;
@@ -365,7 +366,7 @@
         margin-left: em(-5, 14);
         margin-top: em(3, 14);
         position: absolute;
-        margin-top: calc(1em + em(5, 14));
+        top: calc(1em + em(5, 14));
         z-index: 2;
         border: em(1, 14) solid $mercury;
         li {

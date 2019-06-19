@@ -62,7 +62,7 @@
         -moz-column-gap: 0;
         z-index: 1;
         position: absolute;
-        margin-top: calc(1em + em(5, 14));
+        top: calc(3.15em + em(5, 14));
         border: em(1, 14) solid $mercury;
 
         li {
