@@ -48,7 +48,7 @@ _components:
         text: >-
           If you are experiencing any issues and need support for the RADIO.COM
           app or desktop player, please reach out to us at <a
-          href="mailto:support@radio.com" target="_blank">support@radio.com</a>.
+          href="mailto:support@radio.com" >support@radio.com</a>.
       legal-6:
         text: Public Inspection File - Help
         componentVariation: paragraph
@@ -56,7 +56,7 @@ _components:
         text: >-
           If you need help accessing the file due to a disability, please
           contact <a href="mailto:publicfileinfo@entercom.com"
-          target="_blank">publicfileinfo@entercom.com</a>
+          >publicfileinfo@entercom.com</a>
   subheader:
     instances:
       legal-2:
