@@ -66,34 +66,45 @@ module.exports.render = async (ref, data, locals) => {
      * add a condition to the query
      *
      * @param {String} item - a string of items to apply add to the query condition
-     * @param {String} nested - a key to be used as a nested query if needed
-     * @param {Function} createObj - a function that take the value and returns the object representation
-     * @param {String} condition - possible options addShould/addMust/addMustNot
+     * @param {Object} conditions - object or array that contains query conditions
+     * @param {String} conditionType - possible options addShould/addMust/addMustNot
      */
-    addCondition = (item, nested, createObj, condition) => {
+    addCondition = (item, conditions, conditionType) => {
+      const { nested, multiQuery, createObj } = conditions;
+
       if (item) {
         const localQuery = nested ? queryService.newNestedQuery(nested) : query,
           items = item.split(',');
 
-        items.forEach(instance => queryService[condition](localQuery, { match: createObj(instance)}));
-        if (condition === 'addShould') {
-          queryService.addMinimumShould(localQuery, 1);
-        }
-        if (nested) {
-          queryService.addMust(query, localQuery);
-        }
+        items.forEach(instance => {
+          if (multiQuery) {
+            createObj(instance).forEach(cond => {
+              if (cond.nested) {
+                const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), { match: cond.match });
+                
+                queryService[conditionType === 'addMustNot' ? 'addMust' : conditionType](localQuery, newNestedQuery);
+              } else {
+                queryService[conditionType](localQuery, { match: cond.match });
+              }
+            });
+          } else {
+            queryService[conditionType](localQuery, { match: createObj(instance)});
+          }
+          if (conditionType === 'addShould') {
+            queryService.addMinimumShould(localQuery, 1);
+          }
+        });
       }
     },
     /**
      * add filter and exclude conditions to the query
      *
      * @param {String} key
-     * @param {String} nested
-     * @param {Function} createObj
+     * @param {Object} conditions
      */
-    addFilterAndExclude = (key, nested, createObj) => {
-      addCondition(filters[key], nested, createObj, 'addShould');
-      addCondition(excludes[key], nested, createObj, 'addMustNot');
+    addFilterAndExclude = (key, conditions) => {
+      addCondition(filters[key], conditions, 'addShould');
+      addCondition(excludes[key], conditions, 'addMustNot');
     },
     queryFilters = {
       // vertical (sectionfront) and/or exclude tags
@@ -104,8 +115,16 @@ module.exports.render = async (ref, data, locals) => {
       subcategory: { createObj: secondaryArticleType => ({ secondaryArticleType }) },
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
-      // stations (nested object search)
-      station: { createObj: station => ({ 'byline.sources.text': station }), nested: 'byline' }
+      // stations (stationSyndication)
+      station: {
+        createObj: station => [
+          { match: { stationSyndication: station } },
+          { match: { 'stationSyndication.normalized': station } }
+        ],
+        multiQuery: true
+      },
+      // genres syndicated to (genreSyndication)
+      genre: { createObj: genreSyndication => ({ 'genreSyndication.normalized': genreSyndication }) }
     };
 
   queryService.addSize(query, filters.size ? filters.size : data.query.size);
@@ -115,7 +134,7 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
-  Object.entries(queryFilters).forEach(([key, { nested, createObj }]) => addFilterAndExclude(key, nested, createObj));
+  Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
 
   try {
     if (meta.rawQuery) {
