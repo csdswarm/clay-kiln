@@ -66,7 +66,7 @@ class WebPlayer extends Audio {
 }
 
 // Add player mount channel.
-clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
+clientCommunicationBridge.subscribe('ClientWebPlayerMountPlayer', async () => {
   await clientPlayerInterface.mountPlayer();
 
   // create an element that can represent the web player
@@ -79,7 +79,7 @@ clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
 });
 
 // Listen for player to start playback.
-clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (payload) => {
+clientCommunicationBridge.subscribe('ClientWebPlayerPlaybackStatus', async (payload) => {
   const { id, playingClass, playerState } = payload;
 
   if (playerState === 'play') {

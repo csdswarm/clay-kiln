@@ -6,11 +6,13 @@ const adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
+  environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
+  inProduction = environment === 'production',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
   doubleclickPageTypeTagStationsDirectory = 'stationsdirectory',
-  doubleclickPageTypeTagStationDetail = 'station',
+  doubleclickPageTypeTagStationDetail = 'livestreamplayer',
   doubleclickPageTypeTagTag = 'tag',
   doubleclickPageTypeTagAuthor = 'authors',
   adRefreshInterval = '60000', // Time in milliseconds for ad refresh
@@ -302,15 +304,19 @@ function getAdTargeting(pageData, urlPathname) {
       }
       break;
     case 'stationDetail':
-      adTargetingData.targetingTags = [doubleclickPageTypeTagStationDetail, pageData.pageName];
+      adTargetingData.targetingTags = [doubleclickPageTypeTagStationDetail, 'unity'];
       adTargetingData.targetingPageId = pageData.pageName;
-      adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${doubleclickPageTypeTagStationDetail}`);
-      const stationDetailComponent = document.querySelector('.component--station-detail');
+      const stationDetailComponent = document.querySelector('.component--station-detail'),
+        stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
+        station = stationDetailEl ? JSON.parse(stationDetailEl.innerHTML) : {},
+        stationBannerTag = inProduction ? station.doubleclick_bannertag : doubleclickBannerTag;
 
-      adTargetingData.targetingRadioStation = stationDetailComponent.getAttribute('data-station-slug');
-      adTargetingData.targetingCategory = adTargetingData.targetingGenre = stationDetailComponent.getAttribute('data-station-category');
-      if (adTargetingData.targetingCategory == 'music') {
-        adTargetingData.targetingGenre = stationDetailComponent.getAttribute('data-station-genre');
+      adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${doubleclickPageTypeTagStationDetail}`;
+      adTargetingData.targetingMarket = station.market_name;
+      adTargetingData.targetingRadioStation = station.callsign;
+      adTargetingData.targetingCategory = adTargetingData.targetingGenre = station.category.toLowerCase();
+      if (adTargetingData.targetingCategory == 'music' && station.genre_name.length) {
+        adTargetingData.targetingGenre = station.genre_name[0].toLowerCase();
       }
       break;
     case 'topicPage':
@@ -377,6 +383,10 @@ function createAds(adSlots) {
         .setTargeting('loc', adLocation)
         .setTargeting('adtest', queryParams.adtest || '')
         .addService(pubAds);
+
+      if (adTargetingData.targetingMarket) {
+        slot.setTargeting('market', adTargetingData.targetingMarket);
+      }
 
       // Right rail and inline gallery ads need unique names
       if (rightRailAdSizes.includes(adSize)) {

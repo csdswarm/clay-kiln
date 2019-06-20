@@ -114,7 +114,7 @@ install-dev:
 	make build-player && cd app && npm i && npm run build && cd ../spa && npm i && npm run-script build -- --mode=none
 
 install:
-	cd app && npm i && npm run build && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
+	cd app && npm i && npm run build-production && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
 
 lint:
 	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
