@@ -181,7 +181,7 @@ function updateSkinStyles(hasSkin) {
 
   if (hasSkin) {
     billboard.style['background'] = 'transparent';
-    billboard.style['margin-bottom'] = '-0.875em';
+    billboard.style['margin-bottom'] = '0';
   } else {
     billboard.style['background'] = null;
     billboard.style['margin-bottom'] = null;
@@ -467,7 +467,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.getElementsByClassName('layout')[0],
+    globalDiv = document.getElementsByClassName('layout__top')[0],
     resetElements = resizeForSkin();
 
   // Include our default bg color
@@ -531,7 +531,9 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
 
   if (globalDiv) {
     document.body.style.backgroundColor = backgroundColor;
-    globalDiv.prepend(bgdiv);
+
+    // insert after the nav so that its absolute positioning doesn't start under the nav
+    globalDiv.parentNode.insertBefore(bgdiv, globalDiv.nextSibling);
   }
 
   /**

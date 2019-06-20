@@ -1,0 +1,12 @@
+{
+  "source": {
+    "index": "currentIndex"
+  },
+  "dest": {
+    "index": "newIndex"
+  },
+  "script": {
+    "lang": "painless",
+    "source": "if(ctx._source.lead?.size() == 1) { ctx._source.lead[0]=[\"_ref\": ctx._source.lead[0]] }"
+  }
+}

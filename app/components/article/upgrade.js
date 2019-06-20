@@ -1,7 +1,9 @@
 'use strict';
 
-const { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
- { setNoIndexNoFollow } = require('../../services/universal/create-content');
+const rest = require('../../services/universal/rest'),
+  getComponentInstance = (uri, opts) => rest.get(`https://${uri}`, opts),
+  putComponentInstance = (uri, body) => rest.put(`https://${uri}`, body, true),
+  { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
