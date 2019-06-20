@@ -33,7 +33,6 @@ _components:
     sectionFront: ''
     contentType: 'gallery'
     stationSyndication: []
-    categorySyndication: []
     genreSyndication: []
     syndicatedUrl: ''
     syndicationStatus: original

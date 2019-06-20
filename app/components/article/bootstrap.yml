@@ -14,7 +14,6 @@ _components:
         sources: []
     syndicatedUrl: ''
     stationSyndication: []
-    categorySyndication: []
     genreSyndication: []
     syndicationStatus: original
     lead: []

@@ -30,15 +30,19 @@ alias="${array[1]}";
 
 mappings=$(curl -X GET "$es:9200/$currentIndex/_mappings") 2>/dev/null;
 
-if [[ $mappings != *"stationSyndication"* || $mappings != *"categorySyndication"* || $mappings != *"genreSyndication"* ]]; then
+if [[ $mappings != *"stationSyndication"* || $mappings != *"genreSyndication"* || $mappings == *"categorySyndication"* ]]; then
   printf "\nmaking curl GET to $es:9200/_cat/indices?pretty&s=index:desc\n";
   indices=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null);
   # sometimes the currentIndex isn't necessarily the largest. and query brings back in alphabetical order, so 2 > 10
   newIndex=$(node largest-index "$indices");
   setting=$(curl -X GET "$es:9200/$currentIndex/_settings") 2>/dev/null;
 
-  # add byline properties to mapping
-  indexPayload=$(node index-payload "$mappings" "$setting");
+  # remove category syndication property or add genre and station syndication properties to mapping
+  if [[ $mappings == *"categorySyndication"* ]]; then
+    indexPayload=$(node remove-category-syndication "$mappings" "$setting");
+  else
+    indexPayload=$(node index-payload "$mappings" "$setting");
+  fi
 
   printf "\n\nCreating new index ($newIndex)...\n\n"
   curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "$indexPayload";

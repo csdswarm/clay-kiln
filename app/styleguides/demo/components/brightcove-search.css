@@ -1,0 +1,77 @@
+.kiln-field {
+    .brightcove-search {
+      .ui-textbox {
+        margin-bottom: em(16);
+      }
+  
+      &__date-range {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+  
+        .ui-datepicker {
+          width: 100%;
+        }
+      }
+  
+      &__search-results {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: em(20);
+  
+        ul {
+          width: 100%;
+        }
+  
+        .search-results__item {
+          display: flex;
+          flex-direction: row;
+          padding: em(4);
+          cursor: pointer;
+          justify-content: space-between;
+      
+          &:hover {
+            background-color: lightgrey;
+          }
+        }
+      
+        .search-results__header {
+          display: flex;
+          flex-direction: row;
+          margin: em(4);
+          cursor: pointer;
+          justify-content: space-between;
+          font-weight: bold;
+          border-bottom: 1px solid black;
+        }
+      }
+    }
+  
+    .brightcove-video-preview {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+  
+      .video-preview__image {
+        display: flex;
+        height: 50%;
+        width: 50%;
+      }
+           
+      .video-preview__info {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin: em(32) em(12);
+        font-size: em(18);
+        text-align: center;
+        justify-content: space-around;
+      }
+
+      .video-preview__id {
+          color: grey;
+      }
+    }
+  }
+  
