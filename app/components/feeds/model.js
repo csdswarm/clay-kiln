@@ -123,8 +123,6 @@ module.exports.render = async (ref, data, locals) => {
         ],
         multiQuery: true
       },
-      // categories syndicated to (categorySyndication)
-      category: { createObj: categorySyndication => ({ 'categorySyndication.normalized': categorySyndication }) },
       // genres syndicated to (genreSyndication)
       genre: { createObj: genreSyndication => ({ 'genreSyndication.normalized': genreSyndication }) }
     };
