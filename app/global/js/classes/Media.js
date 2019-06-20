@@ -75,14 +75,15 @@ class Media {
    *
    * @param {Element} component
    */
-  whenScriptsLoaded(component) {
-    const { id, media, node, persistent } = this.createMedia(component),
-      mediaObserver = new IntersectionObserver((change) => this.mediaIsNotInView(change), {threshold: 0});
+  async whenScriptsLoaded(component) {
+    const { id, media, node, persistent } = await this.createMedia(component),
+      mediaObserver = new IntersectionObserver((change) => this.notInView(change), {threshold: 0});
 
     this.id = id;
     this.media = media;
     this.node = node;
     this.persistent = Boolean(persistent);
+    this.lead = Boolean(this.node.closest('.body__header .lead'));
 
     // Observe media for if it goes out of view
     mediaObserver.observe(this.getNode());
@@ -134,7 +135,7 @@ class Media {
    *
    * @param {array} changes
    */
-  mediaIsNotInView(changes) {
+  notInView(changes) {
     changes.forEach(change => {
       if (change.intersectionRatio === 0) {
         this.pause();
@@ -159,6 +160,7 @@ class Media {
    */
   log() {
     if (this.options.debug) {
+      console.log('%c %s', 'color: green', '-'.repeat(100));
       console.log.apply(this, arguments);
     }
   }
@@ -179,6 +181,7 @@ class Media {
   getEventTypes() {
     return {
       MEDIA_PLAY: 'play',
+      MEDIA_PAUSE: 'pause',
       MEDIA_VOLUME: 'volume',
       MEDIA_READY: 'ready',
       AD_PLAY: 'ad_play',
@@ -205,7 +208,6 @@ class Media {
    * start the media (can be overridden)
    */
   async play() {
-
     await this.getMedia().play();
   }
   /**
@@ -219,6 +221,14 @@ class Media {
    */
   async unmute() {
     this.getMedia().muted = false;
+  }
+  /**
+   * determines if the media is in the lead position
+   *
+   * @return {Boolean}
+   */
+  isLead() {
+    return this.lead;
   }
 }
 

@@ -37,6 +37,8 @@ class YouTube extends Video {
   onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PLAYING) {
       this.dispatchEvent(this.getEventTypes().MEDIA_PLAY);
+    } else if (event.data === YT.PlayerState.PAUSED) {
+      this.dispatchEvent(this.getEventTypes().MEDIA_PAUSE);
     }
   }
 
@@ -51,15 +53,23 @@ class YouTube extends Video {
   /**
    * responds to the player volume dispatching the events
    *
+   * @param {object} event
    */
-  onPlayerVolumeChange() {
-    this.dispatchEvent(this.getEventTypes().MEDIA_VOLUME);
-  }
+  onPlayerVolumeChange(event) {
+    if (!this.currentVolume) {
+      this.currentVolume = event.data;
+    }
 
+    // youtube dispatches the volume change event event when it hasn't changed
+    if (this.currentVolume.muted !== event.data.muted || this.currentVolume.volume !== event.data.volume) {
+      this.currentVolume = event.data;
+      this.dispatchEvent(this.getEventTypes().MEDIA_VOLUME);
+    }
+  }
   /**
    * @override
    */
-  createMedia(component) {
+  async createMedia(component) {
     const config = {
       videoConfig: {
         videoContainerId: component.getAttribute('data-element-id').trim(),
@@ -73,7 +83,7 @@ class YouTube extends Video {
         events: {
           onReady: () => this.onPlayerReady(),
           onStateChange: (event) => this.onPlayerStateChange(event),
-          onVolumeChange: () => this.onPlayerVolumeChange()
+          onVolumeChange: (event) => this.onPlayerVolumeChange(event)
         }
       }
     };
@@ -93,11 +103,16 @@ class YouTube extends Video {
       };
     }
 
-    return {
-      id: component.dataset.elementId,
-      media: new YT.Player(config.videoConfig.videoContainerId, config.playerOptions),
-      node: component
-    };
+    // Race conditions occur where YT is defined, but the Player constructor has not been created yet.
+    if (YT.Player) {
+      return Promise.resolve({
+        id: component.dataset.elementId,
+        media: new YT.Player(config.videoConfig.videoContainerId, config.playerOptions),
+        node: component
+      });
+    } else {
+      return new Promise(resolve => setTimeout(() => resolve(this.createMedia(component)), 100));
+    }
   }
   /**
    * proxy events through the node
@@ -131,9 +146,10 @@ class YouTube extends Video {
    * @override
    */
   async unmute() {
-    await this.getMedia().unMute();
+    if (this.userInteracted()) {
+      await this.getMedia().unMute();
+    }
   }
-
   /**
    * @override
    */
@@ -141,7 +157,6 @@ class YouTube extends Video {
     // once the media has played once, add an event for the next time it plays
     this.addEvent(eventTypes.MEDIA_PLAY, () => super.unmuteOnPlay(eventTypes), { once: true });
   }
-
   /**
    * @override
    */

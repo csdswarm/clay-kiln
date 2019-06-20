@@ -1,22 +1,24 @@
 'use strict';
 
 // Polyfill
-require('intersection-observer');
 require('core-js/modules/es6.symbol');
 const Video = require('../../global/js/classes/Video'),
   clientCommunicationBridge = require('../../services/client/ClientCommunicationBridge')();
 
 class Brightcove extends Video {
+  /**
+   * @override
+   */
   constructor(brightcoveComponent) {
     const videoPlayer = brightcoveComponent.querySelector('video-js'),
-      videoPlayerWrapper = brightcoveComponent.querySelector('.player__video'),
       brightcoveAccount = videoPlayer.getAttribute('data-account'),
       brightcovePlayerId = videoPlayer.getAttribute('data-player');
 
-    super(videoPlayer, `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`);
+    super(brightcoveComponent, {
+      script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`
+    });
 
-    this.setObserver(brightcoveComponent);
-    this.videoPlayerWrapper = videoPlayerWrapper;
+    this.videoPlayerWrapper = brightcoveComponent.querySelector('.player__video');
     this.webPlayerPlaybackState = clientCommunicationBridge.getLatest('ClientWebPlayerPlaybackStatus', {}).playerState;
 
     clientCommunicationBridge.subscribe('ClientWebPlayerPlaybackStatus', async ({playerState}) => {
@@ -27,112 +29,109 @@ class Brightcove extends Video {
     });
   }
   /**
-   * Construct the player
-   *
-   * @param {Element} component
-   * @return {object}
+   * @override
    */
-  createPlayer(component) {
-    // eslint-disable-next-line no-undef
-    const id = component.getAttribute('id'),
-      player = bc(id),
-      node = player.el();
+  createMedia(component) {
+    const id = component.querySelector('video-js').getAttribute('id'),
+      media = bc(id),
+      node = component;
 
-    return { id, player, node };
+    return { id, media, node };
   }
   /**
-   * * Returns the event types for the video, should be overloaded
-   *
-   * @return {object}
+   * @override
    */
   getEventTypes() {
     return {
-      VIDEO_START: 'play',
-      VIDEO_READY: 'loadedmetadata',
-      AD_START: 'ads-play'
+      MEDIA_PLAY: 'play',
+      MEDIA_PAUSE: 'pause',
+      MEDIA_READY: 'loadedmetadata',
+      AD_PLAY: 'ads-play',
+      MEDIA_VOLUME: 'volumechange',
+      AD_VOLUME: 'ads-volumechange'
     };
   }
   /**
-   * adds an event for the specific video type
+   * use the brightcove event listener
    *
-   * @param {Element} object
-   * @param {string} type
-   * @param {function} listener
+   * @override
    */
-  addEvent(object, type, listener) {
-    object.on(type, listener);
+  addEvent(type, listener, options) {
+    if (options && options.once) {
+      this.getMedia().one(type, listener);
+    } else {
+      this.getMedia().on(type, listener);
+    }
   }
   /**
-   * Initialize an intersectionObserver to watch if the brightcove container is no longer in view
-   *
-   * @param {component} brightcoveComponent
+   * @override
    */
-  setObserver(brightcoveComponent) {
-    const brightcoveObserver = new IntersectionObserver(this.containerIsInView.bind(this), {threshold: 0});
-    
-    brightcoveObserver.observe(brightcoveComponent);
+  async mute() {
+    await this.getMedia().muted(true);
   }
   /**
-   * Check if the container has gone out of view
-   *
-   * @param {array} changes
+   * @override
    */
-  containerIsInView(changes) {
-    changes.forEach(change => {
-      if (change.intersectionRatio === 0) {
-        this.addStickyPlayer();
-      } else {
-        this.removeStickyPlayer();
-      }
-    });
+  async unmute() {
+    // only unmute if the user has actually interacted with the player
+    if (this.userInteracted()) {
+      await this.getMedia().muted(false);
+    }
   }
   /**
    * add brightcove sticky player if web player is paused or not on page
+   *
+   * @return {Boolean}
    */
   addStickyPlayer() {
     if (clientCommunicationBridge.getLatest('ClientWebPlayerMountPlayer')) {
       this.videoPlayerWrapper.classList.add('web-player-exists');
     }
     if (this.webPlayerPlaybackState !== 'play') {
+      // ensure that the height is retained
+      this.getNode().style.minHeight = `${this.videoPlayerWrapper.offsetHeight}px`;
       this.videoPlayerWrapper.classList.add('player__video--out-of-view');
+      return true;
     }
-    this.mute(this.getPlayer(this.getPlayerId()));
+
+    return false;
   }
   /**
    * hide the brightcove sticky player
    */
   removeStickyPlayer() {
+    // remove the min height
+    this.getNode().style.minHeight = 'initial';
     this.videoPlayerWrapper.classList.remove('player__video--out-of-view');
   }
   /**
    * @override
-   * Check if the video has gone out of view
    *
-   * @param {array} changes
+   * Check if the video has gone out of view only when not sticky
+   * if web player is paused or not on page
    */
-  videoIsInView() {
-    // Don't run super videoIsInView
-  }
-  /**
-   * mute the player
-   *
-   * @param {object} player
-   */
-  mute(player) {
-    if (player) {
-      player.muted(true);
+  notInView(changes) {
+    let stuck = false;
+
+    // Only the lead can be sticky
+    if (this.isLead()) {
+      changes.forEach(change => {
+        if (change.intersectionRatio === 0) {
+          stuck = this.addStickyPlayer();
+        } else {
+          this.removeStickyPlayer();
+        }
+      });
+    }
+    if (!stuck) {
+      super.notInView(changes);
     }
   }
   /**
-   * start the player
-   *
-   * @param {object} player
+   * @override
    */
-  play(player) {
-    if (player) {
-      player.muted(true);
-      player.play();
-    }
+  userInteracted() {
+    return this.getMedia().userActive();
   }
 }
 

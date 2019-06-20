@@ -10,13 +10,11 @@ class VerizonMedia extends Video {
     super(verizonMediaComponent.querySelector('video-js'), {
       script: '//cdn.vidible.tv/prod/player/js/latest/vidible-min.js'
     });
-
-    this.userInteraction = false;
   }
   /**
    * @override
    */
-  createMedia(component) {
+  async createMedia(component) {
     // eslint-disable-next-line no-undef
     const media = vidible.player(component.getAttribute('id')).setup({
         bcid: component.getAttribute('data-company'),
@@ -33,19 +31,9 @@ class VerizonMedia extends Video {
     // attach our listener to the media so we can dispatch through the node because their listener does not handle options
     Object.keys(events).forEach(key => media.addEventListener(events[key], (e) => this.dispatchEvent(e)));
 
-    // vidible calls the play event each time a new video is loaded, so in order to determine when a video should
-    // unmute and be able to pause other videos, once the video has paused, any additional interactions would have to be
-    // from the user
-    // eslint-disable-next-line no-undef
-    media.addEventListener(vidible.VIDEO_PAUSE, () => {
-      this.userInteraction = true;
-    }, { once: true });
-    // eslint-disable-next-line no-undef
-    media.addEventListener(vidible.VIDEO_VOLUME_CHANGED, () => {
-      this.userInteraction = true;
-    }, { once: true });
-
-    return { id, media, node: component.querySelector('div') };
+    // while the vidible player exists and you can interact with it, there is oddness when hitting a page with
+    // a vidible video directly (it works fine with spa navigation), but waiting 100ms seems to let it finish itself
+    return new Promise((resolve) => setTimeout(() => resolve({ id, media, node: component.querySelector('div') }), 100));
   }
   /**
    * @override
@@ -54,6 +42,8 @@ class VerizonMedia extends Video {
     return {
       // eslint-disable-next-line no-undef
       MEDIA_PLAY: vidible.VIDEO_PLAY,
+      // eslint-disable-next-line no-undef
+      MEDIA_PAUSE: vidible.VIDEO_PAUSE,
       // eslint-disable-next-line no-undef
       MEDIA_READY: vidible.VIDEO_DATA_LOADED,
       // eslint-disable-next-line no-undef
@@ -68,7 +58,10 @@ class VerizonMedia extends Video {
    * @param {string} event
    */
   dispatchEvent(event) {
-    this.getNode().dispatchEvent(new CustomEvent(event.type, event.data));
+    // eslint-disable-next-line no-undef
+    if (event.type !== vidible.VIDEO_PLAY || this.userInteracted()) {
+      this.getNode().dispatchEvent(new CustomEvent(event.type, event.data));
+    }
   }
   /**
 * @override
@@ -89,21 +82,12 @@ class VerizonMedia extends Video {
   async unmute() {
     const media = this.getMedia();
 
-    if (this.userInteraction && await media.isMuted()) {
+    if (this.userInteracted() && await media.isMuted()) {
       await media.toggleMute();
       // vidible seems to have a null volume too often, so set the volume to full so there is sound
       if (!await media.getPlayerInfo().volume) {
         await media.volume(1);
       }
-    }
-  }
-  /**
-   * @override
-   */
-  pauseOtherActiveMedia() {
-    // only pause if the user has actually interacted with the player
-    if (this.userInteraction) {
-      return super.pauseOtherActiveMedia();
     }
   }
 }
