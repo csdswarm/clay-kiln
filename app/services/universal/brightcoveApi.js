@@ -83,7 +83,8 @@ const log = require('./log').setup({file: __filename}),
         body: data ? JSON.stringify(data) : '',
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${ access_token }`
+          Authorization: `Bearer ${ access_token }`,
+          'Content-Type': 'application/json'
         }
       });
     } catch (e) {

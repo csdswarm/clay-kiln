@@ -9,8 +9,7 @@
         required
         accept=".avi,.mov,.mp4,.mpeg"
         name="brightcove-upload"
-        :invalid="!validFileSize"
-        v-model="videoFile"
+        @change="addVideoFile"
       ></ui-fileupload>
       <ui-textbox
         required
@@ -33,6 +32,8 @@
         required
         floating-label
         label="Short Description"
+        maxlength=248
+        enforceMaxlength
         v-model="shortDescription"
       ></ui-textbox>
       <ui-textbox
@@ -48,8 +49,12 @@
       >Upload</ui-button>
     </div>
     <ui-progress-circular v-show="loading"></ui-progress-circular>
-    <div v-if="videoUploaded" class="brightcove-upload__upload-results">
-
+    <div v-if="uploadSuccess" class="brightcove-video-preview">
+        <div class="video-preview__info">
+            <strong>{{uploadedVideo.name}}</strong>
+            <i class="video-preview__id">ID: {{uploadedVideo.id}}</i>
+        </div>
+        <img class="video-preview__image" :src="uploadedVideo.imageUrl" />
     </div>
   </div>
 </template>
@@ -66,16 +71,11 @@
     props: ['name', 'data', 'schema', 'args'],
     data() {
       return {
-        uploadedVideo: null,
+        uploadedVideo: { id: this.data },
         loading: false,
-        videoFile: null,
         videoName: '',
         stationOptions: [],
-        selectedStation: null,
-        defaultStation: {
-          label: window.kiln.locals.station.name,
-          value: window.kiln.locals.station.callsign
-        },
+        selectedStation: window.kiln.locals.station.callsign,
         shortDescription: '',
         longDescription: ''
       };
@@ -83,26 +83,34 @@
     computed: {
       uploadSuccess: function () {
         return !this.loading && this.uploadedVideo;
-      },
-      validFileSize: function () {
-        // return this.videoFile (size <= 500mb)
       }
     },
     async created() {
-      if (this.data) {
-        try {
-          const results = await axios.get('/brightcove/search', {params: { query: this.data }});
-          if (results.data[0]) {
-            this.uploadedVideo = results.data[0];
-          }
-        } catch (e) {
-          console.error('Error retrieving video info');
-        }
-      }
+      // if (this.data) {
+      //   try {
+      //     const results = await axios.get('/brightcove/search', {params: { query: this.data }});
+      //     if (results.data[0]) {
+      //       this.uploadedVideo = results.data[0];
+      //     }
+      //   } catch (e) {
+      //     console.error('Error retrieving video info');
+      //   }
+      // }
     },
     methods: {
-      uploadNewVideo() {
-
+      addVideoFile(files, event) {
+        this.videoFile = files.length ? files[0] : null;
+      },
+      async uploadNewVideo(event) {
+        event.preventDefault();
+        const {videoFile, videoName, selectedStation, shortDescription, longDescription} = this;
+        console.log("create new video with this data: ", {videoFile, videoName, selectedStation, shortDescription, longDescription});
+        this.loading = true;
+        this.uploadedVideo = await axios.post('/brightcove/upload', {videoFile, videoName, selectedStation, shortDescription, longDescription});
+        this.loading = false;
+        if (this.uploadedVideo) {
+          // this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo.id })
+        }
       }
     },
     components: {

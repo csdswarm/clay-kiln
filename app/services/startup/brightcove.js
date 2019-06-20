@@ -48,12 +48,55 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     }
   },
   /**
+   * There are four API requests involved in push-based ingestion for videos:
+   * CMS API POST request to create the video object in Video Cloud (same as for pull-based ingestion)
+   * Dynamic Ingest GET request to get the Brightcove S3 bucket URLs
+   * PUT request to upload the source file to the Brightcove S3 bucket
+   * Dynamic Ingest POST request to ingest the source file (same as for pull-based ingestion)
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {Promise}
+   */
+  upload = async (req, res) => {
+    console.log("REQUEST");
+    const {videoName: name, 
+      shortDescription: description, 
+      longDescription: long_description, 
+      selectedStation: station
+    } = req.body;
+    console.log({
+      name,
+      description,
+      long_description,
+      custom_fields: { station }
+    });
+
+    try {
+      const createdVideo = await brightcoveApi.request('POST', 'videos', null, {
+        name,
+        description,
+        long_description,
+        custom_fields: { station }
+      });
+      
+      console.log(createdVideo);
+      if (createdVideo) {
+        
+      }
+    } catch (e) {
+      console.error(e);
+      res.send(e);
+    }
+  },
+  /**
    * Add Brightcove routes to the express app
    *
    * @param {object} app the express app
    */
   inject = (app) => {
     app.use('/brightcove/search', search);
+    app.use('/brightcove/upload', upload);
   };
 
 module.exports.inject = inject;

@@ -9,6 +9,11 @@ videoId:
     validate:
       required: true
 
+newVideo:
+  _label: Upload new video
+  _has:
+    input: brightcove-upload
+
 showTitle:
   _label: Show video title?
   _has: checkbox
@@ -21,5 +26,6 @@ _groups:
       height: 30px;
       ifEmpty: videoId
     fields:
-      - videoId
       - showTitle
+      - videoId (Search for video)
+      - newVideo (Upload new video)
