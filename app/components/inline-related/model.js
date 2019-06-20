@@ -39,7 +39,7 @@ module.exports.save = (ref, data, locals) => {
           urlIsValid: result.urlIsValid,
           canonicalUrl: result.canonicalUrl,
           feedImgUrl: result.feedImgUrl,
-          lead: result.lead ? result.lead[0].split('/')[2] : null
+          lead: result.lead && result.lead[0] && result.lead[0]._ref ? result.lead[0]._ref.split('/')[2] : null
         });
 
         if (article.title) {

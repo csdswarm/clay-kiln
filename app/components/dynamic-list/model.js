@@ -21,7 +21,7 @@ function buildAndExecuteQuery(routeParamValue, data, locals) {
       from,
       size
     },
-    query = queryService(index, locals);
+    query = queryService(index);
 
   query.body = _clone(body); // lose the reference
 

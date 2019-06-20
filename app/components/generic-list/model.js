@@ -21,7 +21,7 @@ module.exports.render = (ref, data, locals) => {
       from: from,
       size: size
     }),
-    query = queryService(data.index, locals);
+    query = queryService(data.index);
 
   query.body = _clone(body); // lose the reference
 
