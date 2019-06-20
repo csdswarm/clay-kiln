@@ -366,7 +366,7 @@
         margin-left: em(-5, 14);
         margin-top: em(3, 14);
         position: absolute;
-        top: calc(1em + em(5, 14));
+        top: em(20);
         z-index: 2;
         border: em(1, 14) solid $mercury;
         li {
