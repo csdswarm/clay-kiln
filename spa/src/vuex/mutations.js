@@ -13,7 +13,6 @@ const createModalMessage = (type, message) => { return { type, message } }
  */
 const formatProfile = (profile) => {
   const dateFormat = isMobileDevice() ? 'YYYY-MM-DD' : 'YYYY-MM-DDTHH:mm:ssZ'
-  console.log('format', profile.date_of_birth ? moment.utc(profile.date_of_birth).local(true).format(dateFormat) : '')
   return {
     ...profile,
     date_of_birth: profile.date_of_birth ? moment.utc(profile.date_of_birth).local(true).format(dateFormat) : '',
