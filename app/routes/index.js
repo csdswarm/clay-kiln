@@ -112,7 +112,6 @@ module.exports = router => {
         });
       }
     });
-
   });
 
   /**
@@ -133,9 +132,9 @@ module.exports = router => {
    * Sitemap for stations directories and station detail pages
    */
   router.get('/sitemap-stations.xml', async function (req, res) {
-    const baseUrl = `${req.headers['x-forwarded-proto']}://${req.headers.host}`,
+    const baseUrl = `https://${req.headers.host}`,
       urlset = [
-        { _attr: { xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9' } },
+        { _attr: { xmlns: 'https://www.sitemaps.org/schemas/sitemap/0.9' } },
         { url: [{ loc: `${baseUrl}/stations` }] },
         { url: [{ loc: `${baseUrl}/stations/location` }] },
         { url: [{ loc: `${baseUrl}/stations/music` }] },
@@ -166,9 +165,9 @@ module.exports = router => {
     // Station detail pages
     await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }).then(function (stations) {
       stations.data.forEach(station => {
-        if (station.attributes.site_slug) {
+        if (station.attributes.site_slug || station.attributes.callsign || station.id) {
           urlset.push({ url:
-            [{ loc: `${baseUrl}/${station.attributes.site_slug}/listen` }]
+            [{ loc: `${baseUrl}/${ station.attributes.site_slug || station.attributes.callsign || station.id }/listen` }]
           });
         }
       });

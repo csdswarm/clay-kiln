@@ -9,6 +9,7 @@ head:
       - meta-image
       - meta-icons
       - meta-url
+      - meta-tags
 
 headLayout:
   _componentList:
