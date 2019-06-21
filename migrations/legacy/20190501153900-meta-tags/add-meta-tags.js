@@ -107,9 +107,10 @@ async function updatePages(pages, publishedPages) {
     let hash = page.match(/_pages\/([a-zA-Z0-9]{25})?(\d+|sbp-\d+)?(.+)?/);
     if (hash) {
       const unity = hash[1],
+        imported = hash[2],
         other = hash[3],
         // we don't need to do this for imported content, upgrade scripts handle this
-        slug = unity || other;
+        slug = unity || other || (imported == '404' ? imported : undefined);
 
       if (slug) {
         const pageUri = `/_pages/${slug}`,
