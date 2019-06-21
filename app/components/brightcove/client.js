@@ -33,12 +33,13 @@ class Brightcove extends Video {
    */
   createMedia(component) {
     const id = component.querySelector('video-js').getAttribute('id'),
-      autoplayUnmuted = component.getAttribute('data-autoplay-unmuted') === 'true',
-      clickToPlay = component.getAttribute('data-click-to-play') === 'true',
       media = bc(id),
       node = component;
 
-    return { id, player, node };
+    this.autoplayUnmuted = component.getAttribute('data-autoplay-unmuted') === 'true';
+    this.clickToPlay = component.getAttribute('data-click-to-play') === 'true';
+
+    return { id, media, node };
   }
   /**
    * @override
@@ -64,6 +65,15 @@ class Brightcove extends Video {
     } else {
       this.getMedia().on(type, listener);
     }
+  }
+  /**
+   * @override
+   */
+  async play() {
+    if (this.autoplayUnmuted) {
+      await this.getMedia().muted(false);
+    }
+    await this.getMedia().play();
   }
   /**
    * @override
@@ -134,6 +144,12 @@ class Brightcove extends Video {
    */
   userInteracted() {
     return this.getMedia().userActive();
+  }
+  /**
+   * @override
+   */
+  shouldAutoplay() {
+    return !this.clickToPlay && super.shouldAutoplay();
   }
 }
 

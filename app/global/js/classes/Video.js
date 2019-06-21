@@ -60,6 +60,15 @@ class Video extends Media {
       this.addEvent(eventTypes.AD_VOLUME, () => this.pauseOtherActiveMedia());
     }
   }
+
+  /**
+   * determines if the video should auto play
+   *
+   * @return {boolean}
+   */
+  shouldAutoplay() {
+    return !isMobileWidth() && this.isLead();
+  }
   /**
    * automatically play the lede video while muted, otherwise unmute and pause the video
    *
@@ -69,7 +78,7 @@ class Video extends Media {
     const eventTypes = this.getEventTypes();
 
     // auto play muted the video if it is the main lede
-    if (!isMobileWidth() && this.isLead()) {
+    if (this.shouldAutoplay()) {
       await this.mute();
       await this.play();
     } else {
