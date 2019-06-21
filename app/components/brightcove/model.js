@@ -1,22 +1,18 @@
 'use strict';
 
-const brightcoveApi = require('../../services/universal/brightcoveApi'),
-  log = require('../../services/universal/log').setup({file: __filename});
+const brightcoveApi = require('../../services/universal/brightcoveApi');
 
 // just to test
-module.exports.render = async (ref, data, locals) => {
+module.exports.render = async (ref, data) => {
   const { videoId } = data,
     // cache this response for 5-10 min
-    res = await brightcoveApi.request('GET', `videos/${videoId}`),
-    playback = await brightcoveApi.request('GET', `videos/${videoId}`, 'playback'),
-    params = { 
+    res = await brightcoveApi.request('GET', `videos/${videoId}`, null, null, 'cms', 3600000),
+    params = {
       dimensions: 'video',
       where: `video==${videoId}`
     },
     // cache this response for 5-10 min
-    analyticsData = await brightcoveApi.request('GET', ``, params, null, 'analytics');
-
-  log('info', `playback: ${JSON.stringify(playback)}`);
+    analyticsData = await brightcoveApi.request('GET', '', params, null, 'analytics', 300000);
 
   if (res) {
     data.name = res.name;

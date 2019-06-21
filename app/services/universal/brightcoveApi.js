@@ -3,13 +3,16 @@
 let access_token,
   expires_in = 0,
   accessTokenUpdated = null;
+
 const log = require('./log').setup({file: __filename}),
   rest = require('./rest'),
   brightcoveCmsApi = `cms.api.brightcove.com/v1/accounts/${process.env.BRIGHTCOVE_ACCOUNT_ID}/`,
   brightcoveAnalyticsApi = 'analytics.api.brightcove.com/v1/data',
-  brightcovePlaybackApi = `edge.api.brightcove.com/playback/v1/accounts/${process.env.BRIGHTCOVE_ACCOUNT_ID}/`,
   brightcoveOAuthApi = 'https://oauth.brightcove.com/v4/access_token?grant_type=client_credentials',
   qs = require('qs'),
+  ioredis = require('ioredis'),
+  redis = new ioredis(process.env.REDIS_HOST),
+  TTL = 300000,
   methods = [
     'GET',
     'POST',
@@ -17,33 +20,43 @@ const log = require('./log').setup({file: __filename}),
     'PUT',
     'DELETE'
   ],
+  /**
+   * Creates a redis key from route, params, api
+   *
+   * @param {string} route
+   * @param {object} params
+   * @param {string} api
+   * @return {string}
+   */
+  createKey = (route, params, api) => {
+    const encodeParams =  params ? `?${qs.stringify(params)}` : '';
 
+    return `${api}.${route}${encodeParams}`;
+  },
   /**
    * Creates a url from a route and params
    *
    * @param {string} route
    * @param {object} params
+   * @param {string} api
    * @return {string}
    */
-  createEndpoint = (route, params, api = 'cms') => {
-
+  createEndpoint = (route, params, api) => {
     let apiUrl;
+
     switch (api) {
-      case 'cms': 
+      case 'cms':
         apiUrl = brightcoveCmsApi;
         break;
       // analytics data endpoint is odd... "accounts" is a param
       // https://analytics.api.brightcove.com/v1/data?accounts=account_id(s)&dimensions=video&where=video==video_id
-      case 'analytics': 
+      case 'analytics':
         apiUrl = brightcoveAnalyticsApi;
         params = params || {};
         params.accounts = process.env.BRIGHTCOVE_ACCOUNT_ID;
-        route = '';
         break;
-      // https://support.brightcove.com/overview-playback-api#Get_video_by_id
-      case 'playback':
-        apiUrl = brightcovePlaybackApi;
-        break;
+      default:
+        apiUrl = brightcoveCmsApi;
     }
 
     const decodeParams =  params ? `?${decodeURIComponent(qs.stringify(params))}` : '';
@@ -78,16 +91,42 @@ const log = require('./log').setup({file: __filename}),
     }
   },
   /**
-   * Retrieve response from endpoint
+   * Get an API response from cache
+   *
+   * @param {string} key
+   * @param {integer} ttl
+   * @returns {object}
+   */
+  getFromCache = async (key, ttl) => {
+    try {
+      const cached = await redis.get(key),
+        data = JSON.parse(cached);
+
+      if (data.updated_at && (new Date() - new Date(data.updated_at) > ttl)) {
+        return null;
+      } else {
+        data.response_cached = true;
+        return data;
+      }
+    // catch cache miss
+    } catch (e) {
+      return null;
+    }
+  };
+
+  /**
+   * Retrieve response from api endpoint
    *
    * @param {string} method
    * @param {string} route
    * @param {object} params
    * @param {object} [data]
+   * @param {string} api
+   * @param {string} key
    * @return {Promise}
    * @throws {Error}
    */
-  request = async (method, route, params, data, api = 'cms') => {
+  hitApiAndSave = async (method, route, params, data, api, key) => {
     try {
       const endpoint = createEndpoint(route, params, api),
         currentTime = new Date().getTime() / 1000;
@@ -100,17 +139,62 @@ const log = require('./log').setup({file: __filename}),
         return null;
       }
 
-      return await rest.request(endpoint, {
-        method: method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET',
+      const response = await rest.request(endpoint, {
+        method,
         body: data ? JSON.stringify(data) : '',
         credentials: 'include',
         headers: {
           Authorization: `Bearer ${ access_token }`
         }
       });
+
+      if (method == 'GET' && key) {
+        response.updated_at = new Date();
+
+        try {
+          redis.set(key, JSON.stringify(response));
+        } catch (e) {
+          log('error', e.message);
+        }
+      }
+
+      return response;
+
     } catch (e) {
       log('error', e.response.statusText);
       return null;
+    }
+  };
+
+  /**
+   * Retrieve response from api endpoint or cache
+   *
+   * @param {string} method
+   * @param {string} route
+   * @param {object} params
+   * @param {object} [data]
+   * @param {string} api
+   * @param {integer} ttl
+   * @return {Promise}
+   * @throws {Error}
+   */
+  request = async (method, route, params, data, api = 'cms', ttl = TTL) => {
+    let { method, route, params, data, api, ttl } = options;
+
+    method = method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET';
+
+    if (method == 'GET') {
+      const key = createKey(route, params, api),
+        data = await getFromCache(key, ttl);
+
+      if (data) {
+        return data;
+      } else {
+        return await hitApiAndSave(method, route, params, data, api, key);
+      }
+
+    } else {
+      return await hitApiAndSave(method, route, params, data, api);
     }
   };
 
