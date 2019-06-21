@@ -4,8 +4,7 @@
         <div class="content-import__input">
             <ui-textbox
                 floating-label
-                label="Import Content"
-                placeholder="Import Url"
+                label="Import Content (Paste Full Url)"
                 class="content-import__input-textbox"
 
                 @keydown-enter="importContent"
