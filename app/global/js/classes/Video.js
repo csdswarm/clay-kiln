@@ -88,7 +88,7 @@ class Video extends Media {
 
     super.prepareMedia();
 
-    this.addInteractionEvents(eventTypes)
+    this.addInteractionEvents(eventTypes);
     this.unmuteOnPlay(eventTypes);
     this.pauseOnUnmute(eventTypes);
   }

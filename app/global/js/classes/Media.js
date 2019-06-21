@@ -1,7 +1,5 @@
 'use strict';
 
-// Polyfill
-require('intersection-observer');
 let currentMedia = [];
 
 const clearCurrentMedia = () => {
