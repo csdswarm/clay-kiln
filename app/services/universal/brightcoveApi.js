@@ -112,8 +112,7 @@ const log = require('./log').setup({file: __filename}),
     } catch (e) {
       return null;
     }
-  };
-
+  },
   /**
    * Retrieve response from api endpoint
    *
@@ -164,8 +163,7 @@ const log = require('./log').setup({file: __filename}),
       log('error', e.response.statusText);
       return null;
     }
-  };
-
+  },
   /**
    * Retrieve response from api endpoint or cache
    *
