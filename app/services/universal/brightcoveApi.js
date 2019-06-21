@@ -177,8 +177,6 @@ const log = require('./log').setup({file: __filename}),
    * @throws {Error}
    */
   request = async (method, route, params, data, api = 'cms', ttl = TTL) => {
-    let { method, route, params, data, api, ttl } = options;
-
     method = method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET';
 
     if (method == 'GET') {
