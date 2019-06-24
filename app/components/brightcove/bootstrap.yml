@@ -2,11 +2,3 @@ _components:
   brightcove:
     videoId: ''
     showTitle: false
-    name: ''
-    description: ''
-    thumbnailUrl: ''
-    uploadDate: ''
-    contentUrl: ''
-    duration: ''
-    embedUrl: ''
-    interactionCount: 0
