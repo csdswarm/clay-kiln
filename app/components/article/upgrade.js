@@ -38,7 +38,7 @@ module.exports['3.0'] = function (uri, data) {
 
 // new-two-col layout was updated to add meta-tags component
 module.exports['4.0'] = async (uri, data) => {
-  const hash = uri.match(/instances\/(\d+)/);
+  const hash = uri.match(/instances\/(sbp-\d+|\d+)/);
 
   // only works for imported pages, migration should take care of Unity pages, new pages are already ok
   // Unity pages don't have the same hash for page and article/gallery component
