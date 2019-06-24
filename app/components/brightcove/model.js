@@ -2,27 +2,22 @@
 
 const brightcoveApi = require('../../services/universal/brightcoveApi');
 
-// just to test
 module.exports.render = async (ref, data) => {
   const { videoId } = data,
     // cache this response for 5-10 min
-    res = await brightcoveApi.request('GET', `videos/${videoId}`, null, null, 'cms', 3600000),
-    params = {
-      dimensions: 'video',
-      where: `video==${videoId}`
-    },
+    videoData = await brightcoveApi.getVideoDetails(videoId),
     // cache this response for 5-10 min
-    analyticsData = await brightcoveApi.request('GET', '', params, null, 'analytics', 300000);
+    analyticsData = await brightcoveApi.getVideoAnalytics(videoId);
 
-  if (res) {
-    data.name = res.name;
-    data.description = res.description;
-    data.longDescription = res.long_description;
-    data.thumbnailUrl = res.images && res.images.thumbnail && res.images.thumbnail.src;
-    data.createdAt = res.created_at;
-    data.publishedAt = res.published_at;
-    data.updatedAt = res.updated_at;
-    data.duration = res.duration;
+  if (videoData) {
+    data.name = videoData.name;
+    data.description = videoData.description;
+    data.longDescription = videoData.long_description;
+    data.thumbnailUrl = videoData.images && videoData.images.thumbnail && videoData.images.thumbnail.src;
+    data.createdAt = videoData.created_at;
+    data.publishedAt = videoData.published_at;
+    data.updatedAt = videoData.updated_at;
+    data.duration = videoData.duration;
   }
 
   if (analyticsData && analyticsData.items && analyticsData.items.length == 1) {

@@ -12,7 +12,12 @@ const log = require('./log').setup({file: __filename}),
   qs = require('qs'),
   ioredis = require('ioredis'),
   redis = new ioredis(process.env.REDIS_HOST),
-  TTL = 300000,
+  TTL = {
+    DEFAULT: 300000,
+    MIN: 60000,
+    HOUR: 3600000,
+    DAY: 86400000
+  },
   methods = [
     'GET',
     'POST',
@@ -31,6 +36,8 @@ const log = require('./log').setup({file: __filename}),
   createKey = (route, params, api) => {
     const encodeParams =  params ? `?${qs.stringify(params)}` : '';
 
+    route = route || '';
+
     return `${api}.${route}${encodeParams}`;
   },
   /**
@@ -43,6 +50,8 @@ const log = require('./log').setup({file: __filename}),
    */
   createEndpoint = (route, params, api) => {
     let apiUrl;
+
+    route = route || '';
 
     switch (api) {
       case 'cms':
@@ -91,11 +100,34 @@ const log = require('./log').setup({file: __filename}),
     }
   },
   /**
+   * Get a response either from cache or the api
+   *
+   * @param {Object} options
+   * @returns {Promise}
+   */
+  getFromCacheOrApi = async (options) => {
+    const { method, route, params, data, api, ttl } = options;
+
+    if (method == 'GET') {
+      const key = createKey(route, params, api),
+        data = await getFromCache(key, ttl);
+
+      if (data) {
+        return data;
+      } else {
+        return await hitApiAndSave({ method, route, params, data, api, key });
+      }
+
+    } else {
+      return await hitApiAndSave({ method, route, params, data, api });
+    }
+  },
+  /**
    * Get an API response from cache
    *
    * @param {string} key
    * @param {integer} ttl
-   * @returns {object}
+   * @returns {Promise}
    */
   getFromCache = async (key, ttl) => {
     try {
@@ -116,21 +148,13 @@ const log = require('./log').setup({file: __filename}),
   /**
    * Retrieve response from api endpoint
    *
-   * @param {string} method
-   * @param {string} route
-   * @param {object} params
-   * @param {object} [data]
-   * @param {string} api
-   * @param {string} key
+   * @param {object} options
    * @return {Promise}
    * @throws {Error}
    */
-  hitApiAndSave = async (method, route, params, data, api, key) => {
+  hitApiAndSave = async (options) => {
     try {
-      const endpoint = createEndpoint(route, params, api),
-        currentTime = new Date().getTime() / 1000;
-
-      if (!access_token || (accessTokenUpdated && currentTime >= accessTokenUpdated + expires_in)) {
+      if (!access_token || (accessTokenUpdated && (new Date().getTime() / 1000) >= accessTokenUpdated + expires_in)) {
         ({ access_token, expires_in } = await getAccessToken());
       }
 
@@ -138,14 +162,16 @@ const log = require('./log').setup({file: __filename}),
         return null;
       }
 
-      const response = await rest.request(endpoint, {
-        method,
-        body: data ? JSON.stringify(data) : '',
-        credentials: 'include',
-        headers: {
-          Authorization: `Bearer ${ access_token }`
-        }
-      });
+      const { method, route, params, data, api, key } = options,
+        endpoint = createEndpoint(route, params, api),
+        response = await rest.request(endpoint, {
+          method,
+          body: data ? JSON.stringify(data) : '',
+          credentials: 'include',
+          headers: {
+            Authorization: `Bearer ${ access_token }`
+          }
+        });
 
       if (method == 'GET' && key) {
         response.updated_at = new Date();
@@ -171,27 +197,49 @@ const log = require('./log').setup({file: __filename}),
    * @param {string} route
    * @param {object} params
    * @param {object} [data]
-   * @param {string} api
-   * @param {integer} ttl
    * @return {Promise}
    * @throws {Error}
    */
-  request = async (method, route, params, data, api = 'cms', ttl = TTL) => {
+  request = async (method, route, params, data) => {
     method = method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET';
 
-    if (method == 'GET') {
-      const key = createKey(route, params, api),
-        data = await getFromCache(key, ttl);
+    // defaults for existing functionality
+    const api = 'cms', ttl = TTL.DEFAULT;
 
-      if (data) {
-        return data;
-      } else {
-        return await hitApiAndSave(method, route, params, data, api, key);
-      }
+    return getFromCacheOrApi({ method, route, params, data, api, ttl });
+  },
+  /**
+   * hit the analytics api to get video analytics
+   *
+   * @param {integer} videoId
+   * @param {integer} ttl
+   * @returns {Promise}
+   */
+  getVideoAnalytics = async (videoId, ttl = 5 * TTL.MIN) => {
+    const api = 'analytics',
+      method = 'GET',
+      params = {
+        dimensions: 'video',
+        where: `video==${videoId}`
+      };
 
-    } else {
-      return await hitApiAndSave(method, route, params, data, api);
-    }
+    return getFromCacheOrApi({ method, params, api, ttl });
+  },
+  /**
+   * hit the cms api to get video data
+   *
+   * @param {integer} videoId
+   * @param {integer} ttl
+   * @returns {Promise}
+   */
+  getVideoDetails = async (videoId, ttl = TTL.HOUR) => {
+    const route = `videos/${videoId}`,
+      api = 'cms',
+      method = 'GET';
+
+    return getFromCacheOrApi({ method, route, api, ttl });
   };
 
 module.exports.request = request;
+module.exports.getVideoAnalytics = getVideoAnalytics;
+module.exports.getVideoDetails = getVideoDetails;
