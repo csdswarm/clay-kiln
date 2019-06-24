@@ -31,6 +31,15 @@ const info = {
 }
 
 /**
+ * Creates a deep copy of all enumerable properties of a JS object that has no circular dependencies
+ * @param {Object} obj
+ * @returns {Object}
+ */
+function clone(obj){
+  return JSON.parse(JSON.stringify(obj))
+}
+
+/**
  * Break apart a reference url (root/store/:componentName/instances/:instanceName) into the parts needed
  * url is store/:componentName/instances/:instanceName
  * @param ref
@@ -92,7 +101,7 @@ async function getMemoizedData(url) {
   if (!memoized[url]) {
     memoized[url] = await getData(url, `getMemoizedData:  ${url}`)
   }
-  return JSON.parse(JSON.stringify(memoized[url]))
+  return clone(memoized[url])
 }
 
 /**
@@ -128,10 +137,13 @@ function removeRoot(value) {
  */
 function removeEnvironmentRoots(obj, useRefs, ...props) {
   const mapWithoutRoot = useRefs ? (({ _ref }) => ({ _ref: removeRoot(_ref) })) : removeRoot
+  const newObj = clone(obj);
 
   props.forEach(prop => {
-    obj[prop] = obj[prop].map(mapWithoutRoot)
+    newObj[prop] = obj[prop].map(mapWithoutRoot)
   })
+
+  return newObj;
 }
 
 /**
@@ -139,13 +151,30 @@ function removeEnvironmentRoots(obj, useRefs, ...props) {
  * @returns {Promise<void>}
  */
 async function addStaticPageLayoutInstance() {
-  const newStaticPageLayout = await getMemoizedData('_layouts/two-column-layout/instances/article')
-  if (newStaticPageLayout.secondary && Array.isArray(newStaticPageLayout.secondary)) {
-    newStaticPageLayout.secondary = newStaticPageLayout.secondary.filter(({ _ref }) => !_ref.includes('recirculation'))
-  }
-  removeEnvironmentRoots(newStaticPageLayout, true, 'headLayout', 'top', 'secondary', 'bottom', 'kilnInternals',
-    'static')
+  const propsToClean = ['headLayout', 'top', 'secondary', 'bottom', 'kilnInternals', 'static']
+  const articleLayout = await getMemoizedData('_layouts/two-column-layout/instances/article')
+  const newStaticPageLayout = removeEnvironmentRoots(articleLayout, true, ...propsToClean)
+
+  newStaticPageLayout.secondary = filterOutUnneededRefs(newStaticPageLayout.secondary, true,'recirculation', 'billboardBottom')
+
   await storeData('_layouts/two-column-layout/instances/static-page', newStaticPageLayout)
+}
+
+/**
+ * Looks in list, which should be an array, for occurrences of the words in the toRemove list and filters them out
+ * @param {{string[]|{_ref:string}[]} list
+ * @param {boolean} useRefs
+ * @param {string[]} toRemove
+ * @returns {{string[]|{_ref:string}[]}}
+ */
+function filterOutUnneededRefs(list, useRefs, ...toRemove){
+  const includesText = ref => text => ref.includes(text)
+  const filterForRef = ref => !toRemove.some(includesText(ref))
+  if (Array.isArray(list)) {
+    if(useRefs) return list.filter(({ _ref }) => filterForRef(_ref))
+    else return list.filter(filterForRef)
+  }
+  return list
 }
 
 /**
@@ -153,16 +182,18 @@ async function addStaticPageLayoutInstance() {
  * @returns {Promise<void>}
  */
 async function addNewStaticPage() {
-  const newStaticPage = await getMemoizedData('_pages/new-two-col')
+  const propsToClean = ['head', 'pageHeader', 'main', 'tertiary']
+  const twoColPage = await getMemoizedData('_pages/new-two-col')
+  const newStaticPage = removeEnvironmentRoots(twoColPage, false, ...propsToClean)
+  const removeRefs = ['recirculation', 'halfPageBottom']
+
   newStaticPage.layout = removeRoot(newStaticPage.layout).replace(/instances\/.*$/, 'instances/static-page')
-  if (newStaticPage.tertiary && Array.isArray(newStaticPage.tertiary)) {
-    newStaticPage.tertiary = newStaticPage.tertiary.filter(i => !i.includes('recirculation'))
-  }
+  newStaticPage.tertiary = filterOutUnneededRefs(newStaticPage.tertiary, false, ...removeRefs)
+
   const articleInst = newStaticPage.main.findIndex(i => i.includes('article'))
   if (articleInst !== -1) {
     newStaticPage.main[articleInst] = newStaticPage.main[articleInst].replace('article', 'static-page')
   }
-  removeEnvironmentRoots(newStaticPage, false, 'head', 'pageHeader', 'main', 'tertiary')
   await storeData('_pages/new-static-page', newStaticPage)
 }
 
@@ -350,19 +381,57 @@ async function updateSubscriptionPage() {
  * trick.
  */
 function writeOutFinalResult() {
-  const yaml = YAML.stringify(final, 8, 2)
-  console.log('Saving page and component definitions:\n')
-  console.log(yaml)
-  fs.writeFile(`${__dirname}/_update.yml`, yaml, 'utf8', function (err) {
+  const {_lists, _pages, _layouts, _components} = final;
+  const {'new-static-page': _template, ...nonTemplates} = _pages;
+
+  const layouts = YAML.stringify({_layouts}, 8, 2)
+  const lists = YAML.stringify({_lists}, 8, 2)
+  const components = YAML.stringify({_components}, 8, 2)
+  const template = YAML.stringify({_pages: {'new-static-page': _template}}, 8, 2)
+  const pages = YAML.stringify({_pages: {...nonTemplates}}, 8, 2)
+
+  console.log('Saving static page template definition:\n')
+  console.log(template)
+
+  fs.writeFile(`${__dirname}/_template.yml`, template, 'utf8', function (err) {
     if (err) throw err
   })
+
+  console.log('Saving layout definitions:\n')
+  console.log(layouts)
+
+  fs.writeFile(`${__dirname}/_layouts.yml`, layouts, 'utf8', function (err) {
+    if (err) throw err
+  })
+
+  console.log('Saving list definitions:\n')
+  console.log(lists)
+
+  fs.writeFile(`${__dirname}/_lists.yml`, lists, 'utf8', function (err) {
+    if (err) throw err
+  })
+
+  console.log('Saving component definitions:\n')
+  console.log(components)
+
+  fs.writeFile(`${__dirname}/_components.yml`, components, 'utf8', function (err) {
+    if (err) throw err
+  })
+
+  console.log('Saving page definitions:\n')
+  console.log(pages)
+
+  fs.writeFile(`${__dirname}/_pages.yml`, pages, 'utf8', function (err) {
+    if (err) throw err
+  })
+
   console.log('\n')
 }
 
 
 // Start here. names pretty much describe what's happening
 addNewStaticPageTemplate()
-  .then(addNewContestRulesPage)
+// .then(addNewContestRulesPage) // Per Priscilla, no longer handling contest-rules in this issue - CSD
   .then(addNewLegalPage)
   .then(updateSubscriptionPage)
   .then(writeOutFinalResult)

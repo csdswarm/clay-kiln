@@ -27,3 +27,15 @@ content:
       - html-embed
       - subheader
       - paragraph
+
+pageTitle:
+  _publish: pageTitle
+  _has:
+    help: Plaintext page title, set by headline.
+
+plaintextPrimaryHeadline:
+  _publish:
+    - ogTitle
+    - pageListTitle
+  _has:
+    help: Plaintext title set by headline.
