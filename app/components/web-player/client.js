@@ -6,13 +6,13 @@ const clientPlayerInterface = require('../../services/client/ClientPlayerInterfa
   recentStations = require('../../services/client/recentStations');
 
 // Add player mount channel.
-clientCommunicationBridge.addChannel('ClientWebPlayerMountPlayer', async () => {
+clientCommunicationBridge.subscribe('ClientWebPlayerMountPlayer', async () => {
   await clientPlayerInterface.mountPlayer();
   return true;
 });
 
 // Listen for player to start playback.
-clientCommunicationBridge.addChannel('ClientWebPlayerPlaybackStatus', async (payload) => {
+clientCommunicationBridge.subscribe('ClientWebPlayerPlaybackStatus', async (payload) => {
   const { id, playingClass, playerState } = payload;
 
   if (playerState === 'play') {
