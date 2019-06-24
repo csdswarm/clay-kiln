@@ -1,6 +1,7 @@
 'use strict';
 
-const { putComponentInstance } = require('../../services/server/publish-utils'),
+const rest = require('../../services/universal/rest'),
+  putComponentInstance = (uri, body) => rest.put(`https://${uri}`, body, true),
   /**
    * removes the first open and last close tags from a html string
    *

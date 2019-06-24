@@ -31,6 +31,33 @@ class ClientCommunicationBridge {
   }
 
   /**
+   * Get namespace specific id
+   *
+   * @param {string} channelName
+   * @returns {string} channelId
+   */
+  getChannelId(channelName) {
+    return `${LISTENER_TYPE_NAMESPACE}ClientChannel${channelName}`;
+  }
+
+  /**
+   * Return channel or create a new one
+   *
+   * @param {string} channelName
+   * @param {boolean} [createIfUndefined]
+   * @returns {string}
+   */
+  getChannel(channelName, createIfUndefined) {
+    const channelId = this.getChannelId(channelName);
+
+    if (!this.channels[channelId] && createIfUndefined) {
+      this.channels[channelId] = {listeners: []};
+    }
+
+    return this.channels[channelId];
+  }
+
+  /**
    *
    * Use to determine if a channel has already been added.
    *
@@ -38,29 +65,47 @@ class ClientCommunicationBridge {
    * @returns {boolean} - whether or not a channel with this name is active.
    */
   channelActive(channelName) {
-    return !!this.channels[`${LISTENER_TYPE_NAMESPACE}ClientChannel${channelName}`];
+    return !!this.getChannel(channelName);
+  }
+
+  /**
+   * Return the last payload returned in the channel
+   *
+   * @param {*} channelName
+   * @param {boolean} [ifUndefined]
+   *
+   * @returns {object} latest channel state
+   */
+  getLatest(channelName, ifUndefined) {
+    const channel = this.getChannel(channelName);
+
+    if (!channel) {
+      throw new Error(`Channel ${channelName} does not exist.`);
+    }
+
+    return channel.state || ifUndefined;
   }
 
   /**
    *
-   * Add a Client.js channel that listens for messages from SPA code.
+   * Subscribe to a Client.js channel that listens for messages from SPA code.
    *
    * @param {string} channelName - Recieve messages sent to this channel name.
    * @param {function} handler - Handler function to execute when a message hits this channel.
+   * @returns {function} unsubscribe
    */
-  addChannel(channelName, handler) {
-    const channel = `${LISTENER_TYPE_NAMESPACE}ClientChannel${channelName}`;
-
-    if (this.channels[channel]) {
-      throw new Error(`Channel ${channelName} already exists.`);
-    } else {
-      const channelListener = async (event) => {
+  subscribe(channelName, handler) {
+    const channel = this.getChannel(channelName, true),
+      channelId = this.getChannelId(channelName),
+      channelListener = async (event) => {
         // Extract data from message event detail.
         const { id, payload: messagePayload } = event.detail;
 
+        channel.state = messagePayload;
+
         // Execute the handler callback.
         // eslint-disable-next-line one-var
-        const responsePayload = await handler(messagePayload);
+        const responsePayload = await Promise.all(channel.listeners.map(func => func(messagePayload)));
 
         // Send response
         // eslint-disable-next-line one-var
@@ -71,14 +116,24 @@ class ClientCommunicationBridge {
         document.dispatchEvent(responseEvent);
       };
 
-      document.addEventListener(channel, channelListener);
-      this.channels[channel] = channelListener;
-    }
+    document.addEventListener(channelId, channelListener);
+
+    channel.listeners.push(handler);
+
+    return () => this.unsubscribe(channelName, handler);
   }
 
-  removeChannel() {
-    // TODO: Remove a client.js channel. This is stubbed out. It will be completed as part of tech debt "SPA events accessible from client.js files".
-    // https://entercomdigitalservices.atlassian.net/wiki/spaces/UNITY/pages/204701707/Tech+Debt
+  /**
+   *
+   * Unsubscribe from a Client channel
+   *
+   * @param {string} channelName - Channel that needs to be unsubscribed from
+   * @param {function} handler - Handler function to execute when a message hits this channel.
+   */
+  unsubscribe(channelName, handler) {
+    const channel = this.getChannel(channelName);
+
+    this.channels[channel] = channel.listeners.filter(listener => listener !== handler);
   }
 
   /**
