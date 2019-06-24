@@ -14,3 +14,28 @@
     display: none;
   }
 }
+
+@media screen and (min-width:1023px) {
+  .lead {
+    .component--brightcove {
+      min-width: em(1);
+      min-height: em(1);
+
+      .player__video.player__video--out-of-view{
+        width: em(445);
+        height: em(260);
+        position: fixed;
+        right: em(10);
+        bottom: em(10);
+        background-color: #fafafa;
+        border: em(1) solid #e1e1e1;
+        padding: em(10);
+        z-index: 1001;
+
+        &.web-player-exists{
+          bottom: em(78);
+        }
+      }
+    }
+  }
+}
