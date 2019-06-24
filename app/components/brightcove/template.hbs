@@ -12,13 +12,14 @@
             data-application-id
             controls></video-js>
 
-            <meta itemprop="headline" content="{{ name }}">
-            <meta itemprop="description" content="{{ description }}">
-            <meta itemprop="thumbnail" content="{{ thumbnailUrl }}">
+            <meta itemprop="name" content="{{ name }}">
+            <meta itemprop="headline" content="{{ seoHeadline }}">
+            <meta itemprop="description" content="{{ seoDescription }}">
+            <meta itemprop="thumbnailUrl" content="{{ thumbnailUrl }}">
             <meta itemprop="uploadDate" content="{{ createdAt }}">
-            <meta itemprop="contentUrl" content="">
-            <meta itemprop="duration" content="{{ duration }}">
-            <meta itemprop="embedUrl" content="">
+            <meta itemprop="contentUrl" content="{{{ seoContentUrl }}}">
+            <meta itemprop="embedUrl" content="{{{ seoEmbedUrl }}}">
+            <meta itemprop="duration" content="{{{ duration }}}">
 
             <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
               <meta itemprop="interactionType" content="http://schema.org/ViewAction">

@@ -7,6 +7,6 @@ _components:
     thumbnailUrl: ''
     uploadDate: ''
     contentUrl: ''
-    duration: 0
+    duration: ''
     embedUrl: ''
     interactionCount: 0
