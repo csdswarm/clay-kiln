@@ -102,7 +102,7 @@ class SpaPlayerInterface {
    */
   async mountPlayer () {
     // Instruct web-player/client.js to mount the player.
-    const playerMounted = await spaCommunicationBridge.sendMessage('ClientWebPlayerMountPlayer')
+    const playerMounted = await spaCommunicationBridge.sendMessage('ClientWebPlayerMountPlayer', true)
 
     // Verify player is mounted.
     if (playerMounted) {
@@ -116,6 +116,10 @@ class SpaPlayerInterface {
 
         spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', payload)
         this.spa.$store.commit(mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS, { currentlyPlaying: payload })
+      })
+
+      window.addEventListener('stationIdClick', e => {
+        this.redirectToSDP(e.detail.siteSlug, e.detail.id, e.detail.callsign)
       })
 
       return true
@@ -148,7 +152,7 @@ class SpaPlayerInterface {
   attachClientEventListeners () {
     // Add channel that listens for play/pause button clicks.
     if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlaybackStatus')) {
-      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlaybackStatus', async (payload) => {
+      spaCommunicationBridge.subscribe('SpaPlayerInterfacePlaybackStatus', async (payload) => {
         const { stationId, playbackStatus } = payload
 
         if (stationId) {
@@ -160,8 +164,9 @@ class SpaPlayerInterface {
     }
     // Add channel that communicates currently loaded station id.
     if (!spaCommunicationBridge.channelActive('SpaPlayerInterfaceGetCurrentStationId')) {
-      spaCommunicationBridge.addChannel('SpaPlayerInterfaceGetCurrentStationId', async () => {
+      spaCommunicationBridge.subscribe('SpaPlayerInterfaceGetCurrentStationId', async () => {
         const currentStation = this.getCurrentStation()
+
         return currentStation.id
       })
     }
@@ -196,6 +201,17 @@ class SpaPlayerInterface {
     if (stationId && (!currentStation || currentStation.id !== stationId)) {
       await this.loadStation(stationId)
     }
+  }
+
+  /**
+   * Redirect to Station Detail Page by using siteSlug, callsign or id
+   * @param { string } siteSlug
+   * @param { number } id
+   * @param { string } callsign
+   */
+  redirectToSDP (siteSlug, id, callsign) {
+    const value = siteSlug || callsign || id
+    this.spa.$router.push(`/${value}/listen`)
   }
 
   /**

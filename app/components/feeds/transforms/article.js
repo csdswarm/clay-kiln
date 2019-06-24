@@ -14,7 +14,7 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = function (data, locals) {
-  const { canonicalUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
+  const { canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
       {
@@ -28,6 +28,9 @@ module.exports = function (data, locals) {
       },
       {
         guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
+      },
+      {
+        syndicatedUrl
       },
       {
         description: { _cdata: seoDescription }
@@ -58,6 +61,12 @@ module.exports = function (data, locals) {
   if (data.slides) {
     transform.push({
       slides: { _cdata: renderContent(data.slides, locals)}
+    });
+  }
+
+  if (data.lead) {
+    transform.push({
+      lead: { _cdata: renderContent(data.lead, locals)}
     });
   }
 
