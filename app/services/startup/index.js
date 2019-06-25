@@ -17,6 +17,7 @@ const pkg = require('../../package.json'),
   // redirectTrailingSlash = require('./trailing-slash'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
+  brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
   user = require('./user'),
   radium = require('./radium');
@@ -82,6 +83,8 @@ function setupApp(app) {
   radium.inject(app);
 
   app.use(canonicalJSON);
+
+  brightcove.inject(app);
 
   sessionStore = createSessionStore();
 

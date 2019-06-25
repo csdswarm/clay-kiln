@@ -5,7 +5,6 @@
       <message></message>
       <div class="floating-label">
       <input name="email" type="email" placeholder="Email Address" :value="email" @change="onFieldChange($event)">
-        <label>Email Address</label>
       </div>
     </fieldset>
     <input type="submit" value="SUBMIT" @click.prevent="onForgotPasswordSubmit()"/>
@@ -14,7 +13,6 @@
         <router-link to="/account/login">Log In</router-link>
         |
         <router-link to="/account/signup">Create an Account</router-link>
-
       </span>
     </p>
   </div>
