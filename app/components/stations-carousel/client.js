@@ -3,20 +3,8 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   radioApiService = require('../../services/client/radioApi'),
   Hammer = require('hammerjs'),
-  localStorage = window.localStorage,
-  Handlebars = require('handlebars'),
-  stationLi = `
-    <a class="station-card" href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
-      <img class='thumb'
-          srcset='{{ default square_logo_large "" }}?width=222&dpr=1.5 1.5x,
-            {{ default square_logo_large "" }}?width=222&dpr=2 2x'
-          src='{{ default square_logo_large "" }}?width=222'
-      />
-      <span class='name'>{{ default name '' }}</span>
-    </a>
-  `;
+  localStorage = window.localStorage;
 
-require('clayhandlebars')(Handlebars);
 
 class StationsCarousel {
   constructor(element) {
@@ -79,6 +67,8 @@ StationsCarousel.prototype = {
           this.stationsVisible = 2;
         }
         let calculatedImageSize = (document.body.clientWidth - 40 - this.gutterWidth * (this.stationsVisible - 1)) / this.stationsVisible;
+        
+        calculatedImageSize += 2;
 
         this.imageSize = calculatedImageSize + this.gutterWidth;
         // set image size dependent on window size
@@ -294,16 +284,48 @@ StationsCarousel.prototype = {
    * Insert new payload of stations into DOM
    * @function
    */
-  updateStationsDOM: function () {
-    this.stationsList.removeChild(this.stationsList.querySelector('.loader-container')); // Remove loader
-    const template = Handlebars.compile(stationLi);
+  updateStationsDOM: async function () {
+    const stationIds = this.stationsData.stations.map(station => station.id),
+      endpoint = `//${window.location.hostname}/_components/stations-list.html?stationIDs=${stationIds.join(',')}`,
+      localStations = await radioApiService.fetchDOM(endpoint);
 
-    this.stationsData.stations.forEach(function (stationData) {
-      let station = document.createElement('li');
+    // Clear out loader and old stuff
+    while (this.stationsList.firstChild) {
+      this.stationsList.removeChild(this.stationsList.firstChild);
+    }
 
-      this.stationsList.appendChild(station);
-      station.innerHTML = template(stationData);
-    }.bind(this));
+    // Add thumb class to each image
+    localStations.querySelectorAll('img.lede__image').forEach(img => {
+      img.className += ' thumb';
+    });
+
+    // Add name class to station names
+    localStations.querySelectorAll('span.station__name').forEach(name => {
+      name.classList += ' name';
+    });
+
+    // Add station-card class to the anchor tags
+    localStations.querySelectorAll('a.spa-link').forEach(anchor => {
+      anchor.classList += ' station-card';
+    });
+
+    // Fix favorites buttons
+    // Having station-card on the anchors fixes the station name style,
+    // but puts the favorite button behind the thumbnail
+    localStations.querySelectorAll('[data-fav-station]').forEach(button => {
+      let card = button.parentElement,
+        play = card.querySelector('[data-play-station]');
+
+      card.removeChild(button);
+      card.insertBefore(button, play);
+    });
+
+    // Remove slogans
+    localStations.querySelectorAll('span.station__secondary-info').forEach(slogan => {
+      slogan.parentElement.removeChild(slogan);
+    });
+
+    this.stationsList.append(localStations);
 
     // Store for stations centering when stations do not fill up page
     this.stationsNodes = this.stationsCarousel.querySelectorAll('li');
@@ -319,31 +341,33 @@ StationsCarousel.prototype = {
     this.marketID = await market.getID();
     return this.getFilteredStationsFromApi().then(stationsData => {
       this.stationsData = stationsData;
-      this.updateStationsDOM();
-      this.setImageAndPageDims();
-      this.setCarouselWidth();
-      this.totalPages = Math.ceil(this.stationsData.count / this.pageSize);
-      this.hideOrShowEndArrows();
-      this.centerPageResults();
-      if (this.windowWidth < this.windowSizes.medium) {
-        this.createPaginationDots();
-      }
-      this.hammerTime.on('swipeleft', function (e) {
-        this.getPage(e, this);
-      }.bind(this));
-      this.hammerTime.on('swiperight', function (e) {
-        this.getPage(e, this);
-      }.bind(this));
-      this.leftArrow.addEventListener('click', function (e) {
-        this.getPage(e, this);
-      }.bind(this));
-      this.rightArrow.addEventListener('click', function (e) {
-        this.getPage(e, this);
-      }.bind(this));
-      window.addEventListener('resize', function (e) {
-        this.restyleCarousel(e, this);
-      }.bind(this));
-      return stationsData;
+
+      this.updateStationsDOM().then(() => {
+        this.setImageAndPageDims();
+        this.setCarouselWidth();
+        this.totalPages = Math.ceil(this.stationsData.count / this.pageSize);
+        this.hideOrShowEndArrows();
+        this.centerPageResults();
+        if (this.windowWidth < this.windowSizes.medium) {
+          this.createPaginationDots();
+        }
+        this.hammerTime.on('swipeleft', function (e) {
+          this.getPage(e, this);
+        }.bind(this));
+        this.hammerTime.on('swiperight', function (e) {
+          this.getPage(e, this);
+        }.bind(this));
+        this.leftArrow.addEventListener('click', function (e) {
+          this.getPage(e, this);
+        }.bind(this));
+        this.rightArrow.addEventListener('click', function (e) {
+          this.getPage(e, this);
+        }.bind(this));
+        window.addEventListener('resize', function (e) {
+          this.restyleCarousel(e, this);
+        }.bind(this));
+        return stationsData;
+      });
     });
   }
 };
