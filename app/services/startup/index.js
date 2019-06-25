@@ -5,6 +5,7 @@ const pkg = require('../../package.json'),
   amphoraPkg = require('amphora/package.json'),
   kilnPkg = require('clay-kiln/package.json'),
   bodyParser = require('body-parser'),
+  cookieParser = require('cookie-parser'),
   compression = require('compression'),
   session = require('express-session'),
   RedisStore = require('connect-redis')(session),
@@ -17,7 +18,8 @@ const pkg = require('../../package.json'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
-  log = require('../universal/log').setup({ file: __filename });
+  log = require('../universal/log').setup({ file: __filename }),
+  lytics = require('./lytics');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -67,11 +69,15 @@ function setupApp(app) {
     extended: true
   }));
 
+  app.use(cookieParser());
+
   app.use(handleRedirects);
 
   app.use(locals);
 
   app.use(currentStation);
+
+  lytics.inject(app);
 
   app.use(canonicalJSON);
 
