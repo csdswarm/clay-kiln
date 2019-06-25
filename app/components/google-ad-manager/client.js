@@ -5,9 +5,6 @@ require('intersection-observer');
 const adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
-  doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
-  environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
-  inProduction = environment === 'production',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
@@ -181,7 +178,7 @@ function updateSkinStyles(hasSkin) {
 
   if (hasSkin) {
     billboard.style['background'] = 'transparent';
-    billboard.style['margin-bottom'] = '-0.875em';
+    billboard.style['margin-bottom'] = '0';
   } else {
     billboard.style['background'] = null;
     billboard.style['margin-bottom'] = null;
@@ -258,6 +255,10 @@ function getPageTargeting(urlPathname) {
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData, urlPathname) {
+  const doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
+    environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
+    inProduction = environment === 'production';
+
   let siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
     adTargetingData = {
       targetingRadioStation: null,
@@ -467,7 +468,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.getElementsByClassName('layout')[0],
+    globalDiv = document.getElementsByClassName('layout__top')[0],
     resetElements = resizeForSkin();
 
   // Include our default bg color
@@ -531,7 +532,9 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
 
   if (globalDiv) {
     document.body.style.backgroundColor = backgroundColor;
-    globalDiv.prepend(bgdiv);
+
+    // insert after the nav so that its absolute positioning doesn't start under the nav
+    globalDiv.parentNode.insertBefore(bgdiv, globalDiv.nextSibling);
   }
 
   /**

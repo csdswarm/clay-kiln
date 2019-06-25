@@ -46,12 +46,9 @@ module.exports.save = function (uri, data) {
  * @param  {Object} locals
  * @return {Promise|Object}
  */
-module.exports.render = function (ref, data, locals) {
-  let ES_QUERY,
-    { meta } = data;
-
+module.exports.render = async (ref, data, locals) => {
   if (!data.index) {
-    log('error', 'Feed cmpt requires an `index` and `transform` property in the data');
+    log('error', 'Feed component requires an `index` and `transform` property in the data');
     return data;
   }
 
@@ -61,23 +58,98 @@ module.exports.render = function (ref, data, locals) {
     return data;
   }
 
-  ES_QUERY = queryService(data.index, locals); // Build the appropriate query obj for the env
-  ES_QUERY.body.query = data.query.query; // Just replace all the properties in query with the data
-  ES_QUERY.body.size = data.query.size;
-  ES_QUERY.body.sort = data.query.sort;
-  ES_QUERY.body._source = data.query._source;
+  const { meta } = data,
+    filters = locals.filter || {},
+    excludes = locals.exclude || {},
+    query = queryService(data.index, locals, data.query.query ? data.query.query : null), // Build the appropriate query obj for the env
+    /**
+     * add a condition to the query
+     *
+     * @param {String} item - a string of items to apply add to the query condition
+     * @param {Object} conditions - object or array that contains query conditions
+     * @param {String} conditionType - possible options addShould/addMust/addMustNot
+     */
+    addCondition = (item, conditions, conditionType) => {
+      const { nested, multiQuery, createObj } = conditions;
 
-  if (meta.rawQuery) {
-    return queryService.searchByQueryWithRawResult(ES_QUERY)
-      .then((results) => {
-        data.results = results.hits.hits; // Attach results and return data
-        return data;
-      });
-  } else {
-    return queryService.searchByQuery(ES_QUERY)
-      .then((results) => {
-        data.results = results; // Attach results and return data
-        return data;
-      });
+      if (item) {
+        const localQuery = nested ? queryService.newNestedQuery(nested) : query,
+          items = item.split(',');
+
+        items.forEach(instance => {
+          if (multiQuery) {
+            createObj(instance).forEach(cond => {
+              if (cond.nested) {
+                const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), { match: cond.match });
+                
+                queryService[conditionType === 'addMustNot' ? 'addMust' : conditionType](localQuery, newNestedQuery);
+              } else {
+                queryService[conditionType](localQuery, { match: cond.match });
+              }
+            });
+          } else {
+            queryService[conditionType](localQuery, { match: createObj(instance)});
+          }
+          if (conditionType === 'addShould') {
+            queryService.addMinimumShould(localQuery, 1);
+          }
+        });
+      }
+    },
+    /**
+     * add filter and exclude conditions to the query
+     *
+     * @param {String} key
+     * @param {Object} conditions
+     */
+    addFilterAndExclude = (key, conditions) => {
+      addCondition(filters[key], conditions, 'addShould');
+      addCondition(excludes[key], conditions, 'addMustNot');
+    },
+    queryFilters = {
+      // vertical (sectionfront) and/or exclude tags
+      vertical: { createObj: sectionFront => ({ sectionFront }) },
+      // tags
+      tag: { createObj: tag => ({ 'tags.normalized': tag }) },
+      // subcategory (secondary article type)
+      subcategory: { createObj: secondaryArticleType => ({ secondaryArticleType }) },
+      // editorial feed (grouped stations)
+      editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
+      // stations (stationSyndication)
+      station: {
+        createObj: station => [
+          { match: { stationSyndication: station } },
+          { match: { 'stationSyndication.normalized': station } }
+        ],
+        multiQuery: true
+      },
+      // genres syndicated to (genreSyndication)
+      genre: { createObj: genreSyndication => ({ 'genreSyndication.normalized': genreSyndication }) }
+    };
+
+  queryService.addSize(query, filters.size ? filters.size : data.query.size);
+  queryService.addSort(query, data.query.sort);
+  if (data.query._source) {
+    queryService.onlyWithTheseFields(query, data.query._source);
   }
+
+  // Loop through all the generic items and add any filter/exclude conditions that are needed
+  Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
+
+  try {
+    if (meta.rawQuery) {
+      const results = await queryService.searchByQueryWithRawResult(query);
+
+      data.results = results.hits.hits; // Attach results and return data
+      return data;
+    } else {
+      data.results = await queryService.searchByQuery(query); // Attach results and return data
+
+      return data;
+    }
+  } catch (e) {
+    queryService.logCatch(e, 'feeds.model');
+    return data;
+  }
+
 };
