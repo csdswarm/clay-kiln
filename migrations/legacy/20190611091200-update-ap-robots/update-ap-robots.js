@@ -6,7 +6,7 @@ const
     parseHost, clayExport, esQuery, clayImport, httpGet,
     republish, _get, _chunk, clone, prettyJSON
   } = require('../migration-utils').v1,
-  host = process.argv[2],
+  host = process.argv[2] || 'clay.radio.com',
   { es, url, http, message: envMessage } = parseHost(host),
   CHUNK_SIZE = 15, MAX_ARTICLES = 10000, DEFAULT_PAUSE = 25,
   METATAGS = 'meta-tags', ARTICLES = 'article', GALLERIES = 'gallery';
@@ -17,26 +17,27 @@ async function wait(millis) {
   return new Promise(resolve => setTimeout(resolve, millis));
 }
 
-function chunkUrls(urls){
+function chunkUrls(urls) {
   return _chunk(urls, CHUNK_SIZE);
 }
 
 function logError(message, error) {
+  const divider = '\n' + '-'.repeat(60) + '\n'
   console.error(message);
   console.error('See `errors.log` in migration folder (20190611091200-update-ap-robots) for more details');
   if (!errorLog) {
+    fs.unlinkSync('./errors.log');
     errorLog = fs.createWriteStream('./errors.log', { flags: 'a' });
   }
-  errorLog.write('\n' + '-'.repeat(60) + '\n' + message + ':\n' + '-'.repeat(60) + '\n');
+  errorLog.write(`${divider}${message}${divider}`);
   try {
-    errorLog.write(prettyJSON({ error }) + '-'.repeat(60) + '\n\n');
+    errorLog.write(`${prettyJSON({ error })}${divider}`);
   } catch (e) {
     // handle cyclic dependency (won't show as detailed of an error, but may provide some useful info)
-    errorLog.write(`${error}` + '-'.repeat(60) + '\n\n');
+    errorLog.write(`${error}${divider}`);
   }
-  console.log('\n');
+  console.log('\n\n');
 }
-
 
 async function getListOfComponentsWithAPSource() {
   const info = await esQuery({
@@ -56,16 +57,25 @@ async function makeSureAllAreUpToDate(componentUrlChunks) {
   // goes through all the page urls for the articles/galleries we want to update and touches them, so that they
   // run through their upgrade scripts. That way, we will have meta-tags available to update.
   const allRequests = [];
+  const badRequests = [];
   console.log(`Updating publish version of target components`);
   for (const chunk of componentUrlChunks) {
     for (const url of chunk) {
       try {
         // give a little pause to make sure that the server isn't overwhelmed.
         await wait(DEFAULT_PAUSE);
+        // getting page based on article id (this will work for imported items but it's unlikely to work with
+        // others), so if page does not exist, track which articles could not be updated this way and log them
+        // so we can handle updating some other way if needed.
         const pageUrl = url.replace(/^.*\/instances\//, `${host}/_pages/`) + '.html';
         // don't really need anything back, just need to touch the target page, so it runs it's upgrades.
         allRequests.push(httpGet({ http, url: pageUrl })
-          .then(() => console.log(`Ensured: ${http}://${pageUrl} is up-to-date`)));
+          .then(() => console.log(`Ensured: ${http}://${pageUrl} is up-to-date`))
+          .catch(error => {
+            logError(`Problem upgrading ${http}://${pageUrl}, perhaps a different page is associated with ${url}`,
+              { error })
+            badRequests.push(url);
+          }));
       } catch (error) {
         logError(`There was a problem publishing ${hostUrl}`, error);
       }
@@ -74,7 +84,9 @@ async function makeSureAllAreUpToDate(componentUrlChunks) {
   // Do need to wait for these to be done before moving on.
   await Promise.all(allRequests);
   console.log('Done updating target components.\n\n');
-  return componentUrlChunks;
+  // Only return the articles for pages that worked. We don't want to partially update those that don't or they might
+  // not be fixable until someone republishes manually
+  return componentUrlChunks.filter(url => !badRequests.includes(url));
 }
 
 async function updateAllComponents(componentUrlChunks) {
@@ -87,7 +99,6 @@ async function updateAllComponents(componentUrlChunks) {
     await logResult(result);
   }
   console.log(`Done updating robots for AP.\n\n\n`);
-
 }
 
 async function getComponentsFromClay(componentUrls) {
@@ -112,10 +123,10 @@ async function getComponentsFromClay(componentUrls) {
   }
 
   // Here's where we will wait for everything that is in process to complete
-  return componentPromises.map(async ({ type, promise }) => {
+  return await Promise.all(componentPromises.map(async ({ type, promise }) => {
     const [componentData, metaTagData] = await promise;
     return { type, componentData, metaTagData };
-  })
+  }))
 }
 
 function mergeByType(type, components) {
@@ -129,6 +140,7 @@ function mergeByType(type, components) {
 }
 
 function mergeInstances(components) {
+  // likely to only be articles and meta-tags
   return {
     [ARTICLES]: { instances: fixNoIndexNoFollow(mergeByType(ARTICLES, components)) },
     [GALLERIES]: { instances: fixNoIndexNoFollow(mergeByType(GALLERIES, components)) },
@@ -145,11 +157,10 @@ function fixNoIndexNoFollow(componentInstances) {
     }), {})
 }
 
-async function republishAffectedPages(ids){
-  for (const id in ids) {
-    republish({hostname: host, http, path: `/_pages/${id}`})
-      .then(() => console.log('republished: ', id))
-      .catch(error => logError('Problem trying to republish:', error));
+async function republishAffectedPages(ids) {
+  for (const id of ids) {
+    republish({ hostname: host, http, path: `/_pages/${id}` })
+      .catch(error => logError('Problem trying to republish:', { error }));
     await wait(DEFAULT_PAUSE);
   }
 }
@@ -191,6 +202,6 @@ getListOfComponentsWithAPSource()
   .then(chunkUrls)
   .then(makeSureAllAreUpToDate)
   .then(updateAllComponents)
-  .catch(logError)
+  .catch(error => logError(`Unhandled Errors:`, { error }))
   .then(listErrors)
 ;
