@@ -1,16 +1,31 @@
 'use strict';
 
+const _get = require('lodash/get'),
+  makeFromPathname = require('../../services/universal/make-from-pathname'),
+  getTrackingPageData = require('../../services/universal/get-tracking-page-data'),
+  { NMC, OG_TYPE } = require('../../services/universal/shared-tracking-vars');
+
 module.exports.render = (ref, data, locals) => {
-  const OG_TYPE = 'og:type',
-    AUTHOR_NAME = 'article:author:name',
+  const AUTHOR_NAME = 'article:author:name',
     PUB_TIME = 'article:published_time',
     CATEGORY = 'cXenseParse:recs:category',
     STATION_CALL_LETTERS = 'station-call-letters',
-    categories = [];
+    categories = [],
+    { station, url } = locals,
+    fromPathname = makeFromPathname({ url }),
+    category = fromPathname.getCategory(station) || 'music',
+    genre = fromPathname.getGenre(station) || 'aaa',
+    pageData = getTrackingPageData(fromPathname.getPathname(), data.contentType),
+    pageId = fromPathname.getPageId(pageData),
+    tags = fromPathname.getTags(pageData, (data.contentTagItems || []).map(i => i.text));
 
   // save these for SPA to easily be able to create or delete tags without knowing property / names
   // lets us only have to update meta-tags component when adding / removing meta tags in the future
-  data.metaTags = [];
+  data.metaTags = [
+    { name: NMC.cat, content: category },
+    { name: NMC.genre, content: genre },
+    { name: NMC.tag, content: tags.join(', ') }
+  ];
   data.unusedTags = [];
 
   // add content type tag
@@ -24,9 +39,15 @@ module.exports.render = (ref, data, locals) => {
   if (data.authors.length > 0) {
     const authors = data.authors.map(a => a.text).join(', ');
 
-    data.metaTags.push({ property: AUTHOR_NAME, content: authors });
+    data.metaTags.push(
+      { property: AUTHOR_NAME, content: authors },
+      { name: NMC.author, content: authors }
+    );
   } else {
-    data.unusedTags.push({ type: 'property', property: AUTHOR_NAME });
+    data.unusedTags.push(
+      { type: 'property', property: AUTHOR_NAME },
+      { type: 'name', name: NMC.author }
+    );
   }
 
   // add pub date tag
@@ -47,8 +68,8 @@ module.exports.render = (ref, data, locals) => {
     categories.push(data.secondaryArticleType.toLowerCase());
   }
 
-  if (locals.station && locals.station.category) {
-    categories.push(locals.station.category.toLowerCase());
+  if (_get(station, 'category')) {
+    categories.push(station.category.toLowerCase());
   }
 
   if (categories.length > 0) {
@@ -58,11 +79,29 @@ module.exports.render = (ref, data, locals) => {
   }
 
   // add station call letters tag
-  if (locals.station && locals.station.callsign) {
-    data.metaTags.push({ name: STATION_CALL_LETTERS, content: locals.station.callsign });
+  if (_get(station, 'callsign')) {
+    data.metaTags.push(
+      { name: STATION_CALL_LETTERS, content: station.callsign },
+      { name: NMC.station, content: station.callsign },
+    );
   } else {
     // ON-543: Yes, on every page in www.radio.com unless it's a station page.
-    data.metaTags.push({ name: STATION_CALL_LETTERS, content: 'NATL-RC' });
+    data.metaTags.push(
+      { name: STATION_CALL_LETTERS, content: 'NATL-RC' },
+      { name: NMC.station, content: 'NATL-RC' }
+    );
+  }
+
+  if (_get(station, 'market_name')) {
+    data.metaTags.push({ name: NMC.market, content: station.market_name });
+  } else {
+    data.unusedTags.push({ type: 'name', name: NMC.market });
+  }
+
+  if (pageId) {
+    data.metaTags.push({ name: NMC.pid, content: pageId });
+  } else {
+    data.unusedTags.push({ type: 'name', name: NMC.pid });
   }
 
   return data;

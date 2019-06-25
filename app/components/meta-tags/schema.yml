@@ -20,3 +20,6 @@ sectionFront:
 
 secondaryArticleType:
   _subscribe: secondaryArticleType
+
+contentTagItems:
+  _subscribe: metaContentTagItems
