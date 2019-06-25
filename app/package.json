@@ -37,6 +37,7 @@
     "clayutils": "^2.6.1",
     "compression": "^1.7.2",
     "connect-redis": "^3.3.3",
+    "core-js": "^2.6.9",
     "date-fns": "^1.29.0",
     "dollar-slice": "^2.2.0",
     "dompurify": "^1.0.5",

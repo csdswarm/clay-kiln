@@ -52,10 +52,9 @@
 
 .layout--two-column {
   .layout__page-header,
-  .layout__bottom,
-  .layout__content {
+  .layout__bottom {
     z-index: 2;
-    position: relative
+    position: relative;
   }
 
   .layout__page-header,
@@ -65,6 +64,9 @@
   }
 
   .layout__content {
+    z-index: 3;
+    position: relative;
+
     .content__main,
     .content__secondary {
       width: 100%;

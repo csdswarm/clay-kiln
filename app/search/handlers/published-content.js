@@ -25,7 +25,7 @@ function getContent(obj, param) {
 
   return h(content)
     .map(({ _ref }) => h(db.get(_ref).then( data => ({ _ref, data: JSON.stringify(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
-    .mergeWithLimit(1) // Merge each individual stream into the bigger stream
+    .parallel(1) // Merge each individual stream into the bigger stream
     .collect() // Turn each individual object into an array of objects
     .map(resolvedContent => {
       obj.value[param] = resolvedContent; // Assign the array of resolved objects to the original property
@@ -85,10 +85,10 @@ function getSlideEmbed(slides) {
  */
 function getSlides(obj) {
   return getContent(obj, 'slides')
-    // returns an object because we're still part of the stream created in getContent, no parent stream to merge into
+  // returns an object because we're still part of the stream created in getContent, no parent stream to merge into
     .map( ({ value }) => getSlideEmbed(value.slides))
     // merge stream from getSlideEmbed into getContent stream
-    .mergeWithLimit(1)
+    .parallel(1)
     .map( resolvedContent => {
       obj.value.slides = resolvedContent;
       return obj;
@@ -97,7 +97,7 @@ function getSlides(obj) {
 
 function save(stream) {
   return stream
-    .parallel(25)
+    .parallel(1)
     .filter(CONTENT_FILTER)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
@@ -106,13 +106,17 @@ function save(stream) {
     // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
     .map(param => param.key.indexOf('article') >= 0 || param.key.indexOf('gallery') >= 0 ? getContent(param, 'content') : h.of(param))
     // merge all content streams into main stream
-    .mergeWithLimit(25) // Merge each individual stream into the bigger stream --> this turns the stream back into the article obj
+    .parallel(1) // Merge each individual stream into the bigger stream --> this turns the stream back into the article obj
     // get data content for slides
     .map(param => param.key.indexOf('gallery') >= 0 ? getSlides(param) : h.of(param))
     // merge all slides streams into main stream
-    .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
+    .parallel(1) // Arbitrary number here, just wanted a matching limit
+    // add data for lead
+    .map(param => getContent(param, 'lead'))
+    .parallel(1)
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
+    .flatten()
     .flatMap(send)
     .errors(logError)
     .each(logSuccess(INDEX));
@@ -121,10 +125,10 @@ function save(stream) {
 /**
  * Send the data to Elastic
  *
- * @param  {Array} ops
+ * @param  {Object} op
  * @return {Function}
  */
-function send([ op ]) {
+function send(op) {
   return h(elastic.update(INDEX, op.key, op.value, false, true).then(() => op.key));
 }
 
