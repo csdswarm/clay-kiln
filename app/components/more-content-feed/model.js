@@ -112,14 +112,6 @@ module.exports.render = function (ref, data, locals) {
       data.dynamicTagPage = true;
     }
 
-    data.sectionFront = null;
-
-    if (locals && locals.sectionFront) {
-      data.sectionFront = locals.sectionFront;
-    } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
-      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
-    }
-
     if (!data.tag) {
       return data;
     }
@@ -144,6 +136,13 @@ module.exports.render = function (ref, data, locals) {
       queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     }
 
+    data.sectionFront = null;
+
+    if (locals && (locals.sectionFront || locals.secondarySectionFront)) {
+      data.sectionFront = locals.secondarySectionFront || locals.sectionFront;
+    } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
+      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
+    }
     if (data.sectionFront) {
       queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     }
@@ -171,10 +170,10 @@ module.exports.render = function (ref, data, locals) {
     || !locals) {
       return data;
     }
-    if (data.secondarySectionFront || data.secondarySectionFrontManual) {
-      queryService.addMust(query, { match: { secondarySectionFront: data.secondarySectionFrontManual || data.secondarySectionFront }});
-    } else if (data.sectionFront || data.sectionFrontManual) {
-      queryService.addMust(query, { match: { sectionFront: data.sectionFrontManual || data.sectionFront }});
+    if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
+      queryService.addMust(query, { match: { secondarySectionFront: data.secondarySectionFrontManual || locals.secondarySectionFront }});
+    } else if (locals.sectionFront || data.sectionFrontManual) {
+      queryService.addMust(query, { match: { sectionFront: data.sectionFrontManual || locals.sectionFront }});
     }
   } else if (data.populateFrom === 'all-content') {
     if (!locals) {
