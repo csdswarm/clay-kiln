@@ -1,7 +1,7 @@
 import * as mutationTypes from './mutationTypes'
 import vuexStoreDefaultState from '@/store'
-import { isMobileDevice } from '../views/account/utils';
-import moment from 'moment';
+import { isMobileDevice } from '../views/account/utils'
+import moment from 'moment'
 
 const createModalMessage = (type, message) => { return { type, message } }
 

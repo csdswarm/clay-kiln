@@ -27,6 +27,7 @@ const axiosCall = async ({ method, url, data, commit }, ignoreError) => {
     return result
   } catch (err) {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, false)
+
     if (!ignoreError) {
       commit(mutationTypes.MODAL_ERROR, formatError(err).message)
     }
@@ -51,7 +52,9 @@ export default {
     if (!state.metadata.app) {
       const result = await axiosCall({ method: 'get', url: '/v1/app/metadata', commit })
 
-      commit(mutationTypes.SET_METADATA, result.data)
+      if (result) {
+        commit(mutationTypes.SET_METADATA, result.data)
+      }
 
       return result
     }
@@ -67,10 +70,12 @@ export default {
         device_id: getDeviceId()
       } })
 
-    commit(mutationTypes.SET_USER, { ...result.data })
+    if (result) {
+      commit(mutationTypes.SET_USER, { ...result.data })
 
-    if (hideModal) {
-      commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+      if (hideModal) {
+        commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+      }
     }
   },
   async [actionTypes.SIGN_OUT] ({ commit }) {
@@ -81,10 +86,11 @@ export default {
         includeDeviceKey: true
       }
     })
-    commit(mutationTypes.SET_USER, { })
+
+    commit(mutationTypes.SET_USER, {})
   },
   async [actionTypes.SIGN_UP] ({ commit, state, dispatch }, { email, password }) {
-    await axiosCall({ commit,
+    const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/signup',
       data: {
@@ -93,11 +99,13 @@ export default {
         password
       } })
 
-    // For the sign up process, we want to keep the modal open so
-    // that the create profile modal can be displayed without any issues
-    await dispatch(actionTypes.SIGN_IN, { email, password, hideModal: false })
-    commit(mutationTypes.SIGN_UP_COMPLETE)
-    commit(mutationTypes.ROUTER_PUSH, '/account/profile')
+    if (result) {
+      // For the sign up process, we want to keep the modal open so
+      // that the create profile modal can be displayed without any issues
+      await dispatch(actionTypes.SIGN_IN, { email, password, hideModal: false })
+      commit(mutationTypes.SIGN_UP_COMPLETE)
+      commit(mutationTypes.ROUTER_PUSH, '/account/profile')
+    }
   },
   async [actionTypes.CREATE_PROFILE] ({ commit }, user) {
     const result = await axiosCall({ commit,
@@ -113,8 +121,10 @@ export default {
       })
     })
 
-    commit(mutationTypes.SET_USER, result.data)
-    commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+    if (result) {
+      commit(mutationTypes.SET_USER, result.data)
+      commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+    }
   },
   async [actionTypes.GET_PROFILE] ({ commit }, ignoreError = false) {
     const result = await axiosCall({ commit,
@@ -137,31 +147,38 @@ export default {
       })
     })
 
-    commit(mutationTypes.SET_USER, result.data)
-    commit(mutationTypes.MODAL_SUCCESS, UPDATE_PROFILE_SUCCESS)
+    if (result) {
+      commit(mutationTypes.SET_USER, result.data)
+      commit(mutationTypes.MODAL_SUCCESS, UPDATE_PROFILE_SUCCESS)
+    }
   },
   async [actionTypes.UPDATE_PASSWORD] ({ commit }, passwords) {
-    await axiosCall({ commit,
+    const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/password/update',
       data: passwords
     })
 
-    commit(mutationTypes.MODAL_SUCCESS, UPDATE_PASSWORD_SUCCESS)
+    if (result) {
+      commit(mutationTypes.MODAL_SUCCESS, UPDATE_PASSWORD_SUCCESS)
+    }
   },
   async [actionTypes.FORGOT_PASSWORD] ({ commit, state }, email) {
-    await axiosCall({ commit,
+    const result = await axiosCall({ commit,
       method: 'put',
       url: '/v1/auth/password/forgot',
       data: {
+        client_id: state.metadata.app.webplayer.clientId,
         email
       }
     })
 
-    commit(mutationTypes.MODAL_SUCCESS, FORGOT_PASSWORD_SUCCESS)
+    if (result) {
+      commit(mutationTypes.MODAL_SUCCESS, FORGOT_PASSWORD_SUCCESS)
+    }
   },
   async [actionTypes.RESET_PASSWORD] ({ commit, dispatch }, { email, authCode, password }) {
-    await axiosCall({ commit,
+    const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/password/reset',
       data: {
@@ -171,8 +188,10 @@ export default {
       }
     })
 
-    dispatch(actionTypes.SIGN_IN, { email, password })
-    commit(mutationTypes.MODAL_SUCCESS, RESET_PASSWORD_SUCCESS)
+    if (result) {
+      dispatch(actionTypes.SIGN_IN, { email, password })
+      commit(mutationTypes.MODAL_SUCCESS, RESET_PASSWORD_SUCCESS)
+    }
   },
   async [actionTypes.FAVORITE_STATIONS_ADD] ({ commit }, stationId) {
     const result = await axiosCall({ commit,
@@ -183,7 +202,9 @@ export default {
       }
     })
 
-    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    if (result) {
+      commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    }
   },
   async [actionTypes.FAVORITE_STATIONS_REMOVE] ({ commit }, stationId) {
     const result = await axiosCall({ commit,
@@ -194,7 +215,9 @@ export default {
       }
     })
 
-    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    if (result) {
+      commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    }
   },
   async [actionTypes.FAVORITE_STATIONS_GET] ({ commit }) {
     const result = await axiosCall({
@@ -203,7 +226,9 @@ export default {
       url: '/v1/favorites/stations'
     }, true)
 
-    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    if (result) {
+      commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    }
   },
   async [actionTypes.ROUTE_CHANGE] ({ commit, dispatch, state }, route) {
     const favoritesExpiredTime = 1000 * 60 * 5

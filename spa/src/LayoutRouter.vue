@@ -323,6 +323,9 @@ export default {
       }
     },
     modalComponent (component) {
+      // always clear any previous error message
+      this.$store.commit(mutationTypes.MODAL_ERROR, null)
+
       if (!component) {
         // no component, ensure that the modal is hidden
         this.modalHide()
