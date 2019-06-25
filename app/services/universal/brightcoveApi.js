@@ -203,10 +203,10 @@ const log = require('./log').setup({file: __filename}),
   request = async (method, route, params, data) => {
     method = method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET';
 
-    // defaults for existing functionality
-    const api = 'cms', ttl = TTL.DEFAULT;
+    // defaults for existing functionality which needs to bypass cache
+    const api = 'cms';
 
-    return getFromCacheOrApi({ method, route, params, data, api, ttl });
+    return hitApiAndSave({ method, route, params, data, api });
   },
   /**
    * hit the analytics api to get video analytics
