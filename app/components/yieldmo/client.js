@@ -6,11 +6,12 @@
  */
 function injectYieldmo() {
   const yieldmo = document.querySelector('.component--yieldmo'),
-    bodyContent = document.getElementsByClassName('body__content')[0],
-    firstParagraph = bodyContent.querySelector('p'),
-    secondParagraph = bodyContent.querySelector('p:nth-of-type(2)');
+    bodyContent = document.getElementsByClassName('body__content')[0];
 
   if (bodyContent) {
+    const firstParagraph = bodyContent.querySelector('p'),
+      secondParagraph = bodyContent.querySelector('p:nth-of-type(2)');
+
     if (secondParagraph) {
       secondParagraph.insertAdjacentElement('afterend', yieldmo);
     } else if (firstParagraph) {
