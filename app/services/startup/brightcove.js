@@ -60,16 +60,26 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    */
   upload = async (req, res) => {
     console.log("REQUEST");
-    const {videoName: name, 
-      shortDescription: description, 
-      longDescription: long_description, 
-      selectedStation: station
-    } = req.body;
+    const {
+      name,
+      shortDescription: description,
+      longDescription: long_description,
+      station,
+      highLevelCategory: high_level_category,
+      secondaryCategory,
+      tertiaryCategory,
+      additionalKeywords: vmg_category
+    } = req.body,
+      mandatoryCategories = tertiaryCategory ? `${ secondaryCategory },${ tertiaryCategory }` : secondaryCategory;
     console.log({
       name,
       description,
       long_description,
-      custom_fields: { station }
+      custom_fields: {
+        station,
+        high_level_category,
+        vmg_category: `${ mandatoryCategories },${ vmg_category }`
+      }
     });
 
     try {
@@ -77,13 +87,31 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         name,
         description,
         long_description,
-        custom_fields: { station }
+        custom_fields: {
+          station,
+          high_level_category,
+          vmg_category: `${ mandatoryCategories },${ vmg_category }`
+        },
+        economics: 'AD_SUPPORTED'
       });
-      
+
       console.log(createdVideo);
       if (createdVideo) {
-        
+        // next steps
       }
+    } catch (e) {
+      console.error(e);
+      res.send(e);
+    }
+  },
+  getVideoByID = async (req, res) => {
+    try {
+      const video = await brightcoveApi.request('GET', `videos/${req.query.id}`)
+
+      if (video.id) {
+        res.send(video);
+      }
+      res.send(`Error fetching video with ID ${req.query.id}`);
     } catch (e) {
       console.error(e);
       res.send(e);
@@ -97,6 +125,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   inject = (app) => {
     app.use('/brightcove/search', search);
     app.use('/brightcove/upload', upload);
+    app.use('/brightcove/get', getVideoByID);
   };
 
 module.exports.inject = inject;

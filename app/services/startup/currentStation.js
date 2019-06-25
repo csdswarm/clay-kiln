@@ -4,6 +4,7 @@ const radioApiService = require('../../services/server/radioApi'),
   { isEmpty } = require('lodash'),
   { extname } = require('path'),
   allStations = {},
+  allStationsCallsigns = [],
   defaultStation = {
     id: 0,
     name: 'Radio.com',
@@ -63,6 +64,7 @@ const radioApiService = require('../../services/server/radioApi'),
           const slug = station.attributes.site_slug || station.attributes.callsign || station.id;
 
           allStations[slug] = station.attributes;
+          allStationsCallsigns.push(station.attributes.callsign);
         });
       }
 
@@ -84,6 +86,7 @@ const radioApiService = require('../../services/server/radioApi'),
  */
 module.exports = async (req, res, next) => {
   res.locals.station = await getStation(req);
+  res.locals.allStationsCallsigns = allStationsCallsigns;
 
   return next();
 };
