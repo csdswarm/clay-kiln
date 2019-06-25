@@ -296,17 +296,17 @@ StationsCarousel.prototype = {
 
     // Add thumb class to each image
     localStations.querySelectorAll('img.lede__image').forEach(img => {
-      img.className += ' thumb';
+      img.classList.add('thumb');
     });
 
     // Add name class to station names
     localStations.querySelectorAll('span.station__name').forEach(name => {
-      name.classList += ' name';
+      name.classList.add('name');
     });
 
     // Add station-card class to the anchor tags
     localStations.querySelectorAll('a.spa-link').forEach(anchor => {
-      anchor.classList += ' station-card';
+      anchor.classList.add('station-card');
     });
 
     // Fix favorites buttons
