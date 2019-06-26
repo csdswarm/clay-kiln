@@ -78,6 +78,7 @@ const log = require('./log').setup({file: __filename}),
         return null;
       }
 
+      console.log(endpoint, JSON.stringify(data));
       return await rest.request(endpoint, {
         method: method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET',
         body: data ? JSON.stringify(data) : '',

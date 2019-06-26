@@ -1,5 +1,6 @@
 _components:
   brightcove:
-    videoId: ''
+    video: null
     showTitle: false
-    newVideo: {}
+    searchVideo: null
+    newVideo: null

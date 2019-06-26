@@ -1,3 +1,5 @@
+@import "_global/colors";
+
 .component--brightcove {
   margin-bottom: em(20);
 
@@ -5,6 +7,33 @@
     video {
       width: 100%;
       height: auto;
+    }
+  }
+  .article__body .body__header .lead & .video__preview,
+  .video__preview {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background: $hawkesBlue;
+    padding: em(10);
+    div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: end;
+      span {
+        color: $denim;
+        &:first-of-type {
+          margin-bottom: 1em;
+        }
+      }
+    }
+    img {
+      margin-left: em(20);
+      height: em(150);
+      width: auto;
     }
   }
 }

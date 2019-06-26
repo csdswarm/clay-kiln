@@ -61,25 +61,24 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   upload = async (req, res) => {
     console.log("REQUEST");
     const {
-      name,
+      videoName: name,
       shortDescription: description,
       longDescription: long_description,
       station,
       highLevelCategory: high_level_category,
-      secondaryCategory,
-      tertiaryCategory,
-      additionalKeywords: vmg_category
-    } = req.body,
-      mandatoryCategories = tertiaryCategory ? `${ secondaryCategory },${ tertiaryCategory }` : secondaryCategory;
+      tags,
+      adSupported: economics
+    } = req.body;
     console.log({
       name,
       description,
       long_description,
       custom_fields: {
         station,
-        high_level_category,
-        vmg_category: `${ mandatoryCategories },${ vmg_category }`
-      }
+        high_level_category
+      },
+      tags,
+      economics
     });
 
     try {
@@ -89,10 +88,10 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         long_description,
         custom_fields: {
           station,
-          high_level_category,
-          vmg_category: `${ mandatoryCategories },${ vmg_category }`
+          high_level_category
         },
-        economics: 'AD_SUPPORTED'
+        tags,
+        economics
       });
 
       console.log(createdVideo);
@@ -106,10 +105,12 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   },
   getVideoByID = async (req, res) => {
     try {
+      console.log(req);
       const video = await brightcoveApi.request('GET', `videos/${req.query.id}`)
 
       if (video.id) {
-        res.send(video);
+        const transformedVideo = transformSearchResults([video])[0];
+        res.send(transformedVideo);
       }
       res.send(`Error fetching video with ID ${req.query.id}`);
     } catch (e) {

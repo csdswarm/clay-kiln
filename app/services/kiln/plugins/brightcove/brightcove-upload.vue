@@ -9,6 +9,7 @@
         required
         accept=".avi, .mov, .mp4, .mpeg"
         name="brightcove-upload"
+        label="CHOOSE A FILE *"
         @change="addVideoFile"
       ></ui-fileupload>
       <ui-textbox
@@ -17,7 +18,7 @@
         enforceMaxlength
         floating-label
         label="Video Name *"
-        v-model="name"
+        v-model="videoName"
       ></ui-textbox>
       <ui-textbox
         required
@@ -50,6 +51,7 @@
         label="Choose a high level category *"
         :options="highLevelCategoryOptions"
         v-model="highLevelCategory"
+        @change="resetCategories"
       ></ui-select>
       <ui-select
         v-if="highLevelCategory"
@@ -73,13 +75,47 @@
         multiLine
         floating-label
         label="Additional Keywords (Separate with commas)"
-        help="Please use no fewer than 3 keywords per video. Keywords are not case sensitive. And please avoid spaces!"
+        help="Please use no fewer than 3 keywords per video including categories selected above."
         v-model="additionalKeywords"
       ></ui-textbox>
-      <ui-button @click="uploadNewVideo">Upload</ui-button>
-      <strong v-if="!validForm">Please fill in all required fields (marked with *)</strong>
+      <ui-alert
+        v-if="tags.length < 2 && highLevelCategory"
+        type="warning"
+        dismissable=false
+      >More keywords are required to upload.
+      </ui-alert>
+      <ui-checkbox
+        label="Enable preroll?"
+        v-model="adSupported"
+        checked
+        trueValue="AD_SUPPORTED"
+        falseValue="FREE"
+      ></ui-checkbox>
+      <ui-alert
+        v-if="!validForm"
+        type="error"
+        dismissable=false
+      >Please fill in all required fields (marked with *)
+      </ui-alert>
+      <ui-alert
+        v-if="uploadSuccess"
+        type="success"
+      >Successfully uploaded new video.</ui-alert>
+      <div class="button-container">
+        <ui-button 
+          size="large"
+          :loading="loading"
+          @click="uploadNewVideo"
+          :disabled="!validForm"
+        >Upload</ui-button>
+        <ui-button 
+          size="large"
+          buttonType="reset"
+          iconPosition="right"
+          @click="resetForm"
+        >Reset Fields</ui-button>
+      </div>
     </div>
-    <ui-progress-circular v-show="loading"></ui-progress-circular>
     <div v-if="uploadSuccess" class="brightcove-video-preview">
       <div class="video-preview__info">
         <strong>{{uploadedVideo.name}}</strong>
@@ -92,11 +128,7 @@
 <script>
   import axios from 'axios';
 
-  const UiButton = window.kiln.utils.components.UiButton,
-    UiFileupload = window.kiln.utils.components.UiFileupload,
-    UiProgressCircular = window.kiln.utils.components.UiProgressCircular,
-    UiTextbox = window.kiln.utils.components.UiTextbox,
-    UiSelect = window.kiln.utils.components.UiSelect;
+  const { UiButton, UiFileupload, UiProgressCircular, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components;
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -104,7 +136,7 @@
       return {
         uploadedVideo: null,
         loading: false,
-        name: '',
+        videoName: '',
         shortDescription: '',
         longDescription: '',
         stationOptions: window.kiln.locals.allStationsCallsigns,
@@ -115,18 +147,19 @@
           "NEWS_LIFESTYLE"
         ],
         highLevelCategory: '',
-        secondaryCategoryOptions: [],
         secondaryCategory: '',
         tertiaryCategoryOptions: [
           'food', 'drink', 'travel', 'home', 'health', 'environment'
         ],
         tertiaryCategory: '',
-        additionalKeywords: ''
+        additionalKeywords: '',
+        adSupported: 'AD_SUPPORTED'
       };
     },
     computed: {
-      secondaryCategoryOptions: function () {
+      secondaryCategoryOptions: function() {
         let options = [];
+
         switch (this.highLevelCategory) {
           case 'MUSIC_ENTERTAINMENT':
             options = [
@@ -147,21 +180,33 @@
         }
         return options;
       },
-      formattedKeywords: function () {
-        return this.additionalKeywords.replace(/\s/g, '').toLowerCase();
+      tags: function() {
+        const keywords = this.additionalKeywords ? this.additionalKeywords.split(',') : [];
+
+        if (this.tertiaryCategory) {
+          keywords.unshift(this.tertiaryCategory);
+        }
+        if (this.secondaryCategory) {
+          keywords.unshift(this.secondaryCategory);
+        }
+        console.log("tags", keywords);
+        return keywords;
       },
       validForm: function() {
-        return this.name && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && (this.highLevelCategory === 'NEWS_LIFESTYLE' ? this.tertiaryCategory : true);
+        const tertiaryCategory = this.highLevelCategory === 'NEWS_LIFESTYLE' ? this.tertiaryCategory : true;
+
+        return this.videoFile && this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
       },
       uploadSuccess: function () {
-        return !this.loading && this.uploadedVideo.id;
+        return !this.loading && this.uploadedVideo && this.uploadedVideo.id;
       }
     },
     async created() {
       console.log("created", this.uploadedVideo, this.data);
       if (this.data) {
         try {
-          const video = await axios.get('/brightcove/get', {params: { query: {id: this.data} }});
+          const video = await axios.get('/brightcove/get', { params: { id: this.data.id } });
+          console.log("got video: ", video);
 
           if (video.id) {
             this.uploadedVideo = video;
@@ -175,17 +220,35 @@
       addVideoFile(files, event) {
         this.videoFile = files.length ? files[0] : null;
       },
+      resetForm() {
+        this.uploadedVideo = null;
+        this.videoName = '';
+        this.shortDescription = '';
+        this.longDescription = '';
+        this.station = window.kiln.locals.station.callsign;
+        this.highLevelCategory = '';
+        this.secondaryCategory = '';
+        this.tertiaryCategory = '';
+        this.additionalKeywords = '';
+        this.adSupported = 'AD_SUPPORTED';
+      },
+      resetCategories() {
+        this.secondaryCategory = '';
+        this.tertiaryCategory = '';
+      },
       async uploadNewVideo(event) {
         event.preventDefault();
-        const { videoFile, name, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, formattedKeywords } = this;
-        if (validForm) {
-          console.log("create new video with this data: ", { videoFile, name, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, formattedKeywords });
+        const { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
+        if (this.validForm) {
+          console.log("create new video with this data: ", { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
           this.loading = true;
-          this.uploadedVideo = await axios.post('/brightcove/upload', { videoFile, name, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, formattedKeywords });
+          this.uploadedVideo = await axios.post('/brightcove/upload', { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
           if (this.uploadedVideo.id) {
             this.loading = false;
-            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo.id })
+            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
           }
+        } else {
+          console.log("failed upload - data: ", { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
         }
       }
     },
@@ -194,7 +257,9 @@
       UiFileupload,
       UiProgressCircular,
       UiTextbox,
-      UiSelect
+      UiSelect,
+      UiCheckbox,
+      UiAlert
     }
   }
 </script>

@@ -54,7 +54,7 @@
             </ul>
             <ui-progress-circular v-show="loading"></ui-progress-circular>
         </div>
-        <div v-if="video.id" class="brightcove-video-preview">
+        <div v-if="video" class="brightcove-video-preview">
             <div class="video-preview__info">
                 <strong>{{video.name}}</strong>
                 <i class="video-preview__id">ID: {{video.id}}</i>
@@ -77,7 +77,7 @@
         props: ['name', 'data', 'schema', 'args'],
         data() {
             return {
-                video: {id: this.data},
+                video: this.data,
                 searchResults: [],
                 loading: false,
                 query: '',
@@ -103,7 +103,7 @@
         async created() {
             if (this.data) {
                 try {
-                    const results = await axios.get('/brightcove/search', {params: { query: this.data }});
+                    const results = await axios.get('/brightcove/search', {params: { query: this.data.id }});
                     if (results.data[0]) {
                         this.video = results.data[0];
                     }
@@ -139,7 +139,8 @@
             selectBrightcove(suggestion) {
                 this.video = suggestion;
                 this.searchResults = [];
-                this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.video.id })
+                console.log("select video:", JSON.stringify(this.video));
+                this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.video })
             }
         },
         components: {
@@ -150,5 +151,3 @@
         }
     }
 </script>
-
-

@@ -1,13 +1,18 @@
+_version: 1.0
 _description: |
   Brightcove video embed
 
-videoId:
-  _label: Video ID
+video:
+  _label: Video
+  _has:
+    validate:
+      required: true
+
+searchVideo:
+  _label: Search for video
   _has:
     input: brightcove-search
     webLabel: Search
-    validate:
-      required: true
 
 newVideo:
   _label: Upload new video
@@ -19,13 +24,13 @@ showTitle:
   _has: checkbox
 
 _groups:
-  video:
+  videoSettings:
     _label: Brightcove Video
     _placeholder:
       text: Brightcove Video
       height: 30px;
-      ifEmpty: videoId
+      ifEmpty: searchVideo AND newVideo
     fields:
-      - showTitle
-      - videoId (Search for video)
+      - showTitle (Edit Video)
+      - searchVideo (Search for video)
       - newVideo (Upload new video)
