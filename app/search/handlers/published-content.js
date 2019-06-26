@@ -11,6 +11,8 @@ const h = require('highland'),
 
 // Subscribe to the save stream
 subscribe('save').through(save);
+// Subscribe to the delete stream
+subscribe('unpublishPage').through(unpublishPage);
 
 /**
  * Takes an Article obj and attaches the data attribute for each _ref for a given parameter
@@ -102,6 +104,7 @@ function save(stream) {
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
+    .map(a => {console.log('save map', a); return a;})
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
     .map(param => param.key.indexOf('article') >= 0 || param.key.indexOf('gallery') >= 0 ? getContent(param, 'content') : h.of(param))
@@ -130,6 +133,41 @@ function save(stream) {
  */
 function send(op) {
   return h(elastic.update(INDEX, op.key, op.value, false, true).then(() => op.key));
+}
+
+/**
+ * Remove the data in Elastic
+ *
+ * @param  {String} key
+ * @return {Stream<Promise<String>>}
+ */
+function removePublished(key) {
+  const publishedKey = `${key}@published`;
+
+  return h(elastic.del(INDEX, publishedKey).then(() => publishedKey));
+}
+
+/**
+ * Gets the main content from a unpublished object
+ *
+ * @param {Object} op
+ * @return {Stream<Promise<String>>}
+ */
+function getMain(op) {
+  return h(db.get(op.uri).then( data => data.main[0]));
+}
+
+/**
+ * remove the published article/gallery from elasticsearch
+ *
+ * @param {Stream} stream
+ * @return {Stream}
+ */
+function unpublishPage(stream) {
+  return stream.flatMap(getMain)
+    .flatMap(removePublished)
+    .errors(logError)
+    .each(logSuccess(INDEX));
 }
 
 /**
