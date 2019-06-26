@@ -300,7 +300,6 @@ $medium-screen-nav-width: em(728);
           }
           span {
             text-overflow: ellipsis;
-            white-space: nowrap;
             overflow: hidden;
             width: 100%;
             &.station__name {
