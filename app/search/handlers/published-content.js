@@ -104,7 +104,6 @@ function save(stream) {
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
-    .map(a => {console.log('save map', a); return a;})
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
     .map(param => param.key.indexOf('article') >= 0 || param.key.indexOf('gallery') >= 0 ? getContent(param, 'content') : h.of(param))
