@@ -68,8 +68,6 @@ StationsCarousel.prototype = {
         }
         let calculatedImageSize = (document.body.clientWidth - 40 - this.gutterWidth * (this.stationsVisible - 1)) / this.stationsVisible;
         
-        calculatedImageSize += 2;
-
         this.imageSize = calculatedImageSize + this.gutterWidth;
         // set image size dependent on window size
         for (let i = 0; i < this.stationsNodes.length; i++) {
