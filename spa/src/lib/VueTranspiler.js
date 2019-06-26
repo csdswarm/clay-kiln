@@ -37,11 +37,12 @@ export default class {
 
     $('a').each(function () {
       const $link = $(this)
-
       const $href = $link.attr('href')
+      const $target = $link.attr('target').toLowerCase()
+
       if ($href) {
         const linkParts = new URL($href)
-        if (linkParts.hostname === window.location.hostname && linkParts.pathname !== '/audio') {
+        if (linkParts.hostname === window.location.hostname && linkParts.pathname !== '/audio' && $target !== '_blank') {
           if (!$link.hasClass('outbound-link')) {
             $link.addClass('spa-link')
           }

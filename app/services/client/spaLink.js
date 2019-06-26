@@ -8,8 +8,8 @@ const urlParse = require('url-parse');
  * @param {object} anchorTagsContainer -- node that has anchor tag children
  */
 function apply(anchorTagsContainer) {
-  // Attach vue router listener on SPA links.
-  const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link');
+  // Attach vue router listener on SPA links that are not opening in a new tab/window.
+  const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link:not([target="_blank" i]');
 
   if (anchorTags) {
     anchorTags.forEach(anchor => {
