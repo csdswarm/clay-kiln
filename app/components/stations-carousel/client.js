@@ -337,35 +337,33 @@ StationsCarousel.prototype = {
    */
   updateStations: async function () {
     this.marketID = await market.getID();
-    return this.getFilteredStationsFromApi().then(stationsData => {
+    return this.getFilteredStationsFromApi().then(async (stationsData) => {
       this.stationsData = stationsData;
-
-      this.updateStationsDOM().then(() => {
-        this.setImageAndPageDims();
-        this.setCarouselWidth();
-        this.totalPages = Math.ceil(this.stationsData.count / this.pageSize);
-        this.hideOrShowEndArrows();
-        this.centerPageResults();
-        if (this.windowWidth < this.windowSizes.medium) {
-          this.createPaginationDots();
-        }
-        this.hammerTime.on('swipeleft', function (e) {
-          this.getPage(e, this);
-        }.bind(this));
-        this.hammerTime.on('swiperight', function (e) {
-          this.getPage(e, this);
-        }.bind(this));
-        this.leftArrow.addEventListener('click', function (e) {
-          this.getPage(e, this);
-        }.bind(this));
-        this.rightArrow.addEventListener('click', function (e) {
-          this.getPage(e, this);
-        }.bind(this));
-        window.addEventListener('resize', function (e) {
-          this.restyleCarousel(e, this);
-        }.bind(this));
-        return stationsData;
-      });
+      await this.updateStationsDOM();
+      this.setImageAndPageDims();
+      this.setCarouselWidth();
+      this.totalPages = Math.ceil(this.stationsData.count / this.pageSize);
+      this.hideOrShowEndArrows();
+      this.centerPageResults();
+      if (this.windowWidth < this.windowSizes.medium) {
+        this.createPaginationDots();
+      }
+      this.hammerTime.on('swipeleft', function (e) {
+        this.getPage(e, this);
+      }.bind(this));
+      this.hammerTime.on('swiperight', function (e) {
+        this.getPage(e, this);
+      }.bind(this));
+      this.leftArrow.addEventListener('click', function (e) {
+        this.getPage(e, this);
+      }.bind(this));
+      this.rightArrow.addEventListener('click', function (e) {
+        this.getPage(e, this);
+      }.bind(this));
+      window.addEventListener('resize', function (e) {
+        this.restyleCarousel(e, this);
+      }.bind(this));
+      return stationsData;
     });
   }
 };
