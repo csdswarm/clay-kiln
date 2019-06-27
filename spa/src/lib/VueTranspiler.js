@@ -38,7 +38,7 @@ export default class {
     $('a').each(function () {
       const $link = $(this)
       const $href = $link.attr('href')
-      const $target = $link.attr('target').toLowerCase()
+      const $target = String($link.attr('target')).toLowerCase()
 
       if ($href) {
         const linkParts = new URL($href)
