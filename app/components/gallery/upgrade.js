@@ -1,9 +1,11 @@
 'use strict';
 
-const { isEmpty } = require('lodash');
-const cuid = require('cuid');
-const publishUtils = require('../../services/server/publish-utils');
-const { getComponentInstance, getComponentVersion } = require('clayutils');
+const isEmpty = require('lodash/isEmpty'),
+  cuid = require('cuid'),
+  rest = require('../../services/universal/rest'),
+  { getComponentInstance, getComponentVersion } = require('clayutils'),
+  getComponentInstanceObj = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
+  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -54,25 +56,25 @@ module.exports['4.0'] = async (uri, data) => {
       metaTagsUri = metaTagsUriPublished.replace('@published', ''),
       pageUriPublished = uri.replace('_components/gallery/instances', '_pages'),
       pageUri = pageUriPublished.replace('@published', ''),
-      page = await publishUtils.getComponentInstance(pageUri);
+      page = await getComponentInstanceObj(pageUri);
 
     if (page && page.head && !page.head.includes(metaTagsUri)) {
 
       page.head.push(metaTagsUri);
       // create meta-tags component instance
       // don't wait for it, let it run and it should be updated by the next page load.
-      publishUtils.putComponentInstance(metaTagsUri, metaTagsData)
+      putComponentInstance(metaTagsUri, metaTagsData)
         .then(() => {
           if (published) {
-            return publishUtils.putComponentInstance(metaTagsUriPublished, metaTagsData);
+            return putComponentInstance(metaTagsUriPublished, metaTagsData);
           } else {
             return;
           }
         })
-        .then(publishUtils.putComponentInstance(pageUri, page))
+        .then(putComponentInstance(pageUri, page))
         .then(() => {
           if (published) {
-            return publishUtils.putComponentInstance(pageUriPublished, page);
+            return putComponentInstance(pageUriPublished, page);
           } else {
             return;
           }
@@ -84,6 +86,8 @@ module.exports['4.0'] = async (uri, data) => {
 };
 
 module.exports['5.0'] = async function (uri, data) {
+  // if sideShare has data then that means someone explicitly PUT or POSTed it
+  //   so we should leave it be.
   if (!isEmpty(data.sideShare)) {
     return data;
   }
@@ -91,6 +95,8 @@ module.exports['5.0'] = async function (uri, data) {
   const galleryInstanceId = getComponentInstance(uri),
     newShareUri = uri.replace(/\/gallery\/instances\/.*/, '/share/instances/new');
 
+  // for the 'new' gallery we don't need to create a share instance because it
+  //   should just refer to '/share/instances/new'
   if (galleryInstanceId === 'new') {
     return {
       ...data,
@@ -101,7 +107,7 @@ module.exports['5.0'] = async function (uri, data) {
   // these shouldn't be declared above the 'new' short-circuit
   // eslint-disable-next-line one-var
   const isPublished = getComponentVersion(uri) === 'published',
-    newShareData = await publishUtils.getComponentInstance(newShareUri),
+    newShareData = await getComponentInstanceObj(newShareUri),
     shareInstanceData = Object.assign(newShareData, {
       pinImage: data.feedImgUrl,
       title: data.headline
@@ -113,7 +119,7 @@ module.exports['5.0'] = async function (uri, data) {
     shareInstanceUri += '@published';
   }
 
-  await publishUtils.putComponentInstance(shareInstanceUri, shareInstanceData);
+  await putComponentInstance(shareInstanceUri, shareInstanceData);
 
   return {
     ...data,
