@@ -284,44 +284,13 @@ StationsCarousel.prototype = {
    */
   updateStationsDOM: async function () {
     const stationIds = this.stationsData.stations.map(station => station.id),
-      endpoint = `//${window.location.hostname}/_components/stations-list.html?stationIDs=${stationIds.join(',')}`,
+      endpoint = `//${window.location.hostname}/_components/stations-list/instances/local.html?stationIDs=${stationIds.join(',')}`,
       localStations = await radioApiService.fetchDOM(endpoint);
 
     // Clear out loader and old stuff
     while (this.stationsList.firstChild) {
       this.stationsList.removeChild(this.stationsList.firstChild);
     }
-
-    // Add thumb class to each image
-    localStations.querySelectorAll('img.lede__image').forEach(img => {
-      img.classList.add('thumb');
-    });
-
-    // Add name class to station names
-    localStations.querySelectorAll('span.station__name').forEach(name => {
-      name.classList.add('name');
-    });
-
-    // Add station-card class to the anchor tags
-    localStations.querySelectorAll('a.spa-link').forEach(anchor => {
-      anchor.classList.add('station-card');
-    });
-
-    // Fix favorites buttons
-    // Having station-card on the anchors fixes the station name style,
-    // but puts the favorite button behind the thumbnail
-    localStations.querySelectorAll('[data-fav-station]').forEach(button => {
-      let card = button.parentElement,
-        play = card.querySelector('[data-play-station]');
-
-      card.removeChild(button);
-      card.insertBefore(button, play);
-    });
-
-    // Remove slogans
-    localStations.querySelectorAll('span.station__secondary-info').forEach(slogan => {
-      slogan.parentElement.removeChild(slogan);
-    });
 
     this.stationsList.append(localStations);
 
