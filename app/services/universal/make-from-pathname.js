@@ -152,7 +152,7 @@ module.exports = ({ pathname, url } = {}) => {
         pageId = page;
       } else if (articleOrGalleryPage.has(page)) {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop().substring(0, 39);
-      } else if (page === 'articlePage') {
+      } else if (page === 'topicPage') {
         pageId = doubleclickPageTypeTagTag + '_' + pageName;
       }
 
