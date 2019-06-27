@@ -19,7 +19,7 @@ var SITE_ENDPOINT;
  */
 function newQueryWithLocals(index, locals) {
   if (locals) {
-    SITE_ENDPOINT = `//${locals.site.host}${locals.site.port !== 80 ? `:${locals.site.port}` : ''}${locals.site.path}/_search`;
+    SITE_ENDPOINT = `//${locals.site.host}${locals.site.port !== 80 && locals.site.port !== 443 ? `:${locals.site.port}` : ''}${locals.site.path}/_search`;
   }
   return universalQuery(index);
 }

@@ -1,9 +1,12 @@
 'use strict';
 
-const _get = require('lodash/get'),
+const _isEmpty = require('lodash/isEmpty'),
+  _get = require('lodash/get'),
+  cuid = require('cuid'),
   rest = require('../../services/universal/rest'),
-  getComponentInstance = (uri, opts) => rest.get(`https://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`https://${uri}`, body, true);
+  { getComponentInstance, getComponentVersion } = require('clayutils'),
+  getComponentInstanceObj = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
+  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -54,7 +57,7 @@ module.exports['4.0'] = async (uri, data) => {
       metaTagsUri = metaTagsUriPublished.replace('@published', ''),
       pageUriPublished = uri.replace('_components/gallery/instances', '_pages'),
       pageUri = pageUriPublished.replace('@published', ''),
-      page = await getComponentInstance(pageUri);
+      page = await getComponentInstanceObj(pageUri);
 
     if (page && page.head && !page.head.includes(metaTagsUri)) {
 
@@ -83,9 +86,53 @@ module.exports['4.0'] = async (uri, data) => {
   return data;
 };
 
+module.exports['5.0'] = async function (uri, data) {
+  // if sideShare has data then that means someone explicitly PUT or POSTed it
+  //   so we should leave it be.
+  if (!_isEmpty(data.sideShare)) {
+    return data;
+  }
+
+  const galleryInstanceId = getComponentInstance(uri),
+    newShareUri = uri.replace(/\/gallery\/instances\/.*/, '/share/instances/new');
+
+  // for the 'new' gallery we don't need to create a share instance because it
+  //   should just refer to '/share/instances/new'
+  if (galleryInstanceId === 'new') {
+    return {
+      ...data,
+      sideShare: { _ref: newShareUri }
+    };
+  }
+
+  // these shouldn't be declared above the 'new' short-circuit
+  // eslint-disable-next-line one-var
+  const isPublished = getComponentVersion(uri) === 'published',
+    newShareData = await getComponentInstanceObj(newShareUri),
+    shareInstanceData = Object.assign(newShareData, {
+      pinImage: data.feedImgUrl,
+      title: data.headline
+    });
+
+  let shareInstanceUri = newShareUri.replace('/instances/new', `/instances/${cuid()}`);
+
+  if (isPublished) {
+    shareInstanceUri += '@published';
+  }
+
+  await putComponentInstance(shareInstanceUri, shareInstanceData);
+
+  return {
+    ...data,
+    sideShare: {
+      _ref: shareInstanceUri
+    }
+  };
+};
+
 // articles and galleries need to pass their tags down to the
 //   meta-tags component.
-module.exports['5.0'] = async (uri, data) => {
+module.exports['6.0'] = async (uri, data) => {
   const hash = /instances\/\d+/.test(uri);
 
   // only works for imported pages, migration should take care of Unity pages, new pages are already ok
@@ -101,7 +148,7 @@ module.exports['5.0'] = async (uri, data) => {
     pageUri = nonPublishedUri.replace('_components/gallery/instances', '_pages');
 
   try {
-    await getComponentInstance(pageUri);
+    await getComponentInstanceObj(pageUri);
   } catch (e) {
     // if the page doesn't exist then this the metadata will have been updated
     //   by the migration.
@@ -117,8 +164,8 @@ module.exports['5.0'] = async (uri, data) => {
   const isPublished = uri.includes('@published'),
     metaTagsUri = nonPublishedUri.replace('gallery', 'meta-tags'),
     [metaTagsData, publishedMetaTagsData] = await Promise.all([
-      getComponentInstance(metaTagsUri),
-      isPublished ? getComponentInstance(metaTagsUri + '@published') : null
+      getComponentInstanceObj(metaTagsUri),
+      isPublished ? getComponentInstanceObj(metaTagsUri + '@published') : null
     ]),
     contentTagItems = data.tags.items;
 
