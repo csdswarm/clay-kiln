@@ -17,13 +17,17 @@ module.exports.render = (ref, data, locals) => {
     genre = fromPathname.getGenre(station) || 'aaa',
     pageData = getTrackingPageData(fromPathname.getPathname(), data.contentType),
     pageId = fromPathname.getPageId(pageData),
-    tags = fromPathname.getTags(pageData, (data.contentTagItems || []).map(i => i.text));
+    tags = fromPathname.getTags(pageData, (data.contentTagItems || []).map(i => i.text)),
+    nmcStation = fromPathname.isStationDetail()
+      ? _get(station, 'callsign', 'natlrc')
+      : 'natlrc';
 
   // save these for SPA to easily be able to create or delete tags without knowing property / names
   // lets us only have to update meta-tags component when adding / removing meta tags in the future
   data.metaTags = [
     { name: NMC.cat, content: category },
     { name: NMC.genre, content: genre },
+    { name: NMC.station, nmcStation },
     { name: NMC.tag, content: tags.join(', ') }
   ];
   data.unusedTags = [];
@@ -80,16 +84,10 @@ module.exports.render = (ref, data, locals) => {
 
   // add station call letters tag
   if (_get(station, 'callsign')) {
-    data.metaTags.push(
-      { name: STATION_CALL_LETTERS, content: station.callsign },
-      { name: NMC.station, content: station.callsign },
-    );
+    data.metaTags.push({ name: STATION_CALL_LETTERS, content: station.callsign });
   } else {
     // ON-543: Yes, on every page in www.radio.com unless it's a station page.
-    data.metaTags.push(
-      { name: STATION_CALL_LETTERS, content: 'NATL-RC' },
-      { name: NMC.station, content: 'NATL-RC' }
-    );
+    data.metaTags.push({ name: STATION_CALL_LETTERS, content: 'NATL-RC' });
   }
 
   if (_get(station, 'market_name')) {

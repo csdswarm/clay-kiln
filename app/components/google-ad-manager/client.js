@@ -17,7 +17,6 @@ const _get = require('lodash/get'),
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   adRefreshInterval = '60000', // Time in milliseconds for ad refresh
-  targetingNationalRadioStation = 'natlrc',
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
@@ -250,7 +249,7 @@ function getAdTargeting(pageData) {
 
   let siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
     adTargetingData = {
-      targetingRadioStation: getMetaTagContent('name', NMC.station, null),
+      targetingRadioStation: getMetaTagContent('name', NMC.station),
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingCategory: getMetaTagContent('name', NMC.cat),
       targetingAuthors: getMetaTagContent('name', NMC.author, '').split(', '),
@@ -333,7 +332,7 @@ function createAds(adSlots) {
       }
 
       slot
-        .setTargeting('station', adTargetingData.targetingRadioStation || targetingNationalRadioStation)
+        .setTargeting('station', adTargetingData.targetingRadioStation)
         .setTargeting('genre', adTargetingData.targetingGenre)
         .setTargeting('cat', adTargetingData.targetingCategory)
         .setTargeting('tag', adTargetingData.targetingTags)
