@@ -15,6 +15,7 @@ const AWS = require('aws-sdk'),
   }),
   uuidv4 = require('uuid/v4'),
   radioApi = require('../services/server/radioApi'),
+  brightcoveApi = require('../services/universal/brightcoveApi'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml');
 
@@ -118,6 +119,15 @@ module.exports = router => {
    */
   router.get('/api/v1/*', function (req, res) {
     radioApi.get(req.params[0], req.query).then(function (data) {
+      return res.send(data);
+    });
+  });
+
+  /**
+   * Proxy for brightcove api endpoints
+   */
+  router.get('/api/brightcove', function (req, res) {
+    brightcoveApi.get(req.query).then(function (data) {
       return res.send(data);
     });
   });

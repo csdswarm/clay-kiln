@@ -10,14 +10,7 @@ const log = require('./log').setup({file: __filename}),
   brightcoveAnalyticsApi = 'analytics.api.brightcove.com/v1/data',
   brightcoveOAuthApi = 'https://oauth.brightcove.com/v4/access_token?grant_type=client_credentials',
   qs = require('qs'),
-  ioredis = require('ioredis'),
-  redis = new ioredis(process.env.REDIS_HOST),
-  TTL = {
-    DEFAULT: 300000,
-    MIN: 60000,
-    HOUR: 3600000,
-    DAY: 86400000
-  },
+  radioApi = require('../server/radioApi'),
   methods = [
     'GET',
     'POST',
@@ -26,19 +19,29 @@ const log = require('./log').setup({file: __filename}),
     'DELETE'
   ],
   /**
-   * Creates a redis key from route, params, api
+   * sets the brightcove url and params for the api
    *
-   * @param {string} route
-   * @param {object} params
    * @param {string} api
+   * @param {object} params
    * @return {string}
    */
-  createKey = (route, params, api) => {
-    const encodeParams =  params ? `?${qs.stringify(params)}` : '';
+  getBrightcoveUrl = (api, params) => {
+    let url;
 
-    route = route || '';
+    switch (api) {
+      // analytics data endpoint is odd... "accounts" is a param
+      // https://analytics.api.brightcove.com/v1/data?accounts=account_id(s)&dimensions=video&where=video==video_id
+      case 'analytics':
+        url = brightcoveAnalyticsApi;
+        if (params) {
+          params.accounts = process.env.BRIGHTCOVE_ACCOUNT_ID;
+        }
+        break;
+      default:
+        url = brightcoveCmsApi;
+    }
 
-    return `${api}.${route}${encodeParams}`;
+    return `https://${url}`;
   },
   /**
    * Creates a url from a route and params
@@ -49,28 +52,13 @@ const log = require('./log').setup({file: __filename}),
    * @return {string}
    */
   createEndpoint = (route, params, api) => {
-    let apiUrl;
+    let apiUrl = getBrightcoveUrl(api, params);
 
     route = route || '';
 
-    switch (api) {
-      case 'cms':
-        apiUrl = brightcoveCmsApi;
-        break;
-      // analytics data endpoint is odd... "accounts" is a param
-      // https://analytics.api.brightcove.com/v1/data?accounts=account_id(s)&dimensions=video&where=video==video_id
-      case 'analytics':
-        apiUrl = brightcoveAnalyticsApi;
-        params = params || {};
-        params.accounts = process.env.BRIGHTCOVE_ACCOUNT_ID;
-        break;
-      default:
-        apiUrl = brightcoveCmsApi;
-    }
-
     const decodeParams =  params ? `?${decodeURIComponent(qs.stringify(params))}` : '';
 
-    return `https://${apiUrl}${route}${decodeParams}`;
+    return `${apiUrl}${route}${decodeParams}`;
   },
   /**
    * Retrieve access token and expiry time from oauth
@@ -79,119 +67,35 @@ const log = require('./log').setup({file: __filename}),
    * @throws {Error}
    */
   getAccessToken = async () => {
-    const base64EncodedCreds = Buffer.from(`${process.env.BRIGHTCOVE_CLIENT_ID}:${process.env.BRIGHTCOVE_CLIENT_SECRET}`).toString('base64'),
-      response = await rest.request(brightcoveOAuthApi, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          Authorization: `Basic ${base64EncodedCreds}`,
-          'Content-Type': 'application/x-www-form-urlencoded'
-        }
-      });
+    const currentTime = new Date().getTime() / 1000;
 
-    if (response.access_token) {
-      accessTokenUpdated = new Date().getTime() / 1000; // current time in seconds
-      return response;
-    } else {
-      const e = new Error(`Failed to request access token. Error: ${response.response.statusText}`);
-
-      log('error', e.message);
-      return null;
-    }
-  },
-  /**
-   * Get a response either from cache or the api
-   *
-   * @param {Object} options
-   * @returns {Promise}
-   */
-  getFromCacheOrApi = async (options) => {
-    const { method, route, params, data, api, ttl } = options;
-
-    if (method == 'GET') {
-      const key = createKey(route, params, api),
-        data = await getFromCache(key, ttl);
-
-      if (data) {
-        return data;
-      } else {
-        return await hitApiAndSave({ method, route, params, data, api, key });
-      }
-
-    } else {
-      return await hitApiAndSave({ method, route, params, data, api });
-    }
-  },
-  /**
-   * Get an API response from cache
-   *
-   * @param {string} key
-   * @param {integer} ttl
-   * @returns {Promise}
-   */
-  getFromCache = async (key, ttl) => {
-    try {
-      const cached = await redis.get(key),
-        data = JSON.parse(cached);
-
-      if (data.updated_at && (new Date() - new Date(data.updated_at) > ttl)) {
-        return null;
-      } else {
-        data.response_cached = true;
-        return data;
-      }
-    // catch cache miss
-    } catch (e) {
-      return null;
-    }
-  },
-  /**
-   * Retrieve response from api endpoint
-   *
-   * @param {object} options
-   * @return {Promise}
-   * @throws {Error}
-   */
-  hitApiAndSave = async (options) => {
-    try {
-      if (!access_token || (accessTokenUpdated && (new Date().getTime() / 1000) >= accessTokenUpdated + expires_in)) {
-        ({ access_token, expires_in } = await getAccessToken());
-      }
-
-      if (!access_token) {
-        return null;
-      }
-
-      const { method, route, params, data, api, key } = options,
-        endpoint = createEndpoint(route, params, api),
-        response = await rest.request(endpoint, {
-          method,
-          body: data ? JSON.stringify(data) : '',
+    if (!access_token || (accessTokenUpdated && currentTime >= accessTokenUpdated + expires_in)) {
+      const base64EncodedCreds = Buffer.from(`${process.env.BRIGHTCOVE_CLIENT_ID}:${process.env.BRIGHTCOVE_CLIENT_SECRET}`).toString('base64'),
+        response = await rest.request(brightcoveOAuthApi, {
+          method: 'POST',
           credentials: 'include',
           headers: {
-            Authorization: `Bearer ${ access_token }`
+            Authorization: `Basic ${base64EncodedCreds}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
           }
         });
 
-      if (method == 'GET' && key) {
-        response.updated_at = new Date();
+      if (response.access_token) {
+        accessTokenUpdated = new Date().getTime() / 1000; // current time in seconds
+        access_token = response.access_token;
+        expires_in = response.expires_in;
+      } else {
+        const e = new Error(`Failed to request access token. Error: ${response.response.statusText}`);
 
-        try {
-          redis.set(key, JSON.stringify(response));
-        } catch (e) {
-          log('error', e.message);
-        }
+        log('error', e.message);
+        return null;
       }
-
-      return response;
-
-    } catch (e) {
-      log('error', e.response.statusText);
-      return null;
+    } else {
+      return { access_token, expires_in };
     }
   },
   /**
-   * Retrieve response from api endpoint or cache
+   * Retrieve response from endpoint
    *
    * @param {string} method
    * @param {string} route
@@ -201,45 +105,58 @@ const log = require('./log').setup({file: __filename}),
    * @throws {Error}
    */
   request = async (method, route, params, data) => {
-    method = method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET';
+    try {
+      const endpoint = createEndpoint(route, params);
 
-    // defaults for existing functionality which needs to bypass cache
-    const api = 'cms';
+      await getAccessToken();
+      if (!access_token) {
+        return null;
+      }
 
-    return hitApiAndSave({ method, route, params, data, api });
+      return await rest.request(endpoint, {
+        method: method && methods.includes(method.toUpperCase()) ? method.toUpperCase() : 'GET',
+        body: data ? JSON.stringify(data) : '',
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${ access_token }`
+        }
+      });
+    } catch (e) {
+      log('error', e.response.statusText);
+      return null;
+    }
   },
   /**
-   * hit the analytics api to get video analytics
+   * uses the radioApi get/caching to
    *
-   * @param {integer} videoId
-   * @param {integer} ttl
-   * @returns {Promise}
+   * @param {Object} options
+   * @return {Promise}
    */
-  getVideoAnalytics = async (videoId, ttl = 5 * TTL.MIN) => {
-    const api = 'analytics',
-      method = 'GET',
-      params = {
-        dimensions: 'video',
-        where: `video==${videoId}`
+  get = async (options) => {
+    // test1: "{{domain}}/api/brightcove?api=cms&ttl=0&route=videos%2F{{videoId}}",
+    // test2: "{{domain}}/api/brightcove?api=analytics&ttl=0&params%5Bdimensions%5D=video&params%5Bwhere%5D=video%3D%3D{{videoId}}"
+
+    await getAccessToken();
+    if (!access_token) {
+      return null;
+    }
+
+    const { api, route, params, ttl } = options,
+      url = getBrightcoveUrl(api, params),
+      endpoint = route ? `${url}${route}` : url,
+      headers = {
+        credentials: 'include',
+        headers: {
+          Authorization: `Bearer ${ access_token }`
+        }
+      },
+      radioApiOptions = {
+        ttl,
+        headers
       };
 
-    return getFromCacheOrApi({ method, params, api, ttl });
-  },
-  /**
-   * hit the cms api to get video data
-   *
-   * @param {integer} videoId
-   * @param {integer} ttl
-   * @returns {Promise}
-   */
-  getVideoDetails = async (videoId, ttl = TTL.HOUR) => {
-    const route = `videos/${videoId}`,
-      api = 'cms',
-      method = 'GET';
-
-    return getFromCacheOrApi({ method, route, api, ttl });
+    return await radioApi.get(endpoint, params, null, radioApiOptions);
   };
 
 module.exports.request = request;
-module.exports.getVideoAnalytics = getVideoAnalytics;
-module.exports.getVideoDetails = getVideoDetails;
+module.exports.get = get;
