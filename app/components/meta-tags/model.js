@@ -1,9 +1,9 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  makeFromPathname = require('../../services/universal/make-from-pathname'),
-  getTrackingPageData = require('../../services/universal/get-tracking-page-data'),
-  { NMC, OG_TYPE } = require('../../services/universal/shared-tracking-vars');
+  makeFromPathname = require('../../services/universal/analytics/make-from-pathname'),
+  getTrackingPageData = require('../../services/universal/analytics/get-tracking-page-data'),
+  { NMC, OG_TYPE } = require('../../services/universal/analytics/shared-tracking-vars');
 
 module.exports.render = (ref, data, locals) => {
   const AUTHOR_NAME = 'article:author:name',

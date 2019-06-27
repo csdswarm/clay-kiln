@@ -4,7 +4,7 @@ require('intersection-observer');
 
 const _get = require('lodash/get'),
   adMapping = require('./adMapping'),
-  getTrackingPageData = require('../../services/universal/get-tracking-page-data'),
+  getTrackingPageData = require('../../services/universal/analytics/get-tracking-page-data'),
   {
     doubleclickPageTypeTagArticle,
     doubleclickPageTypeTagSection,
@@ -12,7 +12,7 @@ const _get = require('lodash/get'),
     doubleclickPageTypeTagStationsDirectory,
     NMC,
     OG_TYPE
-  } = require('../../services/universal/shared-tracking-vars'),
+  } = require('../../services/universal/analytics/shared-tracking-vars'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
