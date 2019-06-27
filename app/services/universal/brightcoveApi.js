@@ -133,10 +133,8 @@ const log = require('./log').setup({file: __filename}),
    * @return {Promise}
    */
   get = async (options) => {
-    // test1: "{{domain}}/api/brightcove?api=cms&ttl=0&route=videos%2F{{videoId}}",
-    // test2: "{{domain}}/api/brightcove?api=analytics&ttl=0&params%5Bdimensions%5D=video&params%5Bwhere%5D=video%3D%3D{{videoId}}"
-
     await getAccessToken();
+
     if (!access_token) {
       return null;
     }
