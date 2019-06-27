@@ -123,7 +123,7 @@ const rest = require('../universal/rest'),
   getAndSave = async (endpoint, dbKey, validate, options) => {
     try {
       const ttl = options.ttl,
-        response =  await rest.get(endpoint, options.headers);
+        response = await rest.get(endpoint, options.headers);
 
       if (validate(response)) {
         response.updated_at = new Date();
