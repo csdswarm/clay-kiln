@@ -191,7 +191,7 @@ async function addContentTagItems(page, isPublished) {
   ]);
 
   const tagsUri = removeHost(contentData.tags._ref),
-    tagsPublishedUri = removeHost(contentPublishedData.tags._ref);
+    tagsPublishedUri = isPublished ? removeHost(contentPublishedData.tags._ref) : null;
 
   const [
     tagsData,

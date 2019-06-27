@@ -195,10 +195,6 @@ document.querySelectorAll('.google-ad-manager--mobile-adhesion').forEach(ad => a
 function updateSkinStyles(hasSkin) {
   const billboard = document.querySelector('.google-ad-manager--billboard');
 
-  if (!billboard) {
-    return;
-  }
-
   if (hasSkin) {
     billboard.style['background'] = 'transparent';
     billboard.style['margin-bottom'] = '0';
@@ -420,10 +416,6 @@ function resizeForSkin() {
  * @param {string} position
  */
 window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, position) {
-  if (!document.querySelector('.google-ad-manager--billboard')) {
-    return;
-  }
-
   updateSkinStyles(true);
   const skinDiv = 'freq-dfp--bg-skin',
     skinClass = 'advertisement--full',

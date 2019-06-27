@@ -13,7 +13,7 @@ module.exports.render = (ref, data, locals) => {
     categories = [],
     { station, url } = locals,
     fromPathname = makeFromPathname({ url }),
-    { importedNmcData } = data,
+    { importedNmcData = {} } = data,
     category = importedNmcData.category || fromPathname.getCategory(station) || 'music',
     genre = importedNmcData.genre || fromPathname.getGenre(station) || 'aaa',
     pageData = getTrackingPageData(fromPathname.getPathname(), data.contentType),
@@ -44,7 +44,7 @@ module.exports.render = (ref, data, locals) => {
   // add author tag
   let nmcAuthors = importedNmcData.author;
 
-  if (data.authors.length > 0) {
+  if (_get(data, 'authors.length') > 0) {
     const authors = data.authors.map(a => a.text).join(', ');
 
     if (!nmcAuthors) {
