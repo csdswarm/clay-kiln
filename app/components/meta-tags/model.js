@@ -13,12 +13,14 @@ module.exports.render = (ref, data, locals) => {
     categories = [],
     { station, url } = locals,
     fromPathname = makeFromPathname({ url }),
-    category = fromPathname.getCategory(station) || 'music',
-    genre = fromPathname.getGenre(station) || 'aaa',
+    { importedNmcData } = data,
+    category = importedNmcData.category || fromPathname.getCategory(station) || 'music',
+    genre = importedNmcData.genre || fromPathname.getGenre(station) || 'aaa',
     pageData = getTrackingPageData(fromPathname.getPathname(), data.contentType),
-    pageId = fromPathname.getPageId(pageData),
-    tags = fromPathname.getTags(pageData, (data.contentTagItems || []).map(i => i.text)),
-    nmcStation = fromPathname.isStationDetail()
+    pageId = importedNmcData.pid || fromPathname.getPageId(pageData),
+    tags = importedNmcData.tag || fromPathname.getTags(pageData, (data.contentTagItems || []).map(i => i.text)).join(', '),
+    marketName = importedNmcData.market || _get(station, 'market_name'),
+    stationCallsign = importedNmcData.station || fromPathname.isStationDetail()
       ? _get(station, 'callsign', 'natlrc')
       : 'natlrc';
 
@@ -27,8 +29,8 @@ module.exports.render = (ref, data, locals) => {
   data.metaTags = [
     { name: NMC.cat, content: category },
     { name: NMC.genre, content: genre },
-    { name: NMC.station, nmcStation },
-    { name: NMC.tag, content: tags.join(', ') }
+    { name: NMC.station, stationCallsign },
+    { name: NMC.tag, content: tags }
   ];
   data.unusedTags = [];
 
@@ -40,18 +42,24 @@ module.exports.render = (ref, data, locals) => {
   }
 
   // add author tag
+  let nmcAuthors = importedNmcData.author;
+
   if (data.authors.length > 0) {
     const authors = data.authors.map(a => a.text).join(', ');
 
-    data.metaTags.push(
-      { property: AUTHOR_NAME, content: authors },
-      { name: NMC.author, content: authors }
-    );
+    if (!nmcAuthors) {
+      nmcAuthors = authors;
+    }
+
+    data.metaTags.push({ property: AUTHOR_NAME, content: authors });
   } else {
-    data.unusedTags.push(
-      { type: 'property', property: AUTHOR_NAME },
-      { type: 'name', name: NMC.author }
-    );
+    data.unusedTags.push({ type: 'property', property: AUTHOR_NAME });
+  }
+
+  if (nmcAuthors) {
+    data.metaTags.push({ name: NMC.author, content: nmcAuthors });
+  } else {
+    data.unusedTags.push({ type: 'name', name: NMC.author });
   }
 
   // add pub date tag
@@ -90,8 +98,8 @@ module.exports.render = (ref, data, locals) => {
     data.metaTags.push({ name: STATION_CALL_LETTERS, content: 'NATL-RC' });
   }
 
-  if (_get(station, 'market_name')) {
-    data.metaTags.push({ name: NMC.market, content: station.market_name });
+  if (marketName) {
+    data.metaTags.push({ name: NMC.market, content: marketName });
   } else {
     data.unusedTags.push({ type: 'name', name: NMC.market });
   }

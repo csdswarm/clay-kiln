@@ -23,3 +23,11 @@ secondaryArticleType:
 
 contentTagItems:
   _subscribe: metaContentTagItems
+
+#
+# an empty object that will store the nmc name -> content pairs
+#  e.g. station -> 'natlrc'.  note the lack of the 'nmc:' prefix in the name
+#
+# see 'universal/shared-tracking-vars.js for potential keys
+#
+importedNmcData: {}
