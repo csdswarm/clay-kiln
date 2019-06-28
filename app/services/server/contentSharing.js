@@ -4,6 +4,13 @@ const qs = require('qs'),
   rest = require('../universal/rest'),
   log = require('../universal/log').setup({ file: __filename }),
   importContentUrl = process.env.IMPORT_CONTENT_URL,
+  /**
+   * Sends domain and slug to content-import lambda for importing
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {Promise}
+   */
   importContent = async (req, res) => {
     try {
       if (!req.user || !req.user.auth) {

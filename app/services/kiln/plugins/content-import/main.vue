@@ -34,6 +34,9 @@
             }
         },
         methods: {
+            /**
+             * parses domain and slug from url and sends to import content lambda
+             */
             async importContent() {
                 this.error = '';
                 this.loading = true;
