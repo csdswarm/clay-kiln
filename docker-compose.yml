@@ -11,6 +11,10 @@ services:
       dockerfile: Dockerfile
     links:
       - clay
+    networks:
+      main:
+        aliases:
+          - clay.radio.com
     ports:
       - "80:80"
 
@@ -24,6 +28,8 @@ services:
       - redis
       - elasticsearch
       - postgres
+    networks:
+      main:
     command: "npm start"
     volumes:
       - ./app:/usr/src/app
@@ -33,6 +39,8 @@ services:
     image: redis
     logging:
       driver: none
+    networks:
+      main:
     ports:
       - "6379:6379"
     volumes:
@@ -44,6 +52,8 @@ services:
     command: elasticsearch
     logging:
       driver: none
+    networks:
+      main:
     ports:
       - "9200:9200"
     volumes:
@@ -53,6 +63,8 @@ services:
 
   postgres:
     image: postgres:10.4
+    networks:
+      main:
     restart: always
     environment:
       POSTGRES_PASSWORD: example
@@ -60,3 +72,6 @@ services:
       - ./postgres/data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+networks:
+  main:
