@@ -51,7 +51,7 @@ async function getVideoViews(videoId) {
     }
   }, null, { ttl });
 
-  if (analyticsData && analyticsData.items && analyticsData.items.length == 1) {
+  if (analyticsData && analyticsData.items && analyticsData.items.length === 1) {
     return analyticsData.items[0].video_view;
   } else {
     return null;

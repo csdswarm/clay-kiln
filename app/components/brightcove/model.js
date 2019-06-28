@@ -1,6 +1,10 @@
 'use strict';
 
-const apiHelper = require('./api-helper');
+const apiHelper = require('./api-helper'),
+  // dumb, but this has to be here for kiln to know to put it in window.process.env
+  // being used in apiHelper, was coming up `undefined` before this
+  // eslint-disable-next-line no-unused-vars
+  protocol = process.env.CLAY_SITE_PROTOCOL;
 
 module.exports.save = async (ref, data) => {
   if (data.videoId) {

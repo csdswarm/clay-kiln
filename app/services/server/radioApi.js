@@ -119,6 +119,7 @@ const rest = require('../universal/rest'),
           try {
             redis.set(dbKey, JSON.stringify(response));
           } catch (e) {
+            // still return the response even if setting cache failed
           }
         }
 

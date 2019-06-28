@@ -28,17 +28,15 @@ const log = require('./log').setup({file: __filename}),
   getBrightcoveUrl = (api, params) => {
     let url;
 
-    switch (api) {
-      // analytics data endpoint is odd... "accounts" is a param
-      // https://analytics.api.brightcove.com/v1/data?accounts=account_id(s)&dimensions=video&where=video==video_id
-      case 'analytics':
-        url = brightcoveAnalyticsApi;
-        if (params) {
-          params.accounts = process.env.BRIGHTCOVE_ACCOUNT_ID;
-        }
-        break;
-      default:
-        url = brightcoveCmsApi;
+    // analytics data endpoint is odd... "accounts" is a param
+    // https://analytics.api.brightcove.com/v1/data?accounts=account_id(s)&dimensions=video&where=video==video_id
+    if (api == 'analytics') {
+      url = brightcoveAnalyticsApi;
+      if (params) {
+        params.accounts = process.env.BRIGHTCOVE_ACCOUNT_ID;
+      }
+    } else {
+      url = brightcoveCmsApi;
     }
 
     return `https://${url}`;
@@ -52,11 +50,10 @@ const log = require('./log').setup({file: __filename}),
    * @return {string}
    */
   createEndpoint = (route, params, api) => {
-    let apiUrl = getBrightcoveUrl(api, params);
+    const apiUrl = getBrightcoveUrl(api, params),
+      decodeParams = params ? `?${decodeURIComponent(qs.stringify(params))}` : '';
 
     route = route || '';
-
-    const decodeParams =  params ? `?${decodeURIComponent(qs.stringify(params))}` : '';
 
     return `${apiUrl}${route}${decodeParams}`;
   },
