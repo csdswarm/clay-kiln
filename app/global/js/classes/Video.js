@@ -81,14 +81,17 @@ class Video extends Media {
     if (this.shouldAutoplay()) {
       await this.mute();
       await this.play();
+
+      this.addInteractionEvents(eventTypes);
     } else {
       await this.pause();
       await this.unmute();
+
+      this.userInteraction = true;
     }
 
     super.prepareMedia();
 
-    this.addInteractionEvents(eventTypes);
     this.unmuteOnPlay(eventTypes);
     this.pauseOnUnmute(eventTypes);
   }
