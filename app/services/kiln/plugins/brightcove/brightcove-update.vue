@@ -1,17 +1,10 @@
-<!--  Brightcove Upload -->
+<!--  Brightcove Update -->
 <docs>
-  # Brightcove Upload
+  # Brightcove Update
 </docs>
 <template>
-  <div class="brightcove-upload">
-    <div class="brightcove-upload__upload-options">
-      <ui-fileupload
-        required
-        accept=".avi, .mov, .mp4, .mpeg"
-        name="brightcove-upload"
-        label="CHOOSE A FILE *"
-        @change="setVideoFile"
-      ></ui-fileupload>
+  <div class="brightcove-update">
+    <div class="brightcove-update__update-options">
       <ui-textbox
         required
         maxlength="255"
@@ -82,7 +75,7 @@
         v-if="tags.length < 2 && highLevelCategory"
         type="warning"
         dismissable=false
-      >More keywords are required to upload.
+      >More keywords are required to update.
       </ui-alert>
       <ui-checkbox
         label="Enable preroll?"
@@ -101,7 +94,7 @@
         <ui-button
           size="large"
           :loading="loading"
-          @click="uploadNewVideo"
+          @click="updateVideo"
           :disabled="!validForm"
         >Upload</ui-button>
         <ui-button
@@ -109,26 +102,27 @@
           buttonType="reset"
           iconPosition="right"
           @click="resetForm"
-        >Reset Fields</ui-button>
+        >Reset Fields to Last Update</ui-button>
       </div>
       <ui-alert
-        v-if="!loading && uploadStatus.message"
-        :type="uploadStatus.type"
-      >{{ uploadStatus.message }}</ui-alert>
+        v-if="!loading && updateStatus.message"
+        :type="updateStatus.type"
+      >{{ updateStatus.message }}</ui-alert>
     </div>
-    <div v-if="uploadSuccess" class="brightcove-video-preview">
+    <div v-if="editSuccess" class="brightcove-video-preview">
       <div class="video-preview__info">
-        <strong>{{uploadedVideo.name}}</strong>
-        <i class="video-preview__id">ID: {{uploadedVideo.id}}</i>
+        <strong>{{ updatedVideo.name }}</strong>
+        <i class="video-preview__id">ID: {{ updatedVideo.id }}</i>
       </div>
-      <img class="video-preview__image" :src="uploadedVideo.imageUrl">
+      <img class="video-preview__image" :src=" updatedVideo.imageUrl">
     </div>
   </div>
 </template>
 <script>
   import axios from 'axios';
+  import { transformVideoResults } from '../../../startup/brightcove.js'
 
-  const { UiButton, UiFileupload, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
+  const { UiButton, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
     MUSIC_ENTERTAINMENT = 'MUSIC_ENTERTAINMENT',
     SPORTS = 'SPORTS',
     NEWS_LIFESTYLE = 'NEWS_LIFESTYLE',
@@ -139,28 +133,27 @@
     props: ['name', 'data', 'schema', 'args'],
     data() {
       return {
-        uploadedVideo: null,
+        updatedVideo: null,
         loading: false,
-        videoFile: null,
-        videoName: '',
-        shortDescription: '',
-        longDescription: '',
+        videoName: this.updatedVideo.name || '',
+        shortDescription: this.updatedVideo.description || '',
+        longDescription: this.updatedVideo.long_description || '',
         stationOptions: window.kiln.locals.allStationsCallsigns,
-        station: window.kiln.locals.station.callsign,
+        station: this.updatedVideo.custom_fields.station || window.kiln.locals.station.callsign,
         highLevelCategoryOptions: [
           MUSIC_ENTERTAINMENT,
           SPORTS,
           NEWS_LIFESTYLE
         ],
-        highLevelCategory: '',
-        secondaryCategory: '',
+        highLevelCategory: this.updatedVideo.custom_fields.high_level_category || '',
+        secondaryCategory: this.derivedSecondaryCategory || '',
         tertiaryCategoryOptions: [
           'food', 'drink', 'travel', 'home', 'health', 'environment'
         ],
-        tertiaryCategory: '',
-        additionalKeywords: '',
-        adSupported: AD_SUPPORTED,
-        uploadStatus: {
+        tertiaryCategory: this.derivedTertiaryCategory || '',
+        additionalKeywords: this.derivedKeywords || '',
+        adSupported: this.updatedVideo.economics || AD_SUPPORTED,
+        updateStatus: {
           type: 'info',
           message: ''
         }
@@ -201,24 +194,43 @@
         }
         return keywords;
       },
+      derivedSecondaryCategory: function() {
+        return (this.updatedVideo.tags.filter(keyword => {
+          return this.secondaryCategoryOptions.includes(keyword);
+        })).join();
+      },
+      derivedTertiaryCategory: function() {
+        return (this.updatedVideo.tags.filter(keyword => {
+          return this.tertiaryCategoryOptions.includes(keyword);
+        })).join();
+      },
+      derivedKeywords: function() {
+        return (this.updatedVideo.tags.filter(keyword => {
+          return !(this.secondaryCategoryOptions.concat(this.tertiaryCategoryOptions)).includes(keyword);
+        })).join();
+      },
       validForm: function() {
         const tertiaryCategory = this.highLevelCategory === NEWS_LIFESTYLE ? this.tertiaryCategory : true;
 
-        return this.videoFile && this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
+        return this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
       },
-      uploadSuccess: function() {
-        return !this.loading && this.uploadedVideo && this.uploadedVideo.id;
+      updateSuccess: function() {
+        return !this.loading && this.updatedVideo && this.updatedVideo.id;
       }
     },
     async created() {
-      console.log("created upload plugin", this.uploadedVideo, this.data);
+      console.log("created update plugin", this.updatedVideo, this.data);
       if (this.data) {
         try {
-          const video = await axios.get('/brightcove/get', { params: { id: this.data.id } });
+          const video = await axios.get('/brightcove/get', { params: {
+              id: this.data.id,
+              full_object: true
+            } });
+
           console.log("got video: ", video.data);
 
           if (video.data.id) {
-            this.uploadedVideo = video.data;
+            this.updatedVideo = video.data;
           }
         } catch (e) {
           console.error('Error retrieving video info');
@@ -226,26 +238,18 @@
       }
     },
     methods: {
-      setVideoFile(files, event) {
-        this.videoFile = null;
-
-        if (files.length) {
-          this.videoFile = files[0];
-        }
-      },
       resetForm() {
-        this.uploadedVideo = null;
-        this.videoFile = null;
-        this.videoName = '';
-        this.shortDescription = '';
-        this.longDescription = '';
-        this.station = window.kiln.locals.station.callsign;
-        this.highLevelCategory = '';
-        this.secondaryCategory = '';
-        this.tertiaryCategory = '';
-        this.additionalKeywords = '';
-        this.adSupported = AD_SUPPORTED;
+        this.videoName = this.updatedVideo.name;
+        this.shortDescription = this.updatedVideo.description;
+        this.longDescription = this.updatedVideo.long_description;
+        this.station = this.updatedVideo.custom_fields.station;
+        this.highLevelCategory = this.updatedVideo.custom_fields.high_level_category;
+        this.secondaryCategory = this.derivedSecondaryCategory;
+        this.tertiaryCategory = this.derivedTertiaryCategory;
+        this.additionalKeywords = this.derivedKeywords;
+        this.adSupported = this.updatedVideo.economics;
         this.loading = false;
+        this.updatedVideo = null;
       },
       resetCategories() {
         this.secondaryCategory = '';
@@ -255,51 +259,21 @@
         event.preventDefault();
         const { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
 
-        console.log("create new video with this data: ", { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
+        console.log("update video with this data: ", { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
         this.loading = true;
-        const { data: createResponse } = await axios.post('/brightcove/create', { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
-          { signed_url, api_request_url, videoID } = createResponse;
+        const { data: updateResponse } = await axios.post('/brightcove/update', { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
 
-        console.log(signed_url, api_request_url, videoID);
+        console.log('updateResponse', updateResponse);
+        this.loading = false;
 
-        if (signed_url && api_request_url && videoID) {
-          try {
-            const formData = new FormData;
-              // xhr = new XMLHttpRequest();
+        if (updateResponse.id) {
+          this.updatedVideo = updateResponse;
+          const transformedVideo = transformVideoResults([updateResponse])[0];
 
-            formData.append('file', this.videoFile);
-            // xhr.open('PUT', signed_url, true);
-            // xhr.onload = function () {
-            //   if (xhr.status === 200) {
-            //     // File(s) uploaded.
-            //     console.log("file uploaded to brightcove s3. full response: ", xhr);
-            //   } else {
-            //     console.log("error with upload to S3. full response: ", xhr);
-            //   }
-            // };
-            // xhr.send(formData);
-
-            const uploadToS3Response = await axios.put(signed_url, formData, {
-              headers: {'Content-Type': 'multipart/form-data'}
-            });
-            console.log('uploadToS3Response', uploadToS3Response);
-          } catch(e) {
-            this.loading = false;
-            this.uploadStatus = {type: 'error', message: `Failed to upload video to Brightcove S3. ${e}`};
-            throw e;
-          }
-
-          const { data: ingestResponse } = await axios.post('/brightcove/upload', { api_request_url, videoID });
-
-          this.loading = false;
-          if (ingestResponse.id) {
-            this.uploadedVideo = ingestResponse;
-            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
-            this.uploadStatus = {type: 'success', message: 'Successfully uploaded video'};
-            this.resetForm();
-          } else {
-            this.uploadStatus = {type: 'error', message: `Failed to upload video. ${ingestResponse}`};
-          }
+          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: transformedVideo });
+          this.updateStatus = { type: 'success', message: `Successfully updated video. Last Updated: ${ updateResponse.updated_at }` };
+        } else {
+          this.updateStatus = { type: 'error', message: `Failed to update video. ${ updateResponse }` };
         }
       }
     },

@@ -50,12 +50,8 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     }
   },
   /**
-   * Upload new video to brightcove --
-   * The four API requests involved in push-based ingestion for videos:
-   * CMS API POST request to create the video object in Video Cloud (same as for pull-based ingestion)
-   * Dynamic Ingest GET request to get the Brightcove S3 bucket URLs
-   * PUT request to upload the source file to the Brightcove S3 bucket
-   * Dynamic Ingest POST request to ingest the source file (same as for pull-based ingestion)
+   * Create new video object in brightcove and
+   * gets the Brightcove S3 bucket URLs for video ingestion
    *
    * @param {object} req
    * @param {object} res
@@ -87,7 +83,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         economics
       });
 
-      console.log("Created Video: ", createdVidName, createdVidID, videoFileName);
+      console.log("Created Video: ", createdVidName, createdVidID);
       if (createdVidName && createdVidID) {
         const sourceName = slugify(createdVidName),
           // Step 2: Request for Brightcove S3 Urls
@@ -97,8 +93,8 @@ const brightcoveApi = require('../universal/brightcoveApi'),
 
         if (signed_url && api_request_url) {
           // Step 3: Upload video file to Brightcove S3 ******* DO ON FE
-          // curl -X PUT "signed_url" --upload-file FILE_PATH_FOR_LOCAL_ASSET_GOES_HERE 
-        
+          // curl -X PUT "signed_url" --upload-file FILE_PATH_FOR_LOCAL_ASSET_GOES_HERE
+
           res.send({signed_url, api_request_url, videoID: createdVidID})
         } else {
           res.send('Failed to fetch brightcove S3 URLs.');
@@ -112,12 +108,8 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     }
   },
   /**
-   * Upload new video to brightcove --
-   * The four API requests involved in push-based ingestion for videos:
-   * CMS API POST request to create the video object in Video Cloud (same as for pull-based ingestion)
-   * Dynamic Ingest GET request to get the Brightcove S3 bucket URLs
-   * PUT request to upload the source file to the Brightcove S3 bucket
-   * Dynamic Ingest POST request to ingest the source file (same as for pull-based ingestion)
+   * Ingest newly uploaded video from Brightcove S3 bucket to
+   * corresponding video object in Brightcove
    *
    * @param {object} req
    * @param {object} res
@@ -131,19 +123,62 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     } = req.body;
 
     try {
-      // Step 4: Ingest uploaded file in S3 to Brightcove media library
       const ingestJobStatus = await brightcoveApi.ingestVideoFromS3(videoID, api_request_url);
-          
+
       if (ingestJobStatus === 'finished') {
         const video = await brightcoveApi.request('GET', `videos/${videoID}`)
 
         if (video.id) {
           res.send(transformVideoResults([video])[0]);
         } else {
-          res.send('Failed to fetch created video.');  
+          res.send('Failed to fetch created video.');
         }
       } else {
         res.send('Failed to ingest video file from S3.');
+      }
+    } catch (e) {
+      console.error(e);
+      res.send(e);
+    }
+  },
+  /**
+   * Update data for existing video in brightcove
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {Promise}
+   */
+  update = async (req, res) => {
+    console.log("UPDATE REQUEST");
+    const {
+      videoName: name,
+      shortDescription: description,
+      longDescription: long_description,
+      station,
+      highLevelCategory: high_level_category,
+      tags,
+      adSupported: economics
+    } = req.body;
+
+    try {
+      // Patch video object in video cloud
+      const updateResponse = await brightcoveApi.request('PUT', 'videos', null, {
+        name,
+        description,
+        long_description,
+        custom_fields: {
+          station,
+          high_level_category
+        },
+        tags,
+        economics
+      });
+
+      console.log("Updated Video: ", updateResponse.id);
+      if (updateResponse.id) {
+        res.send(updateResponse)
+      } else {
+        res.send('Failed to update video object in Brightcove.');
       }
     } catch (e) {
       console.error(e);
@@ -155,7 +190,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       console.log(req);
       const video = await brightcoveApi.request('GET', `videos/${req.query.id}`)
 
-      if (video.id) {
+      if (video.id && !req.query.full_object) {
         res.send(transformVideoResults([video])[0]);
       }
       res.send(`Error fetching video with ID ${req.query.id}`);
@@ -173,7 +208,9 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     app.use('/brightcove/search', search);
     app.use('/brightcove/create', create);
     app.use('/brightcove/upload', upload);
+    app.use('/brightcove/update', update);
     app.use('/brightcove/get', getVideoByID);
   };
 
 module.exports.inject = inject;
+module.exports.transformVideoResults = transformVideoResults;

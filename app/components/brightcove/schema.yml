@@ -19,6 +19,14 @@ newVideo:
   _has:
     input: brightcove-upload
 
+updateVideo:
+  _label: Update video
+  _has:
+    input: brightcove-update
+  _reveal:
+    field: video
+    operator: not-empty
+
 showTitle:
   _label: Show video title?
   _has: checkbox
@@ -31,6 +39,7 @@ _groups:
       height: 30px;
       ifEmpty: searchVideo AND newVideo
     fields:
-      - showTitle (Edit Video)
+      - showTitle (Update video)
+      - updateVideo (Update video)
       - searchVideo (Search for video)
       - newVideo (Upload new video)

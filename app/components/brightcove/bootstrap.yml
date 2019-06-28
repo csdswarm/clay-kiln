@@ -4,3 +4,4 @@ _components:
     showTitle: false
     searchVideo: null
     newVideo: null
+    updateVideo: null
