@@ -2,17 +2,24 @@
          data-uri="{{ default _ref _self }}"
          data-track-type="trending-recirculation"
          data-editable="trendingItems">
-  <h2 class="trending__title"><span>TRENDING on RADIO.COM</span></h2>
+  <h2 class="trending__title">
+    {{#if lytics}}
+      <span>You May Also Like</span>
+    {{else}}
+      <span>TRENDING on RADIO.COM</span>
+    {{/if}}
+  </h2>
   <div class="trending__data">
     {{#each items}}
       <div class="trending__item">
-        <a href="{{ canonicalUrl }}"
+        <a href="{{ concat canonicalUrl params}}"
            class="trending__item__link"
            data-track-type="article-link"
            data-track-component-name="trending"
            data-track-page-uri="{{ pageUri }}"
            data-track-headline="{{ primaryHeadline }}"
-           data-track-component-title="Trending">
+           data-track-component-title="Trending"
+           data-track-lytics="{{ lytics }}">
           {{#if sectionFront}}
             <div class="trending__item__tag">{{ sectionFront }}</div>
           {{/if}}

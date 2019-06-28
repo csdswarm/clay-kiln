@@ -1,8 +1,8 @@
 'use strict';
 
 const rest = require('../../services/universal/rest'),
-  getComponentInstance = (uri, opts) => rest.get(`https://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`https://${uri}`, body, true);
+  getComponentInstance = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
+  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -38,7 +38,7 @@ module.exports['3.0'] = function (uri, data) {
 
 // new-two-col layout was updated to add meta-tags component
 module.exports['4.0'] = async (uri, data) => {
-  const hash = uri.match(/instances\/(\d+)/);
+  const hash = uri.match(/instances\/(sbp-\d+|\d+)/);
 
   // only works for imported pages, migration should take care of Unity pages, new pages are already ok
   // Unity pages don't have the same hash for page and article/gallery component

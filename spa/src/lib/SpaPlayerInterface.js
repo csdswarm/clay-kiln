@@ -102,7 +102,7 @@ class SpaPlayerInterface {
    */
   async mountPlayer () {
     // Instruct web-player/client.js to mount the player.
-    const playerMounted = await spaCommunicationBridge.sendMessage('ClientWebPlayerMountPlayer')
+    const playerMounted = await spaCommunicationBridge.sendMessage('ClientWebPlayerMountPlayer', true)
 
     // Verify player is mounted.
     if (playerMounted) {
@@ -152,7 +152,7 @@ class SpaPlayerInterface {
   attachClientEventListeners () {
     // Add channel that listens for play/pause button clicks.
     if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlaybackStatus')) {
-      spaCommunicationBridge.addChannel('SpaPlayerInterfacePlaybackStatus', async (payload) => {
+      spaCommunicationBridge.subscribe('SpaPlayerInterfacePlaybackStatus', async (payload) => {
         const { stationId, playbackStatus } = payload
 
         if (stationId) {
@@ -164,8 +164,9 @@ class SpaPlayerInterface {
     }
     // Add channel that communicates currently loaded station id.
     if (!spaCommunicationBridge.channelActive('SpaPlayerInterfaceGetCurrentStationId')) {
-      spaCommunicationBridge.addChannel('SpaPlayerInterfaceGetCurrentStationId', async () => {
+      spaCommunicationBridge.subscribe('SpaPlayerInterfaceGetCurrentStationId', async () => {
         const currentStation = this.getCurrentStation()
+
         return currentStation.id
       })
     }
