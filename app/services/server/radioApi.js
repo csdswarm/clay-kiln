@@ -2,8 +2,6 @@
 
 const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
-  clayUrl = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}`,
-  env = process.env.NODE_ENV || 'prod',
   qs = require('qs'),
   ioredis = require('ioredis'),
   redis = new ioredis(process.env.REDIS_HOST),
@@ -23,14 +21,6 @@ const rest = require('../universal/rest'),
    * @return {boolean}
    */
   isRadioApiRoute = (route) => !httpRegEx.test(route),
-  /**
-   * Returns if the route passed in is for radio.com or a different location
-   * If it is, we need to add port 3001 on local env only
-   *
-   * @param {string} route
-   * @return {boolean}
-   */
-  isClayRoute = (route) => route.includes(clayUrl),
   /**
    * Creates a dbKey from a route and params
    *
@@ -55,13 +45,9 @@ const rest = require('../universal/rest'),
   createEndpoint = (route, params) => {
     const decodeParams =  params ? `?${decodeURIComponent(qs.stringify(params))}` : '';
 
-    if (isRadioApiRoute(route)) {
-      return `https://${radioApi}${route}${decodeParams}`;
-    } else if (isClayRoute(route) && env == 'local') {
-      return `${route.replace(clayUrl, `${clayUrl}:3001`)}${decodeParams}`;
-    } else {
-      return `${route}${decodeParams}`;
-    }
+    return isRadioApiRoute(route) ?
+      `https://${radioApi}${route}${decodeParams}` :
+      `${route}${decodeParams}`;
   },
   /**
    * returns a function to verify the response of the call was valid
