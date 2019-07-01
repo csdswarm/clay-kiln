@@ -6,10 +6,10 @@ const _get = require('lodash/get'),
   adMapping = require('./adMapping'),
   getTrackingPageData = require('../../services/universal/analytics/get-tracking-page-data'),
   {
-    doubleclickPageTypeTagArticle,
-    doubleclickPageTypeTagSection,
-    doubleclickPageTypeTagStationDetail,
-    doubleclickPageTypeTagStationsDirectory,
+    pageTypeTagArticle,
+    pageTypeTagSection,
+    pageTypeTagStationDetail,
+    pageTypeTagStationsDirectory,
     NMC,
     OG_TYPE
   } = require('../../services/universal/analytics/shared-tracking-vars'),
@@ -260,13 +260,13 @@ function getAdTargeting(pageData) {
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/', pageData.pageName);
       break;
     case 'homepage':
-      adTargetingData.siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
+      adTargetingData.siteZone = siteZone.concat('/', 'home', '/', pageTypeTagSection);
       break;
     case 'sectionFront':
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/article');
       break;
     case 'stationsDirectory':
-      adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${doubleclickPageTypeTagStationsDirectory}`);
+      adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${pageTypeTagStationsDirectory}`);
       break;
     case 'stationDetail':
       const stationDetailComponent = document.querySelector('.component--station-detail'),
@@ -274,15 +274,15 @@ function getAdTargeting(pageData) {
         station = stationDetailEl ? JSON.parse(stationDetailEl.innerHTML) : {},
         stationBannerTag = inProduction ? station.doubleclick_bannertag : doubleclickBannerTag;
 
-      adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${doubleclickPageTypeTagStationDetail}`;
+      adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${pageTypeTagStationDetail}`;
       adTargetingData.targetingMarket = getMetaTagContent('name', NMC.market);
       break;
     case 'topicPage':
       // Must remain tag for targeting in DFP unless a change is made in the future to update it there
-      adTargetingData.siteZone = siteZone.concat('/', 'tag', '/', doubleclickPageTypeTagSection);
+      adTargetingData.siteZone = siteZone.concat('/', 'tag', '/', pageTypeTagSection);
       break;
     case 'authorPage':
-      adTargetingData.siteZone = siteZone.concat('/', 'show', '/', doubleclickPageTypeTagArticle);
+      adTargetingData.siteZone = siteZone.concat('/', 'show', '/', pageTypeTagArticle);
     default:
   }
 

@@ -21,10 +21,10 @@ const NMC = ['author', 'cat', 'genre', 'market', 'pid', 'station', 'tag']
   );
 
 module.exports = {
-  doubleclickPageTypeTagArticle: 'article',
-  doubleclickPageTypeTagSection: 'sectionfront',
-  doubleclickPageTypeTagStationDetail: 'livestreamplayer',
-  doubleclickPageTypeTagStationsDirectory: 'stationsdirectory',
+  pageTypeTagArticle: 'article',
+  pageTypeTagSection: 'sectionfront',
+  pageTypeTagStationDetail: 'livestreamplayer',
+  pageTypeTagStationsDirectory: 'stationsdirectory',
   NMC,
   OG_TYPE: 'og:type'
 };

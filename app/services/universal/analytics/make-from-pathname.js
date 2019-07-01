@@ -13,13 +13,13 @@ const _get = require('lodash/get'),
   urlParse = require('url-parse'),
   { stripOuterSlashes } = require('./pathname-utils'),
   {
-    doubleclickPageTypeTagArticle,
-    doubleclickPageTypeTagSection,
-    doubleclickPageTypeTagStationDetail,
-    doubleclickPageTypeTagStationsDirectory
+    pageTypeTagArticle,
+    pageTypeTagSection,
+    pageTypeTagStationDetail,
+    pageTypeTagStationsDirectory
   } = require('./shared-tracking-vars'),
-  doubleclickPageTypeTagAuthor = 'authors',
-  doubleclickPageTypeTagTag = 'tag',
+  pageTypeTagAuthor = 'authors',
+  pageTypeTagTag = 'tag',
   // TODO: Confirm with team this whitelist makes sense.  It seems we should be
   //   able to extract from the url instead, and that this list is
   //   missing 'location'.
@@ -153,7 +153,7 @@ module.exports = ({ pathname, url } = {}) => {
       } else if (articleOrGalleryPage.has(page)) {
         pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop().substring(0, 39);
       } else if (page === 'topicPage') {
-        pageId = doubleclickPageTypeTagTag + '_' + pageName;
+        pageId = pageTypeTagTag + '_' + pageName;
       }
 
       return pageId;
@@ -179,17 +179,17 @@ module.exports = ({ pathname, url } = {}) => {
         case 'vgallery':
           return [pageName, ...contentTags];
         case 'homepage':
-          return [doubleclickPageTypeTagSection, page];
+          return [pageTypeTagSection, page];
         case 'sectionFront':
-          return [doubleclickPageTypeTagSection, pageName];
+          return [pageTypeTagSection, pageName];
         case 'stationsDirectory':
-          return [doubleclickPageTypeTagStationsDirectory, pageName];
+          return [pageTypeTagStationsDirectory, pageName];
         case 'stationDetail':
-          return [doubleclickPageTypeTagStationDetail, 'unity'];
+          return [pageTypeTagStationDetail, 'unity'];
         case 'topicPage':
-          return [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, pageName];
+          return [pageTypeTagTag, pageTypeTagSection, pageName];
         case 'authorPage':
-          return [doubleclickPageTypeTagArticle, doubleclickPageTypeTagAuthor];
+          return [pageTypeTagArticle, pageTypeTagAuthor];
         default:
           return [];
       }
