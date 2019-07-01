@@ -9,7 +9,7 @@ const urlParse = require('url-parse');
  */
 function apply(anchorTagsContainer) {
   // Attach vue router listener on SPA links that are not opening in a new tab/window.
-  const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link:not([target="_blank" i]');
+  const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link:not([target="_blank" i])');
 
   if (anchorTags) {
     anchorTags.forEach(anchor => {
