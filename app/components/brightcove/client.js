@@ -32,12 +32,13 @@ class Brightcove extends Video {
    * @override
    */
   createMedia(component) {
-    const id = component.querySelector('video-js').getAttribute('id'),
+    const video = component.querySelector('video-js'),
+      id = video.getAttribute('id'),
       media = bc(id),
       node = component;
 
-    this.autoplayUnmuted = component.getAttribute('data-autoplay-unmuted') === 'true';
-    this.clickToPlay = component.getAttribute('data-click-to-play') === 'true';
+    this.autoplayUnmuted = video.getAttribute('data-autoplay-unmuted') === 'true';
+    this.clickToPlay = video.getAttribute('data-click-to-play') === 'true';
 
     return { id, media, node };
   }
