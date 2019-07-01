@@ -256,7 +256,6 @@
         this.additionalKeywords = this.derivedKeywords;
         this.adSupported = this.updatedVideo.economics;
         this.loading = false;
-        this.updatedVideo = null;
       },
       resetCategories() {
         this.secondaryCategory = '';
