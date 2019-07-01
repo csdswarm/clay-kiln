@@ -71,10 +71,10 @@ class ClientCommunicationBridge {
   /**
    * Return the last payload returned in the channel
    *
-   * @param {*} channelName
-   * @param {boolean} [ifUndefined]
+   * @param {String} channelName
+   * @param {*} [ifUndefined]
    *
-   * @returns {object} latest channel state
+   * @returns {*} latest channel state
    */
   getLatest(channelName, ifUndefined) {
     const channel = this.getChannel(channelName);

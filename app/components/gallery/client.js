@@ -1,7 +1,5 @@
 'use strict';
 
-require('intersection-observer');
-
 class Gallery {
   constructor() {
     this.sidebar = document.querySelector('.content__sidebar');

@@ -1,157 +1,117 @@
 'use strict';
 
-// Polyfill
-require('intersection-observer');
-const { isMobileWidth } = require('../../../services/client/mobile'),
-  videoActivePlayers = [],
-  clearActivePlayers = () => {
-    // cleanup Listener
-    document.removeEventListener('dismount', clearActivePlayers);
+const Media = require('./Media'),
+  { isMobileWidth } = require('../../../services/client/mobile');
 
-    videoActivePlayers.length = 0;
-  };
-
-class Video {
+class Video extends Media {
   /**
-   * @param {Element} component
-   * @param {string} script
+   * @override
    */
-  constructor(component, script) {
-    const videoObserver = new IntersectionObserver(this.videoIsInView.bind(this), {threshold: 0}),
-      s = document.createElement('script');
+  constructor(el, options) {
+    super(el, options);
 
-    s.src = script;
-    // Add the script tag to the document
-    document.body.appendChild(s);
-    // Call a function to play the video once player's JavaScript loaded
-    s.onload = () => {
-      const { id, player, node, autoplayUnmuted, clickToPlay } = this.createPlayer(component),
-        eventTypes = this.getEventTypes();
-
-      this.id = id;
-
-      // listen to the global page dismount to clear out the players
-      if (videoActivePlayers.length === 0) {
-        // Listener for dismount to delete videos
-        document.addEventListener('dismount', clearActivePlayers);
-      }
-
-      // Keep track of all videos on page
-      videoActivePlayers.push({ id,  player });
-
-      // Observe video for if it goes out of view
-      videoObserver.observe(node);
-
-      // When a video begins playing trigger a stop on all others on page (must track video and ad events)
-      this.addEvent(player, eventTypes.VIDEO_START, this.pauseOtherActivePlayers.bind(this));
-      this.addEvent(player, eventTypes.AD_START, this.pauseOtherActivePlayers.bind(this));
-
-      // autoplay muted else pause
-      this.addEvent(player, eventTypes.VIDEO_READY, async () => {
-        if (!isMobileWidth() && node.closest('.body__header .lead') && !clickToPlay) {
-          this.play(player);
-          
-          if (autoplayUnmuted) {
-            await this.unmute();
-          }
-        } else {
-          this.pause(player);
-        }
-      });
-    };
+    this.userInteraction = false;
   }
   /**
-   * Construct the player (needs to be overloaded)
-   *
-   * @param {Element} component
-   * @return {object}
+   * @override
    */
-  createPlayer(component) {
-    return { id: component.id, player: component.player, node: component.node };
-  }
-  /**
-   * Returns the player (needs to be overloaded)
-   *
-   * @param {string} id
-   * @return {object}
-   */
-  getPlayer(id) {
-    const video = videoActivePlayers.find((player) => player.id === id);
+  prepareMedia() {
+    const eventTypes = this.getEventTypes();
 
-    return video ? video.player : undefined;
+    // autoplay muted else pause for videos once it is ready
+    this.addEvent(eventTypes.MEDIA_READY, () => this.autoPlayOrPause(), { once: true });
   }
   /**
-   * Returns the id of player
+   * add event to unmute the video if the user clicks play
    *
-   * @return {string}
+   * @param {object} eventTypes
    */
-  getPlayerId() {
-    return this.id;
+  unmuteOnPlay(eventTypes) {
+    this.addEvent(eventTypes.MEDIA_PLAY, () => this.unmute());
   }
   /**
-   * Returns the event types for the video, should be overloaded
+   * adds events for when the user has interacted with the video
    *
-   * @return {object}
+   * @param {object} eventTypes
    */
-  getEventTypes() {
-    return {
-      VIDEO_START: '',
-      VIDEO_READY: '',
-      AD_START: ''
-    };
+  addInteractionEvents(eventTypes) {
+    // unmute and be able to pause other videos, once the video has paused, any additional interactions would have to be
+    // from the user
+    this.addEvent(eventTypes.MEDIA_PAUSE, () => { this.log('PAUSE interaction'); this.userInteraction = true; }, { once: true });
+    this.addEvent(eventTypes.MEDIA_VOLUME, () => { this.log('VOLUME interaction'); this.userInteraction = true; }, { once: true });
   }
   /**
-   * adds an event for the specific video type
+   * returns if the user has interacted with with player
    *
-   * @param {Element} object
-   * @param {string} type
-   * @param {function} listener
+   * @returns {boolean}
    */
-  addEvent(object, type, listener) {
-    object.addEventListener(type, listener);
+  userInteracted() {
+    return this.userInteraction;
   }
   /**
-   * Check if the video has gone out of view
+   * add the event to pause other media on volume change
    *
-   * @param {array} changes
+   * @param {object} eventTypes
    */
-  videoIsInView(changes) {
-    changes.forEach(change => {
-      if (change.intersectionRatio === 0) {
-        this.pause(this.getPlayer(this.getPlayerId()));
-      }
-    });
+  pauseOnUnmute(eventTypes) {
+    // the volume watcher since some videos change volume on play/pause causing things to pause
+    this.addEvent(eventTypes.MEDIA_VOLUME, () => this.pauseOtherActiveMedia());
+    if (eventTypes.AD_VOLUME) {
+      this.addEvent(eventTypes.AD_VOLUME, () => this.pauseOtherActiveMedia());
+    }
+  }
+
+  /**
+   * determines if the video should auto play
+   *
+   * @return {boolean}
+   */
+  shouldAutoplay() {
+    return !isMobileWidth() && this.isLead();
   }
   /**
-   * Pause the player
+   * automatically play the lede video while muted, otherwise unmute and pause the video
    *
-   * @param {object} player
+   * @return {Promise<void>}
    */
-  pause(player) {
-    if (player) {
-      player.pause();
+  async autoPlayOrPause() {
+    const eventTypes = this.getEventTypes();
+
+    // auto play muted the video if it is the main lede
+    if (this.shouldAutoplay()) {
+      await this.mute();
+      await this.play();
+
+      this.addInteractionEvents(eventTypes);
+    } else {
+      await this.pause();
+      await this.unmute();
+
+      this.userInteraction = true;
+    }
+
+    super.prepareMedia();
+
+    this.unmuteOnPlay(eventTypes);
+    this.pauseOnUnmute(eventTypes);
+  }
+  /**
+   * @override
+   */
+  async unmute() {
+    // only unmute if the user has interacted with the video
+    if (this.userInteracted()) {
+      await super.unmute();
     }
   }
   /**
-   * start the player
-   *
-   * @param {object} player
+   * @override
    */
-  play(player) {
-    if (player) {
-      player.play();
+  pauseOtherActiveMedia() {
+    // only pause if the user has interacted with the video
+    if (this.userInteracted()) {
+      return super.pauseOtherActiveMedia();
     }
-  }
-  /**
-   * Loop over all players on page and pause them if it's not the video in question
-   */
-  pauseOtherActivePlayers() {
-    // Loop over all players on the current page
-    videoActivePlayers.forEach((playerOnPage) => {
-      if (this.getPlayerId() !== playerOnPage.id) {
-        this.pause(playerOnPage.player);
-      }
-    });
   }
 }
 

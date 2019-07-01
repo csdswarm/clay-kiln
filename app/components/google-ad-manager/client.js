@@ -1,6 +1,5 @@
 'use strict';
 
-require('intersection-observer');
 
 const adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
@@ -433,12 +432,12 @@ function resizeForSkin() {
     stationCarousels = document.querySelectorAll('.component--stations-carousel');
 
   let origCarouselStyles = [];
-      
+
   stationCarousels.forEach((elem) => {
     const {margin, width} = window.getComputedStyle(elem);
-        
+
     origCarouselStyles.push({margin, width});
-        
+
     Object.assign(elem.style, {
       'margin-left': `calc((100% - ${contentDiv.clientWidth}px)/2)`,
       width: `${contentDiv.clientWidth}px`
