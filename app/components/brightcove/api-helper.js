@@ -1,9 +1,7 @@
 'use strict';
 
-const radioApi = require('../../services/server/radioApi'),
-  moment = require('moment'),
-  url = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/api/brightcove`,
-  ttl = radioApi.TTL.NONE;
+const proxyHelper = require('../../services/universal/brightcove-proxy-helper'),
+  moment = require('moment');
 
 /**
  * Use the proxy to hit the brightcove api for video data
@@ -11,12 +9,12 @@ const radioApi = require('../../services/server/radioApi'),
  * @param {Object} data
  */
 async function addVideoDetails(data) {
+  if (!data.videoId) {
+    return null;
+  }
+
   const { videoId } = data,
-    videoData = await radioApi.get(url, {
-      route: `videos/${videoId}`,
-      api: 'cms',
-      ttl
-    }, null, { ttl });
+    videoData = await proxyHelper.getVideoDetails(videoId);
 
   if (videoData) {
     data.name = videoData.name;
@@ -40,22 +38,11 @@ async function addVideoDetails(data) {
  * @param {integer} videoId
  */
 async function getVideoViews(videoId) {
-  // might look confusing here, but send a param of ttl = 5 min so that the brightcove api response is cached
-  // but this initial call to the proxy should not be cached.
-  const analyticsData = await radioApi.get(url, {
-    api: 'analytics',
-    ttl: radioApi.TTL.MIN * 5,
-    params: {
-      dimensions: 'video',
-      where: `video==${videoId}`
-    }
-  }, null, { ttl });
-
-  if (analyticsData && analyticsData.items && analyticsData.items.length === 1) {
-    return analyticsData.items[0].video_view;
-  } else {
+  if (!videoId) {
     return null;
   }
+
+  return await proxyHelper.getVideoViews(videoId);
 };
 
 module.exports.addVideoDetails = addVideoDetails;
