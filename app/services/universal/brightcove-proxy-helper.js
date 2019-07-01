@@ -19,10 +19,10 @@ const radioApi = require('../server/radioApi'),
  */
 async function getVideoDetails(videoId) {
   return await radioApi.get(url, {
-      route: `videos/${videoId}`,
-      api: 'cms',
-      ttl
-    }, null, { ttl });
+    route: `videos/${videoId}`,
+    api: 'cms',
+    ttl
+  }, null, { ttl });
 };
 
 /**
