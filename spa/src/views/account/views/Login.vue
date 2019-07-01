@@ -7,11 +7,9 @@
       <message></message>
       <div class="floating-label">
         <input type="email" placeholder="Email Address" name="email" @change="onFieldChange($event)"/>
-        <label>Email Address</label>
       </div>
       <div class="floating-label">
         <input type="password" placeholder="Password" name="password" @change="onFieldChange($event)"/>
-        <label>Password</label>
       </div>
     </fieldset>
     <input type="submit" value="LOG IN" @click.prevent="onLogInSubmit()"/>

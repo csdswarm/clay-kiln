@@ -4,6 +4,7 @@ const radioApiService = require('../../services/server/radioApi'),
   { playingClass, favoriteModifier } = require('../../services/server/spaLocals'),
   _get = require('lodash/get'),
   SPORTS_SLUG = 'sports',
+  NEWS_SLUG = 'news',
   NEWSTALK_SLUG = 'news-talk';
 
 /**
@@ -149,8 +150,10 @@ module.exports.render = async (uri, data, locals) => {
           break;
         case 'genre':
           data.genre = slugifyService(locals.station.genre[0].name);
-          if (data.genre === SPORTS_SLUG || data.genre === NEWSTALK_SLUG) {
+          if (data.genre === SPORTS_SLUG) {
             data.seeAllLink = `/stations/${ data.genre }`;
+          } else if (data.genre === NEWSTALK_SLUG || data.genre === NEWS_SLUG) {
+            data.seeAllLink = `/stations/${ NEWSTALK_SLUG }`;
           } else {
             data.seeAllLink = `/stations/music/${ data.genre }`;
           }
@@ -208,7 +211,11 @@ module.exports.render = async (uri, data, locals) => {
 
       if (slugifyService(genreData.attributes.name) === SPORTS_SLUG ||
         slugifyService(genreData.attributes.name) === NEWSTALK_SLUG) {
-        data.seeAllLink = genreData.attributes ? `/stations/${ slugifyService(genreData.attributes.name) }` : '/stations';
+        data.seeAllLink = `/stations/${ slugifyService(genreData.attributes.name) }`;
+        data.truncatedList = false;
+      } else if (slugifyService(genreData.attributes.name) === NEWS_SLUG) {
+        data.seeAllLink = `/stations/${ NEWSTALK_SLUG }`;
+        data.truncatedList = false;
       } else {
         data.seeAllLink = genreData.attributes ? `/stations/music/${ slugifyService(genreData.attributes.name) }` : '/stations/music';
       }

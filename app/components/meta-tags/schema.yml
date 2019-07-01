@@ -1,0 +1,22 @@
+_version: 1.0
+_description: |
+  Generates a list of meta tags
+
+authors:
+  _subscribe: authors
+
+publishDate:
+  _subscribe: publishDate
+
+automatedPublishDate:
+  _has:
+    help: Date that is automatically generated when article is published
+
+contentType:
+ _subscribe: contentType
+
+sectionFront:
+  _subscribe: sectionFront
+
+secondaryArticleType:
+  _subscribe: secondaryArticleType

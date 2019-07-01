@@ -8,7 +8,15 @@
         {{/each}}
       </select>
     {{/ifAll}}
-    {{> stations-list stationsList }}
+    {{#if (compare dynamicGenre "news-talk") }}
+      {{~#each @root.locals.allNewsTalk ~}}
+        <div class="directory-genre__stations-by-music-genre" data-genre="{{ id }}">
+          {{> stations-list ../stationsList }}
+        </div>
+      {{~/each ~}}
+    {{else}}
+      {{> stations-list stationsList }}
+    {{/if}}
   {{else}}
     <select class="directory-genre__dropdown--mobile">
       <option value="">See all in genre:</option>
@@ -17,7 +25,7 @@
       {{/each}}
     </select>
     {{~#each @root.locals.allMusic ~}}
-      <div class="directory-location__stations-by-music-genre" data-genre="{{ id }}">
+      <div class="directory-genre__stations-by-music-genre" data-genre="{{ id }}">
         {{> stations-list ../stationsListTruncated }}
       </div>
     {{~/each ~}}
