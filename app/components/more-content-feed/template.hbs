@@ -3,7 +3,8 @@
            data-track-populate-from="{{ populateFrom }}"
            data-track-location="{{ locationOfContentFeed }}"
            data-uri="{{ default _ref _self }}"
-           data-track-type="more-content-feed">
+           data-track-type="more-content-feed"
+           {{#if lazyLoads}}data-lazy-loads={{lazyLoads}}{{/if}}>
     {{#if (compare locationOfContentFeed 'homepage') }}
         <h2 class="more-content-feed__title"><span>MORE from RADIO.COM</span></h2>
     {{/if}}

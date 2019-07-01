@@ -1,19 +1,23 @@
 'use strict';
 const { fetchDOM } = require('../../services/client/radioApi'),
-  safari = require('../../services/client/safari');
+  safari = require('../../services/client/safari'),
+  visibility = require('../../services/client/visibility');
 
 class MoreContentFeed {
   constructor(el) {
     this.moreContentFeed = el;
     this.loadMore = el.querySelector('.links__link--loadmore');
     this.moreContentUrl = '//' + this.moreContentFeed.getAttribute('data-uri').replace('@published', '') + '.html';
-
+    this.maxLazyLoadedPages = parseInt(String(this.moreContentFeed.getAttribute('data-lazy-loads')).trim(), 10);
     this.currentPage = 1;
     this.tag = '';
     this.author = '';
 
     // load another page every time the load more button is clicked!
     if (this.loadMore) {
+      this.maxLazyLoadedPages = isNaN(this.maxLazyLoadedPages) ? 5 : this.maxLazyLoadedPages;
+      this.setupLazyLoad();
+
       this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
       if (this.loadMore.getAttribute('data-tag')) {
         this.tag = this.loadMore.getAttribute('data-tag') || '';
@@ -24,6 +28,25 @@ class MoreContentFeed {
         this.sectionFront = this.loadMore.getAttribute('data-section') || '';
       }
     }
+  }
+
+  /**
+   * Handle lazy loading logic
+   * Setup scroll listener on loadMore element
+   * Call handleLoadMoreContent
+   * Stop once it has lazy loaded enough pages
+   */
+  setupLazyLoad() {
+    if (this.currentPage > this.maxLazyLoadedPages) {
+      return;
+    }
+
+    this.loadMoreVisibility = new visibility.Visible(this.loadMore, { shownThreshold: 0.05 });
+    this.loadMoreVisibility.on('shown', async () => {
+      this.loadMoreVisibility.destroy();
+      await this.handleLoadMoreContent();
+      this.setupLazyLoad();
+    });
   }
 
   /**
