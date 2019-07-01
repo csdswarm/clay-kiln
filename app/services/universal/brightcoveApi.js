@@ -184,11 +184,10 @@ const log = require('./log').setup({file: __filename}),
           log('error', e.message);
         }
       }
-
       return response;
 
     } catch (e) {
-      log('error', e.response.statusText);
+      log('error', e.response.statusText, JSON.stringify(e));
       return null;
     }
   },

@@ -11,5 +11,5 @@ module.exports = () => {
   window.kiln.inputs = window.kiln.inputs || {};
   window.kiln.inputs['brightcove-search'] = brightcoveSearch;
   window.kiln.inputs['brightcove-upload'] = brightcoveUpload;
-  window.kiln.inputs['brightcove-upload'] = brightcoveUpdate;
+  window.kiln.inputs['brightcove-update'] = brightcoveUpdate;
 };

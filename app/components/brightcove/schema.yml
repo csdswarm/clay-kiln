@@ -5,6 +5,7 @@ _description: |
 video:
   _label: Video
   _has:
+    input: static
     validate:
       required: true
 
@@ -22,10 +23,10 @@ newVideo:
 updateVideo:
   _label: Update video
   _has:
-    input: brightcove-update
+    input: static
   _reveal:
     field: video
-    operator: not-empty
+    operator: truthy
 
 showTitle:
   _label: Show video title?
@@ -39,6 +40,7 @@ _groups:
       height: 30px;
       ifEmpty: searchVideo AND newVideo
     fields:
+      - video (Update video)
       - showTitle (Update video)
       - updateVideo (Update video)
       - searchVideo (Search for video)

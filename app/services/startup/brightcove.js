@@ -149,8 +149,8 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @returns {Promise}
    */
   update = async (req, res) => {
-    console.log("UPDATE REQUEST");
     const {
+      video,
       videoName: name,
       shortDescription: description,
       longDescription: long_description,
@@ -162,7 +162,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
 
     try {
       // Patch video object in video cloud
-      const updateResponse = await brightcoveApi.request('PUT', 'videos', null, {
+      const updateResponse = await brightcoveApi.request('PATCH', `videos/${video.id}`, null, {
         name,
         description,
         long_description,
@@ -174,7 +174,6 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         economics
       });
 
-      console.log("Updated Video: ", updateResponse.id);
       if (updateResponse.id) {
         res.send(updateResponse)
       } else {
@@ -187,13 +186,17 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   },
   getVideoByID = async (req, res) => {
     try {
-      console.log(req);
       const video = await brightcoveApi.request('GET', `videos/${req.query.id}`)
 
-      if (video.id && !req.query.full_object) {
-        res.send(transformVideoResults([video])[0]);
+      if (video.id) {
+        if (!req.query.full_object) {
+          res.send(transformVideoResults([video])[0]);
+        } else {
+          res.send(video);  
+        }
+      } else {
+        res.send(`Error fetching video with ID ${req.query.id}`);
       }
-      res.send(`Error fetching video with ID ${req.query.id}`);
     } catch (e) {
       console.error(e);
       res.send(e);

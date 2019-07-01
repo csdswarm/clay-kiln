@@ -96,7 +96,7 @@
           :loading="loading"
           @click="updateVideo"
           :disabled="!validForm"
-        >Upload</ui-button>
+        >Update</ui-button>
         <ui-button
           size="large"
           buttonType="reset"
@@ -135,24 +135,24 @@
       return {
         updatedVideo: null,
         loading: false,
-        videoName: this.updatedVideo.name || '',
-        shortDescription: this.updatedVideo.description || '',
-        longDescription: this.updatedVideo.long_description || '',
+        videoName: '',
+        shortDescription: '',
+        longDescription: '',
         stationOptions: window.kiln.locals.allStationsCallsigns,
-        station: this.updatedVideo.custom_fields.station || window.kiln.locals.station.callsign,
+        station: window.kiln.locals.station.callsign,
         highLevelCategoryOptions: [
           MUSIC_ENTERTAINMENT,
           SPORTS,
           NEWS_LIFESTYLE
         ],
-        highLevelCategory: this.updatedVideo.custom_fields.high_level_category || '',
-        secondaryCategory: this.derivedSecondaryCategory || '',
+        highLevelCategory: '',
+        secondaryCategory: '',
         tertiaryCategoryOptions: [
           'food', 'drink', 'travel', 'home', 'health', 'environment'
         ],
-        tertiaryCategory: this.derivedTertiaryCategory || '',
-        additionalKeywords: this.derivedKeywords || '',
-        adSupported: this.updatedVideo.economics || AD_SUPPORTED,
+        tertiaryCategory: '',
+        additionalKeywords: '',
+        adSupported: AD_SUPPORTED,
         updateStatus: {
           type: 'info',
           message: ''
@@ -227,10 +227,17 @@
               full_object: true
             } });
 
-          console.log("got video: ", video.data);
-
           if (video.data.id) {
             this.updatedVideo = video.data;
+            this.videoName = this.updatedVideo.name;
+            this.shortDescription = this.updatedVideo.description;
+            this.longDescription = this.updatedVideo.long_description;
+            this.station = this.updatedVideo.custom_fields.station;
+            this.highLevelCategory = this.updatedVideo.custom_fields.high_level_category;
+            this.secondaryCategory = this.derivedSecondaryCategory;
+            this.tertiaryCategory = this.derivedTertiaryCategory;
+            this.additionalKeywords = this.derivedKeywords;
+            this.adSupported = this.updatedVideo.economics;
           }
         } catch (e) {
           console.error('Error retrieving video info');
@@ -255,15 +262,13 @@
         this.secondaryCategory = '';
         this.tertiaryCategory = '';
       },
-      async uploadNewVideo(event) {
+      async updateVideo(event) {
         event.preventDefault();
-        const { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
+        const { updatedVideo: video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
 
-        console.log("update video with this data: ", { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
         this.loading = true;
-        const { data: updateResponse } = await axios.post('/brightcove/update', { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
+        const { data: updateResponse } = await axios.post('/brightcove/update', { video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
 
-        console.log('updateResponse', updateResponse);
         this.loading = false;
 
         if (updateResponse.id) {
@@ -273,13 +278,12 @@
           this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: transformedVideo });
           this.updateStatus = { type: 'success', message: `Successfully updated video. Last Updated: ${ updateResponse.updated_at }` };
         } else {
-          this.updateStatus = { type: 'error', message: `Failed to update video. ${ updateResponse }` };
+          this.updateStatus = { type: 'error', message: `Failed to update video. ${ JSON.stringify(updateResponse) }` };
         }
       }
     },
     components: {
       UiButton,
-      UiFileupload,
       UiTextbox,
       UiSelect,
       UiCheckbox,
