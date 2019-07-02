@@ -5,6 +5,7 @@ const h = require('highland'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
+  db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
   CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
 
