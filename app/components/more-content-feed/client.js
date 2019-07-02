@@ -15,7 +15,8 @@ class MoreContentFeed {
 
     // load another page every time the load more button is clicked!
     if (this.loadMore) {
-      this.maxLazyLoadedPages = isNaN(this.maxLazyLoadedPages) ? 5 : this.maxLazyLoadedPages;
+      // Default page size is 5, with 10 articles loaded initially. Default to 4 more pages to equal 30
+      this.maxLazyLoadedPages = isNaN(this.maxLazyLoadedPages) ? 4 : this.maxLazyLoadedPages;
       this.setupLazyLoad();
 
       this.loadMore.onclick = this.handleLoadMoreContent.bind(this);

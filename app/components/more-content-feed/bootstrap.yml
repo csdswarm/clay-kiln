@@ -16,3 +16,4 @@ _components:
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
     introComponents: []
+    lazyLoads: 4

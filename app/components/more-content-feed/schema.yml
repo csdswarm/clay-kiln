@@ -21,6 +21,13 @@ pageLength:
     input: text
     type: number
 
+lazyLoads:
+  _label: Pages to Lazy Load
+  _has:
+    help: Number of pages to lazy load before "load more" needs to be clicked
+    input: text
+    type: number
+
 populateFrom:
   _label: Populate content from?
   _has:

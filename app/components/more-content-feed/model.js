@@ -89,6 +89,7 @@ module.exports.render = function (ref, data, locals) {
   } else {
     data.pageLength = maxItems;
     data.initialLoad = true;
+    data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / pageLength), 0);
   }
 
   if (data.populateFrom == 'tag') {
