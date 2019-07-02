@@ -21,10 +21,10 @@
         {{#ifAll ../truncatedList (compare @index '<' 14) }}{{ set 'hideStations' true }}{{/ifAll}}
         {{#ifAny (compare ../truncatedList false) hideStations }}
           <li class="station">
-            <a href="//{{ @root.locals.site.host }}/{{ default (default site_slug callsign) id }}/listen" class="spa-link">
+            <a href="//{{ @root.locals.site.host }}/{{ default (default site_slug callsign) id }}/listen" class="{{ if (compare @root.filterBy '===' 'local') 'station-card' else='spa-link' }}"{{#if (compare @root.filterBy '===' 'local')}} target="_blank"{{/if}}>
               <div class="station__lede" itemscope itemtype="http://schema.org/ImageObject">
                 <button data-fav-station="{{id}}" class="lede__favorite-btn{{favoriteModifier}}"></button>
-                <img class="lede__image" src="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0"
+                <img class="lede__image{{ if (compare @root.filterBy '===' 'local') ' thumb' }}" src="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0"
                      srcset="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0 138w,
                     {{ square_logo_large }}?width=220&height=220&crop=1:1,offset-y0 220w,
                     {{ square_logo_large }}?width=208&height=208&crop=1:1,offset-y0 208w,
@@ -36,8 +36,10 @@
                 <button data-play-station="{{ id }}"
                         class="lede__play-btn {{ playingClass }}"></button>
               </div>
-              <span class="station__name">{{ name }}</span>
+              <span class="station__name{{ if (compare @root.filterBy '===' 'local') ' name' }}">{{ name }}</span>
+              {{#if (compare @root.filterBy '!==' 'local')}}
               <span class="station__secondary-info">{{ slogan }}</span>
+              {{/if}}
             </a>
           </li>
         {{/ifAny}}
