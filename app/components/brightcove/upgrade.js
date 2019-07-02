@@ -4,7 +4,7 @@ module.exports['1.0'] = function (uri, data) {
   
   let newData = Object.assign({}, data);
 
-  if (!uri.includes('instances/new') && newData.videoId) {
+  if (newData.videoId) {
     newData.video = {
       id: newData.videoId,
       imageUrl: '',
