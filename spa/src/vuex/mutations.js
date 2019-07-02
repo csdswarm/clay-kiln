@@ -1,7 +1,24 @@
 import * as mutationTypes from './mutationTypes'
 import vuexStoreDefaultState from '@/store'
+import { isMobileDevice } from '../views/account/utils'
+import moment from 'moment'
 
 const createModalMessage = (type, message) => { return { type, message } }
+
+/**
+ * takes a profile with date_of_birth in UTC and converts it to local, formatting as needed based on device
+ *
+ * @param {Object} profile
+ * @return {Object} profile
+ */
+const formatProfile = (profile) => {
+  const dateFormat = isMobileDevice() ? 'YYYY-MM-DD' : 'YYYY-MM-DDTHH:mm:ssZ'
+  return {
+    ...profile,
+    date_of_birth: profile.date_of_birth ? moment.utc(profile.date_of_birth).local(true).format(dateFormat) : '',
+    savedTimeStamp: new Date().getTime()
+  }
+}
 
 export default {
   [mutationTypes.LOAD_HANDLEBARS]: (state, payload) => {
@@ -50,7 +67,7 @@ export default {
     state.modalMessage = createModalMessage()
   },
   [mutationTypes.SET_METADATA]: (state, metadata) => { state.metadata = metadata },
-  [mutationTypes.SET_USER]: (state, user) => { state.user = { ...user, savedTimeStamp: new Date().getTime() } },
+  [mutationTypes.SET_USER]: (state, user) => { state.user = formatProfile(user) },
   [mutationTypes.SET_REDIRECT_URI]: (state, redirectUri) => { state.redirectUri = redirectUri },
   [mutationTypes.SIGN_UP_COMPLETE]: (state) => { state.user.signUpComplete = true },
   [mutationTypes.ACCOUNT_MODAL_LOADING]: (state, loading) => { state.modalLoading = loading },
@@ -58,7 +75,6 @@ export default {
   [mutationTypes.MODAL_SUCCESS]: (state, message) => { state.modalMessage = createModalMessage('success', message) },
   [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path },
   [mutationTypes.SET_USER_STATIONS]: (state, stations) => {
-    state.user.favoriteStations = stations
-    state.user.savedTimeStamp = new Date().getTime()
+    state.user = formatProfile({ ...state.user, favoriteStations: stations })
   }
 }

@@ -149,11 +149,11 @@ export default {
   },
 
   async created () {
-    try {
-      await this.$store.dispatch(actionTypes.GET_PROFILE)
+    await this.$store.dispatch(actionTypes.GET_PROFILE, true)
+
+    if (this.$store.state.user.zip_code) {
       this.updatedUser = { ...this.$store.state.user }
-    } catch (e) {
-      this.$store.commit(mutationTypes.MODAL_ERROR, null)
+    } else {
       this.$router.push({ path: '/account/login' })
     }
   },
@@ -188,6 +188,7 @@ export default {
 
     onProfileSubmit () {
       const error = this.validateProfileEntities(this.updatedUser)
+
       if (error) {
         this.$store.commit(mutationTypes.MODAL_ERROR, error)
       } else {

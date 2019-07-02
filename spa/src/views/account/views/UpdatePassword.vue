@@ -66,10 +66,9 @@ export default {
   },
 
   async created () {
-    try {
-      await this.$store.dispatch(actionTypes.GET_PROFILE)
-    } catch (e) {
-      this.$store.commit(mutationTypes.MODAL_ERROR, null)
+    await this.$store.dispatch(actionTypes.GET_PROFILE, true)
+
+    if (!this.$store.state.user.zip_code) {
       this.$router.push({ path: '/account/login' })
     }
   },

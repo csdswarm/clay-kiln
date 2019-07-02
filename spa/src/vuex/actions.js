@@ -1,15 +1,22 @@
 import axios from 'axios'
 import * as mutationTypes from './mutationTypes'
 import * as actionTypes from './actionTypes'
-import formatError from '../views/account/services/format_error'
-import { getDeviceId, isMobileDevice } from '../views/account/utils'
-import moment from 'moment'
+import { getDeviceId } from '../views/account/utils'
 import {
   FORGOT_PASSWORD_SUCCESS,
   RESET_PASSWORD_SUCCESS,
   UPDATE_PASSWORD_SUCCESS,
   UPDATE_PROFILE_SUCCESS
 } from '../views/account/constants'
+
+const formatError = (err) => {
+  if (err.response) {
+    const { errors } = err.response.data
+    return new Error(errors[0].detail)
+  }
+
+  return new Error('An unknown error occurred!')
+}
 
 const axiosCall = async ({ method, url, data, commit }, ignoreError) => {
   try {
@@ -20,19 +27,22 @@ const axiosCall = async ({ method, url, data, commit }, ignoreError) => {
     return result
   } catch (err) {
     commit(mutationTypes.ACCOUNT_MODAL_LOADING, false)
+
     if (!ignoreError) {
       commit(mutationTypes.MODAL_ERROR, formatError(err).message)
-      throw formatError(err)
     }
   }
 }
 
+/**
+ * takes a local user and converts the date_of_birth to a UTC string to be saved on the server
+ * @param {Object} profile
+ * @return {Object} profile
+ */
 const formatProfile = (profile) => {
-  const dateFormat = isMobileDevice() ? 'YYYY-MM-DD' : 'MM-DD-YYYY'
-
   return {
     ...profile,
-    date_of_birth: profile.date_of_birth ? moment.utc(profile.date_of_birth).local().format(dateFormat) : ''
+    date_of_birth: profile.date_of_birth ? new Date(profile.date_of_birth).toISOString() : ''
   }
 }
 
@@ -42,7 +52,9 @@ export default {
     if (!state.metadata.app) {
       const result = await axiosCall({ method: 'get', url: '/v1/app/metadata', commit })
 
-      commit(mutationTypes.SET_METADATA, result.data)
+      if (result) {
+        commit(mutationTypes.SET_METADATA, result.data)
+      }
 
       return result
     }
@@ -58,10 +70,12 @@ export default {
         device_id: getDeviceId()
       } })
 
-    commit(mutationTypes.SET_USER, { ...result.data })
+    if (result) {
+      commit(mutationTypes.SET_USER, { ...result.data })
 
-    if (hideModal) {
-      commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+      if (hideModal) {
+        commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+      }
     }
   },
   async [actionTypes.SIGN_OUT] ({ commit }) {
@@ -72,10 +86,11 @@ export default {
         includeDeviceKey: true
       }
     })
-    commit(mutationTypes.SET_USER, { })
+
+    commit(mutationTypes.SET_USER, {})
   },
   async [actionTypes.SIGN_UP] ({ commit, state, dispatch }, { email, password }) {
-    await axiosCall({ commit,
+    const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/signup',
       data: {
@@ -84,28 +99,32 @@ export default {
         password
       } })
 
-    // For the sign up process, we want to keep the modal open so
-    // that the create profile modal can be displayed without any issues
-    await dispatch(actionTypes.SIGN_IN, { email, password, hideModal: false })
-    commit(mutationTypes.SIGN_UP_COMPLETE)
-    commit(mutationTypes.ROUTER_PUSH, '/account/profile')
+    if (result) {
+      // For the sign up process, we want to keep the modal open so
+      // that the create profile modal can be displayed without any issues
+      await dispatch(actionTypes.SIGN_IN, { email, password, hideModal: false })
+      commit(mutationTypes.SIGN_UP_COMPLETE)
+      commit(mutationTypes.ROUTER_PUSH, '/account/profile')
+    }
   },
   async [actionTypes.CREATE_PROFILE] ({ commit }, user) {
     const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/profile/create',
-      data: {
+      data: formatProfile({
         first_name: user.firstName,
         last_name: user.lastName,
         gender: user.gender,
-        date_of_birth: moment(user.dateOfBirth, 'MM-DD-YYYY').toISOString(),
+        date_of_birth: user.dateOfBirth,
         zip_code: user.zipCode,
         email: user.email
-      }
+      })
     })
 
-    commit(mutationTypes.SET_USER, formatProfile(result.data))
-    commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+    if (result) {
+      commit(mutationTypes.SET_USER, result.data)
+      commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+    }
   },
   async [actionTypes.GET_PROFILE] ({ commit }, ignoreError = false) {
     const result = await axiosCall({ commit,
@@ -113,48 +132,53 @@ export default {
       url: '/v1/profile'
     }, ignoreError)
 
-    if (result) {
-      commit(mutationTypes.SET_USER, formatProfile(result.data))
-    }
+    commit(mutationTypes.SET_USER, result ? result.data : {})
   },
   async [actionTypes.UPDATE_PROFILE] ({ commit }, user) {
     const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/profile/update',
-      data: {
+      data: formatProfile({
         first_name: user.first_name,
         last_name: user.last_name,
         gender: user.gender,
-        date_of_birth: moment(user.date_of_birth).toISOString(),
+        date_of_birth: user.date_of_birth,
         zip_code: user.zip_code
-      }
+      })
     })
 
-    commit(mutationTypes.SET_USER, formatProfile(result.data))
-    commit(mutationTypes.MODAL_SUCCESS, UPDATE_PROFILE_SUCCESS)
+    if (result) {
+      commit(mutationTypes.SET_USER, result.data)
+      commit(mutationTypes.MODAL_SUCCESS, UPDATE_PROFILE_SUCCESS)
+    }
   },
   async [actionTypes.UPDATE_PASSWORD] ({ commit }, passwords) {
-    await axiosCall({ commit,
+    const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/password/update',
       data: passwords
     })
 
-    commit(mutationTypes.MODAL_SUCCESS, UPDATE_PASSWORD_SUCCESS)
+    if (result) {
+      commit(mutationTypes.MODAL_SUCCESS, UPDATE_PASSWORD_SUCCESS)
+    }
   },
   async [actionTypes.FORGOT_PASSWORD] ({ commit, state }, email) {
-    await axiosCall({ commit,
+    const result = await axiosCall({ commit,
       method: 'put',
       url: '/v1/auth/password/forgot',
       data: {
+        client_id: state.metadata.app.webplayer.clientId,
         email
       }
     })
 
-    commit(mutationTypes.MODAL_SUCCESS, FORGOT_PASSWORD_SUCCESS)
+    if (result) {
+      commit(mutationTypes.MODAL_SUCCESS, FORGOT_PASSWORD_SUCCESS)
+    }
   },
   async [actionTypes.RESET_PASSWORD] ({ commit, dispatch }, { email, authCode, password }) {
-    await axiosCall({ commit,
+    const result = await axiosCall({ commit,
       method: 'post',
       url: '/v1/auth/password/reset',
       data: {
@@ -164,8 +188,10 @@ export default {
       }
     })
 
-    dispatch(actionTypes.SIGN_IN, { email, password })
-    commit(mutationTypes.MODAL_SUCCESS, RESET_PASSWORD_SUCCESS)
+    if (result) {
+      dispatch(actionTypes.SIGN_IN, { email, password })
+      commit(mutationTypes.MODAL_SUCCESS, RESET_PASSWORD_SUCCESS)
+    }
   },
   async [actionTypes.FAVORITE_STATIONS_ADD] ({ commit }, stationId) {
     const result = await axiosCall({ commit,
@@ -176,7 +202,9 @@ export default {
       }
     })
 
-    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    if (result) {
+      commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    }
   },
   async [actionTypes.FAVORITE_STATIONS_REMOVE] ({ commit }, stationId) {
     const result = await axiosCall({ commit,
@@ -187,7 +215,9 @@ export default {
       }
     })
 
-    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    if (result) {
+      commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    }
   },
   async [actionTypes.FAVORITE_STATIONS_GET] ({ commit }) {
     const result = await axiosCall({
@@ -196,7 +226,9 @@ export default {
       url: '/v1/favorites/stations'
     }, true)
 
-    commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    if (result) {
+      commit(mutationTypes.SET_USER_STATIONS, result.data.station_ids)
+    }
   },
   async [actionTypes.ROUTE_CHANGE] ({ commit, dispatch, state }, route) {
     const favoritesExpiredTime = 1000 * 60 * 5
