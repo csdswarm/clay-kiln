@@ -4,7 +4,9 @@ require('intersection-observer');
 
 const _get = require('lodash/get'),
   adMapping = require('./adMapping'),
-  getTrackingPageData = require('../../services/universal/analytics/get-tracking-page-data'),
+  getPageData = require('../../services/universal/analytics/get-page-data'),
+  getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
+  makeFromPathname = require('../../services/universal/analytics/make-from-pathname'),
   {
     pageTypeTagArticle,
     pageTypeTagSection,
@@ -100,12 +102,12 @@ googletag.cmd.push(() => {
 });
 
 /**
- * Returns the content if the selector is successful, otherwise the
+ * Returns the content if the selector is successful, otherwise the optional
  *   fallback value.
  * @param {string} attrKey
  * @param {string} attrVal
- * @param {*} fallback
- * @returns {string|undefined}
+ * @param {*} [fallback]
+ * @returns {*}
  */
 function getMetaTagContent(attrKey, attrVal, fallback) {
   return _get(
@@ -230,6 +232,128 @@ function setAdsIDs(adSlots = null) {
   createAds(adSlots);
 }
 
+function isArticleOrGallery(pageData) {
+  return pageData.page === 'article'
+    || pageData.page === 'vgallery';
+}
+
+/**
+ * Returns a comma delimited list of authors when on a gallery or article page,
+ *   otherwise undefined
+ *
+ * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
+ * @returns {string|undefined}
+ */
+function getAuthors(pageData) {
+  if (!isArticleOrGallery(pageData)) {
+    return [];
+  }
+
+  const articleOrGallery = pageData.page === 'article'
+    ? 'article'
+    : 'gallery';
+
+  return Array.from(document.querySelectorAll(`.component--${articleOrGallery} .author`))
+    .map(tag => {
+      return tag.getAttribute('data-author')
+        .replace(/\s/, '-')
+        .toLowerCase();
+    });
+}
+
+/**
+ * Returns a comma delimited list of authors when on a gallery or article page,
+ *   otherwise undefined
+ *
+ * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
+ * @returns {string[]}
+ */
+function getContentTags(pageData) {
+  if (!isArticleOrGallery(pageData)) {
+    return [];
+  }
+
+  return Array.from(document.querySelectorAll('.component--tags .tags__item'))
+    .map(tag => tag.getAttribute('data-tag'));
+}
+
+/**
+ * Gets the targeting data which is potentially shared with Nieslen Marketing
+ *   Cloud meta tags (depending on whether they were imported from the
+ *   drupal api).  When the nielsen marketing cloud meta tags are imported, we
+ *   should ignore them and just get the tracking data from the dom.
+ *
+ * @param {boolean} shouldUseNmcTags
+ * @param {object} currentStation - the station object
+ * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
+ * @returns {object}
+ */
+function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
+  // we can't refer to the NMC tags for author since NMC only holds a single
+  //   author for some reason.
+  const authors = getAuthors(pageData);
+
+  let adTargetingData;
+
+  if (shouldUseNmcTags) {
+    const market = pageData.page === 'stationDetail'
+      ? getMetaTagContent('name', NMC.market)
+      : undefined;
+
+    adTargetingData = {
+      targetingAuthors: authors,
+      targetingCategory: getMetaTagContent('name', NMC.cat),
+      targetingGenre: getMetaTagContent('name', NMC.genre),
+      targetingMarket: market,
+      targetingPageId: getMetaTagContent('name', NMC.pid),
+      targetingRadioStation: getMetaTagContent('name', NMC.station),
+      targetingTags: getMetaTagContent('name', NMC.tag, '').split('/')
+    };
+  } else {
+    const contentTags = getContentTags(pageData),
+      trackingData = getTrackingData({
+        pathname: window.location.pathname,
+        station: currentStation,
+        pageData,
+        contentTags
+      });
+
+    adTargetingData = {
+      targetingAuthors: authors,
+      targetingCategory: trackingData.cat,
+      targetingGenre: trackingData.genre,
+      targetingMarket: trackingData.market,
+      targetingPageId: trackingData.pid,
+      targetingRadioStation: trackingData.station,
+      targetingTags: trackingData.tag
+    };
+  }
+
+  if (isArticleOrGallery(pageData)) {
+    adTargetingData.targetingPageId = adTargetingData.targetingPageId.substring(0, 39);
+  }
+
+  return adTargetingData;
+}
+
+function getCurrentStation() {
+  const fromPathname = makeFromPathname({ pathname: window.location.pathname });
+
+  if (!fromPathname.isStationDetail()) {
+    return {};
+  }
+
+  // these shouldn't be declared above the short circuit
+  // eslint-disable-next-line one-var
+  const stationDetailComponent = document.querySelector('.component--station-detail'),
+    stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
+    station = stationDetailEl
+      ? JSON.parse(stationDetailEl.innerHTML)
+      : {};
+
+  return station;
+}
+
 /**
  * Use page type and name to determine targeting
  * values for setting up the ad
@@ -241,17 +365,15 @@ function setAdsIDs(adSlots = null) {
 function getAdTargeting(pageData) {
   const doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
     environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
-    inProduction = environment === 'production';
-
-  let siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-    adTargetingData = {
-      targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingGenre: getMetaTagContent('name', NMC.genre),
-      targetingCategory: getMetaTagContent('name', NMC.cat),
-      targetingAuthors: getMetaTagContent('name', NMC.author, '').split(', '),
-      targetingTags: getMetaTagContent('name', NMC.tag, '').split(', '),
-      targetingPageId: getMetaTagContent('name', NMC.pid)
-    };
+    inProduction = environment === 'production',
+    currentStation = getCurrentStation(),
+    // this query selector should always succeed
+    firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
+    hasNmcTags = !!firstNmcTag,
+    isNmcDataImported = hasNmcTags && firstNmcTag.getAttribute('data-was-imported') === 'true',
+    shouldUseNmcTags = hasNmcTags && !isNmcDataImported,
+    siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
+    adTargetingData = getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData);
 
   // Set up targeting and ad paths based on current page
   switch (pageData.page) {
@@ -269,13 +391,11 @@ function getAdTargeting(pageData) {
       adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${pageTypeTagStationsDirectory}`);
       break;
     case 'stationDetail':
-      const stationDetailComponent = document.querySelector('.component--station-detail'),
-        stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
-        station = stationDetailEl ? JSON.parse(stationDetailEl.innerHTML) : {},
-        stationBannerTag = inProduction ? station.doubleclick_bannertag : doubleclickBannerTag;
+      const stationBannerTag = inProduction
+        ? currentStation.doubleclick_bannertag
+        : doubleclickBannerTag;
 
       adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${pageTypeTagStationDetail}`;
-      adTargetingData.targetingMarket = getMetaTagContent('name', NMC.market);
       break;
     case 'topicPage':
       // Must remain tag for targeting in DFP unless a change is made in the future to update it there
@@ -297,7 +417,7 @@ function getAdTargeting(pageData) {
 function createAds(adSlots) {
   const queryParams = urlParse(window.location, true).query,
     contentType = getMetaTagContent('property', OG_TYPE),
-    pageData = getTrackingPageData(window.location.pathname, contentType),
+    pageData = getPageData(window.location.pathname, contentType),
     adTargetingData = getAdTargeting(pageData);
 
   googletag.cmd.push(function () {

@@ -2,9 +2,8 @@
 
 /**
  * README
- *   I didn't know where to put these nor what to name the file.  Its purpose
- *   is to centralize constants shared between google-ad-manager/client.js
- *   and meta-tags/model.js
+ *   This file's purpose is to centralize the constants shared between
+ *   google-ad-manager/client.js and meta-tags/model.js.
  */
 
 /**

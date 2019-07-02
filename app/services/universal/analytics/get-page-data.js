@@ -1,6 +1,6 @@
 'use strict';
 
-const { stripOuterSlashes } = require('./pathname-utils'),
+const { stripOuterSlashes } = require('../pathname-utils'),
   makeFromPathname = require('./make-from-pathname');
 
 /**

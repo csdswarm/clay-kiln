@@ -11,7 +11,7 @@
 const _get = require('lodash/get'),
   _startsWith = require('lodash/startsWith'),
   urlParse = require('url-parse'),
-  { stripOuterSlashes } = require('./pathname-utils'),
+  { stripOuterSlashes } = require('../pathname-utils'),
   {
     pageTypeTagArticle,
     pageTypeTagSection,
@@ -151,7 +151,7 @@ module.exports = ({ pathname, url } = {}) => {
       if (page === 'homepage') {
         pageId = page;
       } else if (articleOrGalleryPage.has(page)) {
-        pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop().substring(0, 39);
+        pageId = pageName + '_' + stripOuterSlashes(pathname).split('/').pop();
       } else if (page === 'topicPage') {
         pageId = pageTypeTagTag + '_' + pageName;
       }
