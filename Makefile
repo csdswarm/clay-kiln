@@ -143,7 +143,7 @@ restore:
 	cp -R ./.snapshot/elasticsearch ./elasticsearch
 	cp -R ./.snapshot/redis ./redis
 	cp -R ./.snapshot/postgres ./postgres
-	docker load -i ./snapshot/clay-radio_clay
+	docker load -i ./.snapshot/clay-radio_clay
 
 .PHONY: spa
 spa:
