@@ -6,13 +6,11 @@ const _get = require('lodash/get'),
     return encodeURIComponent(`${url}?${qs.stringify({
       utm_campaign: 'sharebutton',
       utm_medium: 'social',
-      utm_term: this.stationCallSign,
       ...params
     })}`);
   };
 
 module.exports.render = (ref, data, locals) => {
-  console.log({data, locals, ref});
   const title = encodeURIComponent(striptags(data.shortTitle || data.title)),
     domain = _get(locals, 'site.host'),
     stationCallSign = _get(locals, 'station.callsign');
