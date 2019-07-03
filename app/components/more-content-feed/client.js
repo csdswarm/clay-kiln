@@ -8,15 +8,13 @@ class MoreContentFeed {
     this.moreContentFeed = el;
     this.loadMore = el.querySelector('.links__link--loadmore');
     this.moreContentUrl = '//' + this.moreContentFeed.getAttribute('data-uri').replace('@published', '') + '.html';
-    this.maxLazyLoadedPages = parseInt(String(this.moreContentFeed.getAttribute('data-lazy-loads')).trim(), 10);
+    this.maxLazyLoadedPages = parseInt(this.moreContentFeed.getAttribute('data-lazy-loads'), 10);
     this.currentPage = 1;
     this.tag = '';
     this.author = '';
 
     // load another page every time the load more button is clicked!
     if (this.loadMore) {
-      // Default page size is 5, with 10 articles loaded initially. Default to 4 more pages to equal 30
-      this.maxLazyLoadedPages = isNaN(this.maxLazyLoadedPages) ? 4 : this.maxLazyLoadedPages;
       this.setupLazyLoad();
 
       this.loadMore.onclick = this.handleLoadMoreContent.bind(this);

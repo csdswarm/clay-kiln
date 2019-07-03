@@ -89,7 +89,11 @@ module.exports.render = function (ref, data, locals) {
   } else {
     data.pageLength = maxItems;
     data.initialLoad = true;
-    data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / pageLength), 0);
+
+    // Default to loading 30 articles, which usually works out to 4 pages
+    if (!data.lazyLoads) {
+      data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / pageLength), 0);
+    }
   }
 
   if (data.populateFrom == 'tag') {

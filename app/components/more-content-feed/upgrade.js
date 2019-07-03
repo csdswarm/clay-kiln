@@ -61,10 +61,3 @@ module.exports['5.0'] = function (uri, data) {
     contentCollectionLogoSponsorship: { _ref : contentCollectionLogoSponsorshipURIPublished }
   };
 };
-
-module.exports['6.0'] = function (uri, data) {
-  return {
-    ...data,
-    lazyLoads: 4
-  };
-};
