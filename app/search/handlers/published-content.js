@@ -5,11 +5,14 @@ const h = require('highland'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
+  db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
   CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
 
 // Subscribe to the save stream
 subscribe('save').through(save);
+// Subscribe to the delete stream
+subscribe('unpublishPage').through(unpublishPage);
 
 /**
  * Takes an obj and attaches the data attribute for each _ref for a given parameter
@@ -104,6 +107,41 @@ function save(stream) {
  */
 function send(op) {
   return h(elastic.update(INDEX, op.key, op.value, false, true).then(() => op.key));
+}
+
+/**
+ * Remove the data in Elastic
+ *
+ * @param  {String} key
+ * @return {Stream<Promise<String>>}
+ */
+function removePublished(key) {
+  const publishedKey = `${key}@published`;
+
+  return h(elastic.del(INDEX, publishedKey).then(() => publishedKey));
+}
+
+/**
+ * Gets the main content from a unpublished object
+ *
+ * @param {Object} op
+ * @return {Stream<Promise<String>>}
+ */
+function getMain(op) {
+  return h(db.get(op.uri).then( data => data.main[0]));
+}
+
+/**
+ * remove the published article/gallery from elasticsearch
+ *
+ * @param {Stream} stream
+ * @return {Stream}
+ */
+function unpublishPage(stream) {
+  return stream.flatMap(getMain)
+    .flatMap(removePublished)
+    .errors(logError)
+    .each(logSuccess(INDEX));
 }
 
 /**
