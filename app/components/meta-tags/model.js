@@ -4,6 +4,7 @@ const _get = require('lodash/get'),
   _isEmpty = require('lodash/isEmpty'),
   _without = require('lodash/without'),
   parse = require('url-parse'),
+  getPageId = require('../../services/universal/analytics/get-page-id'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
   { NMC, OG_TYPE } = require('../../services/universal/analytics/shared-tracking-vars');
@@ -18,24 +19,32 @@ const _get = require('lodash/get'),
  * @returns {object}
  */
 function getNmcData(hasImportedNmcData, componentData, locals) {
-  if (hasImportedNmcData) {
-    return componentData.importedNmcData;
-  }
-
   const { station, url } = locals,
     pathname = parse(url).pathname,
-    pageData = getPageData(pathname, componentData.contentType),
-    contentTags = (componentData.contentTagItems || []).map(i => i.text),
-    trackingData = getTrackingData({
-      contentTags,
-      pageData,
-      pathname,
-      station
-    });
+    pageData = getPageData(pathname, componentData.contentType);
 
-  trackingData.tag = trackingData.tag.join('/');
+  if (hasImportedNmcData) {
+    const pageId = getPageId({ pageData, pathname }),
+      nmcData = componentData.importedNmcData;
 
-  return trackingData;
+    // the imported pid is always a bogus value 'api_v1.1_blogs'.  We know this
+    //   is bogus because it's not the value in the article's html.
+    nmcData.pid = pageId;
+
+    return nmcData;
+  } else { // nmc data is not imported
+    const contentTags = (componentData.contentTagItems || []).map(i => i.text),
+      nmcData = getTrackingData({
+        contentTags,
+        pageData,
+        pathname,
+        station
+      });
+
+    nmcData.tag = nmcData.tag.join('/');
+
+    return nmcData;
+  }
 }
 
 module.exports.render = (ref, data, locals) => {
@@ -74,7 +83,7 @@ module.exports.render = (ref, data, locals) => {
     const authors = data.authors.map(a => a.text).join(', ');
 
     if (!hasImportedNmcData) {
-      nmcAuthor = data.authors[0];
+      nmcAuthor = data.authors[0].text;
     }
 
     data.metaTags.push({ property: AUTHOR_NAME, content: authors });

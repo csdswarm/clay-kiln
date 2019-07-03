@@ -20,9 +20,6 @@ const _get = require('lodash/get'),
   } = require('./shared-tracking-vars'),
   pageTypeTagAuthor = 'authors',
   pageTypeTagTag = 'tag',
-  // TODO: Confirm with team this whitelist makes sense.  It seems we should be
-  //   able to extract from the url instead, and that this list is
-  //   missing 'location'.
   setOfCategories = new Set(['music', 'news-talk', 'sports']),
   // these are in relation to the 'page' field of universal/get-targeting-page-data.js
   articleOrGalleryPage = new Set(['article', 'vgallery']),

@@ -1,6 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  getPageId = require('./get-page-id'),
   makeFromPathname = require('./make-from-pathname');
 
 /**
@@ -23,7 +24,7 @@ module.exports = function getTrackingData({ pathname, station, pageData, content
   return {
     cat: fromPathname.getCategory(station) || 'music',
     genre: fromPathname.getGenre(station) || 'aaa',
-    pid: fromPathname.getPageId(pageData),
+    pid: getPageId({ pageData, pathname }),
     tag: fromPathname.getTags(pageData, contentTags),
     market: fromPathname.isStationDetail()
       ? _get(station, 'market_name')
