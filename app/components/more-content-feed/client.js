@@ -43,6 +43,7 @@ class MoreContentFeed {
     }
 
     this.loadMoreVisibility = new visibility.Visible(this.loadMore, { shownThreshold: 0.05 });
+    this.loadMore.style.visibility = 'hidden';
     this.loadMoreVisibility.on('shown', async () => {
       this.loadMoreVisibility.destroy();
       await this.handleLoadMoreContent();
