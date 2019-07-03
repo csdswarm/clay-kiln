@@ -238,8 +238,8 @@ function isArticleOrGallery(pageData) {
 }
 
 /**
- * Returns a comma delimited list of authors when on a gallery or article page,
- *   otherwise undefined
+ * Returns an array of authors when on a gallery or article page, otherwise an
+ *   empty array.
  *
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
  * @returns {string|undefined}
@@ -262,8 +262,8 @@ function getAuthors(pageData) {
 }
 
 /**
- * Returns a comma delimited list of authors when on a gallery or article page,
- *   otherwise undefined
+ * Returns an array of tags when on a gallery or article page, otherwise an
+ *   empty array.
  *
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
  * @returns {string[]}
