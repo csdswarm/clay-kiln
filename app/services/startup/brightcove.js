@@ -69,6 +69,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       adSupported: economics
     } = req.body;
 
+    console.log("video file in server side:", videoFile, JSON.stringify(videoFile));
     try {
       // Step 1: Create video object in video cloud
       const {name: createdVidName, id: createdVidID} = await brightcoveApi.request('POST', 'videos', null, {
@@ -134,7 +135,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
           res.send('Failed to fetch created video.');
         }
       } else {
-        res.send('Failed to ingest video file from S3.');
+        res.send(`Failed to ingest video file from S3. Job status: ${ingestJobStatus}`);
       }
     } catch (e) {
       console.error(e);
@@ -192,7 +193,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         if (!req.query.full_object) {
           res.send(transformVideoResults([video])[0]);
         } else {
-          res.send(video);  
+          res.send(video);
         }
       } else {
         res.send(`Error fetching video with ID ${req.query.id}`);

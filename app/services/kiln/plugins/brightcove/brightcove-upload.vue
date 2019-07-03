@@ -254,9 +254,9 @@
       },
       async uploadNewVideo(event) {
         event.preventDefault();
-        const { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
+        const { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
 
-        console.log("create new video with this data: ", { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
+        console.log("create new video with this data: ", { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
         this.loading = true;
         const { data: createResponse } = await axios.post('/brightcove/create', { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
           { signed_url, api_request_url, videoID } = createResponse;
@@ -264,71 +264,36 @@
         console.log(signed_url, api_request_url, videoID);
 
         if (signed_url && api_request_url && videoID) {
-          // const formData = new FormData;
-          //   // xhr = new XMLHttpRequest();
-
-          // formData.append('file', this.videoFile);
-          // xhr.open('PUT', signed_url, true);
-          // xhr.onload = function () {
-          //   if (xhr.status === 200) {
-          //     // File(s) uploaded.
-          //     console.log("file uploaded to brightcove s3. full response: ", xhr);
-          //   } else {
-          //     console.log("error with upload to S3. full response: ", xhr);
-          //   }
-          // };
-          // xhr.send(formData);
           try {
-            const uploadToS3Response = await axios.put(signed_url, { 'files': this.videoFile }, {
-              headers: {  
-                'Content-Type': undefined  
-              }, 
-              transformRequest: [ data => {
-                const formData = new FormData();  
-                
-                console.log("video file: ", this.videoFile);
-                formData.append('file', this.videoFile);  
-                
-                return formData;  
-              }]
+            const uploadToS3Response = await fetch(signed_url, {
+              method: 'PUT',
+              file: videoFile,
+              headers:{
+                'Content-Disposition': `attachment; filename=${videoFile.name}`
+              }
             });
-            // const formData = new FormData,
-            //   xhr = new XMLHttpRequest();
 
-            // formData.append('file', this.videoFile);
-            // xhr.open('PUT', signed_url, true);
-            // xhr.onload = function () {
-            //   if (xhr.status === 200) {
-            //     // File(s) uploaded.
-            //     console.log("file uploaded to brightcove s3. full response: ", xhr);
-            //   } else {
-            //     console.log("error with upload to S3. full response: ", xhr);
-            //   }
-            // };
-            // xhr.send(formData);
-            
             console.log('uploadToS3Response', uploadToS3Response);
+            if (uploadToS3Response.status === 200) {
+              const { data: ingestResponse } = await axios.post('/brightcove/upload', { api_request_url, videoID });
+
+              this.loading = false;
+              if (ingestResponse.id) {
+                this.uploadedVideo = ingestResponse;
+                this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
+                this.uploadStatus = {type: 'success', message: 'Successfully uploaded video'};
+                this.resetForm();
+              } else {
+                this.uploadStatus = {type: 'error', message: `Failed to upload video. ${ingestResponse}`};
+              }
+            } else {
+              this.loading = false;
+              this.uploadStatus = {type: 'error', message: `Failed to upload video to Brightcove S3. ${uploadToS3Response.statusText}`};
+            }
           } catch (e) {
             this.loading = false;
             this.uploadStatus = {type: 'error', message: `Failed to upload video to Brightcove S3. ${e}`};
             throw e;
-          }
-
-          if (uploadToS3Response.status === 200) {
-            const { data: ingestResponse } = await axios.post('/brightcove/upload', { api_request_url, videoID });
-
-            this.loading = false;
-            if (ingestResponse.id) {
-              this.uploadedVideo = ingestResponse;
-              this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
-              this.uploadStatus = {type: 'success', message: 'Successfully uploaded video'};
-              this.resetForm();
-            } else {
-              this.uploadStatus = {type: 'error', message: `Failed to upload video. ${ingestResponse}`};
-            }
-          } else {
-            this.loading = false;
-            this.uploadStatus = {type: 'error', message: `Failed to upload video to Brightcove S3. ${uploadToS3Response.statusText}`};
           }
         }
       }
