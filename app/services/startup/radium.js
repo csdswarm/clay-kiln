@@ -7,10 +7,11 @@ const axios = require('axios'),
   },
   jwt = require('jsonwebtoken'),
   moment = require('moment'),
-  db = require('../server/db'),
+  ioredis = require('ioredis'),
+  redis = new ioredis(process.env.REDIS_HOST),
   excludeKeys = {
     token: ['access_token', 'expires_in', 'refresh_token', 'id_token', 'device_key', 'token_type'],
-    profile: ['application_id', 'created_date', 'modified_date', 'tracking_id', 'user_id', 'userId']
+    profile: ['application_id', 'created_date', 'modified_date', 'tracking_id', 'userId']
   },
   radiumApi = 'https://radium.radio.com/',
   facebookCallbackUrL = process.env.FACEBOOK_CALLBACK_URL,
@@ -120,8 +121,8 @@ const axios = require('axios'),
    */
   refreshAuthToken = async (req, res) => {
     const profile = decodeCookie(COOKIES.profile, req.cookies),
-      tokens = await db.get(`token-${profile.userId}`),
-      refreshToken = tokens.refreshToken,
+      tokens = await redis.get(`token-${profile.user_id}`),
+      refreshToken = JSON.parse(tokens).refreshToken,
       authToken = decodeCookie(COOKIES.accessToken, req.cookies),
       response = await call('PUT', 'v1/auth/new_token', {
         refresh_token: refreshToken,
@@ -235,7 +236,7 @@ const axios = require('axios'),
       addCookie(COOKIES.accessToken, response.data.access_token, accessExpires, res);
 
       // since sending all of the tokens will be more than 4,096 bytes, store the refresh
-      db.put(`token-${profile.user_id}`, JSON.stringify({
+      await redis.set(`token-${profile.user_id}`, JSON.stringify({
         refreshToken: response.data.refresh_token
       }));
 
