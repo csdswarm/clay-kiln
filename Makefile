@@ -126,6 +126,25 @@ build-player:
 	cd ./radio-web-player/demo-site && npm i && npm run build
 	cp -r ./radio-web-player/demo-site/dist/* ./app/public/web-player/
 
+snapshot:
+	make down
+	if cd ./.snapshot; then rm -rf ./.snapshot; fi
+	mkdir ./.snapshot;
+	docker save -o ./.snapshot/clay-radio_clay clay-radio_clay
+	cp -R ./elasticsearch ./.snapshot/elasticsearch
+	cp -R ./redis ./.snapshot/redis
+	cp -R ./postgres ./.snapshot/postgres
+
+restore:
+	make down
+	rm -rf ./elasticsearch
+	rm -rf ./redis
+	rm -rf ./postgres
+	cp -R ./.snapshot/elasticsearch ./elasticsearch
+	cp -R ./.snapshot/redis ./redis
+	cp -R ./.snapshot/postgres ./postgres
+	docker load -i ./.snapshot/clay-radio_clay
+
 .PHONY: spa
 spa:
 	cd spa && npm i && npm run-script build -- --mode=none

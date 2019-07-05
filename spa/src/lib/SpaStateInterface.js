@@ -13,7 +13,7 @@ class SpaStateInterface {
     this.spa = spaApp
 
     if (!spaCommunicationBridge.channelActive('SpaStateInterfaceState')) {
-      spaCommunicationBridge.addChannel('SpaStateInterfaceState',
+      spaCommunicationBridge.subscribe('SpaStateInterfaceState',
         (variable) => variable ? this.spa.$store.state[variable] : this.spa.$store.state
       )
     }

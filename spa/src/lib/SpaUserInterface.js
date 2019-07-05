@@ -29,7 +29,7 @@ class SpaUserInterface {
   attachClientCommunication () {
     // Add channel for favoriting stations
     if (!spaCommunicationBridge.channelActive('SpaUserFavorite')) {
-      spaCommunicationBridge.addChannel('SpaUserFavorite', (payload) => {
+      spaCommunicationBridge.subscribe('SpaUserFavorite', (payload) => {
         const { action, stationId } = payload
 
         return this[action](stationId)

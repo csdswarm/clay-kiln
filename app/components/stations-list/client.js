@@ -1,4 +1,7 @@
 'use strict';
+// Polyfill
+require('core-js/modules/es6.symbol');
+
 const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v1/`,
   recentStations = require('../../services/client/recentStations'),
   radioApiService = require('../../services/client/radioApi'),
