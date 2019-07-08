@@ -129,6 +129,10 @@ module.exports.render = function (ref, data, locals) {
 
       data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
       data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
+      data.articles = data.articles.map(article => {
+        article.canonicalUrl = article.canonicalUrl.replace(/^http:/, 'https:'); // Replace http with https for SEO, http is stored in ES
+        return article;
+      });
 
       return data;
     })
