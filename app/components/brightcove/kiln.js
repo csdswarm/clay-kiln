@@ -8,6 +8,18 @@ module.exports = (schema) => {
   schema.autoplayUnmuted = new KilnInput(schema, 'autoplayUnmuted');
   schema.clickToPlay = new KilnInput(schema, 'clickToPlay');
 
+  schema.clickToPlay.on('change', (value) => {
+    if (value) {
+      schema.autoplayUnmuted.value(false);
+    }
+  });
+
+  schema.autoplayUnmuted.on('change', (value) => {
+    if (value) {
+      schema.clickToPlay.value(false);
+    }
+  });
+
   subscriptions.subscribe('OPEN_FORM', ({uri}) => {
     const bc = document.querySelector(`[data-uri="${uri}"]`);
 
