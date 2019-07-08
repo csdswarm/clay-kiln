@@ -14,7 +14,6 @@
     </modal>
   </div>
 </template>
-
 <script>
 
 // Import dependencies.
@@ -25,6 +24,7 @@ import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
+import SpaScroll from '@/lib/SpaScroll'
 import URL from 'url-parse'
 import { getLocals } from '../../app/services/client/spaLocals'
 import ModalContent from '@/views/ModalContent'
@@ -62,14 +62,14 @@ export default {
   },
   methods: {
     /**
-     *
-     * Contains Layout template matching logic.
-     *
-     * Match a given spa payload with a Vue layout component
-     *
-     * @param {object} spaPayload - The handlebars context payload data.
-     * @returns {string} - Matched Layout component name.
-     */
+       *
+       * Contains Layout template matching logic.
+       *
+       * Match a given spa payload with a Vue layout component
+       *
+       * @param {object} spaPayload - The handlebars context payload data.
+       * @returns {string} - Matched Layout component name.
+       */
     layoutRouter (spaPayload) {
       let nextLayoutComponent = null
 
@@ -86,11 +86,11 @@ export default {
       return nextLayoutComponent
     },
     /**
-     * converts a string into a regular expression * as a wildcard
-     *
-     * @param {string} url
-     * @returns {RegExp}
-     */
+       * converts a string into a regular expression * as a wildcard
+       *
+       * @param {string} url
+       * @returns {RegExp}
+       */
     createRegExp (url) {
       const regExp = url.replace(/\*/g, '.*')
 
@@ -178,23 +178,26 @@ export default {
       return !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url)
     },
     /**
-     *
-     * Returns an object with all the JSON payload required for a page render.
-     *
-     * @param {string} destination - The URL being requested.
-     * @param {object} query - The query object
-     * @returns {object}  - The JSON payload
-     */
+       *
+       * Returns an object with all the JSON payload required for a page render.
+       *
+       * @param {string} destination - The URL being requested.
+       * @param {object} query - The query object
+       * @returns {object}  - The JSON payload
+       */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
+      // remove the extension from preview pages
+      const cleanDestination = destination.replace('.html', '')
       const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
       const ieCacheBuster = (new Date()).getTime() // force reload of app components on IE11
-      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}&cb=${ieCacheBuster}`
-      const newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
+      const newSpaPayloadPath = `${cleanDestination}?json${queryString ? `&${queryString}` : ''}&cb=${ieCacheBuster}`
+      const newSpaPayloadPathNoJson = `${cleanDestination}${queryString ? `?${queryString}` : ''}`
 
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
-            'x-amphora-page-json': true,
+            // preview pages will 404 if the header is true because the published key does not exist
+            'x-amphora-page-json': !destination.includes('.html'),
             'x-locals': JSON.stringify(await getLocals(this.$store.state))
           }
         })
@@ -208,7 +211,7 @@ export default {
           const redirect = `${e.response.data.redirect}${queryString ? `${separator}${queryString}` : ''}`
           if (this.isLocalUrl(redirect)) {
             // we are returning the new path, so need to adjust the browser path
-            window.history.replaceState({ }, null, redirect)
+            window.history.replaceState({}, null, redirect)
             return this.getNextSpaPayload(redirect.replace(/^[^/]+/i, ''), query)
           } else {
             window.location.replace(redirect)
@@ -223,12 +226,12 @@ export default {
       }
     },
     /**
-     *
-     * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
-     *
-     * @param {string} path - The path of the next route.
-     * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
-     */
+       *
+       * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
+       *
+       * @param {string} path - The path of the next route.
+       * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
+       */
     buildPageViewEventData: function buildPageViewEventData (path, spaPayload) {
       const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
       const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
@@ -303,16 +306,21 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
-      const intercept = this.getInterceptRoute(to.path)
-
-      if (intercept) {
-        if (to.path.toLocaleLowerCase() === from.path.toLocaleLowerCase()) {
-          // to prevent looping go to home page
-          from.path = '/'
-        }
-        await this.handleIntercept(intercept, from.path)
+      // handle internal hashes
+      if (to.path === from.path && to.hash !== from.hash) {
+        SpaScroll.initialPageloadHashLinkScroll(to.hash)
       } else {
-        await this.handleSpaRoute(to)
+        const intercept = this.getInterceptRoute(to.path)
+
+        if (intercept) {
+          if (to.path.toLocaleLowerCase() === from.path.toLocaleLowerCase()) {
+            // to prevent looping go to home page
+            from.path = '/'
+          }
+          await this.handleIntercept(intercept, from.path)
+        } else {
+          await this.handleSpaRoute(to)
+        }
       }
     },
     routerPush (path) {
@@ -348,7 +356,6 @@ export default {
     this.handleIntercept(this.getInterceptRoute(this.$route.path), '/')
   }
 }
-
 </script>
 
 // use a global bus for listening to events for closing the modal
