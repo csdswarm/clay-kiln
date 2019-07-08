@@ -6,7 +6,7 @@ const _ = require('lodash'),
   sanitize = require('../universal/sanitize'),
   utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
-  canonicalProtocol = 'http', // todo: this is a HUGE assumption, make it not be an assumption?
+  canonicalProtocol = 'http',
   canonicalPort = process.env.PORT || 3001,
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
@@ -17,6 +17,14 @@ const _ = require('lodash'),
    * @returns {string}
    */
   componentUri = (uri) => uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`),
+  /**
+   * gets a component instance
+   *
+   * @param {string} uri
+   * @param {object} opts
+   * @returns {Promise}
+   */
+  getComponentInstance = (uri, opts) => rest.get(componentUri(uri), opts),
   /**
    * adds/updates a component instance
    *
@@ -181,3 +189,4 @@ module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.ht
 module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
 module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
 module.exports.putComponentInstance = putComponentInstance;
+module.exports.getComponentInstance = getComponentInstance;

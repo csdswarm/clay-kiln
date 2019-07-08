@@ -4,9 +4,6 @@
 const adMapping = require('./adMapping'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
-  doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
-  environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
-  inProduction = environment === 'production',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   doubleclickPageTypeTagArticle = 'article',
   doubleclickPageTypeTagSection = 'sectionfront',
@@ -257,6 +254,10 @@ function getPageTargeting(urlPathname) {
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData, urlPathname) {
+  const doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
+    environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
+    inProduction = environment === 'production';
+
   let siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
     adTargetingData = {
       targetingRadioStation: null,

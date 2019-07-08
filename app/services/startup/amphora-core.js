@@ -15,7 +15,8 @@ function initAmphora(app, search, sessionStore, routes) {
       routes,
       require('amphora-schedule')
     ],
-    storage: require('amphora-storage-postgres')
+    storage: require('amphora-storage-postgres'),
+    eventBus: require('amphora-event-bus-redis')
   }).then(router => {
     router.use(healthCheck({
       env: [
