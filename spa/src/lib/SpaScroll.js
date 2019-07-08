@@ -45,7 +45,7 @@ const SpaScroll = {
       try {
         el = document.querySelector(hash)
       } catch (e) {
-        //invalid hash for querySelector
+        // invalid hash for querySelector
       }
       if (el) {
         const offset = { x: 0, y: 0 }

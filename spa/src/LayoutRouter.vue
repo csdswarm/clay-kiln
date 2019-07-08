@@ -1,7 +1,6 @@
 <template>
   <component v-bind:is="this.activeLayoutComponent"></component>
 </template>
-
 <script>
 
 // Import dependencies.
@@ -12,9 +11,9 @@ import OneColumnFullWidthLayout from '@/views/OneColumnFullWidthLayout'
 import TwoColumnLayout from '@/views/TwoColumnLayout'
 import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
+import SpaScroll from '@/lib/SpaScroll'
 import URL from 'url-parse'
 import { getLocals } from '../../app/services/client/spaLocals'
-import SpaScroll from "./lib/SpaScroll";
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -34,14 +33,14 @@ export default {
   computed: {},
   methods: {
     /**
-     *
-     * Contains Layout template matching logic.
-     *
-     * Match a given spa payload with a Vue layout component
-     *
-     * @param {object} spaPayload - The handlebars context payload data.
-     * @returns {string} - Matched Layout component name.
-     */
+       *
+       * Contains Layout template matching logic.
+       *
+       * Match a given spa payload with a Vue layout component
+       *
+       * @param {object} spaPayload - The handlebars context payload data.
+       * @returns {string} - Matched Layout component name.
+       */
     layoutRouter (spaPayload) {
       let nextLayoutComponent = null
 
@@ -58,33 +57,33 @@ export default {
       return nextLayoutComponent
     },
     /**
-     * converts a string into a regular expression * as a wildcard
-     *
-     * @param {string} url
-     * @returns {RegExp}
-     */
+       * converts a string into a regular expression * as a wildcard
+       *
+       * @param {string} url
+       * @returns {RegExp}
+       */
     createRegExp (url) {
       const regExp = url.replace(/\*/g, '.*')
 
       return new RegExp(`^${regExp}`, 'i')
     },
     /**
-     * determines if the url belongs to the spa
-     *
-     * @param {string} url
-     * @returns {boolean}
-     */
+       * determines if the url belongs to the spa
+       *
+       * @param {string} url
+       * @returns {boolean}
+       */
     isLocalUrl (url) {
       return !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url)
     },
     /**
-     *
-     * Returns an object with all the JSON payload required for a page render.
-     *
-     * @param {string} destination - The URL being requested.
-     * @param {object} query - The query object
-     * @returns {object}  - The JSON payload
-     */
+       *
+       * Returns an object with all the JSON payload required for a page render.
+       *
+       * @param {string} destination - The URL being requested.
+       * @param {object} query - The query object
+       * @returns {object}  - The JSON payload
+       */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
       // remove the extension from preview pages
       const cleanDestination = destination.replace('.html', '')
@@ -96,7 +95,7 @@ export default {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
             // preview pages will 404 if the header is true because the published key does not exist
-            'x-amphora-page-json': destination.includes('.html') ? false : true,
+            'x-amphora-page-json': !destination.includes('.html'),
             'x-locals': JSON.stringify(getLocals(this.$store.state))
           }
         })
@@ -110,7 +109,7 @@ export default {
           const redirect = `${e.response.data.redirect}${queryString ? `${separator}${queryString}` : ''}`
           if (this.isLocalUrl(redirect)) {
             // we are returning the new path, so need to adjust the browser path
-            window.history.replaceState({ }, null, redirect)
+            window.history.replaceState({}, null, redirect)
             return this.getNextSpaPayload(redirect.replace(/^[^/]+/i, ''), query)
           } else {
             window.location.replace(redirect)
@@ -125,12 +124,12 @@ export default {
       }
     },
     /**
-     *
-     * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
-     *
-     * @param {string} path - The path of the next route.
-     * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
-     */
+       *
+       * Returns an object with all the payload data expected by client.js consumers of the SPA "pageView" event.
+       *
+       * @param {string} path - The path of the next route.
+       * @param {object} spaPayload - The handlebars context payload data associated with the "next" page.
+       */
     buildPageViewEventData: function buildPageViewEventData (path, spaPayload) {
       const nextTitleComponentData = queryPayload.findComponent(spaPayload.head, 'meta-title')
       const nextMetaDescriptionData = queryPayload.findComponent(spaPayload.head, 'meta-description')
@@ -205,5 +204,4 @@ export default {
     }
   }
 }
-
 </script>
