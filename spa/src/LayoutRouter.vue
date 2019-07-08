@@ -14,6 +14,7 @@ import MetaManager from '@/lib/MetaManager'
 import QueryPayload from '@/lib/QueryPayload'
 import URL from 'url-parse'
 import { getLocals } from '../../app/services/client/spaLocals'
+import SpaScroll from "./lib/SpaScroll";
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -85,14 +86,17 @@ export default {
      * @returns {object}  - The JSON payload
      */
     getNextSpaPayload: async function getNextSpaPayload (destination, query) {
+      // remove the extension from preview pages
+      const cleanDestination = destination.replace('.html', '')
       const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
-      const newSpaPayloadPath = `${destination}?json${queryString ? `&${queryString}` : ''}`
-      const newSpaPayloadPathNoJson = `${destination}${queryString ? `?${queryString}` : ''}`
+      const newSpaPayloadPath = `${cleanDestination}?json${queryString ? `&${queryString}` : ''}`
+      const newSpaPayloadPathNoJson = `${cleanDestination}${queryString ? `?${queryString}` : ''}`
 
       try {
         const nextSpaPayloadResult = await axios.get(newSpaPayloadPath, {
           headers: {
-            'x-amphora-page-json': true,
+            // preview pages will 404 if the header is true because the published key does not exist
+            'x-amphora-page-json': destination.includes('.html') ? false : true,
             'x-locals': JSON.stringify(getLocals(this.$store.state))
           }
         })
@@ -159,39 +163,44 @@ export default {
   },
   watch: {
     '$route': async function (to, from) {
-      // Start loading animation.
-      this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+      // handle internal hashes
+      if (to.path === from.path && to.hash !== from.hash) {
+        SpaScroll.initialPageloadHashLinkScroll(to.hash)
+      } else {
+        // Start loading animation.
+        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
 
-      // Get SPA payload data for next path.
-      const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
+        // Get SPA payload data for next path.
+        const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
 
-      if (spaPayload) {
-        const path = (new URL(spaPayload.url)).pathname
+        if (spaPayload) {
+          const path = (new URL(spaPayload.url)).pathname
 
-        // Load matched Layout Component.
-        this.activeLayoutComponent = this.layoutRouter(spaPayload)
+          // Load matched Layout Component.
+          this.activeLayoutComponent = this.layoutRouter(spaPayload)
 
-        // Reset/flush the pageCache
-        this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
+          // Reset/flush the pageCache
+          this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
 
-        // Commit next payload to store to kick off re-render.
-        this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+          // Commit next payload to store to kick off re-render.
+          this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
 
-        // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-        metaManager.updateExternalTags(this.$store.state.spaPayload)
+          // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+          metaManager.updateExternalTags(this.$store.state.spaPayload)
 
-        // Stop loading animation.
-        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+          // Stop loading animation.
+          this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
 
-        // Build pageView event data
-        const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
+          // Build pageView event data
+          const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
 
-        // Call global pageView event.
-        const event = new CustomEvent(`pageView`, {
-          detail: pageViewEventData
-        })
+          // Call global pageView event.
+          const event = new CustomEvent(`pageView`, {
+            detail: pageViewEventData
+          })
 
-        document.dispatchEvent(event)
+          document.dispatchEvent(event)
+        }
       }
     }
   }
