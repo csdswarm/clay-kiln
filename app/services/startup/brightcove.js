@@ -2,7 +2,6 @@
 
 const brightcoveApi = require('../universal/brightcoveApi'),
   slugify = require('../universal/slugify'),
-  rest = require('../universal/rest'),
   _get = require('lodash/get'),
   moment = require('moment'),
   /**
@@ -58,7 +57,6 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @returns {Promise}
    */
   create = async (req, res) => {
-    console.log("CREATE REQUEST");
     const {
       videoName: name,
       shortDescription: description,
@@ -83,19 +81,16 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         economics
       });
 
-      console.log("Created Video: ", createdVidName, createdVidID);
       if (createdVidName && createdVidID) {
         const sourceName = slugify(createdVidName),
           // Step 2: Request for Brightcove S3 Urls
           { signed_url, api_request_url } = await brightcoveApi.getS3Urls(createdVidID, sourceName);
 
-        console.log("S3 URLs: ", signed_url, api_request_url);
-
         if (signed_url && api_request_url) {
           // Step 3: Upload video file to Brightcove S3 ******* DO ON FE
           // curl -X PUT "signed_url" --upload-file FILE_PATH_FOR_LOCAL_ASSET_GOES_HERE
 
-          res.send({signed_url, api_request_url, videoID: createdVidID})
+          res.send({signed_url, api_request_url, videoID: createdVidID});
         } else {
           res.send('Failed to fetch brightcove S3 URLs.');
         }
@@ -116,7 +111,6 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @returns {Promise}
    */
   upload = async (req, res) => {
-    console.log("UPLOAD REQUEST");
     const {
       api_request_url,
       videoID
@@ -126,7 +120,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       const ingestResponse = await brightcoveApi.ingestVideoFromS3(videoID, api_request_url);
 
       if (ingestResponse.id) {
-        const video = await brightcoveApi.request('GET', `videos/${videoID}`)
+        const video = await brightcoveApi.request('GET', `videos/${videoID}`);
 
         if (video.id) {
           res.send({ video: transformVideoResults([video])[0], jobID: ingestResponse.id });
@@ -146,7 +140,6 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       videoID,
       jobID
     } = req.body;
-    console.log("STATUS REQUEST", videoID, jobID);
 
     try {
       const ingestJobStatus = await brightcoveApi.getStatusOfIngestJob(videoID, jobID);
@@ -195,7 +188,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       });
 
       if (updateResponse.id) {
-        res.send(updateResponse)
+        res.send(updateResponse);
       } else {
         res.send('Failed to update video object in Brightcove.');
       }
@@ -206,7 +199,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   },
   getVideoByID = async (req, res) => {
     try {
-      const video = await brightcoveApi.request('GET', `videos/${req.query.id}`)
+      const video = await brightcoveApi.request('GET', `videos/${req.query.id}`);
 
       if (video.id) {
         if (!req.query.full_object) {

@@ -280,7 +280,6 @@
 
               if (ingestResponse.video.id) {
                 this.uploadedVideo = ingestResponse.video;
-                console.log(this.uploadedVideo);
                 this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
                 this.uploadStatus = {type: 'success', message: 'Successfully uploaded video. Go to "Update Video" tab to edit. Please allow a few minutes for video renditions to be created.'};
                 this.getIngestStatus(ingestResponse.jobID, videoID);
@@ -311,9 +310,8 @@
               const { data: videoWithMedia } = await axios.get('/brightcove/get', { params: {
                 id: videoID
               } });
-              
+
               this.uploadedVideo = videoWithMedia;
-              console.log(this.uploadedVideo);
               this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
             }
           } else {

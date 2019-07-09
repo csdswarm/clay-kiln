@@ -11,7 +11,7 @@ module.exports['1.0'] = function (uri, data) {
       name: ''
     };
   } else {
-    newData.video = null
+    newData.video = null;
   }
   delete newData.videoId;
 

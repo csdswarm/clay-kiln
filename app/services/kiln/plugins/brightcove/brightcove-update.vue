@@ -109,12 +109,12 @@
         :type="updateStatus.type"
       >{{ updateStatus.message }}</ui-alert>
     </div>
-    <div v-if="editSuccess" class="brightcove-video-preview">
+    <div v-if="updateSuccess" class="brightcove-video-preview">
       <div class="video-preview__info">
-        <strong>{{ updatedVideo.name }}</strong>
-        <i class="video-preview__id">ID: {{ updatedVideo.id }}</i>
+        <strong>{{ transformedVideo.name }}</strong>
+        <i class="video-preview__id">ID: {{ transformedVideo.id }}</i>
       </div>
-      <img class="video-preview__image" :src=" updatedVideo.imageUrl">
+      <img class="video-preview__image" :src=" transformedVideo.imageUrl">
     </div>
   </div>
 </template>
@@ -134,6 +134,7 @@
     data() {
       return {
         updatedVideo: null,
+        transformedVideo: null,
         loading: false,
         videoName: '',
         shortDescription: '',
@@ -215,19 +216,19 @@
         return this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
       },
       updateSuccess: function() {
-        return !this.loading && this.updatedVideo && this.updatedVideo.id;
+        return !this.loading && this.transformedVideo && this.transformedVideo.id;
       }
     },
     async created() {
       if (this.data) {
         try {
-          const video = await axios.get('/brightcove/get', { params: {
+          const { data: video } = await axios.get('/brightcove/get', { params: {
               id: this.data.id,
               full_object: true
             } });
 
-          if (video.data.id) {
-            this.updatedVideo = video.data;
+          if (video.id) {
+            this.updatedVideo = video;
             this.videoName = this.updatedVideo.name;
             this.shortDescription = this.updatedVideo.description;
             this.longDescription = this.updatedVideo.long_description;
@@ -271,9 +272,9 @@
 
         if (updateResponse.id) {
           this.updatedVideo = updateResponse;
-          const transformedVideo = transformVideoResults([updateResponse])[0];
+          this.transformedVideo = transformVideoResults([updateResponse])[0];
 
-          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: transformedVideo });
+          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.transformedVideo });
           this.updateStatus = { type: 'success', message: `Successfully updated video. Last Updated: ${ updateResponse.updated_at }` };
         } else {
           this.updateStatus = { type: 'error', message: `Failed to update video. ${ JSON.stringify(updateResponse) }` };

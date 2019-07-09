@@ -26,7 +26,6 @@ const log = require('./log').setup({file: __filename}),
     'PUT',
     'DELETE'
   ],
-  promises = [],
   /**
    * Creates a redis key from route, params, api
    *
@@ -262,6 +261,7 @@ const log = require('./log').setup({file: __filename}),
         return null;
       }
 
+      // eslint-disable-next-line one-var
       const response = await rest.request(endpoint, {
         method: 'GET',
         headers: {
@@ -309,10 +309,8 @@ const log = require('./log').setup({file: __filename}),
           master: {
             url: videoUrlInS3
           },
-          profile: "multi-platform-standard-static", // todo: verify profile value in test account
-          // profile: "multi-platform-extended-static-with-mp4",
-          // profile: "multi-platform-standard-static-with-mp4-custom-thumbnail",
-          "capture-images": true
+          profile: 'multi-platform-standard-static-with-mp4-custom-thumbnail',
+          'capture-images': true
         }),
         headers: {
           Authorization: `Bearer ${ access_token }`,
@@ -320,7 +318,6 @@ const log = require('./log').setup({file: __filename}),
         }
       });
     } catch (e) {
-      console.log("return ingest video catch error");
       log('error', e);
       return null;
     }
@@ -342,9 +339,8 @@ const log = require('./log').setup({file: __filename}),
 
           resolve(response.state || 'failed');
         } catch (e) {
-          console.log("return ingest status catch error");
           log('error', e);
-          resolve(`return ingest status catch error: ${e}`);
+          resolve(`return ingest status error: ${e}`);
         }
       }, 1000);
     });
