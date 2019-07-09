@@ -1,0 +1,14 @@
+<div
+  data-uri="{{ default _ref _self }}"
+  class="component component--static-page"
+  role="main"
+  itemscope itemtype="http://schema.org/WebPage"
+>
+  <header class="component__header">
+    <h1 data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+  </header>
+
+  <section itemprop="mainEntity">
+    <div data-editable="content" itemprop="text">{{> component-list content }}</div>
+  </section>
+</div>

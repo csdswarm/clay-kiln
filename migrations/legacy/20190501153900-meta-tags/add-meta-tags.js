@@ -107,9 +107,10 @@ async function updatePages(pages, publishedPages) {
     let hash = page.match(/_pages\/([a-zA-Z0-9]{25})?(\d+|sbp-\d+)?(.+)?/);
     if (hash) {
       const unity = hash[1],
+        imported = hash[2],
         other = hash[3],
         // we don't need to do this for imported content, upgrade scripts handle this
-        slug = unity || other;
+        slug = unity || other || (imported == '404' ? imported : undefined);
 
       if (slug) {
         const pageUri = `/_pages/${slug}`,
@@ -133,17 +134,21 @@ async function updatePages(pages, publishedPages) {
   });
 }
 
+function hasMetaTagsComponent(head) {
+  return Boolean(head.find(instance => instance.includes('/_components/meta-tags/instances/')));
+}
+
 async function addMetaTags(page, published, hash = 'general') {
   const metaTagsComponent = `/_components/meta-tags/instances/${hash}`,
     metaTagsComponentWHost = `${host}${metaTagsComponent}`;
 
   let added = false;
-  if (page && page.head && !page.head.includes(metaTagsComponentWHost)) {
+  if (page && page.head && !(hasMetaTagsComponent(page.head))) {
     page.head.push(metaTagsComponentWHost);
     added = true;
 
     // /_components/meta-tags/instances/general has already been created and published
-    if (hash != 'general') {
+    if (hash != 'general' && hash != '404') {
       const metaTags = {
         authors: [],
         publishDate: '',
