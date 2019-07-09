@@ -43,8 +43,8 @@ module.exports.render = (ref, data, locals) => {
     categories.push(data.sectionFront.toLowerCase());
   }
 
-  if (data.secondaryArticleType) {
-    categories.push(data.secondaryArticleType.toLowerCase());
+  if (data.secondarySectionFront) {
+    categories.push(data.secondarySectionFront.toLowerCase());
   }
 
   if (locals.station && locals.station.category) {
