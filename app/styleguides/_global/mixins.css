@@ -84,19 +84,19 @@
   }
 }
 
-@define-mixin show__play {
+@define-mixin show__play $color: $purple {
   @mixin show__button;
 
   &:after {
      border-top: em(8) solid transparent;
      border-bottom: em(8) solid transparent;
-     border-left: em(12) solid $purple;
+     border-left: em(12) solid $color;
      margin-left: em(12);
      margin-top: em(8);
    }
 }
 
-@define-mixin show__pause {
+@define-mixin show__pause $color: $purple {
   @mixin show__button;
 
   &:after {
@@ -104,14 +104,14 @@
     margin-left: em(10);
     height: em(14);
     width: em(12);
-    border: em(5) solid $purple;
+    border: em(5) solid $color;
     border-top: 0;
     border-bottom: 0;
     border-radius: em(1);
   }
 }
 
-@define-mixin show__stop {
+@define-mixin show__stop $color: $purple {
   @mixin show__button;
 
   &:after {
@@ -119,6 +119,6 @@
      margin-left: em(10);
      height: em(12);
      width: em(12);
-     background-color: $purple;
+     background-color: $color;
    }
 }

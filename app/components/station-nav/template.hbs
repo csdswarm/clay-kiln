@@ -1,0 +1,30 @@
+<div class="component component--station-nav" data-uri="{{ default _ref _self }}">
+  <div class="station-nav__menu">
+    <img class="menu__image" src="{{ station.square_logo_small }}?width=100&height=100&crop=1:1">
+    <ul class="menu__navigation">
+      <li>
+        <a class="navigation__text">playlist</a>
+      </li>
+      <li>
+        <a class="navigation__text">shows</a>
+      </li>
+      <li>
+        <a class="navigation__text">contests</a>
+      </li>
+      <li>
+        <a class="navigation__text">events</a>
+      </li>
+      <li>
+        <a class="navigation__text">more from {{ station.callsign }}</a>
+      </li>
+    </ul>
+    <div class="menu__listen">
+      <button class="listen__button" data-station-id="{{ station.id }}">
+        <div class="button__icon {{ playingClass }}"></div>
+        <div class="button__text">listen</div>
+      </button>
+    </div>
+    <div class="menu__carat"></div>
+  </div>
+  <div class="station_nav__drawer"></div>
+</div>

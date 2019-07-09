@@ -458,3 +458,10 @@ em, i {
 @define-mixin global-sponsor-logos-font1 {
   @mixin font ProximaNova-Regular, 14px, $black, -.22px, 17px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||||     Station Nav Styleguide      |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin station-nav-font1 {
+  @mixin font CircularStd-Medium, 15px, $white, -.23px, 18px;
+}

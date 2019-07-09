@@ -1,0 +1,95 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--station-nav {
+  background-color: $boulder;
+  display: flex;
+  justify-content: center;
+
+  .station-nav__menu {
+    display: flex;
+    align-items: flex-end;
+    width: em(1100);
+
+    .menu__image {
+      width: em(100);
+      height: em(100);
+      margin-right: em(40);
+      margin-bottom: em(16);
+      margin-top: em(16);
+    }
+
+    .menu__navigation {
+      display: flex;
+      margin-bottom: em(16  );
+
+      .navigation__text {
+        @mixin station-nav-font1;
+        text-transform: uppercase;
+        vertical-align: bottom;
+        margin-left: em(10, 15);
+        margin-right: em(10, 15);
+      }
+    }
+
+    .menu__listen {
+      margin-left: auto;
+      margin-right: em(5);
+
+      .listen__button {
+        display: flex;
+        align-items: center;
+        background-color: $tundora;
+        border: 0;
+        padding: em(14) em(14) em(14) em(12);
+
+        .button__text {
+          @mixin station-nav-font1;
+          text-transform: uppercase;
+        }
+
+        .button__icon {
+          display: inline;
+          margin-right: em(8);
+
+          &.show__play {
+            @mixin show__play $tundora;
+          }
+          &.show__pause {
+            @mixin show__pause $tundora;
+          }
+          &.show__stop {
+            @mixin show__stop $tundora;
+          }
+        }
+      }
+    }
+
+    .menu__carat {
+      background-color: $tundora;
+      padding-bottom: em(20);
+      width: em(25);
+      height: em(40);
+
+      &:after {
+        display: block;
+        position: relative;
+        top: em(11);
+        right: em(-7);
+        width: em(8, 12);
+        height: em(8, 12);
+        content: '';
+        transform: rotate(45deg);
+        border-width: 0 em(2, 12) em(2, 12) 0;
+        border-style: solid;
+        border-color: $white;
+      }
+    }
+  }
+
+  .station_nav__drawer {
+    display: none;
+    background-color: $dustyGray;
+  }
+}
