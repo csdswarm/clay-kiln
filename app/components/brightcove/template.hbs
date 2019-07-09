@@ -1,5 +1,5 @@
 <div data-uri="{{ default _ref _self }}" class="component component--brightcove" data-editable="videoSettings">
-  <div class="player">
+  <div class="player" itemscope itemtype="http://schema.org/VideoObject">
     {{#if video.id }}
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
         {{#unless @root.locals.edit}}
@@ -13,6 +13,20 @@
             data-embed="default"
             data-application-id
             controls></video-js>
+
+            <meta itemprop="name" content="{{ name }}">
+            <meta itemprop="headline" content="{{ seoHeadline }}">
+            <meta itemprop="description" content="{{ seoDescription }}">
+            <meta itemprop="thumbnailUrl" content="{{ thumbnailUrl }}">
+            <meta itemprop="uploadDate" content="{{ bcCreatedAt }}">
+            <meta itemprop="contentUrl" content="{{{ seoContentUrl }}}">
+            <meta itemprop="embedUrl" content="{{{ seoEmbedUrl }}}">
+            <meta itemprop="duration" content="{{{ duration }}}">
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/ViewAction">
+              <meta itemprop="userInteractionCount" content="{{ views }}">
+            </div>
         {{else}}
           <div class="video__preview" style="min-height: 20px; margin-bottom: 20px;">
             <div>

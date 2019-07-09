@@ -14,7 +14,9 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
+  importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
+  brightcoveApi = require('../services/universal/brightcoveApi'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml');
 
@@ -121,6 +123,20 @@ module.exports = router => {
       return res.send(data);
     });
   });
+
+  /**
+   * Proxy for brightcove api endpoints
+   */
+  router.get('/api/brightcove', function (req, res) {
+    brightcoveApi.get(req.query).then(function (data) {
+      return res.send(data);
+    });
+  });
+
+  /**
+   * Use import-content here to grab amphora user
+   */
+  router.post('/import-content', importContent);
 
   /**
    * Sitemap for stations directories and station detail pages

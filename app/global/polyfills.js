@@ -252,14 +252,12 @@
 
   // startsWith - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
   if (!String.prototype.startsWith) {
-    Object.defineProperty(String.prototype, 'startsWith', {
-        value: function(search, pos) {
-            pos = !pos || pos < 0 ? 0 : +pos;
-            return this.substring(pos, pos + search.length) === search;
-        }
-    });
+    String.prototype.startsWith = function(search, pos) {
+      pos = !pos || pos < 0 ? 0 : +pos;
+      return this.substring(pos, pos + search.length) === search;
+    };
   }
-
+  
   // endsWith - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
   if (!String.prototype.endsWith) {
     String.prototype.endsWith = function (search, this_len) {
