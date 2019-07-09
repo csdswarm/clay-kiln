@@ -16,22 +16,22 @@
   	outline: em(1,16) solid $color;
   }
   @mixin latest-recirc-box $purple;
-  .component--music & {
+  &.component--music {
   	@mixin latest-recirc-box $sunsetOrange;
   }
-  .component--news & {
+  &.component--news {
   	@mixin latest-recirc-box $lightningYellow;
   }
-  .component--sports & {
+  &.component--sports {
   	@mixin latest-recirc-box $azureRadience;
   }
-  .component--podcasts & {
+  &.component--podcasts {
   	@mixin latest-recirc-box $robinsEggBlue;
   }
-  .component--tag & {
+  &.component--tag {
   	@mixin latest-recirc-box $purple;
   }
-  .component--station & {
+  &.component--station {
   	@mixin latest-recirc-box $parisM;
   }
 }

@@ -73,7 +73,16 @@ module.exports.render = function (ref, data, locals) {
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, {date: 'desc'});
-  queryService.addShould(query, { regexp: { lead: process.env.CLAY_SITE_HOST + '\/_components\/brightcove\/instances.*' } });
+  queryService.addShould(query, {
+    nested: {
+      path: 'lead',
+      query: {
+        regexp: {
+          'lead._ref': `${process.env.CLAY_SITE_HOST}\/_components\/brightcove\/instances.*`
+        }
+      }
+    }
+  });
 
   // Filter out the following tags
   if (data.filterTags) {
