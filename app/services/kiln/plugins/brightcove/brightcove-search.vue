@@ -139,7 +139,6 @@
             selectBrightcove(suggestion) {
                 this.video = suggestion;
                 this.searchResults = [];
-                console.log("select video:", JSON.stringify(this.video));
                 this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.video })
             }
         },

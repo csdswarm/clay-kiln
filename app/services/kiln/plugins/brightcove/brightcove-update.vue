@@ -120,7 +120,7 @@
 </template>
 <script>
   import axios from 'axios';
-  import { transformVideoResults } from '../../../startup/brightcove.js'
+  import { transformVideoResults } from '../../../startup/brightcove.js';
 
   const { UiButton, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
     MUSIC_ENTERTAINMENT = 'MUSIC_ENTERTAINMENT',
@@ -219,7 +219,6 @@
       }
     },
     async created() {
-      console.log("created update plugin", this.updatedVideo, this.data);
       if (this.data) {
         try {
           const video = await axios.get('/brightcove/get', { params: {

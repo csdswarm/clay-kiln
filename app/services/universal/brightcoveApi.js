@@ -26,6 +26,7 @@ const log = require('./log').setup({file: __filename}),
     'PUT',
     'DELETE'
   ],
+  promises = [],
   /**
    * Creates a redis key from route, params, api
    *
@@ -175,7 +176,7 @@ const log = require('./log').setup({file: __filename}),
           }
         });
 
-      if (method == 'GET' && key) {
+      if (method === 'GET' && key) {
         response.updated_at = new Date();
 
         try {
@@ -187,7 +188,7 @@ const log = require('./log').setup({file: __filename}),
       return response;
 
     } catch (e) {
-      log('error', e.response.statusText, JSON.stringify(e));
+      log('error', JSON.stringify(e));
       return null;
     }
   },
@@ -267,10 +268,10 @@ const log = require('./log').setup({file: __filename}),
           Authorization: `Bearer ${ access_token }`
         }
       });
-      
+
       if (response.signed_url && response.api_request_url) {
         const {signed_url, api_request_url} = response;
-        
+
         return {signed_url, api_request_url};
       } else {
         log('error', response);
@@ -302,13 +303,15 @@ const log = require('./log').setup({file: __filename}),
         return null;
       }
 
-      const response = await rest.request(endpoint, {
+      return await rest.request(endpoint, {
         method: 'POST',
         body: JSON.stringify({
           master: {
             url: videoUrlInS3
           },
           profile: "multi-platform-standard-static", // todo: verify profile value in test account
+          // profile: "multi-platform-extended-static-with-mp4",
+          // profile: "multi-platform-standard-static-with-mp4-custom-thumbnail",
           "capture-images": true
         }),
         headers: {
@@ -316,21 +319,9 @@ const log = require('./log').setup({file: __filename}),
           'Content-Type': 'application/json'
         }
       });
-
-      if (response.id) {
-        let ingestJobStatus = 'processing';
-
-        while (!['finished', 'failed'].includes(ingestJobStatus)) {
-          ingestJobStatus = await getStatusOfIngestJob(videoID, response.id);
-        }
-
-        return ingestJobStatus;
-      } else {
-        log('error', response);
-        return null;
-      }
     } catch (e) {
-      log('error', e.response.statusText);
+      console.log("return ingest video catch error");
+      log('error', e);
       return null;
     }
   },
@@ -343,29 +334,20 @@ const log = require('./log').setup({file: __filename}),
    * @throws {Error}
    */
   getStatusOfIngestJob = async (videoID, jobID) => {
-    try {
-      const currentTime = new Date().getTime() / 1000;
+    return new Promise((resolve) => {
+      setTimeout(async () => {
+        try {
+          const endpoint = `videos/${videoID}/ingest_jobs/${jobID}`,
+            response = await request('GET', endpoint);
 
-      if (!access_token || (accessTokenUpdated && currentTime >= accessTokenUpdated + expires_in)) {
-        ({ access_token, expires_in } = await getAccessToken());
-      }
-
-      if (!access_token) {
-        return null;
-      }
-
-      const response = await request('GET', `videos/${videoID}/ingest_jobs/${jobID}`);
-
-      if (response.state) {
-        return response.state;
-      } else {
-        log('error', response);
-        return null;
-      }
-    } catch (e) {
-      log('error', e.response.statusText);
-      return null;
-    }
+          resolve(response.state || 'failed');
+        } catch (e) {
+          console.log("return ingest status catch error");
+          log('error', e);
+          resolve(`return ingest status catch error: ${e}`);
+        }
+      }, 1000);
+    });
   };
 
 module.exports.request = request;
@@ -373,3 +355,4 @@ module.exports.getVideoAnalytics = getVideoAnalytics;
 module.exports.getVideoDetails = getVideoDetails;
 module.exports.getS3Urls = getS3Urls;
 module.exports.ingestVideoFromS3 = ingestVideoFromS3;
+module.exports.getStatusOfIngestJob = getStatusOfIngestJob;

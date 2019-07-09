@@ -112,11 +112,15 @@
         >Reset Fields</ui-button>
       </div>
       <ui-alert
-        v-if="!loading && uploadStatus.message"
+        v-if="uploadStatus.message"
         :type="uploadStatus.type"
       >{{ uploadStatus.message }}</ui-alert>
+      <ui-alert
+        v-if="uploadStatus.type === 'success' && ingestStatus.message"
+        :type="ingestStatus.type"
+      >{{ ingestStatus.message }}</ui-alert>
     </div>
-    <div v-if="uploadSuccess" class="brightcove-video-preview">
+    <div v-if="uploadedVideo && ingestStatus.type === 'success'" class="brightcove-video-preview">
       <div class="video-preview__info">
         <strong>{{uploadedVideo.name}}</strong>
         <i class="video-preview__id">ID: {{uploadedVideo.id}}</i>
@@ -163,6 +167,10 @@
         uploadStatus: {
           type: 'info',
           message: ''
+        },
+        ingestStatus: {
+          type: 'info',
+          message: ''
         }
       };
     },
@@ -206,17 +214,12 @@
         const tertiaryCategory = this.highLevelCategory === NEWS_LIFESTYLE ? this.tertiaryCategory : true;
 
         return this.videoFile && this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
-      },
-      uploadSuccess: function() {
-        return !this.loading && this.uploadedVideo && this.uploadedVideo.id;
       }
     },
     async created() {
-      console.log("created upload plugin", this.uploadedVideo, this.data);
       if (this.data) {
         try {
           const video = await axios.get('/brightcove/get', { params: { id: this.data.id } });
-          console.log("got video: ", video.data);
 
           if (video.data.id) {
             this.uploadedVideo = video.data;
@@ -228,6 +231,7 @@
     },
     methods: {
       setVideoFile(files, event) {
+        this.fileUpload = event.target;
         this.videoFile = null;
 
         if (files.length) {
@@ -254,35 +258,32 @@
       },
       async uploadNewVideo(event) {
         event.preventDefault();
-        const { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
-
-        console.log("create new video with this data: ", { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
         this.loading = true;
-        const { data: createResponse } = await axios.post('/brightcove/create', { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
+        this.uploadStatus.message = null;
+        this.ingestStatus.message = null;
+        const { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this,
+          { data: createResponse } = await axios.post('/brightcove/create', { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
           { signed_url, api_request_url, videoID } = createResponse;
-
-        console.log(signed_url, api_request_url, videoID);
 
         if (signed_url && api_request_url && videoID) {
           try {
             const uploadToS3Response = await fetch(signed_url, {
               method: 'PUT',
-              file: videoFile,
+              body: videoFile,
               headers:{
-                'Content-Disposition': `attachment; filename=${videoFile.name}`
+                'Content-Type': ''
               }
             });
 
-            console.log('uploadToS3Response', uploadToS3Response);
             if (uploadToS3Response.status === 200) {
               const { data: ingestResponse } = await axios.post('/brightcove/upload', { api_request_url, videoID });
 
-              this.loading = false;
-              if (ingestResponse.id) {
-                this.uploadedVideo = ingestResponse;
+              if (ingestResponse.video.id) {
+                this.uploadedVideo = ingestResponse.video;
+                console.log(this.uploadedVideo);
                 this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
-                this.uploadStatus = {type: 'success', message: 'Successfully uploaded video'};
-                this.resetForm();
+                this.uploadStatus = {type: 'success', message: 'Successfully uploaded video. Go to "Update Video" tab to edit. Please allow a few minutes for video renditions to be created.'};
+                this.getIngestStatus(ingestResponse.jobID, videoID);
               } else {
                 this.uploadStatus = {type: 'error', message: `Failed to upload video. ${ingestResponse}`};
               }
@@ -296,6 +297,29 @@
             throw e;
           }
         }
+      },
+      getIngestStatus(jobID, videoID) {
+        this.ingestStatus = { type: 'info', message: 'Creating video renditions...' };
+        setTimeout(async () => {
+          const { data: ingestStatus } = await axios.post('/brightcove/ingestStatus', { jobID, videoID });
+          
+          if (['finished', 'failed'].includes(ingestStatus)) {
+            this.loading = false;
+            this.ingestStatus.message = `${ingestStatus.replace('f','F')} creating renditions!`;
+            this.ingestStatus.type = ingestStatus === 'finished' ? 'success' : 'error';
+            if (ingestStatus === 'finished') {
+              const { data: videoWithMedia } = await axios.get('/brightcove/get', { params: {
+                id: videoID
+              } });
+              
+              this.uploadedVideo = videoWithMedia;
+              console.log(this.uploadedVideo);
+              this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
+            }
+          } else {
+            this.getIngestStatus(jobID, videoID);
+          }
+        }, 5000);
       }
     },
     components: {

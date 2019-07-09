@@ -69,7 +69,6 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       adSupported: economics
     } = req.body;
 
-    console.log("video file in server side:", videoFile, JSON.stringify(videoFile));
     try {
       // Step 1: Create video object in video cloud
       const {name: createdVidName, id: createdVidID} = await brightcoveApi.request('POST', 'videos', null, {
@@ -124,16 +123,36 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     } = req.body;
 
     try {
-      const ingestJobStatus = await brightcoveApi.ingestVideoFromS3(videoID, api_request_url);
+      const ingestResponse = await brightcoveApi.ingestVideoFromS3(videoID, api_request_url);
 
-      if (ingestJobStatus === 'finished') {
+      if (ingestResponse.id) {
         const video = await brightcoveApi.request('GET', `videos/${videoID}`)
 
         if (video.id) {
-          res.send(transformVideoResults([video])[0]);
+          res.send({ video: transformVideoResults([video])[0], jobID: ingestResponse.id });
         } else {
           res.send('Failed to fetch created video.');
         }
+      } else {
+        res.send('Failed to ingest video file from S3.');
+      }
+    } catch (e) {
+      console.error(e);
+      res.send(e);
+    }
+  },
+  getIngestStatus = async (req, res) => {
+    const {
+      videoID,
+      jobID
+    } = req.body;
+    console.log("STATUS REQUEST", videoID, jobID);
+
+    try {
+      const ingestJobStatus = await brightcoveApi.getStatusOfIngestJob(videoID, jobID);
+
+      if (ingestJobStatus === 'finished') {
+        res.send(ingestJobStatus);
       } else {
         res.send(`Failed to ingest video file from S3. Job status: ${ingestJobStatus}`);
       }
@@ -212,6 +231,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     app.use('/brightcove/search', search);
     app.use('/brightcove/create', create);
     app.use('/brightcove/upload', upload);
+    app.use('/brightcove/ingestStatus', getIngestStatus);
     app.use('/brightcove/update', update);
     app.use('/brightcove/get', getVideoByID);
   };
