@@ -1,6 +1,8 @@
 _components:
   brightcove:
     video: null
+    autoplayUnmuted: false
+    clickToPlay: false
     showTitle: false
     searchVideo: null
     newVideo: null

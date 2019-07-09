@@ -27,6 +27,13 @@ updateVideo:
   _reveal:
     field: video
     operator: truthy
+autoplayUnmuted:
+  _label: Autoplay / unmuted (Happy Birthday Videos Only)
+  _has: checkbox
+
+clickToPlay:
+  _label: Click to play
+  _has: checkbox
 
 showTitle:
   _label: Show video title?
@@ -42,6 +49,8 @@ _groups:
     fields:
       - video (Update video)
       - showTitle (Update video)
+      - autoplayUnmuted (Update video)
+      - clickToPlay (Update video)
       - updateVideo (Update video)
       - searchVideo (Search for video)
       - newVideo (Upload new video)
