@@ -19,7 +19,7 @@ const pkg = require('../../package.json'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
-  lytics = require('./lytics');
+  lytics = require('./lytics'),
   eventBusSubscribers = require('./event-bus-subscribers');
 
 function createSessionStore() {
