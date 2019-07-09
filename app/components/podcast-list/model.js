@@ -31,6 +31,9 @@ const radioApiService = require('../../services/server/radioApi'),
  */
 module.exports.render = async function (ref, data, locals) {
   if (data.items.length === maxItems || !locals || locals.edit) {
+    data.items.forEach(item => {
+      item.podcast.imageUrl = utils.createImageUrl(item.podcast.imageUrl);
+    });
     return new Promise((resolve) => resolve(data));
   }
 
