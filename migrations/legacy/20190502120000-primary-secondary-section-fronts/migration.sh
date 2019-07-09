@@ -16,7 +16,7 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "Add new section front lists...\n"
+# printf "Add new section front lists...\n"
 cat ./_lists.yml | clay import -k demo -y $1
 
 printf "\n\nResetting data for new instance of podcast list"
@@ -35,6 +35,17 @@ rm ./$componentType-$instanceType.yml
 printf "\n\n\n\n"
 
 printf "\nUpdating Section Fronts to Add Podcast Modules...\n\n"
+# _components/section-front/instances/new
+componentType="section-front"
+instanceType="new"
+printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
+node ./section-front-update.js "$1" "$componentType" "$instanceType";
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$componentType-$instanceType.json
+rm ./$componentType-$instanceType.yml
+printf "\n\n\n\n"
+
 # _components/section-front/instances/new
 componentType="section-front"
 instanceType="new"
