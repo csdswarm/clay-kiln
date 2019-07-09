@@ -19,6 +19,7 @@ if (!instanceType) {
 // Get current JSON
 const data = require(`${__dirname}/${componentType}-${instanceType}.json`)
 
+data.content = [];
 delete data.sectionFrontManual;
 
 // Create correct clay data structure
