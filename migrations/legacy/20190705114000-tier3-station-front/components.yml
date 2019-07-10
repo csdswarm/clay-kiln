@@ -37,10 +37,6 @@ _components:
         includePodcastModule: false
         googleAdUnderStationsModule:
           _ref: /_components/google-ad-manager/instances/billboardBottom
-  podcast-list:
-    instances:
-      new:
-        items: []
   section-lead:
     instances:
       station-front-3:
@@ -56,27 +52,7 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPageTop
         filterSecondarySectionFronts: {}
         articles: []
-  google-ad-manager:
-    instances:
-      halfPageTop:
-        adSize: half-page
-        adLocation: atf
-        adPosition: rec
-      halfPageBottomTopic:
-        adSize: half-page-topic
-        sticky: true
-        adLocation: btf
-        adPosition: rec
-      contentCollectionLogoSponsorship:
-        adSize: content-collection-logo-sponsorship
-        adLocation: atf
-        adPosition: logo-sponsorship
-      billboardBottom:
-        adSize: billboard
-        adLocation: btf
-        adPosition: bottom
-        componentVariation: google-ad-manager
-  more-content-feed:
+   more-content-feed:
     instances:
       station-front-3:
         tag: ''
