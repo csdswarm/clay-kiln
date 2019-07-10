@@ -1,0 +1,58 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--static-page {
+  /* BEM exceptions - targeting tags that are added as a result of editing */
+  .component__header {
+    padding: em(20, 45) 0;
+    @mixin static-page-font1;
+    @mixin medium-small-screen {
+      padding-top: em(50, 35);
+      padding-bottom: em(20, 35);
+      @mixin static-page-font2;
+    }
+  }
+
+  /* TODO: Create a mixin for this. Should probably be handled during tech debt fixes - CSD */
+  a {
+    background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(purpleRGB), .50) 80%, rgba($(purpleRGB), .50) 100%);
+    &:hover {
+      background: linear-gradient(to bottom, rgba($(purpleRGB), .50) 0, rgba($(purpleRGB), .50) 100%);
+    }
+  }
+
+  .component--subheader {
+    padding: em(15, 24) 0;
+    @mixin static-page-font3;
+
+    a {
+      @mixin static-page-font3;
+      text-decoration: inherit;
+      background: inherit;
+
+      &:hover {
+        text-decoration: underline !important;
+      }
+    }
+  }
+
+  .paragraph {
+    margin-bottom: em(20, 18);
+    @mixin static-page-font5;
+    > strong {
+      @mixin static-page-font6;
+    }
+  }
+
+  .iframe-container__padded-container {
+    padding-top: 0;
+    iframe {
+      position: relative;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: auto;
+    }
+  }
+}

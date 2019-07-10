@@ -9,6 +9,20 @@
 import cheerio from 'cheerio'
 import URL from 'url-parse'
 
+/**
+ * returns if a domain is part of the entercom approved list
+ * ** NOTE: This is duplicated in the app also until merged into the release-radium branch where it can be shared
+ * @param {string} hostname
+ * @return {boolean}
+ */
+const isEntercomDomain = (hostname) => {
+  const SEO_FOLLOW_DOMAINS = ['1thingus.com,entercom.com', 'culinarykitchenchicago.com', 'dfwrestaurantweek.com',
+    'musictowndetroit.com', 'mensroomlive.com', 'jimrome.com', 'radio.com']
+  const domain = hostname.split('.').reverse().slice(0, 2).reverse().join('.')
+
+  return SEO_FOLLOW_DOMAINS.includes(domain)
+}
+
 export default class {
   /**
    *
@@ -37,15 +51,19 @@ export default class {
 
     $('a').each(function () {
       const $link = $(this)
-
       const $href = $link.attr('href')
       if ($href) {
         const linkParts = new URL($href)
+
         if (linkParts.hostname === window.location.hostname && linkParts.pathname !== '/audio') {
-          if (!$link.hasClass('outbound-link')) {
+          if (!$link.hasClass('outbound-link') && !($href || '').startsWith('#')) {
             $link.addClass('spa-link')
           }
         } else {
+          if (!isEntercomDomain(linkParts.hostname)) {
+            $link.attr('rel', 'nofollow')
+          }
+
           $link.addClass('outbound-link')
           $link.attr('target', '_blank')
         }
