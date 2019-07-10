@@ -63,7 +63,7 @@
         v-model="secondaryCategory"
       ></ui-select>
       <ui-select
-        v-if="highLevelCategory === 'NEWS_LIFESTYLE'"
+        v-if="highLevelCategory === NEWS_LIFESTYLE"
         required
         has-search
         floating-label
@@ -131,11 +131,10 @@
 </template>
 <script>
   import axios from 'axios';
+  import 'whatwg-fetch';
+  import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions } from './brightcoveCategories.js';
 
   const { UiButton, UiFileupload, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
-    MUSIC_ENTERTAINMENT = 'MUSIC_ENTERTAINMENT',
-    SPORTS = 'SPORTS',
-    NEWS_LIFESTYLE = 'NEWS_LIFESTYLE',
     AD_SUPPORTED = 'AD_SUPPORTED',
     FREE = 'FREE';
 
@@ -151,16 +150,10 @@
         longDescription: '',
         stationOptions: window.kiln.locals.allStationsCallsigns,
         station: window.kiln.locals.station.callsign,
-        highLevelCategoryOptions: [
-          MUSIC_ENTERTAINMENT,
-          SPORTS,
-          NEWS_LIFESTYLE
-        ],
+        highLevelCategoryOptions,
         highLevelCategory: '',
         secondaryCategory: '',
-        tertiaryCategoryOptions: [
-          'food', 'drink', 'travel', 'home', 'health', 'environment'
-        ],
+        tertiaryCategoryOptions,
         tertiaryCategory: '',
         additionalKeywords: '',
         adSupported: AD_SUPPORTED,
@@ -176,27 +169,7 @@
     },
     computed: {
       secondaryCategoryOptions: function() {
-        let options = [];
-
-        switch (this.highLevelCategory) {
-          case MUSIC_ENTERTAINMENT:
-            options = [
-              'awards', 'performance', 'tv', 'streaming', 'digitalvideo', 'film', 'unrelatedentertainment', 'pop', 'rock', 'alternative', 'hiphop-r&b', 'country', 'classicrock', 'latino'
-            ];
-            break;
-          case SPORTS:
-            options = [
-              'nfl', 'nhl', 'mlb', 'nba', 'ncaafootball', 'ncaabasketball', 'mma-wwe', 'tennis', 'golf', 'soccer', 'unrelatedsports'
-            ];
-            break;
-          case NEWS_LIFESTYLE:
-            options = [
-              'national', 'lasvegas', 'international', 'losangeles', 'austin', 'madison', 'baltimore', 'memphis', 'boston', 'miami', 'buffalo', 'milwaukee', 'charlotte', 'minneapolis', 'chattanooga', 'neworleans', 'chicago', 'newyork', 'cleveland', 'norfolk', 'dfw', 'orlando', 'denver', 'phoenix', 'detroit', 'philadelphia', 'gainesville', 'pittsburgh', 'greensboro', 'portland', 'greenville', 'providence', 'hartford', 'richmond', 'houston', 'riverside', 'indianapolis', 'rochester', 'kansascity', 'sacramento', 'lasvegas', 'sandiego', 'losangeles', 'sanfrancisco', 'madison', 'seattle', 'memphis', 'springfield', 'miami', 'stlouis', 'milwaukee', 'washingtondc', 'minneapolis', 'wichita', 'neworleans', 'wilkesbarre'
-            ];
-            break;
-          default:
-        }
-        return options;
+        return secondaryCategoryOptions(this.highLevelCategory);
       },
       tags: function() {
         const keywords = this.additionalKeywords ? this.additionalKeywords.split(',') : [],
@@ -214,19 +187,6 @@
         const tertiaryCategory = this.highLevelCategory === NEWS_LIFESTYLE ? this.tertiaryCategory : true;
 
         return this.videoFile && this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
-      }
-    },
-    async created() {
-      if (this.data) {
-        try {
-          const video = await axios.get('/brightcove/get', { params: { id: this.data.id } });
-
-          if (video.data.id) {
-            this.uploadedVideo = video.data;
-          }
-        } catch (e) {
-          console.error('Error retrieving video info');
-        }
       }
     },
     methods: {
@@ -267,6 +227,7 @@
 
         if (signed_url && api_request_url && videoID) {
           try {
+            // Upload video file to Brightcove S3
             const uploadToS3Response = await fetch(signed_url, {
               method: 'PUT',
               body: videoFile,
@@ -293,15 +254,17 @@
           } catch (e) {
             this.loading = false;
             this.uploadStatus = {type: 'error', message: `Failed to upload video to Brightcove S3. ${e}`};
-            throw e;
           }
+        } else {
+          this.loading = false;
+          this.uploadStatus = {type: 'error', message: `Failed to create video. ${createResponse}`};
         }
       },
       getIngestStatus(jobID, videoID) {
         this.ingestStatus = { type: 'info', message: 'Creating video renditions...' };
         setTimeout(async () => {
           const { data: ingestStatus } = await axios.post('/brightcove/ingestStatus', { jobID, videoID });
-          
+
           if (['finished', 'failed'].includes(ingestStatus)) {
             this.loading = false;
             this.ingestStatus.message = `${ingestStatus.replace('f','F')} creating renditions!`;

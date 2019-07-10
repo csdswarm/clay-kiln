@@ -87,9 +87,6 @@ const brightcoveApi = require('../universal/brightcoveApi'),
           { signed_url, api_request_url } = await brightcoveApi.getS3Urls(createdVidID, sourceName);
 
         if (signed_url && api_request_url) {
-          // Step 3: Upload video file to Brightcove S3 ******* DO ON FE
-          // curl -X PUT "signed_url" --upload-file FILE_PATH_FOR_LOCAL_ASSET_GOES_HERE
-
           res.send({signed_url, api_request_url, videoID: createdVidID});
         } else {
           res.send('Failed to fetch brightcove S3 URLs.');
@@ -135,6 +132,13 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       res.send(e);
     }
   },
+  /**
+   * Get status of ingest job
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {Promise}
+   */
   getIngestStatus = async (req, res) => {
     const {
       videoID,
@@ -197,6 +201,14 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       res.send(e);
     }
   },
+  /**
+   * Get video object from brightcove by ID
+   * Returns full or transformed object
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {Promise}
+   */
   getVideoByID = async (req, res) => {
     try {
       const video = await brightcoveApi.request('GET', `videos/${req.query.id}`);

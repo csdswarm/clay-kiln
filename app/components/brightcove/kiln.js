@@ -23,7 +23,7 @@ module.exports = (schema) => {
       schema.clickToPlay.value(false);
     }
   });
-  
+
   /* This field is set by searchVideo, newVideo or updateVideo
   * and should not be visible in editor settings
   */
@@ -41,7 +41,7 @@ module.exports = (schema) => {
           schema.updateVideo.setProp('_has', { input: 'brightcove-update' });
           schema.updateVideo.show(); // retrigger created() hook of updateVideo input
         }
-      } catch (e) {console.log(e);}
+      } catch (e) {}
     }
   });
 
