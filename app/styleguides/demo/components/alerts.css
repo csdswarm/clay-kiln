@@ -1,3 +1,52 @@
 .alerts-manager {
-    min-width: em(600);
+    min-width: em(900);
+
+    &__time-picker {
+        display: flex;
+        justify-content: space-between;
+
+        .ui-datepicker {
+            flex-grow: 1;
+            margin: em(10) em(10) em(10) 0
+        }
+
+        .ui-textbox {
+            flex-grow: 1;
+            margin: em(10) 0 em(10) em(10)
+        }
+    }
+
+    .page-list-headers {
+        &__start, &__end {
+            flex: 1 1 em(200);
+            align-items: center;
+        }
+
+        &__message {
+            flex: 1 1 em(400);
+            align-items: center;
+        }
+
+        &__breaking {
+            flex: 1 1 em(100);
+            align-items: center;
+        }
+    }
+
+    .page-list-item {
+        &__start, &__end {
+            flex: 1 1 em(200);
+            padding: em(5);
+        }
+
+        &__message {
+            flex: 1 1 em(400);
+            padding: em(5);
+        }
+
+        &__breaking {
+            flex: 1 1 em(100);
+            padding: em(5)
+        }
+    }
 }
