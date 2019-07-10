@@ -16,6 +16,7 @@ module.exports = (schema) => {
 
   schema.autoplayUnmuted.on('change', (value) => {
     if (value) {
+      schema.autoplayUnmuted.showSnackBar({message: 'Some browsers may disable autoplayed videos if unmuted'});
       schema.clickToPlay.value(false);
     }
   });
