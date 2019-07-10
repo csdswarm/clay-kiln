@@ -103,13 +103,12 @@
         async created() {
             if (this.data) {
                 try {
-                    const results = await axios.get('/brightcove/search', {params: { query: this.data.id }});
-                    if (results.data[0]) {
-                        this.video = results.data[0];
+                    const { status, data: results } = await axios.get('/brightcove/search', {params: { query: this.data.id }});
+
+                    if (status === 200 && results[0]) {
+                        this.video = results[0];
                     }
-                } catch (e) {
-                    console.error('Error retrieving video info');
-                }
+                } catch (e) {}
             }
         },
         methods: {
@@ -122,8 +121,15 @@
                 const {query, endDate, startDate} = this.params
 
                 if (query || endDate || startDate) {
-                    axios.get('/brightcove/search', {params: {query, endDate, startDate}}).then(response => {
-                        this.searchResults = response.data;
+                    axios.get('/brightcove/search', {params: {query, endDate, startDate}}).then(({ status, data }) => {
+                        if (status === 200 && data) {
+                            this.searchResults = data;
+                        } else {
+                            this.searchResults = [];
+                        }
+                        this.loading = false;
+                    }).catch(e => {
+                        this.searchResults = [];
                         this.loading = false;
                     });
                 } else {

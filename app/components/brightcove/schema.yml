@@ -27,6 +27,7 @@ updateVideo:
   _reveal:
     field: video
     operator: truthy
+
 autoplayUnmuted:
   _label: Autoplay / unmuted (Happy Birthday Videos Only)
   _has: checkbox
@@ -45,7 +46,7 @@ _groups:
     _placeholder:
       text: Brightcove Video
       height: 30px;
-      ifEmpty: searchVideo AND newVideo
+      ifEmpty: searchVideo AND newVideo AND video
     fields:
       - video (Update video)
       - showTitle (Update video)

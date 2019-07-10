@@ -37,15 +37,15 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   search = async (req, res) => {
     try {
       return brightcoveApi.request('GET', 'videos', {q: buildQuery(req.query), limit: 10})
-        .then(transformVideoResults)
+        .then(({ body }) => transformVideoResults(body))
         .then(results => res.send(results))
         .catch(e => {
           console.error(e);
-          res.send(e);
+          res.status(500).send(e);
         });
     } catch (e) {
       console.error(e);
-      res.send(e);
+      res.status(500).send(e);
     }
   },
   /**
@@ -69,34 +69,35 @@ const brightcoveApi = require('../universal/brightcoveApi'),
 
     try {
       // Step 1: Create video object in video cloud
-      const {name: createdVidName, id: createdVidID} = await brightcoveApi.request('POST', 'videos', null, {
-        name,
-        description,
-        long_description,
-        custom_fields: {
-          station,
-          high_level_category
-        },
-        tags,
-        economics
-      });
+      const { status, statusText, body: video } = await brightcoveApi.request('POST', 'videos', null, {
+          name,
+          description,
+          long_description,
+          custom_fields: {
+            station,
+            high_level_category
+          },
+          tags,
+          economics
+        }),
+        { name: createdVidName, id: createdVidID } = video;
 
-      if (createdVidName && createdVidID) {
+      if (status === 200 && createdVidName && createdVidID) {
         const sourceName = slugify(createdVidName),
           // Step 2: Request for Brightcove S3 Urls
-          { signed_url, api_request_url } = await brightcoveApi.getS3Urls(createdVidID, sourceName);
+          { status, statusText, signed_url, api_request_url } = await brightcoveApi.getS3Urls(createdVidID, sourceName);
 
         if (signed_url && api_request_url) {
           res.send({signed_url, api_request_url, videoID: createdVidID});
         } else {
-          res.send('Failed to fetch brightcove S3 URLs.');
+          res.status(status).send(statusText);
         }
       } else {
-        res.send('Failed to create video object in Brightcove.');
+        res.status(status).send(statusText);
       }
     } catch (e) {
       console.error(e);
-      res.send(e);
+      res.status(500).send(e);
     }
   },
   /**
@@ -114,22 +115,22 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     } = req.body;
 
     try {
-      const ingestResponse = await brightcoveApi.ingestVideoFromS3(videoID, api_request_url);
+      const { status, statusText, body: ingestResponse } = await brightcoveApi.ingestVideoFromS3(videoID, api_request_url);
 
-      if (ingestResponse.id) {
-        const video = await brightcoveApi.request('GET', `videos/${videoID}`);
+      if (status === 200 && ingestResponse.id) {
+        const { status, statusText, body: video } = await brightcoveApi.request('GET', `videos/${ videoID }`);
 
-        if (video.id) {
+        if (status === 200 && video.id) {
           res.send({ video: transformVideoResults([video])[0], jobID: ingestResponse.id });
         } else {
-          res.send('Failed to fetch created video.');
+          res.status(status).send(statusText);
         }
       } else {
-        res.send('Failed to ingest video file from S3.');
+        res.status(status).send(statusText);
       }
     } catch (e) {
       console.error(e);
-      res.send(e);
+      res.status(500).send(e);
     }
   },
   /**
@@ -146,16 +147,16 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     } = req.body;
 
     try {
-      const ingestJobStatus = await brightcoveApi.getStatusOfIngestJob(videoID, jobID);
+      const { status, statusText, body: ingestJobStatus } = await brightcoveApi.getStatusOfIngestJob(videoID, jobID);
 
-      if (ingestJobStatus === 'finished') {
-        res.send(ingestJobStatus);
+      if (status === 200) {
+        res.send(ingestJobStatus.state);
       } else {
-        res.send(`Failed to ingest video file from S3. Job status: ${ingestJobStatus}`);
+        res.status(status).send(statusText);
       }
     } catch (e) {
       console.error(e);
-      res.send(e);
+      res.status(500).send(e);
     }
   },
   /**
@@ -179,7 +180,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
 
     try {
       // Patch video object in video cloud
-      const updateResponse = await brightcoveApi.request('PATCH', `videos/${video.id}`, null, {
+      const { status, statusText, body: updateResponse } = await brightcoveApi.request('PATCH', `videos/${ video.id }`, null, {
         name,
         description,
         long_description,
@@ -191,14 +192,14 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         economics
       });
 
-      if (updateResponse.id) {
+      if (status === 200 && updateResponse.id) {
         res.send(updateResponse);
       } else {
-        res.send('Failed to update video object in Brightcove.');
+        res.status(status).send(statusText);
       }
     } catch (e) {
       console.error(e);
-      res.send(e);
+      res.status(500).send(e);
     }
   },
   /**
@@ -211,20 +212,20 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    */
   getVideoByID = async (req, res) => {
     try {
-      const video = await brightcoveApi.request('GET', `videos/${req.query.id}`);
+      const { status, statusText, body: video } = await brightcoveApi.request('GET', `videos/${ req.query.id }`);
 
-      if (video.id) {
+      if (status === 200 && video.id) {
         if (!req.query.full_object) {
           res.send(transformVideoResults([video])[0]);
         } else {
           res.send(video);
         }
       } else {
-        res.send(`Error fetching video with ID ${req.query.id}`);
+        res.status(status).send(statusText);
       }
     } catch (e) {
       console.error(e);
-      res.send(e);
+      res.status(500).send(e);
     }
   },
   /**

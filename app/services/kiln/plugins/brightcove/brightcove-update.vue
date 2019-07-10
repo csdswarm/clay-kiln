@@ -194,12 +194,12 @@
     async created() {
       if (this.data) {
         try {
-          const { data: video } = await axios.get('/brightcove/get', { params: {
+          const { status, data: video } = await axios.get('/brightcove/get', { params: {
               id: this.data.id,
               full_object: true
             } });
 
-          if (video.id) {
+          if (status === 200 && video.id) {
             this.updatedVideo = video;
             this.videoName = this.updatedVideo.name;
             this.shortDescription = this.updatedVideo.description;
@@ -210,6 +210,8 @@
             this.tertiaryCategory = this.derivedTertiaryCategory;
             this.additionalKeywords = this.derivedKeywords;
             this.adSupported = this.updatedVideo.economics;
+          } else {
+            this.updateStatus = { type: 'error', message: `${ status } Error retrieving video info. ${ video }` };
           }
         } catch (e) {
           this.updateStatus = { type: 'error', message: `Error retrieving video info. ${e}` };
@@ -238,18 +240,23 @@
         const { updatedVideo: video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
 
         this.loading = true;
-        const { data: updateResponse } = await axios.post('/brightcove/update', { video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
+        try {
+          const { status, data: updateResponse } = await axios.post('/brightcove/update', { video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
 
-        this.loading = false;
+          this.loading = false;
 
-        if (updateResponse.id) {
-          this.updatedVideo = updateResponse;
-          this.transformedVideo = transformVideoResults([updateResponse])[0];
+          if (status === 200 && updateResponse.id) {
+            this.updatedVideo = updateResponse;
+            this.transformedVideo = transformVideoResults([updateResponse])[0];
 
-          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.transformedVideo });
-          this.updateStatus = { type: 'success', message: `Successfully updated video. Last Updated: ${ updateResponse.updated_at }` };
-        } else {
-          this.updateStatus = { type: 'error', message: `Failed to update video. ${ JSON.stringify(updateResponse) }` };
+            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.transformedVideo });
+            this.updateStatus = { type: 'success', message: `Successfully updated video. Last Updated: ${ updateResponse.updated_at }` };
+          } else {
+            this.updateStatus = { type: 'error', message: `${ status } Failed to update video. ${ updateResponse }` };
+          }
+        } catch(e) {
+          this.loading = false;
+          this.updateStatus = { type: 'error', message: `Failed to update video. ${e}` };
         }
       }
     },

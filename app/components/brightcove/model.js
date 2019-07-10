@@ -3,7 +3,7 @@
 const apiHelper = require('./api-helper');
 
 module.exports.save = async (ref, data) => {
-  if (data.video.id) {
+  if (data.video && data.video.id) {
     return await apiHelper.addVideoDetails(data);
   }
   return data;
@@ -17,7 +17,7 @@ module.exports.render = async (ref, data, locals) => {
   data.seoHeadline = data.description || data.name;
   data.seoDescription = data.longDescription || data.description || data.name;
 
-  if (data.video.id) {
+  if (video.id) {
     data.seoEmbedUrl = `https://players.brightcove.net/${locals.site.brightcoveAccountId}/${locals.site.brightcovePlayerId}_default/index.html?videoId=${video.id}`;
     data.views = await apiHelper.getVideoViews(video.id);
   }
