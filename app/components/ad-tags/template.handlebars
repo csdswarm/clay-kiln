@@ -1,0 +1,10 @@
+<div class="component component--ad-tags" data-uri="{{ default _ref _self }}" data-editable="items">
+  {{~#if items.length ~}}
+    <h4 class="editor-description">Ad Tags</h4>
+    <ul class="ad-tags">
+      {{~#each items as |adTag| ~}}
+        <li class="ad-tags__item" data-normalized-ad-tag="{{ replace (trim (lowercase adTag.text)) ' ' '-' }}">{{adTag.text}}</li>
+      {{~/each~}}
+    </ul>
+  {{~/if~}}
+</div>

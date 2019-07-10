@@ -27,6 +27,10 @@
   display: none;
 }
 
+body:not(.kiln-edit-mode) .component--tags .editor-description {
+  display: none;
+}
+
 .component--tags .tags,
 .component--tags .tags-item {
   display: inline-block;
@@ -41,6 +45,10 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+  }
+
+  .editor-description {
+    margin-bottom: em(10);
   }
 }
 

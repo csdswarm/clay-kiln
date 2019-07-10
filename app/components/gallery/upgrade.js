@@ -1,6 +1,7 @@
 'use strict';
 
-const isEmpty = require('lodash/isEmpty'),
+const addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  isEmpty = require('lodash/isEmpty'),
   cuid = require('cuid'),
   rest = require('../../services/universal/rest'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
@@ -127,4 +128,11 @@ module.exports['5.0'] = async function (uri, data) {
       _ref: shareInstanceUri
     }
   };
+};
+
+// ensure adTags exists
+module.exports['6.0'] = async function (uri, data) {
+  data = addAdTags('gallery', uri, data);
+
+  return data;
 };

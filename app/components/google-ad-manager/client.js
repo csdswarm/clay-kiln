@@ -271,8 +271,8 @@ function getAdTargeting(pageData, urlPathname) {
     case 'article':
     case 'vgallery':
       adTargetingData.targetingTags = [pageData.pageName];
-      [...document.querySelectorAll('.component--tags .tags__item')].forEach(tag => {
-        adTargetingData.targetingTags.push(tag.getAttribute('data-tag'));
+      [...document.querySelectorAll('.component--ad-tags .ad-tags__item')].forEach(tag => {
+        adTargetingData.targetingTags.push(tag.getAttribute('data-normalized-ad-tag'));
       });
       adTargetingData.targetingPageId = (pageData.pageName + '_' + urlPathname.split('/').pop()).substring(0, 39);
       [...document.querySelectorAll('.component--article .author')].forEach(tag => {

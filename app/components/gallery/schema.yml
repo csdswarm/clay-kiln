@@ -1,4 +1,4 @@
-_version: 5.0
+_version: 6.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -535,3 +535,7 @@ tags:
   _component:
     include:
       - tags
+adTags:
+  _component:
+    include:
+      - ad-tags

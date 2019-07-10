@@ -1,6 +1,7 @@
 'use strict';
 
-const rest = require('../../services/universal/rest'),
+const addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  rest = require('../../services/universal/rest'),
   getComponentInstance = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
   putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
 
@@ -83,6 +84,13 @@ module.exports['4.0'] = async (uri, data) => {
         });
     }
   }
+
+  return data;
+};
+
+// ensure adTags exists
+module.exports['5.0'] = async function (uri, data) {
+  data = addAdTags('article', uri, data);
 
   return data;
 };
