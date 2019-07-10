@@ -1,4 +1,5 @@
 {{ set 'uniquePlayerID' (randomString 'youtube-player-') }}
+
 {{#ifAny @root.locals.edit videoValid}}
 <div data-uri="{{ default _ref _self }}" class="component component--youtube{{if @root.locals.edit ' edit-mode'}}{{#ifAny (compare videoType 'Related') (compare videoType 'Sponsored')}} site-accents{{/ifAny}}{{ if playerBorderTop ' border-top' }}{{ if playerBorderBottom ' border-bottom' }}"
      data-element-id="{{ uniquePlayerID }}"
@@ -32,13 +33,13 @@
         <div id="{{ uniquePlayerID }}"></div>
       </div>
     {{else}}
-      {{#unless videoValid}}
-        <div data-placeholder="videoValid"></div>
-      {{else}}
-        {{#if videoThumbnail}}
-          <img class="youtube-video-preview" src="{{ videoThumbnail }}" alt="">
-        {{/if}}
-      {{/unless}}
+      {{#if contentId}}
+        <div class="kiln-placeholder" style="min-height: 20px; margin-bottom: 20px;">
+          <div class="placeholder-label">
+            <span class="placeholder-text">Youtube {{if isPlaylist "Playlist" else="Video"}} ID: {{ contentId }}</span>
+          </div>
+        </div>
+      {{/if}}
     {{/unless}}
   </div>
 
