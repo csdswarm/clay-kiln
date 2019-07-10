@@ -14,9 +14,9 @@ const rest = require('../universal/rest'),
    * @return {boolean}
    */
   isEntercomDomain = (hostname) => {
-    const SEO_FOLLOW_DOMAINS = ['1thingus.com,entercom.com','culinarykitchenchicago.com','dfwrestaurantweek.com',
-        'musictowndetroit.com','mensroomlive.com','jimrome.com','radio.com'],
-      domain = hostname.split('.').reverse().slice(0,2).reverse().join('.');
+    const SEO_FOLLOW_DOMAINS = ['1thingus.com,entercom.com', 'culinarykitchenchicago.com', 'dfwrestaurantweek.com',
+        'musictowndetroit.com', 'mensroomlive.com', 'jimrome.com', 'radio.com'],
+      domain = hostname.split('.').reverse().slice(0, 2).reverse().join('.');
 
     return SEO_FOLLOW_DOMAINS.includes(domain);
   },
