@@ -1,32 +1,25 @@
 @import "_global/fonts";
 
-body:not(.kiln-edit-mode) .component--ad-tags {
-  display: none;
-
-  .editor-description {
-    display: none;
-  }
-}
-
 .component--ad-tags {
   clear: both;
   margin-bottom: em(15);
 
+  /* only visible in edit mode */
+  display: none;
+
   .editor-description {
     margin-bottom: em(10);
   }
+}
+
+body.kiln-edit-mode .component--ad-tags {
+  display: block;
 }
 
 @media screen and (min-width:600px) {
   .component--ad-tags {
     margin-bottom: em(10);
     margin-top: em(16);
-  }
-}
-
-@media print {
-  .component--ad-tags {
-    display: none;
   }
 }
 
