@@ -70,7 +70,7 @@ function uriToUrl(uri, locals) {
     port = _get(locals, 'site.port'),
     parsed = _parse(`${protocol}://${uri}`);
 
-  if (port !== 80) {
+  if (port !== 80 && port !== 443) {
     parsed.set('port', port);
   }
 

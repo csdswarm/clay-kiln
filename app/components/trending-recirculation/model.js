@@ -1,6 +1,8 @@
 'use strict';
 
-const _ = require('lodash'),
+const _get = require('lodash/get'),
+  abTest = require('../../services/universal/a-b-test'),
+  lyticsApi = require('../../services/universal/lyticsApi'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   elasticFields = [
@@ -9,7 +11,8 @@ const _ = require('lodash'),
     'canonicalUrl',
     'feedImgUrl',
     'sectionFront'
-  ];
+  ],
+  defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 /**
  * @param {string} ref
@@ -22,7 +25,7 @@ module.exports.save = (ref, data, locals) => {
     return data;
   }
 
-  return Promise.all(_.map(data.items, async (item) => {
+  return Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
     const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
@@ -46,4 +49,35 @@ module.exports.save = (ref, data, locals) => {
 
       return data;
     });
+};
+
+/**
+ * @param {string} ref
+ * @param {object} data
+ * @param {object} locals
+ * @returns {Promise}
+ */
+module.exports.render = async (ref, data, locals) => {
+  if (abTest()) {
+    const lyticsId = _get(locals, 'lytics.uid'),
+      noUserParams = lyticsId ? {} : {url: locals.url},
+      recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, contentsegment: 'recommended_for_you', ...noUserParams}),
+      articles = recommendations.map(upd => ({
+        url: `https://${upd.url}`,
+        canonicalUrl: `https://${upd.url}`,
+        primaryHeadline: upd.title,
+        feedImgUrl: upd.primary_image || defaultImage
+      }));
+
+    if (articles.length > 0) {
+      data.items = articles;
+      data.lytics = true;
+    }
+  }
+
+  (data.items || []).map(item => {
+    item.params = `?article=${data.lytics ? 'recommended' : 'curated'}`;
+  });
+
+  return data;
 };

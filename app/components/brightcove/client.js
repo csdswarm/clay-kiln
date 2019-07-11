@@ -24,7 +24,7 @@ class Brightcove extends Video {
     clientCommunicationBridge.subscribe('ClientWebPlayerPlaybackStatus', async ({playerState}) => {
       this.webPlayerPlaybackState = playerState;
       if (this.webPlayerPlaybackState === 'play') {
-        this.removeStickyPlayer();
+        this.hideStickyPlayer();
       }
     });
   }
@@ -41,6 +41,16 @@ class Brightcove extends Video {
     this.clickToPlay = video.getAttribute('data-click-to-play') === 'true';
 
     return { id, media, node };
+  }
+  /**
+   * @override
+   */
+  prepareMedia() {
+    super.prepareMedia();
+
+    this.addEvent(this.getEventTypes().MEDIA_PLAY, () => {
+      this.active = true;
+    });
   }
   /**
    * @override
@@ -79,6 +89,14 @@ class Brightcove extends Video {
   /**
    * @override
    */
+  async pause() {
+    this.active = false;
+    this.hideStickyPlayer();
+    await super.pause();
+  }
+  /**
+   * @override
+   */
   async mute() {
     await this.getMedia().muted(true);
   }
@@ -92,11 +110,11 @@ class Brightcove extends Video {
     }
   }
   /**
-   * add brightcove sticky player if web player is paused or not on page
+   * show brightcove sticky player if web player is paused or not on page
    *
    * @return {Boolean}
    */
-  addStickyPlayer() {
+  showStickyPlayer() {
     if (clientCommunicationBridge.getLatest('ClientWebPlayerMountPlayer')) {
       this.videoPlayerWrapper.classList.add('web-player-exists');
     }
@@ -112,7 +130,7 @@ class Brightcove extends Video {
   /**
    * hide the brightcove sticky player
    */
-  removeStickyPlayer() {
+  hideStickyPlayer() {
     // remove the min height
     this.getNode().style.minHeight = 'initial';
     this.videoPlayerWrapper.classList.remove('player__video--out-of-view');
@@ -126,16 +144,13 @@ class Brightcove extends Video {
   notInView(changes) {
     let stuck = false;
 
-    // Only the lead can be sticky
-    if (this.isLead()) {
-      changes.forEach(change => {
-        if (change.intersectionRatio === 0) {
-          stuck = this.addStickyPlayer();
-        } else {
-          this.removeStickyPlayer();
-        }
-      });
-    }
+    changes.forEach(change => {
+      if (change.intersectionRatio === 0 && this.active) {
+        stuck = this.showStickyPlayer();
+      } else {
+        this.hideStickyPlayer();
+      }
+    });
     if (!stuck) {
       super.notInView(changes);
     }

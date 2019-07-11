@@ -43,7 +43,7 @@ class ClientPlayerInterface {
     if (qs.includes('webplayer')) {
       const params = qs.substring(1).split('&'),
         webPlayer = params.find(item => item.includes('webplayer'));
-
+        
       webPlayerParam = webPlayer.split('=')[1];
     }
 
