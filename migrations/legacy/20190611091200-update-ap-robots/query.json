@@ -1,0 +1,25 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "nested": {
+            "path": "byline",
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "match_phrase": {
+                      "byline.sources.text": "The Associated Press"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "_source": false
+}
