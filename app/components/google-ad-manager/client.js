@@ -270,10 +270,16 @@ function getAdTargeting(pageData, urlPathname) {
   switch (pageData.page) {
     case 'article':
     case 'vgallery':
-      adTargetingData.targetingTags = [pageData.pageName];
-      [...document.querySelectorAll('.component--ad-tags .ad-tags__item')].forEach(tag => {
-        adTargetingData.targetingTags.push(tag.getAttribute('data-normalized-ad-tag'));
-      });
+      const adTagsEl = document.querySelector('.component--ad-tags'),
+        adTags = adTagsEl
+          ? (adTagsEl.getAttribute('data-normalized-ad-tags') || '').split(',')
+          : [];
+
+      adTargetingData.targetingTags = [
+        pageData.pageName,
+        ...adTags
+      ];
+
       adTargetingData.targetingPageId = (pageData.pageName + '_' + urlPathname.split('/').pop()).substring(0, 39);
       [...document.querySelectorAll('.component--article .author')].forEach(tag => {
         adTargetingData.targetingAuthors.push(tag.getAttribute('data-author').replace(/\s/, '-').toLowerCase());
@@ -306,6 +312,10 @@ function getAdTargeting(pageData, urlPathname) {
     case 'stationDetail':
       adTargetingData.targetingTags = [doubleclickPageTypeTagStationDetail, 'unity'];
       adTargetingData.targetingPageId = pageData.pageName;
+
+      // this is a bug in the linter.  It wants to join this const with the one
+      //   in a previous case statement.
+      // eslint-disable-next-line one-var
       const stationDetailComponent = document.querySelector('.component--station-detail'),
         stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
         station = stationDetailEl ? JSON.parse(stationDetailEl.innerHTML) : {},

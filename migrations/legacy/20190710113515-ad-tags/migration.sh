@@ -16,7 +16,18 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "\ninitializing /_lists/ad-tags...\n\n"
+printf "\ninitializing ad-tags...\n\n"
+
+# create ad-tags/instances/new
+curl -X PUT "$http://$1/_components/ad-tags/instances/new" \
+  --silent \
+  --show-error \
+  -H 'authorization: token accesskey' \
+  -H 'content-type: application/json' \
+  -d '{"items":[]}' >/dev/null
+
+
+# initialize /_lists/ad-tags for list autocompletion
 
 # from here
 # https://stackoverflow.com/a/2220646
@@ -25,5 +36,10 @@ response=$(curl --write-out %{http_code} --silent --output /dev/null "$http://$1
 # I'm assuming we'll only receive 200 and 404 responses but PUT'ing on
 #   everything not 200 will catch a few unexpected cases.
 if [ "${response}" != "200" ]; then
-  curl -X PUT "$http://$1/_lists/ad-tags" -H 'authorization: token accesskey' -H 'content-type: application/json' -d '[]'
+  curl -X PUT "$http://$1/_lists/ad-tags" \
+    --silent \
+    --show-error \
+    -H 'authorization: token accesskey' \
+    -H 'content-type: application/json' \
+    -d '[]' >/dev/null
 fi

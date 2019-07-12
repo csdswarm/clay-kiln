@@ -27,10 +27,6 @@
   display: none;
 }
 
-body:not(.kiln-edit-mode) .component--tags .editor-description {
-  display: none;
-}
-
 .component--tags .tags,
 .component--tags .tags-item {
   display: inline-block;

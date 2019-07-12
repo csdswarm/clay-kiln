@@ -1,6 +1,8 @@
 <div class="component component--tags" data-uri="{{ default _ref _self }}" data-editable="items">
   {{~#if items.length ~}}
-    <h4 class="editor-description">Editorial Tags</h4>
+    {{~#if @root.locals.edit ~}}
+      <h4 class="editor-description">Editorial Tags</h4>
+    {{~/if~}}
     <ul class="tags {{#if sectionFront}}tags--{{sectionFront}}{{/if}}">
       {{! visible tags }}
       {{! original nunjucks logic appears less verbose, moved some logic out of tag for clarity }}

@@ -4,16 +4,9 @@
   clear: both;
   margin-bottom: em(15);
 
-  /* only visible in edit mode */
-  display: none;
-
   .editor-description {
     margin-bottom: em(10);
   }
-}
-
-body.kiln-edit-mode .component--ad-tags {
-  display: block;
 }
 
 @media screen and (min-width:600px) {

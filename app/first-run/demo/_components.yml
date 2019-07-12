@@ -556,10 +556,6 @@ _components:
     instances:
       new:
         items: []
-  ad-tags:
-    instances:
-      new:
-        items: []
 
   podcast-list:
     instances:
@@ -641,8 +637,6 @@ _components:
             _ref: /_components/paragraph/instances/new
         tags:
           _ref: /_components/tags/instances/new
-        adTags:
-          _ref: /_components/ad-tags/instances/new
         sideShare:
           _ref: /_components/share/instances/new
         # bottomShare:
