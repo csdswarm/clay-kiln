@@ -84,3 +84,5 @@ radio-web-player
 
 # Update notifier
 app/.config/configstore/*
+
+.snapshot

@@ -171,3 +171,11 @@ _users:
     username: ricky.harkins@swarmsolutions.com
     provider: google
     auth: admin
+  -
+    username: phil.olson@swarmsolutions.com
+    provider: google
+    auth: admin
+  -
+    username: ben.leffler@swarmsolutions.com
+    provider: google
+    auth: admin

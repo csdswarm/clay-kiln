@@ -32,6 +32,8 @@ _components:
       _ref: /_components/share/instances/new
     sectionFront: ''
     contentType: 'gallery'
+    stationSyndication: []
+    genreSyndication: []
     syndicatedUrl: ''
     syndicationStatus: original
     showSocial: true
@@ -42,3 +44,5 @@ _components:
     crumbs: []
     featured: false
     editorialFeeds: {}
+    isContentFromAP: false
+    noIndexNoFollow: false

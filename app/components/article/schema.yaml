@@ -1,4 +1,4 @@
-_version: 3.0
+_version: 5.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -379,6 +379,14 @@ editorialFeeds:
     search: true
     list: freq_editorial_feeds
     help: Select all editorial feeds terms for syndication
+stationSyndication:
+  _label: Syndicate to station(s)
+  _has:
+    input: station-select
+genreSyndication:
+  _label: Syndicate to genre(s)
+  _has:
+    input: genre-select
 
 _groups:
   publishedDate:
@@ -432,10 +440,14 @@ _groups:
       - showSocial
       - sectionFront
       - hasSecondaryBylines
+      - apContent
+      - noIndexNoFollow
   syndication:
     fields:
       - featured
       - editorialFeeds
+      - stationSyndication
+      - genreSyndication
       - syndicationStatus
       - syndicatedUrl
 
@@ -490,3 +502,20 @@ tags:
   _component:
     include:
       - tags
+
+apContent:
+  _label: [No Index / No Follow is always ON for AP]
+  _has: static
+  _reveal:
+    field: isContentFromAP
+    operator: ===
+    value: true
+
+noIndexNoFollow:
+  _publish: noIndexNoFollow
+  _label: No Index / No Follow
+  _has: checkbox
+  _reveal:
+    field: isContentFromAP
+    operator: ===
+    value: false
