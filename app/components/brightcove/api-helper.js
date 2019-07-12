@@ -9,7 +9,7 @@ const proxyHelper = require('../../services/universal/brightcove-proxy-helper'),
  * @param {Object} data
  */
 async function addVideoDetails(data) {
-  if (!data.video.id) {
+  if (!data.video || !data.video.id) {
     return null;
   }
 

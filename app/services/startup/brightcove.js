@@ -70,20 +70,20 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     try {
       // Step 1: Create video object in video cloud
       const { status, statusText, body: video } = await brightcoveApi.request('POST', 'videos', null, {
-          name,
-          description,
-          long_description,
-          custom_fields: {
-            station,
-            high_level_category
-          },
-          tags,
-          economics
-        }),
-        { name: createdVidName, id: createdVidID } = video;
+        name,
+        description,
+        long_description,
+        custom_fields: {
+          station,
+          high_level_category
+        },
+        tags,
+        economics
+      });
 
-      if (status === 200 && createdVidName && createdVidID) {
-        const sourceName = slugify(createdVidName),
+      if (status === 201 && video) {
+        const { name: createdVidName, id: createdVidID } = video,
+          sourceName = slugify(createdVidName),
           // Step 2: Request for Brightcove S3 Urls
           { status, statusText, signed_url, api_request_url } = await brightcoveApi.getS3Urls(createdVidID, sourceName);
 

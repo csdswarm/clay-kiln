@@ -29,17 +29,29 @@ module.exports = (schema) => {
   */
   schema.video.hide();
 
-  subscriptions.subscribe('UPDATE_FORMDATA', input => {
+  subscriptions.subscribe('UPDATE_FORMDATA', async input => {
     // set video if new video, search video, or update video was changed
     if (input.path === 'searchVideo' || input.path === 'newVideo' || input.path === 'updateVideo') {
       try {
         schema.video.value(input.data);
+        console.log("vid val:", schema.video.value());
         if (input.path !== 'updateVideo') {
-          // set updateVideo data and show input in frontend if video is set
+          // show newly selected video in update tab
           schema.updateVideo.hide();
           schema.updateVideo.value(input.data);
           schema.updateVideo.setProp('_has', { input: 'brightcove-update' });
           schema.updateVideo.show(); // retrigger created() hook of updateVideo input
+
+          const instanceSubString = '_components/brightcove/instances/',
+            brightcoveURI = subscriptions.getComponentInstances('brightcove')[0].split(instanceSubString)[0],
+            brightcoveInstanceURI = `${ brightcoveURI }${ instanceSubString }${subscriptions.url().instance}`,
+            instanceData = await subscriptions.getComponentData(brightcoveInstanceURI);
+
+          console.log('data:', instanceData);
+          subscriptions.saveComponent(brightcoveInstanceURI, { ...instanceData, video: input.data });
+          
+          // refresh so update tab has newest selected video data -- todo - broken
+          subscriptions.reRenderInstance(brightcoveInstanceURI);
         }
       } catch (e) {}
     }

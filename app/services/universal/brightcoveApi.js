@@ -7,7 +7,7 @@ let access_token,
 const log = require('./log').setup({ file: __filename }),
   rest = require('./rest'),
   brightcoveCmsApi = `cms.api.brightcove.com/v1/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/`,
-  brightcoveIngestApi = `https://ingest.api.brightcove.com/v1/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/videos/`,
+  brightcoveIngestApi = `ingest.api.brightcove.com/v1/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/videos/`,
   brightcoveAnalyticsApi = 'analytics.api.brightcove.com/v1/data',
   brightcoveOAuthApi = 'https://oauth.brightcove.com/v4/access_token?grant_type=client_credentials',
   qs = require('qs'),
@@ -192,7 +192,7 @@ const log = require('./log').setup({ file: __filename }),
       return { status, statusText, signed_url, api_request_url };
     } catch (e) {
       log('error', e);
-      return {status: 500, statusText: e};
+      return { status: 500, statusText: e };
     }
   },
   /**

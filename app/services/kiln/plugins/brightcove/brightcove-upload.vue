@@ -130,8 +130,7 @@
   </div>
 </template>
 <script>
-  import axios from 'axios';
-  import 'whatwg-fetch';
+  import 'isomorphic-fetch';
   import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions } from './brightcoveCategories.js';
 
   const { UiButton, UiFileupload, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
@@ -164,7 +163,8 @@
         ingestStatus: {
           type: 'info',
           message: ''
-        }
+        },
+        NEWS_LIFESTYLE
       };
     },
     computed: {
@@ -221,74 +221,100 @@
         this.loading = true;
         this.uploadStatus.message = null;
         this.ingestStatus.message = null;
-        const { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this,
-          { status, data: createResponse } = await axios.post('/brightcove/create', { videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
-          { signed_url, api_request_url, videoID } = createResponse;
+        try {
+          const { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this,
+            response = await fetch('/brightcove/create', {
+              method: 'POST',
+              body: JSON.stringify({ videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
+              headers: { 'Content-Type': 'application/json' }
+            }),
+            { signed_url, api_request_url, videoID } = await response.json(),
+            { status, statusText } = response;
 
-        if (status === 200 && signed_url && api_request_url && videoID) {
-          try {
-            // Upload video file to Brightcove S3
-            const { status, statusText } = await fetch(signed_url, {
-              method: 'PUT',
-              body: videoFile,
-              headers:{
-                'Content-Type': ''
-              }
-            });
+          if (status === 200 && signed_url && api_request_url && videoID) {
+            try {
+              // Upload video file to Brightcove S3
+              const { status, statusText } = await fetch(signed_url, {
+                method: 'PUT',
+                body: videoFile,
+                headers:{
+                  'Content-Type': ''
+                }
+              });
 
-            if (status === 200) {
-              const { status, data: ingestResponse } = await axios.post('/brightcove/upload', { api_request_url, videoID });
+              if (status === 200) {
+                const response = await fetch('/brightcove/upload', {
+                  method: 'POST',
+                  body: JSON.stringify({ api_request_url, videoID }),
+                  headers: { 'Content-Type': 'application/json' }
+                }),
+                { video, jobID } = await response.json(),
+                { status, statusText } = response;
 
-              if (status === 200 && ingestResponse.video.id) {
-                this.uploadedVideo = ingestResponse.video;
-                this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
-                this.uploadStatus = { type: 'success', message: 'Successfully uploaded video. Go to "Update Video" tab to edit. Please allow a few minutes for video renditions to be created.' };
-                this.getIngestStatus(ingestResponse.jobID, videoID);
+                if (status === 200 && video && jobID) {
+                  this.uploadedVideo = video;
+                  this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
+                  this.uploadStatus = { type: 'success', message: 'Successfully uploaded video. Go to "Update Video" tab to edit. Please allow a few minutes for video renditions to be created.' };
+                  this.getIngestStatus(jobID, videoID);
+                } else {
+                  this.uploadStatus = { type: 'error', message: `Failed to upload video -- ${ status } ${ statusText }` };
+                }
               } else {
-                this.uploadStatus = { type: 'error', message: `${ status } Failed to upload video. ${ ingestResponse }` };
+                this.loading = false;
+                this.uploadStatus = { type: 'error', message: `Failed to upload video to Brightcove S3 -- ${ status } ${ statusText }` };
               }
-            } else {
+            } catch (e) {
               this.loading = false;
-              this.uploadStatus = { type: 'error', message: `${ status } Failed to upload video to Brightcove S3. ${ statusText }` };
+              this.uploadStatus = { type: 'error', message: `Failed to upload video to Brightcove S3. ${e}` };
             }
-          } catch (e) {
+          } else {
             this.loading = false;
-            this.uploadStatus = { type: 'error', message: `Failed to upload video to Brightcove S3. ${e}` };
+            this.uploadStatus = { type: 'error', message: `Failed to create video -- ${ status } ${ statusText }` };
           }
-        } else {
+        } catch(e) {
           this.loading = false;
-          this.uploadStatus = { type: 'error', message: `${ status } Failed to create video. ${ createResponse }` };
+          this.uploadStatus = { type: 'error', message: `Failed to create video. ${e}` };
         }
       },
       getIngestStatus(jobID, videoID) {
         this.ingestStatus = { type: 'info', message: 'Creating video renditions...' };
         setTimeout(async () => {
           try {
-            const { status, data: ingestStatus } = await axios.post('/brightcove/ingestStatus', { jobID, videoID });
+            const response = await fetch('/brightcove/ingestStatus', {
+                method: 'POST',
+                body: JSON.stringify({ jobID, videoID }),
+                headers: { 'Content-Type': 'application/json' }
+              }),
+              ingestStatus = await response.text(),
+              { status, statusText } = response;
 
-            if (status === 200) {
+            if (status === 200 && ingestStatus) {
               if (['finished', 'failed'].includes(ingestStatus)) {
                 this.loading = false;
                 this.ingestStatus.message = `${ ingestStatus.replace('f','F') } creating renditions!`;
                 this.ingestStatus.type = ingestStatus === 'finished' ? 'success' : 'error';
                 if (ingestStatus === 'finished') {
-                  const { data: videoWithMedia } = await axios.get('/brightcove/get', { params: {
-                    id: videoID
-                  } });
+                  const response = await fetch(`/brightcove/get?id=${videoID}`),
+                    videoWithMedia = await response.json(),
+                    { status, statusText } = response;
 
-                  this.uploadedVideo = videoWithMedia;
-                  this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
+                  if (status === 200 && videoWithMedia) {
+                    this.uploadedVideo = videoWithMedia;
+                    this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
+                  } else {
+                    this.uploadStatus.message = `Failed to get video after it was created -- ${ status } ${ statusText }`;
+                  }
                 }
               } else {
                 this.getIngestStatus(jobID, videoID);
               }
             } else {
               this.loading = false;
-              this.ingestStatus.message = `${ status } Failed to get ingest job status. ${ ingestStatus }`;
+              this.ingestStatus = { type: 'error', message: `Failed to get ingest job status -- ${ status } ${ statusText }` };
             }
           } catch (e) {
             this.loading = false;
-            this.ingestStatus.message = `Failed to create renditions ${e}`;
+            this.ingestStatus = { type: 'error', message: `Failed to create renditions ${e}` };
           }
         }, 5000);
       }
