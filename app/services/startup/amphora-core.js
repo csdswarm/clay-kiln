@@ -18,6 +18,7 @@ function initAmphora(app, search, sessionStore, routes) {
     storage: require('amphora-storage-postgres'),
     eventBus: require('amphora-event-bus-redis')
   }).then(router => {
+
     router.use(healthCheck({
       env: [
         'AMBROSE_HOST',
