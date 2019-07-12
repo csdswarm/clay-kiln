@@ -69,27 +69,66 @@ function isEntercomDomain(hostname) {
 }
 
 /**
- * prepare a document for the spa with adding necessary classes
+ * prepare a link object for the spa with adding necessary classes
+ *
+ * @param {object} link
+ * @param {function} addClass
+ * @param {function} setAttribute
+ * @param {function} getAttribute
+ */
+function prepareLink(link, addClass, setAttribute, getAttribute) {
+  const href = getAttribute(link, 'href'),
+    target = getAttribute(link, 'target');
+
+  if (isSpaLink(href) && !href.startsWith('#') && target !== '_blank') {
+    addClass(link, 'spa-link');
+  } else {
+    const linkParts = new URL(href);
+
+    if (!isEntercomDomain(linkParts.hostname)) {
+      setAttribute(link, 'rel', 'nofollow');
+    }
+
+    addClass(link, 'outbound-link');
+    setAttribute(link, 'target', '_blank');
+  }
+}
+
+/**
+ * prepare a dom object for the spa with adding necessary classes
+ *
+ * @param {object} doc
+ */
+function prepareDOM(doc) {
+  const addClass = (link, className) => link.classList.add(className),
+    setAttribute = (link, name, value) => link.setAttribute(name, value),
+    getAttribute = (link, name) => link.getAttribute(name);
+
+  doc.querySelectorAll('a[href]').forEach(link => prepareLink(link, addClass, setAttribute, getAttribute));
+}
+
+/**
+ * prepare cheerio document for the spa with adding necessary classes
+ *
+ * @param {object} $
+ */
+function prepareCheerio($) {
+  const addClass = (link, className) => link.addClass(className),
+    setAttribute = (link, name, value) => link.attr(name, value),
+    getAttribute = (link, name) => link.attr(name);
+
+  $('a[href]').each(function () {
+    prepareLink($(this), addClass, setAttribute, getAttribute);
+  });
+}
+
+/**
+ * prepare dom object or cheerio object for the spa with adding necessary classes
  *
  * @param {object} doc
  */
 function prepare(doc) {
-  doc.querySelectorAll('a[href]').forEach(
-    link => {
-      if (isSpaLink(link.href) && !link.href.startsWith('#') && link.target !== '_blank') {
-        link.classList.add('spa-link');
-      } else {
-        const linkParts = new URL(link.href);
-
-        if (!isEntercomDomain(linkParts.hostname)) {
-          link.setAttribute('rel', 'nofollow');
-        }
-
-        link.classList.add('outbound-link');
-        link.setAttribute('target', '_blank');
-      }
-    }
-  );
+  doc.querySelectorAll ? prepareDOM(doc) : prepareCheerio(doc);
 }
 
 module.exports.addEventListeners = addEventListeners;

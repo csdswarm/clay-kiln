@@ -6,17 +6,17 @@ const pkg = require('../../package.json'),
   helpers = require('../universal/helpers'),
   resolveMediaService = require('../server/resolve-media'),
   { prepare } = require('../universal/spaLink'),
-  JSDOM = require('jsdom').jsdom;
+  cheerio = require('cheerio');
 
 amphoraHtml.configureRender({
   editAssetTags: true,
   cacheBuster: pkg.version,
   transformHtml: html => {
-    const doc = new JSDOM(html);
+    const $ = cheerio.load(html);
 
-    prepare(doc);
+    prepare($);
 
-    return doc.body.innerHTML;
+    return $.html();
   }
 });
 
@@ -29,4 +29,3 @@ module.exports = {
   html: amphoraHtml,
   rss: amphoraRss
 };
-
