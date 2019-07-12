@@ -4,6 +4,7 @@ const KilnInput = window.kiln.kilnInput;
 
 module.exports = (schema) => {
   const subscriptions = new KilnInput(schema);
+  let formURI;
 
   schema.video = new KilnInput(schema, 'video');
   schema.newVideo = new KilnInput(schema, 'newVideo');
@@ -30,30 +31,32 @@ module.exports = (schema) => {
   schema.video.hide();
 
   subscriptions.subscribe('UPDATE_FORMDATA', async input => {
-    // set video if new video, search video, or update video was changed
+    // set video if new video or search video was changed
     if (input.path === 'searchVideo' || input.path === 'newVideo' || input.path === 'updateVideo') {
+      schema.video.value(input.data);
+
+      console.log("Update form data.", input);
+        
       try {
-        schema.video.value(input.data);
-        console.log("vid val:", schema.video.value());
         if (input.path !== 'updateVideo') {
           // show newly selected video in update tab
-          schema.updateVideo.hide();
           schema.updateVideo.value(input.data);
           schema.updateVideo.setProp('_has', { input: 'brightcove-update' });
-          schema.updateVideo.show(); // retrigger created() hook of updateVideo input
+          schema.updateVideo.hide();
+          schema.updateVideo.show();
 
-          const instanceSubString = '_components/brightcove/instances/',
-            brightcoveURI = subscriptions.getComponentInstances('brightcove')[0].split(instanceSubString)[0],
-            brightcoveInstanceURI = `${ brightcoveURI }${ instanceSubString }${subscriptions.url().instance}`,
-            instanceData = await subscriptions.getComponentData(brightcoveInstanceURI);
+          /* 
+            TODO: need to figure out how to trigger updated() or created() hook of update plugin 
+            to reflect newly selected video when searchVideo or newVideo is set. 
+            Changing updateVideo's value through kilnjs's value() method does not trigger updated() hook / vuex state change. 
+            Using UPDATE_FORMDATA event or kilnjs reRenderInstance() also does not trigger lifecycle hook change.
+          */
+          // const instanceData = await subscriptions.getComponentData(formURI);
 
-          console.log('data:', instanceData);
-          subscriptions.saveComponent(brightcoveInstanceURI, { ...instanceData, video: input.data });
-          
-          // refresh so update tab has newest selected video data -- todo - broken
-          subscriptions.reRenderInstance(brightcoveInstanceURI);
+          // subscriptions.saveComponent(formURI, { ...instanceData, video: input.data });
+          // subscriptions.reRenderInstance(formURI); // does not rerender input, doesnt trigger hook in updateVideo plugin
         }
-      } catch (e) {}
+      } catch(e) {console.log(e);}
     }
   });
 
@@ -61,6 +64,8 @@ module.exports = (schema) => {
     // set updateVideo input and value if video exists
     const video = schema.video.value(),
       bc = document.querySelector(`[data-uri="${uri}"]`);
+
+    formURI = uri;
 
     if (!bc.closest('.lead')) {
       schema.autoplayUnmuted.hide();

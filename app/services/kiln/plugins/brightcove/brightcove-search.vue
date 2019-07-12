@@ -146,6 +146,15 @@
                 this.video = suggestion;
                 this.searchResults = [];
                 this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.video })
+                /* 
+                    TODO: need to figure out how to trigger updated() or created() hook of update plugin 
+                    to reflect newly selected video when searchVideo or newVideo is set. Changing updateVideo's value through kilnjs's value() method does not trigger updated() hook / vuex state change. Using UPDATE_FORMDATA event also does not trigger lifecycle hook change.
+                */
+                // this.$store.commit('UPDATE_FORMDATA', { path: 'updateVideo', data: this.video });
+                // try {
+                    // this.$store.commit('CLOSE_FORM');
+                    // this.$store.commit('OPEN_FORM', uri); // where can i access uri?
+                // } catch(e){console.log(e);}
             }
         },
         components: {

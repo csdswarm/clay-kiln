@@ -119,7 +119,7 @@
   </div>
 </template>
 <script>
-  import axios from 'axios';
+  import 'isomorphic-fetch';
   import { transformVideoResults } from '../../../startup/brightcove.js';
   import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions } from './brightcoveCategories.js';
 
@@ -131,7 +131,7 @@
     props: ['name', 'data', 'schema', 'args'],
     data() {
       return {
-        updatedVideo: null,
+        updatedVideo: this.data || null,
         transformedVideo: null,
         loading: false,
         videoName: '',
@@ -149,7 +149,8 @@
         updateStatus: {
           type: 'info',
           message: ''
-        }
+        },
+        NEWS_LIFESTYLE
       };
     },
     computed: {
@@ -192,12 +193,12 @@
       }
     },
     async created() {
+      console.log("UPDATE BC PLUGIN CREATED");
       if (this.data) {
         try {
-          const { status, data: video } = await axios.get('/brightcove/get', { params: {
-              id: this.data.id,
-              full_object: true
-            } });
+          const response = await fetch(`/brightcove/get?id=${ this.data.id }&full_object=true`),
+            video = await response.json(),
+            { status, statusText } = response;
 
           if (status === 200 && video.id) {
             this.updatedVideo = video;
@@ -211,12 +212,18 @@
             this.additionalKeywords = this.derivedKeywords;
             this.adSupported = this.updatedVideo.economics;
           } else {
-            this.updateStatus = { type: 'error', message: `${ status } Error retrieving video info. ${ video }` };
+            this.updateStatus = { type: 'error', message: `Error retrieving video info -- ${ status } ${ statusText }` };
           }
         } catch (e) {
-          this.updateStatus = { type: 'error', message: `Error retrieving video info. ${e}` };
+          this.updateStatus = { type: 'error', message: `Error retrieving video info -- ${e}` };
         }
       }
+    },
+    async updated() {
+      console.log("UPDATE BC PLUGIN UPDATED");
+    },
+    async mounted() {
+      console.log("UPDATE BC PLUGIN MOUNTED");
     },
     methods: {
       resetForm() {
@@ -241,7 +248,15 @@
 
         this.loading = true;
         try {
-          const { status, data: updateResponse } = await axios.post('/brightcove/update', { video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported });
+          const response = await fetch('/brightcove/update', {
+            method: 'POST',
+            body: JSON.stringify({ video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }),
+          updateResponse = await response.json(),
+          { status, statusText } = response;
 
           this.loading = false;
 
@@ -252,11 +267,11 @@
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.transformedVideo });
             this.updateStatus = { type: 'success', message: `Successfully updated video. Last Updated: ${ updateResponse.updated_at }` };
           } else {
-            this.updateStatus = { type: 'error', message: `${ status } Failed to update video. ${ updateResponse }` };
+            this.updateStatus = { type: 'error', message: `Failed to update video -- ${ status } ${ statusText }` };
           }
         } catch(e) {
           this.loading = false;
-          this.updateStatus = { type: 'error', message: `Failed to update video. ${e}` };
+          this.updateStatus = { type: 'error', message: `Failed to update video -- ${e}` };
         }
       }
     },
