@@ -7,7 +7,6 @@ const _ = require('lodash'),
   utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   canonicalProtocol = 'http',
-  canonicalPort = process.env.PORT || 3001,
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   /**
@@ -16,7 +15,7 @@ const _ = require('lodash'),
    * @param {string} uri
    * @returns {string}
    */
-  componentUri = (uri) => uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`),
+  componentUri = (uri) => uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1$2`),
   /**
    * gets a component instance
    *
@@ -141,13 +140,12 @@ function getMainComponentFromRef(componentReference, locals) {
 
 /**
  * Return the URL prefix of a site.
- * @param {object} site e.g. {prefix: 'localhost.thecut.com', port: 3001, proto: 'http'}
- * @returns {string} e.g. 'http://localhost.thecut.com:3001'
+ * @param {object} site e.g. {prefix: 'localhost.thecut.com', proto: 'http'}
+ * @returns {string} e.g. 'http://localhost.thecut.com'
  */
 function getUrlPrefix(site) {
   const proto = site && site.proto || canonicalProtocol,
-    port = site && site.port || canonicalPort,
-    urlPrefix = utils.uriToUrl(site.prefix, { site: { protocol: proto, port: port } });
+    urlPrefix = utils.uriToUrl(site.prefix, { site: { protocol: proto } });
 
   return _.trimEnd(urlPrefix, '/'); // never has a trailing slash; newer lodash uses `trimEnd`
 }

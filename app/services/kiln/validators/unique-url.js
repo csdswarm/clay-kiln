@@ -6,14 +6,6 @@ const _findKey = require('lodash/findKey'),
   rest = require('../../../services/universal/rest'),
   helpers = require('./helpers');
 
-function addPort(uri, location) {
-  const hasPort = location.port === '80' ||
-    location.port === '443' ||
-    uri.indexOf(':' + location.port) !== -1;
-
-  return hasPort ? uri : uri.replace(location.hostname, `${location.hostname}:${location.port}`);
-}
-
 function addProtocol(uri, location) {
   const hasProtocol = uri.indexOf(location.protocol) === 0;
 
@@ -21,7 +13,7 @@ function addProtocol(uri, location) {
 }
 
 /**
- * add port and protocol to uri
+ * add protocol to uri
  * @param  {string} uri
  * @param  {object} [location] passed in for testing
  * @return {string}
@@ -29,7 +21,7 @@ function addProtocol(uri, location) {
 function uriToUrl(uri, location) {
   location = location || /* istanbul ignore next: can't stub window.location */ window.location;
 
-  return addProtocol(addPort(uri, location), location);
+  return addProtocol(uri, location);
 }
 
 module.exports = {

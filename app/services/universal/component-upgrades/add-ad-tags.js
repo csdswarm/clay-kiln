@@ -2,9 +2,7 @@
 
 const _endsWith = require('lodash/endsWith'),
   cuid = require('cuid'),
-  rest = require('../rest'),
-  getComponentInstance = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
+  { getComponentInstance, putComponentInstance } = require('../../server/publish-utils');
 
 /**
  * This function mutates and returns the passed in component instance data for a

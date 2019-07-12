@@ -1,9 +1,7 @@
 'use strict';
 
 const addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
-  rest = require('../../services/universal/rest'),
-  getComponentInstance = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
+  { getComponentInstance, putComponentInstance } = require('../../server/publish-utils');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference

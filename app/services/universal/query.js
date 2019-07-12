@@ -250,7 +250,7 @@ function onlyWithTheseFields(query, fields) {
  * @returns {Object}
  */
 function onlyWithinThisSite(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}});
+  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}});
 
   addFilter(query, {prefix: {canonicalUrl: prefix}});
 
@@ -263,7 +263,7 @@ function onlyWithinThisSite(query, site) {
  * @returns {object}
  */
 function withinThisSiteAndCrossposts(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}}),
+  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}}),
     prefixFilter = {prefix: {canonicalUrl: prefix}};
   var crosspostFilter = {term: {}},
     shouldFilter = { bool: { should: [], minimum_should_match: 1 } };

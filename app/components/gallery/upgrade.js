@@ -3,10 +3,11 @@
 const addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
   isEmpty = require('lodash/isEmpty'),
   cuid = require('cuid'),
-  rest = require('../../services/universal/rest'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
-  getComponentInstanceObj = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
+  {
+    getComponentInstance: getComponentInstanceObj,
+    putComponentInstance
+  } = require('../../services/server/publish-utils');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference

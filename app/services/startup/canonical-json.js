@@ -15,7 +15,7 @@ const _ = require('lodash'),
  */
 function fakeLocals(req, res, params) {
   _.each(sites.sites(), site => {
-    res.locals.url = db.uriToUrl(req.hostname + req.originalUrl, site.protocol, site.port);
+    res.locals.url = db.uriToUrl(req.hostname + req.originalUrl, { site });
     res.locals.site = site;
     res.locals.params = params;
   });
