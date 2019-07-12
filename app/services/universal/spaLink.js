@@ -1,6 +1,8 @@
 'use strict';
 
-const URL = require('url-parse');
+const URL = require('url-parse'),
+  // https://regex101.com/r/gDfIxb/1
+  spaLinkRegex = new RegExp(`^.*(?=${process.env.CLAY_SITE_HOST}).*$`);
 
 /**
  * Add SPA navigation listener to links
@@ -49,12 +51,6 @@ function navigateTo(path) {
  * @returns {boolean}
  */
 function isSpaLink(uri) {
-  // https://regex101.com/r/gDfIxb/1
-  // console.log(window)
-  const host = typeof window === 'undefined' ? 'clay.radio.com' : window.location.host,
-  // TODO determine how to get the node domain passed though -- could use the ENV variable and parse out the URLs from that
-    spaLinkRegex = new RegExp(`^.*(?=${host}).*$`);
-
   return spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' );
 }
 
@@ -73,7 +69,7 @@ function isEntercomDomain(hostname) {
 }
 
 /**
- * prepare a link for the spa
+ * prepare a document for the spa with adding necessary classes
  *
  * @param {object} doc
  */
