@@ -32,10 +32,16 @@ export default class MetaManager {
 
       metaTitleData = {
         title,
-        ogTitle: metaTitle
+        ogTitle: metaTitle,
+        twitterTitle: metaTitle
       }
     } else {
       metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
+
+      //default to the SEO title for backwards compatibility
+      if (!metaTitleData.twitterTitle) {
+        metaTitleData.twitterTitle = metaTitleData.ogTitle;
+      }
     }
 
     // meta-tags component needs to be added to every page
@@ -66,7 +72,7 @@ export default class MetaManager {
     if (metaTitleData) {
       this.updateTitleTag(metaTitleData.title)
       this.updateMetaTag('property', 'og:title', metaTitleData.ogTitle, true)
-      this.updateMetaTag('name', 'twitter:title', metaTitleData.ogTitle, true)
+      this.updateMetaTag('name', 'twitter:title', metaTitleData.twitterTitle, true)
     } else {
       this.deleteMetaTag('property', 'og:title')
       this.deleteMetaTag('name', 'twitter:title')
