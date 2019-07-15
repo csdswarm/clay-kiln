@@ -192,11 +192,20 @@
         return !this.loading && this.transformedVideo && this.transformedVideo.id;
       }
     },
+    watch: {
+      data: async function(vid) {
+        this.populateFormWithData(vid);
+      }
+    },
     async created() {
-      console.log("UPDATE BC PLUGIN CREATED");
       if (this.data) {
+        this.populateFormWithData(this.data);
+      }
+    },
+    methods: {
+      async populateFormWithData(vid) {
         try {
-          const response = await fetch(`/brightcove/get?id=${ this.data.id }&full_object=true`),
+          const response = await fetch(`/brightcove/get?id=${ vid.id }&full_object=true`),
             video = await response.json(),
             { status, statusText } = response;
 
@@ -217,15 +226,7 @@
         } catch (e) {
           this.updateStatus = { type: 'error', message: `Error retrieving video info -- ${e}` };
         }
-      }
-    },
-    async updated() {
-      console.log("UPDATE BC PLUGIN UPDATED");
-    },
-    async mounted() {
-      console.log("UPDATE BC PLUGIN MOUNTED");
-    },
-    methods: {
+      },
       resetForm() {
         this.videoName = this.updatedVideo.name;
         this.shortDescription = this.updatedVideo.description;

@@ -4,7 +4,6 @@ const KilnInput = window.kiln.kilnInput;
 
 module.exports = (schema) => {
   const subscriptions = new KilnInput(schema);
-  let formURI;
 
   schema.video = new KilnInput(schema, 'video');
   schema.newVideo = new KilnInput(schema, 'newVideo');
@@ -42,19 +41,6 @@ module.exports = (schema) => {
           // show newly selected video in update tab
           schema.updateVideo.value(input.data);
           schema.updateVideo.setProp('_has', { input: 'brightcove-update' });
-          schema.updateVideo.hide();
-          schema.updateVideo.show();
-
-          /* 
-            TODO: need to figure out how to trigger updated() or created() hook of update plugin 
-            to reflect newly selected video when searchVideo or newVideo is set. 
-            Changing updateVideo's value through kilnjs's value() method does not trigger updated() hook / vuex state change. 
-            Using UPDATE_FORMDATA event or kilnjs reRenderInstance() also does not trigger lifecycle hook change.
-          */
-          // const instanceData = await subscriptions.getComponentData(formURI);
-
-          // subscriptions.saveComponent(formURI, { ...instanceData, video: input.data });
-          // subscriptions.reRenderInstance(formURI); // does not rerender input, doesnt trigger hook in updateVideo plugin
         }
       } catch(e) {console.log(e);}
     }
@@ -64,8 +50,6 @@ module.exports = (schema) => {
     // set updateVideo input and value if video exists
     const video = schema.video.value(),
       bc = document.querySelector(`[data-uri="${uri}"]`);
-
-    formURI = uri;
 
     if (!bc.closest('.lead')) {
       schema.autoplayUnmuted.hide();
