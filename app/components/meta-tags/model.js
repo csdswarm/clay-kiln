@@ -6,6 +6,7 @@ module.exports.render = (ref, data, locals) => {
     PUB_TIME = 'article:published_time',
     CATEGORY = 'cXenseParse:recs:category',
     STATION_CALL_LETTERS = 'station-call-letters',
+    ROBOTS = 'robots',
     categories = [];
 
   // save these for SPA to easily be able to create or delete tags without knowing property / names
@@ -63,6 +64,12 @@ module.exports.render = (ref, data, locals) => {
   } else {
     // ON-543: Yes, on every page in www.radio.com unless it's a station page.
     data.metaTags.push({ name: STATION_CALL_LETTERS, content: 'NATL-RC' });
+  }
+
+  if (data.noIndexNoFollow) {
+    data.metaTags.push({name: ROBOTS, content: 'noindex, nofollow'});
+  } else {
+    data.unusedTags.push({type: 'name', name: ROBOTS});
   }
 
   return data;
