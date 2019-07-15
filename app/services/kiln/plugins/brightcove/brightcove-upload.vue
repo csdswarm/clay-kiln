@@ -130,8 +130,8 @@
   </div>
 </template>
 <script>
-  import 'isomorphic-fetch';
-  import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions } from './brightcoveCategories.js';
+  import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, 
+  tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
   const { UiButton, UiFileupload, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
     AD_SUPPORTED = 'AD_SUPPORTED',
@@ -168,9 +168,17 @@
       };
     },
     computed: {
+      /**
+       * Returns list of secondary categories dependent on highLevelCategory selected
+       * @returns {Array}
+       */
       secondaryCategoryOptions: function() {
         return secondaryCategoryOptions(this.highLevelCategory);
       },
+      /**
+       * Gets tags from combining secondary category, tertiary category and additional keywords
+       * @returns {Array}
+       */
       tags: function() {
         const keywords = this.additionalKeywords ? this.additionalKeywords.split(',') : [],
           keywordsTrimmed = keywords.map(keyword => { return keyword.trim(); });
@@ -183,6 +191,10 @@
         }
         return keywordsTrimmed;
       },
+      /**
+       * Checks form validity dependent on highLevelCategory
+       * @returns {boolean}
+       */
       validForm: function() {
         const tertiaryCategory = this.highLevelCategory === NEWS_LIFESTYLE ? this.tertiaryCategory : true;
 
@@ -190,6 +202,11 @@
       }
     },
     methods: {
+      /**
+       * Get file stream from file input
+       * @param {Object[]} files
+       * @param {Object} event
+       */
       setVideoFile(files, event) {
         this.fileUpload = event.target;
         this.videoFile = null;
@@ -198,6 +215,9 @@
           this.videoFile = files[0];
         }
       },
+      /**
+       * Resets form fields and loading status
+       */
       resetForm() {
         this.uploadedVideo = null;
         this.videoFile = null;
@@ -212,44 +232,44 @@
         this.adSupported = AD_SUPPORTED;
         this.loading = false;
       },
+      /**
+       * When high level category is changed secondary and tertiary categories are reset
+       * because the list of options changes dependent on high level category
+       */
       resetCategories() {
         this.secondaryCategory = '';
         this.tertiaryCategory = '';
       },
+      /**
+       * Creates new video object in Brightcove,
+       * uploads new video file to brightcove s3, 
+       * & ingests video file to video object in brightcove.
+       * Sets upload status alert on FE
+       * @param {Object} event
+       */
       async uploadNewVideo(event) {
         event.preventDefault();
         this.loading = true;
         this.uploadStatus.message = null;
         this.ingestStatus.message = null;
         try {
-          const { videoFile, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this,
-            response = await fetch('/brightcove/create', {
-              method: 'POST',
-              body: JSON.stringify({ videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
-              headers: { 'Content-Type': 'application/json' }
-            }),
-            { signed_url, api_request_url, videoID } = await response.json(),
-            { status, statusText } = response;
+          const { videoFile, videoName, shortDescription, longDescription, 
+            station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this,
+            { status, statusText, data } = await getFetchResponse('POST', '/brightcove/create', { 
+              videoName, shortDescription, longDescription, station, highLevelCategory, 
+              secondaryCategory, tertiaryCategory, tags, adSupported 
+            }, { 'Content-Type': 'application/json' } ),
+            { signed_url, api_request_url, videoID } = data;
 
           if (status === 200 && signed_url && api_request_url && videoID) {
             try {
               // Upload video file to Brightcove S3
-              const { status, statusText } = await fetch(signed_url, {
-                method: 'PUT',
-                body: videoFile,
-                headers:{
-                  'Content-Type': ''
-                }
-              });
+              const { status, statusText } = await getFetchResponse('PUT', signed_url, videoFile, { 'Content-Type': '' });
 
               if (status === 200) {
-                const response = await fetch('/brightcove/upload', {
-                  method: 'POST',
-                  body: JSON.stringify({ api_request_url, videoID }),
-                  headers: { 'Content-Type': 'application/json' }
-                }),
-                { video, jobID } = await response.json(),
-                { status, statusText } = response;
+                const { status, statusText, data } = await getFetchResponse('POST', '/brightcove/upload', 
+                  { api_request_url, videoID }, { 'Content-Type': 'application/json' }),
+                  { video, jobID } = data;
 
                 if (status === 200 && video && jobID) {
                   this.uploadedVideo = video;
@@ -276,33 +296,33 @@
           this.uploadStatus = { type: 'error', message: `Failed to create video. ${e}` };
         }
       },
+      /**
+       * Retrieves job status of ingesting video from brightcove S3 to brightcove video object
+       * Sets ingest status alert on FE
+       * @param {string} jobID
+       * @param {string} videoID
+       */
       getIngestStatus(jobID, videoID) {
         this.ingestStatus = { type: 'info', message: 'Creating video renditions...' };
         setTimeout(async () => {
           try {
-            const response = await fetch('/brightcove/ingestStatus', {
-                method: 'POST',
-                body: JSON.stringify({ jobID, videoID }),
-                headers: { 'Content-Type': 'application/json' }
-              }),
-              ingestStatus = await response.text(),
-              { status, statusText } = response;
+            const { status, statusText, data: ingestStatus } = await getFetchResponse('POST', '/brightcove/ingestStatus',
+              { jobID, videoID }, { 'Content-Type': 'application/json' }),
+              { state } = ingestStatus;
 
-            if (status === 200 && ingestStatus) {
-              if (['finished', 'failed'].includes(ingestStatus)) {
+            if (status === 200 && state) {
+              if (['finished', 'failed'].includes(state)) {
                 this.loading = false;
-                this.ingestStatus.message = `${ ingestStatus.replace('f','F') } creating renditions!`;
-                this.ingestStatus.type = ingestStatus === 'finished' ? 'success' : 'error';
-                if (ingestStatus === 'finished') {
-                  const response = await fetch(`/brightcove/get?id=${videoID}`),
-                    videoWithMedia = await response.json(),
-                    { status, statusText } = response;
-
+                this.ingestStatus.message = `${ state.replace('f','F') } creating renditions!`;
+                this.ingestStatus.type = state === 'finished' ? 'success' : 'error';
+                if (state === 'finished') {
+                  const { status, statusText, data: videoWithMedia } = await getFetchResponse('GET', `/brightcove/get?id=${videoID}`);
+                  
                   if (status === 200 && videoWithMedia) {
                     this.uploadedVideo = videoWithMedia;
                     this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
                   } else {
-                    this.uploadStatus.message = `Failed to get video after it was created -- ${ status } ${ statusText }`;
+                    this.uploadStatus = { type: 'error', message: `Failed to get video after it was created -- ${ status } ${ statusText }`};
                   }
                 }
               } else {

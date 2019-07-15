@@ -33,16 +33,13 @@ module.exports = (schema) => {
     // set video if new video or search video was changed
     if (input.path === 'searchVideo' || input.path === 'newVideo' || input.path === 'updateVideo') {
       schema.video.value(input.data);
-
-      console.log("Update form data.", input);
-        
       try {
         if (input.path !== 'updateVideo') {
           // show newly selected video in update tab
           schema.updateVideo.value(input.data);
           schema.updateVideo.setProp('_has', { input: 'brightcove-update' });
         }
-      } catch(e) {console.log(e);}
+      } catch (e) {console.log(e);}
     }
   });
 

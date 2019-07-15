@@ -150,7 +150,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       const { status, statusText, body: ingestJobStatus } = await brightcoveApi.getStatusOfIngestJob(videoID, jobID);
 
       if (status === 200) {
-        res.send(ingestJobStatus.state);
+        res.send({state: ingestJobStatus.state});
       } else {
         res.status(status).send(statusText);
       }

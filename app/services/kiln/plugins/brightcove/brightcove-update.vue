@@ -119,9 +119,9 @@
   </div>
 </template>
 <script>
-  import 'isomorphic-fetch';
   import { transformVideoResults } from '../../../startup/brightcove.js';
-  import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions } from './brightcoveCategories.js';
+  import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, 
+  tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
   const { UiButton, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
     AD_SUPPORTED = 'AD_SUPPORTED',
@@ -154,9 +154,17 @@
       };
     },
     computed: {
+      /**
+       * Returns list of secondary categories dependent on highLevelCategory selected
+       * @returns {Array}
+       */
       secondaryCategoryOptions: function() {
         return secondaryCategoryOptions(this.highLevelCategory);
       },
+      /**
+       * Gets tags from combining secondary category, tertiary category and additional keywords
+       * @returns {Array}
+       */
       tags: function() {
         const keywords = this.additionalKeywords ? this.additionalKeywords.split(',') : [];
 
@@ -168,26 +176,46 @@
         }
         return keywords;
       },
+      /**
+       * Determines secondary category of video from its tags
+       * @returns {String}
+       */
       derivedSecondaryCategory: function() {
         return (this.updatedVideo.tags.filter(keyword => {
           return this.secondaryCategoryOptions.includes(keyword);
         })).join();
       },
+      /**
+       * Determines tertiary category of video from its tags
+       * @returns {String}
+       */
       derivedTertiaryCategory: function() {
         return (this.updatedVideo.tags.filter(keyword => {
           return this.tertiaryCategoryOptions.includes(keyword);
         })).join();
       },
+      /**
+       * Determines keywords from tags by extracting out categories
+       * @returns {String}
+       */
       derivedKeywords: function() {
         return (this.updatedVideo.tags.filter(keyword => {
           return !(this.secondaryCategoryOptions.concat(this.tertiaryCategoryOptions)).includes(keyword);
         })).join();
       },
+      /**
+       * Checks form validity dependent on highLevelCategory
+       * @returns {boolean}
+       */
       validForm: function() {
         const tertiaryCategory = this.highLevelCategory === NEWS_LIFESTYLE ? this.tertiaryCategory : true;
 
         return this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
       },
+      /**
+       * Returns success of update if done loading and video is set
+       * @returns {boolean}
+       */
       updateSuccess: function() {
         return !this.loading && this.transformedVideo && this.transformedVideo.id;
       }
@@ -203,11 +231,14 @@
       }
     },
     methods: {
+      /**
+       * Retrieves video object from brightcove with video ID and 
+       * populates update form fields with this data
+       * @param {Object} vid
+       */
       async populateFormWithData(vid) {
         try {
-          const response = await fetch(`/brightcove/get?id=${ vid.id }&full_object=true`),
-            video = await response.json(),
-            { status, statusText } = response;
+          const { status, statusText, data: video } = await getFetchResponse('GET', `/brightcove/get?id=${ vid.id }&full_object=true`);
 
           if (status === 200 && video.id) {
             this.updatedVideo = video;
@@ -227,6 +258,10 @@
           this.updateStatus = { type: 'error', message: `Error retrieving video info -- ${e}` };
         }
       },
+      /**
+       * Resets form fields back to the last values retrieved from api
+       * and resets the loading status
+       */
       resetForm() {
         this.videoName = this.updatedVideo.name;
         this.shortDescription = this.updatedVideo.description;
@@ -239,25 +274,30 @@
         this.adSupported = this.updatedVideo.economics;
         this.loading = false;
       },
+      /**
+       * When high level category is changed secondary and tertiary categories are reset
+       * because the list of options changes dependent on high level category
+       */
       resetCategories() {
         this.secondaryCategory = '';
         this.tertiaryCategory = '';
       },
+      /**
+       * Updates existing video in brightcove and sets video to updated video
+       * @param {Object} event
+       */
       async updateVideo(event) {
         event.preventDefault();
-        const { updatedVideo: video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
+        const { updatedVideo: video, videoName, shortDescription, longDescription, station, 
+          highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
 
         this.loading = true;
         try {
-          const response = await fetch('/brightcove/update', {
-            method: 'POST',
-            body: JSON.stringify({ video, videoName, shortDescription, longDescription, station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported }),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }),
-          updateResponse = await response.json(),
-          { status, statusText } = response;
+          const { status, statusText, data: updateResponse } = await getFetchResponse('POST', '/brightcove/update', 
+            {
+              video, videoName, shortDescription, longDescription, station, 
+              highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported
+            }, {'Content-Type': 'application/json'} );
 
           this.loading = false;
 
