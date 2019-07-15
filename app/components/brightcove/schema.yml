@@ -10,6 +10,14 @@ videoId:
     validate:
       required: true
 
+autoplayUnmuted:
+  _label: Autoplay / unmuted (Happy Birthday Videos Only)
+  _has: checkbox
+
+clickToPlay:
+  _label: Click to play
+  _has: checkbox
+
 showTitle:
   _label: Show video title?
   _has: checkbox
@@ -23,4 +31,6 @@ _groups:
       ifEmpty: videoId
     fields:
       - videoId
+      - autoplayUnmuted
+      - clickToPlay
       - showTitle
