@@ -38,9 +38,9 @@ export default class MetaManager {
     } else {
       metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
 
-      //default to the SEO title for backwards compatibility
+      // default to the SEO title for backwards compatibility
       if (!metaTitleData.twitterTitle) {
-        metaTitleData.twitterTitle = metaTitleData.ogTitle;
+        metaTitleData.twitterTitle = metaTitleData.ogTitle
       }
     }
 
