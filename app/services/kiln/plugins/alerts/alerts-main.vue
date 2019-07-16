@@ -77,26 +77,17 @@
                     >Breaking</ui-checkbox>
                 </div>
                 <ui-button
-                    @click="addAlert">Add Alert</ui-button>
+                    @click="addAlert"
+                    :disabled="validForm">Save Alert</ui-button>
         </ui-modal>
     </div>
 </template>
 
 <script>
+    const axios = require('axios');
     const moment = require('moment');
     const { UiButton, UiCheckbox, UiDatepicker, UiTabs, UiTab, UiTextbox, UiModal } = window.kiln.utils.components;
     const allStationsCallsigns = window.kiln.locals.allStationsCallsigns || ['NATL-RC', 'KMOX', 'KROX'];
-    const mockAlerts = [{
-        message: 'Something is going on',
-        breaking: true,
-        end: 1563328800000,
-        start: 1562770860000
-    }, {
-        message: 'Something else is going on',
-        breaking: true,
-        end: 1583358800000,
-        start: 1572770860000
-    }]
 
     export default {
         data() {
@@ -145,13 +136,12 @@
                         end: moment.utc(alert.end).format('llll')
                     };
                 });
+            },
+            validForm: function() {
+                return this.message && this.startDate && this.startTime && this.endDate && this.endTime;
             }
         },
         methods: {
-            async loadAlerts(value) {
-                console.log('load alerts');
-                this.alerts = mockAlerts;
-            },
             async addAlert() {
                 const {
                     breaking,
@@ -160,9 +150,31 @@
                     end
                 } = this;
 
-                console.log('should add alert', {
-                    breaking, message, start, end
-                });
+                try {
+                    await axios.post('/alerts', {breaking, message, start, end});
+                    this.loadAlerts();
+                    this.closeModal('alertModal');
+                    this.clearModal();
+                } catch (e) {
+                    console.log('throw error');
+                }
+                
+            },
+            clearModal() {
+                this.breaking = false;
+                this.message = '';
+                this.endDate = '';
+                this.endTime = '';
+                this.startDate = '';
+                this.startTime = '';
+            },
+            closeModal(ref) {
+                this.$refs[ref].close();
+            },
+            async loadAlerts() {
+                const {data = []} = await axios.get('/alerts');
+
+                this.alerts = data;
             },
             openModal(ref) {
                 this.$refs[ref].open();
