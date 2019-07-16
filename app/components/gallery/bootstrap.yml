@@ -44,3 +44,5 @@ _components:
     crumbs: []
     featured: false
     editorialFeeds: {}
+    isContentFromAP: false
+    noIndexNoFollow: false
