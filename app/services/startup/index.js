@@ -77,7 +77,7 @@ function setupApp(app) {
   app.use(currentStation);
 
   lytics.inject(app);
-
+  
   app.use(canonicalJSON);
 
   brightcove.inject(app);

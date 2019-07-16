@@ -18,7 +18,7 @@
 
     .page-list-headers {
         &__start, &__end {
-            flex: 1 1 em(200);
+            flex: 1 1 em(225);
             align-items: center;
         }
 
@@ -28,14 +28,14 @@
         }
 
         &__breaking {
-            flex: 1 1 em(100);
+            flex: 1 1 em(50);
             align-items: center;
         }
     }
 
     .page-list-item {
         &__start, &__end {
-            flex: 1 1 em(200);
+            flex: 1 1 em(225);
             padding: em(5);
         }
 
@@ -45,7 +45,7 @@
         }
 
         &__breaking {
-            flex: 1 1 em(100);
+            flex: 1 1 em(50);
             padding: em(5)
         }
     }

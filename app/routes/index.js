@@ -14,6 +14,8 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
+  additionalDataTypes = require('../services/server/add-data-types'),
+  alerts = require('../services/server/alerts'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   slugifyService = require('../services/universal/slugify'),
@@ -176,4 +178,7 @@ module.exports = router => {
     res.type('application/xml');
     return res.send( xml( { urlset }, { declaration: true } ) );
   });
+
+  additionalDataTypes.inject(router);
+  alerts.inject(router);
 };

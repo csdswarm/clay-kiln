@@ -142,5 +142,6 @@ module.exports.getUri = uri => db.get(uri);
 module.exports.get = get;
 module.exports.post = post;
 module.exports.put = put;
+module.exports.raw = db.raw;
 module.exports.uriToUrl = utils.uriToUrl;
 module.exports.DATA_STRUCTURES = DATA_STRUCTURES;
