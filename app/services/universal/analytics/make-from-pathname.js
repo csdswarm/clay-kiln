@@ -130,9 +130,10 @@ module.exports = ({ pathname, url } = {}) => {
         return stationsDirectory.getGenre(pathname);
       } else if (api.isStationDetail()) {
         assertCurrentStation(currentStation);
-        const category = currentStation.category.toLowerCase();
+        const category = currentStation.category.toLowerCase(),
+          hasGenre = (category === 'music') && currentStation.genre_name.length;
 
-        return category === ('music' && currentStation.genre_name.length)
+        return hasGenre
           ? currentStation.genre_name[0].toLowerCase()
           : category;
       }
