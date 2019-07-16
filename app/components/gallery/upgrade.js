@@ -7,7 +7,8 @@ const addAdTags = require('../../services/universal/component-upgrades/add-ad-ta
   {
     getComponentInstance: getComponentInstanceObj,
     putComponentInstance
-  } = require('../../services/server/publish-utils');
+  } = require('../../services/server/publish-utils'),
+  { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -136,4 +137,8 @@ module.exports['6.0'] = async function (uri, data) {
   data = addAdTags('gallery', uri, data);
 
   return data;
+};
+
+module.exports['7.0'] = (uri, data) => {
+  return setNoIndexNoFollow(data);
 };

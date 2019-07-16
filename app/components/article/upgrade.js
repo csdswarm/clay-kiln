@@ -1,7 +1,8 @@
 'use strict';
 
 const addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
-  { getComponentInstance, putComponentInstance } = require('../../server/publish-utils');
+  { getComponentInstance, putComponentInstance } = require('../../server/publish-utils'),
+  { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -91,4 +92,8 @@ module.exports['5.0'] = async function (uri, data) {
   data = addAdTags('article', uri, data);
 
   return data;
+};
+
+module.exports['6.0'] = (uri, data) => {
+  return setNoIndexNoFollow(data);
 };
