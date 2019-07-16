@@ -1,3 +1,38 @@
 _components:
   station-nav:
-    allowed: true
+    headerLinks: [
+      {
+        "url": "",
+        "text": "playlist",
+        "drawer": false,
+        "current": false
+      },
+      {
+        "url": "",
+        "text": "shows",
+        "drawer": true,
+        "secondaryLinks": [],
+        "current": false
+      },
+      {
+        "url": "",
+        "text": "contests",
+        "drawer": true,
+        "secondaryLinks": [],
+        "current": false
+      },
+      {
+        "url": "",
+        "text": "events",
+        "drawer": true,
+        "secondaryLinks": [],
+        "current": false
+      },
+      {
+        "url": "",
+        "text": "more from",
+        "drawer": true,
+        "secondaryLinks": [],
+        "current": false
+      },
+    ]
