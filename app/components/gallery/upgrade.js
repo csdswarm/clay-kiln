@@ -5,7 +5,8 @@ const isEmpty = require('lodash/isEmpty'),
   rest = require('../../services/universal/rest'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
   getComponentInstanceObj = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
+  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true),
+  { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -127,4 +128,9 @@ module.exports['5.0'] = async function (uri, data) {
       _ref: shareInstanceUri
     }
   };
+};
+
+
+module.exports['6.0'] = (uri, data) => {
+  return setNoIndexNoFollow(data);
 };
