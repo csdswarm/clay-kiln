@@ -48,8 +48,8 @@ function getSlideEmbed(slides, components) {
     // which is why we need to parse this and then stringify it again
     const slideData = JSON.parse(slide.data);
 
-    slideData.slideEmbed = getContent(slideData, 'slideEmbed', components);
-    slideData.description = getContent(slideData, 'description', components);
+    slideData.slideEmbed = getContent(slideData, 'slideEmbed', components).slideEmbed;
+    slideData.description = getContent(slideData, 'description', components).description;
 
     slide.data = JSON.stringify(slideData);
   });
@@ -73,6 +73,7 @@ function processContent(obj, components) {
     obj.value = getContent(obj.value, 'slides', components);
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
   }
+
 
   return obj;
 }
