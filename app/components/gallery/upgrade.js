@@ -163,15 +163,22 @@ module.exports['6.0'] = async (uri, data) => {
   // eslint-disable-next-line one-var
   const isPublished = uri.includes('@published'),
     metaTagsUri = nonPublishedUri.replace('gallery', 'meta-tags'),
-    [metaTagsData, publishedMetaTagsData] = await Promise.all([
+    tagsUri = nonPublishedUri.replace('gallery', 'tags'),
+    [
+      metaTagsData,
+      publishedMetaTagsData,
+      tagsData,
+      publishedTagsData
+    ] = await Promise.all([
       getComponentInstanceObj(metaTagsUri),
-      isPublished ? getComponentInstanceObj(metaTagsUri + '@published') : null
-    ]),
-    contentTagItems = data.tags.items;
+      isPublished ? getComponentInstanceObj(metaTagsUri + '@published') : null,
+      getComponentInstanceObj(tagsUri),
+      isPublished ? getComponentInstanceObj(tagsUri + '@published') : null
+    ]);
 
-  Object.assign(metaTagsData, { contentTagItems });
+  Object.assign(metaTagsData, { contentTagItems: tagsData.items });
   if (isPublished) {
-    Object.assign(publishedMetaTagsData, { contentTagItems });
+    Object.assign(publishedMetaTagsData, { contentTagItems: publishedTagsData.itmes });
   }
 
   await Promise.all([
