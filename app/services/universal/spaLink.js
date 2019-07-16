@@ -11,22 +11,24 @@ const URL = require('url-parse'),
  */
 function addEventListeners(anchorTagsContainer) {
   // Attach vue router listener on SPA links that are not opening in a new tab/window.
-  const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link:not([target="_blank" i])');
+  const anchorTags = anchorTagsContainer.querySelectorAll('a.spa-link');
 
   if (anchorTags) {
     anchorTags.forEach(anchor => {
-      anchor.addEventListener('click', event => {
-        let link = anchor.getAttribute('href');
+      if (String(anchor.getAttribute('target')).toLowerCase() !== '_blank') {
+        anchor.addEventListener('click', event => {
+          let link = anchor.getAttribute('href');
 
-        if (!link.includes('http')) {
-          link = window.location.protocol + link;
-        }
+          if (!link.includes('http')) {
+            link = window.location.protocol + link;
+          }
 
-        event.preventDefault();
-        anchor.removeEventListener('click', anchor.fn, false);
+          event.preventDefault();
+          anchor.removeEventListener('click', anchor.fn, false);
 
-        navigateTo(URL(link).pathname);
-      });
+          navigateTo(URL(link).pathname);
+        });
+      }
     });
   }
 }
