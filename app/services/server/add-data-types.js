@@ -2,6 +2,15 @@
 const db = require('./db'),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   { DATA_STRUCTURES } = require('./db'),
+  /**
+   * Middleware to ensure user is logged into CMS
+   *
+   * @param {Object} req
+   * @param {object} res
+   * @param {function} next
+   *
+   * @returns {Promise}
+   */
   checkAuth = (req, res, next) => {
     if (!req.user || !req.user.auth) {
       return res.status(401).send('You must be logged into Kiln to add alerts');
