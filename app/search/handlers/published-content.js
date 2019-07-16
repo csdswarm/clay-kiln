@@ -20,15 +20,16 @@ subscribe('unpublishPage').through(unpublishPage);
  * @param {Object} obj
  * @param {String} param
  * @param {Object} components
+ * @param {Function} [transform]
  *
  * @returns {Object}
  */
-function getContent(obj, param, components) {
+function getContent(obj, param, components, transform = (data) => data ) {
   const content = obj[param],
     getData = (ref) => components.find(item => item.key === ref).value;
 
   // loop through all items and add a key with the value of the ref
-  obj[param] = content.map((component) => ({ ...component, data: getData(component._ref) }));
+  obj[param] = content.map((component) => ({ ...component, data: transform(getData(component._ref)) }));
 
   // return a new copy
   return { ...obj };
@@ -46,10 +47,11 @@ function getSlideEmbed(slides, components) {
   slides.map( slide => {
     // helpers.parseOpValue created an object for each main key, but it does not do sub keys
     // which is why we need to parse this and then stringify it again
-    const slideData = JSON.parse(slide.data);
+    const slideData = JSON.parse(slide.data),
+      transform = (data) => JSON.parse(data);
 
-    slideData.slideEmbed = getContent(slideData, 'slideEmbed', components).slideEmbed;
-    slideData.description = getContent(slideData, 'description', components).description;
+    slideData.slideEmbed = getContent(slideData, 'slideEmbed', components, transform).slideEmbed;
+    slideData.description = getContent(slideData, 'description', components, transform).description;
 
     slide.data = JSON.stringify(slideData);
   });
