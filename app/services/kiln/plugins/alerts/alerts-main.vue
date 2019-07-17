@@ -11,23 +11,27 @@
                 
                 v-for="tab in tabs">
             </ui-tab>
-            <ui-button @click="openModal('alertModal')">Add Alert</ui-button>
-            <ui-select 
-                label="Station"
-                :options="stationCallsigns"
-                v-if="!global"
-                v-model="selectedStation">
-            </ui-select>
-            <ui-progress-circular v-if="loading"></ui-progress-circular>
-            <div v-else>
+            <div class="alerts-manager__toolbar">
+                <ui-button @click="openModal('alertModal')">Add Alert</ui-button>
+                <div class="alerts-manager__station-select">
+                    <ui-select 
+                        label="Station"
+                        :options="stationCallsigns"
+                        @select="loadAlerts"
+                        v-if="!global"
+                        v-model="selectedStation">
+                    </ui-select>
+                </div>
+            </div>
+            <div>
                 <div class="page-list-headers">
                     <span class="page-list-header page-list-headers__start">Start</span>
                     <span class="page-list-header page-list-headers__end">End</span>
                     <span class="page-list-header page-list-headers__message">Message</span>
-                    <span class="page-list-header page-list-headers__breaking">Breaking</span>
+                    <span class="page-list-header page-list-headers__breaking"></span>
                     <span class="page-list-header page-list-headers__delete"></span>
                 </div>
-                <div class="page-list-readout">
+                <div class="page-list-readout" v-show="!loading">
                     <div
                         :key="alert.message"
                         class="page-list-item"
@@ -38,13 +42,19 @@
                         <span class="page-list-item__end">{{alert.end | formatDate}}</span>
                         <span class="page-list-item__message">{{alert.message}}</span>
                         <span class="page-list-item__breaking">
-                            <ui-icon-button icon="check_circle_outline" v-if="alert.breaking"></ui-icon-button>
+                            <ui-icon-button 
+                                icon="error" 
+                                color="red"
+                                tooltip="BREAKING"
+                                disabled=true
+                                v-if="alert.breaking"></ui-icon-button>
                         </span>
                         <span class="page-list-item__delete">
                             <ui-icon-button icon="delete_outline" @click="deleteAlert(alert)"></ui-icon-button>
                         </span>
                     </div>
                 </div>
+                <ui-progress-circular v-show="loading"></ui-progress-circular>
             </div>
         </ui-tabs>
         <!-- <ui-confirm
@@ -98,12 +108,6 @@
                         <ui-checkbox
                             v-model="breaking"
                         >Breaking</ui-checkbox>
-                        <ui-select 
-                            label="Station"
-                            :options="stationCallsigns"
-                            v-if="!global"
-                            v-model="selectedStation">
-                        </ui-select>
                     </div>
                 </div>
                 <ui-button
@@ -122,7 +126,7 @@
         UiCheckbox, 
         UiConfirm, 
         UiDatepicker, 
-        UiIconButton, 
+        UiIconButton,
         UiProgressCircular,
         UiTabs, 
         UiTab, 
@@ -135,12 +139,16 @@
         data() {
             return {
                 alerts: [],
+                breaking: false,
                 endDate: '',
                 endTime: '',
+                loading: false,
+                message: '',
                 startDate: '',
                 startTime: '',
                 errorMessage: '',
                 selectedAlert: {},
+                selectedStation: '',
                 stationCallsigns: allStationsCallsigns,
                 tab: 'global',
                 tabs: [{
@@ -251,6 +259,7 @@
             UiConfirm,
             UiDatepicker,
             UiIconButton,
+            UiProgressCircular,
             UiTabs,
             UiTab,
             UiTextbox,

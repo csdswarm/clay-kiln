@@ -12,13 +12,14 @@ const db = require('../server/db'),
    * @returns {array}
    */
   pullDataFromResponse = (response) => response.rows.map(({id, data}) => ({id, ...data})),
-  checkForOverlap = async (start, end) => {
+  checkForOverlap = async (start, end, station) => {
     await db.ensureTableExists('alert');
     const response = await db.raw(`
         SELECT id FROM alert
         WHERE int8range(${start}::int8, ${end}::int8)
             && int8range((data->>'start')::int8, (data->>'end')::int8)
             AND data->>'active' = 'true'
+            AND data->>'station' = '${station}'
     `);
 
     return response.rowCount > 0;
@@ -48,7 +49,7 @@ const db = require('../server/db'),
           alerts = await db.raw(`
             SELECT id, data
             FROM alert
-            WHERE (data->>'end')::int8 > EXTRACT(EPOCH FROM NOW())
+            WHERE (data->>'end')::int8 > EXTRACT(EPOCH FROM NOW())::int8
               AND ${whereQuery}
             ORDER BY data->>'start'
           `).then(pullDataFromResponse);
@@ -66,7 +67,7 @@ const db = require('../server/db'),
     app.post('/alerts', async (req, res) => {
       const alert = req.body,
         key = `${CLAY_SITE_HOST}/_alert/${uuidV4()}`,
-        overlap = await checkForOverlap(alert.start, alert.end);
+        overlap = await checkForOverlap(alert.start, alert.end, alert.station);
 
       if (overlap) {
         return res.status(400).send('Cannot save this alert. Its start and end times overlap with another alert');
