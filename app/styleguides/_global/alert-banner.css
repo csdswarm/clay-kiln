@@ -1,0 +1,222 @@
+@import "mixins";
+@import "fonts";
+@import "colors";
+
+$heading-height: em(60);
+$heading-side-width: em(62);
+$mobile-text-line-height: em(17);
+
+.alert-banner {
+  width: 100%;
+  max-width: em(1100);
+  position: relative;
+  overflow: hidden;
+  margin: em(20) auto;
+  min-height: $heading-height;
+
+  &__message {
+    width: 100%;
+    position: relative;
+    background-color: $white;
+    overflow: hidden;
+    border: em(1) solid $purple;
+    max-height: calc($heading-height + ($mobile-text-line-height * 3.4) + em(40));
+    opacity: 1;
+    transition: opacity 1s .5s;
+
+    .alert-banner--show-secondary & {
+      opacity: 0;
+      max-height: 0;
+      border-width:0;
+      transition: opacity 1s;
+    }
+
+    & + & {
+      opacity: 0;
+      max-height: 0;
+      border-width:0;
+      transition: opacity 1s;
+
+      .alert-banner--show-secondary & {
+        opacity: 1;
+        border-width: em(1);
+        max-height: calc($heading-height + ($mobile-text-line-height * 3.4) + em(40));
+        transition: opacity 1s .5s;
+      }
+    }
+  }
+
+  &__heading {
+    width: 100%;
+    height: $heading-height;
+    position: relative;
+    background-color: $white;
+
+    @mixin medium-small-screen {
+      background-color: $purple;
+    }
+  }
+
+  &__indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: $heading-side-width;
+    height: $heading-height;
+    padding: em(18);
+    background-color: $purple;
+  }
+
+  &__icon {
+    border: em(2) solid $white;
+    text-align: center;
+    border-radius: 50%;
+    height: em(25);
+    width: em(25);
+    display: block;
+    padding: em(3);
+
+    &:before {
+      content: '!';
+      font-weight: bold;
+      color: $white;
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: $heading-side-width;
+    height: $heading-height;
+  }
+
+  &__close-button {
+    cursor: pointer;
+  }
+
+  &__body {
+    position: absolute;
+    padding: em(18);
+    padding-right: 0;
+    width: calc(100% - ($heading-side-width * 2) + em(18));
+    height: em(24);
+    top: 0;
+    left: $heading-side-width;
+
+    @mixin medium-screen {
+      padding-top: em(21);
+    }
+
+    @mixin medium-small-screen {
+      padding: em(20);
+      position: relative;
+      width: 100%;
+      height: auto;
+      top: 0;
+      left: 0;
+    }
+  }
+
+  &__text {
+    @mixin alert-banner-font1;
+    position: relative;
+    font-weight: 500;
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    &--overflows:after {
+      content: '...';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      padding-left: 2px;
+      background: linear-gradient(transparent 5%, $white, $white);
+    }
+
+    @mixin medium-screen {
+      @mixin alert-banner-font2;
+      max-height: calc($mobile-text-line-height * 3.4)
+    }
+
+    @mixin medium-small-screen {
+      white-space: inherit;
+      text-overflow: inherit;
+    }
+  }
+
+  @mixin large-screen {
+    max-width: em(940);
+  }
+
+  @mixin medium-screen {
+    max-width: em(708);
+  }
+
+  @mixin medium-small-screen {
+    min-height: calc($heading-height * 2);
+  }
+}
+
+.x-btn {
+  position: absolute;
+  height: em(22);
+  width: em(22);
+  top: em(19);
+  right: em(21);
+
+  &__cris,
+  &__cross {
+    position: absolute;
+    width: em(29);
+    height: em(4);
+    color: $purple;
+    background-color: $purple;
+    top: em(9);
+    right: em(-4);
+
+    @mixin medium-small-screen {
+      background-color: $white;
+    }
+  }
+
+  &__cris {
+    -webkit-transform: rotate(-135deg);
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+  }
+
+  &__cross {
+    -webkit-transform: rotate(135deg);
+    -moz-transform: rotate(135deg);
+    -ms-transform: rotate(135deg);
+    -o-transform: rotate(135deg);
+    transform: rotate(135deg);
+  }
+}
+
+.alert-banner__message--breaking {
+  border-color: $crimson;
+
+  .alert-banner__indicator,
+  .x-btn__cris,
+  .x-btn__cross {
+    background-color: $crimson;
+  }
+
+  @mixin medium-small-screen {
+    .alert-banner__heading {
+      background-color: $crimson;
+    }
+
+    .x-btn__cris,
+    .x-btn__cross {
+      background-color: $white;
+    }
+  }
+}

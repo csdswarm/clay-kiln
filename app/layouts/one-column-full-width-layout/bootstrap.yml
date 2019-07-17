@@ -4,6 +4,7 @@ _layouts:
     headLayout: []
     pageHeader: pageHeader
     top: []
+    banner: []
     main: main
     bottom: []
     kilnInternals:
