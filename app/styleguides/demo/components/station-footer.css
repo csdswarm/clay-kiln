@@ -1,0 +1,52 @@
+@import "_global/mixins";
+@import "_global/colors";
+@import "_global/fonts";
+
+.component--station-footer {
+  width: 100%;
+  background: $boulder;
+  position: relative;
+  text-align: center;
+  padding: em(40) em(20);
+  display: flex;
+  justify-content: center;
+
+  .station-footer__station {
+    width: em(620);
+
+    @media screen and (max-width: 660px) {
+      width: 100%;
+    }
+
+    .station__info {
+      .info__name {
+        @mixin station-footer-font2;
+      }
+
+      .info__slogan {
+        @mixin station-footer-font1;
+      }
+    }
+
+    .station__social {
+      margin: em(26);
+      > a {
+        display: inline-block;
+        text-decoration: none;
+      }
+      > a object {
+        @mixin inline-block;
+        height: em(30);
+        margin: 0 em(10);
+        pointer-events: none;
+      }
+    }
+
+    .station__link {
+      @mixin station-footer-font3;
+      @mixin inline-block;
+      padding: 0 em(15);
+      text-decoration: none;
+    }
+  }
+}
