@@ -2,6 +2,7 @@
 
 const db = require('../server/db'),
   uuidV4 = require('uuid/v4'),
+  _pick = require('lodash/pick'),
   log = require('../universal/log').setup({file: __filename}),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   /**
@@ -10,13 +11,14 @@ const db = require('../server/db'),
    * @param {object} response
    * @returns {array}
    */
-  pullDataFromResponse = (response) => response.rows.map(row => row.data),
+  pullDataFromResponse = (response) => response.rows.map(({id, data}) => ({id, ...data})),
   checkForOverlap = async (start, end) => {
     await db.ensureTableExists('alert');
     const response = await db.raw(`
         SELECT id FROM alert
         WHERE int8range(${start}::int8, ${end}::int8)
             && int8range((data->>'start')::int8, (data->>'end')::int8)
+            AND data->>'active' = 'true'
     `);
 
     return response.rowCount > 0;
@@ -31,17 +33,29 @@ const db = require('../server/db'),
      * Get the current alerts for a station
      */
     app.get('/alerts', async (req, res) => {
+      const allowedParams = ['active', 'current', 'station'];
+
       try {
-        const alerts = await db.raw(`
-            SELECT data
+        const params = _pick({active: true, ...req.query}, allowedParams),
+          whereQuery = Object.keys(params).map(key => {
+            switch (key) {
+              case 'current':
+                return "EXTRACT(EPOCH FROM NOW())::int8 <@ int8range((data->>'start')::int8, (data->>'end')::int8)";
+              default:
+                return `data->>'${key}' = '${params[key]}'`;
+            }
+          }).join(' AND '),
+          alerts = await db.raw(`
+            SELECT id, data
             FROM alert
-            WHERE to_timestamp(((data->>'end')::int8)/1000) > NOW()
+            WHERE (data->>'end')::int8 > EXTRACT(EPOCH FROM NOW())
+              AND ${whereQuery}
             ORDER BY data->>'start'
-        `).then(pullDataFromResponse);
+          `).then(pullDataFromResponse);
 
         res.status(200).send(alerts);
       } catch (e) {
-        log(e.message);
+        log('error', e.message);
         res.status(500).send('There was an error getting current alerts');
       }
     });
@@ -55,15 +69,36 @@ const db = require('../server/db'),
         overlap = await checkForOverlap(alert.start, alert.end);
 
       if (overlap) {
-        return res.status(500).send('Cannot save this alert. Its start and end times overlap with another alert');
+        return res.status(400).send('Cannot save this alert. Its start and end times overlap with another alert');
       }
 
       try {
-        await db.post(key, alert);
+        await db.post(key, {...alert, active: true});
 
         res.status(200).send(key);
       } catch (e) {
-        log(e.message);
+        log('error', e.message);
+        res.status(500).send('There was an error saving the alert');
+      }
+    });
+
+    /**
+     * Update an alert
+     */
+    app.put('/alerts', async (req, res) => {
+      const {id: key, ...alert} = req.body,
+        overlap = await checkForOverlap(alert.start, alert.end);
+
+      if (alert.active && overlap) {
+        return res.status(400).send('Cannot save this alert. Its start and end times overlap with another alert');
+      }
+
+      try {
+        await db.put(key, alert);
+
+        res.status(200).send({key, ...alert});
+      } catch (e) {
+        log('error', e.message);
         res.status(500).send('There was an error saving the alert');
       }
     });

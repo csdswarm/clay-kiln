@@ -60,6 +60,17 @@ const db = require('./db'),
           res.status(500).send(e.message);
         }
       });
+  
+      app.delete(`*_${DATA_TYPE}*`, checkAuth, async (req, res) => {
+        const key = `${CLAY_SITE_HOST}${req.originalUrl}`;
+  
+        try {
+          await db.del(key);
+          res.status(200).send(key);
+        } catch (e) {
+          res.status(500).send(e.message);
+        }
+      });
     });
   };
 

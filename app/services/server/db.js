@@ -37,7 +37,7 @@ const utils = require('../universal/utils'),
           )
         `);
       } catch (e) {
-        log(`There was a problem creating a table for ${tableName}`, e);
+        log('error', `There was a problem creating a table for ${tableName}`, e);
         return Promise.resolve(false);
       }
     }
@@ -73,6 +73,19 @@ const utils = require('../universal/utils'),
     });
 
     return tableName;
+  },
+  del = async (key) => {
+    const tableName = findSchemaAndTable(key);
+
+    if (!tableName) {
+      return db.del(key);
+    } else {
+      await ensureTableExists(tableName);
+      return db.raw(`
+        DELETE FROM ${tableName}
+        WHERE id = ?
+      `, [key]);
+    }
   },
   get = async (key, ...args) => {
     const tableName = findSchemaAndTable(key);
@@ -139,6 +152,7 @@ const utils = require('../universal/utils'),
   };
 
 module.exports.getUri = uri => db.get(uri);
+module.exports.del = del;
 module.exports.get = get;
 module.exports.post = post;
 module.exports.put = put;
