@@ -1,0 +1,6 @@
+_components:
+  static-page:
+    headline: ''
+    content:
+      - _ref: /_components/paragraph/instances/new
+    pageTitle: ''
