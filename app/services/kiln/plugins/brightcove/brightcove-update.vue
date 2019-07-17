@@ -68,7 +68,7 @@
         multiLine
         floating-label
         label="Additional Keywords (Separate with commas)"
-        help="Please use no fewer than 3 keywords per video including categories selected above."
+        help="Use no fewer than 3 keywords per video including categories selected above."
         v-model="additionalKeywords"
       ></ui-textbox>
       <ui-alert
@@ -88,7 +88,7 @@
         v-if="!validForm"
         :type="ERROR"
         dismissable=false
-      >Please fill in all required fields (marked with *)
+      >Fill in all required fields (marked with *)
       </ui-alert>
       <div class="button-container">
         <ui-button
@@ -114,14 +114,14 @@
         <strong>{{ transformedVideo.name }}</strong>
         <i class="video-preview__id">ID: {{ transformedVideo.id }}</i>
       </div>
-      <img class="video-preview__image" :src=" transformedVideo.imageUrl">
+      <img v-if="transformedVideo.imageUrl" class="video-preview__image" :src="transformedVideo.imageUrl">
     </div>
   </div>
 </template>
 <script>
   import { transformVideoResults } from '../../../startup/brightcove.js';
-  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, 
-  tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
+  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, getAllCategoryOptions, 
+  highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
   const { UiButton, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components;
 
@@ -139,8 +139,9 @@
         station: window.kiln.locals.station.callsign,
         highLevelCategoryOptions,
         highLevelCategory: '',
+        secondaryCategoryOptions: [],
         secondaryCategory: '',
-        tertiaryCategoryOptions,
+        tertiaryCategoryOptions: [],
         tertiaryCategory: '',
         additionalKeywords: '',
         adSupported: AD_SUPPORTED,
@@ -156,17 +157,11 @@
     },
     computed: {
       /**
-       * Returns list of secondary categories dependent on highLevelCategory selected
-       * @returns {Array}
-       */
-      secondaryCategoryOptions: function() {
-        return secondaryCategoryOptions(this.highLevelCategory);
-      },
-      /**
        * Gets tags from combining secondary category, tertiary category and additional keywords
+       * 
        * @returns {Array}
        */
-      tags: function() {
+      tags() {
         const keywords = this.additionalKeywords ? this.additionalKeywords.split(',') : [];
 
         if (this.tertiaryCategory) {
@@ -179,55 +174,78 @@
       },
       /**
        * Determines secondary category of video from its tags
+       * 
        * @returns {String}
        */
-      derivedSecondaryCategory: function() {
+      derivedSecondaryCategory() {
         return (this.updatedVideo.tags.filter(keyword => {
           return this.secondaryCategoryOptions.includes(keyword);
         })).join();
       },
       /**
        * Determines tertiary category of video from its tags
+       * 
        * @returns {String}
        */
-      derivedTertiaryCategory: function() {
+      derivedTertiaryCategory() {
         return (this.updatedVideo.tags.filter(keyword => {
           return this.tertiaryCategoryOptions.includes(keyword);
         })).join();
       },
       /**
        * Determines keywords from tags by extracting out categories
+       * 
        * @returns {String}
        */
-      derivedKeywords: function() {
+      derivedKeywords() {
         return (this.updatedVideo.tags.filter(keyword => {
           return !(this.secondaryCategoryOptions.concat(this.tertiaryCategoryOptions)).includes(keyword);
-        })).join();
+        })).join(', ');
       },
       /**
        * Checks form validity dependent on highLevelCategory
+       * 
        * @returns {boolean}
        */
-      validForm: function() {
+      validForm() {
         const tertiaryCategory = this.highLevelCategory === NEWS_LIFESTYLE ? this.tertiaryCategory : true;
 
         return this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
       },
       /**
        * Returns success of update if done loading and video is set
+       * 
        * @returns {boolean}
        */
-      updateSuccess: function() {
+      updateSuccess() {
         return !this.loading && this.transformedVideo && this.transformedVideo.id;
       }
     },
     watch: {
-      data: async function(vid) {
+      /**
+       * Resets preview of video and updates form 
+       * with newly selected video data
+       * 
+       * @param {string} newSelectedCategory
+       */
+      data(vid) {
+        this.transformedVideo = vid;
+        this.setUpdateStatus(INFO, null);
         this.populateFormWithData(vid);
+      },
+      /**
+       * Gets updated secondary categories when high level category is changed
+       * 
+       * @param {string} newSelectedCategory
+       */
+      async highLevelCategory(newSelectedCategory) {
+        this.secondaryCategoryOptions = await secondaryCategoryOptions(newSelectedCategory);
       }
     },
     async created() {
       if (this.data) {
+        await getAllCategoryOptions();
+        this.tertiaryCategoryOptions = await tertiaryCategoryOptions();
         this.populateFormWithData(this.data);
       }
     },
@@ -244,6 +262,7 @@
       /**
        * Retrieves video object from brightcove with video ID and 
        * populates update form fields with this data
+       * 
        * @param {Object} vid
        */
       async populateFormWithData(vid) {
@@ -257,6 +276,7 @@
             this.longDescription = this.updatedVideo.long_description;
             this.station = this.updatedVideo.custom_fields.station;
             this.highLevelCategory = this.updatedVideo.custom_fields.high_level_category;
+            this.secondaryCategoryOptions = await secondaryCategoryOptions(this.highLevelCategory);
             this.secondaryCategory = this.derivedSecondaryCategory;
             this.tertiaryCategory = this.derivedTertiaryCategory;
             this.additionalKeywords = this.derivedKeywords;
@@ -271,23 +291,27 @@
       /**
        * Resets form fields back to the last values retrieved from api
        * and resets the loading status
+       * 
        */
-      resetForm() {
+      async resetForm() {
         this.videoName = this.updatedVideo.name;
         this.shortDescription = this.updatedVideo.description;
         this.longDescription = this.updatedVideo.long_description;
         this.station = this.updatedVideo.custom_fields.station;
         this.highLevelCategory = this.updatedVideo.custom_fields.high_level_category;
+        this.secondaryCategoryOptions = await secondaryCategoryOptions(this.highLevelCategory);
         this.secondaryCategory = this.derivedSecondaryCategory;
         this.tertiaryCategory = this.derivedTertiaryCategory;
         this.additionalKeywords = this.derivedKeywords;
         this.adSupported = this.updatedVideo.economics;
         this.loading = false;
+        this.transformedVideo = null;
         this.setUpdateStatus(INFO, null);
       },
       /**
        * When high level category is changed secondary and tertiary categories are reset
        * because the list of options changes dependent on high level category
+       * 
        */
       resetCategories() {
         this.secondaryCategory = '';
@@ -295,6 +319,7 @@
       },
       /**
        * Updates existing video in brightcove and sets video to updated video
+       * 
        * @param {Object} event
        */
       async updateVideo(event) {

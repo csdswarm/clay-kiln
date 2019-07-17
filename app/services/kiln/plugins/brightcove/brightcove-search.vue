@@ -59,7 +59,7 @@
                 <strong>{{video.name}}</strong>
                 <i class="video-preview__id">ID: {{video.id}}</i>
             </div>
-            <img class="video-preview__image" :src="video.imageUrl" />
+            <img v-if="video.imageUrl" class="video-preview__image" :src="video.imageUrl" />
         </div>
     </div>
 </template>
@@ -86,17 +86,17 @@
             };
         },
         computed: {
-            params: function () {
+            params() {
                 const {endDate, query, startDate} = this;
                 if (endDate && startDate && endDate < startDate) {
                     return {query};
                 }
                 return {query, endDate, startDate};
             },
-            showResults: function () {
+            showResults() {
                 return this.loading || this.searchResults.length !== 0;
             },
-            validDateRange: function () {
+            validDateRange() {
                 return !this.endDate || !this.startDate || this.endDate > this.startDate;
             }
         },
@@ -137,7 +137,7 @@
                     this.loading = false;
                 }
             }, 1000),
-            populateSearchResults: function() {
+            populateSearchResults() {
                 this.loading = true;
 
                 this.debouncedPopulateSearchResults();

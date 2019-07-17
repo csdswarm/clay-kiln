@@ -32,7 +32,7 @@ module.exports = (schema) => {
 
   subscriptions.subscribe('UPDATE_FORMDATA', async input => {
     // set video if new video or search video was changed
-    if (input.path === 'searchVideo' || input.path === 'newVideo' || input.path === 'updateVideo') {
+    if (['searchVideo','newVideo','updateVideo'].includes(input.path)) {
       schema.video.value(input.data);
       try {
         if (input.path !== 'updateVideo') {

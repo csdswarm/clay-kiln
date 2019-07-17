@@ -10,7 +10,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @param {object} params includes query, endDate, and startDate
    * @returns {string} a brightcove friendly query string
    */
-  buildQuery = (params) => {
+  buildQuery = params => {
     const {query, endDate, startDate} = params,
       start = startDate ? moment(startDate).startOf('day').toISOString() : '',
       end = endDate ? moment(endDate).endOf('day').toISOString() : 'NOW',
@@ -24,9 +24,24 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @param {Array} results array of video objects
    * @returns {Array} an array of video objects with only needed fields
    */
-  transformVideoResults = (results) => (results || []).map(({name, images, id, updated_at}) => {
+  transformVideoResults = results => (results || []).map(({name, images, id, updated_at}) => {
     return {name, id, imageUrl: _get(images, 'thumbnail.src', ''), updated_at};
   }),
+  /**
+   * Get video object from brightcove by ID
+   *
+   * @param {string} videoID
+   * @returns {Promise}
+   */
+  getVideoObject = async videoID => {
+    const { status, statusText, body: video } = await brightcoveApi.request('GET', `videos/${ videoID }`);
+
+    if (status === 200 && video.id) {
+      return { video };
+    } else {
+      return { status, statusText };
+    }
+  },
   /**
    * Returns an array of Brightcove videos based on the provided query
    *
@@ -118,9 +133,9 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       const { status, statusText, body: ingestResponse } = await brightcoveApi.ingestVideoFromS3(videoID, api_request_url);
 
       if (status === 200 && ingestResponse.id) {
-        const { status, statusText, body: video } = await brightcoveApi.request('GET', `videos/${ videoID }`);
-
-        if (status === 200 && video.id) {
+        const { status, statusText, video } = await getVideoObject(videoID);
+        
+        if (video && video.id) {
           res.send({ video: transformVideoResults([video])[0], jobID: ingestResponse.id });
         } else {
           res.status(status).send(statusText);
@@ -212,9 +227,9 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    */
   getVideoByID = async (req, res) => {
     try {
-      const { status, statusText, body: video } = await brightcoveApi.request('GET', `videos/${ req.query.id }`);
-
-      if (status === 200 && video.id) {
+      const { status, statusText, video } = await getVideoObject(req.query.id);
+      
+      if (video && video.id) {
         if (!req.query.full_object) {
           res.send(transformVideoResults([video])[0]);
         } else {

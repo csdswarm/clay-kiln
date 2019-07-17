@@ -75,7 +75,7 @@
         multiLine
         floating-label
         label="Additional Keywords (Separate with commas)"
-        help="Please use no fewer than 3 keywords per video including categories selected above."
+        help="Use no fewer than 3 keywords per video including categories selected above."
         v-model="additionalKeywords"
       ></ui-textbox>
       <ui-alert
@@ -95,7 +95,7 @@
         v-if="!validForm"
         :type="ERROR"
         dismissable=false
-      >Please fill in all required fields (marked with *)
+      >Fill in all required fields (marked with *)
       </ui-alert>
       <div class="button-container">
         <ui-button
@@ -122,16 +122,16 @@
     </div>
     <div v-if="uploadedVideo && ingestStatus.type === SUCCESS" class="brightcove-video-preview">
       <div class="video-preview__info">
-        <strong>{{uploadedVideo.name}}</strong>
-        <i class="video-preview__id">ID: {{uploadedVideo.id}}</i>
+        <strong>{{ uploadedVideo.name }}</strong>
+        <i class="video-preview__id">ID: {{ uploadedVideo.id }}</i>
       </div>
-      <img class="video-preview__image" :src="uploadedVideo.imageUrl">
+      <img v-if="uploadedVideo.imageUrl" class="video-preview__image" :src="uploadedVideo.imageUrl">
     </div>
   </div>
 </template>
 <script>
-  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, 
-  tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
+  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, getAllCategoryOptions, 
+  highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
   const { UiButton, UiFileupload, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
     UPLOAD = 'upload',
@@ -151,8 +151,9 @@
         station: window.kiln.locals.station.callsign,
         highLevelCategoryOptions,
         highLevelCategory: '',
+        secondaryCategoryOptions: [],
         secondaryCategory: '',
-        tertiaryCategoryOptions,
+        tertiaryCategoryOptions: [],
         tertiaryCategory: '',
         additionalKeywords: '',
         adSupported: AD_SUPPORTED,
@@ -173,17 +174,10 @@
     },
     computed: {
       /**
-       * Returns list of secondary categories dependent on highLevelCategory selected
-       * @returns {Array}
-       */
-      secondaryCategoryOptions: function() {
-        return secondaryCategoryOptions(this.highLevelCategory);
-      },
-      /**
        * Gets tags from combining secondary category, tertiary category and additional keywords
        * @returns {Array}
        */
-      tags: function() {
+      tags() {
         const keywords = this.additionalKeywords ? this.additionalKeywords.split(',') : [],
           keywordsTrimmed = keywords.map(keyword => { return keyword.trim(); });
 
@@ -199,11 +193,25 @@
        * Checks form validity dependent on highLevelCategory
        * @returns {boolean}
        */
-      validForm: function() {
+      validForm() {
         const tertiaryCategory = this.highLevelCategory === NEWS_LIFESTYLE ? this.tertiaryCategory : true;
 
         return this.videoFile && this.videoName && this.shortDescription && this.station && this.highLevelCategory && this.secondaryCategory && tertiaryCategory && this.tags.length >= 2;
       }
+    },
+    watch: {
+      /**
+       * Gets updated secondary categories when high level category is changed
+       * 
+       * @param {string} newSelectedCategory
+       */
+      async highLevelCategory(newSelectedCategory) {
+        this.secondaryCategoryOptions = await secondaryCategoryOptions(newSelectedCategory);
+      }
+    },
+    async created() {
+      await getAllCategoryOptions();
+      this.tertiaryCategoryOptions = tertiaryCategoryOptions();
     },
     methods: {
       /**
@@ -340,7 +348,7 @@
           if (status === 200 && video && jobID) {
             this.uploadedVideo = video;
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
-            this.updateStatus(UPLOAD, SUCCESS, 'Successfully uploaded video. Go to "Update Video" tab to edit. Please allow a few minutes for video renditions to be created.');
+            this.updateStatus(UPLOAD, SUCCESS, 'Successfully uploaded video. Go to "Update Video" tab to edit. Allow a few minutes for video renditions to be created.');
             this.getIngestStatus(jobID, videoID);
           } else {
             this.loading = false;
@@ -371,14 +379,9 @@
                 this.loading = false;
                 this.updateStatus(INGEST, state === 'finished' ? SUCCESS : ERROR, `${ state.replace('f','F') } creating renditions!`)
                 if (state === 'finished') {
-                  const { status, statusText, data: videoWithMedia } = await getFetchResponse('GET', `/brightcove/get?id=${videoID}`);
-                  
-                  if (status === 200 && videoWithMedia) {
-                    this.uploadedVideo = videoWithMedia;
-                    this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
-                  } else {
-                    this.updateStatus(UPLOAD, ERROR, `Failed to get video after it was created -- ${ status } ${ statusText }`);
-                  }
+                  this.getVideoObjWithVideoFile(videoID);
+                } else {
+                  this.updateStatus(INGEST, ERROR, 'Failed to ingest video');
                 }
               } else {
                 this.getIngestStatus(jobID, videoID);
@@ -392,6 +395,25 @@
             this.updateStatus(INGEST, ERROR, `Failed to create renditions ${ e.message }`);
           }
         }, 5000);
+      },
+      /**
+       * Gets video object from brightcove cloud
+       * 
+       * @param {string} videoID
+       */
+      async getVideoObjWithVideoFile(videoID) {
+        try {
+          const { status, statusText, data: videoWithMedia } = await getFetchResponse('GET', `/brightcove/get?id=${videoID}`);
+                  
+          if (status === 200 && videoWithMedia) {
+            this.uploadedVideo = videoWithMedia;
+            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
+          } else {
+            this.updateStatus(UPLOAD, ERROR, `Failed to get video after it was created -- ${ status } ${ statusText }`);
+          }
+        } catch(e) {
+          this.updateStatus(UPLOAD, ERROR, `Failed to get video after it was created -- ${ e.message }`);
+        }
       }
     },
     components: {
