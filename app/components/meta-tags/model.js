@@ -62,7 +62,8 @@ module.exports.render = (ref, data, locals) => {
     nmcData = getNmcData(hasImportedNmcData, data, locals),
     // author is handled separately because we need to check data.authors before
     //   figuring out nmc's author value
-    nmcKeysExceptAuthor = _without(Object.keys(NMC), 'author');
+    nmcKeysExceptAuthor = _without(Object.keys(NMC), 'author'),
+    ROBOTS = 'robots';
 
   // save these for SPA to easily be able to create or delete tags without knowing property / names
   // lets us only have to update meta-tags component when adding / removing meta tags in the future
@@ -125,6 +126,12 @@ module.exports.render = (ref, data, locals) => {
   } else {
     // ON-543: Yes, on every page in www.radio.com unless it's a station page.
     data.metaTags.push({ name: STATION_CALL_LETTERS, content: 'NATL-RC' });
+  }
+
+  if (data.noIndexNoFollow) {
+    data.metaTags.push({name: ROBOTS, content: 'noindex, nofollow'});
+  } else {
+    data.unusedTags.push({type: 'name', name: ROBOTS});
   }
 
   // handle nmc tags

@@ -6,3 +6,4 @@ _components:
     sectionFront: ""
     secondaryArticleType: ""
     contentTagItems: []
+    noIndexNoFollow: false

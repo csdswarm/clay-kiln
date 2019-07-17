@@ -6,7 +6,8 @@ const _isEmpty = require('lodash/isEmpty'),
   rest = require('../../services/universal/rest'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
   getComponentInstanceObj = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true);
+  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true),
+  { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -130,9 +131,13 @@ module.exports['5.0'] = async function (uri, data) {
   };
 };
 
+module.exports['6.0'] = (uri, data) => {
+  return setNoIndexNoFollow(data);
+};
+
 // articles and galleries need to pass their tags down to the
 //   meta-tags component.
-module.exports['6.0'] = async (uri, data) => {
+module.exports['7.0'] = async (uri, data) => {
   const hash = /instances\/\d+/.test(uri);
 
   // only works for imported pages, migration should take care of Unity pages, new pages are already ok

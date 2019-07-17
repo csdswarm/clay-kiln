@@ -1,6 +1,5 @@
 'use strict';
 
-require('intersection-observer');
 
 const _get = require('lodash/get'),
   adMapping = require('./adMapping'),

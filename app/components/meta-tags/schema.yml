@@ -23,3 +23,6 @@ secondaryArticleType:
 
 contentTagItems:
   _subscribe: metaContentTagItems
+
+noIndexNoFollow:
+  _subscribe: noIndexNoFollow

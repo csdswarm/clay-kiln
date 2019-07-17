@@ -1,4 +1,6 @@
 _components:
   brightcove:
     videoId: ''
+    autoplayUnmuted: false
+    clickToPlay: false
     showTitle: false
