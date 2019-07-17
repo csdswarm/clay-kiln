@@ -1,6 +1,7 @@
 'use strict';
 
 const rest = require('../universal/rest'),
+  qs = require('qs'),
   { formatLocal } = require('../../services/universal/dateTime'),
   { getLocals } = require('./spaLocals'),
   spaLinkService = require('./spaLink'),
@@ -9,6 +10,14 @@ const rest = require('../universal/rest'),
   clientStateInterface = require('./ClientStateInterface')(),
   // https://regex101.com/r/gDfIxb/1
   spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
+  // here for models that reference /server/radioApi (brightcove)
+  TTL = {
+    NONE: 0,
+    DEFAULT: 300000,
+    MIN: 60000,
+    HOUR: 3600000,
+    DAY: 86400000
+  },
   /**
    * returns if a domain is part of the entercom approved list
    * ** NOTE: This is duplicated in the spa also merged into the release-radium branch where it can be shared
@@ -124,13 +133,17 @@ const rest = require('../universal/rest'),
    * Get data
    *
    * @param {string} route
+   * @param {*} [params]
    * @returns {*}
    */
-  get = (route) => {
-    return rest.get(route).then(data => {
+  get = (route, params) => {
+    const endpoint = params ? `${route}?${qs.stringify(params)}` : route;
+
+    return rest.get(endpoint).then(data => {
       return data;
     });
   };
 
 module.exports.get = get;
 module.exports.fetchDOM = fetchDOM;
+module.exports.TTL = TTL;
