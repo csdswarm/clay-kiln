@@ -1,7 +1,12 @@
 'use strict';
 require('isomorphic-fetch');
 
-const MUSIC_ENTERTAINMENT = 'MUSIC_ENTERTAINMENT',
+const AD_SUPPORTED = 'AD_SUPPORTED',
+  FREE = 'FREE',
+  INFO = 'info',
+  ERROR = 'error',
+  SUCCESS = 'success',
+  MUSIC_ENTERTAINMENT = 'MUSIC_ENTERTAINMENT',
   SPORTS = 'SPORTS',
   NEWS_LIFESTYLE = 'NEWS_LIFESTYLE',
   highLevelCategoryOptions = [
@@ -68,16 +73,28 @@ const MUSIC_ENTERTAINMENT = 'MUSIC_ENTERTAINMENT',
             body: headers && headers['Content-Type'] === 'application/json' ? JSON.stringify(body) : body,
             headers: headers
           }),
-          data = headers && headers['Content-Type'] === 'application/json' ? await response.json() : null,
           { status, statusText } = response;
           
-        return { status, statusText, data };
+        if (status >= 200 && status < 300) {
+          const data = headers && headers['Content-Type'] === 'application/json'
+            ? await response.json()
+            : null;
+        
+          return { status, statusText, data };
+        } else {
+          return { status, statusText, data: statusText };
+        }
       }
     } catch (e) {
       return { status: 500, statusText: e, data: e };
     }
   };
 
+module.exports.AD_SUPPORTED = AD_SUPPORTED;
+module.exports.FREE = FREE;
+module.exports.INFO = INFO;
+module.exports.ERROR = ERROR;
+module.exports.SUCCESS = SUCCESS;
 module.exports.NEWS_LIFESTYLE = NEWS_LIFESTYLE;
 module.exports.highLevelCategoryOptions = highLevelCategoryOptions;
 module.exports.secondaryCategoryOptions = secondaryCategoryOptions;

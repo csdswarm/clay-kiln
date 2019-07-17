@@ -81,12 +81,12 @@
         label="Enable preroll?"
         v-model="adSupported"
         checked
-        trueValue="AD_SUPPORTED"
-        falseValue="FREE"
+        :trueValue="AD_SUPPORTED"
+        :falseValue="FREE"
       ></ui-checkbox>
       <ui-alert
         v-if="!validForm"
-        type="error"
+        :type="ERROR"
         dismissable=false
       >Please fill in all required fields (marked with *)
       </ui-alert>
@@ -120,12 +120,10 @@
 </template>
 <script>
   import { transformVideoResults } from '../../../startup/brightcove.js';
-  import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, 
+  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, 
   tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
-  const { UiButton, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
-    AD_SUPPORTED = 'AD_SUPPORTED',
-    FREE = 'FREE';
+  const { UiButton, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components;
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -147,9 +145,12 @@
         additionalKeywords: '',
         adSupported: AD_SUPPORTED,
         updateStatus: {
-          type: 'info',
+          type: INFO,
           message: ''
         },
+        AD_SUPPORTED,
+        FREE,
+        ERROR,
         NEWS_LIFESTYLE
       };
     },
@@ -232,6 +233,15 @@
     },
     methods: {
       /**
+       * Set update status on FE
+       * 
+       * @param {string} type
+       * @param {string} message
+       */
+      setUpdateStatus(type, message) {
+        this.updateStatus = { type, message };
+      },
+      /**
        * Retrieves video object from brightcove with video ID and 
        * populates update form fields with this data
        * @param {Object} vid
@@ -252,10 +262,10 @@
             this.additionalKeywords = this.derivedKeywords;
             this.adSupported = this.updatedVideo.economics;
           } else {
-            this.updateStatus = { type: 'error', message: `Error retrieving video info -- ${ status } ${ statusText }` };
+            this.setUpdateStatus(ERROR, `Error retrieving video info -- ${ status } ${ statusText }`);
           }
         } catch (e) {
-          this.updateStatus = { type: 'error', message: `Error retrieving video info -- ${e}` };
+          this.setUpdateStatus(ERROR, `Error retrieving video info -- ${ e.message }`);
         }
       },
       /**
@@ -273,6 +283,7 @@
         this.additionalKeywords = this.derivedKeywords;
         this.adSupported = this.updatedVideo.economics;
         this.loading = false;
+        this.setUpdateStatus(INFO, null);
       },
       /**
        * When high level category is changed secondary and tertiary categories are reset
@@ -306,13 +317,13 @@
             this.transformedVideo = transformVideoResults([updateResponse])[0];
 
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.transformedVideo });
-            this.updateStatus = { type: 'success', message: `Successfully updated video. Last Updated: ${ updateResponse.updated_at }` };
+            this.setUpdateStatus(SUCCESS, `Successfully updated video. Last Updated: ${ updateResponse.updated_at }`);
           } else {
-            this.updateStatus = { type: 'error', message: `Failed to update video -- ${ status } ${ statusText }` };
+            this.setUpdateStatus(ERROR, `Failed to update video -- ${ status } ${ statusText }`);
           }
         } catch(e) {
           this.loading = false;
-          this.updateStatus = { type: 'error', message: `Failed to update video -- ${e}` };
+          this.setUpdateStatus(ERROR, `Failed to update video -- ${ e.message }`);
         }
       }
     },

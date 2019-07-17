@@ -88,12 +88,12 @@
         label="Enable preroll?"
         v-model="adSupported"
         checked
-        trueValue="AD_SUPPORTED"
-        falseValue="FREE"
+        :trueValue="AD_SUPPORTED"
+        :falseValue="FREE"
       ></ui-checkbox>
       <ui-alert
         v-if="!validForm"
-        type="error"
+        :type="ERROR"
         dismissable=false
       >Please fill in all required fields (marked with *)
       </ui-alert>
@@ -116,11 +116,11 @@
         :type="uploadStatus.type"
       >{{ uploadStatus.message }}</ui-alert>
       <ui-alert
-        v-if="uploadStatus.type === 'success' && ingestStatus.message"
+        v-if="uploadStatus.type === SUCCESS && ingestStatus.message"
         :type="ingestStatus.type"
       >{{ ingestStatus.message }}</ui-alert>
     </div>
-    <div v-if="uploadedVideo && ingestStatus.type === 'success'" class="brightcove-video-preview">
+    <div v-if="uploadedVideo && ingestStatus.type === SUCCESS" class="brightcove-video-preview">
       <div class="video-preview__info">
         <strong>{{uploadedVideo.name}}</strong>
         <i class="video-preview__id">ID: {{uploadedVideo.id}}</i>
@@ -130,12 +130,12 @@
   </div>
 </template>
 <script>
-  import { NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, 
+  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, highLevelCategoryOptions, secondaryCategoryOptions, 
   tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
   const { UiButton, UiFileupload, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
-    AD_SUPPORTED = 'AD_SUPPORTED',
-    FREE = 'FREE';
+    UPLOAD = 'upload',
+    INGEST = 'ingest';
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -157,13 +157,17 @@
         additionalKeywords: '',
         adSupported: AD_SUPPORTED,
         uploadStatus: {
-          type: 'info',
+          type: INFO,
           message: ''
         },
         ingestStatus: {
-          type: 'info',
+          type: INFO,
           message: ''
         },
+        AD_SUPPORTED,
+        FREE,
+        ERROR,
+        SUCCESS,
         NEWS_LIFESTYLE
       };
     },
@@ -203,7 +207,22 @@
     },
     methods: {
       /**
+       * Set upload/ingest status on FE
+       * 
+       * @param {string} alertType
+       * @param {string} type
+       * @param {string} message
+       */
+      updateStatus(alertType, type, message) {
+        if (alertType === UPLOAD) {
+          this.uploadStatus = { type, message };
+        } else if (alertType === INGEST) {
+          this.ingestStatus = { type, message };
+        }
+      },
+      /**
        * Get file stream from file input
+       * 
        * @param {Object[]} files
        * @param {Object} event
        */
@@ -217,6 +236,7 @@
       },
       /**
        * Resets form fields and loading status
+       * 
        */
       resetForm() {
         this.uploadedVideo = null;
@@ -231,29 +251,37 @@
         this.additionalKeywords = '';
         this.adSupported = AD_SUPPORTED;
         this.loading = false;
+        this.updateStatus(UPLOAD, INFO, null);
+        this.updateStatus(INGEST, INFO, null);
       },
       /**
        * When high level category is changed secondary and tertiary categories are reset
        * because the list of options changes dependent on high level category
+       * 
        */
       resetCategories() {
         this.secondaryCategory = '';
         this.tertiaryCategory = '';
       },
       /**
-       * Creates new video object in Brightcove,
-       * uploads new video file to brightcove s3, 
-       * & ingests video file to video object in brightcove.
-       * Sets upload status alert on FE
+       * Init method to start video upload process
+       * 
        * @param {Object} event
        */
-      async uploadNewVideo(event) {
+      uploadNewVideo(event) {
         event.preventDefault();
         this.loading = true;
-        this.uploadStatus.message = null;
-        this.ingestStatus.message = null;
+        this.updateStatus(UPLOAD, INFO, null);
+        this.updateStatus(INGEST, INFO, null);
+        this.createBrightcoveVideoObj();
+      },
+      /**
+       * Creates new video object in Brightcove
+       * 
+       */
+      async createBrightcoveVideoObj() {
         try {
-          const { videoFile, videoName, shortDescription, longDescription, 
+          const { videoName, shortDescription, longDescription, 
             station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this,
             { status, statusText, data } = await getFetchResponse('POST', '/brightcove/create', { 
               videoName, shortDescription, longDescription, station, highLevelCategory, 
@@ -262,48 +290,76 @@
             { signed_url, api_request_url, videoID } = data;
 
           if (status === 200 && signed_url && api_request_url && videoID) {
-            try {
-              // Upload video file to Brightcove S3
-              const { status, statusText } = await getFetchResponse('PUT', signed_url, videoFile, { 'Content-Type': '' });
-
-              if (status === 200) {
-                const { status, statusText, data } = await getFetchResponse('POST', '/brightcove/upload', 
-                  { api_request_url, videoID }, { 'Content-Type': 'application/json' }),
-                  { video, jobID } = data;
-
-                if (status === 200 && video && jobID) {
-                  this.uploadedVideo = video;
-                  this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
-                  this.uploadStatus = { type: 'success', message: 'Successfully uploaded video. Go to "Update Video" tab to edit. Please allow a few minutes for video renditions to be created.' };
-                  this.getIngestStatus(jobID, videoID);
-                } else {
-                  this.uploadStatus = { type: 'error', message: `Failed to upload video -- ${ status } ${ statusText }` };
-                }
-              } else {
-                this.loading = false;
-                this.uploadStatus = { type: 'error', message: `Failed to upload video to Brightcove S3 -- ${ status } ${ statusText }` };
-              }
-            } catch (e) {
-              this.loading = false;
-              this.uploadStatus = { type: 'error', message: `Failed to upload video to Brightcove S3. ${e}` };
-            }
+            this.uploadVideoToBrightcoveS3(signed_url, api_request_url, videoID);
           } else {
             this.loading = false;
-            this.uploadStatus = { type: 'error', message: `Failed to create video -- ${ status } ${ statusText }` };
+            this.updateStatus(UPLOAD, ERROR, `Failed to create video -- ${ status } ${ statusText }`);
           }
         } catch(e) {
           this.loading = false;
-          this.uploadStatus = { type: 'error', message: `Failed to create video. ${e}` };
+          this.updateStatus(UPLOAD, ERROR, `Failed to create video. ${ e.message }`);
         }
+      },
+      /**
+       * Uploads new video file to brightcove s3
+       * using the signed url returned from brightcove's ingest api
+       *
+       * @param {string} signed_url
+       * @param {string} api_request_url
+       * @param {string} videoID
+       */
+      async uploadVideoToBrightcoveS3(signed_url, api_request_url, videoID) {
+        try {
+          const { videoFile } = this,
+          { status, statusText } = await getFetchResponse('PUT', signed_url, videoFile, { 'Content-Type': '' });
+
+          if (status === 200) {
+            this.uploadS3VideoToBrightcove(api_request_url, videoID);
+          } else {
+            this.loading = false;
+            this.updateStatus(UPLOAD, ERROR, `Failed to upload video to Brightcove S3 -- ${ status } ${ statusText }`);
+          }
+        } catch (e) {
+          this.loading = false;
+          this.updateStatus(UPLOAD, ERROR, `Failed to upload video to Brightcove S3. ${ e.message }`);
+        }
+      },
+      /**
+       * Uploads video file in brightcove s3
+       * to Brightcove's video cloud
+       *
+       * @param {string} api_request_url
+       * @param {string} videoID
+       */
+      async uploadS3VideoToBrightcove(api_request_url, videoID) {
+        try {
+          const { status, statusText, data } = await getFetchResponse('POST', '/brightcove/upload', 
+            { api_request_url, videoID }, { 'Content-Type': 'application/json' }),
+            { video, jobID } = data;
+
+          if (status === 200 && video && jobID) {
+            this.uploadedVideo = video;
+            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
+            this.updateStatus(UPLOAD, SUCCESS, 'Successfully uploaded video. Go to "Update Video" tab to edit. Please allow a few minutes for video renditions to be created.');
+            this.getIngestStatus(jobID, videoID);
+          } else {
+            this.loading = false;
+            this.updateStatus(UPLOAD, ERROR, `Failed to upload S3 video to BC -- ${ status } ${ statusText }`);
+          }
+        } catch (e) {
+          this.loading = false;
+          this.updateStatus(UPLOAD, ERROR, `Failed to upload S3 video to Brightcove. ${ e.message }`);
+        }  
       },
       /**
        * Retrieves job status of ingesting video from brightcove S3 to brightcove video object
        * Sets ingest status alert on FE
+       * 
        * @param {string} jobID
        * @param {string} videoID
        */
       getIngestStatus(jobID, videoID) {
-        this.ingestStatus = { type: 'info', message: 'Creating video renditions...' };
+        this.updateStatus(INGEST, INFO, 'Creating video renditions...');
         setTimeout(async () => {
           try {
             const { status, statusText, data: ingestStatus } = await getFetchResponse('POST', '/brightcove/ingestStatus',
@@ -313,8 +369,7 @@
             if (status === 200 && state) {
               if (['finished', 'failed'].includes(state)) {
                 this.loading = false;
-                this.ingestStatus.message = `${ state.replace('f','F') } creating renditions!`;
-                this.ingestStatus.type = state === 'finished' ? 'success' : 'error';
+                this.updateStatus(INGEST, state === 'finished' ? SUCCESS : ERROR, `${ state.replace('f','F') } creating renditions!`)
                 if (state === 'finished') {
                   const { status, statusText, data: videoWithMedia } = await getFetchResponse('GET', `/brightcove/get?id=${videoID}`);
                   
@@ -322,7 +377,7 @@
                     this.uploadedVideo = videoWithMedia;
                     this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
                   } else {
-                    this.uploadStatus = { type: 'error', message: `Failed to get video after it was created -- ${ status } ${ statusText }`};
+                    this.updateStatus(UPLOAD, ERROR, `Failed to get video after it was created -- ${ status } ${ statusText }`);
                   }
                 }
               } else {
@@ -330,11 +385,11 @@
               }
             } else {
               this.loading = false;
-              this.ingestStatus = { type: 'error', message: `Failed to get ingest job status -- ${ status } ${ statusText }` };
+              this.updateStatus(INGEST, ERROR, `Failed to get ingest job status -- ${ status } ${ statusText }`);
             }
           } catch (e) {
             this.loading = false;
-            this.ingestStatus = { type: 'error', message: `Failed to create renditions ${e}` };
+            this.updateStatus(INGEST, ERROR, `Failed to create renditions ${ e.message }`);
           }
         }, 5000);
       }
