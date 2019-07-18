@@ -142,7 +142,6 @@
         UiTextbox, 
         UiModal, 
         UiSelect } = window.kiln.utils.components;
-    const allStationsCallsigns = window.kiln.locals.allStationsCallsigns || ['KMOX', 'KROX'];
 
     export default {
         data() {
@@ -159,7 +158,7 @@
                 errorMessage: '',
                 selectedAlert: {},
                 selectedStation: '',
-                stationCallsigns: allStationsCallsigns,
+                stationCallsigns: window.kiln.locals.allStationsCallsigns,
                 tab: 'global',
                 tabs: [{
                     id: 'global',
