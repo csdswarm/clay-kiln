@@ -1,0 +1,68 @@
+# Only keeping parts that are specific to contest rules, will merge in script
+_components:
+  meta-title:
+    instances:
+      contest-rules:
+        title: Contest Rules | RADIO.COM
+        twitterTitle: Contest Rules | RADIO.COM
+        ogTitle: Contest Rules | RADIO.COM
+        kilnTitle: Contest Rules | RADIO.COM
+  meta-description:
+    instances:
+      contest-rules:
+        description: Contest Rules
+  static-page:
+    instances:
+      contest-rules:
+        headline: Contest Rules
+        content:
+          - _ref: /_components/paragraph/instances/contest-rules-1
+          - _ref: /_components/paragraph/instances/contest-rules-2
+          - _ref: /_components/subheader/instances/contest-rules-3
+          - _ref: /_components/paragraph/instances/contest-rules-4
+          - _ref: /_components/subheader/instances/contest-rules-5
+          - _ref: /_components/paragraph/instances/contest-rules-6
+        pageTitle: Contest Rules
+        primaryHeadline: Contest Rules
+        plaintextPrimaryHeadline: Contest Rules
+        twitterTitle: Contest Rules
+        ogTitle: Contest Rules
+        kilnTitle: Contest Rules
+  paragraph:
+    instances:
+      contest-rules-1:
+        text: >-
+          Unless otherwise indicated below, RADIO.COM’s general contest rules
+          apply to RADIO.COM contests. For the specific terms and conditions
+          applicable to a particular RADIO.COM contest, please see below.
+        componentVariation: paragraph
+      contest-rules-2:
+        text: >-
+          You can also view RADIO.COM's&nbsp;<a
+          href="/general-contest-rules"
+          target="_blank">General Contest Rules</a>&nbsp;or review
+          Entercom's&nbsp;<a href="http://www.entercom.com/privacy-policy"
+          target="_blank">Privacy Policy.</a>
+      contest-rules-4:
+        text: 'Contest Rules: 12.4.18 - 12.16.18'
+      contest-rules-6:
+        text: >-
+          Contest Rules: New Year's Eve Weekend National Flyaway 11.26.18 -
+          12.7.18<br /><a
+          href="http://entercomweb.com/nationalpromotions/contest/nye/ETM_NYE_WeekendFlyaway_2018_ContestRules.pdf">Click
+          here for contest rules</a>
+  subheader:
+    instances:
+      contest-rules-3:
+        text: >-
+          <a
+          href="https://www.radio.com/contest/american-cancer-society-12-days-christmas-giveaway">The
+          American Cancer Society 12 Days of Christmas Giveaway</a>
+        anchorId: ip-the-american-cancer-society-12-days-of-christmas-giveaway
+        componentVariation: subheader
+      contest-rules-5:
+        text: >-
+          <a
+          href="https://www.radio.com/contest/see-ariana-grande-imagine-dragons">See
+          Ariana Grande &amp; Imagine Dragons</a>
+        anchorId: ip-see-ariana-grande-imagine-dragons

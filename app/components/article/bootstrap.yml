@@ -47,3 +47,5 @@ _components:
     contentType: 'article'
     featured: false
     editorialFeeds: {}
+    isContentFromAP: false
+    noIndexNoFollow: false

@@ -1,0 +1,41 @@
+_confirmRemoval: true
+
+headline:
+  _label: Headline
+  _placeholder:
+    height: 40px
+    text: Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+    help: Appears as page title
+
+content:
+  _label: Page Content
+  _placeholder:
+    text: Page Content
+    height: 600px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - image
+      - html-embed
+      - subheader
+      - paragraph
+
+pageTitle:
+  _publish: pageTitle
+  _has:
+    help: Plaintext page title, set by headline.
+
+plaintextPrimaryHeadline:
+  _publish:
+    - ogTitle
+    - pageListTitle
+  _has:
+    help: Plaintext title set by headline.

@@ -1,0 +1,36 @@
+# Only keeping parts that are specific to subscribe, will merge in script
+_components:
+  static-page:
+    instances:
+      newsletter-subscribe:
+        headline: Subscribe
+        content:
+          - _ref: /_components/paragraph/instances/newsletter-subscribe-1
+          - _ref: /_components/paragraph/instances/newsletter-subscribe-2
+          - _ref: /_components/paragraph/instances/newsletter-subscribe-3
+          - _ref: /_components/html-embed/instances/newsletter-subscribe-4
+        pageTitle: Subscribe
+        primaryHeadline: Subscribe
+        plaintextPrimaryHeadline: Subscribe
+  paragraph:
+    instances:
+      newsletter-subscribe-1:
+        text: ''
+        componentVariation: paragraph
+      newsletter-subscribe-2:
+        text: Subscribe to RADIO.COM emails.
+      newsletter-subscribe-3:
+        text: >-
+          You'll receive updates on stations, content, new app features,
+          contests, shows and more from RADIO.COM.
+  html-embed:
+    instances:
+      newsletter-subscribe-4:
+        text: |-
+          <iframe
+            allowfullscreen=""
+            data-ss-embed="iframe"
+            scrolling="no"
+            src="https://embed-515031.secondstreetapp.com/embed/8dc333ac-f895-4115-836d-b7ec41705cc2/"
+            style="background-color: transparent; border: 0px none transparent; padding: 0px; overflow: hidden; min-width: 100%; width: 100px; height: 874px;"></iframe>
+        isIframe: true
