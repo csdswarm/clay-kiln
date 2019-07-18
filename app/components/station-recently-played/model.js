@@ -56,7 +56,7 @@ module.exports.render = async function (ref, data, locals) {
       .map((item) => {
         return {
           playing: item.playing,
-          start_time: item.timePlayedUtc,
+          start_time: item.timePlayedUtc.includes('Z') ? item.timePlayedUtc : `${item.timePlayedUtc}Z`,
           artist: item.artist,
           image: item.imageUrl,
           title: item.title,
