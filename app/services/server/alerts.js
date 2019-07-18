@@ -38,12 +38,14 @@ const db = require('../server/db'),
 
       try {
         const params = _pick({active: true, ...req.query}, allowedParams),
+          paramValues = [],
           whereQuery = Object.keys(params).map(key => {
             switch (key) {
               case 'current':
                 return "EXTRACT(EPOCH FROM NOW())::int8 <@ int8range((data->>'start')::int8, (data->>'end')::int8)";
               default:
-                return `data->>'${key}' = '${params[key]}'`;
+                paramValues.push(params[key]);
+                return `data->>'${key}' = ?`;
             }
           }).join(' AND '),
           alerts = await db.raw(`
@@ -52,7 +54,7 @@ const db = require('../server/db'),
             WHERE (data->>'end')::int8 > EXTRACT(EPOCH FROM NOW())::int8
               AND ${whereQuery}
             ORDER BY data->>'start'
-          `).then(pullDataFromResponse);
+          `, paramValues).then(pullDataFromResponse);
 
         res.status(200).send(alerts);
       } catch (e) {

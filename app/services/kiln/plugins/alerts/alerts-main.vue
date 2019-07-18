@@ -16,6 +16,7 @@
                 <div class="alerts-manager__station-select">
                     <ui-select 
                         label="Station"
+                        placeholder="Select a station"
                         :options="stationCallsigns"
                         @select="loadAlerts"
                         v-if="!global"
@@ -28,20 +29,19 @@
                     <span class="page-list-header page-list-headers__start">Start</span>
                     <span class="page-list-header page-list-headers__end">End</span>
                     <span class="page-list-header page-list-headers__message">Message</span>
-                    <span class="page-list-header page-list-headers__breaking"></span>
-                    <span class="page-list-header page-list-headers__delete"></span>
+                    <span class="page-list-header page-list-headers__icons"></span>
                 </div>
                 <div class="page-list-readout" v-show="!loading">
                     <div
                         :key="alert.message"
                         class="page-list-item"
 
-                        v-for="alert in alerts"
+                        v-for="(alert, index) in alerts"
                     >
                         <span class="page-list-item__start">{{alert.start | formatDate}}</span>
                         <span class="page-list-item__end">{{alert.end | formatDate}}</span>
                         <span class="page-list-item__message">{{alert.message}}</span>
-                        <span class="page-list-item__breaking">
+                        <span class="page-list-item__icons">
                             <ui-icon-button 
                                 icon="error" 
                                 color="red"
@@ -49,8 +49,16 @@
                                 disabled=true
                                 v-if="alert.breaking"></ui-icon-button>
                         </span>
-                        <span class="page-list-item__delete">
-                            <ui-icon-button icon="delete_outline" @click="deleteAlert(alert)"></ui-icon-button>
+                        <span class="page-list-item__menu">
+                            <ui-icon-button 
+                                icon="more_vert" 
+                                has-dropdown
+                                ref="itemButton">
+                                <div class="page-list-item__dropdown" slot="dropdown">
+                                    <ui-button>Edit</ui-button>
+                                    <ui-button @click="deleteAlert(alert)">Delete</ui-button>
+                                </div>
+                            </ui-icon-button>
                         </span>
                     </div>
                 </div>
@@ -112,7 +120,7 @@
                 </div>
                 <ui-button
                     @click="addAlert"
-                    :disabled="validForm">Save Alert</ui-button>
+                    :disabled="!validForm">Save Alert</ui-button>
                 <div>{{ errorMessage }}</div>
         </ui-modal>
     </div>
@@ -125,7 +133,7 @@
         UiButton, 
         UiCheckbox, 
         UiConfirm, 
-        UiDatepicker, 
+        UiDatepicker,
         UiIconButton,
         UiProgressCircular,
         UiTabs, 
@@ -134,6 +142,15 @@
         UiModal, 
         UiSelect } = window.kiln.utils.components;
     const allStationsCallsigns = window.kiln.locals.allStationsCallsigns || ['KMOX', 'KROX'];
+    const itemOptions = [
+        {
+            label: 'Edit',
+            type: 'edit'
+        }, {
+            label: 'Delete',
+            type: 'delete'
+        }
+    ]
 
     export default {
         data() {
@@ -142,6 +159,7 @@
                 breaking: false,
                 endDate: '',
                 endTime: '',
+                itemOptions,
                 loading: false,
                 message: '',
                 startDate: '',
@@ -228,16 +246,24 @@
                 this.selectedAlert = alert;
                 this.$refs[ref].open();
             },
-            async deleteAlert(){
+            async deleteAlert(alert){
+                this.selectedAlert = alert;
                 await axios.put('/alerts', {...this.selectedAlert, active: false});
                 await this.loadAlerts();
             },
             async loadAlerts() {
-                this.loading = true;
-                const {data = []} = await axios.get('/alerts', {params: {station: this.station}});
+                if (!this.global && !this.selectedStation) {
+                    this.alerts = [];
+                } else {
+                    this.loading = true;
+                    const {data = []} = await axios.get('/alerts', {params: {station: this.station}});
 
-                this.loading = false;
-                this.alerts = data;
+                    this.loading = false;
+                    this.alerts = data;
+                }
+            },
+            menuOptionSelect(...args) {
+                console.log({args})
             },
             openModal(ref) {
                 this.errorMessage = '';

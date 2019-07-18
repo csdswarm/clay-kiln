@@ -48,7 +48,7 @@
             align-items: center;
         }
 
-        &__breaking {
+        &__icons {
             flex: 1 1 em(50);
             align-items: center;
         }
@@ -65,9 +65,14 @@
             padding: em(5);
         }
 
-        &__breaking {
+        &__icons {
             flex: 1 1 em(50);
             padding: em(5)
         }
     }
+}
+
+.page-list-item__dropdown {
+    display: flex;
+    flex-direction: column;
 }
