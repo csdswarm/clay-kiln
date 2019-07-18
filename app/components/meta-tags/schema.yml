@@ -20,3 +20,6 @@ sectionFront:
 
 secondaryArticleType:
   _subscribe: secondaryArticleType
+
+noIndexNoFollow:
+  _subscribe: noIndexNoFollow

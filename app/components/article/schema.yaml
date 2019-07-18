@@ -1,4 +1,4 @@
-_version: 4.0
+_version: 5.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -440,6 +440,8 @@ _groups:
       - showSocial
       - sectionFront
       - hasSecondaryBylines
+      - apContent
+      - noIndexNoFollow
   syndication:
     fields:
       - featured
@@ -500,3 +502,20 @@ tags:
   _component:
     include:
       - tags
+
+apContent:
+  _label: [No Index / No Follow is always ON for AP]
+  _has: static
+  _reveal:
+    field: isContentFromAP
+    operator: ===
+    value: true
+
+noIndexNoFollow:
+  _publish: noIndexNoFollow
+  _label: No Index / No Follow
+  _has: checkbox
+  _reveal:
+    field: isContentFromAP
+    operator: ===
+    value: false

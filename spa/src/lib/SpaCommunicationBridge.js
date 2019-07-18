@@ -57,7 +57,7 @@ class SpaCommunicationBridge {
     const channelId = this.getChannelId(channelName)
 
     if (!this.channels[channelId] && createIfUndefined) {
-      this.channels[channelId] = {listeners: []}
+      this.channels[channelId] = { listeners: [] }
     }
 
     return this.channels[channelId]
