@@ -132,13 +132,13 @@ module.exports['5.0'] = async function (uri, data) {
   };
 };
 
+module.exports['6.0'] = (uri, data) => {
+  return setNoIndexNoFollow(data);
+};
+
 // ensure adTags exists
-module.exports['6.0'] = async function (uri, data) {
+module.exports['7.0'] = async function (uri, data) {
   data = addAdTags('gallery', uri, data);
 
   return data;
-};
-
-module.exports['7.0'] = (uri, data) => {
-  return setNoIndexNoFollow(data);
 };
