@@ -13,7 +13,6 @@ const db = require('../server/db'),
    */
   pullDataFromResponse = (response) => response.rows.map(({id, data}) => ({id, ...data})),
   checkForOverlap = async (start, end, station) => {
-    await db.ensureTableExists('alert');
     const response = await db.raw(`
         SELECT id FROM alert
         WHERE int8range(${start}::int8, ${end}::int8)
@@ -30,6 +29,7 @@ const db = require('../server/db'),
    * @param {object} app
    */
   inject = (app) => {
+    db.ensureTableExists('alert');
     /**
      * Get the current alerts for a station
      */
