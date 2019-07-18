@@ -2,6 +2,7 @@
 <template>
     <div class="alerts-manager">
         <ui-tabs
+            class="alerts-manager__tabs"
             fullwidth
             @tab-change="updateTab">
             <ui-tab
@@ -36,7 +37,7 @@
                         :key="alert.message"
                         class="page-list-item"
 
-                        v-for="(alert, index) in alerts"
+                        v-for="alert in alerts"
                     >
                         <span class="page-list-item__start">{{alert.start | formatDate}}</span>
                         <span class="page-list-item__end">{{alert.end | formatDate}}</span>
@@ -46,7 +47,6 @@
                                 icon="error" 
                                 color="red"
                                 tooltip="BREAKING"
-                                disabled=true
                                 v-if="alert.breaking"></ui-icon-button>
                         </span>
                         <span class="page-list-item__menu">
@@ -55,8 +55,8 @@
                                 has-dropdown
                                 ref="itemButton">
                                 <div class="page-list-item__dropdown" slot="dropdown">
-                                    <ui-button>Edit</ui-button>
-                                    <ui-button @click="deleteAlert(alert)">Delete</ui-button>
+                                    <ui-button @click="editAlert(alert)">Edit</ui-button>
+                                    <ui-button @click="confirmDeleteAlert(alert)">Delete</ui-button>
                                 </div>
                             </ui-icon-button>
                         </span>
@@ -65,14 +65,14 @@
                 <ui-progress-circular v-show="loading"></ui-progress-circular>
             </div>
         </ui-tabs>
-        <!-- <ui-confirm
+        <ui-confirm
             ref='confirmDelete'
             title='Confirm Delete'
 
             @confirm="deleteAlert"
             >
             Are you sure you want to delete this alert?
-        </ui-confirm> -->
+        </ui-confirm>
         <ui-modal
             title="Add New Alert"
             ref="alertModal"
@@ -87,7 +87,7 @@
                     <div class="alerts-manager__time-picker">
                         <ui-datepicker
                             placeholder="Select the start date"
-                            :maxDate:="endDate"
+                            :maxDate="endDate"
                             
                             v-model="startDate"
                         >Start Date</ui-datepicker>
@@ -119,9 +119,10 @@
                     </div>
                 </div>
                 <ui-button
+                    class="alerts-manager__save-alert"
                     @click="addAlert"
                     :disabled="!validForm">Save Alert</ui-button>
-                <div>{{ errorMessage }}</div>
+                <div class="alerts-manager__error-message">{{ errorMessage }}</div>
         </ui-modal>
     </div>
 </template>
@@ -142,24 +143,15 @@
         UiModal, 
         UiSelect } = window.kiln.utils.components;
     const allStationsCallsigns = window.kiln.locals.allStationsCallsigns || ['KMOX', 'KROX'];
-    const itemOptions = [
-        {
-            label: 'Edit',
-            type: 'edit'
-        }, {
-            label: 'Delete',
-            type: 'delete'
-        }
-    ]
 
     export default {
         data() {
             return {
                 alerts: [],
                 breaking: false,
+                editMode: false,
                 endDate: '',
                 endTime: '',
-                itemOptions,
                 loading: false,
                 message: '',
                 startDate: '',
@@ -217,11 +209,17 @@
                     message,
                     start,
                     end,
-                    station
+                    station,
+                    selectedAlert
                 } = this;
 
                 try {
-                    await axios.post('/alerts', {breaking, message, start, end, station});
+                    if (this.editMode && selectedAlert) {
+                        await axios.put('/alerts', {...selectedAlert, breaking, message, start, end, station})
+                        this.editMode = false;
+                    } else {
+                        await axios.post('/alerts', {breaking, message, start, end, station});
+                    }
                     await this.loadAlerts();
                     this.closeModal('alertModal');
                     this.clearModal();
@@ -244,12 +242,17 @@
             },
             confirmDeleteAlert(alert) {
                 this.selectedAlert = alert;
-                this.$refs[ref].open();
+                this.$refs['confirmDelete'].open();
             },
-            async deleteAlert(alert){
-                this.selectedAlert = alert;
+            async deleteAlert(){
                 await axios.put('/alerts', {...this.selectedAlert, active: false});
                 await this.loadAlerts();
+            },
+            editAlert(alert) {
+                this.selectedAlert = alert;
+                this.editMode = true;
+                this.setForm(alert);
+                this.openModal('alertModal')
             },
             async loadAlerts() {
                 if (!this.global && !this.selectedStation) {
@@ -262,12 +265,20 @@
                     this.alerts = data;
                 }
             },
-            menuOptionSelect(...args) {
-                console.log({args})
-            },
             openModal(ref) {
                 this.errorMessage = '';
                 this.$refs[ref].open();
+            },
+            setForm(alert) {
+                const start = moment.utc(alert.start*1000);
+                const end = moment.utc(alert.end*1000);
+
+                this.breaking = alert.breaking;
+                this.message = alert.message;
+                this.startDate = start.toDate();
+                this.startTime = start.format('HH:mm:ss');
+                this.endDate = end.toDate();
+                this.endTime = end.format('HH:mm:ss');
             },
             updateTab(tab) {
                 this.tab = tab;

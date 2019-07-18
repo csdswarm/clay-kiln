@@ -1,5 +1,8 @@
 .alerts-manager {
-    min-width: em(900);
+
+    > .alerts-manager__tabs {
+        width: 900px;
+    }
 
     &__toolbar {
         display: flex;
@@ -20,6 +23,15 @@
                 flex-grow: 1
             }
         }
+    }
+
+    &__save-alert {
+        width: 100%;
+    }
+
+    &__error-message {
+        margin: em(15) 0px 0px;
+        color: red;
     }
 
     &__time-picker {
