@@ -331,6 +331,11 @@ function setPlainAuthorsList(data) {
     data.authors = authors;
   }
 }
+
+/**
+ * Transcribes byline names, directly to sources on the data.
+ * @param {Object} data
+ */
 function setPlainSourcesList(data) {
   const bylineList = _get(data, 'byline', []),
     sources = [];
@@ -363,7 +368,80 @@ function sanitizeByline(data) {
   data.byline = byline.filter(entry => !!entry.names);
 }
 
+/**
+ * updates the key in the object if it exists replacing the ${key} with value
+ *
+ * @param {object} obj
+ * @param {string} key
+ * @param {string} value
+ */
+function replaceDefaultKeyValue(obj, key, value) {
+  if (obj[key]) {
+    obj[key] = obj[key].replace(`\${${key}}`, value || '');
+  }
+}
+
+/**
+ * set dateModified to published date if before the publish date.
+ * @param {Object} data
+ */
+function fixModifiedDate(data) {
+  if (!data.dateModified || data.dateModified < data.date) {
+    data.dateModified = data.date;
+  }
+}
+
+/**
+ * Adds station logo to the byline if it's a station
+ * @param {Object} data
+ * @param {Object} locals
+ */
+function addStationLogo(data, locals) {
+  const isStation = locals.station.slug !== 'www';
+
+  replaceDefaultKeyValue(data, 'stationLogoUrl', isStation ? locals.station.square_logo_small : '');
+  replaceDefaultKeyValue(data, 'stationURL', isStation ? locals.station.website : '');
+
+  if (data.byline && data.byline[0].sources.length) {
+    replaceDefaultKeyValue(data.byline[0].sources[0], 'text', isStation ? locals.station.name : '');
+    if (data.byline[0].sources[0].text === '') {
+      data.byline[0].sources.length = 0;
+    }
+  }
+}
+
+/**
+ * Replaces any radio.com text in the byline with RADIO.COM in capitals
+ * @param {Object} data
+ */
+function upCaseRadioDotCom(data) {
+  const sources = _get(data, 'byline[0].sources', []);
+
+  sources.length && sources.forEach(source => {
+    source.text = source.text.replace(/radio\.com/gi, 'RADIO.COM');
+  });
+}
+
+/**
+ * Set's noIndexNoFollow for meta tag based on information in the component
+ * @param {Object} data
+ * @returns {Object}
+ */
+function setNoIndexNoFollow(data) {
+  const isContentFromAP = _get(data, 'byline', [])
+    .some(({sources = []}) =>
+      sources.some(({text}) => text === 'The Associated Press'));
+
+  data.isContentFromAP = isContentFromAP;
+  data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;
+
+  return data;
+}
+
 function render(ref, data, locals) {
+  fixModifiedDate(data);
+  addStationLogo(data, locals);
+  upCaseRadioDotCom(data);
   if (locals && !locals.edit) {
     return data;
   }
@@ -375,7 +453,7 @@ function render(ref, data, locals) {
     circulationService.setGoogleStandoutHelpers(data, resolved.publishedData, resolved.past.length);
     return data;
   });
-};
+}
 
 function save(uri, data, locals) {
   // first, let's get all the synchronous stuff out of the way:
@@ -390,6 +468,7 @@ function save(uri, data, locals) {
   setPlainAuthorsList(data);
   setPlainSourcesList(data);
   sanitizeByline(data);
+  setNoIndexNoFollow(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image
@@ -401,7 +480,9 @@ function save(uri, data, locals) {
     setSlugAndLock(data, resolved.prevData, resolved.publishedData);
     return data;
   });
-};
+}
+
+module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
 
 module.exports.render = render;
 module.exports.save = save;

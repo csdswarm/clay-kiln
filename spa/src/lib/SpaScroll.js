@@ -40,7 +40,13 @@ const SpaScroll = {
     }
 
     function scrollToPosition (hash) {
-      const el = document.querySelector(hash)
+      let el = null
+
+      try {
+        el = document.querySelector(hash)
+      } catch (e) {
+        // invalid hash for querySelector
+      }
       if (el) {
         const offset = { x: 0, y: 0 }
         const position = getElementPosition(el, offset)

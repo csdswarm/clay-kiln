@@ -69,8 +69,10 @@ module.exports.render = async (ref, data, locals) => {
         feedImgUrl: upd.primary_image || defaultImage
       }));
 
-    data.items = articles;
-    data.lytics = true;
+    if (articles.length > 0) {
+      data.items = articles;
+      data.lytics = true;
+    }
   }
 
   (data.items || []).map(item => {

@@ -10,7 +10,12 @@ const clientCommunicationBridge = require('./ClientCommunicationBridge')();
  *
  */
 class ClientPlayerInterface {
-  // Mount the player
+  /**
+   *
+   * Mount the player and load in resources
+   *
+   * @returns {node} - The web player document node.
+   */
   mountPlayer() {
     // Get data-attributes from hbs template.
     const webPlayerComponentDiv = document.body.querySelector('div.component--web-player'),
@@ -38,7 +43,7 @@ class ClientPlayerInterface {
     if (qs.includes('webplayer')) {
       const params = qs.substring(1).split('&'),
         webPlayer = params.find(item => item.includes('webplayer'));
-
+        
       webPlayerParam = webPlayer.split('=')[1];
     }
 
