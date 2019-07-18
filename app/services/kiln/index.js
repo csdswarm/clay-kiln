@@ -9,6 +9,7 @@ module.exports = () => {
   require('./plugins/podcast-select')();
   require('./plugins/content-syndication')();
   require('./plugins/brightcove-search')();
+  require('./plugins/content-search')();
   require('./plugins/instagram')();
   require('./validators')();
 };

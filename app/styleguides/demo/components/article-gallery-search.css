@@ -1,0 +1,49 @@
+.kiln-field {
+  .content-search {
+    .ui-textbox {
+      margin-bottom: em(16);
+    }
+
+    &__search-results {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      ul {
+        width: 100%;
+      }
+
+      .search-results__item {
+        display: flex;
+        flex-direction: row;
+        padding: em(4);
+        cursor: pointer;
+        justify-content: space-between;
+
+        &:hover {
+          background-color: lightgrey;
+        }
+
+        .item__header {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-right: em(4);
+        }
+        .item__date {
+          white-space: nowrap;
+        }
+      }
+
+      .search-results__header {
+        display: flex;
+        flex-direction: row;
+        margin: em(4);
+        cursor: pointer;
+        justify-content: space-between;
+        font-weight: bold;
+        border-bottom: 1px solid black;
+      }
+    }
+  }
+}
