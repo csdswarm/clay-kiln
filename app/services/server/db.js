@@ -28,7 +28,7 @@ const utils = require('../universal/utils'),
    * @returns {Promise}
    */
   createTable = async (tableName) => {
-    if (!(await checkTableExists(tableName))) {
+    if (!await checkTableExists(tableName)) {
       try {
         await db.raw(`
           CREATE TABLE ${tableName} (
