@@ -9,7 +9,13 @@ const httpOrHttps = process.argv.slice(2)[0],
   options = {
     host
   },
-  failedRequests = [];
+  failedRequests = [],
+  requestIsFiring = false,
+  waitMs = ms => {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms)
+    });
+  };
 
 console.log("updating 'contentTagItems' property of non-upgrade'able meta-tags");
 
@@ -77,22 +83,25 @@ async function makeRequest(path, method, data) {
 
     console.log(`${method} to ${requestOptions.path}`);
     req.end();
-  });
+  })
+    .then((result) => waitMs(1000).then(() => result))
+    .catch(err => {
+      if (err.code === 'ETIMEDOUT') {
+        return makeRequest(path, method, data);
+      }
+      return Promise.reject(err);
+    });
 }
 
 async function letsDoThis() {
-  const [general, generalPublished] = await Promise.all([
-    makeJsonRequest('/_components/meta-tags/instances/general', 'GET'),
-    makeJsonRequest('/_components/meta-tags/instances/general@published', 'GET')
-  ]);
+  const general = await makeJsonRequest('/_components/meta-tags/instances/general', 'GET'),
+    generalPublished = await makeJsonRequest('/_components/meta-tags/instances/general@published', 'GET');
 
   general.contentTagItems = [];
   generalPublished.contentTagItems = [];
 
-  await Promise.all([
-    makeRequest('/_components/meta-tags/instances/general', 'PUT', general),
-    makeRequest('/_components/meta-tags/instances/general@published', 'PUT', generalPublished),
-  ]);
+  await makeRequest('/_components/meta-tags/instances/general', 'PUT', general);
+  await makeRequest('/_components/meta-tags/instances/general@published', 'PUT', generalPublished);
 
   const pages = await makeJsonRequest('/_pages', 'GET'),
     setOfPublishedPages = new Set(await makeJsonRequest('/_pages/@published', 'GET'));
@@ -102,37 +111,42 @@ async function letsDoThis() {
 
 async function updatePages(pages, setOfPublishedPages) {
   for (let i = 0; i < pages.length; i++) {
-    const page = pages[i],
-      isPublished = setOfPublishedPages.has(`${page}@published`);
+    try {
+      const page = pages[i],
+        isPublished = setOfPublishedPages.has(`${page}@published`);
 
-    // unity created pages are alpha-numeric 25 chars
-    // imported (sbp were imported) content is a number --> handled by upgrade, do nothing
-    // other - layout level pages (new-two-col, gallery, etc) use /_components/meta-tags/instances/general
-    // keeping named-groups as comment for clarity on which group is which
-    // let hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
-    const hash = page.match(/_pages\/([a-zA-Z0-9]{25})?(\d+|sbp-\d+)?(.+)?/);
+      // unity created pages are alpha-numeric 25 chars
+      // imported (sbp were imported) content is a number --> handled by upgrade, do nothing
+      // other - layout level pages (new-two-col, gallery, etc) use /_components/meta-tags/instances/general
+      // keeping named-groups as comment for clarity on which group is which
+      // let hash = page.match(/_pages\/(?<unity>[a-zA-Z0-9]{25})?(?<imported>\d+|sbp-\d+)?(?<other>.+)?/);
+      const hash = page.match(/_pages\/([a-zA-Z0-9]{25})?(\d+|sbp-\d+)?(.+)?/);
 
-    if (!hash) {
-      continue;
+      if (!hash) {
+        continue;
+      }
+
+      const unity = hash[1],
+        imported = hash[2],
+        other = hash[3],
+        // we don't need to do this for imported content, upgrade scripts handle this
+        slug = unity || other || (imported == '404' ? imported : undefined);
+
+      // we only need to update the unity pages.  All others will be handled by
+      //   the upgrade script
+      if (!unity) {
+        continue;
+      }
+
+      const pageUri = `/_pages/${slug}`,
+        pageJson = await makeJsonRequest(pageUri, 'GET');
+
+      // send in unity hash -- "other" pages default to meta-tags general instance
+      await addContentTagItems(pageJson, isPublished, unity);
+    } catch (e) {
+      // a request should have failed in this scenario which will be
+      //   logged after
     }
-
-    const unity = hash[1],
-      imported = hash[2],
-      other = hash[3],
-      // we don't need to do this for imported content, upgrade scripts handle this
-      slug = unity || other || (imported == '404' ? imported : undefined);
-
-    // we only need to update the unity pages.  All others will be handled by
-    //   the upgrade script
-    if (!unity) {
-      continue;
-    }
-
-    const pageUri = `/_pages/${slug}`,
-      pageJson = await makeJsonRequest(pageUri, 'GET');
-
-    // send in unity hash -- "other" pages default to meta-tags general instance
-    await addContentTagItems(pageJson, isPublished, unity);
   };
 
   failedRequests.forEach(failure => {
@@ -178,38 +192,24 @@ async function addContentTagItems(page, isPublished) {
     return;
   }
 
-  const [
-    metaTagsData,
-    contentData,
-    metaTagsPublishedData,
-    contentPublishedData
-  ] = await Promise.all([
-    makeJsonRequest(metaTagsUri, 'GET'),
-    makeJsonRequest(contentUri, 'GET'),
-    isPublished ? makeJsonRequest(metaTagsUri + '@published', 'GET') : null,
-    isPublished ? makeJsonRequest(contentUri + '@published', 'GET') : null
-  ]);
-
-  const tagsUri = removeHost(contentData.tags._ref),
-    tagsPublishedUri = isPublished ? removeHost(contentPublishedData.tags._ref) : null;
-
-  const [
-    tagsData,
-    tagsPublishedData
-  ] = await Promise.all([
-    makeJsonRequest(tagsUri, 'GET'),
-    isPublished ? makeJsonRequest(tagsPublishedUri, 'GET') : null
-  ]);
+  const metaTagsData = await makeJsonRequest(metaTagsUri, 'GET'),
+    contentData = await makeJsonRequest(contentUri, 'GET'),
+    metaTagsPublishedData = isPublished ? await makeJsonRequest(metaTagsUri + '@published', 'GET') : null,
+    contentPublishedData = isPublished ? await makeJsonRequest(contentUri + '@published', 'GET') : null,
+    tagsUri = removeHost(contentData.tags._ref),
+    tagsPublishedUri = isPublished ? removeHost(contentPublishedData.tags._ref) : null,
+    tagsData = await makeJsonRequest(tagsUri, 'GET'),
+    tagsPublishedData = isPublished ? await makeJsonRequest(tagsPublishedUri, 'GET') : null;
 
   metaTagsData.contentTagItems = tagsData.items;
   if (isPublished) {
     metaTagsPublishedData.contentTagItems = tagsPublishedData.items;
   }
 
-  await Promise.all([
-    makeRequest(metaTagsUri, 'PUT', metaTagsData),
-    isPublished ? makeRequest(metaTagsUri + '@published', 'PUT', metaTagsPublishedData) : null
-  ]);
+  await makeRequest(metaTagsUri, 'PUT', metaTagsData);
+  if (isPublished) {
+    await makeRequest(metaTagsUri + '@published', 'PUT', metaTagsPublishedData);
+  }
 }
 
 letsDoThis();
