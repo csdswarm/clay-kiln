@@ -1,7 +1,8 @@
 'use strict';
 
 const _ = require('lodash'),
-  utils = require('../universal/utils');
+  utils = require('../universal/utils'),
+  protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
  * @param {object} result
@@ -9,6 +10,24 @@ const _ = require('lodash'),
  */
 function formatSearchResult(result) {
   return _.map(result.hits.hits, '_source');
+}
+
+/**
+ * Returns result with any canonicalUrls having the proper protocol
+ *
+ * @param {object} result
+ * @returns {Array}
+ */
+function formatProtocol(result) {
+  return _.map(result, article => {
+    const url = _.get(article, 'canonicalUrl');
+
+    if (url) {
+      return { ...article, canonicalUrl: url.replace(/^http:/, protocol) };
+    }
+
+    return article;
+  });
 }
 
 /**
@@ -381,5 +400,6 @@ module.exports.onlyWithinThisSite = onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = formatAggregationResults;
 module.exports.formatSearchResult = formatSearchResult;
+module.exports.formatProtocol = formatProtocol;
 module.exports.moreLikeThis = moreLikeThis;
 module.exports.newNestedQuery = newNestedQuery;

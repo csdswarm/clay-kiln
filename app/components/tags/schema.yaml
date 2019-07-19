@@ -15,7 +15,9 @@ _description: |
   * A user can select a Featured Tag (which displays at the top of the article) by double-clicking the intended tag. Changes will be visible if you refresh the page.
 
 items:
-  _publish: keywords
+  _publish:
+    - keywords
+    - metaContentTagItems
   _placeholder:
     text: Tags
     height: 40px
