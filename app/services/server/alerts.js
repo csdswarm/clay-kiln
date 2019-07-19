@@ -12,6 +12,15 @@ const db = require('../server/db'),
    * @returns {array}
    */
   pullDataFromResponse = (response) => response.rows.map(({id, data}) => ({id, ...data})),
+  /**
+   * Checks if the start and end times for an alert overlap with any other alert
+   *
+   * @param {string} start
+   * @param {string} end
+   * @param {string} station
+   *
+   * @returns {boolean}
+   */
   checkForOverlap = async (start, end, station) => {
     const response = await db.raw(`
         SELECT id FROM alert

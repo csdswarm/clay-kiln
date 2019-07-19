@@ -74,6 +74,14 @@ const utils = require('../universal/utils'),
 
     return tableName;
   },
+  /**
+   * Removes a row in a postgres table
+   * If the table is not in DATA_STRUCTURES, the call is passed to the amphora-storage-postgres instance
+   *
+   * @param {string} key
+   *
+   * @returns {Promise}
+   */
   del = async (key) => {
     const tableName = findSchemaAndTable(key);
 
@@ -87,6 +95,14 @@ const utils = require('../universal/utils'),
       `, [key]);
     }
   },
+  /**
+   * Gets a row in a postgres table
+   * If the table is not in DATA_STRUCTURES, the call is passed to the amphora-storage-postgres instance
+   *
+   * @param {string} key
+   *
+   * @returns {Promise}
+   */
   get = async (key, ...args) => {
     const tableName = findSchemaAndTable(key);
 

@@ -19,7 +19,7 @@ const db = require('./db'),
     next();
   },
   /**
-   * add alerts routes to an express app
+   * add db access routes for each DATA_STRUCTURE to an express app
    *
    * @param {object} app
    */

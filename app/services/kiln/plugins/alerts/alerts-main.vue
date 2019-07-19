@@ -169,10 +169,12 @@
                 }]
             }
         },
+        /** Load current alerts when component is created */
         created() {
             this.loadAlerts();
         },
         computed: {
+            /** Combines date and time input into one field */
             end: function () {
                 const [hour, minute] = this.endTime.split(':');
 
@@ -182,6 +184,7 @@
 
                 return moment.utc(this.endDate).hour(hour).minute(minute).second(0).milliseconds(0).valueOf()/1000; 
             },
+            /** Combines date and time input into one field */
             start: function () {
                 const [hour, minute] = this.startTime.split(':');
 
@@ -194,14 +197,19 @@
             global: function() {
                 return this.tab === 'global';
             },
+            /** Current station, or global station */
             station: function() {
                 return this.global ? 'NATL-RC' : this.selectedStation;
             },
+            /** True if all required fields are entered */
             validForm: function() {
                 return this.message && this.startDate && this.startTime && this.endDate && this.endTime;
             }
         },
         methods: {
+            /**
+             * Adds or updates an alert based on if in editMode
+             */
             async addAlert() {
                 const {
                     breaking,
@@ -227,6 +235,7 @@
                 }
                 
             },
+            /** Clears the new/update alert form */
             clearModal() {
                 this.breaking = false;
                 this.message = '';
@@ -239,20 +248,24 @@
             closeModal(ref) {
                 this.$refs[ref].close();
             },
+            /** Checks to confirm that an alert should be deleted */
             confirmDeleteAlert(alert) {
                 this.selectedAlert = alert;
                 this.$refs['confirmDelete'].open();
             },
+            /** Sets the current selectedAlert active flag to false*/
             async deleteAlert(){
                 await axios.put('/alerts', {...this.selectedAlert, active: false});
                 await this.loadAlerts();
             },
+            /** Sets editMode to true and opens the modal */
             editAlert(alert) {
                 this.selectedAlert = alert;
                 this.editMode = true;
                 this.setForm(alert);
                 this.openModal('alertModal')
             },
+            /** Loads all current and future alerts globally or by station */
             async loadAlerts() {
                 if (!this.global && !this.selectedStation) {
                     this.alerts = [];
@@ -268,6 +281,7 @@
                 this.errorMessage = '';
                 this.$refs[ref].open();
             },
+            /** Populates the form with selectedAlert when in editMode */
             setForm(alert) {
                 const start = moment.utc(alert.start*1000);
                 const end = moment.utc(alert.end*1000);
@@ -279,12 +293,14 @@
                 this.endDate = end.toDate();
                 this.endTime = end.format('HH:mm:ss');
             },
+            /** Loads alerts when the tab is changed */
             updateTab(tab) {
                 this.tab = tab;
                 this.loadAlerts();
             }
         },
         filters: {
+            /** Date formatter */
             formatDate: function (value) {
                 return moment.utc(value*1000).format('llll')
             }
