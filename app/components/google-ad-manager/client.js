@@ -3,6 +3,7 @@
 
 const _get = require('lodash/get'),
   adMapping = require('./adMapping'),
+  googleAdManagerComponent = document.querySelector('.component--google-ad-manager'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
   makeFromPathname = require('../../services/universal/analytics/make-from-pathname'),
@@ -17,7 +18,7 @@ const _get = require('lodash/get'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
-  adRefreshInterval = '60000', // Time in milliseconds for ad refresh
+  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in milliseconds for ad refresh
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
@@ -169,8 +170,7 @@ function lazyLoadAd(changes, observer) {
       observer.unobserve(change.target);
     }
   });
-};
-
+}
 
 /**
  * adds a listener to the x div to enable it to close the current ad
@@ -362,8 +362,8 @@ function getCurrentStation() {
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData) {
-  const doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
-    environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
+  const doubleclickBannerTag = googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag'),
+    environment = googleAdManagerComponent.getAttribute('data-environment'),
     inProduction = environment === 'production',
     currentStation = getCurrentStation(),
     // this query selector should always succeed
