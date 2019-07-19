@@ -1,0 +1,78 @@
+_components:
+  station-nav:
+    instances:
+      default:
+        primaryLinks:
+          - {url: "", text: playlist, drawer: false, current: false}
+          - {url: "", text: shows, drawer: true, secondaryLinks: [{url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}, {url: /test, text: 'shows test link'}], current: false}
+          - {url: "", text: contests, drawer: true, secondaryLinks: [{url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}, {url: /test, text: 'contests test link'}], current: false}
+          - {url: "", text: events, drawer: true, secondaryLinks: [], current: false}
+          - {url: "", text: 'more from', drawer: true, secondaryLinks: [], current: false}
+  meta-title:
+    instances:
+      station-front-3:
+        title: ""
+        ogTitle: ""
+        kilnTitle: ""
+        twitterTitle: ""
+  meta-description:
+    instances:
+      station-front-3:
+        description: ""
+  meta-url:
+    instances:
+      station-front-3:
+        url: ""
+        _version: 1
+  section-front:
+    instances:
+      station-front-3:
+        title: ""
+        sectionLead:
+          _ref: /_components/section-lead/instances/new
+        moreContentFeed:
+          _ref: /_components/more-content-feed/instances/station-front-3
+        stationsCarousel: []
+        googleAdUnderStationsModule:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
+        includePodcastModule: false
+  section-lead:
+    instances:
+      station-front-3:
+        tag: ""
+        items: []
+        _version: 4
+        filterTags:
+          - {text: 'Radio.com Latino'}
+        contentType:
+          article: true
+          gallery: true
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPageTop
+        filterSecondaryArticleTypes: {}
+        articles: []
+  more-content-feed:
+    instances:
+      station-front-3:
+        tag: ""
+        items: []
+        tagInfo: ""
+        _version: 5
+        filterTags: []
+        contentType:
+          article: true
+          gallery: true
+        populateFrom: all-content
+        sectionFront: ""
+        introComponents: []
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+        sectionFrontManual: ""
+        locationOfContentFeed: station-front
+        filterSecondaryArticleTypes: {}
+        contentCollectionLogoSponsorship:
+          _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+        initialLoad: true
+        pageLength: 10
+        moreContent: false
+        content: []

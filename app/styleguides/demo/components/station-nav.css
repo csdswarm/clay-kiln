@@ -5,12 +5,21 @@
 .component--station-nav {
   background-color: $boulder;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
 
   .station-nav__menu {
     display: flex;
     align-items: flex-end;
     width: em(1100);
+
+    .menu__mobile-toggle {
+      display: none;
+      @mixin medium-screen {
+        display: block;
+      }
+    }
 
     .menu__image {
       width: em(100);
@@ -22,14 +31,20 @@
 
     .menu__navigation {
       display: flex;
-      margin-bottom: em(16  );
+      margin-bottom: em(16);
 
-      .navigation__text {
-        @mixin station-nav-font1;
-        text-transform: uppercase;
-        vertical-align: bottom;
-        margin-left: em(10, 15);
-        margin-right: em(10, 15);
+      .drawer__item {
+        li {
+          a {
+            span {
+              @mixin station-nav-font1;
+              text-transform: uppercase;
+              vertical-align: bottom;
+              margin-left: em(10, 15);
+              margin-right: em(10, 15);
+            }
+          }
+        }
       }
     }
 
@@ -88,8 +103,24 @@
     }
   }
 
-  .station_nav__drawer {
+  .station_nav__drawers {
     display: none;
     background-color: $dustyGray;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+
+    &.active {
+      display: flex;
+    }
+    .drawers__drawer {
+      display: none;
+      background: red;
+      width: em(1100);
+      height: auto;
+      &.active {
+        display: flex;
+      }
+    }
   }
 }

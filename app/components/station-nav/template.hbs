@@ -1,46 +1,33 @@
 <div class="component component--station-nav" data-uri="{{ default _ref _self }}">
   <div class="station-nav__menu">
     <div class="menu__mobile-toggle">
-        <button class="closed">
+        <button class="mobile-toggle--closed">
           {{{ read 'components/station-nav/media/chevron_down.svg' }}}
         </button>
-        <button class="open">
+        <button class="mobile-toggle--open">
           {{{ read 'components/station-nav/media/chevron_up.svg' }}}
         </button>
     </div>
     <img class="menu__image" src="{{ station.square_logo_small }}?width=100&height=100&crop=1:1">
-    {{#if primaryLinks.length}}
+    {{#if primaryLinks.length }}
       <ul class="menu__navigation">
-        {{#each primaryLinks}}
-          <li class="navigation__primary navigation__primary--{{text}} {{#if current}}navigation__primary--current{{/if}} {{#if drawer}}navigation__primary--drawer-enabled{{/if}}">
-            {{#if url}}
-              <a href="{{url}}">
+        {{#each primaryLinks }}
+          <li class="navigation__primary primary--label-{{ text }} {{ if current 'primary--current' }} {{ if drawer 'primary--drawer-enabled' }}">
+            {{#if url }}
+              <a href="{{ url }}">
                 <button>
-                  <span class="primary__text">{{text}}</span>
+                  <span>{{ text }}</span>
                 </button>
               </a>
             {{ else }}
               <button>
-                <span class="primary__text">{{text}}</span>
+                <span>{{ text }}</span>
               </button>
-            {{/if}}
-            {{#if secondaryLinks.length}}
-              <div class="primary__drawer primary__drawer--{{text}}">
-                <ul class="container">
-                  {{#each secondaryLinks }}
-                    <li class="drawer__sub-nav">
-                      <a href="{{url}}">
-                        <span class="sub-nav__text">{{text}}</span>
-                      </a>
-                    </li>
-                  {{/each}}
-                </ul>
-              </div>
-            {{/if}}
+            {{/if }}
           </li>
-        {{/each}}
+        {{/each }}
       </ul>
-    {{/if}}
+    {{/if }}
     <div class="menu__listen">
       <button class="listen__button" data-station-id="{{ station.id }}">
         <div class="button__icon {{ playingClass }}"></div>
@@ -49,40 +36,58 @@
     </div>
     <div class="menu__carat"></div>
   </div>
-  <div class="station_nav__drawer station_nav__drawer--mobile primary__drawer">
-    {{#if primaryLinks.length}}
-      <ul>
-        {{#each primaryLinks}}
-          <li class="drawer__item drawer__item--{{text}}">
-            <div class="item__name">
-              <a href="{{url}}">
-                <span>{{text}}</span>
+  <div class="station_nav__drawers">
+    {{#each primaryLinks }}
+      {{#ifAll drawer secondaryLinks.length }}
+        <ul class="drawers__drawer drawer--desktop drawer--{{ text }}">
+          {{#each secondaryLinks }}
+            <li class="drawer__item item--{{ text }}">
+              <a href="{{ url }}">
+                <span>{{ text }}</span>
               </a>
-              {{#if drawer}}
-                <div class="item__menu-toggle">
-                  <button class="closed">
+            </li>
+          {{/each }}
+        </ul>
+      {{/ifAll }}
+    {{/each }}
+     
+    {{#if primaryLinks.length }}
+      <ul class="drawers__drawer drawer--mobile">
+        {{#each primaryLinks }}
+          <li class="drawer__item item--{{ text }}">
+            <div class="item__label">
+              <a href="{{ url }}">
+                <button>
+                  <span>{{ text }}</span>
+                </button>
+              </a>
+              {{#ifAll drawer secondaryLinks.length }}
+              <div class="label__menu-toggle">
+                <button class="menu-toggle--closed">
                   {{{ read 'components/station-nav/media/chevron_down.svg' }}}
-                  </button>
-                  <button class="open">
+                </button>
+                <button class="menu-toggle--open">
                   {{{ read 'components/station-nav/media/chevron_up.svg' }}}
-                  </button>
-                </div>
-              {{/if}}
+                </button>
+              </div>
+              {{/ifAll }}
             </div>
-            {{#if secondaryLinks.length}}
+            {{#if secondaryLinks.length }}
               <ul>
-                {{#each secondaryLinks}}
-                  <li class="drawer__item drawer__item--{{text}}">
-                    <a href="{{url}}">
-                      <span>{{text}}</span>
+                {{#each secondaryLinks }}
+                  <li>
+                    <a href="{{ url }}">
+                      <button>
+                        <span>{{ text }}</span>
+                      </button>
                     </a>
                   </li>
-                {{/each}}
+                {{/each }}
               </ul>
-            {{/if}}
+            {{/if }}
           </li>
-        {{/each}}
+        {{/each }}
       </ul>
-    {{/if}}
+    {{/if }}
   </div>
 </div>

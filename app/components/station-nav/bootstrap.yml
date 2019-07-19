@@ -1,6 +1,6 @@
 _components:
   station-nav:
-    headerLinks: [
+    primaryLinks: [
       {
         "url": "",
         "text": "playlist",
