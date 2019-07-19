@@ -7,7 +7,15 @@ const pkg = require('../../package.json'),
   resolveMediaService = require('../server/resolve-media'),
   { prepare } = require('../universal/spaLink'),
   cheerio = require('cheerio'),
-  transformHtml = html => {
+  /**
+   * take the html rendered by handlebars and modify all links to add appropriate classes and no follow
+   *
+   * @param {string} ref
+   * @param {string} html
+   * @param {object} locals
+   * @return {*}
+   */
+  transformHtml = (ref, html) => {
     const $ = cheerio.load(html);
 
     prepare($);
@@ -24,7 +32,7 @@ amphoraHtml.configureRender({
 amphoraHtml.addResolveMedia(resolveMediaService);
 amphoraHtml.addHelpers(helpers);
 amphoraHtml.addEnvVars(require('../../client-env.json'));
-amphoraHtml.addPlugins([{ postRender: transformHtml }])
+amphoraHtml.addPlugins([{ postRender: transformHtml }]);
 
 module.exports = {
   default: 'html',
