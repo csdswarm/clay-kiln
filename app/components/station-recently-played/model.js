@@ -3,6 +3,7 @@
 const radioApi = require('../../services/server/radioApi'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
   { playingClass } = require('../../services/server/spaLocals'),
+  { formatUTC } = require('../../services/universal/dateTime'),
   moment = require('moment');
 
 /**
@@ -56,7 +57,7 @@ module.exports.render = async function (ref, data, locals) {
       .map((item) => {
         return {
           playing: item.playing,
-          start_time: item.timePlayedUtc.includes('Z') ? item.timePlayedUtc : `${item.timePlayedUtc}Z`,
+          start_time: formatUTC(item.timePlayedUtc),
           artist: item.artist,
           image: item.imageUrl,
           title: item.title,
