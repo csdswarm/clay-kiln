@@ -55,7 +55,7 @@ const radioApiService = require('../../services/server/radioApi'),
   getStation = async (req) => {
     if (validPath(req)) {
       const slugInReqUrl = getStationSlug(req),
-        response = await radioApiService.get('stations', {page: {size: 999}}, null, radioApiService.TTL.DAY);
+        response = await radioApiService.get('stations', {page: {size: 999}}, null, { ttl: radioApiService.TTL.DAY });
 
       // use the stations as a cached object so we don't have to run the same logic every request
       if (!response.response_cached || isEmpty(allStations)) {

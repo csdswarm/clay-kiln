@@ -13,7 +13,8 @@ const queryService = require('../../services/server/query'),
     'feedImgUrl',
     'contentType'
   ],
-  maxItems = 3;
+  maxItems = 3,
+  protocol = `${process.env.CLAY_SITE_PROTOCOL}:`;
 
 /**
  * @param {string} ref
@@ -65,8 +66,8 @@ module.exports.render = function (ref, data, locals) {
     contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl;
 
-  // items are saved from form, articles are used on FE
-  data.articles = data.items;
+  // items are saved from form, articles are used on FE, and make sure they use the correct protocol
+  data.items = data.articles = data.items.map(a => ({ ...a, canonicalUrl: a.canonicalUrl.replace(/^http:/, protocol) }));
 
   if (!data.sectionFront || !locals) {
     return data;
