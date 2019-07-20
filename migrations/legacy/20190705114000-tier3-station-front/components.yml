@@ -41,15 +41,15 @@ _components:
       station-front-3:
         tag: ""
         items: []
-        _version: 4
-        filterTags:
-          - {text: 'Radio.com Latino'}
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPageTop
         contentType:
           article: true
           gallery: true
-        googleAdRightRail:
-          _ref: /_components/google-ad-manager/instances/halfPageTop
         filterSecondaryArticleTypes: {}
+        filterTags:
+          - {text: 'Radio.com Latino'}
+        _version: 4
         articles: []
   more-content-feed:
     instances:
@@ -57,11 +57,6 @@ _components:
         tag: ""
         items: []
         tagInfo: ""
-        _version: 5
-        filterTags: []
-        contentType:
-          article: true
-          gallery: true
         populateFrom: all-content
         sectionFront: ""
         introComponents: []
@@ -69,9 +64,14 @@ _components:
           _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
         sectionFrontManual: ""
         locationOfContentFeed: station-front
+        contentType:
+          article: true
+          gallery: true
         filterSecondaryArticleTypes: {}
+        filterTags: []
         contentCollectionLogoSponsorship:
           _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+        _version: 5
         initialLoad: true
         pageLength: 10
         moreContent: false

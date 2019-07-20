@@ -22,7 +22,6 @@ _layouts:
         headLayout:
           - {_ref: /_components/favicon/instances/default}
           - {_ref: /_components/google-ad-manager-head/instances/default}
-          - {_ref: /_components/youtube-player-head/instances/new}
           - {_ref: /_components/comscore-head/instances/default}
           - {_ref: /_components/google-tag-manager/instances/default}
         pageHeader: pageHeader

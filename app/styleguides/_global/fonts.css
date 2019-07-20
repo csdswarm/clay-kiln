@@ -466,6 +466,10 @@ em, i {
   @mixin font CircularStd-Medium, 15px, $white, -.23px, 18px;
 }
 
+@define-mixin station-nav-font2 {
+  @mixin font ProximaNova-Regular, 14px, $white, -.23px, 17px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Static Page Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/

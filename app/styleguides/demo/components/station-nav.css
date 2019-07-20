@@ -2,6 +2,14 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+$default-screen-nav-width: em(1100); /* 1280+ */
+$large-screen-nav-width: em(940); /* 1280-1024 */
+$medium-screen-nav-width: em(728); /* 1023-481 */
+$medium-small-screen-nav-width: em(440); /* 480-361 */
+$small-screen-nav-width: em(320); /* 360- */
+$station-logo-width-height: em(100);
+$station-logo-width-height-med-screen: em(80);
+
 .component--station-nav {
   background-color: $boulder;
   display: flex;
@@ -12,7 +20,17 @@
   .station-nav__menu {
     display: flex;
     align-items: flex-end;
-    width: em(1100);
+    width: $default-screen-nav-width;
+    @mixin large-screen {
+      width: $large-screen-nav-width;
+    }
+    @mixin medium-screen {
+      width: $medium-screen-nav-width;
+    }
+    @mixin nav-mobile-breakpoint {
+      width: 100%;
+      padding: 0 em(20);
+    }
 
     .menu__mobile-toggle {
       display: none;
@@ -22,27 +40,33 @@
     }
 
     .menu__image {
-      width: em(100);
-      height: em(100);
+      width: $station-logo-width-height;
+      height: $station-logo-width-height;
       margin-right: em(40);
       margin-bottom: em(16);
       margin-top: em(16);
+      @mixin medium-small-screen {
+        width: $station-logo-width-height-med-screen;
+        height: $station-logo-width-height-med-screen;
+      }
     }
 
     .menu__navigation {
       display: flex;
-      margin-bottom: em(16);
+      margin-left: em(-15);
 
-      .drawer__item {
-        li {
-          a {
-            span {
-              @mixin station-nav-font1;
-              text-transform: uppercase;
-              vertical-align: bottom;
-              margin-left: em(10, 15);
-              margin-right: em(10, 15);
-            }
+      li.navigation__primary {
+        a {
+          text-decoration: none;
+        }
+        button {
+          border: 0;
+          background: none;
+          padding: em(16, 15) em(15, 15);
+          span {
+            @mixin station-nav-font1;
+            text-transform: uppercase;
+            vertical-align: bottom;
           }
         }
       }
@@ -109,17 +133,49 @@
     width: 100%;
     flex-direction: column;
     align-items: center;
+    padding: em(30) calc((100% - $default-screen-nav-width) / 2);
+    @mixin large-screen {
+      padding: em(30) calc((100% - $large-screen-nav-width) / 2);
+    }
+    @mixin medium-screen {
+      padding: em(30) calc((100% - $medium-screen-nav-width) / 2);
+    }
+    @mixin nav-mobile-breakpoint {
+      padding: em(30) em(20);
+    }
 
     &.active {
       display: flex;
     }
     .drawers__drawer {
       display: none;
-      background: red;
-      width: em(1100);
+      width: calc($default-screen-nav-width - $station-logo-width-height - em(40) + em(30));
+      @mixin large-screen {
+        width: calc($large-screen-nav-width - $station-logo-width-height - em(40) + em(30));
+      }
+      @mixin medium-screen {
+        width: calc($medium-screen-nav-width - $station-logo-width-height-med-screen - em(40) + em(30));
+      }
+      @mixin nav-mobile-breakpoint {
+        width: calc(100% - em(40));
+      }
       height: auto;
+      flex-wrap: wrap;
+      align-self: flex-end;
+      margin: em(-5) em(-15);
       &.active {
         display: flex;
+      }
+      .drawer__item {
+        margin: em(5) em(15);
+        white-space: nowrap;
+        flex: 0 0 auto;
+        a {
+          text-decoration: none;
+          span {
+            @mixin station-nav-font2;
+          }
+        }
       }
     }
   }
