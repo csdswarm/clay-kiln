@@ -11,108 +11,92 @@ const h = require('highland'),
 
 // Subscribe to the save stream
 subscribe('save').through(save);
+// Subscribe to the delete stream
+subscribe('unpublishPage').through(unpublishPage);
 
 /**
- * Takes an Article obj and attaches the data attribute for each _ref for a given parameter
+ * Takes an obj and attaches the data attribute for each _ref for a given parameter
  *
  * @param {Object} obj
  * @param {String} param
+ * @param {Object} components
+ * @param {Function} [transform]
  *
- * @returns {Stream}
+ * @returns {Object}
  */
-function getContent(obj, param) {
-  const content = obj.value[param];
+function getContent(obj, param, components, transform = (data) => data ) {
+  const content = obj[param],
+    getData = (ref) => components.find(item => item.key === ref).value;
 
-  return h(content)
-    .map(({ _ref }) => h(db.get(_ref).then( data => ({ _ref, data: JSON.stringify(data) }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
-    .mergeWithLimit(1) // Merge each individual stream into the bigger stream
-    .collect() // Turn each individual object into an array of objects
-    .map(resolvedContent => {
-      obj.value[param] = resolvedContent; // Assign the array of resolved objects to the original property
-      return obj; // Return the original, now modified object
-    });
+  // loop through all items and add a key with the value of the ref
+  obj[param] = content.map((component) => ({ ...component, data: transform(getData(component._ref)) }));
+
+  // return a new copy
+  return { ...obj };
 }
 
 /**
  * attaches data for each _ref in slideEmbed
  *
  * @param {Object} slides
+ * @param {Object} components
  *
- * @returns {Stream}
+ * @returns {Object}
  */
-function getSlideEmbed(slides) {
-  return h(slides)
-    .map( slide => {
-      const slideData = JSON.parse(slide.data);
+function getSlideEmbed(slides, components) {
+  slides.map( slide => {
+    // helpers.parseOpValue created an object for each main key, but it does not do sub keys
+    // which is why we need to parse this and then stringify it again
+    const slideData = JSON.parse(slide.data),
+      transform = (data) => JSON.parse(data);
 
-      return h(slideData.slideEmbed)
-        .map(({ _ref }) => h(db.get(_ref).then( data => ({ _ref, data: data }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
-        .parallel(1) // make sure embeds come back in order
-        .collect()
-        .map(resolvedContent => {
-          slideData.slideEmbed = resolvedContent;
-          // data for some reason needs to be a string or elasticsearch throws a parse error
-          slide.data = JSON.stringify(slideData);
-          return slide;
-        });
-    })
-    .parallel(1) // bring all slides back together, parallel ensures order
-    .map( slide => {
-      const slideData = JSON.parse(slide.data);
+    slideData.slideEmbed = getContent(slideData, 'slideEmbed', components, transform).slideEmbed;
+    slideData.description = getContent(slideData, 'description', components, transform).description;
 
-      // description is an empty array if there isn't anything
-      return slideData.description && slideData.description.length > 0 ? h(slideData.description)
-        .map(({ _ref }) => h(db.get(_ref).then( data => ({ _ref, data: data }) ))) // Run each _ref through a get, but return a Promise wrapped in a Stream
-        .parallel(1) // make sure descriptions come back in order
-        .collect()
-        .map(resolvedContent => {
-          slideData.description = resolvedContent;
-          // data for some reason needs to be a string or elasticsearch throws a parse error
-          slide.data = JSON.stringify(slideData);
-          return slide;
-        }) : h.of(slide);
-    })
-    .parallel(1) // bring all slides back together, 1 at a time, but parallel ensures order
-    .collect(); // Turn back into an array of slides
+    slide.data = JSON.stringify(slideData);
+  });
+
+  return slides;
 }
 
 /**
- * Takes an Article obj and attaches the data attribute for each _ref for each slide and also slideEmbed
+ * Takes an obj and attaches the data attribute for each _ref as needed
  *
  * @param {Object} obj
+ * @param {Object} components
  *
- * @returns {Stream}
+ * @returns {Object}
  */
-function getSlides(obj) {
-  return getContent(obj, 'slides')
-    // returns an object because we're still part of the stream created in getContent, no parent stream to merge into
-    .map( ({ value }) => getSlideEmbed(value.slides))
-    // merge stream from getSlideEmbed into getContent stream
-    .mergeWithLimit(1)
-    .map( resolvedContent => {
-      obj.value.slides = resolvedContent;
-      return obj;
-    });
+function processContent(obj, components) {
+  obj.value = getContent(obj.value, 'lead', components);
+  obj.value = getContent(obj.value, 'content', components);
+
+  if (obj.key.includes('gallery')) {
+    obj.value = getContent(obj.value, 'slides', components);
+    obj.value.slides = getSlideEmbed(obj.value.slides, components);
+  }
+
+
+  return obj;
 }
 
 function save(stream) {
+  const components = [];
+
   return stream
-    .parallel(25)
+    .parallel(1)
+    // copy the data being saved so we can search it
+    .map(param => { components.push(param); return param; })
+    // only bring back articles and galleries
     .filter(CONTENT_FILTER)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
-    // Return an object wrapped in a stream but either get the stream from `getArticleContent` or just immediately wrap the object with h.of
-    .map(param => param.key.indexOf('article') >= 0 || param.key.indexOf('gallery') >= 0 ? getContent(param, 'content') : h.of(param))
-    // merge all content streams into main stream
-    .mergeWithLimit(25) // Merge each individual stream into the bigger stream --> this turns the stream back into the article obj
-    // get data content for slides
-    .map(param => param.key.indexOf('gallery') >= 0 ? getSlides(param) : h.of(param))
-    // merge all slides streams into main stream
-    .mergeWithLimit(25) // Arbitrary number here, just wanted a matching limit
+    .map(obj => processContent(obj, components))
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
+    .flatten()
     .flatMap(send)
     .errors(logError)
     .each(logSuccess(INDEX));
@@ -121,11 +105,46 @@ function save(stream) {
 /**
  * Send the data to Elastic
  *
- * @param  {Array} ops
+ * @param  {Object} op
  * @return {Function}
  */
-function send([ op ]) {
+function send(op) {
   return h(elastic.update(INDEX, op.key, op.value, false, true).then(() => op.key));
+}
+
+/**
+ * Remove the data in Elastic
+ *
+ * @param  {String} key
+ * @return {Stream<Promise<String>>}
+ */
+function removePublished(key) {
+  const publishedKey = `${key}@published`;
+
+  return h(elastic.del(INDEX, publishedKey).then(() => publishedKey));
+}
+
+/**
+ * Gets the main content from a unpublished object
+ *
+ * @param {Object} op
+ * @return {Stream<Promise<String>>}
+ */
+function getMain(op) {
+  return h(db.get(op.uri).then( data => data.main[0]));
+}
+
+/**
+ * remove the published article/gallery from elasticsearch
+ *
+ * @param {Stream} stream
+ * @return {Stream}
+ */
+function unpublishPage(stream) {
+  return stream.flatMap(getMain)
+    .flatMap(removePublished)
+    .errors(logError)
+    .each(logSuccess(INDEX));
 }
 
 /**

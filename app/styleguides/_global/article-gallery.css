@@ -151,6 +151,10 @@
       a {
         text-decoration: none;
       }
+      .from-station__logo {
+        border: 1px solid $silver;
+        margin-top: em(15, 14);
+      }
     }
     .info__timestamp {
       @mixin article-font9;

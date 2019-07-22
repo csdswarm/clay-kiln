@@ -13,6 +13,8 @@ _components:
         names: []
         sources: []
     syndicatedUrl: ''
+    stationSyndication: []
+    genreSyndication: []
     syndicationStatus: original
     lead: []
     content:
@@ -21,7 +23,8 @@ _components:
       _ref: /_components/tags/instances/new
     contentPageSponsorLogo:
       _ref: /_components/google-ad-manager/instances/contentPageLogoSponsorship
-    sideShare: /_components/share/instances/new
+    sideShare:
+      _ref: /_components/share/instances/new
     feeds:
       sitemaps: true
       rss: true
@@ -44,3 +47,5 @@ _components:
     contentType: 'article'
     featured: false
     editorialFeeds: {}
+    isContentFromAP: false
+    noIndexNoFollow: false

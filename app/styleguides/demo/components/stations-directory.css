@@ -62,8 +62,9 @@
         -moz-column-gap: 0;
         z-index: 1;
         position: absolute;
-        margin-top: calc(1em + em(5, 14));
+        top: em(56);
         border: em(1, 14) solid $mercury;
+        background: $white;
 
         li {
           @mixin stations-directory-font2;

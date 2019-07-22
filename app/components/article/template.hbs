@@ -82,9 +82,11 @@
         {{> share sideShare }}
       </div>
     </div>
-    <div class="body__content" data-editable="content" itemprop="articleBody">
+    <div class="body__content">
       {{! don't display generated annotatedTextAria in edit mode. Replace all ad components with ad-dummies }}
-      {{> component-list content }}
+      <div data-editable="content" itemprop="articleBody">
+        {{> component-list content }}
+      </div>
 
       {{! Tags }}
       {{> tags tags}}
@@ -132,6 +134,14 @@
             <li class="item">
               <h4 class="item-title">Editorial Feeds Term(s)</h4>
               <p class="item-data">{{{ default (commaSeparated editorialFeeds false) empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Syndicate to Station(s)</h4>
+              <p class="item-data">{{{ default (join stationSyndication) empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Syndicate to Genre(s)</h4>
+              <p class="item-data">{{{ default (join genreSyndication) empty }}}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Syndication Status</h4>

@@ -34,7 +34,7 @@ function addFakeCallback() {
  * @throws {Error} on non-2xx status
  */
 function checkStatus(res) {
-  if (res.status >= 200 && res.status < 300) {
+  if (res.ok) {
     return res;
   } else {
     const error = new Error(res.statusText);
@@ -43,6 +43,16 @@ function checkStatus(res) {
     throw error;
   }
 }
+
+/**
+ * REQUEST
+ * @param {string} url
+ * @param {object} [opts] See https://github.github.io/fetch/#options
+ * @return {Promise}
+ */
+module.exports.request = function (url, opts) {
+  return fetch(url, opts).then(checkStatus).then(function (res) { return res.json(); });
+};
 
 /**
  * GET

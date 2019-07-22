@@ -6,7 +6,7 @@ const _ = require('lodash'),
   sanitize = require('../universal/sanitize'),
   utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
-  canonicalProtocol = 'http', // todo: this is a HUGE assumption, make it not be an assumption?
+  canonicalProtocol = 'http',
   canonicalPort = process.env.PORT || 3001,
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
@@ -23,6 +23,14 @@ const _ = require('lodash'),
    * @returns {string}
    */
   componentUri = (uri) => uri.replace(/([^/]+)(.*)/, `${canonicalProtocol}://$1:${canonicalPort}$2`),
+  /**
+   * gets a component instance
+   *
+   * @param {string} uri
+   * @param {object} opts
+   * @returns {Promise}
+   */
+  getComponentInstance = (uri, opts) => rest.get(componentUri(uri), opts),
   /**
    * adds/updates a component instance
    *
@@ -67,7 +75,7 @@ function getComponentReference(page, mainComponentRefs) {
         return value;
       } else if (_.isObject(value)) {
         let result = _.isArray(value) ? _.find(value, function (o) { return isMainComponentReference(o, mainComponentRefs); }) : getComponentReference(value, mainComponentRefs);
-        
+
         if (result) {
           return result;
         }
@@ -138,7 +146,7 @@ function getMainComponentFromRef(componentReference, locals) {
       guaranteePrimaryHeadline(component);
       guaranteeLocalDate(component, publishedComponent, locals);
     }
-    
+
     return {component, pageType};
   });
 }
@@ -167,7 +175,7 @@ function getUrlPrefix(site) {
 function getUrlOptions(component, locals, pageType) {
   const urlOptions = {},
     date = moment(locals.date);
-    
+
   urlOptions.prefix = getUrlPrefix(locals.site);
   urlOptions.sectionFront = component.sectionFront || slugifyService(component.title);
   urlOptions.contentType = component.contentType || null;
@@ -203,3 +211,4 @@ module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.pageTypes = pageTypes;
+module.exports.getComponentInstance = getComponentInstance;
