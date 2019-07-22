@@ -13,9 +13,6 @@ contentType:
 
 sportsItems:
   _label: Sports Articles
-  _placeholder:
-    height: 150px;
-    text: Sports Articles
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -58,9 +55,6 @@ sportsItems:
           required: true
 musicItems:
   _label: Music Articles
-  _placeholder:
-    height: 150px;
-    text: Music Articles
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -104,9 +98,6 @@ musicItems:
 
 newsItems:
   _label: News Articles
-  _placeholder:
-    height: 150px;
-    text: News Articles
   _has:
     input: complex-list
     enforceMaxlength: true
