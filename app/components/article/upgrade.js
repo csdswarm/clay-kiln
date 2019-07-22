@@ -155,7 +155,7 @@ module.exports['6.0'] = async (uri, data) => {
 
 // ensure adTags exists
 module.exports['7.0'] = async function (uri, data) {
-  data = addAdTags('article', uri, data);
+  data = await addAdTags('article', uri, data);
 
   return data;
 };

@@ -200,7 +200,7 @@ module.exports['7.0'] = async (uri, data) => {
 
 // ensure adTags exists
 module.exports['8.0'] = async function (uri, data) {
-  data = addAdTags('gallery', uri, data);
+  data = await addAdTags('gallery', uri, data);
 
   return data;
 };
