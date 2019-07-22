@@ -115,6 +115,10 @@ module.exports.render = async (ref, data, locals) => {
       subcategory: { createObj: secondaryArticleType => ({ secondaryArticleType }) },
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
+      // corporate websites (corporateSyndication)
+      corporate: {
+        createObj: corporateSyndication => ({ 'corporateSyndication.normalized': corporateSyndication })
+      },
       // stations (stationSyndication)
       station: {
         createObj: station => [
