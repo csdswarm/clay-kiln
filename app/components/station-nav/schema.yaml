@@ -2,6 +2,18 @@ _description: |
   This is the station header under the main header. It displays the station logo, top level navigational links, navigational drawers, listen button and listen drawer.
 _confirmRemoval: true
 
+stationLogo:
+  _label: Station Logo Image
+  _help: Upload image to override default station image
+  _has:
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    validate:
+      required: false
+
 primaryLinks:
   _label: Station Primary Nav
   _placeholder:
@@ -17,7 +29,10 @@ primaryLinks:
           input: text
           type: url
           validate:
-            required: false
+            required:
+              field: secondaryLinks
+              operator: length-equals
+              value: 0
       -
         prop: drawer
         _label: Does this nav item have a drawer/tray/dropdown menu?
@@ -38,10 +53,15 @@ primaryLinks:
       -
         prop: secondaryLinks
         _label: Station Drawer Nav -- Secondary Links
+        _reveal:
+          field: drawer
+          operator: truthy
         _has:
           input: complex-list
           validate:
-            required: false
+            required:
+              field: drawer
+              operator: truthy
           props:
             -
               prop: text
@@ -65,4 +85,5 @@ primaryLinks:
 _groups:
   settings:
     fields:
+      - stationLogo
       - primaryLinks
