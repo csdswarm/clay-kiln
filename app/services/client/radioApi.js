@@ -6,8 +6,6 @@ const rest = require('../universal/rest'),
   { getLocals } = require('./spaLocals'),
   spaLinkService = require('../universal/spaLink'),
   clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
-  // https://regex101.com/r/gDfIxb/1
-  spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
   // here for models that reference /server/radioApi (brightcove)
   TTL = {
     NONE: 0,
@@ -16,15 +14,6 @@ const rest = require('../universal/rest'),
     HOUR: 3600000,
     DAY: 86400000
   },
-  /**
-   * returns boolean of whether it is a link within the SPA
-   * return true if link is on current URL host or
-   * starts with '/' and is not '/audio'
-   *
-   * @param {string} uri
-   * @returns {boolean}
-   */
-  isSpaLink = (uri) => spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' ),
   // An array of functions that take in a node and return the mutated node with attached events or modifications to data
   spaFunctions = [
     /**
@@ -47,8 +36,8 @@ const rest = require('../universal/rest'),
      * @param {Node} doc
      * @returns {Node}
      */
-    (doc) => {
-      spaLinkService.prepare(doc);
+    async (doc) => {
+      await spaLinkService.prepare(doc);
       spaLinkService.addEventListeners(doc);
 
       return doc;
@@ -80,7 +69,7 @@ const rest = require('../universal/rest'),
    * @returns {Node}
    */
   spaInterface = (doc) => {
-    return spaFunctions.reduce((node, func) => func(node), doc);
+    return spaFunctions.reduce(async (node, func) => await func(node), doc);
   },
   /**
    * Client side AJAX call to get the specified route and returns a DOM object

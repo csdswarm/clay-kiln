@@ -1,8 +1,11 @@
 'use strict';
 
-const URL = require('url-parse'),
+const db = require('../server/db'),
+  URL = require('url-parse'),
   // https://regex101.com/r/gDfIxb/1
   spaLinkRegex = new RegExp(`^.*(?=${process.env.CLAY_SITE_HOST}).*$`);
+
+let SEO_FOLLOW_DOMAINS = [];
 
 /**
  * Add SPA navigation listener to links
@@ -63,9 +66,7 @@ function isSpaLink(uri) {
  * @return {boolean}
  */
 function isEntercomDomain(hostname) {
-  const SEO_FOLLOW_DOMAINS = ['1thingus.com,entercom.com', 'culinarykitchenchicago.com', 'dfwrestaurantweek.com',
-      'musictowndetroit.com', 'mensroomlive.com', 'jimrome.com', 'radio.com'],
-    domain = hostname.split('.').reverse().slice(0, 2).reverse().join('.');
+  const domain = hostname.split('.').reverse().slice(0, 2).reverse().join('.');
 
   return SEO_FOLLOW_DOMAINS.includes(domain);
 }
@@ -106,7 +107,7 @@ function prepareDOM(doc) {
     setAttribute = (link, name, value) => link.setAttribute(name, value),
     getAttribute = (link, name) => link.getAttribute(name);
 
-  doc.querySelectorAll('a[href]').forEach(link => prepareLink(link, addClass, setAttribute, getAttribute));
+  doc.querySelectorAll('a[href]').forEach((link) => prepareLink(link, addClass, setAttribute, getAttribute));
 }
 
 /**
@@ -129,7 +130,11 @@ function prepareCheerio($) {
  *
  * @param {object} doc
  */
-function prepare(doc) {
+async function prepare(doc) {
+  if (!SEO_FOLLOW_DOMAINS.length) {
+    SEO_FOLLOW_DOMAINS = await db.get(`${process.env.CLAY_SITE_HOST}/_lists/entercom-domains`).catch(() => []);
+  }
+
   doc.querySelectorAll ? prepareDOM(doc) : prepareCheerio(doc);
 }
 

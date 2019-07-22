@@ -9,16 +9,16 @@ const pkg = require('../../package.json'),
   cheerio = require('cheerio'),
   /**
    * take the html rendered by handlebars and modify all links to add appropriate classes and no follow
+   * a third argument containing locals is also sent to postRender method in case it is needed
    *
    * @param {string} ref
    * @param {string} html
-   * @param {object} locals
    * @return {*}
    */
-  transformHtml = (ref, html) => {
+  transformHtml = async (ref, html) => {
     const $ = cheerio.load(html);
 
-    prepare($);
+    await prepare($);
 
     return $.html();
   };
