@@ -24,11 +24,11 @@ const db = require('../server/db'),
   checkForOverlap = async (start, end, station) => {
     const response = await db.raw(`
         SELECT id FROM alert
-        WHERE int8range(${start}::int8, ${end}::int8)
-            && int8range((data->>'start')::int8, (data->>'end')::int8)
+        WHERE tsrange(?, ?)
+            && tsrange((data->>'start')::timestamp, (data->>'end')::timestamp)
             AND data->>'active' = 'true'
-            AND data->>'station' = '${station}'
-    `);
+            AND data->>'station' = ?
+    `, [start, end, station]);
 
     return response.rowCount > 0;
   },
@@ -51,7 +51,7 @@ const db = require('../server/db'),
           whereQuery = Object.keys(params).map(key => {
             switch (key) {
               case 'current':
-                return "EXTRACT(EPOCH FROM NOW())::int8 <@ int8range((data->>'start')::int8, (data->>'end')::int8)";
+                return "NOW() AT TIME ZONE 'UTC' <@ tsrange((data->>'start')::timestamp, (data->>'end')::timestamp)";
               default:
                 paramValues.push(params[key]);
                 return `data->>'${key}' = ?`;
@@ -60,7 +60,7 @@ const db = require('../server/db'),
           alerts = await db.raw(`
             SELECT id, data
             FROM alert
-            WHERE (data->>'end')::int8 > EXTRACT(EPOCH FROM NOW())::int8
+            WHERE (data->>'end')::timestamp > NOW() AT TIME ZONE 'UTC'
               AND ${whereQuery}
             ORDER BY data->>'start'
           `, paramValues).then(pullDataFromResponse);
@@ -99,7 +99,7 @@ const db = require('../server/db'),
      */
     app.put('/alerts', async (req, res) => {
       const {id: key, ...alert} = req.body,
-        overlap = await checkForOverlap(alert.start, alert.end);
+        overlap = await checkForOverlap(alert.start, alert.end, alert.station);
 
       if (alert.active && overlap) {
         return res.status(400).send('Cannot save this alert. Its start and end times overlap with another alert');

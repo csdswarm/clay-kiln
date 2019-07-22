@@ -182,7 +182,7 @@
                     return '';
                 }
 
-                return moment.utc(this.endDate).hour(hour).minute(minute).second(0).milliseconds(0).valueOf()/1000; 
+                return moment(this.endDate).hour(hour).minute(minute).second(0).milliseconds(0); 
             },
             /** Combines date and time input into one field */
             start: function () {
@@ -192,7 +192,7 @@
                     return '';
                 }
 
-                return moment.utc(this.startDate).hour(hour).minute(minute).second(0).milliseconds(0).valueOf()/1000;            
+                return moment(this.startDate).hour(hour).minute(minute).second(0).milliseconds(0);            
             },
             global: function() {
                 return this.tab === 'global';
@@ -283,8 +283,8 @@
             },
             /** Populates the form with selectedAlert when in editMode */
             setForm(alert) {
-                const start = moment.utc(alert.start*1000);
-                const end = moment.utc(alert.end*1000);
+                const start = moment(alert.start);
+                const end = moment(alert.end);
 
                 this.breaking = alert.breaking;
                 this.message = alert.message;
@@ -302,7 +302,7 @@
         filters: {
             /** Date formatter */
             formatDate: function (value) {
-                return moment.utc(value*1000).format('llll')
+                return moment.utc(value).local().format('llll')
             }
         },
         components: {
