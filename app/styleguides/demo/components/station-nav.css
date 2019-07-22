@@ -34,8 +34,38 @@ $station-logo-width-height-med-screen: em(80);
 
     .menu__mobile-toggle {
       display: none;
+      align-self: center;
+      margin-right: em(25);
       @mixin medium-screen {
-        display: block;
+        display: flex;
+      }
+      button {
+        background: none;
+        outline: none;
+        margin: 0;
+        border: 0;
+        padding: 0;
+        font-family: inherit; 
+        font-size: 100%;
+        line-height: 1;
+        width: em(16);
+        height: auto;
+        cursor: pointer;
+        &.mobile-toggle--open {
+          display: none;
+        }
+        svg {
+          width: 100%;
+          height: auto;
+        }
+      }
+      &.active {
+        button.mobile-toggle--closed {
+          display: none;
+        }
+        button.mobile-toggle--open {
+          display: block;
+        }
       }
     }
 
@@ -54,6 +84,9 @@ $station-logo-width-height-med-screen: em(80);
     .menu__navigation {
       display: flex;
       margin-left: em(-15);
+      @mixin medium-screen {
+        display: none;
+      }
 
       li.navigation__primary {
         a {
@@ -62,7 +95,13 @@ $station-logo-width-height-med-screen: em(80);
         button {
           border: 0;
           background: none;
-          padding: em(16, 15) em(15, 15);
+          font-family: inherit;
+          font-size: 100%;
+          line-height: 1.15;
+          margin: 0;
+          text-transform: none;
+          padding: em(16) em(15);
+          cursor: pointer;
           span {
             @mixin station-nav-font1;
             text-transform: uppercase;
