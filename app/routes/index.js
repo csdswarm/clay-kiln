@@ -179,6 +179,6 @@ module.exports = router => {
     return res.send( xml( { urlset }, { declaration: true } ) );
   });
 
-  additionalDataTypes.inject(router);
+  additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router);
 };

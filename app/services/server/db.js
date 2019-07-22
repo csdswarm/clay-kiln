@@ -38,7 +38,7 @@ const utils = require('../universal/utils'),
         `);
       } catch (e) {
         log('error', `There was a problem creating a table for ${tableName}`, e);
-        return Promise.resolve(false);
+        return false;
       }
     }
     return Promise.resolve(true);

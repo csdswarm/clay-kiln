@@ -3,73 +3,34 @@ const db = require('./db'),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   { DATA_STRUCTURES } = require('./db'),
   /**
-   * Middleware to ensure user is logged into CMS
+   * build endpoints for a specific data typ
    *
-   * @param {Object} req
-   * @param {object} res
-   * @param {function} next
+   * @param {string} method
    *
-   * @returns {Promise}
+   * @returns {function}
    */
-  checkAuth = (req, res, next) => {
-    if (!req.user || !req.user.auth) {
-      return res.status(401).send('You must be logged into Kiln to add alerts');
-    }
+  buildEndpoint = (method) => async (req, res) => {
+    const key = `${CLAY_SITE_HOST}${req.originalUrl}`;
 
-    next();
+    try {
+      await db[method].apply(this, [key, req.body]);
+      res.status(200).send(key);
+    } catch (e) {
+      res.status(500).send(e.message);
+    }
   },
   /**
    * add db access routes for each DATA_STRUCTURE to an express app
    *
    * @param {object} app
+   * @param {function} checkAuth
    */
-  inject = app => {
+  inject = (app, checkAuth) => {
     DATA_STRUCTURES.forEach(DATA_TYPE => {
-      app.get(`*_${DATA_TYPE}*`, async (req, res) => {
-        const key = `${CLAY_SITE_HOST}${req.originalUrl}`;
+      app.get(`*/_${DATA_TYPE}*`, buildEndpoint('get'));
 
-        try {
-          const alert = await db.get(key);
-  
-          res.status(200).send(alert);
-        } catch (e) {
-          res.status(500).send(e.message);
-        }
-      });
-
-      app.post(`*_${DATA_TYPE}*`, checkAuth, async (req, res) => {
-        const key = `${CLAY_SITE_HOST}${req.originalUrl}`,
-          fields = req.body;
-  
-        try {
-          await db.post(key, fields);
-          res.status(200).send(key);
-        } catch (e) {
-          res.status(500).send(e.message);
-        }
-      });
-  
-      app.put(`*_${DATA_TYPE}*`, checkAuth, async (req, res) => {
-        const key = `${CLAY_SITE_HOST}${req.originalUrl}`,
-          fields = req.body;
-  
-        try {
-          await db.put(key, fields);
-          res.status(200).send(key);
-        } catch (e) {
-          res.status(500).send(e.message);
-        }
-      });
-  
-      app.delete(`*_${DATA_TYPE}*`, checkAuth, async (req, res) => {
-        const key = `${CLAY_SITE_HOST}${req.originalUrl}`;
-  
-        try {
-          await db.del(key);
-          res.status(200).send(key);
-        } catch (e) {
-          res.status(500).send(e.message);
-        }
+      ['post', 'put', 'delete'].forEach(method => {
+        app[method](`*/_${DATA_TYPE}*`, checkAuth, buildEndpoint(method));
       });
     });
   };
