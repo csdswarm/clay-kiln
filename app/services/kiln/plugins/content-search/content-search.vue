@@ -100,7 +100,7 @@
        */
       async performSearch() {
         this.loading = true;
-console.log('performSEarch', this.searchText)
+
         try {
           // if there are no search text yet, pass in * to get the top 10 most recent
           const response = await axios.post('/_search', this.createElasticsearchQuery(this.searchText || '*'));
