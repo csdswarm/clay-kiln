@@ -52,6 +52,7 @@ function newQueryWithCount(index, count, locals) {
 function searchByQuery(query) {
   return searchByQueryWithRawResult(query)
     .then(universalQuery.formatSearchResult)
+    .then(universalQuery.formatProtocol)
     .catch(e => {
       throw new Error(e);
     });

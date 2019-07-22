@@ -1,18 +1,23 @@
 'use strict';
 
 
-const adMapping = require('./adMapping'),
+const _get = require('lodash/get'),
+  adMapping = require('./adMapping'),
+  getPageData = require('../../services/universal/analytics/get-page-data'),
+  getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
+  makeFromPathname = require('../../services/universal/analytics/make-from-pathname'),
+  {
+    pageTypeTagArticle,
+    pageTypeTagSection,
+    pageTypeTagStationDetail,
+    pageTypeTagStationsDirectory,
+    NMC,
+    OG_TYPE
+  } = require('../../services/universal/analytics/shared-tracking-vars'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
-  doubleclickPageTypeTagArticle = 'article',
-  doubleclickPageTypeTagSection = 'sectionfront',
-  doubleclickPageTypeTagStationsDirectory = 'stationsdirectory',
-  doubleclickPageTypeTagStationDetail = 'livestreamplayer',
-  doubleclickPageTypeTagTag = 'tag',
-  doubleclickPageTypeTagAuthor = 'authors',
   adRefreshInterval = '60000', // Time in milliseconds for ad refresh
-  targetingNationalRadioStation = 'natlrc',
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
@@ -94,6 +99,22 @@ googletag.cmd.push(() => {
     }
   });
 });
+
+/**
+ * Returns the content if the selector is successful, otherwise the optional
+ *   fallback value.
+ * @param {string} attrKey
+ * @param {string} attrVal
+ * @param {*} [fallback]
+ * @returns {*}
+ */
+function getMetaTagContent(attrKey, attrVal, fallback) {
+  return _get(
+    document.querySelector(`meta[${attrKey}="${attrVal}"]`),
+    'content',
+    fallback
+  );
+}
 
 /**
  * Set up all ads on the page
@@ -210,39 +231,128 @@ function setAdsIDs(adSlots = null) {
   createAds(adSlots);
 }
 
-/**
- * use ids of ad slots on page to create google ad slots and display them
- *
- * @param {string} urlPathname
- * @returns {object} pageData
- */
-function getPageTargeting(urlPathname) {
-  let pageData = {};
+function isArticleOrGallery(pageData) {
+  return pageData.page === 'article'
+    || pageData.page === 'vgallery';
+}
 
-  if (urlPathname === '') {
-    pageData.page = 'homepage';
-  } else if (document.getElementsByTagName('article').length > 0) {
-    pageData.page = pageData.pageName = 'article';
-  } else if (document.querySelector('.component--gallery')) {
-    pageData.page = pageData.pageName = 'vgallery';
-  } else if (document.querySelector('.component--stations-directory')) {
-    pageData.page = 'stationsDirectory';
-    pageData.pageName = urlPathname.replace('/', '_');
-  } else if (document.querySelector('.component--station-detail')) {
-    pageData.page = 'stationDetail';
-    pageData.pageName = urlPathname.split('/')[0];
-  } else if (document.querySelector('.component--topic-page')) {
-    pageData.page = 'topicPage';
-    pageData.pageName = urlPathname.replace(/[^\/]+\//, '');
-  } else if (document.querySelector('.component--author-page')) {
-    pageData.page = 'authorPage';
-    pageData.pageName = urlPathname.replace('/', '_');
-  } else {
-    pageData.page = 'sectionFront';
-    pageData.pageName = urlPathname;
+/**
+ * Returns an array of authors when on a gallery or article page, otherwise an
+ *   empty array.
+ *
+ * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
+ * @returns {string|undefined}
+ */
+function getAuthors(pageData) {
+  if (!isArticleOrGallery(pageData)) {
+    return [];
   }
 
-  return pageData;
+  const articleOrGallery = pageData.page === 'article'
+    ? 'article'
+    : 'gallery';
+
+  return Array.from(document.querySelectorAll(`.component--${articleOrGallery} .author`))
+    .map(tag => {
+      return tag.getAttribute('data-author')
+        .replace(/\s/, '-')
+        .toLowerCase();
+    });
+}
+
+/**
+ * Returns an array of ad tags when on a gallery or article page, otherwise an
+ *   empty array.
+ *
+ * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
+ * @returns {string[]}
+ */
+function getContentTags(pageData) {
+  if (!isArticleOrGallery(pageData)) {
+    return [];
+  }
+
+  const adTagsEl = document.querySelector('.component--ad-tags');
+
+  return adTagsEl
+    ? (adTagsEl.getAttribute('data-normalized-ad-tags') || '').split(',')
+    : [];
+}
+
+/**
+ * Gets the targeting data which is potentially shared with Nieslen Marketing
+ *   Cloud meta tags (depending on whether they were imported from the
+ *   drupal api).  When the nielsen marketing cloud meta tags are imported, we
+ *   should ignore them and just get the tracking data from the dom.
+ *
+ * @param {boolean} shouldUseNmcTags
+ * @param {object} currentStation - the station object
+ * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
+ * @returns {object}
+ */
+function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
+  // we can't refer to the NMC tags for author since NMC only holds a single
+  //   author for some reason.
+  const authors = getAuthors(pageData),
+    contentTags = getContentTags(pageData),
+    trackingData = getTrackingData({
+      pathname: window.location.pathname,
+      station: currentStation,
+      pageData,
+      contentTags
+    }),
+    adTargetingData = {
+      targetingAuthors: authors,
+      // google ad manager doesn't take the tags from nmc since nmc cares about
+      //   the editorial tags rather than the ad tags.
+      targetingTags: trackingData.tag
+    };
+
+  if (shouldUseNmcTags) {
+    const market = pageData.page === 'stationDetail'
+      ? getMetaTagContent('name', NMC.market)
+      : undefined;
+
+    Object.assign(adTargetingData, {
+      targetingCategory: getMetaTagContent('name', NMC.cat),
+      targetingGenre: getMetaTagContent('name', NMC.genre),
+      targetingMarket: market,
+      targetingPageId: getMetaTagContent('name', NMC.pid),
+      targetingRadioStation: getMetaTagContent('name', NMC.station)
+    });
+  } else {
+    Object.assign(adTargetingData, {
+      targetingCategory: trackingData.cat,
+      targetingGenre: trackingData.genre,
+      targetingMarket: trackingData.market,
+      targetingPageId: trackingData.pid,
+      targetingRadioStation: trackingData.station
+    });
+  }
+
+  if (isArticleOrGallery(pageData)) {
+    adTargetingData.targetingPageId = adTargetingData.targetingPageId.substring(0, 39);
+  }
+
+  return adTargetingData;
+}
+
+function getCurrentStation() {
+  const fromPathname = makeFromPathname({ pathname: window.location.pathname });
+
+  if (!fromPathname.isStationDetail()) {
+    return {};
+  }
+
+  // these shouldn't be declared above the short circuit
+  // eslint-disable-next-line one-var
+  const stationDetailComponent = document.querySelector('.component--station-detail'),
+    stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
+    station = stationDetailEl
+      ? JSON.parse(stationDetailEl.innerHTML)
+      : {};
+
+  return station;
 }
 
 /**
@@ -253,92 +363,47 @@ function getPageTargeting(urlPathname) {
  * @param {string} urlPathname - Current Path
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
-function getAdTargeting(pageData, urlPathname) {
+function getAdTargeting(pageData) {
   const doubleclickBannerTag = document.querySelector('.component--google-ad-manager').getAttribute('data-doubleclick-banner-tag'),
     environment = document.querySelector('.component--google-ad-manager').getAttribute('data-environment'),
-    inProduction = environment === 'production';
-
-  let siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
-    adTargetingData = {
-      targetingRadioStation: null,
-      targetingGenre: 'aaa',
-      targetingCategory: 'music',
-      targetingAuthors: []
-    };
+    inProduction = environment === 'production',
+    currentStation = getCurrentStation(),
+    // this query selector should always succeed
+    firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
+    hasNmcTags = !!firstNmcTag,
+    isNmcDataImported = hasNmcTags && firstNmcTag.getAttribute('data-was-imported') === 'true',
+    shouldUseNmcTags = hasNmcTags && !isNmcDataImported,
+    siteZone = doubleclickPrefix.concat('/', doubleclickBannerTag),
+    adTargetingData = getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData);
 
   // Set up targeting and ad paths based on current page
   switch (pageData.page) {
     case 'article':
     case 'vgallery':
-      const adTagsEl = document.querySelector('.component--ad-tags'),
-        adTags = adTagsEl
-          ? (adTagsEl.getAttribute('data-normalized-ad-tags') || '').split(',')
-          : [];
-
-      adTargetingData.targetingTags = [
-        pageData.pageName,
-        ...adTags
-      ];
-
-      adTargetingData.targetingPageId = (pageData.pageName + '_' + urlPathname.split('/').pop()).substring(0, 39);
-      [...document.querySelectorAll('.component--article .author')].forEach(tag => {
-        adTargetingData.targetingAuthors.push(tag.getAttribute('data-author').replace(/\s/, '-').toLowerCase());
-      });
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/', pageData.pageName);
       break;
     case 'homepage':
-      adTargetingData.targetingTags = [doubleclickPageTypeTagSection, pageData.page];
-      adTargetingData.targetingPageId = pageData.page;
-      adTargetingData.siteZone = siteZone.concat('/', 'home', '/', doubleclickPageTypeTagSection);
+      adTargetingData.siteZone = siteZone.concat('/', 'home', '/', pageTypeTagSection);
       break;
     case 'sectionFront':
-      adTargetingData.targetingTags = [doubleclickPageTypeTagSection, pageData.pageName];
-      adTargetingData.targetingPageId = pageData.pageName;
       adTargetingData.siteZone = siteZone.concat('/', pageData.pageName, '/article');
       break;
     case 'stationsDirectory':
-      adTargetingData.targetingTags = [doubleclickPageTypeTagStationsDirectory, pageData.pageName];
-      adTargetingData.targetingPageId = pageData.pageName;
-      adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${doubleclickPageTypeTagStationsDirectory}`);
-      if (document.querySelector('.directory-page--music')) {
-        adTargetingData.targetingCategory = 'music';
-        adTargetingData.targetingGenre = urlPathname.replace('stations/music/', '');
-      } else if (document.querySelector('.directory-page--news-talk')) {
-        adTargetingData.targetingCategory = adTargetingData.targetingGenre = 'news-talk';
-      } else if (document.querySelector('.directory-page--sports')) {
-        adTargetingData.targetingCategory = adTargetingData.targetingGenre = 'sports';
-      }
+      adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${pageTypeTagStationsDirectory}`);
       break;
     case 'stationDetail':
-      adTargetingData.targetingTags = [doubleclickPageTypeTagStationDetail, 'unity'];
-      adTargetingData.targetingPageId = pageData.pageName;
+      const stationBannerTag = inProduction
+        ? currentStation.doubleclick_bannertag
+        : doubleclickBannerTag;
 
-      // this is a bug in the linter.  It wants to join this const with the one
-      //   in a previous case statement.
-      // eslint-disable-next-line one-var
-      const stationDetailComponent = document.querySelector('.component--station-detail'),
-        stationDetailEl = stationDetailComponent.querySelector('.station-detail__data'),
-        station = stationDetailEl ? JSON.parse(stationDetailEl.innerHTML) : {},
-        stationBannerTag = inProduction ? station.doubleclick_bannertag : doubleclickBannerTag;
-
-      adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${doubleclickPageTypeTagStationDetail}`;
-      adTargetingData.targetingMarket = station.market_name;
-      adTargetingData.targetingRadioStation = station.callsign;
-      adTargetingData.targetingCategory = adTargetingData.targetingGenre = station.category.toLowerCase();
-      if (adTargetingData.targetingCategory == 'music' && station.genre_name.length) {
-        adTargetingData.targetingGenre = station.genre_name[0].toLowerCase();
-      }
+      adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${pageTypeTagStationDetail}`;
       break;
     case 'topicPage':
-      adTargetingData.targetingTags = [doubleclickPageTypeTagTag, doubleclickPageTypeTagSection, pageData.pageName];
-      adTargetingData.targetingPageId = doubleclickPageTypeTagTag + '_' + pageData.pageName;
       // Must remain tag for targeting in DFP unless a change is made in the future to update it there
-      adTargetingData.siteZone = siteZone.concat('/', 'tag', '/', doubleclickPageTypeTagSection);
+      adTargetingData.siteZone = siteZone.concat('/', 'tag', '/', pageTypeTagSection);
       break;
     case 'authorPage':
-      adTargetingData.targetingTags = [doubleclickPageTypeTagArticle, doubleclickPageTypeTagAuthor];
-      adTargetingData.targetingPageId = pageData.pageName;
-      adTargetingData.siteZone = siteZone.concat('/', 'show', '/', doubleclickPageTypeTagArticle);
+      adTargetingData.siteZone = siteZone.concat('/', 'show', '/', pageTypeTagArticle);
     default:
   }
 
@@ -351,10 +416,10 @@ function getAdTargeting(pageData, urlPathname) {
  * @param {array} adSlots - Ad Slots to set up
  */
 function createAds(adSlots) {
-  const urlPathname = window.location.pathname.replace(/^\/|\/$/g, ''),
-    queryParams = urlParse(window.location, true).query,
-    pageData = getPageTargeting(urlPathname),
-    adTargetingData = getAdTargeting(pageData, urlPathname);
+  const queryParams = urlParse(window.location, true).query,
+    contentType = getMetaTagContent('property', OG_TYPE),
+    pageData = getPageData(window.location.pathname, contentType),
+    adTargetingData = getAdTargeting(pageData);
 
   googletag.cmd.push(function () {
     // Set refresh value on page level
@@ -384,7 +449,7 @@ function createAds(adSlots) {
       }
 
       slot
-        .setTargeting('station', adTargetingData.targetingRadioStation || targetingNationalRadioStation)
+        .setTargeting('station', adTargetingData.targetingRadioStation)
         .setTargeting('genre', adTargetingData.targetingGenre)
         .setTargeting('cat', adTargetingData.targetingCategory)
         .setTargeting('tag', adTargetingData.targetingTags)
