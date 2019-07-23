@@ -1,11 +1,11 @@
 'use strict';
 
-const db = require('../server/db'),
-  URL = require('url-parse'),
+const URL = require('url-parse'),
+  domain = typeof window === 'undefined' ? process.env.CLAY_SITE_HOST : window.location.host,
   // https://regex101.com/r/gDfIxb/1
-  spaLinkRegex = new RegExp(`^.*(?=${process.env.CLAY_SITE_HOST}).*$`);
+  spaLinkRegex = new RegExp(`^.*(?=${domain}).*$`);
 
-let SEO_FOLLOW_DOMAINS = [];
+let ENTERCOM_DOMAINS = [];
 
 /**
  * Add SPA navigation listener to links
@@ -68,7 +68,7 @@ function isSpaLink(uri) {
 function isEntercomDomain(hostname) {
   const domain = hostname.split('.').reverse().slice(0, 2).reverse().join('.');
 
-  return SEO_FOLLOW_DOMAINS.includes(domain);
+  return ENTERCOM_DOMAINS.includes(domain);
 }
 
 /**
@@ -129,10 +129,11 @@ function prepareCheerio($) {
  * prepare dom object or cheerio object for the spa with adding necessary classes
  *
  * @param {object} doc
+ * @param {array} domains
  */
-async function prepare(doc) {
-  if (!SEO_FOLLOW_DOMAINS.length) {
-    SEO_FOLLOW_DOMAINS = await db.get(`${process.env.CLAY_SITE_HOST}/_lists/entercom-domains`).catch(() => []);
+function prepare(doc, domains) {
+  if (!ENTERCOM_DOMAINS.length) {
+    ENTERCOM_DOMAINS = domains;
   }
 
   doc.querySelectorAll ? prepareDOM(doc) : prepareCheerio(doc);

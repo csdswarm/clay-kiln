@@ -36,8 +36,7 @@ const rest = require('../universal/rest'),
      * @param {Node} doc
      * @returns {Node}
      */
-    async (doc) => {
-      await spaLinkService.prepare(doc);
+    (doc) => {
       spaLinkService.addEventListeners(doc);
 
       return doc;
@@ -69,7 +68,7 @@ const rest = require('../universal/rest'),
    * @returns {Node}
    */
   spaInterface = (doc) => {
-    return spaFunctions.reduce(async (node, func) => await func(node), doc);
+    return spaFunctions.reduce((node, func) => func(node), doc);
   },
   /**
    * Client side AJAX call to get the specified route and returns a DOM object
