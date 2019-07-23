@@ -113,7 +113,7 @@ module.exports.render = async (ref, data, locals) => {
       tag: { createObj: tag => ({ 'tags.normalized': tag }) },
       // subcategory (secondary article type)
       subcategory: { createObj: secondaryArticleType => ({ secondaryArticleType }) },
-      // editorial feed (grouped stations)migrat
+      // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
       // stations (stationSyndication)
       station: {

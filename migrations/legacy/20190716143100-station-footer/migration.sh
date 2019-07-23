@@ -17,7 +17,7 @@ else
 fi
 
 echo "Using $http://$1"
-if [[ $(curl "$http://$1/_components/station-footer/instances" 2>&1) == *"station-footer"* ]];
+if [[ $(curl "$http://$1/_components/station-footer/instances" 2>&1) == *"station-fooer"* ]];
 then
     echo "Section Front 3 section front already exists";
 else
