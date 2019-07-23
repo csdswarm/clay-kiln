@@ -10,6 +10,12 @@ const _ = require('lodash'),
   canonicalPort = process.env.PORT || 3001,
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
+  slugifyService = require('../../services/universal/slugify'),
+  pageTypes = {
+    ARTICLE: 'article',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front'
+  },
   /**
    * returns a url to the server for a component
    *
@@ -133,9 +139,15 @@ function getMainComponentFromRef(componentReference, locals) {
     db.get(componentReference + '@published')
       .catch(_.noop)
   ]).spread(function (component, publishedComponent) {
-    guaranteePrimaryHeadline(component);
-    guaranteeLocalDate(component, publishedComponent, locals);
-    return component;
+    const componentTypeRegex = /^.*_components\/(\b.+\b)\/instances.*$/g,
+      pageType = componentTypeRegex.exec(componentReference)[1] || null;
+
+    if ([pageTypes.ARTICLE,pageTypes.GALLERY].includes(pageType)) {
+      guaranteePrimaryHeadline(component);
+      guaranteeLocalDate(component, publishedComponent, locals);
+    }
+
+    return {component, pageType};
   });
 }
 
@@ -156,26 +168,34 @@ function getUrlPrefix(site) {
  * returns an object to be consumed by url patterns
  * @param {object} component
  * @param {object} locals
- * @returns {{prefix: string, sectionFront: string, contentType: string, yyyy: string, mm: string, slug: string, isEvergreen: boolean}}
+ * @param {string} pageType
+ * @returns {{prefix: string, sectionFront: string, contentType: string, yyyy: string, mm: string, slug: string, isEvergreen: boolean, title: string, pageType: string}}
  * @throws {Error} if there's no date, slug, or prefix
  */
-function getUrlOptions(component, locals) {
+function getUrlOptions(component, locals, pageType) {
   const urlOptions = {},
     date = moment(locals.date);
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = component.sectionFront;
-  urlOptions.contentType = component.contentType;
-  urlOptions.yyyy = date.format('YYYY');
-  urlOptions.mm = date.format('MM');
-  urlOptions.slug = component.slug || sanitize.cleanSlug(component.primaryHeadline);
-  urlOptions.isEvergreen = component.evergreenSlug;
+  urlOptions.sectionFront = component.sectionFront || slugifyService(component.title);
+  urlOptions.contentType = component.contentType || null;
+  urlOptions.yyyy = date.format('YYYY') || null;
+  urlOptions.mm = date.format('MM') || null;
+  urlOptions.slug = component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
+  urlOptions.isEvergreen = component.evergreenSlug || null;
+  urlOptions.pageType = pageType;
 
-  if (!(locals.site && locals.date && urlOptions.slug)) {
-    throw new Error('Client: Cannot generate a canonical url at prefix: ' +
-      locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
+  if ([pageTypes.ARTICLE, pageTypes.GALLERY].includes(urlOptions.pageType)) {
+    if (!(locals.site && locals.date && urlOptions.slug)) {
+      throw new Error('Client: Cannot generate a canonical url at prefix: ' +
+        locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
+    }
+  } else if (urlOptions.pageType === pageTypes.SECTIONFRONT) {
+    if (!(locals.site && urlOptions.sectionFront)) {
+      throw new Error('Client: Cannot generate a canonical url at prefix: ' +
+        locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
+    }
   }
-
   return urlOptions;
 }
 
@@ -188,5 +208,7 @@ module.exports.getPublishDate = getPublishDate;
 module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.html`; // e.g. http://vulture.com/music/x.html - modified re: ON-333
 module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
 module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
+module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.putComponentInstance = putComponentInstance;
+module.exports.pageTypes = pageTypes;
 module.exports.getComponentInstance = getComponentInstance;

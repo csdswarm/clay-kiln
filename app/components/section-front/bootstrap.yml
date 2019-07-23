@@ -1,6 +1,8 @@
 _components:
   section-front:
     title: ''
+    titleLocked: false
+    includePodcastModule: false
     sectionLead:
       _ref: /_components/section-lead
     googleAdUnderStationsModule:

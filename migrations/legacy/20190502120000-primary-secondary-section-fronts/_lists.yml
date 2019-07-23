@@ -1,0 +1,11 @@
+_lists:
+  primary-section-fronts:
+    -
+      name: Music
+      value: music
+    -
+      name: News
+      value: news
+    -
+      name: Sports
+      value: sports

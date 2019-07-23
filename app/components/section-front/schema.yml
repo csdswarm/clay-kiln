@@ -4,8 +4,22 @@ title:
   _label: Title
   _publish: sectionFront
   _has:
-    input: static
-    text: ${title}
+    input: text
+    validate:
+      required:
+        field: titleLocked
+        operator: falsy
+  _reveal:
+    field: titleLocked
+    operator: falsy
+
+titleLocked:
+  _label: Is title locked?
+  _has: checkbox
+
+includePodcastModule:
+  _label: Include podcast module on page?
+  _has: checkbox
 
 podcastList:
   _component:
@@ -51,4 +65,4 @@ _groups:
   settings:
     fields:
       - title
-      - canonicalUrl
+      - includePodcastModule

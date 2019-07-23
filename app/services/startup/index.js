@@ -17,6 +17,7 @@ const pkg = require('../../package.json'),
   redirectTrailingSlash = require('./trailing-slash'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
+  eventBusSubscribers = require('./event-bus-subscribers'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
   lytics = require('./lytics');
@@ -85,6 +86,8 @@ function setupApp(app) {
   sessionStore = createSessionStore();
 
   feedComponents.init();
+
+  eventBusSubscribers();
 
   return amphoraSearch()
     .then(searchPlugin => {
