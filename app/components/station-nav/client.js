@@ -1,12 +1,12 @@
 'use strict';
 let stationNav,
-desktopNavItems,
-navDrawersContainer,
-desktopNavDrawers,
-mobileNavToggle,
-mobileNavDrawer,
-mobileNavItems,
-listenNavToggle;
+  desktopNavItems,
+  navDrawersContainer,
+  desktopNavDrawers,
+  mobileNavToggle,
+  mobileNavDrawer,
+  mobileNavItems,
+  listenNavToggle;
 
 const { isMobileNavWidth } = require('../../services/client/mobile'),
   active = 'active',
@@ -16,7 +16,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    *
    * @param {Object} event
    */
-  toggleListenDrawer = (e) => {
+  toggleListenDrawer = (event) => {
     listenNavToggle.classList.toggle(active);
     // TODO -- Toggle listen drawer here
   },
@@ -32,7 +32,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
     mobileNavDrawer.classList.toggle(active);
   },
   /**
-   * Toggle nav drawer container that includes 
+   * Toggle nav drawer container that includes
    * all secondaryLinks & mobile nav
    *
    * @param {Object} event -- contains type and currentTarget
@@ -62,7 +62,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   },
   /**
    * Toggle desktop or mobile nav drawer/dropdown
-   * 
+   *
    * @param {Object} event -- contains type and currentTarget
    */
   toggleNavDrawer = ({ type, currentTarget }) => {
@@ -81,12 +81,11 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
         itemLabelClass = Array.from(currentTarget.classList).filter(itemClass => {
           return itemClass.includes(CLASS_SUBSTRING);
         }),
-        label = itemLabelClass[0].replace(CLASS_SUBSTRING, '');
-
-      // toggle corresponding desktop drawer if it exists
-      const selectedDrawer = navDrawersContainer.querySelector(`.drawer--desktop.drawer--${ label }`);
+        label = itemLabelClass[0].replace(CLASS_SUBSTRING, ''),
+        selectedDrawer = navDrawersContainer.querySelector(`.drawer--desktop.drawer--${ label }`);
 
       if (selectedDrawer) {
+        // toggle corresponding desktop drawer if it exists
         currentTarget.classList.toggle(active);
         selectedDrawer.classList.toggle(active);
       } else {

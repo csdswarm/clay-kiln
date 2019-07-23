@@ -34,15 +34,16 @@ $caret-margin-right: em(25);
   display: block;
   height: em(130);
   .station-nav__fixed-container {
-    background-color: $boulder;
+    background: none;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: fixed;
     width: 100%;
-    z-index: 100;
+    z-index: 4;
     .station-nav__menu {
+      background: $boulder;
       display: flex;
       align-items: flex-end;
       width: $default-screen-nav-width;
@@ -201,21 +202,25 @@ $caret-margin-right: em(25);
     }
 
     .station_nav__drawers {
-      display: none;
+      display: flex;
       background-color: $dustyGray;
       width: 100%;
       flex-direction: column;
       align-items: center;
-      padding: em(30) calc((100% - $default-screen-nav-width) / 2);
-      @mixin large-screen {
-        padding: em(30) calc((100% - $large-screen-nav-width) / 2);
-      }
-      @mixin medium-screen {
-        padding: em(30) 0;
-      }
+      padding: 0;
+      transform: translateY(-100%);
+      transition: all 100ms linear;
+      z-index: -1;
 
       &.active {
-        display: flex;
+        transform: translateY(0);
+        padding: em(30) calc((100% - $default-screen-nav-width) / 2);
+        @mixin large-screen {
+          padding: em(30) calc((100% - $large-screen-nav-width) / 2);
+        }
+        @mixin medium-screen {
+          padding: em(30) 0;
+        }
       }
       .drawers__drawer {
         display: none;

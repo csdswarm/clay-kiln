@@ -17,10 +17,10 @@ else
 fi
 
 echo "Using $http://$1"
-# if [[ $(curl "$http://$1/_components/section-front/instances" 2>&1) == *"station-front-3"* ]];
-# then
-#     echo "Section Front 3 section front already exists";
-# else
+if [[ $(curl "$http://$1/_components/section-front/instances" 2>&1) == *"station-front-3"* ]];
+then
+    echo "Section Front 3 section front already exists";
+else
     npm i yamljs node-fetch;
     clay export -y "$http://$1/_layouts/one-column-layout/instances/general" > layout.yml;
     node ./modifyLayout.js;
@@ -30,5 +30,5 @@ echo "Using $http://$1"
     cat ./components.yml | clay import -y -k demo "$http://$1";
     cat ./pages.yml | clay import -y -k demo "$http://$1";
 
-    # rm -rf ./node_modules package-lock.json layout.yml components.yml
-# fi
+    rm -rf ./node_modules package-lock.json layout.yml components.yml
+fi
