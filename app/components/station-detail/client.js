@@ -159,15 +159,14 @@ StationDetail.prototype = {
       c.classList.remove('active');
       if (c.classList.contains(`container--${contentLabel}`)) {
         if (this.lastUpdated !== contentLabel) {
-          if (contentLabel === 'recently-played') {
-            await this.updateRecentlyPlayed(c);
-          } else if (contentLabel === 'schedule') {
-            await this.updateSchedule(c);
-          } else if (contentLabel === 'discover') {
-            await this.updateDiscover(c);
-          } else if (contentLabel === 'favorites') {
-            await this.updateFavorites(c);
-          }
+          const updates = {
+            'recently-played': this.updateRecentlyPlayed,
+            schedule: this.updateSchedule,
+            discover: this.updateDiscover,
+            favorites: this.updateFavorites
+          };
+
+          await updates[contentLabel](c);
         }
 
         this.lastUpdated = contentLabel;
