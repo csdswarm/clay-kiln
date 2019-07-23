@@ -43,230 +43,31 @@ const createYaml = async () => {
               {
                 "url": "",
                 "text": "playlist",
-                "drawer": false,
-                "current": false
+                "drawer": false
               },
               {
                 "url": "",
                 "text": "shows",
                 "drawer": true,
-                "secondaryLinks": [
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "shows test link"
-                  }
-                ],
-                "current": false
+                "secondaryLinks": []
               },
               {
                 "url": "",
                 "text": "contests",
                 "drawer": true,
-                "secondaryLinks": [
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  },
-                  {
-                    "url": "/test",
-                    "text": "contests test link"
-                  }
-                ],
-                "current": false
+                "secondaryLinks": []
               },
               {
                 "url": "",
                 "text": "events",
                 "drawer": true,
-                "secondaryLinks": [],
-                "current": false
+                "secondaryLinks": []
               },
               {
                 "url": "",
                 "text": "more from",
                 "drawer": true,
-                "secondaryLinks": [],
-                "current": false
+                "secondaryLinks": []
               },
             ]        
           }
