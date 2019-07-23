@@ -17,7 +17,7 @@ async function updateTab(content, stationId) {
 
   let uri = `//${component.getAttribute('data-uri').replace('@published', '')}.html`;
 
-  if (typeof stationId === 'string') {
+  if (stationId) {
     uri += `?stationId=${stationId}`;
   }
 
@@ -83,7 +83,6 @@ StationDetail.prototype = {
    * Update recently played tab
    * @function
    * @param {Node} content
-   * @param {Number} stationId
    */
   updateRecentlyPlayed: async function (content) {
     await updateTab(content, this.stationId);
@@ -95,7 +94,6 @@ StationDetail.prototype = {
    * Update station schedule tab
    * @function
    * @param {Node} content
-   * @param {Number} stationId
    */
   updateSchedule: async function (content) {
     await updateTab(content, this.stationId);
@@ -166,7 +164,7 @@ StationDetail.prototype = {
             favorites: this.updateFavorites
           };
 
-          await updates[contentLabel](c);
+          await updates[contentLabel].call(this, c);
         }
 
         this.lastUpdated = contentLabel;
