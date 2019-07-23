@@ -67,10 +67,12 @@ module.exports.render = function (ref, data, locals) {
   let cleanUrl;
 
   // items are saved from form, articles are used on FE, and make sure they use the correct protocol
-  data.items = data.articles = data.items.map(item => ({
-    ...item,
-    canonicalUrl: item.canonicalUrl.replace(/^http:/, protocol)
-  }));
+  data.items = data.articles = data.items
+    .filter(item => item.canonicalUrl)
+    .map(item => ({
+      ...item,
+      canonicalUrl: item.canonicalUrl.replace(/^http:/, protocol)
+    }));
 
   if (!data.sectionFront || !locals) {
     return data;
