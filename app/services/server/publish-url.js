@@ -81,7 +81,11 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === pageTypes.SECTIONFRONT) {
-        return pubUtils.sectionFrontSlugPattern(urlOptions);
+        if (!urlOptions.primarySectionFront) {
+          return pubUtils.sectionFrontSlugPattern(urlOptions);
+        } else {
+          return pubUtils.secondarySectionFrontSlugPattern(urlOptions);
+        }
       }
     });
 }

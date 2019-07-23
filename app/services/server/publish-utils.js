@@ -177,7 +177,8 @@ function getUrlOptions(component, locals, pageType) {
     date = moment(locals.date);
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = component.sectionFront || slugifyService(component.title);
+  urlOptions.sectionFront = slugifyService(component.sectionFront || component.title);
+  urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
@@ -209,6 +210,7 @@ module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.ht
 module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
 module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
+module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.pageTypes = pageTypes;
 module.exports.getComponentInstance = getComponentInstance;

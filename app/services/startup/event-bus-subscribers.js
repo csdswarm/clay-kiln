@@ -3,6 +3,7 @@
 const db = require('../../services/server/db'),
   log = require('../../services/universal/log').setup({ file: __filename }),
   primarySectionFrontsList = '/_lists/primary-section-fronts',
+  secondarySectionFrontsList = '/_lists/secondary-section-fronts',
   { subscribe } = require('amphora-search');
 
 /**
@@ -41,18 +42,19 @@ async function handlePublishSectionFront(page) {
   try {
     const host = page.uri.split('/')[0],
       sectionFrontRef = page.data.main[0].replace('@published',''),
-      data = await db.get(sectionFrontRef);
+      data = await db.get(sectionFrontRef),
+      sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
     
     if (data.title && !data.titleLocked) {
-      const primarySectionFronts = await db.get(`${host}${primarySectionFrontsList}`),
-        sectionFrontValues = primarySectionFronts.map(sectionFront => sectionFront.value);
+      const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
+        sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
       
       if (!sectionFrontValues.includes(data.title.toLowerCase())) {
-        primarySectionFronts.push({
+        sectionFronts.push({
           name: data.title,
           value: data.title.toLowerCase()
         });
-        await db.put(`${host}${primarySectionFrontsList}`, JSON.stringify(primarySectionFronts));
+        await db.put(`${host}${sectionFrontsList}`, JSON.stringify(sectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: true}));
       }
     }
@@ -74,15 +76,16 @@ async function handleUnpublishSectionFront(page) {
       mainRef = pageData.main[0];
 
     if (mainRef.includes('/_components/section-front/instances/')) {
-      const data = await db.get(mainRef);
-
+      const data = await db.get(mainRef),
+        sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
+      
       if (data.title) {
-        const primarySectionFronts = await db.get(`${host}${primarySectionFrontsList}`),
-          updatedSectionFronts = primarySectionFronts.filter(sectionFront => {
+        const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
+          updatedSectionFronts = sectionFronts.filter(sectionFront => {
             return sectionFront.value !== data.title.toLowerCase();
           });
 
-        await db.put(`${host}${primarySectionFrontsList}`, JSON.stringify(updatedSectionFronts));
+        await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
         await db.put(mainRef, JSON.stringify({...data, titleLocked: false}));
       }
     }
