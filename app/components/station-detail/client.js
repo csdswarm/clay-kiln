@@ -1,5 +1,29 @@
 'use strict';
 
+const { fetchDOM } = require('../../services/client/radioApi'),
+  stationRecentlyPlayedFactory = require('../station-recently-played/client'),
+  stationScheduleFactory = require('../station-schedule/client'),
+  stationDiscoverFactory = require('../station-discover/client'),
+  stationsListFactory = require('../stations-list/client');
+
+/**
+ * Update tab content
+ * @function
+ * @param {Node} content
+ * @param {String} stationId
+ */
+async function updateTab(content, stationId) {
+  const component = content.querySelector('.component');
+
+  let uri = `//${component.getAttribute('data-uri').replace('@published', '')}.html`;
+
+  if (typeof stationId === 'string') {
+    uri += `?stationId=${stationId}`;
+  }
+
+  component.parentNode.replaceChild(await fetchDOM(uri), component);
+}
+
 class StationDetail {
   constructor() {
     const sidebar = document.querySelector('.content__sidebar'),
@@ -9,13 +33,16 @@ class StationDetail {
       hash = window.location.hash.replace('#', ''),
       firstTab = tabs[0].className.replace('tabs__', '');
 
+    this.stationId = document.querySelector('.image__play-btn').getAttribute('data-play-station');
     this.repositionRightRail(sidebar, stationDetail);
     this.addTabNavigationListeners(tabs, content);
 
     if (hash) {
+      this.lastUpdated = hash;
       this.activateTab(hash, tabs, content, true);
       window.scrollTo(0, document.querySelector('.station-detail__body').offsetTop);
     } else {
+      this.lastUpdated = firstTab;
       this.activateTab(firstTab, tabs, content);
     }
 
@@ -51,6 +78,54 @@ StationDetail.prototype = {
       tab.addEventListener('click', function (e) { this.activateTab(e, tabs, content, true); }.bind(this));
     }
   },
+
+  /**
+   * Update recently played tab
+   * @function
+   * @param {Node} content
+   * @param {Number} stationId
+   */
+  updateRecentlyPlayed: async function (content) {
+    await updateTab(content, this.stationId);
+    
+    stationRecentlyPlayedFactory(content.querySelector('.component--station-recently-played'));
+  },
+
+  /**
+   * Update station schedule tab
+   * @function
+   * @param {Node} content
+   * @param {Number} stationId
+   */
+  updateSchedule: async function (content) {
+    await updateTab(content, this.stationId);
+
+    stationScheduleFactory(content.querySelector('.component--station-schedule'));
+  },
+
+  /**
+   * Update discover tab
+   * @function
+   * @param {Node} content
+   */
+  updateDiscover: async function (content) {
+    await updateTab(content, this.stationId);
+
+    stationDiscoverFactory(content.querySelector('.component--station-discover'));
+    content.querySelectorAll('.component--stations-list').forEach(stationsListFactory);
+  },
+
+  /**
+   * Update favorites tab
+   * @function
+   * @param {Node} content
+   */
+  updateFavorites: async function (content) {
+    await updateTab(content);
+
+    stationsListFactory(content.querySelector('.component--stations-list'));
+  },
+
   /**
    * Navigate between tabs
    * @function
@@ -59,7 +134,7 @@ StationDetail.prototype = {
    * @param {NodeListOf} content
    * @param {boolean} [useHash]
    */
-  activateTab: function (e, tabs, content, useHash) {
+  activateTab: async function (e, tabs, content, useHash) {
     let contentLabel;
 
     if (e.currentTarget) {
@@ -83,6 +158,19 @@ StationDetail.prototype = {
     for (let c of content) {
       c.classList.remove('active');
       if (c.classList.contains(`container--${contentLabel}`)) {
+        if (this.lastUpdated !== contentLabel) {
+          if (contentLabel === 'recently-played') {
+            await this.updateRecentlyPlayed(c);
+          } else if (contentLabel === 'schedule') {
+            await this.updateSchedule(c);
+          } else if (contentLabel === 'discover') {
+            await this.updateDiscover(c);
+          } else if (contentLabel === 'favorites') {
+            await this.updateFavorites(c);
+          }
+        }
+
+        this.lastUpdated = contentLabel;
         c.classList.add('active');
       }
     }
