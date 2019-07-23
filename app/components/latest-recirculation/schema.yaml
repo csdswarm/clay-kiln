@@ -2,10 +2,10 @@ _version: 2.0
 _confirmRemoval: true
 
 _description: |
-  A list of five latest related articles by article type, tag, or manually populated.
+  A list of five latest related articles by section front, secondary section front, tag, or manually populated.
 
 populateBy:
-  _label: Populate articles by article type or tag?
+  _label: Populate articles by primary section front, secondary section front or tag?
   _has:
     validate:
       required: true
@@ -92,7 +92,6 @@ _groups:
   latestRecirculationItems:
     fields:
       - populateBy
-      - sectionFront
       - contentType
       - tag
       - items

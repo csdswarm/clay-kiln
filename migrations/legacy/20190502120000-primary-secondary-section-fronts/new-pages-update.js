@@ -21,16 +21,18 @@ const data = require(`${__dirname}/lists-${listType}.json`),
       title: 'Section Front'
     }]
   };
-let newData;
+let newData = data;
 
-if (data[0].id === 'General-content') {
-  newData = [...data, sectionFrontOption];
-} else {
-  newData = [{
-    id: "General-content",
-    title: "1. General Content",
-    children: data
-  }, sectionFrontOption];
+if (data.length === 1 || data[1].id !== 'section-front') {
+  if (data[0].id === 'General-content') {
+    newData = [...data, sectionFrontOption];
+  } else {
+    newData = [{
+      id: "General-content",
+      title: "1. General Content",
+      children: data
+    }, sectionFrontOption];
+  }
 }
 
 // Create correct clay data structure

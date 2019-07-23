@@ -22,7 +22,29 @@ cat ./_lists.yml | clay import -k demo -y $1
 printf "\n\nResetting data for new instance of podcast list"
 curl -X PUT $http://$1/_components/podcast-list/instances/new -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -o /dev/null -s -d '{ "items": [] }'
 
+printf "\nUpdating More Content Feed Instance Section Front to remove sectionFrontManual value...\n\n"
+# _components/more-content-feed/instances/section-front
+componentType="more-content-feed"
+instanceType="section-front"
+printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
+node ./more-content-feed-update.js "$1" "$componentType" "$instanceType";
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$componentType-$instanceType.json
+rm ./$componentType-$instanceType.yml
+printf "\n\n\n\n"
+
 printf "\nUpdating Section Fronts to Add Podcast Modules...\n\n"
+# _components/section-front/instances/new
+componentType="section-front"
+instanceType="new"
+printf "\n\nUpdating component $componentType instance $instanceType...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
+node ./section-front-update.js "$1" "$componentType" "$instanceType";
+cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
+rm ./$componentType-$instanceType.json
+rm ./$componentType-$instanceType.yml
+printf "\n\n\n\n"
 
 # _components/section-front/instances/new
 componentType="section-front"

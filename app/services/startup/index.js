@@ -17,10 +17,10 @@ const pkg = require('../../package.json'),
   redirectTrailingSlash = require('./trailing-slash'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
-  eventBusSubscribers = require('./event-bus-subscribers'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
-  lytics = require('./lytics');
+  lytics = require('./lytics'),
+  eventBusSubscribers = require('./event-bus-subscribers');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
