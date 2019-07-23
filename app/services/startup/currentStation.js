@@ -70,6 +70,15 @@ const radioApiService = require('../../services/server/radioApi'),
         return allStations[slugInReqUrl];
       }
 
+      // If the station isn't in the slug, look for the querystring parameter
+      if (req.query.stationId) {
+        const station = await radioApiService.get(`/stations/${req.query.stationId}`);
+
+        if (station.data && station.data.attributes) {
+          return station.data.attributes;
+        }
+      }
+
       return defaultStation;
     }
   };
