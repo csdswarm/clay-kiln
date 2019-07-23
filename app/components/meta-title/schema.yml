@@ -26,6 +26,17 @@ ogTitle:
       fn: description
       value: og:title, will fall back to regular title if it doesn't exist. For articles, this is generated from the SEO headline.
 
+twitterTitle:
+  _label: Twitter Title
+  _display: settings
+  _subscribe: twitterTitle
+  _has:
+  - text
+  - label
+  -
+    fn: description
+    value: twitter:title, will fall back to regular title if it doesn't exist. For articles, this is generated from the SEO headline.
+
 kilnTitle:
   _label: Kiln Title
   _display: settings

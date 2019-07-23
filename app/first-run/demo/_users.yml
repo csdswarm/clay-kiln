@@ -179,3 +179,7 @@ _users:
     username: ben.leffler@swarmsolutions.com
     provider: google
     auth: admin
+  -
+    username: Leland.Kwong@entercom.com
+    provider: google
+    auth: admin
