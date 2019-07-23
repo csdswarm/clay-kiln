@@ -114,7 +114,7 @@ $caret-margin-right: em(25);
           }
           button {
             @mixin button-reset;
-            padding: em(14) em(15);
+            padding: em(12) em(15);
             span {
               @mixin station-nav-font1;
               text-transform: uppercase;

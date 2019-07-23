@@ -1,6 +1,6 @@
 'use strict';
 
-const { playingClass } = require('../../services/server/spaLocals');
+const { playingClass } = require('../../services/universal/spaLocals');
 
 module.exports.render = (ref, data, locals) => {
   data.playingClass = playingClass(locals, locals.station.id);

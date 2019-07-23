@@ -11,23 +11,33 @@ listenNavToggle;
 const { isMobileNavWidth } = require('../../services/client/mobile'),
   active = 'active',
 
+  /**
+   * Toggle listen nav arrow direction & listen nav drawer on click of caret
+   *
+   * @param {Object} event
+   */
   toggleListenDrawer = (e) => {
     listenNavToggle.classList.toggle(active);
     // TODO -- Toggle listen drawer here
   },
   /**
-   * Toggle mobile nav arrow direction & mobile nav on click of arrow
+   * Toggle mobile nav arrow direction & mobile nav on click of caret
    *
    * @param {Object} event -- contains type and currentTarget
    */
-  toggleMobileDrawer = ({type, currentTarget}) => {
+  toggleMobileDrawer = ({ type, currentTarget }) => {
     mobileNavToggle.classList.toggle(active);
 
-    toggleNavDrawerContainer(type, currentTarget);
+    toggleNavDrawerContainer({type, currentTarget});
     mobileNavDrawer.classList.toggle(active);
   },
-
-  toggleNavDrawerContainer = (type, currentTarget) => {
+  /**
+   * Toggle nav drawer container that includes 
+   * all secondaryLinks & mobile nav
+   *
+   * @param {Object} event -- contains type and currentTarget
+   */
+  toggleNavDrawerContainer = ({ type, currentTarget }) => {
     const isMobile = isMobileNavWidth();
 
     // toggle container for all drawers
@@ -52,12 +62,13 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   },
   /**
    * Toggle desktop or mobile nav drawer/dropdown
-   * @param {Object} event - Event from event listener
+   * 
+   * @param {Object} event -- contains type and currentTarget
    */
   toggleNavDrawer = ({ type, currentTarget }) => {
     const isMobile = isMobileNavWidth();
 
-    toggleNavDrawerContainer(type, currentTarget);
+    toggleNavDrawerContainer({type, currentTarget});
 
     // reset all desktop drawers
     for (let drawer of desktopNavDrawers) {
@@ -91,28 +102,28 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * Toggle secondary nav items dropdown for primary nav items
    * on mobile on click of primary nav item
    *
-   * @param {Object} event - Event from event listener.
+   * @param {Object} event -- contains currentTarget
    */
-  toggleMobileSecondaryLinks = event => {
-    if (!event.currentTarget.classList.contains(active)) {
+  toggleMobileSecondaryLinks = ({ currentTarget }) => {
+    if (!currentTarget.classList.contains(active)) {
       // Close dropdown of all categories
       for (let item of mobileNavItems) {
         item.classList.remove(active);
       }
     }
-    event.currentTarget.classList.toggle(active);
+    currentTarget.classList.toggle(active);
   },
 
   /**
-   * Add event listeners to header elements to toggle drawers & images.
+   * Add event listeners to nav elements to toggle drawers & carets.
    *
    */
   addEventListeners = () => {
     // Toggle Listen Nav
-    listenNavToggle.addEventListener('click', e => { toggleListenDrawer(e); });
+    listenNavToggle.addEventListener('click', toggleListenDrawer);
 
     // Toggle Mobile Nav
-    mobileNavToggle.addEventListener('click', e => { toggleMobileDrawer(e); });
+    mobileNavToggle.addEventListener('click', toggleMobileDrawer);
 
     // Toggle Dropdowns on Mobile Nav Categories
     mobileNavItems.forEach(item => {
@@ -122,17 +133,13 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
     // Toggle Nav Desktop Drawers
     desktopNavItems.forEach(item => {
       if (item.classList.contains('primary--drawer-enabled')) {
-        item.addEventListener('mouseover', e => { toggleNavDrawer(e); });
-        item.addEventListener('mouseout', e => { toggleNavDrawer(e); });
+        item.addEventListener('mouseover', toggleNavDrawer);
+        item.addEventListener('mouseout', toggleNavDrawer);
       }
     });
 
-    navDrawersContainer.addEventListener('mouseover', e => {
-      toggleNavDrawerContainer(e.type, e.currentTarget);
-    });
-    navDrawersContainer.addEventListener('mouseout', e => {
-      toggleNavDrawerContainer(e.type, e.currentTarget);
-    });
+    navDrawersContainer.addEventListener('mouseover', toggleNavDrawerContainer);
+    navDrawersContainer.addEventListener('mouseout', toggleNavDrawerContainer);
 
     // Remove mobile & desktop navs on resize
     window.addEventListener('resize', function () {
@@ -154,13 +161,13 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
 // mount listener for vue (optional)
 document.addEventListener('station-nav-mount', function () {
   // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
-  stationNav = document.querySelector('.component--station-nav'),
-  desktopNavItems = stationNav.querySelectorAll('.navigation__primary'),
-  navDrawersContainer = stationNav.querySelector('.station_nav__drawers'),
-  desktopNavDrawers = navDrawersContainer.querySelectorAll('.drawer--desktop'),
-  mobileNavToggle = stationNav.querySelector('.menu__mobile-toggle'),
-  mobileNavDrawer = navDrawersContainer.querySelector('.drawer--mobile'),
-  mobileNavItems = mobileNavDrawer.querySelectorAll('.drawer__item'),
+  stationNav = document.querySelector('.component--station-nav');
+  desktopNavItems = stationNav.querySelectorAll('.navigation__primary');
+  navDrawersContainer = stationNav.querySelector('.station_nav__drawers');
+  desktopNavDrawers = navDrawersContainer.querySelectorAll('.drawer--desktop');
+  mobileNavToggle = stationNav.querySelector('.menu__mobile-toggle');
+  mobileNavDrawer = navDrawersContainer.querySelector('.drawer--mobile');
+  mobileNavItems = mobileNavDrawer.querySelectorAll('.drawer__item');
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
 
   addEventListeners();

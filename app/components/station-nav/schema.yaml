@@ -9,8 +9,8 @@ stationLogo:
     input: advanced-image-upload
     webLabel: Insert Image via Web
     webHelp: Supply a valid HTTPS url to an image file then click "done" button
-    uploadLabel: Upload Image Attachment
-    uploadHelp: Choose an image file from your computer
+    uploadLabel: Upload Image Attachment for Station Logo
+    uploadHelp: Choose an image file from your computer for station logo to override station default logo
     validate:
       required: false
 
@@ -30,9 +30,8 @@ primaryLinks:
           type: url
           validate:
             required:
-              field: secondaryLinks
-              operator: length-equals
-              value: 0
+              field: drawer
+              operator: falsy
       -
         prop: drawer
         _label: Does this nav item have a drawer/tray/dropdown menu?
