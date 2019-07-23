@@ -12,7 +12,7 @@ footerLinks:
     filter: true
     props:
     -
-      prop: textcurrentst
+      prop: text
       _label: Link Text
       _has:
         input: text
@@ -31,8 +31,6 @@ footerLinks:
           patternMessage: e.g. http://domain.com/path or /path
 
 _groups:
-  footerLinks:
-    _label: Footer Links
-
+  settings:
     fields:
     - footerLinks

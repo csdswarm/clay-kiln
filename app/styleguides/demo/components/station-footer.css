@@ -11,24 +11,22 @@
   display: flex;
   justify-content: center;
 
-  .station-footer__station {
+  .station-footer {
     width: em(620);
 
     @media screen and (max-width: 660px) {
       width: 100%;
     }
 
-    .station__info {
-      .info__name {
-        @mixin station-footer-font2;
-      }
-
-      .info__slogan {
-        @mixin station-footer-font1;
-      }
+    &__name {
+      @mixin station-footer-font2;
     }
 
-    .station__social {
+    &__slogan {
+      @mixin station-footer-font1;
+    }
+
+    &__social {
       margin: em(26);
       > a {
         display: inline-block;
@@ -42,7 +40,7 @@
       }
     }
 
-    .station__link {
+    &__link {
       @mixin station-footer-font3;
       @mixin inline-block;
       padding: 0 em(15);
