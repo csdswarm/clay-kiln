@@ -2,31 +2,17 @@
 
 const { DAY: BANNER_ALERT_CLOSE_PERIOD, SECOND } = require('../../services/universal/constants'),
   MESSAGE_CYCLE_DURATION = 5 * SECOND;
-let _fadeCycleIntervalId, _hashIndex = 1;
+let _fadeCycleIntervalId;
 
-/**
- * Checks cookies to see if user has closed a message already and returns
- * a list of element selectors matching each closed message
- * @returns {Array}
- */
-function getSelectorsForClosedAlertsFromCookie() {
-  const cookies = document.cookie,
-    re = /atbr_(\w+)=1;/g,
-    output = [];
-  let found = re.exec(cookies);
-
-  while (Array.isArray(found)) {
-    output.push(`#alertBanner_${found[1]}`);
-    found = re.exec(cookies);
-  }
-  return output;
-}
 
 /**
  * Clears the fade cycle interval if it exists
  */
 function clearExistingIntervals() {
-  _fadeCycleIntervalId && window.clearInterval(_fadeCycleIntervalId);
+  if (_fadeCycleIntervalId) {
+    window.clearInterval(_fadeCycleIntervalId);
+    _fadeCycleIntervalId = null;
+  }
 }
 
 /**
@@ -47,7 +33,7 @@ function removeBannerMessage(el) {
   return message => {
     el.removeChild(message);
 
-    // If all messages are gone, remove the alert banner.
+    // If all messages are gone, remove the alert banner itself.
     if (!el.children.length) {
       el.parentElement.removeChild(el);
     }
@@ -68,30 +54,53 @@ function closeAlert(el, message) {
     document.cookie = `${cookieId}=1; expires=${messageClosedPeriod()}; path=/`;
 
     removeBannerMessage(el)(message);
+    clearExistingIntervals();
+    el.classList.remove('alert-banner--show-secondary');
   };
 }
 
 /**
- * Switches which message is shown in the banner. If the number of messages falls below 2
- * (should only ever be between 0 and 2 messages), then turn off the interval cycle as it
- * is not needed.
- * @param {HTMLElement} el The alert-banner element
- * @returns {Function} The function that toggles or removes the class to show the secondary message
+ * Saves an element's original `innerHTML` to `data.origText` on the element, if it was not already saved
+ * otherwise, it reverts the elements `innerHTML` to the value saved in `data.origText`
+ * @param {HTMLElement} textEl
+ * @returns {string}
  */
-function toggleSecondaryMessage(el) {
-  return () => {
-    if (el.children.length > 1) {
-      el.classList.toggle('alert-banner--show-secondary');
-    } else {
-      el.classList.remove('alert-banner--show-secondary');
-      clearExistingIntervals();
-    }
-  };
+function resetText(textEl) {
+  let origText;
+
+  if (!textEl.data || !textEl.data.origText) {
+    origText = textEl.innerHTML;
+    textEl.data = {...textEl.data || {}, origText};
+  } else {
+    origText = textEl.data.origText;
+  }
+  textEl.innerHTML = origText;
+  return origText;
 }
 
 /**
- * Iterates over the child messages and checks to see if they are multiline and exceed the
- * size of their container. If so, it adds a class that will allow ellipses to be shown
+ * Enforces adding Ellipsis to a multiline text element that has overflowed
+ *
+ * NOTE: Use until line-clamp is adopted and works effectively in supported browsers.
+ * @param {HTMLElement} textEl
+ */
+function addEllipsisOnOverflow(textEl) {
+  resetText(textEl);
+
+  const style = window.getComputedStyle(textEl),
+    isMultiline = textEl.clientHeight >= 2 * parseFloat(style.getPropertyValue('line-height')),
+    words = textEl.data.origText.split(' ');
+  let isOverflow = isMultiline && (textEl.clientHeight < textEl.scrollHeight);
+
+  while (isOverflow && words.length > 0) {
+    words.pop();
+    textEl.innerHTML = words.join(' ') + ' …';
+    isOverflow = textEl.clientHeight < textEl.scrollHeight;
+  }
+}
+
+/**
+ * Iterates over the child messages and adds a check to create ellipsis on overflow
  *
  * Why? Basically because CSS ellipses currently only work for single line boxes, however,
  * there is a requirement that we show multiple lines on smaller devices, but show ellipses
@@ -99,16 +108,9 @@ function toggleSecondaryMessage(el) {
  * @param {HTMLElement} el The alert-banner element
  */
 function handleOverflow(el) {
-  for (const child of Array.from(el.querySelectorAll('.alert-banner__text') || [])) {
-    const computedStyle = window.getComputedStyle(child),
-      isMultiline = child.clientHeight >= 2 * parseInt(computedStyle.getPropertyValue('line-height')),
-      contentOverflows = isMultiline && (child.clientHeight < child.scrollHeight);
-
-    if (contentOverflows) {
-      child.classList.add('alert-banner__text--overflows');
-    } else {
-      child.classList.remove('alert-banner__text--overflows');
-    }
+  for (const textEl of el.querySelectorAll('.alert-banner__text')) {
+    addEllipsisOnOverflow(textEl);
+    window.addEventListener('resize', ()=> addEllipsisOnOverflow(textEl));
   }
 }
 
@@ -117,23 +119,13 @@ function handleOverflow(el) {
  * @param {HTMLElement} el The alert-banner element
  */
 function setMessageFadeCycle(el) {
-  clearExistingIntervals();
-  _fadeCycleIntervalId = setInterval(toggleSecondaryMessage(el), MESSAGE_CYCLE_DURATION);
-}
-
-/**
- * If any messages from the server match a local closed message cookie, remove it from
- * the message list
- * @param {HTMLElement} el The alert-banner element
- */
-function removeClosedMessages(el) {
-  const messageFoundInDOM = message => message,
-    removeMessage = removeBannerMessage(el);
-
-  getSelectorsForClosedAlertsFromCookie()
-    .map(selector => el.querySelector(selector))
-    .filter(messageFoundInDOM)
-    .forEach(removeMessage);
+  if (el.children.length > 1) {
+    clearExistingIntervals();
+    _fadeCycleIntervalId = setInterval(
+      () => el.classList.toggle('alert-banner--show-secondary'),
+      MESSAGE_CYCLE_DURATION
+    );
+  }
 }
 
 /**
@@ -151,21 +143,19 @@ function attachCloseHandlers(el) {
 }
 
 /**
- * Prepares the environment, configures events and binds all handlers needed for
- * banner alerts
- * @param {HTMLElement | {hashIndex:(number|undefined)}} el The alert-banner element
+ * Prepares the environment, configures events and binds all handlers needed for banner alerts
+ * @param {HTMLElement | {bannerAlertSet:(boolean|undefined)}} el The alert-banner element
  */
 function setupAlertBannerClientFunctionality(el) {
 
-  if (el.hashIndex) return;
+  if (el.bannerAlertSet) {
+    return;
+  }
 
-  el.hashIndex = _hashIndex++; // to prevent potential double entries
+  el.bannerAlertSet = true; // to prevent potential double entries
 
   handleOverflow(el);
-  window.addEventListener('resize', () => handleOverflow(el));
-
   setMessageFadeCycle(el);
-  removeClosedMessages(el);
   attachCloseHandlers(el);
 
 }

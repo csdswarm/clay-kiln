@@ -1,7 +1,11 @@
-const {clayImport, clayExport, parseHost, readFile, _has, _set} = require('../migration-utils').v1;
+const { clayImport, clayExport, parseHost, readFile, prettyJSON, _has, _set } = require('../migration-utils').v1;
 const host = process.argv[2] || 'clay.radio.com';
-const {es, url: hostUrl, http, messages} = parseHost(host);
-const logMessage = message => data => { console.log(message + '\n\n'); return data};
+const { url: hostUrl } = parseHost(host);
+const logMessage = message => data => {
+  console.log(message + '\n\n');
+  return data
+};
+
 const TARGET_LAYOUTS = [
   '_layouts/two-column-layout/instances/article',
   '_layouts/one-column-layout/instances/article', // probably not used, but just in case
@@ -10,11 +14,11 @@ const TARGET_LAYOUTS = [
 
 async function createDefaultAlertBanner() {
   try {
-    const {data} = await readFile({path:'./alert-banner.yml'});
-    await clayImport({payload: data, hostUrl});
-  }
-  catch (error){
-    console.log('An error occurred while trying to create the default alert-banner instance.', error);
+    const { data } = await readFile({ path: './alert-banner.yml' });
+    await clayImport({ payload: data, hostUrl });
+  } catch (error) {
+    console.log('An error occurred while trying to create the default alert-banner instance.', prettyJSON({error}));
+    throw error;
   }
 }
 
@@ -34,10 +38,14 @@ function addBannerToInstances(layouts){
     });
 }
 
-function updateInstances(layoutsWithAlertBanner){
+function updateInstances(layoutsWithAlertBanner) {
   return Promise.all(layoutsWithAlertBanner
     .map(payload => {
-      return clayImport({payload, hostUrl, publish: true})
+      try {
+        return clayImport({ payload, hostUrl, publish: true })
+      } catch (error) {
+        console.log('An error occurred while trying to update the alert-banner instance.', prettyJSON({error}));
+      }
     }));
 }
 

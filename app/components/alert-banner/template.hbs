@@ -1,15 +1,13 @@
-{{#if messages}}
+{{#if @root.locals.messages }}
   <div  data-uri="{{ default _ref _self }}" class="component component--alert-banner alert-banner">
-    {{#each messages}}
+    {{#each @root.locals.messages}}
       <div id="alertBanner_{{ id }}" class="alert-banner__message{{#if breaking}} alert-banner__message--breaking{{/if}}">
         <div class="alert-banner__heading">
           <div class="alert-banner__indicator">
             <div class="alert-banner__icon"></div>
           </div>
           <div class="alert-banner__close">
-            <div class="alert-banner__close-button x-btn">
-              <div class="x-btn__cris"></div><div class="x-btn__cross"></div>
-            </div>
+            <div class="alert-banner__close-button"></div>
           </div>
         </div>
         <div class="alert-banner__body">

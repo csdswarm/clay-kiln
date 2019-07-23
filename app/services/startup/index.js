@@ -19,7 +19,7 @@ const pkg = require('../../package.json'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
-  lytics = require('./lytics');
+  cookies = require('./cookies');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -76,8 +76,8 @@ function setupApp(app) {
 
   app.use(currentStation);
 
-  lytics.inject(app);
-
+  cookies.inject(app);
+  
   app.use(canonicalJSON);
 
   brightcove.inject(app);
