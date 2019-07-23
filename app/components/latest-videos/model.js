@@ -112,7 +112,7 @@ module.exports.render = function (ref, data, locals) {
     });
   }
 
-  return queryService.searchByQuery(query)
+  return queryService.searchByQuery(query, locals)
     .then(function (results) {
       data.articles = data.items.concat(results).slice(0, maxItems); // show a maximum of maxItems links
 

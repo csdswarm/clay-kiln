@@ -106,7 +106,7 @@ module.exports.render = async function (ref, data, locals) {
     }
 
     try {
-      const results = await queryService.searchByQuery(query),
+      const results = await queryService.searchByQuery(query, locals),
         // combine the curated articles (musicItems, newsItems, sportsItems, etc.) with the query results
         articles = items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
@@ -115,5 +115,6 @@ module.exports.render = async function (ref, data, locals) {
       queryService.logCatch(e, ref);
     }
   }
+
   return data;
 };

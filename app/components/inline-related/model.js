@@ -101,7 +101,7 @@ module.exports.render = function (ref, data, locals) {
     });
   }
 
-  return queryService.searchByQuery(query)
+  return queryService.searchByQuery(query, locals)
     .then(function (results) {
       const limit = data.fill;
 

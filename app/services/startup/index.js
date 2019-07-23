@@ -19,7 +19,8 @@ const pkg = require('../../package.json'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
-  lytics = require('./lytics');
+  lytics = require('./lytics'),
+  addRdcRedisSession = require('./add-rdc-redis-session');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -72,6 +73,8 @@ function setupApp(app) {
 
   app.use(handleRedirects);
 
+  addRdcRedisSession(app);
+
   app.use(locals);
 
   app.use(currentStation);
@@ -89,6 +92,7 @@ function setupApp(app) {
   return amphoraSearch()
     .then(searchPlugin => {
       log('info', `Using ElasticSearch at ${process.env.ELASTIC_HOST}`);
+
       return initCore(app, searchPlugin, sessionStore, routes);
     });
 }

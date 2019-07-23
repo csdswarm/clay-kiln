@@ -218,7 +218,8 @@ module.exports.render = function (ref, data, locals) {
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     });
   }
-  return queryService.searchByQuery(query)
+
+  return queryService.searchByQuery(query, locals)
     .then(function (results) {
       results = results.map(content => {
         content.lead = content.lead[0]._ref.split('/')[2];

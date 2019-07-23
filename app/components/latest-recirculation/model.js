@@ -82,7 +82,7 @@ const queryService = require('../../services/server/query'),
       }
 
       // hydrate item list.
-      const hydrationResults = await queryService.searchByQuery(query);
+      const hydrationResults = await queryService.searchByQuery(query, locals);
 
       data.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 

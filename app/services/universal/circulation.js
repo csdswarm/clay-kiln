@@ -319,7 +319,7 @@ function getRollingStandoutArticles(locals) {
     }
   ]);
 
-  return queryService.searchByQuery(rollingStandoutArticlesQuery).catch(() => []);
+  return queryService.searchByQuery(rollingStandoutArticlesQuery, locals).catch(() => []);
 }
 
 function setGoogleStandoutHelpers(data, publishedData, rollingCount) {

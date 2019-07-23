@@ -1,11 +1,16 @@
 'use strict';
 
-const amphoraSearch = require('amphora-search'),
+const _every = require('lodash/every'),
+  _get = require('lodash/get'),
+  _set = require('lodash/set'),
+  _isEmpty = require('lodash/isEmpty'),
+  amphoraSearch = require('amphora-search'),
   bluebird = require('bluebird'),
   log = require('../universal/log').setup({ file: __filename }),
   indexWithPrefix = amphoraSearch.indexWithPrefix,
   universalQuery = require('../universal/query'),
-  utils = require('../universal/utils');
+  utils = require('../universal/utils'),
+  loadedIdsService = require('./loaded-ids');
 
 /**
  * Get ElasticSearch client reference
@@ -62,15 +67,17 @@ function newQueryWithCount(index, count) {
 }
 
 /**
- * Query Elastic and clean up raw result object
- * to only display array of results
+ * Query Elastic and clean up raw result object to only display array of
+ *   results.  If locals is passed then its loadedIds property will be updated.
+ *
  * @param  {Object} query
+ * @param  {Object} [locals]
  * @return {Promise}
  * @example searchByQuery({"index":"local_published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
-function searchByQuery(query) {
-  return searchByQueryWithRawResult(query)
+function searchByQuery(query, locals) {
+  return searchByQueryWithRawResult(query, locals)
     .then(universalQuery.formatSearchResult)
     .then(universalQuery.formatProtocol)
     .catch(e => {
@@ -79,22 +86,89 @@ function searchByQuery(query) {
 }
 
 /**
- * Query Elastic client for results
+ * Adds all the _id's from the query results to locals.loadedIds
+ *
+ * Note: this method should only be called if locals was passed
+ *
+ * @param {object} results
+ * @param {object} locals
+ */
+async function appendLoadedIdsToLocalsAndRedis(results, locals) {
+  const hits = results.hits.hits,
+    allHitsHaveIds = _every(hits, h => h._id),
+    resultIds = results.hits.hits.map(h => h._id);
+
+  if (_isEmpty(hits) || !allHitsHaveIds) {
+    return;
+  }
+
+  locals.loadedIds = locals.loadedIds.concat(resultIds);
+  await loadedIdsService.appendLoadedIds(locals.rdcSessionID, resultIds);
+}
+
+/**
+ * Note: This method mutates query.  Also it should only ever be called when
+ *   there exists loadedIds.
+ *
+ * @param {object} query
+ * @param {string[]} loadedIds
+ */
+function addMustNotGetLoadedIds(query, loadedIds) {
+  const bool = _get(query, 'body.query.bool', {}),
+    // I couldn't find a good elasticsearch way to query "must not match any of
+    //   these values".
+    matchAnyLoadedIds = loadedIds.map(_id => ({ match: { _id } }));
+
+  _set(query, 'body.query.bool', bool);
+
+  // needs to be declared after body.query.bool is set
+  // eslint-disable-next-line one-var
+  const mustNot = _get(bool, 'must_not', []);
+
+  if (!Array.isArray(mustNot)) {
+    // must_not must be an object then and turned into an array
+    mustNot = [bool.must_not];
+  }
+
+  bool.must_not = mustNot.concat(matchAnyLoadedIds);
+}
+
+/**
+ * Query Elastic client for results. If locals is passed then its loadedIds
+ *   property will be updated.
+ *
  * @param  {Object} query
+ * @param  {Object} [locals]
  * @return {Object}
  */
-function searchByQueryWithRawResult(query) {
+async function searchByQueryWithRawResult(query, locals) {
+  const localsWasPassed = !!locals,
+    loadedIds = localsWasPassed
+      ? await loadedIdsService.lazilyGetLoadedIdsFromLocals(locals)
+      : [],
+    hasLoadedIds = !_isEmpty(loadedIds);
+
   getSearchInstance();
 
   if (!module.exports.searchInstance) {
     return bluebird.reject('Search not instantiated.');
   }
 
-  return module.exports.searchInstance.search(query).then(function (results) {
-    log('trace', `got ${results.hits.hits.length} results`);
-    log('debug', JSON.stringify(results));
-    return results;
-  });
+  if (hasLoadedIds) {
+    addMustNotGetLoadedIds(query, loadedIds);
+  }
+
+  return module.exports.searchInstance.search(query)
+    .then(async (results) => {
+      log('trace', `got ${results.hits.hits.length} results`);
+      log('debug', JSON.stringify(results));
+
+      if (localsWasPassed) {
+        await appendLoadedIdsToLocalsAndRedis(results, locals);
+      }
+
+      return results;
+    });
 }
 /**
  * Update Elastic document

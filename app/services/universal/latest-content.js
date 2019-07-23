@@ -35,7 +35,7 @@ function throwOnEmptyResult(url) {
 function getArticleData(ref, data, locals, fields) {
   var query = queryService.onePublishedArticleByUrl(data.url, fields, locals);
 
-  return queryService.searchByQuery(query)
+  return queryService.searchByQuery(query, locals)
     .then( result => _head(result) );
 }
 

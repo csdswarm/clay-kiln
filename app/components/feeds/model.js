@@ -81,7 +81,7 @@ module.exports.render = async (ref, data, locals) => {
             createObj(instance).forEach(cond => {
               if (cond.nested) {
                 const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), { match: cond.match });
-                
+
                 queryService[conditionType === 'addMustNot' ? 'addMust' : conditionType](localQuery, newNestedQuery);
               } else {
                 queryService[conditionType](localQuery, { match: cond.match });
@@ -138,12 +138,12 @@ module.exports.render = async (ref, data, locals) => {
 
   try {
     if (meta.rawQuery) {
-      const results = await queryService.searchByQueryWithRawResult(query);
+      const results = await queryService.searchByQueryWithRawResult(query, locals);
 
       data.results = results.hits.hits; // Attach results and return data
       return data;
     } else {
-      data.results = await queryService.searchByQuery(query); // Attach results and return data
+      data.results = await queryService.searchByQuery(query, locals); // Attach results and return data
 
       return data;
     }
