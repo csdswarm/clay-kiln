@@ -1,0 +1,67 @@
+# Only keeping parts that are specific to legal, will merge in script
+_components:
+  meta-title:
+    instances:
+      legal:
+        title: Entercom Legal | RADIO.COM
+        twitterTitle: Entercom Legal | RADIO.COM
+        ogTitle: Entercom Legal | RADIO.COM
+        kilnTitle: Entercom Legal | RADIO.COM
+  meta-description:
+    instances:
+      legal:
+        description: entercom-legal | RADIO.COM
+  static-page:
+    instances:
+      legal:
+        headline: Entercom Legal
+        content:
+          - _ref: /_components/paragraph/instances/legal-1
+          - _ref: /_components/subheader/instances/legal-2
+          - _ref: /_components/paragraph/instances/legal-3
+          - _ref: /_components/paragraph/instances/legal-4
+          - _ref: /_components/subheader/instances/legal-5
+          - _ref: /_components/paragraph/instances/legal-6
+          - _ref: /_components/paragraph/instances/legal-7
+        pageTitle: Entercom Legal
+        primaryHeadline: Entercom Legal
+        plaintextPrimaryHeadline: Entercom Legal
+        twitterTitle: Entercom Legal
+        ogTitle:  Entercom Legal
+        kilnTitle: Entercom Legal
+  paragraph:
+    instances:
+      legal-1:
+        text: >-
+          <a href="#ip-contact-us-support"><strong
+          >Contact&nbsp;Us&nbsp;&amp;&nbsp;Support</strong></a><strong> |
+          </strong><a
+          href="#ip-public-file"><strong>Public&nbsp;File</strong></a><strong >
+          | </strong><a
+          href="http://www.entercom.com/terms-and-conditions"><strong
+          >Terms&nbsp;of&nbsp;Service</strong></a>
+        componentVariation: paragraph
+      legal-3:
+        text: RADIO.COM App &amp; Player - Contact and Support
+        componentVariation: paragraph
+      legal-4:
+        text: >-
+          If you are experiencing any issues and need support for the RADIO.COM
+          app or desktop player, please reach out to us at <a
+          href="mailto:support@radio.com" >support@radio.com</a>.
+      legal-6:
+        text: Public Inspection File - Help
+        componentVariation: paragraph
+      legal-7:
+        text: >-
+          If you need help accessing the file due to a disability, please
+          contact <a href="mailto:publicfileinfo@entercom.com"
+          >publicfileinfo@entercom.com</a>
+  subheader:
+    instances:
+      legal-2:
+        text: Contact Us &amp; Support
+        anchorId: ip-contact-us-support
+      legal-5:
+        text: Public File
+        anchorId: ip-public-file

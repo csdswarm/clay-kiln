@@ -64,6 +64,7 @@
         position: absolute;
         top: em(56);
         border: em(1, 14) solid $mercury;
+        background: $white;
 
         li {
           @mixin stations-directory-font2;
