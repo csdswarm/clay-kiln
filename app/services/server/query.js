@@ -86,7 +86,8 @@ function searchByQuery(query, locals) {
 }
 
 /**
- * Adds all the _id's from the query results to locals.loadedIds
+ * Adds all the _id's from the query results to locals.loadedIds and ensures
+ *   they are added to the redis store.
  *
  * Note: this method should only be called if locals was passed
  *
@@ -103,34 +104,7 @@ async function appendLoadedIdsToLocalsAndRedis(results, locals) {
   }
 
   locals.loadedIds = locals.loadedIds.concat(resultIds);
-  await loadedIdsService.appendLoadedIds(locals.rdcSessionID, resultIds);
-}
-
-/**
- * Note: This method mutates query.  Also it should only ever be called when
- *   there exists loadedIds.
- *
- * @param {object} query
- * @param {string[]} loadedIds
- */
-function addMustNotGetLoadedIds(query, loadedIds) {
-  const bool = _get(query, 'body.query.bool', {}),
-    // I couldn't find a good elasticsearch way to query "must not match any of
-    //   these values".
-    matchAnyLoadedIds = loadedIds.map(_id => ({ match: { _id } }));
-
-  _set(query, 'body.query.bool', bool);
-
-  // needs to be declared after body.query.bool is set
-  // eslint-disable-next-line one-var
-  const mustNot = _get(bool, 'must_not', []);
-
-  if (!Array.isArray(mustNot)) {
-    // must_not must be an object then and turned into an array
-    mustNot = [bool.must_not];
-  }
-
-  bool.must_not = mustNot.concat(matchAnyLoadedIds);
+  await loadedIdsService.append(locals.rdcSessionID, resultIds);
 }
 
 /**
@@ -144,9 +118,8 @@ function addMustNotGetLoadedIds(query, loadedIds) {
 async function searchByQueryWithRawResult(query, locals) {
   const localsWasPassed = !!locals,
     loadedIds = localsWasPassed
-      ? await loadedIdsService.lazilyGetLoadedIdsFromLocals(locals)
-      : [],
-    hasLoadedIds = !_isEmpty(loadedIds);
+      ? await loadedIdsService.lazilyGetFromLocals(locals)
+      : [];
 
   getSearchInstance();
 
@@ -154,21 +127,20 @@ async function searchByQueryWithRawResult(query, locals) {
     return bluebird.reject('Search not instantiated.');
   }
 
-  if (hasLoadedIds) {
-    addMustNotGetLoadedIds(query, loadedIds);
+  loadedIds.forEach(id => universalQuery.addMustNot(query, id));
+
+  // we need the above logic to run before we can get the results
+  // eslint-disable-next-line one-var
+  const results = module.exports.searchInstance.search(query);
+
+  log('trace', `got ${results.hits.hits.length} results`);
+  log('debug', JSON.stringify(results));
+
+  if (localsWasPassed) {
+    await appendLoadedIdsToLocalsAndRedis(results, locals);
   }
 
-  return module.exports.searchInstance.search(query)
-    .then(async (results) => {
-      log('trace', `got ${results.hits.hits.length} results`);
-      log('debug', JSON.stringify(results));
-
-      if (localsWasPassed) {
-        await appendLoadedIdsToLocalsAndRedis(results, locals);
-      }
-
-      return results;
-    });
+  return results;
 }
 /**
  * Update Elastic document

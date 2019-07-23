@@ -50,8 +50,9 @@ function getRoutes() {
   //   should be clearing the 'loadedIds' for content deduping purposes.
   //   Outside  of these routes, loadedIds needs to stay in tact in case a
   //   'more-content-feed' component fires ajax calls that should be deduped
-  //   etc.  If we need to clear the loaded ids outside of that, then we can
-  //   create an endpoint then.
+  //   etc.  If we need to clear the loaded ids outside of that then we can
+  //   create a header & middleware which allows for requests to explitly
+  //   clear them.
   //
   // 'middleware' is a routing option as seen by the code found here:
   //   https://github.com/clay/amphora/blob/v7.3.2/lib/services/attachRoutes.js#L92-L100
@@ -61,7 +62,7 @@ function getRoutes() {
 
       try {
         // rdcSessionID is instantiated in services/startup/add-rdc-redis-session.js
-        await loadedIdsService.clearLoadedIds(locals.rdcSessionID);
+        await loadedIdsService.clear(locals.rdcSessionID);
         locals.loadedIds = [];
       } catch (err) {
         log('error', 'Error when deleting loadedIdsKey from redis', err);
