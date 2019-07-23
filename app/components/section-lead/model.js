@@ -83,7 +83,7 @@ module.exports.render = function (ref, data, locals) {
     queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
   }
   if (data.filterBySecondary) {
-    queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});
+    queryService.addMust(query, { match: { secondarySectionFront: data.filterBySecondary }});
   }
   if (data.tag) {
     queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
@@ -115,12 +115,12 @@ module.exports.render = function (ref, data, locals) {
   }
 
   // Filter out the following secondary article type
-  if (data.filterSecondaryArticleTypes) {
-    Object.entries(data.filterSecondaryArticleTypes).forEach((secondaryArticleType) => {
-      let [ secondaryArticleTypeFilter, filterOut ] = secondaryArticleType;
+  if (data.filterSecondarySectionFronts) {
+    Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
+      let [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondaryArticleType: secondaryArticleTypeFilter }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
       }
     });
   }

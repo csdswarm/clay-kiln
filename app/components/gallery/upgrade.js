@@ -195,3 +195,13 @@ module.exports['7.0'] = async (uri, data) => {
 
   return data;
 };
+
+module.exports['8.0'] = function (uri, data) {
+  let newData = Object.assign({}, data);
+
+  newData.secondarySectionFront = data.secondaryArticleType || '';
+
+  delete newData.secondaryArticleType;
+
+  return newData;
+};

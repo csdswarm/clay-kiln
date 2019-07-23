@@ -9,4 +9,67 @@ _lists:
     -
       name: Sports
       value: sports
-  secondary-section-fronts: []
+  secondary-section-fronts:
+    -
+      name: Pop
+      value: pop
+    -
+      name: Alternative
+      value: alternative
+    -
+      name: Country
+      value: country
+    -
+      name: Urban
+      value: hip hop r&b
+    -
+      name: Rock
+      value: rock
+    -
+      name: Classic Rock
+      value: classic rock
+    -
+      name: Icons
+      value: icons
+    -
+      name: Entertainment News
+      value: entertainment news
+    -
+      name: Movies
+      value: movies
+    -
+      name: Television
+      value: television
+    -
+      name: National News
+      value: national news
+    -
+      name: Politics
+      value: politics
+    -
+      name: Local Politics
+      value: local politics
+    -
+      name: Small Business Pulse
+      value: small business pulse
+    -
+      name: NFL
+      value: nfl
+    -
+      name: MLB
+      value: mlb
+    -
+      name: NBA
+      value: nba
+    -
+      name: NHL hockey
+      value: nhl
+    -
+      name: NCAA Football
+      value: ncaa football
+    -
+      name: NCAA Basketball
+      value: ncaa basketball
+    -
+      name: MMA & WWE
+      value: mma & wwe
