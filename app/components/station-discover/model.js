@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports.render = async (uri, data, locals) => {
+module.exports.render = (uri, data, locals) => {
   if (!locals.station) {
     return data;
   }
