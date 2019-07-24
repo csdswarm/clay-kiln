@@ -19,7 +19,7 @@ fi
 echo "Using $http://$1"
 if [[ $(curl "$http://$1/_components/station-footer/instances" 2>&1) == *"station-footer"* ]];
 then
-    echo "Section Front 3 section front already exists";
+    echo "Section Front 3 station footer already exists";
 else
     npm i yamljs;
     clay export -y "$http://$1/_layouts/one-column-layout/instances/station" > layout.yml;

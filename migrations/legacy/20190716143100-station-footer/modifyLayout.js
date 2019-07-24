@@ -3,31 +3,11 @@ const fs = require('fs'),
 
 const data = YAML.load(`${__dirname}/layout.yml`);
 
-const bottom = [
-  {
-    _ref: "/_components/google-ad-manager/instances/billboardBottom"
-  },
-  {
-    _ref: "/_components/google-ad-manager/instances/oop"
-  },
-  {
-    _ref: "/_components/google-ad-manager/instances/mobileAdhesion"
-  },
-  {
-    _ref: "/_components/station-footer/instances/default"
-  },
-  {
-    _ref: "/_components/footer/instances/default"
-  },
-  {
-    _ref: "/_components/nielsen/instances/default"
-  },
-  {
-    _ref: "/_components/google-ad-manager/instances/mobileInterstitial"
-  }
-];
+const position = data._layouts['one-column-layout'].instances.station.bottom.findIndex(item => item._ref === '/_components/footer/instances/default');
 
-data._layouts['one-column-layout'].instances.station.bottom = bottom;
+data._layouts['one-column-layout'].instances.station.bottom.slice(position - 1, 0, {
+  _ref: "/_components/station-footer/instances/default"
+});
 
 fs.writeFile(`${__dirname}/layout.yml`, YAML.stringify(data, 6, 2), 'utf8', function(err) {
     if (err) throw err;
