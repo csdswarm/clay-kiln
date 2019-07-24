@@ -38,8 +38,18 @@ export default class MetaManager {
     } else {
       metaTitleData = queryPayload.findComponent(spaPayload.head, 'meta-title')
 
+      // ensure a title exists on the page
+      if (!metaTitleData) {
+        const defaultTitle = 'RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts';
+
+        metaTitleData = {
+          title: defaultTitle,
+          ogTitle: defaultTitle,
+          twitterTitle: defaultTitle
+        }
+      }
       // default to the SEO title for backwards compatibility
-      if (!metaTitleData.twitterTitle) {
+      else if (!metaTitleData.twitterTitle) {
         metaTitleData.twitterTitle = metaTitleData.ogTitle
       }
     }
