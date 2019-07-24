@@ -97,7 +97,7 @@ function searchByQuery(query, locals) {
 async function appendLoadedIdsToLocalsAndRedis(results, locals) {
   const hits = results.hits.hits,
     allHitsHaveIds = _every(hits, h => h._id),
-    resultIds = results.hits.hits.map(h => h._id);
+    resultIds = hits.map(h => h._id);
 
   if (_isEmpty(hits) || !allHitsHaveIds) {
     return;
