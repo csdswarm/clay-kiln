@@ -143,7 +143,7 @@ module.exports.render = async (ref, data, locals) => {
       // date range
       created_date_between: {
         filterConditionType: 'addMust',
-        createObj: ({ start = new Date(), end = new Date() }) => {
+        createObj: ({ start = new Date().toISOString(), end = new Date().toISOString() }) => {
           const dates = formatSortDate([start, end]);
 
           return { range: { date: { gte: dates[0], lte: dates[1] } } };
@@ -157,7 +157,7 @@ module.exports.render = async (ref, data, locals) => {
       // modified_date range
       modified_date_between: {
         filterConditionType: 'addMust',
-        createObj: ({ start = new Date(), end = new Date() }) => {
+        createObj: ({ start = new Date().toISOString(), end = new Date().toISOString() }) => {
           const dates = formatSortDate([start, end]);
 
           return { range: { dateModified: { gte: dates[0], lte: dates[1] } } };
