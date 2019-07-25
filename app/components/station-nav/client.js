@@ -6,7 +6,8 @@ let stationNav,
   mobileNavToggle,
   mobileNavDrawer,
   mobileNavItems,
-  listenNavToggle;
+  listenNavToggle,
+  listenNavDrawer;
 
 const { isMobileNavWidth } = require('../../services/client/mobile'),
   active = 'active',
@@ -14,11 +15,13 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   /**
    * Toggle listen nav arrow direction & listen nav drawer on click of caret
    *
-   * @param {Object} event
+   * @param {Object} event -- contains type and currentTarget
    */
-  toggleListenDrawer = (event) => {
+  toggleListenDrawer = ({type, currentTarget}) => {
     listenNavToggle.classList.toggle(active);
-    // TODO -- Toggle listen drawer here
+
+    toggleNavDrawerContainer({type, currentTarget});
+    listenNavDrawer.classList.toggle(active);
   },
   /**
    * Toggle mobile nav arrow direction & mobile nav on click of caret
@@ -168,6 +171,7 @@ document.addEventListener('station-nav-mount', function () {
   mobileNavDrawer = navDrawersContainer.querySelector('.drawer--mobile');
   mobileNavItems = mobileNavDrawer.querySelectorAll('.drawer__item');
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
+  listenNavDrawer = navDrawersContainer.querySelector('.drawer--listen');
 
   addEventListeners();
 });

@@ -25,3 +25,4 @@ _components:
         text: more from
         drawer: true
         secondaryLinks: []
+    featuredLinks: []

@@ -240,11 +240,11 @@ $caret-margin-right: em(25);
         height: auto;
         flex-wrap: wrap;
         align-self: flex-end;
-        margin: em(-5) em(-15);
         &.active {
           display: flex;
         }
         &.drawer--desktop {
+          margin: em(-5) em(-15);
           .drawer__item {
             margin: em(5) em(15);
             white-space: nowrap;
@@ -334,6 +334,25 @@ $caret-margin-right: em(25);
                 }
               }
             }
+          }
+        }
+        &.drawer--listen {
+          flex-direction: column;
+          section {
+            width: widthOnGrid(4,3);
+            &:not(:last-of-type) {
+              margin-right: widthOnGrid(1,2);  
+            }
+            @mixin medium-screen {
+              width: 100%;
+              margin-right: 0;
+            }
+          }
+          .drawer__playing {
+          }
+          .drawer__audio {
+          }
+          .drawer__featured {
           }
         }
       }
