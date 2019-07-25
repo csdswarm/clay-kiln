@@ -1,5 +1,6 @@
 'use strict';
 const rest = require('../../services/universal/rest'),
+  log = require('../../services/universal/log').setup({file: __filename}),
   _uniq = require('lodash/uniq');
 
 /**
@@ -27,9 +28,9 @@ function hashId(id) {
  */
 function handleErrors(error) {
   if (error && error.response && error.response.status === 404) {
-    console.log('Error: Could not get alert banners. Endpoint not found.');
+    log('error', 'Could not get alert banners. Endpoint not found.');
   } else {
-    console.log('Error: There was a problem attempting to get alert banners', JSON.stringify({error}));
+    log('error', 'There was a problem attempting to get alert banners', {error});
   }
 }
 
