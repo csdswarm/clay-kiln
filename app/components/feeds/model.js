@@ -117,7 +117,7 @@ module.exports.render = async (ref, data, locals) => {
       editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
       // corporate websites (corporateSyndication)
       corporate: {
-        createObj: corporateSyndication => ({ 'corporateSyndication.normalized': corporateSyndication })
+        createObj: corporateSyndication => ({ [`corporateSyndication.${corporateSyndication}`]: true })
       },
       // stations (stationSyndication)
       station: {

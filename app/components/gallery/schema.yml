@@ -389,7 +389,7 @@ corporateSyndication:
     input: select
     multiple: true
     search: true
-    list: corporate-websites
+    list: corporate_websites
     help: Select all corporate websites for syndication
 stationSyndication:
   _label: Syndicate to station(s)

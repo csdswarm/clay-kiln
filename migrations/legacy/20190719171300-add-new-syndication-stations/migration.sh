@@ -31,11 +31,9 @@ rm ./editorialFeedList.json
 
 printf "\nAdding Corporate Website options to syndicated section...\n\n"
 
-corporateWebsiteList='_lists/corporate-websites'
+corporateWebsiteList='_lists/corporate_websites'
 
 curl -X PUT $http://$1/$corporateWebsiteList -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./corporateWebsiteList.json -o /dev/null -s
 curl -X PUT $http://$1/$corporateWebsiteList@published -H 'Authorization: token accesskey' -o /dev/null -s
-
-mappings=$(curl -X GET -H "Accept: application/json" "$es:9200/$currentIndex/_mappings" > elasticsearchMapping.json);
 
 node ./updateElasticsearchMapping "$1" "${es}:9200" "${http}"

@@ -2,7 +2,10 @@ const fs = require('fs'),
   host = process.argv.slice(2)[0],
   elasticsearchURL = process.argv.slice(2)[1],
   http = process.argv.slice(2)[2],
-  {v1: {httpGet, httpRequest}} = require('../migration-utils');
+  {v1: {httpGet, httpRequest}} = require('../migration-utils'),
+  headers = {
+    'Content-Type': 'application/json'
+  };
 
 if (!host) {
   throw new Error('Missing host');
@@ -40,16 +43,17 @@ const getLatestIndex = async () => {
   return {latestIndex, newIndex}
 }
 
-const getSettings = async (latestIndex) => {
-  const settings = await httpGet({url: `${elasticsearchURL}/${latestIndex}/_settings`, http}).then(JSON.parse),
-    newSettings = {settings: {analysis: settings[latestIndex].settings.index.analysis}}
+const getSettings = async (index) => {
+  const settings = await httpGet({url: `${elasticsearchURL}/${index}/_settings`, http}).then(JSON.parse),
+    newSettings = {settings: {analysis: settings[index].settings.index.analysis}}
 
   return newSettings;
 }
 
-const getAndUpdateElasticsearchMapping = async (latestIndex) => {
-  const resp = await httpGet({url: `${elasticsearchURL}/${latestIndex}/_mappings`, http}).then(JSON.parse).catch(err => console.log(err)),
-    mappings = resp[latestIndex].mappings;
+const getAndUpdateElasticsearchMapping = async (index) => {
+  console.log('getting elasticsearch mappings for ', index, '\n');
+  const resp = await httpGet({url: `${elasticsearchURL}/${index}/_mappings`, http}).then(JSON.parse).catch(err => console.log(err)),
+    mappings = resp[index].mappings;
 
   if (mappings._doc.properties.corporateSyndication) {
     return;
@@ -60,7 +64,7 @@ const getAndUpdateElasticsearchMapping = async (latestIndex) => {
       ...mappings._doc,
       properties: {
         ...mappings._doc.properties,
-        corporateSyndication: {type: 'keyword', fields: {normalized: {type: 'text', analyzer: 'station_analyzer'}}}
+        corporateSyndication: {dynamic: true}
       }
     }
   }};
@@ -69,23 +73,46 @@ const getAndUpdateElasticsearchMapping = async (latestIndex) => {
 }
 
 const createNewElasticsearchIndex = async (newIndex, body) => {
+  console.log('Creating new elasticsearch index for', newIndex, '\n')
   try {
-    const response = await httpRequest({http, method: 'PUT', url: `${http}://${elasticsearchURL}/${newIndex}`, body})
+    await httpRequest({http, method: 'PUT', url: `${http}://${elasticsearchURL}/${newIndex}`, body, headers});
   } catch (e) {
-    console.log(e);
+    console.log(e)
   }
+}
+
+const reindex = async (latestIndex, newIndex) => {
+  console.log('Reindexing based on new index\n')
+  const response = await httpRequest({http, method: 'POST', url: `${http}://${elasticsearchURL}/_reindex`, body: {
+    source: {
+      index: latestIndex
+    },
+    dest: {
+      index: newIndex
+    }
+  }, headers})
+}
+
+const addNewAlias = async (currentIndex, newIndex) => {
+  console.log('adding new alias', newIndex, '\n')
+  const response = await httpRequest({http, method: 'POST', url: `${http}://${elasticsearchURL}/_aliases`, body: {
+    actions: [
+      {remove: {index: currentIndex, alias: 'published-content'}},
+      {add: {index: newIndex, alias: 'published-content'}}
+    ]
+  }, headers})
 }
 
 const update = async () => {
   const currentIndex = await getCurrentIndex(),
     {latestIndex, newIndex} = await getLatestIndex(),
-    settings = await getSettings(latestIndex),
-    mappings = await getAndUpdateElasticsearchMapping(latestIndex);
+    settings = await getSettings(currentIndex),
+    mappings = await getAndUpdateElasticsearchMapping(currentIndex);
 
   if (mappings) {
-    console.log({...mappings})
     await createNewElasticsearchIndex(newIndex, {...settings, ...mappings})
-    console.log({latestIndex, newIndex})
+    await reindex(currentIndex, newIndex);
+    await addNewAlias(latestIndex, newIndex)
   }
 }
 

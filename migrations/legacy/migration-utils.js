@@ -266,8 +266,8 @@ function httpRequest(params) {
     try {
       const conn = require(http);
 
-      const parsedOptions = options.url ? {...options, ...url.parse(options.url)} : options
- 
+      const parsedOptions = options.url ? {...options, ...url.parse(options.url)} : options;
+
       const req = conn.request(parsedOptions, res => {
         const data = [];
         res.on('data', chunk => data.push(chunk));
