@@ -2,7 +2,7 @@
 
 const radioApi = require('../../services/server/radioApi'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
-  { playingClass } = require('../../services/server/spaLocals'),
+  { playingClass } = require('../../services/universal/spaLocals'),
   moment = require('moment');
 
 /**
@@ -66,4 +66,3 @@ module.exports.render = async function (ref, data, locals) {
   }
   return data;
 };
-
