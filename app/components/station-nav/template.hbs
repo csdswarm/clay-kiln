@@ -1,6 +1,6 @@
 <div class="component component--station-nav" data-uri="{{ default _ref _self }}">
   <div class="station-nav__fixed-container">
-    <div class="station-nav__menu">
+    <div class="station-nav__menu menu">
       <div class="menu__mobile-toggle">
           <button class="mobile-toggle--closed">
             {{{ read 'components/station-nav/media/chevron_down.svg' }}}
@@ -11,9 +11,9 @@
       </div>
       <img class="menu__image" src="{{ default stationLogo station.square_logo_small }}?width=100&height=100&crop=1:1">
       {{#if primaryLinks.length }}
-        <ul class="menu__navigation">
+        <ul class="menu__navigation navigation">
           {{#each primaryLinks }}
-            <li class="navigation__primary primary--label-{{ text }} {{ if current 'primary--current' }} {{ if drawer 'primary--drawer-enabled' }}">
+            <li class="navigation__primary primary primary--label-{{ text }} {{ if current 'primary--current' }} {{ if drawer 'primary--drawer-enabled' }}">
               {{#if url }}
                 <a href="{{ url }}">
                   <button>
@@ -30,8 +30,8 @@
           {{/each }}
         </ul>
       {{/if }}
-      <div class="menu__listen">
-        <button class="listen__button" data-station-id="{{ station.id }}">
+      <div class="menu__listen listen">
+        <button class="listen__button button" data-station-id="{{ station.id }}">
           <div class="button__icon {{ playingClass }}">
             {{!-- stays static --}}
             {{{ read 'components/station-nav/media/play_button.svg' }}}
@@ -48,10 +48,10 @@
         </button>
       </div>
     </div>
-    <div class="station_nav__drawers">
+    <div class="station_nav__drawers drawers">
       {{#each primaryLinks }}
         {{#ifAll drawer secondaryLinks.length }}
-          <ul class="drawers__drawer drawer--desktop drawer--{{ text }}">
+          <ul class="drawers__drawer drawer drawer--desktop drawer--{{ text }}">
             {{#each secondaryLinks }}
               <li class="drawer__item item--{{ text }}">
                 <a href="{{ url }}">
@@ -64,10 +64,10 @@
       {{/each }}
       
       {{#if primaryLinks.length }}
-        <ul class="drawers__drawer drawer--mobile">
+        <ul class="drawers__drawer drawer drawer--mobile">
           {{#each primaryLinks }}
-            <li class="drawer__item item--{{ text }}">
-              <div class="item__label">
+            <li class="drawer__item item item--{{ text }}">
+              <div class="item__label label">
                 {{#ifAll drawer secondaryLinks.length }}
                 <button>
                   <span>{{ text }}</span>
