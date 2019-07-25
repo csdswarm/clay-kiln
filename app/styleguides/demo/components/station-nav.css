@@ -33,6 +33,7 @@ $caret-margin-right: em(25);
 .component--station-nav {
   display: block;
   height: em(130);
+  
   .station-nav__fixed-container {
     background: none;
     display: flex;
@@ -42,19 +43,22 @@ $caret-margin-right: em(25);
     position: fixed;
     width: 100%;
     z-index: 4;
+    @mixin medium-screen {
+      position: relative;
+    }
     .station-nav__menu {
       background: $boulder;
       display: flex;
       align-items: flex-end;
-      width: $default-screen-nav-width;
+      width: 100%;
+      padding: 0 calc((100% - $default-screen-nav-width) / 2);
       @mixin large-screen {
-        width: $large-screen-nav-width;
+        padding: 0 calc((100% - $large-screen-nav-width) / 2);
       }
       @mixin medium-screen {
-        width: $medium-screen-nav-width;
+        padding: 0 calc((100% - $medium-screen-nav-width) / 2);
       }
       @mixin nav-mobile-breakpoint {
-        width: 100%;
         padding: 0 em(20);
       }
 
