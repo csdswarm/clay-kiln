@@ -43,7 +43,7 @@ function handleErrors(error) {
  * @param {string[]} closedAlerts an array of id's from the client indicating messages that have been closed by the user
  * @returns {Promise<{id: string, message: string, breaking: boolean}[]>}
  */
-async function getAlerts({protocol = 'http', host = 'clay.radio.com', callsign, closedAlerts = []}) {
+async function getAlerts({protocol, host, callsign, closedAlerts = []}) {
   try {
     const
       base = `${protocol}://${host}/alerts?active=true&current=true&station=`,
