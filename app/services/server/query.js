@@ -1,8 +1,6 @@
 'use strict';
 
 const _every = require('lodash/every'),
-  _get = require('lodash/get'),
-  _set = require('lodash/set'),
   _isEmpty = require('lodash/isEmpty'),
   amphoraSearch = require('amphora-search'),
   bluebird = require('bluebird'),
@@ -80,8 +78,12 @@ function searchByQuery(query, locals) {
   return searchByQueryWithRawResult(query, locals)
     .then(universalQuery.formatSearchResult)
     .then(universalQuery.formatProtocol)
-    .catch(e => {
-      throw new Error(e);
+    .catch(originalErr => {
+      const err = originalErr instanceof Error
+        ? originalErr
+        : new Error(originalErr);
+
+      return Promise.reject(err);
     });
 }
 
@@ -127,11 +129,10 @@ async function searchByQueryWithRawResult(query, locals) {
     return bluebird.reject('Search not instantiated.');
   }
 
-  loadedIds.forEach(id => universalQuery.addMustNot(query, id));
-
+  loadedIds.forEach(_id => universalQuery.addMustNot(query, { match: { _id } }));
   // we need the above logic to run before we can get the results
   // eslint-disable-next-line one-var
-  const results = module.exports.searchInstance.search(query);
+  const results = await module.exports.searchInstance.search(query);
 
   log('trace', `got ${results.hits.hits.length} results`);
   log('debug', JSON.stringify(results));
@@ -236,7 +237,7 @@ function onePublishedArticleByUrl(url, fields) {
  * @param  {String} ref
  */
 function logCatch(e, ref) {
-  log('error', `Error querying Elastic for component ${ref}`);
+  log('error', `Error querying Elastic for component ${ref}`, e);
 }
 
 module.exports = newQueryWithPrefix;

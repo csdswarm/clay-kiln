@@ -10,7 +10,7 @@ if (
 ) {
   throw new Error(
     'process.env.EXPRESS_RDC_SESSION_SECRET must be truthy'
-    + "\n(make sure it's populated in app/.env"
+    + "\n(make sure it's populated in app/.env)"
   );
 }
 
