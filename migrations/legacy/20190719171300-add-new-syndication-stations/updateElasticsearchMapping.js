@@ -51,7 +51,7 @@ const getSettings = async (index) => {
 }
 
 const getAndUpdateElasticsearchMapping = async (index) => {
-  console.log('getting elasticsearch mappings for ', index, '\n');
+  console.log('getting elasticsearch mappings for', index, '\n');
   const resp = await httpGet({url: `${elasticsearchURL}/${index}/_mappings`, http}).then(JSON.parse).catch(err => console.log(err)),
     mappings = resp[index].mappings;
 
@@ -64,7 +64,7 @@ const getAndUpdateElasticsearchMapping = async (index) => {
       ...mappings._doc,
       properties: {
         ...mappings._doc.properties,
-        corporateSyndication: {dynamic: true}
+        corporateSyndication: {type: 'object', dynamic: true}
       }
     }
   }};
@@ -74,12 +74,12 @@ const getAndUpdateElasticsearchMapping = async (index) => {
 
 const createNewElasticsearchIndex = async (newIndex, body) => {
   console.log('Creating new elasticsearch index for', newIndex, '\n')
-  try {
-    await httpRequest({http, method: 'PUT', url: `${http}://${elasticsearchURL}/${newIndex}`, body, headers});
-  } catch (e) {
-    console.log(e)
+  const response = await httpRequest({http, method: 'PUT', url: `${http}://${elasticsearchURL}/${newIndex}`, body, headers});
+
+  if (response.result !== 'success') {
+    throw new Error(`There was an error creating the elasticsearch index for ${newIndex}`);
   }
-}
+ }
 
 const reindex = async (latestIndex, newIndex) => {
   console.log('Reindexing based on new index\n')
@@ -90,7 +90,11 @@ const reindex = async (latestIndex, newIndex) => {
     dest: {
       index: newIndex
     }
-  }, headers})
+  }, headers});
+  
+  if (response.result !== 'success') {
+    throw new Error('There was an error reindexing');
+  }
 }
 
 const addNewAlias = async (currentIndex, newIndex) => {
@@ -101,6 +105,10 @@ const addNewAlias = async (currentIndex, newIndex) => {
       {add: {index: newIndex, alias: 'published-content'}}
     ]
   }, headers})
+  
+  if (response.result !== 'success') {
+    throw new Error('here was an error adding a new alias for published-content');
+  }
 }
 
 const update = async () => {
@@ -113,6 +121,8 @@ const update = async () => {
     await createNewElasticsearchIndex(newIndex, {...settings, ...mappings})
     await reindex(currentIndex, newIndex);
     await addNewAlias(latestIndex, newIndex)
+  } else {
+    console.log(`The corporateSyndication field already exists on ${currentIndex}`);
   }
 }
 
