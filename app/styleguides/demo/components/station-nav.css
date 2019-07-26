@@ -19,7 +19,7 @@ $caret-margin-right: em(25);
   margin: 0;
   border: 0;
   padding: 0;
-  font-family: inherit; 
+  font-family: inherit;
   font-size: 100%;
   line-height: 1;
   text-transform: none;
@@ -33,7 +33,7 @@ $caret-margin-right: em(25);
 .component--station-nav {
   display: block;
   height: em(130);
-  
+
   .station-nav__fixed-container {
     background: none;
     display: flex;
@@ -206,24 +206,29 @@ $caret-margin-right: em(25);
     }
 
     .station_nav__drawers {
-      display: flex;
+      display: none;
       background-color: $dustyGray;
       width: 100%;
       flex-direction: column;
       align-items: center;
       padding: 0;
-      transform: translateY(-100%);
-      transition: all 100ms linear;
       z-index: -1;
+      @mixin medium-screen {
+        display: flex;
+        transform: translateY(-100%);
+        transition: all 100ms linear;
+      }
 
-      &.active {
-        transform: translateY(0);
+      &.active,
+      &.active-locked {
+        display: flex;
         padding: em(30) calc((100% - $default-screen-nav-width) / 2);
         @mixin large-screen {
           padding: em(30) calc((100% - $large-screen-nav-width) / 2);
         }
         @mixin medium-screen {
           padding: em(30) 0;
+          transform: translateY(0);
         }
       }
       .drawers__drawer {
@@ -341,7 +346,7 @@ $caret-margin-right: em(25);
           section {
             width: widthOnGrid(4,3);
             &:not(:last-of-type) {
-              margin-right: widthOnGrid(1,2);  
+              margin-right: widthOnGrid(1,2);
             }
             @mixin medium-screen {
               width: 100%;

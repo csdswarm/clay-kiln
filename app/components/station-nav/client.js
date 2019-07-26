@@ -11,16 +11,25 @@ let stationNav,
 
 const { isMobileNavWidth } = require('../../services/client/mobile'),
   active = 'active',
+  active_locked = 'active-locked',
 
   /**
    * Toggle listen nav arrow direction & listen nav drawer on click of caret
    *
    * @param {Object} event -- contains type and currentTarget
    */
-  toggleListenDrawer = ({type, currentTarget}) => {
-    listenNavToggle.classList.toggle(active);
+  toggleListenDrawer = ({type}) => {
+    toggleNavDrawerContainer({type, currentTarget: listenNavDrawer});
 
-    toggleNavDrawerContainer({type, currentTarget});
+    // reset main nav
+    for (let drawer of desktopNavDrawers) {
+      drawer.classList.remove(active);
+    }
+    mobileNavToggle.classList.remove(active);
+    mobileNavDrawer.classList.remove(active);
+
+    // toggle listen drawer
+    listenNavToggle.classList.toggle(active);
     listenNavDrawer.classList.toggle(active);
   },
   /**
@@ -28,10 +37,15 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    *
    * @param {Object} event -- contains type and currentTarget
    */
-  toggleMobileDrawer = ({ type, currentTarget }) => {
-    mobileNavToggle.classList.toggle(active);
+  toggleMobileDrawer = ({ type }) => {
+    toggleNavDrawerContainer({type, currentTarget: mobileNavDrawer});
 
-    toggleNavDrawerContainer({type, currentTarget});
+    // reset listen nav
+    listenNavToggle.classList.remove(active);
+    listenNavDrawer.classList.remove(active);
+
+    // toggle mobile drawer
+    mobileNavToggle.classList.toggle(active);
     mobileNavDrawer.classList.toggle(active);
   },
   /**
@@ -41,23 +55,22 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @param {Object} event -- contains type and currentTarget
    */
   toggleNavDrawerContainer = ({ type, currentTarget }) => {
-    const isMobile = isMobileNavWidth();
-
     // toggle container for all drawers
     switch (type) {
       case 'mouseover':
-        if (!isMobile) {
-          navDrawersContainer.classList.add(active);
-        }
+        navDrawersContainer.classList.add(active);
         break;
       case 'mouseout':
-        if (!isMobile) {
-          navDrawersContainer.classList.remove(active);
-        }
+        navDrawersContainer.classList.remove(active);
         break;
       case 'click':
+        // for mobile & listen navs
         if (currentTarget !== navDrawersContainer) {
-          navDrawersContainer.classList.toggle(active);
+          if (currentTarget.classList.contains(active)) {
+            navDrawersContainer.classList.remove(active, active_locked);
+          } else {
+            navDrawersContainer.classList.add(active, active_locked);
+          }
         }
         break;
       default:
@@ -77,6 +90,10 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
     for (let drawer of desktopNavDrawers) {
       drawer.classList.remove(active);
     }
+    // reset listen nav
+    listenNavToggle.classList.remove(active);
+    listenNavDrawer.classList.remove(active);
+    navDrawersContainer.classList.remove(active_locked);
 
     if (!isMobile) {
       // get desktop nav item label

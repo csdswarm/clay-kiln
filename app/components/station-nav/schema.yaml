@@ -132,9 +132,9 @@ featuredLinks:
           validate:
             required:
               field: type
-              operator: !==
+              operator: '!=='
               value: content
-      
+
 _groups:
   settings:
     fields:
