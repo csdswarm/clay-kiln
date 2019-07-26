@@ -180,6 +180,12 @@ function urlToCanonicalUrl(url) {
   return kilnUrlToPageUrl(url).split('?')[0].split('#')[0];
 }
 
+function debugLog(...args) {
+  if (process.env.NODE_ENV === 'local') {
+    console.log(...args); // eslint-disable-line no-console
+  }
+}
+
 module.exports.isFieldEmpty = isFieldEmpty;
 module.exports.has = has;
 module.exports.replaceVersion = replaceVersion;
@@ -192,3 +198,4 @@ module.exports.isPublishedVersion = isPublishedVersion;
 module.exports.ensurePublishedVersion = ensurePublishedVersion;
 module.exports.isInstance = isInstance;
 module.exports.urlToCanonicalUrl = urlToCanonicalUrl;
+module.exports.debugLog = debugLog;
