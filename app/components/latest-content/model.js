@@ -13,6 +13,7 @@ const queryService = require('../../services/server/query'),
     'contentType'
   ],
   maxItems = 3;
+
 /**
  * For each section's override items (0 through 3), look up the associated
  * articles and save them in redis.
@@ -22,7 +23,6 @@ const queryService = require('../../services/server/query'),
  * @param {object} locals
  * @returns {Promise}
  */
-
 module.exports.save = async function (ref, data, locals) {
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`];
@@ -49,6 +49,7 @@ module.exports.save = async function (ref, data, locals) {
   }
   return data;
 };
+
 /**
  * @param {string} ref
  * @param {object} data

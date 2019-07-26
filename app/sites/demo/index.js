@@ -50,22 +50,37 @@ function getRoutes() {
   //   should be clearing the 'loadedIds' for content deduping purposes.
   //   Outside  of these routes, loadedIds needs to stay in tact in case a
   //   'more-content-feed' component fires ajax calls that should be deduped
-  //   etc.  If we need to clear the loaded ids outside of that then we can
-  //   create a header & middleware which allows for requests to explitly
-  //   clear them.
+  //   etc.  It's important to note this middleware will only run on initial
+  //   page requests from the browser (i.e. *not* from within the spa).  The spa
+  //   only asks for the json which is handled in startup/canonical-json.js.
+  //   That is why the LayoutRouter attaches the request
+  //   header 'x-clear-loaded-ids'.
   //
   // 'middleware' is a routing option as seen by the code found here:
   //   https://github.com/clay/amphora/blob/v7.3.2/lib/services/attachRoutes.js#L92-L100
   return initialRoutes.map(r => {
     r.middleware = async (_req, res, next) => {
-      const { locals } = res;
+      const { locals } = res,
+        // there may be a better way to do this, but the purpose here is to only
+        //   clear the loaded ids when our full path is actually hit.  e.g. the
+        //   middleware for '/' will run on all paths because amphora mounts it
+        //   via `app.use('/'` instead of `app.use(/^\$/`.  Oddly enough the
+        //   baseUrl for '/' ends up being an empty string hence the
+        //   second condition.
+        isMountedPath = _req.baseUrl === _req.originalUrl
+          || (r.path === '/' && _req.originalUrl === '/');
 
-      try {
-        // rdcSessionID is instantiated in services/startup/add-rdc-redis-session.js
-        await loadedIdsService.clear(locals.rdcSessionID);
-        locals.loadedIds = [];
-      } catch (err) {
-        log('error', 'Error when deleting loadedIdsKey from redis', err);
+      if (
+        _req.method === 'GET'
+        && isMountedPath
+      ) {
+        try {
+          // rdcSessionID is instantiated in services/startup/add-rdc-redis-session.js
+          await loadedIdsService.clear(locals.rdcSessionID);
+          locals.loadedIds = [];
+        } catch (err) {
+          log('error', 'Error when deleting loadedIds from redis', err);
+        }
       }
 
       next();
@@ -86,4 +101,3 @@ module.exports.resolvePublishUrl = [
 module.exports.modifyPublishedData = [
   publishing.addLastModified
 ];
-

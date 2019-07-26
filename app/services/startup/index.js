@@ -20,7 +20,8 @@ const pkg = require('../../package.json'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
   lytics = require('./lytics'),
-  addRdcRedisSession = require('./add-rdc-redis-session');
+  addRdcRedisSession = require('./add-rdc-redis-session'),
+  handleClearLoadedIds = require('./handle-clear-loaded-ids');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -74,6 +75,8 @@ function setupApp(app) {
   app.use(handleRedirects);
 
   addRdcRedisSession(app);
+
+  app.use(handleClearLoadedIds);
 
   app.use(locals);
 
