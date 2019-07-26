@@ -49,24 +49,26 @@
         }
     }
 
-    .page-list-headers {
-        &__start, &__end {
-            flex: 1 1 em(225);
-            align-items: center;
-        }
+    .alerts-manager__page-list-headers {
+        &.page-list-headers {
+            &__start, &__end {
+                flex: 1 1 em(225);
+                align-items: center;
+            }
 
-        &__message {
-            flex: 1 1 em(400);
-            align-items: center;
-        }
+            &__message {
+                flex: 1 1 em(400);
+                align-items: center;
+            }
 
-        &__icons {
-            flex: 1 1 em(50);
-            align-items: center;
+            &__icons {
+                flex: 1 1 em(50);
+                align-items: center;
+            }
         }
     }
 
-    .page-list-item {
+    .alerts-manager__page-list-item {
         &__start, &__end {
             flex: 1 1 em(225);
             padding: em(5);

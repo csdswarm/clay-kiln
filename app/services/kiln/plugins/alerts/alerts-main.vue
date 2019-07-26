@@ -27,10 +27,10 @@
             </div>
             <div>
                 <div class="page-list-headers">
-                    <span class="page-list-header page-list-headers__start">Start</span>
-                    <span class="page-list-header page-list-headers__end">End</span>
-                    <span class="page-list-header page-list-headers__message">Message</span>
-                    <span class="page-list-header page-list-headers__icons"></span>
+                    <span class="alerts-manager__page-list-headers page-list-header page-list-headers__start">Start</span>
+                    <span class="alerts-manager__page-list-headers page-list-header page-list-headers__end">End</span>
+                    <span class="alerts-manager__page-list-headers page-list-header page-list-headers__message">Message</span>
+                    <span class="alerts-manager__page-list-headers page-list-header page-list-headers__icons"></span>
                 </div>
                 <div class="page-list-readout" v-show="!loading">
                     <div
@@ -39,10 +39,10 @@
 
                         v-for="alert in alerts"
                     >
-                        <span class="page-list-item__start">{{alert.start | formatDate}}</span>
-                        <span class="page-list-item__end">{{alert.end | formatDate}}</span>
-                        <span class="page-list-item__message">{{alert.message}}</span>
-                        <span class="page-list-item__icons">
+                        <span class="alerts-manager__page-list-item__start">{{alert.start | formatDate}}</span>
+                        <span class="alerts-manager__page-list-item__end">{{alert.end | formatDate}}</span>
+                        <span class="alerts-manager__page-list-item__message">{{alert.message}}</span>
+                        <span class="alerts-manager__page-list-item__icons">
                             <ui-icon-button 
                                 icon="error" 
                                 color="red"
