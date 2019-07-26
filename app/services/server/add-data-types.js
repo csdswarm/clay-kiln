@@ -27,10 +27,10 @@ const db = require('./db'),
    */
   inject = (app, checkAuth) => {
     DATA_STRUCTURES.forEach(DATA_TYPE => {
-      app.get(`*/_${DATA_TYPE}*`, buildEndpoint('get'));
+      app.get(`/_${DATA_TYPE}*`, buildEndpoint('get'));
 
       ['post', 'put', 'delete'].forEach(method => {
-        app[method](`*/_${DATA_TYPE}*`, checkAuth, buildEndpoint(method));
+        app[method](`/_${DATA_TYPE}*`, checkAuth, buildEndpoint(method));
       });
     });
   };
