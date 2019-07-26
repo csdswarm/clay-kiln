@@ -40,16 +40,15 @@ export default class MetaManager {
 
       // ensure a title exists on the page
       if (!metaTitleData) {
-        const defaultTitle = 'RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts';
+        const defaultTitle = 'RADIO.COM: Listen to Free Radio Online | Music, Sports, News, Podcasts'
 
         metaTitleData = {
           title: defaultTitle,
           ogTitle: defaultTitle,
           twitterTitle: defaultTitle
         }
-      }
-      // default to the SEO title for backwards compatibility
-      else if (!metaTitleData.twitterTitle) {
+      } else if (!metaTitleData.twitterTitle) {
+        // default to the SEO title for backwards compatibility
         metaTitleData.twitterTitle = metaTitleData.ogTitle
       }
     }
