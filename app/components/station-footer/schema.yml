@@ -24,7 +24,6 @@ footerLinks:
       _label: URL
       _has:
         input: text
-        help: The URL and stuff
         validate:
           required: true
           pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
