@@ -1,7 +1,7 @@
 const fs = require('fs'),
   host = process.argv.slice(2)[0],
   elasticsearchURL = process.argv.slice(2)[1],
-  http = process.argv.slice(2)[2],
+  http = 'http',
   {v1: {httpGet, httpRequest}} = require('../migration-utils'),
   headers = {
     'Content-Type': 'application/json'

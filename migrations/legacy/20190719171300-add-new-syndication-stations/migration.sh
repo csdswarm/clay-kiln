@@ -36,4 +36,4 @@ corporateWebsiteList='_lists/corporate_websites'
 curl -X PUT $http://$1/$corporateWebsiteList -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./corporateWebsiteList.json -o /dev/null -s
 curl -X PUT $http://$1/$corporateWebsiteList@published -H 'Authorization: token accesskey' -o /dev/null -s
 
-node ./updateElasticsearchMapping "$1" "${es}:9200" "${http}"
+node ./updateElasticsearchMapping "$1" "${es}:9200"
