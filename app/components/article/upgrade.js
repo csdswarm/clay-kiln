@@ -1,7 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  // addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
@@ -154,8 +154,8 @@ module.exports['6.0'] = async (uri, data) => {
 };
 
 // ensure adTags exists
-// module.exports['7.0'] = async function (uri, data) {
-//   data = await addAdTags('article', uri, data);
+module.exports['7.0'] = async function (uri, data) {
+  data = await addAdTags('article', uri, data);
 
-//   return data;
-// };
+  return data;
+};
