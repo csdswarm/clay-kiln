@@ -74,7 +74,7 @@ const getAndUpdateElasticsearchMapping = async (index) => {
 
 const createNewElasticsearchIndex = async (newIndex, body) => {
   console.log('Creating new elasticsearch index for', newIndex, '\n')
-  const response = await httpRequest({http, method: 'PUT', url: `${http}://${elasticsearchURL}/${newIndex}`, body, headers});
+  const response = await httpRequest({http, method: 'PUT', url: `${elasticsearchURL}/${newIndex}`, body, headers});
 
   if (response.result !== 'success') {
     throw new Error(`There was an error creating the elasticsearch index for ${newIndex}`);
@@ -83,7 +83,7 @@ const createNewElasticsearchIndex = async (newIndex, body) => {
 
 const reindex = async (latestIndex, newIndex) => {
   console.log('Reindexing based on new index\n')
-  const response = await httpRequest({http, method: 'POST', url: `${http}://${elasticsearchURL}/_reindex`, body: {
+  const response = await httpRequest({http, method: 'POST', url: `${elasticsearchURL}/_reindex`, body: {
     source: {
       index: latestIndex
     },
@@ -99,7 +99,7 @@ const reindex = async (latestIndex, newIndex) => {
 
 const addNewAlias = async (currentIndex, newIndex) => {
   console.log('adding new alias', newIndex, '\n')
-  const response = await httpRequest({http, method: 'POST', url: `${http}://${elasticsearchURL}/_aliases`, body: {
+  const response = await httpRequest({http, method: 'POST', url: `${elasticsearchURL}/_aliases`, body: {
     actions: [
       {remove: {index: currentIndex, alias: 'published-content'}},
       {add: {index: newIndex, alias: 'published-content'}}
