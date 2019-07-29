@@ -57,6 +57,7 @@ function checkStatus(res) {
 
 //   return { status, statusText, body };
 // };
+
 /**
  * REQUEST
  * @param {string} url
@@ -64,13 +65,7 @@ function checkStatus(res) {
  * @return {Promise}
  */
 module.exports.request = function (url, opts) {
-  return fetch(url, opts).then(checkStatus).then(function (res) {
-    return {
-      status: res.status,
-      statusText: res.statusText,
-      body: res.json()
-    };
-  });
+  return fetch(url, opts).then(checkStatus).then(function (res) { return res.json(); });
 };
 
 /**
