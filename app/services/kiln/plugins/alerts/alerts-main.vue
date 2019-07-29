@@ -174,25 +174,11 @@
             this.loadAlerts();
         },
         computed: {
-            /** Combines date and time input into one field */
             end: function () {
-                const [hour, minute] = this.endTime.split(':');
-
-                if (!this.endDate || !hour || !minute) {
-                    return '';
-                }
-
-                return moment(this.endDate).hour(hour).minute(minute).second(0).milliseconds(0); 
+                return this.combineDateAndTime(this.endDate, this.endTime);
             },
-            /** Combines date and time input into one field */
             start: function () {
-                const [hour, minute] = this.startTime.split(':');
-
-                if (!this.startDate || !hour || !minute) {
-                    return '';
-                }
-
-                return moment(this.startDate).hour(hour).minute(minute).second(0).milliseconds(0);            
+                return this.combineDateAndTime(this.startDate, this.startTime);          
             },
             global: function() {
                 return this.tab === 'global';
@@ -247,6 +233,16 @@
             },
             closeModal(ref) {
                 this.$refs[ref].close();
+            },
+            /** Combines date and time input into one field */
+            combineDateAndTime(date, time) {
+                const [hour, minute] = time.split(':');
+
+                if (!date || !hour || !minute) {
+                    return '';
+                }
+
+                return moment(date).hour(hour).minute(minute).second(0).milliseconds(0);
             },
             /** Checks to confirm that an alert should be deleted */
             confirmDeleteAlert(alert) {
