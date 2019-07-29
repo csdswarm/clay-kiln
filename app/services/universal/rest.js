@@ -44,18 +44,33 @@ function checkStatus(res) {
   }
 }
 
+// /**
+//  * REQUEST (does not reject on errors so we can pass the status code)
+//  * @param {string} url
+//  * @param {object} [opts] See https://github.github.io/fetch/#options
+//  * @return {Promise}
+//  */
+// module.exports.request = async (url, opts) => {
+//   const response = await fetch(url, opts),
+//     body = await response.json(),
+//     { status, statusText } = response;
+
+//   return { status, statusText, body };
+// };
 /**
- * REQUEST (does not reject on errors so we can pass the status code)
+ * REQUEST
  * @param {string} url
  * @param {object} [opts] See https://github.github.io/fetch/#options
  * @return {Promise}
  */
-module.exports.request = async (url, opts) => {
-  const response = await fetch(url, opts),
-    body = await response.json(),
-    { status, statusText } = response;
-
-  return { status, statusText, body };
+module.exports.request = function (url, opts) {
+  return fetch(url, opts).then(checkStatus).then(function (res) {
+    return {
+      status: res.status,
+      statusText: res.statusText,
+      body: res.json()
+    };
+  });
 };
 
 /**
