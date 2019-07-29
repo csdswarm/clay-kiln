@@ -2,11 +2,13 @@
 
 const _isEmpty = require('lodash/isEmpty'),
   _get = require('lodash/get'),
+  // addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
   cuid = require('cuid'),
-  rest = require('../../services/universal/rest'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
-  getComponentInstanceObj = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true),
+  {
+    getComponentInstance: getComponentInstanceObj,
+    putComponentInstance
+  } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
@@ -195,3 +197,10 @@ module.exports['7.0'] = async (uri, data) => {
 
   return data;
 };
+
+// ensure adTags exists
+// module.exports['8.0'] = async function (uri, data) {
+//   data = await addAdTags('gallery', uri, data);
+
+//   return data;
+// };

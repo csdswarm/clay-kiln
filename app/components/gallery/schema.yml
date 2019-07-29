@@ -537,6 +537,10 @@ tags:
   _component:
     include:
       - tags
+adTags:
+  _component:
+    include:
+      - ad-tags
 
 apContent:
   _label: [No Index / No Follow is always ON for AP]

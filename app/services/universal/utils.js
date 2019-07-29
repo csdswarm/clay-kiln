@@ -67,12 +67,7 @@ function replaceVersion(uri, version) {
  */
 function uriToUrl(uri, locals) {
   const protocol = _get(locals, 'site.protocol') || 'http',
-    port = _get(locals, 'site.port'),
     parsed = _parse(`${protocol}://${uri}`);
-
-  if (port !== 80 && port !== 443) {
-    parsed.set('port', port);
-  }
 
   return parsed.href;
 }
@@ -120,7 +115,6 @@ function toTitleCase(str) {
  * @param {object} locals
  * @param {string} [locals.site.protocol]
  * @param {string} locals.site.host
- * @param {string} [locals.site.port]
  * @param {string} [locals.site.path]
  * @returns {string} e.g. `http://nymag.com/scienceofus` or `http://localhost.dev.nymag.biz:3001/scienceofus`
  */
@@ -128,10 +122,9 @@ function getSiteBaseUrl(locals) {
   const site = locals.site || {},
     protocol = site.protocol || 'http',
     host = site.host,
-    port = (site.port || '80').toString(),
     path = site.path || '';
 
-  return `${protocol}://${host}${port === '80' ? '' : ':' + port}${path}`;
+  return `${protocol}://${host}${path}`;
 }
 
 /**

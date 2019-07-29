@@ -28,6 +28,8 @@ _components:
       _ref: /_components/google-ad-manager/instances/halfPageBottom
     tags:
       _ref: /_components/tags/instances/new
+    adTags:
+      _ref: /_components/ad-tags/instances/new
     sideShare:
       _ref: /_components/share/instances/new
     sectionFront: ''
