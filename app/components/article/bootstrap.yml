@@ -33,7 +33,7 @@ _components:
       most-popular: true
       newsfeed: true
       apple-news: true
-    secondaryArticleType: ''
+    secondarySectionFront: ''
     showSocial: true
     authors: []
     sources: []

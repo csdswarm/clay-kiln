@@ -10,5 +10,6 @@ module.exports = () => {
   require('./plugins/brightcove')();
   require('./plugins/content-syndication')();
   require('./plugins/instagram')();
+  require('./plugins/subscriptions')();
   require('./validators')();
 };

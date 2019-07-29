@@ -41,7 +41,7 @@ _components:
     showSocial: true
     eligibleForGoogleStandout: false
     sources: []
-    secondaryArticleType: ''
+    secondarySectionFront: ''
     footer: []
     crumbs: []
     featured: false
