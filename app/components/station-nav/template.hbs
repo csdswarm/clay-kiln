@@ -62,7 +62,7 @@
           </ul>
         {{/ifAll }}
       {{/each }}
-      
+
       {{#if primaryLinks.length }}
         <ul class="drawers__drawer drawer drawer--mobile">
           {{#each primaryLinks }}
@@ -108,13 +108,66 @@
 
       <div class="drawers__drawer drawer drawer--listen">
         <section class="drawer__playing">
-
+          <ul>
+            <li>
+              <h3>now playing</h3>
+              <div data-play-station="{{ station.id }}">
+                <img src="{{ nowPlaying.imageUrl }}?width=100&height=100&crop=1:1,offset-y0" alt="{{ nowPlaying.title }}">
+                <div>
+                  <h3>{{ nowPlaying.title }}</h3>
+                  <span>{{ nowPlaying.artist }}</span>
+                </div>
+              </div>
+            </li>
+            <li>
+              <h3>on-air</h3>
+              <div data-play-station="{{ station.id }}">
+                <img src="{{ onAir.image }}?width=100&height=100&crop=1:1,offset-y0" alt="{{ onAir.name }}">
+                <div>
+                  <h3>{{ onAir.name }}</h3>
+                  <span>{{ onAir.timeSlot }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
         </section>
         <section class="drawer__audio">
-          
+          <ul>
+            <li>
+              <h3>audio from {{ station.name }}</h3>
+              <ul>
+                <li>
+                  <span data-play-station="{{ station.id }}">Live</span>
+                </li>
+                <li>
+                  <a href="/podcasts">
+                    <span>Podcasts</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            {{#if station.phonetic_name }}
+            <li class="drawer__smart-speaker">
+              <span>Ask your smart speaker to play</span>
+              <h3>{{ station.phonetic_name }}</h3>
+            </li>
+            {{/if }}
+          </ul>
         </section>
         <section class="drawer__featured">
-          
+          {{#if featuredLinks }}
+          <ul>
+            {{#each featuredLinks }}
+            <li>
+              <h3>featured {{ type }}</h3>
+              <a href="{{ url }}">
+                <img src="{{ image }}?width=100&height=100&crop=1:1,offset-y0" alt="{{ headline }}">
+                <span>{{ headline }}</span>
+              </a>
+            </li>
+            {{/each }}
+          </ul>
+          {{/if }}
         </section>
       </div>
     </div>

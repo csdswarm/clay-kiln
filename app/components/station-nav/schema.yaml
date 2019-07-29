@@ -114,21 +114,21 @@ featuredLinks:
             required: true
       -
         prop: headline
-        _label: Featured piece Headline
+        _label: Featured piece headline
         _has:
           input: text
           validate:
             required: true
       -
-        prop: imageOverride
+        prop: image
         _label: Featured piece thumbnail
-        _help: Upload image to override default content thumbnail
+        _help: Upload image for content thumbnail
         _has:
           input: advanced-image-upload
           webLabel: Insert Image via Web
           webHelp: Supply a valid HTTPS url to an image file then click "done" button
           uploadLabel: Upload Image Attachment for Content Thumbnail
-          uploadHelp: Choose an image file from your computer for content thumbnail to override default content recirc image or if no image
+          uploadHelp: Choose an image file from your computer for content thumbnail
           validate:
             required:
               field: type
