@@ -2,7 +2,7 @@
 
 const _isEmpty = require('lodash/isEmpty'),
   _get = require('lodash/get'),
-  addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  // addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
   cuid = require('cuid'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
   {
@@ -199,8 +199,8 @@ module.exports['7.0'] = async (uri, data) => {
 };
 
 // ensure adTags exists
-module.exports['8.0'] = async function (uri, data) {
-  data = await addAdTags('gallery', uri, data);
+// module.exports['8.0'] = async function (uri, data) {
+//   data = await addAdTags('gallery', uri, data);
 
-  return data;
-};
+//   return data;
+// };
