@@ -23,7 +23,7 @@
           <li class="station">
             <a href="//{{ @root.locals.site.host }}/{{ default (default site_slug callsign) id }}/listen" class="{{ if (compare @root.filterBy '===' 'local') 'station-card' else='spa-link' }}"{{#if (compare @root.filterBy '===' 'local')}} target="_blank"{{/if}}>
               <div class="station__lede" itemscope itemtype="http://schema.org/ImageObject">
-                <button data-fav-station="{{id}}" class="lede__favorite-btn{{favoriteModifier}}"></button>
+                {{!-- <button data-fav-station="{{id}}" class="lede__favorite-btn{{favoriteModifier}}"></button> --}}
                 <img class="lede__image{{ if (compare @root.filterBy '===' 'local') ' thumb' }}" src="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0"
                      srcset="{{ square_logo_large }}?width=138&height=138&crop=1:1,offset-y0 138w,
                     {{ square_logo_large }}?width=220&height=220&crop=1:1,offset-y0 220w,
