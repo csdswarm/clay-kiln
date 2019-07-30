@@ -257,7 +257,6 @@
       return this.substring(pos, pos + search.length) === search;
     };
   }
-
   // endsWith - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
   if (!String.prototype.endsWith) {
     String.prototype.endsWith = function (search, this_len) {

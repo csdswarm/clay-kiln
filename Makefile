@@ -128,7 +128,7 @@ build-player:
 
 snapshot:
 	make down
-	if cd ./.snapshot; then rm -rf ./.snapshot; fi
+	if [ -d './.snapshot' ]; then rm -rf ./.snapshot; fi
 	mkdir ./.snapshot;
 	docker save -o ./.snapshot/clay-radio_clay clay-radio_clay
 	cp -R ./elasticsearch ./.snapshot/elasticsearch

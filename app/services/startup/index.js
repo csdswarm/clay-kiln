@@ -20,6 +20,7 @@ const pkg = require('../../package.json'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
   lytics = require('./lytics'),
+  eventBusSubscribers = require('./event-bus-subscribers');
   user = require('./user'),
   radium = require('./radium');
 
@@ -91,6 +92,8 @@ function setupApp(app) {
   sessionStore = createSessionStore();
 
   feedComponents.init();
+
+  eventBusSubscribers();
 
   return amphoraSearch()
     .then(searchPlugin => {

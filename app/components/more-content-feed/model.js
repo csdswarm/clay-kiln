@@ -94,7 +94,7 @@ module.exports.render = function (ref, data, locals) {
     data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
   }
 
-  if (data.populateFrom == 'tag') {
+  if (data.populateFrom === 'tag') {
     // If we're publishing for a dynamic page, alert the template
     data.dynamicTagPage = false;
 
@@ -113,14 +113,6 @@ module.exports.render = function (ref, data, locals) {
       // This is from a tag page
       data.tag = locals.params.dynamicTag;
       data.dynamicTagPage = true;
-    }
-
-    data.sectionFront = null;
-
-    if (locals && locals.sectionFront) {
-      data.sectionFront = locals.sectionFront;
-    } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
-      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
     }
 
     if (!data.tag) {
@@ -147,11 +139,18 @@ module.exports.render = function (ref, data, locals) {
       queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     }
 
+    data.sectionFront = null;
+
+    if (locals && (locals.sectionFront || locals.secondarySectionFront)) {
+      data.sectionFront = locals.secondarySectionFront || locals.sectionFront;
+    } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
+      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
+    }
     if (data.sectionFront) {
       queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     }
     queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom == 'author') {
+  } else if (data.populateFrom === 'author') {
     // Check if we are on an author page and override the above
     if (locals && locals.author) {
       // This is from load more on an author page
@@ -168,20 +167,25 @@ module.exports.render = function (ref, data, locals) {
     // No need to clean the author as the analyzer in elastic handles cleaning
     queryService.addShould(query, { match: { 'authors.normalized': data.author }});
     queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom == 'section-front') {
-    if (!data.sectionFront && !data.sectionFrontManual || !locals) {
+  } else if (data.populateFrom === 'section-front') {
+    if (!data.sectionFront && !data.sectionFrontManual &&
+    !data.secondarySectionFront && !data.secondarySectionFrontManual
+    || !locals) {
       return data;
     }
-    queryService.addShould(query, { match: { sectionFront: data.sectionFrontManual || data.sectionFront }});
-    queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom == 'all-content') {
+    if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
+      queryService.addMust(query, { match: { secondarySectionFront: data.secondarySectionFrontManual || locals.secondarySectionFront }});
+    } else if (locals.sectionFront || data.sectionFrontManual) {
+      queryService.addMust(query, { match: { sectionFront: data.sectionFrontManual || locals.sectionFront }});
+    }
+  } else if (data.populateFrom === 'all-content') {
     if (!locals) {
       return data;
     }
   }
 
   if (data.filterBySecondary) {
-    queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});
+    queryService.addMust(query, { match: { secondarySectionFront: data.filterBySecondary }});
   }
 
   queryService.addSort(query, {date: 'desc'});
@@ -194,12 +198,12 @@ module.exports.render = function (ref, data, locals) {
   }
 
   // Filter out the following secondary article type
-  if (data.filterSecondaryArticleTypes) {
-    Object.entries(data.filterSecondaryArticleTypes).forEach((secondaryArticleType) => {
-      let [ secondaryArticleTypeFilter, filterOut ] = secondaryArticleType;
+  if (data.filterSecondarySectionFronts) {
+    Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
+      let [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondaryArticleType: secondaryArticleTypeFilter }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
       }
     });
   }
