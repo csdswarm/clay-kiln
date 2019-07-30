@@ -42,9 +42,10 @@ const queryPayload = new QueryPayload()
 export default {
   name: 'LayoutRouter',
   async created () {
+    /* TODO - UNCOMMENT to enable radium - ALSO change how this is being done so we only call the get profile if we know if the user is logged in
     // see if the user is logged in and populate the store
     await this.$store.dispatch(actionTypes.GET_PROFILE, true)
-
+    */
     // Load initial layout.
     this.activeLayoutComponent = this.layoutRouter(this.$store.state.spaPayload)
   },
