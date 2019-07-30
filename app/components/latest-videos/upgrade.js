@@ -10,3 +10,13 @@ module.exports['1.0'] = function (uri, data) {
 
   return data;
 };
+
+module.exports['2.0'] = function (uri, data) {
+  let newData = Object.assign({}, data);
+
+  newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
+  
+  delete newData.filterSecondaryArticleTypes;
+  
+  return newData;
+};

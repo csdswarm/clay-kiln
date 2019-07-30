@@ -1,11 +1,11 @@
 _description: |
-  A list of podcasts. (This module requires minimum of 4 podcast selections in the list.)
+  List of podcasts -- Will autofill by category upon publish if left empty or less than 4 items.
 
 items:
-  _label: Items
+  _label: Podcasts
   _placeholder:
     height: 200px;
-    text: Podcast List
+    text: Podcast List -- Autofills upon publish if left empty or less than 4 items
   _has:
     input: complex-list
     enforceMaxlength: true

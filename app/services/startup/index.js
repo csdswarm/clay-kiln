@@ -19,7 +19,8 @@ const pkg = require('../../package.json'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
-  lytics = require('./lytics');
+  lytics = require('./lytics'),
+  eventBusSubscribers = require('./event-bus-subscribers');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -85,6 +86,8 @@ function setupApp(app) {
   sessionStore = createSessionStore();
 
   feedComponents.init();
+
+  eventBusSubscribers();
 
   return amphoraSearch()
     .then(searchPlugin => {
