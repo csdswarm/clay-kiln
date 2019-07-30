@@ -18,6 +18,7 @@
                     <ui-select 
                         label="Station"
                         placeholder="Select a station"
+                        hasSearch=true
                         :options="stationCallsigns"
                         @select="loadAlerts"
                         v-if="!global"
@@ -158,7 +159,7 @@
                 errorMessage: '',
                 selectedAlert: {},
                 selectedStation: '',
-                stationCallsigns: window.kiln.locals.allStationsCallsigns,
+                stationCallsigns: (window.kiln.locals.allStationsCallsigns || []).sort(),
                 tab: 'global',
                 tabs: [{
                     id: 'global',
