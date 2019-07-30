@@ -1,6 +1,7 @@
 'use strict';
 
 const radioApiService = require('../../services/server/radioApi'),
+  slugifyService = require('../../services/universal/slugify'),
   utils = require('../../services/universal/podcast'),
   maxItems = 4,
   /**
@@ -16,11 +17,12 @@ const radioApiService = require('../../services/server/radioApi'),
    * @returns {number}
    */
   getPodcastCategoryID = async (categoryName) => {
-    const podcastCategories = await radioApiService.get('categories', { page: { size: 20 } });
+    const podcastCategories = await radioApiService.get('categories', { page: { size: 20 } }),
+      podcastCategory = podcastCategories.data.find(category => {
+        return category.attributes.slug.includes(slugifyService(categoryName));
+      });
 
-    return podcastCategories.data.find(category => {
-      return category.attributes.slug.includes(categoryName);
-    }).id;
+    return podcastCategory ? podcastCategory.id : null;
   };
 
 /**
@@ -30,17 +32,18 @@ const radioApiService = require('../../services/server/radioApi'),
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
-  if (data.items.length === maxItems || !locals || locals.edit) {
+  if (data.items.length === maxItems || !locals || locals.edit || ref.includes('/instances/new')) {
     data.items.forEach(item => {
       item.podcast.imageUrl = utils.createImageUrl(item.podcast.imageUrl);
     });
-    return new Promise((resolve) => resolve(data));
+
+    return data;
   }
 
   let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
 
-  if (locals.sectionFront) {
-    const podcastCategoryID = await getPodcastCategoryID(locals.sectionFront);
+  if (locals.sectionFront || locals.secondarySectionFront) {
+    const podcastCategoryID = await getPodcastCategoryID(locals.secondarySectionFront || locals.sectionFront);
 
     if (podcastCategoryID) {
       podcastsFilter = {...podcastsFilter, filter: { category_id: podcastCategoryID } };

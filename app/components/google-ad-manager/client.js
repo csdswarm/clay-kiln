@@ -261,7 +261,7 @@ function getAuthors(pageData) {
 }
 
 /**
- * Returns an array of tags when on a gallery or article page, otherwise an
+ * Returns an array of ad tags when on a gallery or article page, otherwise an
  *   empty array.
  *
  * @param {object} pageData - the result of 'services/universal/analytics/get-page-data.js'
@@ -272,8 +272,11 @@ function getContentTags(pageData) {
     return [];
   }
 
-  return Array.from(document.querySelectorAll('.component--tags .tags__item'))
-    .map(tag => tag.getAttribute('data-tag'));
+  const adTagsEl = document.querySelector('.component--ad-tags');
+
+  return adTagsEl
+    ? (adTagsEl.getAttribute('data-normalized-ad-tags') || '').split(',')
+    : [];
 }
 
 /**
@@ -290,42 +293,41 @@ function getContentTags(pageData) {
 function getInitialAdTargetingData(shouldUseNmcTags, currentStation, pageData) {
   // we can't refer to the NMC tags for author since NMC only holds a single
   //   author for some reason.
-  const authors = getAuthors(pageData);
-
-  let adTargetingData;
+  const authors = getAuthors(pageData),
+    contentTags = getContentTags(pageData),
+    trackingData = getTrackingData({
+      pathname: window.location.pathname,
+      station: currentStation,
+      pageData,
+      contentTags
+    }),
+    adTargetingData = {
+      targetingAuthors: authors,
+      // google ad manager doesn't take the tags from nmc since nmc cares about
+      //   the editorial tags rather than the ad tags.
+      targetingTags: trackingData.tag
+    };
 
   if (shouldUseNmcTags) {
     const market = pageData.page === 'stationDetail'
       ? getMetaTagContent('name', NMC.market)
       : undefined;
 
-    adTargetingData = {
-      targetingAuthors: authors,
+    Object.assign(adTargetingData, {
       targetingCategory: getMetaTagContent('name', NMC.cat),
       targetingGenre: getMetaTagContent('name', NMC.genre),
       targetingMarket: market,
       targetingPageId: getMetaTagContent('name', NMC.pid),
-      targetingRadioStation: getMetaTagContent('name', NMC.station),
-      targetingTags: getMetaTagContent('name', NMC.tag, '').split('/')
-    };
+      targetingRadioStation: getMetaTagContent('name', NMC.station)
+    });
   } else {
-    const contentTags = getContentTags(pageData),
-      trackingData = getTrackingData({
-        pathname: window.location.pathname,
-        station: currentStation,
-        pageData,
-        contentTags
-      });
-
-    adTargetingData = {
-      targetingAuthors: authors,
+    Object.assign(adTargetingData, {
       targetingCategory: trackingData.cat,
       targetingGenre: trackingData.genre,
       targetingMarket: trackingData.market,
       targetingPageId: trackingData.pid,
-      targetingRadioStation: trackingData.station,
-      targetingTags: trackingData.tag
-    };
+      targetingRadioStation: trackingData.station
+    });
   }
 
   if (isArticleOrGallery(pageData)) {

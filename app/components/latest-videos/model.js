@@ -92,12 +92,12 @@ module.exports.render = function (ref, data, locals) {
   }
 
   // Filter out the following secondary article type
-  if (data.filterSecondaryArticleTypes) {
-    Object.entries(data.filterSecondaryArticleTypes).forEach((secondaryArticleType) => {
-      let [ secondaryArticleTypeFilter, filterOut ] = secondaryArticleType;
+  if (data.filterSecondarySectionFronts) {
+    Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
+      let [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondaryArticleType: secondaryArticleTypeFilter }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
       }
     });
   }
