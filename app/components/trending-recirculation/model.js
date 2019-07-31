@@ -61,21 +61,29 @@ module.exports.render = async (ref, data, locals) => {
   if (abTest()) {
     const lyticsId = _get(locals, 'lytics.uid'),
       noUserParams = lyticsId ? {} : {url: locals.url},
-      recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, contentsegment: 'recommended_for_you', ...noUserParams}),
-      articles = recommendations.map(upd => ({
-        url: `https://${upd.url}`,
-        canonicalUrl: `https://${upd.url}`,
-        primaryHeadline: upd.title,
-        feedImgUrl: upd.primary_image || defaultImage
-      }));
+      recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, contentsegment: 'recommended_for_you', ...noUserParams});
+    let articles = [
+      // create a set to remove duplicates then deconstruct back to an array
+      ...new Set(
+        recommendations.map(
+          upd => ({
+            url: `https://${upd.url}`,
+            canonicalUrl: `https://${upd.url}`,
+            primaryHeadline: upd.title,
+            feedImgUrl: upd.primary_image || defaultImage,
+            lytics: true
+          })
+        )
+      )
+    ];
 
     if (articles.length > 0) {
       // backfill if there are missing items
       if (articles.length !== 6) {
-        const urls = articles.map(item => item.url),
-          availableItems = data.items.filter(item => !urls.includes(item.url))  ;
+        const urls = articles.map(item => item.canonicalUrl),
+          availableItems = data.items.filter(item => !urls.includes(item.canonicalUrl));
 
-        articles.concat(availableItems.splice(0, 6 - articles.length));
+        articles = articles.concat(availableItems.splice(0, 6 - articles.length));
       }
 
       data.items = articles;
