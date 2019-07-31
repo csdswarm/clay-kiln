@@ -51,7 +51,6 @@ export default {
      * @return {boolean}
      */
     isNewPage: function () {
-      console.log('page', this.lastUrl , this.$store.state.spaPayload.url)
       // if it is the initial load and there is no url yet, or any new page load
       if (!this.$store.state.spaPayload.url || this.lastUrl !== this.$store.state.spaPayload.url) {
         if (!this.$store.state.spaPayload.url) {
@@ -61,7 +60,7 @@ export default {
 
         return true
       }
-      return false;
+      return false
     },
     /**
      * Handle any logic required to get a new vue render to function properly
