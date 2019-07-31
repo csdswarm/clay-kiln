@@ -1,6 +1,7 @@
 'use strict';
 
-const radioApi = require('../../services/server/radioApi'),
+const { playingClass } = require('../../services/universal/spaLocals'),
+  radioApi = require('../../services/server/radioApi'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime'),
   _get = require('lodash/get'),
   _find = require('lodash/find'),
@@ -22,7 +23,6 @@ const radioApi = require('../../services/server/radioApi'),
         artist: song.artist.replace(/-/g, ', ')
       };
     }
-    console.log('now playing', data.nowPlaying);
   },
   /**
    * Retrieve and set current show on air from api
@@ -44,13 +44,13 @@ const radioApi = require('../../services/server/radioApi'),
         }
       );
 
-    console.log(dayOfWeek, locals.station.id, schedules);
     if (_has(schedules, 'data.length')) {
       const show = _find(schedules.data, schedule => {
         const item = schedule.attributes;
 
         return dayOfWeek === stationDayOfWeek && currentlyBetween(item.start_time, item.end_time);
       });
+      
       if (show) {
         const { attributes: onAir } = show;
 
@@ -60,29 +60,11 @@ const radioApi = require('../../services/server/radioApi'),
           scheduleDays: onAir.display_schedule ? onAir.display_schedule.split(':')[0] : '',
           startTime: onAir.start_time ? formatUTC(getTime(onAir.start_time)) : ''
         };
-        console.log("onair", data.onAir);
       }
     }
   };
 
 module.exports.render = async (ref, data, locals) => {
-  locals.station = {
-    "id": 369,
-    "name": "MIX 105.1",
-    "website": "http://www.mix1051.com",
-    "callsign": "WOMXFM",
-    "slug": "mix-1051",
-    "site_slug": "mix1051",
-    "category": "Music",
-    "listen_live_url": "http://player.radio.com/listen/station/mix-1051",
-    "hero_image": "https://images.radio.com/logos/morningmixuse.jpg",
-    "square_logo_small": "https://images.radio.com/logos/mixsquaregrey.png",
-    "square_logo_large": "https://images.radio.com/logos/mixsquaregrey.png",
-    "gmt_offset": -5,
-    "primary_color": "#dd1086",
-    "secondary_color": "#ffffff",
-    "phonetic_name": "Mix One Oh Five Point One Orlando"
-  }
   if (!locals.station && !locals.station.id) {
     return data;
   }
@@ -90,6 +72,7 @@ module.exports.render = async (ref, data, locals) => {
   await getNowPlaying(data, locals);
   await getShowOnAir(data, locals);
 
+  data.playingClass = playingClass(locals, locals.station.id);
   data.station = locals.station;
 
   return data;

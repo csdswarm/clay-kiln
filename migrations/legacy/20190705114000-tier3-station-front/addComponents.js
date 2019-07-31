@@ -48,7 +48,7 @@ const createYaml = async () => {
           default: {
             primaryLinks: [
               {
-                "url": "",
+                "url": "/",
                 "text": "playlist",
                 "drawer": false
               },
@@ -72,7 +72,7 @@ const createYaml = async () => {
               },
               {
                 "url": "",
-                "text": "more from",
+                "text": "more from station",
                 "drawer": true,
                 "secondaryLinks": []
               }

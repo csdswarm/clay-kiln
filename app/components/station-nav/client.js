@@ -12,59 +12,74 @@ let stationNav,
   lastTarget;
 
 const { isMobileNavWidth } = require('../../services/client/mobile'),
+  { fetchDOM } = require('../../services/client/radioApi'),
   active = 'active',
   _find = require('lodash/find'),
+  /**
+   * load in new data for listen nav from the api
+   * @returns {Promise}
+   */
+  refreshListenNav = async () => {
+    const doc = await fetchDOM(`//${window.location.hostname}/_components/station-listen-nav/instances/default.html`),
+      // content = doc.querySelector('.station-schedule');
+      oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
+    listenNavDrawer.replaceChild(doc, oldChild);
+  },
+  /**
+   * Reset main & listen navs & toggles
+  */
+  resetNavs = () => {
+    navDrawersContainer.classList.remove(active);
+    allDrawers.forEach(item => {
+      item.classList.remove(active);
+    });
+    desktopNavItems.forEach(item => {
+      item.classList.remove(active);
+    });
+    listenNavToggle.classList.remove(active);
+    mobileNavToggle.classList.remove(active);
+  },
   /**
    * Toggle nav drawer container that includes
-   * all secondaryLinks, mobile nav & listen nav
+   * all secondaryLinks & listen nav.
+   * Does not affect mobile nav.
    *
    * @param {Object} event -- contains type and currentTarget
    */
   toggleNavDrawerContainer = ({ type, currentTarget }) => {
-    console.log("last target", lastTarget, lastTarget !== mobileNavToggle);
-    try {
-      switch (type) {
-        case 'mouseenter':
-          if (lastTarget !== mobileNavToggle) {
-            console.log("mouseenter add 2");
-            currentTarget.classList.add(active);
-            lastTarget.classList.add(active);
+    switch (type) {
+      case 'mouseenter':
+        if (lastTarget !== mobileNavToggle) {
+          // activate drawer container
+          currentTarget.classList.add(active);
+          // activate toggle
+          lastTarget.classList.add(active);
 
-            if (lastTarget.classList.contains('navigation__primary')) {
-              // get desktop nav item label
-              const CLASS_SUBSTRING = 'primary--label-',
+          // activate drawer for main nav or listen nav
+          if (lastTarget.classList.contains('navigation__primary')) {
+            // get label to activate the right drawer
+            const CLASS_SUBSTRING = 'primary--label-',
               classWithLabel = _find(lastTarget.classList, toggleClass => {
-                  return toggleClass.includes(CLASS_SUBSTRING);
-                }),
-                label = classWithLabel.replace(CLASS_SUBSTRING, ''),
-                selectedDrawer = currentTarget.querySelector(`.drawer--desktop.drawer--${ label }`);
-              
-              if (selectedDrawer) {
-                selectedDrawer.classList.add(active);
-              }
-            } else {
-              listenNavDrawer.classList.add(active);
+                return toggleClass.includes(CLASS_SUBSTRING);
+              }),
+              label = classWithLabel.replace(CLASS_SUBSTRING, ''),
+              selectedDrawer = currentTarget.querySelector(`.drawer--desktop.drawer--${ label }`);
+            
+            if (selectedDrawer) {
+              selectedDrawer.classList.add(active);
             }
+          } else {
+            listenNavDrawer.classList.add(active);
           }
-          break;
-        case 'mouseleave':
-          if (lastTarget !== mobileNavToggle) {
-            console.log("mouseleave remove 2");
-            currentTarget.classList.remove(active);
-            allDrawers.forEach(item => {
-              item.classList.remove(active);
-            });
-            desktopNavItems.forEach(item => {
-              item.classList.remove(active);
-            });
-            listenNavToggle.classList.remove(active);
-          }
-          break;
-        default:
-      }
-    } catch(e) {
-      console.log(e);
+        }
+        break;
+      case 'mouseleave':
+        if (lastTarget !== mobileNavToggle) {
+          resetNavs();
+        }
+        break;
+      default:
     }
   },
   /**
@@ -73,14 +88,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @param {Object} event -- contains type and currentTarget
    */
   toggleNavDrawer = ({ type, currentTarget }) => {
-    // reset all drawers and toggles
-    allDrawers.forEach(item => {
-      item.classList.remove(active);
-    });
-    desktopNavItems.forEach(item => {
-      item.classList.remove(active);
-    });
-    listenNavToggle.classList.remove(active);
+    resetNavs();
 
     // get desktop nav item label
     const CLASS_SUBSTRING = 'primary--label-',
@@ -93,13 +101,11 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
     if (selectedDrawer) {
       // toggle corresponding desktop drawer if it exists
       if (type === 'mouseleave') {
-        console.log("remove desktop drawer & toggle");
         currentTarget.classList.remove(active);
         selectedDrawer.classList.remove(active);
         navDrawersContainer.classList.remove(active);
         lastTarget = currentTarget;
       } else {
-        console.log("add desktop drawer & toggle");
         currentTarget.classList.add(active);
         selectedDrawer.classList.add(active);
         navDrawersContainer.classList.add(active);
@@ -112,24 +118,15 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @param {Object} event -- contains type and currentTarget
    */
   toggleListenDrawer = ({ type, currentTarget }) => {
-    // reset main nav
-    allDrawers.forEach(item => {
-      item.classList.remove(active);
-    });
-    desktopNavItems.forEach(item => {
-      item.classList.remove(active);
-    });
-    mobileNavToggle.classList.remove(active);
+    resetNavs();
 
-    // toggle listen drawer
     if (type === 'mouseleave') {
-      console.log("remove listen drawer & toggle");
       currentTarget.classList.remove(active);
       listenNavDrawer.classList.remove(active);
       navDrawersContainer.classList.remove(active);
       lastTarget = currentTarget;
     } else {
-      console.log("add listen drawer & toggle");
+      refreshListenNav();
       currentTarget.classList.add(active);
       listenNavDrawer.classList.add(active);
       navDrawersContainer.classList.add(active);
@@ -141,10 +138,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @param {Object} event -- contains currentTarget
    */
   toggleMobileDrawer = ({ currentTarget }) => {
-    // reset main nav
-    allDrawers.forEach(item => {
-      item.classList.remove(active);
-    });
+    // reset desktop navs & toggles
     desktopNavItems.forEach(item => {
       item.classList.remove(active);
     });
