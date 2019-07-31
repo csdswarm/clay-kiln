@@ -36,7 +36,14 @@ function handleErrors(error) {
 /**
  * Gets banner alerts from the appropriate rest service and organizes the results as needed.
  *
- * @param {{site:{protocol:string, host:string}, station: {callsign:string}, closedAlerts: string[]}} locals
+ * @param {object} locals
+ * @param {object} locals.site
+ * @param {string} locals.site.protocol
+ * @param {string} locals.site.host
+ * @param {object} locals.station
+ * @param {string} locals.station.callsign
+ * @param {string[]} locals.closedAlerts
+ * @param {object} locals.defaultStation
  * @returns {Promise<{id: string, message: string, breaking: boolean}[]>}
  */
 async function getAlerts(locals) {
