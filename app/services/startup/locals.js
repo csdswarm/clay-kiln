@@ -1,6 +1,7 @@
 'use strict';
 
 const log = require('../universal/log').setup({ file: __filename }),
+  deepmerge = require('deepmerge'),
   db = require('../server/db');
 
 let ENTERCOM_DOMAINS = null;
@@ -14,12 +15,12 @@ let ENTERCOM_DOMAINS = null;
 function spaLocals(req, res) {
   try {
     const header = req.header('x-locals'),
-      locals = header ? JSON.parse(header) : null;
+      locals = header ? JSON.parse(header) : null,
+      options = { arrayMerge: (destinationArray, sourceArray) => sourceArray};
 
-    res.locals = res.locals ? {
-      ...res.locals,
-      ...locals
-    } : locals;
+    if (locals) {
+      res.locals = deepmerge(res.locals, locals, options);
+    }
   } catch (e) {
     log('error', 'Error in locals middleware:', e);
   }
