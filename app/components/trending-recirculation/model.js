@@ -12,7 +12,7 @@ const _get = require('lodash/get'),
     'feedImgUrl',
     'sectionFront'
   ],
-  defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
+  defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 /**
  * @param {string} ref
@@ -77,7 +77,7 @@ module.exports.render = async (ref, data, locals) => {
 
   (data.items || []).map(item => {
     item.params = `?article=${data.lytics ? 'recommended' : 'curated'}`;
-    item.feedImgUrl += item.feedImgUrl.includes('?') ? '&' : '?';
+    item.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
   });
 
   return data;
