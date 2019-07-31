@@ -132,10 +132,7 @@ featuredLinks:
           uploadLabel: Upload Image Attachment for Content Thumbnail
           uploadHelp: Choose an image file from your computer for content thumbnail
           validate:
-            required:
-              field: type
-              operator: '!=='
-              value: content
+            required: true
 
 listenNav:
   _component:
