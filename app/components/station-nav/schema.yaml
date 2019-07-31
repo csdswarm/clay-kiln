@@ -86,7 +86,9 @@ featuredLinks:
   _placeholder:
     text: Featured Links
     height: 100
+  _publish: featuredLinks
   _has:
+    help: Featured links
     input: complex-list
     enforceMaxlength: true
     validate:
@@ -134,6 +136,11 @@ featuredLinks:
               field: type
               operator: '!=='
               value: content
+
+listenNav:
+  _component:
+    include:
+      - station-listen-nav
 
 _groups:
   settings:
