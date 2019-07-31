@@ -39,7 +39,7 @@ export default {
       const handlebarsHtml = handlebarsWrapper(this.$store.state.spaPayload)
 
       // Transpile handlebars HTML to Vue templating HTML
-      return vueTranspiler.transpile(handlebarsHtml)
+      return vueTranspiler.transpile(handlebarsHtml, this.$store.state.spaPayloadLocals)
     },
     onSpaLinkClick: function (event, element) {
       event.preventDefault()

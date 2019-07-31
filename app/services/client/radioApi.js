@@ -4,12 +4,10 @@ const rest = require('../universal/rest'),
   qs = require('qs'),
   { formatLocal } = require('../../services/universal/dateTime'),
   { getLocals } = require('./spaLocals'),
-  spaLinkService = require('./spaLink'),
-  clientPlayerInterface = require('./ClientPlayerInterface')(),
+  spaLinkService = require('../universal/spaLink'),
+  clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
   clientUserInterface = require('./ClientUserInterface')(),
   clientStateInterface = require('./ClientStateInterface')(),
-  // https://regex101.com/r/gDfIxb/1
-  spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
   // here for models that reference /server/radioApi (brightcove)
   TTL = {
     NONE: 0,
@@ -18,28 +16,6 @@ const rest = require('../universal/rest'),
     HOUR: 3600000,
     DAY: 86400000
   },
-  /**
-   * returns if a domain is part of the entercom approved list
-   * ** NOTE: This is duplicated in the spa also merged into the release-radium branch where it can be shared
-   * @param {string} hostname
-   * @return {boolean}
-   */
-  isEntercomDomain = (hostname) => {
-    const SEO_FOLLOW_DOMAINS = ['1thingus.com,entercom.com', 'culinarykitchenchicago.com', 'dfwrestaurantweek.com',
-        'musictowndetroit.com', 'mensroomlive.com', 'jimrome.com', 'radio.com'],
-      domain = hostname.split('.').reverse().slice(0, 2).reverse().join('.');
-
-    return SEO_FOLLOW_DOMAINS.includes(domain);
-  },
-  /**
-   * returns boolean of whether it is a link within the SPA
-   * return true if link is on current URL host or
-   * starts with '/' and is not '/audio'
-   *
-   * @param {string} uri
-   * @returns {boolean}
-   */
-  isSpaLink = (uri) => spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' ),
   // An array of functions that take in a node and return the mutated node with attached events or modifications to data
   spaFunctions = [
     /**
@@ -63,20 +39,7 @@ const rest = require('../universal/rest'),
      * @returns {Node}
      */
     (doc) => {
-      const anchors = doc.querySelectorAll('a');
-
-      anchors.forEach((anchor) =>  {
-        const href = anchor.getAttribute('href');
-
-        if (isSpaLink(href) && !anchor.classList.contains('spa-link')) {
-          anchor.classList.add('spa-link');
-        } else if (!isEntercomDomain(href)) {
-          anchor.setAttribute('rel', 'nofollow');
-        }
-
-      });
-
-      spaLinkService.apply(doc);
+      spaLinkService.addEventListeners(doc);
 
       return doc;
     },
