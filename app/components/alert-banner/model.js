@@ -1,7 +1,7 @@
 'use strict';
 const rest = require('../../services/universal/rest'),
-  log = require('../../services/universal/log').setup({file: __filename}),
-  _uniq = require('lodash/uniq');
+  log = require('../../services/universal/log').setup({ file: __filename }),
+  NATIONAL_CALLSIGN = 'NATL-RC';
 
 /**
  * Gets the first part of the guid after _alert/ in the id
@@ -30,27 +30,32 @@ function handleErrors(error) {
   if (error && error.response && error.response.status === 404) {
     log('error', 'Could not get alert banners. Endpoint not found.');
   } else {
-    log('error', 'There was a problem attempting to get alert banners', {error});
+    log('error', 'There was a problem attempting to get alert banners', { error });
   }
 }
 
 /**
  * Gets banner alerts from the appropriate rest service and organizes the results as needed.
  *
- * @param {string} protocol
- * @param {string} host
- * @param {string} callsign The station callsign
- * @param {string[]} closedAlerts an array of id's from the client indicating messages that have been closed by the user
+ * @param {{site:{protocol:string, host:string}, station: {callsign:string}, closedAlerts: string[]}} locals
  * @returns {Promise<{id: string, message: string, breaking: boolean}[]>}
  */
-async function getAlerts({protocol, host, callsign, closedAlerts = []}) {
+async function getAlerts(locals) {
   try {
     const
-      base = `${protocol}://${host}/alerts?active=true&current=true&station=`,
-      getMessages = _uniq([`${base}NATL-RC`, `${base}${callsign}`])
-        .map(url => rest.get(url).catch(handleErrors)),
+      { protocol, host } = locals.site || {},
+      { callsign } = locals.station || {},
+      { closedAlerts = [] } = locals,
+      urlExists = url => url,
+      getMessage = url => rest.get(url).catch(handleErrors),
       existingMessages = message => message && message.length,
       unclosedMessages = message => !closedAlerts.includes(message.id),
+      base = `${protocol}://${host}/alerts?active=true&current=true&station=`,
+      urlNational = `${base}${NATIONAL_CALLSIGN}`,
+      urlLocal = callsign !== NATIONAL_CALLSIGN ? `${base}${callsign}` : '',
+      getMessages = [urlNational, urlLocal]
+        .filter(urlExists)
+        .map(getMessage),
       messages = await Promise.all(getMessages);
 
     return messages

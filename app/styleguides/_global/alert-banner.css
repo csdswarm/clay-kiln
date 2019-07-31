@@ -31,7 +31,7 @@ $mobile-text-line-height: em(17);
       transition: opacity 1s;
     }
 
-    & + & {
+    & + .alert-banner__message {
       opacity: 0;
       max-height: 0;
       border-width:0;
