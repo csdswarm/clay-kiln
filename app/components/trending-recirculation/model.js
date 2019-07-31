@@ -70,6 +70,14 @@ module.exports.render = async (ref, data, locals) => {
       }));
 
     if (articles.length > 0) {
+      // backfill if there are missing items
+      if (articles.length !== 6) {
+        const urls = articles.map(item => item.url),
+          availableItems = data.items.filter(item => !urls.includes(item.url))  ;
+
+        articles.concat(availableItems.splice(0, 6 - articles.length));
+      }
+
       data.items = articles;
       data.lytics = true;
     }
