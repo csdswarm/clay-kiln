@@ -143,6 +143,30 @@ function attachCloseHandlers(el) {
 }
 
 /**
+ * Checks to see if any alerts on the page should be closed and closes them
+ *
+ * Why? Because it would appear that some sort of caching is happening and even though the server
+ * is not sending any messages, they are still appearing in the page. - CSD
+ *
+ * @param {HTMLElement} el The alert-banner element
+ */
+function ensureClosedAlerts(el) {
+  const {cookie} = document,
+    idRe = /atbr_(\w+)=1/g;
+
+  let match;
+
+  while ((match = idRe.exec(cookie)) !== null) {
+    const message = el.querySelector(`#alertBanner_${match[1]}`),
+      close = closeAlert(el, message);
+
+    if (message) {
+      close();
+    }
+  }
+}
+
+/**
  * Prepares the environment, configures events and binds all handlers needed for banner alerts
  * @param {HTMLElement | {bannerAlertSet:(boolean|undefined)}} el The alert-banner element
  */
@@ -157,7 +181,7 @@ function setupAlertBannerClientFunctionality(el) {
   handleOverflow(el);
   setMessageFadeCycle(el);
   attachCloseHandlers(el);
-
+  ensureClosedAlerts(el);
 }
 
 module.exports = setupAlertBannerClientFunctionality;

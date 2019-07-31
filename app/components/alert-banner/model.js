@@ -1,7 +1,6 @@
 'use strict';
 const rest = require('../../services/universal/rest'),
-  log = require('../../services/universal/log').setup({ file: __filename }),
-  NATIONAL_CALLSIGN = 'NATL-RC';
+  log = require('../../services/universal/log').setup({ file: __filename });
 
 /**
  * Gets the first part of the guid after _alert/ in the id
@@ -45,14 +44,14 @@ async function getAlerts(locals) {
     const
       { protocol, host } = locals.site || {},
       { callsign } = locals.station || {},
-      { closedAlerts = [] } = locals,
+      { closedAlerts = [] , defaultStation} = locals,
       urlExists = url => url,
       getMessage = url => rest.get(url).catch(handleErrors),
       existingMessages = message => message && message.length,
       unclosedMessages = message => !closedAlerts.includes(message.id),
       base = `${protocol}://${host}/alerts?active=true&current=true&station=`,
-      urlNational = `${base}${NATIONAL_CALLSIGN}`,
-      urlLocal = callsign !== NATIONAL_CALLSIGN ? `${base}${callsign}` : '',
+      urlNational = `${base}${defaultStation.callsign}`,
+      urlLocal = callsign !== defaultStation.callsign ? `${base}${callsign}` : '',
       getMessages = [urlNational, urlLocal]
         .filter(urlExists)
         .map(getMessage),
