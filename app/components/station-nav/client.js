@@ -8,115 +8,67 @@ let stationNav,
   mobileNavDrawer,
   mobileNavItems,
   listenNavToggle,
-  listenNavDrawer;
+  listenNavDrawer,
+  lastTarget;
 
 const { isMobileNavWidth } = require('../../services/client/mobile'),
   active = 'active',
-  active_locked = 'active-locked',
+  _find = require('lodash/find'),
 
-  /**
-   * Toggle listen nav arrow direction & listen nav drawer on click of caret
-   *
-   * @param {Object} event -- contains type and currentTarget
-   */
-  toggleListenDrawer = ({ type, currentTarget }) => {
-    toggleNavDrawerContainer({ type, currentTarget });
-
-    // reset main nav
-    allDrawers.forEach(item => {
-      item.classList.remove(active);
-    });
-    desktopNavItems.forEach(item => {
-      item.classList.remove(active);
-    });
-    mobileNavToggle.classList.remove(active);
-
-    // toggle listen drawer
-    listenNavToggle.classList.add(active);
-    listenNavDrawer.classList.add(active);
-  },
-  /**
-   * Toggle mobile nav arrow direction & mobile nav on click of caret
-   *
-   * @param {Object} event -- contains type and currentTarget
-   */
-  toggleMobileDrawer = ({ type, currentTarget }) => {
-    toggleNavDrawerContainer({ type, currentTarget });
-
-    // reset listen nav
-    listenNavToggle.classList.remove(active);
-    listenNavDrawer.classList.remove(active);
-
-    // toggle mobile drawer
-    mobileNavToggle.classList.toggle(active);
-    mobileNavDrawer.classList.toggle(active);
-  },
-  /**
-   * Removes all desktop nav drawers and toggles
-   */
-  removeNavs = () => {
-    navDrawersContainer.classList.remove(active);
-    desktopNavItems.forEach(item => {
-      item.classList.remove(active);
-    });
-    listenNavToggle.classList.remove(active);
-  },
   /**
    * Toggle nav drawer container that includes
-   * all secondaryLinks & mobile nav
+   * all secondaryLinks, mobile nav & listen nav
    *
    * @param {Object} event -- contains type and currentTarget
    */
   toggleNavDrawerContainer = ({ type, currentTarget }) => {
-    // toggle container for all drawers
-    switch (type) {
-      case 'mouseover':
-        if (currentTarget !== navDrawersContainer) {
-          if (currentTarget.classList.contains(active)) {
-            console.log("mouseover remove");
-            removeNavs();
-          } else {
-            console.log("mouseover add 1");
-            navDrawersContainer.classList.add(active);
+    console.log("last target", lastTarget, lastTarget !== mobileNavToggle);
+    try {
+      switch (type) {
+        case 'mouseenter':
+          if (lastTarget !== mobileNavToggle) {
+            console.log("mouseenter add 2");
+            currentTarget.classList.add(active);
+            lastTarget.classList.add(active);
+
+            if (lastTarget.classList.contains('navigation__primary')) {
+              // get desktop nav item label
+              const CLASS_SUBSTRING = 'primary--label-',
+              classWithLabel = _find(lastTarget.classList, toggleClass => {
+                  return toggleClass.includes(CLASS_SUBSTRING);
+                }),
+                label = classWithLabel.replace(CLASS_SUBSTRING, ''),
+                selectedDrawer = currentTarget.querySelector(`.drawer--desktop.drawer--${ label }`);
+              
+              if (selectedDrawer) {
+                selectedDrawer.classList.add(active);
+              }
+            } else {
+              listenNavDrawer.classList.add(active);
+            }
           }
-        } else {
-          console.log("mouseover add 2");
-          navDrawersContainer.classList.add(active);
-        }
-        break;
-      case 'mouseout':
-        if (currentTarget !== navDrawersContainer) {
-          if (currentTarget.classList.contains(active)) {
-            console.log("mouseout remove 1");
-            removeNavs();
-          } else {
-            console.log("mouseout add");
-            navDrawersContainer.classList.add(active);
-          }
-        } else {
-          console.log("mouseout remove 2");
-          removeNavs();
-        }
-        break;
-      case 'click':
-        // for mobile navs
-        if (currentTarget !== navDrawersContainer) {
-          if (currentTarget.classList.contains(active)) {
-            navDrawersContainer.classList.remove(active, active_locked);
-            desktopNavItems.forEach(item => {
-              item.classList.remove(active, active_locked);
+          break;
+        case 'mouseleave':
+          if (lastTarget !== mobileNavToggle) {
+            console.log("mouseleave remove 2");
+            currentTarget.classList.remove(active);
+            allDrawers.forEach(item => {
+              item.classList.remove(active);
             });
-            listenNavToggle.classList.remove(active, active_locked);
-          } else {
-            navDrawersContainer.classList.add(active, active_locked);
+            desktopNavItems.forEach(item => {
+              item.classList.remove(active);
+            });
+            listenNavToggle.classList.remove(active);
           }
-        }
-        break;
-      default:
+          break;
+        default:
+      }
+    } catch(e) {
+      console.log(e);
     }
   },
   /**
-   * Toggle desktop or mobile nav drawer/dropdown
+   * Toggle desktop navs on hover of nav items
    *
    * @param {Object} event -- contains type and currentTarget
    */
@@ -130,23 +82,80 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
     });
     listenNavToggle.classList.remove(active);
 
-    toggleNavDrawerContainer({type, currentTarget});
-
     // get desktop nav item label
     const CLASS_SUBSTRING = 'primary--label-',
-      itemLabelClass = Array.from(currentTarget.classList).filter(itemClass => {
-        return itemClass.includes(CLASS_SUBSTRING);
+      classWithLabel = _find(currentTarget.classList, toggleClass => {
+        return toggleClass.includes(CLASS_SUBSTRING);
       }),
-      label = itemLabelClass[0].replace(CLASS_SUBSTRING, ''),
+      label = classWithLabel.replace(CLASS_SUBSTRING, ''),
       selectedDrawer = navDrawersContainer.querySelector(`.drawer--desktop.drawer--${ label }`);
 
     if (selectedDrawer) {
       // toggle corresponding desktop drawer if it exists
-      currentTarget.classList.toggle(active);
-      selectedDrawer.classList.toggle(active);
+      if (type === 'mouseleave') {
+        console.log("remove desktop drawer & toggle");
+        currentTarget.classList.remove(active);
+        selectedDrawer.classList.remove(active);
+        navDrawersContainer.classList.remove(active);
+        lastTarget = currentTarget;
+      } else {
+        console.log("add desktop drawer & toggle");
+        currentTarget.classList.add(active);
+        selectedDrawer.classList.add(active);
+        navDrawersContainer.classList.add(active);
+      }
     }
   },
+  /**
+   * Toggle listen nav arrow direction & listen nav drawer on hover of caret
+   *
+   * @param {Object} event -- contains type and currentTarget
+   */
+  toggleListenDrawer = ({ type, currentTarget }) => {
+    // reset main nav
+    allDrawers.forEach(item => {
+      item.classList.remove(active);
+    });
+    desktopNavItems.forEach(item => {
+      item.classList.remove(active);
+    });
+    mobileNavToggle.classList.remove(active);
 
+    // toggle listen drawer
+    if (type === 'mouseleave') {
+      console.log("remove listen drawer & toggle");
+      currentTarget.classList.remove(active);
+      listenNavDrawer.classList.remove(active);
+      navDrawersContainer.classList.remove(active);
+      lastTarget = currentTarget;
+    } else {
+      console.log("add listen drawer & toggle");
+      currentTarget.classList.add(active);
+      listenNavDrawer.classList.add(active);
+      navDrawersContainer.classList.add(active);
+    }
+  },
+  /**
+   * Toggle mobile nav arrow direction & mobile nav on click of caret
+   *
+   * @param {Object} event -- contains currentTarget
+   */
+  toggleMobileDrawer = ({ currentTarget }) => {
+    // reset main nav
+    allDrawers.forEach(item => {
+      item.classList.remove(active);
+    });
+    desktopNavItems.forEach(item => {
+      item.classList.remove(active);
+    });
+    listenNavToggle.classList.remove(active);
+
+    // toggle mobile drawer
+    lastTarget = currentTarget;
+    currentTarget.classList.toggle(active);
+    mobileNavDrawer.classList.toggle(active);
+    navDrawersContainer.classList.toggle(active);
+  },
   /**
    * Toggle secondary nav items dropdown for primary nav items
    * on mobile on click of primary nav item
@@ -169,8 +178,8 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    */
   addEventListeners = () => {
     // Toggle Listen Nav
-    listenNavToggle.addEventListener('mouseover', toggleListenDrawer);
-    listenNavToggle.addEventListener('mouseout', toggleListenDrawer);
+    listenNavToggle.addEventListener('mouseenter', toggleListenDrawer);
+    listenNavToggle.addEventListener('mouseleave', toggleListenDrawer);
 
     // Toggle Mobile Nav
     mobileNavToggle.addEventListener('click', toggleMobileDrawer);
@@ -183,13 +192,13 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
     // Toggle Nav Desktop Drawers
     desktopNavItems.forEach(item => {
       if (item.classList.contains('primary--drawer-enabled')) {
-        item.addEventListener('mouseover', toggleNavDrawer);
-        item.addEventListener('mouseout', toggleNavDrawer);
+        item.addEventListener('mouseenter', toggleNavDrawer);
+        item.addEventListener('mouseleave', toggleNavDrawer);
       }
     });
 
-    navDrawersContainer.addEventListener('mouseover', toggleNavDrawerContainer);
-    navDrawersContainer.addEventListener('mouseout', toggleNavDrawerContainer);
+    navDrawersContainer.addEventListener('mouseenter', toggleNavDrawerContainer);
+    navDrawersContainer.addEventListener('mouseleave', toggleNavDrawerContainer);
 
     // Remove mobile & desktop navs on resize
     window.addEventListener('resize', function () {
@@ -197,7 +206,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
 
       if (!isMobile) {
         if (!listenNavDrawer.classList.contains(active)) {
-          navDrawersContainer.classList.remove(active, active_locked);
+          navDrawersContainer.classList.remove(active);
         }
         mobileNavToggle.classList.remove(active);
         mobileNavDrawer.classList.remove(active);
