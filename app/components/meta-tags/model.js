@@ -81,7 +81,7 @@ module.exports.render = (ref, data, locals) => {
   let nmcAuthor = importedNmcData.author;
 
   if (_get(data, 'authors.length') > 0) {
-    const authors = data.authors.map(a => a.text).join(', ');
+    const authors = data.authors.map(author => author.text).join(', ');
 
     if (!hasImportedNmcData) {
       nmcAuthor = data.authors[0].text;
