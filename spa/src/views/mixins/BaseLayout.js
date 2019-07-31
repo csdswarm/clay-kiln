@@ -4,12 +4,12 @@
  *
  */
 
-import URL from 'url-parse'
 import VueTranspiler from '@/lib/VueTranspiler'
 import * as mutationTypes from '../../vuex/mutationTypes'
 import SpaPlayerInterface from '../../lib/SpaPlayerInterface'
 import SpaUserInterface from '../../lib/SpaUserInterface'
 import SpaStateInterface from '../../lib/SpaStateInterface'
+import { addEventListeners } from '../../../../app/services/universal/spaLink'
 const vueTranspiler = new VueTranspiler()
 
 export default {
@@ -17,10 +17,14 @@ export default {
     this.onLayoutUpdate()
   },
   updated () {
-    this.onLayoutUpdate()
+    if (this.isNewPage()) {
+      this.onLayoutUpdate()
+    }
   },
   beforeUpdate () {
-    this.onLayoutDestroy()
+    if (this.isNewPage()) {
+      this.onLayoutDestroy()
+    }
   },
   beforeDestroy () {
     this.onLayoutDestroy()
@@ -41,14 +45,23 @@ export default {
       // Transpile handlebars HTML to Vue templating HTML
       return vueTranspiler.transpile(handlebarsHtml, this.$store.state.spaPayloadLocals)
     },
-    onSpaLinkClick: function (event, element) {
-      event.preventDefault()
+    /**
+     * determines if there has been a page change
+     *
+     * @return {boolean}
+     */
+    isNewPage: function () {
+      console.log('page', this.lastUrl , this.$store.state.spaPayload.url)
+      // if it is the initial load and there is no url yet, or any new page load
+      if (!this.$store.state.spaPayload.url || this.lastUrl !== this.$store.state.spaPayload.url) {
+        if (!this.$store.state.spaPayload.url) {
+          this.$store.state.spaPayload.url = `${window.location.origin}${window.location.pathname}`
+        }
+        this.lastUrl = this.$store.state.spaPayload.url
 
-      // Remove the event listener
-      element.removeEventListener('click', element.fn, false)
-
-      const linkParts = new URL(element.getAttribute('href'))
-      this.$router.push(`${linkParts.pathname}${linkParts.query}` || '/')
+        return true
+      }
+      return false;
     },
     /**
      * Handle any logic required to get a new vue render to function properly
@@ -62,11 +75,7 @@ export default {
       }
 
       // Attach vue router listener on SPA links.
-      this.$el.querySelectorAll('a.spa-link').forEach(link => {
-        link.addEventListener('click', event => {
-          this.onSpaLinkClick(event, link)
-        })
-      })
+      addEventListeners(this.$el)
 
       // Create Spa/Client interfaces
       this.interfaces = {
