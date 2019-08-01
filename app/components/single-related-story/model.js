@@ -30,7 +30,7 @@ function assignToData(data, result) {
 }
 
 module.exports.save = (ref, data, locals) => {
-  return recircCmpt.getArticleDataAndValidate(ref, data, locals, ELASTIC_FIELDS)
+  return recircCmpt.getArticleDataAndValidate(ref, data, locals, ELASTIC_FIELDS, { shouldDedupeContent: false })
     .then( result => assignToData(data, result) );
 };
 

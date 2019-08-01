@@ -79,7 +79,7 @@ const queryService = require('../../services/server/query'),
       }
 
       // hydrate item list.
-      const hydrationResults = await queryService.searchByQuery(query, locals);
+      const hydrationResults = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true });
 
       data.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
 
@@ -124,7 +124,7 @@ module.exports.save = async (ref, data, locals) => {
   }
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
+    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, { shouldDedupeContent: false });
 
     return  {
       ...item,
@@ -162,7 +162,7 @@ module.exports.render = function (ref, data, locals) {
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
     const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-    
+
     queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     return renderDefault(ref, data, locals, query);
   }

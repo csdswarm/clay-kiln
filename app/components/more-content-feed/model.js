@@ -31,7 +31,7 @@ module.exports.save = (ref, data, locals) => {
   }
   return Promise.all(_.map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
+    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, { shouldDedupeContent: false })
       .then((result) => {
         const content = Object.assign(item, {
           primaryHeadline: item.overrideTitle || result.primaryHeadline,
@@ -223,7 +223,7 @@ module.exports.render = function (ref, data, locals) {
     });
   }
 
-  return queryService.searchByQuery(query, locals)
+  return queryService.searchByQuery(query, locals, { shouldDedupeContent: true })
     .then(function (results) {
       results = results.map(content => {
         content.lead = content.lead[0]._ref.split('/')[2];

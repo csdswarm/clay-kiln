@@ -30,7 +30,7 @@ module.exports.save = (ref, data, locals) => {
   return Promise.all(data.items.map((item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
+    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, { shouldDedupeContent: false })
       .then((result) => {
         const article = Object.assign(item, {
           primaryHeadline: item.overrideTitle || result.primaryHeadline,
@@ -122,7 +122,7 @@ module.exports.render = function (ref, data, locals) {
     });
   }
 
-  return queryService.searchByQuery(query, locals)
+  return queryService.searchByQuery(query, locals, { shouldDedupeContent: true })
     .then(function (results) {
 
       data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links

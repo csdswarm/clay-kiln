@@ -70,12 +70,13 @@ function newQueryWithCount(index, count) {
  *
  * @param  {Object} query
  * @param  {Object} [locals]
+ * @param  {Object} [opts] - passed to searchByQueryWithRawResult
  * @return {Promise}
  * @example searchByQuery({"index":"local_published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
-function searchByQuery(query, locals) {
-  return searchByQueryWithRawResult(query, locals)
+function searchByQuery(query, locals, opts) {
+  return searchByQueryWithRawResult(query, locals, opts)
     .then(universalQuery.formatSearchResult)
     .then(universalQuery.formatProtocol)
     .catch(originalErr => {
@@ -115,13 +116,28 @@ async function appendLoadedIdsToLocalsAndRedis(results, locals) {
  *
  * @param  {Object} query
  * @param  {Object} [locals]
+ * @param  {Object} [opts] - meant to hold various options in the future.
+ *   Currently it just holds the required option 'shouldDedupeContent'.
  * @return {Object}
  */
-async function searchByQueryWithRawResult(query, locals) {
-  const localsWasPassed = !!locals,
-    loadedIds = localsWasPassed
-      ? await loadedIdsService.lazilyGetFromLocals(locals)
-      : [];
+async function searchByQueryWithRawResult(query, locals, opts = {}) {
+  if (!opts.hasOwnProperty('shouldDedupeContent')) {
+    log(
+      'warn',
+      "opts.shouldDedupeContent wasn't passed to searchByQueryWithRawResult."
+      + '\n  This should be passed in order to keep the code explicit.'
+      + '\n  Right now it will default to true if locals is truthy and passes'
+      + '\n  Object.isExtensible (locals is not extensible during the model ->'
+      + '\n  save hook).'
+    );
+
+    opts.shouldDedupeContent = !!locals
+      && Object.isExtensible(locals);
+  }
+
+  const loadedIds = opts.shouldDedupeContent
+    ? await loadedIdsService.lazilyGetFromLocals(locals)
+    : [];
 
   getSearchInstance();
 
@@ -137,7 +153,7 @@ async function searchByQueryWithRawResult(query, locals) {
   log('trace', `got ${results.hits.hits.length} results`);
   log('debug', JSON.stringify(results));
 
-  if (localsWasPassed) {
+  if (opts.shouldDedupeContent) {
     await appendLoadedIdsToLocalsAndRedis(results, locals);
   }
 

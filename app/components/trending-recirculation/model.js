@@ -28,7 +28,7 @@ module.exports.save = (ref, data, locals) => {
   return Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
+    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, { shouldDedupeContent: false }),
       article = {
         ...item,
         primaryHeadline: item.overrideTitle || result.primaryHeadline,
