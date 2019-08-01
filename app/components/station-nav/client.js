@@ -30,8 +30,8 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   resetNavs = () => {
     [
       navDrawersContainer,
-      allDrawers,
-      desktopNavItems,
+      Array.from(allDrawers),
+      Array.from(desktopNavItems),
       listenNavToggle,
       mobileNavToggle
     ].flat()
@@ -59,7 +59,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
           if (lastTarget.classList.contains('navigation__primary')) {
             // get label to activate the right drawer
             const CLASS_SUBSTRING = 'primary--label-',
-              classWithLabel = lastTarget.classList.find(toggleClass => {
+              classWithLabel = Array.from(lastTarget.classList).find(toggleClass => {
                 return toggleClass.includes(CLASS_SUBSTRING);
               }),
               label = classWithLabel.replace(CLASS_SUBSTRING, ''),
@@ -88,10 +88,9 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    */
   toggleNavDrawer = ({ type, currentTarget }) => {
     resetNavs();
-
     // get desktop nav item label
     const CLASS_SUBSTRING = 'primary--label-',
-      classWithLabel = currentTarget.classList.find(toggleClass => {
+      classWithLabel = Array.from(currentTarget.classList).find(toggleClass => {
         return toggleClass.includes(CLASS_SUBSTRING);
       }),
       label = classWithLabel.replace(CLASS_SUBSTRING, ''),

@@ -1,23 +1,21 @@
 'use strict';
 
- const radioApi = require('../server/radioApi'),
- { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../universal/dateTime'),
- _get = require('lodash/get'),
- _find = require('lodash/find'),
- _has = require('lodash/has'),
+const radioApi = require('../server/radioApi'),
+  { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../universal/dateTime'),
+  _get = require('lodash/get'),
+  _find = require('lodash/find'),
+  _has = require('lodash/has'),
 
   /**
    * Retrieve and set now playing song from api
    *
-   * @param {Object} data
-   * @param {Object} locals
+   * @param {number} stationId
+   * @param {Object} [data]
   */
-  getNowPlaying = async (data, locals) => {
-    console.log("get now playing");
-    const now_playing = await radioApi.get(`/stations/${ locals.station.id }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {});
+  getNowPlaying = async (stationId, data = null) => {
+    const now_playing = await radioApi.get(`/stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {});
 
-    console.log("get now playing done");
-    if (_has(now_playing, 'data.event.current_event')) {
+    if (data && _has(now_playing, 'data.event.current_event')) {
       const song = now_playing.data.event.current_event;
 
       data.nowPlaying = {
@@ -25,16 +23,18 @@
         artist: song.artist.replace(/-/g, ', ')
       };
     }
+    return now_playing;
   },
   /**
-   * Retrieve and set current show on air from api
+   * Retrieve station show schedules from api and
+   * set current show on air if enabled
    *
-   * @param {Object} data
+   * @param {number} stationId
    * @param {Object} locals
-   * @param {boolean} [allShows]
+   * @param {Object} [data]
+   * @param {boolean} [onAir]
   */
-  getShowOnAir = async (data, locals, allShows = false) => {
-    console.log("get show on air");
+  getSchedule = async (stationId, locals, data = null, onAir = false) => {
     const gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
       // using the station offset determine the current day 1 - 7 based
       stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
@@ -44,11 +44,11 @@
           'page[size]': 50,
           'page[number]':1,
           'filter[day_of_week]': dayOfWeek,
-          'filter[station_id]': locals.station.id
+          'filter[station_id]': stationId
         }
       );
-    console.log('get show done');
-    if (_has(schedules, 'data.length')) {
+
+    if (onAir && _has(schedules, 'data.length')) {
       const show = _find(schedules.data, schedule => {
         const item = schedule.attributes;
 
@@ -65,9 +65,11 @@
           startTime: onAir.start_time ? formatUTC(getTime(onAir.start_time)) : ''
         };
       }
+    } else if (!onAir) {
+      return schedules;
     }
   };
 
 
 module.exports.getNowPlaying = getNowPlaying;
-module.exports.getShowOnAir = getShowOnAir;
+module.exports.getSchedule = getSchedule;

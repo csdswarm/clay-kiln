@@ -49,8 +49,8 @@ primaryLinks:
           enforceMaxlength: true
           validate:
             required: true
-            max: 13
-            maxMessage: This field must be 13 or fewer characters long
+            max: 20
+            maxMessage: This field must be 20 or fewer characters long
       -
         prop: secondaryLinks
         _label: Station Drawer Nav -- Secondary Links
@@ -72,8 +72,6 @@ primaryLinks:
                 enforceMaxlength: true
                 validate:
                   required: true
-                  max: 25
-                  maxMessage: This field must be 25 or fewer characters long
             -
               prop: url
               _label: Drawer nav item URL
