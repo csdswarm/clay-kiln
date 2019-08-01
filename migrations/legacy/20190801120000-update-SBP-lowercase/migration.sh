@@ -21,7 +21,7 @@ printf "Update SBP instance to use lowercase 'small business pulse' secondarySec
 # _components/more-content-feed/instances/small-business-pulse
 componentType="more-content-feed"
 instanceType="small-business-pulse"
-printf "\n\nUpdating layout $layoutType instance $instanceType...\n\n"
+printf "\n\nUpdating layout $componentType instance $instanceType...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_components/$componentType/instances/$instanceType > ./$componentType-$instanceType.json
 node ./sbp-update.js "$1" "$componentType" "$instanceType";
 cat ./$componentType-$instanceType.yml | clay import -k demo -y $1 -p
