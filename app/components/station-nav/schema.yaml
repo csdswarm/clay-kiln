@@ -32,6 +32,8 @@ primaryLinks:
             required:
               field: drawer
               operator: falsy
+            pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+            patternMessage: e.g. http://domain.com/path or /path
       -
         prop: drawer
         _label: Does this nav item have a drawer/tray/dropdown menu?
@@ -80,6 +82,8 @@ primaryLinks:
                 type: url
                 validate:
                   required: true
+                  pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+                  patternMessage: e.g. http://domain.com/path or /path
 
 featuredLinks:
   _label: Featured Links in Listen Nav Drawer (Up to 2)
@@ -114,6 +118,8 @@ featuredLinks:
           type: url
           validate:
             required: true
+            pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+            patternMessage: e.g. http://domain.com/path or /path
       -
         prop: headline
         _label: Featured piece headline

@@ -14,14 +14,12 @@ let stationNav,
 const { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
   active = 'active',
-  _find = require('lodash/find'),
   /**
    * load in new data for listen nav from the api
    * @returns {Promise}
    */
   refreshListenNav = async () => {
-    const doc = await fetchDOM(`//${window.location.hostname}/_components/station-listen-nav/instances/default.html`),
-      // content = doc.querySelector('.station-schedule');
+    const doc = await fetchDOM('/_components/station-listen-nav/instances/default.html'),
       oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
     listenNavDrawer.replaceChild(doc, oldChild);
@@ -30,15 +28,16 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * Reset main & listen navs & toggles
   */
   resetNavs = () => {
-    navDrawersContainer.classList.remove(active);
-    allDrawers.forEach(item => {
-      item.classList.remove(active);
-    });
-    desktopNavItems.forEach(item => {
-      item.classList.remove(active);
-    });
-    listenNavToggle.classList.remove(active);
-    mobileNavToggle.classList.remove(active);
+    [
+      navDrawersContainer,
+      allDrawers,
+      desktopNavItems,
+      listenNavToggle,
+      mobileNavToggle
+    ].flat()
+      .forEach( item => {
+        item.classList.remove(active);
+      });
   },
   /**
    * Toggle nav drawer container that includes
@@ -60,12 +59,12 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
           if (lastTarget.classList.contains('navigation__primary')) {
             // get label to activate the right drawer
             const CLASS_SUBSTRING = 'primary--label-',
-              classWithLabel = _find(lastTarget.classList, toggleClass => {
+              classWithLabel = lastTarget.classList.find(toggleClass => {
                 return toggleClass.includes(CLASS_SUBSTRING);
               }),
               label = classWithLabel.replace(CLASS_SUBSTRING, ''),
               selectedDrawer = currentTarget.querySelector(`.drawer--desktop.drawer--${ label }`);
-            
+
             if (selectedDrawer) {
               selectedDrawer.classList.add(active);
             }
@@ -92,7 +91,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
 
     // get desktop nav item label
     const CLASS_SUBSTRING = 'primary--label-',
-      classWithLabel = _find(currentTarget.classList, toggleClass => {
+      classWithLabel = currentTarget.classList.find(toggleClass => {
         return toggleClass.includes(CLASS_SUBSTRING);
       }),
       label = classWithLabel.replace(CLASS_SUBSTRING, ''),
