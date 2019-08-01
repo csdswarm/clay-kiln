@@ -14,26 +14,29 @@ const _endsWith = require('lodash/endsWith'),
  * @returns {object} - the updated 'data' object
  */
 module.exports = async (componentName, uri, data) => {
-  const isNew = _endsWith(uri, `/_components/${componentName}/instances/new`),
-    instanceId = isNew
+  const isNewOrDefault = (
+      _endsWith(uri, `/_components/${componentName}/instances/new`)
+      || _endsWith(uri, `/_components/${componentName}`)
+    ),
+    adTagsInstanceId = isNewOrDefault
       ? 'new'
       : cuid(),
-    _ref = uri.replace(
-      new RegExp(`/_components/${componentName}/.*`),
-      `/_components/ad-tags/instances/${instanceId}`
+    adTagsUri = uri.replace(
+      new RegExp(`/_components/${componentName}(/.*|$)`),
+      `/_components/ad-tags/instances/${adTagsInstanceId}`
     );
 
-  if (!isNew) {
+  if (!isNewOrDefault) {
     const isPublished = _endsWith(uri, '@published'),
-      newData = await getComponentInstance(_ref.replace(/\/instances\/.*/, '/instances/new'));
+      newData = await getComponentInstance(adTagsUri.replace(/\/instances\/.*/, '/instances/new'));
 
     await Promise.all([
-      putComponentInstance(_ref, newData),
-      isPublished ? putComponentInstance(_ref + '@published', newData) : null
+      putComponentInstance(adTagsUri, newData),
+      isPublished ? putComponentInstance(adTagsUri + '@published', newData) : null
     ]);
   }
 
-  data.adTags = { _ref };
+  data.adTags = { _ref: adTagsUri };
 
   return data;
 };
