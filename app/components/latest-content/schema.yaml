@@ -117,7 +117,7 @@ newsItems:
       prop: url
       _label: URL
       _has:
-        input: text
+        input: content-search
         type: url
         validate:
           required: true
