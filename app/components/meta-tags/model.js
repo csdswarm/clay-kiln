@@ -1,13 +1,69 @@
 'use strict';
 
+const _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
+  _without = require('lodash/without'),
+  parse = require('url-parse'),
+  getPageId = require('../../services/universal/analytics/get-page-id'),
+  getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
+  getPageData = require('../../services/universal/analytics/get-page-data'),
+  { NMC, OG_TYPE } = require('../../services/universal/analytics/shared-tracking-vars');
+
+/**
+ * Returns properties for the Nielsen Marketing Cloud tags dependent on whether
+ * any were imported.
+ *
+ * @param {boolean} hasImportedNmcData
+ * @param {object} componentData
+ * @param {object} locals
+ * @returns {object}
+ */
+function getNmcData(hasImportedNmcData, componentData, locals) {
+  const { station, url } = locals,
+    pathname = parse(url).pathname,
+    pageData = getPageData(pathname, componentData.contentType);
+
+  if (hasImportedNmcData) {
+    const pageId = getPageId({ pageData, pathname }),
+      nmcData = componentData.importedNmcData;
+
+    // the imported pid is always a bogus value 'api_v1.1_blogs'.  We know this
+    //   is bogus because it's not the value in the article's html.
+    nmcData.pid = pageId;
+
+    return nmcData;
+  } else { // nmc data is not imported
+    const contentTags = (componentData.contentTagItems || []).map(i => i.text),
+      nmcData = getTrackingData({
+        contentTags,
+        pageData,
+        pathname,
+        station
+      });
+
+    nmcData.tag = nmcData.tag.join('/');
+
+    return nmcData;
+  }
+}
+
 module.exports.render = (ref, data, locals) => {
-  const OG_TYPE = 'og:type',
-    AUTHOR_NAME = 'article:author:name',
+  const AUTHOR_NAME = 'article:author:name',
     PUB_TIME = 'article:published_time',
     CATEGORY = 'cXenseParse:recs:category',
     STATION_CALL_LETTERS = 'station-call-letters',
-    ROBOTS = 'robots',
-    categories = [];
+    categories = [],
+    { station } = locals,
+    { importedNmcData = {} } = data,
+    // if we don't have imported data then we want to use the same logic
+    //   google-ad-manager/client.js was using prior to introducing the Nielsen
+    //   Marketing Cloud tags.
+    hasImportedNmcData = !_isEmpty(importedNmcData),
+    nmcData = getNmcData(hasImportedNmcData, data, locals),
+    // author is handled separately because we need to check data.authors before
+    //   figuring out nmc's author value
+    nmcKeysExceptAuthor = _without(Object.keys(NMC), 'author'),
+    ROBOTS = 'robots';
 
   // save these for SPA to easily be able to create or delete tags without knowing property / names
   // lets us only have to update meta-tags component when adding / removing meta tags in the future
@@ -22,8 +78,14 @@ module.exports.render = (ref, data, locals) => {
   }
 
   // add author tag
-  if (data.authors.length > 0) {
-    const authors = data.authors.map(a => a.text).join(', ');
+  let nmcAuthor = importedNmcData.author;
+
+  if (_get(data, 'authors.length') > 0) {
+    const authors = data.authors.map(author => author.text).join(', ');
+
+    if (!hasImportedNmcData) {
+      nmcAuthor = data.authors[0].text;
+    }
 
     data.metaTags.push({ property: AUTHOR_NAME, content: authors });
   } else {
@@ -44,12 +106,12 @@ module.exports.render = (ref, data, locals) => {
     categories.push(data.sectionFront.toLowerCase());
   }
 
-  if (data.secondaryArticleType) {
-    categories.push(data.secondaryArticleType.toLowerCase());
+  if (data.secondarySectionFront) {
+    categories.push(data.secondarySectionFront.toLowerCase());
   }
 
-  if (locals.station && locals.station.category) {
-    categories.push(locals.station.category.toLowerCase());
+  if (_get(station, 'category')) {
+    categories.push(station.category.toLowerCase());
   }
 
   if (categories.length > 0) {
@@ -59,8 +121,8 @@ module.exports.render = (ref, data, locals) => {
   }
 
   // add station call letters tag
-  if (locals.station && locals.station.callsign) {
-    data.metaTags.push({ name: STATION_CALL_LETTERS, content: locals.station.callsign });
+  if (_get(station, 'callsign')) {
+    data.metaTags.push({ name: STATION_CALL_LETTERS, content: station.callsign });
   } else {
     // ON-543: Yes, on every page in www.radio.com unless it's a station page.
     data.metaTags.push({ name: STATION_CALL_LETTERS, content: 'NATL-RC' });
@@ -70,6 +132,37 @@ module.exports.render = (ref, data, locals) => {
     data.metaTags.push({name: ROBOTS, content: 'noindex, nofollow'});
   } else {
     data.unusedTags.push({type: 'name', name: ROBOTS});
+  }
+
+  // handle nmc tags
+  //
+  // note we use the 'data-was-imported' attribute to communicate to
+  //   'google-ad-manager/client.js' whether the nmc tags were imported.  If
+  //   they were, then google ad manager should ignore them when calculating its
+  //   own tracking data.  If the tags weren't imported, then they should use
+  //   the exact same values as the nmc meta tags.  This attribute is located on
+  //   every nmc meta tag because I didn't know where a single queryable
+  //   location could be (maybe window.<something> ?).
+  if (nmcAuthor) {
+    data.metaTags.push({
+      name: NMC.author,
+      content: nmcAuthor,
+      'data-was-imported': hasImportedNmcData
+    });
+  } else {
+    data.unusedTags.push({ type: 'name', name: NMC.author });
+  }
+
+  for (const key of nmcKeysExceptAuthor) {
+    if (nmcData[key]) {
+      data.metaTags.push({
+        name: NMC[key],
+        content: nmcData[key],
+        'data-was-imported': hasImportedNmcData
+      });
+    } else {
+      data.unusedTags.push({ type: 'name', name: NMC[key] });
+    }
   }
 
   return data;

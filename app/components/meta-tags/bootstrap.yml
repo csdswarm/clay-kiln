@@ -4,5 +4,6 @@ _components:
     authors: []
     publishDate: ""
     sectionFront: ""
-    secondaryArticleType: ""
+    secondarySectionFront: ""
+    contentTagItems: []
     noIndexNoFollow: false
