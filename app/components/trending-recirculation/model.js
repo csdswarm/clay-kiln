@@ -60,7 +60,7 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = async (ref, data, locals) => {
-  if (abTest()) {
+  if (abTest() && !locals.edit) {
     const lyticsId = _get(locals, 'lytics.uid'),
       noUserParams = lyticsId ? {} : {url: locals.url},
       recommendations = await lyticsApi.recommend(lyticsId, {limit: MAX_LYTICS, contentsegment: 'recommended_for_you', ...noUserParams}),
