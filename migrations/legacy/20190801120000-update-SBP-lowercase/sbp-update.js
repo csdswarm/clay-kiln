@@ -8,8 +8,8 @@ if (!host) {
   throw new Error('Missing host');
 }
 
-if (!layoutType) {
-  throw new Error('Missing layout type.')
+if (!componentType) {
+  throw new Error('Missing component type.')
 }
 
 if (!instanceType) {
