@@ -1,12 +1,12 @@
 <div class="component--station-listen-nav">
-  {{#ifAll nowPlaying onAir }}
+  {{#ifAny nowPlaying onAir }}
   <section class="drawer__playing">
     <ul>
       {{#if nowPlaying }}
       <li>
         <h3>now playing</h3>
         <div data-play-station="{{ station.id }}" class="{{ playingClass }}">
-          <img src="{{ nowPlaying.imageUrl }}?width=100&height=100&crop=1:1,offset-y0" alt="{{ nowPlaying.title }}">
+          <img src="{{ nowPlaying.imageUrl }}width=100&height=100&crop=1:1,offset-y0" alt="{{ nowPlaying.title }}">
           <div>
             <h3>{{ nowPlaying.title }}</h3>
             <span>{{ nowPlaying.artist }}</span>
@@ -18,7 +18,7 @@
       <li>
         <h3>on-air</h3>
         <div data-play-station="{{ station.id }}" class="{{ playingClass }}">
-          <img src="{{ onAir.image }}?width=100&height=100&crop=1:1,offset-y0" alt="{{ onAir.name }}">
+          <img src="{{ onAir.image }}width=100&height=100&crop=1:1,offset-y0" alt="{{ onAir.name }}">
           <div>
             <h3>{{ onAir.name }}</h3>
             <span>{{ onAir.scheduleDays }}: {{ userLocalDate onAir.startTime 'h:mm A' }}</span>
@@ -28,7 +28,7 @@
       {{/if }}
     </ul>
   </section>
-  {{/ifAll }}
+  {{/ifAny }}
   <section class="drawer__audio">
     <ul>
       <li>
@@ -59,7 +59,7 @@
       <li>
         <h3>featured {{ type }}</h3>
         <a href="{{ url }}">
-          <img src="{{ image }}?width=100&height=100&crop=1:1,offset-y0" alt="{{ headline }}">
+          <img src="{{ image }}width=100&height=100&crop=1:1,offset-y0" alt="{{ headline }}">
           <span>{{ headline }}</span>
         </a>
       </li>
