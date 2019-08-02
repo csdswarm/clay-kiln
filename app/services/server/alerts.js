@@ -5,6 +5,8 @@ const db = require('../server/db'),
   _pick = require('lodash/pick'),
   log = require('../universal/log').setup({file: __filename}),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
+  checkEndsBeforeStart = (start, end) => new Date(end) < new Date(start),
+  checkEndsInPast = end => new Date(end) < Date.now(),
   /**
    * Transform Postgres response into just data
    *
@@ -12,21 +14,6 @@ const db = require('../server/db'),
    * @returns {array}
    */
   pullDataFromResponse = (response) => response.rows.map(({id, data}) => ({id, ...data})),
-  /**
-   * Verifies that the start date occurs before the end date
-   *
-   * @param {string} start
-   * @param {string} end
-   * @returns {boolean}
-   */
-  checkThatStartIsBeforeEnd = (start, end) => new Date(start) < new Date(end),
-  /**
-   * Verifies that the end date occurs after the current date
-   *
-   * @param {string} end
-   * @returns {boolean}
-   */
-  checkThatEndIsNotInThePast = end => new Date(end) > Date.now(),
   /**
    * Checks if the start and end times for an alert overlap with any other alert
    *
@@ -64,12 +51,12 @@ const db = require('../server/db'),
     const {start, end, station} = alert;
 
     try {
-      if (!checkThatStartIsBeforeEnd(start, end)) {
-        return {failed: true, message: 'Cannot save this alert. Its start time is after its end time'};
+      if (checkEndsBeforeStart(start, end)) {
+        return {failed: true, message: 'Cannot save this alert. It ends before it starts.'};
       }
 
-      if (!checkThatEndIsNotInThePast(end)) {
-        return {failed: true, message: 'Cannot save this alert. It is in the past.'};
+      if (checkEndsInPast(end)) {
+        return {failed: true, message: 'Cannot save this alert. It ends in the past.'};
       }
 
       if (await checkForOverlap(start, end, station, key)) {
