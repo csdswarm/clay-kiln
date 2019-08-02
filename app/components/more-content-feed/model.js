@@ -147,7 +147,7 @@ module.exports.render = function (ref, data, locals) {
       data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
     }
     if (data.sectionFront) {
-      queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
+      queryService.addMust(query, { match: { sectionFront: data.sectionFront.toLowerCase() }});
     }
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom === 'author') {
@@ -174,9 +174,13 @@ module.exports.render = function (ref, data, locals) {
       return data;
     }
     if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
-      queryService.addMust(query, { match: { secondarySectionFront: data.secondarySectionFrontManual || locals.secondarySectionFront }});
+      const secondarySectionFront = data.secondarySectionFrontManual || locals.secondarySectionFront;
+
+      queryService.addMust(query, { match: { secondarySectionFront: secondarySectionFront.toLowerCase() }});
     } else if (locals.sectionFront || data.sectionFrontManual) {
-      queryService.addMust(query, { match: { sectionFront: data.sectionFrontManual || locals.sectionFront }});
+      const sectionFront = data.sectionFrontManual || locals.sectionFront;
+
+      queryService.addMust(query, { match: { sectionFront: sectionFront.toLowerCase() }});
     }
   } else if (data.populateFrom === 'all-content') {
     if (!locals) {
@@ -185,7 +189,7 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (data.filterBySecondary) {
-    queryService.addMust(query, { match: { secondarySectionFront: data.filterBySecondary }});
+    queryService.addMust(query, { match: { secondarySectionFront: data.filterBySecondary.toLowerCase() }});
   }
 
   queryService.addSort(query, {date: 'desc'});
@@ -203,7 +207,7 @@ module.exports.render = function (ref, data, locals) {
       let [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter.toLowerCase() }});
       }
     });
   }
