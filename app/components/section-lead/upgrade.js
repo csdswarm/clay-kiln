@@ -48,3 +48,14 @@ module.exports['4.0'] = function (uri, data) {
 
   return data;
 };
+
+
+module.exports['5.0'] = function (uri, data) {
+  let newData = Object.assign({}, data);
+
+  newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
+  
+  delete newData.filterSecondaryArticleTypes;
+  
+  return newData;
+};

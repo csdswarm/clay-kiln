@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 2.0
 _description: |
   Latest videos module
 
@@ -41,38 +41,16 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondaryArticleTypes:
-  _label: Exclude Secondary Article Types
+filterSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
   _has:
-    input: checkbox-group
-    options:
-      - Pop
-      - Alternative
-      - Country
-      -
-        name: Hip-Hop R&B
-        value: Hip-Hop R&B
-      - Rock
-      - Icons
-      - Entertainment News
-      - Movies
-      - Television
-      - National News
-      - Politics
-      - Local Politics
-      - Small Business Pulse
-      - NFL
-      - MLB
-      - NBA
-      - NHL
-      - NCAA Football
-      - NCAA Basketball
-      -
-        name: MMA & WWE
-        value: MMA & WWE
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
 
 _groups:
   settings:
     fields:
       - filterTags
-      - filterSecondaryArticleTypes
+      - filterSecondarySectionFronts

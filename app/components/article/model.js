@@ -4,7 +4,7 @@ const createContent = require('../../services/universal/create-content'),
   {autoLink} = require('../breadcrumbs');
 
 module.exports.render = function (ref, data, locals) {
-  autoLink(data, ['sectionFront', 'secondaryArticleType'], locals.site.host);
+  autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);
   return createContent.render(ref, data, locals);
 };
 

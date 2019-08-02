@@ -128,8 +128,12 @@ module.exports = router => {
    * Proxy for brightcove api endpoints
    */
   router.get('/api/brightcove', function (req, res) {
-    brightcoveApi.get(req.query).then(function (data) {
-      return res.send(data);
+    brightcoveApi.get(req.query).then(function ({ status, statusText, body: data }) {
+      if (status === 200) {
+        return res.send(data);
+      } else {
+        return res.status(500).send(statusText);
+      }
     });
   });
 
