@@ -13,24 +13,77 @@ const db = require('../server/db'),
    */
   pullDataFromResponse = (response) => response.rows.map(({id, data}) => ({id, ...data})),
   /**
+   * Verifies that the start date occurs before the end date
+   *
+   * @param {string} start
+   * @param {string} end
+   * @returns {boolean}
+   */
+  checkThatStartIsBeforeEnd = (start, end) => new Date(start) < new Date(end),
+  /**
+   * Verifies that the end date occurs after the current date
+   *
+   * @param {string} end
+   * @returns {boolean}
+   */
+  checkThatEndIsNotInThePast = end => new Date(end) > Date.now(),
+  /**
    * Checks if the start and end times for an alert overlap with any other alert
    *
    * @param {string} start
    * @param {string} end
    * @param {string} station
-   *
+   * @param {string} key
    * @returns {boolean}
    */
-  checkForOverlap = async (start, end, station) => {
-    const response = await db.raw(`
-        SELECT id FROM alert
-        WHERE tsrange(?, ?)
-            && tsrange((data->>'start')::timestamp, (data->>'end')::timestamp)
-            AND data->>'active' = 'true'
-            AND data->>'station' = ?
-    `, [start, end, station]);
+  checkForOverlap = async (start, end, station, key) => {
+    const onlyCurrentEntries = '(data->>\'end\')::timestamp > NOW()',
+      onlyActiveEntries = 'data->>\'active\' = \'true\'',
+      onlyEntriesWithinSameStation = 'data->>\'station\' = ?',
+      entriesWhoseTimeRangeOverlapTheSavedEntry =
+        'tsrange(?, ?) && tsrange((data->>\'start\')::timestamp, (data->>\'end\')::timestamp)',
+      exceptTheEntryBeingSaved = 'id != ?',
+      response = await db.raw(`
+      SELECT id FROM alert
+      WHERE ${onlyCurrentEntries} 
+        AND ${onlyActiveEntries} 
+        AND ${onlyEntriesWithinSameStation}
+        AND ${entriesWhoseTimeRangeOverlapTheSavedEntry} 
+        AND ${exceptTheEntryBeingSaved}`,
+      [station, start, end, key]);
 
     return response.rowCount > 0;
+  },
+  /**
+   * Validate an alert
+   *
+   * @param {string} key
+   * @param {Object} alert
+   */
+  validate = async (key, alert) => {
+    const {start, end, station} = alert;
+
+    try {
+      if (!checkThatStartIsBeforeEnd(start, end)) {
+        return {failed: true, message: 'Cannot save this alert. Its start time is after its end time'};
+      }
+
+      if (!checkThatEndIsNotInThePast(end)) {
+        return {failed: true, message: 'Cannot save this alert. It is in the past.'};
+      }
+
+      if (await checkForOverlap(start, end, station, key)) {
+        return {failed: true, message: 'Cannot save this alert. Its start and end times overlap with another alert'};
+      }
+    } catch (error) {
+      log('error', 'There was a problem validating the alert', {alert, error});
+      return {
+        failed: true,
+        message: 'An unanticipated error occurred while trying to validate the alert. Please try again.'
+      };
+    }
+
+    return {failed: false};
   },
   /**
    * Add routes for alerts
@@ -76,12 +129,13 @@ const db = require('../server/db'),
      * Add a new alert
      */
     app.post('/alerts', async (req, res) => {
+
       const alert = req.body,
         key = `${CLAY_SITE_HOST}/_alert/${uuidV4()}`,
-        overlap = await checkForOverlap(alert.start, alert.end, alert.station);
+        validation = await validate(key, alert);
 
-      if (overlap) {
-        return res.status(400).send('Cannot save this alert. Its start and end times overlap with another alert');
+      if (validation.failed) {
+        return res.status(400).send(validation.message);
       }
 
       try {
@@ -99,10 +153,10 @@ const db = require('../server/db'),
      */
     app.put('/alerts', async (req, res) => {
       const {id: key, ...alert} = req.body,
-        overlap = await checkForOverlap(alert.start, alert.end, alert.station);
+        validation = await validate(key, alert);
 
-      if (alert.active && overlap) {
-        return res.status(400).send('Cannot save this alert. Its start and end times overlap with another alert');
+      if (validation.failed) {
+        return res.status(400).send(validation.message);
       }
 
       try {
