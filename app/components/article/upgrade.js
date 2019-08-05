@@ -1,9 +1,8 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  rest = require('../../services/universal/rest'),
-  getComponentInstance = (uri, opts) => rest.get(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, opts),
-  putComponentInstance = (uri, body) => rest.put(`${process.env.CLAY_SITE_PROTOCOL}://${uri}`, body, true),
+  addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
@@ -152,4 +151,21 @@ module.exports['6.0'] = async (uri, data) => {
   ]);
 
   return data;
+};
+
+// ensure adTags exists
+module.exports['7.0'] = async function (uri, data) {
+  data = await addAdTags('article', uri, data);
+
+  return data;
+};
+
+module.exports['8.0'] = function (uri, data) {
+  let newData = Object.assign({}, data);
+
+  newData.secondarySectionFront = data.secondaryArticleType || '';
+
+  delete newData.secondaryArticleType;
+
+  return newData;
 };

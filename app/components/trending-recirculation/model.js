@@ -12,7 +12,9 @@ const _get = require('lodash/get'),
     'feedImgUrl',
     'sectionFront'
   ],
-  defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
+  defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
+  MAX_LYTICS = 10, // since lytics has bad data, get more than the required amount
+  MAX_ITEMS = 6;
 
 /**
  * @param {string} ref
@@ -58,25 +60,42 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = async (ref, data, locals) => {
-  if (abTest()) {
+  if (abTest() && !locals.edit) {
     const lyticsId = _get(locals, 'lytics.uid'),
       noUserParams = lyticsId ? {} : {url: locals.url},
-      recommendations = await lyticsApi.recommend(lyticsId, {limit: 6, contentsegment: 'recommended_for_you', ...noUserParams}),
-      articles = recommendations.map(upd => ({
-        url: `https://${upd.url}`,
-        canonicalUrl: `https://${upd.url}`,
-        primaryHeadline: upd.title,
-        feedImgUrl: upd.primary_image || defaultImage
-      }));
+      recommendations = await lyticsApi.recommend(lyticsId, {limit: MAX_LYTICS, contentsegment: 'recommended_for_you', ...noUserParams}),
+      recommendedUrls = recommendations.map(upd => upd.url);
+    let articles =
+      // remove duplicates by checking the position of the urls and remove items that have no title
+      recommendations.filter((item, index) => recommendedUrls.indexOf(item.url) === index && item.title)
+        .map(
+          upd => ({
+            url: `https://${upd.url}`,
+            canonicalUrl: `https://${upd.url}`,
+            primaryHeadline: upd.title,
+            feedImgUrl: upd.primary_image || defaultImage,
+            lytics: true,
+            params: '?article=recommended'
+          })
+        ).splice(0, MAX_ITEMS);
 
     if (articles.length > 0) {
+      // backfill if there are missing items
+      if (articles.length !== MAX_ITEMS) {
+        const urls = articles.map(item => item.canonicalUrl),
+          availableItems = data.items.filter(item => !urls.includes(item.canonicalUrl));
+
+        articles = articles.concat(availableItems.splice(0, MAX_ITEMS - articles.length));
+      }
+
       data.items = articles;
       data.lytics = true;
     }
   }
 
   (data.items || []).map(item => {
-    item.params = `?article=${data.lytics ? 'recommended' : 'curated'}`;
+    item.params = item.params || '?article=curated';
+    item.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
   });
 
   return data;

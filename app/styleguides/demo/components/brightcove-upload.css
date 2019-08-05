@@ -1,0 +1,11 @@
+.kiln-field {
+  .brightcove-upload,
+  .brightcove-update {
+    .button-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-bottom: em(16);
+    }
+  }
+}

@@ -1,0 +1,478 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.account {
+  @mixin radium-form-font4;
+  background: $alabaster;
+
+  a {
+    color: $parisM;
+
+    &:hover,
+    &:focus {
+      color: $purple;
+    }
+
+    &.underline-link{
+      text-decoration: underline;
+      &:link,
+      &:hover,
+      &:active,
+      &:visited {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  h1 {
+    @mixin radium-form-font2;
+    font-weight: 900;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    @mixin radium-form-font5;
+    margin-bottom: 10px;
+  }
+
+  h3 {
+    @mixin radium-form-font1;
+    margin-bottom: 20px;
+  }
+
+  p {
+    @mixin radium-form-font8;
+    margin-bottom: 10px;
+  }
+
+  @define-mixin message $color, $pad, $bottomMargin {
+    display: inline-block;
+    width: 100%;
+    padding: $pad;
+    margin-top: 10px;
+    margin-bottom: $bottomMargin;
+    border: 2px solid $color;
+  }
+
+  .error {
+    @mixin message $red, 10px, 30px;
+    @mixin radium-form-font9;
+    text-align: center;
+  }
+
+  .success {
+    @mixin message $fruitSalad, 5px, 30px;
+    @mixin radium-form-font10;
+  }
+
+  .image {
+    padding-top: 30px;
+    padding-bottom: 20px;
+    display: block;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .terms {
+    @mixin message $parisM, 5px, 15px;
+    @mixin radium-form-font6;
+    text-align: center;
+  }
+
+  .password {
+    @mixin radium-form-font-11;
+    float: right;
+  }
+
+  .small {
+    @mixin radium-form-font6;
+  }
+
+  .light-bg {
+    background-color: $alabaster;
+  }
+
+  .loading {
+    position: relative;
+    display: block;
+    padding: 12px 0 12px 0;
+    color: $white;
+    background: $parisM;
+    width: 100%;
+    margin: 5px auto;
+  }
+
+  .section {
+    padding: 5px 0;
+  }
+
+
+  /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+  /* ||||||||||||||||||| FORM ||||||||||||||||||| */
+  /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+  @define-mixin _input {
+    @mixin radium-form-font7;
+    border: none;
+    height: 46px;
+    outline: 0;
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    background-color: $mercury;
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03) inset;
+    margin: 0 0 15px;
+    @mixin medium-small-screen {
+      font-size: 16px;
+    }
+  }
+
+  .input {
+    @mixin _input;
+  }
+
+  .form-style-5 {
+    min-width: 320px;
+    width: 48%;
+    background: $alabaster;
+    margin: 10px auto;
+    padding: 20px;
+    border-radius: 8px;
+    @mixin radium-form-font5;
+
+    fieldset {
+      border: none;
+    }
+
+    input[type="text"],
+    input[type="datetime"],
+    input[type="email"],
+    input[type="number"],
+    input[type="search"],
+    input[type="password"],
+    input[type="url"],
+    textarea,
+    select {
+      @mixin _input;
+    }
+
+    input[type="text"]:focus,
+    input[type="datetime"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus,
+    input[type="search"]:focus,
+    input[type="time"]:focus,
+    input[type="url"]:focus,
+    textarea:focus,
+    select:focus {
+      background: $alto;
+    }
+
+    select {
+      -webkit-appearance: menulist-button;
+      height: 35px;
+    }
+
+    /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+    /* ||||||||||||| Mobile Datepicker |||||||||||| */
+    /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+    .dob {
+      opacity: 0;
+      position: absolute;
+    }
+
+    input[type="submit"],
+    input[type="button"] {
+      position: relative;
+      display: block;
+      padding: 19px 39px 18px 39px;
+      border: 0;
+      background: $parisM;
+      @mixin radium-form-font3;
+      text-align: center;
+      font-style: normal;
+      width: 100%;
+      margin: 10px auto;
+      min-width: 220px;
+    }
+
+    input[type="button2"] {
+      position: relative;
+      float: left;
+      display: block;
+      padding: 19px 39px 18px 39px;
+      border: 0;
+      @mixin radium-form-font3;
+      background: $parisM;
+      text-align: center;
+      font-style: normal;
+      width: 49%;
+      margin: 10px 4px 10px auto;
+      min-width: 225px;
+    }
+
+    input[type="submit"]:hover,
+    input[type="button"]:hover,
+    input[type="button2"]:hover {
+      background: $purple;
+    }
+  }
+
+  /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+  /* ||||||||||||| Mobile Datepicker |||||||||||| */
+  /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+  a {
+    text-decoration: none;
+    color: $parisM;
+
+    &:visited {
+      text-decoration: none;
+      color: $parisM;
+    }
+
+    &:hover {
+      color: $endeavor;
+      text-decoration: underline;
+    }
+
+    &:not([href]):not([tabindex]) {
+      color: inherit;
+      text-decoration: none;
+
+      &:focus,
+      &:hover {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
+
+  .form-loading {
+    user-select: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.03);
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+  }
+
+  .facebook-button {
+    cursor: pointer;
+    opacity: 0.9;
+    transition: opacity 50ms;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+  /* |||||||||||| Desktop Datepicker |||||||||||| */
+  /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+  .vdp-datepicker__calendar {
+    position: static;
+    width: auto;
+
+    .cell {
+      &.selected {
+        background-color: $parisM !important;
+        color: $alabaster;
+      }
+
+      &:hover {
+        border-color: $parisM !important;
+      }
+    }
+  }
+
+
+  /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+  /* ||||||||||||||| Radio Buttons |||||||||||||| */
+  /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+  .h1-login {
+    line-height: 180%;
+  }
+
+  .sign-in {
+    position: relative;
+  }
+
+  .h1-signup {
+    line-height: 180%;
+  }
+
+  .sign-up {
+    position: relative;
+  }
+
+  .closeModal {
+    position: absolute;
+    width: 23px;
+    height: 23px;
+    border: 2px solid white;
+    background-color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    right: 0;
+
+    &::before, &::after {
+      position: absolute;
+      top: 8px;
+      left: 3px;
+      width: 13px;
+      height: 3px;
+      content: "";
+      background-color: $parisM;
+    }
+
+    &::before {
+      transform: rotate(-45deg);
+    }
+
+    &::after {
+      transform: rotate(45deg);
+    }
+  }
+
+  label {
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    font-size: 12px;
+    line-height: 12px;
+    opacity: .7;
+    padding-left: 3px;
+    padding-top: 2px;
+  }
+
+  .radio-label {
+    position: static;
+    left: auto;
+    font-size: 16px;
+    opacity: 1;
+    padding-left: 0;
+    padding-top: 0;
+  }
+
+  .floating-label {
+    position: relative;
+    margin-bottom: 10px;
+    width: 100%;
+
+    label {
+      height: 0;
+      width: 0;
+      overflow: hidden;
+      position: absolute;
+      left: 0;
+      top: calc(50% - 5px);
+      opacity: 0;
+      transition: all .3s ease;
+      font-size: 14px;
+      padding-left: 15px;
+    }
+
+    input {
+      display: flex;
+
+      &:not(:placeholder-shown) + label {
+        height: auto;
+        width: auto;
+        transform: translateY(-18px);
+        opacity: .7;
+        font-size: 12px;
+        padding-left: 2px;
+        position: absolute;
+        top: 18px;
+      }
+    }
+  }
+
+  .create-profile {
+    position: relative;
+  }
+
+  .disabled-ui {
+    opacity: 0.5;
+  }
+
+  .enabled-ui {
+    opacity: 1.0;
+  }
+
+  .radio-item {
+    display: inline-block;
+    position: relative;
+    padding: 0 6px;
+    margin: 10px 0 0;
+
+    input[type='radio'] {
+      display: none;
+
+      &:checked + label:after {
+        border-radius: 11px;
+        width: 12px;
+        height: 12px;
+        position: absolute;
+        top: 9px;
+        left: 10px;
+        content: " ";
+        display: block;
+        background: $parisM;
+      }
+    }
+
+    label {
+      color: $doveGray;
+      font-weight: normal;
+
+      &:before {
+        content: " ";
+        display: inline-block;
+        position: relative;
+        top: 5px;
+        margin: 0 5px 0 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 11px;
+        border: 2px solid $parisM;
+        background-color: transparent;
+      }
+    }
+  }
+
+  .gender-box {
+    padding-bottom: 15px;
+    padding-left: 10px;
+    background-color: $mercury;
+    margin-bottom: 15px;
+  }
+
+  .update-password {
+    position: relative;
+  }
+}
+

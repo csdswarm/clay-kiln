@@ -7,7 +7,7 @@
 // Import dependencies.
 import vanillaHandlebars from 'handlebars'
 import clayHBS from 'clayhandlebars'
-import clayKilnPartial from '../../app/node_modules/clay-kiln/template.handlebars'
+import clayKilnPartial from '../node_modules/clay-kiln/template.handlebars'
 import clayHelpers from '../../app/services/universal/helpers'
 
 // Attach handlebars helper dependencies from 'clayhandlebars'.

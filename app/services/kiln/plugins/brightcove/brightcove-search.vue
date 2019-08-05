@@ -54,12 +54,12 @@
             </ul>
             <ui-progress-circular v-show="loading"></ui-progress-circular>
         </div>
-        <div v-if="video.id" class="brightcove-video-preview">
+        <div v-if="video" class="brightcove-video-preview">
             <div class="video-preview__info">
                 <strong>{{video.name}}</strong>
                 <i class="video-preview__id">ID: {{video.id}}</i>
             </div>
-            <img class="video-preview__image" :src="video.imageUrl" />
+            <img v-if="video.imageUrl" class="video-preview__image" :src="video.imageUrl" />
         </div>
     </div>
 </template>
@@ -77,7 +77,7 @@
         props: ['name', 'data', 'schema', 'args'],
         data() {
             return {
-                video: {id: this.data},
+                video: this.data,
                 searchResults: [],
                 loading: false,
                 query: '',
@@ -86,30 +86,29 @@
             };
         },
         computed: {
-            params: function () {
+            params() {
                 const {endDate, query, startDate} = this;
                 if (endDate && startDate && endDate < startDate) {
                     return {query};
                 }
                 return {query, endDate, startDate};
             },
-            showResults: function () {
+            showResults() {
                 return this.loading || this.searchResults.length !== 0;
             },
-            validDateRange: function () {
+            validDateRange() {
                 return !this.endDate || !this.startDate || this.endDate > this.startDate;
             }
         },
         async created() {
             if (this.data) {
                 try {
-                    const results = await axios.get('/brightcove/search', {params: { query: this.data }});
-                    if (results.data[0]) {
-                        this.video = results.data[0];
+                    const { status, data: results } = await axios.get('/brightcove/search', {params: { query: this.data.id }});
+
+                    if (status === 200 && results[0]) {
+                        this.video = results[0];
                     }
-                } catch (e) {
-                    console.error('Error retrieving video info');
-                }
+                } catch (e) {}
             }
         },
         methods: {
@@ -122,8 +121,15 @@
                 const {query, endDate, startDate} = this.params
 
                 if (query || endDate || startDate) {
-                    axios.get('/brightcove/search', {params: {query, endDate, startDate}}).then(response => {
-                        this.searchResults = response.data;
+                    axios.get('/brightcove/search', {params: {query, endDate, startDate}}).then(({ status, data }) => {
+                        if (status === 200 && data) {
+                            this.searchResults = data;
+                        } else {
+                            this.searchResults = [];
+                        }
+                        this.loading = false;
+                    }).catch(e => {
+                        this.searchResults = [];
                         this.loading = false;
                     });
                 } else {
@@ -131,7 +137,7 @@
                     this.loading = false;
                 }
             }, 1000),
-            populateSearchResults: function() {
+            populateSearchResults() {
                 this.loading = true;
 
                 this.debouncedPopulateSearchResults();
@@ -139,7 +145,7 @@
             selectBrightcove(suggestion) {
                 this.video = suggestion;
                 this.searchResults = [];
-                this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.video.id })
+                this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.video });
             }
         },
         components: {
@@ -150,5 +156,3 @@
         }
     }
 </script>
-
-
