@@ -12,10 +12,12 @@ import QueryPayload from './QueryPayload'
 import ClientPlayerInterface from '../../../app/services/client/ClientPlayerInterface'
 const spaCommunicationBridge = SpaCommunicationBridge()
 const queryPayload = new QueryPayload()
+const sessionStorage = window.sessionStorage
 
 class SpaPlayerInterface {
   constructor (spaApp) {
     this.spa = spaApp
+    this.playerSession = JSON.parse(sessionStorage.getItem('currentlyPlaying')) || {}
     this.attachClientCommunication()
 
     // Attach event listeners to DOM
@@ -41,10 +43,18 @@ class SpaPlayerInterface {
       await this.bootPlayer()
 
       // If appropriate, pop the player bar onto the screen by loading a station.
-      const stationDetailPageStationId = this.extractStationIdFromSpaPayload()
+      const stationId = this.extractStationIdFromSpaPayload() || this.playerSession.id
 
-      if (stationDetailPageStationId) {
-        await this.loadStation(stationDetailPageStationId)
+      if (this.playerSession.playerState !== 'play') {
+        this.spa.$store.state.radioPlayer.autoplay = false
+      }
+
+      if (stationId) {
+        await this.loadStation(stationId)
+      }
+
+      if (this.playerSession.playerState !== 'play') {
+        this.spa.$store.state.radioPlayer.handlePause()
       }
     }
   }
@@ -69,8 +79,9 @@ class SpaPlayerInterface {
    */
   autoBootPlayer (path) {
     const matchedStationDetailRoute = path.match(/^\/(.+)\/listen$/)
+    const playerWasActive = Object.keys(this.playerSession).length !== 0
 
-    if (matchedStationDetailRoute) {
+    if (matchedStationDetailRoute || playerWasActive) {
       return true
     } else {
       return false
@@ -127,6 +138,7 @@ class SpaPlayerInterface {
           playerState: e.detail.playerState
         }
 
+        sessionStorage.setItem('currentlyPlaying', JSON.stringify(payload))
         spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', payload)
         this.spa.$store.commit(mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS, { currentlyPlaying: payload })
       })
