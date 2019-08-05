@@ -18,7 +18,7 @@ $mobile-text-line-height: em(17);
     margin-bottom: 0;
 
     .layout--one-column & {
-      margin-bottom: em(20)
+      margin-bottom: em(20);
     }
   }
 }
