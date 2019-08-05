@@ -1,9 +1,10 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
-  _ = require('lodash'),
+  _get = require('lodash/get'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
+  loadedIdsService = require('../../services/server/loaded-ids'),
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
   elasticIndex = 'published-content',
@@ -17,43 +18,46 @@ const queryService = require('../../services/server/query'),
   ],
   maxItems = 2;
 
+
 /**
- * @param {string} ref
+ * @param {string} uri
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = (ref, data, locals) => {
+module.exports.save = async (uri, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
 
-  return Promise.all(_.map(data.items, (item) => {
+  await Promise.all(data.items.map(async item => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, { shouldDedupeContent: false })
-      .then((result) => {
-        const article = Object.assign(item, {
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl,
-          lead: result.lead && result.lead[0] && result.lead[0]._ref ? result.lead[0]._ref.split('/')[2] : null
-        });
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts),
+      leadRef = _get(result, 'lead[0]._ref');
 
-        if (article.title) {
-          article.plaintextTitle = toPlainText(article.title);
-        }
-
-        return article;
-      });
-  }))
-    .then((items) => {
-      data.items = items;
-
-      return data;
+    Object.assign(item, {
+      uri: result._id,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      pageUri: result.pageUri,
+      urlIsValid: result.urlIsValid,
+      canonicalUrl: result.canonicalUrl,
+      feedImgUrl: result.feedImgUrl,
+      lead: leadRef
+        ? leadRef.split('/')[2]
+        : null
     });
+
+    if (item.title) {
+      item.plaintextTitle = toPlainText(item.title);
+    }
+  }));
+
+  return data;
 };
 
 /**
@@ -62,8 +66,21 @@ module.exports.save = (ref, data, locals) => {
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
+module.exports.render = async function (ref, data, locals) {
+  const curatedIds = data.items.filter(i => i.uri).map(i => i.uri),
+    availableSlots = maxItems - data.items.length;
+
+  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+
+  // it shouldn't be less than 0, but just in case
+  if (availableSlots <= 0) {
+    return data;
+  }
+
+  // this shouldn't be declared above the short circuit
+  // eslint-disable-next-line one-var
+  const numItemsToQuery = Math.min(availableSlots, data.fill),
+    query = queryService.newQueryWithCount(elasticIndex, numItemsToQuery, locals);
   let cleanUrl;
 
   // items are saved from form, articles are used on FE
@@ -91,25 +108,13 @@ module.exports.render = function (ref, data, locals) {
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
   }
 
-  // exclude the curated content from the results
-  if (data.items && !isComponent(locals.url)) {
-    data.items.forEach(item => {
-      if (item.canonicalUrl) {
-        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-      }
-    });
+  try {
+    const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true });
+
+    data.articles = data.items.concat(results);
+  } catch (e) {
+    queryService.logCatch(e, ref);
   }
 
-  return queryService.searchByQuery(query, locals, { shouldDedupeContent: true })
-    .then(function (results) {
-      const limit = data.fill;
-
-      data.articles = data.items.concat(_.take(results, limit)).slice(0, maxItems); // show a maximum of maxItems links
-      return data;
-    })
-    .catch(e => {
-      queryService.logCatch(e, ref);
-      return data;
-    });
+  return data;
 };

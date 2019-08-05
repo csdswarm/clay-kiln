@@ -44,7 +44,7 @@ function getArticleData(ref, data, locals, fields, searchOpts) {
 }
 
 // I don't see a good way to refactor this to require fewer parameters.  We
-//   could some of these into an object, but that just gets around the problem
+//   could stuff these into an object, but that just gets around the problem
 //   rather than solving it.
 // eslint-disable-next-line max-params
 module.exports.getArticleDataAndValidate = function (ref, data, locals, fields, searchOpts) {

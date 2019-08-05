@@ -1,5 +1,6 @@
 'use strict';
 const queryService = require('../../services/server/query'),
+  loadedIdsService = require('../../services/server/loaded-ids'),
   db = require('../../services/server/db'),
   contentTypeService = require('../../services/universal/content-type'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
@@ -58,16 +59,6 @@ const queryService = require('../../services/server/query'),
         queryService.addMustNot(query, {match: {canonicalUrl: cleanUrl}});
       }
 
-      // exclude the curated content from the results
-      if (data.items && !isComponent(locals.url)) {
-        data.items.forEach(item => {
-          if (item.canonicalUrl) {
-            cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-            queryService.addMustNot(query, {match: {canonicalUrl: cleanUrl}});
-          }
-        });
-      }
-
       // exclude trending recirculation content from the results.
       if (trendingRecircItems.length && !isComponent(locals.url)) {
         trendingRecircItems.forEach(item => {
@@ -81,13 +72,12 @@ const queryService = require('../../services/server/query'),
       // hydrate item list.
       const hydrationResults = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true });
 
-      data.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-
-      return data;
+      data.articles = data.items.concat(hydrationResults);
     } catch (e) {
       queryService.logCatch(e, ref);
-      return data;
     }
+
+    return data;
   },
   /**
    * @param {object} data
@@ -113,21 +103,28 @@ const queryService = require('../../services/server/query'),
   };
 
 /**
- * @param {string} ref
+ * @param {string} uri
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = async (ref, data, locals) => {
+module.exports.save = async (uri, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
+
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, { shouldDedupeContent: false });
+
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
 
     return  {
       ...item,
+      uri: result._id,
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       pageUri: result.pageUri,
       urlIsValid: result.urlIsValid,
@@ -145,13 +142,23 @@ module.exports.save = async (ref, data, locals) => {
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = function (ref, data, locals) {
+module.exports.render = async function (ref, data, locals) {
   if (data.populateBy === 'station' && locals.params) {
     return renderStation(data, locals);
   }
 
+  const curatedIds = data.items.filter(i => i.uri).map(i => i.uri),
+    availableSlots = maxItems - data.items.length;
+
+  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+
+  // if there are no available slots then there's no need to query
+  if (availableSlots <= 0) {
+    return data;
+  }
+
   if (data.populateBy === 'tag' && data.tag && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
 
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
@@ -161,11 +168,11 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
 
     queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     return renderDefault(ref, data, locals, query);
   }
 
-  return Promise.resolve(data);
+  return data;
 };

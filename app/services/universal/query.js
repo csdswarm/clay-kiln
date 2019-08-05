@@ -5,11 +5,20 @@ const _ = require('lodash'),
   protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
- * @param {object} result
- * @returns {Array}
+ * @param {object} searchOpts
+ * @returns {function}
  */
-function formatSearchResult(result) {
-  return _.map(result.hits.hits, '_source');
+function getFormatSearchResult(searchOpts) {
+  return result => {
+    if (!searchOpts.includeIdInResult) {
+      return _.map(result.hits.hits, '_source');
+    }
+
+    return result.hits.hits.map(hit => {
+      hit._source._id = hit._id;
+      return hit._source;
+    });
+  };
 }
 
 /**
@@ -399,7 +408,7 @@ module.exports.onlyWithTheseFields = onlyWithTheseFields;
 module.exports.onlyWithinThisSite = onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = formatAggregationResults;
-module.exports.formatSearchResult = formatSearchResult;
+module.exports.getFormatSearchResult = getFormatSearchResult;
 module.exports.formatProtocol = formatProtocol;
 module.exports.moreLikeThis = moreLikeThis;
 module.exports.newNestedQuery = newNestedQuery;

@@ -45,13 +45,17 @@ function newQueryWithCount(index, count, locals) {
  * Query Elastic and clean up raw result object
  * to only display array of results
  * @param  {Object} query
+ * @param  {Object} _locals - currently unused
+ * @param  {Object} opts - see server/query.js for opts description
  * @return {Promise}
  * @example searchByQuery({"index":"published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
-function searchByQuery(query) {
+function searchByQuery(query, _locals, opts) {
+  const formatSearchResult = universalQuery.getFormatSearchResult(opts);
+
   return searchByQueryWithRawResult(query)
-    .then(universalQuery.formatSearchResult)
+    .then(formatSearchResult)
     .then(universalQuery.formatProtocol)
     .catch(e => {
       throw new Error(e);
@@ -61,7 +65,6 @@ function searchByQuery(query) {
 /**
  * Query Elastic using the _search endpoint
  * @param  {Object} query
- * @param  {Object} locals
  * @return {Object}
  */
 function searchByQueryWithRawResult(query) {
@@ -169,7 +172,7 @@ module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
 module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
-module.exports.formatSearchResult = universalQuery.formatSearchResult;
+module.exports.getFormatSearchResult = universalQuery.getFormatSearchResult;
 module.exports.moreLikeThis = universalQuery.moreLikeThis;
 
 // For testing

@@ -3,8 +3,9 @@
 const _assign = require('lodash/assign'),
   _pickBy = require('lodash/pickBy'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  loadedIdsService = require('../../services/server/loaded-ids'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
-  ELASTIC_FIELDS = [
+  elasticFields = [
     'primaryHeadline',
     'pageUri'
   ];
@@ -17,6 +18,7 @@ const _assign = require('lodash/assign'),
  */
 function assignToData(data, result) {
   _assign(data, _pickBy({
+    uri: result._id,
     title: data.overrideTitle || result.primaryHeadline,
     pageUri: result.pageUri,
     urlIsValid: result.urlIsValid
@@ -29,9 +31,22 @@ function assignToData(data, result) {
   return data;
 }
 
-module.exports.save = (ref, data, locals) => {
-  return recircCmpt.getArticleDataAndValidate(ref, data, locals, ELASTIC_FIELDS, { shouldDedupeContent: false })
+module.exports.save = (uri, data, locals) => {
+  const searchOpts = {
+    includeIdInResult: true,
+    shouldDedupeContent: false
+  };
+
+  return recircCmpt.getArticleDataAndValidate(uri, data, locals, elasticFields, searchOpts)
     .then( result => assignToData(data, result) );
+};
+
+module.exports.render = async (uri, data, locals) => {
+  if (data.uri) {
+    await loadedIdsService.appendToLocalsAndRedis([data.uri], locals);
+  }
+
+  return data;
 };
 
 // export for use in upgrade.js

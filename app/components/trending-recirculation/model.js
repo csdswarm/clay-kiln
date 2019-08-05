@@ -1,10 +1,12 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  _includes = require('lodash/includes'),
   abTest = require('../../services/universal/a-b-test'),
   lyticsApi = require('../../services/universal/lyticsApi'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
+  loadedIdsService = require('../../services/server/loaded-ids'),
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -14,25 +16,30 @@ const _get = require('lodash/get'),
   ],
   defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
   MAX_LYTICS = 10, // since lytics has bad data, get more than the required amount
-  MAX_ITEMS = 6;
+  MAX_ITEMS = 6,
+  searchOpts = {
+    includeIdInResult: true,
+    shouldDedupeContent: false
+  };
 
 /**
- * @param {string} ref
+ * @param {string} uri
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = (ref, data, locals) => {
+module.exports.save = async (uri, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
 
-  return Promise.all(data.items.map(async (item) => {
+  data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, { shouldDedupeContent: false }),
+    const result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts),
       article = {
         ...item,
+        uri: result._id,
         primaryHeadline: item.overrideTitle || result.primaryHeadline,
         pageUri: result.pageUri,
         urlIsValid: result.urlIsValid,
@@ -45,26 +52,24 @@ module.exports.save = (ref, data, locals) => {
     }
 
     return article;
-  }))
-    .then((items) => {
-      data.items = items;
+  }));
 
-      return data;
-    });
+  return data;
 };
 
 /**
- * @param {string} ref
+ * @param {string} uri
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = async (ref, data, locals) => {
+module.exports.render = async (uri, data, locals) => {
   if (abTest() && !locals.edit) {
     const lyticsId = _get(locals, 'lytics.uid'),
       noUserParams = lyticsId ? {} : {url: locals.url},
       recommendations = await lyticsApi.recommend(lyticsId, {limit: MAX_LYTICS, contentsegment: 'recommended_for_you', ...noUserParams}),
-      recommendedUrls = recommendations.map(upd => upd.url);
+      recommendedUrls = recommendations.map(upd => upd.url),
+      currentlyLoadedIds = await loadedIdsService.lazilyGetFromLocals(locals);
     let articles =
       // remove duplicates by checking the position of the urls and remove items that have no title
       recommendations.filter((item, index) => recommendedUrls.indexOf(item.url) === index && item.title)
@@ -78,6 +83,17 @@ module.exports.render = async (ref, data, locals) => {
             params: '?article=recommended'
           })
         ).splice(0, MAX_ITEMS);
+
+    // fetch the content uri for deduping purposes
+    articles = await Promise.all(articles.map(async anArticle => {
+      const result = await recircCmpt.getArticleDataAndValidate(uri, anArticle, locals, [], searchOpts);
+
+      anArticle.uri = result._id;
+
+      return anArticle;
+    }));
+
+    articles = articles.filter(anArticle => !_includes(currentlyLoadedIds, anArticle.uri));
 
     if (articles.length > 0) {
       // backfill if there are missing items
@@ -97,6 +113,10 @@ module.exports.render = async (ref, data, locals) => {
     item.params = item.params || '?article=curated';
     item.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
   });
+
+  const newLoadedIds = data.items.filter(i => i.uri).map(i => i.uri);
+
+  await loadedIdsService.appendToLocalsAndRedis(newLoadedIds, locals);
 
   return data;
 };

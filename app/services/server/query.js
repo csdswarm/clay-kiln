@@ -1,7 +1,6 @@
 'use strict';
 
 const _every = require('lodash/every'),
-  _isEmpty = require('lodash/isEmpty'),
   amphoraSearch = require('amphora-search'),
   bluebird = require('bluebird'),
   log = require('../universal/log').setup({ file: __filename }),
@@ -70,15 +69,29 @@ function newQueryWithCount(index, count) {
  *
  * @param  {Object} query
  * @param  {Object} [locals]
- * @param  {Object} [opts] - passed to searchByQueryWithRawResult
+ * @param  {Object} [opts] - various search options shared with
+ *                           searchByQueryWithRawResult.  This method relies on
+ *                           : 'includeIdInResult'
+ *                           : 'transofrmResult'
  * @return {Promise}
  * @example searchByQuery({"index":"local_published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
 function searchByQuery(query, locals, opts) {
+  const formatSearchResult = universalQuery.getFormatSearchResult(opts);
+
   return searchByQueryWithRawResult(query, locals, opts)
-    .then(universalQuery.formatSearchResult)
-    .then(universalQuery.formatProtocol)
+    .then(async rawResult => {
+      let formattedResult = await formatSearchResult(rawResult);
+
+      formattedResult = await universalQuery.formatProtocol(formattedResult);
+
+      if (!opts.transformResult) {
+        return formattedResult;
+      }
+
+      return opts.transformResult(formattedResult, rawResult);
+    })
     .catch(originalErr => {
       const err = originalErr instanceof Error
         ? originalErr
@@ -89,35 +102,13 @@ function searchByQuery(query, locals, opts) {
 }
 
 /**
- * Adds all the _id's from the query results to locals.loadedIds and ensures
- *   they are added to the redis store.
- *
- * Note: this method should only be called if locals was passed
- *
- * @param {object} results
- * @param {object} locals
- */
-async function appendLoadedIdsToLocalsAndRedis(results, locals) {
-  const hits = results.hits.hits,
-    allHitsHaveIds = _every(hits, h => h._id),
-    resultIds = hits.map(h => h._id);
-
-  if (_isEmpty(hits) || !allHitsHaveIds) {
-    return;
-  }
-
-  locals.loadedIds = locals.loadedIds.concat(resultIds);
-  await loadedIdsService.append(locals.rdcSessionID, resultIds);
-}
-
-/**
  * Query Elastic client for results. If locals is passed then its loadedIds
  *   property will be updated.
  *
  * @param  {Object} query
  * @param  {Object} [locals]
- * @param  {Object} [opts] - meant to hold various options in the future.
- *   Currently it just holds the required option 'shouldDedupeContent'.
+ * @param  {Object} [opts] - various search options shared with searchByQuery.
+ *   This method uses 'shouldDedupeContent'.
  * @return {Object}
  */
 async function searchByQueryWithRawResult(query, locals, opts = {}) {
@@ -154,7 +145,13 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
   log('debug', JSON.stringify(results));
 
   if (opts.shouldDedupeContent) {
-    await appendLoadedIdsToLocalsAndRedis(results, locals);
+    const hits = results.hits.hits,
+      allHitsHaveIds = _every(hits, h => h._id),
+      resultIds = hits.map(h => h._id);
+
+    if (hits.length && allHitsHaveIds) {
+      await loadedIdsService.appendToLocalsAndRedis(resultIds, locals);
+    }
   }
 
   return results;
