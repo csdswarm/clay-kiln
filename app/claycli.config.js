@@ -42,6 +42,13 @@ module.exports = {
           .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
           .pipe(gulp.dest('./public/js/', {overwrite: true}));
       }
+    },
+    {
+      name: 'spa-media',
+      fn: () => {
+        return gulp.src('public/dist/**/*.+(jpg|jpeg|png|gif|webp|svg|ico)')
+          .pipe(gulp.dest('public'));
+      }
     }
   ],
   plugins: [

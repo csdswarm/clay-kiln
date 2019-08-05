@@ -5,6 +5,7 @@ _components:
       - 'music'
       - 'sports'
       - 'news'
+    filterSecondarySectionFronts: {}
     musicItems: []
     sportsItems: []
     newsItems: []

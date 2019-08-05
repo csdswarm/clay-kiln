@@ -4,14 +4,15 @@ const radioApiService = require('../../services/server/radioApi'),
   { isEmpty } = require('lodash'),
   { extname } = require('path'),
   allStations = {},
+  allStationsCallsigns = [],
   defaultStation = {
     id: 0,
     name: 'Radio.com',
     callsign: 'NATL-RC',
     website: 'https://www.radio.com',
     slug: 'www',
-    square_logo_small: 'http://images.radio.com/aiu-media/og_775x515_0.jpg',
-    square_logo_large: 'http://images.radio.com/aiu-media/og_775x515_0.jpg',
+    square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
+    square_logo_large: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
     city: 'New York',
     state: 'NY',
     country: 'US',
@@ -68,6 +69,7 @@ const radioApiService = require('../../services/server/radioApi'),
           const slug = station.attributes.site_slug || station.attributes.callsign || station.id;
 
           allStations[slug] = station.attributes;
+          allStationsCallsigns.push(station.attributes.callsign);
         });
       }
 
@@ -89,6 +91,7 @@ const radioApiService = require('../../services/server/radioApi'),
  */
 module.exports = async (req, res, next) => {
   res.locals.station = await getStation(req);
+  res.locals.allStationsCallsigns = allStationsCallsigns;
 
   return next();
 };
