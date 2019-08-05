@@ -5,7 +5,8 @@ let musicEntertainmentSecondaryCategories = [],
   sportsSecondaryCategories = [],
   newsLifestyleSecondaryCategories = [],
   allTertiaryCategories = [];
-const AD_SUPPORTED = 'AD_SUPPORTED',
+const { getFetchResponse } = require('../utils/fetch'),
+  AD_SUPPORTED = 'AD_SUPPORTED',
   FREE = 'FREE',
   INFO = 'info',
   ERROR = 'error',
@@ -19,47 +20,6 @@ const AD_SUPPORTED = 'AD_SUPPORTED',
     NEWS_LIFESTYLE
   ],
   /**
-   * Returns request's response status and JSON
-   * using fetch
-   *
-   * @param {string} method
-   * @param {string} route
-   * @param {any} body
-   * @param {Object} headers
-   * @returns {Object}
-   *
-   */
-  getFetchResponse = async (method, route, body, headers) => {
-    try {
-      if (method === 'GET') {
-        const response = await fetch(route),
-          data = await response.json(),
-          { status, statusText } = response;
-
-        return { status, statusText, data };
-      } else {
-        const response = await fetch(route, {
-            method,
-            body: headers && headers['Content-Type'] === 'application/json' ? JSON.stringify(body) : body,
-            headers: headers
-          }),
-          { status, statusText } = response;
-          
-        if (status >= 200 && status < 300) {
-          const data = headers && headers['Content-Type'] === 'application/json'
-            ? await response.json()
-            : null;
-        
-          return { status, statusText, data };
-        } else {
-          return { status, statusText, data: statusText };
-        }
-      }
-    } catch (e) {
-      return { status: 500, statusText: e, data: e };
-    }
-  },
-  /**
    * Gets secondary categories from _lists
    * or provide fallback categories
    *
@@ -69,7 +29,7 @@ const AD_SUPPORTED = 'AD_SUPPORTED',
    */
   getCategoriesFromList = async (endpoint, fallbackCategories) => {
     const { status, data } = await getFetchResponse('GET', `${ window.location.origin }/_lists/${ endpoint }`);
-    
+
     if (status >= 200 && status < 300) {
       return data;
     } else {

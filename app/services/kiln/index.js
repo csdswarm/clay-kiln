@@ -11,5 +11,6 @@ module.exports = () => {
   require('./plugins/content-syndication')();
   require('./plugins/instagram')();
   require('./plugins/subscriptions')();
+  require('./plugins/stations')();
   require('./validators')();
 };

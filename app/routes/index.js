@@ -17,6 +17,7 @@ const AWS = require('aws-sdk'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
+  stationTheming = require('../services/server/stationThemingApi'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml');
 
@@ -190,4 +191,6 @@ module.exports = router => {
     res.type('application/xml');
     return res.send( xml( { urlset }, { declaration: true } ) );
   });
+
+  stationTheming.inject(router);
 };
