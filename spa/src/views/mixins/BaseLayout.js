@@ -5,7 +5,6 @@
  */
 
 import VueTranspiler from '@/lib/VueTranspiler'
-import * as mutationTypes from '../../vuex/mutationTypes'
 import SpaPlayerInterface from '../../lib/SpaPlayerInterface'
 import SpaUserInterface from '../../lib/SpaUserInterface'
 import SpaStateInterface from '../../lib/SpaStateInterface'
@@ -17,14 +16,10 @@ export default {
     this.onLayoutUpdate()
   },
   updated () {
-    if (this.isNewPage()) {
-      this.onLayoutUpdate()
-    }
+    this.onLayoutUpdate()
   },
   beforeUpdate () {
-    if (this.isNewPage()) {
-      this.onLayoutDestroy()
-    }
+    this.onLayoutDestroy()
   },
   beforeDestroy () {
     this.onLayoutDestroy()
@@ -48,16 +43,18 @@ export default {
     /**
      * determines if there has been a page change
      *
+     * @param {boolean} saveUrl - if the call is an update it should be true, if a destroy it should be false
      * @return {boolean}
      */
-    isNewPage: function () {
+    isNewPage: function (saveUrl) {
       // if it is the initial load and there is no url yet, or any new page load
       if (!this.$store.state.spaPayload.url || this.lastUrl !== this.$store.state.spaPayload.url) {
         if (!this.$store.state.spaPayload.url) {
           this.$store.state.spaPayload.url = `${window.location.origin}${window.location.pathname}`
         }
-        this.lastUrl = this.$store.state.spaPayload.url
-
+        if (saveUrl) {
+          this.lastUrl = this.$store.state.spaPayload.url
+        }
         return true
       }
       return false
@@ -66,38 +63,32 @@ export default {
      * Handle any logic required to get a new vue render to function properly
      */
     onLayoutUpdate: function () {
-      if (this.$store.state.setupRan) {
-        // Don't call setup as it's already been run in another call
-        return
-      } else {
-        this.$store.commit(mutationTypes.FLAG_SETUP_RAN, true)
+      if (this.isNewPage(true)) {
+        // Attach vue router listener on SPA links.
+        addEventListeners(this.$el)
+
+        // Create Spa/Client interfaces
+        this.interfaces = {
+          player: new SpaPlayerInterface(this),
+          user: new SpaUserInterface(this),
+          state: new SpaStateInterface(this)
+        }
+
+        this.handleComponents('mount')
       }
-
-      // Attach vue router listener on SPA links.
-      addEventListeners(this.$el)
-
-      // Create Spa/Client interfaces
-      this.interfaces = {
-        player: new SpaPlayerInterface(this),
-        user: new SpaUserInterface(this),
-        state: new SpaStateInterface(this)
-      }
-
-      this.handleComponents('mount')
     },
     /**
      * Handle any logic required to get a new vue render to function properly
      */
     onLayoutDestroy: function () {
-      this.$store.commit(mutationTypes.FLAG_SETUP_RAN, false)
-
-      // Loop over all components that were loaded and try to call any cleanup JS they have
-      this.handleComponents('dismount')
+      if (this.isNewPage(false)) {
+        // Loop over all components that were loaded and try to call any cleanup JS they have
+        this.handleComponents('dismount')
+      }
     },
     /**
      * Handle setup / cleanup of components and their required JS
      *
-     * @param el
      * @param type
      */
     handleComponents: function (type) {
