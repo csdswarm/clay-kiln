@@ -15,3 +15,8 @@ discoverComponent:
   _component:
     include:
       - station-discover
+
+favoritesComponent:
+  _component:
+    include:
+      - station-favorites

@@ -98,7 +98,7 @@ const queryService = require('../../services/server/query'),
     const feedUrl = `${locals.station.website}/station_feed.json`,
       feed = await radioApiService.get(feedUrl, null, (response) => response.nodes),
       nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
-      defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
+      defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
     data.station = locals.station.name;
     data.articles = await Promise.all(nodes.map(async (item) => {

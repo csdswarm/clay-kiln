@@ -12,7 +12,7 @@ const pkg = require('../../package.json'),
   routes = require('../../routes'),
   canonicalJSON = require('./canonical-json'),
   initCore = require('./amphora-core'),
-  locals = require('./spaLocals'),
+  locals = require('./locals'),
   currentStation = require('./currentStation'),
   redirectTrailingSlash = require('./trailing-slash'),
   feedComponents = require('./feed-components'),
@@ -22,7 +22,9 @@ const pkg = require('../../package.json'),
   lytics = require('./lytics'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   addRdcRedisSession = require('./add-rdc-redis-session'),
-  handleClearLoadedIds = require('./handle-clear-loaded-ids');
+  handleClearLoadedIds = require('./handle-clear-loaded-ids'),
+  user = require('./user'),
+  radium = require('./radium');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -79,11 +81,15 @@ function setupApp(app) {
 
   app.use(handleClearLoadedIds);
 
+  app.use(user);
+
   app.use(locals);
 
   app.use(currentStation);
 
   lytics.inject(app);
+
+  radium.inject(app);
 
   app.use(canonicalJSON);
 
