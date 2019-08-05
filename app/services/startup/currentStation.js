@@ -21,7 +21,7 @@ const radioApiService = require('../../services/server/radioApi'),
       name: 'New York, NY'
     },
     category: '',
-    phonetic_name: ''
+    phonetic_name: 'radio dot com'
   },
   /**
    * returns the slug of the site either from a subdomain or as the first element of the path
