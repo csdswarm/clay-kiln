@@ -81,7 +81,7 @@ module.exports.render = async (ref, data, locals) => {
             createObj(instance).forEach(cond => {
               if (cond.nested) {
                 const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), { match: cond.match });
-                
+
                 queryService[conditionType === 'addMustNot' ? 'addMust' : conditionType](localQuery, newNestedQuery);
               } else {
                 queryService[conditionType](localQuery, { match: cond.match });
