@@ -25,7 +25,7 @@ async function updateTab(content, stationId) {
 }
 
 class StationDetail {
-  constructor() {
+  constructor(element) {
     const sidebar = document.querySelector('.content__sidebar'),
       stationDetail = document.querySelector('.component--station-detail'),
       tabs = stationDetail.querySelectorAll('.tabs li'),
@@ -33,7 +33,14 @@ class StationDetail {
       hash = window.location.hash.replace('#', ''),
       firstTab = tabs[0].className.replace('tabs__', '');
 
-    this.stationId = document.querySelector('.image__play-btn').getAttribute('data-play-station');
+    this.stationId = element.querySelector('.image__play-btn').getAttribute('data-play-station');
+    this.updates = {
+      'recently-played': this.updateRecentlyPlayed.bind(this),
+      schedule: this.updateSchedule.bind(this),
+      discover: this.updateDiscover.bind(this),
+      favorites: this.updateFavorites.bind(this)
+    };
+
     this.repositionRightRail(sidebar, stationDetail);
     this.addTabNavigationListeners(tabs, content);
 
@@ -157,14 +164,7 @@ StationDetail.prototype = {
       c.classList.remove('active');
       if (c.classList.contains(`container--${contentLabel}`)) {
         if (this.lastUpdated !== contentLabel) {
-          const updates = {
-            'recently-played': this.updateRecentlyPlayed,
-            schedule: this.updateSchedule,
-            discover: this.updateDiscover,
-            favorites: this.updateFavorites
-          };
-
-          await updates[contentLabel].call(this, c);
+          await this.updates[contentLabel](c);
         }
 
         this.lastUpdated = contentLabel;
@@ -178,4 +178,4 @@ StationDetail.prototype = {
   }
 };
 
-module.exports = () => new StationDetail();
+module.exports = (element) => new StationDetail(element);
