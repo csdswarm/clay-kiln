@@ -10,6 +10,7 @@
       label="Primary Color"
       :model="primaryColor"
     >
+      <color-picker :model="primaryColor"></color-picker>
       <div class="station-theme-manager__color-preview"
       :style="{ background: primaryColor }"></div>
     </ui-textbox>
@@ -90,6 +91,7 @@
       UiTextbox,
       UiAlert
     } = window.kiln.utils.components,
+    { ColorPicker } = require('vue-color-picker-wheel'),
     { getFetchResponse } = require('../utils/fetch');
 
   export default {
@@ -217,7 +219,8 @@
         UiButton,
         UiProgressCircular,
         UiTextbox,
-        UiAlert
+        UiAlert,
+        ColorPicker
     }
   }
 </script>
