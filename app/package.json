@@ -82,7 +82,7 @@
     "validator": "^10.8.0",
     "vinyl-map2": "^1.2.1",
     "vue": "^2.5.16",
-    "vue-color-picker-wheel": "^0.4.3",
+    "vue-iro-color-picker": "^2.0.0",
     "vue-template-compiler": "^2.5.17",
     "vueify": "^9.4.1",
     "xml": "^1.0.1",

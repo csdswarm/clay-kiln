@@ -2,66 +2,128 @@
 <template>
   <div class="station-theme-manager">
     <h3>Station Theme Colors</h3>
-    <ui-textbox
-      required
-      :invalid="!isColorHex"
-      :error="colorHexError"
-      floating-label
-      label="Primary Color"
-      :model="primaryColor"
-    >
-      <color-picker :model="primaryColor"></color-picker>
+    <div class="theme-color-input">
+      <ui-textbox
+        required
+        :invalid="!isColorHex(primaryColor)"
+        :error="colorHexError"
+        floating-label
+        v-bind:style="{ color: primaryColor }"
+        label="Primary Color"
+        v-model="primaryColor"
+      ></ui-textbox>
+      <ui-icon-button
+        :tooltip="pickerTooltip"
+        has-dropdown
+        icon="colorize"
+        size="normal"
+        v-bind:style="{ 'background-color': primaryColor }"
+      >
+        <div class="color-picker-dropdown" slot="dropdown">
+          <color-picker v-model="primaryColor"></color-picker>
+        </div>
+      </ui-icon-button>
+    </div>
+    <div class="theme-color-input">
+      <ui-textbox
+        required
+        :invalid="!isColorHex(secondaryColor)"
+        :error="colorHexError"
+        floating-label
+        v-bind:style="{ color: secondaryColor }"
+        label="Secondary Color"
+        v-model="secondaryColor"
+      ></ui-textbox>
+      <ui-icon-button
+        :tooltip="pickerTooltip"
+        has-dropdown
+        icon="colorize"
+        size="normal"
+        v-bind:style="{ 'background-color': secondaryColor }"
+      >
+        <div class="color-picker-dropdown" slot="dropdown">
+          <color-picker v-model="secondaryColor"></color-picker>
+        </div>
+      </ui-icon-button>
+    </div>
+    <div class="theme-color-input">
+      <ui-textbox
+        required
+        :invalid="!isColorHex(tertiaryColor)"
+        :error="colorHexError"
+        floating-label
+        v-bind:style="{ color: tertiaryColor }"
+        label="Tertiary Color"
+        v-model="tertiaryColor"
+      ></ui-textbox>
+      <ui-icon-button
+        :tooltip="pickerTooltip"
+        has-dropdown
+        icon="colorize"
+        size="normal"
+        v-bind:style="{ 'background-color': tertiaryColor }"
+      >
+        <div class="color-picker-dropdown" slot="dropdown">
+          <color-picker v-model="tertiaryColor"></color-picker>
+        </div>
+      </ui-icon-button>
+    </div>
+    <div class="theme-color-input">
+      <ui-textbox
+        required
+        :invalid="!isColorHex(primaryFontColor)"
+        :error="colorHexError"
+        floating-label
+        v-bind:style="{ color: primaryFontColor }"
+        label="Primary Font Color"
+        v-model="primaryFontColor"
+      ></ui-textbox>
+      <ui-icon-button
+        :tooltip="pickerTooltip"
+        has-dropdown
+        icon="colorize"
+        size="normal"
+        v-bind:style="{ 'background-color': primaryFontColor }"
+      >
+        <div class="color-picker-dropdown" slot="dropdown">
+          <color-picker v-model="primaryFontColor"></color-picker>
+        </div>
+      </ui-icon-button>
       <div class="station-theme-manager__color-preview"
-      :style="{ background: primaryColor }"></div>
-    </ui-textbox>
-    <ui-textbox
-      required
-      :invalid="!isColorHex"
-      :error="colorHexError"
-      floating-label
-      label="Secondary Color"
-      :model="secondaryColor"
-    >
-      <div class="station-theme-manager__color-preview"
-      :style="{ background: secondaryColor }"></div>
-    </ui-textbox>
-    <ui-textbox
-      required
-      :invalid="!isColorHex"
-      :error="colorHexError"
-      floating-label
-      label="Tertiary Color"
-      :model="tertiaryColor"
-    >
-      <div class="station-theme-manager__color-preview"
-      :style="{ background: tertiaryColor }"></div>
-    </ui-textbox>
-    <ui-textbox
-      required
-      :invalid="!isColorHex"
-      :error="colorHexError"
-      floating-label
-      label="Primary Font Color"
-      :model="primaryFontColor"
-    >
-      <div class="station-theme-manager__color-preview"
-      :style="{ color: primaryFontColor }">
-        <span :for="font in fonts">Preview primary font color in {{ font }}</span>
+        v-bind:style="{ color: primaryFontColor }">
+        <span v-bind:key="font" v-for="font in fonts">
+          Preview primary font color in {{ font }}
+        </span>
       </div>
-    </ui-textbox>
-    <ui-textbox
-      required
-      :invalid="!isColorHex"
-      :error="colorHexError"
-      floating-label
-      label="Secondary Font Color"
-      :model="secondaryFontColor"
-    >
+    </div>
+    <div class="theme-color-input">
+      <ui-textbox
+        required
+        :invalid="!isColorHex(secondaryFontColor)"
+        :error="colorHexError"
+        floating-label
+        v-bind:style="{ color: secondaryFontColor }"
+        label="Secondary Font Color"
+        v-model="secondaryFontColor"
+      ></ui-textbox>
+      <ui-icon-button
+        :tooltip="pickerTooltip"
+        has-dropdown
+        icon="colorize"
+        size="normal"
+        v-bind:style="{ 'background-color': secondaryFontColor }"
+      >
+        <div class="color-picker-dropdown" slot="dropdown">
+          <color-picker v-model="secondaryFontColor"></color-picker>
+        </div>
+      </ui-icon-button>
       <div class="station-theme-manager__color-preview"
-      :style="{ color: secondaryFontColor }">
-        <span :for="font in fonts">Preview secondary font color in {{ font }}</span>
+        v-bind:style="{ color: secondaryFontColor }">
+        <span v-bind:key="font" v-for="font in fonts">
+          Preview secondary font color in {{ font }}
+        </span>
       </div>
-    </ui-textbox>
+    </div>
     <div class="button-container">
       <ui-button
         size="large"
@@ -77,8 +139,9 @@
       >Reset Fields</ui-button>
     </div>
     <ui-alert
-      :if="updateStatus.message"
+      v-if="updateStatus.message"
       :type="updateStatus.type"
+      @dismiss="updateStatus.message = ''"
     >{{ updateStatus.message }}</ui-alert>
   </div>
 </template>
@@ -89,9 +152,10 @@
       UiButton,
       UiProgressCircular,
       UiTextbox,
-      UiAlert
+      UiAlert,
+      UiIconButton
     } = window.kiln.utils.components,
-    { ColorPicker } = require('vue-color-picker-wheel'),
+    ColorPicker = require('vue-iro-color-picker'),
     { getFetchResponse } = require('../utils/fetch');
 
   export default {
@@ -103,6 +167,7 @@
         tertiaryColor: '',
         primaryFontColor: '',
         secondaryFontColor: '',
+        pickerTooltip: 'color picker',
         loading: false,
         updateStatus: {
           type: '',
@@ -122,13 +187,14 @@
           'ProximaNova-Regular',
           'ProximaNova-RegularIt'
         ],
-        colorHexError: 'Not a valid color hex. Format should be # followed by 3 or 6 letters or numbers'
+        colorHexError: 'Enter a valid color hex. Format should be # followed by 3 or 6 letters (a-f) or numbers'
       }
     },
     /**
      * Load current theme when component is created
     */
     created() {
+      window.kiln.locals.station.id = 369;
       this.loadTheme();
     },
     computed: {
@@ -136,7 +202,13 @@
        * Validator for form. Valid when all fields are truthy.
       */
       validForm() {
-        return this.primaryColor && this.secondaryColor && this.tertiaryColor && this.primaryFontColor && this.secondaryFontColor;
+        return [
+          this.primaryColor,
+          this.secondaryColor,
+          this.tertiaryColor,
+          this.primaryFontColor,
+          this.secondaryFontColor
+        ].every(this.isColorHex);
       }
     },
     methods: {
@@ -220,7 +292,8 @@
         UiProgressCircular,
         UiTextbox,
         UiAlert,
-        ColorPicker
+        UiIconButton,
+        'color-picker': ColorPicker
     }
   }
 </script>
