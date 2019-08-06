@@ -120,7 +120,7 @@ module.exports.render = async (ref, data, locals) => {
       // vertical (sectionfront) and/or exclude tags
       vertical: { createObj: sectionFront => ({ match: { sectionFront } }) },
       // tags
-      tag: { createObj: tag => ({ 'tags.normalized': tag }) },
+      tag: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
       // subcategory (secondary article type)
       subcategory: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
       // editorial feed (grouped stations)
@@ -173,7 +173,7 @@ module.exports.render = async (ref, data, locals) => {
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
   Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
-
+console.log(JSON.stringify(query, null, 2))
   try {
     if (meta.rawQuery) {
       const results = await queryService.searchByQueryWithRawResult(query);
