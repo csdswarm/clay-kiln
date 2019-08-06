@@ -68,9 +68,9 @@ function newQueryWithCount(index, count) {
  *   results.  If locals is passed then its loadedIds property will be updated.
  *
  * @param  {Object} query
- * @param  {Object} [locals]
- * @param  {Object} [opts] - various search options shared with
- *                           searchByQueryWithRawResult.  This method relies on
+ * @param  {Object} locals
+ * @param  {Object} opts - various search options shared with
+ *                         searchByQueryWithRawResult.  This method relies on
  *                           : 'includeIdInResult'
  *                           : 'transofrmResult'
  * @return {Promise}
@@ -106,8 +106,8 @@ function searchByQuery(query, locals, opts) {
  *   property will be updated.
  *
  * @param  {Object} query
- * @param  {Object} [locals]
- * @param  {Object} [opts] - various search options shared with searchByQuery.
+ * @param  {Object} locals
+ * @param  {Object} opts - various search options shared with searchByQuery.
  *   This method uses 'shouldDedupeContent'.
  * @return {Object}
  */
