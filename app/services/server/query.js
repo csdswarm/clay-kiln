@@ -146,8 +146,8 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
 
   if (opts.shouldDedupeContent) {
     const hits = results.hits.hits,
-      allHitsHaveIds = _every(hits, h => h._id),
-      resultIds = hits.map(h => h._id);
+      allHitsHaveIds = _every(hits, aHit => aHit._id),
+      resultIds = hits.map(aHit => aHit._id);
 
     if (hits.length && allHitsHaveIds) {
       await loadedIdsService.appendToLocalsAndRedis(resultIds, locals);

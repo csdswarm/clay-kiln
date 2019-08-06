@@ -64,7 +64,7 @@ module.exports.save = async function (uri, data, locals) {
 module.exports.render = async function (ref, data, locals) {
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
-      curatedIds = items.filter(i => i.uri).map(i => i.uri);
+      curatedIds = items.filter(item => item.uri).map(item => item.uri);
 
     await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
   }

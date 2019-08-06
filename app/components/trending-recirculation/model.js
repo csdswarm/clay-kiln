@@ -114,7 +114,7 @@ module.exports.render = async (uri, data, locals) => {
     item.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
   });
 
-  const newLoadedIds = data.items.filter(i => i.uri).map(i => i.uri);
+  const newLoadedIds = data.items.filter(item => item.uri).map(item => item.uri);
 
   await loadedIdsService.appendToLocalsAndRedis(newLoadedIds, locals);
 

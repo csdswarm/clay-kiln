@@ -84,7 +84,7 @@ module.exports.render = async function (ref, data, locals) {
         };
       }
     },
-    curatedIds = data.items.filter(i => i.uri).map(i => i.uri);
+    curatedIds = data.items.filter(item => item.uri).map(item => item.uri);
   let cleanUrl;
 
   await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);

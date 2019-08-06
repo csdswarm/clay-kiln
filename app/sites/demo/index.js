@@ -61,8 +61,8 @@ function getRoutes() {
   //
   // 'middleware' is a routing option as seen by the code found here:
   //   https://github.com/clay/amphora/blob/v7.3.2/lib/services/attachRoutes.js#L92-L100
-  return initialRoutes.map(r => {
-    r.middleware = async (_req, res, next) => {
+  return initialRoutes.map(route => {
+    route.middleware = async (_req, res, next) => {
       const { locals } = res,
         // there may be a better way to do this, but the purpose here is to only
         //   clear the loaded ids when our full path is actually hit.  e.g. the
@@ -71,7 +71,7 @@ function getRoutes() {
         //   baseUrl for '/' ends up being an empty string hence the
         //   second condition.
         isMountedPath = _req.baseUrl === _req.originalUrl
-          || (r.path === '/' && _req.originalUrl === '/');
+          || (route.path === '/' && _req.originalUrl === '/');
 
       if (
         _req.method === 'GET'
@@ -89,7 +89,7 @@ function getRoutes() {
       next();
     };
 
-    return r;
+    return route;
   });
 }
 
