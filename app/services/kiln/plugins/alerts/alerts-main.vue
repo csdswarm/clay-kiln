@@ -13,7 +13,7 @@
                 v-for="tab in tabs">
             </ui-tab>
             <div class="alerts-manager__toolbar">
-                <ui-button @click="openModal('alertModal')">Add Alert</ui-button>
+                <ui-button @click="newAlert">Add Alert</ui-button>
                 <div class="alerts-manager__station-select">
                     <ui-select 
                         label="Station"
@@ -75,7 +75,7 @@
             Are you sure you want to delete this alert?
         </ui-confirm>
         <ui-modal
-            title="Add New Alert"
+            :title="heading"
             ref="alertModal"
         >
                 <div>
@@ -144,6 +144,15 @@
         UiModal, 
         UiSelect } = window.kiln.utils.components;
 
+    /**
+     * Simple cache-buster value to append to rest URL's to ensure they get the latest version of data
+     * TODO: consider replacing this as a part of any initiative involving ON-953 - CSD
+     * @returns {{cb: *}}
+     */
+    function cb(){
+      return {cb:(Math.random()+'').replace(/^0\./,'')};
+    }
+
     export default {
         data() {
             return {
@@ -175,21 +184,24 @@
             this.loadAlerts();
         },
         computed: {
-            end: function () {
+            end() {
                 return this.combineDateAndTime(this.endDate, this.endTime);
             },
-            start: function () {
+            start() {
                 return this.combineDateAndTime(this.startDate, this.startTime);          
             },
-            global: function() {
+            global() {
                 return this.tab === 'global';
             },
+            heading(){
+                return `${this.editMode ? 'Edit' : 'Add New'} Alert` ;
+            },
             /** Current station, or global station */
-            station: function() {
+            station() {
                 return this.global ? 'NATL-RC' : this.selectedStation;
             },
             /** True if all required fields are entered */
-            validForm: function() {
+            validForm() {
                 return this.message && this.startDate && this.startTime && this.endDate && this.endTime;
             }
         },
@@ -209,10 +221,10 @@
 
                 try {
                     if (this.editMode && selectedAlert) {
-                        await axios.put('/alerts', {...selectedAlert, breaking, message, start, end, station})
+                        await axios.put('/alerts', {...selectedAlert, breaking, message, start, end, station, params:cb()})
                         this.editMode = false;
                     } else {
-                        await axios.post('/alerts', {breaking, message, start, end, station});
+                        await axios.post('/alerts', {breaking, message, start, end, station, params: cb()});
                     }
                     await this.loadAlerts();
                     this.closeModal('alertModal');
@@ -221,6 +233,10 @@
                     this.errorMessage = response.data;
                 }
                 
+            },
+            newAlert(){
+                this.editMode = false;
+                this.openModal('alertModal');
             },
             /** Clears the new/update alert form */
             clearModal() {
@@ -231,6 +247,10 @@
                 this.startDate = '';
                 this.startTime = '';
                 this.errorMessage = '';
+            },
+            closeDropdown(ref) {
+                const el = [].concat(this.$refs[ref])[0]; // may or may not be in an array, force it to be
+                el.closeDropdown && el.closeDropdown()
             },
             closeModal(ref) {
                 this.$refs[ref].close();
@@ -248,11 +268,12 @@
             /** Checks to confirm that an alert should be deleted */
             confirmDeleteAlert(alert) {
                 this.selectedAlert = alert;
+                this.closeDropdown('itemButton');
                 this.$refs['confirmDelete'].open();
             },
             /** Sets the current selectedAlert active flag to false*/
             async deleteAlert(){
-                await axios.put('/alerts', {...this.selectedAlert, active: false});
+                await axios.put('/alerts', {...this.selectedAlert, active: false, params: cb()});
                 await this.loadAlerts();
             },
             /** Sets editMode to true and opens the modal */
@@ -260,6 +281,7 @@
                 this.selectedAlert = alert;
                 this.editMode = true;
                 this.setForm(alert);
+                this.closeDropdown('itemButton');
                 this.openModal('alertModal')
             },
             /** Loads all current and future alerts globally or by station */
@@ -268,7 +290,7 @@
                     this.alerts = [];
                 } else {
                     this.loading = true;
-                    const {data = []} = await axios.get('/alerts', {params: {station: this.station}});
+                    const {data = []} = await axios.get('/alerts', {params: {station: this.station, ...cb()}});
 
                     this.loading = false;
                     this.alerts = data;
