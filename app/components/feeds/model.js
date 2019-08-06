@@ -173,7 +173,7 @@ module.exports.render = async (ref, data, locals) => {
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
   Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
-console.log(JSON.stringify(query, null, 2))
+
   try {
     if (meta.rawQuery) {
       const results = await queryService.searchByQueryWithRawResult(query);
