@@ -26,7 +26,7 @@ const pkg = require('../../package.json'),
 
 amphoraHtml.configureRender({
   editAssetTags: true,
-  cacheBuster: pkg.version
+  cacheBuster: process.env.NODE_ENV == 'production' ? pkg.version : Date.now()
 });
 
 amphoraHtml.addResolveMedia(resolveMediaService);
