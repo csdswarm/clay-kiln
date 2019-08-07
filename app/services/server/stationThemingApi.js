@@ -9,33 +9,35 @@ const db = require('./db'),
    * @param {object} app
    */
   inject = (app) => {
+    db.ensureTableExists('station_themes');
+
     /**
-     * Get the current alerts for a station
+     * Get the current theme for a station
      */
     app.get('/station-theme/:stationID', async (req, res) => {
-      const key = `${CLAY_SITE_HOST}/_station-theme/${ req.params.stationID }`;
+      const key = `${CLAY_SITE_HOST}/_station_themes/${ req.params.stationID }`;
 
       try {
         const theme = await db.get(key);
 
-        res.status(200).send({ key, ...theme });
+        res.status(200).send(theme);
       } catch (e) {
-        log('error', e.message);
-        res.status(500).send('There was an error getting the current theme');
+        log('error', e);
+        res.status(500).send('There was an error getting the current theme or theme does not exist');
       }
     });
 
     /**
-     * Add a new alert
+     * Add a new station theme
     */
     app.post('/station-theme/:stationID', async (req, res) => {
-      const key = `${CLAY_SITE_HOST}/_station-theme/${ req.params.stationID }`,
+      const key = `${CLAY_SITE_HOST}/_station_themes/${ req.params.stationID }`,
         theme = req.body;
 
       try {
-        await db.post(key, ...theme);
+        await db.post(key, theme);
 
-        res.status(200).send(key);
+        res.status(200).send(theme);
       } catch (e) {
         log('error', e.message);
         res.status(500).send('There was an error saving the theme');
@@ -43,16 +45,16 @@ const db = require('./db'),
     });
 
     /**
-     * Update an alert
+     * Update a station theme
     */
     app.put('/station-theme/:stationID', async (req, res) => {
-      const key = `${CLAY_SITE_HOST}/_station-theme/${ req.params.stationID }`,
+      const key = `${CLAY_SITE_HOST}/_station_themes/${ req.params.stationID }`,
         theme = req.body;
 
       try {
         await db.put(key, theme);
 
-        res.status(200).send({key, ...theme});
+        res.status(200).send(theme);
       } catch (e) {
         log('error', e.message);
         res.status(500).send('There was an error saving the theme');

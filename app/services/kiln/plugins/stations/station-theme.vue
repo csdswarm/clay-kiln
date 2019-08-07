@@ -194,7 +194,6 @@
      * Load current theme when component is created
     */
     created() {
-      window.kiln.locals.station.id = 369;
       this.loadTheme();
     },
     computed: {
@@ -232,9 +231,17 @@
         const { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor } = this;
 
         try {
-          const { status, statusText, data: theme } = await getFetchResponse('POST',
-            `/station-theme/${ window.kiln.locals.station.id }`,
-            { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor });
+          let METHOD;
+          if (this.theme) {
+            METHOD = 'PUT';
+          } else {
+            METHOD = 'POST';
+          }
+          const { status, statusText, data: theme } = await getFetchResponse(METHOD,
+              `/station-theme/${ window.kiln.locals.station.id }`,
+              { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor },
+              {'Content-Type': 'application/json'}
+            );
 
           this.loading = false;
           if (status >= 200 && status < 300) {
@@ -253,22 +260,22 @@
       async loadTheme() {
         this.loading = true;
         try {
-          const { status, statusText, data: theme } = await getFetchResponse('GET', `/station-theme/${ window.kiln.locals.station.id }`);
+          const { status, statusText, data } = await getFetchResponse('GET', `/station-theme/${ window.kiln.locals.station.id }`);
 
           this.loading = false;
           if (status >= 200 && status < 300) {
-            this.theme = theme;
-            this.primaryColor = theme.primaryColor;
-            this.secondaryColor = theme.secondaryColor;
-            this.tertiaryColor = theme.tertiaryColor;
-            this.primaryFontColor = theme.primaryFontColor;
-            this.secondaryFontColor = theme.secondaryFontColor;
+            this.theme = data;
+            this.primaryColor = data.primaryColor;
+            this.secondaryColor = data.secondaryColor;
+            this.tertiaryColor = data.tertiaryColor;
+            this.primaryFontColor = data.primaryFontColor;
+            this.secondaryFontColor = data.secondaryFontColor;
           } else {
-            this.updateStatus = {type: 'error', message: `Could not get theme. ${ status }: ${ statusText }`}
+            this.updateStatus = {type: 'error', message: `Could not fetch theme. ${ status }: ${ data }`};
           }
         } catch(e) {
           this.loading = false;
-          this.updateStatus = {type: 'error', message: `Could not get theme. ${ e }`}
+          this.updateStatus = {type: 'error', message: `Could not fetch theme. ${ e }`};
         }
       },
       /**

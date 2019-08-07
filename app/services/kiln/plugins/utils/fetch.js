@@ -16,9 +16,9 @@ const getFetchResponse = async (method, route, body, headers) => {
   try {
     if (method === 'GET') {
       const response = await fetch(route),
-        data = await response.json(),
-        { status, statusText } = response;
-
+        { status, statusText } = response,
+        data = status >= 200 && status < 300 ? await response.json() : await response.text();
+        
       return { status, statusText, data };
     } else {
       const response = await fetch(route, {
@@ -31,7 +31,7 @@ const getFetchResponse = async (method, route, body, headers) => {
       if (status >= 200 && status < 300) {
         const data = headers && headers['Content-Type'] === 'application/json'
           ? await response.json()
-          : null;
+          : await response.text();
 
         return { status, statusText, data };
       } else {
