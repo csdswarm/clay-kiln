@@ -150,7 +150,7 @@
      * @returns {{cb: *}}
      */
     function cb(){
-      return {cb:(Math.random()+'').replace(/^0\./,'')};
+      return {cb:Date.now()};
     }
 
     export default {
