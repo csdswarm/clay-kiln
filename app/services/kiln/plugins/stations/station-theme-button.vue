@@ -1,4 +1,4 @@
-<!-- Alerts Manager -->
+<!-- Station Theme Manager Button -->
 <template>
     <nav-menu-button :id="id" @nav-click="toggleDrawer">
         <span>Station Theme</span>
