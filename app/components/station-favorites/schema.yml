@@ -1,0 +1,7 @@
+_description: |
+  Show station favorites
+
+favoriteStations:
+  _component:
+    include:
+      - stations-list

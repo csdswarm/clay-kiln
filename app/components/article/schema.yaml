@@ -1,4 +1,4 @@
-_version: 6.0
+_version: 9.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -284,58 +284,24 @@ sectionFront:
   _label: Section Front
   _publish: sectionFront
   _has:
-    input: radio
-    options:
-      -
-        name: Music
-        value: music
-      -
-        name: News
-        value: news
-      -
-        name: Podcasts
-        value: podcasts
-      -
-        name: Sports
-        value: sports
+    input: select
+    search: true
+    list: primary-section-fronts
     validate:
       required: true
+secondarySectionFront:
+  _label: Secondary Section Front
+  _publish: secondarySectionFront
+  _has:
+    input: select
+    search: true
+    list: secondary-section-fronts
 contentType:
   _label: Content Type
   _publish: contentType
   _has:
     input: static
     text: ${contentType}
-secondaryArticleType:
-  _label: Secondary Article Type
-  _publish: secondaryArticleType
-  _has:
-    input: radio
-    options:
-      - Pop
-      - Alternative
-      - Country
-      -
-        name: Hip-Hop R&B
-        value: Hip-Hop R&B
-      - Rock
-      - Icons
-      - Entertainment News
-      - Movies
-      - Television
-      - National News
-      - Politics
-      - Local Politics
-      - Small Business Pulse
-      - NFL
-      - MLB
-      - NBA
-      - NHL
-      - NCAA Football
-      - NCAA Basketball
-      -
-        name: MMA & WWE
-        value: MMA & WWE
 showSocial:
   _label: Display Social Handle
   _has:
@@ -423,7 +389,7 @@ _groups:
   circMetadata:
     fields:
       - sectionFront
-      - secondaryArticleType
+      - secondarySectionFront
   bylinesAndStationLogo:
     fields:
       - byline
@@ -502,6 +468,10 @@ tags:
   _component:
     include:
       - tags
+adTags:
+  _component:
+    include:
+      - ad-tags
 
 apContent:
   _label: [No Index / No Follow is always ON for AP]

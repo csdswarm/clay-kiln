@@ -122,3 +122,24 @@
      background-color: $purple;
    }
 }
+
+@define-mixin favorite-btn {
+  cursor: pointer;
+  outline: none;
+  border: 0;
+  padding: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-size: em(16);
+  height: em(28);
+  width: em(28);
+}
+
+@define-mixin favorite-not-active {
+  background: transparent url("/media/components/station-detail/favorite.svg");
+  @mixin favorite-btn;
+}
+@define-mixin favorite-active {
+  background: transparent url("/media/components/station-detail/favorite--active.svg");
+  @mixin favorite-btn;
+}

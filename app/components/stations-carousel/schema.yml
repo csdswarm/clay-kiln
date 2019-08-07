@@ -9,9 +9,6 @@ overrideTitle:
 sectionFront:
   _label: Section Front
   _subscribe: sectionFront
-  _has:
-    input: static
-    text: ${sectionFront}
 
 sectionFrontManual:
   _label: Section Front Category
@@ -20,20 +17,9 @@ sectionFrontManual:
     operator: ===
     value: section-front
   _has:
-    input: radio
-    options:
-      -
-        name: Music
-        value: music
-      -
-        name: News
-        value: news
-      -
-        name: Podcasts
-        value: podcasts
-      -
-        name: Sports
-        value: sports
+    input: select
+    search: true
+    list: primary-section-fronts
 
 genre:
   _label: Genre

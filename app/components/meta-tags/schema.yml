@@ -18,8 +18,8 @@ contentType:
 sectionFront:
   _subscribe: sectionFront
 
-secondaryArticleType:
-  _subscribe: secondaryArticleType
+secondarySectionFront:
+  _subscribe: secondarySectionFront
 
 contentTagItems:
   _subscribe: metaContentTagItems

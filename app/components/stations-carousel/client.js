@@ -3,20 +3,8 @@ const radioApi = `${window.location.protocol}//${window.location.hostname}/api/v
   market = require('../../services/client/market'),
   radioApiService = require('../../services/client/radioApi'),
   Hammer = require('hammerjs'),
-  localStorage = window.localStorage,
-  Handlebars = require('handlebars'),
-  stationLi = `
-    <a class="station-card" href='{{ default listen_live_url "https://player.radio.com"}}' target='_blank'>
-      <img class='thumb'
-          srcset='{{ default square_logo_large "" }}?width=222&dpr=1.5 1.5x,
-            {{ default square_logo_large "" }}?width=222&dpr=2 2x'
-          src='{{ default square_logo_large "" }}?width=222'
-      />
-      <span class='name'>{{ default name '' }}</span>
-    </a>
-  `;
+  localStorage = window.localStorage;
 
-require('clayhandlebars')(Handlebars);
 
 class StationsCarousel {
   constructor(element) {
@@ -294,16 +282,17 @@ StationsCarousel.prototype = {
    * Insert new payload of stations into DOM
    * @function
    */
-  updateStationsDOM: function () {
-    this.stationsList.removeChild(this.stationsList.querySelector('.loader-container')); // Remove loader
-    const template = Handlebars.compile(stationLi);
+  updateStationsDOM: async function () {
+    const stationIds = this.stationsData.stations.map(station => station.id),
+      endpoint = `//${window.location.hostname}/_components/stations-list/instances/local.html?stationIDs=${stationIds.join(',')}`,
+      localStations = await radioApiService.fetchDOM(endpoint);
 
-    this.stationsData.stations.forEach(function (stationData) {
-      let station = document.createElement('li');
+    // Clear out loader and old stuff
+    while (this.stationsList.firstChild) {
+      this.stationsList.removeChild(this.stationsList.firstChild);
+    }
 
-      this.stationsList.appendChild(station);
-      station.innerHTML = template(stationData);
-    }.bind(this));
+    this.stationsList.append(localStations);
 
     // Store for stations centering when stations do not fill up page
     this.stationsNodes = this.stationsCarousel.querySelectorAll('li');
@@ -317,9 +306,9 @@ StationsCarousel.prototype = {
    */
   updateStations: async function () {
     this.marketID = await market.getID();
-    return this.getFilteredStationsFromApi().then(stationsData => {
+    return this.getFilteredStationsFromApi().then(async (stationsData) => {
       this.stationsData = stationsData;
-      this.updateStationsDOM();
+      await this.updateStationsDOM();
       this.setImageAndPageDims();
       this.setCarouselWidth();
       this.totalPages = Math.ceil(this.stationsData.count / this.pageSize);
