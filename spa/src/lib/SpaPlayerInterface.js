@@ -45,16 +45,8 @@ class SpaPlayerInterface {
       // If appropriate, pop the player bar onto the screen by loading a station.
       const stationId = this.extractStationIdFromSpaPayload() || this.playerSession.id
 
-      if (this.playerSession.playerState !== 'play') {
-        this.spa.$store.state.radioPlayer.autoplay = false
-      }
-
       if (stationId) {
         await this.loadStation(stationId)
-      }
-
-      if (this.playerSession.playerState !== 'play') {
-        this.spa.$store.state.radioPlayer.handlePause()
       }
     }
   }
