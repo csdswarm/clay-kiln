@@ -7,7 +7,7 @@ const recircCmpt = require('../../universal/recirc-cmpt'),
   };
 
 /**
- * Mutates data by assigning 'uri' to each curated item
+ * Mutates each item by assigning the 'uri' fetched from elasticsearch
  *
  * @param {string} uri
  * @param {object[]} items

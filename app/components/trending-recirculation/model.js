@@ -23,12 +23,12 @@ const _get = require('lodash/get'),
   };
 
 /**
- * @param {string} uri
+ * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = async (uri, data, locals) => {
+module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
@@ -36,7 +36,7 @@ module.exports.save = async (uri, data, locals) => {
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    const result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts),
+    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts),
       article = {
         ...item,
         uri: result._id,
@@ -58,12 +58,12 @@ module.exports.save = async (uri, data, locals) => {
 };
 
 /**
- * @param {string} uri
+ * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = async (uri, data, locals) => {
+module.exports.render = async (ref, data, locals) => {
   if (abTest() && !locals.edit) {
     const lyticsId = _get(locals, 'lytics.uid'),
       noUserParams = lyticsId ? {} : {url: locals.url},
@@ -86,7 +86,7 @@ module.exports.render = async (uri, data, locals) => {
 
     // fetch the content uri for deduping purposes
     articles = await Promise.all(articles.map(async anArticle => {
-      const result = await recircCmpt.getArticleDataAndValidate(uri, anArticle, locals, [], searchOpts);
+      const result = await recircCmpt.getArticleDataAndValidate(ref, anArticle, locals, [], searchOpts);
 
       anArticle.uri = result._id;
 

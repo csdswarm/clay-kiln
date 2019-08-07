@@ -18,12 +18,12 @@ const queryService = require('../../services/server/query'),
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`;
 
 /**
- * @param {string} uri
+ * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = async (uri, data, locals) => {
+module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
@@ -40,7 +40,7 @@ module.exports.save = async (uri, data, locals) => {
         includeIdInResult: true,
         shouldDedupeContent: false
       },
-      result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
     Object.assign(item, {
       uri: result._id,
@@ -60,12 +60,12 @@ module.exports.save = async (uri, data, locals) => {
 };
 
 /**
- * @param {string} uri
+ * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = async (uri, data, locals) => {
+module.exports.render = async (ref, data, locals) => {
   const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
     setPrimaryStoryLabel = () => {
       data.primaryStoryLabel = data.primaryStoryLabel
@@ -145,7 +145,7 @@ module.exports.render = async (uri, data, locals) => {
     data.articles = data.items.concat(results);
     setPrimaryStoryLabel();
   } catch (e) {
-    queryService.logCatch(e, uri);
+    queryService.logCatch(e, ref);
   }
 
   return data;

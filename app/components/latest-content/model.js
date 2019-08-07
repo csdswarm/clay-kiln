@@ -18,12 +18,12 @@ const queryService = require('../../services/server/query'),
  * For each section's override items (0 through 3), look up the associated
  * articles and save them in redis.
  *
- * @param {string} uri
+ * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = async function (uri, data, locals) {
+module.exports.save = async function (ref, data, locals) {
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`];
 
@@ -39,7 +39,7 @@ module.exports.save = async function (uri, data, locals) {
           includeIdInResult: true,
           shouldDedupeContent: false
         },
-        result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
+        result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
       Object.assign(item, {
         uri: result._id,

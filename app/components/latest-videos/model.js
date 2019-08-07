@@ -16,12 +16,12 @@ const queryService = require('../../services/server/query'),
   maxItems = 6;
 
 /**
- * @param {string} uri
+ * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = async (uri, data, locals) => {
+module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
@@ -33,7 +33,7 @@ module.exports.save = async (uri, data, locals) => {
         includeIdInResult: true,
         shouldDedupeContent: false
       },
-      result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
     Object.assign(item, {
       uri: result._id,
