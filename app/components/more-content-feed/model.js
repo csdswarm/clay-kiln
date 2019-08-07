@@ -149,16 +149,6 @@ module.exports.render = async function (ref, data, locals) {
       queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
     }
 
-    data.sectionFront = null;
-
-    if (locals && (locals.sectionFront || locals.secondarySectionFront)) {
-      data.sectionFront = locals.secondarySectionFront || locals.sectionFront;
-    } else if (locals && locals.url && locals.url.split('radio.com/')[1].indexOf('topic') == -1 && locals.url.split('radio.com/')[1].indexOf('_') == -1) {
-      data.sectionFront = locals.url.split('radio.com/')[1].split('/')[0];
-    }
-    if (data.sectionFront) {
-      queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
-    }
     queryService.addMinimumShould(query, 1);
   } else if (data.populateFrom === 'author') {
     // Check if we are on an author page and override the above
@@ -184,18 +174,22 @@ module.exports.render = async function (ref, data, locals) {
       return data;
     }
     if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
-      queryService.addMust(query, { match: { secondarySectionFront: data.secondarySectionFrontManual || locals.secondarySectionFront }});
+      const secondarySectionFront = data.secondarySectionFrontManual || locals.secondarySectionFront;
+
+      queryService.addShould(query, { match: { secondarySectionFront: secondarySectionFront }});
+      queryService.addShould(query, { match: { secondarySectionFront: secondarySectionFront.toLowerCase() }});
+      queryService.addMinimumShould(query, 1);
     } else if (locals.sectionFront || data.sectionFrontManual) {
-      queryService.addMust(query, { match: { sectionFront: data.sectionFrontManual || locals.sectionFront }});
+      const sectionFront = data.sectionFrontManual || locals.sectionFront;
+
+      queryService.addShould(query, { match: { sectionFront: sectionFront }});
+      queryService.addShould(query, { match: { sectionFront: sectionFront.toLowerCase() }});
+      queryService.addMinimumShould(query, 1);
     }
   } else if (data.populateFrom === 'all-content') {
     if (!locals) {
       return data;
     }
-  }
-
-  if (data.filterBySecondary) {
-    queryService.addMust(query, { match: { secondarySectionFront: data.filterBySecondary }});
   }
 
   queryService.addSort(query, {date: 'desc'});
@@ -214,6 +208,7 @@ module.exports.render = async function (ref, data, locals) {
 
       if (filterOut) {
         queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter.toLowerCase() }});
       }
     });
   }

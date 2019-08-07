@@ -38,6 +38,6 @@ export default class {
 
     prepare(doc, locals.ENTERCOM_DOMAINS)
 
-    return doc.body.innerHTML
+    return doc.body ? doc.body.innerHTML : ''
   }
 }

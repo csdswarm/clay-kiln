@@ -214,3 +214,11 @@ module.exports['9.0'] = function (uri, data) {
 
   return newData;
 };
+
+module.exports['10.0'] = function (uri, data) {
+  let newData = Object.assign({}, data);
+
+  newData.secondarySectionFront = data.secondarySectionFront === 'Small Business Pulse' ? data.secondarySectionFront.toLowerCase() : data.secondarySectionFront;
+
+  return newData;
+};
