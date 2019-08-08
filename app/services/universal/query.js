@@ -71,8 +71,6 @@ function newQuery(index, query) {
   };
 }
 
-
-
 /**
  * Adds a property to the query based on the action provided.
  *
@@ -385,6 +383,29 @@ function newNestedQuery(path) {
   };
 }
 
+/**
+ * adds a query_string search on the fields
+ *
+ * @param {Object} query
+ * @param {String} searchTerm
+ * @param {String|Array} fields
+ *
+ * @return {Object}
+ */
+function addSearch(query, searchTerm, fields) {
+  const key = `${getRoot(query)}.query`,
+    value = {
+      query_string: {
+        query: searchTerm.replace(/([\/|:])/g, '\\$1'),
+        fields: _.isArray(fields) ? fields : [fields]
+      }
+    };
+
+  _.set(query, key,  value);
+
+  return query;
+}
+
 module.exports = newQuery;
 module.exports.addAggregation = addAggregation;
 module.exports.addShould = addShould;
@@ -403,3 +424,4 @@ module.exports.formatSearchResult = formatSearchResult;
 module.exports.formatProtocol = formatProtocol;
 module.exports.moreLikeThis = moreLikeThis;
 module.exports.newNestedQuery = newNestedQuery;
+module.exports.addSearch = addSearch;

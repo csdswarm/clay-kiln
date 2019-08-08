@@ -125,7 +125,7 @@ module.exports.put = function (url, data, isAuthenticated) {
  * note: primarily used for elastic search
  * @param  {string}  url
  * @param  {object|array}  data
- * @param  {Boolean} isAuthenticated set to true if making POST requests to Clay
+ * @param  {Boolean} [isAuthenticated] set to true if making POST requests to Clay
  * @return {Promise}
  */
 module.exports.post = function (url, data, isAuthenticated) {
