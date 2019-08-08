@@ -147,7 +147,8 @@
 </template>
 
 <script>
-  require('isomorphic-fetch');
+  import axios from 'axios';
+
   const {
       UiButton,
       UiProgressCircular,
@@ -155,8 +156,7 @@
       UiAlert,
       UiIconButton
     } = window.kiln.utils.components,
-    ColorPicker = require('vue-iro-color-picker'),
-    { getFetchResponse } = require('../utils/fetch');
+    ColorPicker = require('vue-iro-color-picker');
 
   export default {
     data() {
@@ -233,25 +233,21 @@
         try {
           let METHOD;
           if (this.theme) {
-            METHOD = 'PUT';
+            METHOD = 'put';
           } else {
-            METHOD = 'POST';
+            METHOD = 'post';
           }
-          const { status, statusText, data: theme } = await getFetchResponse(METHOD,
-              `/station-theme/${ window.kiln.locals.station.id }`,
-              { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor },
-              {'Content-Type': 'application/json'}
-            );
+          const { status, statusText, data: theme } = await axios({
+              method: METHOD,
+              url: `/station-theme/${ window.kiln.locals.station.id }`,
+              data: { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor }
+            });
 
           this.loading = false;
-          if (status >= 200 && status < 300) {
-            this.updateStatus = {type: 'success', message: 'Station theme updated.'}
-          } else {
-            this.updateStatus = {type: 'error', message: `Could not get theme. ${ status }: ${ statusText }`}
-          }
-        } catch(e) {
+          this.updateStatus = {type: 'success', message: 'Station theme updated.'}
+        } catch({ response }) {
           this.loading = false;
-          this.updateStatus = {type: 'error', message: `Could not get theme. ${ e }`}
+          this.updateStatus = {type: 'error', message: `Could not update theme. ${ response.data }`}
         }
       },
       /**
@@ -260,22 +256,18 @@
       async loadTheme() {
         this.loading = true;
         try {
-          const { status, statusText, data } = await getFetchResponse('GET', `/station-theme/${ window.kiln.locals.station.id }`);
+          const { data } = await axios.get(`/station-theme/${ window.kiln.locals.station.id }`);
 
           this.loading = false;
-          if (status >= 200 && status < 300) {
-            this.theme = data;
-            this.primaryColor = data.primaryColor;
-            this.secondaryColor = data.secondaryColor;
-            this.tertiaryColor = data.tertiaryColor;
-            this.primaryFontColor = data.primaryFontColor;
-            this.secondaryFontColor = data.secondaryFontColor;
-          } else {
-            this.updateStatus = {type: 'error', message: `Could not fetch theme. ${ status }: ${ data }`};
-          }
-        } catch(e) {
+          this.theme = data;
+          this.primaryColor = data.primaryColor;
+          this.secondaryColor = data.secondaryColor;
+          this.tertiaryColor = data.tertiaryColor;
+          this.primaryFontColor = data.primaryFontColor;
+          this.secondaryFontColor = data.secondaryFontColor;
+        } catch({ response }) {
           this.loading = false;
-          this.updateStatus = {type: 'error', message: `Could not fetch theme. ${ e }`};
+          this.updateStatus = {type: 'error', message: `Could not fetch theme. ${ response.data }`};
         }
       },
       /**

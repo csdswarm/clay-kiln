@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require('./db'),
-  log = require('../universal/log').setup({file: __filename}),
+  log = require('../universal/log').setup({ file: __filename }),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   /**
    * Add routes for station themes
@@ -15,7 +15,7 @@ const db = require('./db'),
      * Get the current theme for a station
      */
     app.get('/station-theme/:stationID', async (req, res) => {
-      const key = `${CLAY_SITE_HOST}/_station_themes/${ req.params.stationID }`;
+      const key = `${ CLAY_SITE_HOST }/_station_themes/${ req.params.stationID }`;
 
       try {
         const theme = await db.get(key);
@@ -23,7 +23,7 @@ const db = require('./db'),
         res.status(200).send(theme);
       } catch (e) {
         log('error', e);
-        res.status(500).send('There was an error getting the current theme or theme does not exist');
+        res.status(500).send('There was an error getting the current theme or theme does not exist.');
       }
     });
 
@@ -31,7 +31,7 @@ const db = require('./db'),
      * Add a new station theme
     */
     app.post('/station-theme/:stationID', async (req, res) => {
-      const key = `${CLAY_SITE_HOST}/_station_themes/${ req.params.stationID }`,
+      const key = `${ CLAY_SITE_HOST }/_station_themes/${ req.params.stationID }`,
         theme = req.body;
 
       try {
@@ -40,7 +40,7 @@ const db = require('./db'),
         res.status(200).send(theme);
       } catch (e) {
         log('error', e.message);
-        res.status(500).send('There was an error saving the theme');
+        res.status(500).send('There was an error saving the theme.');
       }
     });
 
@@ -48,7 +48,7 @@ const db = require('./db'),
      * Update a station theme
     */
     app.put('/station-theme/:stationID', async (req, res) => {
-      const key = `${CLAY_SITE_HOST}/_station_themes/${ req.params.stationID }`,
+      const key = `${ CLAY_SITE_HOST }/_station_themes/${ req.params.stationID }`,
         theme = req.body;
 
       try {
@@ -57,7 +57,7 @@ const db = require('./db'),
         res.status(200).send(theme);
       } catch (e) {
         log('error', e.message);
-        res.status(500).send('There was an error saving the theme');
+        res.status(500).send('There was an error saving the theme.');
       }
     });
   };
