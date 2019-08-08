@@ -237,11 +237,11 @@
           } else {
             METHOD = 'post';
           }
-          const { status, statusText, data: theme } = await axios({
-              method: METHOD,
-              url: `/station-theme/${ window.kiln.locals.station.id }`,
-              data: { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor }
-            });
+          await axios({
+            method: METHOD,
+            url: `/station-theme/${ window.kiln.locals.station.id }`,
+            data: { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor }
+          });
 
           this.loading = false;
           this.updateStatus = {type: 'success', message: 'Station theme updated.'}
