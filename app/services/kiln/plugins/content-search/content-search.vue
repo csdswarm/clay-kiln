@@ -76,7 +76,7 @@
         const results = await queryService.searchByQuery(query);
 
         // format the date using the same format as clay-kiln
-        return results.map(item => ({ ...item, date: kilnDateTimeFormat(item.date) }))
+        return results.map(item => ({ ...item, date: kilnDateTimeFormat(item.date) }));
       },
       /**
        *  makes a call to the endpoint and populates the results
@@ -115,7 +115,7 @@
       selectItem(selected) {
         this.searchText = selected.canonicalUrl;
         this.searchResults = [selected];
-        this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText })
+        this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
       }
     },
     components: {

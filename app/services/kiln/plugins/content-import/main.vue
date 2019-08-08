@@ -56,7 +56,7 @@
 
         const results = await queryService.searchByQuery(query);
 
-        return results.map(item => [item.url, item.urlHistory].flat())
+        return results.map(item => [item.url, item.urlHistory].flat()) //make each item a single array
           .flat() //create a single array or urls
           .find(url => url); //obtain the first item or undefined
       },
@@ -78,7 +78,7 @@
 
           if (existing) {
             this.loading = false;
-            this.error = `This content already exists.`
+            this.error = `This content already exists.`;
             this.errorUrl = existing;
           } else {
             const [result] = await rest.post('/import-content', { domain: host, filter: { slug: pathname } });
@@ -87,7 +87,7 @@
               window.location.href = `${ location }${ result.url }?edit=true`;
             } else {
               this.loading = false;
-              this.error = `This content failed to import.  Please log an error ticket with the error "${ result.message }`
+              this.error = `This content failed to import.  Please log an error ticket with the error "${ result.message }`;
             }
           }
         } catch (e) {
