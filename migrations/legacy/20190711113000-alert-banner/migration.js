@@ -16,7 +16,10 @@ const LAYOUTS_INSERT_PAGEAREA = [
 ];
 
 const PAGES_INSERT_COMPONENT = [
-  '_pages/home'
+  '_pages/home',
+  '_pages/news',
+  '_pages/sports',
+  '_pages/music',
 ];
 
 const TARGET_LAYOUTS = [
