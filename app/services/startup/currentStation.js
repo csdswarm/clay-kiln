@@ -21,7 +21,12 @@ const radioApiService = require('../../services/server/radioApi'),
       id: 15,
       name: 'New York, NY'
     },
-    category: ''
+    category: '',
+    slogan: 'Bringing radio alive',
+    twitter: 'radiodotcom',
+    facebook: 'https://www.facebook.com/radiodotcom',
+    youtube: 'https://www.youtube.com/user/radiodotcom',
+    instagram: 'https://www.instagram.com/radiodotcom'
   },
   /**
    * returns the slug of the site either from a subdomain or as the first element of the path

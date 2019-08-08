@@ -541,3 +541,16 @@ em, i {
 @define-mixin station-nav-font1 {
   @mixin font CircularStd-Medium, 15px, $white, -.23px, 18px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||||   Station Footer Styleguide     |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin station-footer-font1 {
+  @mixin font CircularStd-Medium, 18px, $white, -.45px, 22px;
+}
+@define-mixin station-footer-font2 {
+  @mixin font CircularStd-Black, 18px, $white, -.45px, 22px;
+}
+@define-mixin station-footer-font3 {
+  @mixin font ProximaNova-Regular, 14px, $white, -.23px, 22px;
+}

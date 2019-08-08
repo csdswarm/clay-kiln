@@ -10,6 +10,7 @@ module.exports = () => {
   require('./plugins/podcast-select')();
   require('./plugins/brightcove')();
   require('./plugins/content-syndication')();
+  require('./plugins/content-search')();
   require('./plugins/instagram')();
   require('./plugins/subscriptions')();
   require('./plugins/stations')();
