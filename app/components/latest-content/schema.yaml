@@ -24,8 +24,7 @@ sportsItems:
       prop: url
       _label: URL
       _has:
-        input: text
-        type: url
+        input: content-search
         validate:
           required: true
     -
@@ -66,7 +65,7 @@ musicItems:
       prop: url
       _label: URL
       _has:
-        input: text
+        input: content-search
         type: url
         validate:
           required: true
@@ -109,7 +108,7 @@ newsItems:
       prop: url
       _label: URL
       _has:
-        input: text
+        input: content-search
         type: url
         validate:
           required: true
