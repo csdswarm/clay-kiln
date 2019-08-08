@@ -297,7 +297,7 @@ function setCanonicalUrl(data, locals) {
 function getRollingStandoutArticles(locals) {
   var rollingStandoutArticlesQuery = queryService(PUBLISHED_CONTENT_INDEX, locals),
     site = locals.site,
-    uriPrefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}});
+    uriPrefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http' }});
 
   queryService.addMust(rollingStandoutArticlesQuery, [
     {

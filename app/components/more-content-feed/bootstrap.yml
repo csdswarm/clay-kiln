@@ -7,8 +7,10 @@ _components:
     contentType: { article: true, gallery: true }
     sectionFront: ''
     sectionFrontManual: ''
+    secondarySectionFront: ''
+    secondarySectionFrontManual: ''
     filterTags: []
-    filterSecondaryArticleTypes: []
+    filterSecondarySectionFronts: []
     populateFrom: ''
     locationOfContentFeed: ''
     contentCollectionLogoSponsorship:

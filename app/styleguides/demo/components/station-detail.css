@@ -77,6 +77,7 @@
             margin-bottom: em(15);
           }
           .station-title__name {
+            display: inline;
             overflow: hidden;
             @mixin station-detail-font1;
             max-height: em(84, 35);
@@ -84,6 +85,33 @@
             @mixin medium-screen {
               @mixin station-detail-font2;
               max-height: em(84, 24);
+            }
+          }
+
+          .station-title__favorite-btn--{
+            &not-active {
+              @mixin favorite-not-active;
+
+              top: em(2);
+              position: relative;
+
+              @mixin medium-screen {
+                height: em(24);
+                width: em(24);
+                top: em(4);
+              }
+            }
+            &active {
+              @mixin favorite-active;
+
+              top: em(2);
+              position: relative;
+
+              @mixin medium-screen {
+                height: em(24);
+                width: em(24);
+                top: em(4);
+              }
             }
           }
         }

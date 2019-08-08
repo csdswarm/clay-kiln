@@ -1,7 +1,7 @@
 'use strict';
 
 const SelectBox = require('../../services/client/selectbox'),
-  spaLinkService = require('../../services/client/spaLink');
+  spaLinkService = require('../../services/universal/spaLink');
 
 class DirectoryGenre {
   constructor(el) {

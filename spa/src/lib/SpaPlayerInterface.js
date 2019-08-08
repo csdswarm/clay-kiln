@@ -9,13 +9,26 @@
 import * as mutationTypes from '../vuex/mutationTypes'
 import SpaCommunicationBridge from './SpaCommunicationBridge'
 import QueryPayload from './QueryPayload'
+import ClientPlayerInterface from '../../../app/services/client/ClientPlayerInterface'
 const spaCommunicationBridge = SpaCommunicationBridge()
 const queryPayload = new QueryPayload()
 
 class SpaPlayerInterface {
   constructor (spaApp) {
     this.spa = spaApp
-    this.attachClientEventListeners()
+    this.attachClientCommunication()
+
+    // Attach event listeners to DOM
+    ClientPlayerInterface().addEventListener(this.spa.$el)
+
+    /**
+     * Execute web player "routing" logic (determines whether to lazy-load player and auto-initialize player bar).
+     *
+     * NOTE: router() is async and returns a promise, but onLayoutUpdate() must be synchronous (because Vue lifecycle methods
+     * must be synchronous). Since the player exists outside of the slice of DOM managed by the SPA, playerInterface.router() is safe to call
+     * as if it was "synchronous" and there is no need to block further execution of onLayoutUpdate() until playerInterface.router() resolves.
+     */
+    this.router()
   }
 
   /**
@@ -149,7 +162,7 @@ class SpaPlayerInterface {
    * the player.
    *
    */
-  attachClientEventListeners () {
+  attachClientCommunication () {
     // Add channel that listens for play/pause button clicks.
     if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlaybackStatus')) {
       spaCommunicationBridge.subscribe('SpaPlayerInterfacePlaybackStatus', async (payload) => {

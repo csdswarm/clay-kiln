@@ -22,6 +22,8 @@ _components:
       - _ref: /_components/paragraph/instances/new
     tags:
       _ref: /_components/tags/instances/new
+    adTags:
+      _ref: /_components/ad-tags/instances/new
     contentPageSponsorLogo:
       _ref: /_components/google-ad-manager/instances/contentPageLogoSponsorship
     sideShare:
@@ -32,7 +34,7 @@ _components:
       most-popular: true
       newsfeed: true
       apple-news: true
-    secondaryArticleType: ''
+    secondarySectionFront: ''
     showSocial: true
     authors: []
     sources: []
