@@ -8,7 +8,9 @@ const stationThemeButton = require('./station-theme-button.vue'),
 module.exports = () => {
   window.kiln = window.kiln || {};
   window.kiln.navButtons = window.kiln.navButtons || {};
-  window.kiln.navButtons['station-theme'] = stationThemeButton;
   window.kiln.navContent = window.kiln.navContent || {};
-  window.kiln.navContent['station-theme'] = stationTheme;
+  if (window.kiln.locals.station.id !== 0) {
+    window.kiln.navButtons['station-theme'] = stationThemeButton;
+    window.kiln.navContent['station-theme'] = stationTheme;
+  }
 };
