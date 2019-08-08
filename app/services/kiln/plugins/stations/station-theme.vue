@@ -231,12 +231,8 @@
         const { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor } = this;
 
         try {
-          let METHOD;
-          if (this.theme) {
-            METHOD = 'put';
-          } else {
-            METHOD = 'post';
-          }
+          const METHOD = this.theme ? 'put' : 'post';
+          
           await axios({
             method: METHOD,
             url: `/station-theme/${ window.kiln.locals.station.id }`,
