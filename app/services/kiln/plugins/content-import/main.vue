@@ -44,6 +44,10 @@
     methods: {
       /**
        * search the page index for the path of the URL and return one if found
+       *
+       * @param {string} path
+       *
+       * @returns {string}
        */
       async findExisting(path) {
         const query = queryService('pages', window.kiln.locals);
@@ -78,7 +82,7 @@
 
           if (existing) {
             this.loading = false;
-            this.error = `This content already exists.`;
+            this.error = 'This content already exists.';
             this.errorUrl = existing;
           } else {
             const [result] = await rest.post('/import-content', { domain: host, filter: { slug: pathname } });
@@ -87,7 +91,7 @@
               window.location.href = `${ location }${ result.url }?edit=true`;
             } else {
               this.loading = false;
-              this.error = `This content failed to import.  Please log an error ticket with the error "${ result.message }`;
+              this.error = `This content failed to import.  Please log an error ticket with the error "${ result.message }"`;
             }
           }
         } catch (e) {

@@ -62,6 +62,8 @@
     methods: {
       /**
        * search the published_content index the search string
+       *
+       * @returns {array}
        */
       async search() {
         const query = queryService('published-content', window.kiln.locals),
