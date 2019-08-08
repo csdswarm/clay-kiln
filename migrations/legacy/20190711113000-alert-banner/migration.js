@@ -6,10 +6,22 @@ const logMessage = message => data => {
   return data
 };
 
-const TARGET_LAYOUTS = [
+const LAYOUTS_INSERT_COMPONENT = [
   '_layouts/two-column-layout/instances/article',
-  '_layouts/one-column-layout/instances/article', // probably not used, but just in case
+  '_layouts/one-column-layout/instances/article' // probably not used, but just in case
+];
+
+const LAYOUTS_INSERT_PAGEAREA = [
   '_layouts/one-column-layout/instances/general'
+];
+
+const PAGES_INSERT_COMPONENT = [
+  '_pages/home'
+];
+
+const TARGET_LAYOUTS = [
+  ...LAYOUTS_INSERT_PAGEAREA,
+  ...LAYOUTS_INSERT_COMPONENT
 ];
 
 async function createDefaultAlertBanner() {
@@ -26,36 +38,59 @@ function getLayoutInstances(){
   return Promise.all(TARGET_LAYOUTS.map(layout => clayExport({componentUrl: `${hostUrl}/${layout}`})));
 }
 
-function addBannerToInstances(layouts){
+function getPages(){
+  return Promise.all(PAGES_INSERT_COMPONENT.map(page => clayExport({ componentUrl: `${hostUrl}/${page}` })));
+}
+
+function addBannerToLayouts(layouts){
   return layouts
-    .map(({data}) => {
-      const path = TARGET_LAYOUTS
-        .map(address => address.split('/'))
-        .find(path => _has(data, path));
+    .map(({ data }) => {
+      const [path, target] = TARGET_LAYOUTS
+        .map(address => [address.split('/'), address])
+        .find(path => _has(data, path[0]));
       path.push('banner');
-      _set(data, path, [{_ref: `${host}/_components/alert-banner/instances/default`}]);
+
+      const injectComponent = LAYOUTS_INSERT_COMPONENT.includes(target);
+
+      const value = injectComponent ? [{_ref: `${host}/_components/alert-banner/instances/default`}] : 'banner';
+
+      _set(data, path, value);
+
       return data;
     });
 }
 
-function updateInstances(layoutsWithAlertBanner) {
-  return Promise.all(layoutsWithAlertBanner
+function addBannerToPages(pages){
+  return pages
+    .map(({ data }) => {
+      const path = PAGES_INSERT_COMPONENT
+        .map(address => address.split('/'))
+        .find(path => _has(data, path));
+      path.push('banner');
+
+      _set(data, path, [`${host}/_components/alert-banner/instances/default`]);
+
+      return data;
+    });
+}
+
+function importContent(content) {
+  return Promise.all(content
     .map(payload => {
       try {
         return clayImport({ payload, hostUrl, publish: true })
       } catch (error) {
-        console.log('An error occurred while trying to update the alert-banner instance.', prettyJSON({error}));
+        console.log('An error occurred while trying to update a page or layout instance.', prettyJSON({error}));
       }
     }));
 }
 
 createDefaultAlertBanner()
   .then(logMessage('Default alert-banner instance created.'))
-  .then(getLayoutInstances)
-  .then(logMessage('Got Layout instances.'))
-  .then(addBannerToInstances)
-  .then(logMessage('Added Banners to instances.'))
-  .then(updateInstances)
+  .then(() => Promise.all([getLayoutInstances(), getPages()]))
+  .then(logMessage('Got layout instances and pages.'))
+  .then(([layouts, pages]) => Promise.all([addBannerToLayouts(layouts), addBannerToPages(pages)]))
+  .then(logMessage('Added banner to layout instances and pages.'))
+  .then(([layouts, pages]) => importContent([...layouts, ...pages]))
   .then(logMessage('Done.'))
-  .catch(console.log)
-
+  .catch(console.log);
