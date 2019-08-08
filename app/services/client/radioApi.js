@@ -5,7 +5,7 @@ const rest = require('../universal/rest'),
   { formatLocal } = require('../../services/universal/dateTime'),
   { getLocals } = require('./spaLocals'),
   spaLinkService = require('../universal/spaLink'),
-  clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
+  clientPlayerInterface = require('./ClientPlayerInterface')(),
   clientUserInterface = require('./ClientUserInterface')(),
   clientStateInterface = require('./ClientStateInterface')(),
   // here for models that reference /server/radioApi (brightcove)
