@@ -231,10 +231,8 @@
         const { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor } = this;
 
         try {
-          const METHOD = this.theme ? 'put' : 'post';
-          
           await axios({
-            method: METHOD,
+            method: this.theme ? 'put' : 'post',
             url: `/station-theme/${ window.kiln.locals.station.id }`,
             data: { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor }
           });
