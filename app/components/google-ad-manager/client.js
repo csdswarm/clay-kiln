@@ -40,6 +40,19 @@ let refreshCount = 0,
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
 
+/**
+ * Add Sharethrough script on first page load
+ * @function
+ */
+(() => {
+  const firstScript = document.getElementsByTagName('script')[0],
+    newScript = document.createElement('script');
+
+  newScript.async = true;
+  newScript.src = 'https://native.sharethrough.com/assets/sfp.js';
+  firstScript.parentNode.insertBefore(newScript, firstScript);
+})();
+
 // Listener to ensure lytics has been setup in GTM (Google Tag Manager)
 document.addEventListener('gtm-lytics-setup', () => {
   initializeAds();
@@ -461,6 +474,9 @@ function createAds(adSlots) {
 
       if (adTargetingData.targetingMarket) {
         slot.setTargeting('market', adTargetingData.targetingMarket);
+      }
+      if (adSize === 'sharethroughTag') {
+        slot.setTargeting('strnativekey', ad.id);
       }
 
       // Right rail and inline gallery ads need unique names

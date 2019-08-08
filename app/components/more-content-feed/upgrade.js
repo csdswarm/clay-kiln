@@ -71,3 +71,9 @@ module.exports['6.0'] = function (uri, data) {
   
   return newData;
 };
+
+module.exports['7.0'] = function (uri, data) {
+  data.sharethroughTag = { _ref: '/_components/google-ad-manager/instances/sharethroughTag' };
+  
+  return data;
+};

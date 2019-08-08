@@ -242,6 +242,11 @@ googleAdRightRail:
     include:
       - google-ad-manager
 
+sharethroughTag:
+  _component:
+    include:
+      - google-ad-manager
+
 _groups:
   contentFeed:
     _label: Content Feed
