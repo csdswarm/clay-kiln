@@ -59,7 +59,7 @@
     "highland": "^2.13.0",
     "html-truncate": "^1.2.2",
     "html-word-count": "^2.0.0",
-    "ioredis": "^4.10.4",
+    "ioredis": "4.10.4",
     "isomorphic-fetch": "^2.2.1",
     "js-base64": "^2.4.9",
     "jsdom": "^9.5.0",

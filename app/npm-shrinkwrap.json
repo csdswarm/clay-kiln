@@ -1,6 +1,6 @@
 {
   "name": "clay-starter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1138,7 +1138,7 @@
         "glob": "7.1.4",
         "handlebars": "4.1.2",
         "highland": "2.13.5",
-        "ioredis": "4.14.0",
+        "ioredis": "4.10.4",
         "js-yaml": "3.13.1",
         "lodash": "4.17.15",
         "node-fetch": "1.7.3",
@@ -1248,7 +1248,7 @@
       "integrity": "sha512-CTGgNUr2Naa60h/HqiKJt3SCD0mgZC3SlxIfAqnWRZIb0Ie0dg/5KvqOr0Mgm+1MTyHAddIN7d7HzsgHoXQirQ==",
       "requires": {
         "clay-log": "1.3.1",
-        "ioredis": "4.14.0"
+        "ioredis": "4.10.4"
       }
     },
     "amphora-fs": {
@@ -1416,7 +1416,7 @@
         "clay-log": "1.3.1",
         "clayutils": "2.6.1",
         "highland": "2.13.5",
-        "ioredis": "4.14.0",
+        "ioredis": "4.10.4",
         "knex": "0.15.2",
         "pg": "7.4.3",
         "pg-query-stream": "1.1.2"
@@ -3183,7 +3183,6 @@
         "anymatch": "2.0.0",
         "async-each": "1.0.3",
         "braces": "2.3.2",
-        "fsevents": "1.2.9",
         "glob-parent": "3.1.0",
         "inherits": "2.0.3",
         "is-binary-path": "1.0.1",
@@ -3315,7 +3314,6 @@
         "escape-quotes": "1.0.2",
         "event-stream": "3.3.4",
         "fs-extra": "7.0.1",
-        "fsevents": "1.2.9",
         "get-stdin": "5.0.1",
         "glob": "7.1.4",
         "gulp": "4.0.2",
@@ -8129,9 +8127,9 @@
       "integrity": "sha1-EEqOSqym09jNFXqO+L+rLXo//bY="
     },
     "ioredis": {
-      "version": "4.14.0",
-      "resolved": "https://registry.npmjs.org/ioredis/-/ioredis-4.14.0.tgz",
-      "integrity": "sha512-vGzyW9QTdGMjaAPUhMj48Z31mIO5qJLzkbsE5dg+orNi7L5Ph035htmkBZNDTDdDk7kp7e9UJUr+alhRuaWp8g==",
+      "version": "4.10.4",
+      "resolved": "https://registry.npmjs.org/ioredis/-/ioredis-4.10.4.tgz",
+      "integrity": "sha512-hGH0ixXRjqTYa/UUiODfjo29phZ57n8WjFTKpsrN3dgsTCkH+WAVuGdbSoH68n+ha2ns6z8d/MRPOU0as0BtIA==",
       "requires": {
         "cluster-key-slot": "1.1.0",
         "debug": "4.1.1",
