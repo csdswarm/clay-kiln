@@ -2,18 +2,13 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-$default-screen-nav-width: em(1100); /* 1280+ desktop */
-$large-screen-nav-width: em(940); /* 1280-1024 desktop */
-$medium-screen-nav-width: em(728); /* 1023-481 tablet */
-$medium-small-screen-nav-width: em(440); /* 480-361 mobile */
-$small-screen-nav-width: em(320); /* 360- mobile */
 $station-logo-width-height: em(100);
 $station-logo-width-height-med-screen: em(80);
 $logo-margin-right: em(40);
 $caret-width: em(16);
 $caret-margin-right: em(25);
 
-@define-mixin primary-triangle {
+@define-mixin triangle {
   width: 0;
   height: 0;
   border-bottom: em(12) solid $dustyGray;
@@ -143,7 +138,7 @@ $caret-margin-right: em(25);
             }
           }
           .menu__triangle {
-            @mixin primary-triangle;
+            @mixin triangle;
             display: none;
           }
         }
@@ -214,7 +209,7 @@ $caret-margin-right: em(25);
           }
         }
         .menu__triangle {
-          @mixin primary-triangle;
+          @mixin triangle;
           margin: 0;
           position: absolute;
           bottom: 0;

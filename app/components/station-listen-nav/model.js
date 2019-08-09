@@ -7,10 +7,11 @@ const { playingClass } = require('../../services/universal/spaLocals'),
    * Appends ? or & to end of img string
    *
    * @param {string} img
+   * @param {Object} locals -- includes site
    * @returns {string}
   */
-  appendParamsAmpOrQuery = (img) => {
-    img = img || 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+  appendParamsAmpOrQuery = (img, { site }) => {
+    img = img || site.radiocomDefaultImg;
     img = img.includes('?') ?
       `${ img }&` :
       `${ img }?`;
@@ -25,20 +26,25 @@ module.exports.render = async (ref, data, locals) => {
 
   await Promise.all([
     getNowPlaying(locals.station.id, data),
-    getSchedule(locals.station.id, locals, data, true)
+    getSchedule({
+      stationId: locals.station.id,
+      pageSize: 50,
+      pageNum: 1,
+      filterByDay: true
+    }, locals, data, true)
   ]);
 
   data.playingClass = playingClass(locals, locals.station.id);
   data.station = locals.station;
 
   data.featuredLinks.forEach((link, i, links) => {
-    links[i].image = appendParamsAmpOrQuery(link.image);
+    links[i].image = appendParamsAmpOrQuery(link.image, locals);
   });
   if (data.nowPlaying) {
-    data.nowPlaying.imageUrl = appendParamsAmpOrQuery(data.nowPlaying.imageUrl);
+    data.nowPlaying.imageUrl = appendParamsAmpOrQuery(data.nowPlaying.imageUrl, locals);
   }
   if (data.onAir) {
-    data.onAir.image = appendParamsAmpOrQuery(data.onAir.image);
+    data.onAir.image = appendParamsAmpOrQuery(data.onAir.image, locals);
   }
 
   return data;

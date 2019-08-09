@@ -29,24 +29,32 @@ const radioApi = require('../server/radioApi'),
    * Retrieve station show schedules from api and
    * set current show on air if enabled
    *
-   * @param {number} stationId
+   * @param {Object} config
+   * @param {number} config.stationId
+   * @param {number} config.pageSize
+   * @param {number} config.pageNum
+   * @param {boolean} config.filterByDay
    * @param {Object} locals
    * @param {Object} [data]
    * @param {boolean} [onAir]
   */
-  getSchedule = async (stationId, locals, data = null, onAir = false) => {
-    const gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
+  getSchedule = async (config, locals, data = null, onAir = false) => {
+    const { stationId, pageSize, pageNum, filterByDay } = config,
+      gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
       // using the station offset determine the current day 1 - 7 based
       stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
       dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
-      schedules = await radioApi.get('schedules',
-        {
-          'page[size]': 50,
-          'page[number]':1,
-          'filter[day_of_week]': dayOfWeek,
-          'filter[station_id]': stationId
-        }
-      );
+      params = {
+        'page[size]': pageSize,
+        'page[number]': pageNum,
+        'filter[station_id]': stationId
+      };
+
+    if (filterByDay) {
+      params['filter[day_of_week]'] = dayOfWeek;
+    }
+    // eslint-disable-next-line one-var
+    const schedules = await radioApi.get('schedules', params);
 
     if (onAir && _has(schedules, 'data.length')) {
       const show = _find(schedules.data, schedule => {

@@ -9,7 +9,7 @@ module.exports.render = async (ref, data, locals) => {
 
   data.playingClass = playingClass(locals, locals.station.id);
   data.station = locals.station;
-  data.stationLogo = data.stationLogo || data.station.square_logo_small || 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+  data.stationLogo = data.stationLogo || data.station.square_logo_small || locals.site.radiocomDefaultImg;
   data.stationLogo = data.stationLogo.includes('?') ?
     `${ data.stationLogo }&` :
     `${ data.stationLogo }?`;
