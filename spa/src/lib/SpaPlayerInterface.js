@@ -71,7 +71,7 @@ class SpaPlayerInterface {
    */
   autoBootPlayer (path) {
     const matchedStationDetailRoute = path.match(/^\/(.+)\/listen$/)
-    const playerWasActive = Object.keys(this.playerSession).length !== 0
+    const playerWasActive = this.playerSession.playerState === 'play'
 
     if (matchedStationDetailRoute || playerWasActive) {
       return true
