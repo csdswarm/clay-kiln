@@ -38,7 +38,7 @@ const createYaml = async () => {
     _components: {
       'station-listen-nav': {
         instances: {
-          default: {
+          new: {
             featuredLinks: []
           }
         }
@@ -79,7 +79,7 @@ const createYaml = async () => {
             ],
             featuredLinks: [],
             listenNav: {
-              _ref: '/_components/station-listen-nav/instances/default'
+              _ref: '/_components/station-listen-nav/instances/new'
             }
           }
         }

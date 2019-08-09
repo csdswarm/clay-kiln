@@ -27,4 +27,4 @@ _components:
         secondaryLinks: []
     featuredLinks: []
     listenNav:
-      _ref: /_components/station-listen-nav/instances/default
+      _ref: /_components/station-listen-nav/instances/new
