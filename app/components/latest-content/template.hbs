@@ -2,8 +2,20 @@
   <h2 class="latest-content__title"><span>LATEST on RADIO.COM</span></h2>
   <div class="latest-content__section">
     {{#each articles as |articleSection|}}
-      <div class="section__container section__container--{{articleSection.section}}">
-        <div data-editable="{{articleSection.section}}Items"></div>
+      <div
+        class="section__container section__container--{{articleSection.section}}"
+        data-editable="{{articleSection.section}}Items"
+      >
+        {{! only show edit placeholder in edit mode}}
+        {{#if @root.locals.edit}}
+          <div class="kiln-placeholder latest-content__add-article-button">
+            <div class="placeholder-label">
+              <span class="ui-icon placeholder-icon material-icons add">add</span>
+              <span class="placeholder-text">{{articleSection.section}} articles</span>
+            </div>
+          </div>
+        {{/if}}
+
         <ul class="container__article-list">
           {{#each articleSection.articles as |article|}}
             <li>
