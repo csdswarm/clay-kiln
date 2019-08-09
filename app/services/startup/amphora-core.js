@@ -8,7 +8,7 @@ function initAmphora(app, search, sessionStore, routes) {
   return amphora({
     app,
     renderers,
-    providers: ['apikey', 'google', 'cognito'],
+    providers: ['google', 'cognito'],
     sessionStore,
     plugins: [
       search,
