@@ -9,7 +9,7 @@
  *
  */
 
-import debounce from 'lodash.debounce'
+import debounce from 'lodash/debounce'
 import $ from 'jquery'
 import * as mutationTypes from '../vuex/mutationTypes'
 

@@ -1,3 +1,5 @@
+@import "_global/colors";
+
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||||||| Licensed Fonts |||||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -481,6 +483,57 @@ em, i {
   @mixin font ProximaNova-Bold, 18px, $black, -.36px, 30px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Radium Fonts Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin radium-font1 {
+  @mixin font ProximaNova-Regular, 12px, $white, normal, 12px;
+}
+
+@define-mixin radium-form-font1 {
+  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 44px;
+}
+
+@define-mixin radium-form-font2 {
+  @mixin font CircularStd-Black, 22px, $parisM, -.55px, 28px;
+}
+
+@define-mixin radium-form-font3 {
+  @mixin font CircularStd-Medium, 18px, $white, -.3, 23px;
+}
+
+@define-mixin radium-form-font4 {
+  @mixin font CircularStd-Medium, 16px, $black, -.26, 20px;
+}
+
+@define-mixin radium-form-font5 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23, 18px;
+}
+
+@define-mixin radium-form-font6 {
+  @mixin font CircularStd-Black, 14px, $parisM, -.23, 18px;
+}
+
+@define-mixin radium-form-font7 {
+  @mixin font CircularStd-Medium, 14px, $tundora, -.23, 18px;
+}
+
+@define-mixin radium-form-font8 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23, 18px;
+}
+
+@define-mixin radium-form-font9 {
+  @mixin font CircularStd-Medium, 14px, $red, -.23, 18px;
+}
+
+@define-mixin radium-form-font10 {
+  @mixin font CircularStd-Medium, 14px, $fruitSalad, -.23, 18px;
+}
+
+@define-mixin radium-form-font-11 {
+  @mixin font CircularStd-Black, 12px, $parisM, -.3, 15px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||||||     Station Nav Styleguide      |||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -526,4 +579,17 @@ em, i {
 
 @define-mixin station-listen-nav-font5 {
   @mixin font ProximaNova-Regular, 15px, $white, -.24px, 18px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||||   Station Footer Styleguide     |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin station-footer-font1 {
+  @mixin font CircularStd-Medium, 18px, $white, -.45px, 22px;
+}
+@define-mixin station-footer-font2 {
+  @mixin font CircularStd-Black, 18px, $white, -.45px, 22px;
+}
+@define-mixin station-footer-font3 {
+  @mixin font ProximaNova-Regular, 14px, $white, -.23px, 22px;
 }

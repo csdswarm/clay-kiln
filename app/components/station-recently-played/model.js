@@ -1,7 +1,7 @@
 'use strict';
 
 const radioApi = require('../../services/server/radioApi'),
-  { apiDayOfWeek } = require('../../services/universal/dateTime'),
+  { apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime'),
   { playingClass } = require('../../services/universal/spaLocals'),
   { getNowPlaying } = require('../../services/universal/station'),
   moment = require('moment');
@@ -57,7 +57,7 @@ module.exports.render = async function (ref, data, locals) {
       .map((item) => {
         return {
           playing: item.playing,
-          start_time: item.timePlayedUtc,
+          start_time: formatUTC(item.timePlayedUtc),
           artist: item.artist,
           image: item.imageUrl,
           title: item.title,
