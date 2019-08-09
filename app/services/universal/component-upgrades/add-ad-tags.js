@@ -14,10 +14,8 @@ const _endsWith = require('lodash/endsWith'),
  * @returns {object} - the updated 'data' object
  */
 module.exports = async (componentName, uri, data) => {
-  const isNewOrDefault = (
-      _endsWith(uri, `/_components/${componentName}/instances/new`)
-      || _endsWith(uri, `/_components/${componentName}`)
-    ),
+  const isNewOrDefault = _endsWith(uri, `/_components/${componentName}/instances/new`)
+      || _endsWith(uri, `/_components/${componentName}`),
     adTagsInstanceId = isNewOrDefault
       ? 'new'
       : cuid(),
