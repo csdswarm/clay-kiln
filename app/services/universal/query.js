@@ -5,6 +5,10 @@ const _ = require('lodash'),
   protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
+ * Returns a function which formats the search results based off the search
+ *   options.  Specifically if the option 'includeIdInResult' is truthy, then
+ *   each hit's '_id' is assigned to its '_source' object.
+ *
  * @param {object} searchOpts
  * @returns {function}
  */

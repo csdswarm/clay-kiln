@@ -72,7 +72,7 @@ function newQueryWithCount(index, count) {
  * @param  {Object} opts - various search options shared with
  *                         searchByQueryWithRawResult.  This method relies on
  *                           : 'includeIdInResult'
- *                           : 'transofrmResult'
+ *                           : 'transformResult'
  * @return {Promise}
  * @example searchByQuery({"index":"local_published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
