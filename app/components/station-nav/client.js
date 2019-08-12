@@ -19,7 +19,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @returns {Promise}
    */
   refreshListenNav = async () => {
-    const doc = await fetchDOM('/_components/station-listen-nav/instances/default.html'),
+    const doc = await fetchDOM('/_components/station-listen-nav/instances/new.html'),
       oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
     listenNavDrawer.replaceChild(doc, oldChild);
