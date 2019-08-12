@@ -8,13 +8,15 @@
  */
 function fixAJAXImages(parentContainer) {
   // iOS doesn't play nice with srcset dynamically (https://github.com/metafizzy/infinite-scroll/issues/770)
-  if (/iPhone|iPad|Safari/.test(navigator.userAgent)) {
-    parentContainer.querySelectorAll('img').forEach((img) => {
-      if (!img.height) {
-        img.outerHTML = img.outerHTML;
-      }
-    });
-  }
+  setTimeout(() => {
+    if (/iPhone|iPad/.test(navigator.userAgent)) {
+      parentContainer.querySelectorAll('img').forEach((img) => {
+        if (!img.height) {
+          img.outerHTML = img.outerHTML;
+        }
+      });
+    }
+  }, 0);
 }
 
 module.exports.fixAJAXImages = fixAJAXImages;
