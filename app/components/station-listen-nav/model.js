@@ -39,6 +39,7 @@ module.exports.render = async (ref, data, locals) => {
 
   data.featuredLinks.forEach((link, i, links) => {
     links[i].image = appendParamsAmpOrQuery(link.image, locals);
+    links[i].url = links[i].type === 'content' ? links[i].contentURL : links[i].URL;
   });
   if (data.nowPlaying) {
     data.nowPlaying.imageUrl = appendParamsAmpOrQuery(data.nowPlaying.imageUrl, locals);

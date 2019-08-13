@@ -109,13 +109,36 @@ featuredLinks:
           validate:
             required: true
       -
-        prop: url
-        _label: Featured piece URL
+        prop: URL
+        _label: Featured audio/contest/events URL
+        _reveal:
+          field: type
+          operator: '!=='
+          value: content
         _has:
           input: text
           type: url
           validate:
-            required: true
+            required:
+              field: type
+              operator: '!=='
+              value: content
+            pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+            patternMessage: e.g. http://domain.com/path or /path
+      -
+        prop: contentURL
+        _label: Featured content URL search
+        _reveal:
+          field: type
+          operator: ===
+          value: content
+        _has:
+          input: content-search
+          validate:
+            required:
+              field: type
+              operator: ===
+              value: content
             pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
             patternMessage: e.g. http://domain.com/path or /path
       -
