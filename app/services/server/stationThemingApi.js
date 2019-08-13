@@ -14,7 +14,7 @@ const db = require('./db'),
     /**
      * Get the current theme for a station
      */
-    app.get('/station-theme/:stationID', async (req, res) => {
+    app.get('/station-theme/:siteSlug/:stationID', async (req, res) => {
       const key = `${ CLAY_SITE_HOST }/_station_themes/${ req.params.stationID }`;
 
       try {
@@ -30,9 +30,9 @@ const db = require('./db'),
     /**
      * Add a new station theme
     */
-    app.post('/station-theme/:stationID', async (req, res) => {
-      const key = `${ CLAY_SITE_HOST }/_station_themes/${ req.params.stationID }`,
-        theme = req.body;
+    app.post('/station-theme/:siteSlug', async (req, res) => {
+      const { stationID, ...theme } = req.body,
+        key = `${ CLAY_SITE_HOST }/_station_themes/${ stationID }`;
 
       try {
         await db.post(key, theme);
@@ -47,9 +47,9 @@ const db = require('./db'),
     /**
      * Update a station theme
     */
-    app.put('/station-theme/:stationID', async (req, res) => {
-      const key = `${ CLAY_SITE_HOST }/_station_themes/${ req.params.stationID }`,
-        theme = req.body;
+    app.put('/station-theme/:siteSlug', async (req, res) => {
+      const { stationID, ...theme } = req.body,
+        key = `${ CLAY_SITE_HOST }/_station_themes/${ stationID }`;
 
       try {
         await db.put(key, theme);
