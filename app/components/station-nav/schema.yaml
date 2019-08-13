@@ -112,7 +112,12 @@ featuredLinks:
         prop: url
         _label: Featured piece URL
         _has:
-          input: content-search
+          input: text
+          type: url
+          validate:
+            required: true
+            pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+            patternMessage: e.g. http://domain.com/path or /path
       -
         prop: headline
         _label: Featured piece headline
