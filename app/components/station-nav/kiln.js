@@ -28,14 +28,13 @@ const KilnInput = window.kiln.kilnInput,
       URLPropIndex = featuredLinksHasProps.findIndex(item => item.prop === 'url'),
       updatedURLHasProp = Object.assign(featuredLinksHas, {
         props: [
-          ...featuredLinksHasProps.slice(0, URLPropIndex),
-          Object.assign(featuredLinksHasProps[URLPropIndex], {
+          ...featuredLinksHasProps,
+          ...Object.assign(featuredLinksHasProps[URLPropIndex], {
             _has: {
               ...featuredLinksHasProps[URLPropIndex]['_has'],
               ...newURLHasProps
             }
-          }),
-          ...featuredLinksHasProps.slice(URLPropIndex + 1)
+          })
         ]
       });
 
