@@ -1,5 +1,8 @@
 'use strict';
 
+const { getComponentVersion } = require('clayutils'),
+  { putComponentInstance } = require('../../services/server/publish-utils');
+
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
     data.contentType = { article: true, gallery: true };
@@ -72,8 +75,24 @@ module.exports['6.0'] = function (uri, data) {
   return newData;
 };
 
-module.exports['7.0'] = function (uri, data) {
-  data.sharethroughTag = { _ref: '/_components/google-ad-manager/instances/sharethroughTag' };
-  
-  return data;
+module.exports['7.0'] = async function (uri, data) {
+  const isPublished = getComponentVersion(uri) === 'published',
+    sharethroughTagInstanceData = {
+      adSize: "sharethrough-tag",
+      adLocation: "atf",
+      adPosition: "native"
+    };
+
+  let sharethroughTagInstanceUri = isPublished ? 
+    uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag@published') :
+    uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag');
+
+  await putComponentInstance(sharethroughTagInstanceUri, sharethroughTagInstanceData);
+
+  return {
+    ...data,
+    sharethroughTag: {
+      _ref: sharethroughTagInstanceUri
+    }
+  };
 };

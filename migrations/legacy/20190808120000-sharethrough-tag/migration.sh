@@ -17,6 +17,6 @@ else
 fi
 
 printf "Create new sharethrough instance for google ad manager component...\n"
-cat ./_components.yml | clay import -k demo -y $1
+cat ./_components.yml | clay import -k demo -y -p $1
 
 printf "\n\n\n\n"
