@@ -76,6 +76,8 @@ function processContent(obj, components) {
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
   }
 
+  // ensure dateModified is always set
+  obj.value.dateModified = obj.value.dateModified || (new Date(obj.value.date)).toISOString();
 
   return obj;
 }
