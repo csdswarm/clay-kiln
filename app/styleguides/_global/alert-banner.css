@@ -6,7 +6,7 @@ $heading-height: em(60);
 $heading-side-width: em(62);
 $mobile-text-line-height: em(17);
 
-.component--alert-banner {
+.component--alert-banner .alert-banner {
   width: 100%;
   max-width: em(1100);
   position: relative;
@@ -21,9 +21,6 @@ $mobile-text-line-height: em(17);
       margin-bottom: em(20);
     }
   }
-}
-
-.component--alert-banner .alert-banner {
 
   &__message {
     width: 100%;
