@@ -77,7 +77,7 @@ function processContent(obj, components) {
   }
 
   // ensure dateModified is always set
-  obj.value.dateModified = obj.value.dateModified || (new Date(obj.value.date)).toISOString();
+  obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
 
   return obj;
 }
