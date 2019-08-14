@@ -56,7 +56,7 @@ async function getAlerts(locals) {
       getMessage = url => rest.get(url).catch(handleErrors),
       existingMessages = message => message && message.length,
       unclosedMessages = message => !closedAlerts.includes(message.id),
-      base = `${protocol}://${host}/alerts?active=true&current=true&station=`,
+      base = `${protocol}://${host}/alerts?cb=${Date.now()}&active=true&current=true&station=`,
       urlNational = `${base}${defaultStation.callsign}`,
       urlLocal = callsign !== defaultStation.callsign ? `${base}${callsign}` : '',
       getMessages = [urlNational, urlLocal]
