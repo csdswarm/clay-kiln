@@ -37,9 +37,9 @@ module.exports.render = async (ref, data, locals) => {
   data.playingClass = playingClass(locals, locals.station.id);
   data.station = locals.station;
 
-  data.featuredLinks.forEach((link, i, links) => {
-    links[i].image = appendParamsAmpOrQuery(link.image, locals);
-    links[i].url = links[i].type === 'content' ? links[i].contentURL : links[i].URL;
+  data.featuredLinks.forEach(link => {
+    link.image = appendParamsAmpOrQuery(link.image, locals);
+    link.url = link.type === 'content' ? link.contentURL : link.URL;
   });
   if (data.nowPlaying) {
     data.nowPlaying.imageUrl = appendParamsAmpOrQuery(data.nowPlaying.imageUrl, locals);

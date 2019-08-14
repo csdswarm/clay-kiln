@@ -32,7 +32,7 @@ primaryLinks:
             required:
               field: drawer
               operator: falsy
-            pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+            pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
             patternMessage: e.g. http://domain.com/path or /path
       -
         prop: drawer
@@ -80,7 +80,7 @@ primaryLinks:
                 type: url
                 validate:
                   required: true
-                  pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+                  pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
                   patternMessage: e.g. http://domain.com/path or /path
 
 featuredLinks:
@@ -123,7 +123,7 @@ featuredLinks:
               field: type
               operator: '!=='
               value: content
-            pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+            pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
             patternMessage: e.g. http://domain.com/path or /path
       -
         prop: contentURL
@@ -139,7 +139,7 @@ featuredLinks:
               field: type
               operator: ===
               value: content
-            pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
+            pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
             patternMessage: e.g. http://domain.com/path or /path
       -
         prop: headline
