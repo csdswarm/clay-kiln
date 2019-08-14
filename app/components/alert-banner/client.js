@@ -26,16 +26,16 @@ function messageClosedPeriod() {
 /**
  * Removes the message element from the alert banner and removes the
  * alert banner if there are no messages left in it.
- * @param {HTMLElement} el The alert-banner element
+ * @param {HTMLElement} container The alert-banner element
  * @returns {Function} a function to remove the message element from the banner
  */
-function removeBannerMessage(el) {
+function removeBannerMessage(container) {
   return message => {
-    el.removeChild(message);
+    container.removeChild(message);
 
     // If all messages are gone, remove the alert banner itself.
-    if (!el.children.length) {
-      el.parentElement.removeChild(el);
+    if (!container.children.length) {
+      container.parentElement.removeChild(container);
     }
   };
 }
@@ -43,19 +43,19 @@ function removeBannerMessage(el) {
 /**
  * Closes the alert banner when the user clicks its close button.
  * It also saves a cookie to remember not to show this again for a while
- * @param {HTMLElement} el The alert banner element
+ * @param {HTMLElement} container The alert banner element
  * @param {HTMLElement} message The message element to close
  * @returns {Function}
  */
-function closeAlert(el, message) {
+function closeAlert(container, message) {
   return () => {
     const cookieId = message.id.replace(/^alertBanner_/, 'atbr_');
 
     document.cookie = `${cookieId}=1; expires=${messageClosedPeriod()}; path=/`;
 
-    removeBannerMessage(el)(message);
+    removeBannerMessage(container)(message);
     clearExistingIntervals();
-    el.classList.remove('alert-banner--show-secondary');
+    container.classList.remove('alert-banner--show-secondary');
   };
 }
 
@@ -105,10 +105,10 @@ function addEllipsisOnOverflow(textEl) {
  * Why? Basically because CSS ellipses currently only work for single line boxes, however,
  * there is a requirement that we show multiple lines on smaller devices, but show ellipses
  * for content that goes over the maximum number of lines - CSD July, 2019
- * @param {HTMLElement} el The alert-banner element
+ * @param {HTMLElement} container The alert-banner element
  */
-function handleOverflow(el) {
-  for (const textEl of el.querySelectorAll('.alert-banner__text')) {
+function handleOverflow(container) {
+  for (const textEl of container.querySelectorAll('.alert-banner__text')) {
     addEllipsisOnOverflow(textEl);
     window.addEventListener('resize', ()=> addEllipsisOnOverflow(textEl));
   }
@@ -116,13 +116,13 @@ function handleOverflow(el) {
 
 /**
  * Sets the interval to fade any secondary banner messages into and out of view
- * @param {HTMLElement} el The alert-banner element
+ * @param {HTMLElement} container The alert-banner element
  */
-function setMessageFadeCycle(el) {
-  if (el.children.length > 1) {
+function setMessageFadeCycle(container) {
+  if (container.children.length > 1) {
     clearExistingIntervals();
     _fadeCycleIntervalId = setInterval(
-      () => el.classList.toggle('alert-banner--show-secondary'),
+      () => container.classList.toggle('alert-banner--show-secondary'),
       MESSAGE_CYCLE_DURATION
     );
   }
@@ -130,15 +130,15 @@ function setMessageFadeCycle(el) {
 
 /**
  * Attaches all close handlers to the X button of each banner message
- * @param {HTMLElement} el The alert-banner element
+ * @param {HTMLElement} container The alert-banner element
  */
-function attachCloseHandlers(el) {
-  el
+function attachCloseHandlers(container) {
+  container
     .querySelectorAll('.alert-banner__message')
     .forEach(message => {
       message
         .querySelector('.alert-banner__close-button')
-        .addEventListener('click', closeAlert(el, message), { once: true });
+        .addEventListener('click', closeAlert(container, message), { once: true });
     });
 }
 
@@ -148,17 +148,17 @@ function attachCloseHandlers(el) {
  * Why? Because it would appear that some sort of caching is happening and even though the server
  * is not sending any messages, they are still appearing in the page. - CSD
  *
- * @param {HTMLElement} el The alert-banner element
+ * @param {HTMLElement} container The alert-banner element
  */
-function ensureClosedAlerts(el) {
+function ensureClosedAlerts(container) {
   const {cookie} = document,
     idRe = /atbr_(\w+)=1/g;
 
   let match;
 
   while ((match = idRe.exec(cookie)) !== null) {
-    const message = el.querySelector(`#alertBanner_${match[1]}`),
-      close = closeAlert(el, message);
+    const message = container.querySelector(`#alertBanner_${match[1]}`),
+      close = closeAlert(container, message);
 
     if (message) {
       close();
@@ -178,10 +178,12 @@ function setupAlertBannerClientFunctionality(el) {
 
   el.bannerAlertSet = true; // to prevent potential double entries
 
-  handleOverflow(el);
-  setMessageFadeCycle(el);
-  attachCloseHandlers(el);
-  ensureClosedAlerts(el);
+  const container = el.querySelector('.alert-banner');
+
+  handleOverflow(container);
+  setMessageFadeCycle(container);
+  attachCloseHandlers(container);
+  ensureClosedAlerts(container);
 }
 
 module.exports = setupAlertBannerClientFunctionality;

@@ -22,6 +22,20 @@ $mobile-text-line-height: em(17);
     }
   }
 
+  &.alert-banner--show-secondary .alert-banner__message {
+    opacity: 0;
+    max-height: 0;
+    border-width:0;
+    transition: opacity 1s;
+
+    & + .alert-banner__message {
+      opacity: 1;
+      border-width: em(1);
+      max-height: calc($heading-height + ($mobile-text-line-height * 3.4) + em(40));
+      transition: opacity 1s .5s;
+    }
+  }
+
   &__message {
     width: 100%;
     position: relative;
@@ -32,25 +46,11 @@ $mobile-text-line-height: em(17);
     opacity: 1;
     transition: opacity 1s .5s;
 
-    .alert-banner--show-secondary & {
-      opacity: 0;
-      max-height: 0;
-      border-width:0;
-      transition: opacity 1s;
-    }
-
     & + .alert-banner__message {
       opacity: 0;
       max-height: 0;
       border-width:0;
       transition: opacity 1s;
-
-      .alert-banner--show-secondary & {
-        opacity: 1;
-        border-width: em(1);
-        max-height: calc($heading-height + ($mobile-text-line-height * 3.4) + em(40));
-        transition: opacity 1s .5s;
-      }
     }
 
     &--breaking {
