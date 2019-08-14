@@ -1,6 +1,5 @@
-const { clayImport, clayExport, parseHost, readFile, prettyJSON, _has, _set } = require('../migration-utils').v1;
-const host = process.argv[2] || 'clay.radio.com';
-const { url: hostUrl } = parseHost(host);
+const { clayImport, clayExport, readFile, prettyJSON, _has, _set } = require('../migration-utils').v1;
+const hostUrl = process.argv[2] || 'clay.radio.com';
 const logMessage = message => data => {
   console.log(message + '\n\n');
   return data
@@ -55,7 +54,7 @@ function addBannerToLayouts(layouts){
 
       const injectComponent = LAYOUTS_INSERT_COMPONENT.includes(target);
 
-      const value = injectComponent ? [{_ref: `${host}/_components/alert-banner/instances/default`}] : 'banner';
+      const value = injectComponent ? [{_ref: `${hostUrl}/_components/alert-banner/instances/default`}] : 'banner';
 
       _set(data, path, value);
 
@@ -71,7 +70,7 @@ function addBannerToPages(pages){
         .find(path => _has(data, path));
       path.push('banner');
 
-      _set(data, path, [`${host}/_components/alert-banner/instances/default`]);
+      _set(data, path, [`${hostUrl}/_components/alert-banner/instances/default`]);
 
       return data;
     });
