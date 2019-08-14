@@ -64,41 +64,24 @@ function newQueryWithCount(index, count) {
 }
 
 /**
- * Query Elastic and clean up raw result object to only display array of
- *   results.  If locals is passed then its loadedIds property will be updated.
+ * Query Elastic and clean up raw result object to only display array
+ *   of results.
  *
  * @param  {Object} query
  * @param  {Object} locals
  * @param  {Object} opts - various search options shared with
- *                         searchByQueryWithRawResult.  This method relies on
- *                           : 'includeIdInResult'
- *                           : 'transformResult'
+ *   searchByQueryWithRawResult.  This method relies on
+ *     : 'includeIdInResult'
+ *     : 'transformResult'
+ *
+ *   Note a warning will appear if the option 'shouldDedupeContent' isn't
+ *     passed.  The default value of '{}' is only to avoid errors.
  * @return {Promise}
  * @example searchByQuery({"index":"local_published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
-function searchByQuery(query, locals, opts) {
-  const formatSearchResult = universalQuery.getFormatSearchResult(opts);
-
-  return searchByQueryWithRawResult(query, locals, opts)
-    .then(async rawResult => {
-      let formattedResult = await formatSearchResult(rawResult);
-
-      formattedResult = await universalQuery.formatProtocol(formattedResult);
-
-      if (!opts.transformResult) {
-        return formattedResult;
-      }
-
-      return opts.transformResult(formattedResult, rawResult);
-    })
-    .catch(originalErr => {
-      const err = originalErr instanceof Error
-        ? originalErr
-        : new Error(originalErr);
-
-      return Promise.reject(err);
-    });
+function searchByQuery(query, locals, opts = {}) {
+  return universalQuery.searchByQuery(query, locals, opts, searchByQueryWithRawResult);
 }
 
 /**

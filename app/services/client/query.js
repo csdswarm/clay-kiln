@@ -45,21 +45,14 @@ function newQueryWithCount(index, count, locals) {
  * Query Elastic and clean up raw result object
  * to only display array of results
  * @param  {Object} query
- * @param  {Object} _locals - currently unused
- * @param  {Object} opts - see server/query.js for opts description
+ * @param  {Object} locals
+ * @param  {Object} [opts] - see server/query.js for opts description
  * @return {Promise}
  * @example searchByQuery({"index":"published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
-function searchByQuery(query, _locals, opts) {
-  const formatSearchResult = universalQuery.getFormatSearchResult(opts);
-
-  return searchByQueryWithRawResult(query)
-    .then(formatSearchResult)
-    .then(universalQuery.formatProtocol)
-    .catch(e => {
-      throw new Error(e);
-    });
+function searchByQuery(query, locals, opts = {}) {
+  return universalQuery.searchByQuery(query, locals, opts, searchByQueryWithRawResult);
 }
 
 /**
