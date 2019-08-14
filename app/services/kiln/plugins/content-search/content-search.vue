@@ -132,7 +132,8 @@
           this.debouncePerformSearch();
         } else {
           // if there are less than two, just take already exists and see if it can reduce the results
-          this.searchResults = this.searchResults.filter(item => item.canonicalUrl.includes(this.searchText) || item.seoHeadline.includes(this.searchText));
+          this.searchResults = this.searchResults.filter(item => 
+            item.canonicalUrl.includes(this.searchText) || item.seoHeadline.includes(this.searchText));
         }
       },
       /**
