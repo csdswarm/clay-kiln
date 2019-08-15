@@ -25,6 +25,7 @@ headLayout:
 
 top:
   _componentList:
+    page: true
     include:
       - header
 layoutHeader:
@@ -48,6 +49,12 @@ secondary:
       - generic-list
 
 bottom:
+  _componentList:
+    page: true
+    include:
+      - footer
+
+bottomAd:
   _componentList:
     include:
       - footer

@@ -6,6 +6,7 @@ _layouts:
     top: []
     main: main
     secondary: []
+    bottomAd: []
     bottom: []
     kilnInternals:
       - _ref: /_components/clay-kiln/instances/general
