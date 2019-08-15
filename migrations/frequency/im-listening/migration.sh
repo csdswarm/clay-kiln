@@ -25,7 +25,7 @@ fi
 #   3. outputs that list to a file whose path will be passed to the
 #      frequency-clay-translator cli
 #
-curl "es.radio-prd.com:9200/published-content/_search" \
+curl "$es:9200/published-content/_search" \
   --silent \
   --show-error \
   -H 'Content-Type: application/json' \
