@@ -1,6 +1,7 @@
 'use strict';
 
 const rest = require('../universal/rest'),
+  promises = require('../universal/promises'),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
   ioredis = require('ioredis'),
@@ -12,6 +13,7 @@ const rest = require('../universal/rest'),
     HOUR: 3600000,
     DAY: 86400000
   },
+  API_TIMEOUT = 6000,
   httpRegEx = /^https?:\/\//,
 
   /**
@@ -72,26 +74,33 @@ const rest = require('../universal/rest'),
 
     options.ttl = options.ttl || TTL.DEFAULT;
 
-    // could add a check to see if ttl is set to 0 so we don't have cache misses that we know are going to miss
     try {
+      // if there's no ttl, throw so we can skip the cache miss and try to fetch new data
+      if (!options.ttl) {
+        throw new Error();
+      }
+
       const cached = await redis.get(dbKey),
         data = JSON.parse(cached);
 
       if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
-        try {
-          return await getAndSave(requestEndpoint, dbKey, validateFn, options);
-        } catch (e) {
-        }
+        // if the data is old, fire off a new api request to get it up to date, but don't wait on it
+        getAndSave(requestEndpoint, dbKey, validateFn, options)
+          .catch(() => {});
       }
-      // If API errors out or within TTL, return existing data
+
+      // always return cached if it's available
       data.response_cached = true;
       return data;
     } catch (e) {
       try {
-        // if an issue with getting the key, get the data
-        return await getAndSave(requestEndpoint, dbKey, validateFn, options);
+        // return api response if it's fast enough. if not, it might still freshen the cache
+        return await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), API_TIMEOUT);
       } catch (e) {
-        // If API errors out and we don't have stale data, return empty object
+        // request failed, validation failed, or timeout. return empty object
+
+        console.error(`Radio API error for endpoint ${requestEndpoint}:`, e);
+
         return {};
       }
     }
@@ -116,11 +125,8 @@ const rest = require('../universal/rest'),
 
         // added to allow cache to be bypassed
         if (ttl > 0) {
-          try {
-            redis.set(dbKey, JSON.stringify(response));
-          } catch (e) {
-            // still return the response even if setting cache failed
-          }
+          redis.set(dbKey, JSON.stringify(response))
+            .catch(() => {});
         }
 
         return response;
