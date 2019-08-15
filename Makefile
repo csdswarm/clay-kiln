@@ -10,8 +10,8 @@ up-nginx:
 down:
 	docker-compose stop nginx redis elasticsearch clay postgres
 
-restart:
-	docker-compose stop clay && docker-compose up -d clay && make clay-logs
+rebuild:
+	docker-compose stop clay && cd app && npm run build && cd .. && cd spa && npm run-script build -- --mode=none && docker-compose up -d clay && cd .. && make clay-logs
 
 rm-all:
 	@echo "Removing all stopped containers..."

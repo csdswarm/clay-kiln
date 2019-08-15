@@ -1,6 +1,8 @@
 'use strict';
 
-const routes = require('./routes');
+const routes = require('./routes'),
+  logger = require('../../../universal/log'),
+  log = logger.setup({ file: __filename });
 
 /**
  * initialize the permissions plugin
@@ -13,7 +15,7 @@ function init(hasPermissions) {
     try {
       return routes(router, hasPermissions);
     } catch (e) {
-      console.log(e); //todo use logger
+      log('error', e);
     }
   };
 }

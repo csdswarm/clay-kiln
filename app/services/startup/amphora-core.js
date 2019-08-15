@@ -16,8 +16,7 @@ const amphora = require('amphora'),
  */
 function hasPermissions(uri, data, user) {
   // STUB for testing - if cognito users have no permissions to publish pages
-
-  return user.provider === 'cognito' && isPage(uri) && isPublished(uri);
+  return !(user.provider === 'cognito' && isPage(uri) && isPublished(uri));
 }
 
 function initAmphora(app, search, sessionStore, routes) {

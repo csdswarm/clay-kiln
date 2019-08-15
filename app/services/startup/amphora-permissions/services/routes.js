@@ -1,6 +1,5 @@
 'use strict';
 
-
 const appRoot = require('app-root-path'),
   express = require('express'),
   files = require('amphora-fs'),
@@ -9,7 +8,7 @@ const appRoot = require('app-root-path'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
 
 /**
- * intercepts and passes the permission object to the function
+ *  passes the permission object to the permission function
  *
  * @param {Function} hasPermission
  * @return {Function}
