@@ -25,7 +25,7 @@
 <script>
   import rest from '../../../universal/rest';
   import urlParse from 'url-parse';
-  import queryService from '../../../client/query';
+  import queryService, { onePublishedArticleByUrl } from '../../../client/query';
 
   const UiIconButton = window.kiln.utils.components.UiIconButton;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
@@ -43,26 +43,19 @@
     },
     methods: {
       /**
-       * search the page index for the path of the URL and return one if found
+       * search for an existing url and return one if found
        *
        * @param {string} path
        *
        * @returns {string}
        */
       async findExisting(path) {
-        const query = queryService('pages', window.kiln.locals);
+        const { host } = window.kiln.locals.site,
+          query = onePublishedArticleByUrl(`http://${host}${path}`, ['canonicalUrl'], window.kiln.locals),
+          results = await queryService.searchByQuery(query),
+          { canonicalUrl } = results[0] || {};
 
-        queryService.addSize(query, 1);
-        //check both url and urlHistory since it automatically creates redirects when changed
-        queryService.onlyWithTheseFields(query, ['urlHistory', 'url']);
-        //ensure the path matches the end path
-        queryService.addSearch(query, `*${ path }`, ['urlHistory', 'url']);
-
-        const results = await queryService.searchByQuery(query);
-
-        return results.map(item => [item.url, item.urlHistory].flat()) //make each item a single array
-          .flat() //create a single array or urls
-          .find(url => url); //obtain the first item or undefined
+        return canonicalUrl
       },
       /**
        * parses domain and slug from url and sends to import content lambda
