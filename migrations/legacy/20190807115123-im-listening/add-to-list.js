@@ -6,7 +6,7 @@
  *    'primary-section-fronts' list
  */
 
-const axios = require('axios'),
+const axios = require('../../../app/node_modules/axios'),
   httpOrHttps = process.argv.slice(2)[0],
   host = process.argv.slice(2)[1],
   listUrl = `${httpOrHttps}://${host}/_lists/primary-section-fronts`,
