@@ -29,7 +29,7 @@ const _get = require('lodash/get'),
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
 let refreshCount = 0,
   allAdSlots = {},
-  adsRefreshing = false,
+  adsRefreshing = true,
   initialPageAdSlots = [],
   clearDfpTakeover = () => {},
   numRightRail = 1,
@@ -452,7 +452,6 @@ function createAds(adSlots) {
         slot = googletag.defineOutOfPageSlot(adTargetingData.siteZone, ad.id);
         updateSkinStyles(true);
       } else {
-        console.log(adSize, adSizes[adSize]);
         slot = googletag.defineSlot(
           adTargetingData.siteZone,
           [adSizes[adSize].defaultSize],
@@ -478,6 +477,7 @@ function createAds(adSlots) {
         slot.setTargeting('market', adTargetingData.targetingMarket);
       }
       if (adSize === 'sharethrough-tag') {
+        console.log(sharethroughPlacementKey);
         slot.setTargeting('strnativekey', sharethroughPlacementKey);
       }
 

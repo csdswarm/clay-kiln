@@ -1,4 +1,8 @@
-<div
+{{#if (compare adSize "sharethrough-tag")}}
+  <li
+{{else }}
+  <div
+{{/if }}
   data-uri="{{ default _ref _self }}"
   data-placeholder="adSize"
   data-ad-position="{{ adPosition }}"
@@ -7,9 +11,7 @@
   data-doubleclick-banner-tag="{{ doubleclickBannerTag }}"
   data-environment="{{ environment }}"
   data-ad-refresh-interval="{{ adRefreshInterval }}"
-  {{#if (compare adSize "sharethrough-tag") }}
-    data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
-  {{/if }}
+  data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
   class="component component--google-ad-manager google-ad-manager--{{adSize}} {{#if sticky }}sticky{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
 >
   {{#unless @root.locals.edit}}
@@ -30,5 +32,8 @@
       {{/if}}
     {{/if}}
   {{/unless}}
-</div>
-{{!-- 970x250, 970x90, 728x90, 300x600, 300x250, 320x50, 100x35 --}}
+{{#if (compare adSize "sharethrough-tag")}}
+  </li>
+{{else }}
+  </div>
+{{/if }}
