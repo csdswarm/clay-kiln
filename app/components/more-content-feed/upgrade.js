@@ -78,12 +78,12 @@ module.exports['6.0'] = function (uri, data) {
 module.exports['7.0'] = async function (uri, data) {
   const isPublished = getComponentVersion(uri) === 'published',
     sharethroughTagInstanceData = {
-      adSize: "sharethrough-tag",
-      adLocation: "atf",
-      adPosition: "native"
+      adSize: 'sharethrough-tag',
+      adLocation: 'atf',
+      adPosition: 'native'
     };
 
-  let sharethroughTagInstanceUri = isPublished ? 
+  let sharethroughTagInstanceUri = isPublished ?
     uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag@published') :
     uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag');
 

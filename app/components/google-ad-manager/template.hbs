@@ -7,6 +7,9 @@
   data-doubleclick-banner-tag="{{ doubleclickBannerTag }}"
   data-environment="{{ environment }}"
   data-ad-refresh-interval="{{ adRefreshInterval }}"
+  {{#if (compare adSize "sharethrough-tag") }}
+    data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
+  {{/if }}
   class="component component--google-ad-manager google-ad-manager--{{adSize}} {{#if sticky }}sticky{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
 >
   {{#unless @root.locals.edit}}

@@ -18,7 +18,8 @@ const _get = require('lodash/get'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
-  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in milliseconds for ad refresh
+  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
+  sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
@@ -451,6 +452,7 @@ function createAds(adSlots) {
         slot = googletag.defineOutOfPageSlot(adTargetingData.siteZone, ad.id);
         updateSkinStyles(true);
       } else {
+        console.log(adSize, adSizes[adSize]);
         slot = googletag.defineSlot(
           adTargetingData.siteZone,
           [adSizes[adSize].defaultSize],
@@ -476,7 +478,7 @@ function createAds(adSlots) {
         slot.setTargeting('market', adTargetingData.targetingMarket);
       }
       if (adSize === 'sharethrough-tag') {
-        slot.setTargeting('strnativekey', ad.id);
+        slot.setTargeting('strnativekey', sharethroughPlacementKey);
       }
 
       // Right rail and inline gallery ads need unique names
