@@ -2,6 +2,7 @@
 
 const rest = require('../universal/rest'),
   promises = require('../universal/promises'),
+  log = require('../universal/log').setup({ file: __filename }),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
   ioredis = require('ioredis'),
@@ -99,7 +100,7 @@ const rest = require('../universal/rest'),
       } catch (e) {
         // request failed, validation failed, or timeout. return empty object
 
-        console.error(`Radio API error for endpoint ${requestEndpoint}:`, e);
+        log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
 
         return {};
       }
