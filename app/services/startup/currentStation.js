@@ -23,6 +23,7 @@ const radioApiService = require('../../services/server/radioApi'),
       name: 'New York, NY'
     },
     category: '',
+    phonetic_name: 'radio dot com',
     slogan: 'Bringing radio alive',
     twitter: 'radiodotcom',
     facebook: 'https://www.facebook.com/radiodotcom',

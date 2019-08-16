@@ -36,10 +36,51 @@ const createYaml = async () => {
 
   const componentList = {
     _components: {
+      'station-listen-nav': {
+        instances: {
+          new: {
+            featuredLinks: []
+          }
+        }
+      },
       'station-nav': {
         instances: {
           default: {
-            allowed: true
+            primaryLinks: [
+              {
+                "url": "/",
+                "text": "playlist",
+                "drawer": false
+              },
+              {
+                "url": "",
+                "text": "shows",
+                "drawer": true,
+                "secondaryLinks": []
+              },
+              {
+                "url": "",
+                "text": "contests",
+                "drawer": true,
+                "secondaryLinks": []
+              },
+              {
+                "url": "",
+                "text": "events",
+                "drawer": true,
+                "secondaryLinks": []
+              },
+              {
+                "url": "",
+                "text": "more from station",
+                "drawer": true,
+                "secondaryLinks": []
+              }
+            ],
+            featuredLinks: [],
+            listenNav: {
+              _ref: '/_components/station-listen-nav/instances/new'
+            }
           }
         }
       },
@@ -64,4 +105,3 @@ const createYaml = async () => {
   );
 }
 createYaml();
-
