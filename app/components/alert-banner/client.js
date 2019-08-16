@@ -180,10 +180,12 @@ function setupAlertBannerClientFunctionality(el) {
 
   const container = el.querySelector('.alert-banner');
 
-  handleOverflow(container);
-  setMessageFadeCycle(container);
-  attachCloseHandlers(container);
-  ensureClosedAlerts(container);
+  if (container) {
+    handleOverflow(container);
+    setMessageFadeCycle(container);
+    attachCloseHandlers(container);
+    ensureClosedAlerts(container);
+  }
 }
 
 module.exports = setupAlertBannerClientFunctionality;
