@@ -85,7 +85,7 @@ const rest = require('../universal/rest'),
         }
       };
 
-    options.ttl = options.ttl || TTL.DEFAULT;
+    if (typeof options.ttl !== 'number') options.ttl = TTL.DEFAULT;
 
     try {
       // if there's no ttl, skip the cache miss and try to fetch new data
