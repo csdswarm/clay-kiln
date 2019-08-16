@@ -96,6 +96,11 @@ const rest = require('../universal/rest'),
       const cached = await redis.get(dbKey),
         data = JSON.parse(cached);
 
+      // if there is no data in cache, wait on fresh data
+      if (!cached) {
+        return await getFreshData();
+      }
+
       if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
         // if the data is old, fire off a new api request to get it up to date, but don't wait on it
         getAndSave(requestEndpoint, dbKey, validateFn, options)
