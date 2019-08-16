@@ -71,14 +71,26 @@ const rest = require('../universal/rest'),
   get = async (route, params, validate, options = {} ) => {
     const dbKey = createKey(route, params),
       validateFn = validate || defaultValidation(route),
-      requestEndpoint = createEndpoint(route, params);
+      requestEndpoint = createEndpoint(route, params),
+      getFreshData = async () => {
+        try {
+          // return api response if it's fast enough. if not, it might still freshen the cache
+          return await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), API_TIMEOUT);
+        } catch (e) {
+          // request failed, validation failed, or timeout. return empty object
+
+          log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
+
+          return {};
+        }
+      };
 
     options.ttl = options.ttl || TTL.DEFAULT;
 
     try {
-      // if there's no ttl, throw so we can skip the cache miss and try to fetch new data
+      // if there's no ttl, skip the cache miss and try to fetch new data
       if (!options.ttl) {
-        throw new Error();
+        return await getFreshData();
       }
 
       const cached = await redis.get(dbKey),
@@ -94,16 +106,7 @@ const rest = require('../universal/rest'),
       data.response_cached = true;
       return data;
     } catch (e) {
-      try {
-        // return api response if it's fast enough. if not, it might still freshen the cache
-        return await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), API_TIMEOUT);
-      } catch (e) {
-        // request failed, validation failed, or timeout. return empty object
-
-        log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
-
-        return {};
-      }
+      return await getFreshData();
     }
   },
   /**
