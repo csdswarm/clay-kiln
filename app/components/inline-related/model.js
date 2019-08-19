@@ -71,6 +71,7 @@ module.exports.render = async function (ref, data, locals) {
     availableSlots = maxItems - data.items.length;
 
   await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+  // items are saved from form, articles are used on FE
   data.articles = data.items;
 
   // it shouldn't be less than 0, but just in case
@@ -84,7 +85,6 @@ module.exports.render = async function (ref, data, locals) {
     query = queryService.newQueryWithCount(elasticIndex, numItemsToQuery, locals);
   let cleanUrl;
 
-  // items are saved from form, articles are used on FE
   data.missingItems = data.articles.some(item => {
     return typeof item.feedImgUrl === 'undefined';
   });
