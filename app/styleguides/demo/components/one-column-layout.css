@@ -7,7 +7,9 @@
 .layout--one-column {
   height: 100vh;
   .layout__page-header,
-  .layout__bottom {
+  .layout__bottom,
+  .layout__bottomSection,
+  .layout__bottomAd {
     z-index: 2;
     position: relative
   }

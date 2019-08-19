@@ -1,23 +1,39 @@
 const fs = require('fs'),
   YAML = require('yamljs');
 
-const data = YAML.load(`${__dirname}/layout.yml`);
+/**
+ * Split array of { _ref } into 3 sections
+ * @param {Array} section
+ * @param {String} ref
+ */
+function splitSectionOn(section, ref) {
+  const sections = [],
+    index = section.findIndex(({ _ref }) => _ref === ref);
 
-const bottomAdSlot = [ {
-  _ref: "/_components/google-ad-manager/instances/billboardBottom"
-}, {
-  _ref: "/_components/google-ad-manager/instances/oop"
-}, {
-  _ref: "/_components/google-ad-manager/instances/mobileAdhesion"
-}, {
-  _ref: "/_components/nielsen/instances/default"
-} ];
+  sections.push(section.slice(0, index));
+  sections.push([{ _ref: ref }]);
+  sections.push(section.slice(index + 1));
 
-const bottom = data._layouts['one-column-layout'].instances.station.bottom.filter((item) => !(/google\-ad\-manager|nielsen/.test(item._ref)));
+  return sections;
+}
 
-data._layouts['one-column-layout'].instances.station.bottom = bottom;
-data._layouts['one-column-layout'].instances.station.bottom._page = true;
-data._layouts['one-column-layout'].instances.station.bottomAdSlot = bottomAdSlot;
+const data = YAML.load(`${__dirname}/originalLayout.yml`);
+
+const stationLayout = data._layouts['one-column-layout'].instances.station;
+
+// Split top and bottom on the station-nav and station-footer
+const topSplit = splitSectionOn(stationLayout.top, '/_components/station-nav/instances/default');
+const bottomSplit = splitSectionOn(stationLayout.bottom, '/_components/station-footer/instances/default');
+
+stationLayout.top = topSplit[0];
+stationLayout.topSection = topSplit[1];
+stationLayout.topAd = topSplit[2];
+
+stationLayout.bottomAd = bottomSplit[0];
+stationLayout.bottomSection = bottomSplit[1];
+stationLayout.bottom = bottomSplit[2];
+
+data._layouts['one-column-layout'].instances.station = stationLayout;
 
 fs.writeFile(`${__dirname}/layout.yml`, YAML.stringify(data, 6, 2), 'utf8', function(err) {
     if (err) throw err;

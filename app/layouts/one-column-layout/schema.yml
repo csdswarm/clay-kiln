@@ -25,7 +25,15 @@ headLayout:
 
 top:
   _componentList:
+    include:
+      - header
+topSection:
+  _componentList:
     page: true
+    include:
+      - station-nav
+topAd:
+  _componentList:
     include:
       - header
 layoutHeader:
@@ -50,9 +58,14 @@ secondary:
 
 bottom:
   _componentList:
-    page: true
     include:
       - footer
+
+bottomSection:
+  _componentList:
+    page: true
+    include:
+      - station-footer
 
 bottomAd:
   _componentList:
