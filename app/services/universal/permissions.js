@@ -1,5 +1,30 @@
 'use strict';
 
+/*
+  User permissions are functions off of the main user object that are chained into a sentence
+    locals.user.can('publish').an('article').for('NATL-RC').value
+
+  They can also be passed in all at once
+    locals.user.may('publish', 'article', 'NATL-RC').value
+
+  The order does not matter, they can we switched around to whatever works best for the situation
+    locals.user.for('NATL-RC').using('gallery').isAbleTo('update')
+
+  The main object is the only required item, it will default the other conditions
+    locals.user.canUse('alert-banner').message
+
+  The check will return an object with a boolean value and string message key:
+    {
+      value: false,
+      message: 'You do not have permissions to publish an article.'
+    }
+    {
+      value: true,
+      message: ''
+    }
+*/
+
+
 const KEYS = {
     action: 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
     object: 'a,an,the,this,using,canUse,canModify'.split(','),
