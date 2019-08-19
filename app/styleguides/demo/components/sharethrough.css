@@ -1,7 +1,5 @@
 /* stylelint-disable */
-@import "_global/mixins";
 @import "_global/fonts";
-@import "_global/colors";
 
 .component--google-ad-manager {
   &.google-ad-manager--sharethrough-tag {
