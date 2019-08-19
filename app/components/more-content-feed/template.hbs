@@ -1,22 +1,22 @@
-{{#if initialLoad }}
-  <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront') }}component--{{ sectionFront }}{{/if }}{{#if (compare populateFrom 'tag') }}component--tag{{/if }}"
+{{#if initialLoad}}
+  <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
            data-track-populate-from="{{ populateFrom }}"
            data-track-location="{{ locationOfContentFeed }}"
            data-uri="{{ default _ref _self }}"
            data-track-type="more-content-feed"
            data-lazy-loads="{{ lazyLoads }}">
-    {{#if (compare locationOfContentFeed 'homepage') }}
+    {{#if (compare locationOfContentFeed 'homepage')}}
         <h2 class="more-content-feed__title"><span>MORE from RADIO.COM</span></h2>
-    {{/if }}
+    {{/if}}
     <div class="more-content-feed__container">
       <div class="more-content-feed__left-content">
-        {{#unless dynamicTagPage }}
+        {{#unless dynamicTagPage}}
           <div class="more-content-feed__intro-components" data-editable="introComponents">
-            {{> component-list introComponents }}
+            {{> component-list introComponents}}
           </div>
-        {{/unless }}
-        {{#unless content.length }}
-          {{#if @root.locals.edit }}
+        {{/unless}}
+        {{#unless content.length}}
+          {{#if @root.locals.edit}}
             <div class="more-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
               <div class="placeholder-label">
                 <span class="ui-icon placeholder-icon material-icons add">add</span>
@@ -24,13 +24,13 @@
                 <div class="ui-ripple-ink"></div>
               </div>
             </div>
-          {{/if }}
-        {{/unless }}
-        {{#ifAny content.length @root.locals.edit }}
+          {{/if}}
+        {{/unless}}
+        {{#ifAny content.length @root.locals.edit}}
           <ul class="more-content-feed__links" data-editable="contentFeed">
-        {{/ifAny }}
-{{/if }}
-          {{#each content as |feedItem| }}
+        {{/ifAny}}
+{{/if}}
+          {{#each content as |feedItem|}}
             <li>
               <a class="links__link links__link--{{ feedItem.sectionFront }}" href="{{ feedItem.canonicalUrl }}"
                  data-track-type="feedItem-link"
@@ -42,24 +42,24 @@
                 <div class="thumb__container">
                   {{#ifAll (compare ../populateFrom 'all-content')  feedItem.sectionFront}}
                     <span class="thumb__section-front">{{{ feedItem.sectionFront }}}</span>
-                  {{/ifAll }}
-                  {{#unless (compare ../locationOfContentFeed 'homepage') }}
-                    {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove') }}
+                  {{/ifAll}}
+                  {{#unless (compare ../locationOfContentFeed 'homepage')}}
+                    {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
                       <span class="thumb__content-type">
                         {{{ read 'components/more-content-feed/media/watch.svg' }}}
                       </span>
-                    {{/ifAny }}
-                    {{#if (compare feedItem.lead 'omny') }}
+                    {{/ifAny}}
+                    {{#if (compare feedItem.lead 'omny')}}
                       <span class="thumb__content-type">
                         {{{ read 'components/more-content-feed/media/listen.svg' }}}
                       </span>
-                    {{/if }}
-                    {{#if (compare feedItem.contentType 'gallery') }}
+                    {{/if}}
+                    {{#if (compare feedItem.contentType 'gallery')}}
                       <span class="thumb__content-type">
                         {{{ read 'components/more-content-feed/media/gallery.svg' }}}
                       </span>
-                    {{/if }}
-                  {{/unless }}
+                    {{/if}}
+                  {{/unless}}
                   <img
                     src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0"
                     srcset="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
@@ -76,34 +76,34 @@
                     <span class="info__teaser">{{{ feedItem.subHeadline }}}</span>
                   </div>
                   <div class="info__datetime-posted">
-                    {{#if (isPublished24HrsAgo feedItem.date) }}
+                    {{#if (isPublished24HrsAgo feedItem.date)}}
                       {{{ timeAgoTimestamp feedItem.date }}}
-                    {{else }}
+                    {{else}}
                       {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
-                    {{/if }}
+                    {{/if}}
                   </div>
                 </div>
               </a>
             </li>
-            {{#ifAll (modulo (add @index 1) 2 0) (compare ../feedItem.length "!==" (add @index 1)) }}
-              {{> google-ad-manager ../sharethroughTag }}
-            {{/ifAll }}
-          {{/each }}
-{{#if moreContent }}
+            {{#ifAll (modulo (add @index 1) 2 0) (compare ../feedItem.length "!==" (add @index 1))}}
+              {{> google-ad-manager ../sharethroughTag}}
+            {{/ifAll}}
+          {{/each}}
+{{#if moreContent}}
     <li class="links__link--loadmore"
-        {{#if tag}}data-tag="{{ tag }}"{{/if}}
+        {{#if tag}}data-tag="{{ tag}}"{{/if}}
         {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
         {{#if author}}data-author="{{ author }}"{{/if}}>
       <button class="more-content-feed__loadmore">
         <div class="loadmore__text">Load More</div>
       </button>
     </li>
-{{/if }}
-{{#if initialLoad }}
+{{/if}}
+{{#if initialLoad}}
           </ul>
         </div>
         <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
-          {{#ifAny (compare locationOfContentFeed 'topic-page') (compare locationOfContentFeed 'author-page') }}
+          {{#ifAny (compare locationOfContentFeed 'topic-page') (compare locationOfContentFeed 'author-page')}}
             {{> google-ad-manager contentCollectionLogoSponsorship}}
           {{/ifAny}}
           {{#if @root.locals.edit}}
@@ -111,7 +111,7 @@
               <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
             {{/unless}}
           {{else}}
-            {{#ifAll tagInfo (compare dynamicTagPage false) }}
+            {{#ifAll tagInfo (compare dynamicTagPage false)}}
               <aside class="blurb">{{ tagInfo }}</aside>
             {{/ifAll}}
           {{/if}}
@@ -119,4 +119,4 @@
         </div>
       </div>
   </section>
-{{/if }}
+{{/if}}
