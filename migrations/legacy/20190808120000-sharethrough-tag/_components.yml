@@ -3,5 +3,5 @@ _components:
     instances:
       sharethroughTag:
         adSize: "sharethrough-tag"
-        adLocation: "atf"
+        adLocation: "btf"
         adPosition: "native"

@@ -477,7 +477,6 @@ function createAds(adSlots) {
         slot.setTargeting('market', adTargetingData.targetingMarket);
       }
       if (adSize === 'sharethrough-tag') {
-        console.log(sharethroughPlacementKey);
         slot.setTargeting('strnativekey', sharethroughPlacementKey);
       }
 
