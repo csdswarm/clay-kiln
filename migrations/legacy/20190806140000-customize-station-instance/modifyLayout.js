@@ -17,7 +17,7 @@ function splitSectionOn(section, ref) {
   return sections;
 }
 
-const data = YAML.load(`${__dirname}/originalLayout.yml`);
+const data = YAML.load(`${__dirname}/layout.yml`);
 
 const stationLayout = data._layouts['one-column-layout'].instances.station;
 

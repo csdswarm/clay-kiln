@@ -24,6 +24,9 @@ else
     echo "Setting up Station Front instances";
     
     clay export -y "$http://$1/_layouts/one-column-layout/instances/station" > layout.yml;
+
+    curl -X PUT $http://$1/_layouts/one-column-layout/instances/station@published -H 'Authorization: token accesskey' -o /dev/null -s
+
     clay export -y "$http://$1/_lists/new-pages" > list.yml;
     clay export -y "$http://$1/_pages/station-front-3" > page.yml;
 
