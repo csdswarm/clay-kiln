@@ -1,20 +1,22 @@
 'use strict';
 
 const { expect, assert } = require('chai'),
-  Permissions = require('./permissions'),
-  permissionRecord = {
-    article:{
-      publish:{station:{'NATL-RC': 1}},
-      create:{station:{'NATL-RC': 1}},
-      update:{station:{'NATL-RC': 1}}
-    },
-    gallery:{
-      publish:{station:{WHIO: 1, ABCD: 1}},
-      create:{station:{'NATL-RC': 1}},
-      update:{station:{'NATL-RC': 1}}
-    },
-    'alert-banner':{
-      any:{station:{'NATL-RC': 1}}
+  addPermissions = require('./permissions'),
+  user = {
+    permissions: {
+      article:{
+        publish:{station:{'NATL-RC': 1}},
+        create:{station:{'NATL-RC': 1}},
+        update:{station:{'NATL-RC': 1}}
+      },
+      gallery:{
+        publish:{station:{WHIO: 1, ABCD: 1}},
+        create:{station:{'NATL-RC': 1}},
+        update:{station:{'NATL-RC': 1}}
+      },
+      'alert-banner':{
+        any:{station:{'NATL-RC': 1}}
+      }
     }
   },
   actions = 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
@@ -23,13 +25,10 @@ const { expect, assert } = require('chai'),
   articleCreateMessage = 'You do not have permissions to create an article.',
   galleryCreateMessage = 'You do not have permissions to publish a gallery.',
   AnyMessage = 'You do not have permissions to the cool magic things.';
-let user = {};
+
+addPermissions(user);
 
 describe('permissions', () => {
-  beforeEach(() => {
-    Permissions(user, permissionRecord);
-  });
-
   describe('actions', () => {
     it('pass arguments', () => {
       actions.forEach(action => {

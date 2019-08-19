@@ -245,10 +245,9 @@ const KEYS = {
      * mutate a user object with the chained permission functions storing the permissions internally
      *
      * @param {object} user
-     * @param {object} permissions
      */
-    return (user, permissions) => {
-      _permissions = permissions;
+    return (user) => {
+      _permissions = user.permissions;
 
       addMethods(user);
     };
