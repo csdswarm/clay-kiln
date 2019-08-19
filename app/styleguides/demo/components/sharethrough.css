@@ -7,107 +7,12 @@
   &.google-ad-manager--sharethrough-tag {
     background: none;
 
-    &:hover {
-      .thumb__container {
-        opacity: 0.9;
-      }
-    }
-
-    .thumb__container {
-      &::before {
-        @mixin more-content-feed-font10;
-        content: 'Advertisement';
-        position: absolute;
-        z-index: 1;
-        width: auto;
-        background: $blazeOrange;
-        display: inline-block;
-        left: 0;
-        padding: em(4, 14) em(6, 14);
-      }
-      width: em(widthOnGrid(5,4));
-      height: em(214);
-      @mixin large-screen {
-        width: em(widthOnGrid(4,3));
-        height: em(169);
-      }
-      @mixin medium-screen {
-        width: 100%;
-        height: 100%;
-      }
-      @mixin medium-small-screen {
-        max-height: em(248);
-        max-width: em(440);
-        margin-bottom: em(15);
-      }
-      @mixin small-screen {
-        max-height: em(180);
-        max-width: em(320);
-      }
-    }
     .link__info {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-self: center;
       text-align: left;
-      max-width: em(widthOnGrid(5,4));
-      @mixin large-screen {
-        width: em(widthOnGrid(4,3));
-      }
-      @mixin medium-screen {
-        max-width: em(widthOnGrid(3,2,medium-screen));
-        width: 50%;
-      }
-      @mixin medium-small-screen {
-        width: 100%;
-        height: auto;
-        padding: 0;
-      }
+
       .info__sponsor {
-        @mixin more-content-feed-font11;
+        @mixin more-content-feed-font10;
         margin-bottom: em(4, 16);
-      }
-      .info__headline {
-        @mixin more-content-feed-font2;
-        display: block;
-        margin-bottom: em(10, 22);
-        text-align: left;
-        @mixin large-screen {
-          @mixin more-content-feed-font6;
-          margin-bottom: em(10, 18);
-        }
-        @mixin medium-small-screen {
-          @mixin more-content-feed-font2;
-          margin-bottom: em(10, 22);
-        }
-      }
-      .info__teaser {
-        @mixin more-content-feed-font3;
-        display: block;
-        @mixin large-screen {
-          @mixin more-content-feed-font7;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-        }
-        @mixin medium-screen {
-          text-overflow: unset;
-          overflow: visible;
-          white-space: normal;
-        }
-        @media all and (max-width: 700px) {
-          text-overflow: ellipsis;
-          overflow: hidden;
-          white-space: nowrap;
-        }
-        @mixin medium-small-screen {
-          margin-bottom: em(15, 16);
-          margin-top: 0;
-          text-overflow: unset;
-          overflow: visible;
-          white-space: normal;
-        }
       }
     }
   }

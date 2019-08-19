@@ -286,9 +286,6 @@ em, i {
   @mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
 }
 @define-mixin more-content-feed-font10 {
-  @mixin font CircularStd-Medium, 14px, $white, -.23px, 17px;
-}
-@define-mixin more-content-feed-font11 {
   @mixin font ProximaNova-Light, 16px, $blazeOrange, -.26px, 22px;
 }
 
