@@ -29,7 +29,7 @@ const _get = require('lodash/get'),
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
 let refreshCount = 0,
   allAdSlots = {},
-  adsRefreshing = true,
+  adsRefreshing = false,
   initialPageAdSlots = [],
   clearDfpTakeover = () => {},
   numRightRail = 1,
