@@ -19,12 +19,14 @@ fi
 echo "Using $http://$1"
 if [[ $(curl "$http://$1/_lists/new-pages" 2>&1) == *"station-front-3"* ]];
 then
-    echo "Station Front already exists";
+    echo "Station Front instances already exist";
 else
-    npm i yamljs node-fetch;
+    echo "Setting up Station Front instances";
+    
     clay export -y "$http://$1/_layouts/one-column-layout/instances/station" > layout.yml;
     clay export -y "$http://$1/_lists/new-pages" > list.yml;
     clay export -y "$http://$1/_pages/station-front-3" > page.yml;
+
     node ./modifyLayout.js;
     node ./modifyPage.js;
     node ./addStationFrontToList.js;
@@ -33,5 +35,5 @@ else
     cat ./page.yml | clay import -y -k demo "$http://$1";
     cat ./list.yml | clay import -y -k demo "$http://$1";
 
-    rm -rf ./node_modules package-lock.json layout.yml list.yml;
+    rm -rf layout.yml page.yml list.yml;
 fi

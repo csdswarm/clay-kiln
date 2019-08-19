@@ -1,5 +1,5 @@
 const fs = require('fs'),
-  YAML = require('yamljs');
+  YAML = require('../../../app/node_modules/yamljs');
 
 /**
  * Split array of { _ref } into 3 sections

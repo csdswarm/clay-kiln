@@ -1,5 +1,5 @@
 const fs = require('fs'),
-  YAML = require('yamljs');
+  YAML = require('../../../app/node_modules/yamljs');
 
 const data = YAML.load(`${__dirname}/list.yml`);
 
