@@ -202,7 +202,7 @@
             },
             /** True if all required fields are entered */
             validForm() {
-                return this.message && this.startDate && this.startTime && this.endDate && this.endTime;
+                return this.message && this.startDate && this.startTime && this.endDate && this.endTime && !moment(this.start).isSame(this.end);
             }
         },
         methods: {
