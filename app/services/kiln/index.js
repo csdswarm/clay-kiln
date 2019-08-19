@@ -1,5 +1,7 @@
 'use strict';
 
+const { secureAllSchemas } = require('./permissions');
+
 // exported as "kiln-plugins"
 module.exports = () => {
   window.kiln.helpers = require('../../services/universal/helpers');
@@ -13,4 +15,5 @@ module.exports = () => {
   require('./plugins/instagram')();
   require('./plugins/subscriptions')();
   require('./validators')();
+  secureAllSchemas();
 };
