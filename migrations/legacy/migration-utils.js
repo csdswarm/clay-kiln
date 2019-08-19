@@ -13,6 +13,7 @@
 // - CSD
 
 const _get = require('../../app/node_modules/lodash/get');
+const _set = require('../../app/node_modules/lodash/set');
 const _chunk = require('../../app/node_modules/lodash/chunk');
 const claycli = require('../../app/node_modules/claycli');
 const YAML = require('../../app/node_modules/yamljs');
@@ -310,6 +311,7 @@ function republish(params) {
  *******************************************************************************************/
 const v1 = {
   _get,
+  _set,
   _chunk,
   prettyJSON,
   toYaml,
