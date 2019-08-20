@@ -1,6 +1,6 @@
 'use strict';
 const slugifyService = require('../../services/universal/slugify'),
-  { playingClass, favoriteModifier } = require('../../services/server/spaLocals'),
+  { playingClass, favoriteModifier } = require('../../services/universal/spaLocals'),
   { addCrumb } = require('../breadcrumbs'),
   NEWS_TALK = 'News & Talk',
   SPORTS = 'Sports',
