@@ -3,7 +3,34 @@
 
 .component--gallery-slide {
   margin: 0 0 em(40) 0;
-
+  &.editing {
+    transition: all 100ms linear 250ms;
+    &:hover {
+      padding: 0.5em 0.5em 0.5em em(75);
+      outline: em(1) dashed black;
+      cursor: grab;
+      background: #f5f5f5;
+      > div {
+        outline: 1px dashed #ccc;
+        padding: 0.25em;
+      }
+      &:after {
+        content: "gallery slide";
+        text-transform: uppercase;
+        background: black;
+        position: absolute;
+        top: -0.75em;
+        left: 0.5em;
+        color: white;
+        padding: 0.125em 0.25em;
+        font-size: 0.65em;
+      }
+      .gallery-slide__text {
+        padding-bottom: em(60);
+        transition: all 100ms linear 250ms;
+      }
+    }
+  }
   .gallery-slide__text {
     /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
     margin: em(30) 0 0 0;
@@ -95,7 +122,6 @@
     margin: em(30) 0 em(30) 0;
   }
 }
-
 
 .condensed .component--gallery-slide {
 	&.editing {
