@@ -97,7 +97,7 @@
 }
 
 
-.component--gallery-slide {
+.condensed .component--gallery-slide {
 	&.editing {
 		transition: all 100ms linear 50ms;
 		display: flex;
@@ -133,6 +133,11 @@
 			max-height: 4em;
 			overflow: hidden;
 			margin-right: 1em;
+      &:hover {
+        overflow: visible;
+        max-width: 24em;
+        max-height: 12em;
+      }
 		}
 		.slideText.gallery-slide__text {
 			display: flex;

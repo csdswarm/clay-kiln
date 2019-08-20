@@ -108,12 +108,28 @@
                 </li>
               </ul>
             </section>
+            <section class="content__slide-settings" data-editable="slidesEditorDisplaySettings">
+              <h2 class="slide-settings__title">EDITOR ONLY Display Settings</h2>
+              <ul class="slide-settings__items">
+                <li class="item">
+                  <div role="alert" class="ui-alert ui-alert--type-warning">
+                    <div class="ui-alert__body">
+                        <div class="ui-alert__content">
+                            Pro Tip: You can turn on/off <strong>condensed view</strong> to more easily reorder your slides. (Not user facing)
+                        </div>
+                    </div>
+                  </div>
+                  <h4 class="item-title">Condensed Slide View?</h4>
+                  <p class="item-data">{{ toggleEditorCondensedSlidesView }}</p>
+                </li>
+              </ul>
+            </section>
           {{/if}}
-          {{#each slides }}
-            <div data-editable="slides">
-              {{> (getComponentName this._ref) this }}
-            </div>
-          {{/each}}
+          <div data-editable="slides" class="{{ if toggleEditorCondensedSlidesView 'condensed' }}">
+            {{#each slides }}
+                {{> (getComponentName this._ref) this }}
+            {{/each}}
+          </div>
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
