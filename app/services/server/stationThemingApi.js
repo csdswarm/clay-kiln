@@ -4,6 +4,17 @@ const db = require('./db'),
   log = require('../universal/log').setup({ file: __filename }),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   /**
+   * retrieves the current station theme
+   *
+   * @param {number} stationId
+   * @return {object}
+   */
+  get = async (stationId) => {
+    const key = `${CLAY_SITE_HOST}/_station_themes/${stationId}`;
+
+    return await db.get(key);
+  },
+  /**
    * Add routes for station themes
    *
    * @param {object} app
@@ -15,10 +26,8 @@ const db = require('./db'),
      * Get the current theme for a station
      */
     app.get('/station-theme/:siteSlug/:stationID', async (req, res) => {
-      const key = `${ CLAY_SITE_HOST }/_station_themes/${ req.params.stationID }`;
-
       try {
-        const theme = await db.get(key);
+        const theme = await get(req.params.stationID);
 
         res.status(200).send(theme);
       } catch (e) {
@@ -63,3 +72,4 @@ const db = require('./db'),
   };
 
 module.exports.inject = inject;
+module.exports.get = get;

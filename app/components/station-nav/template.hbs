@@ -1,4 +1,11 @@
 <div class="component component--station-nav" data-uri="{{ default _ref _self }}">
+    <style class="station-colors">
+      :root {
+        {{#each station.theme}}
+          --station-{{@key}}: {{this}};
+        {{/each}}
+      }
+    </style>
   <nav class="station-nav__fixed-container">
     <div class="station-nav__menu menu">
       <div class="menu__mobile-toggle">

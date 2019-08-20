@@ -51,6 +51,15 @@ $purple: #3C00B7; /* Primary Bright */
 $purpleRGB: 60, 0, 183;
 
 /* ---------------------------------------------------------- */
+/* ------              Station Colors                  ------ */
+/* ---------------------------------------------------------- */
+$station-primaryColor: var(--station-primaryColor, $boulder);
+$station-secondaryColor: var(--station-secondaryColor, $tundora);
+$station-tertiaryColor: var(--station-tertiaryColor, $dustyGray);;
+$station-primaryFontColor: var(--station-primaryFontColor, $white);
+$station-secondaryFontColor: var(--station-secondaryFontColor, $black);
+
+/* ---------------------------------------------------------- */
 /* ------ OLD NAMING SYSTEM --- Remove once in staging ------ */
 /* ---------------------------------------------------------- */
 
