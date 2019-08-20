@@ -66,10 +66,11 @@ async function getAlerts(locals) {
 
     return messages
       .filter(existingMessages)
-      .map(([{ id, message, breaking }]) => ({
+      .map(([{ id, message, breaking, link }]) => ({
         id: hashId(id),
         message,
-        breaking
+        breaking,
+        link
       }))
       .filter(unclosedMessages);
   } catch (error) {
