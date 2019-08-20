@@ -14,8 +14,8 @@ const appRoot = require('app-root-path'),
  * @return {Function}
  */
 function checkPermission(hasPermission) {
-  return (req, res, next) => {
-    if (hasPermission(req.uri, req.body, req.user || {})) {
+  return async (req, res, next) => {
+    if (await hasPermission(req.uri, req.body, res.locals || {})) {
       next();
     } else {
       res.status(403).send({ error: 'Permission Denied' });
