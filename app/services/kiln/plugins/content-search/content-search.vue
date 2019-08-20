@@ -78,7 +78,7 @@
             },
             "query": {
               "query_string": {
-                "query": `*${query.replace(/([\/|:])/g, '\\$1')}*`,
+                "query": `*${query.replace(/^https?:\/\//, '').replace(/([\/|:])/g, '\\$1')}*`,
                 "fields": [
                   "authors",
                   "canonicalUrl",
