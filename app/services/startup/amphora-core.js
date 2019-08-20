@@ -6,7 +6,7 @@ const amphora = require('amphora'),
   permissions = require('./amphora-permissions'),
   log = require('../universal/log').setup({ file: __filename }),
   { getComponentInstance } = require('../server/publish-utils'),
-  { isComponent, getComponentName, isPage, isPublished } = require('clayutils');
+  { getComponentName, isPage, isPublished } = require('clayutils');
 
 /**
  * determine if the current user has permissions to the specific item
