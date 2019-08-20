@@ -38,12 +38,7 @@
       min-height: em(20);
       margin-bottom: em(20);
       border: em(1) solid transparent;
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      background: $hawkesBlue;
       color: $denim;
-      padding: em(10);
 
       div {
         display: flex;
