@@ -4,7 +4,9 @@ const amphora = require('amphora'),
   renderers = require('./amphora-renderers'),
   healthCheck = require('@nymdev/health-check'),
   permissions = require('./amphora-permissions'),
-  { isPage, isPublished } = require('clayutils');
+  log = require('../universal/log').setup({ file: __filename }),
+  { getComponentInstance } = require('../server/publish-utils'),
+  { isComponent, getComponentName, isPage, isPublished } = require('clayutils');
 
 /**
  * determine if the current user has permissions to the specific item
@@ -15,8 +17,22 @@ const amphora = require('amphora'),
  * @return {boolean}
  */
 async function hasPermissions(uri, data, locals) {
-  // STUB for testing - if cognito users have no permissions to publish pages
-  return !(locals.user.provider === 'cognito' && isPage(uri) && isPublished(uri));
+  // server side checking specific components if required
+  // if (isComponent(uri)) {
+  //   return locals.user.can('xyz').a(getComponentName(uri)).at(locals.station.callsign);
+  // }
+
+  if (isPage(uri) && isPublished(uri)) {
+    try {
+      const page = await getComponentInstance(uri.split('@')[0], {});
+
+      return locals.user.can('publish').a(getComponentName(page.main[0])).at(locals.station.callsign).value;
+    } catch (e) {
+      log('error', e);
+    }
+
+    return false;
+  }
 }
 
 function initAmphora(app, search, sessionStore, routes) {
