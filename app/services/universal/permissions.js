@@ -25,7 +25,8 @@
 */
 
 
-const KEYS = {
+const pluralize = require('pluralize'),
+  KEYS = {
     action: 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
     object: 'a,an,the,this,using,canUse,canModify'.split(','),
     location: 'at,for,with,on'.split(',')
@@ -52,10 +53,9 @@ const KEYS = {
      * @return {string}
      */
     const createMessage = ({ action, object }) => {
-        const a = ['a','e','i','o','u'].includes(object.charAt(0)) ? 'an' : 'a',
-          perform = action === 'any' ? 'the' : `${action} ${a}`;
+        const perform = action === 'any' ? '' : ` ${action}`;
 
-        return `You do not have permissions to ${perform} ${object.replace(/-/g, ' ')}.`;
+        return `You do not have permissions to${perform} ${pluralize(object.replace(/-/g, ' '))}.`;
       },
       /**
        * checks the permission object for the currently defined condition (action/object/location) and
@@ -247,7 +247,7 @@ const KEYS = {
      * @param {object} user
      */
     return (user) => {
-      _permissions = user.permissions;
+      _permissions = user.permissions || {};
 
       addMethods(user);
     };
