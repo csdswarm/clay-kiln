@@ -4,8 +4,12 @@ _layouts:
     headLayout: []
     pageHeader: pageHeader
     top: []
+    topSection: []
+    topAd: []
     main: main
     secondary: []
+    bottomAd: []
+    bottomSection: []
     bottom: []
     kilnInternals:
       - _ref: /_components/clay-kiln/instances/general
