@@ -22,9 +22,9 @@ const { expect, assert } = require('chai'),
   actions = 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
   objects = 'a,an,the,this,using,canUse,canModify'.split(','),
   locations = 'at,for,with,on'.split(','),
-  articleCreateMessage = 'You do not have permissions to create an article.',
-  galleryCreateMessage = 'You do not have permissions to publish a gallery.',
-  AnyMessage = 'You do not have permissions to the cool magic things.';
+  articleCreateMessage = 'You do not have permissions to create articles.',
+  galleryCreateMessage = 'You do not have permissions to publish galleries.',
+  AnyMessage = 'You do not have permissions to cool magic things.';
 
 addPermissions(user);
 
