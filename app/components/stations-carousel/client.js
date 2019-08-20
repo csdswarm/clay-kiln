@@ -42,13 +42,12 @@ class StationsCarousel {
     }
     this.updateStations();
   }
-}
-StationsCarousel.prototype = {
+
   /**
    * Set stations' image size and page size
    * @function
    */
-  setImageAndPageDims: function () {
+  setImageAndPageDims() {
     this.pageSize = 1; // Number of stations to move left/right when navigating
     this.layoutWidth = getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass}`)).width;
     this.gutterWidth = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} li`)).marginRight.replace('px',''));
@@ -81,27 +80,29 @@ StationsCarousel.prototype = {
         this.stationsNodes.thumbs[i].setAttribute('style', '');
       }
     }
-  },
+  }
+
   /**
    * Set width of carousel to full window width
    * @function
    */
-  setCarouselWidth: function () {
+  setCarouselWidth() {
     let style = `display: inline-flex; width: ${document.body.clientWidth}px;`;
-    
+
     if (this.stationsCarousel.closest('.layout--one-column')) {
       // set width of carousel to full width and display it to prevent flashing
       style += `margin-left: calc((${document.body.clientWidth}px - ${this.layoutWidth}) / -2);`;
     }
     this.stationsCarousel.setAttribute('style', style);
-  },
+  }
+
   /**
    * Reset vars to calculate and set new dimensions and pages of carousel on window resize
    * @param {object} event
    * @param {object} _this
    * @function
    */
-  restyleCarousel: function (event, _this) {
+  restyleCarousel(event, _this) {
     _this.windowWidth = window.outerWidth;
     _this.setImageAndPageDims();
     _this.totalPages = Math.ceil(_this.stationsData.count / _this.pageSize);
@@ -110,12 +111,13 @@ StationsCarousel.prototype = {
       _this.createPaginationDots();
     }
     _this.getPage(null, _this);
-  },
+  }
+
   /**
    * Hide or show navigation arrows if at the end or start of station results in carousel
    * @function
    */
-  hideOrShowEndArrows: function () {
+  hideOrShowEndArrows() {
     if (this.windowWidth >= this.windowSizes.medium) {
       let visible = 'visibility: visible',
         hidden = 'visibility: hidden';
@@ -131,12 +133,13 @@ StationsCarousel.prototype = {
         this.rightArrow.setAttribute('style', hidden);
       }
     }
-  },
+  }
+
   /**
    * Center station results on first or last page if they don't fill up the page
    * @function
    */
-  centerPageResults: function () {
+  centerPageResults() {
     let remainderStations = this.stationsData.count % this.pageSize;
 
     if (this.totalPages * this.pageSize <= this.stationsVisible) { // Center stations if fills short of first page
@@ -163,12 +166,13 @@ StationsCarousel.prototype = {
       this.stationsList.setAttribute('style',`transform: translateX(-${this.pageStationsLocation}px);`); // uncenter last page
       this.stationsList.classList.remove('align-center'); // uncenter first page
     }
-  },
+  }
+
   /**
    * Remove existing pagination dots and replace with newly created dots
    * @function
    */
-  createPaginationDots: function () {
+  createPaginationDots() {
     // Remove existing pagination
     while (this.paginationDots.lastChild) {
       this.paginationDots.removeChild(this.paginationDots.lastChild);
@@ -186,12 +190,13 @@ StationsCarousel.prototype = {
       }
     }
     this.updatePaginationDots();
-  },
+  }
+
   /**
    * Update style of dots and show new page results on click of arrows or pagination dots
    * @function
    */
-  updatePaginationDots: function () {
+  updatePaginationDots() {
     if (this.totalPages > 1) {
       let allDots = this.stationsCarousel.querySelectorAll(`.${this.dotClass}`);
 
@@ -201,14 +206,15 @@ StationsCarousel.prototype = {
       }
       this.stationsCarousel.querySelector(`.${this.dotClass}[data-page='${this.pageNum}']`).classList.add('dot--active');
     }
-  },
+  }
+
   /**
    * Show new page results on click of arrows or pagination dots
    * @param {object} event
    * @param {object} _this
    * @function
    */
-  getPage: function (event, _this) {
+  getPage(event, _this) {
     const leftArrowEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'left',
       rightArrowEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-direction') == 'right',
       dotEvent = event && event.currentTarget && event.currentTarget.getAttribute('data-page') !== null,
@@ -248,13 +254,14 @@ StationsCarousel.prototype = {
     _this.pageStationsLocation = (_this.pageNum - 1) * _this.pageSize * _this.imageSize;
     _this.stationsList.setAttribute('style',`transform: translateX(-${_this.pageStationsLocation}px);`);
     _this.centerPageResults();
-  },
+  }
+
   /**
    * Get stations from api using market ID and filters
    * @function
    * @returns {Promise}
    */
-  getFilteredStationsFromApi: function () {
+  async getFilteredStationsFromApi() {
     let params = `?sort=-popularity&filter[market_id]=${this.marketID}&page[size]=${this.allStationsCount}`;
 
     if (this.filterStationsBy == 'section-front') {
@@ -277,12 +284,13 @@ StationsCarousel.prototype = {
         return Promise.reject();
       }
     });
-  },
+  }
+
   /**
    * Insert new payload of stations into DOM
    * @function
    */
-  updateStationsDOM: async function () {
+  async updateStationsDOM() {
     const stationIds = this.stationsData.stations.map(station => station.id),
       endpoint = `//${window.location.hostname}/_components/stations-list/instances/local.html?stationIDs=${stationIds.join(',')}`,
       localStations = await radioApiService.fetchDOM(endpoint);
@@ -298,13 +306,14 @@ StationsCarousel.prototype = {
     this.stationsNodes = this.stationsCarousel.querySelectorAll('li');
     // Store for image resizing when window width is medium or smaller
     this.stationsNodes.thumbs = this.stationsCarousel.querySelectorAll('.thumb');
-  },
+  }
+
   /**
    * Initial function - retrieve new payload of stations into DOM and enable navigation
    * @function
    * @returns {Promise}
    */
-  updateStations: async function () {
+  async updateStations() {
     this.marketID = await market.getID();
     return this.getFilteredStationsFromApi().then(async (stationsData) => {
       this.stationsData = stationsData;
@@ -335,6 +344,6 @@ StationsCarousel.prototype = {
       return stationsData;
     });
   }
-};
+}
 
 module.exports = el => new StationsCarousel(el);
