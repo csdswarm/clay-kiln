@@ -44,7 +44,7 @@
                         <span class="alerts-manager__page-list-item__end">{{alert.end | formatDate}}</span>
                         <div class="alerts-manager__page-list-item__message">
                             <div>{{alert.message}}</div>
-                            <div class="alerts-manager-page-list-item__link">Link: <a :href="alert.link">{{alert.link}}</a></div>
+                            <div class="alerts-manager-page-list-item__link" v-if="alert.link">Link: <a :href="alert.link">{{alert.link}}</a></div>
                         </div>
                         <span class="alerts-manager__page-list-item__icons">
                             <ui-icon-button 
