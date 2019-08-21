@@ -119,5 +119,12 @@ describe('urps tests', () => {
 
       expect(locals.user.permissions).to.eql({ 'author-page': { any: { station: { 'NATL-RC': 1 } } } });
     });
+
+    it('refreshes permissions from urps if it\'s been too long since the last check', async () => {});
+
+    it('refreshes the user token if it has exceeded its expiration', async () => {});
+
+    it('handles no auth on session', async () => {});
+
   });
 });
