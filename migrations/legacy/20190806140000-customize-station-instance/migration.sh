@@ -17,11 +17,11 @@ else
 fi
 
 echo "Using $http://$1"
-if [[ $(curl "$http://$1/_lists/new-pages" 2>&1) == *"station-front-3"* ]];
+if [[ $(curl "$http://$1/_lists/new-pages" 2>&1) == *"station-basic-music"* ]];
 then
-    echo "Station Front instances already exist";
+    echo "Basic Music Station instances already exist";
 else
-    echo "Setting up Station Front instances";
+    echo "Setting up Basic Music Stations";
     
     clay export -y "$http://$1/_layouts/one-column-layout/instances/station" > layout.yml;
     clay export -y "$http://$1/_lists/new-pages" > list.yml;
