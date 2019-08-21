@@ -1,11 +1,10 @@
 'use strict';
 
 const publishing = require('../../services/publishing'),
-  middleware = require('./middleware'),
   mainComponentRefs = ['/_components/article/instances', '/_components/gallery/instances', '/_components/section-front/instances'];
 
 module.exports.routes = [
-  { path: '/', middleware },
+  { path: '/' },
   { path: '/:sectionFront'},
   { path: '/:sectionFront/:secondarySectionFront'},
   { path: '/blogs/:author/:title'}, // Frequency URL pattern
