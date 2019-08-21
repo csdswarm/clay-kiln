@@ -10,11 +10,13 @@
       {{{ text }}}
     {{/if}}
   {{else}}
-    <div class="html-embed__preview kiln-placeholder">
-      <div>
-        <span>Embedded HTML</span>
+    {{#if text}}
+      <div class="html-embed__preview kiln-placeholder">
+        <div>
+          <span>Embedded HTML</span>
+        </div>
+        <pre>{{ ellipsisSubstring text 0 500 }}</pre>
       </div>
-      {{#if text}}<pre>{{ ellipsisSubstring text 0 500 }}</pre>{{/if}}
-    </div>
+    {{/if}}
   {{/unless}}
 </div>
