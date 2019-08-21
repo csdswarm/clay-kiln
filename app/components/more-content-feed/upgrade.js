@@ -1,7 +1,7 @@
 'use strict';
 
 const { getComponentVersion } = require('clayutils'),
-  { putComponentInstance } = require('../../services/server/publish-utils');
+  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils');
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -79,20 +79,38 @@ module.exports['7.0'] = async function (uri, data) {
   const isPublished = getComponentVersion(uri) === 'published',
     sharethroughTagInstanceData = {
       adSize: 'sharethrough-tag',
-      adLocation: 'atf',
+      adLocation: 'btf',
       adPosition: 'native'
-    };
+    },
+    sharethroughTagInstanceUri = isPublished ?
+      uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag@published') :
+      uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag');
 
-  let sharethroughTagInstanceUri = isPublished ?
-    uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag@published') :
-    uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag');
+  try {
+    const sharethroughTagInstance = await getComponentInstance(sharethroughTagInstanceUri);
 
-  await putComponentInstance(sharethroughTagInstanceUri, sharethroughTagInstanceData);
+    if (!data.sharethroughTag) {
+      if (!sharethroughTagInstance) {
+        await putComponentInstance(sharethroughTagInstanceUri, sharethroughTagInstanceData);
+      }
 
-  return {
-    ...data,
-    sharethroughTag: {
-      _ref: sharethroughTagInstanceUri
+      return {
+        ...data,
+        sharethroughTag: {
+          _ref: sharethroughTagInstanceUri
+        }
+      };
     }
-  };
+    
+    return data;
+  } catch (e) {
+    await putComponentInstance(sharethroughTagInstanceUri, sharethroughTagInstanceData);
+
+    return {
+      ...data,
+      sharethroughTag: {
+        _ref: sharethroughTagInstanceUri
+      }
+    };
+  }
 };
