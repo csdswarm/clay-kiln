@@ -12,7 +12,7 @@ async function set(key, value, ttlSeconds) {
   try {
     return await util.promisify(redis.set).bind(redis)(key, value, 'EX', ttlSeconds);
   } catch (error) {
-    log('error', `There was an error trying to set cache for key:"${key}" to value:"${value}"`, error)
+    log('error', `There was an error trying to set cache for key:"${key}" to value:"${value}"`, error);
   }
 }
 
@@ -20,7 +20,7 @@ async function get(key) {
   try {
     return await util.promisify(redis.get).bind(redis)(key);
   } catch (error) {
-    log('error', `There was an error trying to get cache for key:${key}`, error)
+    log('error', `There was an error trying to get cache for key:${key}`, error);
   }
 }
 

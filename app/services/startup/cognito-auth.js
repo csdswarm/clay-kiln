@@ -5,6 +5,7 @@ const util = require('util'),
   _get = require('lodash/get'),
   qs = require('qs'),
   AWS = require('aws-sdk'),
+  jwt = require('jsonwebtoken'),
   cache = require('../server/cache'),
   SECOND = 1000,
   TTL_SECONDS = 60,
@@ -32,14 +33,16 @@ const util = require('util'),
           getUser = util.promisify(cognitoClient.getUser).bind(cognitoClient),
           userData = await getUser({AccessToken: _get(response, 'data.access_token', '')}),
           userAttributes = _get(userData,'UserAttributes', []),
-          userName = _get(userAttributes.find(({Name}) => Name === 'email'),'Value','').toLowerCase();
+          userName = _get(userAttributes.find(({Name}) => Name === 'email'),'Value','').toLowerCase(),
+          {access_token: token, refresh_token: refreshToken, expires_in: expiresIn} = response.data;
 
         // response.data has the tokens at this point
         await cache.set(`${userName}`,
           {
-            token: response.data.access_token,
-            refreshToken: response.data.refresh_token,
-            expires: Date.now() + (_get(response, 'data.expires_in', 0) * SECOND),
+            token,
+            refreshToken,
+            expires: Date.now() + ((expiresIn || 0) * SECOND),
+            deviceKey: (jwt.decode(token) || {}).device_key,
             lastUpdated: Date.now()
           },
           TTL_SECONDS
