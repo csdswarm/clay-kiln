@@ -35,7 +35,14 @@ else
     cat ./page.yml | clay import -y -k demo "$http://$1";
     cat ./list.yml | clay import -y -k demo "$http://$1";
 
-    curl -X PUT $http://$1/_layouts/one-column-layout/instances/station@published -H 'Authorization: token accesskey' -o /dev/null -s
+    echo "Publishing station-basic-music layout...";
+    curl -X PUT $http://$1/_layouts/one-column-layout/instances/station-basic-music@published -H 'Authorization: token accesskey' -o /dev/null -s
+
+    echo "Deleting station layout...";
+    curl -X DELETE $http://$1/_layouts/one-column-layout/instances/station -H 'Authorization: token accesskey' -o /dev/null -s
+
+    echo "Deleting station-front-3 page...";
+    curl -X DELETE $http://$1/_pages/station-front-3 -H 'Authorization: token accesskey' -o /dev/null -s
 
     rm -rf layout.yml page.yml list.yml;
 fi

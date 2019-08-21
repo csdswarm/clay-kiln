@@ -33,7 +33,8 @@ stationLayout.bottomAd = bottomSplit[0];
 stationLayout.bottomSection = bottomSplit[1];
 stationLayout.bottom = bottomSplit[2];
 
-data._layouts['one-column-layout'].instances.station = stationLayout;
+delete data._layouts['one-column-layout'].instances.station;
+data._layouts['one-column-layout'].instances['station-basic-music'] = stationLayout;
 
 fs.writeFile(`${__dirname}/layout.yml`, YAML.stringify(data, 6, 2), 'utf8', function(err) {
     if (err) throw err;

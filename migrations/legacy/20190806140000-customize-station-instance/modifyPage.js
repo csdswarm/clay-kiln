@@ -13,7 +13,13 @@ if (stationFront.pageHeader === 'pageHeader') {
   stationFront.pageHeader = '/_components/topic-page-header/instances/new';
 }
 
-data._pages['station-front-3'] = stationFront;
+if (stationFront.layout === '/_layouts/one-column-layout/instances/station') {
+  stationFront.layout = '/_layouts/one-column-layout/instances/station-basic-music';
+}
+
+// rename to station-basic-music
+data._pages['station-basic-music'] = stationFront;
+delete data._pages['station-front-3'];
 
 fs.writeFile(`${__dirname}/page.yml`, YAML.stringify(data, 6, 2), 'utf8', function(err) {
     if (err) throw err;
