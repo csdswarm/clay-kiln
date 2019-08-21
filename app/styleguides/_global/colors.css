@@ -18,6 +18,7 @@ $silverChalice: #A6A6A6;
 $tundora: #444;
 $wildSand: #F5F5F5;
 $silver: #CCC;
+$mineShaft: #393939;
 
 /* Reds */
 $red: #F00; /* Errors */
@@ -51,13 +52,14 @@ $purple: #3C00B7; /* Primary Bright */
 $purpleRGB: 60, 0, 183;
 
 /* ---------------------------------------------------------- */
-/* ------              Station Colors                  ------ */
+/* ------           Station Front Colors               ------ */
 /* ---------------------------------------------------------- */
-$station-primaryColor: var(--station-primaryColor, $boulder);
-$station-secondaryColor: var(--station-secondaryColor, $tundora);
-$station-tertiaryColor: var(--station-tertiaryColor, $dustyGray);;
-$station-primaryFontColor: var(--station-primaryFontColor, $white);
-$station-secondaryFontColor: var(--station-secondaryFontColor, $black);
+$station-primaryColor: theme(primaryColor, $parisM);
+$station-secondaryColor: theme(secondaryColor, $purple);
+$station-tertiaryColor: theme(tertiaryColor, $mineShaft);
+$station-primaryFontColor: theme(primaryFontColor, $white);
+$station-secondaryFontColor: theme(secondaryFontColor, $black);
+
 
 /* ---------------------------------------------------------- */
 /* ------ OLD NAMING SYSTEM --- Remove once in staging ------ */

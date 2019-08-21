@@ -1,7 +1,6 @@
 'use strict';
 
 const radioApiService = require('../../services/server/radioApi'),
-  { get } = require('../../services/server/stationThemingApi'),
   { isEmpty } = require('lodash'),
   { extname } = require('path'),
   allStations = {},
@@ -75,11 +74,6 @@ const radioApiService = require('../../services/server/radioApi'),
     // verify the slug is valid
     if (Object.keys(allStations).includes(slug)) {
       const station = allStations[slug];
-
-      // as log as there is an station id, get the theme
-      if (station.id) {
-        station.theme = await get(station.id);
-      }
 
       return station;
     }

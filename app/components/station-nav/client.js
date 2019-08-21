@@ -14,7 +14,6 @@ let stationNav,
 
 const { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
-  cssVars = require('css-vars-ponyfill'),
   active = 'active',
   /**
    * load in new data for listen nav from the api
@@ -212,9 +211,6 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
       }
     });
   };
-
-// IE11 fix for css variables
-cssVars({});
 
 // mount listener for vue (optional)
 document.addEventListener('station-nav-mount', function () {
