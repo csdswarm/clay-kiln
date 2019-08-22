@@ -35,6 +35,9 @@ populateFrom:
         name: Section Front
         value: section-front
       - tag
+      -
+        name: Section Front & Tag
+        value: section-front-and-tag
       - manual
 
 locationOfContentFeed:
@@ -61,7 +64,9 @@ sectionFrontManual:
   _reveal:
     field: populateFrom
     operator: ===
-    value: section-front
+    values:
+      - section-front
+      - section-front-and-tag
   _has:
     input: select
     search: true
@@ -79,7 +84,9 @@ secondarySectionFrontManual:
   _reveal:
     field: populateFrom
     operator: ===
-    value: section-front
+    values:
+      - section-front
+      - section-front-and-tag
   _has:
     input: select
     search: true
@@ -100,7 +107,9 @@ tagManual:
   _reveal:
     field: populateFrom
     operator: ===
-    value: tag
+    values:
+      - tag
+      - section-front-and-tag
   _has:
     input: simple-list
     autocomplete:
@@ -112,7 +121,9 @@ tagManual:
       required:
         field: populateFrom
         operator: ===
-        value: tag
+        values:
+          - tag
+          - section-front-and-tag
 
 tagInfo:
   _label: Tag Info
@@ -123,7 +134,9 @@ tagInfo:
   _reveal:
     field: populateFrom
     operator: ===
-    value: tag
+    values:
+      - tag
+      - section-front-and-tag
   _has:
     input: text
     help: Tag Description / More Info (Will be shown in right rail)
