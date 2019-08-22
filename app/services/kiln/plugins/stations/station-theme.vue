@@ -234,7 +234,7 @@
           await axios({
             method: this.theme ? 'put' : 'post',
             url: `/station-theme/${ window.kiln.locals.station.site_slug }`,
-            data: { stationID: window.kiln.locals.station.id, primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor }
+            data: { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor }
           });
 
           this.loading = false;
@@ -251,7 +251,7 @@
       async loadTheme() {
         this.loading = true;
         try {
-          const { data } = await axios.get(`/station-theme/${ window.kiln.locals.station.site_slug }/${ window.kiln.locals.station.id }`);
+          const { data } = await axios.get(`/station-theme/${ window.kiln.locals.station.site_slug }`);
 
           this.loading = false;
           this.theme = data;

@@ -196,5 +196,5 @@ module.exports = router => {
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router);
-  stationTheming.inject(router);
+  stationTheming.inject(router, checkAuth);
 };
