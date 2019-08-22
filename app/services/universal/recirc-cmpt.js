@@ -1,6 +1,7 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
+  _get = require('lodash/get'),
   _set = require('lodash/set'),
   _head = require('lodash/head');
 
@@ -57,6 +58,22 @@ module.exports.getArticleDataAndValidate = function (ref, data, locals, fields) 
   return getArticleData(ref, data, locals, fields)
     .then( throwOnEmptyResult(data.url) )
     .then( data => _set(data, 'urlIsValid', true) )
+    .then( data => {
+      data.leadComponent = null;
+
+      const leadRef = _get(data.lead, '[0]._ref');
+
+      if (leadRef) {
+        // extract component name from ref
+        const match = leadRef.match(/_components\/(.+?)\//);
+
+        if (match) {
+          data.leadComponent = match[1];
+        }
+      }
+
+      return data;
+    })
     .catch( err => {
       queryService.logCatch(err, ref);
 
