@@ -539,5 +539,5 @@ noIndexNoFollow:
 
 # toggle editing condensed list view
 toggleEditorCondensedSlidesView:
-  _label: Toggle Condensed Slide View
+  _label: Condensed Slide View On
   _has: checkbox

@@ -115,12 +115,12 @@
                   <div role="alert" class="ui-alert ui-alert--type-warning">
                     <div class="ui-alert__body">
                         <div class="ui-alert__content">
-                            Pro Tip: You can turn on/off <strong>condensed view</strong> to more easily reorder your slides. (Not user facing)
+                            Toggle on condensed slide view to reorder slides more easily. This does not change the look of the slides themselves when published on site.
                         </div>
                     </div>
                   </div>
                   <h4 class="item-title">Condensed Slide View?</h4>
-                  <p class="item-data">{{ toggleEditorCondensedSlidesView }}</p>
+                  <p class="item-data">{{ if toggleEditorCondensedSlidesView 'On' else='Off' }}</p>
                 </li>
               </ul>
             </section>
