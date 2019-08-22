@@ -1,6 +1,7 @@
 'use strict';
 
 const _endsWith = require('lodash/endsWith'),
+  addPermissions = require('../universal/permissions'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
   /**
@@ -23,14 +24,18 @@ const _endsWith = require('lodash/endsWith'),
   /**
    * Default hide a field and watch for load success to check user permissions
    *
+   * Use to secure a field within a kiln.js file
+   *
    * @param {KilnInput} fieldInput
-   * @param {object} permission
+   * @param {string} permission
    */
   secureField = (fieldInput, permission) => {
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
+      addPermissions(user);
+      
       if (user.may(permission, component, station.callsign)) {
         fieldInput.show();
       }
@@ -40,8 +45,10 @@ const _endsWith = require('lodash/endsWith'),
    * Map through schema fields, find fields with permissions, and secure them
    * Then apply function from kiln.js
    *
+   * Use to secure an entire schema with one permission from a kiln.js file
+   *
    * @param {function} kilnjs
-   * @param {string} componentPermission
+   * @param {string} [componentPermission]
    * @returns {function} secureKilnJs
    */
   secureSchema = (kilnjs, componentPermission) => (schema) => {
@@ -58,6 +65,8 @@ const _endsWith = require('lodash/endsWith'),
   /**
    * Add a default kilnjs file in componentKilnJs for all components
    * If a kiln.js file already exists, wrap it with secured version
+   *
+   * Secures every field with a _permissions field in the schema.yml
    */
   secureAllSchemas = () => {
     window.kiln = window.kiln || {};
