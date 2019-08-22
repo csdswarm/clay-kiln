@@ -17,7 +17,7 @@ else
 fi
 
 echo "Using $http://$1"
-if [[ $(curl "$http://$1/_components/theme/instances" 2>&1) == *"deefault"* ]];
+if [[ $(curl "$http://$1/_components/theme/instances" 2>&1) == *"default"* ]];
 then
     echo "Theme has already been setup.";
 else
@@ -28,5 +28,5 @@ else
     cat ./components.yml | clay import -y -p -k demo "$http://$1";
     cat ./layouts.yml | clay import -y -p -k demo "$http://$1";
 
-#    rm -rf ./node_modules package-lock.json layouts.yml
+    rm -rf ./node_modules package-lock.json layouts.yml
 fi

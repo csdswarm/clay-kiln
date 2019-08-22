@@ -6,14 +6,13 @@ const rest = require('../universal/rest'),
 /**
  * call the get endpoint
  *
- * @param {string} stationId
+ * @param {string} site_slug
  *
  * @return {Promise<{}>}
  */
-async function get(stationId) {
+async function get(site_slug) {
   try {
-    // the endpoint does not use the siteSlug, so hard coding the text
-    return await rest.get(`/station-theme/siteSlug/${stationId}`);
+    return await rest.get(`/station-theme/${site_slug}`);
   } catch (e) {
     log('error', e);
     return {};
