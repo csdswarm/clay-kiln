@@ -1,6 +1,7 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
+  { getComponentName } = require('clayutils'),
   _get = require('lodash/get'),
   _set = require('lodash/set'),
   _head = require('lodash/head');
@@ -64,12 +65,9 @@ module.exports.getArticleDataAndValidate = function (ref, data, locals, fields) 
       const leadRef = _get(data.lead, '[0]._ref');
 
       if (leadRef) {
-        // extract component name from ref
-        const match = leadRef.match(/_components\/(.+?)\//);
-
-        if (match) {
-          data.leadComponent = match[1];
-        }
+        try {
+          data.leadComponent = getComponentName(leadRef);
+        } catch (e) {}
       }
 
       return data;
