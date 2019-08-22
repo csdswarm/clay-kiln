@@ -114,7 +114,7 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	make build-player && cd spa && npm i && npm run-script build -- --mode=none && cd ../app && npm i && npm run build
+	cd spa && npm i && npm run-script build -- --mode=none && cd ../app && npm i && npm run build
 
 install:
 	cd spa && npm i && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm i && npm run build-production
