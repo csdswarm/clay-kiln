@@ -27,6 +27,7 @@ const _endsWith = require('lodash/endsWith'),
    * @param {object} permission
    */
   secureField = (fieldInput, permission) => {
+    // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
