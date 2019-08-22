@@ -47,6 +47,12 @@
         searchText: this.data || ''
       };
     },
+    watch: {
+      data(val) {
+        this.searchText = val || '';
+        this.performSearch();
+      }
+    },
     computed: {
       showResults: function () {
         return this.loading || this.searchResults.length !== 0;
@@ -126,7 +132,7 @@
           this.debouncePerformSearch();
         } else {
           // if there are less than two, just take already exists and see if it can reduce the results
-          this.searchResults = this.searchResults.filter(item =>
+          this.searchResults = this.searchResults.filter(item => 
             item.canonicalUrl.includes(this.searchText) || item.seoHeadline.includes(this.searchText));
         }
       },
@@ -147,5 +153,3 @@
     }
   }
 </script>
-
-
