@@ -1,7 +1,9 @@
-<style class="component component--theme" data-uri="{{ default _ref _self }}">
-  :root {
-    {{#each theme}}
-      --theme-{{@key}}: {{this}};
-    {{/each}}
-  }
-</style>
+<div class="component component--theme" data-uri="{{ default _ref _self }}">
+  <style>
+    :root {
+      {{#each theme}}
+        --theme-{{@key}}: {{this}};
+      {{/each}}
+    }
+  </style>
+</div>
