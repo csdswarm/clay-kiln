@@ -7,6 +7,18 @@ const appRoot = require('app-root-path'),
   bodyParser = require('body-parser'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
 
+
+/**
+ *  determines if the user is not an actual user
+ *
+ * @param {object} user
+ *
+ * @return {boolean}
+ */
+function isRobot(user) {
+  return !user.username;
+}
+
 /**
  *  passes the permission object to the permission function
  *
@@ -15,7 +27,7 @@ const appRoot = require('app-root-path'),
  */
 function checkPermission(hasPermission) {
   return async (req, res, next) => {
-    if (await hasPermission(req.uri, req.body, res.locals || {})) {
+    if (isRobot(res.locals.user) || await hasPermission(req.uri, req.body, res.locals || {})) {
       next();
     } else {
       res.status(403).send({ error: 'Permission Denied' });
