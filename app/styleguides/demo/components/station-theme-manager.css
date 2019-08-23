@@ -18,7 +18,7 @@
     margin-bottom: em(30);
   }
   .ui-textbox {
-    width: em(300);
+    width: em(500);
     margin-right: em(10);
     input {
       color: inherit;
@@ -32,6 +32,13 @@
     display: flex;
     flex-direction: column;
     margin-left: em(30);
+    padding: em(30);
+
+    h3 {
+      @mixin font CircularStd-Black, 12px, inherit, 0px, 15px;
+      margin-bottom: em(30);
+      max-width: em(400);
+    }
 
     span {
       &:nth-of-type(1) {
