@@ -10,13 +10,25 @@ const { expect, assert } = require('chai'),
   proxyquire = require('proxyquire'),
   routes = proxyquire('./routes', {
     express
-  });
+  }),
+  send = sinon.stub();
+let res = {};
 
 describe('routes', function () {
   beforeEach(function () {
     expressRouter.use.reset();
     expressRouter.put.reset();
     expressRouter.all.reset();
+
+    send.reset();
+    res = {
+      status: sinon.stub().returns({ send }),
+      locals: {
+        user: {
+          username: 'testing'
+        }
+      }
+    };
   });
   it('sets up routes for pages and components', function () {
     const router = { use: sinon.stub() },
@@ -44,10 +56,10 @@ describe('routes', function () {
       next = sinon.stub();
 
     routes(router, permissionsFunc);
-    await expressRouter.put.firstCall.args[1]({ uri: 1, body: 2 }, { locals :3 }, next);
+    await expressRouter.put.firstCall.args[1]({ uri: 1, body: 2 }, res, next);
 
     expect(permissionsFunc.callCount).to.eql(1);
-    assert(permissionsFunc.calledWith(1, 2, 3));
+    assert(permissionsFunc.calledWith(1, 2, res.locals));
 
     expect(next.callCount).to.eql(1);
   });
@@ -57,26 +69,35 @@ describe('routes', function () {
       next = sinon.stub();
 
     routes(router, permissionsFunc);
-    await expressRouter.put.lastCall.args[1]({ uri: 1, body: 2}, { locals :3 }, next);
+    await expressRouter.put.lastCall.args[1]({ uri: 1, body: 2}, res, next);
 
     expect(permissionsFunc.callCount).to.eql(1);
-    assert(permissionsFunc.calledWith(1, 2, 3));
+    assert(permissionsFunc.calledWith(1, 2, res.locals));
+    expect(next.callCount).to.eql(1);
+  });
+  it('middleware calls next with robot user and no permission for pages', async function () {
+    const router = { use: sinon.stub() },
+      permissionsFunc = sinon.stub().returns(false),
+      next = sinon.stub();
+
+    res.locals.user = {};
+    routes(router, permissionsFunc);
+    await expressRouter.put.lastCall.args[1]({ uri: 1, body: 2 }, res, next);
+
+    expect(permissionsFunc.callCount).to.eql(0);
     expect(next.callCount).to.eql(1);
   });
   it('middleware calls send on unsuccessful permissions for pages', async function () {
     const router = { use: sinon.stub() },
-      permissionsFunc = sinon.stub().returns(false),
-      send = sinon.stub(),
-      status = sinon.stub().returns({ send }),
-      res = { status, locals: 3 };
+      permissionsFunc = sinon.stub().returns(false);
 
     routes(router, permissionsFunc);
     await expressRouter.put.lastCall.args[1]({ uri: 1, body: 2 }, res, null);
 
     expect(permissionsFunc.callCount).to.eql(1);
-    assert(permissionsFunc.calledWith(1, 2, 3));
-    expect(status.callCount).to.eql(1);
-    assert(status.calledWith(403));
+    assert(permissionsFunc.calledWith(1, 2, res.locals));
+    expect(res.status.callCount).to.eql(1);
+    assert(res.status.calledWith(403));
     expect(send.callCount).to.eql(1);
     assert(send.calledWith({ error: 'Permission Denied' }));
   });
