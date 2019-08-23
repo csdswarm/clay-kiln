@@ -424,8 +424,6 @@ _groups:
       - slidesNumbered
       - reverseOrder
       - includeInlineAds
-  slidesEditorDisplaySettings:
-    fields:
       - toggleEditorCondensedSlidesView
   settings:
     fields:
