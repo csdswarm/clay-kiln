@@ -123,14 +123,14 @@
   }
 }
 
-.condensed .component--gallery-slide {
+.content__slides--condensed .component--gallery-slide {
 	&.editing {
 		transition: all 100ms linear 50ms;
 		display: flex;
 		align-items: center;
 		background: hsla(0, 0%, 98%, 1);
 		margin-bottom: 0.75em;
-		padding: 0.5em 1em;
+		padding: em(0.5, 16) em(1, 16);
 		&:hover {
 			outline: em(1) dashed black;
 			cursor: grab;
