@@ -1,24 +1,42 @@
-<div data-uri="{{ default _ref _self }}" class="component component--brightcove" data-editable="video">
-  <div class="player">
-    {{#if videoId}}
+<div data-uri="{{ default _ref _self }}" class="component component--brightcove" data-editable="videoSettings">
+  <div class="player" itemscope itemtype="http://schema.org/VideoObject">
+    {{#if video.id }}
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
         {{#unless @root.locals.edit}}
-          <video-js id="video-{{ videoId }}"
+          <video-js id="video-{{ video.id }}"
             class="video-js vjs-16-9"
-            data-video-id="{{ videoId }}"
+            data-video-id="{{ video.id }}"
             data-account="{{ @root.locals.site.brightcoveAccountId }}"
             data-player="{{ @root.locals.site.brightcovePlayerId }}"
+            data-autoplay-unmuted={{ autoplayUnmuted }}
+            data-click-to-play={{ clickToPlay }}
             data-embed="default"
             data-application-id
             controls></video-js>
+
+            <meta itemprop="name" content="{{ name }}">
+            <meta itemprop="headline" content="{{ seoHeadline }}">
+            <meta itemprop="description" content="{{ seoDescription }}">
+            <meta itemprop="thumbnailUrl" content="{{ thumbnailUrl }}">
+            <meta itemprop="uploadDate" content="{{ bcCreatedAt }}">
+            <meta itemprop="contentUrl" content="{{{ seoContentUrl }}}">
+            <meta itemprop="embedUrl" content="{{{ seoEmbedUrl }}}">
+            <meta itemprop="duration" content="{{{ duration }}}">
+
+            <div itemprop="interactionStatistic" itemscope itemtype="http://schema.org/InteractionCounter">
+              <meta itemprop="interactionType" content="http://schema.org/ViewAction">
+              <meta itemprop="userInteractionCount" content="{{ views }}">
+            </div>
         {{else}}
-          {{! @TODO: ON-38 Show thumbnail from video, get it during save in model.js and store on the component }}
-          <div class="kiln-placeholder" style="min-height: 20px; margin-bottom: 20px;">
-            <div class="placeholder-label"><span class="placeholder-text">Brightcove Video ID: {{ videoId }}</span></div>
+          <div class="video__preview" style="min-height: 20px; margin-bottom: 20px;">
+            <div>
+              {{#if video.name}}<span>{{ video.name }}</span>{{/if}}
+              <span>Brightcove ID: {{ video.id }}</span>
+            </div>
+            {{#if video.imageUrl}}<img src="{{ video.imageUrl }}" alt="{{ video.name }}">{{/if}}
           </div>
         {{/unless}}
       </div>
     {{/if}}
   </div>
 </div>
-

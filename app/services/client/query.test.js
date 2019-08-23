@@ -16,7 +16,7 @@ const INDEX = 'pages',
 describe(dirname, function () {
   describe(filename, function () {
     var sandbox,
-      locals = {site: {host: 'site.com', port: 3001, path: ''}},
+      locals = {site: {host: 'site.com', path: ''}},
       post = sinon.stub();
 
     beforeEach(function () {

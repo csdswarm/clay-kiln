@@ -1,4 +1,4 @@
-_version: 4.0
+_version: 5.0
 primaryStoryLabel:
   _label: Primary Lede Label
   _has:
@@ -16,6 +16,7 @@ contentType:
     options:
       - article
       - gallery
+
 items:
   _label: Items
   _has:
@@ -28,8 +29,7 @@ items:
         prop: url
         _label: URL
         _has:
-          input: text
-          type: url
+          input: content-search
           validate:
             required: true
       -
@@ -55,42 +55,14 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondaryArticleTypes:
-  _label: Exclude Secondary Article Type
+filterSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
   _has:
-    input: checkbox-group
-    options:
-    - Pop
-    - Alternative
-    - Country
-    -
-      name: Hip-Hop R&B
-      value: Hip-Hop R&B
-    - Rock
-    - Icons
-    - Entertainment News
-    - Movies
-    - Television
-    - National News
-    - Politics
-    - Local Politics
-    - Small Business Pulse
-    - NFL
-    - MLB
-    - NBA
-    - NHL
-    - NCAA Football
-    - NCAA Basketball
-    -
-      name: MMA & WWE
-      value: MMA & WWE
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
 
-sectionFront:
-  _label: Filter by Section Front
-  _subscribe: sectionFront
-  _has:
-    input: static
-    text: ${sectionFront}
 tag:
   _label: Filter by Tag
   _subscribe: tag
@@ -110,10 +82,9 @@ _groups:
     - primaryStoryLabel
     - contentType
     - items
-    - sectionFront
     - filterTags
-    - filterSecondaryArticleTypes
+    - filterSecondarySectionFronts
     _placeholder:
-      ifEmpty: sectionFront
+      ifEmpty: contentType
       height: 400px
       text: Lead Story(s)

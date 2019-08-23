@@ -19,7 +19,7 @@ var SITE_ENDPOINT;
  */
 function newQueryWithLocals(index, locals) {
   if (locals) {
-    SITE_ENDPOINT = `//${locals.site.host}${locals.site.port !== 80 && locals.site.port !== 443 ? `:${locals.site.port}` : ''}${locals.site.path}/_search`;
+    SITE_ENDPOINT = `//${locals.site.host}${locals.site.path}/_search`;
   }
   return universalQuery(index);
 }
@@ -52,6 +52,7 @@ function newQueryWithCount(index, count, locals) {
 function searchByQuery(query) {
   return searchByQueryWithRawResult(query)
     .then(universalQuery.formatSearchResult)
+    .then(universalQuery.formatProtocol)
     .catch(e => {
       throw new Error(e);
     });
@@ -79,7 +80,7 @@ function searchByQueryWithRawResult(query) {
  * @return {Promise}
  */
 function updateByQuery(query, locals) {
-  SITE_ENDPOINT = `http://${locals.site.host}:${locals.site.port}${locals.site.path}/_update`;
+  SITE_ENDPOINT = `http://${locals.site.host}${locals.site.path}/_update`;
 
   return module.exports.post(SITE_ENDPOINT, query, true)
     .then(function (results) {

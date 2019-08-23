@@ -10,7 +10,12 @@ const clientCommunicationBridge = require('./ClientCommunicationBridge')();
  *
  */
 class ClientPlayerInterface {
-  // Mount the player
+  /**
+   *
+   * Mount the player and load in resources
+   *
+   * @returns {node} - The web player document node.
+   */
   mountPlayer() {
     // Get data-attributes from hbs template.
     const webPlayerComponentDiv = document.body.querySelector('div.component--web-player'),
@@ -23,6 +28,27 @@ class ClientPlayerInterface {
     parallelPromises.push(this.lazyLoadJsResource(`${webPlayerHost}${webPlayerEnv}/radio-player.min.js`));
 
     return Promise.all(parallelPromises);
+  }
+
+  /**
+   *
+   * Adds events related to player
+   *
+   * @param {Node} doc
+   * @returns {Node} - document with events attached
+   */
+  addEventListener(doc) {
+    // Attach play button click handlers
+    doc.querySelectorAll('[data-play-station]').forEach(element => {
+      element.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
+
+        this[playbackStatus](element.dataset.playStation);
+      });
+    });
+    return doc;
   }
 
   /**
