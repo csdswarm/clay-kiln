@@ -86,6 +86,10 @@
                     <ui-textbox
                         label="Message"
                         multi-line
+
+                        error="Please limit alert to 140 characters or less"
+                        :maxlength="140"
+                        :invalid="message.length > 140"
                         
                         v-model="message"
                     ></ui-textbox>
