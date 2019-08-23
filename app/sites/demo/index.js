@@ -4,7 +4,7 @@ const publishing = require('../../services/publishing'),
   mainComponentRefs = ['/_components/article/instances', '/_components/gallery/instances', '/_components/section-front/instances'];
 
 module.exports.routes = [
-  { path: '/'},
+  { path: '/' },
   { path: '/:sectionFront'},
   { path: '/:sectionFront/:secondarySectionFront'},
   { path: '/blogs/:author/:title'}, // Frequency URL pattern
