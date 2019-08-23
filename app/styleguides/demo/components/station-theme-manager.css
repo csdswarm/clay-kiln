@@ -24,6 +24,9 @@
       color: inherit;
     }
   }
+  .ui-icon-button--type-primary {
+    border: em(1) solid $boulder;
+  }
   .ui-alert {
     font-size: 16px;
     max-width: em(687);

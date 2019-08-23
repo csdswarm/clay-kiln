@@ -8,7 +8,6 @@
         :invalid="!isColorHex(primaryColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: primaryColor }"
         label="Primary Color (Example: station nav, icons, hyperlink, etc)"
         v-model="primaryColor"
       ></ui-textbox>
@@ -30,7 +29,6 @@
         :invalid="!isColorHex(secondaryColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: secondaryColor }"
         label="Secondary Color (Example: station nav dropdown)"
         v-model="secondaryColor"
       ></ui-textbox>
@@ -52,7 +50,6 @@
         :invalid="!isColorHex(tertiaryColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: tertiaryColor }"
         label="Tertiary Color (Example: Listen Live button)"
         v-model="tertiaryColor"
       ></ui-textbox>
@@ -74,7 +71,6 @@
         :invalid="!isColorHex(primaryFontColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: primaryFontColor }"
         label="Primary Font Color (Example: station nav text)"
         v-model="primaryFontColor"
       ></ui-textbox>
@@ -102,7 +98,6 @@
         :invalid="!isColorHex(secondaryFontColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: secondaryFontColor }"
         label="Secondary Font Color (Example: station listen live nav text)"
         v-model="secondaryFontColor"
       ></ui-textbox>
