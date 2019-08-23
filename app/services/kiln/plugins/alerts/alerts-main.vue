@@ -79,6 +79,7 @@
         </ui-confirm>
         <ui-modal
             :title="heading"
+            @close="clearModal"
             ref="alertModal"
         >
                 <div>
