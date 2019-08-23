@@ -9,6 +9,8 @@ const routes = require('./routes'),
  *
  * @param {Function} hasPermissions
  * @param {Router} [userRouter]
+ *
+ * @returns {Function}
  */
 function init(hasPermissions, userRouter) {
   return (router) => {
