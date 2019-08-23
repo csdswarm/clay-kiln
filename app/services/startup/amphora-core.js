@@ -17,11 +17,12 @@ const express = require('express'),
  * @return {Router}
  */
 function userPermissionRouter() {
-  const userPermissionRouter = express.Router();
+  const ignorePaths = ['/_pages/'], // creating a new page dies when the user object is modified
+    userPermissionRouter = express.Router();
 
   userPermissionRouter.all('/*', async (req, res, next) => {
     try {
-      if (res.locals.user) {
+      if (!ignorePaths.includes(req.path) && res.locals.user) {
         await loadPermissions(req.session, res.locals.user);
         addPermissions(res.locals.user);
       }
