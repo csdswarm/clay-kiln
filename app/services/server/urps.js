@@ -82,7 +82,7 @@ async function loadPermissions(session, user) {
       Object.assign(loginData, await refreshAuthToken(loginData));
     }
 
-    if (!loginData.token) { // user not logged in to cognito. can't get permissions at this time
+    if (!loginData.token) { // user not logged into cognito. can't get permissions at this time
       return;
     }
 
