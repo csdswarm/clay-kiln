@@ -1,13 +1,13 @@
 'use strict';
 
 const axios = require('axios'),
-  _get = require('lodash/get'),
   qs = require('qs'),
   jwt = require('jsonwebtoken'),
+  log = require('../universal/log').setup({ file: __filename }),
   cache = require('../server/cache'),
   { getUser } = require('../server/cognito'),
-  { SECOND } = require('../universal/constants').time,
-  STORE_IN_CACHE_SECONDS = 60,
+  { SECOND, HOUR } = require('../universal/constants').time,
+  STORE_IN_CACHE_SECONDS = 4 * HOUR / SECOND,
 
   /**
    * Setup cognito routes so we can be a man in the middle to get the tokens that are returned
@@ -30,23 +30,24 @@ const axios = require('axios'),
       try {
         const response = await axios(options),
           currentTime = Date.now(),
-          { access_token, refresh_token, expires_in } = response.data,
-          userName = _get(await getUser(access_token), 'email', '').toLowerCase();
+          { access_token: token, refresh_token: refreshToken, expires_in } = response.data,
+          { email: userName } = await getUser(token),
+          { device_key: deviceKey } = jwt.decode(token);
 
-        // response.data has the tokens at this point
-        await cache.set(`cognito-auth--${userName}`,
-          {
-            token: access_token,
-            refreshToken: refresh_token,
+        await cache.set(`cognito-auth--${userName.toLowerCase()}`,
+          JSON.stringify({
+            token,
+            refreshToken,
             expires: currentTime + ((expires_in || 0) * SECOND),
-            deviceKey: _get(jwt.decode(access_token), 'device_key', ''),
+            deviceKey,
             lastUpdated: currentTime
-          },
+          }),
           STORE_IN_CACHE_SECONDS
         );
 
         res.send(response.data);
       } catch (e) {
+        log('error', 'There was an error attempting to process the oAuth2 token for cognito', e);
         res.status(e.response.status).json(e.response.data);
       }
     });
