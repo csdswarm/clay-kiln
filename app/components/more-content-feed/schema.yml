@@ -36,8 +36,11 @@ populateFrom:
         value: section-front
       - tag
       -
-        name: Section Front & Tag
+        name: Section Front and Tag
         value: section-front-and-tag
+      -
+        name: Section Front or Tag
+        value: section-front-or-tag
       - manual
 
 locationOfContentFeed:
@@ -67,6 +70,7 @@ sectionFrontManual:
     values:
       - section-front
       - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: select
     search: true
@@ -87,6 +91,7 @@ secondarySectionFrontManual:
     values:
       - section-front
       - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: select
     search: true
@@ -110,6 +115,7 @@ tagManual:
     values:
       - tag
       - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: simple-list
     autocomplete:
@@ -124,6 +130,7 @@ tagManual:
         values:
           - tag
           - section-front-and-tag
+          - section-front-or-tag
 
 tagInfo:
   _label: Tag Info
@@ -137,6 +144,7 @@ tagInfo:
     values:
       - tag
       - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: text
     help: Tag Description / More Info (Will be shown in right rail)
