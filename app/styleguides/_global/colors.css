@@ -19,6 +19,10 @@ $tundora: #444;
 $wildSand: #F5F5F5;
 $silver: #CCC;
 $almostWhite: #FAFAFA;
+$lightSilver: #F4F4F4;
+$charcoal: #4D4D4D;
+$60gray: #999999;
+$91gray: #E8E8E8;
 
 /* Reds */
 $red: #F00; /* Errors */
@@ -44,6 +48,8 @@ $denim: #1976d2;
 $hawkesBlue: #e3f2fd; /* Kiln Edit Mode Components */
 $robinsEggBlue: #00CCB7; /* Podcasts */
 $robinsEggBlueRGB: 0, 204, 183;
+$lightCyan: #8bc0d4;
+$darkCyan: #1782a9
 
 /* Purples */
 $parisM: #1F055E; /* Primary Dark */

@@ -547,3 +547,35 @@ em, i {
 @define-mixin gallery-condensed-slide-title {
   font-size: 16px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Gallery/Article Editing  |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin component-settings-font-1 {
+  color: $60gray;
+  font-style: italic;
+}
+@define-mixin component-settings-font-2 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(24, 16), inherit, -.3, em(28, 24);
+}
+@define-mixin component-settings-font-3 {
+  font-weight: 700;
+  @mixin font Helvetica, Arial, em(16, 16), inherit, -.3, em(28, 16);
+}
+@define-mixin component-settings-font-4 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(16, 16), $darkCyan, -.3, em(18, 16);
+}
+@define-mixin component-settings-font-5 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(12, 16), $charcoal, -.3, em(14, 12);
+}
+@define-mixin component-settings-font-6 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(12, 16), $lightCyan, -.3, em(14, 12);
+}
+@define-mixin component-settings-font-7 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(14, 16), inherit, -.3, em(16, 14);
+}

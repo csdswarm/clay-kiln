@@ -1,42 +1,31 @@
 .component__settings {
-    background: #f4f4f4;
+    background: $lightSilver;
     clear: both;
     margin: em(20) 0;
     width: 100%;
     .settings--empty {
-      color: #999;
-      font-style: italic;
+      @mixin component-settings-font-1;
     }
 
     .settings__title {
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: em(24, 16);
-      font-weight: 400;
-      line-height: em(28, 24);
+      @mixin component-settings-font-2;
       margin: 0;
       padding: em(15, 24) em(20, 24);
     }
 
     .settings__section {
-      border-top: em(1) solid #e8e8e8;
+      border-top: em(1) solid $91gray;
       padding: em(15) em(20);
       .editor > form {
-        background-color: #f4f4f4;
+        background-color: $lightSilver;
       }
       .subtitle {
-        font-family: Helvetica, Arial, sans-serif;
-        font-size: em(16, 16);
-        font-weight: 700;
-        line-height: em(28);
+        @mixin component-settings-font-3
         margin: 0;
         padding: 0 0 em(10);
         &.sub-edit:after {
-          color: #1782a9;
           content: 'Edit';
-          font-family: Helvetica, Arial, sans-serif;
-          font-size: em(16, 16);
-          font-weight: 400;
-          line-height: em(18);
+          @mixin component-settings-font-4;
           margin: 0 0 0 em(15);
         }
       }
@@ -48,30 +37,19 @@
           margin-top: em(20);
         }
         .item-title {
-          color: #4d4d4d;
-          font-family: Helvetica, Arial, sans-serif;
-          font-size: em(12, 16);
-          font-weight: 400;
-          line-height: em(14, 12);
+          @mixin component-settings-font-5
           margin: 0;
           padding: 0 0 em(5, 12);
           text-transform: uppercase;
           &.required:after {
-            color: #8bc0d4;
+            @mixin component-settings-font-6
             content: 'required';
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: em(12, 16);
-            font-weight: 400;
-            line-height: em(14, 12);
             margin: 0 0 0 em(15, 12);
             text-transform: lowercase;
           }
         }
         .item-data {
-          font-family: Helvetica, Arial, sans-serif;
-          font-size: em(14, 16);
-          font-weight: 400;
-          line-height: em(16, 14);
+          @mixin component-settings-font-7
           margin: 0;
           padding: 0;
           .feedimg {
@@ -79,8 +57,8 @@
             width: em(200);
           }
           .empty-feedimg {
-            background-color: #d8d8d8;
-            border: em(1) solid #999;
+            background-color: $alto;
+            border: em(1) solid $60gray;
             height: em(150);
             width: em(200);
           }
