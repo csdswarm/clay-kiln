@@ -1,6 +1,6 @@
 'use strict';
 
-const schemaService = require('../../services/kiln/schema');
+const schemaService = require('../../services/kiln/permissions');
 
 module.exports = (schema) => {
   schemaService.publishRights(schema);

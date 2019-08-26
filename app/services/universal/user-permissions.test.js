@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect, assert } = require('chai'),
-  addPermissions = require('./permissions'),
+  addPermissions = require('./user-permissions'),
   user = {
     permissions: {
       article:{

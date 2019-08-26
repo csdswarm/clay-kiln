@@ -9,7 +9,7 @@ const express = require('express'),
   { getComponentInstance } = require('../server/publish-utils'),
   { getComponentName, isComponent, isPage, isPublished } = require('clayutils'),
   { loadPermissions } = require('../../services/server/urps'),
-  addPermissions = require('../../services/universal/permissions'),
+  addPermissions = require('../../services/universal/user-permissions'),
   _set = require('lodash/set'),
   _get = require('lodash/get'),
   appRoot = require('app-root-path'),
@@ -62,7 +62,7 @@ function userPermissionRouter() {
         addPermissions(res.locals.user);
       }
     } catch (e) {
-      log('error', e);
+      log('error', 'Error adding locals.user permissions', e);
     }
     next();
   });

@@ -40,7 +40,7 @@ const pluralize = require('pluralize'),
    *
    * @return {Function}
    */
-  permissions = () => {
+  userPermissions = () => {
     let _permissions = {}, // the permissions to check against
       _condition = {}, // action/object/location key/value
       _methods = {}; // all of the chained methods
@@ -254,4 +254,4 @@ const pluralize = require('pluralize'),
   };
 
 
-module.exports = permissions();
+module.exports = userPermissions();
