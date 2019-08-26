@@ -9,19 +9,19 @@
 
     &:hover {
       padding: 0.5em 0.5em 0.5em em(75);
-      outline: em(1) dashed black;
+      outline: em(1) dashed $black;
       cursor: grab;
-      background: #f5f5f5;
+      background: $wildSand;
 
       >div {
-        outline: 1px dashed #ccc;
+        outline: 1px dashed $silver;
         padding: 0.25em;
       }
 
       &:after {
         content: "gallery slide";
         text-transform: uppercase;
-        background: black;
+        background: $black;
         position: absolute;
         top: -0.75em;
         left: 0.5em;
@@ -98,7 +98,7 @@
 .component--gallery-slide.component--gallery-slide__news {
 
   .gallery-slide__number {
-    color: #444444;
+    color: $tundora;
     background: $lightningYellow;
   }
 
@@ -138,7 +138,7 @@
     padding: em(8, 16) em(16, 16);
 
     &:hover {
-      outline: em(1) dashed black;
+      outline: em(1) dashed $black;
       cursor: grab;
       padding: em(16, 16) em(24, 16);
 
