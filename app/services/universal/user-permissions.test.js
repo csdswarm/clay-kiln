@@ -1,7 +1,7 @@
 'use strict';
 
 const { expect, assert } = require('chai'),
-  Permissions = require('./permissions'),
+  Permissions = require('./user-permissions'),
   permissionRecord = {
     article:{
       publish:{station:{'NATL-RC': 1}},
