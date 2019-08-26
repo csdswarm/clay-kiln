@@ -34,11 +34,16 @@ const _endsWith = require('lodash/endsWith'),
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
-    fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
-      addPermissions(user);
+    fieldInput.subscribe(PRELOAD_SUCCESS, (data) => {
+      // preload_success can get called on things that are not components
+      if (data.component) {
+        const {user, locals: {station}, url: {component}} = data;
 
-      if (user.may(permission, component, station.callsign)) {
-        fieldInput.show();
+        addPermissions(user);
+
+        if (user.may(permission, component, station.callsign)) {
+          fieldInput.show();
+        }
       }
     });
   },
@@ -54,7 +59,7 @@ const _endsWith = require('lodash/endsWith'),
    */
   secureSchema = (kilnjs, componentPermission) => (schema) => {
     Object.keys(schema).forEach(field => {
-      const permission = schema[field]._permission || componentPermission;
+      const permission = schema[field]._permission || schema._permission || componentPermission;
 
       if (schema[field]._has && permission) {
         schema[field] = new KilnInput(schema, field);
@@ -92,7 +97,7 @@ const _endsWith = require('lodash/endsWith'),
   publishRights = (schema) => {
     const subscriptions = new KilnInput(schema);
 
-    subscriptions.subscribe('PRELOAD_SUCCESS', async ({ locals }) => {
+    subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
       addPermissions(locals.user);
 
       const { value, message } = locals.user.can('publish').an(schema.schemaName).at(locals.station.callsign);
