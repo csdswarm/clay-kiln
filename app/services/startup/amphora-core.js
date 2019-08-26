@@ -9,7 +9,7 @@ const express = require('express'),
   { getComponentInstance } = require('../server/publish-utils'),
   { getComponentName, isPage, isPublished } = require('clayutils'),
   { loadPermissions } = require('../../services/server/urps'),
-  addPermissions = require('../../services/universal/permissions');
+  addPermissions = require('../../services/universal/user-permissions');
 
 /**
  * middleware router to ensure that locals.user object obtains permissions

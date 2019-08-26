@@ -1,6 +1,6 @@
 'use strict';
 
-const addPermissions = require('../universal/permissions'),
+const addPermissions = require('../universal/user-permissions'),
   KilnInput = window.kiln.kilnInput,
   _camelCase = require('lodash/camelCase'),
   /**
