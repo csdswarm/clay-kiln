@@ -53,10 +53,12 @@ const _endsWith = require('lodash/endsWith'),
    */
   secureSchema = (kilnjs, componentPermission) => (schema) => {
     Object.keys(schema).forEach(field => {
-      if (schema[field]._permission || componentPermission) {
+      const permission = schema[field]._permission || componentPermission;
+
+      if (schema[field]._has && permission) {
         schema[field] = new KilnInput(schema, field);
 
-        secureField(schema[field], schema[field]._permission || componentPermission);
+        secureField(schema[field], permission);
       }
     });
 
