@@ -7,9 +7,44 @@ const express = require('express'),
   permissionsPlugin = require('./amphora-permissions'),
   log = require('../universal/log').setup({ file: __filename }),
   { getComponentInstance } = require('../server/publish-utils'),
-  { getComponentName, isPage, isPublished } = require('clayutils'),
+  { getComponentName, isComponent, isPage, isPublished } = require('clayutils'),
   { loadPermissions } = require('../../services/server/urps'),
-  addPermissions = require('../../services/universal/permissions');
+  addPermissions = require('../../services/universal/permissions'),
+  _set = require('lodash/set'),
+  _get = require('lodash/get'),
+  appRoot = require('app-root-path'),
+  files = require('amphora-fs'),
+  path = require('path'),
+  YAML = require('yamljs'),
+  componentsToCheck = getComponentsWithPermissions();
+
+/**
+ * loop through each component and add it to the list if it has a _permission
+ *
+ * @return {Array}
+ */
+function getComponentsWithPermissions() {
+  const obj = {};
+
+  // check each component
+  files.getFolders([appRoot, 'components'].join(path.sep)).forEach((component) => {
+    const path = files.getComponentPath(component),
+      schema = YAML.load(files.getSchemaPath(path));
+
+    if (schema._permission) { // the entire component has permissions
+      _set(obj, component, schema._permission);
+    } else { // a field on the component has permissions
+
+      Object.keys(schema).forEach(field => {
+        if (schema[field]._permission) {
+          _set(obj, `${component}.${field}`, schema[field]._permission);
+        }
+      });
+    }
+  });
+
+  return obj;
+}
 
 /**
  * middleware router to ensure that locals.user object obtains permissions
@@ -36,6 +71,45 @@ function userPermissionRouter() {
 }
 
 /**
+ * retrieves the data from the uri
+ *
+ * @param {string} uri
+ * @param {string} [key]
+ *
+ * @return {object}
+ */
+async function getComponentData(uri, key) {
+  const data = await getComponentInstance(uri.split('@')[0], {}) || {};
+
+  return key ? _get(data, key) : data;
+}
+
+/**
+ * check a component for field level permissions
+ *
+ * @param {string} uri
+ * @param {string} component
+ * @param {object} data
+ * @param {object} locals
+ *
+ * @return {boolean|null}
+ */
+async function checkFieldPermission(uri, component, data, locals) {
+  // get a copy of the unmodified data
+  const instance = await getComponentData(uri);
+
+  for (const field of Object.keys(componentsToCheck[component])) {
+    // compare the fields or if no previous data
+    if (JSON.stringify(instance[field]) !== JSON.stringify(data[field])) {
+      // add condition for the specific fields
+      const action = componentsToCheck[component][field];
+
+      return locals.user.can(action).a(field).at(locals.station.callsign).value;
+    }
+  }
+}
+
+/**
  * determine if the current user has permissions to the specific item
  *
  * @param {string} uri
@@ -44,15 +118,27 @@ function userPermissionRouter() {
  * @return {boolean}
  */
 async function checkUserPermissions(uri, data, locals) {
-  // server side checking specific components if required
-  // if (isComponent(uri)) {
-  //   return locals.user.can('xyz').a(getComponentName(uri)).at(locals.station.callsign);
-  // }
+  if (isComponent(uri)) {
+    const component = getComponentName(uri);
+
+    if (Object.keys(componentsToCheck).includes(component)) {
+      const action = componentsToCheck[component]._permission;
+
+      if (action) { // entire component
+        return locals.user.can(action).a(component).at(locals.station.callsign).value;
+      } else { // specific field in a component
+        const fieldPermission = await checkFieldPermission(uri, component, data, locals);
+
+        if (fieldPermission !== null) {
+          return fieldPermission;
+        }
+      }
+    }
+  }
 
   if (isPage(uri) && isPublished(uri)) {
     try {
-      const page = await getComponentInstance(uri.split('@')[0], {}),
-        pageType = getComponentName(page.main[0]);
+      const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
 
       return locals.user.can('publish').a(pageType).at(locals.station.callsign).value;
     } catch (e) {

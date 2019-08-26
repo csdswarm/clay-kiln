@@ -35,7 +35,7 @@ const _endsWith = require('lodash/endsWith'),
 
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
       addPermissions(user);
-      
+
       if (user.may(permission, component, station.callsign)) {
         fieldInput.show();
       }
@@ -53,10 +53,12 @@ const _endsWith = require('lodash/endsWith'),
    */
   secureSchema = (kilnjs, componentPermission) => (schema) => {
     Object.keys(schema).forEach(field => {
-      if (schema[field]._permission || componentPermission) {
+      const permission = schema[field]._permission || schema._permission || componentPermission;
+
+      if (permission) {
         schema[field] = new KilnInput(schema, field);
 
-        secureField(schema[field], schema[field]._permission || componentPermission);
+        secureField(schema[field], permission);
       }
     });
 
