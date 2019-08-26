@@ -5,7 +5,7 @@ const
   log = require('../universal/log').setup({ file: __filename }),
   { refreshAuthToken } = require('./cognito'),
   cache = require('./cache'),
-  MINUTE = require('../universal/constants').time,
+  { MINUTE } = require('../universal/constants').time,
   PERM_CHECK_INTERVAL = 5 * MINUTE;
 
 /**
@@ -72,7 +72,7 @@ async function loadPermissions(session, user) {
       loginData = { ...session.auth };
 
     if (!loginData.token) {
-      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${user.username}`)));
+      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${user.username}`) || '{}'));
       cache.del(`cognito-auth--${user.username}`);
     }
 
