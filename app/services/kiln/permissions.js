@@ -1,6 +1,7 @@
 'use strict';
 
 const _endsWith = require('lodash/endsWith'),
+  _isString = require('lodash/isString'),
   addPermissions = require('../universal/user-permissions'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -24,19 +25,23 @@ const _endsWith = require('lodash/endsWith'),
   /**
    * Default hide a field and watch for load success to check user permissions
    *
+   * Permission can be a string, or an object with an action and target
+   *
    * Use to secure a field within a kiln.js file
    *
    * @param {KilnInput} fieldInput
-   * @param {string} permission
+   * @param {string|object} permission
    */
   secureField = (fieldInput, permission) => {
+    const {action, target} = _isString(permission) ? {action: permission} : permission;
+
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
       addPermissions(user);
 
-      if (user.may(permission, component, station.callsign)) {
+      if (user.may(action, target || component, station.callsign)) {
         fieldInput.show();
       }
     });
@@ -53,7 +58,7 @@ const _endsWith = require('lodash/endsWith'),
    */
   secureSchema = (kilnjs, componentPermission) => (schema) => {
     Object.keys(schema).forEach(field => {
-      const permission = schema[field]._permission || componentPermission;
+      const permission = schema[field]._permission || schema._permission || componentPermission;
 
       if (schema[field]._has && permission) {
         schema[field] = new KilnInput(schema, field);
