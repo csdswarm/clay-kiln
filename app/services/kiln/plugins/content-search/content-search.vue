@@ -78,7 +78,7 @@
 
         queryService.addSize(query, 10);
         queryService.onlyWithTheseFields(query, ['date', 'canonicalUrl', 'seoHeadline']);
-        queryService.addSearch(query, `*${ searchString }*`, ["authors", "canonicalUrl", "tags", "teaser"]);
+        queryService.addSearch(query, `*${ searchString.replace(/^https?:\/\//, '') }*`, ["authors", "canonicalUrl", "tags", "teaser"]);
         queryService.addSort(query, { date: { order: 'desc'} });
 
         const results = await queryService.searchByQuery(query);
