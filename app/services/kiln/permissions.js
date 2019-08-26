@@ -1,7 +1,7 @@
 'use strict';
 
 const _endsWith = require('lodash/endsWith'),
-  addPermissions = require('../universal/permissions'),
+  addPermissions = require('../universal/user-permissions'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
   /**
@@ -35,7 +35,7 @@ const _endsWith = require('lodash/endsWith'),
 
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
       addPermissions(user);
-      
+
       if (user.may(permission, component, station.callsign)) {
         fieldInput.show();
       }
