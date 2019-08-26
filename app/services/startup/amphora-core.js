@@ -27,7 +27,7 @@ function userPermissionRouter() {
         addPermissions(res.locals.user);
       }
     } catch (e) {
-      log('error', e);
+      log('error', 'Error adding locals.user permissions', e);
     }
     next();
   });
