@@ -535,3 +535,15 @@ em, i {
 @define-mixin radium-form-font-11 {
   @mixin font CircularStd-Black, 12px, $parisM, -.3, 15px;
 }
+
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Gallery Editing  |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin gallery-condensed-after {
+  color: white;
+  font-size: 10.4px;
+}
+@define-mixin gallery-condensed-slide-title {
+  font-size: 16px;
+}

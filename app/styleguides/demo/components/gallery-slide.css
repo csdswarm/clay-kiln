@@ -3,17 +3,21 @@
 
 .component--gallery-slide {
   margin: 0 0 em(40) 0;
+
   &.editing {
     transition: all 100ms linear 250ms;
+
     &:hover {
       padding: 0.5em 0.5em 0.5em em(75);
       outline: em(1) dashed black;
       cursor: grab;
       background: #f5f5f5;
-      > div {
+
+      >div {
         outline: 1px dashed #ccc;
         padding: 0.25em;
       }
+
       &:after {
         content: "gallery slide";
         text-transform: uppercase;
@@ -21,16 +25,17 @@
         position: absolute;
         top: -0.75em;
         left: 0.5em;
-        color: white;
         padding: 0.125em 0.25em;
-        font-size: 0.65em;
+        @mixin gallery-condensed-after;
       }
+
       .gallery-slide__text {
         padding-bottom: em(60);
         transition: all 100ms linear 250ms;
       }
     }
   }
+
   .gallery-slide__text {
     /* Note: margin-bottom on this element will break our SpaScroll.attachGallerySlideDynamicSlug() logic */
     margin: em(30) 0 0 0;
@@ -124,73 +129,85 @@
 }
 
 .content__slides--condensed .component--gallery-slide {
-	&.editing {
-		transition: all 100ms linear 50ms;
-		display: flex;
-		align-items: center;
-		background: hsla(0, 0%, 98%, 1);
-		margin-bottom: 0.75em;
-		padding: em(0.5, 16) em(1, 16);
-		&:hover {
-			outline: em(1) dashed black;
-			cursor: grab;
-			padding: 1em 1.5em;
-			.gallery-slide__text, .slideEmbed{
-			  transition: all 100ms linear 250ms;
-			}
-      > div {
-        outline: 1px dashed #ccc;
-        padding: 0.25em;
+  &.editing {
+    transition: all 100ms linear 50ms;
+    display: flex;
+    align-items: center;
+    background: $almostWhite;
+    margin-bottom: 0.75em;
+    padding: em(8, 16) em(16, 16);
+
+    &:hover {
+      outline: em(1) dashed black;
+      cursor: grab;
+      padding: em(16, 16) em(24, 16);
+
+      .gallery-slide__text,
+      .slideEmbed {
+        transition: all 100ms linear 250ms;
       }
+
+      >div {
+        outline: 1px dashed $silver;
+        padding: em(4, 16);
+      }
+
       &:after {
         content: "gallery slide";
         text-transform: uppercase;
-        background: black;
+        background: $black;
         position: absolute;
-        top: -0.75em;
-        left: 0.5em;
-        color: white;
-        padding: 0.125em 0.25em;
-        font-size: 0.65em;
+        top: -em(12, 16);
+        left: em(8, 16);
+        padding: em(2, 16) em(4, 16);
+        @mixin gallery-condensed-after;
       }
-		}
-		.slideEmbed {
-			max-width: 6em;
-			max-height: 4em;
-			overflow: hidden;
-			margin-right: 1em;
+    }
+
+    .slideEmbed {
+      max-width: em(96, 16);
+      max-height: em(64, 16);
+      overflow: hidden;
+      margin-right: em(16, 16);
+
       &:hover {
         overflow: visible;
-        max-width: 24em;
-        max-height: 12em;
+        max-width: em(384, 16);
+        max-height: em(192, 16);
       }
-		}
-		.slideText.gallery-slide__text {
-			display: flex;
-			align-items: center;
-			margin-top: 0;
-			width: 100%;
-			justify-content: space-around;
-			.gallery-slide__titlewrapper {
-			  margin: 0;
+    }
+
+    .slideText.gallery-slide__text {
+      display: flex;
+      align-items: center;
+      margin-top: 0;
+      width: 100%;
+      justify-content: space-around;
+
+      .gallery-slide__titlewrapper {
+        margin: 0;
         flex: 0 0 50%;
         display: flex;
         align-items: center;
+
         .gallery-slide__number {
           min-width: em(25, 18);
         }
+
         .gallery-slide__title {
-          padding-right: 1em;
-          font-size: 1em;
-          line-height: 1.25em;
+          padding-right: em(16, 16);
+          @mixin gallery-condensed-slide-title;
+          line-height: em(20, 16);
         }
-			}
+      }
+
       div[data-editable="description"] {
         flex: 0 0 50%;
+
         p {
           margin: 0;
         }
       }
-		}
-	}
+    }
+  }
 }
