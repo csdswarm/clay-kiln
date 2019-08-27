@@ -3,7 +3,7 @@ image: node:8.9.0-stretch
 definitions:
   steps:
     - step: &build
-        name: Build
+        name: Build Clay
         caches:
           - node
         script:
@@ -17,12 +17,15 @@ pipelines:
     - step: *build
     - parallel:
         - step:
+            name: Compile assets
             script:
               - cd spa && npm run-script build -- --mode=none && cd ../app && npm run build
         - step:
+            name: Lint Clay App
             script:
               - cd app && npm run eslint
         - step:
+            name: Lint SPA
             script:
               - cd spa && npm run lint -- --no-fix
 
