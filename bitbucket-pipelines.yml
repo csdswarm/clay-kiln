@@ -28,7 +28,22 @@ pipelines:
             name: Lint SPA
             script:
               - cd spa && npm run lint -- --no-fix
-
+  pull-requests:
+    test-pipeline:
+      - step: *build
+      - parallel:
+          - step:
+              name: Compile assets
+              script:
+                - cd spa && npm run-script build -- --mode=none && cd ../app && npm run build
+          - step:
+              name: Lint Clay App
+              script:
+                - cd app && npm run eslint
+          - step:
+              name: Lint SPA
+              script:
+                - cd spa && npm run lint -- --no-fix
   branches:
     '{develop,staging,master}':
       - step:
