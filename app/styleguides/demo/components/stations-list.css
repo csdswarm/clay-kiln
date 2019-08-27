@@ -340,24 +340,8 @@
           }
           img {
             display: block;
-
-            /*
-             * This is to handle bug with Safari AJAX images using srcset (https://github.com/metafizzy/infinite-scroll/issues/770)
-             * I chose CSS as to not request each image against using JS
-             */
-            @mixin default-screen {
-              width: em(138);
-              height: em(138);
-            }
-            @mixin large-screen {
-              width: em(138);
-              height: em(138);
-            }
-
-            @mixin medium-screen {
-              width: 100%;
-              height: 100%;
-            }
+            width: 100%;
+            height: 100%;
           }
         }
         span {

@@ -534,6 +534,17 @@ em, i {
   @mixin font CircularStd-Black, 12px, $parisM, -.3, 15px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Alert Banner Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin alert-banner-font1 {
+  @mixin font CircularStd-Medium, 18px, $black, -.3px, 22px;
+}
+
+@define-mixin alert-banner-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||||||     Station Nav Styleguide      |||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
