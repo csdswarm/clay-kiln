@@ -3,11 +3,11 @@ image: node:8.9.0-stretch
 definitions:
   steps:
     - step: &build
-        name: Build Clay
+        name: Build Clay & Compile Assets
         caches:
           - node
         script:
-          - cd spa && npm i && cd ../app && npm i
+          - make install
         artifacts:
           - app/**
           - spa/**
@@ -16,10 +16,6 @@ pipelines:
   default:
     - step: *build
     - parallel:
-        - step:
-            name: Compile assets
-            script:
-              - cd spa && npm run-script build -- --mode=none && cd ../app && npm run build
         - step:
             name: Lint Clay App
             script:
@@ -32,10 +28,6 @@ pipelines:
     test-pipeline:
       - step: *build
       - parallel:
-          - step:
-              name: Compile assets
-              script:
-                - cd spa && npm run-script build -- --mode=none && cd ../app && npm run build
           - step:
               name: Lint Clay App
               script:
