@@ -17,27 +17,29 @@ pipelines:
     - step: *build
     - parallel:
         - step:
+            caches:
+              - node
             name: Lint Clay App
             script:
               - cd app && npm run eslint
         - step:
+            caches:
+              - node
             name: Lint SPA
             script:
               - cd spa && npm run lint -- --no-fix
   pull-requests:
-    test-pipeline:
       - step: *build
       - parallel:
           - step:
+              caches:
+                - node
               name: Lint Clay App
               script:
                 - cd app && npm run eslint
           - step:
+              caches:
+                - node
               name: Lint SPA
               script:
                 - cd spa && npm run lint -- --no-fix
-  branches:
-    '{develop,staging,master}':
-      - step:
-          script:
-            - echo "No pipeline for develop, staging, master"
