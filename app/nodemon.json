@@ -1,7 +1,8 @@
 {
   "ext": "css js yaml yml handlebars hbs",
   "ignore": [
-    "*.test.js"
+    "*.test.js",
+    "components/**/client.js"
   ],
   "max-old-space-size": 256,
   "max-semi-space-size": 2,
@@ -12,10 +13,10 @@
     "global/kiln-js",
     "search",
     "services",
-    "styleguides",
     "sites",
     "public",
     "routes",
     "layouts"
-  ]
+  ],
+  "delay": 3000
 }
