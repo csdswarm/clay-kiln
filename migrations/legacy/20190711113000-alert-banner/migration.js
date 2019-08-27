@@ -6,8 +6,7 @@ const logMessage = message => data => {
 };
 
 const LAYOUTS_INSERT_COMPONENT = [
-  '_layouts/two-column-layout/instances/article',
-  '_layouts/one-column-layout/instances/article' // probably not used, but just in case
+  '_layouts/two-column-layout/instances/article'
 ];
 
 const LAYOUTS_INSERT_PAGEAREA = [
