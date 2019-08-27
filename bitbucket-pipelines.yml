@@ -28,18 +28,3 @@ pipelines:
             name: Lint SPA
             script:
               - cd spa && npm run lint -- --no-fix
-  pull-requests:
-      - step: *build
-      - parallel:
-          - step:
-              caches:
-                - node
-              name: Lint Clay App
-              script:
-                - cd app && npm run eslint
-          - step:
-              caches:
-                - node
-              name: Lint SPA
-              script:
-                - cd spa && npm run lint -- --no-fix
