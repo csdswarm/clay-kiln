@@ -1,7 +1,6 @@
 'use strict';
 
 const _endsWith = require('lodash/endsWith'),
-  _isString = require('lodash/isString'),
   addPermissions = require('../universal/user-permissions'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -33,15 +32,13 @@ const _endsWith = require('lodash/endsWith'),
    * @param {string|object} permission
    */
   secureField = (fieldInput, permission) => {
-    const {action, target} = _isString(permission) ? {action: permission} : permission;
-
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
       addPermissions(user);
 
-      if (user.may(action, target || component, station.callsign)) {
+      if (user.may(permission, component, station.callsign)) {
         fieldInput.show();
       }
     });
