@@ -1,28 +1,10 @@
 image: node:8.9.0-stretch
-
-definitions:
-  steps:
-    - step: &build
-        name: Build
-        caches:
-          - node
-        script:
-          - cd spa && npm i && cd ../app && npm i
-        artifacts:
-          - app/**
-          - spa/**
-
 pipelines:
   default:
-    - step: *build
-    - parallel:
-        - step:
-            script:
-              - cd spa && npm run-script build -- --mode=none && cd ../app && npm run build
-        - step:
-            script:
-              - make lint
-
+    - step:
+        script:
+          - make install
+          - make lint
   branches:
     '{develop,staging,master}':
       - step:
