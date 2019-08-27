@@ -39,8 +39,6 @@ const _endsWith = require('lodash/endsWith'),
       if (data.component) {
         const {user, locals: {station}, url: {component}} = data;
 
-        addPermissions(user);
-
         if (user.may(permission, component, station.callsign)) {
           fieldInput.show();
         }
@@ -98,7 +96,6 @@ const _endsWith = require('lodash/endsWith'),
     const subscriptions = new KilnInput(schema);
 
     subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
-      addPermissions(locals.user);
 
       const { value, message } = locals.user.can('publish').an(schema.schemaName).at(locals.station.callsign);
 
@@ -118,6 +115,10 @@ const _endsWith = require('lodash/endsWith'),
       }
     });
   };
+
+// kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
+// this to the user object, so we are accessing it directly off of the window
+addPermissions(window.kiln.locals.user);
 
 module.exports.secureField = secureField;
 module.exports.secureSchema = secureSchema;

@@ -117,7 +117,7 @@ async function checkUserPermissions(uri, data, locals) {
   if (isComponent(uri)) {
     const component = getComponentName(uri);
 
-    if (Object.keys(componentsToCheck).includes(component)) {
+    if (componentsToCheck[component]) {
       const action = componentsToCheck[component]._permission;
 
       if (action) { // entire component
