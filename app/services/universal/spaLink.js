@@ -75,15 +75,15 @@ function isEntercomDomain(hostname) {
  * prepare a link object for the spa with adding necessary classes
  *
  * @param {object} link
- * @param {function} addClass
- * @param {function} setAttribute
- * @param {function} getAttribute
+ * @param {object} helpers
  */
-function prepareLink(link, addClass, setAttribute, getAttribute) {
-  const href = getAttribute(link, 'href'),
-    target = getAttribute(link, 'target');
+function prepareLink(link, helpers) {
+  const { addClass, setAttribute, getAttribute, hasClass } = helpers,
+    href = getAttribute(link, 'href'),
+    target = getAttribute(link, 'target'),
+    isOutbound = hasClass(link, 'outbound-link');
 
-  if (isSpaLink(href) && !href.startsWith('#') && target !== '_blank') {
+  if (isSpaLink(href) && !href.startsWith('#') && target !== '_blank' && !isOutbound) {
     addClass(link, 'spa-link');
   } else {
     const linkParts = new URL(href);
@@ -92,7 +92,10 @@ function prepareLink(link, addClass, setAttribute, getAttribute) {
       setAttribute(link, 'rel', 'nofollow');
     }
 
-    addClass(link, 'outbound-link');
+    if (!isOutbound) {
+      addClass(link, 'outbound-link');
+    }
+
     setAttribute(link, 'target', '_blank');
   }
 }
@@ -105,9 +108,10 @@ function prepareLink(link, addClass, setAttribute, getAttribute) {
 function prepareDOM(doc) {
   const addClass = (link, className) => link.classList.add(className),
     setAttribute = (link, name, value) => link.setAttribute(name, value),
-    getAttribute = (link, name) => link.getAttribute(name);
+    getAttribute = (link, name) => link.getAttribute(name),
+    hasClass = (link, className) => link.classList.contains(className);
 
-  doc.querySelectorAll('a[href]').forEach((link) => prepareLink(link, addClass, setAttribute, getAttribute));
+  doc.querySelectorAll('a[href]').forEach((link) => prepareLink(link, { addClass, setAttribute, getAttribute, hasClass }));
 }
 
 /**
@@ -118,10 +122,11 @@ function prepareDOM(doc) {
 function prepareCheerio($) {
   const addClass = (link, className) => link.addClass(className),
     setAttribute = (link, name, value) => link.attr(name, value),
-    getAttribute = (link, name) => link.attr(name);
+    getAttribute = (link, name) => link.attr(name),
+    hasClass = (link, className) => link.hasClass(className);
 
   $('a[href]').each(function () {
-    prepareLink($(this), addClass, setAttribute, getAttribute);
+    prepareLink($(this), { addClass, setAttribute, getAttribute, hasClass });
   });
 }
 
