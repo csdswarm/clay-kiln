@@ -1,5 +1,5 @@
 .component__settings {
-    background: $lightSilver;
+    background: $wildSand;
     clear: both;
     margin: em(20) 0;
     width: 100%;
@@ -17,7 +17,7 @@
       border-top: em(1) solid $91gray;
       padding: em(15) em(20);
       .editor > form {
-        background-color: $lightSilver;
+        background-color: $wildSand;
       }
       .subtitle {
         @mixin component-settings-font-3
