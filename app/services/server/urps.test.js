@@ -106,20 +106,17 @@ describe('urps tests', () => {
         },
         './cognito': {
           refreshAuthToken: refreshAuthToken || (() => {})
-        },
-        '../universal/constants': {
-          time: { MINUTE: 60000 }
         }
       });
     }
+
+    beforeEach(resetGlobals);
 
     it('loads existing permissions from the session cache', async () => {
       const urps = requireUrpsLoadPermsStandard({
         cacheResults: '',
         log: console.log
       });
-
-      resetGlobals();
 
       req.session.auth = {
         ...authBase,
@@ -135,8 +132,6 @@ describe('urps tests', () => {
       const restGetResults = [{ type: 'author-page', action: 'any', target: { type: 'station', value: 'NATL-RC' } }],
         urps = requireUrpsLoadPermsStandard({ restGetResults });
 
-      resetGlobals();
-
       req.session.auth = { ...authBase };
 
       await urps.loadPermissions(req.session, locals.user);
@@ -148,8 +143,6 @@ describe('urps tests', () => {
       const longAgo = Date.now() - 100000000,
         restGetResults = [{ type: 'tags', action: 'create', target: { type: 'station', value: 'KROQFM' } }],
         urps = requireUrpsLoadPermsStandard({ restGetResults });
-
-      resetGlobals();
 
       req.session.auth = { ...authBase, lastUpdated: longAgo };
 
@@ -163,8 +156,6 @@ describe('urps tests', () => {
       const inThePast = Date.now() - 1000,
         refreshAuthToken = sinon.spy(),
         urps = requireUrpsLoadPermsStandard({ refreshAuthToken });
-
-      resetGlobals();
 
       req.session.auth = {
         ...authBase,
@@ -186,8 +177,6 @@ describe('urps tests', () => {
         ],
         urps = requireUrpsLoadPermsStandard({ cacheResults, restGetResults });
 
-      resetGlobals();
-
       await urps.loadPermissions(req.session, locals.user);
 
       expect(locals.user.permissions).to.eql({
@@ -207,8 +196,6 @@ describe('urps tests', () => {
           invokeError: true,
           log
         });
-
-      resetGlobals();
 
       locals.user.username = 'jschmoe@idaho.gov';
 
