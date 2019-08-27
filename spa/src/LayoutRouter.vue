@@ -1,5 +1,18 @@
 <template>
-  <component v-bind:is="this.activeLayoutComponent"></component>
+  <div>
+    <component v-bind:is="this.activeLayoutComponent"></component>
+    <modal
+      name="modal"
+      @closed="modalClosed"
+      :adaptive="true"
+      :scrollable="true"
+      width="400px"
+      height="auto"
+      :min-height="300"
+    >
+      <modalContent/>
+    </modal>
+  </div>
 </template>
 <script>
 
@@ -14,6 +27,13 @@ import QueryPayload from '@/lib/QueryPayload'
 import SpaScroll from '@/lib/SpaScroll'
 import URL from 'url-parse'
 import { getLocals } from '../../app/services/client/spaLocals'
+import ModalContent from '@/views/ModalContent'
+import modalRoutes from '@/views/routes/intercept'
+import actionRoutes from '@/views/routes/action'
+import { mapState } from 'vuex'
+import * as actionTypes from './vuex/actionTypes'
+
+const interceptRoutes = [].concat(modalRoutes, actionRoutes)
 
 // Instantiate libraries.
 const metaManager = new MetaManager()
@@ -21,16 +41,26 @@ const queryPayload = new QueryPayload()
 
 export default {
   name: 'LayoutRouter',
-  created () {
+  async created () {
+    /* TODO - UNCOMMENT to enable radium - ALSO change how this is being done so we only call the get profile if we know if the user is logged in
+    // see if the user is logged in and populate the store
+    await this.$store.dispatch(actionTypes.GET_PROFILE, true)
+    */
     // Load initial layout.
     this.activeLayoutComponent = this.layoutRouter(this.$store.state.spaPayload)
   },
   data: function () {
     return {
-      activeLayoutComponent: null
+      activeLayoutComponent: null,
+      redirectTo: null
     }
   },
-  computed: {},
+  computed: {
+    ...mapState([
+      'modalComponent',
+      'routerPush'
+    ])
+  },
   methods: {
     /**
        *
@@ -68,11 +98,83 @@ export default {
       return new RegExp(`^${regExp}`, 'i')
     },
     /**
-       * determines if the url belongs to the spa
-       *
-       * @param {string} url
-       * @returns {boolean}
-       */
+     * shows the account the modal
+     *
+     */
+    modalShow () { this.$modal.show('modal') },
+    /**
+     * hides the account modal
+     *
+     */
+    modalHide () { this.$modal.hide('modal') },
+    /**
+     * keep state in sync
+     *
+     */
+    modalClosed () {
+      this.$store.commit(mutationTypes.ACCOUNT_MODAL_HIDE)
+    },
+    /**
+     * returns the component that should be rendered for a modal route
+     *
+     *  @param {string} path
+     *  @returns {boolean}
+     */
+    getInterceptRoute (path) {
+      return interceptRoutes.find((route) => route.path === path)
+    },
+    /**
+     * Provides metadata about routes that should invoke a modal
+     * @typedef {{path: string, name: string, component: object, props: [boolean]}} ModalRoute
+     */
+    /**
+     * Provides metadata about routes that should invoke an action
+     * @typedef {{path: string, name: string, action: string, props: [boolean]}} ActionRoute
+     */
+    /**
+     * Provides metadata for routes to be intercepted
+     * @typedef {(ModalRoute|ActionRoute)} InterceptRoute
+     */
+    /**
+     * if the path belongs to an account page, show modal and handle routing else hide the modal
+     *
+     * @param {InterceptRoute} [route]
+     * @param {string} from
+     * @returns {boolean}
+     */
+    handleIntercept (route, from) {
+      const { component, action } = route || {}
+
+      if (component) {
+        this.modalShow()
+
+        this.$store.commit(mutationTypes.ACCOUNT_MODAL_SHOW, component)
+
+        // set the current path for where to update history to when the modal changes
+        if (!this.redirectTo && from) {
+          this.redirectTo = from
+        }
+
+        return true
+      } else if (action) {
+        const returnToPage = () => { this.$router.push(from) }
+        this.$store
+          .dispatch(action)
+          .then(returnToPage)
+          .catch(returnToPage)
+        return true
+      }
+
+      this.modalHide()
+
+      return false
+    },
+    /**
+     * determines if the url belongs to the spa
+     *
+     * @param {string} url
+     * @returns {boolean}
+     */
     isLocalUrl (url) {
       return !/^https?:\/\//.test(url) || this.createRegExp(`${window.location.protocol}//${window.location.hostname}`).test(url)
     },
@@ -88,7 +190,8 @@ export default {
       // remove the extension from preview pages
       const cleanDestination = destination.replace('.html', '')
       const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
-      const newSpaPayloadPath = `${cleanDestination}?json${queryString ? `&${queryString}` : ''}`
+      const ieCacheBuster = (new Date()).getTime() // force reload of app components on IE11
+      const newSpaPayloadPath = `${cleanDestination}?json${queryString ? `&${queryString}` : ''}&cb=${ieCacheBuster}`
       const newSpaPayloadPathNoJson = `${cleanDestination}${queryString ? `?${queryString}` : ''}`
 
       try {
@@ -96,7 +199,7 @@ export default {
           headers: {
             // preview pages will 404 if the header is true because the published key does not exist
             'x-amphora-page-json': !destination.includes('.html'),
-            'x-locals': JSON.stringify(getLocals(this.$store.state))
+            'x-locals': JSON.stringify(await getLocals(this.$store.state))
           }
         })
 
@@ -153,12 +256,54 @@ export default {
         toTopicPage: nextTopicPageData || {},
         toStationDetailPage: nextStationDetailPageData || {}
       }
+    },
+    /**
+     *
+     *  Handles the logic for rendering the page with data from clay and updates any required DOM elements
+     *
+     */
+    async handleSpaRoute (to) {
+      // run any spa actions before getting data for a new page render
+      await this.$store.dispatch(actionTypes.ROUTE_CHANGE, to)
+
+      // Get SPA payload data for next path.
+      const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
+
+      if (spaPayload) {
+        const path = (new URL(spaPayload.url)).pathname
+
+        // Load matched Layout Component.
+        this.activeLayoutComponent = this.layoutRouter(spaPayload)
+
+        // Reset/flush the pageCache
+        this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
+
+        // Commit next payload to store to kick off re-render.
+        this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
+
+        // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
+        metaManager.updateExternalTags(this.$store.state.spaPayload)
+
+        // Stop loading animation.
+        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
+
+        // Build pageView event data
+        const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
+
+        // Call global pageView event.
+        const event = new CustomEvent(`pageView`, {
+          detail: pageViewEventData
+        })
+
+        document.dispatchEvent(event)
+      }
     }
   },
   components: {
-    'OneColumnLayout': OneColumnLayout,
-    'OneColumnFullWidthLayout': OneColumnFullWidthLayout,
-    'TwoColumnLayout': TwoColumnLayout
+    OneColumnLayout,
+    OneColumnFullWidthLayout,
+    TwoColumnLayout,
+    ModalContent
   },
   watch: {
     '$route': async function (to, from) {
@@ -166,42 +311,53 @@ export default {
       if (to.path === from.path && to.hash !== from.hash) {
         SpaScroll.initialPageloadHashLinkScroll(to.hash)
       } else {
-        // Start loading animation.
-        this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, true)
+        const intercept = this.getInterceptRoute(to.path)
 
-        // Get SPA payload data for next path.
-        const spaPayload = await this.getNextSpaPayload(`//${window.location.hostname}${to.path}`, to.query)
-
-        if (spaPayload) {
-          const path = (new URL(spaPayload.url)).pathname
-
-          // Load matched Layout Component.
-          this.activeLayoutComponent = this.layoutRouter(spaPayload)
-
-          // Reset/flush the pageCache
-          this.$store.commit(mutationTypes.RESET_PAGE_CACHE)
-
-          // Commit next payload to store to kick off re-render.
-          this.$store.commit(mutationTypes.LOAD_SPA_PAYLOAD, spaPayload)
-
-          // Update Meta Tags and other appropriate sections of the page that sit outside of the SPA
-          metaManager.updateExternalTags(this.$store.state.spaPayload)
-
-          // Stop loading animation.
-          this.$store.commit(mutationTypes.ACTIVATE_LOADING_ANIMATION, false)
-
-          // Build pageView event data
-          const pageViewEventData = this.buildPageViewEventData(path, this.$store.state.spaPayload)
-
-          // Call global pageView event.
-          const event = new CustomEvent(`pageView`, {
-            detail: pageViewEventData
-          })
-
-          document.dispatchEvent(event)
+        if (intercept) {
+          if (to.path.toLocaleLowerCase() === from.path.toLocaleLowerCase()) {
+            // to prevent looping go to home page
+            from.path = '/'
+          }
+          await this.handleIntercept(intercept, from.path)
+        } else {
+          await this.handleSpaRoute(to)
         }
       }
+    },
+    routerPush (path) {
+      if (path) {
+        this.$router.push({ path })
+        // reset routerPush so that future values set on it always trigger a change and consequently, this method
+        this.$store.state.routerPush = null
+      }
+    },
+    modalComponent (component) {
+      // always clear any previous error message
+      this.$store.commit(mutationTypes.MODAL_ERROR, null)
+
+      if (!component) {
+        // no component, ensure that the modal is hidden
+        this.modalHide()
+
+        if (this.redirectTo) {
+          const path = this.redirectTo
+
+          this.redirectTo = null
+
+          this.$router.push(path)
+        }
+      } else {
+        // since the modal is not updating the title, manually do it
+        // if we need to update anything for meta data or additional tracking, it can be done here
+        metaManager.updateTitleTag(`${component.name.replace(/([A-Z])/g, ' $1')} | RADIO.COM`)
+      }
     }
+  },
+  mounted () {
+    this.handleIntercept(this.getInterceptRoute(this.$route.path), '/')
   }
 }
 </script>
+
+// use a global bus for listening to events for closing the modal
+// use the global bus for emiting the event from inside the login.vue page

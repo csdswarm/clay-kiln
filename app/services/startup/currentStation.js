@@ -4,14 +4,16 @@ const radioApiService = require('../../services/server/radioApi'),
   { isEmpty } = require('lodash'),
   { extname } = require('path'),
   allStations = {},
+  allStationsIds = {},
+  allStationsCallsigns = [],
   defaultStation = {
     id: 0,
     name: 'Radio.com',
     callsign: 'NATL-RC',
     website: 'https://www.radio.com',
     slug: 'www',
-    square_logo_small: 'http://images.radio.com/aiu-media/og_775x515_0.jpg',
-    square_logo_large: 'http://images.radio.com/aiu-media/og_775x515_0.jpg',
+    square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
+    square_logo_large: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
     city: 'New York',
     state: 'NY',
     country: 'US',
@@ -55,6 +57,7 @@ const radioApiService = require('../../services/server/radioApi'),
   getStation = async (req) => {
     if (validPath(req)) {
       const slugInReqUrl = getStationSlug(req),
+        stationId = req.query.stationId,
         response = await radioApiService.get('stations', {page: {size: 999}}, null, { ttl: radioApiService.TTL.DAY });
 
       // use the stations as a cached object so we don't have to run the same logic every request
@@ -63,11 +66,18 @@ const radioApiService = require('../../services/server/radioApi'),
           const slug = station.attributes.site_slug || station.attributes.callsign || station.id;
 
           allStations[slug] = station.attributes;
+          allStationsIds[station.id] = slug;
+          allStationsCallsigns.push(station.attributes.callsign);
         });
       }
 
       if (Object.keys(allStations).includes(slugInReqUrl)) {
         return allStations[slugInReqUrl];
+      }
+
+      // If the station isn't in the slug, look for the querystring parameter
+      if (stationId && Object.keys(allStationsIds).includes(stationId)) {
+        return allStations[allStationsIds[stationId]];
       }
 
       return defaultStation;
@@ -84,6 +94,7 @@ const radioApiService = require('../../services/server/radioApi'),
  */
 module.exports = async (req, res, next) => {
   res.locals.station = await getStation(req);
+  res.locals.allStationsCallsigns = allStationsCallsigns;
   res.locals.defaultStation = defaultStation;
 
   return next();

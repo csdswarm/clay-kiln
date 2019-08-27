@@ -19,6 +19,7 @@ const _set = require('../../app/node_modules/lodash/set');
 const _chunk = require('../../app/node_modules/lodash/chunk');
 const claycli = require('../../app/node_modules/claycli');
 const YAML = require('../../app/node_modules/yamljs');
+const url = require('url');
 
 const DEFAULT_HOST = 'clay.radio.com';
 const HTTP = { http: 'http' };
@@ -263,12 +264,14 @@ function httpGet(params) {
  * @returns {Promise<{result: ('success'|'fail'), data: string, params: Object}>}
  */
 function httpRequest(params) {
-  const { http, options } = params;
+  const { http, body, ...options } = params;
   return new Promise((resolve, reject) => {
     try {
       const conn = require(http);
 
-      const req = conn.request(options, res => {
+      const parsedOptions = options.url ? {...options, ...url.parse(options.url)} : options;
+
+      const req = conn.request(parsedOptions, res => {
         const data = [];
         res.on('data', chunk => data.push(chunk));
         res.on('end', () => resolve({ result: 'success', data: Buffer.concat(data).toString(), params }));
@@ -276,6 +279,7 @@ function httpRequest(params) {
       });
       req.on('error', error => reject({ result: 'fail', params, error }));
 
+      req.write(JSON.stringify(body))
       req.end();
 
     } catch (error) {

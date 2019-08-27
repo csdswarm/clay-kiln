@@ -6,9 +6,12 @@ module.exports = () => {
   require('./plugins/content-import')();
   require('./plugins/word-count')();
   require('./plugins/advanced-image-upload')();
+  require('./plugins/alerts')();
   require('./plugins/podcast-select')();
+  require('./plugins/brightcove')();
   require('./plugins/content-syndication')();
-  require('./plugins/brightcove-search')();
+  require('./plugins/content-search')();
   require('./plugins/instagram')();
+  require('./plugins/subscriptions')();
   require('./validators')();
 };

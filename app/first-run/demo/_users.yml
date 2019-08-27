@@ -183,3 +183,11 @@ _users:
     username: Leland.Kwong@entercom.com
     provider: google
     auth: admin
+  -
+    username: micah.allen@swarmsolutions.com
+    provider: google
+    auth: admin 
+  -
+    username: jeremy.zevin@entercom.com
+    provider: google
+    auth: admin

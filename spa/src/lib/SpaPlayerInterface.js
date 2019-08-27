@@ -9,13 +9,28 @@
 import * as mutationTypes from '../vuex/mutationTypes'
 import SpaCommunicationBridge from './SpaCommunicationBridge'
 import QueryPayload from './QueryPayload'
+import ClientPlayerInterface from '../../../app/services/client/ClientPlayerInterface'
 const spaCommunicationBridge = SpaCommunicationBridge()
 const queryPayload = new QueryPayload()
+const sessionStorage = window.sessionStorage
 
 class SpaPlayerInterface {
   constructor (spaApp) {
     this.spa = spaApp
-    this.attachClientEventListeners()
+    this.playerSession = JSON.parse(sessionStorage.getItem('currentlyPlaying')) || {}
+    this.attachClientCommunication()
+
+    // Attach event listeners to DOM
+    ClientPlayerInterface().addEventListener(this.spa.$el)
+
+    /**
+     * Execute web player "routing" logic (determines whether to lazy-load player and auto-initialize player bar).
+     *
+     * NOTE: router() is async and returns a promise, but onLayoutUpdate() must be synchronous (because Vue lifecycle methods
+     * must be synchronous). Since the player exists outside of the slice of DOM managed by the SPA, playerInterface.router() is safe to call
+     * as if it was "synchronous" and there is no need to block further execution of onLayoutUpdate() until playerInterface.router() resolves.
+     */
+    this.router()
   }
 
   /**
@@ -28,10 +43,10 @@ class SpaPlayerInterface {
       await this.bootPlayer()
 
       // If appropriate, pop the player bar onto the screen by loading a station.
-      const stationDetailPageStationId = this.extractStationIdFromSpaPayload()
+      const stationId = this.extractStationIdFromSpaPayload() || this.playerSession.id
 
-      if (stationDetailPageStationId) {
-        await this.loadStation(stationDetailPageStationId)
+      if (stationId) {
+        await this.loadStation(stationId)
       }
     }
   }
@@ -56,8 +71,9 @@ class SpaPlayerInterface {
    */
   autoBootPlayer (path) {
     const matchedStationDetailRoute = path.match(/^\/(.+)\/listen$/)
+    const playerWasActive = this.playerSession.playerState === 'play'
 
-    if (matchedStationDetailRoute) {
+    if (matchedStationDetailRoute || playerWasActive) {
       return true
     } else {
       return false
@@ -114,6 +130,7 @@ class SpaPlayerInterface {
           playerState: e.detail.playerState
         }
 
+        sessionStorage.setItem('currentlyPlaying', JSON.stringify(payload))
         spaCommunicationBridge.sendMessage('ClientWebPlayerPlaybackStatus', payload)
         this.spa.$store.commit(mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS, { currentlyPlaying: payload })
       })
@@ -149,7 +166,7 @@ class SpaPlayerInterface {
    * the player.
    *
    */
-  attachClientEventListeners () {
+  attachClientCommunication () {
     // Add channel that listens for play/pause button clicks.
     if (!spaCommunicationBridge.channelActive('SpaPlayerInterfacePlaybackStatus')) {
       spaCommunicationBridge.subscribe('SpaPlayerInterfacePlaybackStatus', async (payload) => {

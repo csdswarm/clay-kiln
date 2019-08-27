@@ -12,13 +12,16 @@ const pkg = require('../../package.json'),
   routes = require('../../routes'),
   canonicalJSON = require('./canonical-json'),
   initCore = require('./amphora-core'),
-  locals = require('./spaLocals'),
+  locals = require('./locals'),
   currentStation = require('./currentStation'),
   redirectTrailingSlash = require('./trailing-slash'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
+  eventBusSubscribers = require('./event-bus-subscribers'),
+  user = require('./user'),
+  radium = require('./radium'),
   cookies = require('./cookies');
 
 function createSessionStore() {
@@ -72,12 +75,16 @@ function setupApp(app) {
 
   app.use(handleRedirects);
 
+  app.use(user);
+
   app.use(locals);
 
   app.use(currentStation);
 
   cookies.inject(app);
-  
+
+  radium.inject(app);
+
   app.use(canonicalJSON);
 
   brightcove.inject(app);
@@ -85,6 +92,8 @@ function setupApp(app) {
   sessionStore = createSessionStore();
 
   feedComponents.init();
+
+  eventBusSubscribers();
 
   return amphoraSearch()
     .then(searchPlugin => {

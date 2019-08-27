@@ -32,6 +32,27 @@ class ClientPlayerInterface {
 
   /**
    *
+   * Adds events related to player
+   *
+   * @param {Node} doc
+   * @returns {Node} - document with events attached
+   */
+  addEventListener(doc) {
+    // Attach play button click handlers
+    doc.querySelectorAll('[data-play-station]').forEach(element => {
+      element.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
+
+        this[playbackStatus](element.dataset.playStation);
+      });
+    });
+    return doc;
+  }
+
+  /**
+   *
    * Load different player library depending on environment.
    *
    * @returns {string} - The web player environment namespace.
