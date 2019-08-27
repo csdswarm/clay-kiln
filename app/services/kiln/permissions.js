@@ -22,14 +22,6 @@ const _endsWith = require('lodash/endsWith'),
 
     return kilnjs;
   },
-  getActionAndTarget = (permission) => {
-    if (_isString(permission)) {
-      return {action: permission};
-    }
-    const action = Object.keys(permission)[0];
-
-    return {action, target: permission[action]};
-  },
   /**
    * Default hide a field and watch for load success to check user permissions
    *
@@ -41,7 +33,7 @@ const _endsWith = require('lodash/endsWith'),
    * @param {string|object} permission
    */
   secureField = (fieldInput, permission) => {
-    const {action, target} = getActionAndTarget(permission);
+    const {action, target} = _isString(permission) ? {action: permission} : permission;
 
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
