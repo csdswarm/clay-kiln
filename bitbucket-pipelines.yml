@@ -1,17 +1,15 @@
 image: node:8.9.0-stretch
 pipelines:
   default:
-    - parallel:
-      - step:
-          caches:
-            - node
-          script:
-            - make install
-      - step:
-          script:
-            - make lint
+    - step:
+        caches:
+          - node
+        script:
+          - make install
+          - make lint
+
   branches:
     '{develop,staging,master}':
         - step:
             script:
-              - echo "No pipline for develop, staging, master"
+              - echo "No pipeline for develop, staging, master"
