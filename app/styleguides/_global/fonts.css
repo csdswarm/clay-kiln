@@ -565,7 +565,7 @@ em, i {
 }
 @define-mixin component-settings-font-4 {
   font-weight: 400;
-  @mixin font Helvetica, Arial, em(16, 16), $darkCyan, -.3, em(18, 16);
+  @mixin font Helvetica, Arial, em(16, 16), $easternBlue, -.3, em(18, 16);
 }
 @define-mixin component-settings-font-5 {
   font-weight: 400;
@@ -573,7 +573,7 @@ em, i {
 }
 @define-mixin component-settings-font-6 {
   font-weight: 400;
-  @mixin font Helvetica, Arial, em(12, 16), $lightCyan, -.3, em(14, 12);
+  @mixin font Helvetica, Arial, em(12, 16), $halfBaked, -.3, em(14, 12);
 }
 @define-mixin component-settings-font-7 {
   font-weight: 400;
