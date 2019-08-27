@@ -1,8 +1,8 @@
 'use strict';
 
 function Constructor() {
-  const sidebar = document.getElementsByClassName('content__sidebar')[0],
-    articleBody = document.getElementsByClassName('article__body')[0],
+  const sidebar = document.getElementsByClassName('content__sidebar')[0];
+  const articleBody = document.getElementsByClassName('article__body')[0],
     logoSponsorship = document.querySelector('.google-ad-manager--content-page-logo-sponsorship');
 
   this.repositionRightRail(sidebar, articleBody);
