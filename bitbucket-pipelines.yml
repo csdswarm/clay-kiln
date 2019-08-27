@@ -5,11 +5,17 @@ pipelines:
         caches:
           - node
         script:
-          - make install
-          - make lint
+          - cd spa && npm i && cd ../app && npm i
+    - parallel:
+        - step:
+            script:
+              - cd spa && npm run-script build -- --mode=none && cd ../app && npm run build
+        - step:
+            script:
+              - make lint
 
   branches:
     '{develop,staging,master}':
-        - step:
-            script:
-              - echo "No pipeline for develop, staging, master"
+      - step:
+          script:
+            - echo "No pipeline for develop, staging, master"
