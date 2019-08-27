@@ -43,7 +43,7 @@ const _endsWith = require('lodash/endsWith'),
           fieldInput.show();
         }
       }
-    });
+    }, true);
   },
   /**
    * Map through schema fields, find fields with permissions, and secure them
@@ -113,7 +113,7 @@ const _endsWith = require('lodash/endsWith'),
         });
         schema[name].hide();
       }
-    });
+    }, true);
   };
 
 // kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
