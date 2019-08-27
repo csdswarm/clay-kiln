@@ -76,4 +76,9 @@ describe('permissions', () => {
       expect(user.canUse('alert-banner').message).to.eql('');
     });
   });
+  describe('actions as objects', () => {
+    it('overides the object string', () => {
+      assert(user.can({ publish: 'gallery' }).an('ignored-item').for('ABCD').value)
+    });
+  });
 });

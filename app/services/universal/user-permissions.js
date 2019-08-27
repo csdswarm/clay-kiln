@@ -58,6 +58,23 @@ const pluralize = require('pluralize'),
         return `You do not have permissions to${perform} ${pluralize(object.replace(/-/g, ' '))}.`;
       },
       /**
+       * returns the string of either the object passed in or the value of the action
+       *
+       * @param {object|string} action
+       * @param {string} object
+       *
+       * @return {string}
+       */
+      getObjectValue = (action, object) => typeof action === 'string' ? object : Object.values(action).pop(),
+      /**
+       * returns the string of either the action passed in or the key of the action
+       *
+       * @param {object|string} action
+       *
+       * @return {string}
+       */
+      getActionValue = (action) => typeof action === 'string' ? action : Object.keys(action).pop(),
+      /**
        * checks the permission object for the currently defined condition (action/object/location) and
        * returns the value or message based on the type of variable requested.
        *
@@ -82,9 +99,12 @@ const pluralize = require('pluralize'),
         const { action = DEFAULT.action, object, location = DEFAULT.location } = _condition;
 
         if (object) {
-          value = Boolean(_permissions[object] &&
-            _permissions[object][action] &&
-            _permissions[object][action].station[location]);
+          const objectToCheck = getObjectValue(action, object),
+            actionToCheck = getActionValue(action);
+
+          value = Boolean(_permissions[objectToCheck] &&
+            _permissions[objectToCheck][actionToCheck] &&
+            _permissions[objectToCheck][actionToCheck].station[location]);
 
           if (!value) {
             message = createMessage(_condition);
