@@ -133,7 +133,7 @@
     transition: all 100ms linear 50ms;
     display: flex;
     align-items: center;
-    background: $almostWhite;
+    background: $alabaster;
     margin-bottom: em(12, 16);
     padding: em(8, 16) em(16, 16);
 

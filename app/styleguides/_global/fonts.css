@@ -569,7 +569,7 @@ em, i {
 }
 @define-mixin component-settings-font-5 {
   font-weight: 400;
-  @mixin font Helvetica, Arial, em(12, 16), $charcoal, -.3, em(14, 12);
+  @mixin font Helvetica, Arial, em(12, 16), $tundora, -.3, em(14, 12);
 }
 @define-mixin component-settings-font-6 {
   font-weight: 400;
