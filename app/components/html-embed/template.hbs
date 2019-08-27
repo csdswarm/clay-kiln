@@ -1,11 +1,22 @@
 <div data-uri="{{ default _ref self }}" data-editable="text" class="component component--html-embed{{if @root.locals.edit " edit"}}">
-  {{#if isIframe}}
-    <div class="html-embed__iframe-container">
-      <div class="iframe-container__padded-container">
-        {{{ text }}}
+  {{#unless @root.locals.edit}}
+    {{#if isIframe}}
+      <div class="html-embed__iframe-container">
+        <div class="iframe-container__padded-container">
+          {{{ text }}}
+        </div>
       </div>
-    </div>
+    {{else}}
+      {{{ text }}}
+    {{/if}}
   {{else}}
-    {{{ text }}}
-  {{/if}}
+    {{#if text}}
+      <div class="html-embed__preview kiln-placeholder">
+        <div>
+          <span>Embedded HTML</span>
+        </div>
+        <pre>{{ ellipsisSubstring text 0 500 }}</pre>
+      </div>
+    {{/if}}
+  {{/unless}}
 </div>
