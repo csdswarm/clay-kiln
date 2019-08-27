@@ -228,7 +228,6 @@ document.addEventListener('station-nav-mount', function () {
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
   listenNavDrawer = navDrawersContainer.querySelector('.drawer--listen');
   listenNavComponent = document.querySelector('.component--station-listen-nav');
-  console.log(listenNavComponent.getAttribute('data-uri'));
   stationListenNavInstance = getComponentInstance(listenNavComponent.getAttribute('data-uri'));
 
   addEventListeners();
