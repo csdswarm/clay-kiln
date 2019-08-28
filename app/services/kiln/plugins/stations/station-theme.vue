@@ -98,7 +98,7 @@
         :invalid="!isColorHex(secondaryFontColor)"
         :error="colorHexError"
         floating-label
-        label="Secondary Font Color (Example: station listen live nav text)"
+        label="Secondary Font Color (Example: station nav dropdown text)"
         v-model="secondaryFontColor"
       ></ui-textbox>
       <ui-icon-button
