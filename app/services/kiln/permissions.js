@@ -2,6 +2,7 @@
 
 const _endsWith = require('lodash/endsWith'),
   addPermissions = require('../universal/user-permissions'),
+  _camelCase = require('lodash/camelCase'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
   /**
@@ -35,13 +36,13 @@ const _endsWith = require('lodash/endsWith'),
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
-    fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
-      addPermissions(user);
+    fieldInput.subscribe(PRELOAD_SUCCESS, (data) => {
+      const {user, locals: {station}, url: {component}} = data;
 
       if (user.may(permission, component, station.callsign)) {
         fieldInput.show();
       }
-    });
+    }, true);
   },
   /**
    * Map through schema fields, find fields with permissions, and secure them
@@ -84,8 +85,41 @@ const _endsWith = require('lodash/endsWith'),
 
         window.kiln.componentKilnjs[component] = secureSchema(kilnjs);
       });
+  },
+  /**
+   * mutates the schema blocking the user from being able to publish if they do not have permissions
+   *
+   * @param {object} schema
+   */
+  publishRights = (schema) => {
+    const subscriptions = new KilnInput(schema);
+
+    subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
+
+      const { value, message } = locals.user.can('publish').an(schema.schemaName).at(locals.station.callsign);
+
+      if (!value) {
+        const name = _camelCase(message);
+
+        // using the name the message, it will display the message in the error list
+        schema[name] = new KilnInput(schema, name);
+        schema[name].setProp('_has', {
+          ...schema[name]['_has'],
+          input: 'text',
+          validate: {
+            required: true
+          }
+        });
+        schema[name].hide();
+      }
+    }, true);
   };
+
+// kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
+// this to the user object, so we are accessing it directly off of the window
+addPermissions(window.kiln.locals.user);
 
 module.exports.secureField = secureField;
 module.exports.secureSchema = secureSchema;
 module.exports.secureAllSchemas = secureAllSchemas;
+module.exports.publishRights = publishRights;

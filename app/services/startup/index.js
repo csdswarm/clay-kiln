@@ -22,7 +22,8 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
-  cookies = require('./cookies');
+  cookies = require('./cookies'),
+  cognitoAuth = require('./cognito-auth');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -84,6 +85,8 @@ function setupApp(app) {
   cookies.inject(app);
 
   radium.inject(app);
+
+  cognitoAuth.inject(app);
 
   app.use(canonicalJSON);
 
