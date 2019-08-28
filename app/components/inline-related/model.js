@@ -1,7 +1,6 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
-  _get = require('lodash/get'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   loadedIdsService = require('../../services/server/loaded-ids'),
@@ -37,8 +36,7 @@ module.exports.save = async (ref, data, locals) => {
         includeIdInResult: true,
         shouldDedupeContent: false
       },
-      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts),
-      leadRef = _get(result, 'lead[0]._ref');
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
     Object.assign(item, {
       uri: result._id,
@@ -47,9 +45,7 @@ module.exports.save = async (ref, data, locals) => {
       urlIsValid: result.urlIsValid,
       canonicalUrl: result.canonicalUrl,
       feedImgUrl: result.feedImgUrl,
-      lead: leadRef
-        ? leadRef.split('/')[2]
-        : null
+      lead: result.leadComponent
     });
 
     if (item.title) {
