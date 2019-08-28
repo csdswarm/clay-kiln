@@ -15,6 +15,12 @@ const SECOND = 1000,
     DAY,
     WEEK,
     YEAR
+  },
+
+  pageTypes = {
+    ARTICLE: 'article',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front'
   };
 
 
@@ -25,5 +31,6 @@ module.exports = {
   DAY,
   WEEK,
   YEAR,
-  time
+  time,
+  pageTypes
 };

@@ -10,11 +10,7 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   slugifyService = require('../../services/universal/slugify'),
-  pageTypes = {
-    ARTICLE: 'article',
-    GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
-  },
+  { pageTypes } = require('../universal/constants'),
   /**
    * returns a url to the server for a component
    *
@@ -199,19 +195,13 @@ function getUrlOptions(component, locals, pageType) {
   return urlOptions;
 }
 
+Object.assign(module.exports, require('../universal/url-patterns'));
 module.exports.getComponentReference = getComponentReference;
 module.exports.getMainComponentFromRef = getMainComponentFromRef;
 module.exports.getUrlOptions = getUrlOptions;
 module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
-// URL patterns below need to be handled by the site's index.js
-module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.html`; // e.g. http://vulture.com/music/x.html - modified re: ON-333
-module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
-module.exports.articleSecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/${o.slug}`;
-module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
-module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/gallery/${o.slug}`;
-module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
-module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.getComponentInstance = getComponentInstance;
 module.exports.pageTypes = pageTypes;
+

@@ -66,3 +66,5 @@ module.exports.getArticleDataAndValidate = function (ref, data, locals, fields) 
       return data;
     });
 };
+
+module.exports.getArticleData = getArticleData;
