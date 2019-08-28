@@ -12,6 +12,7 @@ class MoreContentFeed {
     this.currentPage = 1;
     this.tag = '';
     this.author = '';
+    this.lazyLoadEvent = new Event('content-feed-lazy-load');
 
     // load another page every time the load more button is clicked!
     if (this.loadMore) {
@@ -45,6 +46,7 @@ class MoreContentFeed {
     this.loadMoreVisibility.on('shown', async () => {
       this.loadMoreVisibility.destroy();
       await this.handleLoadMoreContent();
+      document.dispatchEvent(this.lazyLoadEvent);
       this.setupLazyLoad();
     });
   }
@@ -84,4 +86,3 @@ class MoreContentFeed {
 };
 
 module.exports = el => new MoreContentFeed(el);
-

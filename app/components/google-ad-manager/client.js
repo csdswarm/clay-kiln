@@ -59,6 +59,12 @@ document.addEventListener('gtm-lytics-setup', () => {
   initializeAds();
 }, false);
 
+document.addEventListener('content-feed-lazy-load', () => {
+  googletag.destroySlots();
+  adsMounted = true;
+  initializeAds();
+}, false);
+
 // Set up ads when navigating in SPA
 document.addEventListener('google-ad-manager-mount', () => {
   // This will allow initializeAds to trigger ad refresh
@@ -452,14 +458,14 @@ function createAds(adSlots) {
         slot = googletag.defineOutOfPageSlot(adTargetingData.siteZone, ad.id);
         updateSkinStyles(true);
       } else {
+
         slot = googletag.defineSlot(
           adTargetingData.siteZone,
           [adSizes[adSize].defaultSize],
           ad.id
         );
 
-        slot
-          .defineSizeMapping(sizeMapping);
+        slot.defineSizeMapping(sizeMapping);
       }
 
       slot
