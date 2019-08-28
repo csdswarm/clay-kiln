@@ -168,6 +168,8 @@ class StationsList {
         station.classList.add('active');
       }
     });
+
+    safari.fixAJAXImages(this.stationsList);
   }
   /**
    * Using list of station IDs,
@@ -181,7 +183,6 @@ class StationsList {
     const newStations = this.stationsData = await this.getComponentTemplate(stationsIDs, null, instanceModifier);
 
     this.stationsList.append(newStations);
-    safari.fixAJAXImages(this.stationsList);
     this.toggleLoader();
     this.displayActiveStations();
   }
@@ -200,7 +201,6 @@ class StationsList {
       this.parentElement.removeChild(this.parentElement.firstChild);
     };
     this.parentElement.append(newStations);
-    safari.fixAJAXImages(this.parentElement);
     this.setStationList(this.parentElement);
     this.displayActiveStations();
 
