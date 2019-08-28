@@ -45,6 +45,12 @@ pageHeader:
     page: true
     include:
       - topic-page-header
+
+banner:
+  _componentList:
+    include:
+      - alert-banner
+
 main:
   _componentList:
     page: true

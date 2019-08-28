@@ -12,7 +12,10 @@
 // or where it does significantly different things that would break a prior migration
 // - CSD
 
+const fs = require('fs');
 const _get = require('../../app/node_modules/lodash/get');
+const _has = require('../../app/node_modules/lodash/has');
+const _set = require('../../app/node_modules/lodash/set');
 const _chunk = require('../../app/node_modules/lodash/chunk');
 const claycli = require('../../app/node_modules/claycli');
 const YAML = require('../../app/node_modules/yamljs');
@@ -304,12 +307,29 @@ function republish(params) {
   return httpRequest({http, options});
 }
 
+/**
+ *
+ * @param {Object} params
+ * @returns {Promise<any>}
+ */
+function readFile(params){
+  const {path} = params;
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, 'utf8', (error, data) => {
+      error
+        ? reject({result: 'fail', params, error})
+        : resolve({result: 'success', data, params});
+    });
+  });
+}
 
 /*******************************************************************************************
  *                                     Version 1.0                                         *
  *******************************************************************************************/
 const v1 = {
   _get,
+  _has,
+  _set,
   _chunk,
   prettyJSON,
   toYaml,
@@ -321,6 +341,7 @@ const v1 = {
   httpGet,
   republish,
   httpRequest,
+  readFile,
 };
 
 module.exports = {

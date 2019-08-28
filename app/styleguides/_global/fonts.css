@@ -593,3 +593,14 @@ em, i {
 @define-mixin station-footer-font3 {
   @mixin font ProximaNova-Regular, 14px, $white, -.23px, 22px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Alert Banner Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin alert-banner-font1 {
+  @mixin font CircularStd-Medium, 18px, $black, -.3px, 22px;
+}
+
+@define-mixin alert-banner-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}

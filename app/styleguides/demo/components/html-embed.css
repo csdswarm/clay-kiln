@@ -1,3 +1,5 @@
+@import "_global/colors";
+
 .component--html-embed {
   margin-bottom: em(30);
   width: 100%;
@@ -32,10 +34,27 @@
   }
 
   &.edit {
-    min-height: em(20);
+    .html-embed__preview {
+      min-height: em(20);
+      margin-bottom: em(20);
+      border: em(1) solid transparent;
+      color: $denim;
 
-    &:hover {
-      border: em(1) solid #e3f2fd;
+      div {
+        display: flex;
+        width: em(75);
+        margin-right: em(10);
+      }
+
+      pre {
+        overflow-x: auto;
+        min-height: em(40);
+        max-height: em(240)
+      }
+  
+      &:hover {
+        border: em(1) solid #e3f2fd;
+      }
     }
   }
 }
