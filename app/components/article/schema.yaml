@@ -345,6 +345,14 @@ editorialFeeds:
     search: true
     list: freq_editorial_feeds
     help: Select all editorial feeds terms for syndication
+corporateSyndication:
+  _label: Syndicate to corporate website(s)
+  _has:
+    input: select
+    multiple: true
+    search: true
+    list: corporate_websites
+    help: Select all corporate websites for syndication
 stationSyndication:
   _label: Syndicate to station(s)
   _has:
@@ -412,6 +420,7 @@ _groups:
     fields:
       - featured
       - editorialFeeds
+      - corporateSyndication
       - stationSyndication
       - genreSyndication
       - syndicationStatus

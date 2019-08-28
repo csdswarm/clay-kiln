@@ -31,6 +31,12 @@ pageHeader:
   _componentList:
     include:
       - google-ad-manager
+
+banner:
+  _componentList:
+    include:
+      - alert-banner
+
 main:
   _componentList:
     page: true
