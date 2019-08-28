@@ -12,7 +12,7 @@ class MoreContentFeed {
     this.currentPage = 1;
     this.tag = '';
     this.author = '';
-    this.lazyLoadEvent = new Event('content-feed-lazy-load');
+    this.lazyLoadEvent = new CustomEvent('content-feed-lazy-load');
 
     // load another page every time the load more button is clicked!
     if (this.loadMore) {
