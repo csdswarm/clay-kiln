@@ -35,13 +35,10 @@ const _endsWith = require('lodash/endsWith'),
     fieldInput.hide();
 
     fieldInput.subscribe(PRELOAD_SUCCESS, (data) => {
-      // preload_success can get called on things that are not components
-      if (data.component) {
-        const {user, locals: {station}, url: {component}} = data;
+      const {user, locals: {station}, url: {component}} = data;
 
-        if (user.may(permission, component, station.callsign)) {
-          fieldInput.show();
-        }
+      if (user.may(permission, component, station.callsign)) {
+        fieldInput.show();
       }
     }, true);
   },
