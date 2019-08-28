@@ -1,7 +1,6 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
-  _get = require('lodash/get'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   loadedIdsService = require('../../services/server/loaded-ids'),
