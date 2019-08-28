@@ -65,6 +65,7 @@ module.exports.render = function (ref, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
     contentTypes = contentTypeService.parseFromData(data),
     addContentCondition = data.populateFrom === 'section-front-or-tag' ? queryService.addShould : queryService.addMust;
+
   let cleanUrl;
 
   data.initialLoad = false;
@@ -142,9 +143,10 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (['section-front', 'section-front-and-tag', 'section-front-or-tag'].includes(data.populateFrom)) {
-    if (!data.sectionFront && !data.sectionFrontManual &&
-      !data.secondarySectionFront && !data.secondarySectionFrontManual
-      || !locals) {
+    const noSectionFrontsSet = !data.sectionFront && !data.sectionFrontManual
+      && !data.secondarySectionFront && !data.secondarySectionFrontManual;
+
+    if (noSectionFrontsSet) {
       return data;
     }
     if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
