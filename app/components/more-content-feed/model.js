@@ -143,12 +143,13 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (['section-front', 'section-front-and-tag', 'section-front-or-tag'].includes(data.populateFrom)) {
-    const noSectionFrontsSet = !data.sectionFront && !data.sectionFrontManual
-      && !data.secondarySectionFront && !data.secondarySectionFrontManual;
+    const noSectionFrontsOrLocals = (!data.sectionFront && !data.sectionFrontManual
+      && !data.secondarySectionFront && !data.secondarySectionFrontManual) || !locals;
 
-    if (noSectionFrontsSet) {
+    if (noSectionFrontsOrLocals) {
       return data;
     }
+
     if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
       const secondarySectionFront = data.secondarySectionFrontManual || locals.secondarySectionFront;
 
