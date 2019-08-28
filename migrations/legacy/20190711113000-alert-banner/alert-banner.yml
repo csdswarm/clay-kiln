@@ -1,0 +1,5 @@
+_components:
+  alert-banner:
+    instances:
+      default:
+        messages: []
