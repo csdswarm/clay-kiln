@@ -1,17 +1,24 @@
 image: node:8.9.0-stretch
+
+definitions:
+  steps:
+    - step: &build
+        name: Build Clay & Compile Assets
+        script:
+          - make install
+        artifacts:
+          - app/**
+          - spa/**
+
 pipelines:
   default:
+    - step: *build
     - parallel:
-      - step:
-          caches:
-            - node
-          script:
-            - make install
-      - step:
-          script:
-            - make lint
-  branches:
-    '{develop,staging,master}':
         - step:
+            name: Lint Clay App
             script:
-              - echo "No pipline for develop, staging, master"
+              - cd app && npm run eslint
+        - step:
+            name: Lint SPA
+            script:
+              - cd spa && npm run lint -- --no-fix
