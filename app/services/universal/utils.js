@@ -38,6 +38,15 @@ function has(val) {
 }
 
 /**
+ * determine if a string is a url
+ * @param  {string}  str
+ * @return {Boolean}
+ */
+function isUrl(str) {
+  return /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(str);
+}
+
+/**
  * replace version in uri
  * e.g. when fetching @published data, or previous component data
  * @param  {string} uri
@@ -182,6 +191,7 @@ function debugLog(...args) {
 module.exports.isFieldEmpty = isFieldEmpty;
 module.exports.has = has;
 module.exports.replaceVersion = replaceVersion;
+module.exports.isUrl = isUrl;
 module.exports.uriToUrl = uriToUrl;
 module.exports.urlToUri = urlToUri;
 module.exports.formatStart = formatStart;
