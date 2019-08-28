@@ -1,6 +1,7 @@
 'use strict';
 
 const util = require('util'),
+  log = require('../universal/log').setup({ file: __filename }),
   _get = require('lodash/get'),
   _fromPairs = require('lodash/fromPairs'),
   AWS = require('aws-sdk'),
@@ -34,21 +35,25 @@ async function refreshAuthToken({ refreshToken, deviceKey }) {
       }
     };
 
-  let authResult;
+  try {
+    let authResult;
 
-  if (process.env.COGNITO_CONSUMER_SECRET) {
-    options.AuthParameters.SECRET_HASH = process.env.COGNITO_CONSUMER_SECRET;
+    if (process.env.COGNITO_CONSUMER_SECRET) {
+      options.AuthParameters.SECRET_HASH = process.env.COGNITO_CONSUMER_SECRET;
+    }
+
+    authResult = _get(await initiateAuth(options), 'AuthenticationResult', {});
+
+    return {
+      refreshToken,
+      deviceKey,
+      token: authResult.AccessToken,
+      expires: Date.now() + ((authResult.ExpiresIn || 0) * SECOND),
+      lastUpdated: Date.now()
+    };
+  } catch (error) {
+    log('error', 'There was an error attempting to refresh the cognito access token', error);
   }
-
-  authResult = _get(await initiateAuth(options), 'AuthenticationResult', {});
-
-  return {
-    token: authResult.AccessToken,
-    refreshToken: authResult.RefreshToken,
-    expires: Date.now() + ((authResult.ExpiresIn || 0) * SECOND),
-    deviceKey: authResult.NewDeviceMetadata.DeviceKey,
-    lastUpdated: Date.now()
-  };
 }
 
 /**
@@ -60,11 +65,18 @@ async function refreshAuthToken({ refreshToken, deviceKey }) {
  */
 async function getUser(jwtAccessToken) {
   const cognitoClient = new AWS.CognitoIdentityServiceProvider(),
-    getUser = util.promisify(cognitoClient.getUser).bind(cognitoClient),
-    userData = await getUser({ AccessToken: _get(jwtAccessToken, '') }),
-    userAttributes = _get(userData, 'UserAttributes', []);
+    getCognitoUser = util.promisify(cognitoClient.getUser).bind(cognitoClient);
 
-  return _fromPairs(userAttributes.map(({ Name, Value }) => [Name, Value]));
+  try {
+    const
+      userData = await getCognitoUser({ AccessToken: jwtAccessToken }),
+      userAttributes = _get(userData, 'UserAttributes', []),
+      objPairsToArrayPairs = ({ Name, Value }) => [Name, Value];
+
+    return _fromPairs(userAttributes.map(objPairsToArrayPairs));
+  } catch (error) {
+    log('error', 'There was an error trying to get information about the cognito user', error);
+  }
 }
 
 module.exports = {

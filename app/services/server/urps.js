@@ -3,9 +3,9 @@
 const
   rest = require('../universal/rest'),
   log = require('../universal/log').setup({ file: __filename }),
-  {refreshAuthToken} = require('./cognito'),
+  { refreshAuthToken } = require('./cognito'),
   cache = require('./cache'),
-  MINUTE = require('../universal/constants').time,
+  { MINUTE } = require('../universal/constants').time,
   PERM_CHECK_INTERVAL = 5 * MINUTE;
 
 /**
@@ -38,6 +38,10 @@ const
  */
 async function getAllPermissions(jwtToken) {
   try {
+    if (!jwtToken) {
+      throw new Error('The jwtToken is a required parameter');
+    }
+
     const options = { headers: { Authorization: jwtToken } },
       permissionsList = await rest.get(`${process.env.URPS_AUTHORIZATIONS_URL}/permissions/all`, options);
 
@@ -48,6 +52,7 @@ async function getAllPermissions(jwtToken) {
           newTargetType = newAction[targetType] = { ...newAction[targetType] };
 
         newTargetType[target] = 1; // using 1 instead of true to keep size down
+
         return { ...permissions, [permType]: { ...newPermission } };
       }, {});
   } catch (error) {
@@ -64,12 +69,21 @@ async function getAllPermissions(jwtToken) {
 async function loadPermissions(session, user) {
   try {
     const currentTime = Date.now(),
-      loginData = {...session.auth} || await cache.get(`cognito-auth--${user.username}`);
+      loginData = { ...session.auth };
 
-    let {expires, permissions, lastUpdated} = loginData;
+    if (!loginData.token) {
+      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${user.username}`) || '{}'));
+      cache.del(`cognito-auth--${user.username}`);
+    }
+
+    let { expires, permissions, lastUpdated } = loginData;
 
     if (expires < currentTime) {
       Object.assign(loginData, await refreshAuthToken(loginData));
+    }
+
+    if (!loginData.token) { // user not logged into cognito. can't get permissions at this time
+      return;
     }
 
     if (!permissions || lastUpdated + PERM_CHECK_INTERVAL < currentTime) {

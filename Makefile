@@ -148,6 +148,10 @@ restore:
 	cp -R ./.snapshot/postgres ./postgres
 	docker load -i ./.snapshot/clay-radio_clay
 
+gen-certs:
+	cd nginx &&	mkdir -p certs
+	cd nginx/certs && mkcert *.radio.com
+
 .PHONY: spa
 spa:
 	cd spa && npm i && npm run-script build -- --mode=none
