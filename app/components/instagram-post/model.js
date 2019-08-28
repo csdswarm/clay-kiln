@@ -15,7 +15,7 @@ function hideCaption(data) {
 module.exports.save = function (uri, data) {
   if (data.url) {
     // note: we're using the un-authenticated api endpoint. don't abuse this
-    return rest.getJSONP(instagramApiBaseUrl + encodeURI(data.url) + hideCaption(data))
+    return rest.get(instagramApiBaseUrl + encodeURI(data.url) + hideCaption(data))
       .then(function (json) {
         // get instagram oembed html
         data.html = json.html;

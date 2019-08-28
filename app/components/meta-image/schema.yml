@@ -5,7 +5,9 @@ _description: |
 imageUrl:
   _label: Image Url
   _display: settings
-  _subscribe: pageMetaImage
+  _subscribe:
+    - pageMetaImage
+    - feedImgUrl
   _has:
     -
       fn: text
