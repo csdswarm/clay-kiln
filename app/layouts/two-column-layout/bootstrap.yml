@@ -6,6 +6,7 @@ _layouts:
     pageHeader: []
     adSplash: []
     sectionHeader: []
+    banner: []
     main: 'main'
     primary: []
     secondary: []

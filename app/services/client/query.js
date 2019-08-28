@@ -167,6 +167,8 @@ module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCro
 module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
 module.exports.getFormatSearchResult = universalQuery.getFormatSearchResult;
 module.exports.moreLikeThis = universalQuery.moreLikeThis;
+module.exports.newNestedQuery = universalQuery.newNestedQuery;
+module.exports.addSearch = universalQuery.addSearch;
 
 // For testing
 module.exports.post = universalRest.post;
