@@ -9,14 +9,16 @@
   height: 100vh;
   .layout__page-header,
   .layout__bottom,
-  .layout__bottomSection,
   .layout__bottomAd {
     z-index: 2;
     position: relative
   }
-  .layout__content {
-    background: $white;
+  .layout__content,
+  .layout__bottomSection {
     z-index: 3;
     position: relative;
+  }
+  .layout__content {
+    background: $white;
   }
 }
