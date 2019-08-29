@@ -175,7 +175,9 @@ function getUrlOptions(component, locals, pageType) {
     date = moment(locals.date);
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = slugifyService(component.sectionFront || component.title) || null;
+  urlOptions.sectionFront = component.stationFront ?
+    component.sectionFront || component.title :
+    slugifyService(component.sectionFront || component.title) || null;
   urlOptions.secondarySectionFront = slugifyService(component.secondarySectionFront) || null;
   urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);
   urlOptions.contentType = component.contentType || null;
