@@ -45,18 +45,14 @@ function newQueryWithCount(index, count, locals) {
  * Query Elastic and clean up raw result object
  * to only display array of results
  * @param  {Object} query
+ * @param  {Object} locals
+ * @param  {Object} [opts] - see server/query.js for opts description
  * @return {Promise}
  * @example searchByQuery({"index":"published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
-function searchByQuery(query) {
-  return searchByQueryWithRawResult(query)
-    .then(universalQuery.formatSearchResult)
-    .then(universalQuery.formatProtocol)
-    .catch(e => {
-      throw new Error(e);
-    });
-
+function searchByQuery(query, locals, opts = {}) {
+  return universalQuery.searchByQuery(query, locals, opts, searchByQueryWithRawResult);
 }
 
 /**
@@ -65,10 +61,10 @@ function searchByQuery(query) {
  * @return {Object}
  */
 function searchByQueryWithRawResult(query) {
-  log('trace', 'performing elastic search', { query: query });
+  log('trace', 'performing elastic search', { query });
 
   return module.exports.post(SITE_ENDPOINT, query, true).then(function (results) {
-    log('trace', `got ${results.hits.hits.length} results`, { results: results});
+    log('trace', `got ${results.hits.hits.length} results`, { results });
     return results;
   });
 }
@@ -169,8 +165,10 @@ module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
 module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
-module.exports.formatSearchResult = universalQuery.formatSearchResult;
+module.exports.getFormatSearchResult = universalQuery.getFormatSearchResult;
 module.exports.moreLikeThis = universalQuery.moreLikeThis;
+module.exports.newNestedQuery = universalQuery.newNestedQuery;
+module.exports.addSearch = universalQuery.addSearch;
 
 // For testing
 module.exports.post = universalRest.post;

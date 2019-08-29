@@ -2,6 +2,7 @@
 
 const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
+  loadedIdsService = require('../../services/server/loaded-ids'),
   contentTypeService = require('../../services/universal/content-type'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
@@ -22,37 +23,40 @@ const queryService = require('../../services/server/query'),
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = (ref, data, locals) => {
+module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
 
-  return Promise.all(data.items.map((item) => {
+  data.primaryStoryLabel = data.primaryStoryLabel
+    || locals.sectionFront
+    || locals.secondarySectionFront
+    || data.tag;
+
+  await Promise.all(data.items.map(async item => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
-      .then((result) => {
-        const article = Object.assign(item, {
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl
-        });
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
-        if (article.title) {
-          article.plaintextTitle = toPlainText(article.title);
-        }
-
-        return article;
-      });
-  }))
-    .then((items) => {
-      data.items = items;
-      data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront || locals.secondarySectionFront || data.tag;
-
-      return data;
+    Object.assign(item, {
+      uri: result._id,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      pageUri: result.pageUri,
+      urlIsValid: result.urlIsValid,
+      canonicalUrl: result.canonicalUrl,
+      feedImgUrl: result.feedImgUrl
     });
+
+    if (item.title) {
+      item.plaintextTitle = toPlainText(item.title);
+    }
+  }));
+
+  return data;
 };
 
 /**
@@ -61,10 +65,17 @@ module.exports.save = (ref, data, locals) => {
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
-    contentTypes = contentTypeService.parseFromData(data);
-  let cleanUrl;
+module.exports.render = async (ref, data, locals) => {
+  const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
+    setPrimaryStoryLabel = () => {
+      data.primaryStoryLabel = data.primaryStoryLabel
+        || locals.secondarySectionFront
+        || locals.sectionFront
+        || data.tag;
+    },
+    availableSlots = maxItems - data.items.length;
+
+  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
 
   // items are saved from form, articles are used on FE, and make sure they use the correct protocol
   data.items = data.articles = data.items
@@ -77,6 +88,17 @@ module.exports.render = function (ref, data, locals) {
   if (!locals || !locals.sectionFront && !locals.secondarySectionFront) {
     return data;
   }
+
+  if (availableSlots <= 0) {
+    setPrimaryStoryLabel();
+    return data;
+  }
+
+  // these shouldn't be declared above the short circuit
+  // eslint-disable-next-line one-var
+  const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals),
+    contentTypes = contentTypeService.parseFromData(data);
+  let cleanUrl;
 
   if (contentTypes.length) {
     queryService.addFilter(query, { terms: { contentType: contentTypes } });
@@ -99,16 +121,6 @@ module.exports.render = function (ref, data, locals) {
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
   }
 
-  // exclude the curated content from the results
-  if (data.items && !isComponent(locals.url)) {
-    data.items.forEach(item => {
-      if (item.canonicalUrl) {
-        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-      }
-    });
-  }
-
   // Filter out the following tags
   if (data.filterTags) {
     for (const tag of data.filterTags.map((tag) => tag.text)) {
@@ -127,15 +139,14 @@ module.exports.render = function (ref, data, locals) {
     });
   }
 
-  return queryService.searchByQuery(query)
-    .then(function (results) {
+  try {
+    const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true });
 
-      data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-      data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
-      return data;
-    })
-    .catch(e => {
-      queryService.logCatch(e, ref);
-      return data;
-    });
+    data.articles = data.items.concat(results);
+    setPrimaryStoryLabel();
+  } catch (e) {
+    queryService.logCatch(e, ref);
+  }
+
+  return data;
 };
