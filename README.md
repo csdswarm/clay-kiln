@@ -52,7 +52,15 @@ Within the clay-radio folder run
 make gen-certs
 ```
 
-This generates the TSL/SSL certs needed to access the site locally over https.
+This generates the TLS/SSL certs needed to access the site locally over https.
+
+Also run 
+
+```bash
+make up-nginx
+```
+
+To ensure that the nginx container gets the new certs.
 
 If you would like SSL to run with a local CA, so that you are not warned that the SSL might not be
 trustworthy, run the following command (it only needs to be run once on your machine):
