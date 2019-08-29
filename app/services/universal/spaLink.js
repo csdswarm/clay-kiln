@@ -92,10 +92,7 @@ function prepareLink(link, helpers) {
       setAttribute(link, 'rel', 'nofollow');
     }
 
-    if (!isOutbound) {
-      addClass(link, 'outbound-link');
-    }
-
+    addClass(link, 'outbound-link');
     setAttribute(link, 'target', '_blank');
   }
 }
