@@ -94,7 +94,6 @@ const createYaml = async () => {
   componentList._components['more-content-feed'].instances['station-front-3'].locationOfContentFeed = 'station-front';
   componentList._components['section-front'].instances['station-front-3'].stationsCarousel = [];
   componentList._components['section-front'].instances['station-front-3'].includePodcastModule = false;
-  componentList._components['section-front'].instances['station-front-3'].stationFront = true;
   componentList._components['section-front'].instances['station-front-3'].moreContentFeed._ref = '/_components/more-content-feed/instances/station-front-3';
 
   const clay = host.split('/')[2];
