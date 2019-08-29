@@ -1,11 +1,9 @@
 'use strict';
 
 const createContent = require('../../services/universal/create-content'),
-  {autoLink} = require('../breadcrumbs'),
-  loadedIdsService = require('../../services/server/loaded-ids');
+  {autoLink} = require('../breadcrumbs');
 
-module.exports.render = async function (ref, data, locals) {
-  await loadedIdsService.appendToLocalsAndRedis([ref], locals);
+module.exports.render = function (ref, data, locals) {
   autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);
   return createContent.render(ref, data, locals);
 };

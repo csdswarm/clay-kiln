@@ -1,0 +1,48 @@
+_version: 1.1
+
+_description: |
+  This is a single related story that is intended to be placed at the bottom of an article.
+
+  It displays a link with a title taken from the metadata of the specified url.
+
+  _Similar to: [related-story](https://github.com/nymag/sites/blob/master/components/related-story/README.md), [related-story-detailed](https://github.com/nymag/sites/blob/master/components/related-story-detailed/README.md), [greatest-hit](https://github.com/nymag/sites/blob/master/components/greatest-hit/README.md)_
+
+_devDescription: When saving, the url will be accessed and the `og:title` will be grabbed. It can be overridden in the component settings.
+
+url:
+  _label: URL
+  _has:
+    input: text
+    type: url
+    validate:
+      required: true
+  _placeholder:
+    text: Single Related Story
+    height: 30px
+overrideTitle:
+  _label: Headline Override
+  _has:
+    input: text
+# field used for validation
+urlIsValid:
+  _label: URL Validation
+  _has:
+    input: text
+    validate:
+      required: true
+      requiredMessage: Input URL is invalid (destination is not on Clay). Please try a different article url, or enter 'ignore' here to use the current URL anyway and set title manually
+
+# non-user-editable fields used for GA tracking
+pageUri:
+  _has:
+    help: Page Uri of destination article
+plaintextTitle:
+  _has:
+    help: Plaintext title of destination article
+
+_groups:
+  settings:
+    fields:
+      - url
+      - overrideTitle
+      - urlIsValid
