@@ -3,6 +3,7 @@
 const brightcoveApi = require('../universal/brightcoveApi'),
   slugify = require('../universal/slugify'),
   _get = require('lodash/get'),
+  _pick = require('lodash/pick'),
   moment = require('moment'),
   /**
    *  Create a query string that works with brightcove api standards
@@ -19,13 +20,19 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     return `${encodeURIComponent(query)}${updatedAtQuery}`;
   },
   /**
-   * Return only the needed fields to the UI
+   * Return only the needed fields to the UI for videos
    *
    * @param {Array} results array of video objects
    * @returns {Array} an array of video objects with only needed fields
    */
-  transformVideoResults = results => (results || []).map(({name, images, id, updated_at}) => {
-    return {name, id, imageUrl: _get(images, 'thumbnail.src', ''), updated_at};
+  transformVideoResults = results => (results || []).map(({ name, images, id, updated_at, delivery_type }) => {
+    return {
+      name,
+      id,
+      imageUrl: _get(images, 'thumbnail.src', ''),
+      updated_at,
+      delivery_type
+    };
   }),
   /**
    * Get video object from brightcove by ID
@@ -53,6 +60,28 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     try {
       return brightcoveApi.request('GET', 'videos', {q: buildQuery(req.query), limit: 10})
         .then(({ body }) => transformVideoResults(body))
+        .then(results => res.send(results))
+        .catch(e => {
+          console.error(e);
+          res.status(500).send(e);
+        });
+    } catch (e) {
+      console.error(e);
+      res.status(500).send(e);
+    }
+  },
+  /**
+   * Returns an array of Brightcove players
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {Promise}
+   */
+  players = async (req, res) => {
+    try {
+      return brightcoveApi.request('GET', 'players', null, null, 'player_management')
+        .then(res => res.body.items)
+        .then(results => results.map(player => _pick(player, ['id', 'name'])))
         .then(results => res.send(results))
         .catch(e => {
           console.error(e);
@@ -134,7 +163,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
 
       if (status === 200 && ingestResponse.id) {
         const { status, statusText, video } = await getVideoObject(videoID);
-        
+
         if (video && video.id) {
           res.send({ video: transformVideoResults([video])[0], jobID: ingestResponse.id });
         } else {
@@ -228,7 +257,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   getVideoByID = async (req, res) => {
     try {
       const { status, statusText, video } = await getVideoObject(req.query.id);
-      
+
       if (video && video.id) {
         if (!req.query.full_object) {
           res.send(transformVideoResults([video])[0]);
@@ -255,6 +284,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     app.use('/brightcove/ingestStatus', getIngestStatus);
     app.use('/brightcove/update', update);
     app.use('/brightcove/get', getVideoByID);
+    app.use('/brightcove/players', players);
   };
 
 module.exports.inject = inject;

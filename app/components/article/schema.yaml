@@ -236,6 +236,7 @@ lead:
       - image
       - instagram-post
       - brightcove
+      - brightcove-live
       - youtube
       - html-embed
       - omny

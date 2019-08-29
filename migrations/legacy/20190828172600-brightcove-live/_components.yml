@@ -1,0 +1,11 @@
+_components:
+  brightcove-live:
+    instances:
+      new:
+        video: null
+        autoplayUnmuted: false
+        clickToPlay: false
+        showTitle: false
+        searchVideo: null
+        newVideo: null
+        updateVideo: null

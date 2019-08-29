@@ -1,6 +1,5 @@
-_version: 2.0
 _description: |
-  Brightcove video embed
+  Brightcove Live video embed
 
 video:
   _label: Video
@@ -9,17 +8,16 @@ video:
     validate:
       required: true
 
+player:
+  _label: Video Player
+  _has: brightcove-player
+
 searchVideo:
   _label: Search for video
   _has:
     input: brightcove-search
     webLabel: Search
-    live: false
-
-newVideo:
-  _label: Upload new video
-  _has:
-    input: brightcove-upload
+    live: true
 
 updateVideo:
   _label: Update video
@@ -43,16 +41,16 @@ showTitle:
 
 _groups:
   videoSettings:
-    _label: Brightcove Video
+    _label: Brightcove Live Video
     _placeholder:
-      text: Brightcove Video
+      text: Brightcove Live Video
       height: 30px;
-      ifEmpty: searchVideo AND newVideo AND video
+      ifEmpty: searchVideo AND video
     fields:
       - video (Update video)
+      - player (Update video)
       - showTitle (Update video)
       - autoplayUnmuted (Update video)
       - clickToPlay (Update video)
       - updateVideo (Update video)
       - searchVideo (Search for video)
-      - newVideo (Upload new video)
