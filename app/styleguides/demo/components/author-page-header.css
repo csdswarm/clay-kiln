@@ -23,7 +23,7 @@
     &__text-container {
         display: flex;
         flex: 1 0 auto;
-        padding-left: em(16);
+        padding-left: em(20);
         flex-direction: column;
         justify-content: center;
         @mixin medium-small-screen {
@@ -37,7 +37,7 @@
         @mixin author-page-header-font2;
     }
     &__social-container {
-        margin-top: em(20);
+        margin-top: em(14);
         display: block;
         @mixin author-page-header-font4;
         @media only screen and (min-width: 481px) and (max-width: 1023px) {
@@ -48,11 +48,12 @@
         display: none;
         @media only screen and (min-width: 481px) and (max-width: 1023px) {
             display: block;
+            margin-bottom: em(20);
         }
     }
     &__bio-text-container {
-        margin-top: em(22);
-        margin-bottom: em(30);
+        margin-top: em(14);
+        margin-bottom: em(38);
     }
     &__bio-text {
         @mixin author-page-header-font3;
