@@ -1,49 +1,58 @@
 {{#*inline "tempShare" }}
-  Follow Susie:
-  {{!-- TODO: This will have to be have the actual SHARE component --}}
-  <aside data-uri="{{ default _ref _self }}" class="component component--share">
-    <a target="_blank" href="{{ facebookUrl }}" class="share-link share-link--facebook" title="Share on Facebook"
-      aria-label="Share on Facebook"></a>
-    <a target="_blank" href="{{ twitterUrl }}" class="share-link share-link--twitter" title="Share on Twitter"
-      aria-label="Share on Twitter"></a>
-    <a href="{{ emailUrl }}" class="share-link share-link--email" title="Email" aria-label="Email"></a>
-    <button class="share-link share-link--copy-link" title="Copy link" aria-label="Copy link"></button>
-  </aside>
-  {{!-- end share component --}}
+Follow Susie:
+{{!-- TODO: This will have to be have the actual SHARE component --}}
+<aside data-uri="{{ default _ref _self }}" class="component component--share">
+  <a target="_blank" href="{{ facebookUrl }}" class="share-link share-link--facebook" title="Share on Facebook"
+    aria-label="Share on Facebook"></a>
+  <a target="_blank" href="{{ twitterUrl }}" class="share-link share-link--twitter" title="Share on Twitter"
+    aria-label="Share on Twitter"></a>
+  <a href="{{ emailUrl }}" class="share-link share-link--email" title="Email" aria-label="Email"></a>
+  <button class="share-link share-link--copy-link" title="Copy link" aria-label="Copy link"></button>
+</aside>
+{{!-- end share component --}}
 {{/inline}}
 
 <section class="component component--author-page-header author-page-header">
-  <div class="author-page-header__left-container">
-    <div class="author-page-header__author-info-container">
-      <div class="author-page-header__img-container">
-        {{!-- TODO: Ask about the the image component and how it will be used here possibly --}}
-        <img src="https://peterhurley.com/sites/default/files/styles/big/public/photos/2015/02/37/hallecpeterhurley.jpg"
-          alt="author" class="author-page-header__author-img">
-      </div>
-      <div class="author-page-header__text-container">
-        <div class="author-page-header__name">Susie Morales</div>
-        <div class="author-page-header__schedule">Mon-Fri: 9AM</div>
-        <div class="author-page-header__social-container">
-          {{> tempShare }} {{!-- TODO: replace with actual component --}}
-        </div>
-      </div>
+  <div class="author-page-header__author-info-container">
+    <div class="author-page-header__img-container">
+      {{!-- TODO: Ask about the the image component and how it will be used here possibly --}}
+      <img src="https://peterhurley.com/sites/default/files/styles/big/public/photos/2015/02/37/hallecpeterhurley.jpg"
+        alt="author" class="author-page-header__author-img">
     </div>
-    <div class="author-page-header__bio-text-container">
-      <div class="author-page-header__social-container--md-sm-screen">
+    <div class="author-page-header__text-container">
+      <div class="author-page-header__name">Susie Morales</div>
+      <div class="author-page-header__schedule">Mon-Fri: 9AM</div>
+      <div class="author-page-header__social-container">
         {{> tempShare }} {{!-- TODO: replace with actual component --}}
       </div>
-      <p class="author-page-header__bio-text">
-        Hi everyone! Where do I even begin? I grew up in Palm Bay, FL and got into radio just fresh out of high school (Go Bayside Bears!) as an intern in promotions. I got sucked into music! It can take you through a series of emotions, but it keeps your mind occupied, helps in healing and makes memories. Since my radio career has started, I have a memory and feeling for so many songs. You remember moments, places, people… and I really just fell in love with all of it. After graduating from Connecticut School of Broadcasting, I landed a production position in Melbourne, FL ,and was on air overnights too! From there on out I’ve worked in Jacksonville, FL doing weekends and nights, and then ended up in the city I have always dreamed of working in, The City Beautiful! I was a pain in the butt, I emailed my boss for over 8 years to work at MIX 105.1. IT FINALLY PAID OFF! After a few years part time, I was able to jump into the Midday position (listen from 9am-3pm)! I’m really into social media, and am also Public Service Affairs Director. I love being involved with any and all non-profit organizations and give back whenever I get a chance. Now, for some fun facts. I’m originally from Providence, Rhode Island, so I’m a New England Patriots fan.
-      </p>
-      <p class="author-page-header__bio-text">
-        I know, how awful! I love seafood and Mexican food, but nothing compares to some good Polish pierogis and stuffed cabbage, yes-I can make them! You can usually find me eating at new local joints, and I’m a sucker for Margaritas and Old Fashions. I love all of the theme parks Orlando has to offer, so chances are I’ll be spending my time checking out new attractions and riding all the rides! ‘Work hard, play harder’ is my motto. I’m an all-around animal lover, but am the mother of two adorable cats (Dartagnon and Maui) that act like dogs. I love crafting, and watching HGTV for home decorating ideas. And most of all, I try to spend as much time with my family as much as I possibly can, because no day is promised.
-      </p>
     </div>
   </div>
-  <div class="author-page-header__right-container">
-    {{!-- TODO: This will have to be replaced with advert component --}}
-    {{!-- NOTE: There is currently an ad in the more content section below this however, the design show it in this section but I believe this section is optional so logic will be needed --}}
-    <img src="https://via.placeholder.com/300x250?text=300x250+GOOGLE">
+  <div class="author-page-header__bio-text-container">
+    <div class="author-page-header__social-container--md-sm-screen">
+      {{> tempShare }} {{!-- TODO: replace with actual component --}}
+    </div>
+    <p class="author-page-header__bio-text">
+      Hi everyone! Where do I even begin? I grew up in Palm Bay, FL and got into radio just fresh out of high school (Go
+      Bayside Bears!) as an intern in promotions. I got sucked into music! It can take you through a series of emotions,
+      but it keeps your mind occupied, helps in healing and makes memories. Since my radio career has started, I have a
+      memory and feeling for so many songs. You remember moments, places, people… and I really just fell in love with
+      all of it. After graduating from Connecticut School of Broadcasting, I landed a production position in Melbourne,
+      FL ,and was on air overnights too! From there on out I’ve worked in Jacksonville, FL doing weekends and nights,
+      and then ended up in the city I have always dreamed of working in, The City Beautiful! I was a pain in the butt, I
+      emailed my boss for over 8 years to work at MIX 105.1. IT FINALLY PAID OFF! After a few years part time, I was
+      able to jump into the Midday position (listen from 9am-3pm)! I’m really into social media, and am also Public
+      Service Affairs Director. I love being involved with any and all non-profit organizations and give back whenever I
+      get a chance. Now, for some fun facts. I’m originally from Providence, Rhode Island, so I’m a New England Patriots
+      fan.
+    </p>
+    <p class="author-page-header__bio-text">
+      I know, how awful! I love seafood and Mexican food, but nothing compares to some good Polish pierogis and stuffed
+      cabbage, yes-I can make them! You can usually find me eating at new local joints, and I’m a sucker for Margaritas
+      and Old Fashions. I love all of the theme parks Orlando has to offer, so chances are I’ll be spending my time
+      checking out new attractions and riding all the rides! ‘Work hard, play harder’ is my motto. I’m an all-around
+      animal lover, but am the mother of two adorable cats (Dartagnon and Maui) that act like dogs. I love crafting, and
+      watching HGTV for home decorating ideas. And most of all, I try to spend as much time with my family as much as I
+      possibly can, because no day is promised.
+    </p>
   </div>
-  
 </section>

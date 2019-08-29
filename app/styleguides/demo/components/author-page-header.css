@@ -3,23 +3,9 @@
 @import "_global/colors";
 
 .author-page-header {
-    display: flex;
     margin-top: em(49);
     @mixin medium-screen {
         flex-direction: column;
-    }
-    &__left-container {
-        flex: 1 1 auto;
-        padding-right: em(16);
-        @mixin medium-screen {
-            padding-right: 0;
-        }
-    }
-    &__right-container {
-        flex: 0 0 em(300);
-        @mixin medium-screen {
-            display: none;
-        }
     }
     &__author-info-container {
         display: flex;
