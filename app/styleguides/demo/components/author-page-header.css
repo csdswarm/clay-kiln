@@ -1,0 +1,62 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.author-page-header {
+    display: flex;
+    @mixin medium-screen {
+        flex-direction: column;
+    }
+    &__left-container {
+        flex: 1 1 auto;
+    }
+    &__right-container {
+        flex: 0 0 em(300);
+        @mixin medium-screen {
+            display: none;
+        }
+    }
+    &__author-info-container {
+        display: flex;
+        @mixin medium-small-screen {
+            flex-direction: column;
+        }
+    }
+    &__img-container {
+        flex: 0 0 33%;
+    }
+    &__author-img {
+        width: 100%;
+        border: em(1) solid $alto;
+    }
+    &__text-container {
+        display: flex;
+        flex: 1 0 auto;
+        padding-left: em(16);
+        flex-direction: column;
+        justify-content: center;
+        @mixin medium-small-screen {
+            padding-left: em(0);
+        }
+    }
+    &__name {
+        @mixin author-page-header-font1;
+    }
+    &__schedule {
+        @mixin author-page-header-font2;
+    }
+    &__social-container {
+        margin-top: em(20);
+        @mixin author-page-header-font4;
+    }
+    &__bio-text-container {
+        margin-top: em(22);
+        margin-bottom: em(30);
+    }
+    &__bio-text {
+        @mixin author-page-header-font3;
+        margin-bottom: em(14)
+    }
+}
+
+
