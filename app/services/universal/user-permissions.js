@@ -104,8 +104,7 @@ const pluralize = require('pluralize'),
             target: targetToCheck,
             location: locationToCheck
           } = getCondition(action, target, location);
-console.log(actionToCheck, targetToCheck, locationToCheck)
-console.log(_permissions[targetToCheck][actionToCheck].station[locationToCheck])
+
           value = Boolean(_permissions[targetToCheck] &&
             _permissions[targetToCheck][actionToCheck] &&
             _permissions[targetToCheck][actionToCheck].station[locationToCheck]);
