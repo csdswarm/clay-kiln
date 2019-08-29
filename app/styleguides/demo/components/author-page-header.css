@@ -4,11 +4,16 @@
 
 .author-page-header {
     display: flex;
+    margin-top: em(49);
     @mixin medium-screen {
         flex-direction: column;
     }
     &__left-container {
         flex: 1 1 auto;
+        padding-right: em(16);
+        @mixin medium-screen {
+            padding-right: 0;
+        }
     }
     &__right-container {
         flex: 0 0 em(300);
@@ -47,7 +52,17 @@
     }
     &__social-container {
         margin-top: em(20);
+        display: block;
         @mixin author-page-header-font4;
+        @media only screen and (min-width: 481px) and (max-width: 1023px) {
+            display: none;
+        }
+    }
+    &__social-container--md-sm-screen {
+        display: none;
+        @media only screen and (min-width: 481px) and (max-width: 1023px) {
+            display: block;
+        }
     }
     &__bio-text-container {
         margin-top: em(22);

@@ -1,3 +1,17 @@
+{{#*inline "tempShare" }}
+  Follow Susie:
+  {{!-- TODO: This will have to be have the actual SHARE component --}}
+  <aside data-uri="{{ default _ref _self }}" class="component component--share">
+    <a target="_blank" href="{{ facebookUrl }}" class="share-link share-link--facebook" title="Share on Facebook"
+      aria-label="Share on Facebook"></a>
+    <a target="_blank" href="{{ twitterUrl }}" class="share-link share-link--twitter" title="Share on Twitter"
+      aria-label="Share on Twitter"></a>
+    <a href="{{ emailUrl }}" class="share-link share-link--email" title="Email" aria-label="Email"></a>
+    <button class="share-link share-link--copy-link" title="Copy link" aria-label="Copy link"></button>
+  </aside>
+  {{!-- end share component --}}
+{{/inline}}
+
 <section class="component component--author-page-header author-page-header">
   <div class="author-page-header__left-container">
     <div class="author-page-header__author-info-container">
@@ -10,21 +24,14 @@
         <div class="author-page-header__name">Susie Morales</div>
         <div class="author-page-header__schedule">Mon-Fri: 9AM</div>
         <div class="author-page-header__social-container">
-          Follow Susie:
-          {{!-- TODO: This will have to be have the actual SHARE component --}}
-          <aside data-uri="{{ default _ref _self }}" class="component component--share">
-            <a target="_blank" href="{{ facebookUrl }}" class="share-link share-link--facebook" title="Share on Facebook"
-              aria-label="Share on Facebook"></a>
-            <a target="_blank" href="{{ twitterUrl }}" class="share-link share-link--twitter" title="Share on Twitter"
-              aria-label="Share on Twitter"></a>
-            <a href="{{ emailUrl }}" class="share-link share-link--email" title="Email" aria-label="Email"></a>
-            <button class="share-link share-link--copy-link" title="Copy link" aria-label="Copy link"></button>
-          </aside>
-          {{!-- end share component --}}
+          {{> tempShare }} {{!-- TODO: replace with actual component --}}
         </div>
       </div>
     </div>
     <div class="author-page-header__bio-text-container">
+      <div class="author-page-header__social-container--md-sm-screen">
+        {{> tempShare }} {{!-- TODO: replace with actual component --}}
+      </div>
       <p class="author-page-header__bio-text">
         Hi everyone! Where do I even begin? I grew up in Palm Bay, FL and got into radio just fresh out of high school (Go Bayside Bears!) as an intern in promotions. I got sucked into music! It can take you through a series of emotions, but it keeps your mind occupied, helps in healing and makes memories. Since my radio career has started, I have a memory and feeling for so many songs. You remember moments, places, people… and I really just fell in love with all of it. After graduating from Connecticut School of Broadcasting, I landed a production position in Melbourne, FL ,and was on air overnights too! From there on out I’ve worked in Jacksonville, FL doing weekends and nights, and then ended up in the city I have always dreamed of working in, The City Beautiful! I was a pain in the butt, I emailed my boss for over 8 years to work at MIX 105.1. IT FINALLY PAID OFF! After a few years part time, I was able to jump into the Midday position (listen from 9am-3pm)! I’m really into social media, and am also Public Service Affairs Director. I love being involved with any and all non-profit organizations and give back whenever I get a chance. Now, for some fun facts. I’m originally from Providence, Rhode Island, so I’m a New England Patriots fan.
       </p>
