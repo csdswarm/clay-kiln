@@ -58,7 +58,7 @@ module.exports.save = (ref, data, locals) => {
  * @param {string} ref
  * @param {object} data
  * @param {object} locals
- * @returns {Promise}
+ * @returns {Promise<object> | object}
  */
 module.exports.render = function (ref, data, locals) {
   // take 1 more article than needed to know if there are more

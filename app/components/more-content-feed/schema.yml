@@ -1,8 +1,6 @@
 _version: 6.0
 _description: |
-  A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
-  The articles will be filtered by the section front of the URL, (ex: /sports/football with tags "NFL" and
-  "National News" will only show sports stories that have either of those tags).
+  Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
 contentType:
   _label: Content type
@@ -21,6 +19,10 @@ pageLength:
     input: text
     type: number
 
+autoPopulatedContentHeader:
+  _label: Auto-Populated Content
+  _has: static
+
 populateFrom:
   _label: Populate content from?
   _has:
@@ -36,12 +38,16 @@ populateFrom:
         value: section-front
       - tag
       -
-        name: Section Front and Tag
+        name: Contains Both Section Front and Tag
         value: section-front-and-tag
       -
-        name: Section Front or Tag
+        name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
+
+curatedContentHeader:
+  _label: Curated Content
+  _has: static
 
 locationOfContentFeed:
   _label: Content Feed is on Homepage
@@ -268,15 +274,17 @@ _groups:
     _label: Content Feed
     fields:
       - pageLength
+      - autoPopulatedContentHeader
       - populateFrom
       - sectionFrontManual
       - secondarySectionFrontManual
       - tagManual
       - tagInfo
-      - items
       - contentType
       - filterTags
       - filterSecondarySectionFronts
+      - curatedContentHeader
+      - items
     _placeholder:
       height: 100px
       ifEmpty: populateFrom
