@@ -3,6 +3,7 @@
 @import '_global/grid';
 @import '_global/spa';
 @import "_global/colors";
+@import "_global/alert-banner";
 
 .layout.layout--one-column-full-width {
   height: 100vh;

@@ -222,3 +222,4 @@ module.exports.formatSearchResult = universalQuery.formatSearchResult;
 module.exports.moreLikeThis = universalQuery.moreLikeThis;
 module.exports.moreLikeThis = universalQuery.moreLikeThis;
 module.exports.newNestedQuery = universalQuery.newNestedQuery;
+module.exports.addSearch = universalQuery.addSearch;
