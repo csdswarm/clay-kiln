@@ -78,7 +78,7 @@ describe('permissions', () => {
   });
   describe('actions as objects', () => {
     it('overides the object string', () => {
-      assert(user.can({ publish: 'gallery' }).an('ignored-item').for('ABCD').value)
+      assert(user.can({ publish: 'gallery' }).an('ignored-item').for('ABCD').value);
     });
   });
 });
