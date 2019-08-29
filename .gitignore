@@ -86,3 +86,5 @@ radio-web-player
 app/.config/configstore/*
 
 .snapshot
+
+nginx/certs/
