@@ -38,7 +38,7 @@ const _endsWith = require('lodash/endsWith'),
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
       addPermissions(user);
 
-      if (user.may(permission, component, station.callsign)) {
+      if (user.may(permission, component, station.callsign).value) {
         fieldInput.show();
       }
     });
