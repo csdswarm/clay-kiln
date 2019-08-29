@@ -27,7 +27,7 @@ function isRobot(user) {
  */
 function checkPermission(hasPermission) {
   return async (req, res, next) => {
-    if (isRobot(res.locals.user) || await hasPermission(req.uri, req.body, res.locals || {})) {
+    if (isRobot(res.locals.user) || await hasPermission(req.uri, req, res.locals || {})) {
       next();
     } else {
       res.status(403).send({ error: 'Permission Denied' });
