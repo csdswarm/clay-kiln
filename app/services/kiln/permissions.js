@@ -94,7 +94,7 @@ const _endsWith = require('lodash/endsWith'),
 
     subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
 
-      const { value, message } = locals.user.can('publish').an(schema.schemaName).at(locals.station.callsign);
+      const { value, message } = locals.user.can('publish').a(schema.schemaName);
 
       if (!value) {
         const name = _camelCase(message);
@@ -115,7 +115,7 @@ const _endsWith = require('lodash/endsWith'),
 
 // kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
 // this to the user object, so we are accessing it directly off of the window
-addPermissions(window.kiln.locals.user);
+addPermissions(window.kiln.locals);
 
 module.exports.secureField = secureField;
 module.exports.secureSchema = secureSchema;

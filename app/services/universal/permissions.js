@@ -28,12 +28,11 @@ function getComponentsWithPermissions() {
       schema = YAML.load(amphoraFiles.getSchemaPath(path));
 
     if (schema._permission) { // the entire component has permissions
-      _set(obj, component, schema._permission);
+      _set(obj, `${component}.component`, schema._permission);
     } else { // a field on the component has permissions
-
       Object.keys(schema).forEach(field => {
         if (schema[field]._permission) {
-          _set(obj, `${component}.${field}`, schema[field]._permission);
+          _set(obj, `${component}.field.${field}`, schema[field]._permission);
         }
       });
     }
@@ -48,14 +47,15 @@ function getComponentsWithPermissions() {
  * @return {Router}
  */
 function userPermissionRouter() {
-  const ignorePaths = ['/_pages/'], // creating a new page dies when the user object is modified
-    userPermissionRouter = express.Router();
+  const userPermissionRouter = express.Router();
 
   userPermissionRouter.all('/*', async (req, res, next) => {
     try {
-      if (!ignorePaths.includes(req.path) && res.locals.user) {
-        await loadPermissions(req.session, res.locals.user);
-        addPermissions(res.locals.user);
+      if (res.locals.user) {
+        if (res.locals.user.provider === 'cognito') {
+          await loadPermissions(req.session, res.locals);
+        }
+        addPermissions(res.locals);
       }
     } catch (e) {
       log('error', 'Error adding locals.user permissions', e);
@@ -81,26 +81,41 @@ async function getComponentData(uri, key) {
 }
 
 /**
- * check a component for field level permissions
+ * check a component for field level permissions and modify the request with old data if they do not have permissions
  *
  * @param {string} uri
  * @param {string} component
- * @param {object} data
+ * @param {object} req
  * @param {object} locals
- *
- * @return {boolean|null}
  */
-async function checkFieldPermission(uri, component, data, locals) {
-  // get a copy of the unmodified data
-  const instance = await getComponentData(uri);
+async function checkComponentPermission(uri, component, req, locals) {
+  if (componentsToCheck[component].component) { // entire component
+    const action = componentsToCheck[component].component;
 
-  for (const field of Object.keys(componentsToCheck[component])) {
-    // compare the fields or if no previous data
-    if (JSON.stringify(instance[field]) !== JSON.stringify(data[field])) {
+    if (!locals.user.can(action).a(component).value) {
+      // no permissions to modify this component, so reset the value to what it had been
+      req.body = await getComponentData(uri);
+    }
+  } else { // specific fields
+    for (const field of Object.keys(componentsToCheck[component].field)) {
       // add condition for the specific fields
-      const action = componentsToCheck[component][field];
+      const action = componentsToCheck[component].field[field];
 
-      return locals.user.can(action).a(field).at(locals.station.callsign).value;
+      if (!locals.user.can(action).a(field).value) {
+        let data;
+
+        // only get the component data once inside the loop
+        if (!data) {
+          data = await getComponentData(uri);
+        }
+
+        // if the field exists already override it, else remove it so it matches what it had been
+        if (data[field]) {
+          req.body[field] = data[field];
+        } else {
+          delete req.body[field];
+        }
+      }
     }
   }
 }
@@ -109,43 +124,34 @@ async function checkFieldPermission(uri, component, data, locals) {
  * determine if the current user has permissions to the specific item
  *
  * @param {string} uri
- * @param {object} data
+ * @param {object} req
  * @param {object} locals
  * @return {boolean}
  */
-async function checkUserPermissions(uri, data, locals) {
-  if (isComponent(uri)) {
-    const component = getComponentName(uri);
+async function checkUserPermissions(uri, req, locals) {
 
-    if (componentsToCheck[component]) {
-      const action = componentsToCheck[component]._permission;
+  try {
+    if (isComponent(uri)) {
+      const component = getComponentName(uri);
 
-      if (action) { // entire component
-        return locals.user.can(action).a(component).at(locals.station.callsign).value;
-      } else { // specific field in a component
-        const fieldPermission = await checkFieldPermission(uri, component, data, locals);
-
-        if (fieldPermission !== null) {
-          return fieldPermission;
-        }
+      if (componentsToCheck[component]) {
+        await checkComponentPermission(uri, component, req, locals);
       }
     }
-  }
 
-  if (isPage(uri) && isPublished(uri)) {
-    try {
+    if (isPage(uri) && isPublished(uri)) {
       const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
 
-      return locals.user.can('publish').a(pageType).at(locals.station.callsign).value;
-    } catch (e) {
-      log('error', e);
+      return locals.user.can('publish').a(pageType).value;
     }
+
+    // if no permissions are required they can do it
+    return true;
+  } catch (e) {
+    log('error', 'Error checking user permissions', e);
 
     return false;
   }
-
-  // if no permissions are required they can do it
-  return true;
 }
 
 module.exports.checkUserPermissions = checkUserPermissions;
