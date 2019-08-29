@@ -1,7 +1,6 @@
 'use strict';
 
-const _endsWith = require('lodash/endsWith'),
-  addPermissions = require('../universal/user-permissions'),
+const addPermissions = require('../universal/user-permissions'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
   /**
@@ -36,12 +35,10 @@ const _endsWith = require('lodash/endsWith'),
     fieldInput.hide();
 
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
-      addPermissions(user);
-
       if (user.may(permission, component, station.callsign).value) {
         fieldInput.show();
       }
-    });
+    }, true);
   },
   /**
    * Map through schema fields, find fields with permissions, and secure them
@@ -76,15 +73,17 @@ const _endsWith = require('lodash/endsWith'),
     window.kiln = window.kiln || {};
     window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
 
-    Object.keys(window.modules)
-      .filter(key => _endsWith(key, '.model'))
-      .forEach((key) => {
-        const component = key.replace('.model', ''),
-          kilnjs = getKilnJs(component);
+    window.kiln.local.components
+      .forEach(component => {
+        const kilnjs = getKilnJs(component);
 
         window.kiln.componentKilnjs[component] = secureSchema(kilnjs);
       });
   };
+
+// kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
+// this to the user object, so we are accessing it directly off of the window
+addPermissions(window.kiln.locals);
 
 module.exports.secureField = secureField;
 module.exports.secureSchema = secureSchema;
