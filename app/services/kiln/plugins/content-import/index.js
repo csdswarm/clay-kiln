@@ -11,8 +11,8 @@ module.exports = () => {
   window.kiln.navButtons = window.kiln.navButtons || {};
   window.kiln.navContent = window.kiln.navContent || {};
 
-  addPermissions(window.kiln.locals.user);
-  if (window.kiln.locals.user.can('import').using('import-content').at(window.kiln.locals.station.callsign).value) {
+  addPermissions(window.kiln.locals);
+  if (window.kiln.locals.user.can('import').using('import-content').value) {
     window.kiln.navButtons['content-import'] = contentImport;
     window.kiln.navContent['content-import'] = main;
   }
