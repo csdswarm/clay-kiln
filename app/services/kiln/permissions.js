@@ -25,10 +25,12 @@ const _endsWith = require('lodash/endsWith'),
   /**
    * Default hide a field and watch for load success to check user permissions
    *
+   * Permission can be a string, or an object with an action and target
+   *
    * Use to secure a field within a kiln.js file
    *
    * @param {KilnInput} fieldInput
-   * @param {string} permission
+   * @param {string|object} permission
    */
   secureField = (fieldInput, permission) => {
     // Should actually be disabled/enabled instead of hide/show
@@ -37,7 +39,7 @@ const _endsWith = require('lodash/endsWith'),
     fieldInput.subscribe(PRELOAD_SUCCESS, (data) => {
       const {user, locals: {station}, url: {component}} = data;
 
-      if (user.may(permission, component, station.callsign)) {
+      if (user.may(permission, component, station.callsign).value) {
         fieldInput.show();
       }
     }, true);

@@ -19,5 +19,11 @@ const SECOND = 1000,
 
 
 module.exports = {
+  SECOND,
+  MINUTE,
+  HOUR,
+  DAY,
+  WEEK,
+  YEAR,
   time
 };

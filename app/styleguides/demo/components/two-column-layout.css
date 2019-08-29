@@ -4,6 +4,7 @@
 @import '_global/grid';
 @import '_global/spa';
 @import "_global/colors";
+@import "_global/alert-banner";
 
 .layout--two-column {
   margin: 0;
@@ -36,6 +37,10 @@
   flex-direction: row;
   flex-wrap: wrap;
   background: $white;
+}
+
+.layout--two-column .layout__content .content__banner {
+  flex: 100%;
 }
 
 .layout--two-column .layout__content .content__main {

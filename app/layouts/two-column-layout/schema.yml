@@ -48,6 +48,12 @@ sectionHeader:
   _componentList:
     include:
       - subheader
+
+banner:
+  _componentList:
+    include:
+      - alert-banner
+
 main:
   _componentList:
     page: true
@@ -82,4 +88,3 @@ static:
     include:
       - web-player
       - chartbeat
-
