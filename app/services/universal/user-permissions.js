@@ -104,7 +104,8 @@ const pluralize = require('pluralize'),
             target: targetToCheck,
             location: locationToCheck
           } = getCondition(action, target, location);
-
+console.log(actionToCheck, targetToCheck, locationToCheck)
+console.log(_permissions[targetToCheck][actionToCheck].station[locationToCheck])
           value = Boolean(_permissions[targetToCheck] &&
             _permissions[targetToCheck][actionToCheck] &&
             _permissions[targetToCheck][actionToCheck].station[locationToCheck]);
@@ -270,14 +271,16 @@ const pluralize = require('pluralize'),
      * @param {object} locals
      */
     return ({ user, permissions, station }) => {
-      _permissions = permissions || {};
+      if (user && !user.can) {
+        _permissions = permissions || {};
 
-      // helper to not have to pass station
-      if (station && station.callsign) {
-        _DEFAULT.location = station.callsign;
+        // helper to not have to pass station
+        if (station && station.callsign) {
+          _DEFAULT.location = station.callsign;
+        }
+
+        addMethods(user);
       }
-
-      addMethods(user);
     };
   };
 
