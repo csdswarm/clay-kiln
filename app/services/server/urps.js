@@ -56,7 +56,7 @@ async function getAllPermissions(jwtToken) {
         return { ...permissions, [permType]: { ...newPermission } };
       }, {});
   } catch (error) {
-    // log('error', 'There was a problem trying to get URPS permissions for the user', { error, jwtToken });
+    log('error', 'There was a problem trying to get URPS permissions for the user', { error, jwtToken });
   }
 }
 
