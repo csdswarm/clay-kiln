@@ -1,7 +1,6 @@
 'use strict';
 
-const _endsWith = require('lodash/endsWith'),
-  addPermissions = require('../universal/user-permissions'),
+const addPermissions = require('../universal/user-permissions'),
   _camelCase = require('lodash/camelCase'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -75,11 +74,9 @@ const _endsWith = require('lodash/endsWith'),
     window.kiln = window.kiln || {};
     window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
 
-    Object.keys(window.modules)
-      .filter(key => _endsWith(key, '.model'))
-      .forEach((key) => {
-        const component = key.replace('.model', ''),
-          kilnjs = getKilnJs(component);
+    window.kiln.locals.components
+      .forEach(component => {
+        const kilnjs = getKilnJs(component);
 
         window.kiln.componentKilnjs[component] = secureSchema(kilnjs);
       });

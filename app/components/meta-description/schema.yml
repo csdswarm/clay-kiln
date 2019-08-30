@@ -3,6 +3,9 @@ _description: |
 
   This component lives in the head of the page, and is usually edited via the article component.
 
+_permission:
+  update: section-fronts_meta-tags
+
 description:
   _label: Description
   _display: settings
