@@ -73,7 +73,7 @@ const addPermissions = require('../universal/permissions'),
     window.kiln = window.kiln || {};
     window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
 
-    window.kiln.local.components
+    window.kiln.locals.components
       .forEach(component => {
         const kilnjs = getKilnJs(component);
 
