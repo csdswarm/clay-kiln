@@ -123,9 +123,9 @@ describe('urps tests', () => {
         permissions: { admin: { any: { environment: { 'dev-clay.radio.com': 1 } } } }
       };
 
-      await urps.loadPermissions(req.session, locals.user);
+      await urps.loadPermissions(req.session, locals);
 
-      expect(locals.user.permissions).to.eql(req.session.auth.permissions);
+      expect(locals.permissions).to.eql(req.session.auth.permissions);
     });
 
     it('gets permissions from urps if not already cached in session', async () => {
@@ -134,9 +134,9 @@ describe('urps tests', () => {
 
       req.session.auth = { ...authBase };
 
-      await urps.loadPermissions(req.session, locals.user);
+      await urps.loadPermissions(req.session, locals);
 
-      expect(locals.user.permissions).to.eql({ 'author-page': { any: { station: { 'NATL-RC': 1 } } } });
+      expect(locals.permissions).to.eql({ 'author-page': { any: { station: { 'NATL-RC': 1 } } } });
     });
 
     it('refreshes permissions from urps if it\'s been too long since the last check', async () => {
@@ -146,9 +146,9 @@ describe('urps tests', () => {
 
       req.session.auth = { ...authBase, lastUpdated: longAgo };
 
-      await urps.loadPermissions(req.session, locals.user);
+      await urps.loadPermissions(req.session, locals);
 
-      expect(locals.user.permissions).to.eql({ tags: { create: { station: { KROQFM: 1 } } } });
+      expect(locals.permissions).to.eql({ tags: { create: { station: { KROQFM: 1 } } } });
 
     });
 
@@ -163,7 +163,7 @@ describe('urps tests', () => {
         permissions: { 'doesn\'t': { really: { matter: { here: 1 } } } }
       };
 
-      await urps.loadPermissions(req.session, locals.user);
+      await urps.loadPermissions(req.session, locals);
 
       assert(refreshAuthToken.calledWith(req.session.auth));
 
@@ -177,9 +177,9 @@ describe('urps tests', () => {
         ],
         urps = requireUrpsLoadPermsStandard({ cacheResults, restGetResults });
 
-      await urps.loadPermissions(req.session, locals.user);
+      await urps.loadPermissions(req.session, locals);
 
-      expect(locals.user.permissions).to.eql({
+      expect(locals.permissions).to.eql({
         tags: {
           create: { station: { 'NATL-RC': 1 } },
           update: { station: { 'NATL-RC': 1 } }
@@ -199,7 +199,7 @@ describe('urps tests', () => {
 
       locals.user.username = 'jschmoe@idaho.gov';
 
-      await urps.loadPermissions(req.session, locals.user);
+      await urps.loadPermissions(req.session, locals);
 
       // note: also called with error, but specific error stack too difficult to
       // replicate here, so just checking the first two params

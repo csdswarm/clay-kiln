@@ -63,17 +63,17 @@ async function getAllPermissions(jwtToken) {
 /**
  * Assigns permissions to the user object
  * @param {Object} session user session object
- * @param {Object} user locals.user
+ * @param {Object} locals locals
  * @returns {Promise<void>}
  */
-async function loadPermissions(session, user) {
+async function loadPermissions(session, locals) {
   try {
     const currentTime = Date.now(),
       loginData = { ...session.auth };
 
     if (!loginData.token) {
-      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${user.username}`) || '{}'));
-      cache.del(`cognito-auth--${user.username}`);
+      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${locals.user.username}`) || '{}'));
+      cache.del(`cognito-auth--${locals.user.username}`);
     }
 
     let { expires, permissions, lastUpdated } = loginData;
@@ -92,10 +92,10 @@ async function loadPermissions(session, user) {
     }
 
     session.auth = { ...loginData, permissions, lastUpdated };
-    user.permissions = session.auth.permissions;
+    locals.permissions = session.auth.permissions;
 
   } catch (error) {
-    log('error', `There was an error attempting to load user permissions for ${user.username}.`, error);
+    log('error', `There was an error attempting to load user permissions for ${locals.user.username}.`, error);
   }
 }
 
