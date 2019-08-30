@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports.render = (ref, data, locals) => {
+module.exports.render = (ref, data) => {
   return data;
 };
