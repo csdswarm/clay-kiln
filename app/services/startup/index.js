@@ -20,6 +20,8 @@ const pkg = require('../../package.json'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
   eventBusSubscribers = require('./event-bus-subscribers'),
+  addRdcRedisSession = require('./add-rdc-redis-session'),
+  handleClearLoadedIds = require('./handle-clear-loaded-ids'),
   user = require('./user'),
   radium = require('./radium'),
   cookies = require('./cookies');
@@ -75,6 +77,10 @@ function setupApp(app) {
 
   app.use(handleRedirects);
 
+  addRdcRedisSession(app);
+
+  app.use(handleClearLoadedIds);
+
   app.use(user);
 
   app.use(locals);
@@ -98,6 +104,7 @@ function setupApp(app) {
   return amphoraSearch()
     .then(searchPlugin => {
       log('info', `Using ElasticSearch at ${process.env.ELASTIC_HOST}`);
+
       return initCore(app, searchPlugin, sessionStore, routes);
     });
 }

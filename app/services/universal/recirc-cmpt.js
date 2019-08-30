@@ -1,6 +1,8 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
+  { getComponentName } = require('clayutils'),
+  _get = require('lodash/get'),
   _set = require('lodash/set'),
   _head = require('lodash/head');
 
@@ -30,16 +32,24 @@ function throwOnEmptyResult(url) {
  * @param  {object} data
  * @param  {object} locals
  * @param  {array} fields
+ * @param  {object} searchOpts
  * @return {function}
  */
-function getArticleData(ref, data, locals, fields) {
+// see the comment above getArticleDataAndValidate for an explanation on
+//   disabling the eslint rule
+// eslint-disable-next-line max-params
+function getArticleData(ref, data, locals, fields, searchOpts) {
   var query = queryService.onePublishedArticleByUrl(data.url, fields, locals);
 
-  return queryService.searchByQuery(query)
+  return queryService.searchByQuery(query, locals, searchOpts)
     .then( result => _head(result) );
 }
 
-module.exports.getArticleDataAndValidate = function (ref, data, locals, fields) {
+// I don't see a good way to refactor this to require fewer parameters.  We
+//   could stuff these into an object, but that just gets around the problem
+//   rather than solving it.
+// eslint-disable-next-line max-params
+module.exports.getArticleDataAndValidate = function (ref, data, locals, fields, searchOpts) {
   // if url isn't provided, clear data
   if (!data.url) {
     return Promise.resolve({});
@@ -54,9 +64,22 @@ module.exports.getArticleDataAndValidate = function (ref, data, locals, fields) 
   // to `http` because that is what is stored in Elastic.
   data.url = data.url.replace('https', 'http');
 
-  return getArticleData(ref, data, locals, fields)
+  return getArticleData(ref, data, locals, fields, searchOpts)
     .then( throwOnEmptyResult(data.url) )
     .then( data => _set(data, 'urlIsValid', true) )
+    .then( data => {
+      data.leadComponent = null;
+
+      const leadRef = _get(data.lead, '[0]._ref');
+
+      if (leadRef) {
+        try {
+          data.leadComponent = getComponentName(leadRef);
+        } catch (e) {}
+      }
+
+      return data;
+    })
     .catch( err => {
       queryService.logCatch(err, ref);
 

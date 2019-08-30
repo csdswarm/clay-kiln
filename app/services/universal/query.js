@@ -5,11 +5,24 @@ const _ = require('lodash'),
   protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
- * @param {object} result
- * @returns {Array}
+ * Returns a function which formats the search results based off the search
+ *   options.  Specifically if the option 'includeIdInResult' is truthy, then
+ *   each hit's '_id' is assigned to its '_source' object.
+ *
+ * @param {object} [searchOpts]
+ * @returns {function}
  */
-function formatSearchResult(result) {
-  return _.map(result.hits.hits, '_source');
+function getFormatSearchResult(searchOpts = {}) {
+  return result => {
+    if (!searchOpts.includeIdInResult) {
+      return _.map(result.hits.hits, '_source');
+    }
+
+    return result.hits.hits.map(hit => {
+      hit._source._id = hit._id;
+      return hit._source;
+    });
+  };
 }
 
 /**
@@ -384,6 +397,42 @@ function newNestedQuery(path) {
 }
 
 /**
+ * This method exists because the only difference between the client and server
+ *   'searchByQuery' calls is the searchByQueryWithRawResult, which those now
+ *   pass in.
+ *
+ * @param  {Object} query
+ * @param  {Object} locals
+ * @param  {Object} opts - see server/query.js for opts description
+ * @param  {function} searchByQueryWithRawResult - a reference to the function
+ *   found in either client or server query.js
+ * @return {Promise}
+ */
+function searchByQuery(query, locals, opts, searchByQueryWithRawResult) {
+  const formatSearchResult = getFormatSearchResult(opts);
+
+  return searchByQueryWithRawResult(query, locals, opts)
+    .then(rawResult => {
+      let formattedResult = formatSearchResult(rawResult);
+
+      formattedResult = formatProtocol(formattedResult);
+
+      if (!opts.transformResult) {
+        return formattedResult;
+      }
+
+      return opts.transformResult(formattedResult, rawResult);
+    })
+    .catch(originalErr => {
+      const err = originalErr instanceof Error
+        ? originalErr
+        : new Error(originalErr);
+
+      return Promise.reject(err);
+    });
+}
+
+/**
  * adds a query_string search on the fields
  *
  * @param {Object} query
@@ -420,8 +469,9 @@ module.exports.onlyWithTheseFields = onlyWithTheseFields;
 module.exports.onlyWithinThisSite = onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = formatAggregationResults;
-module.exports.formatSearchResult = formatSearchResult;
+module.exports.getFormatSearchResult = getFormatSearchResult;
 module.exports.formatProtocol = formatProtocol;
 module.exports.moreLikeThis = moreLikeThis;
 module.exports.newNestedQuery = newNestedQuery;
+module.exports.searchByQuery = searchByQuery;
 module.exports.addSearch = addSearch;
