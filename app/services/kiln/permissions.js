@@ -1,6 +1,6 @@
 'use strict';
 
-const addPermissions = require('../universal/user-permissions'),
+const addPermissions = require('../universal/permissions'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
   /**
