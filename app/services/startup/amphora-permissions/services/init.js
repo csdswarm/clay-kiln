@@ -13,9 +13,9 @@ const routes = require('./routes'),
  * @returns {Function}
  */
 function init(hasPermissions, userRouter) {
-  return (router) => {
+  return (router, db) => {
     try {
-      return routes(router, hasPermissions, userRouter);
+      return routes(router, hasPermissions, userRouter, db);
     } catch (e) {
       log('error', e);
     }

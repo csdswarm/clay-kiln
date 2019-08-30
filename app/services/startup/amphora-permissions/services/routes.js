@@ -5,8 +5,9 @@ const appRoot = require('app-root-path'),
   files = require('amphora-fs'),
   path = require('path'),
   bodyParser = require('body-parser'),
+  { getComponentName } = require('clayutils'),
+  { wrapInTryCatch } = require('../../middleware-utils'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
-
 
 /**
  *  determines if the user is not an actual user
@@ -36,12 +37,36 @@ function checkPermission(hasPermission) {
 }
 
 /**
+ * returns middleware that ensures the user has permissions to unpublish
+ *   the requested page
+ * @param {object} db
+ * @returns {function}
+ */
+function makeCheckUnpublishPermission(db) {
+  return wrapInTryCatch(async (req, res, next) => {
+    const pageUri = await db.get(req.uri),
+      pageData = await db.get(pageUri),
+      pageType = getComponentName(pageData.main[0]),
+      { station, user } = res.locals,
+      canUnpublishPage = user.can('unpublish').a(pageType).at(station.callsign).value;
+
+    if (canUnpublishPage) {
+      next();
+      return;
+    }
+
+    res.status(403).send({ error: 'Permission Denied' });
+  });
+}
+
+/**
  * Set up permission checks for all components.
  * @param {Object} router
  * @param {Function} hasPermission - must return boolean
  * @param {Router} userRouter - router to apply to the permissionRouter for setting permissions based on locals.user
+ * @param {Object} db - amphora's internal database connector
  */
-function setupRoutes(router, hasPermission, userRouter) {
+function setupRoutes(router, hasPermission, userRouter, db) {
   const permissionRouter = express.Router();
 
   // assume json or text for anything in request bodies
@@ -67,6 +92,8 @@ function setupRoutes(router, hasPermission, userRouter) {
   permissionRouter.patch('/_pages/*', checkPermission(hasPermission));
   permissionRouter.post('/_pages/*', checkPermission(hasPermission));
   permissionRouter.delete('/_pages/*', checkPermission(hasPermission));
+
+  permissionRouter.delete('/_uris/*', makeCheckUnpublishPermission(db));
 
   router.use('/', permissionRouter);
 }

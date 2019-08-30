@@ -129,7 +129,6 @@ async function checkComponentPermission(uri, component, req, locals) {
  * @return {boolean}
  */
 async function checkUserPermissions(uri, req, locals) {
-
   try {
     // no matter the request, verify the user has can has the record for this site
     if (!locals.user.hasPermissionsTo('access').this('station').value) {
