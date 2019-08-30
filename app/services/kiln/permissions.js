@@ -163,6 +163,23 @@ const _endsWith = require('lodash/endsWith'),
         return;
       }
 
+      // shouldn't be declared above the short circuit
+      // eslint-disable-next-line one-var
+      const publishBtn = document.querySelector('.right-drawer .publish-actions > button'),
+        unpublishBtn = document.querySelector('.right-drawer .publish-status > button');
+
+      // if this was rendered on the server then there won't be any mutations
+      if (publishBtn || unpublishBtn) {
+        if (publishBtn) {
+          publishBtn.style.display = 'none';
+        }
+        if (unpublishBtn) {
+          unpublishBtn.style.display = 'none';
+        }
+
+        return;
+      }
+
       // this shouldn't be declared above the short circuit
       // eslint-disable-next-line one-var
       const kilnWrapper = document.querySelector('.kiln-wrapper'),
