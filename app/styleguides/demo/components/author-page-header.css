@@ -43,6 +43,12 @@
         @media only screen and (min-width: 481px) and (max-width: 1023px) {
             display: none;
         }
+        /* This is a BEM combinator hack right now - adding to retro to discuss */
+        /* Share component needs to have added functionality to accomodate this need - added car to sprint retro */
+        .component--share {
+            flex-direction: row;
+            align-items: center;
+        }
     }
     &__social-container--md-sm-screen {
         display: none;
