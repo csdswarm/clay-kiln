@@ -4,23 +4,6 @@ const publishing = require('../../services/publishing'),
   mainComponentRefs = ['/_components/article/instances', '/_components/gallery/instances', '/_components/section-front/instances'];
 
 module.exports.routes = [
-  // Paths with dynamic params first should come first, url's must go from in order of increasing specificity
-  { path: '/'},
-  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
-  { path: '/stations', dynamicPage: 'stations-directory' },
-  { path: '/stations/location', dynamicPage: 'stations-directory' },
-  { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
-  { path: '/stations/music', dynamicPage: 'stations-directory' },
-  { path: '/stations/music/:dynamicGenre', dynamicPage: 'stations-directory' },
-  { path: '/stations/news-talk', dynamicPage: 'stations-directory' },
-  { path: '/stations/sports', dynamicPage: 'stations-directory' },
-  { path: '/account/:dynamicPage', dynamicPage: 'home'  },
-  { path: '/account/:dynamicPage/:mode', dynamicPage: 'home'  },
-  { path: '/topic/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/music/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/news/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
-  { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
   // Partially static
   { path: '/blogs/:author/:title'}, // Frequency URL pattern
   { path: '/blogs/:title'}, // Frequency URL pattern
@@ -42,6 +25,23 @@ module.exports.routes = [
   { path: '/small-business-pulse/:slug' },
   { path: '/small-business-pulse/:year/:month/:name' },
   { path: '/small-business-pulse/:year/:month/:day/:name' },
+  // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
+  { path: '/'},
+  { path: '/:dynamicStation/listen', dynamicPage: 'station' },
+  { path: '/stations', dynamicPage: 'stations-directory' },
+  { path: '/stations/location', dynamicPage: 'stations-directory' },
+  { path: '/stations/location/:dynamicMarket', dynamicPage: 'stations-directory' },
+  { path: '/stations/music', dynamicPage: 'stations-directory' },
+  { path: '/stations/music/:dynamicGenre', dynamicPage: 'stations-directory' },
+  { path: '/stations/news-talk', dynamicPage: 'stations-directory' },
+  { path: '/stations/sports', dynamicPage: 'stations-directory' },
+  { path: '/account/:dynamicPage', dynamicPage: 'home'  },
+  { path: '/account/:dynamicPage/:mode', dynamicPage: 'home'  },
+  { path: '/topic/:dynamicTag', dynamicPage: 'topic' },
+  { path: '/music/:dynamicTag', dynamicPage: 'topic' },
+  { path: '/news/:dynamicTag', dynamicPage: 'topic' },
+  { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
+  { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
   // Full dynamic paths
   { path: '/:sectionFront'},
   { path: '/:sectionFront/:secondarySectionFront'},
