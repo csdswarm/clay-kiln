@@ -1,7 +1,7 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   _map = require('lodash/map'),
-  _get = require('lodash/get'),
+  _capitalize = require('lodash/capitalize'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
   { sendError } = require('../../services/universal/cmpt-error'),
@@ -247,7 +247,7 @@ module.exports.render = async function (ref, data, locals) {
 
   // 404 any dynamic pages who have no content
   if (dynamicPage && data.content.length === 0) {
-    sendError('Page not found', 404);
+    sendError(`${_capitalize(data.populateFrom)} not found`, 404);
   }
 
   return data;
