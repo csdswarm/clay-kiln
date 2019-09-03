@@ -10,11 +10,14 @@
     &__author-info-container {
         display: flex;
         @mixin medium-small-screen {
-            flex-direction: column;
+            flex-wrap: wrap;
         }
     }
     &__img-container {
         flex: 0 0 33%;
+        @mixin medium-small-screen {
+            flex: 0 0 100%;
+        }
     }
     &__author-img {
         width: 100%;
@@ -28,6 +31,7 @@
         justify-content: center;
         @mixin medium-small-screen {
             padding-left: em(0);
+            padding-top: em(20);
         }
     }
     &__name {
