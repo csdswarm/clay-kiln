@@ -3,7 +3,7 @@
 /**
  * Transform station data into a global slug
  *
- * @param  {object} data
+ * @param  {object} station
  * @return {String}
  */
 function getStationSlug(station) {
