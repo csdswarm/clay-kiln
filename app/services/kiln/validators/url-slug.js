@@ -19,7 +19,9 @@ const { getComponentName } = require('clayutils'),
       publishedSlug = pageUrl.split('/').slice(-1)[0];
 
     return publishedSlug !== data.slug;
-  };
+  },
+  findComponentToValidate = components => Object.entries(components)
+    .find(([uri]) => componentTypesToValidate[getComponentName(uri)]);
 
 module.exports = {
   label: 'Duplicate Slug',
@@ -27,37 +29,35 @@ module.exports = {
   type: 'error',
   async validate(state) {
     /**
+     * validates the slug field of the component by checking for a duplicate slug
      * @param {Array[]} objectEntry
      * @returns {Promise <object>} validationErrors
      */
     const validateSlug = async ([uri, data]) => {
         const componentName = getComponentName(uri);
 
-        try {
-          const res = await urlExists(uri, data, state.locals, componentName),
-            isDuplicate = !!res,
-            isInvalidSlug = isDuplicate && isSlugChanged(state, data);
+        if (isSlugChanged(state, data)) {
+          try {
+            const res = await urlExists(uri, data, state.locals, componentName),
+              urlAlreadyPublished = !!res;
 
-          if (isInvalidSlug) {
-            return {
-              uri,
-              location: `${componentName} » slug`,
-              field: 'slug',
-              preview: data.slug
-            };
+            if (urlAlreadyPublished) {
+              return {
+                uri,
+                location: `${componentName} » slug`,
+                field: 'slug',
+                preview: data.slug
+              };
+            }
+          } catch (e) {
+            log('error', 'problem validating slug', e);
           }
-        } catch (e) {
-          log('error', 'problem validating slug', e);
         }
       },
-      errors = (
-        await Promise.all(
-          Object.entries(state.components)
-            .filter(([uri]) => componentTypesToValidate[getComponentName(uri)])
-            .map(validateSlug)
-        )
-      ).filter(validationFailure => validationFailure);
+      validationError = await validateSlug(
+        findComponentToValidate(state.components)
+      );
 
-    return errors;
+    return validationError ? [validationError] : [];
   }
 };
