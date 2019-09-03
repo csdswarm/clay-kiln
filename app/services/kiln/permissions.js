@@ -96,7 +96,7 @@ const _endsWith = require('lodash/endsWith'),
 
     subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
 
-      const { value, message } = locals.user.can('publish').a(schema.schemaName);
+      const { value, message } = locals.user.hasPermissionsTo('access').this('station');
 
       if (!value) {
         const name = _camelCase(message);

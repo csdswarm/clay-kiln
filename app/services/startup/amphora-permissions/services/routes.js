@@ -57,10 +57,16 @@ function setupRoutes(router, hasPermission, userRouter) {
     const path = ['', '_components', folder, 'instances', '*'].join('/');
 
     permissionRouter.put(path, checkPermission(hasPermission));
+    permissionRouter.post(path, checkPermission(hasPermission));
+    permissionRouter.patch(path, checkPermission(hasPermission));
+    permissionRouter.delete(path, checkPermission(hasPermission));
   });
 
   // check all pages
   permissionRouter.put('/_pages/*', checkPermission(hasPermission));
+  permissionRouter.patch('/_pages/*', checkPermission(hasPermission));
+  permissionRouter.post('/_pages/*', checkPermission(hasPermission));
+  permissionRouter.delete('/_pages/*', checkPermission(hasPermission));
 
   router.use('/', permissionRouter);
 }
