@@ -131,18 +131,17 @@ async function checkComponentPermission(uri, component, req, locals) {
 async function checkUserPermissions(uri, req, locals) {
 
   try {
+    // no matter the request, verify the user has can has the record for this site
+    if (!locals.user.hasPermissionsTo('access').this('station').value) {
+      return false;
+    }
+
     if (isComponent(uri)) {
       const component = getComponentName(uri);
 
       if (componentsToCheck[component]) {
         await checkComponentPermission(uri, component, req, locals);
       }
-    }
-
-    if (isPage(uri) && isPublished(uri)) {
-      const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
-
-      return locals.user.can('publish').a(pageType).value;
     }
 
     // if no permissions are required they can do it
