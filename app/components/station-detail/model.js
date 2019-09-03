@@ -84,7 +84,7 @@ module.exports.render = (uri, data, locals) => {
   data.stationSlug = getStationSlug(locals.station);
 
   if (locals.params.dynamicStation !== data.stationSlug) {
-    sendError('Station does not exist', 404);
+    sendError('Station not found', 404);
   }
 
   locals.station.playingClass = playingClass(locals, locals.station.id);
