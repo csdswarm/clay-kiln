@@ -3,7 +3,9 @@
 const { expect, assert } = require('chai'),
   addPermissions = require('./user-permissions'),
   locals = {
-    user: {},
+    user: {
+      provider: 'cognito'
+    },
     permissions: {
       article:{
         publish:{station:{'NATL-RC': 1}},
@@ -30,9 +32,11 @@ const { expect, assert } = require('chai'),
   galleryCreateMessage = 'You do not have permissions to publish galleries.',
   AnyMessage = 'You do not have permissions to cool magic things.';
 
-addPermissions(locals);
 
 describe('permissions', () => {
+  beforeEach(() => {
+    addPermissions(locals);
+  });
   describe('actions', () => {
     it('pass arguments', () => {
       actions.forEach(action => {
@@ -84,6 +88,16 @@ describe('permissions', () => {
     it('overides the object string', () => {
       assert(locals.user.can({ publish: 'gallery' }).an('ignored-item').for('ABCD').value);
       expect(locals.user.can({ publish: 'gallery' }).a('ignored-item').for('DEF').message).to.eql(galleryCreateMessage);
+    });
+  });
+  describe('override', () => {
+    it('is always true', () => {
+      delete locals.user.can; // hack to reapply the functions
+      locals.user.provider = 'google';
+      addPermissions(locals);
+
+      assert(locals.user.can('NOPE', 'NOPE', 'NOPE', ).value);
+      assert(locals.user.can('NOPE', 'NOPE', 'NOPE').value);
     });
   });
 });
