@@ -1,3 +1,5 @@
+'use strict';
+
 // https://developer.apple.com/documentation/apple_news/component
 // https://developer.apple.com/documentation/apple_news/apple_news_format/components
 
@@ -19,23 +21,23 @@ const { formatSimpleByline } = require('../../services/universal/byline'),
 module.exports = function (ref, data, locals) {
   return {
     role: 'container',
-    style: headerStyle,
-    layout: headerLayout,
+    style: 'headerStyle',
+    layout: 'headerLayout',
     components: [
       {
         role: 'title',
         text: data.primaryHeadline,
-        layout: headlineLayout,
-        style: headlineStyle,
-        textStyle: headlineTextStyle,
+        layout: 'headlineLayout',
+        style: 'headlineStyle',
+        textStyle: 'headlineTextStyle',
         format: 'html'
       },
       {
         role: 'author',
         text: formatBylines(data.byline),
-        layout: bylineLayout,
-        style: bylineStyle,
-        textStyle: bylineTextStyle,
+        layout: 'bylineLayout',
+        style: 'bylineStyle',
+        textStyle: 'bylineTextStyle',
         format: 'html'
       }
     ]
