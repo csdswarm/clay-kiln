@@ -10,6 +10,7 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   slugifyService = require('../../services/universal/slugify'),
+  urlPatterns = require('../universal/url-patterns'),
   { PAGE_TYPES } = require('../universal/constants'),
   /**
    * returns a url to the server for a component
@@ -195,7 +196,6 @@ function getUrlOptions(component, locals, pageType) {
   return urlOptions;
 }
 
-Object.assign(module.exports, require('../universal/url-patterns'));
 module.exports.getComponentReference = getComponentReference;
 module.exports.getMainComponentFromRef = getMainComponentFromRef;
 module.exports.getUrlOptions = getUrlOptions;
@@ -203,5 +203,15 @@ module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.getComponentInstance = getComponentInstance;
+
+// URL patterns below need to be handled by the site's index.js
+module.exports.dateUrlPattern = urlPatterns.dateUrlPattern;
+module.exports.articleSlugPattern = urlPatterns.articleSlugPattern;
+module.exports.articleSecondarySectionFrontSlugPattern = urlPatterns.articleSecondarySectionFrontSlugPattern;
+module.exports.gallerySlugPattern = urlPatterns.gallerySlugPattern;
+module.exports.gallerySecondarySectionFrontSlugPattern = urlPatterns.gallerySecondarySectionFrontSlugPattern;
+module.exports.sectionFrontSlugPattern = urlPatterns.sectionFrontSlugPattern;
+module.exports.secondarySectionFrontSlugPattern = urlPatterns.secondarySectionFrontSlugPattern;
+
 module.exports.PAGE_TYPES = PAGE_TYPES;
 
