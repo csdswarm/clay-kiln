@@ -4,11 +4,11 @@ const { getComponentName } = require('clayutils'),
   log = require('../../universal/log').setup({
     file: __filename
   }),
-  { pageTypes } = require('../../universal/constants'),
+  { PAGE_TYPES } = require('../../universal/constants'),
   urlExists = require('../../universal/url-exists'),
   componentTypesToValidate = {
-    [pageTypes.ARTICLE]: true,
-    [pageTypes.GALLERY]: true
+    [PAGE_TYPES.ARTICLE]: true,
+    [PAGE_TYPES.GALLERY]: true
   },
   isSlugChanged = (state, data) => {
     const {

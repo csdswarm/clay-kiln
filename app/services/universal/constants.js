@@ -17,7 +17,7 @@ const SECOND = 1000,
     YEAR
   },
 
-  pageTypes = {
+  PAGE_TYPES = {
     ARTICLE: 'article',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front'
@@ -32,5 +32,5 @@ module.exports = {
   WEEK,
   YEAR,
   time,
-  pageTypes
+  PAGE_TYPES
 };

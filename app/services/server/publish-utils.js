@@ -10,7 +10,7 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   slugifyService = require('../../services/universal/slugify'),
-  { pageTypes } = require('../universal/constants'),
+  { PAGE_TYPES } = require('../universal/constants'),
   /**
    * returns a url to the server for a component
    *
@@ -137,7 +137,7 @@ function getMainComponentFromRef(componentReference, locals) {
     const componentTypeRegex = /^.*_components\/(\b.+\b)\/instances.*$/g,
       pageType = componentTypeRegex.exec(componentReference)[1] || null;
 
-    if ([pageTypes.ARTICLE,pageTypes.GALLERY].includes(pageType)) {
+    if ([PAGE_TYPES.ARTICLE,PAGE_TYPES.GALLERY].includes(pageType)) {
       guaranteePrimaryHeadline(component);
       guaranteeLocalDate(component, publishedComponent, locals);
     }
@@ -181,12 +181,12 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
 
-  if ([pageTypes.ARTICLE, pageTypes.GALLERY].includes(urlOptions.pageType)) {
+  if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
     }
-  } else if (urlOptions.pageType === pageTypes.SECTIONFRONT) {
+  } else if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
     if (!(locals.site && urlOptions.sectionFront)) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
@@ -203,5 +203,5 @@ module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.getComponentInstance = getComponentInstance;
-module.exports.pageTypes = pageTypes;
+module.exports.PAGE_TYPES = PAGE_TYPES;
 

@@ -1,16 +1,16 @@
 'use strict';
 
 const { getArticleData } = require('../universal/recirc-cmpt'),
-  { pageTypes } = require('../universal/constants'),
+  { PAGE_TYPES } = require('../universal/constants'),
   urlPatterns = require('../universal/url-patterns'),
   componentSlugUrl = (componentName = '', data = {}) => {
-    if (componentName === pageTypes.ARTICLE) {
+    if (componentName === PAGE_TYPES.ARTICLE) {
       return data.secondarySectionFront
         ? urlPatterns.articleSecondarySectionFrontSlugPattern(data)
         : urlPatterns.articleSlugPattern(data);
     }
 
-    if (componentName === pageTypes.GALLERY) {
+    if (componentName === PAGE_TYPES.GALLERY) {
       return data.secondarySectionFront
         ? urlPatterns.gallerySecondarySectionFrontSlugPattern(data)
         : urlPatterns.gallerySlugPattern;
