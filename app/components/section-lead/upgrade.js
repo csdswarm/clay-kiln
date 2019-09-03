@@ -1,7 +1,5 @@
 'use strict';
 
-const addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items');
-
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
     data.contentType = { article: true, gallery: true };
@@ -56,15 +54,8 @@ module.exports['5.0'] = function (uri, data) {
   let newData = Object.assign({}, data);
 
   newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
-
+  
   delete newData.filterSecondaryArticleTypes;
-
+  
   return newData;
-};
-
-
-module.exports['6.0'] = async (uri, data, locals) => {
-  await addUriToCuratedItems(uri, data.items, locals);
-
-  return data;
 };
