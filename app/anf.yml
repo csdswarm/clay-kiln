@@ -1,0 +1,45 @@
+version: '1.10.1'
+language: en
+layout:
+  columns: 6
+  width: 1024
+  margin: 30
+  gutter: 20
+componentStyles:
+  headerStyle:
+  headlineStyle:
+  bylineStyle:
+  exampleComponentStyle:
+    backgroundColor: '#FFFFFF'
+    opacity: 1
+    border:
+      all:
+        width: 1
+        color: '#333'
+      left: false
+      right: false
+componentTextStyles:
+  default:
+    fontName: Georgia
+    textColor: '#111'
+    fontSize: 18
+    lineHeight: 20
+    linkStyle:
+      textColor: '#1782a9'
+  default-body:
+    fontName: Georgia
+    fontSize: 17
+    lineHeight: 27
+    paragraphSpacingBefore: 12
+    paragraphSpacingAfter: 12
+  headlineTextStyle:
+  bylineTextStyle:
+componentLayouts:
+  bodyContentLayout:
+    columnStart: 0
+    columnSpan: 6
+    margin:
+      bottom: 20
+  headerLayout:
+  headlineLayout:
+  bylineLayout:

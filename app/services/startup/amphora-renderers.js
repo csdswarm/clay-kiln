@@ -3,6 +3,7 @@
 const pkg = require('../../package.json'),
   amphoraHtml = require('amphora-html'),
   amphoraRss = require('amphora-rss'),
+  amphoraAppleNews = require('amphora-apple-news'),
   helpers = require('../universal/helpers'),
   resolveMediaService = require('../server/resolve-media'),
   { prepare } = require('../universal/spaLink'),
@@ -37,5 +38,6 @@ amphoraHtml.addPlugins([{ postRender: transformHtml }]);
 module.exports = {
   default: 'html',
   html: amphoraHtml,
-  rss: amphoraRss
+  rss: amphoraRss,
+  anf: amphoraAppleNews
 };
