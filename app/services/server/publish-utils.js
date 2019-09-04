@@ -12,6 +12,7 @@ const _ = require('lodash'),
   slugifyService = require('../../services/universal/slugify'),
   pageTypes = {
     ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front'
   },
@@ -181,7 +182,7 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
+  urlOptions.slug = component.title || component.slug || (component.primaryHeadling && sanitize.cleanSlug(component.primaryHeadline)) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
 
@@ -195,7 +196,12 @@ function getUrlOptions(component, locals, pageType) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
     }
+  } else if (urlOptions.pageType === pageTypes.AUTHOR) {
+    urlOptions.contentType = 'authors';
+    urlOptions.author = component.author;
+    urlOptions.authorSlug = slugifyService(component.author);
   }
+
   return urlOptions;
 }
 
@@ -208,6 +214,7 @@ module.exports.getPublishDate = getPublishDate;
 module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.html`; // e.g. http://vulture.com/music/x.html - modified re: ON-333
 module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
 module.exports.articleSecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/${o.slug}`;
+module.exports.authorPageSlugPattern = o => `${o.prefix}/${o.contentType}/${o.authorSlug}`;
 module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
 module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/gallery/${o.slug}`;
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music

@@ -1,0 +1,8 @@
+_components:
+  author-page-header:
+    author: ''
+    profileImage: ''
+    scheduleTime: ''
+    socialButtonsShow: false
+    socialButtonsURLs: []
+    bio: ''
