@@ -204,10 +204,6 @@ const addPermissions = require('../universal/user-permissions'),
 // this to the user object, so we are accessing it directly off of the window
 addPermissions(window.kiln.locals);
 
-// kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
-// this to the user object, so we are accessing it directly off of the window
-addPermissions(window.kiln.locals);
-
 module.exports.secureField = secureField;
 module.exports.secureSchema = secureSchema;
 module.exports.secureAllSchemas = secureAllSchemas;
