@@ -18,7 +18,7 @@ const { expect, assert } = require('chai'),
         update:{station:{'NATL-RC': 1}}
       },
       'alert-banner':{
-        any:{station:{'NATL-RC': 1}}
+        access:{station:{'NATL-RC': 1}}
       }
     },
     station: {
@@ -30,8 +30,7 @@ const { expect, assert } = require('chai'),
   locations = 'at,for,with,on'.split(','),
   articleCreateMessage = 'You do not have permissions to create articles.',
   galleryCreateMessage = 'You do not have permissions to publish galleries.',
-  AnyMessage = 'You do not have permissions to cool magic things.';
-
+  accessMessage = 'You do not have permissions to cool magic things.';
 
 describe('permissions', () => {
   beforeEach(() => {
@@ -76,7 +75,8 @@ describe('permissions', () => {
     it('become errors correctly', () => {
       expect(locals.user.include('create').an('article').at('ABC').message).to.eql(articleCreateMessage);
       expect(locals.user.can('publish').a('gallery').for('DEF').message).to.eql(galleryCreateMessage);
-      expect(locals.user.include('any').an('cool-magic-things').message).to.eql(AnyMessage);
+      expect(locals.user.include('access').an('cool-magic-things').message).to.eql(accessMessage);
+      expect(locals.user.canModify('cool-magic-things').message).to.eql(accessMessage);
     });
     it('remain blank when valid', () => {
       expect(locals.user.include('create').an('article').message).to.eql('');
