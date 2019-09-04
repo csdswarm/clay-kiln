@@ -1,15 +1,14 @@
 version: '1.10.1'
 language: en
+# https://developer.apple.com/documentation/apple_news/layout
 layout:
   columns: 6
   width: 1024
   margin: 30
   gutter: 20
+# https://developer.apple.com/documentation/apple_news/apple_news_format/component_styles
 componentStyles:
-  headerStyle:
-  headlineStyle:
-  bylineStyle:
-  exampleComponentStyle:
+  exampleStyle:
     backgroundColor: '#FFFFFF'
     opacity: 1
     border:
@@ -18,6 +17,20 @@ componentStyles:
         color: '#333'
       left: false
       right: false
+  headerStyle:
+  headlineStyle:
+  bylineStyle:
+  ledeStyle:
+  imageStyle:
+  instagramStyle:
+  brightcoveStyle:
+  youtubeStyle:
+  bodyStyle:
+  paragraphStyle:
+  subheaderStyle:
+  tweetStyle:
+  facebookPostStyle:
+# https://developer.apple.com/documentation/apple_news/apple_news_format/text_styles
 componentTextStyles:
   default:
     fontName: Georgia
@@ -26,16 +39,18 @@ componentTextStyles:
     lineHeight: 20
     linkStyle:
       textColor: '#1782a9'
-  default-body:
-    fontName: Georgia
-    fontSize: 17
-    lineHeight: 27
     paragraphSpacingBefore: 12
     paragraphSpacingAfter: 12
   headlineTextStyle:
   bylineTextStyle:
+  ledeTextStyle:
+  imageTextStyle:
+  bodyTextStyle:
+  paragraphTextStyle:
+  subheaderTextStyle:
+# https://developer.apple.com/documentation/apple_news/componentlayout
 componentLayouts:
-  bodyContentLayout:
+  default:
     columnStart: 0
     columnSpan: 6
     margin:
@@ -43,3 +58,13 @@ componentLayouts:
   headerLayout:
   headlineLayout:
   bylineLayout:
+  ledeLayout:
+  imageLayout:
+  instagramLayout:
+  brightcoveLayout:
+  youtubeLayout:
+  bodyLayout:
+  paragraphLayout:
+  subheaderLayout:
+  tweetLayout:
+  facebookPostLayout:

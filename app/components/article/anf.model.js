@@ -3,42 +3,115 @@
 // https://developer.apple.com/documentation/apple_news/component
 // https://developer.apple.com/documentation/apple_news/apple_news_format/components
 
-const { formatSimpleByline } = require('../../services/universal/byline'),
+const { getComponentInstance } = require('../../services/server/publish-utils'),
+  { getComponentName } = require('clayutils'),
+  { byline: formatAuthors } = require('../../services/universal/byline'),
   formatBylines = bylines => {
-    const bylineHTML = '';
+    let bylineHTML = '';
 
     bylines.forEach(byline => {
-      bylineHTML.push(`${ byline.prefix } `);
-      bylineHTML.push(formatSimpleByline(byline.names));
-      byline.sources.forEach(source => {
-        bylineHTML.push(`, ${ source.text }`);
-      });
+      if (byline.names.length) {
+        const prefix = byline.prefix.charAt(0).toUpperCase() + byline.prefix.slice(1);
+
+        bylineHTML = bylineHTML.concat(`${ prefix } `);
+        bylineHTML = bylineHTML.concat(formatAuthors(byline.names));
+        byline.sources.forEach(source => {
+          bylineHTML = bylineHTML.concat(`, ${ source.text }`);
+        });
+      } else {
+        const sources = byline.sources.map(source => source.text);
+
+        bylineHTML = bylineHTML.concat(sources.join(', '));
+      }
     });
 
     return bylineHTML;
+  },
+  /**
+   * https://developer.apple.com/documentation/apple_news/apple_news_format/components/using_html_with_apple_news_format?language=data
+   * iframe not supported in ANF
+   *
+   * @param {string} instance
+   * @returns {Boolean}
+  */
+  isNotHTMLEmbed = instance => {
+    return getComponentName(instance) !== 'html-embed';
+  },
+  /**
+   * Get apple news format of lede ref
+   *
+   * @param {Array} lede
+   * @returns {Promise|Array}
+  */
+  getLede = async lede => {
+    const ledeANF = [];
+
+    if (isNotHTMLEmbed(lede[0]._ref)) {
+      try {
+        ledeANF.push(await getComponentInstance(`${ lede[0]._ref }.anf`));
+      } catch (e) {};
+    }
+
+    return ledeANF;
+  },
+  /**
+   * Get apple news format of each content ref
+   *
+   * @param {Array} content
+   * @returns {Array}
+  */
+  getContent = content => {
+    const contentANF = [];
+
+    content.forEach(async contentInstance => {
+      if (isNotHTMLEmbed(contentInstance._ref)) {
+        try {
+          contentANF.push(await getComponentInstance(`${ contentInstance._ref }.anf`));
+        } catch(e) {};
+      }
+    })
+
+    return contentANF;
   };
 
-module.exports = function (ref, data, locals) {
+module.exports = async function (ref, data, locals) {
   return {
     role: 'container',
-    style: 'headerStyle',
-    layout: 'headerLayout',
     components: [
       {
-        role: 'title',
-        text: data.primaryHeadline,
-        layout: 'headlineLayout',
-        style: 'headlineStyle',
-        textStyle: 'headlineTextStyle',
-        format: 'html'
+        role: 'header',
+        style: 'headerStyle',
+        layout: 'headerLayout',
+        components: [
+          {
+            role: 'title',
+            text: data.primaryHeadline,
+            layout: 'headlineLayout',
+            style: 'headlineStyle',
+            textStyle: 'headlineTextStyle',
+            format: 'html'
+          },
+          {
+            role: 'byline',
+            text: formatBylines(data.byline),
+            layout: 'bylineLayout',
+            style: 'bylineStyle',
+            textStyle: 'bylineTextStyle',
+            format: 'html'
+          }
+        ]
       },
       {
-        role: 'author',
-        text: formatBylines(data.byline),
-        layout: 'bylineLayout',
-        style: 'bylineStyle',
-        textStyle: 'bylineTextStyle',
-        format: 'html'
+        role: 'section',
+        style: 'ledeStyle',
+        layout: 'ledeLayout',
+        components: await getLede(data.lead)
+      },
+      {
+        role: 'section',
+        style: 'bodyStyle',
+        layout: 'bodyLayout',
+        components: getContent(data.content)
       }
     ]
   };
