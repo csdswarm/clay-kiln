@@ -1,8 +1,6 @@
 'use strict';
 
-const _endsWith = require('lodash/endsWith'),
-  addPermissions = require('../universal/user-permissions'),
-  _camelCase = require('lodash/camelCase'),
+const addPermissions = require('../universal/permissions'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
   /**
@@ -36,9 +34,7 @@ const _endsWith = require('lodash/endsWith'),
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
-    fieldInput.subscribe(PRELOAD_SUCCESS, (data) => {
-      const {user, locals: {station}, url: {component}} = data;
-
+    fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
       if (user.may(permission, component, station.callsign).value) {
         fieldInput.show();
       }
@@ -77,11 +73,9 @@ const _endsWith = require('lodash/endsWith'),
     window.kiln = window.kiln || {};
     window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
 
-    Object.keys(window.modules)
-      .filter(key => _endsWith(key, '.model'))
-      .forEach((key) => {
-        const component = key.replace('.model', ''),
-          kilnjs = getKilnJs(component);
+    window.kiln.locals.components
+      .forEach(component => {
+        const kilnjs = getKilnJs(component);
 
         window.kiln.componentKilnjs[component] = secureSchema(kilnjs);
       });
@@ -114,6 +108,10 @@ const _endsWith = require('lodash/endsWith'),
       }
     }, true);
   };
+
+// kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
+// this to the user object, so we are accessing it directly off of the window
+addPermissions(window.kiln.locals);
 
 // kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
 // this to the user object, so we are accessing it directly off of the window
