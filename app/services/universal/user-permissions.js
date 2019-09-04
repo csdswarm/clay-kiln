@@ -42,7 +42,7 @@ const pluralize = require('pluralize'),
       _override = false; // override all permission checks
 
     const _DEFAULT = {
-        action: 'any',
+        action: 'access',
         location: 'NATL-RC'
       },
       /**
@@ -53,7 +53,7 @@ const pluralize = require('pluralize'),
        * @return {string}
        */
       createMessage = (action, target) => {
-        const perform = action === 'any' ? '' : ` ${action}`;
+        const perform = action === _DEFAULT.action ? '' : ` ${action}`;
 
         return `You do not have permissions to${perform} ${pluralize(target.replace(/-/g, ' '))}.`;
       },
@@ -88,7 +88,7 @@ const pluralize = require('pluralize'),
        *      update:{ station:{ KILTAM: 1, KLOLFM: 1} },
        *    },
        *    'alert-banner':{
-       *      any:{ station:{'NATL-RC': 1 } }
+       *      access:{ station:{'NATL-RC': 1 } }
        *    }
        *  }
        *
