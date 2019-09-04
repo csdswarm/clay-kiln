@@ -1,6 +1,7 @@
 'use strict';
 
 const addPermissions = require('../universal/permissions'),
+  _camelCase = require('lodash/camelCase'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
   /**
