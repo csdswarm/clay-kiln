@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 3.0
 _description: |
   A list of five latest related articles by article type, tag, or manually populated.
 contentType:
@@ -13,9 +13,6 @@ contentType:
 
 sportsItems:
   _label: Sports Articles
-  _placeholder:
-    height: 150px;
-    text: Sports Articles
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -27,8 +24,7 @@ sportsItems:
       prop: url
       _label: URL
       _has:
-        input: text
-        type: url
+        input: content-search
         validate:
           required: true
     -
@@ -58,9 +54,6 @@ sportsItems:
           required: true
 musicItems:
   _label: Music Articles
-  _placeholder:
-    height: 150px;
-    text: Music Articles
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -72,7 +65,7 @@ musicItems:
       prop: url
       _label: URL
       _has:
-        input: text
+        input: content-search
         type: url
         validate:
           required: true
@@ -104,9 +97,6 @@ musicItems:
 
 newsItems:
   _label: News Articles
-  _placeholder:
-    height: 150px;
-    text: News Articles
   _has:
     input: complex-list
     enforceMaxlength: true
@@ -118,7 +108,7 @@ newsItems:
       prop: url
       _label: URL
       _has:
-        input: text
+        input: content-search
         type: url
         validate:
           required: true
@@ -158,42 +148,20 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondaryArticleTypes:
-  _label: Exclude Secondary Article Types
+filterSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
   _has:
-    input: checkbox-group
-    options:
-      - Pop
-      - Alternative
-      - Country
-      -
-        name: Hip-Hop R&B
-        value: Hip-Hop R&B
-      - Rock
-      - Icons
-      - Entertainment News
-      - Movies
-      - Television
-      - National News
-      - Politics
-      - Local Politics
-      - Small Business Pulse
-      - NFL
-      - MLB
-      - NBA
-      - NHL
-      - NCAA Football
-      - NCAA Basketball
-      -
-        name: MMA & WWE
-        value: MMA & WWE
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
 
 _groups:
   settings:
     fields:
       - contentType
       - filterTags
-      - filterSecondaryArticleTypes
+      - filterSecondarySectionFronts
   musicItems:
     fields:
       - musicItems

@@ -71,8 +71,6 @@ function newQuery(index, query) {
   };
 }
 
-
-
 /**
  * Adds a property to the query based on the action provided.
  *
@@ -269,7 +267,7 @@ function onlyWithTheseFields(query, fields) {
  * @returns {Object}
  */
 function onlyWithinThisSite(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}});
+  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}});
 
   addFilter(query, {prefix: {canonicalUrl: prefix}});
 
@@ -282,7 +280,7 @@ function onlyWithinThisSite(query, site) {
  * @returns {object}
  */
 function withinThisSiteAndCrossposts(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}}),
+  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}}),
     prefixFilter = {prefix: {canonicalUrl: prefix}};
   var crosspostFilter = {term: {}},
     shouldFilter = { bool: { should: [], minimum_should_match: 1 } };
@@ -385,6 +383,29 @@ function newNestedQuery(path) {
   };
 }
 
+/**
+ * adds a query_string search on the fields
+ *
+ * @param {Object} query
+ * @param {String} searchTerm
+ * @param {String|Array} fields
+ *
+ * @return {Object}
+ */
+function addSearch(query, searchTerm, fields) {
+  const key = `${getRoot(query)}.query`,
+    value = {
+      query_string: {
+        query: searchTerm.replace(/([\/|:])/g, '\\$1'),
+        fields: _.isArray(fields) ? fields : [fields]
+      }
+    };
+
+  _.set(query, key,  value);
+
+  return query;
+}
+
 module.exports = newQuery;
 module.exports.addAggregation = addAggregation;
 module.exports.addShould = addShould;
@@ -403,3 +424,4 @@ module.exports.formatSearchResult = formatSearchResult;
 module.exports.formatProtocol = formatProtocol;
 module.exports.moreLikeThis = moreLikeThis;
 module.exports.newNestedQuery = newNestedQuery;
+module.exports.addSearch = addSearch;

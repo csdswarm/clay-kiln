@@ -27,6 +27,7 @@ class StationsList {
     this.loader = element.querySelector('.loader-container');
     this.pageNum = 1;
     this.pageSize = 6;
+
     const page = document.body.querySelector('.content__main > section'),
       stationsDataEl = element.querySelector('.stations-list__data');
 
@@ -37,7 +38,7 @@ class StationsList {
       this.pageType = STATION_DETAIL;
     }
 
-    this.stationsData = stationsDataEl ? JSON.parse(stationsDataEl.innerText) : [];
+    this.stationsData = stationsDataEl && stationsDataEl.innerText ? JSON.parse(stationsDataEl.innerText) : [];
     this.updateStations();
     if (this.loadMoreBtn) {
       this.loadMoreBtn.addEventListener('click', () => this.loadMoreStations() );
@@ -47,6 +48,31 @@ class StationsList {
       // code to run when vue dismounts/destroys, aka just before a new "pageview" will be loaded.
       window.removeEventListener('resize', this.toggleSeeAllLinkAndAds );
     }, { once: true });
+  }
+  /**
+   * Keep track of how many elements initially exist and ensure that many exist the next call
+   * since returning from a modal route run this again but data is not cleared
+   */
+  resetStationsList() {
+    let initialCount = this.stationsList.getAttribute('data-initial-count');
+    const currentCount = this.stationsList.childElementCount;
+
+    if (initialCount === null) {
+      initialCount = currentCount;
+      this.stationsList.setAttribute('data-initial-count', initialCount);
+    }
+    initialCount = parseInt(initialCount);
+
+    if (initialCount < currentCount) {
+      const range = document.createRange();
+
+      range.selectNodeContents(this.stationsList);
+      if (initialCount !== 0) {
+        range.setStartAfter(this.stationsList.children[initialCount - 1]);
+      }
+      range.deleteContents();
+    }
+
   }
   /**
    * Get local stations from api
@@ -142,6 +168,8 @@ class StationsList {
         station.classList.add('active');
       }
     });
+
+    safari.fixAJAXImages(this.stationsList);
   }
   /**
    * Using list of station IDs,
@@ -155,7 +183,6 @@ class StationsList {
     const newStations = this.stationsData = await this.getComponentTemplate(stationsIDs, null, instanceModifier);
 
     this.stationsList.append(newStations);
-    safari.fixAJAXImages(this.stationsList);
     this.toggleLoader();
     this.displayActiveStations();
   }
@@ -174,7 +201,6 @@ class StationsList {
       this.parentElement.removeChild(this.parentElement.firstChild);
     };
     this.parentElement.append(newStations);
-    safari.fixAJAXImages(this.parentElement);
     this.setStationList(this.parentElement);
     this.displayActiveStations();
 

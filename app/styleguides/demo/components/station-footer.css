@@ -45,6 +45,15 @@
       @mixin inline-block;
       padding: 0 em(15);
       text-decoration: none;
+      font-weight: 500;
+    }
+
+    &__copyright {
+      @mixin station-footer-font3;
+      @mixin inline-block;
+      padding: 0 em(15);
+      font-weight: 300;
     }
   }
 }
+

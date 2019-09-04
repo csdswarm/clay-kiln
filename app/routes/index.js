@@ -14,6 +14,8 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
+  additionalDataTypes = require('../services/server/add-data-types'),
+  alerts = require('../services/server/alerts'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
@@ -128,8 +130,12 @@ module.exports = router => {
    * Proxy for brightcove api endpoints
    */
   router.get('/api/brightcove', function (req, res) {
-    brightcoveApi.get(req.query).then(function (data) {
-      return res.send(data);
+    brightcoveApi.get(req.query).then(function ({ status, statusText, body: data }) {
+      if (status === 200) {
+        return res.send(data);
+      } else {
+        return res.status(500).send(statusText);
+      }
     });
   });
 
@@ -186,4 +192,7 @@ module.exports = router => {
     res.type('application/xml');
     return res.send( xml( { urlset }, { declaration: true } ) );
   });
+
+  additionalDataTypes.inject(router, checkAuth);
+  alerts.inject(router, checkAuth);
 };

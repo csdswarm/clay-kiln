@@ -1,0 +1,6 @@
+_components:
+  station-favorites:
+      instances:
+        default:
+          favoriteStations:
+            _ref: /_components/stations-list/instances/favorites

@@ -81,7 +81,7 @@ module.exports.render = (ref, data, locals) => {
   let nmcAuthor = importedNmcData.author;
 
   if (_get(data, 'authors.length') > 0) {
-    const authors = data.authors.map(a => a.text).join(', ');
+    const authors = data.authors.map(author => author.text).join(', ');
 
     if (!hasImportedNmcData) {
       nmcAuthor = data.authors[0].text;
@@ -106,8 +106,8 @@ module.exports.render = (ref, data, locals) => {
     categories.push(data.sectionFront.toLowerCase());
   }
 
-  if (data.secondaryArticleType) {
-    categories.push(data.secondaryArticleType.toLowerCase());
+  if (data.secondarySectionFront) {
+    categories.push(data.secondarySectionFront.toLowerCase());
   }
 
   if (_get(station, 'category')) {
