@@ -118,7 +118,7 @@ const addPermissions = require('../universal/user-permissions'),
    * @param {boolean} scoped
    * @returns {Promise}
    */
-  getWhenPreloaded = (subscriptions, scoped = false) => {
+  whenPreloaded = (subscriptions, scoped = false) => {
     return new Promise((resolve, reject) => {
       try {
         setTimeout(() => {
@@ -141,6 +141,17 @@ const addPermissions = require('../universal/user-permissions'),
     });
   },
   /**
+   * sets all truthy elements to have the style display: none
+   *
+   * @param {Element[]} elements
+   */
+  setDisplayNone = (elements) => {
+    elements.filter(anElement => !!anElement)
+      .forEach(anElement => {
+        anElement.style.display = 'none';
+      });
+  },
+  /**
    * hides the 'publish' or 'unpublish' button if the user does not
    *   have permissions
    *
@@ -148,14 +159,14 @@ const addPermissions = require('../universal/user-permissions'),
    **/
   publishRights = (schema) => {
     const subscriptions = new KilnInput(schema),
-      whenPreloaded = getWhenPreloaded(subscriptions);
+      whenPreloadedPromise = whenPreloaded(subscriptions);
 
     subscriptions.subscribe('OPEN_DRAWER', async payload => {
       if (payload !== 'publish-page') {
         return;
       }
 
-      const { locals } = await whenPreloaded,
+      const { locals } = await whenPreloadedPromise,
         hasAccess = locals.user.hasPermissionsTo('access').this('station');
 
       if (hasAccess) {
@@ -169,12 +180,7 @@ const addPermissions = require('../universal/user-permissions'),
 
       // if this was rendered on the server then there won't be any mutations
       if (publishBtn || unpublishBtn) {
-        if (publishBtn) {
-          publishBtn.style.display = 'none';
-        }
-        if (unpublishBtn) {
-          unpublishBtn.style.display = 'none';
-        }
+        setDisplayNone([publishBtn, unpublishBtn]);
 
         return;
       }
@@ -186,12 +192,7 @@ const addPermissions = require('../universal/user-permissions'),
           for (const mutation of mutationList) {
             const { publishBtn, unpublishBtn } = getAddedPublishButtons(mutation);
 
-            if (publishBtn) {
-              publishBtn.style.display = 'none';
-            }
-            if (unpublishBtn) {
-              unpublishBtn.style.display = 'none';
-            }
+            setDisplayNone([publishBtn, unpublishBtn]);
             if ([...mutation.removedNodes].find(isRightDrawer)) {
               observer.disconnect();
             }
