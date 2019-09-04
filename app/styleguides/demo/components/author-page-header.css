@@ -3,12 +3,12 @@
 @import "_global/colors";
 
 .author-page-header {
-    margin-top: em(49);
     @mixin medium-screen {
         flex-direction: column;
     }
     &__author-info-container {
         display: flex;
+        margin-bottom: em(14);
         @mixin medium-small-screen {
             flex-wrap: wrap;
         }
@@ -38,10 +38,10 @@
         @mixin author-page-header-font1;
     }
     &__schedule {
+        margin-bottom: em(14, 20);
         @mixin author-page-header-font2;
     }
     &__social-container {
-        margin-top: em(14);
         display: block;
         @mixin author-page-header-font4;
         @media only screen and (min-width: 481px) and (max-width: 1023px) {
@@ -62,7 +62,6 @@
         }
     }
     &__bio-text-container {
-        margin-top: em(14);
         margin-bottom: em(38);
     }
     &__bio-text {
