@@ -1,7 +1,6 @@
 'use strict';
 
-const _endsWith = require('lodash/endsWith'),
-  addPermissions = require('../universal/user-permissions'),
+const addPermissions = require('../universal/user-permissions'),
   preloadTimeout = 5000,
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
