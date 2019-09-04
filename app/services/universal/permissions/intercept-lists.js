@@ -1,15 +1,8 @@
 'use strict';
 
-/**
- * README
- *  - This plugin intercepts specific _lists requests in order to perform
- *    dynamic behavior on the results.  For example we needed to filter
- *    new-pages based off the user's permissions.
- */
-
 const axios = require('axios'),
   { URL } = require('url'),
-  { wrapInTryCatch } = require('./middleware-utils'),
+  { wrapInTryCatch } = require('../../startup/middleware-utils'),
   /**
    * determines whether the /_lists/new-pages request should pass through
    *   to clay
@@ -48,6 +41,12 @@ const axios = require('axios'),
     return false;
   };
 
+/**
+ * Adds an endpoint to the router which intercepts the 'new-pages' list and
+ *   modifies the response according to the user's permissions
+ *
+ * @param {object} router - an express router
+ */
 module.exports = router => {
   router.get('/_lists/new-pages', wrapInTryCatch(async (req, res, next) => {
     if (shouldPassNewPagesRequestToClay(req, res)) {

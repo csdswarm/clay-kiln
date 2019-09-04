@@ -5,10 +5,6 @@
  *   error handling middleware
  *   https://expressjs.com/en/guide/error-handling.html#the-default-error-handler
  *
- * Note: This method is copied in the amphora-permissions plugin because that
- *   plugin should be isolated i.e. it should be treated as though it were a
- *   separate npm package.
- *
  * @param {function} middleware
  * @returns {function}
  */
@@ -23,4 +19,18 @@ module.exports.wrapInTryCatch = middleware => {
       next(err);
     }
   };
+};
+
+/**
+ * Applies the middleware to the path for all unsafe methods
+ *
+ * @param {object} router
+ * @param {string} path
+ * @param {function} middleware
+ */
+module.exports.addMiddlewareToUnsafeMethods = (router, path, middleware) => {
+  router.put(path, middleware);
+  router.post(path, middleware);
+  router.patch(path, middleware);
+  router.delete(path, middleware);
 };

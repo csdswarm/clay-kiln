@@ -5,8 +5,7 @@ const appRoot = require('app-root-path'),
   files = require('amphora-fs'),
   path = require('path'),
   bodyParser = require('body-parser'),
-  { getComponentName } = require('clayutils'),
-  { wrapInTryCatch } = require('../../middleware-utils'),
+  { addMiddlewareToUnsafeMethods, wrapInTryCatch } = require('./middleware-utils'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
 
 /**
@@ -24,38 +23,16 @@ function isRobot(user) {
  *  passes the permission object to the permission function
  *
  * @param {Function} hasPermission
+ * @param {object} db
  * @return {Function}
  */
-function checkPermission(hasPermission) {
-  return async (req, res, next) => {
-    if (isRobot(res.locals.user) || await hasPermission(req.uri, req, res.locals || {})) {
+function checkPermission(hasPermission, db) {
+  return wrapInTryCatch(async (req, res, next) => {
+    if (isRobot(res.locals.user) || await hasPermission(req.uri, req, res.locals || {}, db)) {
       next();
     } else {
       res.status(403).send({ error: 'Permission Denied' });
     }
-  };
-}
-
-/**
- * returns middleware that ensures the user has permissions to unpublish
- *   the requested page
- * @param {object} db
- * @returns {function}
- */
-function makeCheckUnpublishPermission(db) {
-  return wrapInTryCatch(async (req, res, next) => {
-    const pageUri = await db.get(req.uri),
-      pageData = await db.get(pageUri),
-      pageType = getComponentName(pageData.main[0]),
-      { station, user } = res.locals,
-      canUnpublishPage = user.can('unpublish').a(pageType).at(station.callsign).value;
-
-    if (canUnpublishPage) {
-      next();
-      return;
-    }
-
-    res.status(403).send({ error: 'Permission Denied' });
   });
 }
 
@@ -67,7 +44,8 @@ function makeCheckUnpublishPermission(db) {
  * @param {Object} db - amphora's internal database connector
  */
 function setupRoutes(router, hasPermission, userRouter, db) {
-  const permissionRouter = express.Router();
+  const permissionRouter = express.Router(),
+    checkPermissionMiddleware = checkPermission(hasPermission, db);
 
   // assume json or text for anything in request bodies
   permissionRouter.use(jsonBodyParser);
@@ -81,19 +59,12 @@ function setupRoutes(router, hasPermission, userRouter, db) {
   files.getFolders([appRoot, 'components'].join(path.sep)).forEach((folder) => {
     const path = ['', '_components', folder, 'instances', '*'].join('/');
 
-    permissionRouter.put(path, checkPermission(hasPermission));
-    permissionRouter.post(path, checkPermission(hasPermission));
-    permissionRouter.patch(path, checkPermission(hasPermission));
-    permissionRouter.delete(path, checkPermission(hasPermission));
+    addMiddlewareToUnsafeMethods(permissionRouter, path, checkPermissionMiddleware);
   });
 
   // check all pages
-  permissionRouter.put('/_pages/*', checkPermission(hasPermission));
-  permissionRouter.patch('/_pages/*', checkPermission(hasPermission));
-  permissionRouter.post('/_pages/*', checkPermission(hasPermission));
-  permissionRouter.delete('/_pages/*', checkPermission(hasPermission));
-
-  permissionRouter.delete('/_uris/*', makeCheckUnpublishPermission(db));
+  addMiddlewareToUnsafeMethods(permissionRouter, '/_pages/*', checkPermissionMiddleware);
+  addMiddlewareToUnsafeMethods(permissionRouter, '/_uris/*', checkPermissionMiddleware);
 
   router.use('/', permissionRouter);
 }
