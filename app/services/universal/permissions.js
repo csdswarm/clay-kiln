@@ -3,7 +3,7 @@
 const express = require('express'),
   log = require('../universal/log').setup({ file: __filename }),
   { getComponentInstance } = require('../server/publish-utils'),
-  { getComponentName, isComponent, isPage, isPublished } = require('clayutils'),
+  { getComponentName, isComponent } = require('clayutils'),
   { loadPermissions } = require('../../services/server/urps'),
   addPermissions = require('../../services/universal/user-permissions'),
   _set = require('lodash/set'),
@@ -129,7 +129,6 @@ async function checkComponentPermission(uri, component, req, locals) {
  * @return {boolean}
  */
 async function checkUserPermissions(uri, req, locals) {
-
   try {
     // no matter the request, verify the user has can has the record for this site
     if (!locals.user.hasPermissionsTo('access').this('station').value) {

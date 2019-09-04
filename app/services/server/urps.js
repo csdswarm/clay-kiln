@@ -72,8 +72,10 @@ async function loadPermissions(session, locals) {
       loginData = { ...session.auth };
 
     if (!loginData.token) {
-      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${locals.user.username}`) || '{}'));
-      cache.del(`cognito-auth--${locals.user.username}`);
+      const key = `cognito-auth--${locals.user.username.toLowerCase()}`;
+
+      Object.assign(loginData, JSON.parse(await cache.get(key) || '{}'));
+      cache.del(key);
     }
 
     let { expires, permissions, lastUpdated } = loginData;

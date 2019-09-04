@@ -1,10 +1,11 @@
 'use strict';
 
-const _endsWith = require('lodash/endsWith'),
-  addPermissions = require('../universal/user-permissions'),
+const addPermissions = require('../universal/user-permissions'),
   _camelCase = require('lodash/camelCase'),
+  log = require('../universal/log').setup({ file: __filename }),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
+  preloadTimeout = 5000,
   /**
    * Check if a kiln.js file exists for a component, provide default function if not
    *
@@ -23,6 +24,36 @@ const _endsWith = require('lodash/endsWith'),
     return kilnjs;
   },
   /**
+  * A helper method which subscribes to PRELOAD_SUCCESS and returns a promise
+  *   of the first result.
+  *
+  * @param {object} subscriptions
+  * @param {boolean} scoped
+  * @returns {Promise}
+  */
+  whenPreloaded = (subscriptions, scoped = false) => {
+    return new Promise((resolve, reject) => {
+      try {
+        setTimeout(() => {
+          reject(new Error(`PRELOAD_SUCCESS wasn't published after ${preloadTimeout} ms`));
+        }, preloadTimeout);
+
+        subscriptions.subscribe(
+          PRELOAD_SUCCESS,
+          (...args) => {
+            // this unsubscribes from the event as future event calls serve
+            //   no purpose.
+            delete subscriptions.subscribedEvents[PRELOAD_SUCCESS];
+            resolve(...args);
+          },
+          scoped
+        );
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+  /**
    * Default hide a field and watch for load success to check user permissions
    *
    * Permission can be a string, or an object with an action and target
@@ -31,18 +62,22 @@ const _endsWith = require('lodash/endsWith'),
    *
    * @param {KilnInput} fieldInput
    * @param {string|object} permission
+   * @param {string} component
    */
-  secureField = (fieldInput, permission) => {
-    // Should actually be disabled/enabled instead of hide/show
-    fieldInput.hide();
+  secureField = async (fieldInput, permission, component) => {
+    try {
+      // Should actually be disabled/enabled instead of hide/show
+      fieldInput.hide();
 
-    fieldInput.subscribe(PRELOAD_SUCCESS, (data) => {
-      const {user, locals: {station}, url: {component}} = data;
+      const { user, locals: { station } } = await whenPreloaded(fieldInput),
+        showInput = user.may(permission, component, station.callsign).value;
 
-      if (user.may(permission, component, station.callsign).value) {
+      if (showInput) {
         fieldInput.show();
       }
-    }, true);
+    } catch (err) {
+      log('error', `error when securing the field '${fieldInput.inputName}' for component '${component}'`, err);
+    }
   },
   /**
    * Map through schema fields, find fields with permissions, and secure them
@@ -51,17 +86,18 @@ const _endsWith = require('lodash/endsWith'),
    * Use to secure an entire schema with one permission from a kiln.js file
    *
    * @param {function} kilnjs
+   * @param {string} componentName
    * @param {string} [componentPermission]
    * @returns {function} secureKilnJs
    */
-  secureSchema = (kilnjs, componentPermission) => (schema) => {
+  secureSchema = (kilnjs, componentName, componentPermission) => (schema) => {
     Object.keys(schema).forEach(field => {
       const permission = schema[field]._permission || schema._permission || componentPermission;
 
       if (schema[field]._has && permission) {
         schema[field] = new KilnInput(schema, field);
 
-        secureField(schema[field], permission);
+        secureField(schema[field], permission, componentName);
       }
     });
 
@@ -77,13 +113,11 @@ const _endsWith = require('lodash/endsWith'),
     window.kiln = window.kiln || {};
     window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
 
-    Object.keys(window.modules)
-      .filter(key => _endsWith(key, '.model'))
-      .forEach((key) => {
-        const component = key.replace('.model', ''),
-          kilnjs = getKilnJs(component);
+    window.kiln.locals.components
+      .forEach((component) => {
+        const kilnjs = getKilnJs(component);
 
-        window.kiln.componentKilnjs[component] = secureSchema(kilnjs);
+        window.kiln.componentKilnjs[component] = secureSchema(kilnjs, component);
       });
   },
   /**
@@ -95,7 +129,6 @@ const _endsWith = require('lodash/endsWith'),
     const subscriptions = new KilnInput(schema);
 
     subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
-
       const { value, message } = locals.user.hasPermissionsTo('access').this('station');
 
       if (!value) {
