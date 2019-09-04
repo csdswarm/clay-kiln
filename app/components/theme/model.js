@@ -38,7 +38,13 @@ module.exports.render = async (ref, data, locals) => {
 
   // as log as there is an station id, get the theme
   if (locals.station.id) {
-    const theme = await get(locals.station.site_slug) || defaultTheme;
+    let theme = {};
+
+    try {
+      theme = await get(locals.station.site_slug) || defaultTheme;
+    } catch (e) {
+      theme = defaultTheme;
+    }
 
     data.theme = {
       ...theme,
