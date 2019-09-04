@@ -42,7 +42,7 @@ module.exports.save = (ref, data, locals) => {
           feedImgUrl: item.overrideImage || result.feedImgUrl,
           sectionFront: item.overrideSectionFront || result.sectionFront,
           date: item.overrideDate || result.date,
-          lead: item.overrideContentType || result.lead
+          lead: item.overrideContentType || result.leadComponent
         });
 
         return content;

@@ -461,7 +461,6 @@ em, i {
   @mixin font ProximaNova-Regular, 14px, $black, -.22px, 17px;
 }
 
-
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Static Page Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -578,4 +577,14 @@ em, i {
 @define-mixin component-settings-font-7 {
   font-weight: 400;
   @mixin font Helvetica, Arial, em(14, 16), inherit, -.3, em(16, 14);
+}
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Alert Banner Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin alert-banner-font1 {
+  @mixin font CircularStd-Medium, 18px, $black, -.3px, 22px;
+}
+
+@define-mixin alert-banner-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
 }
