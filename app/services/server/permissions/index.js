@@ -2,7 +2,7 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, isComponent, isPage, isPublished, isUri } = require('clayutils'),
+  { getComponentName, isComponent, isPage, isUri } = require('clayutils'),
   { loadPermissions } = require('../urps'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
