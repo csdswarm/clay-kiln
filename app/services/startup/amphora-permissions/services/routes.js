@@ -5,19 +5,8 @@ const appRoot = require('app-root-path'),
   files = require('amphora-fs'),
   path = require('path'),
   bodyParser = require('body-parser'),
-  { addMiddlewareToUnsafeMethods, wrapInTryCatch } = require('./middleware-utils'),
+  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./middleware-utils'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
-
-/**
- *  determines if the user is not an actual user
- *
- * @param {object} user
- *
- * @return {boolean}
- */
-function isRobot(user) {
-  return !user.username;
-}
 
 /**
  *  passes the permission object to the permission function

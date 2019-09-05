@@ -2,7 +2,6 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentInstance } = require('../../server/publish-utils'),
   { getComponentName, isComponent, isPage, isPublished, isUri } = require('clayutils'),
   { loadPermissions } = require('../../server/urps'),
   addPermissions = require('../user-permissions'),
@@ -73,13 +72,14 @@ function userPermissionRouter() {
 /**
  * retrieves the data from the uri
  *
+ * @param {object} db - amphora's internal db instance
  * @param {string} uri
  * @param {string} [key]
  *
  * @return {object}
  */
-async function getComponentData(uri, key) {
-  const data = await getComponentInstance(uri.split('@')[0], {}) || {};
+async function getComponentData(db, uri, key) {
+  const data = await db.get(uri.split('@')[0]) || {};
 
   return key ? _get(data, key) : data;
 }
@@ -88,17 +88,23 @@ async function getComponentData(uri, key) {
  * check a component for field level permissions and modify the request with old data if they do not have permissions
  *
  * @param {string} uri
- * @param {string} component
  * @param {object} req
  * @param {object} locals
+ * @param {object} db - amphora's internal db instance
  */
-async function checkComponentPermission(uri, component, req, locals) {
+async function checkComponentPermission(uri, req, locals, db) {
+  const component = getComponentName(uri);
+
+  if (!componentsToCheck[component]) {
+    return;
+  }
+
   if (componentsToCheck[component].component) { // entire component
     const action = componentsToCheck[component].component;
 
     if (!locals.user.can(action).a(component).value) {
       // no permissions to modify this component, so reset the value to what it had been
-      req.body = await getComponentData(uri);
+      req.body = await getComponentData(db, uri);
     }
   } else { // specific fields
     for (const field of Object.keys(componentsToCheck[component].field)) {
@@ -110,7 +116,7 @@ async function checkComponentPermission(uri, component, req, locals) {
 
         // only get the component data once inside the loop
         if (!data) {
-          data = await getComponentData(uri);
+          data = await getComponentData(db, uri);
         }
 
         // if the field exists already override it, else remove it so it matches what it had been
@@ -141,11 +147,7 @@ async function checkUserPermissions(uri, req, locals, db) {
     }
 
     if (isComponent(uri)) {
-      const component = getComponentName(uri);
-
-      if (componentsToCheck[component]) {
-        await checkComponentPermission(uri, component, req, locals);
-      }
+      await checkComponentPermission(uri, req, locals, db);
     }
 
     if (isPage(uri) && req.method === 'POST') {
