@@ -19,6 +19,15 @@ const { getArticleData } = require('../universal/recirc-cmpt'),
     return '';
   };
 
+/**
+ * Makes a request with the component's canonicalUrl to determine whether
+ * a published version exists or not
+ * @param {String} ref component uri
+ * @param {Object} data component data
+ * @param {Object} locals kiln site locals
+ * @param {String} componentName type of component (ie: article, gallery, etc...)
+ * @returns {Boolean} whether a component at that url exists or not
+ */
 module.exports = (
   ref = '',
   data = {},
