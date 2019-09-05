@@ -22,6 +22,20 @@ function fakeLocals(req, res, params) {
 }
 
 /**
+ * Get approriate routePrefix and routeParamKey from req.path
+ *
+ * @param {string} path
+ * @returns {Object}
+ */
+function getPrefixAndKey(path) {
+  const authorRoute = (new RegExp('^\\/authors\\/')).test(path),
+    routePrefix = authorRoute ? 'author' : 'topic',
+    routeParamKey = authorRoute ? 'author' : 'tag';
+
+  return { routeParamKey, routePrefix };
+}
+
+/**
  * If you add the `X-Amphora-Page-JSON` header to a request
  * to a canonical url you can grab the page's JSON.
  *
@@ -32,9 +46,7 @@ function fakeLocals(req, res, params) {
  */
 function middleware(req, res, next) {
   const params = {},
-    authorRoute = (new RegExp('^\\/authors\\/')).test(req.path),
-    routePrefix = authorRoute ? 'authors' : 'topic',
-    routeParamKey = authorRoute ? 'author' : 'tag';
+    { routeParamKey, routePrefix } = getPrefixAndKey(req.path);
 
   let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, dynamicParamExtractor;
 
@@ -42,8 +54,8 @@ function middleware(req, res, next) {
     return next();
   }
 
-  // Define Curated/Dynamic "tag" routes.
-  // Match against section-front and "topic" slug prefixes
+  // Define Curated/Dynamic routes.
+  // Match against section-front, topic, and author slug prefixes
   curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
   curatedOrDynamicRoutePrefixes.push('topic');
   curatedOrDynamicRoutePrefixes.push('authors');
@@ -51,28 +63,30 @@ function middleware(req, res, next) {
   // Define curated/dynamic routing logic
   curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
 
-  // If it's a topic or section-front route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic tag page logic.
+  // If it's a curated/dynamic route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
-    // Define keyword extraction logic.
+    // Define param extraction logic.
     dynamicParamExtractor = new RegExp(`^\\/(?:${curatedOrDynamicRoutePrefixes.join('|')})\\/([^/]+)\\/?`);
 
     /**
-     * We need logic to handle different routing between dynamic topic/section-front pages and curated,
+     * We need logic to handle different routing between dynamic route pages and curated,
      * since both share the same slug prefixes.
      */
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
       .then(pageKey => {
-        // Curated topic/section-front page found. Serve content collection.
-        // Extract tag keyword and set it to params appropriately.
+        // Curated page found. Serve content collection.
+        // Extract param keyword and set it to correct params key appropriately.
         params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
         return db.get(`${pageKey}@published`);
       })
       .catch(error => {
-        // If error was a "not found" error, then fallback to serving dynamic topic/section-front page.
+        // If error was a "not found" error, then fallback to serving dynamic route page.
         const notFoundErrorPrefix = 'Key not found in database';
 
+        console.log({routeParamKey, routePrefix});
+
         if (error.message.substring(0, notFoundErrorPrefix.length) === notFoundErrorPrefix) {
-          // Extract tag keyword and set it to params appropriately.
+          // Extract correct param and set it to params appropriately.
           params[`dynamic${_.capitalize(routeParamKey)}`] = req.path.match(dynamicParamExtractor)[1];
           return db.get(`${req.hostname}/_pages/${routePrefix}@published`);
         } else {

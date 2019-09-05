@@ -29,6 +29,19 @@ curl -X PUT $http://$1/$newPageList@published -H 'Authorization: token accesskey
 
 rm newPageList.json
 
+authorPage="_pages/author"
+
+printf "\nUpdating Current Author Page...\n"
+
+curl -X GET -H "Accept: application/json" $http://$1/$authorPage > ./authorPage.json
+
+node updateAuthorPage.js $1/_components/author-page-header/instances/new
+
+curl -X PUT $http://$1/$authorPage -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./authorPage.json -o /dev/null -s
+curl -X PUT $http://$1/$authorPage@published -H 'Authorization: token accesskey' -o /dev/null -s
+
+rm authorPage.json
+
 printf "\n\nCreating Author Page Header...\n\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
 cat ./_pages.yml | clay import -k demo -y -p $1
