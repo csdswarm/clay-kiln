@@ -83,8 +83,6 @@ function middleware(req, res, next) {
         // If error was a "not found" error, then fallback to serving dynamic route page.
         const notFoundErrorPrefix = 'Key not found in database';
 
-        console.log({routeParamKey, routePrefix});
-
         if (error.message.substring(0, notFoundErrorPrefix.length) === notFoundErrorPrefix) {
           // Extract correct param and set it to params appropriately.
           params[`dynamic${_.capitalize(routeParamKey)}`] = req.path.match(dynamicParamExtractor)[1];
