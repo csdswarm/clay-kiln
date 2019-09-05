@@ -1,12 +1,9 @@
 'use strict';
 
 module.exports.render = (ref, data, locals) => {
-  let author = '';
-
-  if (locals && locals.params) {
-    author = locals.params.author || locals.params.dynamicAuthor;
+  if (locals && locals.params && locals.params.dynamicAuthor) {
+    data.author = locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,'');
   }
 
-  data.author = author.replace(/-/g, ' ').replace(/\//g,'');
   return data;
 };
