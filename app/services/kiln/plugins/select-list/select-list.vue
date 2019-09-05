@@ -23,7 +23,7 @@
             return {
                 label: this.schema._label,
                 listOptions: [],
-                selected: ''
+                selected: this.data || ''
             };
         },
         mounted() {
