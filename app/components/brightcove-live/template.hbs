@@ -1,18 +1,19 @@
-<div data-uri="{{ default _ref _self }}" class="component component--brightcove-live" data-editable="videoSettings">
+<div data-uri="{{ default _ref _self }}" class="component component--brightcove brightcove--live" data-editable="videoSettings">
   <div class="player" itemscope itemtype="http://schema.org/VideoObject">
     {{#if video.id }}
       <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
         {{#unless @root.locals.edit}}
-          <video-js id="video-{{ video.id }}"
-            class="video-js vjs-16-9"
-            data-video-id="{{ video.id }}"
-            data-account="{{ @root.locals.site.brightcoveAccountId }}"
-            data-player="{{ @root.locals.site.brightcovePlayerId }}"
-            data-autoplay-unmuted={{ autoplayUnmuted }}
-            data-click-to-play={{ clickToPlay }}
-            data-embed="default"
-            data-application-id
-            controls></video-js>
+            <video-js id="video-{{ video.id }}"
+              class="video-js vjs-16-9"
+              data-video-id="{{ video.id }}"
+              data-account="{{ @root.locals.site.brightcoveAccountId }}"
+              data-player="{{ player }}"
+              data-ad-config-id="{{ adConfig }}"
+              data-autoplay-unmuted={{ autoplayUnmuted }}
+              data-click-to-play={{ clickToPlay }}
+              data-embed="default"
+              data-application-id
+              controls></video-js>
 
             <meta itemprop="name" content="{{ name }}">
             <meta itemprop="headline" content="{{ seoHeadline }}">

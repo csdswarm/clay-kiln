@@ -36,7 +36,9 @@
         },
         computed: {
             value() {
-                return this.selectedPlayer || [];
+                return this.playerOptions
+                    ? this.playerOptions.find(opt => opt.value === this.selectedPlayer)
+                    : null;
             },
         },
         methods: {
@@ -47,10 +49,16 @@
             populatePlayers() {
                 axios.get('/brightcove/players').then(({ status, data }) => {
                     if (status === 200 && data) {
-                        this.playerOptions = data.map(player => ({
-                            name: player.name,
+                        const options = data.map(player => ({
+                            label: player.name,
                             value: player.id
                         }));
+
+                        this.playerOptions = options;
+
+                        if (!this.data && options.length) {
+                            this.selectedPlayer = options[0].value;
+                        }
                     }
                 }).catch(e => {
                     log('error', 'Unable to fetch Brightcove players.', e);
@@ -62,8 +70,8 @@
              */
             updateSelectedPlayer(input) {
                 try {
-                    this.selectedPlayer = input;
-                    this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedPlayer })
+                    this.selectedPlayer = input.value;
+                    this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.selectedPlayer });
                 } catch (e) {}
             },
         },

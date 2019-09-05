@@ -9,8 +9,18 @@ video:
       required: true
 
 player:
-  _label: Video Player
-  _has: brightcove-player
+  _label: Player
+  _has:
+    input: brightcove-player
+    validate:
+      required: true
+
+adConfig:
+  _label: Ad Configuration
+  _has:
+    input: brightcove-adconfig
+    validate:
+      required: true
 
 searchVideo:
   _label: Search for video
@@ -49,6 +59,7 @@ _groups:
     fields:
       - video (Update video)
       - player (Update video)
+      - adConfig (Update video)
       - showTitle (Update video)
       - autoplayUnmuted (Update video)
       - clickToPlay (Update video)

@@ -97,7 +97,7 @@ const log = require('./log').setup({ file: __filename }),
   },
   /**
    * Retrieve response from endpoint
-   * (Uses Brightcove CMS api in endpoint)
+   * (Uses Brightcove CMS api by default)
    *
    * @param {string} method
    * @param {string} route

@@ -5,6 +5,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   _get = require('lodash/get'),
   _pick = require('lodash/pick'),
   moment = require('moment'),
+  axios = require('axios'),
   /**
    *  Create a query string that works with brightcove api standards
    *
@@ -58,13 +59,9 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    */
   search = async (req, res) => {
     try {
-      return brightcoveApi.request('GET', 'videos', {q: buildQuery(req.query), limit: 10})
+      await brightcoveApi.request('GET', 'videos', {q: buildQuery(req.query), limit: 10})
         .then(({ body }) => transformVideoResults(body))
-        .then(results => res.send(results))
-        .catch(e => {
-          console.error(e);
-          res.status(500).send(e);
-        });
+        .then(results => res.send(results));
     } catch (e) {
       console.error(e);
       res.status(500).send(e);
@@ -79,18 +76,46 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    */
   players = async (req, res) => {
     try {
-      return brightcoveApi.request('GET', 'players', null, null, 'player_management')
+      await brightcoveApi.request('GET', 'players', null, null, 'player_management')
         .then(res => res.body.items)
         .then(results => results.map(player => _pick(player, ['id', 'name'])))
-        .then(results => res.send(results))
-        .catch(e => {
-          console.error(e);
-          res.status(500).send(e);
-        });
+        .then(results => res.send(results));
     } catch (e) {
       console.error(e);
       res.status(500).send(e);
     }
+  },
+  /**
+   * Returns an array of Brightcove ad configurations
+   *
+   * @param {object} req
+   * @param {object} res
+   * @returns {Promise}
+   */
+  adConfigs = async (req, res) => {
+    try {
+      const endpoint = `https://api.bcovlive.io/v1/ssai/applications/account/${ process.env.BRIGHTCOVE_LIVE_ACCOUNT_ID }`,
+        response = await axios.get(endpoint, {
+          headers: {
+            'X-API-KEY': process.env.BRIGHTCOVE_LIVE_API_KEY
+          }
+        });
+
+      console.log(response.data);
+    } catch (e) {
+      console.error(e);
+    }
+
+    res.json([
+      {
+        id: 'djdajdlkajjerj',
+        name: 'Default'
+      },
+      {
+        id: 'dd44j4jrjr',
+        name: 'Tons of Ads!'
+      }
+    ]);
   },
   /**
    * Create new video object in brightcove and
@@ -140,7 +165,6 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
       res.status(500).send(e);
     }
   },
@@ -285,6 +309,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     app.use('/brightcove/update', update);
     app.use('/brightcove/get', getVideoByID);
     app.use('/brightcove/players', players);
+    app.use('/brightcove/adconfigs', adConfigs);
   };
 
 module.exports.inject = inject;
