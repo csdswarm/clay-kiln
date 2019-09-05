@@ -3,6 +3,14 @@
 const { getArticleData } = require('../universal/recirc-cmpt'),
   { PAGE_TYPES } = require('../universal/constants'),
   urlPatterns = require('../universal/url-patterns'),
+
+  /**
+   * generates a url based on the component's type and data
+   *
+   * @param {String} componentName
+   * @param {Object} data
+   * @returns {String}
+   */
   componentSlugUrl = (componentName = '', data = {}) => {
     if (componentName === PAGE_TYPES.ARTICLE) {
       return data.secondarySectionFront

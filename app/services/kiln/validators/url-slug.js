@@ -10,6 +10,14 @@ const { getComponentName } = require('clayutils'),
     [PAGE_TYPES.ARTICLE]: true,
     [PAGE_TYPES.GALLERY]: true
   },
+  /**
+   * determines whether the slug has changed by comparing the current
+   * page state with the published component's data
+   *
+   * @param {Object} state
+   * @param {Object} data
+   * @returns {Boolean}
+   */
   isSlugChanged = (state, data) => {
     const {
         page: {
