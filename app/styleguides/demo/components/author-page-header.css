@@ -44,7 +44,7 @@
     &__social-container {
         display: block;
         @mixin author-page-header-font4;
-        @media only screen and (min-width: 481px) and (max-width: 1023px) {
+        @mixin only-medium-screen {
             display: none;
         }
         /* This is a BEM combinator hack right now - adding to retro to discuss */
@@ -56,7 +56,7 @@
     }
     &__social-container--md-sm-screen {
         display: none;
-        @media only screen and (min-width: 481px) and (max-width: 1023px) {
+        @mixin only-medium-screen {
             display: block;
             margin-bottom: em(20);
         }
