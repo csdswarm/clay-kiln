@@ -40,7 +40,7 @@ const radioApiService = require('../../services/server/radioApi'),
     const [, stationPath] = req.originalUrl.split('?')[0].split('/'),
       stationHost = req.get('host').split('/').shift().split('.').shift().toLowerCase();
 
-    return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
+    return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath.toLowerCase() : stationHost.toLowerCase();
   },
   /**
    * determines if the path is valid for station information
