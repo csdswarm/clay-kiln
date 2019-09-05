@@ -11,7 +11,8 @@ const _get = require('lodash/get'),
   promises = require('./promises'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
-  mediaplay = require('./media-play');
+  mediaplay = require('./media-play'),
+  urlExists = require('../../services/universal/url-exists');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -455,7 +456,18 @@ function render(ref, data, locals) {
   });
 }
 
-function save(uri, data, locals) {
+async function save(uri, data, locals) {
+  const isClient = typeof window !== 'undefined',
+    urlAlreadyExists = await urlExists(uri, data, locals);
+
+  /*
+    kiln doesn't display custom error messages, so on the client-side we'll
+    use the publishing drawer for validation errors.
+  */
+  if (urlAlreadyExists && !isClient) {
+    throw new Error('duplicate url');
+  }
+
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
