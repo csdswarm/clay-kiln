@@ -47,13 +47,13 @@ async function handlePublishSectionFront(page) {
     
     if (data.title && !data.titleLocked) {
       const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
-        sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
-      
-      if (!sectionFrontValues.includes(data.title.toLowerCase())) {
-        sectionFronts.push({
-          name: data.title,
-          value: data.title.toLowerCase()
-        });
+        sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value),
+        name = data.stationFront ? data.stationSiteSlug : data.title,
+        value = name.toLowerCase();
+
+      if (!sectionFrontValues.includes(value)) {
+        sectionFronts.push({ name, value });
+
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(sectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: true}));
       }
@@ -77,12 +77,13 @@ async function handleUnpublishSectionFront(page) {
 
     if (mainRef.includes('/_components/section-front/instances/')) {
       const data = await db.get(mainRef),
-        sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
-      
-      if (data.title) {
+        sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList,
+        value = data.stationFront ? data.stationSiteSlug : data.title;
+
+      if (value) {
         const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
           updatedSectionFronts = sectionFronts.filter(sectionFront => {
-            return sectionFront.value !== data.title.toLowerCase();
+            return sectionFront.value !== value.toLowerCase();
           });
 
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));

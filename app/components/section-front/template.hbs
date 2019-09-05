@@ -7,6 +7,7 @@
         <span>Primary section front <span class="warn">*required</span> : {{ primarySectionFront }}</span>
       {{/unless}}
       <span>Title {{#unless primary}} (Secondary Section Front){{/unless}} <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
+      {{#if stationFront}}<span>Site Slug <span class="warn">*required</span> : {{ default stationSiteSlug 'No Slug Set' }}</span>{{/if}}
       {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
       <span>Include podcast module? : {{ default includePodcastModule 'False' }}</span>
     </div>

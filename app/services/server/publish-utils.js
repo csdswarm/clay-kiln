@@ -176,7 +176,7 @@ function getUrlOptions(component, locals, pageType) {
 
   urlOptions.prefix = getUrlPrefix(locals.site);
   urlOptions.sectionFront = component.stationFront ?
-    component.sectionFront || component.title :
+    component.stationSiteSlug || component.title :
     slugifyService(component.sectionFront || component.title) || null;
   urlOptions.secondarySectionFront = slugifyService(component.secondarySectionFront) || null;
   urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);

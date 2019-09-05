@@ -22,6 +22,18 @@ titleLocked:
   _label: Is title locked?
   _has: checkbox
 
+stationSiteSlug:
+  _label: Site Slug
+  _has:
+    input: text
+    validate:
+      required:
+        field: stationFront
+        operator: truthy
+  _reveal:
+    field: stationFront
+    operator: truthy
+
 primary:
   _label: Is this a primary section front?
   _has: checkbox
@@ -94,4 +106,5 @@ _groups:
       - primary
       - primarySectionFront
       - title
+      - stationSiteSlug
       - includePodcastModule
