@@ -3,6 +3,9 @@ _components:
     author: ''
     profileImage: ''
     scheduleTime: ''
-    socialButtonsShow: false
-    socialButtonsURLs: []
     bio: ''
+    facebookHandle: ''
+    twitterHandle: ''
+    youtubeHandle: ''
+    instagramHandle: ''
+    email: ''

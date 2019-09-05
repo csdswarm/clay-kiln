@@ -25,43 +25,33 @@ scheduleTime:
   _has:
     input: text
 
-
-socialButtonsShow:
-  _label: Add Social Media
-  _has:
-    validate:
-      required: true
-    input: checkbox
-
-socialButtonsURLs:
-  _label: Add Social Button
-  _has:
-    input: complex-list
-    props:
-      -
-        prop: type
-        _label: Social Type
-        _has:
-          input: radio
-          options:
-            - facebook
-            - twitter
-            - instagram
-            - youtube
-            - email
-      -
-        prop: url
-        _label: Social Page URL
-        _has:
-          input: text
-          type: url
-  _reveal:
-    field: socialButtonsShow
-    operator: ===
-    value: true
-
 bio:
   _label: Biography
+  _has:
+    input: text
+
+facebookHandle:
+  _label: Facebook Handle
+  _has:
+    input: text
+
+twitterHandle:
+  _label: Twitter Handle
+  _has:
+    input: text
+
+youtubeHandle:
+  _label: YouTube Account
+  _has:
+    input: text
+
+instagramHandle:
+  _label: Instagram Handle
+  _has:
+    input: text
+
+email:
+  _label: email
   _has:
     input: text
 
@@ -72,8 +62,11 @@ _groups:
       - profileImage
       - scheduleTime
       - bio
-      - socialButtonsShow
-      - socialButtonsURLs
+      - facebookHandle
+      - twitterHandle
+      - youtubeHandle
+      - instagramHandle
+      - email
     _placeholder:
       height: 250px
       text: Author Header
