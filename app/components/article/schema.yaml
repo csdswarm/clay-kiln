@@ -308,6 +308,9 @@ showSocial:
   _has:
     input: checkbox
     help: Author social handles are displayed by default. Unchecking this will hide handles on this article
+fullWidthLead:
+  _label: Full-Width Lead Component
+  _has: checkbox
 rubric:
   _label: Rubric
   _subscribe: rubric
@@ -413,6 +416,7 @@ _groups:
     fields:
       - feeds
       - showSocial
+      - fullWidthLead
       - sectionFront
       - hasSecondaryBylines
       - apContent

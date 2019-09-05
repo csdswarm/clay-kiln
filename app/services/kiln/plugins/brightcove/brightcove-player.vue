@@ -57,7 +57,7 @@
                         this.playerOptions = options;
 
                         if (!this.data && options.length) {
-                            this.selectedPlayer = options[0].value;
+                            this.updateSelectedPlayer(options[0]);
                         }
                     }
                 }).catch(e => {

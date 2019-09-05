@@ -16,9 +16,10 @@ module.exports.render = async (ref, data, locals) => {
   data.seoContentUrl = data.link || locals.url;
   data.seoHeadline = data.description || data.name;
   data.seoDescription = data.longDescription || data.description || data.name;
+  data.player = data.player || locals.site.brightcovePlayerId;
 
   if (video && video.id) {
-    data.seoEmbedUrl = `https://players.brightcove.net/${locals.site.brightcoveAccountId}/${locals.site.brightcovePlayerId}_default/index.html?videoId=${video.id}`;
+    data.seoEmbedUrl = `https://players.brightcove.net/${locals.site.brightcoveAccountId}/${data.player}_default/index.html?videoId=${video.id}&adConfigId=${data.adConfig}`;
     data.views = await apiHelper.getVideoViews(video.id);
   }
 

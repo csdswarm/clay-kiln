@@ -57,7 +57,7 @@
                         this.adConfigOptions = options;
 
                         if (!this.data && options.length) {
-                            this.selectedAdConfig = options[0].value;
+                            this.updateSelectedAdConfig(options[0]);
                         }
                     }
                 }).catch(e => {
