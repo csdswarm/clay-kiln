@@ -31,8 +31,12 @@ function fakeLocals(req, res, params) {
  * @returns {Promise}
  */
 function middleware(req, res, next) {
-  const params = {};
-  let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, tagKeywordExtractor;
+  const params = {},
+    authorRoute = (new RegExp('^\\/authors\\/')).test(req.path),
+    routePrefix = authorRoute ? 'authors' : 'topic',
+    routeParamKey = authorRoute ? 'author' : 'tag';
+
+  let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, dynamicParamExtractor;
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
@@ -42,6 +46,7 @@ function middleware(req, res, next) {
   // Match against section-front and "topic" slug prefixes
   curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
   curatedOrDynamicRoutePrefixes.push('topic');
+  curatedOrDynamicRoutePrefixes.push('authors');
 
   // Define curated/dynamic routing logic
   curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
@@ -49,7 +54,7 @@ function middleware(req, res, next) {
   // If it's a topic or section-front route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic tag page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
     // Define keyword extraction logic.
-    tagKeywordExtractor = new RegExp(`^\\/(?:${curatedOrDynamicRoutePrefixes.join('|')})\\/([^/]+)\\/?`);
+    dynamicParamExtractor = new RegExp(`^\\/(?:${curatedOrDynamicRoutePrefixes.join('|')})\\/([^/]+)\\/?`);
 
     /**
      * We need logic to handle different routing between dynamic topic/section-front pages and curated,
@@ -59,7 +64,7 @@ function middleware(req, res, next) {
       .then(pageKey => {
         // Curated topic/section-front page found. Serve content collection.
         // Extract tag keyword and set it to params appropriately.
-        params.tag = req.path.match(tagKeywordExtractor)[1];
+        params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
         return db.get(`${pageKey}@published`);
       })
       .catch(error => {
@@ -68,18 +73,13 @@ function middleware(req, res, next) {
 
         if (error.message.substring(0, notFoundErrorPrefix.length) === notFoundErrorPrefix) {
           // Extract tag keyword and set it to params appropriately.
-          params.dynamicTag = req.path.match(tagKeywordExtractor)[1];
-          return db.get(`${req.hostname}/_pages/topic@published`);
+          params[`dynamic${_.capitalize(routeParamKey)}`] = req.path.match(dynamicParamExtractor)[1];
+          return db.get(`${req.hostname}/_pages/${routePrefix}@published`);
         } else {
 
           throw error;
         }
-
       });
-
-  } else if (req.path.indexOf('/authors/') === 0) {
-    params.dynamicAuthor = req.path.match(/authors\/(.+)\/?/)[1];
-    promise = db.get(`${req.hostname}/_pages/author@published`);
   } else if (req.path.indexOf('/stations') === 0) {
     if (req.path.match(/stations\/location\/(.+)/)) {
       params.dynamicMarket = req.path.match(/stations\/location\/(.+)/)[1];
