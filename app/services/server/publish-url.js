@@ -100,6 +100,7 @@ function getAuthorPageUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       const slug = pubUtils.authorPageSlugPattern(urlOptions);
+      
       return slug;
     });
 }

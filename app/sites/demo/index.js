@@ -2,9 +2,9 @@
 
 const publishing = require('../../services/publishing'),
   mainComponentRefs = [
-    '/_components/article/instances', 
-    '/_components/gallery/instances', 
-    '/_components/section-front/instances', 
+    '/_components/article/instances',
+    '/_components/gallery/instances',
+    '/_components/section-front/instances',
     '/_components/author-page-header/instances'
   ];
 
