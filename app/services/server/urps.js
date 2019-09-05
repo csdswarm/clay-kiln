@@ -43,20 +43,23 @@ async function getAllPermissions(jwtToken) {
     }
 
     const options = { headers: { Authorization: jwtToken } },
-      permissionsList = await rest.get(`${process.env.URPS_AUTHORIZATIONS_URL}/permissions/all`, options);
+      permissionsList = await rest.get(`${process.env.URPS_AUTHORIZATIONS_URL}/permissions/all`,
+        options);
 
     return permissionsList
-      .reduce((permissions, { type: permType, action, target: { type: targetType, value: target } }) => {
-        const newPermission = { ...permissions[permType] },
-          newAction = newPermission[action] = { ...newPermission[action] },
-          newTargetType = newAction[targetType] = { ...newAction[targetType] };
+      .reduce(
+        (permissions, { type: permType, action, target: { type: targetType, value: target } }) => {
+          const newPermission = { ...permissions[permType] },
+            newAction = newPermission[action] = { ...newPermission[action] },
+            newTargetType = newAction[targetType] = { ...newAction[targetType] };
 
-        newTargetType[target] = 1; // using 1 instead of true to keep size down
+          newTargetType[target] = 1; // using 1 instead of true to keep size down
 
-        return { ...permissions, [permType]: { ...newPermission } };
-      }, {});
+          return { ...permissions, [permType]: { ...newPermission } };
+        }, {});
   } catch (error) {
-    log('error', 'There was a problem trying to get URPS permissions for the user', { error, jwtToken });
+    log('error', 'There was a problem trying to get URPS permissions for the user',
+      { error, jwtToken });
   }
 }
 
@@ -72,10 +75,10 @@ async function loadPermissions(session, locals) {
       loginData = { ...session.auth };
 
     if (!loginData.token) {
-      const key = `cognito-auth--${locals.user.username.toLowerCase()}`;
+      const username = (locals.user.username || '').toLowerCase();
 
-      Object.assign(loginData, JSON.parse(await cache.get(key) || '{}'));
-      cache.del(key);
+      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${username}`) || '{}'));
+      cache.del(`cognito-auth--${username}`);
     }
 
     let { expires, permissions, lastUpdated } = loginData;

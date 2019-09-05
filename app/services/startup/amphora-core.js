@@ -4,7 +4,7 @@ const amphora = require('amphora'),
   renderers = require('./amphora-renderers'),
   healthCheck = require('@nymdev/health-check'),
   permissionsPlugin = require('./amphora-permissions'),
-  { checkUserPermissions, userPermissionRouter } = require('../universal/permissions');
+  { checkUserPermissions, userPermissionRouter } = require('../server/permissions');
 
 function initAmphora(app, search, sessionStore, routes) {
   return amphora({
