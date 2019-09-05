@@ -1,6 +1,6 @@
 'use strict';
 
-const addPermissions = require('../universal/permissions'),
+const addPermissions = require('../universal/user-permissions'),
   _camelCase = require('lodash/camelCase'),
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -109,10 +109,6 @@ const addPermissions = require('../universal/permissions'),
       }
     }, true);
   };
-
-// kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
-// this to the user object, so we are accessing it directly off of the window
-addPermissions(window.kiln.locals);
 
 // kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
 // this to the user object, so we are accessing it directly off of the window

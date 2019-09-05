@@ -2,10 +2,10 @@
 
 const express = require('express'),
   log = require('../universal/log').setup({ file: __filename }),
-  { getComponentInstance } = require('../server/publish-utils'),
+  { getComponentInstance } = require('./publish-utils'),
   { getComponentName, isComponent } = require('clayutils'),
-  { loadPermissions } = require('../../services/server/urps'),
-  addPermissions = require('../../services/universal/user-permissions'),
+  { loadPermissions } = require('./urps'),
+  addPermissions = require('../universal/user-permissions'),
   _set = require('lodash/set'),
   _get = require('lodash/get'),
   appRoot = require('app-root-path'),
