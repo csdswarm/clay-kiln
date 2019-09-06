@@ -152,7 +152,7 @@ async function checkUserPermissions(uri, req, locals, db) {
 
     if (isPage(uri)) {
       if (isPublished(uri)) {
-        const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
+        const pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
 
         return pageTypesToCheck.has(pageType)
           ? locals.user.can('publish').a(pageType).value
