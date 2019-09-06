@@ -1,6 +1,6 @@
 'use strict';
 
-const apiHelper = require('../../services/universal/brightcoveApiHelper');
+const apiHelper = require('../../services/universal/brightcove-proxy-helper');
 
 module.exports.save = async (ref, data) => {
   if (data.video && data.video.id) {
