@@ -40,8 +40,11 @@ const { getPageInstance } = require('clayutils'),
     });
 
     return inlineRelatedANF;
-  }
+  };
 
-module.exports = function (ref, data, locals) {
-  return getInlineRelated(data.articles);
+module.exports = function (ref, data) {
+  return {
+    role: 'aside',
+    components: getInlineRelated(data.articles)
+  };
 };

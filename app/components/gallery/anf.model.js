@@ -50,7 +50,9 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     if (isNotHTMLEmbed(lede[0]._ref)) {
       try {
         ledeANF.push(await getCompInstanceData(`${ lede[0]._ref }.anf`));
-      } catch (e) {};
+      } catch (e) {
+        log('error', `Error getting component instance data for lede anf: ${e}`);
+      };
     }
 
     return ledeANF;
@@ -59,7 +61,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * Get apple news format of each content ref
    *
    * @param {Array} content
-   * @returns {Array}
+   * @returns {Promise|Array}
   */
   getContent = async content => {
     const contentANF = [];
@@ -82,8 +84,6 @@ module.exports = async function (ref, data) {
   return {
     role: 'container',
     identifier: getComponentInstance(ref),
-    style: 'articleStyle',
-    layout: 'articleLayout',
     components: [
       {
         role: 'header',
@@ -113,6 +113,12 @@ module.exports = async function (ref, data) {
         style: 'ledeStyle',
         layout: 'ledeLayout',
         components: await getLede(data.lead)
+      },
+      {
+        role: 'section',
+        style: 'galleryStyle',
+        layout: 'galleryLayout',
+        components: await getContent(data.slides)
       },
       {
         role: 'section',

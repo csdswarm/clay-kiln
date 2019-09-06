@@ -4,7 +4,7 @@
  *  https://developer.apple.com/documentation/apple_news/heading
 */
 
-module.exports = function (ref, data, locals) {
+module.exports = function (ref, data) {
   return {
     role: 'heading2',
     text: data.text,

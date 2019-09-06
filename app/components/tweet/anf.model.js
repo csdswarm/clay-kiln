@@ -19,9 +19,9 @@ const getTweetURL = data => {
   }
 
   return url;
-}
+};
 
-module.exports = function (ref, data, locals) {
+module.exports = function (ref, data) {
   return {
     role: 'tweet',
     URL: getTweetURL(data),

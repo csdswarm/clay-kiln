@@ -4,7 +4,7 @@
  *  https://developer.apple.com/documentation/apple_news/image
 */
 
-module.exports = function (ref, data, locals) {
+module.exports = function (ref, data) {
   return {
     role: 'image',
     URL: data.url,

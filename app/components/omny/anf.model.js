@@ -8,8 +8,8 @@ module.exports = function (ref, data, locals) {
   return {
     role: 'video', // test
     URL: '', // .M3U8
-    layout: 'brightcoveLayout',
-    style: 'brightcoveStyle',
+    layout: 'omnyLayout',
+    style: 'omnyStyle',
     format: 'html'
   };
 };
