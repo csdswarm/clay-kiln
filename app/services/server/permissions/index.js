@@ -2,7 +2,7 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, isComponent, isPage, isUri } = require('clayutils'),
+  { getComponentName, isComponent, isPage, isPublished, isUri } = require('clayutils'),
   { loadPermissions } = require('../urps'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
@@ -150,12 +150,20 @@ async function checkUserPermissions(uri, req, locals, db) {
       await checkComponentPermission(uri, req, locals, db);
     }
 
-    if (isPage(uri) && req.method === 'POST') {
-      const pageType = getComponentName(req.body.main[0]);
+    if (isPage(uri)) {
+      if (isPublished(uri)) {
+        const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
 
-      return pageTypesToCheck.has(pageType)
-        ? locals.user.can('create').a(pageType).value
-        : true;
+        return pageTypesToCheck.has(pageType)
+          ? locals.user.can('publish').a(pageType).value
+          : true;
+      } else if (req.method === 'POST') {
+        const pageType = getComponentName(req.body.main[0]);
+
+        return pageTypesToCheck.has(pageType)
+          ? locals.user.can('create').a(pageType).value
+          : true;
+      }
     }
 
     if (isUri(uri) && req.method === 'DELETE') {

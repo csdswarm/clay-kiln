@@ -5,7 +5,7 @@ const appRoot = require('app-root-path'),
   files = require('amphora-fs'),
   path = require('path'),
   bodyParser = require('body-parser'),
-  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./middleware-utils'),
+  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./utils'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
 
 /**
