@@ -100,6 +100,8 @@ feedImgUrl:
     input: advanced-image-upload
     uploadLabel: Upload Image Attachment
     uploadHelp: Choose an image file from your computer
+    validate:
+      required: true
 slug:
   _label: Slug
   _has:
