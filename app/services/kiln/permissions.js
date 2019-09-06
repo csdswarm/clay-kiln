@@ -55,7 +55,10 @@ const addPermissions = require('../universal/user-permissions'),
     Object.keys(schema).forEach(field => {
       const permission = schema[field]._permission || schema._permission || componentPermission;
 
-      if (schema[field]._has && permission) {
+      if (permission && permission._has) {
+        console.warn(`The ${schema.schemaName} component was upgraded causing the _permission to become corrupted.`,
+          `Upgrade the /app/components/${schema.schemaName}/schema.yml to enable permissions.`);
+      } else if (schema[field]._has && permission) {
         schema[field] = new KilnInput(schema, field);
 
         secureField(schema[field], permission);
