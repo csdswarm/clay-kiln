@@ -5,5 +5,3 @@ _components:
     clickToPlay: false
     showTitle: false
     searchVideo: null
-    newVideo: null
-    updateVideo: null

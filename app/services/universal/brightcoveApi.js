@@ -8,7 +8,6 @@ const log = require('./log').setup({ file: __filename }),
   rest = require('./rest'),
   brightcoveCmsApi = `cms.api.brightcove.com/v1/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/`,
   brightcoveIngestApi = `ingest.api.brightcove.com/v1/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/videos/`,
-  brightcovePlayerManagementApi = `players.api.brightcove.com/v2/accounts/${ process.env.BRIGHTCOVE_ACCOUNT_ID }/`,
   brightcoveAnalyticsApi = 'analytics.api.brightcove.com/v1/data',
   brightcoveOAuthApi = 'https://oauth.brightcove.com/v4/access_token?grant_type=client_credentials',
   qs = require('qs'),
@@ -41,9 +40,6 @@ const log = require('./log').setup({ file: __filename }),
         break;
       case 'ingest':
         url = brightcoveIngestApi;
-        break;
-      case 'player_management':
-        url = brightcovePlayerManagementApi;
         break;
       default:
         url = brightcoveCmsApi;
@@ -97,20 +93,18 @@ const log = require('./log').setup({ file: __filename }),
   },
   /**
    * Retrieve response from endpoint
-   * (Uses Brightcove CMS api by default)
+   * (Uses Brightcove CMS api in endpoint)
    *
    * @param {string} method
    * @param {string} route
    * @param {object} params
    * @param {object} [data]
-   * @param {string} [api]
    * @returns {Promise}
    * @throws {Error}
    */
-  // eslint-disable-next-line max-params
-  request = async (method, route, params, data, api) => {
+  request = async (method, route, params, data) => {
     try {
-      const endpoint = createEndpoint(route, params, api);
+      const endpoint = createEndpoint(route, params);
 
       await getAccessToken();
       if (!access_token) {

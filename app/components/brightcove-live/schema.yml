@@ -8,17 +8,11 @@ video:
     validate:
       required: true
 
-player:
-  _label: Player
-  _has:
-    input: brightcove-player
-    validate:
-      required: true
-
 adConfig:
   _label: Ad Configuration
   _has:
-    input: brightcove-adconfig
+    input: text
+    help: The ID of the live ad configuration. Defaults to no ad configuration if not set.
     validate:
       required: true
 
@@ -28,14 +22,6 @@ searchVideo:
     input: brightcove-search
     webLabel: Search
     live: true
-
-updateVideo:
-  _label: Update video
-  _has:
-    input: static
-  _reveal:
-    field: video
-    operator: truthy
 
 autoplayUnmuted:
   _label: Autoplay / unmuted (Happy Birthday Videos Only)
@@ -57,11 +43,9 @@ _groups:
       height: 30px;
       ifEmpty: searchVideo AND video
     fields:
-      - video (Update video)
-      - player (Update video)
-      - adConfig (Update video)
-      - showTitle (Update video)
-      - autoplayUnmuted (Update video)
-      - clickToPlay (Update video)
-      - updateVideo (Update video)
+      - video (Video settings)
+      - adConfig (Video settings)
+      - showTitle (Video settings)
+      - autoplayUnmuted (Video settings)
+      - clickToPlay (Video settings)
       - searchVideo (Search for video)
