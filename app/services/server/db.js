@@ -11,7 +11,7 @@ const utils = require('../universal/utils'),
    * @returns {boolean}
    */
   checkTableExists = async (tableName) => {
-    const {rows: [{exists}]} = await db.raw(`
+    const { rows: [{ exists }] } = await db.raw(`
       SELECT EXISTS(
         SELECT *
         FROM information_schema.tables
@@ -114,7 +114,7 @@ const utils = require('../universal/utils'),
         SELECT data FROM ${tableName}
         WHERE id = ?
       `, [key])
-        .then(({rows}) => {
+        .then(({ rows }) => {
           if (!rows.length) return Promise.reject(`No result found in ${tableName} for ${key}`);
 
           return rows[0].data;
@@ -165,6 +165,45 @@ const utils = require('../universal/utils'),
         WHERE id = ?
       `, [value, key]);
     }
+  },
+  /**
+   * Takes a URI (even if it is not a `/_pages/` uri), finds the target page
+   * and returns a list of component ids that belong to its `main` section as an array
+   * @param {string} uri
+   * @returns {Promise<string[]>}
+   */
+  getMainComponentsForPageUri = async (uri) => {
+    const
+      firstMatchingUrl = `
+        SELECT id, url, data
+        FROM public.uris u
+        WHERE ? IN (u.url /* if it's a slug url */, u.data /* if a /_pages/ url */)
+      `,
+      recursiveMatches = `
+        SELECT u2.id, u2.url, u2.data
+        FROM _uris _u 
+          INNER JOIN public.uris u2 ON _u.data = u2.id 
+      `,
+      mainComponentsList = `
+        SELECT 
+          main
+        FROM 
+          _uris _u 
+          INNER JOIN public.pages p
+            ON _u.data = p.id
+          , jsonb_array_elements_text(p.data->'main') main
+        WHERE _u.data ~ '/_pages/'
+      `,
+      sql = `
+          WITH RECURSIVE _uris AS (
+              ${firstMatchingUrl}
+            UNION ALL
+              ${recursiveMatches} 
+          )
+          ${mainComponentsList};`,
+      data = await db.raw(sql, [uri]);
+
+    return data.rows && data.rows.map(row => row.main) || [];
   };
 
 module.exports.getUri = uri => db.get(uri);
@@ -175,4 +214,5 @@ module.exports.put = put;
 module.exports.raw = db.raw;
 module.exports.uriToUrl = utils.uriToUrl;
 module.exports.ensureTableExists = ensureTableExists;
+module.exports.getMainComponentsForPageUri = getMainComponentsForPageUri;
 module.exports.DATA_STRUCTURES = DATA_STRUCTURES;

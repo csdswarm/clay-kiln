@@ -39,3 +39,5 @@ plaintextPrimaryHeadline:
     - pageListTitle
   _has:
     help: Plaintext title set by headline.
+
+_permission: update

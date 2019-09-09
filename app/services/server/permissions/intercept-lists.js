@@ -3,6 +3,7 @@
 const axios = require('axios'),
   { URL } = require('url'),
   { wrapInTryCatch } = require('../../startup/middleware-utils'),
+  staticPage = require('./static-page'),
   /**
    * determines whether the /_lists/new-pages request should pass through
    *   to clay
@@ -29,10 +30,11 @@ const axios = require('axios'),
     }
 
     // eslint-disable-next-line one-var
-    const canCreateSectionFronts = user.can('create').a('section-fronts').at(station.callsign).value,
-      // so far the only permission applying filters to this data is creating
-      //   section fronts
-      hasFullPermissions = canCreateSectionFronts;
+    const canCreate = user.can('create'),
+      canCreateSectionFronts = canCreate.a('section-fronts').at(station.callsign).value,
+      canCreateAStaticPage = canCreate.a('static-page').value,
+      hasFullPermissions = canCreateSectionFronts
+        && canCreateAStaticPage;
 
     if (hasFullPermissions) {
       return true;
@@ -63,20 +65,23 @@ module.exports = router => {
     // eslint-disable-next-line one-var
     const urlObj = new URL(req.protocol + '://' + req.get('host') + req.originalUrl),
       { user, station } = res.locals,
-      canCreateSectionFronts = user.can('create').a('section-fronts').at(station.callsign).value;
+      canCreateSectionFronts = user.can('create').a('section-fronts').at(station.callsign).value,
+      canCreateStaticPageMenuItem = staticPage.canCreateMenuItem(user);
 
     urlObj.searchParams.append('fromClay', 'true');
 
     // urlObj needs to be mutated before we can get the result
     // eslint-disable-next-line one-var
     const { data: newPages } = await axios.get(urlObj.toString()),
-      filteredPages = newPages.filter(item => {
-        if (!canCreateSectionFronts && item.id === 'section-front') {
-          return false;
-        }
+      filteredPages = newPages
+        .filter(item => {
+          if (!canCreateSectionFronts && item.id === 'section-front') {
+            return false;
+          }
 
-        return true;
-      });
+          return true;
+        })
+        .map(item => ({ ...item, children: item.children.filter(canCreateStaticPageMenuItem) }));
 
     res.send(filteredPages);
   }));

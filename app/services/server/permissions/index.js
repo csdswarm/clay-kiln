@@ -11,9 +11,10 @@ const express = require('express'),
   amphoraFiles = require('amphora-fs'),
   path = require('path'),
   YAML = require('yamljs'),
+  staticPage = require('./static-page'),
   interceptLists = require('./intercept-lists'),
   componentsToCheck = getComponentsWithPermissions(),
-  pageTypesToCheck = new Set(['homepage', 'section-front']);
+  pageTypesToCheck = new Set(['homepage', 'section-front', 'static-page']);
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -140,10 +141,18 @@ async function checkComponentPermission(uri, req, locals, db) {
  * @return {boolean}
  */
 async function checkUserPermissions(uri, req, locals, db) {
+  const { user } = locals,
+    { query } = req;
+
   try {
     // no matter the request, verify the user has can has the record for this site
-    if (!locals.user.hasPermissionsTo('access').this('station').value) {
+    if (!user.hasPermissionsTo('access').this('station').value) {
       return false;
+    }
+
+    // forcibly prevent user from editing a page they don't have permissions to update
+    if (query.edit === 'true' && await staticPage.isPageAStaticPage(uri)) {
+      return user.can('update').a('static-page').value;
     }
 
     if (isComponent(uri)) {
@@ -170,7 +179,7 @@ async function checkUserPermissions(uri, req, locals, db) {
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),
         pageType = getComponentName(pageData.main[0]),
-        { station, user } = locals;
+        { station } = locals;
 
       return pageTypesToCheck.has(pageType)
         ? user.can('unpublish').a(pageType).at(station.callsign).value
