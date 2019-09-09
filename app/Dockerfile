@@ -1,4 +1,4 @@
-FROM node:8.9.0-stretch
+FROM node:10.16.3-jessie
 
 ###### For Dev
 RUN apt-get update

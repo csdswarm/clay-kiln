@@ -114,6 +114,7 @@
     "gulp-uglify": "^3.0.0",
     "istanbul": "^0.4.5",
     "mocha": "^6.0.0",
+    "node-memwatch": "^1.0.1",
     "nodemon": "^1.18.7",
     "postcss-functions": "^3.0.0",
     "postcss-import": "^11.1.0",

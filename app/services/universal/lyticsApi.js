@@ -30,7 +30,7 @@ const accessToken = process.env.LYTICS_API_KEY,
 
       return await rest.get(endpoint);
     } catch (e) {
-      log('error', e);
+      // log('error', e);
       return null;
     }
   },

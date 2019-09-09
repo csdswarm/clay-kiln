@@ -131,22 +131,28 @@ build-player:
 
 snapshot:
 	make down
-	if [ -d './.snapshot' ]; then rm -rf ./.snapshot; fi
-	mkdir ./.snapshot;
-	docker save -o ./.snapshot/clay-radio_clay clay-radio_clay
-	cp -R ./elasticsearch ./.snapshot/elasticsearch
-	cp -R ./redis ./.snapshot/redis
-	cp -R ./postgres ./.snapshot/postgres
+	if [ ! -d './.snapshot' ]; then mkdir ./.snapshot; fi
+	if [ -d './.snapshot/$(name)' ]; then rm -rf './.snapshot'; fi
+	mkdir './.snapshot/$(name)';
+	docker save -o './.snapshot/$(name)/clay-radio_clay' clay-radio_clay
+	cp -R ./elasticsearch './.snapshot/$(name)/elasticsearch'
+	cp -R ./redis './.snapshot/$(name)/redis'
+	cp -R ./postgres './.snapshot/$(name)/postgres'
+
+snapshot: name = default
 
 restore:
 	make down
+	if [ ! -d './.snapshot/$(name)' ]; then echo "snapshot './.snapshot/$(name)' doesn't exist"; exit 1; fi
 	rm -rf ./elasticsearch
 	rm -rf ./redis
 	rm -rf ./postgres
-	cp -R ./.snapshot/elasticsearch ./elasticsearch
-	cp -R ./.snapshot/redis ./redis
-	cp -R ./.snapshot/postgres ./postgres
-	docker load -i ./.snapshot/clay-radio_clay
+	cp -R './.snapshot/$(name)/elasticsearch' ./elasticsearch
+	cp -R './.snapshot/$(name)/redis' ./redis
+	cp -R './.snapshot/$(name)/postgres' ./postgres
+	docker load -i './.snapshot/$(name)/clay-radio_clay'
+
+restore: name = default
 
 .PHONY: spa
 spa:
