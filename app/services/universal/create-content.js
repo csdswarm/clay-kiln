@@ -253,16 +253,14 @@ function manualSlugUnlock(data, prevData) {
 }
 
 /**
- * generate the slug from the seoHeadline or shortHeadline
+ * generate the slug from the seoHeadline
  * note: they should already have been sanitized
  * @param  {object} data
  */
 function generateSlug(data) {
   if (has(data.seoHeadline)) {
     data.slug = sanitize.cleanSlug(data.seoHeadline);
-  } else if (has(data.shortHeadline)) {
-    data.slug = sanitize.cleanSlug(data.shortHeadline);
-  } // else don't set the slug
+  }
 }
 
 /**
