@@ -5,6 +5,10 @@
   &.google-ad-manager--sharethrough-tag {
     background: none;
 
+    .thumbnail-wrapper {
+      width: 100% !important;
+      height: 100% !important;
+    }
     .link__info {
       text-align: left;
 
