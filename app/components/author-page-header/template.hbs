@@ -1,30 +1,13 @@
-
-
-{{#*inline "follow" }}
-{{#if showSocial}}
-  Follow {{ author }}:
-  <aside class="component component--share">
-    {{#if facebookUrl }}
-      <a target="_blank" href="{{ facebookUrl }}" class="share-link share-link--facebook" title="Follow on Facebook"
-        aria-label="Follow on Facebook"></a>
-    {{/if}}
-    {{#if twitterUrl }}
-      <a target="_blank" href="{{ twitterUrl }}" class="share-link share-link--twitter" title="Follow on Twitter"
-        aria-label="Follow on Twitter"></a>
-    {{/if}}
-    {{#if instagramUrl }}
-      <a target="_blank" href="{{ instagramUrl }}" class="share-link share-link--instagram" title="Follow on Instagram"
-        aria-label="Follow on Instagram"></a>
-    {{/if}}
-    {{#if youtubeUrl }}
-      <a target="_blank" href="{{ youtubeUrl }}" class="share-link share-link--youtube" title="Subscribe on YouTube"
-        aria-label="Subscribe on YouTube"></a>
-    {{/if}}
-    {{#if email }}
-      <a href="mailto:{{ email }}" class="share-link share-link--email" title="Email" aria-label="Email"></a>
-    {{/if}}
+{{#*inline "authorLinks" }}
+  <div class="author-page-header__links-author-name">
+    Follow {{ author }}:
+  </div>
+  <aside class="author-page-header__links">
+    {{#each socialLinks}}
+      <a target="_blank" href="{{ this.url }}" class="author-page-header__link author-page-header__link--{{ this.type }}" title="{{ this.title }}"
+      aria-label="{{ this.title }}"></a>
+    {{/each}}
   </aside>
-{{/if}}
 {{/inline}}
 
 <section data-uri="{{ default _ref _self }}"
@@ -42,13 +25,13 @@
       <div class="author-page-header__name">{{ author }}</div>
       <div class="author-page-header__schedule">{{ scheduleTime }}</div>
       <div class="author-page-header__social-container">
-        {{> follow }} {{!-- TODO: ON-807: replace with actual component --}}
+        {{> authorLinks }} {{!-- TODO: ON-807: replace with actual component --}}
       </div>
     </div>
   </div>
   <div class="author-page-header__bio-text-container">
     <div class="author-page-header__social-container--md-sm-screen">
-      {{> follow }} {{!-- TODO: ON-807: replace with actual component --}}
+      {{> authorLinks }} {{!-- TODO: ON-807: replace with actual component --}}
     </div>
     <p class="author-page-header__bio-text">
       {{ bio }}

@@ -30,22 +30,22 @@ bio:
   _has:
     input: text
 
-facebookHandle:
+facebook:
   _label: Facebook Handle
   _has:
     input: text
 
-twitterHandle:
+twitter:
   _label: Twitter Handle
   _has:
     input: text
 
-youtubeHandle:
+youtube:
   _label: YouTube Account
   _has:
     input: text
 
-instagramHandle:
+instagram:
   _label: Instagram Handle
   _has:
     input: text
@@ -62,10 +62,10 @@ _groups:
       - profileImage
       - scheduleTime
       - bio
-      - facebookHandle
-      - twitterHandle
-      - youtubeHandle
-      - instagramHandle
+      - facebook
+      - twitter
+      - youtube
+      - instagram
       - email
     _placeholder:
       height: 250px

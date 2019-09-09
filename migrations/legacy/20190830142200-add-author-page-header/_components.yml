@@ -6,10 +6,10 @@ _components:
         profileImage: ''
         scheduleTime: ''
         bio: ''
-        facebookHandle: ''
-        twitterHandle: ''
-        youtubeHandle: ''
-        instagramHandle: ''
+        facebook: ''
+        twitter: ''
+        youtube: ''
+        instagram: ''
         email: ''
   dynamic-meta-title:
     instances:

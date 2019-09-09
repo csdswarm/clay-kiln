@@ -1,20 +1,48 @@
 'use strict';
 
+const _capitalize = (str) => {
+    return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
+  },
+  socialLinks = [
+    {
+      type: 'facebook',
+      url: 'https://www.facebook.com/{handle}',
+      title: 'Follow on Facebook'
+    },
+    {
+      type: 'twitter',
+      url: 'https://www.twitter.com/{handle}',
+      title: 'Follow on Twitter'
+    },
+    {
+      type: 'instagram',
+      url: 'https://www.instagram.com/{handle}',
+      title: 'Follow on Instagram'
+    },
+    {
+      type: 'youtube',
+      url: 'https://www.youtube.com/{handle}',
+      title: 'Subscribe to YouTube Channel'
+    },
+    {
+      type: 'email',
+      url: 'mailto:{handle}',
+      title: 'Email'
+    }
+  ];
+
 module.exports.render = (ref, data, locals) => {
-  const {email, facebookHandle, instagramHandle, twitterHandle, youtubeHandle} = data;
-
   if (locals && locals.params && locals.params.dynamicAuthor) {
-    data.author = locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,'');
+    data.author = _capitalize(locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,''));
   }
 
-  if (email || facebookHandle || instagramHandle || twitterHandle || youtubeHandle) {
-    data.showSocial = true;
+  data.socialLinks = socialLinks.map(link => {
+    const handle = data[link.type];
 
-    data.facebookUrl = facebookHandle && `https://www.facebook.com/${facebookHandle}`;
-    data.instagramUrl = instagramHandle && `https://www.instagram.com/${instagramHandle}`;
-    data.twitterUrl = twitterHandle && `https://www.twitter.com/${twitterHandle}`;
-    data.youtubeUrl = youtubeHandle && `https://www.youtube.com/${youtubeHandle}`;
-  }
+    if (handle) {
+      return {...link, url: link.url.replace('{handle}', handle)};
+    }
+  }).filter(l => l);
 
   return data;
 };

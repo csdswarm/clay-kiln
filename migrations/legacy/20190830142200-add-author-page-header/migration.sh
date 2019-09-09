@@ -29,6 +29,10 @@ curl -X PUT $http://$1/$newPageList@published -H 'Authorization: token accesskey
 
 rm newPageList.json
 
+printf "\n\nCreating Author Page Header...\n\n\n"
+cat ./_components.yml | clay import -k demo -y -p $1
+cat ./_pages.yml | clay import -k demo -y -p $1
+
 authorPage="_pages/author"
 
 printf "\nUpdating Current Author Page...\n"
@@ -41,7 +45,3 @@ curl -X PUT $http://$1/$authorPage -H 'Authorization: token accesskey' -H 'Conte
 curl -X PUT $http://$1/$authorPage@published -H 'Authorization: token accesskey' -o /dev/null -s
 
 rm authorPage.json
-
-printf "\n\nCreating Author Page Header...\n\n\n"
-cat ./_components.yml | clay import -k demo -y -p $1
-cat ./_pages.yml | clay import -k demo -y -p $1
