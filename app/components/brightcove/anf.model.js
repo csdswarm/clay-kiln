@@ -4,10 +4,10 @@
  *  https://developer.apple.com/documentation/apple_news/video
 */
 
-module.exports = function (ref, data, locals) {
+module.exports = function (ref, data) {
   return {
-    role: 'video', // test
-    URL: '', // .M3U8
+    role: 'video',
+    URL: data.video.m3u8Source || '',
     layout: 'brightcoveLayout',
     style: 'brightcoveStyle',
     format: 'html'
