@@ -5,7 +5,7 @@ const _get = require('lodash/get'),
   rest = require('../universal/rest'),
   log = require('../universal/log').setup({file: __filename}),
   ANF_API = 'https://news-api.apple.com/',
-  ANF_API_WITH_CHANNEL = `https://news-api.apple.com/channels/${ APPLE_NEWS_CHANNEL_ID }/`,
+  ANF_API_WITH_CHANNEL = `https://news-api.apple.com/channels/${ process.env.APPLE_NEWS_CHANNEL_ID }/`,
   moment = require('moment'),
   /**
    * Create header for request including auth
