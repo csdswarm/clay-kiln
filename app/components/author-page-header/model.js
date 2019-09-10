@@ -34,15 +34,16 @@ const _capitalize = (str) => {
 module.exports.render = (ref, data, locals) => {
   if (locals && locals.params && locals.params.dynamicAuthor) {
     data.author = _capitalize(locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,''));
+    data.dynamic = true;
   }
-
+  
   data.socialLinks = socialLinks.map(link => {
     const handle = data[link.type];
-
+  
     if (handle) {
       return {...link, url: link.url.replace('{handle}', handle)};
     }
   }).filter(updatedLink => updatedLink);
-
+  
   return data;
 };
