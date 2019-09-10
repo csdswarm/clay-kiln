@@ -50,10 +50,6 @@ module.exports.getArticleDataAndValidate = function (ref, data, locals, fields) 
     data.urlIsValid = null;
   }
 
-  // Urls pasted from https sites need to have the url re-assigned
-  // to `http` because that is what is stored in Elastic.
-  data.url = data.url.replace('https', 'http');
-
   return getArticleData(ref, data, locals, fields)
     .then( throwOnEmptyResult(data.url) )
     .then( data => _set(data, 'urlIsValid', true) )
