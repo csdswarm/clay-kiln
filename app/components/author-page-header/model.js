@@ -42,7 +42,7 @@ module.exports.render = (ref, data, locals) => {
     if (handle) {
       return {...link, url: link.url.replace('{handle}', handle)};
     }
-  }).filter(l => l);
+  }).filter(updatedLink => updatedLink);
 
   return data;
 };

@@ -1,5 +1,8 @@
 #! /bin/bash
 
+scriptdir="$(dirname "$0")"
+cd "$scriptdir"
+
 if [ "$1" != "" ]; then
   if [ "$1" == "clay.radio.com" ]; then
     es="$1" && http="http";
