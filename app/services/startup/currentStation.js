@@ -38,15 +38,19 @@ const radioApiService = require('../../services/server/radioApi'),
   },
   /**
    * determines if the path is valid for station information
+   * invalid paths are as follows:
+   *  Paths to files (has extension)
+   *  Paths to components that do not include a stationId query
    *
    * @param {object} req
    * @return {boolean}
    */
   validPath = (req) => {
     const excludeExt = ['.js', '.css', '.svg', '.woff', '.woff2', '.png', '.jpg', '.jpeg', '.gif', '.ico'],
-      ext = extname(req.path);
+      ext = extname(req.path),
+      stationsList = req.path.indexOf('_components') !== -1 && !req.query.stationId || false;
 
-    return !ext || !excludeExt.includes(ext);
+    return !stationsList && (!ext || !excludeExt.includes(ext));
   },
   /**
    * determines if the default station should be used
@@ -58,7 +62,7 @@ const radioApiService = require('../../services/server/radioApi'),
     if (validPath(req)) {
       const slugInReqUrl = getStationSlug(req),
         stationId = req.query.stationId,
-        response = await radioApiService.get('stations', {page: {size: 999}}, null, { ttl: radioApiService.TTL.DAY });
+        response = await radioApiService.get('stations', {page: {size: 1000}}, null, { ttl: radioApiService.TTL.MIN * 30 });
 
       // use the stations as a cached object so we don't have to run the same logic every request
       if (!response.response_cached || isEmpty(allStations)) {
