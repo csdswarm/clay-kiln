@@ -45,8 +45,7 @@
     margin-bottom: em(25, 18);
   }
 }
-.article__full-width-lead,
-.gallery__full-width-lead {
+.lead--full-width {
   margin-bottom: em(48);
 }
 .article__body,
