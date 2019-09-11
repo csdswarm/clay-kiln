@@ -48,7 +48,7 @@ const radioApiService = require('../../services/server/radioApi'),
   validPath = (req) => {
     const excludeExt = ['.js', '.css', '.svg', '.woff', '.woff2', '.png', '.jpg', '.jpeg', '.gif', '.ico'],
       ext = extname(req.path),
-      stationsList = req.path.indexOf('_components') !== -1 && !req.query.stationId || false;
+      stationsList = req.path.includes('_components') && !req.query.stationId || false;
 
     return !stationsList && (!ext || !excludeExt.includes(ext));
   },

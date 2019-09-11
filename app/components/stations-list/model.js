@@ -89,7 +89,7 @@ module.exports.render = async (uri, data, locals) => {
       'page[size]': 1000,
       sort: '-popularity'
     },
-    isStation = _get(locals.station) && _get(locals.station.slug) !== 'www'; // Verify we have a station
+    isStation = locals.station && locals.station.slug !== 'www'; // Verify we have a station
 
   if (locals.stationIDs || data.filterBy === 'favorites') {
     const stationIDs = locals.stationIDs || _get(locals, 'radiumUser.favoriteStations', []).join();
