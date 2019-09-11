@@ -1,0 +1,21 @@
+<div data-uri="{{ default _ref _self }}" class="component component--latest-top-recirc-slider latest-top-recirc-slider">
+    <div class="latest-top-recirc-slider__slider-container">
+        <ul class="latest-top-recirc-slider__items-container">
+            {{#each items }}
+                <li class="latest-top-recirc-slider__item-container">
+                    <div class="latest-top-recirc-slider__item-img-container">
+                        <img src="{{this.img}}" alt="" class="latest-top-recirc-slider__item-img">
+                    </div>
+                    <div class="latest-top-recirc-slider__item-text">
+                        <div class="latest-top-recirc-slider__item-category latest-top-recirc-slider__item-category--{{lowercase this.category }}">{{this.category}}</div>
+                        <div class="latest-top-recirc-slider__item-title">{{this.title}}</div>
+                    </div>
+                </li>
+            {{/each}}
+        </ul>
+        <div class="latest-top-recirc-slider__controls-container">
+            <div class="latest-top-recirc-slider__control latest-top-recirc-slider__control--left"></div>
+            <div class="latest-top-recirc-slider__control latest-top-recirc-slider__control--right"></div>
+        </div>
+    </div>
+</div>
