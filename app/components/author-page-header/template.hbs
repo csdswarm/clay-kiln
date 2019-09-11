@@ -19,32 +19,35 @@
       <h1 class="author-page-header__dynamic-name">{{ author }}</h1>
     </div>
   {{else}}
-    <div class="author-page-header__author-info-container">
-      <div class="author-page-header__img-container">
-        {{#if profileImage }}
-          <img src="{{ profileImage }}"
-            alt="author" class="author-page-header__author-img">
-        {{/if}}
+    <div class="author-page-header__left-content">
+      <div class="author-page-header__author-info-container">
+        <div class="author-page-header__img-container">
+          {{#if profileImage }}
+            <img src="{{ profileImage }}"
+              alt="author" class="author-page-header__author-img">
+          {{/if}}
+        </div>
+        <div class="author-page-header__text-container">
+          <div class="author-page-header__name">{{ author }}</div>
+          <div class="author-page-header__schedule">{{ scheduleTime }}</div>
+          {{#if socialLinks.length }}
+            <div class="author-page-header__social-container">
+              {{> authorLinks }}
+            </div>
+          {{/if}}
+        </div>
       </div>
-      <div class="author-page-header__text-container">
-        <div class="author-page-header__name">{{ author }}</div>
-        <div class="author-page-header__schedule">{{ scheduleTime }}</div>
+      <div class="author-page-header__bio-text-container">
         {{#if socialLinks.length }}
-          <div class="author-page-header__social-container">
+          <div class="author-page-header__social-container--md-sm-screen">
             {{> authorLinks }}
           </div>
         {{/if}}
+        <p class="author-page-header__bio-text">
+          {{ bio }}
+        </p>
       </div>
     </div>
-    <div class="author-page-header__bio-text-container">
-      {{#if socialLinks.length }}
-        <div class="author-page-header__social-container--md-sm-screen">
-          {{> authorLinks }}
-        </div>
-      {{/if}}
-      <p class="author-page-header__bio-text">
-        {{ bio }}
-      </p>
-    </div>
+    <div class="author-page-header__right-content"></div>
   {{/if}}
 </section>

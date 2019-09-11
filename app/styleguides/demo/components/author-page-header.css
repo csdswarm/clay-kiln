@@ -4,30 +4,54 @@
 
 .author-page-header {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    position: relative;
+    padding: em(30);
+    background: $white;
+    width: em(1160);
+    margin: auto;
+
+    @mixin large-screen {
+        width: em(1000);
+    }
+    @mixin medium-screen {
+        width: calc(100% - em(60));
+        max-width: em(728);
+    }
+    @mixin medium-small-screen {
+        width: calc(100% - em(40));
+        padding: 0 em(20);
+    }
+
+    &__left-content {
+        width: em(800);
+        padding-right: em(30);
+
+        @mixin large-screen {
+            width: em(640);
+        }
+
+        @mixin medium-screen {
+            width: 100%
+        }
+    }
+
+    &__right-content {
+        position: absolute;
+        padding: em(30);
+        top: 0;
+        right: 0;
+
+        @mixin medium-screen {
+            display: none;
+        }
+    }
 
     @mixin medium-screen {
         flex-direction: column;
     }
-    &__author-info-container,
-    &__bio-text-container,
-    &__dynamic-container {
-        width: em(1100);
-        @mixin large-screen {
-            width: em(940);
-        }
-        @mixin medium-screen {
-            width: em(728);
-        }
-        @media only screen and (max-width: 788px) {
-            width: 100%;
-            padding: 0 em(20);
-        }
-    }
     &__author-info-container {
         display: flex;
-        margin-bottom: em(14);
         @mixin medium-small-screen {
             flex-wrap: wrap;
         }
@@ -58,6 +82,7 @@
         position: relative;
         margin: auto;
         max-width: 100%;
+        width: em(1100);
         display: inline-flex;
         flex-direction: row;
         align-items: center;
@@ -101,7 +126,7 @@
         }
     }
     &__bio-text-container {
-        margin-bottom: em(38);
+        padding-bottom: em(38);
     }
     &__bio-text {
         @mixin author-page-header-font3;
