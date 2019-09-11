@@ -2,8 +2,11 @@
 
 // Polyfill
 require('core-js/modules/es6.symbol');
-const Video = require('./Video'),
-  clientCommunicationBridge = require('../../../services/client/ClientCommunicationBridge')();
+const { defer } = require('../../../services/universal/promises'),
+  Video = require('./Video'),
+  clientCommunicationBridge = require('../../../services/client/ClientCommunicationBridge')(),
+  scriptLoadedPromises = [],
+  loadedPlayers = [];
 
 class BrightcoveVideo extends Video {
   /**
@@ -15,8 +18,27 @@ class BrightcoveVideo extends Video {
       brightcovePlayerId = videoPlayer.getAttribute('data-player');
 
     super(brightcoveComponent, {
-      script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`
+      script: `//players.brightcove.net/${brightcoveAccount}/${brightcovePlayerId}_default/index.min.js`,
+      dontLoadScripts: true
     });
+
+    this.deferredScriptLoaded = defer();
+
+    // wait for all other BC videos on the page to load first
+    Promise.all(scriptLoadedPromises).then(() => {
+      if (loadedPlayers.includes(brightcovePlayerId)) {
+        // the script has already been loaded
+        this.whenScriptsLoaded();
+        this.deferredScriptLoaded.resolve();
+      } else {
+        // load the scripts like normal
+        this.loadScripts();
+        loadedPlayers.push(brightcovePlayerId);
+      }
+    });
+
+    // add our load promise to the queue so other BC videos wait
+    scriptLoadedPromises.push(this.deferredScriptLoaded.promise);
 
     this.videoPlayerWrapper = brightcoveComponent.querySelector('.player__video');
     this.webPlayerPlaybackState = clientCommunicationBridge.getLatest('ClientWebPlayerPlaybackStatus', {}).playerState;
@@ -51,6 +73,11 @@ class BrightcoveVideo extends Video {
     this.addEvent(this.getEventTypes().MEDIA_PLAY, () => {
       this.active = true;
     });
+
+    this.addEvent(this.getEventTypes().MEDIA_READY, () => {
+      // mark this video as done so the next one can load
+      this.deferredScriptLoaded.resolve();
+    });
   }
   /**
    * @override
@@ -59,7 +86,7 @@ class BrightcoveVideo extends Video {
     return {
       MEDIA_PLAY: 'play',
       MEDIA_PAUSE: 'pause',
-      MEDIA_READY: 'loadedmetadata',
+      MEDIA_READY: 'loadstart',
       AD_PLAY: 'ads-play',
       MEDIA_VOLUME: 'volumechange',
       AD_VOLUME: 'ads-volumechange'
