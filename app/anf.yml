@@ -38,9 +38,10 @@ componentStyles:
   slideTitleStyle:
   slideDescriptionStyle:
 # https://developer.apple.com/documentation/apple_news/apple_news_format/text_styles
+# PostScript font names: CircularStd-Black, CircularStd-BookItalic, CircularStd-Medium, ProximaNova-Bold, ProximaNova-Light, ProximaNova-Regular 
 componentTextStyles:
   default:
-    fontName: Georgia
+    fontName: 'CircularStd-Black'
     textColor: '#111'
     fontSize: 18
     lineHeight: 20
