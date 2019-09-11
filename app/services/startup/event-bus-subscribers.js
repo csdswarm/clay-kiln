@@ -45,7 +45,7 @@ async function handlePublishSectionFront(page) {
       data = await db.get(sectionFrontRef),
       sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
     
-    if (data.title && !data.titleLocked) {
+    if ((data.title || data.stationSiteSlug) && !data.titleLocked) {
       const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
         sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value),
         name = data.stationFront ? data.stationSiteSlug : data.title,
@@ -85,7 +85,7 @@ async function handleUnpublishSectionFront(page) {
           updatedSectionFronts = sectionFronts.filter(sectionFront => {
             return sectionFront.value !== value.toLowerCase();
           });
-
+        
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
         await db.put(mainRef, JSON.stringify({...data, titleLocked: false}));
       }

@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 2.0
 _confirmRemoval: true
 
 title:
@@ -12,11 +12,12 @@ title:
     input: text
     validate:
       required:
-        field: titleLocked
-        operator: falsy
+        field: revealSectionFrontControls
+        operator: truthy
   _reveal:
-    field: titleLocked
-    operator: falsy
+    field: revealSectionFrontControls
+    operator: truthy
+
 
 titleLocked:
   _label: Is title locked?
@@ -24,6 +25,11 @@ titleLocked:
 
 stationSiteSlug:
   _label: Site Slug
+  _publish:
+    - sectionFront
+    - ogTitle
+    - pageListTitle
+    - pageTitle
   _has:
     input: text
     validate:
@@ -31,15 +37,15 @@ stationSiteSlug:
         field: stationFront
         operator: truthy
   _reveal:
-    field: stationFront
+    field: revealStationControls
     operator: truthy
 
 primary:
   _label: Is this a primary section front?
   _has: checkbox
   _reveal:
-    field: titleLocked
-    operator: falsy
+    field: revealSectionFrontControls
+    operator: truthy
 
 primarySectionFront:
   _reveal:

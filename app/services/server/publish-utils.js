@@ -183,7 +183,9 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
+  urlOptions.slug = component.stationFront ?
+    component.stationSiteSlug :
+    component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
 
