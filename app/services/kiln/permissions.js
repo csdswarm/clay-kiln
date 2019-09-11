@@ -31,12 +31,11 @@ const addPermissions = require('../universal/permissions'),
    * @param {string|object} permission
    */
   secureField = (fieldInput, permission) => {
-    // Should actually be disabled/enabled instead of hide/show
-    fieldInput.hide();
-
     fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
-      if (user.may(permission, component, station.callsign).value) {
-        fieldInput.show();
+      if (!user.may(permission, component, station.callsign).value) {
+        // This has to be done in subscribe because setProp currently does not work until the schema exists
+        // If clay-kiln fixes this, we can set it before the subscribe and enable afterwards
+        fieldInput.setProp('disabled', true);
       }
     }, true);
   },
