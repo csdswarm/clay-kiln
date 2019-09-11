@@ -34,7 +34,7 @@ stationSiteSlug:
     input: text
     validate:
       required:
-        field: stationFront
+        field: revealStationControls
         operator: truthy
   _reveal:
     field: revealStationControls
