@@ -1,5 +1,6 @@
 'use strict';
 const queryService = require('../../services/server/query'),
+  _get = require('lodash/get'),
   _map = require('lodash/map'),
   _capitalize = require('lodash/capitalize'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
@@ -206,7 +207,7 @@ module.exports.render = async function (ref, data, locals) {
   }
 
   // add minimum should if there are any
-  if (_.get(query, 'body.query.bool.should[0]')) queryService.addMinimumShould(query, 1);
+  if (_get(query, 'body.query.bool.should[0]')) queryService.addMinimumShould(query, 1);
 
   queryService.addSort(query, {date: 'desc'});
 
