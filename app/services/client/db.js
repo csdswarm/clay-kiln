@@ -14,15 +14,31 @@
  */
 
 const rest = require('../universal/rest'),
-  utils = require('../universal/utils');
+  utils = require('../universal/utils'),
+  ENDPOINT_MAP = {
+    '/_valid_scripts/items': {
+      get: '/valid-scripts',
+      put: '/valid-scripts'
+    }
+  };
+
+function fixRef(ref, method) {
+  const path = ref.replace(window.location.host, '');
+
+  if (ENDPOINT_MAP[path]) {
+    ref = ref.replace(path, ENDPOINT_MAP[path][method]);
+  }
+
+  return ref;
+}
 
 function get(ref, locals) {
-  return rest.get(utils.uriToUrl(ref, locals));
+  return rest.get(utils.uriToUrl(fixRef(ref, 'get'), locals));
 }
 
 function put(ref, data, locals) {
   // Pass true for the authentication flag
-  return rest.put(utils.uriToUrl(ref, locals), data, true);
+  return rest.put(utils.uriToUrl(fixRef(ref, 'put'), locals), data, true);
 }
 
 module.exports.get = get;
