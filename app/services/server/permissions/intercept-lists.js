@@ -75,6 +75,18 @@ module.exports = router => {
           return false;
         }
 
+        // filter out by station premissions
+        // this code assumes all station-specific categories will have an id
+        //   `station_${callsign}`.  Categories without the 'station_' prefix
+        //   are assumed to be for the national station.
+        const callsign = item.id.startsWith('station_')
+          ? item.id.slice('station_'.length)
+          : 'NATL-RC';
+
+        if (!user.can('access').the('station').at(callsign).value) {
+          return false;
+        }
+
         return true;
       });
 

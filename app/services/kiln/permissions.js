@@ -1,6 +1,7 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
+  { hasClass } = require('../client/dom-helpers'),
   preloadTimeout = 5000,
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -82,22 +83,13 @@ const addPermissions = require('../universal/user-permissions'),
       });
   },
   /**
-   * tests whether the node contains the class 'right-drawer'
-   *
-   * @param {Node} node
-   * @returns {boolean}
-   */
-  isRightDrawer = (node) => {
-    return node.classList && node.classList.contains('right-drawer');
-  },
-  /**
    * returns the publish button elements if they were added
    *
    * @param {object} mutation
    * @returns {object}
    */
   getAddedPublishButtons = (mutation) => {
-    const publishDrawer = [...mutation.addedNodes].find(isRightDrawer);
+    const publishDrawer = Array.from(mutation.addedNodes).find(hasClass('right-drawer'));
 
     if (!publishDrawer) {
       return {};
@@ -191,7 +183,7 @@ const addPermissions = require('../universal/user-permissions'),
             const { publishBtn, unpublishBtn } = getAddedPublishButtons(mutation);
 
             setDisplayNone([publishBtn, unpublishBtn]);
-            if ([...mutation.removedNodes].find(isRightDrawer)) {
+            if (Array.from(mutation.removedNodes).find(hasClass('right-drawer'))) {
               observer.disconnect();
             }
           }

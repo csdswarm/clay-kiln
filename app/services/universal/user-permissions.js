@@ -274,7 +274,11 @@ const pluralize = require('pluralize'),
     return ({ user, permissions, station }) => {
       if (user && !user.can) {
         _permissions = permissions || {};
-        _override = user.provider === 'google';
+        _override = false;
+
+        if (user.provider === 'google') {
+          _permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
+        }
 
         // helper to not have to pass station
         if (station && station.callsign) {
