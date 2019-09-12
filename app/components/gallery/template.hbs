@@ -28,6 +28,13 @@
   </header>
 
   {{#if fullWidthLead }}
+    {{#if @root.locals.edit }}
+      <div data-editable="leadSettings">
+        <h1>Lead Settings:</h1>
+        <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
+      </div>
+    {{/if}}
+
     {{! Lead }}
     <div class="lead lead--full-width" data-editable="lead">
       {{> component-list lead }}
@@ -41,12 +48,19 @@
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
   >
     {{#unless fullWidthLead }}
-        <div class="body__header">
-          {{! Lead }}
-            <div class="lead" data-editable="lead">
-              {{> component-list lead }}
-            </div>
+      {{#if @root.locals.edit }}
+        <div data-editable="leadSettings">
+          <h1>Lead Settings:</h1>
+          <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
         </div>
+      {{/if}}
+
+      <div class="body__header">
+        {{! Lead }}
+        <div class="lead" data-editable="lead">
+          {{> component-list lead }}
+        </div>
+      </div>
     {{/unless}}
 
     <div class="body__info">

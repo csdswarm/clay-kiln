@@ -432,7 +432,6 @@ _groups:
   settings:
     fields:
       - showSocial
-      - fullWidthLead
       - hasSecondaryBylines
       - sectionFront
       - slidesNumbered (Gallery Slides)
@@ -449,6 +448,11 @@ _groups:
       - genreSyndication
       - syndicationStatus
       - syndicatedUrl
+
+  leadSettings:
+    _label: Lead Settings
+    fields:
+      - fullWidthLead
 
 # non-user-editable fields, set by model.js and used for pubsub
 eligibleForGoogleStandout:
