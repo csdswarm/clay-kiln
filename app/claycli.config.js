@@ -82,5 +82,6 @@ module.exports = {
     })
   ],
   babelTargets: { browsers: ['> 2%'] },
+  babelDebug: true,
   autoprefixerOptions: { overrideBrowserslist: ['> 2%'] }
 };

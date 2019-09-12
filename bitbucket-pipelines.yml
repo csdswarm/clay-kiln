@@ -1,4 +1,4 @@
-image: node:8.9.0-stretch
+image: node:10.16.3
 
 definitions:
   steps:
