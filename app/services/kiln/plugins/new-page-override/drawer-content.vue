@@ -85,7 +85,7 @@ export default {
       return sortPages(_.cloneDeep(stationPages));
     },
     stationIsSelectable() {
-      return this.stationSelectItems.length > 2
+      return this.stationSelectItems.length > 1
     },
     stationSelectItems() {
       const items = _.get(this.$store, 'state.lists[new-pages].items', [])
