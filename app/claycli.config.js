@@ -40,7 +40,7 @@ module.exports = {
             ]
           }))
           .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
-          .pipe(gulp.dest('./public/js/', {overwrite: true}));
+          .pipe(gulp.dest('./public/js/', { overwrite: true }));
       }
     },
     {

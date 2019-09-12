@@ -51,7 +51,7 @@ async function getAlerts(locals) {
     const
       { protocol, host } = locals.site || {},
       { callsign } = locals.station || {},
-      { closedAlerts = [] , defaultStation} = locals,
+      { closedAlerts = [] , defaultStation } = locals,
       urlExists = url => url,
       getMessage = url => rest.get(url).catch(handleErrors),
       existingMessages = message => message && message.length,

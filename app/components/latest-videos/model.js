@@ -72,7 +72,7 @@ module.exports.render = function (ref, data, locals) {
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addMinimumShould(query, 1);
-  queryService.addSort(query, {date: 'desc'});
+  queryService.addSort(query, { date: 'desc' });
   queryService.addShould(query, {
     nested: {
       path: 'lead',
@@ -87,17 +87,17 @@ module.exports.render = function (ref, data, locals) {
   // Filter out the following tags
   if (data.filterTags) {
     for (const tag of data.filterTags.map((tag) => tag.text)) {
-      queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
+      queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
     }
   }
 
   // Filter out the following secondary article type
   if (data.filterSecondarySectionFronts) {
     Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-      let [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
+      const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
       }
     });
   }

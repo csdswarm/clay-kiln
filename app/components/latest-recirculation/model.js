@@ -46,16 +46,16 @@ const queryService = require('../../services/server/query'),
       queryService.onlyWithinThisSite(query, locals.site);
       queryService.onlyWithTheseFields(query, elasticFields);
 
-      queryService.addSort(query, {date: 'desc'});
+      queryService.addSort(query, { date: 'desc' });
 
       if (contentTypes.length) {
-        queryService.addFilter(query, {terms: {contentType: contentTypes}});
+        queryService.addFilter(query, { terms: { contentType: contentTypes } });
       }
 
       // exclude the current page in results
       if (locals.url && !isComponent(locals.url)) {
         cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(query, {match: {canonicalUrl: cleanUrl}});
+        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
       }
 
       // exclude the curated content from the results
@@ -63,7 +63,7 @@ const queryService = require('../../services/server/query'),
         data.items.forEach(item => {
           if (item.canonicalUrl) {
             cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-            queryService.addMustNot(query, {match: {canonicalUrl: cleanUrl}});
+            queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
           }
         });
       }
@@ -73,7 +73,7 @@ const queryService = require('../../services/server/query'),
         trendingRecircItems.forEach(item => {
           if (item.canonicalUrl) {
             cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-            queryService.addMustNot(query, {match: {canonicalUrl: cleanUrl}});
+            queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
           }
         });
       }
@@ -154,8 +154,8 @@ module.exports.render = function (ref, data, locals) {
     const query = queryService.newQueryWithCount(elasticIndex, maxItems);
 
     // Clean based on tags and grab first as we only ever pass 1
-    data.tag = tag.clean([{text: data.tag}])[0].text || '';
-    queryService.addMust(query, { match: { 'tags.normalized': data.tag }});
+    data.tag = tag.clean([{ text: data.tag }])[0].text || '';
+    queryService.addMust(query, { match: { 'tags.normalized': data.tag } });
 
     return renderDefault(ref, data, locals, query);
   }
@@ -163,7 +163,7 @@ module.exports.render = function (ref, data, locals) {
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
     const query = queryService.newQueryWithCount(elasticIndex, maxItems);
     
-    queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
+    queryService.addMust(query, { match: { sectionFront: data.sectionFront } });
     return renderDefault(ref, data, locals, query);
   }
 

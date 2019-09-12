@@ -85,13 +85,13 @@ module.exports.render = function (ref, data, locals) {
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
   if (locals.secondarySectionFront) {
-    queryService.addMust(query, { match: { secondarySectionFront: locals.secondarySectionFront }});
+    queryService.addMust(query, { match: { secondarySectionFront: locals.secondarySectionFront } });
   } else if (locals.sectionFront) {
-    queryService.addMust(query, { match: { sectionFront: locals.sectionFront }});
+    queryService.addMust(query, { match: { sectionFront: locals.sectionFront } });
   } else if (data.tag) {
-    queryService.addMust(query, { match: { 'tags.normalized': data.tag }});
+    queryService.addMust(query, { match: { 'tags.normalized': data.tag } });
   }
-  queryService.addSort(query, {date: 'desc'});
+  queryService.addSort(query, { date: 'desc' });
 
   // exclude the current page in results
   if (locals.url && !isComponent(locals.url)) {
@@ -112,17 +112,17 @@ module.exports.render = function (ref, data, locals) {
   // Filter out the following tags
   if (data.filterTags) {
     for (const tag of data.filterTags.map((tag) => tag.text)) {
-      queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
+      queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
     }
   }
 
   // Filter out the following secondary article type
   if (data.filterSecondarySectionFronts) {
     Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-      let [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
+      const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
       }
     });
   }

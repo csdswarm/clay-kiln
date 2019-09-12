@@ -8,7 +8,7 @@
 module.exports.props = function (props) {
   return Promise.all(Object.keys(props).map(function (key) {
     return Promise.resolve(props[key]).then(function (res) {
-      let one = {};
+      const one = {};
 
       one[key] = res;
       return one;
@@ -16,7 +16,7 @@ module.exports.props = function (props) {
   }))
     .then(function (resolvedArray) {
       return resolvedArray.reduce(function (memo, oneRes) {
-        let key = Object.keys(oneRes)[0];
+        const key = Object.keys(oneRes)[0];
 
         memo[key] = oneRes[key];
         return memo;

@@ -46,7 +46,7 @@ module.exports.render = async function (ref, data, locals) {
     const podcastCategoryID = await getPodcastCategoryID(locals.secondarySectionFront || locals.sectionFront);
 
     if (podcastCategoryID) {
-      podcastsFilter = {...podcastsFilter, filter: { category_id: podcastCategoryID } };
+      podcastsFilter = { ...podcastsFilter, filter: { category_id: podcastCategoryID } };
     }
   }
 

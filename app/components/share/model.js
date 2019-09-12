@@ -17,9 +17,9 @@ module.exports.render = (ref, data, locals) => {
   
   return {
     ...data,
-    emailUrl: `mailto:?subject=${title}&body=${buildUTMUrl(locals.url, {utm_source: domain, utm_medium: 'email', utm_term: stationCallSign})}`,
-    facebookUrl: `http://www.facebook.com/sharer/sharer.php?u=${buildUTMUrl(locals.url, {utm_source: 'facebook.com', utm_term: stationCallSign})}`,
-    twitterUrl: `https://twitter.com/share?text=${title}&via=${data.twitterHandle}&url=${buildUTMUrl(locals.url, { utm_source: 'twitter.com', utm_term: stationCallSign})}`,
+    emailUrl: `mailto:?subject=${title}&body=${buildUTMUrl(locals.url, { utm_source: domain, utm_medium: 'email', utm_term: stationCallSign })}`,
+    facebookUrl: `http://www.facebook.com/sharer/sharer.php?u=${buildUTMUrl(locals.url, { utm_source: 'facebook.com', utm_term: stationCallSign })}`,
+    twitterUrl: `https://twitter.com/share?text=${title}&via=${data.twitterHandle}&url=${buildUTMUrl(locals.url, { utm_source: 'twitter.com', utm_term: stationCallSign })}`,
     domain,
     stationCallSign
   };

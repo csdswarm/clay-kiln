@@ -32,7 +32,7 @@ function fakeLocals(req, res, params) {
  */
 function middleware(req, res, next) {
   const params = {};
-  let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, tagKeywordExtractor;
+  let promise, tagKeywordExtractor;
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
@@ -40,11 +40,12 @@ function middleware(req, res, next) {
 
   // Define Curated/Dynamic "tag" routes.
   // Match against section-front and "topic" slug prefixes
-  curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+  const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+
   curatedOrDynamicRoutePrefixes.push('topic');
 
   // Define curated/dynamic routing logic
-  curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
+  const curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
 
   // If it's a topic or section-front route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic tag page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
@@ -107,7 +108,7 @@ function middleware(req, res, next) {
       log('error', '404', { stack: err.stack });
       res
         .status(404)
-        .json({ status: 404, msg: err.message});
+        .json({ status: 404, msg: err.message });
     });
 }
 

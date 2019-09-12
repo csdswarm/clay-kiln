@@ -113,7 +113,7 @@ const moment = require('moment'),
    * @returns {string} the users locale timezone
    */
   usersTimeZone = () => {
-    const dateArray = new Date().toLocaleTimeString(getNavigatorLanguage(),{timeZoneName:'short'}).split(' ');
+    const dateArray = new Date().toLocaleTimeString(getNavigatorLanguage(),{ timeZoneName:'short' }).split(' ');
 
     return dateArray.pop();
   },

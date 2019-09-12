@@ -13,7 +13,7 @@ const slugifyService = require('../../services/universal/slugify'),
  * @returns {array}
  */
 function getStationTags(station) {
-  let tags = [];
+  const tags = [];
 
   if (station.genre_name) {
     station.genre_name.forEach(genre => {

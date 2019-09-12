@@ -16,7 +16,7 @@ function spaLocals(req, res) {
   try {
     const header = req.header('x-locals'),
       locals = header ? JSON.parse(header) : null,
-      options = { arrayMerge: (destinationArray, sourceArray) => sourceArray};
+      options = { arrayMerge: (destinationArray, sourceArray) => sourceArray };
 
     if (locals) {
       res.locals = deepmerge(res.locals, locals, options);

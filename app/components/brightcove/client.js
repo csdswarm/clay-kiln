@@ -21,7 +21,7 @@ class Brightcove extends Video {
     this.videoPlayerWrapper = brightcoveComponent.querySelector('.player__video');
     this.webPlayerPlaybackState = clientCommunicationBridge.getLatest('ClientWebPlayerPlaybackStatus', {}).playerState;
 
-    clientCommunicationBridge.subscribe('ClientWebPlayerPlaybackStatus', async ({playerState}) => {
+    clientCommunicationBridge.subscribe('ClientWebPlayerPlaybackStatus', async ({ playerState }) => {
       this.webPlayerPlaybackState = playerState;
       if (this.webPlayerPlaybackState === 'play') {
         this.hideStickyPlayer();

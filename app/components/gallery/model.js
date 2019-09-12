@@ -1,7 +1,7 @@
 'use strict';
 
 const createContent = require('../../services/universal/create-content'),
-  {autoLink} = require('../breadcrumbs');
+  { autoLink } = require('../breadcrumbs');
 
 module.exports.render = function (ref, data, locals) {
   autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);

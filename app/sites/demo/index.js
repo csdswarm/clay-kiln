@@ -4,13 +4,13 @@ const publishing = require('../../services/publishing'),
   mainComponentRefs = ['/_components/article/instances', '/_components/gallery/instances', '/_components/section-front/instances'];
 
 module.exports.routes = [
-  { path: '/'},
-  { path: '/:sectionFront'},
-  { path: '/:sectionFront/:secondarySectionFront'},
-  { path: '/blogs/:author/:title'}, // Frequency URL pattern
-  { path: '/blogs/:title'}, // Frequency URL pattern
-  { path: '/articles/:author/:title'}, // Frequency URL pattern
-  { path: '/articles/:title'}, // Frequency URL pattern
+  { path: '/' },
+  { path: '/:sectionFront' },
+  { path: '/:sectionFront/:secondarySectionFront' },
+  { path: '/blogs/:author/:title' }, // Frequency URL pattern
+  { path: '/blogs/:title' }, // Frequency URL pattern
+  { path: '/articles/:author/:title' }, // Frequency URL pattern
+  { path: '/articles/:title' }, // Frequency URL pattern
   { path: '/:year/:month/:name' },
   { path: '/:year/:month/:day/:name' },
   { path: '/article/:name' },
@@ -20,10 +20,10 @@ module.exports.routes = [
   { path: '/music/gallery/:slug' },
   { path: '/news/gallery/:slug' },
   { path: '/sports/gallery/:slug' },
-  { path: '/topic/:tag'},
-  { path: '/music/:tag'},
-  { path: '/news/:tag'},
-  { path: '/sports/:tag'},
+  { path: '/topic/:tag' },
+  { path: '/music/:tag' },
+  { path: '/news/:tag' },
+  { path: '/sports/:tag' },
   { path: '/topic/:dynamicTag', dynamicPage: 'topic' },
   { path: '/music/:dynamicTag', dynamicPage: 'topic' },
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
