@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import Loader from '../components/Loader'
 import Message from '../components/Message'
 import * as actionTypes from '@/vuex/actionTypes'
 import * as mutationTypes from '@/vuex/mutationTypes'
@@ -48,6 +49,7 @@ export default {
   name: 'UpdatePassword',
 
   components: {
+    Loader,
     Message
   },
 
