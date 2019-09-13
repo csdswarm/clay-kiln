@@ -65,7 +65,7 @@ $thumbnail-continer-width: 70px;
         transition: transform 125ms ease;
         user-select: none;
         z-index: 1;
-        width: 100%;
+        width: calc(100% - em($controls-width, 16));
         @mixin medium-small-screen {
             flex: 0 0 100%;
         }
