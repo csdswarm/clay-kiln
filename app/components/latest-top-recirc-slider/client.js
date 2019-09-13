@@ -1,5 +1,5 @@
 'use strict';
-var Hammer;
+const Hammer = require('hammerjs');
 
 class SliderDom {
   constructor(containerEl) {
@@ -35,10 +35,6 @@ class SliderDom {
       return;
     }
     this.dom.itemsContainer.x += this.dom.itemsContainer.getSingleSlideWidth() * direction;
-    // if(this.dom.itemsContainer.x <= -this.dom.itemsContainer.getMaxX()) {
-    //     console.log('done!');
-    //     this.dom.itemsContainer.x += this.dom.itemsContainer.getInitialOffset();
-    // }
     this.dom.itemsContainer.el.style.transform = `translateX(${this.dom.itemsContainer.x}px)`;
     this.setBtnsState();
   }
@@ -61,7 +57,7 @@ class SliderDom {
   }
 
   onResize() {
-    console.log('resize!');
+    // console.log('resize!');
     // console.log(this.dom.itemsContainer.getMaxX(), this.dom.itemsContainer.getSlides().reduce((p,c)=>p+=c.offsetWidth,0));
     this.dom.itemsContainer.x = 0;
     this.dom.itemsContainer.el.style.transform = `translateX(${this.dom.itemsContainer.x}px)`;
@@ -99,7 +95,6 @@ class Slider {
     // remove the local listeners once Vue dismounts
     this.sd.dom.el.removeEventListener('click', this.onClick);
     window.removeEventListener('resize', this.onResize);
-    console.log('dismount');
     this.hammer.off('swipeleft swiperight', this.sd.dom.itemsContainer.el);
   }
 
