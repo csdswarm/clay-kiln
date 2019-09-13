@@ -6,7 +6,7 @@ function rndInt(min = 0, max = 1) {
 function rndPick(array) {
   return array[rndInt(0,array.length - 1)];
 }
-function getItems(num = 6) {
+function getItems(num = 2) {
   const items = [];
   
   for (let i = 0; i < num; i++) {
@@ -24,6 +24,8 @@ function getItems(num = 6) {
 }
 
 module.exports.render = (ref, data, locals) => {
+  locals.query = locals.query || {};
+  console.log(locals.query);
   data.items = getItems(locals.query.numItems);
   return data;
 };
