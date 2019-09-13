@@ -1,4 +1,15 @@
 'use strict';
+const queryService = require('../../services/server/query'),
+  elasticIndex = 'published-content',
+  // elasticFields = [
+  //   'primaryHeadline',
+  //   'pageUri',
+  //   'canonicalUrl',
+  //   'feedImgUrl',
+  //   'contentType',
+  //   'sectionFront'
+  // ],
+  maxItems = 10;
 
 function rndInt(min = 0, max = 1) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -23,9 +34,28 @@ function getItems(num = 2) {
   return items;
 }
 
+
+async function testSearch() {
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+  console.log('[query]', query);
+  let response = await queryService.searchByQuery(query);
+  return response;
+}
 module.exports.render = (ref, data, locals) => {
   locals.query = locals.query || {};
-  console.log(locals.query);
+  
+  
+  // if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
+  //   const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+    
+  //   queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
+  //   return renderDefault(ref, data, locals, query);
+  // }
+
+  testSearch()
+    .then(data => console.log('[data]', data))
+    .catch(err => console.log(err));
+    
   data.items = getItems(locals.query.numItems);
   return data;
 };
