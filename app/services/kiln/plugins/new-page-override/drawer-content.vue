@@ -4,12 +4,11 @@
   user to filter the page list by station.
 
   1. a station in the context of the 'new-pages' list is a template category
-     with an id `station_${callsign}`
+     with a 'stationCallsign' property
   2. if a category exists that isn't a station then it's assumed to be the
      national station
   3. if a user can only access one station then no dropdown is shown.  This is
-     determined by the number of category ids in 'new-pages' which start
-     with 'station_'
+     determined by the number of 'new-pages' with a 'stationCallsign'
 </docs>
 
 <template>
@@ -71,10 +70,10 @@ export default {
       // of their (adding / removing) actions
       return this.nationalIsSelected
         ? _.get(this.$store, 'state.ui.favoritePageCategory')
-        : `station_${this.selectedStation.value}`;
+        : this.stationCallsignToCategoryId[this.selectedStation.value]
     },
     nationalIsSelected() {
-      return this.selectedStation.value === 'NATL-RC';
+      return this.selectedStation.value === nationalStationSelectItem.value;
     },
     pages() {
       const allPages = _.get(this.$store, 'state.lists[new-pages].items', []),
@@ -89,19 +88,27 @@ export default {
     },
     stationSelectItems() {
       const items = _.get(this.$store, 'state.lists[new-pages].items', [])
-        .filter(({ id }) => id.startsWith('station_'))
-        .map(({ id, title }) => ({
-          label: title.slice('Station: '.length),
-          value: id.slice('station_'.length)
+        .filter(({ stationCallsign }) => stationCallsign)
+        .map(({ stationCallsign }) => ({
+          label: stationCallsign,
+          value: stationCallsign
         }));
 
       return [nationalStationSelectItem].concat(items);
+    },
+    stationCallsignToCategoryId() {
+      return _.get(this.$store, 'state.lists[new-pages].items', [])
+        .filter(({ stationCallsign }) => stationCallsign)
+        .reduce(
+          (result, { id, stationCallsign }) => _.set(result, stationCallsign, id),
+          {}
+        )
     }
   },
   methods: {
-    bySelectedStation({ id }) {
-      return id === `station_${this.selectedStation.value}`
-        || (this.nationalIsSelected && !id.startsWith('station_'));
+    bySelectedStation({ id, stationCallsign }) {
+      return stationCallsign === this.selectedStation.value
+        || (this.nationalIsSelected && !stationCallsign);
     },
     itemClick(id, title) {
       const category = _.find(this.pages, category => _.find(category.children, child => child.id === id));
