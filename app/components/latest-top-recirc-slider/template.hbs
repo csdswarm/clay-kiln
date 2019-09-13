@@ -3,13 +3,15 @@
         <ul class="latest-top-recirc-slider__items-container">
             {{#each items }}
                 <li class="latest-top-recirc-slider__item-container">
-                    <div class="latest-top-recirc-slider__item-img-container">
-                        <img src="{{this.img}}" alt="" class="latest-top-recirc-slider__item-img" draggable="false">
-                    </div>
-                    <div class="latest-top-recirc-slider__item-text">
-                        <div class="latest-top-recirc-slider__item-category latest-top-recirc-slider__item-category--{{lowercase this.category }}">{{this.category}}</div>
-                        <div class="latest-top-recirc-slider__item-title">{{this.title}}</div>
-                    </div>
+                    <a class="latest-top-recirc-slider__item-link" href="{{ @root.locals.site.protocol }}://{{ @root.locals.site.host }}">
+                        <div class="latest-top-recirc-slider__item-img-container">
+                            <img src="{{this.img}}" alt="" class="latest-top-recirc-slider__item-img" draggable="false">
+                        </div>
+                        <div class="latest-top-recirc-slider__item-text">
+                            <div class="latest-top-recirc-slider__item-category latest-top-recirc-slider__item-category--{{lowercase this.category }}">{{this.category}}</div>
+                            <div class="latest-top-recirc-slider__item-title">{{this.title}}</div>
+                        </div>
+                    </a>
                 </li>
             {{/each}}
         </ul>

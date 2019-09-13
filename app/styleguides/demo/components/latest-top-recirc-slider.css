@@ -90,6 +90,10 @@ $thumbnail-continer-width: 70px;
             flex: 0 0 50%;
         }
     }
+    &__item-link {
+        display: flex;
+        text-decoration: none;
+    }
     &__item-img-container {
         display: flex;
         justify-content: center;
