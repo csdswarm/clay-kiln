@@ -424,6 +424,7 @@ _groups:
       - slidesNumbered
       - reverseOrder
       - includeInlineAds
+      - toggleEditorCondensedSlidesView
   settings:
     fields:
       - showSocial
@@ -533,3 +534,8 @@ noIndexNoFollow:
     field: isContentFromAP
     operator: ===
     value: false
+
+# toggle editing condensed list view
+toggleEditorCondensedSlidesView:
+  _label: Condensed Slide View On
+  _has: checkbox

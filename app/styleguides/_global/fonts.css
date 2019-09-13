@@ -534,6 +534,60 @@ em, i {
   @mixin font CircularStd-Black, 12px, $parisM, -.3, 15px;
 }
 
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Gallery Editing  |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin gallery-condensed-after {
+  color: white;
+  font-size: 10.4px;
+}
+@define-mixin gallery-condensed-slide-title {
+  font-size: 16px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Gallery/Article Editing  |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin component-settings-font-1 {
+  color: $60gray;
+  font-style: italic;
+}
+@define-mixin component-settings-font-2 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(24, 16), inherit, -.3, em(28, 24);
+}
+@define-mixin component-settings-font-3 {
+  font-weight: 700;
+  @mixin font Helvetica, Arial, em(16, 16), inherit, -.3, em(28, 16);
+}
+@define-mixin component-settings-font-4 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(16, 16), $easternBlue, -.3, em(18, 16);
+}
+@define-mixin component-settings-font-5 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(12, 16), $tundora, -.3, em(14, 12);
+}
+@define-mixin component-settings-font-6 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(12, 16), $halfBaked, -.3, em(14, 12);
+}
+@define-mixin component-settings-font-7 {
+  font-weight: 400;
+  @mixin font Helvetica, Arial, em(14, 16), inherit, -.3, em(16, 14);
+}
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Alert Banner Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin alert-banner-font1 {
+  @mixin font CircularStd-Medium, 18px, $black, -.3px, 22px;
+}
+
+@define-mixin alert-banner-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||||||     Station Nav Styleguide      |||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
