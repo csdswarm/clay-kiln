@@ -36,9 +36,14 @@ const { filterableList, UiSelect } = window.kiln.utils.components,
   nationalStationSelectItem = { value: 'NATL-RC', label: 'National' };
 
 export default {
+  created() {
+    this.selectedStation = this.stationSelectItems.includes(nationalStationSelectItem)
+      ? nationalStationSelectItem
+      : stationSelectItems[0];
+  },
   data() {
     return {
-      selectedStation: nationalStationSelectItem,
+      selectedStation: {},
       secondaryActions: [{
         icon: 'settings',
         tooltip: 'Edit Template',
@@ -92,9 +97,14 @@ export default {
         .map(({ stationCallsign }) => ({
           label: stationCallsign,
           value: stationCallsign
-        }));
+        })),
+        { user } = window.kiln.locals;
 
-      return [nationalStationSelectItem].concat(items);
+      if (user.can('access').the('station').at(nationalStationSelectItem.value)) {
+        items.push(nationalStationSelectItem);
+      }
+
+      return _.sortBy(items, 'label');
     },
     stationCallsignToCategoryId() {
       return _.get(this.$store, 'state.lists[new-pages].items', [])
