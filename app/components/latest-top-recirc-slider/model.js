@@ -37,20 +37,14 @@ function getItems(num = 2) {
 
 async function testSearch() {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+
   console.log('[query]', query);
   let response = await queryService.searchByQuery(query);
+  
   return response;
 }
 module.exports.render = (ref, data, locals) => {
   locals.query = locals.query || {};
-  
-  
-  // if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
-  //   const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-    
-  //   queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
-  //   return renderDefault(ref, data, locals, query);
-  // }
 
   testSearch()
     .then(data => console.log('[data]', data))
