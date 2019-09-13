@@ -4,7 +4,7 @@
   "description": "The started for Clay",
   "main": "app.js",
   "scripts": {
-    "test": "mocha \"./{,!(node_modules)/**/}*.test.js\"",
+    "test": "mocha --exit \"./{,!(node_modules)/**/}*.test.js\"",
     "start": "npm run check-elastic && nodemon --exec \"node -r dotenv/config\" app.js",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
     "build": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true LOG=info ./node_modules/.bin/clay compile --globs 'global/js/**/!(*.test).js' --reporter pretty && LOG=info ./node_modules/.bin/clay compile custom-tasks",
@@ -109,6 +109,7 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "fetch-mock": "^7.3.0",
+    "get-port": "^5.0.0",
     "glob": "^7.1.2",
     "gulp": "^4.0.0",
     "gulp-babel": "^8.0.0",

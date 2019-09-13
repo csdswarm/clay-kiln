@@ -98,7 +98,6 @@ async function loadPermissions(session, locals) {
 
     session.auth = { ...loginData, permissions, lastUpdated };
     locals.permissions = session.auth.permissions;
-
   } catch (error) {
     log('error', `There was an error attempting to load user permissions for ${locals.user.username}.`, error);
   }

@@ -5,34 +5,24 @@ const appRoot = require('app-root-path'),
   files = require('amphora-fs'),
   path = require('path'),
   bodyParser = require('body-parser'),
+  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./utils'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
-
-
-/**
- *  determines if the user is not an actual user
- *
- * @param {object} user
- *
- * @return {boolean}
- */
-function isRobot(user) {
-  return !user.username;
-}
 
 /**
  *  passes the permission object to the permission function
  *
  * @param {Function} hasPermission
+ * @param {object} db
  * @return {Function}
  */
-function checkPermission(hasPermission) {
-  return async (req, res, next) => {
-    if (isRobot(res.locals.user) || await hasPermission(req.uri, req, res.locals || {})) {
+function checkPermission(hasPermission, db) {
+  return wrapInTryCatch(async (req, res, next) => {
+    if (isRobot(res.locals.user) || await hasPermission(req.uri, req, res.locals || {}, db)) {
       next();
     } else {
       res.status(403).send({ error: 'Permission Denied' });
     }
-  };
+  });
 }
 
 /**
@@ -40,9 +30,11 @@ function checkPermission(hasPermission) {
  * @param {Object} router
  * @param {Function} hasPermission - must return boolean
  * @param {Router} userRouter - router to apply to the permissionRouter for setting permissions based on locals.user
+ * @param {Object} db - amphora's internal database connector
  */
-function setupRoutes(router, hasPermission, userRouter) {
-  const permissionRouter = express.Router();
+function setupRoutes(router, hasPermission, userRouter, db) {
+  const permissionRouter = express.Router(),
+    checkPermissionMiddleware = checkPermission(hasPermission, db);
 
   // assume json or text for anything in request bodies
   permissionRouter.use(jsonBodyParser);
@@ -56,17 +48,12 @@ function setupRoutes(router, hasPermission, userRouter) {
   files.getFolders([appRoot, 'components'].join(path.sep)).forEach((folder) => {
     const path = ['', '_components', folder, 'instances', '*'].join('/');
 
-    permissionRouter.put(path, checkPermission(hasPermission));
-    permissionRouter.post(path, checkPermission(hasPermission));
-    permissionRouter.patch(path, checkPermission(hasPermission));
-    permissionRouter.delete(path, checkPermission(hasPermission));
+    addMiddlewareToUnsafeMethods(permissionRouter, path, checkPermissionMiddleware);
   });
 
   // check all pages
-  permissionRouter.put('/_pages/*', checkPermission(hasPermission));
-  permissionRouter.patch('/_pages/*', checkPermission(hasPermission));
-  permissionRouter.post('/_pages/*', checkPermission(hasPermission));
-  permissionRouter.delete('/_pages/*', checkPermission(hasPermission));
+  addMiddlewareToUnsafeMethods(permissionRouter, '/_pages/*', checkPermissionMiddleware);
+  addMiddlewareToUnsafeMethods(permissionRouter, '/_uris/*', checkPermissionMiddleware);
 
   router.use('/', permissionRouter);
 }

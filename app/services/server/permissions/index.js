@@ -1,18 +1,19 @@
 'use strict';
 
 const express = require('express'),
-  log = require('../universal/log').setup({ file: __filename }),
-  { getComponentInstance } = require('./publish-utils'),
-  { getComponentName, isComponent } = require('clayutils'),
-  { loadPermissions } = require('./urps'),
-  addPermissions = require('../universal/user-permissions'),
+  log = require('../../universal/log').setup({ file: __filename }),
+  { getComponentName, isComponent, isPage, isPublished, isUri } = require('clayutils'),
+  { loadPermissions } = require('../urps'),
+  addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
   _get = require('lodash/get'),
   appRoot = require('app-root-path'),
   amphoraFiles = require('amphora-fs'),
   path = require('path'),
   YAML = require('yamljs'),
-  componentsToCheck = getComponentsWithPermissions();
+  interceptLists = require('./intercept-lists'),
+  componentsToCheck = getComponentsWithPermissions(),
+  pageTypesToCheck = new Set(['homepage', 'section-front']);
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -63,19 +64,22 @@ function userPermissionRouter() {
     next();
   });
 
+  interceptLists(userPermissionRouter);
+
   return userPermissionRouter;
 }
 
 /**
  * retrieves the data from the uri
  *
+ * @param {object} db - amphora's internal db instance
  * @param {string} uri
  * @param {string} [key]
  *
  * @return {object}
  */
-async function getComponentData(uri, key) {
-  const data = await getComponentInstance(uri.split('@')[0], {}) || {};
+async function getComponentData(db, uri, key) {
+  const data = await db.get(uri.split('@')[0]) || {};
 
   return key ? _get(data, key) : data;
 }
@@ -84,17 +88,23 @@ async function getComponentData(uri, key) {
  * check a component for field level permissions and modify the request with old data if they do not have permissions
  *
  * @param {string} uri
- * @param {string} component
  * @param {object} req
  * @param {object} locals
+ * @param {object} db - amphora's internal db instance
  */
-async function checkComponentPermission(uri, component, req, locals) {
+async function checkComponentPermission(uri, req, locals, db) {
+  const component = getComponentName(uri);
+
+  if (!componentsToCheck[component]) {
+    return;
+  }
+
   if (componentsToCheck[component].component) { // entire component
     const action = componentsToCheck[component].component;
 
     if (!locals.user.can(action).a(component).value) {
       // no permissions to modify this component, so reset the value to what it had been
-      req.body = await getComponentData(uri);
+      req.body = await getComponentData(db, uri);
     }
   } else { // specific fields
     for (const field of Object.keys(componentsToCheck[component].field)) {
@@ -106,7 +116,7 @@ async function checkComponentPermission(uri, component, req, locals) {
 
         // only get the component data once inside the loop
         if (!data) {
-          data = await getComponentData(uri);
+          data = await getComponentData(db, uri);
         }
 
         // if the field exists already override it, else remove it so it matches what it had been
@@ -126,10 +136,10 @@ async function checkComponentPermission(uri, component, req, locals) {
  * @param {string} uri
  * @param {object} req
  * @param {object} locals
+ * @param {object} db - amphora's internal db instance
  * @return {boolean}
  */
-async function checkUserPermissions(uri, req, locals) {
-
+async function checkUserPermissions(uri, req, locals, db) {
   try {
     // no matter the request, verify the user has can has the record for this site
     if (!locals.user.hasPermissionsTo('access').this('station').value) {
@@ -137,11 +147,34 @@ async function checkUserPermissions(uri, req, locals) {
     }
 
     if (isComponent(uri)) {
-      const component = getComponentName(uri);
+      await checkComponentPermission(uri, req, locals, db);
+    }
 
-      if (componentsToCheck[component]) {
-        await checkComponentPermission(uri, component, req, locals);
+    if (isPage(uri)) {
+      if (isPublished(uri)) {
+        const pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
+
+        return pageTypesToCheck.has(pageType)
+          ? locals.user.can('publish').a(pageType).value
+          : true;
+      } else if (req.method === 'POST') {
+        const pageType = getComponentName(req.body.main[0]);
+
+        return pageTypesToCheck.has(pageType)
+          ? locals.user.can('create').a(pageType).value
+          : true;
       }
+    }
+
+    if (isUri(uri) && req.method === 'DELETE') {
+      const pageUri = await db.get(req.uri),
+        pageData = await db.get(pageUri),
+        pageType = getComponentName(pageData.main[0]),
+        { station, user } = locals;
+
+      return pageTypesToCheck.has(pageType)
+        ? user.can('unpublish').a(pageType).at(station.callsign).value
+        : true;
     }
 
     // if no permissions are required they can do it
