@@ -1,55 +1,78 @@
 'use strict';
 const queryService = require('../../services/server/query'),
+  { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
-  // elasticFields = [
-  //   'primaryHeadline',
-  //   'pageUri',
-  //   'canonicalUrl',
-  //   'feedImgUrl',
-  //   'contentType',
-  //   'sectionFront'
-  // ],
-  maxItems = 10;
+  elasticFields = [
+    'primaryHeadline',
+    'pageUri',
+    'canonicalUrl',
+    'feedImgUrl',
+    'contentType',
+    'sectionFront'
+  ];
 
-function rndInt(min = 0, max = 1) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-function rndPick(array) {
-  return array[rndInt(0,array.length - 1)];
-}
-function getItems(num = 2) {
-  const items = [];
-  
-  for (let i = 0; i < num; i++) {
-    let item;
+/**
+ * @param {number} numResults
+ * @param {object} locals
+ * @returns {Object}
+ */
+function buildQuery(numResults, locals) {
+  // console.log('[locals]', locals);
+  const query = queryService.newQueryWithCount(elasticIndex, numResults);
 
-    item = {
-      img: `https://placeimg.com/300/300/animals/${rndInt(1,10)}`,
-      title: 'Faucibus a pellentesque sit amet porttitor eget dolorssss.',
-      category: rndPick(['music', 'news', 'sports']),
-      link: '/foo'
-    };
-    items.push(item);
+  queryService.addShould(query, [
+    {
+      match: {
+        sectionFront: 'sports'
+      }
+    },
+    {
+      match: {
+        sectionFront: 'news'
+      }
+    },
+    {
+      match: {
+        sectionFront: 'music'
+      }
+    }
+  ]);
+  // exclude the current page in results
+  if (locals.url && !isComponent(locals.url)) {
+    const cleanLocalsUrl = locals.url.split('?')[0].replace('https://', 'http://');
+
+    queryService.addMustNot(query, { match: { canonicalUrl: cleanLocalsUrl } });
   }
-  return items;
+  queryService.onlyWithTheseFields(query, elasticFields);
+  return query;
 }
 
+/**
+ * @param {object} locals
+ * @returns {Promise}
+ */
+async function buildAndRequestElasticSearch(locals) {
+  const
+    elasticQuery = buildQuery(10, locals),
+    request = await queryService.searchByQuery(elasticQuery);
 
-async function testSearch() {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-
-  console.log('[query]', query);
-  let response = await queryService.searchByQuery(query);
-  
-  return response;
+  return request;
 }
+
+/**
+ * @param {string} ref
+ * @param {object} data
+ * @param {object} locals
+ * @returns {Promise}
+ */
 module.exports.render = (ref, data, locals) => {
-  locals.query = locals.query || {};
-
-  testSearch()
-    .then(data => console.log('[data]', data))
-    .catch(err => console.log(err));
-    
-  data.items = getItems(locals.query.numItems);
-  return data;
+  return buildAndRequestElasticSearch(locals)
+    .then(response => {
+      data.items = response.sort(() => Math.random() > 0.5 ? 1 : -1);
+      return data;
+    })
+    .catch(err => {
+      queryService.logCatch(err, ref);
+      return data;
+    });
 };

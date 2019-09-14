@@ -3,13 +3,13 @@
         <ul class="latest-top-recirc-slider__items-container">
             {{#each items }}
                 <li class="latest-top-recirc-slider__item-container">
-                    <a class="latest-top-recirc-slider__item-link" href="{{ @root.locals.site.protocol }}://{{ @root.locals.site.host }}">
+                    <a class="latest-top-recirc-slider__item-link" href="{{ this.canonicalUrl }}">
                         <div class="latest-top-recirc-slider__item-img-container">
-                            <img src="{{this.img}}" alt="" class="latest-top-recirc-slider__item-img" draggable="false">
+                            <img src="{{this.feedImgUrl}}?width=150&crop=1:1,offset-y0);" alt="" class="latest-top-recirc-slider__item-img" draggable="false">
                         </div>
                         <div class="latest-top-recirc-slider__item-text">
-                            <div class="latest-top-recirc-slider__item-category latest-top-recirc-slider__item-category--{{lowercase this.category }}">{{this.category}}</div>
-                            <div class="latest-top-recirc-slider__item-title">{{this.title}}</div>
+                            <div class="latest-top-recirc-slider__item-category latest-top-recirc-slider__item-category--{{lowercase this.sectionFront }}">{{this.sectionFront}}</div>
+                            <div class="latest-top-recirc-slider__item-title">{{this.primaryHeadline}}</div>
                         </div>
                     </a>
                 </li>
