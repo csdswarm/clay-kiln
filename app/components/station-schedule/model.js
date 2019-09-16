@@ -1,7 +1,7 @@
 'use strict';
 
 const radioAPI = require('../../services/server/radioApi'),
-  { playingClass } = require('../../services/server/spaLocals'),
+  { playingClass } = require('../../services/universal/spaLocals'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime');
 
 /**
@@ -70,4 +70,3 @@ module.exports.render = async function (ref, data, locals) {
         })
   };
 };
-

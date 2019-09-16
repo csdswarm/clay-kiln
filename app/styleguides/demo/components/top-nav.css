@@ -693,7 +693,7 @@ $drawerSelector: nav-drawer;
   }
 }
 
-@media only screen and (max-width: 788px) {
+@mixin nav-mobile-breakpoint {
   .radiocom-nav .container {
     width: 100%;
     padding: 0 em(20);

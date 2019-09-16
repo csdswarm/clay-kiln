@@ -58,12 +58,14 @@ module.exports.save = (ref, data, locals) => {
  * @param {string} ref
  * @param {object} data
  * @param {object} locals
- * @returns {Promise}
+ * @returns {Promise<object> | object}
  */
 module.exports.render = function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
-    contentTypes = contentTypeService.parseFromData(data);
+    contentTypes = contentTypeService.parseFromData(data),
+    addContentCondition = data.populateFrom === 'section-front-or-tag' ? queryService.addShould : queryService.addMust;
+
   let cleanUrl;
 
   data.initialLoad = false;
@@ -94,7 +96,7 @@ module.exports.render = function (ref, data, locals) {
     data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
   }
 
-  if (data.populateFrom === 'tag') {
+  if (['tag', 'section-front-and-tag', 'section-front-or-tag'].includes(data.populateFrom)) {
     // If we're publishing for a dynamic page, alert the template
     data.dynamicTagPage = false;
 
@@ -132,15 +134,51 @@ module.exports.render = function (ref, data, locals) {
     // Handle querying an array of tags
     if (Array.isArray(data.tag)) {
       for (let tag of data.tag) {
-        queryService.addShould(query, { match: { 'tags.normalized': tag }});
+        addContentCondition(query, { match: { 'tags.normalized': tag }});
       }
     } else {
       // No need to clean the tag as the analyzer in elastic handles cleaning
-      queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+      addContentCondition(query, { match: { 'tags.normalized': data.tag }});
+    }
+  }
+
+  if (['section-front', 'section-front-and-tag', 'section-front-or-tag'].includes(data.populateFrom)) {
+    const noSectionFrontsOrLocals = (!data.sectionFront && !data.sectionFrontManual
+      && !data.secondarySectionFront && !data.secondarySectionFrontManual) || !locals;
+
+    if (noSectionFrontsOrLocals) {
+      return data;
     }
 
-    queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom === 'author') {
+    if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
+      const secondarySectionFront = data.secondarySectionFrontManual || locals.secondarySectionFront;
+
+      // group these into a single OR clause so they dont trip up `must`
+      addContentCondition(query, {
+        bool: {
+          should: [
+            { match: { secondarySectionFront: secondarySectionFront }},
+            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() }}
+          ],
+          minimum_should_match: 1
+        }
+      });
+    } else if (locals.sectionFront || data.sectionFrontManual) {
+      const sectionFront = data.sectionFrontManual || locals.sectionFront;
+
+      addContentCondition(query, {
+        bool: {
+          should: [
+            { match: { sectionFront: sectionFront }},
+            { match: { sectionFront: sectionFront.toLowerCase() }}
+          ],
+          minimum_should_match: 1
+        }
+      });
+    }
+  }
+
+  if (data.populateFrom === 'author') {
     // Check if we are on an author page and override the above
     if (locals && locals.author) {
       // This is from load more on an author page
@@ -155,32 +193,15 @@ module.exports.render = function (ref, data, locals) {
     }
 
     // No need to clean the author as the analyzer in elastic handles cleaning
-    queryService.addShould(query, { match: { 'authors.normalized': data.author }});
-    queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom === 'section-front') {
-    if (!data.sectionFront && !data.sectionFrontManual &&
-    !data.secondarySectionFront && !data.secondarySectionFrontManual
-    || !locals) {
-      return data;
-    }
-    if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
-      const secondarySectionFront = data.secondarySectionFrontManual || locals.secondarySectionFront;
-
-      queryService.addShould(query, { match: { secondarySectionFront: secondarySectionFront }});
-      queryService.addShould(query, { match: { secondarySectionFront: secondarySectionFront.toLowerCase() }});
-      queryService.addMinimumShould(query, 1);
-    } else if (locals.sectionFront || data.sectionFrontManual) {
-      const sectionFront = data.sectionFrontManual || locals.sectionFront;
-
-      queryService.addShould(query, { match: { sectionFront: sectionFront }});
-      queryService.addShould(query, { match: { sectionFront: sectionFront.toLowerCase() }});
-      queryService.addMinimumShould(query, 1);
-    }
+    queryService.addMust(query, { match: { 'authors.normalized': data.author }});
   } else if (data.populateFrom === 'all-content') {
     if (!locals) {
       return data;
     }
   }
+
+  // add minimum should if there are any
+  if (_.get(query, 'body.query.bool.should[0]')) queryService.addMinimumShould(query, 1);
 
   queryService.addSort(query, {date: 'desc'});
 
