@@ -27,19 +27,12 @@
     {{/ifAny}}
   </header>
 
-  {{#if fullWidthLead }}
-    {{#if @root.locals.edit }}
-      <div data-editable="leadSettings">
-        <h1>Lead Settings:</h1>
-        <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
-      </div>
-    {{/if}}
-
+  {{#ifAll fullWidthLead (compare @root.locals.edit '!==' true) }}
     {{! Lead }}
     <div class="lead lead--full-width" data-editable="lead">
       {{> component-list lead }}
     </div>
-  {{/if}}
+  {{/ifAll}}
 
   {{> google-ad-manager contentPageSponsorLogo }}
 
@@ -47,8 +40,8 @@
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
   >
-    {{#unless fullWidthLead }}
-      {{#if @root.locals.edit }}
+    {{#ifAny @root.locals.edit (compare fullWidthLead '!==' true) }}
+      {{#if supportsFullWidthLead }}
         <div data-editable="leadSettings">
           <h1>Lead Settings:</h1>
           <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
@@ -61,7 +54,7 @@
           {{> component-list lead }}
         </div>
       </div>
-    {{/unless}}
+    {{/ifAny}}
 
     <div class="body__info">
       {{! authors }}

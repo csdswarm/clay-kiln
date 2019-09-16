@@ -11,7 +11,8 @@ const _get = require('lodash/get'),
   promises = require('./promises'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
-  mediaplay = require('./media-play');
+  mediaplay = require('./media-play'),
+  { getComponentName } = require('clayutils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -436,10 +437,34 @@ function setNoIndexNoFollow(data) {
   return data;
 }
 
+/**
+ * Handles full-width lead only if a supported lead component is set
+ * @param {Object} data
+ * @param {Object} locals
+ */
+function handleFullWidthLead(data, locals) {
+  let supported = false;
+
+  const leadRef = _get(data, 'lead[0]._ref');
+
+  if (leadRef) {
+    const componentName = getComponentName(leadRef);
+
+    supported = ['brightcove', 'brightcove-live', 'image'].includes(componentName);
+  }
+
+  if (locals.edit) {
+    data.supportsFullWidthLead = supported;
+  }
+
+  data.fullWidthLead = supported && data.fullWidthLead;
+}
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
+  handleFullWidthLead(data, locals);
   if (locals && !locals.edit) {
     return data;
   }
