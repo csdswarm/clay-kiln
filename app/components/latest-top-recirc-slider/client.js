@@ -1,8 +1,14 @@
 'use strict';
 const Hammer = require('hammerjs');
 
+/**
+ * class handles all the view related props and methods associated with the
+ * Slider class and should be instantiated on mount within the Slider
+ * @class
+ */
 class SliderDom {
   constructor(containerEl) {
+    // this object contains all the element references and util methods in working with those dom elements
     this.dom = {
       el: containerEl,
       btns: {
@@ -39,6 +45,7 @@ class SliderDom {
     this.setBtnsState();
   }
   setBtnsState() {
+    // this could probably be improved and made more efficient
     if (this.dom.itemsContainer.x < 0) {
       this.dom.btns.canMoveLeft = true;
       this.dom.btns.left.style.opacity = 1;
@@ -57,13 +64,18 @@ class SliderDom {
   }
 
   onResize() {
-    // console.log('resize!');
-    // console.log(this.dom.itemsContainer.getMaxX(), this.dom.itemsContainer.getSlides().reduce((p,c)=>p+=c.offsetWidth,0));
+    // window resize cb basically resets the items container and buttons UI state
     this.dom.itemsContainer.x = 0;
     this.dom.itemsContainer.el.style.transform = `translateX(${this.dom.itemsContainer.x}px)`;
     this.setBtnsState();
   }
 }
+
+/**
+ * main class for the latest recirc top slider handles initialization on mount and dismount
+ * also handles all listeners
+ * @class
+ */
 class Slider {
   constructor() {
     // bind the event listener methods do this context for removal on dismount
