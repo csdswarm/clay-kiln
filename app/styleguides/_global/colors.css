@@ -21,6 +21,8 @@ $silver: #CCC;
 
 /* Reds */
 $red: #F00; /* Errors */
+$crimson: #DB1111; /* Breaking Alert */
+$crimsonRGB: 219, 17, 17;
 
 /* Oranges */
 $sunsetOrange: #FF4940; /* Music */

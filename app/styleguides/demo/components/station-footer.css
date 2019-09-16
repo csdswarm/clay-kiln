@@ -7,7 +7,7 @@
   background: $boulder;
   position: relative;
   text-align: center;
-  padding: em(40) em(20);
+  padding: em(40) em(20) 0 em(20);
   display: flex;
   justify-content: center;
 
@@ -40,11 +40,23 @@
       }
     }
 
+    &__links {
+      margin-bottom: em(40);
+    }
+
     &__link {
       @mixin station-footer-font3;
       @mixin inline-block;
-      padding: 0 em(15);
+      margin: 0 em(15);
       text-decoration: none;
+      font-weight: 500;
+    }
+
+    &__copyright {
+      @mixin station-footer-font3;
+      @mixin inline-block;
+      margin-bottom: em(40, 14);
+      font-weight: 300;
     }
   }
 }

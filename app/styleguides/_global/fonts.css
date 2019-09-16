@@ -461,7 +461,6 @@ em, i {
   @mixin font ProximaNova-Regular, 14px, $black, -.22px, 17px;
 }
 
-
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Static Page Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -483,6 +482,7 @@ em, i {
 @define-mixin static-page-font6 {
   @mixin font ProximaNova-Bold, 18px, $black, -.36px, 30px;
 }
+
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||| Radium Fonts Styleguide |||||||||| */
@@ -533,6 +533,17 @@ em, i {
 
 @define-mixin radium-form-font-11 {
   @mixin font CircularStd-Black, 12px, $parisM, -.3, 15px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Alert Banner Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin alert-banner-font1 {
+  @mixin font CircularStd-Medium, 18px, $black, -.3px, 22px;
+}
+
+@define-mixin alert-banner-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/

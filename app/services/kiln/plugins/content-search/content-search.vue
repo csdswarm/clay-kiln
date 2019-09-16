@@ -34,6 +34,7 @@
   import axios from 'axios';
   import _debounce from 'lodash/debounce';
   import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
+  import queryService from '../../../client/query';
 
   const { UiButton, UiTextbox }  = window.kiln.utils.components;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
@@ -46,6 +47,12 @@
         loading: false,
         searchText: this.data || ''
       };
+    },
+    watch: {
+      data(val) {
+        this.searchText = val || '';
+        this.performSearch();
+      }
     },
     computed: {
       showResults: function () {
@@ -60,40 +67,24 @@
     },
     methods: {
       /**
-       * creates the elasticsearch query
+       * search the published_content index the search string
        *
-       * @param {String} query
-       * @returns {Object}
+       * @returns {array}
        */
-      createElasticsearchQuery(query) {
-        return  {
-          "index": "published-content",
-          "body": {
-            "size": 10,
-            "from": 0,
-            "sort": {
-              "date": {
-                "order": "desc"
-              }
-            },
-            "query": {
-              "query_string": {
-                "query": `*${query.replace(/([\/|:])/g, '\\$1')}*`,
-                "fields": [
-                  "authors",
-                  "canonicalUrl",
-                  "tags",
-                  "teaser"
-                ]
-              }
-            },
-            "_source": [
-              "date",
-              "canonicalUrl",
-              "seoHeadline"
-            ]
-          }
-        };
+      async search() {
+        const query = queryService('published-content', window.kiln.locals),
+            // if there are no search text yet, pass in * to get the top 10 most recent
+            searchString = this.searchText || '*';
+
+        queryService.addSize(query, 10);
+        queryService.onlyWithTheseFields(query, ['date', 'canonicalUrl', 'seoHeadline']);
+        queryService.addSearch(query, `*${ searchString.replace(/^https?:\/\//, '') }*`, ["authors", "canonicalUrl", "tags", "teaser"]);
+        queryService.addSort(query, { date: { order: 'desc'} });
+
+        const results = await queryService.searchByQuery(query);
+
+        // format the date using the same format as clay-kiln
+        return results.map(item => ({ ...item, date: kilnDateTimeFormat(item.date) }));
       },
       /**
        *  makes a call to the endpoint and populates the results
@@ -102,12 +93,7 @@
         this.loading = true;
 
         try {
-          // if there are no search text yet, pass in * to get the top 10 most recent
-          const response = await axios.post('/_search', this.createElasticsearchQuery(this.searchText || '*'));
-
-          // format the date using the same format as clay-kiln
-          this.searchResults = response.data.hits.hits.map(item =>
-            ({ ...item._source, date: kilnDateTimeFormat(item._source.date) }));
+          this.searchResults = await this.search();
           this.loading = false;
         } catch (e) {
           this.searchResults = [];
@@ -122,11 +108,11 @@
        * determines if the search should take place based on the current input
        */
       inputOnchange() {
-        if (this.searchTextparams === '' || this.searchText.length > 2) {
+        if (this.searchTextparams === '' || !this.searchText || this.searchText.length > 2) {
           this.debouncePerformSearch();
         } else {
           // if there are less than two, just take already exists and see if it can reduce the results
-          this.searchResults = this.searchResults.filter(item =>
+          this.searchResults = this.searchResults.filter(item => 
             item.canonicalUrl.includes(this.searchText) || item.seoHeadline.includes(this.searchText));
         }
       },
@@ -137,7 +123,7 @@
       selectItem(selected) {
         this.searchText = selected.canonicalUrl;
         this.searchResults = [selected];
-        this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText })
+        this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
       }
     },
     components: {
@@ -147,5 +133,3 @@
     }
   }
 </script>
-
-
