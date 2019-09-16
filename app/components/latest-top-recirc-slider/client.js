@@ -4,9 +4,12 @@ const Hammer = require('hammerjs');
 /**
  * class handles all the view related props and methods associated with the
  * Slider class and should be instantiated on mount within the Slider
- * @class
  */
 class SliderDom {
+  /**
+   * Create a slider view.
+   * @param {HTMLElement} containerEl - The html ref to the parent slider.
+   */
   constructor(containerEl) {
     // this object contains all the element references and util methods in working with those dom elements
     this.dom = {
@@ -32,6 +35,10 @@ class SliderDom {
     };
     this.setBtnsState();
   }
+  /**
+   * Create a slider view.
+   * @param {number} direction - -1 or 1.
+   */
   setItemsContainerPosition(direction) {
     // short circuit if btn disabled
     if (
@@ -74,7 +81,6 @@ class SliderDom {
 /**
  * main class for the latest recirc top slider handles initialization on mount and dismount
  * also handles all listeners
- * @class
  */
 class Slider {
   constructor() {
