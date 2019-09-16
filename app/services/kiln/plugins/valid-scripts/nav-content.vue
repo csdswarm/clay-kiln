@@ -1,57 +1,70 @@
 <template>
-    <div class="valid-scripts">
-        <div class="valid-scripts__input">
+    <div class="valid-scripts filterable-list">
+        <div class="filterable-list-input">
             <ui-textbox
                     floating-label
-                    label="Filter List"
+                    label="Search Source Terms"
                     class="valid-scripts__input-textbox"
                     v-model="filter"
                     :disabled="loading"
             ></ui-textbox>
         </div>
-        <div mode="out-in" class="complex-list-items">
-            <div>Valid HTML embed source terms</div>
-            <div class="complex-list-item is-expanded">
-                <div class="complex-list-item-inner"
-                     v-for="item in items">
-                    <ui-textbox
-                            floating-label
-                            label=""
-                            class="valid-scripts__input-textbox"
-                            :value="item"
-                            @input="handleInput"
-                            @blur="updateItem(item)"
-                            :disabled="loading"
-                    ></ui-textbox>
+        <div class="filterable-list-headers">
+            <span class="filterable-list-header filterable-list-header-title">Source terms</span>
+            <span class="filterable-list-header filterable-list-header-action">Action</span>
+        </div>
+        <div class="filterable-list-readout">
+            <ul class="filterable-list-readout-list">
+                <li class="filterable-list-item"
+                    v-for="item in items">
+                    <div class="filterable-list-item-child">
+                        <ui-textbox
+                                class="valid-scripts__input-textbox"
+                                :value="item"
+                                @input="handleInput"
+                                @blur="updateItem(item)"
+                                :disabled="loading"
+                        ></ui-textbox>
 
-                    <ui-icon-button
-                            icon="delete"
-                            tooltip="Remove this item"
-                            tooltipPosition="top center"
-                            @click="removeItem(item)"
-                            :disabled="loading"
-                    ></ui-icon-button>
-                </div>
-                <ui-progress-circular v-show="loading"></ui-progress-circular>
-            </div>
+                        <ui-icon-button
+                                icon="delete"
+                                class="filterable-list-item-child-secondary-action"
+                                tooltip="Remove this item"
+                                tooltipPosition="top center"
+                                @click="removeItem(item)"
+                                :disabled="loading"
+                        ></ui-icon-button>
+                    </div>
+                </li>
+            </ul>
+            <ui-progress-circular v-show="loading"></ui-progress-circular>
+        </div>
+        <div class="filterable-list-add">
+            <ul class="filterable-list-readout-list">
+                <li class="filterable-list-item">
+                    <div class="filterable-list-item-child">
+                        <ui-textbox
+                                floating-label
+                                label="Add Source Term"
+                                class="valid-scripts__input-textbox"
+                                v-model="newItem"
+                                @keyup.enter="addItem"
+                                :disabled="loading"
+                        ></ui-textbox>
+
+                        <ui-icon-button
+                                icon="add"
+                                class="filterable-list-item-child-secondary-action"
+                                @click="addItem"
+                                tooltip="Add Source Term"
+                                tooltipPosition="top center"
+                                :disabled="loading"
+                        ></ui-icon-button>
+                    </div>
+                </li>
+            </ul>
         </div>
 
-        <ui-textbox
-                floating-label
-                label="Add valid script"
-                class="valid-scripts__input-textbox"
-                v-model="newItem"
-                @keyup.enter="addItem"
-                :disabled="loading"
-        ></ui-textbox>
-
-        <ui-icon-button
-                icon="add"
-                @click="addItem"
-                tooltip="Add an item"
-                tooltipPosition="top center"
-                :disabled="loading"
-        ></ui-icon-button>
         <div v-if="error" class="valid-scripts__error">
             {{ error }}
         </div>
@@ -75,7 +88,7 @@
       method: 'post'
     },
     UPDATE: {
-      verb: 'add',
+      verb: 'update',
       method: 'put'
     },
     REMOVE: {
@@ -127,13 +140,13 @@
         this.loading = true;
 
         try {
-            const results = await rest[action.method]('/valid-scripts', data);
+          const results = await rest[action.method]('/valid-scripts', data);
 
-            if (results && results.items) {
-              this.data = results.items;
-            } else {
-              this.error = `Failed to ${action.verb} the item "${ results.message }"`;
-            }
+          if (results && results.items) {
+            this.data = results.items;
+          } else {
+            this.error = `Failed to ${action.verb} the item "${ results.message }"`;
+          }
         } catch (e) {
           this.error = `An unexpected error has occurred. ${e}`;
         }
@@ -149,6 +162,8 @@
 
           return;
         }
+
+        document.getElementsByClassName('filterable-list-item')[0].scrollIntoView();
 
         await this.request(REQUEST.ADD, { item: this.newItem });
 
@@ -181,8 +196,10 @@
      * populate the items
      */
     async mounted() {
+
+      //TODO focus on the add because it is where we should start
+
       await this.request(REQUEST.GET);
     }
   }
 </script>
-

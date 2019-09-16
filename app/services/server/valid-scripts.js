@@ -47,7 +47,7 @@ const db = require('./db'),
         const data = await get();
 
         if (!data.items.includes(req.body.item)) {
-          data.items.push(req.body.item);
+          data.items.unshift(req.body.item);
 
           await db.put(KEY, data);
         }
