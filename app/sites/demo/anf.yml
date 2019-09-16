@@ -1,6 +1,9 @@
+# https://developer.apple.com/documentation/apple_news/articledocument
+
 version: '1.10.1'
 language: en
 # https://developer.apple.com/documentation/apple_news/layout
+documentStyle:
 layout:
   columns: 6
   width: 1024
