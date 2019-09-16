@@ -1,4 +1,4 @@
-.valid-scripts {
+.valid-source {
   display: flex;
   flex-direction: column;
   min-width: em(400);
@@ -34,6 +34,12 @@
 
   .ui-icon-button--type-primary.ui-icon-button--color-default {
     background-color: transparent;
+  }
+
+  .filterable-list-add {
+    .filterable-list-item-child {
+      padding-left: 0;
+    }
   }
 
 }

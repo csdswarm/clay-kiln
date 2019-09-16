@@ -8,7 +8,7 @@ const navButton = require('./nav-button.vue'),
 module.exports = () => {
   window.kiln = window.kiln || {};
   window.kiln.navButtons = window.kiln.navButtons || {};
-  window.kiln.navButtons['valid-scripts'] = navButton;
+  window.kiln.navButtons['valid-source'] = navButton;
   window.kiln.navContent = window.kiln.navContent || {};
-  window.kiln.navContent['valid-scripts'] = navContent;
+  window.kiln.navContent['valid-source'] = navContent;
 };

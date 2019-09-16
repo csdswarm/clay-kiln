@@ -15,7 +15,7 @@ async function hasBadSource(text) {
   const scripts = text.match(/<script[^>]+src=(["|'])(.*?)\1/gi) || [],
     sources = scripts.map(item => item.match(/src=(["|'])(.*?)\1/i)[2]),
     // query the DB
-    validSources = (await db.get(`${process.env.CLAY_SITE_HOST}/_valid_scripts/items`)).items,
+    validSources = (await db.get(`${process.env.CLAY_SITE_HOST}/_valid_source/items`)).items,
     // check each source and verify it is valid
     badSources = sources.map(source => {
       for (const validSource of validSources) {

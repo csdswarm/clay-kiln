@@ -1,10 +1,10 @@
 <template>
-    <div class="valid-scripts filterable-list">
+    <div class="valid-source filterable-list">
         <div class="filterable-list-input">
             <ui-textbox
                     floating-label
                     label="Search Source Terms"
-                    class="valid-scripts__input-textbox"
+                    class="valid-source__input-textbox"
                     v-model="filter"
                     :disabled="loading"
             ></ui-textbox>
@@ -19,7 +19,7 @@
                     v-for="item in items">
                     <div class="filterable-list-item-child">
                         <ui-textbox
-                                class="valid-scripts__input-textbox"
+                                class="valid-source__input-textbox"
                                 :value="item"
                                 @input="handleInput"
                                 @blur="updateItem(item)"
@@ -46,9 +46,8 @@
                         <ui-textbox
                                 floating-label
                                 label="Add Source Term"
-                                class="valid-scripts__input-textbox"
+                                class="valid-source__input-textbox"
                                 v-model="newItem"
-                                @keyup.enter="addItem"
                                 :disabled="loading"
                         ></ui-textbox>
 
@@ -65,7 +64,7 @@
             </ul>
         </div>
 
-        <div v-if="error" class="valid-scripts__error">
+        <div v-if="error" class="valid-source__error">
             {{ error }}
         </div>
     </div>
@@ -140,12 +139,12 @@
         this.loading = true;
 
         try {
-          const results = await rest[action.method]('/valid-scripts', data);
+          const results = await rest[action.method]('/valid-source', data);
 
           if (results && results.items) {
             this.data = results.items;
           } else {
-            this.error = `Failed to ${action.verb} the item "${ results.message }"`;
+            this.error = `Failed to ${ action.verb } the item "${ results.message }"`;
           }
         } catch (e) {
           this.error = `An unexpected error has occurred. ${e}`;
@@ -188,7 +187,7 @@
 
           this.data = this.data.map(item => item === oldItem ? newItem : item);
 
-          await this.request(REQUEST.UPDATE, {old: oldItem, new: newItem});
+          await this.request(REQUEST.UPDATE, { old: oldItem, new: newItem });
         }
       }
     },
@@ -196,9 +195,6 @@
      * populate the items
      */
     async mounted() {
-
-      //TODO focus on the add because it is where we should start
-
       await this.request(REQUEST.GET);
     }
   }

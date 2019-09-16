@@ -2,12 +2,12 @@
 
 const db = require('./db'),
   log = require('../universal/log').setup({file: __filename}),
-  NAME = 'valid-scripts',
+  NAME = 'valid-source',
   TABLE = NAME.replace('-', '_'),
   ENDPOINT = `/${NAME}`,
   KEY = `${process.env.CLAY_SITE_HOST}/_${TABLE}/items`,
   /**
-   * Add routes for valid-scripts
+   * Add routes for valid-source
    *
    * @param {object} app
    * @param {function} checkAuth
@@ -28,14 +28,14 @@ const db = require('./db'),
 
     db.ensureTableExists(TABLE);
     /**
-     * Get the current valid-scripts for html-embeds
+     * Get the current valid-source for html-embeds
      */
     app.get(ENDPOINT, async (req, res) => {
       try {
         res.status(200).send(await get());
       } catch (e) {
-        log('error', `Failed valid-scripts get ${e.message}`);
-        res.status(500).send('There was an error getting current valid-scripts');
+        log('error', `Failed valid-source get ${e.message}`);
+        res.status(500).send('There was an error getting current valid-source');
       }
     });
 
@@ -54,7 +54,7 @@ const db = require('./db'),
 
         res.status(200).send(data);
       } catch (e) {
-        log('error', `Failed valid-scripts post ${e.message}`);
+        log('error', `Failed valid-source post ${e.message}`);
         res.status(500).send('There was an error saving the item');
       }
     });
@@ -74,7 +74,7 @@ const db = require('./db'),
 
         res.status(200).send(data);
       } catch (e) {
-        log('error', `Failed valid-scripts put ${e.message}`);
+        log('error', `Failed valid-source put ${e.message}`);
         res.status(500).send('There was an error saving the item');
       }
     });
@@ -94,7 +94,7 @@ const db = require('./db'),
 
         res.status(200).send(data);
       } catch (e) {
-        log('error', `Failed valid-scripts del ${e.message}`);
+        log('error', `Failed valid-source del ${e.message}`);
         res.status(500).send('There was an error saving the item');
       }
     });

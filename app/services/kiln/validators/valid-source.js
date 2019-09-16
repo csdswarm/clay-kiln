@@ -1,11 +1,11 @@
 'use strict';
 
 const { getComponentName } = require('clayutils'),
-  { hasBadSource } = require('../../universal/html-embed');
+  { hasBadSource } = require('../../universal/valid-source');
 
 module.exports = {
-  label: 'Embed Script Error',
-  description: 'This embed contains a script source that is not allowed.',
+  label: 'Valid Source Error',
+  description: 'The embed contains a script source that is not permitted.',
   type: 'error',
   async validate({ components }) {
     // grab the html-embeds on the page
@@ -19,7 +19,7 @@ module.exports = {
             uri,
             location: 'Html Embed » HTML',
             field: 'text',
-            preview: data.text
+            preview: data.text.substring(0, 85)
           };
         }
       }))

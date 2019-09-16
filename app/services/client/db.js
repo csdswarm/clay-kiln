@@ -16,13 +16,21 @@
 const rest = require('../universal/rest'),
   utils = require('../universal/utils'),
   ENDPOINT_MAP = {
-    '/_valid_scripts/items': {
-      get: '/valid-scripts',
-      put: '/valid-scripts'
+    '/_valid_source/items': {
+      get: '/valid-source',
+      put: '/valid-source'
     }
   };
 
-function fixRef(ref, method) {
+/**
+ * maps the db endpoint to a different enpoint
+ *
+ * @param {string} ref
+ * @param {string} method
+ *
+ * @return {string}
+ */
+function mapRef(ref, method) {
   const path = ref.replace(window.location.host, '');
 
   if (ENDPOINT_MAP[path]) {
@@ -33,12 +41,12 @@ function fixRef(ref, method) {
 }
 
 function get(ref, locals) {
-  return rest.get(utils.uriToUrl(fixRef(ref, 'get'), locals));
+  return rest.get(utils.uriToUrl(mapRef(ref, 'get'), locals));
 }
 
 function put(ref, data, locals) {
   // Pass true for the authentication flag
-  return rest.put(utils.uriToUrl(fixRef(ref, 'put'), locals), data, true);
+  return rest.put(utils.uriToUrl(mapRef(ref, 'put'), locals), data, true);
 }
 
 module.exports.get = get;

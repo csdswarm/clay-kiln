@@ -1,7 +1,7 @@
 'use strict';
 
 const log = require('../../services/universal/log').setup({ file: __filename }),
-  { hasBadSource } = require('../../services/universal/html-embed'),
+  { hasBadSource } = require('../../services/universal/valid-source'),
   { SERVER_SIDE } = require('../../services/universal/constants');
 
 /**

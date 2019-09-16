@@ -19,7 +19,7 @@ const AWS = require('aws-sdk'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
-  validScripts = require('../services/server/valid-scripts'),
+  validScripts = require('../services/server/valid-source'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml');
 

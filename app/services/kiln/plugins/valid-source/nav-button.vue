@@ -11,7 +11,7 @@ const navMenuButton = window.kiln.utils.components.navMenuButton;
 export default {
     data() {
         return {
-            id: 'valid-scripts'
+            id: 'valid-source'
         }
     },
     methods: {

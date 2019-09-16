@@ -123,4 +123,3 @@ module.exports.render = function (ref, data, locals) {
       return data;
     });
 };
-

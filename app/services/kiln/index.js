@@ -13,6 +13,6 @@ module.exports = () => {
   require('./plugins/content-search')();
   require('./plugins/instagram')();
   require('./plugins/subscriptions')();
-  require('./plugins/valid-scripts')();
+  require('./plugins/valid-source')();
   require('./validators')();
 };
