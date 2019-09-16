@@ -17,9 +17,8 @@ const queryService = require('../../services/server/query'),
  * @returns {Object}
  */
 function buildQuery(numResults, locals) {
-  // console.log('[locals]', locals);
   const query = queryService.newQueryWithCount(elasticIndex, numResults);
-
+  // grab content from these section fronts
   queryService.addShould(query, [
     {
       match: {
