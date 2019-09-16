@@ -1,7 +1,7 @@
 <!-- Article Import -->
 <template>
     <nav-menu-button :id="id" @nav-click="toggleDrawer">
-        <span>Valid Embed Scripts</span>
+        <span>Valid Script Source</span>
     </nav-menu-button>
 </template>
 
