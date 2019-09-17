@@ -454,20 +454,12 @@ function handleFullWidthLead(data, locals) {
   }
 
   if (locals.edit) {
-    data.supportsFullWidthLead = supported;
+    data._computed.supportsFullWidthLead = supported;
   }
 
-  data.renderFullWidthLead = data.fullWidthLead && !locals.edit;
-  data.fullWidthLead = supported && data.fullWidthLead;
-}
+  data._computed.renderFullWidthLead = data.fullWidthLead && !locals.edit;
 
-/**
- * Prevent calculated data from being persisted.
- * @param {Object} data
- */
-function removeCalculatedFields(data) {
-  delete data.supportsFullWidthLead;
-  delete data.renderFullWidthLead;
+  data.fullWidthLead = supported && data.fullWidthLead;
 }
 
 function render(ref, data, locals) {
@@ -503,7 +495,6 @@ function save(uri, data, locals) {
   setPlainSourcesList(data);
   sanitizeByline(data);
   setNoIndexNoFollow(data);
-  removeCalculatedFields(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image

@@ -28,7 +28,7 @@
     {{/ifAny}}
   </header>
 
-  {{#if renderFullWidthLead }}
+  {{#if _computed.renderFullWidthLead }}
     {{! Lead }}
     <div class="lead lead--full-width" data-editable="lead">
       {{> component-list lead }}
@@ -41,8 +41,8 @@
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
   >
-    {{#unless renderFullWidthLead }}
-      {{#if supportsFullWidthLead }}
+    {{#unless _computed.renderFullWidthLead }}
+      {{#if _computed.supportsFullWidthLead }}
         <div data-editable="leadSettings">
           <h1>Lead Settings:</h1>
           <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
