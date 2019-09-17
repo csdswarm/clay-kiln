@@ -98,24 +98,29 @@ const { wrapInTryCatch } = require('../../../services/startup/middleware-utils')
         WHERE type = '${types.sectionFrontsAndGalleries}'
       `);
 
-      // first let's add the section fronts because there won't be nearly 50000
-      const sectionFrontResult = await db.raw(`
+      // we need to get the homepage and section fronts first because there
+      //   won't be nearly 50,000 of them.
+      const homeResult = await db.raw(`
+          ${selectXmlData}
+          FROM pages
+          WHERE meta @> '{"published": true}'
+            AND data#>>'{main, 0}' ~ '_components/homepage/'
+          ORDER BY meta->>'url';
+        `),
+        sectionFrontResult = await db.raw(`
           ${selectXmlData}
           FROM pages
           WHERE meta @> '{"published": true}'
             AND data#>>'{main, 0}' ~ '_components/section-front/'
           ORDER BY meta->>'url';
         `),
+        // the hardcoded '1' accounts for the homepage
         galleryResult = await db.raw(`
           ${baseGallerySelect}
-          LIMIT ${sitemapUrlLimit - sectionFrontResult.rows.length}
+          LIMIT ${sitemapUrlLimit - (homeResult.rows.length + sectionFrontResult.rows.length)}
         `),
-        rows = sectionFrontResult.rows.concat(galleryResult.rows);
-
-      if (!rows.length) {
-        res.status(200).end();
-        return;
-      }
+        rows = homeResult.rows.concat(sectionFrontResult.rows)
+          .concat(galleryResult.rows);
 
       addSitemap({
         type: types.sectionFrontsAndGalleries,
