@@ -4,7 +4,6 @@ let SECTIONS, FONTS;
 const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   ENCODE_UTF8 = require('crypto-js/enc-utf8'),
   ENCODE_BASE64 = require('crypto-js/enc-base64'),
-  atob = require('atob'),
   qs = require('querystring'),
   rest = require('../universal/rest'),
   log = require('../universal/log').setup({file: __filename}),
