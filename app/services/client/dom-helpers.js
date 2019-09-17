@@ -25,13 +25,13 @@ api.hasClass = className => element => {
 };
 
 /**
- * A curried function which returns whether the element has the content
+ * A curried function which returns whether the element has the text content
  *
  * @param {string} textContent
  * @returns {function}
  * @example
  *   Array.from(document.querySelectorAll('button'))
- *     .find(hasContent('New Page'))
+ *     .find(hasTextContent('New Page'))
  */
 api.hasTextContent = textContent => element => {
   return element && element.textContent === textContent;
