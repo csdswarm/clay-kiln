@@ -3,6 +3,7 @@
 const axios = require('axios'),
   { URL } = require('url'),
   { wrapInTryCatch } = require('../../startup/middleware-utils'),
+  sectionFronts = new Set([ 'section-front', 'stations' ]),
   /**
    * determines whether the /_lists/new-pages request should pass through
    *   to clay
@@ -71,7 +72,7 @@ module.exports = router => {
     // eslint-disable-next-line one-var
     const { data: newPages } = await axios.get(urlObj.toString()),
       filteredPages = newPages.filter(item => {
-        if (!canCreateSectionFronts && item.id === 'section-front') {
+        if (!canCreateSectionFronts && sectionFronts.has(item.id)) {
           return false;
         }
 
