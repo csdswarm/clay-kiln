@@ -2,55 +2,47 @@
 
 const KilnInput = window.kiln.kilnInput,
   rest = require('../../services/universal/rest'),
-  ANF_API = 'https://news-api.apple.com/';
+  ANF_API = '/apple-news/articles';
+let articleRef, articleData;
 
-module.exports = async schema => {
+module.exports = schema => {
   try {
-    const subscriptions = new KilnInput(schema),
-      articleRef = subscriptions.getComponentInstances('article')[0],
-      articleRefData = await KilnInput.getComponentData(articleRef);
+    const kilnInput = new KilnInput(schema);
 
-    if (!!articleRefData.appleNewsEnabled) {
-      schema.sectionFront = new KilnInput(schema, 'sectionFront');
-      schema.secondarySectionFront = new KilnInput(schema, 'secondarySectionFront');
+    kilnInput.subscribe('PRELOAD_SUCCESS', payload => {
+      articleRef = kilnInput.getComponentInstances('article')[0];
+      articleData = payload.components[articleRef];
+    });
+    kilnInput.subscribe('UPDATE_PAGE_STATE', async payload => {
+      console.log(payload);
 
-      subscriptions.subscribe('UPDATE_PAGE_STATE', async payload => {
-        console.log(payload);
+      if (!!articleData.appleNewsEnabled) {
+        const articleExistsinAppleNews = !!articleData.appleNewsID,
+          articleID = articleData.appleNewsID,
+          deleteArticle = !payload.published;
 
-        const articleExistsinAppleNews = !!articleRefData.appleNewsID,
-          articleID = articleRefData.appleNewsID,
-          deleteArticle = false, // @TODO: Determine from UPDATE_PAGE_STATE payload
-          metadata = {
-            articleRef,
-            accessoryText: articleRefData.sectionFront ||
-              articleRefData.secondarySectionFront,
-            isCandidateToBeFeatured,
-            // ...isHiddenSchemaVal ? { isHidden: isHiddenSchemaVal } : {},
-            isPreview: !!articleRefData.appleNewsPreviewOnly,
-            // ...isSponsoredSchemaVal ? { isSponsored: isSponsoredSchemaVal } : {}
-          }; // @TODO: ON-922 Apple News Feed Options
-
-        rest.request(`${ ANF_API }articles${ articleExistsinAppleNews ? `/${ articleID }` : '' }`, {
+        rest.request(`${ ANF_API }${ articleExistsinAppleNews ? `/${ articleID }` : '' }`, {
           method: deleteArticle ? 'DELETE' : 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
           ...deleteArticle ? {} : {
-            body: JSON.stringify({
-              articleRef,
-              ...metadata
-            })
+            body: JSON.stringify({ articleRef })
           }
         })
           .then(({ id }) => {
             if (id) {
-              articleRefData.appleNewsID = id;
+              articleData.appleNewsID = id;
             } else {
-              delete articleRefData.appleNewsID;
+              delete articleData.appleNewsID;
             }
-            kilnInput.publishComponent(articleRef, articleRefData);
+            kilnInput.publishComponent(articleRef, articleData);
           })
-          .catch(e => console.log(`Error hitting apple news api on pub/unpub: ${ e }`));
-
-      });
-    }
+          .catch(e => {
+            console.log(`Error hitting apple news api on pub/unpub: ${ JSON.stringify(e) }`);
+          });
+      }
+    });
   } catch(e) {
     console.log(e);
   }

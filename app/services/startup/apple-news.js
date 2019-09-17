@@ -2,15 +2,17 @@
 
 let SECTIONS, FONTS;
 const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
-  ENCODE_UTF8 = require('crypto-js/enc-utf8'),
   ENCODE_BASE64 = require('crypto-js/enc-base64'),
   qs = require('querystring'),
   rest = require('../universal/rest'),
   log = require('../universal/log').setup({file: __filename}),
   { getComponentInstance: getCompInstanceData } = require('../server/publish-utils'),
   ANF_API = 'https://news-api.apple.com/',
-  ANF_CHANNEL_API = `https://news-api.apple.com/channels/${ process.env.APPLE_NEWS_CHANNEL_ID }/`,
+  ANF_CHANNEL_API = `${ ANF_API }channels/${ process.env.APPLE_NEWS_CHANNEL_ID }/`,
   moment = require('moment'),
+  FormData = require('form-data'),
+  fs = require('fs'),
+  path = require('path'),
   /**
    * Handle request errors
    *
@@ -50,7 +52,8 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     }
 
     if (!FONTS) {
-      const fontsDir = `${ req.protocol }://${ req.hostname }/fonts/demo/`;
+      // path.join(__dirname, '../templates')
+      const fontsDir = path.join(__dirname, '../../public/fonts/demo/');
 
       FONTS = {
         'CircularStd-Black': `${ fontsDir }circularstd-black.woff`,
@@ -109,6 +112,10 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       hashed = HMAC_SHA256(canonicalRequest, keyBytes),
       signature = ENCODE_BASE64.stringify(hashed);
 
+    log('info', `HEADERS: ${canonicalRequest}, ${JSON.stringify({
+      Accept: 'application/json',
+      Authorization: `HHMAC; key=${ process.env.APPLE_NEWS_KEY_ID }; signature=${ signature }; date=${ date }`
+    })}`)
     return {
       Accept: 'application/json',
       Authorization: `HHMAC; key=${ process.env.APPLE_NEWS_KEY_ID }; signature=${ signature }; date=${ date }`
@@ -250,12 +257,17 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     const method = 'GET',
       requestURL = `${ ANF_API }articles/${ req.params.articleID }`;
 
-    rest.request(requestURL, {
+    return rest.request(requestURL, {
       method,
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText, body: article }) => {
-      if (status === 200) res.send(article.data);
-      else res.status(status).send(statusText);
+      if (status === 200) {
+        if (res) res.send(article.data);
+        else return article.data;
+      } else {
+        if (res) res.status(status).send(statusText);
+        else return statusText;
+      }
     }).catch(e => handleReqErr(e, 'Error getting article data from apple news API', res));
   },
   /**
@@ -272,19 +284,19 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Object}
   */
   articleRequest = async (req, res) => {
+    log('info', 'ARTICLE REQUEST');
     // https://developer.apple.com/documentation/apple_news/create_an_article
     // https://developer.apple.com/documentation/apple_news/update_an_article
+    try {
     const updateArticle = !!req.params.articleID,
       method = 'POST',
       requestURL = `${ ANF_API }articles${ updateArticle ? `/${ req.params.articleID }` : '' }`,
-      { articleRef,
-        accessoryText,
+      { articleRef } = req.body,
+      [ { sectionFront,
+        secondarySectionFront,
         isCandidateToBeFeatured,
         isHidden,
-        isPreview,
-        isSponsored
-      } = req.body,
-      [ { sectionFront }, articleANF ] = await Promise.all([
+        isSponsored }, articleANF ] = await Promise.all([
         getCompInstanceData(articleRef),
         getCompInstanceData(`${ articleRef }.anf?config=true`)
       ]),
@@ -292,8 +304,10 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       formData = new FormData();
     let revision = '';
 
+    log('info', `UPDATE?: ${ updateArticle }`)
     if (updateArticle) {
       revision = { revision } = await readArticle({ params: { articleID: req.params.articleID }});
+      log('info', `UPDATE REQUEST: ${ revision }`);
     }
 
     // See https://developer.apple.com/documentation/apple_news/create_article_metadata_fields for details
@@ -303,40 +317,54 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
      *  Standalone articles do not appear in channel,
      *  but still appear in topics and search results, and may appear in For You.
     */
-    formData.append('metadata', {
+    const metadata = {
       data: {
         ...updateArticle ? { revision } : {},
-        ...accessoryText ? { accessoryText } : { accessoryText: 'metadata.byline' },
+        accessoryText: secondarySectionFront || sectionFront || 'metadata.byline',
         ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
         ...isHidden ? { isHidden } : {},
-        ...isPreview ? { isPreview } : {},
+        ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},
         ...isSponsored ? { isSponsored } : {},
         links: {
           channel: ANF_CHANNEL_API,
           sections: sectionLink ? [ sectionLink ] : []
         }
       }
-    });
-
-    formData.append('article.json', articleANF);
+    };
+    formData.append('metadata', JSON.stringify(metadata));
+    formData.append('article.json', JSON.stringify(articleANF));
 
     // Fonts: Refer in component textStyles of ANF by using `fontName: { PostScript name of font }`
     for (const fontKey in FONTS) {
       if (FONTS.hasOwnProperty(fontKey)) {
-        formData.append(fontKey, new Blob([ FONTS[ fontKey ] ], {
-          type: 'application/octet-stream'
-        }));
+        fs.readFile(FONTS[ fontKey ], function (err, data) {
+          if (err) throw err;
+          const buffer = Buffer.from(data);
+
+          formData.append(fontKey, buffer);
+        });
       }
     }
 
     rest.request(requestURL, {
       method,
-      headers: { ...createRequestHeader(method, requestURL), 'Content-Type': 'multipart/form-data' },
+      headers: {
+        ...createRequestHeader(method, requestURL),
+        'Content-Type': 'multipart/form-data'
+      },
       body: formData
     }).then(({ status, statusText, body: article }) => {
-      if ([ 200, 201 ].includes(status)) res.send(article.data);
-      else res.status(status).send(statusText);
+      if ([ 200, 201 ].includes(status)) {
+        log('info', 'SUCCESS PUBLISH');
+        res.send(article.data);
+      } else {
+        log('error', `${status} ${statusText} ${JSON.stringify(article)} ${requestURL}`);
+        res.status(status).send(statusText);
+      }
     }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
+    } catch (e) {
+      log('error', e);
+    }
   },
   /**
    * Publish article to apple news channel
