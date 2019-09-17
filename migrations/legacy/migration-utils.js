@@ -20,6 +20,7 @@ const _chunk = require('../../app/node_modules/lodash/chunk');
 const claycli = require('../../app/node_modules/claycli');
 const YAML = require('../../app/node_modules/yamljs');
 const url = require('url');
+const usingDb = require('./using-db');
 
 const DEFAULT_HOST = 'clay.radio.com';
 const HTTP = { http: 'http' };
@@ -342,6 +343,7 @@ const v1 = {
   republish,
   httpRequest,
   readFile,
+  usingDb: usingDb.v1,
 };
 
 module.exports = {
