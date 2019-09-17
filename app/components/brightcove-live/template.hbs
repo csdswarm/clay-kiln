@@ -1,7 +1,7 @@
 <div data-uri="{{ default _ref _self }}" class="component component--brightcove brightcove--live" data-editable="videoSettings">
   <div class="player" itemscope itemtype="http://schema.org/VideoObject">
     {{#if video.id }}
-      <div class="player__video {{#unless showTitle}}player__video--hidden-title{{/unless}}">
+      <div class="player__video">
         {{#unless @root.locals.edit}}
             <video-js id="video-{{ video.id }}"
               class="video-js vjs-16-9"
@@ -9,8 +9,6 @@
               data-account="{{ @root.locals.site.brightcoveAccountId }}"
               data-player="{{ @root.locals.site.brightcoveLivePlayerId }}"
               data-ad-config-id="{{ adConfig }}"
-              data-autoplay-unmuted={{ autoplayUnmuted }}
-              data-click-to-play={{ clickToPlay }}
               data-embed="default"
               data-application-id
               controls></video-js>

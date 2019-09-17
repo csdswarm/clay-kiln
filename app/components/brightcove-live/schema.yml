@@ -23,18 +23,6 @@ searchVideo:
     webLabel: Search
     live: true
 
-autoplayUnmuted:
-  _label: Autoplay / unmuted (Happy Birthday Videos Only)
-  _has: checkbox
-
-clickToPlay:
-  _label: Click to play
-  _has: checkbox
-
-showTitle:
-  _label: Show video title?
-  _has: checkbox
-
 _groups:
   videoSettings:
     _label: Brightcove Live Video
@@ -45,7 +33,4 @@ _groups:
     fields:
       - video (Video settings)
       - adConfig (Video settings)
-      - showTitle (Video settings)
-      - autoplayUnmuted (Video settings)
-      - clickToPlay (Video settings)
       - searchVideo (Search for video)

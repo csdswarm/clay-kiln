@@ -457,7 +457,17 @@ function handleFullWidthLead(data, locals) {
     data.supportsFullWidthLead = supported;
   }
 
+  data.renderFullWidthLead = data.fullWidthLead && !locals.edit;
   data.fullWidthLead = supported && data.fullWidthLead;
+}
+
+/**
+ * Prevent calculated data from being persisted.
+ * @param {Object} data
+ */
+function removeCalculatedFields(data) {
+  delete data.supportsFullWidthLead;
+  delete data.renderFullWidthLead;
 }
 
 function render(ref, data, locals) {
@@ -465,6 +475,7 @@ function render(ref, data, locals) {
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
   handleFullWidthLead(data, locals);
+
   if (locals && !locals.edit) {
     return data;
   }
@@ -492,6 +503,7 @@ function save(uri, data, locals) {
   setPlainSourcesList(data);
   sanitizeByline(data);
   setNoIndexNoFollow(data);
+  removeCalculatedFields(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image

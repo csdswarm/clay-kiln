@@ -6,21 +6,6 @@ module.exports = (schema) => {
   const subscriptions = new KilnInput(schema);
 
   schema.video = new KilnInput(schema, 'video');
-  schema.autoplayUnmuted = new KilnInput(schema, 'autoplayUnmuted');
-  schema.clickToPlay = new KilnInput(schema, 'clickToPlay');
-
-  schema.clickToPlay.on('change', (value) => {
-    if (value) {
-      schema.autoplayUnmuted.value(false);
-    }
-  });
-
-  schema.autoplayUnmuted.on('change', (value) => {
-    if (value) {
-      schema.autoplayUnmuted.showSnackBar({message: 'Some browsers may disable autoplayed videos if unmuted'});
-      schema.clickToPlay.value(false);
-    }
-  });
 
   /* This field is set by searchVideo
   * and should not be visible in editor settings
