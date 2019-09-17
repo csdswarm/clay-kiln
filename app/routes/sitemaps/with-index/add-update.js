@@ -28,7 +28,6 @@ const { wrapInTryCatch } = require('../../../services/startup/middleware-utils')
    * @returns {string}
    */
   getSitemapContent = rows => {
-    console.log('rows: ' + JSON.stringify(rows, null, 2));
     return xmlSitemapHeader + rows.map(aRow => aRow.xml_data).join('') + '</urlset>';
   },
   /**
@@ -37,7 +36,6 @@ const { wrapInTryCatch } = require('../../../services/startup/middleware-utils')
    * @param {object} router
    */
   addSitemap = async ({ type, num, content }) => {
-    console.log('content: ' + content);
     await db.raw(`
       INSERT INTO sitemap_with_index (type, num, content, lastmod)
       VALUES (
