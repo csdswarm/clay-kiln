@@ -9,6 +9,8 @@ module.exports.render = function (ref, data, locals) {
 };
 
 module.exports.save = function (uri, data, locals) {
+  data.appleNewsEnabled = process.env.APPLE_NEWS_ENABLED;
+  data.appleNewsPreviewOnly = process.env.APPLE_NEWS_PREVIEW_ONLY;
   data.totalSlides = data.slides.length;
   return createContent.save(uri, data, locals);
 };
