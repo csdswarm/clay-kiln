@@ -57,7 +57,7 @@ class StagingHelperUI {
    * method for adding html inside the nav component's element
    */
   createAndInsertStylesAndHtml() {
-    document.body.querySelector('.component--top-nav').insertAdjacentHTML('afterbegin', `${this.getHtml()}`);
+    document.body.querySelector('.component--top-nav').insertAdjacentHTML('afterbegin', this.getHtml());
   }
   /**
    * method for initializing the class's dom object which creates references to the ui elements
