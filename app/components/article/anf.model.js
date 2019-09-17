@@ -16,7 +16,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     timeAgoTimestamp
   } = require('../../services/universal/format-time'),
   formatLocalDate = require('clayhandlebars/helpers/time/formatLocalDate'),
-  ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss±ZZ:ZZ',
+  ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]',
   /**
    * Get canonical URL from customUrl or derived from section fronts and slug
    *
@@ -38,7 +38,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
         `${ secondarySectionFront }/` : '' }${ slug }`;
     }).catch(e => {
       log('error', `Error getting page data: ${ e }`);
-      
+
       return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
         `${ secondarySectionFront }/` : '' }${ slug }`;
     });
@@ -80,7 +80,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
   formatTimestamp = (date, dateModified) => {
     let formattedTimestamp = '';
     const isPub24HrsAgo = isPublished24HrsAgo(dateModified || date);
-    
+
     if (dateModified) {
       formattedTimestamp = `Updated ${ !isPub24HrsAgo ? 'on ' : '' }`;
     }
@@ -103,7 +103,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
   */
   getTags = async tags => {
     return getCompInstanceData(tags._ref).then(tags => {
-      return tags.items.map(tag => tag.text).join(', ');
+      return tags.items.map(tag => tag.text);
     }).catch(e => log('error', `Error getting tags: ${e}`));
   },
   /**
@@ -165,9 +165,9 @@ module.exports = async function (ref, data, locals) {
     identifier: refInstance,
     title: data.primaryHeadline,
     metadata: {
-      authors: _flattenDeep(data.byline.map(byline => _get(byline, 'names')))
+      authors: data.byline.length ? _flattenDeep(data.byline.map(byline => _get(byline, 'names')))
         .map(name => _get(name, 'text'))
-        .join(', '),
+        : [],
       canonicalURL: await getCanonicalURL(refInstance, data, locals),
       dateCreated: formatLocalDate(data.date || data.dateModified, ISO_8601_FORMAT),
       dateModified: formatLocalDate(data.dateModified || data.date, ISO_8601_FORMAT),
