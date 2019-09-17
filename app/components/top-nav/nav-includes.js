@@ -2,61 +2,90 @@
 
 const COOKIE_NAME = 'api_stg';
 
+/** Class for working with a browser cookie. */
 class Cookie {
   constructor() {}
-
+  /**
+   * static method used to get the value of the provide key(name) of cookie
+   *
+   * @param {string} name - cookie key
+   * @return {string} cookies value
+   */
   static getCookie(name) {
-    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    const value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
 
-    return v ? v[2] : null;
+    return value ? value[2] : null;
   }
-
+  /**
+   * static method used to set the value of the provide key(name) of cookie
+   *
+   * @param {string} name - cookie key
+   * @param {string} value - cookie value
+   * @param {num} days - cookie days to expire
+   */
   static setCookie(name, value, days) {
     const date = new Date;
 
     date.setTime(date.getTime() + 24 * 60 * 60 * 1000 * days);
     document.cookie = name + '=' + value + ';path=/;expires=' + date.toGMTString();
   }
-
+  /**
+   * static method used to remove the value of the provide key(name) of cookie
+   *
+   * @param {string} name - cookie key to delete
+   */
   static deleteCookie(name) {
     this.setCookie(name, '', -1);
   }
 }
 
+/** Class for working with dom in the context of staging helper */
 class StagingHelperUI {
+  /**
+   * method initialize and build the ui
+   */
   constructor() {
     this.onClickRemove = this.onClickRemove.bind(this);
-  }
-
-  init() {
     this.createAndInsertStylesAndHtml();
     this.initDom();
     this.addListeners();
-    setTimeout(()=>{
+    setTimeout(() => {
       this.dom.el.classList.add('staging-helper__container--on');
-    },0);
+    }, 0);
   }
-
+  /**
+   * method for adding html inside the nav component's element
+   */
   createAndInsertStylesAndHtml() {
-    document.body.querySelector('.component--top-nav').insertAdjacentHTML('afterbegin', `${this.getHtml()}` );
+    document.body.querySelector('.component--top-nav').insertAdjacentHTML('afterbegin', `${this.getHtml()}`);
   }
-
+  /**
+   * method for initializing the class's dom object which creates references to the ui elements
+   */
   initDom() {
     this.dom = {
       el: document.querySelector('.staging-helper__container'),
       btn: document.querySelector('.staging-helper__clear-button')
     };
   }
-
+  /**
+   * method for adding listeners to referenced ui elements
+   */
   addListeners() {
     this.dom.btn.addEventListener('click', this.onClickRemove);
   }
-
+  /**
+   * method for responding to the off button in ui
+   */
   onClickRemove() {
     Cookie.deleteCookie(COOKIE_NAME);
     window.location.reload();
   }
-
+  /**
+   * method for returning the html for the ui
+   *
+   * @return {string} dom html
+   */
   getHtml() {
     return `
       <div class="staging-helper__container">
@@ -66,7 +95,11 @@ class StagingHelperUI {
       </div>
     `;
   }
-
+  /**
+   * method for returning the styles for the ui
+   *
+   * @return {string} dom styles
+   */
   getStyles() {
     return `
       <style>
@@ -109,25 +142,31 @@ class StagingHelperUI {
       </style>
     `;
   }
-
+  /**
+   * method for when dismount callback is invoked and listeners are removed properly
+   */
   onDismount() {
     this.dom.btn.removeEventListener('click', this.onClickRemove);
   }
 }
 
+/** Class for staging helper */
 class StagingHelper {
-  constructor() {}
-
+  constructor() { }
+  /**
+   * method for when the mount callback is invoked and we look for the cookie
+   */
   onMount() {
     // look for cookie
     const api_stg = Cookie.getCookie(COOKIE_NAME);
 
     if (api_stg) {
       this.ui = new StagingHelperUI();
-      this.ui.init();
     }
   }
-
+  /**
+   * method for when the dismount callback is invoked
+   */
   onDismount() {
     this.ui.onDismount();
   }
