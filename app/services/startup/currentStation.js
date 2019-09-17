@@ -105,6 +105,7 @@ module.exports = async (req, res, next) => {
     res.locals.station = station;
   }
   res.locals.allStationsCallsigns = allStationsCallsigns;
+  res.locals.allStationsSlugs = Object.keys(allStations);
   res.locals.defaultStation = defaultStation;
 
   return next();
