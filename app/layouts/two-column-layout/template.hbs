@@ -28,11 +28,13 @@
       <script src="/dist/app.js"></script>
     {{/if}}
   {{/unless}}
-
 </head>
 <body>
 <div id="vue-app-mount-point">
-  <section class="layout layout--two-column">
+  <section class="layout layout--two-column{{#unless @root.locals.canEditPage}} layout--no-permissions{{/unless}}">
+    {{#unless @root.locals.canEditPage}}
+      <h1 class="layout__no-permissions-message">Sorry, but you do not have permissions to edit this type of page.</h1>
+    {{/unless}}
     <section class="layout__top" data-editable="top">{{> component-list top }}</section>
     <header>
       <div class="layout__layout-header" data-editable="layoutHeader">{{> component-list layoutHeader }}</div>

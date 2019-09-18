@@ -545,3 +545,11 @@ em, i {
 @define-mixin alert-banner-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
 }
+
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Permissions Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin permissions-font1 {
+  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
+}

@@ -2,8 +2,9 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, isComponent, isPage, isPublished, isUri } = require('clayutils'),
+  { getComponentName, isComponent, isPage, isPublished, isUri, isPageMeta } = require('clayutils'),
   { loadPermissions } = require('../urps'),
+  { getMainComponentsForPageUri } = require('../db'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
   _get = require('lodash/get'),
@@ -11,7 +12,6 @@ const express = require('express'),
   amphoraFiles = require('amphora-fs'),
   path = require('path'),
   YAML = require('yamljs'),
-  staticPage = require('./static-page'),
   interceptLists = require('./intercept-lists'),
   componentsToCheck = getComponentsWithPermissions(),
   pageTypesToCheck = new Set(['homepage', 'section-front', 'static-page']);
@@ -58,6 +58,8 @@ function userPermissionRouter() {
           await loadPermissions(req.session, res.locals);
         }
         addPermissions(res.locals);
+
+        res.locals.canEditPage = await checkUpdatePrivileges(req.uri, res.locals);
       }
     } catch (e) {
       log('error', 'Error adding locals.user permissions', e);
@@ -68,6 +70,25 @@ function userPermissionRouter() {
   interceptLists(userPermissionRouter);
 
   return userPermissionRouter;
+}
+
+async function checkUpdatePrivileges(uri, {edit, user}) {
+  // TODO: When local pageTypesToCheck matches global, remove the local const of the same name
+  // Currently, some items in the global do not have update privilege and would break -CSD
+  const pageTypesToCheck = new Set(['static-page']);
+
+  if (edit === 'true') {
+    const mainComponents = await getMainComponentsForPageUri(uri);
+
+    for (const component of mainComponents) {
+      const pageType = getComponentName(component);
+
+      if (pageTypesToCheck.has(pageType)) {
+        return user.can('update').a(pageType).value;
+      }
+    }
+  }
+  return true;
 }
 
 /**
@@ -141,18 +162,12 @@ async function checkComponentPermission(uri, req, locals, db) {
  * @return {boolean}
  */
 async function checkUserPermissions(uri, req, locals, db) {
-  const { user } = locals,
-    { query } = req;
+  const { user } = locals;
 
   try {
     // no matter the request, verify the user has can has the record for this site
     if (!user.hasPermissionsTo('access').this('station').value) {
       return false;
-    }
-
-    // forcibly prevent user from editing a page they don't have permissions to update
-    if (query.edit === 'true' && await staticPage.isPageAStaticPage(uri)) {
-      return user.can('update').a('static-page').value;
     }
 
     if (isComponent(uri)) {
@@ -172,6 +187,15 @@ async function checkUserPermissions(uri, req, locals, db) {
         return pageTypesToCheck.has(pageType)
           ? locals.user.can('create').a(pageType).value
           : true;
+      } else if (req.method === 'GET' && !isPageMeta(uri)) {
+        // TODO: remove local pageTypesToCheck when it matches global
+        // At the moment, some of those pages do not have an update privilege
+        const pageTypesToCheck = new Set(['static-page']),
+          pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
+
+        return pageTypesToCheck.has(pageType)
+          ? locals.user.can('update').a(pageType).value
+          : true;
       }
     }
 
@@ -185,6 +209,8 @@ async function checkUserPermissions(uri, req, locals, db) {
         ? user.can('unpublish').a(pageType).at(station.callsign).value
         : true;
     }
+
+
 
     // if no permissions are required they can do it
     return true;
