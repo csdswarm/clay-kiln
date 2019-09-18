@@ -1,0 +1,22 @@
+_description: |
+  Adds `<meta name="twitter:card">`, `twitter:image`, and `og:image` tags to the head.
+
+routeParam:
+  _label: Route Param
+  _has:
+    input: text
+    help: Define the route param whose value in replacement for ${paramValue} in the url
+
+dynamicImageUrl:
+  _label: Url template
+  _has:
+    input: text
+    valitade:
+      required: true
+    help: Template for url.  Note that '${paramValue}' will be replaced with the provided param
+
+_groups:
+  settings:
+    fields:
+      - routeParam
+      - dynamicImageUrl
