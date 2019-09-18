@@ -35,8 +35,8 @@ module.exports = {
   label: 'Invalid Station Slug',
   description: 'The slug must be a valid station slug.',
   type: 'error',
-  async validate(state, slugs) { // slugs passed for testing
-    const validSlugs = slugs || await getSlugs();
+  async validate(state) { // slugs passed for testing
+    const validSlugs = await getSlugs();
 
     return _reduce(state.components, (errors, instance, uri) => {
       if (!components.has(helpers.getComponentName(uri))) {
