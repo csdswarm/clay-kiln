@@ -468,7 +468,10 @@ function isFullWidthLeadSupported(data) {
 function renderFullWidthLead(data, locals) {
   const supported = isFullWidthLeadSupported(data);
 
-  if (locals.edit) data._computed.supportsFullWidthLead = supported;
+  if (locals.edit) {
+    data._computed.supportsFullWidthLead = supported;
+  }
+
   data._computed.renderFullWidthLead = data.fullWidthLead && !locals.edit;
 }
 
