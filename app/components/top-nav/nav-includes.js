@@ -79,7 +79,10 @@ class StagingHelperUI {
    */
   onClickRemove() {
     Cookie.deleteCookie(COOKIE_NAME);
-    window.location.reload();
+    // change to remove the params from url to avoid a infinite loop
+    const locationNoParams = window.location.protocol + '//' + window.location.host + window.location.pathname;
+
+    window.location.replace(locationNoParams);
   }
   /**
    * method for returning the html for the ui
