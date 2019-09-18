@@ -101,23 +101,19 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    *
    * @param {String} method
    * @param {String} URL
+   * @param {String} [contentType]
    * @returns {Object}
   */
-  createRequestHeader = (method, URL) => {
+  createRequestHeader = (method, URL, contentType='') => {
     // https://developer.apple.com/documentation/apple_news/apple_news_api/about_the_news_security_model#2970281
 
     const date = moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), //ISO 8601
-      canonicalRequest = method + URL + date,
+      canonicalRequest = method + URL + date + contentType,
       keyBytes = ENCODE_BASE64.parse(process.env.APPLE_NEWS_KEY_SECRET.toString(ENCODE_BASE64)),
       hashed = HMAC_SHA256(canonicalRequest, keyBytes),
       signature = ENCODE_BASE64.stringify(hashed);
 
-    log('info', `HEADERS: ${canonicalRequest}, ${JSON.stringify({
-      Accept: 'application/json',
-      Authorization: `HHMAC; key=${ process.env.APPLE_NEWS_KEY_ID }; signature=${ signature }; date=${ date }`
-    })}`)
     return {
-      Accept: 'application/json',
       Authorization: `HHMAC; key=${ process.env.APPLE_NEWS_KEY_ID }; signature=${ signature }; date=${ date }`
     };
   },
@@ -136,6 +132,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       method,
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText, body: sections }) => {
+      log('info', `${status} ${statusText}`);
       if (status === 200) {
         if (res) res.send(sections.data || []);
         else return sections.data || [];
@@ -346,10 +343,12 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       }
     }
 
+    const canonicalRequestEntities = `multipart/form-data; boundary=${ formData._boundary }${ JSON.stringify(formData) }`;
+
     rest.request(requestURL, {
       method,
       headers: {
-        ...createRequestHeader(method, requestURL),
+        ...createRequestHeader(method, requestURL, canonicalRequestEntities),
         'Content-Type': 'multipart/form-data'
       },
       body: formData
