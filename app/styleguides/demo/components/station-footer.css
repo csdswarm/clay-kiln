@@ -47,7 +47,7 @@
     &__link {
       @mixin station-footer-font3;
       @mixin inline-block;
-      margin: 0 em(15);
+      margin: 0 em(15, 14);
       text-decoration: none;
       font-weight: 500;
     }
