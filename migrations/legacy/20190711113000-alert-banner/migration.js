@@ -79,7 +79,7 @@ function importContent(content) {
   return Promise.all(content
     .map(payload => {
       try {
-        return clayImport({ payload, hostUrl, publish: true })
+        return clayImport({ payload, hostUrl, publish: false })
       } catch (error) {
         console.log('An error occurred while trying to update a page or layout instance.', prettyJSON({error}));
       }
