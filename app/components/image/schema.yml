@@ -59,7 +59,7 @@ _groups:
       - credit
       - alt
       - borderToggle
-    _label: Image Image
+    _label: Image
     _placeholder:
       text: New Image
       height: 250px
