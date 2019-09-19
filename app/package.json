@@ -1,6 +1,6 @@
 {
   "name": "clay-starter",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "The started for Clay",
   "main": "app.js",
   "scripts": {
