@@ -5,11 +5,10 @@ const logMessage = message => data => {
   return data
 };
 
-
 async function createDefaultInstance(componentName) {
   try {
     const { data } = await readFile({ path: `./${componentName}.yml` });
-    await clayImport({
+    const stuff = await clayImport({
       hostUrl,
       payload: data
     });
@@ -21,7 +20,11 @@ async function createDefaultInstance(componentName) {
 }
 
 async function addComponentToArticleData(articleInstanceData, componentName){
-  articleInstanceData['top'].push({_ref: `${hostUrl}/_components/${componentName}/instances/default`});
+  const newData = {_ref: `${hostUrl}/_components/${componentName}/instances/default`};
+  const target = articleInstanceData._layouts['two-column-layout'].instances.article.top;
+  if(!target.find(el => hostUrl + el._ref === newData._ref)) {
+    target.push(newData);
+  }
   return articleInstanceData;
 }
 
@@ -29,39 +32,29 @@ function getLayoutInstance(){
   return clayExport({componentUrl: `${hostUrl}/_layouts/two-column-layout/instances/article`});
 }
 
-function importContent(contentData) {
-  return clayImport({ payload: contentData, hostUrl: `${hostUrl}/_layouts/two-column-layout/instances/article`, publish: true });
+function importContent(payload) {
+  return clayImport({ payload, hostUrl: hostUrl, publish: true });
 }
 
 createDefaultInstance('latest-top-recirc-slider')
-  // first create the default instance
-  .then( componentName => logMessage(`Default ${componentName} instance created.`)())
-  // next get the layout instance data
-  .then(getLayoutInstance)
-  // next push the new ref on to the layout instance
-  .then( ({data}) => addComponentToArticleData(data._layouts['two-column-layout'].instances.article, 'latest-top-recirc-slider'))
-  .then( articleInstanceData => logMessage(prettyJSON(articleInstanceData))())
-  // .then( (data) => importContent(data))
-  // .then( r => console.log('[rrr]', r))
+  .then( response => {
+    console.log('[createDefaultInstance]', `${response} -- created\n==> now getting article layout instance...`);
+    return getLayoutInstance()
+  })
+  .then( exportResponse => {
+    console.log('[article layout instance retrieved] ===>');
+    // console.log('[exportData.data]', exportResponse.data);
+    console.log('==> now adding new ref into instance', );
+    return addComponentToArticleData(exportResponse.data, 'latest-top-recirc-slider');
+  })
+  .then( newInstanceData => {
+    console.log('[new reference added]');
+    console.log('[newInstanceData]', newInstanceData._layouts['two-column-layout'].instances.article.top);
+    console.log('==> now importing...');
+    return importContent(newInstanceData);
+  })
+  .then( importResponse => {
+    console.log('[importResponse]', importResponse);
+  })
   .catch(console.log);
-
-
-
-  // getLayoutInstance()
-//   .then( ({data}) => {
-//     // console.log('[response data]', data._layouts['two-column-layout'].instances.article);
-//     console.log('[addComponentToArticle]', addComponentToArticle(data._layouts['two-column-layout'].instances.article, 'latest-top-recirc-slider'));
-//     // console.log('[addComponentToLayouts]', addComponentToLayouts(li, 'latest-top-recirc-slider'));
-//   });
-
-
-
-// createDefaultAlertBanner()
-//   .then(logMessage('Default alert-banner instance created.'))
-//   .then(() => Promise.all([getLayoutInstances(), getPages()]))
-//   .then(logMessage('Got layout instances and pages.'))
-//   .then(([layouts, pages]) => Promise.all([addBannerToLayouts(layouts), addBannerToPages(pages)]))
-//   .then(logMessage('Added banner to layout instances and pages.'))
-//   .then(([layouts, pages]) => importContent([...layouts, ...pages]))
-//   .then(logMessage('Done.'))
-//   .catch(console.log);
+  
