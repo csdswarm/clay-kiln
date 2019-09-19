@@ -96,7 +96,7 @@ const queryService = require('../../services/server/query'),
    */
   renderStation = async (data, locals) => {
     const feedUrl = `${locals.station.website}/station_feed.json`,
-      feed = await radioApiService.get(feedUrl, null, (response) => response.nodes),
+      feed = await radioApiService.get(feedUrl, null, (response) => response.nodes, {}, locals),
       nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
       defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
@@ -162,7 +162,7 @@ module.exports.render = function (ref, data, locals) {
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
     const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-    
+
     queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     return renderDefault(ref, data, locals, query);
   }

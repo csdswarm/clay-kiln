@@ -22,6 +22,7 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
+  apiStg = require('./apiStg'),
   cookies = require('./cookies');
 
 function createSessionStore() {
@@ -73,6 +74,10 @@ function setupApp(app) {
 
   app.use(cookieParser());
 
+  apiStg.inject(app);
+
+  cookies.inject(app);
+
   app.use(handleRedirects);
 
   app.use(user);
@@ -80,8 +85,6 @@ function setupApp(app) {
   app.use(locals);
 
   app.use(currentStation);
-
-  cookies.inject(app);
 
   radium.inject(app);
 

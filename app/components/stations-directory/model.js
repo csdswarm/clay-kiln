@@ -9,16 +9,17 @@ const radioApiService = require('../../services/server/radioApi'),
 /**
  * fetch all markets from
  * radio api into an array
+ * @param {object} locals
  * @returns {Promise<array>}
  */
-function getAllMarkets() {
+function getAllMarkets(locals) {
   const route = 'markets',
     params = {
       'page[size]': 100,
       sort: 'name'
     };
 
-  return radioApiService.get(route, params).then(response => {
+  return radioApiService.get(route, params, null, {}, locals).then(response => {
     if (response.data) {
       return response.data.map(data => {
         data.attributes.slug = slugifyService(data.attributes.display_name);
@@ -33,19 +34,20 @@ function getAllMarkets() {
  * fetch all music genres from
  * radio api into an array
  * @param {boolean} newsTalk
+ * @param {object} locals
  * @returns {Promise<array>}
  */
-function getAllGenres(newsTalk) {
+function getAllGenres(newsTalk, locals) {
   const route = 'genres',
     params = {
       'page[size]': 100
     };
-  
+
   if (newsTalk) {
     params['sort'] = 'name';
   }
 
-  return radioApiService.get(route, params).then(response => {
+  return radioApiService.get(route, params, null, {}, locals).then(response => {
     if (response.data) {
       const onlyMusicGenres = genre => ![SPORTS_SLUG, NEWS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
         onlyNewsTalkGenres = genre => [NEWS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
@@ -67,9 +69,9 @@ module.exports.render = async (uri, data, locals) => {
     return data;
   }
 
-  data.location = locals.allMarkets = await getAllMarkets();
-  data.music = locals.allMusic = await getAllGenres();
-  locals.allNewsTalk = await getAllGenres(true);
+  data.location = locals.allMarkets = await getAllMarkets(locals);
+  data.music = locals.allMusic = await getAllGenres(false, locals);
+  locals.allNewsTalk = await getAllGenres(true, locals);
   let path = url.parse(locals.url).pathname;
 
   if (path.includes('location') || path.includes('music')) {
