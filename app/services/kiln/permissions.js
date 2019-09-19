@@ -1,7 +1,7 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
-  _camelCase = require('lodash/camelCase'),
+  preloadTimeout = 5000,
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
   /**
@@ -85,33 +85,123 @@ const addPermissions = require('../universal/user-permissions'),
       });
   },
   /**
-   * mutates the schema blocking the user from being able to publish if they do not have permissions
+   * tests whether the node contains the class 'right-drawer'
    *
-   * @param {object} schema
+   * @param {Node} node
+   * @returns {boolean}
    */
+  isRightDrawer = (node) => {
+    return node.classList && node.classList.contains('right-drawer');
+  },
+  /**
+   * returns the publish button elements if they were added
+   *
+   * @param {object} mutation
+   * @returns {object}
+   */
+  getAddedPublishButtons = (mutation) => {
+    const publishDrawer = [...mutation.addedNodes].find(isRightDrawer);
+
+    if (!publishDrawer) {
+      return {};
+    }
+
+    return {
+      publishBtn: publishDrawer.querySelector('.publish-actions > button'),
+      unpublishBtn: publishDrawer.querySelector('.publish-status > button')
+    };
+  },
+  /**
+   * A helper method which subscribes to PRELOAD_SUCCESS and returns a promise
+   *   of the first result.
+   *
+   * @param {object} subscriptions
+   * @param {boolean} scoped
+   * @returns {Promise}
+   */
+  whenPreloaded = (subscriptions, scoped = false) => {
+    return new Promise((resolve, reject) => {
+      try {
+        setTimeout(() => {
+          reject(new Error(`PRELOAD_SUCCESS wasn't published after ${preloadTimeout} ms`));
+        }, preloadTimeout);
+
+        subscriptions.subscribe(
+          PRELOAD_SUCCESS,
+          (...args) => {
+            // this unsubscribes from the event as future event calls serve
+            //   no purpose.
+            delete subscriptions.subscribedEvents[PRELOAD_SUCCESS];
+            resolve(...args);
+          },
+          scoped
+        );
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+  /**
+   * sets all truthy elements to have the style display: none
+   *
+   * @param {Element[]} elements
+   */
+  setDisplayNone = (elements) => {
+    elements.filter(anElement => !!anElement)
+      .forEach(anElement => {
+        anElement.style.display = 'none';
+      });
+  },
+  /**
+   * hides the 'publish' or 'unpublish' button if the user does not
+   *   have permissions
+   *
+   * @param {object} schema - only used because KilnInput requires it
+   **/
   publishRights = (schema) => {
-    const subscriptions = new KilnInput(schema);
+    const subscriptions = new KilnInput(schema),
+      whenPreloadedPromise = whenPreloaded(subscriptions);
 
-    subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
+    subscriptions.subscribe('OPEN_DRAWER', async payload => {
+      if (payload !== 'publish-page') {
+        return;
+      }
 
-      const { value, message } = locals.user.hasPermissionsTo('access').this('station');
+      const { locals } = await whenPreloadedPromise,
+        hasAccess = locals.user.hasPermissionsTo('access').this('station');
 
-      if (!value) {
-        const name = _camelCase(message);
+      if (hasAccess) {
+        return;
+      }
 
-        // using the name the message, it will display the message in the error list
-        schema[name] = new KilnInput(schema, name);
-        schema[name].setProp('_has', {
-          ...schema[name]['_has'],
-          input: 'text',
-          validate: {
-            required: true
+      // shouldn't be declared above the short circuit
+      // eslint-disable-next-line one-var
+      const publishBtn = document.querySelector('.right-drawer .publish-actions > button'),
+        unpublishBtn = document.querySelector('.right-drawer .publish-status > button');
+
+      // if this was rendered on the server then there won't be any mutations
+      if (publishBtn || unpublishBtn) {
+        setDisplayNone([publishBtn, unpublishBtn]);
+
+        return;
+      }
+
+      // this shouldn't be declared above the short circuit
+      // eslint-disable-next-line one-var
+      const kilnWrapper = document.querySelector('.kiln-wrapper'),
+        observer = new MutationObserver(mutationList => {
+          for (const mutation of mutationList) {
+            const { publishBtn, unpublishBtn } = getAddedPublishButtons(mutation);
+
+            setDisplayNone([publishBtn, unpublishBtn]);
+            if ([...mutation.removedNodes].find(isRightDrawer)) {
+              observer.disconnect();
+            }
           }
         });
-        schema[name].hide();
-      }
-    }, true);
 
+      observer.observe(kilnWrapper, { childList: true });
+    }, false);
   },
   /**
    * mutates the schema blocking the user from being able to add/remove items from a simple-list if they do not have permissions
@@ -142,3 +232,4 @@ module.exports.secureSchema = secureSchema;
 module.exports.secureAllSchemas = secureAllSchemas;
 module.exports.publishRights = publishRights;
 module.exports.simpleListRights = simpleListRights;
+
