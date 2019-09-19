@@ -64,7 +64,6 @@ $thumbnail-continer-width: 70px;
         /* can't use flex shorthand with calc here because of IE11 bug */
         flex-grow: 0;
         flex-shrink: 1;
-        flex-basis: calc(100% - em($controls-width, 16));
         transform: translateX(0);
         transition: transform 125ms ease;
         user-select: none;
