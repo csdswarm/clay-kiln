@@ -3,7 +3,6 @@
 const axios = require('axios'),
   { URL } = require('url'),
   { wrapInTryCatch } = require('../../startup/middleware-utils'),
-  staticPage = require('./static-page'),
   /**
    * determines whether the /_lists/new-pages request should pass through
    *   to clay
@@ -31,8 +30,8 @@ const axios = require('axios'),
 
     // eslint-disable-next-line one-var
     const canCreate = user.can('create'),
-      canCreateSectionFronts = canCreate.a('section-fronts').at(station.callsign).value,
-      canCreateAStaticPage = canCreate.a('static-page').value,
+      canCreateSectionFronts = canCreate.a('section-front').at(station.callsign).value,
+      canCreateAStaticPage = canCreate.a('static-page').at(station.callsign).value,
       hasFullPermissions = canCreateSectionFronts
         && canCreateAStaticPage;
 
@@ -41,7 +40,19 @@ const axios = require('axios'),
     }
 
     return false;
-  };
+  },
+  /**
+   * Creates a filter method for _list menu items that will verify that the user has permissions
+   * if it is a menu item with a matching item.id
+   * @param { Object } user - The user object
+   * @param { Object } station - The station information object
+   * @param { string } pageType - The type of page to check permissions for
+   * @param { string } id - The component instance id for the menu item
+   * @returns { function(*): boolean }
+   */
+  menuItemChecker = ({user, station: {callsign}}, pageType, id) =>
+    item =>
+      item.id !== id || user.can('create').a(pageType).at(callsign).value;
 
 /**
  * Adds an endpoint to the router which intercepts the 'new-pages' list and
@@ -65,8 +76,8 @@ module.exports = router => {
     // eslint-disable-next-line one-var
     const urlObj = new URL(req.protocol + '://' + req.get('host') + req.originalUrl),
       { user, station } = res.locals,
-      canCreateSectionFronts = user.can('create').a('section-fronts').at(station.callsign).value,
-      canCreateStaticPageMenuItem = staticPage.canCreateMenuItem(user);
+      canCreateSectionFronts = user.can('create').a('section-front').at(station.callsign).value,
+      canCreateStaticPageMenuItem = menuItemChecker(res.locals, 'static-page', 'new-static-page');
 
     urlObj.searchParams.append('fromClay', 'true');
 
