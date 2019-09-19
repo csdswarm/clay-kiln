@@ -27,8 +27,8 @@ items:
     badge: FR
     autocomplete:
       list: tags
-      allowRemove: true
-      allowCreate: true
+      allowRemove: false
+      allowCreate: false
 sectionFront:
   _subscribe: sectionFront
 featureRubric:
@@ -36,4 +36,3 @@ featureRubric:
   _has:
     input: description
     value: Field used by model.js to inform the article/gallery feature rubric
-_permission: update
