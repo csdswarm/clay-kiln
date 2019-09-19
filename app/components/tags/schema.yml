@@ -29,6 +29,9 @@ items:
       list: tags
       allowRemove: false
       allowCreate: false
+  _list_permission:
+    create: create
+    remove: update
 sectionFront:
   _subscribe: sectionFront
 featureRubric:

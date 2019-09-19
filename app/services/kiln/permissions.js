@@ -216,8 +216,8 @@ const addPermissions = require('../universal/user-permissions'),
     const subscriptions = new KilnInput(schema);
 
     subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
-      schema[field]._has.autocomplete.allowCreate = locals.user.isAbleTo('create').using(component);
-      schema[field]._has.autocomplete.allowRemove = locals.user.isAbleTo('update').using(component);
+      schema[field]._has.autocomplete.allowCreate = locals.user.isAbleTo('create').using(component).value;
+      schema[field]._has.autocomplete.allowRemove = locals.user.isAbleTo('update').using(component).value;
     });
 
     return schema;
