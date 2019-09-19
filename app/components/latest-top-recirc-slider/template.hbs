@@ -1,4 +1,4 @@
-<div data-uri="{{ default _ref _self }}" class="component component--latest-top-recirc-slider latest-top-recirc-slider">
+<div data-uri="{{ default _ref _self }}" class="component component--latest-top-recirc-slider latest-top-recirc-slider {{ if (compare items.length "<=" 0) 'latest-top-recirc-slider--empty'}}">
     <div class="latest-top-recirc-slider__slider-container">
         <ul class="latest-top-recirc-slider__items-container">
             {{#each items }}
