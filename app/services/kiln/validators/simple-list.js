@@ -3,7 +3,7 @@
 const { getComponentName } = require('clayutils'),
   _startCase = require('lodash/startCase'),
   db = require('../../client/db'),
-  componentsToCheck = ['tags'],
+  listsToCheck = ['tags'],
   /**
    * validates that all of the items in the component are in the existing list of items
    *
@@ -13,7 +13,7 @@ const { getComponentName } = require('clayutils'),
    *
    * @return {array}
    */
-  validateComponents = (components, componentName, existingItems) => {
+  validateComponentsLists = (components, componentName, existingItems) => {
     return components.map(async ([uri, data]) => {
       let blockItems = [];
 
@@ -40,16 +40,16 @@ module.exports = {
   async validate({ components, locals }) {
     let errors = [];
 
-    for (const component of componentsToCheck) {
-      // if you does not have permissions to add/update
-      if (true || !locals.user.can('create').this(component) || !locals.user.can('update').this(component)) {
+    for (const component of listsToCheck) {
+      // only check add permissions since remove should already be disabled
+      if (!locals.user.hasPermissionsTo('create').this(component)) {
         // grab the items on the page
         const listComponents = Object.entries(components)
             .filter(([uri]) => getComponentName(uri) === component),
           existingItems = (await db.get(`${process.env.CLAY_SITE_HOST}/_lists/${component}`, locals))
             .map(item => item.text);
 
-        errors = errors.concat(await Promise.all(validateComponents(listComponents, component, existingItems)));
+        errors = errors.concat(await Promise.all(validateComponentsLists(listComponents, component, existingItems)));
       }
     }
 

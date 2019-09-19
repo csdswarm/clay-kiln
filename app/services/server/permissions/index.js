@@ -2,7 +2,7 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, isComponent, isPage, isUri } = require('clayutils'),
+  { getComponentName, isComponent, isPage, isUri, isList, getListInstance } = require('clayutils'),
   { loadPermissions } = require('../urps'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
@@ -13,7 +13,8 @@ const express = require('express'),
   YAML = require('yamljs'),
   interceptLists = require('./intercept-lists'),
   componentsToCheck = getComponentsWithPermissions(),
-  pageTypesToCheck = new Set(['homepage', 'section-front']);
+  pageTypesToCheck = new Set(['homepage', 'section-front']),
+  listsToCheck = ['tags'];
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -167,6 +168,30 @@ async function checkUserPermissions(uri, req, locals, db) {
       return pageTypesToCheck.has(pageType)
         ? user.can('unpublish').a(pageType).at(station.callsign).value
         : true;
+    }
+
+    if (isList(uri) && req.method === 'PUT') {
+      const list = getListInstance(uri);
+
+      if (listsToCheck.includes(list)) {
+        const existingItems = (await db.get(`${process.env.CLAY_SITE_HOST}/_lists/${list}`))
+            .map(item => item.text),
+          canAdd = false && locals.user.hasPermissionsTo('create').a(list),
+          canRemove = false && locals.user.hasPermissionsTo('update').a(list),
+          data = req.body.map(item => item.text),
+          addedToList = data.filter(item => !existingItems.includes(item)).length !== 0,
+          removedFromList = existingItems.filter(item => !data.includes(item)).length !== 0;
+
+        if (addedToList && removedFromList) {
+          return canAdd && canRemove;
+        }
+        if (addedToList) {
+          return canAdd;
+        }
+        if (removedFromList) {
+          return canRemove;
+        }
+      }
     }
 
     // if no permissions are required they can do it

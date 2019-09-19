@@ -5,7 +5,7 @@ const appRoot = require('app-root-path'),
   files = require('amphora-fs'),
   path = require('path'),
   bodyParser = require('body-parser'),
-  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./middleware-utils'),
+  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./utils'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
 
 /**
@@ -54,6 +54,7 @@ function setupRoutes(router, hasPermission, userRouter, db) {
   // check all pages
   addMiddlewareToUnsafeMethods(permissionRouter, '/_pages/*', checkPermissionMiddleware);
   addMiddlewareToUnsafeMethods(permissionRouter, '/_uris/*', checkPermissionMiddleware);
+  addMiddlewareToUnsafeMethods(permissionRouter, '/_lists/*', checkPermissionMiddleware);
 
   router.use('/', permissionRouter);
 }
