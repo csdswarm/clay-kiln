@@ -44,15 +44,14 @@ const axios = require('axios'),
   /**
    * Creates a filter method for _list menu items that will verify that the user has permissions
    * if it is a menu item with a matching item.id
-   * @param { Object } user - The user object
-   * @param { Object } station - The station information object
+   * @param { Object } locals - The locals object
    * @param { string } pageType - The type of page to check permissions for
    * @param { string } id - The component instance id for the menu item
    * @returns { function(*): boolean }
    */
-  menuItemChecker = ({user, station: {callsign}}, pageType, id) =>
+  menuItemChecker = (locals, pageType, id) =>
     item =>
-      item.id !== id || user.can('create').a(pageType).at(callsign).value;
+      item.id !== id || locals.user.can('create').a(pageType).at(locals.station.callsign).value;
 
 /**
  * Adds an endpoint to the router which intercepts the 'new-pages' list and

@@ -85,13 +85,12 @@ function userPermissionRouter() {
 
 /**
  * Verifies if user has privileges to update the uri
- * @param {string} url The url of the page to check
- * @param {boolean} edit If the page is being edited
- * @param {object} user The user object containing the permission checks
- * @returns {Promise<{canEditPages: boolean, typeOfPages?: string}>}
+ * @param {Object} locals The locals object
+ * @returns {Promise<object>}
  */
-async function checkUpdatePrivileges({url, edit, user, station }) {
-  const urlParser = new URL(url),
+async function checkUpdatePrivileges(locals) {
+  const {url, edit, user, station } = locals,
+    urlParser = new URL(url),
     uri = `${urlParser.host}${urlParser.pathname}`;
 
   try {
