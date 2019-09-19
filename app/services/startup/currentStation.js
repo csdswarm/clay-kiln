@@ -104,12 +104,14 @@ const radioApiService = require('../../services/server/radioApi'),
 module.exports = async (req, res, next) => {
   const station = await getStation(req);
 
-  if (station) {
-    res.locals.station = station;
-  }
   res.locals.allStationsCallsigns = allStationsCallsigns;
   res.locals.allStationsSlugs = Object.keys(allStations);
   res.locals.defaultStation = defaultStation;
+  res.locals.station = {};
+
+  if (station) {
+    res.locals.station = station;
+  }
 
   return next();
 };
