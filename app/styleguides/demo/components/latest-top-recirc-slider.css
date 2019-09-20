@@ -21,7 +21,7 @@ $thumbnail-continer-width: 70px;
         top: em(46, 16);
     }
     &__slider-container {
-        background: #333;
+        background: $white;
         height: em(71, 16);
         display: flex;
         border-top: 1px solid $60gray;
