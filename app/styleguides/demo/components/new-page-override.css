@@ -1,4 +1,5 @@
-.new-page-override > .station-select {
+.new-page-override__station-select,
+.new-page-override__no-permissions-notification {
   /*
     16px horizontal is the same margin as filterable-list-input
     lib/utils/filterable-list.vue: line 13

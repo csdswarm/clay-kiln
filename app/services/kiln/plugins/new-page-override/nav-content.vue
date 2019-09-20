@@ -13,7 +13,7 @@
 
 <template>
   <div class="new-page-override">
-    <div class="station-select" v-if="stationIsSelectable">
+    <div class="new-page-override__station-select" v-if="stationIsSelectable">
       <ui-select
         class="station-select"
         has-search
@@ -23,26 +23,31 @@
         v-model="selectedStation"
       ></ui-select>
     </div>
-    <filterable-list v-if="isAdmin"
-      class="new-page-nav"
-      :content="pages"
-      :secondaryActions="secondaryActions"
-      :initialExpanded="initialExpanded"
-      filterLabel="Search Page Templates"
-      :addTitle="addTitle"
-      :addIcon="addIcon"
-      header="Page Template"
-      @child-action="itemClick"
-      @add="addTemplate">
-    </filterable-list>
-    <filterable-list v-else
-      class="new-page-nav"
-      :content="pages"
-      :initialExpanded="initialExpanded"
-      filterLabel="Search Page Templates"
-      header="Page Template"
-      @child-action="itemClick">
-    </filterable-list>
+    <div v-if="anyPagesExist">
+      <filterable-list v-if="isAdmin"
+        class="new-page-nav"
+        :content="pages"
+        :secondaryActions="secondaryActions"
+        :initialExpanded="initialExpanded"
+        filterLabel="Search Page Templates"
+        :addTitle="addTitle"
+        :addIcon="addIcon"
+        header="Page Template"
+        @child-action="itemClick"
+        @add="addTemplate">
+      </filterable-list>
+      <filterable-list v-else
+        class="new-page-nav"
+        :content="pages"
+        :initialExpanded="initialExpanded"
+        filterLabel="Search Page Templates"
+        header="Page Template"
+        @child-action="itemClick">
+      </filterable-list>
+    </div>
+    <h3 class="new-page-override__no-permissions-notification" v-else>
+      You don't have permissions to create a&nbsp;page
+    </h3>
   </div>
 </template>
 
@@ -74,6 +79,12 @@ export default {
     };
   },
   computed: {
+    allPages() {
+      return _.get(this.$store, 'state.lists[new-pages].items', []);
+    },
+    anyPagesExist() {
+      return !!this.allPages.length;
+    },
     isAdmin() {
       return _.get(this.$store, 'state.user.auth') === 'admin';
     },
@@ -99,10 +110,9 @@ export default {
       return this.selectedStation.value === nationalStationSelectItem.value;
     },
     pages() {
-      const allPages = _.get(this.$store, 'state.lists[new-pages].items', []),
-        stationPages = this.stationIsSelectable
-          ? allPages.filter(this.bySelectedStation)
-          : allPages;
+      const stationPages = this.stationIsSelectable
+        ? this.allPages.filter(this.bySelectedStation)
+        : this.allPages;
 
       return sortPages(_.cloneDeep(stationPages));
     },
