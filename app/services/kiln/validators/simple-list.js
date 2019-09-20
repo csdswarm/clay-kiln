@@ -36,7 +36,7 @@ const { getComponentName } = require('clayutils'),
 
 module.exports = {
   label: 'List Errors',
-  description: 'The list contain unapproved items.',
+  description: 'The list contains unapproved items.',
   type: 'error',
   async validate({ components, locals }) {
     const listsToCheck = Object.keys(locals.componentPermissions._lists);
