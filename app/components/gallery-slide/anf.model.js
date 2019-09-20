@@ -4,8 +4,8 @@
 // https://developer.apple.com/documentation/apple_news/apple_news_format/components
 
 const log = require('../../services/universal/log').setup({ file: __filename }),
+  { isNotHTMLEmbed } = require('../../services/universal/contentAppleNews'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
-  { getComponentName } = require('clayutils'),
   /**
    * Returns slide description in ANF if it exists
    *
@@ -22,16 +22,6 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
         layout: 'slideDescriptionLayout'
       };
     }
-  },
-  /**
-   * https://developer.apple.com/documentation/apple_news/apple_news_format/components/using_html_with_apple_news_format?language=data
-   * iframe not supported in ANF
-   *
-   * @param {string} instance
-   * @returns {Boolean}
-  */
-  isNotHTMLEmbed = instance => {
-    return getComponentName(instance) !== 'html-embed';
   },
   /**
    * Get apple news format of slide ref

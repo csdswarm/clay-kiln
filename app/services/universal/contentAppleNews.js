@@ -147,79 +147,83 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     }
 
     return contentANF;
+  },
+  getContentANF = async function (ref, data, locals) {
+    const tags = await getTags(data.tags),
+      lede = await getLede(data.lead) || [],
+      refInstance = getComponentInstance(ref),
+      contentType = getComponentName(ref);
+
+    return {
+      identifier: refInstance,
+      title: data.primaryHeadline,
+      metadata: {
+        authors: data.byline.length ? _flattenDeep(data.byline.map(byline => _get(byline, 'names')))
+          .map(name => _get(name, 'text'))
+          : [],
+        canonicalURL: await getCanonicalURL(refInstance, data, locals),
+        dateCreated: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
+        dateModified: formatLocalDate(data.dateModified || data.date || new Date(), ISO_8601_FORMAT),
+        datePublished: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
+        excerpt: data.pageDescription,
+        ...tags ? { keywords: tags } : {},
+        thumbnailURL: primaryVideo.stillURL || data.feedImgUrl,
+        ...!!primaryVideo.URL ? { videoURL: primaryVideo.URL } : {}
+      },
+      components: [
+        {
+          role: 'container',
+          style: contentType === 'article' ? 'articleStyle' : 'galleryStyle',
+          layout: contentType === 'article' ? 'articleLayout' : 'galleryLayout',
+          components: [
+            {
+              role: 'header',
+              style: 'headerStyle',
+              layout: 'headerLayout',
+              components: [
+                {
+                  role: 'title',
+                  text: data.primaryHeadline,
+                  layout: 'headlineLayout',
+                  style: 'headlineStyle',
+                  textStyle: 'headlineTextStyle',
+                  format: 'html'
+                },
+                {
+                  role: 'byline',
+                  text: `${ formatBylines(data.byline) } ${ formatTimestamp(data.date, data.dateModified) }`,
+                  layout: 'bylineLayout',
+                  style: 'bylineStyle',
+                  textStyle: 'bylineTextStyle',
+                  format: 'html'
+                }
+              ]
+            },
+            {
+              role: 'section',
+              style: 'ledeStyle',
+              layout: 'ledeLayout',
+              components: lede
+            },
+            ...contentType === 'gallery' ? [{
+              role: 'section',
+              style: 'galleryStyle',
+              layout: 'galleryLayout',
+              components: await getContent(data.slides)
+            }] : [],
+            {
+              role: 'section',
+              style: 'bodyStyle',
+              layout: 'bodyLayout',
+              components: await getContent(data.content)
+            }
+          ]
+        }
+      ]
+    };
   };
 
-module.exports = async function (ref, data, locals) {
-  const tags = await getTags(data.tags),
-    lede = await getLede(data.lead) || [],
-    refInstance = getComponentInstance(ref),
-    contentType = getComponentName(ref);
-
-  return {
-    identifier: refInstance,
-    title: data.primaryHeadline,
-    metadata: {
-      authors: data.byline.length ? _flattenDeep(data.byline.map(byline => _get(byline, 'names')))
-        .map(name => _get(name, 'text'))
-        : [],
-      canonicalURL: await getCanonicalURL(refInstance, data, locals),
-      dateCreated: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
-      dateModified: formatLocalDate(data.dateModified || data.date || new Date(), ISO_8601_FORMAT),
-      datePublished: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
-      excerpt: data.pageDescription,
-      ...tags ? { keywords: tags } : {},
-      thumbnailURL: primaryVideo.stillURL || data.feedImgUrl,
-      ...!!primaryVideo.URL ? { videoURL: primaryVideo.URL } : {}
-    },
-    components: [
-      {
-        role: 'container',
-        style: contentType === 'article' ? 'articleStyle' : 'galleryStyle',
-        layout: contentType === 'article' ? 'articleLayout' : 'galleryLayout',
-        components: [
-          {
-            role: 'header',
-            style: 'headerStyle',
-            layout: 'headerLayout',
-            components: [
-              {
-                role: 'title',
-                text: data.primaryHeadline,
-                layout: 'headlineLayout',
-                style: 'headlineStyle',
-                textStyle: 'headlineTextStyle',
-                format: 'html'
-              },
-              {
-                role: 'byline',
-                text: `${ formatBylines(data.byline) } ${ formatTimestamp(data.date, data.dateModified) }`,
-                layout: 'bylineLayout',
-                style: 'bylineStyle',
-                textStyle: 'bylineTextStyle',
-                format: 'html'
-              }
-            ]
-          },
-          {
-            role: 'section',
-            style: 'ledeStyle',
-            layout: 'ledeLayout',
-            components: lede
-          },
-          ...contentType === 'gallery' ? [{
-            role: 'section',
-            style: 'galleryStyle',
-            layout: 'galleryLayout',
-            components: await getContent(data.slides)
-          }] : [],
-          {
-            role: 'section',
-            style: 'bodyStyle',
-            layout: 'bodyLayout',
-            components: await getContent(data.content)
-          }
-        ]
-      }
-    ]
-  };
+module.exports = {
+  isNotHTMLEmbed: isNotHTMLEmbed,
+  contentANF: getContentANF
 };
