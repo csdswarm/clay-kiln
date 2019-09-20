@@ -104,10 +104,10 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @param {String} [contentType]
    * @returns {Object}
   */
-  createRequestHeader = (method, URL, contentType='') => {
+  createRequestHeader = (method, URL, contentType = '') => {
     // https://developer.apple.com/documentation/apple_news/apple_news_api/about_the_news_security_model#2970281
 
-    const date = moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), //ISO 8601
+    const date = moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), // ISO 8601
       canonicalRequest = method + URL + date + contentType,
       keyBytes = ENCODE_BASE64.parse(process.env.APPLE_NEWS_KEY_SECRET.toString(ENCODE_BASE64)),
       hashed = HMAC_SHA256(canonicalRequest, keyBytes),
@@ -285,82 +285,86 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     // https://developer.apple.com/documentation/apple_news/create_an_article
     // https://developer.apple.com/documentation/apple_news/update_an_article
     try {
-    const updateArticle = !!req.params.articleID,
-      method = 'POST',
-      requestURL = `${ ANF_API }articles${ updateArticle ? `/${ req.params.articleID }` : '' }`,
-      { articleRef } = req.body,
-      [ { sectionFront,
-        secondarySectionFront,
-        isCandidateToBeFeatured,
-        isHidden,
-        isSponsored }, articleANF ] = await Promise.all([
-        getCompInstanceData(articleRef),
-        getCompInstanceData(`${ articleRef }.anf?config=true`)
-      ]),
-      { link: sectionLink } = sectionFrontToAppleNewsSectionMap(sectionFront),
-      formData = new FormData();
-    let revision = '';
+      const updateArticle = !!req.params.articleID,
+        method = 'POST',
+        requestURL = `${ ANF_API }articles${ updateArticle ? `/${ req.params.articleID }` : '' }`,
+        { articleRef } = req.body,
+        [ { sectionFront,
+          secondarySectionFront,
+          isCandidateToBeFeatured,
+          isHidden,
+          isSponsored }, articleANF ] = await Promise.all([
+          getCompInstanceData(articleRef),
+          getCompInstanceData(`${ articleRef }.anf?config=true`)
+        ]),
+        { link: sectionLink } = sectionFrontToAppleNewsSectionMap(sectionFront),
+        formData = new FormData();
+      let revision = '';
 
-    log('info', `UPDATE?: ${ updateArticle }`)
-    if (updateArticle) {
-      revision = { revision } = await readArticle({ params: { articleID: req.params.articleID }});
-      log('info', `UPDATE REQUEST: ${ revision }`);
-    }
+      log('info', `UPDATE?: ${ updateArticle }`);
+      if (updateArticle) {
+        revision = { revision } = await readArticle({ params: { articleID: req.params.articleID }});
+        log('info', `UPDATE REQUEST: ${ revision }`);
+      }
 
-    // See https://developer.apple.com/documentation/apple_news/create_article_metadata_fields for details
-    /** Metadata Sections Note:
-     *  Omitting links.sections will publish to channel's default section.
-     *  Setting to empty [] will publish a standalone article outside of sections.
-     *  Standalone articles do not appear in channel,
-     *  but still appear in topics and search results, and may appear in For You.
-    */
-    const metadata = {
-      data: {
-        ...updateArticle ? { revision } : {},
-        accessoryText: secondarySectionFront || sectionFront || 'metadata.byline',
-        ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
-        ...isHidden ? { isHidden } : {},
-        ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},
-        ...isSponsored ? { isSponsored } : {},
-        links: {
-          channel: ANF_CHANNEL_API,
-          sections: sectionLink ? [ sectionLink ] : []
+      // See https://developer.apple.com/documentation/apple_news/create_article_metadata_fields for details
+      /** Metadata Sections Note:
+       *  Omitting links.sections will publish to channel's default section.
+       *  Setting to empty [] will publish a standalone article outside of sections.
+       *  Standalone articles do not appear in channel,
+       *  but still appear in topics and search results, and may appear in For You.
+      */
+      // eslint-disable-next-line one-var
+      const metadata = {
+        data: {
+          ...updateArticle ? { revision } : {},
+          accessoryText: secondarySectionFront || sectionFront || 'metadata.byline',
+          ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
+          ...isHidden ? { isHidden } : {},
+          ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},
+          ...isSponsored ? { isSponsored } : {},
+          links: {
+            channel: ANF_CHANNEL_API,
+            sections: sectionLink ? [ sectionLink ] : []
+          }
+        }
+      };
+
+      formData.append('metadata', JSON.stringify(metadata));
+      formData.append('article.json', JSON.stringify(articleANF));
+
+      // Fonts: Refer in component textStyles of ANF by using `fontName: { PostScript name of font }`
+      // eslint-disable-next-line one-var
+      for (const fontKey in FONTS) {
+        if (FONTS.hasOwnProperty(fontKey)) {
+          fs.readFile(FONTS[ fontKey ], function (err, data) {
+            if (err) throw err;
+            const buffer = Buffer.from(data);
+
+            formData.append(fontKey, buffer);
+          });
         }
       }
-    };
-    formData.append('metadata', JSON.stringify(metadata));
-    formData.append('article.json', JSON.stringify(articleANF));
 
-    // Fonts: Refer in component textStyles of ANF by using `fontName: { PostScript name of font }`
-    for (const fontKey in FONTS) {
-      if (FONTS.hasOwnProperty(fontKey)) {
-        fs.readFile(FONTS[ fontKey ], function (err, data) {
-          if (err) throw err;
-          const buffer = Buffer.from(data);
+      // eslint-disable-next-line one-var
+      const canonicalRequestEntities = `multipart/form-data; boundary=${ formData._boundary }${ JSON.stringify(formData) }`;
 
-          formData.append(fontKey, buffer);
-        });
-      }
-    }
-
-    const canonicalRequestEntities = `multipart/form-data; boundary=${ formData._boundary }${ JSON.stringify(formData) }`;
-
-    rest.request(requestURL, {
-      method,
-      headers: {
-        ...createRequestHeader(method, requestURL, canonicalRequestEntities),
-        'Content-Type': 'multipart/form-data'
-      },
-      body: formData
-    }).then(({ status, statusText, body: article }) => {
-      if ([ 200, 201 ].includes(status)) {
-        log('info', 'SUCCESS PUBLISH');
-        res.send(article.data);
-      } else {
-        log('error', `${status} ${statusText} ${JSON.stringify(article)} ${requestURL}`);
-        res.status(status).send(statusText);
-      }
-    }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
+      rest.request(requestURL, {
+        method,
+        headers: {
+          ...createRequestHeader(method, requestURL, canonicalRequestEntities),
+          'Content-Type': 'multipart/form-data'
+        },
+        body: formData
+      }).then(({ status, statusText, body: article }) => {
+        if ([ 200, 201 ].includes(status)) {
+          log('info', 'SUCCESS PUBLISH');
+          res.send(article.data);
+        } else {
+          log('error', `${status} ${statusText} ${JSON.stringify(article)} ${requestURL}`);
+          res.status(status).send(statusText);
+        }
+      }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
     } catch (e) {
       log('error', e);
     }
