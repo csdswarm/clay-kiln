@@ -291,6 +291,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       { articleRef } = req.body,
       [ { sectionFront,
         secondarySectionFront,
+        accessoryText,
         isCandidateToBeFeatured,
         isHidden,
         isSponsored }, articleANF ] = await Promise.all([
@@ -317,7 +318,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     const metadata = {
       data: {
         ...updateArticle ? { revision } : {},
-        accessoryText: secondarySectionFront || sectionFront || 'metadata.byline',
+        accessoryText: accessoryText || secondarySectionFront || sectionFront || 'metadata.authors',
         ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
         ...isHidden ? { isHidden } : {},
         ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},

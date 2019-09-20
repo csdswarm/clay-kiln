@@ -362,6 +362,11 @@ genreSyndication:
   _has:
     input: genre-select
 
+accessoryText:
+  _label: Text below excerpt in channel view
+  _has:
+    input: text
+    help: The text to include below the article excerpt in the channel view, such as a byline or category label.
 isCandidateToBeFeatured:
   _label: Should be featured in Apple News feed?
   _has:
@@ -443,6 +448,7 @@ _groups:
       - syndicatedUrl
   appleNews:
     fields:
+      - accessoryText
       - isCandidateToBeFeatured
       - isHidden
       - isSponsored
