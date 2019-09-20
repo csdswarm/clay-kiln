@@ -29,17 +29,42 @@ class SliderDom {
         getSingleSlideWidth: () => this.dom.itemsContainer.el.children[0].offsetWidth,
         getTotalWidthOfSlides: () => this.dom.itemsContainer.getSlides().reduce((p, c) => p += c.offsetWidth, 0),
         getInitialOffset: () => this.dom.itemsContainer.getSingleSlideWidth() - this.dom.itemsContainer.getViewWidth() % this.dom.itemsContainer.getSingleSlideWidth(),
-        getMaxX: () => this.dom.itemsContainer.getTotalWidthOfSlides() - this.dom.itemsContainer.getViewWidth()
+        getMaxX: () => this.dom.itemsContainer.getTotalWidthOfSlides() - this.dom.itemsContainer.getViewWidth(),
+        getSlidesVisible: () => this.dom.itemsContainer.getViewWidth() / this.dom.itemsContainer.getSingleSlideWidth(),
+        getTotalClicksToTheRight: () => this.dom.itemsContainer.getSlides().length - this.dom.itemsContainer.getSlidesVisible()
       },
       items: containerEl.querySelectorAll('.latest-top-recirc-slider__item-container')
     };
+    this._maxClicksRight = Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() );
     this.setBtnsState();
+  }
+  set maxClicksRight(value) {
+    this._maxClicksRight += value;
+    if (this._maxClicksRight < 0) {
+      this._maxClicksRight = 0;
+    } else if (this._maxClicksRight > Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() )) {
+      this._maxClicksRight = Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() );
+    }
+  }
+
+  get maxClicksRight() {
+    return this._maxClicksRight;
   }
   /**
    * Create a slider view.
    * @param {number} direction - -1 or 1.
    */
   setItemsContainerPosition(direction) {
+    this.maxClicksRight = direction;
+    console.log('[itemsContainer===>]');
+    console.log('[getSingleSlideWidth]', this.dom.itemsContainer.getSingleSlideWidth());
+    console.log('[getTotalWidthOfSlides]', this.dom.itemsContainer.getTotalWidthOfSlides());
+    console.log('[getInitialOffset]', this.dom.itemsContainer.getInitialOffset());
+    console.log('[getMaxX]', this.dom.itemsContainer.getMaxX());
+    console.log('[getSlidesVisible]', this.dom.itemsContainer.getSlidesVisible());
+    console.log('[getTotalClicksToTheRight]', this.dom.itemsContainer.getTotalClicksToTheRight());
+    console.log('[maxClicksRight]', this.maxClicksRight);
+    console.log('[getTotalClicksToTheRight - maxClicksRight]', Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() ) - this.maxClicksRight);
     // short circuit if btn disabled
     if (
       (direction > 0 && !this.dom.btns.canMoveLeft) ||
@@ -47,26 +72,27 @@ class SliderDom {
     ) {
       return;
     }
+    this.setBtnsState();
     this.dom.itemsContainer.x += this.dom.itemsContainer.getSingleSlideWidth() * direction;
     this.dom.itemsContainer.el.style.transform = `translateX(${this.dom.itemsContainer.x}px)`;
-    this.setBtnsState();
+    
   }
   setBtnsState() {
-    // this could probably be improved and made more efficient
-    if (this.dom.itemsContainer.x < 0) {
-      this.dom.btns.canMoveLeft = true;
-      this.dom.btns.left.style.opacity = 1;
-    } else if (this.dom.itemsContainer.x <= 0) {
-      this.dom.btns.canMoveLeft = false;
-      this.dom.btns.left.style.opacity = this.dom.btns.disabledOpacity;
-    }
-
-    if (this.dom.itemsContainer.x >= 0) {
+    // boundaries for clicking or swiping right
+    if (this.maxClicksRight > 0) {
       this.dom.btns.canMoveRight = true;
       this.dom.btns.right.style.opacity = 1;
-    } else if (this.dom.itemsContainer.x <= -this.dom.itemsContainer.getMaxX()) {
+    } else {
       this.dom.btns.canMoveRight = false;
       this.dom.btns.right.style.opacity = this.dom.btns.disabledOpacity;
+    }
+    // boundaries for clicking or swiping left
+    if (Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() ) - this.maxClicksRight > 0) {
+      this.dom.btns.canMoveLeft = true;
+      this.dom.btns.left.style.opacity = 1;
+    } else {
+      this.dom.btns.canMoveLeft = false;
+      this.dom.btns.left.style.opacity = this.dom.btns.disabledOpacity;
     }
   }
 
@@ -75,6 +101,7 @@ class SliderDom {
     this.dom.itemsContainer.x = 0;
     this.dom.itemsContainer.el.style.transform = `translateX(${this.dom.itemsContainer.x}px)`;
     this.setBtnsState();
+    this.maxClicksRight = Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() );
   }
 }
 
@@ -99,11 +126,11 @@ class Slider {
     window.addEventListener('resize', this.onResize);
     // hammer time
     this.hammer = new Hammer(this.sd.dom.itemsContainer.el);
-    this.hammer.on('swipeleft swiperight', (ev) => {
-      if (ev.type === 'swipeleft') {
+    this.hammer.on('swipeleft swiperight', (event) => {
+      if (event.type === 'swipeleft') {
         this.moveRight();
       }
-      if (ev.type === 'swiperight') {
+      if (event.type === 'swiperight') {
         this.moveLeft();
       }
     });
