@@ -14,8 +14,12 @@ const getTweetURL = data => {
   if (!data.showMedia && !data.showThread) {
     url.concat('hide_media=true&hide_thread=true');
   } else {
-    if (!data.showMedia) url.concat('hide_media=true');
-    if (!data.showThread) url.concat('hide_thread=true');
+    if (!data.showMedia) {
+      url.concat('hide_media=true');
+    }
+    if (!data.showThread) {
+      url.concat('hide_thread=true');
+    }
   }
 
   return url;
