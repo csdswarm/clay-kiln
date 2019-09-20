@@ -366,6 +366,22 @@ genreSyndication:
   _has:
     input: genre-select
 
+isCandidateToBeFeatured:
+  _label: Should be featured in Apple News feed?
+  _has:
+    input: checkbox
+    help: A Boolean that indicates whether this article should be considered for featuring in News.
+isHidden:
+  _label: Hidden from displaying in Apple News feed?
+  _has:
+    input: checkbox
+    help: A Boolean that indicates whether the article should be temporarily hidden from display in the News feed.
+isSponsored:
+  _label: Is this a sponsored post?
+  _has:
+    input: checkbox
+    help: A Boolean that indicates whether this article consists of sponsored content for promotional purposes. Sponsored content must be marked as such; channels that do not follow this policy may be suspended.
+
 _groups:
   publishedDate:
     fields:
@@ -444,6 +460,11 @@ _groups:
       - genreSyndication
       - syndicationStatus
       - syndicatedUrl
+  appleNews:
+    fields:
+      - isCandidateToBeFeatured
+      - isHidden
+      - isSponsored
 
 # non-user-editable fields, set by model.js and used for pubsub
 eligibleForGoogleStandout:

@@ -49,3 +49,6 @@ _components:
     isContentFromAP: false
     noIndexNoFollow: false
     toggleEditorCondensedSlidesView: true
+    isCandidateToBeFeatured: false
+    isHidden: false
+    isSponsored: false

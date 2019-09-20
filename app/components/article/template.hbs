@@ -161,6 +161,24 @@
           </ul>
         </section>
 
+        <section class="circulation__section" data-editable="appleNews">
+          <h3 class="subtitle circ-edit">Apple News</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title">Featured</h4>
+              <p class="item-data">{{ if isCandidateToBeFeatured 'Yes' else='No' }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Hidden</h4>
+              <p class="item-data">{{ if isHidden 'Yes' else='No' }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Sponsored</h4>
+              <p class="item-data">{{ if isSponsored 'Yes' else='No' }}</p>
+            </li>
+          </ul>
+        </section>
+
         <section class="circulation__section" data-editable="circSlug">
           {{#if slugLock}}
             <div class="alert alert-warning">
