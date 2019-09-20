@@ -17,26 +17,18 @@ const queryService = require('../../services/server/query'),
  * @returns {Object}
  */
 function buildQuery(numResults, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, numResults);
+  const query = queryService.newQueryWithCount(elasticIndex, numResults),
+    // grab content from these section fronts from the env
+    sectionFronts = process.env.SECTION_FRONTS.split(',');
   
-  // grab content from these section fronts
-  queryService.addShould(query, [
-    {
+  // map the sectionFronts to should matches
+  queryService.addShould(query, sectionFronts.map(sf => {
+    return {
       match: {
-        sectionFront: 'sports'
+        sectionFront: sf
       }
-    },
-    {
-      match: {
-        sectionFront: 'news'
-      }
-    },
-    {
-      match: {
-        sectionFront: 'music'
-      }
-    }
-  ]);
+    };
+  }));
   // exclude the current page in results
   if (locals.url && !isComponent(locals.url)) {
     const cleanLocalsUrl = locals.url.split('?')[0].replace('https://', 'http://');
