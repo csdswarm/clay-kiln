@@ -1,21 +1,19 @@
-const usingDb = require('../using-db').v1;
+'use strict';
+
+const usingDb = require('../using-db').v1,
+  fs = require('fs'),
+  util = require('util'),
+  readFileAsync = util.promisify(fs.readFile);
 
 run()
 
 async function run() {
   try {
-    await usingDb(db => db.query(`
-      CREATE TABLE IF NOT EXISTS sitemap_with_index
-      (
-          type varchar NOT NULL,
-          num integer NOT NULL,
-          content text NOT NULL,
-          lastmod varchar NOT NULL,
-          PRIMARY KEY (type, num)
-      )
-    `));
+    const createSitemapView = await readFileAsync('./create-sitemap-view.sql', 'utf8');
 
-    console.log("successfully created the postgres table 'sitemap_with_index'");
+    await usingDb(db => db.query(createSitemapView));
+
+    console.log("successfully created the postgres view 'sitemap'");
   } catch (err) {
     console.error(err);
   }

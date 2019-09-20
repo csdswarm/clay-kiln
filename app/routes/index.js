@@ -21,7 +21,7 @@ const AWS = require('aws-sdk'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml'),
-  sitemaps = require('./sitemaps');
+  addSitemapEndpoints = require('./add-sitemap-endpoints');
 
 module.exports = router => {
 
@@ -145,7 +145,7 @@ module.exports = router => {
    */
   router.post('/import-content', importContent);
 
-  router.use('/sitemaps', sitemaps);
+  addSitemapEndpoints(router);
 
   /**
    * Sitemap for stations directories and station detail pages
