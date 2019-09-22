@@ -1,9 +1,8 @@
 DROP MATERIALIZED VIEW IF EXISTS sitemap_articles_and_galleries;
 
 --
--- The _components CTE contains the mappings we need from each component
---   : component id
---   : which sitemap it belongs to
+-- The _components CTE holds all the component ids of the components we
+--   care about
 --
 -- We don't want to include component instances where 'noIndexNoFollow' is true
 --

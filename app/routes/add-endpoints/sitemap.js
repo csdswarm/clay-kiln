@@ -33,6 +33,13 @@ const _snakeCase = require('lodash/snakeCase'),
     return result;
   };
 
+/**
+ * Returns a single query which selects the sitemap ids along with their last
+ *   updated timestamp
+ *
+ * @param {Set} sitemapViews
+ * @returns {string}
+ */
 function getSitemapIndexQuery(sitemapViews) {
   return Array.from(sitemapViews)
     .map(viewName => `
@@ -43,6 +50,12 @@ function getSitemapIndexQuery(sitemapViews) {
     .join('\nUNION\n');
 }
 
+/**
+ * Returns a single query which refreshes all our sitemap materialized views
+ *
+ * @param {Set} sitemapViews
+ * @returns {string}
+ */
 function getRefreshViewsQuery(sitemapViews) {
   return Array.from(sitemapViews)
     .map(viewName => `REFRESH MATERIALIZED VIEW CONCURRENTLY ${viewName};`)
