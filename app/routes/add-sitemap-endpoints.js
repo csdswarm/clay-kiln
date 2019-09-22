@@ -1,8 +1,18 @@
 'use strict';
 
-const db = require('../services/server/db'),
+const _snakeCase = require('lodash/snakeCase'),
+  _kebabCase = require('lodash/kebabCase'),
+  db = require('../services/server/db'),
   { wrapInTryCatch } = require('../services/startup/middleware-utils'),
   xmlIndexHeader = '<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+  sitemapViews = new Set([
+    'sitemap_articles_and_galleries',
+    'sitemap_section_fronts_and_homepage'
+  ]),
+  query = {
+    sitemapIndex: getSitemapIndexQuery(sitemapViews),
+    refreshViews: getRefreshViewsQuery(sitemapViews)
+  },
   /**
    * returns the resulting sitemap index xml
    *
@@ -11,11 +21,11 @@ const db = require('../services/server/db'),
    * @returns {string}
    */
   getIndexXml = (req, rows) => {
-    const fullBaseUrl = req.protocol + '://' + req.get('host') + req.baseUrl;
+    const protocolAndHost = req.protocol + '://' + req.get('host');
     let result = xmlIndexHeader;
 
-    for (const { id, last_updated } of rows) {
-      result += `<sitemap><loc>${fullBaseUrl}/sitemap-${id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`;
+    for (const { last_updated, sitemap_id } of rows) {
+      result += `<sitemap><loc>${protocolAndHost}/${sitemap_id}.xml</loc><lastmod>${last_updated}</lastmod></sitemap>`;
     }
 
     result += '</sitemapindex>';
@@ -23,12 +33,36 @@ const db = require('../services/server/db'),
     return result;
   };
 
+function getSitemapIndexQuery(sitemapViews) {
+  return Array.from(sitemapViews)
+    .map(viewName => `
+      SELECT '${_kebabCase(viewName)}-' || id as sitemap_id,
+        last_updated
+      FROM ${viewName}
+    `)
+    .join('\nUNION\n');
+}
+
+function getRefreshViewsQuery(sitemapViews) {
+  return Array.from(sitemapViews)
+    .map(viewName => `REFRESH MATERIALIZED VIEW CONCURRENTLY ${viewName};`)
+    .join('\n');
+}
+
 module.exports = router => {
-  router.get('/sitemap-:id.xml', wrapInTryCatch(async (req, res, next) => {
+  router.get('/sitemap-:name([a-z][a-z-]+[a-z])-:id(\\d+).xml', wrapInTryCatch(async (req, res, next) => {
+    const viewName = 'sitemap_' + _snakeCase(req.params.name);
+
+    if (!sitemapViews.has(viewName)) {
+      return next();
+    }
+
+    // this shouldn't be declared above the short circuit
+    // eslint-disable-next-line one-var
     const result = await db.raw(`
       SELECT data
-      FROM sitemap
-      WHERE id = '${req.params.id}'
+      FROM ${viewName}
+      WHERE id = ${req.params.id}
     `);
 
     if (!result.rows[0]) {
@@ -40,10 +74,7 @@ module.exports = router => {
   }));
 
   router.get('/sitemap-index.xml', wrapInTryCatch(async (req, res, next) => {
-    const result = await db.raw(`
-      SELECT id, last_updated
-      FROM sitemap
-    `);
+    const result = await db.raw(query.sitemapIndex);
 
     if (!result.rows.length) {
       return next();
@@ -54,7 +85,7 @@ module.exports = router => {
   }));
 
   router.post('/update-sitemaps', wrapInTryCatch(async (req, res) => {
-    await db.raw('REFRESH MATERIALIZED VIEW CONCURRENTLY sitemap');
+    await db.raw(query.refreshViews);
     res.status(200).end();
   }));
 };

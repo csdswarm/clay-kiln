@@ -1,13 +1,4 @@
---
--- README
---   This view generates all sitemaps which follow the 'Sitemap protocol'
---   https://www.sitemaps.org/protocol.html
---
---   It's a materialized view because we only need to update the data every so
---   often, meaning we don't need it to produce real-time data every query.
---
-
-DROP MATERIALIZED VIEW IF EXISTS sitemap;
+DROP MATERIALIZED VIEW IF EXISTS sitemap_section_fronts_and_homepage;
 
 --
 -- The _components CTE contains the mappings we need from each component
@@ -17,34 +8,10 @@ DROP MATERIALIZED VIEW IF EXISTS sitemap;
 -- We don't want to include component instances where 'noIndexNoFollow' is true
 --
 
-CREATE MATERIALIZED VIEW sitemap AS WITH _components AS (
-  SELECT
-    id,
-    'articles-and-galleries' AS sitemap
-  FROM
-    components.gallery g
-  WHERE
-    g.data ->> 'noIndexNoFollow' != 'true'
+CREATE MATERIALIZED VIEW sitemap_section_fronts_and_homepage AS WITH _components AS (
+  SELECT id FROM components.homepage
   UNION
-  SELECT
-    id,
-    'articles-and-galleries' AS sitemap
-  FROM
-    components.article a
-  WHERE
-    a.data ->> 'noIndexNoFollow' != 'true'
-  UNION
-  SELECT
-    id,
-    'section-fronts-and-homepage' AS sitemap
-  FROM
-    components.homepage
-  UNION
-  SELECT
-    id,
-    'section-fronts-and-homepage' AS sitemap
-  FROM
-    components."section-front"
+  SELECT id FROM components."section-front"
 ),
 --
 -- The _page_data CTE joins the component ids found above with the page's main
@@ -54,14 +21,9 @@ CREATE MATERIALIZED VIEW sitemap AS WITH _components AS (
 -- We then use the pages to
 --   : only grab those which are published
 --   : grab the published url and time it was published
---   : identify which 'sitemap page' each row belongs to, where pages are sized
---     to 50,000 rows.  (I can't think of a better name for this.  Unfortunately
---     'page' is overloaded here)
 --
 _page_data AS (
   SELECT
-    _c.sitemap,
-    (ROW_NUMBER() OVER (PARTITION BY _c.sitemap ORDER BY p.meta ->> 'url') - 1) / 50000 AS page,
     replace(p.meta ->> 'url', 'http://', 'https://') AS loc,
     (p.meta ->> 'publishTime') AS lastmod
   FROM
@@ -72,12 +34,10 @@ _page_data AS (
     p.meta @> '{"published": true}'
 ),
 --
--- The _urls CTE just molds _page_data into the sitemap file names and
---   xml <url> strings
+-- The _urls CTE turns 'loc' and 'lastmod' into a <url> element
 --
 _urls AS (
   SELECT
-    sitemap || '-' || ((page + 1)::text) AS sitemap,
     xmlelement(name url, xmlelement(name loc, loc), xmlelement(name lastmod, lastmod)) AS xml_data
   FROM
     _page_data
@@ -86,8 +46,16 @@ _urls AS (
 -- And finally we wrap all _urls into each sitemap and leave the current
 --   timestamp (in W3C datetime format)
 --
+-- Note 'id' is hardcoded to 1 because in the other sitemap tables the id is the
+--   sitemap page.  This table will never have 50,000 records and thus doesn't
+--   need pages.  To keep the code simple though we want the tables to all have
+--   the same column names... and the reason we don't want all the sitemap data
+--   to be held in a single materialized view is that makes maintaining it more
+--   difficult (i.e. it's harder for multiple devs to update it at the
+--   same time)
+--
 SELECT
-  sitemap as id,
+  1 as id,
   to_char(timezone('utc', now()), 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS last_updated,
   -- postgres does not have a direct way to add encoding
   xmlroot(
@@ -99,10 +67,10 @@ SELECT
     version '1.0" encoding="UTF-8'
   )::text AS data
 FROM
-  _urls
-GROUP BY
-  sitemap
-ORDER BY
-  sitemap;
+  _urls;
 
-CREATE UNIQUE INDEX idx_mv_sitemap ON sitemap(id);
+--
+-- this allows us to 'refresh materialized view concurrently' without hardcoding
+--   which tables have unique constraints or querying for it in advance.
+--
+CREATE UNIQUE INDEX idx_mv_sitemap_section_fronts_and_homepage ON sitemap_section_fronts_and_homepage(id);
