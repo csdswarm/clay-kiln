@@ -2,7 +2,7 @@
 
 const _snakeCase = require('lodash/snakeCase'),
   _kebabCase = require('lodash/kebabCase'),
-  db = require('../services/server/db'),
+  db = require('../../services/server/db'),
   { wrapInTryCatch } = require('../services/startup/middleware-utils'),
   xmlIndexHeader = '<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
   sitemapViews = new Set([
