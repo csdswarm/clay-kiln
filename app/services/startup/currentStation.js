@@ -2,7 +2,11 @@
 
 const radioApiService = require('../../services/server/radioApi'),
   { isEmpty } = require('lodash'),
-  { extname } = require('path'),
+  { lstatSync, readdirSync } = require('fs'),
+  { join } = require('path'),
+  isDirectory = source => lstatSync(source).isDirectory(),
+  getDirectories = source =>
+    readdirSync(source).map(name => join(source, name)).filter(isDirectory),
   allStations = {},
   allStationsIds = {},
   allStationsCallsigns = [],
@@ -43,10 +47,9 @@ const radioApiService = require('../../services/server/radioApi'),
    * @return {boolean}
    */
   validPath = (req) => {
-    const excludeExt = ['.js', '.css', '.svg', '.woff', '.woff2', '.png', '.jpg', '.jpeg', '.gif', '.ico'],
-      ext = extname(req.path);
+    const publicDirs = getDirectories('./public/');
 
-    return !ext || !excludeExt.includes(ext);
+    return publicDirs.every(publicPathDir => req.path.indexOf(publicPathDir.replace('public', '')) !== 0);
   },
   /**
    * determines if the default station should be used

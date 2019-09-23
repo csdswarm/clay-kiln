@@ -94,7 +94,9 @@ module.exports.render = async (uri, data, locals) => {
   if (locals.stationIDs || data.filterBy === 'favorites') {
     const stationIDs = locals.stationIDs || _get(locals, 'radiumUser.favoriteStations', []).join();
 
-    params['filter[id]'] = stationIDs;
+    if (stationIDs) {
+      params['filter[id]'] = stationIDs;
+    }
     
     return radioApiService.get(route, params).then(response => {
       if (response.data) {

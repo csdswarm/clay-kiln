@@ -2,6 +2,8 @@
 const slugifyService = require('../../services/universal/slugify'),
   { playingClass, favoriteModifier } = require('../../services/server/spaLocals'),
   { addCrumb } = require('../breadcrumbs'),
+  { sendError } = require('../../services/universal/cmpt-error'),
+  { getStationSlug} = require('../../services/universal/stations'),
   NEWS_TALK = 'News & Talk',
   SPORTS = 'Sports',
   LOCATION = 'location';
@@ -68,7 +70,7 @@ function addMetaData(station) {
  */
 function addBreadcrumbLinks(data, host) {
   addCrumb(data, `//${host}/stations`, 'stations');
-  addCrumb(data, `//${host}/${ data.station.site_slug || data.station.callsign || data.station.id }/listen`, data.station.name);
+  addCrumb(data, `//${host}/${ data.stationSlug }/listen`, data.station.name);
 
   return data;
 }
@@ -77,6 +79,12 @@ function addBreadcrumbLinks(data, host) {
 module.exports.render = (uri, data, locals) => {
   if (!locals.params) {
     return data;
+  }
+
+  data.stationSlug = getStationSlug(locals.station);
+
+  if (locals.params.dynamicStation !== data.stationSlug) {
+    sendError('Station not found', 404);
   }
 
   locals.station.playingClass = playingClass(locals, locals.station.id);
