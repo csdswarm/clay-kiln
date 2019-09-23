@@ -1,6 +1,7 @@
 'use strict';
 const db = require('../../client/db'),
   _reduce = require('lodash/reduce'),
+  _get = require('lodash/get'),
   helpers = require('./helpers'),
   locals = window.kiln.locals,
   slugs = {},
@@ -36,7 +37,8 @@ module.exports = {
   description: 'The slug must be a valid station slug.',
   type: 'error',
   async validate(state) { // slugs passed for testing
-    const validSlugs = await getSlugs();
+    const validSlugs = await getSlugs(),
+      published = _get(state, 'page.state.published', false);
 
     return _reduce(state.components, (errors, instance, uri) => {
       if (!components.has(helpers.getComponentName(uri))) {
@@ -44,15 +46,12 @@ module.exports = {
       }
 
       Object.keys(instance).forEach(name => {
-        if (!fields.has(name)) {
+        if (!fields.has(name) || !instance[name]) {
           return;
         }
 
-        const val = instance[name];
-
-        if (!val) {
-          return;
-        }
+        const val = instance[name],
+          publishedPageExists = validSlugs[val];
 
         // Check for value in validSlugs
         if (!validSlugs.hasOwnProperty(val)) {
@@ -62,7 +61,7 @@ module.exports = {
             location: `${helpers.labelUtil(helpers.getComponentName(uri))} » Site Slug`,
             preview: `${val} is not a valid station slug`
           });
-        } else if (validSlugs[val] === true) {
+        } else if (!published && publishedPageExists) {
           // Station front is already published for this station
           errors.push({
             uri: uri,
