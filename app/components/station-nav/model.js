@@ -1,6 +1,7 @@
 'use strict';
 
-const { playingClass } = require('../../services/universal/spaLocals');
+const { playingClass } = require('../../services/universal/spaLocals'),
+  _get = require('lodash/get');
 
 module.exports.render = async (ref, data, locals) => {
   if (!locals.station && !locals.station.id) {
@@ -9,10 +10,13 @@ module.exports.render = async (ref, data, locals) => {
 
   data.playingClass = playingClass(locals, locals.station.id);
   data.station = locals.station;
-  data.stationLogo = data.stationLogo || data.station.square_logo_small || locals.site.radiocomDefaultImg;
-  data.stationLogo = data.stationLogo.includes('?') ?
-    `${ data.stationLogo }&` :
-    `${ data.stationLogo }?`;
+  data.stationLogo = data.stationLogo || _get(locals, 'station.station_logo_small', '');
+
+  if (data.stationLogo.length) {
+    data.stationLogo = data.stationLogo.includes('?') ?
+      `${ data.stationLogo }&` :
+      `${ data.stationLogo }?`;
+  }
 
   return data;
 };
