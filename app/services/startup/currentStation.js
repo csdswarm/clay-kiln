@@ -16,6 +16,7 @@ const radioApiService = require('../../services/server/radioApi'),
     callsign: 'NATL-RC',
     website: 'https://www.radio.com',
     slug: 'www',
+    site_slug: 'www',
     square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
     square_logo_large: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
     city: 'New York',
@@ -58,6 +59,31 @@ const radioApiService = require('../../services/server/radioApi'),
     return publicDirs.every(publicPathDir => req.path.indexOf(publicPathDir.replace('public', '')) !== 0);
   },
   /**
+   * find the station by slug or id
+   *
+   * @param {string} slugInReqUrl
+   * @param {string} stationId
+   *
+   * @return {object}
+   */
+  findStation = async (slugInReqUrl, stationId) => {
+    let slug = slugInReqUrl;
+
+    // If the station isn't in the slug, look for it by stationId
+    if (!Object.keys(allStations).includes(slugInReqUrl) && Object.keys(allStationsIds).includes(stationId)) {
+      slug = allStationsIds[stationId];
+    }
+
+    // verify the slug is valid
+    if (Object.keys(allStations).includes(slug)) {
+      const station = allStations[slug];
+
+      return station;
+    }
+
+    return null;
+  },
+  /**
    * determines if the default station should be used
    *
    * @param {object} req
@@ -80,16 +106,10 @@ const radioApiService = require('../../services/server/radioApi'),
         });
       }
 
-      if (Object.keys(allStations).includes(slugInReqUrl)) {
-        return allStations[slugInReqUrl];
-      }
+      // eslint-disable-next-line one-var
+      const station = await findStation(slugInReqUrl, stationId);
 
-      // If the station isn't in the slug, look for the querystring parameter
-      if (stationId && Object.keys(allStationsIds).includes(stationId)) {
-        return allStations[allStationsIds[stationId]];
-      }
-
-      return defaultStation;
+      return station || defaultStation;
     }
   };
 
