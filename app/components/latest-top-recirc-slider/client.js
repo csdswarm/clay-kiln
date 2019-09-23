@@ -55,44 +55,54 @@ class SliderDom {
    * @param {number} direction - -1 or 1.
    */
   setItemsContainerPosition(direction) {
-    this.maxClicksRight = direction;
+    const slider = this,
+      { btns: buttons, itemsContainer } = slider.dom;
+    
+    slider.maxClicksRight = direction;
     // short circuit if btn disabled
     if (
-      (direction > 0 && !this.dom.btns.canMoveLeft) ||
-      (direction < 0 && !this.dom.btns.canMoveRight)
+      (direction > 0 && !buttons.canMoveLeft) ||
+      (direction < 0 && !buttons.canMoveRight)
     ) {
       return;
     }
-    this.setBtnsState();
-    this.dom.itemsContainer.x += this.dom.itemsContainer.getSingleSlideWidth() * direction;
-    this.dom.itemsContainer.el.style.transform = `translateX(${this.dom.itemsContainer.x}px)`;
+    slider.setBtnsState();
+    itemsContainer.x += itemsContainer.getSingleSlideWidth() * direction;
+    itemsContainer.el.style.transform = `translateX(${itemsContainer.x}px)`;
     
   }
   setBtnsState() {
+    const slider = this,
+      { btns: buttons, itemsContainer } = slider.dom,
+      { left: leftButton, right: rightButton } = buttons;
+
     // boundaries for clicking or swiping right
     if (this.maxClicksRight > 0) {
-      this.dom.btns.canMoveRight = true;
-      this.dom.btns.right.style.opacity = 1;
+      buttons.canMoveRight = true;
+      rightButton.style.opacity = 1;
     } else {
-      this.dom.btns.canMoveRight = false;
-      this.dom.btns.right.style.opacity = this.dom.btns.disabledOpacity;
+      buttons.canMoveRight = false;
+      rightButton.style.opacity = buttons.disabledOpacity;
     }
     // boundaries for clicking or swiping left
-    if (Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() ) - this.maxClicksRight > 0) {
-      this.dom.btns.canMoveLeft = true;
-      this.dom.btns.left.style.opacity = 1;
+    if (Math.round( itemsContainer.getTotalClicksToTheRight() ) - slider.maxClicksRight > 0) {
+      buttons.canMoveLeft = true;
+      leftButton.style.opacity = 1;
     } else {
-      this.dom.btns.canMoveLeft = false;
-      this.dom.btns.left.style.opacity = this.dom.btns.disabledOpacity;
+      buttons.canMoveLeft = false;
+      leftButton.style.opacity = buttons.disabledOpacity;
     }
   }
 
   onResize() {
+    const slider = this,
+      { itemsContainer } = slider.dom;
+    
     // window resize cb basically resets the items container and buttons UI state
-    this.dom.itemsContainer.x = 0;
-    this.dom.itemsContainer.el.style.transform = `translateX(${this.dom.itemsContainer.x}px)`;
-    this.setBtnsState();
-    this.maxClicksRight = Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() );
+    itemsContainer.x = 0;
+    itemsContainer.el.style.transform = `translateX(${itemsContainer.x}px)`;
+    slider.setBtnsState();
+    slider.maxClicksRight = Math.round( itemsContainer.getTotalClicksToTheRight() );
   }
 }
 
