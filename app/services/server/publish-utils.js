@@ -205,13 +205,32 @@ module.exports.getUrlOptions = getUrlOptions;
 module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
 // URL patterns below need to be handled by the site's index.js
-module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.html`; // e.g. http://vulture.com/music/x.html - modified re: ON-333
-module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
-module.exports.articleSecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/${o.slug}`;
-module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
-module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/gallery/${o.slug}`;
-module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
-module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
+module.exports.dateUrlPattern = opts => {
+  // e.g. http://vulture.com/music/x.html - modified re: ON-333
+  return `${opts.prefix}/${opts.sectionFront}/${opts.slug}.html`;
+};
+module.exports.articleSlugPattern = opts => {
+  // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
+  return `${opts.prefix}/${opts.sectionFront}/${opts.slug}`;
+};
+module.exports.articleSecondarySectionFrontSlugPattern = opts => {
+  return `${opts.prefix}/${opts.sectionFront}/${opts.secondarySectionFront}/${opts.slug}`;
+};
+module.exports.gallerySlugPattern = opts => {
+  // e.g. http://radio.com/music/gallery/grammies
+  return `${opts.prefix}/${opts.sectionFront}/gallery/${opts.slug}`;
+};
+module.exports.gallerySecondarySectionFrontSlugPattern = opts => {
+  return `${opts.prefix}/${opts.sectionFront}/${opts.secondarySectionFront}/gallery/${opts.slug}`;
+};
+module.exports.sectionFrontSlugPattern = opts => {
+  // e.g. http://radio.com/music
+  return `${opts.prefix}/${opts.sectionFront}`;
+};
+module.exports.secondarySectionFrontSlugPattern = opts => {
+  // e.g. http://radio.com/music/pop
+  return `${opts.prefix}/${opts.primarySectionFront}/${opts.sectionFront}`;
+};
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.getComponentInstance = getComponentInstance;
 module.exports.pageTypes = pageTypes;

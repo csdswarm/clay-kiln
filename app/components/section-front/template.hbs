@@ -1,4 +1,8 @@
-<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--section-front{{ if @root.locals.edit ' editing' }}">
+<section role="main"
+  data-track-type="section"
+  data-uri="{{ default _ref _self }}"
+  class="component component--section-front{{ if @root.locals.edit ' editing' }}">
+
   {{#if @root.locals.edit }}
     <div class="section-front__settings" data-editable="settings">
       <h1>Section Front Settings:</h1>
