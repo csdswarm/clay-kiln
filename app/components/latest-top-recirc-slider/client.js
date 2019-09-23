@@ -56,15 +56,6 @@ class SliderDom {
    */
   setItemsContainerPosition(direction) {
     this.maxClicksRight = direction;
-    console.log('[itemsContainer===>]');
-    console.log('[getSingleSlideWidth]', this.dom.itemsContainer.getSingleSlideWidth());
-    console.log('[getTotalWidthOfSlides]', this.dom.itemsContainer.getTotalWidthOfSlides());
-    console.log('[getInitialOffset]', this.dom.itemsContainer.getInitialOffset());
-    console.log('[getMaxX]', this.dom.itemsContainer.getMaxX());
-    console.log('[getSlidesVisible]', this.dom.itemsContainer.getSlidesVisible());
-    console.log('[getTotalClicksToTheRight]', this.dom.itemsContainer.getTotalClicksToTheRight());
-    console.log('[maxClicksRight]', this.maxClicksRight);
-    console.log('[getTotalClicksToTheRight - maxClicksRight]', Math.round( this.dom.itemsContainer.getTotalClicksToTheRight() ) - this.maxClicksRight);
     // short circuit if btn disabled
     if (
       (direction > 0 && !this.dom.btns.canMoveLeft) ||
