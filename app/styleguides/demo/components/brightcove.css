@@ -9,8 +9,9 @@
       height: auto;
     }
   }
-  .article__body .body__header .lead & .video__preview,
-  .video__preview {
+
+  .gallery__body .body__header .lead & .video__preview,
+  .article__body .body__header .lead & .video__preview {
     width: 100%;
     display: flex;
     flex-direction: row;
