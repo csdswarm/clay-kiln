@@ -9,14 +9,16 @@
             {{{ read 'components/station-nav/media/chevron_up.svg' }}}
           </button>
       </div>
-      {{#if (compare stationLogo '!==' '') }}
-        <img class="menu__image" src="{{ stationLogo }}width=100&height=100&crop=1:1">
-      {{ else }}
-        <div class="menu__image kiln-placeholder">
-          <div class="placeholder-label">
-            <span class="placeholder-text">Add Station Logo</span>
+      {{#if (compare stationLogo '===' '') }}
+        {{#if @root.locals.edit}}
+          <div class="menu__image kiln-placeholder">
+            <div class="placeholder-label">
+              <span class="placeholder-text">Add Station Logo</span>
+            </div>
           </div>
-        </div>
+        {{/if}}
+      {{ else }}
+        <img class="menu__image" src="{{ stationLogo }}width=100&height=100&crop=1:1">
       {{/if}}
       {{#if primaryLinks.length }}
         <ul class="menu__navigation navigation">
