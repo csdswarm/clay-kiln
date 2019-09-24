@@ -2,7 +2,7 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, isComponent, isPage, isPublished, isUri } = require('clayutils'),
+  { getComponentName, getListInstance, isComponent, isList, isPage, isPublished, isUri } = require('clayutils'),
   { loadPermissions } = require('../urps'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
@@ -35,6 +35,10 @@ function getComponentsWithPermissions() {
         if (schema[field]._permission) {
           _set(obj, `${component}.field.${field}`, schema[field]._permission);
         }
+        // specific check for lists
+        if (schema[field]._list_permission) {
+          _set(obj, `_lists.${component}.field.${field}`, schema[field]._list_permission);
+        }
       });
     }
   });
@@ -57,6 +61,8 @@ function userPermissionRouter() {
           await loadPermissions(req.session, res.locals);
         }
         addPermissions(res.locals);
+
+        res.locals.componentPermissions = componentsToCheck;
       }
     } catch (e) {
       log('error', 'Error adding locals.user permissions', e);
@@ -85,6 +91,32 @@ async function getComponentData(db, uri, key) {
 }
 
 /**
+ * determines if a user has permissions to perform an action on a list
+ *
+ * @param {string} component
+ * @param {string} field
+ * @param {object} data
+ * @param {object} db
+ * @param {object} locals
+ *
+ * @return {Promise<boolean>}
+ */
+async function hasListPermissions({ component, field, data, db, locals }) {
+  const existingItems = (await db.get(`${process.env.CLAY_SITE_HOST}/_lists/${component}`))
+      .map(item => item.text),
+    permissions = componentsToCheck._lists[component].field[field],
+    create = permissions.create,
+    remove = permissions.remove,
+    blockAdd = !locals.user.hasPermissionsTo(create).a(component).value,
+    blockRemove = !locals.user.hasPermissionsTo(remove).a(component).value,
+    listData = data.map(item => item.text),
+    addedToList = () => Boolean(listData.find(item => !existingItems.includes(item))),
+    removedFromList = () => Boolean(existingItems.find(item => !listData.includes(item)));
+
+  return !(blockAdd && addedToList()) && !(blockRemove && removedFromList());
+}
+
+/**
  * check a component for field level permissions and modify the request with old data if they do not have permissions
  *
  * @param {string} uri
@@ -95,11 +127,11 @@ async function getComponentData(db, uri, key) {
 async function checkComponentPermission(uri, req, locals, db) {
   const component = getComponentName(uri);
 
-  if (!componentsToCheck[component]) {
+  if (!componentsToCheck[component] && !componentsToCheck._lists[component]) {
     return;
   }
 
-  if (componentsToCheck[component].component) { // entire component
+  if (_get(componentsToCheck, `${component}.component`)) { // entire component
     const action = componentsToCheck[component].component;
 
     if (!locals.user.can(action).a(component).value) {
@@ -107,23 +139,36 @@ async function checkComponentPermission(uri, req, locals, db) {
       req.body = await getComponentData(db, uri);
     }
   } else { // specific fields
-    for (const field of Object.keys(componentsToCheck[component].field)) {
+    let data;
+    const resetData = async (field) => {
+      // only get the component data once inside the loop
+      if (!data) {
+        data = await getComponentData(db, uri);
+      }
+
+      // if the field exists already override it, else remove it so it matches what it had been
+      if (data[field]) {
+        req.body[field] = data[field];
+      } else {
+        delete req.body[field];
+      }
+    };
+
+    for (const field of Object.keys(_get(componentsToCheck, `${component}.field`, {}))) {
       // add condition for the specific fields
       const action = componentsToCheck[component].field[field];
 
       if (!locals.user.can(action).a(field).value) {
-        let data;
+        await resetData(field);
+      }
+    }
 
-        // only get the component data once inside the loop
-        if (!data) {
-          data = await getComponentData(db, uri);
-        }
+    if (_get(componentsToCheck, `_lists.${component}`)) {
+      for (const field of Object.keys(_get(componentsToCheck, `_lists.${component}.field`, {}))) {
+        const hasPermissions = await hasListPermissions({ component, field, data: req.body[field], db, locals });
 
-        // if the field exists already override it, else remove it so it matches what it had been
-        if (data[field]) {
-          req.body[field] = data[field];
-        } else {
-          delete req.body[field];
+        if (!hasPermissions) {
+          await resetData(field);
         }
       }
     }
@@ -175,6 +220,22 @@ async function checkUserPermissions(uri, req, locals, db) {
       return pageTypesToCheck.has(pageType)
         ? user.can('unpublish').a(pageType).at(station.callsign).value
         : true;
+    }
+
+    if (isList(uri) && req.method === 'PUT') {
+      const list = getListInstance(uri);
+
+      if (Object.keys(componentsToCheck._lists || {}).includes(list)) {
+        let allow = true;
+
+        for (const field of Object.keys(componentsToCheck._lists[list].field)) {
+          const hasPermissions = await hasListPermissions({ component: list, field, data: req.body, db, locals });
+
+          allow = !hasPermissions ? false : allow;
+        }
+
+        return allow;
+      }
     }
 
     // if no permissions are required they can do it

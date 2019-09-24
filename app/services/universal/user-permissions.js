@@ -25,6 +25,7 @@
 */
 
 const pluralize = require('pluralize'),
+  _get = require('lodash/get'),
   KEYS = {
     action: 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
     target: 'a,an,the,this,using,canUse,canModify'.split(','),
@@ -107,9 +108,7 @@ const pluralize = require('pluralize'),
             location: locationToCheck
           } = getCondition(action, target, location);
 
-          value = Boolean(_override || (_permissions[targetToCheck] &&
-            _permissions[targetToCheck][actionToCheck] &&
-            _permissions[targetToCheck][actionToCheck].station[locationToCheck]));
+          value = Boolean(_override || _get(_permissions, `${targetToCheck}.${actionToCheck}.station.${locationToCheck}`));
 
           if (!value) {
             message = createMessage(actionToCheck, targetToCheck);
@@ -274,7 +273,11 @@ const pluralize = require('pluralize'),
     return ({ user, permissions, station }) => {
       if (user && !user.can) {
         _permissions = permissions || {};
-        _override = user.provider === 'google';
+        _override = false;
+
+        if (user.provider === 'google') {
+          _permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
+        }
 
         // helper to not have to pass station
         if (station && station.callsign) {

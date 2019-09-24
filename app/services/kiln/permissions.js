@@ -55,7 +55,10 @@ const addPermissions = require('../universal/user-permissions'),
     Object.keys(schema).forEach(field => {
       const permission = schema[field]._permission || schema._permission || componentPermission;
 
-      if (schema[field]._has && permission) {
+      if (permission && permission._has) {
+        console.warn(`The ${schema.schemaName} component was upgraded causing the _permission to become corrupted.`,
+          `Upgrade the /app/components/${schema.schemaName}/schema.yml to enable permissions.`);
+      } else if (schema[field]._has && permission) {
         schema[field] = new KilnInput(schema, field);
 
         secureField(schema[field], permission);
@@ -199,6 +202,25 @@ const addPermissions = require('../universal/user-permissions'),
 
       observer.observe(kilnWrapper, { childList: true });
     }, false);
+  },
+  /**
+   * mutates the schema blocking the user from being able to add/remove items from a simple-list if they do not have permissions
+   *
+   * @param {object} schema
+   * @param {string} field
+   * @param {string} [component]
+   *
+   * @return {object} - schema
+   */
+  simpleListRights = (schema, field, component = schema.schemaName) => {
+    const subscriptions = new KilnInput(schema);
+
+    subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
+      schema[field]._has.autocomplete.allowCreate = locals.user.isAbleTo('create').using(component).value;
+      schema[field]._has.autocomplete.allowRemove = locals.user.isAbleTo('update').using(component).value;
+    });
+
+    return schema;
   };
 
 // kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
@@ -209,4 +231,5 @@ module.exports.secureField = secureField;
 module.exports.secureSchema = secureSchema;
 module.exports.secureAllSchemas = secureAllSchemas;
 module.exports.publishRights = publishRights;
+module.exports.simpleListRights = simpleListRights;
 
