@@ -10,7 +10,7 @@ module.exports.render = async (ref, data, locals) => {
 
   data.playingClass = playingClass(locals, locals.station.id);
   data.station = locals.station;
-  data.stationLogo = data.stationLogo || _get(locals, 'station.station_logo_small', '');
+  data.stationLogo = data.stationLogo || _get(locals, 'station.square_logo_small', '');
 
   if (data.stationLogo.length) {
     data.stationLogo = data.stationLogo.includes('?') ?
