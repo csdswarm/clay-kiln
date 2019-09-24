@@ -10,7 +10,13 @@ module.exports.render = async (ref, data, locals) => {
 
   data.playingClass = playingClass(locals, locals.station.id);
   data.station = locals.station;
-  data.stationLogo = data.stationLogo || _get(locals, 'station.square_logo_small', '');
+
+  // Don't default to what's in locals.station unless it's not the default station
+  if (_get(locals, 'station.slug', 'www') === 'www') {
+    data.stationLogo = data.stationLogo || '';
+  } else {
+    data.stationLogo = data.stationLogo || _get(locals, 'station.square_logo_small', '');
+  }
 
   if (data.stationLogo.length) {
     data.stationLogo = data.stationLogo.includes('?') ?
