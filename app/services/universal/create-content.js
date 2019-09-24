@@ -436,10 +436,22 @@ function setNoIndexNoFollow(data) {
   return data;
 }
 
+/**
+ * For Sports articles and galleries, use @RDCSport twitter handle.
+ * @param data
+ * @param locals
+ */
+function addTwitterHandle(data, locals) {
+  if (data.sectionFront === 'sports') {
+    locals.shareTwitterHandle = 'RDCSports';
+  }
+}
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
+  addTwitterHandle(data, locals);
   if (locals && !locals.edit) {
     return data;
   }
