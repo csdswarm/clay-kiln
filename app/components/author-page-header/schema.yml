@@ -4,7 +4,7 @@ _description: |
 _confirmRemoval: true
 
 author:
-  _label: Author Name
+  _label: Author/Host Name
   _has:
     input: select-list
     list: authors
@@ -24,36 +24,43 @@ scheduleTime:
   _label: Schedule Time
   _has:
     input: text
+    help: Enter the weekday(s) and time(s) of the Host’s On Air Schedule
 
 bio:
   _label: Biography
   _has:
     input: text
+    help: Enter the Author or Host’s professional biography
 
 facebook:
   _label: Facebook Handle
   _has:
     input: text
+    help: "Link to the Author or Host’s Facebook Account (for example: facebook.com/NAMEHERE)"
 
 twitter:
   _label: Twitter Handle
   _has:
     input: text
+    help: "Link to the Author or Host’s Twitter Account (for example: twitter.com/NAMEHERE)"
 
 youtube:
   _label: YouTube Account
   _has:
     input: text
+    help: "Link to the Author or Host’s YouTube Account (for example: youtube.com/channel/NAMEHERE)"
 
 instagram:
   _label: Instagram Handle
   _has:
     input: text
+    help: "Link to the Author or Host’s Instagram Account (for example: instagram.com/NAMEHERE)"
 
 email:
-  _label: email
+  _label: Email
   _has:
     input: text
+    help: Enter the Author or Host’s public-facing email address
 
 _groups:
   settings:
@@ -67,7 +74,8 @@ _groups:
       - youtube
       - instagram
       - email
+    _label: Author/Host Header Settings
     _placeholder:
       height: 250px
-      text: Author Header
+      text: Author/Host Header
       ifEmpty: author
