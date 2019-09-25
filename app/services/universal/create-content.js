@@ -305,51 +305,77 @@ function cleanSiloImageUrl(data) {
 }
 
 /**
- * This is a NYMag legacy thing. We converted the original
- * `authors` array into a more complex `byline` structure,
- * but we still key a lot of things off the flatter `authors`
- * array. That's why we're doing this work, but it's done
- * on save as to not affect rendering
- *
+ * Generator function, iterates over all bylines and then yields each item under the byline
+ * property provided
+ * @param {object} data
+ * @param {string} prop the list property on each byline to get data for
+ * @yields {object}
+ * @example
+ * // given bylines with the following structure:
+ * // [{
+ * //     names: [{text: 'bobby'}, {text: 'johnny'}],
+ * //     sources: [{text: 'RADIO.COM'}, {text: 'KROQ FM'}]
+ * //   }, {
+ * //     names: [{text: 'jennifer'}, {text: 'christy'}],
+ * //     sources: [{text: 'The Associated Press'}]
+ * // }]
+ * // authors would be: [{text: 'bobby'}, {text: 'johnny'}, {text: 'jennifer'}, {text: 'christy'}]
+ * // sources would be: [{text: 'RADIO.COM'}, {text: 'KROQ FM'}, {text: 'The Associated Press'}]
+ * const authors = Array.from(bylinesList(data, 'names'));
+ * const sources = Array.from(bylinesList(data, 'sources'));
+ */
+function *bylinesList(data, prop) {
+  const bylines = data.byline || [];
+
+  if (bylines && bylines.length) {
+    for (const byline of bylines) {
+      for (const item of byline[prop] || []) {
+        yield item;
+      }
+    }
+  }
+}
+
+/**
+ * Iterates the byline authors performing cleanup and modifications as needed
  * @param {object} data
  */
-function setPlainAuthorsList(data) {
-  const bylineList = _get(data, 'byline', []),
-    authors = [];
+function bylineAuthorOperations(data) {
+  const authors = Array.from(bylinesList(data, 'names'));
 
-  if (bylineList.length > 0) {
-    bylineList.forEach((byline) => {
-      if (byline.names) {
-        byline.names.forEach((name) => {
-          authors.push(name);
-        });
-      }
-    });
+  for (const author of authors) {
+    delete author.count;
+    author.slug = utils.textToEncodedSlug(author.text);
+  }
 
+  /*
+    Originally a NYMag legacy thing, since we converted the original
+    `authors` array into a more complex `byline` structure,
+    but we still key a lot of things off the flatter `authors`
+    array. That's why we're doing this work, but it's done
+    on save as to not affect rendering.
+  */
+  if (authors.length) {
     data.authors = authors;
   }
 }
 
 /**
- * Transcribes byline names, directly to sources on the data.
- * @param {Object} data
+ * Iterates the byline sources performing cleanup and modifications as needed
+ * @param {object} data
  */
-function setPlainSourcesList(data) {
-  const bylineList = _get(data, 'byline', []),
-    sources = [];
+function bylineSourceOperations(data) {
+  const sources = Array.from(bylinesList(data, 'sources'));
 
-  if (bylineList.length > 0) {
-    bylineList.forEach((byline) => {
-      if (byline.names) {
-        byline.names.forEach((name) => {
-          sources.push(name);
-        });
-      }
-    });
+  for (const source of sources) {
+    delete source.count;
+  }
 
+  if (sources.length) {
     data.sources = sources;
   }
 }
+
 
 /**
  * Good for when you have a byline array but one
@@ -427,8 +453,8 @@ function upCaseRadioDotCom(data) {
  */
 function setNoIndexNoFollow(data) {
   const isContentFromAP = _get(data, 'byline', [])
-    .some(({sources = []}) =>
-      sources.some(({text}) => text === 'The Associated Press'));
+    .some(({ sources = [] }) =>
+      sources.some(({ text }) => text === 'The Associated Press'));
 
   data.isContentFromAP = isContentFromAP;
   data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;
@@ -463,8 +489,8 @@ function save(uri, data, locals) {
   formatDate(data, locals);
   setCanonicalUrl(data, locals);
   cleanSiloImageUrl(data);
-  setPlainAuthorsList(data);
-  setPlainSourcesList(data);
+  bylineAuthorOperations(data);
+  bylineSourceOperations(data);
   sanitizeByline(data);
   setNoIndexNoFollow(data);
 
@@ -476,6 +502,8 @@ function save(uri, data, locals) {
   }).then(function (resolved) {
     // once async calls are done, use their resolved values to update some more data
     setSlugAndLock(data, resolved.prevData, resolved.publishedData);
+    return data;
+  }).then(data => {
     return data;
   });
 }
