@@ -7,7 +7,7 @@ const h = require('highland'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
   db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
-  CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
+  CONTENT_FILTER = isOpForComponents(['article', 'gallery', 'contest']);
 
 // Subscribe to the save stream
 subscribe('save').through(save);
@@ -89,7 +89,7 @@ function save(stream) {
     .parallel(1)
     // copy the data being saved so we can search it
     .map(param => { components.push(param); return param; })
-    // only bring back articles and galleries
+    // only bring back articles, galleries, and contest pages
     .filter(CONTENT_FILTER)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
@@ -138,7 +138,7 @@ function getMain(op) {
 }
 
 /**
- * remove the published article/gallery from elasticsearch
+ * remove the published article/gallery/contest from elasticsearch
  *
  * @param {Stream} stream
  * @return {Stream}
@@ -151,7 +151,7 @@ function unpublishPage(stream) {
 }
 
 /**
- * Index articles/galleries on publish
+ * Index articles/galleries/contests on publish
  * @param  {Object} args
  * @returns {Promise}
  */

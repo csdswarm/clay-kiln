@@ -13,7 +13,8 @@ const _ = require('lodash'),
   pageTypes = {
     ARTICLE: 'article',
     GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
+    SECTIONFRONT: 'section-front',
+    CONTEST: 'contest'
   },
   /**
    * returns a url to the server for a component
@@ -141,7 +142,7 @@ function getMainComponentFromRef(componentReference, locals) {
     const componentTypeRegex = /^.*_components\/(\b.+\b)\/instances.*$/g,
       pageType = componentTypeRegex.exec(componentReference)[1] || null;
 
-    if ([pageTypes.ARTICLE,pageTypes.GALLERY].includes(pageType)) {
+    if ([pageTypes.ARTICLE, pageTypes.GALLERY, pageTypes.CONTEST].includes(pageType)) {
       guaranteePrimaryHeadline(component);
       guaranteeLocalDate(component, publishedComponent, locals);
     }
@@ -185,7 +186,7 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
 
-  if ([pageTypes.ARTICLE, pageTypes.GALLERY].includes(urlOptions.pageType)) {
+  if ([pageTypes.ARTICLE, pageTypes.GALLERY, pageTypes.CONTEST].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
@@ -212,6 +213,7 @@ module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/
 module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/gallery/${o.slug}`;
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
+module.exports.contestSlugPattern = o => `${o.prefix}/contests/${o.slug}`; // e.g. http://radio.com/contests/mix-105-1-gatorland-tickets
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.getComponentInstance = getComponentInstance;
 module.exports.pageTypes = pageTypes;
