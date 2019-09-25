@@ -236,7 +236,8 @@ const updateAlias = async (httpEs, currentIndex, newIndex, alias) => {
       + `\ncurrentIndex: ${currentIndex}`
       + `\nnewIndex: ${newIndex}`
       + `\nalias: ${alias}`
-      + `\nbody: ${prettyJSON(body)}`
+      + `\nbody: ${prettyJSON(body)}`,
+      innerErr
     );
   }
 }
