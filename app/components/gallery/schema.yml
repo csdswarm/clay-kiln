@@ -426,6 +426,7 @@ _groups:
       - includeInlineAds
   settings:
     fields:
+      - stationName
       - showSocial
       - hasSecondaryBylines
       - sectionFront
@@ -533,3 +534,10 @@ noIndexNoFollow:
     field: isContentFromAP
     operator: ===
     value: false
+
+stationName:
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy

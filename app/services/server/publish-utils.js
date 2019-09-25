@@ -2,6 +2,7 @@
 
 const _ = require('lodash'),
   moment = require('moment'),
+  isTruthy = _.identity,
   db = require('./db'),
   sanitize = require('../universal/sanitize'),
   utils = require('../universal/utils'),
@@ -184,6 +185,7 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.slug = component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
+  urlOptions.stationSlug = component.stationSlug || '';
 
   if ([pageTypes.ARTICLE, pageTypes.GALLERY].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {
@@ -211,25 +213,36 @@ module.exports.dateUrlPattern = opts => {
 };
 module.exports.articleSlugPattern = opts => {
   // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
-  return `${opts.prefix}/${opts.sectionFront}/${opts.slug}`;
-};
-module.exports.articleSecondarySectionFrontSlugPattern = opts => {
-  return `${opts.prefix}/${opts.sectionFront}/${opts.secondarySectionFront}/${opts.slug}`;
+  return [
+    opts.prefix,
+    opts.stationSlug,
+    opts.sectionFront,
+    opts.secondarySectionFront,
+    opts.slug
+  ].filter(isTruthy)
+    .join('/');
 };
 module.exports.gallerySlugPattern = opts => {
   // e.g. http://radio.com/music/gallery/grammies
-  return `${opts.prefix}/${opts.sectionFront}/gallery/${opts.slug}`;
-};
-module.exports.gallerySecondarySectionFrontSlugPattern = opts => {
-  return `${opts.prefix}/${opts.sectionFront}/${opts.secondarySectionFront}/gallery/${opts.slug}`;
+  return [
+    opts.prefix,
+    opts.stationSlug,
+    opts.sectionFront,
+    opts.secondarySectionFront,
+    'gallery',
+    opts.slug
+  ].filter(isTruthy)
+    .join('/');
 };
 module.exports.sectionFrontSlugPattern = opts => {
   // e.g. http://radio.com/music
-  return `${opts.prefix}/${opts.sectionFront}`;
-};
-module.exports.secondarySectionFrontSlugPattern = opts => {
-  // e.g. http://radio.com/music/pop
-  return `${opts.prefix}/${opts.primarySectionFront}/${opts.sectionFront}`;
+  return [
+    opts.prefix,
+    opts.stationSlug,
+    opts.primarySectionFront,
+    opts.sectionFront
+  ].filter(isTruthy)
+    .join('/');
 };
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.getComponentInstance = getComponentInstance;

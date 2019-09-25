@@ -13,7 +13,8 @@ const express = require('express'),
   YAML = require('yamljs'),
   interceptLists = require('./intercept-lists'),
   componentsToCheck = getComponentsWithPermissions(),
-  pageTypesToCheck = new Set(['homepage', 'section-front']);
+  { pageTypesToCheck } = require('./utils'),
+  hasPermissions = require('./has-permissions');
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -71,6 +72,10 @@ function userPermissionRouter() {
   });
 
   interceptLists(userPermissionRouter);
+
+  // we need access to 'res' in createPage so a proper 400 error can be returned
+  //   when a bad station slug is sent.
+  hasPermissions.createPage(userPermissionRouter);
 
   return userPermissionRouter;
 }
@@ -195,20 +200,12 @@ async function checkUserPermissions(uri, req, locals, db) {
       await checkComponentPermission(uri, req, locals, db);
     }
 
-    if (isPage(uri)) {
-      if (isPublished(uri)) {
-        const pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
+    if (isPage(uri) && isPublished(uri)) {
+      const pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
 
-        return pageTypesToCheck.has(pageType)
-          ? locals.user.can('publish').a(pageType).value
-          : true;
-      } else if (req.method === 'POST') {
-        const pageType = getComponentName(req.body.main[0]);
-
-        return pageTypesToCheck.has(pageType)
-          ? locals.user.can('create').a(pageType).value
-          : true;
-      }
+      return pageTypesToCheck.has(pageType)
+        ? locals.user.can('publish').a(pageType).value
+        : true;
     }
 
     if (isUri(uri) && req.method === 'DELETE') {
