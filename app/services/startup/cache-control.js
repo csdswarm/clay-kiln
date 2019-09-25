@@ -3,9 +3,18 @@
 const interceptor = require('express-interceptor'),
   cacheControlInterceptor = interceptor((req, res) => {
     return {
+      /**
+       * Returns whether a request should be intercepted or not
+       * @returns {boolean}
+       */
       isInterceptable: () => {
         return shouldPassCache(req, res);
       },
+      /**
+       * The interception happens here, after all other middleware. res can be altered before the response is actually sent.
+       * @param body
+       * @param send
+       */
       intercept: (body, send) => {
         res.set('Cache-Control', 'private, no-store');
         send(body);
