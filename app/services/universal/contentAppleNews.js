@@ -7,13 +7,27 @@ let primaryVideo = {
   stillURL: ''
 };
 const log = require('../../services/universal/log').setup({ file: __filename }),
+  sectionCategoryStyles = {
+    music: 'category1Style',
+    sports: 'category2Style',
+    news: 'category3Style'
+  },
+  slugify = require('../../services/universal/slugify'),
+  _isObject = require('lodash/isObject'),
   _get = require('lodash/get'),
   _flattenDeep = require('lodash/flattenDeep'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
   { getComponentName, getComponentInstance } = require('clayutils'),
-  { byline: formatAuthors } = require('../../services/universal/byline'),
   formatLocalDate = require('clayhandlebars/helpers/time/formatLocalDate'),
   ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]',
+  RESPONSIVE_COLUMN_CONDITIONS = {
+    IPHONE: {
+      maxColumns: 4
+    },
+    IPAD: {
+      minColumns: 5
+    }
+  },
   /**
    * Get canonical URL from customUrl or derived from section fronts and slug
    *
@@ -44,28 +58,37 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * Format byline with author and sources
    *
    * @param {Array} bylines
+   * @param {Object} data
+   * @param {Object} locals
    * @returns {string}
   */
-  formatBylines = bylines => {
-    let bylineHTML = '';
+  formatBylines = (bylines, data, locals) => {
+    const formattedBylines = bylines.reduce((newFormattedBylines, byline) => {
+      const authorsListPrefix = byline.names.length
+          ? `${byline.prefix.charAt(0).toUpperCase() + byline.prefix.slice(1)} `
+          : '',
+        formattedAuthors = byline.names
+          .map((name) => {
+            const authorName = _isObject(name) ? name.text : name,
+              authorSlug = slugify(authorName),
+              { site: { protocol, prefix } } = locals,
+              authorHref = `${protocol}://${prefix}/authors/${authorSlug}`,
+              categoryStyle = sectionCategoryStyles[data.sectionFront];
 
-    bylines.forEach(byline => {
-      if (byline.names.length) {
-        const prefix = byline.prefix.charAt(0).toUpperCase() + byline.prefix.slice(1);
+            return `<a href="${authorHref}"><span data-anf-textstyle="${categoryStyle}">${authorName}</span></a>`;
+          })
+          .join(', '),
+        formattedSources = byline.sources
+          .map(source => `<span>${source.text}</span>`)
+          .join(', ');
 
-        bylineHTML = bylineHTML.concat(`${ prefix } `);
-        bylineHTML = bylineHTML.concat(formatAuthors(byline.names));
-        byline.sources.forEach(source => {
-          bylineHTML = bylineHTML.concat(`, ${ source.text }`);
-        });
-      } else {
-        const sources = byline.sources.map(source => source.text);
+      newFormattedBylines.push(
+        `${authorsListPrefix}${formattedAuthors}${formattedSources}`
+      );
+      return newFormattedBylines;
+    }, []);
 
-        bylineHTML = bylineHTML.concat(sources.join(', '));
-      }
-    });
-
-    return bylineHTML;
+    return formattedBylines.join('<br />');
   },
   /**
    * Format timestamp from date published or last modified
@@ -75,18 +98,9 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * @returns {string}
   */
   formatTimestamp = (date, dateModified) => {
-    let formattedTimestamp = '';
+    const formattedTimestamp = formatLocalDate(dateModified || date, 'MMM D, YYYY');
 
-    if (dateModified) {
-      formattedTimestamp = 'Updated on ';
-    }
-
-    formattedTimestamp = formattedTimestamp.concat(
-      formatLocalDate(dateModified || date || new Date(), 'MMMM D, YYYY'),
-      formatLocalDate(dateModified || date || new Date(), ' h:mm a')
-    );
-
-    return formattedTimestamp;
+    return `<span data-anf-textstyle="publishTimeStyle">${formattedTimestamp}</span>`;
   },
   /**
    * Get tags from tags component ref
@@ -123,9 +137,23 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
             const { URL, stillURL } = lede;
 
             primaryVideo = { URL, stillURL };
+            return [{
+              ...lede,
+              layout: 'headerImageLayout'
+            }];
           }
 
-          return [ lede ];
+          const { components: [ledeImage, ledeCaption] } = lede;
+
+          return [
+            {
+              ...ledeImage,
+              layout: 'headerImageLayout'
+            },
+            ...ledeCaption
+              ? [ledeCaption]
+              : []
+          ];
         }).catch(e => log('error', `Error getting lede anf: ${ e }`));
     }
   },
@@ -141,18 +169,65 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     for (const contentInstance of content) {
       if (isNotHTMLEmbed(contentInstance._ref)) {
         await getCompInstanceData(`${ contentInstance._ref }.anf`)
-          .then(data => contentANF.push(data))
+          .then(data => {
+            const isTextComponent = 'text' in data,
+              isEmptyTextComponent = isTextComponent && !data.text;
+
+            if (isEmptyTextComponent) {
+              return;
+            }
+
+            contentANF.push(data);
+          })
           .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf: ${e}`));
       }
     }
 
     return contentANF;
   },
+  responsiveBylineComponents = (data, locals) => {
+    const { byline, date, dateModified } = data,
+      anfBylineComponent = (props) => ({
+        role: 'byline',
+        layout: 'authorLayout',
+        textStyle: 'authorStyle',
+        format: 'html',
+        ...props
+      }),
+      bylineContent = formatBylines(byline, data, locals),
+      timestampContent = formatTimestamp(date, dateModified);
+
+    return [
+      anfBylineComponent({
+        text: `${bylineContent} ${timestampContent}`,
+        conditional: {
+          conditions: RESPONSIVE_COLUMN_CONDITIONS.IPHONE,
+          hidden: true
+        }
+      }),
+      anfBylineComponent({
+        text: `${bylineContent}<br /><br />${timestampContent}`,
+        conditional: {
+          conditions: RESPONSIVE_COLUMN_CONDITIONS.IPAD,
+          hidden: true
+        }
+      })
+    ];
+  },
+  generateANFPreviewFile = (ref) => {
+    const isDev = process.env.NODE_ENV === 'local';
+
+    if (isDev) {
+      require('./anf-test-file-generator')(ref);
+    }
+  },
   getContentANF = async function (ref, data, locals) {
     const tags = await getTags(data.tags),
       lede = await getLede(data.lead) || [],
       refInstance = getComponentInstance(ref),
       contentType = getComponentName(ref);
+
+    generateANFPreviewFile(ref);
 
     return {
       identifier: refInstance,
@@ -172,52 +247,58 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
       },
       components: [
         {
-          role: 'container',
-          style: contentType === 'article' ? 'articleStyle' : 'galleryStyle',
-          layout: contentType === 'article' ? 'articleLayout' : 'galleryLayout',
+          role: 'header',
+          style: 'headerStyle',
+          layout: 'headerLayout',
           components: [
             {
-              role: 'header',
-              style: 'headerStyle',
-              layout: 'headerLayout',
-              components: [
+              role: 'title',
+              text: data.headline,
+              layout: 'titleLayout',
+              textStyle: 'titleStyle',
+              format: 'html',
+              conditional: [
                 {
-                  role: 'title',
-                  text: data.primaryHeadline,
-                  layout: 'headlineLayout',
-                  style: 'headlineStyle',
-                  textStyle: 'headlineTextStyle',
-                  format: 'html'
-                },
-                {
-                  role: 'byline',
-                  text: `${ formatBylines(data.byline) } ${ formatTimestamp(data.date, data.dateModified) }`,
-                  layout: 'bylineLayout',
-                  style: 'bylineStyle',
-                  textStyle: 'bylineTextStyle',
-                  format: 'html'
+                  conditions: RESPONSIVE_COLUMN_CONDITIONS.IPHONE,
+                  textStyle: {
+                    fontSize: 35,
+                    lineHeight: 42
+                  }
                 }
               ]
             },
             {
-              role: 'section',
-              style: 'ledeStyle',
-              layout: 'ledeLayout',
-              components: lede
+              role: 'intro',
+              text: data.subHeadline,
+              layout: 'introLayout',
+              textStyle: 'introStyle',
+              conditional: [
+                {
+                  conditions: RESPONSIVE_COLUMN_CONDITIONS.IPHONE,
+                  textStyle: {
+                    fontSize: 18,
+                    lineHeight: 24
+                  }
+                }
+              ]
             },
-            ...contentType === 'gallery' ? [{
-              role: 'section',
-              style: 'galleryStyle',
-              layout: 'galleryLayout',
-              components: await getContent(data.slides)
-            }] : [],
-            {
-              role: 'section',
-              style: 'bodyStyle',
-              layout: 'bodyLayout',
-              components: await getContent(data.content)
-            }
+            ...responsiveBylineComponents(data, locals)
           ]
+        },
+        {
+          role: 'section',
+          layout: 'headerImageLayout',
+          components: lede
+        },
+        ...contentType === 'gallery' ? [{
+          role: 'section',
+          layout: 'bodyLayout',
+          components: await getContent(data.slides)
+        }] : [],
+        {
+          role: 'section',
+          layout: 'bodyLayout',
+          components: await getContent(data.content)
         }
       ]
     };

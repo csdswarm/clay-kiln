@@ -30,7 +30,6 @@ module.exports = function (ref, data) {
     role: 'tweet',
     URL: getTweetURL(data),
     layout: 'tweetLayout',
-    style: 'tweetStyle',
     format: 'html'
   };
 };

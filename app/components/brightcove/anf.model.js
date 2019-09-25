@@ -10,7 +10,6 @@ module.exports = function (ref, data) {
     URL: data.video.m3u8Source || '',
     stillURL: data.video.imageUrl || '',
     layout: 'brightcoveLayout',
-    style: 'brightcoveStyle',
     format: 'html'
   };
 };
