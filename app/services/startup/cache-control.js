@@ -7,7 +7,7 @@ const interceptor = require('express-interceptor'),
        * Returns whether a request should be intercepted or not
        * @returns {boolean}
        */
-      isInterceptable: () => {
+      isInterceptable() {
         return shouldPassCache(req, res);
       },
       /**
@@ -15,7 +15,7 @@ const interceptor = require('express-interceptor'),
        * @param body
        * @param send
        */
-      intercept: (body, send) => {
+      intercept(body, send) {
         res.set('Cache-Control', 'private, no-store');
         send(body);
       }
