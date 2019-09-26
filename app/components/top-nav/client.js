@@ -6,7 +6,6 @@ let isNotDesktop = false,
 const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
   mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
   MEDIUM_SCREEN_WIDTH = 1023,
-  navIncludes = require('./nav-includes'),
 
   /**
    * Checks to see if the screen width is small enough to be considered not a desktop view
@@ -162,12 +161,4 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
 document.addEventListener('top-nav-mount', function () {
   // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
   addEventListeners();
-  navIncludes.stagingHelper.onMount();
-});
-
-
-// dismount listener for vue
-document.addEventListener('top-nav-dismount', function () {
-  // code to run when vue mounts/updates, aka after a new "pageview" has unloaded.
-  navIncludes.stagingHelper.onDismount();
 });
