@@ -23,7 +23,7 @@ async function addComponentToArticleData(articleInstanceData, componentName){
   const newData = {_ref: `${hostUrl}/_components/${componentName}/instances/default`};
   const target = articleInstanceData._layouts['two-column-layout'].instances.article.top;
   if(!target.find(el => hostUrl + el._ref === newData._ref)) {
-    target.push(newData);
+    target.splice(1, 0, newData);
   }
   return articleInstanceData;
 }
