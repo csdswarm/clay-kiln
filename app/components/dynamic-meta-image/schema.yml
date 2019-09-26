@@ -11,7 +11,7 @@ dynamicImageUrl:
   _label: Url template
   _has:
     input: text
-    valitade:
+    validate:
       required: true
     help: Template for url.  Note that '${paramValue}' will be replaced with the provided param
 
