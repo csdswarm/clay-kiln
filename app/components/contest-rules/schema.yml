@@ -1,0 +1,17 @@
+_description: |
+  A component used to indicate the legal contest description and activation window on a contest page.
+
+text:
+  _placeholder:
+    height: 50px
+    text: New Description
+    required: true
+  _has:
+    input: inline
+    type: multi-component
+    pseudoBullet: true
+    buttons:
+      - bold
+      - italic
+      - strike
+      - link
