@@ -1,6 +1,7 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   { isComponent } = require('clayutils'),
+  recircCmpt = require('../../services/universal/recirc-cmpt'),
   elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -9,18 +10,22 @@ const queryService = require('../../services/server/query'),
     'feedImgUrl',
     'contentType',
     'sectionFront'
-  ];
+  ],
+  maxResults = 10;
 
 /**
  * @param {number} numResults
  * @param {object} locals
+ * @param {array} items
  * @returns {Object}
  */
-function buildQuery(numResults, locals) {
+function buildQuery(numResults, locals, items) {
   const query = queryService.newQueryWithCount(elasticIndex, numResults),
     // grab content from these section fronts from the env
     sectionFronts = process.env.SECTION_FRONTS.split(',');
   
+  // add sorting
+  queryService.addSort(query, {date: 'desc'});
   // map the sectionFronts to should matches
   queryService.addShould(query, sectionFronts.map(sf => {
     return {
@@ -35,20 +40,31 @@ function buildQuery(numResults, locals) {
 
     queryService.addMustNot(query, { match: { canonicalUrl: cleanLocalsUrl } });
   }
+  // exclude the curated content from the results
+  if (items && items.length < maxResults  && !isComponent(locals.url)) {
+    items.forEach(item => {
+      if (item.canonicalUrl) {
+        let cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+        
+        queryService.addMustNot(query, {match: {canonicalUrl: cleanUrl}});
+      }
+    });
+  }
   queryService.onlyWithTheseFields(query, elasticFields);
   return query;
 }
 
 /**
  * @param {object} locals
+ * @param {array} items
  * @returns {Promise}
  */
-async function buildAndRequestElasticSearch(locals) {
+async function buildAndRequestElasticSearch(locals, items) {
   const
-    elasticQuery = buildQuery(10, locals),
-    request = await queryService.searchByQuery(elasticQuery);
+    elasticQuery = buildQuery(maxResults, locals, items),
+    elasticQueryResponseItems = await queryService.searchByQuery(elasticQuery);
 
-  return request;
+  return elasticQueryResponseItems;
 }
 
 /**
@@ -58,13 +74,41 @@ async function buildAndRequestElasticSearch(locals) {
  * @returns {Promise}
  */
 module.exports.render = (ref, data, locals) => {
-  return buildAndRequestElasticSearch(locals)
-    .then(response => {
-      data.items = response.sort(() => Math.random() > 0.5 ? 1 : -1);
+  console.log('[data.items]', data.items);
+  return buildAndRequestElasticSearch(locals, data.items)
+    .then(elasticQueryResponseItems => {
+      data.articles = elasticQueryResponseItems.concat(elasticQueryResponseItems.slice(0, maxResults)).slice(0, maxResults); // show a maximum of maxItems links; // response.sort(() => Math.random() > 0.5 ? 1 : -1);
       return data;
     })
     .catch(err => {
       queryService.logCatch(err, ref);
       return data;
     });
+};
+
+/**
+ * @param {string} ref
+ * @param {object} data
+ * @param {object} locals
+ * @returns {Promise}
+ */
+module.exports.save = async (ref, data, locals) => {
+  if (!data.items.length || !locals) {
+    return data;
+  }
+  data.items = await Promise.all(data.items.map(async (item) => {
+    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
+
+    return  {
+      ...item,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      pageUri: result.pageUri,
+      urlIsValid: result.urlIsValid,
+      canonicalUrl: item.url || result.canonicalUrl,
+      feedImgUrl: item.overrideImage || result.feedImgUrl
+    };
+  }));
+
+  return data;
 };
