@@ -41,7 +41,7 @@ function buildQuery(numResults, locals, items) {
     queryService.addMustNot(query, { match: { canonicalUrl: cleanLocalsUrl } });
   }
   // exclude the curated content from the results
-  if (items && items.length < maxResults  && !isComponent(locals.url)) {
+  if (items && !isComponent(locals.url)) {
     items.forEach(item => {
       if (item.canonicalUrl) {
         let cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
@@ -76,7 +76,7 @@ async function buildAndRequestElasticSearch(locals, items) {
 module.exports.render = (ref, data, locals) => {
   return buildAndRequestElasticSearch(locals, data.items)
     .then(elasticQueryResponseItems => {
-      data.articles = elasticQueryResponseItems.concat(elasticQueryResponseItems.slice(0, maxResults)).slice(0, maxResults); // show a maximum of maxItems links; // response.sort(() => Math.random() > 0.5 ? 1 : -1);
+      data.articles = data.items.concat(elasticQueryResponseItems.slice(0, maxResults)).slice(0, maxResults); // show a maximum of maxItems links; // response.sort(() => Math.random() > 0.5 ? 1 : -1);
       return data;
     })
     .catch(err => {
@@ -105,7 +105,8 @@ module.exports.save = async (ref, data, locals) => {
       pageUri: result.pageUri,
       urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
-      feedImgUrl: item.overrideImage || result.feedImgUrl
+      feedImgUrl: item.overrideImage || result.feedImgUrl ,
+      sectionFront: result.sectionFront
     };
   }));
 
