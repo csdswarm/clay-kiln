@@ -11,7 +11,8 @@ const _get = require('lodash/get'),
   promises = require('./promises'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
-  mediaplay = require('./media-play');
+  mediaplay = require('./media-play'),
+  { pageTypes } = require('./../server/publish-utils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -440,8 +441,12 @@ function setNoIndexNoFollow(data) {
 
 function render(ref, data, locals) {
   fixModifiedDate(data);
-  addStationLogo(data, locals);
-  upCaseRadioDotCom(data);
+
+  if (data.contentType !== pageTypes.CONTEST) {
+    addStationLogo(data, locals);
+    upCaseRadioDotCom(data);
+  }
+  
   if (locals && !locals.edit) {
     return data;
   }
