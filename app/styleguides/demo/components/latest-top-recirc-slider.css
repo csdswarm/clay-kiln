@@ -10,9 +10,6 @@ $thumbnail-continer-width: 70px;
 .latest-top-recirc-slider {
     height: em(71, 16);
     overflow: hidden;
-    &--empty {
-        display: none;
-    }
     &__slider-container {
         position: fixed;
         width: 100%;
@@ -144,3 +141,11 @@ $thumbnail-continer-width: 70px;
     }
 }
 
+.editing .latest-top-recirc-slider {
+    &__slider-container {
+        top: em(116, 16);
+        @mixin medium-screen {
+            top: em(102, 16);
+        }
+    }
+}
