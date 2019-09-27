@@ -8,9 +8,8 @@ module.exports = function (ref, data) {
   return {
     role: 'body',
     text: data.text,
-    layout: 'paragraphLayout',
-    style: 'paragraphStyle',
-    textStyle: 'paragraphTextStyle',
+    layout: 'bodyItemLayout',
+    textStyle: 'bodyStyle',
     format: 'html'
   };
 };

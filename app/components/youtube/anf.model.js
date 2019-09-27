@@ -9,7 +9,6 @@ module.exports = function (ref, data) {
     role: 'embedvideo',
     URL: `https://www.youtube.com/embed/${ data.contentId }`,
     layout: 'youtubeLayout',
-    style: 'youtubeStyle',
     format: 'html'
   };
 };

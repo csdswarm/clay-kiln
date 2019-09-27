@@ -76,10 +76,10 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
 
     switch (sectionFront) {
       case 'music':
-        section = SECTIONS['Entertainment & Music'];
+        section = SECTIONS['Entertainment & Music'] || {};
         break;
       case 'sports':
-        section = SECTIONS['Sports'];
+        section = SECTIONS['Sports'] || {};
         break;
       case 'news':
         section = SECTIONS['News'] || {};
@@ -300,7 +300,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         parts = [];
       let revision = '';
 
-      log('info', `UPDATE?: ${ updateArticle }`);
+      log('info', `UPDATE?: ${ updateArticle }, ${req.params.articleID}`);
       if (updateArticle) {
         revision = { revision } = await readArticle({ params: { articleID: req.params.articleID }});
         log('info', `UPDATE REQUEST: ${ revision }`);
@@ -376,7 +376,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           log('info', 'SUCCESS PUBLISH');
           res.send(article.data);
         } else {
-          log('error', `${status} ${statusText} ${ article } ${requestURL}`);
+          log('error', `ARTICLE POST ERROR: ${status} ${statusText} ${ JSON.stringify(article) } ${requestURL}`);
           res.status(status).send(statusText);
         }
       }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));

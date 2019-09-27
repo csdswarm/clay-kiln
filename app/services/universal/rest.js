@@ -52,8 +52,8 @@ function checkStatus(res) {
  */
 module.exports.request = async (url, opts) => {
   const response = await fetch(url, opts),
-    // body = await response.json(), todo: uncomment after testing
-    body = await response.text(),
+    body = await response.json(),
+    // body = await response.text(),
     { status, statusText } = response;
 
   return { status, statusText, body };
