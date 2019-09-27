@@ -12,6 +12,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   moment = require('moment'),
   fs = require('fs'),
   path = require('path'),
+  FormData = require('form-data'),
   /**
    * Handle request errors
    *
@@ -76,18 +77,17 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
 
     switch (sectionFront) {
       case 'music':
-        section = SECTIONS['Entertainment & Music'] || {};
+        section = SECTIONS['Entertainment & Music'] || SECTIONS['News'] || {};
         break;
       case 'sports':
-        section = SECTIONS['Sports'] || {};
+        section = SECTIONS['Sports'] || SECTIONS['News'] || {};
         break;
       case 'news':
+      default:
         section = SECTIONS['News'] || {};
         break;
-      default:
-        section = {};
     }
-
+    
     return section;
   },
   /**
@@ -287,22 +287,23 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         method = 'POST',
         requestURL = `${ updateArticle ? ANF_API : ANF_CHANNEL_API }articles${ updateArticle ? `/${ req.params.articleID }` : '' }`,
         { articleRef } = req.body,
-        articleJSONEndpoint = `${ articleRef }.anf?config=true`,
         [ { sectionFront,
           secondarySectionFront,
           isCandidateToBeFeatured,
           isHidden,
           isSponsored }, articleANF ] = await Promise.all([
           getCompInstanceData(articleRef),
-          getCompInstanceData(articleJSONEndpoint)
+          getCompInstanceData(`${ articleRef }.anf?config=true`)
         ]),
         { link: sectionLink } = sectionFrontToAppleNewsSectionMap(sectionFront),
-        parts = [];
+        formData = new FormData;
+        // parts = [];
       let revision = '';
 
       log('info', `UPDATE?: ${ updateArticle }, ${req.params.articleID}`);
       if (updateArticle) {
-        revision = { revision } = await readArticle({ params: { articleID: req.params.articleID }});
+        const { revision: rev } = await readArticle({ params: { articleID: req.params.articleID }});
+        revision = rev;
         log('info', `UPDATE REQUEST: ${ revision }`);
       }
 
@@ -329,24 +330,9 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         }
       };
 
-      const boundary = '839214772116429229761594', //hardcoded for now
-        metadataBuffer = Buffer.from(JSON.stringify(metadata)),
-        metadataBufferSize = metadataBuffer.length,
-        metaDataPart = `--${ boundary }\r\n` + 
-          `Content-Disposition: form-data; name="metadata"; size="${ metadataBufferSize }"\r\n\r\n`+
-          `${ metadataBuffer }\r\n`,
-        articleJSONBuffer = Buffer.from(JSON.stringify(articleANF)),
-        articleJSONBufferSize = articleJSONBuffer.length,
-        articleJSONPart = `--${ boundary }\r\n` + 
-          'Content-Type: application/json\r\n' +
-          `Content-Disposition: form-data; filename="article.json"; size="${ articleJSONBufferSize }"\r\n\r\n` +
-          `${ Buffer.from(JSON.stringify(articleANF)) }\r\n`;
-
-      parts.push(metaDataPart, articleJSONPart)
+      formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
+      formData.append('article.json', JSON.stringify(articleANF), 'article.json');
       
-      const partsJoined = parts.join('\r\n'),
-        formData = `--${ boundary }\r\n${ partsJoined }\r\n--${ boundary }--`;
-
       // Fonts: Refer in component textStyles of ANF by using `fontName: { PostScript name of font }`
       // eslint-disable-next-line one-var
       // const fontsDir = path.join(__dirname, '../../public/fonts/demo/');
@@ -357,17 +343,20 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       //       if (err) throw err;
       //       const buffer = Buffer.from(data);
 
-      //       formData.append(fontKey, buffer, FONTS[ fontKey ].replace(fontsDir, ''));
+      //       formData.append(fontKey, new Blob(buffer, {
+      //         type: "application/octet-stream"
+      //       }), FONTS[fontKey].replace(fontsDir,''));
       //     });
       //   }
       // }
 
-      const contentType = `multipart/form-data; boundary=${ boundary }`;
+      const contentType = `multipart/form-data; boundary=${ formData._boundary }`,
+        post = formData.getBuffer().toString();
 
       rest.request(requestURL, {
         method,
         headers: {
-          ...createRequestHeader(method, requestURL, contentType, formData),
+          ...createRequestHeader(method, requestURL, contentType, post),
           'Content-Type': contentType
         },
         body: formData

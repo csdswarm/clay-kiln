@@ -12,6 +12,7 @@ module.exports = (schema, cmptName) => {
     kilnInput.subscribe('PRELOAD_SUCCESS', payload => {
       articleRef = kilnInput.getComponentInstances(cmptName)[0];
       articleData = payload.components[articleRef];
+      console.log(payload, articleData);
     });
     kilnInput.subscribe('UPDATE_PAGE_STATE', async payload => {
       console.log(payload);
@@ -30,13 +31,13 @@ module.exports = (schema, cmptName) => {
             body: JSON.stringify({ articleRef })
           }
         })
-          .then(({ id }) => {
+          .then(({ body: { id } }) => {
             if (id) {
               articleData.appleNewsID = id;
             } else {
               delete articleData.appleNewsID;
             }
-            kilnInput.publishComponent(articleRef, articleData);
+            // kilnInput.publishComponent(articleRef, articleData); // bug: infinite loop
           })
           .catch(e => {
             console.log(`Error hitting apple news api on pub/unpub: ${ JSON.stringify(e) }`);
