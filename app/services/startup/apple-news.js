@@ -102,16 +102,20 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @param {String} method
    * @param {String} URL
    * @param {String} [contentType]
+   * * @param {String} [post]
    * @returns {Object}
   */
-  createRequestHeader = (method, URL, contentType = '') => {
+  createRequestHeader = (method, URL, contentType = '', post = '') => {
     // https://developer.apple.com/documentation/apple_news/apple_news_api/about_the_news_security_model#2970281
+    
 
     const date = moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), // ISO 8601
-      canonicalRequest = method + URL + date + contentType,
+      canonicalRequest = method + URL + date + contentType + post,
       keyBytes = ENCODE_BASE64.parse(process.env.APPLE_NEWS_KEY_SECRET.toString(ENCODE_BASE64)),
       hashed = HMAC_SHA256(canonicalRequest, keyBytes),
       signature = ENCODE_BASE64.stringify(hashed);
+
+    log('info', `CANON REQ: ${canonicalRequest}`);
 
     return {
       Authorization: `HHMAC; key=${ process.env.APPLE_NEWS_KEY_ID }; signature=${ signature }; date=${ date }`
@@ -125,6 +129,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Array}
    */
   getAllSections = async (req, res) => {
+    log('info', 'get apple news sections');
     const method = 'GET',
       requestURL = `${ ANF_CHANNEL_API }sections`;
 
@@ -347,12 +352,13 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       }
 
       // eslint-disable-next-line one-var
-      const canonicalRequestEntities = `multipart/form-data; boundary=${ formData._boundary }${ JSON.stringify(formData) }`;
+      const contentType = `multipart/form-data; boundary=${ formData._boundary }`,
+        postBuffer = formData.getBuffer();
 
       rest.request(requestURL, {
         method,
         headers: {
-          ...createRequestHeader(method, requestURL, canonicalRequestEntities),
+          ...createRequestHeader(method, requestURL, contentType, postBuffer.toString()),
           'Content-Type': 'multipart/form-data'
         },
         body: formData
