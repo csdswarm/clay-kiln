@@ -52,6 +52,7 @@
     }
     &__author-info-container {
         display: flex;
+        margin-bottom: em(14);
         @mixin medium-small-screen {
             flex-wrap: wrap;
         }
