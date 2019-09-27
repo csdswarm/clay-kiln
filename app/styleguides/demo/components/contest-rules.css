@@ -3,9 +3,7 @@
 @import "_global/colors";
 
 .contest-rules {
-    padding: 20em;
     &__rules-body-text {
-
     }
     &__rules-body-text-intro {
         font-weight: bold;

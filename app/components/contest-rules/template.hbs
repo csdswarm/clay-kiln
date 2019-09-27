@@ -1,6 +1,7 @@
 <div class="component component--contest-rules contest-rules{{ if @root.locals.edit ' editing' }}" data-uri="{{ default _ref self }}">
-    <div class="content-rules__rules-body-text" data-editable="text">
+    <p class="contest-rules__rules-body-text" data-editable="text">
+        <span class="contest-rules__rules-body-text-intro">Contest Rules: </span>
         {{ rulesBodyText }}
-        <a class="content-rules__rules-body-text-outro-link">Full Contest Rules.</a>
-    </div>
+        <a class="contest-rules__rules-body-text-outro-link">Full Contest Rules.</a>
+    </p>
 </div>
