@@ -76,7 +76,7 @@ async function buildAndRequestElasticSearch(locals, items) {
 module.exports.render = (ref, data, locals) => {
   return buildAndRequestElasticSearch(locals, data.items)
     .then(elasticQueryResponseItems => {
-      data.articles = data.items.concat(elasticQueryResponseItems.slice(0, maxResults)).slice(0, maxResults); // show a maximum of maxItems links; // response.sort(() => Math.random() > 0.5 ? 1 : -1);
+      data.articles = data.items.concat(elasticQueryResponseItems.slice(0, maxResults)).slice(0, maxResults); // show a maximum of maxItems links
       return data;
     })
     .catch(err => {
