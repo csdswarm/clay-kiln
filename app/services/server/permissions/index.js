@@ -14,7 +14,9 @@ const express = require('express'),
   interceptLists = require('./intercept-lists'),
   componentsToCheck = getComponentsWithPermissions(),
   { pageTypesToCheck } = require('./utils'),
-  hasPermissions = require('./has-permissions');
+  hasPermissions = require('./has-permissions'),
+  stationUtils = require('../station-utils'),
+  { getComponentData } = require('../db');
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -81,21 +83,6 @@ function userPermissionRouter() {
 }
 
 /**
- * retrieves the data from the uri
- *
- * @param {object} db - amphora's internal db instance
- * @param {string} uri
- * @param {string} [key]
- *
- * @return {object}
- */
-async function getComponentData(db, uri, key) {
-  const data = await db.get(uri.split('@')[0]) || {};
-
-  return key ? _get(data, key) : data;
-}
-
-/**
  * determines if a user has permissions to perform an action on a list
  *
  * @param {string} component
@@ -141,14 +128,14 @@ async function checkComponentPermission(uri, req, locals, db) {
 
     if (!locals.user.can(action).a(component).value) {
       // no permissions to modify this component, so reset the value to what it had been
-      req.body = await getComponentData(db, uri);
+      req.body = await getComponentData(uri);
     }
   } else { // specific fields
     let data;
     const resetData = async (field) => {
       // only get the component data once inside the loop
       if (!data) {
-        data = await getComponentData(db, uri);
+        data = await getComponentData(uri);
       }
 
       // if the field exists already override it, else remove it so it matches what it had been
@@ -191,8 +178,10 @@ async function checkComponentPermission(uri, req, locals, db) {
  */
 async function checkUserPermissions(uri, req, locals, db) {
   try {
+    const { user } = locals;
+
     // no matter the request, verify the user has can has the record for this site
-    if (!locals.user.hasPermissionsTo('access').this('station').value) {
+    if (!user.hasPermissionsTo('access').this('station').value) {
       return false;
     }
 
@@ -200,12 +189,23 @@ async function checkUserPermissions(uri, req, locals, db) {
       await checkComponentPermission(uri, req, locals, db);
     }
 
-    if (isPage(uri) && isPublished(uri)) {
-      const pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
+    if (isPage(uri)) {
+      const customUrl = req.body.url;
 
-      return pageTypesToCheck.has(pageType)
-        ? locals.user.can('publish').a(pageType).value
-        : true;
+      if (customUrl) {
+        const callsign = await stationUtils.getCallsignFromUrl(customUrl);
+
+        if (!user.can('access').the('station').at(callsign)) {
+          return false;
+        }
+      }
+      if (isPublished(uri)) {
+        const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
+
+        return pageTypesToCheck.has(pageType)
+          ? user.can('publish').a(pageType).value
+          : true;
+      }
     }
 
     if (isUri(uri) && req.method === 'DELETE') {

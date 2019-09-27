@@ -1,23 +1,8 @@
 'use strict';
 
 const amphora = require('amphora'),
-  _get = require('lodash/get'),
-  radioApiService = require('../../services/server/radioApi'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
-  /**
-   * Finds the station name from the slug
-   *
-   * @param {string} slug
-   * @returns {string}
-   */
-  getNameFromStationSlug = async slug => {
-    const response = await radioApiService.get('stations', { page: { size: 1000 } }),
-      stationFound = response.data.find(aStation => {
-        return aStation.attributes.site_slug === slug;
-      });
-
-    return _get(stationFound, 'attributes.name');
-  };
+  stationUtils = require('../../services/server/station-utils');
 
 module.exports = router => {
   router.post('/_pages', (req, res) => {
@@ -41,7 +26,7 @@ module.exports = router => {
     if (stationSlug) {
       Object.assign(res.locals, {
         newPageStationSlug: stationSlug,
-        stationName: await getNameFromStationSlug(stationSlug)
+        stationName: await stationUtils.getNameFromSlug(stationSlug)
       });
     }
 

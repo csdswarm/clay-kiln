@@ -1,23 +1,8 @@
 'use strict';
 
-const radioApiService = require('../../radioApi'),
-  _get = require('lodash/get'),
-  { getComponentName } = require('clayutils'),
+const { getComponentName } = require('clayutils'),
   { pageTypesToCheck } = require('../utils'),
-  /**
-   * Finds the station callsign from the slug
-   *
-   * @param {string} slug
-   * @returns {string}
-   */
-  getCallsignFromStationSlug = async slug => {
-    const response = await radioApiService.get('stations', { page: { size: 1000 } }),
-      stationFound = response.data.find(aStation => {
-        return aStation.attributes.site_slug === slug;
-      });
-
-    return _get(stationFound, 'attributes.callsign');
-  };
+  stationUtils = require('../../station-utils');
 
 module.exports = router => {
   router.post('/create-page', async (req, res, next) => {
@@ -27,7 +12,7 @@ module.exports = router => {
     let callsign = 'NATL-RC';
 
     if (stationSlug) {
-      const callsign = await getCallsignFromStationSlug(stationSlug);
+      const callsign = await stationUtils.getCallsignFromSlug(stationSlug);
 
       if (!callsign) {
         res.status(400);
