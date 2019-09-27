@@ -1,7 +1,8 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
-  { hasClass } = require('../client/dom-helpers'),
+  whenRightDrawerExists = require('./when-right-drawer-exists'),
+  { setEachToDisplayNone } = require('../client/dom-helpers'),
   preloadTimeout = 5000,
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -56,7 +57,10 @@ const addPermissions = require('../universal/user-permissions'),
     Object.keys(schema).forEach(field => {
       const permission = schema[field]._permission || schema._permission || componentPermission;
 
-      if (schema[field]._has && permission) {
+      if (permission && permission._has) {
+        console.warn(`The ${schema.schemaName} component was upgraded causing the _permission to become corrupted.`,
+          `Upgrade the /app/components/${schema.schemaName}/schema.yml to enable permissions.`);
+      } else if (schema[field]._has && permission) {
         schema[field] = new KilnInput(schema, field);
 
         secureField(schema[field], permission);
@@ -81,24 +85,6 @@ const addPermissions = require('../universal/user-permissions'),
 
         window.kiln.componentKilnjs[component] = secureSchema(kilnjs);
       });
-  },
-  /**
-   * returns the publish button elements if they were added
-   *
-   * @param {object} mutation
-   * @returns {object}
-   */
-  getAddedPublishButtons = (mutation) => {
-    const publishDrawer = Array.from(mutation.addedNodes).find(hasClass('right-drawer'));
-
-    if (!publishDrawer) {
-      return {};
-    }
-
-    return {
-      publishBtn: publishDrawer.querySelector('.publish-actions > button'),
-      unpublishBtn: publishDrawer.querySelector('.publish-status > button')
-    };
   },
   /**
    * A helper method which subscribes to PRELOAD_SUCCESS and returns a promise
@@ -131,17 +117,6 @@ const addPermissions = require('../universal/user-permissions'),
     });
   },
   /**
-   * sets all truthy elements to have the style display: none
-   *
-   * @param {Element[]} elements
-   */
-  setDisplayNone = (elements) => {
-    elements.filter(anElement => !!anElement)
-      .forEach(anElement => {
-        anElement.style.display = 'none';
-      });
-  },
-  /**
    * hides the 'publish' or 'unpublish' button if the user does not
    *   have permissions
    *
@@ -151,11 +126,7 @@ const addPermissions = require('../universal/user-permissions'),
     const subscriptions = new KilnInput(schema),
       whenPreloadedPromise = whenPreloaded(subscriptions);
 
-    subscriptions.subscribe('OPEN_DRAWER', async payload => {
-      if (payload !== 'publish-page') {
-        return;
-      }
-
+    whenRightDrawerExists(subscriptions, async rightDrawerEl => {
       const { locals } = await whenPreloadedPromise,
         hasAccess = locals.user.hasPermissionsTo('access').this('station');
 
@@ -163,34 +134,32 @@ const addPermissions = require('../universal/user-permissions'),
         return;
       }
 
-      // shouldn't be declared above the short circuit
+      // these shouldn't be declared above the short circuit
       // eslint-disable-next-line one-var
-      const publishBtn = document.querySelector('.right-drawer .publish-actions > button'),
-        unpublishBtn = document.querySelector('.right-drawer .publish-status > button');
+      const publishBtn = rightDrawerEl.querySelector('.publish-actions > button'),
+        unpublishBtn = rightDrawerEl.querySelector('.publish-status > button');
 
-      // if this was rendered on the server then there won't be any mutations
-      if (publishBtn || unpublishBtn) {
-        setDisplayNone([publishBtn, unpublishBtn]);
+      setEachToDisplayNone([publishBtn, unpublishBtn]);
+    });
+  },
+  /**
+   * mutates the schema blocking the user from being able to add/remove items from a simple-list if they do not have permissions
+   *
+   * @param {object} schema
+   * @param {string} field
+   * @param {string} [component]
+   *
+   * @return {object} - schema
+   */
+  simpleListRights = (schema, field, component = schema.schemaName) => {
+    const subscriptions = new KilnInput(schema);
 
-        return;
-      }
+    subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
+      schema[field]._has.autocomplete.allowCreate = locals.user.isAbleTo('create').using(component).value;
+      schema[field]._has.autocomplete.allowRemove = locals.user.isAbleTo('update').using(component).value;
+    });
 
-      // this shouldn't be declared above the short circuit
-      // eslint-disable-next-line one-var
-      const kilnWrapper = document.querySelector('.kiln-wrapper'),
-        observer = new MutationObserver(mutationList => {
-          for (const mutation of mutationList) {
-            const { publishBtn, unpublishBtn } = getAddedPublishButtons(mutation);
-
-            setDisplayNone([publishBtn, unpublishBtn]);
-            if (Array.from(mutation.removedNodes).find(hasClass('right-drawer'))) {
-              observer.disconnect();
-            }
-          }
-        });
-
-      observer.observe(kilnWrapper, { childList: true });
-    }, false);
+    return schema;
   };
 
 // kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
@@ -201,4 +170,5 @@ module.exports.secureField = secureField;
 module.exports.secureSchema = secureSchema;
 module.exports.secureAllSchemas = secureAllSchemas;
 module.exports.publishRights = publishRights;
+module.exports.simpleListRights = simpleListRights;
 

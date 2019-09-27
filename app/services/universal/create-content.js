@@ -453,9 +453,30 @@ function render(ref, data, locals) {
   });
 }
 
+/**
+ * Assigns 'stationSlug' and 'stationName' to data.
+ *
+ * newPageStationSlug should only exist upon creating a new page.  The property
+ *   is attached to locals in `app/routes/add-endpoint/create-page.js`.  Its
+ *   purpose is to avoid creating a new content-type instance for every station
+ *   (article/gallery/section front/etc.)
+ *
+ * @param {object} data
+ * @param {object} locals
+ */
+function assignStationInfo(data, locals) {
+  if (locals.newPageStationSlug !== undefined) {
+    Object.assign(data, {
+      stationSlug: locals.newPageStationSlug,
+      stationName: locals.stationName
+    });
+  }
+}
+
 function save(uri, data, locals) {
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
+  assignStationInfo(data, locals);
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
@@ -484,3 +505,4 @@ module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
 
 module.exports.render = render;
 module.exports.save = save;
+module.exports.assignStationInfo = assignStationInfo;
