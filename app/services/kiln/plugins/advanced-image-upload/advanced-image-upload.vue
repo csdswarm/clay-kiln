@@ -6,8 +6,8 @@
   This Vue single file component is a Clay Kiln input that allows the editor to upload an image
   file directly to s3, or simply provide a url to a public image resource.
 
-  The url that will be stored in the associated property of the component data, will be either
-  the public url provided, or the url to the newly uploaded resource hosted on s3.
+  The url that will be stored in the associated property of the component data, will be the url
+  to the newly uploaded resource hosted on s3.
 
   More info:
   https://claycms.gitbook.io/kiln/kiln-fundamentals/components/inputs
@@ -39,11 +39,8 @@
 
 <script>
 
-import validator from 'validator'
 import axios from 'axios'
 
-const UiTextbox = window.kiln.utils.components.UiTextbox
-const UiIconButton = window.kiln.utils.components.UiIconButton
 const UiFileupload = window.kiln.utils.components.UiFileupload
 
 export default {
@@ -51,102 +48,10 @@ export default {
   data() {
     return {
       imageUrl: this.data || '', // Set passed data "prop" as local data so it can be mutated. See https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
-      webFileUrl: '',
       fileUploadButtonDisabled: false
     };
   },
-  computed: {
-    /**
-     *
-     * Validates string in web file text input as url.
-     *
-     * @returns {boolean} If url in web file text input is a valid url string.
-     */
-    webFileUrlFieldIsValid() {
-
-      // Cachebusting dependencies
-      const webFileUrl = this.webFileUrl
-
-      // If url field is empty, that is valid. Else validate input as url.
-      if (!webFileUrl) {
-        return true
-      } else {
-        return validator.isURL(webFileUrl, {
-          protocols: ['https'],
-          require_protocol: true
-        })
-      }
-
-    },
-    /**
-     *
-     * Determines web file "done" button color.
-     *
-     * @returns {string}
-     */
-    iconButtonColor() {
-
-      // Cachebusting dependencies
-      const webFileUrl = this.webFileUrl
-      const webFileUrlFieldIsValid = this.webFileUrlFieldIsValid
-
-      // Only "activate" button with green color if field is filled with valid url.
-      if (!webFileUrl) {
-        return 'default'
-      } else {
-        return webFileUrlFieldIsValid ? 'green' : 'default'
-      }
-
-    },
-    /**
-     *
-     * Determines web file "done" button disabled/enabled.
-     *
-     * @returns {boolean}
-     */
-    iconButtonDisabled() {
-
-      // Cachebusting dependencies
-      const webFileUrl = this.webFileUrl
-      const webFileUrlFieldIsValid = this.webFileUrlFieldIsValid
-
-      // If field is empty or invalid, disable "done" button.
-      return (!webFileUrl || !webFileUrlFieldIsValid) ? true : false
-
-    }
-  },
   methods: {
-    /**
-     *
-     * Event handler that is fired when web file "done" button is pressed.
-     *
-     * This simply takes the input of the web file text field, and saves it to
-     * the assigned component data property. Afterwards the web file text field is reset.
-     *
-     */
-    webFileAttached() {
-
-      // Use web file url field to set imageUrl.
-      this.imageUrl = this.webFileUrl;
-
-      // Set value of form to be the web file url.
-      this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.webFileUrl });
-
-      // Reset web file url field
-      this.webFileUrl = '';
-
-    },
-    /**
-     *
-     * Event handler that is fired when web file text field input is updated.
-     *
-     * This simply maps the input of the text field to this component's appropriate data model.
-     *
-     * @param {string} input - The contents of the web file text field.
-     */
-    updateWebFileUrl(input) {
-      this.webFileUrl = input
-    },
     /**
      *
      * Event handler that is fired when an image file is attached via the file upload button.
@@ -193,7 +98,6 @@ export default {
             // Set value of form to be the s3 file url.
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: s3ImageUrl });
 
-            this.webFileUrl = ''; // Reset web file attachment field
             this.fileUploadButtonDisabled = false; // Re-enable file upload button.
 
           });
@@ -238,8 +142,6 @@ export default {
     }
   },
   components: {
-    UiTextbox,
-    UiIconButton,
     UiFileupload
   }
 }
