@@ -1,19 +1,23 @@
 <docs>
-  This component adds functionality on top of clay-kiln's `lib/nav/new-page.vue`
-  where most of this code is copied from.  Specifically this component allows a
-  user to filter the page list by station.
+This component adds functionality on top of clay-kiln's `lib/nav/new-page.vue`
+where most of this code is copied from.  Specifically this component allows the
+user to select a station for which the new content will belong to.
 
-  1. a station in the context of the 'new-pages' list is a template category
-     with a 'stationCallsign' property
-  2. if a category exists that isn't a station then it's assumed to be the
-     national station
-  3. if a user can only access one station then no dropdown is shown.  This is
-     determined by the number of 'new-pages' with a 'stationCallsign'
+If the user only has permissions to create content for a single station, then a
+label is displayed showing its name.
+
+If the user doesn't have permissions to create content for any stations, then
+a header indicates such.
 </docs>
 
 <template>
   <div class="new-page-override">
-    <div class="new-page-override__station-select" v-if="stationIsSelectable">
+    <div v-if="stationSelectItems.length === 1"
+      class="new-page-override__station-label">
+
+      Station: {{ selectedStation.label }}
+    </div>
+    <div class="new-page-override__station-select" v-else-if="stationIsSelectable">
       <ui-select
         class="station-select"
         has-search
@@ -53,19 +57,51 @@
 
 <script>
 import _ from 'lodash';
-import { editExt, htmlExt, pagesRoute, setItem, sortPages, uriToUrl } from './clay-kiln-utils';
+import axios from 'axios';
+import {
+  editExt,
+  htmlExt,
+  pagesRoute,
+  refProp,
+  setItem,
+  sortPages,
+  uriToUrl
+} from './clay-kiln-utils';
 
 const { filterableList, UiSelect } = window.kiln.utils.components,
-  nationalStationSelectItem = { value: 'NATL-RC', label: 'National' };
+  // the national station doesn't have a slug
+  nationalSlug = '';
 
 export default {
-  created() {
-    this.selectedStation = this.stationSelectItems.includes(nationalStationSelectItem)
-      ? nationalStationSelectItem
-      : stationSelectItems[0];
+  async created() {
+    const { data: slugToNameAndCallsign } = await axios.get('/new-page-stations', { withCredentials: true });
+
+    this.stationSelectItems = _.chain(slugToNameAndCallsign)
+      .map(({ name, callsign }, slug) => {
+        // the callsign is for coding purposes afik and would probably
+        //   confuse editors.
+        if (callsign === 'NATL-RC') {
+          return {
+            label: name,
+            value: slug
+          };
+        }
+
+        return {
+          label: `${name} | ${callsign}`,
+          value: slug
+        };
+      })
+      .sortBy('label')
+      .value();
+
+    this.selectedStation = slugToNameAndCallsign[nationalSlug]
+      ? this.stationSelectItems.find(selectItem => selectItem.value === nationalSlug)
+      : this.stationSelectItems[0];
   },
   data() {
     return {
+      stationSelectItems: [],
       selectedStation: {},
       secondaryActions: [{
         icon: 'settings',
@@ -79,11 +115,8 @@ export default {
     };
   },
   computed: {
-    allPages() {
-      return _.get(this.$store, 'state.lists[new-pages].items', []);
-    },
     anyPagesExist() {
-      return !!this.allPages.length;
+      return !!(_.get(this.$store, 'state.lists[new-pages].items', []).length);
     },
     isAdmin() {
       return _.get(this.$store, 'state.user.auth') === 'admin';
@@ -102,59 +135,50 @@ export default {
       // this provides a more seamless edit experience with less clicking around
       // for common actions, and allows users to immediately view the results
       // of their (adding / removing) actions
-      return this.nationalIsSelected
-        ? _.get(this.$store, 'state.ui.favoritePageCategory')
-        : this.stationCallsignToCategoryId[this.selectedStation.value]
-    },
-    nationalIsSelected() {
-      return this.selectedStation.value === nationalStationSelectItem.value;
+      return _.get(this.$store, 'state.ui.favoritePageCategory');
     },
     pages() {
-      const stationPages = this.stationIsSelectable
-        ? this.allPages.filter(this.bySelectedStation)
-        : this.allPages;
+      let items = _.cloneDeep(_.get(this.$store, 'state.lists[new-pages].items', []));
 
-      return sortPages(_.cloneDeep(stationPages));
+      return sortPages(items);
     },
     stationIsSelectable() {
       return this.stationSelectItems.length > 1
-    },
-    stationSelectItems() {
-      const items = _.get(this.$store, 'state.lists[new-pages].items', [])
-        .filter(({ stationCallsign }) => stationCallsign)
-        .map(({ stationCallsign }) => ({
-          label: stationCallsign,
-          value: stationCallsign
-        })),
-        { user } = window.kiln.locals;
-
-      if (user.can('access').the('station').at(nationalStationSelectItem.value)) {
-        items.push(nationalStationSelectItem);
-      }
-
-      return _.sortBy(items, 'label');
-    },
-    stationCallsignToCategoryId() {
-      return _.get(this.$store, 'state.lists[new-pages].items', [])
-        .filter(({ stationCallsign }) => stationCallsign)
-        .reduce(
-          (result, { id, stationCallsign }) => _.set(result, stationCallsign, id),
-          {}
-        )
     }
   },
   methods: {
-    bySelectedStation({ id, stationCallsign }) {
-      return stationCallsign === this.selectedStation.value
-        || (this.nationalIsSelected && !stationCallsign);
-    },
-    itemClick(id, title) {
+    async itemClick(id, title) {
       const category = _.find(this.pages, category => _.find(category.children, child => child.id === id));
 
       this.$store.commit('CREATE_PAGE', title);
 
-      return setItem('kiln-page-category', category.id) // save category so it'll be open next time
-        .then(() => this.$store.dispatch('createPage', id).then(url => window.location.href = url));
+      await setItem('kiln-page-category', category.id) // save category so it'll be open next time
+
+      //
+      // instead of calling store.dispatch('createPage', id), we need to
+      //   duplicate most of that functionality in order to call the new
+      //   endpoint and include the station.
+      //
+      // the createPage dispatch code can be found at
+      // lib/page-data/actions.js: line 102
+      //
+      this.$store.dispatch('startProgress', 'save');
+
+      const prefix = _.get(this.$store, 'state.site.prefix'),
+        { data: pageBody } = await axios.get(uriToUrl(`${prefix}${pagesRoute}${id}`)),
+        { data: newPage } = await axios.post(
+          uriToUrl(`${prefix}/create-page`),
+          {
+            stationSlug: this.selectedStation.value,
+            pageBody
+          },
+          { withCredentials: true }
+        ),
+        editNewPageUrl = uriToUrl(newPage[refProp]) + htmlExt + editExt;
+
+      this.$store.dispatch('finishProgress', 'save');
+
+      window.location.href = editNewPageUrl;
     },
     editTemplate(id) {
       const prefix = _.get(this.$store, 'state.site.prefix');

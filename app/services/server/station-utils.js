@@ -54,6 +54,18 @@ const _get = require('lodash/get'),
   };
 
 /**
+ * Exposes the allStations state, ensuring they are updated when accessed
+ *
+ * Note: if more keys are added to the allStations state then we can generate
+ *   this getAllStations via a function.  For now this is easier to read.
+ */
+api.getAllStations = {
+  asArray: withUpdatedStations(() => _state.allStations.asArray),
+  byCallsign: withUpdatedStations(() => _state.allStations.byCallsign),
+  bySlug: withUpdatedStations(() => _state.allStations.bySlug)
+};
+
+/**
  * Returns the station callsign from a url, where the url either has a station
  *   slug at the beginning of the path in the url, or it doesn't which means the
  *   content belongs to the national station.

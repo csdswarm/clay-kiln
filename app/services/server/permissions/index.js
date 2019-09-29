@@ -16,7 +16,8 @@ const express = require('express'),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
   stationUtils = require('../station-utils'),
-  { getComponentData } = require('../db');
+  { getComponentData } = require('../db'),
+  addEndpoints = require('./add-endpoints');
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -60,8 +61,12 @@ function userPermissionRouter() {
   userPermissionRouter.all('/*', async (req, res, next) => {
     try {
       if (res.locals.user) {
-        if (res.locals.user.provider === 'cognito') {
+        const { provider } = res.locals.user;
+
+        if (provider === 'cognito') {
           await loadPermissions(req.session, res.locals);
+        } else if (provider === 'google') {
+          res.locals.permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
         }
         addPermissions(res.locals);
 
@@ -78,6 +83,7 @@ function userPermissionRouter() {
   // we need access to 'res' in createPage so a proper 400 error can be returned
   //   when a bad station slug is sent.
   hasPermissions.createPage(userPermissionRouter);
+  addEndpoints.newPageStations(userPermissionRouter);
 
   return userPermissionRouter;
 }

@@ -72,8 +72,11 @@ module.exports.editExt = '?edit=true';
 // lib/utils/references.js: line 107
 module.exports.htmlExt = '.html';
 
-// lib/utils/references.js: line 96
+// lib/utils/references.js: line 75, 96, 107 and 108 respectively
+module.exports.refProp = '_ref';
 module.exports.pagesRoute = '/_pages/';
+module.exports.htmlExt = '.html';
+module.exports.editExt = '?edit=true';
 
 /**
  * when fetching or updating pages, make sure they're sorted
