@@ -8,6 +8,7 @@ let primaryVideo = {
 };
 const log = require('../../services/universal/log').setup({ file: __filename }),
   _get = require('lodash/get'),
+  _upperFirst = require('lodash/upperFirst'),
   _flattenDeep = require('lodash/flattenDeep'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
   { getComponentName, getComponentInstance } = require('clayutils'),
@@ -51,7 +52,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
 
     bylines.forEach(byline => {
       if (byline.names.length) {
-        const prefix = byline.prefix.charAt(0).toUpperCase() + byline.prefix.slice(1);
+        const prefix = _upperFirst(byline.prefix);
 
         bylineHTML = bylineHTML.concat(`${ prefix } `);
         bylineHTML = bylineHTML.concat(formatAuthors(byline.names));
@@ -130,12 +131,47 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     }
   },
   /**
+   * Build app download CTA link in ANF
+   *
+   * @returns {Object}
+  */
+  appDownloadCTA = () => {
+    return {
+      role: 'aside',
+      style: 'asideStyle',
+      layout: 'asideLayout',
+      components: [
+        {
+          role: 'body',
+          text: 'Download the RADIO.COM app now',
+          style: 'appDownloadCTALinkStyle',
+          layout: 'appDownloadCTALinkLayout',
+          textStyle: 'appDownloadCTALinkTextStyle',
+          additions: [
+            {
+              type: 'link',
+              URL: 'https://app.radio.com/apple-news-download'
+            }
+          ]
+        },
+        {
+          role: 'image',
+          URL: 'bundle://arrow.png',
+          style: 'appDownloadCTAArrowStyle',
+          layout: 'appDownloadCTAArrowLayout'
+        }
+      ]
+    };
+  },
+  /**
    * Get apple news format of each content ref
    *
    * @param {Array} content
+   * @param {Boolean} [addAppDLLink]
+   *
    * @returns {Promise|Array}
   */
-  getContent = async content => {
+  getContent = async (content, addAppDLLink = false) => {
     const contentANF = [];
 
     for (const contentInstance of content) {
@@ -144,6 +180,10 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
           .then(data => contentANF.push(data))
           .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf: ${e}`));
       }
+    }
+
+    if (addAppDLLink) {
+      contentANF.splice(1, 0, appDownloadCTA());
     }
 
     return contentANF;
@@ -209,13 +249,59 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
               role: 'section',
               style: 'galleryStyle',
               layout: 'galleryLayout',
-              components: await getContent(data.slides)
+              components: await getContent(data.slides, true)
             }] : [],
             {
               role: 'section',
               style: 'bodyStyle',
               layout: 'bodyLayout',
-              components: await getContent(data.content)
+              components: await getContent(data.content, contentType === 'article')
+            },
+            {
+              role: 'section',
+              style: 'footerStyle',
+              layout: 'footerLayout',
+              components: [
+                {
+                  role: 'logo',
+                  URL: 'bundle://radiocom-logo-white.png',
+                  layout: 'logoLayout',
+                  style: 'logoStyle'
+                },
+                {
+                  role: 'body',
+                  text: 'Get the latest news and alerts delivered right to your inbox',
+                  layout: 'footerBodyLayout',
+                  style: 'footerBodyStyle',
+                  textStyle: 'footerBodyTextStyle'
+                },
+                {
+                  role: 'container',
+                  style: 'footerCTABtnContainerStyle',
+                  layout: 'footerCTABtnContainerLayout',
+                  components: [
+                    {
+                      role: 'image',
+                      URL: 'bundle://mail.png',
+                      style: 'footerCTABtnMailStyle',
+                      layout: 'footerCTABtnMailLayout'
+                    },
+                    {
+                      role: 'body',
+                      text: 'SIGN UP NOW',
+                      layout: 'footerCTABtnLayout',
+                      style: 'footerCTABtnStyle',
+                      textStyle: 'footerCTABtnTextStyle',
+                      additions: [
+                        {
+                          type: 'link',
+                          URL: 'https://app.radio.com/apple-news-download'
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

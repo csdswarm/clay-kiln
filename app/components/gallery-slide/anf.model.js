@@ -22,6 +22,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
         layout: 'slideDescriptionLayout'
       };
     }
+    return {};
   },
   /**
    * Get apple news format of slide ref
@@ -57,8 +58,8 @@ module.exports = async function (ref, data) {
         textStyle: 'slideTitleTextStyle',
         layout: 'slideTitleLayout'
       },
-      getSlideDescriptionIfExists(data.description),
-      await getSlideEmbed(data.slideEmbed[0])
+      ...getSlideDescriptionIfExists(data.description),
+      ...await getSlideEmbed(data.slideEmbed[0])
     ]
   };
 };

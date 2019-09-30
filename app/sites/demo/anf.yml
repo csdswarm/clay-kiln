@@ -87,3 +87,24 @@ componentLayouts:
   gallerySlideLayout:
   slideTitleLayout:
   slideDescriptionLayout:
+
+
+# appDownloadCTALinkStyle
+# appDownloadCTALinkLayout
+# appDownloadCTALinkTextStyle
+# appDownloadCTAArrowStyle
+# appDownloadCTAArrowLayout
+# footerStyle
+# footerLayout
+# logoLayout
+# logoStyle
+# footerBodyLayout
+# footerBodyStyle
+# footerBodyTextStyle
+# footerCTABtnContainerStyle
+# footerCTABtnContainerLayout
+# footerCTABtnMailStyle
+# footerCTABtnMailLayout
+# footerCTABtnLayout
+# footerCTABtnStyle
+# footerCTABtnTextStyle
