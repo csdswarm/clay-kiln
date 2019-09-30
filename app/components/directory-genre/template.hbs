@@ -3,13 +3,13 @@
     {{#ifAll (compare dynamicGenre "!==" "news-talk") (compare dynamicGenre "!==" "sports") }}
       <select class="directory-genre__dropdown--mobile">
         <option value="">See all in genre:</option>
-        {{#each @root.locals.allMusic }}
+        {{#each allMusic }}
           <option value="{{ attributes.slug }}">{{ attributes.name }}</option>
         {{/each}}
       </select>
     {{/ifAll}}
     {{#if (compare dynamicGenre "news-talk") }}
-      {{~#each @root.locals.allNewsTalk ~}}
+      {{~#each allNewsTalk ~}}
         <div class="directory-genre__stations-by-music-genre" data-genre="{{ id }}">
           {{> stations-list ../stationsList }}
         </div>
@@ -20,11 +20,11 @@
   {{else}}
     <select class="directory-genre__dropdown--mobile">
       <option value="">See all in genre:</option>
-      {{#each @root.locals.allMusic }}
+      {{#each allMusic }}
         <option value="{{ attributes.slug }}">{{ attributes.name }}</option>
       {{/each}}
     </select>
-    {{~#each @root.locals.allMusic ~}}
+    {{~#each allMusic ~}}
       <div class="directory-genre__stations-by-music-genre" data-genre="{{ id }}">
         {{> stations-list ../stationsListTruncated }}
       </div>
