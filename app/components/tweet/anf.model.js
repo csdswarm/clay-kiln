@@ -9,7 +9,7 @@ const getTweetURL = data => {
     return data.url;
   }
 
-  const url = `${ data.url }?`;
+  let url = `${ data.url }?`;
 
   if (!data.showMedia && !data.showThread) {
     url += 'hide_media=true&hide_thread=true';

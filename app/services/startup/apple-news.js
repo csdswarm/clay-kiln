@@ -13,6 +13,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   fs = require('fs'),
   path = require('path'),
   FormData = require('form-data'),
+  Blob = require('blob'),
   /**
    * Handle request errors
    *
@@ -87,7 +88,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         section = SECTIONS['News'] || {};
         break;
     }
-    
+
     return section;
   },
   /**
@@ -100,12 +101,12 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @param {String} method
    * @param {String} URL
    * @param {String} [contentType]
-   * * @param {String} [post]
+   * @param {String} [post]
    * @returns {Object}
   */
   createRequestHeader = (method, URL, contentType = '', post = '') => {
     // https://developer.apple.com/documentation/apple_news/apple_news_api/about_the_news_security_model#2970281
-    
+
     const date = moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), // ISO 8601
       canonicalRequest = method + URL + date + contentType + post,
       keyBytes = ENCODE_BASE64.parse(process.env.APPLE_NEWS_KEY_SECRET.toString(ENCODE_BASE64)),
@@ -297,14 +298,14 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         ]),
         { link: sectionLink } = sectionFrontToAppleNewsSectionMap(sectionFront),
         formData = new FormData;
-        // parts = [];
       let revision = '';
 
-      log('info', `UPDATE?: ${ updateArticle }, ${req.params.articleID}`);
+      log('info', `UPDATE?: ${ updateArticle }, ARTICLE ID: ${req.params.articleID}`);
       if (updateArticle) {
         const { revision: rev } = await readArticle({ params: { articleID: req.params.articleID }});
+
         revision = rev;
-        log('info', `UPDATE REQUEST: ${ revision }`);
+        log('info', `UPDATE REQUEST REVISION ID: ${ revision }`);
       }
 
       // See https://developer.apple.com/documentation/apple_news/create_article_metadata_fields for details
@@ -332,23 +333,37 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
 
       formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
       formData.append('article.json', JSON.stringify(articleANF), 'article.json');
-      
+
+      const assetsDir = path.join(__dirname, '../../public/media/components/article/'),
+        assets = ['radiocom-logo-white.png', 'mail.png', 'arrow.png'];
+
+      for (const asset in assets) {
+        fs.readFile(`${ assetsDir }${ assets[ asset ] }`, function (err, data) {
+          if (err) throw err;
+          const buffer = Buffer.from(data);
+
+          formData.append(assets[ asset ], new Blob(buffer, {
+            type: 'image/png'
+          }), assets[ asset ]);
+        });
+      }
+
       // Fonts: Refer in component textStyles of ANF by using `fontName: { PostScript name of font }`
       // eslint-disable-next-line one-var
-      // const fontsDir = path.join(__dirname, '../../public/fonts/demo/');
+      const fontsDir = path.join(__dirname, '../../public/fonts/demo/');
 
-      // for (const fontKey in FONTS) {
-      //   if (FONTS.hasOwnProperty(fontKey)) {
-      //     fs.readFile(FONTS[ fontKey ], function (err, data) {
-      //       if (err) throw err;
-      //       const buffer = Buffer.from(data);
+      for (const fontKey in FONTS) {
+        if (FONTS.hasOwnProperty(fontKey)) {
+          fs.readFile(FONTS[ fontKey ], function (err, data) {
+            if (err) throw err;
+            const buffer = Buffer.from(data);
 
-      //       formData.append(fontKey, new Blob(buffer, {
-      //         type: "application/octet-stream"
-      //       }), FONTS[fontKey].replace(fontsDir,''));
-      //     });
-      //   }
-      // }
+            formData.append(fontKey, new Blob(buffer, {
+              type: 'application/octet-stream'
+            }), FONTS[fontKey].replace(fontsDir,''));
+          });
+        }
+      }
 
       const contentType = `multipart/form-data; boundary=${ formData._boundary }`,
         post = formData.getBuffer().toString();
