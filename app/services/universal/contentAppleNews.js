@@ -33,16 +33,16 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     return getCompInstanceData(`${ host }/_pages/${ refInstance }`)
       .then(({ customUrl }) => {
         if (customUrl) return customUrl;
-        else return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
-          `${ secondarySectionFront }/` : '' }${ contentType === 'gallery' ?
-          'gallery/' : '' }${ slug }`;
+        else return `${ protocol }://${ host }/${ sectionFront }/${
+          secondarySectionFront ? `${ secondarySectionFront }/` : '' }${
+          contentType === 'gallery' ? 'gallery/' : '' }${ slug }`;
       })
       .catch(e => {
         log('error', `Error getting page data: ${ e }`);
 
-        return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
-          `${ secondarySectionFront }/` : '' }${ contentType === 'gallery' ?
-          'gallery/' : '' }${ slug }`;
+        return `${ protocol }://${ host }/${ sectionFront }/${
+          secondarySectionFront ? `${ secondarySectionFront }/` : '' }${
+          contentType === 'gallery' ? 'gallery/' : '' }${ slug }`;
       });
   },
   /**
