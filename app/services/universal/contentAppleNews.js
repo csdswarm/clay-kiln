@@ -29,18 +29,20 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * @param {string} locals.site.host
    * @returns {string}
   */
-  getCanonicalURL = async (refInstance, { sectionFront, secondarySectionFront, slug }, { site: { protocol, host } }) => {
+  getCanonicalURL = async (refInstance, { sectionFront, secondarySectionFront, slug, contentType }, { site: { protocol, host } }) => {
     return getCompInstanceData(`${ host }/_pages/${ refInstance }`)
       .then(({ customUrl }) => {
         if (customUrl) return customUrl;
         else return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
-          `${ secondarySectionFront }/` : '' }${ slug }`;
+          `${ secondarySectionFront }/` : '' }${ contentType === 'gallery' ?
+          'gallery/' : '' }${ slug }`;
       })
       .catch(e => {
         log('error', `Error getting page data: ${ e }`);
 
         return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
-          `${ secondarySectionFront }/` : '' }${ slug }`;
+          `${ secondarySectionFront }/` : '' }${ contentType === 'gallery' ?
+          'gallery/' : '' }${ slug }`;
       });
   },
   /**
