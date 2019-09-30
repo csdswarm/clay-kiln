@@ -30,16 +30,18 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * @returns {string}
   */
   getCanonicalURL = async (refInstance, { sectionFront, secondarySectionFront, slug }, { site: { protocol, host } }) => {
-    return getCompInstanceData(`${ host }/_pages/${ refInstance }`).then(({ customUrl }) => {
-      if (customUrl) return customUrl;
-      else return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
-        `${ secondarySectionFront }/` : '' }${ slug }`;
-    }).catch(e => {
-      log('error', `Error getting page data: ${ e }`);
+    return getCompInstanceData(`${ host }/_pages/${ refInstance }`)
+      .then(({ customUrl }) => {
+        if (customUrl) return customUrl;
+        else return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
+          `${ secondarySectionFront }/` : '' }${ slug }`;
+      })
+      .catch(e => {
+        log('error', `Error getting page data: ${ e }`);
 
-      return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
-        `${ secondarySectionFront }/` : '' }${ slug }`;
-    });
+        return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
+          `${ secondarySectionFront }/` : '' }${ slug }`;
+      });
   },
   /**
    * Format byline with author and sources

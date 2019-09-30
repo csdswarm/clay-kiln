@@ -7,22 +7,15 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
   { isNotHTMLEmbed } = require('../../services/universal/contentAppleNews'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
   /**
-   * Returns slide description in ANF if it exists
+   * Get description text of slide
    *
-   * @param {string} description
-   * @returns {Object}
-   */
-  getSlideDescriptionIfExists = description => {
-    if (description) {
-      return {
-        role: 'caption',
-        text: description.text,
-        style: 'slideDescriptionStyle',
-        textStyle: 'slideDescriptionTextStyle',
-        layout: 'slideDescriptionLayout'
-      };
-    }
-    return {};
+   * @param {Array} description
+   * @returns {Promise|string}
+  */
+  getDescription = async description => {
+    const { text } = await getCompInstanceData(description[0]._ref);
+
+    return text;
   },
   /**
    * Get apple news format of slide ref
@@ -46,6 +39,8 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
   };
 
 module.exports = async function (ref, data) {
+  const description = await getDescription(data.description);
+
   return {
     role: 'container',
     style: 'gallerySlideStyle',
@@ -58,8 +53,14 @@ module.exports = async function (ref, data) {
         textStyle: 'slideTitleTextStyle',
         layout: 'slideTitleLayout'
       },
-      ...getSlideDescriptionIfExists(data.description),
-      ...await getSlideEmbed(data.slideEmbed[0])
+      ...description ? [{
+        role: 'caption',
+        text: description,
+        style: 'slideDescriptionStyle',
+        textStyle: 'slideDescriptionTextStyle',
+        layout: 'slideDescriptionLayout'
+      }] : [],
+      ...data.slideEmbed[0] ? [await getSlideEmbed(data.slideEmbed[0])] : []
     ]
   };
 };
