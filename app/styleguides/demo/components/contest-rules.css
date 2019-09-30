@@ -3,9 +3,31 @@
 @import "_global/colors";
 
 .contest-rules {
+    transition: 125ms ease;
     &__rules-body-text {
+        p:nth-child(1):before {
+            content: "Contest Rules: ";
+            @mixin rules-component-font-1;
+        }
     }
-    &__rules-body-text-intro {
-        font-weight: bold;
+    &__list-view-container {
+        display: none;
     }
+    &__contest-headline {
+        @mixin rules-component-font-2;
+        a {
+            text-decoration: none;
+        }
+    }
+}
+
+.conest-rules-page .contest-rules {
+    &__list-view-container {
+        display: block;
+    }
+}
+
+.editing .selected.contest-rules {
+    padding: em(18, 16);
+    border: 1px dashed $silver;
 }
