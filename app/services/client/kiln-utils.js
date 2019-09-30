@@ -48,6 +48,23 @@ const KilnInput = window.kiln.kilnInput,
     });
 
     return schema;
+  },
+  /**
+   * keep headlines in sync for a component
+   *
+   * @param {string} component
+   *
+   * @return {Object} fields
+   */
+  syncHeadlines = component => {
+    const fields = {};
+
+    fields[component] =  {
+      headline: ['primaryHeadline', 'shortHeadline', 'teaser', 'plaintextPrimaryHeadline', 'plaintextPrimaryHeadline']
+    };
+
+    return fields;
   };
 
 module.exports.syncFields = syncFields;
+module.exports.syncHeadlines = syncHeadlines;
