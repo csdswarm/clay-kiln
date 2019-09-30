@@ -12,21 +12,7 @@ a header indicates such.
 
 <template>
   <div class="new-page-override">
-    <div v-if="stationSelectItems.length === 1"
-      class="new-page-override__station-label">
-
-      Station: {{ selectedStation.label }}
-    </div>
-    <div class="new-page-override__station-select" v-else-if="stationIsSelectable">
-      <ui-select
-        class="station-select"
-        has-search
-        label="Select a station"
-        placeholder="Search a station"
-        :options="stationSelectItems"
-        v-model="selectedStation"
-      ></ui-select>
-    </div>
+    <station-select class="new-page-override__station-select" />
     <div v-if="anyPagesExist">
       <filterable-list v-if="isAdmin"
         class="new-page-nav"
@@ -58,6 +44,8 @@ a header indicates such.
 <script>
 import _ from 'lodash';
 import axios from 'axios';
+import { mapState } from 'vuex'
+import StationSelect from '../../shared-vue-components/station-select.vue'
 import {
   editExt,
   htmlExt,
@@ -68,41 +56,12 @@ import {
   uriToUrl
 } from './clay-kiln-utils';
 
-const { filterableList, UiSelect } = window.kiln.utils.components,
-  // the national station doesn't have a slug
-  nationalSlug = '';
+const { filterableList } = window.kiln.utils.components;
 
 export default {
-  async created() {
-    const { data: slugToNameAndCallsign } = await axios.get('/new-page-stations', { withCredentials: true });
-
-    this.stationSelectItems = _.chain(slugToNameAndCallsign)
-      .map(({ name, callsign }, slug) => {
-        // the callsign is for coding purposes afik and would probably
-        //   confuse editors.
-        if (callsign === 'NATL-RC') {
-          return {
-            label: name,
-            value: slug
-          };
-        }
-
-        return {
-          label: `${name} | ${callsign}`,
-          value: slug
-        };
-      })
-      .sortBy('label')
-      .value();
-
-    this.selectedStation = slugToNameAndCallsign[nationalSlug]
-      ? this.stationSelectItems.find(selectItem => selectItem.value === nationalSlug)
-      : this.stationSelectItems[0];
-  },
   data() {
     return {
       stationSelectItems: [],
-      selectedStation: {},
       secondaryActions: [{
         icon: 'settings',
         tooltip: 'Edit Template',
@@ -114,38 +73,39 @@ export default {
       }]
     };
   },
-  computed: {
-    anyPagesExist() {
-      return !!(_.get(this.$store, 'state.lists[new-pages].items', []).length);
-    },
-    isAdmin() {
-      return _.get(this.$store, 'state.user.auth') === 'admin';
-    },
-    addTitle() {
-      return _.get(this.$store, 'state.ui.metaKey') ? 'Duplicate Current Page' : 'Add Current Page To List';
-    },
-    addIcon() {
-      return _.get(this.$store, 'state.ui.metaKey') ? 'plus_one' : 'add';
-    },
-    initialExpanded() {
-      // the page list will open to the last used category. this is:
-      // 1. the category that the last page was created from
-      // 2. the category that the last page was added to
-      // 3. the category that the last page was removed from
-      // this provides a more seamless edit experience with less clicking around
-      // for common actions, and allows users to immediately view the results
-      // of their (adding / removing) actions
-      return _.get(this.$store, 'state.ui.favoritePageCategory');
-    },
-    pages() {
-      let items = _.cloneDeep(_.get(this.$store, 'state.lists[new-pages].items', []));
+  computed: Object.assign(
+    {},
+    mapState(StationSelect.storeNs, ['selectedStationSlug']),
+    {
+      anyPagesExist() {
+        return !!(_.get(this.$store, 'state.lists[new-pages].items', []).length);
+      },
+      isAdmin() {
+        return _.get(this.$store, 'state.user.auth') === 'admin';
+      },
+      addTitle() {
+        return _.get(this.$store, 'state.ui.metaKey') ? 'Duplicate Current Page' : 'Add Current Page To List';
+      },
+      addIcon() {
+        return _.get(this.$store, 'state.ui.metaKey') ? 'plus_one' : 'add';
+      },
+      initialExpanded() {
+        // the page list will open to the last used category. this is:
+        // 1. the category that the last page was created from
+        // 2. the category that the last page was added to
+        // 3. the category that the last page was removed from
+        // this provides a more seamless edit experience with less clicking around
+        // for common actions, and allows users to immediately view the results
+        // of their (adding / removing) actions
+        return _.get(this.$store, 'state.ui.favoritePageCategory');
+      },
+      pages() {
+        let items = _.cloneDeep(_.get(this.$store, 'state.lists[new-pages].items', []));
 
-      return sortPages(items);
-    },
-    stationIsSelectable() {
-      return this.stationSelectItems.length > 1
+        return sortPages(items);
+      }
     }
-  },
+  ),
   methods: {
     async itemClick(id, title) {
       const category = _.find(this.pages, category => _.find(category.children, child => child.id === id));
@@ -169,7 +129,7 @@ export default {
         { data: newPage } = await axios.post(
           uriToUrl(`${prefix}/create-page`),
           {
-            stationSlug: this.selectedStation.value,
+            stationSlug: this.selectedStationSlug,
             pageBody
           },
           { withCredentials: true }
@@ -244,7 +204,7 @@ export default {
   },
   components: {
     'filterable-list': filterableList,
-    'ui-select': UiSelect
+    StationSelect
   }
 };
 </script>
