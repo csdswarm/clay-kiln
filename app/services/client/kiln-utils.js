@@ -60,7 +60,7 @@ const KilnInput = window.kiln.kilnInput,
     const fields = {};
 
     fields[component] =  {
-      headline: ['primaryHeadline', 'shortHeadline', 'teaser', 'plaintextPrimaryHeadline', 'plaintextPrimaryHeadline']
+      headline: ['primaryHeadline', 'shortHeadline', 'teaser', 'plaintextPrimaryHeadline']
     };
 
     return fields;
