@@ -270,12 +270,13 @@ function httpRequest(params) {
     try {
       const conn = require(http);
 
-      const parsedOptions = options.url ? {...options, ...url.parse(options.url)} : options;
+      const parsedOptions = options.url ? { ...options, ...url.parse(options.url) } : options;
 
       const req = conn.request(parsedOptions, res => {
         const data = [];
         res.on('data', chunk => data.push(chunk));
-        res.on('end', () => resolve({ result: 'success', data: Buffer.concat(data).toString(), params }));
+        res.on('end',
+          () => resolve({ result: 'success', data: Buffer.concat(data).toString(), params }));
         res.on('error', error => reject({ result: 'fail', params, error }));
       });
       req.on('error', error => reject({ result: 'fail', params, error }));
@@ -305,7 +306,7 @@ function republish(params) {
     }
   };
 
-  return httpRequest({http, options});
+  return httpRequest({ http, options });
 }
 
 /**
@@ -313,13 +314,13 @@ function republish(params) {
  * @param {Object} params
  * @returns {Promise<any>}
  */
-function readFile(params){
-  const {path} = params;
+function readFile(params) {
+  const { path } = params;
   return new Promise((resolve, reject) => {
     fs.readFile(path, 'utf8', (error, data) => {
       error
-        ? reject({result: 'fail', params, error})
-        : resolve({result: 'success', data, params});
+        ? reject({ result: 'fail', params, error })
+        : resolve({ result: 'success', data, params });
     });
   });
 }
