@@ -164,8 +164,11 @@ module.exports = router => {
     // Location station directory pages
     await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }).then(function (markets) {
       markets.data.forEach(market => {
-        urlset.push({ url:
-          [{ loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}` }]
+        urlset.push({
+          url:
+            [{
+              loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}`
+            }]
         });
       });
     });
@@ -174,26 +177,32 @@ module.exports = router => {
     await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }).then(function (genres) {
       genres.data.forEach(genre => {
         if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
-          urlset.push({ url:
-            [{ loc: `${baseUrl}/stations/music/${slugifyService(genre.attributes.name)}` }]
+          urlset.push({
+            url:
+              [{ loc: `${baseUrl}/stations/music/${slugifyService(genre.attributes.name)}` }]
           });
         }
       });
     });
 
     // Station detail pages
-    await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }).then(function (stations) {
-      stations.data.forEach(station => {
-        if (station.attributes.site_slug || station.attributes.callsign || station.id) {
-          urlset.push({ url:
-            [{ loc: `${baseUrl}/${ station.attributes.site_slug || station.attributes.callsign || station.id }/listen` }]
-          });
-        }
+    await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' })
+      .then(function (stations) {
+        stations.data.forEach(station => {
+          if (station.attributes.site_slug || station.attributes.callsign || station.id) {
+            urlset.push({
+              url:
+                [{
+                  loc: `${baseUrl}/${station.attributes.site_slug || station.attributes.callsign ||
+                  station.id}/listen`
+                }]
+            });
+          }
+        });
       });
-    });
 
     res.type('application/xml');
-    return res.send( xml( { urlset }, { declaration: true } ) );
+    return res.send(xml({ urlset }, { declaration: true }));
   });
 
   additionalDataTypes.inject(router, checkAuth);
