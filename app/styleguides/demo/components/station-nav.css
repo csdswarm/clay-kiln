@@ -153,7 +153,7 @@ $caret-margin-right: em(25);
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: $station-secondaryColor;
+          background-color: $station-tertiaryColor;
           border: 0;
           height: em(50);
           width: em(110);
@@ -177,7 +177,7 @@ $caret-margin-right: em(25);
       }
 
       .menu__listen-toggle {
-        background-color: $station-secondaryColor;
+        background-color: $station-tertiaryColor;
         width: em(30);
         height: em(50);
         display: flex;
@@ -225,7 +225,7 @@ $caret-margin-right: em(25);
 
     .station_nav__drawers {
       display: none;
-      background-color: $station-tertiaryColor;
+      background-color: $station-secondaryColor;
       width: 100%;
       flex-direction: column;
       align-items: center;
