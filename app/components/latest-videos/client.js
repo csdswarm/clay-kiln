@@ -55,7 +55,7 @@ class LatestVideos {
     this.onDismount = this.onDismount.bind(this);
     this.onScroll = this.onScroll.bind(this);
     document.addEventListener('latest-videos-mount', this.onMount);
-    document.addEventListener('latest-videos-dismount', this.onMount);
+    document.addEventListener('latest-videos-dismount', this.onDismount);
   }
 
   /**
