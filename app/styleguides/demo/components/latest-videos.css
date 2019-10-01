@@ -132,9 +132,30 @@
       margin-top: em(7);
     }
 
-    .latest-videos__rail {
-      width: widthOnGrid(3, 2);
+    .latest-videos__rail-container {
+      position: relative;
       height: 100%;
+      width: widthOnGrid(3, 2);
+    }
+
+    .latest-videos__rail-foreground {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      &--scroll-more-down {
+        background: linear-gradient(180deg, rgba(255,255,255,0) 80%, rgba(255,255,255,1) 100%);
+      }
+    }
+
+    .latest-videos__rail {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
       overflow-y: auto;
 
       .latest-videos__video {

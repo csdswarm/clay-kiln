@@ -36,7 +36,8 @@
         </div>
       {{else}}
         {{#if (compare @index 1)}}
-          <div class="latest-videos__rail">
+          <div class="latest-videos__rail-container">
+            <div class="latest-videos__rail">
         {{/if}}
         <div class="latest-videos__video latest-videos__video--{{ article.sectionFront }}">
           <a href="{{ article.canonicalUrl }}"
@@ -66,6 +67,8 @@
           </div>
         </div>
         {{#if @last}}
+            </div>
+            <div class="latest-videos__rail-foreground latest-videos__rail-foreground--scroll-more-down"></div>
           </div>
         {{/if}}
       {{/if}}
