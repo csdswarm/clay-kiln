@@ -26,6 +26,7 @@ $drawerSelector: nav-drawer;
     background: transparent;
     border: none;
     height: 100%;
+    width: 100%;
   }
 
   ul {
@@ -290,6 +291,10 @@ $drawerSelector: nav-drawer;
 
         .$(drawerSelector)__sub-nav {
           @mixin inline-block;
+
+          > a {
+            display: block;
+          }
 
           &:first-of-type {
             margin-right: em(100);

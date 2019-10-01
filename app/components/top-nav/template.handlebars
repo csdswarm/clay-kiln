@@ -29,7 +29,13 @@
                   {{#each list as |subnav| }}
                     <div class="nav-drawer__sub-nav">
                       {{#if subnav.list}}
-                        <span class="sub-nav__text">{{subnav.text}}</span>
+                        {{#if subnav.url}}
+                          <a href="{{subnav.url}}">
+                            <span class="sub-nav__text">{{subnav.text}}</span>
+                          </a>
+                        {{ else }}
+                          <span class="sub-nav__text">{{subnav.text}}</span>
+                        {{/if}}
                         <ul class="nav-drawer__sub-nav--columns">
                           {{#each subnav.list as |subnavLink| }}
                             <li>

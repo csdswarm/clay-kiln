@@ -7,6 +7,7 @@
     </header>
     <section class="layout__section-header" data-editable="sectionHeader" v-html="this.componentList('sectionHeader')"></section>
     <section class="layout__content">
+      <section class="content__banner" data-editable="banner" v-html="this.componentList('banner')"></section>
       <section class="content__main" data-editable="main" v-html="this.componentList('main')"></section>
       <section class="content__sidebar" data-editable="tertiary" data-track-zone="tertiary" v-html="this.componentList('tertiary')"></section>
       <section class="content__secondary" data-editable="secondary" data-track-zone="secondary" v-html="this.componentList('secondary')"></section>
