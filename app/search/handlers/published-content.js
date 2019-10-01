@@ -76,12 +76,14 @@ function processContent(obj, components) {
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
   }
 
+  // ensure dateModified is always set
+  obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
 
   return obj;
 }
 
 function save(stream) {
-  const components = [];
+  let components = [];
 
   return stream
     .parallel(1)
@@ -96,6 +98,7 @@ function save(stream) {
     .map(obj => processContent(obj, components))
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
+    .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()
     .flatMap(send)
     .errors(logError)

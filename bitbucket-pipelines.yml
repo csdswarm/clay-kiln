@@ -1,0 +1,24 @@
+image: node:8.9.0-stretch
+
+definitions:
+  steps:
+    - step: &build
+        name: Build Clay & Compile Assets
+        script:
+          - make install
+        artifacts:
+          - app/**
+          - spa/**
+
+pipelines:
+  default:
+    - step: *build
+    - parallel:
+        - step:
+            name: Lint Clay App
+            script:
+              - cd app && npm run eslint
+        - step:
+            name: Lint SPA
+            script:
+              - cd spa && npm run lint -- --no-fix

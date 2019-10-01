@@ -6,6 +6,7 @@ _layouts:
     top: []
     topSection: []
     topAd: []
+    banner: []
     main: main
     secondary: []
     bottomAd: []

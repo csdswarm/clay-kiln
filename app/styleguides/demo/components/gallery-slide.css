@@ -3,15 +3,35 @@
 
 .component--gallery-slide {
   margin: 0 0 em(40) 0;
+
   &.editing {
-    transition: all 200ms linear 250ms;
+    transition: all 100ms linear 250ms;
+
     &:hover {
-      padding: 0 0 0 em(60);
-      outline: em(1) dashed black;
+      padding: em(8, 16) em(8, 16) em(8, 16) em(75);
+      outline: em(1) dashed $black;
       cursor: grab;
+      background: $wildSand;
+
+      >div {
+        outline: 1px dashed $silver;
+        padding: em(4, 16);
+      }
+
+      &:after {
+        content: "gallery slide";
+        text-transform: uppercase;
+        background: $black;
+        position: absolute;
+        top: -em(12, 16);
+        left: em(8, 16);
+        padding: em(2, 16) em(4, 16);
+        @mixin gallery-condensed-after;
+      }
+
       .gallery-slide__text {
         padding-bottom: em(60);
-        transition: all 200ms linear 250ms;
+        transition: all 100ms linear 250ms;
       }
     }
   }
@@ -78,7 +98,7 @@
 .component--gallery-slide.component--gallery-slide__news {
 
   .gallery-slide__number {
-    color: #444444;
+    color: $tundora;
     background: $lightningYellow;
   }
 
@@ -105,5 +125,89 @@
 @media screen and (max-width:480px) {
   .component--gallery-slide .gallery-slide__text {
     margin: em(30) 0 em(30) 0;
+  }
+}
+
+.content__slides--condensed .component--gallery-slide {
+  &.editing {
+    transition: all 100ms linear 50ms;
+    display: flex;
+    align-items: center;
+    background: $alabaster;
+    margin-bottom: em(12, 16);
+    padding: em(8, 16) em(16, 16);
+
+    &:hover {
+      outline: em(1) dashed $black;
+      cursor: grab;
+      padding: em(16, 16) em(24, 16);
+
+      .gallery-slide__text,
+      .slideEmbed {
+        transition: all 100ms linear 250ms;
+      }
+
+      >div {
+        outline: 1px dashed $silver;
+        padding: em(4, 16);
+      }
+
+      &:after {
+        content: "gallery slide";
+        text-transform: uppercase;
+        background: $black;
+        position: absolute;
+        top: -em(12, 16);
+        left: em(8, 16);
+        padding: em(2, 16) em(4, 16);
+        @mixin gallery-condensed-after;
+      }
+    }
+
+    .slideEmbed {
+      max-width: em(96, 16);
+      max-height: em(64, 16);
+      overflow: hidden;
+      margin-right: em(16, 16);
+
+      &:hover {
+        overflow: visible;
+        max-width: em(384, 16);
+        max-height: em(192, 16);
+      }
+    }
+
+    .slideText.gallery-slide__text {
+      display: flex;
+      align-items: center;
+      margin-top: 0;
+      width: 100%;
+      justify-content: space-around;
+
+      .gallery-slide__titlewrapper {
+        margin: 0;
+        flex: 0 0 50%;
+        display: flex;
+        align-items: center;
+
+        .gallery-slide__number {
+          min-width: em(25, 18);
+        }
+
+        .gallery-slide__title {
+          padding-right: em(16, 16);
+          @mixin gallery-condensed-slide-title;
+          line-height: em(20, 16);
+        }
+      }
+
+      div[data-editable="description"] {
+        flex: 0 0 50%;
+
+        p {
+          margin: 0;
+        }
+      }
+    }
   }
 }

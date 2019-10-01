@@ -48,3 +48,4 @@ _components:
     editorialFeeds: {}
     isContentFromAP: false
     noIndexNoFollow: false
+    toggleEditorCondensedSlidesView: true

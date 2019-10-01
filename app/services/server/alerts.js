@@ -76,8 +76,9 @@ const db = require('../server/db'),
    * Add routes for alerts
    *
    * @param {object} app
+   * @param {function} checkAuth
    */
-  inject = (app) => {
+  inject = (app, checkAuth) => {
     db.ensureTableExists('alert');
     /**
      * Get the current alerts for a station
@@ -115,7 +116,7 @@ const db = require('../server/db'),
     /**
      * Add a new alert
      */
-    app.post('/alerts', async (req, res) => {
+    app.post('/alerts', checkAuth, async (req, res) => {
 
       const alert = req.body,
         key = `${CLAY_SITE_HOST}/_alert/${uuidV4()}`,
@@ -138,7 +139,7 @@ const db = require('../server/db'),
     /**
      * Update an alert
      */
-    app.put('/alerts', async (req, res) => {
+    app.put('/alerts', checkAuth, async (req, res) => {
       const {id: key, ...alert} = req.body,
         validation = await validate(key, alert);
 

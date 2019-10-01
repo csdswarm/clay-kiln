@@ -84,6 +84,16 @@
             padding: em(5)
         }
     }
+
+    .alerts-manager-page-list-item__link {
+        font-size: em(14);
+        
+        > a {
+            font-style: italic;
+            color: inherit;
+            text-decoration: inherit;
+        }
+    }
 }
 
 .page-list-item__dropdown {

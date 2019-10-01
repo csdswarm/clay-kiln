@@ -1,6 +1,8 @@
 'use strict';
 
 const rest = require('../universal/rest'),
+  promises = require('../universal/promises'),
+  log = require('../universal/log').setup({ file: __filename }),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
   ioredis = require('ioredis'),
@@ -12,6 +14,7 @@ const rest = require('../universal/rest'),
     HOUR: 3600000,
     DAY: 86400000
   },
+  API_TIMEOUT = 6000,
   httpRegEx = /^https?:\/\//,
 
   /**
@@ -68,32 +71,47 @@ const rest = require('../universal/rest'),
   get = async (route, params, validate, options = {} ) => {
     const dbKey = createKey(route, params),
       validateFn = validate || defaultValidation(route),
-      requestEndpoint = createEndpoint(route, params);
+      requestEndpoint = createEndpoint(route, params),
+      getFreshData = async () => {
+        try {
+          // return api response if it's fast enough. if not, it might still freshen the cache
+          return await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), API_TIMEOUT);
+        } catch (e) {
+          // request failed, validation failed, or timeout. return empty object
 
-    options.ttl = options.ttl || TTL.DEFAULT;
+          log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
 
-    // could add a check to see if ttl is set to 0 so we don't have cache misses that we know are going to miss
+          return {};
+        }
+      };
+
+    if (typeof options.ttl !== 'number') options.ttl = TTL.DEFAULT;
+
     try {
+      // if there's no ttl, skip the cache miss and try to fetch new data
+      if (!options.ttl) {
+        return await getFreshData();
+      }
+
       const cached = await redis.get(dbKey),
         data = JSON.parse(cached);
 
-      if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
-        try {
-          return await getAndSave(requestEndpoint, dbKey, validateFn, options);
-        } catch (e) {
-        }
+      // if there is no data in cache, wait on fresh data
+      if (!cached) {
+        return await getFreshData();
       }
-      // If API errors out or within TTL, return existing data
+
+      if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
+        // if the data is old, fire off a new api request to get it up to date, but don't wait on it
+        getAndSave(requestEndpoint, dbKey, validateFn, options)
+          .catch(() => {});
+      }
+
+      // always return cached if it's available
       data.response_cached = true;
       return data;
     } catch (e) {
-      try {
-        // if an issue with getting the key, get the data
-        return await getAndSave(requestEndpoint, dbKey, validateFn, options);
-      } catch (e) {
-        // If API errors out and we don't have stale data, return empty object
-        return {};
-      }
+      return await getFreshData();
     }
   },
   /**
@@ -116,11 +134,8 @@ const rest = require('../universal/rest'),
 
         // added to allow cache to be bypassed
         if (ttl > 0) {
-          try {
-            redis.set(dbKey, JSON.stringify(response));
-          } catch (e) {
-            // still return the response even if setting cache failed
-          }
+          redis.set(dbKey, JSON.stringify(response))
+            .catch(() => {});
         }
 
         return response;

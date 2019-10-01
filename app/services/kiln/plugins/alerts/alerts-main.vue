@@ -42,7 +42,10 @@
                     >
                         <span class="alerts-manager__page-list-item__start">{{alert.start | formatDate}}</span>
                         <span class="alerts-manager__page-list-item__end">{{alert.end | formatDate}}</span>
-                        <span class="alerts-manager__page-list-item__message">{{alert.message}}</span>
+                        <div class="alerts-manager__page-list-item__message">
+                            <div>{{alert.message}}</div>
+                            <div class="alerts-manager-page-list-item__link" v-if="alert.link">Link: <a :href="alert.link">{{alert.link}}</a></div>
+                        </div>
                         <span class="alerts-manager__page-list-item__icons">
                             <ui-icon-button 
                                 icon="error" 
@@ -76,14 +79,27 @@
         </ui-confirm>
         <ui-modal
             :title="heading"
+            @close="clearModal"
             ref="alertModal"
         >
                 <div>
                     <ui-textbox
                         label="Message"
                         multi-line
+
+                        error="Please limit alert to 140 characters or less"
+                        :maxlength="140"
+                        :invalid="message.length > 140"
                         
                         v-model="message"
+                    ></ui-textbox>
+                    <ui-textbox
+                        label="Link"
+                        type="url"
+                        :error="validLinkError"
+                        :invalid="!validLink"
+                        
+                        v-model="link"
                     ></ui-textbox>
                     <div class="alerts-manager__time-picker">
                         <ui-datepicker
@@ -131,6 +147,7 @@
 <script>
     const axios = require('axios');
     const moment = require('moment');
+    const { isUrl } = require('../../../universal/utils');
     const { 
         UiButton, 
         UiCheckbox, 
@@ -150,7 +167,7 @@
      * @returns {{cb: *}}
      */
     function cb(){
-      return {cb:(Math.random()+'').replace(/^0\./,'')};
+      return {cb:Date.now()};
     }
 
     export default {
@@ -161,6 +178,7 @@
                 editMode: false,
                 endDate: '',
                 endTime: '',
+                link: '',
                 loading: false,
                 message: '',
                 startDate: '',
@@ -176,7 +194,8 @@
                 }, {
                     id: 'station',
                     name: 'Station'
-                }]
+                }],
+                validLinkError: ''
             }
         },
         /** Load current alerts when component is created */
@@ -202,7 +221,15 @@
             },
             /** True if all required fields are entered */
             validForm() {
-                return this.message && this.startDate && this.startTime && this.endDate && this.endTime;
+                return this.message && this.startDate && this.startTime && this.endDate && this.endTime && !moment(this.start).isSameOrAfter(this.end) && this.validLink;
+            },
+            validLink() {
+                if (this.link && !isUrl(this.link)) {
+                    this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
+                    return false;
+                }
+                this.validLinkError = '';
+                return true;          
             }
         },
         methods: {
@@ -213,18 +240,20 @@
                 const {
                     breaking,
                     message,
+                    link,
                     start,
                     end,
                     station,
                     selectedAlert
                 } = this;
+                const alert = {breaking, link, message, start, end, station, params: cb()};
 
                 try {
                     if (this.editMode && selectedAlert) {
-                        await axios.put('/alerts', {...selectedAlert, breaking, message, start, end, station, params:cb()})
+                        await axios.put('/alerts', {...selectedAlert, ...alert})
                         this.editMode = false;
                     } else {
-                        await axios.post('/alerts', {breaking, message, start, end, station, params: cb()});
+                        await axios.post('/alerts', alert);
                     }
                     await this.loadAlerts();
                     this.closeModal('alertModal');
@@ -242,6 +271,7 @@
             clearModal() {
                 this.breaking = false;
                 this.message = '';
+                this.link = '';
                 this.endDate = '';
                 this.endTime = '';
                 this.startDate = '';
@@ -307,6 +337,7 @@
 
                 this.breaking = alert.breaking;
                 this.message = alert.message;
+                this.link = alert.link;
                 this.startDate = start.toDate();
                 this.startTime = start.format('HH:mm:ss');
                 this.endDate = end.toDate();
