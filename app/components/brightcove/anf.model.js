@@ -9,7 +9,7 @@ module.exports = function (ref, data) {
     role: 'video',
     URL: data.video.m3u8Source || '',
     stillURL: data.video.imageUrl || '',
-    layout: 'brightcoveLayout',
+    layout: 'videoLayout',
     format: 'html'
   };
 };

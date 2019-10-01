@@ -167,39 +167,6 @@ const log = require('../log').setup({ file: __filename }),
     }
   },
   /**
-   * Build app download CTA link in ANF
-   *
-   * @returns {Object}
-  */
-  appDownloadCTA = () => {
-    return {
-      role: 'aside',
-      style: 'asideStyle',
-      layout: 'asideLayout',
-      components: [
-        {
-          role: 'body',
-          text: 'Download the RADIO.COM app now',
-          style: 'appDownloadCTALinkStyle',
-          layout: 'appDownloadCTALinkLayout',
-          textStyle: 'appDownloadCTALinkTextStyle',
-          additions: [
-            {
-              type: 'link',
-              URL: 'https://app.radio.com/apple-news-download'
-            }
-          ]
-        },
-        {
-          role: 'image',
-          URL: 'bundle://arrow.png',
-          style: 'appDownloadCTAArrowStyle',
-          layout: 'appDownloadCTAArrowLayout'
-        }
-      ]
-    };
-  },
-  /**
    * Get apple news format of each content ref
    *
    * @param {Array} content
@@ -207,7 +174,7 @@ const log = require('../log').setup({ file: __filename }),
    *
    * @returns {Promise|Array}
   */
-  getContent = async (content, addAppDLLink = false) => {
+  getContent = async (content) => {
     const contentANF = [];
 
     for (const contentInstance of content) {
@@ -225,10 +192,6 @@ const log = require('../log').setup({ file: __filename }),
           })
           .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf: ${e}`));
       }
-    }
-
-    if (addAppDLLink) {
-      contentANF.splice(1, 0, appDownloadCTA());
     }
 
     return contentANF;
@@ -362,7 +325,7 @@ const log = require('../log').setup({ file: __filename }),
           components: await getContent(data.slides)
         }] : [],
         anfBodyContent(await getContent(data.content), data.sectionFront),
-        require('./component-footer.json')
+        require('./component-footer.js/index.js')
       ]
     };
   };
