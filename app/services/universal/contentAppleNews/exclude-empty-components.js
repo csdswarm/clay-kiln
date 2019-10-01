@@ -13,7 +13,7 @@ const isValidComponent = component => {
   hasChildComponents = ({ components }) => Array.isArray(components),
 
   /**
-   * Returns a new list excluding empty components (text is null or empty string).
+   * Returns a component tree excluding empty components (text is null or empty string).
    * This is needed because Apple news format does not allow text components
    * that have a `null` or `''` value.
    *

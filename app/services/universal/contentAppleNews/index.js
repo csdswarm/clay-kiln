@@ -21,6 +21,7 @@ const log = require('../log').setup({ file: __filename }),
   { getComponentName, getComponentInstance } = require('clayutils'),
   excludeEmptyComponents = require('./exclude-empty-components'),
   formatLocalDate = require('clayhandlebars/helpers/time/formatLocalDate'),
+  APP_DOWNLOAD_URL = 'https://app.radio.com/apple-news-download',
   ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]',
   RESPONSIVE_COLUMN_CONDITIONS = {
     IPHONE: {
@@ -69,7 +70,7 @@ const log = require('../log').setup({ file: __filename }),
    * @returns {string}
   */
   formatBylines = (bylines, data, locals) => {
-    const formattedBylines = bylines.reduce((newFormattedBylines, byline) => {
+    const formattedBylines = bylines.map((byline) => {
       const authorsListPrefix = byline.names.length
           ? _upperFirst(byline.prefix)
           : '',
@@ -88,11 +89,13 @@ const log = require('../log').setup({ file: __filename }),
           .map(source => `<span>${source.text}</span>`)
           .join(', ');
 
-      newFormattedBylines.push(
-        `${authorsListPrefix}${formattedAuthors}, ${formattedSources}`
-      );
-      return newFormattedBylines;
-    }, []);
+      return [
+        `${authorsListPrefix}${formattedAuthors}`,
+        formattedSources
+        // either credit sources might be missing, so this prevents an unecessary comma
+      ].filter(content => content.trim().length > 0 )
+        .join(', ');
+    });
 
     return formattedBylines.join('<br />');
   },
@@ -266,6 +269,24 @@ const log = require('../log').setup({ file: __filename }),
       require('../anf-test-file-generator')(ref);
     }
   },
+  anfBodyContent = (anfComponents, sectionFront) => {
+    const interstitialDownloadLink = {
+      role: 'body',
+      text: `<a href="${APP_DOWNLOAD_URL}"><span data-anf-textstyle="hyperlinkStyle">Get the RADIO.COM app now</span> <span data-anf-textstyle="${sectionCategoryStyles[sectionFront]}">▸</span></a>`,
+      format: 'html',
+      layout: 'bodyItemLayout'
+    };
+
+    return {
+      role: 'section',
+      layout: 'bodyLayout',
+      components: [
+        ...anfComponents.slice(0, 1),
+        interstitialDownloadLink,
+        ...anfComponents.slice(1)
+      ]
+    };
+  },
   getContentANF = async function (ref, data, locals) {
     const tags = await getTags(data.tags),
       lede = await getLede(data.lead) || [],
@@ -340,11 +361,7 @@ const log = require('../log').setup({ file: __filename }),
           layout: 'bodyLayout',
           components: await getContent(data.slides)
         }] : [],
-        {
-          role: 'section',
-          layout: 'bodyLayout',
-          components: await getContent(data.content)
-        },
+        anfBodyContent(await getContent(data.content), data.sectionFront),
         require('./component-footer.json')
       ]
     };

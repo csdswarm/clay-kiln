@@ -9,6 +9,11 @@
   documentStyle:
     backgroundColor: "#f6f6f6"
   componentTextStyles:
+    default-body:
+      textAlignment: "left"
+      fontName: "Avenir-Book"
+      fontSize: 18
+      textColor: "#000"
     titleStyle:
       textAlignment: "left"
       fontName: "AvenirNext-Bold"
@@ -27,12 +32,6 @@
       fontSize: 14
       lineHeight: 17
       textColor: "#000"
-    bodyStyle:
-      textAlignment: "left"
-      fontName: "Avenir-Book"
-      fontSize: 18
-      lineHeight: 28
-      textColor: "#000"
     slideDescriptionStyle:
       fontSize: 15
       lineHeight: 20
@@ -40,6 +39,13 @@
   componentStyles:
     headerStyle: {}
   textStyles:
+    default-tag-a:
+      fontName: "AvenirNext-Bold"
+      textColor: "#000"
+    # must be set separately for underline to work
+    hyperlinkStyle:
+      underline:
+        color: "#000"
     metaStyle:
       textColor: "#777"
     category1Style:
@@ -59,6 +65,7 @@
       fontName: "Avenir-Black"
       textColor: "purple"
       fontSize: 14
+      lineHeight: 14
   componentLayouts:
     headerLayout:
       columnStart: 0
@@ -120,23 +127,3 @@
     slideDescriptionLayout:
       margin:
         bottom: 10
-
-# appDownloadCTALinkStyle
-# appDownloadCTALinkLayout
-# appDownloadCTALinkTextStyle
-# appDownloadCTAArrowStyle
-# appDownloadCTAArrowLayout
-# footerStyle
-# footerLayout
-# logoLayout
-# logoStyle
-# footerBodyLayout
-# footerBodyStyle
-# footerBodyTextStyle
-# footerCTABtnContainerStyle
-# footerCTABtnContainerLayout
-# footerCTABtnMailStyle
-# footerCTABtnMailLayout
-# footerCTABtnLayout
-# footerCTABtnStyle
-# footerCTABtnTextStyle

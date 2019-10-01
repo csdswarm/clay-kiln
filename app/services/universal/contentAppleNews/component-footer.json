@@ -23,7 +23,7 @@
       }
     },
     {
-      "role": "text",
+      "role": "body",
       "text": "Get the latest news and alerts delivered right to your inbox",
       "textStyle": {
         "fontSize": 18,
