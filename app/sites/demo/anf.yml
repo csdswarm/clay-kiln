@@ -55,6 +55,10 @@
     publishTimeStyle:
       fontSize: 12
       textColor: "#777"
+    footerCTAStyle:
+      fontName: "Avenir-Black"
+      textColor: "purple"
+      fontSize: 14
   componentLayouts:
     headerLayout:
       columnStart: 0
@@ -116,3 +120,23 @@
     slideDescriptionLayout:
       margin:
         bottom: 10
+
+# appDownloadCTALinkStyle
+# appDownloadCTALinkLayout
+# appDownloadCTALinkTextStyle
+# appDownloadCTAArrowStyle
+# appDownloadCTAArrowLayout
+# footerStyle
+# footerLayout
+# logoLayout
+# logoStyle
+# footerBodyLayout
+# footerBodyStyle
+# footerBodyTextStyle
+# footerCTABtnContainerStyle
+# footerCTABtnContainerLayout
+# footerCTABtnMailStyle
+# footerCTABtnMailLayout
+# footerCTABtnLayout
+# footerCTABtnStyle
+# footerCTABtnTextStyle

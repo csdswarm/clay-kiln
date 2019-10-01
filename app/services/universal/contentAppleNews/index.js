@@ -6,18 +6,20 @@ let primaryVideo = {
   URL: '',
   stillURL: ''
 };
-const log = require('../../services/universal/log').setup({ file: __filename }),
+const log = require('../log').setup({ file: __filename }),
   sectionCategoryStyles = {
     music: 'category1Style',
     sports: 'category2Style',
     news: 'category3Style'
   },
-  slugify = require('../../services/universal/slugify'),
+  slugify = require('../slugify'),
   _isObject = require('lodash/isObject'),
   _get = require('lodash/get'),
+  _upperFirst = require('lodash/upperFirst'),
   _flattenDeep = require('lodash/flattenDeep'),
-  { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
+  { getComponentInstance: getCompInstanceData } = require('../../server/publish-utils'),
   { getComponentName, getComponentInstance } = require('clayutils'),
+  excludeEmptyComponents = require('./exclude-empty-components'),
   formatLocalDate = require('clayhandlebars/helpers/time/formatLocalDate'),
   ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]',
   RESPONSIVE_COLUMN_CONDITIONS = {
@@ -42,17 +44,21 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * @param {string} locals.site.host
    * @returns {string}
   */
-  getCanonicalURL = async (refInstance, { sectionFront, secondarySectionFront, slug }, { site: { protocol, host } }) => {
-    return getCompInstanceData(`${ host }/_pages/${ refInstance }`).then(({ customUrl }) => {
-      if (customUrl) return customUrl;
-      else return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
-        `${ secondarySectionFront }/` : '' }${ slug }`;
-    }).catch(e => {
-      log('error', `Error getting page data: ${ e }`);
+  getCanonicalURL = async (refInstance, { sectionFront, secondarySectionFront, slug, contentType }, { site: { protocol, host } }) => {
+    return getCompInstanceData(`${ host }/_pages/${ refInstance }`)
+      .then(({ customUrl }) => {
+        if (customUrl) return customUrl;
+        else return `${ protocol }://${ host }/${ sectionFront }/${
+          secondarySectionFront ? `${ secondarySectionFront }/` : '' }${
+          contentType === 'gallery' ? 'gallery/' : '' }${ slug }`;
+      })
+      .catch(e => {
+        log('error', `Error getting page data: ${ e }`);
 
-      return `${ protocol }://${ host }/${ sectionFront }/${ secondarySectionFront ?
-        `${ secondarySectionFront }/` : '' }${ slug }`;
-    });
+        return `${ protocol }://${ host }/${ sectionFront }/${
+          secondarySectionFront ? `${ secondarySectionFront }/` : '' }${
+          contentType === 'gallery' ? 'gallery/' : '' }${ slug }`;
+      });
   },
   /**
    * Format byline with author and sources
@@ -65,7 +71,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
   formatBylines = (bylines, data, locals) => {
     const formattedBylines = bylines.reduce((newFormattedBylines, byline) => {
       const authorsListPrefix = byline.names.length
-          ? `${byline.prefix.charAt(0).toUpperCase() + byline.prefix.slice(1)} `
+          ? _upperFirst(byline.prefix)
           : '',
         formattedAuthors = byline.names
           .map((name) => {
@@ -83,7 +89,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
           .join(', ');
 
       newFormattedBylines.push(
-        `${authorsListPrefix}${formattedAuthors}${formattedSources}`
+        `${authorsListPrefix}${formattedAuthors}, ${formattedSources}`
       );
       return newFormattedBylines;
     }, []);
@@ -158,12 +164,47 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     }
   },
   /**
+   * Build app download CTA link in ANF
+   *
+   * @returns {Object}
+  */
+  appDownloadCTA = () => {
+    return {
+      role: 'aside',
+      style: 'asideStyle',
+      layout: 'asideLayout',
+      components: [
+        {
+          role: 'body',
+          text: 'Download the RADIO.COM app now',
+          style: 'appDownloadCTALinkStyle',
+          layout: 'appDownloadCTALinkLayout',
+          textStyle: 'appDownloadCTALinkTextStyle',
+          additions: [
+            {
+              type: 'link',
+              URL: 'https://app.radio.com/apple-news-download'
+            }
+          ]
+        },
+        {
+          role: 'image',
+          URL: 'bundle://arrow.png',
+          style: 'appDownloadCTAArrowStyle',
+          layout: 'appDownloadCTAArrowLayout'
+        }
+      ]
+    };
+  },
+  /**
    * Get apple news format of each content ref
    *
    * @param {Array} content
+   * @param {Boolean} [addAppDLLink]
+   *
    * @returns {Promise|Array}
   */
-  getContent = async content => {
+  getContent = async (content, addAppDLLink = false) => {
     const contentANF = [];
 
     for (const contentInstance of content) {
@@ -181,6 +222,10 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
           })
           .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf: ${e}`));
       }
+    }
+
+    if (addAppDLLink) {
+      contentANF.splice(1, 0, appDownloadCTA());
     }
 
     return contentANF;
@@ -218,7 +263,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     const isDev = process.env.NODE_ENV === 'local';
 
     if (isDev) {
-      require('./anf-test-file-generator')(ref);
+      require('../anf-test-file-generator')(ref);
     }
   },
   getContentANF = async function (ref, data, locals) {
@@ -299,12 +344,15 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
           role: 'section',
           layout: 'bodyLayout',
           components: await getContent(data.content)
-        }
+        },
+        require('./component-footer.json')
       ]
     };
   };
 
 module.exports = {
   isNotHTMLEmbed: isNotHTMLEmbed,
-  contentANF: getContentANF
+  contentANF: async (...args) => excludeEmptyComponents(
+    await getContentANF(...args)
+  )
 };

@@ -1,15 +1,17 @@
 'use strict';
 
+const filePath = './apple-news-format/preview/article.json';
 let isFetching = false,
   writeArticleFile = (res) => {
     if (typeof window !== 'undefined') {
       return;
     }
 
-    const fs = require('fs');
+    const fs = require('fs-extra');
 
     try {
-      fs.writeFileSync('./apple-news-format/preview/article.json', JSON.stringify(res, null, 2));
+      fs.ensureFileSync(filePath);
+      fs.writeFileSync(filePath, JSON.stringify(res, null, 2));
       console.log('[ANF TEST FILE SUCCESS]');
     } catch (error) {
       console.error('[ANF TEST FILE ERROR]', error);
