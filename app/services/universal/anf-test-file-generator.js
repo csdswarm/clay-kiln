@@ -2,7 +2,12 @@
 
 const filePath = './apple-news-format/preview/article.json';
 let isFetching = false,
-  writeArticleFile = (res) => {
+  /**
+   * Writes the anf component tree to disk
+   *
+   * @param {Object} anfComponentTree
+   */
+  writeArticleFile = (anfComponentTree) => {
     if (typeof window !== 'undefined') {
       return;
     }
@@ -11,21 +16,27 @@ let isFetching = false,
 
     try {
       fs.ensureFileSync(filePath);
-      fs.writeFileSync(filePath, JSON.stringify(res, null, 2));
+      fs.writeFileSync(filePath, JSON.stringify(anfComponentTree, null, 2));
       console.log('[ANF TEST FILE SUCCESS]');
     } catch (error) {
       console.error('[ANF TEST FILE ERROR]', error);
     }
   };
 
-module.exports = function generateArticleFileForAppleNewsPreview(ref) {
+/**
+ * Writes an article.json file using the anf result from a component.
+ * This is only used for development purposes.
+ *
+ * @param {String} clayComponentRef
+ */
+module.exports = function generateArticleFileForAppleNewsPreview(clayComponentRef) {
   // to prevent an infinite fetch loop from happening, we don't do any fetching while there is a pending request
   if (isFetching) {
     return;
   }
 
   const fetch = require('isomorphic-fetch'),
-    articleAnfDataUrl = `http://${ref}.anf?config=true`;
+    articleAnfDataUrl = `http://${clayComponentRef}.anf?config=true`;
 
   isFetching = true;
 
