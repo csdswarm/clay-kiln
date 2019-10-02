@@ -81,16 +81,6 @@
       columnStart: 0
       margin:
         top: 30
-    tweetLayout:
-      columnStart: 0
-      margin:
-        top: 30
-        bottom: 30
-    videoLayout:
-      columnStart: 0
-      margin:
-        top: 30
-        bottom: 30
     captionLayout:
       margin:
         top: 10

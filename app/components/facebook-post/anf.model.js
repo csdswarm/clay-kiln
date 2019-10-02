@@ -8,8 +8,7 @@ module.exports = function (ref, data) {
   return {
     role: 'facebook_post',
     URL: data.url,
-    layout: 'facebookPostLayout',
-    style: 'facebookPostStyle',
+    layout: 'bodyItemLayout',
     format: 'html'
   };
 };

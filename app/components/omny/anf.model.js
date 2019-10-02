@@ -8,8 +8,7 @@ module.exports = function (ref, data) {
   return {
     role: 'audio',
     URL: `${ data.clipSrc }.mp3`,
-    layout: 'videoLayout',
-    style: 'omnyStyle',
+    layout: 'bodyItemLayout',
     format: 'html'
   };
 };

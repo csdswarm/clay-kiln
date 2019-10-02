@@ -8,7 +8,7 @@ module.exports = function (ref, data) {
   return {
     role: 'embedvideo',
     URL: `https://www.youtube.com/embed/${ data.contentId }`,
-    layout: 'videoLayout',
+    layout: 'bodyItemLayout',
     format: 'html'
   };
 };
