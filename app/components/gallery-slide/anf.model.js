@@ -77,7 +77,7 @@ module.exports = async function (ref, data) {
     role: 'container',
     layout: 'slideGalleryItemLayout',
     components: [
-      ...await Promise.all(data.slideEmbed.map(getSlideEmbed)),
+      await getSlideEmbed(data.slideEmbed[0]),
       titleComponent,
       await getAnfSlideDescription(descRef)
     ]
