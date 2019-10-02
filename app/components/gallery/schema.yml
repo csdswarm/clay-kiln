@@ -89,9 +89,12 @@ seoDescription:
   _has:
     input: text
     type: multi-line
+    rows: 4
     help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 200 characters
     validate:
       required: true
+      min: 140
+      max: 250
 feedImgUrl:
   _label: Recirculation Image
   _publish: feedImgUrl
