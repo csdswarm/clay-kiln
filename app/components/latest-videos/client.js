@@ -72,7 +72,7 @@ class LatestVideos {
   onDismount() {
     this.vc.dom.rail.removeEventListener('scroll', this.onScroll);
     document.removeEventListener('latest-videos-mount', this.onMount);
-    document.removeEventListener('latest-videos-dismount', this.onMount);
+    document.removeEventListener('latest-videos-dismount', this.onDismount);
   }
 
   /**
