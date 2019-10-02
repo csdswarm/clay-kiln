@@ -44,7 +44,7 @@ a header indicates such.
 <script>
 import _ from 'lodash';
 import axios from 'axios';
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import StationSelect from '../../shared-vue-components/station-select.vue'
 import {
   editExt,
@@ -75,7 +75,7 @@ export default {
   },
   computed: Object.assign(
     {},
-    mapState(StationSelect.storeNs, ['selectedStationSlug']),
+    mapGetters(StationSelect.storeNs, ['selectedStation']),
     {
       anyPagesExist() {
         return !!(_.get(this.$store, 'state.lists[new-pages].items', []).length);
@@ -129,7 +129,7 @@ export default {
         { data: newPage } = await axios.post(
           uriToUrl(`${prefix}/create-page`),
           {
-            stationSlug: this.selectedStationSlug,
+            stationSlug: this.selectedStation.slug,
             pageBody
           },
           { withCredentials: true }

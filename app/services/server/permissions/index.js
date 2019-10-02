@@ -17,7 +17,7 @@ const express = require('express'),
   hasPermissions = require('./has-permissions'),
   stationUtils = require('../station-utils'),
   { getComponentData } = require('../db'),
-  addEndpoints = require('./add-endpoints');
+  attachToLocals = require('./attach-to-locals');
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -83,7 +83,7 @@ function userPermissionRouter() {
   // we need access to 'res' in createPage so a proper 400 error can be returned
   //   when a bad station slug is sent.
   hasPermissions.createPage(userPermissionRouter);
-  addEndpoints.newPageStations(userPermissionRouter);
+  attachToLocals.stationsIHaveAccessTo(userPermissionRouter);
 
   return userPermissionRouter;
 }

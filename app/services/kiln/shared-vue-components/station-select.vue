@@ -1,24 +1,23 @@
 <template>
-  <div class="station-select">
-    <div v-if="stationSelectItems.length === 1"
-      class="station-select__label">
+  <div v-if="!hasManyStations"
+    class="station-select station-select-label">
 
-      Station: {{ selectedStation.label }}
-    </div>
-    <ui-select v-else-if="stationIsSelectable"
-      class="station-select__ui-select"
-      has-search
-      label="Select a station"
-      placeholder="Search a station"
-      :options="stationSelectItems"
-      v-model="selectedStation"
-    ></ui-select>
+    Station: {{ selectedStation.label || '&lt;no station&gt;' }}
   </div>
+
+  <ui-select v-else
+    class="station-select station-select-input"
+    has-search
+    label="Select a station"
+    placeholder="Search a station"
+    :options="items"
+    v-model="selectedItem"
+  ></ui-select>
 </template>
 
 <script>
 import _ from 'lodash';
-import axios from 'axios';
+import { mapGetters, mapState } from 'vuex';
 
 const { UiSelect } = window.kiln.utils.components,
   // the national station doesn't have a slug
@@ -29,62 +28,107 @@ const { UiSelect } = window.kiln.utils.components,
     // important!
     namespaced: true,
     state: {
-      selectedStationSlug: ''
+      // _items and _selectedItem should not be consumed by other components
+      _items: [],
+      _selectedItem: {}
+    },
+    getters: {
+      hasManyStations(state) {
+        return state._items.length > 1;
+      },
+      isLabel(_state, getters) {
+        return !getters.hasManyStations;
+      },
+      selectedStation(state) {
+        return state._selectedItem.value;
+      }
     },
     mutations: {
-      setSelectedStationSlug(state, slug) {
-        state.selectedStationSlug = slug
+      _setItems(state, val) {
+        state._items = val
+      },
+      _setSelectedItem(state, val) {
+        state._selectedItem = val
       }
     }
   };
 
 export default {
   name: 'station-select',
+  storeNs,
+  props: {
+    initialSelectedSlug: String,
+    initialSelectedCallsign: String
+  },
   async created() {
+    console.log('created');
     this.$store.registerModule(storeNs, store);
 
-    const { data: slugToNameAndCallsign } = await axios.get('/new-page-stations', { withCredentials: true })
-
-    this.stationSelectItems = _.chain(slugToNameAndCallsign)
-      .map(({ name, callsign }, slug) => {
-        return {
-          // the national station callsign is for coding purposes afik and would
-          //   probably confuse editors.
-          label: callsign === 'NATL-RC'
-            ? name
-            : `${name} | ${callsign}`,
-          value: slug
-        };
-      })
-      .sortBy('label')
-      .value();
-
-    const selectedStation = slugToNameAndCallsign[nationalSlug]
-      ? this.stationSelectItems.find(selectItem => selectItem.value === nationalSlug)
-      : this.stationSelectItems[0];
-
-    this.selectedStation = selectedStation || '';
+    this.stationsBySlug = window.kiln.locals.stationsIHaveAccessTo;
+    this.initItems();
+    this.initSelectedItem();
   },
   data() {
     return {
-      stationSelectItems: [],
-      selectedStation: {}
+      stationsBySlug: {}
     };
-  },
-  watch: {
-    selectedStation({ value }) {
-      this.$store.commit(`${storeNs}/setSelectedStationSlug`, value);
-    }
   },
   components: {
     'ui-select': UiSelect
   },
-  computed: {
-    stationIsSelectable() {
-      return this.stationSelectItems.length > 1
+  methods: {
+    initItems() {
+      const items = _.chain(this.stationsBySlug)
+        .map((station, slug) => {
+          const { callsign, name } = station;
+
+          return {
+            // the national station callsign is for coding purposes afik and would
+            //   probably confuse editors.
+            label: callsign === 'NATL-RC'
+              ? name
+              : `${name} | ${callsign}`,
+            value: station
+          };
+        })
+        .sortBy('label')
+        .value();
+
+      this.$store.commit(`${storeNs}/_setItems`, items);
+    },
+
+    initSelectedItem() {
+      let searchPredicate = this.stationsBySlug[nationalSlug]
+        ? item => item.value.slug === nationalSlug
+        // otherwise just get the first one
+        : item => item;
+
+      if (this.initialSelectedSlug) {
+        searchPredicate = item => item.value.slug === this.initialSelectedSlug;
+      } else if (this.initialSelectedCallsign) {
+        searchPredicate = item => item.value.callsign === this.initialSelectedCallsign;
+      }
+
+      this.$store.commit(`${storeNs}/_setSelectedItem`, this.items.find(searchPredicate) || {});
     }
   },
-  storeNs
+  computed: Object.assign(
+    {},
+    mapState(storeNs, {
+      items: state => state._items
+    }),
+    mapGetters(storeNs, ['hasManyStations']),
+    {
+      selectedItem: {
+        get() {
+          return this.$store.state[storeNs]._selectedItem;
+        },
+        set(item) {
+          this.$store.commit(`${storeNs}/_setSelectedItem`, item);
+        }
+      }
+    }
+  )
 }
 
 </script>

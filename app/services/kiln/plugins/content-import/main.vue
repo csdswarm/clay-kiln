@@ -28,7 +28,8 @@
   import urlParse from 'url-parse';
   import queryService, { onePublishedArticleByUrl } from '../../../client/query';
   import StationSelect from '../../shared-vue-components/station-select.vue'
-  import { mapState } from 'vuex'
+  import { mapGetters } from 'vuex'
+  import { ensureStartsWith } from '../../../universal/utils'
 
   const UiIconButton = window.kiln.utils.components.UiIconButton;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
@@ -44,7 +45,7 @@
         loading: false
       }
     },
-    computed: mapState(StationSelect.storeNs, ['selectedStationSlug']),
+    computed: mapGetters(StationSelect.storeNs, ['selectedStation']),
     methods: {
       /**
        * search for an existing url and return one if found
@@ -72,9 +73,7 @@
         // ensure a protocol and remove trailing slashes from url
         const url =  `${ includesProtocol ? '' : 'https://' }${ this.contentUrl.replace(/\/$/, '') }`;
         const { host, pathname } = urlParse(url, {});
-        const contentPath = this.selectedStationSlug
-          ? '/' + this.selectedStationSlug + pathname
-          : pathname;
+        const contentPath = ensureStartsWith('/', this.selectedStation.slug + pathname);
 
         try {
           //see if the item already exists
@@ -86,7 +85,7 @@
             this.errorUrl = existing;
           } else {
             const [result] = await rest.post('/import-content', {
-              stationSlug: this.selectedStationSlug,
+              stationSlug: this.selectedStation.slug,
               domain: host,
               filter: { slug: pathname }
             });

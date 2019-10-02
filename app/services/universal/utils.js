@@ -188,17 +188,31 @@ function debugLog(...args) {
   }
 }
 
-module.exports.isFieldEmpty = isFieldEmpty;
-module.exports.has = has;
-module.exports.replaceVersion = replaceVersion;
-module.exports.isUrl = isUrl;
-module.exports.uriToUrl = uriToUrl;
-module.exports.urlToUri = urlToUri;
-module.exports.formatStart = formatStart;
-module.exports.toTitleCase = toTitleCase;
-module.exports.getSiteBaseUrl = getSiteBaseUrl;
-module.exports.isPublishedVersion = isPublishedVersion;
-module.exports.ensurePublishedVersion = ensurePublishedVersion;
-module.exports.isInstance = isInstance;
-module.exports.urlToCanonicalUrl = urlToCanonicalUrl;
-module.exports.debugLog = debugLog;
+function ensureStartsWith(prefix, str) {
+  return str.startsWith(prefix)
+    ? str
+    : prefix + str;
+}
+
+function prettyJSON(obj) {
+  return JSON.stringify(obj, null, 2);
+}
+
+Object.assign(module.exports, {
+  isFieldEmpty,
+  has,
+  replaceVersion,
+  isUrl,
+  uriToUrl,
+  urlToUri,
+  formatStart,
+  toTitleCase,
+  getSiteBaseUrl,
+  isPublishedVersion,
+  ensurePublishedVersion,
+  isInstance,
+  urlToCanonicalUrl,
+  debugLog,
+  ensureStartsWith,
+  prettyJSON
+});
