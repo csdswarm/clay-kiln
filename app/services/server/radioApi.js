@@ -148,7 +148,7 @@ const rest = require('../universal/rest'),
         if (ttl > 0) {
           // use REDIS expire
           if (expire) {
-            redis.set(dbKey, JSON.stringify(response), 'EX', expire)
+            redis.set(dbKey, JSON.stringify(response), 'PX', expire)
               .catch(() => {});
           } else {
             redis.set(dbKey, JSON.stringify(response))
