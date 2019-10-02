@@ -101,7 +101,8 @@
         width: em(780);
         margin-right: em(20);
         .article__header,
-        .gallery__header {
+        .gallery__header,
+        .lead--full-width {
           width: em(1100);
         }
       }
@@ -116,7 +117,8 @@
         width: em(620);
         margin-right: em(20);
         .article__header,
-        .gallery__header {
+        .gallery__header,
+        .lead--full-width {
           width: em(940);
         }
       }
@@ -132,7 +134,8 @@
         width: 100%;
         margin: 0 auto;
         .article__header,
-        .gallery__header {
+        .gallery__header,
+        .lead--full-width {
           width: 100%;
         }
       }

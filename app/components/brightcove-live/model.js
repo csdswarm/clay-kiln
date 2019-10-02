@@ -18,7 +18,7 @@ module.exports.render = async (ref, data, locals) => {
   data.seoDescription = data.longDescription || data.description || data.name;
 
   if (video && video.id) {
-    data.seoEmbedUrl = `https://players.brightcove.net/${locals.site.brightcoveAccountId}/${locals.site.brightcovePlayerId}_default/index.html?videoId=${video.id}`;
+    data.seoEmbedUrl = `https://players.brightcove.net/${locals.site.brightcoveAccountId}/${locals.site.brightcoveLivePlayerId}_default/index.html?videoId=${video.id}&adConfigId=${data.adConfig}`;
     data.views = await apiHelper.getVideoViews(video.id);
   }
 

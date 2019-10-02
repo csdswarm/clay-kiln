@@ -1,0 +1,6 @@
+_components:
+  brightcove-live:
+    instances:
+      new:
+        video: null
+        searchVideo: null

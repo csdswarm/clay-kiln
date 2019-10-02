@@ -12,7 +12,8 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
-  urlExists = require('../../services/universal/url-exists');
+  urlExists = require('../../services/universal/url-exists'),
+  { getComponentName } = require('clayutils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -437,10 +438,62 @@ function setNoIndexNoFollow(data) {
   return data;
 }
 
+/**
+ * Tests if the lead component supports full-width mode
+ * @param {Object} data
+ * @returns {boolean}
+ */
+function isFullWidthLeadSupported(data) {
+  let supported = false;
+
+  const leadRef = _get(data, 'lead[0]._ref');
+
+  if (leadRef) {
+    const componentName = getComponentName(leadRef);
+
+    supported = [
+      'brightcove',
+      'brightcove-live',
+      'image'
+    ].includes(componentName);
+  }
+
+  return supported;
+}
+
+/**
+ * Sets computed data for full-width leads
+ * @param {Object} data
+ * @param {Object} locals
+ */
+function renderFullWidthLead(data, locals) {
+  const supported = isFullWidthLeadSupported(data);
+
+  if (locals.edit) {
+    data._computed.supportsFullWidthLead = supported;
+  }
+
+  data._computed.renderFullWidthLead = data.fullWidthLead && !locals.edit;
+}
+
+/**
+ * Sets the full-width lead only if it's supported
+ * @param {Object} data
+ */
+function setFullWidthLead(data) {
+  const supported = isFullWidthLeadSupported(data);
+
+  // full-width lead should always be false if the lead component isn't supported
+  data.fullWidthLead = supported && data.fullWidthLead;
+}
+
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
+  renderFullWidthLead(data, locals);
+
   if (locals && !locals.edit) {
     return data;
   }
@@ -479,6 +532,7 @@ async function save(uri, data, locals) {
   setPlainSourcesList(data);
   sanitizeByline(data);
   setNoIndexNoFollow(data);
+  setFullWidthLead(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image

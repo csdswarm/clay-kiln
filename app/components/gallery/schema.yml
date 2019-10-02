@@ -236,6 +236,7 @@ lead:
       - image
       - instagram-post
       - brightcove
+      - brightcove-live
       - youtube
       - html-embed
       - omny
@@ -311,6 +312,9 @@ showSocial:
   _has:
     input: checkbox
     help: Author social handles are displayed by default. Unchecking this will hide handles on this gallery
+fullWidthLead:
+  _label: Full-Width Lead Component
+  _has: checkbox
 rubric:
   _label: Rubric
   _subscribe: rubric
@@ -444,6 +448,11 @@ _groups:
       - genreSyndication
       - syndicationStatus
       - syndicatedUrl
+
+  leadSettings:
+    _label: Lead Settings
+    fields:
+      - fullWidthLead
 
 # non-user-editable fields, set by model.js and used for pubsub
 eligibleForGoogleStandout:
