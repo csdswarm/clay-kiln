@@ -6,20 +6,22 @@ let primaryVideo = {
   URL: '',
   stillURL: ''
 };
-const log = require('../../services/universal/log').setup({ file: __filename }),
+const log = require('../log').setup({ file: __filename }),
   sectionCategoryStyles = {
     music: 'category1Style',
     sports: 'category2Style',
     news: 'category3Style'
   },
-  slugify = require('../../services/universal/slugify'),
+  slugify = require('../slugify'),
   _isObject = require('lodash/isObject'),
   _get = require('lodash/get'),
   _upperFirst = require('lodash/upperFirst'),
   _flattenDeep = require('lodash/flattenDeep'),
-  { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
+  { getComponentInstance: getCompInstanceData } = require('../../server/publish-utils'),
   { getComponentName, getComponentInstance } = require('clayutils'),
+  excludeEmptyComponents = require('./exclude-empty-components'),
   formatLocalDate = require('clayhandlebars/helpers/time/formatLocalDate'),
+  APP_DOWNLOAD_URL = 'https://app.radio.com/apple-news-download',
   ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]',
   RESPONSIVE_COLUMN_CONDITIONS = {
     IPHONE: {
@@ -68,8 +70,10 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * @returns {string}
   */
   formatBylines = (bylines, data, locals) => {
-    const formattedBylines = bylines.reduce((newFormattedBylines, byline) => {
-      const authorsListPrefix = byline.names.length ? _upperFirst(byline.prefix) : '',
+    const formattedBylines = bylines.map((byline) => {
+      const authorsListPrefix = byline.names.length
+          ? _upperFirst(byline.prefix)
+          : '',
         formattedAuthors = byline.names
           .map((name) => {
             const authorName = _isObject(name) ? name.text : name,
@@ -85,11 +89,13 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
           .map(source => `<span>${source.text}</span>`)
           .join(', ');
 
-      newFormattedBylines.push(
-        `${authorsListPrefix}${formattedAuthors}${formattedSources}`
-      );
-      return newFormattedBylines;
-    }, []);
+      return [
+        `${authorsListPrefix}${formattedAuthors}`,
+        formattedSources
+        // either credit sources might be missing, so this prevents an unecessary comma
+      ].filter(content => content.trim().length > 0 )
+        .join(', ');
+    });
 
     return formattedBylines.join('<br />');
   },
@@ -161,39 +167,6 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     }
   },
   /**
-   * Build app download CTA link in ANF
-   *
-   * @returns {Object}
-  */
-  appDownloadCTA = () => {
-    return {
-      role: 'aside',
-      style: 'asideStyle',
-      layout: 'asideLayout',
-      components: [
-        {
-          role: 'body',
-          text: 'Download the RADIO.COM app now',
-          style: 'appDownloadCTALinkStyle',
-          layout: 'appDownloadCTALinkLayout',
-          textStyle: 'appDownloadCTALinkTextStyle',
-          additions: [
-            {
-              type: 'link',
-              URL: 'https://app.radio.com/apple-news-download'
-            }
-          ]
-        },
-        {
-          role: 'image',
-          URL: 'bundle://arrow.png',
-          style: 'appDownloadCTAArrowStyle',
-          layout: 'appDownloadCTAArrowLayout'
-        }
-      ]
-    };
-  },
-  /**
    * Get apple news format of each content ref
    *
    * @param {Array} content
@@ -201,7 +174,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    *
    * @returns {Promise|Array}
   */
-  getContent = async (content, addAppDLLink = false) => {
+  getContent = async (content) => {
     const contentANF = [];
 
     for (const contentInstance of content) {
@@ -219,10 +192,6 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
           })
           .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf: ${e}`));
       }
-    }
-
-    if (addAppDLLink) {
-      contentANF.splice(1, 0, appDownloadCTA());
     }
 
     return contentANF;
@@ -260,8 +229,26 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
     const isDev = process.env.NODE_ENV === 'local';
 
     if (isDev) {
-      require('./anf-test-file-generator')(ref);
+      require('../anf-test-file-generator')(ref);
     }
+  },
+  anfBodyContent = (anfComponents, sectionFront) => {
+    const interstitialDownloadLink = {
+      role: 'body',
+      text: `<a href="${APP_DOWNLOAD_URL}"><span data-anf-textstyle="hyperlinkStyle">Get the RADIO.COM app now</span> <span data-anf-textstyle="${sectionCategoryStyles[sectionFront]}">▸</span></a>`,
+      format: 'html',
+      layout: 'bodyItemLayout'
+    };
+
+    return {
+      role: 'section',
+      layout: 'bodyLayout',
+      components: [
+        ...anfComponents.slice(0, 1),
+        interstitialDownloadLink,
+        ...anfComponents.slice(1)
+      ]
+    };
   },
   getContentANF = async function (ref, data, locals) {
     const tags = await getTags(data.tags),
@@ -335,64 +322,17 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
         ...contentType === 'gallery' ? [{
           role: 'section',
           layout: 'bodyLayout',
-          components: await getContent(data.slides, true)
+          components: await getContent(data.slides)
         }] : [],
-        {
-          role: 'section',
-          layout: 'bodyLayout',
-          components: await getContent(data.content, contentType === 'article')
-        },
-        {
-          role: 'section',
-          style: 'footerStyle',
-          layout: 'footerLayout',
-          components: [
-            {
-              role: 'logo',
-              URL: 'bundle://radiocom-logo-white.png',
-              layout: 'logoLayout',
-              style: 'logoStyle'
-            },
-            {
-              role: 'body',
-              text: 'Get the latest news and alerts delivered right to your inbox',
-              layout: 'footerBodyLayout',
-              style: 'footerBodyStyle',
-              textStyle: 'footerBodyTextStyle'
-            },
-            {
-              role: 'container',
-              style: 'footerCTABtnContainerStyle',
-              layout: 'footerCTABtnContainerLayout',
-              components: [
-                {
-                  role: 'image',
-                  URL: 'bundle://mail.png',
-                  style: 'footerCTABtnMailStyle',
-                  layout: 'footerCTABtnMailLayout'
-                },
-                {
-                  role: 'body',
-                  text: 'SIGN UP NOW',
-                  layout: 'footerCTABtnLayout',
-                  style: 'footerCTABtnStyle',
-                  textStyle: 'footerCTABtnTextStyle',
-                  additions: [
-                    {
-                      type: 'link',
-                      URL: 'https://app.radio.com/apple-news-download'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
+        anfBodyContent(await getContent(data.content), data.sectionFront),
+        require('./component-footer.js/index.js')
       ]
     };
   };
 
 module.exports = {
   isNotHTMLEmbed: isNotHTMLEmbed,
-  contentANF: getContentANF
+  contentANF: async (...args) => excludeEmptyComponents(
+    await getContentANF(...args)
+  )
 };

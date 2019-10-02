@@ -3,13 +3,27 @@
 /** https://developer.apple.com/documentation/apple_news/apple_news_format/components
  *  https://developer.apple.com/documentation/apple_news/body
 */
+const cheerio = require('cheerio');
 
-module.exports = function (ref, data) {
+module.exports = function (_, data) {
+  const $ = cheerio.load(data.text),
+    addAnfHyperlinkStyleWrapper = (_, el) => {
+      const t = $(el).text();
+
+      $(el).html(
+        `<span data-anf-textstyle="hyperlinkStyle">${t}</span>`
+      );
+    };
+
+  $('a').each(addAnfHyperlinkStyleWrapper);
+
   return {
     role: 'body',
-    text: data.text,
+    text: $.html(),
     layout: 'bodyItemLayout',
-    textStyle: 'bodyStyle',
-    format: 'html'
+    format: 'html',
+    textStyle: {
+      lineHeight: 28
+    }
   };
 };

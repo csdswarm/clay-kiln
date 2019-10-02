@@ -52,6 +52,7 @@
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "form-data": "^2.5.1",
+    "fs-extra": "^8.1.0",
     "gulp-newer": "git+https://github.com/nelsonpecora/gulp-newer.git",
     "hammerjs": "^2.0.8",
     "handlebars": "^4.0.12",
