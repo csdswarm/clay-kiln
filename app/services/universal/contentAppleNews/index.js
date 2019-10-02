@@ -160,9 +160,7 @@ const log = require('../log').setup({ file: __filename }),
               ...ledeImage,
               layout: 'headerImageLayout'
             },
-            ...ledeCaption
-              ? [ledeCaption]
-              : []
+            ledeCaption || ANF_EMPTY_COMPONENT
           ];
         }).catch(e => log('error', `Error getting lede anf: ${ e }`));
     }
@@ -190,6 +188,13 @@ const log = require('../log').setup({ file: __filename }),
 
     return contentANF;
   },
+  /**
+   * Returns byline components with responsive layout conditions.
+   *
+   * @param {Object} data
+   * @param {Object} locals
+   * @returns {Array}
+   */
   responsiveBylineComponents = (data, locals) => {
     const { byline, date, dateModified } = data,
       anfBylineComponent = (props) => ({
@@ -219,13 +224,20 @@ const log = require('../log').setup({ file: __filename }),
       })
     ];
   },
-  generateANFPreviewFile = (ref) => {
+  generateANFPreviewFile = (clayComponentRef) => {
     const isDev = process.env.NODE_ENV === 'local';
 
     if (isDev) {
-      require('../anf-test-file-generator')(ref);
+      require('../anf-test-file-generator')(clayComponentRef);
     }
   },
+  /**
+   * Builds out the main body content
+   *
+   * @param {Array} anfComponents
+   * @param {String} sectionFront
+   * @returns {Object} anf component tree
+   */
   anfPrimaryBodyContent = (anfComponents, sectionFront) => {
     const arrowIcon = `<span data-anf-textstyle="${sectionCategoryStyles[sectionFront]}">▸</span>`,
       linkText = '<span data-anf-textstyle="hyperlinkStyle">Get the RADIO.COM app now</span>',
