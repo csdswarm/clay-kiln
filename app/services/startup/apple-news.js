@@ -13,7 +13,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   fs = require('fs'),
   path = require('path'),
   FormData = require('form-data'),
-  Blob = require('blob'),
   /**
    * Handle request errors
    *
@@ -338,32 +337,29 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         assets = ['radiocom-logo-white.png', 'mail.png', 'arrow.png'];
 
       for (const asset in assets) {
-        fs.readFile(`${ assetsDir }${ assets[ asset ] }`, function (err, data) {
-          if (err) throw err;
-          const buffer = Buffer.from(data);
+        const data = fs.readFileSync(`${ assetsDir }${ assets[asset] }`);
+          // buffer = Buffer.from(data);
 
-          formData.append(assets[ asset ], new Blob(buffer, {
-            type: 'image/png'
-          }), assets[ asset ]);
-        });
+        console.log('add asset', assets[asset], typeof data);
+        // formData.append(assets[asset], data.toString(), assets[asset]); //FAILED_TO_PARSE_IMAGE
+        // formData.append(assets[asset], data, assets[asset]); // 401 unauthorized
+        // formData.append(assets[asset], Buffer.from(data), assets[asset]); // 401 unauthorized
+
       }
 
-      // Fonts: Refer in component textStyles of ANF by using `fontName: { PostScript name of font }`
-      // eslint-disable-next-line one-var
-      const fontsDir = path.join(__dirname, '../../public/fonts/demo/');
+      // // Fonts: Refer in component textStyles of ANF by using `fontName: { PostScript name of font }`
+      // // eslint-disable-next-line one-var
+      // const fontsDir = path.join(__dirname, '../../public/fonts/demo/');
 
-      for (const fontKey in FONTS) {
-        if (FONTS.hasOwnProperty(fontKey)) {
-          fs.readFile(FONTS[ fontKey ], function (err, data) {
-            if (err) throw err;
-            const buffer = Buffer.from(data);
+      // for (const fontKey in FONTS) {
+      //   if (FONTS.hasOwnProperty(fontKey)) {
+      //     const data = fs.readFileSync(FONTS[ fontKey ]),
+      //       buffer = Buffer.from(data);
 
-            formData.append(fontKey, new Blob(buffer, {
-              type: 'application/octet-stream'
-            }), FONTS[fontKey].replace(fontsDir,''));
-          });
-        }
-      }
+      //     console.log('add font', fontKey);
+      //     formData.append(fontKey, buffer, FONTS[fontKey].replace(fontsDir,''));
+      //   }
+      // }
 
       const contentType = `multipart/form-data; boundary=${ formData._boundary }`,
         post = formData.getBuffer().toString();
