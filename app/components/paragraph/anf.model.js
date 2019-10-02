@@ -19,7 +19,7 @@ module.exports = function (_, data) {
 
   return {
     role: 'body',
-    text: $.html(),
+    text: $('body').html(),
     layout: 'bodyItemLayout',
     format: 'html',
     textStyle: {

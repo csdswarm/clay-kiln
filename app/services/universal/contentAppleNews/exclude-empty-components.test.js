@@ -4,6 +4,7 @@ const expect = require('chai').expect,
   dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
   removeEmptyComponents = require('./exclude-empty-components'),
+  { ANF_EMPTY_COMPONENT } = require('./constants'),
   mockComponents = {
     emptyText: {
       text: ''
@@ -23,6 +24,7 @@ describe(`${dirname}/${filename}`, () => {
           mockComponents.emptyText,
           mockComponents.nullText,
           mockComponents.placeholderText,
+          ANF_EMPTY_COMPONENT,
           {
             role: 'section',
             components: [

@@ -21,6 +21,7 @@ const log = require('../log').setup({ file: __filename }),
   { getComponentName, getComponentInstance } = require('clayutils'),
   excludeEmptyComponents = require('./exclude-empty-components'),
   formatLocalDate = require('clayhandlebars/helpers/time/formatLocalDate'),
+  { ANF_EMPTY_COMPONENT } = require('./constants'),
   APP_DOWNLOAD_URL = 'https://app.radio.com/apple-news-download',
   ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]',
   RESPONSIVE_COLUMN_CONDITIONS = {
@@ -314,9 +315,9 @@ const log = require('../log').setup({ file: __filename }),
           layout: 'headerImageLayout',
           components: lede
         },
-        ...contentType === 'gallery'
-          ? [anfPrimaryBodyContent(await getContent(data.slides), data.sectionFront)]
-          : [],
+        contentType === 'gallery'
+          ? anfPrimaryBodyContent(await getContent(data.slides), data.sectionFront)
+          : ANF_EMPTY_COMPONENT,
         contentType === 'article'
           ? anfPrimaryBodyContent(await getContent(data.content), data.sectionFront)
           : {

@@ -4,6 +4,7 @@
 // https://developer.apple.com/documentation/apple_news/apple_news_format/components
 
 const log = require('../../services/universal/log').setup({ file: __filename }),
+  { ANF_EMPTY_COMPONENT } = require('../../services/universal/contentAppleNews/constants'),
   { isNotHTMLEmbed } = require('../../services/universal/contentAppleNews'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
   _get = require('lodash/get'),
@@ -36,23 +37,27 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
         log('error', `Error getting component instance data
         for ${ slide._ref } anf: ${e}`);
       };
+      return ANF_EMPTY_COMPONENT;
     }
   },
-  getSlideDescription = (descriptionRef = '') => {
+  /**
+   * @param {String} descriptionRef clay component ref
+   * @returns {Object} anf component
+   */
+  getAnfSlideDescription = (descriptionRef = '') => {
     try {
-      return getCompInstanceData(`${descriptionRef}.anf`);
+      return descriptionRef
+        ? getCompInstanceData(`${descriptionRef}.anf`)
+        : ANF_EMPTY_COMPONENT;
     } catch (err) {
       log('error', `Error getting slide description for ${descriptionRef} and: ${err}`);
-      return null;
     }
+    return ANF_EMPTY_COMPONENT;
   };
 
 module.exports = async function (ref, data) {
   const { title, description } = data,
     descRef = _get(description[0], '_ref'),
-    slideDescription = descRef
-      ? await getSlideDescription(descRef)
-      : null,
     titleComponent = {
       role: 'heading2',
       text: title,
@@ -74,9 +79,7 @@ module.exports = async function (ref, data) {
     components: [
       ...await Promise.all(data.slideEmbed.map(getSlideEmbed)),
       titleComponent,
-      ...slideDescription
-        ? [slideDescription]
-        : []
+      await getAnfSlideDescription(descRef)
     ]
   };
 };

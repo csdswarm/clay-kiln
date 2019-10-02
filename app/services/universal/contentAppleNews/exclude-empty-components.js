@@ -1,6 +1,15 @@
 'use strict';
 
-const isValidComponent = component => {
+/**
+ * @param {Object|null} component apple news format component object
+ * @returns {Bool}
+ */
+const { ANF_EMPTY_COMPONENT } = require('./constants'),
+  isValidComponent = component => {
+    if (component === ANF_EMPTY_COMPONENT) {
+      return false;
+    }
+
     const isTextComponent = 'text' in component;
 
     if (isTextComponent) {
@@ -10,15 +19,21 @@ const isValidComponent = component => {
 
     return true;
   },
+  /**
+   * @param {Object} componentTree apple news format component object
+   * @returns {Bool}
+   */
   hasChildComponents = ({ components }) => Array.isArray(components),
 
   /**
-   * Returns a component tree excluding empty components (text is null or empty string).
-   * This is needed because Apple news format does not allow text components
-   * that have a `null` or `''` value.
+   * Returns a component tree excluding empty components.
+   * Values that are considered empty components are:
+   *
+   * - ANF components that have a text value of empty string or null
+   * - null
    *
    * @param {Object} componentTree apple news format component object
-   * @returns {Object} filtered list
+   * @returns {Object} new component tree with empty components excluded
    */
   excludeEmptyComponents = (componentTree = {}) => {
     const { components } = componentTree;
