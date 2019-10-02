@@ -63,7 +63,7 @@
       textColor: "#777"
     footerCTAStyle:
       fontName: "Avenir-Black"
-      textColor: "purple"
+      textColor: "#1F055E"
       fontSize: 14
       lineHeight: 14
   componentLayouts:
@@ -88,9 +88,6 @@
         bottom: 30
     videoLayout:
       columnStart: 0
-      margin:
-        top: 30
-        bottom: 30
       margin:
         top: 30
         bottom: 30

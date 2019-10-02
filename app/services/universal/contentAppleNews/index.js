@@ -325,7 +325,7 @@ const log = require('../log').setup({ file: __filename }),
           components: await getContent(data.slides)
         }] : [],
         anfBodyContent(await getContent(data.content), data.sectionFront),
-        require('./component-footer.js/index.js')
+        require('./component-footer')
       ]
     };
   };
