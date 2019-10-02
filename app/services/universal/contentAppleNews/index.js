@@ -181,13 +181,6 @@ const log = require('../log').setup({ file: __filename }),
       if (isNotHTMLEmbed(contentInstance._ref)) {
         await getCompInstanceData(`${ contentInstance._ref }.anf`)
           .then(data => {
-            const isTextComponent = 'text' in data,
-              isEmptyTextComponent = isTextComponent && !data.text;
-
-            if (isEmptyTextComponent) {
-              return;
-            }
-
             contentANF.push(data);
           })
           .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf: ${e}`));
@@ -232,13 +225,15 @@ const log = require('../log').setup({ file: __filename }),
       require('../anf-test-file-generator')(ref);
     }
   },
-  anfBodyContent = (anfComponents, sectionFront) => {
-    const interstitialDownloadLink = {
-      role: 'body',
-      text: `<a href="${APP_DOWNLOAD_URL}"><span data-anf-textstyle="hyperlinkStyle">Get the RADIO.COM app now</span> <span data-anf-textstyle="${sectionCategoryStyles[sectionFront]}">▸</span></a>`,
-      format: 'html',
-      layout: 'bodyItemLayout'
-    };
+  anfPrimaryBodyContent = (anfComponents, sectionFront) => {
+    const arrowIcon = `<span data-anf-textstyle="${sectionCategoryStyles[sectionFront]}">▸</span>`,
+      linkText = '<span data-anf-textstyle="hyperlinkStyle">Get the RADIO.COM app now</span>',
+      interstitialDownloadLink = {
+        role: 'body',
+        text: `<a href="${APP_DOWNLOAD_URL}">${linkText} ${arrowIcon}</a>`,
+        format: 'html',
+        layout: 'bodyItemLayout'
+      };
 
     return {
       role: 'section',
@@ -319,12 +314,16 @@ const log = require('../log').setup({ file: __filename }),
           layout: 'headerImageLayout',
           components: lede
         },
-        ...contentType === 'gallery' ? [{
-          role: 'section',
-          layout: 'bodyLayout',
-          components: await getContent(data.slides)
-        }] : [],
-        anfBodyContent(await getContent(data.content), data.sectionFront),
+        ...contentType === 'gallery'
+          ? [anfPrimaryBodyContent(await getContent(data.slides), data.sectionFront)]
+          : [],
+        contentType === 'article'
+          ? anfPrimaryBodyContent(await getContent(data.content), data.sectionFront)
+          : {
+            role: 'section',
+            layout: 'bodyLayout',
+            components: await getContent(data.content)
+          },
         require('./component-footer')
       ]
     };

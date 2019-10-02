@@ -38,9 +38,9 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
       };
     }
   },
-  getSlideDescription = async (descriptionRef = '') => {
+  getSlideDescription = (descriptionRef = '') => {
     try {
-      return await getCompInstanceData(`${descriptionRef}.anf`);
+      return getCompInstanceData(`${descriptionRef}.anf`);
     } catch (err) {
       log('error', `Error getting slide description for ${descriptionRef} and: ${err}`);
       return null;

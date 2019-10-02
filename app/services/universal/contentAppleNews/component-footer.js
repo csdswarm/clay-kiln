@@ -1,7 +1,7 @@
 'use strict';
 
 const URL_LOGO = 'https://images.radio.com/aiu-media/radiocomlogowhite-47112475-0fac-4811-b34b-49f88dc2af49.png',
-  URL_MAIL_ICON = 'https://images.radio.com/aiu-media/mail-7d850a71-cd77-46e5-ae88-76633a92bb57.png',
+  URL_MAIL_ICON = 'https://images.radio.com/aiu-media/mail-f096c8b2-9951-48a8-8b57-83fd8c152ba2.png',
   COLOR_PRIMARY = '#1F055E',
   logoComponent = {
     role: 'image',
