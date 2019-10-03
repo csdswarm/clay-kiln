@@ -4,8 +4,7 @@
  *  https://developer.apple.com/documentation/apple_news/image
 */
 
-const htmlSpaces = (count = 0) => new Array(count).fill(0)
-  .reduce((spaces) => `${spaces}&nbsp;`, '');
+const htmlSpaces = (count = 0) => '&nbsp;'.repeat(count);
 
 module.exports = function (ref, data) {
   const { url, caption, credit } = data,
