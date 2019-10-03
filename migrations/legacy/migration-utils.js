@@ -340,29 +340,6 @@ function readFile(params) {
 }
 
 /**
- * Allows a message to be inserted within a promise chain without interrupting
- * the chain.
- * @param {string} message The message to output to the console
- * @returns {function(data: *): *} A function that passes data through to the next promise
- * @example
- * iReturnAPromise()
- *   .then(insertMessage('I just did something'))
- *   .then(nextThingTodo)
- *   .then(insertMessage('I just did the next thing'))
- *   .then(finished)
- *   .catch(e => console.error('Something went terribly wrong. Fix it now!'))
- */
-function insertMessage(message, debug = false) {
-  return payload => {
-    console.log(message + '\n');
-    if (debug) {
-      console.log(prettyJSON({ payload }), '\n');
-    }
-    return payload;
-  }
-}
-
-/**
  * Handles running sql against postgres
  * @param {string} sql the sql to execute
  * @param {*} args optional arguments to be passed to the sql which will replace any `?` in the
@@ -446,7 +423,6 @@ const v1 = {
   usingDb: usingDb.v1,
   readFileAsync,
   getFileText,
-  insertMessage,
   executeSQL,
   executeSQLFile,
   executeSQLFileTrans,

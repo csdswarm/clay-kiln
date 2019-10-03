@@ -4,9 +4,7 @@ const _get = require('lodash/get'),
   striptags = require('striptags'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  utils = require('./utils'),
-  has = utils.has, // convenience
-  isFieldEmpty = utils.isFieldEmpty, // convenience
+  {uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug} = require('./utils'),
   sanitize = require('./sanitize'),
   promises = require('./promises'),
   rest = require('./rest'),
@@ -190,7 +188,7 @@ function setCanonicalUrl(data, locals) {
  */
 function getPrevData(uri, data, locals) {
   if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.slug)) {
-    return promises.timeout(rest.get(utils.uriToUrl(utils.replaceVersion(uri), locals)), 1000).catch(() => null); // fail gracefully
+    return promises.timeout(rest.get(uriToUrl(replaceVersion(uri), locals)), 1000).catch(() => null); // fail gracefully
   }
 }
 
@@ -204,7 +202,7 @@ function getPrevData(uri, data, locals) {
  */
 function getPublishedData(uri, data, locals) {
   if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.slug)) {
-    return promises.timeout(rest.get(utils.uriToUrl(utils.replaceVersion(uri, 'published'), locals)), 1000).catch(() => null); // fail gracefully
+    return promises.timeout(rest.get(uriToUrl(replaceVersion(uri, 'published'), locals)), 1000).catch(() => null); // fail gracefully
   }
 }
 
@@ -305,79 +303,6 @@ function cleanSiloImageUrl(data) {
 }
 
 /**
- * Generator function, iterates over all bylines and then yields each item under the byline
- * property provided
- * @param {object} data
- * @param {string} prop the list property on each byline to get data for
- * @yields {object}
- * @example
- * // given bylines with the following structure:
- * // [{
- * //     names: [{text: 'bobby'}, {text: 'johnny'}],
- * //     sources: [{text: 'RADIO.COM'}, {text: 'KROQ FM'}]
- * //   }, {
- * //     names: [{text: 'jennifer'}, {text: 'christy'}],
- * //     sources: [{text: 'The Associated Press'}]
- * // }]
- * // authors would be: [{text: 'bobby'}, {text: 'johnny'}, {text: 'jennifer'}, {text: 'christy'}]
- * // sources would be: [{text: 'RADIO.COM'}, {text: 'KROQ FM'}, {text: 'The Associated Press'}]
- * const authors = Array.from(bylinesList(data, 'names'));
- * const sources = Array.from(bylinesList(data, 'sources'));
- */
-function *bylinesList(data, prop) {
-  const bylines = data.byline || [];
-
-  if (bylines && bylines.length) {
-    for (const byline of bylines) {
-      for (const item of byline[prop] || []) {
-        yield item;
-      }
-    }
-  }
-}
-
-/**
- * Iterates the byline authors performing cleanup and modifications as needed
- * @param {object} data
- */
-function bylineAuthorOperations(data) {
-  const authors = Array.from(bylinesList(data, 'names'));
-
-  for (const author of authors) {
-    delete author.count;
-    author.slug = utils.textToEncodedSlug(author.text);
-  }
-
-  /*
-    Originally a NYMag legacy thing, since we converted the original
-    `authors` array into a more complex `byline` structure,
-    but we still key a lot of things off the flatter `authors`
-    array. That's why we're doing this work, but it's done
-    on save as to not affect rendering.
-  */
-  if (authors.length) {
-    data.authors = authors;
-  }
-}
-
-/**
- * Iterates the byline sources performing cleanup and modifications as needed
- * @param {object} data
- */
-function bylineSourceOperations(data) {
-  const sources = Array.from(bylinesList(data, 'sources'));
-
-  for (const source of sources) {
-    delete source.count;
-  }
-
-  if (sources.length) {
-    data.sources = sources;
-  }
-}
-
-
-/**
  * Good for when you have a byline array but one
  * of the objects inside the byline has no name.
  * The byline formatter handlebars helper doesn't
@@ -390,6 +315,39 @@ function sanitizeByline(data) {
   const byline = _get(data, 'byline', []);
 
   data.byline = byline.filter(entry => !!entry.names);
+}
+
+/**
+ * Iterates over the byline, cleaning and consolidating authors and sources into their own
+ * property for backward compatibility and reduced development effort elsewhere
+ *
+ * @param {object} data
+ */
+function bylineOperations(data) {
+  const authors = [], sources = [];
+
+  for (const {names, sources} of data.byline || []) {
+    /*
+      Originally a NYMag legacy thing, since we converted the original
+      `authors` array into a more complex `byline` structure,
+      but we still key a lot of things off the flatter `authors`
+      array. That's why we're doing this work, but it's done
+      on save as to not affect rendering.
+    */
+    for (const author of names || []) {
+      delete author.count;
+      author.slug = textToEncodedSlug(author.text);
+      authors.push(author);
+    }
+    // do sources too
+    for (const source of sources || []) {
+      delete source.count;
+      sources.push(source);
+    }
+  }
+
+  Object.assign(data, {authors, sources});
+  sanitizeByline(data);
 }
 
 /**
@@ -489,9 +447,7 @@ function save(uri, data, locals) {
   formatDate(data, locals);
   setCanonicalUrl(data, locals);
   cleanSiloImageUrl(data);
-  bylineAuthorOperations(data);
-  bylineSourceOperations(data);
-  sanitizeByline(data);
+  bylineOperations(data);
   setNoIndexNoFollow(data);
 
   // now that we have some initial data (and inputs are sanitized),

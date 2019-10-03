@@ -6,7 +6,6 @@ const {
   executeSQL,
   executeSQLFile,
   executeSQLFileTrans,
-  insertMessage,
   parseHost,
   prettyJSON,
 } = require('../migration-utils').v1;
@@ -15,8 +14,58 @@ const { url, message } = parseHost(host); // should happen after migration-utils
 const divider = '\n' + '-'.repeat(80) + '\n';
 const DEBUG = false;
 
-const start = async () =>
-  console.log(`\n${divider}Updating data for topic and author sitemaps.${divider}`, message);
+const heading = text => `\n${divider}${text}${divider}`;
+
+const start = async () => {
+  const getArticleGalleryAuthors = getData('article-gallery-authors');
+  const updateArticleGalleryAuthors = updateData('article-gallery-authors');
+  const createAuthorsSitemapScript = createSitemapScript('authors');
+  const getTags = getData('tags');
+  const updateTags = updateData('tags');
+  const createTopicsSitemapScript = createSitemapScript('topics');
+
+  console.log(heading('Updating data for topic and author sitemaps.'), message);
+
+  console.log(heading('  Adding slugs to authors in articles and galleries'));
+
+  console.log('Getting existing authors, first.');
+  const authors = await getArticleGalleryAuthors();
+
+  console.log('Got existing authors. Now adding slugs');
+  const authorsWithSlugs = addAuthorSlugs(authors);
+
+  console.log('Finished adding slugs. Now updating the DB.');
+  await updateArticleGalleryAuthors(authorsWithSlugs);
+  console.log('The DB was updated.', DEBUG);
+
+  console.log(heading('  Creating materialized view for authors sitemap.'));
+  const authorsSQL = await createAuthorsSitemapScript();
+  console.log('created sitemap materialized view "script" for authors');
+
+  await executeSQL(authorsSQL);
+  console.log('Script Executed.\nFinished creating materialized view for authors.');
+
+  console.log(heading('  Adding slugs to tags'));
+
+  console.log('Getting existing tags first.');
+  const tags = await getTags();
+
+  console.log('Got existing tags. Now adding slugs.');
+  const tagsWithSlugs = await addTagSlugs(tags);
+
+  console.log('Finished adding slugs. Now updating the DB.');
+  await updateTags(tagsWithSlugs);
+  console.log('The DB was updated.');
+
+  console.log(heading('  Creating materialized view for topics sitemap.'));
+  const topicsSQL = await createTopicsSitemapScript();
+  console.log('created sitemap materialized view "script" for topics');
+
+  await executeSQL(topicsSQL);
+  console.log('Script Executed.\nFinished creating materialized view for topics.');
+
+  console.log(`Done updating data for topic and author sitemaps.${divider}`);
+};
 
 const getData = name => () => executeSQLFile(`${__dirname}/sql/${name}-get.sql`);
 
@@ -42,47 +91,9 @@ const addTagSlugs = rows =>
     items: items.map(addSlug)
   }));
 
-const finish = () =>
-  console.log(`Done updating data for topic and author sitemaps.${divider}`);
 
 start()
-  .then(insertMessage(`${divider}  Adding slugs to authors in articles and galleries${divider}`))
-
-  .then(insertMessage('Getting existing authors, first.'))
-  .then(getData('article-gallery-authors'))
-  .then(insertMessage('Got existing authors. Now adding slugs', DEBUG))
-  .then(addAuthorSlugs)
-  .then(insertMessage('Finished adding slugs. Now updating the DB.', DEBUG))
-  .then(updateData('article-gallery-authors'))
-  .then(insertMessage('The DB was updated.', DEBUG))
-
-  .then(insertMessage(`${divider}  Creating materialized view for authors sitemap.${divider}`))
-
-  .then(createSitemapScript('authors'))
-  .then(insertMessage('created sitemap materialized view "script" for authors', DEBUG))
-  .then(executeSQL)
-  .then(insertMessage('Script Executed.\nFinished creating materialized view for authors.'))
-
-  .then(insertMessage(`${divider}  Adding slugs to tags${divider}`))
-
-  .then(insertMessage('Getting existing tags first.'))
-  .then(getData('tags'))
-  .then(insertMessage('Got existing tags. Now adding slugs.', DEBUG))
-  .then(addTagSlugs)
-  .then(insertMessage('Finished adding slugs. Now updating the DB.', DEBUG))
-  .then(updateData('tags'))
-  .then(insertMessage('The DB was updated.', DEBUG))
-
-  .then(insertMessage(`${divider}  Creating materialized view for topics sitemap.${divider}`))
-
-  .then(createSitemapScript('topics'))
-  .then(insertMessage('created sitemap materialized view "script" for topics', DEBUG))
-  .then(executeSQL)
-  .then(insertMessage('Script Executed.\nFinished creating materialized view for topics.'))
-
-  .then(finish)
-
   .catch(error => console.error(
     'An unexpected problem occurred when updating topic/author sitemaps.',
-    prettyJSON({ error })
+    error
   ));
