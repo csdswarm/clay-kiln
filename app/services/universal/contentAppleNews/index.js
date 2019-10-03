@@ -233,7 +233,7 @@ const log = require('../log').setup({ file: __filename }),
     const isDev = process.env.NODE_ENV === 'local';
 
     if (isDev) {
-      require('../anf-test-file-generator')(clayComponentRef);
+      require('../../server/contentAppleNews/anf-test-file-generator')(clayComponentRef);
     }
   },
   /**
