@@ -21,6 +21,7 @@ const log = require('../log').setup({ file: __filename }),
   { getComponentName, getComponentInstance } = require('clayutils'),
   excludeEmptyComponents = require('./exclude-empty-components'),
   formatLocalDate = require('clayhandlebars/helpers/time/formatLocalDate'),
+  anfComponentFooter = require('./component-footer'),
   { ANF_EMPTY_COMPONENT } = require('./constants'),
   APP_DOWNLOAD_URL = 'https://app.radio.com/apple-news-download',
   ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]',
@@ -55,7 +56,7 @@ const log = require('../log').setup({ file: __filename }),
           contentType === 'gallery' ? 'gallery/' : '' }${ slug }`;
       })
       .catch(e => {
-        log('error', `Error getting page data: ${ e }`);
+        log('error', `Error getting page data: ${ e.stack }`);
 
         return `${ protocol }://${ host }/${ sectionFront }/${
           secondarySectionFront ? `${ secondarySectionFront }/` : '' }${
@@ -169,7 +170,6 @@ const log = require('../log').setup({ file: __filename }),
    * Get apple news format of each content ref
    *
    * @param {Array} content
-   * @param {Boolean} [addAppDLLink]
    *
    * @returns {Promise|Array}
   */
@@ -224,6 +224,11 @@ const log = require('../log').setup({ file: __filename }),
       })
     ];
   },
+  /**
+   * Writes an article.json file to disk (local development only)
+   *
+   * @param {String} clayComponentRef
+   */
   generateANFPreviewFile = (clayComponentRef) => {
     const isDev = process.env.NODE_ENV === 'local';
 
@@ -258,6 +263,16 @@ const log = require('../log').setup({ file: __filename }),
       ]
     };
   },
+  /**
+   * Builds out an apple news format article structure based off of the component's data
+   *
+   * @param {String} ref
+   * @param {Object} data
+   * @param {Object} locals
+   *
+   * @returns {Object} apple news articleDocument (https://developer.apple.com/documentation/apple_news/articledocument)
+   *
+   */
   getContentANF = async function (ref, data, locals) {
     const tags = await getTags(data.tags),
       lede = await getLede(data.lead) || [],
@@ -337,7 +352,7 @@ const log = require('../log').setup({ file: __filename }),
             layout: 'bodyLayout',
             components: await getContent(data.content)
           },
-        require('./component-footer')
+        anfComponentFooter
       ]
     };
   };

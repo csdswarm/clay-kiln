@@ -1,16 +1,19 @@
 'use strict';
 
-/**
- * @param {Object|null} component apple news format component object
- * @returns {Bool}
- */
 const { ANF_EMPTY_COMPONENT } = require('./constants'),
+  /**
+   * Checks validity of component
+   *
+   * @param {Object} component apple news format component object
+   *
+   * @returns {Bool}
+   */
   isValidComponent = component => {
     if (component === ANF_EMPTY_COMPONENT) {
       return false;
     }
 
-    const isTextComponent = 'text' in component;
+    const isTextComponent = component.hasOwnProperty('text');
 
     if (isTextComponent) {
       return typeof component.text === 'string'
@@ -20,6 +23,8 @@ const { ANF_EMPTY_COMPONENT } = require('./constants'),
     return true;
   },
   /**
+   * Checks if component has child components
+   *
    * @param {Object} componentTree apple news format component object
    * @returns {Bool}
    */
@@ -42,20 +47,10 @@ const { ANF_EMPTY_COMPONENT } = require('./constants'),
       return componentTree;
     }
 
-    // eslint-disable-next-line one-var
-    const filteredComponents = components.reduce((filteredList, subTree) => {
-      if (isValidComponent(subTree)) {
-        filteredList.push(
-          excludeEmptyComponents(subTree)
-        );
-      }
-
-      return filteredList;
-    }, []);
-
     return {
       ...componentTree,
-      components: filteredComponents
+      components: components.filter(isValidComponent)
+        .map(excludeEmptyComponents)
     };
   };
 

@@ -8,6 +8,7 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
   { isNotHTMLEmbed } = require('../../services/universal/contentAppleNews'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
   _get = require('lodash/get'),
+  _set = require('lodash/set'),
   /**
    * Get apple news format of slide ref
    *
@@ -17,22 +18,13 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
   getSlideEmbed = async slide => {
     if (isNotHTMLEmbed(slide._ref)) {
       try {
-        const slideANF = await getCompInstanceData(`${ slide._ref }.anf`),
-          { components: [imgComponent, captionComponent] } = slideANF;
+        const slideANF = await getCompInstanceData(`${ slide._ref }.anf`);
 
-        return {
-          ...slideANF,
-          components: [
-            imgComponent,
-            {
-              ...captionComponent,
-              textStyle: {
-                ...captionComponent.textStyle,
-                textAlignment: 'right'
-              }
-            }
-          ]
-        };
+        return _set(
+          slideANF,
+          'components[1].textStyle.textAlignment',
+          'right'
+        );
       } catch (e) {
         log('error', `Error getting component instance data
         for ${ slide._ref } anf: ${e}`);
