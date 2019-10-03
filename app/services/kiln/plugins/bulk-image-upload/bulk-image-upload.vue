@@ -34,17 +34,33 @@ const pMap = require('p-map');
 const _uniqBy = require('lodash/uniqBy');
 const { uploadFile } = require('../../../client/s3');
 
-// Converts Array-like FileList to an Array
-const FileListToArray = fileList => Array.prototype.slice.call(fileList);
+/**
+ * Build structure of image component
+ *
+ * @param {string} url
+ */
 const buildImageComponent = url => ({name: 'image', data: {url}});
+/**
+ * Build structure of gallery-slide component
+ *
+ * @param {string} imageRef
+ */
 const buildGallerySlideComponent = imageRef => ({name: 'gallery-slide', data: { slideEmbed: [{[refProp]: imageRef[refProp]}]}});
-// Use kiln create method to create image components and then add the _ref to a gallery-slide
+/**
+ * Use kiln create method to create image components and then add the _ref to a gallery-slide
+ *
+ * @param {array} imageUrls
+ */
 const createGallerySlideComponents = async imageUrls => {
     const imageRefs = await create(imageUrls.map(buildImageComponent));
 
     return imageRefs.map(buildGallerySlideComponent);
 }
-// Find the gallery instance on the current page
+/**
+ * Find the gallery instance on the current page
+ *
+ * @param {object} store
+ */
 const getGalleryInstance = (store) => 
     Object.keys(store.state.components)
         .find((key) => key.includes(`_components/gallery/instances`));
@@ -60,27 +76,41 @@ export default {
       }
   },
   methods: {
-      // Clears the select box
-      // KeenUi v1.2 has a clear method, but kiln doesn't have it yet
+      /**
+       * Clears the fileupload box
+       * KeenUi v1.2 has a clear method, but kiln doesn't have it yet
+       */
       clearFileUpload() {
           this.$refs.upload.hasSelection = false;
           this.$refs.upload.multiple = false;
       },
-      // remove file from selected list
+      /**
+       * Remove file from selected list
+       *
+       * @param {number} index
+       */
       removeFile(index) {
           this.files.splice(index, 1);
       },
-      // Add selected files to waiting to upload list
-      // Adds 'selected' status and limits to 20 files at once
+      /**
+       * Add selected files to waiting to upload list
+       * Adds 'selected' status and limits to 20 files at once
+       * @param {array} files
+       */
       selectFiles(files) {
           this.files = _uniqBy(this.files
-            .concat(FileListToArray(files)
+            .concat(Array.from(files)
             .map(file => ({file, name: file.name, status: 'selected'})))
             .slice(0, 20), 'name');
           this.statusMessage = `${this.files.length}/20 files selected`;
           this.clearFileUpload();
       },
-      // Update the status of files
+      /**
+       * Update the status of a file
+       * 
+       * @param {string} status
+       * @param {number} index
+       */
       updateFileStatus(status, index) {
           return (data) => {
             if (index) {
@@ -91,7 +121,9 @@ export default {
             return data;
           }
       },
-      // Uploads the files to S3 and then creates and saves gallery-slide components to the provided field
+      /**
+       * Uploads the files to s3 and then creates and save gallery-slide components to the provided field
+       */
       async uploadFiles() {
           this.status = 'uploading';
           return pMap(this.files, ({file}, index) => 

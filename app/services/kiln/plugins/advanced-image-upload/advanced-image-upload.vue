@@ -66,7 +66,7 @@
 <script>
 
 import validator from 'validator'
-import { uploadFile } from '../../../server/s3'
+import { uploadFile } from '../../../client/s3'
 
 const UiTextbox = window.kiln.utils.components.UiTextbox
 const UiIconButton = window.kiln.utils.components.UiIconButton
