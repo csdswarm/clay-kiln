@@ -28,10 +28,9 @@
 <script>
 
 const { UiButton, UiFileupload, UiIconButton, UiProgressCircular } = window.kiln.utils.components;
-const { getParentComponent } = window.kiln.utils.componentElements;
 const create = window.kiln.utils.create.default;
 const { refProp } = window.kiln.utils.references;
-const bluebird = require('bluebird');
+const pMap = require('p-map');
 const _uniqBy = require('lodash/uniqBy');
 const { uploadFile } = require('../../../client/s3');
 
@@ -95,12 +94,12 @@ export default {
       // Uploads the files to S3 and then creates and saves gallery-slide components to the provided field
       async uploadFiles() {
           this.status = 'uploading';
-          return bluebird.map(this.files, ({file}, index) => 
+          return pMap(this.files, ({file}, index) => 
             uploadFile(file)
                 .then(({fileKey, host}) => `https://${host}/${fileKey}`)
                 .then(this.updateFileStatus('uploaded', index))
                 .catch(this.updateFileStatus('error', index))
-          , { concurrency: 5 })
+          , { concurrency: 5, stopOnError: true })
           .then(createGallerySlideComponents)
           .then(this.updateFileStatus('created'))
           .then(newGallerySlides =>
