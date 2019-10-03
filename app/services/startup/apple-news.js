@@ -1,6 +1,6 @@
 'use strict';
 
-let SECTIONS, FONTS;
+let SECTIONS;
 const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   ENCODE_BASE64 = require('crypto-js/enc-base64'),
   qs = require('querystring'),
@@ -10,8 +10,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   ANF_API = 'https://news-api.apple.com/',
   ANF_CHANNEL_API = `${ ANF_API }channels/${ process.env.APPLE_NEWS_CHANNEL_ID }/`,
   moment = require('moment'),
-  fs = require('fs'),
-  path = require('path'),
   FormData = require('form-data'),
   /**
    * Handle request errors
@@ -49,19 +47,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           link: self
         };
       });
-    }
-
-    if (!FONTS) {
-      const fontsDir = path.join(__dirname, '../../public/fonts/demo/');
-
-      FONTS = {
-        'CircularStd-Black': `${ fontsDir }circularstd-black.woff`,
-        'CircularStd-BookItalic': `${ fontsDir }circularstd-bookitalic.woff`,
-        'CircularStd-Medium': `${ fontsDir }circularstd-medium.woff`,
-        'ProximaNova-Bold': `${ fontsDir }proximanova-bold-webfont.woff`,
-        'ProximaNova-Light': `${ fontsDir }proximanova-light-webfont.woff`,
-        'ProximaNova-Regular': `${ fontsDir }proximanova-regular-webfont.woff`
-      };
     }
 
     next();
@@ -286,7 +271,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       const updateArticle = !!req.params.articleID,
         method = 'POST',
         requestURL = `${ updateArticle ? ANF_API : ANF_CHANNEL_API }articles${ updateArticle ? `/${ req.params.articleID }` : '' }`,
-        { articleRef } = req.body,
+        { articleRef, revision } = req.body,
         [ { sectionFront,
           secondarySectionFront,
           isCandidateToBeFeatured,
@@ -296,88 +281,43 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           getCompInstanceData(`${ articleRef }.anf?config=true`)
         ]),
         { link: sectionLink } = sectionFrontToAppleNewsSectionMap(sectionFront),
-        formData = new FormData;
-      let revision = '';
-
-      log('info', `UPDATE?: ${ updateArticle }, ARTICLE ID: ${req.params.articleID}`);
-      if (updateArticle) {
-        const { revision: rev } = await readArticle({ params: { articleID: req.params.articleID }});
-
-        revision = rev;
-        log('info', `UPDATE REQUEST REVISION ID: ${ revision }`);
-      }
-
-      // See https://developer.apple.com/documentation/apple_news/create_article_metadata_fields for details
-      /** Metadata Sections Note:
-       *  Omitting links.sections will publish to channel's default section.
-       *  Setting to empty [] will publish a standalone article outside of sections.
-       *  Standalone articles do not appear in channel,
-       *  but still appear in topics and search results, and may appear in For You.
-      */
-      // eslint-disable-next-line one-var
-      const metadata = {
-        data: {
-          ...updateArticle ? { revision } : {},
-          accessoryText: secondarySectionFront || sectionFront || 'metadata.byline',
-          ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
-          ...isHidden ? { isHidden } : {},
-          ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},
-          ...isSponsored ? { isSponsored } : {},
-          links: {
-            channel: ANF_CHANNEL_API,
-            sections: sectionLink ? [ sectionLink ] : []
+        formData = new FormData,
+        metadata = {
+          // See https://developer.apple.com/documentation/apple_news/create_article_metadata_fields for details
+          data: {
+            ...updateArticle ? { revision } : {},
+            accessoryText: secondarySectionFront || sectionFront || 'metadata.byline',
+            ...isCandidateToBeFeatured ? { isCandidateToBeFeatured } : {},
+            ...isHidden ? { isHidden } : {},
+            ...process.env.APPLE_NEWS_PREVIEW_ONLY ? { isPreview: true } : {},
+            ...isSponsored ? { isSponsored } : {},
+            links: {
+              channel: ANF_CHANNEL_API,
+              sections: sectionLink ? [ sectionLink ] : []
+            }
           }
-        }
-      };
+        };
 
       formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
       formData.append('article.json', JSON.stringify(articleANF), 'article.json');
 
-      const assetsDir = path.join(__dirname, '../../public/media/components/article/'),
-        assets = ['radiocom-logo-white.png', 'mail.png', 'arrow.png'];
-
-      for (const asset in assets) {
-        const data = fs.readFileSync(`${ assetsDir }${ assets[asset] }`);
-          // buffer = Buffer.from(data);
-
-        console.log('add asset', assets[asset], typeof data);
-        // formData.append(assets[asset], data.toString(), assets[asset]); //FAILED_TO_PARSE_IMAGE
-        // formData.append(assets[asset], data, assets[asset]); // 401 unauthorized
-        // formData.append(assets[asset], Buffer.from(data), assets[asset]); // 401 unauthorized
-
-      }
-
-      // // Fonts: Refer in component textStyles of ANF by using `fontName: { PostScript name of font }`
-      // // eslint-disable-next-line one-var
-      // const fontsDir = path.join(__dirname, '../../public/fonts/demo/');
-
-      // for (const fontKey in FONTS) {
-      //   if (FONTS.hasOwnProperty(fontKey)) {
-      //     const data = fs.readFileSync(FONTS[ fontKey ]),
-      //       buffer = Buffer.from(data);
-
-      //     console.log('add font', fontKey);
-      //     formData.append(fontKey, buffer, FONTS[fontKey].replace(fontsDir,''));
-      //   }
-      // }
-
-      const contentType = `multipart/form-data; boundary=${ formData._boundary }`,
-        post = formData.getBuffer().toString();
+      // eslint-disable-next-line one-var
+      const contentType = `multipart/form-data; boundary=${ formData._boundary }`;
 
       rest.request(requestURL, {
         method,
         headers: {
-          ...createRequestHeader(method, requestURL, contentType, post),
+          ...createRequestHeader(method, requestURL, contentType,
+            formData.getBuffer().toString()),
           'Content-Type': contentType
         },
         body: formData
       }).then(({ status, statusText, body: article }) => {
         if ([ 200, 201 ].includes(status)) {
-          log('info', 'SUCCESS PUBLISH');
-          res.send(article.data);
+          res.status(status).send(article.data);
         } else {
-          log('error', `ARTICLE POST ERROR: ${status} ${statusText} ${ JSON.stringify(article) } ${requestURL}`);
-          res.status(status).send(statusText);
+          log('error', `ARTICLE POST ERROR: ${status} ${statusText} ${ JSON.stringify(article) }`);
+          res.status(status).send(article);
         }
       }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
     } catch (e) {

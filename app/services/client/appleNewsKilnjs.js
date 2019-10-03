@@ -1,52 +1,85 @@
 'use strict';
 
 const KilnInput = window.kiln.kilnInput,
-  rest = require('../../services/universal/rest'),
+  { getComponentName } = require('clayutils'),
   ANF_API = '/apple-news/articles';
 let articleRef, articleData;
 
 module.exports = (schema, cmptName) => {
-  try {
-    const kilnInput = new KilnInput(schema);
+  const kilnInput = new KilnInput(schema);
 
-    kilnInput.subscribe('PRELOAD_SUCCESS', payload => {
-      articleRef = kilnInput.getComponentInstances(cmptName)[0];
-      articleData = payload.components[articleRef];
-      console.log(payload, articleData);
-    });
-    kilnInput.subscribe('UPDATE_PAGE_STATE', async payload => {
-      console.log(payload);
+  kilnInput.subscribe('PRELOAD_SUCCESS', payload => {
+    articleRef = kilnInput.getComponentInstances(cmptName)[0];
+    articleData = payload.components[articleRef];
+  });
+  kilnInput.subscribe('UPDATE_COMPONENT', payload => {
+    if (['article', 'gallery'].includes(getComponentName(payload.uri))) {
+      articleData = payload.data;
+    }
+  });
+  kilnInput.subscribe('UPDATE_PAGE_STATE', async payload => {
+    if (!!articleData.appleNewsEnabled &&
+      ['publish', 'unpublish'].includes(payload.history[payload.history.length - 1].action)) {
+      const articleExistsinAppleNews = !!articleData.appleNewsID,
+        articleID = articleData.appleNewsID,
+        deleteArticle = !payload.published;
 
-      if (!!articleData.appleNewsEnabled) {
-        const articleExistsinAppleNews = !!articleData.appleNewsID,
-          articleID = articleData.appleNewsID,
-          deleteArticle = !payload.published;
-
-        rest.request(`${ ANF_API }${ articleExistsinAppleNews ? `/${ articleID }` : '' }`, {
-          method: deleteArticle ? 'DELETE' : 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          ...deleteArticle ? {} : {
-            body: JSON.stringify({ articleRef })
-          }
-        })
-          .then(({ body: { id } }) => {
-            if (id) {
-              articleData.appleNewsID = id;
-            } else {
-              delete articleData.appleNewsID;
+      if ( deleteArticle && articleExistsinAppleNews ||
+        !deleteArticle ) {
+        kilnInput.fetch(
+          `${ ANF_API }${ articleExistsinAppleNews ? `/${ articleID }` : '' }`,
+          {
+            method: deleteArticle ? 'DELETE' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            ...deleteArticle ? {} : {
+              body: JSON.stringify({
+                articleRef,
+                revision: articleData.appleNewsRevision
+              })
             }
-            // kilnInput.publishComponent(articleRef, articleData); // bug: infinite loop
+          },
+          false,
+          120000
+        )
+          .then(response => {
+            const contentType = response.headers.get('Content-Type');
+
+            if (contentType && contentType.includes('application/json')) {
+              return response.json();
+            } else {
+              return response.text();
+            }
           })
-          .catch(e => {
-            console.log(`Error hitting apple news api on pub/unpub: ${ JSON.stringify(e) }`);
+          .then(jsonOrText => {
+            if (typeof jsonOrText === 'string') {
+              delete articleData.appleNewsID;
+              delete articleData.appleNewsRevision;
+            } else {
+              const { id, revision } = jsonOrText;
+
+              if (id) {
+                articleData.appleNewsID = id;
+                articleData.appleNewsRevision = revision;
+              }
+            }
+
+            kilnInput.saveComponent(articleRef, articleData);
+          })
+          .catch(error => {
+            if (error.message === 'Timeout') {
+              console.log('Timeout hitting apple news api on pub/unpub');
+            } else {
+              console.log(`Error hitting apple news api on pub/unpub: ${ error.message }`);
+              if (error.message === '404: Not Found') {
+                delete articleData.appleNewsID;
+                delete articleData.appleNewsRevision;
+                kilnInput.saveComponent(articleRef, articleData);
+              }
+            }
           });
       }
-    });
-  } catch (e) {
-    console.log(e);
-  }
+    }
+  });
 
   return schema;
 };
