@@ -104,10 +104,10 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @param {String} [contentType]
    * @returns {Object}
   */
-  createRequestHeader = (method, URL, contentType='') => {
+  createRequestHeader = (method, URL, contentType = '') => {
     // https://developer.apple.com/documentation/apple_news/apple_news_api/about_the_news_security_model#2970281
 
-    const date = moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), //ISO 8601
+    const date = moment().format('YYYY-MM-DDTHH:mm:ss[Z]'), // ISO 8601
       canonicalRequest = method + URL + date + contentType,
       keyBytes = ENCODE_BASE64.parse(process.env.APPLE_NEWS_KEY_SECRET.toString(ENCODE_BASE64)),
       hashed = HMAC_SHA256(canonicalRequest, keyBytes),
@@ -281,10 +281,8 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Object}
   */
   articleRequest = async (req, res) => {
-    log('info', 'ARTICLE REQUEST');
     // https://developer.apple.com/documentation/apple_news/create_an_article
     // https://developer.apple.com/documentation/apple_news/update_an_article
-    try {
     const updateArticle = !!req.params.articleID,
       method = 'POST',
       requestURL = `${ ANF_API }articles${ updateArticle ? `/${ req.params.articleID }` : '' }`,
@@ -302,7 +300,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       formData = new FormData();
     let revision = '';
 
-    log('info', `UPDATE?: ${ updateArticle }`)
+    log('info', `UPDATE?: ${ updateArticle }`);
     if (updateArticle) {
       revision = { revision } = await readArticle({ params: { articleID: req.params.articleID }});
       log('info', `UPDATE REQUEST: ${ revision }`);
@@ -315,6 +313,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
      *  Standalone articles do not appear in channel,
      *  but still appear in topics and search results, and may appear in For You.
     */
+    // eslint-disable-next-line one-var
     const metadata = {
       data: {
         ...updateArticle ? { revision } : {},
@@ -329,6 +328,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         }
       }
     };
+
     formData.append('metadata', JSON.stringify(metadata));
     formData.append('article.json', JSON.stringify(articleANF));
 
@@ -344,6 +344,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       }
     }
 
+    // eslint-disable-next-line one-var
     const canonicalRequestEntities = `multipart/form-data; boundary=${ formData._boundary }${ JSON.stringify(formData) }`;
 
     rest.request(requestURL, {
@@ -362,9 +363,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         res.status(status).send(statusText);
       }
     }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
-    } catch (e) {
-      log('error', e);
-    }
   },
   /**
    * Publish article to apple news channel

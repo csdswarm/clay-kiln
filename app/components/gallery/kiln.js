@@ -43,7 +43,7 @@ module.exports = schema => {
           });
       }
     });
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
 
