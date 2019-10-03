@@ -326,7 +326,7 @@ function sanitizeByline(data) {
 function bylineOperations(data) {
   const authors = [], sources = [];
 
-  for (const {names, sources} of data.byline || []) {
+  for (const {names, sources: bylineSources} of data.byline || []) {
     /*
       Originally a NYMag legacy thing, since we converted the original
       `authors` array into a more complex `byline` structure,
@@ -340,7 +340,7 @@ function bylineOperations(data) {
       authors.push(author);
     }
     // do sources too
-    for (const source of sources || []) {
+    for (const source of bylineSources || []) {
       delete source.count;
       sources.push(source);
     }
