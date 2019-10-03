@@ -8,14 +8,12 @@ _pages:
       - _ref: /_components/meta-tags/instances/general
     main:
       - _ref: /_components/contest/instances/new
-    layout: 
-      _ref: /_layouts/two-column-layout/instances/national-contest
+    layout: /_layouts/two-column-layout/instances/national-contest
     tertiary:
       - _ref: /_components/google-ad-manager/instances/mediumRectangleTop
       - _ref: /_components/latest-recirculation/instances/new
       - _ref: /_components/google-ad-manager/instances/halfPageBottom
-    pageHeader: 
-      _ref: /_components/google-ad-manager/instances/billboardTop
+    pageHeader: /_components/google-ad-manager/instances/billboardTop
   station-contest:
     head:
       - _ref: /_components/meta-title/instances/general
@@ -25,11 +23,9 @@ _pages:
       - _ref: /_components/meta-tags/instances/general
     main:
       - _ref: /_components/contest/instances/new
-    layout: 
-      _ref: /_layouts/two-column-layout/instances/station-contest
+    layout: /_layouts/two-column-layout/instances/station-contest
     tertiary:
       - _ref: /_components/google-ad-manager/instances/mediumRectangleTop
       - _ref: /_components/latest-recirculation/instances/new
       - _ref: /_components/google-ad-manager/instances/halfPageBottom
-    pageHeader: 
-      _ref: /_components/google-ad-manager/instances/billboardTop
+    pageHeader: /_components/google-ad-manager/instances/billboardTop
