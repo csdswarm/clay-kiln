@@ -459,8 +459,6 @@ function save(uri, data, locals) {
     // once async calls are done, use their resolved values to update some more data
     setSlugAndLock(data, resolved.prevData, resolved.publishedData);
     return data;
-  }).then(data => {
-    return data;
   });
 }
 
