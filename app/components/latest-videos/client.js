@@ -1,5 +1,7 @@
 'use strict';
 
+const _bindAll = require('lodash/bindAll');
+
 /**
  * class representing the dom elements and functionality of the LatestVideos class
  */
@@ -29,8 +31,9 @@ class LatestVideosViewController {
    * method for scroll event
    */
   onRailScroll() {
-    const scrollTop = this.dom.rail.el.scrollTop,
-      maxHeight = this.dom.rail.getAllItemsHeight() - this.dom.rail.el.offsetHeight + 45,
+    const gradHeightOffset = 45,
+      scrollTop = this.dom.rail.el.scrollTop,
+      maxHeight = this.dom.rail.getAllItemsHeight() - this.dom.rail.el.offsetHeight + gradHeightOffset,
       railForeground = this.dom.railForeground;
 
     if (scrollTop >= maxHeight) {
@@ -51,9 +54,7 @@ class LatestVideos {
    */
   constructor(el) {
     this.el = el;
-    this.onMount = this.onMount.bind(this);
-    this.onDismount = this.onDismount.bind(this);
-    this.onScroll = this.onScroll.bind(this);
+    _bindAll(this, ['onMount', 'onDismount', 'onScroll']);
     document.addEventListener('latest-videos-mount', this.onMount);
     document.addEventListener('latest-videos-dismount', this.onDismount);
   }
@@ -70,7 +71,7 @@ class LatestVideos {
    * callback method for the component's dismounting event
    */
   onDismount() {
-    this.vc.dom.rail.removeEventListener('scroll', this.onScroll);
+    this.vc.dom.rail.el.removeEventListener('scroll', this.onScroll);
     document.removeEventListener('latest-videos-mount', this.onMount);
     document.removeEventListener('latest-videos-dismount', this.onDismount);
   }
