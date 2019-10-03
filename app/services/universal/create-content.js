@@ -12,7 +12,7 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
-  { pageTypes } = require('./../server/publish-utils'),
+  { PAGE_TYPES } = require('./../server/publish-utils'),
   urlExists = require('../../services/universal/url-exists'),
   { getComponentName } = require('clayutils');
 
@@ -494,7 +494,7 @@ function setFullWidthLead(data) {
 function render(ref, data, locals) {
   fixModifiedDate(data);
 
-  if (data.contentType !== pageTypes.CONTEST) {
+  if (data.contentType !== PAGE_TYPES.CONTEST) {
     addStationLogo(data, locals);
     upCaseRadioDotCom(data);
     renderFullWidthLead(data, locals);
