@@ -1,6 +1,6 @@
 {
   "name": "clay-starter",
-  "version": "0.0.17",
+  "version": "0.0.20",
   "description": "The started for Clay",
   "main": "app.js",
   "scripts": {
@@ -49,6 +49,7 @@
     "dotenv": "^8.0.0",
     "eventify": "^2.0.1",
     "express": "^4.16.3",
+    "express-interceptor": "^1.2.0",
     "express-session": "^1.15.6",
     "gulp-newer": "git+https://github.com/nelsonpecora/gulp-newer.git",
     "hammerjs": "^2.0.8",

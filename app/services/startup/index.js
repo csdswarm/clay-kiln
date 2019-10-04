@@ -22,7 +22,8 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
-  cookies = require('./cookies');
+  cookies = require('./cookies'),
+  cacheControl = require('./cache-control');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -80,6 +81,8 @@ function setupApp(app) {
   app.use(locals);
 
   app.use(currentStation);
+
+  app.use(cacheControl);
 
   cookies.inject(app);
 
