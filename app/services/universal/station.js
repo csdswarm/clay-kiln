@@ -13,7 +13,7 @@ const radioApi = require('../server/radioApi'),
    * @param {Object} [data]
   */
   getNowPlaying = async (stationId, data = null) => {
-    const now_playing = await radioApi.get(`/stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {});
+    const now_playing = await radioApi.get(`stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {});
 
     if (data && _has(now_playing, 'data.event.current_event')) {
       const song = now_playing.data.event.current_event;

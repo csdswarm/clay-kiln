@@ -12,7 +12,7 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
-  { PAGE_TYPES } = require('./../server/publish-utils'),
+  { PAGE_TYPES } = require('./../universal/constants'),
   urlExists = require('../../services/universal/url-exists'),
   { getComponentName } = require('clayutils');
 
@@ -499,7 +499,7 @@ function render(ref, data, locals) {
     upCaseRadioDotCom(data);
     renderFullWidthLead(data, locals);
   }
-  
+
   if (locals && !locals.edit) {
     return data;
   }
