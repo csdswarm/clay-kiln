@@ -1,7 +1,7 @@
 'use strict';
 
 class Gallery {
-  constructor() {
+  constructor(el) {
     this.sidebar = document.querySelector('.content__sidebar');
     this.galleryBody = document.querySelector('.gallery__body');
     this.firstInlineAd = document.querySelector('.slides__ad-container'),
@@ -13,13 +13,14 @@ class Gallery {
     this.galleryAdTotal = document.querySelectorAll('.slides__ad-container').length,
     this.trackedPageviews = [];
 
-    this.repositionRightRail();
-    this.logoSponsorship = document.querySelector('.google-ad-manager--content-page-logo-sponsorship');
-    setTimeout(() => {
-      if (this.logoSponsorship.clientHeight === 0) {
-        this.repositionRightRail();
-      }
-    }, 3000);
+    const observer = new MutationObserver(() => {
+      this.repositionRightRail();
+    });
+
+    observer.observe(el, {
+      childList: true,
+      subtree: true
+    });
 
     if (this.firstInlineAd) {
       window.addEventListener('scroll', () => {
@@ -44,8 +45,6 @@ class Gallery {
    * Repositions the right rail under the gallery headline &
    * subheadline so that it is in line with the gallery body.
    * @function
-   * @param {object} sidebar
-   * @param {object} galleryBody
    */
   repositionRightRail() {
     this.sidebar.style.marginTop = this.galleryBody.offsetTop + 'px';
@@ -103,4 +102,4 @@ class Gallery {
   }
 }
 
-module.exports = () => new Gallery();
+module.exports = (el) => new Gallery(el);

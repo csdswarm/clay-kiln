@@ -9,11 +9,7 @@
 .component--topic-page-header {
   h1 {
     @mixin topic-page-header-font2;
-    position: absolute;
     z-index: 2;
-    bottom: 0;
-    left: 0;
-    right: 0;
     margin:0 auto em(30, 35) auto;
     text-transform: capitalize;
     display: table;
@@ -71,7 +67,7 @@
     }
 
     .banner__image {
-      position: relative;
+      position: absolute;
       overflow: hidden;
       width: 100%;
       height: em(250);
@@ -95,9 +91,15 @@
 
     h1 {
       @mixin topic-page-header-font1;
+      position: relative;
+      top: em(80);
 
       &:after {
         border-top: em(1, 35) solid $white;
+      }
+
+      @mixin medium-small-screen {
+        top: em(64);
       }
     }
   }
