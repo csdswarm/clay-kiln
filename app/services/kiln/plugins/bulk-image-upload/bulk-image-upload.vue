@@ -30,7 +30,6 @@
 const { UiButton, UiFileupload, UiIconButton, UiProgressCircular } = window.kiln.utils.components;
 const create = window.kiln.utils.create.default;
 const { refProp } = window.kiln.utils.references;
-const pMap = require('p-map');
 const _uniqBy = require('lodash/uniqBy');
 const { uploadFile } = require('../../../client/s3');
 
@@ -126,12 +125,11 @@ export default {
        */
       async uploadFiles() {
           this.status = 'uploading';
-          return pMap(this.files, ({file}, index) => 
+          return Promise.all(this.files.map(({file}, index) => 
             uploadFile(file)
                 .then(({fileKey, host}) => `https://${host}/${fileKey}`)
                 .then(this.updateFileStatus('uploaded', index))
-                .catch(this.updateFileStatus('error', index))
-          , { concurrency: 5, stopOnError: true })
+                .catch(this.updateFileStatus('error', index))))
           .then(createGallerySlideComponents)
           .then(this.updateFileStatus('created'))
           .then(newGallerySlides =>
