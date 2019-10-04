@@ -285,6 +285,10 @@ $drawerSelector: nav-drawer;
         .$(drawerSelector)__sub-nav {
           @mixin inline-block;
 
+          > a {
+            display: block;
+          }
+
           &:first-of-type {
             margin-right: em(100);
 
