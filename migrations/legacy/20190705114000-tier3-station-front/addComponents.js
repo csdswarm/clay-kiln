@@ -36,12 +36,19 @@ const createYaml = async () => {
 
   const componentList = {
     _components: {
+      'station-listen-nav': {
+        instances: {
+          new: {
+            featuredLinks: []
+          }
+        }
+      },
       'station-nav': {
         instances: {
           default: {
             primaryLinks: [
               {
-                "url": "",
+                "url": "/",
                 "text": "playlist",
                 "drawer": false
               },
@@ -65,11 +72,15 @@ const createYaml = async () => {
               },
               {
                 "url": "",
-                "text": "more from",
+                "text": "more from station",
                 "drawer": true,
                 "secondaryLinks": []
-              },
-            ]        
+              }
+            ],
+            featuredLinks: [],
+            listenNav: {
+              _ref: '/_components/station-listen-nav/instances/new'
+            }
           }
         }
       },
