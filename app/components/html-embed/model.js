@@ -28,9 +28,9 @@ module.exports.render = function (ref, data, locals) { // eslint-disable-line no
  *
  * @returns {object}
  */
-module.exports.save = async function (ref, data) {
+module.exports.save = async function (ref, data, locals) {
   // server side only check so user can get validation error from ui
-  if (SERVER_SIDE && await hasBadSource(data.text)) {
+  if (SERVER_SIDE && await hasBadSource(data.text, locals)) {
     // remove the embed text since there was bad sources in the script tag
     data.text = '';
   }

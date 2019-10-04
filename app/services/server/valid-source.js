@@ -14,7 +14,7 @@ const db = require('./db'),
    */
   inject = (app, checkAuth) => {
     const get = async () => {
-      let data = await db.get(KEY, { });
+      let data = await db.get(KEY, null, { });
 
       if (!data.items) {
         const items = [];

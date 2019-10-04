@@ -14,7 +14,7 @@ module.exports = {
 
     return (await Promise.all(
       htmlEmbeds.map(async ([uri, data]) => {
-        if (await hasBadSource(data.text)) {
+        if (await hasBadSource(data.text, window.kiln.locals)) {
           return {
             uri,
             location: 'Html Embed » HTML',

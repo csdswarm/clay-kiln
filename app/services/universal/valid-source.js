@@ -1,21 +1,23 @@
 'use strict';
 
-const db = require('../../services/server/db');
+const db = require('../../services/server/db'),
+  noItems = { items: [] };
 
 /**
  * determine if there are any script src tags that are not valid
  *
  * @param {string} text
+ * @param {object} locals
  *
  * @return {Promise<boolean>}
  */
-async function hasBadSource(text) {
+async function hasBadSource(text, locals) {
   // pull out script tags
   // our version of node does not support string.prototype.matchAll, so doing it with multiple steps
   const scripts = text.match(/<script[^>]+src=(["|'])(.*?)\1/gi) || [],
     sources = scripts.map(item => item.match(/src=(["|'])(.*?)\1/i)[2]),
     // query the DB
-    validSources = (await db.get(`${process.env.CLAY_SITE_HOST}/_valid_source/items`)).items,
+    validSources = (await db.get(`${process.env.CLAY_SITE_HOST}/_valid_source/items`, locals, noItems)).items,
     // check each source and verify it is valid
     badSources = sources.map(source => {
       for (const validSource of validSources) {
