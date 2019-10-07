@@ -28,7 +28,14 @@ const { getComponentName } = require('clayutils'),
 
     return publishedSlug !== data.slug;
   },
-  findComponentToValidate = components => Object.entries(components)
+  /**
+   * Looks for the first component that has a type requiring validation.
+   * If it doesn't exist, then we can safely assume no validation is necessary.
+   *
+   * @param {Array} components
+   * @returns {Object|undefined} component
+   */
+  findComponentRequiringValidation = components => Object.entries(components)
     .find(([uri]) => componentTypesToValidate[getComponentName(uri)]);
 
 module.exports = {
@@ -38,11 +45,19 @@ module.exports = {
   async validate(state) {
     /**
      * validates the slug field of the component by checking for a duplicate slug
-     * @param {Array[]} objectEntry
-     * @returns {Promise <object>} validationErrors
+     * @param {Array[]} components
+     * @returns {(Promise <object>|Promise <null>)} validationErrors
      */
-    const validateSlug = async ([uri, data]) => {
-        const componentName = getComponentName(uri);
+    const validateSlug = async (components) => {
+        const componentToValidate = findComponentRequiringValidation(components);
+
+        if (!componentToValidate) {
+          return null;
+        }
+
+        // eslint-disable-next-line one-var
+        const [uri, data] = componentToValidate,
+          componentName = getComponentName(uri);
 
         if (isSlugChanged(state, data)) {
           try {
@@ -63,7 +78,7 @@ module.exports = {
         }
       },
       validationError = await validateSlug(
-        findComponentToValidate(state.components)
+        state.components
       );
 
     return validationError ? [validationError] : [];
