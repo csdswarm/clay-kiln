@@ -1,10 +1,11 @@
 'use strict';
 
-const db = require('../server/db'),
+const db = require('./db'),
   uuidV4 = require('uuid/v4'),
   _pick = require('lodash/pick'),
   log = require('../universal/log').setup({file: __filename}),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
+  { wrapInTryCatch } = require('../startup/middleware-utils'),
   checkEndsBeforeStart = (start, end) => new Date(end) < new Date(start),
   checkEndsInPast = end => new Date(end) < Date.now(),
   /**
@@ -80,6 +81,33 @@ const db = require('../server/db'),
    */
   inject = (app, checkAuth) => {
     db.ensureTableExists('alert');
+
+    /**
+     * middleware to check if the user has the correct permission to create or update
+     */
+    app.use('/alerts', wrapInTryCatch((req, res, next) => {
+      if (req.method === 'GET') {
+        return next();
+      }
+
+      const { station } = req.body,
+        action = req.method === 'POST' ? 'create' : 'update';
+
+      let permission = res.locals.user.can(action);
+
+      if (station !== 'GLOBAL') {
+        permission = permission.a('alerts_station').for(station);
+      } else {
+        permission = permission.a('alerts_global');
+      }
+
+      if (permission.value) {
+        return next();
+      }
+
+      res.status(403).send(permission.message);
+    }));
+
     /**
      * Get the current alerts for a station
      */
