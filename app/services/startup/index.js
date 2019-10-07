@@ -19,11 +19,12 @@ const pkg = require('../../package.json'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
-  lytics = require('./lytics'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
-  cognitoAuth = require('./cognito-auth');
+  cognitoAuth = require('./cognito-auth'),
+  cookies = require('./cookies'),
+  cacheControl = require('./cache-control');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -82,7 +83,9 @@ function setupApp(app) {
 
   app.use(currentStation);
 
-  lytics.inject(app);
+  app.use(cacheControl);
+
+  cookies.inject(app);
 
   radium.inject(app);
 

@@ -15,9 +15,22 @@ const SECOND = 1000,
     DAY,
     WEEK,
     YEAR
+  },
+
+  PAGE_TYPES = {
+    ARTICLE: 'article',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front'
   };
 
 
 module.exports = {
-  time
+  SECOND,
+  MINUTE,
+  HOUR,
+  DAY,
+  WEEK,
+  YEAR,
+  time,
+  PAGE_TYPES
 };

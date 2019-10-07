@@ -4,7 +4,8 @@ const mediaplay = require('./media-play'),
   responsiveImages = require('./responsive-images'),
   formatTime = require('./format-time'),
   dateTime = require('./dateTime'),
-  truncate = require('./truncate');
+  truncate = require('./truncate'),
+  ellipsisSubstring = require('./ellipsisSubstring');
 
 module.exports = {
   byline: require('./byline'),
@@ -22,6 +23,7 @@ module.exports = {
   isPublished24HrsAgo: formatTime.isPublished24HrsAgo,
   timeAgoTimestamp: formatTime.timeAgoTimestamp,
   truncateText: truncate,
+  ellipsisSubstring: ellipsisSubstring,
   calloutType: require('./callout'),
   attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow'),
   reversibleOneBasedIndex: require('./reversibleOneBasedIndex'),

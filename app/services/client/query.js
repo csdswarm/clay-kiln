@@ -3,6 +3,7 @@
 const universalQuery = require('../universal/query'),
   universalRest = require('../universal/rest'),
   utils = require('../universal/utils'),
+  { urlToElasticSearch } = utils,
   log = require('../universal/log').setup({ file: __filename, context: 'client' });
 
 var SITE_ENDPOINT;
@@ -128,9 +129,14 @@ function executeMultipleSearchRequests(query) {
  * @returns {Promise}
  */
 function onePublishedArticleByUrl(url, fields, locals) {
-  const query = newQueryWithCount('published-content', null, locals);
+  const query = newQueryWithCount('published-content', null, locals),
+    canonicalUrl = utils.urlToCanonicalUrl(
+      urlToElasticSearch(url)
+    );
 
-  universalQuery.addFilter(query, {term: {canonicalUrl: utils.urlToCanonicalUrl(url)}});
+  universalQuery.addFilter(query, {
+    term: { canonicalUrl }
+  });
   if (fields) {
     universalQuery.onlyWithTheseFields(query, fields);
   }
@@ -171,6 +177,8 @@ module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCro
 module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
 module.exports.formatSearchResult = universalQuery.formatSearchResult;
 module.exports.moreLikeThis = universalQuery.moreLikeThis;
+module.exports.newNestedQuery = universalQuery.newNestedQuery;
+module.exports.addSearch = universalQuery.addSearch;
 
 // For testing
 module.exports.post = universalRest.post;
