@@ -25,6 +25,7 @@ module.exports.render = function (ref, data, locals) { // eslint-disable-line no
 /**
  * @param {string} ref
  * @param {object} data
+ * @param {object} locals
  *
  * @returns {object}
  */
