@@ -187,18 +187,13 @@
                 selectedAlert: {},
                 selectedStation: {},
                 tab: 'global',
-                tabs: [{
-                    id: 'global',
-                    name: 'Global'
-                }, {
-                    id: 'station',
-                    name: 'Station'
-                }],
+                selectedStation: '',
                 validLinkError: ''
             }
         },
-        /** Load current alerts when component is created */
+        /** Load current alerts and set default tab when component is created */
         created() {
+            this.tab = this.tabs[0].id;
             this.loadAlerts();
         },
         computed: {
@@ -206,7 +201,7 @@
                 return this.combineDateAndTime(this.endDate, this.endTime);
             },
             start() {
-                return this.combineDateAndTime(this.startDate, this.startTime);          
+                return this.combineDateAndTime(this.startDate, this.startTime);
             },
             global() {
                 return this.tab === 'global';
@@ -219,12 +214,45 @@
                 return this.global ? 'GLOBAL' : this.selectedStation.value;
             },
             stationCallsigns() {
-                const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
-               
-                return allStationCallsigns.concat('NATL-RC').sort().map(station => ({
-                    label: station === 'NATL-RC' ? 'Radio.com' : station,
-                    value: station
-                }));
+                const callsigns = new Set(),
+                    { permissions } = kiln.locals,
+                    stationPermissions = permissions.alerts_station || {},
+                    user = kiln.locals.user;
+
+                // Get a list of callsigns the user has access to
+                Object.keys(stationPermissions).forEach((permission) => {
+                    const stationsPermissions = stationPermissions[permission].station;
+
+                    Object.keys(stationsPermissions).forEach((callsign) => {
+                        if (stationsPermissions[callsign]) {
+                            callsigns.add(callsign);
+                        }
+                    });
+                });
+
+                return [...callsigns].sort();
+            },
+            tabs() {
+                const { user } = kiln.locals,
+                    tabs = [],
+                    hasGlobalAlertPermissions = user.can('create').a('alerts_global').value || user.can('update').a('alerts_global').value,
+                    hasStationAlertPermissions = user.can('create').a('alerts_station').value || user.can('update').a('alerts_station').value;
+
+                if (hasGlobalAlertPermissions) {
+                    tabs.push({
+                        id: 'global',
+                        name: 'Global'
+                    });
+                }
+
+                if (hasStationAlertPermissions) {
+                    tabs.push({
+                        id: 'station',
+                        name: 'Station'
+                    });
+                }
+
+                return tabs;
             },
             /** True if all required fields are entered */
             validForm() {
@@ -236,7 +264,7 @@
                     return false;
                 }
                 this.validLinkError = '';
-                return true;          
+                return true;
             }
         },
         methods: {
