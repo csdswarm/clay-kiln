@@ -16,19 +16,25 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
+# cat ./_layouts.yml | clay import -k demo -y $1
+instance="national-contest"
+layout="_layouts/two-column-layout/instances/$instance"
+printf "\n\Creating $layout...\n\n"
+node ./create-layout.js "$1" "$instance";
+curl -X PUT $http://$1/$layout -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./$instance-layout.json -o /dev/null -s
+curl -X PUT $http://$1/$layout@published -H 'Authorization: token accesskey' -o /dev/null -s
+rm ./$instance-layout.json
+
+instance="station-contest"
+layout="_layouts/two-column-layout/instances/$instance"
+printf "\n\Creating $layout...\n\n"
+node ./create-layout.js "$1" "$instance";
+curl -X PUT $http://$1/$layout -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./$instance-layout.json -o /dev/null -s
+curl -X PUT $http://$1/$layout@published -H 'Authorization: token accesskey' -o /dev/null -s
+rm ./$instance-layout.json
+
 printf "\n\nCreating Tags 'contests-new' instance and Contest 'new' instance...\n\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
-
-# cat ./_layouts.yml | clay import -k demo -y $1
-layout="_layouts/two-column-layout/instances/national-contest"
-printf "\n\Creating $layout...\n\n"
-curl -X PUT $http://$1/$layout -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./contest-layout-national.json -o /dev/null -s
-curl -X PUT $http://$1/$layout@published -H 'Authorization: token accesskey' -o /dev/null -s
-
-layout="_layouts/two-column-layout/instances/station-contest"
-printf "\n\Creating $layout...\n\n"
-curl -X PUT $http://$1/$layout -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./contest-layout-station.json -o /dev/null -s
-curl -X PUT $http://$1/$layout@published -H 'Authorization: token accesskey' -o /dev/null -s
 
 printf "\n\nCreating 'station-contest' and 'national-contest' pages...\n\n\n"
 cat ./_pages.yml | clay import -k demo -y $1
