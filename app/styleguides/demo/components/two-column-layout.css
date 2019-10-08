@@ -88,9 +88,17 @@
 }
 
 .kiln-edit-mode .layout--two-column {
-  .content__sidebar {
-    visibility: visible;
-    margin-top: em(153);
+  & [data-main-component='article'],
+  & [data-main-component='gallery'] {
+    .content__sidebar {
+      visibility: visible;
+      margin-top: em(153);
+    }
+  },
+  & [data-main-component='contest'] {
+    .content__sidebar {
+      visibility: visible;
+    }
   }
 }
 
