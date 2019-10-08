@@ -19,7 +19,7 @@ const createContent = require('../../services/universal/create-content'),
 
     data.contestDateRange = `${
       moment(data.startDateTime).format(formatWithTimezone)
-    } through - ${
+    } through ${
       moment(data.endDateTime).format(formatWithTimezone)
     }`;
   };
