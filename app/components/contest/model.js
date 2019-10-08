@@ -6,17 +6,16 @@ const createContent = require('../../services/universal/create-content'),
   dateParse = require('date-fns/parse'),
   formatContestDate = data => {
     let timezone = 'ET';
+
+    if (data.station) {
+      timezone = data.station.timezone;
+    }
     const formatWithTimezone = `MMMM D, YYYY [at] h:mma [${ timezone }]`;
 
     data.startDateTime = dateFormat(dateParse(data.startDate + ' ' +
       data.startTime));
     data.endDateTime = dateFormat(dateParse(data.endDate + ' ' +
       data.endTime));
-
-    if (data.station) {
-      timezone = data.station.timezone;
-    }
-
     data.contestDateRange = `${
       moment(data.startDateTime).format(formatWithTimezone)
     } through ${
