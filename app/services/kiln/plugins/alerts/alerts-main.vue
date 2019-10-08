@@ -185,7 +185,6 @@
                 startTime: '',
                 errorMessage: '',
                 selectedAlert: {},
-                selectedStation: {},
                 tab: 'global',
                 selectedStation: '',
                 validLinkError: ''
@@ -211,7 +210,7 @@
             },
             /** Current station, or global station */
             station() {
-                return this.global ? 'GLOBAL' : this.selectedStation.value;
+                return this.global ? 'GLOBAL' : this.selectedStation;
             },
             stationCallsigns() {
                 const callsigns = new Set(),
@@ -351,7 +350,7 @@
             },
             /** Loads all current and future alerts globally or by station */
             async loadAlerts() {
-                if (!this.global && !this.selectedStation.value) {
+                if (!this.global && !this.selectedStation) {
                     this.alerts = [];
                 } else {
                     this.loading = true;
