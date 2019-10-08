@@ -29,7 +29,7 @@ const axios = require('axios'),
     }
 
     // eslint-disable-next-line one-var
-    const canCreateSectionFronts = user.can('create').a('section-fronts').at(station.callsign).value,
+    const canCreateSectionFronts = user.can('create').a('section-front').at(station.callsign).value,
       // so far the only permission applying filters to this data is creating
       //   section fronts
       hasFullPermissions = canCreateSectionFronts;
@@ -63,7 +63,7 @@ module.exports = router => {
     // eslint-disable-next-line one-var
     const urlObj = new URL(req.protocol + '://' + req.get('host') + req.originalUrl),
       { user, station } = res.locals,
-      canCreateSectionFronts = user.can('create').a('section-fronts').at(station.callsign).value;
+      canCreateSectionFronts = user.can('create').a('section-front').at(station.callsign).value;
 
     urlObj.searchParams.append('fromClay', 'true');
 
