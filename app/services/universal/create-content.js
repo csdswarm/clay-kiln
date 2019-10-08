@@ -172,6 +172,13 @@ function formatDate(data, locals) {
   } else {
     data.date = dateFormat(new Date()); // ISO 8601 date string
   }
+
+  if (data.contentType === PAGE_TYPES.CONTEST) {
+    data.startDateTime = dateFormat(dateParse(data.startDate + ' ' +
+      data.startTime)); // ISO 8601 date string
+    data.endDateTime = dateFormat(dateParse(data.endDate + ' ' +
+      data.endTime)); // ISO 8601 date string
+  }
 }
 
 /**
