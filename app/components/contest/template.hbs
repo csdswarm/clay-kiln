@@ -50,11 +50,10 @@
       {{!-- Contest Rules --}}
       {{> contest-rules rules }}
 
-      <div class="body__contest-dates">
+      <div class="body__contest-dates" data-editable="dates">
         <h3>Contest Dates:</h3>
         <span>
-          {{ formatLocalDate startDate 'MMMM D, YYYY [at] h:mma z' }} through - {{ formatLocalDate endDate 'MMMM D, YYYY [at] h:mma z' }}
-          {{ moment startDate 'MMMM D, YYYY [at] h:mma z' }} through - {{ moment endDate 'MMMM D, YYYY [at] h:mma z' }}
+          {{ formatLocalDate startDateTime 'MMMM D, YYYY [at] h:mma Z' }} through - {{ formatLocalDate endDateTime 'MMMM D, YYYY [at] h:mma Z' }}
         </span>
       </div>
 
