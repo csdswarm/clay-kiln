@@ -3,6 +3,7 @@
 const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
+  _get = require('lodash/get'),
   DATA_STRUCTURES = ['alert', 'station_themes'],
   /**
    * Check Postgres to see if the table exists
@@ -165,6 +166,19 @@ const utils = require('../universal/utils'),
         WHERE id = ?
       `, [value, key]);
     }
+  },
+  /**
+   * retrieves the data from the uri
+   *
+   * @param {string} uri
+   * @param {string} [key]
+   *
+   * @return {object}
+   */
+  getComponentData = async (uri, key) => {
+    const data = await db.get(uri.split('@')[0]) || {};
+
+    return key ? _get(data, key) : data;
   };
 
 module.exports.getUri = uri => db.get(uri);
@@ -176,3 +190,4 @@ module.exports.raw = db.raw;
 module.exports.uriToUrl = utils.uriToUrl;
 module.exports.ensureTableExists = ensureTableExists;
 module.exports.DATA_STRUCTURES = DATA_STRUCTURES;
+module.exports.getComponentData = getComponentData;

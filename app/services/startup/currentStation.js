@@ -1,6 +1,6 @@
 'use strict';
 
-const radioApiService = require('../../services/server/radioApi'),
+const radioApiService = require('../server/radioApi'),
   { isEmpty } = require('lodash'),
   { lstatSync, readdirSync } = require('fs'),
   { join } = require('path'),
@@ -42,7 +42,7 @@ const radioApiService = require('../../services/server/radioApi'),
    * @return {string}
    */
   getStationSlug = (req) => {
-    const [, stationPath] = req.originalUrl.split('?')[0].split('/'),
+    const stationPath = req.originalUrl.split('/')[1],
       stationHost = req.get('host').split('/').shift().split('.').shift().toLowerCase();
 
     return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath.toLowerCase() : stationHost.toLowerCase();

@@ -27,8 +27,11 @@ items:
     badge: FR
     autocomplete:
       list: tags
-      allowRemove: true
-      allowCreate: true
+      allowRemove: false
+      allowCreate: false
+  _list_permission:
+    create: create
+    remove: update
 sectionFront:
   _subscribe: sectionFront
 featureRubric:

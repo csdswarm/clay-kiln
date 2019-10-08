@@ -54,6 +54,7 @@ function setupRoutes(router, hasPermission, userRouter, db) {
   // check all pages
   addMiddlewareToUnsafeMethods(permissionRouter, '/_pages/*', checkPermissionMiddleware);
   addMiddlewareToUnsafeMethods(permissionRouter, '/_uris/*', checkPermissionMiddleware);
+  addMiddlewareToUnsafeMethods(permissionRouter, '/_lists/*', checkPermissionMiddleware);
 
   router.use('/', permissionRouter);
 }
