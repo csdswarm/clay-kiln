@@ -1,5 +1,4 @@
 const { clayImport, clayExport, _get, _set } = require('../migration-utils').v1;
-const _chunk = require('lodash/chunk');
 const host = process.argv[2] || 'clay.radio.com';
 const logMessage = message => data => {
   console.log(message + '\n\n');
