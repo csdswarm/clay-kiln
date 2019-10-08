@@ -20,6 +20,10 @@ const _chunk = require('../../app/node_modules/lodash/chunk');
 const claycli = require('../../app/node_modules/claycli');
 const YAML = require('../../app/node_modules/yamljs');
 const url = require('url');
+const httpGet = require('./http-get');
+const httpRequest = require('./http-request');
+const makeHttpEs = require('./make-http-es');
+const elasticsearch = require('./elasticsearch');
 
 const DEFAULT_HOST = 'clay.radio.com';
 const HTTP = { http: 'http' };
@@ -220,74 +224,6 @@ function clayExport(params) {
   });
 }
 
-
-/**
- * Basically a simple http GET, to retrieve data or markup from a web node. Assumes results are text.
- * @param {Object} params
- * @param {string} params.url - the url to retrieve
- * @param {protocol} params.http - the http (or https) protocol to use
- * @returns {Promise<string>}
- */
-function httpGet(params) {
-  const { url, http } = params;
-  return new Promise((resolve, reject) => {
-    try {
-      const conn = require(http);
-
-      const req = conn.get(`${http}://${url.replace(/^https?:\/\//, '')}`, res => {
-        const chunks = [];
-
-        res.on('data', function (chunk) {
-          chunks.push(chunk);
-        });
-
-        res.on('end', function () {
-          resolve(Buffer.concat(chunks).toString());
-        });
-
-        res.on('error', error => reject({ result: 'fail', params, error }))
-      });
-
-      req.on('error', error => reject({ result: 'fail', params, error }))
-
-    } catch (error) {
-      reject({ result: 'fail', params, error });
-    }
-  });
-}
-
-/**
- * Performs a general httpRequest, with much of the error handling built in
- * @param {Object} params
- * @param {('http'|'https')} params.http
- * @param {ClientRequestArgs|Object} params.options
- * @returns {Promise<{result: ('success'|'fail'), data: string, params: Object}>}
- */
-function httpRequest(params) {
-  const { http, body, ...options } = params;
-  return new Promise((resolve, reject) => {
-    try {
-      const conn = require(http);
-
-      const parsedOptions = options.url ? {...options, ...url.parse(options.url)} : options;
-
-      const req = conn.request(parsedOptions, res => {
-        const data = [];
-        res.on('data', chunk => data.push(chunk));
-        res.on('end', () => resolve({ result: 'success', data: Buffer.concat(data).toString(), params }));
-        res.on('error', error => reject({ result: 'fail', params, error }));
-      });
-      req.on('error', error => reject({ result: 'fail', params, error }));
-
-      req.write(JSON.stringify(body))
-      req.end();
-
-    } catch (error) {
-      reject({ result: 'fail', params, error })
-    }
-  });
-}
-
 /**
  * Does a basic republish of the page or component
  * @param {Object} params
@@ -338,12 +274,12 @@ const v1 = {
   esQuery,
   clayImport,
   clayExport,
-  httpGet,
+  httpGet: httpGet.v1,
   republish,
-  httpRequest,
+  httpRequest: httpRequest.v1,
   readFile,
+  makeHttpEs: makeHttpEs.v1,
+  elasticsearch: elasticsearch.v1
 };
 
-module.exports = {
-  v1,
-};
+module.exports = { v1 };

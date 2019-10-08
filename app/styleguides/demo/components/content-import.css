@@ -3,6 +3,10 @@
     flex-direction: column;
     min-width: em(600);
 
+    &__station-select {
+      margin: em(32) em(16) 0;
+    }
+
     &__input {
         display: flex;
         flex-direction: row;
