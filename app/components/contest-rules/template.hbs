@@ -1,0 +1,13 @@
+<div class="component component--contest-rules contest-rules{{ if @root.locals.edit ' editing' }}" data-uri="{{ default _ref self }}">
+    <div class="contest-rules__list-view-container">
+        <h2 class="contest-rules__contest-headline">
+            <a href="contests/{{ contestSlug }}">{{contestHeadline}}</a>
+        </h2>
+        <div class="contest-rules__date-range">
+            <p class="paragraph">Contest Date Range: {{ moment contestStartDate 'dddd, MMMM Do YYYY' }} to {{ moment contestEndDate 'dddd, MMMM Do YYYY' }}</p>
+        </div>
+    </div>
+    <div class="contest-rules__rules-body-text paragraph" data-editable="rulesBodyText">
+        {{{ rulesBodyText }}}
+    </div>
+</div>

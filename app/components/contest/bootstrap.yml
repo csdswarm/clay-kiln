@@ -19,7 +19,7 @@ _components:
     startDate: ''
     endDate: ''
     rules:
-      _ref: /_components/paragraph/instances/new
+      _ref: /_components/contest-rules/instances/new
     tags:
       _ref: /_components/tags/instances/contests-new
     adTags:

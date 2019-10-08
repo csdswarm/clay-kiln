@@ -167,7 +167,7 @@ endDateTime:
 rules:
   _component:
     include:
-      - paragraph # will be replaced by rules component in ON-1056
+      - contest-rules
 
 tags:
   _component:
