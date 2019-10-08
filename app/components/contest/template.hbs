@@ -50,10 +50,17 @@
       {{!-- Contest Rules --}}
       {{> paragraph rules }}
 
+      {{#if station}}
+        {{ set 'formatWithTimezone'
+          (concat 'MMMM D, YYYY [at] h:mma [' station.timezone ']')
+        }}
+      {{else}}
+        {{ set 'formatWithTimezone' 'MMMM D, YYYY [at] h:mma [ET]' }}
+      {{/if}}
       <div class="body__contest-dates" data-editable="dates">
         <h3>Contest Dates:</h3>
         <span>
-          {{ formatLocalDate startDateTime 'MMMM D, YYYY [at] h:mma Z' }} through - {{ formatLocalDate endDateTime 'MMMM D, YYYY [at] h:mma Z' }}
+          {{ moment startDateTime formatWithTimezone }} through - {{ moment endDateTime formatWithTimezone }}
         </span>
       </div>
 
