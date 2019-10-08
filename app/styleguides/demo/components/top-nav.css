@@ -761,7 +761,7 @@ $drawerSelector: nav-drawer;
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 .nav-drawer--sports {
   > .container {
-    padding-left: widthOnGrid(3, 2);
+    padding-left: widthOnGrid(3, 1);
     background-image: url('/media/components/top-nav/sports_dropdown_logo.png');
     background-size: em(140) em(40);
     background-repeat: no-repeat;

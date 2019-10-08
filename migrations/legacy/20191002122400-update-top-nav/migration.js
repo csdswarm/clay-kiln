@@ -23,7 +23,7 @@ function updateComponentInstance({ data }) {
   const path = COMPONENT_INSTANCE.split('/'),
     component = _get(data, [...path]);
 
-  component.headerLinks = component.headerLinks.map(({text, list, ...rest}) => {
+  component.headerLinks = component.headerLinks.map(({text, list, hasHeader, ...rest}) => {
       if (list) {
         let newList = [];
         switch (text) {
@@ -45,7 +45,7 @@ function updateComponentInstance({ data }) {
                             }
                         });
                 } else {
-                    newList.push({list: subList, text: subText, ...rest, hasHeader: !!subText});
+                    newList.push({list: subList, text: subText, hasHeader: !!subText, ...rest});
                 }
             });
             break;
@@ -65,14 +65,14 @@ function updateComponentInstance({ data }) {
                             }
                         });
                 } else {
-                    newList.push({list: subList, text: subText, ...rest, hasHeader: !!subText});
+                    newList.push({list: subList, text: subText, hasHeader: !!subText, ...rest});
                 }
             });
             break;
           default:
-            return { list, text, ...rest, hasHeader: !!text };
+            return { list, text, ...rest };
         }
-        return { list: newList, text, ...rest, hasHeader: !!text};
+        return { list: newList, text, ...rest};
       } else {
         return { text, list, ...rest };
       }
