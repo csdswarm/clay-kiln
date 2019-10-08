@@ -83,32 +83,6 @@ const db = require('./db'),
     db.ensureTableExists('alert');
 
     /**
-     * middleware to check if the user has the correct permission to create or update
-     */
-    app.use('/alerts', wrapInTryCatch((req, res, next) => {
-      if (req.method === 'GET') {
-        return next();
-      }
-
-      const { station } = req.body,
-        action = req.method === 'POST' ? 'create' : 'update';
-
-      let permission = res.locals.user.can(action);
-
-      if (station !== 'GLOBAL') {
-        permission = permission.a('alerts_station').for(station);
-      } else {
-        permission = permission.a('alerts_global');
-      }
-
-      if (permission.value) {
-        return next();
-      }
-
-      res.status(403).send(permission.message);
-    }));
-
-    /**
      * Get the current alerts for a station
      */
     app.get('/alerts', async (req, res) => {
@@ -184,6 +158,36 @@ const db = require('./db'),
         res.status(500).send('There was an error saving the alert');
       }
     });
+  },
+  /**
+   * Add permissions middleware for /alerts
+   *
+   * @param {object} router
+   */
+  addAlertsMiddleware = (router) => {
+    router.use('/alerts', wrapInTryCatch((req, res, next) => {
+      if (req.method === 'GET') {
+        return next();
+      }
+
+      const { station } = req.body,
+        action = req.method === 'POST' ? 'create' : 'update';
+
+      let permission = res.locals.user.can(action);
+
+      if (station !== 'GLOBAL') {
+        permission = permission.a('alerts_station').for(station);
+      } else {
+        permission = permission.a('alerts_global');
+      }
+
+      if (permission.value) {
+        return next();
+      }
+
+      res.status(403).send(permission.message);
+    }));
   };
 
 module.exports.inject = inject;
+module.exports.addAlertsMiddleware = addAlertsMiddleware;

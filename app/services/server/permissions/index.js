@@ -12,6 +12,7 @@ const express = require('express'),
   path = require('path'),
   YAML = require('yamljs'),
   interceptLists = require('./intercept-lists'),
+  { addAlertsMiddleware } = require('../alerts'),
   componentsToCheck = getComponentsWithPermissions(),
   pageTypesToCheck = new Set(['homepage', 'section-front']);
 
@@ -71,6 +72,7 @@ function userPermissionRouter() {
   });
 
   interceptLists(userPermissionRouter);
+  addAlertsMiddleware(userPermissionRouter);
 
   return userPermissionRouter;
 }
