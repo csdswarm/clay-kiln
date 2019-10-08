@@ -146,28 +146,26 @@ async function checkUserPermissions(uri, req, locals, db) {
       return false;
     }
     if (isComponent(uri)) {
-      console.log('PERMISSIONS LOG 1');
       await checkComponentPermission(uri, req, locals, db);
     }
     if (isPage(uri)) {
-      console.log('PERMISSIONS LOG 2');
       if (isPublished(uri)) {
         const pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
-        console.log('page type', pageType);
 
         return pageTypesToCheck.has(pageType)
           ? locals.user.can('publish').a(pageType).value
           : true;
       } else if (req.method === 'POST') {
-        const pageType = getComponentName(req.body.main[0]);
+        // const pageType = getComponentName(req.body.main[0]);
 
-        return pageTypesToCheck.has(pageType)
-          ? locals.user.can('create').a(pageType).value
-          : true;
+        // return pageTypesToCheck.has(pageType)
+        //   ? locals.user.can('create').a(pageType).value
+        //   : true;
+
+        return true;
       }
     }
     if (isUri(uri) && req.method === 'DELETE') {
-      console.log('PERMISSIONS LOG 3');
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),
         pageType = getComponentName(pageData.main[0]),
@@ -177,7 +175,6 @@ async function checkUserPermissions(uri, req, locals, db) {
         ? user.can('unpublish').a(pageType).at(station.callsign).value
         : true;
     }
-    console.log('PERMISSIONS LOG 4');
     // if no permissions are required they can do it
     return true;
   } catch (e) {

@@ -24,6 +24,7 @@ lead:
 headline:
   _label: Headline
   _subscribe: articleHeadline
+  _publish: contestHeadline
   _placeholder:
     height: 40px
     text: Headline
@@ -35,7 +36,7 @@ headline:
       - strike
     validate:
       required: true
-    help: Appears as article title
+    help: Appears as contest title
 
 subHeadline:
   _label: Sub headline
@@ -132,16 +133,36 @@ embed:
       - html-embed
 
 startDate:
-  _label: Contest Start Datetime
+  _label: Contest Start Date
   _has:
     input: datepicker
-    help: Contest start time and dat
+    help: Contest start date
+
+startTime:
+  _label: Contest Start Time
+  _has:
+    input: timepicker
+    help: Contest start time
+
+startDateTime:
+  _label: Contest Start Date and Time
+  _publish: contestStartDate
 
 endDate:
-  _label: Contest End Datetime
+  _label: Contest End Date
   _has:
     input: datepicker
-    help: Contest end time and date
+    help: Contest end date
+
+endTime:
+  _label: Contest End Time
+  _has:
+    input: timepicker
+    help: Contest end time
+
+endDateTime:
+  _label: Contest End Datetime
+  _publish: contestEndDate
 
 rules:
   _component:
@@ -173,6 +194,7 @@ feedImgUrl:
 
 slug:
   _label: Slug
+  _publish: contestSlug
   _has:
     input: text
     validate:
@@ -201,6 +223,12 @@ _groups:
   circSlug:
     fields:
       - slug
+  dates:
+    fields:
+      - startDate
+      - startTime
+      - endDate
+      - endTime
 
 
 # Non user editable. Set by model.js. Included in schema to use _publish functionality

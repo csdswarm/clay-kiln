@@ -106,7 +106,7 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
 function getContestSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      if (urlOptions.pageType === pageTypes.CONTEST) {
+      if (urlOptions.pageType === PAGE_TYPES.CONTEST) {
         return pubUtils.contestSlugPattern(urlOptions);
       }
     });
