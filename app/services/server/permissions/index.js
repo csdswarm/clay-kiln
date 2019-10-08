@@ -156,7 +156,7 @@ async function checkUserPermissions(uri, req, locals, db) {
           ? locals.user.can('publish').a(pageType).value
           : true;
       } else if (req.method === 'POST') {
-        const pageType = getComponentName(req.body.main[0]);
+        // const pageType = getComponentName(req.body.main[0]);
 
         // return pageTypesToCheck.has(pageType)
         //   ? locals.user.can('create').a(pageType).value

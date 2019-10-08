@@ -13,7 +13,7 @@ const radioApi = require('../server/radioApi'),
    * @param {Object} [data]
    * @returns {Promise|Object}
   */
-  getNowPlaying = async (stationId=299, data = null) => {
+  getNowPlaying = async (stationId, data = null) => {
     if (stationId !== 0) {
       const now_playing = await radioApi.get(`stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {});
 
