@@ -1,7 +1,7 @@
 'use strict';
 
 const pubUtils = require('./publish-utils'),
-  { pageTypes } = pubUtils;
+  { PAGE_TYPES } = pubUtils;
 
 /**
  * Common functionality used for `getYearMonthSlugUrl` and `getArticleSlugUrl`
@@ -48,7 +48,7 @@ function getYearMonthSlugUrl(pageData, locals, mainComponentRefs) {
 function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      if (urlOptions.contentType === pageTypes.ARTICLE) {
+      if (urlOptions.contentType === PAGE_TYPES.ARTICLE) {
         if (urlOptions.secondarySectionFront) {
           return pubUtils.articleSecondarySectionFrontSlugPattern(urlOptions);
         }
@@ -67,7 +67,7 @@ function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
 function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      if (urlOptions.contentType === pageTypes.GALLERY) {
+      if (urlOptions.contentType === PAGE_TYPES.GALLERY) {
         if (urlOptions.secondarySectionFront) {
           return pubUtils.gallerySecondarySectionFrontSlugPattern(urlOptions);
         }
@@ -86,7 +86,7 @@ function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
 function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      if (urlOptions.pageType === pageTypes.SECTIONFRONT) {
+      if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
         if (!urlOptions.primarySectionFront) {
           return pubUtils.sectionFrontSlugPattern(urlOptions);
         } else {
@@ -96,7 +96,24 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
     });
 }
 
+/**
+ * Return the url for a contest pg based on its slug, within the contests subdir
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getContestSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.CONTEST) {
+        return pubUtils.contestSlugPattern(urlOptions);
+      }
+    });
+}
+
 module.exports.getYearMonthSlugUrl = getYearMonthSlugUrl;
 module.exports.getArticleSlugUrl = getArticleSlugUrl;
 module.exports.getGallerySlugUrl = getGallerySlugUrl;
 module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
+module.exports.getContestSlugUrl = getContestSlugUrl;

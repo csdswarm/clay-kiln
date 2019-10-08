@@ -1,0 +1,33 @@
+_version: 1.1
+
+_description: |
+  This is the component to add a video to an article via the video’s URL. This component supports YouTube and Magnify and can also support any video players that Embedly supports.
+
+url:
+  _label: URL
+  _placeholder:
+    text: Video
+    height: 250px
+  _has:
+    input: text
+    validate:
+      required: true
+    help: Also accepts embed code
+
+# Non-editable fields
+html:
+  _label: HTML
+  _has:
+    help: HTML generated from the provided url.
+
+lastGenerated:
+  _label: Last Generated
+  _has:
+    help: The URL that last generated the embed HTML. If the new url matches lastGenerated, the existing html will be trusted and will not be re-generated.
+
+videoValid:
+  help: Used to decide whether or not to display a video in the template
+  _placeholder:
+    text: Invalid video url ${url}. This video will not display
+    permanent: true
+

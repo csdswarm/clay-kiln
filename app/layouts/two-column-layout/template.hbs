@@ -7,6 +7,7 @@
   {{#unless (includes (default _ref _self) "@published") }}
     <meta name="robots" content="noindex">
   {{/unless}}
+  <meta property="fb:pages" content="135147466526831"/>
 
   <script src="/js/polyfills.js"></script>
 
@@ -32,7 +33,8 @@
 </head>
 <body>
 <div id="vue-app-mount-point">
-  <section class="layout layout--two-column">
+  <section class="layout layout--two-column"
+    data-main-component="{{ getComponentName main.0._ref }}">
     <section class="layout__top" data-editable="top">{{> component-list top }}</section>
     <header>
       <div class="layout__layout-header" data-editable="layoutHeader">{{> component-list layoutHeader }}</div>

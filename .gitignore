@@ -95,3 +95,5 @@ app/.config/configstore/*
 
 #vscode settings
 .vscode
+
+nginx/certs/

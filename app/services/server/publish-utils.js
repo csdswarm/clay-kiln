@@ -10,11 +10,8 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   slugifyService = require('../../services/universal/slugify'),
-  pageTypes = {
-    ARTICLE: 'article',
-    GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
-  },
+  urlPatterns = require('../universal/url-patterns'),
+  { PAGE_TYPES } = require('../universal/constants'),
   /**
    * returns a url to the server for a component
    *
@@ -141,7 +138,7 @@ function getMainComponentFromRef(componentReference, locals) {
     const componentTypeRegex = /^.*_components\/(\b.+\b)\/instances.*$/g,
       pageType = componentTypeRegex.exec(componentReference)[1] || null;
 
-    if ([pageTypes.ARTICLE,pageTypes.GALLERY].includes(pageType)) {
+    if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST].includes(pageType)) {
       guaranteePrimaryHeadline(component);
       guaranteeLocalDate(component, publishedComponent, locals);
     }
@@ -175,22 +172,26 @@ function getUrlOptions(component, locals, pageType) {
     date = moment(locals.date);
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = slugifyService(component.sectionFront || component.title) || null;
+  urlOptions.sectionFront = component.stationFront ?
+    component.stationSiteSlug || component.title :
+    slugifyService(component.sectionFront || component.title) || null;
   urlOptions.secondarySectionFront = slugifyService(component.secondarySectionFront) || null;
   urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
+  urlOptions.slug = component.stationFront ?
+    component.stationSiteSlug :
+    component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
 
-  if ([pageTypes.ARTICLE, pageTypes.GALLERY].includes(urlOptions.pageType)) {
+  if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
     }
-  } else if (urlOptions.pageType === pageTypes.SECTIONFRONT) {
+  } else if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
     if (!(locals.site && urlOptions.sectionFront)) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
@@ -204,14 +205,17 @@ module.exports.getMainComponentFromRef = getMainComponentFromRef;
 module.exports.getUrlOptions = getUrlOptions;
 module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
-// URL patterns below need to be handled by the site's index.js
-module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.html`; // e.g. http://vulture.com/music/x.html - modified re: ON-333
-module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
-module.exports.articleSecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/${o.slug}`;
-module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/${o.slug}`; // e.g. http://radio.com/music/gallery/grammies
-module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/gallery/${o.slug}`;
-module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
-module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.getComponentInstance = getComponentInstance;
-module.exports.pageTypes = pageTypes;
+
+// URL patterns below need to be handled by the site's index.js
+module.exports.dateUrlPattern = urlPatterns.dateUrlPattern;
+module.exports.articleSlugPattern = urlPatterns.articleSlugPattern;
+module.exports.articleSecondarySectionFrontSlugPattern = urlPatterns.articleSecondarySectionFrontSlugPattern;
+module.exports.gallerySlugPattern = urlPatterns.gallerySlugPattern;
+module.exports.gallerySecondarySectionFrontSlugPattern = urlPatterns.gallerySecondarySectionFrontSlugPattern;
+module.exports.sectionFrontSlugPattern = urlPatterns.sectionFrontSlugPattern;
+module.exports.secondarySectionFrontSlugPattern = urlPatterns.secondarySectionFrontSlugPattern;
+module.exports.contestSlugPattern = urlPatterns.contestSlugPattern;
+
+module.exports.PAGE_TYPES = PAGE_TYPES;

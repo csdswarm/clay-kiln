@@ -1,7 +1,7 @@
 'use strict';
 
 const publishing = require('../../services/publishing'),
-  mainComponentRefs = ['/_components/article/instances', '/_components/gallery/instances', '/_components/section-front/instances'];
+  mainComponentRefs = ['/_components/article/instances', '/_components/gallery/instances', '/_components/section-front/instances', '/_components/contest/instances'];
 
 module.exports.routes = [
   // Partially static
@@ -25,6 +25,7 @@ module.exports.routes = [
   { path: '/small-business-pulse/:slug' },
   { path: '/small-business-pulse/:year/:month/:name' },
   { path: '/small-business-pulse/:year/:month/:day/:name' },
+  { path: '/contests/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/'},
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
@@ -53,7 +54,8 @@ module.exports.routes = [
 module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
-  (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs)
+  (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs)
 ];
 
 module.exports.modifyPublishedData = [

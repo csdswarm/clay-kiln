@@ -1,0 +1,33 @@
+_pages:
+  national-contest:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+      - /_components/meta-tags/instances/general
+    main:
+      - /_components/contest/instances/new
+    layout: /_layouts/two-column-layout/instances/national-contest
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/new
+      - /_components/google-ad-manager/instances/halfPageBottom
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+  station-contest:
+    head:
+      - /_components/meta-title/instances/general
+      - /_components/meta-description/instances/general
+      - /_components/meta-image/instances/general
+      - /_components/meta-url/instances/general
+      - /_components/meta-tags/instances/general
+    main:
+      - /_components/contest/instances/new
+    layout: /_layouts/two-column-layout/instances/station-contest
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      - /_components/latest-recirculation/instances/new
+      - /_components/google-ad-manager/instances/halfPageBottom
+    pageHeader:
+      - /_components/google-ad-manager/instances/billboardTop

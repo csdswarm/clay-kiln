@@ -1,6 +1,6 @@
 'use strict';
 
-const apiHelper = require('./api-helper');
+const apiHelper = require('../../services/universal/brightcove-proxy-helper');
 
 module.exports['1.0'] = async (uri, data) => {
   if (data.videoId) {
@@ -10,7 +10,7 @@ module.exports['1.0'] = async (uri, data) => {
 };
 
 module.exports['2.0'] = function (uri, data) {
-  
+
   let newData = Object.assign({}, data);
 
   if (newData.videoId) {

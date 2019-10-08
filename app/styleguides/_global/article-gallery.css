@@ -45,8 +45,12 @@
     margin-bottom: em(25, 18);
   }
 }
+.lead--full-width {
+  margin-bottom: em(48);
+}
 .article__body,
-.gallery__body {
+.gallery__body,
+.contest__body {
   display: inline-block;
   width: 100%;
 
@@ -112,7 +116,7 @@
         @define-mixin author-name-color $sectionFront, $color {
           .component--article[data-section-front=$sectionFront] & a,
           .component--gallery[data-section-front=$sectionFront] & a {
-            color: $color;
+            color: theme(primaryColor, $color);
           }
         }
         @mixin author-name-color music, $sunsetOrange;
@@ -195,7 +199,8 @@
   .article__body[data-lead-orientation=vertical],
   .gallery__body,
   .gallery__body[data-lead-type=instagram],
-  .gallery__body[data-lead-orientation=vertical] {
+  .gallery__body[data-lead-orientation=vertical],
+  .contest__body {
     display: flex;
     flex-direction: column;
     .body__header,
@@ -239,7 +244,8 @@
   .article__body[data-lead-orientation=vertical],
   .gallery__body,
   .gallery__body[data-lead-type=instagram],
-  .gallery__body[data-lead-orientation=vertical] {
+  .gallery__body[data-lead-orientation=vertical],
+  .contest__body {
     .body__info {
       margin-bottom: em(50);
     }
@@ -251,7 +257,8 @@
   .article__body[data-lead-orientation=vertical],
   .gallery__body,
   .gallery__body[data-lead-type=instagram],
-  .gallery__body[data-lead-orientation=vertical] {
+  .gallery__body[data-lead-orientation=vertical],
+  .contest__body {
     .body__info {
       margin-bottom: em(40);
     }
@@ -263,7 +270,8 @@
   .article__body[data-lead-orientation=vertical],
   .gallery__body,
   .gallery__body[data-lead-type=instagram],
-  .gallery__body[data-lead-orientation=vertical] {
+  .gallery__body[data-lead-orientation=vertical],
+  .contest__body {
     .body__info {
       flex-direction: column;
       .info--left-top {
@@ -277,7 +285,8 @@
 }
 
 .component--article,
-.component--gallery {
+.component--gallery,
+.component--contest {
   .body__word-count {
     background: #f4f4f4;
     clear: both;
@@ -426,7 +435,7 @@
   .component.article--$sectionFront,
   .component.gallery--$sectionFront{
     .breadcrumbs__separator {
-      color: $color;
+      color: theme(primaryColor, $color);
     }
   }
 }
@@ -441,11 +450,7 @@
   .gallery--$sectionFront {
     .paragraph {
       a {
-        background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(color), .50) 80%, rgba($(color), .50) 100%);
-
-        &:hover {
-           background: linear-gradient(to bottom, rgba($(color), .50) 0, rgba($(color), .50) 100%);
-        }
+        @mixin anchor $color;
       }
     }
   }

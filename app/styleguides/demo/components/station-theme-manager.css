@@ -1,0 +1,81 @@
+@import "_global/fonts";
+
+.color-picker-dropdown {
+  padding: em(30);
+}
+.station-theme-manager {
+  overflow-y: scroll;
+  padding: em(30);
+
+  h3 {
+    @mixin font CircularStd-Black, 20px, inherit, -.23px, 25px;
+    margin-bottom: em(30, 20);
+  }
+  .theme-color-input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: em(30);
+  }
+  .ui-textbox {
+    width: em(300);
+    margin-right: em(10);
+    input {
+      color: inherit;
+    }
+  }
+  .ui-alert {
+    font-size: 16px;
+    max-width: em(687);
+  }
+  .station-theme-manager__color-preview {
+    display: flex;
+    flex-direction: column;
+    margin-left: em(30);
+
+    span {
+      &:nth-of-type(1) {
+        @mixin font CircularStd-Black, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(2) {
+        @mixin font CircularStd-BlackItalic, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(3) {
+        @mixin font CircularStd-Book, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(4) {
+        @mixin font CircularStd-BookItalic, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(5) {
+        @mixin font CircularStd-Medium, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(6) {
+        @mixin font CircularStd-MediumItalic, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(7) {
+        @mixin font ProximaNova-Bold, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(8) {
+        @mixin font ProximaNova-BoldIt, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(9) {
+        @mixin font ProximaNova-Light, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(10) {
+        @mixin font ProximaNova-LightIt, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(11) {
+        @mixin font ProximaNova-Regular, 12px, inherit, 0px, 15px;
+      }
+      &:nth-of-type(12) {
+        @mixin font ProximaNova-RegularIt, 12px, inherit, 0px, 15px;
+      }
+    }
+  }
+  .button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: em(30);
+  }
+}
