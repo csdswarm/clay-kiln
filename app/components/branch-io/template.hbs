@@ -1,18 +1,17 @@
 <!-- data-uri="{{ default _ref _self }}" -->
 {{#unless @root.locals.edit}}
+    <script src="https://cdn.branch.io/branch-2.49.0.min.js"></script>
     <script type="text/javascript">
-        // load Branch
-        (function(b,r,a,n,c,h,_,s,d,k){if(!b[n]||!b[n]._q){for(;s<_.length;)c(h,_[s++]);d=r.createElement(a);d.async=1;d.src="https://cdn.branch.io/branch-latest.min.js";k=r.getElementsByTagName(a)[0];k.parentNode.insertBefore(d,k);b[n]=h}})(window,document,"script","branch",function(b,r){b[r]=function(){b._q.push([r,arguments])}},{_q:[],_v:1},"addListener applyCode autoAppIndex banner closeBanner closeJourney creditHistory credits data deepview deepviewCta first getCode init link logout redeem referrals removeListener sendSMS setBranchViewData setIdentity track validateCode trackCommerceEvent logEvent disableTracking".split(" "), 0);
         // init Branch
-        branch.init("{{ branchIoKey }}");
+        branch.init("{{ _computed.branchIoKey }}");
     </script>
-    {{#each player_site_genre }}
+    {{#each _computed.player_site_genre }}
         <meta name="branch:deeplink:player_site_genre" content="{{ name }}" />
     {{/each}}
-    <meta name="branch:deeplink:station_logo" content="{{ station_logo }}" />
-    <meta name="branch:deeplink:player_site_category" content="{{ player_site_category }}" />
-    <meta name="branch:deeplink:player_site_market" content="{{ player_site_market }}" />
-    <meta name="branch:deeplink:page" content="{{ page }}" />
-    <meta name="branch:deeplink:station_name" content="{{ station_name }}" />
-    <meta name="branch:deeplink:station_id" content="{{ station_id }}" />
+    <meta name="branch:deeplink:station_logo" content="{{ _computed.station_logo }}" />
+    <meta name="branch:deeplink:player_site_category" content="{{ _computed.player_site_category }}" />
+    <meta name="branch:deeplink:player_site_market" content="{{ _computed.player_site_market }}" />
+    <meta name="branch:deeplink:page" content="{{ _computed.page }}" />
+    <meta name="branch:deeplink:station_name" content="{{ _computed.station_name }}" />
+    <meta name="branch:deeplink:station_id" content="{{ _computed.station_id }}" />
 {{/unless}}
