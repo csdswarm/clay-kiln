@@ -23,7 +23,7 @@ function updateComponentInstance({ data }) {
   const path = COMPONENT_INSTANCE.split('/'),
     component = _get(data, [...path]);
 
-  component.headerLinks = component.headerLinks.map(({text, list, hasHeader, ...rest}) => {
+  component.headerLinks = component.headerLinks.map(({text, list, hasHeader: removing, ...rest}) => {
       if (list) {
         let newList = [];
         switch (text) {
