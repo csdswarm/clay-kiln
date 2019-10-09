@@ -1,10 +1,16 @@
-<section role="main">
-  <div class="contest-rules-page">
-    {{#each contestRules}}
-      <div class="contest-rules-page__rule">
-        <div>{{title}}</div>
-        <div>{{date}}</div>
-      </div>
-    {{/each}}
+{{#*inline "rulesList"}}
+  This is a placeholder component for contestRules component
+{{/inline}}
+
+<article
+  role="main"
+  data-uri="{{ default _ref _self }}"
+  class="component component--contest-rules-page"
+  itemscope
+  itemtype="http://schema.org/Article"
+>
+  <div class="content__body">
+    <h1>Contest Rules</h1>
+    {{> rulesList}}
   </div>
-</section>
+</article>
