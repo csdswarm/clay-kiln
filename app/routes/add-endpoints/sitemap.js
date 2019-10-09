@@ -21,7 +21,7 @@ const _snakeCase = require('lodash/snakeCase'),
    * @returns {string}
    */
   getIndexXml = (req, rows) => {
-    const protocolAndHost = req.protocol + '://' + req.get('host');
+    const protocolAndHost = process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host');
     let result = xmlIndexHeader;
 
     for (const { last_updated, sitemap_id } of rows) {
