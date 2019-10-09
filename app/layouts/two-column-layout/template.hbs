@@ -31,10 +31,10 @@
 </head>
 <body>
 <div id="vue-app-mount-point">
-  <section class="layout layout--two-column{{#unless @root.locals.canEditPage}} layout--no-permissions{{/unless}}">
-    {{#unless @root.locals.canEditPage}}
+  <section class="layout layout--two-column{{#if @root.locals.showLackOfEditPermissionsBanner}} layout--no-permissions{{/if}}">
+    {{#if @root.locals.showLackOfEditPermissionsBanner}}
       <h1 class="layout__no-permissions-message">Sorry, but you do not have permissions to edit {{ @root.locals.updateTarget }}.</h1>
-    {{/unless}}
+    {{/if}}
     <section class="layout__top" data-editable="top">{{> component-list top }}</section>
     <header>
       <div class="layout__layout-header" data-editable="layoutHeader">{{> component-list layoutHeader }}</div>

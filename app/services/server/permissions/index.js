@@ -102,7 +102,7 @@ async function checkUpdatePrivileges(locals) {
 
         if (pageType === 'static-page') {
           return {
-            canEditPage: user.can('update').a(pageType).value,
+            showLackOfEditPermissionsBanner: !user.can('update').a(pageType).value,
             updateTarget: `${typesOfPages[pageType]} for ${station.name}`
           };
         }
@@ -115,7 +115,6 @@ async function checkUpdatePrivileges(locals) {
       error
     );
   }
-  return { canEditPage: true };
 }
 
 /**
