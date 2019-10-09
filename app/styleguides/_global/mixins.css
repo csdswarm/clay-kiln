@@ -48,6 +48,13 @@
     @mixin-content;
   }
 }
+
+$default-screen-nav-width: em(1100); /* 1280+ desktop */
+$large-screen-nav-width: em(940); /* 1280-1024 desktop */
+$medium-screen-nav-width: em(728); /* 1023-481 tablet */
+$medium-small-screen-nav-width: em(440); /* 480-361 mobile */
+$small-screen-nav-width: em(320); /* 360- mobile */
+
 @define-mixin vertical-align $position: relative {
   position: $position;
   top: 50%;
@@ -155,3 +162,10 @@
   background-size: $size;
 }
 
+@define-mixin anchor $color {
+  background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba(theme(primaryColorRGB, '$color'), .50) 80%, rgba(theme(primaryColorRGB, '$color'), .50) 100%);
+
+  &:hover {
+    background: linear-gradient(to bottom, rgba(theme(primaryColorRGB, '$color'), .50) 0, rgba(theme(primaryColorRGB, '$color'), .50) 100%);
+  }
+}

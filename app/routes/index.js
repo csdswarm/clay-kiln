@@ -19,6 +19,7 @@ const AWS = require('aws-sdk'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
+  stationTheming = require('../services/server/stationThemingApi'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml');
 
@@ -195,4 +196,5 @@ module.exports = router => {
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
+  stationTheming.inject(router, checkAuth);
 };

@@ -21,9 +21,8 @@ items:
   _placeholder:
     text: Tags
     height: 40px
-  _display: inline
   _has:
-    fn: simple-list
+    input: simple-list
     propertyName: isRubric
     badge: FR
     autocomplete:
@@ -35,5 +34,5 @@ sectionFront:
 featureRubric:
   _publish: rubric
   _has:
-    fn: description
+    input: description
     value: Field used by model.js to inform the article/gallery feature rubric

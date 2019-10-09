@@ -13,3 +13,11 @@ module.exports.render = (uri, data, locals) => {
 
   return data;
 };
+
+module.exports.save = (uri, data) => {
+  return {
+    ...data,
+    revealSectionFrontControls: !data.stationFront && !data.titleLocked,
+    revealStationControls: data.stationFront && !data.titleLocked
+  };
+};
