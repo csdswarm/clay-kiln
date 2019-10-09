@@ -85,6 +85,7 @@
                 </div>
               </a>
             </li>
+            {{!-- Add sharethrough every third item in list, except last item in list --}}
             {{#ifAll (modulo (add @index 1) 2 0) (compare ../feedItem.length "!==" (add @index 1))}}
               {{> google-ad-manager ../sharethroughTag}}
             {{/ifAll}}
