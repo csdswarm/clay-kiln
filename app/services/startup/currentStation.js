@@ -89,6 +89,8 @@ const radioApiService = require('../../services/server/radioApi'),
 
       return defaultStation;
     }
+
+    return {};
   };
 
 
