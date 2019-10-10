@@ -1,4 +1,4 @@
-_version: 6.0
+_version: 7.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -265,6 +265,11 @@ contentCollectionLogoSponsorship:
       - google-ad-manager
 
 googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
+
+sharethroughTag:
   _component:
     include:
       - google-ad-manager
