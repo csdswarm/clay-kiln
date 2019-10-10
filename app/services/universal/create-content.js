@@ -178,7 +178,7 @@ function formatDate(data, locals) {
  */
 function setCanonicalUrl(data, locals) {
   if (_get(locals, 'publishUrl')) {
-    data.canonicalUrl = locals.publishUrl;
+    data.canonicalUrl = locals.publishUrl.replace('https', 'http');
   }
 }
 
