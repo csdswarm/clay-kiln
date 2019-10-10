@@ -95,7 +95,8 @@ const queryService = require('../../services/server/query'),
    * @returns {Promise}
    */
   renderStation = async (data, locals) => {
-    if (locals.station.id) {
+    data.articles = []; // Default to empty array so it's not undefined
+    if (locals.station.id && locals.station.website) {
       const feedUrl = `${locals.station.website.replace(/\/$/, '')}/station_feed.json`,
         feed = await radioApiService.get(feedUrl, null, (response) => response.nodes),
         nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
