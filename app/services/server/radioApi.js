@@ -3,6 +3,7 @@
 const rest = require('../universal/rest'),
   promises = require('../universal/promises'),
   log = require('../universal/log').setup({ file: __filename }),
+  isEmpty = require('lodash/isEmpty'),
   radioApi = 'api.radio.com/v1/',
   qs = require('qs'),
   ioredis = require('ioredis'),
@@ -62,6 +63,9 @@ const rest = require('../universal/rest'),
   /**
    * Retrieve data from Redis or an endpoint
    *
+   * options.ttl = soft TTL to compare against an updated_at value
+   * options.expire = REDIS expire settings to expire the KEY and drop from REDIS
+   *
    * @param {string} route
    * @param {*} [params]
    * @param {function} [validate]
@@ -72,16 +76,22 @@ const rest = require('../universal/rest'),
     const dbKey = createKey(route, params),
       validateFn = validate || defaultValidation(route),
       requestEndpoint = createEndpoint(route, params),
-      getFreshData = async () => {
+      getFreshData = async (apiTimeout = API_TIMEOUT, cachedData = {}) => {
         try {
           // return api response if it's fast enough. if not, it might still freshen the cache
-          return await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), API_TIMEOUT);
+          let result = await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), apiTimeout);
+
+          result.response_cached = false;
+          return result;
         } catch (e) {
           // request failed, validation failed, or timeout. return empty object
 
           log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
 
-          return {};
+          if (!isEmpty(cachedData)) {
+            cachedData.response_cached = true;
+          }
+          return cachedData;
         }
       };
 
@@ -103,11 +113,9 @@ const rest = require('../universal/rest'),
 
       if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
         // if the data is old, fire off a new api request to get it up to date, but don't wait on it
-        getAndSave(requestEndpoint, dbKey, validateFn, options)
-          .catch(() => {});
+        return getFreshData(2000, data);
       }
 
-      // always return cached if it's available
       data.response_cached = true;
       return data;
     } catch (e) {
@@ -116,6 +124,9 @@ const rest = require('../universal/rest'),
   },
   /**
    * Retrieve data from endpoint and save to db
+   *
+   * options.ttl = soft TTL to compare against an updated_at value
+   * options.expire = REDIS expire settings to expire the KEY and drop from REDIS
    *
    * @param {string} endpoint
    * @param {string} dbKey
@@ -127,6 +138,7 @@ const rest = require('../universal/rest'),
   getAndSave = async (endpoint, dbKey, validate, options) => {
     try {
       const ttl = options.ttl,
+        expire = options.expire || false,
         response = await rest.get(endpoint, options.headers);
 
       if (validate(response)) {
@@ -134,8 +146,14 @@ const rest = require('../universal/rest'),
 
         // added to allow cache to be bypassed
         if (ttl > 0) {
-          redis.set(dbKey, JSON.stringify(response))
-            .catch(() => {});
+          // use REDIS expire
+          if (expire) {
+            redis.set(dbKey, JSON.stringify(response), 'PX', expire)
+              .catch(() => {});
+          } else {
+            redis.set(dbKey, JSON.stringify(response))
+              .catch(() => {});
+          }
         }
 
         return response;

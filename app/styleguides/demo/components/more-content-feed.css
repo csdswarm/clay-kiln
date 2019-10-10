@@ -113,7 +113,8 @@
           width: inherit;
         }
 
-        .thumb__section-front {
+        .thumb__section-front,
+        .thumb__advertisement {
           background: $purple;
           @mixin more-content-feed-font5;
           position: absolute;
@@ -127,6 +128,10 @@
             line-height: em(33, 18);
             padding: 0 em(6, 18);
           }
+        }
+        .thumb__advertisement {
+          background: $blazeOrange;
+          z-index: 1;
         }
         .thumb__content-type {
           background: $purple;

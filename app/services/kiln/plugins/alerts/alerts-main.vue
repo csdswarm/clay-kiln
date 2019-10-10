@@ -178,6 +178,7 @@
                 startTime: '',
                 errorMessage: '',
                 selectedAlert: {},
+                selectedStation: {},
                 tab: 'global',
                 tabs: [{
                     id: 'global',
@@ -379,4 +380,3 @@
         }
     }
 </script>
-

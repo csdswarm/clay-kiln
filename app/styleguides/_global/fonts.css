@@ -285,6 +285,9 @@ em, i {
 @define-mixin more-content-feed-font9 {
   @mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
 }
+@define-mixin more-content-feed-font10 {
+  @mixin font ProximaNova-Light, 16px, $blazeOrange, -.26px, 22px;
+}
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| Section-Lead Fonts Styleguide |||||| */
