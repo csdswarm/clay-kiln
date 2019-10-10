@@ -213,23 +213,15 @@
                 return this.global ? 'GLOBAL' : this.selectedStation;
             },
             stationCallsigns() {
-                const callsigns = new Set(),
-                    { permissions } = kiln.locals,
-                    stationPermissions = permissions.alerts_station || {},
-                    user = kiln.locals.user;
+                const { user, allStationsCallsigns } = kiln.locals,
+                    withStationAlerts = user.using('alerts_station'),
+                    hasStationAccess = station =>
+                        withStationAlerts.can('update').for(station).value ||
+                        withStationAlerts.can('create').for(station).value;
 
-                // Get a list of callsigns the user has access to
-                Object.keys(stationPermissions).forEach((permission) => {
-                    const stationsPermissions = stationPermissions[permission].station;
-
-                    Object.keys(stationsPermissions).forEach((callsign) => {
-                        if (stationsPermissions[callsign]) {
-                            callsigns.add(callsign);
-                        }
-                    });
-                });
-
-                return [...callsigns].sort();
+                return allStationsCallsigns
+                    .filter(callsign => hasStationAccess(callsign))
+                    .sort();
             },
             tabs() {
                 const { user } = kiln.locals,
@@ -238,17 +230,11 @@
                     hasStationAlertPermissions = user.can('create').a('alerts_station').value || user.can('update').a('alerts_station').value;
 
                 if (hasGlobalAlertPermissions) {
-                    tabs.push({
-                        id: 'global',
-                        name: 'Global'
-                    });
+                    tabs.push({ id: 'global', name: 'Global' });
                 }
 
                 if (hasStationAlertPermissions) {
-                    tabs.push({
-                        id: 'station',
-                        name: 'Station'
-                    });
+                    tabs.push({ id: 'station', name: 'Station' });
                 }
 
                 return tabs;

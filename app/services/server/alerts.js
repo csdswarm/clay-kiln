@@ -175,10 +175,10 @@ const db = require('./db'),
 
       let permission = res.locals.user.can(action);
 
-      if (station !== 'GLOBAL') {
-        permission = permission.a('alerts_station').for(station);
-      } else {
+      if (station === 'GLOBAL') {
         permission = permission.a('alerts_global');
+      } else {
+        permission = permission.a('alerts_station').for(station);
       }
 
       if (permission.value) {
