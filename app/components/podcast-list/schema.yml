@@ -32,7 +32,7 @@ primaryColor:
   _label: Component's Primary Color
   _has:
     input: text
-    help: Override the these color with a hexadecimal(i.e. "#00CCB7") value above
+    help: Override theme color with a hexadecimal(i.e. "#00CCB7") value above
 
 isTitleFontColorDark:
   _label: Component's Title Font Color Dark
