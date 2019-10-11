@@ -1,6 +1,6 @@
 'use strict';
 
-let SECTIONS;
+// let sections;
 const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   ENCODE_BASE64 = require('crypto-js/enc-base64'),
   qs = require('querystring'),
@@ -34,14 +34,14 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Function}
   */
   bootstrap = async (req, res, next) => {
-    if (!SECTIONS) {
-      const sections = await getAllSections();
+    if (!res.locals.appleNewsSections) {
+      const allSections = await getAllSections();
 
-      SECTIONS = {};
-      sections.forEach(section => {
+      res.locals.appleNewsSections = {};
+      allSections.forEach(section => {
         const { name, id, isDefault, links: { self } } = section;
 
-        SECTIONS[ name ] = {
+        res.locals.appleNewsSections[ name ] = {
           id,
           isDefault,
           link: self
@@ -57,19 +57,19 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @param {string} sectionFront
    * @returns {Object}
   */
-  sectionFrontToAppleNewsSectionMap = sectionFront => {
+  sectionFrontToAppleNewsSectionMap = (sectionFront, sections) => {
     let section;
 
     switch (sectionFront) {
       case 'music':
-        section = SECTIONS['Entertainment & Music'] || SECTIONS['News'] || {};
+        section = sections['Entertainment & Music'] || sections['News'] || {};
         break;
       case 'sports':
-        section = SECTIONS['Sports'] || SECTIONS['News'] || {};
+        section = sections['Sports'] || sections['News'] || {};
         break;
       case 'news':
       default:
-        section = SECTIONS['News'] || {};
+        section = sections['News'] || {};
         break;
     }
 
@@ -116,7 +116,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       method,
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText, body: sections }) => {
-      log('info', `${status} ${statusText}`);
       if (status === 200) {
         if (res) res.send(sections.data || []);
         else return sections.data || [];
@@ -280,7 +279,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           getCompInstanceData(articleRef),
           getCompInstanceData(`${ articleRef }.anf?config=true`)
         ]),
-        { link: sectionLink } = sectionFrontToAppleNewsSectionMap(sectionFront),
+        { link: sectionLink } = sectionFrontToAppleNewsSectionMap(sectionFront, res.locals.appleNewsSections),
         formData = new FormData,
         metadata = {
           // See https://developer.apple.com/documentation/apple_news/create_article_metadata_fields for details
