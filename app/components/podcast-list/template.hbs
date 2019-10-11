@@ -20,7 +20,8 @@
           {{ item.podcast.label }}
         </div>
         {{#if ../showCallToActions}}
-          <div class="podcast-list__more podcast-list__more{{ if ../primaryColor '--override-fill' else=''}}" style="color: {{ if ../primaryColor ../primaryColor else=''}}; fill: {{ if ../primaryColor ../primaryColor else=''}};">
+          <div class="podcast-list__more podcast-list__more{{ if ../primaryColor '--override-fill' else=''}}" 
+            style="color: {{ if ../primaryColor ../primaryColor else=''}}; fill: {{ if ../primaryColor ../primaryColor else=''}};">
             See All Episodes {{{ read 'components/podcast-list/media/caret.svg' }}}
           </div>
         {{/if}}
