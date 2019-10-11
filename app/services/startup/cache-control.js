@@ -12,7 +12,7 @@ const interceptor = require('express-interceptor'),
       },
       /**
        * The interception happens here, after all other middleware. res can be altered before the response is actually sent.
-       * @param body
+       * @param {object} body
        * @param send
        */
       intercept(body, send) {
