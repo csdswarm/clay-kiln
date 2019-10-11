@@ -46,12 +46,18 @@ const buildImageComponent = url => ({name: 'image', data: {url}});
  */
 const buildGallerySlideComponent = imageRef => ({name: 'gallery-slide', data: { slideEmbed: [{[refProp]: imageRef[refProp]}]}});
 /**
+ * Filter out imageUrls that were not uploaded correctly
+ * 
+ * @param {string | object} imageUrl
+ */
+const filterErrors = imageUrl => !(imageUrl instanceof Error);
+/**
  * Use kiln create method to create image components and then add the _ref to a gallery-slide
  *
  * @param {array} imageUrls
  */
 const createGallerySlideComponents = async imageUrls => {
-    const imageRefs = await create(imageUrls.map(buildImageComponent));
+    const imageRefs = await create(imageUrls.filter(filterErrors).map(buildImageComponent));
 
     return imageRefs.map(buildGallerySlideComponent);
 }
