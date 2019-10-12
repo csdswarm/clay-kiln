@@ -64,7 +64,9 @@ module.exports = unityComponent({
    * @returns {Promise}
    */
   render(ref, data, locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+    const query = queryService.newQueryWithCount(elasticIndex, maxItems),
+      { sectionFront } = data;
+
     let cleanUrl;
 
     if (!locals) {
@@ -112,11 +114,16 @@ module.exports = unityComponent({
       }
     }
 
+    data._computed.articleOverrides = ['news', 'sports', 'music', 'podcasts'].includes(sectionFront)
+      ? { sectionFront }
+      : null;
+
     return queryService.searchByQuery(query)
       .then(function (results) {
         data.articles = data.items
           .concat(results)
-          .slice(0, maxItems); // show a maximum of maxItems links
+          .slice(0, maxItems) // show a maximum of maxItems links
+          .map(article => ({ ...article, ...data._computed.articleOverrides }));
 
         return data;
       })

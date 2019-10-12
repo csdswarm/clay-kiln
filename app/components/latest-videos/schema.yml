@@ -49,8 +49,17 @@ filterSecondarySectionFronts:
     multiple: true
     list: secondary-section-fronts
 
+title:
+  _label: Video Section Title
+  _has:
+    input: text
+
 _groups:
   settings:
     fields:
+      - title
       - filterTags
       - filterSecondarySectionFronts
+
+sectionFront:
+  _subscribe: sectionFront
