@@ -20,6 +20,7 @@ module.exports = {
   dynamicImage: require('./dynamic-image'),
   secondsToISO: formatTime.secondsToISO,
   formatDateRange: formatTime.formatDateRange,
+  formatDateTimeRange: formatTime.formatDateTimeRange,
   isPublished24HrsAgo: formatTime.isPublished24HrsAgo,
   timeAgoTimestamp: formatTime.timeAgoTimestamp,
   truncateText: truncate,

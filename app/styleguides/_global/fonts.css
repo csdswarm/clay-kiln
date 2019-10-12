@@ -683,3 +683,6 @@ em, i {
 @define-mixin contest-font6 {
   @mixin font ProximaNova-Light, 18px, $black, -0.29px, 22px;
 }
+@define-mixin contest-font7 {
+  @mixin font CircularStd-Black, 18px, $black, -0.45px, 22px;
+}

@@ -177,9 +177,9 @@ endDateTime:
   _label: Contest End Datetime
   _publish: contestEndDate
 
-contestDateRange:
-  _label: Contest Start and End Datetime
-  _publish: contestDateRange
+timezone:
+  _label: Contest Timezone
+  _publish: timezone
 
 rules:
   _component:
