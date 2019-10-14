@@ -37,7 +37,7 @@ const _get = require('lodash/get'),
       default:
         return 'ET';
     }
-  }
+  },
   /**
    * ensures _state.allStations is up to date
    */
