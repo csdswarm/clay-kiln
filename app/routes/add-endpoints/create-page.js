@@ -24,9 +24,15 @@ module.exports = router => {
     }
 
     if (stationSlug) {
+      const [ stationName, stationTimezone ] = await Promise.all([
+        stationUtils.getNameFromSlug(stationSlug),
+        stationUtils.getTimezoneFromSlug(stationSlug)
+      ]);
+      
       Object.assign(res.locals, {
         newPageStationSlug: stationSlug,
-        stationName: await stationUtils.getNameFromSlug(stationSlug)
+        stationName,
+        stationTimezone
       });
     }
 

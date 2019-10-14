@@ -8,12 +8,8 @@ const createContent = require('../../services/universal/create-content'),
    *
    * @param {Object} data
    */
-  formatContestDate = data => {
-    data.timezone = 'ET';
-
-    if (data.station) {
-      data.timezone = data.station.timezone;
-    }
+  formatContestDate = (data, locals) => {
+    data.timezone = locals.stationTimezone || 'ET';
 
     if (data.startDate && data.startTime && data.endDate && data.endTime) {
       data.startDateTime = dateFormat(dateParse(data.startDate + ' ' +
@@ -24,7 +20,7 @@ const createContent = require('../../services/universal/create-content'),
   };
 
 module.exports.render = function (ref, data, locals) {
-  formatContestDate(data);
+  formatContestDate(data, locals);
 
   return createContent.render(ref, data, locals);
 };

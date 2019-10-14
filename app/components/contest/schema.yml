@@ -181,6 +181,22 @@ timezone:
   _label: Contest Timezone
   _publish: timezone
 
+stationSlug:
+  _label: Station Slug
+  _has: static
+  _publish: stationSlug
+  _reveal:
+    field: stationSlug
+    operator: truthy
+
+stationName:
+  _label: Station Name
+  _has: static
+  _publish: stationName
+  _reveal:
+    field: stationName
+    operator: truthy
+
 rules:
   _component:
     include:
@@ -227,6 +243,9 @@ slug:
       tooltip: Generate from Short Headline
 
 _groups:
+  settings:
+    fields:
+      - stationName
   circHeadlines:
     fields:
       - primaryHeadline
