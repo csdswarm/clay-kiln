@@ -120,6 +120,7 @@
     "gulp-if": "^2.0.2",
     "gulp-uglify": "^3.0.0",
     "istanbul": "^0.4.5",
+    "localforage": "^1.7.1",
     "mocha": "^6.0.0",
     "nodemon": "^1.18.7",
     "postcss-functions": "^3.0.0",
@@ -135,6 +136,7 @@
     "uglify-js": "^2.8.29",
     "uglifyify": "^5.0.2",
     "vinyl-map2": "^1.2.1",
+    "vuex": "3.0.1",
     "yargs": "^11.0.0"
   }
 }

@@ -254,6 +254,7 @@ content:
       - inline-related
       - omny
       - verizon-media
+      - contest-rules
 feeds:
   _label: Include in These Feeds
   _has:
@@ -403,6 +404,7 @@ _groups:
 
   settings:
     fields:
+      - stationName
       - feeds
       - showSocial
       - sectionFront
@@ -496,3 +498,10 @@ noIndexNoFollow:
     field: isContentFromAP
     operator: ===
     value: false
+
+stationName:
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy

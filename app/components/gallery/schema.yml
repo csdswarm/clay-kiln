@@ -420,6 +420,7 @@ _groups:
       - toggleEditorCondensedSlidesView
   settings:
     fields:
+      - stationName
       - showSocial
       - hasSecondaryBylines
       - sectionFront
@@ -537,3 +538,10 @@ noIndexNoFollow:
 toggleEditorCondensedSlidesView:
   _label: Condensed Slide View On
   _has: checkbox
+
+stationName:
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy

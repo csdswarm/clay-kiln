@@ -49,9 +49,6 @@ function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.contentType === PAGE_TYPES.ARTICLE) {
-        if (urlOptions.secondarySectionFront) {
-          return pubUtils.articleSecondarySectionFrontSlugPattern(urlOptions);
-        }
         return pubUtils.articleSlugPattern(urlOptions);
       }
     });
@@ -68,9 +65,6 @@ function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.contentType === PAGE_TYPES.GALLERY) {
-        if (urlOptions.secondarySectionFront) {
-          return pubUtils.gallerySecondarySectionFrontSlugPattern(urlOptions);
-        }
         return pubUtils.gallerySlugPattern(urlOptions);
       }
     });
@@ -87,11 +81,7 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
-        if (!urlOptions.primarySectionFront) {
-          return pubUtils.sectionFrontSlugPattern(urlOptions);
-        } else {
-          return pubUtils.secondarySectionFrontSlugPattern(urlOptions);
-        }
+        return pubUtils.sectionFrontSlugPattern(urlOptions);
       }
     });
 }

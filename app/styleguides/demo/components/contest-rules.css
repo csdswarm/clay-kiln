@@ -1,0 +1,24 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.contest-rules {
+    transition: 125ms ease;
+    &__rules-body-text {
+        p:nth-child(1):before {
+            content: "Contest Rules: ";
+            @mixin rules-component-font-1;
+        }
+    }
+    &__contest-headline {
+        @mixin rules-component-font-2;
+        a {
+            text-decoration: none;
+        }
+    }
+}
+
+.editing .selected.contest-rules {
+    padding: em(18, 16);
+    border: 1px dashed $silver;
+}

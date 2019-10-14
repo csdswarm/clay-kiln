@@ -164,10 +164,14 @@ endDateTime:
   _label: Contest End Datetime
   _publish: contestEndDate
 
+contestDateRange:
+  _label: Contest Start and End Datetime
+  _publish: contestDateRange
+
 rules:
   _component:
     include:
-      - paragraph # will be replaced by rules component in ON-1056
+      - contest-rules
 
 tags:
   _component:
