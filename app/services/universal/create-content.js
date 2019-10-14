@@ -529,7 +529,14 @@ function assignStationInfo(data, locals) {
   if (locals.newPageStationSlug !== undefined) {
     Object.assign(data, {
       stationSlug: locals.newPageStationSlug,
-      stationName: locals.stationName
+      stationName: locals.stationName,
+      stationCallsign: locals.stationCallsign,
+      stationTimezone: locals.stationTimezone
+    });
+  } else {
+    Object.assign(data, {
+      stationCallsign: _get(locals, 'defaultStation.callsign', 'NATL-RC'),
+      stationTimezone: _get(locals, 'defaultStation.timezone', 'ET')
     });
   }
 }
