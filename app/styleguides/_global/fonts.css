@@ -285,6 +285,9 @@ em, i {
 @define-mixin more-content-feed-font9 {
   @mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
 }
+@define-mixin more-content-feed-font10 {
+  @mixin font ProximaNova-Light, 16px, $blazeOrange, -.26px, 22px;
+}
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| Section-Lead Fonts Styleguide |||||| */
@@ -656,4 +659,30 @@ em, i {
 }
 @define-mixin rules-component-font-2 {
   @mixin font CircularStd-Black, 35px, $black, -0.58px, 42px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Contest Component Styleguide ||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
+
+@define-mixin contest-font1 {
+  @mixin font CircularStd-Black, 45px, $black, -0.74px, 54px;
+}
+@define-mixin contest-font2 {
+  @mixin font ProximaNova-Light, 22px, $black, -0.36px, 26px;
+}
+@define-mixin contest-font3 {
+  @mixin font CircularStd-Medium, 16px, $black, -0.26px, 19px;
+}
+@define-mixin contest-font4 {
+  @mixin font CircularStd-Black, 22px, $black, -0.55px, 26px;
+}
+@define-mixin contest-font5 {
+  @mixin font CircularStd-Black, 35px, $black, -0.58px, 42px;
+}
+@define-mixin contest-font6 {
+  @mixin font ProximaNova-Light, 18px, $black, -0.29px, 22px;
+}
+@define-mixin contest-font7 {
+  @mixin font CircularStd-Black, 18px, $black, -0.45px, 22px;
 }

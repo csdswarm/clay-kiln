@@ -1,30 +1,26 @@
 'use strict';
 
 const createContent = require('../../services/universal/create-content'),
-  moment = require('moment'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  formatContestDate = data => {
-    let timezone = 'ET';
+  /**
+   * Format contest dates to include start date and time and end date and time
+   *
+   * @param {Object} data
+   */
+  formatContestDate = (data, locals) => {
+    data.timezone = locals.stationTimezone || 'ET';
 
-    if (data.station) {
-      timezone = data.station.timezone;
+    if (data.startDate && data.startTime && data.endDate && data.endTime) {
+      data.startDateTime = dateFormat(dateParse(data.startDate + ' ' +
+        data.startTime));
+      data.endDateTime = dateFormat(dateParse(data.endDate + ' ' +
+        data.endTime));
     }
-    const formatWithTimezone = `MMMM D, YYYY [at] h:mma [${ timezone }]`;
-
-    data.startDateTime = dateFormat(dateParse(data.startDate + ' ' +
-      data.startTime));
-    data.endDateTime = dateFormat(dateParse(data.endDate + ' ' +
-      data.endTime));
-    data.contestDateRange = `${
-      moment(data.startDateTime).format(formatWithTimezone)
-    } through ${
-      moment(data.endDateTime).format(formatWithTimezone)
-    }`;
   };
 
 module.exports.render = function (ref, data, locals) {
-  formatContestDate(data);
+  formatContestDate(data, locals);
 
   return createContent.render(ref, data, locals);
 };

@@ -123,9 +123,14 @@ sideShare:
       - share
 
 description:
-  _component:
+  _label: Contest Description
+  _componentList:
+    fuzzy: false # allows interactives, etc to add one-off components
     include:
       - paragraph
+    validate:
+      min: 1
+      required: true
 
 embed:
   _component:
@@ -137,12 +142,16 @@ startDate:
   _has:
     input: datepicker
     help: Contest start date
+    validate:
+      required: true
 
 startTime:
   _label: Contest Start Time
   _has:
     input: timepicker
     help: Contest start time
+    validate:
+      required: true
 
 startDateTime:
   _label: Contest Start Date and Time
@@ -153,20 +162,40 @@ endDate:
   _has:
     input: datepicker
     help: Contest end date
+    validate:
+      required: true
 
 endTime:
   _label: Contest End Time
   _has:
     input: timepicker
     help: Contest end time
+    validate:
+      required: true
 
 endDateTime:
   _label: Contest End Datetime
   _publish: contestEndDate
 
-contestDateRange:
-  _label: Contest Start and End Datetime
-  _publish: contestDateRange
+timezone:
+  _label: Contest Timezone
+  _publish: timezone
+
+stationSlug:
+  _label: Station Slug
+  _has: static
+  _publish: stationSlug
+  _reveal:
+    field: stationSlug
+    operator: truthy
+
+stationName:
+  _label: Station Name
+  _has: static
+  _publish: stationName
+  _reveal:
+    field: stationName
+    operator: truthy
 
 rules:
   _component:
@@ -214,6 +243,9 @@ slug:
       tooltip: Generate from Short Headline
 
 _groups:
+  settings:
+    fields:
+      - stationName
   circHeadlines:
     fields:
       - primaryHeadline

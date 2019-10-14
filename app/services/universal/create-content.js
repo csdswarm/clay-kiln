@@ -14,6 +14,7 @@ const _get = require('lodash/get'),
   mediaplay = require('./media-play'),
   { PAGE_TYPES } = require('./../universal/constants'),
   urlExists = require('../../services/universal/url-exists'),
+  { urlToElasticSearch } = require('../../services/universal/utils'),
   { getComponentName } = require('clayutils');
 
 /**
@@ -181,7 +182,7 @@ function formatDate(data, locals) {
  */
 function setCanonicalUrl(data, locals) {
   if (_get(locals, 'publishUrl')) {
-    data.canonicalUrl = locals.publishUrl;
+    data.canonicalUrl = urlToElasticSearch(locals.publishUrl);
   }
 }
 

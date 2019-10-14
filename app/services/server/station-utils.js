@@ -10,22 +10,55 @@ const _get = require('lodash/get'),
       bySlug: {},
       byCallsign: {},
       asArray: []
+    },
+    allMarkets: []
+  },
+  /**
+   * Get timezone from market api
+   * 
+   * @param {Array} markets
+   * @param {Number} marketID
+   */
+  getTimezoneFromMarketID = (markets, marketID) => {
+    const market = markets.find(market => {
+      return market.id === marketID;
+    });
+
+    switch (market.attributes.timezone) {
+      case 'US/Pacific':
+        return 'PT';
+      case 'US/Mountain':
+      case 'MT':
+        return 'MT';
+      case 'US/Central':
+        return 'CT';
+      case 'US/Eastern':
+      case null:
+      default:
+        return 'ET';
     }
   },
   /**
    * ensures _state.allStations is up to date
    */
   updateAllStations = async () => {
-    const resp = await radioApi.get('stations', { page: { size: 1000 } }),
-      { allStations } = _state;
+    // const resp = await radioApi.get('stations', { page: { size: 1000 } }),
+    const { allStations } = _state,
+      [ stationsResp, marketsResp ] = await Promise.all([
+        radioApi.get('stations', { page: { size: 1000 } }),
+        radioApi.get('markets', { page: { size: 100 } })
+      ])
 
-    if (resp.response_cached && !_isEmpty(allStations.asArray)) {
+    if (stationsResp.response_cached && !_isEmpty(allStations.asArray)) {
       return;
     }
 
-    allStations.asArray = resp.data;
+    allStations.asArray = stationsResp.data;
 
-    resp.data.forEach(station => {
+    stationsResp.data.forEach(station => {
+      station.attributes.timezone = getTimezoneFromMarketID(marketsResp.data,
+        station.attributes.market_id || station.attributes.market.id);
+
       allStations.bySlug[station.attributes.site_slug] = station;
       allStations.byCallsign[station.attributes.callsign] = station;
     });
@@ -101,5 +134,13 @@ api.getCallsignFromSlug = withUpdatedStations(slug => _state.allStations.bySlug[
  * @returns {object|undefined}
  */
 api.getStationFromOriginalUrl = withUpdatedStations(getStationFromUrl);
+
+/**
+ * Finds the station timezone from the slug
+ *
+ * @param {string} slug
+ * @returns {Promise<string>}
+ */
+api.getTimezoneFromSlug = withUpdatedStations(slug => _state.allStations.bySlug[slug].attributes.timezone);
 
 module.exports = api;
