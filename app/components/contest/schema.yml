@@ -177,8 +177,8 @@ endDateTime:
   _label: Contest End Datetime
   _publish: contestEndDate
 
-timezone:
-  _label: Contest Timezone
+stationTimezone:
+  _label: Station or National Timezone
   _publish: timezone
 
 stationSlug:
@@ -195,6 +195,14 @@ stationName:
   _publish: stationName
   _reveal:
     field: stationName
+    operator: truthy
+
+stationCallsign:
+  _label: Station Callsign
+  _has: static
+  _publish: stationCallsign
+  _reveal:
+    field: stationCallsign
     operator: truthy
 
 rules:
@@ -245,7 +253,12 @@ slug:
 _groups:
   settings:
     fields:
+      - startDateTime
+      - endDateTime
+      - stationTimezone
+      - stationSlug
       - stationName
+      - stationCallsign
   circHeadlines:
     fields:
       - primaryHeadline

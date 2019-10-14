@@ -27,6 +27,7 @@ const radioApiService = require('../server/radioApi'),
       id: 15,
       name: 'New York, NY'
     },
+    timezone: 'ET',
     category: '',
     phonetic_name: 'radio dot com',
     slogan: 'Bringing radio alive',
