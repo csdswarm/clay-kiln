@@ -1,4 +1,7 @@
 /* stylelint-disable */
+
+/* Styles for article, gallery and contest pages */
+
 @import "mixins";
 @import "fonts";
 @import "colors";
@@ -43,9 +46,10 @@
   .header__secondary {
     @mixin article-font3;
     display: inline-block;
-    margin-bottom: em(25, 18);
+    margin-bottom: em(25, 22);
   }
 }
+
 .lead--full-width {
   margin-bottom: em(48);
 }
@@ -194,6 +198,7 @@
     }
   }
 }
+
 @mixin large-screen {
   .article__body,
   .article__body[data-lead-type=instagram],

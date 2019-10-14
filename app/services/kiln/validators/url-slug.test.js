@@ -19,11 +19,12 @@ var dirname = __dirname.split('/').pop(),
   generateMockState = ({
     componentData = defaultComponentData,
     pageType = 'article',
-    currentPageUrl = 'http://clay.radio.com/section-front/secondary/slug'
-  }) => ({
-    components: {
+    currentPageUrl = 'http://clay.radio.com/section-front/secondary/slug',
+    components = {
       [`clay.radio.com/_components/${pageType}/instances/cjzsvb07d000f1mpf2el59sn4`]: componentData
-    },
+    }
+  }) => ({
+    components,
     page: {
       uri: 'clay.radio.com/_pages/cjzsvb01u00001mpfddnsbu0e',
       state: {
@@ -38,6 +39,20 @@ var dirname = __dirname.split('/').pop(),
   });
 
 describe(`${dirname}/${filename}`, () => {
+  it('is valid when there is no component to validate', async () => {
+    const { validate: urlSlugValidator } = requireValidateSlug({
+        urlExists: async () => false
+      }),
+      mockState = generateMockState({
+        pageType: 'homePage',
+        currentPageUrl: 'http://clay.radio.com',
+        components: {}
+      }),
+      errors = await urlSlugValidator(mockState);
+
+    expect(errors.length).to.equal(0);
+  });
+
   it('[article] passes when unique slug', async () => {
     const { validate: urlSlugValidator } = requireValidateSlug({
         urlExists: async () => false

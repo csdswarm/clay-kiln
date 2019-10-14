@@ -48,3 +48,62 @@ cat ./lists-$listType.yml | clay import -k demo -y $1
 rm ./lists-$listType.json
 rm ./lists-$listType.yml
 printf "\n\n\n\n"
+
+# Updating existing field mappings
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#_updating_existing_field_mappings
+
+# find out which index is currently being used 
+printf "\nmaking curl GET to $es:9200/published-content/_alias\n";
+curl -X GET "$es:9200/published-content/_alias" > ./aliases.json;
+currentIndex=$(node alias "$1");
+rm ./aliases.json
+
+mappings=$(curl -X GET "$es:9200/$currentIndex/_mappings");
+
+if [[ $mappings != *"startDateTime"* && $mappings != *"endDateTime"* ]]; then
+  printf "\nmaking curl GET to $es:9200/_cat/indices?pretty&s=index:desc\n";
+  indices=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null);
+  # sometimes the currentIndex isn't necessarily the largest. and query brings back in alphabetical order, so 2 > 10
+  largestIndex=$(node largest-index "$1" "$indices");
+
+  # increment largetIndex by 1 to create newIndex
+  num=$(echo $largestIndex | sed 's/[^0-9]*//g');
+  newIndex="$(echo $largestIndex | sed 's/[0-9]*//g')$((num+1))";
+
+  # add featured and editorialFeeds properties to mapping
+  newProps="\"startDateTime\": {\"type\": \"date\"}, \"endDateTime\": {\"type\": \"date\"}";
+
+  # assuming this is fixed
+  alias="published-content";
+  newMappings=$(curl -X GET "$es:9200/$currentIndex/_mappings" 2>/dev/null | sed -n "s/\"properties\":{/\"properties\":{$newProps,/p" | sed -n "s/{\"$currentIndex\":{\(.*\)}}/\1/p");
+
+  printf "\n\nCreating new index ($newIndex)...\n\n"
+  curl -X GET "$es:9200/$currentIndex/_settings" > ./settings.json;
+  node ./settings-update.js "$1";
+  settings=$(cat ./settings.txt);
+  curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d "{$settings,$newMappings}";
+  rm ./settings.json;
+  rm ./settings.txt;
+
+  printf "\r\n\r\nCopying old index data ($currentIndex) to new index ($newIndex)...\n\n"
+  curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "
+  {
+    \"source\": {
+      \"index\": \"$currentIndex\"
+    },
+    \"dest\": {
+      \"index\": \"$newIndex\"
+    }
+  }";
+
+  sleep 1;
+
+  printf "\n\nRemoving old alias and adding new ($alias)...\n\n"
+  curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
+  {
+      \"actions\" : [
+          { \"remove\" : { \"index\" : \"$currentIndex\", \"alias\" : \"$alias\" } },
+          { \"add\" : { \"index\" : \"$newIndex\", \"alias\" : \"$alias\" } }
+      ]
+  }";
+fi

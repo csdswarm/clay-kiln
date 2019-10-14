@@ -25,7 +25,6 @@ module.exports = router => {
     if (!res.locals.edit) {
       return next();
     }
-
     const callsignsIHaveAccessTo = Object.keys(res.locals.permissions.station.access.station),
       stationsByCallsign = await stationUtils.getAllStations.byCallsign(),
       stationsBySlug = _.chain(stationsByCallsign)
@@ -49,7 +48,8 @@ module.exports = router => {
         '': {
           callsign: 'NATL-RC',
           name: 'Radio.com',
-          slug: ''
+          slug: '',
+          timezone: 'ET'
         }
       });
     }

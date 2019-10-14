@@ -2,7 +2,6 @@
 
 const _ = require('lodash'),
   moment = require('moment'),
-  isTruthy = _.identity,
   db = require('./db'),
   sanitize = require('../universal/sanitize'),
   utils = require('../universal/utils'),
@@ -207,44 +206,6 @@ module.exports.getMainComponentFromRef = getMainComponentFromRef;
 module.exports.getUrlOptions = getUrlOptions;
 module.exports.getUrlPrefix = getUrlPrefix;
 module.exports.getPublishDate = getPublishDate;
-// URL patterns below need to be handled by the site's index.js
-module.exports.dateUrlPattern = opts => {
-  // e.g. http://vulture.com/music/x.html - modified re: ON-333
-  return `${opts.prefix}/${opts.sectionFront}/${opts.slug}.html`;
-};
-module.exports.articleSlugPattern = opts => {
-  // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
-  return [
-    opts.prefix,
-    opts.stationSlug,
-    opts.sectionFront,
-    opts.secondarySectionFront,
-    opts.slug
-  ].filter(isTruthy)
-    .join('/');
-};
-module.exports.gallerySlugPattern = opts => {
-  // e.g. http://radio.com/music/gallery/grammies
-  return [
-    opts.prefix,
-    opts.stationSlug,
-    opts.sectionFront,
-    opts.secondarySectionFront,
-    'gallery',
-    opts.slug
-  ].filter(isTruthy)
-    .join('/');
-};
-module.exports.sectionFrontSlugPattern = opts => {
-  // e.g. http://radio.com/music
-  return [
-    opts.prefix,
-    opts.stationSlug,
-    opts.primarySectionFront,
-    opts.sectionFront
-  ].filter(isTruthy)
-    .join('/');
-};
 module.exports.putComponentInstance = putComponentInstance;
 module.exports.getComponentInstance = getComponentInstance;
 
