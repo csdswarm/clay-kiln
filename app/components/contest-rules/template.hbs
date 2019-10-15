@@ -5,7 +5,7 @@
                 <a href="/contests/{{ contestSlug }}">{{ contestHeadline }}</a>
             </h2>
             <div class="contest-rules__date-range">
-                <p class="paragraph">Contest Date Range: {{ moment contestStartDate 'dddd, MMMM Do YYYY' }} to {{ moment contestEndDate 'dddd, MMMM Do YYYY' }}</p>
+                <p class="paragraph">Contest Date Range: {{ formatDateTimeRange contestStartDate contestEndDate (concat "MMMM D, YYYY [at] h:mma [" stationTimeZone "]") ' through ' }}</p>
             </div>
         </div>    
     {{/if}}
