@@ -1,28 +1,66 @@
 'use strict';
 /* eslint-disable one-var */
 
-const mockData = {
-  rules: new Array(5).fill(0).map(() => ({
-    title: 'Rule title',
-    description: 'Lorem ipsum dolor sit amet consectetur',
-    date: new Date().toISOString(),
-    url: 'http://clay.radio.com',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris convallis pulvinar odio, et pellentesque urna interdum vitae. Sed porta, magna sed tincidunt dignissim, dui mi vulputate dui, id rutrum nulla sem in magna. Vestibulum tincidunt ante neque, at finibus elit aliquet ac. Cras enim enim, accumsan in blandit in, bibendum maximus risus. Quisque lacinia sapien ac magna fringilla porta. Nunc sed est in sapien fermentum scelerisque ultrices ac mi. Integer sed feugiat metus.'
-  }))
+const _get = require('lodash/get');
+const db = require('amphora-storage-postgres');
+const moment = require('moment');
+const CO_NAME = 'RADIO.COM';
+const queryDateRange = 30;
+const getContestRules = async ({
+  startTime = '',
+  stationCallsign = ''
+}) => {
+  const contestRulesQuery = /* sql */`
+    SELECT *
+    FROM components."contest-rules"
+
+    -- make sure contest has already started
+    WHERE data->>'contestStartDate' <= '${startTime}'
+    -- show contests that are within 30 days from start time
+    AND DATE_PART(
+      'day',
+      (data ->> 'contestEndDate')::timestamp - '${startTime}'::timestamp
+    ) <= ${queryDateRange}
+
+    -- filter published
+    AND id SIMILAR TO '%@published'
+
+    AND data->>'stationCallsign' = '${stationCallsign.toUpperCase()}'
+  `;
+  const { rows } = await db.raw(contestRulesQuery);
+  const pluckData = ({ data }) => data;
+
+  return rows.map(pluckData);
 };
 
-module.exports.render = (ref, data, locals) => {
+module.exports.render = async (ref, data, locals) => {
+  const stationSlug = _get(locals, 'params.stationSlug');
   const {
-    params = {
-      stationSlug: ''
-    }
+    defaultStation: {
+      callsign: defaultCallsign
+    },
+    station: stationInfo
   } = locals;
-  const { stationSlug = '' } = params;
-  const hasStation = !!stationSlug;
+  const stationCallsign = stationSlug || defaultCallsign;
+  const isDefaultStation = stationCallsign === defaultCallsign;
+  const stationName = isDefaultStation ? CO_NAME : stationInfo.name;
+  const startTime = moment().toISOString(true);
+  const contestRules = (await getContestRules({
+    startTime,
+    stationCallsign
+  })).map((ruleData) => ({
+    ...ruleData,
+    showHeader: true
+  }));
+  const rulesUrlSubDomain = isDefaultStation ? 'www' : stationSlug;
 
-  console.log('[CONTEST RULES RENDER]', stationSlug);
+  console.log('[CONTEST RULES QUERY]', stationCallsign, stationName, locals.station);
+
   return Object.assign(data, {
-    contestRules: mockData.rules,
-    hasStation
+    contestRules,
+    stationMeta: {
+      rulesUrlSubDomain,
+      name: stationName
+    }
   });
 };
