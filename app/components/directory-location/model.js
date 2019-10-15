@@ -7,5 +7,9 @@ module.exports.render = async (uri, data, locals) => {
       data.market = locals.params.dynamicMarket;
     }
   }
+
+  // this should be updated to use _computed once that's in (ON-1021)
+  data.allMarkets = locals.allMarkets;
+
   return data;
 };

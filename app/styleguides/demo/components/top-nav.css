@@ -292,6 +292,10 @@ $drawerSelector: nav-drawer;
         .$(drawerSelector)__sub-nav {
           @mixin inline-block;
 
+          > a {
+            display: block;
+          }
+
           &:first-of-type {
             margin-right: em(100);
 
@@ -794,5 +798,11 @@ $drawerSelector: nav-drawer;
     (min-resolution: 192dpi) {
       background-image: url('/media/components/top-nav/sports_dropdown_logo_2x.png');
     }
+  }
+}
+
+.branch-banner-is-active {
+  .radiocom-nav {
+    top: 76px;
   }
 }
