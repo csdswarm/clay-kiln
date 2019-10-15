@@ -61,5 +61,3 @@ _groups:
       - filterTags
       - filterSecondarySectionFronts
 
-sectionFront:
-  _subscribe: sectionFront

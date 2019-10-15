@@ -1,5 +1,5 @@
 <section data-uri="{{ default _ref _self }}" class="component component--latest-videos{{ if @root.locals.edit ' editing' }}" data-editable="items">
-  <h2{{#if _computed.articleOverrides}} class="latest-videos__title--{{ sectionFront }}"{{/if}}><span>{{{ title }}}</span></h2>
+  <h2><span>{{{ title }}}</span></h2>
   <div class="latest-videos__videos">
     {{#each articles as |article|}}
       {{#if @first}}
