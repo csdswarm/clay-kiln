@@ -10,7 +10,8 @@ const clearCurrentMedia = () => {
     script: null,
     callback: null,
     type: 'Media',
-    config: {}
+    config: {},
+    dontLoadScripts: false
   },
   CALLBACK_COMPLETE = 'COMPLETE';
 
@@ -33,8 +34,18 @@ class Media {
       };
     }
 
+    this.component = component;
     this.options = options;
 
+    if (!options.dontLoadScripts) {
+      this.loadScripts();
+    }
+  }
+
+  /**
+   * load the needed script tags
+   */
+  loadScripts() {
     if (this.options.script && (!this.options.callback || callbacks[this.options.callback] !== CALLBACK_COMPLETE)) {
       const script = document.createElement('script');
 
@@ -42,21 +53,21 @@ class Media {
 
       if (this.options.callback) {
         // hold on to all calls because there could be multiple before the callback runs
-        if (!callbacks[options.callback]) {
+        if (!callbacks[this.options.callback]) {
           callbacks[this.options.callback] = [];
         }
-        callbacks[this.options.callback].push({ component, instance: this });
+        callbacks[this.options.callback].push(this);
 
         window[this.options.callback] = () => this.processCallbacks(this.options.callback);
       } else {
         // Call a function to process the media once media's JavaScript loaded
-        script.onload = () => this.whenScriptsLoaded(component);
+        script.onload = () => this.whenScriptsLoaded();
       }
 
       // Add the script tag
       document.head.appendChild(script);
     } else {
-      this.whenScriptsLoaded(component);
+      this.whenScriptsLoaded();
     }
   }
   /**
@@ -65,16 +76,15 @@ class Media {
    * @param {string} key
    */
   processCallbacks(key) {
-    callbacks[key].forEach(item => item.instance.whenScriptsLoaded(item.component));
+    callbacks[key].forEach(item => item.whenScriptsLoaded());
     callbacks[key] = CALLBACK_COMPLETE;
   }
   /**
    * process the media once the scripts have been loaded
-   *
-   * @param {Element} component
    */
-  async whenScriptsLoaded(component) {
-    const { id, media, node, persistent } = await this.createMedia(component),
+  async whenScriptsLoaded() {
+    const { component } = this,
+      { id, media, node, persistent } = await this.createMedia(component),
       mediaObserver = new IntersectionObserver((change) => this.notInView(change), {threshold: 0});
 
     this.id = id;
