@@ -16,15 +16,14 @@ const getContestRules = async ({
 
     -- make sure contest has already started
     WHERE data->>'contestStartDate' <= '${startTime}'
+
     -- show contests that are within 30 days from start time
     AND DATE_PART(
       'day',
       (data ->> 'contestEndDate')::timestamp - '${startTime}'::timestamp
     ) <= ${queryDateRange}
 
-    -- filter published
     AND id SIMILAR TO '%@published'
-
     AND data->>'stationCallsign' = '${stationCallsign.toUpperCase()}'
   `;
   const { rows } = await db.raw(contestRulesQuery);
@@ -50,6 +49,7 @@ module.exports.render = async (ref, data, locals) => {
     stationCallsign
   })).map((ruleData) => ({
     ...ruleData,
+    stationTimeZone: locals.station.timezone,
     showHeader: true
   }));
   const rulesUrlSubDomain = isDefaultStation ? 'www' : stationSlug;
