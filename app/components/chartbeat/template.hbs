@@ -1,7 +1,7 @@
 {{#unless @root.locals.edit}}
   <script type="text/javascript">
     (function() {
-      var _sf_async_config = window._sf_async_config = (window._sf_async_config || {});
+      const _sf_async_config = window._sf_async_config = (window._sf_async_config || {});
       /** CONFIGURATION START **/
       _sf_async_config.uid = 65686;
       _sf_async_config.domain = window.location.hostname;
@@ -11,8 +11,12 @@
       /** CONFIGURATION END **/
 
       function loadChartbeat() {
-        var e = document.createElement('script');
-        var n = document.getElementsByTagName('script')[0];
+        const e = document.createElement('script');
+        const n = document.getElementsByTagName('script')[0];
+        const mainContent = document.querySelector('[role="main"]') || {};
+        const main = mainContent ? mainContent.dataset : {};
+        _sf_async_config.authors = main.authors.split(', ').join();
+        _sf_async_config.sections = ['National', ...(main.sectionFront ? [`national-${main.sectionFront}`] : []), 'editorial'].join();
         e.type = 'text/javascript';
         e.async = true;
         e.src = '//static.chartbeat.com/js/chartbeat.js';
@@ -28,12 +32,17 @@
      * Object passed in must contain path & title, authors and sections are optional
      */
     document.addEventListener('pageView', function (event) {
-      let details = event.details || {};
+      const details = event.detail || {},
+        content = details.toArticlePage || details.toGalleryPage || {},
+        authors = (content.authors || []).map(({text}) => text),
+        sectionFront = content.sectionFront ? [`national-${content.sectionFront}`] : [],
+        sections = ['National', ...sectionFront, 'editorial'];
+
       pSUPERFLY.virtualPage({
-        sections: details.section || '',
-        authors: details.authors || '',
-        path: details.path || window.location.pathname,
-        title: details.title || document.title
+        sections: sections.join(),
+        authors: authors.join(),
+        path: details.toPath || window.location.pathname,
+        title: details.toTitle || document.title
       });
     });
   </script>
