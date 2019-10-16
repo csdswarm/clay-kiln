@@ -20,6 +20,7 @@ const AWS = require('aws-sdk'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   slugifyService = require('../services/universal/slugify'),
+  stationUtils = require('../services/server/station-utils'),
   xml = require('xml');
 
 module.exports = router => {
@@ -191,6 +192,14 @@ module.exports = router => {
 
     res.type('application/xml');
     return res.send( xml( { urlset }, { declaration: true } ) );
+  });
+
+  /**
+   * Endpoint to expose a list of all callsigns plus NATL-RC to the client
+   *   instead of relying on currentStation.js and locals
+   */
+  router.get('/all-rdc-callsigns', async (req, res) => {
+    res.send(await stationUtils.getAllStationsCallsigns(res.locals));
   });
 
   additionalDataTypes.inject(router, checkAuth);

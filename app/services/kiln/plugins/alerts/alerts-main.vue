@@ -162,6 +162,11 @@
         UiSelect } = window.kiln.utils.components;
 
     /**
+     * Cache results from /all-rdc-callsigns
+     */
+    let stationCallsigns;
+
+    /**
      * Simple cache-buster value to append to rest URL's to ensure they get the latest version of data
      * TODO: consider replacing this as a part of any initiative involving ON-953 - CSD
      * @returns {{cb: *}}
@@ -187,12 +192,14 @@
                 selectedAlert: {},
                 tab: 'global',
                 selectedStation: '',
+                stationCallsigns: stationCallsigns || [],
                 validLinkError: ''
             }
         },
-        /** Load current alerts and set default tab when component is created */
-        created() {
+        /** Load current alerts, load callsigns, and set default tab when component is created */
+        async created() {
             this.tab = this.tabs[0].id;
+            this.stationCallsigns = stationCallsigns || await this.getAccessibleCallsigns();
             this.loadAlerts();
         },
         computed: {
@@ -211,17 +218,6 @@
             /** Current station, or global station */
             station() {
                 return this.global ? 'GLOBAL' : this.selectedStation;
-            },
-            stationCallsigns() {
-                const { user, allStationsCallsigns } = kiln.locals,
-                    withStationAlerts = user.using('alerts_station'),
-                    hasStationAccess = station =>
-                        withStationAlerts.can('update').for(station).value ||
-                        withStationAlerts.can('create').for(station).value;
-
-                return allStationsCallsigns
-                    .filter(callsign => hasStationAccess(callsign))
-                    .sort();
             },
             tabs() {
                 const { user } = kiln.locals,
@@ -367,6 +363,20 @@
             updateTab(tab) {
                 this.tab = tab;
                 this.loadAlerts();
+            },
+            async getAccessibleCallsigns() {
+                const { data: callsigns = []} = await axios.get('/all-rdc-callsigns'),
+                    { user } = kiln.locals,
+                    withStationAlerts = user.using('alerts_station'),
+                    hasStationAccess = station =>
+                        withStationAlerts.can('update').for(station).value ||
+                        withStationAlerts.can('create').for(station).value;
+
+                stationCallsigns = callsigns
+                    .filter(callsign => hasStationAccess(callsign))
+                    .sort();
+                
+                return stationCallsigns;
             }
         },
         filters: {

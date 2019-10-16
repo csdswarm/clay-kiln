@@ -102,4 +102,23 @@ api.getCallsignFromSlug = withUpdatedStations(slug => _state.allStations.bySlug[
  */
 api.getStationFromOriginalUrl = withUpdatedStations(getStationFromUrl);
 
+/**
+ * Get a list of all the station callsigns with NATL-RC as a station
+ *   optionally passing locals to get the default station callsign
+ *
+ * @param {object} locals
+ * @returns {array}
+ */
+api.getAllStationsCallsigns = withUpdatedStations((locals = {}) => {
+  const defaultStationCallsign = _get(locals, 'defaultStation.callsign', 'NATL-RC'),
+    callsigns = Object.keys(_state.allStations.byCallsign);
+  
+  callsigns.push(defaultStationCallsign);
+
+  return callsigns
+    // Ensure that the default callsign isn't in the list twice somehow
+    .filter((callsign, index) => callsigns.indexOf(callsign) === index)
+    .sort();
+});
+
 module.exports = api;
