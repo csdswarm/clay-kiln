@@ -22,9 +22,16 @@ async function createDefaultInstance(componentName) {
 async function addComponentToArticleData(articleInstanceData, componentName){
   const newData = {_ref: `${hostUrl}/_components/${componentName}/instances/default`};
   const target = articleInstanceData._layouts['two-column-layout'].instances.article.top;
-  if(!target.find(el => hostUrl + el._ref === newData._ref)) {
-    target.splice(1, 0, newData);
+  const sliderIndex = target.findIndex((el) => hostUrl + el._ref === newData._ref);
+  // remove the slider if it is there
+  if(sliderIndex > -1) {
+    target.splice(sliderIndex, 1);
   }
+  // now find the index of the nav ref
+  const navIndex = target.findIndex((el) => hostUrl + el._ref === `${hostUrl}/_components/top-nav/instances/default`);
+  // now insert it after the nav + 1
+  target.splice(navIndex + 1, 0, newData);
+
   return articleInstanceData;
 }
 
