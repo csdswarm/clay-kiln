@@ -1,6 +1,6 @@
 'use strict';
 
-const _isTruthy = require('lodash').identity;
+const exists = require('lodash').identity;
 
 // URL patterns below need to be handled by the site's index.js
 module.exports.dateUrlPattern = opts => {
@@ -15,7 +15,7 @@ module.exports.articleSlugPattern = opts => {
     opts.sectionFront,
     opts.secondarySectionFront,
     opts.slug
-  ].filter(_isTruthy)
+  ].filter(exists)
     .join('/');
 };
 module.exports.gallerySlugPattern = opts => {
@@ -27,7 +27,7 @@ module.exports.gallerySlugPattern = opts => {
     opts.secondarySectionFront,
     'gallery',
     opts.slug
-  ].filter(_isTruthy)
+  ].filter(exists)
     .join('/');
 };
 module.exports.sectionFrontSlugPattern = opts => {
@@ -37,7 +37,7 @@ module.exports.sectionFrontSlugPattern = opts => {
     opts.stationSlug,
     opts.primarySectionFront,
     opts.sectionFront
-  ].filter(_isTruthy)
+  ].filter(exists)
     .join('/');
 };
 module.exports.contestSlugPattern = opts => {
@@ -47,6 +47,6 @@ module.exports.contestSlugPattern = opts => {
     opts.stationSlug,
     'contests',
     opts.slug
-  ].filter(_isTruthy)
+  ].filter(exists)
     .join('/');
 };

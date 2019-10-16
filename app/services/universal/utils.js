@@ -82,6 +82,31 @@ function uriToUrl(uri, locals) {
 }
 
 /**
+ * Remove extension from route / path.
+ *
+ * Note: copied from amphora@v7.3.2 lib/responses.js
+ *   Ideally we'd use the uri provided by amphora but our currentStation module
+ *   depends on this and its middleware occurrs before amphora.
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+function removeExtension(path) {
+  let leadingDot, endSlash = path.lastIndexOf('/');
+
+  if (endSlash > -1) {
+    leadingDot = path.indexOf('.', endSlash);
+  } else {
+    leadingDot = path.indexOf('.');
+  }
+
+  if (leadingDot > -1) {
+    path = path.substr(0, leadingDot);
+  }
+  return path;
+}
+
+/**
  * generate a uri from a url
  * @param  {string} url
  * @return {string}
@@ -89,7 +114,7 @@ function uriToUrl(uri, locals) {
 function urlToUri(url) {
   const parsed = _parse(url);
 
-  return `${parsed.hostname}${parsed.pathname}`;
+  return `${parsed.hostname}${removeExtension(parsed.pathname)}`;
 }
 
 /**
@@ -198,14 +223,21 @@ function prettyJSON(obj) {
   return JSON.stringify(obj, null, 2);
 }
 
-Object.assign(module.exports, {
-  /**
-   * Url queries to elastic search need to be `http` since that is
-   * how it is indexed as.
-   * @param {String} url
-   * @returns {String}
-   */
-  urlToElasticSearch: url => url.replace('https', 'http'),
+/**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {String} url
+ * @returns {String}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
+function getFullOriginalUrl(req) {
+  return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
+}
+
+module.exports = {
   isFieldEmpty,
   has,
   replaceVersion,
@@ -219,7 +251,9 @@ Object.assign(module.exports, {
   ensurePublishedVersion,
   isInstance,
   urlToCanonicalUrl,
+  urlToElasticSearch,
   debugLog,
   ensureStartsWith,
-  prettyJSON
-});
+  prettyJSON,
+  getFullOriginalUrl
+};

@@ -22,7 +22,19 @@ const SECOND = 1000,
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
     CONTEST: 'contest'
-  };
+  },
+
+  // this should list the component names of the content types which may be
+  //   created.  A content type is essentially a component that is listed uder
+  //   page data -> main[0]
+  contentTypes = new Set([
+    'article',
+    'gallery',
+    'section-front',
+    'static-page',
+    'topic-page',
+    'contest'
+  ]);
 
 
 module.exports = {
@@ -33,5 +45,6 @@ module.exports = {
   WEEK,
   YEAR,
   time,
-  PAGE_TYPES
+  PAGE_TYPES,
+  contentTypes
 };
