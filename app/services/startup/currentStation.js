@@ -1,11 +1,7 @@
 'use strict';
 
-const radioApiService = require('../server/radioApi'),
-  { isEmpty } = require('lodash'),
-  { extname } = require('path'),
-  allStations = {},
-  allStationsIds = {},
-  allStationsCallsigns = [],
+const { extname } = require('path'),
+  stationUtils = require('../server/station-utils'),
   defaultStation = {
     id: 0,
     name: 'Radio.com',
@@ -52,34 +48,22 @@ const radioApiService = require('../server/radioApi'),
    * determines if the default station should be used
    *
    * @param {object} req
-   * @return {boolean}
+   * @param {object} allStations
+   * @return {object}
    */
-  getStation = async (req) => {
-    if (validPath(req)) {
-      const slugInReqUrl = getStationSlug(req),
-        stationId = req.query.stationId,
-        response = await radioApiService.get('stations', {page: {size: 999}}, null, { ttl: radioApiService.TTL.DAY });
+  getStation = (req, allStations) => {
+    if (!validPath(req)) {
+      return;
+    }
 
-      // use the stations as a cached object so we don't have to run the same logic every request
-      if (!response.response_cached || isEmpty(allStations)) {
-        response.data.forEach((station) => {
-          const slug = station.attributes.site_slug || station.attributes.callsign || station.id;
+    const slugInReqUrl = getStationSlug(req),
+      stationId = req.query.stationId;
 
-          allStations[slug] = station.attributes;
-          allStationsIds[station.id] = slug;
-          allStationsCallsigns.push(station.attributes.callsign);
-        });
-      }
-
-      if (Object.keys(allStations).includes(slugInReqUrl)) {
-        return allStations[slugInReqUrl];
-      }
-
-      // If the station isn't in the slug, look for the querystring parameter
-      if (stationId && Object.keys(allStationsIds).includes(stationId)) {
-        return allStations[allStationsIds[stationId]];
-      }
-
+    if (allStations.bySlug.hasOwnProperty(slugInReqUrl)) {
+      return allStations.bySlug[slugInReqUrl];
+    } else if (stationId && allStations.byId.hasOwnProperty(stationId)) {
+      return allStations.byId[stationId];
+    } else {
       return defaultStation;
     }
   };
@@ -93,8 +77,10 @@ const radioApiService = require('../server/radioApi'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  res.locals.station = await getStation(req);
-  res.locals.allStationsCallsigns = allStationsCallsigns;
+  const allStations = await stationUtils.getAllStations();
+
+  res.locals.station = getStation(req, allStations);
+  res.locals.allStationsCallsigns = Object.keys(allStations.byCallsign);
   res.locals.defaultStation = defaultStation;
 
   return next();
