@@ -87,8 +87,6 @@ feedImgUrl:
   help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
   _has:
     input: advanced-image-upload
-    webLabel: Insert Image via Web
-    webHelp: Supply a valid HTTPS url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
     uploadHelp: Choose an image file from your computer
     validate:
