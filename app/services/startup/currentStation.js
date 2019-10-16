@@ -1,7 +1,13 @@
 'use strict';
 
 const { extname } = require('path'),
+  { getComponentName, isComponent, isPage, isPageMeta } = require('clayutils'),
+  _get = require('lodash/get'),
+  log = require('../universal/log').setup({ file: __filename }),
+  { getFullOriginalUrl, urlToUri } = require('../universal/utils'),
   stationUtils = require('../server/station-utils'),
+  contentTypes = require('../universal/constants'),
+  db = require('../server/db'),
   defaultStation = {
     id: 0,
     name: 'Radio.com',
@@ -33,6 +39,67 @@ const { extname } = require('path'),
     return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
   },
   /**
+   * returns whether the request is for a content component
+   *
+   * @param {string} url
+   * @returns {boolean}
+   */
+  isContentComponent = url => {
+    const componentName = getComponentName(url);
+
+    return isComponent(url)
+      && contentTypes.has(componentName);
+  },
+  /**
+   * fetches the main component's data in the page and returns the 'stationSlug'
+   *   property or an empty string.
+   *
+   * @param {string} uri - the page uri
+   * @returns {string}
+   */
+  getStationSlugFromPage = async uri => {
+    let mainComponentUri;
+
+    try {
+      mainComponentUri = _get(await db.get(uri), 'main[0]', '');
+    } catch (err) {
+      logUnexpectedDbError(uri, err);
+    }
+
+    return mainComponentUri
+      ? getStationSlugFromComponent(mainComponentUri)
+      : '';
+  },
+  /**
+   * Logs the error if something happened besides the result not being found
+   *
+   * @param {string} uri
+   * @param {Error} err
+   */
+  logUnexpectedDbError = (uri, err) => {
+    if (!err.message.startsWith('No result found')) {
+      log('error', 'Error getting the data from uri: ' + uri, err);
+    }
+  },
+  /**
+   * fetches the component data and returns the 'stationSlug' property or an
+   *   empty string.
+   *
+   * @param {string} uri
+   * @returns {string}
+   */
+  getStationSlugFromComponent = async uri => {
+    let result = '';
+
+    try {
+      result = _get(await db.get(uri), 'stationSlug', '');
+    } catch (err) {
+      logUnexpectedDbError(uri, err);
+    }
+
+    return result;
+  },
+  /**
    * determines if the path is valid for station information
    *
    * @param {object} req
@@ -51,21 +118,28 @@ const { extname } = require('path'),
    * @param {object} allStations
    * @return {object}
    */
-  getStation = (req, allStations) => {
+  getStation = async (req, allStations) => {
     if (!validPath(req)) {
-      return;
+      return {};
     }
 
     const slugInReqUrl = getStationSlug(req),
-      stationId = req.query.stationId;
+      stationId = req.query.stationId,
+      url = getFullOriginalUrl(req);
+
+    let stationSlug = '';
 
     if (allStations.bySlug.hasOwnProperty(slugInReqUrl)) {
-      return allStations.bySlug[slugInReqUrl];
+      stationSlug = slugInReqUrl;
     } else if (stationId && allStations.byId.hasOwnProperty(stationId)) {
-      return allStations.byId[stationId];
-    } else {
-      return defaultStation;
+      stationSlug = allStations.byId[stationId].attributes.site_slug;
+    } else if (isPage(url) && !isPageMeta(url)) {
+      stationSlug = await getStationSlugFromPage(urlToUri(url));
+    } else if (isContentComponent(url)) {
+      stationSlug = await getStationSlugFromComponent(urlToUri(url));
     }
+
+    return allStations.bySlug[stationSlug] || defaultStation;
   };
 
 
@@ -79,7 +153,7 @@ const { extname } = require('path'),
 module.exports = async (req, res, next) => {
   const allStations = await stationUtils.getAllStations();
 
-  res.locals.station = getStation(req, allStations);
+  res.locals.station = await getStation(req, allStations);
   res.locals.allStationsCallsigns = Object.keys(allStations.byCallsign);
   res.locals.defaultStation = defaultStation;
 

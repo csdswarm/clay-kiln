@@ -82,6 +82,31 @@ function uriToUrl(uri, locals) {
 }
 
 /**
+ * Remove extension from route / path.
+ *
+ * Note: copied from amphora@v7.3.2 lib/responses.js
+ *   Ideally we'd use the uri provided by amphora but our currentStation module
+ *   depends on this and its middleware occurrs before amphora.
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+function removeExtension(path) {
+  let leadingDot, endSlash = path.lastIndexOf('/');
+
+  if (endSlash > -1) {
+    leadingDot = path.indexOf('.', endSlash);
+  } else {
+    leadingDot = path.indexOf('.');
+  }
+
+  if (leadingDot > -1) {
+    path = path.substr(0, leadingDot);
+  }
+  return path;
+}
+
+/**
  * generate a uri from a url
  * @param  {string} url
  * @return {string}
@@ -89,7 +114,7 @@ function uriToUrl(uri, locals) {
 function urlToUri(url) {
   const parsed = _parse(url);
 
-  return `${parsed.hostname}${parsed.pathname}`;
+  return `${parsed.hostname}${removeExtension(parsed.pathname)}`;
 }
 
 /**
@@ -188,17 +213,24 @@ function debugLog(...args) {
   }
 }
 
-module.exports.isFieldEmpty = isFieldEmpty;
-module.exports.has = has;
-module.exports.replaceVersion = replaceVersion;
-module.exports.isUrl = isUrl;
-module.exports.uriToUrl = uriToUrl;
-module.exports.urlToUri = urlToUri;
-module.exports.formatStart = formatStart;
-module.exports.toTitleCase = toTitleCase;
-module.exports.getSiteBaseUrl = getSiteBaseUrl;
-module.exports.isPublishedVersion = isPublishedVersion;
-module.exports.ensurePublishedVersion = ensurePublishedVersion;
-module.exports.isInstance = isInstance;
-module.exports.urlToCanonicalUrl = urlToCanonicalUrl;
-module.exports.debugLog = debugLog;
+function getFullOriginalUrl(req) {
+  return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
+}
+
+module.exports = {
+  isFieldEmpty,
+  has,
+  replaceVersion,
+  isUrl,
+  uriToUrl,
+  urlToUri,
+  formatStart,
+  toTitleCase,
+  getSiteBaseUrl,
+  isPublishedVersion,
+  ensurePublishedVersion,
+  isInstance,
+  urlToCanonicalUrl,
+  debugLog,
+  getFullOriginalUrl
+};
