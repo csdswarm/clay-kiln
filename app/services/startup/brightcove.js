@@ -19,13 +19,19 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     return `${encodeURIComponent(query)}${updatedAtQuery}`;
   },
   /**
-   * Return only the needed fields to the UI
+   * Return only the needed fields to the UI for videos
    *
    * @param {Array} results array of video objects
    * @returns {Array} an array of video objects with only needed fields
    */
-  transformVideoResults = results => (results || []).map(({name, images, id, updated_at}) => {
-    return {name, id, imageUrl: _get(images, 'thumbnail.src', ''), updated_at};
+  transformVideoResults = results => (results || []).map(({ name, images, id, updated_at, delivery_type }) => {
+    return {
+      name,
+      id,
+      imageUrl: _get(images, 'thumbnail.src', ''),
+      updated_at,
+      delivery_type
+    };
   }),
   /**
    * Get video object from brightcove by ID
@@ -51,13 +57,9 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    */
   search = async (req, res) => {
     try {
-      return brightcoveApi.request('GET', 'videos', {q: buildQuery(req.query), limit: 10})
+      await brightcoveApi.request('GET', 'videos', {q: buildQuery(req.query), limit: 10})
         .then(({ body }) => transformVideoResults(body))
-        .then(results => res.send(results))
-        .catch(e => {
-          console.error(e);
-          res.status(500).send(e);
-        });
+        .then(results => res.send(results));
     } catch (e) {
       console.error(e);
       res.status(500).send(e);
@@ -134,7 +136,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
 
       if (status === 200 && ingestResponse.id) {
         const { status, statusText, video } = await getVideoObject(videoID);
-        
+
         if (video && video.id) {
           res.send({ video: transformVideoResults([video])[0], jobID: ingestResponse.id });
         } else {
@@ -228,7 +230,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   getVideoByID = async (req, res) => {
     try {
       const { status, statusText, video } = await getVideoObject(req.query.id);
-      
+
       if (video && video.id) {
         if (!req.query.full_object) {
           res.send(transformVideoResults([video])[0]);

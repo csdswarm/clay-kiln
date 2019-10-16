@@ -23,7 +23,8 @@ const pkg = require('../../package.json'),
   user = require('./user'),
   radium = require('./radium'),
   cookies = require('./cookies'),
-  cognitoAuth = require('./cognito-auth');
+  cognitoAuth = require('./cognito-auth'),
+  cacheControl = require('./cache-control');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -81,6 +82,8 @@ function setupApp(app) {
   app.use(locals);
 
   app.use(currentStation);
+
+  app.use(cacheControl);
 
   cookies.inject(app);
 

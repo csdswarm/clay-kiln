@@ -18,7 +18,8 @@ const _get = require('lodash/get'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
-  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in milliseconds for ad refresh
+  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
+  sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
@@ -40,8 +41,27 @@ let refreshCount = 0,
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
 
+/**
+ * Add Sharethrough script on first page load
+ * @function
+ */
+(() => {
+  const firstScript = document.getElementsByTagName('script')[0],
+    newScript = document.createElement('script');
+
+  newScript.async = true;
+  newScript.src = 'https://native.sharethrough.com/assets/sfp.js';
+  firstScript.parentNode.insertBefore(newScript, firstScript);
+})();
+
 // Listener to ensure lytics has been setup in GTM (Google Tag Manager)
 document.addEventListener('gtm-lytics-setup', () => {
+  initializeAds();
+}, false);
+
+document.addEventListener('content-feed-lazy-load', () => {
+  googletag.destroySlots();
+  adsMounted = true;
   initializeAds();
 }, false);
 
@@ -444,8 +464,7 @@ function createAds(adSlots) {
           ad.id
         );
 
-        slot
-          .defineSizeMapping(sizeMapping);
+        slot.defineSizeMapping(sizeMapping);
       }
 
       slot
@@ -461,6 +480,9 @@ function createAds(adSlots) {
 
       if (adTargetingData.targetingMarket) {
         slot.setTargeting('market', adTargetingData.targetingMarket);
+      }
+      if (adSize === 'sharethrough-tag') {
+        slot.setTargeting('strnativekey', sharethroughPlacementKey);
       }
 
       // Right rail and inline gallery ads need unique names
