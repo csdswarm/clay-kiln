@@ -60,8 +60,7 @@ export default {
     initialSelectedSlug: String,
     initialSelectedCallsign: String
   },
-  async created() {
-    console.log('created');
+  created() {
     this.$store.registerModule(storeNs, store);
 
     this.stationsBySlug = window.kiln.locals.stationsIHaveAccessTo;
