@@ -199,7 +199,7 @@ module.exports = router => {
    *   instead of relying on currentStation.js and locals
    */
   router.get('/all-rdc-callsigns', async (req, res) => {
-    res.send(await stationUtils.getAllStationsCallsigns(res.locals));
+    res.send(await stationUtils.getAllStationsCallsigns());
   });
 
   additionalDataTypes.inject(router, checkAuth);
