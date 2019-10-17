@@ -1,7 +1,8 @@
 'use strict';
 
 const { getComponentName } = require('clayutils'),
-  { hasBadSource } = require('../../universal/valid-source');
+  getBadSources = require('../../universal/get-bad-sources'),
+  uniq = require('lodash/uniq');
 
 module.exports = {
   label: 'Valid Source Error',
@@ -14,12 +15,14 @@ module.exports = {
 
     return (await Promise.all(
       htmlEmbeds.map(async ([uri, data]) => {
-        if (await hasBadSource(data.text, window.kiln.locals)) {
+        const badSources = await getBadSources(data.text, window.kiln.locals);
+
+        if (badSources.length) {
           return {
             uri,
             location: 'Html Embed » HTML',
             field: 'text',
-            preview: data.text.substring(0, 85)
+            preview: uniq(badSources).join(' ')
           };
         }
       }))
