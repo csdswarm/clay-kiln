@@ -35,7 +35,6 @@ const defaultTheme = {
   };
 
 module.exports.render = async (ref, data, locals) => {
-
   // as log as there is an station id, get the theme
   if (locals.station.id) {
     let theme = {};

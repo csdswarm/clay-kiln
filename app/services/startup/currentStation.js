@@ -108,7 +108,6 @@ const { lstatSync, readdirSync } = require('fs'),
     } catch (err) {
       logUnexpectedDbError(uri, err);
     }
-
     return result;
   },
   /**
@@ -154,7 +153,7 @@ const { lstatSync, readdirSync } = require('fs'),
       stationSlug = await getStationSlugFromComponent(urlToUri(url));
     }
 
-    return allStations.bySlug[stationSlug] || defaultStation;
+    return  _get(allStations, `bySlug[${stationSlug}].attributes`) || defaultStation;
   };
 
 

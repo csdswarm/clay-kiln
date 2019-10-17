@@ -177,10 +177,6 @@ endDateTime:
   _label: Contest End Datetime
   _publish: contestEndDate
 
-stationTimezone:
-  _label: Station or National Timezone
-  _publish: timezone
-
 stationSlug:
   _label: Station Slug
   _has: static
@@ -251,14 +247,6 @@ slug:
       tooltip: Generate from Short Headline
 
 _groups:
-  settings:
-    fields:
-      - startDateTime
-      - endDateTime
-      - stationTimezone
-      - stationSlug
-      - stationName
-      - stationCallsign
   circHeadlines:
     fields:
       - primaryHeadline

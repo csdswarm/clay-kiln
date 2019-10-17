@@ -48,8 +48,7 @@ module.exports = router => {
         '': {
           callsign: 'NATL-RC',
           name: 'Radio.com',
-          slug: '',
-          timezone: 'ET'
+          slug: ''
         }
       });
     }
