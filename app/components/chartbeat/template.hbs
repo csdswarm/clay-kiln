@@ -10,40 +10,138 @@
       _sf_async_config.authors = '';
       /** CONFIGURATION END **/
 
+      /**
+      * Find the first non-empty object passed in
+      *
+      * @param {array} objs
+      *
+      * @returns {object}
+      */
+      function takeFirst(...objs) {
+        return objs.filter(obj => obj && Object.keys(obj).length)[0];
+      }
+
+      /**
+      * Get component name from component uri
+      * Copied from clayutils `getComponentName`
+      *
+      * @param {string} ref
+      *
+      * @returns {string} componentName
+      */
+      function getComponentName(ref) {
+        const result = /_components\/(.+?)[\/\.]/.exec(ref) || /_components\/(.*)/.exec(ref);
+
+        return result && result[1];
+      }
+
+      /**
+      * Replace AM/FM with -(AM/FM)
+      * Copied from frequency's implementation of chartbeat (ON-1108)
+      *
+      * @param {string} callsign
+      *
+      * @returns {string}
+      */
+      function updateCallsign(callsign) {
+        return callsign.toUpperCase().replace('AM', '-AM').replace('FM', '-FM');
+      }
+
+      /**
+      * Add default sections dependent on the component
+      *
+      * @param {string} component
+      * @param {array} sections
+      *
+      * @returns {array}
+      */
+      function addDefaultSections(component, sections) {
+        let defaultSections = [];
+
+        switch(component) {
+          case 'station-detail':
+            defaultSections = ['radiocom'];
+            break;
+          case 'stations-directory':
+            defaultSections = ['radiocom', 'RADI-FM'];
+            break;
+          default:
+            defaultSections = ['National', 'editorial']
+        }
+
+        return defaultSections.concat(sections).filter(section => section).join();
+      }
+
+      /**
+      * Replace title if required for component
+      *
+      * @param {string} component
+      * @param {string} title
+      *
+      * @returns {string}
+      */
+      function getTitle(component, title) {
+        switch(component) {
+          case 'stations-directory':
+            return 'Radio.com';
+          default:
+            return title;
+        }
+      }
+
       function loadChartbeat() {
         const e = document.createElement('script');
         const n = document.getElementsByTagName('script')[0];
         const mainContent = document.querySelector('[role="main"]') || {};
-        const main = mainContent ? mainContent.dataset : {};
-        _sf_async_config.authors = main.authors.split(', ').join();
-        _sf_async_config.sections = ['National', ...(main.sectionFront ? [`national-${main.sectionFront}`] : []), 'editorial'].join();
+        const data = mainContent ? mainContent.dataset : {};
+        const component = getComponentName(data.uri);
+        const sections = [
+          data.sectionFront && `national-${data.sectionFront}`, 
+          data.market, 
+          data.category,
+          data.genre,
+          data.callsign ? updateCallsign(data.callsign) : data.callsign
+        ].filter(section => section);
+
+        _sf_async_config.authors = (data.authors || '').split(', ').join();
+        _sf_async_config.sections = addDefaultSections(component, sections);
+        _sf_async_config.title = getTitle(component, document.title)
         e.type = 'text/javascript';
         e.async = true;
         e.src = '//static.chartbeat.com/js/chartbeat.js';
         n.parentNode.insertBefore(e, n);
       }
 
+      /**
+      * Create virtual page views for SPA
+      *
+      * Object passed in must contain path & title, authors and sections are optional
+      */
+      document.addEventListener('pageView', function (event) {
+        const details = event.detail || {},
+          content = takeFirst(details.toArticlePage, details.toGalleryPage, details.toStationDetailPage, details.toStationDirectoryPage) || {},
+          component = getComponentName(content._ref),
+          station = content.station || {},
+          authors = (content.authors || []).map(({text}) => text),
+          sectionFront = content.sectionFront && `national-${content.sectionFront}`,
+          dynamicSections = [
+            sectionFront,
+            station.market ? station.market.display_name : station.market,
+            content.category,
+            content.genre,
+            station.callsign ? updateCallsign(station.callsign) : station.callsign
+          ].filter(section => section),
+          sections = addDefaultSections(component, dynamicSections);
+
+        pSUPERFLY.virtualPage({
+          sections: sections,
+          authors: authors.join(),
+          path: details.toPath || window.location.pathname,
+          title: getTitle(component, details.toTitle || document.title)
+        });
+      });
+
       loadChartbeat();
     })();
-
-    /**
-     * Create virtual page views for SPA
-     *
-     * Object passed in must contain path & title, authors and sections are optional
-     */
-    document.addEventListener('pageView', function (event) {
-      const details = event.detail || {},
-        content = details.toArticlePage || details.toGalleryPage || {},
-        authors = (content.authors || []).map(({text}) => text),
-        sectionFront = content.sectionFront ? [`national-${content.sectionFront}`] : [],
-        sections = ['National', ...sectionFront, 'editorial'];
-
-      pSUPERFLY.virtualPage({
-        sections: sections.join(),
-        authors: authors.join(),
-        path: details.toPath || window.location.pathname,
-        title: details.toTitle || document.title
-      });
-    });
   </script>
 {{/unless}}
