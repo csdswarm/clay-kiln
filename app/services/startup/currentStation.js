@@ -10,24 +10,7 @@ const radioApiService = require('../../services/server/radioApi'),
   allStations = {},
   allStationsIds = {},
   allStationsCallsigns = [],
-  defaultStation = {
-    id: 0,
-    name: 'Radio.com',
-    callsign: 'NATL-RC',
-    website: 'https://www.radio.com',
-    slug: 'www',
-    square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
-    square_logo_large: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
-    city: 'New York',
-    state: 'NY',
-    country: 'US',
-    gmt_offset: -5,
-    market: {
-      id: 15,
-      name: 'New York, NY'
-    },
-    category: ''
-  },
+  { DEFAULT_STATION } = require('../universal/constants'),
   /**
    * returns the slug of the site either from a subdomain or as the first element of the path
    *
@@ -87,7 +70,7 @@ const radioApiService = require('../../services/server/radioApi'),
         return allStations[allStationsIds[stationId]];
       }
 
-      return defaultStation;
+      return DEFAULT_STATION;
     }
 
     return {};
@@ -104,7 +87,7 @@ const radioApiService = require('../../services/server/radioApi'),
 module.exports = async (req, res, next) => {
   res.locals.station = await getStation(req);
   res.locals.allStationsCallsigns = allStationsCallsigns;
-  res.locals.defaultStation = defaultStation;
+  res.locals.defaultStation = DEFAULT_STATION;
 
   return next();
 };
