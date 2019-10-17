@@ -4,6 +4,7 @@ const _get = require('lodash/get'),
   _isEmpty = require('lodash/isEmpty'),
   radioApi = require('./radioApi'),
   { URL } = require('url'),
+  { DEFAULT_STATION } = require('../universal/constants')
   api = {},
   _state = {
     allStations: {
@@ -106,18 +107,13 @@ api.getStationFromOriginalUrl = withUpdatedStations(getStationFromUrl);
  * Get a list of all the station callsigns with NATL-RC as a station
  *   optionally passing the default station callsign
  *
- * @param {string} defaultStationCallsign
  * @returns {array}
  */
-api.getAllStationsCallsigns = withUpdatedStations((defaultStationCallsign = 'NATL-RC') => {
-  const callsigns = Object.keys(_state.allStations.byCallsign);
-
-  callsigns.push(defaultStationCallsign);
-
-  return callsigns
-    // Ensure that the default callsign isn't in the list twice somehow
-    .filter((callsign, index) => callsigns.indexOf(callsign) === index)
-    .sort();
-});
+api.getAllStationsCallsigns = withUpdatedStations(() =>
+  [
+    DEFAULT_STATION.callsign,
+    ...Object.keys(_state.allStations.byCallsign)
+  ].sort()
+);
 
 module.exports = api;
