@@ -25,7 +25,7 @@ class StationsCarousel {
     this.gutterWidth = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} li`)).marginRight.replace('px',''));
     this.imageSize = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} .thumb`)).width.replace('px','')) + this.gutterWidth;
     this.pageNum = 1;
-    this.windowWidth = window.outerWidth;
+    this.windowWidth = window.innerWidth;
     this.windowSizes = {
       large: 1280,
       medium: 1024,
@@ -102,7 +102,7 @@ StationsCarousel.prototype = {
    * @function
    */
   restyleCarousel: function (event, _this) {
-    _this.windowWidth = window.outerWidth;
+    _this.windowWidth = window.innerWidth;
     _this.setImageAndPageDims();
     _this.totalPages = Math.ceil(_this.stationsData.count / _this.pageSize);
     _this.setCarouselWidth();
@@ -278,6 +278,12 @@ StationsCarousel.prototype = {
       }
     });
   },
+  addCarouselItem: function (el) {
+    el.classList.add('station');
+
+    this.stationsData.count++;
+    this.stationsList.append(el);
+  },
   /**
    * Insert new payload of stations into DOM
    * @function
@@ -285,7 +291,8 @@ StationsCarousel.prototype = {
   updateStationsDOM: async function () {
     const stationIds = this.stationsData.stations.map(station => station.id),
       endpoint = `//${window.location.hostname}/_components/stations-list/instances/local.html?stationIDs=${stationIds.join(',')}`,
-      localStations = await radioApiService.fetchDOM(endpoint);
+      localStations = await radioApiService.fetchDOM(endpoint),
+      curatedItems = this.stationsCarousel.querySelectorAll('.curated-item');
 
     // Clear out loader and old stuff
     while (this.stationsList.firstChild) {
@@ -293,6 +300,7 @@ StationsCarousel.prototype = {
     }
 
     this.stationsList.append(localStations);
+    curatedItems.forEach(item => this.addCarouselItem(item));
 
     // Store for stations centering when stations do not fill up page
     this.stationsNodes = this.stationsCarousel.querySelectorAll('li');
