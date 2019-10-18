@@ -153,10 +153,6 @@ module.exports.render = async (uri, data, locals) => {
           params['filter[market_id]'] = locals.station.market.id;
           break;
         case 'genre':
-          if (!locals.station.genre.length) {
-            return returnStationless(data);
-          }
-
           data.genre = slugifyService(locals.station.genre[0].name);
           if (data.genre === SPORTS_SLUG) {
             data.seeAllLink = `/stations/${ data.genre }`;
