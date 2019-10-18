@@ -4,7 +4,7 @@ const _get = require('lodash/get'),
   _isEmpty = require('lodash/isEmpty'),
   radioApi = require('./radioApi'),
   { URL } = require('url'),
-  { DEFAULT_STATION } = require('../universal/constants')
+  { DEFAULT_STATION } = require('../universal/constants'),
   api = {},
   _state = {
     allStations: {
@@ -109,11 +109,14 @@ api.getStationFromOriginalUrl = withUpdatedStations(getStationFromUrl);
  *
  * @returns {array}
  */
-api.getAllStationsCallsigns = withUpdatedStations(() =>
-  [
-    DEFAULT_STATION.callsign,
-    ...Object.keys(_state.allStations.byCallsign)
-  ].sort()
-);
+api.getAllStationsCallsigns = withUpdatedStations((addDefaultCallsign = true) => {
+  const callsigns = Object.keys(_state.allStations.byCallsign);
+
+  if (addDefaultCallsign) {
+    callsigns.push(DEFAULT_STATION.callsign);
+  }
+
+  return callsigns.sort();
+});
 
 module.exports = api;
