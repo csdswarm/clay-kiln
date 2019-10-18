@@ -55,6 +55,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * Map article sectionFront to apple news section
    *
    * @param {string} sectionFront
+   * @param {Object} sections
    * @returns {Object}
   */
   sectionFrontToAppleNewsSectionMap = (sectionFront, sections) => {
@@ -321,6 +322,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
     } catch (e) {
       log('error', e);
+      res.status(500).send(e);
     }
   },
   /**
@@ -369,7 +371,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    */
   inject = (app) => {
 
-    app.use((req, res, next) => bootstrap(req,res,next) );
+    app.use('/apple-news*', bootstrap);
 
     app.get('/apple-news/sections', getAllSections);
     app.get('/apple-news/sections/:sectionID', readSection);
