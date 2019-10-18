@@ -107,6 +107,7 @@ api.getStationFromOriginalUrl = withUpdatedStations(getStationFromUrl);
  * Get a list of all the station callsigns with NATL-RC as a station
  *   optionally passing the default station callsign
  *
+ * @param {boolean} addDefaultCallsign
  * @returns {array}
  */
 api.getAllStationsCallsigns = withUpdatedStations((addDefaultCallsign = true) => {
