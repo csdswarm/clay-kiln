@@ -1,6 +1,5 @@
 'use strict';
 
-// let sections;
 const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   ENCODE_BASE64 = require('crypto-js/enc-base64'),
   qs = require('querystring'),
