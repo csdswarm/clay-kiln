@@ -132,7 +132,7 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title">Featured</h4>
-              <p class="item-data">{{ if featured 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo featured }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Editorial Feeds Term(s)</h4>
@@ -170,15 +170,15 @@
             </li>
             <li class="item">
               <h4 class="item-title">Featured</h4>
-              <p class="item-data">{{ if isCandidateToBeFeatured 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo isCandidateToBeFeatured }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Hidden</h4>
-              <p class="item-data">{{ if isHidden 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo isHidden }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Sponsored</h4>
-              <p class="item-data">{{ if isSponsored 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo isSponsored }}</p>
             </li>
           </ul>
         </section>
@@ -202,7 +202,7 @@
             <li class="item">
               <h4 class="item-title">Evergreen Treatment</h4>
               <p class="item-data">
-                {{ if evergreenSlug 'Yes' else='No' }}
+                {{ yesNo evergreenSlug }}
               </p>
             </li>
           </ul>

@@ -188,6 +188,20 @@ function debugLog(...args) {
   }
 }
 
+/**
+ * return yes/no dependent on val truthiness
+ * @param  {*}  val
+ * @return {Boolean}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+module.exports.yesNo = yesNo;
 module.exports.isFieldEmpty = isFieldEmpty;
 module.exports.has = has;
 module.exports.replaceVersion = replaceVersion;
