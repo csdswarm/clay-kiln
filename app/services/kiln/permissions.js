@@ -73,7 +73,6 @@ const addPermissions = require('../universal/user-permissions'),
   secureAllSchemas = () => {
     window.kiln = window.kiln || {};
     window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
-
     window.kiln.locals.components
       .forEach(component => {
         const kilnjs = getKilnJs(component);
@@ -139,15 +138,20 @@ const addPermissions = require('../universal/user-permissions'),
     });
   },
   /**
-   * sets all truthy elements to have the style display: none
+   * makes a function which will set the display to 'none' according to the
+   *   passed permissions
    *
-   * @param {Element[]} elements
+   * @param {boolean} canPublish
+   * @param {boolean} canUnpublish
+   * @returns {function}
    */
-  setDisplayNone = (elements) => {
-    elements.filter(anElement => !!anElement)
-      .forEach(anElement => {
-        anElement.style.display = 'none';
-      });
+  makeHandleDisplay = (canPublish, canUnpublish) => (publishBtn, unpublishBtn) => {
+    if (!canPublish && publishBtn) {
+      publishBtn.style.display = 'none';
+    }
+    if (!canUnpublish && unpublishBtn) {
+      unpublishBtn.style.display = 'none';
+    }
   },
   /**
    * hides the 'publish' or 'unpublish' button if the user does not
@@ -165,21 +169,22 @@ const addPermissions = require('../universal/user-permissions'),
       }
 
       const { locals } = await whenPreloadedPromise,
-        hasAccess = locals.user.hasPermissionsTo('access').this('station');
+        canPublish = locals.user.can('publish').a(schema.schemaName).value,
+        canUnpublish = locals.user.can('unpublish').a(schema.schemaName).value;
 
-      if (hasAccess) {
+      if (canPublish && canUnpublish) {
         return;
       }
 
       // shouldn't be declared above the short circuit
       // eslint-disable-next-line one-var
-      const publishBtn = document.querySelector('.right-drawer .publish-actions > button'),
+      const handleDisplay = makeHandleDisplay(canPublish, canUnpublish),
+        publishBtn = document.querySelector('.right-drawer .publish-actions > button'),
         unpublishBtn = document.querySelector('.right-drawer .publish-status > button');
 
       // if this was rendered on the server then there won't be any mutations
       if (publishBtn || unpublishBtn) {
-        setDisplayNone([publishBtn, unpublishBtn]);
-
+        handleDisplay(publishBtn, unpublishBtn);
         return;
       }
 
@@ -190,7 +195,7 @@ const addPermissions = require('../universal/user-permissions'),
           for (const mutation of mutationList) {
             const { publishBtn, unpublishBtn } = getAddedPublishButtons(mutation);
 
-            setDisplayNone([publishBtn, unpublishBtn]);
+            handleDisplay(publishBtn, unpublishBtn);
             if ([...mutation.removedNodes].find(isRightDrawer)) {
               observer.disconnect();
             }
