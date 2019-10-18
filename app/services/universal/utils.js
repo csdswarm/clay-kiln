@@ -190,8 +190,9 @@ function debugLog(...args) {
 
 /**
  * return yes/no dependent on val truthiness
+ *
  * @param  {*}  val
- * @return {Boolean}
+ * @returns {String}
  */
 function yesNo(val) {
   if (val) {
