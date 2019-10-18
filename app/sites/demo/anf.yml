@@ -1,90 +1,114 @@
-# https://developer.apple.com/documentation/apple_news/articledocument
-
-version: '1.10.1'
-language: en
-# https://developer.apple.com/documentation/apple_news/layout
-documentStyle:
-layout:
-  columns: 6
-  width: 1024
-  margin: 30
-  gutter: 20
-# https://developer.apple.com/documentation/apple_news/apple_news_format/component_styles
-componentStyles:
-  exampleStyle:
-    backgroundColor: '#FFFFFF'
-    opacity: 1
-    border:
-      all:
-        width: 1
-        color: '#333'
-      left: false
-      right: false
-  articleStyle:
-  headerStyle:
-  headlineStyle:
-  bylineStyle:
-  ledeStyle:
-  imageStyle:
-  instagramStyle:
-  brightcoveStyle:
-  youtubeStyle:
-  omnyStyle:
-  verizonMediaStyle:
-  bodyStyle:
-  paragraphStyle:
-  subheaderStyle:
-  tweetStyle:
-  facebookPostStyle:
-  galleryStyle:
-  gallerySlideStyle:
-  slideTitleStyle:
-  slideDescriptionStyle:
-# https://developer.apple.com/documentation/apple_news/apple_news_format/text_styles
-# PostScript font names: CircularStd-Black, CircularStd-BookItalic, CircularStd-Medium, ProximaNova-Bold, ProximaNova-Light, ProximaNova-Regular 
-componentTextStyles:
-  default:
-    fontName: 'CircularStd-Black'
-    textColor: '#111'
-    fontSize: 18
-    lineHeight: 20
-    linkStyle:
-      textColor: '#1782a9'
-    paragraphSpacingBefore: 12
-    paragraphSpacingAfter: 12
-  headlineTextStyle:
-  bylineTextStyle:
-  ledeTextStyle:
-  imageTextStyle:
-  bodyTextStyle:
-  paragraphTextStyle:
-  subheaderTextStyle:
-  slideTitleTextStyle:
-  slideDescriptionTextStyle:
-# https://developer.apple.com/documentation/apple_news/componentlayout
-componentLayouts:
-  default:
-    columnStart: 0
-    columnSpan: 6
-    margin:
-      bottom: 20
-  articleLayout:
-  headerLayout:
-  headlineLayout:
-  bylineLayout:
-  ledeLayout:
-  imageLayout:
-  instagramLayout:
-  brightcoveLayout:
-  youtubeLayout:
-  omnyLayout:
-  verizonMediaLayout:
-  bodyLayout:
-  paragraphLayout:
-  subheaderLayout:
-  tweetLayout:
-  facebookPostLayout:
-  galleryLayout:
-  gallerySlideLayout:
-  slideTitleLayout:
-  slideDescriptionLayout:
+---
+  version: "1.0"
+  language: "en"
+  layout:
+    columns: 12
+    width: 1024
+    margin: 70
+    gutter: 20
+  documentStyle:
+    backgroundColor: "#f6f6f6"
+  componentTextStyles:
+    default-body:
+      textAlignment: "left"
+      fontName: "Avenir-Book"
+      fontSize: 18
+      textColor: "#000"
+    titleStyle:
+      textAlignment: "left"
+      fontName: "AvenirNext-Bold"
+      fontSize: 45
+      lineHeight: 52
+      textColor: "#000"
+    introStyle:
+      textAlignment: "left"
+      fontName: "Avenir-Roman"
+      fontSize: 22
+      lineHeight: 30
+      textColor: "#000"
+    authorStyle:
+      textAlignment: "left"
+      fontName: "AvenirNext-Medium"
+      fontSize: 14
+      lineHeight: 17
+      textColor: "#000"
+    slideDescriptionStyle:
+      fontSize: 15
+      lineHeight: 20
+      fontName: "Avenir-Book"
+  componentStyles:
+    headerStyle: {}
+  textStyles:
+    default-tag-a:
+      fontName: "AvenirNext-Bold"
+      textColor: "#000"
+    # must be set separately for underline to work
+    hyperlinkStyle:
+      underline:
+        color: "#000"
+    metaStyle:
+      textColor: "#777"
+    category1Style:
+      textColor: "#FF4940"
+    category2Style:
+      textColor: "#0099FF"
+    category3Style:
+      textColor: "#0099FF"
+    category4Style:
+      textColor: "#00CCB7"
+    boldStyle:
+      fontName: "AvenirNext-Bold"
+    publishTimeStyle:
+      fontSize: 12
+      textColor: "#777"
+    footerCTAStyle:
+      fontName: "Avenir-Black"
+      textColor: "#1F055E"
+      fontSize: 14
+      lineHeight: 14
+  componentLayouts:
+    headerLayout:
+      columnStart: 0
+      ignoreDocumentMargin: true
+    headerImageLayout:
+      columnStart: 0
+      ignoreDocumentMargin: true
+      minimumHeight: "40vh"
+      margin:
+        top: 15
+        bottom: 8
+    imageLayout:
+      columnStart: 0
+      margin:
+        top: 30
+    captionLayout:
+      margin:
+        top: 10
+    titleLayout:
+      columnStart: 0
+      margin:
+        top: 30
+        bottom: 10
+    introLayout:
+      columnStart: 0
+      margin:
+        top: 10
+        bottom: 10
+    authorLayout:
+      columnStart: 0
+      margin:
+        top: 10
+    bodyLayout:
+      columnStart: 0
+      margin:
+        top: 50
+        bottom: 15
+    bodyItemLayout:
+      margin:
+        bottom: 30
+    slideGalleryItemLayout:
+      margin:
+        bottom: 20
+    slideDescriptionLayout:
+      margin:
+        bottom: 10

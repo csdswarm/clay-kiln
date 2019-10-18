@@ -9,7 +9,7 @@ module.exports.render = function (ref, data, locals) {
 };
 
 module.exports.save = function (uri, data, locals) {
-  data.appleNewsEnabled = process.env.APPLE_NEWS_ENABLED;
+  data.appleNewsEnabled = process.env.APPLE_NEWS_ENABLED === 'TRUE';
   data.dateModified = (new Date()).toISOString();
   return createContent.save(uri, data, locals);
 };

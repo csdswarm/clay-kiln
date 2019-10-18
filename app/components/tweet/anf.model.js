@@ -9,13 +9,17 @@ const getTweetURL = data => {
     return data.url;
   }
 
-  const url = `${ data.url }?`;
+  let url = `${ data.url }?`;
 
   if (!data.showMedia && !data.showThread) {
-    url.concat('hide_media=true&hide_thread=true');
+    url += 'hide_media=true&hide_thread=true';
   } else {
-    if (!data.showMedia) url.concat('hide_media=true');
-    if (!data.showThread) url.concat('hide_thread=true');
+    if (!data.showMedia) {
+      url += 'hide_media=true';
+    }
+    if (!data.showThread) {
+      url += 'hide_thread=true';
+    }
   }
 
   return url;
@@ -25,8 +29,7 @@ module.exports = function (ref, data) {
   return {
     role: 'tweet',
     URL: getTweetURL(data),
-    layout: 'tweetLayout',
-    style: 'tweetStyle',
+    layout: 'bodyItemLayout',
     format: 'html'
   };
 };

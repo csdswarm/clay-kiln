@@ -29,8 +29,10 @@ module.exports = {
             initialHistory = [];
           }
 
-          const historyHasChanged = initialHistory.length !== mutation.payload.history.length,
-            isContentPage = ['article', 'gallery'].includes(getComponentName(state.page.data.main[0]));
+          const historyHasChanged = initialHistory.length !==
+            mutation.payload.history.length,
+            isContentPage = ['article', 'gallery'].includes(
+              getComponentName(state.page.data.main[0]));
           if (
             historyHasChanged
             && !isContentPage
