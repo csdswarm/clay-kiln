@@ -12,7 +12,7 @@ module.exports = router => {
     let callsign = 'NATL-RC';
 
     if (stationSlug) {
-      const callsign = await stationUtils.getCallsignFromSlug(stationSlug);
+      callsign = await stationUtils.getCallsignFromSlug(stationSlug);
 
       if (!callsign) {
         res.status(400);

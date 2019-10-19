@@ -5,27 +5,38 @@ const _get = require('lodash/get'),
   radioApi = require('./radioApi'),
   { URL } = require('url'),
   api = {},
+  getEmptyAllStations = () => ({
+    asArray: [],
+    byCallsign: {},
+    byId: {},
+    bySlug: {}
+  }),
   _state = {
-    allStations: {
-      bySlug: {},
-      byCallsign: {},
-      asArray: []
-    }
+    allStations: getEmptyAllStations()
+  },
+  resetAllStations = () => {
+    _state.allStations = getEmptyAllStations();
   },
   /**
    * ensures _state.allStations is up to date
    */
   updateAllStations = async () => {
-    const resp = await radioApi.get('stations', { page: { size: 1000 } }),
-      { allStations } = _state;
+    const resp = await radioApi.get('stations', { page: { size: 1000 } });
 
-    if (resp.response_cached && !_isEmpty(allStations.asArray)) {
+    if (resp.response_cached && !_isEmpty(_state.allStations.asArray)) {
       return;
     }
+
+    resetAllStations();
+
+    // can't be declared above `resetAllStations`
+    // eslint-disable-next-line one-var
+    const { allStations } = _state;
 
     allStations.asArray = resp.data;
 
     resp.data.forEach(station => {
+      allStations.byId[station.id] = station;
       allStations.bySlug[station.attributes.site_slug] = station;
       allStations.byCallsign[station.attributes.callsign] = station;
     });
@@ -54,16 +65,26 @@ const _get = require('lodash/get'),
   };
 
 /**
+ * Returns an up-to-date _state.allStations
+ *
+ * @returns {object}
+ */
+api.getAllStations = withUpdatedStations(() => _state.allStations);
+
+/**
  * Exposes the allStations state, ensuring they are updated when accessed
  *
- * Note: if more keys are added to the allStations state then we can generate
- *   this getAllStations via a function.  For now this is easier to read.
+ * Note: my decision to add these individually as functions was a mistake.  I
+ *   should have just returned _state.allStations and let it be.  We can clean
+ *   this up in the future but for now I don't want to break other
+ *   people's code.
  */
-api.getAllStations = {
+Object.assign(api.getAllStations, {
   asArray: withUpdatedStations(() => _state.allStations.asArray),
   byCallsign: withUpdatedStations(() => _state.allStations.byCallsign),
+  byId: withUpdatedStations(() => _state.allStations.byId),
   bySlug: withUpdatedStations(() => _state.allStations.bySlug)
-};
+});
 
 /**
  * Returns the station callsign from a url, where the url either has a station

@@ -2,7 +2,7 @@
 
 const _ = require('lodash'),
   moment = require('moment'),
-  isTruthy = _.identity,
+  exists = _.identity,
   db = require('./db'),
   sanitize = require('../universal/sanitize'),
   utils = require('../universal/utils'),
@@ -219,7 +219,7 @@ module.exports.articleSlugPattern = opts => {
     opts.sectionFront,
     opts.secondarySectionFront,
     opts.slug
-  ].filter(isTruthy)
+  ].filter(exists)
     .join('/');
 };
 module.exports.gallerySlugPattern = opts => {
@@ -231,7 +231,7 @@ module.exports.gallerySlugPattern = opts => {
     opts.secondarySectionFront,
     'gallery',
     opts.slug
-  ].filter(isTruthy)
+  ].filter(exists)
     .join('/');
 };
 module.exports.sectionFrontSlugPattern = opts => {
@@ -241,7 +241,7 @@ module.exports.sectionFrontSlugPattern = opts => {
     opts.stationSlug,
     opts.primarySectionFront,
     opts.sectionFront
-  ].filter(isTruthy)
+  ].filter(exists)
     .join('/');
 };
 module.exports.putComponentInstance = putComponentInstance;
