@@ -24,17 +24,9 @@ module.exports = router => {
     }
 
     if (stationSlug) {
-      const { name: stationName,
-        timezone: stationTimezone,
-        callsign: stationCallsign
-      } = await stationUtils.getStationDataFromSlug(stationSlug);
+      const allStations = await stationUtils.getAllStations();
 
-      Object.assign(res.locals, {
-        newPageStationSlug: stationSlug,
-        stationName,
-        stationTimezone,
-        stationCallsign
-      });
+      res.locals.newPageStation = allStations.bySlug[stationSlug];
     }
 
     // we need to mutate locals before declaring the result

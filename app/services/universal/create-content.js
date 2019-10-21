@@ -15,7 +15,8 @@ const _get = require('lodash/get'),
   { PAGE_TYPES } = require('./../universal/constants'),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
-  { getComponentName } = require('clayutils');
+  { getComponentName } = require('clayutils'),
+  articleOrGallery = new Set(['article', 'gallery']);
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -517,26 +518,37 @@ function render(ref, data, locals) {
 /**
  * Assigns 'stationSlug' and 'stationName' to data.
  *
- * newPageStationSlug should only exist upon creating a new page.  The property
- *   is attached to locals in `app/routes/add-endpoint/create-page.js`.  Its
+ * newPageStation should only exist upon creating a new page.  The property is
+ *   attached to locals in `app/routes/add-endpoint/create-page.js`.  Its
  *   purpose is to avoid creating a new content-type instance for every station
  *   (article/gallery/section front/etc.)
  *
+ * @param {string} uri
  * @param {object} data
  * @param {object} locals
  */
-function assignStationInfo(data, locals) {
-  if (locals.newPageStationSlug !== undefined) {
+function assignStationInfo(uri, data, locals) {
+  if (locals.newPageStation !== undefined) {
+    const attrs = locals.newPageStation.attributes,
+      componentName = getComponentName(uri);
+
     Object.assign(data, {
-      stationSlug: locals.newPageStationSlug,
-      stationName: locals.stationName,
-      stationCallsign: locals.stationCallsign,
-      stationTimezone: locals.stationTimezone
+      stationSlug: attrs.site_slug,
+      stationName: attrs.name,
+      stationCallsign: attrs.callsign,
+      stationTimezone: attrs.timezone
     });
+
+    if (articleOrGallery.has(componentName)) {
+      Object.assign(data, {
+        stationLogoUrl: attrs.square_logo_small,
+        stationURL: attrs.website
+      });
+    }
   } else {
     Object.assign(data, {
-      stationCallsign: _get(locals, 'defaultStation.callsign', 'NATL-RC'),
-      stationTimezone: _get(locals, 'defaultStation.timezone', 'ET')
+      stationCallsign: 'NATL-RC',
+      stationTimezone: 'ET'
     });
   }
 }
@@ -555,7 +567,7 @@ async function save(uri, data, locals) {
 
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
-  assignStationInfo(data, locals);
+  assignStationInfo(uri, data, locals);
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);

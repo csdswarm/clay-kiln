@@ -10,7 +10,7 @@ const { lstatSync, readdirSync } = require('fs'),
   log = require('../universal/log').setup({ file: __filename }),
   { getFullOriginalUrl, urlToUri } = require('../universal/utils'),
   stationUtils = require('../server/station-utils'),
-  contentTypes = require('../universal/constants'),
+  { contentTypes } = require('../universal/constants'),
   db = require('../server/db'),
   defaultStation = {
     id: 0,

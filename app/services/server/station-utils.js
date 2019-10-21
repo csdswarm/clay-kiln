@@ -64,10 +64,10 @@ const _get = require('lodash/get'),
     allStations.asArray = stationsResp.data;
 
     stationsResp.data.forEach(station => {
-      if (marketsResp.data) {
-        station.attributes.timezone = getTimezoneFromMarketID(marketsResp.data,
-          station.attributes.market_id || station.attributes.market.id);
-      }
+      station.attributes.timezone = marketsResp.data ?
+        getTimezoneFromMarketID(marketsResp.data,
+        station.attributes.market_id || station.attributes.market.id)
+        : 'ET';
 
       allStations.byId[station.id] = station;
       allStations.bySlug[station.attributes.site_slug] = station;
@@ -145,23 +145,5 @@ api.getCallsignFromSlug = withUpdatedStations(slug => _state.allStations.bySlug[
  * @returns {object|undefined}
  */
 api.getStationFromOriginalUrl = withUpdatedStations(getStationFromUrl);
-
-/**
- * Finds the station data from the slug
- *
- * @param {string} slug
- * @returns {Promise<Object>}
- */
-api.getStationDataFromSlug = withUpdatedStations(slug => {
-  const { name,
-    timezone,
-    callsign
-  } = _state.allStations.bySlug[slug].attributes;
-
-  return { name,
-    timezone,
-    callsign
-  };
-});
 
 module.exports = api;
