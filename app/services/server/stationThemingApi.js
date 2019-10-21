@@ -70,7 +70,29 @@ const db = require('./db'),
         res.status(500).send('There was an error saving the theme.');
       }
     });
+  },
+  getStationPage = async (stationSlug) => {
+    return await db.get(`${CLAY_SITE_HOST}/_pages/${stationSlug}`);
+  },
+  getStationNav = async data => {
+    const { topSection = [] } = data,
+      ref = topSection.find(ref => /station\-nav/.test(ref));
+
+    if (ref) {
+      return await db.get(ref);
+    }
+  },
+  getStationFooter = async data => {
+    const { bottomSection = [] } = data,
+      ref = bottomSection.find(ref => /station\-footer/.test(ref));
+
+    if (ref) {
+      return await db.get(ref);
+    }
   };
 
 module.exports.inject = inject;
 module.exports.get = get;
+module.exports.getStationPage = getStationPage;
+module.exports.getStationNav = getStationNav;
+module.exports.getStationFooter = getStationFooter;
