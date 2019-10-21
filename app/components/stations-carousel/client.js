@@ -19,6 +19,7 @@ class StationsCarousel {
     this.leftArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--left');
     this.rightArrow = this.stationsCarousel.querySelector('.stations-carousel__arrow--right');
     this.paginationDots = this.stationsCarousel.querySelector('.carousel__pagination-dots');
+    this.curatedItems = this.stationsCarousel.querySelectorAll('.curated-item');
     this.dotClass = 'pagination-dots__dot';
     this.marketID = localStorage.getItem('marketID');
     this.pageSize = 1; // Number of stations to move left/right when navigating
@@ -51,8 +52,12 @@ StationsCarousel.prototype = {
   setImageAndPageDims: function () {
     this.pageSize = 1; // Number of stations to move left/right when navigating
     this.layoutWidth = getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass}`)).width;
-    this.gutterWidth = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} li`)).marginRight.replace('px',''));
-    this.imageSize = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} .thumb`)).width.replace('px','')) + this.gutterWidth;
+    if (this.stationsCarousel.querySelector(`.${this.innerContainerClass} li`)) {
+      this.gutterWidth = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} li`)).marginRight.replace('px',''));
+    }
+    if (this.stationsCarousel.querySelector(`.${this.innerContainerClass} .thumb`)) {
+      this.imageSize = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} .thumb`)).width.replace('px','')) + this.gutterWidth;
+    }
     if (this.windowWidth >= this.windowSizes.large) {
       this.stationsVisible = 7;
     } else if (this.windowWidth >= this.windowSizes.medium) {
@@ -285,22 +290,29 @@ StationsCarousel.prototype = {
     this.stationsList.append(el);
   },
   /**
+   * Hide the station carousel
+   */
+  hideStationCarousel: function () {
+    this.stationsCarousel.style.display = 'none';
+  },
+  /**
    * Insert new payload of stations into DOM
    * @function
    */
   updateStationsDOM: async function () {
     const stationIds = this.stationsData.stations.map(station => station.id),
       endpoint = `//${window.location.hostname}/_components/stations-list/instances/local.html?stationIDs=${stationIds.join(',')}`,
-      localStations = await radioApiService.fetchDOM(endpoint),
-      curatedItems = this.stationsCarousel.querySelectorAll('.curated-item');
+      localStations = await radioApiService.fetchDOM(endpoint);
 
     // Clear out loader and old stuff
     while (this.stationsList.firstChild) {
       this.stationsList.removeChild(this.stationsList.firstChild);
     }
 
-    this.stationsList.append(localStations);
-    curatedItems.forEach(item => this.addCarouselItem(item));
+    if (stationIds.length) {
+      this.stationsList.append(localStations);
+    }
+    this.curatedItems.forEach(item => this.addCarouselItem(item));
 
     // Store for stations centering when stations do not fill up page
     this.stationsNodes = this.stationsCarousel.querySelectorAll('li');
@@ -315,6 +327,10 @@ StationsCarousel.prototype = {
   updateStations: async function () {
     this.marketID = await market.getID();
     return this.getFilteredStationsFromApi().then(async (stationsData) => {
+      if (!stationsData.count && !this.curatedItems.length) {
+        this.hideStationCarousel();
+        return;
+      }
       this.stationsData = stationsData;
       await this.updateStationsDOM();
       this.setImageAndPageDims();
