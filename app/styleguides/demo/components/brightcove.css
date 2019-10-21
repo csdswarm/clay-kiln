@@ -36,6 +36,61 @@
       width: auto;
     }
   }
+
+  .rdc-overlay {
+    background-color: $parisM;
+    border: 1px solid $white;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
+    bottom: em(42, 16);
+    left: em(10, 16);
+    top: auto;
+    width: auto;
+    display: flex;
+    align-items: center;
+    transition: left 150ms ease-out;
+    @mixin overlay-font1;
+    &__close {
+      width: 0;
+      opacity: 0;
+      cursor: pointer;
+      transition: 120ms ease;
+    }
+    &__link {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    &__logo {
+      background: url('/media/components/brightcove/rdc-overlay-logo.svg') no-repeat;
+      background-size: contain;
+      width: em(21, 16);
+      height: em(22, 16);
+      margin-right: em(10, 16);
+    }
+    &:hover {
+      .rdc-overlay__close {
+        display: block;
+        width: fit-content;
+        margin-right: em(10, 16);
+        opacity: 1;
+        &:hover {
+          color: $red;
+        }
+      }
+    }
+    &.vjs-hidden {
+      display: block;
+      left: -100%;
+      transition: left 100ms ease-in;
+      display: block !important;
+      .rdc-overlay__close {
+        display: none;
+      }
+    }
+  }
 }
 
 .player__video--hidden-title {
