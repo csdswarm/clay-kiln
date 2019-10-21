@@ -5,7 +5,8 @@ const { getStationPage, getStationFooter } = require('../../services/server/stat
 module.exports.render = async (ref, data, locals) => {
   const { station, defaultStation } = locals,
     { slug } = station,
-    isNotDefaultStation = slug !== defaultStation.slug,
+    isDefaultStation = slug === defaultStation.slug,
+    isDefaultRef = ref.endsWith('default'),
     buttons = {
       facebook: (url) => url,
       twitter: (id) => `https://twitter.com/${id}`,
@@ -14,12 +15,12 @@ module.exports.render = async (ref, data, locals) => {
     };
 
   let instanceData = Object.assign({}, data, { _computed: {
-    renderForStation: isNotDefaultStation
+    renderForStation: !isDefaultStation || !isDefaultRef
   } });
 
   instanceData.station = station;
 
-  if (ref.endsWith('default') && isNotDefaultStation) {
+  if (isDefaultRef && !isDefaultStation) {
     const stationPageData = getStationPage(slug);
 
     if (stationPageData) {

@@ -7,13 +7,14 @@ const { playingClass } = require('../../services/universal/spaLocals'),
 module.exports.render = async (ref, data, locals) => {
   const { station, defaultStation } = locals,
     { slug } = station,
-    isNotDefaultStation = slug !== defaultStation.slug;
+    isDefaultStation = slug === defaultStation.slug,
+    isDefaultRef = ref.endsWith('default');
 
   let instanceData = Object.assign({}, data, { _computed: {
-    renderForStation: isNotDefaultStation
+    renderForStation: !isDefaultStation || !isDefaultRef
   } });
 
-  if (ref.endsWith('default') && isNotDefaultStation) {
+  if (isDefaultRef && !isDefaultStation) {
     const stationPageData = getStationPage(slug);
 
     if (stationPageData) {
