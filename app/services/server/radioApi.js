@@ -5,6 +5,7 @@ const rest = require('../universal/rest'),
   log = require('../universal/log').setup({ file: __filename }),
   isEmpty = require('lodash/isEmpty'),
   radioApi = 'api.radio.com/v1/',
+  radioStgApi = 'api-stg.radio.com/v1/',
   qs = require('qs'),
   ioredis = require('ioredis'),
   redis = new ioredis(process.env.REDIS_HOST),
@@ -44,14 +45,25 @@ const rest = require('../universal/rest'),
    *
    * @param {string} route
    * @param {object} params
+   * @param {object} locals
    * @return {string}
    */
-  createEndpoint = (route, params) => {
-    const decodeParams =  params ? `?${decodeURIComponent(qs.stringify(params))}` : '';
+  createEndpoint = (route, params, locals) => {
+    const decodeParams = params ? `?${decodeURIComponent(qs.stringify(params))}` : '',
+      apiHost = shouldUseStagingApi(locals) ? radioStgApi : radioApi;
 
     return isRadioApiRoute(route) ?
-      `https://${radioApi}${route}${decodeParams}` :
+      `https://${apiHost}${route}${decodeParams}` :
       `${route}${decodeParams}`;
+  },
+  /**
+   * Determines whether we should use the staging api
+   *
+   * @param {object} locals
+   * @returns {boolean}
+   */
+  shouldUseStagingApi = (locals) => {
+    return locals.useStagingApi && !locals.edit;
   },
   /**
    * returns a function to verify the response of the call was valid
@@ -70,12 +82,14 @@ const rest = require('../universal/rest'),
    * @param {*} [params]
    * @param {function} [validate]
    * @param {object} options
+   * @param {object} locals
    * @return {Promise}
    */
-  get = async (route, params, validate, options = {} ) => {
+  // eslint-disable-next-line max-params
+  get = async (route, params, validate, options = {}, locals = {} ) => {
     const dbKey = createKey(route, params),
       validateFn = validate || defaultValidation(route),
-      requestEndpoint = createEndpoint(route, params),
+      requestEndpoint = createEndpoint(route, params, locals),
       getFreshData = async (apiTimeout = API_TIMEOUT, cachedData = {}) => {
         try {
           // return api response if it's fast enough. if not, it might still freshen the cache
@@ -95,7 +109,14 @@ const rest = require('../universal/rest'),
         }
       };
 
-    if (typeof options.ttl !== 'number') options.ttl = TTL.DEFAULT;
+    if (typeof options.ttl !== 'number') {
+      options.ttl = TTL.DEFAULT;
+    }
+
+    if (shouldUseStagingApi(locals)) {
+      // setting the ttl to 0 will ensure fresh data that wont be saved to the cache
+      options.ttl = 0;
+    }
 
     try {
       // if there's no ttl, skip the cache miss and try to fetch new data

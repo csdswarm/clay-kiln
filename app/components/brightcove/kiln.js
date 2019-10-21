@@ -42,7 +42,7 @@ module.exports = (schema) => {
         }
       } catch (e) {console.log(e);}
     }
-  });
+  }, true);
 
   subscriptions.subscribe('OPEN_FORM', ({ uri }) => {
     // set updateVideo input and value if video exists
@@ -61,7 +61,7 @@ module.exports = (schema) => {
       schema.updateVideo.value(video);
       schema.updateVideo.setProp('_has', { input: 'brightcove-update' });
     }
-  });
+  }, true);
 
   return schema;
 };

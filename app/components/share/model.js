@@ -14,7 +14,9 @@ module.exports.render = (ref, data, locals) => {
   const title = encodeURIComponent(striptags(data.shortTitle || data.title)),
     domain = _get(locals, 'site.host'),
     stationCallSign = _get(locals, 'station.callsign');
-  
+
+  data.twitterHandle = locals.shareTwitterHandle || data.twitterHandle;
+
   return {
     ...data,
     emailUrl: `mailto:?subject=${title}&body=${buildUTMUrl(locals.url, { utm_source: domain, utm_medium: 'email', utm_term: stationCallSign })}`,
