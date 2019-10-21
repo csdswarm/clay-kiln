@@ -1,28 +1,43 @@
 'use strict';
 
 const { playingClass } = require('../../services/universal/spaLocals'),
-  _get = require('lodash/get');
+  _get = require('lodash/get'),
+  { getStationPage, getStationNav } = require('../../services/server/stationThemingApi');
 
 module.exports.render = async (ref, data, locals) => {
-  if (!locals.station && !locals.station.id) {
-    return data;
+  const { station, defaultStation } = locals,
+    { slug } = station,
+    isNotDefaultStation = slug !== defaultStation.slug;
+
+  let instanceData = Object.assign({}, data, { _computed: {
+    renderForStation: isNotDefaultStation
+  } });
+
+  if (ref.endsWith('default') && isNotDefaultStation) {
+    const stationPageData = getStationPage(slug);
+
+    if (stationPageData) {
+      instanceData = Object.assign(instanceData, await getStationNav(stationPageData));
+    } else {
+      instanceData._computed.renderForStation = false;
+    }
   }
 
-  data.playingClass = playingClass(locals, locals.station.id);
-  data.station = locals.station;
+  instanceData.playingClass = playingClass(locals, locals.station.id);
+  instanceData.station = locals.station;
 
   // Don't default to what's in locals.station unless it's not the default station
   if (_get(locals, 'station.slug', 'www') === 'www') {
-    data.stationLogo = data.stationLogo || '';
+    instanceData.stationLogo = instanceData.stationLogo || '';
   } else {
-    data.stationLogo = data.stationLogo || _get(locals, 'station.square_logo_small', '');
+    instanceData.stationLogo = instanceData.stationLogo || _get(locals, 'station.square_logo_small', '');
   }
 
-  if (data.stationLogo.length) {
-    data.stationLogo = data.stationLogo.includes('?') ?
-      `${ data.stationLogo }&` :
-      `${ data.stationLogo }?`;
+  if (instanceData.stationLogo.length) {
+    instanceData.stationLogo = instanceData.stationLogo.includes('?') ?
+      `${ instanceData.stationLogo }&` :
+      `${ instanceData.stationLogo }?`;
   }
 
-  return data;
+  return instanceData;
 };
