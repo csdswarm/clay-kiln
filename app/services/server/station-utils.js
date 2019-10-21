@@ -65,8 +65,10 @@ const _get = require('lodash/get'),
 
     stationsResp.data.forEach(station => {
       station.attributes.timezone = marketsResp.data ?
-        getTimezoneFromMarketID(marketsResp.data,
-        station.attributes.market_id || station.attributes.market.id)
+        getTimezoneFromMarketID(
+          marketsResp.data,
+          station.attributes.market_id || station.attributes.market.id
+        )
         : 'ET';
 
       allStations.byId[station.id] = station;
