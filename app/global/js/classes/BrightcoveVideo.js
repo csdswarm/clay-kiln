@@ -234,8 +234,9 @@ class BrightcoveVideo extends Video {
           const overlayCloseBtn = myPlayer.el_.querySelector('.rdc-overlay__close');
 
           myPlayer.onRdcClose = e => {
-            // NOTE: this listener should be removed if it is decided to be semi-permanent
-            e.target.parentElement.classList.add('vjs-hidden');
+            // this is to make it semi-permanent as in it would require a refresh or page change
+            e.target.parentElement.style.display = 'none';
+            overlayCloseBtn.removeEventListener('click', myPlayer.onRdcClose);
           };
 
           overlayCloseBtn.addEventListener('click', myPlayer.onRdcClose);
