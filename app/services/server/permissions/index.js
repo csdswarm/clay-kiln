@@ -201,7 +201,7 @@ async function checkUserPermissions(uri, req, locals, db) {
       if (customUrl) {
         const callsign = await stationUtils.getCallsignFromUrl(customUrl);
 
-        if (!user.can('access').the('station').at(callsign)) {
+        if (!user.can('access').the('station').at(callsign).value) {
           return false;
         }
       }

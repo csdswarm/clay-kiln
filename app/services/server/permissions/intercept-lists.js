@@ -43,7 +43,7 @@ module.exports = router => {
     // eslint-disable-next-line one-var
     const urlObj = new URL(req.protocol + '://' + req.get('host') + req.originalUrl),
       { user } = res.locals,
-      canCreateSectionFronts = user.can('create').a('section-fronts').value;
+      canCreateSectionFronts = user.can('create').a('section-front').value;
 
     urlObj.searchParams.append('fromClay', 'true');
 
