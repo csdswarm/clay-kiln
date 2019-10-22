@@ -199,7 +199,7 @@ class BrightcoveVideo extends Video {
   }
 
   /**
-   * If the player has igh_level_category of SPORTS add overlay
+   * If the player has high_level_category of SPORTS add overlay
    * @function
    */
   addOverlay() {
@@ -209,7 +209,7 @@ class BrightcoveVideo extends Video {
       myPlayer.on('loadstart', function () {
         const highLevelCategory = _get(myPlayer, 'mediainfo.customFields.high_level_category');
 
-        if (!highLevelCategory || highLevelCategory !== 'SPORTS') {
+        if (!highLevelCategory) {
           return; // short circuit if not needed
         }
         // check to see if this is a sports video
@@ -221,7 +221,7 @@ class BrightcoveVideo extends Video {
               content: `
                 <a href="https://app.radio.com/brightcove-video-overlay" target="_blank" class="rdc-overlay__link">
                   <div class="rdc-overlay__logo"></div>
-                  <div class="rdc-overlay__text"> Download the RADIO.COM app <span class="rdc-overlay__caret">▸</span></div>
+                  <div class="rdc-overlay__text"> Download the RADIO.COM app <span class="rdc-overlay__caret"></span></div>
                 </a>
                 <div class="rdc-overlay__close"></div>
               `,

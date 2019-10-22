@@ -66,12 +66,23 @@
         text-decoration: underline;
       }
     }
+    &__text {
+      display: flex;
+      align-items: center;
+    }
     &__logo {
       background: url('/media/components/brightcove/rdc-overlay-logo.svg') no-repeat;
       background-size: contain;
       width: em(21, 16);
       height: em(22, 16);
       margin-right: em(10, 16);
+    }
+    &__caret {
+      background: url('/media/components/brightcove/caret-right.svg') no-repeat center center;
+      width: em(12, 16);
+      height: em(12, 16);
+      margin-left: em(4, 16);
+      display: inline-block;
     }
     &:hover {
       .rdc-overlay__close {
