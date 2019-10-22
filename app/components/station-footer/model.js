@@ -6,7 +6,7 @@ module.exports.render = async (ref, data, locals) => {
   const { station, defaultStation } = locals,
     { slug } = station,
     isDefaultStation = slug === defaultStation.slug,
-    isDefaultRef = ref.endsWith('default'),
+    isDefaultRef = /instances\/default/.test(ref),
     buttons = {
       facebook: (url) => url,
       twitter: (id) => `https://twitter.com/${id}`,

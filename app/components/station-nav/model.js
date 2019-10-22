@@ -8,11 +8,15 @@ module.exports.render = async (ref, data, locals) => {
   const { station, defaultStation } = locals,
     { slug } = station,
     isDefaultStation = slug === defaultStation.slug,
-    isDefaultRef = ref.endsWith('default');
+    isDefaultRef = /instances\/default/.test(ref);
 
   let instanceData = Object.assign({}, data, { _computed: {
     renderForStation: !isDefaultStation || !isDefaultRef
   } });
+
+  console.log(`isDefaultStation -> ${isDefaultStation}`);
+  console.log(`isDefaultRef -> ${isDefaultRef} -> (${ref})`);
+  console.log(`renderForStation -> ${instanceData._computed.renderForStation}`);
 
   if (isDefaultRef && !isDefaultStation) {
     const stationPageData = getStationPage(slug);
