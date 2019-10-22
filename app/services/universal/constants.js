@@ -21,7 +21,9 @@ const SECOND = 1000,
     ARTICLE: 'article',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front'
-  };
+  },
+  
+  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 
 module.exports = {
@@ -32,5 +34,6 @@ module.exports = {
   WEEK,
   YEAR,
   time,
-  PAGE_TYPES
+  PAGE_TYPES,
+  DEFAULT_RADIOCOM_LOGO
 };

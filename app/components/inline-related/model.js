@@ -1,6 +1,7 @@
 'use strict';
 
-const queryService = require('../../services/server/query'),
+const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
+  queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
@@ -35,10 +36,10 @@ module.exports.save = (ref, data, locals) => {
       .then((result) => {
         const article = Object.assign(item, {
           primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
+          pageUri: item.url || result.pageUri,
           urlIsValid: result.urlIsValid,
-          canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl,
+          canonicalUrl: item.url || result.canonicalUrl,
+          feedImgUrl: item.overrideImage || result.feedImgUrl || DEFAULT_RADIOCOM_LOGO,
           lead: result.leadComponent
         });
 

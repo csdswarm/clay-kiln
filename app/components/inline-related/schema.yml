@@ -23,8 +23,7 @@ items:
       prop: url
       _label: URL
       _has:
-        input: text
-        type: url
+        input: content-search
         validate:
           required: true
     -
@@ -34,6 +33,22 @@ items:
         input: text
         validate:
           max: 80
+          required:
+            field: items.primaryHeadline
+            operator: falsy
+    -
+      prop: overrideImage
+      _label: Image Override
+      _has:
+        input: advanced-image-upload
+        uploadLabel: Upload Image Attachment
+        uploadHelp: Choose an image file from your computer
+    -
+      prop: ignoreValidation
+      _label: Bypass URL Validation?
+      _has:
+        input: checkbox
+        help: Use this field if the destination of the URL entered is not a Clay page. If checked, Headline and/or Image override must be set manually.
     -
       prop: urlIsValid
       _has:
