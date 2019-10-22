@@ -50,10 +50,13 @@
     transition: left 150ms ease-out;
     @mixin overlay-font1;
     &__close {
-      width: 0;
+      display: block;
+      background: url('/media/components/brightcove/close-btn.svg') no-repeat;
+      width: em(0, 16);
+      height: em(16, 16);
       opacity: 0;
       cursor: pointer;
-      transition: 120ms ease;
+      transition: 75ms ease;
     }
     &__link {
       text-decoration: none;
@@ -72,13 +75,9 @@
     }
     &:hover {
       .rdc-overlay__close {
-        display: block;
-        width: fit-content;
-        margin-right: em(10, 16);
+        width: em(16, 16);
+        margin-left: em(14, 16);
         opacity: 1;
-        &:hover {
-          color: $red;
-        }
       }
     }
     &.vjs-hidden {

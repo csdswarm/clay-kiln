@@ -219,11 +219,11 @@ class BrightcoveVideo extends Video {
             class: 'rdc-overlay',
             overlays: [{
               content: `
-                <div class="rdc-overlay__close">X</div>
                 <a href="https://app.radio.com/brightcove-video-overlay" target="_blank" class="rdc-overlay__link">
                   <div class="rdc-overlay__logo"></div>
                   <div class="rdc-overlay__text"> Download the RADIO.COM app <span class="rdc-overlay__caret">▸</span></div>
                 </a>
+                <div class="rdc-overlay__close"></div>
               `,
               start: 10,
               end: 20
