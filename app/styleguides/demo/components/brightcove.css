@@ -39,8 +39,8 @@
 
   .rdc-overlay {
     background-color: $parisM;
-    border: 1px solid $white;
-    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.5);
+    border: em(1, 16) solid $white;
+    box-shadow: 0 0 em(3, 16) 0 rgba(0, 0, 0, 0.5);
     bottom: em(42, 16);
     left: em(10, 16);
     top: auto;
@@ -82,7 +82,6 @@
       }
     }
     &.vjs-hidden {
-      display: block;
       left: -100%;
       transition: left 100ms ease-in;
       display: block !important;
