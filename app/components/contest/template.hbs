@@ -27,10 +27,6 @@
     </div>
     <meta itemprop="dateModified" content="{{ dateModified }}" />
 
-    {{! lede }}
-    <div class="lead" data-editable="lead">
-      {{> component-list lead }}
-    </div>
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">
       {{{ headline }}}
@@ -41,6 +37,10 @@
         {{{ subHeadline }}}
       </span>
     {{/ifAny}}
+    {{! lede }}
+    <div class="lead" data-editable="lead">
+      {{> component-list lead }}
+    </div>
   </header>
 
   <section class="contest__body">
