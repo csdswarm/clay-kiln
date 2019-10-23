@@ -18,11 +18,12 @@ module.exports = router => {
       pagesUri = req.hostname + '/_pages/';
 
     if (!pageBody) {
-      res.status(400);
-      res.send({ error: "'pageBody' is required" });
+      res.status(400).send({ error: "'pageBody' is required" });
       return;
     }
 
+    // stationSlug is valid due to a check in
+    // app/services/server/permissions/has-permissions/create-page.js
     if (stationSlug) {
       const allStations = await stationUtils.getAllStations();
 
