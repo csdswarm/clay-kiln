@@ -2,7 +2,7 @@
   <div v-if="!hasManyStations"
     class="station-select station-select-label">
 
-    Station: {{ selectedStation.label || '&lt;no station&gt;' }}
+    Station: {{ selectedItem.label || '&lt;no station&gt;' }}
   </div>
 
   <ui-select v-else
@@ -25,7 +25,6 @@ const { UiSelect } = window.kiln.utils.components,
   // Ns = namespace
   storeNs = 'stationSelect',
   store = {
-    // important!
     namespaced: true,
     state: {
       // _items and _selectedItem should not be consumed by other components
