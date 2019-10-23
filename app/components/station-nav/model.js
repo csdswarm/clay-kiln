@@ -14,10 +14,6 @@ module.exports.render = async (ref, data, locals) => {
     renderForStation: !isDefaultStation || !isDefaultRef
   } });
 
-  console.log(`isDefaultStation -> ${isDefaultStation}`);
-  console.log(`isDefaultRef -> ${isDefaultRef} -> (${ref})`);
-  console.log(`renderForStation -> ${instanceData._computed.renderForStation}`);
-
   if (isDefaultRef && !isDefaultStation) {
     const stationPageData = getStationPage(slug);
 
