@@ -1,23 +1,44 @@
 'use strict';
 
-module.exports.render = (ref, data, locals) => {
-  data.station = locals.station;
+const { getStationPage, getStationFooter } = require('../../services/server/stationThemingApi');
 
-  data.socialButtons = [];
-  const buttons = {
-    facebook: (url) => url,
-    twitter: (id) => `https://twitter.com/${id}`,
-    youtube: (url) => url,
-    instagram: (url) => url
-  };
+module.exports.render = async (ref, data, locals) => {
+  const { station, defaultStation } = locals,
+    { slug } = station,
+    isDefaultStation = slug === defaultStation.slug,
+    isDefaultRef = /instances\/default/.test(ref),
+    buttons = {
+      facebook: (url) => url,
+      twitter: (id) => `https://twitter.com/${id}`,
+      youtube: (url) => url,
+      instagram: (url) => url
+    };
+
+  let instanceData = Object.assign({}, data, { _computed: {
+    renderForStation: !isDefaultStation || !isDefaultRef
+  } });
+
+  instanceData.station = station;
+
+  if (isDefaultRef && !isDefaultStation) {
+    const stationPageData = getStationPage(slug);
+
+    if (stationPageData) {
+      instanceData = Object.assign(instanceData, await getStationFooter(stationPageData));
+    } else {
+      instanceData._computed.renderForStation = false;
+    }
+  }
+
+  instanceData.socialButtons = [];
 
   Object.keys(buttons).forEach(type => {
-    const url = data.station[type];
+    const url = instanceData.station[type];
 
     if (url) {
-      data.socialButtons.push({ type, url: buttons[type](url) });
+      instanceData.socialButtons.push({ type, url: buttons[type](url) });
     }
   });
 
-  return data;
+  return instanceData;
 };

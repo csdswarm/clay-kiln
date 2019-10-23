@@ -17,6 +17,7 @@ const _get = require('../../app/node_modules/lodash/get');
 const _has = require('../../app/node_modules/lodash/has');
 const _set = require('../../app/node_modules/lodash/set');
 const _chunk = require('../../app/node_modules/lodash/chunk');
+const _findIndex = require('../../app/node_modules/lodash/findIndex');
 const claycli = require('../../app/node_modules/claycli');
 const YAML = require('../../app/node_modules/yamljs');
 const url = require('url');
@@ -267,6 +268,7 @@ const v1 = {
   _has,
   _set,
   _chunk,
+  _findIndex,
   prettyJSON,
   toYaml,
   clone,
