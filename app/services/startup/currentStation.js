@@ -149,7 +149,6 @@ const { lstatSync, readdirSync } = require('fs'),
       stationSlug = allStations.byId[stationId].attributes.site_slug;
     } else if (isPage(url) && !isPageMeta(url)) {
       stationSlug = await getStationSlugFromPage(urlToUri(url));
-      console.log('station slug', stationSlug);
     } else if (isContentComponent(url)) {
       stationSlug = await getStationSlugFromComponent(urlToUri(url));
     }
