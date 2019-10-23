@@ -15,9 +15,9 @@ const express = require('express'),
   componentsToCheck = getComponentsWithPermissions(),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
-  stationUtils = require('../station-utils'),
   { getComponentData } = require('../db'),
-  attachToLocals = require('./attach-to-locals');
+  attachToLocals = require('./attach-to-locals'),
+  { wrapInTryCatch } = require('../../startup/middleware-utils');
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -58,7 +58,7 @@ function getComponentsWithPermissions() {
 function userPermissionRouter() {
   const userPermissionRouter = express.Router();
 
-  userPermissionRouter.all('/*', async (req, res, next) => {
+  userPermissionRouter.all('/*', wrapInTryCatch(async (req, res, next) => {
     try {
       if (res.locals.user) {
         const { provider } = res.locals.user;
@@ -76,7 +76,7 @@ function userPermissionRouter() {
       log('error', 'Error adding locals.user permissions', e);
     }
     next();
-  });
+  }));
 
   interceptLists(userPermissionRouter);
 
@@ -193,23 +193,14 @@ async function checkUserPermissions(uri, req, locals, db) {
     if (isComponent(uri)) {
       await checkComponentPermission(uri, req, locals, db);
     }
-    if (isPage(uri)) {
-      const customUrl = req.body.url;
 
-      if (customUrl) {
-        const callsign = await stationUtils.getCallsignFromUrl(customUrl);
+    if (isPage(uri) && isPublished(uri)) {
+      const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
 
-        if (!user.can('access').the('station').at(callsign)) {
-          return false;
-        }
-      }
-      if (isPublished(uri)) {
-        const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
-
-        return pageTypesToCheck.has(pageType)
-          ? user.can('publish').a(pageType).value
-          : true;
-      }
+      console.log(pageType, locals.station.callsign);
+      return pageTypesToCheck.has(pageType)
+        ? user.can('publish').a(pageType).value
+        : true;
     }
     if (isUri(uri) && req.method === 'DELETE') {
       const pageUri = await db.get(req.uri),

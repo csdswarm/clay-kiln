@@ -13,31 +13,26 @@ a header indicates such.
 <template>
   <div class="new-page-override">
     <station-select class="new-page-override__station-select" />
-    <div v-if="anyPagesExist">
-      <filterable-list v-if="isAdmin"
-        class="new-page-nav"
-        :content="pages"
-        :secondaryActions="secondaryActions"
-        :initialExpanded="initialExpanded"
-        filterLabel="Search Page Templates"
-        :addTitle="addTitle"
-        :addIcon="addIcon"
-        header="Page Template"
-        @child-action="itemClick"
-        @add="addTemplate">
-      </filterable-list>
-      <filterable-list v-else
-        class="new-page-nav"
-        :content="pages"
-        :initialExpanded="initialExpanded"
-        filterLabel="Search Page Templates"
-        header="Page Template"
-        @child-action="itemClick">
-      </filterable-list>
-    </div>
-    <h3 class="new-page-override__no-permissions-notification" v-else>
-      You don't have permissions to create a&nbsp;page
-    </h3>
+    <filterable-list v-if="isAdmin"
+      class="new-page-nav"
+      :content="pages"
+      :secondaryActions="secondaryActions"
+      :initialExpanded="initialExpanded"
+      filterLabel="Search Page Templates"
+      :addTitle="addTitle"
+      :addIcon="addIcon"
+      header="Page Template"
+      @child-action="itemClick"
+      @add="addTemplate">
+    </filterable-list>
+    <filterable-list v-else
+      class="new-page-nav"
+      :content="pages"
+      :initialExpanded="initialExpanded"
+      filterLabel="Search Page Templates"
+      header="Page Template"
+      @child-action="itemClick">
+    </filterable-list>
   </div>
 </template>
 
@@ -77,9 +72,6 @@ export default {
     {},
     mapGetters(StationSelect.storeNs, ['selectedStation']),
     {
-      anyPagesExist() {
-        return !!(_.get(this.$store, 'state.lists[new-pages].items', []).length);
-      },
       isAdmin() {
         return _.get(this.$store, 'state.user.auth') === 'admin';
       },

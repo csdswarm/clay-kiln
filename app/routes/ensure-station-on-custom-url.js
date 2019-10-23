@@ -4,23 +4,22 @@ const stationUtils = require('../services/server/station-utils'),
   { getComponentData } = require('../services/server/db'),
   { wrapInTryCatch } = require('../services/startup/middleware-utils'),
   { URL } = require('url'),
+  _get = require('lodash/get'),
   /**
-   * If the request contains a content type type with a station, then prepend
-   *   the station slug to the custom url path
+   * Ensures the custom url has a pathname which starts with the correct
+   *   station slug
    *
    * @param {object} req
+   * @param {string} stationSlug
    * @returns {string}
    */
-  ensureUrlHasStationIfNeccessary = async req => {
-    const { stationSlug } = await getComponentData(req.body.main[0]);
+  sanitizeCustomUrl = (req, stationSlug) => {
+    const url = new URL(req.body.url),
+      beginsWithStationSlugRe = new RegExp(`^/${stationSlug}/`);
 
-    if (!stationSlug) {
+    if (beginsWithStationSlugRe.test(url.pathname)) {
       return req.body.url;
     }
-
-    // shouldn't be declared above the short circuit
-    // eslint-disable-next-line one-var
-    const url = new URL(req.body.url);
 
     url.pathname = '/' + stationSlug + url.pathname;
 
@@ -28,8 +27,9 @@ const stationUtils = require('../services/server/station-utils'),
   };
 
 /**
- * Thie method ensures a page with custom url is prepended with the appropriate
- *   station slug if one exists.
+ * This method ensures a page with custom url is prepended with the appropriate
+ *   station slug if one exists.  It also validates the custom url to make sure
+ *   it contains only the station the content is assigned to.
  *
  * @param {object} router
  */
@@ -44,14 +44,45 @@ module.exports = router => {
 
     // shouldn't be declared above the short circuit
     // eslint-disable-next-line one-var
-    const station = await stationUtils.getStationFromOriginalUrl(customUrl);
+    const [station, componentData] = await Promise.all([
+        stationUtils.getStationFromOriginalUrl(customUrl),
+        getComponentData(req.body.main[0])
+      ]),
+      // empty strings indicate the national site at this point
+      stationSlugFrom = {
+        customUrl: _get(station, 'attributes.site_slug', ''),
+        component: _get(componentData, 'stationSlug', '')
+      },
+      // if the station slug from the component is falsey, then the content
+      //   belongs to the national station
+      contentBelongsToNationalStation = !stationSlugFrom.component;
 
-    // if the url already has a station slug then there's nothing more to do
-    if (station) {
-      return next();
+    if (contentBelongsToNationalStation && stationSlugFrom.customUrl) {
+      res.status(400).send({
+        error: 'This content belongs to the national station but the custom url'
+          + " begins with a station slug which isn't allowed"
+          + '\ncustomUrl: ' + customUrl
+          + '\nstation slug extracted: ' + stationSlugFrom.customUrl
+      });
+      return;
+    } else if (!contentBelongsToNationalStation) {
+      const customUrlObj = new URL(req.body.url),
+        isOnlyStationSlugRe = new RegExp(`^/${stationSlugFrom.component}/?$`);
+
+      // if the custom url exists but it's only the station slug that means the
+      //   user typed just the station slug and nothing else which isn't allowed
+      if (isOnlyStationSlugRe.test(customUrlObj.pathname)) {
+        res.status(400).send({
+          error: 'The custom url cannot just be the station slug'
+            + '\ncustom url: ' + req.body.url
+            + '\nstation slug: ' + stationSlugFrom.component
+        });
+        return;
+      }
+
+      req.body.url = sanitizeCustomUrl(req, stationSlugFrom.component);
     }
 
-    req.body.url = await ensureUrlHasStationIfNeccessary(req);
     next();
   }));
 };
