@@ -15,7 +15,6 @@ const express = require('express'),
   componentsToCheck = getComponentsWithPermissions(),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
-  stationUtils = require('../station-utils'),
   { getComponentData } = require('../db'),
   attachToLocals = require('./attach-to-locals'),
   { wrapInTryCatch } = require('../../startup/middleware-utils');
