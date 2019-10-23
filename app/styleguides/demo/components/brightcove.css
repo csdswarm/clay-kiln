@@ -94,7 +94,8 @@
     &.vjs-hidden {
       left: -100%;
       transition: left 100ms ease-in;
-      display: block !important;
+      /* needed to override BC important */
+      display: block !important; 
       .rdc-overlay__close {
         display: none;
       }
