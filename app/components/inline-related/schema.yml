@@ -34,21 +34,25 @@ items:
         validate:
           max: 80
           required:
-            field: items.primaryHeadline
-            operator: falsy
+            field: ignoreValidation
+            operator: truthy
     -
       prop: overrideImage
       _label: Image Override
       _has:
         input: advanced-image-upload
         uploadLabel: Upload Image Attachment
-        uploadHelp: Choose an image file from your computer
+        uploadHelp: Choose an image file from your computer to override image
+        validate:
+          required:
+            field: ignoreValidation
+            operator: truthy
     -
       prop: ignoreValidation
       _label: Bypass URL Validation?
       _has:
         input: checkbox
-        help: Use this field if the destination of the URL entered is not a Clay page. If checked, Headline and/or Image override must be set manually.
+        help: Use this field if the destination of the URL entered is not a Radio.com content page. If checked, Headline and Image Override must be set manually.
     -
       prop: urlIsValid
       _has:
