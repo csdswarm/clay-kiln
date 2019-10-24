@@ -28,7 +28,7 @@ module.exports.render = async (ref, data, locals) => {
   instanceData.station = locals.station;
 
   // Don't default to what's in locals.station unless it's not the default station
-  if (_get(locals, 'station.slug', 'www') === 'www') {
+  if (_get(locals, 'station.slug', defaultStation.slug) === defaultStation.slug) {
     instanceData.stationLogo = instanceData.stationLogo || '';
   } else {
     instanceData.stationLogo = instanceData.stationLogo || _get(locals, 'station.square_logo_small', '');
