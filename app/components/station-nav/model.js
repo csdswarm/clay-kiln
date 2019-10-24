@@ -15,7 +15,7 @@ module.exports.render = async (ref, data, locals) => {
   } });
 
   if (isDefaultRef && !isDefaultStation) {
-    const stationPageData = getStationPage(slug);
+    const stationPageData = await getStationPage(slug);
 
     if (stationPageData) {
       instanceData = Object.assign(instanceData, await getStationNav(stationPageData));

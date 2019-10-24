@@ -21,7 +21,7 @@ module.exports.render = async (ref, data, locals) => {
   instanceData.station = station;
 
   if (isDefaultRef && !isDefaultStation) {
-    const stationPageData = getStationPage(slug);
+    const stationPageData = await getStationPage(slug);
 
     if (stationPageData) {
       instanceData = Object.assign(instanceData, await getStationFooter(stationPageData));
