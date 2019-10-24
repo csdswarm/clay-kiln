@@ -2,43 +2,47 @@
 
 const { playingClass } = require('../../services/universal/spaLocals'),
   _get = require('lodash/get'),
-  { getStationPage, getStationNav } = require('../../services/server/stationThemingApi');
+  { getStationPage, getStationNav } = require('../../services/server/stationThemingApi'),
+  { unityComponent } = require('../../services/universal/amphora');
 
-module.exports.render = async (ref, data, locals) => {
-  const { station, defaultStation } = locals,
-    { slug } = station,
-    isDefaultStation = slug === defaultStation.slug,
-    isDefaultRef = /instances\/default/.test(ref);
+module.exports = unityComponent({
+  render: async (ref, data, locals) => {
+    const { station, defaultStation } = locals,
+      { slug } = station,
+      isDefaultStation = slug === defaultStation.slug,
+      isDefaultRef = /instances\/default/.test(ref);
 
-  let instanceData = Object.assign({}, data, { _computed: {
-    renderForStation: !isDefaultStation || !isDefaultRef
-  } });
+    data._computed = {
+      renderForStation: !isDefaultStation || !isDefaultRef
+    };
 
-  if (isDefaultRef && !isDefaultStation) {
-    const stationPageData = await getStationPage(slug);
+    if (isDefaultRef && !isDefaultStation) {
+      const stationPageData = await getStationPage(slug);
 
-    if (stationPageData) {
-      instanceData = Object.assign(instanceData, await getStationNav(stationPageData));
-    } else {
-      instanceData._computed.renderForStation = false;
+      if (stationPageData) {
+        Object.assign(data, await getStationNav(stationPageData));
+      } else {
+        // There's no published station page, we shouldn't render the default nav
+        data._computed.renderForStation = false;
+      }
     }
+
+    data.playingClass = playingClass(locals, locals.station.id);
+    data.station = locals.station;
+
+    // Don't default to what's in locals.station unless it's not the default station
+    if (_get(locals, 'station.slug', defaultStation.slug) === defaultStation.slug) {
+      data.stationLogo = data.stationLogo || '';
+    } else {
+      data.stationLogo = data.stationLogo || _get(locals, 'station.square_logo_small', '');
+    }
+
+    if (data.stationLogo.length) {
+      data.stationLogo = data.stationLogo.includes('?') ?
+        `${ data.stationLogo }&` :
+        `${ data.stationLogo }?`;
+    }
+
+    return data;
   }
-
-  instanceData.playingClass = playingClass(locals, locals.station.id);
-  instanceData.station = locals.station;
-
-  // Don't default to what's in locals.station unless it's not the default station
-  if (_get(locals, 'station.slug', defaultStation.slug) === defaultStation.slug) {
-    instanceData.stationLogo = instanceData.stationLogo || '';
-  } else {
-    instanceData.stationLogo = instanceData.stationLogo || _get(locals, 'station.square_logo_small', '');
-  }
-
-  if (instanceData.stationLogo.length) {
-    instanceData.stationLogo = instanceData.stationLogo.includes('?') ?
-      `${ instanceData.stationLogo }&` :
-      `${ instanceData.stationLogo }?`;
-  }
-
-  return instanceData;
-};
+});
