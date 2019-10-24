@@ -89,8 +89,6 @@ const db = require('./db'),
       AND sectionFront.id ~ 'published'
     `).then(results => _get(results, 'rows[0].uri'));
 
-    console.log(`Found pageUri -> ${pageUri}`);
-
     return db.get(pageUri);
   },
 
