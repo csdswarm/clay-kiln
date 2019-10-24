@@ -2,6 +2,8 @@
 
 const db = require('./db'),
   log = require('../universal/log').setup({ file: __filename }),
+  { findComponentRefInPage } = require('clayutils'),
+  _get = require('lodash/get'),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   /**
    * retrieves the current station theme
@@ -71,20 +73,45 @@ const db = require('./db'),
       }
     });
   },
+
+  /**
+   * Get the published page uri of the station
+   *
+   * @param {string} stationSlug
+   */
   getStationPage = async (stationSlug) => {
-    return await db.get(`${CLAY_SITE_HOST}/_pages/${stationSlug}`);
+    const pageUri = await db.raw(`
+      SELECT page.id as uri
+      FROM public.pages AS page
+      INNER JOIN components."section-front" AS sectionFront
+        ON page.data->'main'->>0 = sectionFront.id
+      WHERE sectionFront.data->>'stationSiteSlug' = '${stationSlug}'
+      AND sectionFront.id ~ 'published'
+    `).then(results => _get(results, 'rows[0].uri'));
+
+    return db.get(pageUri);
   },
-  getStationNav = async data => {
-    const { topSection = [] } = data,
-      ref = topSection.find(ref => /station\-nav/.test(ref));
+
+  /**
+   * Get the station-nav data for the station nav in the page
+   *
+   * @param {object} pageData
+   */
+  getStationNav = async pageData => {
+    const ref = findComponentRefInPage(pageData, 'station-nav');
 
     if (ref) {
       return await db.get(ref);
     }
   },
-  getStationFooter = async data => {
-    const { bottomSection = [] } = data,
-      ref = bottomSection.find(ref => /station\-footer/.test(ref));
+
+  /**
+   * Get the station-footer data for the station-footer in the page
+   *
+   * @param {object} pageData
+   */
+  getStationFooter = async pageData => {
+    const ref = findComponentRefInPage(pageData, 'station-footer');
 
     if (ref) {
       return await db.get(ref);
