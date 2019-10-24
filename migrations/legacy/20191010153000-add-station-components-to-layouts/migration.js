@@ -1,4 +1,4 @@
-const { clayImport, clayExport, _get, _set, _findIndex } = require('../migration-utils').v1;
+const { clayImport, clayExport, _get, _set } = require('../migration-utils').v1;
 const hostUrl = process.argv[2] || 'clay.radio.com';
 const { inspect } = require('util');
 
@@ -13,10 +13,10 @@ const STATION_FOOTER = { _ref: `${hostUrl}/_components/station-footer/instances/
 
 function addStationComponents (layoutData) {
   const { top, bottom } = layoutData,
-    insertNavAfter = _findIndex(top, ({ _ref }) => /top\-nav/.test(_ref)),
-    insertFooterBefore = _findIndex(bottom, ({ _ref }) => /footer/.test(_ref)),
-    navIndex = _findIndex(top, ({ _ref }) => /station\-nav/.test(_ref)),
-    footerIndex = _findIndex(bottom, ({ _ref }) => /station\-footer/.test(_ref));
+    insertNavAfter = top.findIndex(({ _ref }) => /top\-nav/.test(_ref)),
+    insertFooterBefore = bottom.findIndex(({ _ref }) => /footer/.test(_ref)),
+    navIndex = top.findIndex(({ _ref }) => /station\-nav/.test(_ref)),
+    footerIndex = bottom.findIndex(({ _ref }) => /station\-footer/.test(_ref));
 
   // Add station nav if it doesn't exist
   if (navIndex === -1) {
