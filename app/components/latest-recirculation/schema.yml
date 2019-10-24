@@ -95,6 +95,6 @@ _groups:
       - tag
       - items
     _placeholder:
-      ifEmpty: 'populateBy'
+      ifEmpty: items and articles
       height: 500px
       text: Latest Story(s)

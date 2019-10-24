@@ -7,6 +7,7 @@
   data-tags="{{ join (map tags.items (getProp "text")) }}"
   data-station-slug="{{ stationSlug }}"
 >
+  {{> breadcrumbs this }}
   <header class="contest__header">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />

@@ -7,7 +7,7 @@ const h = require('highland'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
   db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
-  { PAGE_TYPES } = require('../../services/server/publish-utils'),
+  { PAGE_TYPES } = require('../../services/universal/constants'),
   CONTENT_FILTER = isOpForComponents([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST]);
 
 // Subscribe to the save stream
@@ -70,8 +70,10 @@ function getSlideEmbed(slides, components) {
  */
 function processContent(obj, components) {
   obj.value = getContent(obj.value, 'lead', components);
-  
-  if (!obj.key.includes(PAGE_TYPES.CONTEST)) {
+
+  if (obj.key.includes(PAGE_TYPES.CONTEST)) {
+    obj.value = getContent(obj.value, 'description', components);
+  } else {
     obj.value = getContent(obj.value, 'content', components);
   }
 

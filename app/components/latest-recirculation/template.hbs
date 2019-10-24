@@ -1,8 +1,8 @@
-<section class="component component--latest-recirc {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}{{#if (compare populateBy 'station')}}component--station{{/if}}{{#if (compare articles.length 0)}} component--empty{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
+<section class="component component--latest-recirc {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}{{#if (compare populateBy 'station')}}component--station{{/if}}{{#ifNone articles.length @root.locals.edit}} component--empty{{/ifNone}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
   {{#ifAny articles.length @root.locals.edit}}
     <h2 class="latest-recirc__title">LATEST
     {{#if (compare populateBy 'sectionFront')}}
-      in <span class="title">{{sectionFront}}</span>
+      in <span class="title">{{ default sectionFront 'Radio.com' }}</span>
     {{/if}}
     {{#if (compare populateBy 'tag')}}
       in <span class="title">{{tag}}</span>

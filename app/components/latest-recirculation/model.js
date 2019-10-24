@@ -153,22 +153,18 @@ module.exports.render = function (ref, data, locals) {
     return renderStation(data, locals);
   }
 
-  if (data.populateBy === 'tag' && data.tag && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems);
 
+  if (data.populateBy === 'tag' && data.tag && locals) {
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
     queryService.addMust(query, { match: { 'tags.normalized': data.tag }});
-
-    return renderDefault(ref, data, locals, query);
   }
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-
     queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
-    return renderDefault(ref, data, locals, query);
   }
+  return renderDefault(ref, data, locals, query);
 
-  return Promise.resolve(data);
+  // return Promise.resolve(data);
 };

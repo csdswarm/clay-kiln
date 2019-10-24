@@ -3,6 +3,15 @@ _components:
     instances:
       new:
         rulesBodyText: ''
+  latest-recirculation:
+    instances:
+      station:
+        tag: ''
+        items: []
+        populateBy: station
+        contentType:
+          article: true
+          gallery: true
   tags:
     instances:
       contests-new:

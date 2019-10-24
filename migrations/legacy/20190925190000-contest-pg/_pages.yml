@@ -27,7 +27,7 @@ _pages:
     layout: /_layouts/two-column-layout/instances/station-contest
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
-      - /_components/latest-recirculation/instances/new
+      - /_components/latest-recirculation/instances/station
       - /_components/google-ad-manager/instances/halfPageBottom
     pageHeader:
       - /_components/google-ad-manager/instances/billboardTop

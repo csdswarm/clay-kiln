@@ -546,10 +546,12 @@ function assignStationInfo(uri, data, locals) {
       });
     }
   } else {
-    Object.assign(data, {
-      stationCallsign: 'NATL-RC',
-      stationTimezone: 'ET'
-    });
+    if (data.contentType === PAGE_TYPES.CONTEST) {
+      Object.assign(data, {
+        stationCallsign: _get(data, 'stationCallsign', 'NATL-RC'),
+        stationTimezone: _get(data, 'stationTimezone', 'ET')
+      });
+    }
   }
 }
 

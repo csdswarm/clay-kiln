@@ -25,6 +25,16 @@ export default {
     this.onLayoutDestroy()
   },
   methods: {
+    getMainCmpt: function () {
+      const handlebarsWrapper = this.$store.state.handlebars.compile(`{{
+        getComponentName main.0._ref }}`)
+
+      const handlebarsHtml = handlebarsWrapper(this.$store.state.spaPayload)
+
+      // Transpile handlebars HTML to Vue templating HTML
+      return vueTranspiler.transpile(handlebarsHtml,
+        this.$store.state.spaPayloadLocals)
+    },
     componentList: function (stateSliceKey) {
       // Return early if data not set.
       if (!this.$store.state.spaPayload[stateSliceKey]) {
