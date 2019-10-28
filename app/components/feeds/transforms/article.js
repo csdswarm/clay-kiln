@@ -70,6 +70,16 @@ module.exports = function (data, locals) {
     });
   }
 
+  if (data.footer) {
+    const footerContent = renderContent(data.footer, locals);
+
+    if (footerContent) {
+      transform.push({
+        footer: { _cdata: footerContent }
+      });
+    }
+  }
+
   // Add the tags
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
