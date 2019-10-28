@@ -16,7 +16,12 @@ const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
     'lead',
     'contentType'
   ],
-  maxItems = 2;
+  maxItems = 2,
+
+applyAspectRatio = imgUrl => {
+  imgUrl += imgUrl.includes('?') ? '&' : '?';
+  imgUrl += 'crop=16:9';
+};
 
 /**
  * @param {string} ref
@@ -46,6 +51,8 @@ module.exports.save = (ref, data, locals) => {
         if (article.title) {
           article.plaintextTitle = toPlainText(article.title);
         }
+
+        applyAspectRatio(article.feedImgUrl);
 
         return article;
       });
