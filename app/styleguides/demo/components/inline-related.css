@@ -94,6 +94,8 @@
       @mixin medium-screen {
         width: em(widthOnGrid(2, 1, medium-screen), 14);
       }
+      display: block;
+      outline: em(1, 14) solid $boulder;
     }
 
     @mixin medium-small-screen {
