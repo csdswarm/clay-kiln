@@ -64,15 +64,11 @@ module.exports = unityComponent({
     // leaving the lytics stuff above intact and seeing if we need to backfill
     const numArticlesToBackFill = MAX_ITEMS - data.items.length;
 
-    if (numArticlesToBackFill > 0) {
+    if (!locals.edit && numArticlesToBackFill > 0) {
       return buildAndRequestElasticSearch(numArticlesToBackFill, data.items, locals)
         // if editing don't backfill
         .then(responseItems => {
-          if (!locals.edit) {
-            data._computed.articles = [...data.items, ...responseItems];
-          } else {
-            data._computed.articles = [...data.items];
-          }
+          data._computed.articles = [...data.items, ...responseItems];
           addParamsAndHttps(data._computed.articles);
           return data;
         })
