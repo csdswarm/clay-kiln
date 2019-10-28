@@ -66,7 +66,6 @@ module.exports = unityComponent({
 
     if (!locals.edit && numArticlesToBackFill > 0) {
       return buildAndRequestElasticSearch(numArticlesToBackFill, data.items, locals)
-        // if editing don't backfill
         .then(responseItems => {
           data._computed.articles = [...data.items, ...responseItems];
           addParamsAndHttps(data._computed.articles);
