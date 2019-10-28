@@ -13,6 +13,7 @@ const log = require('../log').setup({ file: __filename }),
     news: 'category3Style'
   },
   slugify = require('../slugify'),
+  db = require('amphora-storage-postgres'),
   _isObject = require('lodash/isObject'),
   _get = require('lodash/get'),
   _upperFirst = require('lodash/upperFirst'),
@@ -35,31 +36,21 @@ const log = require('../log').setup({ file: __filename }),
    * Get canonical URL from customUrl or derived from section fronts and slug
    *
    * @param {string} refInstance
-   * @param {Object} data
-   * @param {string} data.sectionFront
-   * @param {string} data.secondarySectionFront
-   * @param {string} data.slug
    * @param {Object} locals
    * @param {Object} locals.site
    * @param {string} locals.site.protocol
    * @param {string} locals.site.host
    * @returns {string}
   */
-  getCanonicalURL = async (refInstance, { sectionFront, secondarySectionFront, slug, contentType }, { site: { protocol, host } }) => {
-    return getCompInstanceData(`${ host }/_pages/${ refInstance }`)
-      .then(({ customUrl }) => {
-        if (customUrl) return customUrl;
-        else return `${ protocol }://${ host }/${ sectionFront }/${
-          secondarySectionFront ? `${ secondarySectionFront }/` : '' }${
-          contentType === 'gallery' ? 'gallery/' : '' }${ slug }`;
-      })
-      .catch(e => {
-        log('error', `Error getting page data: ${ e }`);
+  getCanonicalURL = async (refInstance, { site: { protocol, host } }) => {
+    const sql = `
+        SELECT data->'customUrl'->>0 as uri
+        FROM public.pages
+        WHERE data->'main'->>0 ~ '${host}/_components/article/instances/${refInstance}'
+      `,
+      canonicalUrl = await db.raw(sql).then(results => _get(results, 'rows[0].uri'));
 
-        return `${ protocol }://${ host }/${ sectionFront }/${
-          secondarySectionFront ? `${ secondarySectionFront }/` : '' }${
-          contentType === 'gallery' ? 'gallery/' : '' }${ slug }`;
-      });
+    return canonicalUrl || `${protocol}://${host}`;
   },
   /**
    * Format byline with author and sources
@@ -260,7 +251,7 @@ const log = require('../log').setup({ file: __filename }),
         authors: data.byline.length ? _flattenDeep(data.byline.map(byline => _get(byline, 'names')))
           .map(name => _get(name, 'text'))
           : [],
-        canonicalURL: await getCanonicalURL(refInstance, data, locals),
+        canonicalURL: await getCanonicalURL(refInstance, locals),
         dateCreated: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
         dateModified: formatLocalDate(data.dateModified || data.date || new Date(), ISO_8601_FORMAT),
         datePublished: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
