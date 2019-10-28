@@ -10,7 +10,7 @@
     {{/if}}
   </h2>
   <div class="trending__data">
-    {{#each items}}
+    {{#each _computed.articles}}
       <div class="trending__item">
         <a href="{{ concat canonicalUrl params}}"
            class="trending__item__link"
