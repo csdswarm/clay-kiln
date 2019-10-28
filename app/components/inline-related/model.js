@@ -17,11 +17,11 @@ const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
     'contentType'
   ],
   maxItems = 2,
-
-applyAspectRatio = imgUrl => {
-  imgUrl += imgUrl.includes('?') ? '&' : '?';
-  imgUrl += 'crop=16:9';
-};
+  applyAspectRatio = imgUrl => {
+    imgUrl += imgUrl.includes('?') ? '&' : '?';
+    imgUrl += 'crop=16:9';
+    return imgUrl;
+  };
 
 /**
  * @param {string} ref
@@ -44,15 +44,13 @@ module.exports.save = (ref, data, locals) => {
           pageUri: item.url || result.pageUri,
           urlIsValid: result.urlIsValid,
           canonicalUrl: item.url || result.canonicalUrl,
-          feedImgUrl: item.overrideImage || result.feedImgUrl || DEFAULT_RADIOCOM_LOGO,
+          feedImgUrl: applyAspectRatio(item.overrideImage || result.feedImgUrl || DEFAULT_RADIOCOM_LOGO),
           lead: result.leadComponent
         });
 
         if (article.title) {
           article.plaintextTitle = toPlainText(article.title);
         }
-
-        applyAspectRatio(article.feedImgUrl);
 
         return article;
       });
