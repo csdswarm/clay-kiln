@@ -139,7 +139,11 @@ const { extname } = require('path'),
       stationSlug = await getStationSlugFromComponent(urlToUri(url));
     }
 
-    return allStations.bySlug[stationSlug] || defaultStation;
+    return _get(
+      allStations,
+      `bySlug[${stationSlug}].attributes`,
+      defaultStation
+    );
   };
 
 

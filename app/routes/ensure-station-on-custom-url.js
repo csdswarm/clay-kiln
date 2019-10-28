@@ -4,21 +4,22 @@ const stationUtils = require('../services/server/station-utils'),
   { getComponentData } = require('../services/server/db'),
   { wrapInTryCatch } = require('../services/startup/middleware-utils'),
   { URL } = require('url'),
+  { isPageMeta } = require('clayutils'),
   _get = require('lodash/get'),
   /**
    * Ensures the custom url has a pathname which starts with the correct
    *   station slug
    *
-   * @param {object} req
+   * @param {string} customUrl
    * @param {string} stationSlug
    * @returns {string}
    */
-  sanitizeCustomUrl = (req, stationSlug) => {
-    const url = new URL(req.body.url),
+  sanitizeCustomUrl = (customUrl, stationSlug) => {
+    const url = new URL(customUrl),
       beginsWithStationSlugRe = new RegExp(`^/${stationSlug}/`);
 
     if (beginsWithStationSlugRe.test(url.pathname)) {
-      return req.body.url;
+      return customUrl;
     }
 
     url.pathname = '/' + stationSlug + url.pathname;
@@ -37,8 +38,11 @@ module.exports = router => {
   router.put('/_pages/*', wrapInTryCatch(async (req, res, next) => {
     const customUrl = req.body.url;
 
-    // if there's no custom url then there's nothing to do
-    if (!req.body.url) {
+    if (
+      isPageMeta(req.uri)
+      // if there's no custom url then there's nothing to do.
+      || !customUrl
+    ) {
       return next();
     }
 
@@ -66,7 +70,7 @@ module.exports = router => {
       });
       return;
     } else if (!contentBelongsToNationalStation) {
-      const customUrlObj = new URL(req.body.url),
+      const customUrlObj = new URL(customUrl),
         isOnlyStationSlugRe = new RegExp(`^/${stationSlugFrom.component}/?$`);
 
       // if the custom url exists but it's only the station slug that means the
@@ -74,13 +78,13 @@ module.exports = router => {
       if (isOnlyStationSlugRe.test(customUrlObj.pathname)) {
         res.status(400).send({
           error: 'The custom url cannot just be the station slug'
-            + '\ncustom url: ' + req.body.url
+            + '\ncustom url: ' + customUrl
             + '\nstation slug: ' + stationSlugFrom.component
         });
         return;
       }
 
-      req.body.url = sanitizeCustomUrl(req, stationSlugFrom.component);
+      req.body.url = sanitizeCustomUrl(customUrl, stationSlugFrom.component);
     }
 
     next();

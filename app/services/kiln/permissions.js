@@ -90,9 +90,9 @@ const addPermissions = require('../universal/user-permissions'),
    * A helper method which subscribes to PRELOAD_SUCCESS and returns a promise
    *   of the first result.
    *
-   * @param {object} subscriptions
-   * @param {boolean} scoped
-   * @returns {Promise}
+   * @param {object} subscriptions - an instance of KilnInput
+   * @param {boolean} [scoped=false]
+   * @returns {Promise} - the result of PRELOAD_SUCCESS
    */
   whenPreloaded = (subscriptions, scoped = false) => {
     return new Promise((resolve, reject) => {
