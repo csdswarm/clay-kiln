@@ -50,13 +50,16 @@ StationsCarousel.prototype = {
    * @function
    */
   setImageAndPageDims: function () {
+    const firstLi = this.stationsCarousel.querySelector(`.${this.innerContainerClass} li`),
+      firstThumb = this.stationsCarousel.querySelector(`.${this.innerContainerClass} .thumb`);
+
     this.pageSize = 1; // Number of stations to move left/right when navigating
     this.layoutWidth = getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass}`)).width;
-    if (this.stationsCarousel.querySelector(`.${this.innerContainerClass} li`)) {
-      this.gutterWidth = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} li`)).marginRight.replace('px',''));
+    if (firstLi) {
+      this.gutterWidth = Number(getComputedStyle(firstLi).marginRight.replace('px',''));
     }
-    if (this.stationsCarousel.querySelector(`.${this.innerContainerClass} .thumb`)) {
-      this.imageSize = Number(getComputedStyle(this.stationsCarousel.querySelector(`.${this.innerContainerClass} .thumb`)).width.replace('px','')) + this.gutterWidth;
+    if (firstThumb) {
+      this.imageSize = Number(getComputedStyle(firstThumb).width.replace('px','')) + this.gutterWidth;
     }
     if (this.windowWidth >= this.windowSizes.large) {
       this.stationsVisible = 7;
