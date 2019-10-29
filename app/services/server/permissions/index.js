@@ -2,14 +2,16 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, isComponent, isPage, isPublished, isUri, isList, getListInstance } = require('clayutils'),
+  { getComponentName, isComponent, isPage, isPublished, isUri, isPageMeta, isList, getListInstance } = require('clayutils'),
   { loadPermissions } = require('../urps'),
+  { getMainComponentsForPageUri } = require('../db'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
   _get = require('lodash/get'),
   appRoot = require('app-root-path'),
   amphoraFiles = require('amphora-fs'),
   path = require('path'),
+  { URL } = require('url'),
   YAML = require('yamljs'),
   interceptLists = require('./intercept-lists'),
   componentsToCheck = getComponentsWithPermissions(),
@@ -17,7 +19,11 @@ const express = require('express'),
   hasPermissions = require('./has-permissions'),
   { getComponentData } = require('../db'),
   attachToLocals = require('./attach-to-locals'),
-  { wrapInTryCatch } = require('../../startup/middleware-utils');
+  typesOfPages = {
+    homepage: 'the home page',
+    'section-front': 'section fronts',
+    'static-page': 'static pages'
+  };
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -58,25 +64,31 @@ function getComponentsWithPermissions() {
 function userPermissionRouter() {
   const userPermissionRouter = express.Router();
 
-  userPermissionRouter.all('/*', wrapInTryCatch(async (req, res, next) => {
+  userPermissionRouter.all('/*', async (req, res, next) => {
     try {
-      if (res.locals.user) {
+      const { locals } = res;
+
+      if (locals.user) {
         const { provider } = res.locals.user;
 
         if (provider === 'cognito') {
-          await loadPermissions(req.session, res.locals);
+          await loadPermissions(req.session, locals);
         } else if (provider === 'google') {
-          res.locals.permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
+          locals.permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
         }
-        addPermissions(res.locals);
+        addPermissions(locals);
 
-        res.locals.componentPermissions = componentsToCheck;
+        Object.assign(
+          locals,
+          await checkUpdatePrivileges(locals),
+          { componentPermissions: componentsToCheck }
+        );
       }
     } catch (e) {
       log('error', 'Error adding locals.user permissions', e);
     }
     next();
-  }));
+  });
 
   interceptLists(userPermissionRouter);
 
@@ -89,8 +101,41 @@ function userPermissionRouter() {
 }
 
 /**
+ * Verifies if user has privileges to update the uri
+ * @param {Object} locals The locals object
+ * @returns {Promise<object>}
+ */
+async function checkUpdatePrivileges(locals) {
+  const {url, edit, user, station } = locals,
+    urlParser = new URL(url),
+    uri = `${urlParser.host}${urlParser.pathname}`;
+
+  try {
+    if (edit === 'true') {
+      const mainComponents = await getMainComponentsForPageUri(uri);
+
+      for (const component of mainComponents) {
+        const pageType = getComponentName(component);
+
+        if (pageType === 'static-page') {
+          return {
+            showLackOfEditPermissionsBanner: !user.can('update').a(pageType).value,
+            updateTarget: `${typesOfPages[pageType]} for ${station.name}`
+          };
+        }
+      }
+    }
+  } catch (error) {
+    log(
+      'error',
+      `There was an error trying to check for update privileges for user: ${user} on page: ${uri}`,
+      error
+    );
+  }
+}
+
+/**
  * determines if a user has permissions to perform an action on a list
- *
  * @param {string} component
  * @param {string} field
  * @param {object} data
@@ -195,19 +240,43 @@ async function checkUserPermissions(uri, req, locals, db) {
       await checkComponentPermission(uri, req, locals, db);
     }
 
-    if (isPage(uri) && isPublished(uri)) {
-      const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
+    if (isPage(uri) && !isPageMeta(uri)) {
+      if (isPublished(uri)) {
+        const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
 
-      return pageTypesToCheck.has(pageType)
-        ? user.can('publish').a(pageType).value
-        : true;
+        return pageTypesToCheck.has(pageType)
+          ? user.can('publish').a(pageType).value
+          : true;
+      } else if (req.method === 'POST') {
+        const pageType = getComponentName(req.body.main[0]);
+
+        return pageTypesToCheck.has(pageType)
+          ? locals.user.can('create').a(pageType).value
+          : true;
+      } else if (req.method === 'GET') {
+        /*
+        Why are we preventing a GET when a page can't be updated?
+        In short, this is a workaround to a problem where components are updated separately from
+        the page. When the component PUT requests come in, it's *extremely* difficult at this time
+        to determine what page they belong to.
+        This workaround basically prevents the page editor from working when the user does not have
+        permissions, so it provides "some" security for those who would unintentionally edit something
+        they don't have permissions to. Remove it when we work out how to prevent component level
+        PUT requests appropriately.
+        * */
+        const pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
+
+        return pageType === 'static-page'
+          ? locals.user.can('update').a(pageType).value
+          : true;
+      }
     }
 
     if (isUri(uri) && req.method === 'DELETE') {
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),
         pageType = getComponentName(pageData.main[0]),
-        { station, user } = locals;
+        { station } = locals;
 
       return pageTypesToCheck.has(pageType)
         ? user.can('unpublish').a(pageType).at(station.callsign).value
