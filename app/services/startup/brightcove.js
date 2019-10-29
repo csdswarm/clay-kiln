@@ -19,13 +19,13 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     return `${encodeURIComponent(query)}${updatedAtQuery}`;
   },
   /**
-   * Return only the needed fields to the UI
+   * Return only the needed fields to the UI for videos
    *
    * @param {Array} results array of video objects
    * @returns {Array} an array of video objects with only needed fields
    */
   transformVideoResults = async results => {
-    return await Promise.all( (results || []).map( async ({name, images, id, updated_at}) => {
+    return await Promise.all( (results || []).map( async ({name, images, id, updated_at, delivery_type }) => {
       const { status, body: videoSources } = await brightcoveApi.request('GET', `videos/${ id }/sources`);
 
       return {
@@ -35,7 +35,8 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         updated_at,
         m3u8Source: status === 200 ? _get(videoSources.find(source => {
           return source.type === 'application/x-mpegURL';
-        }), 'src', '') : ''
+        }), 'src', '') : '',
+        delivery_type
       };
     }));
   },
