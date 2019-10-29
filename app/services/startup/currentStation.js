@@ -1,15 +1,17 @@
 'use strict';
 
-const radioApiService = require('../../services/server/radioApi'),
-  { isEmpty } = require('lodash'),
+const { join } = require('path'),
   { lstatSync, readdirSync } = require('fs'),
-  { join } = require('path'),
   isDirectory = source => lstatSync(source).isDirectory(),
   getDirectories = source =>
     readdirSync(source).map(name => join(source, name)).filter(isDirectory),
-  allStations = {},
-  allStationsIds = {},
-  allStationsCallsigns = [],
+  { getComponentName, isComponent, isPage, isPageMeta } = require('clayutils'),
+  _get = require('lodash/get'),
+  log = require('../universal/log').setup({ file: __filename }),
+  { getFullOriginalUrl, urlToUri } = require('../universal/utils'),
+  stationUtils = require('../server/station-utils'),
+  { contentTypes } = require('../universal/constants'),
+  db = require('../server/db'),
   defaultStation = {
     id: 0,
     name: 'Radio.com',
@@ -35,10 +37,71 @@ const radioApiService = require('../../services/server/radioApi'),
    * @return {string}
    */
   getStationSlug = (req) => {
-    const [, stationPath] = req.originalUrl.split('/'),
+    const stationPath = req.originalUrl.split('/')[1],
       stationHost = req.get('host').split('/').shift().split('.').shift().toLowerCase();
 
     return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
+  },
+  /**
+   * returns whether the request is for a content component
+   *
+   * @param {string} url
+   * @returns {boolean}
+   */
+  isContentComponent = url => {
+    const componentName = getComponentName(url);
+
+    return isComponent(url)
+      && contentTypes.has(componentName);
+  },
+  /**
+   * fetches the main component's data in the page and returns the 'stationSlug'
+   *   property or an empty string.
+   *
+   * @param {string} uri - the page uri
+   * @returns {string}
+   */
+  getStationSlugFromPage = async uri => {
+    let mainComponentUri;
+
+    try {
+      mainComponentUri = _get(await db.get(uri), 'main[0]', '');
+    } catch (err) {
+      logUnexpectedDbError(uri, err);
+    }
+
+    return mainComponentUri
+      ? getStationSlugFromComponent(mainComponentUri)
+      : '';
+  },
+  /**
+   * Logs the error if something happened besides the result not being found
+   *
+   * @param {string} uri
+   * @param {Error} err
+   */
+  logUnexpectedDbError = (uri, err) => {
+    if (!err.message.startsWith('No result found')) {
+      log('error', 'Error getting the data from uri: ' + uri, err);
+    }
+  },
+  /**
+   * fetches the component data and returns the 'stationSlug' property or an
+   *   empty string.
+   *
+   * @param {string} uri
+   * @returns {string}
+   */
+  getStationSlugFromComponent = async uri => {
+    let result = '';
+
+    try {
+      result = _get(await db.get(uri), 'stationSlug', '');
+    } catch (err) {
+      logUnexpectedDbError(uri, err);
+    }
+
+    return result;
   },
   /**
    * determines if the path is valid for station information
@@ -59,39 +122,35 @@ const radioApiService = require('../../services/server/radioApi'),
    * determines if the default station should be used
    *
    * @param {object} req
-   * @param {object} locals
-   * @return {boolean}
+   * @param {object} allStations
+   * @return {object}
    */
-  getStation = async (req, locals) => {
-    if (validPath(req)) {
-      const slugInReqUrl = getStationSlug(req),
-        stationId = req.query.stationId,
-        response = await radioApiService.get('stations', {page: {size: 1000}}, null, { ttl: radioApiService.TTL.MIN * 30 }, locals);
-
-      // use the stations as a cached object so we don't have to run the same logic every request
-      if (response.response_cached === false || isEmpty(allStations)) {
-        response.data.forEach((station) => {
-          const slug = station.attributes.site_slug || station.attributes.callsign || station.id;
-
-          allStations[slug] = station.attributes;
-          allStationsIds[station.id] = slug;
-          allStationsCallsigns.push(station.attributes.callsign);
-        });
-      }
-
-      if (Object.keys(allStations).includes(slugInReqUrl)) {
-        return allStations[slugInReqUrl];
-      }
-
-      // If the station isn't in the slug, look for the querystring parameter
-      if (stationId && Object.keys(allStationsIds).includes(stationId)) {
-        return allStations[allStationsIds[stationId]];
-      }
-
-      return defaultStation;
+  getStation = async (req, allStations) => {
+    if (!validPath(req)) {
+      return {};
     }
 
-    return {};
+    const slugInReqUrl = getStationSlug(req),
+      stationId = req.query.stationId,
+      url = getFullOriginalUrl(req);
+
+    let stationSlug = '';
+
+    if (allStations.bySlug.hasOwnProperty(slugInReqUrl)) {
+      stationSlug = slugInReqUrl;
+    } else if (stationId && allStations.byId.hasOwnProperty(stationId)) {
+      stationSlug = allStations.byId[stationId].attributes.site_slug;
+    } else if (isPage(url) && !isPageMeta(url)) {
+      stationSlug = await getStationSlugFromPage(urlToUri(url));
+    } else if (isContentComponent(url)) {
+      stationSlug = await getStationSlugFromComponent(urlToUri(url));
+    }
+
+    return _get(
+      allStations,
+      `bySlug[${stationSlug}].attributes`,
+      defaultStation
+    );
   };
 
 
@@ -103,9 +162,14 @@ const radioApiService = require('../../services/server/radioApi'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  res.locals.station = await getStation(req, res.locals);
-  res.locals.allStationsCallsigns = allStationsCallsigns;
-  res.locals.defaultStation = defaultStation;
+  const { locals } = res,
+    allStations = await stationUtils.getAllStations({ locals });
+
+  Object.assign(locals, {
+    station: await getStation(req, allStations),
+    allStationsCallsigns: Object.keys(allStations.byCallsign),
+    defaultStation
+  });
 
   return next();
 };

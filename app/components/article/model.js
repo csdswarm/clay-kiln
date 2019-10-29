@@ -9,8 +9,10 @@ module.exports = unityComponent({
     autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);
     return createContent.render(uri, data, locals);
   },
-  save: (uri, data, locals) => {
+  save: async (uri, data, locals) => {
     data.dateModified = (new Date()).toISOString();
-    return createContent.save(uri, data, locals);
+    await createContent.save(uri, data, locals);
+
+    return data;
   }
 });

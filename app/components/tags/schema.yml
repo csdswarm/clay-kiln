@@ -21,19 +21,21 @@ items:
   _placeholder:
     text: Tags
     height: 40px
-  _display: inline
   _has:
-    fn: simple-list
+    input: simple-list
     propertyName: isRubric
     badge: FR
     autocomplete:
       list: tags
-      allowRemove: true
-      allowCreate: true
+      allowRemove: false
+      allowCreate: false
+  _list_permission:
+    create: create
+    remove: update
 sectionFront:
   _subscribe: sectionFront
 featureRubric:
   _publish: rubric
   _has:
-    fn: description
+    input: description
     value: Field used by model.js to inform the article/gallery feature rubric
