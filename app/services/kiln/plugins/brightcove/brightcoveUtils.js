@@ -40,8 +40,9 @@ const { getFetchResponse } = require('../utils/fetch'),
   },
   /**
    * Gets all secondary & tertiary categories from _lists, if not already retrieved.
+   * @returns {Promise<Object>}
    */
-  getAllCategoryOptions = async () => {
+  getAllCategoryOptions = () => {
     if (!categoriesCache) {
       // start loading categories from server
       categoriesCache = Promise.all([
@@ -70,7 +71,10 @@ const { getFetchResponse } = require('../utils/fetch'),
         sportsSecondary,
         newsLifestyleSecondary,
         allTertiary
-      }));
+      })).catch(err => {
+        categoriesCache = null;
+        throw err;
+      });
     }
 
     return categoriesCache;
