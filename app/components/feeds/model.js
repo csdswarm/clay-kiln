@@ -125,6 +125,11 @@ module.exports.render = async (ref, data, locals) => {
       subcategory: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } }) },
+      // contentType
+      type: {
+        filterConditionType: 'addMust',
+        createObj: contentType => ({ match: { contentType }})
+      },
       // corporate websites (corporateSyndication)
       corporate: {
         createObj: corporateSyndication => ({ match: { [`corporateSyndication.${corporateSyndication}`]: true } })
