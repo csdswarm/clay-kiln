@@ -73,7 +73,8 @@
     headerImageLayout:
       columnStart: 0
       ignoreDocumentMargin: true
-      minimumHeight: "40vh"
+      minimumWidth: "100vw"
+      minimumHeight: "56vw"
       margin:
         top: 15
         bottom: 8
