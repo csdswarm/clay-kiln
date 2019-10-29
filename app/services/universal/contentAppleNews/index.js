@@ -40,15 +40,23 @@ const log = require('../log').setup({ file: __filename }),
    * @param {Object} locals.site
    * @param {string} locals.site.protocol
    * @param {string} locals.site.host
+   * @param {string} contentType
    * @returns {string}
   */
-  getCanonicalURL = async (refInstance, { site: { protocol, host } }) => {
-    const sql = `
-        SELECT data->'customUrl'->>0 as uri
-        FROM public.pages
-        WHERE data->'main'->>0 ~ '${host}/_components/article/instances/${refInstance}'
-      `,
+  getCanonicalURL = async (refInstance, { site: { protocol, host } }, contentType) => {
+    // Get canonicalUrl from published content data if created in clay
+    let { canonicalUrl } = await db.get(`${host}/_components/${ contentType }/instances/${refInstance}@published`);
+
+    if (!canonicalUrl) {
+      // Get customUrl from page data if content was imported
+      const sql = `
+          SELECT data->'customUrl'->>0 as uri
+          FROM public.pages
+          WHERE data->'main'->>0 ~ '${host}/_components/${ contentType }/instances/${refInstance}'
+        `;
+
       canonicalUrl = await db.raw(sql).then(results => _get(results, 'rows[0].uri'));
+    }
 
     return canonicalUrl || `${protocol}://${host}`;
   },
@@ -251,7 +259,7 @@ const log = require('../log').setup({ file: __filename }),
         authors: data.byline.length ? _flattenDeep(data.byline.map(byline => _get(byline, 'names')))
           .map(name => _get(name, 'text'))
           : [],
-        canonicalURL: await getCanonicalURL(refInstance, locals),
+        canonicalURL: await getCanonicalURL(refInstance, locals, contentType),
         dateCreated: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
         dateModified: formatLocalDate(data.dateModified || data.date || new Date(), ISO_8601_FORMAT),
         datePublished: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
