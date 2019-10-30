@@ -57,7 +57,7 @@ module.exports = router => {
       ]),
       // empty strings indicate the national site at this point
       stationSlugFrom = {
-        customUrl: _get(station, 'attributes.site_slug', ''),
+        customUrl: _get(station, 'site_slug', ''),
         component: _get(componentData, 'stationSlug', '')
       },
       // if the station slug from the component is falsey, then the content
