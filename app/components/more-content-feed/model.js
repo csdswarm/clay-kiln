@@ -1,8 +1,11 @@
 'use strict';
 const queryService = require('../../services/server/query'),
-  _ = require('lodash'),
+  _get = require('lodash/get'),
+  _map = require('lodash/map'),
+  _capitalize = require('lodash/capitalize'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
+  { sendError } = require('../../services/universal/cmpt-error'),
   { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
   elasticFields = [
@@ -29,7 +32,7 @@ module.exports.save = (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
-  return Promise.all(_.map(data.items, (item) => {
+  return Promise.all(_map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
       .then((result) => {
@@ -60,13 +63,15 @@ module.exports.save = (ref, data, locals) => {
  * @param {object} locals
  * @returns {Promise<object> | object}
  */
-module.exports.render = function (ref, data, locals) {
+module.exports.render = async function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
     contentTypes = contentTypeService.parseFromData(data),
     addContentCondition = data.populateFrom === 'section-front-or-tag' ? queryService.addShould : queryService.addMust;
 
-  let cleanUrl;
+  let cleanUrl,
+    dynamicPage = false,
+    results = [];
 
   data.initialLoad = false;
 
@@ -114,7 +119,7 @@ module.exports.render = function (ref, data, locals) {
     } else if (locals && locals.params && locals.params.dynamicTag) {
       // This is from a tag page
       data.tag = locals.params.dynamicTag;
-      data.dynamicTagPage = true;
+      data.dynamicTagPage = dynamicPage = true;
     }
 
     if (!data.tag) {
@@ -189,6 +194,7 @@ module.exports.render = function (ref, data, locals) {
     } else if (locals && locals.params && locals.params.dynamicAuthor) {
       // This is from an dynamic author page
       data.author = locals.params.dynamicAuthor;
+      dynamicPage = true;
     }
 
     if (!data.author) {
@@ -204,7 +210,7 @@ module.exports.render = function (ref, data, locals) {
   }
 
   // add minimum should if there are any
-  if (_.get(query, 'body.query.bool.should[0]')) queryService.addMinimumShould(query, 1);
+  if (_get(query, 'body.query.bool.should[0]')) queryService.addMinimumShould(query, 1);
 
   queryService.addSort(query, {date: 'desc'});
 
@@ -241,27 +247,34 @@ module.exports.render = function (ref, data, locals) {
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     });
   }
-  return queryService.searchByQuery(query)
-    .then(function (results) {
-      results = results.map(content => {
-        content.lead = content.lead[0]._ref.split('/')[2];
-        return content;
-      });
 
-      // "more content" button passes page query param - render more content and return it
-      data.moreContent = results.length > data.pageLength;
+  try {
+    results = await queryService.searchByQuery(query);
+  } catch (e) {
+    queryService.logCatch(e, ref);
+    return data;
+  };
 
-      // On initial load we need to append curated items onto the list, otherwise skip
-      if (data.initialLoad) {
-        data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of pageLength links
-      } else {
-        data.content = results.slice(0, data.pageLength); // show a maximum of pageLength links
-      }
+  results = results.map(content => {
+    content.lead = content.lead[0]._ref.split('/')[2];
+    return content;
+  });
 
-      return data;
-    })
-    .catch(e => {
-      queryService.logCatch(e, ref);
-      return data;
-    });
+  // "more content" button passes page query param - render more content and return it
+  data.moreContent = results.length > data.pageLength;
+
+  // On initial load we need to append curated items onto the list, otherwise skip
+  if (data.initialLoad) {
+    data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of pageLength links
+  } else {
+    data.content = results.slice(0, data.pageLength); // show a maximum of pageLength links
+  }
+
+  // 404 any dynamic pages who have no content
+  if (dynamicPage && data.content.length === 0) {
+    sendError(`${_capitalize(data.populateFrom)} not found`, 404);
+  }
+
+  return data;
+
 };
