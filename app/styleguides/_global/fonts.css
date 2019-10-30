@@ -591,3 +591,10 @@ em, i {
 @define-mixin alert-banner-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Presented By Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin presented-by-font1 {
+  @mixin font ProximaNova-Regular, 14px, $black, -0.23px, 22px;
+}
