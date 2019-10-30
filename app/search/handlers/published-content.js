@@ -7,7 +7,8 @@ const h = require('highland'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
   db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
-  CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
+  CONTENT_FILTER = isOpForComponents(['article', 'gallery']),
+  ANF_API = '/apple-news/articles';
 
 // Subscribe to the save stream
 subscribe('save').through(save);
@@ -82,7 +83,57 @@ function processContent(obj, components) {
   return obj;
 }
 
+/**
+ * Publish content to apple news and 
+ * save apple news ID and revision ID to elastic
+ *
+ * @param {Object} op
+ * @return {<Promise<Object>}
+ */
+async function publishToAppleNews(obj) {
+  console.log('handle pub page', obj.value.appleNewsEnabled, obj.key);
+  if (obj.value.appleNewsEnabled) {
+    try {
+      console.log('sending to apple news -- ', obj.value.appleNewsID ? 'update' : 'publish', obj.value.appleNewsID, obj.value.appleNewsRevision);
+
+      const { appleNewsRevision, appleNewsID } = obj.value,
+        response = await fetch(
+          `${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }${
+            ANF_API }${ appleNewsID ? `/${ appleNewsID }` : '' }`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              articleRef: obj.key,
+              revision: appleNewsRevision
+            })
+          }
+        ),
+        jsonOrText = (response.headers.get('Content-Type') || '').includes
+        ('application/json') ? await response.json() : await response.text(),
+        { id, revision } = jsonOrText;
+
+      if (id && revision) {
+        console.log('apple news returned id & revision', id, revision);
+        obj.value.appleNewsID = id;
+        obj.value.appleNewsRevision = revision; 
+      }
+    } catch (e) {
+      log('error', `Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);
+      if (e.message === '404: Not Found') {
+        console.log('article not found in apple news');
+        delete obj.value.appleNewsID;
+        delete obj.value.appleNewsRevision;
+        console.log('finish deleting article ID from db');
+      }
+    }
+  }
+
+  return obj;
+}
+
 function save(stream) {
+  console.log('save stream');
   let components = [];
 
   return stream
@@ -96,6 +147,7 @@ function save(stream) {
     .filter(filters.isPublished)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
+    .flatMap(obj => { return h(publishToAppleNews(obj).then(() => obj)); })
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
@@ -112,7 +164,42 @@ function save(stream) {
  * @return {Function}
  */
 function send(op) {
+  console.log('send to elastic');
   return h(elastic.update(INDEX, op.key, op.value, false, true).then(() => op.key));
+}
+
+/**
+ * Unpublish content from apple news and 
+ * delete apple news ID and revision ID from elastic
+ *
+ * @param {Object} op
+ * @return {<Promise<Object>}
+ */
+async function unpublishFromAppleNews(obj) {
+  console.log('handle unpub page', obj);
+  const { appleNewsEnabled, appleNewsID } = obj.value;
+
+  if (appleNewsEnabled && appleNewsID) {
+    const response = await fetch(
+      `${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }${
+        ANF_API }/${ appleNewsID }`,
+      {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+
+    if ([204, 404].includes(response.status)) {
+      console.log('finish deleting article from apple news');
+      delete obj.value.appleNewsID;
+      delete obj.value.appleNewsRevision;
+      console.log('finish deleting article ID from db');
+    } else {
+      console.log('unpub failed');
+    }
+  }
+
+  return obj;
 }
 
 /**
@@ -122,6 +209,7 @@ function send(op) {
  * @return {Stream<Promise<String>>}
  */
 function removePublished(key) {
+  console.log('remove from elastic');
   const publishedKey = `${key}@published`;
 
   return h(elastic.del(INDEX, publishedKey).then(() => publishedKey));
@@ -133,8 +221,27 @@ function removePublished(key) {
  * @param {Object} op
  * @return {Stream<Promise<String>>}
  */
-function getMain(op) {
+function getMainUri(op) {
   return h(db.get(op.uri).then( data => data.main[0]));
+}
+
+/**
+ * Gets the main content from a unpublished object
+ *
+ * @param {Object} op
+ * @return {Stream<Promise<Object>>}
+ */
+function getMainData(op) {
+  return h(
+    db.get(op.uri)
+      .then( data => data.main[0] )
+      .then( mainURI => { return { mainURI, mainData: db.get(mainURI) } })
+      .then( (mainURI, mainData)  => {
+        console.log('mainURI 2', mainURI);
+        console.log( 'mainData', mainData );
+        return { obj: mainData, uri: mainURI };
+      })
+  );
 }
 
 /**
@@ -144,7 +251,10 @@ function getMain(op) {
  * @return {Stream}
  */
 function unpublishPage(stream) {
-  return stream.flatMap(getMain)
+  return stream
+    .flatMap(getMainData)
+    .map(({uri, obj}) => { return { uri, obj: helpers.parseOpValue(obj) }; })
+    .flatMap(({uri, obj}) => { return h(unpublishFromAppleNews(obj).then(() => uri)); })
     .flatMap(removePublished)
     .errors(logError)
     .each(logSuccess(INDEX));

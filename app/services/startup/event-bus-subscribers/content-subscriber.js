@@ -1,18 +1,19 @@
 'use strict';
 
-const db = require('../../../services/server/db'),
+const h = require('highland'),
+  db = require('../../../services/server/db'),
   log = require('../../../services/universal/log').setup({ file: __filename }),
   { getComponentName } = require('clayutils'),
-  { subscribe } = require('amphora-search'),
-  ANF_API = '/apple-news/articles';
+  { subscribe, elastic, helpers } = require('amphora-search'),
+  ANF_API = '/apple-news/articles',
+  INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX);
 
 /**
  * @param {Object} stream - save page event payload
  */
 function save(stream) {
-  console.log(stream);
   stream
-    .filter( filterNonContentType )
+    .filter( filterNonContentComponent )
     .each( handleSaveContent );
 }
 
@@ -42,8 +43,25 @@ function filterNonContentType(page) {
     ['article', 'gallery'].includes(getComponentName(page.data.main[0]));
 }
 
-async function handleSaveContent(page) {
-  console.log('save', page);
+/**
+ * @param {Object} stream - save component event payload
+ * @returns {boolean}
+ */
+function filterNonContentComponent(stream) {
+  return stream._incoming && stream._incoming[0] &&
+    ['article', 'gallery'].includes(getComponentName(stream._incoming[0].key));
+}
+
+async function handleSaveContent(stream) {
+  const componentSaveEvent = stream._incoming[0],
+    { appleNewsID,
+      appleNewsRevision } = JSON.parse(componentSaveEvent.value);
+
+  const { appleNewsID: appleID, appleNewsRevision: appleRev } = await db.get(componentSaveEvent.key);
+  
+  console.log('op key', componentSaveEvent.key);
+  console.log('get from db:', appleID, appleRev);
+  console.log('save', appleNewsID, appleNewsRevision);
 }
 
 /**
@@ -85,13 +103,16 @@ async function handlePublishContentPg(page) {
           publishedArticleData.appleNewsID = id;
           publishedArticleData.appleNewsRevision = revision;
           console.log('apple news returned id & revision', id, revision);
-          await db.put(unpubArticleRef, JSON.stringify(publishedArticleData));
-          await db.put(articleRef, JSON.stringify(publishedArticleData));
-          console.log('finish saving id & revision to db');
-          const { appleNewsID, appleNewsRevision } = await db.get(unpubArticleRef);
-          console.log(appleNewsID, appleNewsRevision);
-          const { appleNewsID: pubID, appleNewsRevision: pubRev } = await db.get(articleRef);
-          console.log(pubID, pubRev);
+          // await db.put(unpubArticleRef, JSON.stringify(publishedArticleData));
+          // await db.put(articleRef, JSON.stringify(publishedArticleData));
+          // console.log('finish saving id & revision to db');
+          // const { appleNewsID, appleNewsRevision } = await db.get(unpubArticleRef);
+          // console.log(appleNewsID, appleNewsRevision);
+          // const { appleNewsID: pubID, appleNewsRevision: pubRev } = await db.get(articleRef);
+          // console.log(pubID, pubRev);
+          await elastic.update(INDEX, unpubArticleRef, publishedArticleData, false, true);
+          const elasticData = await elastic.getDocument(INDEX, unpubArticleRef);
+          console.log('elastic data', unpubArticleRef, elasticData);
         }
       } catch (e) {
         log('error', `Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);
@@ -118,12 +139,14 @@ async function handlePublishContentPg(page) {
  * @param {Object} page - unpublish page event payload
  */
 async function handleUnpublishContentPg(page) {
+  console.log('handle unpub page');
   try {
     const host = page.uri.split('/')[0],
       pageData = await db.get(page.uri),
       mainRef = pageData.main[0];
 
     if (['article', 'gallery'].includes(getComponentName(mainRef))) {
+      console.log('is article/gallery');
       const articleData = await db.get(mainRef),
         { appleNewsEnabled, appleNewsID } = articleData;
 
@@ -158,7 +181,7 @@ async function handleUnpublishContentPg(page) {
  * subscribe to event bus messages
  */
 module.exports = () => {
-  subscribe('save').through(save);
-  subscribe('publishPage').through(publishPage);
-  subscribe('unpublishPage').through(unpublishPage);
+  // subscribe('save').through(save);
+  // subscribe('publishPage').through(publishPage);
+  // subscribe('unpublishPage').through(unpublishPage);
 };
