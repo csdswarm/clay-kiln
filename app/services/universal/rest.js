@@ -52,8 +52,16 @@ function checkStatus(res) {
  */
 module.exports.request = async (url, opts) => {
   const response = await fetch(url, opts),
-    body = await response.json(),
+    contentType = response.headers.get('Content-Type'),
     { status, statusText } = response;
+
+  let body;
+
+  if (contentType && contentType.includes('application/json')) {
+    body = await response.json();
+  } else {
+    body = await response.text();
+  }
 
   return { status, statusText, body };
 };

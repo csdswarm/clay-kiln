@@ -28,18 +28,35 @@
     {{/ifAny}}
   </header>
 
+  {{#if _computed.renderFullWidthLead }}
+    {{! Lead }}
+    <div class="lead lead--full-width" data-editable="lead">
+      {{> component-list lead }}
+    </div>
+  {{/if}}
+
   {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="article__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
   >
-    <div class="body__header">
-      {{! Lead }}
-      <div class="lead" data-editable="lead">
-        {{> component-list lead }}
+    {{#unless _computed.renderFullWidthLead }}
+      {{#if _computed.supportsFullWidthLead }}
+        <div data-editable="leadSettings">
+          <h1>Lead Settings:</h1>
+          <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
+        </div>
+      {{/if}}
+
+      <div class="body__header">
+        {{! Lead }}
+        <div class="lead" data-editable="lead">
+          {{> component-list lead }}
+        </div>
       </div>
-    </div>
+    {{/unless}}
+
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
@@ -132,7 +149,7 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title">Featured</h4>
-              <p class="item-data">{{ if featured 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo featured }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Editorial Feeds Term(s)</h4>
@@ -161,6 +178,28 @@
           </ul>
         </section>
 
+        <section class="circulation__section" data-editable="appleNews">
+          <h3 class="subtitle circ-edit">Apple News</h3>
+          <ul class="items">
+            <li class="item">
+              <h4 class="item-title">Accessory Text</h4>
+              <p class="item-data">{{{ default accessoryText empty }}}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Featured</h4>
+              <p class="item-data">{{ yesNo isCandidateToBeFeatured }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Hidden</h4>
+              <p class="item-data">{{ yesNo isHidden }}</p>
+            </li>
+            <li class="item">
+              <h4 class="item-title">Sponsored</h4>
+              <p class="item-data">{{ yesNo isSponsored }}</p>
+            </li>
+          </ul>
+        </section>
+
         <section class="circulation__section" data-editable="circSlug">
           {{#if slugLock}}
             <div class="alert alert-warning">
@@ -180,7 +219,7 @@
             <li class="item">
               <h4 class="item-title">Evergreen Treatment</h4>
               <p class="item-data">
-                {{ if evergreenSlug 'Yes' else='No' }}
+                {{ yesNo evergreenSlug }}
               </p>
             </li>
           </ul>

@@ -18,11 +18,14 @@ const pkg = require('../../package.json'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
+  appleNews = require('./apple-news'),
   log = require('../universal/log').setup({ file: __filename }),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
-  cookies = require('./cookies');
+  apiStg = require('./apiStg'),
+  cookies = require('./cookies'),
+  cacheControl = require('./cache-control');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -73,6 +76,10 @@ function setupApp(app) {
 
   app.use(cookieParser());
 
+  apiStg.inject(app);
+
+  cookies.inject(app);
+
   app.use(handleRedirects);
 
   app.use(user);
@@ -81,13 +88,15 @@ function setupApp(app) {
 
   app.use(currentStation);
 
-  cookies.inject(app);
+  app.use(cacheControl);
 
   radium.inject(app);
 
   app.use(canonicalJSON);
 
   brightcove.inject(app);
+
+  appleNews.inject(app);
 
   sessionStore = createSessionStore();
 
