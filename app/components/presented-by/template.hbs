@@ -1,4 +1,4 @@
-<div data-uri="{{ default _ref self }}" class="component component--presented-by presented-by {{ if (compare presenters.length ">" 5) "presented-by--multi-row" else="" }}">
+<div data-uri="{{ default _ref self }}" class="component component--presented-by presented-by {{ _computed.presentedByClasses }}">
   <div class="presented-by__title-container">
     <div class="presented-by__title" data-editable="displayTitle">{{ displayTitle }}</div>
   </div>
