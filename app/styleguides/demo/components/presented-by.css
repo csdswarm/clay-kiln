@@ -32,6 +32,13 @@
   &__logo-img {
     width: 100%;
   }
+
+  &--multi-row {
+    align-items: flex-start;
+    .presented-by__title-container {
+      margin-top: em(18, 18);
+    }
+  }
 }
 
 .editing .presented-by {
