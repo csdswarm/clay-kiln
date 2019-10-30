@@ -17,7 +17,7 @@ let isFetching = false,
     try {
       fs.ensureFileSync(filePath);
       fs.writeFileSync(filePath, JSON.stringify(anfComponentTree, null, 2));
-      console.log('[ANF TEST FILE SUCCESS]');
+      console.log(`[ANF TEST FILE SUCCESS]: file written to ${filePath}`);
     } catch (error) {
       console.error('[ANF TEST FILE ERROR]', error);
     }

@@ -2,10 +2,7 @@
 
 // https://developer.apple.com/documentation/apple_news/component
 // https://developer.apple.com/documentation/apple_news/apple_news_format/components
-let primaryVideo = {
-  URL: '',
-  stillURL: ''
-};
+
 const log = require('../log').setup({ file: __filename }),
   sectionCategoryStyles = {
     music: 'category1Style',
@@ -141,30 +138,39 @@ const log = require('../log').setup({ file: __filename }),
    * @returns {Promise|Array}
   */
   getLede = async lede => {
+    const fallbackLede = {};
+
     if (isNotHTMLEmbed(lede[0]._ref)) {
       return getCompInstanceData(`${ lede[0]._ref }.anf`)
-        .then(lede => {
-          if (lede.role === 'video') {
-            const { URL, stillURL } = lede;
-
-            primaryVideo = { URL, stillURL };
-            return [{
-              ...lede,
-              layout: 'headerImageLayout'
-            }];
-          }
-
-          const { components: [ledeImage, ledeCaption] } = lede;
-
-          return [
-            {
-              ...ledeImage,
-              layout: 'headerImageLayout'
-            },
-            ledeCaption || ANF_EMPTY_COMPONENT
-          ];
-        }).catch(e => log('error', `Error getting lede anf: ${ e }`));
+        .catch(e => {
+          log('error', `Error getting lede anf: ${ e }`);
+          return fallbackLede;
+        });
     }
+
+    return fallbackLede;
+  },
+  ledeComponentToAnf = (lede) => {
+    if (!lede) {
+      return [];
+    }
+
+    if (lede.stillURL) {
+      return [{
+        ...lede,
+        layout: 'headerImageLayout'
+      }];
+    }
+
+    const { components: [ledeImage, ledeCaption] } = lede;
+
+    return [
+      {
+        ...ledeImage,
+        layout: 'headerImageLayout'
+      },
+      ledeCaption || ANF_EMPTY_COMPONENT
+    ];
   },
   /**
    * Get apple news format of each content ref
@@ -275,7 +281,7 @@ const log = require('../log').setup({ file: __filename }),
    */
   getContentANF = async function (ref, data, locals) {
     const tags = await getTags(data.tags),
-      lede = await getLede(data.lead) || [],
+      lede = await getLede(data.lead),
       refInstance = getComponentInstance(ref),
       contentType = getComponentName(ref);
 
@@ -294,8 +300,8 @@ const log = require('../log').setup({ file: __filename }),
         datePublished: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
         excerpt: data.pageDescription,
         ...tags ? { keywords: tags } : {},
-        thumbnailURL: primaryVideo.stillURL || data.feedImgUrl,
-        ...!!primaryVideo.URL ? { videoURL: primaryVideo.URL } : {}
+        thumbnailURL: lede.stillURL || data.feedImgUrl,
+        ...!!lede.URL ? { videoURL: lede.URL } : {}
       },
       components: [
         {
@@ -340,7 +346,7 @@ const log = require('../log').setup({ file: __filename }),
         {
           role: 'section',
           layout: 'headerImageLayout',
-          components: lede
+          components: ledeComponentToAnf(lede)
         },
         contentType === 'gallery'
           ? anfPrimaryBodyContent(await getContent(data.slides), data.sectionFront)
