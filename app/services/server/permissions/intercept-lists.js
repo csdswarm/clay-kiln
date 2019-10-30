@@ -76,6 +76,8 @@ module.exports = router => {
           if (!user.can('access').the('station').at(callsign).value) {
             return false;
           }
+
+          return true;
         })
         .map(item => ({ ...item, children: item.children.filter(canCreateStaticPageMenuItem) }));
 
