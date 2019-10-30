@@ -29,7 +29,7 @@
     </div>
     <div v-if="imageUrl">
       <img 
-          :class="['advanced-image-upload__attached-image', args.maxEditorDisplayHeight ? 'advanced-image-upload__attached-image--clamped-height' : '' ]"
+          :class="['advanced-image-upload__attached-image', { 'advanced-image-upload__attached-image--clamped-height': args.maxEditorDisplayHeight } ]"
           alt="attached image" 
           :src="imageUrl" 
           :style="args.maxEditorDisplayHeight ? 'max-height:' + args.maxEditorDisplayHeight : ''" />
