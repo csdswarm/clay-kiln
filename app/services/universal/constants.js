@@ -22,8 +22,7 @@ const SECOND = 1000,
     SECTIONFRONT: 'section-front'
   },
   // this should list the component names of the content types which may be
-  //   created.  A content type is essentially a component that is listed uder
-  //   page data -> main[0]
+  //   created via the kiln drawer.
   contentTypes = new Set([
     'article',
     'gallery',
