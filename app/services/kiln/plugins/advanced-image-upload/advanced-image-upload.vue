@@ -17,6 +17,7 @@
 
   * **uploadLabel** - File Upload Button label.
   * **uploadHelp** - Description / helper text for the file upload button.
+  * **maxEditorDisplayHeight** - height for when used in a complex list.
 
 </docs>
 
@@ -27,7 +28,11 @@
       <div class="ui-textbox__feedback-text">{{ args.uploadHelp }}</div>
     </div>
     <div v-if="imageUrl">
-      <img class="advanced-image-upload__attached-image" alt="attached image" :src="imageUrl" />
+      <img 
+          :class="['advanced-image-upload__attached-image', args.maxEditorDisplayHeight ? 'advanced-image-upload__attached-image--clamped-height' : '' ]"
+          alt="attached image" 
+          :src="imageUrl" 
+          :style="args.maxEditorDisplayHeight ? 'max-height:' + args.maxEditorDisplayHeight : ''" />
     </div>
     <div v-else>
       <div class="advanced-image-upload__image-placeholder kiln-placeholder">
