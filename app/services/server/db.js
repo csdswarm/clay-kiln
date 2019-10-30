@@ -179,55 +179,17 @@ const utils = require('../universal/utils'),
     const data = await db.get(uri.split('@')[0]) || {};
 
     return key ? _get(data, key) : data;
-  },
-  /**
-   * Takes a URI (even if it is not a `/_pages/` uri), finds the target page
-   * and returns a list of component ids that belong to its `main` section as an array
-   * @param {string} uri
-   * @returns {Promise<string[]>}
-   */
-  getMainComponentsForPageUri = async (uri) => {
-    const
-      firstMatchingUrl = `
-        SELECT id, url, data
-        FROM public.uris u
-        WHERE ? IN (u.url /* if it's a slug url */, u.data /* if a /_pages/ url */)
-      `,
-      recursiveMatches = `
-        SELECT u2.id, u2.url, u2.data
-        FROM _uris _u
-          INNER JOIN public.uris u2 ON _u.data = u2.id
-      `,
-      mainComponentsList = `
-        SELECT
-          main
-        FROM
-          _uris _u
-          INNER JOIN public.pages p
-            ON _u.data = p.id
-          , jsonb_array_elements_text(p.data->'main') main
-        WHERE _u.data ~ '/_pages/'
-      `,
-      sql = `
-          WITH RECURSIVE _uris AS (
-              ${firstMatchingUrl}
-            UNION ALL
-              ${recursiveMatches}
-          )
-          ${mainComponentsList};`,
-      data = await db.raw(sql, [uri]);
-
-    return data.rows && data.rows.map(row => row.main) || [];
   };
 
-module.exports.getUri = uri => db.get(uri);
-module.exports.del = del;
-module.exports.get = get;
-module.exports.post = post;
-module.exports.put = put;
-module.exports.raw = db.raw;
-module.exports.uriToUrl = utils.uriToUrl;
-module.exports.ensureTableExists = ensureTableExists;
-module.exports.getMainComponentsForPageUri = getMainComponentsForPageUri;
-module.exports.DATA_STRUCTURES = DATA_STRUCTURES;
-module.exports.getComponentData = getComponentData;
+module.exports = {
+  getUri: uri => db.get(uri),
+  del,
+  get,
+  post,
+  put,
+  raw: db.raw,
+  uriToUrl: utils.uriToUrl,
+  ensureTableExists,
+  DATA_STRUCTURES,
+  getComponentData
+};
