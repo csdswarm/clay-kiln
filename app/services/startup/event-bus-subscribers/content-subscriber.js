@@ -103,16 +103,13 @@ async function handlePublishContentPg(page) {
           publishedArticleData.appleNewsID = id;
           publishedArticleData.appleNewsRevision = revision;
           console.log('apple news returned id & revision', id, revision);
-          // await db.put(unpubArticleRef, JSON.stringify(publishedArticleData));
-          // await db.put(articleRef, JSON.stringify(publishedArticleData));
-          // console.log('finish saving id & revision to db');
-          // const { appleNewsID, appleNewsRevision } = await db.get(unpubArticleRef);
-          // console.log(appleNewsID, appleNewsRevision);
-          // const { appleNewsID: pubID, appleNewsRevision: pubRev } = await db.get(articleRef);
-          // console.log(pubID, pubRev);
-          await elastic.update(INDEX, unpubArticleRef, publishedArticleData, false, true);
-          const elasticData = await elastic.getDocument(INDEX, unpubArticleRef);
-          console.log('elastic data', unpubArticleRef, elasticData);
+          await db.put(unpubArticleRef, JSON.stringify(publishedArticleData));
+          await db.put(articleRef, JSON.stringify(publishedArticleData));
+          console.log('finish saving id & revision to db');
+          const { appleNewsID, appleNewsRevision } = await db.get(unpubArticleRef);
+          console.log(appleNewsID, appleNewsRevision);
+          const { appleNewsID: pubID, appleNewsRevision: pubRev } = await db.get(articleRef);
+          console.log(pubID, pubRev);
         }
       } catch (e) {
         log('error', `Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);

@@ -91,8 +91,8 @@ function processContent(obj, components) {
  * @return {<Promise<Object>}
  */
 async function publishToAppleNews(obj) {
-  console.log('handle pub page', obj.value.appleNewsEnabled, obj.key);
-  if (obj.value.appleNewsEnabled) {
+  console.log('handle pub page', obj.key);
+  if (process.env.APPLE_NEWS_ENABLED) {
     try {
       console.log('sending to apple news -- ', obj.value.appleNewsID ? 'update' : 'publish', obj.value.appleNewsID, obj.value.appleNewsRevision);
 
@@ -147,7 +147,7 @@ function save(stream) {
     .filter(filters.isPublished)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
-    .flatMap(obj => { return h(publishToAppleNews(obj).then(() => obj)); })
+    .flatMap(obj => h(publishToAppleNews(obj).then(() => obj)))
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
@@ -176,10 +176,10 @@ function send(op) {
  * @return {<Promise<Object>}
  */
 async function unpublishFromAppleNews(obj) {
-  console.log('handle unpub page', obj);
-  const { appleNewsEnabled, appleNewsID } = obj.value;
+  console.log('handle unpub page');
+  const { appleNewsID } = obj;
 
-  if (appleNewsEnabled && appleNewsID) {
+  if (process.env.APPLE_NEWS_ENABLED && appleNewsID) {
     const response = await fetch(
       `${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }${
         ANF_API }/${ appleNewsID }`,
@@ -235,12 +235,8 @@ function getMainData(op) {
   return h(
     db.get(op.uri)
       .then( data => data.main[0] )
-      .then( mainURI => { return { mainURI, mainData: db.get(mainURI) } })
-      .then( (mainURI, mainData)  => {
-        console.log('mainURI 2', mainURI);
-        console.log( 'mainData', mainData );
-        return { obj: mainData, uri: mainURI };
-      })
+      .then( async mainURI => ({ mainURI, mainData: await db.get(mainURI) }))
+      .then( ({ mainURI, mainData }) => ({ obj: mainData, uri: mainURI }))
   );
 }
 
@@ -253,8 +249,7 @@ function getMainData(op) {
 function unpublishPage(stream) {
   return stream
     .flatMap(getMainData)
-    .map(({uri, obj}) => { return { uri, obj: helpers.parseOpValue(obj) }; })
-    .flatMap(({uri, obj}) => { return h(unpublishFromAppleNews(obj).then(() => uri)); })
+    .flatMap(({ uri, obj }) => h(unpublishFromAppleNews(obj).then(() => uri)))
     .flatMap(removePublished)
     .errors(logError)
     .each(logSuccess(INDEX));
