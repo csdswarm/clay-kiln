@@ -102,7 +102,7 @@ async function checkUpdatePrivileges(locals) {
 
         if (pageType === 'static-page') {
           return {
-            showLackOfEditPermissionsBanner: !user.can('update').a(pageType).value,
+            showNoEditPermissionsBanner: !user.can('update').a(pageType).value,
             updateTarget: `${typesOfPages[pageType]} for ${station.name}`
           };
         }
