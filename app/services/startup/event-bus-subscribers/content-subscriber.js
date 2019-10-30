@@ -7,6 +7,16 @@ const db = require('../../../services/server/db'),
   ANF_API = '/apple-news/articles';
 
 /**
+ * @param {Object} stream - save page event payload
+ */
+function save(stream) {
+  console.log(stream);
+  stream
+    .filter( filterNonContentType )
+    .each( handleSaveContent );
+}
+
+/**
  * @param {Object} stream - publish page event payload
  */
 function publishPage(stream) {
@@ -32,6 +42,10 @@ function filterNonContentType(page) {
     ['article', 'gallery'].includes(getComponentName(page.data.main[0]));
 }
 
+async function handleSaveContent(page) {
+  console.log('save', page);
+}
+
 /**
  * Upon publish, publish to apple news feed and
  * add appleNewsID and appleNewsRevision to article
@@ -41,12 +55,16 @@ function filterNonContentType(page) {
 async function handlePublishContentPg(page) {
   try {
     const host = page.uri.split('/')[0],
-      articleRef = page.data.main[0].replace('@published',''),
-      articleData = await db.get(articleRef);
+      articleRef = page.data.main[0],
+      unpubArticleRef = articleRef.replace('@published', ''),
+      publishedArticleData = await db.get(articleRef),
+      unpubArticleData = await db.get(unpubArticleRef);
 
-    if (articleData.appleNewsEnabled) {
+    console.log('handle pub page', publishedArticleData.appleNewsEnabled);
+    if (publishedArticleData.appleNewsEnabled) {
       try {
-        const { appleNewsRevision, appleNewsID } = articleData,
+        console.log('sending to apple news -- ', unpubArticleData.appleNewsID ? 'update' : 'publish', 'unpub:', unpubArticleData.appleNewsID, unpubArticleData.appleNewsRevision, 'pub:', publishedArticleData.appleNewsID, publishedArticleData.appleNewsRevision);
+        const { appleNewsRevision, appleNewsID } = publishedArticleData,
           response = await fetch(
             `${ process.env.CLAY_SITE_PROTOCOL }://${ host }${
               ANF_API }${ appleNewsID ? `/${ appleNewsID }` : '' }`,
@@ -64,16 +82,26 @@ async function handlePublishContentPg(page) {
           { id, revision } = jsonOrText;
 
         if (id && revision) {
-          articleData.appleNewsID = id;
-          articleData.appleNewsRevision = revision;
-          await db.put(articleRef, JSON.stringify(articleData));
+          publishedArticleData.appleNewsID = id;
+          publishedArticleData.appleNewsRevision = revision;
+          console.log('apple news returned id & revision', id, revision);
+          await db.put(unpubArticleRef, JSON.stringify(publishedArticleData));
+          await db.put(articleRef, JSON.stringify(publishedArticleData));
+          console.log('finish saving id & revision to db');
+          const { appleNewsID, appleNewsRevision } = await db.get(unpubArticleRef);
+          console.log(appleNewsID, appleNewsRevision);
+          const { appleNewsID: pubID, appleNewsRevision: pubRev } = await db.get(articleRef);
+          console.log(pubID, pubRev);
         }
       } catch (e) {
         log('error', `Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);
         if (e.message === '404: Not Found') {
-          delete articleData.appleNewsID;
-          delete articleData.appleNewsRevision;
-          await db.put(articleRef, JSON.stringify(articleData));
+          delete unpubArticleData.appleNewsID;
+          delete unpubArticleData.appleNewsRevision;
+          console.log('article not found in apple news');
+          await db.put(unpubArticleRefarticleRef, JSON.stringify(unpubArticleData));
+          await db.put(articleRef, JSON.stringify(unpubArticleData));
+          console.log('finish deleting article ID from db');
         }
       }
     }
@@ -110,9 +138,14 @@ async function handleUnpublishContentPg(page) {
         );
 
         if ([204, 404].includes(response.status)) {
+          console.log('finish deleting article from apple news');
           delete articleData.appleNewsID;
           delete articleData.appleNewsRevision;
           await db.put(mainRef, JSON.stringify(articleData));
+          await db.put(mainRef.replace('@published', ''), JSON.stringify(articleData));
+          console.log('finish deleting article ID from db');
+        } else {
+          console.log('unpub failed');
         }
       }
     }
@@ -125,6 +158,7 @@ async function handleUnpublishContentPg(page) {
  * subscribe to event bus messages
  */
 module.exports = () => {
+  subscribe('save').through(save);
   subscribe('publishPage').through(publishPage);
   subscribe('unpublishPage').through(unpublishPage);
 };
