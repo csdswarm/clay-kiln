@@ -96,7 +96,17 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
     });
 }
 
+function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      const slug = pubUtils.authorPageSlugPattern(urlOptions);
+      
+      return slug;
+    });
+}
+
 module.exports.getYearMonthSlugUrl = getYearMonthSlugUrl;
 module.exports.getArticleSlugUrl = getArticleSlugUrl;
 module.exports.getGallerySlugUrl = getGallerySlugUrl;
 module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
+module.exports.getAuthorPageSlugUrl = getAuthorPageSlugUrl;

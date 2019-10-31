@@ -188,8 +188,11 @@ module.exports.render = async function (ref, data, locals) {
     if (locals && locals.author) {
       // This is from load more on an author page
       data.author = locals.author;
-    } else if (locals && locals.params) {
+    } else if (locals && locals.params && locals.params.author) {
       // This is from an author page
+      data.author = locals.params.author;
+    } else if (locals && locals.params && locals.params.dynamicAuthor) {
+      // This is from an dynamic author page
       data.author = locals.params.dynamicAuthor;
       dynamicPage = true;
     }
