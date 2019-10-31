@@ -84,7 +84,7 @@ function processContent(obj, components) {
 }
 
 /**
- * Publish content to apple news and 
+ * Publish content to apple news and
  * save apple news ID and revision ID to elastic
  *
  * @param {Object} op
@@ -116,7 +116,7 @@ async function publishToAppleNews(obj) {
       if (id && revision) {
         console.log('apple news returned id & revision', id, revision);
         obj.value.appleNewsID = id;
-        obj.value.appleNewsRevision = revision; 
+        obj.value.appleNewsRevision = revision;
       }
     } catch (e) {
       log('error', `Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);
@@ -147,7 +147,7 @@ function save(stream) {
     .filter(filters.isPublished)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
-    .flatMap(obj => h(publishToAppleNews(obj).then(() => obj)))
+    // .flatMap(obj => h(publishToAppleNews(obj).then(() => obj)))
     .map(stripPostProperties)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
@@ -164,12 +164,12 @@ function save(stream) {
  * @return {Function}
  */
 function send(op) {
-  console.log('send to elastic');
+  console.log('send to elastic', op.value);
   return h(elastic.update(INDEX, op.key, op.value, false, true).then(() => op.key));
 }
 
 /**
- * Unpublish content from apple news and 
+ * Unpublish content from apple news and
  * delete apple news ID and revision ID from elastic
  *
  * @param {Object} op
@@ -221,7 +221,7 @@ function removePublished(key) {
  * @param {Object} op
  * @return {Stream<Promise<String>>}
  */
-function getMainUri(op) {
+function getMain(op) {
   return h(db.get(op.uri).then( data => data.main[0]));
 }
 
@@ -248,8 +248,9 @@ function getMainData(op) {
  */
 function unpublishPage(stream) {
   return stream
-    .flatMap(getMainData)
-    .flatMap(({ uri, obj }) => h(unpublishFromAppleNews(obj).then(() => uri)))
+    // .flatMap(getMainData)
+    // .flatMap(({ uri, obj }) => h(unpublishFromAppleNews(obj).then(() => uri)))
+    .flatMap(getMain)
     .flatMap(removePublished)
     .errors(logError)
     .each(logSuccess(INDEX));
