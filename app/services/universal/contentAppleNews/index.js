@@ -136,7 +136,7 @@ const log = require('../log').setup({ file: __filename }),
    * @param {Array} lede
    * @returns {Promise|Array}
   */
-  getLede = async lede => {
+  getLedeAnf = async lede => {
     const fallbackLede = {};
 
     if (isNotHTMLEmbed(lede[0]._ref)) {
@@ -149,6 +149,12 @@ const log = require('../log').setup({ file: __filename }),
 
     return fallbackLede;
   },
+  /**
+   * Conditionally transforms the lede component to be formatted depending on what properties it contains
+   *
+   * @param {Object} lede
+   * @returns {Array}
+   */
   ledeComponentToAnf = (lede) => {
     if (!lede) {
       return [];
@@ -280,7 +286,7 @@ const log = require('../log').setup({ file: __filename }),
    */
   getContentANF = async function (ref, data, locals) {
     const tags = await getTags(data.tags),
-      lede = await getLede(data.lead),
+      lede = await getLedeAnf(data.lead),
       refInstance = getComponentInstance(ref),
       contentType = getComponentName(ref);
 
