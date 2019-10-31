@@ -7,8 +7,8 @@ definitions:
         script:
           - make install
         artifacts:
-          - app/**
-          - spa/**
+          - app/node_modules
+          - spa/node_modules
 
 pipelines:
   default:
