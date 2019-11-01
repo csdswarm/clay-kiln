@@ -8,7 +8,6 @@ module.exports = function (ref, data) {
   return {
     role: 'instagram',
     URL: data.showCaption ? data.url : `${ data.url }&hidecaption=true`,
-    layout: 'bodyItemLayout',
-    format: 'html'
+    layout: 'bodyItemLayout'
   };
 };

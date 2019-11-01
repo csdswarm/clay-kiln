@@ -12,8 +12,7 @@ module.exports = async function (ref, data) {
   return {
     role: 'audio',
     URL: `${ data.clipSrc }.mp3`,
-    imageURL,
-    layout: 'bodyItemLayout',
-    format: 'html'
+    ...imageURL ? { imageURL } : {},
+    layout: 'bodyItemLayout'
   };
 };

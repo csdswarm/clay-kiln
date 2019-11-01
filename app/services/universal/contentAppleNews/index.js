@@ -88,7 +88,7 @@ const log = require('../log').setup({ file: __filename }),
           .join(', ');
 
       return [
-        `${authorsListPrefix}${formattedAuthors}`,
+        `${authorsListPrefix} ${formattedAuthors}`,
         formattedSources
         // either credit sources might be missing, so this prevents an unecessary comma
       ].filter(content => content.trim().length > 0 )
@@ -118,7 +118,7 @@ const log = require('../log').setup({ file: __filename }),
   getTags = async tags => {
     return getCompInstanceData(tags._ref).then(tags => {
       return tags.items.map(tag => tag.text);
-    }).catch(e => log('error', `Error getting tags: ${e}`));
+    }).catch(e => log('error', 'Error getting tags:', e));
   },
   /**
    * https://developer.apple.com/documentation/apple_news/apple_news_format/components/using_html_with_apple_news_format?language=data
@@ -142,7 +142,7 @@ const log = require('../log').setup({ file: __filename }),
     if (isNotHTMLEmbed(lede[0]._ref)) {
       return getCompInstanceData(`${ lede[0]._ref }.anf`)
         .catch(e => {
-          log('error', `Error getting lede anf: ${ e }`);
+          log('error', 'Error getting lede anf:', e);
           return fallbackLede;
         });
     }
@@ -160,22 +160,25 @@ const log = require('../log').setup({ file: __filename }),
       return [];
     }
 
-    if (lede.stillURL) {
-      return [{
-        ...lede,
-        layout: 'headerImageLayout'
-      }];
+    const { components } = lede,
+      isImageComponent = _get(components, '0.role') === 'image';
+
+    if (isImageComponent) {
+      const [ledeImage, ledeCaption] = components;
+
+      return [
+        {
+          ...ledeImage,
+          layout: 'headerImageLayout'
+        },
+        ledeCaption || ANF_EMPTY_COMPONENT
+      ];
     }
 
-    const { components: [ledeImage, ledeCaption] } = lede;
-
-    return [
-      {
-        ...ledeImage,
-        layout: 'headerImageLayout'
-      },
-      ledeCaption || ANF_EMPTY_COMPONENT
-    ];
+    return [{
+      ...lede,
+      layout: 'headerImageLayout'
+    }];
   },
   /**
    * Get apple news format of each content ref
@@ -193,7 +196,7 @@ const log = require('../log').setup({ file: __filename }),
           .then(data => {
             contentANF.push(data);
           })
-          .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf: ${e}`));
+          .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf:`, e));
       }
     }
 
@@ -306,7 +309,7 @@ const log = require('../log').setup({ file: __filename }),
         excerpt: data.pageDescription,
         ...tags ? { keywords: tags } : {},
         thumbnailURL: lede.stillURL || data.feedImgUrl,
-        ...!!lede.URL ? { videoURL: lede.URL } : {}
+        ...lede.role === 'video' ? { videoURL: lede.URL } : {}
       },
       components: [
         {
