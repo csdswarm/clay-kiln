@@ -10,11 +10,11 @@ const publishing = require('../../services/publishing'),
 
 module.exports.routes = [
   // Partially static
-  { path: '/authors/:author'},
-  { path: '/blogs/:author/:title'}, // Frequency URL pattern
-  { path: '/blogs/:title'}, // Frequency URL pattern
-  { path: '/articles/:author/:title'}, // Frequency URL pattern
-  { path: '/articles/:title'}, // Frequency URL pattern
+  { path: '/authors/:author' },
+  { path: '/blogs/:author/:title' }, // Frequency URL pattern
+  { path: '/blogs/:title' }, // Frequency URL pattern
+  { path: '/articles/:author/:title' }, // Frequency URL pattern
+  { path: '/articles/:title' }, // Frequency URL pattern
   { path: '/article/:name' },
   { path: '/music/article/:slug' },
   { path: '/news/article/:slug' },

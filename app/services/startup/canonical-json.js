@@ -48,7 +48,7 @@ function middleware(req, res, next) {
   const params = {},
     { routeParamKey, routePrefix } = getPrefixAndKey(req.path);
 
-  let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, dynamicParamExtractor;
+  let promise, dynamicParamExtractor;
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
@@ -56,7 +56,8 @@ function middleware(req, res, next) {
 
   // Define Curated/Dynamic routes.
   // Match against section-front, topic, and author slug prefixes
-  curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+  const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+
   curatedOrDynamicRoutePrefixes.push('topic');
   curatedOrDynamicRoutePrefixes.push('authors');
 

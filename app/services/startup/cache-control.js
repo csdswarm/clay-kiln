@@ -13,7 +13,7 @@ const interceptor = require('express-interceptor'),
       /**
        * The interception happens here, after all other middleware. res can be altered before the response is actually sent.
        * @param {object} body
-       * @param send
+       * @param {function} send
        */
       intercept(body, send) {
         res.set('Cache-Control', 'private, no-store');

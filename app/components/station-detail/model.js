@@ -93,7 +93,7 @@ module.exports.render = (uri, data, locals) => {
 
   data.tags = getStationTags(locals.station);
   data.category = locals.station.category.toLowerCase() || '';
-  data.genre = locals.station.genre.map(({name}) => name).join();
+  data.genre = locals.station.genre.map(({ name }) => name).join();
   addBreadcrumbLinks(data, locals.site.host);
 
   return data;
