@@ -33,31 +33,23 @@ function filterNonContentType(page) {
 }
 
 /**
- * @param {Object} stream - save component event payload
- * @returns {boolean}
- */
-function filterNonContentComponent(stream) {
-  return stream._incoming && stream._incoming[0] &&
-    ['article', 'gallery'].includes(getComponentName(stream._incoming[0].key));
-}
-
-/**
  * Upon publish, publish to apple news feed and
- * add appleNewsID and appleNewsRevision to article
+ * add id and revision to db
  *
  * @param {page} page - publish page event payload
  **/
 async function handlePublishContentPg(page) {
   if (process.env.APPLE_NEWS_ENABLED) {
+    let appleNewsData = {};
+    const articleRef = page.data.main[0].replace('@published', ''),
+      appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`;
+
     try {
-      let appleNewsData = {};
-      const articleRef = page.data.main[0].replace('@published', ''),
-        appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`;
+      appleNewsData = await db.get(appleNewsKey);
+    } catch (e) { /* no apple news data in db for article */ };
 
-      try {
-        appleNewsData = await db.get(appleNewsKey);
-      } catch(e) { /* no apple news data in db for article */ };
-
+    try {
+      // eslint-disable-next-line one-var
       const { id, revision } = appleNewsData,
         response = await fetch(
           `${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }${
@@ -97,8 +89,7 @@ async function handlePublishContentPg(page) {
 
 /**
  * Upon unpublish, remove from apple news feed
- * and remove appleNewsID and appleNewsRevision
- * from article data
+ * and remove id and revision from db
  *
  * @param {Object} page - unpublish page event payload
  */
