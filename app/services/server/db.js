@@ -3,7 +3,7 @@
 const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
-  DATA_STRUCTURES = ['alert', 'apple_news'],
+  DATA_STRUCTURES = ['alert', 'valid_source', 'apple_news'],
   /**
    * Check Postgres to see if the table exists
    *
@@ -100,14 +100,16 @@ const utils = require('../universal/utils'),
    * If the table is not in DATA_STRUCTURES, the call is passed to the amphora-storage-postgres instance
    *
    * @param {string} key
+   * @param {object} [_locals] - unused, only here for api compatibility with client/db.js
+   * @param {any} [defaultValue]
    *
    * @returns {Promise}
    */
-  get = async (key, ...args) => {
+  get = async (key, _locals, defaultValue) => {
     const tableName = findSchemaAndTable(key);
 
     if (!tableName) {
-      return db.get(key, ...args);
+      return db.get(key);
     } else {
       await ensureTableExists(tableName);
       return db.raw(`
@@ -115,7 +117,9 @@ const utils = require('../universal/utils'),
         WHERE id = ?
       `, [key])
         .then(({rows}) => {
-          if (!rows.length) return Promise.reject(`No result found in ${tableName} for ${key}`);
+          if (!rows.length) {
+            return defaultValue || Promise.reject(new Error(`No result found in ${tableName} for ${key}`));
+          }
 
           return rows[0].data;
         });

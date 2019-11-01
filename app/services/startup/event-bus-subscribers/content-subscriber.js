@@ -39,14 +39,10 @@ function filterNonContentType(page) {
  * @param {page} page - publish page event payload
  **/
 async function handlePublishContentPg(page) {
-  if (process.env.APPLE_NEWS_ENABLED) {
-    let appleNewsData = {};
+  if (process.env.APPLE_NEWS_ENABLED === 'TRUE') {
     const articleRef = page.data.main[0].replace('@published', ''),
-      appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`;
-
-    try {
-      appleNewsData = await db.get(appleNewsKey);
-    } catch (e) { /* no apple news data in db for article */ };
+      appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`,
+      appleNewsData = await db.get(appleNewsKey, null, {});
 
     try {
       // eslint-disable-next-line one-var
@@ -99,9 +95,9 @@ async function handleUnpublishContentPg(page) {
       mainRef = pageData.main[0];
 
     if (['article', 'gallery'].includes(getComponentName(mainRef)) &&
-      process.env.APPLE_NEWS_ENABLED) {
+      process.env.APPLE_NEWS_ENABLED === 'TRUE') {
       const appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ mainRef }`,
-        articleData = await db.get(appleNewsKey),
+        articleData = await db.get(appleNewsKey, null, {}),
         { id } = articleData;
 
       if (id) {

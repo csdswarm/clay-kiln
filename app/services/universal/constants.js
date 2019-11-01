@@ -1,7 +1,8 @@
 'use strict';
 
-// Time Constants
-const SECOND = 1000,
+const _get = require('lodash/get'),
+  // Time Constants
+  SECOND = 1000,
   MINUTE = 60 * SECOND,
   HOUR = 60 * MINUTE,
   DAY = 24 * HOUR,
@@ -22,7 +23,9 @@ const SECOND = 1000,
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front'
-  };
+  },
+
+  SERVER_SIDE = _get(process, 'release.name') === 'node';
 
 
 module.exports = {
@@ -33,5 +36,6 @@ module.exports = {
   WEEK,
   YEAR,
   time,
-  PAGE_TYPES
+  PAGE_TYPES,
+  SERVER_SIDE
 };
