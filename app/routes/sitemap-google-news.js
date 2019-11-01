@@ -21,22 +21,25 @@ module.exports = async function (req, res) {
       ' as "xsi:schemaLocation"'
       : '',
     urlsInGoogleNewsFormatSQL = `
-    SELECT (meta->>'publishTime')::timestamp as published, xmlelement(name url, 
-      xmlelement(name loc, replace(meta->>'url', 'http://', 'https://')),
+    SELECT COALESCE(p.meta->>'publishTime', p.meta->>'updateTime')::timestamp as published, xmlelement(name url, 
+      xmlelement(name loc, replace(COALESCE(p.meta->>'url', pub.data->>'customUrl'), 'http://', 'https://')),
       xmlelement(name "news:news", 
         xmlelement(name "news:publication", 
           xmlelement(name "news:name", '${PUBLICATION_NAME}'),
           xmlelement(name "news:language", 'en')
         ),
-        xmlelement(name "news:publication_date", (meta->>'publishTime')::timestamptz),
-        xmlelement(name "news:title", meta->>'title')
+        xmlelement(name "news:publication_date", COALESCE(p.meta->>'publishTime', p.meta->>'updateTime')::timestamptz),
+        xmlelement(name "news:title", p.meta->>'title')
       )
     ) as xml_data
-    FROM public.pages
+    FROM 
+      public.pages pub
+        INNER JOIN public.pages p ON pub.id ~ '@published$' AND LEFT(pub.id, -10) = p.id, 
+        jsonb_array_elements_text(pub.data->'main') article_id
+        INNER JOIN components.article a ON article_id = a.id
     WHERE 
-      meta @> '{"published": true}'
-      AND (meta->>'publishTime')::date > current_date - ${NUMBER_OF_DAYS_TO_RETRIEVE}
-      AND data#>>'{main, 0}' ~ '_components/article/'
+      COALESCE(p.meta->>'publishTime', p.meta->>'updateTime')::date > current_date - ${NUMBER_OF_DAYS_TO_RETRIEVE}
+      AND NOT a.data @> '{"noIndexNoFollow": true}'
     ORDER BY 
       published DESC
     LIMIT 1000`,
