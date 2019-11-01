@@ -178,7 +178,7 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
+  urlOptions.slug = component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline)) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
 
@@ -192,7 +192,12 @@ function getUrlOptions(component, locals, pageType) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
     }
+  } else if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
+    urlOptions.contentType = 'authors';
+    urlOptions.author = component.author;
+    urlOptions.authorSlug = slugifyService(component.author);
   }
+
   return urlOptions;
 }
 
@@ -208,6 +213,7 @@ module.exports.getComponentInstance = getComponentInstance;
 module.exports.dateUrlPattern = urlPatterns.dateUrlPattern;
 module.exports.articleSlugPattern = urlPatterns.articleSlugPattern;
 module.exports.articleSecondarySectionFrontSlugPattern = urlPatterns.articleSecondarySectionFrontSlugPattern;
+module.exports.authorPageSlugPattern = o => `${o.prefix}/${o.contentType}/${o.authorSlug}`;
 module.exports.gallerySlugPattern = urlPatterns.gallerySlugPattern;
 module.exports.gallerySecondarySectionFrontSlugPattern = urlPatterns.gallerySecondarySectionFrontSlugPattern;
 module.exports.sectionFrontSlugPattern = urlPatterns.sectionFrontSlugPattern;
