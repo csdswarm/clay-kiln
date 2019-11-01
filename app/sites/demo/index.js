@@ -1,10 +1,16 @@
 'use strict';
 
 const publishing = require('../../services/publishing'),
-  mainComponentRefs = ['/_components/article/instances', '/_components/gallery/instances', '/_components/section-front/instances'];
+  mainComponentRefs = [
+    '/_components/article/instances',
+    '/_components/gallery/instances',
+    '/_components/section-front/instances',
+    '/_components/author-page-header/instances'
+  ];
 
 module.exports.routes = [
   // Partially static
+  { path: '/authors/:author'},
   { path: '/blogs/:author/:title'}, // Frequency URL pattern
   { path: '/blogs/:title'}, // Frequency URL pattern
   { path: '/articles/:author/:title'}, // Frequency URL pattern
@@ -53,7 +59,8 @@ module.exports.routes = [
 module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
-  (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs)
+  (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];
 
 module.exports.modifyPublishedData = [

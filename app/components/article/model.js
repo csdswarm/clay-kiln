@@ -10,7 +10,6 @@ module.exports = unityComponent({
     return createContent.render(uri, data, locals);
   },
   save: (uri, data, locals) => {
-    data.appleNewsEnabled = process.env.APPLE_NEWS_ENABLED === 'TRUE';
     data.dateModified = (new Date()).toISOString();
     return createContent.save(uri, data, locals);
   }

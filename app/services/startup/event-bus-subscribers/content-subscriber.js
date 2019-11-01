@@ -1,20 +1,10 @@
 'use strict';
 
 const db = require('../../../services/server/db'),
+  { subscribe } = require('amphora-search'),
   log = require('../../../services/universal/log').setup({ file: __filename }),
   { getComponentName } = require('clayutils'),
-  { subscribe } = require('amphora-search'),
   ANF_API = '/apple-news/articles';
-
-/**
- * @param {Object} stream - save page event payload
- */
-function save(stream) {
-  console.log(stream);
-  stream
-    .filter( filterNonContentType )
-    .each( handleSaveContent );
-}
 
 /**
  * @param {Object} stream - publish page event payload
@@ -42,95 +32,82 @@ function filterNonContentType(page) {
     ['article', 'gallery'].includes(getComponentName(page.data.main[0]));
 }
 
-async function handleSaveContent(page) {
-  console.log('save', page);
-}
-
 /**
  * Upon publish, publish to apple news feed and
- * add appleNewsID and appleNewsRevision to article
+ * add id and revision to db
  *
  * @param {page} page - publish page event payload
  **/
 async function handlePublishContentPg(page) {
-  try {
-    const host = page.uri.split('/')[0],
-      articleRef = page.data.main[0],
-      unpubArticleRef = articleRef.replace('@published', ''),
-      publishedArticleData = await db.get(articleRef),
-      unpubArticleData = await db.get(unpubArticleRef);
+  if (process.env.APPLE_NEWS_ENABLED) {
+    let appleNewsData = {};
+    const articleRef = page.data.main[0].replace('@published', ''),
+      appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ articleRef }`;
 
-    console.log('handle pub page', publishedArticleData.appleNewsEnabled);
-    if (publishedArticleData.appleNewsEnabled) {
-      try {
-        console.log('sending to apple news -- ', unpubArticleData.appleNewsID ? 'update' : 'publish', 'unpub:', unpubArticleData.appleNewsID, unpubArticleData.appleNewsRevision, 'pub:', publishedArticleData.appleNewsID, publishedArticleData.appleNewsRevision);
-        const { appleNewsRevision, appleNewsID } = publishedArticleData,
-          response = await fetch(
-            `${ process.env.CLAY_SITE_PROTOCOL }://${ host }${
-              ANF_API }${ appleNewsID ? `/${ appleNewsID }` : '' }`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                articleRef,
-                revision: appleNewsRevision
-              })
-            }
-          ),
-          jsonOrText = (response.headers.get('Content-Type') || '').includes
-          ('application/json') ? await response.json() : await response.text(),
-          { id, revision } = jsonOrText;
+    try {
+      appleNewsData = await db.get(appleNewsKey);
+    } catch (e) { /* no apple news data in db for article */ };
 
-        if (id && revision) {
-          publishedArticleData.appleNewsID = id;
-          publishedArticleData.appleNewsRevision = revision;
-          console.log('apple news returned id & revision', id, revision);
-          await db.put(unpubArticleRef, JSON.stringify(publishedArticleData));
-          await db.put(articleRef, JSON.stringify(publishedArticleData));
-          console.log('finish saving id & revision to db');
-          const { appleNewsID, appleNewsRevision } = await db.get(unpubArticleRef);
-          console.log(appleNewsID, appleNewsRevision);
-          const { appleNewsID: pubID, appleNewsRevision: pubRev } = await db.get(articleRef);
-          console.log(pubID, pubRev);
-        }
-      } catch (e) {
-        log('error', `Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);
-        if (e.message === '404: Not Found') {
-          delete unpubArticleData.appleNewsID;
-          delete unpubArticleData.appleNewsRevision;
-          console.log('article not found in apple news');
-          await db.put(unpubArticleRefarticleRef, JSON.stringify(unpubArticleData));
-          await db.put(articleRef, JSON.stringify(unpubArticleData));
-          console.log('finish deleting article ID from db');
+    try {
+      // eslint-disable-next-line one-var
+      const { id, revision } = appleNewsData,
+        response = await fetch(
+          `${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }${
+            ANF_API }${ id ? `/${ id }` : '' }`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              articleRef,
+              revision: revision || null
+            })
+          }
+        ),
+        jsonOrText = (response.headers.get('Content-Type') || '').includes
+        ('application/json') ? await response.json() : await response.text(),
+        { id: newID, revision: newRevision } = jsonOrText;
+
+      if (newID && newRevision) {
+        const updatedAppleNewsData = JSON.stringify({
+          id: newID, revision: newRevision
+        });
+
+        if (id) {
+          await db.put(appleNewsKey, updatedAppleNewsData);
+        } else {
+          await db.post(appleNewsKey, updatedAppleNewsData);
         }
       }
+    } catch (e) {
+      log('error', `Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);
+      if (e.message === '404: Not Found') {
+        await db.del(appleNewsKey);
+      }
     }
-  } catch (e) {
-    log('error', `Error getting article data: ${ e.message } ${ e.stack }`);
   }
 };
 
 /**
  * Upon unpublish, remove from apple news feed
- * and remove appleNewsID and appleNewsRevision
- * from article data
+ * and remove id and revision from db
  *
  * @param {Object} page - unpublish page event payload
  */
 async function handleUnpublishContentPg(page) {
   try {
-    const host = page.uri.split('/')[0],
-      pageData = await db.get(page.uri),
+    const pageData = await db.get(page.uri),
       mainRef = pageData.main[0];
 
-    if (['article', 'gallery'].includes(getComponentName(mainRef))) {
-      const articleData = await db.get(mainRef),
-        { appleNewsEnabled, appleNewsID } = articleData;
+    if (['article', 'gallery'].includes(getComponentName(mainRef)) &&
+      process.env.APPLE_NEWS_ENABLED) {
+      const appleNewsKey = `${ process.env.CLAY_SITE_HOST }/_apple_news/${ mainRef }`,
+        articleData = await db.get(appleNewsKey),
+        { id } = articleData;
 
-      if (appleNewsEnabled && appleNewsID) {
+      if (id) {
         const response = await fetch(
-          `${ process.env.CLAY_SITE_PROTOCOL }://${ host }${
-            ANF_API }/${ appleNewsID }`,
+          `${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }${
+            ANF_API }/${ id }`,
           {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
@@ -138,16 +115,10 @@ async function handleUnpublishContentPg(page) {
         );
 
         if ([204, 404].includes(response.status)) {
-          console.log('finish deleting article from apple news');
-          delete articleData.appleNewsID;
-          delete articleData.appleNewsRevision;
-          await db.put(mainRef, JSON.stringify(articleData));
-          await db.put(mainRef.replace('@published', ''), JSON.stringify(articleData));
-          console.log('finish deleting article ID from db');
-        } else {
-          console.log('unpub failed');
+          await db.del(appleNewsKey);
         }
       }
+
     }
   } catch (e) {
     log('error', `Error hitting apple news api on unpub: ${ e.message } ${ e.stack }`);
@@ -158,7 +129,6 @@ async function handleUnpublishContentPg(page) {
  * subscribe to event bus messages
  */
 module.exports = () => {
-  subscribe('save').through(save);
   subscribe('publishPage').through(publishPage);
   subscribe('unpublishPage').through(unpublishPage);
 };
