@@ -2,7 +2,7 @@
 
 const _get = require('lodash/get'),
   db = require('amphora-storage-postgres'),
-  { isPage, isPageMeta, isUri } = require('clayutils'),
+  { isPage, isUri } = require('clayutils'),
   pathToRegexp = require('path-to-regexp'),
   urlParse = require('url-parse'),
   log = require('../../universal/log').setup({ file: __filename }),
@@ -177,8 +177,12 @@ const _get = require('lodash/get'),
      * @param {string} pipelineArgs.url
      */
     pageUri: async (stationSlugObj, { url }) => {
-      if (!isPage(url) || isPageMeta(url)) {
+      if (!isPage(url)) {
         return;
+      }
+
+      if (url.endsWith('/meta')) {
+        url = url.slice(0, -'/meta'.length);
       }
 
       const foundStationSlug = await getStationSlugFromPage(urlToUri(url));
