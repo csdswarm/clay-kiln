@@ -83,7 +83,6 @@ function processContent(obj, components) {
 }
 
 function save(stream) {
-  console.log('save stream');
   let components = [];
 
   return stream
@@ -146,8 +145,7 @@ function getMain(op) {
  * @return {Stream}
  */
 function unpublishPage(stream) {
-  return stream
-    .flatMap(getMain)
+  return stream.flatMap(getMain)
     .flatMap(removePublished)
     .errors(logError)
     .each(logSuccess(INDEX));
