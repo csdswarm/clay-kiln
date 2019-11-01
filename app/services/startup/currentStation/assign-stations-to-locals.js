@@ -91,6 +91,7 @@ const { join } = require('path'),
       Object.assign(locals, {
         station: {},
         stationForPermissions: null
+
       });
       return;
     }
@@ -104,7 +105,8 @@ const { join } = require('path'),
           getSlugFrom.stationIdParameter,
           getSlugFrom.pageUri,
           getSlugFrom.contentComponent,
-          getSlugFrom.publishedUri
+          getSlugFrom.publishedUri,
+          getSlugFrom.rdcRoute
         ]
       ),
       // this ternary accounts for the unlikely scenario 'null' is a
