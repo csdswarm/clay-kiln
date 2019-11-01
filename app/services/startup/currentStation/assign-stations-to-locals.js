@@ -88,7 +88,11 @@ const { join } = require('path'),
    */
   assignStationsToLocals = async (locals, req, allStations) => {
     if (!validPath(req)) {
-      return {};
+      Object.assign(locals, {
+        station: {},
+        stationForPermissions: null
+      });
+      return;
     }
 
     const url = getFullOriginalUrl(req),

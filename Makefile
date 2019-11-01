@@ -114,10 +114,10 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	cd spa && npm i && npm run-script build -- --mode=none && cd ../app && npm i && npm run build
+	cd app && npm i && cd ../spa && npm i && npm run-script build -- --mode=none && cd ../app && npm run build
 
 install:
-	cd spa && npm i && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm i && npm run build-production
+	cd app && npm i && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm run build-production
 
 lint:
 	cd app && npm run eslint; cd ../spa && npm run lint -- --no-fix

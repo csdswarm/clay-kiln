@@ -165,7 +165,7 @@ const _get = require('lodash/get'),
         allStations.byId[stationId]
         && typeof stationSlugObj.forCommonUse !== 'string'
       ) {
-        stationSlugObj.forCommonUse = allStations.byId[stationId].attributes.site_slug;
+        stationSlugObj.forCommonUse = allStations.byId[stationId].site_slug;
       }
     },
     /**
