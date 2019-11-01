@@ -1,6 +1,6 @@
 'use strict';
 
-const { claycli } = require('../base');
+const { claycli } = require('./base');
 
 /**
  * Exports objects from clay

@@ -6,8 +6,8 @@
  *    'https://bitbucket.org/entercom/clay-radio/src/82ed8c7fc80bbc2f57673d98da19db96fbeccb77/migrations/legacy/elasticsearch.js?at=ON-1068-add-station-logic-to-content-type'
  *
  */
-const { _identity, _defaults, prettyJSON } = require('../base');
-const { v1: makeHttpEs } = require('../make-http-es');
+const { _identity, _defaults, prettyJSON } = require('./base');
+const { v1: makeHttpEs } = require('./make-http-es');
 const isTruthy = _identity;
 
 /**

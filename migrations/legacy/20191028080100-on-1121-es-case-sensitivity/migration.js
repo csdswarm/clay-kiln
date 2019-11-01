@@ -49,7 +49,7 @@ async function start() {
   if (updated) {
     console.log(`Created flexible match analyzer for secondarySectionFront in the ${updated} index`);
   } else {
-    console.log(`Flexible match analyzer for secondarySectionFront in the ${updated} index already exists. Skipping.`);
+    console.log(`Flexible match analyzer for secondarySectionFront in the ${index} index already exists. Skipping.`);
   }
 }
 

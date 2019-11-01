@@ -1,6 +1,6 @@
 'use strict';
 
-const httpRequest = require('../http-request').v1;
+const httpRequest = require('./http-request').v1;
 
 /**
  * Does a basic republish of the page or component

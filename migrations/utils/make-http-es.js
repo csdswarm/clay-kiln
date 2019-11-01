@@ -1,7 +1,7 @@
 'use strict';
 
-const httpGet = require('../http-get').v1,
-  httpRequest = require('../http-request').v1;
+const httpGet = require('./http-get').v1,
+  httpRequest = require('./http-request').v1;
 
 /**
  * Adds the prefix to the beginning if the string doesn't already start with it

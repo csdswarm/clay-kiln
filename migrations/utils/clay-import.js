@@ -1,5 +1,5 @@
 'use strict';
-const { _get, claycli, toYaml } = require('../base');
+const { _get, claycli, toYaml } = require('./base');
 
 /**
  * Imports objects (_components/_pages/_layouts/_lists) into clay
