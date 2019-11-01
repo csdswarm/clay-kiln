@@ -137,7 +137,6 @@ function getMain(op) {
   return h(db.get(op.uri).then( data => data.main[0]));
 }
 
-
 /**
  * remove the published article/gallery from elasticsearch
  *
