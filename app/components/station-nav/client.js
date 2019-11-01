@@ -16,7 +16,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    *
    * @param {Object} event
    */
-  toggleListenDrawer = () => {
+  toggleListenDrawer = (event) => {
     listenNavToggle.classList.toggle(active);
     // TODO -- Toggle listen drawer here
   },
