@@ -30,7 +30,7 @@ const axios = require('axios'),
    */
   menuItemChecker = (locals, pageType, id) =>
     item =>
-      item.id !== id || locals.user.can('create').a(pageType).at(locals.station.callsign).value;
+      item.id !== id || locals.user.can('create').a(pageType).value;
 
 /**
  * Adds an endpoint to the router which intercepts the 'new-pages' list and
@@ -65,15 +65,6 @@ module.exports = router => {
       filteredPages = newPages
         .filter(item => {
           if (!canCreateSectionFronts && item.id === 'section-front') {
-            return false;
-          }
-
-          // filter out by station premissions
-          // Categories without a stationCallsign property are assumed to be for
-          //   the national station.
-          const callsign = item.stationCallsign || 'NATL-RC';
-
-          if (!user.can('access').the('station').at(callsign).value) {
             return false;
           }
 
