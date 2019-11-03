@@ -397,7 +397,7 @@ function addSearch(query, searchTerm, fields) {
   const key = `${getRoot(query)}.query`,
     value = {
       query_string: {
-        query: searchTerm.replace(/([\/|:])/g, '\\$1'),
+        query: sanitizeSearchTerm(searchTerm),
         fields: _.isArray(fields) ? fields : [fields]
       }
     };
@@ -405,6 +405,19 @@ function addSearch(query, searchTerm, fields) {
   _.set(query, key,  value);
 
   return query;
+}
+
+/**
+ * for now (for backwards compatibility) this just escapes colons and forward
+ *   slashes.  The full list of query special characters is found here:
+ *
+ *   https://www.elastic.co/guide/en/elasticsearch/reference/6.2/query-dsl-query-string-query.html#_reserved_characters
+ *
+ * @param {string} searchTerm
+ * @returns {string}
+ */
+function sanitizeSearchTerm(searchTerm) {
+  return searchTerm.replace(/([\/|:])/g, '\\$1');
 }
 
 module.exports = newQuery;
@@ -427,5 +440,6 @@ Object.assign(module.exports, {
   formatProtocol,
   moreLikeThis,
   newNestedQuery,
-  addSearch
+  addSearch,
+  sanitizeSearchTerm
 });
