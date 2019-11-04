@@ -355,7 +355,7 @@ async function executeSQL(sql, ...args) {
     );
     return rows || [];
   } catch (error) {
-    console.error('There was an error while executing SQL.\n\n', { error, path, args });
+    console.error('There was an error while executing SQL.\n\n', { error, args });
   }
 }
 

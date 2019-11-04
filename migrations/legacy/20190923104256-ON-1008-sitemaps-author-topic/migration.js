@@ -76,19 +76,19 @@ const createSitemapScript = name =>
   async () => (await getFileText(`${__dirname}/sql/${name}-sitemap.sql`))
      .replace(/{{baseUrl}}/g, url);
 
-const addSlug = ({ text }) => ({ text, slug: textToEncodedSlug(text) });
+const addSlug = obj => obj && ({ text: obj.text, slug: textToEncodedSlug(obj.text) });
 
 const addAuthorSlugs = rows =>
-  rows.map(({id, byline, authors}) => ({
-    id,
-    byline: byline.map(item => ({...item, names: item.names.map(addSlug) })),
-    authors: authors.map(addSlug),
+  rows.map(obj => obj && ({
+    id: obj.id,
+    byline: obj.byline.map(item => item && ({...item, names: item.names.map(addSlug) })),
+    authors: obj.authors.map(addSlug),
   }));
 
 const addTagSlugs = rows =>
-  rows.map(({id, items}) => ({
-    id,
-    items: items.map(addSlug)
+  rows.map(obj => obj && ({
+    id: obj.id,
+    items: obj.items.map(addSlug)
   }));
 
 
