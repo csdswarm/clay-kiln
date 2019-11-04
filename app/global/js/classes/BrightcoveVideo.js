@@ -225,8 +225,8 @@ class BrightcoveVideo extends Video {
                 </a>
                 <div class="rdc-overlay__close"></div>
               `,
-              start: 10,
-              end: 20
+              start: 20,
+              end: 30
             }]
           });
 
