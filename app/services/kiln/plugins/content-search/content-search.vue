@@ -30,9 +30,8 @@
     </div>
 </template>
 <script>
-
   import axios from 'axios';
-  import _values from 'lodash/values';
+  import _ from 'lodash';
   import _debounce from 'lodash/debounce';
   import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
   import queryService from '../../../client/query';
@@ -40,13 +39,47 @@
   const { UiButton, UiTextbox }  = window.kiln.utils.components;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
   const { sanitizeSearchTerm } = queryService;
+  const nationalStationSlug = '';
+  // this query says
+  //   "match if stationSlug doesn't exist or it's an empty slug"
+  //   currently I think national stations shouldn't have a stationSlug, but
+  //   because I'm setting stationSlug to an empty string as a national slug
+  //   identifier, I wanted to make sure we checked that as well.
+  const matchNationalStation = [
+    {
+      bool: {
+        must_not: { exists: { field: "stationSlug" } }
+      }
+    },
+    { match: { stationSlug: nationalStationSlug } }
+  ];
 
-  const matchStationsIHaveAccessTo = () => {
+  /**
+   * returns an array which will be put into an elasticsearch `should` array
+   *   meant to match any station we have access to.
+   *
+   * I'm pretty sure this needs to be a function because window.kiln.locals is
+   *
+   *
+   * @returns {object}
+   */
+  const getMatchStationsIHaveAccessTo = () => {
     const { locals } = window.kiln;
 
-    return _values(locals.stationsIHaveAccessTo)
-      .map(station => ({ match: { stationSlug: station.slug } }));
+    const matchStations = _.chain(locals.stationsIHaveAccessTo)
+      // omit the national
+      .omit(nationalStationSlug)
+      .map(station => ({ match: { stationSlug: station.slug } }))
+      .value();
+
+    if (locals.stationsIHaveAccessTo[nationalStationSlug]) {
+      matchStations.push(...matchNationalStation)
+    }
+
+    return matchStations;
   };
+
+  const matchStationsIHaveAccessTo = getMatchStationsIHaveAccessTo();
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -96,7 +129,7 @@
                 fields: ["authors", "canonicalUrl", "tags", "teaser"]
               }
             }],
-            should: matchStationsIHaveAccessTo()
+            should: matchStationsIHaveAccessTo
           }
         });
         queryService.addSort(query, { date: { order: 'desc'} });
