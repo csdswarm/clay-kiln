@@ -21,6 +21,7 @@ $silver: #CCC;
 $mineShaft: #393939;
 $60gray: #999999;
 $91gray: #E8E8E8;
+$mineShaftLight: #393939;
 
 /* Reds */
 $red: #F00; /* Errors */
@@ -62,7 +63,7 @@ $purpleRGB: 60, 0, 183;
 /* ---------------------------------------------------------- */
 $station-primaryColor: theme(primaryColor, $parisM);
 $station-secondaryColor: theme(secondaryColor, $purple);
-$station-tertiaryColor: theme(tertiaryColor, $mineShaft);
+$station-tertiaryColor: theme(tertiaryColor, $mineShaftLight);
 $station-primaryFontColor: theme(primaryFontColor, $white);
 $station-secondaryFontColor: theme(secondaryFontColor, $black);
 

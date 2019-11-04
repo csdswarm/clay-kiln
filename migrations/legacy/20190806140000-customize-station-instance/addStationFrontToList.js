@@ -3,26 +3,22 @@ const fs = require('fs'),
 
 const data = YAML.load(`${__dirname}/list.yml`);
 
-const newStationFront = { id: 'station-front-3', title: 'Station Front' };
+const newStationFront = { id: 'station-basic-music', title: 'Basic Music' };
+const stationsList = { id: 'stations', title: '3. Stations', children: [ newStationFront ] };
 
 const newPages = data._lists['new-pages'];
 
-const index = newPages.findIndex(({ id }) => id === 'section-front');
-const stationFront = newPages[index].children.find(({ id }) => id === newStationFront.id);
+// Check if stations exists in the list
+const stationsIndex = newPages.findIndex(({ id }) => id === stationsList.id);
 
-if (stationFront === undefined) {
-  newPages[index].children.push(newStationFront);
+if (stationsIndex === -1) {
+  newPages.push(stationsList);
 } else {
-  newPages[index].children.splice(
-    newPages[index].children.findIndex(({ id }) => id === newStationFront.id),
-    1,
-    newStationFront
-  );
+  newPages[stationsIndex].children.push(newStationFront);
 }
 
 data._lists['new-pages'] = newPages;
 
 fs.writeFile(`${__dirname}/list.yml`, YAML.stringify(data, 6, 2), 'utf8', function(err) {
-    if (err) throw err;
-  }
-);
+  if (err) throw err;
+});

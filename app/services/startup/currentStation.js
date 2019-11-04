@@ -42,10 +42,10 @@ const radioApiService = require('../../services/server/radioApi'),
    * @return {string}
    */
   getStationSlug = (req) => {
-    const [, stationPath] = req.originalUrl.split('/'),
+    const [, stationPath] = req.originalUrl.split('?')[0].split('/'),
       stationHost = req.get('host').split('/').shift().split('.').shift().toLowerCase();
 
-    return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
+    return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath.toLowerCase() : stationHost.toLowerCase();
   },
   /**
    * determines if the path is valid for station information
@@ -122,9 +122,12 @@ const radioApiService = require('../../services/server/radioApi'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  res.locals.station = await getStation(req);
+  const station = await getStation(req);
+
   res.locals.allStationsCallsigns = allStationsCallsigns;
+  res.locals.allStationsSlugs = Object.keys(allStations);
   res.locals.defaultStation = defaultStation;
+  res.locals.station = station || {};
 
   return next();
 };

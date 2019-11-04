@@ -35,7 +35,7 @@ topSection:
 topAd:
   _componentList:
     include:
-      - header
+      - google-ad-manager
 layoutHeader:
   _componentList:
     include:
@@ -76,7 +76,7 @@ bottomSection:
 bottomAd:
   _componentList:
     include:
-      - footer
+      - google-ad-manager
 
 kilnInternals:
   _componentList:
