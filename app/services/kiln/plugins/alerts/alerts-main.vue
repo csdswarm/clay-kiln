@@ -138,9 +138,9 @@
 <script>
     const axios = require('axios');
     const moment = require('moment');
+    const _get = require('lodash/get');
     const { isUrl } = require('../../../universal/utils');
     const StationSelect = require('../../shared-vue-components/station-select.vue');
-    const { mapGetters } = require('vuex');
     const {
         UiButton,
         UiCheckbox,
@@ -198,48 +198,64 @@
                 this.loadAlerts();
             }
         },
-        computed: Object.assign(
-            {},
-            mapGetters(StationSelect.storeNs, ['selectedStation']),
-            {
-                end() {
-                    return this.combineDateAndTime(this.endDate, this.endTime);
-                },
-                start() {
-                    return this.combineDateAndTime(this.startDate, this.startTime);
-                },
-                global() {
-                    return this.tab === 'global';
-                },
-                heading(){
-                    return `${this.editMode ? 'Edit' : 'Add New'} Alert` ;
-                },
-                /** Current station, or global station */
-                station() {
-                    return this.global ? 'NATL-RC' : this.selectedStation.callsign;
-                },
-                /** True if all required fields are entered */
-                validForm() {
-                    return (
-                        this.message
-                        && this.startDate
-                        && this.startTime
-                        && this.endDate
-                        && this.endTime
-                        && !moment(this.start).isSameOrAfter(this.end)
-                        && this.validLink
-                    );
-                },
-                validLink() {
-                    if (this.link && !isUrl(this.link)) {
-                        this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
-                        return false;
-                    }
-                    this.validLinkError = '';
-                    return true;
+        computed: {
+            end() {
+                return this.combineDateAndTime(this.endDate, this.endTime);
+            },
+            start() {
+                return this.combineDateAndTime(this.startDate, this.startTime);
+            },
+            global() {
+                return this.tab === 'global';
+            },
+            heading() {
+                return `${this.editMode ? 'Edit' : 'Add New'} Alert`;
+            },
+            selectedStation() {
+                // because this component conditionally renders station-select,
+                //   the store may not have been initialized so we need to  wrap
+                //   the accessor in _get
+                return _get(
+                    this.$store.state,
+                    `[${StationSelect.storeNs}].selectedStation`,
+                    {}
+                );
+            },
+            /** Current station, or global station */
+            station() {
+                return this.global ? 'GLOBAL' : this.selectedStation.callsign;
+            },
+            stationCallsigns() {
+                const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
+
+                return allStationCallsigns.concat('NATL-RC')
+                    .sort()
+                    .map(station => ({
+                        label: station === 'NATL-RC' ? 'Radio.com' : station,
+                        value: station
+                    }));
+            },
+            /** True if all required fields are entered */
+            validForm() {
+                return (
+                    this.message
+                    && this.startDate
+                    && this.startTime
+                    && this.endDate
+                    && this.endTime
+                    && !moment(this.start).isSameOrAfter(this.end)
+                    && this.validLink
+                );
+            },
+            validLink() {
+                if (this.link && !isUrl(this.link)) {
+                    this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
+                    return false;
                 }
+                this.validLinkError = '';
+                return true;
             }
-        ),
+        },
         methods: {
             /**
              * Adds or updates an alert based on if in editMode
