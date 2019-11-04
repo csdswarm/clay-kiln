@@ -6,8 +6,8 @@ const { getStationPage, getStationFooter } = require('../../services/server/stat
 module.exports = unityComponent({
   render: async (ref, data, locals) => {
     const { station, defaultStation } = locals,
-      { slug } = station,
-      isDefaultStation = slug === defaultStation.slug,
+      { site_slug } = station,
+      isDefaultStation = site_slug === defaultStation.site_slug,
       isDefaultRef = /instances\/default/.test(ref),
       buttons = {
         facebook: (url) => url,
@@ -23,7 +23,7 @@ module.exports = unityComponent({
     data.station = station;
 
     if (isDefaultRef && !isDefaultStation) {
-      const stationPageData = await getStationPage(slug);
+      const stationPageData = await getStationPage(site_slug);
 
       if (stationPageData) {
         Object.assign(data, await getStationFooter(stationPageData));

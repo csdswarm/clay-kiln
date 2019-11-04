@@ -89,7 +89,9 @@ const db = require('./db'),
       AND sectionFront.id ~ 'published'
     `).then(results => _get(results, 'rows[0].uri'));
 
-    return db.get(pageUri);
+    if (pageUri) {
+      return db.get(pageUri);
+    }
   },
 
   /**

@@ -8,8 +8,8 @@ const { playingClass } = require('../../services/universal/spaLocals'),
 module.exports = unityComponent({
   render: async (ref, data, locals) => {
     const { station, defaultStation } = locals,
-      { slug } = station,
-      isDefaultStation = slug === defaultStation.slug,
+      { site_slug } = station,
+      isDefaultStation = site_slug === defaultStation.site_slug,
       isDefaultRef = /instances\/default/.test(ref);
 
     data._computed = {
@@ -17,7 +17,7 @@ module.exports = unityComponent({
     };
 
     if (isDefaultRef && !isDefaultStation) {
-      const stationPageData = await getStationPage(slug);
+      const stationPageData = await getStationPage(site_slug);
 
       if (stationPageData) {
         Object.assign(data, await getStationNav(stationPageData));
