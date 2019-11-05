@@ -25,7 +25,7 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   await Promise.all([
-    getNowPlaying(locals.station.id, data),
+    getNowPlaying(locals.station.id, data, locals),
     getSchedule({
       stationId: locals.station.id,
       pageSize: 50,

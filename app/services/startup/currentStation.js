@@ -156,7 +156,7 @@ const { lstatSync, readdirSync } = require('fs'),
     return _get(
       allStations,
       `bySlug[${stationSlug}].attributes`,
-      DEFAULT_STATION
+      defaultStation
     );
   };
 
