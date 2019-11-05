@@ -9,4 +9,5 @@
 
 2. Create a new page
    1. create a migration.yml file
-   2.
+   2. create a {page-name}.yml file
+   3. import and publish page `clay import -k demo -y -p $1 < ./{path-to-page-yaml-file}`
