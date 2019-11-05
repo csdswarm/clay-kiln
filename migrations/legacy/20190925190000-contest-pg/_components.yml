@@ -14,7 +14,7 @@ _components:
           gallery: true
   tags:
     instances:
-      contests-new:
+      contests:
         items:
           -
             text: 'Contests'
@@ -46,6 +46,6 @@ _components:
         rules:
           _ref: /_components/contest-rules/instances/new
         tags:
-          _ref: /_components/tags/instances/contests-new
+          _ref: /_components/tags/instances/contests
         adTags:
           _ref: /_components/ad-tags/instances/new
