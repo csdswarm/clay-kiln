@@ -19,6 +19,6 @@ const removePrimaryLinks = async (componentData) => {
 console.log('Removing primaryLinks from default station-nav instance...\n');
 
 getStationNav()
-  .catch(console.error)
   .then(removePrimaryLinks)
-  .then(() => console.log('\nDone.'));
+  .then(() => console.log('\nDone.'))
+  .catch(console.error);
