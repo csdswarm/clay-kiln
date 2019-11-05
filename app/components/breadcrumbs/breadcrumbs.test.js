@@ -11,7 +11,8 @@ describe.only(dirname, function () {
       const data = { a: 'ay', b: 'bee' },
         props = ['a'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      autoLink(data, props, 'somehost.com');
+      expect(data.breadcrumbs)
         .to.eql([
           { text: 'ay', url: '//somehost.com/ay' }
         ]);
@@ -21,7 +22,8 @@ describe.only(dirname, function () {
       const data = { a: 'ay', b: 'bee', c: 'cee' },
         props = ['a', 'b', 'c'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      autoLink(data, props, 'somehost.com');
+      expect(data.breadcrumbs)
         .to.eql([
           { text: 'ay', url: '//somehost.com/ay' },
           { text: 'bee', url: '//somehost.com/ay/bee' },
@@ -33,7 +35,8 @@ describe.only(dirname, function () {
       const data = { a: 'ay', b: 'bee', c: 'cee' },
         props = ['a', 'b', 'd'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      autoLink(data, props, 'somehost.com');
+      expect(data.breadcrumbs)
         .to.eql([
           { text: 'ay', url: '//somehost.com/ay' },
           { text: 'bee', url: '//somehost.com/ay/bee' }
@@ -44,7 +47,8 @@ describe.only(dirname, function () {
       const data = { a: 'Ay', b: 'Bee' },
         props = ['a', 'b'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      autoLink(data, props, 'somehost.com');
+      expect(data.breadcrumbs)
         .to.eql([
           { text: 'Ay', url: '//somehost.com/ay' },
           { text: 'Bee', url: '//somehost.com/ay/bee' }
@@ -55,7 +59,8 @@ describe.only(dirname, function () {
       const data = { a: 'Ay Thing', b: 'Bee Gone Foul Pirate' },
         props = ['a', 'b'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      autoLink(data, props, 'somehost.com');
+      expect(data.breadcrumbs)
         .to.eql([
           { text: 'Ay Thing', url: '//somehost.com/ay-thing' },
           { text: 'Bee Gone Foul Pirate', url: '//somehost.com/ay-thing/bee-gone-foul-pirate' }
@@ -66,7 +71,8 @@ describe.only(dirname, function () {
       const data = { a: 'Ay Thing/Whosiwatsit', b: 'Bee Gone & Leave Now' },
         props = ['a', 'b'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      autoLink(data, props, 'somehost.com');
+      expect(data.breadcrumbs)
         .to.eql([
           { text: 'Ay Thing/Whosiwatsit', url: '//somehost.com/ay-thing%2Fwhosiwatsit' },
           { text: 'Bee Gone & Leave Now', url: '//somehost.com/ay-thing%2Fwhosiwatsit/bee-gone-%26-leave-now' }
