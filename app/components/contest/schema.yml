@@ -177,6 +177,10 @@ endDateTime:
   _label: Contest End Datetime
   _publish: contestEndDate
 
+stationTimezone:
+  _label: Station Timezone
+  _publish: stationTimezone
+
 stationSlug:
   _label: Station Slug
   _has: static
