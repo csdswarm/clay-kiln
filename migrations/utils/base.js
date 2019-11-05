@@ -1,5 +1,10 @@
 'use strict';
-const YAML = require('yamljs');
+const YAML = require('../../app/node_modules/yamljs');
+
+const DEFAULT_HEADERS = {
+  'Content-Type': 'application/json',
+  'Authorization': 'token accesskey',
+};
 
 // This library is designed to provide easy access to simple functions that have little to no
 // dependencies on anything else. Anything here should be either a wrapper for a 3rd party method
@@ -9,6 +14,7 @@ const YAML = require('yamljs');
 //            Do not add methods to this library that depend on any other items in this library
 //            create a new module or add those directly to migration-utils.js
 module.exports = {
+  DEFAULT_HEADERS,
   _chunk: require('../../app/node_modules/lodash/chunk'),
   _defaults: require('../../app/node_modules/lodash/defaults'),
   _get: require('../../app/node_modules/lodash/get'),

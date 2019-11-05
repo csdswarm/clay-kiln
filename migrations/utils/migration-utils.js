@@ -21,6 +21,8 @@
  *******************************************************************************************/
 const v1 = {
   ...(require('./base')),
+  ...(require('./execute-sql').v1),
+  ...(require('./read-file').v1),
   clayExport: require('./clay-export').v1,
   clayImport: require('./clay-import').v1,
   elasticsearch: require('./elasticsearch').v1,
@@ -28,8 +30,8 @@ const v1 = {
   httpGet: require('./http-get').v1,
   httpRequest: require('./http-request').v1,
   parseHost: require('./parse-host').v1,
-  readFile: require('./read-file').v1,
   republish: require('./republish').v1,
+  usingDb: require('./using-db').v1,
 };
 
 module.exports = {

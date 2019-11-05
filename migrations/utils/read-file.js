@@ -1,8 +1,10 @@
 'use strict';
 const fs = require('fs');
+const util = require('util');
+const readFileAsync_v1 = util.promisify(fs.readFile);
+const getFileText_v1 = path => readFileAsync_v1(path, 'utf-8');
 
 /**
- *
  * @param {Object} params
  * @returns {Promise<any>}
  */
@@ -17,4 +19,14 @@ function readFile_v1(params) {
   });
 }
 
-module.exports = { v1: readFile_v1 };
+module.exports = {
+  v1: {
+    /**
+     * use readFileAsync instead, keeping readFile only for backwards compatibility
+     * @deprecated
+     */
+    readFile: readFile_v1,
+    getFileText: getFileText_v1,
+    readFileAsync: readFileAsync_v1,
+  }
+};

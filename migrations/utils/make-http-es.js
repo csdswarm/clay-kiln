@@ -106,7 +106,7 @@ const makeHttpEs_v1 = parsedHost => {
     // I couldn't think of readable properties for post/put so I stuck
     //   'responseType' as an argument.  It's possible we'll want to post
     //   different body types without adding a header every time but currently
-    //   we don't have a need for that.
+    //   we don't have a need for that. - PO
     post: makePostOrPut('POST'),
     put: makePostOrPut('PUT')
   };
