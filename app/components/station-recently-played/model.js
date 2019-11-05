@@ -1,9 +1,8 @@
 'use strict';
 
 const radioApi = require('../../services/server/radioApi'),
-  { apiDayOfWeek } = require('../../services/universal/dateTime'),
-  { playingClass } = require('../../services/server/spaLocals'),
-  { formatUTC } = require('../../services/universal/dateTime'),
+  { apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime'),
+  { playingClass } = require('../../services/universal/spaLocals'),
   moment = require('moment');
 
 /**

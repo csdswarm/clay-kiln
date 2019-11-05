@@ -53,6 +53,13 @@
     @mixin-content;
   }
 }
+
+$default-screen-nav-width: em(1100); /* 1280+ desktop */
+$large-screen-nav-width: em(940); /* 1280-1024 desktop */
+$medium-screen-nav-width: em(728); /* 1023-481 tablet */
+$medium-small-screen-nav-width: em(440); /* 480-361 mobile */
+$small-screen-nav-width: em(320); /* 360- mobile */
+
 @define-mixin vertical-align $position: relative {
   position: $position;
   top: 50%;
