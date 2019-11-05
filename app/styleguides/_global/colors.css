@@ -13,6 +13,7 @@ $boulder: #777;
 $concrete: #F3F3F3;
 $doveGray: #666;
 $dustyGray: #9B9B9B;
+$mineShaft: #222;
 $mercury: #E1E1E1;
 $mineShaftLight: #393939;
 $silver: #CCC;
@@ -57,6 +58,9 @@ $parisM: #1F055E; /* Primary Dark */
 $parisMRGB: 31, 5, 94;
 $purple: #3C00B7; /* Primary Bright */
 $purpleRGB: 60, 0, 183;
+
+/* Pinks */
+$redViolet: #E60F8B;
 
 /* ---------------------------------------------------------- */
 /* ------           Station Front Colors               ------ */

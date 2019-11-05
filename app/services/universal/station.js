@@ -15,7 +15,7 @@ const radioApi = require('../server/radioApi'),
   */
   getNowPlaying = async (stationId, data = null) => {
     if (stationId !== 0) {
-      const now_playing = await radioApi.get(`stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {});
+      const now_playing = await radioApi.get(`stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }, locals).catch(() => {});
 
       if (data && _has(now_playing, 'data.event.current_event')) {
         const song = now_playing.data.event.current_event;
@@ -61,7 +61,7 @@ const radioApi = require('../server/radioApi'),
       params['filter[day_of_week]'] = dayOfWeek;
     }
     // eslint-disable-next-line one-var
-    const schedules = await radioApi.get('schedules', params);
+    const schedules = await radioApi.get('schedules', params, null, { ttl: radioApi.TTL.MIN * 3, expire: radioApi.TTL.DAY * 7 }, locals);
 
     if (onAir && _has(schedules, 'data.length')) {
       const show = _find(schedules.data, schedule => {

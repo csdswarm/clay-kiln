@@ -153,9 +153,12 @@ const { lstatSync, readdirSync } = require('fs'),
       stationSlug = await getStationSlugFromComponent(urlToUri(url));
     }
 
-    return  _get(allStations, `bySlug[${stationSlug}].attributes`) || defaultStation;
+    return _get(
+      allStations,
+      `bySlug[${stationSlug}].attributes`,
+      DEFAULT_STATION
+    );
   };
-
 
 /**
  * obtain the current station details and store them for all components to access in locals

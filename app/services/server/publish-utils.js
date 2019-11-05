@@ -197,7 +197,12 @@ function getUrlOptions(component, locals, pageType) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
     }
+  } else if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
+    urlOptions.contentType = 'authors';
+    urlOptions.author = component.author;
+    urlOptions.authorSlug = slugifyService(component.author);
   }
+
   return urlOptions;
 }
 
@@ -213,6 +218,7 @@ module.exports.getComponentInstance = getComponentInstance;
 module.exports.dateUrlPattern = urlPatterns.dateUrlPattern;
 module.exports.articleSlugPattern = urlPatterns.articleSlugPattern;
 module.exports.articleSecondarySectionFrontSlugPattern = urlPatterns.articleSecondarySectionFrontSlugPattern;
+module.exports.authorPageSlugPattern = o => `${o.prefix}/${o.contentType}/${o.authorSlug}`;
 module.exports.gallerySlugPattern = urlPatterns.gallerySlugPattern;
 module.exports.gallerySecondarySectionFrontSlugPattern = urlPatterns.gallerySecondarySectionFrontSlugPattern;
 module.exports.sectionFrontSlugPattern = urlPatterns.sectionFrontSlugPattern;

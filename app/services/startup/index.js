@@ -22,6 +22,7 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
+  apiStg = require('./apiStg'),
   cookies = require('./cookies'),
   cacheControl = require('./cache-control'),
   cognitoAuth = require('./cognito-auth');
@@ -75,6 +76,10 @@ function setupApp(app) {
 
   app.use(cookieParser());
 
+  apiStg.inject(app);
+
+  cookies.inject(app);
+
   app.use(handleRedirects);
 
   app.use(user);
@@ -84,8 +89,6 @@ function setupApp(app) {
   app.use(currentStation);
 
   app.use(cacheControl);
-
-  cookies.inject(app);
 
   radium.inject(app);
 
