@@ -22,7 +22,13 @@
 
 <template>
   <div class="advanced-image-upload">
-    <ui-fileupload ref="fileUploadButton" :label="args.uploadLabel" color="accent" :disabled="fileUploadButtonDisabled" accept="image/*" @change="localFileAttached"></ui-fileupload>
+    <ui-fileupload ref="fileUploadButton"
+      :label="args.uploadLabel"
+      color="accent"
+      :disabled="fileUploadButtonDisabled"
+      accept="image/*"
+      @change="localFileAttached">
+    </ui-fileupload>
     <div class="ui-textbox__feedback" v-if="args.uploadHelp">
       <div class="ui-textbox__feedback-text">{{ args.uploadHelp }}</div>
     </div>
@@ -31,7 +37,10 @@
     </div>
     <div v-else>
       <div class="advanced-image-upload__image-placeholder kiln-placeholder">
-        <div class="placeholder-label"><span class="placeholder-text">No Image</span><div class="ui-ripple-ink"></div></div>
+        <div class="placeholder-label">
+          <span class="placeholder-text">No Image</span>
+          <div class="ui-ripple-ink"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -85,10 +94,9 @@ export default {
         this.prepareFileForUpload(file.name, file.type)
           .then(data => {
             return this.execFileUpload(data.s3SignedUrl, file, data.s3FileType)
-              .then(() => { return { host: data.s3CdnHost, fileKey: data.s3FileKey }});
+              .then(() => ({ host: data.s3CdnHost, fileKey: data.s3FileKey }));
           })
           .then((s3) => {
-
             // Build the full s3 image url.
             const s3ImageUrl = `https://${s3.host}/${s3.fileKey}`;
 
