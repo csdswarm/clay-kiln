@@ -48,9 +48,6 @@ const queryService = require('../../services/server/query'),
 
       queryService.addSort(query, {date: 'desc'});
 
-
-      queryService.addMinimumShould(query, 1);
-
       if (contentTypes.length) {
         queryService.addFilter(query, {terms: {contentType: contentTypes}});
       }
@@ -98,19 +95,22 @@ const queryService = require('../../services/server/query'),
    * @returns {Promise}
    */
   renderStation = async (data, locals) => {
-    const feedUrl = `${locals.station.website}/station_feed.json`,
-      feed = await radioApiService.get(feedUrl, null, (response) => response.nodes),
-      nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
-      defaultImage = 'http://images.radio.com/aiu-media/og_775x515_0.jpg';
+    data.articles = []; // Default to empty array so it's not undefined
+    if (locals.station.id && locals.station.website) {
+      const feedUrl = `${locals.station.website.replace(/\/$/, '')}/station_feed.json`,
+        feed = await radioApiService.get(feedUrl, null, (response) => response.nodes, {}, locals),
+        nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
+        defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
-    data.station = locals.station.name;
-    data.articles = await Promise.all(nodes.map(async (item) => {
-      return {
-        feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
-        externalUrl: item.node.URL,
-        primaryHeadline: item.node.field_engagement_title || item.node.title
-      };
-    }));
+      data.station = locals.station.name;
+      data.articles = await Promise.all(nodes.map(async (item) => {
+        return {
+          feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
+          externalUrl: item.node.URL,
+          primaryHeadline: item.node.field_engagement_title || item.node.title
+        };
+      }));
+    }
 
     return data;
   };
@@ -158,7 +158,7 @@ module.exports.render = function (ref, data, locals) {
 
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{text: data.tag}])[0].text || '';
-    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+    queryService.addMust(query, { match: { 'tags.normalized': data.tag }});
 
     return renderDefault(ref, data, locals, query);
   }
@@ -166,8 +166,7 @@ module.exports.render = function (ref, data, locals) {
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
     const query = queryService.newQueryWithCount(elasticIndex, maxItems);
 
-    queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
-
+    queryService.addMust(query, { match: { sectionFront: data.sectionFront }});
     return renderDefault(ref, data, locals, query);
   }
 

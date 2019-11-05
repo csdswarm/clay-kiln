@@ -1,7 +1,8 @@
 'use strict';
 
 const _ = require('lodash'),
-  utils = require('../universal/utils');
+  utils = require('../universal/utils'),
+  protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
  * @param {object} result
@@ -9,6 +10,24 @@ const _ = require('lodash'),
  */
 function formatSearchResult(result) {
   return _.map(result.hits.hits, '_source');
+}
+
+/**
+ * Returns result with any canonicalUrls having the proper protocol
+ *
+ * @param {object} result
+ * @returns {Array}
+ */
+function formatProtocol(result) {
+  return _.map(result, article => {
+    const url = _.get(article, 'canonicalUrl');
+
+    if (url) {
+      return { ...article, canonicalUrl: url.replace(/^http:/, protocol) };
+    }
+
+    return article;
+  });
 }
 
 /**
@@ -51,8 +70,6 @@ function newQuery(index, query) {
     body
   };
 }
-
-
 
 /**
  * Adds a property to the query based on the action provided.
@@ -250,7 +267,7 @@ function onlyWithTheseFields(query, fields) {
  * @returns {Object}
  */
 function onlyWithinThisSite(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}});
+  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}});
 
   addFilter(query, {prefix: {canonicalUrl: prefix}});
 
@@ -263,7 +280,7 @@ function onlyWithinThisSite(query, site) {
  * @returns {object}
  */
 function withinThisSiteAndCrossposts(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}}),
+  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}}),
     prefixFilter = {prefix: {canonicalUrl: prefix}};
   var crosspostFilter = {term: {}},
     shouldFilter = { bool: { should: [], minimum_should_match: 1 } };
@@ -366,6 +383,29 @@ function newNestedQuery(path) {
   };
 }
 
+/**
+ * adds a query_string search on the fields
+ *
+ * @param {Object} query
+ * @param {String} searchTerm
+ * @param {String|Array} fields
+ *
+ * @return {Object}
+ */
+function addSearch(query, searchTerm, fields) {
+  const key = `${getRoot(query)}.query`,
+    value = {
+      query_string: {
+        query: searchTerm.replace(/([\/|:])/g, '\\$1'),
+        fields: _.isArray(fields) ? fields : [fields]
+      }
+    };
+
+  _.set(query, key,  value);
+
+  return query;
+}
+
 module.exports = newQuery;
 module.exports.addAggregation = addAggregation;
 module.exports.addShould = addShould;
@@ -381,5 +421,7 @@ module.exports.onlyWithinThisSite = onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = formatAggregationResults;
 module.exports.formatSearchResult = formatSearchResult;
+module.exports.formatProtocol = formatProtocol;
 module.exports.moreLikeThis = moreLikeThis;
 module.exports.newNestedQuery = newNestedQuery;
+module.exports.addSearch = addSearch;

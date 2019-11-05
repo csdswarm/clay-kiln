@@ -1,5 +1,9 @@
 <section role="main" data-track-type="section" data-uri="{{ default _ref _self }}"
   class="component component--station-detail{{ if @root.locals.edit ' editing' }} station-detail--{{category}}"
+  data-callsign="{{ station.callsign }}"
+  data-category="{{ station.category }}"
+  data-genre="{{ genre }}"
+  data-market="{{ station.market.display_name }}"
 >
   <pre class="station-detail__data">{{{ stringify station }}}</pre>
   {{> breadcrumbs this }}
@@ -16,7 +20,7 @@
       <div class="lede__info">
         <div class="info__text">
           <div class="text__station-title">
-            {{!-- favorite btn here --}}
+            {{!-- <button data-fav-station="{{station.id}}" class="station-title__favorite-btn{{station.favoriteModifier}}"></button> --}}
             <h1 class="station-title__name">{{station.name}}</h1>
           </div>
           <p class="text__station-slogan">{{station.slogan}}</p>
@@ -93,9 +97,12 @@
         <ul>
           <li class="discover__tab discover__tab--recent-stations">recent stations</li>
           <li class="discover__tab discover__tab--market-stations">{{station.city}} stations</li>
-          <li class="discover__tab discover__tab--genre-stations">all {{station.genre_name}}</li>
+          {{#if station.genre.length}}
+            <li class="discover__tab discover__tab--genre-stations">all {{station.genre_name}}</li>
+          {{/if}}
         </ul>
       </li>
+      {{!-- <li class="tabs__favorites">Favorites</li> --}}
     </ul>
     <div class="tabbed-content">
       <!-- add components here -->
@@ -107,6 +114,9 @@
       </div>
       <div class="tabbed-content__container container--discover">
         {{> station-discover discoverComponent }}
+      </div>
+      <div class="tabbed-content__container container--favorites">
+        {{> station-favorites favoritesComponent }}
       </div>
     </div>
   </div>

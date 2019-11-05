@@ -1,4 +1,5 @@
 <nav class="component component--top-nav radiocom-nav-placeholder" data-uri="{{ default _ref _self }}" data-editable="settings">
+  <div class="branch-journeys-top"></div>
   <div class="radiocom-nav">
     <div class="container">
       <div id="hamburger" class="radiocom-nav__hamburger wrapper">
@@ -29,7 +30,13 @@
                   {{#each list as |subnav| }}
                     <div class="nav-drawer__sub-nav">
                       {{#if subnav.list}}
-                        <span class="sub-nav__text">{{subnav.text}}</span>
+                        {{#if subnav.url}}
+                          <a href="{{subnav.url}}">
+                            <span class="sub-nav__text">{{subnav.text}}</span>
+                          </a>
+                        {{ else }}
+                          <span class="sub-nav__text">{{subnav.text}}</span>
+                        {{/if}}
                         <ul class="nav-drawer__sub-nav--columns">
                           {{#each subnav.list as |subnavLink| }}
                             <li>
@@ -56,6 +63,27 @@
           </div>
         {{/each}}
       {{/if}}
+      {{!-- TODO: Uncommented to enable radium users
+      <div class="radium radium--top-nav">
+        {{#if radiumUser }}
+          <span class="radium__text radium__nav-header radium__twisty">{{accountUser}}<span class="radium__twisty-twister"></span></span>
+          <div class="radium__nav-drawer">
+            <div class="radium__container">
+              <ul class="radium__list">
+                <li class="radium__list-item"><a class="radium__link radium__text" href="/account/profile/update">Manage Profile</a></li>
+                <li class="radium__list-item"><a class="radium__link radium__text" href="/account/password/update">Change Password</a></li>
+                <li class="radium__list-item"><a class="radium__link radium__text" href="/account/logout">Logout</a></li>
+              </ul>
+            </div>
+          </div>
+        {{else}}
+          <span class="radium__nav-header">
+            <a class="radium__link radium__link--signed-out radium__text" href="/account/login">Log In</a>
+            <a class="radium__link radium__link--signed-out radium__text" href="/account/signup">Sign Up</a>
+          </span>
+        {{/if}}
+      </div>
+      --}}
       <div class="nav-drawer nav-drawer--mobile">
         {{#if headerLinks.length}}
           {{#each headerLinks}}
@@ -66,6 +94,22 @@
             </div>
           {{/each}}
         {{/if}}
+        {{!--
+        <div class="radium radium--mobile">
+          {{#if radiumUser }}
+            <ul class="radium__list">
+              <li class="radium__list-item"><a class="radium_link radium__text" href="/account/profile/update">Manage Profile</a></li>
+              <li class="radium__list-item"><a class="radium_link radium__text" href="/account/password/update">Change Password</a></li>
+              <li class="radium__list-item"><a class="radium_link radium__text" href="/account/logout">Log Out</a></li>
+            </ul>
+          {{else}}
+            <ul class="radium__list radium__list">
+              <li class="radium__list-item"><a class="radium__link radium__link--signed-out radium__text" href="/account/login">Log In</a></li>
+              <li class="radium__list-item"><a class="radium__link radium__link--signed-out radium__text" href="/account/signup">Sign Up</a></li>
+            </ul>
+          {{/if}}
+        </div>
+        --}}
       </div>
     </div>
   </div>

@@ -28,7 +28,10 @@ module.exports.render = async function (ref, data, locals) {
         'page[number]':1,
         'filter[day_of_week]': dayOfWeek,
         'filter[station_id]': stationId
-      }
+      },
+      null,
+      {},
+      locals
     );
 
   // if there is no data for the current day, check to see if there is any data for this station
@@ -38,7 +41,10 @@ module.exports.render = async function (ref, data, locals) {
         'page[size]': 1,
         'page[number]':1,
         'filter[station_id]': stationId
-      });
+      },
+      null,
+      {},
+      locals);
 
     if (anySchedule.data && !anySchedule.data.length) {
       return data;

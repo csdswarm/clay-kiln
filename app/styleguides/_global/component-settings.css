@@ -1,0 +1,87 @@
+.component__settings {
+    background: $wildSand;
+    clear: both;
+    margin: em(20) 0;
+    width: 100%;
+    .settings--empty {
+      @mixin component-settings-font-1;
+    }
+
+    .settings__title {
+      @mixin component-settings-font-2;
+      margin: 0;
+      padding: em(15, 24) em(20, 24);
+    }
+
+    .settings__section {
+      border-top: em(1) solid $91gray;
+      padding: em(15) em(20);
+      .editor > form {
+        background-color: $wildSand;
+      }
+      .subtitle {
+        @mixin component-settings-font-3
+        margin: 0;
+        padding: 0 0 em(10);
+        &.sub-edit:after {
+          content: 'Edit';
+          @mixin component-settings-font-4;
+          margin: 0 0 0 em(15);
+        }
+      }
+      .items {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        .item + .item {
+          margin-top: em(20);
+        }
+        .item-title {
+          @mixin component-settings-font-5
+          margin: 0;
+          padding: 0 0 em(5, 12);
+          text-transform: uppercase;
+          &.required:after {
+            @mixin component-settings-font-6
+            content: 'required';
+            margin: 0 0 0 em(15, 12);
+            text-transform: lowercase;
+          }
+        }
+        .item-data {
+          @mixin component-settings-font-7
+          margin: 0;
+          padding: 0;
+          .feedimg {
+            height: auto;
+            width: em(200);
+          }
+          .empty-feedimg {
+            background-color: $alto;
+            border: em(1) solid $60gray;
+            height: em(150);
+            width: em(200);
+          }
+          .feedlayout {
+            align-items: center;
+            display: none;
+            height: em(28);
+            justify-content: flex-start;
+            margin: 0 em(5) 0 0;
+            padding: 0;
+            &.current {
+              display: flex;
+            }
+            svg {
+              display: block;
+              height: auto;
+              margin-right: em(10);
+              width: em(30);
+            }
+          }
+        }
+      }
+    }
+
+
+  }

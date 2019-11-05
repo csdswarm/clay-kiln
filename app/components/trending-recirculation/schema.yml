@@ -17,8 +17,7 @@ items:
       prop: url
       _label: URL -- Requires 6 Entries
       _has:
-        input: text
-        type: url
+        input: content-search
         validate:
           required: true
     -

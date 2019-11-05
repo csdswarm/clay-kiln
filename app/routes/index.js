@@ -14,6 +14,8 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
+  additionalDataTypes = require('../services/server/add-data-types'),
+  alerts = require('../services/server/alerts'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
@@ -119,7 +121,7 @@ module.exports = router => {
    * Caching for api.radio.com endpoints
    */
   router.get('/api/v1/*', function (req, res) {
-    radioApi.get(req.params[0], req.query).then(function (data) {
+    radioApi.get(req.params[0], req.query, null, {}, res.locals).then(function (data) {
       return res.send(data);
     });
   });
@@ -128,8 +130,12 @@ module.exports = router => {
    * Proxy for brightcove api endpoints
    */
   router.get('/api/brightcove', function (req, res) {
-    brightcoveApi.get(req.query).then(function (data) {
-      return res.send(data);
+    brightcoveApi.get(req.query).then(function ({ status, statusText, body: data }) {
+      if (status === 200) {
+        return res.send(data);
+      } else {
+        return res.status(500).send(statusText);
+      }
     });
   });
 
@@ -153,7 +159,7 @@ module.exports = router => {
       ];
 
     // Location station directory pages
-    await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }).then(function (markets) {
+    await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }, null, {}, res.locals).then(function (markets) {
       markets.data.forEach(market => {
         urlset.push({ url:
           [{ loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}` }]
@@ -162,7 +168,7 @@ module.exports = router => {
     });
 
     // Music station directory pages
-    await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }).then(function (genres) {
+    await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }, null, {}, res.locals).then(function (genres) {
       genres.data.forEach(genre => {
         if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
           urlset.push({ url:
@@ -173,7 +179,7 @@ module.exports = router => {
     });
 
     // Station detail pages
-    await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }).then(function (stations) {
+    await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }, null, {}, res.locals).then(function (stations) {
       stations.data.forEach(station => {
         if (station.attributes.site_slug || station.attributes.callsign || station.id) {
           urlset.push({ url:
@@ -186,4 +192,7 @@ module.exports = router => {
     res.type('application/xml');
     return res.send( xml( { urlset }, { declaration: true } ) );
   });
+
+  additionalDataTypes.inject(router, checkAuth);
+  alerts.inject(router, checkAuth);
 };

@@ -1,5 +1,8 @@
 'use strict';
 
+const { getComponentVersion } = require('clayutils'),
+  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils');
+
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
     data.contentType = { article: true, gallery: true };
@@ -60,4 +63,54 @@ module.exports['5.0'] = function (uri, data) {
     ...data,
     contentCollectionLogoSponsorship: { _ref : contentCollectionLogoSponsorshipURIPublished }
   };
+};
+
+module.exports['6.0'] = function (uri, data) {
+  let newData = Object.assign({}, data);
+
+  newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
+  
+  delete newData.filterSecondaryArticleTypes;
+  
+  return newData;
+};
+
+module.exports['7.0'] = async function (uri, data) {
+  const isPublished = getComponentVersion(uri) === 'published',
+    sharethroughTagInstanceData = {
+      adSize: 'sharethrough-tag',
+      adLocation: 'btf',
+      adPosition: 'native'
+    },
+    sharethroughTagInstanceUri = isPublished ?
+      uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag@published') :
+      uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag');
+
+  try {
+    const sharethroughTagInstance = await getComponentInstance(sharethroughTagInstanceUri);
+
+    if (!data.sharethroughTag) {
+      if (!sharethroughTagInstance) {
+        await putComponentInstance(sharethroughTagInstanceUri, sharethroughTagInstanceData);
+      }
+
+      return {
+        ...data,
+        sharethroughTag: {
+          _ref: sharethroughTagInstanceUri
+        }
+      };
+    }
+    
+    return data;
+  } catch (e) {
+    await putComponentInstance(sharethroughTagInstanceUri, sharethroughTagInstanceData);
+
+    return {
+      ...data,
+      sharethroughTag: {
+        _ref: sharethroughTagInstanceUri
+      }
+    };
+  }
 };
