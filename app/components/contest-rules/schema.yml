@@ -13,6 +13,9 @@ contestEndDate:
 contestSlug:
   _subscribe: contestSlug
 
+contestDateRange:
+  _subscribe: contestDateRange
+
 rulesBodyText:
   _label: Contest Rules
   _placeholder:
