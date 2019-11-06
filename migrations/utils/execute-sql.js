@@ -1,4 +1,6 @@
-const usingDb = require('./using-db')
+const usingDb = require('./using-db');
+const { v1: { getFileText } } = require('./read-file');
+
 /**
  * Handles running sql against postgres
  * @param {string} sql the sql to execute
