@@ -33,8 +33,8 @@ function getAllMarkets(locals) {
 /**
  * fetch all music genres from
  * radio api into an array
- * @param {boolean} newsTalk
  * @param {object} locals
+ * @param {boolean} newsTalk
  * @returns {Promise<array>}
  */
 function getAllGenres(locals, newsTalk = false) {

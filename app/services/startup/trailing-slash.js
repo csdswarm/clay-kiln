@@ -1,6 +1,6 @@
 'use strict';
 
-const log = require('../universal/log').setup({file: __filename}),
+const log = require('../universal/log').setup({ file: __filename }),
   lastSlashInString = /\/(?=[^\/]*?$)/;
 
 /**
@@ -26,7 +26,7 @@ const log = require('../universal/log').setup({file: __filename}),
  */
 module.exports = (req, res, next) => {
   try {
-    const {path, originalUrl} = req;
+    const { path, originalUrl } = req;
 
     if (path.endsWith('/') && path.toString() !== '/' && !path.includes('/_')) {
       const urlWithoutTrailingSlash = originalUrl.replace(lastSlashInString, '');

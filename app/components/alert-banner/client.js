@@ -70,7 +70,7 @@ function resetText(textEl) {
 
   if (!textEl.data || !textEl.data.origText) {
     origText = textEl.innerHTML;
-    textEl.data = {...textEl.data || {}, origText};
+    textEl.data = { ...textEl.data || {}, origText };
   } else {
     origText = textEl.data.origText;
   }
@@ -151,7 +151,7 @@ function attachCloseHandlers(container) {
  * @param {HTMLElement} container The alert-banner element
  */
 function ensureClosedAlerts(container) {
-  const {cookie} = document,
+  const { cookie } = document,
     idRe = /atbr_(\w+)=1/g;
 
   let match;

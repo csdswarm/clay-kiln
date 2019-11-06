@@ -144,7 +144,7 @@ const axios = require('axios'),
    * @return {Promise<Object>}
    */
   call = async (method, url, data, accessToken) => {
-    const headers = {...accessToken ? {authorization: `Bearer ${accessToken}`} : {}};
+    const headers = { ...accessToken ? { authorization: `Bearer ${accessToken}` } : {} };
      
     return await axios({
       method,
@@ -437,7 +437,7 @@ const axios = require('axios'),
     return res.send(
       `<html>
         <head>
-          <script>window.opener.postMessage(${JSON.stringify({error_description})}, window.location.protocol + '//' + window.location.hostname); window.close();</script>
+          <script>window.opener.postMessage(${JSON.stringify({ error_description })}, window.location.protocol + '//' + window.location.hostname); window.close();</script>
         </head>
         <body></body>
       </html>`
