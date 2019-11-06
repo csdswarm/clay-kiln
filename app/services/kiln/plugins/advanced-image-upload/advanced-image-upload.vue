@@ -85,7 +85,6 @@ export default {
      * @param {array} files - FileList array of files.
      */
     localFileAttached(files) {
-
       // Disable file upload button while processing.
       this.fileUploadButtonDisabled = true;
 
@@ -163,6 +162,7 @@ export default {
       // keen-ui's file upload component doesn't expose a function to reset its
       //   state so we have to ref it directly.
       this.$refs.fileUploadButton.hasSelection = false;
+      this.$refs.fileUploadButton.$refs.input.value = null;
 
       this.setImageUrl('');
     }
