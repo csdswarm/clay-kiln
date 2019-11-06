@@ -107,7 +107,8 @@ module.exports = unityComponent({
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
           canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl
+          feedImgUrl: result.feedImgUrl,
+          sectionFront: result.sectionFront
         };
 
       if (article.title) {
