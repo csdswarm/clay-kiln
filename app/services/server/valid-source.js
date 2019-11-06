@@ -1,6 +1,7 @@
 'use strict';
 
 const db = require('./db'),
+  { preventFastlyCache } = require('../startup/middleware-utils'),
   log = require('../universal/log').setup({ file: __filename }),
   NAME = 'valid-source',
   TABLE = NAME.replace('-', '_'),
@@ -31,10 +32,12 @@ const db = require('./db'),
      * Get the current valid-source for html-embeds
      */
     app.get(ENDPOINT, async (req, res) => {
+      preventFastlyCache(res);
+
       try {
         res.status(200).send(await get());
       } catch (e) {
-        log('error', `Failed valid-source get ${e.message}`);
+        log('error', 'Failed valid-source get', e);
         res.status(500).send('There was an error getting current valid-source');
       }
     });
@@ -74,7 +77,7 @@ const db = require('./db'),
 
         res.status(200).send(data);
       } catch (e) {
-        log('error', `Failed valid-source put ${e.message}`);
+        log('error', 'Failed valid-source put', e);
         res.status(500).send('There was an error saving the item');
       }
     });
@@ -94,7 +97,7 @@ const db = require('./db'),
 
         res.status(200).send(data);
       } catch (e) {
-        log('error', `Failed valid-source del ${e.message}`);
+        log('error', 'Failed valid-source del', e);
         res.status(500).send('There was an error saving the item');
       }
     });
