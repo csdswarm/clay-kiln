@@ -793,3 +793,9 @@ $drawerSelector: nav-drawer;
     }
   }
 }
+
+.branch-banner-is-active {
+  .radiocom-nav {
+    top: 76px;
+  }
+}

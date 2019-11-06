@@ -11,7 +11,7 @@ describe(dirname, function () {
     describe('validate', function () {
       var fn = lib[this.title],
         site = { prefix: 'domain.com' },
-        location = { protocol: 'http:', hostname: 'domain.com'},
+        location = { protocol: 'http:', hostname: 'domain.com' },
         sandbox;
 
       beforeEach(function () {

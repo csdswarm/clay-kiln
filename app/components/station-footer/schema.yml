@@ -29,7 +29,15 @@ footerLinks:
           pattern: ^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,}|\/)([-a-zA-Z0-9@:%_\+.~#?&//=]*)$
           patternMessage: e.g. http://domain.com/path or /path
 
+copyright:
+  _label: Copyright Text
+  _placeholder:
+    height: 14px
+    text: Copyright Text
+  _has:
+    input: inline
+
 _groups:
   settings:
     fields:
-    - footerLinks
+      - footerLinks

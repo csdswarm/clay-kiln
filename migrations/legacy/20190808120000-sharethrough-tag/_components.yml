@@ -1,0 +1,7 @@
+_components:
+  google-ad-manager:
+    instances:
+      sharethroughTag:
+        adSize: "sharethrough-tag"
+        adLocation: "btf"
+        adPosition: "native"

@@ -10,8 +10,8 @@
     }
   }
 
-  .gallery__body .body__header .lead & .video__preview,
-  .article__body .body__header .lead & .video__preview {
+  .gallery__body & .video__preview,
+  .article__body & .video__preview {
     width: 100%;
     display: flex;
     align-items: center;

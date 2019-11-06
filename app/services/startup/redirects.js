@@ -90,7 +90,7 @@ const db = require('../server/db'),
         redirectUrl = decode64Buffer.toString('utf8');
 
       if ((req.hostname + req.path) !== redirectUrl) {
-        res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '')});
+        res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '') });
         return false;
       }
     }
