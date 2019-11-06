@@ -1,0 +1,18 @@
+_components:
+  feeds:
+    instances:
+      google-news-feed:
+        meta:
+          renderer: "rss"
+          contentType: "rss"
+          fileExtension: "rss"
+          title: "Radio.com Google News Feed"
+          description: "Most recent content from Radio.com for Google News Feed"
+          link: "http://clay.radio.com"
+        index: "published-content"
+        query: 
+          size: 20
+          sort:
+            date: "desc"
+        transform: "article"
+  

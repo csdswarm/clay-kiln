@@ -16,9 +16,10 @@ const _forEach = require('lodash/forEach'),
  *
  * @param {Array} content
  * @param {Object} locals
+ * @param {string} [format]
  * @returns {String}
  */
-function renderContent(content, locals) {
+function renderContent(content, locals, format) {
   return _reduce(content, (res, cmpt) => {
     const ref = _get(cmpt, '_ref', ''),
       cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
@@ -28,7 +29,7 @@ function renderContent(content, locals) {
     if (match && cmptData) {
       // render the component and add it to the response
       if (match[1] !== 'inline-related') {
-        res += renderComponent(match[1], cmptData);
+        res += renderComponent(match[1], cmptData, format);
       }
     }
 
@@ -137,7 +138,7 @@ function addArrayOfProps(data, property, transform) {
  * @param {Object[]} transform
  * @return {Promise<Object[]>}
  */
-function addRssMediaImage(image, transform) {
+function addRssMediaImage(image) {
   if (!image) return Promise.resolve(); // If a mediaplay image isn't in the content, escape TODO: Make this better. Use images in ledes, basic image, etc, but find something
 
   return getRawMetadata(image.url)
@@ -150,7 +151,7 @@ function addRssMediaImage(image, transform) {
       if (meta.copyright) imageContent.push({ 'media:copyright': meta.copyright });
       if (meta.caption) imageContent.push({ 'media:title': meta.caption });
 
-      transform.push({ 'media:content': imageContent });
+      return imageContent;
     });
 }
 

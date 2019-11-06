@@ -20,14 +20,17 @@ function init() {
   });
 
   // searches the components directories for any feed.hbs files -- was having weird behavior when using relative path.. was starting in /app
-  let templates = glob.sync(path.join(__dirname, '..', '..', 'components', '**', 'feed.hbs'));
+  const templates = glob.sync(path.join(__dirname, '..', '..', 'components', '**', '*feed.hbs'));
 
   // compile the feed.hbs files
   _each(templates, (template) => {
-    let match = template.match(/components\/([^\/]+)\//);
+    const match = template.match(/components\/([^\/]+)\//),
+      format = template.match(/[^\/]+(?=\.feed\.hbs)/);
 
     if (match) {
-      hbs.partials[`${match[1]}`] = hbs.compile(`${fs.readFileSync(template)}`, { preventIndent: true });
+      const partialName = format ? `${match[1]}.${format[0]}` : match[1];
+
+      hbs.partials[partialName] = hbs.compile(`${fs.readFileSync(template)}`, { preventIndent: true });
     }
   });
 };
@@ -37,10 +40,15 @@ function init() {
  *
  * @param {String} cmptName
  * @param {Object} cmptData
+ * @param {string} [format]
  * @returns {String}
  */
-function renderComponent(cmptName, cmptData) {
-  return hbs.partials[`${cmptName}`] ? hbs.partials[`${cmptName}`](cmptData) : '';
+function renderComponent(cmptName, cmptData, format) {
+  const partialNameWithFormat = format ? `${cmptName}.${format}` : cmptName,
+    partialExists = !!hbs.partials[partialNameWithFormat],
+    partialName = partialExists ? partialNameWithFormat : cmptName;
+
+  return hbs.partials[partialName] ? hbs.partials[partialName](cmptData) : '';
 }
 
 module.exports.init = init;
