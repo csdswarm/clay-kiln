@@ -185,8 +185,7 @@
                 startTime: '',
                 errorMessage: '',
                 selectedAlert: {},
-                selectedStation: '',
-                stationCallsigns: (window.kiln.locals.allStationsCallsigns || []).sort(),
+                selectedStation: {},
                 tab: 'global',
                 tabs: [{
                     id: 'global',
@@ -212,12 +211,20 @@
             global() {
                 return this.tab === 'global';
             },
-            heading(){
+            heading() {
                 return `${this.editMode ? 'Edit' : 'Add New'} Alert` ;
             },
             /** Current station, or global station */
             station() {
-                return this.global ? 'NATL-RC' : this.selectedStation;
+                return this.global ? 'GLOBAL' : this.selectedStation.value;
+            },
+            stationCallsigns() {
+                const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
+               
+                return allStationCallsigns.concat('NATL-RC').sort().map(station => ({
+                    label: station === 'NATL-RC' ? 'Radio.com' : station,
+                    value: station
+                }));
             },
             /** True if all required fields are entered */
             validForm() {
@@ -316,7 +323,7 @@
             },
             /** Loads all current and future alerts globally or by station */
             async loadAlerts() {
-                if (!this.global && !this.selectedStation) {
+                if (!this.global && !this.selectedStation.value) {
                     this.alerts = [];
                 } else {
                     this.loading = true;

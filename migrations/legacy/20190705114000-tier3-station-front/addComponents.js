@@ -39,7 +39,37 @@ const createYaml = async () => {
       'station-nav': {
         instances: {
           default: {
-            allowed: true
+            primaryLinks: [
+              {
+                "url": "",
+                "text": "playlist",
+                "drawer": false
+              },
+              {
+                "url": "",
+                "text": "shows",
+                "drawer": true,
+                "secondaryLinks": []
+              },
+              {
+                "url": "",
+                "text": "contests",
+                "drawer": true,
+                "secondaryLinks": []
+              },
+              {
+                "url": "",
+                "text": "events",
+                "drawer": true,
+                "secondaryLinks": []
+              },
+              {
+                "url": "",
+                "text": "more from",
+                "drawer": true,
+                "secondaryLinks": []
+              },
+            ]        
           }
         }
       },
@@ -64,4 +94,3 @@ const createYaml = async () => {
   );
 }
 createYaml();
-

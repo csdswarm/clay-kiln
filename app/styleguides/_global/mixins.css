@@ -28,6 +28,17 @@
     @mixin-content;
   }
 }
+@define-mixin only-medium-screen {
+  @media only screen and (min-width: 481px) and (max-width: 1023px) {
+    @mixin-content;
+  }
+}
+
+@define-mixin nav-mobile-breakpoint {
+  @media only screen and (max-width: 788px) {
+    @mixin-content;
+  }
+}
 
 /* Medium-Small Screen */
 @define-mixin medium-small-screen {

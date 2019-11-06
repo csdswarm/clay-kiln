@@ -33,7 +33,7 @@ function mountComponentModule(moduleName) {
         selector = `[data-uri*="_components/${cmptName}/"]`,
         els = document.querySelectorAll(selector);
 
-      for (let el of els) {
+      for (const el of els) {
         try {
           cmptModule(el);
         } catch (err) {

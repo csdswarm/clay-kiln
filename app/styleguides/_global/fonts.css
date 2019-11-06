@@ -285,6 +285,9 @@ em, i {
 @define-mixin more-content-feed-font9 {
   @mixin font CircularStd-Black, 18px, $white, -.55px, 18px;
 }
+@define-mixin more-content-feed-font10 {
+  @mixin font ProximaNova-Light, 16px, $blazeOrange, -.26px, 22px;
+}
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| Section-Lead Fonts Styleguide |||||| */
@@ -483,6 +486,7 @@ em, i {
   @mixin font ProximaNova-Bold, 18px, $black, -.36px, 30px;
 }
 
+
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||| Radium Fonts Styleguide |||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -592,7 +596,23 @@ em, i {
 /* |||||||||     Station Nav Styleguide      |||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin station-nav-font1 {
-  @mixin font CircularStd-Medium, 15px, $white, -.23px, 18px;
+  @mixin font CircularStd-Black, 15px, $white, -.23px, 18px;
+}
+
+@define-mixin station-nav-font2 {
+  @mixin font ProximaNova-Regular, 14px, $white, -.23px, 17px;
+}
+
+@define-mixin station-nav-font3 {
+  @mixin font CircularStd-Black, 15px, $white, -.4px, 28px;
+}
+
+@define-mixin station-nav-font4 {
+  @mixin font ProximaNova-Regular, 14px, $white, -.23px, 28px;
+}
+
+@define-mixin station-nav-font5 {
+  @mixin font CircularStd-Black, 16px, $white, -.6px, 19px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -649,4 +669,30 @@ em, i {
 }
 @define-mixin station-theme-font13 {
   @mixin font ProximaNova-RegularIt, 12px, inherit, 0px, 15px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||| Author Page Header Fonts Styleguide  ||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin author-page-header-font1 {
+@mixin font CircularStd-Black, 35px, $mineShaft, -.58px, 42px;
+}
+@define-mixin author-page-header-font2 {
+@mixin font CircularStd-Black, 20px, $redViolet, -.33px, 22px;
+}
+@define-mixin author-page-header-font3 {
+@mixin font ProximaNova-Regular, 18px, $black, inherit, 28px;
+}
+@define-mixin author-page-header-font4 {
+@mixin font CircularStd-Book, 14px, $black, -.27px, 17px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Latest Top Recirculation Slider Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin latest-top-recirc-slider-font1 {
+  @mixin font CircularStd-Black, 12px, $black, -.2px, 14px;
+}
+@define-mixin latest-top-recirc-slider-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
