@@ -50,7 +50,7 @@ module.exports = async function (data, locals) {
         description: { _cdata: seoDescription }
       },
       {
-        'content:encoded': { _cdata: renderContent(content, locals, contentFormat)}
+        'content:encoded': { _cdata: renderContent(content, locals, contentFormat) }
       },
       {
         stationUrl: stationURL
@@ -74,13 +74,13 @@ module.exports = async function (data, locals) {
 
   if (data.slides) {
     transform.push({
-      slides: { _cdata: renderContent(data.slides, locals, contentFormat)}
+      slides: { _cdata: renderContent(data.slides, locals, contentFormat) }
     });
   }
 
   if (data.lead) {
     transform.push({
-      lead: { _cdata: renderContent(lead, locals, contentFormat)}
+      lead: { _cdata: renderContent(lead, locals, contentFormat) }
     });
   }
 

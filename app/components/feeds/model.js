@@ -128,7 +128,7 @@ module.exports.render = async (ref, data, locals) => {
       // contentType
       type: {
         filterConditionType: 'addMust',
-        createObj: contentType => ({ match: { contentType }})
+        createObj: contentType => ({ match: { contentType } })
       },
       // corporate websites (corporateSyndication)
       corporate: {
