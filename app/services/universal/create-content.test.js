@@ -200,8 +200,8 @@ describe(`${dirname}/${filename}`, () => {
     it('adds all sources to the sources property', async () => {
       const data = {
         ...mockData.data, byline: [
-          { names: [{text: 'bob'}], sources: [{ text: 'source1' }, { text: 'source2' }] },
-          { names: [{text: 'tom'}], sources: [{ text: 'source3' }, { text: 'source4' }] }
+          { names: [{ text: 'bob' }], sources: [{ text: 'source1' }, { text: 'source2' }] },
+          { names: [{ text: 'tom' }], sources: [{ text: 'source3' }, { text: 'source4' }] }
         ]
       };
 
@@ -218,7 +218,7 @@ describe(`${dirname}/${filename}`, () => {
     it('adds a slug to each author', async () => {
       const data = {
         ...mockData.data, byline: [
-          {names: [{text: 'Testy User'}, {text: 'María-Jose Carreño Quiñones'}]}
+          { names: [{ text: 'Testy User' }, { text: 'María-Jose Carreño Quiñones' }] }
         ]
       };
 
@@ -233,8 +233,8 @@ describe(`${dirname}/${filename}`, () => {
       const data = {
         ...mockData.data, byline: [
           {
-            names: [{text: 'User 1', count: 10}, {text: 'User 2', count: 1}],
-            sources: [{text: 'Source 1', count: 3}]
+            names: [{ text: 'User 1', count: 10 }, { text: 'User 2', count: 1 }],
+            sources: [{ text: 'Source 1', count: 3 }]
           }
         ]
       };

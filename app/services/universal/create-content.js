@@ -4,7 +4,7 @@ const _get = require('lodash/get'),
   striptags = require('striptags'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  {uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug} = require('./utils'),
+  { uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug } = require('./utils'),
   sanitize = require('./sanitize'),
   promises = require('./promises'),
   rest = require('./rest'),
@@ -329,7 +329,7 @@ function sanitizeByline(data) {
 function bylineOperations(data) {
   const authors = [], sources = [];
 
-  for (const {names, sources: bylineSources} of data.byline || []) {
+  for (const { names, sources: bylineSources } of data.byline || []) {
     /*
       Originally a NYMag legacy thing, since we converted the original
       `authors` array into a more complex `byline` structure,
@@ -349,7 +349,7 @@ function bylineOperations(data) {
     }
   }
 
-  Object.assign(data, {authors, sources});
+  Object.assign(data, { authors, sources });
   sanitizeByline(data);
 }
 
