@@ -16,7 +16,7 @@ module.exports = async function (req, res) {
     ];
 
   // Location station directory pages
-  await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }).then(function (markets) {
+  await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }, null, {}, res.locals).then(function (markets) {
     markets.data.forEach(market => {
       urlset.push({
         url:
@@ -28,7 +28,7 @@ module.exports = async function (req, res) {
   });
 
   // Music station directory pages
-  await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }).then(function (genres) {
+  await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }, null, {}, res.locals).then(function (genres) {
     genres.data.forEach(genre => {
       if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
         urlset.push({
@@ -40,20 +40,18 @@ module.exports = async function (req, res) {
   });
 
   // Station detail pages
-  await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' })
-    .then(function (stations) {
-      stations.data.forEach(station => {
-        if (station.attributes.site_slug || station.attributes.callsign || station.id) {
-          urlset.push({
-            url:
+  await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }, null, {}, res.locals).then(function (stations) {
+    stations.data.forEach(station => {
+      if (station.attributes.site_slug || station.attributes.callsign || station.id) {
+        urlset.push({
+          url:
               [{
-                loc: `${baseUrl}/${station.attributes.site_slug || station.attributes.callsign ||
-                station.id}/listen`
+                loc: `${baseUrl}/${station.attributes.site_slug || station.attributes.callsign || station.id}/listen`
               }]
-          });
-        }
-      });
+        });
+      }
     });
+  });
 
   res.type('application/xml');
   return res.send(xml({ urlset }, { declaration: true }));
