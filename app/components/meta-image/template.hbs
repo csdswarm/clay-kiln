@@ -1,7 +1,7 @@
 <!-- data-uri="{{ default _ref _self }}" -->
 {{#if imageUrl}}
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@radiodotcom">
-<meta content="{{#if imageUrl}}{{ imageUrl }}{{/if}}" name="twitter:image">
-<meta property="og:image" content="{{#if imageUrl}}{{ imageUrl }}{{/if}}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@radiodotcom">
+    <meta content="{{ imageUrl }}" name="twitter:image">
+    <meta property="og:image" content="{{ imageUrl }}">
 {{/if}}

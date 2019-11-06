@@ -13,12 +13,9 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
 
   /**
    * Toggle listen nav arrow direction & listen nav drawer on click of caret
-   *
-   * @param {Object} event
    */
-  toggleListenDrawer = (event) => {
+  toggleListenDrawer = () => {
     listenNavToggle.classList.toggle(active);
-    // TODO -- Toggle listen drawer here
   },
   /**
    * Toggle mobile nav arrow direction & mobile nav on click of caret
@@ -28,7 +25,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   toggleMobileDrawer = ({ type, currentTarget }) => {
     mobileNavToggle.classList.toggle(active);
 
-    toggleNavDrawerContainer({type, currentTarget});
+    toggleNavDrawerContainer({ type, currentTarget });
     mobileNavDrawer.classList.toggle(active);
   },
   /**
@@ -68,10 +65,10 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   toggleNavDrawer = ({ type, currentTarget }) => {
     const isMobile = isMobileNavWidth();
 
-    toggleNavDrawerContainer({type, currentTarget});
+    toggleNavDrawerContainer({ type, currentTarget });
 
     // reset all desktop drawers
-    for (let drawer of desktopNavDrawers) {
+    for (const drawer of desktopNavDrawers) {
       drawer.classList.remove(active);
     }
 
@@ -106,7 +103,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   toggleMobileSecondaryLinks = ({ currentTarget }) => {
     if (!currentTarget.classList.contains(active)) {
       // Close dropdown of all categories
-      for (let item of mobileNavItems) {
+      for (const item of mobileNavItems) {
         item.classList.remove(active);
       }
     }
@@ -150,7 +147,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
         mobileNavDrawer.classList.remove(active);
       } else {
         // reset all desktop drawers
-        for (let drawer of desktopNavDrawers) {
+        for (const drawer of desktopNavDrawers) {
           drawer.classList.remove(active);
         }
       }

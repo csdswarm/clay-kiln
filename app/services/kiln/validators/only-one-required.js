@@ -24,7 +24,7 @@ module.exports = {
     validations.forEach(validation => {
       const componentsUri = Object.keys(state.components),
         componentsOnPage = _filter(componentsUri, uri => helpers.getComponentName(uri) === validation.componentName)
-          .map(uri => ({data: state.components[uri], uri})),
+          .map(uri => ({ data: state.components[uri], uri })),
         filteredComponents = componentsOnPage.filter(validation.filter);
 
       if (validation.hasErrors(componentsOnPage, filteredComponents)) {
