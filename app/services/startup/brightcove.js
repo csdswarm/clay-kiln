@@ -25,7 +25,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @returns {Array} an array of video objects with only needed fields
    */
   transformVideoResults = async results => {
-    return await Promise.all( (results || []).map( async ({name, images, id, updated_at, delivery_type }) => {
+    return await Promise.all( (results || []).map( async ({ name, images, id, updated_at, delivery_type }) => {
       const { status, body: videoSources } = await brightcoveApi.request('GET', `videos/${ id }/sources`);
 
       return {

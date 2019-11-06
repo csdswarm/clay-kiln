@@ -1,26 +1,26 @@
 'use strict';
 
 const filePath = './apple-news-format/preview/article.json';
-let isFetching = false,
-  /**
-   * Writes the anf component tree to disk
-   *
-   * @param {Object} anfComponentTree
-   */
-  writeArticleFile = (anfComponentTree) => {
-    if (typeof window !== 'undefined') {
-      return;
-    }
+let isFetching = false;
+/**
+ * Writes the anf component tree to disk
+ *
+ * @param {Object} anfComponentTree
+ */
+const writeArticleFile = (anfComponentTree) => {
+  if (typeof window !== 'undefined') {
+    return;
+  }
 
-    const fs = require('fs-extra');
+  const fs = require('fs-extra');
 
-    try {
-      fs.ensureFileSync(filePath);
-      fs.writeFileSync(filePath, JSON.stringify(anfComponentTree, null, 2));
-    } catch (error) {
-      console.error('[ANF TEST FILE ERROR]', error);
-    }
-  };
+  try {
+    fs.ensureFileSync(filePath);
+    fs.writeFileSync(filePath, JSON.stringify(anfComponentTree, null, 2));
+  } catch (error) {
+    console.error('[ANF TEST FILE ERROR]', error);
+  }
+};
 
 /**
  * Writes an article.json file using the anf result from a component.
