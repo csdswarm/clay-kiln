@@ -1,16 +1,16 @@
 'use strict';
 
-function Constructor() {
+function Constructor(el) {
   const sidebar = document.getElementsByClassName('content__sidebar')[0],
     articleBody = document.getElementsByClassName('article__body')[0],
-    logoSponsorship = document.querySelector('.google-ad-manager--content-page-logo-sponsorship');
-
-  this.repositionRightRail(sidebar, articleBody);
-  setTimeout(() => {
-    if (logoSponsorship.clientHeight === 0) {
+    observer = new MutationObserver(() => {
       this.repositionRightRail(sidebar, articleBody);
-    }
-  }, 3000);
+    });
+
+  observer.observe(el, {
+    childList: true,
+    subtree: true
+  });
 }
 
 Constructor.prototype = {
@@ -28,4 +28,4 @@ Constructor.prototype = {
   }
 };
 
-module.exports = () => new Constructor();
+module.exports = (el) => new Constructor(el);

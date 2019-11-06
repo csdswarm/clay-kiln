@@ -45,6 +45,9 @@
     margin-bottom: em(25, 18);
   }
 }
+.lead--full-width {
+  margin-bottom: em(48);
+}
 .article__body,
 .gallery__body {
   display: inline-block;
@@ -56,6 +59,8 @@
       width: 100%;
       display: flex;
       justify-content: center;
+      flex-direction: column;
+
       .component--brightcove,
       .component--verizon-media,
       .component--omny {

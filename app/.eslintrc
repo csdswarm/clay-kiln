@@ -108,7 +108,11 @@
     "no-trailing-spaces": [2, { "skipBlankLines": true}],
     "no-underscore-dangle": 0,
     "no-unneeded-ternary": 1,
-    "one-var": 2,
+    "one-var": [2, {
+      "let": "always",
+      "var": "always",
+      "const": "consecutive"
+    }],
     "quotes": [2, "single", "avoid-escape"],
     "semi": [2, "always"],
     "keyword-spacing": 2,
@@ -116,6 +120,11 @@
     "space-before-function-paren": [2, {"anonymous": "always", "named": "never"}],
     "space-infix-ops": [1, {"int32Hint": false}],
     "spaced-comment": [2, "always"],
+    "prefer-const": ["error", {
+      "destructuring": "any",
+      "ignoreReadBeforeAssign": false
+    }],
+    "object-curly-spacing": ["error", "always"],
     // es6
     "generator-star-spacing": [2, "before"],
     // legacy jshint rules
