@@ -99,7 +99,7 @@ function videoStateChangeWrapper(customParams, playerEvents) {
   return function handleVideoStateChange(playerEvt) {
     if (playerEvt.data === YT.PlayerState.PLAYING && !hasVideoStarted) {
       document.dispatchEvent(_assign(playerEvents.start,
-        {player: {videoId: extractVideoIdFromUrl(playerEvt.target.getVideoUrl()), videoDuration: Math.ceil(playerEvt.target.getDuration())}}
+        { player: { videoId: extractVideoIdFromUrl(playerEvt.target.getVideoUrl()), videoDuration: Math.ceil(playerEvt.target.getDuration()) } }
       ));
       hasVideoStarted = true;
     }

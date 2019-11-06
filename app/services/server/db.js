@@ -12,7 +12,7 @@ const utils = require('../universal/utils'),
    * @returns {boolean}
    */
   checkTableExists = async (tableName) => {
-    const {rows: [{exists}]} = await db.raw(`
+    const { rows: [{ exists }] } = await db.raw(`
       SELECT EXISTS(
         SELECT *
         FROM information_schema.tables
@@ -115,7 +115,7 @@ const utils = require('../universal/utils'),
         SELECT data FROM ${tableName}
         WHERE id = ?
       `, [key])
-        .then(({rows}) => {
+        .then(({ rows }) => {
           if (!rows.length) return Promise.reject(`No result found in ${tableName} for ${key}`);
 
           return rows[0].data;

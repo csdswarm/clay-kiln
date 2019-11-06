@@ -92,7 +92,8 @@ function uriToUrl(uri, locals) {
  * @returns {string}
  */
 function removeExtension(path) {
-  let leadingDot, endSlash = path.lastIndexOf('/');
+  const endSlash = path.lastIndexOf('/');
+  let leadingDot;
 
   if (endSlash > -1) {
     leadingDot = path.indexOf('.', endSlash);
@@ -227,6 +228,16 @@ function getFullOriginalUrl(req) {
   return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
 }
 
+/**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {String} url
+ * @returns {String}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
 module.exports = {
   isFieldEmpty,
   has,
@@ -244,5 +255,6 @@ module.exports = {
   debugLog,
   ensureStartsWith,
   prettyJSON,
-  getFullOriginalUrl
+  getFullOriginalUrl,
+  urlToElasticSearch
 };

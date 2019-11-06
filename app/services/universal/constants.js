@@ -25,7 +25,14 @@ const SECOND = 1000,
     'section-front',
     'static-page',
     'topic-page'
-  ]);
+  ]),
+
+  PAGE_TYPES = {
+    ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front'
+  };
 
 
 module.exports = {
@@ -36,5 +43,6 @@ module.exports = {
   WEEK,
   YEAR,
   contentTypes,
-  time
+  time,
+  PAGE_TYPES
 };

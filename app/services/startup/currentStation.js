@@ -1,13 +1,17 @@
 'use strict';
 
-const { extname } = require('path'),
-  { getComponentName, isComponent, isPage, isPageMeta } = require('clayutils'),
+const { getComponentName, isComponent, isPage, isPageMeta } = require('clayutils'),
   _get = require('lodash/get'),
   log = require('../universal/log').setup({ file: __filename }),
   { getFullOriginalUrl, urlToUri } = require('../universal/utils'),
   stationUtils = require('../server/station-utils'),
   { contentTypes } = require('../universal/constants'),
   db = require('../server/db'),
+  { lstatSync, readdirSync } = require('fs'),
+  { join } = require('path'),
+  isDirectory = source => lstatSync(source).isDirectory(),
+  getDirectories = source =>
+    readdirSync(source).map(name => join(source, name)).filter(isDirectory),
   defaultStation = {
     id: 0,
     name: 'Radio.com',
@@ -101,15 +105,18 @@ const { extname } = require('path'),
   },
   /**
    * determines if the path is valid for station information
+   * invalid paths are as follows:
+   *  Paths to files (has extension)
+   *  Paths to components that do not include a stationId query
    *
    * @param {object} req
    * @return {boolean}
    */
   validPath = (req) => {
-    const excludeExt = ['.js', '.css', '.svg', '.woff', '.woff2', '.png', '.jpg', '.jpeg', '.gif', '.ico'],
-      ext = extname(req.path);
+    const publicDirs = getDirectories('./public/'),
+      stationsList = req.path.includes('_components') && !req.query.stationId || false;
 
-    return !ext || !excludeExt.includes(ext);
+    return !stationsList && publicDirs.every(publicPathDir => req.path.indexOf(publicPathDir.replace('public', '')) !== 0);
   },
   /**
    * determines if the default station should be used
