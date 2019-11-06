@@ -19,7 +19,7 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
   }
 
   return pubUtils.getMainComponentFromRef(componentReference, locals)
-    .then(({component, pageType}) => {
+    .then(({ component, pageType }) => {
       return pubUtils.getUrlOptions(component, locals, pageType);
     });
 }

@@ -63,14 +63,14 @@ function isMainComponentReference(ref, mainComponentRefs) {
  * @returns {string|undefined}
  */
 function getComponentReference(page, mainComponentRefs) {
-  for (let key in page) {
+  for (const key in page) {
     if (page.hasOwnProperty(key)) {
-      let value = page[key];
+      const value = page[key];
 
       if (isMainComponentReference(value, mainComponentRefs)) {
         return value;
       } else if (_.isObject(value)) {
-        let result = _.isArray(value) ? _.find(value, function (o) { return isMainComponentReference(o, mainComponentRefs); }) : getComponentReference(value, mainComponentRefs);
+        const result = _.isArray(value) ? _.find(value, function (o) { return isMainComponentReference(o, mainComponentRefs); }) : getComponentReference(value, mainComponentRefs);
 
         if (result) {
           return result;
@@ -143,7 +143,7 @@ function getMainComponentFromRef(componentReference, locals) {
       guaranteeLocalDate(component, publishedComponent, locals);
     }
 
-    return {component, pageType};
+    return { component, pageType };
   });
 }
 
