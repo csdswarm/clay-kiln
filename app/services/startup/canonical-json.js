@@ -22,6 +22,20 @@ function fakeLocals(req, res, params) {
 }
 
 /**
+ * Get approriate routePrefix and routeParamKey from req.path
+ *
+ * @param {string} path
+ * @returns {Object}
+ */
+function getPrefixAndKey(path) {
+  const authorRoute = (new RegExp('^\\/authors\\/')).test(path),
+    routePrefix = authorRoute ? 'author' : 'topic',
+    routeParamKey = authorRoute ? 'author' : 'tag';
+
+  return { routeParamKey, routePrefix };
+}
+
+/**
  * If you add the `X-Amphora-Page-JSON` header to a request
  * to a canonical url you can grab the page's JSON.
  *
@@ -31,55 +45,54 @@ function fakeLocals(req, res, params) {
  * @returns {Promise}
  */
 function middleware(req, res, next) {
-  const params = {};
-  let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, tagKeywordExtractor;
+  const params = {},
+    { routeParamKey, routePrefix } = getPrefixAndKey(req.path);
+
+  let promise, dynamicParamExtractor;
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
   }
 
-  // Define Curated/Dynamic "tag" routes.
-  // Match against section-front and "topic" slug prefixes
-  curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+  // Define Curated/Dynamic routes.
+  // Match against section-front, topic, and author slug prefixes
+  const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+
   curatedOrDynamicRoutePrefixes.push('topic');
+  curatedOrDynamicRoutePrefixes.push('authors');
 
   // Define curated/dynamic routing logic
-  curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
+  const curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
 
-  // If it's a topic or section-front route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic tag page logic.
+  // If it's a curated/dynamic route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
-    // Define keyword extraction logic.
-    tagKeywordExtractor = new RegExp(`^\\/(?:${curatedOrDynamicRoutePrefixes.join('|')})\\/([^/]+)\\/?`);
+    // Define param extraction logic.
+    dynamicParamExtractor = new RegExp(`^\\/(?:${curatedOrDynamicRoutePrefixes.join('|')})\\/([^/]+)\\/?`);
 
     /**
-     * We need logic to handle different routing between dynamic topic/section-front pages and curated,
+     * We need logic to handle different routing between dynamic route pages and curated,
      * since both share the same slug prefixes.
      */
     promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
       .then(pageKey => {
-        // Curated topic/section-front page found. Serve content collection.
-        // Extract tag keyword and set it to params appropriately.
-        params.tag = req.path.match(tagKeywordExtractor)[1];
+        // Curated page found. Serve content collection.
+        // Extract param keyword and set it to correct params key appropriately.
+        params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
         return db.get(`${pageKey}@published`);
       })
       .catch(error => {
-        // If error was a "not found" error, then fallback to serving dynamic topic/section-front page.
+        // If error was a "not found" error, then fallback to serving dynamic route page.
         const notFoundErrorPrefix = 'Key not found in database';
 
         if (error.message.substring(0, notFoundErrorPrefix.length) === notFoundErrorPrefix) {
-          // Extract tag keyword and set it to params appropriately.
-          params.dynamicTag = req.path.match(tagKeywordExtractor)[1];
-          return db.get(`${req.hostname}/_pages/topic@published`);
+          // Extract correct param and set it to params appropriately.
+          params[`dynamic${_.capitalize(routeParamKey)}`] = req.path.match(dynamicParamExtractor)[1];
+          return db.get(`${req.hostname}/_pages/${routePrefix}@published`);
         } else {
 
           throw error;
         }
-
       });
-
-  } else if (req.path.indexOf('/authors/') === 0) {
-    params.dynamicAuthor = req.path.match(/authors\/(.+)\/?/)[1];
-    promise = db.get(`${req.hostname}/_pages/author@published`);
   } else if (req.path.indexOf('/stations') === 0) {
     if (req.path.match(/stations\/location\/(.+)/)) {
       params.dynamicMarket = req.path.match(/stations\/location\/(.+)/)[1];
@@ -107,7 +120,7 @@ function middleware(req, res, next) {
       log('error', '404', { stack: err.stack });
       res
         .status(404)
-        .json({ status: 404, msg: err.message});
+        .json({ status: 404, msg: err.message });
     });
 }
 
