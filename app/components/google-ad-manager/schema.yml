@@ -46,6 +46,9 @@ adSize:
       -
         name: Article / Gallery Page Logo Sponsorship (100x35)
         value: content-page-logo-sponsorship
+      -
+        name: sharethroughTag
+        value: sharethrough-tag
     validate:
       required: true
 adPosition:

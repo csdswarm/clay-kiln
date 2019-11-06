@@ -1,0 +1,12 @@
+_components:
+  meta-title:
+    instances:
+      stations-directory:
+        title: 'Over 300 radio stations | RADIO.COM'
+        ogTitle: 'Over 300 radio stations | RADIO.COM'
+        kilnTitle: 'Over 300 radio stations | RADIO.COM'
+        twitterTitle: 'Over 300 radio stations | RADIO.COM'
+  meta-description:
+    instances:
+      stations-directory:
+        description: 'Discover top live radio stations from across the country including sports, news, talk and music stations. Keep up with all local and national news, traffic, and weather. Hear exclusive interviews, comedy and commentary.'

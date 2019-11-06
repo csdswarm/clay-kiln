@@ -19,7 +19,7 @@
       <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
     </div>
     <meta itemprop="dateModified" content="{{ dateModified }}" />
-
+    
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
@@ -28,18 +28,35 @@
     {{/ifAny}}
   </header>
 
+  {{#if _computed.renderFullWidthLead }}
+    {{! Lead }}
+    <div class="lead lead--full-width" data-editable="lead">
+      {{> component-list lead }}
+    </div>
+  {{/if}}
+
   {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="article__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
   >
-    <div class="body__header">
-      {{! Lead }}
-      <div class="lead" data-editable="lead">
-        {{> component-list lead }}
+    {{#unless _computed.renderFullWidthLead }}
+      {{#if _computed.supportsFullWidthLead }}
+        <div data-editable="leadSettings">
+          <h1>Lead Settings:</h1>
+          <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
+        </div>
+      {{/if}}
+
+      <div class="body__header">
+        {{! Lead }}
+        <div class="lead" data-editable="lead">
+          {{> component-list lead }}
+        </div>
       </div>
-    </div>
+    {{/unless}}
+
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">

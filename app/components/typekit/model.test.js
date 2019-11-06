@@ -16,15 +16,15 @@ describe(dirname, function () {
       });
 
       it('sets no kitId when the kitSrc is empty', function () {
-        expect(fn(ref, {kitSrc: ''}, {})).to.eql({kitSrc: ''});
+        expect(fn(ref, { kitSrc: '' }, {})).to.eql({ kitSrc: '' });
       });
 
       it('sets no kitId when the kitSrc does not have a matching pattern', function () {
-        expect(fn(ref, {kitSrc: 'http://www.google.com'}, {})).to.eql({kitSrc: 'http://www.google.com'});
+        expect(fn(ref, { kitSrc: 'http://www.google.com' }, {})).to.eql({ kitSrc: 'http://www.google.com' });
       });
 
       it('sets  kitId when the kitSrc has a parseable pattern', function () {
-        expect(fn(ref, {kitSrc: 'http://www.google.com/123abc.js'}, {})).to.eql({kitSrc: 'http://www.google.com/123abc.js', kitId: '123abc'});
+        expect(fn(ref, { kitSrc: 'http://www.google.com/123abc.js' }, {})).to.eql({ kitSrc: 'http://www.google.com/123abc.js', kitId: '123abc' });
       });
     });
   });

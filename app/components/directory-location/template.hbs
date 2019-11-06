@@ -1,14 +1,14 @@
 <section data-uri="{{ default _ref _self }}" class="component component--directory-location">
   <select class="directory-location__dropdown--mobile">
     <option value="">See all in location:</option>
-    {{#each @root.locals.allMarkets }}
+    {{#each allMarkets }}
       <option value="{{ attributes.slug }}">{{ attributes.display_name }}</option>
     {{/each}}
   </select>
   {{#if market }}
     {{> stations-list stationsList }}
   {{else}}
-    {{~#each @root.locals.allMarkets as |market| ~}}
+    {{~#each allMarkets as |market| ~}}
       <div class="directory-location__stations-by-market" data-market="{{ id }}">
         {{> stations-list ../stationsListTruncated }}
       </div>

@@ -102,12 +102,12 @@ function getComponentList(list) {
  */
 function getReadmeData(component) {
   return function (schema) {
-    let description = schema._description || '_No description given._',
+    const description = schema._description || '_No description given._',
       fields = _.reduce(schema, function (result, val, key) {
         if (!val) {
           console.log(chalk.red(`Cannot generate readme for ${component} » ${key}!`));
         } else if (val._has) {
-          let name = val._label || key,
+          const name = val._label || key,
             input = val._has,
             type = val._has.input,
             placeholder = val._placeholder,
@@ -122,7 +122,7 @@ function getReadmeData(component) {
           };
         } else if (val._componentList) {
           // also add component lists, specifying what components they include
-          let name = val._label || key,
+          const name = val._label || key,
             desc = `${getListDescription(val._componentList)}`,
             placeholder = val._placeholder,
             list = getComponentList(val._componentList);
@@ -141,7 +141,7 @@ function getReadmeData(component) {
         if (!val) {
           console.log(chalk.red(`Cannot generate readme for ${component} » ${key}!`));
         } else {
-          let name = val._label || key,
+          const name = val._label || key,
             fields = val.fields.map(function (fieldName) { return fieldName.match(/^(\w+)(?:\s?\((.*)\))?$/)[1]; }),
             placeholder = val._placeholder;
 
@@ -262,7 +262,7 @@ function formatFields(fields) {
  * @returns {string} of markdown
  */
 function createReadme(data) {
-  let readme = `# ${data.name}
+  const readme = `# ${data.name}
 A component for [Clay](https://github.com/nymag/amphora/wiki#clay-is-divided-into-components).
 
 ## Description
