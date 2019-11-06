@@ -161,7 +161,7 @@ const { getComponentInstance } = require('clayutils'),
   toggleMobileSecondaryLinks = ({ currentTarget }) => {
     if (!currentTarget.classList.contains(active)) {
       // Close dropdown of all categories
-      for (let item of mobileNavItems) {
+      for (const item of mobileNavItems) {
         item.classList.remove(active);
       }
     }
@@ -208,7 +208,7 @@ const { getComponentInstance } = require('clayutils'),
         mobileNavDrawer.classList.remove(active);
       } else {
         // reset all desktop drawers
-        for (let drawer of desktopNavDrawers) {
+        for (const drawer of desktopNavDrawers) {
           drawer.classList.remove(active);
         }
       }

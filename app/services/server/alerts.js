@@ -3,7 +3,7 @@
 const db = require('../server/db'),
   uuidV4 = require('uuid/v4'),
   _pick = require('lodash/pick'),
-  log = require('../universal/log').setup({file: __filename}),
+  log = require('../universal/log').setup({ file: __filename }),
   { prettyJSON } = require('../universal/utils'),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   checkEndsBeforeStart = (start, end) => new Date(end) < new Date(start),
@@ -14,7 +14,7 @@ const db = require('../server/db'),
    * @param {object} response
    * @returns {array}
    */
-  pullDataFromResponse = (response) => response.rows.map(({id, data}) => ({id, ...data})),
+  pullDataFromResponse = (response) => response.rows.map(({ id, data }) => ({ id, ...data })),
   /**
    * Checks if the start and end times for an alert overlap with any other alert
    *
@@ -49,19 +49,19 @@ const db = require('../server/db'),
    * @param {Object} alert
    */
   validate = async (key, alert) => {
-    const {start, end, station} = alert;
+    const { start, end, station } = alert;
 
     try {
       if (checkEndsBeforeStart(start, end)) {
-        return {failed: true, message: 'Cannot save this alert. It ends before it starts.'};
+        return { failed: true, message: 'Cannot save this alert. It ends before it starts.' };
       }
 
       if (checkEndsInPast(end)) {
-        return {failed: true, message: 'Cannot save this alert. It ends in the past.'};
+        return { failed: true, message: 'Cannot save this alert. It ends in the past.' };
       }
 
       if (await checkForOverlap(start, end, station, key)) {
-        return {failed: true, message: 'Cannot save this alert. Its start and end times overlap with another alert'};
+        return { failed: true, message: 'Cannot save this alert. Its start and end times overlap with another alert' };
       }
     } catch (error) {
       log(
@@ -77,7 +77,7 @@ const db = require('../server/db'),
       };
     }
 
-    return {failed: false};
+    return { failed: false };
   },
   /**
    * Add routes for alerts
@@ -94,7 +94,7 @@ const db = require('../server/db'),
       const allowedParams = ['active', 'current', 'station'];
 
       try {
-        const params = _pick({active: true, ...req.query}, allowedParams),
+        const params = _pick({ active: true, ...req.query }, allowedParams),
           paramValues = [],
           whereQuery = Object.keys(params).map(key => {
             switch (key) {
@@ -134,7 +134,7 @@ const db = require('../server/db'),
       }
 
       try {
-        await db.post(key, {...alert, active: true});
+        await db.post(key, { ...alert, active: true });
 
         res.status(200).send(key);
       } catch (e) {
@@ -147,7 +147,7 @@ const db = require('../server/db'),
      * Update an alert
      */
     app.put('/alerts', checkAuth, async (req, res) => {
-      const {id: key, ...alert} = req.body,
+      const { id: key, ...alert } = req.body,
         validation = await validate(key, alert);
 
       if (validation.failed) {
@@ -157,7 +157,7 @@ const db = require('../server/db'),
       try {
         await db.put(key, alert);
 
-        res.status(200).send({key, ...alert});
+        res.status(200).send({ key, ...alert });
       } catch (e) {
         log('error', e.message);
         res.status(500).send('There was an error saving the alert');

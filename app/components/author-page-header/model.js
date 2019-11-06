@@ -41,7 +41,7 @@ module.exports.render = (ref, data, locals) => {
     const handle = data[link.type];
   
     if (handle) {
-      return {...link, url: link.url.replace('{handle}', handle)};
+      return { ...link, url: link.url.replace('{handle}', handle) };
     }
   }).filter(updatedLink => updatedLink);
   

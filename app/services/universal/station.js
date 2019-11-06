@@ -62,7 +62,7 @@ const radioApi = require('../server/radioApi'),
       params['filter[day_of_week]'] = dayOfWeek;
     }
     // eslint-disable-next-line one-var
-    const schedules = await radioApi.get('schedules', params, null, { ttl: radioApi.TTL.MIN * 3, expire: radioApi.TTL.DAY * 7 }, locals);
+    const schedules = await radioApi.get('schedules', params, null, {}, locals);
 
     if (onAir && _has(schedules, 'data.length')) {
       const show = _find(schedules.data, schedule => {

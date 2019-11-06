@@ -24,7 +24,7 @@ const _get = require('lodash/get'),
  * @returns {string}
  */
 function stripHeadlineTags(oldHeadline) {
-  let newHeadline = striptags(oldHeadline, ['em', 'i', 'strike']);
+  const newHeadline = striptags(oldHeadline, ['em', 'i', 'strike']);
 
   // if any tags include a trailing space, shift it to outside the tag
   return newHeadline.replace(/ <\/(i|em|strike)>/g, '</$1> ');
@@ -434,8 +434,8 @@ function upCaseRadioDotCom(data) {
  */
 function setNoIndexNoFollow(data) {
   const isContentFromAP = _get(data, 'byline', [])
-    .some(({sources = []}) =>
-      sources.some(({text}) => text === 'The Associated Press'));
+    .some(({ sources = [] }) =>
+      sources.some(({ text }) => text === 'The Associated Press'));
 
   data.isContentFromAP = isContentFromAP;
   data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;

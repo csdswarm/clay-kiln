@@ -1,6 +1,7 @@
 /* stylelint-disable */
 @import "_global/mixins";
 @import "_global/colors";
+@import "_global/fonts";
 
 $default-radium-width: em(150);
 $default-nav-height: em(60);
@@ -497,7 +498,7 @@ $drawerSelector: nav-drawer;
 
   .radium {
     &__text {
-     @mixin radium-font1;
+      @mixin radium-font1;
     }
 
     &__link--signed-out {

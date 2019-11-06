@@ -78,7 +78,8 @@ async function getAllPermissions(jwtToken) {
 async function loadPermissions(session, locals) {
   try {
     const currentTime = Date.now(),
-      loginData = { ...session.auth };
+      loginData = { ...session.auth },
+      { expires } = loginData;
 
     if (!loginData.token) {
       const username = (locals.user.username || '').toLowerCase();
@@ -87,7 +88,7 @@ async function loadPermissions(session, locals) {
       cache.del(`cognito-auth--${username}`);
     }
 
-    let { expires, permissions, lastUpdated } = loginData;
+    let { permissions, lastUpdated } = loginData;
 
     if (expires < currentTime) {
       Object.assign(loginData, await refreshAuthToken(loginData));
