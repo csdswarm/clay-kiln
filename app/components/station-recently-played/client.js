@@ -44,7 +44,7 @@ class StationRecentlyPlayed {
    * @param {number} hour
    * @returns {Promise}
    */
-  async loadContent({stationId, gmtOffset, category }, dayOfWeek, hour) {
+  async loadContent({ stationId, gmtOffset, category }, dayOfWeek, hour) {
     const endpoint = `//${window.location.hostname}/_components/station-recently-played/instances/default.html`,
       doc = await fetchDOM(`${endpoint}?stationId=${stationId}&hour=${hour}&category=${category}&dayOfWeek=${dayOfWeek}&gmt_offset=${gmtOffset}`),
       content = doc.querySelector('.station-recently-played'),

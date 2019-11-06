@@ -92,3 +92,6 @@ radio-web-player
 app/.config/configstore/*
 
 .snapshot
+
+#vscode settings
+.vscode

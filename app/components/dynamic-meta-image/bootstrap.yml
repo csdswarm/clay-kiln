@@ -1,0 +1,5 @@
+_components:
+  dynamic-meta-image:
+    dynamicImageUrl: ''
+    routeParam: ''
+    localsKey: ''

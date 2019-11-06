@@ -83,13 +83,13 @@ module.exports.render = function (ref, data, locals) {
   }
 
   // Clean based on tags and grab first as we only ever pass 1
-  data.tag = tag.clean([{text: data.tag}])[0].text || '';
+  data.tag = tag.clean([{ text: data.tag }])[0].text || '';
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+  queryService.addShould(query, { match: { 'tags.normalized': data.tag } });
   queryService.addMinimumShould(query, 1);
-  queryService.addSort(query, {date: 'desc'});
+  queryService.addSort(query, { date: 'desc' });
 
   // exclude the current page in results
   if (locals.url && !isComponent(locals.url)) {

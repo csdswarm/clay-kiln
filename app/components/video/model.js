@@ -74,7 +74,7 @@ function generateEmbedHtml(url) {
 }
 
 module.exports.render = function (uri, data) {
-  const {url} = data,
+  const { url } = data,
     parsed = parse(url, true),
     query = parsed.query;
 
@@ -102,8 +102,8 @@ module.exports.render = function (uri, data) {
  * @return {Promise}
  */
 module.exports.save = function (uri, data) {
-  let url = data.url,
-    embedCode = url && url.match(/src=['"](.*?)['"]/i); // find first src="(url)"
+  const embedCode = url && url.match(/src=['"](.*?)['"]/i); // find first src="(url)"
+  let url = data.url;
 
   // if they pasted in a full embed code, parse out the url
   if (embedCode) {
