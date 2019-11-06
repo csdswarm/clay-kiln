@@ -36,7 +36,7 @@ module.exports = function (data, locals) {
         description: { _cdata: seoDescription }
       },
       {
-        'content:encoded': { _cdata: renderContent(data.content, locals)}
+        'content:encoded': { _cdata: renderContent(data.content, locals) }
       },
       {
         stationUrl: stationURL
@@ -60,13 +60,13 @@ module.exports = function (data, locals) {
 
   if (data.slides) {
     transform.push({
-      slides: { _cdata: renderContent(data.slides, locals)}
+      slides: { _cdata: renderContent(data.slides, locals) }
     });
   }
 
   if (data.lead) {
     transform.push({
-      lead: { _cdata: renderContent(data.lead, locals)}
+      lead: { _cdata: renderContent(data.lead, locals) }
     });
   }
 

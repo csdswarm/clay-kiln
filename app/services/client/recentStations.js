@@ -8,7 +8,7 @@ const localStorageKey = 'recentStations',
  * @returns {Object[]}
  */
 function get() {
-  let recentStationsIDs = localStorage.getItem(localStorageKey);
+  const recentStationsIDs = localStorage.getItem(localStorageKey);
 
   if (!recentStationsIDs) {
     return [];

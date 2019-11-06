@@ -13,7 +13,7 @@ module.exports['1.0'] = function (uri, data) {
 
 module.exports['2.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   newData.filterSecondaryArticleTypes = {};
 
@@ -39,7 +39,7 @@ module.exports['3.0'] = function (uri, data) {
 
   // Only change the filter value for the HP instance
   if ((isSectionFront.length && !data.filterTags.filter(tag => tag.text === 'Radio.com Latino').length) || uri.indexOf('homepage') >= 0) {
-    data.filterTags.push({text: 'Radio.com Latino'});
+    data.filterTags.push({ text: 'Radio.com Latino' });
   }
 
   return data;
@@ -50,7 +50,7 @@ module.exports['4.0'] = function (uri, data) {
 
   // Only change the filter value for the HP instance
   if (uri.indexOf('instances/home') >= 0 && typeof data.filterTags.find(tag => tag.text === 'Radio.com Latino') === 'undefined') {
-    data.filterTags.push({text: 'Radio.com Latino'});
+    data.filterTags.push({ text: 'Radio.com Latino' });
   }
 
   return data;
@@ -66,7 +66,7 @@ module.exports['5.0'] = function (uri, data) {
 };
 
 module.exports['6.0'] = function (uri, data) {
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
   
