@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require('./db'),
-  log = require('../universal/log').setup({file: __filename}),
+  log = require('../universal/log').setup({ file: __filename }),
   NAME = 'valid-source',
   TABLE = NAME.replace('-', '_'),
   ENDPOINT = `/${NAME}`,

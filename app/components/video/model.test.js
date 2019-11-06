@@ -15,25 +15,25 @@ describe(dirname, function () {
         uri = 'domain.com/_components/video/instances/a';
 
       it('handles data missing the url property', function () {
-        expect(fn(uri, {}, {})).to.eql({youtubeId: ''});
+        expect(fn(uri, {}, {})).to.eql({ youtubeId: '' });
       });
 
       it('handles a non-youtube url', function () {
         const url = 'www.embed.westia.com/a/b/c';
 
-        expect(fn(uri, {url}, {})).to.eql({url, youtubeId: ''});
+        expect(fn(uri, { url }, {})).to.eql({ url, youtubeId: '' });
       });
 
       it('handles youtube short url', function () {
         const url = 'https://youtu.be/ziipowS_kzY';
 
-        expect(fn(uri, {url}, {})).to.eql({url, youtubeId: 'ziipowS_kzY'});
+        expect(fn(uri, { url }, {})).to.eql({ url, youtubeId: 'ziipowS_kzY' });
       });
 
       it('handles long form youtube urls', function () {
         const url = 'https://www.youtube.com/watch?v=ziipowS_kzY';
 
-        expect(fn(uri, {url}, {})).to.eql({url, youtubeId: 'ziipowS_kzY'});
+        expect(fn(uri, { url }, {})).to.eql({ url, youtubeId: 'ziipowS_kzY' });
       });
     });
 
@@ -118,7 +118,7 @@ describe(dirname, function () {
 
       it('does not generate new html if lastGenerated is set and equals saved url', function () {
         rest.get.returns(Promise.resolve({}));
-        return fn(uri, {url: 'http://vimeo.com/foo', lastGenerated: 'http://vimeo.com/foo', html: 'foo' }).then(function (result) {
+        return fn(uri, { url: 'http://vimeo.com/foo', lastGenerated: 'http://vimeo.com/foo', html: 'foo' }).then(function (result) {
           expect(rest.get.called).to.be.false;
           expect(result.html).to.equal('foo');
         });
@@ -126,14 +126,14 @@ describe(dirname, function () {
 
       it('does generate new html if lastGenerated is set and does NOT equal saved url', function () {
         rest.get.returns(Promise.resolve({}));
-        return fn(uri, {url: 'http://vimeo.com/foo', lastGenerated: 'http://vimeo.com/bar', html: 'foo' }).then(function (result) {
+        return fn(uri, { url: 'http://vimeo.com/foo', lastGenerated: 'http://vimeo.com/bar', html: 'foo' }).then(function (result) {
           expect(rest.get.called).to.be.true;
           expect(result.html).to.not.equal('foo');
         });
       });
 
       it('removes lastGenerated if url is unset', function () {
-        return fn(uri, {url: '', lastGenerated: 'http://foo.com', html: 'bar'}).then(function (result) {
+        return fn(uri, { url: '', lastGenerated: 'http://foo.com', html: 'bar' }).then(function (result) {
           expect(result.lastGenerated).to.equal('');
         });
       });

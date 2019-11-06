@@ -35,6 +35,9 @@ const adSizes = {
   },
   'content-page-logo-sponsorship': {
     defaultSize: [100, 35]
+  },
+  'sharethrough-tag': {
+    defaultSize: [1, 1]
   }
 };
 
@@ -42,7 +45,7 @@ module.exports = {
   adSizes,
   sizeMapping: {},
   setupSizeMapping: function () {
-    let sizeMapping = this.sizeMapping;
+    const sizeMapping = this.sizeMapping;
 
     googletag.cmd.push(function () {
       sizeMapping['billboard'] = googletag.sizeMapping()
@@ -99,6 +102,10 @@ module.exports = {
 
       sizeMapping['content-page-logo-sponsorship'] = googletag.sizeMapping()
         .addSize([0, 0], [[100, 35]])
+        .build();
+
+      sizeMapping['sharethrough-tag'] = googletag.sizeMapping()
+        .addSize([0, 0], [[1, 1]])
         .build();
 
     });

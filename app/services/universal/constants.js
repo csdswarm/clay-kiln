@@ -17,7 +17,14 @@ const _get = require('lodash/get'),
     WEEK,
     YEAR
   },
-  SERVER_SIDE = _get(process, 'release.name') === 'node';
+  SERVER_SIDE = _get(process, 'release.name') === 'node',
+
+  PAGE_TYPES = {
+    ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front'
+  };
 
 
 module.exports = {
@@ -28,5 +35,6 @@ module.exports = {
   WEEK,
   YEAR,
   time,
-  SERVER_SIDE
+  SERVER_SIDE,
+  PAGE_TYPES
 };

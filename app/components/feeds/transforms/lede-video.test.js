@@ -9,7 +9,7 @@ describe('feeds', () => {
   describe(dirname, () => {
     describe(filename, () => {
       describe('getBrandLabel', () => {
-        let fn = lib.getBrandLabel;
+        const fn = lib.getBrandLabel;
 
         it('returns the label `The Cut` when the slug `wwwthecut` is provided', () => {
           return expect(fn('wwwthecut')).to.eql('The Cut');
@@ -25,7 +25,7 @@ describe('feeds', () => {
       });
 
       describe('addMediaContent', () => {
-        let fn = lib.addMediaContent,
+        const fn = lib.addMediaContent,
           data = {
             contentVideo:
               {
