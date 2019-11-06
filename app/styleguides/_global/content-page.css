@@ -65,6 +65,8 @@
       width: 100%;
       display: flex;
       justify-content: center;
+      flex-direction: column;
+
       .component--brightcove,
       .component--verizon-media,
       .component--omny {

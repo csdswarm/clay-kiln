@@ -55,7 +55,7 @@ async function handlePublishSectionFront(page) {
         sectionFronts.push({ name, value });
 
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(sectionFronts));
-        await db.put(sectionFrontRef, JSON.stringify({...data, titleLocked: true}));
+        await db.put(sectionFrontRef, JSON.stringify({ ...data, titleLocked: true }));
       }
     }
   } catch (e) {
@@ -87,7 +87,7 @@ async function handleUnpublishSectionFront(page) {
           });
         
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
-        await db.put(mainRef, JSON.stringify({...data, titleLocked: false}));
+        await db.put(mainRef, JSON.stringify({ ...data, titleLocked: false }));
       }
     }
   } catch (e) {

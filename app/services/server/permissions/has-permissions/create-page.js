@@ -7,9 +7,8 @@ const { getComponentName } = require('clayutils'),
 module.exports = router => {
   router.post('/create-page', async (req, res, next) => {
     const { stationSlug } = req.body,
-      { user } = res.locals;
-
-    let callsign = 'NATL-RC';
+      { user } = res.locals,
+      callsign = 'NATL-RC';
 
     if (stationSlug) {
       const callsign = await stationUtils.getCallsignFromSlug(stationSlug);

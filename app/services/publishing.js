@@ -17,4 +17,5 @@ module.exports.getGallerySlugUrl = urlPub.getGallerySlugUrl;
 module.exports.getArticleSlugUrl = urlPub.getArticleSlugUrl;
 module.exports.getSectionFrontSlugUrl = urlPub.getSectionFrontSlugUrl;
 module.exports.getContestSlugUrl = urlPub.getContestSlugUrl;
+module.exports.getAuthorPageSlugUrl = urlPub.getAuthorPageSlugUrl;
 module.exports.addLastModified = addLastModified;

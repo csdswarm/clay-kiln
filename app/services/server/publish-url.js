@@ -19,7 +19,7 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
   }
 
   return pubUtils.getMainComponentFromRef(componentReference, locals)
-    .then(({component, pageType}) => {
+    .then(({ component, pageType }) => {
       return pubUtils.getUrlOptions(component, locals, pageType);
     });
 }
@@ -102,8 +102,18 @@ function getContestSlugUrl(pageData, locals, mainComponentRefs) {
     });
 }
 
+function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      const slug = pubUtils.authorPageSlugPattern(urlOptions);
+      
+      return slug;
+    });
+}
+
 module.exports.getYearMonthSlugUrl = getYearMonthSlugUrl;
 module.exports.getArticleSlugUrl = getArticleSlugUrl;
 module.exports.getGallerySlugUrl = getGallerySlugUrl;
 module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
 module.exports.getContestSlugUrl = getContestSlugUrl;
+module.exports.getAuthorPageSlugUrl = getAuthorPageSlugUrl;

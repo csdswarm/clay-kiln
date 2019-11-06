@@ -19,6 +19,7 @@ const SECOND = 1000,
 
   PAGE_TYPES = {
     ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
     CONTEST: 'contest'

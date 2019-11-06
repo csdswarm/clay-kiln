@@ -17,6 +17,7 @@ module.exports = () => {
   require('./plugins/instagram')();
   require('./plugins/subscriptions')();
   require('./plugins/stations')();
+  require('./plugins/select-list')();
   require('./validators')();
   secureAllSchemas();
 };

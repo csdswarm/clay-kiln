@@ -81,7 +81,7 @@ function isEmptyOrInvalid(component, field) {
  * @param  {array} fields
  * @param {object} schemas
  */
-function validateComponent(errors, { uri, component, fields, schemas}) {
+function validateComponent(errors, { uri, component, fields, schemas }) {
   const invalidFields = [];
 
   fields.forEach(function (field) {

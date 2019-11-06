@@ -92,13 +92,14 @@ const radioApiService = require('../server/radioApi'),
    * determines if the default station should be used
    *
    * @param {object} req
+   * @param {object} locals
    * @return {boolean}
    */
-  getStation = async (req) => {
+  getStation = async (req, locals) => {
     if (validPath(req)) {
       const slugInReqUrl = getStationSlug(req),
         stationId = req.query.stationId,
-        response = await radioApiService.get('stations', {page: {size: 1000}}, null, { ttl: radioApiService.TTL.MIN * 30 });
+        response = await radioApiService.get('stations', { page: { size: 1000 } }, null, { ttl: radioApiService.TTL.MIN * 30 }, locals);
 
       // use the stations as a cached object so we don't have to run the same logic every request
       if (response.response_cached === false || isEmpty(allStations)) {
@@ -129,7 +130,7 @@ const radioApiService = require('../server/radioApi'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  const station = await getStation(req);
+  const station = await getStation(req, res.locals);
 
   res.locals.allStationsCallsigns = allStationsCallsigns;
   res.locals.allStationsSlugs = Object.keys(allStations);
