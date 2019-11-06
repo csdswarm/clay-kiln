@@ -20,7 +20,7 @@ module.exports = (schema) => {
 
   schema.autoplayUnmuted.on('change', (value) => {
     if (value) {
-      schema.autoplayUnmuted.showSnackBar({message: 'Some browsers may disable autoplayed videos if unmuted'});
+      schema.autoplayUnmuted.showSnackBar({ message: 'Some browsers may disable autoplayed videos if unmuted' });
       schema.clickToPlay.value(false);
     }
   });
@@ -42,9 +42,9 @@ module.exports = (schema) => {
         }
       } catch (e) {console.log(e);}
     }
-  });
+  }, true);
 
-  subscriptions.subscribe('OPEN_FORM', ({uri}) => {
+  subscriptions.subscribe('OPEN_FORM', ({ uri }) => {
     // set updateVideo input and value if video exists
     const video = schema.video.value(),
       bc = document.querySelector(`[data-uri="${uri}"]`);
@@ -61,7 +61,7 @@ module.exports = (schema) => {
       schema.updateVideo.value(video);
       schema.updateVideo.setProp('_has', { input: 'brightcove-update' });
     }
-  });
+  }, true);
 
   return schema;
 };

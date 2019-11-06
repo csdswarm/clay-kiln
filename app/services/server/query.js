@@ -5,7 +5,8 @@ const amphoraSearch = require('amphora-search'),
   log = require('../universal/log').setup({ file: __filename }),
   indexWithPrefix = amphoraSearch.indexWithPrefix,
   universalQuery = require('../universal/query'),
-  utils = require('../universal/utils');
+  utils = require('../universal/utils'),
+  { urlToElasticSearch } = utils;
 
 /**
  * Get ElasticSearch client reference
@@ -110,7 +111,7 @@ function updateByQuery(query) {
     return bluebird.reject('Update not instantiated.');
   }
 
-  return module.exports.searchInstance.update({index: prependPrefix(index), id, body, refresh })
+  return module.exports.searchInstance.update({ index: prependPrefix(index), id, body, refresh })
     .then(function (results) {
       log('trace', 'updated elastic document');
       return results;
@@ -171,12 +172,13 @@ function executeMultipleSearchRequests(query) {
  * @returns {Promise}
  */
 function onePublishedArticleByUrl(url, fields) {
-  const query = newQueryWithCount('published-content');
+  const query = newQueryWithCount('published-content'),
+    canonicalUrl = utils.urlToCanonicalUrl(
+      urlToElasticSearch(url)
+    );
 
   universalQuery.addFilter(query, {
-    term: {
-      canonicalUrl: utils.urlToCanonicalUrl(url)
-    }
+    term: { canonicalUrl }
   });
   if (fields) {
     universalQuery.onlyWithTheseFields(query, fields);

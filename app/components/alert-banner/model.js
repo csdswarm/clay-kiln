@@ -51,15 +51,15 @@ async function getAlerts(locals) {
     const
       { protocol, host } = locals.site || {},
       { callsign } = locals.station || {},
-      { closedAlerts = [] , defaultStation} = locals,
+      { closedAlerts = [] } = locals,
       urlExists = url => url,
       getMessage = url => rest.get(url).catch(handleErrors),
       existingMessages = message => message && message.length,
       unclosedMessages = message => !closedAlerts.includes(message.id),
       base = `${protocol}://${host}/alerts?cb=${Date.now()}&active=true&current=true&station=`,
-      urlNational = `${base}${defaultStation.callsign}`,
-      urlLocal = callsign !== defaultStation.callsign ? `${base}${callsign}` : '',
-      getMessages = [urlNational, urlLocal]
+      urlGlobal = `${base}GLOBAL`,
+      urlLocal = `${base}${callsign}`,
+      getMessages = [urlGlobal, urlLocal]
         .filter(urlExists)
         .map(getMessage),
       messages = await Promise.all(getMessages);

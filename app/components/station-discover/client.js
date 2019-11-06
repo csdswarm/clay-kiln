@@ -26,7 +26,7 @@ class StationDiscover {
 
     select.addEventListener('change', (e) => this.activateFilteredList(e) );
 
-    for (let option of this.dropdown) {
+    for (const option of this.dropdown) {
       option.addEventListener('click', (e) => this.activateFilteredList(e) );
     }
   }
@@ -37,7 +37,7 @@ class StationDiscover {
      */
   activateAllLists(event) {
     if (!event || event.target === this.discoverTab) {
-      for (let list of this.stationLists) {
+      for (const list of this.stationLists) {
         list.classList.add('active');
       }
     }
@@ -57,7 +57,7 @@ class StationDiscover {
     }
 
     if (filter) {
-      for (let list of this.stationLists) {
+      for (const list of this.stationLists) {
         list.classList.remove('active');
         if (list.classList.contains(`stations-list--${filter}`)) {
           list.classList.add('active');
