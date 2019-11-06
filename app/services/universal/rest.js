@@ -99,7 +99,7 @@ module.exports.request = async (url, opts) => {
  * @return {Promise}
  */
 module.exports.get = function (url, opts) {
-  const conf = _defaults({method: 'GET'}, opts);
+  const conf = _defaults({ method: 'GET' }, opts);
 
   return fetch(url, conf).then(checkStatus).then(function (res) { return res.json(); });
 };

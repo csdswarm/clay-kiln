@@ -1,7 +1,7 @@
 'use strict';
 
-const filePath = './apple-news-format/preview/article.json';
-let isFetching = false,
+let isFetching = false;
+const filePath = './apple-news-format/preview/article.json',
   writeArticleFile = (res) => {
     if (typeof window !== 'undefined') {
       return;

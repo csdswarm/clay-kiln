@@ -24,9 +24,10 @@ module.exports.render = function (ref, data, locals) { // eslint-disable-line no
 
 /**
  * @param {string} ref
- * @param {object} data
+ * @param {Object} data
+ * @param {Object} locals
  *
- * @returns {object}
+ * @returns {Object}
  */
 module.exports.save = async function (ref, data, locals) {
   // server side only check so user can get validation error from ui
