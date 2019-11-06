@@ -11,7 +11,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @returns {string} a brightcove friendly query string
    */
   buildQuery = params => {
-    const {query, endDate, startDate} = params,
+    const { query, endDate, startDate } = params,
       start = startDate ? moment(startDate).startOf('day').toISOString() : '',
       end = endDate ? moment(endDate).endOf('day').toISOString() : 'NOW',
       updatedAtQuery = startDate || endDate ? `%20%2Bupdated_at:${start}..${end}` : '';
@@ -57,7 +57,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    */
   search = async (req, res) => {
     try {
-      await brightcoveApi.request('GET', 'videos', {q: buildQuery(req.query), limit: 10})
+      await brightcoveApi.request('GET', 'videos', { q: buildQuery(req.query), limit: 10 })
         .then(({ body }) => transformVideoResults(body))
         .then(results => res.send(results));
     } catch (e) {
@@ -105,7 +105,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
           { status, statusText, signed_url, api_request_url } = await brightcoveApi.getS3Urls(createdVidID, sourceName);
 
         if (signed_url && api_request_url) {
-          res.send({signed_url, api_request_url, videoID: createdVidID});
+          res.send({ signed_url, api_request_url, videoID: createdVidID });
         } else {
           res.status(status).send(statusText);
         }
@@ -167,7 +167,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
       const { status, statusText, body: ingestJobStatus } = await brightcoveApi.getStatusOfIngestJob(videoID, jobID);
 
       if (status === 200) {
-        res.send({state: ingestJobStatus.state});
+        res.send({ state: ingestJobStatus.state });
       } else {
         res.status(status).send(statusText);
       }

@@ -4,6 +4,7 @@ const radioAPI = require('../../services/server/radioApi'),
   { playingClass } = require('../../services/server/spaLocals'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime');
 
+
 /**
  * @param {string} ref
  * @param {object} data
@@ -59,8 +60,6 @@ module.exports.render = async function (ref, data, locals) {
     },
     schedule: !json.data ? [] :
       json.data
-      // sort by start date
-        .sort((item1, item2) => getTime(item1.attributes.start_time) > getTime(item2.attributes.start_time))
         // extract only the content we need as a flat record
         .map((schedule) => {
           const item = schedule.attributes;
@@ -76,4 +75,3 @@ module.exports.render = async function (ref, data, locals) {
         })
   };
 };
-

@@ -45,7 +45,7 @@ module.exports = {
   adSizes,
   sizeMapping: {},
   setupSizeMapping: function () {
-    let sizeMapping = this.sizeMapping;
+    const sizeMapping = this.sizeMapping;
 
     googletag.cmd.push(function () {
       sizeMapping['billboard'] = googletag.sizeMapping()
