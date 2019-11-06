@@ -2,7 +2,7 @@
 
 const accessToken = process.env.LYTICS_API_KEY,
   lyticsAPI = process.env.LYTICS_API_URL,
-  log = require('./log').setup({file: __filename}),
+  log = require('./log').setup({ file: __filename }),
   rest = require('./rest'),
   qs = require('qs'),
   /**
@@ -26,7 +26,7 @@ const accessToken = process.env.LYTICS_API_KEY,
    */
   request = async (route, params) => {
     try {
-      const endpoint = createEndpoint(route, {access_token: accessToken, ...params});
+      const endpoint = createEndpoint(route, { access_token: accessToken, ...params });
 
       return await rest.get(endpoint);
     } catch (e) {

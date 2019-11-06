@@ -25,7 +25,7 @@ function buildQuery(numResults, locals, items) {
     sectionFronts = process.env.SECTION_FRONTS.split(',');
   
   // add sorting
-  queryService.addSort(query, {date: 'desc'});
+  queryService.addSort(query, { date: 'desc' });
   // map the sectionFronts to should matches
   queryService.addShould(query, sectionFronts.map(sf => {
     return {
@@ -44,9 +44,9 @@ function buildQuery(numResults, locals, items) {
   if (items && !isComponent(locals.url)) {
     items.forEach(item => {
       if (item.canonicalUrl) {
-        let cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+        const cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
         
-        queryService.addMustNot(query, {match: {canonicalUrl: cleanUrl}});
+        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
       }
     });
   }
