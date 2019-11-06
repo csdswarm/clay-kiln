@@ -14,9 +14,14 @@
       {{/each}}
     </div>
     <div>
-      {{#each footerLinks as |link|}}
-        <a class="station-footer__link" href="{{ link.url }}" title="{{ link.url }}">{{ link.text }}</a>
-      {{/each}}
+      <div class="station-footer__links">
+        {{#each footerLinks as |link|}}
+          <a class="station-footer__link" href="{{ link.url }}" title="{{ link.url }}">{{ link.text }}</a>
+        {{/each}}
+      </div>
+      {{#ifAny @root.locals.edit copyright }}
+        <div class="station-footer__copyright" data-editable="copyright" itemprop="copyright">{{copyright}}</div>
+      {{/ifAny}}
     </div>
   </div>
 </div>

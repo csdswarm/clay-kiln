@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require('../../services/server/db'),
-  log = require('../../services/universal/log').setup({file: __filename}),
+  log = require('../../services/universal/log').setup({ file: __filename }),
   { elastic } = require('amphora-search'),
   { find, forEach } = require('lodash'),
   { isOpForArticle } = require('../filters');

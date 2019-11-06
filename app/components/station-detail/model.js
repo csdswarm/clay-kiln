@@ -3,7 +3,7 @@ const slugifyService = require('../../services/universal/slugify'),
   { playingClass, favoriteModifier } = require('../../services/universal/spaLocals'),
   { addCrumb } = require('../breadcrumbs'),
   { sendError } = require('../../services/universal/cmpt-error'),
-  { getStationSlug} = require('../../services/universal/stations'),
+  { getStationSlug } = require('../../services/universal/stations'),
   NEWS_TALK = 'News & Talk',
   SPORTS = 'Sports',
   LOCATION = 'location';
@@ -15,7 +15,7 @@ const slugifyService = require('../../services/universal/slugify'),
  * @returns {array}
  */
 function getStationTags(station) {
-  let tags = [];
+  const tags = [];
 
   if (station.genre_name) {
     station.genre_name.forEach(genre => {
@@ -93,7 +93,7 @@ module.exports.render = (uri, data, locals) => {
 
   data.tags = getStationTags(locals.station);
   data.category = locals.station.category.toLowerCase() || '';
-  data.genre = locals.station.genre.map(({name}) => name).join();
+  data.genre = locals.station.genre.map(({ name }) => name).join();
   addBreadcrumbLinks(data, locals.site.host);
 
   return data;

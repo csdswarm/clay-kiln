@@ -48,7 +48,7 @@ function middleware(req, res, next) {
   const params = {},
     { routeParamKey, routePrefix } = getPrefixAndKey(req.path);
 
-  let promise, curatedOrDynamicRoutePrefixes, curatedOrDynamicRoutes, dynamicParamExtractor;
+  let promise, dynamicParamExtractor;
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
@@ -56,12 +56,13 @@ function middleware(req, res, next) {
 
   // Define Curated/Dynamic routes.
   // Match against section-front, topic, and author slug prefixes
-  curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+  const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
+
   curatedOrDynamicRoutePrefixes.push('topic');
   curatedOrDynamicRoutePrefixes.push('authors');
 
   // Define curated/dynamic routing logic
-  curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
+  const curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
 
   // If it's a curated/dynamic route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
@@ -119,7 +120,7 @@ function middleware(req, res, next) {
       log('error', '404', { stack: err.stack });
       res
         .status(404)
-        .json({ status: 404, msg: err.message});
+        .json({ status: 404, msg: err.message });
     });
 }
 

@@ -17,8 +17,8 @@ const qs = require('qs'),
         res.status(401).send('You are not authorized to perform this action');
       }
 
-      const params = qs.stringify({...req.body, publish: false}),
-        {results} = await rest.get(`${importContentUrl}?${params}`);
+      const params = qs.stringify({ ...req.body, publish: false }),
+        { results } = await rest.get(`${importContentUrl}?${params}`);
 
       res.send(results);
     } catch (e) {

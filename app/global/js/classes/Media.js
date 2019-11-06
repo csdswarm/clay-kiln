@@ -85,7 +85,7 @@ class Media {
   async whenScriptsLoaded() {
     const { component } = this,
       { id, media, node, persistent } = await this.createMedia(component),
-      mediaObserver = new IntersectionObserver((change) => this.notInView(change), {threshold: 0});
+      mediaObserver = new IntersectionObserver((change) => this.notInView(change), { threshold: 0 });
 
     this.id = id;
     this.media = media;
