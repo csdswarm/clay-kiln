@@ -94,10 +94,13 @@
 
         try {
           this.searchResults = await this.search();
-          this.loading = false;
         } catch (e) {
           this.searchResults = [];
-          this.loading = false;
+        }
+
+        this.loading = false;
+        if (!this.searchResults.length) {
+          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
         }
       },
       /**
@@ -112,7 +115,7 @@
           this.debouncePerformSearch();
         } else {
           // if there are less than two, just take already exists and see if it can reduce the results
-          this.searchResults = this.searchResults.filter(item => 
+          this.searchResults = this.searchResults.filter(item =>
             item.canonicalUrl.includes(this.searchText) || item.seoHeadline.includes(this.searchText));
         }
       },
