@@ -1,0 +1,44 @@
+_description: |
+  A dynamically created slider for promoting recirculation of latest articles and galleries within the same.
+
+items:
+  _label: Items
+  _has:
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      max: 10
+    help: Manually choose articles to include
+    props:
+    -
+      prop: url
+      _label: URL
+      _has:
+        input: content-search
+        validate:
+          required: true
+    -
+      prop: overrideTitle
+      _label: Headline Override
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
+      prop: overrideImage
+      _label: Image Override
+      _has:
+        input: text
+        help: Image url for article thumbnail
+        type: url
+    -
+      prop: ignoreValidation
+      _label: Bypass URL Validation?
+      _has:
+        input: checkbox
+        help: Use this field if the destination of the URL entered is not a Clay page. If checked, Headline and/or Image override must be set manually.
+    -
+      prop: urlIsValid
+      _has:
+        validate:
+          required: true

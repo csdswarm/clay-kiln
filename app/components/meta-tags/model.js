@@ -129,9 +129,9 @@ module.exports.render = (ref, data, locals) => {
   }
 
   if (data.noIndexNoFollow) {
-    data.metaTags.push({name: ROBOTS, content: 'noindex, nofollow'});
+    data.metaTags.push({ name: ROBOTS, content: 'noindex, nofollow' });
   } else {
-    data.unusedTags.push({type: 'name', name: ROBOTS});
+    data.unusedTags.push({ type: 'name', name: ROBOTS });
   }
 
   // handle nmc tags
