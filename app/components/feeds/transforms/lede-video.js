@@ -11,7 +11,7 @@ const _get = require('lodash/get'),
  * @param {Array} transform
  */
 function addDescription({ text }, transform) {
-  transform.push({ description: { _cdata: text }});
+  transform.push({ description: { _cdata: text } });
 }
 
 /**
@@ -34,7 +34,7 @@ function addMediaContent(data, transform) {
     },
     [
       { _attr: { url: `https://www.youtube.com/watch?v=${videoId}`, duration: videoDuration, medium: 'video', expression: 'full' } },
-      { 'media:player': { _attr: { url: `https://www.youtube.com/watch?v=${videoId}` }}}
+      { 'media:player': { _attr: { url: `https://www.youtube.com/watch?v=${videoId}` } } }
     ],
     transform
   );
@@ -102,7 +102,7 @@ module.exports = function (data) {
 
   // Add the optional description, if it exists
   if (_isEmpty(firstParagraph)) {
-    transform.push({ description: { _cdata: teaser }});
+    transform.push({ description: { _cdata: teaser } });
   } else {
     addDescription(firstParagraph, transform);
   }
