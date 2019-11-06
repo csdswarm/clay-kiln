@@ -38,7 +38,7 @@ function normalizeOp(index) {
  */
 function addSiteToOp(op) {
   const prefix = getPrefix(op.key),
-    {slug} = sites.getSiteFromPrefix(prefix);
+    { slug } = sites.getSiteFromPrefix(prefix);
 
   op.value.site = slug;
   return op;

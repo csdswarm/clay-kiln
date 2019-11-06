@@ -17,9 +17,9 @@ module.exports = {
   validate(state) {
     const article = helpers.findArticle(state.components),
       content = article && article.content,
-      length = content && content.length;
+      length = content && content.length,
 
-    let previousMatches = [];
+      previousMatches = [];
 
     if (length) {
       return _reduceRight(content, (errors, component, index) => {

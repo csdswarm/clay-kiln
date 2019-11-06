@@ -20,7 +20,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * @param {boolean} toggleHamburgerOnly - Toggles hamburger without toggling mobile nav.
    */
   toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
-    let bars = document.getElementsByClassName('bar'),
+    const bars = document.getElementsByClassName('bar'),
       navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0],
       activeHamburgerClass = 'active',
       activeMobileNavClass = 'nav-drawer--active';
@@ -30,11 +30,11 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
 
     if (activeHamburger && isNotDesktop) {
       // Open mobile nav drawer & change hamburger styling
-      for (let bar of bars) bar.classList.add(activeHamburgerClass);
+      for (const bar of bars) bar.classList.add(activeHamburgerClass);
       navDrawer.classList.add(activeMobileNavClass);
     } else {
       // Close mobile nav drawer & change hamburger styling
-      for (let bar of bars) bar.classList.remove(activeHamburgerClass);
+      for (const bar of bars) bar.classList.remove(activeHamburgerClass);
       navDrawer.classList.remove(activeMobileNavClass);
     }
     // Toggle Mobile Nav Drawer
@@ -48,11 +48,11 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * @param {boolean} show - Open or close drawer/dropdown.
    */
   toggleNavDrawer = (event, show) => {
-    let navDrawer,
-      navDrawers = document.getElementsByClassName('nav-drawer');
+    const navDrawers = document.getElementsByClassName('nav-drawer');
+    let navDrawer;
 
     isNotDesktop = notDesktop();
-    for (let drawer of navDrawers) {
+    for (const drawer of navDrawers) {
       drawer.classList.remove('nav-drawer--sub-nav-active');
       drawer.classList.remove('nav-drawer--active');
     }
@@ -89,7 +89,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
       event.currentTarget.classList.remove(activeMobileClass);
     } else {
       // Close dropdown of all categories
-      for (let navSection of mobileNavSections) {
+      for (const navSection of mobileNavSections) {
         navSection.classList.remove(activeMobileClass);
       }
       // Open dropdown of clicked category
@@ -110,7 +110,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * Toggle Dropdowns on Mobile Nav Categories
    */
   toggleMobileDropdownOnClick = () => {
-    for (let navSection of mobileNavSections) {
+    for (const navSection of mobileNavSections) {
       navSection.addEventListener('click', e => {
         toggleMobileCategoryDropdown(e);
       });
@@ -121,7 +121,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * Toggle Nav Categories' Drawers
    */
   toggleDrawersOnCategoryHover = () => {
-    for (let navSection of navSections) {
+    for (const navSection of navSections) {
       if (navSection.classList.contains('radiocom-nav__category-button--drawer-enabled')) {
         navSection.addEventListener('mouseover', e => {
           toggleNavDrawer(e, true);
@@ -138,7 +138,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    */
   setMobileNavOnResize = () => {
     window.addEventListener('resize', () => {
-      let navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
+      const navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
 
       if (!notDesktop()) {
         navDrawer.classList.remove('nav-drawer--active');

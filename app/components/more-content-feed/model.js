@@ -138,12 +138,12 @@ module.exports.render = async function (ref, data, locals) {
 
     // Handle querying an array of tags
     if (Array.isArray(data.tag)) {
-      for (let tag of data.tag) {
-        addContentCondition(query, { match: { 'tags.normalized': tag }});
+      for (const tag of data.tag) {
+        addContentCondition(query, { match: { 'tags.normalized': tag } });
       }
     } else {
       // No need to clean the tag as the analyzer in elastic handles cleaning
-      addContentCondition(query, { match: { 'tags.normalized': data.tag }});
+      addContentCondition(query, { match: { 'tags.normalized': data.tag } });
     }
   }
 
@@ -162,8 +162,8 @@ module.exports.render = async function (ref, data, locals) {
       addContentCondition(query, {
         bool: {
           should: [
-            { match: { secondarySectionFront: secondarySectionFront }},
-            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() }}
+            { match: { secondarySectionFront: secondarySectionFront } },
+            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } }
           ],
           minimum_should_match: 1
         }
@@ -174,8 +174,8 @@ module.exports.render = async function (ref, data, locals) {
       addContentCondition(query, {
         bool: {
           should: [
-            { match: { sectionFront: sectionFront }},
-            { match: { sectionFront: sectionFront.toLowerCase() }}
+            { match: { sectionFront: sectionFront } },
+            { match: { sectionFront: sectionFront.toLowerCase() } }
           ],
           minimum_should_match: 1
         }
@@ -202,7 +202,7 @@ module.exports.render = async function (ref, data, locals) {
     }
 
     // No need to clean the author as the analyzer in elastic handles cleaning
-    queryService.addMust(query, { match: { 'authors.normalized': data.author }});
+    queryService.addMust(query, { match: { 'authors.normalized': data.author } });
   } else if (data.populateFrom === 'all-content') {
     if (!locals) {
       return data;
@@ -212,23 +212,23 @@ module.exports.render = async function (ref, data, locals) {
   // add minimum should if there are any
   if (_get(query, 'body.query.bool.should[0]')) queryService.addMinimumShould(query, 1);
 
-  queryService.addSort(query, {date: 'desc'});
+  queryService.addSort(query, { date: 'desc' });
 
   // Filter out the following tags
   if (data.filterTags) {
     for (const tag of data.filterTags.map((tag) => tag.text)) {
-      queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
+      queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
     }
   }
 
   // Filter out the following secondary article type
   if (data.filterSecondarySectionFronts) {
     Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-      let [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
+      const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
-        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter.toLowerCase() }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter.toLowerCase() } });
       }
     });
   }
