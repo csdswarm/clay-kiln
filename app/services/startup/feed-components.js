@@ -20,11 +20,11 @@ function init() {
   });
 
   // searches the components directories for any feed.hbs files -- was having weird behavior when using relative path.. was starting in /app
-  let templates = glob.sync(path.join(__dirname, '..', '..', 'components', '**', 'feed.hbs'));
+  const templates = glob.sync(path.join(__dirname, '..', '..', 'components', '**', 'feed.hbs'));
 
   // compile the feed.hbs files
   _each(templates, (template) => {
-    let match = template.match(/components\/([^\/]+)\//);
+    const match = template.match(/components\/([^\/]+)\//);
 
     if (match) {
       hbs.partials[`${match[1]}`] = hbs.compile(`${fs.readFileSync(template)}`, { preventIndent: true });
