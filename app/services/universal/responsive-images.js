@@ -65,7 +65,7 @@ function validateRenditionName(renditionName) {
   } else if (responsiveRenditions[renditionName]) {
     return renditionName;
   } else {
-    let nameParts = renditionName.split('-');
+    const nameParts = renditionName.split('-');
 
     if (responsiveRenditions[nameParts[0]]) {
       // we have a mediaplay rendition that we know how to handle
@@ -111,7 +111,7 @@ function getSourceSet(url, renditionName) {
   } else {
     renditionName = validateRenditionName(renditionName);
 
-    let srcSetWidths = responsiveRenditions[renditionName].srcSetWidths,
+    const srcSetWidths = responsiveRenditions[renditionName].srcSetWidths,
       srcSets = [];
 
     // for each width to be included, create 1x and 2x density descriptors

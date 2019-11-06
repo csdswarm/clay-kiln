@@ -1,0 +1,5 @@
+_components:
+  latest-top-recirc-slider:
+    instances:
+      default:
+        items: []

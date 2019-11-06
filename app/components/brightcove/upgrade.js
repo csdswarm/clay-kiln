@@ -11,7 +11,7 @@ module.exports['1.0'] = async (uri, data) => {
 
 module.exports['2.0'] = function (uri, data) {
 
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   if (newData.videoId) {
     newData.video = {

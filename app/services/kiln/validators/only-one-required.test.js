@@ -2,7 +2,7 @@
 
 const dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
-  {expect} = require('chai'),
+  { expect } = require('chai'),
   helpers = require('./helpers'),
   lib = require('./only-one-required');
 
@@ -15,7 +15,7 @@ describe(dirname, function () {
       it('doesn\'t do anything if components aren\'t there', function () {
         const state = {
           components: {
-            'www.url.com/_components/some-other-component/instances/a': {a: 'b'}
+            'www.url.com/_components/some-other-component/instances/a': { a: 'b' }
           }
         };
 
@@ -26,9 +26,9 @@ describe(dirname, function () {
         const subscriptionPlans = validations[0],
           state = {
             components: {
-              'www.url.com/_components/subscription-plan/instances/a': {isDefaultSelection: false},
-              'www.url.com/_components/subscription-plan/instances/b': {isDefaultSelection: false},
-              'www.url.com/_components/subscription-plan/instances/c': {isDefaultSelection: false}
+              'www.url.com/_components/subscription-plan/instances/a': { isDefaultSelection: false },
+              'www.url.com/_components/subscription-plan/instances/b': { isDefaultSelection: false },
+              'www.url.com/_components/subscription-plan/instances/c': { isDefaultSelection: false }
             }
           },
           firstComponent = Object.keys(state.components)[0];
@@ -44,9 +44,9 @@ describe(dirname, function () {
       it('returns error if subscription plans components are on the page and more than one is checked', function () {
         const state = {
             components: {
-              'www.url.com/_components/subscription-plan/instances/a': {isDefaultSelection: true},
-              'www.url.com/_components/subscription-plan/instances/b': {isDefaultSelection: true},
-              'www.url.com/_components/subscription-plan/instances/c': {isDefaultSelection: false}
+              'www.url.com/_components/subscription-plan/instances/a': { isDefaultSelection: true },
+              'www.url.com/_components/subscription-plan/instances/b': { isDefaultSelection: true },
+              'www.url.com/_components/subscription-plan/instances/c': { isDefaultSelection: false }
             }
           },
           subscriptionPlans = validations[0],

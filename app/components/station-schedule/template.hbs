@@ -15,8 +15,10 @@
           <img src="{{ image }}?width=101&height=101&crop=1:1,offset-y0" class="show__image"
             onerror="this.onerror=null; this.src='/media/components/station-schedule/fallback.svg';"/>
           <div class="show__details">
-            <div class="details__time
-                {{if playing (concat "details__time--on-air " ../station.category)}}">
+            <div 
+              class="details__time{{if playing (concat " details__time--on-air " ../station.category)}}"
+            >
+              <span>{{ userLocalDate start_time 'h:mm a' }}</span>
               {{#if playing}}
                 ON AIR
               {{else}}
