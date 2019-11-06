@@ -9,8 +9,6 @@ _description: |
 url:
   _has:
     input: advanced-image-upload
-    webLabel: Insert Image via Web
-    webHelp: Supply a valid HTTPS url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
     uploadHelp: Choose an image file from your computer
 caption:
@@ -61,7 +59,7 @@ _groups:
       - credit
       - alt
       - borderToggle
-    _label: Image Image
+    _label: Image
     _placeholder:
       text: New Image
       height: 250px

@@ -13,6 +13,8 @@ const _toPairs = require('lodash/toPairs'),
 
       addClosedAlerts(req, res);
 
+      addStagingApi(req, res);
+
       next();
     });
   };
@@ -41,6 +43,18 @@ function addClosedAlerts(req, res) {
   res.locals.closedAlerts = _toPairs(req.cookies)
     .filter(([key]) => re.test(key))
     .map(([key])=> key.replace(re, ''));
+}
+
+/**
+ * add api staging flag to locals if cookie is present
+ *
+ * @param {ClientRequest | {cookies: object}} req
+ * @param {ServerResponse | {locals: object}} res
+ */
+function addStagingApi(req, res) {
+  if (req.cookies['api_stg']) {
+    res.locals.useStagingApi = true;
+  }
 }
 
 module.exports.inject = inject;

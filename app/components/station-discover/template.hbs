@@ -4,7 +4,9 @@
     <option value="">Filter:</option>
     <option value="recent-stations">Recent</option>
     <option value="market-stations">{{station.city}} Stations</option>
-    <option value="genre-stations">All {{station.genre_name}}</option>
+    {{#if station.genre.length }}
+      <option value="genre-stations">All {{station.genre_name}}</option>
+    {{/if}}
   </select>
 
   <div id="discover__recent-stations" class="station-discover__stations-list stations-list--recent-stations">
@@ -13,8 +15,10 @@
   <div id="discover__market-stations" class="station-discover__stations-list stations-list--market-stations">
     {{> stations-list marketStations }}
   </div>
-  <div id="discover__genre-stations" class="station-discover__stations-list stations-list--genre-stations">
-    {{> stations-list genreStations }}
-  </div>
+  {{#if station.genre.length }}
+    <div id="discover__genre-stations" class="station-discover__stations-list stations-list--genre-stations">
+      {{> stations-list genreStations }}
+    </div>
+  {{/if}}
 
 </section>
