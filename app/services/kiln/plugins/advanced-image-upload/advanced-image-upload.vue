@@ -29,6 +29,15 @@
       accept="image/*"
       @change="localFileAttached">
     </ui-fileupload>
+    <ui-button v-if="imageUrl"
+      icon="delete"
+      buttonType="button"
+      type="secondary"
+      color="red"
+      @click="removeImageUrl">
+
+      Remove
+    </ui-button>
     <div class="ui-textbox__feedback" v-if="args.uploadHelp">
       <div class="ui-textbox__feedback-text">{{ args.uploadHelp }}</div>
     </div>
@@ -50,7 +59,7 @@
 
 import axios from 'axios'
 
-const UiFileupload = window.kiln.utils.components.UiFileupload
+const { UiFileupload, UiButton } = window.kiln.utils.components
 
 export default {
   props: ['name', 'data', 'schema', 'args'],
@@ -98,16 +107,11 @@ export default {
           })
           .then((s3) => {
             // Build the full s3 image url.
-            const s3ImageUrl = `https://${s3.host}/${s3.fileKey}`;
-
-            // Update imageUrl to point to new s3 file.
-            this.imageUrl = s3ImageUrl;
-
-            // Set value of form to be the s3 file url.
-            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: s3ImageUrl });
-
+            this.setImageUrl(`https://${s3.host}/${s3.fileKey}`);
+          })
+          .catch(console.error)
+          .finally(() => {
             this.fileUploadButtonDisabled = false; // Re-enable file upload button.
-
           });
       }
 
@@ -147,10 +151,25 @@ export default {
         }
       });
 
+    },
+    setImageUrl(imageUrl) {
+      // Update imageUrl to point to new s3 file.
+      this.imageUrl = imageUrl;
+
+      // Set value of form to be the s3 file url.
+      this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: imageUrl });
+    },
+    removeImageUrl() {
+      // keen-ui's file upload component doesn't expose a function to reset its
+      //   state so we have to ref it directly.
+      this.$refs.fileUploadButton.hasSelection = false;
+
+      this.setImageUrl('');
     }
   },
   components: {
-    UiFileupload
+    UiFileupload,
+    UiButton
   }
 }
 </script>
