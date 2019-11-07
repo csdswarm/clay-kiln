@@ -1,0 +1,15 @@
+_components:
+  more-content-feed-right-rail:
+    instances:
+      general:
+        allowed: true
+  two-column-component:
+    instances:
+      new:
+        column1: []
+        column2: []
+      author-page:
+        column1: [{
+          _ref: /components/more-content-feed/instances/author-page
+        }]
+        column2: []

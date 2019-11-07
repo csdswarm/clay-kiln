@@ -1,0 +1,15 @@
+<div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
+  {{#ifAny (compare locationOfContentFeed 'topic-page') (compare locationOfContentFeed 'author-page')}}
+    {{> google-ad-manager contentCollectionLogoSponsorship}}
+  {{/ifAny}}
+  {{#if @root.locals.edit}}
+    {{#unless dynamicTagPage}}
+      <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
+    {{/unless}}
+  {{else}}
+    {{#ifAll tagInfo (compare dynamicTagPage false)}}
+      <aside class="blurb">{{ tagInfo }}</aside>
+    {{/ifAll}}
+  {{/if}}
+  {{> google-ad-manager googleAdRightRail}}
+</div>
