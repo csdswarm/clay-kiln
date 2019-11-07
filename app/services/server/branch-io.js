@@ -23,7 +23,8 @@ const db = require('./db'),
           content
         });
       },
-      isStation = _get(locals, 'station.slug', 'www') !== 'www';
+      isStation = _get(locals, 'station.slug', 'www') !== 'www',
+      timestamp = locals.query.t;
 
     // primary section front
     if (data.sectionFront) {
@@ -50,6 +51,11 @@ const db = require('./db'),
       addTag('station_name', _get(locals, 'station.name'));
       addTag('station_logo', _get(locals, 'station.square_logo_small'));
       addTag('page', 'station-detail');
+    }
+
+    // timestamp
+    if (timestamp) {
+      addTag('timecode', timestamp);
     }
 
     return tags;
