@@ -593,6 +593,11 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Presented By Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin presented-by-font1 {
+  @mixin font ProximaNova-Regular, 14px, $black, -0.23px, 22px;
+}
 /* ||| Author Page Header Fonts Styleguide  ||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin author-page-header-font1 {
