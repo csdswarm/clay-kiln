@@ -27,7 +27,7 @@ class NielsenMarketingCloud {
   * @param {object} spaPayload
   */
   parseSPAPayload(spaPayload) {
-    let updatedData = {};
+    const updatedData = {};
 
     if (spaPayload._self && spaPayload.main) { // payload from window
       if (spaPayload.main[0]['_ref'].indexOf('article') !== -1) {
