@@ -55,7 +55,7 @@ function toLinkSegments(data) {
   return prop => {
     const text = data[prop];
 
-    return {segment: slugify(text), text };
+    return { segment: slugify(text), text };
   };
 }
 
@@ -67,7 +67,7 @@ function toLinkSegments(data) {
  * @return {object}
  */
 function createCrumb(url, text) {
-  return {url, text};
+  return { url, text };
 }
 
 
@@ -85,7 +85,7 @@ function createCrumb(url, text) {
  * makeFullLink(arr[1], 1, arr);
  */
 function toFullLinks(host) {
-  return ({text}, index, segments) => createCrumb(`//${host}/${concatValues(segments.slice(0, index + 1), 'segment')}`, text);
+  return ({ text }, index, segments) => createCrumb(`//${host}/${concatValues(segments.slice(0, index + 1), 'segment')}`, text);
 }
 
 module.exports = {

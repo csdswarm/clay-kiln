@@ -11,7 +11,10 @@ const _get = require('lodash/get'),
   promises = require('./promises'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
-  mediaplay = require('./media-play');
+  mediaplay = require('./media-play'),
+  urlExists = require('../../services/universal/url-exists'),
+  { urlToElasticSearch } = require('../../services/universal/utils'),
+  { getComponentName } = require('clayutils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -19,7 +22,7 @@ const _get = require('lodash/get'),
  * @returns {string}
  */
 function stripHeadlineTags(oldHeadline) {
-  let newHeadline = striptags(oldHeadline, ['em', 'i', 'strike']);
+  const newHeadline = striptags(oldHeadline, ['em', 'i', 'strike']);
 
   // if any tags include a trailing space, shift it to outside the tag
   return newHeadline.replace(/ <\/(i|em|strike)>/g, '</$1> ');
@@ -176,7 +179,7 @@ function formatDate(data, locals) {
  */
 function setCanonicalUrl(data, locals) {
   if (_get(locals, 'publishUrl')) {
-    data.canonicalUrl = locals.publishUrl;
+    data.canonicalUrl = urlToElasticSearch(locals.publishUrl);
   }
 }
 
@@ -253,16 +256,14 @@ function manualSlugUnlock(data, prevData) {
 }
 
 /**
- * generate the slug from the seoHeadline or shortHeadline
+ * generate the slug from the seoHeadline
  * note: they should already have been sanitized
  * @param  {object} data
  */
 function generateSlug(data) {
   if (has(data.seoHeadline)) {
     data.slug = sanitize.cleanSlug(data.seoHeadline);
-  } else if (has(data.shortHeadline)) {
-    data.slug = sanitize.cleanSlug(data.shortHeadline);
-  } // else don't set the slug
+  }
 }
 
 /**
@@ -429,8 +430,8 @@ function upCaseRadioDotCom(data) {
  */
 function setNoIndexNoFollow(data) {
   const isContentFromAP = _get(data, 'byline', [])
-    .some(({sources = []}) =>
-      sources.some(({text}) => text === 'The Associated Press'));
+    .some(({ sources = [] }) =>
+      sources.some(({ text }) => text === 'The Associated Press'));
 
   data.isContentFromAP = isContentFromAP;
   data.noIndexNoFollow = data.noIndexNoFollow || isContentFromAP;
@@ -438,10 +439,73 @@ function setNoIndexNoFollow(data) {
   return data;
 }
 
+/**
+ * Tests if the lead component supports full-width mode
+ * @param {Object} data
+ * @returns {boolean}
+ */
+function isFullWidthLeadSupported(data) {
+  let supported = false;
+
+  const leadRef = _get(data, 'lead[0]._ref');
+
+  if (leadRef) {
+    const componentName = getComponentName(leadRef);
+
+    supported = [
+      'brightcove',
+      'brightcove-live',
+      'image'
+    ].includes(componentName);
+  }
+
+  return supported;
+}
+
+/**
+ * Sets computed data for full-width leads
+ * @param {Object} data
+ * @param {Object} locals
+ */
+function renderFullWidthLead(data, locals) {
+  const supported = isFullWidthLeadSupported(data);
+
+  if (locals.edit) {
+    data._computed.supportsFullWidthLead = supported;
+  }
+
+  data._computed.renderFullWidthLead = data.fullWidthLead && !locals.edit;
+}
+
+/**
+ * Sets the full-width lead only if it's supported
+ * @param {Object} data
+ */
+function setFullWidthLead(data) {
+  const supported = isFullWidthLeadSupported(data);
+
+  // full-width lead should always be false if the lead component isn't supported
+  data.fullWidthLead = supported && data.fullWidthLead;
+}
+
+/**
+ * For Sports articles and galleries, use @RDCSport twitter handle.
+ * @param {Object} data
+ * @param {Object} locals
+ */
+function addTwitterHandle(data, locals) {
+  if (data.sectionFront === 'sports') {
+    locals.shareTwitterHandle = 'RDCSports';
+  }
+}
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
+  renderFullWidthLead(data, locals);
+  addTwitterHandle(data, locals);
+
   if (locals && !locals.edit) {
     return data;
   }
@@ -455,7 +519,18 @@ function render(ref, data, locals) {
   });
 }
 
-function save(uri, data, locals) {
+async function save(uri, data, locals) {
+  const isClient = typeof window !== 'undefined',
+    urlAlreadyExists = await urlExists(uri, data, locals);
+
+  /*
+    kiln doesn't display custom error messages, so on the client-side we'll
+    use the publishing drawer for validation errors.
+  */
+  if (urlAlreadyExists && !isClient) {
+    throw new Error('duplicate url');
+  }
+
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
@@ -469,6 +544,7 @@ function save(uri, data, locals) {
   setPlainSourcesList(data);
   sanitizeByline(data);
   setNoIndexNoFollow(data);
+  setFullWidthLead(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image

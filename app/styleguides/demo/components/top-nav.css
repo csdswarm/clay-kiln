@@ -26,6 +26,7 @@ $drawerSelector: nav-drawer;
     background: transparent;
     border: none;
     height: 100%;
+    width: 100%;
   }
 
   ul {
@@ -161,8 +162,7 @@ $drawerSelector: nav-drawer;
   }
 
   @define-mixin header-heading-color $modifier, $color {
-    &.$(navButton)--active.$(navButton)--$(modifier) .category-button__text,
-    &.$(navButton)--$(modifier).$(navButton)--current,
+    &.$(navButton)--$(modifier).$(navButton)--current .category-button__text,
     &:hover.$(navButton)--$(modifier) .category-button__text {
       color: $color;
     }
@@ -290,6 +290,10 @@ $drawerSelector: nav-drawer;
 
         .$(drawerSelector)__sub-nav {
           @mixin inline-block;
+
+          > a {
+            display: block;
+          }
 
           &:first-of-type {
             margin-right: em(100);
@@ -793,5 +797,11 @@ $drawerSelector: nav-drawer;
     (min-resolution: 192dpi) {
       background-image: url('/media/components/top-nav/sports_dropdown_logo_2x.png');
     }
+  }
+}
+
+.branch-banner-is-active {
+  .radiocom-nav {
+    top: 76px;
   }
 }

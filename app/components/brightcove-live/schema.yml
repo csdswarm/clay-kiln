@@ -1,0 +1,36 @@
+_description: |
+  Brightcove Live video embed
+
+video:
+  _label: Video
+  _has:
+    input: static
+    validate:
+      required: true
+
+adConfig:
+  _label: Ad Configuration
+  _has:
+    input: text
+    help: The ID of the live ad configuration. Defaults to no ad configuration if not set.
+    validate:
+      required: true
+
+searchVideo:
+  _label: Search for video
+  _has:
+    input: brightcove-search
+    webLabel: Search
+    live: true
+
+_groups:
+  videoSettings:
+    _label: Brightcove Live Video
+    _placeholder:
+      text: Brightcove Live Video
+      height: 30px;
+      ifEmpty: searchVideo AND video
+    fields:
+      - video (Video settings)
+      - adConfig (Video settings)
+      - searchVideo (Search for video)

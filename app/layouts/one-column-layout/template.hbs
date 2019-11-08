@@ -7,6 +7,7 @@
     {{#unless (includes (default _ref _self) "@published") }}
       <meta name="robots" content="noindex">
     {{/unless}}
+    <meta property="fb:pages" content="135147466526831"/>
 
     <script src="/js/polyfills.js"></script>
 
@@ -27,7 +28,8 @@
         <script src="/dist/js/{{@root.locals.site.app}}"></script>
         <script src="/dist/js/{{@root.locals.site.chunk-vendors}}"></script>
       {{else}}
-        <script src="/dist/app.js"></script>
+        <script src="/dist/js/app.js"></script>
+        <script src="/dist/js/chunk-vendors.js"></script>
       {{/if}}
     {{/unless}}
 
@@ -41,6 +43,7 @@
           <div class="layout__page-header" data-editable="pageHeader">{{> component-list pageHeader }}</div>
         </header>
         <section class="layout__content">
+          <section class="content__banner" data-editable="banner">{{> component-list banner }}</section>
           <section class="content__main" data-editable="main">{{> component-list main }}</section>
           <section class="content__secondary" data-editable="secondary">{{> component-list secondary }}</section>
         </section>

@@ -1,0 +1,6 @@
+_components:
+  dynamic-meta-image:
+    instances:
+      station:
+        localsKey: station.square_logo_large
+        dynamicImageUrl: ${paramValue}

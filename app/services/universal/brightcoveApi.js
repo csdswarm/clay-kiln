@@ -121,7 +121,7 @@ const log = require('./log').setup({ file: __filename }),
       });
     } catch (e) {
       log('error', e);
-      return {status: 500, statusText: e};
+      return { status: 500, statusText: e };
     }
   },
   /**

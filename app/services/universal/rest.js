@@ -65,7 +65,7 @@ module.exports.request = async (url, opts) => {
  * @return {Promise}
  */
 module.exports.get = function (url, opts) {
-  const conf = _defaults({method: 'GET'}, opts);
+  const conf = _defaults({ method: 'GET' }, opts);
 
   return fetch(url, conf).then(checkStatus).then(function (res) { return res.json(); });
 };
@@ -125,7 +125,7 @@ module.exports.put = function (url, data, isAuthenticated) {
  * note: primarily used for elastic search
  * @param  {string}  url
  * @param  {object|array}  data
- * @param  {Boolean} isAuthenticated set to true if making POST requests to Clay
+ * @param  {Boolean} [isAuthenticated] set to true if making POST requests to Clay
  * @return {Promise}
  */
 module.exports.post = function (url, data, isAuthenticated) {

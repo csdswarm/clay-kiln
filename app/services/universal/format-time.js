@@ -36,9 +36,9 @@ function secondsToISO(seconds) {
  * @returns {boolean}
  */
 function isPublished24HrsAgo(date) {
-  let pubWithin24Hrs = false,
-    articleDate = moment(new Date(date)).valueOf(),
+  const articleDate = moment(new Date(date)).valueOf(),
     now = moment().valueOf();
+  let pubWithin24Hrs = false;
 
   if (now - articleDate <= 24 * 60 * 60 * 1000 ) {
     pubWithin24Hrs = true;

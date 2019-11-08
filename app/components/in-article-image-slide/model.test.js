@@ -9,18 +9,18 @@ var expect = require('chai').expect,
 describe(dirname, function () {
   describe(filename, function () {
     describe('save', function () {
-      let fn = lib[this.title],
+      const fn = lib[this.title],
         uri = 'domain.com/_components/in-article-image-slide/instances/foo';
 
 
       it('renders per-instance styles', function () {
         return fn(uri, { sass: 'border:1px solid #000;' }).then(function (result) {
-          expect(result).to.eql({ sass: 'border:1px solid #000;', css: `[data-uri="${uri}"]{border:1px solid #000}`});
+          expect(result).to.eql({ sass: 'border:1px solid #000;', css: `[data-uri="${uri}"]{border:1px solid #000}` });
         });
       });
 
       it('deletes css if sass is deleted', function () {
-        expect(fn(uri, {sass: ''}).css).to.be.empty;
+        expect(fn(uri, { sass: '' }).css).to.be.empty;
       });
 
       it('does not sanitize the caption for spans', () => {
@@ -48,7 +48,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 670px wide and 447px tall if slideshowWidth is small and imageDisplay is horizontal', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'horizontal',
           imageCaption: null,
@@ -63,7 +63,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 2147483647px wide and 447px tall if slideshowWidth is small and imageDisplay is vertical', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'vertical',
           imageCaption: null,
@@ -78,7 +78,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 670px wide and 2147483647px tall if slideshowWidth is small and imageDisplay is flex', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'flex',
           imageCaption: null,
@@ -93,7 +93,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 800px wide and 533px tall if slideshowWidth is medium and imageDisplay is horizontal', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'horizontal',
           imageCaption: null,
@@ -108,7 +108,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 2147483647px wide and 533px tall if slideshowWidth is medium and imageDisplay is vertical', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'vertical',
           imageCaption: null,
@@ -123,7 +123,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 800px wide and 2147483647px tall if slideshowWidth is medium and imageDisplay is flex', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'flex',
           imageCaption: null,
@@ -138,7 +138,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 900px wide and 600px tall if slideshowWidth is large and imageDisplay is horizontal', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'horizontal',
           imageCaption: null,
@@ -153,7 +153,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 2147483647px wide and 600px tall if slideshowWidth is large and imageDisplay is vertical', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'vertical',
           imageCaption: null,
@@ -168,7 +168,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 900px wide and 2147483647px tall if slideshowWidth is large and imageDisplay is flex', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'flex',
           imageCaption: null,
@@ -183,7 +183,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 1200px wide and 800px tall if slideshowWidth is extra-large and imageDisplay is horizontal', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'horizontal',
           imageCaption: null,
@@ -198,7 +198,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 2147483647px wide and 800px tall if slideshowWidth is extra-large and imageDisplay is vertical', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'vertical',
           imageCaption: null,
@@ -213,7 +213,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 1200px wide and 2147483647px tall if slideshowWidth is extra-large and imageDisplay is flex', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'flex',
           imageCaption: null,
@@ -228,7 +228,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 1600px wide and 1067px tall if slideshowWidth is super-extra-large and imageDisplay is horizontal', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'horizontal',
           imageCaption: null,
@@ -243,7 +243,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 2147483647px wide and 1067px tall if slideshowWidth is super-extra-large and imageDisplay is vertical', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'vertical',
           imageCaption: null,
@@ -258,7 +258,7 @@ describe(dirname, function () {
       });
 
       it('gets an image with a 1200px wide and 2147483647px tall if slideshowWidth is super-extra-large and imageDisplay is flex', function () {
-        let current = {
+        const current = {
           imageURL: 'https://pixel.nymag.com/imgs/image.jpg',
           slideDisplay: 'flex',
           imageCaption: null,
