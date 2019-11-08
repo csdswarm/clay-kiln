@@ -199,7 +199,8 @@ export default {
           headers: {
             // preview pages will 404 if the header is true because the published key does not exist
             'x-amphora-page-json': !destination.includes('.html'),
-            'x-locals': JSON.stringify(await getLocals(this.$store.state))
+            'x-locals': JSON.stringify(await getLocals(this.$store.state)),
+            'x-clear-loaded-ids': true
           }
         })
 

@@ -1,7 +1,8 @@
 'use strict';
 
 const { getComponentVersion } = require('clayutils'),
-  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils');
+  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+  addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items');
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -69,9 +70,9 @@ module.exports['6.0'] = function (uri, data) {
   const newData = Object.assign({}, data);
 
   newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
-  
+
   delete newData.filterSecondaryArticleTypes;
-  
+
   return newData;
 };
 
@@ -101,7 +102,7 @@ module.exports['7.0'] = async function (uri, data) {
         }
       };
     }
-    
+
     return data;
   } catch (e) {
     await putComponentInstance(sharethroughTagInstanceUri, sharethroughTagInstanceData);
@@ -113,4 +114,10 @@ module.exports['7.0'] = async function (uri, data) {
       }
     };
   }
+};
+
+module.exports['8.0'] = async (uri, data, locals) => {
+  await addUriToCuratedItems(uri, data.items, locals);
+
+  return data;
 };

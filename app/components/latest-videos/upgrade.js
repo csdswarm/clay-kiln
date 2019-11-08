@@ -1,5 +1,7 @@
 'use strict';
 
+const addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items');
+
 module.exports['1.0'] = function (uri, data) {
   // Only change the filter value for the HP instance
   if (uri.indexOf('homepage')) {
@@ -19,4 +21,10 @@ module.exports['2.0'] = function (uri, data) {
   delete newData.filterSecondaryArticleTypes;
   
   return newData;
+};
+
+module.exports['3.0'] = async (uri, data, locals) => {
+  await addUriToCuratedItems(uri, data.items, locals);
+
+  return data;
 };

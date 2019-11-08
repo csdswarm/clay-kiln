@@ -2,10 +2,12 @@
 
 const { unityComponent } = require('../../services/universal/amphora'),
   createContent = require('../../services/universal/create-content'),
-  { autoLink } = require('../breadcrumbs');
+  { autoLink } = require('../breadcrumbs'),
+  loadedIdsService = require('../../services/server/loaded-ids');
 
 module.exports = unityComponent({
-  render: (uri, data, locals) => {
+  render: async (uri, data, locals) => {
+    await loadedIdsService.appendToLocalsAndRedis([uri], locals);
     autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);
     return createContent.render(uri, data, locals);
   },
