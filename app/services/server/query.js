@@ -1,13 +1,12 @@
 'use strict';
 
-const _every = require('lodash/every'),
-  amphoraSearch = require('amphora-search'),
+const amphoraSearch = require('amphora-search'),
   bluebird = require('bluebird'),
   log = require('../universal/log').setup({ file: __filename }),
   indexWithPrefix = amphoraSearch.indexWithPrefix,
   universalQuery = require('../universal/query'),
   utils = require('../universal/utils'),
-  loadedIdsService = require('./loaded-ids');
+  { urlToElasticSearch } = utils;
 
 /**
  * Get ElasticSearch client reference
@@ -64,80 +63,39 @@ function newQueryWithCount(index, count) {
 }
 
 /**
- * Query Elastic and clean up raw result object to only display array
- *   of results.
- *
+ * Query Elastic and clean up raw result object
+ * to only display array of results
  * @param  {Object} query
- * @param  {Object} locals
- * @param  {Object} opts - various search options shared with
- *   searchByQueryWithRawResult.  This method relies on
- *     : 'includeIdInResult'
- *     : 'transformResult'
- *
- *   Note a warning will appear if the option 'shouldDedupeContent' isn't
- *     passed.  The default value of '{}' is only to avoid errors.
  * @return {Promise}
  * @example searchByQuery({"index":"local_published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
-function searchByQuery(query, locals, opts = {}) {
-  return universalQuery.searchByQuery(query, locals, opts, searchByQueryWithRawResult);
+function searchByQuery(query) {
+  return searchByQueryWithRawResult(query)
+    .then(universalQuery.formatSearchResult)
+    .then(universalQuery.formatProtocol)
+    .catch(e => {
+      throw new Error(e);
+    });
 }
 
 /**
- * Query Elastic client for results. If locals is passed then its loadedIds
- *   property will be updated.
- *
+ * Query Elastic client for results
  * @param  {Object} query
- * @param  {Object} locals
- * @param  {Object} opts - various search options shared with searchByQuery.
- *   This method uses 'shouldDedupeContent'.
  * @return {Object}
  */
-async function searchByQueryWithRawResult(query, locals, opts = {}) {
-  if (!opts.hasOwnProperty('shouldDedupeContent')) {
-    log(
-      'warn',
-      "opts.shouldDedupeContent wasn't passed to searchByQueryWithRawResult."
-      + '\n  This should be passed in order to keep the code explicit.'
-      + '\n  Right now it will default to true if locals is truthy and passes'
-      + '\n  Object.isExtensible (locals is not extensible during the model ->'
-      + '\n  save hook).'
-    );
-
-    opts.shouldDedupeContent = !!locals
-      && Object.isExtensible(locals);
-  }
-
-  const loadedIds = opts.shouldDedupeContent
-    ? await loadedIdsService.lazilyGetFromLocals(locals)
-    : [];
-
+function searchByQueryWithRawResult(query) {
   getSearchInstance();
 
   if (!module.exports.searchInstance) {
     return bluebird.reject('Search not instantiated.');
   }
 
-  loadedIds.forEach(_id => universalQuery.addMustNot(query, { match: { _id } }));
-  // we need the above logic to run before we can get the results
-  // eslint-disable-next-line one-var
-  const results = await module.exports.searchInstance.search(query);
-
-  log('trace', `got ${results.hits.hits.length} results`);
-  log('debug', JSON.stringify(results));
-
-  if (opts.shouldDedupeContent) {
-    const hits = results.hits.hits,
-      allHitsHaveIds = _every(hits, aHit => aHit._id),
-      resultIds = hits.map(aHit => aHit._id);
-
-    if (hits.length && allHitsHaveIds) {
-      await loadedIdsService.appendToLocalsAndRedis(resultIds, locals);
-    }
-  }
-
-  return results;
+  return module.exports.searchInstance.search(query).then(function (results) {
+    log('trace', `got ${results.hits.hits.length} results`);
+    log('debug', JSON.stringify(results));
+    return results;
+  });
 }
 /**
  * Update Elastic document
@@ -153,7 +111,7 @@ function updateByQuery(query) {
     return bluebird.reject('Update not instantiated.');
   }
 
-  return module.exports.searchInstance.update({index: prependPrefix(index), id, body, refresh })
+  return module.exports.searchInstance.update({ index: prependPrefix(index), id, body, refresh })
     .then(function (results) {
       log('trace', 'updated elastic document');
       return results;
@@ -214,12 +172,13 @@ function executeMultipleSearchRequests(query) {
  * @returns {Promise}
  */
 function onePublishedArticleByUrl(url, fields) {
-  const query = newQueryWithCount('published-content');
+  const query = newQueryWithCount('published-content'),
+    canonicalUrl = utils.urlToCanonicalUrl(
+      urlToElasticSearch(url)
+    );
 
   universalQuery.addFilter(query, {
-    term: {
-      canonicalUrl: utils.urlToCanonicalUrl(url)
-    }
+    term: { canonicalUrl }
   });
   if (fields) {
     universalQuery.onlyWithTheseFields(query, fields);
@@ -233,7 +192,7 @@ function onePublishedArticleByUrl(url, fields) {
  * @param  {String} ref
  */
 function logCatch(e, ref) {
-  log('error', `Error querying Elastic for component ${ref}`, e);
+  log('error', `Error querying Elastic for component ${ref}`);
 }
 
 module.exports = newQueryWithPrefix;

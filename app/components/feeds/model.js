@@ -127,7 +127,7 @@ module.exports.render = async (ref, data, locals) => {
       editorial: { createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } }) },
       // corporate websites (corporateSyndication)
       corporate: {
-        createObj: corporateSyndication => ({ [`corporateSyndication.${corporateSyndication}`]: true })
+        createObj: corporateSyndication => ({ match: { [`corporateSyndication.${corporateSyndication}`]: true } })
       },
       // stations (stationSyndication)
       station: {
@@ -180,12 +180,12 @@ module.exports.render = async (ref, data, locals) => {
 
   try {
     if (meta.rawQuery) {
-      const results = await queryService.searchByQueryWithRawResult(query, locals, { shouldDedupeContent: false });
+      const results = await queryService.searchByQueryWithRawResult(query);
 
       data.results = results.hits.hits; // Attach results and return data
       return data;
     } else {
-      data.results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: false }); // Attach results and return data
+      data.results = await queryService.searchByQuery(query); // Attach results and return data
 
       return data;
     }

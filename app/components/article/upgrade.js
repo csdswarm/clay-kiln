@@ -1,13 +1,13 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
+  addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   // Replace articleType with sectionFront, add new contentType property
   newData.sectionFront = data.sectionFront || data.articleType || '';
@@ -20,7 +20,7 @@ module.exports['1.0'] = function (uri, data) {
 
 module.exports['2.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   if (!data.dateModified) {
     newData.dateModified = data.date;
@@ -161,7 +161,7 @@ module.exports['7.0'] = async function (uri, data) {
 };
 
 module.exports['8.0'] = function (uri, data) {
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   newData.secondarySectionFront = data.secondaryArticleType || '';
 
@@ -171,7 +171,7 @@ module.exports['8.0'] = function (uri, data) {
 };
 
 module.exports['9.0'] = function (uri, data) {
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   newData.secondarySectionFront = data.secondarySectionFront === 'Small Business Pulse' ? data.secondarySectionFront.toLowerCase() : data.secondarySectionFront;
 

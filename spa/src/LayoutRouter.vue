@@ -199,8 +199,7 @@ export default {
           headers: {
             // preview pages will 404 if the header is true because the published key does not exist
             'x-amphora-page-json': !destination.includes('.html'),
-            'x-locals': JSON.stringify(await getLocals(this.$store.state)),
-            'x-clear-loaded-ids': true
+            'x-locals': JSON.stringify(await getLocals(this.$store.state))
           }
         })
 
@@ -244,6 +243,7 @@ export default {
       const nextSectionFrontPageData = queryPayload.findComponent(spaPayload.main, 'section-front')
       const nextTopicPageData = queryPayload.findComponent(spaPayload.pageHeader, 'topic-page-header')
       const nextStationDetailPageData = queryPayload.findComponent(spaPayload.main, 'station-detail')
+      const nextStationDirectoryPageData = queryPayload.findComponent(spaPayload.main, 'stations-directory')
 
       return {
         toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
@@ -255,7 +255,8 @@ export default {
         toHomepage: nextHomepageData || {},
         toSectionFrontPage: nextSectionFrontPageData || {},
         toTopicPage: nextTopicPageData || {},
-        toStationDetailPage: nextStationDetailPageData || {}
+        toStationDetailPage: nextStationDetailPageData || {},
+        toStationDirectoryPage: nextStationDirectoryPageData || {}
       }
     },
     /**

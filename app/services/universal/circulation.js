@@ -21,7 +21,7 @@ const _get = require('lodash/get'),
  * @returns {string}
  */
 function stripHeadlineTags(oldHeadline) {
-  let newHeadline = striptags(oldHeadline, ['em', 'i', 'strike']);
+  const newHeadline = striptags(oldHeadline, ['em', 'i', 'strike']);
 
   // if any tags include a trailing space, shift it to outside the tag
   return newHeadline.replace(/ <\/(i|em|strike)>/g, '</$1> ');
@@ -294,10 +294,10 @@ function setCanonicalUrl(data, locals) {
   }
 }
 
-function getRollingStandoutArticles(locals, searchOpts) {
+function getRollingStandoutArticles(locals) {
   var rollingStandoutArticlesQuery = queryService(PUBLISHED_CONTENT_INDEX, locals),
     site = locals.site,
-    uriPrefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http' }});
+    uriPrefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } });
 
   queryService.addMust(rollingStandoutArticlesQuery, [
     {
@@ -319,7 +319,7 @@ function getRollingStandoutArticles(locals, searchOpts) {
     }
   ]);
 
-  return queryService.searchByQuery(rollingStandoutArticlesQuery, locals, searchOpts).catch(() => []);
+  return queryService.searchByQuery(rollingStandoutArticlesQuery).catch(() => []);
 }
 
 function setGoogleStandoutHelpers(data, publishedData, rollingCount) {

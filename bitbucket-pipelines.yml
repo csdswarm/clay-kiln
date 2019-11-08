@@ -1,4 +1,4 @@
-image: node:10.16.3-jessie
+image: node:10.16.3
 
 definitions:
   steps:
@@ -7,8 +7,8 @@ definitions:
         script:
           - make install
         artifacts:
-          - app/**
-          - spa/**
+          - app/node_modules/**
+          - spa/node_modules/**
 
 pipelines:
   default:
@@ -22,3 +22,12 @@ pipelines:
             name: Lint SPA
             script:
               - cd spa && npm run lint -- --no-fix
+  custom:
+    security-audit:
+      - step:
+          name: Run `npm audit`
+          script:
+            - cd app
+            - npm audit --only=prod
+            - cd ../spa
+            - npm audit --only=prod

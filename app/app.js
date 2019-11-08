@@ -12,19 +12,15 @@ var pkg = require('./package.json'),
 
 nodeMemwatch.on('leak', info => {
   console.log('--------------------');
-  console.log('--------------------');
   console.log('leak');
   console.log(JSON.stringify(info, null, 2));
-  console.log('--------------------');
   console.log('--------------------');
 });
 
 nodeMemwatch.on('stats', stats => {
   console.log('--------------------');
-  console.log('--------------------');
   console.log('stats');
   console.log(JSON.stringify(stats, null, 2));
-  console.log('--------------------');
   console.log('--------------------');
 });
 

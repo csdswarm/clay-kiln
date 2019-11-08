@@ -1,10 +1,12 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   _get = require('lodash/get'),
+  _map = require('lodash/map'),
+  _capitalize = require('lodash/capitalize'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
+  { sendError } = require('../../services/universal/cmpt-error'),
   { isComponent } = require('clayutils'),
-  loadedIdsService = require('../../services/server/loaded-ids'),
   elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -26,68 +28,50 @@ const queryService = require('../../services/server/query'),
 * @param {object} locals
 * @returns {Promise}
 */
-module.exports.save = async (ref, data, locals) => {
+module.exports.save = (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
-
-  await Promise.all(data.items.map(async (item) => {
+  return Promise.all(_map(data.items, (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    const searchOpts = {
-        includeIdInResult: true,
-        shouldDedupeContent: false
-      },
-      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
+    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
+      .then((result) => {
+        const content = Object.assign(item, {
+          primaryHeadline: item.overrideTitle || result.primaryHeadline,
+          subHeadline: item.overrideSubHeadline || result.subHeadline,
+          pageUri: result.pageUri,
+          urlIsValid: result.urlIsValid,
+          canonicalUrl: item.url || result.canonicalUrl,
+          feedImgUrl: item.overrideImage || result.feedImgUrl,
+          sectionFront: item.overrideSectionFront || result.sectionFront,
+          date: item.overrideDate || result.date,
+          lead: item.overrideContentType || result.leadComponent
+        });
 
-    Object.assign(item, {
-      uri: result._id,
-      primaryHeadline: item.overrideTitle || result.primaryHeadline,
-      subHeadline: item.overrideSubHeadline || result.subHeadline,
-      pageUri: result.pageUri,
-      urlIsValid: result.urlIsValid,
-      canonicalUrl: item.url || result.canonicalUrl,
-      feedImgUrl: item.overrideImage || result.feedImgUrl,
-      sectionFront: item.overrideSectionFront || result.sectionFront,
-      date: item.overrideDate || result.date,
-      lead: item.overrideContentType || result.lead
+        return content;
+      });
+  }))
+    .then((items) => {
+      data.items = items;
+      return data;
     });
-  }));
-
-  return data;
 };
 
 /**
  * @param {string} ref
  * @param {object} data
  * @param {object} locals
- * @returns {Promise}
+ * @returns {Promise<object> | object}
  */
 module.exports.render = async function (ref, data, locals) {
-  data.pageLength = _get(locals, 'page')
-    ? data.pageLength || pageLength
-    : maxItems;
-
-  // if we're on a page other than 0 then we want to query pageLength number of
-  //   items.  If we're on the first page then we want to query that number
-  //   minus the number of curated items we already have.
-  const count = _get(locals, 'page')
-      ? data.pageLength
-      : data.pageLength - data.items.length,
-    query = queryService.newQueryWithCount(elasticIndex, count, locals),
+  // take 1 more article than needed to know if there are more
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
     contentTypes = contentTypeService.parseFromData(data),
-    searchOpts = {
-      shouldDedupeContent: true,
-      transformResult: (formattedResult, rawResult) => {
-        return {
-          result: formattedResult,
-          moreContent: formattedResult.length < rawResult.hits.total
-        };
-      }
-    },
-    curatedIds = data.items.filter(item => item.uri).map(item => item.uri);
-  let cleanUrl;
+    addContentCondition = data.populateFrom === 'section-front-or-tag' ? queryService.addShould : queryService.addMust;
 
-  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+  let cleanUrl,
+    dynamicPage = false,
+    results = [];
 
   data.initialLoad = false;
 
@@ -97,14 +81,27 @@ module.exports.render = async function (ref, data, locals) {
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  if (!_get(locals, 'page')) {
+  if (locals && locals.page) {
+    /* after the first 10 items, show N more at a time (pageLength defaults to 5)
+     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
+     * we return N + 1 items so we can let the frontend know if we have more data.
+     */
+    if (!data.pageLength) {
+      data.pageLength = pageLength;
+    }
+
+    const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
+
+    queryService.addOffset(query, skip);
+  } else {
+    data.pageLength = maxItems;
     data.initialLoad = true;
 
     // Default to loading 30 articles, which usually works out to 4 pages
     data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
   }
 
-  if (data.populateFrom === 'tag') {
+  if (['tag', 'section-front-and-tag', 'section-front-or-tag'].includes(data.populateFrom)) {
     // If we're publishing for a dynamic page, alert the template
     data.dynamicTagPage = false;
 
@@ -113,16 +110,16 @@ module.exports.render = async function (ref, data, locals) {
     data.tag = data.tagManual || data.tag;
 
     // Check if we are on a tag page and override the above
-    if (_get(locals, 'tag')) {
+    if (locals && locals.tag) {
       // This is from load more on a tag page
       data.tag = locals.tag;
-    } else if (_get(locals, 'params.tag')) {
+    } else if (locals && locals.params && locals.params.tag) {
       // This is from a tag page but do not override a manually set tag
       data.tag = data.tag || locals.params.tag;
-    } else if (_get(locals, 'params.dynamicTag')) {
+    } else if (locals && locals.params && locals.params.dynamicTag) {
       // This is from a tag page
       data.tag = locals.params.dynamicTag;
-      data.dynamicTagPage = true;
+      data.dynamicTagPage = dynamicPage = true;
     }
 
     if (!data.tag) {
@@ -141,23 +138,63 @@ module.exports.render = async function (ref, data, locals) {
 
     // Handle querying an array of tags
     if (Array.isArray(data.tag)) {
-      for (let tag of data.tag) {
-        queryService.addShould(query, { match: { 'tags.normalized': tag }});
+      for (const tag of data.tag) {
+        addContentCondition(query, { match: { 'tags.normalized': tag } });
       }
     } else {
       // No need to clean the tag as the analyzer in elastic handles cleaning
-      queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+      addContentCondition(query, { match: { 'tags.normalized': data.tag } });
+    }
+  }
+
+  if (['section-front', 'section-front-and-tag', 'section-front-or-tag'].includes(data.populateFrom)) {
+    const noSectionFrontsOrLocals = (!data.sectionFront && !data.sectionFrontManual
+      && !data.secondarySectionFront && !data.secondarySectionFrontManual) || !locals;
+
+    if (noSectionFrontsOrLocals) {
+      return data;
     }
 
-    queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom === 'author') {
+    if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
+      const secondarySectionFront = data.secondarySectionFrontManual || locals.secondarySectionFront;
+
+      // group these into a single OR clause so they dont trip up `must`
+      addContentCondition(query, {
+        bool: {
+          should: [
+            { match: { secondarySectionFront: secondarySectionFront } },
+            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } }
+          ],
+          minimum_should_match: 1
+        }
+      });
+    } else if (locals.sectionFront || data.sectionFrontManual) {
+      const sectionFront = data.sectionFrontManual || locals.sectionFront;
+
+      addContentCondition(query, {
+        bool: {
+          should: [
+            { match: { sectionFront: sectionFront } },
+            { match: { sectionFront: sectionFront.toLowerCase() } }
+          ],
+          minimum_should_match: 1
+        }
+      });
+    }
+  }
+
+  if (data.populateFrom === 'author') {
     // Check if we are on an author page and override the above
     if (locals && locals.author) {
       // This is from load more on an author page
       data.author = locals.author;
-    } else if (locals && locals.params) {
+    } else if (locals && locals.params && locals.params.author) {
       // This is from an author page
+      data.author = locals.params.author;
+    } else if (locals && locals.params && locals.params.dynamicAuthor) {
+      // This is from an dynamic author page
       data.author = locals.params.dynamicAuthor;
+      dynamicPage = true;
     }
 
     if (!data.author) {
@@ -165,50 +202,33 @@ module.exports.render = async function (ref, data, locals) {
     }
 
     // No need to clean the author as the analyzer in elastic handles cleaning
-    queryService.addShould(query, { match: { 'authors.normalized': data.author }});
-    queryService.addMinimumShould(query, 1);
-  } else if (data.populateFrom === 'section-front') {
-    if (!data.sectionFront && !data.sectionFrontManual &&
-    !data.secondarySectionFront && !data.secondarySectionFrontManual
-    || !locals) {
-      return data;
-    }
-    if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
-      const secondarySectionFront = data.secondarySectionFrontManual || locals.secondarySectionFront;
-
-      queryService.addShould(query, { match: { secondarySectionFront: secondarySectionFront }});
-      queryService.addShould(query, { match: { secondarySectionFront: secondarySectionFront.toLowerCase() }});
-      queryService.addMinimumShould(query, 1);
-    } else if (locals.sectionFront || data.sectionFrontManual) {
-      const sectionFront = data.sectionFrontManual || locals.sectionFront;
-
-      queryService.addShould(query, { match: { sectionFront: sectionFront }});
-      queryService.addShould(query, { match: { sectionFront: sectionFront.toLowerCase() }});
-      queryService.addMinimumShould(query, 1);
-    }
+    queryService.addMust(query, { match: { 'authors.normalized': data.author } });
   } else if (data.populateFrom === 'all-content') {
     if (!locals) {
       return data;
     }
   }
 
-  queryService.addSort(query, {date: 'desc'});
+  // add minimum should if there are any
+  if (_get(query, 'body.query.bool.should[0]')) queryService.addMinimumShould(query, 1);
+
+  queryService.addSort(query, { date: 'desc' });
 
   // Filter out the following tags
   if (data.filterTags) {
     for (const tag of data.filterTags.map((tag) => tag.text)) {
-      queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
+      queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
     }
   }
 
   // Filter out the following secondary article type
   if (data.filterSecondarySectionFronts) {
     Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-      let [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
+      const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter }});
-        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter.toLowerCase() }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter.toLowerCase() } });
       }
     });
   }
@@ -219,23 +239,42 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
   }
 
-  try {
-    const { result, moreContent } = await queryService.searchByQuery(query, locals, searchOpts);
-
-    result.forEach(content => {
-      content.lead = content.lead[0]._ref.split('/')[2];
+  // exclude the curated content from the results
+  if (data.items && !isComponent(locals.url)) {
+    // this can be a bug when items dont have canonical urls
+    data.items.filter((item) => item.canonicalUrl).forEach(item => {
+      cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+      queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     });
+  }
 
-    // "more content" button passes page query param - render more content and return it
-    data.moreContent = moreContent;
-
-    // On initial load we need to prepend curated items onto the list, otherwise skip
-    data.content = data.initialLoad
-      ? data.items.concat(result)
-      : result;
+  try {
+    results = await queryService.searchByQuery(query);
   } catch (e) {
     queryService.logCatch(e, ref);
+    return data;
+  };
+
+  results = results.map(content => {
+    content.lead = content.lead[0]._ref.split('/')[2];
+    return content;
+  });
+
+  // "more content" button passes page query param - render more content and return it
+  data.moreContent = results.length > data.pageLength;
+
+  // On initial load we need to append curated items onto the list, otherwise skip
+  if (data.initialLoad) {
+    data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of pageLength links
+  } else {
+    data.content = results.slice(0, data.pageLength); // show a maximum of pageLength links
+  }
+
+  // 404 any dynamic pages who have no content
+  if (dynamicPage && data.content.length === 0) {
+    sendError(`${_capitalize(data.populateFrom)} not found`, 404);
   }
 
   return data;
+
 };

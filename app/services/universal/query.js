@@ -5,24 +5,11 @@ const _ = require('lodash'),
   protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
- * Returns a function which formats the search results based off the search
- *   options.  Specifically if the option 'includeIdInResult' is truthy, then
- *   each hit's '_id' is assigned to its '_source' object.
- *
- * @param {object} [searchOpts]
- * @returns {function}
+ * @param {object} result
+ * @returns {Array}
  */
-function getFormatSearchResult(searchOpts = {}) {
-  return result => {
-    if (!searchOpts.includeIdInResult) {
-      return _.map(result.hits.hits, '_source');
-    }
-
-    return result.hits.hits.map(hit => {
-      hit._source._id = hit._id;
-      return hit._source;
-    });
-  };
+function formatSearchResult(result) {
+  return _.map(result.hits.hits, '_source');
 }
 
 /**
@@ -280,9 +267,9 @@ function onlyWithTheseFields(query, fields) {
  * @returns {Object}
  */
 function onlyWithinThisSite(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}});
+  const prefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } });
 
-  addFilter(query, {prefix: {canonicalUrl: prefix}});
+  addFilter(query, { prefix: { canonicalUrl: prefix } });
 
   return query;
 }
@@ -293,9 +280,9 @@ function onlyWithinThisSite(query, site) {
  * @returns {object}
  */
 function withinThisSiteAndCrossposts(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}}),
-    prefixFilter = {prefix: {canonicalUrl: prefix}};
-  var crosspostFilter = {term: {}},
+  const prefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } }),
+    prefixFilter = { prefix: { canonicalUrl: prefix } };
+  var crosspostFilter = { term: {} },
     shouldFilter = { bool: { should: [], minimum_should_match: 1 } };
 
   crosspostFilter.term['crosspost.' + site.slug] = true;
@@ -315,7 +302,7 @@ function withinThisSiteAndCrossposts(query, site) {
  * @returns {object}
  */
 function moreLikeThis(query, id, opts) {
-  let defaultOpts = {
+  const defaultOpts = {
     fields: ['tags'],
     like: {
       _index: query.index, // prefixed index name
@@ -340,7 +327,7 @@ function moreLikeThis(query, id, opts) {
  * @returns {Object} query object
  */
 function addAggregation(query = {}, options) {
-  const {body = {}} = query;
+  const { body = {} } = query;
 
   if (!options) {
     return query;
@@ -397,42 +384,6 @@ function newNestedQuery(path) {
 }
 
 /**
- * This method exists because the only difference between the client and server
- *   'searchByQuery' calls is the searchByQueryWithRawResult, which those now
- *   pass in.
- *
- * @param  {Object} query
- * @param  {Object} locals
- * @param  {Object} opts - see server/query.js for opts description
- * @param  {function} searchByQueryWithRawResult - a reference to the function
- *   found in either client or server query.js
- * @return {Promise}
- */
-function searchByQuery(query, locals, opts, searchByQueryWithRawResult) {
-  const formatSearchResult = getFormatSearchResult(opts);
-
-  return searchByQueryWithRawResult(query, locals, opts)
-    .then(rawResult => {
-      let formattedResult = formatSearchResult(rawResult);
-
-      formattedResult = formatProtocol(formattedResult);
-
-      if (!opts.transformResult) {
-        return formattedResult;
-      }
-
-      return opts.transformResult(formattedResult, rawResult);
-    })
-    .catch(originalErr => {
-      const err = originalErr instanceof Error
-        ? originalErr
-        : new Error(originalErr);
-
-      return Promise.reject(err);
-    });
-}
-
-/**
  * adds a query_string search on the fields
  *
  * @param {Object} query
@@ -469,9 +420,8 @@ module.exports.onlyWithTheseFields = onlyWithTheseFields;
 module.exports.onlyWithinThisSite = onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = formatAggregationResults;
-module.exports.getFormatSearchResult = getFormatSearchResult;
+module.exports.formatSearchResult = formatSearchResult;
 module.exports.formatProtocol = formatProtocol;
 module.exports.moreLikeThis = moreLikeThis;
 module.exports.newNestedQuery = newNestedQuery;
-module.exports.searchByQuery = searchByQuery;
 module.exports.addSearch = addSearch;

@@ -130,7 +130,7 @@
   </div>
 </template>
 <script>
-  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, getAllCategoryOptions, 
+  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE,
   highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
   const { UiButton, UiFileupload, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components,
@@ -202,7 +202,7 @@
     watch: {
       /**
        * Gets updated secondary categories when high level category is changed
-       * 
+       *
        * @param {string} newSelectedCategory
        */
       async highLevelCategory(newSelectedCategory) {
@@ -210,13 +210,12 @@
       }
     },
     async created() {
-      await getAllCategoryOptions();
-      this.tertiaryCategoryOptions = tertiaryCategoryOptions();
+      this.tertiaryCategoryOptions = await tertiaryCategoryOptions();
     },
     methods: {
       /**
        * Set upload/ingest status on FE
-       * 
+       *
        * @param {string} alertType
        * @param {string} type
        * @param {string} message
@@ -230,7 +229,7 @@
       },
       /**
        * Get file stream from file input
-       * 
+       *
        * @param {Object[]} files
        * @param {Object} event
        */
@@ -244,7 +243,7 @@
       },
       /**
        * Resets form fields and loading status
-       * 
+       *
        */
       resetForm() {
         this.uploadedVideo = null;
@@ -265,7 +264,7 @@
       /**
        * When high level category is changed secondary and tertiary categories are reset
        * because the list of options changes dependent on high level category
-       * 
+       *
        */
       resetCategories() {
         this.secondaryCategory = '';
@@ -273,7 +272,7 @@
       },
       /**
        * Init method to start video upload process
-       * 
+       *
        * @param {Object} event
        */
       uploadNewVideo(event) {
@@ -285,15 +284,15 @@
       },
       /**
        * Creates new video object in Brightcove
-       * 
+       *
        */
       async createBrightcoveVideoObj() {
         try {
-          const { videoName, shortDescription, longDescription, 
+          const { videoName, shortDescription, longDescription,
             station, highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this,
-            { status, statusText, data } = await getFetchResponse('POST', '/brightcove/create', { 
-              videoName, shortDescription, longDescription, station, highLevelCategory, 
-              secondaryCategory, tertiaryCategory, tags, adSupported 
+            { status, statusText, data } = await getFetchResponse('POST', '/brightcove/create', {
+              videoName, shortDescription, longDescription, station, highLevelCategory,
+              secondaryCategory, tertiaryCategory, tags, adSupported
             }, { 'Content-Type': 'application/json' } ),
             { signed_url, api_request_url, videoID } = data;
 
@@ -341,7 +340,7 @@
        */
       async uploadS3VideoToBrightcove(api_request_url, videoID) {
         try {
-          const { status, statusText, data } = await getFetchResponse('POST', '/brightcove/upload', 
+          const { status, statusText, data } = await getFetchResponse('POST', '/brightcove/upload',
             { api_request_url, videoID }, { 'Content-Type': 'application/json' }),
             { video, jobID } = data;
 
@@ -357,12 +356,12 @@
         } catch (e) {
           this.loading = false;
           this.updateStatus(UPLOAD, ERROR, `Failed to upload S3 video to Brightcove. ${ e.message }`);
-        }  
+        }
       },
       /**
        * Retrieves job status of ingesting video from brightcove S3 to brightcove video object
        * Sets ingest status alert on FE
-       * 
+       *
        * @param {string} jobID
        * @param {string} videoID
        */
@@ -398,13 +397,13 @@
       },
       /**
        * Gets video object from brightcove cloud
-       * 
+       *
        * @param {string} videoID
        */
       async getVideoObjWithVideoFile(videoID) {
         try {
           const { status, statusText, data: videoWithMedia } = await getFetchResponse('GET', `/brightcove/get?id=${videoID}`);
-                  
+
           if (status === 200 && videoWithMedia) {
             this.uploadedVideo = videoWithMedia;
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.uploadedVideo });
