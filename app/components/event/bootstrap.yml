@@ -1,0 +1,11 @@
+_components:
+  event:
+    displayTitle: "Presented by default data"
+    presenters: [0,0,0]
+    instances:
+      new:
+        displayTitle: "Presented by1"
+        presenters: [1,2,3]
+      new2:
+        displayTitle: "Presented by2"
+        presenters: [4,5,6]
