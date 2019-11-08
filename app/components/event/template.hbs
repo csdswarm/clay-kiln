@@ -1,1 +1,15 @@
-<h1>foo {{ displayTitle }}</h1>
+<article role="main"
+  data-uri="{{ default _ref _self }}"
+  class="component component--event{{ if @root.locals.edit ' editing' }}"
+  itemscope itemtype="http://schema.org/Article"
+  data-headline="{{ striptags headline }}"
+  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
+  data-tags="{{ join (map tags.items (getProp "text")) }}"
+  data-station-slug="{{ stationSlug }}"
+>
+    {{> breadcrumbs this }}
+    <header class="event__header">
+        {{! title }}
+        <h1 class="event__headline" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+    </header>
+</article>

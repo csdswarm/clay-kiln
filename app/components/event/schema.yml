@@ -1,2 +1,18 @@
 _description:
   a component is a component
+
+headline:
+  _label: Event Headline
+  _subscribe: eventHeadline
+  _placeholder:
+    height: 40px
+    text: Event Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+    help: Appears as event's title
