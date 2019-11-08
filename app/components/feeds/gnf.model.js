@@ -19,8 +19,8 @@ module.exports = (ref, data, locals) => {
     mapper = (feed) => ({ meta: data.meta, feed, attr }),
     entryMapper = (entry) => Object.assign(entry, utmParams),
     errorHandler = (error) => {
-      log('error', 'Error rendering RSS data', {
-        error: error.message
+      log('error', `Error rendering RSS data - ${error.message}`, {
+        error
       });
     };
 

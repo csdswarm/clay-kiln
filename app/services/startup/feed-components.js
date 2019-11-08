@@ -48,7 +48,12 @@ function renderComponent(cmptName, cmptData, format) {
     partialExists = !!hbs.partials[partialNameWithFormat],
     partialName = partialExists ? partialNameWithFormat : cmptName;
 
-  return hbs.partials[partialName] ? hbs.partials[partialName](cmptData) : '';
+  if (!hbs.partials[partialName]) {
+    console.warn(`No handlebars partial exists for ${partialName}`);
+    return '';
+  }
+
+  return hbs.partials[partialName](cmptData);
 }
 
 module.exports.init = init;

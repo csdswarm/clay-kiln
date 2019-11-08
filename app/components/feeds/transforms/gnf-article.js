@@ -14,7 +14,7 @@ const format = require('date-fns/format'),
  * @param {Object} locals
  * @return {Array}
  */
-module.exports = async function (data, locals) {
+module.exports = function (data, locals) {
   const {
       canonicalUrl,
       content,
@@ -88,9 +88,6 @@ module.exports = async function (data, locals) {
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
   addArrayOfProps(data.authors, 'dc:creator', transform);
-  // Add the image
-  // return addRssMediaImage(firstAndParse(dataContent, 'image'), transform)
-  //   .then(() => transform);
 
   if (data.editorialFeeds) {
     // Convert editorialFeeds object with terms as keys with boolean values into array of truthy terms
