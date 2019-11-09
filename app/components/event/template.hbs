@@ -1,3 +1,39 @@
+{{#*inline "eventMeta" }}
+  {{! event microdata }}
+    <meta itemprop="url" content="{{ @root.locals.url }}" />
+    <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
+    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="{{ @root.locals.site.name }}" />
+      <meta itemprop="sameAs" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}" />
+      <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+        <meta itemprop="url" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}/media/sites/{{ @root.locals.site.slug }}/logo.w600.h60.png" />
+        <meta itemprop="height" content="60" />
+        <meta itemprop="width" content="600" />
+      </div>
+    </div>
+    <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+      <meta itemprop="url" content="{{ feedImgUrl }}" />
+      <meta itemprop="height" content="{{ extractImgHeight feedImgUrl }}" />
+      <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
+    </div>
+    <meta itemprop="dateModified" content="{{ dateModified }}" />
+{{/inline}}
+
+{{#*inline "eventInfo" }}
+    <div class="event__info-container">
+        <div class="event__info-title">Event Information:</div>
+        <div class="event__info-row">
+            <div class="event__info-icon event__info-icon--date">OK</div>
+            <div class="event__info-text" data-editable="date">{{ formatLocalDate date 'MM/DD/YYYY' }}</div>
+        </div>
+        <div class="event__info-row">
+            <div class="event__info-icon event__info-icon--location">OK</div>
+            <div class="event__info-text" data-editable="location">{{{ location }}}</div>
+        </div>
+    </div>
+{{/inline}}
+
+
 <article role="main"
   data-uri="{{ default _ref _self }}"
   class="component component--event{{ if @root.locals.edit ' editing' }}"
@@ -9,7 +45,26 @@
 >
     {{> breadcrumbs this }}
     <header class="event__header">
+        {{! meta }}
+        {{> eventMeta }}
         {{! title }}
         <h1 class="event__headline" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+        {{! subtitle }}
+        {{#ifAny @root.locals.edit subHeadline}}
+            <span class="event__sub-headline" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+        {{/ifAny}}
+        {{! lead }}
+        <div class="lead" data-editable="lead">
+            {{> component-list lead }}
+        </div>
     </header>
+    <section class="event__body">
+        <div class="body__info">
+            {{! Social Share Buttons }}
+            {{> share sideShare }}
+        </div>
+        <div class="event__content">
+            {{> eventInfo }}
+        </div>
+    </section>
 </article>

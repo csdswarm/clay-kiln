@@ -3,7 +3,7 @@ _components:
     headline: ''
     subHeadline: ''
     startDate: ''
-    endDate: ''
+    startTime: ''
     location: ''
     pageTitle: ''
     content:
@@ -15,7 +15,7 @@ _components:
         headline: ''
         subHeadline: ''
         startDate: ''
-        endDate: ''
+        startTime: ''
         location: ''
         pageTitle: ''
         content:

@@ -1,5 +1,5 @@
 _description:
-  a component is a component
+  A page to house your events
 
 headline:
   _label: Event Headline
@@ -16,3 +16,72 @@ headline:
     validate:
       required: true
     help: Appears as event's title
+subHeadline:
+  _label: Event Sub Headline
+  _subscribe: eventSubHeadline
+  _placeholder:
+    height: 40px
+    text: Event Sub Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: false
+    help: Appears under event's title
+lead:
+  _label: Event Lead
+  _placeholder:
+    text: Event Lead
+    height: 600px
+  _componentList:
+    fuzzy: false
+    include:
+      - image
+      - instagram-post
+      - brightcove
+      - brightcove-live
+      - youtube
+      - html-embed
+      - omny
+      - verizon-media
+    validate:
+      max: 1
+      required: true
+sideShare:
+  _component:
+    include:
+      - share
+startDate:
+  _label: Event Date
+  _placeholder:
+    height: 20px
+    text: Event Start Date
+  _has:
+    input: datepicker
+startTime:
+  _label: Event Time
+  _has:
+    input: timepicker
+date:
+    fields:
+      - startDate
+      - startTime
+location:
+  _label: Event Location
+  _placeholder:
+    height: 20px
+    text: Event Location
+    required: true
+  _has:
+    input: wysiwyg
+    type: multi-line
+    buttons:
+      - italic
+      - strike
+    rows: 4
+    validate:
+      required: true
+    help: the place and address of the event
