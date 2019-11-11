@@ -102,6 +102,11 @@
       <div class="content__info" data-editable="content">
         {{> component-list content }}
       </div>
+      {{#if @root.locals.edit}}
+        <section class="component__bulk-image-upload">
+          <div class="content__bulk-image-upload" data-editable="bulkImageUpload"></div>
+        </section>
+      {{/if}}
       <div class="content__slides {{ if toggleEditorCondensedSlidesView 'content__slides--condensed' }}">
         {{#if @root.locals.edit}}
           {{! Adding slides components }}
