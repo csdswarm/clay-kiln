@@ -79,6 +79,7 @@ location:
     input: wysiwyg
     type: multi-line
     buttons:
+      - bold
       - italic
       - strike
     rows: 4

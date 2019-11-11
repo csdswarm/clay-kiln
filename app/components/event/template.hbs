@@ -23,11 +23,11 @@
     <div class="event__info-container">
         <div class="event__info-title">Event Information:</div>
         <div class="event__info-row">
-            <div class="event__info-icon event__info-icon--date">OK</div>
+            <div class="event__info-icon event__info-icon--date"></div>
             <div class="event__info-text" data-editable="date">{{ formatLocalDate date 'MM/DD/YYYY' }}</div>
         </div>
         <div class="event__info-row">
-            <div class="event__info-icon event__info-icon--location">OK</div>
+            <div class="event__info-icon event__info-icon--location"></div>
             <div class="event__info-text" data-editable="location">{{{ location }}}</div>
         </div>
     </div>
@@ -36,7 +36,7 @@
 
 <article role="main"
   data-uri="{{ default _ref _self }}"
-  class="component component--event{{ if @root.locals.edit ' editing' }}"
+  class="component component--event event{{ if @root.locals.edit ' editing' }}"
   itemscope itemtype="http://schema.org/Article"
   data-headline="{{ striptags headline }}"
   data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
@@ -51,7 +51,9 @@
         <h1 class="event__headline" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
         {{! subtitle }}
         {{#ifAny @root.locals.edit subHeadline}}
-            <span class="event__sub-headline" data-editable="subHeadline" itemprop="subheadline">{{{ subHeadline }}}</span>
+            <div class="event__sub-headline" data-editable="subHeadline" itemprop="subheadline">
+                {{{ subHeadline }}}
+            </div>
         {{/ifAny}}
         {{! lead }}
         <div class="lead" data-editable="lead">
@@ -59,7 +61,7 @@
         </div>
     </header>
     <section class="event__body">
-        <div class="body__info">
+        <div class="event__share">
             {{! Social Share Buttons }}
             {{> share sideShare }}
         </div>

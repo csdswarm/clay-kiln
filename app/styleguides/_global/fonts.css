@@ -622,3 +622,17 @@ em, i {
 @define-mixin latest-top-recirc-slider-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||||||||||| Event Page Fonts Styleguide ||||||||||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin event-page-font1 {
+  @mixin font CircularStd-Black, 22px, $redViolet, -.55px, 26px;
+}
+@define-mixin event-page-font2 {
+  @mixin font ProximaNova-Regular, 18px, $black, inherit, 22px;
+}
+@define-mixin event-page-font3 {
+  @mixin font CircularStd-Black, 45px, $black, -.74px, 54px;
+}
+
