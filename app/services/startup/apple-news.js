@@ -62,14 +62,16 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
 
     switch (sectionFront) {
       case 'music':
-        section = sections['Entertainment & Music'] || sections['News'] || {};
+        section = sections['Entertainment & Music'] || {};
         break;
       case 'sports':
-        section = sections['Sports'] || sections['News'] || {};
+        section = sections['Sports'] || {};
         break;
       case 'news':
-      default:
         section = sections['News'] || {};
+        break;
+      default:
+        section = {};
         break;
     }
 
@@ -298,28 +300,35 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           }
         };
 
-      formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
-      formData.append('article.json', JSON.stringify(articleANF), 'article.json');
+      if (sectionLink) {
+        console.log('sectionfront', sectionFront, secondarySectionFront);
 
-      // eslint-disable-next-line one-var
-      const contentType = `multipart/form-data; boundary=${ formData._boundary }`;
+        formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
+        formData.append('article.json', JSON.stringify(articleANF), 'article.json');
 
-      rest.request(requestURL, {
-        method,
-        headers: {
-          ...createRequestHeader(method, requestURL, contentType,
-            formData.getBuffer().toString()),
-          'Content-Type': contentType
-        },
-        body: formData
-      }).then(({ status, statusText, body: article }) => {
-        if ([ 200, 201 ].includes(status)) {
-          res.status(status).send(article.data);
-        } else {
-          log('error', `ARTICLE POST ERROR: ${status} ${statusText} ${ JSON.stringify(article) }`);
-          res.status(status).send(article);
-        }
-      }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
+        // eslint-disable-next-line one-var
+        const contentType = `multipart/form-data; boundary=${ formData._boundary }`;
+
+        rest.request(requestURL, {
+          method,
+          headers: {
+            ...createRequestHeader(method, requestURL, contentType,
+              formData.getBuffer().toString()),
+            'Content-Type': contentType
+          },
+          body: formData
+        }).then(({ status, statusText, body: article }) => {
+          if ([ 200, 201 ].includes(status)) {
+            res.status(status).send(article.data);
+          } else {
+            log('error', `ARTICLE POST ERROR: ${status} ${statusText} ${ JSON.stringify(article) }`);
+            res.status(status).send(article);
+          }
+        }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
+      } else {
+        log('info', `ARTICLE NOT POSTED TO APPLE NEWS BECAUSE IT IS ${ sectionFront } SECTIONFRONT`);
+        res.status(200).send('Article not posted to apple news feed');
+      }
     } catch (e) {
       log('error', e);
       res.status(500).send(e);
