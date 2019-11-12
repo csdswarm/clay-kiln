@@ -1,17 +1,25 @@
 _description: |
   More content feed right rail
 
+locationOfRightRail:
+  _label: Where is this right rail located?
+  _has:
+    help: Indicates where the right rail is located
+    validate:
+      required: true
+    input: radio
+    options:
+      - homepage
+      - section-front
+      - topic-page
+      - author-page
+
 contentCollectionLogoSponsorship:
   _component:
     include:
       - google-ad-manager
 
 googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager
-
-sharethroughTag:
   _component:
     include:
       - google-ad-manager

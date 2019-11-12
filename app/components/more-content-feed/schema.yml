@@ -60,6 +60,7 @@ locationOfContentFeed:
       - homepage
       - section-front
       - topic-page
+      - author-page
 
 sectionFront:
   _subscribe: sectionFront

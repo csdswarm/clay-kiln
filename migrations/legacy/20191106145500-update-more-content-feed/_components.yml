@@ -1,8 +1,16 @@
 _components:
   more-content-feed-right-rail:
     instances:
-      general:
+      new:
         allowed: true
+      author-page:
+        locationOfRightRail: author-page
+        contentCollectionLogoSponsorship: {
+          _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
+        }
+        googleAdRightRail: {
+          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+        }
   two-column-component:
     instances:
       new:
@@ -10,6 +18,8 @@ _components:
         column2: []
       author-page:
         column1: [{
-          _ref: /components/more-content-feed/instances/author-page
+          _ref: /_components/more-content-feed/instances/author-page
         }]
-        column2: []
+        column2: [{
+          _ref: /_components/more-content-feed-right-rail/instances/author-page
+        }]
