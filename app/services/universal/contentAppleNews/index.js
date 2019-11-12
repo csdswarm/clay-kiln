@@ -133,14 +133,14 @@ const log = require('../log').setup({ file: __filename }),
   /**
    * Get apple news format of lede ref
    *
-   * @param {Array} lede
+   * @param {Array} ledeRef
    * @returns {Promise|Array}
   */
-  getLedeAnf = async lede => {
+  getLedeAnf = async ledeRef => {
     const fallbackLede = {};
 
-    if (isNotHTMLEmbed(lede[0]._ref)) {
-      return getCompInstanceData(`${ lede[0]._ref }.anf`)
+    if (isNotHTMLEmbed(ledeRef)) {
+      return getCompInstanceData(`${ ledeRef }.anf`)
         .catch(e => {
           log('error', 'Error getting lede anf:', e);
           return fallbackLede;
@@ -150,18 +150,19 @@ const log = require('../log').setup({ file: __filename }),
     return fallbackLede;
   },
   /**
-   * Conditionally transforms the lede component to be formatted depending on what properties it contains
+   * Conditionally transforms the lede component to be styled depending on what properties it contains
    *
    * @param {Object} lede
+   * @param {String} ledeRef
    * @returns {Array}
    */
-  ledeComponentToAnf = (lede) => {
+  ledeComponentToAnf = (lede, ledeRef) => {
     if (!lede) {
       return [];
     }
 
     const { components } = lede,
-      isImageComponent = _get(components, '0.role') === 'image';
+      isImageComponent = getComponentName(ledeRef) === 'image';
 
     if (isImageComponent) {
       const [ledeImage, ledeCaption] = components;
@@ -289,7 +290,8 @@ const log = require('../log').setup({ file: __filename }),
    */
   getContentANF = async function (ref, data, locals) {
     const tags = await getTags(data.tags),
-      lede = await getLedeAnf(data.lead),
+      ledeRef = data.lead[0]._ref,
+      lede = await getLedeAnf(ledeRef),
       refInstance = getComponentInstance(ref),
       contentType = getComponentName(ref);
 
@@ -354,7 +356,7 @@ const log = require('../log').setup({ file: __filename }),
         {
           role: 'section',
           layout: 'headerImageLayout',
-          components: ledeComponentToAnf(lede)
+          components: ledeComponentToAnf(lede, ledeRef)
         },
         contentType === 'gallery'
           ? anfPrimaryBodyContent(await getContent(data.slides), data.sectionFront)
