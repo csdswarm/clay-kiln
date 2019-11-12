@@ -31,6 +31,7 @@ subHeadline:
     validate:
       required: false
     help: Appears under event's title
+
 lead:
   _label: Event Lead
   _placeholder:
@@ -50,10 +51,12 @@ lead:
     validate:
       max: 1
       required: true
+
 sideShare:
   _component:
     include:
       - share
+
 startDate:
   _label: Event Date
   _placeholder:
@@ -86,3 +89,25 @@ location:
     validate:
       required: true
     help: the place and address of the event
+
+content:
+  _label: Event Content
+  _placeholder:
+    text: Event Content
+    height: 600px
+  _componentList:
+    fuzzy: true
+    include:
+      - paragraph
+      - presented-by
+      - subheader
+      - image
+      - tweet
+      - facebook-post
+      - instagram-post
+      - youtube
+      - html-embed
+      - brightcove
+      - inline-related
+      - omny
+      - verizon-media

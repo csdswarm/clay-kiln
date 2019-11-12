@@ -6,10 +6,10 @@ _components:
     startTime: ''
     location: ''
     pageTitle: ''
-    content:
-      _ref: /_components/paragraph/instances/new
-    rules:
-      _ref: /_components/presented-by/instances/new
+    lead: []
+    content: []
+    sideShare:
+      _ref: /_components/share/instances/new
     instances:
       new:
         headline: ''
@@ -18,7 +18,7 @@ _components:
         startTime: ''
         location: ''
         pageTitle: ''
-        content:
-          _ref: /_components/paragraph/instances/new
-        rules:
-          _ref: /_components/presented-by/instances/new
+        lead: []
+        content: []
+        sideShare:
+          _ref: /_components/share/instances/new

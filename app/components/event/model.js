@@ -2,6 +2,7 @@
 
 const
   { unityComponent } = require('../../services/universal/amphora'),
+  createContent = require('../../services/universal/create-content'),
   { autoLink } = require('../breadcrumbs');
 
 module.exports = unityComponent({
@@ -13,6 +14,6 @@ module.exports = unityComponent({
     // NOTE: figure out what is needed here
     autoLink(data, ['stationSlug', '{events}'], locals.site.host);
     // NOTE: may need to return createContent.render(uri, data, locals);
-    return data;
+    return createContent.render(ref, data, locals);;
   }
 });
