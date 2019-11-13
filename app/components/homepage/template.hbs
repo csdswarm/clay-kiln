@@ -1,5 +1,7 @@
 <section role="main" data-track-type="homepage" data-uri="{{ default _ref _self }}" class="component component--homepage{{ if @root.locals.edit ' editing' }}">
-	{{> section-lead sectionLead }}
+  <div class="homepage__main-content" data-editable="mainContent">
+  {{> component-list mainContent }}
+  </div>
   <div class="stations-carousel-container" data-editable="stationsCarousel">
     {{> component-list stationsCarousel }}
   </div>

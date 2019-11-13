@@ -1,6 +1,6 @@
 'use strict';
-
-const returnData = (_, data) => data;
+const { getComponentName } = require('clayutils'),
+  returnData = (_, data) => data;
 
 /**
  * @typedef ModelCallback
@@ -24,8 +24,15 @@ const returnData = (_, data) => data;
 function unityComponent({ render = returnData, save = returnData }) {
   return {
     render(uri, data, locals) {
-      // add empty object to be used for any computed data that should not be saved
-      if (typeof data._computed === 'undefined') data._computed = {};
+      const ancestry = locals.ancestry || [],
+        parent = ancestry.slice(-1)[0];
+
+      // add current component to ancestry so that children can find their parents
+      ancestry.push({ name: getComponentName(uri), ref: uri });
+      locals.ancestry = ancestry;
+
+      // add object to be used for any computed data that should not be saved, automatically include a parent reference
+      data._computed = Object.assign({ parent }, data._computed);
 
       return render(uri, data, locals);
     },
@@ -38,4 +45,6 @@ function unityComponent({ render = returnData, save = returnData }) {
   };
 }
 
-module.exports.unityComponent = unityComponent;
+module.exports = {
+  unityComponent
+};

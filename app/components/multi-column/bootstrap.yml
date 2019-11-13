@@ -1,0 +1,18 @@
+_components:
+  multi-column:
+    leftCol: []
+    middleCol: []
+    rightCol: []
+    googleAdHalfPage:
+      _ref: /_components/google-ad-manager/instances/halfPageTop
+    googleAdBillboard:
+      _ref: /_components/google-ad-manager/instances/billboardBottom
+    instances:
+      home:
+        leftCol: []
+        middleCol: []
+        rightCol: []
+        googleAdHalfPage:
+          _ref: /_components/google-ad-manager/instances/halfPageTop
+        googleAdBillboard:
+          _ref: /_components/google-ad-manager/instances/billboardBottom
