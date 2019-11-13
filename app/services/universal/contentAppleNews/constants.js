@@ -2,5 +2,5 @@
 
 module.exports.ANF_EMPTY_COMPONENT = {
   role: 'body',
-  text: ''
+  text: 'ANF_EMPTY_COMPONENT'
 };

@@ -6,6 +6,7 @@
  *  https://developer.apple.com/documentation/apple_news/facebookpost
 */
 
+const { ANF_EMPTY_COMPONENT } = require('../../services/universal/contentAppleNews/constants');
 const validPatterns = new RegExp(
   [
     // https://www.facebook.com/{page-name}/posts/{post-id}
@@ -71,9 +72,8 @@ module.exports = (
 
   // facebook videos wont't play in apple news
   if (isVideo) {
-    log('error', 'facebook videos are not supported', url);
-
-    return null;
+    log('error', 'facebook videos are not supported', { url });
+    return ANF_EMPTY_COMPONENT;
   }
 
   // https://www.facebook.com/{page-name}/photos/a.{some-id}/{post-id} (pasted in from users)
@@ -86,7 +86,7 @@ module.exports = (
     );
   }
 
-  log('error', 'unsupported facebook url', url);
-  return null;
+  log('error', 'unsupported facebook url', { url });
+  return ANF_EMPTY_COMPONENT;
 };
 

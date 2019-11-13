@@ -5,6 +5,7 @@
 
 const log = require('../../services/universal/log').setup({ file: __filename }),
   { ANF_EMPTY_COMPONENT } = require('../../services/universal/contentAppleNews/constants'),
+  { isEmptyComponent } = require('../../services/universal/contentAppleNews/utils'),
   { isNotHTMLEmbed } = require('../../services/universal/contentAppleNews'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
   qs = require('qs'),
@@ -64,13 +65,18 @@ module.exports = async function (ref, data) {
           bottom: 7
         }
       }
-    };
+    },
+    slideEmbed = await getSlideEmbed(data.slideEmbed[0]);
+
+  if (isEmptyComponent(slideEmbed)) {
+    return ANF_EMPTY_COMPONENT;
+  }
 
   return {
     role: 'container',
     layout: 'slideGalleryItemLayout',
     components: [
-      await getSlideEmbed(data.slideEmbed[0]),
+      slideEmbed,
       titleComponent,
       await getAnfSlideDescription(descRef)
     ]

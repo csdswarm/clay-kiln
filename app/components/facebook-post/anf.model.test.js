@@ -6,6 +6,7 @@ const expect = require('chai').expect;
 const dirname = __dirname.split('/').pop();
 const filename = __filename.split('/').pop().split('.').shift();
 const sinon = require('sinon');
+const { isEmptyComponent } = require('../../services/universal/contentAppleNews/utils');
 const facebookPostAnfModel = require('./anf.model');
 const anfFacebookPost = (URL) => ({
   role: 'facebook_post',
@@ -128,8 +129,10 @@ describe(`${dirname}/${filename}`, () => {
     const url = `https://www.facebook.com/pageName/videos/${videoId}/`;
 
     expect(
-      facebookPostAnfModel(mockRef, { url })
-    ).to.equal(null);
+      isEmptyComponent(
+        facebookPostAnfModel(mockRef, { url })
+      )
+    ).to.be.true;
   });
 
   it('handles and logs unsupported urls', () => {
@@ -137,26 +140,31 @@ describe(`${dirname}/${filename}`, () => {
     const url = 'https://www.facebook.com/pageName/posts-abc/1234/';
 
     expect(
-      facebookPostAnfModel(mockRef, { url }, mockLocals, logSpy)
-    ).to.equal(null);
+      isEmptyComponent(
+        facebookPostAnfModel(mockRef, { url }, mockLocals, logSpy)
+      )
+    ).to.be.true;
     sinon.assert.calledOnce(logSpy);
 
     const {
       args
     } = logSpy.getCall(0);
-    const [arg0, arg1] = args;
+    const [arg0, arg1, arg2] = args;
 
     expect(args.length).to.equal(3);
     expect(arg0).to.equal('error');
     expect(typeof arg1).to.equal('string');
+    expect(typeof arg2).to.equal('object');
   });
 
   it('handles empty urls', () => {
     const logSpy = sinon.spy();
 
     expect(
-      facebookPostAnfModel(mockRef, { url: '' }, mockLocals, logSpy)
-    ).to.equal(null);
+      isEmptyComponent(
+        facebookPostAnfModel(mockRef, { url: '' }, mockLocals, logSpy)
+      )
+    ).to.be.true;
     sinon.assert.calledOnce(logSpy);
   });
 });

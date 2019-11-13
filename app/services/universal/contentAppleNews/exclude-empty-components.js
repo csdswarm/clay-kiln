@@ -1,6 +1,6 @@
 'use strict';
 
-const { ANF_EMPTY_COMPONENT } = require('./constants'),
+const { isEmptyComponent } = require('./utils'),
   /**
    * Checks validity of component
    *
@@ -9,7 +9,7 @@ const { ANF_EMPTY_COMPONENT } = require('./constants'),
    * @returns {Bool}
    */
   isValidComponent = component => {
-    if (component === ANF_EMPTY_COMPONENT) {
+    if (isEmptyComponent(component)) {
       return false;
     }
 
