@@ -92,6 +92,11 @@
       height: em(10, 12);
       width: em(10, 12);
     }
+    &--override-fill {
+      & .more__caret {
+      fill: inherit;
+      }
+    }
   }
 }
 

@@ -65,7 +65,7 @@ class StationsCarousel {
           this.pageSize = 2;
           this.stationsVisible = 2;
         }
-        let calculatedImageSize = (document.body.clientWidth - 40 - this.gutterWidth * (this.stationsVisible - 1)) / this.stationsVisible;
+        const calculatedImageSize = (document.body.clientWidth - 40 - this.gutterWidth * (this.stationsVisible - 1)) / this.stationsVisible;
 
         this.imageSize = calculatedImageSize + this.gutterWidth;
         // set image size dependent on window size
@@ -119,7 +119,7 @@ class StationsCarousel {
    */
   hideOrShowEndArrows() {
     if (this.windowWidth >= this.windowSizes.medium) {
-      let visible = 'visibility: visible',
+      const visible = 'visibility: visible',
         hidden = 'visibility: hidden';
 
       if (this.pageNum <= 1) {
@@ -140,7 +140,7 @@ class StationsCarousel {
    * @function
    */
   centerPageResults() {
-    let remainderStations = this.stationsData.count % this.pageSize;
+    const remainderStations = this.stationsData.count % this.pageSize;
 
     if (this.totalPages * this.pageSize <= this.stationsVisible) { // Center stations if fills short of first page
       this.stationsList.classList.add('align-center');
@@ -154,7 +154,7 @@ class StationsCarousel {
           this.stationsNodes[i].style.visibility = 'hidden';
         }
         // center stations on last page
-        let centeredLocation = - (this.pageStationsLocation - (this.stationsVisible - remainderStations) * this.imageSize / 2);
+        const centeredLocation = - (this.pageStationsLocation - (this.stationsVisible - remainderStations) * this.imageSize / 2);
 
         this.stationsList.setAttribute('style',`transform: translateX(${centeredLocation}px);`);
       }
@@ -179,7 +179,7 @@ class StationsCarousel {
     }
     if (this.totalPages > 1) { // Create pagination dots if more than one page
       for (let page = 1; page <= this.totalPages; page++) {
-        let dot = document.createElement('div');
+        const dot = document.createElement('div');
 
         dot.setAttribute('class', this.dotClass);
         dot.setAttribute('data-page', page);
@@ -198,7 +198,7 @@ class StationsCarousel {
    */
   updatePaginationDots() {
     if (this.totalPages > 1) {
-      let allDots = this.stationsCarousel.querySelectorAll(`.${this.dotClass}`);
+      const allDots = this.stationsCarousel.querySelectorAll(`.${this.dotClass}`);
 
       // Remove active styling for previous active page dot & set active class for currently active page dot
       for (let d = 0; d < allDots.length; d++) {
@@ -272,7 +272,7 @@ class StationsCarousel {
 
     return radioApiService.get(`${radioApi}stations${params}`).then(response => {
       if (response.data) {
-        let stationsData = {
+        const stationsData = {
           stations: response.data.map(station => {
             return station.attributes;
           }),

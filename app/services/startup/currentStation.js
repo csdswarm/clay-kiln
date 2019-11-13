@@ -42,29 +42,34 @@ const radioApiService = require('../../services/server/radioApi'),
   },
   /**
    * determines if the path is valid for station information
+   * invalid paths are as follows:
+   *  Paths to files (has extension)
+   *  Paths to components that do not include a stationId query
    *
    * @param {object} req
    * @return {boolean}
    */
   validPath = (req) => {
-    const publicDirs = getDirectories('./public/');
+    const publicDirs = getDirectories('./public/'),
+      stationsList = req.path.includes('_components') && !req.query.stationId || false;
 
-    return publicDirs.every(publicPathDir => req.path.indexOf(publicPathDir.replace('public', '')) !== 0);
+    return !stationsList && publicDirs.every(publicPathDir => req.path.indexOf(publicPathDir.replace('public', '')) !== 0);
   },
   /**
    * determines if the default station should be used
    *
    * @param {object} req
+   * @param {object} locals
    * @return {boolean}
    */
-  getStation = async (req) => {
+  getStation = async (req, locals) => {
     if (validPath(req)) {
       const slugInReqUrl = getStationSlug(req),
         stationId = req.query.stationId,
-        response = await radioApiService.get('stations', {page: {size: 999}}, null, { ttl: radioApiService.TTL.DAY });
+        response = await radioApiService.get('stations', { page: { size: 1000 } }, null, { ttl: radioApiService.TTL.MIN * 30 }, locals);
 
       // use the stations as a cached object so we don't have to run the same logic every request
-      if (!response.response_cached || isEmpty(allStations)) {
+      if (response.response_cached === false || isEmpty(allStations)) {
         response.data.forEach((station) => {
           const slug = station.attributes.site_slug || station.attributes.callsign || station.id;
 
@@ -85,6 +90,8 @@ const radioApiService = require('../../services/server/radioApi'),
 
       return defaultStation;
     }
+
+    return {};
   };
 
 
@@ -96,7 +103,7 @@ const radioApiService = require('../../services/server/radioApi'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  res.locals.station = await getStation(req);
+  res.locals.station = await getStation(req, res.locals);
   res.locals.allStationsCallsigns = allStationsCallsigns;
   res.locals.defaultStation = defaultStation;
 

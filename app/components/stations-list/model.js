@@ -9,11 +9,12 @@ const radioApiService = require('../../services/server/radioApi'),
 
 /**
  * get market data from market slug or ID
+ * @param {object} locals
  * @param {string} slug
  * @param {number} [id]
  * @returns {object}
  */
-function getMarketData({ slug, id }) {
+function getMarketData(locals, { slug, id }) {
   const route = 'markets',
     /* @TODO filter by slug needs to be added to market api
     /* temporarily filter by market ID
@@ -27,7 +28,7 @@ function getMarketData({ slug, id }) {
     params['filter[id]'] = id;
   }
 
-  return radioApiService.get(route, params).then(response => {
+  return radioApiService.get(route, params, null, {}, locals).then(response => {
     if (response.data) {
       if (id) {
         return response.data.shift();
@@ -42,11 +43,12 @@ function getMarketData({ slug, id }) {
 
 /**
  * get genre data from genre slug or ID
+ * @param {object} locals
  * @param {string} slug
  * @param {number} [id]
  * @returns {object}
  */
-function getGenreData({ slug, id }) {
+function getGenreData(locals, { slug, id }) {
   const route = 'genres',
     /* temporarily filter by genre ID
     */
@@ -59,7 +61,7 @@ function getGenreData({ slug, id }) {
     params['filter[id]'] = id;
   }
 
-  return radioApiService.get(route, params).then(response => {
+  return radioApiService.get(route, params, null, {}, locals).then(response => {
     if (response.data) {
       if (id) {
         return response.data.shift();
@@ -98,7 +100,7 @@ module.exports.render = async (uri, data, locals) => {
       params['filter[id]'] = stationIDs;
     }
 
-    return radioApiService.get(route, params).then(response => {
+    return radioApiService.get(route, params, null, {}, locals).then(response => {
       if (response.data) {
         const stations = stationIDs.split(',').map(stationID => {
           const station = response.data.find(station => {
@@ -151,6 +153,10 @@ module.exports.render = async (uri, data, locals) => {
           params['filter[market_id]'] = locals.station.market.id;
           break;
         case 'genre':
+          if (!locals.station.genre.length) {
+            return returnStationless(data);
+          }
+
           data.genre = slugifyService(locals.station.genre[0].name);
           if (data.genre === SPORTS_SLUG) {
             data.seeAllLink = `/stations/${ data.genre }`;
@@ -181,7 +187,7 @@ module.exports.render = async (uri, data, locals) => {
           id: locals.market,
           slug: locals.params.dynamicMarket
         },
-        marketData = await getMarketData(market);
+        marketData = await getMarketData(locals, market);
 
       data.seeAllLink = marketData.attributes ? `/stations/location/${ slugifyService(marketData.attributes.display_name) }` : '/stations/location';
       data.listTitle = marketData.attributes ? marketData.attributes.display_name : '';
@@ -209,7 +215,7 @@ module.exports.render = async (uri, data, locals) => {
       }
 
       // eslint-disable-next-line one-var
-      const genreData = await getGenreData(genre);
+      const genreData = await getGenreData(locals, genre);
 
       if (slugifyService(genreData.attributes.name) === SPORTS_SLUG ||
         slugifyService(genreData.attributes.name) === NEWSTALK_SLUG) {
@@ -240,7 +246,7 @@ module.exports.render = async (uri, data, locals) => {
       }
     }
 
-    return radioApiService.get(route, params).then(response => {
+    return radioApiService.get(route, params, null, {}, locals).then(response => {
       if (response.data) {
         data.stations = response.data ? response.data.map((station) => {
           station.attributes.playingClass = playingClass(locals, station.attributes.id);

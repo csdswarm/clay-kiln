@@ -1,6 +1,6 @@
 {
   "name": "clay-starter",
-  "version": "0.0.17",
+  "version": "0.0.28",
   "description": "The started for Clay",
   "main": "app.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "build-production": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true LOG=info ./node_modules/.bin/clay compile --minify --globs 'global/js/**/!(*.test).js' --reporter pretty && LOG=info ./node_modules/.bin/clay compile custom-tasks",
     "watch": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true LOG=info ./node_modules/.bin/clay compile --globs 'global/js/**/!(*.test).js' --reporter pretty --watch",
     "build-web-player": "npm install git+ssh://git@github.com/Entercom/radio-web-player.git#develop --no-save && mkdir -p public/web-player && cd ./node_modules/radio-web-player && npm install && npm run build && cd demo-site && npm install && npm run build && cp -r dist/* ../../../public/web-player/",
-    "eslint": "npx eslint . --cache"
+    "eslint": "npx eslint ."
   },
   "author": "",
   "license": "MIT",
@@ -29,7 +29,7 @@
     "amphora-search": "^7.3.0",
     "amphora-storage-postgres": "^1.2.1",
     "aws-sdk": "^2.403.0",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "body-parser": "^1.18.2",
     "cheerio": "^1.0.0-rc.3",
     "clay-kiln": "^8.12.0",
@@ -48,6 +48,7 @@
     "dotenv": "^8.0.0",
     "eventify": "^2.0.1",
     "express": "^4.16.3",
+    "express-interceptor": "^1.2.0",
     "express-session": "^1.15.6",
     "gulp-newer": "git+https://github.com/nelsonpecora/gulp-newer.git",
     "hammerjs": "^2.0.8",
@@ -64,7 +65,7 @@
     "jsonp-client": "^1.1.1",
     "jsonwebtoken": "^8.5.1",
     "levelup": "^1.2.1",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.15",
     "merge-stream": "^1.0.0",
     "mobius1-selectr": "^2.4.8",
     "moment": "^2.24.0",
@@ -83,7 +84,6 @@
     "vinyl-map2": "^1.2.1",
     "vue": "^2.5.16",
     "vue-template-compiler": "^2.5.17",
-    "vueify": "^9.4.1",
     "xml": "^1.0.1",
     "xml-escape": "^1.1.0",
     "yamljs": "^0.3.0"
@@ -125,7 +125,7 @@
     "resolve": "^1.11.1",
     "through2": "^2.0.3",
     "uglify-js": "^2.8.29",
-    "uglifyify": "^5.0.1",
+    "uglifyify": "^5.0.2",
     "vinyl-map2": "^1.2.1",
     "yargs": "^11.0.0"
   }

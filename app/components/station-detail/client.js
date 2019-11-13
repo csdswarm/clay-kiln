@@ -80,7 +80,7 @@ class StationDetail {
    * @param {NodeListOf} content
    */
   addTabNavigationListeners(tabs, content) {
-    for (let tab of tabs) {
+    for (const tab of tabs) {
       tab.addEventListener('click', function (e) { this.activateTab(e, tabs, content, true); }.bind(this));
     }
   }
@@ -144,14 +144,14 @@ class StationDetail {
     if (e.currentTarget) {
       contentLabel = e.currentTarget.classList[0].replace('tabs__','');
 
-      for (let tab of tabs) {
+      for (const tab of tabs) {
         tab.classList.remove('active');
       }
       e.currentTarget.classList.add('active');
     } else {
       contentLabel = e;
 
-      for (let tab of tabs) {
+      for (const tab of tabs) {
         tab.classList.remove('active');
         if (tab.classList.contains(`tabs__${contentLabel}`)) {
           tab.classList.add('active');
@@ -159,7 +159,7 @@ class StationDetail {
       }
     }
 
-    for (let c of content) {
+    for (const c of content) {
       c.classList.remove('active');
       if (c.classList.contains(`container--${contentLabel}`)) {
         if (this.lastUpdated !== contentLabel) {

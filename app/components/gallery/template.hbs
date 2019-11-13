@@ -27,18 +27,35 @@
     {{/ifAny}}
   </header>
 
+  {{#if _computed.renderFullWidthLead }}
+    {{! Lead }}
+    <div class="lead lead--full-width" data-editable="lead">
+      {{> component-list lead }}
+    </div>
+  {{/if}}
+
   {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="gallery__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
   >
-    <div class="body__header">
-      {{! Lead }}
-      <div class="lead" data-editable="lead">
-        {{> component-list lead }}
+    {{#unless _computed.renderFullWidthLead }}
+      {{#if _computed.supportsFullWidthLead }}
+        <div data-editable="leadSettings">
+          <h1>Lead Settings:</h1>
+          <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
+        </div>
+      {{/if}}
+
+      <div class="body__header">
+        {{! Lead }}
+        <div class="lead" data-editable="lead">
+          {{> component-list lead }}
+        </div>
       </div>
-    </div>
+    {{/unless}}
+
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
@@ -85,6 +102,11 @@
       <div class="content__info" data-editable="content">
         {{> component-list content }}
       </div>
+      {{#if @root.locals.edit}}
+        <section class="component__bulk-image-upload">
+          <div class="content__bulk-image-upload" data-editable="bulkImageUpload"></div>
+        </section>
+      {{/if}}
       <div class="content__slides {{ if toggleEditorCondensedSlidesView 'content__slides--condensed' }}">
         {{#if @root.locals.edit}}
           {{! Adding slides components }}

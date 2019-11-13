@@ -243,6 +243,7 @@ export default {
       const nextSectionFrontPageData = queryPayload.findComponent(spaPayload.main, 'section-front')
       const nextTopicPageData = queryPayload.findComponent(spaPayload.pageHeader, 'topic-page-header')
       const nextStationDetailPageData = queryPayload.findComponent(spaPayload.main, 'station-detail')
+      const nextStationDirectoryPageData = queryPayload.findComponent(spaPayload.main, 'stations-directory')
 
       return {
         toTitle: (nextTitleComponentData && nextTitleComponentData.title) ? nextTitleComponentData.title : '',
@@ -254,7 +255,8 @@ export default {
         toHomepage: nextHomepageData || {},
         toSectionFrontPage: nextSectionFrontPageData || {},
         toTopicPage: nextTopicPageData || {},
-        toStationDetailPage: nextStationDetailPageData || {}
+        toStationDetailPage: nextStationDetailPageData || {},
+        toStationDirectoryPage: nextStationDirectoryPageData || {}
       }
     },
     /**
