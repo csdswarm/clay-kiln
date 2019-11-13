@@ -24,7 +24,7 @@ const db = require('./db'),
         });
       },
       isStation = _get(locals, 'station.slug', 'www') !== 'www',
-      timestamp = locals.query.t;
+      timestamp = _get(locals, 'query.t');
 
     // primary section front
     if (data.sectionFront) {
