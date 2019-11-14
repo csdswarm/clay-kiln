@@ -12,25 +12,133 @@ function getFormattedDate(date, time) {
 
 
 function getSettingsConfigData() {
-  const emptyHtml = '<span class="circulation--empty">None</span>';
+  const
+    emptyHtml = '<span class="component-settings__property-data-empty">None</span>',
+    emptyImgHtml = '<div class="component-settings__property-data-empty-feed-img">None</div>';
 
   return {
-    settingsTitle: 'Event Circulation!!!!!',
+    settingsTitle: 'Event Circulation',
     classModifier: '--event-settings',
     sections: [
       {
-        dataEditable: 'fooData',
-        sectionTitle: 'Section 1',
+        dataEditable: 'circulationHeadlinesSeoGroup',
+        sectionTitle: 'Headlines, Teasers, and SEO',
         settings: [
           {
-            title: 'Setting 1',
+            title: 'Facebook Headline',
             isRequired: true,
-            templateString: 'Straight Text!'
+            templateString: `{{{ default facebookHeadline '${emptyHtml}' }}}`
           },
           {
-            title: 'Setting 2',
+            title: 'Twitter/Short Headline',
+            isRequired: true,
+            templateString: `{{{ default shortHeadline '${emptyHtml}' }}}`
+          },
+          {
+            title: 'Teaser',
+            isRequired: true,
+            templateString: `{{{ default teaser '${emptyHtml}' }}}`
+          },
+          {
+            title: 'SEO Headline',
+            isRequired: true,
+            templateString: `{{{ default seoHeadline '${emptyHtml}' }}}`
+          },
+          {
+            title: 'SEO Description',
+            isRequired: true,
+            templateString: `{{{ default seoDescription '${emptyHtml}' }}}`
+          }
+        ]
+      },
+      {
+        dataEditable: 'circulationSyndicationGroup',
+        sectionTitle: 'Syndication',
+        settings: [
+          {
+            title: 'Featured',
             isRequired: false,
-            templateString: `{{{ default startDate '${emptyHtml}' }}}`
+            templateString: '{{ if featured "Yes" else="No" }}'
+          },
+          {
+            title: 'Editorial Feeds Term(s)',
+            isRequired: false,
+            templateString: `{{{ default (commaSeparated editorialFeeds false) '${emptyHtml}' }}}`
+          },
+          {
+            title: 'Syndicate to Corporate Website(s)',
+            isRequired: false,
+            templateString: `{{{ default (commaSeparated corporateSyndication false) '${emptyHtml}' }}}`
+          },
+          {
+            title: 'Syndicate to Station(s)',
+            isRequired: false,
+            templateString: `{{{ default (join stationSyndication) '${emptyHtml}' }}}`
+          },
+          {
+            title: 'Syndicate to Genre(s)',
+            isRequired: false,
+            templateString: `{{{ default (join genreSyndication) '${emptyHtml}' }}}`
+          },
+          {
+            title: 'Syndication Status',
+            isRequired: false,
+            templateString: `{{{ default syndicationStatus '${emptyHtml}' }}}`
+          },
+          {
+            title: 'Syndicated URL',
+            isRequired: false,
+            templateString: `{{{ default syndicatedUrl '${emptyHtml}' }}}`
+          }
+        ]
+      },
+      {
+        dataEditable: 'circulationSlugGroup',
+        sectionTitle: 'Slug and URL',
+        settings: [
+          {
+            title: 'Event Slug',
+            isRequired: true,
+            templateString: `{{{ default slug '${emptyHtml}' }}}`
+          },
+          {
+            title: 'Evergreen Treatment',
+            isRequired: false,
+            templateString: '{{ if evergreenSlug "Yes" else="No" }}'
+          }
+        ]
+      },
+      {
+        dataEditable: 'circulationFeedsGroup',
+        sectionTitle: 'Recirculation',
+        settings: [
+          {
+            title: 'Recirculation Image',
+            isRequired: true,
+            // templateString: `{{{ default feedImgUrl '${emptyImgHtml}' }}}`
+            templateString: `
+              {{#if feedImgUrl}}
+                <img class="component-settings__property-data-feed-img" src="{{ feedImgUrl }}?width=300" alt="" />
+              {{else}}
+                <div class="component-settings__property-data-feed-img-empty">None</div>
+              {{/if}}
+            `
+          }
+        ]
+      },
+      {
+        dataEditable: 'circulationMetaGroup',
+        sectionTitle: 'Event Metadata',
+        settings: [
+          {
+            title: 'Section Front',
+            isRequired: true,
+            templateString: '{{ sectionFront }}'
+          },
+          {
+            title: 'Secondary Section Front',
+            isRequired: true,
+            templateString: '{{ secondarySectionFront }}'
           }
         ]
       }

@@ -9,7 +9,7 @@
 
 const Handlebars = require('handlebars');
 
-module.exports = (templateStr, context) => {
+module.exports = function renderTemplateString(templateStr, context) {
   if (!templateStr || !context) {
     return '';
   }
