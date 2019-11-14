@@ -19,20 +19,13 @@ module.exports = function (data, locals) {
       canonicalUrl,
       content,
       lead,
-      syndicatedUrl,
       headline,
-      seoHeadline,
-      feedImgUrl,
-      seoDescription,
-      stationURL,
-      stationTitle,
-      subHeadline,
-      featured
+      seoDescription
     } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
       {
-        'ns-title': { _cdata: headline }
+        title: { _cdata: headline }
       },
       {
         link
@@ -44,58 +37,17 @@ module.exports = function (data, locals) {
         guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
       },
       {
-        syndicatedUrl
-      },
-      {
         description: { _cdata: seoDescription }
       },
       {
-        'content:encoded': { _cdata: renderContent(content, locals, contentFormat) }
-      },
-      {
-        stationUrl: stationURL
-      },
-      {
-        stationTitle
-      },
-      {
-        'ns-subtitle': subHeadline
-      },
-      {
-        seoHeadline: { _cdata: seoHeadline }
-      },
-      {
-        coverImage: feedImgUrl
-      },
-      {
-        featured
+        'content:encoded': { _cdata: renderContent(lead, locals, { format: contentFormat, data: { primary: true } }) + renderContent(content, locals, { format: contentFormat }) }
       }
     ];
-
-  if (data.slides) {
-    transform.push({
-      slides: { _cdata: renderContent(data.slides, locals, contentFormat) }
-    });
-  }
-
-  if (data.lead) {
-    transform.push({
-      lead: { _cdata: renderContent(lead, locals, contentFormat) }
-    });
-  }
 
   // Add the tags
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
   addArrayOfProps(data.authors, 'dc:creator', transform);
-
-  if (data.editorialFeeds) {
-    // Convert editorialFeeds object with terms as keys with boolean values into array of truthy terms
-    const editorialFeeds = Object.keys(data.editorialFeeds).filter(term => {return data.editorialFeeds[term];});
-
-    // Add the editorial feeds terms
-    addArrayOfProps(editorialFeeds, 'editorialFeeds', transform);
-  }
 
   // We HAVE to return a promise because of how NYMag setup the Highland render pipeline
   return Promise.resolve(transform);
