@@ -16,6 +16,7 @@ headline:
     validate:
       required: true
     help: Appears as event's title
+
 subHeadline:
   _label: Event Sub Headline
   _subscribe: eventSubHeadline
@@ -57,21 +58,30 @@ sideShare:
     include:
       - share
 
+tags:
+  _component:
+    include:
+      - tags
+
+adTags:
+  _component:
+    include:
+      - ad-tags
+
 startDate:
   _label: Event Date
-  _placeholder:
-    height: 20px
-    text: Event Start Date
   _has:
     input: datepicker
+    validate:
+      required: true
+
 startTime:
   _label: Event Time
   _has:
     input: timepicker
-date:
-    fields:
-      - startDate
-      - startTime
+    validate:
+      required: true
+
 location:
   _label: Event Location
   _placeholder:
@@ -97,6 +107,8 @@ content:
     height: 600px
   _componentList:
     fuzzy: true
+    validate:
+      required: true
     include:
       - paragraph
       - presented-by
@@ -111,3 +123,13 @@ content:
       - inline-related
       - omny
       - verizon-media
+
+_groups:
+  publishedDate:
+    fields:
+      - startDate
+      - startTime
+    _placeholder:
+      text: Event Date & Time
+      height: 20px
+      ifEmpty: startDate or startTime

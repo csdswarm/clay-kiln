@@ -10,6 +10,10 @@ _components:
     content: []
     sideShare:
       _ref: /_components/share/instances/new
+    tags:
+      _ref: /_components/tags/instances/new
+    adTags:
+      _ref: /_components/ad-tags/instances/new
     instances:
       new:
         headline: ''
@@ -22,3 +26,7 @@ _components:
         content: []
         sideShare:
           _ref: /_components/share/instances/new
+        tags:
+          _ref: /_components/tags/instances/new
+        adTags:
+          _ref: /_components/ad-tags/instances/new
