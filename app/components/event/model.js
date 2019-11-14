@@ -13,8 +13,7 @@ function getFormattedDate(date, time) {
 
 function getSettingsConfigData() {
   const
-    emptyHtml = '<span class="component-settings__property-data-empty">None</span>',
-    emptyImgHtml = '<div class="component-settings__property-data-empty-feed-img">None</div>';
+    emptyHtml = '<span class="component-settings__property-data-empty">None</span>';
 
   return {
     settingsTitle: 'Event Circulation',
@@ -115,7 +114,6 @@ function getSettingsConfigData() {
           {
             title: 'Recirculation Image',
             isRequired: true,
-            // templateString: `{{{ default feedImgUrl '${emptyImgHtml}' }}}`
             templateString: `
               {{#if feedImgUrl}}
                 <img class="component-settings__property-data-feed-img" src="{{ feedImgUrl }}?width=300" alt="" />
