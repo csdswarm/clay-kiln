@@ -301,8 +301,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         };
 
       if (sectionLink) {
-        console.log('sectionfront', sectionFront, secondarySectionFront);
-
         formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
         formData.append('article.json', JSON.stringify(articleANF), 'article.json');
 
