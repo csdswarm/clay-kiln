@@ -159,12 +159,13 @@ module.exports.render = function (ref, data, locals) {
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{ text: data.tag }])[0].text || '';
     queryService.addMust(query, { match: { 'tags.normalized': data.tag } });
+    return renderDefault(ref, data, locals, query);
   }
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
     queryService.addMust(query, { match: { sectionFront: data.sectionFront } });
+    return renderDefault(ref, data, locals, query);
   }
-  return renderDefault(ref, data, locals, query);
 
-  // return Promise.resolve(data);
+  return data;
 };

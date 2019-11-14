@@ -1,7 +1,6 @@
 'use strict';
 
-const host = process.argv.slice(2)[0],
-  indices = process.argv.slice(3)[0];
+const [ host, indices ] = process.argv.slice(2);
 
 if (!host) {
   console.log(process.argv);
