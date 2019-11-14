@@ -304,7 +304,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         formData.append('metadata', JSON.stringify(metadata), 'metadata.json');
         formData.append('article.json', JSON.stringify(articleANF), 'article.json');
 
-        // eslint-disable-next-line one-var
         const contentType = `multipart/form-data; boundary=${ formData._boundary }`;
 
         rest.request(requestURL, {
