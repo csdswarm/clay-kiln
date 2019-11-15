@@ -26,10 +26,10 @@ items:
         input: content-search
         validate:
           required: true
-          # Using pattern from https://regex101.com/r/Mfvx0d/2
-          pattern: ^(?:http:\/\/www\.|https:\/\/[a-z0-9-]*\.|http:\/\/|https:\/\/)?(radio\.com\/?[^\s]*)$
+          # Using pattern from https://regex101.com/r/3eW1gH/4
+          pattern: ^(https?:\/\/[a-z0-9-]*?\.?radio\.com\/?.*?)?\s*$
           patternMessage: Must be a valid Radio.com URL
-        help: Format should follow https://{subdomain if any}.radio.com/{anything url-encoded}
+        help: Format should follow http(s)://{subdomain if any}.radio.com/{anything url-encoded}
     -
       prop: overrideTitle
       _label: Headline Override
