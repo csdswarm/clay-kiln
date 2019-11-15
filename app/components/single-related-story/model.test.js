@@ -26,7 +26,7 @@ describe(dirname, function () {
 
       it('clears data if url is not provided', function () {
         var ref = 'some ref',
-          data = {test: 'test'};
+          data = { test: 'test' };
 
         return expect( fn(ref, data) ).to.deep.equal({});
       });
@@ -89,7 +89,7 @@ describe(dirname, function () {
 
       it('returns existing data if query returns no result', function () {
         const ref = 'some ref',
-          data = {url: 'http://test.com'};
+          data = { url: 'http://test.com' };
 
         queryService.searchByQuery.returns(Promise.resolve([]));
 

@@ -36,7 +36,7 @@ function getMarket() {
  * @returns {Promise<*>}
  */
 async function getID() {
-  let market = await getMarket();
+  const market = await getMarket();
 
   return market.id;
 }
@@ -46,7 +46,7 @@ async function getID() {
  * @returns {Promise<*>}
  */
 async function getName() {
-  let market = await getMarket();
+  const market = await getMarket();
 
   return market.name;
 }
