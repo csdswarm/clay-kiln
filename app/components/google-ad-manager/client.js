@@ -19,6 +19,7 @@ const _get = require('lodash/get'),
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
+  apsPubId = googleAdManagerComponent.getAttribute('data-aps-pub-id'),
   sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
@@ -26,7 +27,8 @@ const _get = require('lodash/get'),
     rootMargin: '0px',
     threshold: 0
   },
-  observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
+  observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig),
+  { initAPS, fetchAPSBids } = require('./aps');
 let refreshCount = 0,
   allAdSlots = {},
   adsRefreshing = false,
@@ -42,7 +44,7 @@ let refreshCount = 0,
 adMapping.setupSizeMapping();
 
 /**
- * Add Sharethrough script on first page load
+ * Add Sharethrough and APS script on first page load
  * @function
  */
 (() => {
@@ -52,6 +54,9 @@ adMapping.setupSizeMapping();
   newScript.async = true;
   newScript.src = 'https://native.sharethrough.com/assets/sfp.js';
   firstScript.parentNode.insertBefore(newScript, firstScript);
+
+  // Initialize APS JavaScript Library
+  initAPS(apsPubId);
 })();
 
 // Listener to ensure lytics has been setup in GTM (Google Tag Manager)
@@ -87,14 +92,16 @@ googletag.cmd.push(() => {
       adsRefreshing = true;
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
-        clearDfpTakeover();
-        // Refresh all ads
-        googletag.pubads().refresh(null, { changeCorrelator: false });
-        // Remove the observers
-        [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
-          observer.unobserve(adSlot);
+        fetchAPSBids(allAdSlots, () => {
+          clearDfpTakeover();
+          // Refresh all ads
+          googletag.pubads().refresh(null, { changeCorrelator: false });
+          // Remove the observers
+          [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
+            observer.unobserve(adSlot);
+          });
+          adsRefreshing = false;
         });
-        adsRefreshing = false;
       }, adRefreshInterval);
     }
   });
@@ -439,7 +446,8 @@ function createAds(adSlots) {
   const queryParams = urlParse(window.location, true).query,
     contentType = getMetaTagContent('property', OG_TYPE),
     pageData = getPageData(window.location.pathname, contentType),
-    adTargetingData = getAdTargeting(pageData);
+    adTargetingData = getAdTargeting(pageData),
+    ads = [];
 
   googletag.cmd.push(function () {
     // Set refresh value on page level
@@ -502,20 +510,27 @@ function createAds(adSlots) {
 
       // Attach to the global ads array
       allAdSlots[ad.id] = slot;
-
-      googletag.display(ad.id);
-
-      // 'atf' ads need to be requested together on page load, do not observe
-      if (adLocation === 'atf') {
-        initialPageAdSlots.push(slot);
-      } else {
-        // Attach the observer for lazy loading
-        observer.observe(ad);
-      }
+      ads.push(ad);
     }
 
-    // Refresh all initial page slots
-    googletag.pubads().refresh(initialPageAdSlots);
+    fetchAPSBids(allAdSlots, () => {
+      ads.forEach(ad => {
+        const adSlot = allAdSlots[ad.id];
+
+        googletag.display(ad.id);
+
+        // 'atf' ads need to be requested together on page load, do not observe
+        if (adSlot.getTargeting('loc')[0] === 'atf') {
+          initialPageAdSlots.push(adSlot);
+        } else {
+          // Attach the observer for lazy loading
+          observer.observe(ad);
+        }
+      });
+
+      // Refresh all initial page slots
+      googletag.pubads().refresh(initialPageAdSlots);
+    });
   });
 }
 
