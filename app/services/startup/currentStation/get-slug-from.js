@@ -12,6 +12,14 @@ const _get = require('lodash/get'),
     urlToUri
   } = require('../../universal/utils'),
   rdcRoutes = rdcRouteObjs.map(obj => pathToRegexp(obj.path)),
+  // these are a hardcoded version of amphora v7.5.2 lib/routes.js line 21
+  clayReservedRoutes = [
+    '/_components',
+    '/_layouts',
+    '/_lists',
+    '/_pages',
+    '/_uris'
+  ],
   /**
    * a helper method which assigns uninitialized station slug properties in the
    *   to the slug which was found.
@@ -117,13 +125,16 @@ const _get = require('lodash/get'),
     return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
   },
   /**
-   * returns whether the request matches a route defined in demo/index.js
+   * returns whether the request
+   *   1. is not a reserved route
+   *   2. matches a route defined in demo/index.js
    *
    * @param {string} pathToTest - the pathname of the original url
    * @returns {boolean}
    */
   isRdcRoute = pathToTest => {
-    return rdcRoutes.some(routeRe => routeRe.test(pathToTest));
+    return clayReservedRoutes.every(reservedRoute => !pathToTest.startsWith(reservedRoute))
+      && rdcRoutes.some(routeRe => routeRe.test(pathToTest));
   },
   /**
    * see './index.js -> checkUntilSlugsAreFound' for how this object is used
