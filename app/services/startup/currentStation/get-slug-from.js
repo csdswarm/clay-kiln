@@ -13,12 +13,15 @@ const _get = require('lodash/get'),
   } = require('../../universal/utils'),
   rdcRoutes = rdcRouteObjs.map(obj => pathToRegexp(obj.path)),
   // these are a hardcoded version of amphora v7.5.2 lib/routes.js line 21
+  //   also '_users' added.  There may be more but we can add them when
+  //   issues arise.
   clayReservedRoutes = [
     '/_components',
     '/_layouts',
     '/_lists',
     '/_pages',
-    '/_uris'
+    '/_uris',
+    '/_users'
   ],
   /**
    * a helper method which assigns uninitialized station slug properties in the
