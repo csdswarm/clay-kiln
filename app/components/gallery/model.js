@@ -1,8 +1,8 @@
 'use strict';
 
-const {unityComponent} = require('../../services/universal/amphora'),
+const { unityComponent } = require('../../services/universal/amphora'),
   createContent = require('../../services/universal/create-content'),
-  {autoLink} = require('../breadcrumbs');
+  { autoLink } = require('../breadcrumbs');
 
 module.exports = unityComponent({
   render: (uri, data, locals) => {

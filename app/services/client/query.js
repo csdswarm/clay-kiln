@@ -73,7 +73,7 @@ function searchByQueryWithRawResult(query) {
   log('trace', 'performing elastic search', { query: query });
 
   return module.exports.post(SITE_ENDPOINT, query, true).then(function (results) {
-    log('trace', `got ${results.hits.hits.length} results`, { results: results});
+    log('trace', `got ${results.hits.hits.length} results`, { results: results });
     return results;
   });
 }
@@ -120,7 +120,7 @@ function executeMultipleSearchRequests(query) {
   log('trace', 'performing elastic search', { query: query });
 
   return module.exports.post(SITE_ENDPOINT, query, true).then(function (results) {
-    log('trace', `got ${results.hits.hits.length} results`, { results: results});
+    log('trace', `got ${results.hits.hits.length} results`, { results: results });
     return results;
   });
 }

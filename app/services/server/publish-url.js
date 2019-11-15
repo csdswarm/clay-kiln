@@ -20,7 +20,7 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
   }
 
   return pubUtils.getMainComponentFromRef(componentReference, locals)
-    .then(({component, pageType}) => {
+    .then(({ component, pageType }) => {
       return pubUtils.getUrlOptions(component, locals, pageType);
     });
 }
@@ -87,9 +87,22 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
     });
 }
 
+/**
+ * Return the url for an author page
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlPatterns.author);
+}
+
 module.exports = {
   getYearMonthSlugUrl,
   getArticleSlugUrl,
   getGallerySlugUrl,
-  getSectionFrontSlugUrl
+  getSectionFrontSlugUrl,
+  getAuthorPageSlugUrl
 };

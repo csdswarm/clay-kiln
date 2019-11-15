@@ -268,9 +268,9 @@ function onlyWithTheseFields(query, fields) {
  * @returns {Object}
  */
 function onlyWithinThisSite(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}});
+  const prefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } });
 
-  addFilter(query, {prefix: {canonicalUrl: prefix}});
+  addFilter(query, { prefix: { canonicalUrl: prefix } });
 
   return query;
 }
@@ -281,9 +281,9 @@ function onlyWithinThisSite(query, site) {
  * @returns {object}
  */
 function withinThisSiteAndCrossposts(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}}),
-    prefixFilter = {prefix: {canonicalUrl: prefix}};
-  var crosspostFilter = {term: {}},
+  const prefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } }),
+    prefixFilter = { prefix: { canonicalUrl: prefix } };
+  var crosspostFilter = { term: {} },
     shouldFilter = { bool: { should: [], minimum_should_match: 1 } };
 
   crosspostFilter.term['crosspost.' + site.slug] = true;
@@ -303,7 +303,7 @@ function withinThisSiteAndCrossposts(query, site) {
  * @returns {object}
  */
 function moreLikeThis(query, id, opts) {
-  let defaultOpts = {
+  const defaultOpts = {
     fields: ['tags'],
     like: {
       _index: query.index, // prefixed index name
@@ -328,7 +328,7 @@ function moreLikeThis(query, id, opts) {
  * @returns {Object} query object
  */
 function addAggregation(query = {}, options) {
-  const {body = {}} = query;
+  const { body = {} } = query;
 
   if (!options) {
     return query;

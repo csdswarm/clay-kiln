@@ -14,6 +14,7 @@ $boulderRGB: 119, 119, 119;
 $concrete: #F3F3F3;
 $doveGray: #666;
 $dustyGray: #9B9B9B;
+$mineShaft: #222;
 $mercury: #E1E1E1;
 $silverChalice: #A6A6A6;
 $tundora: #444;
@@ -57,6 +58,9 @@ $parisM: #1F055E; /* Primary Dark */
 $parisMRGB: 31, 5, 94;
 $purple: #3C00B7; /* Primary Bright */
 $purpleRGB: 60, 0, 183;
+
+/* Pinks */
+$redViolet: #E60F8B;
 
 /* ---------------------------------------------------------- */
 /* ------ OLD NAMING SYSTEM --- Remove once in staging ------ */

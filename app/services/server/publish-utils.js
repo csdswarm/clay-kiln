@@ -62,14 +62,14 @@ function isMainComponentReference(ref, mainComponentRefs) {
  * @returns {string|undefined}
  */
 function getComponentReference(page, mainComponentRefs) {
-  for (let key in page) {
+  for (const key in page) {
     if (page.hasOwnProperty(key)) {
-      let value = page[key];
+      const value = page[key];
 
       if (isMainComponentReference(value, mainComponentRefs)) {
         return value;
       } else if (_.isObject(value)) {
-        let result = _.isArray(value) ? _.find(value, function (o) { return isMainComponentReference(o, mainComponentRefs); }) : getComponentReference(value, mainComponentRefs);
+        const result = _.isArray(value) ? _.find(value, function (o) { return isMainComponentReference(o, mainComponentRefs); }) : getComponentReference(value, mainComponentRefs);
 
         if (result) {
           return result;
@@ -142,7 +142,7 @@ function getMainComponentFromRef(componentReference, locals) {
       guaranteeLocalDate(component, publishedComponent, locals);
     }
 
-    return {component, pageType};
+    return { component, pageType };
   });
 }
 
@@ -177,7 +177,7 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
+  urlOptions.slug = component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline)) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
   urlOptions.stationSlug = component.stationSlug || '';
@@ -192,7 +192,12 @@ function getUrlOptions(component, locals, pageType) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
     }
+  } else if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
+    urlOptions.contentType = 'authors';
+    urlOptions.author = component.author;
+    urlOptions.authorSlug = slugifyService(component.author);
   }
+
   return urlOptions;
 }
 
@@ -206,4 +211,3 @@ module.exports = {
   getComponentInstance,
   PAGE_TYPES
 };
-

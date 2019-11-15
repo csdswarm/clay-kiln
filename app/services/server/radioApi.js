@@ -93,7 +93,7 @@ const rest = require('../universal/rest'),
       getFreshData = async (apiTimeout = API_TIMEOUT, cachedData = {}) => {
         try {
           // return api response if it's fast enough. if not, it might still freshen the cache
-          let result = await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), apiTimeout);
+          const result = await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), apiTimeout);
 
           result.response_cached = false;
           return result;

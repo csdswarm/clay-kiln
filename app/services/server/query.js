@@ -111,7 +111,7 @@ function updateByQuery(query) {
     return bluebird.reject('Update not instantiated.');
   }
 
-  return module.exports.searchInstance.update({index: prependPrefix(index), id, body, refresh })
+  return module.exports.searchInstance.update({ index: prependPrefix(index), id, body, refresh })
     .then(function (results) {
       log('trace', 'updated elastic document');
       return results;
