@@ -75,7 +75,7 @@ async function ifPublishedUriGetPageUri(req) {
  *   determines whether the user can update the page.
  *
  * the following properties are attached
- *  - showLackOfEditPermissionsBanner {boolean}
+ *  - showNoEditPermissionsBanner {boolean}
  *  - updateTarget {string}
  *
  * @param {object} router
@@ -107,7 +107,7 @@ module.exports = router => {
         //   dynamic page or some other content I'm unaware of.  To be safe
         //   we're just going to assign the info based on the current station.
         Object.assign(locals, {
-          showLackOfEditPermissionsBanner: !user.can('access').this('station').value,
+          showNoEditPermissionsBanner: !user.can('access').this('station').value,
           updateTarget: `this page for ${station.name}`
         });
       }
