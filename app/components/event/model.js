@@ -147,6 +147,7 @@ function getSettingsConfigData() {
 module.exports = unityComponent({
 
   save: (ref, data) => {
+    data.dateModified = (new Date()).toISOString();
     // NOTE: may need to return createContent.render(uri, data, locals);
     return data;
   },
