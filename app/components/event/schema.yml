@@ -1,5 +1,5 @@
-_description:
-  A page to house your events
+_description: A page to house your events
+_confirmRemoval: true
 
 # event properties
 headline:
