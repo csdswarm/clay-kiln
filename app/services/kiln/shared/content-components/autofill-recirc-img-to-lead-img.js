@@ -29,6 +29,7 @@ module.exports = (schema) => {
     setFeedImgUrlIfEmpty = async (payload = defaultPayload) => {
       const pageState = kilnInput.getState(),
         {
+          components,
           page: {
             data: {
               main: [mainComponentRef]
@@ -49,9 +50,10 @@ module.exports = (schema) => {
       }
 
       // eslint-disable-next-line one-var
-      const componentData = await kilnInput.getComponentData(mainComponentRef),
-        isLeadComponent = _get(componentData.lead[0], '_ref') === currentUri,
-        noFeedImageSet = !componentData.feedImgUrl;
+      const mainComponentData = components[mainComponentRef],
+        leadComponentRef = _get(mainComponentData, 'lead.0._ref'),
+        isLeadComponent = currentUri === leadComponentRef,
+        noFeedImageSet = !mainComponentData.feedImgUrl;
 
       if (isLeadComponent && noFeedImageSet) {
         setToLeadImage(mainComponentRef, leadImgUrl);
