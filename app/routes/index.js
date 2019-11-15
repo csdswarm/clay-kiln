@@ -53,8 +53,7 @@ module.exports = router => {
     // Set env vars
     const s3Bucket = process.env.AWS_S3_BUCKET,
       s3CdnHost = process.env.AWS_S3_CDN_HOST || `${process.env.AWS_S3_BUCKET}.s3.amazonaws.com`; // If no CDN set, fallback to raw s3 host.
-    let rawFileNameParts, rawFileName, processedFilename,
-      extension, newFileName, s3FileKey, params;
+    let extension;
 
     // Validate input
     if (
@@ -71,10 +70,11 @@ module.exports = router => {
     }
 
     // Sanitize/process filename and add UUID to ensure file is unique within s3 bucket.
-    rawFileNameParts = req.body.fileName.split('.');
+    const rawFileNameParts = req.body.fileName.split('.');
+
     rawFileNameParts.pop();
-    rawFileName = rawFileNameParts.join('.');
-    processedFilename = rawFileName.replace(/[^A-Za-z0-9\s]/gi, '').replace(/[\s]/gi, '-');
+    const rawFileName = rawFileNameParts.join('.'),
+      processedFilename = rawFileName.replace(/[^A-Za-z0-9\s]/gi, '').replace(/[\s]/gi, '-');
 
     // Determine extension
     switch (req.body.fileType) { // eslint-disable-line default-case
@@ -89,16 +89,15 @@ module.exports = router => {
     }
 
     // Build s3 file key
-    newFileName = `${processedFilename}-${uuidv4()}.${extension}`;
-    s3FileKey = `aiu-media/${newFileName}`;
-
-    // Create pre-signed s3 upload url and respond.
-    params = {
-      Bucket: s3Bucket,
-      Key: s3FileKey,
-      Expires: 60,
-      ContentType: req.body.fileType
-    };
+    const newFileName = `${processedFilename}-${uuidv4()}.${extension}`,
+      s3FileKey = `aiu-media/${newFileName}`,
+      // Create pre-signed s3 upload url and respond.
+      params = {
+        Bucket: s3Bucket,
+        Key: s3FileKey,
+        Expires: 60,
+        ContentType: req.body.fileType
+      };
 
     s3.getSignedUrl('putObject', params, function (err, signedUrl) {
       if (err) {
