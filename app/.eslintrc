@@ -35,6 +35,7 @@
     "YT": false, // YouTube library
     "videojs": false,// Brightcove library
     "googletag": false, // GPT
+    "apstag": false, // Amazon APS library
     "vueApp": false, // SPA
     "bc": false // Brightcove
   },

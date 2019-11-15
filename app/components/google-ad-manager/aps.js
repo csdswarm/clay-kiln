@@ -1,0 +1,63 @@
+'use strict';
+
+/**
+ * initialize APS
+ * https://ams.amazon.com/webpublisher/uam/docs/web-integration-documentation/integration-guide/javascript-guide/display.html
+ * The library is loaded async via xhr, so we need to wait for it to finish loading
+ * @param {integer} pubID
+ */
+const initAPS = (pubID) => {
+    if (window.apstag) {
+      apstag.init({
+        pubID,
+        adServer: 'googletag',
+        simplerGPT: true
+      });
+
+      console.log(`APSTag Initialized: ${pubID}`);
+    } else {
+      setTimeout(() => initAPS(pubID), 500);
+    }
+  },
+  /**
+   * Setup bid options parameter for fetchBids
+   * @param {object} bidOptions
+   * @returns {object}
+   */
+  setupBidOptions = (bidOptions) => {
+    const options = {
+      slots: [],
+      timeout: 2e3
+    };
+
+    for (const optionId in bidOptions) {
+      if (bidOptions.hasOwnProperty(optionId)) {
+        const option = bidOptions[optionId],
+          sizes = option.getSizes();
+
+        options.slots.push({
+          slotID: optionId,
+          slotName: `${option.getAdUnitPath()}/${optionId.replace('google-ad-manager__slot--', '')}`,
+          sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ])
+        });
+      }
+    }
+
+    return options;
+  },
+  /**
+   * fetch bids from APS
+   * @param {object} bidOptions
+   * @param {function} callback
+   */
+  fetchAPSBids = (bidOptions, callback) => {
+    apstag.fetchBids(setupBidOptions(bidOptions), () => {
+      apstag.setDisplayBids();
+
+      // Run code from client.js after bids are fetched, and targeting is set
+      callback();
+    });
+  };
+
+module.exports.initAPS = initAPS;
+module.exports.fetchAPSBids = fetchAPSBids;
