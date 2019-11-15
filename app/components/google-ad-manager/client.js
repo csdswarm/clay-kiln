@@ -95,7 +95,7 @@ googletag.cmd.push(() => {
           id = id.split('--')[1];
 
           return !disabledRefreshAds.has(id);
-        }).map(([_, slot]) => slot);
+        }).map(([, slot]) => slot);
 
         googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
 
