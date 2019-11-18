@@ -14,5 +14,21 @@ _components:
           size: 20
           sort:
             date: "desc"
+          query:
+            bool:
+              must:
+                - 
+                  nested:
+                    path: "byline"
+                    query: 
+                      bool:
+                        minimum_should_match: 1
+                        must_not:
+                          - 
+                            match:
+                              "byline.sources.text": "The Associated Press"
+                -
+                  match:
+                    contentType: "article"
         transform: "article"
   

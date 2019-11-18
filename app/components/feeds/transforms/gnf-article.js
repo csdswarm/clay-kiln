@@ -40,7 +40,7 @@ module.exports = function (data, locals) {
         description: { _cdata: seoDescription }
       },
       {
-        'content:encoded': { _cdata: renderContent(lead, locals, { format: contentFormat, data: { primary: true } }) + renderContent(content, locals, { format: contentFormat }) }
+        'content:encoded': { _cdata: renderContent(lead, locals, contentFormat) + renderContent(content, locals, contentFormat) }
       }
     ];
 
