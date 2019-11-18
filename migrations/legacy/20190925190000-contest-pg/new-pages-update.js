@@ -16,33 +16,20 @@ if (!listType) {
 
 // Get current JSON
 const data = require(`${__dirname}/lists-${listType}.json`),
-  nationalContest = {
-    id: 'national-contest',
+  contest = {
+    id: 'contest',
     title: 'Contest'
-  },
-  stationContest = {
-    id: 'station-contest',
-    title: 'Station Contest'
   };
 
 const generalContentPages = _find(data, { id: 'General-content' }),
-  generalContentPagesIndex = _findIndex(data, { id: 'General-content' }),
-  stationContentPages = _find(data, { id: 'stations' }),
-  stationContentPagesIndex = _findIndex(data, { id: 'stations' });
+  generalContentPagesIndex = _findIndex(data, { id: 'General-content' });
 let newData = data;
 
 if (!_find(generalContentPages.children, function(page) {
-  return 'national-contest' === page.id;
+  return 'contest' === page.id;
 })) {
   _set(newData[generalContentPagesIndex], 'children',
-    [ ...generalContentPages.children, nationalContest]);
-}
-
-if (!_find(stationContentPages.children, function(page) {
-  return 'station-contest' === page.id;
-})) {
-  _set(newData[stationContentPagesIndex], 'children',
-    [ ...stationContentPages.children, stationContest]);
+    [ ...generalContentPages.children, contest]);
 }
 
 // Create correct clay data structure
