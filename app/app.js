@@ -1,5 +1,7 @@
 'use strict';
 
+require("dotenv").config(); // This should not be necessary
+
 var pkg = require('./package.json'),
   logger = require('./services/universal/log'),
   log = logger.init(pkg.version),

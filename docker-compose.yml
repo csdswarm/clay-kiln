@@ -24,6 +24,8 @@ services:
       dockerfile: Dockerfile
     logging:
       driver: json-file
+    depends_on:
+      - elasticsearch
     links:
       - redis
       - elasticsearch
