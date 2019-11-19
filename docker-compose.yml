@@ -32,7 +32,7 @@ services:
       - postgres
     networks:
       main:
-    command: "npm start"
+    command: "npm run dev"
     volumes:
       - ./app:/usr/src/app
       - /usr/src/app/node_modules

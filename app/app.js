@@ -1,15 +1,25 @@
 'use strict';
 
-require("dotenv").config(); // This should not be necessary
+var pkg,
+  logger,
+  log,
+  express,
+  startup,
+  port,
+  ip,
+  log;
 
-var pkg = require('./package.json'),
-  logger = require('./services/universal/log'),
-  log = logger.init(pkg.version),
-  express = require('express'),
-  startup = require('./services/startup'),
-  port = process.env.PORT || 3001,
-  ip = process.env.IP_ADDRESS || '0.0.0.0',
-  log = logger.setup({ file: __filename });
+// The .env file should be processed before doing anything else.
+require('dotenv').config();
+
+pkg = require('./package.json');
+logger = require('./services/universal/log');
+log = logger.init(pkg.version);
+express = require('express');
+startup = require('./services/startup');
+port = process.env.PORT || 3001;
+ip = process.env.IP_ADDRESS || '0.0.0.0';
+log = logger.setup({ file: __filename });
 
 startup(express())
   .then(function (router) {
