@@ -30,7 +30,7 @@ module.exports['3.0'] = function (uri, data) {
 };
 
 
-module.exports['4.0'] = function (uri, data) {
+module.exports['5.0'] = function (uri, data) {
   
   // adding editing abilities for the components title and visibility
   data.componentTitle = 'LATEST on RADIO.COM';
