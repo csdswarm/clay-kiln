@@ -80,6 +80,8 @@ function processContent(obj, components) {
   if (obj.key.includes(PAGE_TYPES.GALLERY)) {
     obj.value = getContent(obj.value, 'slides', components);
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
+
+    obj.value = getContent(obj.value, 'footer', components);
   }
 
   // ensure dateModified is always set

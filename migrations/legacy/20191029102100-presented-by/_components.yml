@@ -1,0 +1,6 @@
+_components:
+  presented-by:
+    instances:
+      new:
+        displayTitle: "Presented by"
+        presenters: []

@@ -7,8 +7,8 @@ require('isomorphic-fetch');
  *
  * @param {string} method
  * @param {string} route
- * @param {any} body
- * @param {Object} headers
+ * @param {any} [body]
+ * @param {Object} [headers]
  * @returns {Object}
  *
  */
@@ -18,7 +18,7 @@ const getFetchResponse = async (method, route, body, headers) => {
       const response = await fetch(route),
         { status, statusText } = response,
         data = status >= 200 && status < 300 ? await response.json() : await response.text();
-        
+
       return { status, statusText, data };
     } else {
       const response = await fetch(route, {

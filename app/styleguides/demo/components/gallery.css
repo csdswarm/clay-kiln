@@ -9,6 +9,9 @@
    Any styling that is shared by other content page types should be included in the global content-page stylesheet. */
 
 .component--gallery {
+  .content__bulk-image-upload {
+    margin: 0 0 em(30);
+  }
   .content__slide-settings {
     background: #f4f4f4;
     clear: both;
