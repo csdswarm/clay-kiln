@@ -1,5 +1,6 @@
 'use strict';
 const { getComponentName } = require('clayutils'),
+  dedupeArray = arr => Array.from(new Set(arr)),
   returnData = (_, data) => data;
 
 /**
@@ -16,6 +17,34 @@ const { getComponentName } = require('clayutils'),
  */
 
 /**
+ * Composes the ancestry for the current component as well as the start of any child components
+ * If this is a child component, it may augment its ancestry with its own children
+ * @param {string} myUri
+ * @param {object} data
+ * @param {object?} ancestry - from the locals object (creates a new one if it does not exist on locals)
+ * @returns {object} The new or updated ancestry object
+ */
+function composeAncestry(myUri, data, { ancestry = {} }) {
+  const info = JSON.stringify(data || ''),
+    refsRe = /"_ref"\s*:\s*"[^\/"]+?\/_components\/[^\/]+\/instances\/[^\/\s"]+?"/g,
+    refTrimRe = /(^"_ref"\s*:\s*"|"+$)/g,
+    children = (info.match(refsRe) || []).map(child => child.replace(refTrimRe, '')),
+    me = ancestry[myUri] || { name: getComponentName(myUri) },
+    parents = me.parents || [];
+
+  me.parents = parents;
+  ancestry[myUri] = me;
+
+  for (const ref of children) {
+    const child = ancestry[ref] = ancestry[ref] || { name: getComponentName(ref), parents: [] };
+
+    child.parents = dedupeArray([...child.parents, myUri]);
+  }
+
+  return ancestry;
+}
+
+/**
  * A higher-order function wrapper for component models.
  *
  * @param {UnityComponentModel} options
@@ -24,15 +53,10 @@ const { getComponentName } = require('clayutils'),
 function unityComponent({ render = returnData, save = returnData }) {
   return {
     render(uri, data, locals) {
-      const ancestry = locals.ancestry || [],
-        parent = ancestry.slice(-1)[0];
+      locals.ancestry = composeAncestry(uri, data, locals);
 
-      // add current component to ancestry so that children can find their parents
-      ancestry.push({ name: getComponentName(uri), ref: uri });
-      locals.ancestry = ancestry;
-
-      // add object to be used for any computed data that should not be saved, automatically include a parent reference
-      data._computed = Object.assign({ parent }, data._computed);
+      // add object to be used for any computed data that should not be saved, automatically include a parents reference
+      data._computed = { ...data._computed || {}, parents: locals.ancestry[uri].parents };
 
       return render(uri, data, locals);
     },
