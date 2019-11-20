@@ -8,7 +8,7 @@
  */
 const initAPS = (pubID) => {
     if (window.apstag) {
-      apstag.init({
+      window.apstag.init({
         pubID,
         adServer: 'googletag',
         simplerGPT: true
@@ -50,8 +50,10 @@ const initAPS = (pubID) => {
    * @param {function} callback
    */
   fetchAPSBids = (bidOptions, callback) => {
-    apstag.fetchBids(setupBidOptions(bidOptions), () => {
-      apstag.setDisplayBids();
+    const { fetchBids, setDisplayBids } = window.apstag;
+
+    fetchBids(setupBidOptions(bidOptions), () => {
+      setDisplayBids();
 
       // Run code from client.js after bids are fetched, and targeting is set
       callback();
