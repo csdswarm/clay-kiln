@@ -4,7 +4,6 @@ _layouts:
       event:
         top:
           - _ref: clay.radio.com/_components/top-nav/instances/default
-          - _ref: clay.radio.com/_components/latest-top-recirc-slider/instances/default
           - _ref: clay.radio.com/_components/google-ad-manager/instances/globalLogoSponsorship
         head: head
         main: main
