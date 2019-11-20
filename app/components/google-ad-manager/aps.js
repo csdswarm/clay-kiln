@@ -13,8 +13,6 @@ const initAPS = (pubID) => {
         adServer: 'googletag',
         simplerGPT: true
       });
-
-      console.log(`APSTag Initialized: ${pubID}`);
     } else {
       setTimeout(() => initAPS(pubID), 500);
     }
@@ -29,21 +27,19 @@ const initAPS = (pubID) => {
   setupBidOptions = (params) => {
     const { bidOptions, timeout } = params,
       options = {
-      slots: [],
+        slots: [],
         timeout: timeout
-    };
+      };
 
-    for (const optionId in bidOptions) {
-      if (bidOptions.hasOwnProperty(optionId)) {
-        const option = bidOptions[optionId],
-          sizes = option.getSizes();
+    for (const optionId of Object.keys(bidOptions)) {
+      const option = bidOptions[optionId],
+        sizes = option.getSizes();
 
-        options.slots.push({
-          slotID: optionId,
-          slotName: `${option.getAdUnitPath()}/${optionId.replace('google-ad-manager__slot--', '')}`,
-          sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ])
-        });
-      }
+      options.slots.push({
+        slotID: optionId,
+        slotName: `${option.getAdUnitPath()}/${optionId.replace('google-ad-manager__slot--', '')}`,
+        sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ])
+      });
     }
 
     return options;
@@ -62,5 +58,7 @@ const initAPS = (pubID) => {
     });
   };
 
-module.exports.initAPS = initAPS;
-module.exports.fetchAPSBids = fetchAPSBids;
+module.exports = {
+  initAPS,
+  fetchAPSBids
+};
