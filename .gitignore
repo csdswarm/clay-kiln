@@ -6,6 +6,8 @@ app/public/img/*
 app/public/js/*
 app/public/media/*
 app/public/web-player/*
+app/.pm2
+app/.pm2-dev
 
 # Terraform
 terraform.tfstate
