@@ -1,0 +1,61 @@
+@import "_global/mixins";
+
+.component--multi-column {
+  margin-bottom: em(40);
+  width: 100%;
+
+  .multi-column {
+    display: flex;
+    width: 100%;
+
+    @mixin medium-screen {
+      flex-direction: column;
+    }
+
+    @mixin small-screen {
+      margin-bottom: em(20);
+    }
+  }
+
+  .multi-column__column {
+    display: flex;
+    flex-direction: column;
+
+    .multi-column__editable {
+      flex: 1;
+    }
+
+    &--left {
+      flex: 3;
+    }
+
+    &--middle {
+      flex: 2;
+      margin: 0 em(20);
+
+      @mixin medium-screen {
+        margin: em(20) 0;
+      }
+    }
+
+    &--right {
+      flex: 2;
+    }
+  }
+
+  .multi-column__ad--half-page {
+    margin-top: em(20);
+
+    @mixin medium-screen {
+      display: none;
+    }
+  }
+
+  .multi-column__ad--billboard {
+    display: none;
+
+    @mixin small-screen {
+      display: initial;
+    }
+  }
+}
