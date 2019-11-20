@@ -1,0 +1,37 @@
+_layouts:
+  two-column-layout:
+    instances:
+      event:
+        top:
+          - _ref: clay.radio.com/_components/top-nav/instances/default
+          - _ref: clay.radio.com/_components/latest-top-recirc-slider/instances/default
+          - _ref: clay.radio.com/_components/google-ad-manager/instances/globalLogoSponsorship
+        head: head
+        main: main
+        banner:
+          - _ref: clay.radio.com/_components/alert-banner/instances/default
+        bottom:
+          - _ref: clay.radio.com/_components/yieldmo/instances/default
+          - _ref: clay.radio.com/_components/google-ad-manager/instances/billboardBottom
+          - _ref: clay.radio.com/_components/google-ad-manager/instances/oop
+          - _ref: clay.radio.com/_components/google-ad-manager/instances/mobileAdhesion
+          - _ref: clay.radio.com/_components/google-ad-manager/instances/mobileInterstitial
+          - _ref: clay.radio.com/_components/footer/instances/default
+          - _ref: clay.radio.com/_components/nielsen/instances/default
+        static:
+          - _ref: clay.radio.com/_components/web-player/instances/default
+          - _ref: clay.radio.com/_components/chartbeat/instances/default
+        tertiary: tertiary
+        secondary:
+          - _ref: clay.radio.com/_components/google-ad-manager/instances/billboardBottom
+          - _ref: clay.radio.com/_components/trending-recirculation/instances/default
+        headLayout:
+          - _ref: clay.radio.com/_components/favicon/instances/default
+          - _ref: clay.radio.com/_components/google-ad-manager-head/instances/default
+          - _ref: clay.radio.com/_components/comscore-head/instances/default
+          - _ref: clay.radio.com/_components/google-tag-manager/instances/default
+        pageHeader: pageHeader
+        layoutHeader: layoutHeader
+        kilnInternals:
+          - _ref: clay.radio.com/_components/clay-kiln/instances/general
+        sectionHeader: sectionHeader

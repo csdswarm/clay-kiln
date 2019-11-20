@@ -60,15 +60,25 @@ async function insertNewEventPage(listData) {
 }
 
 logMigrationDivider('Begin Event Migration')
-  // load the page data from YAML
+  // load the layout data from _layouts.yml
+  .then( _ => {
+    logEventMigrationMsg('loading event layout YAML...');
+    return loadPageDataFromYaml('./_layouts.yml');
+  })
+  // import layout YAML into clay
+  .then( loadLayoutFileResponse => {
+    logEventMigrationMsg('Importing event layout into clay...');
+    return importData(loadLayoutFileResponse.data);
+  })
+  // load the page data from _pages.yml
   .then( _ => {
     logEventMigrationMsg('loading event page YAML...');
     return loadPageDataFromYaml('./_pages.yml');
   })
   // import page YAML into clay
-  .then( loadFileResponse => {
+  .then( loadPageFileResponse => {
     logEventMigrationMsg('Importing event page into clay...');
-    return importData(loadFileResponse.data);
+    return importData(loadPageFileResponse.data);
   })
   // export the new-pages list data
   .then( clayImportResponse => {
