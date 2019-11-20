@@ -6,7 +6,9 @@ componentTitle:
   _label: Component's Title
   _has:
     validate:
-      required: true
+      required:
+        field: componentTitleVisible
+        operator: truthy
       min: 4
       max: 80
     help: The title displayed on the component's view
