@@ -1,4 +1,4 @@
-_version: 80.0
+_version: 1.0
 _description: |
   A dynamically created page containing a list of articles by author.
 

@@ -23,3 +23,12 @@ googleAdRightRail:
   _component:
     include:
       - google-ad-manager
+
+_groups:
+  rightRail:
+    _label: Right Rail
+    fields:
+      - locationOfRightRail
+    _placeholder:
+      height: 100px
+      ifEmpty: tagInfo

@@ -1,3 +1,4 @@
+_version: 1.0
 _description: |
   A dynamically created page containing a list of articles by tag.
 
@@ -9,10 +10,10 @@ tag:
   _has:
     input: text
 
-moreContentFeed:
+twoColumnComponent:
   _component:
     include:
-      - more-content-feed
+      - two-column-component
 
 _groups:
   settings:

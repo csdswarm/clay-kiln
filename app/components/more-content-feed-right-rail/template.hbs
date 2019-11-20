@@ -2,14 +2,5 @@
   {{#ifAny (compare locationOfRightRail 'topic-page') (compare locationOfRightRail 'author-page')}}
     {{> google-ad-manager contentCollectionLogoSponsorship}}
   {{/ifAny}}
-  {{#if @root.locals.edit}}
-    {{#unless dynamicTagPage}}
-      <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
-    {{/unless}}
-  {{else}}
-    {{#ifAll tagInfo (compare dynamicTagPage false)}}
-      <aside class="blurb">{{ tagInfo }}</aside>
-    {{/ifAll}}
-  {{/if}}
   {{> google-ad-manager googleAdRightRail}}
 </div>

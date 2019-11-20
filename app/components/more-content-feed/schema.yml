@@ -139,23 +139,6 @@ tagManual:
           - section-front-and-tag
           - section-front-or-tag
 
-tagInfo:
-  _label: Tag Info
-  _placeholder:
-    height: 274px
-    text: More Info on Tag
-    required: true
-  _reveal:
-    field: populateFrom
-    operator: ===
-    values:
-      - tag
-      - section-front-and-tag
-      - section-front-or-tag
-  _has:
-    input: text
-    help: Tag Description / More Info (Will be shown in right rail)
-
 filterTags:
   _label: Exclude Tags
   _has:
@@ -285,7 +268,6 @@ _groups:
       - sectionFrontManual
       - secondarySectionFrontManual
       - tagManual
-      - tagInfo
       - contentType
       - filterTags
       - filterSecondarySectionFronts
