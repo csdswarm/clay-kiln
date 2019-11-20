@@ -6,6 +6,7 @@ module.exports.render = function (ref, data) {
     doubleclickBannerTag: process.env.DOUBLECLICK_BANNER_TAG,
     environment: process.env.NODE_ENV,
     adRefreshInterval: process.env.GOOGLE_AD_REFRESH_INTERVAL,
-    apsPubId: process.env.APS_PUB_ID
+    apsPubId: process.env.APS_PUB_ID,
+    apsTimeout: process.env.APS_TIMEOUT
   };
 };

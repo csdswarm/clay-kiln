@@ -21,13 +21,16 @@ const initAPS = (pubID) => {
   },
   /**
    * Setup bid options parameter for fetchBids
-   * @param {object} bidOptions
+   * @param {object} params
+   * @param {object} params.bidOptions
+   * @param {number} params.timeout
    * @returns {object}
    */
-  setupBidOptions = (bidOptions) => {
-    const options = {
+  setupBidOptions = (params) => {
+    const { bidOptions, timeout } = params,
+      options = {
       slots: [],
-      timeout: 2e3
+        timeout: timeout
     };
 
     for (const optionId in bidOptions) {

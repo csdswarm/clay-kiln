@@ -20,6 +20,7 @@ const _get = require('lodash/get'),
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
   apsPubId = googleAdManagerComponent.getAttribute('data-aps-pub-id'),
+  apsTimeout = parseInt(googleAdManagerComponent.getAttribute('data-aps-timeout'), 10),
   sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
@@ -92,7 +93,10 @@ googletag.cmd.push(() => {
       adsRefreshing = true;
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
-        fetchAPSBids(allAdSlots, () => {
+        fetchAPSBids({
+          bidOptions: allAdSlots,
+          timeout: apsTimeout
+        }, () => {
           clearDfpTakeover();
           // Refresh all ads
           googletag.pubads().refresh(null, { changeCorrelator: false });
@@ -513,7 +517,10 @@ function createAds(adSlots) {
       ads.push(ad);
     }
 
-    fetchAPSBids(allAdSlots, () => {
+    fetchAPSBids({
+      bidOptions: allAdSlots,
+      timeout: apsTimeout
+    }, () => {
       ads.forEach(ad => {
         const adSlot = allAdSlots[ad.id];
 
