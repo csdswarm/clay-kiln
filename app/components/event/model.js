@@ -2,7 +2,7 @@
 
 const
   { unityComponent } = require('../../services/universal/amphora'),
-  // createContent = require('../../services/universal/create-content'),
+  createContent = require('../../services/universal/create-content'),
   moment = require('moment'),
   { autoLink } = require('../breadcrumbs');
 
@@ -146,10 +146,9 @@ function getSettingsConfigData() {
 
 module.exports = unityComponent({
 
-  save: (ref, data) => {
+  save: (ref, data, locals) => {
     data.dateModified = (new Date()).toISOString();
-    // NOTE: may need to return createContent.render(uri, data, locals);
-    return data;
+    return createContent.save(ref, data, locals);
   },
 
   render: (ref, data, locals) => {
@@ -157,8 +156,7 @@ module.exports = unityComponent({
     data._computed.eventCirculationSettings = getSettingsConfigData();
     // NOTE: figure out what is needed here
     autoLink(data, ['stationSlug', '{events}'], locals.site.host);
-    // NOTE: may need to return createContent.render(uri, data, locals);
-    return data;
+    return createContent.render(ref, data, locals);
   }
 
 });
