@@ -564,7 +564,7 @@ function resizeForSkin() {
  *
  * @param {string[]} ads
  */
-window.dfp_disable_refresh = function (ads) {
+window.disableAdRefresh = function (ads) {
   ads.forEach(ad => disabledRefreshAds.add(ad));
 };
 
