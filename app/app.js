@@ -6,8 +6,7 @@ var pkg,
   express,
   startup,
   port,
-  ip,
-  log;
+  ip;
 
 // The .env file should be processed before doing anything else.
 require('dotenv').config();
