@@ -81,7 +81,7 @@ module.exports = {
       }
     })
   ],
-  babelTargets: { browsers: ['> 2%'] },
   babelDebug: true,
-  autoprefixerOptions: { overrideBrowserslist: ['> 2%'] }
+  babelTargets: { browsers: ['> 2%, ie 11'] },
+  autoprefixerOptions: { overrideBrowserslist: ['> 2%, ie 11'] }
 };
