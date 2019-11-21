@@ -20,7 +20,8 @@ const AWS = require('aws-sdk'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   slugifyService = require('../services/universal/slugify'),
-  xml = require('xml');
+  xml = require('xml'),
+  addEndpoints = require('./add-endpoints');
 
 module.exports = router => {
 
@@ -142,6 +143,8 @@ module.exports = router => {
    * Use import-content here to grab amphora user
    */
   router.post('/import-content', importContent);
+
+  addEndpoints.sitemap(router);
 
   /**
    * Sitemap for stations directories and station detail pages
