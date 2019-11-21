@@ -15,7 +15,7 @@ const { getComponentName } = require('clayutils'),
    */
   validateComponentsLists = (components, componentName, field, existingItems) => {
     return components.map(async ([uri, data]) => {
-      let blockItems = [];
+      const blockItems = [];
 
       data.items.forEach(({ text }) => {
         if (!existingItems.includes(text)) {

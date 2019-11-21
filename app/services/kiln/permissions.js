@@ -37,7 +37,7 @@ const addPermissions = require('../universal/user-permissions'),
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
-    fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
+    fieldInput.subscribe(PRELOAD_SUCCESS, ({ user, locals: { station }, url: { component } }) => {
       if (user.may(permission, component, station.callsign).value) {
         fieldInput.show();
       }
