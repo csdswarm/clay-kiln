@@ -12,6 +12,7 @@ module.exports = () => {
   require('./plugins/alerts')();
   require('./plugins/podcast-select')();
   require('./plugins/brightcove')();
+  require('./plugins/bulk-image-upload')();
   require('./plugins/content-syndication')();
   require('./plugins/content-search')();
   require('./plugins/instagram')();
