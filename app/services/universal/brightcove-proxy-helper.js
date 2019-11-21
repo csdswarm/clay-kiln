@@ -9,6 +9,8 @@
  */
 
 const radioApi = require('../server/radioApi'),
+  _get = require('lodash/get'),
+  brightcoveApi = require('../universal/brightcoveApi'),
   moment = require('moment'),
   url = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/api/brightcove`,
   ttl = radioApi.TTL.NONE;
@@ -55,6 +57,25 @@ async function getVideoViews(videoId) {
 }
 
 /**
+ * Retrieves the video source for a brightcove video
+ *
+ * @param {String} id
+ * @returns {String}
+ */
+async function getVideoSource(id) {
+  const { status, body: videoSources } = await brightcoveApi.request('GET', `videos/${ id }/sources`),
+    isSuccess = status === 200;
+
+  if (isSuccess) {
+    return _get(videoSources.find(source => {
+      return source.type === 'application/x-mpegURL';
+    }), 'src', '');
+  }
+
+  return '';
+}
+
+/**
  * Use the proxy to hit the brightcove api for video data
  *
  * @param {Object} data
@@ -65,6 +86,7 @@ async function addVideoDetails(data) {
   }
 
   const { video } = data,
+    { id } = video,
     videoData = await getVideoDetails(video.id);
 
   if (videoData) {
@@ -78,6 +100,8 @@ async function addVideoDetails(data) {
     // for some reason this was getting parsed back to millisecond integer value when not wrapped in a string
     data.duration = `${moment.duration(videoData.duration)}`;
     data.link = videoData.link;
+
+    data.video.m3u8Source = data.video.m3u8Source || await getVideoSource(id);
   }
 
   return data;

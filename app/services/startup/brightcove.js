@@ -26,16 +26,12 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    */
   transformVideoResults = async results => {
     return await Promise.all( (results || []).map( async ({ name, images, id, updated_at, delivery_type }) => {
-      const { status, body: videoSources } = await brightcoveApi.request('GET', `videos/${ id }/sources`);
 
       return {
         name,
         id,
         imageUrl: _get(images, 'thumbnail.src', ''),
         updated_at,
-        m3u8Source: status === 200 ? _get(videoSources.find(source => {
-          return source.type === 'application/x-mpegURL';
-        }), 'src', '') : '',
         delivery_type
       };
     }));
