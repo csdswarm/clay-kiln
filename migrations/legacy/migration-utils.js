@@ -22,6 +22,10 @@ const YAML = require('../../app/node_modules/yamljs');
 const url = require('url');
 
 const DEFAULT_HOST = 'clay.radio.com';
+const DEFAULT_HEADERS = {
+    'Content-Type': 'application/json',
+    'Authorization': 'token accesskey',
+};
 const HTTP = { http: 'http' };
 const HTTPS = { http: 'https' };
 
@@ -327,6 +331,7 @@ function readFile(params){
  *                                     Version 1.0                                         *
  *******************************************************************************************/
 const v1 = {
+  DEFAULT_HEADERS,
   _get,
   _has,
   _set,
