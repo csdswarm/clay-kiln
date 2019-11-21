@@ -29,9 +29,11 @@ const initAPS = (pubID) => {
       options = {
         slots: [],
         timeout: timeout
-      };
+      },
+      bidOptionKeys = Object.keys(bidOptions)
+        .filter(key => bidOptions.hasOwnProperty(key));
 
-    for (const optionId of Object.keys(bidOptions)) {
+    for (const optionId of bidOptionKeys) {
       const option = bidOptions[optionId],
         sizes = option.getSizes();
 
