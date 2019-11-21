@@ -245,6 +245,13 @@ content:
       - paragraph
       - subheader
       - inline-related
+bulkImageUpload:
+  _label: Bulk Image Upload
+  _has: 
+    input: bulk-image-upload
+    dest: slides
+  _placeholder:
+    text: Bulk Image Upload
 slides:
   _label: Add slides to gallery
   _componentList:
