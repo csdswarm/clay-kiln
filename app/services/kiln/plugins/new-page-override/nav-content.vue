@@ -56,7 +56,6 @@ const { filterableList } = window.kiln.utils.components;
 export default {
   data() {
     return {
-      stationSelectItems: [],
       secondaryActions: [{
         icon: 'settings',
         tooltip: 'Edit Template',
@@ -195,7 +194,7 @@ export default {
     }
   },
   components: {
-    'filterable-list': filterableList,
+    filterableList,
     StationSelect
   }
 };

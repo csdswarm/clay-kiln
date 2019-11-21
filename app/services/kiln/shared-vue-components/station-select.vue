@@ -26,10 +26,12 @@ const { UiSelect } = window.kiln.utils.components,
   storeNs = 'stationSelect',
   store = {
     namespaced: true,
-    state: {
+    state() {
       // _items and _selectedItem should not be consumed by other components
-      _items: [],
-      _selectedItem: {}
+      return {
+        _items: [],
+        _selectedItem: {}
+      };
     },
     getters: {
       hasManyStations(state) {
@@ -44,10 +46,10 @@ const { UiSelect } = window.kiln.utils.components,
     },
     mutations: {
       _setItems(state, val) {
-        state._items = val
+        state._items = val;
       },
       _setSelectedItem(state, val) {
-        state._selectedItem = val
+        state._selectedItem = val;
       }
     }
   };
@@ -61,7 +63,6 @@ export default {
   },
   created() {
     this.$store.registerModule(storeNs, store);
-
     this.stationsBySlug = window.kiln.locals.stationsIHaveAccessTo;
     this.initItems();
     this.initSelectedItem();
