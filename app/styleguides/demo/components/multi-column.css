@@ -27,6 +27,10 @@
 
     &--left {
       flex: 3;
+
+      @mixin large-screen {
+        flex: 2;
+      }
     }
 
     &--middle {
