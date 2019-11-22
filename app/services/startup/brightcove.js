@@ -2,6 +2,7 @@
 
 const brightcoveApi = require('../universal/brightcoveApi'),
   slugify = require('../universal/slugify'),
+  log = require('../universal/log').setup({ file: __filename }),
   _get = require('lodash/get'),
   moment = require('moment'),
   /**
@@ -64,7 +65,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         .then(async ({ body }) => await transformVideoResults(body))
         .then(results => res.send(results));
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -116,7 +117,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -149,7 +150,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -175,7 +176,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -218,7 +219,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -244,8 +245,32 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
+    }
+  },
+  /**
+   * Api to get video source from brightcove by ID
+   *
+   * @param {object} req
+   * @param {String} req.params.id
+   * @param {object} res
+   */
+  getVideoSource = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const { body: videoSources } = await brightcoveApi.request('GET', `videos/${ id }/sources`),
+        sourceUrl = _get(videoSources.find(source => {
+          return source.type === 'application/x-mpegURL';
+        }), 'src', '');
+
+      res.send({ sourceUrl });
+    } catch (e) {
+      log(e);
+      res.status(500).send({
+        message: 'bc video source error'
+      });
     }
   },
   /**
@@ -260,6 +285,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     app.use('/brightcove/ingestStatus', getIngestStatus);
     app.use('/brightcove/update', update);
     app.use('/brightcove/get', getVideoByID);
+    app.use('/brightcove/getVideoSource/:id', getVideoSource);
   };
 
 module.exports.inject = inject;
