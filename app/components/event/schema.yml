@@ -47,7 +47,7 @@ startTime:
 venueName:
   _label: Name of the Event's venue
   _placeholder:
-    height: 16px
+    height: 20px
     text: Venue Name
     required: true
   _has:
@@ -61,8 +61,8 @@ venueName:
 venueAddress:
   _label: Event Location
   _placeholder:
-    height: 20px
-    text: Event Location
+    height: 120px
+    text: Venue Location
     required: true
   _has:
     input: wysiwyg

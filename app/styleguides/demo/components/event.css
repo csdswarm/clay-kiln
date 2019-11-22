@@ -63,6 +63,7 @@
     }
     &__info-text-venue-name {
         @mixin event-page-font4;
+        margin-bottom: em(9)
     }
     &__info-text-venue-address {
         @mixin event-page-font4;
