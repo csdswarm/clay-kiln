@@ -138,7 +138,7 @@ function getMainComponentFromRef(componentReference, locals) {
     const componentTypeRegex = /^.*_components\/(\b.+\b)\/instances.*$/g,
       pageType = componentTypeRegex.exec(componentReference)[1] || null;
 
-    if ([PAGE_TYPES.ARTICLE,PAGE_TYPES.GALLERY].includes(pageType)) {
+    if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.EVENT].includes(pageType)) {
       guaranteePrimaryHeadline(component);
       guaranteeLocalDate(component, publishedComponent, locals);
     }
@@ -172,17 +172,18 @@ function getUrlOptions(component, locals, pageType) {
     date = moment(locals.date);
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = slugifyService(component.sectionFront || component.title) || null;
+  urlOptions.sectionFront = component.stationFront ? component.stationSiteSlug || component.title : slugifyService(component.sectionFront || component.title) || null;
   urlOptions.secondarySectionFront = slugifyService(component.secondarySectionFront) || null;
   urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline)) || null;
+  urlOptions.slug = component.stationFront ? component.stationSiteSlug : component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
+  urlOptions.stationSlug = component.stationSlug || '';
 
-  if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY].includes(urlOptions.pageType)) {
+  if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.EVENT].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
@@ -218,6 +219,7 @@ module.exports.gallerySlugPattern = urlPatterns.gallerySlugPattern;
 module.exports.gallerySecondarySectionFrontSlugPattern = urlPatterns.gallerySecondarySectionFrontSlugPattern;
 module.exports.sectionFrontSlugPattern = urlPatterns.sectionFrontSlugPattern;
 module.exports.secondarySectionFrontSlugPattern = urlPatterns.secondarySectionFrontSlugPattern;
+module.exports.eventSlugPattern = urlPatterns.eventSlugPattern;
 
 module.exports.PAGE_TYPES = PAGE_TYPES;
 

@@ -21,7 +21,8 @@ const SECOND = 1000,
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
+    SECTIONFRONT: 'section-front',
+    EVENT: 'event'
   };
 
 
