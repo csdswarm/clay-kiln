@@ -63,6 +63,8 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getEventSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  // NOTE: getAuthorPageSlugUrl will eat up anything after
+  // it so I had to add getEventSlugUrl prior to it
   (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];
 
