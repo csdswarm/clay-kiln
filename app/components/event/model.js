@@ -123,22 +123,6 @@ function getSettingsConfigData() {
             `
           }
         ]
-      },
-      {
-        dataEditable: 'circulationMetaGroup',
-        sectionTitle: 'Event Metadata',
-        settings: [
-          {
-            title: 'Section Front',
-            isRequired: true,
-            templateString: '{{ sectionFront }}'
-          },
-          {
-            title: 'Secondary Section Front',
-            isRequired: true,
-            templateString: '{{ secondarySectionFront }}'
-          }
-        ]
       }
     ]
   };
