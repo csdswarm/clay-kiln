@@ -44,7 +44,21 @@ startTime:
     input: timepicker
     validate:
       required: true
-location:
+venueName:
+  _label: Name of the Event's venue
+  _placeholder:
+    height: 16px
+    text: Venue Name
+    required: true
+  _has:
+    input: text
+    type: text
+    validate:
+      required: true
+      min: 4
+      max: 60
+    help: the name of the venue where the event occurs
+venueAddress:
   _label: Event Location
   _placeholder:
     height: 20px
@@ -53,14 +67,10 @@ location:
   _has:
     input: wysiwyg
     type: multi-line
-    buttons:
-      - bold
-      - italic
-      - strike
     rows: 4
     validate:
       required: true
-    help: the place and address of the event
+    help: the address of the event's venue - press return for new address lines
 # event properties
 
 # components

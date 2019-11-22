@@ -7,13 +7,16 @@
 
 'use strict';
 
-const Handlebars = require('handlebars');
+const
+  handlebars = require('handlebars'),
+  clayHbs = require('clayhandlebars'),
+  hbs = clayHbs(handlebars.create());
 
 module.exports = function renderTemplateString(templateStr, context) {
   if (!templateStr || !context) {
     return '';
   }
-  const template = Handlebars.compile(templateStr);
+  const template = hbs.compile(templateStr);
 
   return template(context);
 };

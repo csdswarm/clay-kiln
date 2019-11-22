@@ -630,4 +630,7 @@ em, i {
 @define-mixin event-page-font3 {
   @mixin font CircularStd-Black, 45px, $black, -.74px, 54px;
 }
+@define-mixin event-page-font4 {
+  @mixin font ProximaNova-Regular, 18px, $black, -.23px, 30px;
+}
 

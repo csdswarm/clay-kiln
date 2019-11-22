@@ -4,7 +4,8 @@ _components:
     subHeadline: ''
     startDate: ''
     startTime: ''
-    location: ''
+    venueName: ''
+    venueAddress: ''
     pageTitle: ''
     lead: []
     content: []
@@ -20,7 +21,8 @@ _components:
         subHeadline: ''
         startDate: ''
         startTime: ''
-        location: ''
+        venueName: ''
+        venueAddress: ''
         pageTitle: ''
         lead: []
         content: []
