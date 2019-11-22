@@ -19,7 +19,6 @@ module.exports = async function (data, locals) {
       canonicalUrl,
       content,
       feedImgUrl,
-      lead,
       headline,
       seoDescription
     } = data,
