@@ -1,5 +1,6 @@
 _components:
   event:
+    contentType: 'event'
     headline: ''
     subHeadline: ''
     startDate: ''
@@ -9,6 +10,7 @@ _components:
     pageTitle: ''
     lead: []
     content: []
+    feedImgUrl: ''
     sideShare:
       _ref: /_components/share/instances/new
     tags:
@@ -17,6 +19,7 @@ _components:
       _ref: /_components/ad-tags/instances/new
     instances:
       new:
+        contentType: 'event'
         headline: ''
         subHeadline: ''
         startDate: ''
@@ -26,6 +29,7 @@ _components:
         pageTitle: ''
         lead: []
         content: []
+        feedImgUrl: ''
         sideShare:
           _ref: /_components/share/instances/new
         tags:
