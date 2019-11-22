@@ -4,72 +4,68 @@
 
 
 .component--event {
-
+    .event {
+        &__headline {
+            @mixin event-page-font3;
+            margin-bottom: em(22, 45);
+        }
+        &__sub-headline {
+            @mixin event-page-font2;
+            margin-bottom: em(39, 22);
+        }
+        &__header {
+            margin-bottom: em(35);
+        }
+        &__body {
+            display: flex;
+            flex-wrap: wrap;
+            @mixin default-screen {
+                flex-wrap: nowrap;
+            }
+        }
+        &__share {
+            margin-right: em(0);
+            margin-bottom: em(34);
+            width: 100%;
+            @mixin default-screen {
+                width: auto;
+                margin-right: em(40);
+            }
+        }
+        &__content {
+            width: 100%;
+        }
+        &__info-title {
+            @mixin event-page-font1;
+            margin-bottom: em(9, 22);
+        }
+        &__info-row {
+            display: flex;
+            margin-bottom: em(15);
+            @mixin event-page-font2;
+        }
+        &__info-icon {
+            width: em(16);
+            height: em(18);
+            margin-right: em(12);
+            &--date {
+                background: url('/media/components/event/icon-time-date.svg') no-repeat;
+            }
+            &--location {
+                background: url('/media/components/event/icon-location.svg') no-repeat;
+            }
+        }
+        &__info-text-venue-name {
+            @mixin event-page-font4;
+        }
+        &__info-text-venue-address {
+            @mixin event-page-font4;
+        }
+    }
 }
 
 
-.event {
-    &__headline {
-        @mixin event-page-font3;
-        margin-bottom: em(22, 45);
-    }
-    &__sub-headline {
-        @mixin event-page-font2;
-        margin-bottom: em(39, 22);
-    }
-    &__header {
-        margin-bottom: em(35);
-    }
-    &__body {
-        display: flex;
-        flex-wrap: wrap;
-        @mixin default-screen {
-            flex-wrap: nowrap;
-        }
-    }
-    &__share {
-        margin-right: em(0);
-        margin-bottom: em(34);
-        width: 100%;
-        @mixin default-screen {
-            width: auto;
-            margin-right: em(40);
-        }
-    }
-    &__content {
-        width: 100%;
-    }
-    &__info-container {
-    }
-    &__info-title {
-        @mixin event-page-font1;
-        margin-bottom: em(9, 22);
-    }
-    &__info-row {
-        display: flex;
-        margin-bottom: em(15);
-        @mixin event-page-font2;
-    }
-    &__info-icon {
-        width: em(16);
-        height: em(18);
-        margin-right: em(12);
-        &--date {
-            background: url('/media/components/event/icon-time-date.svg') no-repeat;
-        }
-        &--location {
-            background: url('/media/components/event/icon-location.svg') no-repeat;
-        }
-    }
-    &__info-text-venue-name {
-        @mixin event-page-font4;
-    }
-    &__info-text-venue-address {
-        @mixin event-page-font4;
-    }
-}
-
-.editing {
+.editing.component--event {
     .event {
         &__info-text-venue-name {
             margin-bottom: em(8);
