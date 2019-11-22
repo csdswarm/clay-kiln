@@ -269,25 +269,6 @@ feedImgUrl:
       required: true
 #/ circulationFeedsGroup fields
 
-#/ circulationMetaGroup fields
-sectionFront:
-  _label: Section Front
-  _publish: sectionFront
-  _has:
-    input: select
-    search: true
-    list: primary-section-fronts
-    validate:
-      required: true
-secondarySectionFront:
-  _label: Secondary Section Front
-  _publish: secondarySectionFront
-  _has:
-    input: select
-    search: true
-    list: secondary-section-fronts
-#/ circulationMetaGroup fields
-
 # groups
 _groups:
   publishedDateGroup:
@@ -322,8 +303,39 @@ _groups:
   circulationFeedsGroup:
     fields:
       - feedImgUrl
-  circulationMetaGroup:
-    fields:
-      - sectionFront
-      - secondarySectionFront
 #/ groups
+
+# Non user editable. Set by model.js. Included in schema to use _publish functionality
+contentType:
+  _label: Content Type
+  _publish: contentType
+  _has:
+    input: static
+    text: 'event'
+canonicalUrl:
+  _publish: url
+  _has:
+    help: Canonical URL of an event. Set when the event publishes.
+pageDescription:
+  _publish: pageDescription
+  _has:
+    help: Plaintext description for search engines, set by seoDescription or teaser.
+socialDescription:
+  _publish: socialDescription
+  _has:
+    help: Plaintext description for social media, set by teaser.
+pageTitle:
+  _publish: pageTitle
+  _has:
+    help: Plaintext page title, set by seoHeadline, shortHeadline, or primaryHeadline. Sponsored posts and certain sites will have extra sugar.
+plaintextPrimaryHeadline:
+  _publish:
+    - ogTitle
+    - pageListTitle
+  _has:
+    help: Plaintext title set by primaryHeadline. Used for facebook sharing.
+plaintextShortHeadline:
+  _publish: twitterTitle
+  _has:
+    help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
+#/ Non user editable.
