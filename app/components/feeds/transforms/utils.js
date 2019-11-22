@@ -132,30 +132,6 @@ function addArrayOfProps(data, property, transform) {
 }
 
 /**
- * Given some image url add an RSS media content tag setup for it
- *
- * @param {{url: String}} image
- * @param {Object[]} transform
- * @return {Promise<Object[]>}
- */
-function addRssMediaImage(image) {
-  if (!image) return Promise.resolve(); // If a mediaplay image isn't in the content, escape TODO: Make this better. Use images in ledes, basic image, etc, but find something
-
-  return getRawMetadata(image.url)
-    .then(function (meta) {
-      const imageContent = [
-        { _attr: { url: image.url } }
-      ];
-
-      if (meta.credit) imageContent.push({ 'media:credit': meta.credit });
-      if (meta.copyright) imageContent.push({ 'media:copyright': meta.copyright });
-      if (meta.caption) imageContent.push({ 'media:title': meta.caption });
-
-      return imageContent;
-    });
-}
-
-/**
  * Assemble a video media:content element along with its related child elements
  *
  * @param {{videoId: string, videoDuration: number, title: string, description: string, thumbnailUrl: string}} video
@@ -182,6 +158,16 @@ function addRssMediaVideo(video, defaultMediaContent, transform) {
   transform.push({ 'media:content': defaultMediaContent.concat(mediaContent) });
 }
 
+async function addGnfImage(imageUrl) {
+  const { caption, copyright } = await getRawMetadata(imageUrl);
+
+  return renderComponent('image', {
+    url: imageUrl,
+    caption,
+    credit: copyright
+  }, 'gnf');
+}
+
 /**
  * Gets content from Elastic published content index documents.
  *
@@ -197,7 +183,7 @@ module.exports.renderComponent = renderComponent;
 module.exports.getContent = getContent;
 module.exports.firstAndParse = firstAndParse;
 module.exports.addArrayOfProps = addArrayOfProps;
-module.exports.addRssMediaImage = addRssMediaImage;
+module.exports.addGnfImage = addGnfImage;
 module.exports.addRssMediaVideo = addRssMediaVideo;
 
 // exposed for testing

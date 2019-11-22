@@ -2,7 +2,7 @@
 
 const format = require('date-fns/format'),
   parse = require('date-fns/parse'),
-  { addArrayOfProps, renderContent } = require('./utils'),
+  { addArrayOfProps, addGnfImage, renderContent } = require('./utils'),
   contentFormat = 'gnf';
 
 /**
@@ -14,10 +14,11 @@ const format = require('date-fns/format'),
  * @param {Object} locals
  * @return {Array}
  */
-module.exports = function (data, locals) {
+module.exports = async function (data, locals) {
   const {
       canonicalUrl,
       content,
+      feedImgUrl,
       lead,
       headline,
       seoDescription
@@ -34,13 +35,13 @@ module.exports = function (data, locals) {
         pubDate: format(parse(data.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ') // Date format must be RFC 822 compliant
       },
       {
-        guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
+        guid: canonicalUrl
       },
       {
         description: { _cdata: seoDescription }
       },
       {
-        'content:encoded': { _cdata: renderContent(lead, locals, contentFormat) + renderContent(content, locals, contentFormat) }
+        'content:encoded': { _cdata: await addGnfImage(feedImgUrl) + renderContent(content, locals, contentFormat) }
       }
     ];
 

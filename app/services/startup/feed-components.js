@@ -8,7 +8,8 @@ const fs = require('fs'),
   hbs = nymagHbs(handlebars.create()),
   glob = require('glob'),
   path = require('path'),
-  helpers = require('../universal/helpers');
+  helpers = require('../universal/helpers'),
+  log = require('../universal/log').setup({ file: __filename });
 
 /**
  * init hbs partials for feed components
@@ -49,7 +50,7 @@ function renderComponent(cmptName, cmptData, format) {
     partialName = partialExists ? partialNameWithFormat : cmptName;
 
   if (!hbs.partials[partialName]) {
-    console.warn(`No handlebars partial exists for ${partialName}`);
+    log('warn', `No handlebars partial exists for ${partialName}`);
     return '';
   }
 
