@@ -29,7 +29,7 @@ const _get = require('lodash/get'),
     threshold: 0
   },
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig),
-  { initAPS, fetchAPSBids } = require('./aps');
+  { initAmazonApstag, fetchAPSBids } = require('./aps');
 let refreshCount = 0,
   allAdSlots = {},
   adsRefreshing = false,
@@ -56,8 +56,7 @@ adMapping.setupSizeMapping();
   newScript.src = 'https://native.sharethrough.com/assets/sfp.js';
   firstScript.parentNode.insertBefore(newScript, firstScript);
 
-  // Initialize APS JavaScript Library
-  initAPS(apsPubId);
+  initAmazonApstag(apsPubId);
 })();
 
 // Listener to ensure lytics has been setup in GTM (Google Tag Manager)
@@ -535,7 +534,6 @@ function createAds(adSlots) {
         }
       });
 
-      // Refresh all initial page slots
       googletag.pubads().refresh(initialPageAdSlots);
     });
   });

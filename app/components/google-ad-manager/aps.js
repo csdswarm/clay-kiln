@@ -6,7 +6,7 @@
  * The library is loaded async via xhr, so we need to wait for it to finish loading
  * @param {integer} pubID
  */
-const initAPS = (pubID) => {
+const initAmazonApstag = (pubID) => {
     if (window.apstag) {
       window.apstag.init({
         pubID,
@@ -14,7 +14,7 @@ const initAPS = (pubID) => {
         simplerGPT: true
       });
     } else {
-      setTimeout(() => initAPS(pubID), 500);
+      setTimeout(() => initAmazonApstag(pubID), 500);
     }
   },
   /**
@@ -26,25 +26,20 @@ const initAPS = (pubID) => {
    */
   setupBidOptions = (params) => {
     const { bidOptions, timeout } = params,
-      options = {
-        slots: [],
-        timeout: timeout
-      },
-      bidOptionKeys = Object.keys(bidOptions)
-        .filter(key => bidOptions.hasOwnProperty(key));
-
-    for (const optionId of bidOptionKeys) {
+      slots = Object.keys(bidOptions)
+        .filter(key => bidOptions.hasOwnProperty(key))
+        .map(optionId => {
       const option = bidOptions[optionId],
         sizes = option.getSizes();
 
-      options.slots.push({
+          return {
         slotID: optionId,
         slotName: `${option.getAdUnitPath()}/${optionId.replace('google-ad-manager__slot--', '')}`,
         sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ])
+          };
       });
-    }
 
-    return options;
+    return { slots, timeout };
   },
   /**
    * fetch bids from APS
@@ -56,13 +51,11 @@ const initAPS = (pubID) => {
 
     fetchBids(setupBidOptions(bidOptions), () => {
       setDisplayBids();
-
-      // Run code from client.js after bids are fetched, and targeting is set
       callback();
     });
   };
 
 module.exports = {
-  initAPS,
+  initAmazonApstag,
   fetchAPSBids
 };
