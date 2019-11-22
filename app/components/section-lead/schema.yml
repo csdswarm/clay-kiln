@@ -23,8 +23,15 @@ items:
     input: complex-list
     enforceMaxlength: true
     validate:
-      max: 3
+      max: 4
     props:
+      - prop: contentLabel
+        _label: Content Label
+        _has:
+          input: text
+          validate:
+            max: 80
+          help: Label for this story. Eg. 'Entertainment'
       -
         prop: url
         _label: URL

@@ -304,6 +304,9 @@ em, i {
 @define-mixin section-lead-font4 {
   @mixin font CircularStd-Medium, 14px, $parisM, -.2px, 18px;
 }
+@define-mixin section-lead-font5 {
+  @mixin font CircularStd-Medium, 16px, $black, -.4px, 19px;
+}
 
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||| Latest Videos Fonts Styleguide |||||| */

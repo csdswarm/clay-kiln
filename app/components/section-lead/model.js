@@ -3,8 +3,9 @@
 const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
-  toPlainText = require('../../services/universal/sanitize').toPlainText,
-  { isComponent } = require('clayutils'),
+  { toPlainText } = require('../../services/universal/sanitize'),
+  qs = require('qs'),
+  { isComponent, getComponentName } = require('clayutils'),
   elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -14,7 +15,28 @@ const queryService = require('../../services/server/query'),
     'contentType'
   ],
   maxItems = 3,
-  protocol = `${process.env.CLAY_SITE_PROTOCOL}:`;
+  protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
+  MEDIA_SIZES = {
+    small: 'max-width: 360px',
+    mediumSmall: 'max-width: 480px',
+    medium: 'max-width: 1023px',
+    large: 'max-width: 1279px',
+    default: 'min-width: 1280px'
+  },
+  asQuery = value => qs.stringify(value, { encode: false });
+
+/**
+ * Takes an object with various sizes set and converts them to
+ * an array of values for picture > source elements
+ * @param {object} sizes
+ * @returns {{srcParams: *, media: *}[]}
+ */
+function mapSizes(sizes) {
+  return Object.entries(sizes).map(([key, value]) => ({
+    media: MEDIA_SIZES[key],
+    srcParams: asQuery(value)
+  }));
+}
 
 /**
  * @param {string} ref
@@ -55,7 +77,6 @@ module.exports.save = (ref, data, locals) => {
     });
 };
 
-
 /**
  * @param {string} ref
  * @param {object} data
@@ -63,8 +84,25 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems, locals),
-    contentTypes = contentTypeService.parseFromData(data);
+  const inMultiColumn = !!data._computed.parents.find(parent => getComponentName(parent) === 'multi-column'),
+    maxCount = inMultiColumn ? 2 : maxItems,
+    query = queryService.newQueryWithCount(elasticIndex, maxCount, locals),
+    contentTypes = contentTypeService.parseFromData(data),
+    squareCrop = '1:1,offset-y0',
+    wideCrop = '16:9,offset-y0',
+    defaultImageSizes = {
+      mediumSmall: { width: 440, crop: wideCrop },
+      medium: { width: 343, crop: wideCrop },
+      large: { width: 140, crop: '140:121,offset-y0' },
+      default: { width: 220, crop: wideCrop }
+    },
+    primaryImageSizes = {
+      mediumSmall: { width: 480, crop: wideCrop },
+      medium: { width: 1023, crop: wideCrop },
+      large: { width: 620, crop: '620:439,offset-y0' },
+      default: { width: 780, crop: wideCrop }
+    };
+
   let cleanUrl;
 
   // items are saved from form, articles are used on FE, and make sure they use the correct protocol
@@ -74,6 +112,31 @@ module.exports.render = function (ref, data, locals) {
       ...item,
       canonicalUrl: item.canonicalUrl.replace(/^http:/, protocol)
     }));
+
+  if (inMultiColumn) {
+    Object.assign(defaultImageSizes, {
+      small: { width: 85, crop: squareCrop },
+      mediumSmall: { width: 115, crop: squareCrop },
+      medium: { width: 222, crop: wideCrop },
+      large: { width: 140, crop: squareCrop }
+    });
+    Object.assign(primaryImageSizes, {
+      small: { width: 360, crop: wideCrop },
+      mediumSmall: { width: 480, crop: wideCrop },
+      medium: { width: 704, crop: wideCrop },
+      large: { width: 300, crop: squareCrop },
+      default: { width: 460, crop: squareCrop }
+    });
+
+    data._computed.useContentLabel = true;
+    data._computed.hideAdRailRight = true;
+    data._computed.mcModifier = 'section-lead--multi-column';
+  }
+
+  data._computed.storySizes = mapSizes(defaultImageSizes);
+  data._computed.storySizeParams = asQuery(defaultImageSizes.default);
+  data._computed.primaryStorySizes = mapSizes(primaryImageSizes);
+  data._computed.primaryStorySizeParams = asQuery(primaryImageSizes.default);
 
   if (!locals || !locals.sectionFront && !locals.secondarySectionFront) {
     return data;
@@ -131,7 +194,7 @@ module.exports.render = function (ref, data, locals) {
   return queryService.searchByQuery(query)
     .then(function (results) {
 
-      data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+      data.articles = data.items.concat(results.slice(0, maxCount)).slice(0, maxCount); // show a maximum of maxCount links
       data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
       return data;
     })
@@ -140,3 +203,5 @@ module.exports.render = function (ref, data, locals) {
       return data;
     });
 };
+
+module.exports = require('../../services/universal/amphora').unityComponent(module.exports);

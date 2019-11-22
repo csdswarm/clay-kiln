@@ -202,6 +202,88 @@
       }
     }
   }
+
+  /* ---------[         MULTI-COLUMN adjustments         ]--------- */
+  &.section-lead--multi-column {
+    width: em(460);
+
+    @mixin large-screen {
+      width: em(300);
+    }
+
+    @mixin medium-screen {
+      width: em(704);
+    }
+
+    @mixin medium-small-screen {
+      width: 100%;
+    }
+
+    &.section-lead--music .details__content-label {  color: $sunsetOrange }
+    &.section-lead--news .details__content-label {  color: $lightningYellow }
+    &.section-lead--sports .details__content-label {  color: $azureRadience }
+    &.section-lead--podcasts .details__content-label {  color: $robinsEggBlue }
+
+    .section-lead__articles {
+      width: 100%
+    }
+
+    /* TODO: deal with spacing issues once we get to medium screen size or lower */
+    .section-lead__article {
+      width: 100%;
+
+      .section-lead__image {
+        @mixin medium-screen {
+          width: em(222);
+        }
+
+        @mixin medium-small-screen {
+          width: em(115);
+        }
+
+        @mixin small-screen {
+          width: em(85);
+        }
+      }
+
+      &.section-lead__article--first {
+
+        @mixin medium-screen {
+          .section-lead__image {
+            width: 100%;
+          }
+        }
+
+        @mixin medium-small-screen {
+          width: 100vw;
+          left: 50%;
+          right: 50%;
+          margin-left: -50vw;
+          margin-right: -50vw;
+        }
+
+        .section-lead__details {
+          @mixin large-screen {
+            position: relative;
+          }
+          @mixin only-medium-screen {
+            position: absolute;
+          }
+        }
+      }
+
+      .details__content-label {
+        @mixin section-lead-font2;
+        display: block;
+        margin: em(15) 0 em(10);
+        text-transform: capitalize;
+
+        @mixin medium-small-screen {
+          @mixin section-lead-font4;
+        }
+      }
+    }
+  }
 }
 
 @define-mixin lead-module-color $sectionTitle, $color {
