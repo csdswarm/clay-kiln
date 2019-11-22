@@ -20,7 +20,8 @@ const _get = require('lodash/get'),
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
   apsPubId = googleAdManagerComponent.getAttribute('data-aps-pub-id'),
-  apsTimeout = parseInt(googleAdManagerComponent.getAttribute('data-aps-timeout'), 10),
+  apsLoadTimeout = parseInt(googleAdManagerComponent.getAttribute('data-aps-load-timeout'), 10),
+  apsBidTimeout = parseInt(googleAdManagerComponent.getAttribute('data-aps-bid-timeout'), 10),
   sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
@@ -29,7 +30,7 @@ const _get = require('lodash/get'),
     threshold: 0
   },
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig),
-  { initAmazonApstag, fetchAPSBids } = require('./aps');
+  amazonTam = require('./aps')(apsPubId, apsLoadTimeout, apsBidTimeout);
 let refreshCount = 0,
   allAdSlots = {},
   adsRefreshing = false,
@@ -45,7 +46,7 @@ let refreshCount = 0,
 adMapping.setupSizeMapping();
 
 /**
- * Add Sharethrough and APS script on first page load
+ * Add Sharethrough on first page load
  * @function
  */
 (() => {
@@ -55,8 +56,6 @@ adMapping.setupSizeMapping();
   newScript.async = true;
   newScript.src = 'https://native.sharethrough.com/assets/sfp.js';
   firstScript.parentNode.insertBefore(newScript, firstScript);
-
-  initAmazonApstag(apsPubId);
 })();
 
 // Listener to ensure lytics has been setup in GTM (Google Tag Manager)
@@ -92,10 +91,7 @@ googletag.cmd.push(() => {
       adsRefreshing = true;
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
-        fetchAPSBids({
-          bidOptions: allAdSlots,
-          timeout: apsTimeout
-        }, () => {
+        amazonTam.fetchAPSBids(allAdSlots, () => {
           clearDfpTakeover();
           // Refresh all ads
           googletag.pubads().refresh(null, { changeCorrelator: false });
@@ -516,10 +512,7 @@ function createAds(adSlots) {
       ads.push(ad);
     }
 
-    fetchAPSBids({
-      bidOptions: allAdSlots,
-      timeout: apsTimeout
-    }, () => {
+    amazonTam.fetchAPSBids(allAdSlots, () => {
       ads.forEach(ad => {
         const adSlot = allAdSlots[ad.id];
 

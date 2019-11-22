@@ -12,7 +12,8 @@
   data-environment="{{ environment }}"
   data-ad-refresh-interval="{{ adRefreshInterval }}"
   data-aps-pub-id="{{ apsPubId }}"
-  data-aps-timeout="{{ apsTimeout }}"
+  data-aps-bid-timeout="{{ apsBidTimeout }}"
+  data-aps-load-timeout="{{ apsLoadTimeout }}"
   data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
   class="component component--google-ad-manager google-ad-manager--{{adSize}} {{#if sticky }}sticky{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
 >
