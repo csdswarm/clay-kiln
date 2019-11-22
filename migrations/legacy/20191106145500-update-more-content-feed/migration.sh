@@ -27,6 +27,3 @@ fi
 
 printf "\nCreating right rail component...\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
-
-curl -X PUT $http://$1/_pages/author@published -H 'Authorization: token accesskey' -o /dev/null -s
-curl -X PUT $http://$1/_pages/topic@published -H 'Authorization: token accesskey' -o /dev/null -s

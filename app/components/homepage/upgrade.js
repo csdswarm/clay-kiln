@@ -4,7 +4,7 @@ const { getComponentInstance, putComponentInstance } = require('../../services/s
   publishedUri = uri => `${uri}@published`;
 
 module.exports['1.0'] = async function (uri, data) {
-  const { moreContentFeed, ...restOfTopicPageData } = data,
+  const { moreContentFeed, ...restOfHomepageData } = data,
     twoColumnComponentRef = moreContentFeed._ref.replace('more-content-feed', 'two-column-component'),
     rightRailRef = moreContentFeed._ref.replace('more-content-feed', 'more-content-feed-right-rail'),
     twoColumnComponentData = {
@@ -41,7 +41,7 @@ module.exports['1.0'] = async function (uri, data) {
   await putComponentInstance(publishedUri(twoColumnComponentRef), twoColumnComponentData);
 
   return {
-    ...restOfTopicPageData,
+    ...restOfHomepageData,
     twoColumnComponent: {
       _ref: moreContentFeed._ref.replace('more-content-feed', 'two-column-component')
     }

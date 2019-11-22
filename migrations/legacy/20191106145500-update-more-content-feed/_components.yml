@@ -3,38 +3,8 @@ _components:
     instances:
       new:
         allowed: true
-      author-page:
-        locationOfRightRail: author-page
-        contentCollectionLogoSponsorship: {
-          _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-        }
-        googleAdRightRail: {
-          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
-        }
-      topic-page:
-        locationOfRightRail: topic-page
-        contentCollectionLogoSponsorship: {
-          _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-        }
-        googleAdRightRail: {
-          _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
-        }
   two-column-component:
     instances:
       new:
         column1: []
         column2: []
-      author-page:
-        column1: [{
-          _ref: /_components/more-content-feed/instances/author-page
-        }]
-        column2: [{
-          _ref: /_components/more-content-feed-right-rail/instances/author-page
-        }]
-      topic-page:
-        column1: [{
-          _ref: /_components/more-content-feed/instances/topic-page
-        }]
-        column2: [{
-          _ref: /_components/more-content-feed-right-rail/instances/topic-page
-        }]
