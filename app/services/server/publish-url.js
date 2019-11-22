@@ -105,7 +105,6 @@ function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
 function getEventSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      console.log('[urlOptions =>>>>>>]', JSON.stringify(urlOptions, null, 2));
       if (urlOptions.pageType === PAGE_TYPES.EVENT) {
         return pubUtils.eventSlugPattern(urlOptions);
       }
