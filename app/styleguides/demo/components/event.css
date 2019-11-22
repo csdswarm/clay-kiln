@@ -61,4 +61,10 @@
             background: url('/media/components/event/icon-location.svg') no-repeat;
         }
     }
+    &__info-text-venue-name {
+        @mixin event-page-font4;
+    }
+    &__info-text-venue-address {
+        @mixin event-page-font4;
+    }
 }

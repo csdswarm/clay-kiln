@@ -32,7 +32,10 @@
         </div>
         <div class="event__info-row">
             <div class="event__info-icon event__info-icon--location"></div>
-            <div class="event__info-text" data-editable="location">{{{ location }}}</div>
+            <div class="event__info-text">
+                <div class="event__info-text-venue-name" data-editable="venueName">{{{ venueName }}}</div>
+                <div class="event__info-text-venue-address" data-editable="venueAddress">{{{ venueAddress }}}</div>
+            </div>
         </div>
     </div>
 {{/inline}}
