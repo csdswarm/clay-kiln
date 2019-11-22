@@ -26,4 +26,7 @@ else
 fi
 
 printf "\nCreating google news feed...\n\n"
-cat ./_components.yml | clay import -k demo -y -p $1
+node migration.js
+
+curl -X PUT $http://$1/_components/feeds/instances/google-news-feed -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./googleNewsFeed.json -o /dev/null -s
+curl -X PUT $http://$1/_components/feeds/instances/google-news-feed@published -H 'Authorization: token accesskey' -o /dev/null -s
