@@ -60,7 +60,7 @@ async function getVideoViews(videoId) {
  * Retrieves the video source for a brightcove video
  *
  * @param {String} id
- * @returns {String}
+ * @returns {String|null}
  */
 async function getVideoSource(id) {
   const { status, body: videoSources } = await brightcoveApi.request('GET', `videos/${ id }/sources`),
@@ -72,7 +72,7 @@ async function getVideoSource(id) {
     }), 'src', '');
   }
 
-  return '';
+  return null;
 }
 
 /**
@@ -87,7 +87,10 @@ async function addVideoDetails(data) {
 
   const { video } = data,
     { id } = video,
-    videoData = await getVideoDetails(video.id);
+    [videoData, videoSource] = await Promise.all([
+      getVideoDetails(video.id),
+      getVideoSource(id)
+    ]);
 
   if (videoData) {
     data.name = videoData.name;
@@ -100,9 +103,9 @@ async function addVideoDetails(data) {
     // for some reason this was getting parsed back to millisecond integer value when not wrapped in a string
     data.duration = `${moment.duration(videoData.duration)}`;
     data.link = videoData.link;
-
-    data.video.m3u8Source = data.video.m3u8Source || await getVideoSource(id);
+    data.video.m3u8Source = videoSource;
   }
+
 
   return data;
 }
