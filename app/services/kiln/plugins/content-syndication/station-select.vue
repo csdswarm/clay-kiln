@@ -12,6 +12,7 @@
         :multiple="true"
         :options="stationOptions"
         :value="value"
+        :disabled="disabled"
         @input="updateSelectedStation"
       >
       </ui-select>
@@ -24,7 +25,7 @@
     log = require('../../../../services/universal/log').setup({file: __filename});
 
   export default {
-    props: ['name', 'data', 'schema', 'args'],
+    props: ['name', 'data', 'schema', 'args', 'disabled'],
     data() {
       return {
         selectedStation: this.data,
