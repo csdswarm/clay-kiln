@@ -222,14 +222,13 @@
             tabs() {
                 const { user } = kiln.locals,
                     tabs = [],
-                    hasGlobalAlertPermissions = user.can('create').a('alerts_global').value || user.can('update').a('alerts_global').value,
-                    hasStationAlertPermissions = user.can('create').a('alerts_station').value || user.can('update').a('alerts_station').value;
+                    hasGlobalAlertPermissions = user.can('create').a('alerts_global').value || user.can('update').a('alerts_global').value;
 
                 if (hasGlobalAlertPermissions) {
                     tabs.push({ id: 'global', name: 'Global' });
                 }
 
-                if (hasStationAlertPermissions) {
+                if (hasGlobalAlertPermissions && this.stationCallsigns.length) {
                     tabs.push({ id: 'station', name: 'Station' });
                 }
 
@@ -367,7 +366,7 @@
             async getAccessibleCallsigns() {
                 const { data: callsigns = []} = await axios.get('/all-rdc-callsigns'),
                     { user } = kiln.locals,
-                    withStationAlerts = user.using('alerts_station'),
+                    withStationAlerts = user.using('alerts_global'),
                     hasStationAccess = station =>
                         withStationAlerts.can('update').for(station).value ||
                         withStationAlerts.can('create').for(station).value;

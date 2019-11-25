@@ -33,10 +33,10 @@ const db = require('./db'),
       exceptTheEntryBeingSaved = 'id != ?',
       response = await db.raw(`
       SELECT id FROM alert
-      WHERE ${onlyCurrentEntries} 
-        AND ${onlyActiveEntries} 
+      WHERE ${onlyCurrentEntries}
+        AND ${onlyActiveEntries}
         AND ${onlyEntriesWithinSameStation}
-        AND ${entriesWhoseTimeRangeOverlapTheSavedEntry} 
+        AND ${entriesWhoseTimeRangeOverlapTheSavedEntry}
         AND ${exceptTheEntryBeingSaved}`,
       [station, start, end, key]);
 
@@ -178,7 +178,7 @@ const db = require('./db'),
       if (station === 'GLOBAL') {
         permission = permission.an('alerts_global');
       } else {
-        permission = permission.an('alerts_station').for(station);
+        permission = permission.an('alerts_global').for(station);
       }
 
       if (permission.value) {

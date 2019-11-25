@@ -13,12 +13,10 @@ module.exports = () => {
   const user = window.kiln.locals.user,
     hasAlertsAccess = () => {
       if (user && user.can) {
-        return user.can('create').an('alerts_station').value ||
-          user.can('update').an('alerts_station').value ||
-          user.can('create').an('alerts_global').value ||
+        return user.can('create').an('alerts_global').value ||
           user.can('update').an('alerts_global').value;
       }
-      
+
       return false;
     };
 
