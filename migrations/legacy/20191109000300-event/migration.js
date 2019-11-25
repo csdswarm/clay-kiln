@@ -68,7 +68,8 @@ logMigrationDivider('Begin Event Migration')
   // import layout YAML into clay
   .then( loadLayoutFileResponse => {
     logEventMigrationMsg('Importing event layout into clay...');
-    return importData(loadLayoutFileResponse.data);
+    const replacedHostYml = loadLayoutFileResponse.data.replace(/\${HOST_URL}/gi, hostUrl);
+    return importData(replacedHostYml);
   })
   // load the page data from _pages.yml
   .then( _ => {
