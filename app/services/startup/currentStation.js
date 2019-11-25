@@ -75,27 +75,27 @@ const radioApiService = require('../../services/server/radioApi'),
     if (validPath(req)) {
       const slugInReqUrl = getStationSlug(req),
         stationId = req.query.stationId,
-        apiKey = radioApiService.shouldUseStagingApi(locals) ? 'stg' : 'prd',
+        apiEnvironment = radioApiService.shouldUseStagingApi(locals) ? 'stg' : 'prd',
         response = await radioApiService.get('stations', { page: { size: 1000 } }, null, { ttl: radioApiService.TTL.MIN * 30 }, locals);
 
       // use the stations as a cached object so we don't have to run the same logic every request
-      if (response.response_cached === false || isEmpty(allStations[apiKey])) {
+      if (response.response_cached === false || isEmpty(allStations[apiEnvironment])) {
         response.data.forEach((station) => {
           const slug = station.attributes.site_slug || station.attributes.callsign || station.id;
 
-          allStations[apiKey][slug] = station.attributes;
-          allStationsIds[apiKey][station.id] = slug;
-          allStationsCallsigns[apiKey].push(station.attributes.callsign);
+          allStations[apiEnvironment][slug] = station.attributes;
+          allStationsIds[apiEnvironment][station.id] = slug;
+          allStationsCallsigns[apiEnvironment].push(station.attributes.callsign);
         });
       }
 
-      if (Object.keys(allStations[apiKey]).includes(slugInReqUrl)) {
-        return allStations[apiKey][slugInReqUrl];
+      if (Object.keys(allStations[apiEnvironment]).includes(slugInReqUrl)) {
+        return allStations[apiEnvironment][slugInReqUrl];
       }
 
       // If the station isn't in the slug, look for the querystring parameter
-      if (stationId && Object.keys(allStationsIds[apiKey]).includes(stationId)) {
-        return allStations[apiKey][allStationsIds[apiKey][stationId]];
+      if (stationId && Object.keys(allStationsIds[apiEnvironment]).includes(stationId)) {
+        return allStations[apiEnvironment][allStationsIds[apiEnvironment][stationId]];
       }
 
       return defaultStation;
@@ -113,10 +113,10 @@ const radioApiService = require('../../services/server/radioApi'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  const apiKey = radioApiService.shouldUseStagingApi(res.locals) ? 'stg' : 'prd';
+  const apiEnvironment = radioApiService.shouldUseStagingApi(res.locals) ? 'stg' : 'prd';
 
   res.locals.station = await getStation(req, res.locals);
-  res.locals.allStationsCallsigns = allStationsCallsigns[apiKey];
+  res.locals.allStationsCallsigns = allStationsCallsigns[apiEnvironment];
   res.locals.defaultStation = defaultStation;
 
   return next();
