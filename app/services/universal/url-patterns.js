@@ -1,8 +1,7 @@
 'use strict';
 
-const exists = require('lodash/identity');
-
-const article = opts => {
+const exists = require('lodash/identity'),
+  article = opts => {
     // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
     return [
       opts.prefix,

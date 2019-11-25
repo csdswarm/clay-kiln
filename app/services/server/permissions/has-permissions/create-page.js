@@ -5,15 +5,22 @@ const { getComponentName } = require('clayutils'),
   stationUtils = require('../../station-utils'),
   { wrapInTryCatch } = require('../../../startup/middleware-utils');
 
+/**
+ * Checks whether the user has permissions to create the page they're attempting
+ *   to create.
+ *
+ * @param {object} router - the userPermissionsRouter passed from permissions/index.js
+ */
 module.exports = router => {
   router.post('/create-page', wrapInTryCatch(async (req, res, next) => {
     const { stationSlug } = req.body,
-      { user } = res.locals;
+      { locals } = res,
+      { user } = locals;
 
     let callsign = 'NATL-RC';
 
     if (stationSlug) {
-      const stationsBySlug = await stationUtils.getAllStations.bySlug(),
+      const stationsBySlug = await stationUtils.getAllStations.bySlug({ locals }),
         station = stationsBySlug[stationSlug];
 
       if (!station) {
@@ -22,7 +29,7 @@ module.exports = router => {
         return;
       }
 
-      callsign = station.attributes.callsign;
+      callsign = station.callsign;
     }
 
     // these shouldn't be declared above the short circuit

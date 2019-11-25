@@ -19,7 +19,18 @@ const axios = require('axios'),
   shouldPassNewPagesRequestToClay = (req, res) => {
     return req.query.fromClay === 'true'
       || !res.locals.user;
-  };
+  },
+  /**
+   * Creates a filter method for _list menu items that will verify that the user has permissions
+   * if it is a menu item with a matching item.id
+   * @param { Object } locals - The locals object
+   * @param { string } pageType - The type of page to check permissions for
+   * @param { string } id - The component instance id for the menu item
+   * @returns { function(*): boolean }
+   */
+  menuItemChecker = (locals, pageType, id) =>
+    item =>
+      item.id !== id || locals.user.can('create').a(pageType).value;
 
 /**
  * Adds an endpoint to the router which intercepts the 'new-pages' list and
@@ -43,29 +54,23 @@ module.exports = router => {
     // eslint-disable-next-line one-var
     const urlObj = new URL(req.protocol + '://' + req.get('host') + req.originalUrl),
       { user } = res.locals,
-      canCreateSectionFronts = user.can('create').a('section-front').value;
+      canCreateSectionFronts = user.can('create').a('section-front').value,
+      canCreateStaticPageMenuItem = menuItemChecker(res.locals, 'static-page', 'new-static-page');
 
     urlObj.searchParams.append('fromClay', 'true');
 
     // urlObj needs to be mutated before we can get the result
     // eslint-disable-next-line one-var
     const { data: newPages } = await axios.get(urlObj.toString()),
-      filteredPages = newPages.filter(item => {
-        if (!canCreateSectionFronts && item.id === 'section-front') {
-          return false;
-        }
+      filteredPages = newPages
+        .filter(item => {
+          if (!canCreateSectionFronts && item.id === 'section-front') {
+            return false;
+          }
 
-        // filter out by station premissions
-        // Categories without a stationCallsign property are assumed to be for
-        //   the national station.
-        const callsign = item.stationCallsign || 'NATL-RC';
-
-        if (!user.can('access').the('station').at(callsign).value) {
-          return false;
-        }
-
-        return true;
-      });
+          return true;
+        })
+        .map(item => ({ ...item, children: item.children.filter(canCreateStaticPageMenuItem) }));
 
     res.send(filteredPages);
   }));

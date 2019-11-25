@@ -518,18 +518,18 @@ function render(ref, data, locals) {
  */
 function assignStationInfo(uri, data, locals) {
   if (locals.newPageStation !== undefined) {
-    const attrs = locals.newPageStation.attributes,
+    const station = locals.newPageStation,
       componentName = getComponentName(uri);
 
     Object.assign(data, {
-      stationSlug: attrs.site_slug,
-      stationName: attrs.name
+      stationSlug: station.site_slug,
+      stationName: station.name
     });
 
     if (articleOrGallery.has(componentName)) {
       Object.assign(data, {
-        stationLogoUrl: attrs.square_logo_small,
-        stationURL: attrs.website
+        stationLogoUrl: station.square_logo_small,
+        stationURL: station.website
       });
     }
   }

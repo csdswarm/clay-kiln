@@ -49,12 +49,15 @@ module.exports = router => {
     // shouldn't be declared above the short circuit
     // eslint-disable-next-line one-var
     const [station, componentData] = await Promise.all([
-        stationUtils.getStationFromOriginalUrl(customUrl),
+        stationUtils.getStationFromOriginalUrl({
+          locals: res.locals,
+          url: customUrl
+        }),
         getComponentData(req.body.main[0])
       ]),
       // empty strings indicate the national site at this point
       stationSlugFrom = {
-        customUrl: _get(station, 'attributes.site_slug', ''),
+        customUrl: _get(station, 'site_slug', ''),
         component: _get(componentData, 'stationSlug', '')
       },
       // if the station slug from the component is falsey, then the content

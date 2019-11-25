@@ -201,13 +201,13 @@ function getUrlOptions(component, locals, pageType) {
   return urlOptions;
 }
 
-module.exports.getComponentReference = getComponentReference;
-module.exports.getMainComponentFromRef = getMainComponentFromRef;
-module.exports.getUrlOptions = getUrlOptions;
-module.exports.getUrlPrefix = getUrlPrefix;
-module.exports.getPublishDate = getPublishDate;
-module.exports.putComponentInstance = putComponentInstance;
-module.exports.getComponentInstance = getComponentInstance;
-
-module.exports.PAGE_TYPES = PAGE_TYPES;
-
+module.exports = {
+  getComponentReference,
+  getMainComponentFromRef,
+  getUrlOptions,
+  getUrlPrefix,
+  getPublishDate,
+  putComponentInstance,
+  getComponentInstance,
+  PAGE_TYPES
+};
