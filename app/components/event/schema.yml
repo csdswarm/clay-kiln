@@ -1,4 +1,4 @@
-_description: A page to house your events
+_description: An event page that includes headline, lede, event venue info, description with presenters & tags.
 _confirmRemoval: true
 
 # event properties
