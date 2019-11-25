@@ -3,6 +3,7 @@
 const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
+  _get = require('lodash/get'),
   DATA_STRUCTURES = ['alert'],
   /**
    * Check Postgres to see if the table exists
@@ -11,7 +12,7 @@ const utils = require('../universal/utils'),
    * @returns {boolean}
    */
   checkTableExists = async (tableName) => {
-    const {rows: [{exists}]} = await db.raw(`
+    const { rows: [{ exists }] } = await db.raw(`
       SELECT EXISTS(
         SELECT *
         FROM information_schema.tables
@@ -114,7 +115,7 @@ const utils = require('../universal/utils'),
         SELECT data FROM ${tableName}
         WHERE id = ?
       `, [key])
-        .then(({rows}) => {
+        .then(({ rows }) => {
           if (!rows.length) return Promise.reject(`No result found in ${tableName} for ${key}`);
 
           return rows[0].data;
@@ -165,14 +166,30 @@ const utils = require('../universal/utils'),
         WHERE id = ?
       `, [value, key]);
     }
+  },
+  /**
+   * retrieves the data from the uri
+   *
+   * @param {string} uri
+   * @param {string} [key]
+   *
+   * @return {object}
+   */
+  getComponentData = async (uri, key) => {
+    const data = await db.get(uri.split('@')[0]) || {};
+
+    return key ? _get(data, key) : data;
   };
 
-module.exports.getUri = uri => db.get(uri);
-module.exports.del = del;
-module.exports.get = get;
-module.exports.post = post;
-module.exports.put = put;
-module.exports.raw = db.raw;
-module.exports.uriToUrl = utils.uriToUrl;
-module.exports.ensureTableExists = ensureTableExists;
-module.exports.DATA_STRUCTURES = DATA_STRUCTURES;
+module.exports = {
+  getUri: uri => db.get(uri),
+  del,
+  get,
+  post,
+  put,
+  raw: db.raw,
+  uriToUrl: utils.uriToUrl,
+  ensureTableExists,
+  DATA_STRUCTURES,
+  getComponentData
+};

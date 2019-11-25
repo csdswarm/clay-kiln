@@ -36,13 +36,11 @@ async function refreshAuthToken({ refreshToken, deviceKey }) {
     };
 
   try {
-    let authResult;
-
     if (process.env.COGNITO_CONSUMER_SECRET) {
       options.AuthParameters.SECRET_HASH = process.env.COGNITO_CONSUMER_SECRET;
     }
 
-    authResult = _get(await initiateAuth(options), 'AuthenticationResult', {});
+    const authResult = _get(await initiateAuth(options), 'AuthenticationResult', {});
 
     return {
       refreshToken,

@@ -69,7 +69,7 @@ describe('routes', function () {
       next = sinon.stub();
 
     routes(router, permissionsFunc);
-    await expressRouter.put.lastCall.args[1]({ uri: 1, body: 2}, res, next);
+    await expressRouter.put.lastCall.args[1]({ uri: 1, body: 2 }, res, next);
 
     expect(permissionsFunc.callCount).to.eql(1);
     assert(permissionsFunc.calledWith(1, 2, res.locals));

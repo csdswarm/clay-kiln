@@ -1,18 +1,18 @@
 'use strict';
 
 const { assert, expect } = require('chai'),
-  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./utils'),
+  { addMiddlewareToUnsafeMethods, isEditor, wrapInTryCatch } = require('./utils'),
   express = require('express'),
   getPort = require('get-port'),
   axios = require('axios');
 
 describe('utils', () => {
-  describe('isRobot', () => {
-    it('should return true if no username exists', () => {
-      expect(isRobot({})).to.be.true;
+  describe('isEditor', () => {
+    it('should return false if username exists', () => {
+      expect(isEditor({})).to.be.false;
     });
     it("should return false if 'username' exists", () => {
-      expect(isRobot({ username: 'mr robot' })).to.be.false;
+      expect(isEditor({ user: { username: 'not a robot' } })).to.be.true;
     });
   });
 

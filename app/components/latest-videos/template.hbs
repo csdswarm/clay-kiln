@@ -1,9 +1,9 @@
 <section data-uri="{{ default _ref _self }}" class="component component--latest-videos{{ if @root.locals.edit ' editing' }}" data-editable="items">
-  <h2><span>Radio.com Video</span></h2>
+  <h2><span>{{{ title }}}</span></h2>
   <div class="latest-videos__videos">
     {{#each articles as |article|}}
       {{#if @first}}
-        <div class="latest-videos__video {{#if @first}}latest-videos__video--main{{/if}} latest-videos__video--{{ article.sectionFront }}">
+        <div class="latest-videos__video latest-videos__video--main latest-videos__video--{{ article.sectionFront }}">
           <a href="{{ article.canonicalUrl }}"
              class="latest-videos__link"
              data-track-type="article-link"
@@ -36,36 +36,39 @@
         </div>
       {{else}}
         {{#if (compare @index 1)}}
-          <div class="latest-videos__rail">
+          <div class="latest-videos__rail-container">
+            <div class="latest-videos__rail">
         {{/if}}
-        <div class="latest-videos__video latest-videos__video--{{ article.sectionFront }}">
-          <a href="{{ article.canonicalUrl }}"
-             class="latest-videos__link"
-             data-track-type="article-link"
-             data-track-component-name="latest-videos"
-             data-track-page-uri="{{ article.pageUri }}"
-             data-track-headline="{{ article.primaryHeadline }}"
-             data-track-component-title="Latest Videos">
-            <span class="latest-videos__play-icon"></span>
-            <img
-              src="{{ article.feedImgUrl }}?width=220&crop=16:9,offset-y0"
-              srcset="{{ article.feedImgUrl }}?width=480&crop=16:9,offset-y0 480w"
-              sizes="(max-width: 480px) 91.5vw,  220px"
-              class="latest-videos__image" />
-          </a>
-          <div class="latest-videos__details">
-            <h3 class="details__title">
-              <a href="{{ article.canonicalUrl }}"
-                 class="latest-videos__link"
-                 data-track-type="article-link"
-                 data-track-component-name="latest-videos"
-                 data-track-page-uri="{{ article.pageUri }}"
-                 data-track-headline="{{ article.primaryHeadline }}"
-                 data-track-component-title="Latest Videos">{{ article.primaryHeadline }}</a>
-            </h3>
-          </div>
-        </div>
+              <div class="latest-videos__video latest-videos__video--{{ article.sectionFront }}">
+                <a href="{{ article.canonicalUrl }}"
+                  class="latest-videos__link"
+                  data-track-type="article-link"
+                  data-track-component-name="latest-videos"
+                  data-track-page-uri="{{ article.pageUri }}"
+                  data-track-headline="{{ article.primaryHeadline }}"
+                  data-track-component-title="Latest Videos">
+                  <span class="latest-videos__play-icon"></span>
+                  <img
+                    src="{{ article.feedImgUrl }}?width=220&crop=16:9,offset-y0"
+                    srcset="{{ article.feedImgUrl }}?width=480&crop=16:9,offset-y0 480w"
+                    sizes="(max-width: 480px) 91.5vw,  220px"
+                    class="latest-videos__image" />
+                </a>
+                <div class="latest-videos__details">
+                  <h3 class="details__title">
+                    <a href="{{ article.canonicalUrl }}"
+                      class="latest-videos__link"
+                      data-track-type="article-link"
+                      data-track-component-name="latest-videos"
+                      data-track-page-uri="{{ article.pageUri }}"
+                      data-track-headline="{{ article.primaryHeadline }}"
+                      data-track-component-title="Latest Videos">{{ article.primaryHeadline }}</a>
+                  </h3>
+                </div>
+              </div>
         {{#if @last}}
+            </div>
+            <div class="latest-videos__rail-foreground latest-videos__rail-foreground--scroll-down-more"></div>
           </div>
         {{/if}}
       {{/if}}

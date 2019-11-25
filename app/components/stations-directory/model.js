@@ -9,16 +9,17 @@ const radioApiService = require('../../services/server/radioApi'),
 /**
  * fetch all markets from
  * radio api into an array
+ * @param {object} locals
  * @returns {Promise<array>}
  */
-function getAllMarkets() {
+function getAllMarkets(locals) {
   const route = 'markets',
     params = {
       'page[size]': 100,
       sort: 'name'
     };
 
-  return radioApiService.get(route, params).then(response => {
+  return radioApiService.get(route, params, null, {}, locals).then(response => {
     if (response.data) {
       return response.data.map(data => {
         data.attributes.slug = slugifyService(data.attributes.display_name);
@@ -32,20 +33,21 @@ function getAllMarkets() {
 /**
  * fetch all music genres from
  * radio api into an array
- * @param {boolean} newsTalk
+ * @param {object} locals
+ * @param {boolean} [newsTalk]
  * @returns {Promise<array>}
  */
-function getAllGenres(newsTalk = false) {
+function getAllGenres(locals, newsTalk = false) {
   const route = 'genres',
     params = {
       'page[size]': 100
     };
-  
+
   if (newsTalk) {
     params['sort'] = 'name';
   }
 
-  return radioApiService.get(route, params).then(response => {
+  return radioApiService.get(route, params, null, {}, locals).then(response => {
     if (response.data) {
       const onlyMusicGenres = genre => ![SPORTS_SLUG, NEWS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
         onlyNewsTalkGenres = genre => [NEWS_SLUG, NEWSTALK_SLUG].includes(genre.attributes.slug),
@@ -67,7 +69,7 @@ module.exports.render = async (uri, data, locals) => {
     return data;
   }
 
-  [data.location, data.music, locals.allNewsTalk] = await Promise.all( [getAllMarkets(), getAllGenres(), getAllGenres(true)]);
+  [data.location, data.music, locals.allNewsTalk] = await Promise.all( [getAllMarkets(locals), getAllGenres(locals), getAllGenres(locals, true)]);
   locals.allMarkets = data.location;
   locals.allMusic = data.music;
 

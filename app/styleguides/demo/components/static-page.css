@@ -1,6 +1,7 @@
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
+@import "_global/content-type";
 
 .component--static-page {
   /* BEM exceptions - targeting tags that are added as a result of editing */

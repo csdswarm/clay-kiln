@@ -5,7 +5,7 @@ const _ = require('lodash'),
   path = require('path'),
   getDependencies = require('claycli/lib/cmd/compile/get-script-dependencies').getDependencies;
 
-let memoizedGetTemplates = _.memoize(getTemplates),
+const memoizedGetTemplates = _.memoize(getTemplates),
   memoizedClientJS = _.memoize(getClientJS)(),
   componentTemplates = memoizedGetTemplates();
 

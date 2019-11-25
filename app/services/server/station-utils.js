@@ -6,29 +6,41 @@ const _get = require('lodash/get'),
   { URL } = require('url'),
   { DEFAULT_STATION } = require('../universal/constants'),
   api = {},
+  getEmptyAllStations = () => ({
+    asArray: [],
+    byCallsign: {},
+    byId: {},
+    bySlug: {}
+  }),
   _state = {
-    allStations: {
-      bySlug: {},
-      byCallsign: {},
-      asArray: []
-    }
+    allStations: getEmptyAllStations()
+  },
+  resetAllStations = () => {
+    _state.allStations = getEmptyAllStations();
   },
   /**
    * ensures _state.allStations is up to date
+   * @param {object} locals
    */
-  updateAllStations = async () => {
-    const resp = await radioApi.get('stations', { page: { size: 1000 } }),
-      { allStations } = _state;
+  updateAllStations = async locals => {
+    const resp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals);
 
-    if (resp.response_cached && !_isEmpty(allStations.asArray)) {
+    if (resp.response_cached === false && !_isEmpty(_state.allStations.asArray)) {
       return;
     }
 
-    allStations.asArray = resp.data;
+    resetAllStations();
 
-    resp.data.forEach(station => {
-      allStations.bySlug[station.attributes.site_slug] = station;
-      allStations.byCallsign[station.attributes.callsign] = station;
+    // can't be declared above `resetAllStations`
+    // eslint-disable-next-line one-var
+    const { allStations } = _state;
+
+    allStations.asArray = resp.data.map(station => station.attributes);
+
+    allStations.asArray.forEach(station => {
+      allStations.byId[station.id] = station;
+      allStations.bySlug[station.site_slug] = station;
+      allStations.byCallsign[station.callsign] = station;
     });
   },
   /**
@@ -38,7 +50,7 @@ const _get = require('lodash/get'),
    * @returns {function}
    */
   withUpdatedStations = fn => async (...args) => {
-    await updateAllStations();
+    await updateAllStations(_get(args, '[0].locals') || {});
     return fn(...args);
   },
   /**
@@ -48,23 +60,33 @@ const _get = require('lodash/get'),
    * @param {string} url
    * @returns {object|undefined}
    */
-  getStationFromUrl = url => {
+  getStationFromUrl = ({ url }) => {
     const slug = new URL(url).pathname.split('/')[1];
 
     return _state.allStations.bySlug[slug];
   };
 
 /**
+ * Returns an up-to-date _state.allStations
+ *
+ * @returns {object}
+ */
+api.getAllStations = withUpdatedStations(() => _state.allStations);
+
+/**
  * Exposes the allStations state, ensuring they are updated when accessed
  *
- * Note: if more keys are added to the allStations state then we can generate
- *   this getAllStations via a function.  For now this is easier to read.
+ * Note: my decision to add these individually as functions was a mistake.  I
+ *   should have just returned _state.allStations and let it be.  We can clean
+ *   this up in the future but for now I don't want to break other
+ *   people's code.
  */
-api.getAllStations = {
+Object.assign(api.getAllStations, {
   asArray: withUpdatedStations(() => _state.allStations.asArray),
   byCallsign: withUpdatedStations(() => _state.allStations.byCallsign),
+  byId: withUpdatedStations(() => _state.allStations.byId),
   bySlug: withUpdatedStations(() => _state.allStations.bySlug)
-};
+});
 
 /**
  * Returns the station callsign from a url, where the url either has a station
@@ -74,8 +96,8 @@ api.getAllStations = {
  * @param {string} url
  * @returns {Promise<string>}
  */
-api.getCallsignFromUrl = withUpdatedStations(url => {
-  return _get(getStationFromUrl(url), 'attributes.callsign', 'NATL-RC');
+api.getCallsignFromUrl = withUpdatedStations(({ url }) => {
+  return _get(getStationFromUrl({ url }), 'callsign', 'NATL-RC');
 });
 
 /**
@@ -84,7 +106,7 @@ api.getCallsignFromUrl = withUpdatedStations(url => {
  * @param {string} slug
  * @returns {Promise<string>}
  */
-api.getNameFromSlug = withUpdatedStations(slug => _state.allStations.bySlug[slug].attributes.name);
+api.getNameFromSlug = withUpdatedStations(({ slug }) => _state.allStations.bySlug[slug].name);
 
 /**
  * Finds the station callsign from the slug
@@ -92,7 +114,7 @@ api.getNameFromSlug = withUpdatedStations(slug => _state.allStations.bySlug[slug
  * @param {string} slug
  * @returns {Promise<string>}
  */
-api.getCallsignFromSlug = withUpdatedStations(slug => _state.allStations.bySlug[slug].attributes.callsign);
+api.getCallsignFromSlug = withUpdatedStations(({ slug }) => _state.allStations.bySlug[slug].callsign);
 
 /**
  * If the url has a station slug then it returns that station.  Otherwise

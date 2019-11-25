@@ -2,7 +2,7 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, getListInstance, isComponent, isList, isPage, isPublished, isUri } = require('clayutils'),
+  { getComponentName, isComponent, isPage, isPublished, isUri, isPageMeta, isList, getListInstance } = require('clayutils'),
   { loadPermissions } = require('../urps'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
@@ -14,7 +14,10 @@ const express = require('express'),
   interceptLists = require('./intercept-lists'),
   { addAlertsMiddleware } = require('../alerts'),
   componentsToCheck = getComponentsWithPermissions(),
-  pageTypesToCheck = new Set(['homepage', 'section-front']);
+  { pageTypesToCheck } = require('./utils'),
+  hasPermissions = require('./has-permissions'),
+  { getComponentData } = require('../db'),
+  attachToLocals = require('./attach-to-locals');
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -57,13 +60,19 @@ function userPermissionRouter() {
 
   userPermissionRouter.all('/*', async (req, res, next) => {
     try {
-      if (res.locals.user) {
-        if (res.locals.user.provider === 'cognito') {
-          await loadPermissions(req.session, res.locals);
-        }
-        addPermissions(res.locals);
+      const { locals } = res;
 
-        res.locals.componentPermissions = componentsToCheck;
+      if (locals.user) {
+        const { provider } = res.locals.user;
+
+        if (provider === 'cognito') {
+          await loadPermissions(req.session, locals);
+        } else if (provider === 'google') {
+          locals.permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
+        }
+        addPermissions(locals);
+
+        locals.componentPermissions = componentsToCheck;
       }
     } catch (e) {
       log('error', 'Error adding locals.user permissions', e);
@@ -74,27 +83,18 @@ function userPermissionRouter() {
   interceptLists(userPermissionRouter);
   addAlertsMiddleware(userPermissionRouter);
 
+  // we need access to 'res' in createPage so a proper 400 error can be returned
+  //   when a bad station slug is sent.
+  hasPermissions.createPage(userPermissionRouter);
+
+  attachToLocals.updatePermissionsInfo(userPermissionRouter);
+  attachToLocals.stationsIHaveAccessTo(userPermissionRouter);
+
   return userPermissionRouter;
 }
 
 /**
- * retrieves the data from the uri
- *
- * @param {object} db - amphora's internal db instance
- * @param {string} uri
- * @param {string} [key]
- *
- * @return {object}
- */
-async function getComponentData(db, uri, key) {
-  const data = await db.get(uri.split('@')[0]) || {};
-
-  return key ? _get(data, key) : data;
-}
-
-/**
  * determines if a user has permissions to perform an action on a list
- *
  * @param {string} component
  * @param {string} field
  * @param {object} data
@@ -138,14 +138,14 @@ async function checkComponentPermission(uri, req, locals, db) {
 
     if (!locals.user.can(action).a(component).value) {
       // no permissions to modify this component, so reset the value to what it had been
-      req.body = await getComponentData(db, uri);
+      req.body = await getComponentData(uri);
     }
   } else { // specific fields
     let data;
     const resetData = async (field) => {
       // only get the component data once inside the loop
       if (!data) {
-        data = await getComponentData(db, uri);
+        data = await getComponentData(uri);
       }
 
       // if the field exists already override it, else remove it so it matches what it had been
@@ -188,8 +188,10 @@ async function checkComponentPermission(uri, req, locals, db) {
  */
 async function checkUserPermissions(uri, req, locals, db) {
   try {
+    const { user } = locals;
+
     // no matter the request, verify the user has can has the record for this site
-    if (!locals.user.hasPermissionsTo('access').this('station').value) {
+    if (!user.hasPermissionsTo('access').this('station').value) {
       return false;
     }
 
@@ -197,27 +199,20 @@ async function checkUserPermissions(uri, req, locals, db) {
       await checkComponentPermission(uri, req, locals, db);
     }
 
-    if (isPage(uri)) {
-      if (isPublished(uri)) {
-        const pageType = getComponentName(await getComponentData(db, uri, 'main[0]'));
+    // TODO: handle page meta
+    if (isPage(uri) && !isPageMeta(uri) && isPublished(uri)) {
+      const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
 
-        return pageTypesToCheck.has(pageType)
-          ? locals.user.can('publish').a(pageType).value
-          : true;
-      } else if (req.method === 'POST') {
-        const pageType = getComponentName(req.body.main[0]);
-
-        return pageTypesToCheck.has(pageType)
-          ? locals.user.can('create').a(pageType).value
-          : true;
-      }
+      return pageTypesToCheck.has(pageType)
+        ? user.can('publish').a(pageType).value
+        : true;
     }
 
     if (isUri(uri) && req.method === 'DELETE') {
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),
         pageType = getComponentName(pageData.main[0]),
-        { station, user } = locals;
+        { station } = locals;
 
       return pageTypesToCheck.has(pageType)
         ? user.can('unpublish').a(pageType).at(station.callsign).value

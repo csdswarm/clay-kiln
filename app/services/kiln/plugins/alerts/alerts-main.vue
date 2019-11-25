@@ -14,17 +14,8 @@
             </ui-tab>
             <div class="alerts-manager__toolbar">
                 <ui-button @click="newAlert">Add Alert</ui-button>
-                <div class="alerts-manager__station-select">
-                    <ui-select
-                        label="Station"
-                        placeholder="Select a station"
-                        hasSearch=true
-                        :options="stationCallsigns"
-                        @select="loadAlerts"
-                        v-if="!global"
-                        v-model="selectedStation">
-                    </ui-select>
-                </div>
+                <station-select v-show="!global"
+                    class="alerts-manager__station-select" />
             </div>
             <div>
                 <div class="page-list-headers">
@@ -147,7 +138,11 @@
 <script>
     const axios = require('axios');
     const moment = require('moment');
+    const _get = require('lodash/get');
+    const { mapGetters } = require('vuex');
     const { isUrl } = require('../../../universal/utils');
+    const stationSelect = require('../../shared-vue-components/station-select');
+    const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
     const {
         UiButton,
         UiCheckbox,
@@ -202,51 +197,68 @@
             this.loadAlerts();
             this.stationCallsigns = stationCallsigns || await this.getAccessibleCallsigns();
         },
-        computed: {
-            end() {
-                return this.combineDateAndTime(this.endDate, this.endTime);
-            },
-            start() {
-                return this.combineDateAndTime(this.startDate, this.startTime);
-            },
-            global() {
-                return this.tab === 'global';
-            },
-            heading() {
-                return `${this.editMode ? 'Edit' : 'Add New'} Alert` ;
-            },
-            /** Current station, or global station */
-            station() {
-                return this.global ? 'GLOBAL' : this.selectedStation;
-            },
-            tabs() {
-                const { user } = kiln.locals,
-                    tabs = [],
-                    hasGlobalAlertPermissions = user.can('create').a('alerts_global').value || user.can('update').a('alerts_global').value;
-
-                if (hasGlobalAlertPermissions) {
-                    tabs.push({ id: 'global', name: 'Global' });
-                }
-
-                if (hasGlobalAlertPermissions && this.stationCallsigns.length) {
-                    tabs.push({ id: 'station', name: 'Station' });
-                }
-
-                return tabs;
-            },
-            /** True if all required fields are entered */
-            validForm() {
-                return this.message && this.startDate && this.startTime && this.endDate && this.endTime && !moment(this.start).isSameOrAfter(this.end) && this.validLink;
-            },
-            validLink() {
-                if (this.link && !isUrl(this.link)) {
-                    this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
-                    return false;
-                }
-                this.validLinkError = '';
-                return true;
+        watch: {
+            selectedStation() {
+                this.loadAlerts();
             }
         },
+        computed: Object.assign(
+            {},
+            mapGetters(stationSelect.storeNs, ['selectedStation']),
+            {
+                end() {
+                    return this.combineDateAndTime(this.endDate, this.endTime);
+                },
+                start() {
+                    return this.combineDateAndTime(this.startDate, this.startTime);
+                },
+                global() {
+                    return this.tab === 'global';
+                },
+                heading() {
+                    return `${this.editMode ? 'Edit' : 'Add New'} Alert`;
+                },
+                /** Current station, or global station */
+                station() {
+                    return this.global ? 'GLOBAL' : this.selectedStation.callsign;
+                },
+                tabs() {
+                    const { user } = kiln.locals,
+                        tabs = [],
+                        hasGlobalAlertPermissions = user.can('create').a('alerts_global').value || user.can('update').a('alerts_global').value;
+
+                    if (hasGlobalAlertPermissions) {
+                        tabs.push({ id: 'global', name: 'Global' });
+                    }
+
+                    if (hasGlobalAlertPermissions && this.stationCallsigns.length) {
+                        tabs.push({ id: 'station', name: 'Station' });
+                    }
+
+                    return tabs;
+                },
+                /** True if all required fields are entered */
+                validForm() {
+                    return (
+                        this.message
+                        && this.startDate
+                        && this.startTime
+                        && this.endDate
+                        && this.endTime
+                        && !moment(this.start).isSameOrAfter(this.end)
+                        && this.validLink
+                    );
+                },
+                validLink() {
+                    if (this.link && !isUrl(this.link)) {
+                        this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
+                        return false;
+                    }
+                    this.validLinkError = '';
+                    return true;
+                }
+            }
+        ),
         methods: {
             /**
              * Adds or updates an alert based on if in editMode
@@ -331,7 +343,7 @@
             },
             /** Loads all current and future alerts globally or by station */
             async loadAlerts() {
-                if (!this.global && !this.selectedStation) {
+                if (!this.global && !this.selectedStation.callsign) {
                     this.alerts = [];
                 } else {
                     this.loading = true;
@@ -395,8 +407,8 @@
             UiTab,
             UiTextbox,
             UiModal,
-            UiSelect
+            UiSelect,
+            'station-select': StationSelectInput
         }
     }
 </script>
-

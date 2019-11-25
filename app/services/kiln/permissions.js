@@ -1,6 +1,8 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
+  whenRightDrawerExists = require('./when-right-drawer-exists'),
+  { setEachToDisplayNone } = require('../client/dom-helpers'),
   preloadTimeout = 5000,
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -35,7 +37,7 @@ const addPermissions = require('../universal/user-permissions'),
     // Should actually be disabled/enabled instead of hide/show
     fieldInput.hide();
 
-    fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
+    fieldInput.subscribe(PRELOAD_SUCCESS, ({ user, locals: { station }, url: { component } }) => {
       if (user.may(permission, component, station.callsign).value) {
         fieldInput.show();
       }
@@ -85,39 +87,12 @@ const addPermissions = require('../universal/user-permissions'),
       });
   },
   /**
-   * tests whether the node contains the class 'right-drawer'
-   *
-   * @param {Node} node
-   * @returns {boolean}
-   */
-  isRightDrawer = (node) => {
-    return node.classList && node.classList.contains('right-drawer');
-  },
-  /**
-   * returns the publish button elements if they were added
-   *
-   * @param {object} mutation
-   * @returns {object}
-   */
-  getAddedPublishButtons = (mutation) => {
-    const publishDrawer = [...mutation.addedNodes].find(isRightDrawer);
-
-    if (!publishDrawer) {
-      return {};
-    }
-
-    return {
-      publishBtn: publishDrawer.querySelector('.publish-actions > button'),
-      unpublishBtn: publishDrawer.querySelector('.publish-status > button')
-    };
-  },
-  /**
    * A helper method which subscribes to PRELOAD_SUCCESS and returns a promise
    *   of the first result.
    *
-   * @param {object} subscriptions
-   * @param {boolean} scoped
-   * @returns {Promise}
+   * @param {object} subscriptions - an instance of KilnInput
+   * @param {boolean} [scoped=false]
+   * @returns {Promise} - the result of PRELOAD_SUCCESS
    */
   whenPreloaded = (subscriptions, scoped = false) => {
     return new Promise((resolve, reject) => {
@@ -142,17 +117,6 @@ const addPermissions = require('../universal/user-permissions'),
     });
   },
   /**
-   * sets all truthy elements to have the style display: none
-   *
-   * @param {Element[]} elements
-   */
-  setDisplayNone = (elements) => {
-    elements.filter(anElement => !!anElement)
-      .forEach(anElement => {
-        anElement.style.display = 'none';
-      });
-  },
-  /**
    * hides the 'publish' or 'unpublish' button if the user does not
    *   have permissions
    *
@@ -162,11 +126,7 @@ const addPermissions = require('../universal/user-permissions'),
     const subscriptions = new KilnInput(schema),
       whenPreloadedPromise = whenPreloaded(subscriptions);
 
-    subscriptions.subscribe('OPEN_DRAWER', async payload => {
-      if (payload !== 'publish-page') {
-        return;
-      }
-
+    whenRightDrawerExists(subscriptions, async rightDrawerEl => {
       const { locals } = await whenPreloadedPromise,
         hasAccess = locals.user.hasPermissionsTo('access').this('station');
 
@@ -174,34 +134,13 @@ const addPermissions = require('../universal/user-permissions'),
         return;
       }
 
-      // shouldn't be declared above the short circuit
+      // these shouldn't be declared above the short circuit
       // eslint-disable-next-line one-var
-      const publishBtn = document.querySelector('.right-drawer .publish-actions > button'),
-        unpublishBtn = document.querySelector('.right-drawer .publish-status > button');
+      const publishBtn = rightDrawerEl.querySelector('.publish-actions > button'),
+        unpublishBtn = rightDrawerEl.querySelector('.publish-status > button');
 
-      // if this was rendered on the server then there won't be any mutations
-      if (publishBtn || unpublishBtn) {
-        setDisplayNone([publishBtn, unpublishBtn]);
-
-        return;
-      }
-
-      // this shouldn't be declared above the short circuit
-      // eslint-disable-next-line one-var
-      const kilnWrapper = document.querySelector('.kiln-wrapper'),
-        observer = new MutationObserver(mutationList => {
-          for (const mutation of mutationList) {
-            const { publishBtn, unpublishBtn } = getAddedPublishButtons(mutation);
-
-            setDisplayNone([publishBtn, unpublishBtn]);
-            if ([...mutation.removedNodes].find(isRightDrawer)) {
-              observer.disconnect();
-            }
-          }
-        });
-
-      observer.observe(kilnWrapper, { childList: true });
-    }, false);
+      setEachToDisplayNone([publishBtn, unpublishBtn]);
+    });
   },
   /**
    * mutates the schema blocking the user from being able to add/remove items from a simple-list if they do not have permissions

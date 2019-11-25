@@ -2,6 +2,7 @@
 @import "mixins";
 @import "fonts";
 @import "colors";
+@import "content-type";
 
 .alert {
   font-family: Verdana, sans-serif;
@@ -59,6 +60,8 @@
       width: 100%;
       display: flex;
       justify-content: center;
+      flex-direction: column;
+
       .component--brightcove,
       .component--verizon-media,
       .component--omny {

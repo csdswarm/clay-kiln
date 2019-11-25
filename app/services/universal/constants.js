@@ -17,8 +17,19 @@ const SECOND = 1000,
     YEAR
   },
 
+  // this should list the component names of the content types which may be
+  //   created via the kiln drawer.
+  contentTypes = new Set([
+    'article',
+    'gallery',
+    'section-front',
+    'static-page',
+    'topic-page'
+  ]),
+
   PAGE_TYPES = {
     ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front'
   },
@@ -52,6 +63,7 @@ module.exports = {
   DAY,
   WEEK,
   YEAR,
+  contentTypes,
   time,
   PAGE_TYPES
 };

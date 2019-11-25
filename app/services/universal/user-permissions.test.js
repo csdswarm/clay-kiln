@@ -8,17 +8,17 @@ const { expect, assert } = require('chai'),
     },
     permissions: {
       article:{
-        publish:{station:{'NATL-RC': 1}},
-        create:{station:{'NATL-RC': 1}},
-        update:{station:{'NATL-RC': 1}}
+        publish:{ station:{ 'NATL-RC': 1 } },
+        create:{ station:{ 'NATL-RC': 1 } },
+        update:{ station:{ 'NATL-RC': 1 } }
       },
       gallery:{
-        publish:{station:{WHIO: 1, ABCD: 1}},
-        create:{station:{'NATL-RC': 1}},
-        update:{station:{'NATL-RC': 1}}
+        publish:{ station:{ WHIO: 1, ABCD: 1 } },
+        create:{ station:{ 'NATL-RC': 1 } },
+        update:{ station:{ 'NATL-RC': 1 } }
       },
       'alert-banner':{
-        access:{station:{'NATL-RC': 1}}
+        access:{ station:{ 'NATL-RC': 1 } }
       }
     },
     station: {

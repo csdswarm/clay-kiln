@@ -1,6 +1,7 @@
 'use strict';
 
 const pubUtils = require('./publish-utils'),
+  urlPatterns = require('../universal/url-patterns'),
   { PAGE_TYPES } = pubUtils;
 
 /**
@@ -19,7 +20,7 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
   }
 
   return pubUtils.getMainComponentFromRef(componentReference, locals)
-    .then(({component, pageType}) => {
+    .then(({ component, pageType }) => {
       return pubUtils.getUrlOptions(component, locals, pageType);
     });
 }
@@ -34,7 +35,7 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
 function getYearMonthSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      return pubUtils.dateUrlPattern(urlOptions);
+      return urlPatterns.date(urlOptions);
     });
 }
 
@@ -49,10 +50,7 @@ function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.contentType === PAGE_TYPES.ARTICLE) {
-        if (urlOptions.secondarySectionFront) {
-          return pubUtils.articleSecondarySectionFrontSlugPattern(urlOptions);
-        }
-        return pubUtils.articleSlugPattern(urlOptions);
+        return urlPatterns.article(urlOptions);
       }
     });
 }
@@ -68,10 +66,7 @@ function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.contentType === PAGE_TYPES.GALLERY) {
-        if (urlOptions.secondarySectionFront) {
-          return pubUtils.gallerySecondarySectionFrontSlugPattern(urlOptions);
-        }
-        return pubUtils.gallerySlugPattern(urlOptions);
+        return urlPatterns.gallery(urlOptions);
       }
     });
 }
@@ -87,16 +82,23 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
-        if (!urlOptions.primarySectionFront) {
-          return pubUtils.sectionFrontSlugPattern(urlOptions);
-        } else {
-          return pubUtils.secondarySectionFrontSlugPattern(urlOptions);
-        }
+        return urlPatterns.sectionFront(urlOptions);
       }
     });
 }
 
-module.exports.getYearMonthSlugUrl = getYearMonthSlugUrl;
-module.exports.getArticleSlugUrl = getArticleSlugUrl;
-module.exports.getGallerySlugUrl = getGallerySlugUrl;
-module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
+function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      const slug = urlPatterns.author(urlOptions);
+
+      return slug;
+    });
+}
+module.exports = {
+  getYearMonthSlugUrl,
+  getArticleSlugUrl,
+  getGallerySlugUrl,
+  getSectionFrontSlugUrl,
+  getAuthorPageSlugUrl
+};

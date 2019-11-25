@@ -10,7 +10,6 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   slugifyService = require('../../services/universal/slugify'),
-  urlPatterns = require('../universal/url-patterns'),
   { PAGE_TYPES } = require('../universal/constants'),
   /**
    * returns a url to the server for a component
@@ -63,14 +62,14 @@ function isMainComponentReference(ref, mainComponentRefs) {
  * @returns {string|undefined}
  */
 function getComponentReference(page, mainComponentRefs) {
-  for (let key in page) {
+  for (const key in page) {
     if (page.hasOwnProperty(key)) {
-      let value = page[key];
+      const value = page[key];
 
       if (isMainComponentReference(value, mainComponentRefs)) {
         return value;
       } else if (_.isObject(value)) {
-        let result = _.isArray(value) ? _.find(value, function (o) { return isMainComponentReference(o, mainComponentRefs); }) : getComponentReference(value, mainComponentRefs);
+        const result = _.isArray(value) ? _.find(value, function (o) { return isMainComponentReference(o, mainComponentRefs); }) : getComponentReference(value, mainComponentRefs);
 
         if (result) {
           return result;
@@ -143,7 +142,7 @@ function getMainComponentFromRef(componentReference, locals) {
       guaranteeLocalDate(component, publishedComponent, locals);
     }
 
-    return {component, pageType};
+    return { component, pageType };
   });
 }
 
@@ -178,9 +177,10 @@ function getUrlOptions(component, locals, pageType) {
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || sanitize.cleanSlug(component.primaryHeadline) || null;
+  urlOptions.slug = component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline)) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
+  urlOptions.stationSlug = component.stationSlug || '';
 
   if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {
@@ -192,26 +192,22 @@ function getUrlOptions(component, locals, pageType) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
     }
+  } else if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
+    urlOptions.contentType = 'authors';
+    urlOptions.author = component.author;
+    urlOptions.authorSlug = slugifyService(component.author);
   }
+
   return urlOptions;
 }
 
-module.exports.getComponentReference = getComponentReference;
-module.exports.getMainComponentFromRef = getMainComponentFromRef;
-module.exports.getUrlOptions = getUrlOptions;
-module.exports.getUrlPrefix = getUrlPrefix;
-module.exports.getPublishDate = getPublishDate;
-module.exports.putComponentInstance = putComponentInstance;
-module.exports.getComponentInstance = getComponentInstance;
-
-// URL patterns below need to be handled by the site's index.js
-module.exports.dateUrlPattern = urlPatterns.dateUrlPattern;
-module.exports.articleSlugPattern = urlPatterns.articleSlugPattern;
-module.exports.articleSecondarySectionFrontSlugPattern = urlPatterns.articleSecondarySectionFrontSlugPattern;
-module.exports.gallerySlugPattern = urlPatterns.gallerySlugPattern;
-module.exports.gallerySecondarySectionFrontSlugPattern = urlPatterns.gallerySecondarySectionFrontSlugPattern;
-module.exports.sectionFrontSlugPattern = urlPatterns.sectionFrontSlugPattern;
-module.exports.secondarySectionFrontSlugPattern = urlPatterns.secondarySectionFrontSlugPattern;
-
-module.exports.PAGE_TYPES = PAGE_TYPES;
-
+module.exports = {
+  getComponentReference,
+  getMainComponentFromRef,
+  getUrlOptions,
+  getUrlPrefix,
+  getPublishDate,
+  putComponentInstance,
+  getComponentInstance,
+  PAGE_TYPES
+};
