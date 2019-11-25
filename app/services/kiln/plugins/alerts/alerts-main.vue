@@ -141,7 +141,8 @@
     const _get = require('lodash/get');
     const { mapGetters } = require('vuex');
     const { isUrl } = require('../../../universal/utils');
-    const StationSelect = require('../../shared-vue-components/station-select.vue');
+    const stationSelect = require('../../shared-vue-components/station-select');
+    const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
     const {
         UiButton,
         UiCheckbox,
@@ -201,7 +202,7 @@
         },
         computed: Object.assign(
             {},
-            mapGetters(StationSelect.storeNs, ['selectedStation']),
+            mapGetters(stationSelect.storeNs, ['selectedStation']),
             {
                 end() {
                     return this.combineDateAndTime(this.endDate, this.endTime);
@@ -386,7 +387,7 @@
             UiTextbox,
             UiModal,
             UiSelect,
-            StationSelect
+            'station-select': StationSelectInput
         }
     }
 </script>

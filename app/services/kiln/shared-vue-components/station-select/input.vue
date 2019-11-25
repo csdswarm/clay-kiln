@@ -18,51 +18,19 @@
 <script>
 import _ from 'lodash';
 import { mapGetters, mapState } from 'vuex';
+import { storeNs } from './index.js';
 
 const { UiSelect } = window.kiln.utils.components,
   // the national station doesn't have a slug
-  nationalSlug = '',
-  // Ns = namespace
-  storeNs = 'stationSelect',
-  store = {
-    namespaced: true,
-    state() {
-      // _items and _selectedItem should not be consumed by other components
-      return {
-        _items: [],
-        _selectedItem: {}
-      };
-    },
-    getters: {
-      hasManyStations(state) {
-        return state._items.length > 1;
-      },
-      isLabel(_state, getters) {
-        return !getters.hasManyStations;
-      },
-      selectedStation(state) {
-        return state._selectedItem.value;
-      }
-    },
-    mutations: {
-      _setItems(state, val) {
-        state._items = val;
-      },
-      _setSelectedItem(state, val) {
-        state._selectedItem = val;
-      }
-    }
-  };
+  nationalSlug = '';
 
 export default {
   name: 'station-select',
-  storeNs,
   props: {
     initialSelectedSlug: String,
     initialSelectedCallsign: String
   },
   created() {
-    this.$store.registerModule(storeNs, store);
     this.stationsBySlug = window.kiln.locals.stationsIHaveAccessTo;
     this.initItems();
     this.initSelectedItem();

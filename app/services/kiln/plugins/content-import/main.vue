@@ -27,7 +27,8 @@
   import rest from '../../../universal/rest';
   import urlParse from 'url-parse';
   import queryService, { onePublishedArticleByUrl } from '../../../client/query';
-  import StationSelect from '../../shared-vue-components/station-select.vue'
+  import stationSelect from '../../shared-vue-components/station-select'
+  import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
   import { mapGetters } from 'vuex'
   import { ensureStartsWith } from '../../../universal/utils'
 
@@ -45,7 +46,7 @@
         loading: false
       }
     },
-    computed: mapGetters(StationSelect.storeNs, ['selectedStation']),
+    computed: mapGetters(stationSelect.storeNs, ['selectedStation']),
     methods: {
       /**
        * search for an existing url and return one if found
@@ -107,7 +108,7 @@
       UiIconButton,
       UiProgressCircular,
       UiTextbox,
-      StationSelect
+      'station-select': StationSelectInput
     }
   }
 </script>
