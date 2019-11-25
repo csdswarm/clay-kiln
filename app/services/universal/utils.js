@@ -208,6 +208,20 @@ function urlToCanonicalUrl(url) {
   return kilnUrlToPageUrl(url).split('?')[0].split('#')[0];
 }
 
+/**
+ * Trims, lowercases, replaces spaces with dashes and urlencodes the string
+ * @param {string} text
+ * @returns {string}
+ */
+function textToEncodedSlug(text) {
+  return encodeURIComponent(
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/ /g, '-')
+  );
+}
+
 function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
@@ -252,6 +266,7 @@ module.exports = {
   ensurePublishedVersion,
   isInstance,
   urlToCanonicalUrl,
+  textToEncodedSlug,
   debugLog,
   ensureStartsWith,
   prettyJSON,
