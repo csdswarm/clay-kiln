@@ -4,7 +4,6 @@ _confirmRemoval: true
 # event properties
 headline:
   _label: Event Headline
-  _subscribe: eventHeadline
   _placeholder:
     height: 40px
     text: Event Headline
