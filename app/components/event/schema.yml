@@ -18,7 +18,6 @@ headline:
     help: Appears as event's title
 subHeadline:
   _label: Event Sub Headline
-  _subscribe: eventSubHeadline
   _placeholder:
     height: 40px
     text: Event Sub Headline
