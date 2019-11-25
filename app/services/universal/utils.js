@@ -278,7 +278,7 @@ function getFullOriginalUrl(req) {
  */
 function urlToElasticSearch(url) {
   return url.replace('https', 'http');
- }
+}
 
 /**
  * Returns whether the request is for a content component.  A content component

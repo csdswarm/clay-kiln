@@ -12,7 +12,7 @@ describe('utils', () => {
       expect(isEditor({})).to.be.false;
     });
     it("should return false if 'username' exists", () => {
-      expect(isEditor({user: { username: 'not a robot' }})).to.be.true;
+      expect(isEditor({ user: { username: 'not a robot' } })).to.be.true;
     });
   });
 
