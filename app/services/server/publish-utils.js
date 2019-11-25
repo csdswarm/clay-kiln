@@ -138,7 +138,7 @@ function getMainComponentFromRef(componentReference, locals) {
     const componentTypeRegex = /^.*_components\/(\b.+\b)\/instances.*$/g,
       pageType = componentTypeRegex.exec(componentReference)[1] || null;
 
-    if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.EVENT].includes(pageType)) {
+    if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY].includes(pageType)) {
       guaranteePrimaryHeadline(component);
       guaranteeLocalDate(component, publishedComponent, locals);
     }
