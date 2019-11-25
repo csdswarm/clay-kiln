@@ -12,7 +12,7 @@ const slugifyService = require('../../services/universal/slugify'),
     .map(genre => {
       const safeLabel = `music/${slugifyService(genre.label)}`;
 
-      return {css: safeLabel, path: safeLabel, ...genre};
+      return { css: safeLabel, path: safeLabel, ...genre };
     });
 
 module.exports = {

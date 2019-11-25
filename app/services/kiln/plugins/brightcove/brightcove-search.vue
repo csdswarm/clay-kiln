@@ -118,12 +118,23 @@
                 this.populateSearchResults();
             },
             debouncedPopulateSearchResults: _debounce(function() {
-                const {query, endDate, startDate} = this.params
+                const {query, endDate, startDate} = this.params;
+
+                const filterResults = data => {
+                    const live = this.args.live;
+
+                    // filter live only, or no live videos
+                    if (typeof live !== 'undefined') {
+                        data = data.filter(video => live ? video.delivery_type === 'live_origin' : video.delivery_type !== 'live_origin');
+                    }
+
+                    return data;
+                };
 
                 if (query || endDate || startDate) {
                     axios.get('/brightcove/search', {params: {query, endDate, startDate}}).then(({ status, data }) => {
                         if (status === 200 && data) {
-                            this.searchResults = data;
+                            this.searchResults = filterResults(data);
                         } else {
                             this.searchResults = [];
                         }

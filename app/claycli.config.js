@@ -40,7 +40,7 @@ module.exports = {
             ]
           }))
           .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
-          .pipe(gulp.dest('./public/js/', {overwrite: true}));
+          .pipe(gulp.dest('./public/js/', { overwrite: true }));
       }
     },
     {
@@ -81,6 +81,7 @@ module.exports = {
       }
     })
   ],
-  babelTargets: { browsers: ['> 2%'] },
-  autoprefixerOptions: { browsers: ['> 2%'] }
+  babelDebug: true,
+  babelTargets: { browsers: ['> 2%, ie 11'] },
+  autoprefixerOptions: { overrideBrowserslist: ['> 2%, ie 11'] }
 };

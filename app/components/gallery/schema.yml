@@ -1,4 +1,4 @@
-_version: 9.0
+_version: 10.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -12,12 +12,6 @@ primaryHeadline:
       required: true
       max: 280
     help: Write your most shareable headline
-    attachedButton:
-      name: magic-button
-      component: gallery
-      store: components
-      property: headline
-      tooltip: Use Gallery Headline
 shortHeadline:
   _label: Twitter/Short Headline
   _has:
@@ -29,13 +23,8 @@ shortHeadline:
       required: true
       max: 140
     help: Also used for Related Stories and some homepages
-    attachedButton:
-      name: magic-button
-      field: primaryHeadline
-      tooltip: Use Facebook Headline
 teaser:
   _label: Teaser
-  _subscribe: galleryTeaser
   _has:
     input: wysiwyg
     buttons:
@@ -89,17 +78,18 @@ seoDescription:
   _has:
     input: text
     type: multi-line
+    rows: 4
     help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 200 characters
     validate:
       required: true
+      min: 140
+      max: 250
 feedImgUrl:
   _label: Recirculation Image
   _publish: feedImgUrl
   help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
   _has:
     input: advanced-image-upload
-    webLabel: Insert Image via Web
-    webHelp: Supply a valid HTTPS url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
     uploadHelp: Choose an image file from your computer
     validate:
@@ -236,6 +226,7 @@ lead:
       - image
       - instagram-post
       - brightcove
+      - brightcove-live
       - youtube
       - html-embed
       - omny
@@ -254,6 +245,13 @@ content:
       - paragraph
       - subheader
       - inline-related
+bulkImageUpload:
+  _label: Bulk Image Upload
+  _has: 
+    input: bulk-image-upload
+    dest: slides
+  _placeholder:
+    text: Bulk Image Upload
 slides:
   _label: Add slides to gallery
   _componentList:
@@ -311,6 +309,9 @@ showSocial:
   _has:
     input: checkbox
     help: Author social handles are displayed by default. Unchecking this will hide handles on this gallery
+fullWidthLead:
+  _label: Full-Width Lead Component
+  _has: checkbox
 rubric:
   _label: Rubric
   _subscribe: rubric
@@ -349,6 +350,14 @@ editorialFeeds:
     search: true
     list: freq_editorial_feeds
     help: Select all editorial feeds terms for syndication
+corporateSyndication:
+  _label: Syndicate to corporate website(s)
+  _has:
+    input: select
+    multiple: true
+    search: true
+    list: corporate_websites
+    help: Select all corporate websites for syndication
 stationSyndication:
   _label: Syndicate to station(s)
   _has:
@@ -416,6 +425,7 @@ _groups:
       - slidesNumbered
       - reverseOrder
       - includeInlineAds
+      - toggleEditorCondensedSlidesView
   settings:
     fields:
       - showSocial
@@ -430,10 +440,16 @@ _groups:
     fields:
       - featured
       - editorialFeeds
+      - corporateSyndication
       - stationSyndication
       - genreSyndication
       - syndicationStatus
       - syndicatedUrl
+
+  leadSettings:
+    _label: Lead Settings
+    fields:
+      - fullWidthLead
 
 # non-user-editable fields, set by model.js and used for pubsub
 eligibleForGoogleStandout:
@@ -524,3 +540,8 @@ noIndexNoFollow:
     field: isContentFromAP
     operator: ===
     value: false
+
+# toggle editing condensed list view
+toggleEditorCondensedSlidesView:
+  _label: Condensed Slide View On
+  _has: checkbox

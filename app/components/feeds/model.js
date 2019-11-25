@@ -1,6 +1,7 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
+  { formatUTC } = require('../../services/universal/dateTime'),
   bluebird = require('bluebird'),
   log = require('../../services/universal/log').setup({
     file: __filename,
@@ -63,6 +64,15 @@ module.exports.render = async (ref, data, locals) => {
     excludes = locals.exclude || {},
     query = queryService(data.index, locals, data.query.query ? data.query.query : null), // Build the appropriate query obj for the env
     /**
+     * Formats the dates in the array then sorts them in ascending order
+     *
+     * @param {array} dateArray
+     * @return {array}
+     */
+    formatSortDate = (dateArray) =>
+      dateArray.map(date => formatUTC(date))
+        .sort((date1, date2) => (new Date(date1)).getTime() - (new Date(date2)).getTime()),
+    /**
      * add a condition to the query
      *
      * @param {String} item - a string of items to apply add to the query condition
@@ -74,21 +84,21 @@ module.exports.render = async (ref, data, locals) => {
 
       if (item) {
         const localQuery = nested ? queryService.newNestedQuery(nested) : query,
-          items = item.split(',');
+          items = typeof item === 'string' ? item.split(',') : [item];
 
         items.forEach(instance => {
           if (multiQuery) {
             createObj(instance).forEach(cond => {
               if (cond.nested) {
-                const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), { match: cond.match });
-                
+                const newNestedQuery = queryService[conditionType](queryService.newNestedQuery(cond.nested), cond);
+
                 queryService[conditionType === 'addMustNot' ? 'addMust' : conditionType](localQuery, newNestedQuery);
               } else {
-                queryService[conditionType](localQuery, { match: cond.match });
+                queryService[conditionType](localQuery, cond);
               }
             });
           } else {
-            queryService[conditionType](localQuery, { match: createObj(instance)});
+            queryService[conditionType](localQuery, createObj(instance));
           }
           if (conditionType === 'addShould') {
             queryService.addMinimumShould(localQuery, 1);
@@ -103,28 +113,60 @@ module.exports.render = async (ref, data, locals) => {
      * @param {Object} conditions
      */
     addFilterAndExclude = (key, conditions) => {
-      addCondition(filters[key], conditions, 'addShould');
-      addCondition(excludes[key], conditions, 'addMustNot');
+      addCondition(filters[key], conditions, conditions.filterConditionType || 'addShould');
+      addCondition(excludes[key], conditions, conditions.excludeConditionType || 'addMustNot');
     },
     queryFilters = {
       // vertical (sectionfront) and/or exclude tags
-      vertical: { createObj: sectionFront => ({ sectionFront }) },
+      vertical: { createObj: sectionFront => ({ match: { sectionFront } }) },
       // tags
-      tag: { createObj: tag => ({ 'tags.normalized': tag }) },
+      tag: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
       // subcategory (secondary article type)
-      subcategory: { createObj: secondarySectionFront => ({ secondarySectionFront }) },
+      subcategory: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
       // editorial feed (grouped stations)
-      editorial: { createObj: editorial => ({ [`editorialFeeds.${editorial}`]: true }) },
+      editorial: { createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } }) },
+      // corporate websites (corporateSyndication)
+      corporate: {
+        createObj: corporateSyndication => ({ match: { [`corporateSyndication.${corporateSyndication}`]: true } })
+      },
       // stations (stationSyndication)
       station: {
         createObj: station => [
-          { match: { stationSyndication: station } },
+          { match: { stationSyndication: station } } ,
           { match: { 'stationSyndication.normalized': station } }
         ],
         multiQuery: true
       },
       // genres syndicated to (genreSyndication)
-      genre: { createObj: genreSyndication => ({ 'genreSyndication.normalized': genreSyndication }) }
+      genre: { createObj: genreSyndication => ({ match: { 'genreSyndication.normalized': genreSyndication } }) },
+      // date
+      created_date: {
+        filterConditionType: 'addMust',
+        createObj: ({ value, operator = 'gte' }) => ({ range: { date: { [operator]: formatUTC(value) } } })
+      },
+      // date range
+      created_date_between: {
+        filterConditionType: 'addMust',
+        createObj: ({ start = new Date().toISOString(), end = new Date().toISOString() }) => {
+          const dates = formatSortDate([start, end]);
+
+          return { range: { date: { gte: dates[0], lte: dates[1] } } };
+        }
+      },
+      // modified date
+      modified_date: {
+        filterConditionType: 'addMust',
+        createObj: ({ value, operator = 'gte' }) => ({ range: { dateModified: { [operator]: formatUTC(value) } } })
+      },
+      // modified_date range
+      modified_date_between: {
+        filterConditionType: 'addMust',
+        createObj: ({ start = new Date().toISOString(), end = new Date().toISOString() }) => {
+          const dates = formatSortDate([start, end]);
+
+          return { range: { dateModified: { gte: dates[0], lte: dates[1] } } };
+        }
+      }
     };
 
   queryService.addSize(query, filters.size ? filters.size : data.query.size);

@@ -1,0 +1,21 @@
+/* stylelint-disable */
+@import "_global/fonts";
+
+.component--google-ad-manager {
+  &.google-ad-manager--sharethrough-tag {
+    background: none;
+
+    .thumbnail-wrapper {
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .link__info {
+      text-align: left;
+
+      .info__sponsor {
+        @mixin more-content-feed-font10;
+        margin-bottom: em(4, 16);
+      }
+    }
+  }
+}

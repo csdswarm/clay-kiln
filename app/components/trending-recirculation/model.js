@@ -62,8 +62,8 @@ module.exports.save = (ref, data, locals) => {
 module.exports.render = async (ref, data, locals) => {
   if (abTest() && !locals.edit) {
     const lyticsId = _get(locals, 'lytics.uid'),
-      noUserParams = lyticsId ? {} : {url: locals.url},
-      recommendations = await lyticsApi.recommend(lyticsId, {limit: MAX_LYTICS, contentsegment: 'recommended_for_you', ...noUserParams}),
+      noUserParams = lyticsId ? {} : { url: locals.url },
+      recommendations = await lyticsApi.recommend(lyticsId, { limit: MAX_LYTICS, contentsegment: 'recommended_for_you', ...noUserParams }),
       recommendedUrls = recommendations.map(upd => upd.url);
     let articles =
       // remove duplicates by checking the position of the urls and remove items that have no title

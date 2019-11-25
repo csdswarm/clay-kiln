@@ -1,7 +1,7 @@
 'use strict';
 const _get = require('lodash/get'),
   _capitalize = require('lodash/capitalize'),
-  {getVideoDetails} = require('../../services/universal/youtube'),
+  { getVideoDetails } = require('../../services/universal/youtube'),
   defaultPlayerBorderTopCTA = 'Watch';
 
 /**
@@ -48,15 +48,13 @@ function clearContentId(data) {
  * @returns {object} The modified data object
  */
 function setVideoDetails(data, videoDetails) {
-  let maxResThumb;
-
   if (!videoDetails.title) {
     data.videoValid = false;
 
     return data;
   }
 
-  maxResThumb = _get(videoDetails, 'thumbnails.maxres.url');
+  const maxResThumb = _get(videoDetails, 'thumbnails.maxres.url');
 
   Object.assign(data, {
     videoValid: true,

@@ -1,5 +1,11 @@
 # Public assets
-app/public
+app/public/css/*
+app/public/dist/*
+app/public/fonts/*
+app/public/img/*
+app/public/js/*
+app/public/media/*
+app/public/web-player/*
 
 # Terraform
 terraform.tfstate
@@ -86,3 +92,7 @@ radio-web-player
 app/.config/configstore/*
 
 .snapshot
+
+nginx/certs/
+#vscode settings
+.vscode
