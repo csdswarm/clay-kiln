@@ -20,8 +20,6 @@ const AWS = require('aws-sdk'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   slugifyService = require('../services/universal/slugify'),
-  stationUtils = require('../services/server/station-utils'),
-  { wrapInTryCatch } = require('../services/startup/middleware-utils'),
   xml = require('xml'),
   addEndpoints = require('./add-endpoints'),
   ensureStationOnCustomUrl = require('./ensure-station-on-custom-url');
@@ -202,16 +200,9 @@ module.exports = router => {
     return res.send(xml({ urlset }, { declaration: true }));
   });
 
-  /**
-   * Endpoint to expose a list of all callsigns plus NATL-RC to the client
-   *   instead of relying on currentStation.js and locals
-   */
-  router.get('/all-rdc-callsigns', wrapInTryCatch(async (req, res) => {
-    res.send(await stationUtils.getAllStationsCallsigns());
-  }));
-
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
   addEndpoints.createPage(router);
+  addEndpoints.allRdcCallsigns(router);
   ensureStationOnCustomUrl(router);
 };
