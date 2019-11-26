@@ -68,6 +68,8 @@ const _get = require('lodash/get'),
 /**
  * Returns an up-to-date _state.allStations
  *
+ * @param {object} argObj
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  * @returns {object}
  */
 api.getAllStations = withUpdatedStations(() => _state.allStations);
@@ -79,6 +81,11 @@ api.getAllStations = withUpdatedStations(() => _state.allStations);
  *   should have just returned _state.allStations and let it be.  We can clean
  *   this up in the future but for now I don't want to break other
  *   people's code.
+ *
+ * Each call has the following params
+ *
+ * @param {object} argObj
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  */
 Object.assign(api.getAllStations, {
   asArray: withUpdatedStations(() => _state.allStations.asArray),
@@ -92,7 +99,9 @@ Object.assign(api.getAllStations, {
  *   slug at the beginning of the path in the url, or it doesn't which means the
  *   content belongs to the national station.
  *
- * @param {string} url
+ * @param {object} argObj
+ * @param {string} argObj.url
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  * @returns {Promise<string>}
  */
 api.getCallsignFromUrl = withUpdatedStations(({ url }) => {
@@ -102,15 +111,18 @@ api.getCallsignFromUrl = withUpdatedStations(({ url }) => {
 /**
  * Finds the station name from the slug
  *
- * @param {string} slug
- * @returns {Promise<string>}
+ * @param {object} argObj
+ * @param {string} argObj.slug
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  */
 api.getNameFromSlug = withUpdatedStations(({ slug }) => _state.allStations.bySlug[slug].name);
 
 /**
  * Finds the station callsign from the slug
  *
- * @param {string} slug
+ * @param {object} argObj
+ * @param {string} argObj.slug
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  * @returns {Promise<string>}
  */
 api.getCallsignFromSlug = withUpdatedStations(({ slug }) => _state.allStations.bySlug[slug].callsign);
@@ -119,7 +131,9 @@ api.getCallsignFromSlug = withUpdatedStations(({ slug }) => _state.allStations.b
  * If the url has a station slug then it returns that station.  Otherwise
  *   undefined is returned.
  *
- * @param {string} url
+ * @param {object} argObj
+ * @param {string} argObj.url
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  * @returns {object|undefined}
  */
 api.getStationFromOriginalUrl = withUpdatedStations(getStationFromUrl);
