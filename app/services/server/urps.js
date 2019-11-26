@@ -76,7 +76,8 @@ async function loadPermissions(session, user) {
       cache.del(`cognito-auth--${user.username}`);
     }
 
-    let { expires, permissions, lastUpdated } = loginData;
+    const { expires } = loginData;
+    let { permissions, lastUpdated } = loginData;
 
     if (expires < currentTime) {
       Object.assign(loginData, await refreshAuthToken(loginData));
