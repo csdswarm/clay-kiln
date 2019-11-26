@@ -2,7 +2,8 @@
 
 // Require depedencies.
 const alerts = require('./alerts.vue'),
-  alertsMain = require('./alerts-main.vue');
+  alertsMain = require('./alerts-main.vue'),
+  { anyStation } = require('../../../universal/user-permissions');
 
 // Register plugin.
 module.exports = () => {
@@ -13,8 +14,8 @@ module.exports = () => {
   const user = window.kiln.locals.user,
     hasAlertsAccess = () => {
       if (user && user.can) {
-        return user.can('create').an('alerts_global').value ||
-          user.can('update').an('alerts_global').value;
+        return user.can('create').an('alerts_global').for(anyStation).value ||
+          user.can('update').an('alerts_global').for(anyStation).value;
       }
 
       return false;

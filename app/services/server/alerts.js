@@ -4,6 +4,7 @@ const db = require('./db'),
   uuidV4 = require('uuid/v4'),
   _pick = require('lodash/pick'),
   log = require('../universal/log').setup({ file: __filename }),
+  { anyStation } = require('../universal/user-permissions'),
   { prettyJSON } = require('../universal/utils'),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   { wrapInTryCatch } = require('../startup/middleware-utils'),
@@ -183,7 +184,7 @@ const db = require('./db'),
       let permission = res.locals.user.can(action);
 
       if (station === 'GLOBAL') {
-        permission = permission.an('alerts_global');
+        permission = permission.an('alerts_global').for(anyStation);
       } else {
         permission = permission.an('alerts_global').for(station);
       }
