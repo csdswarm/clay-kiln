@@ -153,13 +153,7 @@
         UiTabs,
         UiTab,
         UiTextbox,
-        UiModal,
-        UiSelect } = window.kiln.utils.components;
-
-    /**
-     * Cache results from /all-rdc-callsigns
-     */
-    let stationCallsigns;
+        UiModal } = window.kiln.utils.components;
 
     /**
      * Simple cache-buster value to append to rest URL's to ensure they get the latest version of data
@@ -186,8 +180,6 @@
                 errorMessage: '',
                 selectedAlert: {},
                 tab: 'global',
-                selectedStation: '',
-                stationCallsigns: stationCallsigns || [],
                 validLinkError: ''
             }
         },
@@ -195,7 +187,6 @@
         async created() {
             this.tab = this.tabs[0].id;
             this.loadAlerts();
-            this.stationCallsigns = stationCallsigns || await this.getAccessibleCallsigns();
         },
         watch: {
             selectedStation() {
@@ -223,7 +214,7 @@
                     return this.global ? 'GLOBAL' : this.selectedStation.callsign;
                 },
                 tabs() {
-                    const { user } = kiln.locals,
+                    const { user, stationsIHaveAccessTo } = kiln.locals,
                         tabs = [],
                         hasGlobalAlertPermissions = user.can('create').a('alerts_global').value || user.can('update').a('alerts_global').value;
 
@@ -231,7 +222,7 @@
                         tabs.push({ id: 'global', name: 'Global' });
                     }
 
-                    if (hasGlobalAlertPermissions && this.stationCallsigns.length) {
+                    if (hasGlobalAlertPermissions && Object.keys(stationsIHaveAccessTo).length) {
                         tabs.push({ id: 'station', name: 'Station' });
                     }
 
@@ -374,20 +365,6 @@
             updateTab(tab) {
                 this.tab = tab;
                 this.loadAlerts();
-            },
-            async getAccessibleCallsigns() {
-                const { data: callsigns = []} = await axios.get('/all-rdc-callsigns'),
-                    { user } = kiln.locals,
-                    withStationAlerts = user.using('alerts_global'),
-                    hasStationAccess = station =>
-                        withStationAlerts.can('update').for(station).value ||
-                        withStationAlerts.can('create').for(station).value;
-
-                stationCallsigns = callsigns
-                    .filter(callsign => hasStationAccess(callsign))
-                    .sort();
-
-                return stationCallsigns;
             }
         },
         filters: {
@@ -407,7 +384,6 @@
             UiTab,
             UiTextbox,
             UiModal,
-            UiSelect,
             'station-select': StationSelectInput
         }
     }
