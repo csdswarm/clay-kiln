@@ -114,10 +114,10 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	make build-player && cd spa && npm i && npm run-script build -- --mode=none && cd ../app && npm i && npm run build
+	cd spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm ci && npm run build
 
 install:
-	cd spa && npm i && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm i && npm run build-production
+	cd spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm ci && npm run build-production
 
 lint:
 	cd app && npm run eslint; cd ../spa && npm run lint -- --no-fix
@@ -154,10 +154,10 @@ gen-certs:
 
 .PHONY: spa
 spa:
-	cd spa && npm i && npm run-script build -- --mode=none
+	cd spa && npm ci && npm run-script build -- --mode=none
 
 spa-dev:
-	cd spa && npm i && npm run-script build -- --mode=none --watch
+	cd spa && npm ci && npm run-script build -- --mode=none --watch
 
 app-dev:
-	cd app && npm i && npm run watch
+	cd app && npm ci && npm run watch

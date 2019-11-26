@@ -182,23 +182,47 @@ function urlToCanonicalUrl(url) {
   return kilnUrlToPageUrl(url).split('?')[0].split('#')[0];
 }
 
+/**
+ * Trims, lowercases, replaces spaces with dashes and urlencodes the string
+ * @param {string} text
+ * @returns {string}
+ */
+function textToEncodedSlug(text) {
+  return encodeURIComponent(
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/ /g, '-')
+  );
+}
+
 function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
   }
 }
 
-module.exports.isFieldEmpty = isFieldEmpty;
-module.exports.has = has;
-module.exports.replaceVersion = replaceVersion;
-module.exports.isUrl = isUrl;
-module.exports.uriToUrl = uriToUrl;
-module.exports.urlToUri = urlToUri;
-module.exports.formatStart = formatStart;
-module.exports.toTitleCase = toTitleCase;
-module.exports.getSiteBaseUrl = getSiteBaseUrl;
-module.exports.isPublishedVersion = isPublishedVersion;
-module.exports.ensurePublishedVersion = ensurePublishedVersion;
-module.exports.isInstance = isInstance;
-module.exports.urlToCanonicalUrl = urlToCanonicalUrl;
-module.exports.debugLog = debugLog;
+Object.assign(module.exports, {
+  /**
+   * Url queries to elastic search need to be `http` since that is
+   * how it is indexed as.
+   * @param {String} url
+   * @returns {String}
+   */
+  urlToElasticSearch: url => url.replace('https', 'http'),
+  isFieldEmpty,
+  has,
+  replaceVersion,
+  isUrl,
+  uriToUrl,
+  urlToUri,
+  formatStart,
+  toTitleCase,
+  getSiteBaseUrl,
+  isPublishedVersion,
+  ensurePublishedVersion,
+  isInstance,
+  urlToCanonicalUrl,
+  textToEncodedSlug,
+  debugLog
+});

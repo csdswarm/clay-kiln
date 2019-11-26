@@ -17,4 +17,6 @@ _components:
       _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+    sharethroughTag:
+      _ref: /_components/google-ad-manager/instances/sharethroughTag
     introComponents: []
