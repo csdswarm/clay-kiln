@@ -19,6 +19,13 @@ pageLength:
     input: text
     type: number
 
+maxLength:
+  _label: Maximum Number of Content Items
+  _has:
+    help: Limit the number of content items
+    input: text
+    type: number
+
 autoPopulatedContentHeader:
   _label: Auto-Populated Content
   _has: static
@@ -263,6 +270,7 @@ _groups:
     _label: Content Feed
     fields:
       - pageLength
+      - maxLength
       - autoPopulatedContentHeader
       - populateFrom
       - sectionFrontManual
