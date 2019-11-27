@@ -138,9 +138,11 @@
 <script>
     const axios = require('axios');
     const moment = require('moment');
-    const { isUrl } = require('../../../universal/utils');
-    const StationSelect = require('../../shared-vue-components/station-select.vue');
+    const _get = require('lodash/get');
     const { mapGetters } = require('vuex');
+    const { isUrl } = require('../../../universal/utils');
+    const stationSelect = require('../../shared-vue-components/station-select');
+    const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
     const {
         UiButton,
         UiCheckbox,
@@ -178,7 +180,6 @@
                 startTime: '',
                 errorMessage: '',
                 selectedAlert: {},
-                selectedStation: {},
                 tab: 'global',
                 tabs: [{
                     id: 'global',
@@ -201,7 +202,7 @@
         },
         computed: Object.assign(
             {},
-            mapGetters(StationSelect.storeNs, ['selectedStation']),
+            mapGetters(stationSelect.storeNs, ['selectedStation']),
             {
                 end() {
                     return this.combineDateAndTime(this.endDate, this.endTime);
@@ -212,12 +213,22 @@
                 global() {
                     return this.tab === 'global';
                 },
-                heading(){
-                    return `${this.editMode ? 'Edit' : 'Add New'} Alert` ;
+                heading() {
+                    return `${this.editMode ? 'Edit' : 'Add New'} Alert`;
                 },
                 /** Current station, or global station */
                 station() {
-                    return this.global ? 'NATL-RC' : this.selectedStation.callsign;
+                    return this.global ? 'GLOBAL' : this.selectedStation.callsign;
+                },
+                stationCallsigns() {
+                    const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
+
+                    return allStationCallsigns.concat('NATL-RC')
+                        .sort()
+                        .map(station => ({
+                            label: station === 'NATL-RC' ? 'Radio.com' : station,
+                            value: station
+                        }));
                 },
                 /** True if all required fields are entered */
                 validForm() {
@@ -376,7 +387,7 @@
             UiTextbox,
             UiModal,
             UiSelect,
-            StationSelect
+            'station-select': StationSelectInput
         }
     }
 </script>

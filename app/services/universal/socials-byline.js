@@ -1,6 +1,7 @@
 'use strict';
 
 const socialSvgs = require('./social-svgs'),
+  { textToEncodedSlug } = require('./utils'),
   twitterHtml = (authorData) => `<a href="http://twitter.com/${authorData.twitter}" target='_blank' class="author-socials"><span class="author-socials-icon twitter">${socialSvgs.TWITTER}</span><span>@${authorData.twitter}</span></a>`,
   fbHtml = (authorData) => `<a href="http://facebook.com/${authorData.facebook}" target='_blank' class="author-socials"><span class="author-socials-icon facebook">${socialSvgs.FACEBOOK}</span><span>@${authorData.name.toLowerCase().replace(/\s/g, '')}</span></a>`,
   igHtml = (authorData) => `<a href="http://instagram.com/${authorData.instagram}" target='_blank' class="author-socials"><span class="author-socials-icon instagram">${socialSvgs.INSTAGRAM}</span><span>@${authorData.instagram}</span></a>`;
@@ -101,15 +102,15 @@ function getSocialHtmlWithoutPreference(authorData) {
  * @return {String}
  */
 function createAuthorHtml(authorData, options) {
-  var nameOrText = authorData.name || authorData.text,
-    link = nameOrText.trim().replace(/\s/g, '-').replace(/%2F/g, '/').toLowerCase();
+  const nameOrText = authorData.name || authorData.text,
+    link = textToEncodedSlug(nameOrText);
 
   // multiline interpolation doesn't work here because whitespace will get interpreted literally
   return `<span itemprop="author" itemscope itemtype="http://schema.org/Person" class="author" data-author="${nameOrText}">` +
-    `<a href="//${options.authorHost}/authors/${encodeURIComponent(link)}" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
+    `<a href="//${options.authorHost}/authors/${link}" rel="author" class="${options.linkClass ? options.linkClass : 'author__anchor'}">` +
     `<span${options.nameClass ? ` class="${options.nameClass}"` : ''}>${nameOrText}</span>` +
     `<meta itemprop="name" content="${nameOrText}"/>` +
-    `<link itemprop="sameAs" href="//${options.authorHost}/authors/${encodeURIComponent(link)}"/></a></span>`;
+    `<link itemprop="sameAs" href="//${options.authorHost}/authors/${link}"/></a></span>`;
 }
 
 // For testing

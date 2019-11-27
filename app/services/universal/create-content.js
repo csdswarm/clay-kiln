@@ -4,19 +4,17 @@ const _get = require('lodash/get'),
   striptags = require('striptags'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  utils = require('./utils'),
-  has = utils.has, // convenience
-  isFieldEmpty = utils.isFieldEmpty, // convenience
+  { uriToUrl, replaceVersion, has, isFieldEmpty, textToEncodedSlug } = require('./utils'),
   sanitize = require('./sanitize'),
   promises = require('./promises'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
   { PAGE_TYPES } = require('./../universal/constants'),
+  articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
-  { getComponentName } = require('clayutils'),
-  articleOrGallery = new Set(['article', 'gallery']);
+  { getComponentName } = require('clayutils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -197,7 +195,7 @@ function setCanonicalUrl(data, locals) {
  */
 function getPrevData(uri, data, locals) {
   if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.slug)) {
-    return promises.timeout(rest.get(utils.uriToUrl(utils.replaceVersion(uri), locals)), 1000).catch(() => null); // fail gracefully
+    return promises.timeout(rest.get(uriToUrl(replaceVersion(uri), locals)), 1000).catch(() => null); // fail gracefully
   }
 }
 
@@ -211,7 +209,7 @@ function getPrevData(uri, data, locals) {
  */
 function getPublishedData(uri, data, locals) {
   if (has(data.seoHeadline) || has(data.shortHeadline) || has(data.slug)) {
-    return promises.timeout(rest.get(utils.uriToUrl(utils.replaceVersion(uri, 'published'), locals)), 1000).catch(() => null); // fail gracefully
+    return promises.timeout(rest.get(uriToUrl(replaceVersion(uri, 'published'), locals)), 1000).catch(() => null); // fail gracefully
   }
 }
 
@@ -312,53 +310,6 @@ function cleanSiloImageUrl(data) {
 }
 
 /**
- * This is a NYMag legacy thing. We converted the original
- * `authors` array into a more complex `byline` structure,
- * but we still key a lot of things off the flatter `authors`
- * array. That's why we're doing this work, but it's done
- * on save as to not affect rendering
- *
- * @param {object} data
- */
-function setPlainAuthorsList(data) {
-  const bylineList = _get(data, 'byline', []),
-    authors = [];
-
-  if (bylineList.length > 0) {
-    bylineList.forEach((byline) => {
-      if (byline.names) {
-        byline.names.forEach((name) => {
-          authors.push(name);
-        });
-      }
-    });
-
-    data.authors = authors;
-  }
-}
-
-/**
- * Transcribes byline names, directly to sources on the data.
- * @param {Object} data
- */
-function setPlainSourcesList(data) {
-  const bylineList = _get(data, 'byline', []),
-    sources = [];
-
-  if (bylineList.length > 0) {
-    bylineList.forEach((byline) => {
-      if (byline.names) {
-        byline.names.forEach((name) => {
-          sources.push(name);
-        });
-      }
-    });
-
-    data.sources = sources;
-  }
-}
-
-/**
  * Good for when you have a byline array but one
  * of the objects inside the byline has no name.
  * The byline formatter handlebars helper doesn't
@@ -371,6 +322,39 @@ function sanitizeByline(data) {
   const byline = _get(data, 'byline', []);
 
   data.byline = byline.filter(entry => !!entry.names);
+}
+
+/**
+ * Iterates over the byline, cleaning and consolidating authors and sources into their own
+ * property for backward compatibility and reduced development effort elsewhere
+ *
+ * @param {object} data
+ */
+function bylineOperations(data) {
+  const authors = [], sources = [];
+
+  for (const { names, sources: bylineSources } of data.byline || []) {
+    /*
+      Originally a NYMag legacy thing, since we converted the original
+      `authors` array into a more complex `byline` structure,
+      but we still key a lot of things off the flatter `authors`
+      array. That's why we're doing this work, but it's done
+      on save as to not affect rendering.
+    */
+    for (const author of names || []) {
+      delete author.count;
+      author.slug = textToEncodedSlug(author.text);
+      authors.push(author);
+    }
+    // do sources too
+    for (const source of bylineSources || []) {
+      delete source.count;
+      sources.push(source);
+    }
+  }
+
+  Object.assign(data, { authors, sources });
+  sanitizeByline(data);
 }
 
 /**
@@ -540,20 +524,20 @@ function render(ref, data, locals) {
  */
 function assignStationInfo(uri, data, locals) {
   if (locals.newPageStation !== undefined) {
-    const attrs = locals.newPageStation.attributes,
+    const station = locals.newPageStation,
       componentName = getComponentName(uri);
 
     Object.assign(data, {
-      stationSlug: attrs.site_slug,
-      stationName: attrs.name,
-      stationCallsign: attrs.callsign,
-      stationTimezone: attrs.timezone
+      stationSlug: station.site_slug,
+      stationName: station.name,
+      stationCallsign: station.callsign,
+      stationTimezone: station.timezone
     });
 
     if (articleOrGallery.has(componentName)) {
       Object.assign(data, {
-        stationLogoUrl: attrs.square_logo_small,
-        stationURL: attrs.website
+        stationLogoUrl: station.square_logo_small,
+        stationURL: station.website
       });
     }
   } else {
@@ -588,9 +572,7 @@ async function save(uri, data, locals) {
   formatDate(data, locals);
   setCanonicalUrl(data, locals);
   cleanSiloImageUrl(data);
-  setPlainAuthorsList(data);
-  setPlainSourcesList(data);
-  sanitizeByline(data);
+  bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
 

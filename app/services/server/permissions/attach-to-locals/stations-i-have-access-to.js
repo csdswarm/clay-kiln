@@ -22,21 +22,30 @@ module.exports = router => {
   router.get('/*', wrapInTryCatch(async (req, res, next) => {
     // this is only meant for kiln, so if we're not editing then we don't
     //   need it
-    if (!res.locals.edit) {
+    const { locals } = res,
+      stationAccessPerms = _.get(res, 'locals.permissions.station.access.station');
+
+    if (!locals.edit) {
       return next();
     }
-    const callsignsIHaveAccessTo = Object.keys(res.locals.permissions.station.access.station),
-      stationsByCallsign = await stationUtils.getAllStations.byCallsign(),
+
+    if (!stationAccessPerms) {
+      locals.stationsIHaveAccessTo = {};
+      return next();
+    }
+
+    // these shouldn't be declared above the short circuits
+    // eslint-disable-next-line one-var
+    const callsignsIHaveAccessTo = Object.keys(stationAccessPerms),
+      stationsByCallsign = await stationUtils.getAllStations.byCallsign({ locals }),
       stationsBySlug = _.chain(stationsByCallsign)
         .pick(callsignsIHaveAccessTo)
-        .mapKeys('attributes.site_slug')
-        .mapValues(aStation => {
-          const { attributes: attr } = aStation;
-
+        .mapKeys('site_slug')
+        .mapValues(({ callsign, name, site_slug }) => {
           return {
-            callsign: attr.callsign,
-            name: attr.name,
-            slug: attr.site_slug
+            callsign,
+            name,
+            slug: site_slug
           };
         })
         .value();

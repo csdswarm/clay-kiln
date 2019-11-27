@@ -93,7 +93,7 @@ app/.config/configstore/*
 
 .snapshot
 
+nginx/certs/
+
 #vscode settings
 .vscode
-
-nginx/certs/

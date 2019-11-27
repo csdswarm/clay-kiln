@@ -40,7 +40,8 @@ a header indicates such.
 import _ from 'lodash';
 import axios from 'axios';
 import { mapGetters } from 'vuex'
-import StationSelect from '../../shared-vue-components/station-select.vue'
+import stationSelect from '../../shared-vue-components/station-select'
+import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
 import {
   editExt,
   htmlExt,
@@ -56,7 +57,6 @@ const { filterableList } = window.kiln.utils.components;
 export default {
   data() {
     return {
-      stationSelectItems: [],
       secondaryActions: [{
         icon: 'settings',
         tooltip: 'Edit Template',
@@ -70,7 +70,7 @@ export default {
   },
   computed: Object.assign(
     {},
-    mapGetters(StationSelect.storeNs, ['selectedStation']),
+    mapGetters(stationSelect.storeNs, ['selectedStation']),
     {
       isAdmin() {
         return _.get(this.$store, 'state.user.auth') === 'admin';
@@ -195,8 +195,8 @@ export default {
     }
   },
   components: {
-    'filterable-list': filterableList,
-    StationSelect
+    filterableList,
+    'station-select': StationSelectInput
   }
 };
 </script>

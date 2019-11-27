@@ -26,6 +26,7 @@
 
 const pluralize = require('pluralize'),
   _get = require('lodash/get'),
+  anyStation = Symbol(),
   KEYS = {
     action: 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
     target: 'a,an,the,this,using,canUse,canModify'.split(','),
@@ -44,7 +45,7 @@ const pluralize = require('pluralize'),
 
     const _DEFAULT = {
         action: 'access',
-        location: 'NATL-RC'
+        location: null
       },
       /**
        * make the string representing what the user does not have permissions to do
@@ -54,9 +55,7 @@ const pluralize = require('pluralize'),
        * @return {string}
        */
       createMessage = (action, target) => {
-        const perform = action === _DEFAULT.action ? '' : ` ${action}`;
-
-        return `You do not have permissions to${perform} ${pluralize(target.replace(/-/g, ' '))}.`;
+        return `You do not have permissions to ${action} ${pluralize(target.replace(/-/g, ' '))}.`;
       },
       /**
        * returns an the action, target, location given action, target, location
@@ -96,10 +95,15 @@ const pluralize = require('pluralize'),
        * @param {string} type - value/message
        * @return {boolean|string}
        */
-      checkCondition = (type) => {
-        let value = false,
+      checkCondition = type => {
+        let hasPermission = false,
           message = '';
-        const { action = _DEFAULT.action, target, location = _DEFAULT.location } = _condition;
+
+        const {
+          action = _DEFAULT.action,
+          target,
+          location = _DEFAULT.location
+        } = _condition;
 
         if (target) {
           const {
@@ -108,14 +112,46 @@ const pluralize = require('pluralize'),
             location: locationToCheck
           } = getCondition(action, target, location);
 
-          value = Boolean(_override || _get(_permissions, `${targetToCheck}.${actionToCheck}.station.${locationToCheck}`));
+          let stationPath;
 
-          if (!value) {
+          // if no location was passed then that means we're not able to
+          //   verify the station.  This applies to server-side non-content
+          //   components and other contexts which would require a lot of work
+          //   in order to figure out the affected stations.  Here we only end
+          //   up checking the user has permissions to 'action' the 'target'.
+          //   If the user doesn't have permissions to do that for any station,
+          //   then the path won't exist.
+          //
+          // in the future we may create a ticket to attach a list of page
+          //   references to all components and other items which require
+          //   permissions.  This would help out when working with clay in
+          //   general, but specifically it would allow us to check the
+          //   stations a component lives on to determine whether the user is
+          //   allowed to 'action' it.
+          if (!locationToCheck) {
+            stationPath = '';
+            // for a sensible place to put comments
+            // eslint-disable-next-line brace-style
+          }
+          // if 'anyStation' was passed then, similar to no location, we only
+          //   need to check the user can 'action' the 'target'.  This applies
+          //   to permissions like being able to see the alerts and import kiln
+          //   drawer items.
+          else if (locationToCheck === anyStation) {
+            stationPath = '';
+          } else {
+            stationPath = `.station.${locationToCheck}`;
+          }
+
+          hasPermission = _override
+            || !!_get(_permissions, `${targetToCheck}.${actionToCheck}${stationPath}`);
+
+          if (!hasPermission) {
             message = createMessage(actionToCheck, targetToCheck);
           }
         }
 
-        return type === 'message' ? message : value ;
+        return type === 'message' ? message : hasPermission ;
       },
       /**
        * updates the condition keys based on the type and arguments passed in.
@@ -270,15 +306,17 @@ const pluralize = require('pluralize'),
      *
      * @param {object} locals
      */
-    return ({ user, permissions, station }) => {
+    return ({ user, permissions, stationForPermissions }) => {
       if (user && !user.can) {
-        _permissions = permissions || {};
+        _permissions = permissions || {},
         _override = false;
 
         // helper to not have to pass station
-        if (station && station.callsign) {
-          _DEFAULT.location = station.callsign;
-        }
+        _DEFAULT.location = _get(
+          stationForPermissions,
+          'callsign',
+          null
+        );
 
         addMethods(user);
       }
@@ -286,3 +324,7 @@ const pluralize = require('pluralize'),
   };
 
 module.exports = userPermissions();
+
+Object.assign(module.exports, {
+  anyStation
+});

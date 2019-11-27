@@ -22,10 +22,10 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
+  cognitoAuth = require('./cognito-auth'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
-  cacheControl = require('./cache-control'),
-  cognitoAuth = require('./cognito-auth');
+  cacheControl = require('./cache-control');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',

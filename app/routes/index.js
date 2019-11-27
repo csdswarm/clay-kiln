@@ -146,6 +146,8 @@ module.exports = router => {
    */
   router.post('/import-content', importContent);
 
+  addEndpoints.sitemap(router);
+
   /**
    * Sitemap for stations directories and station detail pages
    */
@@ -163,8 +165,11 @@ module.exports = router => {
     // Location station directory pages
     await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }, null, {}, res.locals).then(function (markets) {
       markets.data.forEach(market => {
-        urlset.push({ url:
-          [{ loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}` }]
+        urlset.push({
+          url:
+            [{
+              loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}`
+            }]
         });
       });
     });
@@ -173,8 +178,9 @@ module.exports = router => {
     await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }, null, {}, res.locals).then(function (genres) {
       genres.data.forEach(genre => {
         if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
-          urlset.push({ url:
-            [{ loc: `${baseUrl}/stations/music/${slugifyService(genre.attributes.name)}` }]
+          urlset.push({
+            url:
+              [{ loc: `${baseUrl}/stations/music/${slugifyService(genre.attributes.name)}` }]
           });
         }
       });
@@ -192,7 +198,7 @@ module.exports = router => {
     });
 
     res.type('application/xml');
-    return res.send( xml( { urlset }, { declaration: true } ) );
+    return res.send(xml({ urlset }, { declaration: true }));
   });
 
   additionalDataTypes.inject(router, checkAuth);

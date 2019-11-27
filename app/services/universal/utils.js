@@ -6,7 +6,9 @@ const _isArray = require('lodash/isArray'),
   _isNull = require('lodash/isNull'),
   _isUndefined = require('lodash/isUndefined'),
   _get = require('lodash/get'),
-  _parse = require('url-parse'),
+  parse = require('url-parse'),
+  { getComponentName, isComponent } = require('clayutils'),
+  { contentTypes } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
 
@@ -76,7 +78,7 @@ function replaceVersion(uri, version) {
  */
 function uriToUrl(uri, locals) {
   const protocol = _get(locals, 'site.protocol') || 'http',
-    parsed = _parse(`${protocol}://${uri}`);
+    parsed = parse(`${protocol}://${uri}`);
 
   return parsed.href;
 }
@@ -92,8 +94,8 @@ function uriToUrl(uri, locals) {
  * @returns {string}
  */
 function removeExtension(path) {
-  let leadingDot;
   const endSlash = path.lastIndexOf('/');
+  let leadingDot;
 
   if (endSlash > -1) {
     leadingDot = path.indexOf('.', endSlash);
@@ -113,7 +115,7 @@ function removeExtension(path) {
  * @return {string}
  */
 function urlToUri(url) {
-  const parsed = _parse(url);
+  const parsed = parse(url);
 
   return `${parsed.hostname}${removeExtension(parsed.pathname)}`;
 }
@@ -208,20 +210,64 @@ function urlToCanonicalUrl(url) {
   return kilnUrlToPageUrl(url).split('?')[0].split('#')[0];
 }
 
+/**
+ * Trims, lowercases, replaces spaces with dashes and urlencodes the string
+ * @param {string} text
+ * @returns {string}
+ */
+function textToEncodedSlug(text) {
+  return encodeURIComponent(
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/ /g, '-')
+  );
+}
+
+/**
+ * Copied over from the spa, allows us to log messages that should only show
+ *   during development.
+ *
+ * @param {*} args
+ */
 function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
   }
 }
 
+/*
+ * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
+ *   begin with the prefix.
+ *
+ * @param {string} prefix
+ * @param {string} str
+ * @returns {string}
+ */
 function ensureStartsWith(prefix, str) {
   return str.startsWith(prefix)
     ? str
     : prefix + str;
 }
 
+/**
+ * A tiny utility to format obj as a string
+ *
+ * @param {*} obj
+ * @returns {string}
+ */
 function prettyJSON(obj) {
   return JSON.stringify(obj, null, 2);
+}
+
+/**
+ * Returns the full original url including the protocol and request's host
+ *
+ * @param {object} req
+ * @returns {string}
+ */
+function getFullOriginalUrl(req) {
+  return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
 }
 
 /**
@@ -234,8 +280,19 @@ function urlToElasticSearch(url) {
   return url.replace('https', 'http');
 }
 
-function getFullOriginalUrl(req) {
-  return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
+/**
+ * Returns whether the request is for a content component.  A content component
+ *   here just means a component that can be created via the kiln drawer e.g.
+ *   article, gallery, etc.
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+function isContentComponent(url) {
+  const componentName = getComponentName(url);
+
+  return isComponent(url)
+    && contentTypes.has(componentName);
 }
 
 module.exports = {
@@ -252,9 +309,11 @@ module.exports = {
   ensurePublishedVersion,
   isInstance,
   urlToCanonicalUrl,
-  urlToElasticSearch,
+  textToEncodedSlug,
   debugLog,
   ensureStartsWith,
   prettyJSON,
-  getFullOriginalUrl
+  getFullOriginalUrl,
+  urlToElasticSearch,
+  isContentComponent
 };

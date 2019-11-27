@@ -4,6 +4,7 @@
 @import '_global/spa';
 @import "_global/colors";
 @import "_global/alert-banner";
+@import "_global/layouts";
 
 .layout--one-column {
   height: 100vh;

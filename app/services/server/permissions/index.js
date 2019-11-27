@@ -2,7 +2,7 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, isComponent, isPage, isPublished, isUri, isList, getListInstance } = require('clayutils'),
+  { getComponentName, isComponent, isPage, isPublished, isUri, isPageMeta, isList, getListInstance } = require('clayutils'),
   { loadPermissions } = require('../urps'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
@@ -16,8 +16,7 @@ const express = require('express'),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
   { getComponentData } = require('../db'),
-  attachToLocals = require('./attach-to-locals'),
-  { wrapInTryCatch } = require('../../startup/middleware-utils');
+  attachToLocals = require('./attach-to-locals');
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -58,31 +57,35 @@ function getComponentsWithPermissions() {
 function userPermissionRouter() {
   const userPermissionRouter = express.Router();
 
-  userPermissionRouter.all('/*', wrapInTryCatch(async (req, res, next) => {
+  userPermissionRouter.all('/*', async (req, res, next) => {
     try {
-      if (res.locals.user) {
+      const { locals } = res;
+
+      if (locals.user) {
         const { provider } = res.locals.user;
 
         if (provider === 'cognito') {
-          await loadPermissions(req.session, res.locals);
+          await loadPermissions(req.session, locals);
         } else if (provider === 'google') {
-          res.locals.permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
+          locals.permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
         }
-        addPermissions(res.locals);
+        addPermissions(locals);
 
-        res.locals.componentPermissions = componentsToCheck;
+        locals.componentPermissions = componentsToCheck;
       }
     } catch (e) {
       log('error', 'Error adding locals.user permissions', e);
     }
     next();
-  }));
+  });
 
   interceptLists(userPermissionRouter);
 
   // we need access to 'res' in createPage so a proper 400 error can be returned
   //   when a bad station slug is sent.
   hasPermissions.createPage(userPermissionRouter);
+
+  attachToLocals.updatePermissionsInfo(userPermissionRouter);
   attachToLocals.stationsIHaveAccessTo(userPermissionRouter);
 
   return userPermissionRouter;
@@ -90,7 +93,6 @@ function userPermissionRouter() {
 
 /**
  * determines if a user has permissions to perform an action on a list
- *
  * @param {string} component
  * @param {string} field
  * @param {object} data
@@ -194,7 +196,8 @@ async function checkUserPermissions(uri, req, locals, db) {
       await checkComponentPermission(uri, req, locals, db);
     }
 
-    if (isPage(uri) && isPublished(uri)) {
+    // TODO: handle page meta
+    if (isPage(uri) && !isPageMeta(uri) && isPublished(uri)) {
       const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
  
       return pageTypesToCheck.has(pageType)
@@ -205,7 +208,7 @@ async function checkUserPermissions(uri, req, locals, db) {
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),
         pageType = getComponentName(pageData.main[0]),
-        { station, user } = locals;
+        { station } = locals;
 
       return pageTypesToCheck.has(pageType)
         ? user.can('unpublish').a(pageType).at(station.callsign).value

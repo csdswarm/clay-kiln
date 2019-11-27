@@ -651,6 +651,13 @@ em, i {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Brightcove Overlay Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+@define-mixin overlay-font1 {
+  @mixin font CircularStd-Black, 16px, $white, inherit, 19px;
+}
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Rules Component Styleguide ||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -717,4 +724,11 @@ em, i {
 }
 @define-mixin latest-top-recirc-slider-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Permissions Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin permissions-font1 {
+  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
 }

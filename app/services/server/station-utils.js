@@ -44,14 +44,15 @@ const _get = require('lodash/get'),
   },
   /**
    * ensures _state.allStations is up to date
+   * @param {object} locals
    */
-  updateAllStations = async () => {
+  updateAllStations = async locals => {
     const [ stationsResp, marketsResp ] = await Promise.all([
-      radioApi.get('stations', { page: { size: 1000 } }),
-      radioApi.get('markets', { page: { size: 100 } })
+      radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
+      radioApi.get('markets', { page: { size: 100 } }, null, {}, locals)
     ]);
 
-    if (stationsResp.response_cached && !_isEmpty(_state.allStations.asArray)) {
+    if (stationsResp.response_cached === false && !_isEmpty(_state.allStations.asArray)) {
       return;
     }
 
@@ -61,19 +62,19 @@ const _get = require('lodash/get'),
     // eslint-disable-next-line one-var
     const { allStations } = _state;
 
-    allStations.asArray = stationsResp.data;
+    allStations.asArray = stationsResp.data.map(station => station.attributes);
 
-    stationsResp.data.forEach(station => {
-      station.attributes.timezone = marketsResp.data ?
+    allStations.asArray.forEach(station => {
+      station.timezone = marketsResp.data ?
         getTimezoneFromMarketID(
           marketsResp.data,
-          station.attributes.market_id || station.attributes.market.id
+          station.market_id || station.market.id
         )
         : 'ET';
 
       allStations.byId[station.id] = station;
-      allStations.bySlug[station.attributes.site_slug] = station;
-      allStations.byCallsign[station.attributes.callsign] = station;
+      allStations.bySlug[station.site_slug] = station;
+      allStations.byCallsign[station.callsign] = station;
     });
   },
   /**
@@ -83,7 +84,7 @@ const _get = require('lodash/get'),
    * @returns {function}
    */
   withUpdatedStations = fn => async (...args) => {
-    await updateAllStations();
+    await updateAllStations(_get(args, '[0].locals') || {});
     return fn(...args);
   },
   /**
@@ -93,7 +94,7 @@ const _get = require('lodash/get'),
    * @param {string} url
    * @returns {object|undefined}
    */
-  getStationFromUrl = url => {
+  getStationFromUrl = ({ url }) => {
     const slug = new URL(url).pathname.split('/')[1];
 
     return _state.allStations.bySlug[slug];
@@ -129,7 +130,17 @@ Object.assign(api.getAllStations, {
  * @param {string} url
  * @returns {Promise<string>}
  */
-api.getCallsignFromUrl = withUpdatedStations(url => _get(getStationFromUrl(url), 'attributes.callsign', 'NATL-RC'));
+api.getCallsignFromUrl = withUpdatedStations(({ url }) => {
+  return _get(getStationFromUrl({ url }), 'callsign', 'NATL-RC');
+});
+
+/**
+ * Finds the station name from the slug
+ *
+ * @param {string} slug
+ * @returns {Promise<string>}
+ */
+api.getNameFromSlug = withUpdatedStations(({ slug }) => _state.allStations.bySlug[slug].name);
 
 /**
  * Finds the station callsign from the slug
@@ -137,7 +148,7 @@ api.getCallsignFromUrl = withUpdatedStations(url => _get(getStationFromUrl(url),
  * @param {string} slug
  * @returns {Promise<string>}
  */
-api.getCallsignFromSlug = withUpdatedStations(slug => _state.allStations.bySlug[slug].attributes.callsign);
+api.getCallsignFromSlug = withUpdatedStations(({ slug }) => _state.allStations.bySlug[slug].callsign);
 
 /**
  * If the url has a station slug then it returns that station.  Otherwise

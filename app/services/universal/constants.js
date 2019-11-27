@@ -17,17 +17,8 @@ const SECOND = 1000,
     YEAR
   },
 
-  PAGE_TYPES = {
-    ARTICLE: 'article',
-    AUTHOR: 'author-page-header',
-    GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front',
-    CONTEST: 'contest'
-  },
-
   // this should list the component names of the content types which may be
-  //   created.  A content type is essentially a component that is listed uder
-  //   page data -> main[0]
+  //   created via the kiln drawer.
   contentTypes = new Set([
     'article',
     'gallery',
@@ -35,7 +26,15 @@ const SECOND = 1000,
     'static-page',
     'topic-page',
     'contest'
-  ]);
+  ]),
+
+  PAGE_TYPES = {
+    ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front',
+    CONTEST: 'contest'
+  };
 
 
 module.exports = {
@@ -45,7 +44,7 @@ module.exports = {
   DAY,
   WEEK,
   YEAR,
+  contentTypes,
   time,
-  PAGE_TYPES,
-  contentTypes
+  PAGE_TYPES
 };

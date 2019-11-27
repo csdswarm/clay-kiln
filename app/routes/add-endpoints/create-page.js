@@ -15,7 +15,8 @@ module.exports = router => {
   router.post('/create-page', wrapInTryCatch(async (req, res) => {
     const { pageBody, stationSlug } = req.body,
       // pagesUri is required for the amphora.pages.create call
-      pagesUri = req.hostname + '/_pages/';
+      pagesUri = req.hostname + '/_pages/',
+      { locals } = res;
 
     if (!pageBody) {
       res.status(400).send({ error: "'pageBody' is required" });
@@ -25,7 +26,7 @@ module.exports = router => {
     // stationSlug is valid due to a check in
     // app/services/server/permissions/has-permissions/create-page.js
     if (stationSlug) {
-      const allStations = await stationUtils.getAllStations();
+      const allStations = await stationUtils.getAllStations({ locals });
 
       res.locals.newPageStation = allStations.bySlug[stationSlug];
     }

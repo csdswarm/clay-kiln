@@ -1,6 +1,7 @@
 'use strict';
 
 const pubUtils = require('./publish-utils'),
+  urlPatterns = require('../universal/url-patterns'),
   { PAGE_TYPES } = pubUtils;
 
 /**
@@ -34,7 +35,7 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
 function getYearMonthSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      return pubUtils.dateUrlPattern(urlOptions);
+      return urlPatterns.date(urlOptions);
     });
 }
 
@@ -49,7 +50,7 @@ function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.contentType === PAGE_TYPES.ARTICLE) {
-        return pubUtils.articleSlugPattern(urlOptions);
+        return urlPatterns.article(urlOptions);
       }
     });
 }
@@ -65,7 +66,7 @@ function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.contentType === PAGE_TYPES.GALLERY) {
-        return pubUtils.gallerySlugPattern(urlOptions);
+        return urlPatterns.gallery(urlOptions);
       }
     });
 }
@@ -81,8 +82,17 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
-        return pubUtils.sectionFrontSlugPattern(urlOptions);
+        return urlPatterns.sectionFront(urlOptions);
       }
+    });
+}
+
+function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      const slug = urlPatterns.author(urlOptions);
+
+      return slug;
     });
 }
 
@@ -97,23 +107,16 @@ function getContestSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.CONTEST) {
-        return pubUtils.contestSlugPattern(urlOptions);
+        return urlPatterns.contest(urlOptions);
       }
     });
 }
 
-function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
-  return getUrlOptions(pageData, locals, mainComponentRefs)
-    .then(urlOptions => {
-      const slug = pubUtils.authorPageSlugPattern(urlOptions);
-
-      return slug;
-    });
-}
-
-module.exports.getYearMonthSlugUrl = getYearMonthSlugUrl;
-module.exports.getArticleSlugUrl = getArticleSlugUrl;
-module.exports.getGallerySlugUrl = getGallerySlugUrl;
-module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
-module.exports.getContestSlugUrl = getContestSlugUrl;
-module.exports.getAuthorPageSlugUrl = getAuthorPageSlugUrl;
+module.exports = {
+  getYearMonthSlugUrl,
+  getArticleSlugUrl,
+  getGallerySlugUrl,
+  getSectionFrontSlugUrl,
+  getAuthorPageSlugUrl,
+  getContestSlugUrl
+};
