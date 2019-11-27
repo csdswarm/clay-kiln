@@ -178,14 +178,15 @@ const db = require('./db'),
       }
 
       const { station } = req.body,
+        { user } = res.locals,
         action = req.method === 'POST' ? 'create' : 'update';
 
-      let permission = res.locals.user.can(action);
+      let permission;
 
       if (station === 'GLOBAL') {
-        permission = permission.an('alerts_global');
+        permission = user.can(action).an('alerts_global');
       } else {
-        permission = permission.an('alerts_global').for(station);
+        permission = user.can('access').a('station').for(station);
       }
 
       if (permission.value) {
