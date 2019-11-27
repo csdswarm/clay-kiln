@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: row;
 
+  @mixin medium-screen {
+    flex-direction: column;
+  }
+
   .two-column-component__left-column {
       width: calc(100% - em(300));
       padding-right: em(20);
