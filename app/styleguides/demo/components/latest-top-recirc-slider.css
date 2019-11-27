@@ -89,9 +89,6 @@ $thumbnail-continer-width: 70px;
         @mixin medium-small-screen {
             flex: 0 0 70%;
         }
-        @mixin small-screen {
-            flex: 0 0 70%;
-        }
     }
     &__item-link {
         display: flex;
