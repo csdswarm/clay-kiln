@@ -222,7 +222,7 @@
                         tabs.push({ id: 'global', name: 'Global' });
                     }
 
-                    if (hasGlobalAlertPermissions && Object.keys(stationsIHaveAccessTo).length) {
+                    if (Object.keys(stationsIHaveAccessTo).length) {
                         tabs.push({ id: 'station', name: 'Station' });
                     }
 
