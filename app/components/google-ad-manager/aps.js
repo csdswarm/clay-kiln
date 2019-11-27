@@ -33,10 +33,10 @@ class ApsTam {
    * @param {integer} loadTimeout
    */
   constructor(pubID, bidTimeout, loadTimeout) {
-    this._bidTimeout = bidTimeout;
-    this._loadTimeout = loadTimeout;
-    this._loadStart = new Date();
-    this._pubID = pubID;
+    this.BID_TIMEOUT = bidTimeout;
+    this.LOAD_TIMEOUT = loadTimeout;
+    this.LOAD_START = new Date();
+    this.APS_PUB_ID = pubID;
     this._initialized = false;
 
     this.initAmazonApstag();
@@ -48,7 +48,7 @@ class ApsTam {
    * The library is loaded async via xhr, so we need to wait for it to finish loading
    */
   initAmazonApstag() {
-    const { _pubID, _loadStart, _loadTimeout } = this,
+    const { APS_PUB_ID: pubID, LOAD_START, LOAD_TIMEOUT } = this,
       self = this,
       now = new Date();
 
@@ -56,12 +56,12 @@ class ApsTam {
       this._initialized = true;
 
       window.apstag.init({
-        pubID: _pubID,
+        pubID,
         adServer: 'googletag',
         simplerGPT: true
       });
     } else {
-      if ((now - _loadStart) < _loadTimeout) {
+      if ((now - LOAD_START) < LOAD_TIMEOUT) {
         setTimeout(() => self.initAmazonApstag(), 500);
       } else {
         console.warn('Couldn\'t load Amazon Apstag Library');
@@ -75,7 +75,7 @@ class ApsTam {
    * @param {function} callback
    */
   fetchAPSBids(bidOptions, callback) {
-    const { _initialized, _bidTimeout: bidTimeout } = this;
+    const { _initialized, BID_TIMEOUT: bidTimeout } = this;
 
     if (_initialized) {
       const { fetchBids, setDisplayBids } = window.apstag;
