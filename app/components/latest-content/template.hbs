@@ -1,5 +1,9 @@
 <section class="component component--latest-content" data-uri="{{ default _ref _self }}" data-track-type="latest-content">
-  <h2 class="latest-content__title"><span>LATEST on RADIO.COM</span></h2>
+  {{#if componentTitleVisible}}
+    <h2 class="latest-content__title" data-editable="componentTitle">
+      <span>{{ componentTitle }}</span>
+    </h2>
+  {{/if}}
   <div class="latest-content__section">
     {{#each articles as |articleSection|}}
       <div
