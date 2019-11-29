@@ -8,12 +8,14 @@ const routes = require('./routes'),
  * initialize the permissions plugin
  *
  * @param {Function} hasPermissions
- * @return {Function}
+ * @param {Router} [userRouter]
+ *
+ * @returns {Function}
  */
-function init(hasPermissions) {
+function init(hasPermissions, userRouter) {
   return (router) => {
     try {
-      return routes(router, hasPermissions);
+      return routes(router, hasPermissions, userRouter);
     } catch (e) {
       log('error', e);
     }

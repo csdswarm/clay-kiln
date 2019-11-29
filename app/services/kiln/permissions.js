@@ -84,6 +84,8 @@ const addPermissions = require('../universal/permissions'),
 // this to the user object, so we are accessing it directly off of the window
 addPermissions(window.kiln.locals);
 
-module.exports.secureField = secureField;
-module.exports.secureSchema = secureSchema;
-module.exports.secureAllSchemas = secureAllSchemas;
+module.exports = {
+  secureField,
+  secureSchema,
+  secureAllSchemas
+};
