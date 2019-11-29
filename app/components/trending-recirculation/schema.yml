@@ -42,3 +42,5 @@ _groups:
       text: Trending Stories -- Requires 6 Entries
     fields:
       - items
+
+_permission: update

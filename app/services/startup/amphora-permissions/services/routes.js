@@ -27,7 +27,7 @@ function isRobot(user) {
  */
 function checkPermission(hasPermission) {
   return async (req, res, next) => {
-    if (isRobot(res.locals.user) || await hasPermission(req.uri, req.body, res.locals || {})) {
+    if (isRobot(res.locals.user) || await hasPermission(req.uri, req, res.locals || {})) {
       next();
     } else {
       res.status(403).send({ error: 'Permission Denied' });
@@ -57,10 +57,16 @@ function setupRoutes(router, hasPermission, userRouter) {
     const path = ['', '_components', folder, 'instances', '*'].join('/');
 
     permissionRouter.put(path, checkPermission(hasPermission));
+    permissionRouter.post(path, checkPermission(hasPermission));
+    permissionRouter.patch(path, checkPermission(hasPermission));
+    permissionRouter.delete(path, checkPermission(hasPermission));
   });
 
   // check all pages
   permissionRouter.put('/_pages/*', checkPermission(hasPermission));
+  permissionRouter.patch('/_pages/*', checkPermission(hasPermission));
+  permissionRouter.post('/_pages/*', checkPermission(hasPermission));
+  permissionRouter.delete('/_pages/*', checkPermission(hasPermission));
 
   router.use('/', permissionRouter);
 }

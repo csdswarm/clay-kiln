@@ -24,16 +24,11 @@
     }
 */
 
-
 const pluralize = require('pluralize'),
   KEYS = {
     action: 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
-    object: 'a,an,the,this,using,canUse,canModify'.split(','),
+    target: 'a,an,the,this,using,canUse,canModify'.split(','),
     location: 'at,for,with,on'.split(',')
-  },
-  DEFAULT = {
-    action: 'any',
-    location: 'NATL-RC'
   },
   /**
    * setup the sentence permissions methods
@@ -42,23 +37,47 @@ const pluralize = require('pluralize'),
    */
   userPermissions = () => {
     let _permissions = {}, // the permissions to check against
-      _condition = {}, // action/object/location key/value
-      _methods = {}; // all of the chained methods
+      _condition = {}, // action/target/location key/value
+      _methods = {}, // all of the chained methods
+      _override = false; // override all permission checks
 
-    /**
-     * make the string representing what the user does not have permissions to do
-     *
-     * @param {string} action
-     * @param {string} object
-     * @return {string}
-     */
-    const createMessage = ({ action, object }) => {
-        const perform = action === 'any' ? '' : ` ${action}`;
-
-        return `You do not have permissions to${perform} ${pluralize(object.replace(/-/g, ' '))}.`;
+    const _DEFAULT = {
+        action: 'access',
+        location: 'NATL-RC'
       },
       /**
-       * checks the permission object for the currently defined condition (action/object/location) and
+       * make the string representing what the user does not have permissions to do
+       *
+       * @param {string} action
+       * @param {string} target
+       * @return {string}
+       */
+      createMessage = (action, target) => {
+        const perform = action === _DEFAULT.action ? '' : ` ${action}`;
+
+        return `You do not have permissions to${perform} ${pluralize(target.replace(/-/g, ' '))}.`;
+      },
+      /**
+       * returns an the action, target, location given action, target, location
+       *
+       * @param {object|string} action
+       * @param {string} target
+       * @param {string} location
+       *
+       * @return {object}
+       */
+      getCondition = (action, target, location) => {
+        const actionIsString = typeof action === 'string';
+
+        // if an action is passed in as an object, the key becomes the action and the value becomes the target
+        return {
+          action: actionIsString ? action : Object.keys(action).pop(),
+          target: actionIsString ? target : Object.values(action).pop(),
+          location
+        };
+      },
+      /**
+       * checks the permission object for the currently defined condition (action/target/location) and
        * returns the value or message based on the type of variable requested.
        *
        * example permissions object = {
@@ -69,7 +88,7 @@ const pluralize = require('pluralize'),
        *      update:{ station:{ KILTAM: 1, KLOLFM: 1} },
        *    },
        *    'alert-banner':{
-       *      any:{ station:{'NATL-RC': 1 } }
+       *      access:{ station:{'NATL-RC': 1 } }
        *    }
        *  }
        *
@@ -79,15 +98,21 @@ const pluralize = require('pluralize'),
       checkCondition = (type) => {
         let value = false,
           message = '';
-        const { action = DEFAULT.action, object, location = DEFAULT.location } = _condition;
+        const { action = _DEFAULT.action, target, location = _DEFAULT.location } = _condition;
 
-        if (object) {
-          value = Boolean(_permissions[object] &&
-            _permissions[object][action] &&
-            _permissions[object][action].station[location]);
+        if (target) {
+          const {
+            action: actionToCheck,
+            target: targetToCheck,
+            location: locationToCheck
+          } = getCondition(action, target, location);
+
+          value = Boolean(_override || (_permissions[targetToCheck] &&
+            _permissions[targetToCheck][actionToCheck] &&
+            _permissions[targetToCheck][actionToCheck].station[locationToCheck]));
 
           if (!value) {
-            message = createMessage(_condition);
+            message = createMessage(actionToCheck, targetToCheck);
           }
         }
 
@@ -97,7 +122,7 @@ const pluralize = require('pluralize'),
        * updates the condition keys based on the type and arguments passed in.
        * Each condition type will pass the arguments in a different order.
        *
-       * @param {string} type - action/object/location
+       * @param {string} type - action/target/location
        * @param {string} arg1
        * @param {string} arg2
        * @param {string} arg3
@@ -106,7 +131,7 @@ const pluralize = require('pluralize'),
         /**
          * modifies the condition object with the value for the type if passed in
          *
-         * @param {object} condition - { action, object, location }
+         * @param {object} condition - { action, target, location }
          */
         const updateCondition = (condition) => {
           Object.keys(condition).forEach(item => _condition[item] = condition[item] || _condition[item]);
@@ -114,20 +139,20 @@ const pluralize = require('pluralize'),
 
         switch (type) {
           case 'action':
-            updateCondition({ action: arg1, object: arg2, location: arg3 });
+            updateCondition({ action: arg1, target: arg2, location: arg3 });
             break;
-          case 'object':
-            updateCondition({ object: arg1, action: arg2, location: arg3 });
+          case 'target':
+            updateCondition({ target: arg1, action: arg2, location: arg3 });
             break;
           case 'location':
-            updateCondition({ location: arg1, action: arg2, object: arg3 });
+            updateCondition({ location: arg1, action: arg2, target: arg3 });
             break;
           default:
             throw new Error(`Invalid condition type ${type}.`);
         }
       },
       /**
-       * setup the object with the chained action.object.location methods
+       * setup the object with the chained action.target.location methods
        */
       createMethods = () => {
         /**
@@ -208,8 +233,8 @@ const pluralize = require('pluralize'),
            * @param {boolean} reset
            * @return {object}
            */
-          objects = (next, then, reset) => {
-            return chainFunctions('object', reset)(next, then);
+          targets = (next, then, reset) => {
+            return chainFunctions('target', reset)(next, then);
           },
           /**
            *  setup the base action chained functions
@@ -224,9 +249,9 @@ const pluralize = require('pluralize'),
           };
 
         _methods = {
-          ...locations(actions, objects, true),
-          ...objects(actions, locations, true),
-          ...actions(objects, locations, true)
+          ...locations(actions, targets, true),
+          ...targets(actions, locations, true),
+          ...actions(targets, locations, true)
         };
       },
       /**
@@ -244,14 +269,21 @@ const pluralize = require('pluralize'),
     /**
      * mutate a user object with the chained permission functions storing the permissions internally
      *
-     * @param {object} user
+     * @param {object} locals
      */
-    return (user) => {
-      _permissions = user.permissions || {};
+    return ({ user, permissions, station }) => {
+      if (user && !user.can) {
+        _permissions = permissions || {};
+        _override = user.provider === 'google';
 
-      addMethods(user);
+        // helper to not have to pass station
+        if (station && station.callsign) {
+          _DEFAULT.location = station.callsign;
+        }
+
+        addMethods(user);
+      }
     };
   };
-
 
 module.exports = userPermissions();
