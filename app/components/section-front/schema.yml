@@ -91,7 +91,15 @@ googleAdRightRail:
 _groups:
   settings:
     fields:
+      - stationName
       - primary
       - primarySectionFront
       - title
       - includePodcastModule
+
+stationName:
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy

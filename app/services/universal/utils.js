@@ -6,7 +6,9 @@ const _isArray = require('lodash/isArray'),
   _isNull = require('lodash/isNull'),
   _isUndefined = require('lodash/isUndefined'),
   _get = require('lodash/get'),
-  _parse = require('url-parse'),
+  parse = require('url-parse'),
+  { getComponentName, isComponent } = require('clayutils'),
+  { contentTypes } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
 
@@ -76,9 +78,34 @@ function replaceVersion(uri, version) {
  */
 function uriToUrl(uri, locals) {
   const protocol = _get(locals, 'site.protocol') || 'http',
-    parsed = _parse(`${protocol}://${uri}`);
+    parsed = parse(`${protocol}://${uri}`);
 
   return parsed.href;
+}
+
+/**
+ * Remove extension from route / path.
+ *
+ * Note: copied from amphora@v7.3.2 lib/responses.js
+ *   Ideally we'd use the uri provided by amphora but our currentStation module
+ *   depends on this and its middleware occurrs before amphora.
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+function removeExtension(path) {
+  let leadingDot, endSlash = path.lastIndexOf('/');
+
+  if (endSlash > -1) {
+    leadingDot = path.indexOf('.', endSlash);
+  } else {
+    leadingDot = path.indexOf('.');
+  }
+
+  if (leadingDot > -1) {
+    path = path.substr(0, leadingDot);
+  }
+  return path;
 }
 
 /**
@@ -87,9 +114,9 @@ function uriToUrl(uri, locals) {
  * @return {string}
  */
 function urlToUri(url) {
-  const parsed = _parse(url);
+  const parsed = parse(url);
 
-  return `${parsed.hostname}${parsed.pathname}`;
+  return `${parsed.hostname}${removeExtension(parsed.pathname)}`;
 }
 
 /**
@@ -196,20 +223,79 @@ function textToEncodedSlug(text) {
   );
 }
 
+
+/**
+ * Copied over from the spa, allows us to log messages that should only show
+ *   during development.
+ *
+ * @param {*} args
+ */
 function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
   }
 }
 
-Object.assign(module.exports, {
-  /**
-   * Url queries to elastic search need to be `http` since that is
-   * how it is indexed as.
-   * @param {String} url
-   * @returns {String}
-   */
-  urlToElasticSearch: url => url.replace('https', 'http'),
+/**
+ * how it is indexed as.
+ * Url queries to elastic search need to be `http` since that is
+ * @param {String} url
+ * @returns {String}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
+/*
+ * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
+ *   begin with the prefix.
+ *
+ * @param {string} prefix
+ * @param {string} str
+ * @returns {string}
+ */
+function ensureStartsWith(prefix, str) {
+  return str.startsWith(prefix)
+    ? str
+    : prefix + str;
+}
+
+/**
+ * A tiny utility to format obj as a string
+ *
+ * @param {*} obj
+ * @returns {string}
+ */
+function prettyJSON(obj) {
+  return JSON.stringify(obj, null, 2);
+}
+
+/**
+ * Returns the full original url including the protocol and request's host
+ *
+ * @param {object} req
+ * @returns {string}
+ */
+function getFullOriginalUrl(req) {
+  return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
+}
+
+/**
+ * Returns whether the request is for a content component.  A content component
+ *   here just means a component that can be created via the kiln drawer e.g.
+ *   article, gallery, etc.
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+function isContentComponent(url) {
+  const componentName = getComponentName(url);
+
+  return isComponent(url)
+    && contentTypes.has(componentName);
+}
+
+module.exports = {
   isFieldEmpty,
   has,
   replaceVersion,
@@ -224,5 +310,10 @@ Object.assign(module.exports, {
   isInstance,
   urlToCanonicalUrl,
   textToEncodedSlug,
-  debugLog
-});
+  debugLog,
+  ensureStartsWith,
+  prettyJSON,
+  getFullOriginalUrl,
+  urlToElasticSearch,
+  isContentComponent
+};

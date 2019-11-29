@@ -4,7 +4,7 @@ const amphora = require('amphora'),
   renderers = require('./amphora-renderers'),
   healthCheck = require('@nymdev/health-check'),
   permissionsPlugin = require('./amphora-permissions'),
-  { checkUserPermissions, userPermissionRouter } = require('../universal/permissions');
+  { checkUserPermissions, userPermissionRouter } = require('../server/permissions');
 
 function initAmphora(app, search, sessionStore, routes) {
   return amphora({
@@ -14,9 +14,9 @@ function initAmphora(app, search, sessionStore, routes) {
     sessionStore,
     plugins: [
       search,
+      permissionsPlugin(checkUserPermissions, userPermissionRouter()),
       routes,
-      require('amphora-schedule'),
-      permissionsPlugin(checkUserPermissions, userPermissionRouter())
+      require('amphora-schedule')
     ],
     storage: require('amphora-storage-postgres'),
     eventBus: require('amphora-event-bus-redis')

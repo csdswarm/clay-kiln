@@ -32,10 +32,10 @@ const db = require('../server/db'),
       exceptTheEntryBeingSaved = 'id != ?',
       response = await db.raw(`
       SELECT id FROM alert
-      WHERE ${onlyCurrentEntries} 
-        AND ${onlyActiveEntries} 
+      WHERE ${onlyCurrentEntries}
+        AND ${onlyActiveEntries}
         AND ${onlyEntriesWithinSameStation}
-        AND ${entriesWhoseTimeRangeOverlapTheSavedEntry} 
+        AND ${entriesWhoseTimeRangeOverlapTheSavedEntry}
         AND ${exceptTheEntryBeingSaved}`,
       [station, start, end, key]);
 
@@ -64,6 +64,7 @@ const db = require('../server/db'),
       }
     } catch (error) {
       log('error', 'There was a problem validating the alert', { alert, error });
+
       return {
         failed: true,
         message: 'An unanticipated error occurred while trying to validate the alert. Please try again.'

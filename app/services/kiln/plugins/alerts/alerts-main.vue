@@ -9,22 +9,13 @@
                 :key="tab.id"
                 :id="tab.id"
                 :title="tab.name"
-                
+
                 v-for="tab in tabs">
             </ui-tab>
             <div class="alerts-manager__toolbar">
                 <ui-button @click="newAlert">Add Alert</ui-button>
-                <div class="alerts-manager__station-select">
-                    <ui-select 
-                        label="Station"
-                        placeholder="Select a station"
-                        hasSearch=true
-                        :options="stationCallsigns"
-                        @select="loadAlerts"
-                        v-if="!global"
-                        v-model="selectedStation">
-                    </ui-select>
-                </div>
+                <station-select v-show="!global"
+                    class="alerts-manager__station-select" />
             </div>
             <div>
                 <div class="page-list-headers">
@@ -47,15 +38,15 @@
                             <div class="alerts-manager-page-list-item__link" v-if="alert.link">Link: <a :href="alert.link">{{alert.link}}</a></div>
                         </div>
                         <span class="alerts-manager__page-list-item__icons">
-                            <ui-icon-button 
-                                icon="error" 
+                            <ui-icon-button
+                                icon="error"
                                 color="red"
                                 tooltip="BREAKING"
                                 v-if="alert.breaking"></ui-icon-button>
                         </span>
                         <span class="page-list-item__menu">
-                            <ui-icon-button 
-                                icon="more_vert" 
+                            <ui-icon-button
+                                icon="more_vert"
                                 has-dropdown
                                 ref="itemButton">
                                 <div class="page-list-item__dropdown" slot="dropdown">
@@ -90,7 +81,7 @@
                         error="Please limit alert to 140 characters or less"
                         :maxlength="140"
                         :invalid="message.length > 140"
-                        
+
                         v-model="message"
                     ></ui-textbox>
                     <ui-textbox
@@ -98,14 +89,14 @@
                         type="url"
                         :error="validLinkError"
                         :invalid="!validLink"
-                        
+
                         v-model="link"
                     ></ui-textbox>
                     <div class="alerts-manager__time-picker">
                         <ui-datepicker
                             placeholder="Select the start date"
                             :maxDate="endDate"
-                            
+
                             v-model="startDate"
                         >Start Date</ui-datepicker>
                         <ui-textbox
@@ -119,7 +110,7 @@
                         <ui-datepicker
                             placeholder="Select the end date"
                             :minDate="startDate"
-                            
+
                             v-model="endDate"
                         >End Date</ui-datepicker>
                         <ui-textbox
@@ -148,17 +139,19 @@
     const axios = require('axios');
     const moment = require('moment');
     const { isUrl } = require('../../../universal/utils');
-    const { 
-        UiButton, 
-        UiCheckbox, 
-        UiConfirm, 
+    const StationSelect = require('../../shared-vue-components/station-select.vue');
+    const { mapGetters } = require('vuex');
+    const {
+        UiButton,
+        UiCheckbox,
+        UiConfirm,
         UiDatepicker,
         UiIconButton,
         UiProgressCircular,
-        UiTabs, 
-        UiTab, 
-        UiTextbox, 
-        UiModal, 
+        UiTabs,
+        UiTab,
+        UiTextbox,
+        UiModal,
         UiSelect } = window.kiln.utils.components;
 
     /**
@@ -185,7 +178,6 @@
                 startTime: '',
                 errorMessage: '',
                 selectedAlert: {},
-                selectedStation: {},
                 tab: 'global',
                 tabs: [{
                     id: 'global',
@@ -201,44 +193,63 @@
         created() {
             this.loadAlerts();
         },
-        computed: {
-            end() {
-                return this.combineDateAndTime(this.endDate, this.endTime);
-            },
-            start() {
-                return this.combineDateAndTime(this.startDate, this.startTime);          
-            },
-            global() {
-                return this.tab === 'global';
-            },
-            heading() {
-                return `${this.editMode ? 'Edit' : 'Add New'} Alert` ;
-            },
-            /** Current station, or global station */
-            station() {
-                return this.global ? 'GLOBAL' : this.selectedStation.value;
-            },
-            stationCallsigns() {
-                const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
-               
-                return allStationCallsigns.concat('NATL-RC').sort().map(station => ({
-                    label: station === 'NATL-RC' ? 'Radio.com' : station,
-                    value: station
-                }));
-            },
-            /** True if all required fields are entered */
-            validForm() {
-                return this.message && this.startDate && this.startTime && this.endDate && this.endTime && !moment(this.start).isSameOrAfter(this.end) && this.validLink;
-            },
-            validLink() {
-                if (this.link && !isUrl(this.link)) {
-                    this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
-                    return false;
-                }
-                this.validLinkError = '';
-                return true;          
+        watch: {
+            selectedStation() {
+                this.loadAlerts();
             }
         },
+        computed: Object.assign(
+            {},
+            mapGetters(StationSelect.storeNs, ['selectedStation']),
+            {
+                end() {
+                    return this.combineDateAndTime(this.endDate, this.endTime);
+                },
+                start() {
+                    return this.combineDateAndTime(this.startDate, this.startTime);
+                },
+                global() {
+                    return this.tab === 'global';
+                },
+                heading() {
+                    return `${this.editMode ? 'Edit' : 'Add New'} Alert` ;
+                },
+                /** Current station, or global station */
+                station() {
+                    return this.global ? 'GLOBAL' : this.selectedStation.callsign;
+                },
+                stationCallsigns() {
+                    const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
+
+                    return allStationCallsigns.concat('NATL-RC')
+                        .sort()
+                        .map(station => ({
+                            label: station === 'NATL-RC' ? 'Radio.com' : station,
+                            value: station
+                        }));
+                },
+                /** True if all required fields are entered */
+                validForm() {
+                    return (
+                        this.message
+                        && this.startDate
+                        && this.startTime
+                        && this.endDate
+                        && this.endTime
+                        && !moment(this.start).isSameOrAfter(this.end)
+                        && this.validLink
+                    );
+                },
+                validLink() {
+                    if (this.link && !isUrl(this.link)) {
+                        this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
+                        return false;
+                    }
+                    this.validLinkError = '';
+                    return true;
+                }
+            }
+        ),
         methods: {
             /**
              * Adds or updates an alert based on if in editMode
@@ -268,7 +279,7 @@
                 } catch ({response}) {
                     this.errorMessage = response.data;
                 }
-                
+
             },
             newAlert(){
                 this.editMode = false;
@@ -323,7 +334,7 @@
             },
             /** Loads all current and future alerts globally or by station */
             async loadAlerts() {
-                if (!this.global && !this.selectedStation.value) {
+                if (!this.global && !this.selectedStation.callsign) {
                     this.alerts = [];
                 } else {
                     this.loading = true;
@@ -373,7 +384,8 @@
             UiTab,
             UiTextbox,
             UiModal,
-            UiSelect
+            UiSelect,
+            StationSelect
         }
     }
 </script>

@@ -27,12 +27,20 @@ describe('urps tests', () => {
     it('returns all permissions in the form permission.action.targetType.target', async () => {
       const urps = requireUrpsGetAllPermsStandard({
           restGetResults: [
-            { type: 'admin', action: 'any', target: { type: 'environment', value: 'dev-clay.radio.com' } },
+            {
+              type: 'admin',
+              action: 'any',
+              target: { type: 'environment', value: 'dev-clay.radio.com' }
+            },
             { type: 'author-page', action: 'any', target: { type: 'station', value: 'NATL-RC' } },
             { type: 'tags', action: 'create', target: { type: 'station', value: 'NATL-RC' } },
             { type: 'tags', action: 'update', target: { type: 'station', value: 'NATL-RC' } },
             { type: 'tags', action: 'create', target: { type: 'station', value: 'KROQFM' } },
-            { type: 'content-collections', action: 'create', target: { type: 'station', value: 'NATL-RC' } },
+            {
+              type: 'content-collections',
+              action: 'create',
+              target: { type: 'station', value: 'NATL-RC' }
+            },
             { type: 'gallery', action: 'create', target: { type: 'station', value: 'NATL-RC' } }
           ]
         }),
@@ -42,7 +50,10 @@ describe('urps tests', () => {
       expect(result).to.eql({
         admin: { any: { environment: { 'dev-clay.radio.com': 1 } } },
         'author-page': { any: { station: { 'NATL-RC': 1 } } },
-        tags: { create: { station: { 'NATL-RC': 1, KROQFM: 1 } }, update: { station: { 'NATL-RC': 1 } } },
+        tags: {
+          create: { station: { 'NATL-RC': 1, KROQFM: 1 } },
+          update: { station: { 'NATL-RC': 1 } }
+        },
         'content-collections': { create: { station: { 'NATL-RC': 1 } } },
         gallery: { create: { station: { 'NATL-RC': 1 } } }
       });
@@ -61,8 +72,9 @@ describe('urps tests', () => {
         result = await urps.getAllPermissions(jwtToken);
 
       expect(result).to.be.undefined;
-      assert(log.calledWith('error', 'There was a problem trying to get URPS permissions for the user',
-        { error: restGetResults, jwtToken }));
+      assert(
+        log.calledWith('error', 'There was a problem trying to get URPS permissions for the user',
+          { error: restGetResults, jwtToken }));
     });
   });
 
@@ -88,14 +100,14 @@ describe('urps tests', () => {
 
     // generates standard proxies for required components used by loadPermissions
     function requireUrpsLoadPermsStandard(options) {
-      const { cacheResults, cacheDel, invokeError, restGetResults, refreshAuthToken, log } = options;
+      const { getCacheResults, cacheDel, invokeError, restGetResults, refreshAuthToken, log } = options;
 
       return proxyquire('./urps', {
         '../universal/rest': {
           get: async () => restGetResults
         },
         './cache': {
-          get: invokeError ? sinon.stub().throws('cache problems') : async () => cacheResults,
+          get: invokeError ? sinon.stub().throws('cache problems') : getCacheResults,
           del: cacheDel || (() => {}),
           '@noCallThru': true // cache attempts to create a new ioredis immediately on reference, so never call it
         },
@@ -114,8 +126,7 @@ describe('urps tests', () => {
 
     it('loads existing permissions from the session cache', async () => {
       const urps = requireUrpsLoadPermsStandard({
-        cacheResults: '',
-        log: console.log
+        getCacheResults: async () => {}
       });
 
       req.session.auth = {
@@ -129,7 +140,11 @@ describe('urps tests', () => {
     });
 
     it('gets permissions from urps if not already cached in session', async () => {
-      const restGetResults = [{ type: 'author-page', action: 'any', target: { type: 'station', value: 'NATL-RC' } }],
+      const restGetResults = [{
+          type: 'author-page',
+          action: 'any',
+          target: { type: 'station', value: 'NATL-RC' }
+        }],
         urps = requireUrpsLoadPermsStandard({ restGetResults });
 
       req.session.auth = { ...authBase };
@@ -141,7 +156,11 @@ describe('urps tests', () => {
 
     it('refreshes permissions from urps if it\'s been too long since the last check', async () => {
       const longAgo = Date.now() - 100000000,
-        restGetResults = [{ type: 'tags', action: 'create', target: { type: 'station', value: 'KROQFM' } }],
+        restGetResults = [{
+          type: 'tags',
+          action: 'create',
+          target: { type: 'station', value: 'KROQFM' }
+        }],
         urps = requireUrpsLoadPermsStandard({ restGetResults });
 
       req.session.auth = { ...authBase, lastUpdated: longAgo };
@@ -170,12 +189,12 @@ describe('urps tests', () => {
     });
 
     it('handles no auth on session', async () => {
-      const cacheResults = JSON.stringify({ ...authBase }),
+      const getCacheResults = async () => JSON.stringify({ ...authBase }),
         restGetResults = [
           { type: 'tags', action: 'create', target: { type: 'station', value: 'NATL-RC' } },
           { type: 'tags', action: 'update', target: { type: 'station', value: 'NATL-RC' } }
         ],
-        urps = requireUrpsLoadPermsStandard({ cacheResults, restGetResults });
+        urps = requireUrpsLoadPermsStandard({ getCacheResults, restGetResults });
 
       await urps.loadPermissions(req.session, locals);
 
@@ -185,6 +204,32 @@ describe('urps tests', () => {
           update: { station: { 'NATL-RC': 1 } }
         }
       });
+    });
+
+    it('gets cache results by user name', async () => {
+      const getCacheResults = sinon.spy(),
+        urps = requireUrpsLoadPermsStandard({
+          getCacheResults
+        });
+
+      locals.user.username = 'joe@schmoe.com';
+
+      await urps.loadPermissions(req.session, locals);
+
+      expect(getCacheResults.args[0]).to.eql(['cognito-auth--joe@schmoe.com']);
+    });
+
+    it('does not care about user name casing when searching for results', async () => {
+      const getCacheResults = sinon.spy(),
+        urps = requireUrpsLoadPermsStandard({
+          getCacheResults
+        });
+
+      locals.user.username = 'Joe@Schmoe.com';
+
+      await urps.loadPermissions(req.session, locals);
+
+      expect(getCacheResults.args[0]).to.eql(['cognito-auth--joe@schmoe.com']);
     });
 
     it('handles errors', async () => {

@@ -2,6 +2,7 @@
 @import "mixins";
 @import "fonts";
 @import "colors";
+@import "content-type";
 
 .alert {
   font-family: Verdana, sans-serif;

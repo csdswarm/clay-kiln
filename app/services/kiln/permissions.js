@@ -1,11 +1,12 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
-  _camelCase = require('lodash/camelCase'),
   log = require('../universal/log').setup({ file: __filename }),
+  whenRightDrawerExists = require('./when-right-drawer-exists'),
+  { setEachToDisplayNone } = require('../client/dom-helpers'),
+  preloadTimeout = 5000,
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
-  preloadTimeout = 5000,
   /**
    * Check if a kiln.js file exists for a component, provide default function if not
    *
@@ -94,7 +95,10 @@ const addPermissions = require('../universal/user-permissions'),
     Object.keys(schema).forEach(field => {
       const permission = schema[field]._permission || schema._permission || componentPermission;
 
-      if (schema[field]._has && permission) {
+      if (permission && permission._has) {
+        console.warn(`The ${schema.schemaName} component was upgraded causing the _permission to become corrupted.`,
+          `Upgrade the /app/components/${schema.schemaName}/schema.yml to enable permissions.`);
+      } else if (schema[field]._has && permission) {
         schema[field] = new KilnInput(schema, field);
 
         secureField(schema[field], permission, componentName);
@@ -119,6 +123,51 @@ const addPermissions = require('../universal/user-permissions'),
 
         window.kiln.componentKilnjs[component] = secureSchema(kilnjs, component);
       });
+  },
+  /**
+   * hides the 'publish' or 'unpublish' button if the user does not
+   *   have permissions
+   *
+   * @param {object} schema - only used because KilnInput requires it
+   **/
+  publishRights = (schema) => {
+    const subscriptions = new KilnInput(schema),
+      whenPreloadedPromise = whenPreloaded(subscriptions);
+
+    whenRightDrawerExists(subscriptions, async rightDrawerEl => {
+      const { locals } = await whenPreloadedPromise,
+        hasAccess = locals.user.hasPermissionsTo('access').this('station');
+
+      if (hasAccess) {
+        return;
+      }
+
+      // these shouldn't be declared above the short circuit
+      // eslint-disable-next-line one-var
+      const publishBtn = rightDrawerEl.querySelector('.publish-actions > button'),
+        unpublishBtn = rightDrawerEl.querySelector('.publish-status > button');
+
+      setEachToDisplayNone([publishBtn, unpublishBtn]);
+    });
+  },
+  /**
+   * mutates the schema blocking the user from being able to add/remove items from a simple-list if they do not have permissions
+   *
+   * @param {object} schema
+   * @param {string} field
+   * @param {string} [component]
+   *
+   * @return {object} - schema
+   */
+  simpleListRights = (schema, field, component = schema.schemaName) => {
+    const subscriptions = new KilnInput(schema);
+
+    subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
+      schema[field]._has.autocomplete.allowCreate = locals.user.isAbleTo('create').using(component).value;
+      schema[field]._has.autocomplete.allowRemove = locals.user.isAbleTo('update').using(component).value;
+    });
+
+    return schema;
   };
 
 // kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
@@ -128,5 +177,7 @@ addPermissions(window.kiln.locals);
 module.exports = {
   secureField,
   secureSchema,
-  secureAllSchemas
+  secureAllSchemas,
+  publishRights,
+  simpleListRights
 };

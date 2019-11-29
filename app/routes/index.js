@@ -21,7 +21,8 @@ const AWS = require('aws-sdk'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   slugifyService = require('../services/universal/slugify'),
   xml = require('xml'),
-  addEndpoints = require('./add-endpoints');
+  addEndpoints = require('./add-endpoints'),
+  ensureStationOnCustomUrl = require('./ensure-station-on-custom-url');
 
 module.exports = router => {
 
@@ -201,4 +202,6 @@ module.exports = router => {
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
+  addEndpoints.createPage(router);
+  ensureStationOnCustomUrl(router);
 };
