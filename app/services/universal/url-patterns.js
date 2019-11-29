@@ -12,6 +12,7 @@ const exists = require('lodash/identity'),
     ].filter(exists)
       .join('/');
   },
+  author = opts => `${opts.prefix}/${opts.contentType}/${opts.authorSlug}`,
   date = opts => {
     // e.g. http://vulture.com/music/x.html - modified re: ON-333
     return `${opts.prefix}/${opts.sectionFront}/${opts.slug}.html`;
@@ -41,6 +42,7 @@ const exists = require('lodash/identity'),
 
 module.exports = {
   article,
+  author,
   date,
   gallery,
   sectionFront
