@@ -1,9 +1,9 @@
 <section data-uri="{{ default _ref _self }}" class="component component--latest-videos{{ if @root.locals.edit ' editing' }}" data-editable="items">
-  <h2><span>Radio.com Video</span></h2>
+  <h2><span>{{{ title }}}</span></h2>
   <div class="latest-videos__videos">
     {{#each articles as |article|}}
       {{#if @first}}
-        <div class="latest-videos__video {{#if @first}}latest-videos__video--main{{/if}} latest-videos__video--{{ article.sectionFront }}">
+        <div class="latest-videos__video latest-videos__video--main latest-videos__video--{{ article.sectionFront }}">
           <a href="{{ article.canonicalUrl }}"
              class="latest-videos__link"
              data-track-type="article-link"

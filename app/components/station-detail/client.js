@@ -61,75 +61,74 @@ class StationDetail {
       }
     };
   }
-}
 
-StationDetail.prototype = {
   /**
    * Add margin top to right rail
    * @function
    * @param {object} sidebar
    * @param {Element} stationDetail
    */
-  repositionRightRail: function (sidebar, stationDetail) {
+  repositionRightRail(sidebar, stationDetail) {
     sidebar.style.marginTop = window.getComputedStyle(stationDetail).marginTop;
     sidebar.style.visibility = 'visible';
-  },
+  }
+
   /**
    * Add navigation listeners to tabs
    * @function
    * @param {NodeListOf} tabs
    * @param {NodeListOf} content
    */
-  addTabNavigationListeners: function (tabs, content) {
+  addTabNavigationListeners(tabs, content) {
     for (const tab of tabs) {
       tab.addEventListener('click', function (e) { this.activateTab(e, tabs, content, true); }.bind(this));
     }
-  },
+  }
 
   /**
    * Update recently played tab
    * @function
    * @param {Node} content
    */
-  updateRecentlyPlayed: async function (content) {
+  async updateRecentlyPlayed(content) {
     await updateTab(content, this.stationId);
-    
+
     stationRecentlyPlayedFactory(content.querySelector('.component--station-recently-played'));
-  },
+  }
 
   /**
    * Update station schedule tab
    * @function
    * @param {Node} content
    */
-  updateSchedule: async function (content) {
+  async updateSchedule(content) {
     await updateTab(content, this.stationId);
 
     stationScheduleFactory(content.querySelector('.component--station-schedule'));
-  },
+  }
 
   /**
    * Update discover tab
    * @function
    * @param {Node} content
    */
-  updateDiscover: async function (content) {
+  async updateDiscover(content) {
     await updateTab(content, this.stationId);
 
     stationDiscoverFactory(content.querySelector('.component--station-discover'));
     content.querySelectorAll('.component--stations-list').forEach(stationsListFactory);
-  },
+  }
 
   /**
    * Update favorites tab
    * @function
    * @param {Node} content
    */
-  updateFavorites: async function (content) {
+  async updateFavorites(content) {
     await updateTab(content);
 
     stationsListFactory(content.querySelector('.component--stations-list'));
-  },
+  }
 
   /**
    * Navigate between tabs
@@ -139,7 +138,7 @@ StationDetail.prototype = {
    * @param {NodeListOf} content
    * @param {boolean} [useHash]
    */
-  activateTab: async function (e, tabs, content, useHash) {
+  async activateTab(e, tabs, content, useHash) {
     let contentLabel;
 
     if (e.currentTarget) {
@@ -176,6 +175,6 @@ StationDetail.prototype = {
       history.pushState(null, null, `${window.location.origin}${window.location.pathname}#${contentLabel}`); // set hash without reloading page
     }
   }
-};
+}
 
 module.exports = (element) => new StationDetail(element);
