@@ -30,7 +30,8 @@ const _get = require('lodash/get'),
     threshold: 0
   },
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig),
-  amazonTam = require('./aps')(apsPubId, apsLoadTimeout, apsBidTimeout);
+  amazonTam = require('./aps')(apsPubId, apsLoadTimeout, apsBidTimeout),
+  disabledRefreshAds = new Set();
 let refreshCount = 0,
   allAdSlots = {},
   adsRefreshing = false,
@@ -91,10 +92,18 @@ googletag.cmd.push(() => {
       adsRefreshing = true;
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
-        amazonTam.fetchAPSBids(allAdSlots, () => {
+        // Refresh ads
+        const adsToRefresh = Object.entries(allAdSlots).filter(([id]) => {
+          id = id.split('--')[1];
+
+          return !disabledRefreshAds.has(id);
+        }).map(([, slot]) => slot);
+
+        amazonTam.fetchAPSBids(adsToRefresh, () => {
           clearDfpTakeover();
-          // Refresh all ads
-          googletag.pubads().refresh(null, { changeCorrelator: false });
+
+          googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
+
           // Remove the observers
           [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
             observer.unobserve(adSlot);
@@ -562,6 +571,15 @@ function resizeForSkin() {
     });
   };
 }
+
+/**
+ * Tells a list of ads to stop refreshing, whether they've loaded yet or not.
+ *
+ * @param {string[]} ads
+ */
+window.disableAdRefresh = function (ads) {
+  ads.forEach(ad => disabledRefreshAds.add(ad));
+};
 
 /**
  * Legacy code ported over from frequency to implement the takeover.
