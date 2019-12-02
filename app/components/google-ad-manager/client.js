@@ -93,13 +93,19 @@ googletag.cmd.push(() => {
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
         // Refresh ads
-        const adsToRefresh = Object.entries(allAdSlots).filter(([id]) => {
-          id = id.split('--')[1];
+        const filteredAds = Object.entries(allAdSlots).filter(([id]) => {
+            id = id.split('--')[1];
 
-          return !disabledRefreshAds.has(id);
-        }).map(([, slot]) => slot);
+            return !disabledRefreshAds.has(id);
+          }),
+          adsToRefresh = filteredAds.map(([, slot]) => slot),
+          adsToBid = filteredAds.reduce((refreshingAds, [id, slot]) => {
+            refreshingAds[id] = slot;
 
-        amazonTam.fetchAPSBids(adsToRefresh, () => {
+            return refreshingAds;
+          }, {});
+
+        amazonTam.fetchAPSBids(adsToBid, () => {
           clearDfpTakeover();
 
           googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
