@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 3.0
 _description: |
   Latest videos module
 
@@ -49,8 +49,15 @@ filterSecondarySectionFronts:
     multiple: true
     list: secondary-section-fronts
 
+title:
+  _label: Video Section Title
+  _has:
+    input: text
+
 _groups:
   settings:
     fields:
+      - title
       - filterTags
       - filterSecondarySectionFronts
+
