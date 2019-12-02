@@ -18,6 +18,7 @@
   * **uploadLabel** - File Upload Button label.
   * **uploadHelp** - Description / helper text for the file upload button.
   * **maxEditorDisplayHeight** - height for when used in a complex list.
+  * **enableDelete** - enables delete functionality.  'delete' in this context refers to the url field, not the image on s3.  By default this is false
 
 </docs>
 
@@ -30,7 +31,7 @@
       accept="image/*"
       @change="localFileAttached">
     </ui-fileupload>
-    <ui-button v-if="imageUrl"
+    <ui-button v-if="showDelete"
       icon="delete"
       buttonType="button"
       type="secondary"
@@ -74,9 +75,13 @@ export default {
       fileUploadButtonDisabled: false
     };
   },
+  computed: {
+    showDelete() {
+      return this.data && this.args.enableDelete;
+    }
+  },
   methods: {
     /**
-     *
      * Event handler that is fired when an image file is attached via the file upload button.
      *
      * Logic flow is: Filename and type of attached file is sent to backend in order to create
