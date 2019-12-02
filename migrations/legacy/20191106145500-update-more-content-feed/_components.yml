@@ -6,5 +6,5 @@ _components:
   two-column-component:
     instances:
       new:
-        column1: []
-        column2: []
+        col1: []
+        col2: []

@@ -1,7 +1,7 @@
 _description:
   Two column component
 
-column1:
+col1:
   _label: Column One
   _placeholder:
     text: Column One
@@ -19,7 +19,7 @@ column1:
       - verizon-media
       - more-content-feed
 
-column2:
+col2:
   _label: Column Two
   _placeholder:
     text: Column Two
