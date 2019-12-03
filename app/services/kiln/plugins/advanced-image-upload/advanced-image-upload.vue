@@ -44,7 +44,7 @@
 
 <script>
 
-import axios from 'axios'
+import { uploadFile } from '../../../client/s3'
 
 const UiFileupload = window.kiln.utils.components.UiFileupload
 
@@ -87,11 +87,7 @@ export default {
         from the client to s3. Actual s3 file key (aka file name) will be built on backend by processing
         attached filename and appending a UUID to ensure there are no file collisions in the s3 bucket.
         */
-        this.prepareFileForUpload(file.name, file.type)
-          .then(data => {
-            return this.execFileUpload(data.s3SignedUrl, file, data.s3FileType)
-              .then(() => { return { host: data.s3CdnHost, fileKey: data.s3FileKey }});
-          })
+        uploadFile(file)
           .then((s3) => {
 
             // Build the full s3 image url.
@@ -107,43 +103,7 @@ export default {
 
           });
       }
-
-    },
-    /**
-     *
-     * Send file name and mime type to backend so backend can use AWS creds to generate aws pre-signed request url
-     * associated with this file. This signed url will act as temporary AWS credentials that
-     * the client will use to directly upload the file to s3.
-     *
-     * @param {string} fileName - filename of attached file.
-     * @param {string} fileType - MIME type of attached file.
-     */
-    prepareFileForUpload(fileName, fileType) {
-
-      return axios.post('/advanced-image-upload', {
-        fileName: fileName,
-        fileType: fileType
-      }).then(result => result.data);
-
-    },
-    /**
-     *
-     * Upload a file directly to s3 using a pre-signed request url.
-     *
-     * File object: https://developer.mozilla.org/en-US/docs/Web/API/File
-     *
-     * @param {string} s3SignedUrl - The signed url used as temporary aws creds to process the direct s3 upload.
-     * @param {File} file - File object associated with file upload input button.
-     * @param {string} s3FileType - MIME type of file.
-     */
-    execFileUpload(s3SignedUrl, file, s3FileType) {
-
-      return axios.put(s3SignedUrl, file, {
-        headers: {
-          'Content-Type': s3FileType
-        }
-      });
-
+      
     }
   },
   components: {

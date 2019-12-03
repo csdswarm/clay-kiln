@@ -12,7 +12,19 @@
 // or where it does significantly different things that would break a prior migration
 // - CSD
 
+// must be set before importing usingDb, if it exists
+const pgIndex = process.argv.indexOf('-pg');
+if (pgIndex !== -1) {
+  [
+    process.env.PGHOST,
+    process.env.PGDATABASE,
+    process.env.PGUSER,
+    process.env.PGPASSWORD,
+  ] = process.argv.splice(pgIndex, 5).slice(1);
+}
+
 const fs = require('fs');
+const util = require('util');
 const _get = require('../../app/node_modules/lodash/get');
 const _has = require('../../app/node_modules/lodash/has');
 const _set = require('../../app/node_modules/lodash/set');
@@ -21,8 +33,13 @@ const claycli = require('../../app/node_modules/claycli');
 const YAML = require('../../app/node_modules/yamljs');
 const { isPage } = require('../../app/node_modules/clayutils');
 const url = require('url');
+const usingDb = require('./using-db');
 
 const DEFAULT_HOST = 'clay.radio.com';
+const DEFAULT_HEADERS = {
+    'Content-Type': 'application/json',
+    'Authorization': 'token accesskey',
+};
 const HTTP = { http: 'http' };
 const HTTPS = { http: 'https' };
 
@@ -30,6 +47,8 @@ const HTTPS = { http: 'https' };
 const prettyJSON = obj => JSON.stringify(obj, null, 2);
 const toYaml = obj => YAML.stringify(obj, 8, 2);
 const clone = obj => obj && JSON.parse(JSON.stringify(obj));
+const readFileAsync = util.promisify(fs.readFile);
+const getFileText = path => readFileAsync(path, 'utf-8');
 
 /**
  * given a host, attempts to get the configured values for that host
@@ -268,12 +287,13 @@ function httpRequest(params) {
     try {
       const conn = require(http);
 
-      const parsedOptions = options.url ? {...options, ...url.parse(options.url)} : options;
+      const parsedOptions = options.url ? { ...options, ...url.parse(options.url) } : options;
 
       const req = conn.request(parsedOptions, res => {
         const data = [];
         res.on('data', chunk => data.push(chunk));
-        res.on('end', () => resolve({ result: 'success', data: Buffer.concat(data).toString(), params }));
+        res.on('end',
+          () => resolve({ result: 'success', data: Buffer.concat(data).toString(), params }));
         res.on('error', error => reject({ result: 'fail', params, error }));
       });
       req.on('error', error => reject({ result: 'fail', params, error }));
@@ -303,7 +323,7 @@ function republish(params) {
     }
   };
 
-  return httpRequest({http, options});
+  return httpRequest({ http, options });
 }
 
 /**
@@ -311,15 +331,77 @@ function republish(params) {
  * @param {Object} params
  * @returns {Promise<any>}
  */
-function readFile(params){
-  const {path} = params;
+function readFile(params) {
+  const { path } = params;
   return new Promise((resolve, reject) => {
     fs.readFile(path, 'utf8', (error, data) => {
       error
-        ? reject({result: 'fail', params, error})
-        : resolve({result: 'success', data, params});
+        ? reject({ result: 'fail', params, error })
+        : resolve({ result: 'success', data, params });
     });
   });
+}
+
+/**
+ * Handles running sql against postgres
+ * @param {string} sql the sql to execute
+ * @param {*} args optional arguments to be passed to the sql which will replace any `?` in the
+ *   script with the appropriate data, in the order set.
+ * @returns {Promise<object[]>} The data (if any) that was returned from the query
+ */
+async function executeSQL(sql, ...args) {
+  let rows;
+
+  try {
+    await usingDb.v1(async db =>
+      rows = (await db.query(sql, args)).rows
+    );
+    return rows || [];
+  } catch (error) {
+    console.error('There was an error while executing SQL.\n\n', { error, args });
+  }
+}
+
+/**
+ * Handles retrieving a sql file and running it against postgres immediately
+ * @param {string} path path to .sql file
+ * @param {*} args optional arguments to be passed to the sql which will replace any `?` in the
+ *   script with the appropriate data, in the order set.
+ * @returns {Promise<object[]>} The data (if any) that was returned from the query
+ */
+async function executeSQLFile(path, ...args) {
+  return executeSQL(await getFileText(path), ...args);
+}
+
+/**
+ * Similar to executeSQL, handles running a SQL query, however, it runs it in a transaction and
+ * will rollback any changes if an error occurs during the transaction.
+ * if the query returns any data, so will this
+ * @param {string} path path to .sql file
+ * @param {*} args optional arguments to be passed to the sql which will replace any `?` in the
+ *   script with the appropriate data, in the order set.
+ * @returns {Promise<object[]>} The data (if any) that was returned from the query
+ */
+async function executeSQLFileTrans(path, ...args) {
+  let rows;
+
+  await usingDb.v1(async db => {
+    const client = await db.connect();
+    try {
+      await client.query('BEGIN');
+      rows = (await client.query(await getFileText(path), args)).rows;
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error(
+        'There was an error while executing SQL.\nTransaction Was Rolled Back.\n\n',
+        { error, path, args });
+    } finally {
+      client.release();
+    }
+  });
+
+  return rows || [];
 }
 
 /**
@@ -389,6 +471,7 @@ async function addComponentToContainers(host, containerRefs, componentRef, compo
  *                                     Version 1.0                                         *
  *******************************************************************************************/
 const v1 = {
+  DEFAULT_HEADERS,
   _get,
   _has,
   _set,
@@ -404,6 +487,12 @@ const v1 = {
   republish,
   httpRequest,
   readFile,
+  usingDb: usingDb.v1,
+  readFileAsync,
+  getFileText,
+  executeSQL,
+  executeSQLFile,
+  executeSQLFileTrans,
   addComponentToContainers
 };
 
