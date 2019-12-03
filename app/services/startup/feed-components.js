@@ -46,7 +46,7 @@ function init() {
  */
 function renderComponent(cmptName, cmptData, format) {
   const partialNameWithFormat = format ? `${cmptName}.${format}` : cmptName,
-    partialExists = !!hbs.partials[partialNameWithFormat],
+    partialExists = hbs.partials[partialNameWithFormat],
     partialName = partialExists ? partialNameWithFormat : cmptName;
 
   if (!hbs.partials[partialName]) {

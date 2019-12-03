@@ -178,19 +178,17 @@ function getContent(data) {
   return data.content || data.relatedInfo || [];
 }
 
-module.exports.renderContent = renderContent;
-module.exports.renderComponent = renderComponent;
-module.exports.getContent = getContent;
-module.exports.firstAndParse = firstAndParse;
-module.exports.addArrayOfProps = addArrayOfProps;
-module.exports.addGnfImage = addGnfImage;
-module.exports.addRssMediaVideo = addRssMediaVideo;
-
-// exposed for testing
-module.exports.getMimeType = getMimeType;
-module.exports.addArrayOfProps = addArrayOfProps;
-module.exports.filterAndParse = filterAndParse;
-module.exports.filterByComponentNames = filterByComponentNames;
-module.exports.filterByManyAndParse = filterByManyAndParse;
-module.exports.firstAndParse = firstAndParse;
-module.exports.parseComponentData = parseComponentData;
+module.exports = {
+  addArrayOfProps,
+  addGnfImage,
+  addRssMediaVideo,
+  filterAndParse,
+  filterByComponentName,
+  filterByManyAndParse,
+  firstAndParse,
+  getContent,
+  getMimeType,
+  parseComponentData,
+  renderComponent,
+  renderContent
+};

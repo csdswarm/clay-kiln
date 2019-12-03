@@ -14,7 +14,7 @@ const format = require('date-fns/format'),
  * @param {Object} locals
  * @return {Array}
  */
-module.exports = async function (data, locals) {
+module.exports = async (data, locals) => {
   const {
       canonicalUrl,
       content,
@@ -49,6 +49,5 @@ module.exports = async function (data, locals) {
   // Add the authors
   addArrayOfProps(data.authors, 'dc:creator', transform);
 
-  // We HAVE to return a promise because of how NYMag setup the Highland render pipeline
-  return Promise.resolve(transform);
+  return transform;
 };
