@@ -1,0 +1,26 @@
+@import "colors";
+
+.warning {
+  background-color: $keenUiYellow;
+  padding: 20px;
+
+  &__icon {
+    color: $keenUiAlertIconYellow;
+    vertical-align: top;
+  }
+
+  &__header {
+    display: inline-block;
+    font-family: ProximaNova-Regular, sans-serif;
+    font-size: 20px;
+    height: 24px;
+    line-height: 24px;
+    padding-left: 4px;
+    vertical-align: top;
+  }
+
+  &__content {
+    font-size: 18px;
+    padding-top: 8px;
+  }
+}
