@@ -22,6 +22,26 @@ const SECOND = 1000,
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front'
+  },
+
+  msnFeed = {
+    // values are in pixels.  image requirements found here:
+    // https://partnerhub.msn.com/docs/spec/vcurrent/feed-specifications/AAsCh
+    image: {
+      required: {
+        maxSide: 4000,
+        minSide: 150,
+        maxSizeMb: 14,
+        maxSizeB: 14e6
+      },
+      // we don't need all the recommended msn specs - just the important ones
+      recommended: {
+        ratio: {
+          min: 0.5,
+          max: 1.89
+        }
+      }
+    }
   };
 
 
@@ -33,5 +53,6 @@ module.exports = {
   WEEK,
   YEAR,
   time,
-  PAGE_TYPES
+  PAGE_TYPES,
+  msnFeed
 };

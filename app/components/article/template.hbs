@@ -19,7 +19,7 @@
       <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
     </div>
     <meta itemprop="dateModified" content="{{ dateModified }}" />
-    
+
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
@@ -203,20 +203,9 @@
           </ul>
         </section>
 
-        <section class="circulation__section" data-editable="circFeeds">
-          <h3 class="subtitle circ-edit">Recirculation:</h3>
-          <ul class="items">
-            <li class="item">
-              <h4 class="item-title required">Recirculation Image</h4>
-            <p class="item-data">
-              {{#if feedImgUrl}}
-                <img class="feedimg" src="{{ feedImgUrl }}?width=300" alt="" />
-              {{else}}
-                <div class="empty-feedimg"></div>
-              {{/if}}
-              </p>
-            </li>
-          </ul>
+        <section class="circulation__section">
+          <h3 class="subtitle">Recirculation:</h3>
+          {{> feed-image feedImg }}
         </section>
 
         <section class="circulation__section" data-editable="circMetadata">

@@ -201,4 +201,6 @@ module.exports = router => {
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
+
+  addEndpoints.imageInfo(router, checkAuth);
 };

@@ -84,16 +84,11 @@ seoDescription:
       required: true
       min: 140
       max: 250
-feedImgUrl:
+feedImg:
   _label: Recirculation Image
-  _publish: feedImgUrl
-  help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
-  _has:
-    input: advanced-image-upload
-    uploadLabel: Upload Image Attachment
-    uploadHelp: Choose an image file from your computer
-    validate:
-      required: true
+  _component:
+    include:
+      - feed-image
 slug:
   _label: Slug
   _has:
@@ -374,9 +369,6 @@ _groups:
       text: Secondary Bylines
       height: 60px
       ifEmpty: secondaryAttribution
-  circFeeds:
-    fields:
-      - feedImgUrl
   circHeadlines:
     fields:
       - primaryHeadline

@@ -3,7 +3,8 @@ _components:
     primaryHeadline: ''
     headline: ''
     subHeadline: ''
-    feedImgUrl: ''
+    feedImg:
+      _ref: /_components/feed-image/instances/new
     feedLayout: small
     teaser: ''
     slug: ''
