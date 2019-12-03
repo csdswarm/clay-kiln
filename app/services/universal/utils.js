@@ -1,5 +1,8 @@
 'use strict';
-const _isArray = require('lodash/isArray'),
+const
+  _filter = require('lodash/filter'),
+  _identity = require('lodash/identity'),
+  _isArray = require('lodash/isArray'),
   _isObject = require('lodash/isObject'),
   _isEmpty = require('lodash/isEmpty'),
   _isString = require('lodash/isString'),
@@ -182,6 +185,20 @@ function urlToCanonicalUrl(url) {
   return kilnUrlToPageUrl(url).split('?')[0].split('#')[0];
 }
 
+/**
+ * Trims, lowercases, replaces spaces with dashes and urlencodes the string
+ * @param {string} text
+ * @returns {string}
+ */
+function textToEncodedSlug(text) {
+  return encodeURIComponent(
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/ /g, '-')
+  );
+}
+
 function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
@@ -189,23 +206,50 @@ function debugLog(...args) {
 }
 
 /**
- * Url queries to elastic search need to be `http` since that is
- * how it is indexed as.
- * @param {String} url
- * @returns {String}
+ * can be used to get all _ref objects within an object.
+ * Copied from amphora.references and modified for unity environment.
+ * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
+ * @param {object} obj
+ * @param {Function|string} [filter=_identity]  Optional filter
+ * @returns {array}
  */
-module.exports.urlToElasticSearch = url => url.replace('https', 'http');
-module.exports.isFieldEmpty = isFieldEmpty;
-module.exports.has = has;
-module.exports.replaceVersion = replaceVersion;
-module.exports.isUrl = isUrl;
-module.exports.uriToUrl = uriToUrl;
-module.exports.urlToUri = urlToUri;
-module.exports.formatStart = formatStart;
-module.exports.toTitleCase = toTitleCase;
-module.exports.getSiteBaseUrl = getSiteBaseUrl;
-module.exports.isPublishedVersion = isPublishedVersion;
-module.exports.ensurePublishedVersion = ensurePublishedVersion;
-module.exports.isInstance = isInstance;
-module.exports.urlToCanonicalUrl = urlToCanonicalUrl;
-module.exports.debugLog = debugLog;
+function listDeepObjects(obj, filter) {
+  let cursor, items,
+    list = [],
+    queue = [obj];
+
+  while (queue.length) {
+    cursor = queue.pop();
+    items = _filter(cursor, _isObject);
+    list = list.concat(_filter(items, filter || _identity));
+    queue = queue.concat(items);
+  }
+
+  return list;
+}
+
+Object.assign(module.exports, {
+  /**
+   * Url queries to elastic search need to be `http` since that is
+   * how it is indexed as.
+   * @param {String} url
+   * @returns {String}
+   */
+  urlToElasticSearch: url => url.replace('https', 'http'),
+  isFieldEmpty,
+  has,
+  replaceVersion,
+  isUrl,
+  uriToUrl,
+  urlToUri,
+  formatStart,
+  toTitleCase,
+  getSiteBaseUrl,
+  isPublishedVersion,
+  ensurePublishedVersion,
+  isInstance,
+  urlToCanonicalUrl,
+  textToEncodedSlug,
+  debugLog,
+  listDeepObjects
+});

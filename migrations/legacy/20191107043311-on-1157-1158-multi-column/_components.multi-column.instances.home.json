@@ -1,11 +1,8 @@
 {
-  "googleAdBillboard": {
-    "_ref": "/_components/google-ad-manager/instances/billboardBottom"
+  "mediumRectangleTop": {
+    "_ref": "/_components/google-ad-manager/instances/mediumRectangleTop"
   },
-  "googleAdHalfPage": {
-    "_ref": "/_components/google-ad-manager/instances/halfPageTop"
-  },
-  "leftCol": [],
-  "middleCol": [],
-  "rightCol": []
+  "col1": [],
+  "col2": [],
+  "col3": []
 }

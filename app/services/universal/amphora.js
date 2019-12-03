@@ -1,5 +1,6 @@
 'use strict';
 const { getComponentName } = require('clayutils'),
+  { listDeepObjects } = require('./utils'),
   dedupeArray = arr => Array.from(new Set(arr)),
   returnData = (_, data) => data;
 
@@ -25,20 +26,21 @@ const { getComponentName } = require('clayutils'),
  * @returns {object} The new or updated ancestry object
  */
 function composeAncestry(myUri, data, { ancestry = {} }) {
-  const info = JSON.stringify(data || ''),
-    refsRe = /"_ref"\s*:\s*"[^\/"]+?\/_components\/[^\/]+\/instances\/[^\/\s"]+?"/g,
-    refTrimRe = /(^"_ref"\s*:\s*"|"+$)/g,
-    children = (info.match(refsRe) || []).map(child => child.replace(refTrimRe, '')),
-    me = ancestry[myUri] || { name: getComponentName(myUri) },
-    parents = me.parents || [];
+  try {
+    const children = listDeepObjects(data, '_ref').map(({ _ref }) => _ref),
+      me = ancestry[myUri] || { name: getComponentName(myUri) };
 
-  me.parents = parents;
-  ancestry[myUri] = me;
+    me.parents = me.parents || [];
+    ancestry[myUri] = me;
 
-  for (const ref of children) {
-    const child = ancestry[ref] = ancestry[ref] || { name: getComponentName(ref), parents: [] };
+    for (const ref of children) {
+      const child = ancestry[ref] = ancestry[ref] || { name: getComponentName(ref), parents: [] };
 
-    child.parents = dedupeArray([...child.parents, myUri]);
+      child.parents = dedupeArray([...child.parents, myUri]);
+    }
+
+  } catch (error) {
+    console.error('error', 'There was an error', error );
   }
 
   return ancestry;

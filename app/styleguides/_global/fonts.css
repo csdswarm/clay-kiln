@@ -592,6 +592,13 @@ em, i {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Brightcove Overlay Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+
+@define-mixin overlay-font1 {
+  @mixin font CircularStd-Black, 16px, $white, inherit, 19px;
+}
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Presented By Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/

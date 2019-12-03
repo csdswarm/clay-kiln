@@ -4,14 +4,13 @@ const {
   _unset,
   clayExport,
   clayImport,
-  getFileText,
   prettyJSON,
 } = require('../migration-utils').v1;
+const mcData = require('./_components.multi-column.instances.home.json');
 
 const host = process.argv[2] || 'clay.radio.com';
 
 const slashToDot = val => val.split('/').join('.');
-const getMultiColumnInstanceData = async () => JSON.parse(await getFileText(`./${multiColumnInstancesPath}.home.json`));
 
 const homepageInstancesRef = '_components/homepage/instances';
 const multiColumnInstancesRef = '_components/multi-column/instances';
@@ -23,7 +22,7 @@ const multiColumnInstancesPath = slashToDot(multiColumnInstancesRef);
  * Updates the homepage instance to show the new multi-column component
  * @returns {Promise<{result: ("success"|"fail"), params: Object, messages?: Object[], error?: Object}|*>}
  */
-async function updateHomepageInstances(mcData) {
+async function updateHomepageInstances() {
   console.log('Updating homepage component with new multi-column component\n');
   const { data } = await clayExport({ componentUrl: `${host}/${homepageInstancesRef}` });
 
@@ -48,10 +47,8 @@ async function run() {
   console.log('Started adding multi-column instances\n');
 
   try {
-    const mcData = await getMultiColumnInstanceData();
-    await updateHomepageInstances(mcData);
+    await updateHomepageInstances();
   } catch (error) {
-    error = error instanceof Error ? error : prettyJSON({ error });
     console.error('There was an error adding multi-column instances', error);
   }
   console.log('Finished adding multi-column instances.\n');
