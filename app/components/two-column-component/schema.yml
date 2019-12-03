@@ -25,15 +25,6 @@ col2:
     text: Column Two
     height: 600px
   _componentList:
-    fuzzy: true # allows interactives, etc to add one-off components
+    fuzzy: false # allows interactives, etc to add one-off components
     include:
-      - image
-      - instagram-post
-      - brightcove
-      - brightcove-live
-      - youtube
-      - html-embed
-      - omny
-      - verizon-media
-      - more-content-feed
       - google-ad-manager
