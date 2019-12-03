@@ -25,7 +25,7 @@
       }
     }
 
-    &--left {
+    &--1 {
       
       @mixin default-screen {
         flex: 0 0 widthOnGrid(6, 5);
@@ -42,7 +42,7 @@
       }
     }
 
-    &--middle {
+    &--2 {
       @mixin default-screen {
         flex: 0 0 widthOnGrid(4, 3);
         margin-right: em(20);
@@ -58,7 +58,7 @@
       }
     }
 
-    &--right {
+    &--3 {
       @mixin default-screen {
         flex: 0 0 widthOnGrid(4, 3);
       }
@@ -72,17 +72,12 @@
     }
   }
 
-  .multi-column__ad--half-page {
+  .multi-column__ad--col3 {
     @mixin medium-screen {
       display: none;
     }
-  }
-
-  .multi-column__ad--billboard {
-    display: none;
-
-    @mixin small-screen {
-      display: block;
+    .kiln-edit-mode .component--google-ad-manager, .component--google-ad-manager {
+      margin-bottom: 0;
     }
   }
 }

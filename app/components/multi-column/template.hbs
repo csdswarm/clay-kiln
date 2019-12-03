@@ -1,4 +1,4 @@
-<section class="component component--multi-column" data-uri="{{ default _ref _self }}">
+<section class="component component--multi-column multi-column" data-uri="{{ default _ref _self }}">
   <div class="multi-column">
     <div class="multi-column__column multi-column__column--1" data-editable="col1">
       {{> component-list col1 }}
@@ -10,12 +10,11 @@
       <div class="multi-column__editable" data-editable="col3">
         {{> component-list col3 }}
       </div>
-      <div class="multi-column__ad">
+      <div class="multi-column__ad multi-column__ad--col3">
         {{> google-ad-manager mediumRectangleTop }}
       </div>
     </div>
   </div>
-  <div class="multi-column__ad multi-column__ad--billboard">
-    {{> google-ad-manager googleAdBillboard }}
-  </div>
 </section>
+
+
