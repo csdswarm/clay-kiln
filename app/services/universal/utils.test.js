@@ -1,5 +1,4 @@
 'use strict';
-require('amphora').references.listDeepObjects()
 const {
     listDeepObjects,
     textToEncodedSlug
