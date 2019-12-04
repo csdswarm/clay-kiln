@@ -1,4 +1,4 @@
-_version: 9.0
+_version: 10.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -265,7 +265,27 @@ feeds:
         value: newsfeed
       - name: Apple News
         value: apple-news
+      - name: MSN
+        value: msn
     help: By default, articles are included in all of our feeds. Uncheck these if you don't want this article to appear in them, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
+
+msnTitle:
+  _label: MSN Article Title
+  _has:
+    input: default-text-with-override
+    defaultField: headline
+    overrideCheckbox:
+      help: >-
+        By default the title will be the article's headline.  You will need to
+        override this if the headline doesn't meet MSN's title requirements.
+    validate:
+      # requirement found here
+      # https://partnerhub.msn.com/docs/spec/vcurrent/article-metadata/AAsCd
+      # this must be in sync with the query inside the 'msn' feeds instance and
+      #   msn-feed-utils/article-will-show-on-msn-feed.js
+      min: 21
+      required: true
+
 sectionFront:
   _label: Section Front
   _publish: sectionFront
@@ -411,6 +431,10 @@ _groups:
       - genreSyndication
       - syndicationStatus
       - syndicatedUrl
+
+  msnFeedSettings:
+    fields:
+      - msnTitle
 
   leadSettings:
     _label: Lead Settings

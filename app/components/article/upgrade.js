@@ -4,6 +4,9 @@ const _get = require('lodash/get'),
   addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content'),
+  defaultTextWithOverride = {
+    onModelSave: require('../../services/kiln/plugins/default-text-with-override/on-model-save')
+  },
   { componentizeFeedImg } = require('./upgrade-helpers');
 
 module.exports['1.0'] = function (uri, data) {
@@ -180,6 +183,10 @@ module.exports['9.0'] = function (uri, data) {
 };
 
 module.exports['10.0'] = async (uri, data) => {
+  defaultTextWithOverride.onModelSave.handleDefault('msnTitle', 'headline', data);
+  data.msnTitleLength = _get(data.msnTitle, 'length', 0);
+  data.feeds.msn = true;
+
   await componentizeFeedImg(uri, data);
 
   return data;
