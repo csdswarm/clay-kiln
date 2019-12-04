@@ -14,10 +14,10 @@ module.exports = () => {
   const hasAlertsAccess = () => {
     const { stationsIHaveAccessTo, user } = window.kiln.locals;
 
-    if (user && user.can && stationsIHaveAccesTo) {
+    if (user && user.can && stationsIHaveAccessTo) {
       return user.can('create').an('alerts_global').for(anyStation).value ||
         user.can('update').an('alerts_global').for(anyStation).value ||
-        Object.keys(stationsIHaveAccesTo).length;
+        Object.keys(stationsIHaveAccessTo).length;
     }
 
     return false;
