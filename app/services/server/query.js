@@ -192,7 +192,7 @@ function onePublishedArticleByUrl(url, fields) {
  * @param  {String} ref
  */
 function logCatch(e, ref) {
-  log('error', `Error querying Elastic for component ${ref}`);
+  log('error', `Error querying Elastic for component ${ref}`, e);
 }
 
 module.exports = newQueryWithPrefix;

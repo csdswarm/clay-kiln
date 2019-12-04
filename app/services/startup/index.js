@@ -24,7 +24,8 @@ const pkg = require('../../package.json'),
   radium = require('./radium'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
-  cacheControl = require('./cache-control');
+  cacheControl = require('./cache-control'),
+  addEndpoints = require('./add-endpoints');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -88,6 +89,8 @@ function setupApp(app) {
   app.use(currentStation);
 
   app.use(cacheControl);
+
+  addEndpoints.msnFeed(app);
 
   radium.inject(app);
 
