@@ -203,6 +203,5 @@ module.exports = router => {
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
   addEndpoints.createPage(router);
-  addEndpoints.allRdcCallsigns(router);
   ensureStationOnCustomUrl(router);
 };

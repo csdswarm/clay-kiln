@@ -11,15 +11,17 @@ module.exports = () => {
   window.kiln.locals = window.kiln.locals || {};
   window.kiln.navButtons = window.kiln.navButtons || {};
 
-  const user = window.kiln.locals.user,
-    hasAlertsAccess = () => {
-      if (user && user.can) {
-        return user.can('create').an('alerts_global').for(anyStation).value ||
-          user.can('update').an('alerts_global').for(anyStation).value;
-      }
+  const hasAlertsAccess = () => {
+    const { stationsIHaveAccessTo, user } = window.kiln.locals;
 
-      return false;
-    };
+    if (user && user.can && stationsIHaveAccessTo) {
+      return user.can('create').an('alerts_global').value ||
+        user.can('update').an('alerts_global').value ||
+        Object.keys(stationsIHaveAccessTo).length;
+    }
+
+    return false;
+  };
 
   // Don't register if the user doesn't have permission
   if (hasAlertsAccess()) {
