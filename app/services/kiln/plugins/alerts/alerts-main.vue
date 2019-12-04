@@ -143,6 +143,7 @@
     const { isUrl } = require('../../../universal/utils');
     const stationSelect = require('../../shared-vue-components/station-select');
     const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
+    const { anyStation } = require('../../../universal/user-permissions');
     const {
         UiButton,
         UiCheckbox,
@@ -216,7 +217,8 @@
                 tabs() {
                     const { user, stationsIHaveAccessTo } = kiln.locals,
                         tabs = [],
-                        hasGlobalAlertPermissions = user.can('create').a('alerts_global').value || user.can('update').a('alerts_global').value;
+                        hasGlobalAlertPermissions = user.can('create').a('alerts_global').for(anyStation).value ||
+                            user.can('update').a('alerts_global').for(anyStation).value;
 
                     if (hasGlobalAlertPermissions) {
                         tabs.push({ id: 'global', name: 'Global' });
