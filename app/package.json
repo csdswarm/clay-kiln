@@ -116,7 +116,6 @@
     "gulp-uglify": "^3.0.0",
     "istanbul": "^0.4.5",
     "mocha": "^6.0.0",
-    "nodemon": "^1.19.4",
     "postcss-functions": "^3.0.0",
     "postcss-import": "^11.1.0",
     "postcss-mixins": "^6.2.0",
