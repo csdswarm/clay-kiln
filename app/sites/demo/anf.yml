@@ -1,0 +1,110 @@
+# https://developer.apple.com/documentation/apple_news/articledocument
+
+version: '1.10.1'
+language: en
+# https://developer.apple.com/documentation/apple_news/layout
+documentStyle:
+layout:
+  columns: 6
+  width: 1024
+  margin: 30
+  gutter: 20
+# https://developer.apple.com/documentation/apple_news/apple_news_format/component_styles
+componentStyles:
+  exampleStyle:
+    backgroundColor: '#FFFFFF'
+    opacity: 1
+    border:
+      all:
+        width: 1
+        color: '#333'
+      left: false
+      right: false
+  articleStyle:
+  headerStyle:
+  headlineStyle:
+  bylineStyle:
+  ledeStyle:
+  imageStyle:
+  instagramStyle:
+  brightcoveStyle:
+  youtubeStyle:
+  omnyStyle:
+  verizonMediaStyle:
+  bodyStyle:
+  paragraphStyle:
+  subheaderStyle:
+  tweetStyle:
+  facebookPostStyle:
+  galleryStyle:
+  gallerySlideStyle:
+  slideTitleStyle:
+  slideDescriptionStyle:
+# https://developer.apple.com/documentation/apple_news/apple_news_format/text_styles
+componentTextStyles:
+  default:
+    fontName: Georgia
+    textColor: '#111'
+    fontSize: 18
+    lineHeight: 20
+    linkStyle:
+      textColor: '#1782a9'
+    paragraphSpacingBefore: 12
+    paragraphSpacingAfter: 12
+  headlineTextStyle:
+  bylineTextStyle:
+  ledeTextStyle:
+  imageTextStyle:
+  bodyTextStyle:
+  paragraphTextStyle:
+  subheaderTextStyle:
+  slideTitleTextStyle:
+  slideDescriptionTextStyle:
+# https://developer.apple.com/documentation/apple_news/componentlayout
+componentLayouts:
+  default:
+    columnStart: 0
+    columnSpan: 6
+    margin:
+      bottom: 20
+  articleLayout:
+  headerLayout:
+  headlineLayout:
+  bylineLayout:
+  ledeLayout:
+  imageLayout:
+  instagramLayout:
+  brightcoveLayout:
+  youtubeLayout:
+  omnyLayout:
+  verizonMediaLayout:
+  bodyLayout:
+  paragraphLayout:
+  subheaderLayout:
+  tweetLayout:
+  facebookPostLayout:
+  galleryLayout:
+  gallerySlideLayout:
+  slideTitleLayout:
+  slideDescriptionLayout:
+
+
+# appDownloadCTALinkStyle
+# appDownloadCTALinkLayout
+# appDownloadCTALinkTextStyle
+# appDownloadCTAArrowStyle
+# appDownloadCTAArrowLayout
+# footerStyle
+# footerLayout
+# logoLayout
+# logoStyle
+# footerBodyLayout
+# footerBodyStyle
+# footerBodyTextStyle
+# footerCTABtnContainerStyle
+# footerCTABtnContainerLayout
+# footerCTABtnMailStyle
+# footerCTABtnMailLayout
+# footerCTABtnLayout
+# footerCTABtnStyle
+# footerCTABtnTextStyle
