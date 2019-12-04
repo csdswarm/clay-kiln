@@ -1,8 +1,4 @@
 _components:
-  more-content-feed-right-rail:
-    instances:
-      new:
-        allowed: true
   two-column-component:
     instances:
       new:

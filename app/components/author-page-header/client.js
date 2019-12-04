@@ -2,13 +2,13 @@
 
 const getRightRail = (el) => {
   const layoutPageHeader = document.querySelector('.layout__page-header'),
-    moreContentRightRail = document.querySelector('.component--more-content-feed-right-rail'),
+    rightColumn = document.querySelector('.two-column-component__column--2'),
     authorPageHeaderRightRail = el.querySelector('.author-page-header__right-content');
 
-  if (moreContentRightRail) {
+  if (authorPageHeaderRightRail && rightColumn) {
     layoutPageHeader.style['z-index'] = 4;
 
-    authorPageHeaderRightRail.appendChild(moreContentRightRail);
+    authorPageHeaderRightRail.appendChild(rightColumn);
   }
 };
 

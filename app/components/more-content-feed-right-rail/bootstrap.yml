@@ -1,6 +1,0 @@
-_components:
-  more-content-feed-right-rail:
-    contentCollectionLogoSponsorship:
-      _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-    googleAdRightRail:
-      _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
