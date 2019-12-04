@@ -1,0 +1,5 @@
+_components:
+  page-header:
+    instances:
+      new:
+        title: ''
