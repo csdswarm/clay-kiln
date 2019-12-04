@@ -1,8 +1,32 @@
 'use strict';
 
-const getNewComponentsYml = require('./get-new-components-yml'),
+const path = require('path'),
+  _get = require('../../../app/node_modules/lodash/get'),
+  _set = require('../../../app/node_modules/lodash/set'),
+  getNewComponentsYml = require('./get-new-components-yml'),
+  { v1: elasticsearch } = require('../../utils/elasticsearch'),
   { v1: parseHost } = require('../../utils/parse-host'),
-  { v1: clayImport } = require('../../utils/clay-import');
+  { v1: clayImport } = require('../../utils/clay-import'),
+  shouldUpdate = mappings => {
+    const props = mappings._doc.properties;
+
+    return !props.msnTitleLength
+      || !props.noIndexNoFollow
+      || !props.feeds;
+  },
+  updateMappings = mappings => {
+    Object.assign(mappings._doc.properties, {
+      msnTitleLength: { type: 'integer' },
+      noIndexNoFollow: { type: 'boolean' },
+      feeds: {
+        properties: {
+          msn: { type: 'boolean' }
+        }
+      }
+    });
+
+    return mappings;
+  };
 
 run()
 
@@ -13,9 +37,16 @@ async function run() {
     const host = process.argv[2] || 'clay.radio.com',
       envInfo = parseHost(host);
 
-    await importNewComponents(host, envInfo.http)
+    await Promise.all([
+      importNewComponents(host, envInfo.http),
+      updateIndex(envInfo)
+    ])
 
-    console.log('successfully imported feed-image/new');
+    console.log(
+      'successfully imported the following component instances'
+      + '\n - feeds/msn'
+      + '\n - feed-image/new'
+    );
   } catch (err) {
     console.error(err);
   }
@@ -30,4 +61,15 @@ function importNewComponents(host, http) {
     hostUrl: host,
     payload: msnYml
   });
+}
+
+function updateIndex(envInfo) {
+  return elasticsearch.updateIndex(
+    envInfo,
+    'published-content',
+    {
+      shouldUpdate,
+      updateMappings
+    }
+  )
 }

@@ -13,5 +13,5 @@ const { rendererPipeline } = require('./utils');
  * @return {Promise}
  */
 module.exports = (ref, data, locals) => {
-  return rendererPipeline(ref, data, locals, 'rss');
+  return rendererPipeline(ref, data, locals, 'msn');
 };

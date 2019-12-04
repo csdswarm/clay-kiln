@@ -3,7 +3,6 @@
 const _forEach = require('lodash/forEach'),
   _find = require('lodash/find'),
   _get = require('lodash/get'),
-  _reduce = require('lodash/reduce'),
   _includes = require('lodash/includes'),
   mime = require('mime'),
   { getComponentName } = require('clayutils'),
@@ -16,24 +15,29 @@ const _forEach = require('lodash/forEach'),
  *
  * @param {Array} content
  * @param {Object} locals
+ * @param {string} format
+ * @param {Set<string>} [componentsToSkip = new Set()] - component names to skip rendering
  * @returns {String}
  */
-function renderContent(content, locals) {
-  return _reduce(content, (res, cmpt) => {
+async function renderContent(content, locals, format, componentsToSkip = new Set()) {
+  let res = '';
+
+  for (const cmpt of content) {
     const ref = _get(cmpt, '_ref', ''),
       cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
       match = ref.match(/_components\/([^\/]+)\//);
 
-    cmptData.locals = locals;
-    if (match && cmptData) {
+    if (
+      match
+      && match[1] !== 'inline-related'
+      && !componentsToSkip.has(match[1])
+    ) {
       // render the component and add it to the response
-      if (match[1] !== 'inline-related') {
-        res += renderComponent(match[1], cmptData);
-      }
+      res += await renderComponent(match[1], ref, cmptData, locals, format);
     }
+  }
 
-    return res;
-  }, '');
+  return res;
 }
 
 /**

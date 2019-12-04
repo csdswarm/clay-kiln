@@ -1,5 +1,8 @@
 'use strict';
 
+// note: rss is used loosely here because this feed adds a lot of elements
+//       needed by frequency that aren't valid per the rss spec.
+
 const format = require('date-fns/format'),
   parse = require('date-fns/parse'),
   { addArrayOfProps, renderContent } = require('./utils');

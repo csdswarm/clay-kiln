@@ -42,12 +42,10 @@ module.exports = (
   locals = {},
   componentName = ''
 ) => {
-  const { site:
-      { prefix }
-    } = locals,
+  const { site = {} } = locals,
     protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:',
     urlData = {
-      prefix,
+      prefix: site.prefix,
       sectionFront: data.sectionFront,
       secondarySectionFront: data.secondarySectionFront,
       slug: data.slug

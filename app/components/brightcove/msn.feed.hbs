@@ -1,0 +1,12 @@
+{{#if video}}
+  <div class="component--brightcove">
+    <div class="player">
+      <iframe src="https://players.brightcove.net/{{ locals.site.brightcoveAccountId }}/{{ locals.site.brightcovePlayerId }}_default/index.html?videoId={{ video.id }}"
+        allowfullscreen=""
+        webkitallowfullscreen=""
+        mozallowfullscreen=""
+        style="width: 640px; height: 360px;">
+      </iframe>
+    </div>
+  </div>
+{{/if}}
