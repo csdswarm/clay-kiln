@@ -16,17 +16,15 @@
               <div class="image__hover-overlay"></div>
             </picture>
             <div class="section-lead__details">
-                {{#unless @index}}
-                  {{#if ../_computed.useContentLabel}}
-                    <span class="details__content-label">{{ contentLabel }}</span>
-                  {{else}}
-                    <span class="details__primary-story-label">{{ ../primaryStoryLabel }}</span>
-                  {{/if}}
-                {{/unless}}
-              <h3 class="details__title">{{ article.primaryHeadline }}</h3>
-              {{#ifAll @index ../_computed.useContentLabel}}
+              {{#if ../_computed.useContentLabel}}
                 <span class="details__content-label">{{ contentLabel }}</span>
-              {{/ifAll}}
+              {{/if}}
+              {{#unless @index}}
+                {{#unless ../_computed.useContentLabel}}
+                  <span class="details__primary-story-label">{{ ../primaryStoryLabel }}</span>
+                {{/unless}}
+              {{/unless}}
+              <h3 class="details__title">{{ article.primaryHeadline }}</h3>
             </div>
           </a>
         </div>
