@@ -7,7 +7,10 @@ module.exports.render = (ref, data, locals) => {
   if (locals && locals.params) {
     title = locals.params.tag || locals.params.dynamicTag;
   }
-  data.title = !data.title && locals && title ? title.replace(/-/g, ' ').replace(/\//g,'').replace(/%26/g, '&') : data.title;
+
+  // eslint-disable-next-line no-extra-parens
+  data.title = (!data.title && locals && title) ? title.replace(/-/g, ' ').replace(/\//g,'').replace(/%26/g, '&') : data.title;
+
   return data;
 };
 
