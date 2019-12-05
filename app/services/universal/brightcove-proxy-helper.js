@@ -11,9 +11,8 @@
 const radioApi = require('../server/radioApi'),
   moment = require('moment'),
   log = require('./log').setup({ file: __filename }),
-  { CLAY_SITE_PROTOCOL, CLAY_SITE_HOST } = process.env,
-  baseUrl = `${CLAY_SITE_PROTOCOL}://${CLAY_SITE_HOST}`,
-  url = `${baseUrl}/api/brightcove`,
+  baseUrl = `${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }`,
+  url = `${ baseUrl }/api/brightcove`,
   ttl = radioApi.TTL.NONE;
 
 /**
