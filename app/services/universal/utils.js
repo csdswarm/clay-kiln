@@ -189,12 +189,27 @@ function debugLog(...args) {
 }
 
 /**
- * Url queries to elastic search need to be `http` since that is
- * how it is indexed as.
- * @param {String} url
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
  * @returns {String}
  */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+/**
+* Url queries to elastic search need to be `http` since that is
+* how it is indexed as.
+* @param {String} url
+* @returns {String}
+*/
 module.exports.urlToElasticSearch = url => url.replace('https', 'http');
+module.exports.yesNo = yesNo;
 module.exports.isFieldEmpty = isFieldEmpty;
 module.exports.has = has;
 module.exports.replaceVersion = replaceVersion;

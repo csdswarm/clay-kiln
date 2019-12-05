@@ -1,0 +1,14 @@
+<div data-uri="{{ default _ref self }}" class="{{ _computed.presentedByClasses }}">
+  <div class="presented-by__title-container">
+    <div class="presented-by__title" data-editable="displayTitle">{{ displayTitle }}</div>
+  </div>
+  <div class="presented-by__logos-container" data-editable="presenters">
+    {{#each presenters as |presenter|}}
+        <div class="presented-by__logo-container">
+            <a href="{{ presenter.url }}">
+                <img src="{{ presenter.logo }}" alt="{{ presenter.name }}" class="presented-by__logo-img">
+            </a>
+        </div>
+    {{/each}}
+  </div>
+</div>

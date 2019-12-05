@@ -52,3 +52,7 @@ _components:
     editorialFeeds: {}
     isContentFromAP: false
     noIndexNoFollow: false
+    accessoryText: ''
+    isCandidateToBeFeatured: false
+    isHidden: false
+    isSponsored: false

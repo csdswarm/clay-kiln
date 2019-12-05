@@ -29,8 +29,7 @@ module.exports = function (ref, data) {
   return {
     role: 'tweet',
     URL: getTweetURL(data),
-    layout: 'tweetLayout',
-    style: 'tweetStyle',
+    layout: 'bodyItemLayout',
     format: 'html'
   };
 };

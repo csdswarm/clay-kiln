@@ -6,17 +6,7 @@
 const log = require('../../services/universal/log').setup({ file: __filename }),
   { isNotHTMLEmbed } = require('../../services/universal/contentAppleNews'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
-  /**
-   * Get description text of slide
-   *
-   * @param {Array} description
-   * @returns {Promise|string}
-  */
-  getDescription = async description => {
-    const { text } = await getCompInstanceData(description[0]._ref);
-
-    return text;
-  },
+  _get = require('lodash/get'),
   /**
    * Get apple news format of slide ref
    *
@@ -24,43 +14,69 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * @returns {Promise|Object}
   */
   getSlideEmbed = async slide => {
-    let slideANF = {};
-
     if (isNotHTMLEmbed(slide._ref)) {
       try {
-        slideANF = await getCompInstanceData(`${ slide._ref }.anf`);
+        const slideANF = await getCompInstanceData(`${ slide._ref }.anf`),
+          { components: [imgComponent, captionComponent] } = slideANF;
+
+        return {
+          ...slideANF,
+          components: [
+            imgComponent,
+            {
+              ...captionComponent,
+              textStyle: {
+                ...captionComponent.textStyle,
+                textAlignment: 'right'
+              }
+            }
+          ]
+        };
       } catch (e) {
         log('error', `Error getting component instance data
         for ${ slide._ref } anf: ${e}`);
       };
     }
-
-    return slideANF;
+  },
+  getSlideDescription = (descriptionRef = '') => {
+    try {
+      return getCompInstanceData(`${descriptionRef}.anf`);
+    } catch (err) {
+      log('error', `Error getting slide description for ${descriptionRef} and: ${err}`);
+      return null;
+    }
   };
 
 module.exports = async function (ref, data) {
-  const description = await getDescription(data.description);
+  const { title, description } = data,
+    descRef = _get(description[0], '_ref'),
+    slideDescription = descRef
+      ? await getSlideDescription(descRef)
+      : null,
+    titleComponent = {
+      role: 'heading2',
+      text: title,
+      textStyle: {
+        fontSize: 20,
+        lineHeight: 25,
+        fontName: 'AvenirNext-Bold'
+      },
+      layout: {
+        margin: {
+          bottom: 7
+        }
+      }
+    };
 
   return {
     role: 'container',
-    style: 'gallerySlideStyle',
-    layout: 'gallerySlideLayout',
+    layout: 'slideGalleryItemLayout',
     components: [
-      {
-        role: 'heading2',
-        text: data.title,
-        style: 'slideTitleStyle',
-        textStyle: 'slideTitleTextStyle',
-        layout: 'slideTitleLayout'
-      },
-      ...description ? [{
-        role: 'caption',
-        text: description,
-        style: 'slideDescriptionStyle',
-        textStyle: 'slideDescriptionTextStyle',
-        layout: 'slideDescriptionLayout'
-      }] : [],
-      ...data.slideEmbed[0] ? [await getSlideEmbed(data.slideEmbed[0])] : []
+      ...await Promise.all(data.slideEmbed.map(getSlideEmbed)),
+      titleComponent,
+      ...slideDescription
+        ? [slideDescription]
+        : []
     ]
   };
 };

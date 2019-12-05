@@ -120,7 +120,7 @@
 </template>
 <script>
   import { transformVideoResults } from '../../../startup/brightcove.js';
-  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, getAllCategoryOptions,
+  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE,
   highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
   const { UiButton, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components;
@@ -244,7 +244,6 @@
     },
     async created() {
       if (this.data) {
-        await getAllCategoryOptions();
         this.tertiaryCategoryOptions = await tertiaryCategoryOptions();
         this.populateFormWithData(this.data);
       }
