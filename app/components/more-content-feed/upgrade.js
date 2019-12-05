@@ -114,12 +114,3 @@ module.exports['7.0'] = async function (uri, data) {
     };
   }
 };
-
-module.exports['8.0'] = function (uri, data) {
-  
-  // adding editing abilities for the components title and visibility
-  data.componentTitle = 'MORE from RADIO.COM';
-  data.componentTitleVisible = true;
-
-  return data;
-};
