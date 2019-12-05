@@ -24,7 +24,9 @@ const _get = require('lodash/get'),
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front'
-  };
+  },
+
+  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 
 module.exports = {
@@ -36,5 +38,6 @@ module.exports = {
   YEAR,
   time,
   SERVER_SIDE,
-  PAGE_TYPES
+  PAGE_TYPES,
+  DEFAULT_RADIOCOM_LOGO
 };
