@@ -12,18 +12,14 @@ const path = require('path'),
 
     return !props.msnTitleLength
       || !props.noIndexNoFollow
-      || !props.feeds;
+      || !_get(props, 'feeds.properties.msn');
   },
   updateMappings = mappings => {
-    Object.assign(mappings._doc.properties, {
-      msnTitleLength: { type: 'integer' },
-      noIndexNoFollow: { type: 'boolean' },
-      feeds: {
-        properties: {
-          msn: { type: 'boolean' }
-        }
-      }
-    });
+    const props = mappings._doc.properties;
+
+    props.msnTitleLength = { type: 'integer' };
+    props.noIndexNoFollow = { type: 'boolean' };
+    _set(props, 'feeds.properties.msn', { type: 'boolean' });
 
     return mappings;
   };
