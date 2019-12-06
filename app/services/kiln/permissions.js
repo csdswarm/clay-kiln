@@ -143,10 +143,11 @@ const addPermissions = require('../universal/user-permissions'),
    *
    * @param {boolean} canPublish
    * @param {boolean} canUnpublish
+   * @param {boolean} isPublished
    * @returns {function}
    */
-  makeHandleDisplay = (canPublish, canUnpublish) => (publishBtn, unpublishBtn) => {
-    if (!canPublish && publishBtn) {
+  makeHandleDisplay = (canPublish, canUnpublish, isPublished) => (publishBtn, unpublishBtn) => {
+    if (!canPublish && !isPublished && publishBtn) {
       publishBtn.style.display = 'none';
     }
     if (!canUnpublish && unpublishBtn) {
@@ -168,7 +169,7 @@ const addPermissions = require('../universal/user-permissions'),
         return;
       }
 
-      const { locals } = await whenPreloadedPromise,
+      const { locals, page: { state: published } } = await whenPreloadedPromise,
         canPublish = locals.user.can('publish').a(schema.schemaName).value,
         canUnpublish = locals.user.can('unpublish').a(schema.schemaName).value;
 
@@ -178,7 +179,7 @@ const addPermissions = require('../universal/user-permissions'),
 
       // shouldn't be declared above the short circuit
       // eslint-disable-next-line one-var
-      const handleDisplay = makeHandleDisplay(canPublish, canUnpublish),
+      const handleDisplay = makeHandleDisplay(canPublish, canUnpublish, published),
         publishBtn = document.querySelector('.right-drawer .publish-actions > button'),
         unpublishBtn = document.querySelector('.right-drawer .publish-status > button');
 
