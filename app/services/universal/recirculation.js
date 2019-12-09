@@ -2,6 +2,9 @@
 
 const _isObject = require('lodash/isObject'),
   queryService = require('../server/query'),
+  logger = require('./log'),
+  log = logger.setup({ file: __filename }),
+  recircCmpt = require('./recirc-cmpt'),
   index = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -11,6 +14,7 @@ const _isObject = require('lodash/isObject'),
     'contentType',
     'sectionFront'
   ],
+  returnData = (_, data) => data,
   // Maps defined query filters to correct elastic query formatting
   queryFilters = {
     sectionFronts: { createObj: sectionFront => ({ match: { sectionFront } }) },
@@ -72,9 +76,9 @@ const _isObject = require('lodash/isObject'),
 
       queryService[getQueryType(condition)](query, createObj(value));
     }
-  };
+  },
 
-/**
+  /**
  * Use filters to query elastic for content
  *
  * @param {object} filter
@@ -82,25 +86,75 @@ const _isObject = require('lodash/isObject'),
  * @param {array} fields
  * @returns {array} elasticResults
  */
-module.exports = async (filter, exclude, fields = elasticFields) => {
-  const query = queryService(index);
+  fetchRecirculation = async (filter, exclude, fields = elasticFields) => {
+    const query = queryService(index);
 
-  let results = [];
+    let results = [];
   
-  // add sorting
-  queryService.addSort(query, { date: 'desc' });
+    // add sorting
+    queryService.addSort(query, { date: 'desc' });
 
-  Object.entries(filter).forEach(([key, value]) => addCondition(query, key, value));
-  Object.entries(exclude).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
+    Object.entries(filter).forEach(([key, value]) => addCondition(query, key, value));
+    Object.entries(exclude).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
 
-  queryService.onlyWithTheseFields(query, fields);
+    queryService.onlyWithTheseFields(query, fields);
 
-  try {
-    results = await queryService.searchByQuery(query);
-  } catch (e) {
-    queryService.logCatch(e, 'content-search');
-    console.error(e);
-  }
+    try {
+      results = await queryService.searchByQuery(query);
+    } catch (e) {
+      queryService.logCatch(e, 'content-search');
+      console.error(e);
+    }
 
-  return results;
-};
+    return results;
+  },
+  /**
+   * Provides default data rendering and saving for any component using recirculation items
+   *
+   * @param {object} config
+   * @param {string} config.contentKey
+   * @param {function} config.mapDataToFilters
+   * @param {function} config.render
+   * @param {function} config.save
+   * @returns {object}
+   */
+  recirculationComponent = ({ contentKey = 'articles', mapDataToFilters = (uri, data) => data, render = returnData, save = returnData }) => {
+    return {
+      async render(uri, data, locals) {
+        try {
+          const { filters, excludes } = mapDataToFilters(uri, data, locals),
+            content = await fetchRecirculation(filters, excludes);
+          
+          data[contentKey] = content;
+        } catch (e) {
+          log('error', `There was an error querying items from elastic - ${e.message}`, e);
+        }
+        
+        return render(uri, data, locals);
+      },
+      async save(uri, data, locals) {
+        if (!data.items.length || !locals) {
+          return data;
+        }
+        data.items = await Promise.all(data.items.map(async (item) => {
+          item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+          const result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields);
+      
+          return  {
+            ...item,
+            primaryHeadline: item.overrideTitle || result.primaryHeadline,
+            pageUri: result.pageUri,
+            urlIsValid: result.urlIsValid,
+            canonicalUrl: item.url || result.canonicalUrl,
+            feedImgUrl: item.overrideImage || result.feedImgUrl ,
+            sectionFront: result.sectionFront
+          };
+        }));
+  
+        return save(uri, data, locals);
+      }
+    };
+  };
+
+module.exports = fetchRecirculation;
+module.exports.recirculationComponent = recirculationComponent;
