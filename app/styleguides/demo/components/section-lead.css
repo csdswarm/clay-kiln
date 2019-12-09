@@ -202,101 +202,86 @@
       }
     }
   }
+}
 
-  /* ---------[         MULTI-COLUMN adjustments         ]--------- */
-  &.section-lead--multi-column {
-    width: em(460);
-
-    &.section-lead--music .details__content-label {  color: $sunsetOrange }
-    &.section-lead--news .details__content-label {  color: $lightningYellow }
-    &.section-lead--sports .details__content-label {  color: $azureRadience }
-    &.section-lead--podcasts .details__content-label {  color: $robinsEggBlue }
-
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||| When inside Multi-column Component ||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+.component--multi-column {
+  .component--section-lead{
+    width: 100%;
+    .component--google-ad-manager { display: none; }
     .section-lead__articles {
-      width: 100%
+      width: 100%;
+      margin: 0;
+      height: auto;
     }
-
     .section-lead__article {
       width: 100%;
-
-      &.section-lead__article--first .details__title {
-        @mixin section-lead-mc-font1;
-        font-weight: 900
-      }
-
-      .details__content-label {
-        @mixin section-lead-mc-font2;
-        font-weight: 500;
-        display: block;
-        margin: em(15) 0 em(10);
-        text-transform: capitalize;
-      }
-    }
-
-    @mixin large-screen {
-      width: em(300);
-
-      .section-lead__article.section-lead__article--first .section-lead__details {
-        position: relative;
-      }
-    }
-
-    @mixin medium-screen {
-      width: em(704);
-
-      .section-lead__article .section-lead__image {
-        width: em(222);
-      }
-
-      .section-lead__article.section-lead__article--first .section-lead__image {
-        width: 100%;
-      }
-    }
-
-    @mixin only-medium-screen {
-      .section-lead__article.section-lead__article--first .section-lead__details {
-        position: absolute;
-      }
-
       .section-lead__details {
-        height: em(125);
-        padding-left: em(21);
-        padding-top: em(30);
-        width: em(465);
-        /* hack not sure why this is moving down 15px */
-        margin-top: em(-15);
-      }
-    }
-
-    @mixin medium-small-screen {
-      width: 100%;
-
-      .section-lead__article {
-        .section-lead__image {
-          width: em(115);
+        .details__content-label {
+          display: inline-block;
+          margin: 0 0 em(4, 14) 0;
+          @mixin section-lead-mc-font2;
+          &--top {
+            display: inline-block;
+            @mixin medium-screen {
+              display: none;
+            }
+          }
+          &--bottom {
+            display: none;
+            @mixin medium-screen {
+              display: inline-block;
+            }
+          }
         }
-
-        &.section-lead__article--first {
-          width: 100vw;
-          left: 50%;
-          right: 50%;
-          margin-left: -50vw;
-          margin-right: -50vw;
-
+        .details__title {
+          @mixin section-lead-mc-font3;
+          @mixin medium-screen {
+            @mixin section-lead-mc-font4;
+          }
+        }
+      }
+      &--first {
+        .section-lead__details {
           .details__content-label {
-            @mixin section-lead-mc-font3;
+            margin-top: em(15, 14);
+            &--top {
+              display: inline-block;
+            }
+            &--bottom {
+              display: none;
+            }
+          }
+          .details__title {
+            @mixin section-lead-mc-font1;
           }
         }
       }
     }
-
-    @mixin small-screen {
-      .section-lead__article .section-lead__image {
-        width: em(85);
+    .section-lead__link{
+      flex-wrap: nowrap;
+    }
+    .section-lead__image {
+      flex: 0 0 widthOnGrid(1, 1, 'small-screen');
+      margin: 0 em(20) 0 0;
+      @mixin default-screen {
+        flex: 0 0 widthOnGrid(3, 2);
+      }
+      @mixin large-screen {
+        flex: 0 0 widthOnGrid(2, 1);
+      }
+      @mixin medium-screen {
+        flex: 0 0 widthOnGrid(2, 1, 'medium-screen');
+      }
+      @mixin medium-small-screen {
+        flex: 0 0 widthOnGrid(1, 1, 'medium-small-screen');
       }
     }
   }
 }
+
 
 @define-mixin lead-module-color $sectionTitle, $color {
   .component--section-lead.section-lead--$sectionTitle {
