@@ -4,8 +4,16 @@
 // https://developer.apple.com/documentation/apple_news/apple_news_format/components
 
 const log = require('../../services/universal/log').setup({ file: __filename }),
+  { ANF_EMPTY_COMPONENT } = require('../../services/universal/contentAppleNews/constants'),
+  { isEmptyComponent } = require('../../services/universal/contentAppleNews/utils'),
   { isNotHTMLEmbed } = require('../../services/universal/contentAppleNews'),
   { getComponentInstance: getCompInstanceData } = require('../../services/server/publish-utils'),
+  qs = require('qs'),
+  componentProps = qs.stringify({
+    textStyle: {
+      textAlignment: 'right'
+    }
+  }),
   _get = require('lodash/get'),
   /**
    * Get apple news format of slide ref
@@ -14,45 +22,36 @@ const log = require('../../services/universal/log').setup({ file: __filename }),
    * @returns {Promise|Object}
   */
   getSlideEmbed = async slide => {
-    if (isNotHTMLEmbed(slide._ref)) {
-      try {
-        const slideANF = await getCompInstanceData(`${ slide._ref }.anf`),
-          { components: [imgComponent, captionComponent] } = slideANF;
+    const { _ref } = slide;
 
-        return {
-          ...slideANF,
-          components: [
-            imgComponent,
-            {
-              ...captionComponent,
-              textStyle: {
-                ...captionComponent.textStyle,
-                textAlignment: 'right'
-              }
-            }
-          ]
-        };
+    if (isNotHTMLEmbed(_ref)) {
+      try {
+        return getCompInstanceData(`${ _ref }.anf?${componentProps}`);
       } catch (e) {
         log('error', `Error getting component instance data
-        for ${ slide._ref } anf: ${e}`);
+        for ${ _ref } anf: ${e}`);
       };
+      return ANF_EMPTY_COMPONENT;
     }
   },
-  getSlideDescription = (descriptionRef = '') => {
+  /**
+   * @param {String} descriptionRef clay component ref
+   * @returns {Object} anf component
+   */
+  getAnfSlideDescription = (descriptionRef = '') => {
     try {
-      return getCompInstanceData(`${descriptionRef}.anf`);
+      return descriptionRef
+        ? getCompInstanceData(`${descriptionRef}.anf`)
+        : ANF_EMPTY_COMPONENT;
     } catch (err) {
       log('error', `Error getting slide description for ${descriptionRef} and: ${err}`);
-      return null;
     }
+    return ANF_EMPTY_COMPONENT;
   };
 
 module.exports = async function (ref, data) {
   const { title, description } = data,
     descRef = _get(description[0], '_ref'),
-    slideDescription = descRef
-      ? await getSlideDescription(descRef)
-      : null,
     titleComponent = {
       role: 'heading2',
       text: title,
@@ -66,17 +65,20 @@ module.exports = async function (ref, data) {
           bottom: 7
         }
       }
-    };
+    },
+    slideEmbed = await getSlideEmbed(data.slideEmbed[0]);
+
+  if (isEmptyComponent(slideEmbed)) {
+    return ANF_EMPTY_COMPONENT;
+  }
 
   return {
     role: 'container',
     layout: 'slideGalleryItemLayout',
     components: [
-      ...await Promise.all(data.slideEmbed.map(getSlideEmbed)),
+      slideEmbed,
       titleComponent,
-      ...slideDescription
-        ? [slideDescription]
-        : []
+      await getAnfSlideDescription(descRef)
     ]
   };
 };

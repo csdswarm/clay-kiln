@@ -2,10 +2,7 @@
 
 // https://developer.apple.com/documentation/apple_news/component
 // https://developer.apple.com/documentation/apple_news/apple_news_format/components
-let primaryVideo = {
-  URL: '',
-  stillURL: ''
-};
+
 const log = require('../log').setup({ file: __filename }),
   sectionCategoryStyles = {
     music: 'category1Style',
@@ -22,6 +19,8 @@ const log = require('../log').setup({ file: __filename }),
   { getComponentName, getComponentInstance } = require('clayutils'),
   excludeEmptyComponents = require('./exclude-empty-components'),
   formatLocalDate = require('clayhandlebars/helpers/time/formatLocalDate'),
+  anfComponentFooter = require('./component-footer'),
+  { ANF_EMPTY_COMPONENT } = require('./constants'),
   APP_DOWNLOAD_URL = 'https://app.radio.com/apple-news-download',
   ISO_8601_FORMAT = 'YYYY-MM-DDTHH:mm:ss[Z]',
   RESPONSIVE_COLUMN_CONDITIONS = {
@@ -89,7 +88,7 @@ const log = require('../log').setup({ file: __filename }),
           .join(', ');
 
       return [
-        `${authorsListPrefix}${formattedAuthors}`,
+        `${authorsListPrefix} ${formattedAuthors}`,
         formattedSources
         // either credit sources might be missing, so this prevents an unecessary comma
       ].filter(content => content.trim().length > 0 )
@@ -119,7 +118,7 @@ const log = require('../log').setup({ file: __filename }),
   getTags = async tags => {
     return getCompInstanceData(tags._ref).then(tags => {
       return tags.items.map(tag => tag.text);
-    }).catch(e => log('error', `Error getting tags: ${e}`));
+    }).catch(e => log('error', 'Error getting tags:', e));
   },
   /**
    * https://developer.apple.com/documentation/apple_news/apple_news_format/components/using_html_with_apple_news_format?language=data
@@ -134,42 +133,58 @@ const log = require('../log').setup({ file: __filename }),
   /**
    * Get apple news format of lede ref
    *
-   * @param {Array} lede
+   * @param {Array} ledeRef
    * @returns {Promise|Array}
   */
-  getLede = async lede => {
-    if (isNotHTMLEmbed(lede[0]._ref)) {
-      return getCompInstanceData(`${ lede[0]._ref }.anf`)
-        .then(lede => {
-          if (lede.role === 'video') {
-            const { URL, stillURL } = lede;
+  getLedeAnf = async ledeRef => {
+    const fallbackLede = {};
 
-            primaryVideo = { URL, stillURL };
-            return [{
-              ...lede,
-              layout: 'headerImageLayout'
-            }];
-          }
-
-          const { components: [ledeImage, ledeCaption] } = lede;
-
-          return [
-            {
-              ...ledeImage,
-              layout: 'headerImageLayout'
-            },
-            ...ledeCaption
-              ? [ledeCaption]
-              : []
-          ];
-        }).catch(e => log('error', `Error getting lede anf: ${ e }`));
+    if (isNotHTMLEmbed(ledeRef)) {
+      return getCompInstanceData(`${ ledeRef }.anf`)
+        .catch(e => {
+          log('error', 'Error getting lede anf:', e);
+          return fallbackLede;
+        });
     }
+
+    return fallbackLede;
+  },
+  /**
+   * Conditionally transforms the lede component to be styled depending on what properties it contains
+   *
+   * @param {Object} lede
+   * @param {String} ledeRef
+   * @returns {Array}
+   */
+  ledeComponentToAnf = (lede, ledeRef) => {
+    if (!lede) {
+      return [];
+    }
+
+    const { components } = lede,
+      isImageComponent = getComponentName(ledeRef) === 'image';
+
+    if (isImageComponent) {
+      const [ledeImage, ledeCaption] = components;
+
+      return [
+        {
+          ...ledeImage,
+          layout: 'headerImageLayout'
+        },
+        ledeCaption || ANF_EMPTY_COMPONENT
+      ];
+    }
+
+    return [{
+      ...lede,
+      layout: 'headerImageLayout'
+    }];
   },
   /**
    * Get apple news format of each content ref
    *
    * @param {Array} content
-   * @param {Boolean} [addAppDLLink]
    *
    * @returns {Promise|Array}
   */
@@ -182,12 +197,19 @@ const log = require('../log').setup({ file: __filename }),
           .then(data => {
             contentANF.push(data);
           })
-          .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf: ${e}`));
+          .catch(e => log('error', `Error getting component instance data for ${ contentInstance._ref } anf:`, e));
       }
     }
 
     return contentANF;
   },
+  /**
+   * Returns byline components with responsive layout conditions.
+   *
+   * @param {Object} data
+   * @param {Object} locals
+   * @returns {Array}
+   */
   responsiveBylineComponents = (data, locals) => {
     const { byline, date, dateModified } = data,
       anfBylineComponent = (props) => ({
@@ -217,13 +239,25 @@ const log = require('../log').setup({ file: __filename }),
       })
     ];
   },
-  generateANFPreviewFile = (ref) => {
+  /**
+   * Writes an article.json file to disk (local development only)
+   *
+   * @param {String} clayComponentRef
+   */
+  generateANFPreviewFile = (clayComponentRef) => {
     const isDev = process.env.NODE_ENV === 'local';
 
     if (isDev) {
-      require('../anf-test-file-generator')(ref);
+      require('../../server/contentAppleNews/anf-test-file-generator')(clayComponentRef);
     }
   },
+  /**
+   * Builds out the main body content
+   *
+   * @param {Array} anfComponents
+   * @param {String} sectionFront
+   * @returns {Object} anf component tree
+   */
   anfPrimaryBodyContent = (anfComponents, sectionFront) => {
     const arrowIcon = `<span data-anf-textstyle="${sectionCategoryStyles[sectionFront]}">▸</span>`,
       linkText = '<span data-anf-textstyle="hyperlinkStyle">Get the RADIO.COM app now</span>',
@@ -244,9 +278,20 @@ const log = require('../log').setup({ file: __filename }),
       ]
     };
   },
+  /**
+   * Builds out an apple news format article structure based off of the component's data
+   *
+   * @param {String} ref
+   * @param {Object} data
+   * @param {Object} locals
+   *
+   * @returns {Object} apple news articleDocument (https://developer.apple.com/documentation/apple_news/articledocument)
+   *
+   */
   getContentANF = async function (ref, data, locals) {
     const tags = await getTags(data.tags),
-      lede = await getLede(data.lead) || [],
+      ledeRef = data.lead[0]._ref,
+      lede = await getLedeAnf(ledeRef),
       refInstance = getComponentInstance(ref),
       contentType = getComponentName(ref);
 
@@ -265,8 +310,8 @@ const log = require('../log').setup({ file: __filename }),
         datePublished: formatLocalDate(data.date || data.dateModified || new Date(), ISO_8601_FORMAT),
         excerpt: data.pageDescription,
         ...tags ? { keywords: tags } : {},
-        thumbnailURL: primaryVideo.stillURL || data.feedImgUrl,
-        ...!!primaryVideo.URL ? { videoURL: primaryVideo.URL } : {}
+        thumbnailURL: lede.stillURL || data.feedImgUrl,
+        ...lede.role === 'video' ? { videoURL: lede.URL } : {}
       },
       components: [
         {
@@ -311,11 +356,11 @@ const log = require('../log').setup({ file: __filename }),
         {
           role: 'section',
           layout: 'headerImageLayout',
-          components: lede
+          components: ledeComponentToAnf(lede, ledeRef)
         },
-        ...contentType === 'gallery'
-          ? [anfPrimaryBodyContent(await getContent(data.slides), data.sectionFront)]
-          : [],
+        contentType === 'gallery'
+          ? anfPrimaryBodyContent(await getContent(data.slides), data.sectionFront)
+          : ANF_EMPTY_COMPONENT,
         contentType === 'article'
           ? anfPrimaryBodyContent(await getContent(data.content), data.sectionFront)
           : {
@@ -323,7 +368,7 @@ const log = require('../log').setup({ file: __filename }),
             layout: 'bodyLayout',
             components: await getContent(data.content)
           },
-        require('./component-footer')
+        anfComponentFooter
       ]
     };
   };

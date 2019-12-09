@@ -4,11 +4,15 @@
  *  https://developer.apple.com/documentation/apple_news/video
 */
 
-module.exports = function (ref, data) {
+const rest = require('../../services/universal/rest');
+
+module.exports = async function (ref, data) {
+  const { ImageUrl: imageURL } = await rest.get(`${data.clipSrc}.json`);
+
   return {
     role: 'audio',
     URL: `${ data.clipSrc }.mp3`,
-    layout: 'bodyItemLayout',
-    format: 'html'
+    ...imageURL ? { imageURL } : {},
+    layout: 'bodyItemLayout'
   };
 };

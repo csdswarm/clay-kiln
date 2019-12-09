@@ -1,6 +1,9 @@
 # Radio.com Apple News Format
 
-## incompatible components
+## currently supported components
 
-- html embed
-- verizon media
+- image
+- youtube
+- omny
+- facebook
+- instagram

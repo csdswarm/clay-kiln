@@ -1,7 +1,19 @@
 'use strict';
 
-const isValidComponent = component => {
-    const isTextComponent = 'text' in component;
+const { isEmptyComponent } = require('./utils'),
+  /**
+   * Checks validity of component
+   *
+   * @param {Object} component apple news format component object
+   *
+   * @returns {Bool}
+   */
+  isValidComponent = component => {
+    if (isEmptyComponent(component)) {
+      return false;
+    }
+
+    const isTextComponent = component.hasOwnProperty('text');
 
     if (isTextComponent) {
       return typeof component.text === 'string'
@@ -10,15 +22,23 @@ const isValidComponent = component => {
 
     return true;
   },
+  /**
+   * Checks if component has child components
+   *
+   * @param {Object} componentTree apple news format component object
+   * @returns {Bool}
+   */
   hasChildComponents = ({ components }) => Array.isArray(components),
 
   /**
-   * Returns a component tree excluding empty components (text is null or empty string).
-   * This is needed because Apple news format does not allow text components
-   * that have a `null` or `''` value.
+   * Returns a component tree excluding empty components.
+   * Values that are considered empty components are:
+   *
+   * - ANF components that have a text value of empty string or null
+   * - null
    *
    * @param {Object} componentTree apple news format component object
-   * @returns {Object} filtered list
+   * @returns {Object} new component tree with empty components excluded
    */
   excludeEmptyComponents = (componentTree = {}) => {
     const { components } = componentTree;
@@ -27,20 +47,10 @@ const isValidComponent = component => {
       return componentTree;
     }
 
-    // eslint-disable-next-line one-var
-    const filteredComponents = components.reduce((filteredList, subTree) => {
-      if (isValidComponent(subTree)) {
-        filteredList.push(
-          excludeEmptyComponents(subTree)
-        );
-      }
-
-      return filteredList;
-    }, []);
-
     return {
       ...componentTree,
-      components: filteredComponents
+      components: components.filter(isValidComponent)
+        .map(excludeEmptyComponents)
     };
   };
 
