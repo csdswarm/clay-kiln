@@ -17,7 +17,7 @@
             </picture>
             <div class="section-lead__details">
               {{#if ../_computed.useContentLabel}}
-                <span class="details__content-label">{{ contentLabel }}</span>
+                <span class="details__content-label  details__content-label--top">{{ contentLabel }}</span>
               {{/if}}
               {{#unless @index}}
                 {{#unless ../_computed.useContentLabel}}
@@ -25,6 +25,9 @@
                 {{/unless}}
               {{/unless}}
               <h3 class="details__title">{{ article.primaryHeadline }}</h3>
+              {{#if ../_computed.useContentLabel}}
+                <span class="details__content-label details__content-label--bottom">{{ contentLabel }}</span>
+              {{/if}}
             </div>
           </a>
         </div>
