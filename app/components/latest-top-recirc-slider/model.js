@@ -1,8 +1,9 @@
 'use strict';
-const queryService = require('../../services/server/query'),
+const getRecirculation = require('../../services/universal/recirculation'),
+  logger = require('../../services/universal/log'),
   { isComponent } = require('clayutils'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
-  elasticIndex = 'published-content',
+  log = logger.setup({ file: __filename }),
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -11,61 +12,28 @@ const queryService = require('../../services/server/query'),
     'contentType',
     'sectionFront'
   ],
-  maxResults = 10;
-
-/**
- * @param {number} numResults
- * @param {object} locals
- * @param {array} items
- * @returns {Object}
- */
-function buildQuery(numResults, locals, items) {
-  const query = queryService.newQueryWithCount(elasticIndex, numResults),
-    // grab content from these section fronts from the env
-    sectionFronts = process.env.SECTION_FRONTS.split(',');
-  
-  // add sorting
-  queryService.addSort(query, { date: 'desc' });
-  // map the sectionFronts to should matches
-  queryService.addShould(query, sectionFronts.map(sf => {
-    return {
-      match: {
-        sectionFront: sf
-      }
-    };
-  }));
-  // exclude the current page in results
-  if (locals.url && !isComponent(locals.url)) {
-    const cleanLocalsUrl = locals.url.split('?')[0].replace('https://', 'http://');
-
-    queryService.addMustNot(query, { match: { canonicalUrl: cleanLocalsUrl } });
-  }
-  // exclude the curated content from the results
-  if (items && !isComponent(locals.url)) {
-    items.forEach(item => {
-      if (item.canonicalUrl) {
-        const cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        
-        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-      }
-    });
-  }
-  queryService.onlyWithTheseFields(query, elasticFields);
-  return query;
-}
-
-/**
- * @param {object} locals
- * @param {array} items
- * @returns {Promise}
- */
-async function buildAndRequestElasticSearch(locals, items) {
-  const
-    elasticQuery = buildQuery(maxResults, locals, items),
-    elasticQueryResponseItems = await queryService.searchByQuery(elasticQuery);
-
-  return elasticQueryResponseItems;
-}
+  maxResults = 10,
+  /**
+   * Converts an object with true/false values into an array of "true" keys
+   *
+   * @param {object} obj
+   * @returns {array}
+   */
+  boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
+  /**
+   * Replace https with http
+   *
+   * @param {string} url
+   * @returns {string}
+   */
+  cleanUrl = url => url.split('?')[0].replace('https://', 'http://'),
+  /**
+   * Ensures the url exists and it is not a component ref
+   *
+   * @param {string} url
+   * @returns {boolean}
+   */
+  validUrl = url => url && !isComponent(url);
 
 /**
  * @param {string} ref
@@ -73,16 +41,28 @@ async function buildAndRequestElasticSearch(locals, items) {
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = (ref, data, locals) => {
-  return buildAndRequestElasticSearch(locals, data.items)
-    .then(elasticQueryResponseItems => {
-      data.articles = data.items.concat(elasticQueryResponseItems.slice(0, maxResults)).slice(0, maxResults); // show a maximum of maxItems links
-      return data;
-    })
-    .catch(err => {
-      queryService.logCatch(err, ref);
-      return data;
-    });
+module.exports.render = async (ref, data, locals) => {
+  try {
+    const filters = {
+        contentTypes: boolObjectToArray(data.contentType),
+        sectionFronts: { condition: 'must', value: data.sectionFront },
+        secondarySectionFronts: data.secondarySectionFronts,
+        tags: data.tags
+      },
+      excludes = {
+        canonicalUrls: [locals.url, ...data.items.map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
+        secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
+        sectionFronts: boolObjectToArray(data.excludeSectionFronts),
+        tags: (data.excludeTags || []).map(tag => tag.text)
+      },
+      articles = await getRecirculation(filters, excludes);
+
+    data.articles = data.items.concat(articles).slice(0, maxResults);
+  } catch (e) {
+    log('error', `There was an error querying items from elastic - ${e.message}`, e);
+  }
+
+  return data;
 };
 
 /**

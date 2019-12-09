@@ -62,7 +62,7 @@ module.exports.render = async (ref, data, locals) => {
   const { meta } = data,
     filters = locals.filter || {},
     excludes = locals.exclude || {},
-    query = queryService(data.index, locals, data.query.query ? data.query.query : null), // Build the appropriate query obj for the env
+    query = queryService(data.index, data.query.query ? data.query.query : null), // Build the appropriate query obj for the env
     /**
      * Formats the dates in the array then sorts them in ascending order
      *

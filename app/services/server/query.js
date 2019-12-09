@@ -34,12 +34,11 @@ function prependPrefix(indexString) {
  * Prepends local prefix for Elastic Search client
  *
  * @param  {String} index
- * @param  {Object} [locals]
  * @param  {Object} [query]
  * @return {Object}
  * @example newQueryWithPrefix('published-content')
  */
-function newQueryWithPrefix(index, locals, query) {
+function newQueryWithPrefix(index, query) {
   const uniQuery = universalQuery(index, query);
 
   uniQuery.index = prependPrefix(index);
