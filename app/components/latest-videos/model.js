@@ -4,6 +4,7 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   loadedIdsService = require('../../services/server/loaded-ids'),
+  { unityComponent } = require('../../services/universal/amphora'),
   elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -15,68 +16,73 @@ const queryService = require('../../services/server/query'),
   ],
   maxItems = 6;
 
-/**
- * @param {string} ref
- * @param {object} data
- * @param {object} locals
- * @returns {Promise}
- */
-module.exports.save = async (ref, data, locals) => {
-  if (!data.items.length || !locals) {
-    return data;
-  }
-
-  await Promise.all(data.items.map(async item => {
-    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-
-    const searchOpts = {
-        includeIdInResult: true,
-        shouldDedupeContent: false
-      },
-      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
-
-    Object.assign(item, {
-      uri: result._id,
-      primaryHeadline: item.overrideTitle || result.primaryHeadline,
-      pageUri: result.pageUri,
-      urlIsValid: result.urlIsValid,
-      canonicalUrl: result.canonicalUrl,
-      feedImgUrl: result.feedImgUrl,
-      sectionFront: result.sectionFront
-    });
-
-    if (item.title) {
-      item.plaintextTitle = toPlainText(item.title);
+module.exports = unityComponent({
+  /**
+   * @param {string} ref
+   * @param {object} data
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  save(ref, data, locals) {
+    if (!data.items.length || !locals) {
+      return data;
     }
-  }));
 
-  return data;
-};
+    await Promise.all(data.items.map(async item => {
+      item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-/**
- * @param {string} ref
- * @param {object} data
- * @param {object} locals
- * @returns {Promise}
- */
-module.exports.render = async (ref, data, locals) => {
-  const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
-    availableSlots = maxItems - data.items.length;
+      const searchOpts = {
+          includeIdInResult: true,
+          shouldDedupeContent: false
+        },
+        result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
-  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+      Object.assign(item, {
+        uri: result._id,
+        primaryHeadline: item.overrideTitle || result.primaryHeadline,
+        pageUri: result.pageUri,
+        urlIsValid: result.urlIsValid,
+        canonicalUrl: result.canonicalUrl,
+        feedImgUrl: result.feedImgUrl,
+        sectionFront: result.sectionFront
+      });
 
-  if (availableSlots <= 0) {
-    data.articles = data.items;
+      if (item.title) {
+        item.plaintextTitle = toPlainText(item.title);
+      }
+    }));
+
     return data;
-  }
+  },
 
-  if (!locals) {
-    return data;
-  }
+  /**
+   * @param {string} ref
+   * @param {object} data
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  render(ref, data, locals) {
+    const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
+      availableSlots = maxItems - data.items.length;
 
-  // this shouldn't be declared above the short circuit
-  // eslint-disable-next-line one-var
-  const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
+    await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+
+    if (availableSlots <= 0) {
+      data.articles = data.items;
+      return data;
+    }
+
+    if (!locals) {
+      return data;
+    }
+
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
+
+    let cleanUrl;
+
+    if (!locals) {
+      return data;
+    }
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
@@ -91,7 +97,7 @@ module.exports.render = async (ref, data, locals) => {
         }
       }
     }
-  });
+  );
 
   // Filter out the following tags
   if (data.filterTags) {
@@ -102,13 +108,11 @@ module.exports.render = async (ref, data, locals) => {
 
   // Filter out the following secondary article type
   if (data.filterSecondarySectionFronts) {
-    Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-      const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
-
+    for (const [secondarySectionFrontFilter, filterOut] of Object.entries(data.filterSecondarySectionFronts)) {
       if (filterOut) {
         queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
       }
-    });
+    }
   }
 
   try {
