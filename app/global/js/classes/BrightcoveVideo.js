@@ -3,6 +3,7 @@
 // Polyfill
 require('core-js/modules/es6.symbol');
 const { defer } = require('../../../services/universal/promises'),
+  _get = require('lodash/get'),
   Video = require('./Video'),
   clientCommunicationBridge = require('../../../services/client/ClientCommunicationBridge')(),
   scriptLoadedPromises = [],
@@ -78,6 +79,8 @@ class BrightcoveVideo extends Video {
       // mark this video as done so the next one can load
       this.deferredScriptLoaded.resolve();
     });
+    // add overlay
+    this.addOverlay();
   }
   /**
    * @override
@@ -193,6 +196,53 @@ class BrightcoveVideo extends Video {
    */
   shouldAutoplay() {
     return !this.clickToPlay && super.shouldAutoplay();
+  }
+
+  /**
+   * If the player has high_level_category of SPORTS add overlay
+   * @function
+   */
+  addOverlay() {
+    videojs.getPlayer(this.id).ready( function () {
+      const myPlayer = this;
+
+      myPlayer.on('loadstart', function () {
+        const highLevelCategory = _get(myPlayer, 'mediainfo.customFields.high_level_category');
+
+        if (!highLevelCategory) {
+          return; // short circuit if not needed
+        }
+        // check to see if this is a sports video
+        if (highLevelCategory === 'SPORTS') {
+          // add the overlay
+          myPlayer.overlay({
+            class: 'rdc-overlay',
+            overlays: [{
+              content: `
+                <a href="https://app.radio.com/brightcove-video-player-overlay" target="_blank" class="rdc-overlay__link">
+                  <div class="rdc-overlay__logo"></div>
+                  <div class="rdc-overlay__text"> Download the RADIO.COM app <span class="rdc-overlay__caret"></span></div>
+                </a>
+                <div class="rdc-overlay__close"></div>
+              `,
+              start: 20,
+              end: 30
+            }]
+          });
+
+          // close btn
+          const overlayCloseBtn = myPlayer.el_.querySelector('.rdc-overlay__close');
+
+          myPlayer.onRdcClose = e => {
+            // this is to make it semi-permanent as in it would require a refresh or page change
+            e.target.parentElement.style.display = 'none';
+            overlayCloseBtn.removeEventListener('click', myPlayer.onRdcClose);
+          };
+
+          overlayCloseBtn.addEventListener('click', myPlayer.onRdcClose);
+        }
+      });
+    });
   }
 }
 
