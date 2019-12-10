@@ -46,8 +46,7 @@ module.exports = app => {
     secret: expressRdcSessionSecret,
     // why this is false:
     // https://www.npmjs.com/package/express-session#resave
-    resave: false,
-    saveUninitialized: true
+    resave: false
   }));
 
   app.use((req, res, next) => {
