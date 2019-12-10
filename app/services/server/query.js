@@ -7,8 +7,7 @@ const _every = require('lodash/every'),
   indexWithPrefix = amphoraSearch.indexWithPrefix,
   universalQuery = require('../universal/query'),
   utils = require('../universal/utils'),
-  { urlToElasticSearch } = utils,
-  loadedIdsService = require('./loaded-ids');
+  { urlToElasticSearch } = utils;
 
 /**
  * Get ElasticSearch client reference
@@ -70,13 +69,7 @@ function newQueryWithCount(index, count) {
  *
  * @param  {Object} query
  * @param  {Object} locals
- * @param  {Object} opts - various search options shared with
- *   searchByQueryWithRawResult.  This method relies on
- *     : 'includeIdInResult'
- *     : 'transformResult'
- *
- *   Note a warning will appear if the option 'shouldDedupeContent' isn't
- *     passed.  The default value of '{}' is only to avoid errors.
+ * @param  {SearchOpts} opts - see universal/query.js for the SearchOpts type
  * @return {Promise}
  * @example searchByQuery({"index":"local_published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
@@ -91,8 +84,7 @@ function searchByQuery(query, locals, opts = {}) {
  *
  * @param  {Object} query
  * @param  {Object} locals
- * @param  {Object} opts - various search options shared with searchByQuery.
- *   This method uses 'shouldDedupeContent'.
+ * @param  {Object} opts - see universal/query.js for the SearchOpts type
  * @return {Object}
  */
 async function searchByQueryWithRawResult(query, locals, opts = {}) {
@@ -100,10 +92,12 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
     log(
       'warn',
       "opts.shouldDedupeContent wasn't passed to searchByQueryWithRawResult."
-      + '\n  This should be passed in order to keep the code explicit.'
+      + '\n  This should be passed in order to keep the code explicit because'
+      + "\n  there's no good way to tell whether content should be deduped"
       + '\n  Right now it will default to true if locals is truthy and passes'
       + '\n  Object.isExtensible (locals is not extensible during the model ->'
-      + '\n  save hook).'
+      + '\n  save hook).  This should set it to false on server bootstrap and'
+      + '\n  model save hooks.'
     );
 
     opts.shouldDedupeContent = !!locals
@@ -111,7 +105,7 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
   }
 
   const loadedIds = opts.shouldDedupeContent
-    ? await loadedIdsService.lazilyGetFromLocals(locals)
+    ? locals.loadedIds
     : [];
 
   getSearchInstance();
@@ -121,8 +115,7 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
   }
 
   loadedIds.forEach(_id => universalQuery.addMustNot(query, { match: { _id } }));
-  // we need the above logic to run before we can get the results
-  // eslint-disable-next-line one-var
+
   const results = await module.exports.searchInstance.search(query);
 
   log('trace', `got ${results.hits.hits.length} results`);
@@ -134,7 +127,7 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
       resultIds = hits.map(aHit => aHit._id);
 
     if (hits.length && allHitsHaveIds) {
-      await loadedIdsService.appendToLocalsAndRedis(resultIds, locals);
+      locals.loadedIds = locals.loadedIds.concat(resultIds);
     }
   }
 

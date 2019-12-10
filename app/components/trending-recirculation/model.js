@@ -6,7 +6,6 @@ const _get = require('lodash/get'),
   lyticsApi = require('../../services/universal/lyticsApi'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
-  loadedIdsService = require('../../services/server/loaded-ids'),
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -68,8 +67,8 @@ module.exports.render = async (ref, data, locals) => {
     const lyticsId = _get(locals, 'lytics.uid'),
       noUserParams = lyticsId ? {} : { url: locals.url },
       recommendations = await lyticsApi.recommend(lyticsId, { limit: MAX_LYTICS, contentsegment: 'recommended_for_you', ...noUserParams }),
-      recommendedUrls = recommendations.map(upd => upd.url),
-      currentlyLoadedIds = await loadedIdsService.lazilyGetFromLocals(locals);
+      recommendedUrls = recommendations.map(upd => upd.url);
+
     let articles =
       // remove duplicates by checking the position of the urls and remove items that have no title
       recommendations.filter((item, index) => recommendedUrls.indexOf(item.url) === index && item.title)
@@ -84,6 +83,8 @@ module.exports.render = async (ref, data, locals) => {
           })
         ).splice(0, MAX_ITEMS);
 
+    articles = articles.filter(anArticle => !_includes(locals.loadedIds, anArticle.uri));
+
     // fetch the content uri for deduping purposes
     articles = await Promise.all(articles.map(async anArticle => {
       const result = await recircCmpt.getArticleDataAndValidate(ref, anArticle, locals, [], searchOpts);
@@ -92,8 +93,6 @@ module.exports.render = async (ref, data, locals) => {
 
       return anArticle;
     }));
-
-    articles = articles.filter(anArticle => !_includes(currentlyLoadedIds, anArticle.uri));
 
     if (articles.length > 0) {
       // backfill if there are missing items
@@ -114,9 +113,9 @@ module.exports.render = async (ref, data, locals) => {
     item.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
   });
 
-  const newLoadedIds = data.items.filter(item => item.uri).map(item => item.uri);
+  const newContentIds = data.items.filter(item => item.uri).map(item => item.uri);
 
-  await loadedIdsService.appendToLocalsAndRedis(newLoadedIds, locals);
+  locals.loadedIds = locals.loadedIds.concat(newContentIds);
 
   return data;
 };

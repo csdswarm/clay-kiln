@@ -2,7 +2,6 @@
 
 const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
-  loadedIdsService = require('../../services/server/loaded-ids'),
   contentTypeService = require('../../services/universal/content-type'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
@@ -76,7 +75,7 @@ module.exports.render = async (ref, data, locals) => {
     },
     availableSlots = maxItems - data.items.length;
 
-  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
   // items are saved from form, articles are used on FE, and make sure they use the correct protocol
   data.items = data.articles = data.items

@@ -20,8 +20,6 @@ const pkg = require('../../package.json'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
   eventBusSubscribers = require('./event-bus-subscribers'),
-  addRdcRedisSession = require('./add-rdc-redis-session'),
-  handleClearLoadedIds = require('./handle-clear-loaded-ids'),
   user = require('./user'),
   radium = require('./radium'),
   apiStg = require('./apiStg'),
@@ -82,10 +80,6 @@ function setupApp(app) {
   cookies.inject(app);
 
   app.use(handleRedirects);
-
-  addRdcRedisSession(app);
-
-  app.use(handleClearLoadedIds);
 
   app.use(user);
 

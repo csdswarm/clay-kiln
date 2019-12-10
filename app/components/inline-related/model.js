@@ -3,7 +3,6 @@
 const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
-  loadedIdsService = require('../../services/server/loaded-ids'),
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
   elasticIndex = 'published-content',
@@ -66,7 +65,7 @@ module.exports.render = async function (ref, data, locals) {
   const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
     availableSlots = maxItems - data.items.length;
 
-  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
   // items are saved from form, articles are used on FE
   data.articles = data.items;
 

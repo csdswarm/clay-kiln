@@ -5,11 +5,29 @@ const _ = require('lodash'),
   protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
+ * SearchOpts - options which modify the behavior of elasticsearch
+ *
+ * shouldDedupeContent determines whether elasticsearch should use
+ *   locals.loadedIds to filter out results.  A warning will be logged if this
+ *   property is not passed.  The reason for this is there's no great way to
+ *   determine whether content should be deduped without explicitly stating it.
+ *
+ * transformResult has the signature ({object} formattedResult, {object} rawResult) => {object} updatedFormattedResult
+ *   its purpose is to transform the formatted result into something you need.
+ *   I used it in more-content-feed/model.js to return whether more content existed.
+ *
+ * @typedef {object} SearchOpts
+ * @property {boolean} includeIdInResult - includes '_id' in the formatted result
+ * @property {boolean} shouldDedupeContent - see above for explanation
+ * @property {function} transformResult - see above for the signature and explanation
+ */
+
+/**
  * Returns a function which formats the search results based off the search
  *   options.  Specifically if the option 'includeIdInResult' is truthy, then
  *   each hit's '_id' is assigned to its '_source' object.
  *
- * @param {object} [searchOpts]
+ * @param {SearchOpts} [searchOpts] - see typedef above
  * @returns {function}
  */
 function getFormatSearchResult(searchOpts = {}) {
