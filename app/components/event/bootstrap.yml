@@ -14,7 +14,7 @@ _components:
     sideShare:
       _ref: /_components/share/instances/new
     tags:
-      _ref: /_components/tags/instances/new
+      _ref: /_components/tags/instances/eventPage
     adTags:
       _ref: /_components/ad-tags/instances/new
     instances:
@@ -33,6 +33,6 @@ _components:
         sideShare:
           _ref: /_components/share/instances/new
         tags:
-          _ref: /_components/tags/instances/new
+          _ref: /_components/tags/instances/eventPage
         adTags:
           _ref: /_components/ad-tags/instances/new
