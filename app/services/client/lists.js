@@ -12,4 +12,6 @@ const rest = require('../universal/rest'),
   };
 
 module.exports.retrieveList = retrieveList;
+
+// Returns a resolved promise to ensure API compatibility with the server counterpart
 module.exports.uncacheList = () => Promise.resolve();

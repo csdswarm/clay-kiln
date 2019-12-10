@@ -112,28 +112,23 @@
 				text-transform: capitalize;
 				.link__thumb {
 					height: 100%;
-          width: em(70);
           flex: 0 0 em(70);
 					margin-right: em(15);
 					background-size: cover;
 					background-position: center;
 
           .component--column & {
-            width: em(140);
             flex-basis: em(140);
 
             @mixin medium-screen {
-              width: em(222);
               flex-basis: em(222);
             }
 
             @mixin medium-small-screen {
-              width: em(115);
               flex-basis: em(115);
             }
 
             @mixin small-screen {
-              width: em(85);
               flex-basis: em(85);
             }
           }

@@ -41,13 +41,11 @@
         </li>
       {{/each}}
     </ul>
-  {{else}}
-    {{#if @root.locals.edit}}
-        <div class="kiln-placeholder">
-          <div class="placeholder-label">
-            Latest Recirculation
-          </div>
-        </div>
-    {{/if}}
+  {{else if @root.locals.edit}}
+    <div class="kiln-placeholder">
+      <div class="placeholder-label">
+        Latest Recirculation
+      </div>
+    </div>
   {{/if}}
 </section>
