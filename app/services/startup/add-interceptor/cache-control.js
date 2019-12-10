@@ -34,4 +34,9 @@ const interceptor = require('express-interceptor'),
     return headers.location && headers.location.endsWith('/_auth/login');
   };
 
-module.exports = cacheControlInterceptor;
+/**
+ * @param {object} app - the express app
+ */
+module.exports = app => {
+  app.use(cacheControlInterceptor);
+};
