@@ -11,6 +11,7 @@ _components:
     lead: []
     content: []
     feedImgUrl: ''
+    slug: ''
     sideShare:
       _ref: /_components/share/instances/new
     tags:
@@ -30,6 +31,7 @@ _components:
         lead: []
         content: []
         feedImgUrl: ''
+        slug: ''
         sideShare:
           _ref: /_components/share/instances/new
         tags:
