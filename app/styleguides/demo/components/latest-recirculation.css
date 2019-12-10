@@ -141,11 +141,11 @@
         }
         .link__label {
           @mixin latest-recirc-font4;
-          margin-bottom: em(6);
+          margin-bottom: em(6, 12);
 
           @mixin medium-screen {
             order: 2;
-            margin-top: em(4);
+            margin-top: em(4, 12);
           }
         }
         .link__date {
