@@ -3,7 +3,8 @@
 const _get = require('lodash/get'),
   addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
-  { setNoIndexNoFollow } = require('../../services/universal/create-content');
+  { setNoIndexNoFollow } = require('../../services/universal/create-content'),
+  { componentizeFeedImg } = require('./upgrade-helpers');
 
 module.exports['1.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
@@ -176,4 +177,10 @@ module.exports['9.0'] = function (uri, data) {
   newData.secondarySectionFront = data.secondarySectionFront === 'Small Business Pulse' ? data.secondarySectionFront.toLowerCase() : data.secondarySectionFront;
 
   return newData;
+};
+
+module.exports['10.0'] = async (uri, data) => {
+  await componentizeFeedImg(uri, data);
+
+  return data;
 };
