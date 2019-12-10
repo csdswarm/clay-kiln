@@ -65,7 +65,7 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = async function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1),
+  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
     contentTypes = contentTypeService.parseFromData(data),
     addContentCondition = data.populateFrom === 'section-front-or-tag' ? queryService.addShould : queryService.addMust;
 
@@ -265,7 +265,7 @@ module.exports.render = async function (ref, data, locals) {
 
   // On initial load we need to append curated items onto the list, otherwise skip
   if (data.initialLoad) {
-    data.content = data.items.concat(results).slice(0, data.pageLength); // show a maximum of pageLength links
+    data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of pageLength links
   } else {
     data.content = results.slice(0, data.pageLength); // show a maximum of pageLength links
   }
@@ -275,122 +275,6 @@ module.exports.render = async function (ref, data, locals) {
     sendError(`${_capitalize(data.populateFrom)} not found`, 404);
   }
 
-  {
-    const dataTrackModifiers = [
-        { type: 'type', value: 'feedItem-link' },
-        { type: 'component-name', value: 'more-content-feed' },
-        { type: 'component-title', value: 'More Content Feed' }
-      ],
-    
-      imageSources = [
-        { params: 'width=300\\&crop=16:9,offset-y0', width: '300w' },
-        { params: 'width=320\\&crop=16:9,offset-y0', width: '320w' },
-        { params: 'width=343\\&crop=16:9,offset-y0', width: '343w' },
-        { params: 'width=380\\&crop=16:9,offset-y0', width: '380w' },
-        { params: 'width=440\\&crop=16:9,offset-y0', width: '440w' }
-      ],
-
-      imageSizes = [
-        { media: '(min-width: 100px)', srcset: imageSources }
-      ],
-    
-      defaultImage = {
-        alt: '',
-        sizes: imageSizes,
-        srcset: imageSources,
-        params: imageSources[0].params
-      };
-    /*
-                  src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0"
-                  srcset="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
-                              {{ feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
-                              {{ feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
-                              {{ feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
-                              {{ feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
-
-      <source media="(min-resolution: 192dpi) and (min-width: 1180px), (-webkit-min-device-pixel-ratio:2) and (min-width: 1180px)" data-srcset="{{ desktopGrid }} 2x" />
-      <source media="(min-width: 1180px)" data-srcset="{{ withoutResolution desktopGrid }}" />
-      <source media="(min-resolution: 192dpi) and (min-width: 768px), (-webkit-min-device-pixel-ratio:2) and (min-width: 768px)" data-srcset="{{ tabletGrid }} 2x" />
-      <source media="(min-width: 768px)" data-srcset="{{ withoutResolution tabletGrid }}" />
-      <source media="(min-resolution: 192dpi), (-webkit-min-device-pixel-ratio: 2)" data-srcset="{{ mobileGrid }}" />
-      <img data-src="{{ withoutResolution mobileGrid }}" alt="{{ alt }}">
-
-    * */
-
-    data._computed.links = data.content.map(item => {
-      const link = {
-        cardType: 'content-feed',
-        title: item.primaryHeadline,
-        image: { ...defaultImage, url: item.feedImgUrl },
-        category: item.sectionFront,
-        url: item.canonicalUrl,
-        dataTrackModifiers: [
-          ...dataTrackModifiers,
-          { type: 'page-uri', value: item.pageUri },
-          { type: 'headline', value: item.primaryHeadline },
-          { type: 'sectionFront', value: item.sectionFront }
-        ]
-      };
-
-      if (data.populateFrom === 'all-content') {
-        link.thumb = { type: 'section-front', content: item.sectionFront };
-      }
-      if (data.locationOfContentFeed === 'homepage') {
-        link.thumb = { type: 'content-type' };
-        if (['brightcove', 'youtube'].includes(item.lead)) {
-          // TODO: use something other than require.
-          // link.thumb.content = require('./media/watch.svg');
-          //   }
-          //   if (item.lead === 'omny') {
-          //     link.thumb.content = require('./media/listen.svg');
-          //   }
-          //   if (item.lead === 'gallery') {
-          //     link.thumb.content = require('./media/gallery.svg');
-        }
-      }
-      link._self = '/_components/link-card';
-      return link;
-    });
-  }
-  data._computed.links._self = '/_components/links-list';
-  /*
-
-{{#each content as |feedItem|}}
-    <li>
-          <img
-                  src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0"
-                  srcset="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
-                              {{ feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
-                              {{ feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
-                              {{ feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
-                              {{ feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
-                  sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, (max-width: 1279px) 300px, 380px"
-                  class="link__thumb"/>
-        </div>
-        <div class="link__info">
-          <div class="link__header">
-            <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
-            <span class="info__teaser">{{{ feedItem.subHeadline }}}</span>
-          </div>
-          <div class="info__datetime-posted">
-            {{#if (isPublished24HrsAgo feedItem.date)}}
-              {{{ timeAgoTimestamp feedItem.date }}}
-            {{else}}
-              {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
-            {{/if}}
-          </div>
-        </div>
-      </a>
-    </li>
-  {{!-- Add sharethrough every third item in list, except last item in list --}}
-  {{#ifAll (modulo (add @index 1) 2 0) (compare ../feedItem.length "!==" (add @index 1))}}
-    {{> google-ad-manager ../sharethroughTag}}
-  {{/ifAll}}
-{{/each}}
-
-* */
   return data;
 
 };
-
-module.exports = require('../../services/universal/amphora').unityComponent(module.exports);

@@ -1,70 +1,127 @@
 {{#if initialLoad}}
-  <section class="component component--more-content-feed {{#if
-          (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}{{#if
-          (compare populateFrom 'tag')}}component--tag{{/if}}"
+  <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
            data-track-populate-from="{{ populateFrom }}"
            data-track-location="{{ locationOfContentFeed }}"
            data-uri="{{ default _ref _self }}"
            data-track-type="more-content-feed"
            data-lazy-loads="{{ lazyLoads }}">
-  {{#if (compare locationOfContentFeed 'homepage') }}
-      <h2 class="more-content-feed__title" data-editable="componentTitle">
-        {{#if componentTitleVisible}}
-          <span>{{ componentTitle }}</span>
-        {{/if}}
-      </h2>
-  {{/if}}
-  <div class="more-content-feed__container">
-  <div class="more-content-feed__left-content">
-  {{#unless dynamicTagPage}}
-      <div class="more-content-feed__intro-components" data-editable="introComponents">
-        {{> component-list introComponents}}
-      </div>
-  {{/unless}}
-  {{#unless content.length}}
-    {{#if @root.locals.edit}}
-        <div class="more-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
-          <div class="placeholder-label">
-            <span class="ui-icon placeholder-icon material-icons add">add</span>
-            <span class="placeholder-text">Content Feed</span>
-            <div class="ui-ripple-ink"></div>
-          </div>
-        </div>
+    {{#if (compare locationOfContentFeed 'homepage') }}
+        <h2 class="more-content-feed__title" data-editable="componentTitle">
+          {{#if componentTitleVisible}}
+            <span>{{ componentTitle }}</span>
+          {{/if}}
+        </h2>
     {{/if}}
-  {{/unless}}
-  {{#ifAny content.length @root.locals.edit}}
-    <ul class="more-content-feed__links" data-editable="contentFeed">
-  {{/ifAny}}
+    <div class="more-content-feed__container">
+      <div class="more-content-feed__left-content">
+        {{#unless dynamicTagPage}}
+          <div class="more-content-feed__intro-components" data-editable="introComponents">
+            {{> component-list introComponents}}
+          </div>
+        {{/unless}}
+        {{#unless content.length}}
+          {{#if @root.locals.edit}}
+            <div class="more-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
+              <div class="placeholder-label">
+                <span class="ui-icon placeholder-icon material-icons add">add</span>
+                <span class="placeholder-text">Content Feed</span>
+                <div class="ui-ripple-ink"></div>
+              </div>
+            </div>
+          {{/if}}
+        {{/unless}}
+        {{#ifAny content.length @root.locals.edit}}
+          <ul class="more-content-feed__links" data-editable="contentFeed">
+        {{/ifAny}}
 {{/if}}
-{{>links-list _computed.links }}
+          {{#each content as |feedItem|}}
+            <li>
+              <a class="links__link links__link--{{ feedItem.sectionFront }}" href="{{ feedItem.canonicalUrl }}"
+                 data-track-type="feedItem-link"
+                 data-track-component-name="more-content-feed"
+                 data-track-page-uri="{{ feedItem.pageUri }}"
+                 data-track-headline="{{ feedItem.primaryHeadline }}"
+                 data-track-component-title="More Content Feed"
+                 data-track-sectionFront="{{ feedItem.sectionFront }}">
+                <div class="thumb__container">
+                  {{#ifAll (compare ../populateFrom 'all-content')  feedItem.sectionFront}}
+                    <span class="thumb__section-front">{{{ feedItem.sectionFront }}}</span>
+                  {{/ifAll}}
+                  {{#unless (compare ../locationOfContentFeed 'homepage')}}
+                    {{#ifAny (compare feedItem.lead 'youtube') (compare feedItem.lead 'brightcove')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/watch.svg' }}}
+                      </span>
+                    {{/ifAny}}
+                    {{#if (compare feedItem.lead 'omny')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/listen.svg' }}}
+                      </span>
+                    {{/if}}
+                    {{#if (compare feedItem.contentType 'gallery')}}
+                      <span class="thumb__content-type">
+                        {{{ read 'components/more-content-feed/media/gallery.svg' }}}
+                      </span>
+                    {{/if}}
+                  {{/unless}}
+                  <img
+                    src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0"
+                    srcset="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
+                              {{ feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
+                              {{ feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
+                              {{ feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
+                              {{ feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
+                    sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, (max-width: 1279px) 300px, 380px"
+                    class="link__thumb" />
+                </div>
+                <div class="link__info">
+                  <div class="link__header">
+                    <span class="info__headline">{{{ feedItem.primaryHeadline }}}</span>
+                    <span class="info__teaser">{{{ feedItem.subHeadline }}}</span>
+                  </div>
+                  <div class="info__datetime-posted">
+                    {{#if (isPublished24HrsAgo feedItem.date)}}
+                      {{{ timeAgoTimestamp feedItem.date }}}
+                    {{else}}
+                      {{ formatLocalDate feedItem.date 'MMMM D, YYYY' }}
+                    {{/if}}
+                  </div>
+                </div>
+              </a>
+            </li>
+            {{!-- Add sharethrough every third item in list, except last item in list --}}
+            {{#ifAll (modulo (add @index 1) 2 0) (compare ../feedItem.length "!==" (add @index 1))}}
+              {{> google-ad-manager ../sharethroughTag}}
+            {{/ifAll}}
+          {{/each}}
 {{#if moreContent}}
     <li class="links__link--loadmore"
         {{#if tag}}data-tag="{{ tag}}"{{/if}}
-      {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
-      {{#if author}}data-author="{{ author }}"{{/if}}>
+        {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
+        {{#if author}}data-author="{{ author }}"{{/if}}>
       <button class="more-content-feed__loadmore">
         <div class="loadmore__text">Load More</div>
       </button>
     </li>
 {{/if}}
 {{#if initialLoad}}
-  </ul>
-  </div>
-    <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
-      {{#ifAny (compare locationOfContentFeed 'topic-page') (compare locationOfContentFeed 'author-page')}}
-        {{> google-ad-manager contentCollectionLogoSponsorship}}
-      {{/ifAny}}
-      {{#if @root.locals.edit}}
-        {{#unless dynamicTagPage}}
-          <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
-        {{/unless}}
-      {{else}}
-        {{#ifAll tagInfo (compare dynamicTagPage false)}}
-          <aside class="blurb">{{ tagInfo }}</aside>
-        {{/ifAll}}
-      {{/if}}
-      {{> google-ad-manager googleAdRightRail}}
-    </div>
-  </div>
+          </ul>
+        </div>
+        <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
+          {{#ifAny (compare locationOfContentFeed 'topic-page') (compare locationOfContentFeed 'author-page')}}
+            {{> google-ad-manager contentCollectionLogoSponsorship}}
+          {{/ifAny}}
+          {{#if @root.locals.edit}}
+            {{#unless dynamicTagPage}}
+              <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
+            {{/unless}}
+          {{else}}
+            {{#ifAll tagInfo (compare dynamicTagPage false)}}
+              <aside class="blurb">{{ tagInfo }}</aside>
+            {{/ifAll}}
+          {{/if}}
+          {{> google-ad-manager googleAdRightRail}}
+        </div>
+      </div>
   </section>
 {{/if}}
