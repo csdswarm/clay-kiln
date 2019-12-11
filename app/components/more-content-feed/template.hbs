@@ -5,8 +5,12 @@
            data-uri="{{ default _ref _self }}"
            data-track-type="more-content-feed"
            data-lazy-loads="{{ lazyLoads }}">
-    {{#if (compare locationOfContentFeed 'homepage')}}
-        <h2 class="more-content-feed__title"><span>MORE from RADIO.COM</span></h2>
+    {{#if (compare locationOfContentFeed 'homepage') }}
+        <h2 class="more-content-feed__title" data-editable="componentTitle">
+          {{#if componentTitleVisible}}
+            <span>{{ componentTitle }}</span>
+          {{/if}}
+        </h2>
     {{/if}}
     <div class="more-content-feed__container">
       <div class="more-content-feed__left-content">
