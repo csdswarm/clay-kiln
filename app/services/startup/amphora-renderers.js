@@ -37,5 +37,6 @@ amphoraHtml.addPlugins([{ postRender: transformHtml }]);
 module.exports = {
   default: 'html',
   html: amphoraHtml,
-  rss: amphoraRss
+  rss: amphoraRss,
+  'smart-news': amphoraRss
 };
