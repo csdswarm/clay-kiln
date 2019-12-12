@@ -8,17 +8,17 @@ const { expect, assert } = require('chai'),
     },
     permissions: {
       article:{
-        publish:{station:{'NATL-RC': 1}},
-        create:{station:{'NATL-RC': 1}},
-        update:{station:{'NATL-RC': 1}}
+        publish:{ station:{ 'NATL-RC': 1 } },
+        create:{ station:{ 'NATL-RC': 1 } },
+        update:{ station:{ 'NATL-RC': 1 } }
       },
       gallery:{
-        publish:{station:{WHIO: 1, ABCD: 1}},
-        create:{station:{'NATL-RC': 1}},
-        update:{station:{'NATL-RC': 1}}
+        publish:{ station:{ WHIO: 1, ABCD: 1 } },
+        create:{ station:{ 'NATL-RC': 1 } },
+        update:{ station:{ 'NATL-RC': 1 } }
       },
       'alert-banner':{
-        access:{station:{'NATL-RC': 1}}
+        access:{ station:{ 'NATL-RC': 1 } }
       }
     },
     station: {
@@ -30,7 +30,7 @@ const { expect, assert } = require('chai'),
   locations = 'at,for,with,on'.split(','),
   articleCreateMessage = 'You do not have permissions to create articles.',
   galleryCreateMessage = 'You do not have permissions to publish galleries.',
-  accessMessage = 'You do not have permissions to cool magic things.';
+  accessMessage = 'You do not have permissions to access cool magic things.';
 
 describe('permissions', () => {
   beforeEach(() => {
@@ -88,16 +88,6 @@ describe('permissions', () => {
     it('overides the object string', () => {
       assert(locals.user.can({ publish: 'gallery' }).an('ignored-item').for('ABCD').value);
       expect(locals.user.can({ publish: 'gallery' }).a('ignored-item').for('DEF').message).to.eql(galleryCreateMessage);
-    });
-  });
-  describe('override', () => {
-    it('is always true', () => {
-      delete locals.user.can; // hack to reapply the functions
-      locals.user.provider = 'google';
-      addPermissions(locals);
-
-      assert(locals.user.can('NOPE', 'NOPE', 'NOPE', ).value);
-      assert(locals.user.can('NOPE', 'NOPE', 'NOPE').value);
     });
   });
 });
