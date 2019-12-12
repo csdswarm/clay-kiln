@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.4.4",
+    "autoprefixer": "^9.7.3",
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
     "clay-kiln": "^6.3.3",
