@@ -1,6 +1,7 @@
 _components:
   event:
     contentType: 'event'
+    primaryHeadline: ''
     headline: ''
     subHeadline: ''
     startDate: ''
@@ -21,6 +22,7 @@ _components:
     instances:
       new:
         contentType: 'event'
+        primaryHeadline: ''
         headline: ''
         subHeadline: ''
         startDate: ''

@@ -132,7 +132,7 @@ content:
 #/ component lists
 
 # circulationHeadlinesSeoGroup fields
-facebookHeadline:
+primaryHeadline:
   _label: Facebook Headline
   _has:
     input: wysiwyg
@@ -279,7 +279,7 @@ _groups:
       ifEmpty: startDate or startTime
   circulationHeadlinesSeoGroup:
     fields:
-      - facebookHeadline
+      - primaryHeadline
       - shortHeadline
       - teaser
       - seoHeadline
