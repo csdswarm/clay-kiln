@@ -18,55 +18,55 @@
     <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
   </div>
   <meta itemprop="dateModified" content="{{ dateModified }}" />
-  {{/inline}}
+{{/inline}}
 
-  {{#*inline "eventInfo" }}
-    <div class="event__info-container">
-      <div class="event__info-title">Event Information:</div>
-      <div class="event__info-row">
-        <div class="event__info-icon event__info-icon--date"></div>
-        <div class="event__info-text" data-editable="publishedDateGroup">
-          {{#ifAll startDate startTime}}
-            {{ _computed.dateTime }}
-          {{/ifAll}}
-        </div>
-      </div>
-      <div class="event__info-row">
-        <div class="event__info-icon event__info-icon--location"></div>
-        <div class="event__info-text">
-          <div class="event__info-text-venue-name" data-editable="venueName">{{{ venueName }}}</div>
-          <div class="event__info-text-venue-address" data-editable="venueAddress">{{{ venueAddress }}}</div>
-        </div>
+{{#*inline "eventInfo" }}
+  <div class="event__info-container">
+    <div class="event__info-title">Event Information:</div>
+    <div class="event__info-row">
+      <div class="event__info-icon event__info-icon--date"></div>
+      <div class="event__info-text" data-editable="publishedDateGroup">
+        {{#ifAll startDate startTime}}
+          {{ _computed.dateTime }}
+        {{/ifAll}}
       </div>
     </div>
-    {{/inline}}
+    <div class="event__info-row">
+      <div class="event__info-icon event__info-icon--location"></div>
+      <div class="event__info-text">
+        <div class="event__info-text-venue-name" data-editable="venueName">{{{ venueName }}}</div>
+        <div class="event__info-text-venue-address" data-editable="venueAddress">{{{ venueAddress }}}</div>
+      </div>
+    </div>
+  </div>
+{{/inline}}
 
-    {{#*inline "componentSettings" }}
-      <section
-        class="component-settings {{if this.classModifier (concat 'component-settings' this.classModifier) else='' }}">
-        <h2 class="component-settings__title">{{ this.settingsTitle }}</h2>
-        {{#each this.sections as |section|}}
-          {{> componentSettingsSection section }}
-        {{/each}}
-      </section>
-      {{/inline}}
+{{#*inline "componentSettings" }}
+  <section
+    class="component-settings {{if this.classModifier (concat 'component-settings' this.classModifier) else='' }}">
+    <h2 class="component-settings__title">{{ this.settingsTitle }}</h2>
+    {{#each this.sections as |section|}}
+      {{> componentSettingsSection section }}
+    {{/each}}
+  </section>
+{{/inline}}
 
-      {{#*inline "componentSettingsSection" }}
-        <section class="component-settings__section" data-editable="{{ this.dataEditable }}">
-          <h3 class="component-settings__section-title subtitle">{{ this.sectionTitle }}</h3>
-          <ul class="component-settings__properties">
-            {{#each this.settings as |setting|}}
-              <li class="component-settings__property">
-                <h4
-                  class="component-settings__property-title {{if setting.isRequired 'component-settings__property-title--required' else=''}}">
-                  {{ setting.title }}</h4>
-                <p class="component-settings__property-data">
-                  {{{ renderTemplateString setting.templateString ../../this }}}</p>
-              </li>
-            {{/each}}
-          </ul>
-        </section>
-        {{/inline}}
+{{#*inline "componentSettingsSection" }}
+  <section class="component-settings__section" data-editable="{{ this.dataEditable }}">
+    <h3 class="component-settings__section-title subtitle">{{ this.sectionTitle }}</h3>
+    <ul class="component-settings__properties">
+      {{#each this.settings as |setting|}}
+        <li class="component-settings__property">
+          <h4
+            class="component-settings__property-title {{if setting.isRequired 'component-settings__property-title--required' else=''}}">
+            {{ setting.title }}</h4>
+          <p class="component-settings__property-data">
+            {{{ renderTemplateString setting.templateString ../../this }}}</p>
+        </li>
+      {{/each}}
+    </ul>
+  </section>
+{{/inline}}
 
 
 
