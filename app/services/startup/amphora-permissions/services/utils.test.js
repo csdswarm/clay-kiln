@@ -12,7 +12,7 @@ describe('utils', () => {
       expect(isEditor({})).to.be.false;
     });
     it("should return false if 'username' exists", () => {
-      expect(isEditor({user: { username: 'not a robot' }})).to.be.true;
+      expect(isEditor({ user: { username: 'not a robot' } })).to.be.true;
     });
   });
 
@@ -48,7 +48,7 @@ describe('utils', () => {
   });
 
   describe('wrapInTryCatch', () => {
-    it('should pass a failure to the application default error handler', function () {
+    it('does a failure to the application default error handler', function () {
       // shouldn't take longer than 200ms
       this.timeout(200);
 
@@ -73,23 +73,24 @@ describe('utils', () => {
               } catch (testFailed) {
                 reject(testFailed);
               }
-            };
+            },
+            server = app.use(wrapInTryCatch(failMiddleware), defaultErrorHandler)
+              .listen(port, async () => {
+                try {
+                  await axios.get(`http://localhost:${port}`);
+                } catch (err) {
+                  reject(err);
+                }
 
-          app.use(wrapInTryCatch(failMiddleware), defaultErrorHandler)
-            .listen(port, async () => {
-              try {
-                await axios.get(`http://localhost:${port}`);
-              } catch (err) {
-                reject(err);
-              }
-            });
+                server.close();
+              });
         } catch (err) {
           reject(err);
         }
       });
     });
 
-    it('should work just fine otherwise', function () {
+    it('does nothing if there is no error', function () {
       // shouldn't take longer than 200ms
       this.timeout(200);
 
@@ -116,16 +117,17 @@ describe('utils', () => {
               } catch (testFailed) {
                 reject(testFailed);
               }
-            };
+            },
+            server = app.use(wrapInTryCatch(middleware1), defaultErrorHandler, middleware2)
+              .listen(port, async () => {
+                try {
+                  await axios.get(`http://localhost:${port}`);
+                } catch (err) {
+                  reject(err);
+                }
 
-          app.use(wrapInTryCatch(middleware1), defaultErrorHandler, middleware2)
-            .listen(port, async () => {
-              try {
-                await axios.get(`http://localhost:${port}`);
-              } catch (err) {
-                reject(err);
-              }
-            });
+                server.close();
+              });
         } catch (err) {
           reject(err);
         }
