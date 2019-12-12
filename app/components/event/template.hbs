@@ -71,49 +71,49 @@
 
 
 
-        <article role="main" data-uri="{{ default _ref _self }}"
-          class="component component--event event{{ if @root.locals.edit ' editing' }}" itemscope
-          itemtype="http://schema.org/Article" data-headline="{{ striptags headline }}"
-          data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
-          data-tags="{{ join (map tags.items (getProp "text")) }}" data-station-slug="{{ stationSlug }}">
-          {{> breadcrumbs this }}
-          <header class="event__header">
-            {{! meta }}
-            {{> eventMeta }}
-            {{! title }}
-            <h1 class="event__headline" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
-            {{! subtitle }}
-            {{#ifAny @root.locals.edit subHeadline}}
-              <div class="event__sub-headline" data-editable="subHeadline" itemprop="subheadline">
-                {{{ subHeadline }}}
-              </div>
-            {{/ifAny}}
-            {{! lead }}
-            <div class="lead" data-editable="lead">
-              {{> component-list lead }}
-            </div>
-          </header>
-          <section class="event__body">
-            <div class="event__share">
-              {{! Social Share Buttons }}
-              {{> share sideShare }}
-            </div>
-            <div class="event__content">
-              {{! eventInfo }}
-              {{> eventInfo }}
-              {{! content }}
-              <div data-editable="content" itemprop="eventBody">
-                {{> component-list content }}
-              </div>
-              {{! Tags }}
-              {{> tags tags}}
-              {{! Ad Tags }}
-              {{> ad-tags adTags}}
-            </div>
-          </section>
+<article role="main" data-uri="{{ default _ref _self }}"
+  class="component component--event event{{ if @root.locals.edit ' editing' }}" itemscope
+  itemtype="http://schema.org/Article" data-headline="{{ striptags headline }}"
+  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
+  data-tags="{{ join (map tags.items (getProp "text")) }}" data-station-slug="{{ stationSlug }}">
+  {{> breadcrumbs this }}
+  <header class="event__header">
+    {{! meta }}
+    {{> eventMeta }}
+    {{! title }}
+    <h1 class="event__headline" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
+    {{! subtitle }}
+    {{#ifAny @root.locals.edit subHeadline}}
+      <div class="event__sub-headline" data-editable="subHeadline" itemprop="subheadline">
+        {{{ subHeadline }}}
+      </div>
+    {{/ifAny}}
+    {{! lead }}
+    <div class="lead" data-editable="lead">
+      {{> component-list lead }}
+    </div>
+  </header>
+  <section class="event__body">
+    <div class="event__share">
+      {{! Social Share Buttons }}
+      {{> share sideShare }}
+    </div>
+    <div class="event__content">
+      {{! eventInfo }}
+      {{> eventInfo }}
+      {{! content }}
+      <div data-editable="content" itemprop="eventBody">
+        {{> component-list content }}
+      </div>
+      {{! Tags }}
+      {{> tags tags}}
+      {{! Ad Tags }}
+      {{> ad-tags adTags}}
+    </div>
+  </section>
 
-          {{#if @root.locals.edit }}
-            {{! event circ settings }}
-            {{> componentSettings _computed.eventCirculationSettings }}
-          {{/if}}
-        </article>
+  {{#if @root.locals.edit }}
+    {{! event circ settings }}
+    {{> componentSettings _computed.eventCirculationSettings }}
+  {{/if}}
+</article>
