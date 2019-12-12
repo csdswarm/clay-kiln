@@ -247,7 +247,7 @@ content:
       - inline-related
 bulkImageUpload:
   _label: Bulk Image Upload
-  _has: 
+  _has:
     input: bulk-image-upload
     dest: slides
   _placeholder:
@@ -282,6 +282,15 @@ rightRailStickyAd:
   _component:
     include:
       - google-ad-manager
+feeds:
+  _label: Include in These Feeds
+  _has:
+    input: checkbox-group
+    options:
+      - name: RSS Feeds
+        value: rss
+      - name: Apple News
+        value: apple-news
 sectionFront:
   _label: Section Front
   _publish: sectionFront
@@ -428,6 +437,7 @@ _groups:
       - toggleEditorCondensedSlidesView
   settings:
     fields:
+      - feeds
       - showSocial
       - hasSecondaryBylines
       - sectionFront
