@@ -236,6 +236,15 @@
             }
           }
         }
+        .details__time {
+          display: none;
+          color: $dustyGray;
+          margin-left: em(10);
+
+          @mixin medium-screen {
+            display: inline;
+          }
+        }
         .details__title {
           @mixin section-lead-mc-font3;
           @mixin medium-screen {
@@ -256,6 +265,9 @@
           }
           .details__title {
             @mixin section-lead-mc-font1;
+          }
+          .details__time {
+            display: none;
           }
         }
       }

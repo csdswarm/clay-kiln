@@ -4,15 +4,18 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
   { toPlainText } = require('../../services/universal/sanitize'),
+  { retrieveList } = require('../../services/server/lists'),
   qs = require('qs'),
   { isComponent, getComponentName } = require('clayutils'),
   elasticIndex = 'published-content',
   elasticFields = [
+    'date',
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'contentType'
+    'contentType',
+    'sectionFront'
   ],
   maxItems = 3,
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
@@ -23,7 +26,20 @@ const queryService = require('../../services/server/query'),
     large: 'max-width: 1279px',
     default: 'min-width: 1280px'
   },
-  asQuery = value => qs.stringify(value, { encode: false });
+  asQuery = value => qs.stringify(value, { encode: false }),
+  /**
+   * Gets the display name for a primary section front slug
+   *
+   * @param {string} slug
+   * @param {object} locals
+   * @returns {Promise<string>}
+   */
+  getPrimarySectionFrontName = async (slug, locals) => {
+    const list = await retrieveList('primary-section-fronts', locals),
+      entry = list.find(entry => entry.value === slug);
+
+    return entry ? entry.name : slug;
+  };
 
 /**
  * Takes an object with various sizes set and converts them to
@@ -53,13 +69,15 @@ module.exports.save = (ref, data, locals) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
     return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
-      .then((result) => {
+      .then(async (result) => {
         const article = Object.assign(item, {
+          date: result.date,
           primaryHeadline: item.overrideTitle || result.primaryHeadline,
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
           canonicalUrl: item.url || result.canonicalUrl,
-          feedImgUrl: item.overrideImage || result.feedImgUrl
+          feedImgUrl: item.overrideImage || result.feedImgUrl,
+          label: item.overrideLabel || await getPrimarySectionFrontName(result.sectionFront, locals)
         });
 
         if (article.title) {

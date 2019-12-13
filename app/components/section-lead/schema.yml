@@ -25,13 +25,6 @@ items:
     validate:
       max: 4
     props:
-      - prop: contentLabel
-        _label: Content Label
-        _has:
-          input: text
-          validate:
-            max: 80
-          help: Label for this story. Eg. 'Entertainment'
       -
         prop: url
         _label: URL
@@ -39,6 +32,13 @@ items:
           input: content-search
           validate:
             required: true
+      -
+        prop: overrideLabel
+        _label: Label Override
+        _has:
+          input: text
+          validate:
+            max: 80
       -
         prop: overrideTitle
         _label: Headline Override
