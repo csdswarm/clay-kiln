@@ -32,6 +32,7 @@ const v1 = {
   parseHost: require('./parse-host').v1,
   republish: require('./republish').v1,
   usingDb: require('./using-db').v1,
+  addComponentToContainers: require('./add-component-to-containers').v1
 };
 
 module.exports = {

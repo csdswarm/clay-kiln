@@ -62,6 +62,13 @@ items:
         validate:
           required: true
     -
+      prop: overrideLabel
+      _label: Label Override
+      _has:
+        input: text
+        validate:
+          max: 80
+    -
       prop: overrideTitle
       _label: Headline Override
       _has:
