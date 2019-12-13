@@ -23,7 +23,8 @@ const AWS = require('aws-sdk'),
   ensureStationOnCustomUrl = require('./ensure-station-on-custom-url'),
   validScripts = require('../services/server/valid-source'),
   siteMapStations = require('./sitemap-stations'),
-  siteMapGoogleNews = require('./sitemap-google-news');
+  siteMapGoogleNews = require('./sitemap-google-news'),
+  stationTheming = require('../services/server/stationThemingApi');
 
 module.exports = router => {
 
@@ -159,6 +160,7 @@ module.exports = router => {
   router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
   additionalDataTypes.inject(router, checkAuth);
+  stationTheming.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
   addEndpoints.createPage(router);
   ensureStationOnCustomUrl(router);

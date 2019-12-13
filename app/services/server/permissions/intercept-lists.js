@@ -3,6 +3,7 @@
 const axios = require('axios'),
   { URL } = require('url'),
   { wrapInTryCatch } = require('../../startup/middleware-utils'),
+  sectionFronts = new Set([ 'section-front', 'stations' ]),
   /**
    * determines whether the /_lists/new-pages request should pass through to
    *   clay.  This is based off two conditions
@@ -62,14 +63,13 @@ module.exports = router => {
     // urlObj needs to be mutated before we can get the result
     // eslint-disable-next-line one-var
     const { data: newPages } = await axios.get(urlObj.toString()),
-      filteredPages = newPages
-        .filter(item => {
-          if (!canCreateSectionFronts && item.id === 'section-front') {
-            return false;
-          }
+      filteredPages = newPages.filter(item => {
+        if (!canCreateSectionFronts && sectionFronts.has(item.id)) {
+          return false;
+        }
 
-          return true;
-        })
+        return true;
+      })
         .map(item => ({ ...item, children: item.children.filter(canCreateStaticPageMenuItem) }));
 
     res.send(filteredPages);

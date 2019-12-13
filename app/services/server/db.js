@@ -4,7 +4,7 @@ const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
   _get = require('lodash/get'),
-  DATA_STRUCTURES = ['alert', 'valid_source'],
+  DATA_STRUCTURES = ['alert', 'valid_source', 'station_themes'],
   /**
    * Check Postgres to see if the table exists
    *

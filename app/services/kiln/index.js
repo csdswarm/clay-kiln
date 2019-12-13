@@ -20,6 +20,7 @@ module.exports = () => {
   require('./plugins/valid-source')();
   require('./plugins/select-list')();
   require('./plugins/stores')();
+  require('./plugins/stations')();
   require('./validators')();
   secureAllSchemas();
 };
