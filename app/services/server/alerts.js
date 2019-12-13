@@ -4,6 +4,7 @@ const db = require('../server/db'),
   uuidV4 = require('uuid/v4'),
   _pick = require('lodash/pick'),
   log = require('../universal/log').setup({ file: __filename }),
+  { prettyJSON } = require('../universal/utils'),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   checkEndsBeforeStart = (start, end) => new Date(end) < new Date(start),
   checkEndsInPast = end => new Date(end) < Date.now(),
@@ -63,7 +64,12 @@ const db = require('../server/db'),
         return { failed: true, message: 'Cannot save this alert. Its start and end times overlap with another alert' };
       }
     } catch (error) {
-      log('error', 'There was a problem validating the alert', { alert, error });
+      log(
+        'error',
+        'There was a problem validating the alert'
+        + `\nalert: ${prettyJSON(alert)}`
+        + `\n${error.stack}`
+      );
 
       return {
         failed: true,

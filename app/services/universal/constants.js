@@ -47,9 +47,9 @@ module.exports = {
   DAY,
   WEEK,
   YEAR,
-  PAGE_TYPES,
   contentTypes,
   time,
   SERVER_SIDE,
-  DEFAULT_RADIOCOM_LOGO
+  DEFAULT_RADIOCOM_LOGO,
+  PAGE_TYPES
 };

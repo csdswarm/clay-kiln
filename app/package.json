@@ -74,7 +74,6 @@
     "moment": "^2.24.0",
     "no-scroll": "^2.1.1",
     "path-to-regexp": "0.1.7",
-    "pg": "7.4.3",
     "postcss-csso": "^3.0.0",
     "postcss-safe-parser": "^3.0.1",
     "qs": "^6.6.0",

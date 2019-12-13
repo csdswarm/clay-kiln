@@ -94,7 +94,8 @@ function uriToUrl(uri, locals) {
  * @returns {string}
  */
 function removeExtension(path) {
-  let leadingDot, endSlash = path.lastIndexOf('/');
+  const endSlash = path.lastIndexOf('/');
+  let leadingDot;
 
   if (endSlash > -1) {
     leadingDot = path.indexOf('.', endSlash);
@@ -223,7 +224,6 @@ function textToEncodedSlug(text) {
   );
 }
 
-
 /**
  * Copied over from the spa, allows us to log messages that should only show
  *   during development.
@@ -234,16 +234,6 @@ function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
   }
-}
-
-/**
- * how it is indexed as.
- * Url queries to elastic search need to be `http` since that is
- * @param {String} url
- * @returns {String}
- */
-function urlToElasticSearch(url) {
-  return url.replace('https', 'http');
 }
 
 /*
@@ -278,6 +268,16 @@ function prettyJSON(obj) {
  */
 function getFullOriginalUrl(req) {
   return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
+}
+
+/**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {String} url
+ * @returns {String}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
 }
 
 /**

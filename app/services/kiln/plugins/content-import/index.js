@@ -1,20 +1,21 @@
 'use strict';
 
 // Require depedencies.
-const contentImport = require('./content-import.vue'),
+const _set = require('lodash/set'),
+  contentImport = require('./content-import.vue'),
   main = require('./main.vue'),
-  addPermissions = require('../../../universal/user-permissions');
+  addPermissions = require('../../../universal/user-permissions'),
+  { anyStation } = addPermissions;
 
 // Register plugin.
 module.exports = () => {
-  window.kiln = window.kiln || {};
-  window.kiln.navButtons = window.kiln.navButtons || {};
-  window.kiln.navContent = window.kiln.navContent || {};
+  const { user } = window.kiln.locals;
 
   addPermissions(window.kiln.locals);
-  if (window.kiln.locals.user.can('import').using('import-content').value) {
-    window.kiln.navButtons['content-import'] = contentImport;
-    window.kiln.navContent['content-import'] = main;
+
+  if (user.can('import').using('import-content').at(anyStation).value) {
+    _set(window, 'kiln.navButtons.content-import', contentImport);
+    _set(window, 'kiln.navContent.content-import', main);
   }
 };
 

@@ -19,6 +19,7 @@ module.exports = () => {
   require('./plugins/subscriptions')();
   require('./plugins/valid-source')();
   require('./plugins/select-list')();
+  require('./plugins/stores')();
   require('./validators')();
   secureAllSchemas();
 };
