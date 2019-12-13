@@ -1,5 +1,7 @@
 'use strict';
 
+const exists = require('lodash').identity;
+
 // URL patterns below need to be handled by the site's index.js
 module.exports.dateUrlPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}.html`; // e.g. http://vulture.com/music/x.html - modified re: ON-333
 module.exports.articleSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.slug}`; // e.g. http://radio.com/music/eminem-drops-new-album-and-its-fire - modified re: ON-333
@@ -8,3 +10,13 @@ module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/
 module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/gallery/${o.slug}`;
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
+module.exports.eventSlugPattern = opts => {
+  // e.g. http://radio.com/event/mix-105-rock-n-jock
+  return [
+    opts.prefix,
+    opts.stationSlug,
+    'events',
+    opts.slug
+  ].filter(exists)
+    .join('/');
+};
