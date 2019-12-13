@@ -25,16 +25,16 @@ async function renderContent(content, locals, format, componentsToSkip = new Set
   for (const cmpt of content) {
     const ref = _get(cmpt, '_ref', ''),
       cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
-      match = ref.match(/_components\/([^\/]+)\//);
+      cmptName = getComponentName(ref);
 
     if (
-      match
+      cmptName
       && cmptData
-      && match[1] !== 'inline-related'
-      && !componentsToSkip.has(match[1])
+      && cmptName !== 'inline-related'
+      && !componentsToSkip.has(cmptName)
     ) {
       // render the component and add it to the response
-      res += await renderComponent(match[1], ref, cmptData, locals, format);
+      res += await renderComponent(cmptName, ref, cmptData, locals, format);
     }
   }
 
