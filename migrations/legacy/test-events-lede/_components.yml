@@ -1,0 +1,16 @@
+_components:
+  section-front:
+    instances:
+      new:
+        title: ''
+        podcastList:
+          _ref: clay.radio.com/_components/podcast-list/instances/new
+        sectionLead:
+          _ref: clay.radio.com/_components/events-lede/instances/new
+        moreContentFeed:
+          _ref: clay.radio.com/_components/more-content-feed/instances/section-front
+        stationsCarousel:
+        - _ref: clay.radio.com/_components/stations-carousel/instances/section-front
+        includePodcastModule: false
+        googleAdUnderStationsModule:
+          _ref: clay.radio.com/_components/google-ad-manager/instances/billboardBottom
