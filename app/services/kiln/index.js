@@ -14,6 +14,7 @@ module.exports = () => {
   require('./plugins/content-search')();
   require('./plugins/instagram')();
   require('./plugins/subscriptions')();
+  require('./plugins/valid-source')();
   require('./plugins/select-list')();
   require('./validators')();
 };
