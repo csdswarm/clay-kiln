@@ -4,7 +4,7 @@ const expect = require('chai').expect,
   dirname = __dirname.split('/').pop(),
   { autoLink } = require('.');
 
-describe.only(dirname, function () {
+describe(dirname, function () {
   describe('autoLink', function () {
 
     it('creates one or more links based on property names in data', () => {
