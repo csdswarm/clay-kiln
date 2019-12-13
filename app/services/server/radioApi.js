@@ -189,3 +189,4 @@ const rest = require('../universal/rest'),
 
 module.exports.get = get;
 module.exports.TTL = TTL;
+module.exports.shouldUseStagingApi = shouldUseStagingApi;

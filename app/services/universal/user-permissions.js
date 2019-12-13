@@ -218,7 +218,7 @@ const pluralize = require('pluralize'),
                     _condition = {};
                   }
 
-                  setCondition(type, {arg1, arg2, arg3});
+                  setCondition(type, { arg1, arg2, arg3 });
 
                   if (next) {
                     return addGetters(next(then));
