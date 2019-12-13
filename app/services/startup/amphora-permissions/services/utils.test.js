@@ -3,9 +3,7 @@
 const { assert, expect } = require('chai'),
   sinon = require('sinon'),
   { addMiddlewareToUnsafeMethods, isEditor, wrapInTryCatch } = require('./utils'),
-  express = require('express'),
-  getPort = require('get-port'),
-  axios = require('axios');
+  express = require('express');
 
 describe('utils', () => {
   describe('isEditor', () => {
