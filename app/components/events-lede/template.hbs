@@ -10,8 +10,8 @@
             <source media="(min-width: 1280px)" srcset="{{ feedImgUrl }}?width=780&crop=16:9,offset-y0" />
             <img
               src="{{ feedImgUrl }}?width=780&crop=16:9,offset-y0"
-              class="section-lead__image" />
-            <div class="image__hover-overlay"></div>
+              class="section-lead__image"
+            />
           </picture>
           <div class="events-lede__image-overlay">
             {{#if contentLabel }}
@@ -32,16 +32,8 @@
             {{{ venueName }}}
           </a>
         </span>
-        <p>{{> paragraph description }}</p>
+        {{> paragraph description }}
       </div>
-    {{else}}
-      {{#if @root.locals.edit }}
-        <div class="kiln-placeholder">
-          <div class="placeholder-label">
-            <span class="ui-icon placeholder-icon material-icons add">add</span> <span class="placeholder-text">Featured Event</span> <div class="ui-ripple-ink"></div>
-          </div>
-        </div>
-      {{/if}}
     {{/if}}
   </div>
   {{> google-ad-manager googleAdRightRail }}

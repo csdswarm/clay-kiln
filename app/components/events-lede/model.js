@@ -15,46 +15,40 @@ const { unityComponent } = require('../../services/universal/amphora'),
   utils = require('../../services/universal/utils'),
   { urlToElasticSearch } = utils,
   dateFormat = require('date-fns/format'),
-  dateParse = require('date-fns/parse');
+  dateParse = require('date-fns/parse'),
+  dateFormatString = 'dddd[,] MMMM d [at] h:mm aa';
 
 module.exports = unityComponent({
   render: (uri, data, locals) => {
-    data._computed = {
-      date: data.startDate && data.startTime ? dateFormat(dateParse(data.startDate + ' ' + data.startTime)) : null,
-      addressLink: `https://www.google.com/maps/dir//${ data.venueAddress }`
-    };
-
-    return data;
-  },
-  save: (uri, data, locals) => {
-    if (!data.url || !locals) {
-      return data;
-    }
-
     const query = queryService.newQueryWithCount(elasticIndex, 1, locals),
       canonicalUrl = utils.urlToCanonicalUrl(
         urlToElasticSearch(data.url)
       );
 
     queryService.addFilter(query, { term: { canonicalUrl } });
-    queryService.addFilter(query, { terms: { contentType: 'event' } });
-    if (locals.station) {
+    queryService.addFilter(query, { term: { contentType: 'event' } });
+    if (locals.station.callsign !== locals.defaultStation.callsign) {
       queryService.addMust(query, { match: { station: locals.station } });
     }
     queryService.onlyWithTheseFields(query, elasticFields);
     return queryService.searchByQuery(query)
       .then(function (result) {
-        return {
+        const newData = {
           ...data,
           url: data.url.replace(/^http:/, protocol),
-          headline: result.headline || 'Stars & Strings 2019 - A RADIO.COM Event', //mock
-          startDate: result.startDate || '2019-12-04', //mock
-          startTime: result.startTime || '19:00', //mock
-          venueName: result.venueName || 'Barclays Center', //mock
-          venueAddress: result.venueAddress || '620 Atlantic Ave, Brooklyn, NY 11217', //mock
-          feedImgUrl: result.feedImgUrl || 'https://images.radio.com/wnshfm/S%26S2019_DL_NYC_775x515.jpg', //mock
-          description: data.description || `Tickets ON SALE NOW! Get 'em before they're gone. Lorem ipsum dolor sit amet, consectetur adipiscing.` //mock
+          headline: result.headline,
+          startDate: result.startDate,
+          startTime: result.startTime,
+          venueName: result.venueName,
+          venueAddress: result.venueAddress,
+          feedImgUrl: result.feedImgUrl
         };
+
+        newData._computed = {
+          dateTime: newData.startDate && newData.startTime ? dateFormat(dateParse(newData.startDate + ' ' + newData.startTime), dateFormatString) : null,
+          addressLink: `https://www.google.com/maps/dir//${ newData.venueAddress }`
+        };
+        return newData;
       })
       .catch(e => {
         queryService.logCatch(e, uri);

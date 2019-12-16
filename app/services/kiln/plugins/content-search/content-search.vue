@@ -8,7 +8,7 @@
                 floating-label
                 :label="schema._label"
                 name="content-search"
-                :help="'Keyword search content or paste in a URL. ' + args.help"
+                :help="'Keyword search content or paste in a URL. ' + args.help || ''"
                 @input="inputOnchange"
                 v-model="searchText"
         ></ui-textbox>

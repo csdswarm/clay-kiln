@@ -8,7 +8,8 @@ _components:
     venueName: ''
     venueAddress: ''
     feedImgUrl: ''
-    description: ''
+    description:
+      _ref: /_components/paragraph/instances/new
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/halfPageTop
     instances:
@@ -21,6 +22,7 @@ _components:
         venueName: ''
         venueAddress: ''
         feedImgUrl: ''
-        description: ''
+        description:
+          _ref: /_components/paragraph/instances/new
         googleAdRightRail:
           _ref: /_components/google-ad-manager/instances/halfPageTop
