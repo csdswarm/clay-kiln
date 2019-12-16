@@ -94,7 +94,9 @@ function uriToUrl(uri, locals) {
  * @returns {string}
  */
 function removeExtension(path) {
-  let leadingDot, endSlash = path.lastIndexOf('/');
+  const endSlash = path.lastIndexOf('/');
+
+  let leadingDot = endSlash;
 
   if (endSlash > -1) {
     leadingDot = path.indexOf('.', endSlash);
@@ -105,6 +107,7 @@ function removeExtension(path) {
   if (leadingDot > -1) {
     path = path.substr(0, leadingDot);
   }
+
   return path;
 }
 
