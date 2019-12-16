@@ -34,10 +34,11 @@ describe('cognito tests', () => {
       try {
         process.env.COGNITO_CONSUMER_KEY = 'YOUR KEY TO THE FUTURE';
 
+        const fakeDate = { now: (new Date('March 14, 2015 9:26:54')).valueOf() };
+
         clock = sinon.useFakeTimers(fakeDate);
 
         const
-          fakeDate = { now: (new Date('March 14, 2015 9:26:54')).valueOf() },
           authResults = { AuthenticationResult: { AccessToken: 'ACCESS... GRANTED', ExpiresIn: 3600 } },
           spy = sinon.stub().callsArgWith(1, undefined, authResults),
           cognito = requireCognitoStandard({ initiateAuth: spy }),

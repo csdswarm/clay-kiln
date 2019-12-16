@@ -81,7 +81,7 @@ describe('urps tests', () => {
 
   describe('loadPermissions', () => {
     const req = { session: {} },
-      locals = { user: {} },
+      locals = { user: {}, permissions: {} },
       recently = Date.now() - 100,
       inTheSignificantFuture = recently + 10000000,
       authBase = {
@@ -97,6 +97,7 @@ describe('urps tests', () => {
     function resetGlobals() {
       req.session = {};
       locals.user = {};
+      locals.permissions = {};
     }
 
     // generates standard proxies for required components used by loadPermissions
@@ -202,6 +203,8 @@ describe('urps tests', () => {
           { type: 'tags', action: 'update', target: { type: 'station', value: 'NATL-RC' } }
         ],
         urps = requireUrpsLoadPermsStandard({ getCacheResults, restGetResults });
+
+      locals.user.username = 'joe@schmoe.com';
 
       await urps.loadPermissions(req.session, locals);
 
