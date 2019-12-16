@@ -5,7 +5,7 @@ const { assert, expect } = require('chai'),
   { addMiddlewareToUnsafeMethods, isEditor, wrapInTryCatch } = require('./utils'),
   express = require('express');
 
-describe('utils', () => {
+describe('permissions utils', () => {
   describe('isEditor', () => {
     it('should return false if username exists', () => {
       expect(isEditor({})).to.be.false;

@@ -17,7 +17,7 @@ const { expect, assert } = require('chai'),
   send = sinon.stub();
 let res = {};
 
-describe('routes', function () {
+describe('permissions routes', function () {
   beforeEach(function () {
     expressRouter.use.reset();
     expressRouter.put.reset();
