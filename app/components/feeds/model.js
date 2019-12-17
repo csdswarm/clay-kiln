@@ -122,7 +122,9 @@ module.exports.render = async (ref, data, locals) => {
       // tags
       tag: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
       // subcategory (secondary article type)
-      subcategory: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
+      subcategory: {
+        createObj: secondarySectionFront => ({ match: { 'secondarySectionFront.normalized': secondarySectionFront } })
+      },
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } }) },
       // corporate websites (corporateSyndication)

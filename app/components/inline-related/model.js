@@ -1,9 +1,9 @@
 'use strict';
 
-const queryService = require('../../services/server/query'),
+const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
+  queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
-  loadedIdsService = require('../../services/server/loaded-ids'),
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
   elasticIndex = 'published-content',
@@ -15,7 +15,12 @@ const queryService = require('../../services/server/query'),
     'lead',
     'contentType'
   ],
-  maxItems = 2;
+  maxItems = 2,
+  applyAspectRatio = imgUrl => {
+    imgUrl += imgUrl.includes('?') ? '&' : '?';
+    imgUrl += 'crop=16:9';
+    return imgUrl;
+  };
 
 
 /**
@@ -41,10 +46,10 @@ module.exports.save = async (ref, data, locals) => {
     Object.assign(item, {
       uri: result._id,
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
-      pageUri: result.pageUri,
+      pageUri: item.url || result.pageUri,
       urlIsValid: result.urlIsValid,
-      canonicalUrl: result.canonicalUrl,
-      feedImgUrl: result.feedImgUrl,
+      canonicalUrl: item.url || result.canonicalUrl,
+      feedImgUrl: applyAspectRatio(item.overrideImage || result.feedImgUrl || DEFAULT_RADIOCOM_LOGO),
       lead: result.leadComponent
     });
 
@@ -66,7 +71,7 @@ module.exports.render = async function (ref, data, locals) {
   const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
     availableSlots = maxItems - data.items.length;
 
-  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
   // items are saved from form, articles are used on FE
   data.articles = data.items;
 
