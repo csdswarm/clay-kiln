@@ -24,7 +24,7 @@ const _isObject = require('lodash/isObject'),
   queryFilters = {
     sectionFronts: {
       filterCondition: 'must',
-      createObj: sectionFront => ({ match: { sectionFront } }) 
+      createObj: sectionFront => ({ match: { sectionFront } })
     },
     secondarySectionFronts: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
     tags: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
@@ -92,10 +92,11 @@ const _isObject = require('lodash/isObject'),
  * @param {object} filter
  * @param {object} exclude
  * @param {array} fields
+ * @param {Object} [locals]
  * @returns {array} elasticResults
  */
-  fetchRecirculation = async (filter, exclude, fields = elasticFields) => {
-    const query = queryService(index);
+  fetchRecirculation = async (filter, exclude, fields = elasticFields, locals) => {
+    const query = queryService(index, locals);
 
     let results = [];
   
@@ -131,7 +132,7 @@ const _isObject = require('lodash/isObject'),
       async render(uri, data, locals) {
         try {
           const { filters, excludes } = mapDataToFilters(uri, data, locals),
-            content = await fetchRecirculation(filters, excludes);
+            content = await fetchRecirculation(filters, excludes, elasticFields, locals);
           
           data[contentKey] = content;
         } catch (e) {

@@ -82,7 +82,7 @@ function uriToUrl(uri, locals) {
 }
 
 /**
- * Replace https with http
+ * Replace https with http and removes query string
  *
  * @param {string} url
  * @returns {string}
