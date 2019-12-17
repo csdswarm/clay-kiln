@@ -116,7 +116,16 @@ module.exports['7.0'] = async function (uri, data) {
   }
 };
 
-module.exports['8.0'] = async (uri, data, locals) => {
+module.exports['8.0'] = function (uri, data) {
+
+  // adding editing abilities for the components title and visibility
+  data.componentTitle = 'MORE from RADIO.COM';
+  data.componentTitleVisible = true;
+
+  return data;
+};
+
+module.exports['9.0'] = async (uri, data, locals) => {
   await addUriToCuratedItems(uri, data.items, locals);
 
   return data;

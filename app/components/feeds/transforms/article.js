@@ -2,6 +2,7 @@
 
 const format = require('date-fns/format'),
   parse = require('date-fns/parse'),
+  { getComponentInstance } = require('clayutils'),
   { addArrayOfProps, renderContent } = require('./utils');
 
 /**
@@ -14,8 +15,9 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = function (data, locals) {
-  const { canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
+  const { _id, canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
+    itemId = getComponentInstance(_id),
     transform = [
       {
         title: { _cdata: headline }
@@ -27,7 +29,7 @@ module.exports = function (data, locals) {
         pubDate: format(parse(data.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ') // Date format must be RFC 822 compliant
       },
       {
-        guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
+        guid: [{ _attr: { isPermaLink: false } }, itemId]
       },
       {
         syndicatedUrl
