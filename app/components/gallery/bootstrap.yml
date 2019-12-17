@@ -49,7 +49,3 @@ _components:
     isContentFromAP: false
     noIndexNoFollow: false
     toggleEditorCondensedSlidesView: true
-    accessoryText: ''
-    isCandidateToBeFeatured: false
-    isHidden: false
-    isSponsored: false
