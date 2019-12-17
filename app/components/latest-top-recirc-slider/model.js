@@ -1,5 +1,6 @@
 'use strict';
-const { recirculationComponent } = require('../../services/universal/recirculation'),
+const { recirculationData } = require('../../services/universal/recirculation'),
+  { cleanUrl } = require('../../services/universal/utils'),
   { isComponent } = require('clayutils'),
   /**
    * Converts an object with true/false values into an array of "true" keys
@@ -9,13 +10,6 @@ const { recirculationComponent } = require('../../services/universal/recirculati
    */
   boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
   /**
-   * Replace https with http
-   *
-   * @param {string} url
-   * @returns {string}
-   */
-  cleanUrl = url => url.split('?')[0].replace('https://', 'http://'),
-  /**
    * Ensures the url exists and it is not a component ref
    *
    * @param {string} url
@@ -23,11 +17,11 @@ const { recirculationComponent } = require('../../services/universal/recirculati
    */
   validUrl = url => url && !isComponent(url);
 
-module.exports = recirculationComponent({
+module.exports = recirculationData({
   mapDataToFilters: (ref, data, locals) => ({
     filters: {
       contentTypes: boolObjectToArray(data.contentType),
-      sectionFronts: { condition: 'must', value: data.sectionFront },
+      sectionFronts: data.sectionFront,
       secondarySectionFronts: data.secondarySectionFronts,
       tags: data.tags
     },

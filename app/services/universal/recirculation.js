@@ -1,4 +1,9 @@
 'use strict';
+/**
+ * @file Wrapper for components that provides default elastic functionality
+ * that queries for latest recirculation content.  It also validates any curated
+ * content
+ */
 
 const _isObject = require('lodash/isObject'),
   queryService = require('../server/query'),
@@ -17,7 +22,10 @@ const _isObject = require('lodash/isObject'),
   returnData = (_, data) => data,
   // Maps defined query filters to correct elastic query formatting
   queryFilters = {
-    sectionFronts: { createObj: sectionFront => ({ match: { sectionFront } }) },
+    sectionFronts: {
+      filterCondition: 'must',
+      createObj: sectionFront => ({ match: { sectionFront } }) 
+    },
     secondarySectionFronts: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
     tags: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
     contentTypes: {
@@ -53,7 +61,7 @@ const _isObject = require('lodash/isObject'),
    */
   addCondition = (query, key, valueObj, defaultCondition) => {
     if (!queryFilters[key]) {
-      console.error(`No filter current exists for ${key}`);
+      log('error', `No filter current exists for ${key}`);
       return;
     }
 
@@ -68,7 +76,7 @@ const _isObject = require('lodash/isObject'),
       valueObj.forEach(v => addCondition(query, key, v, arrayCondition));
     } else {
       const { createObj, filterCondition } = queryFilters[key],
-        { condition = defaultCondition || filterCondition, value } = _isObject(valueObj) ? valueObj : { value: valueObj };
+        { condition = filterCondition || defaultCondition, value } = _isObject(valueObj) ? valueObj : { value: valueObj };
 
       if (!createObj || !value) {
         return;
@@ -103,7 +111,7 @@ const _isObject = require('lodash/isObject'),
       results = await queryService.searchByQuery(query);
     } catch (e) {
       queryService.logCatch(e, 'content-search');
-      console.error(e);
+      log('error', 'Error querying Elastic', e);
     }
 
     return results;
@@ -118,7 +126,7 @@ const _isObject = require('lodash/isObject'),
    * @param {function} config.save
    * @returns {object}
    */
-  recirculationComponent = ({ contentKey = 'articles', mapDataToFilters = (uri, data) => data, render = returnData, save = returnData }) => {
+  recirculationData = ({ contentKey = 'articles', mapDataToFilters = returnData, render = returnData, save = returnData }) => {
     return {
       async render(uri, data, locals) {
         try {
@@ -156,5 +164,4 @@ const _isObject = require('lodash/isObject'),
     };
   };
 
-module.exports = fetchRecirculation;
-module.exports.recirculationComponent = recirculationComponent;
+module.exports.recirculationData = recirculationData;
