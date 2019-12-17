@@ -155,6 +155,9 @@ async function buildAndRequestElasticSearch(numResults, curatedItems, locals) {
 function addParamsAndHttps(arr) {
   return arr.map(item => {
     item.params = item.params || '?article=curated';
-    item.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
+    // eslint-disable-next-line no-nested-ternary
+    item.feedImgUrl = item.feedImgUrl
+      ? item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?'
+      : '';
   });
 }
