@@ -18,10 +18,11 @@ const setupBidOptions = (params) => {
         return {
           slotID: optionId,
           slotName: `${option.getAdUnitPath()}/${optionId.replace('google-ad-manager__slot--', '')}`,
-          sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ])
+          sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ]).filter(([width, height]) => width > 7 && height > 7)
         };
-      });
-
+      })
+      .filter(({ sizes }) => sizes.length);
+  
   return { slots, timeout };
 };
 
