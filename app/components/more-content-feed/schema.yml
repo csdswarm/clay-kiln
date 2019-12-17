@@ -1,4 +1,4 @@
-_version: 8.0
+_version: 9.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -26,7 +26,7 @@ componentTitleVisible:
   _label: Show Component's Title
   _has:
     input: checkbox
-    help: Show or hide the title displayed on the component's view 
+    help: Show or hide the title displayed on the component's view
 
 pageLength:
   _label: Page Size

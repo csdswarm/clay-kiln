@@ -2,6 +2,7 @@
 
 const accessToken = process.env.LYTICS_API_KEY,
   lyticsAPI = process.env.LYTICS_API_URL,
+  log = require('./log').setup({ file: __filename }),
   rest = require('./rest'),
   qs = require('qs'),
   /**
@@ -29,7 +30,7 @@ const accessToken = process.env.LYTICS_API_KEY,
 
       return await rest.get(endpoint);
     } catch (e) {
-      log('error', e);
+      log('error', 'error requesting the lytics api', e);
       return null;
     }
   },

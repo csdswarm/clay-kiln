@@ -47,7 +47,7 @@ function newQueryWithCount(index, count, locals) {
  * to only display array of results
  * @param  {Object} query
  * @param  {Object} locals
- * @param  {Object} [opts] - see server/query.js for opts description
+ * @param  {SearchOpts} [opts] - see universal/query.js for the SearchOpts type
  * @return {Promise}
  * @example searchByQuery({"index":"published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})

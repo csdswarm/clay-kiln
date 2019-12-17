@@ -6,7 +6,6 @@ const queryService = require('../../services/server/query'),
   contentTypeService = require('../../services/universal/content-type'),
   { sendError } = require('../../services/universal/cmpt-error'),
   { isComponent } = require('clayutils'),
-  loadedIdsService = require('../../services/server/loaded-ids'),
   elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -92,7 +91,7 @@ module.exports.render = async function (ref, data, locals) {
   let cleanUrl,
     dynamicPage = false;
 
-  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
   data.initialLoad = false;
 

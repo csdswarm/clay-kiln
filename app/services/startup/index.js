@@ -20,13 +20,12 @@ const pkg = require('../../package.json'),
   brightcove = require('./brightcove'),
   log = require('../universal/log').setup({ file: __filename }),
   eventBusSubscribers = require('./event-bus-subscribers'),
-  addRdcRedisSession = require('./add-rdc-redis-session'),
-  handleClearLoadedIds = require('./handle-clear-loaded-ids'),
   user = require('./user'),
   radium = require('./radium'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
-  cacheControl = require('./cache-control');
+  addToLocals = require('./add-to-locals'),
+  addInterceptor = require('./add-interceptor');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -83,17 +82,16 @@ function setupApp(app) {
 
   app.use(handleRedirects);
 
-  addRdcRedisSession(app);
-
-  app.use(handleClearLoadedIds);
-
   app.use(user);
 
   app.use(locals);
 
+  addToLocals.loadedIds(app);
+  addInterceptor.loadedIds(app);
+
   app.use(currentStation);
 
-  app.use(cacheControl);
+  addInterceptor.cacheControl(app);
 
   radium.inject(app);
 

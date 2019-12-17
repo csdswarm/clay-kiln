@@ -14,3 +14,7 @@ googleContainerId: 5XL9KZ5
 verizonMediaCompanyId: 5b4617f33a85ab2357ed40fb
 verizonMediaPlayerId: 5b4617f3e880db42b536cecc
 sharethroughPlacementKey: mxkcXkpf326JUS8ZHS35e6U5
+
+app: 'app.9c2e6dd3.js'
+
+chunk-vendors: 'chunk-vendors.682039a0.js'

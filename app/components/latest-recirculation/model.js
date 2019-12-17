@@ -1,6 +1,5 @@
 'use strict';
 const queryService = require('../../services/server/query'),
-  loadedIdsService = require('../../services/server/loaded-ids'),
   db = require('../../services/server/db'),
   contentTypeService = require('../../services/universal/content-type'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
@@ -153,7 +152,7 @@ module.exports.render = async function (ref, data, locals) {
   const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
     availableSlots = maxItems - data.items.length;
 
-  await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
   // if there are no available slots then there's no need to query
   if (availableSlots <= 0) {
@@ -172,7 +171,7 @@ module.exports.render = async function (ref, data, locals) {
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
     const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
-    
+
     queryService.addMust(query, { match: { sectionFront: data.sectionFront } });
     return renderDefault(ref, data, locals, query);
   }

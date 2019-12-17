@@ -3,7 +3,6 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
   { isComponent } = require('clayutils'),
-  loadedIdsService = require('../../services/server/loaded-ids'),
   elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -66,7 +65,7 @@ module.exports.render = async function (ref, data, locals) {
     const items = data[`${section}Items`],
       curatedIds = items.filter(item => item.uri).map(item => item.uri);
 
-    await loadedIdsService.appendToLocalsAndRedis(curatedIds, locals);
+    locals.loadedIds = locals.loadedIds.concat(curatedIds);
   }
 
   data.articles = [];
