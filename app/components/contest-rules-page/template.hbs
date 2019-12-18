@@ -1,24 +1,5 @@
-{{#*inline "legal" }}
-  {{#*inline "privacyPolicyLink"}}
-    <a href="https://www.entercom.com/privacy-policy">
-      Entercom's Privacy Policy
-    </a>
-  {{/inline}}
-
-  {{#*inline "contestRulesLink"}}
-    <a href="https://{{ stationMeta.rulesUrlSubDomain }}.radio.com/general-contests-rules">
-      General Contest Rules
-    </a>
-  {{/inline}}
-
-  <div class="contest-rules-page__legal">
-    <p>Unless otherwise indicated below, {{ stationMeta.name }}’s general contest rules apply to {{ stationMeta.name }} contests. For the specific terms and conditions applicable to a particular {{ stationMeta.name }} contest, please see below.</p>
-    <p>You can also view {{ stationMeta.name }}'s {{> contestRulesLink }} or review {{> privacyPolicyLink }}.</p>
-  </div>
-{{/inline}}
-
 {{#*inline "contestRulesList"}}
-  {{#each contestRules as |ruleData| }}
+  {{#each _computed.contestRules as |ruleData| }}
     {{> contest-rules ruleData }}
   {{/each}}
 {{/inline}}
@@ -29,12 +10,8 @@
   itemscope
   itemtype="http://schema.org/Article">
 
-  <header class="contest-rules-page__header">
-    <header class="component__header">
-      <h1 itemprop="headline">Contest Rules</h1>
-    </header>
-
-    {{> legal }}
+  <header class="contest-rules-page__header component__header">
+    <h1 itemprop="headline">Contest Rules</h1>
   </header>
 
   <section class="contest-rules-page__body">

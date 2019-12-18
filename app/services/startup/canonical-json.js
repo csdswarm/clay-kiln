@@ -35,6 +35,20 @@ function getPrefixAndKey(path) {
   return { routeParamKey, routePrefix };
 }
 
+const routes = [
+  // contest-rules
+  {
+    testPath: req => req.path.indexOf('/contest-rules') === 0,
+    getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
+  },
+  // [default route handler] resolve the uri and page instance
+  {
+    testPath: () => true,
+    getPageData: req => db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+      .then(data => db.get(`${data}@published`))
+  }
+];
+
 /**
  * If you add the `X-Amphora-Page-JSON` header to a request
  * to a canonical url you can grab the page's JSON.
@@ -104,8 +118,9 @@ function middleware(req, res, next) {
     params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1];
     promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
-    // Otherwise resolve the uri and page instance
-    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
+    promise = routes
+      .find(r => r.testPath(req, res))
+      .getPageData(req, res);
   }
 
   // Compose and respond

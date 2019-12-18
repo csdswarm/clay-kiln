@@ -4,8 +4,11 @@
 const _get = require('lodash/get');
 const db = require('amphora-storage-postgres');
 const moment = require('moment');
-const CO_NAME = 'RADIO.COM';
 const queryDateRange = 30;
+const stationQuery = stationCallsign =>
+  stationCallsign ?
+    `AND data->>'stationCallsign' = '${stationCallsign.toUpperCase()}'` :
+    '';
 const getContestRules = async ({
   startTime = '',
   stationCallsign = ''
@@ -24,7 +27,7 @@ const getContestRules = async ({
     ) <= ${queryDateRange}
 
     AND id SIMILAR TO '%@published'
-    AND data->>'stationCallsign' = '${stationCallsign.toUpperCase()}'
+    ${stationQuery(stationCallsign)}
   `;
   const { rows } = await db.raw(contestRulesQuery);
   const pluckData = ({ data }) => data;
@@ -34,15 +37,7 @@ const getContestRules = async ({
 
 module.exports.render = async (ref, data, locals) => {
   const stationSlug = _get(locals, 'params.stationSlug');
-  const {
-    defaultStation: {
-      callsign: defaultCallsign
-    },
-    station: stationInfo
-  } = locals;
-  const stationCallsign = stationSlug || defaultCallsign;
-  const isDefaultStation = stationCallsign === defaultCallsign;
-  const stationName = isDefaultStation ? CO_NAME : stationInfo.name;
+  const stationCallsign = stationSlug || '';
   const startTime = moment().toISOString(true);
   const contestRules = (await getContestRules({
     startTime,
@@ -52,15 +47,10 @@ module.exports.render = async (ref, data, locals) => {
     stationTimeZone: locals.station.timezone,
     showHeader: true
   }));
-  const rulesUrlSubDomain = isDefaultStation ? 'www' : stationSlug;
 
-  console.log('[CONTEST RULES QUERY]', stationCallsign, stationName, locals.station);
+  data._computed = {
+    contestRules
+  };
 
-  return Object.assign(data, {
-    contestRules,
-    stationMeta: {
-      rulesUrlSubDomain,
-      name: stationName
-    }
-  });
+  return data;
 };
