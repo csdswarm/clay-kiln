@@ -27,5 +27,6 @@ module.exports = {
   calloutType: require('./callout'),
   attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow'),
   reversibleOneBasedIndex: require('./reversibleOneBasedIndex'),
-  userLocalDate: dateTime.userLocalDate
+  userLocalDate: dateTime.userLocalDate,
+  renderTemplateString: require('./renderTemplateString')
 };

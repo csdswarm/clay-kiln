@@ -24,7 +24,8 @@ const _get = require('lodash/get'),
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
+    SECTIONFRONT: 'section-front',
+    EVENT: 'event'
   },
 
   // this should list the component names of the content types which may be
