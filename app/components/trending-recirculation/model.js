@@ -155,8 +155,9 @@ function addParamsAndHttps(arr) {
     .map(item => {
       const newItem = { ...item };
 
-      newItem.params = item.params || '?article=curated';
-      newItem.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
+      newItem.params = newItem.params || '?article=curated';
+      newItem.feedImgUrl = newItem.feedImgUrl.replace('http://', 'https://');
+      newItem.feedImgUrl += newItem.feedImgUrl.includes('?') ? '&' : '?';
       return newItem;
     });
 }
