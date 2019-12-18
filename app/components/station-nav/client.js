@@ -158,7 +158,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   toggleMobileSecondaryLinks = ({ currentTarget }) => {
     if (!currentTarget.classList.contains(active)) {
       // Close dropdown of all categories
-      for (let item of mobileNavItems) {
+      for (const item of mobileNavItems) {
         item.classList.remove(active);
       }
     }
@@ -205,7 +205,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
         mobileNavDrawer.classList.remove(active);
       } else {
         // reset all desktop drawers
-        for (let drawer of desktopNavDrawers) {
+        for (const drawer of desktopNavDrawers) {
           drawer.classList.remove(active);
         }
       }
