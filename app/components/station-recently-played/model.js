@@ -4,7 +4,8 @@ const radioApi = require('../../services/server/radioApi'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
   { playingClass } = require('../../services/server/spaLocals'),
   { formatUTC } = require('../../services/universal/dateTime'),
-  moment = require('moment');
+  moment = require('moment'),
+  _get = require('lodash/get');
 
 /**
  * @param {string} ref
@@ -20,7 +21,7 @@ module.exports.render = async function (ref, data, locals) {
 
   const stationId = locals.stationId ? locals.stationId : locals.station.id,
     gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
-    category = (locals.category ? locals.category : locals.station.category).toLowerCase(),
+    category = (locals.category ? locals.category : _get(locals, 'station.category', '')).toLowerCase(),
     HISTORY_LIMIT = 20,
     // using the station offset determine the current day 1 - 7 based
     stationTime = new Date(new Date().getTime() + gmt_offset * 60 * 1000),

@@ -30,7 +30,7 @@ remove-images:
 	docker rmi -f $$(docker images -q)
 
 clay-logs:
-	docker-compose logs -f clay
+	docker-compose exec clay tail -f .pm2/logs/app_name-out.log
 
 enter-clay:
 	docker-compose exec clay bash
