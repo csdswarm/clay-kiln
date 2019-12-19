@@ -202,6 +202,20 @@ function debugLog(...args) {
   }
 }
 
+/**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
 Object.assign(module.exports, {
   /**
    * Url queries to elastic search need to be `http` since that is
@@ -224,5 +238,6 @@ Object.assign(module.exports, {
   isInstance,
   urlToCanonicalUrl,
   textToEncodedSlug,
-  debugLog
+  debugLog,
+  yesNo
 });

@@ -1,5 +1,7 @@
 'use strict';
 
+const { preventFastlyCache } = require('./middleware-utils');
+
 const interceptor = require('express-interceptor'),
   cacheControlInterceptor = interceptor((req, res) => {
     return {
@@ -16,7 +18,7 @@ const interceptor = require('express-interceptor'),
        * @param {function} send
        */
       intercept(body, send) {
-        res.set('Cache-Control', 'private, no-store');
+        preventFastlyCache(res);
         send(body);
       }
     };
