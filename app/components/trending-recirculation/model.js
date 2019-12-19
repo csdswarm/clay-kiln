@@ -65,25 +65,22 @@ module.exports = unityComponent({
     const numArticlesToBackFill = MAX_ITEMS - data.items.length;
 
     if (!locals.edit && numArticlesToBackFill > 0) {
-      return buildAndRequestElasticSearch(numArticlesToBackFill, data.items, locals)
+      await buildAndRequestElasticSearch(numArticlesToBackFill, data.items, locals)
         .then(responseItems => {
           data._computed.articles = [...data.items, ...responseItems];
-          addParamsAndHttps(data._computed.articles);
-          return data;
         })
         .catch(err => {
           queryService.logCatch(err, ref);
           // still send the curated items
           data._computed.articles = [...data.items];
-          addParamsAndHttps(data._computed.articles);
-          return data;
         });
     } else {
       // no need to backfill
       data._computed.articles = [...data.items];
-      addParamsAndHttps(data._computed.articles);
-      return data;
     }
+
+    data._computed.articles = addParamsAndHttps(data._computed.articles);
+    return data;
 
   },
   /**
@@ -153,8 +150,14 @@ async function buildAndRequestElasticSearch(numResults, curatedItems, locals) {
 }
 
 function addParamsAndHttps(arr) {
-  return arr.map(item => {
-    item.params = item.params || '?article=curated';
-    item.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
-  });
+  return arr
+    .filter(item => item.feedImgUrl)
+    .map(item => {
+      const newItem = { ...item };
+
+      newItem.params = newItem.params || '?article=curated';
+      newItem.feedImgUrl = newItem.feedImgUrl.replace('http://', 'https://');
+      newItem.feedImgUrl += newItem.feedImgUrl.includes('?') ? '&' : '?';
+      return newItem;
+    });
 }
