@@ -1,0 +1,46 @@
+.valid-source {
+  display: flex;
+  flex-direction: column;
+  min-width: em(400);
+
+  &__input {
+    display: flex;
+    flex-direction: row;
+    margin: em(16);
+    align-items: center;
+
+    &-textbox {
+      flex-grow: 1;
+    }
+  }
+
+  &__error {
+    color: red;
+    align-self: center
+  }
+
+  .ui-progress-circular {
+    align-self: center;
+  }
+
+
+  .filterable-list-header-action {
+    padding-right: em(10);
+  }
+
+  .ui-icon-button--type-primary.ui-icon-button--color-default .ui-icon-button__icon {
+    color: rgba(0,0,0,.54);
+  }
+
+  .ui-icon-button--type-primary.ui-icon-button--color-default {
+    background-color: transparent;
+  }
+
+  .filterable-list-add {
+    .filterable-list-item-child {
+      padding-left: 0;
+    }
+  }
+
+}
+

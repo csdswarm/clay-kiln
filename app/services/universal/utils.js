@@ -224,6 +224,19 @@ function prepend(left) {
   return right => left + right;
 }
 
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
 module.exports = {
   /**
    * Url queries to elastic search need to be `http` since that is
@@ -247,5 +260,6 @@ module.exports = {
   urlToCanonicalUrl,
   textToEncodedSlug,
   debugLog,
-  prepend
+  prepend,
+  yesNo
 };

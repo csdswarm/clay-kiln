@@ -93,11 +93,11 @@ async function handlePublishSectionFront(page) {
       sectionFrontRef = page.data.main[0].replace('@published',''),
       data = await db.get(sectionFrontRef),
       sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
-    
+
     if (data.title && !data.titleLocked) {
       const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
         sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
-      
+
       if (!sectionFrontValues.includes(data.title.toLowerCase())) {
         sectionFronts.push({
           name: data.title,
@@ -105,13 +105,16 @@ async function handlePublishSectionFront(page) {
         });
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(sectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({ ...data, titleLocked: true }));
+
+        // delete list from cache
+        redis.del(`list:${sectionFrontsList.replace('/_lists/', '')}`);
       }
     }
   } catch (e) {
     log('error', e);
   }
-};
- 
+}
+
 /**
  * Upon unpublish, remove section front title from primary or secondary
  * section front _lists instance if it exists.
@@ -127,7 +130,7 @@ async function handleUnpublishSectionFront(page) {
     if (mainRef.includes('/_components/section-front/instances/')) {
       const data = await db.get(mainRef),
         sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
-      
+
       if (data.title) {
         const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
           updatedSectionFronts = sectionFronts.filter(sectionFront => {
@@ -141,7 +144,7 @@ async function handleUnpublishSectionFront(page) {
   } catch (e) {
     log('error', e);
   }
-};
+}
 
 /**
  * subscribe to event bus messages
