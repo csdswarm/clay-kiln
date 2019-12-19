@@ -1,8 +1,8 @@
 'use strict';
 
-const db = require('../../services/server/db'),
-  redis = require('../../services/server/redis'),
-  log = require('../../services/universal/log').setup({ file: __filename }),
+const db = require('../../../services/server/db'),
+  redis = require('../../../services/server/redis'),
+  log = require('../../../services/universal/log').setup({ file: __filename }),
   primarySectionFrontsList = '/_lists/primary-section-fronts',
   secondarySectionFrontsList = '/_lists/secondary-section-fronts',
   { subscribe } = require('amphora-search');

@@ -295,25 +295,47 @@ function isContentComponent(url) {
     && contentTypes.has(componentName);
 }
 
-module.exports = {
-  isFieldEmpty,
+/**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+Object.assign(module.exports, {
+  /**
+   * Url queries to elastic search need to be `http` since that is
+   * how it is indexed as.
+   * @param {String} url
+   * @returns {String}
+   */
+  urlToElasticSearch: url => url.replace('https', 'http'),
+  debugLog,
+  ensurePublishedVersion,
+  ensureStartsWith,
+  formatStart,
+  getFullOriginalUrl,
+  getSiteBaseUrl,
   has,
-  replaceVersion,
+  isContentComponent,
+  isFieldEmpty,
+  isInstance,
+  isPublishedVersion,
   isUrl,
+  prettyJSON,
+  replaceVersion,
+  textToEncodedSlug,
+  toTitleCase,
+  urlToCanonicalUrl,
+  urlToElasticSearch,
   uriToUrl,
   urlToUri,
-  formatStart,
-  toTitleCase,
-  getSiteBaseUrl,
-  isPublishedVersion,
-  ensurePublishedVersion,
-  isInstance,
-  urlToCanonicalUrl,
-  textToEncodedSlug,
-  debugLog,
-  ensureStartsWith,
-  prettyJSON,
-  getFullOriginalUrl,
-  urlToElasticSearch,
-  isContentComponent
-};
+  yesNo
+});

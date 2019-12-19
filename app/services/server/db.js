@@ -4,7 +4,7 @@ const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
   _get = require('lodash/get'),
-  DATA_STRUCTURES = ['alert', 'valid_source', 'station_themes'],
+  DATA_STRUCTURES = ['alert', 'apple_news', 'station_themes', 'valid_source'],
   /**
    * Check Postgres to see if the table exists
    *
@@ -119,7 +119,7 @@ const utils = require('../universal/utils'),
       `, [key])
         .then(({ rows }) => {
           if (!rows.length) {
-            return defaultValue || Promise.reject(new Error(`No result found in ${tableName} for ${key}`));
+            return defaultValue || Promise.reject(new Error(`No result found in ${ tableName } for ${ key }`));
           }
 
           return rows[0].data;
