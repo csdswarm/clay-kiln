@@ -107,13 +107,14 @@ module.exports = unityComponent({
       data._computed.articles = [...data.items];
     }
 
+    locals.loadedIds = locals.loadedIds.concat(data._computed.articles);
+
     // and finally backfill via elasticsearch if there are still available slots
     const numArticlesToBackFill = MAX_ITEMS - data._computed.articles.length;
 
     if (!locals.edit && numArticlesToBackFill > 0) {
       const responseItems = await buildAndRequestElasticSearch(
         numArticlesToBackFill,
-        data.items,
         locals
       ).catch(err => {
         queryService.logCatch(err, ref);
@@ -128,7 +129,7 @@ module.exports = unityComponent({
   }
 });
 
-async function buildAndRequestElasticSearch(numResults, curatedItems, locals) {
+async function buildAndRequestElasticSearch(numResults, locals) {
   const elasticQuery = queryService.newQueryWithCount(elasticIndex, numResults);
 
   let cleanUrl;
@@ -140,18 +141,10 @@ async function buildAndRequestElasticSearch(numResults, curatedItems, locals) {
     queryService.addMustNot(elasticQuery, { match: { canonicalUrl: cleanUrl } });
   }
 
-  // exclude the curated content from the results
-  if (curatedItems.length > 0) {
-    curatedItems.forEach(item => {
-      if (item.canonicalUrl) {
-        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(elasticQuery, { match: { canonicalUrl: cleanUrl } });
-      }
-    });
-  }
-
   queryService.onlyWithTheseFields(elasticQuery, elasticFields);
-  return await queryService.searchByQuery(elasticQuery);
+  return await queryService.searchByQuery(elasticQuery, locals, {
+    shouldDedupeContent: true
+  });
 }
 
 function addParamsAndHttps(arr) {
