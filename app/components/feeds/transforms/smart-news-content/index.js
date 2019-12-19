@@ -7,8 +7,12 @@ const parseDate = require('date-fns/parse'),
   // details about why the components are skipped can be found in the specs here
   // https://publishers.smartnews.com/hc/en-us/articles/360010977793
   componentsToSkip = new Set([
-    // skipping for now.  We will probably have to revisit how to handle this
-    //    because I think some articles rely heavily on html-embed content
+    // we need to skip html-embed because we don't know what elements will be
+    //   inside and thus whether it makes sense to skip the unsupported elements
+    //   or omit the content altogether.
+    //
+    // currently business wants these to be skipped, though it's possible they
+    //   later decide articles with html-embeds should be omitted from the feed.
     'html-embed',
 
     // script not supported
