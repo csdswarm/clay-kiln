@@ -56,7 +56,7 @@
     "express-session": "^1.15.6",
     "gulp-newer": "git+https://github.com/nelsonpecora/gulp-newer.git",
     "hammerjs": "^2.0.8",
-    "handlebars": "4.0.11",
+    "handlebars": "4.0.12",
     "he": "^1.1.1",
     "headline-quotes": "^2.1.1",
     "highland": "^2.13.0",
