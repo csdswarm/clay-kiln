@@ -9,8 +9,12 @@ const format = require('date-fns/format'),
   // these skipped components are mostly due to the specs outlined here
   // https://partnerhub.msn.com/docs/spec/vcurrent/using-html/AAsCn
   componentsToSkip = new Set([
-    // skipping for now.  We will probably have to revisit how to handle this
-    //    because I think some articles rely heavily on html-embed content
+    // we need to skip html-embed because we don't know what elements will be
+    //   inside and thus whether it makes sense to skip the unsupported elements
+    //   or omit the content altogether.
+    //
+    // currently business wants these to be skipped, though it's possible they
+    //   later decide articles with html-embeds should be omitted from the feed.
     'html-embed',
 
     // iframe for audio not supported
