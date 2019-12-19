@@ -23,6 +23,7 @@ const v1 = {
   ...(require('./base')),
   ...(require('./execute-sql').v1),
   ...(require('./read-file').v1),
+  addComponentToContainers: require('./add-component-to-containers').v1,
   clayExport: require('./clay-export').v1,
   clayImport: require('./clay-import').v1,
   elasticsearch: require('./elasticsearch').v1,
@@ -32,7 +33,6 @@ const v1 = {
   parseHost: require('./parse-host').v1,
   republish: require('./republish').v1,
   usingDb: require('./using-db').v1,
-  addComponentToContainers: require('./add-component-to-containers').v1
 };
 
 module.exports = {

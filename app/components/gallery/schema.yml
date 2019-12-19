@@ -247,7 +247,7 @@ content:
       - inline-related
 bulkImageUpload:
   _label: Bulk Image Upload
-  _has: 
+  _has:
     input: bulk-image-upload
     dest: slides
   _placeholder:
