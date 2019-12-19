@@ -13,8 +13,6 @@ const parseDate = require('date-fns/parse'),
 module.exports = (ref, data, locals) => {
   setChannelPubDate(data);
 
-  console.log(JSON.stringify(data.meta, null, 2));
-
   return rendererPipeline(ref, data, locals, 'smart-news');
 };
 
