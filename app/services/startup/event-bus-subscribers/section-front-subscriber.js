@@ -2,10 +2,10 @@
 
 const _get = require('lodash/get'),
   { filters, subscribe } = require('amphora-search'),
-  db = require('../server/db'),
-  log = require('../universal/log').setup({ file: __filename }),
-  redis = require('../server/redis'),
-  msnFeedUtils = require('../universal/msn-feed-utils'),
+  db = require('../../server/db'),
+  log = require('../../universal/log').setup({ file: __filename }),
+  redis = require('../../server/redis'),
+  msnFeedUtils = require('../../universal/msn-feed-utils'),
   primarySectionFrontsList = '/_lists/primary-section-fronts',
   secondarySectionFrontsList = '/_lists/secondary-section-fronts',
   /**

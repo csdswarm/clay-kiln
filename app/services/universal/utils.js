@@ -224,6 +224,7 @@ function prepend(left) {
   return right => left + right;
 }
 
+/**
  * return yes/no dependent on val truthiness
  *
  * @param  {*}  val
