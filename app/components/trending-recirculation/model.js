@@ -123,7 +123,7 @@ module.exports = unityComponent({
       data._computed.articles = data._computed.articles.concat(responseItems);
     }
 
-    addParamsAndHttps(data._computed.articles);
+    data._computed.articles = addParamsAndHttps(data._computed.articles);
     return data;
   }
 });
@@ -155,8 +155,14 @@ async function buildAndRequestElasticSearch(numResults, curatedItems, locals) {
 }
 
 function addParamsAndHttps(arr) {
-  return arr.map(item => {
-    item.params = item.params || '?article=curated';
-    item.feedImgUrl += item.feedImgUrl.replace('http://', 'https://').includes('?') ? '&' : '?';
-  });
+  return arr
+    .filter(item => item.feedImgUrl)
+    .map(item => {
+      const newItem = { ...item };
+
+      newItem.params = newItem.params || '?article=curated';
+      newItem.feedImgUrl = newItem.feedImgUrl.replace('http://', 'https://');
+      newItem.feedImgUrl += newItem.feedImgUrl.includes('?') ? '&' : '?';
+      return newItem;
+    });
 }

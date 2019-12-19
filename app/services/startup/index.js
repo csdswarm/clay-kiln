@@ -18,6 +18,7 @@ const pkg = require('../../package.json'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
+  appleNews = require('./apple-news'),
   log = require('../universal/log').setup({ file: __filename }),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
@@ -98,6 +99,8 @@ function setupApp(app) {
   app.use(canonicalJSON);
 
   brightcove.inject(app);
+
+  appleNews.inject(app);
 
   sessionStore = createSessionStore();
 
