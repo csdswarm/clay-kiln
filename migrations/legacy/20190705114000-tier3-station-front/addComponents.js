@@ -1,7 +1,8 @@
 const fs = require('fs'),
   YAML = require('yamljs'),
   fetch = require('node-fetch'),
-  host = process.argv.slice(2)[0];
+  host = process.argv.slice(2)[0],
+  _set = require('../../../app/node_modules/lodash/set');
 
 if (!host) {
   throw new Error('Missing host');
@@ -94,7 +95,11 @@ const createYaml = async () => {
   componentList._components['more-content-feed'].instances['station-front-3'].locationOfContentFeed = 'station-front';
   componentList._components['section-front'].instances['station-front-3'].stationsCarousel = [];
   componentList._components['section-front'].instances['station-front-3'].includePodcastModule = false;
-  componentList._components['section-front'].instances['station-front-3'].moreContentFeed._ref = '/_components/more-content-feed/instances/station-front-3';
+  _set(
+    componentList._components['section-front'].instances['station-front-3'],
+    'moreContentFeed._ref',
+    '/_components/more-content-feed/instances/station-front-3'
+  );
 
   const clay = host.split('/')[2];
   const yaml = YAML.stringify(JSON.parse(JSON.stringify(componentList).replace(new RegExp(clay, 'g'), '')), 6, 2);
