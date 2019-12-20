@@ -1,4 +1,4 @@
-_version: 3.0
+_version: 4.0
 _description: |
   Latest videos module
 
@@ -54,10 +54,18 @@ title:
   _has:
     input: text
 
+primaryContentLabel:
+  _label: Label above the primary item
+  _has:
+    input: text
+    validate:
+      max: 30
+
 _groups:
   settings:
     fields:
       - title
+      - primaryContentLabel
       - filterTags
       - filterSecondarySectionFronts
 
