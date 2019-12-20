@@ -12,6 +12,7 @@ const express = require('express'),
   path = require('path'),
   YAML = require('yamljs'),
   interceptLists = require('./intercept-lists'),
+  { addAlertsMiddleware } = require('../alerts'),
   componentsToCheck = getComponentsWithPermissions(),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
@@ -80,6 +81,7 @@ function userPermissionRouter() {
   });
 
   interceptLists(userPermissionRouter);
+  addAlertsMiddleware(userPermissionRouter);
 
   // we need access to 'res' in createPage so a proper 400 error can be returned
   //   when a bad station slug is sent.
