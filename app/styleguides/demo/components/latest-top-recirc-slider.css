@@ -13,19 +13,14 @@ $thumbnail-continer-width: 70px;
     &__slider-container {
         position: fixed;
         width: 100%;
-        top: em(60, 16);
         left: 0;
         z-index: 99;
-        
+
         background: $white;
         height: em(71, 16);
         display: flex;
         border-top: 1px solid $60gray;
         border-bottom: 1px solid $60gray;
-
-        @mixin medium-screen {
-            top: em(46, 16);
-        }
     }
     &__controls-container {
         background: $purple;
@@ -109,7 +104,7 @@ $thumbnail-continer-width: 70px;
     &__item-text {
         padding: em(10, 16) em(10, 16) em(10, 16) 0;
         @mixin medium-small-screen {
-            padding: em(10, 16); 
+            padding: em(10, 16);
         }
     }
     &__item-category {
@@ -135,14 +130,5 @@ $thumbnail-continer-width: 70px;
         /* autoprefixer: on */
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-}
-
-.editing .latest-top-recirc-slider {
-    &__slider-container {
-        top: em(116, 16);
-        @mixin medium-screen {
-            top: em(102, 16);
-        }
     }
 }

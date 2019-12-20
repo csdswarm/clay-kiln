@@ -2,6 +2,7 @@
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
+@import "_global/content-type";
 
 .component--section-front {
   margin-top: em(30);

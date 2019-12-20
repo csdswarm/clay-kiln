@@ -1,6 +1,7 @@
 @import "_global/mixins";
 @import "_global/fonts";
 @import "_global/colors";
+@import "_global/content-type";
 
 .component--static-page {
   /* BEM exceptions - targeting tags that are added as a result of editing */
@@ -14,12 +15,8 @@
     }
   }
 
-  /* TODO: Create a mixin for this. Should probably be handled during tech debt fixes - CSD */
   a {
-    background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(purpleRGB), .50) 80%, rgba($(purpleRGB), .50) 100%);
-    &:hover {
-      background: linear-gradient(to bottom, rgba($(purpleRGB), .50) 0, rgba($(purpleRGB), .50) 100%);
-    }
+    @mixin anchor $purpleRGB;
   }
 
   .component--subheader {
