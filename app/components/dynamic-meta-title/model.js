@@ -8,9 +8,16 @@ const { hypensToSpaces } = require('../../services/universal/dynamic-route-param
 
 module.exports = unityComponent({
   render: (uri, data, locals) => {
+    const urlMatch = data.urlMatches.find(({ urlString }) => matcher(urlString, locals.url));
+
     let paramValue, metaValue, suffix;
 
-    if (data.routeParam && locals && locals.params) {
+    if (urlMatch) {
+      if (urlMatch.routeParam && locals && locals.params) {
+        paramValue = metaValue = hypensToSpaces(locals.params[urlMatch.routeParam]);
+      }
+      suffix = urlMatch.suffix;
+    } else if (data.routeParam && locals && locals.params) {
       paramValue = metaValue = hypensToSpaces(locals.params[data.routeParam]);
     } else if (data.localsKey && locals) {
       const value = _get(locals, data.localsKey);
@@ -20,16 +27,6 @@ module.exports = unityComponent({
         metaValue = data.metaLocalsKey ? _get(locals, data.metaLocalsKey) : value;
       }
     }
-
-    (data.urlMatches || []).some(({ routeParam, suffix: matchSuffix, urlString }) => {
-      if (matcher(urlString, locals.url)) {
-        if (routeParam && locals && locals.params) {
-          paramValue = metaValue = hypensToSpaces(locals.params[routeParam]);
-        }
-        suffix = matchSuffix;
-        return true;
-      }
-    });
   
     data._computed = Object.assign(data._computed, {
       title: `${toTitleCase(paramValue) || ''}${suffix || data.suffix}`,
