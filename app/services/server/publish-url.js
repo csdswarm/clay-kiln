@@ -115,11 +115,28 @@ function getEventSlugUrl(pageData, locals, mainComponentRefs) {
     });
 }
 
+/**
+ * Return the url for a event pg based on its slug, within the events subdir
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getEventsListingUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.EVENTSLISTING) {
+        return urlPatterns.eventsListing(urlOptions);
+      }
+    });
+}
+
 module.exports = {
   getYearMonthSlugUrl,
   getArticleSlugUrl,
   getGallerySlugUrl,
   getSectionFrontSlugUrl,
   getAuthorPageSlugUrl,
-  getEventSlugUrl
+  getEventSlugUrl,
+  getEventsListingUrl
 };

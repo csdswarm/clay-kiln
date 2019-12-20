@@ -38,12 +38,24 @@ const exists = require('lodash/identity'),
       .join('/');
   },
   event = opts => {
-    // e.g. http://radio.com/event/mix-105-rock-n-jock
+    // e.g. http://radio.com/events/mix-105-rock-n-jock
     return [
       opts.prefix,
       opts.stationSlug,
       'events',
       opts.slug
+    ].filter(exists)
+      .join('/');
+  },
+  eventsListing = opts => {
+    /* e.g.
+      http://radio.com/events
+      http://radio.com/kroq/events
+    */
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      'events'
     ].filter(exists)
       .join('/');
   };
@@ -54,5 +66,6 @@ module.exports = {
   date,
   gallery,
   sectionFront,
-  event
+  event,
+  eventsListing
 };

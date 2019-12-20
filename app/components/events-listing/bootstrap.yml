@@ -1,0 +1,10 @@
+_components:
+  events-listing:
+    content:
+      - _ref: /_components/events-lede/instances/new
+      - _ref: /_components/more-content-feed/instances/new
+    instances:
+      new:
+        content:
+          - _ref: /_components/events-lede/instances/new
+          - _ref: /_components/more-content-feed/instances/new
