@@ -1,7 +1,6 @@
 'use strict';
 
-let stationNav,
-  desktopNavItems,
+let desktopNavItems,
   navDrawersContainer,
   allDrawers,
   desktopNavDrawers,
@@ -158,7 +157,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
   toggleMobileSecondaryLinks = ({ currentTarget }) => {
     if (!currentTarget.classList.contains(active)) {
       // Close dropdown of all categories
-      for (let item of mobileNavItems) {
+      for (const item of mobileNavItems) {
         item.classList.remove(active);
       }
     }
@@ -205,7 +204,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
         mobileNavDrawer.classList.remove(active);
       } else {
         // reset all desktop drawers
-        for (let drawer of desktopNavDrawers) {
+        for (const drawer of desktopNavDrawers) {
           drawer.classList.remove(active);
         }
       }
@@ -215,7 +214,8 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
 // mount listener for vue (optional)
 document.addEventListener('station-nav-mount', function () {
   // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
-  stationNav = document.querySelector('.component--station-nav');
+  const stationNav = document.querySelector('.component--station-nav');
+
   desktopNavItems = stationNav.querySelectorAll('.navigation__primary');
   navDrawersContainer = stationNav.querySelector('.station_nav__drawers');
   allDrawers = navDrawersContainer.querySelectorAll('.drawers__drawer');
