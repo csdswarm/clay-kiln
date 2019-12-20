@@ -30,6 +30,7 @@ module.exports = recirculationData({
       secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
       sectionFronts: boolObjectToArray(data.excludeSectionFronts),
       tags: (data.excludeTags || []).map(tag => tag.text)
-    }
+    },
+    curated: data.items
   })
 });

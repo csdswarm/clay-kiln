@@ -5,7 +5,7 @@
  * content
  */
 
-const _isObject = require('lodash/isObject'),
+const _isPlainObject = require('lodash/isPlainObject'),
   queryService = require('../server/query'),
   logger = require('./log'),
   log = logger.setup({ file: __filename }),
@@ -24,13 +24,14 @@ const _isObject = require('lodash/isObject'),
   queryFilters = {
     sectionFronts: {
       filterCondition: 'must',
+      unique: true,
       createObj: sectionFront => ({ match: { sectionFront } })
     },
     secondarySectionFronts: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
     tags: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
     contentTypes: {
       filterCondition: 'must',
-      multipleCondition: 'should',
+      unique: true,
       createObj: contentType => ({ match: { contentType } })
     },
     canonicalUrls: { createObj: canonicalUrl => ({ match: { canonicalUrl } }) }
@@ -52,6 +53,14 @@ const _isObject = require('lodash/isObject'),
     }
   },
   /**
+   * Convert array to a bool query with a minimum should match
+   * 
+   * @param {array} queries
+   * @param {number} minimumShouldMatch
+   * @returns {object}
+   */
+  minimumShouldMatch = (queries, minimum_should_match = 1) => ({ bool: { should: queries, minimum_should_match }}),
+  /**
    * Add to bool query portion of elastic query
    *
    * @param {object} query
@@ -65,19 +74,16 @@ const _isObject = require('lodash/isObject'),
       return;
     }
 
-    if (!valueObj) {
-      return;
-    }
+    const { createObj, filterCondition, unique } = queryFilters[key],
+      { condition = filterCondition || defaultCondition, value } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
 
-    if (Array.isArray(valueObj)) {
-      const { filterCondition, multipleCondition } = queryFilters[key],
-        arrayCondition = valueObj.length > 1 ? multipleCondition : filterCondition || defaultCondition;
-
-      valueObj.forEach(v => addCondition(query, key, v, arrayCondition));
+    if (Array.isArray(value)) {
+      if (unique) {
+        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)))
+      } else {
+        value.forEach(v => addCondition(query, key, v, condition));
+      }
     } else {
-      const { createObj, filterCondition } = queryFilters[key],
-        { condition = filterCondition || defaultCondition, value } = _isObject(valueObj) ? valueObj : { value: valueObj };
-
       if (!createObj || !value) {
         return;
       }
@@ -127,14 +133,16 @@ const _isObject = require('lodash/isObject'),
    * @param {function} config.save
    * @returns {object}
    */
-  recirculationData = ({ contentKey = 'articles', mapDataToFilters = returnData, render = returnData, save = returnData }) => {
+  recirculationData = ({ contentKey = 'articles', maxItems = 6, mapDataToFilters = returnData, render = returnData, save = returnData }) => {
     return {
       async render(uri, data, locals) {
         try {
-          const { filters, excludes } = mapDataToFilters(uri, data, locals),
+          const { filters, excludes, curated } = mapDataToFilters(uri, data, locals),
             content = await fetchRecirculation(filters, excludes, elasticFields, locals);
           
-          data[contentKey] = content;
+          data._computed = Object.assign(data._computed || {}, {
+            [contentKey]: [...curated, ...content].slice(0, maxItems)
+          });
         } catch (e) {
           log('error', `There was an error querying items from elastic - ${e.message}`, e);
         }
