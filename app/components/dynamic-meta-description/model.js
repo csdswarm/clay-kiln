@@ -31,9 +31,9 @@ module.exports = unityComponent({
       }
     });
     
-    data._computed = {
+    data._computed = Object.assign(data._computed, {
       description: description || data.description
-    };
+    });
 
     return data;
   }

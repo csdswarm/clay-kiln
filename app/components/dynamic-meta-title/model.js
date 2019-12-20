@@ -31,11 +31,10 @@ module.exports = unityComponent({
       }
     });
   
-    data._computed = {
-      title: toTitleCase(paramValue) || '',
-      metaTitle: toTitleCase(metaValue) || '',
-      suffix: suffix || data.suffix
-    };
+    data._computed = Object.assign(data._computed, {
+      title: `${toTitleCase(paramValue) || ''}${suffix || data.suffix}`,
+      metaTitle: `${toTitleCase(metaValue) || ''}${suffix || data.suffix}`
+    });
   
     return data;
   }
