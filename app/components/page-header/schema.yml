@@ -1,0 +1,20 @@
+_description: |
+  A generic page header for collection pages.
+
+_confirmRemoval: true
+
+title:
+  _label: Page Title
+  _has:
+    input: text
+    validate:
+      required: true
+
+_groups:
+  settings:
+    fields:
+      - title
+    _placeholder:
+      height: 250px
+      text: Page Header
+      ifEmpty: title

@@ -1,0 +1,10 @@
+<header
+  data-uri="{{ default _ref _self }}"
+  class="component component--page-header page-header--{{title}} {{ if @root.locals.edit ' editing' }}"
+  data-editable="settings">
+  {{#if title }}
+    <div class="page-header__banner">
+      <h1>{{ title }}</h1>
+    </div>
+  {{/if}}
+</header>
