@@ -30,6 +30,6 @@ node updateNewPageList.js
 curl -X PUT $http://$1/$newPageList -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./newPageList.json -o /dev/null -s
 curl -X PUT $http://$1/$newPageList@published -H 'Authorization: token accesskey' -o /dev/null -s
 
-# rm newPageList.json
+rm newPageList.json
 
 printf "\n\n\n\n"
