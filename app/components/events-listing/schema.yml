@@ -7,4 +7,4 @@ content:
     fuzzy: true # allows interactives, etc to add one-off components
     include:
       - events-lede
-      - more-content-feed
+      # - more-content-feed

@@ -9,6 +9,10 @@ title:
     input: text
     validate:
       required: true
+  _publish:
+    - pageTitle
+    - ogTitle
+    - twitterTitle
 
 _groups:
   settings:
