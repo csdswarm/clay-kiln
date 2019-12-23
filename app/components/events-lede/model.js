@@ -36,12 +36,7 @@ module.exports = unityComponent({
         const newData = {
           ...data,
           url: data.url.replace(/^http:/, protocol),
-          headline: result.headline,
-          startDate: result.startDate,
-          startTime: result.startTime,
-          venueName: result.venueName,
-          venueAddress: result.venueAddress,
-          feedImgUrl: result.feedImgUrl
+          ...result
         };
 
         newData._computed = {

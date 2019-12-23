@@ -37,36 +37,36 @@
     }
   }
   .events-lede__image-container {
-    a {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      &:hover {
-        picture::after {
-          content: '';
-          width: 100%;
-          height: 100%;
-          background: rgba(255,255,255,0.1);
-          position: absolute;
-          top: 0;
-        }
-      }
-    }
-    picture,
-    img {
-      display: block;
-      width: 100%;
-    }
-    picture {
-      @mixin medium-small-screen {
-        width: 100vw;
-        margin: 0 em(-20);
-      }
-    }
     position: relative;
     margin-bottom: em(30);
     @mixin medium-small-screen {
       margin-bottom: em(10);
+    }
+  }
+  .events-lede__anchor {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    &:hover {
+      .events-lede__picture::after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.1);
+        position: absolute;
+        top: 0;
+      }
+    }
+  }
+  .events-lede__picture,
+  .events-lede__image {
+    display: block;
+    width: 100%;
+  }
+  .events-lede__picture {
+    @mixin medium-small-screen {
+      width: 100vw;
+      margin: 0 em(-20);
     }
   }
   .events-lede__image-overlay {
@@ -101,40 +101,38 @@
   .events-lede__title {
     @mixin events-lede-font1;
   }
-  .events-lede__info-container {
-    span {
-      @mixin events-lede-font3;
-      margin-bottom: em(5, 18);
-      display: inline-flex;
-      width: 100%;
-      align-items: center;
-      svg {
-        margin-right: em(7, 18);
+  .events-lede__info {
+    @mixin events-lede-font3;
+    margin-bottom: em(5, 18);
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    &:last-of-type {
+      margin-bottom: em(20, 18);
+      @mixin medium-small-screen {
+        margin-bottom: em(30, 18);
       }
-      &:last-of-type {
-        margin-bottom: em(20, 18);
-        @mixin medium-small-screen {
-          margin-bottom: em(30, 18);
-        }
-        svg {
-          margin-right: em(9, 18);
-        }
-      }
-      a {
-        text-decoration: none;
-        color: inherit;
-        display: inline-flex;
-        width: 100%;
-        align-items: center;
-      }
-    }
-    p {
-      @mixin events-lede-font4;
-      margin-bottom: 0;
     }
   }
-  #events-lede-datetime,
-  #events-lede-location {
+  .events-lede__datetime {
+    margin-right: em(7, 18);
+  }
+  .events-lede__location {
+    margin-right: em(9, 18);
+  }
+  .events-lede__datetime-fill,
+  .events-lede__location-fill {
     fill: theme(primaryColor, $purple);
+  }
+  .events-lede__info-anchor {
+    text-decoration: none;
+    color: inherit;
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+  }
+  .paragraph {
+    @mixin events-lede-font4;
+    margin-bottom: 0;
   }
 }
