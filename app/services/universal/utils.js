@@ -295,7 +295,21 @@ function isContentComponent(url) {
     && contentTypes.has(componentName);
 }
 
-module.exports = {
+/**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+Object.assign(module.exports, {
   isFieldEmpty,
   has,
   replaceVersion,
@@ -315,5 +329,6 @@ module.exports = {
   prettyJSON,
   getFullOriginalUrl,
   urlToElasticSearch,
-  isContentComponent
-};
+  isContentComponent,
+  yesNo
+});

@@ -1,7 +1,8 @@
 'use strict';
 
-// Time Constants
-const SECOND = 1000,
+const _get = require('lodash/get'),
+  // Time Constants
+  SECOND = 1000,
   MINUTE = 60 * SECOND,
   HOUR = 60 * MINUTE,
   DAY = 24 * HOUR,
@@ -16,6 +17,7 @@ const SECOND = 1000,
     WEEK,
     YEAR
   },
+  SERVER_SIDE = _get(process, 'release.name') === 'node',
 
   // this should list the component names of the content types which may be
   //   created via the kiln drawer.
@@ -34,7 +36,9 @@ const SECOND = 1000,
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
     CONTEST: 'contest'
-  };
+  },
+
+  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 
 module.exports = {
@@ -46,5 +50,7 @@ module.exports = {
   YEAR,
   contentTypes,
   time,
-  PAGE_TYPES
+  SERVER_SIDE,
+  PAGE_TYPES,
+  DEFAULT_RADIOCOM_LOGO
 };

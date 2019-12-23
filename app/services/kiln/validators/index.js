@@ -16,4 +16,5 @@ module.exports = () => {
   window.kiln.validators['url-slug'] = require('./url-slug');
   window.kiln.validators['station-slug'] = require('./station-slug');
   window.kiln.validators['simple-list'] = require('./simple-list');
+  window.kiln.validators['valid-source'] = require('./valid-source');
 };

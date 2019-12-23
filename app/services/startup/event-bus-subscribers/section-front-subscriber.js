@@ -1,7 +1,8 @@
 'use strict';
 
-const db = require('../../services/server/db'),
-  log = require('../../services/universal/log').setup({ file: __filename }),
+const db = require('../../../services/server/db'),
+  redis = require('../../../services/server/redis'),
+  log = require('../../../services/universal/log').setup({ file: __filename }),
   primarySectionFrontsList = '/_lists/primary-section-fronts',
   secondarySectionFrontsList = '/_lists/secondary-section-fronts',
   { subscribe } = require('amphora-search');
@@ -44,7 +45,7 @@ async function handlePublishSectionFront(page) {
       sectionFrontRef = page.data.main[0].replace('@published',''),
       data = await db.get(sectionFrontRef),
       sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
-    
+
     if ((data.title || data.stationSiteSlug) && !data.titleLocked) {
       const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
         sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value),
@@ -56,13 +57,16 @@ async function handlePublishSectionFront(page) {
 
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(sectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({ ...data, titleLocked: true }));
+
+        // delete list from cache
+        redis.del(`list:${sectionFrontsList.replace('/_lists/', '')}`);
       }
     }
   } catch (e) {
     log('error', e);
   }
-};
- 
+}
+
 /**
  * Upon unpublish, remove section front title from primary or secondary
  * section front _lists instance if it exists.
@@ -85,7 +89,7 @@ async function handleUnpublishSectionFront(page) {
           updatedSectionFronts = sectionFronts.filter(sectionFront => {
             return sectionFront.value !== value.toLowerCase();
           });
-        
+
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
         await db.put(mainRef, JSON.stringify({ ...data, titleLocked: false }));
       }
@@ -93,7 +97,7 @@ async function handleUnpublishSectionFront(page) {
   } catch (e) {
     log('error', e);
   }
-};
+}
 
 /**
  * subscribe to event bus messages
