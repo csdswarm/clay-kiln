@@ -1,16 +1,9 @@
 'use strict';
 
-<<<<<<< HEAD
 const { playingClass } = require('../../services/universal/spaLocals'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime'),
-  { getSchedule } = require('../../services/universal/station');
-=======
-const radioAPI = require('../../services/server/radioApi'),
-  { playingClass } = require('../../services/server/spaLocals'),
-  { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime'),
+  { getSchedule } = require('../../services/universal/station'),
   _get = require('lodash/get');
->>>>>>> master
-
 
 /**
  * @param {string} ref

@@ -26,7 +26,6 @@ rm ./$instance-layout.json
 
 printf "\n\nCreating Tags 'contests-new' instance and Contest 'new' instance...\n\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
-cat ./contests-page_components.yml | clay import -k demo -y -p $1
 
 printf "\n\nCreating 'contest' page...\n\n\n"
 cat ./_pages.yml | clay import -k demo -y $1

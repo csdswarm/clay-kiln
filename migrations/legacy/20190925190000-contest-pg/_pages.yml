@@ -15,18 +15,3 @@ _pages:
       - /_components/google-ad-manager/instances/halfPageBottom
     pageHeader:
       - /_components/google-ad-manager/instances/billboardTop
-  contests:
-    head:
-      - /_components/dynamic-meta-title/instances/contests-page
-      - /_components/dynamic-meta-description/instances/contests-page
-      - /_components/dynamic-meta-url/instances/contests-page
-      - /_components/meta-image/instances/contests-page
-      - /_components/meta-tags/instances/contests-page
-    main:
-      - /_components/topic-page/instances/contests-page
-    layout: /_layouts/one-column-layout/instances/general
-    customUrl: https://www.radio.com/topic/contests # todo
-    pageHeader:
-      - /_components/topic-page-header/instances/contests-page
-    layoutHeader:
-      - /_components/google-ad-manager/instances/contests-page
