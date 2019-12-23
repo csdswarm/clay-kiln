@@ -2,8 +2,8 @@
          class="component component--section-lead{{ if @root.locals.edit ' editing' }} section-lead--{{default
                  @root.locals.sectionFront 'homepage'}} {{ _computed.mcModifier }}">
   <div class="section-lead__articles" data-editable="items">
-    {{#if articles.length}}
-      {{#each articles as |article|}}
+    {{#if _computed.articles.length}}
+      {{#each _computed.articles as |article|}}
         <div class="section-lead__article {{#unless @index}}section-lead__article--first{{/unless}}">
           <a href="{{ article.canonicalUrl }}" class="section-lead__link">
             <picture class="section-lead__image">

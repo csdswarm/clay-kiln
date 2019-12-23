@@ -4,7 +4,7 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
   { toPlainText } = require('../../services/universal/sanitize'),
-  { retrieveList } = require('../../services/server/lists'),
+  { getSectionFrontName } = require('../../services/server/lists'),
   qs = require('qs'),
   { isComponent, getComponentName } = require('clayutils'),
   elasticIndex = 'published-content',
@@ -17,7 +17,6 @@ const queryService = require('../../services/server/query'),
     'contentType',
     'sectionFront'
   ],
-  maxItems = 3,
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   MEDIA_SIZES = {
     small: 'max-width: 360px',
@@ -28,18 +27,12 @@ const queryService = require('../../services/server/query'),
   },
   asQuery = value => qs.stringify(value, { encode: false }),
   /**
-   * Gets the display name for a primary section front slug
+   * Gets the number of items to display
    *
-   * @param {string} slug
-   * @param {object} locals
-   * @returns {Promise<string>}
+   * @param {boolean} multiColumn
+   * @returns {number}
    */
-  getPrimarySectionFrontName = async (slug, locals) => {
-    const list = await retrieveList('primary-section-fronts', locals),
-      entry = list.find(entry => entry.value === slug);
-
-    return entry ? entry.name : slug;
-  };
+  getMaxItems = (multiColumn) => multiColumn ? 2 : 3;
 
 /**
  * Takes an object with various sizes set and converts them to
@@ -60,39 +53,31 @@ function mapSizes(sizes) {
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = (ref, data, locals) => {
+module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
 
-  return Promise.all(data.items.map((item) => {
+  data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
 
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
-      .then(async (result) => {
-        const article = Object.assign(item, {
-          date: result.date,
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: item.url || result.canonicalUrl,
-          feedImgUrl: item.overrideImage || result.feedImgUrl,
-          label: item.overrideLabel || await getPrimarySectionFrontName(result.sectionFront, locals)
-        });
+    return {
+      ...item,
+      date: result.date,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      pageUri: result.pageUri,
+      urlIsValid: result.urlIsValid,
+      canonicalUrl: item.url || result.canonicalUrl,
+      feedImgUrl: item.overrideImage || result.feedImgUrl,
+      label: item.overrideLabel || await getSectionFrontName(result.sectionFront, false, locals),
+      plaintextTitle: toPlainText(item.title)
+    };
+  }));
 
-        if (article.title) {
-          article.plaintextTitle = toPlainText(article.title);
-        }
+  data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront || locals.secondarySectionFront || data.tag;
 
-        return article;
-      });
-  }))
-    .then((items) => {
-      data.items = items;
-      data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront || locals.secondarySectionFront || data.tag;
-
-      return data;
-    });
+  return data;
 };
 
 /**
@@ -101,10 +86,10 @@ module.exports.save = (ref, data, locals) => {
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = function (ref, data, locals) {
-  const inMultiColumn = !!data._computed.parents.find(parent => getComponentName(parent) === 'multi-column'),
-    maxCount = inMultiColumn ? 2 : maxItems,
-    query = queryService.newQueryWithCount(elasticIndex, maxCount, locals),
+module.exports.render = async function (ref, data, locals) {
+  const inMultiColumn = data._computed.parents.some(parent => getComponentName(parent) === 'multi-column'),
+    maxItems = getMaxItems(inMultiColumn),
+    query = queryService.newQueryWithCount(elasticIndex, maxItems),
     contentTypes = contentTypeService.parseFromData(data),
     squareCrop = '1:1,offset-y0',
     wideCrop = '16:9,offset-y0',
@@ -124,7 +109,7 @@ module.exports.render = function (ref, data, locals) {
   let cleanUrl;
 
   // items are saved from form, articles are used on FE, and make sure they use the correct protocol
-  data.items = data.articles = data.items
+  data.items = data._computed.articles = data.items
     .filter(item => item.canonicalUrl)
     .map(item => ({
       ...item,
@@ -156,7 +141,7 @@ module.exports.render = function (ref, data, locals) {
   data._computed.primaryStorySizes = mapSizes(primaryImageSizes);
   data._computed.primaryStorySizeParams = asQuery(primaryImageSizes.default);
 
-  if (!locals || !locals.sectionFront && !locals.secondarySectionFront) {
+  if (!locals || (!locals.sectionFront && !locals.secondarySectionFront)) {
     return data;
   }
 
@@ -209,17 +194,20 @@ module.exports.render = function (ref, data, locals) {
     });
   }
 
-  return queryService.searchByQuery(query)
-    .then(function (results) {
+  try {
+    const hydrationResults = await queryService.searchByQuery(query).then(items => Promise.all(items.map(async item => ({
+      ...item,
+      label: await getSectionFrontName(item.sectionFront, false, locals)
+    }))));
 
-      data.articles = data.items.concat(results.slice(0, maxCount)).slice(0, maxCount); // show a maximum of maxCount links
-      data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
-      return data;
-    })
-    .catch(e => {
-      queryService.logCatch(e, ref);
-      return data;
-    });
+    data._computed.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+  } catch (e) {
+    queryService.logCatch(e, ref);
+  }
+
+  data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
+
+  return data;
 };
 
 module.exports = require('../../services/universal/amphora').unityComponent(module.exports);

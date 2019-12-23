@@ -10,7 +10,7 @@ const _get = require('lodash/get'),
    * Retrieves a Clay list, checking locals and Redis for cached results first.
    *
    * @param {string} name - The list name
-   * @param {object} locals
+   * @param {object} [locals]
    * @returns {Promise<any[]>}
    */
   retrieveList = async (name, locals) => {
@@ -58,7 +58,22 @@ const _get = require('lodash/get'),
     }
 
     return redis.del(cacheKeyPrefix + name);
+  },
+  /**
+   * Gets the display name for a section front slug. Returns the slug if not found.
+   *
+   * @param {string} slug - The section front's ID
+   * @param {boolean} [secondary] - If it's a secondary section front
+   * @param {object} [locals]
+   * @returns {Promise<string>}
+   */
+  getSectionFrontName = async (slug, secondary = false, locals) => {
+    const list = await retrieveList(secondary ? 'secondary-section-fronts' : 'primary-section-fronts', locals),
+      entry = list.find(entry => entry.value === slug);
+
+    return entry ? entry.name : slug;
   };
 
 module.exports.retrieveList = retrieveList;
 module.exports.uncacheList = uncacheList;
+module.exports.getSectionFrontName = getSectionFrontName;

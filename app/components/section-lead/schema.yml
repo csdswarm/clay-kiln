@@ -23,7 +23,7 @@ items:
     input: complex-list
     enforceMaxlength: true
     validate:
-      max: 4
+      max: 3
     props:
       -
         prop: url

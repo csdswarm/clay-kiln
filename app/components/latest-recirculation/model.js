@@ -8,7 +8,7 @@ const queryService = require('../../services/server/query'),
   radioApiService = require('../../services/server/radioApi'),
   { uploadImage } = require('../../services/universal/s3'),
   { isComponent, getComponentName } = require('clayutils'),
-  { retrieveList } = require('../../services/server/lists'),
+  { getSectionFrontName } = require('../../services/server/lists'),
   tag = require('../tags/model.js'),
   elasticIndex = 'published-content',
   elasticFields = [
@@ -27,19 +27,6 @@ const queryService = require('../../services/server/query'),
    * @returns {number}
    */
   getMaxItems = (data) => data._computed.isMultiColumn ? 4 : 5,
-  /**
-   * Gets the display name for a primary section front slug
-   *
-   * @param {string} slug
-   * @param {object} locals
-   * @returns {Promise<string>}
-   */
-  getPrimarySectionFrontName = async (slug, locals) => {
-    const list = await retrieveList('primary-section-fronts', locals),
-      entry = list.find(entry => entry.value === slug);
-
-    return entry ? entry.name : slug;
-  },
   /**
    * @param {string} ref
    * @param {object} data
@@ -105,7 +92,7 @@ const queryService = require('../../services/server/query'),
       // hydrate item list.
       const hydrationResults = await queryService.searchByQuery(query).then(items => Promise.all(items.map(async item => ({
           ...item,
-          label: await getPrimarySectionFrontName(item.sectionFront, locals)
+          label: await getSectionFrontName(item.sectionFront, false, locals)
         })))),
         maxItems = getMaxItems(data);
 
@@ -164,7 +151,7 @@ module.exports.save = async (ref, data, locals) => {
       urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
-      label: item.overrideLabel || await getPrimarySectionFrontName(result.sectionFront, locals)
+      label: item.overrideLabel || await getSectionFrontName(result.sectionFront, false, locals)
     };
   }));
 
@@ -178,7 +165,7 @@ module.exports.save = async (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  data._computed.isMultiColumn = (data._computed.parents || []).some(ref => getComponentName(ref) === 'multi-column');
+  data._computed.isMultiColumn = data._computed.parents.some(ref => getComponentName(ref) === 'multi-column');
 
   const maxItems = getMaxItems(data);
 
