@@ -360,7 +360,7 @@
       }
     }
   }
-  /* override */
+  /* overrides article.sectionFront styling for sectionFront */
   .component--latest-videos .latest-videos__videos--$(sectionTitle){
     .latest-videos__video.latest-videos__video {
       &:first-child {
