@@ -10,7 +10,7 @@
   }
 
   &__header {
-    @mixin warning-font-1;
+    @mixin warning-font1;
     display: inline-block;
     height: 24px;
     padding-left: 4px;
@@ -18,7 +18,7 @@
   }
 
   &__content {
-    @mixin warning-font-2;
+    @mixin warning-font2;
     padding-top: 8px;
   }
 }
