@@ -30,6 +30,8 @@ primary:
     operator: falsy
 
 primarySectionFront:
+  _publish:
+    - primarySectionFront
   _reveal:
     field: primary
     operator: falsy

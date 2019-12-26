@@ -1,7 +1,9 @@
 'use strict';
 
 const { getComponentVersion } = require('clayutils'),
-  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils');
+  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+  db = require('amphora-storage-postgres'),
+  _get = require('lodash/get');
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -69,9 +71,9 @@ module.exports['6.0'] = function (uri, data) {
   const newData = Object.assign({}, data);
 
   newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
-  
+
   delete newData.filterSecondaryArticleTypes;
-  
+
   return newData;
 };
 
@@ -101,7 +103,7 @@ module.exports['7.0'] = async function (uri, data) {
         }
       };
     }
-    
+
     return data;
   } catch (e) {
     await putComponentInstance(sharethroughTagInstanceUri, sharethroughTagInstanceData);
@@ -116,10 +118,34 @@ module.exports['7.0'] = async function (uri, data) {
 };
 
 module.exports['8.0'] = function (uri, data) {
-  
+
   // adding editing abilities for the components title and visibility
   data.componentTitle = 'MORE from RADIO.COM';
   data.componentTitleVisible = true;
 
   return data;
+};
+
+module.exports['9.0'] = async function (uri, data) {
+  if (data.primarySectionFront) {
+    return data;
+  }
+
+  try {
+    const sql = `
+      SELECT data->>'primarySectionFront' as "primarySectionFront"
+      FROM components."section-front"
+      WHERE data->'moreContentFeed'->>'_ref' ~ '${uri}'
+    `,
+      primarySectionFront = await db.raw(sql)
+        .then(results => _get(results, 'rows[0].primarySectionFront'));
+
+    return {
+      ...data,
+      primarySectionFront: primarySectionFront
+    };
+  } catch (e) {
+    console.error('error upgrading', e.message);
+    return data;
+  }
 };

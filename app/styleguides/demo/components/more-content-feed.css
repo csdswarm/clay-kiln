@@ -16,7 +16,7 @@
     padding-bottom: em(50);
   }
 
-  h2 {
+  .more-content-feed__title {
     @mixin more-content-feed-font1;
     width: 100%;
     position: relative;
@@ -24,19 +24,30 @@
     text-align: center;
     color: $parisM;
     margin-bottom: em(30);
-
     &:before {
-       border-top: em(1, 20) solid $parisM;
-       content: "";
-       margin: 0 auto;
-       position: absolute;
-       top: 50%;
-       left: 0;
-       right: 0;
-       bottom: 0;
-       width: 100%;
-       z-index: -1;
-     }
+      border-top: em(1, 20) solid $parisM;
+      content: "";
+      margin: 0 auto;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      z-index: -1;
+    }
+    @define-mixin titleColor $sectionFront, $color: $purple {
+      &--$sectionFront {
+        color: $color;
+        &:before {
+          border-top: em(1, 20) solid $color;
+        }
+      }
+    }
+    @mixin titleColor music, $sunsetOrange;
+    @mixin titleColor news, $lightningYellow;
+    @mixin titleColor sports, $azureRadience;
+    @mixin titleColor podcasts, $robinsEggBlue;
     span {
       background: $white;
       padding: 0 em(15, 20);
