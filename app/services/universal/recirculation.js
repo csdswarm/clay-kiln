@@ -54,12 +54,12 @@ const _isPlainObject = require('lodash/isPlainObject'),
   },
   /**
    * Convert array to a bool query with a minimum should match
-   * 
+   *
    * @param {array} queries
-   * @param {number} minimumShouldMatch
+   * @param {number} minimum_should_match
    * @returns {object}
    */
-  minimumShouldMatch = (queries, minimum_should_match = 1) => ({ bool: { should: queries, minimum_should_match }}),
+  minimumShouldMatch = (queries, minimum_should_match = 1) => ({ bool: { should: queries, minimum_should_match } }),
   /**
    * Add to bool query portion of elastic query
    *
@@ -79,7 +79,7 @@ const _isPlainObject = require('lodash/isPlainObject'),
 
     if (Array.isArray(value)) {
       if (unique) {
-        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)))
+        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
       } else {
         value.forEach(v => addCondition(query, key, v, condition));
       }
