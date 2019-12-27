@@ -48,6 +48,7 @@
     @mixin titleColor news, $lightningYellow;
     @mixin titleColor sports, $azureRadience;
     @mixin titleColor podcasts, $robinsEggBlue;
+    @mixin titleColor station-front, theme(primaryColor, $parisM);
     span {
       background: $white;
       padding: 0 em(15, 20);

@@ -134,15 +134,18 @@ module.exports['9.0'] = async function (uri, data) {
   try {
     const sql = `
       SELECT data->>'primarySectionFront' as "primarySectionFront"
+        , data->>'stationName' as station
       FROM components."section-front"
-      WHERE data->'moreContentFeed'->>'_ref' ~ '${uri}'
+      WHERE data->'moreContentFeed'->>'_ref' ~ '${ uri }'
     `,
-      primarySectionFront = await db.raw(sql)
-        .then(results => _get(results, 'rows[0].primarySectionFront'));
+      results = await db.raw(sql),
+      primarySectionFront = _get(results, 'rows[0].primarySectionFront'),
+      station = _get(results, 'rows[0].station');
 
     return {
       ...data,
-      primarySectionFront: primarySectionFront
+      primarySectionFront,
+      station
     };
   } catch (e) {
     console.error('error upgrading', e.message);

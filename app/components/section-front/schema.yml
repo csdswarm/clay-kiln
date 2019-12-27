@@ -97,3 +97,11 @@ _groups:
       - primarySectionFront
       - title
       - includePodcastModule
+
+stationName:
+  _publish: stationName
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy
