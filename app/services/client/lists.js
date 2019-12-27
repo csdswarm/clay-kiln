@@ -14,12 +14,11 @@ const rest = require('../universal/rest'),
    * Gets the display name for a section front slug. Returns the slug if not found.
    *
    * @param {string} slug - The section front's ID
-   * @param {boolean} [secondary] - If it's a secondary section front
+   * @param {object[]} data - The section front list
    * @returns {Promise<string>}
    */
-  getSectionFrontName = async (slug, secondary = false) => {
-    const list = await retrieveList(secondary ? 'secondary-section-fronts' : 'primary-section-fronts'),
-      entry = list.find(entry => entry.value === slug);
+  getSectionFrontName = (slug, data) => {
+    const entry = data.find(entry => entry.value === slug);
 
     return entry ? entry.name : slug;
   };

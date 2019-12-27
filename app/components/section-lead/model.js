@@ -4,7 +4,7 @@ const queryService = require('../../services/server/query'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
   { toPlainText } = require('../../services/universal/sanitize'),
-  { getSectionFrontName } = require('../../services/server/lists'),
+  { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   qs = require('qs'),
   { isComponent, getComponentName } = require('clayutils'),
   elasticIndex = 'published-content',
@@ -58,6 +58,8 @@ module.exports.save = async (ref, data, locals) => {
     return data;
   }
 
+  const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
     const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
@@ -70,7 +72,7 @@ module.exports.save = async (ref, data, locals) => {
       urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
-      label: item.overrideLabel || await getSectionFrontName(result.sectionFront, false, locals),
+      label: item.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
       plaintextTitle: toPlainText(item.title)
     };
   }));
@@ -197,7 +199,7 @@ module.exports.render = async function (ref, data, locals) {
   try {
     const hydrationResults = await queryService.searchByQuery(query).then(items => Promise.all(items.map(async item => ({
       ...item,
-      label: await getSectionFrontName(item.sectionFront, false, locals)
+      label: getSectionFrontName(item.sectionFront, await retrieveList('primary-section-fronts', locals))
     }))));
 
     data._computed.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links

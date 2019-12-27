@@ -8,7 +8,7 @@ const queryService = require('../../services/server/query'),
   radioApiService = require('../../services/server/radioApi'),
   { uploadImage } = require('../../services/universal/s3'),
   { isComponent, getComponentName } = require('clayutils'),
-  { getSectionFrontName } = require('../../services/server/lists'),
+  { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   tag = require('../tags/model.js'),
   elasticIndex = 'published-content',
   elasticFields = [
@@ -92,7 +92,7 @@ const queryService = require('../../services/server/query'),
       // hydrate item list.
       const hydrationResults = await queryService.searchByQuery(query).then(items => Promise.all(items.map(async item => ({
           ...item,
-          label: await getSectionFrontName(item.sectionFront, false, locals)
+          label: getSectionFrontName(item.sectionFront, await retrieveList('primary-section-fronts', locals))
         })))),
         maxItems = getMaxItems(data);
 
@@ -139,6 +139,9 @@ module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
+
+  const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
     const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
@@ -151,7 +154,7 @@ module.exports.save = async (ref, data, locals) => {
       urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
-      label: item.overrideLabel || await getSectionFrontName(result.sectionFront, false, locals)
+      label: item.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts)
     };
   }));
 
