@@ -196,11 +196,13 @@ module.exports.render = async function (ref, data, locals) {
     });
   }
 
+  const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+
   try {
-    const hydrationResults = await queryService.searchByQuery(query).then(items => Promise.all(items.map(async item => ({
+    const hydrationResults = await queryService.searchByQuery(query).then(items => items.map(item => ({
       ...item,
-      label: getSectionFrontName(item.sectionFront, await retrieveList('primary-section-fronts', locals))
-    }))));
+      label: getSectionFrontName(item.sectionFront, primarySectionFronts)
+    })));
 
     data._computed.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
   } catch (e) {

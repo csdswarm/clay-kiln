@@ -89,11 +89,13 @@ const queryService = require('../../services/server/query'),
         });
       }
 
+      const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+
       // hydrate item list.
-      const hydrationResults = await queryService.searchByQuery(query).then(items => Promise.all(items.map(async item => ({
+      const hydrationResults = await queryService.searchByQuery(query).then(items => items.map(item => ({
           ...item,
-          label: getSectionFrontName(item.sectionFront, await retrieveList('primary-section-fronts', locals))
-        })))),
+          label: getSectionFrontName(item.sectionFront, primarySectionFronts)
+        }))),
         maxItems = getMaxItems(data);
 
       data._computed.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
