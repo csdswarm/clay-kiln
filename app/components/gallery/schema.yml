@@ -1,4 +1,4 @@
-_version: 10.0
+_version: 11.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -291,6 +291,8 @@ feeds:
         value: rss
       - name: Apple News
         value: apple-news
+      - name: Smart News
+        value: smartNews
 sectionFront:
   _label: Section Front
   _publish: sectionFront

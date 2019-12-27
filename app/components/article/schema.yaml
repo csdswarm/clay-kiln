@@ -1,4 +1,4 @@
-_version: 9.0
+_version: 10.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -264,6 +264,8 @@ feeds:
         value: rss
       - name: Apple News
         value: apple-news
+      - name: Smart News
+        value: smartNews
     help: By default, articles are included in all of our feeds. Uncheck these if you don't want this article to appear in them, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
 sectionFront:
   _label: Section Front
