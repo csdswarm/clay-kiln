@@ -203,6 +203,28 @@ function debugLog(...args) {
 }
 
 /**
+ * prepends left to right
+ *
+ * meant to be used in a mapper function e.g.
+ *
+ * ```
+ * const namespace = 'msn-feed:',
+ *   msnRedisKeys = ['last-modified', 'urls-last-queried']
+ *     .map(prepend(namespace))
+ *
+ * console.log(msnRedisKeys)
+ * // outputs
+ * // [ 'msn-feed:last-modified', 'msn-feed:urls-last-queried' ]
+ * ```
+ *
+ * @param {string} left
+ * @returns {function}
+ */
+function prepend(left) {
+  return right => left + right;
+}
+
+/**
  * return yes/no dependent on val truthiness
  *
  * @param  {*}  val
@@ -216,7 +238,7 @@ function yesNo(val) {
   }
 }
 
-Object.assign(module.exports, {
+module.exports = {
   /**
    * Url queries to elastic search need to be `http` since that is
    * how it is indexed as.
@@ -239,5 +261,6 @@ Object.assign(module.exports, {
   urlToCanonicalUrl,
   textToEncodedSlug,
   debugLog,
+  prepend,
   yesNo
-});
+};
