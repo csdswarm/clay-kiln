@@ -23,7 +23,7 @@ function buildQuery(numResults, locals, items) {
   const query = queryService.newQueryWithCount(elasticIndex, numResults),
     // grab content from these section fronts from the env
     sectionFronts = process.env.SECTION_FRONTS.split(',');
-  
+
   // add sorting
   queryService.addSort(query, { date: 'desc' });
   // map the sectionFronts to should matches
@@ -45,7 +45,7 @@ function buildQuery(numResults, locals, items) {
     items.forEach(item => {
       if (item.canonicalUrl) {
         const cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        
+
         queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
       }
     });
@@ -62,7 +62,12 @@ function buildQuery(numResults, locals, items) {
 async function buildAndRequestElasticSearch(locals, items) {
   const
     elasticQuery = buildQuery(maxResults, locals, items),
-    elasticQueryResponseItems = await queryService.searchByQuery(elasticQuery);
+    searchOpts = { shouldDedupeContent: true },
+    elasticQueryResponseItems = await queryService.searchByQuery(
+      elasticQuery,
+      locals,
+      searchOpts
+    );
 
   return elasticQueryResponseItems;
 }
@@ -74,6 +79,10 @@ async function buildAndRequestElasticSearch(locals, items) {
  * @returns {Promise}
  */
 module.exports.render = (ref, data, locals) => {
+  const curatedIds = data.items.map(anItem => anItem.uri);
+
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
+
   return buildAndRequestElasticSearch(locals, data.items)
     .then(elasticQueryResponseItems => {
       data.articles = data.items.concat(elasticQueryResponseItems.slice(0, maxResults)).slice(0, maxResults); // show a maximum of maxItems links
@@ -97,10 +106,21 @@ module.exports.save = async (ref, data, locals) => {
   }
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(
+        ref,
+        item,
+        locals,
+        elasticFields,
+        searchOpts
+      );
 
     return  {
       ...item,
+      uri: result._id,
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       pageUri: result.pageUri,
       urlIsValid: result.urlIsValid,
