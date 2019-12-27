@@ -39,5 +39,6 @@ module.exports = {
   default: 'html',
   html: amphoraHtml,
   rss: amphoraRss,
+  msn: amphoraRss,
   anf: amphoraAppleNews
 };
