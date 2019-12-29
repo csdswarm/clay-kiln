@@ -9,6 +9,8 @@ module.exports = (host, http, logoUrl) => {
   feeds:
     instances:
       smart-news:
+        attr:
+          "xmlns:snf": "http://www.smartnews.be/snf"
         meta:
           renderer: rss
           contentType: rss
@@ -41,15 +43,15 @@ module.exports = (host, http, logoUrl) => {
                     feeds.smartNews: true
                 - bool:
                     must_not:
-                      term:
-                        noIndexNoFollow: true
-                - nested:
-                    path: byline
-                    query:
-                      bool:
-                        must_not:
-                          match:
-                            byline.sources.text: The Associated Press
+                      - term:
+                          noIndexNoFollow: true
+                      - nested:
+                          path: byline
+                          query:
+                            bool:
+                              must:
+                                match:
+                                  byline.sources.text: The Associated Press
         transform: content
         format: smart-news`
 };
