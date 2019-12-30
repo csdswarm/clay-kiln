@@ -43,6 +43,7 @@ _groups:
   settings:
     fields:
     - tag
+    - sectionFront
     _placeholder:
       ifEmpty: tag
       height: 100px

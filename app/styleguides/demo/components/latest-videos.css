@@ -338,16 +338,16 @@
     .latest-videos__video.latest-videos__video--$(sectionTitle) {
       &:first-child {
         .latest-videos__details {
-          border-color: $color;
+          border-color: rgb($color);
         }
         .details__exclusive {
-          color: $color;
+          color: rgb($color);
         }
       }
 
       &.latest-videos__video--main {
         &:before {
-          border-color: $color;
+          border-color: rgb($color);
         }
       }
     }
@@ -355,13 +355,53 @@
     .latest-videos__rail {
       .latest-videos__video.latest-videos__video--$(sectionTitle) {
         &:before {
-          border-color: $color;
+          border-color: rgb($color);
         }
       }
     }
   }
+  /* overrides article.sectionFront styling for sectionFront */
+  .component--latest-videos .latest-videos__videos--$(sectionTitle){
+    .latest-videos__video.latest-videos__video {
+      &:first-child {
+        .latest-videos__details {
+          border-color: rgb($color);
+        }
+        .details__exclusive {
+          color: rgb($color);
+        }
+      }
+
+      &.latest-videos__video--main {
+        &:before {
+          border-color: rgb($color);
+        }
+      }
+
+      &:hover {
+        .latest-videos__play-icon {
+          background: rgb($color);
+        }
+      }
+    }
+
+    .latest-videos__rail {
+      .latest-videos__video.latest-videos__video {
+        &:before {
+          border-color: rgb($color);
+        }
+      }
+    }
+
+    .latest-videos__link {
+      .latest-videos__play-icon {
+        border: em(10, 22) solid rgb($color);
+        background: rgba($color, .4);
+      }
+    }
+  }
 }
-@mixin lead-module-color music, $sunsetOrange;
-@mixin lead-module-color news, $lightningYellow;
-@mixin lead-module-color sports, $azureRadience;
-@mixin lead-module-color podcasts, $robinsEggBlue;
+@mixin lead-module-color music, $sunsetOrangeRGB;
+@mixin lead-module-color news, $lightningYellowRGB;
+@mixin lead-module-color sports, $azureRadienceRGB;
+@mixin lead-module-color podcasts, $robinsEggBlueRGB;

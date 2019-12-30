@@ -1,6 +1,6 @@
 <section data-uri="{{ default _ref _self }}" class="component component--latest-videos{{ if @root.locals.edit ' editing' }}" data-editable="items">
   <h2><span>{{{ title }}}</span></h2>
-  <div class="latest-videos__videos">
+  <div class="latest-videos__videos latest-videos__videos--{{ sectionFront }}">
     {{#each articles as |article|}}
       {{#if @first}}
         <div class="latest-videos__video latest-videos__video--main latest-videos__video--{{ article.sectionFront }}">
