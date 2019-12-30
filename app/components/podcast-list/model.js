@@ -4,6 +4,7 @@ const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
   utils = require('../../services/universal/podcast'),
   maxItems = 4,
+  backFillThreshold = 3,
   /**
    * determines if the array of podcast items contains a url
    * @param {object} arr
@@ -33,6 +34,8 @@ const radioApiService = require('../../services/server/radioApi'),
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
+  const { backFillEnabled } = data;
+
   if (data.items.length === maxItems || !locals || locals.edit || ref.includes('/instances/new')) {
     data.items.forEach(item => {
       if (item.podcast) {
@@ -56,13 +59,17 @@ module.exports.render = async function (ref, data, locals) {
   }
 
   try {
-    const podcasts = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals);
+    const podcasts = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals),
+      shouldBackFill = podcasts
+        && backFillEnabled
+        && data.items.length <= backFillThreshold;
 
-    if (podcasts) {
-      podcasts.data.splice(0, maxItems).forEach((podcast) => {
-        const url = utils.createUrl(podcast.attributes.title);
+    if (shouldBackFill) {
+      podcasts.forEach((podcast) => {
+        const url = utils.createUrl(podcast.attributes.title),
+          isUnique = !containsUrl(data.items, url);
 
-        if (data.items.length !== maxItems && !containsUrl(data.items, url)) {
+        if (isUnique) {
           data.items.push({
             podcast: {
               label: podcast.attributes.title,
