@@ -9,7 +9,9 @@
             {{{ read 'components/station-nav/media/chevron_up.svg' }}}
           </button>
       </div>
-      <img class="menu__image" src="{{ stationLogo }}width=100&height=100&crop=1:1">
+      <a href="/{{ station.site_slug }}" class="menu__image-anchor">
+        <img class="menu__image" src="{{ stationLogo }}width=100&height=100&crop=1:1">
+      </a>
       {{#if primaryLinks.length }}
         <ul class="menu__navigation navigation">
           {{#each primaryLinks }}
