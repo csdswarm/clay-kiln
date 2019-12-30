@@ -1,9 +1,9 @@
-<section class="component component--podcast-list" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
+<section class="component component--podcast-list component--podcast-list--{{ sectionFront }}" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
   {{#each items as |item|}}
     <div class="podcast-list__item">
       <a class="podcast-list__link outbound-link" href="{{ item.podcast.url }}">
         {{#ifAll @first ../showTitle}}
-          <div class="podcast-list__tag" 
+          <div class="podcast-list__tag"
             style="background-color: {{ if ../primaryColor ../primaryColor else=''}}; color: {{ if ../isTitleFontColorDark '#000000' else=''}}">
             {{ ../title }}
           </div>
@@ -20,7 +20,7 @@
           {{ item.podcast.label }}
         </div>
         {{#if ../showCallToActions}}
-          <div class="podcast-list__more podcast-list__more{{ if ../primaryColor '--override-fill' else=''}}" 
+          <div class="podcast-list__more podcast-list__more{{ if ../primaryColor '--override-fill' else=''}} podcast-list__more{{ if ../sectionFront '--override-fill-section-front' else=''}}"
             style="color: {{ if ../primaryColor ../primaryColor else=''}}; fill: {{ if ../primaryColor ../primaryColor else=''}};">
             See All Episodes {{{ read 'components/podcast-list/media/caret.svg' }}}
           </div>
