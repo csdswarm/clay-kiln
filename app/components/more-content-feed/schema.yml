@@ -1,4 +1,4 @@
-_version: 7.0
+_version: 8.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -11,6 +11,22 @@ contentType:
     options:
       - article
       - gallery
+
+componentTitle:
+  _label: Component's Title
+  _has:
+    validate:
+      required: true
+      min: 4
+      max: 80
+    help: The title displayed on the component's view
+    input: text
+
+componentTitleVisible:
+  _label: Show Component's Title
+  _has:
+    input: checkbox
+    help: Show or hide the title displayed on the component's view 
 
 pageLength:
   _label: Page Size
@@ -278,6 +294,8 @@ _groups:
   contentFeed:
     _label: Content Feed
     fields:
+      - componentTitle
+      - componentTitleVisible
       - pageLength
       - autoPopulatedContentHeader
       - populateFrom

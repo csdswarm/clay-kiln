@@ -19,7 +19,7 @@
       <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
     </div>
     <meta itemprop="dateModified" content="{{ dateModified }}" />
-    
+
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
@@ -149,7 +149,7 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title">Featured</h4>
-              <p class="item-data">{{ if featured 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo featured }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Editorial Feeds Term(s)</h4>
@@ -197,7 +197,7 @@
             <li class="item">
               <h4 class="item-title">Evergreen Treatment</h4>
               <p class="item-data">
-                {{ if evergreenSlug 'Yes' else='No' }}
+                {{ yesNo evergreenSlug }}
               </p>
             </li>
           </ul>

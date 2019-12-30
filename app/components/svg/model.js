@@ -1,5 +1,5 @@
 'use strict';
-const purify = require('../../services/universal/purify'),
+const { purify } = require('../../services/server/dom-utils'),
   utils = require('../../services/universal/utils');
 
 /**
