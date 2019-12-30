@@ -1,3 +1,5 @@
+_version: 1.0
+
 _description: |
   A dynamically created page containing a list of articles by tag.
 
@@ -9,10 +11,33 @@ tag:
   _has:
     input: text
 
+content:
+  _label: Topic Content
+  _placeholder:
+    text: Topic Content
+    height: 600px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - html-embed
+      - brightcove
+      - omny
+      - verizon-media
+      - latest-videos
+      - podcast-list
+
 moreContentFeed:
   _component:
     include:
       - more-content-feed
+
+sectionFront:
+  _label: Section Front
+  _publish: sectionFront
+  _has:
+    input: select
+    search: true
+    list: primary-section-fronts
 
 _groups:
   settings:
