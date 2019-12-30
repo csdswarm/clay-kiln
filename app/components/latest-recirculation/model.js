@@ -89,10 +89,8 @@ const queryService = require('../../services/server/query'),
         });
       }
 
-      const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
-
-      // hydrate item list.
-      const hydrationResults = await queryService.searchByQuery(query).then(items => items.map(item => ({
+      const primarySectionFronts = await retrieveList('primary-section-fronts', locals),
+        hydrationResults = await queryService.searchByQuery(query).then(items => items.map(item => ({
           ...item,
           label: getSectionFrontName(item.sectionFront, primarySectionFronts)
         }))),
