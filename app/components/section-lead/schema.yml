@@ -5,7 +5,7 @@ primaryStoryLabel:
     input: text
     validate:
       max: 80
-    help: Label for the top lede story. Eg. 'Exclusive'
+    help: Label for the top lede story. Eg. 'Exclusive'. Overrides section front of story if exists.
 
 contentType:
   _label: Content type

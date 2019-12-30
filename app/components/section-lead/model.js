@@ -11,7 +11,8 @@ const queryService = require('../../services/server/query'),
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'contentType'
+    'contentType',
+    'sectionFront'
   ],
   maxItems = 3,
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`;
@@ -37,7 +38,8 @@ module.exports.save = (ref, data, locals) => {
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
           canonicalUrl: item.url || result.canonicalUrl,
-          feedImgUrl: item.overrideImage || result.feedImgUrl
+          feedImgUrl: item.overrideImage || result.feedImgUrl,
+          sectionFront: result.sectionFront
         });
 
         if (article.title) {
@@ -49,7 +51,6 @@ module.exports.save = (ref, data, locals) => {
   }))
     .then((items) => {
       data.items = items;
-      data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront || locals.secondarySectionFront || data.tag;
 
       return data;
     });
@@ -132,7 +133,6 @@ module.exports.render = function (ref, data, locals) {
     .then(function (results) {
 
       data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-      data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
       return data;
     })
     .catch(e => {

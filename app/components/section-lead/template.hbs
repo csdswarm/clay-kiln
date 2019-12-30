@@ -27,7 +27,7 @@
             {{/if}}
             <div class="section-lead__details">
               {{#unless @index}}
-                <span class="details__primary-story-label">{{ ../primaryStoryLabel }}</span>
+                <span class="details__primary-story-label">{{ default ../primaryStoryLabel article.sectionFront }}</span>
               {{/unless}}
               <h3 class="details__title">{{ article.primaryHeadline }}</h3>
             </div>
