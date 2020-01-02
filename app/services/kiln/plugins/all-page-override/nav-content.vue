@@ -5,6 +5,12 @@
         <span class="page-list-selected-site">{{ selectedSite }}</span>
         <site-selector slot="dropdown" :sites="sites" @select="selectSite" @multi-select="selectMultipleSites"></site-selector>
       </ui-button>
+      <ui-select
+        placeholder="Select a station"
+        :options="stations"
+        @select="selectStation"
+        :value="selectedStation"
+      ></ui-select>
       <ui-textbox class="page-list-search" v-model.trim="query" type="search" autofocus placeholder="Search by Title or Byline" @input="filterList"></ui-textbox>
       <ui-icon-button class="page-list-status-small" type="secondary" icon="filter_list" has-dropdown ref="statusDropdown" @dropdown-open="onPopoverOpen" @dropdown-close="onPopoverClose">
         <status-selector slot="dropdown" :selectedStatus="selectedStatus" :vertical="true" @select="selectStatus"></status-selector>
@@ -42,7 +48,7 @@
   import statusSelector from './status-selector.vue';
   import pageListItem from './page-list-item.vue';
   const { searchRoute } = window.kiln.utils.references;
-  const { UiButton, UiIconButton, UiTextbox } = window.kiln.utils.components;
+  const { UiButton, UiIconButton, UiSelect, UiTextbox } = window.kiln.utils.components;
   const { uriToUrl } = window.kiln.utils.urls;
 
   const DEFAULT_QUERY_SIZE = 50;
@@ -246,7 +252,9 @@
         sites: getInitialSites.call(this),
         pages: [],
         selectedStatus: _.get(this.$store, 'state.url.status', 'all'),
-        isPopoverOpen: false
+        isPopoverOpen: false,
+        stations: Object.values(window.kiln.locals.stationsIHaveAccessTo).map(({callsign}) => callsign),
+        selectedStation: 'NATL-RC'
       };
     },
     computed: {
@@ -301,6 +309,9 @@
   
           return site;
         });
+      },
+      selectStation(station) {
+          this.selectedStation = station;
       },
       setSingleSite(slug) {
         // loop through all sites, making sure that only one is selected
@@ -385,8 +396,9 @@
     },
     components: {
       UiButton,
-      UiTextbox,
       UiIconButton,
+      UiSelect,
+      UiTextbox,
       'site-selector': siteSelector,
       'status-selector': statusSelector,
       'page-list-item': pageListItem

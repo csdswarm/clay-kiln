@@ -6,7 +6,6 @@ const axios = require('axios'),
   },
   checkStatus = res => {
     if (res.status && res.status >= 200 && res.status < 400) {
-      console.log({ res });
       return res;
     } else {
       const error = new Error(res.statusText);
