@@ -1,13 +1,16 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: clay-radio
-  namespace: working
+  name: {{ include "clay-radio.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "clay-radio.name" . }}
+    helm.sh/chart: {{ include "clay-radio.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   minReplicas: {{ .Values.hpa.min }}
   maxReplicas: {{ .Values.hpa.max }}
   scaleTargetRef:
     apiVersion: extensions/v1beta1
     kind: Deployment
-    name: clay-radio
-  targetCPUUtilizationPercentage: {{ .Values.hpa.cpuTarget }}
+    name: {{ include "clay-radio.fullname" . }}
