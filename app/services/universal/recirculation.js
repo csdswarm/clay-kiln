@@ -75,7 +75,7 @@ const _isPlainObject = require('lodash/isPlainObject'),
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = filterCondition || defaultCondition, value } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
+      { condition = defaultCondition || filterCondition, value } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
 
     if (Array.isArray(value)) {
       if (unique) {
