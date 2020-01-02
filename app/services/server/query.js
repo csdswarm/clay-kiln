@@ -98,15 +98,19 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
       + '\n  Object.isExtensible (locals is not extensible during the model ->'
       + '\n  save hook).  This should set it to false on server bootstrap and'
       + '\n  model save hooks.'
+      + `\n${new Error().stack}`
     );
 
     opts.shouldDedupeContent = !!locals
       && Object.isExtensible(locals);
   }
 
-  const loadedIds = opts.shouldDedupeContent
-    ? locals.loadedIds
-    : [];
+  // we check for locals here because on amphora bootstrap locals doesn't exist.
+  //   And when locals doesn't exist there's no reason to dedupe.
+  const shouldDedupe = locals && opts.shouldDedupeContent,
+    loadedIds = shouldDedupe
+      ? locals.loadedIds
+      : [];
 
   getSearchInstance();
 
@@ -121,7 +125,7 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
   log('trace', `got ${results.hits.hits.length} results`);
   log('debug', JSON.stringify(results));
 
-  if (opts.shouldDedupeContent) {
+  if (shouldDedupe) {
     const hits = results.hits.hits,
       allHitsHaveIds = _every(hits, aHit => aHit._id),
       resultIds = hits.map(aHit => aHit._id);
