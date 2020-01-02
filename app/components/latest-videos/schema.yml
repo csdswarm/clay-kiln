@@ -1,4 +1,4 @@
-_version: 3.0
+_version: 4.0
 _description: |
   Latest videos module
 
@@ -31,6 +31,10 @@ items:
         validate:
           required: true
 
+sectionFront:
+  _label: Section Front
+  _subscribe: sectionFront
+
 filterTags:
   _label: Exclude Tags
   _has:
@@ -54,10 +58,18 @@ title:
   _has:
     input: text
 
+primaryContentLabel:
+  _label: Label above the primary item
+  _has:
+    input: text
+    validate:
+      max: 30
+
 _groups:
   settings:
     fields:
       - title
+      - primaryContentLabel
       - filterTags
       - filterSecondarySectionFronts
 
