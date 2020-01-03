@@ -1,27 +1,3 @@
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: {{ include "clay-radio.fullname" . }}
-  labels:
-    app.kubernetes.io/name: {{ include "clay-radio.name" . }}
-    helm.sh/chart: {{ include "clay-radio.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.ingress.annotations }}
-  annotations:
-{{ toYaml .Values.ingress.annotations | indent 4 }}
-{{- end }}
-spec:
-  rules:
-  - host: clay-radio.staging.kube.radio-dev.com
-    http:
-      paths:
-      - backend:
-          serviceName: clay-radio
-          servicePort: {{ .Values.service.port }}
-
-
 {{- if .Values.ingress.enabled }}
 {{- $fullName := include "clay-radio.fullname" . -}}
 apiVersion: extensions/v1beta1
@@ -33,10 +9,8 @@ metadata:
     helm.sh/chart: {{ include "clay-radio.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.ingress.annotations }}
   annotations:
 {{ toYaml .Values.ingress.annotations | indent 4 }}
-{{- end }} toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   rules:
     {{- range .Values.ingress.hostedZones }}
@@ -47,3 +21,4 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: http
     {{- end }}
+{{ end }}
