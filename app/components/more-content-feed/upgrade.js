@@ -1,9 +1,9 @@
 'use strict';
 
-const { getComponentVersion } = require('clayutils'),
-  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+const _get = require('lodash/get'),
   db = require('amphora-storage-postgres'),
-  _get = require('lodash/get');
+  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+  { getComponentVersion } = require('clayutils');
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -88,6 +88,10 @@ module.exports['7.0'] = async function (uri, data) {
       uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag@published') :
       uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag');
 
+  if (sharethroughTagInstanceUri.includes('more-content-feed')) {
+    return data;
+  }
+  
   try {
     const sharethroughTagInstance = await getComponentInstance(sharethroughTagInstanceUri);
 
