@@ -1,7 +1,9 @@
 /* editing template */
 [data-uri*="/instances/new"] .kiln-placeholder,
-[data-uri*="/instances/new"] .body__circulation,
+[data-uri*="/instances/new"] .body__circulation {
+  background-color: $blue;
+}
 /* editing layout */
 [data-uri*="/instances/default"] .kiln-placeholder {
-  background-color: pink;
+  background-color: $pizazz;
 }
