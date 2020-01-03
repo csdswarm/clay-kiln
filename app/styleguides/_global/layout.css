@@ -1,0 +1,7 @@
+/* editing template */
+[data-uri*="/instances/new"] .kiln-placeholder,
+[data-uri*="/instances/new"] .body__circulation,
+/* editing layout */
+[data-uri*="/instances/default"] .kiln-placeholder {
+  background-color: pink;
+}
