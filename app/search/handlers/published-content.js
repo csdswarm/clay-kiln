@@ -1,6 +1,7 @@
 'use strict';
 
 const h = require('highland'),
+  _ = require('lodash'),
   { logSuccess, logError } = require('../helpers/log-events'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
@@ -26,10 +27,11 @@ subscribe('unpublishPage').through(unpublishPage);
  */
 function getContent(obj, param, components, transform = (data) => data ) {
   const content = obj[param],
-    getData = (ref) => components.find(item => item.key === ref).value;
+    getData = (ref) => components.find(item => item.key === ref).value,
+    addData = (component) => ({ ...component, data: transform(getData(component._ref)) });
 
-  // loop through all items and add a key with the value of the ref
-  obj[param] = content.map((component) => ({ ...component, data: transform(getData(component._ref)) }));
+  // add a key with the data to each ref object
+  obj[param] = _.isArray(content) ? content.map(addData) : addData(content);
 
   // return a new copy
   return { ...obj };
@@ -70,6 +72,7 @@ function getSlideEmbed(slides, components) {
 function processContent(obj, components) {
   obj.value = getContent(obj.value, 'lead', components);
   obj.value = getContent(obj.value, 'content', components);
+  obj.value = getContent(obj.value, 'tags', components);
 
   if (obj.key.includes('gallery')) {
     obj.value = getContent(obj.value, 'slides', components);
@@ -82,6 +85,22 @@ function processContent(obj, components) {
   obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
 
   return obj;
+}
+
+function deslugifyValues(op) {
+  if (op.value.authors) {
+    op.value.authors = op.value.authors.map(author => author.text);
+  }
+
+  if (op.value.tags) {
+    const data = JSON.parse(op.value.tags.data);
+
+    if (data && data.items) {
+      op.value.tags = data.items.map(tag => tag.text);
+    }
+  }
+
+  return op;
 }
 
 function save(stream) {
@@ -99,6 +118,7 @@ function save(stream) {
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
     .map(stripPostProperties)
+    .map(deslugifyValues)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()
