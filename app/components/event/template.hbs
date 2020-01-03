@@ -24,7 +24,9 @@
   <div class="event__info-container">
     <div class="event__info-title">Event Information:</div>
     <div class="event__info-row">
-      <div class="event__info-icon event__info-icon--date"></div>
+      <div class="event__info-icon event__info-icon--date">
+        {{{ read "components/event/media/icon-time-date.svg" }}}
+      </div>
       <div class="event__info-text" data-editable="publishedDateGroup">
         {{#ifAll startDate startTime}}
           {{ _computed.dateTime }}
@@ -32,7 +34,9 @@
       </div>
     </div>
     <div class="event__info-row">
-      <div class="event__info-icon event__info-icon--location"></div>
+      <div class="event__info-icon event__info-icon--location">
+        {{{ read "components/event/media/icon-location.svg" }}}
+      </div>
       <div class="event__info-text">
         <div class="event__info-text-venue-name" data-editable="venueName">{{{ venueName }}}</div>
         <div class="event__info-text-venue-address" data-editable="venueAddress">{{{ venueAddress }}}</div>
