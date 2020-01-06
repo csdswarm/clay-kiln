@@ -3,7 +3,7 @@ pipeline {
   agent any
 
   // Global config
-  environment{
+  environment {
     GO111MODULE='on'
     ROK8S_TMP = "${env.WORKSPACE}@tmp"
     HELM_HOME = "${env.ROK8S_TMP}/.helm"
@@ -87,8 +87,7 @@ pipeline {
             sh 'helm template ./deploy/charts/clay-radio/ --namespace example-staging -f ./deploy/staging/staging.values.yml > ${ROK8S_TMP}/out.yaml'
           }
         }
-      }
-    }
+      
 
     stage('Build') {
       agent {
@@ -155,7 +154,6 @@ pipeline {
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
       } 
-    }
-
+    } 
   }
-} 
+}
