@@ -7,7 +7,7 @@ const _every = require('lodash/every'),
   indexWithPrefix = amphoraSearch.indexWithPrefix,
   universalQuery = require('../universal/query'),
   utils = require('../universal/utils'),
-  { urlToElasticSearch } = utils;
+  { removeFirstLine, urlToElasticSearch } = utils;
 
 /**
  * Get ElasticSearch client reference
@@ -89,6 +89,8 @@ function searchByQuery(query, locals, opts = {}) {
  */
 async function searchByQueryWithRawResult(query, locals, opts = {}) {
   if (!opts.hasOwnProperty('shouldDedupeContent')) {
+    const stack = removeFirstLine(new Error().stack);
+
     log(
       'warn',
       "opts.shouldDedupeContent wasn't passed to searchByQueryWithRawResult."
@@ -98,7 +100,7 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
       + '\n  Object.isExtensible (locals is not extensible during the model ->'
       + '\n  save hook).  This should set it to false on server bootstrap and'
       + '\n  model save hooks.'
-      + `\n${new Error().stack}`
+      + `\n${stack}`
     );
 
     opts.shouldDedupeContent = !!locals
@@ -120,7 +122,14 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
 
   loadedIds.forEach(_id => universalQuery.addMustNot(query, { match: { _id } }));
 
-  const results = await module.exports.searchInstance.search(query);
+  let results = [];
+
+  try {
+    results = await module.exports.searchInstance.search(query);
+  } catch (err) {
+    log('info', 'this query resulted in an error\n' + JSON.stringify(query, null, 2));
+    throw err;
+  }
 
   log('trace', `got ${results.hits.hits.length} results`);
   log('debug', JSON.stringify(results));

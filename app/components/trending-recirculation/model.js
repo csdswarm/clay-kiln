@@ -107,7 +107,9 @@ module.exports = unityComponent({
       data._computed.articles = [...data.items];
     }
 
-    locals.loadedIds = locals.loadedIds.concat(data._computed.articles);
+    locals.loadedIds = locals.loadedIds.concat(
+      data._computed.articles.map(item => item.uri)
+    );
 
     // and finally backfill via elasticsearch if there are still available slots
     const numArticlesToBackFill = MAX_ITEMS - data._computed.articles.length;
