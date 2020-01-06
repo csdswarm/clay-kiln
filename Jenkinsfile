@@ -100,7 +100,7 @@ pipeline {
 
       when {
         expression {
-          return env.BRANCH_NAME == 'master'|| env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop'
+          return env.BRANCH_NAME == 'master'|| env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME ==~ /(.*\/)?feature-.*/
         }
       }
 
@@ -159,4 +159,4 @@ pipeline {
     }
 
   }
-}
+} 
