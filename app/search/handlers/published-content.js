@@ -1,7 +1,6 @@
 'use strict';
 
 const h = require('highland'),
-  _ = require('lodash'),
   { logSuccess, logError } = require('../helpers/log-events'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
@@ -31,7 +30,7 @@ function getContent(obj, param, components, transform = (data) => data ) {
     addData = (component) => ({ ...component, data: transform(getData(component._ref)) });
 
   // add a key with the data to each ref object
-  obj[param] = _.isArray(content) ? content.map(addData) : addData(content);
+  obj[param] = Array.isArray(content) ? content.map(addData) : addData(content);
 
   // return a new copy
   return { ...obj };
@@ -87,16 +86,24 @@ function processContent(obj, components) {
   return obj;
 }
 
-function deslugifyValues(op) {
+/**
+ * Transforms authors and tags objects into display names so that they fit into ES as keywords.
+ *
+ * @param {object} op
+ * @returns {object}
+ */
+function deslugifyAuthorsAndTags(op) {
+  const extractText = obj => obj.text;
+
   if (op.value.authors) {
-    op.value.authors = op.value.authors.map(author => author.text);
+    op.value.authors = op.value.authors.map(extractText);
   }
 
   if (op.value.tags) {
     const data = JSON.parse(op.value.tags.data);
 
     if (data && data.items) {
-      op.value.tags = data.items.map(tag => tag.text);
+      op.value.tags = data.items.map(extractText);
     }
   }
 
@@ -118,7 +125,7 @@ function save(stream) {
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
     .map(stripPostProperties)
-    .map(deslugifyValues)
+    .map(deslugifyAuthorsAndTags)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()
