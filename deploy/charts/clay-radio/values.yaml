@@ -34,10 +34,14 @@ service:
 
 pdb:
   maxUnavailable: 1
+  enabled: True
 
 hpa:
+  enabled: True
   min: 1
   max: 10
+  metric: cpu
+  cpuTarget: 50
 
 ingress:
   enabled: True
