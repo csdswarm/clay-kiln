@@ -1,5 +1,5 @@
 {{- if .Values.hpa.enabled }}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "clay-radio.fullname" . }}
@@ -8,11 +8,12 @@ metadata:
     helm.sh/chart: {{ include "clay-radio.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/component: clay-radio
 spec:
   minReplicas: {{ .Values.hpa.min }}
   maxReplicas: {{ .Values.hpa.max }}
   scaleTargetRef:
-    apiVersion: extensions/v1beta1
+    apiVersion: apps/v1
     kind: Deployment
     name: {{ include "clay-radio.fullname" . }}
   metrics:
