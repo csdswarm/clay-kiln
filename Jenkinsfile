@@ -105,8 +105,7 @@ pipeline {
       }
 
       steps {
-    
-        withAWS(role: 'production_k8s_admins', externalId: '477779916141', duration: 900, roleSessionName: 'jenkins-session') {
+        withCredentials([string(credentialsId: 'dev')])
           sh '''prepare-awscli;
             docker-pull -f deploy/build.config;
             docker-build -f deploy/build.config;
