@@ -36,7 +36,7 @@ spec:
             - configMapRef:
                 name: {{ include "clay-radio.fullname" . }}
             - secretRef:
-                name: clay-radio
+                name: {{ include "clay-radio.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

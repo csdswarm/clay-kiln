@@ -3,3 +3,4 @@ kind: ConfigMap
 metadata:
   name: celery
 data:
+{{ toYaml .Values.configmap.data | indent 2 }}

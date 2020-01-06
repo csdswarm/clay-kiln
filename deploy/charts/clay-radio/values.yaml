@@ -32,6 +32,9 @@ service:
   port: 3001
   targetPort: 3001
 
+configmap:
+  data: {}
+
 pdb:
   maxUnavailable: 1
   enabled: True
