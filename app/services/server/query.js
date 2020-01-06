@@ -89,6 +89,7 @@ function searchByQuery(query, locals, opts = {}) {
  */
 async function searchByQueryWithRawResult(query, locals, opts = {}) {
   if (!opts.hasOwnProperty('shouldDedupeContent')) {
+    // we don't want the initial line with 'Error' because that's misleading
     const stack = removeFirstLine(new Error().stack);
 
     log(
