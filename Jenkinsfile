@@ -110,7 +110,6 @@ pipeline {
             docker-pull -f deploy/build.config;
             docker-build -f deploy/build.config;
             docker-push -f deploy/build.config'''
-        }
       }
     }
 
