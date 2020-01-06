@@ -26,7 +26,8 @@ const _get = require('lodash/get'),
     rootMargin: '0px',
     threshold: 0
   },
-  observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
+  observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig),
+  disabledRefreshAds = new Set();
 let refreshCount = 0,
   allAdSlots = {},
   adsRefreshing = false,
@@ -88,8 +89,16 @@ googletag.cmd.push(() => {
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
         clearDfpTakeover();
-        // Refresh all ads
-        googletag.pubads().refresh(null, { changeCorrelator: false });
+
+        // Refresh ads
+        const adsToRefresh = Object.entries(allAdSlots).filter(([id]) => {
+          id = id.split('--')[1];
+
+          return !disabledRefreshAds.has(id);
+        }).map(([, slot]) => slot);
+
+        googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
+
         // Remove the observers
         [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
           observer.unobserve(adSlot);
@@ -551,6 +560,15 @@ function resizeForSkin() {
 }
 
 /**
+ * Tells a list of ads to stop refreshing, whether they've loaded yet or not.
+ *
+ * @param {string[]} ads
+ */
+window.disableAdRefresh = function (ads) {
+  ads.forEach(ad => disabledRefreshAds.add(ad));
+};
+
+/**
  * Legacy code ported over from frequency to implement the takeover.
  *
  * @param {string} imageUrl
@@ -564,7 +582,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.getElementsByClassName('layout__top')[0],
+    globalDiv = document.querySelector('.layout__topSection') || document.querySelector('.layout__top'),
     resetElements = resizeForSkin();
 
   // Include our default bg color

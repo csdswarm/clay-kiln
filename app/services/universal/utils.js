@@ -95,8 +95,7 @@ function uriToUrl(uri, locals) {
  */
 function removeExtension(path) {
   const endSlash = path.lastIndexOf('/');
-
-  let leadingDot = endSlash;
+  let leadingDot;
 
   if (endSlash > -1) {
     leadingDot = path.indexOf('.', endSlash);
@@ -226,7 +225,6 @@ function textToEncodedSlug(text) {
   );
 }
 
-
 /**
  * Copied over from the spa, allows us to log messages that should only show
  *   during development.
@@ -237,16 +235,6 @@ function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
   }
-}
-
-/**
- * how it is indexed as.
- * Url queries to elastic search need to be `http` since that is
- * @param {String} url
- * @returns {String}
- */
-function urlToElasticSearch(url) {
-  return url.replace('https', 'http');
 }
 
 /*
@@ -284,6 +272,16 @@ function getFullOriginalUrl(req) {
 }
 
 /**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {String} url
+ * @returns {String}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
+/**
  * Returns whether the request is for a content component.  A content component
  *   here just means a component that can be created via the kiln drawer e.g.
  *   article, gallery, etc.
@@ -298,25 +296,47 @@ function isContentComponent(url) {
     && contentTypes.has(componentName);
 }
 
-module.exports = {
-  isFieldEmpty,
+/**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+Object.assign(module.exports, {
+  /**
+   * Url queries to elastic search need to be `http` since that is
+   * how it is indexed as.
+   * @param {String} url
+   * @returns {String}
+   */
+  urlToElasticSearch: url => url.replace('https', 'http'),
+  debugLog,
+  ensurePublishedVersion,
+  ensureStartsWith,
+  formatStart,
+  getFullOriginalUrl,
+  getSiteBaseUrl,
   has,
-  replaceVersion,
+  isContentComponent,
+  isFieldEmpty,
+  isInstance,
+  isPublishedVersion,
   isUrl,
+  prettyJSON,
+  replaceVersion,
+  textToEncodedSlug,
+  toTitleCase,
+  urlToCanonicalUrl,
+  urlToElasticSearch,
   uriToUrl,
   urlToUri,
-  formatStart,
-  toTitleCase,
-  getSiteBaseUrl,
-  isPublishedVersion,
-  ensurePublishedVersion,
-  isInstance,
-  urlToCanonicalUrl,
-  textToEncodedSlug,
-  debugLog,
-  ensureStartsWith,
-  prettyJSON,
-  getFullOriginalUrl,
-  urlToElasticSearch,
-  isContentComponent
-};
+  yesNo
+});

@@ -1,12 +1,12 @@
 'use strict';
 
-const { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
-  addStationNoteToCustomUrl = require('../../services/kiln/add-station-note-to-custom-url'),
+const addStationNoteToCustomUrl = require('../../services/kiln/add-station-note-to-custom-url'),
+  { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
   KilnInput = window.kiln.kilnInput;
 
 module.exports = (schema) => {
-  syncFields(schema, syncHeadlines('gallery'));
   addStationNoteToCustomUrl(new KilnInput(schema));
+  syncFields(schema, syncHeadlines('gallery'));
 
   return schema;
 };

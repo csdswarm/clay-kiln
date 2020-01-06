@@ -10,10 +10,10 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
+  articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
-  { getComponentName } = require('clayutils'),
-  articleOrGallery = new Set(['article', 'gallery']);
+  { getComponentName } = require('clayutils');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines

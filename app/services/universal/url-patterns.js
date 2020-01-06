@@ -13,10 +13,8 @@ const exists = require('lodash/identity'),
       .join('/');
   },
   author = opts => `${opts.prefix}/${opts.contentType}/${opts.authorSlug}`,
-  date = opts => {
-    // e.g. http://vulture.com/music/x.html - modified re: ON-333
-    return `${opts.prefix}/${opts.sectionFront}/${opts.slug}.html`;
-  },
+  // e.g. http://vulture.com/music/x.html - modified re: ON-333
+  date = opts => `${opts.prefix}/${opts.sectionFront}/${opts.slug}.html`,
   gallery = opts => {
     // e.g. http://radio.com/music/gallery/grammies
     return [

@@ -18,7 +18,7 @@ const { expect, assert } = require('chai'),
         update:{ station:{ 'NATL-RC': 1 } }
       },
       'alert-banner':{
-        access:{ station:{ 'NATL-RC': 1 } }
+        access: { station: { 'NATL-RC': 1 } }
       }
     },
     station: {

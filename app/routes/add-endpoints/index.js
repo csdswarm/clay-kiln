@@ -1,6 +1,6 @@
 'use strict';
 
 module.exports = {
-  sitemap: require('./sitemap'),
-  createPage: require('./create-page')
+  createPage: require('./create-page'),
+  sitemap: require('./sitemap')
 };

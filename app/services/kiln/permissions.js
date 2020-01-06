@@ -67,14 +67,11 @@ const addPermissions = require('../universal/user-permissions'),
    */
   secureField = async (fieldInput, permission, component) => {
     try {
-      // Should actually be disabled/enabled instead of hide/show
-      fieldInput.hide();
+      const { user } = await whenPreloaded(fieldInput),
+        disableInput = !user.may(permission, component).value;
 
-      const { user, locals: { station } } = await whenPreloaded(fieldInput),
-        showInput = user.may(permission, component, station.callsign).value;
-
-      if (showInput) {
-        fieldInput.show();
+      if (disableInput) {
+        fieldInput.setProp('disabled', true);
       }
     } catch (err) {
       log('error', `error when securing the field '${fieldInput.inputName}' for component '${component}'`, err);
