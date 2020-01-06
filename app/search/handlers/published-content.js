@@ -87,12 +87,13 @@ function processContent(obj, components) {
 }
 
 /**
- * Transforms authors and tags objects into display names so that they fit into ES as keywords.
+ * Transforms authors and tags objects into display names.
+ * This must be done because ElasticSearch expects an array of strings for tags and authors, which should be their display names.
  *
  * @param {object} op
  * @returns {object}
  */
-function deslugifyAuthorsAndTags(op) {
+function transformAuthorsAndTags(op) {
   const extractText = obj => obj.text;
 
   if (op.value.authors) {
@@ -125,7 +126,7 @@ function save(stream) {
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
     .map(stripPostProperties)
-    .map(deslugifyAuthorsAndTags)
+    .map(transformAuthorsAndTags)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()
