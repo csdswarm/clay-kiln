@@ -130,7 +130,7 @@ pipeline {
 
       steps {
         withCredentials([string(credentialsId: 'dev')]){
-          sh "aws s3 cp ${KUBECONFIG_DATA} ~/.kube/config"
+          sh "cp ${KUBECONFIG_DATA} ~/.kube/config"
           sh "kubectl config use-context ${ROK8S_CLUSTER}_k8s_admins"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
@@ -152,7 +152,7 @@ pipeline {
 
       steps {
         withCredentials([string(credentialsId: 'prd')]){
-          sh "aws s3 cp ${KUBECONFIG_DATA} ~/.kube/config"
+          sh "cp ${KUBECONFIG_DATA} ~/.kube/config"
           sh "kubectl config use-context ${ROK8S_CLUSTER}_k8s_admins"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
