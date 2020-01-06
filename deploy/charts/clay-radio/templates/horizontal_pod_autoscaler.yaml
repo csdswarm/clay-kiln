@@ -20,5 +20,5 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: {{ .Values.hap.cpuTarget }}
+      targetAverageUtilization: {{ .Values.hpa.cpuTarget }}
 {{ end }}
