@@ -40,4 +40,3 @@ configmap:
     COGNITO_CONSUMER_REGION: us-east-1
     APPLE_NEWS_ENABLED: false
     APPLE_NEWS_PREVIEW_ONLY: true
-    TEST1=CICD
