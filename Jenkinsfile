@@ -5,9 +5,9 @@ pipeline {
   // Global config
   environment {
     GO111MODULE='on'
-    ROK8S_TMP = "${env.WORKSPACE}/.tmp"
-    HELM_HOME = "${env.ROK8S_TMP}/.helm"
-    HOME = "${env.ROK8S_TMP}"
+    // ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+    // HELM_HOME = "${env.ROK8S_TMP}/.helm"
+    // HOME = "${env.ROK8S_TMP}"
     CI_SHA1="${env.GIT_COMMIT}"
     CI_BRANCH="${env.GIT_BRANCH}"
     CI_BUILD_NUM="${env.BUILD_NUMBER}"
@@ -18,7 +18,12 @@ pipeline {
 
   stages {
     stage('Checkout'){
-      steps{
+      environment {
+        ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+        HELM_HOME = "${env.ROK8S_TMP}/.helm"
+        HOME = "${env.ROK8S_TMP}"
+      }
+      steps {
         script {
           // Defaults
           ROK8S_AWS_ACCOUNT_ID='477779916141'
@@ -75,13 +80,18 @@ pipeline {
     //     }
 
         stage('Test Chart') {
+          environment {
+            ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+            HELM_HOME = "${env.ROK8S_TMP}/.helm"
+            HOME = "${env.ROK8S_TMP}"
+          }
           agent {
             docker {
               image 'quay.io/reactiveops/ci-images:v10-stretch'
             }
           }
           steps {
-            sh 'ls -la ${WORKSPACE}'
+            sh ''
             sh 'helm init --client-only'
             sh 'cd deploy/charts/clay-radio && helm dependency update && cd ../../..'
             sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-staging -f ./deploy/staging/staging.values.yml'
@@ -91,6 +101,11 @@ pipeline {
       
 
     stage('Build') {
+      environment {
+        ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+        HELM_HOME = "${env.ROK8S_TMP}/.helm"
+        HOME = "${env.ROK8S_TMP}"
+      }
       agent {
         docker {
           image 'quay.io/reactiveops/ci-images:v10-stretch'
@@ -114,6 +129,11 @@ pipeline {
     }
 
     stage('Deploy Develop or Staging') {
+      environment {
+        ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+        HELM_HOME = "${env.ROK8S_TMP}/.helm"
+        HOME = "${env.ROK8S_TMP}"
+      }
       agent {
         docker {
           image 'quay.io/reactiveops/ci-images:v10-stretch'
@@ -136,6 +156,11 @@ pipeline {
     }
 
     stage('Deploy Production') {
+      environment {
+        ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+        HELM_HOME = "${env.ROK8S_TMP}/.helm"
+        HOME = "${env.ROK8S_TMP}"
+      }
       agent {
         docker {
           image 'quay.io/reactiveops/ci-images:v10-stretch'
