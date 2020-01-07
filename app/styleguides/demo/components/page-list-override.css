@@ -5,7 +5,7 @@
     flex-grow: 1;
 }
 
-.all-page-override__station-select {
+.page-list-override__station-select {
     margin: em(8) 0;
 
     &.ui-select {

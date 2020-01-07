@@ -1,8 +1,10 @@
 'use strict';
 
 const _set = require('lodash/set'),
-  navContent = require('./nav-content.vue');
+  allPageOverride = require('./all-page-override.vue'),
+  myPageOverride = require('./my-page-override.vue');
 
 module.exports = () => {
-  _set(window, 'kiln.navContent.all-pages', navContent);
+  _set(window, 'kiln.navContent.all-pages', allPageOverride);
+  _set(window, 'kiln.navContent.my-pages', myPageOverride);
 };

@@ -3,7 +3,7 @@
     <div class="page-list-controls">
       <div class="page-list-controls__column">
         <ui-textbox class="page-list-search" v-model.trim="query" type="search" autofocus placeholder="Search by Title or Byline" @input="filterList"></ui-textbox>
-        <station-select class="all-page-override__station-select" stationOptionLabel="callsign" :onChange="stationChanged"/>
+        <station-select class="page-list-override__station-select" stationOptionLabel="callsign" :onChange="stationChanged"/>
       </div>
       <ui-icon-button class="page-list-status-small" type="secondary" icon="filter_list" has-dropdown ref="statusDropdown" @dropdown-open="onPopoverOpen" @dropdown-close="onPopoverClose">
         <status-selector slot="dropdown" :selectedStatus="selectedStatus" :vertical="true" @select="selectStatus"></status-selector>
@@ -11,7 +11,6 @@
       <status-selector class="page-list-status-large" :selectedStatus="selectedStatus" @select="selectStatus"></status-selector>
     </div>
     <div class="page-list-headers">
-      <span v-if="multipleSitesSelected" class="page-list-header page-list-header-site">Site</span>
       <span class="page-list-header page-list-header-title">Title</span>
       <span class="page-list-header page-list-header-byline">Byline</span>
       <span class="page-list-header page-list-header-status">Status</span>
@@ -22,9 +21,7 @@
         v-for="(page, pageIndex) in pages"
         :key="pageIndex"
         :page="page"
-        :multipleSitesSelected="multipleSitesSelected"
         :isPopoverOpen="isPopoverOpen"
-        @setSite="setSingleSite"
         @setQuery="setQuery"
         @setStatus="selectStatus"></page-list-item>
       <div class="page-list-load-more" v-if="showLoadMore">
@@ -40,7 +37,6 @@
   import stationSelect from '../../shared-vue-components/station-select'
   import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
   import postJSON from './post-json';
-  import siteSelector from './site-selector.vue';
   import statusSelector from './status-selector.vue';
   import pageListItem from './page-list-item.vue';
   const { searchRoute } = window.kiln.utils.references;
@@ -50,30 +46,7 @@
   const DEFAULT_QUERY_SIZE = 50;
 
   /**
-   * get data for all sites, and format it into something we can use
-   * @return {array}
-   */
-  function getInitialSites() {
-    const configSites = _.get(this.$store, 'state.url.sites'),
-      selectedSites = configSites ? configSites.split(',') : [],
-      currentSlug = _.get(this.$store, 'state.site.subsiteSlug') || _.get(this.$store, 'state.site.slug');
-
-    // make an array of all sites, sorted by slug
-    return _.sortBy(_.map(_.get(this.$store, 'state.allSites'), (site) => {
-      const siteSlug = site.subsiteSlug || site.slug;
-
-      return {
-        slug: site.slug,
-        subsiteSlug: site.subsiteSlug,
-        name: site.name,
-        selected: selectedSites.length ? _.includes(selectedSites, siteSlug) : siteSlug === currentSlug
-      };
-    }), 'name');
-  }
-
-  /**
    * build the query to send to elastic
-   * @param  {array} siteFilter
    * @param  {string} queryText
    * @param  {string} queryUser
    * @param {number} offset
@@ -82,7 +55,7 @@
    * @param {string} username
    * @return {object}
    */
-  function buildQuery({ siteFilter, queryText, queryUser, offset, statusFilter, isMyPages, username, stationFilter, subsiteFilter }) { // eslint-disable-line
+  function buildQuery({ queryText, queryUser, offset, statusFilter, isMyPages, username, stationFilter }) { // eslint-disable-line
     let query = {
       index: 'pages',
       body: {
@@ -98,6 +71,7 @@
     };
 
     _.set(query, 'body.query.bool.must', []);
+    _.set(query, 'body.query.bool.must_not', []);
 
     // filter for only "My Pages", and filter users
     if (isMyPages && queryUser) {
@@ -135,52 +109,20 @@
       });
     }
 
-    // filter by selected sites with subsite support
-    const siteFilterShould = {
-      bool: {
-        should: []
+    if (stationFilter) {
+      if (stationFilter.slug) {
+        query.body.query.bool.must.push({
+          match: {
+            stationSlug: stationFilter.slug
+          }
+        });
+      } else {
+        query.body.query.bool.must_not.push({
+          exists: {
+            field: 'stationSlug'
+          }
+        })
       }
-    };
-
-    if (siteFilter.length) {
-      siteFilterShould.bool.should.push({
-        terms: {
-          siteSlug: siteFilter
-        }
-      });
-    } else {
-      siteFilterShould.bool.should.push({
-        terms: {
-          siteSlug: ['no-site-selected']
-        }
-      });
-    }
-
-    if (subsiteFilter.length) {
-      siteFilterShould.bool.should.push({
-        terms: {
-          subsiteSlug: subsiteFilter
-        }
-      });
-    } else {
-      // slug is shared between parent and subsites. if parent is selected, we don't want to bring subsite pages back
-      query.body.query.bool.must_not = {
-        exists: {
-          field: 'subsiteSlug'
-        }
-      };
-    }
-
-    query.body.query.bool.must.push(siteFilterShould);
-
-    if (_.get(stationFilter, 'slug')) {
-      const stationFilterMust = {
-        match: {
-          stationSlug: stationFilter.slug
-        }
-      };
-
-      query.body.query.bool.must.push(stationFilterMust);
     }
 
     // filter by search string
@@ -255,7 +197,6 @@
         query: _.get(this.$store, 'state.url.query', ''),
         offset: 0,
         total: null,
-        sites: getInitialSites.call(this),
         pages: [],
         selectedStatus: _.get(this.$store, 'state.url.status', 'all'),
         isPopoverOpen: false,
@@ -266,21 +207,6 @@
       {},
       mapGetters(stationSelect.storeNs, ['selectedStation']),
       {
-        selectedSites() {
-          return _.filter(this.sites, 'selected');
-        },
-        multipleSitesSelected() {
-          return this.selectedSites.length > 1;
-        },
-        selectedSite() {
-          if (this.multipleSitesSelected) {
-            return 'Multiple';
-          } else if (this.selectedSites.length === 1) {
-            return _.head(this.selectedSites).name;
-          } else {
-            return 'No Site Selected';
-          }
-        },
         showLoadMore() {
           return this.total === null || this.offset < this.total;
         },
@@ -300,38 +226,6 @@
       },
       onPopoverClose() {
         this.isPopoverOpen = false;
-      },
-      compareSite(site, slug) {
-        return site.subsiteSlug === slug || site.slug === slug;
-      },
-      selectSite(slug) {
-        const site = _.find(this.sites, s => this.compareSite(s, slug));
-
-        site.selected = !site.selected;
-        this.$store.commit('FILTER_PAGELIST_SITE', _.map(this.selectedSites, site => site.subsiteSlug || site.slug).join(', '));
-        this.offset = 0;
-        this.fetchPages();
-      },
-      selectMultipleSites(allSites) {
-        this.sites = _.map(this.sites, (site) => {
-          site.selected = allSites;
-  
-          return site;
-        });
-      },
-      setSingleSite(slug) {
-        // loop through all sites, making sure that only one is selected
-        _.each(this.sites, (site) => {
-          if (this.compareSite(site, slug)) {
-            site.selected = true;
-          } else {
-            site.selected = false;
-          }
-        });
-
-        this.$store.commit('FILTER_PAGELIST_SITE', _.map(this.selectedSites, site => site.subsiteSlug || site.slug).join(', '));
-        this.offset = 0;
-        this.fetchPages();
       },
       filterList: _.debounce(function () {
         this.$store.commit('FILTER_PAGELIST_SEARCH', this.query);
@@ -355,9 +249,7 @@
         this.fetchPages();
       },
       fetchPages() {
-        const siteFilter = _.map(_.filter(this.selectedSites, site => !site.subsiteSlug), site => site.slug),
-          subsiteFilter = _.map(_.filter(this.selectedSites, site => site.subsiteSlug), site => site.subsiteSlug),
-          queryText = this.queryText,
+        const queryText = this.queryText,
           queryUser = this.queryUser,
           offset = this.offset,
           prefix = _.get(this.$store, 'state.site.prefix'),
@@ -366,7 +258,7 @@
           stationFilter = this.selectedStation,
           statusFilter = this.selectedStatus,
           query = buildQuery({
-            siteFilter, queryText, queryUser, offset, statusFilter, isMyPages, username, subsiteFilter, stationFilter
+            queryText, queryUser, offset, statusFilter, isMyPages, username, stationFilter
           });
         
         return postJSON(uriToUrl(prefix + searchRoute), query).then((res) => {
@@ -389,7 +281,6 @@
             this.$store.dispatch('setHash', {
               menu: {
                 tab: isMyPages ? 'my-pages' : 'all-pages',
-                sites: siteFilter.join(','),
                 status: statusFilter,
                 query: this.query
               }
@@ -410,7 +301,6 @@
       UiIconButton,
       UiSelect,
       UiTextbox,
-      'site-selector': siteSelector,
       'status-selector': statusSelector,
       'page-list-item': pageListItem,
       'station-select': StationSelectInput
