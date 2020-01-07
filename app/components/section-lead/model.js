@@ -77,8 +77,6 @@ module.exports.save = async (ref, data, locals) => {
     };
   }));
 
-  data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront || locals.secondarySectionFront || data.tag;
-
   return data;
 };
 
@@ -208,8 +206,6 @@ module.exports.render = async function (ref, data, locals) {
   } catch (e) {
     queryService.logCatch(e, ref);
   }
-
-  data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
 
   return data;
 };

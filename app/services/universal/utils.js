@@ -228,6 +228,20 @@ function listDeepObjects(obj, filter) {
   return list;
 }
 
+/**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
 Object.assign(module.exports, {
   /**
    * Url queries to elastic search need to be `http` since that is
@@ -251,5 +265,6 @@ Object.assign(module.exports, {
   urlToCanonicalUrl,
   textToEncodedSlug,
   debugLog,
-  listDeepObjects
+  listDeepObjects,
+  yesNo
 });

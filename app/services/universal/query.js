@@ -5,11 +5,26 @@ const _ = require('lodash'),
   protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
+* Returns an item's id by extracting it from the uri
+*
+* @param {String} uri
+* @returns {String}
+*/
+function getItemId(uri) {
+  return uri.split('/').slice(-1)[0]
+    // clay appends this to published item uris so we want to exclude this
+    .replace('@published', '');
+};
+
+/**
  * @param {object} result
  * @returns {Array}
  */
 function formatSearchResult(result) {
-  return _.map(result.hits.hits, '_source');
+  return result.hits.hits.map(({ _source, _id: uri }) => ({
+    ..._source,
+    itemId: getItemId(uri)
+  }));
 }
 
 /**
