@@ -28,7 +28,7 @@ deploy:
     maxUnavailable: 25%
 
 service:
-  type: clusterIP
+  type: ClusterIP
   port: 3001
   targetPort: 3001
 
