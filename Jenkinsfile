@@ -125,9 +125,10 @@ pipeline {
       steps {
         withCredentials ([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']]) {
           sh '''prepare-awscli;
-            docker-pull -f deploy/build.config;
-            docker-build -f deploy/build.config;
-            docker-push -f deploy/build.config'''
+            cd app; 
+            docker-pull -f ../deploy/build.config;
+            docker-build -f ../deploy/build.config;
+            docker-push -f ../deploy/build.config'''
         }
       }
     }
