@@ -5,7 +5,7 @@ pipeline {
   // Global config
   environment {
     GO111MODULE='on'
-    ROK8S_TMP = "${env.WORKSPACE}@tmp"
+    ROK8S_TMP = "${env.WORKSPACE}/.tmp"
     HELM_HOME = "${env.ROK8S_TMP}/.helm"
     HOME = "${env.ROK8S_TMP}"
     CI_SHA1="${env.GIT_COMMIT}"
@@ -81,7 +81,7 @@ pipeline {
             }
           }
           steps {
-            sh 'sudo helm init --client-only'
+            sh 'helm init --client-only'
             sh 'cd deploy/charts/clay-radio && helm dependency update && cd ../../..'
             sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-staging -f ./deploy/staging/staging.values.yml'
             sh 'helm template ./deploy/charts/clay-radio/ --namespace example-staging -f ./deploy/staging/staging.values.yml > ${ROK8S_TMP}/out.yaml'
