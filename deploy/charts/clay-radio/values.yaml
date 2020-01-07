@@ -1,5 +1,5 @@
 image:
-  repository: 477779916141.dkr.ecr.us-east-1.amazonaws.com/clay-radio
+  repository: 477779916141.dkr.ecr.us-east-1.amazonaws.com/k8s-entercom/clay-radio
   tag: latest
   pullPolicy: IfNotPresent
 
