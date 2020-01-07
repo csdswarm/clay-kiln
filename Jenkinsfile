@@ -60,7 +60,7 @@ pipeline {
     //     stage('Test Code') {
     //       agent {
     //         docker {
-              //  label 'docker'
+              //  label 'docker && !php'
     //           image 'node:10.16.3'
     //         }
     //       }
@@ -88,7 +88,7 @@ pipeline {
           }
           agent {
             docker {
-              label 'docker'
+              label 'docker && !php'
               image 'quay.io/reactiveops/ci-images:v10-stretch'
             }
           }
@@ -110,7 +110,7 @@ pipeline {
       }
       agent {
         docker {
-          label 'docker'
+          label 'docker && !php' 
           image 'quay.io/reactiveops/ci-images:v10-stretch'
           args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
         }
@@ -139,7 +139,7 @@ pipeline {
       }
       agent {
         docker {
-          label 'docker'
+          label 'docker && !php'
           image 'quay.io/reactiveops/ci-images:v10-stretch'
         }
       }
@@ -167,7 +167,7 @@ pipeline {
       }
       agent {
         docker {
-        label 'docker'
+        label 'docker && !php'
           image 'quay.io/reactiveops/ci-images:v10-stretch'
         }
       }
