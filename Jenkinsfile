@@ -81,7 +81,7 @@ pipeline {
             }
           }
           steps {
-            sh 'helm init --client-only'
+            sh 'sudo helm init --client-only'
             sh 'cd deploy/charts/clay-radio && helm dependency update && cd ../../..'
             sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-staging -f ./deploy/staging/staging.values.yml'
             sh 'helm template ./deploy/charts/clay-radio/ --namespace example-staging -f ./deploy/staging/staging.values.yml > ${ROK8S_TMP}/out.yaml'
