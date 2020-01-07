@@ -123,11 +123,12 @@ pipeline {
       }
 
       steps {
-        withCredentials([string(credentialsId: 'dev')])
+        withCredentials([$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']) {
           sh '''prepare-awscli;
             docker-pull -f deploy/build.config;
             docker-build -f deploy/build.config;
             docker-push -f deploy/build.config'''
+        }
       }
     }
 
@@ -151,7 +152,7 @@ pipeline {
       }
 
       steps {
-        withCredentials([string(credentialsId: 'dev')]){
+        withCredentials([$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']) {
           sh "cp ${KUBECONFIG_DATA} ~/.kube/config"
           sh "kubectl config use-context ${ROK8S_CLUSTER}_k8s_admins"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
@@ -179,7 +180,7 @@ pipeline {
       }
 
       steps {
-        withCredentials([string(credentialsId: 'prd')]){
+        withCredentials([$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'prd']) {
           sh "cp ${KUBECONFIG_DATA} ~/.kube/config"
           sh "kubectl config use-context ${ROK8S_CLUSTER}_k8s_admins"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
