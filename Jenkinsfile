@@ -5,9 +5,6 @@ pipeline {
   // Global config
   environment {
     GO111MODULE='on'
-    // ROK8S_TMP = "${env.WORKSPACE}/.tmp"
-    // HELM_HOME = "${env.ROK8S_TMP}/.helm"
-    // HOME = "${env.ROK8S_TMP}"
     CI_SHA1="${env.GIT_COMMIT}"
     CI_BRANCH="${env.TAG_NAME!=null ? "" : env.BRANCH_NAME}"
     CI_BUILD_NUM="${env.BUILD_NUMBER}"
@@ -26,7 +23,6 @@ pipeline {
       steps {
         script {
           // Defaults
-          KUBECONFIG_S3_PATH='s3://entercom-working-infrastructure/working.k8s.radio-dev.com/config'
           ROK8S_CLUSTER='working.k8s.radio-dev.com'
 
           def scmVars = checkout scm
@@ -39,7 +35,6 @@ pipeline {
 
             case "master":
               env.ROK8S_CONFIG='deploy/production.config'
-              KUBECONFIG_S3_PATH='s3://entercom-production-infrastructure/production.k8s.radio-prd.com/config'
               ROK8S_CLUSTER='production.k8s.radio-prd.com'
               break
 
@@ -152,7 +147,6 @@ pipeline {
 
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']]) {
-          sh "cp ${KUBECONFIG_DATA} ~/.kube/config"
           sh "kubectl config use-context ${ROK8S_CLUSTER}_k8s_admins"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
@@ -180,7 +174,6 @@ pipeline {
 
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'prd']]) {
-          sh "cp ${KUBECONFIG_DATA} ~/.kube/config"
           sh "kubectl config use-context ${ROK8S_CLUSTER}_k8s_admins"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
