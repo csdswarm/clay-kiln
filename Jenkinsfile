@@ -147,7 +147,7 @@ pipeline {
 
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']]) {
-          sh "kubectl config use-context ${ROK8S_CLUSTER}_k8s_admins"
+          sh "kubectl config use-context ${ROK8S_CLUSTER}"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
       } 
@@ -174,7 +174,7 @@ pipeline {
 
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'prd']]) {
-          sh "kubectl config use-context ${ROK8S_CLUSTER}_k8s_admins"
+          sh "kubectl config use-context ${ROK8S_CLUSTER}"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
       } 
