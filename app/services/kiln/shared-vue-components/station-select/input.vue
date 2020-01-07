@@ -8,10 +8,11 @@
   <ui-select v-else
     class="station-select station-select-input"
     has-search
-    label="Select a station"
     placeholder="Search a station"
     :options="items"
     v-model="selectedItem"
+    @change="onChange"
+    :filter="filterItems"
   ></ui-select>
 </template>
 
@@ -22,13 +23,16 @@ import { storeNs } from './index.js';
 
 const { UiSelect } = window.kiln.utils.components,
   // the national station doesn't have a slug
-  nationalSlug = '';
+  nationalSlug = '',
+  includes = (value, term) => value.toLowerCase().includes(term.toLowerCase());
 
 export default {
   name: 'station-select',
   props: {
+    onChange: Function,
     initialSelectedSlug: String,
-    initialSelectedCallsign: String
+    initialSelectedCallsign: String,
+    stationOptionLabel: String
   },
   created() {
     this.stationsBySlug = window.kiln.locals.stationsIHaveAccessTo;
@@ -48,11 +52,12 @@ export default {
       const items = _.chain(this.stationsBySlug)
         .map((station, slug) => {
           const { callsign, name } = station;
+          const label = station[this.stationOptionLabel];
 
           return {
             // the national station callsign is for coding purposes afik and would
             //   probably confuse editors.
-            label: callsign === 'NATL-RC'
+            label: label || callsign === 'NATL-RC'
               ? name
               : `${name} | ${callsign}`,
             value: station
@@ -77,6 +82,10 @@ export default {
       }
 
       this.$store.commit(`${storeNs}/_setSelectedItem`, this.items.find(searchPredicate) || {});
+    },
+
+    filterItems({ value }, query) {
+      return !query || includes(value.callsign, query) || includes(value.name, query) || includes(value.slug, query);
     }
   },
   computed: Object.assign(
