@@ -3,7 +3,7 @@
     <div class="page-list-controls">
       <div class="page-list-controls__column">
         <ui-textbox class="page-list-search" v-model.trim="query" type="search" autofocus placeholder="Search by Title or Byline" @input="filterList"></ui-textbox>
-        <station-select class="page-list-override__station-select" stationOptionLabel="callsign" :onChange="stationChanged"/>
+        <station-select class="page-list-override__station-select" allowClear="true" :onChange="stationChanged"/>
       </div>
       <ui-icon-button class="page-list-status-small" type="secondary" icon="filter_list" has-dropdown ref="statusDropdown" @dropdown-open="onPopoverOpen" @dropdown-close="onPopoverClose">
         <status-selector slot="dropdown" :selectedStatus="selectedStatus" :vertical="true" @select="selectStatus"></status-selector>
@@ -55,7 +55,7 @@
    * @param {string} username
    * @return {object}
    */
-  function buildQuery({ queryText, queryUser, offset, statusFilter, isMyPages, username, stationFilter }) { // eslint-disable-line
+  function buildQuery({ queryText, queryUser, offset, statusFilter, isMyPages, username, hasNationalStationAccess, stationFilter, stations }) { // eslint-disable-line
     let query = {
       index: 'pages',
       body: {
@@ -112,7 +112,7 @@
     if (stationFilter) {
       if (stationFilter.slug) {
         query.body.query.bool.must.push({
-          match: {
+          term: {
             stationSlug: stationFilter.slug
           }
         });
@@ -121,8 +121,30 @@
           exists: {
             field: 'stationSlug'
           }
-        })
+        });
       }
+    } else {
+      const stationAccess = {
+        bool: {
+          should: [{
+            terms: {
+              stationSlug: stations
+            }
+          }]
+        }
+      }
+      if (hasNationalStationAccess) {
+        stationAccess.bool.should.push({
+          bool: {
+            must_not: {
+              exists: {
+                field: 'stationSlug'
+              }
+            }
+          }
+        });
+      }
+      query.body.query.bool.must.push(stationAccess);
     }
 
     // filter by search string
@@ -200,7 +222,7 @@
         pages: [],
         selectedStatus: _.get(this.$store, 'state.url.status', 'all'),
         isPopoverOpen: false,
-        stations: Object.values(window.kiln.locals.stationsIHaveAccessTo).map(({callsign}) => callsign)
+        stations: Object.keys(window.kiln.locals.stationsIHaveAccessTo)
       };
     },
     computed: Object.assign(
@@ -257,8 +279,10 @@
           username = _.get(this.$store, 'state.user.username'),
           stationFilter = this.selectedStation,
           statusFilter = this.selectedStatus,
+          stations = this.stations,
+          hasNationalStationAccess = stations.includes(''),
           query = buildQuery({
-            queryText, queryUser, offset, statusFilter, isMyPages, username, stationFilter
+            queryText, queryUser, offset, statusFilter, isMyPages, username, hasNationalStationAccess, stationFilter, stations
           });
         
         return postJSON(uriToUrl(prefix + searchRoute), query).then((res) => {

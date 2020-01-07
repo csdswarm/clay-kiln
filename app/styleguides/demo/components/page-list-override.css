@@ -6,9 +6,11 @@
 }
 
 .page-list-override__station-select {
+    display: flex;
     margin: em(8) 0;
 
-    &.ui-select {
-        margin-bottom: 0;
+    .ui-select {
+        margin: 0 3px 8px 0;
+        flex-grow: 1;
     }
 }
