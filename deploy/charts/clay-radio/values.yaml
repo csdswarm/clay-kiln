@@ -54,4 +54,4 @@ ingress:
     nginx.ingress.kubernetes.io/limit-rps: "10"
     nginx.ingress.kubernetes.io/limit-rpm: "500"
   # The sanitizedBranch value is prefixed to the hostedZones as long as it isn't empty
-  hostedZones: []
+  hostedZones: [cms.radio-dev.com]
