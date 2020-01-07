@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash'),
+  url = require('url'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
   { sites, composer } = require('amphora'),
@@ -38,7 +39,20 @@ function getPrefixAndKey(path) {
 const routes = [
   // contest-rules
   {
-    testPath: req => req.path.indexOf('/contest-rules') === 0,
+    testPath: req => {
+      const { pathname } = url.parse(req.url);
+
+      return pathname === '/contest-rules';
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
+  },
+  // contests page
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url);
+
+      return pathname === '/contests';
+    },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
   // [default route handler] resolve the uri and page instance
