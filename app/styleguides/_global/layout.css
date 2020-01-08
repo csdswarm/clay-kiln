@@ -1,9 +1,11 @@
 /* editing template */
-[data-uri*="/instances/new"] .kiln-placeholder,
-[data-uri*="/instances/new"] .body__circulation {
-  background-color: $blue;
+.kiln-edit-mode--template:not(.kiln-edit-mode--layout) { 
+  .kiln-placeholder,
+  .body__circulation {
+    background-color: $blue;
+  }
 }
 /* editing layout */
-[data-uri*="/instances/default"] .kiln-placeholder {
+.kiln-edit-mode--layout [data-uri*="/instances/default"] .kiln-placeholder {
   background-color: $pizazz;
 }
