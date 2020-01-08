@@ -23,6 +23,7 @@ pipeline {
         script {
           // Defaults
           ROK8S_CLUSTER='working.k8s.radio-dev.com'
+          CRED_ID='dev'
 
           def scmVars = checkout scm
           env.GIT_COMMIT = "${scmVars.GIT_COMMIT}"
@@ -30,12 +31,10 @@ pipeline {
           switch (env.BRANCH_NAME) {
             case "develop":
               env.ROK8S_CONFIG='deploy/development.config'
-              CRED_ID='dev'
               break
 
             case "staging":
               env.ROK8S_CONFIG='deploy/staging.config'
-              CRED_ID='dev'
               break
 
             case "master":
