@@ -61,6 +61,12 @@ spec:
             runAsNonRoot: true
             runAsUser: 1000
             readOnlyRootFilesystem: true
+          volumeMounts:
+          - mountPath: /usr/src/app/.pm2
+            name: cache
+      volumes:
+      - name: cache
+        emptyDir: {}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
