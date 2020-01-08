@@ -11,6 +11,6 @@ RUN npm ci
 # Build application source into image and run container
 COPY . $HOME/
 
-RUN npm run build
+RUN npm run build-production
 
 EXPOSE 3001

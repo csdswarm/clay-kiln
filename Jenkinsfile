@@ -80,17 +80,17 @@ pipeline {
     stage('Test') {
         // branch ON-* 
       parallel {
-        stage('Lint spa') {
-          agent {
-            docker {
-              label 'docker && !php'
-              image 'node:10.16.3'
-            }
-          }
-          steps {
-            sh 'cd spa && npm run lint -- --no-fix'
-          }
-        }
+        // stage('Lint spa') {
+        //   agent {
+        //     docker {
+        //       label 'docker && !php'
+        //       image 'node:10.16.3'
+        //     }
+        //   }
+        //   steps {
+        //     sh 'cd spa && npm run lint -- --no-fix'
+        //   }
+        // }
 
         stage('Lint app') {
           agent {
@@ -100,7 +100,7 @@ pipeline {
             }
           }
           steps {
-            sh 'npm run eslint'
+            sh 'cd /usr/src/app && npm run eslint'
           }
         }
 
