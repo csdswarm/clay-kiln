@@ -36,4 +36,29 @@ const v1 = async cb => {
   }
 };
 
-module.exports = { v1 };
+/**
+ * this does the same thing as v1 except returns the result of `cb`
+ *
+ * @param {function} cb - called with an instance of pg's Pool
+ * @returns {*} - the result of cb
+ */
+const v2 = async cb => {
+  const pool = new Pool({
+    user: PGUSER,
+    host: PGHOST,
+    password: PGPASSWORD,
+    database: PGDATABASE
+  });
+
+  return cb(pool)
+    .finally(() => {
+      if (pool) {
+        pool.end();
+      }
+    });
+};
+
+module.exports = {
+  v1,
+  v2,
+};
