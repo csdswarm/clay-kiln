@@ -121,8 +121,8 @@ pipeline {
             sh ''
             sh 'helm init --client-only'
             sh 'cd deploy/charts/clay-radio && helm dependency update && cd ../../..'
-            sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/working/working.values.yml'
-            sh 'helm template ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/working/working.values.yml > ${ROK8S_TMP}/out.yaml'
+            sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/production/production.values.yml'
+            sh 'helm template ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/production/production.values.yml > ${ROK8S_TMP}/out.yaml'
           }
         }
       }
