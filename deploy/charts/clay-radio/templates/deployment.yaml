@@ -59,6 +59,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           securityContext:
             runAsNonRoot: true
+            runAsUser: 1000
             readOnlyRootFilesystem: true
       {{- with .Values.nodeSelector }}
       nodeSelector:
