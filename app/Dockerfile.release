@@ -1,0 +1,16 @@
+FROM node:10.16.3
+
+ENV HOME=/usr/src/app
+
+COPY package.json $HOME/
+COPY package-lock.json $HOME/
+
+WORKDIR $HOME/
+RUN npm ci
+
+# Build application source into image and run container
+COPY . $HOME/
+
+RUN npm run build
+
+EXPOSE 3001

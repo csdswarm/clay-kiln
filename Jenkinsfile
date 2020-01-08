@@ -4,7 +4,6 @@ pipeline {
 
   // Global config
   environment {
-    GO111MODULE='on'
     CI_SHA1="${env.GIT_COMMIT}"
     CI_BRANCH="${env.TAG_NAME!=null ? "" : env.BRANCH_NAME}"
     CI_BUILD_NUM="${env.BUILD_NUMBER}"
@@ -47,54 +46,6 @@ pipeline {
       }
     }
 
-    // stage('Test') {
-    //     // branch ON-* 
-    //   parallel {
-    //     stage('Test Code') {
-    //       agent {
-    //         docker {
-              //  label 'docker && !php'
-    //           image 'node:10.16.3'
-    //         }
-    //       }
-    //       steps {
-    //         // when does the git clone happen?
-    //         // build setup
-    //         sh 'mkdir -p build_directory'
-    //         sh 'cd build_directory;
-    //             echo "Build Clay & Compile Assets";
-    //             make install'
-    //         sh 'echo "Lint Clay App";
-    //             cd app && npm run eslint'
-    //         sh 'echo "Lint SPA";
-    //             cd spa && npm run lint -- --no-fix'
-    //         // build teardown 
-    //       }
-    //       // need to build in logic for default pipeline and custom pipeline 
-    //     }
-
-        stage('Test Chart') {
-          environment {
-            ROK8S_TMP = "${env.WORKSPACE}/.tmp"
-            HELM_HOME = "${env.ROK8S_TMP}/.helm"
-            HOME = "${env.ROK8S_TMP}"
-          }
-          agent {
-            docker {
-              label 'docker && !php'
-              image 'quay.io/reactiveops/ci-images:v10-stretch'
-            }
-          }
-          steps {
-            sh ''
-            sh 'helm init --client-only'
-            sh 'cd deploy/charts/clay-radio && helm dependency update && cd ../../..'
-            sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/working/working.values.yml'
-            sh 'helm template ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/working/working.values.yml > ${ROK8S_TMP}/out.yaml'
-          }
-        }
-      
-
     stage('Build') {
       environment {
         ROK8S_TMP = "${env.WORKSPACE}/.tmp"
@@ -126,6 +77,56 @@ pipeline {
       }
     }
 
+    stage('Test') {
+        // branch ON-* 
+      parallel {
+        stage('Lint spa') {
+          agent {
+            docker {
+              label 'docker && !php'
+              image 'node:10.16.3'
+            }
+          }
+          steps {
+            sh 'cd spa && npm run lint -- --no-fix'
+          }
+        }
+
+        stage('Lint app') {
+          agent {
+            docker {
+              label 'docker && !php'
+              image "477779916141.dkr.ecr.us-east-1.amazonaws.com/k8s-entercom/clay-radio:${env.GIT_COMMIT}"
+            }
+          }
+          steps {
+            sh 'npm run eslint'
+          }
+        }
+
+        stage('Test Chart') {
+          environment {
+            ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+            HELM_HOME = "${env.ROK8S_TMP}/.helm"
+            HOME = "${env.ROK8S_TMP}"
+          }
+          agent {
+            docker {
+              label 'docker && !php'
+              image 'quay.io/reactiveops/ci-images:v10-stretch'
+            }
+          }
+          steps {
+            sh ''
+            sh 'helm init --client-only'
+            sh 'cd deploy/charts/clay-radio && helm dependency update && cd ../../..'
+            sh 'helm lint ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/working/working.values.yml'
+            sh 'helm template ./deploy/charts/clay-radio/ --namespace example-working -f ./deploy/working/working.values.yml > ${ROK8S_TMP}/out.yaml'
+          }
+        }
+      }
+    }
+
     stage('Deploy Develop or Staging') {
       environment {
         ROK8S_TMP = "${env.WORKSPACE}/.tmp"
@@ -148,7 +149,7 @@ pipeline {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']]) {
           sh 'prepare-kubectl'
-          sh "kubectl config use-context ${ROK8S_CLUSTER}"
+          sh 'kubectl config use-context ${ROK8S_CLUSTER}'
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
       } 
@@ -176,7 +177,7 @@ pipeline {
       steps {
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'prd']]) {
           sh 'prepare-kubectl'
-          sh "kubectl config use-context ${ROK8S_CLUSTER}"
+          sh 'kubectl config use-context ${ROK8S_CLUSTER}'
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
       } 
