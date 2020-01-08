@@ -97,6 +97,7 @@ pipeline {
             docker {
               label 'docker && !php'
               image "477779916141.dkr.ecr.us-east-1.amazonaws.com/k8s-entercom/clay-radio:${env.GIT_COMMIT}"
+              args '-u root' // Run as root to have write access to .config
             }
           }
           steps {

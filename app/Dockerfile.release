@@ -14,3 +14,5 @@ COPY . $HOME/
 RUN npm run build-production
 
 EXPOSE 3001
+
+USER node
