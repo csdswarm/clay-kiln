@@ -28,19 +28,25 @@ pipeline {
           env.GIT_COMMIT = "${scmVars.GIT_COMMIT}"
 
           switch (env.BRANCH_NAME) {
-            case "develop" || "staging":
-              env.ROK8S_CONFIG='deploy/working.config'
+            case "develop":
+              env.ROK8S_CONFIG='deploy/development.config'
+              CRED_ID='dev'
+              break
+
+            case "staging":
+              env.ROK8S_CONFIG='deploy/staging.config'
+              CRED_ID='dev'
               break
 
             case "master":
               env.ROK8S_CONFIG='deploy/production.config'
               ROK8S_CLUSTER='production.k8s.radio-prd.com'
+              CRED_ID='prd'
               break
 
-            case ~/ON-.*/:
-            case ~/(.*\/)?feature-.*/:
-              env.ROK8S_CONFIG='deploy/feature.config'
-              break
+            // case ~/ON-.*/:
+            //   env.ROK8S_CONFIG='deploy/feature.config'
+            //   break
           }
         }
       }
@@ -57,12 +63,6 @@ pipeline {
           label 'docker && !php' 
           image 'quay.io/reactiveops/ci-images:v10-stretch'
           args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
-        }
-      }
-
-      when {
-        expression {
-          return env.BRANCH_NAME == 'master'|| env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME ==~ /(.*\/)?feature-.*/
         }
       }
 
@@ -128,7 +128,7 @@ pipeline {
       }
     }
 
-    stage('Deploy Develop or Staging') {
+    stage('Deploy') {
       environment {
         ROK8S_TMP = "${env.WORKSPACE}/.tmp"
         HELM_HOME = "${env.ROK8S_TMP}/.helm"
@@ -143,45 +143,17 @@ pipeline {
 
       when {
         expression {
-          return env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME ==~ /(.*\/)?feature-.*/
+          return env.BRANCH_NAME == 'master'|| env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME ==~ /(.*\/)?feature-.*/
         }
       }
 
       steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']]) {
+        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: "${CRED_ID}"]]) {
           sh 'prepare-kubectl'
           sh "kubectl config use-context ${ROK8S_CLUSTER}"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
       } 
     }
-
-    stage('Deploy Production') {
-      environment {
-        ROK8S_TMP = "${env.WORKSPACE}/.tmp"
-        HELM_HOME = "${env.ROK8S_TMP}/.helm"
-        HOME = "${env.ROK8S_TMP}"
-      }
-      agent {
-        docker {
-        label 'docker && !php'
-          image 'quay.io/reactiveops/ci-images:v10-stretch'
-        }
-      }
-
-      when {
-        expression {
-          return env.BRANCH_NAME == 'master'
-        }
-      }
-
-      steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'prd']]) {
-          sh 'prepare-kubectl'
-          sh "kubectl config use-context ${ROK8S_CLUSTER}"
-          sh 'helm-deploy -f ${ROK8S_CONFIG}'
-        }
-      } 
-    } 
   }
 }
