@@ -1,0 +1,17 @@
+_components:
+  more-content-feed:
+    componentTitle: 'TOP STORIES'
+    componentTitleVisible: true
+    pageSize: 6
+    curatedItems: []
+    tag: ''
+    tagManual: ''
+    contentType: { article: true, gallery: true }
+    sectionFront: ''
+    sectionFrontManual: ''
+    secondarySectionFront: ''
+    secondarySectionFrontManual: ''
+    filterTags: []
+    filterSecondarySectionFronts: []
+    populateFrom: ''
+    locationOfContentFeed: ''

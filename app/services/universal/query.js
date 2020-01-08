@@ -2,14 +2,14 @@
 
 const _ = require('lodash'),
   utils = require('../universal/utils'),
-  protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
+  protocol = process ? `${ _.get(process, 'env.CLAY_SITE_PROTOCOL', 'https') }:` : window.location.protocol;
 
 /**
-* Returns an item's id by extracting it from the uri
-*
-* @param {String} uri
-* @returns {String}
-*/
+ * Returns an item's id by extracting it from the uri
+ *
+ * @param {String} uri
+ * @returns {String}
+ */
 function getItemId(uri) {
   return uri.split('/').slice(-1)[0]
     // clay appends this to published item uris so we want to exclude this
@@ -96,7 +96,7 @@ function newQuery(index, query) {
  * @return {Object}
  */
 function createAction(query, item, action) {
-  const key = `${getRoot(query)}.query.bool.${action}`,
+  const key = `${ getRoot(query) }.query.bool.${ action }`,
     data = _.get(query, key, undefined),
     itemIsArray = _.isArray(item);
 
@@ -111,7 +111,7 @@ function createAction(query, item, action) {
     if (itemIsArray) {
       _.set(query, key, item);
     } else {
-      _.set(query, key, [item]);
+      _.set(query, key, [ item ]);
     }
   }
 
@@ -164,7 +164,7 @@ function addMustNot(query, item) {
  * @return {Object}
  */
 function addFilter(query, item) {
-  const key = `${getRoot(query)}.query.bool.filter`,
+  const key = `${ getRoot(query) }.query.bool.filter`,
     filter = _.get(query, key, undefined),
     itemIsObject = _.isObject(item);
 
@@ -177,7 +177,7 @@ function addFilter(query, item) {
       filter.push(item);
       _.set(query, key, filter);
     } else {
-      _.set(query, key, [ _.cloneDeep(filter), item ] );
+      _.set(query, key, [ _.cloneDeep(filter), item ]);
     }
   } else {
     _.set(query, key, item);
@@ -198,7 +198,7 @@ function addFilter(query, item) {
  * @return {Object}
  */
 function addMinimumShould(query, num) {
-  const key = `${getRoot(query)}.query.bool.minimum_should_match`;
+  const key = `${ getRoot(query) }.query.bool.minimum_should_match`;
 
   if (typeof num !== 'number') {
     throw new Error('A number is required as the second argument');
@@ -244,7 +244,7 @@ function addSize(query, size) {
   }
   size = parseInt(size);
   if (isNaN(size)) {
-    throw new Error(`Second argument must be a number: ${size}`);
+    throw new Error(`Second argument must be a number: ${ size }`);
   }
   return _.set(query, 'body.size', size);
 }
@@ -318,7 +318,7 @@ function withinThisSiteAndCrossposts(query, site) {
  */
 function moreLikeThis(query, id, opts) {
   const defaultOpts = {
-    fields: ['tags'],
+    fields: [ 'tags' ],
     like: {
       _index: query.index, // prefixed index name
       _type: '_doc',
@@ -369,7 +369,7 @@ function addAggregation(query = {}, options) {
  */
 function formatAggregationResults(aggregationName = '', field = '', skipEmpty = true) {
   return function (results = {}) {
-    let parsedData = _.get(results, `aggregations.${aggregationName}.buckets`, []);
+    let parsedData = _.get(results, `aggregations.${ aggregationName }.buckets`, []);
 
     if (skipEmpty) {
       parsedData = parsedData.filter(result => _.get(result, 'doc_count', 0) !== 0);
@@ -393,7 +393,7 @@ function newNestedQuery(path) {
   return {
     nested: {
       path,
-      query: { }
+      query: {}
     }
   };
 }
@@ -408,35 +408,100 @@ function newNestedQuery(path) {
  * @return {Object}
  */
 function addSearch(query, searchTerm, fields) {
-  const key = `${getRoot(query)}.query`,
+  const key = `${ getRoot(query) }.query`,
     value = {
       query_string: {
         query: searchTerm.replace(/([\/|:])/g, '\\$1'),
-        fields: _.isArray(fields) ? fields : [fields]
+        fields: _.isArray(fields) ? fields : [ fields ]
       }
     };
 
-  _.set(query, key,  value);
+  _.set(query, key, value);
 
   return query;
 }
 
+/**
+ * wraps a key and value in an elastic search match object that searches for both the initial value as well as lowercase
+ * @param {string} key
+ * @param {string} value
+ * @returns {{bool: {should: [{match: {}}, {match: {}}], minimum_should_match: number}}}
+ */
+function matchIgnoreCase(key, value) {
+  return {
+    bool: {
+      should: [
+        matchSimple(key, value),
+        matchSimple(key, value.toLowerCase())
+      ],
+      minimum_should_match: 1
+    }
+  };
+}
+
+/**
+ * wraps a key and value in an elastic search match object
+ * @param {string} key
+ * @param {string} value
+ * @returns {{match: {}}}
+ */
+function matchSimple(key, value) {
+  return { match: { [key]: value } };
+}
+
+/**
+ * wraps a key and set of values in an elastic search terms object
+ * @param {string} key
+ * @param {string[]} values
+ * @returns {{terms: {}}}
+ */
+function terms(key, values) {
+  return {
+    terms: {
+      [key]: values
+    }
+  };
+}
+
 module.exports = newQuery;
-module.exports.addAggregation = addAggregation;
-module.exports.addShould = addShould;
-module.exports.addFilter = addFilter;
-module.exports.addMust = addMust;
-module.exports.addMustNot = addMustNot;
-module.exports.addMinimumShould = addMinimumShould;
-module.exports.addSort = addSort;
-module.exports.addSize = addSize;
-module.exports.addOffset = addOffset;
-module.exports.onlyWithTheseFields = onlyWithTheseFields;
-module.exports.onlyWithinThisSite = onlyWithinThisSite;
-module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
-module.exports.formatAggregationResults = formatAggregationResults;
-module.exports.formatSearchResult = formatSearchResult;
-module.exports.formatProtocol = formatProtocol;
-module.exports.moreLikeThis = moreLikeThis;
-module.exports.newNestedQuery = newNestedQuery;
-module.exports.addSearch = addSearch;
+Object.assign(module.exports, {
+  addAggregation,
+  addFilter,
+  addMinimumShould,
+  addMust,
+  addMustNot,
+  addOffset,
+  addSearch,
+  addShould,
+  addSize,
+  addSort,
+  formatAggregationResults,
+  formatProtocol,
+  formatSearchResult,
+  matchIgnoreCase,
+  matchSimple,
+  moreLikeThis,
+  newNestedQuery,
+  onlyWithTheseFields,
+  onlyWithinThisSite,
+  terms,
+  withinThisSiteAndCrossposts
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
