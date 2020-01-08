@@ -2,7 +2,7 @@
 
 /**
  * Add classes to document body when edit mode is triggered on template or layout
- * 
+ *
  * @param {object} kilnInput
  */
 module.exports = kilnInput => {
