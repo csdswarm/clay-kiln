@@ -5,7 +5,6 @@ const glob = require('glob'),
 module.exports = function (env) {
   const partials = glob.sync(path.resolve(__dirname, '../../global/_partials', '**', '*.hbs'));
 
-  console.log('[partials]', partials);
   if (!env) {
     const
       handlebars = require('handlebars'),
