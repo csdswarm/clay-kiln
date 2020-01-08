@@ -66,7 +66,7 @@ module.exports = function (data, locals) {
 
   if (data.lead) {
     transform.push({
-      lead: { _cdata: renderContent(data.lead, locals) }
+      lead: { _cdata: renderContent(data.lead, locals, { lead: true }) }
     });
   }
 
