@@ -30,6 +30,7 @@ pipeline {
 
           switch (env.BRANCH_NAME) {
             case "develop":
+            case ~/(.*\/)?feature-.*/: //Tmp for fairwinds testing
               env.ROK8S_CONFIG='deploy/development.config'
               break
 
