@@ -1,5 +1,6 @@
 _description: |
-  This is a modified version of more-content-feed that focuses on using small cards and a more modular approach to data
+  A content feed made up of primarily only headlines
+
 
 contentType:
   _label: Content type
@@ -199,23 +200,6 @@ curatedItems:
           validate:
             max: 80
       -
-        prop: overrideContentType
-        _label: Content Type
-        _has:
-          help: The type of media on the lede of the page
-          input: radio
-          options:
-            - image
-            -
-              name: instagram
-              value: instagram-post
-            - brightcove
-            - youtube
-            - verizon-media
-            -
-              name: html embed
-              value: html-embed
-      -
         prop: ignoreValidation
         _label: Bypass URL Validation?
         _has:
@@ -236,6 +220,7 @@ _groups:
       - pageSize
       - autoPopulatedContentHeader
       - populateFrom
+      - locationOfContentFeed
       - sectionFrontManual
       - secondarySectionFrontManual
       - tagManual

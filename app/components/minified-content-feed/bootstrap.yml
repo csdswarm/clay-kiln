@@ -1,5 +1,5 @@
 _components:
-  more-content-feed:
+  minified-content-feed:
     componentTitle: 'TOP STORIES'
     componentTitleVisible: true
     pageSize: 6
@@ -13,5 +13,5 @@ _components:
     secondarySectionFrontManual: ''
     filterTags: []
     filterSecondarySectionFronts: []
-    populateFrom: ''
-    locationOfContentFeed: ''
+    populateFrom: 'all-content'
+    locationOfContentFeed: 'homepage'

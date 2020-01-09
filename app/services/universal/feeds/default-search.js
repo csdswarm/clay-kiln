@@ -1,11 +1,13 @@
 'use strict';
-const {
+const
+  getData = require('./get-data'),
+  { getArticleDataAndValidate } = require('../recirc-cmpt'),
+  { isComponent } = require('clayutils'),
+  {
     matchIgnoreCase,
     matchSimple,
     terms
   } = require('../../server/query'),
-  getData = require('./get-data'),
-  { isPage } = require('clayutils'),
   elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -35,10 +37,10 @@ const {
  *
  * @param {object} data
  * @param {object?} locals
- * @param {} data.contentType
- * @param data.curatedItems
+ * @param {object} data.contentType
+ * @param {object[]} data.curatedItems
  * @param {object?} data.filterSecondarySectionFronts
- * @param {object[]?} data.filterTags
+ * @param {object[]|undefined} data.filterTags
  * @param {number} data.pageSize
  * @param {number?} data.offset
  * @param {string} data.populateFrom
@@ -52,12 +54,11 @@ const {
  * @param {object?} locals.params
  * @param {string?} locals.secondarySectionFront
  * @param {string?} locals.sectionFront
- * @param {object} locals.site
  * @param {*?} locals.tag
  * @param {string} locals.url
  * @returns {Promise<*[]>}
  */
-module.exports = async function (data, locals = {}) {
+module.exports.getList = async function (data, locals = {}) {
   const {
       contentType,
       curatedItems,
@@ -78,7 +79,6 @@ module.exports = async function (data, locals = {}) {
       params = {},
       secondarySectionFront: localSecondarySectionFront,
       sectionFront: localSectionFront,
-      site,
       tag: localTag,
       url
     } = locals,
@@ -103,7 +103,7 @@ module.exports = async function (data, locals = {}) {
     results = [];
 
   if (contentTypes.length) {
-    filter = terms({ contentType: contentTypes });
+    filter = terms('contentType', contentTypes);
   }
 
   if ([ 'tag', 'section-front-and-tag', 'section-front-or-tag' ].includes(populateFrom)) {
@@ -123,7 +123,7 @@ module.exports = async function (data, locals = {}) {
 
     tags = [].concat(tags);
 
-    conditions.concat(tags.map(tag => matchSimple({ 'tags.normalized': tag })));
+    conditions.push(...tags.map(tag => matchSimple('tags.normalized', tag)));
   }
 
   if ([ 'section-front', 'section-front-and-tag', 'section-front-or-tag' ].includes(populateFrom)) {
@@ -144,38 +144,41 @@ module.exports = async function (data, locals = {}) {
     }
   }
 
+
   if (populateFrom === 'author') {
     const author = localAuthor || paramAuthor || dynamicAuthor;
 
     if (!author) {
       return;
     }
-    musts.push(matchSimple({ 'authors.normalized': author }));
+    musts.push(matchSimple('authors.normalized', author));
   } else if (populateFrom === 'all-content') {
     if (locals === {}) {
       return;
     }
   }
 
-  mustNots.concat(filterTags.map(({ text }) => matchSimple({ 'tags.normalized': text })));
+  mustNots.push(...filterTags.map(({ text }) => matchSimple('tags.normalized', text)));
 
   getTrueKeys(filterSecondarySectionFronts).forEach(secondarySectionFront => {
-    mustNots.push(matchSimple({ secondarySectionFront }));
-    mustNots.push(matchSimple({ secondarySectionFront: secondarySectionFront.toLowerCase() }));
+    mustNots.push(matchSimple('secondarySectionFront', secondarySectionFront));
+    mustNots.push(matchSimple('secondarySectionFront', secondarySectionFront.toLowerCase()));
   });
 
   // exclude the current page in results
-  if (url && isPage(url)) {
+  if (url && !isComponent(url)) {
     const canonicalUrl = canonicalizeUrl(url);
 
-    mustNots.push(matchSimple(canonicalUrl));
+    mustNots.push(matchSimple('canonicalUrl', canonicalUrl));
 
     if (curatedItems) {
-      mustNots.concat(curatedItems
+      mustNots.push(...curatedItems
         // not sure canonicalUrl really needs to be canonicalized, but leaving this way for safety
-        .map(({ canonicalUrl }) => canonicalizeUrl(canonicalUrl || ''))
-        .filter(String)
-        .map(canonicalUrl => matchSimple({ canonicalUrl }))
+        .map(({ canonicalUrl }) => {
+          return canonicalizeUrl(canonicalUrl || '');
+        })
+        .filter(url => url)
+        .map(canonicalUrl => matchSimple('canonicalUrl', canonicalUrl))
       );
     }
   }
@@ -189,7 +192,7 @@ module.exports = async function (data, locals = {}) {
     musts,
     offset,
     shoulds,
-    site
+    locals
   });
 
   results.forEach(content => content.lead = content.lead[0]._ref.split('/')[2]);
@@ -199,4 +202,24 @@ module.exports = async function (data, locals = {}) {
   }
 
   return results.slice(0, pageSize);
+};
+
+module.exports.getItemsWithValidation = (ref, curatedItems, locals) => {
+  if (curatedItems && curatedItems.length && locals) {
+    return Promise.all(curatedItems.map(async item => {
+      const result = await getArticleDataAndValidate(ref, item, locals, elasticFields);
+
+      return {
+        ...item,
+        primaryHeadline: item.overrideTitle || result.primaryHeadline,
+        pageUri: result.pageUri,
+        urlIsValid: result.urlIsValid,
+        canonicalUrl: item.url || result.canonicalUrl,
+        sectionFront: item.overrideSectionFront || result.sectionFront,
+        date: item.overrideDate || result.date,
+        lead: item.overrideContentType || result.leadComponent
+      };
+    }));
+  }
+  return [];
 };

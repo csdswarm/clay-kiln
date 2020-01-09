@@ -11,7 +11,7 @@ module.exports = (type, data, content, options) => {
         ...options.track
       },
       type,
-      url: item.url
+      url: item.canonicalUrl
     };
 
     if (options.fields.includes('category')) {

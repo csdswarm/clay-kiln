@@ -26,7 +26,7 @@ const
  * @param {object[]} params.musts matches that must appear in the results
  * @param {number?} params.offset the point where the query should begin returning values when paging occurs
  * @param {object[]} params.shoulds matches that should appear in the results
- * @param {object} params.site
+ * @param {object} params.locals
  * @param {object?} params.sort the field and direction to sort on
  * @returns {Promise|*}
  */
@@ -40,17 +40,17 @@ module.exports = function (params) {
       musts = [],
       offset,
       shoulds = [],
-      site,
+      locals,
       sort = { date: 'desc' }
     } = params,
 
-    query = newQueryWithCount(index, limit, { site });
+    query = newQueryWithCount(index, limit, locals);
 
   if (filter) {
     addFilter(query, filter);
   }
 
-  onlyWithinThisSite(query, site);
+  onlyWithinThisSite(query, locals.site);
   onlyWithTheseFields(query, fields);
 
   if (offset) {
