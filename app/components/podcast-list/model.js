@@ -3,6 +3,8 @@
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
   utils = require('../../services/universal/podcast'),
+  logger = require('../../services/universal/log'),
+  log = logger.setup({ file: __filename }),
   maxItems = 4,
   backFillThreshold = 3,
   /**
@@ -48,41 +50,51 @@ module.exports.render = async function (ref, data, locals) {
     return data;
   }
 
-  let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
-
-  if (locals.sectionFront || locals.secondarySectionFront) {
-    const podcastCategoryID = await getPodcastCategoryID(locals.secondarySectionFront || locals.sectionFront, locals);
-
-    if (podcastCategoryID) {
-      podcastsFilter = { ...podcastsFilter, filter: { category_id: podcastCategoryID } };
-    }
-  }
-
   try {
-    const podcasts = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals),
-      shouldBackFill = podcasts
-        && backFillEnabled
-        && data.items.length <= backFillThreshold;
+    const curatedCount = data.items.length,
+      shouldBackFill = backFillEnabled
+        && curatedCount <= backFillThreshold;
 
     if (shouldBackFill) {
-      podcasts.forEach((podcast) => {
-        const url = utils.createUrl(podcast.attributes.title),
-          isUnique = !containsUrl(data.items, url);
+      let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
 
-        if (isUnique) {
-          data.items.push({
-            podcast: {
-              label: podcast.attributes.title,
-              title: podcast.attributes.title,
-              url,
-              imageUrl: utils.createImageUrl(podcast.attributes.image)
-            }
-          });
+      if (locals.sectionFront || locals.secondarySectionFront) {
+        const podcastCategoryID = await getPodcastCategoryID(locals.secondarySectionFront || locals.sectionFront, locals);
+
+        if (podcastCategoryID) {
+          podcastsFilter = { ...podcastsFilter, filter: { category_id: podcastCategoryID } };
         }
-      });
+      }
+
+      const { data: podcasts } = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals),
+        numItemsToBackFill = maxItems - curatedCount,
+        uniqueUrls = (podcast) => {
+          const url = utils.createUrl(podcast.attributes.title);
+
+          return !containsUrl(data.items, url);
+        },
+        itemsToBackFill = podcasts
+          .filter(uniqueUrls)
+          .slice(0, numItemsToBackFill)
+          .map((podcast) => {
+            const url = utils.createUrl(podcast.attributes.title);
+
+            return {
+              podcast: {
+                label: podcast.attributes.title,
+                title: podcast.attributes.title,
+                url,
+                imageUrl: utils.createImageUrl(podcast.attributes.image)
+              }
+            };
+          });
+
+      data.items.push(
+        ...itemsToBackFill
+      );
     }
   } catch (e) {
-    console.log(e);
+    log('error', 'issue backfilling podcasts', e);
   }
 
   return data;
