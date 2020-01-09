@@ -66,8 +66,7 @@ async function republishPageUris_v1(
       try {
         log.info(uri);
 
-        const componentName = clayutils.getComponentName(uri),
-          dbResult = await db.query(
+        const dbResult = await db.query(
             `select data from pages where id = $1`,
             [uri]
           ),
