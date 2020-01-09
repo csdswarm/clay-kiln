@@ -34,10 +34,13 @@ stationsCarousel:
     include:
       - stations-carousel
 
-sectionLead:
-  _component:
+mainContent:
+  _placeholder:
+    text: Main Content
+    height: 100px
+  _componentList:
     include:
-      - section-lead
+    - multi-column
 
 latestContent:
   _component:

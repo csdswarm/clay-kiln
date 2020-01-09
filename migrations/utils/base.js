@@ -21,6 +21,7 @@ module.exports = {
   _has: require('../../app/node_modules/lodash/has'),
   _identity: require('../../app/node_modules/lodash/identity'),
   _set: require('../../app/node_modules/lodash/set'),
+  _unset: require('../../app/node_modules/lodash/unset'),
   claycli: require('../../app/node_modules/claycli'),
   clayutils: require('../../app/node_modules/clayutils'),
   clone: obj => obj && JSON.parse(JSON.stringify(obj)),
