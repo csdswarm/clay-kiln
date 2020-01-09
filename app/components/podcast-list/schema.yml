@@ -54,6 +54,9 @@ backFillEnabled:
   _label: Enable automatic backfilling of Podcast items
   _has:
     input: checkbox
+sectionFront:
+  _label: Section Front
+  _subscribe: sectionFront
 
 _groups:
   settings:
