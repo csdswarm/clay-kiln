@@ -224,7 +224,11 @@ module.exports['10.0'] = function (uri, data) {
 };
 
 module.exports['11.0'] = (uri, data) => {
-  data.feeds.smartNews = true;
+  data.feeds = {
+    rss: true,
+    'apple-news': true,
+    smartNews: true
+  };
 
   return data;
 };
