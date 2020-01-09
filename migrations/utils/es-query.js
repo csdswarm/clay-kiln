@@ -69,7 +69,7 @@ function esQuery_v1(params) {
  *   - required you to pass the size separately from the query which should
  *     be unnecessary.
  *   - contained a lot of unused parameters.  If we need any of them then in the
- *     future they can be added as an object in the third parameter which can be
+ *     future they can be added as an object in a third parameter which can be
  *     done without bumping the version.
  *   - should have used axios to simplify the request logic
  *
