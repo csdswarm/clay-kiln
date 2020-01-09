@@ -106,13 +106,11 @@ async function republishPageUris_v1(
       );
     }
 
-    if (fail.length) {
-      log.error(
-        '\n\ncontent errored when attempting to re-publish'
-        + '\n---------------------------------------------'
-        + '\n' + fail.map(formatFail).join('\n\n')
-      );
-    }
+    log.error(
+      '\n\ncontent errored when attempting to re-publish'
+      + '\n---------------------------------------------'
+      + '\n' + fail.map(formatFail).join('\n\n')
+    );
   }
 
   return {
