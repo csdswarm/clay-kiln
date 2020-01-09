@@ -19,8 +19,7 @@ col3:
   _componentList:
     fuzzy: true
     include:
-      - paragraph # TODO: replace with top-stories component when it's created
-      - blockquote
+      - minified-content-feed
 
 mediumRectangleTop:
   _component:
