@@ -1,5 +1,7 @@
 _components:
   more-content-feed:
+    componentTitle: 'MORE from RADIO.COM'
+    componentTitleVisible: true
     pageLength: 5
     maxLength: ''
     items: []

@@ -338,7 +338,7 @@
 
           if (status === 200 && updateResponse.id) {
             this.updatedVideo = updateResponse;
-            this.transformedVideo = transformVideoResults([updateResponse])[0];
+            this.transformedVideo = await transformVideoResults([updateResponse])[0];
 
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.transformedVideo });
             this.setUpdateStatus(SUCCESS, `Successfully updated video. Last Updated: ${ updateResponse.updated_at }`);

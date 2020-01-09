@@ -1,13 +1,24 @@
 {{#if initialLoad}}
-  <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
-           data-track-populate-from="{{ populateFrom }}"
-           data-track-location="{{ locationOfContentFeed }}"
-           data-uri="{{ default _ref _self }}"
-           data-track-type="more-content-feed"
-           data-lazy-loads="{{ lazyLoads }}">
-    {{#if (compare locationOfContentFeed 'homepage')}}
-        <h2 class="more-content-feed__title"><span>MORE from RADIO.COM</span></h2>
-    {{/if}}
+  <section
+    class="component component--more-content-feed
+    {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}
+    {{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
+    data-track-populate-from="{{ populateFrom }}"
+    data-track-location="{{ locationOfContentFeed }}"
+    data-uri="{{ default _ref _self }}"
+    data-track-type="more-content-feed"
+    data-lazy-loads="{{ lazyLoads }}"
+  >
+    <h2 class="more-content-feed__title
+      {{#if sectionFront }}more-content-feed__title--{{ sectionFront }}{{/if}}
+      {{#if primarySectionFront }}more-content-feed__title--{{ primarySectionFront }}{{/if}}
+      {{#if station }}more-content-feed__title--station-front{{/if}}"
+      data-editable="header"
+    >
+      {{#if componentTitleVisible}}
+        <span>{{ componentTitle }}</span>
+      {{/if}}
+    </h2>
     <div class="more-content-feed__container">
       <div class="more-content-feed__content">
         {{#unless dynamicTagPage}}

@@ -63,7 +63,7 @@ module.exports.render = async function (ref, data, locals) {
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
       cleanUrl = locals.url.split('?')[0].replace('https://', 'http://'),
-      query = queryService.newQueryWithCount(elasticIndex, maxItems);
+      query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
 
     if (contentTypes.length) {
       queryService.addFilter(query, { terms: { contentType: contentTypes } });

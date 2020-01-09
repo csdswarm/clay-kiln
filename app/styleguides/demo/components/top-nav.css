@@ -295,28 +295,14 @@ $drawerSelector: nav-drawer;
             display: block;
           }
 
-          &:first-of-type {
-            margin-right: em(100);
-
-            .$(drawerSelector)__sub-nav--columns {
-              @mixin ul-columns 3, em(80);
-            }
+          .$(drawerSelector)__sub-nav--columns {
+            @mixin ul-columns 1, em(80);
           }
 
-          &:nth-of-type(2) {
-            margin-right: em(100);
-
-            .$(drawerSelector)__sub-nav--columns {
-              @mixin ul-columns 2, em(80);
-            }
+          &:not(:last-of-type) {
+            margin-right: em(80);
           }
-
-          &:nth-of-type(3) {
-            .$(drawerSelector)__sub-nav--columns {
-              @mixin ul-columns 1, em(80);
-            }
-          }
-
+          
           ul {
             li {
               display: block;
@@ -366,6 +352,7 @@ $drawerSelector: nav-drawer;
       line-height: 28px;
       display: block;
       text-align: left;
+      min-height: em(28);
     }
 
     &.$(drawerSelector)--mobile {
@@ -594,26 +581,12 @@ $drawerSelector: nav-drawer;
           width: em(80);
         }
 
-        &:first-of-type {
-          margin-right: em(80);
-
-          .$(drawerSelector)__sub-nav--columns {
-            @mixin ul-columns 3, em(80);
-          }
+        .$(drawerSelector)__sub-nav--columns {
+          @mixin ul-columns 1, em(80);
         }
 
-        &:nth-of-type(2) {
+        &:not(:last-of-type) {
           margin-right: em(80);
-
-          .$(drawerSelector)__sub-nav--columns {
-            @mixin ul-columns 2, em(80);
-          }
-        }
-
-        &:nth-of-type(3) {
-          .$(drawerSelector)__sub-nav--columns {
-            @mixin ul-columns 1, em(80);
-          }
         }
       }
     }
@@ -787,7 +760,7 @@ $drawerSelector: nav-drawer;
 /*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 .nav-drawer--sports {
   > .container {
-    padding-left: widthOnGrid(3, 2);
+    padding-left: widthOnGrid(3, 1);
     background-image: url('/media/components/top-nav/sports_dropdown_logo.png');
     background-size: em(140) em(40);
     background-repeat: no-repeat;

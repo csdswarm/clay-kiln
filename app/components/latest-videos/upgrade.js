@@ -20,3 +20,7 @@ module.exports['2.0'] = function (uri, data) {
   
   return newData;
 };
+
+module.exports['3.0'] = (uri, data) => ({ title: 'Radio.com Video', ...data });
+
+module.exports['4.0'] = (uri, data) => ({ primaryContentLabel: 'Exclusive Video', ...data });
