@@ -66,16 +66,16 @@ const _isPlainObject = require('lodash/isPlainObject'),
    * @param {object} query
    * @param {string} key
    * @param {string | object} valueObj,
-   * @param {string} defaultCondition
+   * @param {string} conditionOverride
    */
-  addCondition = (query, key, valueObj, defaultCondition) => {
+  addCondition = (query, key, valueObj, conditionOverride) => {
     if (!queryFilters[key]) {
       log('error', `No filter current exists for ${key}`);
       return;
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = defaultCondition || filterCondition, value } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
+      { condition = conditionOverride || filterCondition, value } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
 
     if (Array.isArray(value)) {
       if (unique) {
