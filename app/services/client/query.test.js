@@ -16,7 +16,7 @@ const INDEX = 'pages',
 describe(dirname, function () {
   describe(filename, function () {
     var sandbox,
-      locals = {site: {host: 'site.com', port: 3001, path: ''}},
+      locals = { site: { host: 'site.com', path: '' } },
       post = sinon.stub();
 
     beforeEach(function () {
@@ -63,7 +63,7 @@ describe(dirname, function () {
         query = lib(INDEX, locals);
 
       it('hits the search endpoint', function () {
-        const respObj = {hits: {hits: ['hello']}};
+        const respObj = { hits: { hits: ['hello'] } };
 
         lib.post.returns(Promise.resolve(respObj));
         fn(query).then(function (result) {
@@ -78,7 +78,7 @@ describe(dirname, function () {
         query = lib(INDEX, locals);
 
       it('hits the search endpoint', function () {
-        const respObj = {hits: {hits: ['hello']}};
+        const respObj = { hits: { hits: ['hello'] } };
 
         lib.post.returns(Promise.resolve(respObj.hits.hits));
         fn(query).then(function (result) {
@@ -99,7 +99,7 @@ describe(dirname, function () {
       var fn = lib[this.title];
 
       it('returns number of results found', function () {
-        const respObj = {hits: {hits: ['hello']}},
+        const respObj = { hits: { hits: ['hello'] } },
           query = lib(INDEX, locals);
 
         lib.post.returns(Promise.resolve(respObj));
@@ -122,7 +122,7 @@ describe(dirname, function () {
 
     describe('executeMultipleSearchRequests', function () {
       var fn = lib[this.title];
-      const respObj = {hits: {hits: ['hello']}},
+      const respObj = { hits: { hits: ['hello'] } },
         query = [lib(INDEX), lib('published-content')]; // create a query array with multiple queries
 
       it('hits the search endpoint', function () {

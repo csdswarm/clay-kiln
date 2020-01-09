@@ -1,0 +1,52 @@
+.kiln-field {
+  .content-search {
+    .ui-textbox {
+      margin-bottom: em(16);
+    }
+
+    &__search-results {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      ul {
+        width: 100%;
+      }
+    }
+  }
+
+  .search-results__ {
+    &item {
+      display: flex;
+      flex-direction: row;
+      padding: em(4);
+      cursor: pointer;
+      justify-content: space-between;
+
+      &:hover {
+        background-color: lightgrey;
+      }
+    }
+
+    &headline {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: em(4);
+    }
+
+    &date {
+      white-space: nowrap;
+    }
+
+    &header {
+      display: flex;
+      flex-direction: row;
+      margin: em(4);
+      cursor: pointer;
+      justify-content: space-between;
+      font-weight: bold;
+      border-bottom: 1px solid black;
+    }
+  }
+}

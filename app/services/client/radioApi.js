@@ -1,21 +1,21 @@
 'use strict';
 
 const rest = require('../universal/rest'),
+  qs = require('qs'),
   { formatLocal } = require('../../services/universal/dateTime'),
   { getLocals } = require('./spaLocals'),
-  spaLinkService = require('./spaLink'),
-  clientPlayerInterface = require('../../services/client/ClientPlayerInterface')(),
-  // https://regex101.com/r/gDfIxb/1
-  spaLinkRegex = new RegExp(`^.*(?=${window.location.host}).*$`),
-  /**
-   * returns boolean of whether it is a link within the SPA
-   * return true if link is on current URL host or
-   * starts with '/' and is not '/audio'
-   *
-   * @param {string} uri
-   * @returns {boolean}
-   */
-  isSpaLink = (uri) => spaLinkRegex.test(uri) || ( uri[0] === '/' && uri !== '/audio' ),
+  spaLinkService = require('../universal/spaLink'),
+  clientPlayerInterface = require('./ClientPlayerInterface')(),
+  clientUserInterface = require('./ClientUserInterface')(),
+  clientStateInterface = require('./ClientStateInterface')(),
+  // here for models that reference /server/radioApi (brightcove)
+  TTL = {
+    NONE: 0,
+    DEFAULT: 300000,
+    MIN: 60000,
+    HOUR: 3600000,
+    DAY: 86400000
+  },
   // An array of functions that take in a node and return the mutated node with attached events or modifications to data
   spaFunctions = [
     /**
@@ -39,17 +39,7 @@ const rest = require('../universal/rest'),
      * @returns {Node}
      */
     (doc) => {
-      const anchors = doc.querySelectorAll('a');
-
-      anchors.forEach((anchor) =>  {
-        const href = anchor.getAttribute('href');
-
-        if (isSpaLink(href) && !anchor.classList.contains('spa-link')) {
-          anchor.classList.add('spa-link');
-        }
-      });
-
-      spaLinkService.apply(doc);
+      spaLinkService.addEventListeners(doc);
 
       return doc;
     },
@@ -59,19 +49,14 @@ const rest = require('../universal/rest'),
      * @param {Node} doc
      * @returns {Node}
      */
-    (doc) => {
-      // Attach play button click handlers
-      doc.querySelectorAll('[data-play-station]').forEach(element => {
-        element.addEventListener('click', (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          const playbackStatus = element.classList.contains('show__play') ? 'play' : 'pause';
-
-          clientPlayerInterface[playbackStatus](element.dataset.playStation);
-        });
-      });
-      return doc;
-    }
+    (doc) => clientPlayerInterface.addEventListener(doc),
+    /**
+     * Adds the click events for users
+     *
+     * @param {Node} doc
+     * @returns {Node}
+     */
+    (doc) => clientUserInterface.addEventListener(doc)
   ],
   /**
    * Attaches all spa interfaces
@@ -89,9 +74,10 @@ const rest = require('../universal/rest'),
    * @returns {Promise} which returns {Node}
    */
   fetchDOM = async (route) => {
-    const separator = route.includes('?') ? '&' : '?',
+    const state = await clientStateInterface.getState(),
+      separator = route.includes('?') ? '&' : '?',
       options = {
-        headers: new Headers({ 'x-locals': JSON.stringify(getLocals()) })
+        headers: new Headers({ 'x-locals': JSON.stringify(getLocals(state)) })
       },
       response = await fetch(`${route}${separator}ignore_resolve_media=true`, options),
       html = await response.text(),
@@ -110,13 +96,17 @@ const rest = require('../universal/rest'),
    * Get data
    *
    * @param {string} route
+   * @param {*} [params]
    * @returns {*}
    */
-  get = (route) => {
-    return rest.get(route).then(data => {
+  get = (route, params) => {
+    const endpoint = params ? `${route}?${qs.stringify(params)}` : route;
+
+    return rest.get(endpoint).then(data => {
       return data;
     });
   };
 
 module.exports.get = get;
 module.exports.fetchDOM = fetchDOM;
+module.exports.TTL = TTL;

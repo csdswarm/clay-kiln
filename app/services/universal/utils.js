@@ -38,6 +38,15 @@ function has(val) {
 }
 
 /**
+ * determine if a string is a url
+ * @param  {string}  str
+ * @return {Boolean}
+ */
+function isUrl(str) {
+  return /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(str);
+}
+
+/**
  * replace version in uri
  * e.g. when fetching @published data, or previous component data
  * @param  {string} uri
@@ -67,12 +76,7 @@ function replaceVersion(uri, version) {
  */
 function uriToUrl(uri, locals) {
   const protocol = _get(locals, 'site.protocol') || 'http',
-    port = _get(locals, 'site.port'),
     parsed = _parse(`${protocol}://${uri}`);
-
-  if (port !== 80 && port !== 443) {
-    parsed.set('port', port);
-  }
 
   return parsed.href;
 }
@@ -120,7 +124,6 @@ function toTitleCase(str) {
  * @param {object} locals
  * @param {string} [locals.site.protocol]
  * @param {string} locals.site.host
- * @param {string} [locals.site.port]
  * @param {string} [locals.site.path]
  * @returns {string} e.g. `http://nymag.com/scienceofus` or `http://localhost.dev.nymag.biz:3001/scienceofus`
  */
@@ -128,10 +131,9 @@ function getSiteBaseUrl(locals) {
   const site = locals.site || {},
     protocol = site.protocol || 'http',
     host = site.host,
-    port = (site.port || '80').toString(),
     path = site.path || '';
 
-  return `${protocol}://${host}${port === '80' ? '' : ':' + port}${path}`;
+  return `${protocol}://${host}${path}`;
 }
 
 /**
@@ -180,15 +182,62 @@ function urlToCanonicalUrl(url) {
   return kilnUrlToPageUrl(url).split('?')[0].split('#')[0];
 }
 
-module.exports.isFieldEmpty = isFieldEmpty;
-module.exports.has = has;
-module.exports.replaceVersion = replaceVersion;
-module.exports.uriToUrl = uriToUrl;
-module.exports.urlToUri = urlToUri;
-module.exports.formatStart = formatStart;
-module.exports.toTitleCase = toTitleCase;
-module.exports.getSiteBaseUrl = getSiteBaseUrl;
-module.exports.isPublishedVersion = isPublishedVersion;
-module.exports.ensurePublishedVersion = ensurePublishedVersion;
-module.exports.isInstance = isInstance;
-module.exports.urlToCanonicalUrl = urlToCanonicalUrl;
+/**
+ * Trims, lowercases, replaces spaces with dashes and urlencodes the string
+ * @param {string} text
+ * @returns {string}
+ */
+function textToEncodedSlug(text) {
+  return encodeURIComponent(
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/ /g, '-')
+  );
+}
+
+function debugLog(...args) {
+  if (process.env.NODE_ENV === 'local') {
+    console.log(...args); // eslint-disable-line no-console
+  }
+}
+
+/**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+Object.assign(module.exports, {
+  /**
+   * Url queries to elastic search need to be `http` since that is
+   * how it is indexed as.
+   * @param {String} url
+   * @returns {String}
+   */
+  urlToElasticSearch: url => url.replace('https', 'http'),
+  isFieldEmpty,
+  has,
+  replaceVersion,
+  isUrl,
+  uriToUrl,
+  urlToUri,
+  formatStart,
+  toTitleCase,
+  getSiteBaseUrl,
+  isPublishedVersion,
+  ensurePublishedVersion,
+  isInstance,
+  urlToCanonicalUrl,
+  textToEncodedSlug,
+  debugLog,
+  yesNo
+});

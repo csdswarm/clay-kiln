@@ -14,7 +14,7 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = function (data, locals) {
-  const { canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
+  const { itemId, canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     transform = [
       {
@@ -27,7 +27,7 @@ module.exports = function (data, locals) {
         pubDate: format(parse(data.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ') // Date format must be RFC 822 compliant
       },
       {
-        guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
+        guid: [{ _attr: { isPermaLink: false } }, itemId]
       },
       {
         syndicatedUrl
@@ -36,7 +36,7 @@ module.exports = function (data, locals) {
         description: { _cdata: seoDescription }
       },
       {
-        'content:encoded': { _cdata: renderContent(data.content, locals)}
+        'content:encoded': { _cdata: renderContent(data.content, locals) }
       },
       {
         stationUrl: stationURL
@@ -60,14 +60,24 @@ module.exports = function (data, locals) {
 
   if (data.slides) {
     transform.push({
-      slides: { _cdata: renderContent(data.slides, locals)}
+      slides: { _cdata: renderContent(data.slides, locals) }
     });
   }
 
   if (data.lead) {
     transform.push({
-      lead: { _cdata: renderContent(data.lead, locals)}
+      lead: { _cdata: renderContent(data.lead, locals) }
     });
+  }
+
+  if (data.footer) {
+    const footerContent = renderContent(data.footer, locals);
+
+    if (footerContent) {
+      transform.push({
+        footer: { _cdata: footerContent }
+      });
+    }
   }
 
   // Add the tags

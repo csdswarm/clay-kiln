@@ -1,8 +1,6 @@
-_version: 5.0
+_version: 9.0
 _description: |
-  A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
-  The articles will be filtered by the section front of the URL, (ex: /sports/football with tags "NFL" and
-  "National News" will only show sports stories that have either of those tags).
+  Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
 contentType:
   _label: Content type
@@ -14,12 +12,32 @@ contentType:
       - article
       - gallery
 
+componentTitle:
+  _label: Component's Title
+  _has:
+    validate:
+      required: true
+      min: 4
+      max: 80
+    help: The title displayed on the component's view
+    input: text
+
+componentTitleVisible:
+  _label: Show Component's Title
+  _has:
+    input: checkbox
+    help: Show or hide the title displayed on the component's view
+
 pageLength:
   _label: Page Size
   _has:
     help: Number of articles to load when "load more" is clicked
     input: text
     type: number
+
+autoPopulatedContentHeader:
+  _label: Auto-Populated Content
+  _has: static
 
 populateFrom:
   _label: Populate content from?
@@ -35,7 +53,17 @@ populateFrom:
         name: Section Front
         value: section-front
       - tag
+      -
+        name: Contains Both Section Front and Tag
+        value: section-front-and-tag
+      -
+        name: Contains Either Section Front or Tag
+        value: section-front-or-tag
       - manual
+
+curatedContentHeader:
+  _label: Curated Content
+  _has: static
 
 locationOfContentFeed:
   _label: Content Feed is on Homepage
@@ -49,11 +77,17 @@ locationOfContentFeed:
       - section-front
       - topic-page
 
+station:
+  _subscribe: stationName
+
 sectionFront:
   _subscribe: sectionFront
   _label: Section Front Category
   _has:
     help: Section Front Category from which to pull content
+
+primarySectionFront:
+  _subscribe: primarySectionFront
 
 sectionFrontManual:
   _label: Section Front Category
@@ -61,27 +95,35 @@ sectionFrontManual:
   _reveal:
     field: populateFrom
     operator: ===
-    value: section-front
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
   _has:
-    input: radio
-    options:
-      -
-        name: Music
-        value: music
-      -
-        name: News
-        value: news
-      -
-        name: Podcasts
-        value: podcasts
-      -
-        name: Sports
-        value: sports
-    validate:
-      required:
-        field: populateFrom
-        operator: ===
-        value: section-front
+    input: select
+    search: true
+    list: primary-section-fronts
+
+secondarySectionFront:
+  _subscribe: secondarySectionFront
+  _label: Secondary Section Front
+  _has:
+    help: Secondary Section Front from which to pull content
+
+secondarySectionFrontManual:
+  _label: Secondary Section Front Category
+  _publish: secondarySectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: secondary-section-fronts
 
 tag:
   _subscribe: tag
@@ -98,7 +140,10 @@ tagManual:
   _reveal:
     field: populateFrom
     operator: ===
-    value: tag
+    values:
+      - tag
+      - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: simple-list
     autocomplete:
@@ -110,7 +155,10 @@ tagManual:
       required:
         field: populateFrom
         operator: ===
-        value: tag
+        values:
+          - tag
+          - section-front-and-tag
+          - section-front-or-tag
 
 tagInfo:
   _label: Tag Info
@@ -121,7 +169,10 @@ tagInfo:
   _reveal:
     field: populateFrom
     operator: ===
-    value: tag
+    values:
+      - tag
+      - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: text
     help: Tag Description / More Info (Will be shown in right rail)
@@ -136,35 +187,13 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondaryArticleTypes:
-  _label: Exclude Secondary Article Type
+filterSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
   _has:
-    input: checkbox-group
-    options:
-    - Pop
-    - Alternative
-    - Country
-    -
-      name: Hip-Hop R&B
-      value: Hip-Hop R&B
-    - Rock
-    - Icons
-    - Entertainment News
-    - Movies
-    - Television
-    - National News
-    - Politics
-    - Local Politics
-    - Small Business Pulse
-    - NFL
-    - MLB
-    - NBA
-    - NHL
-    - NCAA Football
-    - NCAA Basketball
-    -
-      name: MMA & WWE
-      value: MMA & WWE
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
 
 items:
   _label: Items
@@ -176,7 +205,7 @@ items:
       prop: url
       _label: URL
       _has:
-        input: text
+        input: content-search
         type: url
         validate:
           required: true
@@ -211,21 +240,9 @@ items:
       prop: overrideSectionFront
       _label: Section Front
       _has:
-        help: The section front this content is a part of
-        input: radio
-        options:
-          -
-            name: Music
-            value: music
-          -
-            name: News
-            value: news
-          -
-            name: Podcasts
-            value: podcasts
-          -
-            name: Sports
-            value: sports
+        input: select
+        search: true
+        list: primary-section-fronts
     -
       prop: overrideContentType
       _label: Content Type
@@ -274,19 +291,34 @@ googleAdRightRail:
     include:
       - google-ad-manager
 
+sharethroughTag:
+  _component:
+    include:
+      - google-ad-manager
+
 _groups:
   contentFeed:
     _label: Content Feed
     fields:
+      - componentTitle
+      - componentTitleVisible
       - pageLength
+      - autoPopulatedContentHeader
       - populateFrom
       - sectionFrontManual
+      - secondarySectionFrontManual
       - tagManual
       - tagInfo
-      - items
       - contentType
       - filterTags
-      - filterSecondaryArticleTypes
+      - filterSecondarySectionFronts
+      - curatedContentHeader
+      - items
     _placeholder:
       height: 100px
       ifEmpty: populateFrom
+  header:
+    _label: Content Feed Title
+    fields:
+      - componentTitle
+      - componentTitleVisible

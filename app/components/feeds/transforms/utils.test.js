@@ -24,7 +24,7 @@ describe('feeds', () => {
         const fn = lib.getMimeType;
 
         it('finds the MIME type when a url is provided', () => {
-          let url = 'http://pixel.nymag.com/imgs/daily/science/2017/03/15/15-pug-artist.w710.h473.jpg';
+          const url = 'http://pixel.nymag.com/imgs/daily/science/2017/03/15/15-pug-artist.w710.h473.jpg';
 
           return expect(fn(url)).to.eql('image/jpeg');
         });
@@ -46,7 +46,7 @@ describe('feeds', () => {
       });
 
       describe('filterAndParse', () => {
-        let fn = lib.filterAndParse;
+        const fn = lib.filterAndParse;
 
         it('filters a component list by a component name then parses the matches data attribute', () => {
           const filterAndParsed = fn(componentList, 'foo-component');
@@ -57,7 +57,7 @@ describe('feeds', () => {
       });
 
       describe('firstAndParse', () => {
-        let fn = lib.firstAndParse;
+        const fn = lib.firstAndParse;
 
         it('find first of a component in a component list and parses its data', () => {
           const firstAndParsed = fn(componentList, 'foo-component');
@@ -67,7 +67,7 @@ describe('feeds', () => {
       });
 
       describe('parseComponentData', () => {
-        let fn = lib.parseComponentData;
+        const fn = lib.parseComponentData;
 
         it('parses a component data in string format to js object', () => {
           const component = componentList[0],

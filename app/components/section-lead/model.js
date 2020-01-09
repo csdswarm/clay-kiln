@@ -13,7 +13,8 @@ const queryService = require('../../services/server/query'),
     'feedImgUrl',
     'contentType'
   ],
-  maxItems = 3;
+  maxItems = 3,
+  protocol = `${process.env.CLAY_SITE_PROTOCOL}:`;
 
 /**
  * @param {string} ref
@@ -35,8 +36,8 @@ module.exports.save = (ref, data, locals) => {
           primaryHeadline: item.overrideTitle || result.primaryHeadline,
           pageUri: result.pageUri,
           urlIsValid: result.urlIsValid,
-          canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl
+          canonicalUrl: item.url || result.canonicalUrl,
+          feedImgUrl: item.overrideImage || result.feedImgUrl
         });
 
         if (article.title) {
@@ -48,11 +49,12 @@ module.exports.save = (ref, data, locals) => {
   }))
     .then((items) => {
       data.items = items;
-      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
+      data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront || locals.secondarySectionFront || data.tag;
 
       return data;
     });
 };
+
 
 /**
  * @param {string} ref
@@ -65,10 +67,15 @@ module.exports.render = function (ref, data, locals) {
     contentTypes = contentTypeService.parseFromData(data);
   let cleanUrl;
 
-  // items are saved from form, articles are used on FE
-  data.articles = data.items;
+  // items are saved from form, articles are used on FE, and make sure they use the correct protocol
+  data.items = data.articles = data.items
+    .filter(item => item.canonicalUrl)
+    .map(item => ({
+      ...item,
+      canonicalUrl: item.canonicalUrl.replace(/^http:/, protocol)
+    }));
 
-  if (!data.sectionFront || !locals) {
+  if (!locals || !locals.sectionFront && !locals.secondarySectionFront) {
     return data;
   }
 
@@ -78,17 +85,14 @@ module.exports.render = function (ref, data, locals) {
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  if (data.sectionFront) {
-    queryService.addShould(query, { match: { sectionFront: data.sectionFront }});
+  if (locals.secondarySectionFront) {
+    queryService.addMust(query, { match: { secondarySectionFront: locals.secondarySectionFront } });
+  } else if (locals.sectionFront) {
+    queryService.addMust(query, { match: { sectionFront: locals.sectionFront } });
+  } else if (data.tag) {
+    queryService.addMust(query, { match: { 'tags.normalized': data.tag } });
   }
-  if (data.filterBySecondary) {
-    queryService.addMust(query, { match: { secondaryArticleType: data.filterBySecondary }});
-  }
-  if (data.tag) {
-    queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
-  }
-  queryService.addMinimumShould(query, 1);
-  queryService.addSort(query, {date: 'desc'});
+  queryService.addSort(query, { date: 'desc' });
 
   // exclude the current page in results
   if (locals.url && !isComponent(locals.url)) {
@@ -109,17 +113,17 @@ module.exports.render = function (ref, data, locals) {
   // Filter out the following tags
   if (data.filterTags) {
     for (const tag of data.filterTags.map((tag) => tag.text)) {
-      queryService.addMustNot(query, { match: { 'tags.normalized': tag }});
+      queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
     }
   }
 
   // Filter out the following secondary article type
-  if (data.filterSecondaryArticleTypes) {
-    Object.entries(data.filterSecondaryArticleTypes).forEach((secondaryArticleType) => {
-      let [ secondaryArticleTypeFilter, filterOut ] = secondaryArticleType;
+  if (data.filterSecondarySectionFronts) {
+    Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
+      const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
 
       if (filterOut) {
-        queryService.addMustNot(query, { match: { secondaryArticleType: secondaryArticleTypeFilter }});
+        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
       }
     });
   }
@@ -128,8 +132,7 @@ module.exports.render = function (ref, data, locals) {
     .then(function (results) {
 
       data.articles = data.items.concat(results.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-      data.primaryStoryLabel = data.primaryStoryLabel || data.sectionFront || data.tag;
-
+      data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
       return data;
     })
     .catch(e => {

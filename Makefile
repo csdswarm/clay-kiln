@@ -10,6 +10,9 @@ up-nginx:
 down:
 	docker-compose stop nginx redis elasticsearch clay postgres
 
+rebuild:
+	docker-compose stop clay && cd app && npm run build && cd .. && cd spa && npm run-script build -- --mode=none && docker-compose up -d clay && cd .. && make clay-logs
+
 rm-all:
 	@echo "Removing all stopped containers..."
 	docker rm $$(docker ps -aq --filter name=^$$(basename $$(pwd)))
@@ -27,7 +30,7 @@ remove-images:
 	docker rmi -f $$(docker images -q)
 
 clay-logs:
-	docker-compose logs -f clay
+	docker-compose exec clay tail -f .pm2/logs/app_name-out.log
 
 enter-clay:
 	docker-compose exec clay bash
@@ -111,13 +114,13 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	make build-player && cd app && npm i && npm run build && cd ../spa && npm i && npm run-script build -- --mode=none
+	cd spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm ci && npm run build
 
 install:
-	cd app && npm i && npm run build-production && cd ../spa && npm i && npm run-script build -- --mode=production && npm run-script production-config
+	cd spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm ci && npm run build-production
 
 lint:
-	cd app && npm run eslint && cd ../spa && npm run lint -- --no-fix
+	cd app && npm run eslint; cd ../spa && npm run lint -- --no-fix
 
 build-player:
 	if cd ./radio-web-player; then git pull; else git clone git@bitbucket.org:entercom/rad-web-player.git ./radio-web-player; fi
@@ -128,7 +131,7 @@ build-player:
 
 snapshot:
 	make down
-	if cd ./.snapshot; then rm -rf ./.snapshot; fi
+	if [ -d './.snapshot' ]; then rm -rf ./.snapshot; fi
 	mkdir ./.snapshot;
 	docker save -o ./.snapshot/clay-radio_clay clay-radio_clay
 	cp -R ./elasticsearch ./.snapshot/elasticsearch
@@ -147,10 +150,10 @@ restore:
 
 .PHONY: spa
 spa:
-	cd spa && npm i && npm run-script build -- --mode=none
+	cd spa && npm ci && npm run-script build -- --mode=none
 
 spa-dev:
-	cd spa && npm i && npm run-script build -- --mode=none --watch
+	cd spa && npm ci && npm run-script build -- --mode=none --watch
 
 app-dev:
-	cd app && npm i && npm run watch
+	cd app && npm ci && npm run watch

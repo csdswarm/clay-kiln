@@ -1,5 +1,7 @@
 _components:
   more-content-feed:
+    componentTitle: 'MORE from RADIO.COM'
+    componentTitleVisible: true
     pageLength: 5
     items: []
     tag: ''
@@ -7,12 +9,16 @@ _components:
     contentType: { article: true, gallery: true }
     sectionFront: ''
     sectionFrontManual: ''
+    secondarySectionFront: ''
+    secondarySectionFrontManual: ''
     filterTags: []
-    filterSecondaryArticleTypes: []
+    filterSecondarySectionFronts: []
     populateFrom: ''
     locationOfContentFeed: ''
     contentCollectionLogoSponsorship:
       _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
+    sharethroughTag:
+      _ref: /_components/google-ad-manager/instances/sharethroughTag
     introComponents: []

@@ -2,6 +2,7 @@
 
 const moment = require('moment'),
   Handlebars = require('handlebars'),
+  { isValid, isToday, isTomorrow, isYesterday, isThisYear, format } = require('date-fns'),
   /**
    * Returns the time from epoch defaulting to the server time if a specific time is not passed in
    *
@@ -112,7 +113,7 @@ const moment = require('moment'),
    * @returns {string} the users locale timezone
    */
   usersTimeZone = () => {
-    const dateArray = new Date().toLocaleTimeString(getNavigatorLanguage(),{timeZoneName:'short'}).split(' ');
+    const dateArray = new Date().toLocaleTimeString(getNavigatorLanguage(),{ timeZoneName:'short' }).split(' ');
 
     return dateArray.pop();
   },
@@ -135,6 +136,40 @@ const moment = require('moment'),
     }
 
     return details;
+  },
+  /**
+   * format hour and minute
+   *
+   * @param  {Date} date
+   * @return {string}
+   */
+  formatHM = (date) => {
+    return ' ' + format(date, 'h:mm A');
+  },
+  /**
+   * format time for pages same as kiln
+   *
+   * @param  {Date} date
+   * @return {string}
+   */
+  kilnDateTimeFormat = (date) => {
+    date = date ? new Date(date) : null;
+
+    if (!date || !isValid(date)) {
+      return '';
+    }
+
+    if (isToday(date)) {
+      return 'Today' + formatHM(date);
+    } else if (isTomorrow(date)) {
+      return 'Tomorrow' + formatHM(date);
+    } else if (isYesterday(date)) {
+      return 'Yesterday' + formatHM(date);
+    } else if (isThisYear(date)) {
+      return format(date, 'M/D') + formatHM(date);
+    } else {
+      return format(date, 'M/D/YY') + formatHM(date);
+    }
   };
 
 module.exports.getTime = getTime;
@@ -146,6 +181,7 @@ module.exports.formatLocal = formatLocal;
 module.exports.nextSevenDays = nextSevenDays;
 module.exports.usersTimeZone = usersTimeZone;
 module.exports.get24Hours = get24Hours;
+module.exports.kilnDateTimeFormat = kilnDateTimeFormat;
 
 
 

@@ -42,6 +42,10 @@
     flex-direction: row;
     flex-wrap: wrap;
   }
+
+  .editor-description {
+    margin-bottom: em(10);
+  }
 }
 
 .tags {

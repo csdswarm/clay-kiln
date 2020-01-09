@@ -1,66 +1,63 @@
 'use strict';
 
-const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
-  mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav');
-  // mutableImages = ['account-btn', 'search-btn'];
-
-let isMobile = false,
+let isNotDesktop = false,
   activeHamburger = false;
 
-/**
- * Toggle hamburger animation & mobile nav on click of hamburger
- * @function toggleHamburger
- * @param {boolean} toggleHamburgerOnly - Toggles hamburger without toggling mobile nav.
- */
-const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
-    let bars = document.getElementsByClassName('bar'),
+const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
+  mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
+  MEDIUM_SCREEN_WIDTH = 1023,
+  navIncludes = require('./nav-includes'),
+
+  /**
+   * Checks to see if the screen width is small enough to be considered not a desktop view
+   * @returns {boolean}
+   */
+  notDesktop = () => { return window.matchMedia(`(max-width: ${MEDIUM_SCREEN_WIDTH}px)`).matches; },
+
+  /**
+   * Toggle hamburger animation & mobile nav on click of hamburger
+   * @function toggleHamburger
+   * @param {boolean} toggleHamburgerOnly - Toggles hamburger without toggling mobile nav.
+   */
+  toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
+    const bars = document.getElementsByClassName('bar'),
       navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0],
       activeHamburgerClass = 'active',
       activeMobileNavClass = 'nav-drawer--active';
 
-    isMobile =
-    !(document.getElementsByClassName('radiocom-nav-placeholder')[0].offsetWidth >
-    1023);
-    activeHamburger = !activeHamburger;
-    if (activeHamburger && isMobile) {
-    // Open mobile nav drawer & change hamburger styling
-      for (let bar of bars) bar.classList.add(activeHamburgerClass);
+    isNotDesktop = notDesktop();
+    activeHamburger = isNotDesktop && !activeHamburger;
+
+    if (activeHamburger && isNotDesktop) {
+      // Open mobile nav drawer & change hamburger styling
+      for (const bar of bars) bar.classList.add(activeHamburgerClass);
       navDrawer.classList.add(activeMobileNavClass);
     } else {
-    // Close mobile nav drawer & change hamburger styling
-      for (let bar of bars) bar.classList.remove(activeHamburgerClass);
+      // Close mobile nav drawer & change hamburger styling
+      for (const bar of bars) bar.classList.remove(activeHamburgerClass);
       navDrawer.classList.remove(activeMobileNavClass);
     }
     // Toggle Mobile Nav Drawer
-    if (!toggleHamburgerOnly) toggleNavDrawer(navDrawer, activeHamburger, true);
+    if (!toggleHamburgerOnly) toggleNavDrawer(navDrawer, activeHamburger);
   },
 
   /**
- * Toggle desktop or mobile nav drawer/dropdown.
- * @function toggleNavDrawer
- * @param {Object} event - Event from event listener.
- * @param {boolean} show - Open or close drawer/dropdown.
- */
+   * Toggle desktop or mobile nav drawer/dropdown.
+   * @function toggleNavDrawer
+   * @param {Object} event - Event from event listener.
+   * @param {boolean} show - Open or close drawer/dropdown.
+   */
   toggleNavDrawer = (event, show) => {
-    let navDrawer,
-      navDrawers = document.getElementsByClassName('nav-drawer');
+    const navDrawers = document.getElementsByClassName('nav-drawer');
+    let navDrawer;
 
-    isMobile =
-    !(document.getElementsByClassName('radiocom-nav-placeholder')[0].offsetWidth >
-    1023);
-    for (let drawer of navDrawers) {
+    isNotDesktop = notDesktop();
+    for (const drawer of navDrawers) {
       drawer.classList.remove('nav-drawer--sub-nav-active');
       drawer.classList.remove('nav-drawer--active');
     }
-    if (!isMobile) {
-    // Toggle desktop nav drawer
-      navDrawer = event.currentTarget.querySelector('.nav-drawer');
-      if (show) {
-        navDrawer.classList.add('nav-drawer--sub-nav-active');
-        navDrawer.classList.add('nav-drawer--active');
-      }
-    } else {
-    // Toggle mobile nav drawer
+    if (isNotDesktop) {
+      // Toggle mobile nav drawer
       navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
       if (show) {
         navDrawer.classList.add('nav-drawer--sub-nav-active');
@@ -69,23 +66,30 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
         navDrawer.classList.remove('nav-drawer--sub-nav-active');
         navDrawer.classList.remove('nav-drawer--active');
       }
+    } else {
+      // Toggle desktop nav drawer
+      navDrawer = event.currentTarget.querySelector('.nav-drawer');
+      if (show) {
+        navDrawer.classList.add('nav-drawer--sub-nav-active');
+        navDrawer.classList.add('nav-drawer--active');
+      }
     }
   },
 
   /**
- * Toggle dropdown for nav categories on mobile on click of nav category
- * @function toggleMobileCategoryDropdown
- * @param {Object} event - Event from event listener.
- */
+   * Toggle dropdown for nav categories on mobile on click of nav category
+   * @function toggleMobileCategoryDropdown
+   * @param {Object} event - Event from event listener.
+   */
   toggleMobileCategoryDropdown = event => {
     const activeMobileClass = 'nav-drawer__sub-nav--active';
 
     if (event.currentTarget.classList.contains(activeMobileClass)) {
-    // Close dropdown of clicked category if dropdown already open
+      // Close dropdown of clicked category if dropdown already open
       event.currentTarget.classList.remove(activeMobileClass);
     } else {
-    // Close dropdown of all categories
-      for (let navSection of mobileNavSections) {
+      // Close dropdown of all categories
+      for (const navSection of mobileNavSections) {
         navSection.classList.remove(activeMobileClass);
       }
       // Open dropdown of clicked category
@@ -94,67 +98,76 @@ const toggleHamburger = toggleHamburgerOnly => {// eslint-disable-line one-var
   },
 
   /**
- * Toggle image source for those images that change on hover.
- * @function toggleImage
- * @param {Object} event - Event from event listener.
- */
-  // toggleImage = event => {
-  //   const defaultImage = event.currentTarget.querySelector('.default'),
-  //     hoveredImage = event.currentTarget.querySelector('.hover');
-
-  //   if (event.type == 'mouseover') {
-  //     defaultImage.classList.add('inactive');
-  //     defaultImage.classList.remove('active');
-  //     hoveredImage.classList.add('active');
-  //     hoveredImage.classList.remove('inactive');
-  //   } else {
-  //     defaultImage.classList.add('active');
-  //     defaultImage.classList.remove('inactive');
-  //     hoveredImage.classList.add('inactive');
-  //     hoveredImage.classList.remove('active');
-  //   }
-  // },
+   * Toggle Mobile Nav
+   */
+  toggleMobileOnClick = () => {
+    document
+      .getElementById('hamburger')
+      .addEventListener('click', toggleHamburger);
+  },
 
   /**
- * Add event listeners to header elements to toggle drawers & images.
- * @function addEventListeners
- */
-  addEventListeners = () => {
-  // Toggle Mobile Nav
-    document.getElementById('hamburger').addEventListener('click', toggleHamburger);
-    // Toggle Images on Hover
-    // for (let image of mutableImages) {
-    //   document.getElementById(image).addEventListener('mouseover', function (e) { toggleImage(e); });
-    //   document.getElementById(image).addEventListener('mouseout', function (e) { toggleImage(e); });
-    // }
-    // Toggle Dropdowns on Mobile Nav Categories
-    for (let navSection of mobileNavSections) {
-      navSection.addEventListener('click', function (e) { toggleMobileCategoryDropdown(e); });
+   * Toggle Dropdowns on Mobile Nav Categories
+   */
+  toggleMobileDropdownOnClick = () => {
+    for (const navSection of mobileNavSections) {
+      navSection.addEventListener('click', e => {
+        toggleMobileCategoryDropdown(e);
+      });
     }
-    // Toggle Nav Categories' Drawers
-    for (let navSection of navSections) {
+  },
+
+  /**
+   * Toggle Nav Categories' Drawers
+   */
+  toggleDrawersOnCategoryHover = () => {
+    for (const navSection of navSections) {
       if (navSection.classList.contains('radiocom-nav__category-button--drawer-enabled')) {
-        navSection.addEventListener('mouseover', function (e) { toggleNavDrawer(e, true); });
-        navSection.addEventListener('mouseout', function (e) { toggleNavDrawer(e, false); });
+        navSection.addEventListener('mouseover', e => {
+          toggleNavDrawer(e, true);
+        });
+        navSection.addEventListener('mouseout', e => {
+          toggleNavDrawer(e, false);
+        });
       }
     }
-    // Remove Mobile Nav When Not on Mobile on Resize of Window
-    window.addEventListener('resize', function () {
-      let navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
+  },
 
-      isMobile =
-      !(document.getElementsByClassName('radiocom-nav-placeholder')[0].offsetWidth >
-      1023);
-      if (!isMobile) {
+  /**
+   * Remove Mobile Nav When Not on Mobile on Resize of Window
+   */
+  setMobileNavOnResize = () => {
+    window.addEventListener('resize', () => {
+      const navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
+
+      if (!notDesktop()) {
         navDrawer.classList.remove('nav-drawer--active');
         navDrawer.classList.remove('nav-drawer--sub-nav-active');
         toggleHamburger(true);
       }
     });
+  },
+  /**
+   * Add event listeners to header elements to toggle drawers & images.
+   * @function addEventListeners
+   */
+  addEventListeners = () => {
+    toggleMobileOnClick();
+    toggleMobileDropdownOnClick();
+    toggleDrawersOnCategoryHover();
+    setMobileNavOnResize();
   };
 
 // mount listener for vue (optional)
 document.addEventListener('top-nav-mount', function () {
   // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
   addEventListeners();
+  navIncludes.stagingHelper.onMount();
+});
+
+
+// dismount listener for vue
+document.addEventListener('top-nav-dismount', function () {
+  // code to run when vue mounts/updates, aka after a new "pageview" has unloaded.
+  navIncludes.stagingHelper.onDismount();
 });

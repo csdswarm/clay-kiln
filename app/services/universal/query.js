@@ -1,14 +1,48 @@
 'use strict';
 
 const _ = require('lodash'),
-  utils = require('../universal/utils');
+  utils = require('../universal/utils'),
+  protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
+
+/**
+* Returns an item's id by extracting it from the uri
+*
+* @param {String} uri
+* @returns {String}
+*/
+function getItemId(uri) {
+  return uri.split('/').slice(-1)[0]
+    // clay appends this to published item uris so we want to exclude this
+    .replace('@published', '');
+};
 
 /**
  * @param {object} result
  * @returns {Array}
  */
 function formatSearchResult(result) {
-  return _.map(result.hits.hits, '_source');
+  return result.hits.hits.map(({ _source, _id: uri }) => ({
+    ..._source,
+    itemId: getItemId(uri)
+  }));
+}
+
+/**
+ * Returns result with any canonicalUrls having the proper protocol
+ *
+ * @param {object} result
+ * @returns {Array}
+ */
+function formatProtocol(result) {
+  return _.map(result, article => {
+    const url = _.get(article, 'canonicalUrl');
+
+    if (url) {
+      return { ...article, canonicalUrl: url.replace(/^http:/, protocol) };
+    }
+
+    return article;
+  });
 }
 
 /**
@@ -51,8 +85,6 @@ function newQuery(index, query) {
     body
   };
 }
-
-
 
 /**
  * Adds a property to the query based on the action provided.
@@ -250,9 +282,9 @@ function onlyWithTheseFields(query, fields) {
  * @returns {Object}
  */
 function onlyWithinThisSite(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}});
+  const prefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } });
 
-  addFilter(query, {prefix: {canonicalUrl: prefix}});
+  addFilter(query, { prefix: { canonicalUrl: prefix } });
 
   return query;
 }
@@ -263,9 +295,9 @@ function onlyWithinThisSite(query, site) {
  * @returns {object}
  */
 function withinThisSiteAndCrossposts(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http', port: site.port}}),
-    prefixFilter = {prefix: {canonicalUrl: prefix}};
-  var crosspostFilter = {term: {}},
+  const prefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } }),
+    prefixFilter = { prefix: { canonicalUrl: prefix } };
+  var crosspostFilter = { term: {} },
     shouldFilter = { bool: { should: [], minimum_should_match: 1 } };
 
   crosspostFilter.term['crosspost.' + site.slug] = true;
@@ -285,7 +317,7 @@ function withinThisSiteAndCrossposts(query, site) {
  * @returns {object}
  */
 function moreLikeThis(query, id, opts) {
-  let defaultOpts = {
+  const defaultOpts = {
     fields: ['tags'],
     like: {
       _index: query.index, // prefixed index name
@@ -310,7 +342,7 @@ function moreLikeThis(query, id, opts) {
  * @returns {Object} query object
  */
 function addAggregation(query = {}, options) {
-  const {body = {}} = query;
+  const { body = {} } = query;
 
   if (!options) {
     return query;
@@ -366,6 +398,29 @@ function newNestedQuery(path) {
   };
 }
 
+/**
+ * adds a query_string search on the fields
+ *
+ * @param {Object} query
+ * @param {String} searchTerm
+ * @param {String|Array} fields
+ *
+ * @return {Object}
+ */
+function addSearch(query, searchTerm, fields) {
+  const key = `${getRoot(query)}.query`,
+    value = {
+      query_string: {
+        query: searchTerm.replace(/([\/|:])/g, '\\$1'),
+        fields: _.isArray(fields) ? fields : [fields]
+      }
+    };
+
+  _.set(query, key,  value);
+
+  return query;
+}
+
 module.exports = newQuery;
 module.exports.addAggregation = addAggregation;
 module.exports.addShould = addShould;
@@ -381,5 +436,7 @@ module.exports.onlyWithinThisSite = onlyWithinThisSite;
 module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
 module.exports.formatAggregationResults = formatAggregationResults;
 module.exports.formatSearchResult = formatSearchResult;
+module.exports.formatProtocol = formatProtocol;
 module.exports.moreLikeThis = moreLikeThis;
 module.exports.newNestedQuery = newNestedQuery;
+module.exports.addSearch = addSearch;

@@ -165,10 +165,10 @@ $medium-screen-nav-width: em(728);
         a {
           position: relative;
           text-decoration: none;
+          display: inline-block;
           &.station-card:hover {
             &:before {
               content: " ";
-              z-index: 10;
               display: block;
               position: absolute;
               height: em(widthOnGrid(2,1));
@@ -182,16 +182,23 @@ $medium-screen-nav-width: em(728);
           }
           &.station-card {
             img {
-              position: relative;
-              width: em(widthOnGrid(2,1));
-              height: em(widthOnGrid(2,1));
-              @mixin medium-screen {
-                width: em(widthOnGrid(2,1,medium-screen));
-                height: em(widthOnGrid(2,1,medium-screen));
+              width: em(150);
+              height: em(150);
+              @mixin default-screen {
+                width: em(120);
+                height: em(120);
               }
-              @media all and (max-width: 1023px) and (min-width: 788px) {
-                width: em(222);
-                height: em(222);
+              @mixin large-screen {
+                width: em(100);
+                height: em(100);
+              }
+              @mixin medium-screen {
+                width: em(160);
+                height: em(160);
+              }
+              @mixin medium-small-screen {
+                width: em(209);
+                height: em(209);
               }
             }
             .name {
@@ -206,6 +213,114 @@ $medium-screen-nav-width: em(728);
               }
               @mixin small-screen {
                 max-height: 56px;
+              }
+            }
+          }
+          .station__lede {
+            position: relative;
+            margin-bottom: em(5);
+            width: 100%;
+            @mixin medium-small-screen {
+              margin-bottom: em(10);
+            }
+  
+            button{
+              cursor: pointer;
+              position: absolute;
+              background: transparent;
+              border: none;
+              padding: 0;
+  
+              @define-mixin favorite {
+                position: absolute;
+                width: em(20);
+                height: em(20);
+                top: 0;
+                left: 0;
+                margin: em(5) 0 0 em(5);
+              }
+              &.lede__favorite-btn-- {
+                &not-active {
+                  @mixin favorite;
+                  @mixin favorite-not-active;
+  
+                  @mixin medium-screen {
+                    margin: em(10) 0 0 em(10);
+                    width: em(37);
+                    height: em(37);
+                  }
+                  @mixin medium-small-screen {
+                    width: em(30);
+                    height: em(30);
+                  }
+                  @mixin small-screen {
+                    width: em(21);
+                    height: em(21);
+                  }
+                }
+                &active {
+                  @mixin favorite;
+                  @mixin favorite-active;
+  
+                  @mixin medium-screen {
+                    margin: em(10) 0 0 em(10);
+                    width: em(37);
+                    height: em(37);
+                  }
+                  @mixin medium-small-screen {
+                    width: em(30);
+                    height: em(30);
+                  }
+                  @mixin small-screen {
+                    width: em(21);
+                    height: em(21);
+                  }
+  
+                }
+              }
+  
+              &.lede__play-btn {
+                font-size: 16px;
+                transform: scale(0.65);
+                bottom: em(0);
+                right: em(0);
+                margin-right: em(1);
+                margin-bottom: em(1);
+  
+                @mixin medium-screen {
+                  transform: scale(1);
+                  margin-right: em(7);
+                  margin-bottom: em(7);
+                }
+                @mixin medium-small-screen {
+                  transform: scale(1.1);
+                  margin-right: em(13);
+                  margin-bottom: em(13);
+                }
+                @mixin small-screen {
+                  transform: scale(0.78);
+                  margin-right: em(6);
+                  margin-bottom: em(6);
+                }
+              }
+              &.show__play {
+                @mixin show__play;
+                box-shadow: 0 0 em(1.6) em(1.6) rgba(0,0,0,0.25), inset 0 0 em(4) em(1) $wildSand;
+                &:after {
+                  margin-top: 0;
+                }
+              }
+              &.show__pause {
+                @mixin show__pause;
+                &:after {
+                  margin-top: 0;
+                }
+              }
+              &.show__stop {
+                @mixin show__stop;
+                &:after {
+                  margin-top: 0;
+                }
               }
             }
           }

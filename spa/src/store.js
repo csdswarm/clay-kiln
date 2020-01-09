@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import * as mutationTypes from './vuex/mutationTypes'
 import { handlebars } from '../config/initHandlebars'
 import { Base64 } from 'js-base64'
+import mutations from './vuex/mutations'
+import actions from './vuex/actions'
 
 Vue.use(Vuex)
 
 // Set store default values.
-const vuexStoreDefaultState = {
+export const vuexStoreDefaultState = {
   handlebars: null,
   spaPayload: {},
   spaPayloadLocals: {},
@@ -17,51 +18,23 @@ const vuexStoreDefaultState = {
   pageCache: {
     gallerySlidePageviews: {} // Used to track slide pageview events so slide pageviews are only counted once per SPA "pageview"
   },
-  radioPlayer: null
+  radioPlayer: null,
+  metadata: {},
+  modalComponent: null,
+  user: {},
+  modalLoading: true,
+  modalMessage: {
+    message: null,
+    type: null
+  },
+  routerPush: null
 }
 
 export default new Vuex.Store({
   state: vuexStoreDefaultState,
-  mutations: {
-    [mutationTypes.LOAD_HANDLEBARS]: (state, payload) => {
-      state.handlebars = payload.handlebars
-    },
-    [mutationTypes.LOAD_SPA_PAYLOAD]: (state, payload) => {
-      state.spaPayload = payload
-    },
-    [mutationTypes.LOAD_SPA_PAYLOAD_LOCALS]: (state, payload) => {
-      state.spaPayloadLocals = payload
-    },
-    [mutationTypes.MODIFY_SPA_PAYLOAD_LOCALS]: (state, payload) => {
-      state.spaPayloadLocals = { ...state.spaPayloadLocals, ...payload }
-    },
-    [mutationTypes.FLAG_SETUP_RAN]: (state, setupRan) => {
-      state.setupRan = setupRan
-    },
-    [mutationTypes.ACTIVATE_LOADING_ANIMATION]: (state, activate) => {
-      state.loadingAnimation = activate
-    },
-    [mutationTypes.RESET_PAGE_CACHE]: (state) => {
-      state.pageCache = Object.assign({}, vuexStoreDefaultState.pageCache)
-    },
-    [mutationTypes.TRACK_GALLERY_SLIDE_PAGEVIEW]: (state, slideId) => {
-      // Update gallerySlidePageviews to track the new slide pageview.
-      const gallerySlidePageviews = Object.assign({}, state.pageCache.gallerySlidePageviews, { [slideId]: true })
-
-      // Recreate pageCache with new state.
-      state.pageCache = Object.assign(
-        {},
-        state.pageCache,
-        { gallerySlidePageviews }
-      )
-    },
-    [mutationTypes.LOAD_RADIO_PLAYER]: (state, radioPlayer) => {
-      state.radioPlayer = radioPlayer
-    }
-  },
-  actions: {
-
-  }
+  mutations,
+  actions,
+  getters: {}
 })
 
 /**

@@ -26,6 +26,32 @@ function addFakeCallback() {
 }
 
 /**
+ * Makes a request for PUT/POST/DELETE
+ *
+ * @param {string} method
+ * @param {string} url
+ * @param {object} data
+ * @param {boolean} isAuthenticated
+ *
+ * @return {Promise<Response | never>}
+ */
+function makeRequest(method, url, data, isAuthenticated) {
+  const payload = {
+    method,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  };
+
+  if (isAuthenticated) {
+    authenticate(payload);
+  }
+
+  return fetch(url, payload).then(checkStatus).then(function (res) { return res.json(); });
+}
+
+/**
  * check status after doing http calls
  * note: this is necessary because fetch doesn't reject on errors,
  * only on network failure or incomplete requests
@@ -45,13 +71,25 @@ function checkStatus(res) {
 }
 
 /**
- * REQUEST
+ * REQUEST (does not reject on errors so we can pass the status code)
  * @param {string} url
  * @param {object} [opts] See https://github.github.io/fetch/#options
  * @return {Promise}
  */
-module.exports.request = function (url, opts) {
-  return fetch(url, opts).then(checkStatus).then(function (res) { return res.json(); });
+module.exports.request = async (url, opts) => {
+  const response = await fetch(url, opts),
+    contentType = response.headers.get('Content-Type'),
+    { status, statusText } = response;
+
+  let body;
+
+  if (contentType && contentType.includes('application/json')) {
+    body = await response.json();
+  } else {
+    body = await response.text();
+  }
+
+  return { status, statusText, body };
 };
 
 /**
@@ -61,7 +99,7 @@ module.exports.request = function (url, opts) {
  * @return {Promise}
  */
 module.exports.get = function (url, opts) {
-  const conf = _defaults({method: 'GET'}, opts);
+  const conf = _defaults({ method: 'GET' }, opts);
 
   return fetch(url, conf).then(checkStatus).then(function (res) { return res.json(); });
 };
@@ -100,20 +138,8 @@ module.exports.getHTML = function (url) {
  * @param  {Boolean} isAuthenticated set to true if making PUT requests to Clay
  * @return {Promise}
  */
-module.exports.put = function (url, data, isAuthenticated) {
-  const payload = {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  };
-
-  if (isAuthenticated) {
-    authenticate(payload);
-  }
-
-  return fetch(url, payload).then(checkStatus).then(function (res) { return res.json(); });
+module.exports.put = async function (url, data, isAuthenticated) {
+  return await makeRequest('PUT', url, data, isAuthenticated);
 };
 
 /**
@@ -121,21 +147,21 @@ module.exports.put = function (url, data, isAuthenticated) {
  * note: primarily used for elastic search
  * @param  {string}  url
  * @param  {object|array}  data
- * @param  {Boolean} isAuthenticated set to true if making POST requests to Clay
+ * @param  {Boolean} [isAuthenticated] set to true if making POST requests to Clay
  * @return {Promise}
  */
-module.exports.post = function (url, data, isAuthenticated) {
-  const payload = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  };
+module.exports.post = async function (url, data, isAuthenticated) {
+  return await makeRequest('POST', url, data, isAuthenticated);
+};
 
-  if (isAuthenticated) {
-    authenticate(payload);
-  }
-
-  return fetch(url, payload).then(checkStatus).then(function (res) { return res.json(); });
+/**
+ * DELETE
+ *
+ * @param  {string}  url
+ * @param  {object|array}  data
+ * @param  {Boolean} [isAuthenticated] set to true if making POST requests to Clay
+ * @return {Promise}
+ */
+module.exports.delete = async function (url, data, isAuthenticated) {
+  return await makeRequest('DELETE', url, data, isAuthenticated);
 };

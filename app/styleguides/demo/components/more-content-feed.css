@@ -16,7 +16,7 @@
     padding-bottom: em(50);
   }
 
-  h2 {
+  .more-content-feed__title {
     @mixin more-content-feed-font1;
     width: 100%;
     position: relative;
@@ -24,19 +24,31 @@
     text-align: center;
     color: $parisM;
     margin-bottom: em(30);
-
     &:before {
-       border-top: em(1, 20) solid $parisM;
-       content: "";
-       margin: 0 auto;
-       position: absolute;
-       top: 50%;
-       left: 0;
-       right: 0;
-       bottom: 0;
-       width: 100%;
-       z-index: -1;
-     }
+      border-top: em(1, 20) solid $parisM;
+      content: "";
+      margin: 0 auto;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      z-index: -1;
+    }
+    @define-mixin titleColor $sectionFront, $color: $purple {
+      &--$sectionFront {
+        color: $color;
+        &:before {
+          border-top: em(1, 20) solid $color;
+        }
+      }
+    }
+    @mixin titleColor music, $sunsetOrange;
+    @mixin titleColor news, $lightningYellow;
+    @mixin titleColor sports, $azureRadience;
+    @mixin titleColor podcasts, $robinsEggBlue;
+    @mixin titleColor station-front, theme(primaryColor, $parisM);
     span {
       background: $white;
       padding: 0 em(15, 20);
@@ -113,7 +125,8 @@
           width: inherit;
         }
 
-        .thumb__section-front {
+        .thumb__section-front,
+        .thumb__advertisement {
           background: $purple;
           @mixin more-content-feed-font5;
           position: absolute;
@@ -127,6 +140,10 @@
             line-height: em(33, 18);
             padding: 0 em(6, 18);
           }
+        }
+        .thumb__advertisement {
+          background: $blazeOrange;
+          z-index: 1;
         }
         .thumb__content-type {
           background: $purple;

@@ -10,7 +10,7 @@ module.exports['1.0'] = function (uri, data) {
 
 module.exports['2.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   newData.sectionFront = newData.sectionFront || data.filterBySection;
   delete newData.filterBySection;
@@ -25,7 +25,7 @@ module.exports['2.0'] = function (uri, data) {
 
 module.exports['3.0'] = function (uri, data) {
   // Clone so we don't lose value by reference
-  let newData = Object.assign({}, data);
+  const newData = Object.assign({}, data);
 
   newData.filterSecondaryArticleTypes = {};
 
@@ -43,8 +43,19 @@ module.exports['4.0'] = function (uri, data) {
 
   // Add tag if it's not already on the section lead
   if (!data.filterTags.filter(tag => tag.text === 'Radio.com Latino').length) {
-    data.filterTags.push({text: 'Radio.com Latino'});
+    data.filterTags.push({ text: 'Radio.com Latino' });
   }
 
   return data;
+};
+
+
+module.exports['5.0'] = function (uri, data) {
+  const newData = Object.assign({}, data);
+
+  newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
+  
+  delete newData.filterSecondaryArticleTypes;
+  
+  return newData;
 };

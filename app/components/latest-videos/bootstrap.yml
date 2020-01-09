@@ -2,4 +2,6 @@ _components:
   latest-videos:
     items: []
     filterTags: []
-    filterSecondaryArticleTypes: []
+    filterSecondarySectionFronts: []
+    title: Radio.com Video
+    primaryContentLabel: 'Exclusive Video'

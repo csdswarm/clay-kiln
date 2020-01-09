@@ -10,7 +10,13 @@ function slugify(value) {
   const cleanValue = value
     .toLocaleLowerCase()
     .trim()
-    .replace(/ /g, '-');
+    .replace(/ /g, '-')
+    // tech debt: remove any characters that shouldn't be in a url.  This is
+    //   only necessary because we're transforming section front titles to
+    //   section front urls which causes a problem in the case of
+    //   "i'm listening".  Ideally we'd store the section front url and use
+    //   it directly.
+    .replace(/'/g, '');
 
   return encodeURIComponent(cleanValue);
 }
@@ -49,7 +55,7 @@ function toLinkSegments(data) {
   return prop => {
     const text = data[prop];
 
-    return {segment: slugify(text), text };
+    return { segment: slugify(text), text };
   };
 }
 
@@ -61,7 +67,7 @@ function toLinkSegments(data) {
  * @return {object}
  */
 function createCrumb(url, text) {
-  return {url, text};
+  return { url, text };
 }
 
 
@@ -79,7 +85,7 @@ function createCrumb(url, text) {
  * makeFullLink(arr[1], 1, arr);
  */
 function toFullLinks(host) {
-  return ({text}, index, segments) => createCrumb(`//${host}/${concatValues(segments.slice(0, index + 1), 'segment')}`, text);
+  return ({ text }, index, segments) => createCrumb(`//${host}/${concatValues(segments.slice(0, index + 1), 'segment')}`, text);
 }
 
 module.exports = {
