@@ -41,7 +41,7 @@ pdb:
 
 hpa:
   enabled: True
-  min: 1
+  min: 2
   max: 10
   metric: cpu
   cpuTarget: 50
