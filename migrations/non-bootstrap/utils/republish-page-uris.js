@@ -66,8 +66,7 @@ async function republishPageUris_v1(
       try {
         log.info(uri);
 
-        const componentName = clayutils.getComponentName(uri),
-          dbResult = await db.query(
+        const dbResult = await db.query(
             `select data from pages where id = $1`,
             [uri]
           ),
@@ -107,13 +106,11 @@ async function republishPageUris_v1(
       );
     }
 
-    if (fail.length) {
-      log.error(
-        '\n\ncontent errored when attempting to re-publish'
-        + '\n---------------------------------------------'
-        + '\n' + fail.map(formatFail).join('\n\n')
-      );
-    }
+    log.error(
+      '\n\ncontent errored when attempting to re-publish'
+      + '\n---------------------------------------------'
+      + '\n' + fail.map(formatFail).join('\n\n')
+    );
   }
 
   return {
