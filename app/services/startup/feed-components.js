@@ -54,24 +54,35 @@ function init() {
   );
 };
 
+function getPartialName(cmptName, format) {
+  const partialNameWithFormat = format ? `${cmptName}.${format}` : cmptName,
+    partialExists = !!hbs.partials[partialNameWithFormat];
+
+  return partialExists
+    ? partialNameWithFormat
+    : cmptName;
+}
+
 /**
  * render a feed component from the name and data
  *
+ * this is async because it calls model.render which is necessary for some feed
+ *   formats.  I'm choosing to keep this async method separate in order to
+ *   prevent bad merges.
+ *
  * @param {String} cmptName
- * @param {string} uri
  * @param {String} cmptData
- * @param {object} locals
  * @param {string} [format]
+ * @param {string} uri
+ * @param {object} locals
  * @returns {String}
  */
 // I'm trying not to refactor too much right now due to the amount of time this
 //   ticket has taken.  If we still want to cater to this max params rule then
 //   I'm punting a fix for later.
 // eslint-disable-next-line max-params
-async function renderComponent(cmptName, uri, cmptData, locals, format) {
-  const partialNameWithFormat = format ? `${cmptName}.${format}` : cmptName,
-    partialExists = !!hbs.partials[partialNameWithFormat],
-    partialName = partialExists ? partialNameWithFormat : cmptName;
+async function renderComponentAsync(cmptName, cmptData, format, uri, locals) {
+  const partialName = getPartialName(cmptName, format);
 
   if (!hbs.partials[partialName]) {
     log('error', `No handlebars partial exists for ${partialName}`);
@@ -87,6 +98,26 @@ async function renderComponent(cmptName, uri, cmptData, locals, format) {
   return hbs.partials[partialName](cmptData).trim();
 }
 
+/**
+ * render a feed component from the name and data
+ *
+ * @param {String} cmptName
+ * @param {Object} cmptData
+ * @param {string} [format]
+ * @returns {String}
+ */
+function renderComponent(cmptName, cmptData, format) {
+  const partialName = getPartialName(cmptName, format);
+
+  if (!hbs.partials[partialName]) {
+    log('warn', `No handlebars partial exists for ${partialName}`);
+    return '';
+  }
+
+  return hbs.partials[partialName](cmptData);
+}
+
 module.exports.init = init;
 module.exports.hbs = hbs;
 module.exports.renderComponent = renderComponent;
+module.exports.renderComponentAsync = renderComponentAsync;
