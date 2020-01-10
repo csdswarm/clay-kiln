@@ -58,17 +58,17 @@ function init() {
  * render a feed component from the name and data
  *
  * @param {String} cmptName
- * @param {string} uri
  * @param {String} cmptData
- * @param {object} locals
  * @param {string} [format]
+ * @param {string} uri
+ * @param {object} locals
  * @returns {String}
  */
 // I'm trying not to refactor too much right now due to the amount of time this
 //   ticket has taken.  If we still want to cater to this max params rule then
 //   I'm punting a fix for later.
 // eslint-disable-next-line max-params
-async function renderComponent(cmptName, uri, cmptData, locals, format) {
+async function renderComponent(cmptName, cmptData, format, uri, locals) {
   const partialNameWithFormat = format ? `${cmptName}.${format}` : cmptName,
     partialExists = !!hbs.partials[partialNameWithFormat],
     partialName = partialExists ? partialNameWithFormat : cmptName;
@@ -80,7 +80,10 @@ async function renderComponent(cmptName, uri, cmptData, locals, format) {
 
   const render = cmptToRenderFn[cmptName];
 
-  if (render) {
+  // we need to check for uri and locals because when I merge this into branches
+  //   which have google news feed, they'll be calling this method without uri
+  //   and locals which breaks render.
+  if (render && uri && locals) {
     cmptData = await render(uri, cmptData, locals);
   }
 

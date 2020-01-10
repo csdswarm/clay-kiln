@@ -34,7 +34,7 @@ async function renderContent(content, locals, format, componentsToSkip = new Set
       && !componentsToSkip.has(cmptName)
     ) {
       // render the component and add it to the response
-      res += await renderComponent(cmptName, ref, cmptData, locals, format);
+      res += await renderComponent(cmptName, cmptData, format, ref, locals);
     }
   }
 
