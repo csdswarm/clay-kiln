@@ -8,7 +8,7 @@
     {{#if (compare @index 0) }}
       {{> event-lead event }}
     {{else}}
-      {{> content-card event }}
+      {{> content-card event _self=true }}
     {{/if}}
   {{/each}}
 </div>

@@ -1,5 +1,3 @@
-@import "_global/mixins";
-@import "_global/fonts";
-@import "_global/colors";
-@import "_global/_partials/content-card.css";
-@import "_global/_partials/content-card-thumb.css";
+.event-list {
+  display: block;
+}
