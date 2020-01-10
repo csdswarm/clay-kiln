@@ -1,7 +1,7 @@
 'use strict';
 
 const parseDate = require('date-fns/parse'),
-  { addArrayOfProps, renderContent } = require('../utils'),
+  { addArrayOfProps, renderContentAsync } = require('../utils'),
   comscoreScript = require('./comscore-script'),
   gaScript = require('./ga-script'),
   // details about why the components are skipped can be found in the specs here
@@ -37,8 +37,8 @@ module.exports = async (data, locals) => {
   const { canonicalUrl, content, headline, lead, seoDescription } = data,
     link = `${canonicalUrl}`,
     [leadHtml, contentHtml] = await Promise.all([
-      renderContent(lead, locals, 'smart-news', componentsToSkip),
-      renderContent(content, locals, 'smart-news', componentsToSkip)
+      renderContentAsync(lead, locals, 'smart-news', componentsToSkip),
+      renderContentAsync(content, locals, 'smart-news', componentsToSkip)
     ]),
     xmlObj = [
       {
