@@ -91,9 +91,6 @@ async function renderComponentAsync(cmptName, cmptData, format, uri, locals) {
 
   const render = cmptToRenderFn[cmptName];
 
-  // we need to check for uri and locals because when I merge this into branches
-  //   which have google news feed, they'll be calling this method without uri
-  //   and locals which breaks render.
   if (render) {
     cmptData = await render(uri, cmptData, locals);
   }
