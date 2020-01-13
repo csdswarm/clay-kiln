@@ -14,7 +14,7 @@
     {{#each presenters as |presenter|}}
         <div class="presented-by__logo-container">
           {{#if presenter.url}}
-            <a class="presented-by__logo-link" href="{{ presenter.url }}">
+            <a class="presented-by__logo-link presented-by__logo-link--clickable" href="{{ presenter.url }}">
               {{> presenter-block }}
             </a>
           {{else}}
@@ -26,3 +26,4 @@
     {{/each}}
   </div>
 </div>
+
