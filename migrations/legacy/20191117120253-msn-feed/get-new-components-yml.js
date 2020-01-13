@@ -38,15 +38,8 @@ module.exports = (host, http) => {
                       gt: 20
                 - bool:
                     must_not:
-                      - term:
-                          noIndexNoFollow: true
-                      - nested:
-                          path: byline
-                          query:
-                            bool:
-                              must:
-                                match:
-                                  byline.sources.text: The Associated Press
+                      term:
+                        noIndexNoFollow: true
         transform: article
         format: msn
   feed-image:
