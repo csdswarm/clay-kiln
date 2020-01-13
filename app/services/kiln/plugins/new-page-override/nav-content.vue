@@ -19,11 +19,9 @@ a header indicates such.
       :secondaryActions="secondaryActions"
       :initialExpanded="initialExpanded"
       filterLabel="Search Page Templates"
-      :addTitle="addTitle"
       :addIcon="addIcon"
       header="Page Template"
-      @child-action="itemClick"
-      @add="addTemplate">
+      @child-action="itemClick">
     </filterable-list>
     <filterable-list v-else
       class="new-page-nav"
@@ -42,6 +40,7 @@ import axios from 'axios';
 import { mapGetters } from 'vuex'
 import stationSelect from '../../shared-vue-components/station-select'
 import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
+import { anyStation } from '../../../universal/user-permissions'
 import {
   editExt,
   htmlExt,
@@ -56,17 +55,19 @@ const { filterableList } = window.kiln.utils.components;
 
 export default {
   data() {
-    return {
-      secondaryActions: [{
+    const secondaryActions = [],
+      { user } = window.kiln.locals,
+      canEditTemplate = user.can('edit').a('pageTemplate').for(anyStation).value;
+
+    if (canEditTemplate) {
+      secondaryActions.push({
         icon: 'settings',
         tooltip: 'Edit Template',
         action: this.editTemplate
-      }, {
-        icon: 'delete',
-        tooltip: 'Remove Template',
-        action: this.removeTemplate
-      }]
-    };
+      });
+    }
+
+    return { secondaryActions };
   },
   computed: Object.assign(
     {},
@@ -74,9 +75,6 @@ export default {
     {
       isAdmin() {
         return _.get(this.$store, 'state.user.auth') === 'admin';
-      },
-      addTitle() {
-        return _.get(this.$store, 'state.ui.metaKey') ? 'Duplicate Current Page' : 'Add Current Page To List';
       },
       addIcon() {
         return _.get(this.$store, 'state.ui.metaKey') ? 'plus_one' : 'add';
@@ -175,23 +173,6 @@ export default {
           return items;
         }
       }).then(() => this.$store.commit('CHANGE_FAVORITE_PAGE_CATEGORY', currentCategoryID));
-    },
-    addTemplate() {
-      const isMetaKeyPressed = _.get(this.$store, 'state.ui.metaKey'),
-        uri = _.get(this.$store, 'state.page.uri'),
-        currentPageID = uri.match(/pages\/([A-Za-z0-9\-]+)/)[1];
-
-      if (isMetaKeyPressed) {
-        this.$store.commit('CREATE_PAGE', currentPageID);
-
-        return this.$store.dispatch('createPage', currentPageID)
-          .then(url => window.location.href = url);
-      } else {
-        this.$store.dispatch('openModal', {
-          title: 'Add Page Template',
-          type: 'add-page'
-        });
-      }
     }
   },
   components: {
