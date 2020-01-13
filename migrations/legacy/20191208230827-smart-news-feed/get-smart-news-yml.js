@@ -3,7 +3,7 @@
 /**
  * returns the components yaml contents
  */
-module.exports = (host, http, logoUrl) => {
+module.exports = (host, http) => {
   return '' +
 `_components:
   feeds:
@@ -43,15 +43,8 @@ module.exports = (host, http, logoUrl) => {
                     feeds.smartNews: true
                 - bool:
                     must_not:
-                      - term:
-                          noIndexNoFollow: true
-                      - nested:
-                          path: byline
-                          query:
-                            bool:
-                              must:
-                                match:
-                                  byline.sources.text: The Associated Press
+                      term:
+                        noIndexNoFollow: true
         transform: content
         format: smart-news`
 };
