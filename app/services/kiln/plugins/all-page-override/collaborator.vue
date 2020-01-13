@@ -1,13 +1,3 @@
-<style lang="sass">
-  .collaborator {
-    position: relative;
-  }
-
-  .collaborator + .collaborator {
-    margin-left: 8px;
-  }
-</style>
-
 <template>
   <div class="collaborator" @click.stop="selectCollaborator">
     <avatar class="collaborator-image" :url="user.imageUrl" size="small" :name="user.name || user.username" ref="avatar"></avatar>

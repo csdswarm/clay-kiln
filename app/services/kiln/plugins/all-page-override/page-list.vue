@@ -33,14 +33,14 @@
 
 <script>
   import _ from 'lodash';
+  import axios from 'axios';
   import { mapGetters } from 'vuex'
   import stationSelect from '../../shared-vue-components/station-select'
   import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
-  import postJSON from './post-json';
   import statusSelector from './status-selector.vue';
   import pageListItem from './page-list-item.vue';
   const { searchRoute } = window.kiln.utils.references;
-  const { UiButton, UiIconButton, UiSelect, UiTextbox } = window.kiln.utils.components;
+  const { UiButton, UiIconButton, UiTextbox } = window.kiln.utils.components;
   const { uriToUrl } = window.kiln.utils.urls;
 
   const DEFAULT_QUERY_SIZE = 50;
@@ -285,7 +285,12 @@
             queryText, queryUser, offset, statusFilter, isMyPages, username, hasNationalStationAccess, stationFilter, stations
           });
         
-        return postJSON(uriToUrl(prefix + searchRoute), query).then((res) => {
+        return axios({ 
+            method: 'post', 
+            url: uriToUrl(prefix + searchRoute), 
+            data: query, 
+            withCredentials: true
+          }).then((res) => {
           const hits = _.get(res, 'data.hits.hits') || [],
             total = _.get(res, 'data.hits.total'),
             pages = _.map(hits, hit => Object.assign({}, hit._source, { uri: hit._id }));
@@ -323,7 +328,6 @@
     components: {
       UiButton,
       UiIconButton,
-      UiSelect,
       UiTextbox,
       'status-selector': statusSelector,
       'page-list-item': pageListItem,
