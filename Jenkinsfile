@@ -15,12 +15,14 @@ pipeline {
   stages {
     stage('Checkout'){
       environment {
-        ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+        ROK8S_TMP = "/tmp"
         HELM_HOME = "${env.ROK8S_TMP}/.helm"
         HOME = "${env.ROK8S_TMP}"
       }
       steps {
         script {
+          // Cleanup
+          sh 'sudo git clean -xdf'
           // Defaults
           ROK8S_CLUSTER='working.k8s.radio-dev.com'
           CRED_ID='dev'
@@ -54,7 +56,7 @@ pipeline {
 
     stage('Build') {
       environment {
-        ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+        ROK8S_TMP = "/tmp"
         HELM_HOME = "${env.ROK8S_TMP}/.helm"
         HOME = "${env.ROK8S_TMP}"
       }
@@ -67,6 +69,7 @@ pipeline {
       }
 
       steps {
+        sh 'git clean -xdf'
         withCredentials ([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']]) {
           sh '''prepare-awscli;
             docker-pull -f deploy/build.config;
@@ -83,6 +86,7 @@ pipeline {
             docker {
               label 'docker && !php'
               image 'node:10.16.3'
+              args '-u root' // Run as root to have write access to .config
             }
           }
           steps {
@@ -105,7 +109,7 @@ pipeline {
 
         stage('Test Chart') {
           environment {
-            ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+            ROK8S_TMP = "/tmp"
             HELM_HOME = "${env.ROK8S_TMP}/.helm"
             HOME = "${env.ROK8S_TMP}"
           }
@@ -128,7 +132,7 @@ pipeline {
 
     stage('Deploy') {
       environment {
-        ROK8S_TMP = "${env.WORKSPACE}/.tmp"
+        ROK8S_TMP = "/tmp"
         HELM_HOME = "${env.ROK8S_TMP}/.helm"
         HOME = "${env.ROK8S_TMP}"
       }
