@@ -629,7 +629,7 @@ em, i {
 /* |||||||||||||||| Event Page Fonts Styleguide ||||||||||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin event-page-font1 {
-  @mixin font CircularStd-Black, 22px, $redViolet, -.55px, 26px;
+  @mixin font CircularStd-Black, 22px, theme(primaryColor, $purple), -.55px, 26px;
 }
 @define-mixin event-page-font2 {
   @mixin font ProximaNova-Regular, 18px, $black, inherit, 22px;

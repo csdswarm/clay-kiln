@@ -50,6 +50,7 @@
 
     &__info-row {
       display: flex;
+      align-items: baseline;
       margin-bottom: em(15);
       @mixin event-page-font2;
     }
@@ -59,12 +60,8 @@
       height: em(18);
       margin-right: em(12);
 
-      &--date {
-        background: url('/media/components/event/icon-time-date.svg') no-repeat;
-      }
-
-      &--location {
-        background: url('/media/components/event/icon-location.svg') no-repeat;
+      .svg-icon {
+        fill: theme(primaryColor, $purple);
       }
     }
 
