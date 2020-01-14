@@ -1,3 +1,4 @@
+_version: 1.0
 _confirmRemoval: true
 
 canonicalUrl:
@@ -20,10 +21,10 @@ podcastList:
     include:
       - podcast-list
 
-moreContentFeed:
+twoColumnComponent:
   _component:
     include:
-      - more-content-feed
+      - two-column-component
 
 stationsCarousel:
   _placeholder:
