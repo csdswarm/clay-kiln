@@ -1,11 +1,13 @@
 'use strict';
 /* eslint-disable one-var */
 
+const { unityComponent } = require('../../services/universal/amphora');
 const db = require('amphora-storage-postgres');
-const moment = require('moment');
-const url = require('url');
 const defaultStation = require('../../services/startup/currentStation/default-station');
+const moment = require('moment');
 const queryDateRange = 30;
+const url = require('url');
+const _get = require('lodash/get');
 
 const stationQuery = stationCallsign =>
   stationCallsign === defaultStation.callsign ?
@@ -39,27 +41,30 @@ const getContestRules = async ({
   return rows.map(pluckData);
 };
 
-module.exports.render = async (ref, data, locals) => {
-  const { pathname } = url.parse(locals.url);
-  const { stationForPermissions } = locals;
-  const { callsign } = stationForPermissions;
-  const startTime = moment().toISOString(true);
-  const isPresentationMode = pathname === '/contests';
-  const contestRules = (await getContestRules({
-    startTime,
-    stationCallsign: callsign
-  })).map((ruleData) => ({
-    ...ruleData,
-    stationTimeZone: locals.station.timezone,
-    showHeader: true,
-    showPresentation: isPresentationMode
-  }));
+module.exports = unityComponent({
+  render: async (ref, data, locals = {}) => {
+    // NOTE: locals is undefined during migration/bootstrap
+    const callsign = _get(locals, 'stationForPermissions.callsign');
+    const { pathname } = url.parse(locals.url);
+    const isPresentationMode = pathname === '/contests';
+    const startTime = moment().toISOString(true);
+    const contestRules = (await getContestRules({
+      startTime,
+      stationCallsign: callsign
+    })).map((ruleData) => ({
+      ...ruleData,
+      stationTimeZone: locals.station.timezone,
+      showHeader: true,
+      showPresentation: isPresentationMode
+    }));
 
-  data._computed = {
-    contestRules,
-    pageTitle: isPresentationMode ?
-      'Contests' : 'Contest Rules'
-  };
+    data._computed = {
+      contestRules,
+      pageTitle: isPresentationMode ?
+        'Contests' :
+        'Contest Rules'
+    };
 
-  return data;
-};
+    return data;
+  }
+});
