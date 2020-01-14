@@ -6,6 +6,8 @@ const _flatten = require('lodash/flatten'),
 
 /**
  * fetches the page template ids from the database
+ *
+ * @returns {Promise<Set<string>>}
  */
 async function getPageTemplateIdsFromDb() {
   const { rows } = await db.raw(`
@@ -31,7 +33,7 @@ async function getPageTemplateIdsFromDb() {
  *   date.  If performance becomes a concern we can revisit this decision.
  *
  * @param {object} locals
- * @returns {Set<string>}
+ * @returns {Promise<Set<string>>}
  */
 module.exports = async locals => {
   if (!locals) {

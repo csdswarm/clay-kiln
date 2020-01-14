@@ -99,9 +99,10 @@ function userPermissionRouter() {
   //   when a bad station slug is sent.
   hasPermissions.createPage(userPermissionRouter);
 
-  // we're restricting editLayout here instead of in checkUserPermissions
-  //   because that method will be kept much simpler if we leave it intercepting
-  //   unsafe methods (here we're intercepting GET /_pages/...?edit=true)
+  // we're restricting editPageTemplate here instead of in checkUserPermissions
+  //   because that function will be kept much simpler if we leave it
+  //   intercepting unsafe methods (here we're intercepting
+  //   GET /_pages/...?edit=true)
   hasPermissions.editPageTemplate(userPermissionRouter);
 
   attachToLocals.updatePermissionsInfo(userPermissionRouter);
