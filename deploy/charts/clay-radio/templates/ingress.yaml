@@ -21,4 +21,12 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: http
     {{- end }}
+    {{- range .Values.ingress.staticDomains }}
+    - host: {{ . }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ $fullName }}
+              servicePort: http
+    {{- end }}
 {{ end }}

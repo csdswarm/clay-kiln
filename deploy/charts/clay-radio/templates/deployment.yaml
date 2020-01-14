@@ -43,20 +43,24 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
-          livenessProbe: null
-          readinessProbe: null
-          # livenessProbe:
-          #   httpGet:
-          #     path: /health-check
-          #     port: http
-          #   initialDelaySeconds: 60
-          #   periodSeconds: 10
-          # readinessProbe:
-          #   httpGet:
-          #     path: /health-check
-          #     port: http
-          #   initialDelaySeconds: 15
-          #   periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              httpHeaders:
+              - name: Host
+                value: {{ index .Values.ingress.staticDomains 0 }}
+              path: /_pages/section-front
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              httpHeaders:
+              - name: Host
+                value: {{ index .Values.ingress.staticDomains 0 }}
+              path: /_pages/section-front
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           securityContext:
