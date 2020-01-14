@@ -9,11 +9,11 @@ fullnameOverride: ""
 
 resources:
   limits:
-    cpu: 300m
-    memory: 256Mi
+    cpu: 2
+    memory: 512Mi
   requests:
-    cpu: 100m
-    memory: 256Mi
+    cpu: 1
+    memory: 512Mi
 nodeSelector: {}
 tolerations: []
 affinity: {}

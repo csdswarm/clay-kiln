@@ -42,4 +42,4 @@ EXPOSE 3001
 
 USER node
 
-CMD ["pm2-runtime", "app.js"]
+CMD ["pm2-runtime", "app.js", "--instances", "2"]

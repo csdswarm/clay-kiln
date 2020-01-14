@@ -59,7 +59,7 @@ spec:
                 value: {{ index .Values.ingress.staticDomains 0 }}
               path: /_pages/section-front
               port: http
-            initialDelaySeconds: 15
+            initialDelaySeconds: 5
             periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
