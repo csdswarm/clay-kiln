@@ -20,7 +20,6 @@ module.exports.save = (uri, data, locals) => {
 
   return {
     ...data,
-    revealSectionFrontControls: !data.stationFront && !data.titleLocked,
-    revealStationControls: data.stationFront && !data.titleLocked
+    revealSectionFrontControls: !data.stationFront && !data.titleLocked
   };
 };
