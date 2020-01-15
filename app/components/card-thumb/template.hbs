@@ -5,15 +5,9 @@
   {{#each contentTypes}}
     <span class="thumb__content-type thumb__content-type--{{ . }}">{{> graphic name=this _self=true }}</span>
   {{/each}}
-  <img {{!-- TODO: consider making a helper for this sort of thing, e.g. {{{ imgSource images.0 }}} --}}
-      src="{{ images.0.url }}?width={{images.0.width}}&crop={{images.0.crop}}{{#if images.0.offset}}
-        ,offset-{{ images.0.offset }}{{/if}}"
-      srcset="{{#each images}}
-          {{ url }}?width={{ width }}&crop={{ crop }}{{ if offset (concat ',offset-' offset)}} {{ width }}w
-          {{#unless @last}},{{/unless}}
-        {{/each}}"
-      sizes="{{#each images}}
-          {{ if maxWidth (concat '(max-width:' maxWidth 'px)')}}{{ width }}px{{#unless @last }},{{/unless}}
-        {{/each}}"
-      class="thumb__image"/>
+  <img src="{{ imgSource images.[0] }}"
+       srcset="{{#each images}} {{ imgSource . }}{{#unless @last}},{{/unless}} {{/each}}"
+       sizes="{{#each images}}  {{ imgSize . }}{{#unless @last }},{{/unless}} {{/each}}"
+       class="thumb__image"
+  />
 </div>
