@@ -1,4 +1,4 @@
-_version: 9.0
+_version: 10.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -77,11 +77,17 @@ locationOfContentFeed:
       - section-front
       - topic-page
 
+station:
+  _subscribe: stationName
+
 sectionFront:
   _subscribe: sectionFront
   _label: Section Front Category
   _has:
     help: Section Front Category from which to pull content
+
+primarySectionFront:
+  _subscribe: primarySectionFront
 
 sectionFrontManual:
   _label: Section Front Category
@@ -311,3 +317,8 @@ _groups:
     _placeholder:
       height: 100px
       ifEmpty: populateFrom
+  header:
+    _label: Content Feed Title
+    fields:
+      - componentTitle
+      - componentTitleVisible
