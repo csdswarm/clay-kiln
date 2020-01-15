@@ -4,5 +4,10 @@
   class="component component--topic-page topic-page--{{tag}}{{ if @root.locals.edit ' editing' }}"
   data-station-slug="{{ stationSlug }}">
 
+  {{#if content}}
+      <div data-editable="content" itemprop="topicBody">
+        {{> component-list content }}
+      </div>
+  {{/if}}
   {{> more-content-feed moreContentFeed}}
 </section>

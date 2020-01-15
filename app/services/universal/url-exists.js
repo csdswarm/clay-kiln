@@ -1,6 +1,7 @@
 'use strict';
 
 const { getArticleData } = require('../universal/recirc-cmpt'),
+  _get = require('lodash/get'),
   { PAGE_TYPES } = require('../universal/constants'),
   urlPatterns = require('../universal/url-patterns'),
 
@@ -38,9 +39,8 @@ module.exports = (
   locals = {},
   componentName = ''
 ) => {
-  const { site:
-      { prefix }
-    } = locals,
+  const
+    prefix = _get(locals, 'site.prefix', ''),
     protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:',
     urlData = {
       prefix,
