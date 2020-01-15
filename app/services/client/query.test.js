@@ -8,7 +8,7 @@ var expect = require('chai').expect,
   sinon = require('sinon'),
   amphora = require('amphora'),
   siteService = amphora.sites,
-  db = amphora.db;
+  db = require('amphora-storage-postgres');
 
 const INDEX = 'pages',
   TYPE = '_doc';

@@ -106,6 +106,7 @@ function removeExtension(path) {
   if (leadingDot > -1) {
     path = path.substr(0, leadingDot);
   }
+
   return path;
 }
 

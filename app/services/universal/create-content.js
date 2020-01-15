@@ -536,14 +536,13 @@ function assignStationInfo(uri, data, locals) {
 }
 
 async function save(uri, data, locals) {
-  const isClient = typeof window !== 'undefined',
-    urlAlreadyExists = await urlExists(uri, data, locals);
+  const isClient = typeof window !== 'undefined';
 
   /*
     kiln doesn't display custom error messages, so on the client-side we'll
     use the publishing drawer for validation errors.
   */
-  if (urlAlreadyExists && !isClient) {
+  if (!isClient && await urlExists(uri, data, locals)) {
     throw new Error('duplicate url');
   }
 
