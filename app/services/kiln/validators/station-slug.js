@@ -25,9 +25,11 @@ async function getSlugs() {
 
   const publishedStations = await db.get(`${locals.site.host}/_lists/primary-section-fronts`, locals);
 
-  locals.allStationsSlugs.forEach(slug => {
-    slugs[slug] = publishedStations.some(({ value }) => slug === value);
-  });
+  if (locals.allStationsSlugs) {
+    locals.allStationsSlugs.forEach(slug => {
+      slugs[slug] = publishedStations.some(({ value }) => slug === value);
+    });
+  }
 
   return slugs;
 }

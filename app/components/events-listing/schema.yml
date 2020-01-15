@@ -7,4 +7,16 @@ content:
     fuzzy: true # allows interactives, etc to add one-off components
     include:
       - events-lede
-      # - more-content-feed
+
+pageDescription:
+  _publish: pageDescription
+  _has:
+    input: text
+    help: Plaintext description for search engines
+    validate:
+      required: true
+
+_groups:
+  settings:
+    fields:
+      - pageDescription

@@ -1,6 +1,6 @@
 'use strict';
 
-const { playingClass } = require('../../services/server/spaLocals'),
+const { playingClass } = require('../../services/universal/spaLocals'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime'),
   { getSchedule } = require('../../services/universal/station'),
   _get = require('lodash/get');

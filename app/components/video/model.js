@@ -102,9 +102,9 @@ module.exports.render = function (uri, data) {
  * @return {Promise}
  */
 module.exports.save = function (uri, data) {
-  const embedCode = url && url.match(/src=['"](.*?)['"]/i); // find first src="(url)"
   let url = data.url;
-
+  const embedCode = url && url.match(/src=['"](.*?)['"]/i); // find first src="(url)"
+  
   // if they pasted in a full embed code, parse out the url
   if (embedCode) {
     url = embedCode[1];
