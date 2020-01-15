@@ -45,7 +45,7 @@ function formatS3Path(locals) {
  * @param {string} utmMedium
  * @returns {Promise}
  */
-function buildModel({ log = defaultLog, prefix, utmSource, utmMedium = 'f1' }) {
+function buildModel({ log = defaultLog, prefix, utmSource = 'etm', utmMedium = 'f1' }) {
   return (ref, data) => {
     const { meta } = data,
       utmParams = { utmSource: meta.utmSource || utmSource, utmMedium: meta.utmMedium || utmMedium },
