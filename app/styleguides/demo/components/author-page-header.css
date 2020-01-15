@@ -69,7 +69,7 @@
     }
     &__text-container {
         display: flex;
-        flex: 1 0 auto;
+        flex: auto;
         padding-left: em(20);
         flex-direction: column;
         justify-content: center;
