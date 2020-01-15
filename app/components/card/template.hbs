@@ -11,8 +11,8 @@
     data-track-{{ @key }}="{{ this }}"
   {{/each}}
 >
-  {{#if thumbnail }}
-    {{> card-thumb thumb _self=true }}
+  {{#if thumb }}
+    {{> card-thumb thumb category=this.category _self=true }}
   {{/if}}
 
   <div class="card__info">
