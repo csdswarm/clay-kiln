@@ -13,8 +13,7 @@
         </li>
       {{/each}}
     </ul>
-  {{else}}
-    {{#if @root.locals.edit}}
+  {{else if @root.locals.edit}}
       <div class="cards-feed__placeholder kiln-placeholder" data-editable="curatedItems">
         <div class="placeholder-label">
           <span class="ui-icon placeholder-icon material-icons add">add</span>
