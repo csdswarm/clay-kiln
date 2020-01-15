@@ -7,7 +7,7 @@ const publishing = require('../../services/publishing'),
     '/_components/section-front/instances',
     '/_components/author-page-header/instances',
     '/_components/event/instances',
-    '/_components/events-listing/instances'
+    '/_components/events-listing-page/instances'
   ];
 
 module.exports.routes = [

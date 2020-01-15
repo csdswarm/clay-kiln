@@ -1,5 +1,5 @@
 _components:
-  events-listing:
+  events-listing-page:
     content:
       - _ref: /_components/events-lede/instances/new
     pageDescription: ''

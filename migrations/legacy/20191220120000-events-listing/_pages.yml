@@ -10,7 +10,7 @@ _pages:
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:
-      - /_components/events-listing/instances/new
+      - /_components/events-listing-page/instances/new
     tertiary:
       - /_components/google-ad-manager/instances/mediumRectangleTop
       - /_components/latest-recirculation/instances/new

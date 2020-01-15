@@ -26,7 +26,7 @@ const _get = require('lodash/get'),
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
     EVENT: 'event',
-    EVENTSLISTING: 'events-listing'
+    EVENTSLISTING: 'events-listing-page'
   },
 
   // this should list the component names of the content types which may be
