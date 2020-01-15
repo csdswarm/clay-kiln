@@ -57,6 +57,8 @@ module.exports = unityComponent({
   },
 
   render: async (ref, data, locals) => {
+    data._computed.articles = [];
+
     if (abTest() && !locals.edit) {
       const lyticsId = _get(locals, 'lytics.uid'),
         noUserParams = lyticsId ? {} : { url: locals.url },
