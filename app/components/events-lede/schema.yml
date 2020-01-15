@@ -6,12 +6,8 @@ contentLabel:
       max: 80
     help: Label for the lede event. Eg. 'Featured Event'
 
-url:
-  _label: URL
-  _has:
-    input: content-search
-    validate:
-      required: true
+lede:
+  _subscribe: lede
 
 # Component properties
 description:
@@ -28,9 +24,5 @@ _groups:
   settings:
     fields:
       - contentLabel
-      - url
+      - lede
       - description
-    _placeholder:
-      ifEmpty: url
-      height: 400px
-      text: Featured Event

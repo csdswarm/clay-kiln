@@ -36,7 +36,9 @@ const _get = require('lodash/get'),
     'gallery',
     'section-front',
     'static-page',
-    'topic-page'
+    'topic-page',
+    'event',
+    'events-listing-page'
   ]),
 
   DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';

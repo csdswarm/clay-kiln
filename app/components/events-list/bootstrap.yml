@@ -1,8 +1,6 @@
 _components:
   events-list:
-    lead: ''
     events: []
     instances:
       new:
-        lead: ''
         events: []
