@@ -171,14 +171,20 @@ function getUrlOptions(component, locals, pageType) {
     date = moment(locals.date);
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = component.stationFront ? null
-  : slugifyService(component.sectionFront || component.title) || null;
+  urlOptions.sectionFront = component.stationFront
+    ? null
+    : slugifyService(component.sectionFront || component.title) || null;
   urlOptions.secondarySectionFront = slugifyService(component.secondarySectionFront) || null;
-  urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);
+  urlOptions.primarySectionFront = component.primary && component.primarySectionFront
+    ? null
+    : slugifyService(component.primarySectionFront);
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline)) || null;
+  urlOptions.slug = component.title
+    || component.slug
+    || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline))
+    || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
   urlOptions.stationSlug = component.stationSlug || '';
@@ -189,7 +195,7 @@ function getUrlOptions(component, locals, pageType) {
         locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
     }
   } else if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
-    if (!(locals.site && urlOptions.sectionFront)) {
+    if (!(locals.site && (urlOptions.stationSlug || urlOptions.sectionFront))) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
     }

@@ -28,7 +28,7 @@ const exists = require('lodash/identity'),
       .join('/');
   },
   sectionFront = opts => {
-    // e.g. http://radio.com/music
+    // e.g. http://radio.com/music or http://radio.com/kroq
     return [
       opts.prefix,
       opts.stationSlug,
