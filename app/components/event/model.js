@@ -26,7 +26,7 @@ function getSettingsConfigData() {
           {
             title: 'Facebook Headline',
             isRequired: true,
-            templateString: `{{{ default facebookHeadline '${emptyHtml}' }}}`
+            templateString: `{{{ default primaryHeadline '${emptyHtml}' }}}`
           },
           {
             title: 'Twitter/Short Headline',

@@ -18,10 +18,12 @@ const pkg = require('../../package.json'),
   feedComponents = require('./feed-components'),
   handleRedirects = require('./redirects'),
   brightcove = require('./brightcove'),
+  appleNews = require('./apple-news'),
   log = require('../universal/log').setup({ file: __filename }),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
+  cognitoAuth = require('./cognito-auth'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
   cacheControl = require('./cache-control');
@@ -91,9 +93,13 @@ function setupApp(app) {
 
   radium.inject(app);
 
+  cognitoAuth.inject(app);
+
   app.use(canonicalJSON);
 
   brightcove.inject(app);
+
+  appleNews.inject(app);
 
   sessionStore = createSessionStore();
 

@@ -1,8 +1,9 @@
 'use strict';
 
+const { assignStationInfo } = require('../../services/universal/create-content.js');
+
 module.exports.render = (uri, data, locals) => {
   if (data.title) {
-
     if (data.primary) {
       locals.sectionFront = data.title.toLowerCase();
     } else {
@@ -12,4 +13,14 @@ module.exports.render = (uri, data, locals) => {
   }
 
   return data;
+};
+
+module.exports.save = (uri, data, locals) => {
+  assignStationInfo(uri, data, locals);
+
+  return {
+    ...data,
+    revealSectionFrontControls: !data.stationFront && !data.titleLocked,
+    revealStationControls: data.stationFront && !data.titleLocked
+  };
 };

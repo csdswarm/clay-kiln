@@ -1,0 +1,28 @@
+_components:
+  events-lede:
+    contentLabel: 'Featured Event'
+    url: ''
+    headline: ''
+    startDate: ''
+    startTime: ''
+    venueName: ''
+    venueAddress: ''
+    feedImgUrl: ''
+    description:
+      _ref: /_components/paragraph/instances/new
+    googleAdRightRail:
+      _ref: /_components/google-ad-manager/instances/halfPageTop
+    instances:
+      new:
+        contentLabel: 'Featured Event'
+        url: ''
+        headline: ''
+        startDate: ''
+        startTime: ''
+        venueName: ''
+        venueAddress: ''
+        feedImgUrl: ''
+        description:
+          _ref: /_components/paragraph/instances/new
+        googleAdRightRail:
+          _ref: /_components/google-ad-manager/instances/halfPageTop

@@ -10,6 +10,7 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
+  articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
   { getComponentName } = require('clayutils');
@@ -503,6 +504,37 @@ function render(ref, data, locals) {
   });
 }
 
+/**
+ * Assigns 'stationSlug' and 'stationName' to data.
+ *
+ * newPageStation should only exist upon creating a new page.  The property is
+ *   attached to locals in `app/routes/add-endpoint/create-page.js`.  Its
+ *   purpose is to avoid creating a new content-type instance for every station
+ *   (article/gallery/section front/etc.)
+ *
+ * @param {string} uri
+ * @param {object} data
+ * @param {object} locals
+ */
+function assignStationInfo(uri, data, locals) {
+  if (locals.newPageStation !== undefined) {
+    const station = locals.newPageStation,
+      componentName = getComponentName(uri);
+
+    Object.assign(data, {
+      stationSlug: station.site_slug,
+      stationName: station.name
+    });
+
+    if (articleOrGallery.has(componentName)) {
+      Object.assign(data, {
+        stationLogoUrl: station.square_logo_small,
+        stationURL: station.website
+      });
+    }
+  }
+}
+
 async function save(uri, data, locals) {
   const isClient = typeof window !== 'undefined',
     urlAlreadyExists = await urlExists(uri, data, locals);
@@ -517,6 +549,7 @@ async function save(uri, data, locals) {
 
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
+  assignStationInfo(uri, data, locals);
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
@@ -544,3 +577,4 @@ module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
 
 module.exports.render = render;
 module.exports.save = save;
+module.exports.assignStationInfo = assignStationInfo;

@@ -1,0 +1,22 @@
+content:
+  _label: Events Listing Page Content
+  _placeholder:
+    text: Events Listing Content
+    height: 600px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - events-lede
+
+pageDescription:
+  _publish: pageDescription
+  _has:
+    input: text
+    help: Plaintext description for search engines
+    validate:
+      required: true
+
+_groups:
+  settings:
+    fields:
+      - pageDescription

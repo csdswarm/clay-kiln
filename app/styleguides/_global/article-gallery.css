@@ -2,6 +2,7 @@
 @import "mixins";
 @import "fonts";
 @import "colors";
+@import "content-type";
 
 .alert {
   font-family: Verdana, sans-serif;
@@ -117,7 +118,7 @@
         @define-mixin author-name-color $sectionFront, $color {
           .component--article[data-section-front=$sectionFront] & a,
           .component--gallery[data-section-front=$sectionFront] & a {
-            color: $color;
+            color: theme(primaryColor, $color);
           }
         }
         @mixin author-name-color music, $sunsetOrange;
@@ -431,7 +432,7 @@
   .component.article--$sectionFront,
   .component.gallery--$sectionFront{
     .breadcrumbs__separator {
-      color: $color;
+      color: theme(primaryColor, $color);
     }
   }
 }
@@ -446,11 +447,7 @@
   .gallery--$sectionFront {
     .paragraph {
       a {
-        background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(color), .50) 80%, rgba($(color), .50) 100%);
-
-        &:hover {
-           background: linear-gradient(to bottom, rgba($(color), .50) 0, rgba($(color), .50) 100%);
-        }
+        @mixin anchor $color;
       }
     }
   }

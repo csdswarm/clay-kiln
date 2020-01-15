@@ -30,7 +30,6 @@ _layouts:
           - _ref: ${HOST_URL}/_components/comscore-head/instances/default
           - _ref: ${HOST_URL}/_components/google-tag-manager/instances/default
         pageHeader: pageHeader
-        layoutHeader: layoutHeader
         kilnInternals:
           - _ref: ${HOST_URL}/_components/clay-kiln/instances/general
         sectionHeader: sectionHeader
