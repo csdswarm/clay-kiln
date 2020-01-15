@@ -31,7 +31,6 @@ populateFrom:
       -
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
-      - manual
 
 sectionFront:
   _label: Section Front Category
@@ -40,7 +39,6 @@ sectionFront:
     field: populateFrom
     operator: ===
     values:
-      - all-content
       - section-front
       - section-front-and-tag
       - section-front-or-tag
@@ -56,7 +54,6 @@ secondarySectionFront:
     field: populateFrom
     operator: ===
     values:
-      - all-content
       - section-front
       - section-front-and-tag
       - section-front-or-tag
@@ -75,7 +72,6 @@ tag:
     field: populateFrom
     operator: ===
     values:
-      - all-content
       - tag
       - section-front-and-tag
       - section-front-or-tag
@@ -170,11 +166,8 @@ _groups:
       - contentType
       - populateFrom
       - sectionFront
-      - sectionFrontManual
       - secondarySectionFront
-      - secondarySectionFrontManual
       - tag
-      - tagManual
       - excludeTags
       - excludeSectionFronts
       - excludeSecondarySectionFronts

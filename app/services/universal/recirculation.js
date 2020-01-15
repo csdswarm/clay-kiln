@@ -28,7 +28,10 @@ const _isPlainObject = require('lodash/isPlainObject'),
       createObj: sectionFront => ({ match: { sectionFront } })
     },
     secondarySectionFronts: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
-    tags: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
+    tags: {
+      unique: true,
+      createObj: tag => ({ match: { 'tags.normalized': tag } })
+    },
     contentTypes: {
       filterCondition: 'must',
       unique: true,
@@ -79,7 +82,11 @@ const _isPlainObject = require('lodash/isPlainObject'),
 
     if (Array.isArray(value)) {
       if (unique) {
-        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
+        const queries = value.map(createObj);
+
+        if (queries.length) {
+          queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
+        }
       } else {
         value.forEach(v => addCondition(query, key, v, condition));
       }
@@ -114,6 +121,11 @@ const _isPlainObject = require('lodash/isPlainObject'),
 
     queryService.onlyWithTheseFields(query, fields);
 
+    // If there is a should query, there needs to be a minimum_should_match
+    if (query.body.query.bool.should) {
+      query.body.query.bool.minimum_should_match = 1;
+    }
+
     try {
       results = await queryService.searchByQuery(query);
     } catch (e) {
@@ -139,7 +151,7 @@ const _isPlainObject = require('lodash/isPlainObject'),
         try {
           const { filters, excludes, curated } = mapDataToFilters(uri, data, locals),
             content = await fetchRecirculation(filters, excludes, elasticFields, locals);
-          
+       
           data._computed = Object.assign(data._computed || {}, {
             [contentKey]: [...curated, ...content].slice(0, maxItems)
           });
