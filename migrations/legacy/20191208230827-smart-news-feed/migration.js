@@ -1,23 +1,23 @@
 'use strict';
 
 const path = require('path'),
-  _get = require('../../../app/node_modules/lodash/get'),
-  _set = require('../../../app/node_modules/lodash/set'),
   getSmartNewsYml = require('./get-smart-news-yml'),
-  { v1: elasticsearch } = require('../../utils/elasticsearch'),
-  { v1: parseHost } = require('../../utils/parse-host'),
-  { v1: clayImport } = require('../../utils/clay-import'),
+  v1Utils = require('../../utils/migration-utils').v1,
+  { _get, clayImport, elasticsearch, parseHost } = v1Utils,
   shouldUpdate = mappings => {
     const props = mappings._doc.properties;
 
     return !props.noIndexNoFollow
-      || !_get(props, 'feeds.properties.smartNews');
+      || !_get(props, 'feeds.dynamic')
   },
   updateMappings = mappings => {
     const props = mappings._doc.properties;
 
     props.noIndexNoFollow = { type: 'boolean' };
-    _set(props, 'feeds.properties.smartNews', { type: 'boolean' });
+    props.feeds = Object.assign(props.feeds || {}, {
+      type: 'object',
+      dynamic: true
+    });
 
     return mappings;
   };
