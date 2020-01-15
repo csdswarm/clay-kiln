@@ -51,14 +51,8 @@
     flex: 0 0 em(15, 16);
     height: em(15, 16);
     margin-right: em(7, 16);
-
-    &--date {
-      background: url('/media/components/events-list/icon-time-date.svg') no-repeat center;
-    }
-
-    &--location {
-      background: url('/media/components/events-list/icon-location.svg') no-repeat center;
-      height: em(19, 16);
+    .svg-icon {
+      fill: theme(primaryColor, $purple);
     }
   }
 
