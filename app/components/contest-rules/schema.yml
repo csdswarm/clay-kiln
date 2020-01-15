@@ -13,6 +13,12 @@ contestEndDate:
 contestSlug:
   _subscribe: contestSlug
 
+feedImgUrl:
+  _subscribe: feedImgUrl
+
+paragraphForMarketing:
+  _subscribe: subHeadline
+
 rulesBodyText:
   _label: Contest Rules
   _placeholder:

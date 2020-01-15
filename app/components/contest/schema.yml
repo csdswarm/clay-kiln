@@ -52,6 +52,7 @@ subHeadline:
     validate:
       required: false
     help: Appears under contest title
+  _publish: subHeadline
 
 primaryHeadline:
   _label: Facebook Headline

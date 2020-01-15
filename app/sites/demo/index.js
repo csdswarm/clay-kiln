@@ -49,8 +49,13 @@ module.exports.routes = [
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
+
   { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
   { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/contests/:slug' },
+  { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
+
   // Full dynamic paths
   { path: '/:sectionFront' },
   { path: '/:sectionFront/:secondarySectionFront' },
