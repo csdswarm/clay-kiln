@@ -1,0 +1,339 @@
+_description: An event page that includes headline, lede, event venue info, description with presenters & tags.
+_confirmRemoval: true
+
+# event properties
+headline:
+  _label: Event Headline
+  _placeholder:
+    height: 40px
+    text: Event Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+    help: Appears as event's title
+subHeadline:
+  _label: Event Sub Headline
+  _placeholder:
+    height: 40px
+    text: Event Sub Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: false
+    help: Appears under event's title
+startDate:
+  _label: Event Date
+  _has:
+    input: datepicker
+    validate:
+      required: true
+startTime:
+  _label: Event Time
+  _has:
+    input: timepicker
+    validate:
+      required: true
+venueName:
+  _label: Name of the Event's venue
+  _placeholder:
+    height: 20px
+    text: Venue Name
+    required: true
+  _has:
+    input: text
+    type: text
+    validate:
+      required: true
+      min: 4
+      max: 60
+    help: the name of the venue where the event occurs
+venueAddress:
+  _label: Event Location
+  _placeholder:
+    height: 120px
+    text: Venue Location
+    required: true
+  _has:
+    input: wysiwyg
+    type: multi-line
+    rows: 4
+    validate:
+      required: true
+    help: the address of the event's venue - press return for new address lines
+# event properties
+
+# components
+sideShare:
+  _component:
+    include:
+      - share
+tags:
+  _component:
+    include:
+      - tags
+adTags:
+  _component:
+    include:
+      - ad-tags
+#/ components
+
+# component lists
+lead:
+  _label: Event Lead
+  _placeholder:
+    text: Event Lead
+    height: 400px
+  _componentList:
+    fuzzy: false
+    include:
+      - image
+      - instagram-post
+      - brightcove
+      - brightcove-live
+      - youtube
+      - html-embed
+      - omny
+      - verizon-media
+    validate:
+      max: 1
+      required: true
+content:
+  _label: Event Content
+  _placeholder:
+    text: Event Content
+    height: 400px
+  _componentList:
+    fuzzy: true
+    validate:
+      required: true
+    include:
+      - paragraph
+      - presented-by
+      - subheader
+      - image
+      - tweet
+      - facebook-post
+      - instagram-post
+      - youtube
+      - html-embed
+      - brightcove
+      - inline-related
+      - omny
+      - verizon-media
+#/ component lists
+
+# circulationHeadlinesSeoGroup fields
+primaryHeadline:
+  _label: Facebook Headline
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 280
+    help: Write your most shareable headline
+shortHeadline:
+  _label: Twitter/Short Headline
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 140
+    help: Also used for Related Stories and some homepages
+teaser:
+  _label: Teaser
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 150
+    help: Appears in feeds and newsletters
+seoHeadline:
+  _label: SEO Headline
+  _has:
+    input: text
+    help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
+    validate:
+      max: 60
+      required: true
+seoDescription:
+  _label: SEO Description
+  _has:
+    input: text
+    type: multi-line
+    rows: 4
+    help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 200 characters
+    validate:
+      required: true
+      min: 140
+      max: 250
+#/ circulationHeadlinesSeoGroup fields
+
+# circulationSyndicationGroup fields
+featured:
+  _label: Is this a featured event?
+  _has: checkbox
+editorialFeeds:
+  _label: Article terms for Editorial Feeds
+  _has:
+    input: select
+    multiple: true
+    search: true
+    list: freq_editorial_feeds
+    help: Select all editorial feeds terms for syndication
+corporateSyndication:
+  _label: Syndicate to corporate website(s)
+  _has:
+    input: select
+    multiple: true
+    search: true
+    list: corporate_websites
+    help: Select all corporate websites for syndication
+stationSyndication:
+  _label: Syndicate to station(s)
+  _has:
+    input: station-select
+genreSyndication:
+  _label: Syndicate to genre(s)
+  _has:
+    input: genre-select
+syndicationStatus:
+  _label: Syndication Status
+  _has:
+    input: radio
+    options:
+      - original
+      - syndicated
+syndicatedUrl:
+  _label: Syndicated URL
+  _publish: syndicatedUrl
+  _has:
+    input: text
+    help: Canonical URL (If different than the publish URL)
+    validate:
+      required:
+        field: syndicationStatus
+        operator: ===
+        value: syndicated
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+#/ circulationSyndicationGroup fields
+
+# circulationSlugGroup fields
+slug:
+  _label: Slug
+  _has:
+    input: text
+    validate:
+      required: true
+    attachedButton:
+      name: magic-button
+      component: event
+      transform: getComponentInstance
+      url: $SITE_PREFIX
+      property: shortHeadline
+      moreMagic:
+        - transform: toSlug
+      tooltip: Generate from Short Headline
+#/ circulationSlugGroup fields
+
+#/ circulationFeedsGroup fields
+feedImgUrl:
+  _label: Recirculation Image
+  # not sure why this(feedImgUrl) has to be published
+  _publish: feedImgUrl
+  _has:
+    input: advanced-image-upload
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    validate:
+      required: true
+#/ circulationFeedsGroup fields
+
+# groups
+_groups:
+  publishedDateGroup:
+    fields:
+      - startDate
+      - startTime
+    _placeholder:
+      text: Event Date & Time
+      height: 20px
+      ifEmpty: startDate or startTime
+  circulationHeadlinesSeoGroup:
+    fields:
+      - primaryHeadline
+      - shortHeadline
+      - teaser
+      - seoHeadline
+      - seoDescription
+  circulationSyndicationGroup:
+    fields:
+      - featured
+      - editorialFeeds
+      - corporateSyndication
+      - stationSyndication
+      - genreSyndication
+      - syndicationStatus
+      - syndicatedUrl
+  circulationSlugGroup:
+    fields:
+      - slug
+      # not sure where evergreenSlug is coming from
+      - evergreenSlug
+  circulationFeedsGroup:
+    fields:
+      - feedImgUrl
+#/ groups
+
+# Non user editable. Set by model.js. Included in schema to use _publish functionality
+contentType:
+  _label: Content Type
+  _publish: contentType
+  _has:
+    input: static
+    text: 'event'
+canonicalUrl:
+  _publish: url
+  _has:
+    help: Canonical URL of an event. Set when the event publishes.
+pageDescription:
+  _publish: pageDescription
+  _has:
+    help: Plaintext description for search engines, set by seoDescription or teaser.
+socialDescription:
+  _publish: socialDescription
+  _has:
+    help: Plaintext description for social media, set by teaser.
+pageTitle:
+  _publish: pageTitle
+  _has:
+    help: Plaintext page title, set by seoHeadline, shortHeadline, or primaryHeadline. Sponsored posts and certain sites will have extra sugar.
+plaintextPrimaryHeadline:
+  _publish:
+    - ogTitle
+    - pageListTitle
+  _has:
+    help: Plaintext title set by primaryHeadline. Used for facebook sharing.
+plaintextShortHeadline:
+  _publish: twitterTitle
+  _has:
+    help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
+#/ Non user editable.
