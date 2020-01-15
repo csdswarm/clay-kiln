@@ -48,6 +48,8 @@ primary:
     operator: truthy
 
 primarySectionFront:
+  _publish:
+    - primarySectionFront
   _reveal:
     field: primary
     operator: falsy
@@ -117,6 +119,7 @@ _groups:
       - includePodcastModule
 
 stationName:
+  _publish: stationName
   _label: Station Name
   _has: static
   _reveal:
