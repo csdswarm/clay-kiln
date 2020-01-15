@@ -20,7 +20,7 @@ function getEvents() {
         headline: `The Awesome Event #${i + 1}`,
         label: 'Featured Event',
         startDate: `2019-12-${pad(i + 1)}`,
-        startTime: `09:${pad(i + 1)}`,
+        startTime: `${pad(i + 10)}:${pad(i + 1)}`,
         teaser: 'this is a teaser',
         venueName: `The Coolest Venue Place #${pad(i + 1)}`
       };
@@ -31,7 +31,10 @@ function getComputedEvents(events) {
   return events.map( event => {
     return {
       ...event,
-      dateTime: moment(`${event.startDate} ${event.startTime}`).format('LLLL')
+      dateTime: moment(`${event.startDate} ${event.startTime}`)
+        .format('dddd, MMMM d [at] h:mm a')
+        .replace(/am$/, 'a.m.')
+        .replace(/pm$/, 'p.m.')
     };
   });
 }
