@@ -5,7 +5,8 @@
  * content
  */
 
-const _isPlainObject = require('lodash/isPlainObject'),
+const _get = require('lodash/get'),
+  _isPlainObject = require('lodash/isPlainObject'),
   queryService = require('../server/query'),
   logger = require('./log'),
   log = logger.setup({ file: __filename }),
@@ -81,12 +82,8 @@ const _isPlainObject = require('lodash/isPlainObject'),
       { condition = conditionOverride || filterCondition, value } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
 
     if (Array.isArray(value)) {
-      if (unique) {
-        const queries = value.map(createObj);
-
-        if (queries.length) {
-          queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
-        }
+      if (unique && value.length) {
+        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
       } else {
         value.forEach(v => addCondition(query, key, v, condition));
       }
@@ -122,7 +119,7 @@ const _isPlainObject = require('lodash/isPlainObject'),
     queryService.onlyWithTheseFields(query, fields);
 
     // If there is a should query, there needs to be a minimum_should_match
-    if (query.body.query.bool.should) {
+    if (_get(query, 'body.query.bool.should')) {
       query.body.query.bool.minimum_should_match = 1;
     }
 
