@@ -2,7 +2,9 @@
 
 const
   { unityComponent } = require('../../services/universal/amphora'),
-  moment = require('moment');
+  dateFormat = require('date-fns/format'),
+  dateParse = require('date-fns/parse'),
+  dateFormatString = 'dddd[,] MMMM d [at] h:mm aa';
 
 function pad(num) {
   if (num <= 9) {
@@ -31,10 +33,7 @@ function getComputedEvents(events) {
   return events.map( event => {
     return {
       ...event,
-      dateTime: moment(`${event.startDate} ${event.startTime}`)
-        .format('dddd, MMMM d [at] h:mm a')
-        .replace(/am$/, 'a.m.')
-        .replace(/pm$/, 'p.m.')
+      dateTime: dateFormat(dateParse(`${event.startDate} ${event.startTime}`), dateFormatString)
     };
   });
 }
