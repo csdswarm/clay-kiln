@@ -29,8 +29,12 @@
     padding: em(4.5, 16) em(9, 18);
   }
 
-  &__logo-img {
+  &__logo-link , &__logo-img {
     width: 100%;
+  }
+
+  &__logo-link {
+    text-align: center;
   }
 
   &--multi-row {
