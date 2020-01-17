@@ -629,3 +629,24 @@ em, i {
 @define-mixin latest-top-recirc-slider-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||| Mnified Content Feed Fonts Styleguide |||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin minified-content-feed-font1 {
+  @mixin font CircularStd-Black, 16px, theme(primaryColor, $parisM), -.26px, 19px;
+}
+@define-mixin minified-content-feed-font2 {
+  @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -.32px, 24px;
+}
+
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||| Card Fonts Styleguide |||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin card-font1 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+@define-mixin card-font2 {
+  @mixin font CircularStd-Medium, 20px, $black, -.33px, 24px;
+}
