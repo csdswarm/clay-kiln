@@ -5,14 +5,14 @@ let isNotDesktop = false,
 
 const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
   mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
-  MEDIUM_SCREEN_WIDTH = 1023,
+  isDesktop = require('../../services/universal/isDesktop'),
   navIncludes = require('./nav-includes'),
 
   /**
    * Checks to see if the screen width is small enough to be considered not a desktop view
    * @returns {boolean}
    */
-  notDesktop = () => { return window.matchMedia(`(max-width: ${MEDIUM_SCREEN_WIDTH}px)`).matches; },
+  notDesktop = () => !isDesktop(),
 
   /**
    * Toggle hamburger animation & mobile nav on click of hamburger
