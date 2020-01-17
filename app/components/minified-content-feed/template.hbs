@@ -28,7 +28,7 @@
       <ul data-editable="contentFeed">
         {{#each _computed.cards }}
           <li>
-            {{> card _self=true }}
+            {{> card _self=true first=@first last=@last }}
           </li>
         {{/each}}
       </ul>
