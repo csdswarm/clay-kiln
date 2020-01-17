@@ -4,7 +4,7 @@ const format = require('date-fns/format'),
   parse = require('date-fns/parse'),
   mimeTypes = require('mime-types'),
   db = require('amphora-storage-postgres'),
-  { addArrayOfProps, renderContent } = require('./utils'),
+  { addArrayOfProps, renderContentAsync } = require('./utils'),
   feedImage = require('../../feed-image/model'),
   // these skipped components are mostly due to the specs outlined here
   // https://partnerhub.msn.com/docs/spec/vcurrent/using-html/AAsCn
@@ -72,7 +72,7 @@ module.exports = async (data, locals) => {
     },
     {
       'content:encoded': {
-        _cdata: await renderContent(data.content, locals, 'msn', componentsToSkip)
+        _cdata: await renderContentAsync(data.content, locals, 'msn', componentsToSkip)
       }
     }
   ];

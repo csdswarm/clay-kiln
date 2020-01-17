@@ -32,6 +32,7 @@ async function renderContentAsync(content, locals, format, componentsToSkip = ne
       cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
       cmptName = getComponentName(ref);
 
+    cmptData.locals = locals;
     if (
       cmptName
       && cmptData
