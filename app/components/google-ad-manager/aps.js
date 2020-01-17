@@ -2,11 +2,11 @@
 const isDesktop = require('../../services/universal/isDesktop'),
 
   /**
-   * Filter mobile ads on desktop
+   * Filter mobile ad if desktop
    * @param {string} slotID
    * @returns {boolean}
    */
-  filterAdsForDesktop = (slotID) => isDesktop() ? !slotID.includes('mobile') : true,
+  filterAdIfDesktop = (slotID) => isDesktop() ? !slotID.includes('mobile') : true,
 
   /**
    * Setup parameters for fetchBids
@@ -29,7 +29,7 @@ const isDesktop = require('../../services/universal/isDesktop'),
             sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ]).filter(([width, height]) => width > 7 && height > 7)
           };
         })
-        .filter(({ slotID, sizes }) => sizes.length && filterAdsForDesktop(slotID));
+        .filter(({ slotID, sizes }) => sizes.length && filterAdIfDesktop(slotID));
 
     return { slots, timeout };
   };
