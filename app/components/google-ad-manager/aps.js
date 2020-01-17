@@ -1,30 +1,38 @@
 'use strict';
+const isDesktop = require('../../services/universal/isDesktop'),
 
-/**
-* Setup parameters for fetchBids
-* @param {object} params
-* @param {object} params.bidOptions
-* @param {number} params.bidTimeout
-* @returns {object}
-*/
-const setupBidOptions = (params) => {
-  const { bidOptions, bidTimeout: timeout } = params,
-    slots = Object.keys(bidOptions)
-      .filter(key => bidOptions.hasOwnProperty(key))
-      .map(optionId => {
-        const option = bidOptions[optionId],
-          sizes = option.getSizes();
+  /**
+   * Filter mobile ads on desktop
+   * @param {string} slotID
+   * @returns {boolean}
+   */
+  filterAdsForDesktop = (slotID) => isDesktop() ? !slotID.includes('mobile') : true,
 
-        return {
-          slotID: optionId,
-          slotName: `${option.getAdUnitPath()}/${optionId.replace('google-ad-manager__slot--', '')}`,
-          sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ]).filter(([width, height]) => width > 7 && height > 7)
-        };
-      })
-      .filter(({ sizes }) => sizes.length);
-  
-  return { slots, timeout };
-};
+  /**
+   * Setup parameters for fetchBids
+   * @param {object} params
+   * @param {object} params.bidOptions
+   * @param {number} params.bidTimeout
+   * @returns {object}
+   */
+  setupBidOptions = (params) => {
+    const { bidOptions, bidTimeout: timeout } = params,
+      slots = Object.keys(bidOptions)
+        .filter(key => bidOptions.hasOwnProperty(key))
+        .map(optionId => {
+          const option = bidOptions[optionId],
+            sizes = option.getSizes();
+
+          return {
+            slotID: optionId,
+            slotName: `${option.getAdUnitPath()}/${optionId.replace('google-ad-manager__slot--', '')}`,
+            sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ]).filter(([width, height]) => width > 7 && height > 7)
+          };
+        })
+        .filter(({ slotID, sizes }) => sizes.length && filterAdsForDesktop(slotID));
+
+    return { slots, timeout };
+  };
 
 class ApsTam {
   /**
