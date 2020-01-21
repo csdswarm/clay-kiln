@@ -1,11 +1,12 @@
 'use strict';
 
-const MEDIUM_SCREEN_WIDTH = 1023,
+const { SERVER_SIDE } = require('../universal/constants'),
+  MEDIUM_SCREEN_WIDTH = 1023,
   isDesktop = () => {
-    try {
+    if (SERVER_SIDE) {
       return !window.matchMedia(`(max-width: ${MEDIUM_SCREEN_WIDTH}px)`).matches;
-    } catch (err) {
-      // No window, not desktop
+    } else {
+      // Node context, not desktop
       return false;
     }
   };
