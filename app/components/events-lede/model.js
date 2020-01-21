@@ -6,13 +6,13 @@ const { unityComponent } = require('../../services/universal/amphora'),
   dateFormatString = 'dddd[,] MMMM d [at] h:mm aa';
 
 module.exports = unityComponent({
-  render: (uri, data, locals) => {
+  render: (uri, data) => {
     const lede = {
-      dateTime: data.lede.startDate && data.lede.startTime 
-        ? dateFormat(dateParse(data.lede.startDate + ' ' + data.lede.startTime), dateFormatString) 
+      dateTime: data.lede.startDate && data.lede.startTime
+        ? dateFormat(dateParse(data.lede.startDate + ' ' + data.lede.startTime),dateFormatString)
         : null,
       addressLink: `https://www.google.com/maps/dir//${ data.lede.venueAddress }`
-    }
+    };
 
     data._computed = { lede };
 

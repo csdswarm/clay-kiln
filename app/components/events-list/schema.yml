@@ -1,1 +1,7 @@
 _description: A listing of events
+
+events:
+  _subscribe: events
+
+moreContent:
+  _subscribe: moreContent
