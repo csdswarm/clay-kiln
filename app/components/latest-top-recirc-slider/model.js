@@ -59,11 +59,9 @@ module.exports = recirculationData({
     },
     excludes: {
       canonicalUrls: [locals.url, ...data.items.map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
-      ..._pick({
-        secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
-        sectionFronts: boolObjectToArray(data.excludeSectionFronts),
-        tags: (data.excludeTags || []).map(tag => tag.text)
-      }, populateFilter(data.populateFrom))
+      secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
+      sectionFronts: boolObjectToArray(data.excludeSectionFronts),
+      tags: (data.excludeTags || []).map(tag => tag.text)
     },
     curated: data.items
   })
