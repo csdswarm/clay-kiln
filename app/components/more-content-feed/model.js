@@ -20,7 +20,8 @@ const queryService = require('../../services/server/query'),
     'contentType'
   ],
   maxItems = 10,
-  pageLength = 5;
+  pageLength = 5,
+  min = (...args) => Math.min(...args.filter(arg => typeof arg === 'number'));
 
 /**
 * @param {string} ref
@@ -65,7 +66,7 @@ module.exports.save = (ref, data, locals) => {
  */
 module.exports.render = async function (ref, data, locals) {
   // take 1 more article than needed to know if there are more
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
+  const query = queryService.newQueryWithCount(elasticIndex, min(data.maxLength, maxItems + 1), locals),
     contentTypes = contentTypeService.parseFromData(data),
     addContentCondition = data.populateFrom === 'section-front-or-tag' ? queryService.addShould : queryService.addMust;
 
@@ -90,15 +91,19 @@ module.exports.render = async function (ref, data, locals) {
       data.pageLength = pageLength;
     }
 
-    const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
+    const skip = min(data.maxLength, maxItems + (parseInt(locals.page) - 1) * data.pageLength);
+
+    if (skip === data.maxLength) {
+      return data;
+    }
 
     queryService.addOffset(query, skip);
   } else {
-    data.pageLength = maxItems;
+    data.pageLength = min(data.maxLength, maxItems);
     data.initialLoad = true;
 
     // Default to loading 30 articles, which usually works out to 4 pages
-    data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
+    data.lazyLoads = Math.max(Math.ceil((min(data.maxLength, 30) - data.pageLength) / data.pageLength), 0);
   }
 
   if (['tag', 'section-front-and-tag', 'section-front-or-tag'].includes(data.populateFrom)) {
@@ -154,7 +159,7 @@ module.exports.render = async function (ref, data, locals) {
     if (noSectionFrontsOrLocals) {
       return data;
     }
-
+    
     if (locals.secondarySectionFront || data.secondarySectionFrontManual) {
       const secondarySectionFront = data.secondarySectionFrontManual || locals.secondarySectionFront;
 

@@ -5,8 +5,12 @@
   <div class="presented-by__logos-container" data-editable="presenters">
     {{#each presenters as |presenter|}}
         <div class="presented-by__logo-container">
-            <a href="{{ presenter.url }}">
+            <a class="presented-by__logo-link" href="{{ presenter.url }}">
+              {{#if presenter.logo}}
                 <img src="{{ presenter.logo }}" alt="{{ presenter.name }}" class="presented-by__logo-img">
+              {{else}}
+                <div class="presented-by__logo-text">{{ presenter.name }}</div>
+              {{/if}}
             </a>
         </div>
     {{/each}}

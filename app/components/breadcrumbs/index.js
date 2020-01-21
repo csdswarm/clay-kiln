@@ -10,7 +10,13 @@ function slugify(value) {
   const cleanValue = value
     .toLocaleLowerCase()
     .trim()
-    .replace(/ /g, '-');
+    .replace(/ /g, '-')
+    // tech debt: remove any characters that shouldn't be in a url.  This is
+    //   only necessary because we're transforming section front titles to
+    //   section front urls which causes a problem in the case of
+    //   "i'm listening".  Ideally we'd store the section front url and use
+    //   it directly.
+    .replace(/'/g, '');
 
   return encodeURIComponent(cleanValue);
 }
