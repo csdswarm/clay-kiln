@@ -5,14 +5,8 @@ let isNotDesktop = false,
 
 const navSections = document.getElementsByClassName('radiocom-nav__category-button'),
   mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
-  isDesktop = require('../../services/universal/isDesktop'),
+  isDesktop = require('../../services/client/isDesktop'),
   navIncludes = require('./nav-includes'),
-
-  /**
-   * Checks to see if the screen width is small enough to be considered not a desktop view
-   * @returns {boolean}
-   */
-  notDesktop = () => !isDesktop(),
 
   /**
    * Toggle hamburger animation & mobile nav on click of hamburger
@@ -25,7 +19,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
       activeHamburgerClass = 'active',
       activeMobileNavClass = 'nav-drawer--active';
 
-    isNotDesktop = notDesktop();
+    isNotDesktop = !isDesktop();
     activeHamburger = isNotDesktop && !activeHamburger;
 
     if (activeHamburger && isNotDesktop) {
@@ -51,7 +45,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
     const navDrawers = document.getElementsByClassName('nav-drawer');
     let navDrawer;
 
-    isNotDesktop = notDesktop();
+    isNotDesktop = !isDesktop();
     for (const drawer of navDrawers) {
       drawer.classList.remove('nav-drawer--sub-nav-active');
       drawer.classList.remove('nav-drawer--active');
@@ -140,7 +134,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
     window.addEventListener('resize', () => {
       const navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0];
 
-      if (!notDesktop()) {
+      if (!isDesktop()) {
         navDrawer.classList.remove('nav-drawer--active');
         navDrawer.classList.remove('nav-drawer--sub-nav-active');
         toggleHamburger(true);

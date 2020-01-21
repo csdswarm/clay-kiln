@@ -1,5 +1,5 @@
 'use strict';
-const isDesktop = require('../../services/universal/isDesktop'),
+const isDesktop = require('../../services/client/isDesktop'),
 
   /**
    * Filter mobile ad if desktop
