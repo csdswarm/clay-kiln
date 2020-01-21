@@ -144,7 +144,7 @@ module.exports.save = async (ref, data, locals) => {
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = async function (ref, data, locals) {
+module.exports.render = function (ref, data, locals) {
   if (data.populateBy === 'station' && locals.params) {
     return renderStation(data, locals);
   }
