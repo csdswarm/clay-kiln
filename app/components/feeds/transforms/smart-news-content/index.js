@@ -41,33 +41,20 @@ module.exports = async (data, locals) => {
       renderContentAsync(content, locals, 'smart-news', componentsToSkip)
     ]),
     xmlObj = [
-      {
-        title: { _cdata: headline }
-      },
-      {
-        // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
-        link
-      },
-      {
-        // Date format must be RFC 822 compliant
-        pubDate: parseDate(data.date).toUTCString()
-      },
-      {
-        guid: [link]
-      },
-      {
-        description: { _cdata: seoDescription }
-      },
+      { title: { _cdata: headline } },
+      // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
+      { link },
+      // Date format must be RFC 822 compliant
+      { pubDate: parseDate(data.date).toUTCString() },
+      { guid: [link] },
+      { description: { _cdata: seoDescription } },
       {
         'content:encoded': {
           _cdata: leadHtml + contentHtml
         }
       },
-      {
-        'snf:analytics': {
-          _cdata: comscoreScript + gaScript
-        }
-      }
+      { 'snf:analytics': { _cdata: comscoreScript } },
+      { 'snf:analytics': { _cdata: gaScript } }
     ];
 
   addArrayOfProps(data.tags, 'category', xmlObj);
