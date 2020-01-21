@@ -18,7 +18,6 @@ const isDesktop = require('../../services/client/isDesktop'),
   setupBidOptions = (params) => {
     const { bidOptions, bidTimeout: timeout } = params,
       slots = Object.keys(bidOptions)
-        .filter(key => bidOptions.hasOwnProperty(key))
         .map(optionId => {
           const option = bidOptions[optionId],
             sizes = option.getSizes();
