@@ -82,7 +82,7 @@ module.exports.render = async function (ref, data, locals) {
       continue;
     }
 
-    const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
 
     if (contentTypes.length) {
       queryService.addFilter(query, { terms: { contentType: contentTypes } });

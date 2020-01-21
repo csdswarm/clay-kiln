@@ -84,7 +84,7 @@ function searchByQuery(query, locals, opts = {}) {
  *
  * @param  {Object} query
  * @param  {Object} locals
- * @param  {Object} opts - see universal/query.js for the SearchOpts type
+ * @param  {SearchOpts} opts - see universal/query.js for the SearchOpts type
  * @return {Object}
  */
 async function searchByQueryWithRawResult(query, locals, opts = {}) {
