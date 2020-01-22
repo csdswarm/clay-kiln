@@ -32,58 +32,47 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = async (data, locals) => {
-  const { canonicalUrl, msnTitle, feedImg, seoDescription } = data,
-    link = `${canonicalUrl}`;
-
-  // this workaround is due to the article upgrade not being run on rss render,
-  //   meaning this may run on old content initially.  We can rely on feedImg
-  //   being an object with a _ref once recent articles have all been upgraded
-  //   (shouldn't take long).
-  let feedImgData = { _computed: {} };
-
-  if (feedImg) {
-    const feedImgRef = feedImg._ref.replace('@published', '');
-
-    // we need the computed prop 'useInMsnFeed'
-    feedImgData = await feedImage.render(
-      feedImgRef,
-      await db.get(feedImgRef),
-      locals
-    );
-  }
-
-  const xmlObj = [
-    {
-      title: { _cdata: msnTitle }
-    },
-    {
-      // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
-      link
-    },
-    {
-      // Date format must be RFC 822 compliant
-      pubDate: format(parse(data.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ')
-    },
-    {
-      guid: [link]
-    },
-    {
-      description: { _cdata: seoDescription }
-    },
-    {
-      'content:encoded': {
-        _cdata: await renderContentAsync(data.content, locals, 'msn', componentsToSkip)
+  const { canonicalUrl, content, lead, msnTitle, feedImg, seoDescription } = data,
+    link = `${canonicalUrl}`,
+    feedImgRef = feedImg._ref.replace('@published', ''),
+    [leadHtml, contentHtml, feedImgData] = await Promise.all([
+      renderContentAsync(lead, locals, 'msn', componentsToSkip),
+      renderContentAsync(content, locals, 'msn', componentsToSkip),
+      await db.get(feedImgRef)
+    ]),
+    feedImgRenderedData = await feedImage.render(feedImgRef, feedImgData, locals),
+    xmlObj = [
+      {
+        title: { _cdata: msnTitle }
+      },
+      {
+        // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
+        link
+      },
+      {
+        // Date format must be RFC 822 compliant
+        pubDate: format(parse(data.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ')
+      },
+      {
+        guid: [link]
+      },
+      {
+        description: { _cdata: seoDescription }
+      },
+      {
+        'content:encoded': {
+          _cdata: leadHtml + contentHtml
+        }
       }
-    }
-  ];
+    ];
 
-  if (feedImgData._computed.useInMsnFeed) {
+  if (feedImgRenderedData._computed.useInMsnFeed) {
     xmlObj.push({
       'media:content': {
         _attr: {
-          url: feedImgData.url,
+          url: feedImgRenderedData.url,
           medium: 'image',
-          type: mimeTypes.lookup(feedImgData.url)
+          type: mimeTypes.lookup(feedImgRenderedData.url)
         }
       }
     });
