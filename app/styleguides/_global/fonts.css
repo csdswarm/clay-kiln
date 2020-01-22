@@ -652,6 +652,9 @@ em, i {
   @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
 }
 @define-mixin events-list-page-font3 {
+  @mixin font ProximaNova-Regular, 18px, $black, -.29px, 22px;
+}
+@define-mixin events-list-page-font4 {
   @mixin font ProximaNova-Regular, 16px, $black, -.26px, 20px;
 }
 
