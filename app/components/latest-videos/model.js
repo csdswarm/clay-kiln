@@ -81,10 +81,6 @@ module.exports = unityComponent({
       locals
     );
 
-    if (!locals) {
-      return data;
-    }
-
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
     queryService.addMinimumShould(query, 1);
