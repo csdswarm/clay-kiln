@@ -10,10 +10,10 @@ const STATION_FOOTER = { _ref: `${hostUrl}/_components/station-footer/instances/
 
 function addStationComponents (layoutData) {
   const { top, bottom } = layoutData,
-    insertNavAfter = top.findIndex(({ _ref }) => /top\-nav/.test(_ref)),
-    insertFooterBefore = bottom.findIndex(({ _ref }) => /footer/.test(_ref)),
-    navIndex = top.findIndex(({ _ref }) => /station\-nav/.test(_ref)),
-    footerIndex = bottom.findIndex(({ _ref }) => /station\-footer/.test(_ref));
+    insertNavAfter = top.findIndex(({ _ref }) => _ref.includes('top-nav')),
+    insertFooterBefore = bottom.findIndex(({ _ref }) => _ref.includes('footer')),
+    navIndex = top.findIndex(({ _ref }) => _ref.includes('station-nav')),
+    footerIndex = bottom.findIndex(({ _ref }) => _ref.includes('station-footer'));
 
   // Add station nav if it doesn't exist
   if (navIndex === -1) {
