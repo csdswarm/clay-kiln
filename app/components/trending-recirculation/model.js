@@ -146,9 +146,11 @@ async function buildAndRequestElasticSearch(numResults, locals) {
   }
 
   queryService.onlyWithTheseFields(elasticQuery, elasticFields);
-  return queryService.searchByQuery(elasticQuery, locals, {
-    shouldDedupeContent: true
-  });
+  return queryService.searchByQuery(
+    elasticQuery,
+    locals,
+    { shouldDedupeContent: true }
+  );
 }
 
 function addParamsAndHttps(arr) {
