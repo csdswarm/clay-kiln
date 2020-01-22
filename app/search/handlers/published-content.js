@@ -26,10 +26,11 @@ subscribe('unpublishPage').through(unpublishPage);
  */
 function getContent(obj, param, components, transform = (data) => data ) {
   const content = obj[param],
-    getData = (ref) => components.find(item => item.key === ref).value;
+    getData = (ref) => components.find(item => item.key === ref).value,
+    addData = (component) => ({ ...component, data: transform(getData(component._ref)) });
 
-  // loop through all items and add a key with the value of the ref
-  obj[param] = content.map((component) => ({ ...component, data: transform(getData(component._ref)) }));
+  // add a key with the data to each ref object
+  obj[param] = Array.isArray(content) ? content.map(addData) : addData(content);
 
   // return a new copy
   return { ...obj };
@@ -71,7 +72,9 @@ function processContent(obj, components) {
   obj.value = getContent(obj.value, 'lead', components);
   obj.value = getContent(obj.value, 'content', components);
 
-  if (obj.key.includes('gallery')) {
+  if (obj.key.includes('article')) {
+    obj.value = getContent(obj.value, 'feedImg', components);
+  } else if (obj.key.includes('gallery')) {
     obj.value = getContent(obj.value, 'slides', components);
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
 

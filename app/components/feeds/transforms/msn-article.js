@@ -2,10 +2,7 @@
 
 const format = require('date-fns/format'),
   parse = require('date-fns/parse'),
-  mimeTypes = require('mime-types'),
-  db = require('amphora-storage-postgres'),
   { addArrayOfProps, renderContentAsync } = require('./utils'),
-  feedImage = require('../../feed-image/model'),
   // these skipped components are mostly due to the specs outlined here
   // https://partnerhub.msn.com/docs/spec/vcurrent/using-html/AAsCn
   componentsToSkip = new Set([
@@ -32,15 +29,23 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = async (data, locals) => {
-  const { canonicalUrl, content, lead, msnTitle, feedImg, seoDescription } = data,
+  const {
+      canonicalUrl,
+      content,
+      feedImg,
+      lead,
+      msnTitle,
+      seoDescription
+    } = data,
     link = `${canonicalUrl}`,
-    feedImgRef = feedImg._ref.replace('@published', ''),
-    [leadHtml, contentHtml, feedImgData] = await Promise.all([
-      renderContentAsync(lead, locals, 'msn', componentsToSkip),
-      renderContentAsync(content, locals, 'msn', componentsToSkip),
-      await db.get(feedImgRef)
+    renderAsync = cmpt => {
+      return renderContentAsync(cmpt, locals, 'msn', componentsToSkip);
+    },
+    [leadHtml, contentHtml, feedImgElement] = await Promise.all([
+      renderAsync(lead),
+      renderAsync(content),
+      renderAsync(feedImg)
     ]),
-    feedImgRenderedData = await feedImage.render(feedImgRef, feedImgData, locals),
     xmlObj = [
       {
         title: { _cdata: msnTitle }
@@ -66,16 +71,11 @@ module.exports = async (data, locals) => {
       }
     ];
 
-  if (feedImgRenderedData._computed.useInMsnFeed) {
-    xmlObj.push({
-      'media:content': {
-        _attr: {
-          url: feedImgRenderedData.url,
-          medium: 'image',
-          type: mimeTypes.lookup(feedImgRenderedData.url)
-        }
-      }
-    });
+  // the feed image may not fit msn's requirements, in which case it will
+  //   return empty
+  if (feedImgElement) {
+    // we need to JSON.parse it because the result of renderContent is a string
+    xmlObj.push(JSON.parse(feedImgElement));
   }
 
   addArrayOfProps(data.tags, 'category', xmlObj);
