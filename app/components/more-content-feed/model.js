@@ -104,28 +104,8 @@ module.exports.render = async function (ref, data, locals) {
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-<<<<<<< HEAD
+
   if (!_get(locals, 'page')) {
-=======
-  if (locals && locals.page) {
-    /* after the first 10 items, show N more at a time (pageLength defaults to 5)
-     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
-     * we return N + 1 items so we can let the frontend know if we have more data.
-     */
-    if (!data.pageLength) {
-      data.pageLength = pageLength;
-    }
-
-    const skip = min(data.maxLength, maxItems + (parseInt(locals.page) - 1) * data.pageLength);
-
-    if (skip === data.maxLength) {
-      return data;
-    }
-
-    queryService.addOffset(query, skip);
-  } else {
-    data.pageLength = min(data.maxLength, maxItems);
->>>>>>> master
     data.initialLoad = true;
 
     // Default to loading 30 articles, which usually works out to 4 pages
