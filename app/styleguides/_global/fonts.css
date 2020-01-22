@@ -641,3 +641,17 @@ em, i {
   @mixin font ProximaNova-Regular, 18px, $black, -.23px, 30px;
 }
 
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||| Events List Page Fonts Styleguide |||||||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin events-list-page-font1 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin events-list-page-font2 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin events-list-page-font3 {
+  @mixin font ProximaNova-Regular, 16px, $black, -.26px, 20px;
+}
+

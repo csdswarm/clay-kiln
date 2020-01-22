@@ -1,0 +1,26 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.content-card-thumb {
+  flex: 0 0 100%;
+  margin-right: em(20);
+
+  @mixin default-screen {
+    flex: 0 0 widthOnGrid(5, 4);
+  }
+  @mixin large-screen {
+    flex: 0 0 widthOnGrid(4, 3);
+  }
+  @mixin medium-screen {
+    flex: 0 0 widthOnGrid(3, 2, 'medium-screen');
+  }
+  @mixin medium-small-screen {
+    flex: 0 0 auto;
+    margin-right: 0;
+  }
+
+  &__img {
+    width: 100%;
+  }
+}
