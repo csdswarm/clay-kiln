@@ -1,8 +1,9 @@
 'use strict';
 
-const { unityComponent } = require('../../services/universal/amphora'),
+const mimeTypes = require('mime-types'),
+  msnFeedUtils = require('../../services/universal/msn-feed-utils'),
   { assignDimensionsAndFileSize } = require('../../services/universal/image-utils'),
-  msnFeedUtils = require('../../services/universal/msn-feed-utils');
+  { unityComponent } = require('../../services/universal/amphora');
 
 module.exports = unityComponent({
   // async render is fine here because is404 will only be undefined once per
@@ -20,6 +21,7 @@ module.exports = unityComponent({
 
   save: async (uri, data) => {
     await assignDimensionsAndFileSize(uri, data);
+    data.mimeType = mimeTypes.lookup(data.url);
 
     return data;
   }
