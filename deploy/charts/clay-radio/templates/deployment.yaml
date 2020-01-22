@@ -70,9 +70,17 @@ spec:
           volumeMounts:
           - mountPath: /usr/src/app/.pm2
             name: cache
+          - mountPath: /home/node/
+            name: clayconfig
       volumes:
       - name: cache
         emptyDir: {}
+      - name: clayconfig
+        configMap:
+          name: {{ include "clay-radio.fullname" . }}-clayconfig
+          items:
+          - key: .clayconfig
+            path: .clayconfig
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

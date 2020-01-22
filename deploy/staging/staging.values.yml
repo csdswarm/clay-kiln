@@ -5,25 +5,25 @@ ingress:
     - stg-clay.radio.com
 configmap:
   data:
-    IP_ADDRESS: 0.0.0.0
-    PORT: 3001
-    CLAY_PROVIDER: google
-    ENABLE_GZIP: true
-    INLINE_EDIT_STYLES: true
-    INLINE_EDIT_SCRIPTS: true
-    STATIC_ASSET_MAX_AGE: 0
-    LOG: info
-    CLAY_LOG_PRETTY: true
-    REDIS_SESSION_HOST: redis://redis-user.radio-stg.com:6379
-    REDIS_HOST: redis://stg-redis.radio-stg.com:6379
-    REDIS_HASH: mydb:h
-    ELASTIC_HOST: http://es.radio-stg.com:9200
-    CLAY_STORAGE_POSTGRES_HOST: cmsdb-write.radio-stg.com
-    CLAY_STORAGE_POSTGRES_DB: cms
-    CLAY_BUS_HOST: redis://stg-redis.radio-stg.com:6379
-    CLAY_STORAGE_POSTGRES_CACHE_HOST: redis://stg-redis.radio-stg.com:6379
-    CLAY_STORAGE_POSTGRES_CACHE_HASH: mydb:h
-    GOOGLE_PROFILE_URL: https://www.googleapis.com/oauth2/v3/userinfo
+    IP_ADDRESS: "0.0.0.0"
+    PORT: "3001"
+    CLAY_PROVIDER: "google"
+    ENABLE_GZIP: "true"
+    INLINE_EDIT_STYLES: "true"
+    INLINE_EDIT_SCRIPTS: "true"
+    STATIC_ASSET_MAX_AGE: "0"
+    LOG: "info"
+    CLAY_LOG_PRETTY: "true"
+    REDIS_SESSION_HOST: "redis://redis-user.radio-stg.com:6379"
+    REDIS_HOST: "redis://stg-redis.radio-stg.com:6379"
+    REDIS_HASH: "mydb:h"
+    ELASTIC_HOST: "http://es.radio-stg.com:9200"
+    CLAY_STORAGE_POSTGRES_HOST: "cmsdb-write.radio-stg.com"
+    CLAY_STORAGE_POSTGRES_DB: "cms"
+    CLAY_BUS_HOST: "redis://stg-redis.radio-stg.com:6379"
+    CLAY_STORAGE_POSTGRES_CACHE_HOST: "redis://stg-redis.radio-stg.com:6379"
+    CLAY_STORAGE_POSTGRES_CACHE_HASH: "mydb:h"
+    GOOGLE_PROFILE_URL: "https://www.googleapis.com/oauth2/v3/userinfo"
     CLAY_SITE_NAME: "Clay Demo"
     CLAY_SITE_HOST: "stg-clay.radio.com"
     CLAY_SITE_SHORTKEY: "cd"
