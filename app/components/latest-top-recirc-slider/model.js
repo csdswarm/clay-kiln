@@ -20,7 +20,7 @@ const queryService = require('../../services/server/query'),
  * @returns {Object}
  */
 function buildQuery(numResults, locals, items) {
-  const query = queryService.newQueryWithCount(elasticIndex, numResults),
+  const query = queryService.newQueryWithCount(elasticIndex, numResults, locals),
     // grab content from these section fronts from the env
     sectionFronts = process.env.SECTION_FRONTS.split(',');
 

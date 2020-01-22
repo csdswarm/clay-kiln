@@ -79,8 +79,6 @@ module.exports = unityComponent({
             })
           ).splice(0, MAX_ITEMS);
 
-      articles = articles.filter(anArticle => !_includes(locals.loadedIds, anArticle.uri));
-
       // fetch the content uri for deduping purposes
       articles = await Promise.all(articles.map(async anArticle => {
         const result = await recircCmpt.getArticleDataAndValidate(ref, anArticle, locals, [], searchOpts);
@@ -89,6 +87,8 @@ module.exports = unityComponent({
 
         return anArticle;
       }));
+
+      articles = articles.filter(anArticle => !_includes(locals.loadedIds, anArticle.uri));
 
       if (articles.length > 0) {
         // backfill with curated if lytics didn't provide MAX_ITEMS #
@@ -134,7 +134,7 @@ module.exports = unityComponent({
 });
 
 async function buildAndRequestElasticSearch(numResults, locals) {
-  const elasticQuery = queryService.newQueryWithCount(elasticIndex, numResults);
+  const elasticQuery = queryService.newQueryWithCount(elasticIndex, numResults, locals);
 
   let cleanUrl;
 
@@ -146,7 +146,7 @@ async function buildAndRequestElasticSearch(numResults, locals) {
   }
 
   queryService.onlyWithTheseFields(elasticQuery, elasticFields);
-  return await queryService.searchByQuery(elasticQuery, locals, {
+  return queryService.searchByQuery(elasticQuery, locals, {
     shouldDedupeContent: true
   });
 }

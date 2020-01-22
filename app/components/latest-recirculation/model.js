@@ -160,7 +160,7 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (data.populateBy === 'tag' && data.tag && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
 
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{ text: data.tag }])[0].text || '';
@@ -170,7 +170,7 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
 
     queryService.addMust(query, { match: { sectionFront: data.sectionFront } });
     return renderDefault(ref, data, locals, query);

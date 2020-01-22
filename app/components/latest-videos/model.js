@@ -75,7 +75,11 @@ module.exports = unityComponent({
       return data;
     }
 
-    const query = queryService.newQueryWithCount(elasticIndex, availableSlots);
+    const query = queryService.newQueryWithCount(
+      elasticIndex,
+      availableSlots,
+      locals
+    );
 
     if (!locals) {
       return data;
