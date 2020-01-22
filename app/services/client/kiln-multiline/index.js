@@ -1,6 +1,10 @@
 'use strict';
 
 const { kilnInput: KilnInput } = window.kiln,
+  /**
+   * LIMITATIONS: does not work for multiline
+   * components in complex lists
+   */
   normalizeEmptyMultiLine = require('./normalize-empty-multiline'),
   /**
    * @param {Object} schemaObject

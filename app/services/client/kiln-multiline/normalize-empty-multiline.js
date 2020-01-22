@@ -29,7 +29,11 @@ const
     multiLineFieldNames,
     kilnInput
   ) => (payload = {}) => {
-    const { uri, data, fields = [] } = payload,
+    const {
+        uri = '',
+        data = {},
+        fields = []
+      } = payload,
       isEmptyMultiLine = (name = '') =>
         multiLineFieldNames.has(name) &&
           isEmptyContent(data[name]),
