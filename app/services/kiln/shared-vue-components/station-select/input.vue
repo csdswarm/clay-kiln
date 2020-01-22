@@ -13,7 +13,6 @@
       :options="items"
       v-model="selectedItem"
       @change="onChange"
-      :filter="filterItems"
       ref="stationSelect"
     ></ui-select>
     <ui-button v-if="allowClear" 
@@ -91,10 +90,6 @@ export default {
       }
 
       this.$store.commit(`${storeNs}/_setSelectedItem`, this.items.find(searchPredicate) || {});
-    },
-
-    filterItems({ value }, query) {
-      return !query || includes(value.callsign, query) || includes(value.name, query) || includes(value.slug, query);
     }
   },
   computed: Object.assign(
