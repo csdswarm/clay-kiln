@@ -2,9 +2,15 @@ DROP MATERIALIZED VIEW IF EXISTS sitemap_videos;
 
 CREATE MATERIALIZED VIEW sitemap_videos AS WITH
     articles_and_galleries AS (
-        SELECT id, data -> 'lead' -> 0 ->> '_ref' as lead FROM components.gallery g WHERE g.data ->> 'noIndexNoFollow' != 'true' AND data -> 'lead' -> 0 ->> '_ref' IS NOT NULL
+        SELECT id, data -> 'lead' -> 0 ->> '_ref' as lead 
+			FROM components.gallery g 
+			WHERE NOT a.data @> '{"noIndexNoFollow": true}' 
+				AND data -> 'lead' -> 0 ->> '_ref' IS NOT NULL
         UNION
-        SELECT id, data -> 'lead' -> 0 ->> '_ref' as lead FROM components.article a WHERE a.data ->> 'noIndexNoFollow' != 'true' AND data -> 'lead' -> 0 ->> '_ref' IS NOT NULL
+        SELECT id, data -> 'lead' -> 0 ->> '_ref' as lead 
+			FROM components.article a 
+			WHERE NOT a.data @> '{"noIndexNoFollow": true}' 
+				AND data -> 'lead' -> 0 ->> '_ref' IS NOT NULL
     ),
 	lead_brightcove AS (
 		SELECT 
@@ -71,10 +77,3 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
 	  page;
 
 SELECT * FROM sitemap_videos;
-
-SELECT * FROM components.article WHERE id = 'clay.radio.com/_components/article/instances/646586@published';
-
-SELECT * FROM public.pages WHERE
-		pages.meta @> '{"published": true}' LIMIT 4;
-		
-SELECT meta FROM public.pages WHERE id = 'clay.radio.com/_pages/646586';
