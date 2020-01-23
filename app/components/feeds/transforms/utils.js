@@ -16,10 +16,11 @@ const _forEach = require('lodash/forEach'),
  *
  * @param {Array} content
  * @param {Object} locals
- * @param {Object} scope
+ * @param {string} [format]
+ * @param {Object} [scope]
  * @returns {String}
  */
-function renderContent(content, locals, scope = {}) {
+function renderContent(content, locals, format, scope = {}) {
   return _reduce(content, (res, cmpt) => {
     const ref = _get(cmpt, '_ref', ''),
       cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
@@ -30,7 +31,7 @@ function renderContent(content, locals, scope = {}) {
     if (match && cmptData) {
       // render the component and add it to the response
       if (match[1] !== 'inline-related') {
-        res += renderComponent(match[1], cmptData);
+        res += renderComponent(match[1], cmptData, format);
       }
     }
 
@@ -133,30 +134,6 @@ function addArrayOfProps(data, property, transform) {
 }
 
 /**
- * Given some image url add an RSS media content tag setup for it
- *
- * @param {{url: String}} image
- * @param {Object[]} transform
- * @return {Promise<Object[]>}
- */
-function addRssMediaImage(image, transform) {
-  if (!image) return Promise.resolve(); // If a mediaplay image isn't in the content, escape TODO: Make this better. Use images in ledes, basic image, etc, but find something
-
-  return getRawMetadata(image.url)
-    .then(function (meta) {
-      const imageContent = [
-        { _attr: { url: image.url } }
-      ];
-
-      if (meta.credit) imageContent.push({ 'media:credit': meta.credit });
-      if (meta.copyright) imageContent.push({ 'media:copyright': meta.copyright });
-      if (meta.caption) imageContent.push({ 'media:title': meta.caption });
-
-      transform.push({ 'media:content': imageContent });
-    });
-}
-
-/**
  * Assemble a video media:content element along with its related child elements
  *
  * @param {{videoId: string, videoDuration: number, title: string, description: string, thumbnailUrl: string}} video
@@ -183,6 +160,16 @@ function addRssMediaVideo(video, defaultMediaContent, transform) {
   transform.push({ 'media:content': defaultMediaContent.concat(mediaContent) });
 }
 
+async function addGnfImage(imageUrl) {
+  const { caption, copyright } = await getRawMetadata(imageUrl);
+
+  return renderComponent('image', {
+    url: imageUrl,
+    caption,
+    credit: copyright
+  }, 'gnf');
+}
+
 /**
  * Gets content from Elastic published content index documents.
  *
@@ -193,19 +180,17 @@ function getContent(data) {
   return data.content || data.relatedInfo || [];
 }
 
-module.exports.renderContent = renderContent;
-module.exports.renderComponent = renderComponent;
-module.exports.getContent = getContent;
-module.exports.firstAndParse = firstAndParse;
-module.exports.addArrayOfProps = addArrayOfProps;
-module.exports.addRssMediaImage = addRssMediaImage;
-module.exports.addRssMediaVideo = addRssMediaVideo;
-
-// exposed for testing
-module.exports.getMimeType = getMimeType;
-module.exports.addArrayOfProps = addArrayOfProps;
-module.exports.filterAndParse = filterAndParse;
-module.exports.filterByComponentNames = filterByComponentNames;
-module.exports.filterByManyAndParse = filterByManyAndParse;
-module.exports.firstAndParse = firstAndParse;
-module.exports.parseComponentData = parseComponentData;
+module.exports = {
+  addArrayOfProps,
+  addGnfImage,
+  addRssMediaVideo,
+  filterAndParse,
+  filterByComponentName,
+  filterByManyAndParse,
+  firstAndParse,
+  getContent,
+  getMimeType,
+  parseComponentData,
+  renderComponent,
+  renderContent
+};
