@@ -3,7 +3,7 @@
 const expect = require('chai').expect,
   dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
-  normalizeEmptyMultiLineContent = require('./normalize-empty-multiline'),
+  { normalizeEmptyMultiLineContent } = require('./normalize-empty-multiline'),
   sinon = require('sinon'),
   { jsdom } = require('jsdom');
 

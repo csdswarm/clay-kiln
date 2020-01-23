@@ -1,17 +1,18 @@
 'use strict';
 
 const { kilnInput: KilnInput } = window.kiln,
+  _isObjectLike = require('lodash/isObjectLike'),
   /**
    * LIMITATIONS: does not work for multiline
    * components in complex lists
    */
-  normalizeEmptyMultiLine = require('./normalize-empty-multiline'),
+  { normalizeEmptyMultiLine } = require('./normalize-empty-multiline'),
   /**
    * @param {Object} schemaObject
    * @return {Bool}
    */
   isMultiLineWysiwyg = ([, config]) => {
-    if (typeof config === null || typeof config !== 'object') {
+    if (!_isObjectLike(config)) {
       return false;
     }
     const { _has = {} } = config,
@@ -45,4 +46,6 @@ const { kilnInput: KilnInput } = window.kiln,
     return schema;
   };
 
-module.exports = watchMultiLineComponentChanges;
+module.exports = {
+  watchMultiLineComponentChanges
+};

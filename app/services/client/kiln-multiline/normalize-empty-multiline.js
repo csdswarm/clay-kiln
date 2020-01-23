@@ -50,4 +50,4 @@ const
     }
   };
 
-module.exports = normalizeEmptyMultiLineContent;
+module.exports = { normalizeEmptyMultiLineContent };

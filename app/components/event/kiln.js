@@ -2,7 +2,7 @@
 
 const
   { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
-  watchMultiLineComponentChanges = require('../../services/client/kiln-multiline');
+  { watchMultiLineComponentChanges } = require('../../services/client/kiln-multiline');
 
 module.exports = (schema) => {
   watchMultiLineComponentChanges(schema);
