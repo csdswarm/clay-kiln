@@ -6,7 +6,7 @@ const { kilnInput: KilnInput } = window.kiln,
    * LIMITATIONS: does not work for multiline
    * components in complex lists
    */
-  { normalizeEmptyMultiLine } = require('./normalize-empty-multiline'),
+  { normalizeEmptyMultiLineContent } = require('./normalize-empty-multiline-content'),
   /**
    * @param {Object} schemaObject
    * @return {Bool}
@@ -37,7 +37,7 @@ const { kilnInput: KilnInput } = window.kiln,
 
     kilnInput.subscribe(
       'UPDATE_COMPONENT',
-      normalizeEmptyMultiLine(
+      normalizeEmptyMultiLineContent(
         multiLineFieldNames,
         kilnInput
       )
