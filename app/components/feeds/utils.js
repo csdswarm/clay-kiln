@@ -46,7 +46,7 @@ function formatS3Path(locals) {
  * @returns {Promise}
  */
 function buildModel({ log = defaultLog, prefix, utmSource = 'etm', utmMedium = 'f1' }) {
-  return (ref, data) => {
+  return (ref, data, locals) => {
     const { meta } = data,
       utmParams = { utmSource: meta.utmSource || utmSource, utmMedium: meta.utmMedium || utmMedium },
       mapper = feed => ({ meta, feed }),
@@ -60,6 +60,7 @@ function buildModel({ log = defaultLog, prefix, utmSource = 'etm', utmMedium = '
     return rendererPipeline({
       prefix,
       data,
+      locals,
       mapper,
       entryMapper,
       errorHandler
