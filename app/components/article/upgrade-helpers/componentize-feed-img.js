@@ -47,9 +47,5 @@ module.exports = async (uri, data) => {
 
   await db.put(newFeedImgRef, newFeedImgData);
 
-  data.feedImg = {
-    _ref: newFeedImgRef
-  };
-
-  delete data.feedImgUrl;
+  data.feedImg = { _ref: newFeedImgRef };
 };
