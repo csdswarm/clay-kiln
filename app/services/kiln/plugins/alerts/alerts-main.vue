@@ -9,13 +9,13 @@
                 :key="tab.id"
                 :id="tab.id"
                 :title="tab.name"
-
+                
                 v-for="tab in tabs">
             </ui-tab>
             <div class="alerts-manager__toolbar">
                 <ui-button @click="newAlert">Add Alert</ui-button>
                 <div class="alerts-manager__station-select">
-                    <ui-select
+                    <ui-select 
                         label="Station"
                         placeholder="Select a station"
                         hasSearch=true
@@ -47,15 +47,15 @@
                             <div class="alerts-manager-page-list-item__link" v-if="alert.link">Link: <a :href="alert.link">{{alert.link}}</a></div>
                         </div>
                         <span class="alerts-manager__page-list-item__icons">
-                            <ui-icon-button
-                                icon="error"
+                            <ui-icon-button 
+                                icon="error" 
                                 color="red"
                                 tooltip="BREAKING"
                                 v-if="alert.breaking"></ui-icon-button>
                         </span>
                         <span class="page-list-item__menu">
-                            <ui-icon-button
-                                icon="more_vert"
+                            <ui-icon-button 
+                                icon="more_vert" 
                                 has-dropdown
                                 ref="itemButton">
                                 <div class="page-list-item__dropdown" slot="dropdown">
@@ -90,7 +90,7 @@
                         error="Please limit alert to 140 characters or less"
                         :maxlength="140"
                         :invalid="message.length > 140"
-
+                        
                         v-model="message"
                     ></ui-textbox>
                     <ui-textbox
@@ -98,14 +98,14 @@
                         type="url"
                         :error="validLinkError"
                         :invalid="!validLink"
-
+                        
                         v-model="link"
                     ></ui-textbox>
                     <div class="alerts-manager__time-picker">
                         <ui-datepicker
                             placeholder="Select the start date"
                             :maxDate="endDate"
-
+                            
                             v-model="startDate"
                         >Start Date</ui-datepicker>
                         <ui-textbox
@@ -119,7 +119,7 @@
                         <ui-datepicker
                             placeholder="Select the end date"
                             :minDate="startDate"
-
+                            
                             v-model="endDate"
                         >End Date</ui-datepicker>
                         <ui-textbox
@@ -148,18 +148,17 @@
     const axios = require('axios');
     const moment = require('moment');
     const { isUrl } = require('../../../universal/utils');
-    const { getAlerts } = require('../../../client/alerts');
-    const {
-        UiButton,
-        UiCheckbox,
-        UiConfirm,
+    const { 
+        UiButton, 
+        UiCheckbox, 
+        UiConfirm, 
         UiDatepicker,
         UiIconButton,
         UiProgressCircular,
-        UiTabs,
-        UiTab,
-        UiTextbox,
-        UiModal,
+        UiTabs, 
+        UiTab, 
+        UiTextbox, 
+        UiModal, 
         UiSelect } = window.kiln.utils.components;
 
     /**
@@ -207,7 +206,7 @@
                 return this.combineDateAndTime(this.endDate, this.endTime);
             },
             start() {
-                return this.combineDateAndTime(this.startDate, this.startTime);
+                return this.combineDateAndTime(this.startDate, this.startTime);          
             },
             global() {
                 return this.tab === 'global';
@@ -221,7 +220,7 @@
             },
             stationCallsigns() {
                 const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
-
+               
                 return allStationCallsigns.concat('NATL-RC').sort().map(station => ({
                     label: station === 'NATL-RC' ? 'Radio.com' : station,
                     value: station
@@ -237,7 +236,7 @@
                     return false;
                 }
                 this.validLinkError = '';
-                return true;
+                return true;          
             }
         },
         methods: {
@@ -269,7 +268,7 @@
                 } catch ({response}) {
                     this.errorMessage = response.data;
                 }
-
+                
             },
             newAlert(){
                 this.editMode = false;
@@ -328,10 +327,7 @@
                     this.alerts = [];
                 } else {
                     this.loading = true;
-                    const data = await getAlerts({
-                        station: this.station,
-                        ...cb()
-                    });
+                    const {data = []} = await axios.get('/alerts', {params: {station: this.station, ...cb()}});
 
                     this.loading = false;
                     this.alerts = data;

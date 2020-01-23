@@ -1,6 +1,5 @@
 'use strict';
-
-const { getAlerts } = require('../../services/server/alerts'),
+const rest = require('../../services/universal/rest'),
   log = require('../../services/universal/log').setup({ file: __filename });
 
 /**
@@ -35,7 +34,7 @@ function handleErrors(error) {
 }
 
 /**
- * Gets banner alerts and organizes the results as needed.
+ * Gets banner alerts from the appropriate rest service and organizes the results as needed.
  *
  * @param {object} locals
  * @param {object} locals.site
@@ -47,25 +46,23 @@ function handleErrors(error) {
  * @param {object} locals.defaultStation
  * @returns {Promise<{id: string, message: string, breaking: boolean}[]>}
  */
-async function prepareAlerts(locals) {
+async function getAlerts(locals) {
   try {
     const
+      { protocol, host } = locals.site || {},
       { callsign } = locals.station || {},
       { closedAlerts = [] } = locals,
+      urlExists = url => url,
+      getMessage = url => rest.get(url).catch(handleErrors),
       existingMessages = message => message && message.length,
       unclosedMessages = message => !closedAlerts.includes(message.id),
-      alertParams = (station) => ({
-        active: true,
-        current: true,
-        station
-      }),
-      globalAlerts = getAlerts(
-        alertParams('GLOBAL')
-      ),
-      stationAlerts = getAlerts(
-        alertParams(callsign)
-      ),
-      messages = await Promise.all([globalAlerts, stationAlerts]);
+      base = `${protocol}://${host}/alerts?cb=${Date.now()}&active=true&current=true&station=`,
+      urlGlobal = `${base}GLOBAL`,
+      urlLocal = `${base}${callsign}`,
+      getMessages = [urlGlobal, urlLocal]
+        .filter(urlExists)
+        .map(getMessage),
+      messages = await Promise.all(getMessages);
 
     return messages
       .filter(existingMessages)
@@ -90,7 +87,7 @@ async function prepareAlerts(locals) {
  * @returns {object} - data
  */
 module.exports.render = (ref, data, locals) => {
-  return prepareAlerts(locals)
+  return getAlerts(locals)
     .then(messages => locals.messages = messages)
     .then(() => data)
     .catch(handleErrors);
