@@ -16,15 +16,17 @@ const _forEach = require('lodash/forEach'),
  *
  * @param {Array} content
  * @param {Object} locals
+ * @param {Object} scope
  * @returns {String}
  */
-function renderContent(content, locals) {
+function renderContent(content, locals, scope = {}) {
   return _reduce(content, (res, cmpt) => {
     const ref = _get(cmpt, '_ref', ''),
       cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
       match = ref.match(/_components\/([^\/]+)\//);
 
     cmptData.locals = locals;
+    cmptData.scope = scope;
     if (match && cmptData) {
       // render the component and add it to the response
       if (match[1] !== 'inline-related') {
