@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 3.0
 _confirmRemoval: true
 
 title:
@@ -73,10 +73,10 @@ podcastList:
     include:
       - podcast-list
 
-moreContentFeed:
+twoColumnComponent:
   _component:
     include:
-      - more-content-feed
+      - two-column-component
 
 stationsCarousel:
   _placeholder:

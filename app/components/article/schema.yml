@@ -155,6 +155,7 @@ sources:
 stationLogoUrl:
   _has:
     input: advanced-image-upload
+    enableDelete: true
     webLabel: Station Logo via Web
     webHelp: Supply a valid HTTPS url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
