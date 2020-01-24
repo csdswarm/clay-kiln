@@ -111,6 +111,16 @@ function removeExtension(path) {
 }
 
 /**
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
+}
+
+/**
  * generate a uri from a url
  * @param  {string} url
  * @return {string}
@@ -318,6 +328,7 @@ Object.assign(module.exports, {
    * @returns {String}
    */
   urlToElasticSearch: url => url.replace('https', 'http'),
+  cleanUrl,
   debugLog,
   ensurePublishedVersion,
   ensureStartsWith,
