@@ -60,7 +60,6 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
 	SELECT
 	  page as id,
 	  to_char(timezone('utc', now()), 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS last_updated,
-	  -- postgres does not have a direct way to add encoding
 	  xmlroot(
 		xmlelement(
 		  name urlset,
@@ -75,5 +74,3 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
 	  page
 	ORDER BY
 	  page;
-
-SELECT * FROM sitemap_videos;
