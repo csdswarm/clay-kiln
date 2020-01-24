@@ -84,6 +84,8 @@ seoDescription:
       required: true
       min: 140
       max: 250
+feedImgUrl:
+  _subscribe: feedImgUrl
 feedImg:
   _label: Recirculation Image
   _component:
