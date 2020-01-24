@@ -1,8 +1,6 @@
-_version: 6.0
+_version: 9.0
 _description: |
-  A list of ten latest related articles from all content or filtered by article type, tag, or manually populated.
-  The articles will be filtered by the section front of the URL, (ex: /sports/football with tags "NFL" and
-  "National News" will only show sports stories that have either of those tags).
+  Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
 contentType:
   _label: Content type
@@ -14,12 +12,39 @@ contentType:
       - article
       - gallery
 
+componentTitle:
+  _label: Component's Title
+  _has:
+    validate:
+      required: true
+      min: 4
+      max: 80
+    help: The title displayed on the component's view
+    input: text
+
+componentTitleVisible:
+  _label: Show Component's Title
+  _has:
+    input: checkbox
+    help: Show or hide the title displayed on the component's view
+
 pageLength:
   _label: Page Size
   _has:
     help: Number of articles to load when "load more" is clicked
     input: text
     type: number
+
+maxLength:
+  _label: Maximum Number of Content Items
+  _has:
+    help: Limit the number of content items
+    input: text
+    type: number
+
+autoPopulatedContentHeader:
+  _label: Auto-Populated Content
+  _has: static
 
 populateFrom:
   _label: Populate content from?
@@ -35,7 +60,17 @@ populateFrom:
         name: Section Front
         value: section-front
       - tag
+      -
+        name: Contains Both Section Front and Tag
+        value: section-front-and-tag
+      -
+        name: Contains Either Section Front or Tag
+        value: section-front-or-tag
       - manual
+
+curatedContentHeader:
+  _label: Curated Content
+  _has: static
 
 locationOfContentFeed:
   _label: Content Feed is on Homepage
@@ -48,6 +83,10 @@ locationOfContentFeed:
       - homepage
       - section-front
       - topic-page
+      - author-page
+
+station:
+  _subscribe: stationName
 
 sectionFront:
   _subscribe: sectionFront
@@ -55,13 +94,19 @@ sectionFront:
   _has:
     help: Section Front Category from which to pull content
 
+primarySectionFront:
+  _subscribe: primarySectionFront
+
 sectionFrontManual:
   _label: Section Front Category
   _publish: sectionFront
   _reveal:
     field: populateFrom
     operator: ===
-    value: section-front
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: select
     search: true
@@ -79,7 +124,10 @@ secondarySectionFrontManual:
   _reveal:
     field: populateFrom
     operator: ===
-    value: section-front
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: select
     search: true
@@ -100,7 +148,10 @@ tagManual:
   _reveal:
     field: populateFrom
     operator: ===
-    value: tag
+    values:
+      - tag
+      - section-front-and-tag
+      - section-front-or-tag
   _has:
     input: simple-list
     autocomplete:
@@ -112,21 +163,10 @@ tagManual:
       required:
         field: populateFrom
         operator: ===
-        value: tag
-
-tagInfo:
-  _label: Tag Info
-  _placeholder:
-    height: 274px
-    text: More Info on Tag
-    required: true
-  _reveal:
-    field: populateFrom
-    operator: ===
-    value: tag
-  _has:
-    input: text
-    help: Tag Description / More Info (Will be shown in right rail)
+        values:
+          - tag
+          - section-front-and-tag
+          - section-front-or-tag
 
 filterTags:
   _label: Exclude Tags
@@ -232,12 +272,7 @@ introComponents:
     include:
     - html-embed
 
-contentCollectionLogoSponsorship:
-  _component:
-    include:
-      - google-ad-manager
-
-googleAdRightRail:
+sharethroughTag:
   _component:
     include:
       - google-ad-manager
@@ -246,16 +281,25 @@ _groups:
   contentFeed:
     _label: Content Feed
     fields:
+      - componentTitle
+      - componentTitleVisible
       - pageLength
+      - maxLength
+      - autoPopulatedContentHeader
       - populateFrom
       - sectionFrontManual
       - secondarySectionFrontManual
       - tagManual
-      - tagInfo
-      - items
       - contentType
       - filterTags
       - filterSecondarySectionFronts
+      - curatedContentHeader
+      - items
     _placeholder:
       height: 100px
       ifEmpty: populateFrom
+  header:
+    _label: Content Feed Title
+    fields:
+      - componentTitle
+      - componentTitleVisible

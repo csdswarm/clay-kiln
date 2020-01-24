@@ -1,0 +1,55 @@
+{
+    "meta": {
+        "renderer": "rss",
+        "contentType": "rss",
+        "fileExtension": "rss",
+        "title": "Radio.com Google News Feed",
+        "description": "Most recent content from Radio.com for Google News Feed"
+    },
+    "index": "published-content",
+    "query": {
+      "size": 20,
+      "sort": {
+        "date": "desc"
+      },
+      "query": {
+        "bool": {
+          "filter": [
+            {
+              "nested": {
+                "path": "byline",
+                "query": {
+                  "bool": {
+                    "must_not": [
+                      {
+                        "match": {
+                          "byline.sources.text": "The Associated Press"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "bool": {
+                "must_not": [
+                  {
+                    "term": {
+                        "noIndexNoFollow": true
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "match": {
+                "contentType": "article"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "transform": "article"
+}

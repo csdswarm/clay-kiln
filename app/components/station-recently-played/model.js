@@ -4,7 +4,8 @@ const radioApi = require('../../services/server/radioApi'),
   { apiDayOfWeek } = require('../../services/universal/dateTime'),
   { playingClass } = require('../../services/server/spaLocals'),
   { formatUTC } = require('../../services/universal/dateTime'),
-  moment = require('moment');
+  moment = require('moment'),
+  _get = require('lodash/get');
 
 /**
  * @param {string} ref
@@ -20,7 +21,7 @@ module.exports.render = async function (ref, data, locals) {
 
   const stationId = locals.stationId ? locals.stationId : locals.station.id,
     gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
-    category = (locals.category ? locals.category : locals.station.category).toLowerCase(),
+    category = (locals.category ? locals.category : _get(locals, 'station.category', '')).toLowerCase(),
     HISTORY_LIMIT = 20,
     // using the station offset determine the current day 1 - 7 based
     stationTime = new Date(new Date().getTime() + gmt_offset * 60 * 1000),
@@ -32,14 +33,12 @@ module.exports.render = async function (ref, data, locals) {
     offsetDayOfWeek = dayOfWeek - Math.floor((hour + parseInt(gmt_offset)) / 24),
     beforeDate = moment().day(dayOfWeek > currentDayOfWeek ? offsetDayOfWeek - 7 : offsetDayOfWeek).hour(hour).minute(59),
     formattedBeforeDate = beforeDate.format('YYYY-MM-DDTHH:mm:ss'),
-    now_playing = radioApi.get(`/stations/${stationId}/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {}),
-    play_history = radioApi.get(`/stations/${stationId}/play_history?event_count=${HISTORY_LIMIT}&before_date=${encodeURIComponent(formattedBeforeDate)}`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {}),
-    shows = await Promise.all([now_playing, play_history]),
-    playing = shows[0],
-    history = shows[1],
+    now_playing = radioApi.get(`stations/${stationId}/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }, locals).catch(() => {}),
+    play_history = radioApi.get(`stations/${stationId}/play_history?event_count=${HISTORY_LIMIT}&before_date=${encodeURIComponent(formattedBeforeDate)}`, null, null, { ttl: radioApi.TTL.MIN * 3, expire: radioApi.TTL.DAY * 7 }, locals).catch(() => {}),
+    [playing, history] = await Promise.all([now_playing, play_history]),
     validHistory = history && history.data && history.data.events && history.data.events.recent_events,
     currentHour = beforeDate.isAfter(stationTime),
-    validPlaying = currentHour && playing && playing.data && shows[0].data.event && shows[0].data.event.current_event;
+    validPlaying = currentHour && playing && playing.data && playing.data.event && playing.data.event.current_event;
 
   if (validHistory || validPlaying) {
     if (validPlaying) {

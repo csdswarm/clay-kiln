@@ -1,6 +1,7 @@
 'use strict';
 
-const queryService = require('../../services/server/query'),
+const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
+  queryService = require('../../services/server/query'),
   _ = require('lodash'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
@@ -15,7 +16,12 @@ const queryService = require('../../services/server/query'),
     'lead',
     'contentType'
   ],
-  maxItems = 2;
+  maxItems = 2,
+  applyAspectRatio = imgUrl => {
+    imgUrl += imgUrl.includes('?') ? '&' : '?';
+    imgUrl += 'crop=16:9';
+    return imgUrl;
+  };
 
 /**
  * @param {string} ref
@@ -35,10 +41,10 @@ module.exports.save = (ref, data, locals) => {
       .then((result) => {
         const article = Object.assign(item, {
           primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
+          pageUri: item.url || result.pageUri,
           urlIsValid: result.urlIsValid,
-          canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl,
+          canonicalUrl: item.url || result.canonicalUrl,
+          feedImgUrl: applyAspectRatio(item.overrideImage || result.feedImgUrl || DEFAULT_RADIOCOM_LOGO),
           lead: result.leadComponent
         });
 
@@ -77,13 +83,13 @@ module.exports.render = function (ref, data, locals) {
   }
 
   // Clean based on tags and grab first as we only ever pass 1
-  data.tag = tag.clean([{text: data.tag}])[0].text || '';
+  data.tag = tag.clean([{ text: data.tag }])[0].text || '';
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addShould(query, { match: { 'tags.normalized': data.tag }});
+  queryService.addShould(query, { match: { 'tags.normalized': data.tag } });
   queryService.addMinimumShould(query, 1);
-  queryService.addSort(query, {date: 'desc'});
+  queryService.addSort(query, { date: 'desc' });
 
   // exclude the current page in results
   if (locals.url && !isComponent(locals.url)) {

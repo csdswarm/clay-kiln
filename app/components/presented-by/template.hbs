@@ -1,0 +1,29 @@
+{{#*inline "presenter-block" }}
+  {{#if this.logo}}
+    <img src="{{ this.logo }}" alt="{{ this.name }}" class="presented-by__logo-img">
+  {{else}}
+    <div class="presented-by__logo-text">{{ this.name }}</div>
+  {{/if}}
+{{/inline}}
+
+<div data-uri="{{ default _ref self }}" class="{{ _computed.presentedByClasses }}">
+  <div class="presented-by__title-container">
+    <div class="presented-by__title" data-editable="displayTitle">{{ displayTitle }}</div>
+  </div>
+  <div class="presented-by__logos-container" data-editable="presenters">
+    {{#each presenters as |presenter|}}
+        <div class="presented-by__logo-container">
+          {{#if presenter.url}}
+            <a class="presented-by__logo-link presented-by__logo-link--clickable" href="{{ presenter.url }}">
+              {{> presenter-block }}
+            </a>
+          {{else}}
+            <span class="presented-by__logo-link">
+              {{> presenter-block }}
+            </span>
+          {{/if}}
+        </div>
+    {{/each}}
+  </div>
+</div>
+

@@ -1,7 +1,8 @@
 'use strict';
 
-// Time Constants
-const SECOND = 1000,
+const _get = require('lodash/get'),
+  // Time Constants
+  SECOND = 1000,
   MINUTE = 60 * SECOND,
   HOUR = 60 * MINUTE,
   DAY = 24 * HOUR,
@@ -15,7 +16,17 @@ const SECOND = 1000,
     DAY,
     WEEK,
     YEAR
-  };
+  },
+  SERVER_SIDE = _get(process, 'release.name') === 'node',
+
+  PAGE_TYPES = {
+    ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front'
+  },
+
+  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 
 module.exports = {
@@ -25,5 +36,8 @@ module.exports = {
   DAY,
   WEEK,
   YEAR,
-  time
+  time,
+  SERVER_SIDE,
+  PAGE_TYPES,
+  DEFAULT_RADIOCOM_LOGO
 };

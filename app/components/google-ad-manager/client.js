@@ -18,14 +18,16 @@ const _get = require('lodash/get'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
-  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in milliseconds for ad refresh
+  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
+  sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
     rootMargin: '0px',
     threshold: 0
   },
-  observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig);
+  observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig),
+  disabledRefreshAds = new Set();
 let refreshCount = 0,
   allAdSlots = {},
   adsRefreshing = false,
@@ -40,8 +42,27 @@ let refreshCount = 0,
 // On page load set up sizeMappings
 adMapping.setupSizeMapping();
 
+/**
+ * Add Sharethrough script on first page load
+ * @function
+ */
+(() => {
+  const firstScript = document.getElementsByTagName('script')[0],
+    newScript = document.createElement('script');
+
+  newScript.async = true;
+  newScript.src = 'https://native.sharethrough.com/assets/sfp.js';
+  firstScript.parentNode.insertBefore(newScript, firstScript);
+})();
+
 // Listener to ensure lytics has been setup in GTM (Google Tag Manager)
 document.addEventListener('gtm-lytics-setup', () => {
+  initializeAds();
+}, false);
+
+document.addEventListener('content-feed-lazy-load', () => {
+  googletag.destroySlots();
+  adsMounted = true;
   initializeAds();
 }, false);
 
@@ -68,8 +89,16 @@ googletag.cmd.push(() => {
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
         clearDfpTakeover();
-        // Refresh all ads
-        googletag.pubads().refresh(null, { changeCorrelator: false });
+
+        // Refresh ads
+        const adsToRefresh = Object.entries(allAdSlots).filter(([id]) => {
+          id = id.split('--')[1];
+
+          return !disabledRefreshAds.has(id);
+        }).map(([, slot]) => slot);
+
+        googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
+
         // Remove the observers
         [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
           observer.unobserve(adSlot);
@@ -166,7 +195,7 @@ function lazyLoadAd(changes, observer) {
   changes.forEach(change => {
     if (change.intersectionRatio > 0) {
       // Stop watching and load the ad
-      googletag.pubads().refresh([allAdSlots[change.target.id]], {changeCorrelator: false});
+      googletag.pubads().refresh([allAdSlots[change.target.id]], { changeCorrelator: false });
       observer.unobserve(change.target);
     }
   });
@@ -217,8 +246,8 @@ function setAdsIDs(adSlots = null) {
   adSlots = adSlots || document.getElementsByClassName('component--google-ad-manager');
   // Loop over all slots and give them unique indexed ID's
   [...adSlots].forEach((slot) => {
-    const dfpContainer = slot.querySelector('.google-ad-manager__slot');
-    let [, slotSize] = adSizeRegex.exec(dfpContainer.classList[1]);
+    const dfpContainer = slot.querySelector('.google-ad-manager__slot'),
+      [, slotSize] = adSizeRegex.exec(dfpContainer.classList[1]);
 
     if (typeof adIndices[slotSize] === 'undefined') {
       adIndices[slotSize] = 1;
@@ -425,14 +454,14 @@ function createAds(adSlots) {
     // Set refresh value on page level
     googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
 
-    for (let adSlot of adSlots) {
+    for (const adSlot of adSlots) {
       const ad = adSlot.querySelector('.google-ad-manager__slot'),
         adSize = adSlot.getAttribute('data-ad-size'),
         adPosition = adSlot.getAttribute('data-ad-position'),
         adLocation = adSlot.getAttribute('data-ad-location'),
-        pubAds = googletag.pubads();
-      let slot,
+        pubAds = googletag.pubads(),
         sizeMapping = adMapping.sizeMapping[adSize];
+      let slot;
 
       if (adSize === 'outOfPage') {
         slot = googletag.defineOutOfPageSlot(adTargetingData.siteZone, ad.id);
@@ -444,8 +473,7 @@ function createAds(adSlots) {
           ad.id
         );
 
-        slot
-          .defineSizeMapping(sizeMapping);
+        slot.defineSizeMapping(sizeMapping);
       }
 
       slot
@@ -461,6 +489,9 @@ function createAds(adSlots) {
 
       if (adTargetingData.targetingMarket) {
         slot.setTargeting('market', adTargetingData.targetingMarket);
+      }
+      if (adSize === 'sharethrough-tag') {
+        slot.setTargeting('strnativekey', sharethroughPlacementKey);
       }
 
       // Right rail and inline gallery ads need unique names
@@ -504,14 +535,14 @@ function createAds(adSlots) {
  */
 function resizeForSkin() {
   const contentDiv = document.querySelector('.layout__content'),
-    stationCarousels = document.querySelectorAll('.component--stations-carousel');
+    stationCarousels = document.querySelectorAll('.component--stations-carousel'),
 
-  let origCarouselStyles = [];
+    origCarouselStyles = [];
 
   stationCarousels.forEach((elem) => {
-    const {margin, width} = window.getComputedStyle(elem);
+    const { margin, width } = window.getComputedStyle(elem);
 
-    origCarouselStyles.push({margin, width});
+    origCarouselStyles.push({ margin, width });
 
     Object.assign(elem.style, {
       'margin-left': `calc((100% - ${contentDiv.clientWidth}px)/2)`,
@@ -521,12 +552,21 @@ function resizeForSkin() {
 
   return () => {
     stationCarousels.forEach((elem, ind) => {
-      const {margin, width} = origCarouselStyles[ind];
+      const { margin, width } = origCarouselStyles[ind];
 
-      Object.assign(elem.style, {margin, width});
+      Object.assign(elem.style, { margin, width });
     });
   };
 }
+
+/**
+ * Tells a list of ads to stop refreshing, whether they've loaded yet or not.
+ *
+ * @param {string[]} ads
+ */
+window.disableAdRefresh = function (ads) {
+  ads.forEach(ad => disabledRefreshAds.add(ad));
+};
 
 /**
  * Legacy code ported over from frequency to implement the takeover.

@@ -5,11 +5,26 @@ const _ = require('lodash'),
   protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
 
 /**
+* Returns an item's id by extracting it from the uri
+*
+* @param {String} uri
+* @returns {String}
+*/
+function getItemId(uri) {
+  return uri.split('/').slice(-1)[0]
+    // clay appends this to published item uris so we want to exclude this
+    .replace('@published', '');
+};
+
+/**
  * @param {object} result
  * @returns {Array}
  */
 function formatSearchResult(result) {
-  return _.map(result.hits.hits, '_source');
+  return result.hits.hits.map(({ _source, _id: uri }) => ({
+    ..._source,
+    itemId: getItemId(uri)
+  }));
 }
 
 /**
@@ -267,9 +282,9 @@ function onlyWithTheseFields(query, fields) {
  * @returns {Object}
  */
 function onlyWithinThisSite(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}});
+  const prefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } });
 
-  addFilter(query, {prefix: {canonicalUrl: prefix}});
+  addFilter(query, { prefix: { canonicalUrl: prefix } });
 
   return query;
 }
@@ -280,9 +295,9 @@ function onlyWithinThisSite(query, site) {
  * @returns {object}
  */
 function withinThisSiteAndCrossposts(query, site) {
-  const prefix = utils.uriToUrl(site.prefix, {site: {protocol: site.proto || 'http'}}),
-    prefixFilter = {prefix: {canonicalUrl: prefix}};
-  var crosspostFilter = {term: {}},
+  const prefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } }),
+    prefixFilter = { prefix: { canonicalUrl: prefix } };
+  var crosspostFilter = { term: {} },
     shouldFilter = { bool: { should: [], minimum_should_match: 1 } };
 
   crosspostFilter.term['crosspost.' + site.slug] = true;
@@ -302,7 +317,7 @@ function withinThisSiteAndCrossposts(query, site) {
  * @returns {object}
  */
 function moreLikeThis(query, id, opts) {
-  let defaultOpts = {
+  const defaultOpts = {
     fields: ['tags'],
     like: {
       _index: query.index, // prefixed index name
@@ -327,7 +342,7 @@ function moreLikeThis(query, id, opts) {
  * @returns {Object} query object
  */
 function addAggregation(query = {}, options) {
-  const {body = {}} = query;
+  const { body = {} } = query;
 
   if (!options) {
     return query;

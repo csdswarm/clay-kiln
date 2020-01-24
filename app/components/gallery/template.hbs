@@ -27,18 +27,35 @@
     {{/ifAny}}
   </header>
 
+  {{#if _computed.renderFullWidthLead }}
+    {{! Lead }}
+    <div class="lead lead--full-width" data-editable="lead">
+      {{> component-list lead }}
+    </div>
+  {{/if}}
+
   {{> google-ad-manager contentPageSponsorLogo }}
 
   <section class="gallery__body"
     {{#if (includes lead.0._ref '_components/instagram-post')}} data-lead-type="instagram" {{/if}}
     {{#if (includes lead.0._ref '_components/image')}} data-lead-orientation="{{lead.0.rendition}}" {{/if}}
   >
-    <div class="body__header">
-      {{! Lead }}
-      <div class="lead" data-editable="lead">
-        {{> component-list lead }}
+    {{#unless _computed.renderFullWidthLead }}
+      {{#if _computed.supportsFullWidthLead }}
+        <div data-editable="leadSettings">
+          <h1>Lead Settings:</h1>
+          <span>Full-Width Lead: {{if fullWidthLead 'Yes' else='No'}}</span>
+        </div>
+      {{/if}}
+
+      <div class="body__header">
+        {{! Lead }}
+        <div class="lead" data-editable="lead">
+          {{> component-list lead }}
+        </div>
       </div>
-    </div>
+    {{/unless}}
+
     <div class="body__info">
       {{! authors }}
       <div class="info--left-top">
@@ -85,35 +102,54 @@
       <div class="content__info" data-editable="content">
         {{> component-list content }}
       </div>
-      <div class="content__slides">
+      {{#if @root.locals.edit}}
+        <section class="component__bulk-image-upload">
+          <div class="content__bulk-image-upload" data-editable="bulkImageUpload"></div>
+        </section>
+      {{/if}}
+      <div class="content__slides {{ if toggleEditorCondensedSlidesView 'content__slides--condensed' }}">
         {{#if @root.locals.edit}}
           {{! Adding slides components }}
           {{#if slides.length}}
-            <section class="content__slide-settings" data-editable="slidesSettings">
-              <h2 class="slide-settings__title">Gallery Slides Settings</h2>
-              <ul class="slide-settings__items">
-                <li class="item">
-                  <h4 class="item-title">Number the slides?</h4>
-                  <p class="item-data">{{ slidesNumbered }}</p>
-                </li>
-                {{#if slidesNumbered}}
+            <section class="component__settings">
+              <h2 class="settings__title">Gallery Settings</h2>
+              <section class="settings__section" data-editable="slidesSettings">
+                <h3 class="subtitle sub-edit">Slide Settings</h3>
+                <ul class="items">
                   <li class="item">
-                    <h4 class="item-title">Reverse number order? eg. 5, 4, 3...</h4>
-                    <p class="item-data">{{ reverseOrder }}</p>
+                    <h4 class="item-title">Number the slides?</h4>
+                    <p class="item-data">{{ slidesNumbered }}</p>
                   </li>
-                {{/if}}
-                <li class="item">
-                  <h4 class="item-title">Add inline ads every 5 slides?</h4>
-                  <p class="item-data">{{ includeInlineAds }}</p>
-                </li>
-              </ul>
+                  {{#if slidesNumbered}}
+                    <li class="item">
+                      <h4 class="item-title">Reverse number order? eg. 5, 4, 3...</h4>
+                      <p class="item-data">{{ reverseOrder }}</p>
+                    </li>
+                  {{/if}}
+                  <li class="item">
+                    <h4 class="item-title">Add inline ads every 5 slides?</h4>
+                    <p class="item-data">{{ includeInlineAds }}</p>
+                  </li>
+                  <li class="item">
+                    <div role="alert" class="ui-alert ui-alert--type-warning">
+                      <div class="ui-alert__body">
+                          <div class="ui-alert__content">
+                              Toggle on condensed slide view to reorder slides more easily. This does not change the look of the slides themselves when published on site.
+                          </div>
+                      </div>
+                    </div>
+                    <h4 class="item-title">Condensed Slide View?</h4>
+                    <p class="item-data">{{ if toggleEditorCondensedSlidesView 'On' else='Off' }}</p>
+                  </li>
+                </ul>
+              </section>
             </section>
           {{/if}}
-          {{#each slides }}
-            <div data-editable="slides">
-              {{> (getComponentName this._ref) this }}
-            </div>
-          {{/each}}
+          <div data-editable="slides">
+            {{#each slides }}
+                {{> (getComponentName this._ref) this }}
+            {{/each}}
+          </div>
         {{else}}
           {{#if slides.length }}
             {{#each slides }}
@@ -190,7 +226,7 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title">Featured</h4>
-              <p class="item-data">{{ if featured 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo featured }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Editorial Feeds Term(s)</h4>
@@ -238,7 +274,7 @@
             <li class="item">
               <h4 class="item-title">Evergreen Treatment</h4>
               <p class="item-data">
-                {{ if evergreenSlug 'Yes' else='No' }}
+                {{ yesNo evergreenSlug }}
               </p>
             </li>
           </ul>

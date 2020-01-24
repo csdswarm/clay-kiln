@@ -1,0 +1,47 @@
+_description:
+  A component that displays one or more logos with links that the event is presented/sponsored by
+
+displayTitle:
+  _label: Displayed title defaults to "Presented By"
+  _has:
+      input: text
+      validate:
+        min: 3
+        max: 30
+
+presenters:
+  _label: Presenters
+  _placeholder:
+    text: Add Presenters
+    height: 30px
+  _has:
+    input: complex-list
+    validate:
+      required: true
+    props:
+      -
+        prop: name
+        _label: Name of presenter
+        _has:
+          help: Used for link text and/or alt text on the logo image
+          input: text
+          validate:
+            required: true
+      -
+        prop: logo
+        _label: Presenter's Logo
+        _has:
+          input: advanced-image-upload
+          uploadLabel: Upload Image Attachment (optional)
+          uploadHelp: Choose an image file from your computer
+          maxEditorDisplayHeight: 120px
+      -
+        prop: url
+        _label: URL to link to the Presenter's website
+        _has:
+          input: text
+          type: url
+          validate:
+            # Using pattern from article/stationURL
+            pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+            patternMessage: Must be a valid URL including the "http://" or "https://"

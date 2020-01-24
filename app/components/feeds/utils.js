@@ -2,7 +2,8 @@
 
 const h = require('highland'),
   transforms = require('./transforms'),
-  bluebird = require('bluebird');
+  bluebird = require('bluebird'),
+  defaultLog = require('../../services/universal/log').setup({ file: __filename });
 
 /**
  * Passes feed's query result through a transform pipeline.
@@ -35,5 +36,38 @@ function formatS3Path(locals) {
   return `https://s3.amazonaws.com/${locals.site.host.replace('www.', '').replace('.com', '')}-html`;
 }
 
-module.exports.rendererPipeline = rendererPipeline;
+/**
+ * Builds a formatter for feeds
+ *
+ * @param {function} log
+ * @param {string} prefix
+ * @param {string} utmSource
+ * @param {string} utmMedium
+ * @returns {Promise}
+ */
+function buildModel({ log = defaultLog, prefix, utmSource = 'etm', utmMedium = 'f1' }) {
+  return (ref, data, locals) => {
+    const { meta } = data,
+      utmParams = { utmSource: meta.utmSource || utmSource, utmMedium: meta.utmMedium || utmMedium },
+      mapper = feed => ({ meta, feed }),
+      entryMapper = entry => Object.assign(entry, utmParams),
+      errorHandler = (error) => {
+        log('error', `Error rendering ${prefix.toUpperCase()} data - ${error.message}`, {
+          error
+        });
+      };
+  
+    return rendererPipeline({
+      prefix,
+      data,
+      locals,
+      mapper,
+      entryMapper,
+      errorHandler
+    });
+  };
+}
+
+module.exports.buildModel = buildModel;
 module.exports.formatS3Path = formatS3Path;
+module.exports.rendererPipeline = rendererPipeline;

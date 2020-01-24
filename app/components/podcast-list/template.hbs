@@ -1,8 +1,13 @@
-<section class="component component--podcast-list" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
+<section class="component podcast-list component--podcast-list podcast-list--{{ sectionFront }}" data-uri="{{ default _ref _self }}" data-track-type="podcast-list" data-editable="items">
   {{#each items as |item|}}
     <div class="podcast-list__item">
       <a class="podcast-list__link outbound-link" href="{{ item.podcast.url }}">
-        {{#if @first}}<div class="podcast-list__tag">Podcasts</div>{{/if}}
+        {{#ifAll @first ../showTitle}}
+          <div class="podcast-list__tag"
+            style="background-color: {{ if ../primaryColor ../primaryColor else=''}}; color: {{ if ../isTitleFontColorDark '#000000' else=''}}">
+            {{ ../title }}
+          </div>
+        {{/ifAll}}
         <img
           src="{{ item.podcast.imageUrl }}width=220&crop=1:1,offset-y0"
           srcset="{{ item.podcast.imageUrl }}width=150&crop=1:1,offset-y0 150w,
@@ -14,9 +19,12 @@
         <div class="podcast-list__title">
           {{ item.podcast.label }}
         </div>
-        <div class="podcast-list__more">
-          See All Episodes {{{ read 'components/podcast-list/media/caret.svg' }}}
-        </div>
+        {{#if ../showCallToActions}}
+          <div class="podcast-list__more podcast-list__more{{ if ../primaryColor '--override-fill' else=''}} podcast-list__more{{ if ../sectionFront '--override-fill-section-front' else=''}}"
+            style="color: {{ if ../primaryColor ../primaryColor else=''}}; fill: {{ if ../primaryColor ../primaryColor else=''}};">
+            See All Episodes {{{ read 'components/podcast-list/media/caret.svg' }}}
+          </div>
+        {{/if}}
       </a>
     </div>
   {{/each}}

@@ -1,0 +1,56 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.presented-by {
+  display: flex;
+  align-items: center;
+  margin-bottom: em(40,18);
+
+  &__title-container {
+    flex: 0 0 auto;
+    margin-right: em(8, 16);
+  }
+
+  &__title {
+    @mixin presented-by-font1;
+  }
+
+  &__logos-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    min-height: em(30, 18);
+  }
+
+  &__logo-container {
+    flex: 0 0 20%;
+    padding: em(4.5, 16) em(9, 18);
+  }
+
+  &__logo-link , &__logo-img {
+    width: 100%;
+  }
+
+  &__logo-link {
+    text-align: center;
+    @mixin presented-by-font2;
+    &--clickable {
+      text-decoration: underline solid theme(primaryColor, $purple);
+    }
+  }
+
+  &--multi-row {
+    align-items: flex-start;
+    .presented-by__title-container {
+      margin-top: em(18, 18);
+    }
+  }
+}
+
+.editing .presented-by {
+  border: 1px dashed $91gray;
+  padding: em(9, 18);
+  margin-bottom: em(18,18);
+}

@@ -19,8 +19,10 @@ const AWS = require('aws-sdk'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
-  slugifyService = require('../services/universal/slugify'),
-  xml = require('xml');
+  validScripts = require('../services/server/valid-source'),
+  addEndpoints = require('./add-endpoints'),
+  siteMapStations = require('./sitemap-stations'),
+  siteMapGoogleNews = require('./sitemap-google-news');
 
 module.exports = router => {
 
@@ -51,8 +53,7 @@ module.exports = router => {
     // Set env vars
     const s3Bucket = process.env.AWS_S3_BUCKET,
       s3CdnHost = process.env.AWS_S3_CDN_HOST || `${process.env.AWS_S3_BUCKET}.s3.amazonaws.com`; // If no CDN set, fallback to raw s3 host.
-    let rawFileNameParts, rawFileName, processedFilename,
-      extension, newFileName, s3FileKey, params;
+    let extension;
 
     // Validate input
     if (
@@ -69,10 +70,11 @@ module.exports = router => {
     }
 
     // Sanitize/process filename and add UUID to ensure file is unique within s3 bucket.
-    rawFileNameParts = req.body.fileName.split('.');
+    const rawFileNameParts = req.body.fileName.split('.');
+
     rawFileNameParts.pop();
-    rawFileName = rawFileNameParts.join('.');
-    processedFilename = rawFileName.replace(/[^A-Za-z0-9\s]/gi, '').replace(/[\s]/gi, '-');
+    const rawFileName = rawFileNameParts.join('.'),
+      processedFilename = rawFileName.replace(/[^A-Za-z0-9\s]/gi, '').replace(/[\s]/gi, '-');
 
     // Determine extension
     switch (req.body.fileType) { // eslint-disable-line default-case
@@ -87,16 +89,15 @@ module.exports = router => {
     }
 
     // Build s3 file key
-    newFileName = `${processedFilename}-${uuidv4()}.${extension}`;
-    s3FileKey = `aiu-media/${newFileName}`;
-
-    // Create pre-signed s3 upload url and respond.
-    params = {
-      Bucket: s3Bucket,
-      Key: s3FileKey,
-      Expires: 60,
-      ContentType: req.body.fileType
-    };
+    const newFileName = `${processedFilename}-${uuidv4()}.${extension}`,
+      s3FileKey = `aiu-media/${newFileName}`,
+      // Create pre-signed s3 upload url and respond.
+      params = {
+        Bucket: s3Bucket,
+        Key: s3FileKey,
+        Expires: 60,
+        ContentType: req.body.fileType
+      };
 
     s3.getSignedUrl('putObject', params, function (err, signedUrl) {
       if (err) {
@@ -121,7 +122,7 @@ module.exports = router => {
    * Caching for api.radio.com endpoints
    */
   router.get('/api/v1/*', function (req, res) {
-    radioApi.get(req.params[0], req.query).then(function (data) {
+    radioApi.get(req.params[0], req.query, null, {}, res.locals).then(function (data) {
       return res.send(data);
     });
   });
@@ -144,55 +145,19 @@ module.exports = router => {
    */
   router.post('/import-content', importContent);
 
+  addEndpoints.sitemap(router);
+
   /**
    * Sitemap for stations directories and station detail pages
    */
-  router.get('/sitemap-stations.xml', async function (req, res) {
-    const baseUrl = `https://${req.headers.host}`,
-      urlset = [
-        { _attr: { xmlns: 'https://www.sitemaps.org/schemas/sitemap/0.9' } },
-        { url: [{ loc: `${baseUrl}/stations` }] },
-        { url: [{ loc: `${baseUrl}/stations/location` }] },
-        { url: [{ loc: `${baseUrl}/stations/music` }] },
-        { url: [{ loc: `${baseUrl}/stations/news-talk` }] },
-        { url: [{ loc: `${baseUrl}/stations/sports` }] }
-      ];
+  router.get('/sitemap-stations.xml', siteMapStations);
 
-    // Location station directory pages
-    await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }).then(function (markets) {
-      markets.data.forEach(market => {
-        urlset.push({ url:
-          [{ loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}` }]
-        });
-      });
-    });
-
-    // Music station directory pages
-    await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }).then(function (genres) {
-      genres.data.forEach(genre => {
-        if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
-          urlset.push({ url:
-            [{ loc: `${baseUrl}/stations/music/${slugifyService(genre.attributes.name)}` }]
-          });
-        }
-      });
-    });
-
-    // Station detail pages
-    await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }).then(function (stations) {
-      stations.data.forEach(station => {
-        if (station.attributes.site_slug || station.attributes.callsign || station.id) {
-          urlset.push({ url:
-            [{ loc: `${baseUrl}/${ station.attributes.site_slug || station.attributes.callsign || station.id }/listen` }]
-          });
-        }
-      });
-    });
-
-    res.type('application/xml');
-    return res.send( xml( { urlset }, { declaration: true } ) );
-  });
+  /**
+   * Sitemap for articles for google news
+   */
+  router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
+  validScripts.inject(router, checkAuth);
 };

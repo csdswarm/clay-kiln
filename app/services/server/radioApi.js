@@ -3,10 +3,11 @@
 const rest = require('../universal/rest'),
   promises = require('../universal/promises'),
   log = require('../universal/log').setup({ file: __filename }),
+  isEmpty = require('lodash/isEmpty'),
   radioApi = 'api.radio.com/v1/',
+  radioStgApi = 'api-stg.radio.com/v1/',
   qs = require('qs'),
-  ioredis = require('ioredis'),
-  redis = new ioredis(process.env.REDIS_HOST),
+  redis = require('./redis'),
   TTL = {
     NONE: 0,
     DEFAULT: 300000,
@@ -43,14 +44,25 @@ const rest = require('../universal/rest'),
    *
    * @param {string} route
    * @param {object} params
+   * @param {object} locals
    * @return {string}
    */
-  createEndpoint = (route, params) => {
-    const decodeParams =  params ? `?${decodeURIComponent(qs.stringify(params))}` : '';
+  createEndpoint = (route, params, locals) => {
+    const decodeParams = params ? `?${decodeURIComponent(qs.stringify(params))}` : '',
+      apiHost = shouldUseStagingApi(locals) ? radioStgApi : radioApi;
 
     return isRadioApiRoute(route) ?
-      `https://${radioApi}${route}${decodeParams}` :
+      `https://${apiHost}${route}${decodeParams}` :
       `${route}${decodeParams}`;
+  },
+  /**
+   * Determines whether we should use the staging api
+   *
+   * @param {object} locals
+   * @returns {boolean}
+   */
+  shouldUseStagingApi = (locals) => {
+    return locals.useStagingApi && !locals.edit;
   },
   /**
    * returns a function to verify the response of the call was valid
@@ -62,30 +74,48 @@ const rest = require('../universal/rest'),
   /**
    * Retrieve data from Redis or an endpoint
    *
+   * options.ttl = soft TTL to compare against an updated_at value
+   * options.expire = REDIS expire settings to expire the KEY and drop from REDIS
+   *
    * @param {string} route
    * @param {*} [params]
    * @param {function} [validate]
    * @param {object} options
+   * @param {object} locals
    * @return {Promise}
    */
-  get = async (route, params, validate, options = {} ) => {
+  // eslint-disable-next-line max-params
+  get = async (route, params, validate, options = {}, locals = {} ) => {
     const dbKey = createKey(route, params),
       validateFn = validate || defaultValidation(route),
-      requestEndpoint = createEndpoint(route, params),
-      getFreshData = async () => {
+      requestEndpoint = createEndpoint(route, params, locals),
+      getFreshData = async (apiTimeout = API_TIMEOUT, cachedData = {}) => {
         try {
           // return api response if it's fast enough. if not, it might still freshen the cache
-          return await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), API_TIMEOUT);
+          const result = await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), apiTimeout);
+
+          result.response_cached = false;
+          return result;
         } catch (e) {
           // request failed, validation failed, or timeout. return empty object
 
           log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
 
-          return {};
+          if (!isEmpty(cachedData)) {
+            cachedData.response_cached = true;
+          }
+          return cachedData;
         }
       };
 
-    if (typeof options.ttl !== 'number') options.ttl = TTL.DEFAULT;
+    if (typeof options.ttl !== 'number') {
+      options.ttl = TTL.DEFAULT;
+    }
+
+    if (shouldUseStagingApi(locals)) {
+      // setting the ttl to 0 will ensure fresh data that wont be saved to the cache
+      options.ttl = 0;
+    }
 
     try {
       // if there's no ttl, skip the cache miss and try to fetch new data
@@ -103,11 +133,9 @@ const rest = require('../universal/rest'),
 
       if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
         // if the data is old, fire off a new api request to get it up to date, but don't wait on it
-        getAndSave(requestEndpoint, dbKey, validateFn, options)
-          .catch(() => {});
+        return getFreshData(2000, data);
       }
 
-      // always return cached if it's available
       data.response_cached = true;
       return data;
     } catch (e) {
@@ -116,6 +144,9 @@ const rest = require('../universal/rest'),
   },
   /**
    * Retrieve data from endpoint and save to db
+   *
+   * options.ttl = soft TTL to compare against an updated_at value
+   * options.expire = REDIS expire settings to expire the KEY and drop from REDIS
    *
    * @param {string} endpoint
    * @param {string} dbKey
@@ -127,6 +158,7 @@ const rest = require('../universal/rest'),
   getAndSave = async (endpoint, dbKey, validate, options) => {
     try {
       const ttl = options.ttl,
+        expire = options.expire || false,
         response = await rest.get(endpoint, options.headers);
 
       if (validate(response)) {
@@ -134,8 +166,14 @@ const rest = require('../universal/rest'),
 
         // added to allow cache to be bypassed
         if (ttl > 0) {
-          redis.set(dbKey, JSON.stringify(response))
-            .catch(() => {});
+          // use REDIS expire
+          if (expire) {
+            redis.set(dbKey, JSON.stringify(response), 'PX', expire)
+              .catch(() => {});
+          } else {
+            redis.set(dbKey, JSON.stringify(response))
+              .catch(() => {});
+          }
         }
 
         return response;
@@ -155,3 +193,4 @@ const rest = require('../universal/rest'),
 
 module.exports.get = get;
 module.exports.TTL = TTL;
+module.exports.shouldUseStagingApi = shouldUseStagingApi;
