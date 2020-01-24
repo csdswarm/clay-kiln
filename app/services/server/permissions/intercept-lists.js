@@ -3,43 +3,35 @@
 const axios = require('axios'),
   { URL } = require('url'),
   { wrapInTryCatch } = require('../../startup/middleware-utils'),
+  sectionFronts = new Set([ 'section-front', 'stations' ]),
   /**
-   * determines whether the /_lists/new-pages request should pass through
-   *   to clay
+   * determines whether the /_lists/new-pages request should pass through to
+   *   clay.  This is based off two conditions
+   *
+   *   1. if the request has 'fromClay' as a query parameter
+   *   2. if no user is associated with the request.  We want to pass this
+   *      through so devs can query the list directly without being logged in.
+   *      e.g. curl /_lists/new-pages.
    *
    * @param {object} req
    * @param {object} res
    * @returns {boolean}
    */
   shouldPassNewPagesRequestToClay = (req, res) => {
-    // if the request is intended to reach clay core then just pass it through
-    if (req.query.fromClay === 'true') {
-      return true;
-    }
-
-    const { station, user } = res.locals;
-
-    // clay lists are public, and the ability to create types of pages will be
-    //   enforced server-side so filtering this list based off permissions is
-    //   for editor convenience.  This means when no user is logged in (e.g.
-    //   curl /_lists/new-pages) we should just return the list directly
-    //   from clay.
-    if (!user) {
-      return true;
-    }
-
-    // eslint-disable-next-line one-var
-    const canCreateSectionFronts = user.can('create').a('section-front').at(station.callsign).value,
-      // so far the only permission applying filters to this data is creating
-      //   section fronts
-      hasFullPermissions = canCreateSectionFronts;
-
-    if (hasFullPermissions) {
-      return true;
-    }
-
-    return false;
-  };
+    return req.query.fromClay === 'true'
+      || !res.locals.user;
+  },
+  /**
+   * Creates a filter method for _list menu items that will verify that the user has permissions
+   * if it is a menu item with a matching item.id
+   * @param { Object } locals - The locals object
+   * @param { string } pageType - The type of page to check permissions for
+   * @param { string } id - The component instance id for the menu item
+   * @returns { function(*): boolean }
+   */
+  menuItemChecker = (locals, pageType, id) =>
+    item =>
+      item.id !== id || locals.user.can('create').a(pageType).value;
 
 /**
  * Adds an endpoint to the router which intercepts the 'new-pages' list and
@@ -62,8 +54,9 @@ module.exports = router => {
     // we should declare this after the short circuit
     // eslint-disable-next-line one-var
     const urlObj = new URL(req.protocol + '://' + req.get('host') + req.originalUrl),
-      { user, station } = res.locals,
-      canCreateSectionFronts = user.can('create').a('section-front').at(station.callsign).value;
+      { user } = res.locals,
+      canCreateSectionFronts = user.can('create').a('section-front').value,
+      canCreateStaticPageMenuItem = menuItemChecker(res.locals, 'static-page', 'new-static-page');
 
     urlObj.searchParams.append('fromClay', 'true');
 
@@ -71,12 +64,13 @@ module.exports = router => {
     // eslint-disable-next-line one-var
     const { data: newPages } = await axios.get(urlObj.toString()),
       filteredPages = newPages.filter(item => {
-        if (!canCreateSectionFronts && item.id === 'section-front') {
+        if (!canCreateSectionFronts && sectionFronts.has(item.id)) {
           return false;
         }
 
         return true;
-      });
+      })
+        .map(item => ({ ...item, children: item.children.filter(canCreateStaticPageMenuItem) }));
 
     res.send(filteredPages);
   }));

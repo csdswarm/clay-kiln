@@ -5,7 +5,7 @@ const appRoot = require('app-root-path'),
   files = require('amphora-fs'),
   path = require('path'),
   bodyParser = require('body-parser'),
-  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./utils'),
+  { addMiddlewareToUnsafeMethods, isEditor, wrapInTryCatch } = require('./utils'),
   jsonBodyParser = bodyParser.json({ strict: true, type: 'application/json', limit: '50mb' });
 
 /**
@@ -17,7 +17,7 @@ const appRoot = require('app-root-path'),
  */
 function checkPermission(hasPermission, db) {
   return wrapInTryCatch(async (req, res, next) => {
-    if (isRobot(res.locals.user) || await hasPermission(req.uri, req, res.locals || {}, db)) {
+    if (!isEditor(res.locals) || await hasPermission(req.uri, req, res.locals || {}, db)) {
       next();
     } else {
       res.status(403).send({ error: 'Permission Denied' });
@@ -54,6 +54,7 @@ function setupRoutes(router, hasPermission, userRouter, db) {
   // check all pages
   addMiddlewareToUnsafeMethods(permissionRouter, '/_pages/*', checkPermissionMiddleware);
   addMiddlewareToUnsafeMethods(permissionRouter, '/_uris/*', checkPermissionMiddleware);
+  addMiddlewareToUnsafeMethods(permissionRouter, '/_lists/*', checkPermissionMiddleware);
 
   router.use('/', permissionRouter);
 }

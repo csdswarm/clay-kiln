@@ -23,9 +23,9 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
+  cognitoAuth = require('./cognito-auth'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
-  cognitoAuth = require('./cognito-auth'),
   cacheControl = require('./cache-control');
 
 function createSessionStore() {

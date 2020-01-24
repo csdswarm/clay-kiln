@@ -43,20 +43,26 @@ async function getAllPermissions(jwtToken) {
     }
 
     const options = { headers: { Authorization: jwtToken } },
-      permissionsList = await rest.get(`${process.env.URPS_AUTHORIZATIONS_URL}/permissions/all`,
-        options);
-
-    return permissionsList
-      .reduce(
-        (permissions, { type: permType, action, target: { type: targetType, value: target } }) => {
+      permissionsList = await rest.get(`${process.env.URPS_AUTHORIZATIONS_URL}/permissions/all`, options),
+      // TODO: remove stopgap compilation of station privileges when URPS is fixed -CSD 9/6/2019
+      // Why?: urps is currently not supporting a requirement for us to have access of type station per user
+      stationAccess = {},
+      output = permissionsList
+        .reduce((permissions, { type: permType, action, target: { type: targetType, value: target } }) => {
           const newPermission = { ...permissions[permType] },
             newAction = newPermission[action] = { ...newPermission[action] },
             newTargetType = newAction[targetType] = { ...newAction[targetType] };
 
+          if (targetType === 'station') {
+            stationAccess[target] = 1;
+          }
           newTargetType[target] = 1; // using 1 instead of true to keep size down
-
           return { ...permissions, [permType]: { ...newPermission } };
         }, {});
+
+    // NOTE: If station access privilege does get urps support, it should override what we are doing above.
+    return { station: { access: { station: { ...stationAccess } } }, ...output };
+
   } catch (error) {
     log('error', 'There was a problem trying to get URPS permissions for the user',
       { error, jwtToken });
@@ -75,13 +81,14 @@ async function loadPermissions(session, locals) {
       loginData = { ...session.auth };
 
     if (!loginData.token) {
-      const username = (locals.user.username || '').toLowerCase();
+      const key = `cognito-auth--${locals.user.username.toLowerCase()}`;
 
-      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${username}`) || '{}'));
-      cache.del(`cognito-auth--${username}`);
+      Object.assign(loginData, JSON.parse(await cache.get(key) || '{}'));
+      cache.del(key);
     }
 
-    let { expires, permissions, lastUpdated } = loginData;
+    const { expires } = loginData;
+    let { permissions, lastUpdated } = loginData;
 
     if (expires < currentTime) {
       Object.assign(loginData, await refreshAuthToken(loginData));

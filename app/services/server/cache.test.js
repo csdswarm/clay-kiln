@@ -18,7 +18,7 @@ describe('cache tests', () => {
     return proxyquire('./cache', {
       ioredis: function (name, options) {
         redisClassSpy(name, options);
-        Object.assign(this, {get, set, del});
+        Object.assign(this, { get, set, del });
       },
       '../universal/log': {
         setup() {
@@ -47,7 +47,7 @@ describe('cache tests', () => {
 
     it('sets a value in the redis cache', async () => {
       const setSpy = sinon.spy(),
-        cache = requireCacheStandard({set: setSpy});
+        cache = requireCacheStandard({ set: setSpy });
 
       await cache.set('SOME KEY', 'A TEXT VALUE', 1000);
 
@@ -73,7 +73,7 @@ describe('cache tests', () => {
 
     it('gets a value from the redis cache', async () => {
       const getSpy = sinon.stub().returns('RESULT VALUE'),
-        cache = requireCacheStandard({get: getSpy}),
+        cache = requireCacheStandard({ get: getSpy }),
         result = await cache.get('THE KEY');
 
       expect(result).to.equal('RESULT VALUE');
@@ -99,7 +99,7 @@ describe('cache tests', () => {
 
     it('deletes a value from the redis cache', async () => {
       const delSpy = sinon.spy(),
-        cache = requireCacheStandard({del: delSpy});
+        cache = requireCacheStandard({ del: delSpy });
 
       await cache.del('DELETE THIS');
 

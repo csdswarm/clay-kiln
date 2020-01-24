@@ -14,9 +14,9 @@ function initAmphora(app, search, sessionStore, routes) {
     sessionStore,
     plugins: [
       search,
+      permissionsPlugin(checkUserPermissions, userPermissionRouter()),
       routes,
-      require('amphora-schedule'),
-      permissionsPlugin(checkUserPermissions, userPermissionRouter())
+      require('amphora-schedule')
     ],
     storage: require('amphora-storage-postgres'),
     eventBus: require('amphora-event-bus-redis')

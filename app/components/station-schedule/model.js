@@ -1,10 +1,9 @@
 'use strict';
 
-const radioAPI = require('../../services/server/radioApi'),
-  { playingClass } = require('../../services/server/spaLocals'),
+const { playingClass } = require('../../services/universal/spaLocals'),
   { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../../services/universal/dateTime'),
+  { getSchedule } = require('../../services/universal/station'),
   _get = require('lodash/get');
-
 
 /**
  * @param {string} ref
@@ -24,29 +23,15 @@ module.exports.render = async function (ref, data, locals) {
     // using the station offset determine the current day 1 - 7 based
     stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
     dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
-    json = await radioAPI.get('schedules',
-      {
-        'page[size]': 50,
-        'page[number]':1,
-        'filter[day_of_week]': dayOfWeek,
-        'filter[station_id]': stationId
-      },
-      null,
-      {},
-      locals
-    );
+    json = await getSchedule({
+      stationId, pageSize: 50, pageNum: 1, filterByDay: true
+    }, locals);
 
   // if there is no data for the current day, check to see if there is any data for this station
   if (json.data && !json.data.length) {
-    const anySchedule = await radioAPI.get('schedules',
-      {
-        'page[size]': 1,
-        'page[number]':1,
-        'filter[station_id]': stationId
-      },
-      null,
-      {},
-      locals);
+    const anySchedule = await getSchedule({
+      stationId, pageSize: 1, pageNum: 1, filterByDay: false
+    }, locals);
 
     if (anySchedule.data && !anySchedule.data.length) {
       return data;

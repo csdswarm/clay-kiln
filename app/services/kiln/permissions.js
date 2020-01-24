@@ -1,6 +1,9 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
+  log = require('../universal/log').setup({ file: __filename }),
+  whenRightDrawerExists = require('./when-right-drawer-exists'),
+  { setEachToDisplayNone } = require('../client/dom-helpers'),
   preloadTimeout = 5000,
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -22,99 +25,13 @@ const addPermissions = require('../universal/user-permissions'),
     return kilnjs;
   },
   /**
-   * Default hide a field and watch for load success to check user permissions
-   *
-   * Permission can be a string, or an object with an action and target
-   *
-   * Use to secure a field within a kiln.js file
-   *
-   * @param {KilnInput} fieldInput
-   * @param {string|object} permission
-   */
-  secureField = (fieldInput, permission) => {
-    // Should actually be disabled/enabled instead of hide/show
-    fieldInput.hide();
-
-    fieldInput.subscribe(PRELOAD_SUCCESS, ({user, locals: {station}, url: {component}}) => {
-      if (user.may(permission, component, station.callsign).value) {
-        fieldInput.show();
-      }
-    }, true);
-  },
-  /**
-   * Map through schema fields, find fields with permissions, and secure them
-   * Then apply function from kiln.js
-   *
-   * Use to secure an entire schema with one permission from a kiln.js file
-   *
-   * @param {function} kilnjs
-   * @param {string} [componentPermission]
-   * @returns {function} secureKilnJs
-   */
-  secureSchema = (kilnjs, componentPermission) => (schema) => {
-    Object.keys(schema).forEach(field => {
-      const permission = schema[field]._permission || schema._permission || componentPermission;
-
-      if (schema[field]._has && permission) {
-        schema[field] = new KilnInput(schema, field);
-
-        secureField(schema[field], permission);
-      }
-    });
-
-    return kilnjs(schema);
-  },
-  /**
-   * Add a default kilnjs file in componentKilnJs for all components
-   * If a kiln.js file already exists, wrap it with secured version
-   *
-   * Secures every field with a _permissions field in the schema.yml
-   */
-  secureAllSchemas = () => {
-    window.kiln = window.kiln || {};
-    window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
-    window.kiln.locals.components
-      .forEach(component => {
-        const kilnjs = getKilnJs(component);
-
-        window.kiln.componentKilnjs[component] = secureSchema(kilnjs);
-      });
-  },
-  /**
-   * tests whether the node contains the class 'right-drawer'
-   *
-   * @param {Node} node
-   * @returns {boolean}
-   */
-  isRightDrawer = (node) => {
-    return node.classList && node.classList.contains('right-drawer');
-  },
-  /**
-   * returns the publish button elements if they were added
-   *
-   * @param {object} mutation
-   * @returns {object}
-   */
-  getAddedPublishButtons = (mutation) => {
-    const publishDrawer = [...mutation.addedNodes].find(isRightDrawer);
-
-    if (!publishDrawer) {
-      return {};
-    }
-
-    return {
-      publishBtn: publishDrawer.querySelector('.publish-actions > button'),
-      unpublishBtn: publishDrawer.querySelector('.publish-status > button')
-    };
-  },
-  /**
-   * A helper method which subscribes to PRELOAD_SUCCESS and returns a promise
-   *   of the first result.
-   *
-   * @param {object} subscriptions
-   * @param {boolean} scoped
-   * @returns {Promise}
-   */
+  * A helper method which subscribes to PRELOAD_SUCCESS and returns a promise
+  *   of the first result.
+  *
+  * @param {object} subscriptions
+  * @param {boolean} scoped
+  * @returns {Promise}
+  */
   whenPreloaded = (subscriptions, scoped = false) => {
     return new Promise((resolve, reject) => {
       try {
@@ -138,21 +55,70 @@ const addPermissions = require('../universal/user-permissions'),
     });
   },
   /**
-   * makes a function which will set the display to 'none' according to the
-   *   passed permissions
+   * Default hide a field and watch for load success to check user permissions
    *
-   * @param {boolean} canPublish
-   * @param {boolean} canUnpublish
-   * @param {boolean} isPublished
-   * @returns {function}
+   * Permission can be a string, or an object with an action and target
+   *
+   * Use to secure a field within a kiln.js file
+   *
+   * @param {KilnInput} fieldInput
+   * @param {string|object} permission
+   * @param {string} component
    */
-  makeHandleDisplay = (canPublish, canUnpublish, isPublished) => (publishBtn, unpublishBtn) => {
-    if (!canPublish && !isPublished && publishBtn) {
-      publishBtn.style.display = 'none';
+  secureField = async (fieldInput, permission, component) => {
+    try {
+      const { user } = await whenPreloaded(fieldInput),
+        disableInput = !user.may(permission, component).value;
+
+      if (disableInput) {
+        fieldInput.setProp('disabled', true);
+      }
+    } catch (err) {
+      log('error', `error when securing the field '${fieldInput.inputName}' for component '${component}'`, err);
     }
-    if (!canUnpublish && unpublishBtn) {
-      unpublishBtn.style.display = 'none';
-    }
+  },
+  /**
+   * Map through schema fields, find fields with permissions, and secure them
+   * Then apply function from kiln.js
+   *
+   * Use to secure an entire schema with one permission from a kiln.js file
+   *
+   * @param {function} kilnjs
+   * @param {string} componentName
+   * @param {string} [componentPermission]
+   * @returns {function} secureKilnJs
+   */
+  secureSchema = (kilnjs, componentName, componentPermission) => (schema) => {
+    Object.keys(schema).forEach(field => {
+      const permission = schema[field]._permission || schema._permission || componentPermission;
+
+      if (permission && permission._has) {
+        console.warn(`The ${schema.schemaName} component was upgraded causing the _permission to become corrupted.`,
+          `Upgrade the /app/components/${schema.schemaName}/schema.yml to enable permissions.`);
+      } else if (schema[field]._has && permission) {
+        schema[field] = new KilnInput(schema, field);
+
+        secureField(schema[field], permission, componentName);
+      }
+    });
+
+    return kilnjs(schema);
+  },
+  /**
+   * Add a default kilnjs file in componentKilnJs for all components
+   * If a kiln.js file already exists, wrap it with secured version
+   *
+   * Secures every field with a _permissions field in the schema.yml
+   */
+  secureAllSchemas = () => {
+    window.kiln = window.kiln || {};
+    window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
+    window.kiln.locals.components
+      .forEach(component => {
+        const kilnjs = getKilnJs(component);
+
+        window.kiln.componentKilnjs[component] = secureSchema(kilnjs, component);
+      });
   },
   /**
    * hides the 'publish' or 'unpublish' button if the user does not
@@ -164,55 +130,50 @@ const addPermissions = require('../universal/user-permissions'),
     const subscriptions = new KilnInput(schema),
       whenPreloadedPromise = whenPreloaded(subscriptions);
 
-    subscriptions.subscribe('OPEN_DRAWER', async payload => {
-      if (payload !== 'publish-page') {
+    whenRightDrawerExists(subscriptions, async rightDrawerEl => {
+      const { locals } = await whenPreloadedPromise,
+        hasAccess = locals.user.hasPermissionsTo('access').this('station');
+
+      if (hasAccess) {
         return;
       }
 
-      const { locals, page: { state: published } } = await whenPreloadedPromise,
-        canPublish = locals.user.can('publish').a(schema.schemaName).value,
-        canUnpublish = locals.user.can('unpublish').a(schema.schemaName).value;
-
-      if (canPublish && canUnpublish) {
-        return;
-      }
-
-      // shouldn't be declared above the short circuit
+      // these shouldn't be declared above the short circuit
       // eslint-disable-next-line one-var
-      const handleDisplay = makeHandleDisplay(canPublish, canUnpublish, published),
-        publishBtn = document.querySelector('.right-drawer .publish-actions > button'),
-        unpublishBtn = document.querySelector('.right-drawer .publish-status > button');
+      const publishBtn = rightDrawerEl.querySelector('.publish-actions > button'),
+        unpublishBtn = rightDrawerEl.querySelector('.publish-status > button');
 
-      // if this was rendered on the server then there won't be any mutations
-      if (publishBtn || unpublishBtn) {
-        handleDisplay(publishBtn, unpublishBtn);
-        return;
-      }
+      setEachToDisplayNone([publishBtn, unpublishBtn]);
+    });
+  },
+  /**
+   * mutates the schema blocking the user from being able to add/remove items from a simple-list if they do not have permissions
+   *
+   * @param {object} schema
+   * @param {string} field
+   * @param {string} [component]
+   *
+   * @return {object} - schema
+   */
+  simpleListRights = (schema, field, component = schema.schemaName) => {
+    const subscriptions = new KilnInput(schema);
 
-      // this shouldn't be declared above the short circuit
-      // eslint-disable-next-line one-var
-      const kilnWrapper = document.querySelector('.kiln-wrapper'),
-        observer = new MutationObserver(mutationList => {
-          for (const mutation of mutationList) {
-            const { publishBtn, unpublishBtn } = getAddedPublishButtons(mutation);
+    subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
+      schema[field]._has.autocomplete.allowCreate = locals.user.isAbleTo('create').using(component).value;
+      schema[field]._has.autocomplete.allowRemove = locals.user.isAbleTo('update').using(component).value;
+    });
 
-            handleDisplay(publishBtn, unpublishBtn);
-            if ([...mutation.removedNodes].find(isRightDrawer)) {
-              observer.disconnect();
-            }
-          }
-        });
-
-      observer.observe(kilnWrapper, { childList: true });
-    }, false);
+    return schema;
   };
 
 // kind of a hack, but NYMag does not have any early events where we can tie into in order to automatically add
 // this to the user object, so we are accessing it directly off of the window
 addPermissions(window.kiln.locals);
 
-module.exports.secureField = secureField;
-module.exports.secureSchema = secureSchema;
-module.exports.secureAllSchemas = secureAllSchemas;
-module.exports.publishRights = publishRights;
-
+module.exports = {
+  secureField,
+  secureSchema,
+  secureAllSchemas,
+  publishRights,
+  simpleListRights
+};
