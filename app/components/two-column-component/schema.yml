@@ -28,3 +28,4 @@ col2:
     fuzzy: false # allows interactives, etc to add one-off components
     include:
       - google-ad-manager
+      - paragraph
