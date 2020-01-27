@@ -7,7 +7,6 @@
  */
 
 const _get = require('lodash/get'),
-  isTruthy = require('lodash/identity'),
   api = {};
 
 /**
@@ -23,18 +22,6 @@ api.hasClass = className => element => {
   const classList =  _get(element, 'classList');
 
   return classList && classList.contains(className);
-};
-
-/**
- * sets all truthy elements to have the style display: none
- *
- * @param {Element[] | NodeList} elements
- */
-api.setEachToDisplayNone = elements => {
-  Array.from(elements).filter(isTruthy)
-    .forEach(anElement => {
-      anElement.style.display = 'none';
-    });
 };
 
 module.exports = api;

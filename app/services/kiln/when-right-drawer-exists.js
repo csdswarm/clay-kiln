@@ -22,7 +22,7 @@ const { hasClass } = require('../client/dom-helpers');
  * @param {function} cb
  */
 module.exports = (kilnInput, cb) => {
-  kilnInput.subscribe('OPEN_DRAWER', async payload => {
+  kilnInput.subscribe('OPEN_DRAWER', payload => {
     if (payload !== 'publish-page') {
       return;
     }

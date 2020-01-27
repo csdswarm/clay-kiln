@@ -9,8 +9,6 @@ _permission:
 title:
   _label: Title
   _subscribe: pageTitle
-  _permission:
-    update: meta-title
   _has:
     input: text
     validate:
