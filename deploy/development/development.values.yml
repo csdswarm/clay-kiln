@@ -2,7 +2,7 @@ ingress:
   hostedZones:
     - cms.radio-dev.com
   staticDomains:
-    - dev-clay.radio.com
+    - dev-clay-k8s.radio.com
 configmap:
   data:
     IP_ADDRESS: "0.0.0.0"
@@ -25,7 +25,7 @@ configmap:
     CLAY_STORAGE_POSTGRES_CACHE_HASH: "mydb:h"
     GOOGLE_PROFILE_URL: "https://www.googleapis.com/oauth2/v3/userinfo"
     CLAY_SITE_NAME: "Radio.com"
-    CLAY_SITE_HOST: "dev-clay.radio.com"
+    CLAY_SITE_HOST: "dev-clay-k8s.radio.com"
     CLAY_SITE_SHORTKEY: "cd"
     CLAY_SITE_PROTOCOL: "https"
     CLAY_SITE_PORT: "443"
@@ -52,4 +52,4 @@ clayconfig:
       [keys]
         demo = accesskey
       [urls]
-        demosite = http://clay.radio.com
+        demosite = http://dev-clay-k8s.radio.com
