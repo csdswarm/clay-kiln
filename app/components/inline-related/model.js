@@ -3,7 +3,7 @@
 const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
   queryService = require('../../services/server/query'),
   _ = require('lodash'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),

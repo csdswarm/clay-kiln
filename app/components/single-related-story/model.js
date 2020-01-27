@@ -2,7 +2,7 @@
 
 const _assign = require('lodash/assign'),
   _pickBy = require('lodash/pickBy'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   ELASTIC_FIELDS = [
     'primaryHeadline',

@@ -2,16 +2,19 @@ _components:
   minified-content-feed:
     componentTitle: 'TOP STORIES'
     componentTitleVisible: true
+    contentType:
+      article: true
+      gallery: true
+    excludeSecondarySectionFronts: []
+    excludeSectionFronts: []
+    excludeTags: []
+    items: []
+    locationOfContentFeed: 'homepage'
     pageSize: 6
-    curatedItems: []
-    tag: ''
-    tagManual: ''
-    contentType: { article: true, gallery: true }
-    sectionFront: ''
-    sectionFrontManual: ''
+    populateFrom: 'all-content'
     secondarySectionFront: ''
     secondarySectionFrontManual: ''
-    filterTags: []
-    filterSecondarySectionFronts: []
-    populateFrom: 'all-content'
-    locationOfContentFeed: 'homepage'
+    sectionFront: ''
+    sectionFrontManual: ''
+    tag: ''
+    tagManual: ''

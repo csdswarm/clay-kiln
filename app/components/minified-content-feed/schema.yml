@@ -160,7 +160,7 @@ tagManual:
           - section-front-and-tag
           - section-front-or-tag
 
-filterTags:
+excludeTags:
   _label: Exclude Tags
   _has:
     input: simple-list
@@ -170,7 +170,15 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondarySectionFronts:
+excludeSectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+
+excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
     input: select
@@ -178,7 +186,7 @@ filterSecondarySectionFronts:
     multiple: true
     list: secondary-section-fronts
 
-curatedItems:
+items:
   _label: Items
   _has:
     input: complex-list
@@ -217,7 +225,6 @@ _groups:
     fields:
       - componentTitle
       - componentTitleVisible
-      - pageSize
       - autoPopulatedContentHeader
       - populateFrom
       - locationOfContentFeed
@@ -228,7 +235,7 @@ _groups:
       - filterTags
       - filterSecondarySectionFronts
       - curatedContentHeader
-      - curatedItems
+      - items
     _placeholder:
       height: 100px
       ifEmpty: populateFrom

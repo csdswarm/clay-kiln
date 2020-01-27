@@ -10,6 +10,17 @@ const _isArray = require('lodash/isArray'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
 
+
+
+/**
+ * returns a list of keys in the object that have a truthy value
+ * @param {object} obj
+ * @returns {string[]}
+ */
+function boolKeys(obj) {
+  return Object.keys(obj || {}).filter(key => obj[key]);
+}
+
 /**
  * determine if a field is empty
  * @param  {*}  val
@@ -226,29 +237,34 @@ function yesNo(val) {
   }
 }
 
-Object.assign(module.exports, {
-  /**
+/**
    * Url queries to elastic search need to be `http` since that is
    * how it is indexed as.
-   * @param {String} url
-   * @returns {String}
+ * @param {string} url
+ * @returns {string}
    */
-  urlToElasticSearch: url => url.replace('https', 'http'),
-  isFieldEmpty,
-  has,
-  replaceVersion,
-  isUrl,
-  uriToUrl,
-  urlToUri,
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
+Object.assign(module.exports, {
+  boolKeys,
   cleanUrl,
-  formatStart,
-  toTitleCase,
-  getSiteBaseUrl,
-  isPublishedVersion,
-  ensurePublishedVersion,
-  isInstance,
-  urlToCanonicalUrl,
-  textToEncodedSlug,
   debugLog,
+  ensurePublishedVersion,
+  formatStart,
+  getSiteBaseUrl,
+  has,
+  isFieldEmpty,
+  isInstance,
+  isPublishedVersion,
+  isUrl,
+  replaceVersion,
+  textToEncodedSlug,
+  toTitleCase,
+  uriToUrl,
+  urlToCanonicalUrl,
+  urlToElasticSearch,
+  urlToUri,
   yesNo
 });

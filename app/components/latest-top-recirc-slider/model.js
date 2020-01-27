@@ -1,6 +1,6 @@
 'use strict';
 const _pick = require ('lodash/pick'),
-  { recirculationData } = require('../../services/universal/recirculation'),
+  { recirculationData } = require('../../services/universal/recirc/recirculation'),
   { cleanUrl } = require('../../services/universal/utils'),
   { isComponent } = require('clayutils'),
   /**
