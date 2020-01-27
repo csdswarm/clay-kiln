@@ -7,6 +7,7 @@
  */
 
 module.exports = {
+  'gnf-article': require('./gnf-article'),
   'rss-article': require('./article'),
   'smart-news-content': require('./smart-news-content')
 };

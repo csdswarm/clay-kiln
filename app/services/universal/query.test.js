@@ -3,7 +3,7 @@
 const expect = require('chai').expect,
   dirname = __dirname.split('/').pop();
 
-describe.only(dirname, function () {
+describe(dirname, function () {
   const { formatSearchResult } = require('./query');
 
   it('parse item id from uri', () => {
