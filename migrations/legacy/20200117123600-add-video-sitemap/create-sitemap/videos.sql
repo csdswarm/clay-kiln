@@ -4,7 +4,7 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
     articles_and_galleries AS (
         SELECT id, data -> 'lead' -> 0 ->> '_ref' as lead 
 			FROM components.gallery g 
-			WHERE NOT a.data @> '{"noIndexNoFollow": true}' 
+			WHERE NOT g.data @> '{"noIndexNoFollow": true}' 
 				AND data -> 'lead' -> 0 ->> '_ref' IS NOT NULL
         UNION
         SELECT id, data -> 'lead' -> 0 ->> '_ref' as lead 
