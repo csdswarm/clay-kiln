@@ -3,6 +3,7 @@ _components:
     componentTitle: 'MORE from RADIO.COM'
     componentTitleVisible: true
     pageLength: 5
+    maxLength: ''
     items: []
     tag: ''
     tagManual: ''
@@ -15,10 +16,6 @@ _components:
     filterSecondarySectionFronts: []
     populateFrom: ''
     locationOfContentFeed: ''
-    contentCollectionLogoSponsorship:
-      _ref: /_components/google-ad-manager/instances/contentCollectionLogoSponsorship
-    googleAdRightRail:
-      _ref: /_components/google-ad-manager/instances/halfPageBottomTopic
     sharethroughTag:
       _ref: /_components/google-ad-manager/instances/sharethroughTag
     introComponents: []
