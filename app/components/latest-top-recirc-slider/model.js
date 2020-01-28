@@ -2,6 +2,7 @@
 const _pick = require ('lodash/pick'),
   { recirculationData } = require('../../services/universal/recirculation'),
   { cleanUrl } = require('../../services/universal/utils'),
+  { DEFAULT_STATION: { id: defaultStationId } } = require('../../services/universal/constants'),
   { isComponent } = require('clayutils'),
   /**
    * Converts an object with true/false values into an array of "true" keys
@@ -66,10 +67,7 @@ module.exports = recirculationData({
         },
         curated: data.items
       },
-      {
-        station: { id: stationId, site_slug: stationSlug },
-        defaultStation: { id: defaultStationId }
-      } = locals;
+      { station: { id: stationId, site_slug: stationSlug } } = locals;
 
     if (stationId !== defaultStationId) {
       recircOpts.filters = { ...recircOpts.filters, stationSlug };
