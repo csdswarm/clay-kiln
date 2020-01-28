@@ -29,34 +29,44 @@ describe('cognito tests', () => {
 
   describe('refreshAuthToken', () => {
     it('requests an update for a cognito token', async () => {
-      process.env.COGNITO_CONSUMER_KEY = 'YOUR KEY TO THE FUTURE';
-      const
-        fakeDate = { now: (new Date('March 14, 2015 9:26:54')).valueOf() },
-        clock = sinon.useFakeTimers(fakeDate),
-        authResults = { AuthenticationResult: { AccessToken: 'ACCESS... GRANTED', ExpiresIn: 3600 } },
-        spy = sinon.stub().callsArgWith(1, undefined, authResults),
-        cognito = requireCognitoStandard({ initiateAuth: spy }),
-        refreshToken = 'REFRESH ME',
-        deviceKey = 'I AM THE KEY MASTER',
-        result = await cognito.refreshAuthToken({ refreshToken, deviceKey });
+      let clock;
 
-      assert(spy.calledWithMatch({
-        AuthFlow: 'REFRESH_TOKEN_AUTH',
-        ClientId: 'YOUR KEY TO THE FUTURE',
-        AuthParameters: {
-          REFRESH_TOKEN: refreshToken,
-          DEVICE_KEY: deviceKey
+      try {
+        process.env.COGNITO_CONSUMER_KEY = 'YOUR KEY TO THE FUTURE';
+
+        const fakeDate = { now: (new Date('March 14, 2015 9:26:54')).valueOf() };
+
+        clock = sinon.useFakeTimers(fakeDate);
+
+        const
+          authResults = { AuthenticationResult: { AccessToken: 'ACCESS... GRANTED', ExpiresIn: 3600 } },
+          spy = sinon.stub().callsArgWith(1, undefined, authResults),
+          cognito = requireCognitoStandard({ initiateAuth: spy }),
+          refreshToken = 'REFRESH ME',
+          deviceKey = 'I AM THE KEY MASTER',
+          result = await cognito.refreshAuthToken({ refreshToken, deviceKey });
+
+        assert(spy.calledWithMatch({
+          AuthFlow: 'REFRESH_TOKEN_AUTH',
+          ClientId: 'YOUR KEY TO THE FUTURE',
+          AuthParameters: {
+            REFRESH_TOKEN: refreshToken,
+            DEVICE_KEY: deviceKey
+          }
+        }));
+
+        expect(result).to.eql({
+          refreshToken,
+          deviceKey,
+          token: authResults.AuthenticationResult.AccessToken,
+          expires: fakeDate.now + 3600000,
+          lastUpdated: fakeDate.now
+        });
+      } finally {
+        if (clock) {
+          clock.restore();
         }
-      }));
-
-      expect(result).to.eql({
-        refreshToken,
-        deviceKey,
-        token: authResults.AuthenticationResult.AccessToken,
-        expires: fakeDate.now + 3600000,
-        lastUpdated: fakeDate.now
-      });
-      clock.reset();
+      }
     });
 
     it('adds a secret hash if COGNITO_CONSUMER_SECRET is set', async () => {

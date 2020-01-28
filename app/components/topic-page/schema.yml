@@ -42,6 +42,7 @@ _groups:
   settings:
     fields:
       - stationName
+      - tag
       - sectionFront
     _placeholder:
       ifEmpty: tag
