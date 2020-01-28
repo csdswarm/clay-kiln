@@ -7,6 +7,7 @@
  */
 
 module.exports = {
+  'gnf-article': require('./gnf-article'),
   'rss-article': require('./article'),
   'msn-article': require('./msn-article')
 };

@@ -119,6 +119,14 @@
         display: inline-block;
       }
     }
+
+    > li.tab--location {
+      ul {
+        columns: 3;
+        -webkit-columns: 3;
+        -moz-columns: 3;
+      }
+    }
   }
 }
 @define-mixin underline-color $stationGenre, $color {
