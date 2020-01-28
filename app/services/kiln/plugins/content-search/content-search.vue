@@ -31,10 +31,11 @@
 </template>
 <script>
 
-  import axios from 'axios';
   import _debounce from 'lodash/debounce';
-  import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
+  import axios from 'axios';
   import queryService from '../../../client/query';
+  import { isUrl } from '../../../../services/universal/utils';
+  import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
 
   const { UiButton, UiTextbox }  = window.kiln.utils.components;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
@@ -66,6 +67,9 @@
         this.performSearch();
     },
     methods: {
+      commitFormData() {
+          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
+      },
       /**
        * search the published_content index the search string
        *
@@ -100,7 +104,7 @@
 
         this.loading = false;
         if (!this.searchResults.length) {
-          this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
+            this.commitFormData();
         }
       },
       /**
@@ -112,6 +116,9 @@
        */
       inputOnchange() {
         if (this.searchTextparams === '' || !this.searchText || this.searchText.length > 2) {
+          if(isUrl(this.searchText)){
+              this.commitFormData();
+          }
           this.debouncePerformSearch();
         } else {
           // if there are less than two, just take already exists and see if it can reduce the results
@@ -126,7 +133,7 @@
       selectItem(selected) {
         this.searchText = selected.canonicalUrl;
         this.searchResults = [selected];
-        this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.searchText });
+        this.commitFormData();
       }
     },
     components: {
