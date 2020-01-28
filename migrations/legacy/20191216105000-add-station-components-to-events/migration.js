@@ -7,17 +7,24 @@ const LAYOUTS = [
 
 const STATION_NAV = { _ref: `${hostUrl}/_components/station-nav/instances/default` };
 const STATION_FOOTER = { _ref: `${hostUrl}/_components/station-footer/instances/default` };
+const STATION_THEME = { _ref: `${hostUrl}/_components/theme/instances/default`};
 
 function addStationComponents (layoutData) {
   const { top, bottom } = layoutData,
     insertNavAfter = top.findIndex(({ _ref }) => _ref.includes('top-nav')),
     insertFooterBefore = bottom.findIndex(({ _ref }) => _ref.includes('footer')),
     navIndex = top.findIndex(({ _ref }) => _ref.includes('station-nav')),
-    footerIndex = bottom.findIndex(({ _ref }) => _ref.includes('station-footer'));
+    footerIndex = bottom.findIndex(({ _ref }) => _ref.includes('station-footer')),
+    themeIndex = top.findIndex(({ _ref }) => _ref.includes('_components/theme'));
 
   // Add station nav if it doesn't exist
   if (navIndex === -1) {
     top.splice(insertNavAfter + 1, 0, STATION_NAV);
+  }
+
+  // Add station theme above nav if it doesn't exist
+  if (themeIndex === -1) {
+    top.splice(insertNavAfter + 1, 0, STATION_THEME);
   }
 
   // Add station footer if it doesn't exist
