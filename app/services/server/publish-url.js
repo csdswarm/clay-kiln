@@ -89,9 +89,9 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
 function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      const slug = pubUtils.authorPageSlugPattern(urlOptions);
-      
-      return slug;
+      if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
+        return pubUtils.authorPageSlugPattern(urlOptions);
+      }
     });
 }
 
