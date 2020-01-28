@@ -57,7 +57,7 @@ export default {
   data() {
     const secondaryActions = [],
       { user } = window.kiln.locals,
-      canEditTemplate = user.can('edit').a('pageTemplate').for(anyStation).value;
+      canEditTemplate = user.can('update').a('templates').for(anyStation).value;
 
     if (canEditTemplate) {
       secondaryActions.push({

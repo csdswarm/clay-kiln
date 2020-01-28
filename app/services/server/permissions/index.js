@@ -224,7 +224,7 @@ async function checkUserPermissions(uri, req, locals, db) {
       && req.method === 'PUT'
     ) {
       const pageId = getPageInstance(uri),
-        canEditPageTemplate = user.can('update').a('pageTemplate').for(anyStation).value;
+        canEditPageTemplate = user.can('update').a('templates').for(anyStation).value;
 
       if (isPublished(uri)) {
         const pageType = getComponentName(await getComponentData(uri, 'main[0]'));

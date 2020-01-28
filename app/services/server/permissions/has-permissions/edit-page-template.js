@@ -16,7 +16,7 @@ module.exports = router => {
       && isRequestingEditMode
       // we test against any station because this is not a
       //   station-specific permission
-      && !user.can('update').a('pageTemplate').for(anyStation).value
+      && !user.can('update').a('templates').for(anyStation).value
     ) {
       const pageInstance = getPageInstance(req.uri),
         pageTemplateIds = await getPageTemplateIds(res.locals);
