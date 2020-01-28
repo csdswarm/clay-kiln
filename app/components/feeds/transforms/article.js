@@ -68,7 +68,7 @@ module.exports = function (data, locals) {
 
   if (data.lead) {
     transform.push({
-      lead: { _cdata: renderContent(data.lead, locals) }
+      lead: { _cdata: renderContent(data.lead, locals, null, { lead: true }) }
     });
   }
 
@@ -86,9 +86,6 @@ module.exports = function (data, locals) {
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
   addArrayOfProps(data.authors, 'dc:creator', transform);
-  // Add the image
-  // return addRssMediaImage(firstAndParse(dataContent, 'image'), transform)
-  //   .then(() => transform);
 
   if (data.editorialFeeds) {
     // Convert editorialFeeds object with terms as keys with boolean values into array of truthy terms

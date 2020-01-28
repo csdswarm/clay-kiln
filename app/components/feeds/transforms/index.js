@@ -2,6 +2,7 @@
 
 // module.exports['msn-article'] = require('./msn-article');
 // module.exports['msn-gallery'] = require('./msn-gallery');
+module.exports['gnf-article'] = require('./gnf-article');
 module.exports['rss-article'] = require('./article');
 // module.exports['atom-article'] = require('./atom-article');
 // module.exports['rss-google-newsstand-article'] = require('./google-newsstand-article');
