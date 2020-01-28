@@ -664,6 +664,9 @@ em, i {
 @define-mixin presented-by-font1 {
   @mixin font ProximaNova-Regular, 14px, $black, -0.23px, 22px;
 }
+@define-mixin presented-by-font2 {
+  @mixin font ProximaNova-Bold, 14px, $black, 0, 16px;
+}
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||| Author Page Header Fonts Styleguide  ||| */
