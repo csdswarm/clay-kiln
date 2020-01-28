@@ -1,4 +1,4 @@
-_version: 8.0
+_version: 9.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -26,12 +26,19 @@ componentTitleVisible:
   _label: Show Component's Title
   _has:
     input: checkbox
-    help: Show or hide the title displayed on the component's view 
+    help: Show or hide the title displayed on the component's view
 
 pageLength:
   _label: Page Size
   _has:
     help: Number of articles to load when "load more" is clicked
+    input: text
+    type: number
+
+maxLength:
+  _label: Maximum Number of Content Items
+  _has:
+    help: Limit the number of content items
     input: text
     type: number
 
@@ -76,12 +83,19 @@ locationOfContentFeed:
       - homepage
       - section-front
       - topic-page
+      - author-page
+
+station:
+  _subscribe: stationName
 
 sectionFront:
   _subscribe: sectionFront
   _label: Section Front Category
   _has:
     help: Section Front Category from which to pull content
+
+primarySectionFront:
+  _subscribe: primarySectionFront
 
 sectionFrontManual:
   _label: Section Front Category
@@ -153,23 +167,6 @@ tagManual:
           - tag
           - section-front-and-tag
           - section-front-or-tag
-
-tagInfo:
-  _label: Tag Info
-  _placeholder:
-    height: 274px
-    text: More Info on Tag
-    required: true
-  _reveal:
-    field: populateFrom
-    operator: ===
-    values:
-      - tag
-      - section-front-and-tag
-      - section-front-or-tag
-  _has:
-    input: text
-    help: Tag Description / More Info (Will be shown in right rail)
 
 filterTags:
   _label: Exclude Tags
@@ -275,16 +272,6 @@ introComponents:
     include:
     - html-embed
 
-contentCollectionLogoSponsorship:
-  _component:
-    include:
-      - google-ad-manager
-
-googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager
-
 sharethroughTag:
   _component:
     include:
@@ -297,12 +284,12 @@ _groups:
       - componentTitle
       - componentTitleVisible
       - pageLength
+      - maxLength
       - autoPopulatedContentHeader
       - populateFrom
       - sectionFrontManual
       - secondarySectionFrontManual
       - tagManual
-      - tagInfo
       - contentType
       - filterTags
       - filterSecondarySectionFronts
@@ -311,3 +298,8 @@ _groups:
     _placeholder:
       height: 100px
       ifEmpty: populateFrom
+  header:
+    _label: Content Feed Title
+    fields:
+      - componentTitle
+      - componentTitleVisible

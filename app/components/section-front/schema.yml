@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 2.0
 _confirmRemoval: true
 
 title:
@@ -30,6 +30,8 @@ primary:
     operator: falsy
 
 primarySectionFront:
+  _publish:
+    - primarySectionFront
   _reveal:
     field: primary
     operator: falsy
@@ -53,10 +55,10 @@ podcastList:
     include:
       - podcast-list
 
-moreContentFeed:
+twoColumnComponent:
   _component:
     include:
-      - more-content-feed
+      - two-column-component
 
 stationsCarousel:
   _placeholder:
@@ -95,3 +97,11 @@ _groups:
       - primarySectionFront
       - title
       - includePodcastModule
+
+stationName:
+  _publish: stationName
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy

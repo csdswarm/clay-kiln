@@ -5,7 +5,8 @@ const mediaplay = require('./media-play'),
   formatTime = require('./format-time'),
   dateTime = require('./dateTime'),
   truncate = require('./truncate'),
-  ellipsisSubstring = require('./ellipsisSubstring');
+  ellipsisSubstring = require('./ellipsisSubstring'),
+  { yesNo } = require('./utils');
 
 module.exports = {
   byline: require('./byline'),
@@ -28,5 +29,6 @@ module.exports = {
   attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow'),
   reversibleOneBasedIndex: require('./reversibleOneBasedIndex'),
   userLocalDate: dateTime.userLocalDate,
-  renderTemplateString: require('./renderTemplateString')
+  renderTemplateString: require('./renderTemplateString'),
+  yesNo: yesNo
 };
