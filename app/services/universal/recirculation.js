@@ -29,6 +29,10 @@ const _get = require('lodash/get'),
       createObj: sectionFront => ({ match: { sectionFront } })
     },
     secondarySectionFronts: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
+    stationSlug: {
+      filterCondition: 'must',
+      createObj: stationSlug => ({ match: { stationSlug } })
+    },
     tags: {
       unique: true,
       createObj: tag => ({ match: { 'tags.normalized': tag } })
@@ -109,7 +113,7 @@ const _get = require('lodash/get'),
     const query = queryService(index, locals);
 
     let results = [];
-  
+
     // add sorting
     queryService.addSort(query, { date: 'desc' });
 
@@ -148,14 +152,14 @@ const _get = require('lodash/get'),
         try {
           const { filters, excludes, curated } = mapDataToFilters(uri, data, locals),
             content = await fetchRecirculation(filters, excludes, elasticFields, locals);
-       
+
           data._computed = Object.assign(data._computed || {}, {
             [contentKey]: [...curated, ...content].slice(0, maxItems)
           });
         } catch (e) {
           log('error', `There was an error querying items from elastic - ${e.message}`, e);
         }
-        
+
         return render(uri, data, locals);
       },
       async save(uri, data, locals) {
@@ -165,7 +169,7 @@ const _get = require('lodash/get'),
         data.items = await Promise.all(data.items.map(async (item) => {
           item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
           const result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields);
-      
+
           return  {
             ...item,
             primaryHeadline: item.overrideTitle || result.primaryHeadline,
@@ -176,7 +180,7 @@ const _get = require('lodash/get'),
             sectionFront: result.sectionFront
           };
         }));
-  
+
         return save(uri, data, locals);
       }
     };

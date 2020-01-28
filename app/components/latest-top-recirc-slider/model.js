@@ -48,21 +48,33 @@ const _pick = require ('lodash/pick'),
   sectionOrTagCondition = (populateFrom, value) => populateFrom === 'section-front-or-tag' ? { condition: 'should', value } : value;
 
 module.exports = recirculationData({
-  mapDataToFilters: (ref, data, locals) => ({
-    filters: {
-      contentTypes: boolObjectToArray(data.contentType),
-      ..._pick({
-        sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFront),
-        secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFront),
-        tags: sectionOrTagCondition(data.populateFrom, (data.tag || []).map(tag => tag.text))
-      }, populateFilter(data.populateFrom))
-    },
-    excludes: {
-      canonicalUrls: [locals.url, ...data.items.map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
-      secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
-      sectionFronts: boolObjectToArray(data.excludeSectionFronts),
-      tags: (data.excludeTags || []).map(tag => tag.text)
-    },
-    curated: data.items
-  })
+  mapDataToFilters: (ref, data, locals) => {
+    const recircOpts = {
+        filters: {
+          contentTypes: boolObjectToArray(data.contentType),
+          ..._pick({
+            sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFront),
+            secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFront),
+            tags: sectionOrTagCondition(data.populateFrom, (data.tag || []).map(tag => tag.text))
+          }, populateFilter(data.populateFrom))
+        },
+        excludes: {
+          canonicalUrls: [locals.url, ...data.items.map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
+          secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
+          sectionFronts: boolObjectToArray(data.excludeSectionFronts),
+          tags: (data.excludeTags || []).map(tag => tag.text)
+        },
+        curated: data.items
+      },
+      {
+        station: { id: stationId, site_slug: stationSlug },
+        defaultStation: { id: defaultStationId }
+      } = locals;
+
+    if (stationId !== defaultStationId) {
+      recircOpts.filters = { ...recircOpts.filters, stationSlug };
+    }
+
+    return recircOpts;
+  }
 });
