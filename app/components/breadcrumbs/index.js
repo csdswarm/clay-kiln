@@ -9,16 +9,19 @@ const { getSectionFrontName, retrieveList } = require('../../services/server/lis
  * @returns {string} a new url-friendly slug
  */
 function slugify(value) {
+  // tech debt: remove any characters that shouldn't be in a url.  This is
+  //   only necessary because we're transforming section front titles to
+  //   section front urls which causes a problem in the case of
+  //   "i'm listening".  Ideally we'd store the section front url and use
+  //   it directly.
+
   const cleanValue = value
     .toLocaleLowerCase()
     .trim()
-    .replace(/ /g, '-')
-    // tech debt: remove any characters that shouldn't be in a url.  This is
-    //   only necessary because we're transforming section front titles to
-    //   section front urls which causes a problem in the case of
-    //   "i'm listening".  Ideally we'd store the section front url and use
-    //   it directly.
-    .replace(/'/g, '');
+    .replace(/&/g, ' ')
+    .replace(/\//g, ' ')
+    .replace(/'/g, '')
+    .replace(/\s+/g, '-');
 
   return encodeURIComponent(cleanValue);
 }
