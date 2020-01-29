@@ -2,7 +2,17 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { getComponentName, isComponent, isPage, isPublished, isUri, isPageMeta, isList, getListInstance } = require('clayutils'),
+  {
+    getComponentName,
+    getPageInstance,
+    isComponent,
+    isPage,
+    isPublished,
+    isUri,
+    isPageMeta,
+    isList,
+    getListInstance
+  } = require('clayutils'),
   { loadPermissions } = require('../urps'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
@@ -17,7 +27,9 @@ const express = require('express'),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
   { getComponentData } = require('../db'),
-  attachToLocals = require('./attach-to-locals');
+  attachToLocals = require('./attach-to-locals'),
+  getPageTemplateIds = require('../get-page-template-ids'),
+  { anyStation } = addPermissions;
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -86,6 +98,12 @@ function userPermissionRouter() {
   // we need access to 'res' in createPage so a proper 400 error can be returned
   //   when a bad station slug is sent.
   hasPermissions.createPage(userPermissionRouter);
+
+  // we're restricting editPageTemplate here instead of in checkUserPermissions
+  //   because that function will be kept much simpler if we leave it
+  //   intercepting unsafe methods (here we're intercepting
+  //   GET /_pages/...?edit=true)
+  hasPermissions.editPageTemplate(userPermissionRouter);
 
   attachToLocals.updatePermissionsInfo(userPermissionRouter);
   attachToLocals.stationsIHaveAccessTo(userPermissionRouter);
@@ -200,12 +218,26 @@ async function checkUserPermissions(uri, req, locals, db) {
     }
 
     // TODO: handle page meta
-    if (isPage(uri) && !isPageMeta(uri) && isPublished(uri)) {
-      const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
+    if (
+      isPage(uri)
+      && !isPageMeta(uri)
+      && req.method === 'PUT'
+    ) {
+      const pageId = getPageInstance(uri),
+        canEditPageTemplate = user.can('update').a('templates').for(anyStation).value;
 
-      return pageTypesToCheck.has(pageType)
-        ? user.can('publish').a(pageType).value
-        : true;
+      if (isPublished(uri)) {
+        const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
+
+        return pageTypesToCheck.has(pageType)
+          ? user.can('publish').a(pageType).value
+          : true;
+      } else if (
+        !canEditPageTemplate
+        && (await getPageTemplateIds(locals)).has(pageId)
+      ) {
+        return false;
+      }
     }
 
     if (isUri(uri) && req.method === 'DELETE') {

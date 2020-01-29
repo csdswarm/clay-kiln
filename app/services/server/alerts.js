@@ -218,8 +218,6 @@ const db = require('./db'),
     }));
   };
 
-module.exports = {
-  addAlertsMiddleware,
-  getAlerts,
-  inject
-};
+module.exports.inject = inject;
+module.exports.addAlertsMiddleware = addAlertsMiddleware;
+module.exports.getAlerts = getAlerts;
