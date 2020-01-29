@@ -1,12 +1,17 @@
 'use strict';
 const isDesktop = require('../../services/client/isDesktop'),
 
-  /**
-   * Filter mobile ad if desktop
-   * @param {string} slotID
-   * @returns {boolean}
-   */
-  filterAdIfDesktop = (slotID) => isDesktop() ? !slotID.includes('mobile') : true,
+  // List of filters to run on each slot to be bid on
+  filters = [
+    // Ensure there are valid sizes for each slot
+    ({ sizes }) => sizes.length,
+
+    // Do not bid on mobile ads if the client is a desktop
+    ({ slotID }) => isDesktop() ? !slotID.includes('mobile') : true,
+
+    // Do not bid on sponsorship slots
+    ({ slotID }) => !slotID.includes('sponsorship')
+  ],
 
   /**
    * Setup parameters for fetchBids
@@ -28,7 +33,7 @@ const isDesktop = require('../../services/client/isDesktop'),
             sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ]).filter(([width, height]) => width > 7 && height > 7)
           };
         })
-        .filter(({ slotID, sizes }) => sizes.length && filterAdIfDesktop(slotID));
+        .filter(slot => filters.every(filter => filter(slot)));
 
     return { slots, timeout };
   };
