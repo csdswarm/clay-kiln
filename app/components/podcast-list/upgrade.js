@@ -10,3 +10,10 @@ module.exports['1.0'] = function (uri, data) {
 
   return data;
 };
+
+module.exports['2.0'] = function (uri, data) {
+
+  data.backFillEnabled = true;
+
+  return data;
+};
