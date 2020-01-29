@@ -1,10 +1,10 @@
 {
   "name": "clay-starter",
-  "version": "0.0.35",
+  "version": "0.0.38",
   "description": "The started for Clay",
   "main": "app.js",
   "scripts": {
-    "test": "mocha \"./{,!(node_modules)/**/}*.test.js\"",
+    "test": "mocha \"./{,!(node_modules)/**}/*.test.js\" --recursive --exit",
     "dev": "pm2 start local.config.js --no-daemon",
     "start": "npm run check-elastic && pm2 start app.js --instances max --log '/home/ubuntu/log.txt'",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
