@@ -1,5 +1,9 @@
 'use strict';
 
+const axios = require('../../app/node_modules/axios'),
+  { prettyJSON } = require('./base'),
+  formatAxiosError = require('./format-axios-error');
+
 /**
  * Performs an elastic search
  * @param {Object} params
@@ -58,6 +62,56 @@ function esQuery_v1(params) {
   });
 }
 
+/**
+ * Performs an elastic search
+ *
+ * I bumped the version because v1
+ *   - required you to pass the size separately from the query which should
+ *     be unnecessary.
+ *   - contained a lot of unused parameters.  If we need any of them then in the
+ *     future they can be added as an object in a third parameter which can be
+ *     done without bumping the version.
+ *   - should have used axios to simplify the request logic
+ *
+ * @param {object} query an elastic search query
+ * @param {object} params
+ * @param {string} params.hostname - the hostname of the elastic search server
+ * @param {string} params.http - the protocol of the elastic search server
+ * @param {string} params.index - the index to search, defaults to empty
+ * @param {boolean} [params.logError] - whether this method should log the error before rethrowing it
+ * @returns {Promise<{object}>}
+ */
+async function esQuery_v2(query, { hostname, http, index, logError = false }) {
+  try {
+    if (!hostname || !http || !index) {
+      throw new Error(
+        'make sure to pass hostname, http and index as params'
+      );
+    }
+
+    const elasticUrl = `${http}://${hostname}:9200/${index}/_search`,
+      { data: result } = await axios.post(elasticUrl, query)
+
+    return result;
+  } catch (err) {
+    if (logError) {
+      console.error(
+        'an error occurred when fetching data from elasticsearch'
+        + '\n\n' + err.stack
+      );
+
+      console.log('\nquery: ' + prettyJSON(query));
+
+      if (err.response) {
+        console.error('\n\n' + formatAxiosError(err));
+      }
+    }
+
+    throw err;
+  }
+}
+
 module.exports = {
-  v1: esQuery_v1
+  v1: esQuery_v1,
+  v2: esQuery_v2,
 };
