@@ -45,12 +45,15 @@
   &__info-dateTime, &__info-venueName {
     @mixin events-list-page-font3;
     display: inline-flex;
+    @mixin large-screen {
+      @mixin events-list-page-font4;
+    }
   }
 
   &__info-icon {
-    flex: 0 0 em(15, 16);
-    height: em(15, 16);
-    margin-right: em(7, 16);
+    flex: 0 0 em(15, 18);
+    height: em(15, 18);
+    margin-right: em(7, 18);
     .svg-icon {
       fill: theme(primaryColor, $purple);
     }
