@@ -1,5 +1,6 @@
 'use strict';
 const isDesktop = require('../../services/client/isDesktop'),
+  passesAll = require('lodash/overEvery'),
 
   // List of filters to run on each slot to be bid on
   filters = [
@@ -33,7 +34,7 @@ const isDesktop = require('../../services/client/isDesktop'),
             sizes: sizes.map(size => [ size.getWidth(), size.getHeight() ]).filter(([width, height]) => width > 7 && height > 7)
           };
         })
-        .filter(slot => filters.every(filter => filter(slot)));
+        .filter(passesAll(filters));
 
     return { slots, timeout };
   };
