@@ -39,7 +39,8 @@ module.exports = unityComponent({
         return {
           title: `Podacst Title ${i + 1}`,
           description: rndPick('lorem ipsum dolor sit amet, consectetur adipiscing elit praesent elementum ligula eget ligula bibendum venenatis'.split(' ')),
-          imageUrl: `https://via.placeholder.com/600/${rndHex()}/ffffff/?text=img-${i + 1}`
+          imageUrl: `https://via.placeholder.com/600/${rndHex()}/ffffff/?text=img-${i + 1}`,
+          link: 'https://radio.com/podcasts/1234'
         };
       });
     return data;
