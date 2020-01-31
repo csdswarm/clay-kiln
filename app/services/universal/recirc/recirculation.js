@@ -191,8 +191,6 @@ const
           };
         }));
 
-        console.log({ items: data.items });
-
         return save(uri, data, locals);
       }
     });
