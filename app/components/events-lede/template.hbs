@@ -1,4 +1,4 @@
-<section data-uri="{{ default _ref _self }}" data-editable="settings" class="component component--events-lede{{ if @root.locals.edit ' editing' }}">
+<section data-uri="{{ default _ref _self }}" class="component component--events-lede{{ if @root.locals.edit ' editing' }}">
   <div class="events-lede__featured">
     {{#if lede.url }}
       <div class="events-lede__image-container">
@@ -13,7 +13,7 @@
               class="section-lead__image"
             />
           </picture>
-          <div class="events-lede__image-overlay">
+          <div class="events-lede__image-overlay" data-editable="contentLabel">
             {{#if contentLabel }}
               <span class="events-lede__content-label">{{ contentLabel }}</span>
             {{/if}}
@@ -32,7 +32,9 @@
             {{{ lede.venueName }}}
           </a>
         </span>
-        {{> paragraph description }}
+        <div data-editable="description">
+          {{> paragraph description }}
+        </div>
       </div>
     {{/if}}
   </div>

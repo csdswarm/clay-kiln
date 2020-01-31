@@ -14,6 +14,7 @@ curatedEvents:
   _placeholder:
     text: Add Event
     height: 200px
+    required: true
 
 events:
   _publish: events
@@ -27,9 +28,6 @@ ledeUrl:
     input: content-search
     validate:
       required: true
-  _placeholder:
-    text: Featured Event
-    height: 400px
 
 moreContent:
   _publish: moreContent
@@ -70,6 +68,10 @@ content:
 # Groups
 _groups:
   settings:
+    _placeholder:
+      text: Events Listing
+      height: 20px
+      ifEmpty: ledeUrl or pageDescription
     fields:
       - ledeUrl
       - pageDescription

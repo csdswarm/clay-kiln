@@ -7,6 +7,7 @@ const { unityComponent } = require('../../services/universal/amphora'),
 
 module.exports = unityComponent({
   render: (uri, data) => {
+    console.log('data lede in lede', data.lede);
     const lede = {
       dateTime: data.lede.startDate && data.lede.startTime
         ? dateFormat(dateParse(data.lede.startDate + ' ' + data.lede.startTime),dateFormatString)

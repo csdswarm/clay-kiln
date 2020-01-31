@@ -1,5 +1,9 @@
 contentLabel:
   _label: Lede Label
+  _placeholder:
+    text: Lede Label
+    height: 30px;
+    required: true
   _has:
     input: text
     validate:
@@ -24,5 +28,3 @@ _groups:
   settings:
     fields:
       - contentLabel
-      - lede
-      - description

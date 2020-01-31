@@ -48,9 +48,9 @@ async function getRecentEventsFromElastic(uri, data, locals) {
 
   // exclude the curated content from the results
   if (data.curatedEvents && !isComponent(locals.url)) {
-    data.curatedEvents.forEach(url => {
+    data.curatedEvents.forEach(event => {
       const cleanUrl = utils.urlToCanonicalUrl(
-        urlToElasticSearch(url)
+        urlToElasticSearch(event.url)
       );
 
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
@@ -80,13 +80,18 @@ async function getRecentEventsFromElastic(uri, data, locals) {
   }
 
   return queryService.searchByQuery(query)
-    .then(function (result) {
-      return {
-        ...result,
-        url: result.canonicalUrl.replace(/^http:/, protocol)
-      };
+    .then(function (results) {
+      console.log('recent events', results);
+      results.forEach(result => {
+        return {
+          ...result,
+          url: result.canonicalUrl.replace(/^http:/, protocol)
+        };
+      });
+      return results;
     })
     .catch(e => {
+      console.log("recent events query error");
       queryService.logCatch(e, uri);
       return [];
     });
@@ -95,7 +100,7 @@ async function getRecentEventsFromElastic(uri, data, locals) {
 /**
  * Gets event data from elastic by querying with event url
  *
- * @param {String[]} urlsList
+ * @param {Object} event
  * @param {Object} locals
  * @returns {Promise<{
  *  url: string,
@@ -107,39 +112,44 @@ async function getRecentEventsFromElastic(uri, data, locals) {
  *  feedImgUrl: string,
  * }[]>}
  */
-async function getEventDataFromElastic(urlsList, locals) {
-  return await Promise.all(urlsList.map(async (url) => {
-    const query = queryService.newQueryWithCount(elasticIndex, 1, locals),
-      canonicalUrl = utils.urlToCanonicalUrl(
-        urlToElasticSearch(url)
-      );
+async function getEventDataFromElastic(event, locals) {
+  console.log('url', event.url);
+  const query = queryService.newQueryWithCount(elasticIndex, 1, locals),
+    canonicalUrl = utils.urlToCanonicalUrl(
+      urlToElasticSearch(event.url)
+    );
 
-    queryService.addFilter(query, { term: { canonicalUrl } });
-    queryService.addFilter(query, { term: { contentType: 'event' } });
-    if (locals.station.callsign !== locals.defaultStation.callsign) {
-      queryService.addMust(query, { match: { station: locals.station } });
-    }
-    queryService.onlyWithTheseFields(query, elasticFields);
-    return queryService.searchByQuery(query)
-      .then(function (result) {
-        return {
-          ...result,
-          url: url.replace(/^http:/, protocol)
-        };
-      })
-      .catch(e => {
-        queryService.logCatch(e, url);
-        return url;
-      });
-  }));
+  queryService.addFilter(query, { term: { canonicalUrl } });
+  queryService.addFilter(query, { term: { contentType: 'event' } });
+  if (locals && locals.station.callsign !== locals.defaultStation.callsign) {
+    queryService.addMust(query, { match: { station: locals.station } });
+  }
+  queryService.onlyWithTheseFields(query, elasticFields);
+  return queryService.searchByQuery(query)
+    .then(function (result) {
+      console.log(result[0]);
+      return {
+        ...result[0],
+        url: event.url.replace(/^http:/, protocol)
+      };
+    })
+    .catch(e => {
+      console.log('curated event query error');
+      queryService.logCatch(e, event.url);
+      return event;
+    });
 }
 
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
-    const curatedEvents = await getEventDataFromElastic(data.curatedEvents, locals),
+    const curatedEvents = await Promise.all(data.curatedEvents.map(async (event) => {
+        await getEventDataFromElastic(event, locals);
+      })),
       recentEvents = await getRecentEventsFromElastic(uri, data, locals);
 
-    data.lede = (await getEventDataFromElastic([data.ledeUrl]))[0];
+    console.log('get lede');
+    data.lede = await getEventDataFromElastic({ url: data.ledeUrl }, locals);
+    console.log('lede in page', data.lede);
 
     // "load more" button passes page query param - render more content and return it
     data.moreContent = recentEvents.length > data.pageLength;
