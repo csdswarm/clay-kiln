@@ -34,16 +34,19 @@ pipeline {
             case "develop":
             case ~/(.*\/)?feature-.*/: //Tmp for fairwinds testing
               env.ROK8S_CONFIG='deploy/development.config'
+              sh 'cd spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm ci && npm run build'
               break
 
             case "staging":
               env.ROK8S_CONFIG='deploy/staging.config'
+              sh 'cd spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm ci && npm run build'
               break
 
             case "master":
               env.ROK8S_CONFIG='deploy/production.config'
               ROK8S_CLUSTER='production.k8s.radio-prd.com'
               CRED_ID='prd'
+              sh 'cd spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm ci && npm run build-production'
               break
 
             // case ~/ON-.*/:
@@ -70,7 +73,6 @@ pipeline {
 
       steps {
         sh 'git clean -xdf'
-        sh 'cd spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm ci && npm run build-production'
         withCredentials ([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'dev']]) {
           sh '''prepare-awscli;
             docker-pull -f deploy/build.config;
