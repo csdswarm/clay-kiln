@@ -42,7 +42,6 @@ presenters:
           input: text
           type: url
           validate:
-            required: true
             # Using pattern from article/stationURL
             pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
             patternMessage: Must be a valid URL including the "http://" or "https://"

@@ -35,6 +35,10 @@
 
   &__logo-link {
     text-align: center;
+    @mixin presented-by-font2;
+    &--clickable {
+      text-decoration: underline solid theme(primaryColor, $purple);
+    }
   }
 
   &--multi-row {
