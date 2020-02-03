@@ -14,6 +14,11 @@ const republishPageUris = require('../utils/republish-page-uris').v1,
     match: {
       "feeds.msn": true
     }
+  },
+  hasMsnTitleLength = {
+    range: {
+      msnTitleLength: { gt: 20 }
+    }
   };
 
 run().catch(console.error)
@@ -23,9 +28,17 @@ async function run () {
     envInfo = parseHost(host),
     newComponentsYml = getNewComponentsYml(host, envInfo.http),
     newComponentsJson = yamljs.parse(newComponentsYml),
-    { query } = newComponentsJson._components.feeds.instances['msn']
+    { query } = newComponentsJson._components.feeds.instances['msn'];
 
-  removeMsnMatch(query)
+  removeMsnSpecificFilters(query);
+
+  // bump the size from 25 to 50 because we removed the msnTitle length filter
+  //   which means the top 25 aren't guaranteed to have a headline of at least
+  //   20 characters.  This is a small convenience hack because most headlines
+  //   will be at least 20 characters, and the way around this hack would be to
+  //   add another index to elasticsearch which would be silly to implement just
+  //   for this migration.
+  query.size = 50;
 
   let result;
 
@@ -52,13 +65,14 @@ async function run () {
 // helper functions
 
 /**
- * existing content doesn't have the feeds.msn property yet so we need to remove
- *   it in order to fetch the published content.
+ * existing content doesn't have the feeds.msn nor msnTitleLength properties yet
+ *   so we need to remove them in order to fetch the published content.
  *
  * @param {object} query - this parameter is mutated
  */
-function removeMsnMatch(query) {
+function removeMsnSpecificFilters(query) {
   query.query.bool.filter = query.query.bool.filter.filter(
     aFilter => !areDeeplyEqual(aFilter, matchesMsnFeed)
+      && !areDeeplyEqual(aFilter, hasMsnTitleLength)
   )
 }
