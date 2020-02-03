@@ -1,6 +1,7 @@
 'use strict';
 
-const _capitalize = (str) => {
+const { assignStationInfo } = require('../../services/universal/create-content'),
+  _capitalize = (str) => {
     return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
   },
   socialLinks = [
@@ -36,14 +37,16 @@ module.exports.render = (ref, data, locals) => {
     data.author = _capitalize(locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,''));
     data.dynamic = true;
   }
-  
+
   data.socialLinks = socialLinks.map(link => {
     const handle = data[link.type];
-  
+
     if (handle) {
       return { ...link, url: link.url.replace('{handle}', handle) };
     }
   }).filter(updatedLink => updatedLink);
-  
+
+  assignStationInfo(ref, data, locals);
+
   return data;
 };

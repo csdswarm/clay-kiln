@@ -86,6 +86,7 @@ const db = require('./db'),
       INNER JOIN components."section-front" AS sectionFront
         ON page.data->'main'->>0 = sectionFront.id
       WHERE sectionFront.data->>'stationSiteSlug' = '${stationSlug}'
+        OR sectionFront.data->>'stationSlug' = '${stationSlug}'
       AND sectionFront.id ~ 'published'
     `).then(results => _get(results, 'rows[0].uri'));
 
