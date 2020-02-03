@@ -182,6 +182,12 @@ module.exports['9.0'] = function (uri, data) {
   return newData;
 };
 
+module.exports['10.0'] = (uri, data) => {
+  data.feeds.smartNews = true;
+
+  return data;
+};
+
 module.exports['10.0'] = async (uri, data) => {
   defaultTextWithOverride.onModelSave.handleDefault('msnTitle', 'headline', data);
   data.msnTitleLength = _get(data.msnTitle, 'length', 0);

@@ -1,6 +1,8 @@
 'use strict';
 
-const { buildModel } = require('./utils'),
-  log = require('../../services/universal/log').setup({ file: __filename, action: 'rss-transform' });
+const { rendererPipeline } = require('./utils');
 
-module.exports = buildModel({ log, prefix: 'gnf' });
+module.exports = (ref, data, locals) => {
+  return rendererPipeline(ref, data, locals, 'gnf');
+};
+

@@ -258,18 +258,14 @@ feeds:
   _has:
     input: checkbox-group
     options:
-      - name: Site Maps and Google Search
-        value: sitemaps
       - name: RSS Feeds
         value: rss
-      - name: Most Popular
-        value: most-popular
-      - name: Latest News and Newsfeed
-        value: newsfeed
       - name: Apple News
         value: apple-news
       - name: MSN
         value: msn
+      - name: Smart News
+        value: smartNews
     help: By default, articles are included in all of our feeds. Uncheck these if you don't want this article to appear in them, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
 
 msnTitle:
