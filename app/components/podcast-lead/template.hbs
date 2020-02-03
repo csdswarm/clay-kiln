@@ -1,3 +1,62 @@
-<div class="component component--podcast-lead podcast-lead" data-uri="{{ default _ref _self }}">
+{{#*inline "shareSubscribe"}}
+  {{#if attributes}}
+    <div class="podcast-lead__share">
+      <div class="podcast-lead__share-title">Share</div>
+      <div class="podcast-lead__share-content">
+        {{> shareIcons attributes.shares }}
+      </div>
+    </div>
+  {{/if}}
+  {{#if attributes}}
+    <div class="podcast-lead__subscribe">
+      <div class="podcast-lead__subscribe-title">Subscribe</div>
+      <div class="podcast-lead__subscribe-content">
+        {{{ read 'components/podcast-lead/media/US_UK_Apple_Podcasts_Listen_Badge_RGB.svg' }}}
+        {{{ read 'components/podcast-lead/media/google_podcasts_badge_svg.svg' }}}
+        {{{ read 'components/podcast-lead/media/RSS.svg' }}}
+      </div>
+    </div>
+  {{/if}}
+{{/inline}}
 
+{{#*inline "shareIcons"}}
+  {{#each this as |socialMedia|}}
+    <a class="podcast-lead__share-icon podcast-lead__share-icon--{{ socialMedia }}" href="#">
+      {{{ read (concat 'components/podcast-lead/media/' socialMedia  '.svg') }}}
+    </a>
+  {{/each}}
+{{/inline}}
+
+{{#*inline "titleDescription"}}
+  <h1 class="podcast-lead__title">{{ title }}</h1>
+  {{#if description}}
+    <p class="podcast-lead__description">{{ description }}</p>
+  {{/if}}
+{{/inline}}
+
+{{#*inline "category"}}
+  {{#if category}}
+    <p class="podcast-lead__category">Category: <span class="podcast-lead__category-name">{{ category.0.name }}</span></p>
+  {{/if}}
+{{/inline}}
+
+<div class="component component--podcast-lead podcast-lead" data-uri="{{ default _ref _self }}">
+  <div class="podcast-lead__info-container-outside-top">
+    {{> titleDescription _computed.podcast.attributes }}
+  </div>
+  <div class="podcast-lead__image-container">
+    <img class="podcast-lead__image" src="{{ _computed.podcast.attributes.image }}" alt="{{ _computed.podcast.attributes.title }}">
+  </div>
+  <div class="podcast-lead__info-container">
+    <div class="podcast-lead__info-container-top">
+      {{> titleDescription _computed.podcast.attributes }}
+      {{> category _computed.podcast.attributes}}
+    </div>
+    <div class="podcast-lead__info-container-bottom">
+      {{> shareSubscribe _computed.podcast }}
+    </div>
+  </div>
+  <div class="podcast-lead__info-container-outside-bottom">
+    {{> shareSubscribe _computed.podcast }}
+  </div>
 </div>
