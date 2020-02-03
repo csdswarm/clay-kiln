@@ -17,7 +17,16 @@ const _get = require('lodash/get'),
     WEEK,
     YEAR
   },
+
   SERVER_SIDE = _get(process, 'release.name') === 'node',
+
+  PAGE_TYPES = {
+    ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
+    GALLERY: 'gallery',
+    SECTIONFRONT: 'section-front',
+    EVENT: 'event'
+  },
 
   // this should list the component names of the content types which may be
   //   created via the kiln drawer.
@@ -28,13 +37,6 @@ const _get = require('lodash/get'),
     'static-page',
     'topic-page'
   ]),
-
-  PAGE_TYPES = {
-    ARTICLE: 'article',
-    AUTHOR: 'author-page-header',
-    GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
-  },
 
   DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
@@ -49,6 +51,6 @@ module.exports = {
   contentTypes,
   time,
   SERVER_SIDE,
-  PAGE_TYPES,
-  DEFAULT_RADIOCOM_LOGO
+  DEFAULT_RADIOCOM_LOGO,
+  PAGE_TYPES
 };

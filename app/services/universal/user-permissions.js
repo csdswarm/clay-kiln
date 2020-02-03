@@ -308,7 +308,7 @@ const pluralize = require('pluralize'),
      */
     return ({ user, permissions, stationForPermissions }) => {
       if (user && !user.can) {
-        _permissions = permissions || {},
+        _permissions = permissions || {};
         _override = false;
 
         // helper to not have to pass station

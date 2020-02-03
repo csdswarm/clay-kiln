@@ -81,10 +81,10 @@ async function loadPermissions(session, locals) {
       loginData = { ...session.auth };
 
     if (!loginData.token) {
-      const username = (locals.user.username || '').toLowerCase();
+      const key = `cognito-auth--${locals.user.username.toLowerCase()}`;
 
-      Object.assign(loginData, JSON.parse(await cache.get(`cognito-auth--${username}`) || '{}'));
-      cache.del(`cognito-auth--${username}`);
+      Object.assign(loginData, JSON.parse(await cache.get(key) || '{}'));
+      cache.del(key);
     }
 
     const { expires } = loginData;

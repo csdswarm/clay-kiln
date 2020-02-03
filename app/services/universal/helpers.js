@@ -29,5 +29,6 @@ module.exports = {
   attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow'),
   reversibleOneBasedIndex: require('./reversibleOneBasedIndex'),
   userLocalDate: dateTime.userLocalDate,
-  yesNo: yesNo
+  yesNo: yesNo,
+  renderTemplateString: require('./renderTemplateString')
 };

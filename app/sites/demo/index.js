@@ -5,11 +5,11 @@ const publishing = require('../../services/publishing'),
     '/_components/article/instances',
     '/_components/gallery/instances',
     '/_components/section-front/instances',
-    '/_components/author-page-header/instances'
+    '/_components/author-page-header/instances',
+    '/_components/event/instances'
   ];
 
 module.exports.routes = [
-  // Partially static
   { path: '/authors/:author' },
   { path: '/blogs/:author/:title' }, // Frequency URL pattern
   { path: '/blogs/:title' }, // Frequency URL pattern
@@ -31,6 +31,7 @@ module.exports.routes = [
   { path: '/small-business-pulse/:slug' },
   { path: '/small-business-pulse/:year/:month/:name' },
   { path: '/small-business-pulse/:year/:month/:day/:name' },
+  { path: '/events/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
@@ -59,7 +60,10 @@ module.exports.routes = [
 module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getEventSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  // NOTE: getAuthorPageSlugUrl will eat up anything after
+  // it so I had to add getEventSlugUrl prior to it
   (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];
 
