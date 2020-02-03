@@ -1,2 +1,5 @@
 _components:
-  podcast-lead: {}
+  podcast-lead:
+    instances:
+      test:
+        null: null
