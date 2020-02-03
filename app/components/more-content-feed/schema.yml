@@ -67,6 +67,11 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - author
 
 curatedContentHeader:
   _label: Curated Content
@@ -168,7 +173,7 @@ tagManual:
           - section-front-and-tag
           - section-front-or-tag
 
-filterTags:
+excludeTags:
   _label: Exclude Tags
   _has:
     input: simple-list
@@ -178,7 +183,15 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondarySectionFronts:
+excludeSectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+
+excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
     input: select
@@ -291,8 +304,9 @@ _groups:
       - secondarySectionFrontManual
       - tagManual
       - contentType
-      - filterTags
-      - filterSecondarySectionFronts
+      - excludeTags
+      - excludeSectionFronts
+      - excludeSecondarySectionFronts
       - curatedContentHeader
       - items
     _placeholder:

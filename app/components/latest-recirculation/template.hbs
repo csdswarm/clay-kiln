@@ -1,18 +1,26 @@
-<section class="component component--latest-recirc {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}{{#if (compare populateBy 'station')}}component--station{{/if}}{{#if (compare articles.length 0)}} component--empty{{/if}}" data-uri="{{ default _ref _self }}" data-track-type="latest-recirculation" data-editable="latestRecirculationItems">
+<section 
+  class="component component--latest-recirc 
+    {{#if (compare populateFrom 'sectionFront')}}component--{{sectionFront}}{{/if}}
+    {{#if (compare populateFrom 'tag')}}component--tag{{/if}}
+    {{#if (compare populateFrom 'station')}}component--station{{/if}}
+    {{#if (compare _computed.articles.length 0)}} component--empty{{/if}}" 
+  data-uri="{{ default _ref _self }}" 
+  data-track-type="latest-recirculation" 
+  data-editable="latestRecirculationItems">
   {{#ifAny articles.length @root.locals.edit}}
     <h2 class="latest-recirc__title">LATEST
-    {{#if (compare populateBy 'sectionFront')}}
+    {{#if (compare populateFrom 'sectionFront')}}
       in <span class="title">{{sectionFront}}</span>
     {{/if}}
-    {{#if (compare populateBy 'tag')}}
+    {{#if (compare populateFrom 'tag')}}
       in <span class="title">{{tag}}</span>
     {{/if}}
-    {{#if (compare populateBy 'station')}}
+    {{#if (compare populateFrom 'station')}}
       from <span class="title">{{station}}</span>
     {{/if}}
     </h2>
     <ul class="latest-recirc__links">
-      {{#each articles as |article|}}
+      {{#each _computed.articles as |article|}}
         <li>
           <a href="{{if article.canonicalUrl article.canonicalUrl else=article.externalUrl}}"
              target="{{if article.canonicalUrl "_self" else="_blank"}}"
