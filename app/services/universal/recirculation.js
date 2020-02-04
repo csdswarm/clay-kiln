@@ -46,7 +46,7 @@ const _get = require('lodash/get'),
       ..._pick({
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
-        tags: sectionOrTagCondition(data.populateFrom, (getTag(data, locals) || []).map(tag => tag.text))
+        tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
       }, populateFilter(data.populateFrom))
     },
     excludes: {
@@ -176,35 +176,35 @@ const _get = require('lodash/get'),
    * @return {array} tags
    */
   getTag = (data, locals) => {
-    let tag = data.tagManual || data.tag;
+    let tags = data.tagManual || data.tag;
 
     // Check if we are on a tag page and override the above
     if (locals && locals.tag) {
       // This is from load more on a tag page
-      tag = locals.tag;
+      tags = locals.tag;
     } else if (locals && locals.params && locals.params.tag) {
       // This is from a tag page but do not override a manually set tag
-      tag = data.tag || locals.params.tag;
+      tags = data.tag || locals.params.tag;
     } else if (locals && locals.params && locals.params.dynamicTag) {
       // This is from a tag page
-      tag = locals.params.dynamicTag;
+      tags = locals.params.dynamicTag;
     }
 
     // normalize tag array (based on simple list input)
-    if (Array.isArray(data.tag)) {
-      tag = data.tag.map(tag => tag.text);
+    if (Array.isArray(tags)) {
+      tags = tags.map(tag => tag.text);
     }
 
     // split comma seperated tags (for load-more get queries)
-    if (typeof data.tag == 'string' && data.tag.indexOf(',') > -1) {
-      tag = data.tag.split(',');
+    if (typeof tags == 'string' && tags.indexOf(',') > -1) {
+      tags = tags.split(',');
     }
 
-    if (data.tag === '') {
+    if (tags === '') {
       return [];
     }
 
-    return tag;
+    return tags;
   },
   /**
    * Determine which sectionFront/tag values to consider based on where the populateFrom value

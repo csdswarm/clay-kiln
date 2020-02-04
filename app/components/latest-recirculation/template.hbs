@@ -3,11 +3,11 @@
     {{#if (compare populateFrom 'sectionFront')}}component--{{sectionFront}}{{/if}}
     {{#if (compare populateFrom 'tag')}}component--tag{{/if}}
     {{#if (compare populateFrom 'station')}}component--station{{/if}}
-    {{#if (compare _computed.articles.length 0)}} component--empty{{/if}}" 
+    {{#ifNone _computed.articles.length @root.locals.edit }} component--empty{{/ifNone}}" 
   data-uri="{{ default _ref _self }}" 
   data-track-type="latest-recirculation" 
   data-editable="latestRecirculationItems">
-  {{#ifAny articles.length @root.locals.edit}}
+  {{#ifAny _computed.articles.length @root.locals.edit }}
     <h2 class="latest-recirc__title">LATEST
     {{#if (compare populateFrom 'sectionFront')}}
       in <span class="title">{{sectionFront}}</span>
