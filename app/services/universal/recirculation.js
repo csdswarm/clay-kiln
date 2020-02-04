@@ -146,7 +146,7 @@ const _get = require('lodash/get'),
    * @param {function} config.save
    * @returns {object}
    */
-  recirculationData = ({ contentKey = 'articles', maxItems = 6, mapDataToFilters = returnData, render = returnData, save = returnData }) => {
+  recirculationData = ({ contentKey = 'articles', maxItems = 10, mapDataToFilters = returnData, render = returnData, save = returnData }) => {
     return {
       async render(uri, data, locals) {
         try {
