@@ -177,3 +177,9 @@ module.exports['9.0'] = function (uri, data) {
 
   return newData;
 };
+
+module.exports['10.0'] = (uri, data) => {
+  data.feeds.smartNews = true;
+
+  return data;
+};
