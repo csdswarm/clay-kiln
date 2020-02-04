@@ -158,6 +158,7 @@ const
   recirculationData = ({ contentKey = 'articles', maxItems = 6, mapDataToFilters = returnData, render = returnData, save = returnData }) =>
     unityComponent({
       async render(uri, data, locals) {
+
         try {
           const { filters, excludes, curated } = mapDataToFilters(uri, data, locals),
             content = await fetchRecirculation(filters, excludes, elasticFields, locals);
@@ -172,10 +173,11 @@ const
         return render(uri, data, locals);
       },
       async save(uri, data, locals) {
-        log('warning', { data, locals });
+
         if (!data.items.length || !locals) {
           return data;
         }
+
         data.items = await Promise.all(data.items.map(async (item) => {
           item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
           const result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields);
