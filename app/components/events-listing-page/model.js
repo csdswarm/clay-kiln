@@ -81,7 +81,6 @@ async function getRecentEventsFromElastic(uri, data, locals) {
 
   return queryService.searchByQuery(query)
     .then(function (results) {
-      console.log('recent events', results);
       results.forEach(result => {
         return {
           ...result,
@@ -91,7 +90,6 @@ async function getRecentEventsFromElastic(uri, data, locals) {
       return results;
     })
     .catch(e => {
-      console.log("recent events query error");
       queryService.logCatch(e, uri);
       return [];
     });
@@ -113,7 +111,6 @@ async function getRecentEventsFromElastic(uri, data, locals) {
  * }[]>}
  */
 async function getEventDataFromElastic(event, locals) {
-  console.log('url', event.url);
   const query = queryService.newQueryWithCount(elasticIndex, 1, locals),
     canonicalUrl = utils.urlToCanonicalUrl(
       urlToElasticSearch(event.url)
@@ -127,29 +124,29 @@ async function getEventDataFromElastic(event, locals) {
   queryService.onlyWithTheseFields(query, elasticFields);
   return queryService.searchByQuery(query)
     .then(function (result) {
-      console.log(result[0]);
       return {
         ...result[0],
         url: event.url.replace(/^http:/, protocol)
       };
     })
     .catch(e => {
-      console.log('curated event query error');
       queryService.logCatch(e, event.url);
       return event;
     });
 }
 
 module.exports = unityComponent({
-  render: async (uri, data, locals) => {
+  render: (uri, data) => {
+    return data;
+  },
+  save: async (uri, data, locals) => {
+    assignStationInfo(uri, data, locals);
     const curatedEvents = await Promise.all(data.curatedEvents.map(async (event) => {
-        await getEventDataFromElastic(event, locals);
+        return await getEventDataFromElastic(event, locals);
       })),
       recentEvents = await getRecentEventsFromElastic(uri, data, locals);
 
-    console.log('get lede');
     data.lede = await getEventDataFromElastic({ url: data.ledeUrl }, locals);
-    console.log('lede in page', data.lede);
 
     // "load more" button passes page query param - render more content and return it
     data.moreContent = recentEvents.length > data.pageLength;
@@ -157,16 +154,10 @@ module.exports = unityComponent({
     // On initial load we need to append curated items onto the list, otherwise skip
     // Show a maximum of pageLength links
     if (data.initialLoad) {
-      data.events.push(curatedEvents, recentEvents);
-      data.events = data.events.slice(0, data.pageLength);
+      data.events = curatedEvents.concat(recentEvents).slice(0, data.pageLength);
     } else {
       data.events = recentEvents.slice(0, data.pageLength);
     }
-
-    return data;
-  },
-  save: (uri, data, locals) => {
-    assignStationInfo(uri, data, locals);
 
     return data;
   }

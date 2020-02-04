@@ -5,9 +5,8 @@
   class="component component--events-listing-page{{ if @root.locals.edit ' editing' }}"
   data-lazy-loads="{{ lazyLoads }}"
 >
-  <div data-editable="content">
-    {{> component-list content }}
-  </div>
+  {{> events-lede _self=true }}
+  {{> events-list _self=true }}
   {{#if @root.locals.edit }}
     <div data-editable="curatedEvents"></div>
   {{/if}}
