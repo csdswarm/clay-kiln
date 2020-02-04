@@ -309,7 +309,7 @@ function yesNo(val) {
   }
 }
 
-Object.assign(module.exports, {
+module.exports = {
   isFieldEmpty,
   has,
   replaceVersion,
@@ -331,4 +331,4 @@ Object.assign(module.exports, {
   urlToElasticSearch,
   isContentComponent,
   yesNo
-});
+};

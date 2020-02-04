@@ -49,8 +49,6 @@ subHeadline:
     buttons:
       - italic
       - strike
-    validate:
-      required: false
     help: Appears under contest title
   _publish: subHeadline
 
