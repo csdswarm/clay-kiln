@@ -29,7 +29,7 @@ pipeline {
       steps {
         script {
           // Cleanup
-          sh 'sudo git clean -xdf'
+          sh 'git clean -xdf'
 
           def scmVars = checkout scm
           env.GIT_COMMIT = "${scmVars.GIT_COMMIT}"
