@@ -29,24 +29,23 @@ pipeline {
       steps {
           // Cleanup
           sh 'sudo git clean -xdf'
-          // Defaults
-          sh '''
-          ROK8S_CLUSTER='working.k8s.radio-dev.com'
-          CRED_ID='dev'
-         
+            
           def scmVars = checkout scm
           env.GIT_COMMIT = "${scmVars.GIT_COMMIT}"
-          '''
-
+          
           switch (env.BRANCH_NAME) {
             case "develop":
             case ~/(.*\/)?feature-.*/: //Tmp for fairwinds testing
               env.ROK8S_CONFIG='deploy/development.config'
+              ROK8S_CLUSTER='working.k8s.radio-dev.com'
+              CRED_ID='dev'
               sh 'cd spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm ci && npm run build'
               break
 
             case "staging":
               env.ROK8S_CONFIG='deploy/staging.config'
+              ROK8S_CLUSTER='working.k8s.radio-dev.com'
+              CRED_ID='dev'
               sh 'cd spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm ci && npm run build'
               break
 
