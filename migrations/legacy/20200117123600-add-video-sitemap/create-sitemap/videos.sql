@@ -74,3 +74,9 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
 	  page
 	ORDER BY
 	  page;
+
+--
+-- this allows us to 'refresh materialized view concurrently' without hardcoding
+--   which tables have unique constraints or querying for it in advance.
+--
+CREATE UNIQUE INDEX idx_mv_sitemap_videos ON sitemap_videos(id);
