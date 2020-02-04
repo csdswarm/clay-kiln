@@ -27,9 +27,10 @@ pipeline {
           }
         }
       steps {
+        script {
           // Cleanup
           sh 'sudo git clean -xdf'
-            
+
           def scmVars = checkout scm
           env.GIT_COMMIT = "${scmVars.GIT_COMMIT}"
           
@@ -60,6 +61,7 @@ pipeline {
             //   env.ROK8S_CONFIG='deploy/feature.config'
             //   break
           }
+        }
       }
     }
 
