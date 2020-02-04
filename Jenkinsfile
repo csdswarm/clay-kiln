@@ -19,6 +19,13 @@ pipeline {
         HELM_HOME = "${env.ROK8S_TMP}/.helm"
         HOME = "${env.ROK8S_TMP}"
       }
+      agent {
+        docker {
+          label 'docker && !php'
+          image 'node:10.16.3'
+          args '-u root' // Run as root to have write access to .config
+        }
+      }
       steps {
         script {
           // Cleanup
