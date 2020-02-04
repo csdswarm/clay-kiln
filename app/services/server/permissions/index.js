@@ -243,11 +243,10 @@ async function checkUserPermissions(uri, req, locals, db) {
     if (isUri(uri) && req.method === 'DELETE') {
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),
-        pageType = getComponentName(pageData.main[0]),
-        { station } = locals;
+        pageType = getComponentName(pageData.main[0]);
 
       return pageTypesToCheck.has(pageType)
-        ? user.can('unpublish').a(pageType).at(station.callsign).value
+        ? user.can('unpublish').a(pageType).value
         : true;
     }
 

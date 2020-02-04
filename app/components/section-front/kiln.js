@@ -1,12 +1,14 @@
 'use strict';
 
-const schemaService = require('../../services/kiln/permissions'),
+const { enforcePublishRights } = require('../../services/kiln/permissions'),
   addStationNoteToCustomUrl = require('../../services/kiln/add-station-note-to-custom-url'),
   KilnInput = window.kiln.kilnInput;
 
 module.exports = (schema) => {
-  schemaService.publishRights(schema);
-  addStationNoteToCustomUrl(new KilnInput(schema));
+  const input = new KilnInput(schema);
+
+  enforcePublishRights(schema);
+  addStationNoteToCustomUrl(input);
 
   return schema;
 };

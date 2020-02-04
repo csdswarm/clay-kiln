@@ -2,14 +2,14 @@ const fs = require('fs'),
 	YAML = require('../../../app/node_modules/yamljs'),
 	YML = { 'metaTitle': {}, 'metaUrl': {},'metaDescription': {},'sectionFront': {},'moreContentFeed': {} },
 	stationFrontRegex = /station\-front\-3$/,
-	inspect = require('util').inspect;
+	isObjectLike = require('../../../app/node_modules/lodash/isObjectLike');
 
 Object.keys(YML).forEach(yml => YML[yml] = YAML.load(`${__dirname}/${yml}.yml`));
 
 function recursiveRename (data) {
 	if (Array.isArray(data)) {
 		data.forEach((item, index) => {
-			if (typeof item === 'object') {
+			if (isObjectLike(item)) {
 				data[index] = recursiveRename(item);
 			}
 
@@ -30,7 +30,7 @@ function recursiveRename (data) {
 
 			const item = data[newKey];
 
-			if (typeof item === 'object') {
+			if (isObjectLike(item)) {
 				data[newKey] = recursiveRename(item);
 			}
 
