@@ -14,8 +14,7 @@ RUN npm ci
 COPY spa $HOME/
 COPY app $HOME/../app/
 
-RUN npm run-script build -- --mode=production && \
-    npm run-script production-config
+RUN npm run-script build -- --mode=none
 
 #######
 # APP
@@ -35,7 +34,7 @@ COPY app $HOME/
 COPY --from=spa /usr/src/app/public/dist/js/app.* $HOME/public/dist/js/
 COPY --from=spa /usr/src/app/sites/demo/config.yml $HOME/sites/demo/
 
-RUN npm run build-production
+RUN npm run build
 RUN npm install pm2 -g
 
 EXPOSE 3001
