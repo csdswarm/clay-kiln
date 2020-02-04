@@ -29,9 +29,11 @@ pipeline {
       steps {
           // Cleanup
           sh 'sudo git clean -xdf'
+          sh '''
           // Defaults
           ROK8S_CLUSTER='working.k8s.radio-dev.com'
           CRED_ID='dev'
+          '''
 
           def scmVars = checkout scm
           env.GIT_COMMIT = "${scmVars.GIT_COMMIT}"
