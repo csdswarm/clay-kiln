@@ -1,37 +1,37 @@
 'use strict';
 /* eslint-disable one-var */
 
-const { unityComponent } = require('../../services/universal/amphora');
-const db = require('amphora-storage-postgres');
-const defaultStation = require('../../services/startup/currentStation/default-station');
-const moment = require('moment');
-const queryDateRange = 30;
 const url = require('url');
 const _get = require('lodash/get');
+const db = require('../../services/server/db');
+const moment = require('moment');
+const queryDateRange = 30;
+const { unityComponent } = require('../../services/universal/amphora');
+const stationQuery = (stationCallsign) => {
+  const callsignUpper = stationCallsign.toUpperCase();
 
-const stationQuery = stationCallsign =>
-  stationCallsign === defaultStation.callsign ?
-    'AND NOT data \\? \'stationCallsign\'' :
-    `AND data->>'stationCallsign' = '${stationCallsign}'`;
-
+  return /* sql */`
+      AND data @> '{"stationCallsign": "${callsignUpper}"}'
+  `;
+};
 const getContestRules = async ({
   startTime = '',
   stationCallsign = ''
 }) => {
   const contestRulesQuery = /* sql */ `
     SELECT *
-    FROM components."contest-rules"
+    FROM components."contest"
 
     -- make sure contest has already started
-    WHERE data->>'contestStartDate' <= '${startTime}'
+    WHERE data->>'startDateTime' <= '${startTime}'
 
     -- show contests that are within 30 days from start time
     AND DATE_PART(
       'day',
-      (data ->> 'contestEndDate')::timestamp - '${startTime}'::timestamp
+      (data ->> 'endDateTime')::timestamp - '${startTime}'::timestamp
     ) <= ${queryDateRange}
 
-    AND id SIMILAR TO '%@published'
+    AND id ~ '@published$'
     ${stationQuery(stationCallsign)}
   `;
 
@@ -58,13 +58,13 @@ module.exports = unityComponent({
       showPresentation: isPresentationMode
     }));
 
-    data._computed = {
-      contestRules,
-      pageTitle: isPresentationMode ?
-        'Contests' :
-        'Contest Rules'
-    };
-
-    return data;
+    return Object.assign(data, {
+      _computed: {
+        contestRules,
+        pageTitle: isPresentationMode ?
+          'Contests' :
+          'Contest Rules'
+      }
+    });
   }
 });

@@ -9,6 +9,7 @@ _components:
     feedImgUrl: ''
     slug: ''
     pageTitle: ''
+    rulesBodyText: ''
     sideShare:
       _ref: /_components/share/instances/new
     lead: []

@@ -22,10 +22,10 @@ const createContent = require('../../services/universal/create-content'),
 module.exports = unityComponent({
   render: (uri, data, locals) => {
     autoLink(data, ['stationSlug', '{contests}'], locals.site.host);
-    formatContestDate(data);
     return createContent.render(uri, data, locals);
   },
   save: (uri, data, locals) => {
+    formatContestDate(data);
     return createContent.save(uri, data, locals);
   }
 });
