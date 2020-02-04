@@ -27,7 +27,6 @@ pipeline {
         }
       }
       steps {
-        script {
           // Cleanup
           sh 'sudo git clean -xdf'
           // Defaults
@@ -62,7 +61,6 @@ pipeline {
           }
         }
       }
-    }
 
     stage('Build') {
       environment {
