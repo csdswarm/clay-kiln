@@ -16,5 +16,6 @@ module.exports = () => {
   window.kiln.validators['subscription-plans-selection'] = require('./only-one-required');
   window.kiln.validators['unique-url'] = require('./unique-url');
   window.kiln.validators['url-slug'] = require('./url-slug');
+  window.kiln.validators['valid-html'] = require('./valid-html');
   window.kiln.validators['valid-source'] = require('./valid-source');
 };

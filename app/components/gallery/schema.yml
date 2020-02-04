@@ -1,4 +1,4 @@
-_version: 10.0
+_version: 11.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -283,6 +283,17 @@ rightRailStickyAd:
   _component:
     include:
       - google-ad-manager
+feeds:
+  _label: Include in These Feeds
+  _has:
+    input: checkbox-group
+    options:
+      - name: RSS Feeds
+        value: rss
+      - name: Apple News
+        value: apple-news
+      - name: Smart News
+        value: smartNews
 sectionFront:
   _label: Section Front
   _publish: sectionFront
@@ -438,6 +449,7 @@ _groups:
   settings:
     fields:
       - stationName
+      - feeds
       - showSocial
       - hasSecondaryBylines
       - sectionFront
