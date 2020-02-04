@@ -32,6 +32,7 @@ RUN npm ci
 # Build application source into image and run container
 COPY app $HOME/
 COPY --from=spa /usr/src/app/public/dist/js/app.* $HOME/public/dist/js/
+COPY --from=spa /usr/src/app/public/dist/js/chunk-vendors* $HOME/public/dist/js/
 COPY --from=spa /usr/src/app/sites/demo/config.yml $HOME/sites/demo/
 
 RUN npm run build
