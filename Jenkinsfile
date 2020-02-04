@@ -20,12 +20,12 @@ pipeline {
         HOME = "${env.ROK8S_TMP}"
       }
       agent {
-        docker {
-          label 'docker && !php'
-          image 'node:10.16.3'
-          args '-u root' // Run as root to have write access to .config
+          docker {
+            label 'docker && !php'
+            image 'node:10.16.3'
+            args '-u root' // Run as root to have write access to .config
+          }
         }
-      }
       steps {
           // Cleanup
           sh 'sudo git clean -xdf'
@@ -59,8 +59,8 @@ pipeline {
             //   env.ROK8S_CONFIG='deploy/feature.config'
             //   break
           }
-        }
       }
+    }
 
     stage('Build') {
       environment {
