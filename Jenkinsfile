@@ -43,7 +43,7 @@ pipeline {
                 docker-pull -f deploy/build.config;
                 echo "using these build arguments: $ROK8S_DOCKER_BUILD_EXTRAARGS";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS;
-                docker-build -f deploy/build.config '$ROK8S_DOCKER_BUILD_EXTRAARGS';
+                docker-build -f deploy/build.config \'$ROK8S_DOCKER_BUILD_EXTRAARGS\';
                 docker-push -f deploy/build.config'''
                 break
 
@@ -54,7 +54,7 @@ pipeline {
                 CRED_ID='dev'
                 sh '''prepare-awscli;
                 docker-pull -f deploy/build.config;
-                docker-build -f deploy/build.config '$ROK8S_DOCKER_BUILD_EXTRAARGS';
+                docker-build -f deploy/build.config \'$ROK8S_DOCKER_BUILD_EXTRAARGS\';
                 docker-push -f deploy/build.config'''
                 break
 
@@ -65,7 +65,7 @@ pipeline {
                 CRED_ID='prd'
                 sh '''prepare-awscli;
                 docker-pull -f deploy/build.config;
-                docker-build -f deploy/build.config '$ROK8S_DOCKER_BUILD_EXTRAARGS';
+                docker-build -f deploy/build.config \'$ROK8S_DOCKER_BUILD_EXTRAARGS\';
                 docker-push -f deploy/build.config'''
                 break
 
