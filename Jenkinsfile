@@ -36,7 +36,7 @@ pipeline {
               case "develop":
               case ~/(.*\/)?feature-.*/: //Tmp for fairwinds testing
                 env.ROK8S_CONFIG='deploy/development.config'
-                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none npm-final-step='cd ../app && npm ci && npm run build'"
+                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none finalstep='cd ../app && npm ci && npm run build'"
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
                 sh '''prepare-awscli;
@@ -49,7 +49,7 @@ pipeline {
 
               case "staging":
                 env.ROK8S_CONFIG='deploy/staging.config'
-                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none npm-final-step='cd ../app && npm ci && npm run build'"
+                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none finalstep='cd ../app && npm ci && npm run build'"
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
                 sh '''prepare-awscli;
@@ -60,7 +60,7 @@ pipeline {
 
               case "master":
                 env.ROK8S_CONFIG='deploy/production.config'
-                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=production npm-final-step='npm run-script production-config && cd ../app && npm ci && npm run build-production'"
+                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=production finalstep='npm run-script production-config && cd ../app && npm ci && npm run build-production'"
                 ROK8S_CLUSTER='production.k8s.radio-prd.com'
                 CRED_ID='prd'
                 sh '''prepare-awscli;
