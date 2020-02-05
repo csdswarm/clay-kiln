@@ -73,6 +73,7 @@ function populateFilter(populateFrom) {
 
 module.exports = recirculationData({
   contentKey: 'cards',
+  maxItems: 6,
   mapDataToFilters: (ref, data, locals) => ({
     filters: {
       contentTypes: boolKeys(data.contentType),
