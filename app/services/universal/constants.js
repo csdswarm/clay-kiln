@@ -27,11 +27,15 @@ const _get = require('lodash/get'),
     SECTIONFRONT: 'section-front'
   },
 
-  // this should list the component names of the content types which may be
-  //   created via the kiln drawer.
+  // this should list the component names of the content types which may appear
+  //   under the 'main' property of a page.  Usually you can think of this as
+  //   a list of page types able to be created in the kiln drawer with the
+  //   addition of 'homepage'
   contentTypes = new Set([
     'article',
+    'author-page',
     'gallery',
+    'homepage',
     'section-front',
     'static-page',
     'topic-page'
