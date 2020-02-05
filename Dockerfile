@@ -35,8 +35,8 @@ RUN npm ci
 
 # Build application source into image and run container
 COPY app $HOME/
-# COPY --from=spa /usr/src/app/public/dist/js/app.* $HOME/public/dist/js/
-# COPY --from=spa /usr/src/app/sites/demo/config.yml $HOME/sites/demo/
+COPY --from=spa /usr/src/app/public/dist/js/app.* $HOME/public/dist/js/
+COPY --from=spa /usr/src/app/sites/demo/config.yml $HOME/sites/demo/
 
 # RUN npm run build-production
 RUN npm install pm2 -g

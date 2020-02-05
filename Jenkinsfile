@@ -36,34 +36,34 @@ pipeline {
               case "develop":
               case ~/(.*\/)?feature-.*/: //Tmp for fairwinds testing
                 env.ROK8S_CONFIG='deploy/development.config'
-                ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none npm-final-step='cd ../app && npm ci && npm run build'"
+                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none npm-final-step='cd ../app && npm ci && npm run build'"
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
                 sh '''prepare-awscli;
                 docker-pull -f deploy/build.config;
-                docker-build -f deploy/build.config ${ROK8S_DOCKER_BUILD_EXTRAARGS};
+                docker-build -f deploy/build.config $ROK8S_DOCKER_BUILD_EXTRAARGS;
                 docker-push -f deploy/build.config'''
                 break
 
               case "staging":
                 env.ROK8S_CONFIG='deploy/staging.config'
-                ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none npm-final-step='cd ../app && npm ci && npm run build'"
+                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none npm-final-step='cd ../app && npm ci && npm run build'"
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
                 sh '''prepare-awscli;
                 docker-pull -f deploy/build.config;
-                docker-build -f deploy/build.config ${ROK8S_DOCKER_BUILD_EXTRAARGS};
+                docker-build -f deploy/build.config $ROK8S_DOCKER_BUILD_EXTRAARGS;
                 docker-push -f deploy/build.config'''
                 break
 
               case "master":
                 env.ROK8S_CONFIG='deploy/production.config'
-                ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=production npm-final-step='npm run-script production-config && cd ../app && npm ci && npm run build-production'"
+                env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=production npm-final-step='npm run-script production-config && cd ../app && npm ci && npm run build-production'"
                 ROK8S_CLUSTER='production.k8s.radio-prd.com'
                 CRED_ID='prd'
                 sh '''prepare-awscli;
                 docker-pull -f deploy/build.config;
-                docker-build -f deploy/build.config ${ROK8S_DOCKER_BUILD_EXTRAARGS};
+                docker-build -f deploy/build.config $ROK8S_DOCKER_BUILD_EXTRAARGS;
                 docker-push -f deploy/build.config'''
                 break
 
