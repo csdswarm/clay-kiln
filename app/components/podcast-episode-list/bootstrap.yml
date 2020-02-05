@@ -1,2 +1,2 @@
 _components:
-  podcast-episode-list: {}
+  podcast-episode-list: { _computed: {} }
