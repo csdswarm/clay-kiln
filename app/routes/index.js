@@ -148,6 +148,7 @@ module.exports = router => {
   router.post('/import-content', importContent);
 
   addEndpoints.sitemap(router);
+  addEndpoints.contestRules(router);
 
   /**
    * Sitemap for stations directories and station detail pages
