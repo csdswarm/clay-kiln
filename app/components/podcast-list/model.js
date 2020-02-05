@@ -3,7 +3,10 @@
 const radioApiService = require('../../services/server/radioApi'),
   slugifyService = require('../../services/universal/slugify'),
   utils = require('../../services/universal/podcast'),
+  logger = require('../../services/universal/log'),
+  log = logger.setup({ file: __filename }),
   maxItems = 4,
+  backFillThreshold = 3,
   /**
    * determines if the array of podcast items contains a url
    * @param {object} arr
@@ -33,6 +36,8 @@ const radioApiService = require('../../services/server/radioApi'),
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
+  const { backFillEnabled } = data;
+
   if (data.items.length === maxItems || !locals || locals.edit || ref.includes('/instances/new')) {
     data.items.forEach(item => {
       if (item.podcast) {
@@ -45,37 +50,51 @@ module.exports.render = async function (ref, data, locals) {
     return data;
   }
 
-  let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
-
-  if (locals.sectionFront || locals.secondarySectionFront) {
-    const podcastCategoryID = await getPodcastCategoryID(locals.secondarySectionFront || locals.sectionFront, locals);
-
-    if (podcastCategoryID) {
-      podcastsFilter = { ...podcastsFilter, filter: { category_id: podcastCategoryID } };
-    }
-  }
-
   try {
-    const podcasts = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals);
+    const curatedCount = data.items.length,
+      shouldBackFill = backFillEnabled
+        && curatedCount <= backFillThreshold;
 
-    if (podcasts) {
-      podcasts.data.splice(0, maxItems).forEach((podcast) => {
-        const url = utils.createUrl(podcast.attributes.title);
+    if (shouldBackFill) {
+      let podcastsFilter = { sort: 'popularity', page: { size: maxItems } };
 
-        if (data.items.length !== maxItems && !containsUrl(data.items, url)) {
-          data.items.push({
-            podcast: {
-              label: podcast.attributes.title,
-              title: podcast.attributes.title,
-              url,
-              imageUrl: utils.createImageUrl(podcast.attributes.image)
-            }
-          });
+      if (locals.sectionFront || locals.secondarySectionFront) {
+        const podcastCategoryID = await getPodcastCategoryID(locals.secondarySectionFront || locals.sectionFront, locals);
+
+        if (podcastCategoryID) {
+          podcastsFilter = { ...podcastsFilter, filter: { category_id: podcastCategoryID } };
         }
-      });
+      }
+
+      const { data: podcasts } = await radioApiService.get('podcasts', podcastsFilter, null, {}, locals),
+        numItemsToBackFill = maxItems - curatedCount,
+        uniqueUrls = (podcast) => {
+          const url = utils.createUrl(podcast.attributes.title);
+
+          return !containsUrl(data.items, url);
+        },
+        itemsToBackFill = podcasts
+          .filter(uniqueUrls)
+          .slice(0, numItemsToBackFill)
+          .map((podcast) => {
+            const url = utils.createUrl(podcast.attributes.title);
+
+            return {
+              podcast: {
+                label: podcast.attributes.title,
+                title: podcast.attributes.title,
+                url,
+                imageUrl: utils.createImageUrl(podcast.attributes.image)
+              }
+            };
+          });
+
+      data.items.push(
+        ...itemsToBackFill
+      );
     }
   } catch (e) {
-    console.log(e);
+    log('error', 'issue backfilling podcasts', e);
   }
 
   return data;
