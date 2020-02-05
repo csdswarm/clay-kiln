@@ -1,6 +1,6 @@
 'use strict';
 
-const queryService = require('../../services/server/query'),
+const queryService = require('../../server/query'),
   { getComponentName } = require('clayutils'),
   _get = require('lodash/get'),
   _set = require('lodash/set'),

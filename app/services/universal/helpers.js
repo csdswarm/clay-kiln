@@ -35,7 +35,7 @@ module.exports = {
   byline,
   calloutType,
   dynamicImage,
-  ellipsisSubstring: ellipsisSubstring,
+  ellipsisSubstring,
   formatDateRange,
   imgSize,
   imgSource,
@@ -53,5 +53,5 @@ module.exports = {
   truncateText: truncate,
   userLocalDate,
   withoutResolution: getRenditionWithoutPixelDensity,
-  yesNo: yesNo
+  yesNo
 };

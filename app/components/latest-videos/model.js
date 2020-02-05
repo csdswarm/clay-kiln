@@ -2,7 +2,7 @@
 
 const queryService = require('../../services/server/query'),
   _ = require('lodash'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
   { unityComponent } = require('../../services/universal/amphora'),

@@ -2,7 +2,7 @@
 const queryService = require('../../services/server/query'),
   db = require('../../services/server/db'),
   contentTypeService = require('../../services/universal/content-type'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   radioApiService = require('../../services/server/radioApi'),
   { uploadImage } = require('../../services/universal/s3'),
   { isComponent } = require('clayutils'),

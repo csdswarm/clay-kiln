@@ -1,10 +1,11 @@
 'use strict';
 
-module.exports = (type, data, content, options) => {
-  return content.map(item => {
+module.exports = (type, content, options) => {
+  return (content || []).map(item => {
     const card = {
       title: item.primaryHeadline,
       track: {
+        // NOTE: pageUri does not seem to exist in our data. Perhaps it used to be a thing. Might be able to remove.
         'page-uri': item.pageUri,
         headline: item.primaryHeadline,
         sectionFront: item.sectionFront,
