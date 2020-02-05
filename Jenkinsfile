@@ -39,12 +39,11 @@ pipeline {
                 env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none finalstep='cd ../app && npm ci && npm run build'"
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
-                sh '''prepare-awscli;
+                sh """prepare-awscli;
                 docker-pull -f deploy/build.config;
-                echo "using these build arguments: $ROK8S_DOCKER_BUILD_EXTRAARGS";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS;
-                docker-build -f deploy/build.config \\'$ROK8S_DOCKER_BUILD_EXTRAARGS\\';
-                docker-push -f deploy/build.config'''
+                docker-build -f deploy/build.config '$ROK8S_DOCKER_BUILD_EXTRAARGS';
+                docker-push -f deploy/build.config"""
                 break
 
               case "staging":
@@ -52,10 +51,10 @@ pipeline {
                 env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=none finalstep='cd ../app && npm ci && npm run build'"
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
-                sh '''prepare-awscli;
+                sh """prepare-awscli;
                 docker-pull -f deploy/build.config;
-                docker-build -f deploy/build.config \\'$ROK8S_DOCKER_BUILD_EXTRAARGS\\';
-                docker-push -f deploy/build.config'''
+                docker-build -f deploy/build.config '$ROK8S_DOCKER_BUILD_EXTRAARGS';
+                docker-push -f deploy/build.config"""
                 break
 
               case "master":
@@ -63,10 +62,10 @@ pipeline {
                 env.ROK8S_DOCKER_BUILD_EXTRAARGS="--build-arg mode=production finalstep='npm run-script production-config && cd ../app && npm ci && npm run build-production'"
                 ROK8S_CLUSTER='production.k8s.radio-prd.com'
                 CRED_ID='prd'
-                sh '''prepare-awscli;
+                sh """prepare-awscli;
                 docker-pull -f deploy/build.config;
-                docker-build -f deploy/build.config \\'$ROK8S_DOCKER_BUILD_EXTRAARGS\\';
-                docker-push -f deploy/build.config'''
+                docker-build -f deploy/build.config '$ROK8S_DOCKER_BUILD_EXTRAARGS';
+                docker-push -f deploy/build.config"""
                 break
 
               // case ~/ON-.*/:
