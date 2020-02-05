@@ -124,16 +124,28 @@ const addPermissions = require('../universal/user-permissions'),
    *   have permissions
    *
    * @param {object} schema
+   * @param {object} opts
+   * @param {boolean} opts.checkStationAccess - determines whether this method should
+   *   only enforce publish rights based off station access.  This makes sense
+   *   for content types which allow all roles to publish such as article
+   *   and gallery.
    **/
-  enforcePublishRights = schema => {
+  enforcePublishRights = (schema, { checkStationAccess }) => {
     const { schemaName } = schema,
       kilnInput = new KilnInput(schema),
       whenPreloadedPromise = whenPreloaded(kilnInput);
 
     whenRightDrawerExists(kilnInput, async rightDrawerEl => {
       const { locals } = await whenPreloadedPromise,
-        canPublish = locals.user.can('publish').a(schemaName).value,
-        canUnpublish = locals.user.can('unpublish').a(schemaName).value;
+        hasAccess = locals.user.can('access').this('station').value,
+        // if a user doesn't have station access then the subsequent un/publish
+        //   checks will fail
+        canPublish = checkStationAccess
+          ? hasAccess
+          : locals.user.can('publish').a(schemaName).value,
+        canUnpublish = checkStationAccess
+          ? hasAccess
+          : locals.user.can('unpublish').a(schemaName).value;
 
       if (canPublish && canUnpublish) {
         return;

@@ -1,14 +1,9 @@
 'use strict';
 
-const { enforcePublishRights } = require('../../services/kiln/permissions'),
-  addStationNoteToCustomUrl = require('../../services/kiln/add-station-note-to-custom-url'),
-  handleEditModePlaceholders = require('../../services/kiln/handle-edit-mode-placeholders'),
-  KilnInput = window.kiln.kilnInput;
+const applyContentLogic = require('../../services/kiln/apply-content-logic');
 
 module.exports = (schema) => {
-  enforcePublishRights(schema);
-  addStationNoteToCustomUrl(new KilnInput(schema));
-  handleEditModePlaceholders(new KilnInput(schema));
+  applyContentLogic.kiln(schema);
 
   return schema;
 };
