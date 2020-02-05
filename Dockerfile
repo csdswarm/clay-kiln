@@ -5,6 +5,9 @@ FROM node:10.16.3 as spa
 
 ENV HOME=/usr/src/spa
 
+ARG mode=none
+ARG npm-final-step='cd ../app && npm ci && npm run build'
+
 COPY spa/package.json $HOME/
 COPY spa/package-lock.json $HOME/
 
@@ -14,8 +17,8 @@ RUN npm ci
 COPY spa $HOME/
 COPY app $HOME/../app/
 
-RUN npm run-script build -- --mode=production && \
-    npm run-script production-config
+RUN cd spa && npm ci && npm run-script build -- --mode=${mode} && \
+    ${npm-final-step}
 
 #######
 # APP
@@ -32,10 +35,10 @@ RUN npm ci
 
 # Build application source into image and run container
 COPY app $HOME/
-COPY --from=spa /usr/src/app/public/dist/js/app.* $HOME/public/dist/js/
-COPY --from=spa /usr/src/app/sites/demo/config.yml $HOME/sites/demo/
+# COPY --from=spa /usr/src/app/public/dist/js/app.* $HOME/public/dist/js/
+# COPY --from=spa /usr/src/app/sites/demo/config.yml $HOME/sites/demo/
 
-RUN npm run build-production
+# RUN npm run build-production
 RUN npm install pm2 -g
 
 EXPOSE 3001
