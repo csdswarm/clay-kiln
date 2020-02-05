@@ -17,7 +17,7 @@ RUN npm ci
 COPY spa $HOME/
 COPY app $HOME/../app/
 
-RUN cd spa && npm ci && npm run-script build -- --mode=${mode} && \
+RUN cd spa && npm ci && npm run-script build --mode=${mode} && \
     ${npm-final-step}
 
 #######
