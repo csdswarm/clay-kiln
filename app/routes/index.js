@@ -27,7 +27,6 @@ const AWS = require('aws-sdk'),
   stationTheming = require('../services/server/stationThemingApi');
 
 module.exports = router => {
-
   // Auth Middleware
   // Add this middleware to a route if the route requires authentication.
   function checkAuth(req, res, next) {
@@ -37,6 +36,8 @@ module.exports = router => {
       return next();
     }
   }
+
+  addEndpoints.refreshPermissions(router, checkAuth);
 
   /**
    *
