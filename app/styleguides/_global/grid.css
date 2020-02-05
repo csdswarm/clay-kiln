@@ -27,7 +27,7 @@
   }
 }
 
-@mixin default-screen {
+@define-mixin default-screen {
   .layout {
     .layout__section-header,
     .layout__content {
@@ -39,7 +39,7 @@
   }
 }
 
-@mixin large-screen {
+@define-mixin large-screen {
   .layout {
     .layout__section-header,
     .layout__content {
@@ -51,7 +51,7 @@
   }
 }
 
-@mixin medium-screen {
+@define-mixin medium-screen {
   .layout {
     background-color: transparent;
 
@@ -67,7 +67,7 @@
   }
 }
 
-@mixin medium-small-screen {
+@define-mixin medium-small-screen {
   .layout {
     background-color: $white;
 
@@ -85,7 +85,7 @@
   }
 }
 
-@mixin small-screen {
+@define-mixin small-screen {
   .layout {
     .layout__section-header,
     .layout__content {
