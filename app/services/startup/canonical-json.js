@@ -42,7 +42,13 @@ const routes = [
     testPath: req => {
       const { pathname } = url.parse(req.url);
 
-      return /\w*\/contest-rules/.test(pathname);
+      return pathname.includes('contest-rules');
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url);
+
+      params.stationSlug = pathname.split('/')[1];
+      console.log('[contest-rules params]', params);
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
@@ -51,13 +57,20 @@ const routes = [
     testPath: req => {
       const { pathname } = url.parse(req.url);
 
-      return /\w*\/contests/.test(pathname);
+      return pathname.includes('contests');
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url);
+
+      params.stationSlug = pathname.split('/')[1];
+      console.log('[contests params]', params);
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
   // [default route handler] resolve the uri and page instance
   {
     testPath: () => true,
+    getParams: () => null,
     getPageData: req => db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
       .then(data => db.get(`${data}@published`))
   }
@@ -132,9 +145,10 @@ function middleware(req, res, next) {
     params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1];
     promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
-    promise = routes
-      .find(r => r.testPath(req, res))
-      .getPageData(req, res);
+    const route = routes.find(r => r.testPath(req));
+
+    route.getParams(req, params);
+    promise = route.getPageData(req);
   }
 
   // Compose and respond
