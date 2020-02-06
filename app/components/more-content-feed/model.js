@@ -1,6 +1,5 @@
 'use strict';
 const _get = require('lodash/get'),
-  _capitalize = require('lodash/capitalize'),
   { recirculationData } = require('../../services/universal/recirculation'),
   { sendError } = require('../../services/universal/cmpt-error'),
   elasticFields = [
@@ -30,10 +29,10 @@ const _get = require('lodash/get'),
     data.dynamicTagPage = _get(locals, 'params.dynamicTag');
 
     if ((data.dynamicTagPage || isDynamicAuthorPage) && data._computed.content.length === 0) {
-      sendError(`${_capitalize(data.populateFrom)} not found`, 404);
+      sendError(`${data.populateFrom} not found`, 404);
     }
 
-    Object.assign({}, data._computed, {
+    Object.assign(data._computed, {
       lazyLoads: (data, maxItems) => Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0)
     });
 
@@ -47,8 +46,7 @@ module.exports = recirculationData({
     pagination: {
       page: parseInt(locals.page),
       pageLength: data.pageLength
-    },
-    curated: data.items
+    }
   }),
   mapResultsToTemplate: (result, item = {}) => {
     return Object.assign(item, {

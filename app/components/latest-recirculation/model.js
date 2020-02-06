@@ -85,5 +85,5 @@ module.exports = recirculationData({
   }),
   maxItems,
   render,
-  skipRender: data => data.populateFrom === 'station'
+  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params
 });

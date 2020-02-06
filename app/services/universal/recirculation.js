@@ -23,6 +23,7 @@ const _get = require('lodash/get'),
   { isComponent } = require('clayutils'),
   { cleanUrl } = require('../../services/universal/utils'),
   queryService = require('../server/query'),
+  { unityComponent } = require('../universal/amphora'),
   logger = require('./log'),
   log = logger.setup({ file: __filename }),
   recircCmpt = require('./recirc-cmpt'),
@@ -314,9 +315,9 @@ const _get = require('lodash/get'),
     render = returnData,
     save = returnData,
     skipRender = () => false } = {}) => {
-    return {
+    return unityComponent({
       async render(uri, data, locals) {
-        if (skipRender(data)) {
+        if (skipRender(data, locals)) {
           return render(uri, data, locals);
         }
 
@@ -352,7 +353,7 @@ const _get = require('lodash/get'),
 
         return save(uri, data, locals);
       }
-    };
+    });
   };
 
 module.exports = {
