@@ -44,7 +44,7 @@ pipeline {
                 docker-pull -f deploy/build.config;
                 ROK8S_DOCKER_BUILD_EXTRAARGS=\\"$BUILD_EXTRAARGS\\";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS
-                docker-build -f deploy/build.config $ROK8S_DOCKER_BUILD_EXTRAARGS;
+                docker-build -f deploy/build.config;
                 docker-push -f deploy/build.config'''
                 break
 
@@ -57,7 +57,7 @@ pipeline {
                 docker-pull -f deploy/build.config;
                 ROK8S_DOCKER_BUILD_EXTRAARGS=\\"$BUILD_EXTRAARGS\\";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS
-                docker-build -f deploy/build.config '$ROK8S_DOCKER_BUILD_EXTRAARGS';
+                docker-build -f deploy/build.config;
                 docker-push -f deploy/build.config'''
                 break
 
@@ -71,7 +71,7 @@ pipeline {
                 docker-pull -f deploy/build.config;
                 ROK8S_DOCKER_BUILD_EXTRAARGS=\\"$BUILD_EXTRAARGS\\";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS
-                docker-build -f deploy/build.config '$ROK8S_DOCKER_BUILD_EXTRAARGS';
+                docker-build -f deploy/build.config;
                 docker-push -f deploy/build.config'''
                 break
 
