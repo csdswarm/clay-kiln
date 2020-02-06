@@ -107,7 +107,7 @@
       }
 			a {
 				height: 100%;
-				display: inline-flex;
+				display: flex;
 				text-decoration: none;
 				text-transform: capitalize;
 				.link__thumb {
