@@ -53,6 +53,7 @@ const routes = [
   // [default route handler] resolve the uri and page instance
   {
     testPath: () => true,
+    getParams: () => {},
     getPageData: req => db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
       .then(data => db.get(`${data}@published`))
   }
