@@ -1,6 +1,7 @@
 'use strict';
 
 const db = require('../../services/server/db'),
+  dateRange = 30,
   stationQuery = (stationCallsign) => {
     const callsignUpper = stationCallsign.toUpperCase();
 
@@ -10,8 +11,7 @@ const db = require('../../services/server/db'),
   },
   getContestRules = async ({
     startTime = '',
-    stationCallsign = '',
-    dateRange = 30
+    stationCallsign = ''
   }) => {
     const contestRulesQuery = /* sql */ `
   SELECT *

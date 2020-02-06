@@ -2,7 +2,6 @@
 /* eslint-disable one-var */
 
 const url = require('url');
-const log = require('../../services/universal/log').setup({ file: __filename });
 const _get = require('lodash/get');
 const isUndefined = require('lodash/isUndefined');
 const moment = require('moment');
@@ -22,29 +21,23 @@ module.exports = unityComponent({
     const { pathname } = url.parse(locals.url);
     const isPresentationMode = pathname === '/contests';
     const startTime = moment().toISOString(true);
+    const contestRules = (await getContestRules({
+      startTime,
+      stationCallsign: callsign
+    })).map((ruleData) => ({
+      ...ruleData,
+      stationTimeZone: locals.station.timezone,
+      showHeader: true,
+      showPresentation: isPresentationMode
+    }));
 
-    try {
-      const contestRules = (await getContestRules({
-        startTime,
-        stationCallsign: callsign
-      })).map((ruleData) => ({
-        ...ruleData,
-        stationTimeZone: locals.station.timezone,
-        showHeader: true,
-        showPresentation: isPresentationMode
-      }));
-
-      return Object.assign(data, {
-        _computed: {
-          contestRules,
-          pageTitle: isPresentationMode ?
-            'Contests' :
-            'Contest Rules'
-        }
-      });
-    } catch (e) {
-      log('error', 'contest-rules-page model error', e);
-      return data;
-    }
+    return Object.assign(data, {
+      _computed: {
+        contestRules,
+        pageTitle: isPresentationMode ?
+          'Contests' :
+          'Contest Rules'
+      }
+    });
   }
 });

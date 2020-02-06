@@ -5,7 +5,7 @@ const rest = require('../universal/rest'),
   getContestRules = (params) => {
     const paramsAsString = qs.stringify(params);
 
-    return rest.get(`/api/contest-rules?${paramsAsString}`);
+    return rest.get(`/rdc/api/contest-rules?${paramsAsString}`);
   };
 
 module.exports.getContestRules = getContestRules;
