@@ -44,7 +44,7 @@ pipeline {
                 docker-pull -f deploy/build.config;
                 ROK8S_DOCKER_BUILD_EXTRAARGS=\\"$BUILD_EXTRAARGS\\";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS
-                docker-build -f deploy/build.config $ROK8S_DOCKER_BUILD_EXTRAARGS;
+                docker-build -f deploy/build.config --build-arg mode=none finalstep='cd ../app && npm ci && npm run build';
                 docker-push -f deploy/build.config'''
                 break
 
