@@ -72,6 +72,7 @@ module.exports = unityComponent({
       return data;
     }
 
+    // Stored in data for breadcrumbs component
     data.stationSlug = _get(locals, 'params.stationSlug');
 
     [locals.podcast, locals.trendingPodcasts] = await Promise.all( [
