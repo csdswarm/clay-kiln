@@ -323,7 +323,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           }
         }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
       } else {
-        log('info', `APPLE NEWS LOG -- ARTICLE NOT POSTED BECAUSE IT IS ${ sectionFront } SECTIONFRONT`);
+        log('info', `APPLE NEWS LOG -- ARTICLE NOT POSTED BECAUSE IT IS ${ sectionFront } SECTIONFRONT OR FAILED TO GET SECTIONS FROM APPLE NEWS API`);
         res.status(200).send('Article not posted to apple news feed');
       }
     } catch (e) {
