@@ -17,7 +17,7 @@ else
 fi
 
 printf "\n\nCreating Podcast Show Detail Page...\n\n\n"
-cat ./_layouts.yml | clay import -k demo -y $1
-cat ./_pages.yml | clay import -k demo -y $1
+cat ./_layouts.yml | clay import -k demo -y -p $1
+cat ./_pages.yml | clay import -k demo -y -p $1
 
 printf "\n\n\n\n"

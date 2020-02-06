@@ -3,7 +3,9 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
   _get = require('lodash/get'),
-  { autoLink } = require('../breadcrumbs');
+  url = require('url'),
+  qs = require('qs');
+  // { autoLink } = require('../breadcrumbs');
 
 /**
  * fetch podcast show data
@@ -21,12 +23,12 @@ function getPodcastShow(locals) {
 /**
  * fetch episodes from a podcast show
  * @param {object} locals
- * @param {String} [sort]
- * @param {number} [page]
  * @returns {Promise<array>}
  */
-function getEpisodesInShow(locals, sort = 'newest', page = 1) {
+function getEpisodesInShow(locals) {
   const route = 'episodes',
+    querystring = url.parse(locals.url).query,
+    { sort = 'newest', page = 1 } = qs.parse(querystring),
     params = {
       'filter[podcast_id]': locals.podcast.id,
       'page[size]': 20,
@@ -67,10 +69,8 @@ function getPopularPodcasts(locals) {
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
     if (!locals || !locals.params) {
-      console.log('no locals or params');
       return data;
     }
-    console.log('locals url', locals.url);
 
     data.stationSlug = _get(locals, 'params.stationSlug');
 
@@ -88,10 +88,6 @@ module.exports = unityComponent({
         episodes: locals.episodes
       }
     };
-
-    console.log('podcast', locals.podcast);
-    console.log('locals url', locals.url);
-    console.log('trending', locals.trendingPodcasts);
 
     // @TODO breadcrumbs to be done in ON-446
     // autoLink(data, ['stationSlug', '{podcasts}', 'podcast.slug'], locals.site.host);

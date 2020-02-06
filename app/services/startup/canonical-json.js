@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash'),
+  url = require('url'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
   { sites, composer } = require('amphora'),
@@ -34,6 +35,28 @@ function getPrefixAndKey(path) {
 
   return { routeParamKey, routePrefix };
 }
+
+const routes = [
+  // podcast show page
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url);
+
+      return pathname.includes('/podcasts');
+    },
+    getParams: (req, params) => {
+      params.stationSlug = req.path.match(/\/(.+)\/podcasts/)[1];
+      params.dynamicSlug = req.path.match(/\/podcasts\/(.+)/)[1];
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/podcast-show@published`)
+  },
+  // [default route handler] resolve the uri and page instance
+  {
+    testPath: () => true,
+    getPageData: req => db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+      .then(data => db.get(`${data}@published`))
+  }
+];
 
 /**
  * If you add the `X-Amphora-Page-JSON` header to a request
@@ -104,8 +127,10 @@ function middleware(req, res, next) {
     params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1];
     promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
-    // Otherwise resolve the uri and page instance
-    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
+    const route = routes.find(r => r.testPath(req));
+
+    route.getParams(req, params);
+    promise = route.getPageData(req);
   }
 
   // Compose and respond
