@@ -182,6 +182,12 @@ module.exports.render = function (ref, data, locals) {
 
   const maxItems = getMaxItems(data);
 
+  if (data.populateBy === 'manual') {
+    data._computed.articles = data.items;
+
+    return data;
+  }
+
   if (data.populateBy === 'station' && locals.params) {
     return renderStation(data, locals);
   }
