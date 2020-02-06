@@ -152,3 +152,9 @@ module.exports['9.0'] = async function (uri, data) {
     return data;
   }
 };
+
+module.exports['10.0'] = function (uri, data) {
+  data.componentTitleVisible = false;
+
+  return data;
+};
