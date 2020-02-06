@@ -53,8 +53,8 @@ module.exports.routes = [
   { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
   { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page' },
   { path: '/contests', dynamicPage: 'contest-rules-page' },
-  { path: '/contests/:slug' },
   { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/contests/:slug' },
 
   // Full dynamic paths
   { path: '/:sectionFront' },

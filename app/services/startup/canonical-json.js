@@ -37,21 +37,21 @@ function getPrefixAndKey(path) {
 }
 
 const routes = [
-  // contest-rules
+  // {stationSlug | ''}/contest-rules
   {
     testPath: req => {
       const { pathname } = url.parse(req.url);
 
-      return pathname === '/contest-rules';
+      return /\w*\/contest-rules/.test(pathname);
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
-  // contests page
+  // {stationSlug | ''}/contests
   {
     testPath: req => {
       const { pathname } = url.parse(req.url);
 
-      return pathname === '/contests';
+      return /\w*\/contests/.test(pathname);
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
