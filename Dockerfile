@@ -17,7 +17,7 @@ RUN npm ci
 COPY spa $HOME/
 COPY app $HOME/../app/
 
-RUN npm ci && npm run-script build --mode=${mode} && \
+RUN cd spa && npm ci && npm run-script build --mode=${mode} && \
     if [ -z "${productionbuild}" ]; then cd ../app && \
     npm ci && npm run build; \
     elif [ "${productionbuild}" = "true" ]; then \
