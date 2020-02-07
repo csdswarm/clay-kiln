@@ -4,10 +4,16 @@ const h = require('highland'),
   { logSuccess, logError } = require('../helpers/log-events'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
+  { getComponentName } = require('clayutils'),
   { isOpForComponents } = require('../filters'),
   db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
-  CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
+  CONTENT = {
+    ARTICLE: 'article',
+    GALLERY: 'gallery',
+    STATIC_PAGE: 'static-page'
+  },
+  CONTENT_FILTER = isOpForComponents(Object.values(CONTENT));
 
 // Subscribe to the save stream
 subscribe('save').through(save);
@@ -69,20 +75,22 @@ function getSlideEmbed(slides, components) {
  * @returns {Object}
  */
 function processContent(obj, components) {
-  obj.value = getContent(obj.value, 'lead', components);
-  obj.value = getContent(obj.value, 'content', components);
-  obj.value = getContent(obj.value, 'tags', components);
-
-  if (obj.key.includes('gallery')) {
-    obj.value = getContent(obj.value, 'slides', components);
-    obj.value.slides = getSlideEmbed(obj.value.slides, components);
-
-    obj.value = getContent(obj.value, 'footer', components);
+  switch (getComponentName(obj.key)) {
+    case CONTENT.STATIC_PAGE:
+      break;
+    case CONTENT.GALLERY:
+      obj.value = getContent(obj.value, 'slides', components);
+      obj.value.slides = getSlideEmbed(obj.value.slides, components);
+  
+      obj.value = getContent(obj.value, 'footer', components);
+    default:
+      obj.value = getContent(obj.value, 'lead', components);
+      obj.value = getContent(obj.value, 'tags', components);
   }
+  obj.value = getContent(obj.value, 'content', components);
 
   // ensure dateModified is always set
   obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
-
   return obj;
 }
 

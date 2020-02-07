@@ -167,6 +167,8 @@ function formatDate(data, locals) {
     data.articleTime = has(data.articleTime) ? data.articleTime : dateFormat(new Date(), 'HH:mm');
     // generate the `date` data from these two fields
     data.date = dateFormat(dateParse(data.articleDate + ' ' + data.articleTime)); // ISO 8601 date string
+  } else if (!data.date) {
+    data.date = new Date().toISOString();
   }
 }
 
