@@ -10,6 +10,7 @@ module.exports = (router, checkAuth) => {
     if (provider !== 'cognito') {
       res.status(400);
       res.send('you must be logged into cognito for this endpoint to work');
+      return;
     }
 
     const auth = req.session.auth;
