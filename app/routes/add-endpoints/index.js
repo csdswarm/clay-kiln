@@ -2,6 +2,6 @@
 
 module.exports = {
   createPage: require('./create-page'),
-  sitemap: require('./sitemap'),
-  refreshPermissions: require('./refresh-permissions')
+  refreshPermissions: require('./refresh-permissions'),
+  sitemap: require('./sitemap')
 };
