@@ -30,12 +30,12 @@ COPY app/package.json $HOME/
 COPY app/package-lock.json $HOME/
 
 WORKDIR $HOME/
-RUN npm ci && npm run build
 
 # Build application source into image and run container
 COPY app $HOME/
 COPY --from=spa /usr/src/app/public/dist/js/app.* $HOME/public/dist/js/
 COPY --from=spa /usr/src/app/sites/demo/config.yml $HOME/sites/demo/
+RUN npm ci && npm run build
 
 # RUN npm run build-production
 RUN npm install pm2 -g
