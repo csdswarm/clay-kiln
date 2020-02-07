@@ -17,13 +17,8 @@ RUN npm ci
 COPY spa $HOME/
 COPY app $HOME/../app/
 
-RUN npm run-script build --mode=${mode} && \
-    if [ -z "${productionbuild}" ]; then cd ../app && \
-    npm ci && npm run build; \
-    elif [ "${productionbuild}" = "true" ]; then \
-    npm run-script production-config && \
-    cd ../app && npm ci && npm run build-production; \
-    fi
+RUN npm run-script build -- --mode=${mode}
+
 #######
 # APP
 #######
@@ -35,7 +30,7 @@ COPY app/package.json $HOME/
 COPY app/package-lock.json $HOME/
 
 WORKDIR $HOME/
-RUN npm ci
+RUN npm ci && npm run build
 
 # Build application source into image and run container
 COPY app $HOME/
