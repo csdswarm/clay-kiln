@@ -94,7 +94,7 @@ module.exports.render = async function (ref, data, locals) {
     query = queryService.newQueryWithCount(elasticIndex, maxItems),
     contentTypes = contentTypeService.parseFromData(data),
     squareCrop = '1:1,offset-y0',
-    wideCrop = '16:9,offset-y0',
+    wideCrop = '8:5.1,offset-y0',
     defaultImageSizes = {
       mediumSmall: { width: 440, crop: wideCrop },
       medium: { width: 343, crop: wideCrop },
