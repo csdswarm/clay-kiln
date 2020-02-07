@@ -6,7 +6,7 @@ FROM node:10.16.3 as spa
 ENV HOME=/usr/src/spa
 
 ARG mode=none
-ARG finalstep='cd ../app && npm ci && npm run build'
+ARG productionbuild=""
 
 COPY spa/package.json $HOME/
 COPY spa/package-lock.json $HOME/
@@ -18,8 +18,12 @@ COPY spa $HOME/
 COPY app $HOME/../app/
 
 RUN npm ci && npm run-script build --mode=${mode} && \
-    ${finalstep}
-
+    if [ -z "${productionbuild}" ]; then cd ../app && \
+    npm ci && npm run build; \
+    elif [ "${productionbuild}" = "true" ]; then \
+    npm run-script production-config && \
+    cd ../app && npm ci && npm run build-production; \
+    fi
 #######
 # APP
 #######
