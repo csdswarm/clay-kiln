@@ -39,7 +39,7 @@ pipeline {
                 env.BUILD_EXTRAARGS='--build-arg mode=none'
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
-                sh '''ROK8S_DEBUG=true
+                sh '''export ROK8S_DEBUG=true
                 prepare-awscli;
                 docker-pull -f deploy/build.config;
                 ROK8S_DOCKER_BUILD_EXTRAARGS=\\"$BUILD_EXTRAARGS\\";
