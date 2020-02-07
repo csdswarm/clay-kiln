@@ -21,17 +21,4 @@ function isOpForComponents(cmpts) {
   };
 }
 
-/**
- * Remove some `post` specific properties
- *
- * @param  {Object} op
- * @return {Object}
- */
-function stripPostProperties(op) {
-  // op.value = _.omit(op.value, ['content']);
-
-  return op;
-}
-
 module.exports.isOpForComponents = isOpForComponents;
-module.exports.stripPostProperties = stripPostProperties;

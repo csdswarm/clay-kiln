@@ -4,7 +4,7 @@ const h = require('highland'),
   { logSuccess, logError } = require('../helpers/log-events'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
-  { isOpForComponents, stripPostProperties } = require('../filters'),
+  { isOpForComponents } = require('../filters'),
   db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
   CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
@@ -125,7 +125,6 @@ function save(stream) {
     .filter(filters.isPublished)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
-    .map(stripPostProperties)
     .map(transformAuthorsAndTags)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
