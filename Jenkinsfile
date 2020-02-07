@@ -55,7 +55,7 @@ pipeline {
                 CRED_ID='dev'
                 sh '''prepare-awscli;
                 docker-pull -f deploy/build.config;
-                ROK8S_DOCKER_BUILD_EXTRAARGS=\\"$BUILD_EXTRAARGS\\";
+                ROK8S_DOCKER_BUILD_EXTRAARGS="$BUILD_EXTRAARGS";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS;
                 docker-build -f deploy/build.config;
                 docker-push -f deploy/build.config'''
@@ -69,7 +69,7 @@ pipeline {
                 sh '''#!/bin/bash -xe
                 prepare-awscli;
                 docker-pull -f deploy/build.config;
-                ROK8S_DOCKER_BUILD_EXTRAARGS=\\"$BUILD_EXTRAARGS\\";
+                ROK8S_DOCKER_BUILD_EXTRAARGS="$BUILD_EXTRAARGS";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS;
                 docker-build -f deploy/build.config;
                 docker-push -f deploy/build.config'''
