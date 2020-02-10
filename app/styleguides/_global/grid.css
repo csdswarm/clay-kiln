@@ -1,4 +1,5 @@
 @import "colors";
+@import "mixins";
 
 .layout {
   .layout__top,
@@ -27,7 +28,7 @@
   }
 }
 
-@define-mixin default-screen {
+@mixin default-screen {
   .layout {
     .layout__section-header,
     .layout__content {
@@ -39,7 +40,7 @@
   }
 }
 
-@define-mixin large-screen {
+@mixin large-screen {
   .layout {
     .layout__section-header,
     .layout__content {
@@ -51,7 +52,7 @@
   }
 }
 
-@define-mixin medium-screen {
+@mixin medium-screen {
   .layout {
     background-color: transparent;
 
@@ -67,7 +68,7 @@
   }
 }
 
-@define-mixin medium-small-screen {
+@mixin medium-small-screen {
   .layout {
     background-color: $white;
 
@@ -85,7 +86,7 @@
   }
 }
 
-@define-mixin small-screen {
+@mixin small-screen {
   .layout {
     .layout__section-header,
     .layout__content {
