@@ -49,12 +49,6 @@ pageLength:
     input: text
     type: number
 
-# Component
-eventsList:
-  _component:
-    include:
-      - events-list
-
 # Groups
 _groups:
   settings:

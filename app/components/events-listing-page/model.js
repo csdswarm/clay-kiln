@@ -18,7 +18,10 @@ const { unityComponent } = require('../../services/universal/amphora'),
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   { isComponent } = require('clayutils'),
   utils = require('../../services/universal/utils'),
-  { urlToElasticSearch } = utils;
+  { urlToElasticSearch } = utils,
+  dateFormat = require('date-fns/format'),
+  dateParse = require('date-fns/parse'),
+  dateFormatString = 'dddd[,] MMMM d [at] h:mm aa';
 
 /**
  * Gets recent events data from elastic
@@ -137,6 +140,14 @@ async function getEventDataFromElastic(event, locals) {
 
 module.exports = unityComponent({
   render: (uri, data) => {
+    data._computed.events = data.events.map(event => {
+      return {
+        ...event,
+        dateTime: event.startDate && event.startTime
+          ? dateFormat(dateParse(event.startDate + ' ' + event.startTime),dateFormatString)
+          : null
+      };
+    });
     return data;
   },
   save: async (uri, data, locals) => {

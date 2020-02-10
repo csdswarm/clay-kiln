@@ -5,12 +5,12 @@
   class="component component--events-listing-page{{ if @root.locals.edit ' editing' }}"
   data-lazy-loads="{{ lazyLoads }}"
 >
-  {{> events-lede _self=true }}
-  {{> events-list _self=true }}
+  {{> events-lede lede _self=true }}
+  {{> events-list _computed.events _self=true }}
   {{#if @root.locals.edit }}
     <div data-editable="curatedEvents"></div>
   {{/if}}
 </section>
 {{else}}
-  {{> events-list eventsList }}
+  {{> events-list _computed.events _self=true }}
 {{/if}}

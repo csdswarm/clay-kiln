@@ -1,5 +1,5 @@
 <div class="component-events-list events-list"  data-uri="{{ default _ref _self }}">
-  {{#each _computed.events as |event|}}
+  {{#each this as |event|}}
     {{> content-card event _self=true }}
   {{/each}}
   {{#if moreContent}}
