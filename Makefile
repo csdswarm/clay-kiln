@@ -19,7 +19,7 @@ rm-all:
 
 burn:
 	@echo "Stopping and removing all containers..."
-	make down && make rm-all
+	docker-compose rm -sfv
 
 rmi-dangle:
 	@echo "Cleaning up all dangling Docker images..."
@@ -32,6 +32,9 @@ remove-images:
 clay-logs:
 	docker-compose exec clay tail -f .pm2/logs/app_name-out.log
 
+clear-logs:
+	echo -n > ./app/.pm2/logs/app_name-out.log
+
 enter-clay:
 	docker-compose exec clay bash
 
@@ -39,7 +42,7 @@ clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data && rm -rf ./postgres/data
 
 clear-app:
-	rm -rf app/node_modules && ls -d ./app/public/* | grep -v dist | xargs rm -rf && rm -rf app/browserify-cache.json
+	rm -rf app/node_modules && ls -d ./app/public/* | grep -v -E "(dist|sitemap)" | xargs rm -rf && rm -rf app/browserify-cache.json
 
 clear-spa:
 	rm -rf spa/node_modules  && rm -rf app/public/dist
@@ -48,7 +51,7 @@ reset:
 	make burn && make clear-data
 
 nuke:
-	make reset && make clear-app && make clear-spa
+	make reset && make clear-app && make clear-spa && make clear-logs
 
 bootstrap:
 	cd ./app &&  cat ./first-run/**/* | clay import -k demo -y clay.radio.com
