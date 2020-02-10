@@ -140,6 +140,10 @@ module.exports = unityComponent({
     return data;
   },
   save: async (uri, data, locals) => {
+    if (!locals || !locals.defaultStation) {
+      return data;
+    }
+
     assignStationInfo(uri, data, locals);
     const curatedEvents = await Promise.all(data.curatedEvents.map(async (event) => {
         return await getEventDataFromElastic(event, locals);

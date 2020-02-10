@@ -1,3 +1,5 @@
+_description: Events listing page
+
 # Properties
 curatedEvents:
   _label: Add Event
