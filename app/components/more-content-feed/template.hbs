@@ -9,18 +9,18 @@
     data-track-type="more-content-feed"
     data-lazy-loads="{{ lazyLoads }}"
   >
-    <h2 class="more-content-feed__title
-      {{#if sectionFront }}more-content-feed__title--{{ sectionFront }}{{/if}}
-      {{#if primarySectionFront }}more-content-feed__title--{{ primarySectionFront }}{{/if}}
-      {{#if station }}more-content-feed__title--station-front{{/if}}"
-      data-editable="header"
-    >
-      {{#if componentTitleVisible}}
+    {{#if componentTitleVisible}}
+      <h2 class="more-content-feed__title
+        {{#if sectionFront }}more-content-feed__title--{{ sectionFront }}{{/if}}
+        {{#if primarySectionFront }}more-content-feed__title--{{ primarySectionFront }}{{/if}}
+        {{#if station }}more-content-feed__title--station-front{{/if}}"
+        data-editable="header"
+      >
         <span>{{ componentTitle }}</span>
-      {{/if}}
-    </h2>
+      </h2>
+    {{/if}}
     <div class="more-content-feed__container">
-      <div class="more-content-feed__left-content">
+      <div class="more-content-feed__content">
         {{#unless dynamicTagPage}}
           <div class="more-content-feed__intro-components" data-editable="introComponents">
             {{> component-list introComponents}}
@@ -113,21 +113,6 @@
 {{/if}}
 {{#if initialLoad}}
           </ul>
-        </div>
-        <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
-          {{#ifAny (compare locationOfContentFeed 'topic-page') (compare locationOfContentFeed 'author-page')}}
-            {{> google-ad-manager contentCollectionLogoSponsorship}}
-          {{/ifAny}}
-          {{#if @root.locals.edit}}
-            {{#unless dynamicTagPage}}
-              <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
-            {{/unless}}
-          {{else}}
-            {{#ifAll tagInfo (compare dynamicTagPage false)}}
-              <aside class="blurb">{{ tagInfo }}</aside>
-            {{/ifAll}}
-          {{/if}}
-          {{> google-ad-manager googleAdRightRail}}
         </div>
       </div>
   </section>

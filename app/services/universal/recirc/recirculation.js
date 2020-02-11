@@ -91,12 +91,8 @@ const
         : { value: valueObj };
 
     if (Array.isArray(value)) {
-      if (unique) {
-        const queries = value.map(createObj);
-
-        if (queries.length) {
-          queryService[getQueryType(condition)](query, minimumShouldMatch(queries));
-        }
+      if (unique && value.length) {
+        queryService[getQueryType(condition)](query, minimumShouldMatch(value.map(createObj)));
       } else {
         value.forEach(v => addCondition(query, key, v, condition));
       }
@@ -155,7 +151,7 @@ const
    * @param {function} config.save
    * @returns {object}
    */
-  recirculationData = ({ contentKey = 'articles', maxItems = 6, mapDataToFilters = returnData, render = returnData, save = returnData }) =>
+  recirculationData = ({ contentKey = 'articles', maxItems = 10, mapDataToFilters = returnData, render = returnData, save = returnData }) =>
     unityComponent({
       async render(uri, data, locals) {
 

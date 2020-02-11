@@ -32,7 +32,8 @@
         }
 
         @mixin medium-screen {
-            width: 100%
+            width: 100%;
+            padding-right: 0;
         }
     }
 
@@ -69,7 +70,7 @@
     }
     &__text-container {
         display: flex;
-        flex: 1 0 auto;
+        flex: auto;
         padding-left: em(20);
         flex-direction: column;
         justify-content: center;
@@ -130,8 +131,89 @@
         padding-bottom: em(38);
     }
     &__bio-text {
-        @mixin author-page-header-font3;
-        margin-bottom: em(14)
+        margin-bottom: em(14);
+        &.paragraph > p {
+            margin-bottom: em(18);
+        }
+        &.paragraph :last-child {
+            margin-bottom: 0;
+        }
+    }
+    &__links {
+        display: flex;
+    }
+    &__links-author-name {
+        @mixin author-page-header-font4;
+    }
+    &__link {
+        /* Set each item to constant 40x40px, including border */
+        width: em(40);
+        height: em(40);
+        border: em(1) solid $alto;
+        box-sizing: border-box;
+        /* Center image, set size to 20x20px, and don't repeat it */
+        background: center/em(20) em(20) no-repeat;
+
+        /* Move each item but first up 1px to create 1px border */
+        &:not(:first-child) {
+            margin-top: em(-1);
+        }
+        /* Show the item's border on hover so it can be recolored properly */
+        &:hover,
+        &:active {
+            z-index: 1;
+        }
+    }
+    &__link-- {
+        &facebook {
+            background-image: url("/media/components/author-page-header/facebook.svg");
+            background-size: auto em(22); /* Increase FB image height to 22px */
+            &:hover,
+            &:active {
+                background-color: $chambray;
+                border-color: $chambray;
+                background-image: url("/media/components/author-page-header/facebook--hover.svg");
+            }
+        }
+        &twitter {
+            background-image: url("/media/components/author-page-header/twitter.svg");
+            background-size: auto em(17); /* Firefox scaling/bounding fix */
+            &:hover,
+            &:active {
+                background-color: $cerulean;
+                border-color: $cerulean;
+                background-image: url("/media/components/author-page-header/twitter--hover.svg");
+            }
+        }
+        &instagram {
+            background-image: url("/media/components/author-page-header/instagram.svg");
+            background-size: auto em(17); /* Firefox scaling/bounding fix */
+            &:hover,
+            &:active {
+                background-color: $redViolet;
+                border-color: $redViolet;
+                background-image: url("/media/components/author-page-header/instagram--hover.svg");
+            }
+        }
+        &youtube {
+            background-image: url("/media/components/author-page-header/youtube.svg");
+            background-size: auto em(17); /* Firefox scaling/bounding fix */
+            &:hover,
+            &:active {
+                background-color: $red;
+                border-color: $red;
+                background-image: url("/media/components/author-page-header/youtube--hover.svg");
+            }
+        }
+        &email {
+            background-image: url("/media/components/author-page-header/email.svg");
+            &:hover,
+            &:active {
+                background-color: $parisM;
+                border-color: $parisM;
+                background-image: url("/media/components/author-page-header/email--hover.svg");
+            }
+        }
     }
 }
 

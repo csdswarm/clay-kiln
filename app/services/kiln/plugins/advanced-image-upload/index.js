@@ -5,13 +5,10 @@
 'use strict';
 
 // Require depedencies.
-const AdvancedImageUpload = require('./advanced-image-upload.vue');
+const AdvancedImageUpload = require('./advanced-image-upload.vue'),
+  _set = require('lodash/set');
 
 // Register plugin.
 module.exports = () => {
-
-  window.kiln = window.kiln || {};
-  window.kiln.inputs = window.kiln.inputs || {};
-  window.kiln.inputs['advanced-image-upload'] = AdvancedImageUpload;
-
+  _set(window, 'kiln.inputs.advanced-image-upload', AdvancedImageUpload);
 };
