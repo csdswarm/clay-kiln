@@ -82,6 +82,16 @@ function uriToUrl(uri, locals) {
 }
 
 /**
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
+}
+
+/**
  * generate a uri from a url
  * @param  {string} url
  * @return {string}
@@ -247,6 +257,7 @@ Object.assign(module.exports, {
   isUrl,
   uriToUrl,
   urlToUri,
+  cleanUrl,
   formatStart,
   toTitleCase,
   getSiteBaseUrl,

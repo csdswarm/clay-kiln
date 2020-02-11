@@ -155,7 +155,13 @@ module.exports['9.0'] = async function (uri, data) {
   }
 };
 
-module.exports['10.0'] = async (uri, data, locals) => {
+module.exports['10.0'] = function (uri, data) {
+  data.componentTitleVisible = false;
+
+  return data;
+};
+
+module.exports['11.0'] = async (uri, data, locals) => {
   await addUriToCuratedItems(uri, data.items, locals);
 
   return data;

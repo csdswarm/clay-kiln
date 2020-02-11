@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 2.0
 _description: |
   List of podcasts -- Will autofill by category upon publish if left empty or less than 4 items.
 
@@ -50,6 +50,10 @@ showCallToActions:
   _has:
     input: checkbox
 
+backFillEnabled:
+  _label: Enable automatic backfilling of Podcast items
+  _has:
+    input: checkbox
 sectionFront:
   _label: Section Front
   _subscribe: sectionFront
@@ -62,3 +66,4 @@ _groups:
       - isTitleFontColorDark
       - showTitle
       - showCallToActions
+      - backFillEnabled

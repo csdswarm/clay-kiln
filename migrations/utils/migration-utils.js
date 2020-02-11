@@ -19,22 +19,27 @@
 /*******************************************************************************************
  *                                     Version 1.0                                         *
  *******************************************************************************************/
-const v1 = {
-  ...(require('./base')),
-  ...(require('./execute-sql').v1),
-  ...(require('./read-file').v1),
-  addComponentToContainers: require('./add-component-to-containers').v1,
-  clayExport: require('./clay-export').v1,
-  clayImport: require('./clay-import').v1,
-  elasticsearch: require('./elasticsearch').v1,
-  esQuery: require('./es-query').v1,
-  httpGet: require('./http-get').v1,
-  httpRequest: require('./http-request').v1,
-  parseHost: require('./parse-host').v1,
-  republish: require('./republish').v1,
-  usingDb: require('./using-db').v1,
-};
+const esQuery = require('./es-query'),
+  v1 = {
+    ...(require('./base')),
+    ...(require('./execute-sql').v1),
+    ...(require('./read-file').v1),
+    addComponentToContainers: require('./add-component-to-containers').v1,
+    clayExport: require('./clay-export').v1,
+    clayImport: require('./clay-import').v1,
+    elasticsearch: require('./elasticsearch').v1,
+    esQuery: esQuery.v1,
+    httpGet: require('./http-get').v1,
+    httpRequest: require('./http-request').v1,
+    parseHost: require('./parse-host').v1,
+    republish: require('./republish').v1,
+    usingDb: require('./using-db').v1,
+  },
+  v2 = {
+    esQuery: esQuery.v2
+  };
 
 module.exports = {
   v1,
+  v2,
 };

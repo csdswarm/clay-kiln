@@ -88,7 +88,7 @@ function prepareLink(link, helpers) {
   } else {
     const linkParts = new URL(href);
 
-    if (!isEntercomDomain(linkParts.hostname)) {
+    if (linkParts.hostname && !isEntercomDomain(linkParts.hostname)) {
       setAttribute(link, 'rel', 'nofollow');
     }
 
