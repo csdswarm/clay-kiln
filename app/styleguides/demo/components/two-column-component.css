@@ -1,0 +1,33 @@
+.component--two-column-component {
+  display: flex;
+  flex-direction: row;
+
+  @mixin medium-screen {
+    flex-direction: column;
+  }
+
+  .two-column-component__column--1 {
+      width: calc(100% - em(300));
+      padding-right: em(20);
+      position: relative;
+      @mixin large-screen {
+        margin-right: 0;
+      }
+      @mixin medium-screen {
+        width: 100%;
+        padding-right: 0;
+      }
+    }
+
+  .two-column-component__column--2 {
+      width: em(300);
+      position: relative;
+      @mixin large-screen {
+        margin-right: 0;
+      }
+      @mixin medium-screen {
+        width: 100%;
+        padding-right: 0;
+      }
+    }  
+}

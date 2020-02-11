@@ -1,7 +1,6 @@
 'use strict';
 const queryService = require('../../services/server/query'),
   _get = require('lodash/get'),
-  _map = require('lodash/map'),
   _capitalize = require('lodash/capitalize'),
   recircCmpt = require('../../services/universal/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
@@ -20,7 +19,8 @@ const queryService = require('../../services/server/query'),
     'contentType'
   ],
   maxItems = 10,
-  pageLength = 5;
+  pageLength = 5,
+  min = (...args) => Math.min(...args.filter(arg => typeof arg === 'number'));
 
 /**
 * @param {string} ref
@@ -28,33 +28,34 @@ const queryService = require('../../services/server/query'),
 * @param {object} locals
 * @returns {Promise}
 */
-module.exports.save = (ref, data, locals) => {
+module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
-  return Promise.all(_map(data.items, (item) => {
-    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
-      .then((result) => {
-        const content = Object.assign(item, {
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          subHeadline: item.overrideSubHeadline || result.subHeadline,
-          pageUri: result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: item.url || result.canonicalUrl,
-          feedImgUrl: item.overrideImage || result.feedImgUrl,
-          sectionFront: item.overrideSectionFront || result.sectionFront,
-          date: item.overrideDate || result.date,
-          lead: item.overrideContentType || result.leadComponent
-        });
 
-        return content;
-      });
-  }))
-    .then((items) => {
-      data.items = items;
-      return data;
+  await Promise.all(data.items.map(async (item) => {
+    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
+
+    Object.assign(item, {
+      uri: result._id,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      subHeadline: item.overrideSubHeadline || result.subHeadline,
+      pageUri: result.pageUri,
+      urlIsValid: result.urlIsValid,
+      canonicalUrl: item.url || result.canonicalUrl,
+      feedImgUrl: item.overrideImage || result.feedImgUrl,
+      sectionFront: item.overrideSectionFront || result.sectionFront,
+      date: item.overrideDate || result.date,
+      lead: item.overrideContentType || result.leadComponent
     });
+  }));
+
+  return data;
 };
 
 /**
@@ -64,14 +65,36 @@ module.exports.save = (ref, data, locals) => {
  * @returns {Promise<object> | object}
  */
 module.exports.render = async function (ref, data, locals) {
-  // take 1 more article than needed to know if there are more
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals),
+  data.pageLength = _get(locals, 'page')
+    ? data.pageLength || pageLength
+    : maxItems;
+
+  data.pageLength = min(data.maxLength, data.pageLength);
+
+  // if we're on a page other than 0 then we want to query pageLength number of
+  //   items.  If we're on the first page then we want to query that number
+  //   minus the number of curated items we already have.
+  const count = _get(locals, 'page')
+      ? data.pageLength
+      : data.pageLength - data.items.length,
+    query = queryService.newQueryWithCount(elasticIndex, count, locals),
     contentTypes = contentTypeService.parseFromData(data),
+    searchOpts = {
+      shouldDedupeContent: true,
+      transformResult: (formattedResult, rawResult) => {
+        return {
+          result: formattedResult,
+          moreContent: formattedResult.length < rawResult.hits.total
+        };
+      }
+    },
+    curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
     addContentCondition = data.populateFrom === 'section-front-or-tag' ? queryService.addShould : queryService.addMust;
 
   let cleanUrl,
-    dynamicPage = false,
-    results = [];
+    dynamicPage = false;
+
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
   data.initialLoad = false;
 
@@ -81,24 +104,12 @@ module.exports.render = async function (ref, data, locals) {
 
   queryService.onlyWithinThisSite(query, locals.site);
   queryService.onlyWithTheseFields(query, elasticFields);
-  if (locals && locals.page) {
-    /* after the first 10 items, show N more at a time (pageLength defaults to 5)
-     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
-     * we return N + 1 items so we can let the frontend know if we have more data.
-     */
-    if (!data.pageLength) {
-      data.pageLength = pageLength;
-    }
 
-    const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
-
-    queryService.addOffset(query, skip);
-  } else {
-    data.pageLength = maxItems;
+  if (!_get(locals, 'page')) {
     data.initialLoad = true;
 
     // Default to loading 30 articles, which usually works out to 4 pages
-    data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
+    data.lazyLoads = Math.max(Math.ceil((min(data.maxLength, 30) - data.pageLength) / data.pageLength), 0);
   }
 
   if (['tag', 'section-front-and-tag', 'section-front-or-tag'].includes(data.populateFrom)) {
@@ -110,13 +121,13 @@ module.exports.render = async function (ref, data, locals) {
     data.tag = data.tagManual || data.tag;
 
     // Check if we are on a tag page and override the above
-    if (locals && locals.tag) {
+    if (_get(locals, 'tag')) {
       // This is from load more on a tag page
       data.tag = locals.tag;
-    } else if (locals && locals.params && locals.params.tag) {
+    } else if (_get(locals, 'params.tag')) {
       // This is from a tag page but do not override a manually set tag
       data.tag = data.tag || locals.params.tag;
-    } else if (locals && locals.params && locals.params.dynamicTag) {
+    } else if (_get(locals, 'params.dynamicTag')) {
       // This is from a tag page
       data.tag = locals.params.dynamicTag;
       data.dynamicTagPage = dynamicPage = true;
@@ -239,35 +250,22 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
   }
 
-  // exclude the curated content from the results
-  if (data.items && !isComponent(locals.url)) {
-    // this can be a bug when items dont have canonical urls
-    data.items.filter((item) => item.canonicalUrl).forEach(item => {
-      cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-      queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-    });
-  }
-
   try {
-    results = await queryService.searchByQuery(query);
+    const { result, moreContent } = await queryService.searchByQuery(query, locals, searchOpts);
+
+    result.forEach(content => {
+      content.lead = content.lead[0]._ref.split('/')[2];
+    });
+
+    // "more content" button passes page query param - render more content and return it
+    data.moreContent = moreContent;
+
+    // On initial load we need to prepend curated items onto the list, otherwise skip
+    data.content = data.initialLoad
+      ? data.items.concat(result)
+      : result;
   } catch (e) {
     queryService.logCatch(e, ref);
-    return data;
-  };
-
-  results = results.map(content => {
-    content.lead = content.lead[0]._ref.split('/')[2];
-    return content;
-  });
-
-  // "more content" button passes page query param - render more content and return it
-  data.moreContent = results.length > data.pageLength;
-
-  // On initial load we need to append curated items onto the list, otherwise skip
-  if (data.initialLoad) {
-    data.content = data.items.concat(results.slice(0, data.pageLength)).slice(0, data.pageLength); // show a maximum of pageLength links
-  } else {
-    data.content = results.slice(0, data.pageLength); // show a maximum of pageLength links
   }
 
   // 404 any dynamic pages who have no content
@@ -276,5 +274,4 @@ module.exports.render = async function (ref, data, locals) {
   }
 
   return data;
-
 };

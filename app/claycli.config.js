@@ -23,6 +23,16 @@ module.exports = {
       }
     },
     {
+      name: 'amazon-tam',
+      fn: () => {
+        return gulp.src([
+          'global/loadAmazonAps.js'
+        ])
+          .pipe(gulpif(!argv.debug, uglify())).on('error', gutil.log)
+          .pipe(gulp.dest('public/js'));
+      }
+    },
+    {
       name: 'mount-modules',
       fn: () => {
         return gulp.src([
@@ -77,6 +87,17 @@ module.exports = {
               width = columns * 60 + gutters * 20;
           }
           return width + 'px';
+        },
+        /**
+         * enables a css theme variable to be used along with a backup of the main value when no theme is present
+         *
+         * @param {string} theme
+         * @param {string} fallback
+         *
+         * @return {string}
+         */
+        theme: function (theme, fallback) {
+          return `var(--theme-${theme}, ${fallback.replace(/'/g, '')})`;
         }
       }
     })

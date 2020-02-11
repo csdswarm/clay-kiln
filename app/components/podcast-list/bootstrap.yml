@@ -6,3 +6,4 @@ _components:
     isTitleFontColorDark: false
     showTitle: true
     showCallToActions: true
+    backFillEnabled: true
