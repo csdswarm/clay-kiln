@@ -10,6 +10,7 @@ const h = require('highland'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
   CONTENT = {
     ARTICLE: 'article',
+    AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     STATIC_PAGE: 'static-page'
   },
@@ -75,7 +76,13 @@ function getSlideEmbed(slides, components) {
  * @returns {Object}
  */
 function processContent(obj, components) {
+  // ensure dateModified is always set
+  obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
+
   switch (getComponentName(obj.key)) {
+    case CONTENT.AUTHOR:
+      obj.value.date = obj.value.dateModified;
+      return obj;
     case CONTENT.STATIC_PAGE:
       break;
     case CONTENT.GALLERY:
@@ -89,8 +96,6 @@ function processContent(obj, components) {
   }
   obj.value = getContent(obj.value, 'content', components);
 
-  // ensure dateModified is always set
-  obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
   return obj;
 }
 

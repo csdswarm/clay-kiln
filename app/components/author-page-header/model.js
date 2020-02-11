@@ -1,6 +1,7 @@
 'use strict';
 
-const _capitalize = (str) => {
+const createContent = require('../../services/universal/create-content'),
+  _capitalize = (str) => {
     return str.split(' ').map(([first, ...rest]) => `${first.toUpperCase()}${rest.join('')}`).join(' ');
   },
   socialLinks = [
@@ -47,3 +48,5 @@ module.exports.render = (ref, data, locals) => {
   
   return data;
 };
+
+module.exports.save = (ref, data, locals) => createContent.save(ref, data, locals);

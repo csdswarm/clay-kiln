@@ -12,6 +12,7 @@ const _get = require('lodash/get'),
   mediaplay = require('./media-play'),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
+  { PAGE_TYPES } = require('../../services/universal/constants'),
   { getComponentName } = require('clayutils');
 
 /**
@@ -298,6 +299,19 @@ function setSlugAndLock(data, prevData, publishedData) {
 }
 
 /**
+ * Ensure required data exists on certain page types
+ *
+ * @param {object} data
+ */
+function standardizePageData(data) {
+  if (data.componentVariation === PAGE_TYPES.AUTHOR) {
+    data.feedImgUrl = data.profileImage;
+    data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.author;
+    data.slug = sanitize.cleanSlug(data.author);
+  }
+}
+
+/**
  * Remove width, height, cropping, and resolution from silo image url.
  * @param  {object} data
  */
@@ -520,6 +534,7 @@ async function save(uri, data, locals) {
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
+  standardizePageData(data);
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
   generatePageDescription(data);
