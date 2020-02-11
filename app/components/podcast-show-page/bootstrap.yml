@@ -2,9 +2,7 @@ _components:
   podcast-show-page:
     stationSlug: ''
     podcast: {}
-    episodes: []
     instances:
       default:
         stationSlug: ''
         podcast: {}
-        episodes: []
