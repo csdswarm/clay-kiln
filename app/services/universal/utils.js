@@ -1,5 +1,8 @@
 'use strict';
-const _isArray = require('lodash/isArray'),
+const
+  _filter = require('lodash/filter'),
+  _identity = require('lodash/identity'),
+  _isArray = require('lodash/isArray'),
   _isObject = require('lodash/isObject'),
   _isEmpty = require('lodash/isEmpty'),
   _isString = require('lodash/isString'),
@@ -243,6 +246,29 @@ function removeFirstLine(str) {
   return str.split('\n').slice(1).join('\n');
 }
 
+/**
+ * can be used to get all _ref objects within an object.
+ * Copied from amphora.references and modified for unity environment.
+ * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
+ * @param {object} obj
+ * @param {Function|string} [filter=_identity]  Optional filter
+ * @returns {array}
+ */
+function listDeepObjects(obj, filter) {
+  let cursor, items,
+    list = [],
+    queue = [obj];
+
+  while (queue.length) {
+    cursor = queue.pop();
+    items = _filter(cursor, _isObject);
+    list = list.concat(_filter(items, filter || _identity));
+    queue = queue.concat(items);
+  }
+
+  return list;
+}
+
 Object.assign(module.exports, {
   /**
    * Url queries to elastic search need to be `http` since that is
@@ -268,5 +294,6 @@ Object.assign(module.exports, {
   textToEncodedSlug,
   debugLog,
   yesNo,
-  removeFirstLine
+  removeFirstLine,
+  listDeepObjects
 });

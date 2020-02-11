@@ -38,6 +38,7 @@ module.exports = {
   _identity: require('../../app/node_modules/lodash/identity'),
   _isEqual: require('../../app/node_modules/lodash/isEqual'),
   _set: require('../../app/node_modules/lodash/set'),
+  _unset: require('../../app/node_modules/lodash/unset'),
   axios: require('../../app/node_modules/axios'),
   claycli: require('../../app/node_modules/claycli'),
   clayutils: require('../../app/node_modules/clayutils'),
@@ -45,8 +46,8 @@ module.exports = {
   ensureEndsWith,
   prettyJSON: obj => JSON.stringify(obj, null, 2),
   toYaml: obj => YAML.stringify(obj, 8, 2),
+  yamljs: YAML,
   waitMs: ms => new Promise(resolve => {
     setTimeout(resolve, ms)
   }),
-  yamljs: YAML,
 };
