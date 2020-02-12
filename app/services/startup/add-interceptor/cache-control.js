@@ -1,6 +1,6 @@
 'use strict';
 
-const { preventFastlyCache } = require('./middleware-utils');
+const { preventFastlyCache } = require('../middleware-utils');
 
 const interceptor = require('express-interceptor'),
   cacheControlInterceptor = interceptor((req, res) => {
@@ -36,4 +36,9 @@ const interceptor = require('express-interceptor'),
     return headers.location && headers.location.endsWith('/_auth/login');
   };
 
-module.exports = cacheControlInterceptor;
+/**
+ * @param {object} app - the express app
+ */
+module.exports = app => {
+  app.use(cacheControlInterceptor);
+};

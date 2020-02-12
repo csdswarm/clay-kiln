@@ -25,8 +25,9 @@ const pkg = require('../../package.json'),
   radium = require('./radium'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
-  cacheControl = require('./cache-control'),
-  addEndpoints = require('./add-endpoints');
+  addEndpoints = require('./add-endpoints'),
+  addToLocals = require('./add-to-locals'),
+  addInterceptor = require('./add-interceptor');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -87,9 +88,12 @@ function setupApp(app) {
 
   app.use(locals);
 
+  addToLocals.loadedIds(app);
+  addInterceptor.loadedIds(app);
+
   app.use(currentStation);
 
-  app.use(cacheControl);
+  addInterceptor.cacheControl(app);
 
   addEndpoints.msnFeed(app);
 
@@ -110,6 +114,7 @@ function setupApp(app) {
   return amphoraSearch()
     .then(searchPlugin => {
       log('info', `Using ElasticSearch at ${process.env.ELASTIC_HOST}`);
+
       return initCore(app, searchPlugin, sessionStore, routes);
     });
 }

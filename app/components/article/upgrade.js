@@ -1,7 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content'),
   defaultTextWithOverride = {
