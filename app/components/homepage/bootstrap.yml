@@ -1,18 +1,11 @@
 _components:
   homepage:
-    moreContentFeed:
-      _ref: /_components/more-content-feed/instances/homepage
-    googleAdUnderStationsModule:
-      _ref: /_components/google-ad-manager/instances/superLeaderboardBottom
-    podcastList:
-      _ref: /_components/podcast-list/instances/new
-    googleAdUnderLatestModule:
-      _ref: /_components/google-ad-manager/instances/billboardBottom
-    latestContent:
-      _ref: /_components/latest-content/instances/default
-    stationsCarousel:
-      _ref: /_components/stations-carousel/instances/homepage
-    latestVideos:
-      _ref: /_component/latest-videos/instances/homepage
     mainContent:
       - _ref: /_components/multi-column/instances/home
+      - _ref: /_components/latest-content/instances/default
+      - _ref: /_components/stations-carousel/instances/homepage
+      - _ref: /_components/google-ad-manager/instances/superLeaderboardBottom
+      - _ref: /_components/podcast-list/instances/new
+      - _ref: /_component/latest-videos/instances/homepage
+      - _ref: /_components/google-ad-manager/instances/billboardBottom
+      - _ref: /_components/more-content-feed/instances/homepage
