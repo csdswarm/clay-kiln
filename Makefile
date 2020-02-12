@@ -13,10 +13,6 @@ down:
 rebuild:
 	docker-compose stop clay && cd app && npm run build && cd .. && cd spa && npm run-script build -- --mode=none && docker-compose up -d clay && cd .. && make clay-logs
 
-rm-all:
-	@echo "Removing all stopped containers..."
-	docker rm $$(docker ps -aq --filter name=^$$(basename $$(pwd)))
-
 burn:
 	@echo "Stopping and removing all containers..."
 	docker-compose rm -sfv
