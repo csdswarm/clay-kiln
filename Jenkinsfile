@@ -63,7 +63,7 @@ pipeline {
 
               case "master":
                 env.ROK8S_CONFIG='deploy/production.config'
-                env.BUILD_EXTRAARGS="--build-arg mode=production --build-arg productionbuild=true"
+                env.BUILD_EXTRAARGS='--build-arg mode=production --build-arg productionbuild=true'
                 ROK8S_CLUSTER='production.k8s.radio-prd.com'
                 CRED_ID='prd'
                 sh '''#!/bin/bash -xe
