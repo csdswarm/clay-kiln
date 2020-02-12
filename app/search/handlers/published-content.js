@@ -4,13 +4,14 @@ const h = require('highland'),
   { logSuccess, logError } = require('../helpers/log-events'),
   { addSiteAndNormalize } = require('../helpers/transform'),
   { filters, helpers, elastic, subscribe } = require('amphora-search'),
-  { getComponentName } = require('clayutils'),
+  { getComponentInstance, getComponentName } = require('clayutils'),
   { isOpForComponents } = require('../filters'),
   db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
   CONTENT = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
+    CONTENT_COLLECTION: 'topic-page-header',
     GALLERY: 'gallery',
     STATIC_PAGE: 'static-page'
   },
@@ -81,9 +82,10 @@ function processContent(obj, components) {
 
   switch (getComponentName(obj.key)) {
     case CONTENT.AUTHOR:
-      obj.value.date = obj.value.dateModified;
-      return obj;
+    case CONTENT.CONTENT_COLLECTION:
+      break;
     case CONTENT.STATIC_PAGE:
+      obj.value = getContent(obj.value, 'content', components);
       break;
     case CONTENT.GALLERY:
       obj.value = getContent(obj.value, 'slides', components);
@@ -93,8 +95,8 @@ function processContent(obj, components) {
     default:
       obj.value = getContent(obj.value, 'lead', components);
       obj.value = getContent(obj.value, 'tags', components);
+      obj.value = getContent(obj.value, 'content', components);
   }
-  obj.value = getContent(obj.value, 'content', components);
 
   return obj;
 }
@@ -124,6 +126,18 @@ function transformAuthorsAndTags(op) {
   return op;
 }
 
+/**
+ * Should not publish default or new instances
+ *
+ * @param {Object} op
+ * @return {boolean}
+ */
+function isNotNewInstance(op) {
+  const instance = getComponentInstance(op.key);
+
+  return instance !== 'new' && instance !== 'default';
+}
+
 function save(stream) {
   let components = [];
 
@@ -133,6 +147,7 @@ function save(stream) {
     .map(param => { components.push(param); return param; })
     // only bring back articles and galleries
     .filter(CONTENT_FILTER)
+    .filter(isNotNewInstance)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)

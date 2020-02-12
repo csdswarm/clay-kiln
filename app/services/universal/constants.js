@@ -22,6 +22,7 @@ const _get = require('lodash/get'),
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
+    CONTENT_COLLECTION: 'topic-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
     STATIC_PAGES: 'static-page'
