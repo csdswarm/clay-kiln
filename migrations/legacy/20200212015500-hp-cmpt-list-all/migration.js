@@ -13,12 +13,12 @@ async function updateHomepageInstance() {
   const homepageInstanceRef = '_components/homepage/instances/home';
     homepageInstanceRefPath = homepageInstanceRef.replace(/\//g, '.'),
     componentsOrder = [
-      'latest-content',
       'stations-carousel',
       'google-ad-manager',
+      'latest-content',
       'podcast-list',
-      'latest-videos',
       'google-ad-manager',
+      'latest-videos',
       'more-content-feed'
     ],
     { data } = await clayExport({
@@ -38,11 +38,12 @@ async function updateHomepageInstance() {
   componentsOrder.forEach(component => {
     const _ref = allRefs.find(ref => ref.includes(component));
 
-    hpData.mainContent.push({ _ref });
+    if (_ref) hpData.mainContent.push({ _ref });
   })
 
   _set(data, homepageInstanceRefPath, hpData);
 
+  console.log(JSON.stringify(data));
   const { result } = await clayImport({
     hostUrl: host, payload: data, publish: true
   });
