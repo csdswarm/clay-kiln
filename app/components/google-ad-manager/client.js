@@ -18,11 +18,11 @@ const _get = require('lodash/get'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
-  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
-  apsPubId = googleAdManagerComponent.getAttribute('data-aps-pub-id'),
-  apsLoadTimeout = parseInt(googleAdManagerComponent.getAttribute('data-aps-load-timeout'), 10),
-  apsBidTimeout = parseInt(googleAdManagerComponent.getAttribute('data-aps-bid-timeout'), 10),
-  sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
+  adRefreshInterval = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-ad-refresh-interval') : 0, // Time in ms for ad refresh
+  apsPubId = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-aps-pub-id') : null,
+  apsLoadTimeout = parseInt(googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-aps-load-timeout') : 0, 10),
+  apsBidTimeout = parseInt(googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-aps-bid-timeout') : 0, 10),
+  sharethroughPlacementKey = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-sharethrough-placement-key') : null,
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
@@ -405,8 +405,8 @@ function getCurrentStation() {
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData) {
-  const doubleclickBannerTag = googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag'),
-    environment = googleAdManagerComponent.getAttribute('data-environment'),
+  const doubleclickBannerTag = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag') : null,
+    environment = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-environment') : null,
     inProduction = environment === 'production',
     currentStation = getCurrentStation(),
     // this query selector should always succeed
