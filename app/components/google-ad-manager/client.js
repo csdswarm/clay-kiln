@@ -19,6 +19,9 @@ const _get = require('lodash/get'),
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
   adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
+  apsPubId = googleAdManagerComponent.getAttribute('data-aps-pub-id'),
+  apsLoadTimeout = parseInt(googleAdManagerComponent.getAttribute('data-aps-load-timeout'), 10),
+  apsBidTimeout = parseInt(googleAdManagerComponent.getAttribute('data-aps-bid-timeout'), 10),
   sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
@@ -27,6 +30,7 @@ const _get = require('lodash/get'),
     threshold: 0
   },
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig),
+  amazonTam = require('./aps')(apsPubId, apsLoadTimeout, apsBidTimeout),
   disabledRefreshAds = new Set();
 let refreshCount = 0,
   allAdSlots = {},
@@ -43,7 +47,7 @@ let refreshCount = 0,
 adMapping.setupSizeMapping();
 
 /**
- * Add Sharethrough script on first page load
+ * Add Sharethrough on first page load
  * @function
  */
 (() => {
@@ -88,22 +92,30 @@ googletag.cmd.push(() => {
       adsRefreshing = true;
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
-        clearDfpTakeover();
-
         // Refresh ads
-        const adsToRefresh = Object.entries(allAdSlots).filter(([id]) => {
-          id = id.split('--')[1];
+        const filteredAds = Object.entries(allAdSlots).filter(([id]) => {
+            id = id.split('--')[1];
 
-          return !disabledRefreshAds.has(id);
-        }).map(([, slot]) => slot);
+            return !disabledRefreshAds.has(id);
+          }),
+          adsToRefresh = filteredAds.map(([, slot]) => slot),
+          adsToBid = filteredAds.reduce((refreshingAds, [id, slot]) => {
+            refreshingAds[id] = slot;
 
-        googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
+            return refreshingAds;
+          }, {});
 
-        // Remove the observers
-        [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
-          observer.unobserve(adSlot);
+        amazonTam.fetchAPSBids(adsToBid, () => {
+          clearDfpTakeover();
+
+          googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
+
+          // Remove the observers
+          [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
+            observer.unobserve(adSlot);
+          });
+          adsRefreshing = false;
         });
-        adsRefreshing = false;
       }, adRefreshInterval);
     }
   });
@@ -448,7 +460,8 @@ function createAds(adSlots) {
   const queryParams = urlParse(window.location, true).query,
     contentType = getMetaTagContent('property', OG_TYPE),
     pageData = getPageData(window.location.pathname, contentType),
-    adTargetingData = getAdTargeting(pageData);
+    adTargetingData = getAdTargeting(pageData),
+    ads = [];
 
   googletag.cmd.push(function () {
     // Set refresh value on page level
@@ -511,20 +524,26 @@ function createAds(adSlots) {
 
       // Attach to the global ads array
       allAdSlots[ad.id] = slot;
-
-      googletag.display(ad.id);
-
-      // 'atf' ads need to be requested together on page load, do not observe
-      if (adLocation === 'atf') {
-        initialPageAdSlots.push(slot);
-      } else {
-        // Attach the observer for lazy loading
-        observer.observe(ad);
-      }
+      ads.push(ad);
     }
 
-    // Refresh all initial page slots
-    googletag.pubads().refresh(initialPageAdSlots);
+    amazonTam.fetchAPSBids(allAdSlots, () => {
+      ads.forEach(ad => {
+        const adSlot = allAdSlots[ad.id];
+
+        googletag.display(ad.id);
+
+        // 'atf' ads need to be requested together on page load, do not observe
+        if (adSlot.getTargeting('loc')[0] === 'atf') {
+          initialPageAdSlots.push(adSlot);
+        } else {
+          // Attach the observer for lazy loading
+          observer.observe(ad);
+        }
+      });
+
+      googletag.pubads().refresh(initialPageAdSlots);
+    });
   });
 }
 
