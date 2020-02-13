@@ -1,9 +1,9 @@
 'use strict';
+const clayExport = require('./clay-export').v1;
+const clayImport = require('./clay-import').v1;
+const { _get, clayutils } = require('./base');
 
-const { isPage } = require('../../app/node_modules/clayutils'),
-  _get = require('../../app/node_modules/lodash/get'),
-  clayExport = require('./clay-export').v1,
-  clayImport = require('./clay-import').v1;
+const { isPage } = clayutils;
 
 /**
  * Helper for adding a component to a component list of multiple layout or page instances

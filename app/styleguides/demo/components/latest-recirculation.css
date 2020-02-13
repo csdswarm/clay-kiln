@@ -202,3 +202,7 @@
 		}
 	}
 }
+
+.kiln-edit-mode .component--latest-recirc.component--empty {
+  display: block;
+}
