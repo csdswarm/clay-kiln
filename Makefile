@@ -15,7 +15,7 @@ rebuild:
 
 burn:
 	@echo "Stopping and removing all containers..."
-	docker-compose rm -sfv
+	docker-compose rm --stop --force -v # -v = associated volumes
 
 rmi-dangle:
 	@echo "Cleaning up all dangling Docker images..."
