@@ -226,6 +226,23 @@ function yesNo(val) {
   }
 }
 
+/**
+ * removes the first line in a string
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function removeFirstLine(str) {
+  if (typeof str !== 'string') {
+    throw new Error(
+      'you must provide a string'
+      + '\n  typeof str: ' + typeof str
+    );
+  }
+
+  return str.split('\n').slice(1).join('\n');
+}
+
 Object.assign(module.exports, {
   /**
    * Url queries to elastic search need to be `http` since that is
@@ -250,5 +267,6 @@ Object.assign(module.exports, {
   urlToCanonicalUrl,
   textToEncodedSlug,
   debugLog,
-  yesNo
+  yesNo,
+  removeFirstLine
 });

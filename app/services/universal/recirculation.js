@@ -261,6 +261,7 @@ const _get = require('lodash/get'),
  */
   fetchRecirculation = async ({ filters, excludes, elasticFields, pagination, maxItems }, locals) => {
     const query = queryService.newQueryWithCount(index, maxItems + 1, locals),
+      searchOpts = { shouldDedupeContent: true },
       { page, pageLength = DEFAULT_PAGE_LENGTH } = pagination,
       offset = maxItems + (parseInt(page) - 1) * pageLength;
 
@@ -269,7 +270,7 @@ const _get = require('lodash/get'),
     }
 
     let results = [];
-  
+
     // add sorting
     queryService.addSort(query, { date: 'desc' });
 
@@ -285,7 +286,7 @@ const _get = require('lodash/get'),
     }
 
     try {
-      results = await queryService.searchByQuery(query);
+      results = await queryService.searchByQuery(query, locals, searchOpts);
     } catch (e) {
       queryService.logCatch(e, 'content-search');
       log('error', 'Error querying Elastic', e);
@@ -317,6 +318,10 @@ const _get = require('lodash/get'),
     skipRender = () => false } = {}) => {
     return unityComponent({
       async render(uri, data, locals) {
+        const curatedIds = data.items.map(anItem => anItem.uri);
+
+        locals.loadedIds = locals.loadedIds.concat(curatedIds);
+        
         if (skipRender(data, locals)) {
           return render(uri, data, locals);
         }
@@ -336,7 +341,6 @@ const _get = require('lodash/get'),
         } catch (e) {
           log('error', `There was an error querying items from elastic - ${e.message}`, e);
         }
-        
         return render(uri, data, locals);
       },
       async save(uri, data, locals) {
@@ -346,7 +350,11 @@ const _get = require('lodash/get'),
 
         data.items = await Promise.all(data.items.map(async (item) => {
           item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-          const result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields);
+          const searchOpts = {
+              includeIdInResult: true,
+              shouldDedupeContent: false
+            },
+            result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
       
           return mapResultsToTemplate(result, item);
         }));

@@ -34,6 +34,8 @@ const { recirculationData } = require('../../services/universal/recirculation'),
         throw e;
       }
     }
+
+    return data;
   },
   /**
    * Also existing functionality that may be able to be replaced.  This pulls articles from the station_feed
