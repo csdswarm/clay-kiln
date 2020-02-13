@@ -303,12 +303,12 @@ function setSlugAndLock(data, prevData, publishedData) {
  *
  * @param {object} data
  */
-function standardizePageData(data) {
-  if (data.componentVariation === PAGE_TYPES.AUTHOR) {
+function standardizePageData(data, componentName) {
+  if (componentName === PAGE_TYPES.AUTHOR) {
     data.feedImgUrl = data.profileImage;
     data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.author;
     data.slug = sanitize.cleanSlug(data.author);
-  } else if (data.componentVariation === PAGE_TYPES.CONTENT_COLLECTION) {
+  } else if (componentName === PAGE_TYPES.CONTENT_COLLECTION) {
     data.feedImgUrl = data.image;
     data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.tag;
     data.slug = sanitize.cleanSlug(data.tag);
@@ -525,7 +525,8 @@ function render(ref, data, locals) {
 
 async function save(uri, data, locals) {
   const isClient = typeof window !== 'undefined',
-    urlAlreadyExists = await urlExists(uri, data, locals);
+    urlAlreadyExists = await urlExists(uri, data, locals),
+    componentName = getComponentName(uri);
 
   /*
     kiln doesn't display custom error messages, so on the client-side we'll
@@ -538,7 +539,7 @@ async function save(uri, data, locals) {
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
-  standardizePageData(data);
+  standardizePageData(data, componentName);
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
   generatePageDescription(data);
