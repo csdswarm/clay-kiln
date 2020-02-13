@@ -1,4 +1,4 @@
-<div class="component-events-list events-list"  data-uri="{{ default _ref _self }}">
+<div class="component-events-list events-list"  data-uri="{{ default _ref _self }}" data-editable="curatedEvents">
   {{#each _computed.events as |event|}}
     {{> content-card event _self=true }}
   {{/each}}

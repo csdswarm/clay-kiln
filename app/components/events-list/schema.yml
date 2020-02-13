@@ -1,7 +1,19 @@
 _description: A listing of events
 
-events:
-  _subscribe: events
-
-moreContent:
-  _subscribe: moreContent
+# Properties
+curatedEvents:
+  _label: Add Event
+  _has:
+    input: complex-list
+    props:
+      -
+        prop: url
+        _label: URL
+        _has:
+          input: content-search
+          validate:
+            required: true
+  _placeholder:
+    text: Add Event
+    height: 60px
+    required: true
