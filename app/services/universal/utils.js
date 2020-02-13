@@ -84,6 +84,16 @@ function uriToUrl(uri, locals) {
 }
 
 /**
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
+}
+
+/**
  * Remove extension from route / path.
  *
  * Note: copied from amphora@v7.3.2 lib/responses.js
@@ -310,6 +320,23 @@ function yesNo(val) {
   }
 }
 
+/**
+ * removes the first line in a string
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function removeFirstLine(str) {
+  if (typeof str !== 'string') {
+    throw new Error(
+      'you must provide a string'
+      + '\n  typeof str: ' + typeof str
+    );
+  }
+
+  return str.split('\n').slice(1).join('\n');
+}
+
 Object.assign(module.exports, {
   /**
    * Url queries to elastic search need to be `http` since that is
@@ -330,13 +357,14 @@ Object.assign(module.exports, {
   isInstance,
   isPublishedVersion,
   isUrl,
+  removeFirstLine,
   prettyJSON,
   replaceVersion,
   textToEncodedSlug,
   toTitleCase,
+  uriToUrl,
   urlToCanonicalUrl,
   urlToElasticSearch,
-  uriToUrl,
   urlToUri,
   yesNo
 });

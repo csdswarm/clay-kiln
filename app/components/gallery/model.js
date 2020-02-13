@@ -6,6 +6,7 @@ const { unityComponent } = require('../../services/universal/amphora'),
 
 module.exports = unityComponent({
   render: (uri, data, locals) => {
+    locals.loadedIds.push(uri);
     autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);
     return createContent.render(uri, data, locals);
   },
