@@ -1,16 +1,6 @@
-{{#if initialLoad }}
-<section
-  data-editable="settings"
-  data-uri="{{ default _ref _self }}"
-  class="component component--events-listing-page{{ if @root.locals.edit ' editing' }}"
-  data-lazy-loads="{{ lazyLoads }}"
->
-  {{> events-lede _self=true }}
-  {{> events-list _self=true }}
-  {{#if @root.locals.edit }}
-    <div data-editable="curatedEvents"></div>
-  {{/if}}
-</section>
-{{else}}
+<div class="component-events-listing-page events-listing-page"  data-uri="{{ default _ref _self }}" data-editable="settings">
+  {{!-- <div>LEDE</div> --}}
+  {{!-- {{> events-lede _self=true }} --}}
+  <div>EVENTS-LIST</div>
   {{> events-list eventsList }}
-{{/if}}
+</div>

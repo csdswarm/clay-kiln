@@ -1,16 +1,17 @@
 _components:
   events-listing-page:
-    curatedEvents: []
-    events: []
     lede: ''
     ledeUrl: ''
     pageDescription: ''
     pageLength: ''
+    eventsList:
+      _ref: /_components/events-list/instances/new
     instances:
       new:
-        curatedEvents: []
-        events: []
         lede: ''
         ledeUrl: ''
         pageDescription: ''
         pageLength: ''
+        eventsList:
+          _ref: /_components/events-list/instances/new
+

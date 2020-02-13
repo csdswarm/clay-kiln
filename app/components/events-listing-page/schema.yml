@@ -1,26 +1,5 @@
 _description: Events listing page
 
-# Properties
-curatedEvents:
-  _label: Add Event
-  _has:
-    input: complex-list
-    props:
-      -
-        prop: url
-        _label: URL
-        _has:
-          input: content-search
-          validate:
-            required: true
-  _placeholder:
-    text: Add Event
-    height: 200px
-    required: true
-
-events:
-  _publish: events
-
 lede:
   _publish: lede
 
@@ -31,9 +10,6 @@ ledeUrl:
     validate:
       required: true
 
-moreContent:
-  _publish: moreContent
-
 pageDescription:
   _publish: pageDescription
   _has:
@@ -41,13 +17,6 @@ pageDescription:
     help: Plaintext description for search engines
     validate:
       required: true
-
-pageLength:
-  _label: Page Size
-  _has:
-    help: Number of events to load when "load more" is clicked
-    input: text
-    type: number
 
 # Component
 eventsList:
@@ -59,11 +28,9 @@ eventsList:
 _groups:
   settings:
     _placeholder:
-      text: Events Listing
-      height: 20px
+      text: Events Listing Page Settings
+      height: 60px
       ifEmpty: ledeUrl OR pageDescription
     fields:
       - ledeUrl
       - pageDescription
-      - curatedEvents
-      - pageLength
