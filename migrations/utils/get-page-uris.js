@@ -3,8 +3,36 @@
 const usingDb = require('./using-db').v2,
   { clayutils } = require('./base'),
   getPageUris_v1 = {
-    fromContentComponentUris: fromContentComponentUris_v1
+    fromContentComponentUris: fromContentComponentUris_v1,
+    fromMainComponent: fromMainComponent_v1,
+    fromPageHeaderComponent: fromPageHeaderComponent_v1
   };
+
+function fromMainComponent_v1(componentName) {
+  return usingDb(async db => {
+    const query = `
+        select p.id
+        from pages p
+          join components."${componentName}" cmpt on cmpt.id = p.data -> 'main' ->> 0
+      `,
+      result = await db.query(query)
+
+    return result.rows.map(({ id }) => id);
+  });
+}
+
+function fromPageHeaderComponent_v1(componentName) {
+  return usingDb(async db => {
+    const query = `
+        select p.id
+        from pages p
+          join components."${componentName}" cmpt on cmpt.id = p.data -> 'pageHeader' ->> 0
+      `,
+      result = await db.query(query)
+
+    return result.rows.map(({ id }) => id);
+  });
+}
 
 /**
  * fetches the page uris from the content component uris.
