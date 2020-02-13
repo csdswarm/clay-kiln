@@ -1,7 +1,6 @@
 'use strict';
 
 const _ = require('lodash'),
-  url = require('url'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
   { sites, composer } = require('amphora'),
@@ -37,24 +36,35 @@ function getPrefixAndKey(path) {
 }
 
 const routes = [
-  // podcast show page
-  {
-    testPath: req => {
-      const { pathname } = url.parse(req.url);
-
-      return pathname.includes('/podcasts');
+  { // stations directories
+    testPath: req => req.path.includes('/stations'),
+    getParams: (req, params) => {
+      if (req.path.match(/stations\/location\/(.+)/)) {
+        params.dynamicMarket = req.path.match(/stations\/location\/(.+)/)[1];
+      } else if (req.path.match(/stations\/music\/(.+)/)) {
+        params.dynamicGenre = req.path.match(/stations\/music\/(.+)/)[1];
+      }
     },
+    getPageData: req => db.get(`${req.hostname}/_pages/stations-directory@published`)
+  },
+  { // station detail page
+    testPath: req => /\/(.+)\/listen$/.test(req.path),
+    getParams: (req, params) => params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1],
+    getPageData: req => db.get(`${req.hostname}/_pages/station@published`)
+  },
+  { // podcast show page
+    testPath: req => req.path.includes('/podcasts'),
     getParams: (req, params) => {
       params.stationSlug = req.path.match(/\/(.+)\/podcasts/)[1];
       params.dynamicSlug = req.path.match(/\/podcasts\/(.+)/)[1];
     },
     getPageData: req => db.get(`${req.hostname}/_pages/podcast-show@published`)
   },
-  // [default route handler] resolve the uri and page instance
-  {
+  { // [default route handler] resolve the uri and page instance
     testPath: () => true,
     getParams: () => {},
-    getPageData: req => db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+    getPageData: req => db
+      .getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
       .then(data => db.get(`${data}@published`))
   }
 ];
@@ -68,7 +78,7 @@ const routes = [
  * @param {Function} next
  * @returns {Promise}
  */
-function middleware(req, res, next) {
+async function middleware(req, res, next) {
   const params = {},
     { routeParamKey, routePrefix } = getPrefixAndKey(req.path);
 
@@ -80,13 +90,15 @@ function middleware(req, res, next) {
 
   // Define Curated/Dynamic routes.
   // Match against section-front, topic, and author slug prefixes
-  const curatedOrDynamicRoutePrefixes = process.env.SECTION_FRONTS ? process.env.SECTION_FRONTS.split(',') : [];
-
-  curatedOrDynamicRoutePrefixes.push('topic');
-  curatedOrDynamicRoutePrefixes.push('authors');
-
-  // Define curated/dynamic routing logic
-  const curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
+  const sectionFrontsList = '/_lists/primary-section-fronts',
+    sectionFronts = await db.get(`${ req.hostname }${ sectionFrontsList }`),
+    sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
+    curatedOrDynamicRoutePrefixes = [
+      ...sectionFrontValues,
+      'topic',
+      'authors'
+    ],
+    curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
 
   // If it's a curated/dynamic route (see curatedOrDynamicRoutePrefixes) apply curated/dynamic page logic.
   if (curatedOrDynamicRoutes.test(req.path)) {
@@ -102,6 +114,7 @@ function middleware(req, res, next) {
         // Curated page found. Serve content collection.
         // Extract param keyword and set it to correct params key appropriately.
         params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
+        console.log('route param', params[routeParamKey]);
         return db.get(`${pageKey}@published`);
       })
       .catch(error => {
@@ -117,16 +130,6 @@ function middleware(req, res, next) {
           throw error;
         }
       });
-  } else if (req.path.indexOf('/stations') === 0) {
-    if (req.path.match(/stations\/location\/(.+)/)) {
-      params.dynamicMarket = req.path.match(/stations\/location\/(.+)/)[1];
-    } else if (req.path.match(/stations\/music\/(.+)/)) {
-      params.dynamicGenre = req.path.match(/stations\/music\/(.+)/)[1];
-    }
-    promise = db.get(`${req.hostname}/_pages/stations-directory@published`);
-  } else if (/\/(.+)\/listen$/.test(req.path)) {
-    params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1];
-    promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
     const route = routes.find(r => r.testPath(req));
 
