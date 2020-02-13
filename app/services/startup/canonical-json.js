@@ -92,7 +92,7 @@ async function middleware(req, res, next) {
   // Match against section-front, topic, and author slug prefixes
   const sectionFrontsList = '/_lists/primary-section-fronts',
     sectionFronts = await db.get(`${ req.hostname }${ sectionFrontsList }`),
-    sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
+    sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value),
     curatedOrDynamicRoutePrefixes = [
       ...sectionFrontValues,
       'topic',
