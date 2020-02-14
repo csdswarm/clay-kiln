@@ -16,9 +16,6 @@ const { expect, assert } = require('chai'),
         publish:{ station:{ WHIO: 1, ABCD: 1 } },
         create:{ station:{ 'NATL-RC': 1 } },
         update:{ station:{ 'NATL-RC': 1 } }
-      },
-      'alert-banner':{
-        access: { station: { 'NATL-RC': 1 } }
       }
     },
     station: {
@@ -29,8 +26,7 @@ const { expect, assert } = require('chai'),
   targets = 'a,an,the,this,using,canUse,canModify'.split(','),
   locations = 'at,for,with,on'.split(','),
   articleCreateMessage = 'You do not have permissions to create articles.',
-  galleryCreateMessage = 'You do not have permissions to publish galleries.',
-  accessMessage = 'You do not have permissions to access cool magic things.';
+  galleryCreateMessage = 'You do not have permissions to publish galleries.';
 
 describe('permissions', () => {
   beforeEach(() => {
@@ -75,13 +71,10 @@ describe('permissions', () => {
     it('become errors correctly', () => {
       expect(locals.user.include('create').an('article').at('ABC').message).to.eql(articleCreateMessage);
       expect(locals.user.can('publish').a('gallery').for('DEF').message).to.eql(galleryCreateMessage);
-      expect(locals.user.include('access').an('cool-magic-things').message).to.eql(accessMessage);
-      expect(locals.user.canModify('cool-magic-things').message).to.eql(accessMessage);
     });
     it('remain blank when valid', () => {
       expect(locals.user.include('create').an('article').message).to.eql('');
       expect(locals.user.can('publish').a('gallery').for('ABCD').message).to.eql('');
-      expect(locals.user.canUse('alert-banner').message).to.eql('');
     });
   });
   describe('actions as targets', () => {
