@@ -1,8 +1,7 @@
 'use strict';
 
 const { getPageInstance, isPageMeta } = require('clayutils'),
-  getPageTemplateIds = require('../../get-page-template-ids'),
-  { anyStation } = require('../../../universal/user-permissions');
+  getPageTemplateIds = require('../../get-page-template-ids');
 
 module.exports = router => {
   router.get('/_pages/*', async (req, res, next) => {
@@ -14,9 +13,7 @@ module.exports = router => {
     if (
       !isPageMeta(req.uri)
       && isRequestingEditMode
-      // we test against any station because this is not a
-      //   station-specific permission
-      && !user.can('update').a('templates').for(anyStation).value
+      && !user.can('update').a('page-template').value
     ) {
       const pageInstance = getPageInstance(req.uri),
         pageTemplateIds = await getPageTemplateIds(res.locals);
