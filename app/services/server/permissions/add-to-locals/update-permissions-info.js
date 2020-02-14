@@ -29,15 +29,18 @@ async function attachToLocalsUsingPageUri(uri, res) {
     return;
   }
 
-  // these shouldn't be declared above the short circuit
-  // eslint-disable-next-line one-var
   const { locals } = res,
     { stationForPermissions, user } = locals,
+    { site_slug } = stationForPermissions,
+    stationName = stationForPermissions.name,
     // only static-page has 'update' permissions currently
+    // it's worth noting that in the future when urps is able to handle
+    //   adding/removing/editing permission targets it may make sense to ensure
+    //   a permission target and action pair exists for each content type
+    //   instead of singing them out in the code like this.
     showNoEditPermissionsBanner = pageType === 'static-page'
       ? !user.can('update').a(pageType).value
-      : !user.can('access').this('station').value,
-    stationName = stationForPermissions.name;
+      : !locals.stationsIHaveAccessTo[site_slug];
 
   Object.assign(locals, {
     showNoEditPermissionsBanner,
@@ -95,7 +98,7 @@ module.exports = router => {
       // eslint-disable-next-line one-var
       const { uri } = req,
         { locals } = res,
-        { station, user } = locals,
+        { site_slug } = stationForPermissions,
         pageUri = isPage(uri)
           ? uri
           : await ifPublishedUriGetPageUri(req);
@@ -107,8 +110,8 @@ module.exports = router => {
         //   dynamic page or some other content I'm unaware of.  To be safe
         //   we're just going to assign the info based on the current station.
         Object.assign(locals, {
-          showNoEditPermissionsBanner: !user.can('access').this('station').value,
-          updateTarget: `this page for ${station.name}`
+          showNoEditPermissionsBanner: !locals.stationsIHaveAccessTo[site_slug],
+          updateTarget: `this page for ${stationForPermissions.name}`
         });
       }
 
