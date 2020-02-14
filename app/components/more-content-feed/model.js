@@ -2,6 +2,7 @@
 const _get = require('lodash/get'),
   { recirculationData } = require('../../services/universal/recirculation'),
   { sendError } = require('../../services/universal/cmpt-error'),
+  maxItems = 10,
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -31,9 +32,9 @@ const _get = require('lodash/get'),
     if ((data.dynamicTagPage || isDynamicAuthorPage) && data._computed.content.length === 0) {
       sendError(`${data.populateFrom} not found`, 404);
     }
-
+ 
     Object.assign(data._computed, {
-      lazyLoads: (data, maxItems) => Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0)
+      lazyLoads: Math.max(Math.ceil((min(data.maxLength, 30) - maxItems) / data.pageLength || 5), 0)
     });
 
     return data;
@@ -42,12 +43,6 @@ const _get = require('lodash/get'),
 module.exports = recirculationData({
   contentKey: 'content',
   elasticFields,
-  mapDataToFilters: (ref, data, locals) => ({
-    pagination: {
-      page: parseInt(locals.page),
-      pageLength: data.pageLength
-    }
-  }),
   mapResultsToTemplate: (result, item = {}) => {
     return Object.assign(item, {
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
