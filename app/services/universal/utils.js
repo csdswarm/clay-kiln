@@ -338,13 +338,6 @@ function removeFirstLine(str) {
 }
 
 Object.assign(module.exports, {
-  /**
-   * Url queries to elastic search need to be `http` since that is
-   * how it is indexed as.
-   * @param {String} url
-   * @returns {String}
-   */
-  urlToElasticSearch: url => url.replace('https', 'http'),
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
