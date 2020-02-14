@@ -18,25 +18,44 @@
   * **uploadLabel** - File Upload Button label.
   * **uploadHelp** - Description / helper text for the file upload button.
   * **maxEditorDisplayHeight** - height for when used in a complex list.
+  * **enableDelete** - enables delete functionality.  'delete' in this context refers to the url field, not the image on s3.  By default this is false
 
 </docs>
 
 <template>
   <div class="advanced-image-upload">
-    <ui-fileupload ref="fileUploadButton" :label="args.uploadLabel" color="accent" :disabled="fileUploadButtonDisabled" accept="image/*" @change="localFileAttached"></ui-fileupload>
+    <ui-fileupload ref="fileUploadButton"
+      :label="args.uploadLabel"
+      color="accent"
+      :disabled="fileUploadButtonDisabled"
+      accept="image/*"
+      @change="localFileAttached">
+    </ui-fileupload>
+    <ui-button v-if="showDelete"
+      icon="delete"
+      buttonType="button"
+      type="secondary"
+      color="red"
+      @click="removeImageUrl">
+
+      Remove
+    </ui-button>
     <div class="ui-textbox__feedback" v-if="args.uploadHelp">
       <div class="ui-textbox__feedback-text">{{ args.uploadHelp }}</div>
     </div>
     <div v-if="imageUrl">
-      <img 
+      <img
           :class="['advanced-image-upload__attached-image', { 'advanced-image-upload__attached-image--clamped-height': args.maxEditorDisplayHeight } ]"
-          alt="attached image" 
-          :src="imageUrl" 
+          alt="attached image"
+          :src="imageUrl"
           :style="args.maxEditorDisplayHeight ? 'max-height:' + args.maxEditorDisplayHeight : ''" />
     </div>
     <div v-else>
       <div class="advanced-image-upload__image-placeholder kiln-placeholder">
-        <div class="placeholder-label"><span class="placeholder-text">No Image</span><div class="ui-ripple-ink"></div></div>
+        <div class="placeholder-label">
+          <span class="placeholder-text">No Image</span>
+          <div class="ui-ripple-ink"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -46,7 +65,7 @@
 
 import { uploadFile } from '../../../client/s3'
 
-const UiFileupload = window.kiln.utils.components.UiFileupload
+const { UiFileupload, UiButton } = window.kiln.utils.components
 
 export default {
   props: ['name', 'data', 'schema', 'args'],
@@ -56,9 +75,13 @@ export default {
       fileUploadButtonDisabled: false
     };
   },
+  computed: {
+    showDelete() {
+      return this.data && this.args.enableDelete;
+    }
+  },
   methods: {
     /**
-     *
      * Event handler that is fired when an image file is attached via the file upload button.
      *
      * Logic flow is: Filename and type of attached file is sent to backend in order to create
@@ -72,7 +95,6 @@ export default {
      * @param {array} files - FileList array of files.
      */
     localFileAttached(files) {
-
       // Disable file upload button while processing.
       this.fileUploadButtonDisabled = true;
 
@@ -89,25 +111,34 @@ export default {
         */
         uploadFile(file)
           .then((s3) => {
-
             // Build the full s3 image url.
-            const s3ImageUrl = `https://${s3.host}/${s3.fileKey}`;
-
-            // Update imageUrl to point to new s3 file.
-            this.imageUrl = s3ImageUrl;
-
-            // Set value of form to be the s3 file url.
-            this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: s3ImageUrl });
-
+            this.setImageUrl(`https://${s3.host}/${s3.fileKey}`);
+          })
+          .catch(console.error)
+          .finally(() => {
             this.fileUploadButtonDisabled = false; // Re-enable file upload button.
-
           });
       }
-      
+    },
+    setImageUrl(imageUrl) {
+      // Update imageUrl to point to new s3 file.
+      this.imageUrl = imageUrl;
+
+      // Set value of form to be the s3 file url.
+      this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: imageUrl });
+    },
+    removeImageUrl() {
+      // keen-ui's file upload component doesn't expose a function to reset its
+      //   state so we have to ref it directly.
+      this.$refs.fileUploadButton.hasSelection = false;
+      this.$refs.fileUploadButton.$refs.input.value = null;
+
+      this.setImageUrl('');
     }
   },
   components: {
-    UiFileupload
+    UiFileupload,
+    UiButton
   }
 }
 </script>

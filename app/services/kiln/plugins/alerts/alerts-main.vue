@@ -14,8 +14,17 @@
             </ui-tab>
             <div class="alerts-manager__toolbar">
                 <ui-button @click="newAlert">Add Alert</ui-button>
-                <station-select v-show="!global"
-                    class="alerts-manager__station-select" />
+                <div class="alerts-manager__station-select">
+                    <ui-select
+                        label="Station"
+                        placeholder="Select a station"
+                        hasSearch=true
+                        :options="stationCallsigns"
+                        @select="loadAlerts"
+                        v-if="!global"
+                        v-model="selectedStation">
+                    </ui-select>
+                </div>
             </div>
             <div>
                 <div class="page-list-headers">
@@ -143,6 +152,7 @@
     const { isUrl } = require('../../../universal/utils');
     const stationSelect = require('../../shared-vue-components/station-select');
     const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
+    const { getAlerts } = require('../../../client/alerts');
     const {
         UiButton,
         UiCheckbox,
@@ -340,7 +350,10 @@
                     this.alerts = [];
                 } else {
                     this.loading = true;
-                    const {data = []} = await axios.get('/alerts', {params: {station: this.station, ...cb()}});
+                    const data = await getAlerts({
+                        station: this.station,
+                        ...cb()
+                    });
 
                     this.loading = false;
                     this.alerts = data;
