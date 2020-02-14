@@ -17,10 +17,12 @@ module.exports = unityComponent({
       return data;
     }
 
-    const callsign = _get(locals, 'stationForPermissions.callsign');
+    const callsign = _get(locals, 'stationForPermissions.callsign', '');
+    const siteSlug = _get(locals, 'params.stationSlug', '');
     const { pathname } = url.parse(locals.url);
     const isPresentationMode = pathname === '/contests';
     const startTime = moment().toISOString(true);
+    const contestLinkPrefix = siteSlug ? `/${siteSlug}` : '';
     const contestRules = (await getContestRules({
       startTime,
       stationCallsign: callsign
@@ -28,7 +30,8 @@ module.exports = unityComponent({
       ...ruleData,
       stationTimeZone: locals.station.timezone,
       showHeader: true,
-      showPresentation: isPresentationMode
+      showPresentation: isPresentationMode,
+      contestLink: `${contestLinkPrefix}/contests/${ruleData.slug}`
     }));
 
     return Object.assign(data, {

@@ -36,34 +36,65 @@ function getPrefixAndKey(path) {
   return { routeParamKey, routePrefix };
 }
 
+/**
+ * Returns the pathname split into an array of parts.
+ *
+ * Example:
+ * ```
+ * const pathname = '/foo/bar/blah'
+ * pathParts(pathname) // ['foo', 'bar', 'blah']
+ * ```
+ *
+ * @param {string} pathname
+ * @returns {Array<string>}
+ */
+function parsePathParts(pathname) {
+  return pathname.match(/[^\/]+/g) || [];
+}
+
 const routes = [
-  // {stationSlug | ''}/contest-rules
+  // `/contest-rules` or `{stationSlug}/contest-rules`
   {
     testPath: req => {
-      const { pathname } = url.parse(req.url);
+      const { pathname } = url.parse(req.url),
+        basePath = 'contest-rules',
+        pathnameIndex = parsePathParts(pathname)
+          .indexOf(basePath);
 
-      return pathname.includes('contest-rules');
+      return pathnameIndex === 0
+        || pathnameIndex === 1;
     },
     getParams: (req, params) => {
-      const { pathname } = url.parse(req.url);
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/contest-rules/);
 
-      params.stationSlug = pathname.split('/')[1];
-      console.log('[contest-rules params]', params);
+      params.stationSlug = match ? match[1] : '';
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
-  // {stationSlug | ''}/contests
+  // `/contests` or `{stationSlug}/contests`
   {
     testPath: req => {
-      const { pathname } = url.parse(req.url);
+      const { pathname } = url.parse(req.url),
+        basePath = 'contests',
+        pathParts = parsePathParts(pathname),
+        pathnameIndex = pathParts
+          .indexOf(basePath),
+        // `/contests/{slug}` or `{stationSlug}/contests/{slug}`
+        isContestPage = /\/contests\/(.+)/.test(pathname);
 
-      return pathname.includes('contests');
+      if (isContestPage) {
+        return false;
+      }
+
+      return pathnameIndex === 0
+        || pathnameIndex === 1;
     },
     getParams: (req, params) => {
-      const { pathname } = url.parse(req.url);
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/contests/);
 
-      params.stationSlug = pathname.split('/')[1];
-      console.log('[contests params]', params);
+      params.stationSlug = match ? match[1] : '';
     },
     getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
   },
