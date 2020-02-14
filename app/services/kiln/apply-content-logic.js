@@ -14,6 +14,9 @@ const addStationNoteToCustomUrl = require('./add-station-note-to-custom-url'),
   // these components require specific permissions to publish.  The other
   //   content components restrict publishing based off station access.
   componentsToCheckPublishPermission = new Set([
+    'static-page'
+  ]),
+  componentsToCheckUnublishPermission = new Set([
     'homepage',
     'section-front',
     'static-page'
@@ -22,7 +25,10 @@ const addStationNoteToCustomUrl = require('./add-station-note-to-custom-url'),
 module.exports = schema => {
   addStationNoteToCustomUrl(new KilnInput(schema));
   enforcePublishRights(schema, {
-    checkStationAccess: !componentsToCheckPublishPermission.has(schema.schemaName)
+    checkStationAccessFor: {
+      publish: !componentsToCheckPublishPermission.has(schema.schemaName),
+      unpublish: !componentsToCheckUnublishPermission.has(schema.schemaName)
+    }
   });
   handleEditModePlaceholders(new KilnInput(schema));
 };
