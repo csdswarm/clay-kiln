@@ -345,6 +345,7 @@ Object.assign(module.exports, {
    * @returns {String}
    */
   urlToElasticSearch: url => url.replace('https', 'http'),
+  cleanUrl,
   debugLog,
   ensurePublishedVersion,
   ensureStartsWith,
