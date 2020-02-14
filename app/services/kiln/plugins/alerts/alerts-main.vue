@@ -143,6 +143,7 @@
     const { isUrl } = require('../../../universal/utils');
     const stationSelect = require('../../shared-vue-components/station-select');
     const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
+    const { anyStation } = require('../../../universal/user-permissions');
     const { getAlerts } = require('../../../client/alerts');
     const {
         UiButton,
@@ -154,8 +155,7 @@
         UiTabs,
         UiTab,
         UiTextbox,
-        UiModal,
-        UiSelect } = window.kiln.utils.components;
+        UiModal } = window.kiln.utils.components;
 
     /**
      * Simple cache-buster value to append to rest URL's to ensure they get the latest version of data
@@ -182,18 +182,12 @@
                 errorMessage: '',
                 selectedAlert: {},
                 tab: 'global',
-                tabs: [{
-                    id: 'global',
-                    name: 'Global'
-                }, {
-                    id: 'station',
-                    name: 'Station'
-                }],
                 validLinkError: ''
             }
         },
-        /** Load current alerts when component is created */
-        created() {
+        /** Load current alerts, load callsigns, and set default tab when component is created */
+        async created() {
+            this.tab = this.tabs[0].id;
             this.loadAlerts();
         },
         watch: {
@@ -221,15 +215,21 @@
                 station() {
                     return this.global ? 'GLOBAL' : this.selectedStation.callsign;
                 },
-                stationCallsigns() {
-                    const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
+                tabs() {
+                    const { user, stationsIHaveAccessTo } = kiln.locals,
+                        tabs = [],
+                        hasGlobalAlertPermissions = user.can('create').a('alerts_global').for(anyStation).value ||
+                            user.can('update').a('alerts_global').for(anyStation).value;
 
-                    return allStationCallsigns.concat('NATL-RC')
-                        .sort()
-                        .map(station => ({
-                            label: station === 'NATL-RC' ? 'Radio.com' : station,
-                            value: station
-                        }));
+                    if (hasGlobalAlertPermissions) {
+                        tabs.push({ id: 'global', name: 'Global' });
+                    }
+
+                    if (Object.keys(stationsIHaveAccessTo).length) {
+                        tabs.push({ id: 'station', name: 'Station' });
+                    }
+
+                    return tabs;
                 },
                 /** True if all required fields are entered */
                 validForm() {
@@ -390,7 +390,6 @@
             UiTab,
             UiTextbox,
             UiModal,
-            UiSelect,
             'station-select': StationSelectInput
         }
     }

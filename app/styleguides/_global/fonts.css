@@ -663,6 +663,7 @@ em, i {
   @mixin font ProximaNova-Bold, 14px, $black, 0, 16px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||| Author Page Header Fonts Styleguide  ||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin author-page-header-font1 {

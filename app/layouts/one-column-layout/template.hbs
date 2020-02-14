@@ -40,7 +40,7 @@
         {{#if @root.locals.showNoEditPermissionsBanner}}
           <h1 class="layout__no-permissions-message">Sorry, but you do not have permissions to edit {{ @root.locals.updateTarget }}.</h1>
         {{/if}}
-        <section class="layout__top" data-editable="top">{{> component-list top }}</section>
+        <section class="layout__top">{{> component-list top }}</section>
         <section class="layout__topSection" data-editable="topSection">{{> component-list topSection }}</section>
         <section class="layout__topAd" data-editable="topAd">{{> component-list topAd }}</section>
         <header>
@@ -55,7 +55,7 @@
         <footer>
            <div class="layout__bottomAd" data-editable="bottomAd">{{> component-list bottomAd }}</div>
            <div class="layout__bottomSection" data-editable="bottomSection">{{> component-list bottomSection }}</div>
-           <div class="layout__bottom" data-editable="bottom">{{> component-list bottom }}</div>
+           <div class="layout__bottom">{{> component-list bottom }}</div>
         </footer>
       </section>
     </div>

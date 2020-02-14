@@ -84,6 +84,16 @@ function uriToUrl(uri, locals) {
 }
 
 /**
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
+}
+
+/**
  * Remove extension from route / path.
  *
  * Note: copied from amphora@v7.3.2 lib/responses.js
@@ -106,17 +116,8 @@ function removeExtension(path) {
   if (leadingDot > -1) {
     path = path.substr(0, leadingDot);
   }
-  return path;
-}
 
-/**
- * Replace https with http and removes query string
- *
- * @param {string} url
- * @returns {string}
- */
-function cleanUrl(url) {
-  return url.split('?')[0].replace('https://', 'http://');
+  return path;
 }
 
 /**
@@ -344,27 +345,27 @@ Object.assign(module.exports, {
    * @returns {String}
    */
   urlToElasticSearch: url => url.replace('https', 'http'),
-  isFieldEmpty,
-  has,
-  replaceVersion,
-  isUrl,
-  uriToUrl,
-  urlToUri,
   cleanUrl,
-  formatStart,
-  toTitleCase,
-  getSiteBaseUrl,
-  isPublishedVersion,
-  ensurePublishedVersion,
-  isInstance,
-  urlToCanonicalUrl,
-  textToEncodedSlug,
   debugLog,
+  ensurePublishedVersion,
   ensureStartsWith,
-  prettyJSON,
+  formatStart,
   getFullOriginalUrl,
-  urlToElasticSearch,
+  getSiteBaseUrl,
+  has,
   isContentComponent,
-  yesNo,
-  removeFirstLine
+  isFieldEmpty,
+  isInstance,
+  isPublishedVersion,
+  isUrl,
+  removeFirstLine,
+  prettyJSON,
+  replaceVersion,
+  textToEncodedSlug,
+  toTitleCase,
+  uriToUrl,
+  urlToCanonicalUrl,
+  urlToElasticSearch,
+  urlToUri,
+  yesNo
 });

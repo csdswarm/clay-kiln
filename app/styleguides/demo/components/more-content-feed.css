@@ -25,7 +25,7 @@
     color: theme(primaryColor, $parisM);
     margin-bottom: em(30);
     &:before {
-      border-top: em(1, 20) solid $parisM;
+      border-top: em(1, 20) solid theme(primaryColor, $parisM);
       content: "";
       margin: 0 auto;
       position: absolute;

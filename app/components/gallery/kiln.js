@@ -1,7 +1,7 @@
 'use strict';
 
-const addStationNoteToCustomUrl = require('../../services/kiln/add-station-note-to-custom-url'),
-  { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
+const { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
+  addStationNoteToCustomUrl = require('../../services/kiln/add-station-note-to-custom-url'),
   handleEditModePlaceholders = require('../../services/kiln/handle-edit-mode-placeholders'),
   KilnInput = window.kiln.kilnInput;
 

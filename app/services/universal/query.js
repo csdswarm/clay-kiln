@@ -488,22 +488,26 @@ function sanitizeSearchTerm(searchTerm) {
 }
 
 module.exports = newQuery;
-module.exports.addAggregation = addAggregation;
-module.exports.addShould = addShould;
-module.exports.addFilter = addFilter;
-module.exports.addMust = addMust;
-module.exports.addMustNot = addMustNot;
-module.exports.addMinimumShould = addMinimumShould;
-module.exports.addSort = addSort;
-module.exports.addSize = addSize;
-module.exports.addOffset = addOffset;
-module.exports.onlyWithTheseFields = onlyWithTheseFields;
-module.exports.onlyWithinThisSite = onlyWithinThisSite;
-module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
-module.exports.formatAggregationResults = formatAggregationResults;
-module.exports.getFormatSearchResult = getFormatSearchResult;
-module.exports.formatProtocol = formatProtocol;
-module.exports.moreLikeThis = moreLikeThis;
-module.exports.newNestedQuery = newNestedQuery;
-module.exports.searchByQuery = searchByQuery;
-module.exports.addSearch = addSearch;
+
+Object.assign(module.exports, {
+  addAggregation,
+  addShould,
+  addFilter,
+  addMust,
+  addMustNot,
+  addMinimumShould,
+  addSort,
+  addSize,
+  addOffset,
+  onlyWithTheseFields,
+  onlyWithinThisSite,
+  withinThisSiteAndCrossposts,
+  formatAggregationResults,
+  getFormatSearchResult,
+  formatProtocol,
+  moreLikeThis,
+  newNestedQuery,
+  searchByQuery,
+  addSearch,
+  sanitizeSearchTerm
+});

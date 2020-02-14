@@ -12,11 +12,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.4.4",
+    "autoprefixer": "^9.7.3",
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2",
     "clay-kiln": "^6.3.3",
     "clayhandlebars": "4.0.0",
-    "handlebars": "^4.0.12",
+    "handlebars": "4.0.12",
     "html-truncate": "^1.2.2",
     "isomorphic-fetch": "^2.2.1",
     "jquery": "^3.3.1",
