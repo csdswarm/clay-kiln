@@ -34,7 +34,14 @@ const parseDate = require('date-fns/parse'),
  * @return {Array}
  */
 module.exports = async (data, locals) => {
-  const { canonicalUrl, content, headline, lead, seoDescription } = data,
+  const {
+      canonicalUrl,
+      content,
+      feedImgUrl,
+      headline,
+      lead,
+      seoDescription
+    } = data,
     link = `${canonicalUrl}`,
     [leadHtml, contentHtml] = await Promise.all([
       renderContentAsync(lead, locals, 'smart-news', componentsToSkip),
@@ -53,6 +60,9 @@ module.exports = async (data, locals) => {
           _cdata: leadHtml + contentHtml
         }
       },
+      { 'media:thumbnail': { _attr: {
+        url: feedImgUrl
+      } } },
       { 'snf:analytics': { _cdata: comscoreScript } },
       { 'snf:analytics': { _cdata: gaScript } }
     ];

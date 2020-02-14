@@ -496,7 +496,7 @@ function render(ref, data, locals) {
   }
 
   return promises.props({
-    past: circulationService.getRollingStandoutArticles(locals),
+    past: circulationService.getRollingStandoutArticles(locals, { shouldDedupeContent: true }),
     publishedData: getPublishedData(ref, data, locals)
   }).then(function (resolved) {
     circulationService.setGoogleStandoutHelpers(data, resolved.publishedData, resolved.past.length);
