@@ -48,7 +48,6 @@ describe('urps tests', () => {
         result = await urps.getAllPermissions(fakeToken);
 
       expect(result).to.eql({
-        station: { access: { station: { 'NATL-RC': 1, KROQFM: 1 } } },
         admin: { any: { environment: { 'dev-clay.radio.com': 1 } } },
         'author-page': { any: { station: { 'NATL-RC': 1 } } },
         tags: {
@@ -154,7 +153,6 @@ describe('urps tests', () => {
       await urps.loadPermissions(req.session, locals);
 
       expect(locals.permissions).to.eql({
-        station: { access: { station: { 'NATL-RC': 1 } } },
         'author-page': { any: { station: { 'NATL-RC': 1 } } }
       });
     });
@@ -173,7 +171,6 @@ describe('urps tests', () => {
       await urps.loadPermissions(req.session, locals);
 
       expect(locals.permissions).to.eql({
-        station: { access: { station: {  KROQFM: 1 } } },
         tags: { create: { station: { KROQFM: 1 } } }
       });
 
@@ -209,7 +206,6 @@ describe('urps tests', () => {
       await urps.loadPermissions(req.session, locals);
 
       expect(locals.permissions).to.eql({
-        station: { access: { station: { 'NATL-RC': 1 } } },
         tags: {
           create: { station: { 'NATL-RC': 1 } },
           update: { station: { 'NATL-RC': 1 } }
