@@ -3,7 +3,7 @@ _description: |
   Receives an image and renders it in the head
 
 _permission:
-  update: section-front_meta-tags
+  update: meta-tags
 
 imageUrl:
   _label: Image Url
