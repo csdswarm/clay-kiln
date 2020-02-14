@@ -16,7 +16,6 @@ const AWS = require('aws-sdk'),
   uuidv4 = require('uuid/v4'),
   additionalDataTypes = require('../services/server/add-data-types'),
   alerts = require('../services/server/alerts'),
-  importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   addEndpoints = require('./add-endpoints'),
@@ -143,11 +142,7 @@ module.exports = router => {
     });
   });
 
-  /**
-   * Use import-content here to grab amphora user
-   */
-  router.post('/import-content', importContent);
-
+  addEndpoints.importContent(router);
   addEndpoints.sitemap(router);
 
   /**

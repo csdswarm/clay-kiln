@@ -1,7 +1,8 @@
 <!-- Content Import Content -->
 <template>
     <div class="content-import">
-        <station-select class="content-import__station-select" />
+        <station-select class="content-import__station-select"
+          :stations="stations" />
         <div class="content-import__input">
             <ui-textbox
                     floating-label
@@ -43,7 +44,8 @@
         contentUrl: '',
         error: '',
         errorUrl: '',
-        loading: false
+        loading: false,
+        stations: window.kiln.locals.stationsICanImportContent
       }
     },
     computed: mapGetters(stationSelect.storeNs, ['selectedStation']),
