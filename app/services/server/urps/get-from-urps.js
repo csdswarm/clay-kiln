@@ -6,7 +6,9 @@ const _truncate = require('lodash/truncate'),
   // urps does not have their auth layer working locally which means we need to
   //   send the cognito_id inside the request body instead of passing the jwt
   //   inside the Authorization header
-  urpsHasAuthLayer = process.env.NODE_ENV !== 'local';
+  urpsHasAuthLayer = process.env.URPS_AUTHORIZATIONS_URL
+    ? !process.env.URPS_AUTHORIZATIONS_URL.includes('host.docker.internal')
+    : true;
 
 /**
  * makes a POST request to urps for the desired info
