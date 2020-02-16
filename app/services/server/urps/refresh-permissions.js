@@ -14,7 +14,7 @@ const _reduce = require('lodash/reduce'),
  * @param {Date} currentTime
  * @returns {function}
  */
-function makeHasExpired(currentTime) {
+function makeIsExpired(currentTime) {
   return lastUpdated => {
     return lastUpdated + PERM_CHECK_INTERVAL < currentTime;
   };
@@ -22,10 +22,10 @@ function makeHasExpired(currentTime) {
 
 async function refreshPermissionsByDomain(auth) {
   const currentTime = Date.now(),
-    hasExpired = makeHasExpired(currentTime),
+    isExpired = makeIsExpired(currentTime),
     stationDomainNames = Object.keys(_omitBy(
       auth.lastUpdatedByStationDomainName,
-      hasExpired
+      isExpired
     ));
 
   await loadPermissions(auth, stationDomainNames);
@@ -46,7 +46,7 @@ function toCallFnByUrlPath(res, callFn) {
 async function refreshCachedCalls(auth) {
   const callFnByUrlPath = _reduce(cachedCalls, toCallFnByUrlPath, {}),
     currentTime = Date.now(),
-    isExpired = makeHasExpired(currentTime),
+    isExpired = makeIsExpired(currentTime),
     urlPathsToRefresh = Object.keys(_omitBy(
       auth.lastUpdatedByUrlPath,
       isExpired
