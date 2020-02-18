@@ -102,7 +102,7 @@
     @mixin events-lede-font1;
   }
   .events-lede__info-container {
-    span {
+    span:not(.placeholder-icon):not(.placeholder-text):not(.ui-icon) {
       @mixin events-lede-font3;
       margin-bottom: em(5, 18);
       display: inline-flex;
