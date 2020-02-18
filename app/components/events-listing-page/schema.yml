@@ -1,15 +1,5 @@
 _description: Events listing page
 
-lede:
-  _publish: lede
-
-ledeUrl:
-  _label: Events Lede URL
-  _has:
-    input: content-search
-    validate:
-      required: true
-
 pageDescription:
   _publish: pageDescription
   _has:
@@ -17,6 +7,11 @@ pageDescription:
     help: Plaintext description for search engines
     validate:
       required: true
+
+eventsLede:
+  _component:
+    include:
+      - events-lede
 
 # Component
 eventsList:
@@ -27,10 +22,5 @@ eventsList:
 # Groups
 _groups:
   settings:
-    _placeholder:
-      text: Events Listing Page Settings
-      height: 60px
-      ifEmpty: ledeUrl OR pageDescription
     fields:
-      - ledeUrl
       - pageDescription

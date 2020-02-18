@@ -1,6 +1,7 @@
 _components:
   events-lede:
     contentLabel: 'Featured Event'
+    ledeUrl: ''
     lede: {}
     description:
       _ref: /_components/paragraph/instances/new
@@ -9,6 +10,7 @@ _components:
     instances:
       new:
         contentLabel: 'Featured Event'
+        ledeUrl: ''
         lede: {}
         description:
           _ref: /_components/paragraph/instances/new

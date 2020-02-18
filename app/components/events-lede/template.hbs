@@ -1,5 +1,9 @@
-<section data-uri="{{ default _ref _self }}" class="component component--events-lede{{ if @root.locals.edit ' editing' }}">
-  <div class="events-lede__featured">
+<section data-uri="{{ default _ref _self }}"
+  class="component component--events-lede{{ if @root.locals.edit ' editing' }}"
+>
+  <div class="events-lede__featured"
+    data-editable="settings"
+  >
     {{#if lede.url }}
       <div class="events-lede__image-container">
         <a href="{{ lede.url }}">
@@ -32,9 +36,7 @@
             {{{ lede.venueName }}}
           </a>
         </span>
-        <div data-editable="description">
-          {{> paragraph description }}
-        </div>
+        {{> paragraph description }}
       </div>
     {{/if}}
   </div>

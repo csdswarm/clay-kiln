@@ -1,17 +1,16 @@
 _components:
   events-listing-page:
-    lede: ''
-    ledeUrl: ''
     pageDescription: ''
     pageLength: ''
+    eventsLede:
+      _ref: /_components/events-lede/instances/new
     eventsList:
       _ref: /_components/events-list/instances/new
     instances:
       new:
-        lede: ''
-        ledeUrl: ''
         pageDescription: ''
         pageLength: ''
+        eventsLede:
+          _ref: /_components/events-lede/instances/new
         eventsList:
           _ref: /_components/events-list/instances/new
-

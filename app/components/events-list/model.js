@@ -3,7 +3,6 @@
 const
   { unityComponent } = require('../../services/universal/amphora'),
   moment = require('moment'),
-  // { assignStationInfo } = require('../../services/universal/create-content.js'),
   queryService = require('../../services/server/query'),
   elasticIndex = 'published-content',
   elasticFields = [
@@ -49,7 +48,6 @@ async function getEventDataFromElastic(event, locals) {
     queryService.addMust(query, { match: { station: locals.station } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
-  console.log('[query]', query);
   return queryService.searchByQuery(query)
     .then(function (result) {
       return {
@@ -140,10 +138,9 @@ async function getRecentEventsFromElastic(uri, data, locals) {
 
 module.exports = unityComponent({
   save: async (uri, data, locals) => {
-    // if (!locals || !locals.defaultStation) {
-    //   return data;
-    // }
-    // assignStationInfo(uri, data, locals);
+    if (!locals || !locals.defaultStation) {
+      return data;
+    }
 
     const
       curatedEvents = await Promise.all(data.curatedEvents.map(async (event) => {
