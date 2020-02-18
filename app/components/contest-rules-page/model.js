@@ -20,7 +20,7 @@ module.exports = unityComponent({
     const callsign = _get(locals, 'stationForPermissions.callsign', '');
     const siteSlug = _get(locals, 'params.stationSlug', '');
     const { pathname } = url.parse(locals.url);
-    const isPresentationMode = pathname === '/contests';
+    const isPresentationMode = pathname.includes('/contests');
     const startTime = moment().toISOString(true);
     const contestLinkPrefix = siteSlug ? `/${siteSlug}` : '';
     const contestRules = (await getContestRules({

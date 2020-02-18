@@ -28,7 +28,7 @@
   {{#if showHeader}}
     <div class="contest-rules--default-view">
       <h2 class="contest-rules__contest-headline">
-        {{> contestLink slug=slug text=headline }}
+        {{> contestLink text=headline }}
       </h2>
       <div class="contest-rules__date-range">
         <p class="paragraph">
@@ -51,10 +51,11 @@
     </div>
     <div class="contest-rules__description-container">
       <h2 class="contest-rules__contest-headline">
-        {{> contestLink slug=slug text=headline }}
+        {{> contestLink text=headline }}
       </h2>
-      <p class="paragraph">{{ paragraphForMarketing }}</p>
-      {{> contestLink slug=slug text="read more" }}
+      {{!-- paragraph for marketing --}}
+      <p class="paragraph">{{ seoHeadline }}</p>
+      {{> contestLink text="read more" }}
     </div>
   </div>
 {{/inline}}
