@@ -1,0 +1,23 @@
+<section role="main" data-track-type="section" data-uri="{{ default _ref _self }}" class="component component--station-front{{ if @root.locals.edit ' editing' }}">
+  {{#if @root.locals.edit }}
+    <div class="station-front__settings" data-editable="settings">
+      <h1>Station Front Settings:</h1>
+      <span>Is this a primary section front? : {{if primary 'Yes' else='No'}}</span>
+      {{#unless primary}}
+        <span>Primary section front <span class="warn">*required</span> : {{ primarySectionFront }}</span>
+      {{/unless}}
+      <span>Title {{#unless primary}} (Secondary Section Front){{/unless}} <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
+      {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
+      <span>Include podcast module? : {{ default includePodcastModule 'False' }}</span>
+    </div>
+  {{/if}}
+  {{> section-lead sectionLead }}
+  <div class="stations-carousel-container" data-editable="stationsCarousel">
+    {{> component-list stationsCarousel }}
+  </div>
+  {{> google-ad-manager googleAdUnderStationsModule}}
+  {{#if includePodcastModule }}
+    {{> podcast-list podcastList }}
+  {{/if}}
+  {{> two-column-component twoColumnComponent }}
+</section>
