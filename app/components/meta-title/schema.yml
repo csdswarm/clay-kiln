@@ -4,7 +4,7 @@ _description: |
   Adds `<title>`, `twitter:title`, and `og:title` tags to the head.
 
 _permission:
-  update: section-front_meta-tags
+  update: meta-tags
 
 title:
   _label: Title
