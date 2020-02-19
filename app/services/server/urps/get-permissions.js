@@ -3,6 +3,7 @@
 const formatPossibleAxiosError = require('../../universal/format-possible-axios-error'),
   getFromUrps = require('./get-from-urps'),
   log = require('../../universal/log').setup({ file: __filename }),
+  { createUnityPermissions } = require('./utils'),
   { unityAppDomainName } = require('../../universal/urps');
 
 /**
