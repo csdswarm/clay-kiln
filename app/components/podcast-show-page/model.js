@@ -2,8 +2,8 @@
 
 const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
-  _get = require('lodash/get');
-  // { autoLink } = require('../breadcrumbs');
+  _get = require('lodash/get'),
+  { autoLink } = require('../breadcrumbs');
 
 /**
  * fetch podcast show data
@@ -24,13 +24,10 @@ module.exports = unityComponent({
       return data;
     }
 
-    // Stored in data for breadcrumbs component
     data.stationSlug = _get(locals, 'params.stationSlug');
+    locals.podcast = await getPodcastShow(locals);
+    autoLink(data, ['stationSlug', '{podcasts}', `{${ locals.params.dynamicSlug }}`], locals.site.host);
 
-    data.podcast = locals.podcast = await getPodcastShow(locals);
-
-    // @TODO breadcrumbs to be done in ON-446
-    // autoLink(data, ['stationSlug', '{podcasts}', 'podcast.slug'], locals.site.host);
     return data;
   }
 });
