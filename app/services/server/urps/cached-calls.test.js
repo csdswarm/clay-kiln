@@ -16,7 +16,7 @@ describe('cachedCalls', () => {
     getFromUrps.resetHistory();
   });
 
-  it('getFromUrps is called with the correct arguments', async () => {
+  it('invokes getFromUrps with the correct arguments', async () => {
     for (const aCachedCall of Object.values(cachedCalls)) {
       const { urlPath, urpsReqBody } = aCachedCall.metaData,
         mockToken = '';
@@ -34,7 +34,7 @@ describe('cachedCalls', () => {
     }
   });
 
-  it('getFromUrps is called when lastUpdated has expired', async () => {
+  it('invokes getFromUrps when lastUpdated has expired', async () => {
     for (const aCachedCall of Object.values(cachedCalls)) {
       const { cachedPropName, urlPath } = aCachedCall.metaData,
         auth = {
@@ -52,7 +52,7 @@ describe('cachedCalls', () => {
     }
   });
 
-  it('getFromUrps is not called when lastUpdated is fresh', async () => {
+  it('does not invoke getFromUrps when lastUpdated is fresh', async () => {
     for (const aCachedCall of Object.values(cachedCalls)) {
       const { cachedPropName, urlPath } = aCachedCall.metaData,
         auth = {
@@ -70,7 +70,7 @@ describe('cachedCalls', () => {
     }
   });
 
-  it('getFromUrps is called when isRefresh is true', async () => {
+  it('invokes getFromUrps when isRefresh is true', async () => {
     for (const aCachedCall of Object.values(cachedCalls)) {
       const { cachedPropName, urlPath } = aCachedCall.metaData,
         auth = {

@@ -8,6 +8,8 @@ const _truncate = require('lodash/truncate'),
   //   inside the Authorization header
   urpsHasAuthLayer = process.env.URPS_AUTHORIZATIONS_URL
     ? !process.env.URPS_AUTHORIZATIONS_URL.includes('host.docker.internal')
+    // default case intended for unit tests which shouldn't rely on
+    //   environment variables
     : true;
 
 /**
