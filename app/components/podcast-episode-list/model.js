@@ -7,10 +7,24 @@ const
   addSeconds = require('date-fns/add_seconds'),
   parse = require('date-fns/parse');
 
+/**
+ * returns a boolean for if the media is from omny
+ *
+ * @param {string} url - the url for the media
+ *
+ * @returns {boolean}
+ */
 function isImageOmny(url) {
   return url.includes('omnycontent');
 }
 
+/**
+ * returns a format string to be used with date fns
+ *
+ * @param {string} durationInSeconds - the duration in second from the api
+ *
+ * @returns {string}
+ */
 function getDurationFormat(durationInSeconds) {
   if (durationInSeconds < 60) {
     return 's [s]ec';
@@ -56,6 +70,8 @@ module.exports = unityComponent({
           );
           return podcastData;
         });
+        // enable the load more button if it is > 0 and can be evenly divided by 20 as a remainder would signify the end
+        data._computed.loadMoreEnabled = data._computed.episodes.length > 0 && data._computed.episodes.length % 20 === 0;
         return data;
       })
       .catch( () => data);
