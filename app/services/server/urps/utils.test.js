@@ -1,10 +1,11 @@
 'use strict';
 
-const { expect } = require('chai'),
-  { createUnityPermissions } = require('./utils'),
-  { unityAppDomainName } = require('../../universal/urps'),
+const { createUnityPermissions } = require('./utils'),
   { DEFAULT_STATION } = require('../../universal/constants'),
-  rdcDomainName = DEFAULT_STATION.unityDomainName;
+  { expect } = require('chai'),
+  { unityAppDomainName } = require('../../universal/urps');
+
+const rdcDomainName = DEFAULT_STATION.unityDomainName;
 
 describe('server/urps/utils', () => {
   it('createUnityPermissions returns the correct unity permissions', async () => {

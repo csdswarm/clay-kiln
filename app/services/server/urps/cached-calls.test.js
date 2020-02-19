@@ -1,8 +1,8 @@
 'use strict';
 
 const proxyquire = require('proxyquire').noCallThru(),
-  { expect } = require('chai'),
   sinon = require('sinon'),
+  { expect } = require('chai'),
   { PERM_CHECK_INTERVAL } = require('./utils');
 
 describe('cachedCalls', () => {

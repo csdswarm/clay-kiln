@@ -6,8 +6,8 @@
 // we use this to cause the re-processing of the environment variable
 //   in get-from-urps
 const proxyquire = require('proxyquire').noPreserveCache(),
-  { expect } = require('chai'),
-  sinon = require('sinon');
+  sinon = require('sinon'),
+  { expect } = require('chai');
 
 describe('getFromUrps', () => {
   const axiosPost = sinon.spy(() => Promise.resolve({ data: {} })),

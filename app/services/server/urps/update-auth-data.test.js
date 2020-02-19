@@ -1,8 +1,8 @@
 'use strict';
 
 const proxyquire = require('proxyquire').noCallThru(),
-  { expect } = require('chai'),
-  sinon = require('sinon');
+  sinon = require('sinon'),
+  { expect } = require('chai');
 
 describe('getFromUrps', () => {
   const getMockData = ({ auth }) => ({

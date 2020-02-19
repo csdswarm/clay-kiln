@@ -1,11 +1,12 @@
 'use strict';
 
 const proxyquire = require('proxyquire').noCallThru(),
-  { expect } = require('chai'),
   sinon = require('sinon'),
-  { unityAppDomainName } = require('../../universal/urps'),
   { DEFAULT_STATION } = require('../../universal/constants'),
-  rdcDomainName = DEFAULT_STATION.urpsDomainName;
+  { expect } = require('chai'),
+  { unityAppDomainName } = require('../../universal/urps');
+
+const rdcDomainName = DEFAULT_STATION.urpsDomainName;
 
 describe('getPermissions', () => {
   const mockUrpsPermissions = [{ some: 'permission' }],

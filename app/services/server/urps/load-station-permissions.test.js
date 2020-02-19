@@ -1,11 +1,12 @@
 'use strict';
 
 const proxyquire = require('proxyquire'),
-  { expect } = require('chai'),
   sinon = require('sinon'),
   { DEFAULT_STATION } = require('../../universal/constants'),
-  { PERM_CHECK_INTERVAL } = require('./utils'),
-  rdcDomainName = DEFAULT_STATION.urpsDomainName;
+  { expect } = require('chai'),
+  { PERM_CHECK_INTERVAL } = require('./utils');
+
+const rdcDomainName = DEFAULT_STATION.urpsDomainName;
 
 describe('loadStationPermissions', () => {
   const loadPermissions = sinon.spy(),

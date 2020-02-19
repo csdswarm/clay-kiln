@@ -1,10 +1,11 @@
 'use strict';
 
 const proxyquire = require('proxyquire'),
-  { expect } = require('chai'),
   sinon = require('sinon'),
   { DEFAULT_STATION } = require('../../universal/constants'),
-  rdcDomainName = DEFAULT_STATION.urpsDomainName,
+  { expect } = require('chai');
+
+const rdcDomainName = DEFAULT_STATION.urpsDomainName,
   delta = 100;
 
 describe('loadPermissions', () => {
