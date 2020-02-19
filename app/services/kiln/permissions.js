@@ -130,20 +130,21 @@ const addPermissions = require('../universal/user-permissions'),
    *   for content types which allow all roles to publish such as article
    *   and gallery.
    **/
-  enforcePublishRights = (schema, { checkStationAccess }) => {
+  enforcePublishRights = (schema, { checkStationAccessFor }) => {
     const { schemaName } = schema,
       kilnInput = new KilnInput(schema),
       whenPreloadedPromise = whenPreloaded(kilnInput);
 
     whenRightDrawerExists(kilnInput, async rightDrawerEl => {
       const { locals } = await whenPreloadedPromise,
-        hasAccess = locals.user.can('access').this('station').value,
+        { site_slug } = locals.stationForPermissions,
+        hasAccess = !!locals.stationsIHaveAccessTo[site_slug],
         // if a user doesn't have station access then the subsequent un/publish
         //   checks will fail
-        canPublish = checkStationAccess
+        canPublish = checkStationAccessFor.publish
           ? hasAccess
           : locals.user.can('publish').a(schemaName).value,
-        canUnpublish = checkStationAccess
+        canUnpublish = checkStationAccessFor.unpublish
           ? hasAccess
           : locals.user.can('unpublish').a(schemaName).value;
 
