@@ -37,11 +37,12 @@
   import queryService from '../../../client/query';
   import { isUrl } from '../../../../services/universal/utils';
   import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
+  import { DEFAULT_STATION } from '../../../../services/universal/constants';
 
   const { UiButton, UiTextbox }  = window.kiln.utils.components;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
   const { sanitizeSearchTerm } = queryService;
-  const nationalStationSlug = '';
+  const nationalStationSlug = DEFAULT_STATION.site_slug;
   // this query says
   //   "match if stationSlug doesn't exist or it's an empty slug"
   //   currently I think national stations shouldn't have a stationSlug, but
@@ -61,7 +62,6 @@
    *   meant to match any station we have access to.
    *
    * I'm pretty sure this needs to be a function because window.kiln.locals is
-   *
    *
    * @returns {object}
    */

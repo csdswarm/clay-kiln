@@ -6,6 +6,8 @@ const stationUtils = require('../services/server/station-utils'),
   { URL } = require('url'),
   { isPageMeta } = require('clayutils'),
   _get = require('lodash/get'),
+  { DEFAULT_STATION } = require('../services/universal/constants'),
+  rdcSlug = DEFAULT_STATION.site_slug,
   /**
    * Ensures the custom url has a pathname which starts with the correct
    *   station slug
@@ -55,10 +57,9 @@ module.exports = router => {
         }),
         getComponentData(req.body.main[0])
       ]),
-      // empty strings indicate the national site at this point
       stationSlugFrom = {
-        customUrl: _get(station, 'site_slug', ''),
-        component: _get(componentData, 'stationSlug', '')
+        customUrl: _get(station, 'site_slug', rdcSlug),
+        component: _get(componentData, 'stationSlug', rdcSlug)
       },
       // if the station slug from the component is falsey, then the content
       //   belongs to the national station
