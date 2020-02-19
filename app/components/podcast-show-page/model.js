@@ -26,8 +26,7 @@ module.exports = unityComponent({
 
     // Stored in data for breadcrumbs component
     data.stationSlug = _get(locals, 'params.stationSlug');
-
-    data.podcast = locals.podcast = await getPodcastShow(locals);
+    locals.podcast = await getPodcastShow(locals);
 
     // @TODO breadcrumbs to be done in ON-446
     // autoLink(data, ['stationSlug', '{podcasts}', 'podcast.slug'], locals.site.host);

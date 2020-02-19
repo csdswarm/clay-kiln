@@ -1,2 +1,6 @@
 _components:
-  podcast-episode-list: { _computed: {} }
+  podcast-episode-list:
+    allowed: true
+    instances:
+      default:
+        allowed: true

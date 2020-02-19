@@ -1,8 +1,10 @@
 _components:
   podcast-show-page:
     stationSlug: ''
-    podcast: {}
+    episodeList: 
+      _ref: /_components/podcast-episode-list/instances/default
     instances:
       default:
         stationSlug: ''
-        podcast: {}
+        episodeList: 
+          _ref: /_components/podcast-episode-list/instances/default
