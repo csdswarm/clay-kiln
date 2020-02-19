@@ -59,6 +59,7 @@ module.exports = unityComponent({
             durationInSeconds = parseFloat(podcastAttributes.duration_seconds);
 
           // NOTE: using snake case to stay consistent with api schema
+          // NOTE: somewhat future proofing if media should come from other source as the omny url contains params
           podcastAttributes.is_image_url_omny = isImageOmny(podcastAttributes.image_url);
           podcastAttributes.published_date_formatted = format(
             parse(podcastAttributes.published_date),
