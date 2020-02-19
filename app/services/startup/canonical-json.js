@@ -114,7 +114,6 @@ async function middleware(req, res, next) {
         // Curated page found. Serve content collection.
         // Extract param keyword and set it to correct params key appropriately.
         params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
-        console.log('route param', params[routeParamKey]);
         return db.get(`${pageKey}@published`);
       })
       .catch(error => {
