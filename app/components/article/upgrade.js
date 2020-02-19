@@ -1,7 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { setNoIndexNoFollow } = require('../../services/universal/create-content');
 
@@ -176,4 +176,10 @@ module.exports['9.0'] = function (uri, data) {
   newData.secondarySectionFront = data.secondarySectionFront === 'Small Business Pulse' ? data.secondarySectionFront.toLowerCase() : data.secondarySectionFront;
 
   return newData;
+};
+
+module.exports['10.0'] = (uri, data) => {
+  data.feeds.smartNews = true;
+
+  return data;
 };

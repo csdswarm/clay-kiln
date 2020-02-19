@@ -82,6 +82,16 @@ function uriToUrl(uri, locals) {
 }
 
 /**
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
+}
+
+/**
  * generate a uri from a url
  * @param  {string} url
  * @return {string}
@@ -216,6 +226,23 @@ function yesNo(val) {
   }
 }
 
+/**
+ * removes the first line in a string
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function removeFirstLine(str) {
+  if (typeof str !== 'string') {
+    throw new Error(
+      'you must provide a string'
+      + '\n  typeof str: ' + typeof str
+    );
+  }
+
+  return str.split('\n').slice(1).join('\n');
+}
+
 Object.assign(module.exports, {
   /**
    * Url queries to elastic search need to be `http` since that is
@@ -230,6 +257,7 @@ Object.assign(module.exports, {
   isUrl,
   uriToUrl,
   urlToUri,
+  cleanUrl,
   formatStart,
   toTitleCase,
   getSiteBaseUrl,
@@ -239,5 +267,6 @@ Object.assign(module.exports, {
   urlToCanonicalUrl,
   textToEncodedSlug,
   debugLog,
-  yesNo
+  yesNo,
+  removeFirstLine
 });

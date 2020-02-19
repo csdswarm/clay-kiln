@@ -1,4 +1,4 @@
-_version: 4.0
+_version: 5.0
 _description: |
   Latest videos module
 
@@ -12,9 +12,9 @@ items:
     props:
     -
       prop: url
-      _label: URL
+      _label: URL (page containing video in lede component)
       _has:
-        input: text
+        input: content-search
         type: url
         validate:
           required: true
