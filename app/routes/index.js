@@ -20,7 +20,6 @@ const AWS = require('aws-sdk'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   addEndpoints = require('./add-endpoints'),
   ensureStationOnCustomUrl = require('./ensure-station-on-custom-url'),
-  validScripts = require('../services/server/valid-source'),
   siteMapStations = require('./sitemap-stations'),
   siteMapGoogleNews = require('./sitemap-google-news'),
   stationTheming = require('../services/server/stationThemingApi');
@@ -160,5 +159,5 @@ module.exports = router => {
   alerts.inject(router, checkAuth);
   addEndpoints.createPage(router);
   ensureStationOnCustomUrl(router);
-  validScripts.inject(router, checkAuth);
+  addEndpoints.validSource(router);
 };
