@@ -1,8 +1,9 @@
 'use strict';
 
 const _set = require('lodash/set'),
-  { MINUTE } = require('../../universal/constants').time,
-  PERM_CHECK_INTERVAL = 5 * MINUTE;
+  { SECOND } = require('../../universal/constants').time;
+
+const PERM_CHECK_INTERVAL = 30 * SECOND;
 
 /**
  * assigns the value 'true' to the path `${action}.${target}`

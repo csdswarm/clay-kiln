@@ -1,7 +1,7 @@
 'use strict';
 
-const { refreshAuthToken } = require('../cognito'),
-  cache = require('../cache');
+const cache = require('../cache'),
+  { refreshAuthToken } = require('../cognito');
 
 /**
  * if session.auth doesn't have a token or has expired, make sure it's updated

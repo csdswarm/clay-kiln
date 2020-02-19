@@ -1,10 +1,9 @@
 'use strict';
 
-const log = require('../../universal/log').setup({ file: __filename }),
-  formatPossibleAxiosError = require('../../universal/format-possible-axios-error'),
-  { unityAppDomainName } = require('../../universal/urps'),
+const formatPossibleAxiosError = require('../../universal/format-possible-axios-error'),
   getFromUrps = require('./get-from-urps'),
-  { createUnityPermissions } = require('./utils');
+  log = require('../../universal/log').setup({ file: __filename }),
+  { unityAppDomainName } = require('../../universal/urps');
 
 /**
  * Gets all permissions for user with jwt from URPS and organizes them as a simple object for checking

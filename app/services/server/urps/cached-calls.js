@@ -1,8 +1,9 @@
 'use strict';
 
 const getFromUrps = require('./get-from-urps'),
-  { PERM_CHECK_INTERVAL } = require('./utils'),
-  getStationDomainNamesIHaveAccessTo = makeCachedUrpsCall({
+  { PERM_CHECK_INTERVAL } = require('./utils');
+
+const getStationDomainNamesIHaveAccessTo = makeCachedUrpsCall({
     urlPath: '/domains/by-type',
     cachedPropName: 'stationDomainNamesIHaveAccessTo',
     toResult: stations => stations.map(aStation => aStation.name),

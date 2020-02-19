@@ -3,10 +3,12 @@
 const _truncate = require('lodash/truncate'),
   axios = require('axios'),
   jwtDecode = require('jwt-decode'),
-  // urps does not have their auth layer working locally which means we need to
-  //   send the cognito_id inside the request body instead of passing the jwt
-  //   inside the Authorization header
-  urpsHasAuthLayer = process.env.NODE_ENV !== 'local';
+  { prettyJSON } = require('../../universal/utils');
+
+// urps does not have their auth layer working locally which means we need to
+//   send the cognito_id inside the request body instead of passing the jwt
+//   inside the Authorization header
+const urpsHasAuthLayer = process.env.NODE_ENV !== 'local';
 
 /**
  * makes a POST request to urps for the desired info
@@ -32,7 +34,7 @@ module.exports = async (path, reqBody, jwt) => {
       let errMsg = 'Error in urps request'
         + '\n-------------------'
         + `\nurl: ${url}`
-        + `\nreqBody: ${JSON.stringify(reqBody, null, 2)}`
+        + `\nreqBody: ${prettyJSON(reqBody)}`
         + `\njwt: ${jwt}`;
 
       if (response) {

@@ -1,8 +1,8 @@
 'use strict';
 
-const log = require('../../universal/log').setup({ file: __filename }),
+const loadPermissions = require('./load-permissions'),
+  log = require('../../universal/log').setup({ file: __filename }),
   { getStationDomainName } = require('../../universal/urps'),
-  loadPermissions = require('./load-permissions'),
   { PERM_CHECK_INTERVAL } = require('./utils');
 
 /**
