@@ -22,8 +22,12 @@
         display: flex;
         flex-grow: 1;
 
-        /* the height of .ui-button */
+        /*
+          the height of .ui-button
+          https://github.com/JosephusPaye/Keen-UI/blob/v1.0.2/src/styles/variables.scss#L91
+        */
         height: 2.25rem;
+
         margin: em(5) em(30);
 
         /*
