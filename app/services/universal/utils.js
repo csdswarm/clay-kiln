@@ -85,6 +85,16 @@ function uriToUrl(uri, locals) {
 }
 
 /**
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
+}
+
+/**
  * generate a uri from a url
  * @param  {string} url
  * @return {string}
@@ -206,6 +216,37 @@ function debugLog(...args) {
 }
 
 /**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+/**
+ * removes the first line in a string
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function removeFirstLine(str) {
+  if (typeof str !== 'string') {
+    throw new Error(
+      'you must provide a string'
+      + '\n  typeof str: ' + typeof str
+    );
+  }
+
+  return str.split('\n').slice(1).join('\n');
+}
+
+/**
  * can be used to get all _ref objects within an object.
  * Copied from amphora.references and modified for unity environment.
  * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
@@ -242,6 +283,7 @@ Object.assign(module.exports, {
   isUrl,
   uriToUrl,
   urlToUri,
+  cleanUrl,
   formatStart,
   toTitleCase,
   getSiteBaseUrl,
@@ -251,5 +293,7 @@ Object.assign(module.exports, {
   urlToCanonicalUrl,
   textToEncodedSlug,
   debugLog,
+  yesNo,
+  removeFirstLine,
   listDeepObjects
 });

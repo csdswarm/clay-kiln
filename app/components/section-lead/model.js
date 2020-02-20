@@ -62,11 +62,17 @@ module.exports.save = async (ref, data, locals) => {
 
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
+    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
+      searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
     return {
       ...item,
       date: result.date,
+      uri: result._id,
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       pageUri: result.pageUri,
       urlIsValid: result.urlIsValid,
@@ -106,9 +112,17 @@ module.exports.render = async function (ref, data, locals) {
       medium: { width: 1023, crop: wideCrop },
       large: { width: 620, crop: '620:439,offset-y0' },
       default: { width: 780, crop: wideCrop }
-    };
+    },
+    curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
+    availableSlots = maxItems - data.items.length;
 
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
   let cleanUrl;
+
+  data.primaryStoryLabel = data.primaryStoryLabel
+    || locals.secondarySectionFront
+    || locals.sectionFront
+    || data.tag;
 
   // items are saved from form, articles are used on FE, and make sure they use the correct protocol
   data.items = data._computed.articles = data.items
@@ -147,6 +161,17 @@ module.exports.render = async function (ref, data, locals) {
     return data;
   }
 
+  if (availableSlots <= 0) {
+    setPrimaryStoryLabel();
+    return data;
+  }
+
+  // these shouldn't be declared above the short circuit
+  // eslint-disable-next-line one-var
+  const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals),
+    contentTypes = contentTypeService.parseFromData(data);
+  let cleanUrl;
+
   if (contentTypes.length) {
     queryService.addFilter(query, { terms: { contentType: contentTypes } });
   }
@@ -166,16 +191,6 @@ module.exports.render = async function (ref, data, locals) {
   if (locals.url && !isComponent(locals.url)) {
     cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-  }
-
-  // exclude the curated content from the results
-  if (data.items && !isComponent(locals.url)) {
-    data.items.forEach(item => {
-      if (item.canonicalUrl) {
-        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-      }
-    });
   }
 
   // Filter out the following tags
@@ -199,17 +214,15 @@ module.exports.render = async function (ref, data, locals) {
   const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
 
   try {
-    const hydrationResults = await queryService.searchByQuery(query).then(items => items.map(item => ({
+    const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true }).then(items => items.map(item => ({
       ...item,
       label: getSectionFrontName(item.sectionFront, primarySectionFronts)
     })));
 
-    data._computed.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+    data._computed.articles = data.items.concat(results);
   } catch (e) {
     queryService.logCatch(e, ref);
   }
-
-  data.primaryStoryLabel = data.primaryStoryLabel || locals.secondarySectionFront || locals.sectionFront || data.tag;
 
   return data;
 };

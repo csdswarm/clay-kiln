@@ -107,7 +107,7 @@
       }
 			a {
 				height: 100%;
-				display: inline-flex;
+				display: flex;
 				text-decoration: none;
 				text-transform: capitalize;
 				.link__thumb {
@@ -201,4 +201,8 @@
 			}
 		}
 	}
+}
+
+.kiln-edit-mode .component--latest-recirc.component--empty {
+  display: block;
 }

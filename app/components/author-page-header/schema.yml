@@ -29,32 +29,37 @@ scheduleTime:
 bio:
   _label: Biography
   _has:
-    input: text
+    input: wysiwyg
+    type: multi-line
+    buttons:
+      - bold
+      - italic
+      - link
     help: Enter the Author or Host’s professional biography
 
 facebook:
   _label: Facebook Handle
   _has:
     input: text
-    help: "Link to the Author or Host’s Facebook Account (for example: facebook.com/NAMEHERE)"
+    help: "Link to the Author or Host’s Facebook Account (for example: if facebook.com/YOURHANDLE just enter YOURHANDLE above)"
 
 twitter:
   _label: Twitter Handle
   _has:
     input: text
-    help: "Link to the Author or Host’s Twitter Account (for example: twitter.com/NAMEHERE)"
+    help: "Link to the Author or Host’s Twitter Account (for example: if twitter.com/YOURHANDLE just enter YOURHANDLE above)"
 
 youtube:
   _label: YouTube Account
   _has:
     input: text
-    help: "Link to the Author or Host’s YouTube Account (for example: youtube.com/channel/NAMEHERE)"
+    help: "Link to the Author or Host’s YouTube Account ((for example: if youtube.com/YOURHANDLE just enter YOURHANDLE above)"
 
 instagram:
   _label: Instagram Handle
   _has:
     input: text
-    help: "Link to the Author or Host’s Instagram Account (for example: instagram.com/NAMEHERE)"
+    help: "Link to the Author or Host’s Instagram Account (for example: if instagram.com/YOURHANDLE just enter YOURHANDLE above)"
 
 email:
   _label: Email

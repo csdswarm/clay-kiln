@@ -69,16 +69,6 @@ const queryService = require('../../services/server/query'),
         queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
       }
 
-      // exclude the curated content from the results
-      if (data.items && !isComponent(locals.url)) {
-        data.items.forEach(item => {
-          if (item.canonicalUrl) {
-            cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-            queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-          }
-        });
-      }
-
       // exclude trending recirculation content from the results.
       if (trendingRecircItems.length && !isComponent(locals.url)) {
         trendingRecircItems.forEach(item => {
@@ -90,19 +80,17 @@ const queryService = require('../../services/server/query'),
       }
 
       const primarySectionFronts = await retrieveList('primary-section-fronts', locals),
-        hydrationResults = await queryService.searchByQuery(query).then(items => items.map(item => ({
+        hydrationResults = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true }).then(items => items.map(item => ({
           ...item,
           label: getSectionFrontName(item.sectionFront, primarySectionFronts)
-        }))),
-        maxItems = getMaxItems(data);
+        })));
 
-      data._computed.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-
-      return data;
+      data._computed.articles = data.items.concat(hydrationResults);
     } catch (e) {
       queryService.logCatch(e, ref);
-      return data;
     }
+
+    return data;
   },
   /**
    * @param {object} data
@@ -144,10 +132,16 @@ module.exports.save = async (ref, data, locals) => {
 
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
+
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
     return {
       ...item,
+      uri: result._id,
       date: result.date,
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       pageUri: result.pageUri,
@@ -170,14 +164,25 @@ module.exports.save = async (ref, data, locals) => {
 module.exports.render = function (ref, data, locals) {
   data._computed.isMultiColumn = data._computed.parents.some(ref => getComponentName(ref) === 'multi-column');
 
-  const maxItems = getMaxItems(data);
+  const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
+    maxItems = getMaxItems(data),
+    availableSlots = maxItems - data.items.length;
+
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
+
+  // if there are no available slots, or we're manual then there's no need to query
+  if (availableSlots <= 0 || data.populateBy === 'manual') {
+    data._computed.articles = data.items;
+
+    return data;
+  }
 
   if (data.populateBy === 'station' && locals.params) {
     return renderStation(data, locals);
   }
 
   if (data.populateBy === 'tag' && data.tag && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
 
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{ text: data.tag }])[0].text || '';
@@ -187,13 +192,13 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
 
     queryService.addMust(query, { match: { sectionFront: data.sectionFront } });
     return renderDefault(ref, data, locals, query);
   }
 
-  return Promise.resolve(data);
+  return data;
 };
 
 module.exports = unityComponent(module.exports);
