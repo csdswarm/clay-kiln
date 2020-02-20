@@ -1,21 +1,45 @@
 'use strict';
+
 const queryService = require('../../services/server/query'),
   db = require('../../services/server/db'),
   contentTypeService = require('../../services/universal/content-type'),
   recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   radioApiService = require('../../services/server/radioApi'),
   { uploadImage } = require('../../services/universal/s3'),
-  { isComponent } = require('clayutils'),
+  { isComponent, getComponentName } = require('clayutils'),
+  { retrieveList } = require('../../services/server/lists'),
+  { unityComponent } = require('../../services/universal/amphora'),
   tag = require('../tags/model.js'),
   elasticIndex = 'published-content',
   elasticFields = [
+    'date',
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'contentType'
+    'contentType',
+    'sectionFront'
   ],
-  maxItems = 5,
+  /**
+   * Gets the number of items to display
+   *
+   * @param {object} data
+   * @returns {number}
+   */
+  getMaxItems = (data) => data._computed.isMultiColumn ? 4 : 5,
+  /**
+   * Gets the display name for a primary section front slug
+   *
+   * @param {string} slug
+   * @param {object} locals
+   * @returns {Promise<string>}
+   */
+  getPrimarySectionFrontName = async (slug, locals) => {
+    const list = await retrieveList('primary-section-fronts', locals),
+      entry = list.find(entry => entry.value === slug);
+
+    return entry ? entry.name : slug;
+  },
   /**
    * @param {string} ref
    * @param {object} data
@@ -58,16 +82,6 @@ const queryService = require('../../services/server/query'),
         queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
       }
 
-      // exclude the curated content from the results
-      if (data.items && !isComponent(locals.url)) {
-        data.items.forEach(item => {
-          if (item.canonicalUrl) {
-            cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-            queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-          }
-        });
-      }
-
       // exclude trending recirculation content from the results.
       if (trendingRecircItems.length && !isComponent(locals.url)) {
         trendingRecircItems.forEach(item => {
@@ -79,15 +93,17 @@ const queryService = require('../../services/server/query'),
       }
 
       // hydrate item list.
-      const hydrationResults = await queryService.searchByQuery(query);
+      const hydrationResults = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true }).then(items => Promise.all(items.map(async item => ({
+        ...item,
+        label: await getPrimarySectionFrontName(item.sectionFront, locals)
+      }))));
 
-      data.articles = data.items.concat(hydrationResults.slice(0, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
-
-      return data;
+      data._computed.articles = data.items.concat(hydrationResults);
     } catch (e) {
       queryService.logCatch(e, ref);
-      return data;
     }
+
+    return data;
   },
   /**
    * @param {object} data
@@ -95,15 +111,14 @@ const queryService = require('../../services/server/query'),
    * @returns {Promise}
    */
   renderStation = async (data, locals) => {
-    data.articles = []; // Default to empty array so it's not undefined
     if (locals.station.id && locals.station.website) {
       const feedUrl = `${locals.station.website.replace(/\/$/, '')}/station_feed.json`,
         feed = await radioApiService.get(feedUrl, null, (response) => response.nodes, {}, locals),
         nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
         defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
-      data.station = locals.station.name;
-      data.articles = await Promise.all(nodes.map(async (item) => {
+      data._computed.station = locals.station.name;
+      data._computed.articles = await Promise.all(nodes.map(async (item) => {
         return {
           feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
           externalUrl: item.node.URL,
@@ -125,17 +140,26 @@ module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
+
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields);
 
-    return  {
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
+
+    return {
       ...item,
+      uri: result._id,
+      date: result.date,
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
       pageUri: result.pageUri,
       urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
-      feedImgUrl: item.overrideImage || result.feedImgUrl
+      feedImgUrl: item.overrideImage || result.feedImgUrl,
+      label: item.overrideLabel || await getPrimarySectionFrontName(result.sectionFront, locals)
     };
   }));
 
@@ -149,12 +173,27 @@ module.exports.save = async (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
+  data._computed.isMultiColumn = (data._computed.parents || []).some(ref => getComponentName(ref) === 'multi-column');
+
+  const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
+    maxItems = getMaxItems(data),
+    availableSlots = maxItems - data.items.length;
+
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
+
+  // if there are no available slots, or we're manual then there's no need to query
+  if (availableSlots <= 0 || data.populateBy === 'manual') {
+    data._computed.articles = data.items;
+
+    return data;
+  }
+
   if (data.populateBy === 'station' && locals.params) {
     return renderStation(data, locals);
   }
 
   if (data.populateBy === 'tag' && data.tag && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
 
     // Clean based on tags and grab first as we only ever pass 1
     data.tag = tag.clean([{ text: data.tag }])[0].text || '';
@@ -164,11 +203,13 @@ module.exports.render = function (ref, data, locals) {
   }
 
   if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
-    const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-    
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
+
     queryService.addMust(query, { match: { sectionFront: data.sectionFront } });
     return renderDefault(ref, data, locals, query);
   }
 
-  return Promise.resolve(data);
+  return data;
 };
+
+module.exports = unityComponent(module.exports);

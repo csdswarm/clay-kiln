@@ -1,6 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items'),
   db = require('amphora-storage-postgres'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
   { getComponentVersion } = require('clayutils');
@@ -91,7 +92,7 @@ module.exports['7.0'] = async function (uri, data) {
   if (sharethroughTagInstanceUri.includes('more-content-feed')) {
     return data;
   }
-  
+
   try {
     const sharethroughTagInstance = await getComponentInstance(sharethroughTagInstanceUri);
 
@@ -130,6 +131,7 @@ module.exports['8.0'] = function (uri, data) {
   return data;
 };
 
+
 module.exports['9.0'] = async function (uri, data) {
   if (data.primarySectionFront) {
     return data;
@@ -159,6 +161,12 @@ module.exports['9.0'] = async function (uri, data) {
 
 module.exports['10.0'] = function (uri, data) {
   data.componentTitleVisible = false;
+
+  return data;
+};
+
+module.exports['11.0'] = async (uri, data, locals) => {
+  await addUriToCuratedItems(uri, data.items, locals);
 
   return data;
 };

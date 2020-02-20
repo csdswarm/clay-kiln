@@ -115,7 +115,8 @@ const
    * @returns {array} elasticResults
    */
   fetchRecirculation = async (filter, exclude, fields = elasticFields, locals) => {
-    const query = queryService(index, locals);
+    const query = queryService(index, locals),
+      searchOpts = { shouldDedupeContent: true };
 
     let results = [];
 
@@ -133,7 +134,7 @@ const
     }
 
     try {
-      results = await queryService.searchByQuery(query);
+      results = await queryService.searchByQuery(query, locals, searchOpts);
     } catch (e) {
       queryService.logCatch(e, 'content-search');
       log('error', 'Error querying Elastic', e);
@@ -154,6 +155,9 @@ const
   recirculationData = ({ contentKey = 'articles', maxItems = 10, mapDataToFilters = returnData, render = returnData, save = returnData }) =>
     unityComponent({
       async render(uri, data, locals) {
+        const curatedIds = data.items.map(anItem => anItem.uri);
+
+        locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
         try {
           const { filters, excludes, curated } = mapDataToFilters(uri, data, locals),
@@ -165,7 +169,6 @@ const
         } catch (e) {
           log('error', `There was an error querying items from elastic - ${ e.message }`, e);
         }
-
         return render(uri, data, locals);
       },
       async save(uri, data, locals) {
@@ -176,10 +179,21 @@ const
 
         data.items = await Promise.all(data.items.map(async (item) => {
           item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-          const result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields);
+          const searchOpts = {
+              includeIdInResult: true,
+              shouldDedupeContent: false
+            },
+            result = await recircCmpt.getArticleDataAndValidate(
+              uri,
+              item,
+              locals,
+              elasticFields,
+              searchOpts
+            );
 
           return {
             ...item,
+            uri: result._id,
             primaryHeadline: item.overrideTitle || result.primaryHeadline,
             pageUri: result.pageUri,
             urlIsValid: result.urlIsValid,
@@ -188,7 +202,6 @@ const
             sectionFront: result.sectionFront
           };
         }));
-
         return save(uri, data, locals);
       }
     });

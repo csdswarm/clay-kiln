@@ -227,6 +227,37 @@ function debugLog(...args) {
 }
 
 /**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+/**
+ * removes the first line in a string
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function removeFirstLine(str) {
+  if (typeof str !== 'string') {
+    throw new Error(
+      'you must provide a string'
+      + '\n  typeof str: ' + typeof str
+    );
+  }
+
+  return str.split('\n').slice(1).join('\n');
+}
+
+/**
  * can be used to get all _ref objects within an object.
  * Copied from amphora.references and modified for unity environment.
  * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
@@ -250,20 +281,6 @@ function listDeepObjects(obj, filter) {
 }
 
 /**
- * return yes/no dependent on val truthiness
- *
- * @param  {*}  val
- * @returns {String}
- */
-function yesNo(val) {
-  if (val) {
-    return 'Yes';
-  } else {
-    return 'No';
-  }
-}
-
-/**
    * Url queries to elastic search need to be `http` since that is
    * how it is indexed as.
  * @param {string} url
@@ -273,7 +290,7 @@ function urlToElasticSearch(url) {
   return url.replace('https', 'http');
 }
 
-Object.assign(module.exports, {
+module.exports = {
   boolKeys,
   cleanUrl,
   debugLog,
@@ -286,6 +303,7 @@ Object.assign(module.exports, {
   isPublishedVersion,
   isUrl,
   listDeepObjects,
+  removeFirstLine,
   replaceVersion,
   textToEncodedSlug,
   toTitleCase,
@@ -294,4 +312,4 @@ Object.assign(module.exports, {
   urlToElasticSearch,
   urlToUri,
   yesNo
-});
+};

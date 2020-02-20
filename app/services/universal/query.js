@@ -5,26 +5,42 @@ const _ = require('lodash'),
   protocol = process ? `${ _.get(process, 'env.CLAY_SITE_PROTOCOL', 'https') }:` : window.location.protocol;
 
 /**
- * Returns an item's id by extracting it from the uri
+ * SearchOpts - options which modify the behavior of elasticsearch
  *
- * @param {String} uri
- * @returns {String}
+ * shouldDedupeContent determines whether elasticsearch should use
+ *   locals.loadedIds to filter out results.  A warning will be logged if this
+ *   property is not passed.  The reason for this is there's no great way to
+ *   determine whether content should be deduped without explicitly stating it.
+ *
+ * transformResult has the signature ({object} formattedResult, {object} rawResult) => {object} updatedFormattedResult
+ *   its purpose is to transform the formatted result into something you need.
+ *   I used it in more-content-feed/model.js to return whether more content existed.
+ *
+ * @typedef {object} SearchOpts
+ * @property {boolean} includeIdInResult - includes '_id' in the formatted result
+ * @property {boolean} shouldDedupeContent - see above for explanation
+ * @property {function} transformResult - see above for the signature and explanation
  */
-function getItemId(uri) {
-  return uri.split('/').slice(-1)[0]
-    // clay appends this to published item uris so we want to exclude this
-    .replace('@published', '');
-};
 
 /**
- * @param {object} result
- * @returns {Array}
+ * Returns a function which formats the search results based off the search
+ *   options.  Specifically if the option 'includeIdInResult' is truthy, then
+ *   each hit's '_id' is assigned to its '_source' object.
+ *
+ * @param {SearchOpts} [searchOpts] - see typedef above
+ * @returns {function}
  */
-function formatSearchResult(result) {
-  return result.hits.hits.map(({ _source, _id: uri }) => ({
-    ..._source,
-    itemId: getItemId(uri)
-  }));
+function getFormatSearchResult(searchOpts = {}) {
+  return result => {
+    if (!searchOpts.includeIdInResult) {
+      return _.map(result.hits.hits, '_source');
+    }
+
+    return result.hits.hits.map(hit => {
+      hit._source._id = hit._id;
+      return hit._source;
+    });
+  };
 }
 
 /**
@@ -399,6 +415,42 @@ function newNestedQuery(path) {
 }
 
 /**
+ * This method exists because the only difference between the client and server
+ *   'searchByQuery' calls is the searchByQueryWithRawResult, which those now
+ *   pass in.
+ *
+ * @param  {Object} query
+ * @param  {Object} locals
+ * @param  {Object} opts - see server/query.js for opts description
+ * @param  {function} searchByQueryWithRawResult - a reference to the function
+ *   found in either client or server query.js
+ * @return {Promise}
+ */
+function searchByQuery(query, locals, opts, searchByQueryWithRawResult) {
+  const formatSearchResult = getFormatSearchResult(opts);
+
+  return searchByQueryWithRawResult(query, locals, opts)
+    .then(rawResult => {
+      let formattedResult = formatSearchResult(rawResult);
+
+      formattedResult = formatProtocol(formattedResult);
+
+      if (!opts.transformResult) {
+        return formattedResult;
+      }
+
+      return opts.transformResult(formattedResult, rawResult);
+    })
+    .catch(originalErr => {
+      const err = originalErr instanceof Error
+        ? originalErr
+        : new Error(originalErr);
+
+      return Promise.reject(err);
+    });
+}
+
+/**
  * adds a query_string search on the fields
  *
  * @param {Object} query
@@ -477,13 +529,14 @@ Object.assign(module.exports, {
   addSort,
   formatAggregationResults,
   formatProtocol,
-  formatSearchResult,
+  getFormatSearchResult,
   matchIgnoreCase,
   matchSimple,
   moreLikeThis,
   newNestedQuery,
   onlyWithTheseFields,
   onlyWithinThisSite,
+  searchByQuery,
   terms,
   withinThisSiteAndCrossposts
 });
