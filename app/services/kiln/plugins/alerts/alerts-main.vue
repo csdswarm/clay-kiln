@@ -13,7 +13,11 @@
                 v-for="tab in tabs">
             </ui-tab>
             <div class="alerts-manager__toolbar">
-                <ui-button @click="newAlert">Add Alert</ui-button>
+                <ui-button class="alerts-manager__add-alert"
+                    @click="newAlert">
+
+                    Add Alert
+                </ui-button>
                 <station-select v-show="!global"
                     class="alerts-manager__station-select" />
             </div>
