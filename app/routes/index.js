@@ -15,7 +15,6 @@ const AWS = require('aws-sdk'),
   }),
   uuidv4 = require('uuid/v4'),
   additionalDataTypes = require('../services/server/add-data-types'),
-  alerts = require('../services/server/alerts'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   addEndpoints = require('./add-endpoints'),
@@ -156,7 +155,7 @@ module.exports = router => {
 
   additionalDataTypes.inject(router, checkAuth);
   stationTheming.inject(router, checkAuth);
-  alerts.inject(router, checkAuth);
+  addEndpoints.alerts(router);
   addEndpoints.createPage(router);
   ensureStationOnCustomUrl(router);
   addEndpoints.validSource(router);
