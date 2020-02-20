@@ -11,7 +11,7 @@ async function updateHomepageInstance() {
   console.log('Updating homepage instance to move all child instances on page into component list...');
 
   const homepageInstanceRefs = [
-      '_components/homepage/instances/home', 
+      '_components/homepage/instances/home',
       '_components/homepage/instances/default'
     ],
     componentsOrder = [
@@ -21,9 +21,10 @@ async function updateHomepageInstance() {
       'podcast-list',
       'latest-videos',
       'google-ad-manager',
-      'more-content-feed'
+      'more-content-feed',
+      'two-column-component'
     ];
-  
+
   await Promise.all(homepageInstanceRefs.map(async homepageInstanceRef => {
     const homepageInstanceRefPath = homepageInstanceRef.replace(/\//g, '.'),
       { data } = await clayExport({
@@ -33,9 +34,11 @@ async function updateHomepageInstance() {
       allRefs = [];
 
     for (const prop in hpData) {
-      if (prop !== 'mainContent') {
+      if (!['mainContent', '_version', 'title'].includes(prop)) {
         if (hpData[prop]._ref) allRefs.push(hpData[prop]._ref);
-        else allRefs.push(hpData[prop][0]._ref);
+        else if (hpData[prop][0] && hpData[prop][0]._ref) {
+          allRefs.push(hpData[prop][0]._ref);
+        }
         delete hpData[prop];
       }
     }
@@ -47,7 +50,7 @@ async function updateHomepageInstance() {
     })
 
     _set(data, homepageInstanceRefPath, hpData);
-    
+
     const { result } = await clayImport({
       hostUrl: host, payload: data, publish: true
     });
@@ -66,7 +69,7 @@ async function updateMultiColInstance() {
     { data: multiColPubData } = await clayExport({
       componentUrl: `${ host }/${ multiColInstancePubRef }`
     });
-  
+
   // Remove ad from draft & published version of multi col instance
   _set(multiColPubData, `${multiColInstancePubRefPath}.mediumRectangleTop`, '');
   const { result: pubResult } = await clayImport({
@@ -76,7 +79,7 @@ async function updateMultiColInstance() {
   if (pubResult === 'success') {
     console.log('\nUpdated multi col published instance successfully\n');
   } else {
-    console.error('There was a problem updating the multi col published instance.', 
+    console.error('There was a problem updating the multi col published instance.',
       prettyJSON({ pubResult, multiColPubData })
     );
   }
@@ -92,7 +95,7 @@ async function updateMultiColInstance() {
   if (draftResult === 'success') {
     console.log('\nUpdated multi col instance draft successfully\n');
   } else {
-    console.error('There was a problem updating the multi col instance draft.', 
+    console.error('There was a problem updating the multi col instance draft.',
       prettyJSON({ draftResult, multiColPubData })
     );
   }
