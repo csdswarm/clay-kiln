@@ -111,6 +111,16 @@ function removeExtension(path) {
 }
 
 /**
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
+}
+
+/**
  * generate a uri from a url
  * @param  {string} url
  * @return {string}
@@ -312,14 +322,25 @@ function yesNo(val) {
   }
 }
 
-Object.assign(module.exports, {
-  /**
-   * Url queries to elastic search need to be `http` since that is
-   * how it is indexed as.
-   * @param {String} url
-   * @returns {String}
-   */
-  urlToElasticSearch: url => url.replace('https', 'http'),
+/**
+ * removes the first line in a string
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function removeFirstLine(str) {
+  if (typeof str !== 'string') {
+    throw new Error(
+      'you must provide a string'
+      + '\n  typeof str: ' + typeof str
+    );
+  }
+
+  return str.split('\n').slice(1).join('\n');
+}
+
+module.exports = {
+  cleanUrl,
   debugLog,
   ensurePublishedVersion,
   ensureStartsWith,
@@ -333,12 +354,13 @@ Object.assign(module.exports, {
   isPublishedVersion,
   isUrl,
   prettyJSON,
+  removeFirstLine,
   replaceVersion,
   textToEncodedSlug,
   toTitleCase,
+  uriToUrl,
   urlToCanonicalUrl,
   urlToElasticSearch,
-  uriToUrl,
   urlToUri,
   yesNo
-});
+};
