@@ -1,6 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  { getStationDomainName } = require('./urps'),
   // Time Constants
   SECOND = 1000,
   MINUTE = 60 * SECOND,
@@ -61,7 +62,6 @@ const _get = require('lodash/get'),
       name: 'New York, NY'
     },
     category: '',
-    urpsDomainName: `${defaultStationName} | `,
 
     // the national station doesn't have a slug in the sense that national
     //   content is not stored underneath a slug like station content is.  For
@@ -78,6 +78,7 @@ const _get = require('lodash/get'),
     site_slug: ''
   };
 
+DEFAULT_STATION.urpsDomainName = getStationDomainName(DEFAULT_STATION);
 
 module.exports = {
   DEFAULT_STATION,
