@@ -243,6 +243,16 @@ function removeFirstLine(str) {
   return str.split('\n').slice(1).join('\n');
 }
 
+/**
+ * returns the domain of the hostname
+ *
+ * @param {string} hostname
+ * @returns {string}
+ */
+function getDomainFromHostname(hostname) {
+  return hostname.split('.').reverse().slice(0, 2).reverse().join('.');
+}
+
 Object.assign(module.exports, {
   /**
    * Url queries to elastic search need to be `http` since that is
@@ -268,5 +278,6 @@ Object.assign(module.exports, {
   textToEncodedSlug,
   debugLog,
   yesNo,
-  removeFirstLine
+  removeFirstLine,
+  getDomainFromHostname
 });
