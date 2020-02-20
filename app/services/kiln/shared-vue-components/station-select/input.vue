@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div class="station-select">
     <div v-if="!hasManyStations"
-      class="station-select station-select-label">
+      class="station-select__label">
 
       Station: {{ selectedItem.label || '&lt;no station&gt;' }}
     </div>
 
     <ui-select v-else
-      class="station-select station-select-input"
+      class="station-select__input"
       has-search
       placeholder="Search a station"
       :options="items"
