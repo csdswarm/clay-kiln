@@ -62,8 +62,7 @@ module.exports.save = async (ref, data, locals) => {
 
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-    const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
-      searchOpts = {
+    const searchOpts = {
         includeIdInResult: true,
         shouldDedupeContent: false
       },
@@ -97,8 +96,6 @@ module.exports.save = async (ref, data, locals) => {
 module.exports.render = async function (ref, data, locals) {
   const inMultiColumn = data._computed.parents.some(parent => getComponentName(parent) === 'multi-column'),
     maxItems = getMaxItems(inMultiColumn),
-    query = queryService.newQueryWithCount(elasticIndex, maxItems),
-    contentTypes = contentTypeService.parseFromData(data),
     squareCrop = '1:1,offset-y0',
     wideCrop = '8:5.1,offset-y0',
     defaultImageSizes = {
@@ -117,7 +114,6 @@ module.exports.render = async function (ref, data, locals) {
     availableSlots = maxItems - data.items.length;
 
   locals.loadedIds = locals.loadedIds.concat(curatedIds);
-  let cleanUrl;
 
   data.primaryStoryLabel = data.primaryStoryLabel
     || locals.secondarySectionFront
@@ -162,7 +158,6 @@ module.exports.render = async function (ref, data, locals) {
   }
 
   if (availableSlots <= 0) {
-    setPrimaryStoryLabel();
     return data;
   }
 
