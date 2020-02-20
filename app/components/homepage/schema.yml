@@ -9,6 +9,7 @@ mainContent:
   _placeholder:
     text: Main Content
     height: 100px
+    required: true
   _componentList:
     fuzzy: true # allows interactives, etc to add one-off components
     include:
