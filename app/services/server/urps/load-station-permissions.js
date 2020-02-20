@@ -15,7 +15,7 @@ const loadPermissions = require('./load-permissions'),
  */
 module.exports = async (session, locals) => {
   try {
-    const currentTime = new Date(),
+    const currentTime = Date.now(),
       { auth } = session,
       { permissions = {} } = auth,
       // we don't need to keep track of last updated by unityAppDomainName
