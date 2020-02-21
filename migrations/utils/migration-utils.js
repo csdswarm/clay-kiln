@@ -34,6 +34,7 @@ const esQuery = require('./es-query'),
     parseHost: require('./parse-host').v1,
     republish: require('./republish').v1,
     usingDb: require('./using-db').v1,
+    retrieveList: require('./list-retrieve').v1
   },
   v2 = {
     esQuery: esQuery.v2
