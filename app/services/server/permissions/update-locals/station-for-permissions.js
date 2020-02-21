@@ -20,7 +20,7 @@ async function getFirstStationIHaveAccessTo(locals) {
   }
 
   const firstSlug = Object.keys(stationsIHaveAccessTo)[0],
-    stationBySlug = await getAllStations.bySlug();
+    stationBySlug = await getAllStations.bySlug({ locals });
 
   return stationBySlug[firstSlug];
 }
