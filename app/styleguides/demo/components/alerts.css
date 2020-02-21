@@ -29,14 +29,6 @@
         height: 2.25rem;
 
         margin: em(5) em(30);
-
-        /*
-          this value is a little less than the height of .ui-button so the
-            text aligns decently.  There is probably a cleaner solution to
-            vertically align this with the button but I don't think it's
-            worth the effort right now.
-        */
-        line-height: 2rem;
     }
 
     &__toolbar {
