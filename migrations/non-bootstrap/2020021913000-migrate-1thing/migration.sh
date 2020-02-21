@@ -62,15 +62,15 @@ pushd ../../../../frequency-clay-translator
 # we only want blogs because of the nature of where articles originated on
 #   imlistening.radio.com.  Blogs indicate they originated from
 #   imlistening.radio.com whereas articles originated elsewhere.
-if [ "$env" = 'local' ]; then
+if [ "$env" = 'prd' ]; then
   npm run import-content --silent \
-    api=1thingStg \
+    api=1thingPrd \
     importType=full \
     publish=true \
     excludeCanonicalUrls="$pathToExistingUrls"
 else
   npm run "$env-import-content" --silent \
-    api=1thingPrd \
+    api=1thingStg \
     importType=full \
     publish=true \
     excludeCanonicalUrls="$pathToExistingUrls"
