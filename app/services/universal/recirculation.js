@@ -56,7 +56,7 @@ const _get = require('lodash/get'),
       secondarySectionFronts: boolObjectToArray(data.excludeSecondarySectionFronts),
       tags: (data.excludeTags || []).map(tag => tag.text)
     },
-    curated: data.items
+    curated: data.items || []
   }),
   defaultTemplate = (validatedItem, curatedItem = {}) => ({
     ...curatedItem,
@@ -321,13 +321,13 @@ const _get = require('lodash/get'),
         const curatedIds = data.items.map(anItem => anItem.uri);
 
         locals.loadedIds = locals.loadedIds.concat(curatedIds);
-        
+
         if (skipRender(data, locals)) {
           return render(uri, data, locals);
         }
 
         try {
-          const { filters = {}, excludes = {}, pagination = {}, curated = [] } = {
+          const { filters = {}, excludes = {}, pagination = {}, curated } = {
               ...defaultMapDataToFilters(uri, data, locals),
               ...await mapDataToFilters(uri, data, locals)
             },
@@ -355,7 +355,7 @@ const _get = require('lodash/get'),
               shouldDedupeContent: false
             },
             result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
-      
+
           return mapResultsToTemplate(result, item);
         }));
 
