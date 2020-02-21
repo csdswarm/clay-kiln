@@ -21,18 +21,30 @@ module.exports = unityComponent({
       paramValue = metaValue = hypensToSpaces(locals.params[data.routeParam]);
     } else if (data.localsKey && locals) {
       const value = _get(locals, data.localsKey);
-  
+
       if (value) {
         paramValue = value;
-        metaValue = data.metaLocalsKey ? _get(locals, data.metaLocalsKey) : value;
+
+        if (data.metaLocalsKey) {
+          if (!Array.isArray(data.metaLocalsKey)) {
+            data.metaLocalsKey = [ data.metaLocalsKey ];
+          }
+
+          metaValue = data.metaLocalsKey
+            .map(key => _get(locals, key))
+            .filter(val => !!val)
+            .join(' ') || value;
+        } else {
+          metaValue = value;
+        }
       }
     }
-  
+
     data._computed = Object.assign(data._computed, {
       title: `${toTitleCase(paramValue) || ''}${suffix || data.suffix}`,
       metaTitle: `${toTitleCase(metaValue) || ''}${suffix || data.suffix}`
     });
-  
+
     return data;
   }
 });
