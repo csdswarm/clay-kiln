@@ -43,7 +43,7 @@ module.exports = async (path, reqBody, jwt) => {
 
       if (response) {
         errMsg += `\nresponse status: ${response.status}`
-          + `\nresponse body: ${_truncate(response.data, { length: 120 })}`;
+          + `\nresponse body: ${_truncate(prettyJSON(response.data), { length: 120 })}`;
       }
 
       errMsg += '\n-------------------';
