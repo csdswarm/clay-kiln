@@ -5,7 +5,7 @@
  * @param {object} data
  */
 function fixHttpUrl(data) {
-  if (data.url) {
+  if (data.defaultUrl) {
     data.defaultUrl = data.defaultUrl.replace('http://', 'https://');
   }
 }
@@ -17,7 +17,7 @@ function fixHttpUrl(data) {
  * @param {object} data
  */
 function fixSyndicatedUrl(data) {
-  if (data.syndicatedUrl) {
+  if (data.defaultSyndicatedUrl) {
     data.defaultSyndicatedUrl = data.defaultSyndicatedUrl.replace('http://', 'https://');
   }
   if (data.defaultSyndicatedUrl &&
