@@ -12,6 +12,15 @@ metadata:
   annotations:
 {{ toYaml .Values.ingress.annotations | indent 4 }}
 spec:
+  tls:
+    - secretName: {{ $fullName }}-cert
+      hosts:
+      {{- range .Values.ingress.hostedZones }}
+      - {{ include "clay-radio.sanitizedPrefix" $ }}{{ . }}
+      {{- end }}
+      {{- range .Values.ingress.staticDomains }}
+      - {{ . }}
+      {{- end }}
   rules:
     {{- range .Values.ingress.hostedZones }}
     - host: {{ include "clay-radio.sanitizedPrefix" $ }}{{ . }}
