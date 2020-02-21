@@ -23,25 +23,20 @@ describe('getFromUrps', () => {
     },
     makeGetFromUrps = () => proxyquire('./get-from-urps', {
       axios: { post: axiosPost }
-    });
-
-  let URPS_AUTHORIZATIONS_URL_orig;
-
-  before(()=> {
-    URPS_AUTHORIZATIONS_URL_orig = process.env.URPS_AUTHORIZATIONS_URL;
-  });
+    }),
+    URPS_HAS_AUTH_LAYER_orig = process.env.URPS_HAS_AUTH_LAYER;
 
   beforeEach(() => {
-    process.env.URPS_AUTHORIZATIONS_URL = 'host.docker.internal';
+    process.env.URPS_HAS_AUTH_LAYER = false;
     axiosPost.resetHistory();
   });
 
   after(() => {
-    process.env.URPS_AUTHORIZATIONS_URL = URPS_AUTHORIZATIONS_URL_orig;
+    process.env.URPS_HAS_AUTH_LAYER = URPS_HAS_AUTH_LAYER_orig;
   });
 
   it('getFromUrps is called with the correct arguments - with auth layer', async () => {
-    process.env.URPS_AUTHORIZATIONS_URL = 'some non-local url';
+    process.env.URPS_HAS_AUTH_LAYER = 'true';
 
     const getFromUrps = makeGetFromUrps(),
       expected = getExpectedData();
@@ -66,7 +61,7 @@ describe('getFromUrps', () => {
     expect(axiosPost.firstCall.args).to.deep.equal([
       expected.path,
       { cognito_id: expected.decodedCognitoId },
-      {}
+      { headers: { Authorization: mock.jwt } }
     ]);
   });
 });

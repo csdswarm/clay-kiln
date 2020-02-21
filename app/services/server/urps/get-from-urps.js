@@ -5,14 +5,9 @@ const _truncate = require('lodash/truncate'),
   jwtDecode = require('jwt-decode'),
   { prettyJSON } = require('../../universal/utils');
 
-// urps does not have their auth layer working locally which means we need to
-//   send the cognito_id inside the request body instead of passing the jwt
-//   inside the Authorization header
-const urpsHasAuthLayer = process.env.URPS_AUTHORIZATIONS_URL
-  ? !process.env.URPS_AUTHORIZATIONS_URL.includes('host.docker.internal')
-  // default case intended for unit tests which shouldn't rely on
-  //   environment variables
-  : true;
+// the urps team doesn't have their auth layer working yet so we need to
+//   additionally pass the cognito_id in the request body until that's turned on
+const urpsHasAuthLayer = process.env.URPS_HAS_AUTH_LAYER === 'true';
 
 /**
  * makes a POST request to urps for the desired info
@@ -23,16 +18,13 @@ const urpsHasAuthLayer = process.env.URPS_AUTHORIZATIONS_URL
  * @returns {object} - the axios response object
  */
 module.exports = async (path, reqBody, jwt) => {
-  const options = urpsHasAuthLayer
-      ? { headers: { Authorization: jwt } }
-      : {},
-    url = `${process.env.URPS_AUTHORIZATIONS_URL}${path}`;
+  const url = `${process.env.URPS_AUTHORIZATIONS_URL}${path}`;
 
   if (!urpsHasAuthLayer) {
     reqBody = Object.assign({}, reqBody, { cognito_id: jwtDecode(jwt).sub });
   }
 
-  return axios.post(url, reqBody, options)
+  return axios.post(url, reqBody, { headers: { Authorization: jwt } })
     .catch(err => {
       const { response } = err;
       let errMsg = 'Error in urps request'
