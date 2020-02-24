@@ -1,11 +1,5 @@
 <a
-    class="{{! these comments will remove whitespace ~}}
-      component {{! ~}}
-      component--card {{! ~}}
-      card {{! ~}}
-      card--{{ type ~}}
-      {{ if category ' card__category--' ~}}{{ category ~}}
-    "
+    class="component component--card card card--{{ type }} {{ if category 'card__category--' }}{{category}} {{ if first 'card--first'}} {{ if last 'card--last'}}"
     href="{{ url }}"
   {{#each track}}
     data-track-{{ @key }}="{{ this }}"
