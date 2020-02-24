@@ -14,8 +14,8 @@ const
     'feedImgUrl',
     'canonicalUrl'
   ],
-  maxItems = 10,
-  pageLength = 5,
+  maxItems = 3,
+  pageLength = 3,
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   { isComponent } = require('clayutils'),
   utils = require('../../services/universal/utils'),
@@ -81,9 +81,12 @@ async function getRecentEventsFromElastic(uri, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
 
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (locals.station.callsign !== locals.defaultStation.callsign) {
-    queryService.addMust(query, { match: { station: locals.station } });
-  }
+  // TODO: figure out a way to pass station if there is one from FE
+  // if (locals.station.callsign !== locals.defaultStation.callsign) {
+  //   queryService.addMust(query, { match: { station: locals.station } });
+  // }
+  // console.log('[locals.station]', locals.station);
+  // console.log('[locals.defaultStation]', locals.defaultStation);
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addSort(query, { date: 'desc' });
 
@@ -108,7 +111,7 @@ async function getRecentEventsFromElastic(uri, data, locals) {
     if (!data.pageLength) {
       data.pageLength = pageLength;
     }
-
+    // TODO: add setting for number of events to grab
     const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
 
     queryService.addOffset(query, skip);
@@ -119,7 +122,7 @@ async function getRecentEventsFromElastic(uri, data, locals) {
     // Default to loading 30 articles, which usually works out to 4 pages
     data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
   }
-
+  // console.log('[query]', JSON.stringify(query, null, 2));
   return queryService.searchByQuery(query)
     .then(function (results) {
       results.forEach(result => {
@@ -157,13 +160,26 @@ module.exports = unityComponent({
     }
     return data;
   },
-  render: (ref, data) => {
+  render: async (uri, data, locals) => {
     data._computed.events = data.events.map(event => {
       return {
         ...event,
         dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
       };
     });
-    return data;
+    // if there is a page number include more events with the page num as offset
+    if (locals.page) {
+      const moreEvents =  await getRecentEventsFromElastic(uri, data, locals);
+
+      data._computed.moreEvents = moreEvents.map( event => {
+        return {
+          ...event,
+          dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
+        };
+      });
+      return data;
+    } else {
+      return data;
+    }
   }
 });
