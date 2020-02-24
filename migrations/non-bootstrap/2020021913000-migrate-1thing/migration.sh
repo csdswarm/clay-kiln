@@ -63,8 +63,14 @@ pushd ../../../../frequency-clay-translator
 #   imlistening.radio.com.  Blogs indicate they originated from
 #   imlistening.radio.com whereas articles originated elsewhere.
 if [ "$env" = 'prd' ]; then
-  npm run import-content --silent \
+  npm run prd-import-content --silent \
     api=1thingPrd \
+    importType=full \
+    publish=true \
+    excludeCanonicalUrls="$pathToExistingUrls"
+elif [ "$env" = 'local']; then
+  npm run import-content --silent \
+    api=1thingStg \
     importType=full \
     publish=true \
     excludeCanonicalUrls="$pathToExistingUrls"
