@@ -32,9 +32,11 @@ async function createNewComponentInstance(host) {
               twoColumnComponent: {
                 _ref: '/_components/two-column-component/instances/section-front'
               },
-              stationsCarousel: {
-                _ref: '/_components/stations-carousel/instances/section-front'
-              }
+              stationsCarousel: [
+                {
+                  _ref: '/_components/stations-carousel/instances/section-front'
+                }
+              ]
             }
           }
         }
