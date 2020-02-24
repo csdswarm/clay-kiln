@@ -46,8 +46,8 @@ module.exports = {
   ensureEndsWith,
   prettyJSON: obj => JSON.stringify(obj, null, 2),
   toYaml: obj => YAML.stringify(obj, 8, 2),
-  yamljs: YAML,
   waitMs: ms => new Promise(resolve => {
     setTimeout(resolve, ms)
   }),
+  yamljs: YAML,
 };

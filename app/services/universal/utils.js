@@ -1,17 +1,28 @@
 'use strict';
 const
   _filter = require('lodash/filter'),
+  _get = require('lodash/get'),
   _identity = require('lodash/identity'),
   _isArray = require('lodash/isArray'),
-  _isObject = require('lodash/isObject'),
   _isEmpty = require('lodash/isEmpty'),
-  _isString = require('lodash/isString'),
   _isNull = require('lodash/isNull'),
+  _isObject = require('lodash/isObject'),
+  _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
-  _get = require('lodash/get'),
   _parse = require('url-parse'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
+
+
+
+/**
+ * returns a list of keys in the object that have a truthy value
+ * @param {object} obj
+ * @returns {string[]}
+ */
+function boolKeys(obj) {
+  return Object.keys(obj || {}).filter(key => obj[key]);
+}
 
 /**
  * determine if a field is empty
@@ -269,31 +280,36 @@ function listDeepObjects(obj, filter) {
   return list;
 }
 
-Object.assign(module.exports, {
-  /**
+/**
    * Url queries to elastic search need to be `http` since that is
    * how it is indexed as.
-   * @param {String} url
-   * @returns {String}
+ * @param {string} url
+ * @returns {string}
    */
-  urlToElasticSearch: url => url.replace('https', 'http'),
-  isFieldEmpty,
-  has,
-  replaceVersion,
-  isUrl,
-  uriToUrl,
-  urlToUri,
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
+module.exports = {
+  boolKeys,
   cleanUrl,
-  formatStart,
-  toTitleCase,
-  getSiteBaseUrl,
-  isPublishedVersion,
-  ensurePublishedVersion,
-  isInstance,
-  urlToCanonicalUrl,
-  textToEncodedSlug,
   debugLog,
-  yesNo,
+  ensurePublishedVersion,
+  formatStart,
+  getSiteBaseUrl,
+  has,
+  isFieldEmpty,
+  isInstance,
+  isPublishedVersion,
+  isUrl,
+  listDeepObjects,
   removeFirstLine,
-  listDeepObjects
-});
+  replaceVersion,
+  textToEncodedSlug,
+  toTitleCase,
+  uriToUrl,
+  urlToCanonicalUrl,
+  urlToElasticSearch,
+  urlToUri,
+  yesNo
+};
