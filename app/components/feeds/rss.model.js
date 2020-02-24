@@ -1,7 +1,6 @@
 'use strict';
 
-const { rendererPipeline } = require('./utils'),
-  log = require('../../services/universal/log').setup({ file: __filename, action: 'rss-transform' });
+const { rendererPipeline } = require('./utils');
 
 /**
  * Run the feed instance through the transform
@@ -14,22 +13,5 @@ const { rendererPipeline } = require('./utils'),
  * @return {Promise}
  */
 module.exports = (ref, data, locals) => {
-  const { meta, attr } = data,
-    utmParams = { utmSource: meta.utmSource || 'nym', utmMedium: meta.utmMedium || 'f1' },
-    mapper = (feed) => ({ meta: data.meta, feed, attr }),
-    entryMapper = (entry) => Object.assign(entry, utmParams),
-    errorHandler = (error) => {
-      log('error', 'Error rendering RSS data', {
-        error: error.message
-      });
-    };
-
-  return rendererPipeline({
-    prefix: 'rss',
-    data,
-    locals,
-    mapper,
-    errorHandler,
-    entryMapper
-  });
+  return rendererPipeline(ref, data, locals, 'rss');
 };
