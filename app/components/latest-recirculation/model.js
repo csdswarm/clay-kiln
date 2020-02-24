@@ -7,7 +7,7 @@ const queryService = require('../../services/server/query'),
   radioApiService = require('../../services/server/radioApi'),
   { uploadImage } = require('../../services/universal/s3'),
   { isComponent, getComponentName } = require('clayutils'),
-  { retrieveList } = require('../../services/server/lists'),
+  { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   { unityComponent } = require('../../services/universal/amphora'),
   tag = require('../tags/model.js'),
   elasticIndex = 'published-content',
@@ -27,19 +27,6 @@ const queryService = require('../../services/server/query'),
    * @returns {number}
    */
   getMaxItems = (data) => data._computed.isMultiColumn ? 4 : 5,
-  /**
-   * Gets the display name for a primary section front slug
-   *
-   * @param {string} slug
-   * @param {object} locals
-   * @returns {Promise<string>}
-   */
-  getPrimarySectionFrontName = async (slug, locals) => {
-    const list = await retrieveList('primary-section-fronts', locals),
-      entry = list.find(entry => entry.value === slug);
-
-    return entry ? entry.name : slug;
-  },
   /**
    * @param {string} ref
    * @param {object} data
@@ -92,11 +79,11 @@ const queryService = require('../../services/server/query'),
         });
       }
 
-      // hydrate item list.
-      const hydrationResults = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true }).then(items => Promise.all(items.map(async item => ({
-        ...item,
-        label: await getPrimarySectionFrontName(item.sectionFront, locals)
-      }))));
+      const primarySectionFronts = await retrieveList('primary-section-fronts', locals),
+        hydrationResults = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true }).then(items => items.map(item => ({
+          ...item,
+          label: getSectionFrontName(item.sectionFront, primarySectionFronts)
+        })));
 
       data._computed.articles = data.items.concat(hydrationResults);
     } catch (e) {
@@ -141,6 +128,8 @@ module.exports.save = async (ref, data, locals) => {
     return data;
   }
 
+  const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
@@ -159,7 +148,7 @@ module.exports.save = async (ref, data, locals) => {
       urlIsValid: result.urlIsValid,
       canonicalUrl: item.url || result.canonicalUrl,
       feedImgUrl: item.overrideImage || result.feedImgUrl,
-      label: item.overrideLabel || await getPrimarySectionFrontName(result.sectionFront, locals)
+      label: item.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts)
     };
   }));
 
@@ -173,7 +162,7 @@ module.exports.save = async (ref, data, locals) => {
  * @returns {Promise}
  */
 module.exports.render = function (ref, data, locals) {
-  data._computed.isMultiColumn = (data._computed.parents || []).some(ref => getComponentName(ref) === 'multi-column');
+  data._computed.isMultiColumn = data._computed.parents.some(ref => getComponentName(ref) === 'multi-column');
 
   const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
     maxItems = getMaxItems(data),
