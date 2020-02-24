@@ -1,4 +1,4 @@
-_version: 4.0
+_version: 5.0
 _description: |
   A list of five latest related articles by article type, tag, or manually populated.
 
@@ -18,7 +18,7 @@ componentTitleVisible:
   _label: Show Component's Title
   _has:
     input: checkbox
-    help: Show or hide the title displayed on the component's view 
+    help: Show or hide the title displayed on the component's view
 
 contentType:
   _label: Content type

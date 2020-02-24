@@ -131,8 +131,13 @@
         padding-bottom: em(38);
     }
     &__bio-text {
-        @mixin author-page-header-font3;
-        margin-bottom: em(14)
+        margin-bottom: em(14);
+        &.paragraph > p {
+            margin-bottom: em(18);
+        }
+        &.paragraph :last-child {
+            margin-bottom: 0;
+        }
     }
     &__links {
         display: flex;
