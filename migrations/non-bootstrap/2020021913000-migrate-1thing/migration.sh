@@ -68,7 +68,7 @@ if [ "$env" = 'prd' ]; then
     importType=full \
     publish=true \
     excludeCanonicalUrls="$pathToExistingUrls"
-elif [ "$env" = 'local']; then
+elif [ "$env" = 'local' ]; then
   npm run import-content --silent \
     api=1thingStg \
     importType=full \
