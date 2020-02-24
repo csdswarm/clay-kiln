@@ -1,3 +1,15 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
 .events-list {
   display: block;
+  &__load-more-btn {
+    /* @mixin podcast-episode-list-font3; */
+    background-color: theme(primaryColor, $purple);
+    color: $white;
+    width: 100%;
+    height: em(42, 14);
+    text-transform: uppercase;
+  }
 }
