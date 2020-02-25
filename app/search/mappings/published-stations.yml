@@ -1,8 +1,6 @@
 _doc:
   dynamic: "false"
   properties:
-    callsign:
-      type: "keyword"
     dateModified:
       type: "date"
     pageUri:
@@ -10,5 +8,7 @@ _doc:
       store: true
     site:
       type: "keyword"
-    slug:
+    stationCallsign:
+      type: "keyword"
+    stationSlug:
       type: "keyword"

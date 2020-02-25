@@ -96,11 +96,27 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
     });
 }
 
+/**
+ * Return the url for a station front based on its station slug
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getStationFrontSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.STATIONFRONT) {
+        return pubUtils.stationFrontSlugPattern(urlOptions);
+      }
+    });
+}
+
 function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       const slug = pubUtils.authorPageSlugPattern(urlOptions);
-      
+
       return slug;
     });
 }
@@ -110,3 +126,4 @@ module.exports.getArticleSlugUrl = getArticleSlugUrl;
 module.exports.getGallerySlugUrl = getGallerySlugUrl;
 module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
 module.exports.getAuthorPageSlugUrl = getAuthorPageSlugUrl;
+module.exports.getStationFrontSlugUrl = getStationFrontSlugUrl;
