@@ -38,7 +38,6 @@ const _get = require('lodash/get'),
     'sectionFront'
   ],
   DEFAULT_MAX_ITEMS = 10,
-  DEFAULT_PAGE_LENGTH = 5,
   returnData = (_, data) => data,
   defaultMapDataToFilters = (ref, data, locals) => ({
     filters: {
@@ -262,15 +261,6 @@ const _get = require('lodash/get'),
   fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems }, locals) => {
     const query = queryService.newQueryWithCount(index, maxItems + 1, locals),
       searchOpts = { shouldDedupeContent: true };
-
-    // Pagination is currently remove since deduping naturally adds pagination.
-    //
-    // const { page, pageLength = DEFAULT_PAGE_LENGTH } = pagination,
-    //   offset = maxItems + (parseInt(page) - 1) * pageLength;
-
-    // if (page) {
-    //   queryService.addOffset(query, offset);
-    // }
 
     let results = [];
 
