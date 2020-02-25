@@ -188,7 +188,7 @@ module.exports['10.0'] = (uri, data) => {
   return data;
 };
 
-module.exports['10.0'] = async (uri, data) => {
+module.exports['11.0'] = async (uri, data) => {
   defaultTextWithOverride.onModelSave.handleDefault('msnTitle', 'headline', data);
   data.msnTitleLength = _get(data.msnTitle, 'length', 0);
   data.feeds.msn = true;
