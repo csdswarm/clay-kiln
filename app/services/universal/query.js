@@ -491,23 +491,23 @@ module.exports = newQuery;
 
 Object.assign(module.exports, {
   addAggregation,
-  addShould,
   addFilter,
+  addMinimumShould,
   addMust,
   addMustNot,
-  addMinimumShould,
-  addSort,
-  addSize,
   addOffset,
-  onlyWithTheseFields,
-  onlyWithinThisSite,
-  withinThisSiteAndCrossposts,
+  addSearch,
+  addShould,
+  addSize,
+  addSort,
   formatAggregationResults,
-  getFormatSearchResult,
   formatProtocol,
+  getFormatSearchResult,
   moreLikeThis,
   newNestedQuery,
+  onlyWithinThisSite,
+  onlyWithTheseFields,
+  sanitizeSearchTerm,
   searchByQuery,
-  addSearch,
-  sanitizeSearchTerm
+  withinThisSiteAndCrossposts
 });

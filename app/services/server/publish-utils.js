@@ -10,7 +10,8 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   slugifyService = require('../../services/universal/slugify'),
-  { PAGE_TYPES } = require('../universal/constants'),
+  { DEFAULT_STATION, PAGE_TYPES } = require('../universal/constants'),
+  rdcSlug = DEFAULT_STATION.site_slug,
   /**
    * returns a url to the server for a component
    *
@@ -184,7 +185,7 @@ function getUrlOptions(component, locals, pageType) {
     component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline)) || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
-  urlOptions.stationSlug = component.stationSlug || '';
+  urlOptions.stationSlug = component.stationSlug || rdcSlug;
 
   if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {

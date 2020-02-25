@@ -13,7 +13,11 @@
                 v-for="tab in tabs">
             </ui-tab>
             <div class="alerts-manager__toolbar">
-                <ui-button @click="newAlert">Add Alert</ui-button>
+                <ui-button class="alerts-manager__add-alert"
+                    @click="newAlert">
+
+                    Add Alert
+                </ui-button>
                 <station-select v-show="!global"
                     class="alerts-manager__station-select" />
             </div>
@@ -141,9 +145,9 @@
     const _get = require('lodash/get');
     const { mapGetters } = require('vuex');
     const { isUrl } = require('../../../universal/utils');
+    const { unityAppDomainName: unityApp } = require('../../../universal/urps');
     const stationSelect = require('../../shared-vue-components/station-select');
     const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
-    const { anyStation } = require('../../../universal/user-permissions');
     const { getAlerts } = require('../../../client/alerts');
     const {
         UiButton,
@@ -218,8 +222,8 @@
                 tabs() {
                     const { user, stationsIHaveAccessTo } = kiln.locals,
                         tabs = [],
-                        hasGlobalAlertPermissions = user.can('create').a('alerts_global').for(anyStation).value ||
-                            user.can('update').a('alerts_global').for(anyStation).value;
+                        hasGlobalAlertPermissions = user.can('create').a('global-alert').for(unityApp).value
+                            || user.can('update').a('global-alert').for(unityApp).value;
 
                     if (hasGlobalAlertPermissions) {
                         tabs.push({ id: 'global', name: 'Global' });

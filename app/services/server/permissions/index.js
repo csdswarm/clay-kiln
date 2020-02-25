@@ -2,6 +2,7 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
+  { unityAppDomainName } = require('../../universal/urps'),
   {
     getComponentName,
     getPageInstance,
@@ -13,7 +14,7 @@ const express = require('express'),
     isList,
     getListInstance
   } = require('clayutils'),
-  { loadPermissions } = require('../urps'),
+  urps = require('../urps'),
   addPermissions = require('../../universal/user-permissions'),
   _set = require('lodash/set'),
   _get = require('lodash/get'),
@@ -22,14 +23,15 @@ const express = require('express'),
   path = require('path'),
   YAML = require('yamljs'),
   interceptLists = require('./intercept-lists'),
-  { addAlertsMiddleware } = require('../alerts'),
   componentsToCheck = getComponentsWithPermissions(),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
   { getComponentData } = require('../db'),
-  attachToLocals = require('./attach-to-locals'),
+  addToLocals = require('./add-to-locals'),
+  updateLocals = require('./update-locals'),
   getPageTemplateIds = require('../get-page-template-ids'),
-  { anyStation } = addPermissions;
+  { wrapInTryCatch } = require('../../startup/middleware-utils'),
+  { refreshPath } = require('../../../routes/add-endpoints/refresh-permissions');
 
 /**
  * loop through each component and add it to the list if it has a _permission
@@ -70,7 +72,28 @@ function getComponentsWithPermissions() {
 function userPermissionRouter() {
   const userPermissionRouter = express.Router();
 
-  userPermissionRouter.all('/*', async (req, res, next) => {
+  userPermissionRouter.use('/', wrapInTryCatch(async (req, res, next) => {
+    const { locals } = res;
+
+    if (_get(locals, 'user.provider') === 'cognito') {
+      await urps.updateAuthData(req.session, locals);
+    }
+
+    next();
+  }));
+
+  // loadPermissions uses stationsIHaveAccessTo which means this middleware must
+  //   come first
+  addToLocals.stationsIHaveAccessTo(userPermissionRouter);
+  updateLocals.stationForPermissions(userPermissionRouter);
+
+  userPermissionRouter.use('/', async (req, res, next) => {
+    // if we're refreshing permissions then don't load permissions because they
+    //   may get loaded twice
+    if (req.path === refreshPath) {
+      return next();
+    }
+
     try {
       const { locals } = res;
 
@@ -78,9 +101,8 @@ function userPermissionRouter() {
         const { provider } = res.locals.user;
 
         if (provider === 'cognito') {
-          await loadPermissions(req.session, locals);
-        } else if (provider === 'google') {
-          locals.permissions = { station: { access: { station: { 'NATL-RC': 1 } } } };
+          await urps.loadStationPermissions(req.session, locals);
+          locals.permissions = req.session.auth.permissions;
         }
         addPermissions(locals);
 
@@ -93,20 +115,23 @@ function userPermissionRouter() {
   });
 
   interceptLists(userPermissionRouter);
-  addAlertsMiddleware(userPermissionRouter);
 
-  // we need access to 'res' in createPage so a proper 400 error can be returned
-  //   when a bad station slug is sent.
+  addToLocals.stationsICanImportContent(userPermissionRouter);
+
+  // updatePermissionsInfo needs to go after stationsIHaveAccessTo
+  addToLocals.updatePermissionsInfo(userPermissionRouter);
+
+  // we need access to 'res' in these so a proper 400 error can be returned
+  //   when a bad station identifier is sent.
   hasPermissions.createPage(userPermissionRouter);
+  hasPermissions.importContent(userPermissionRouter);
+  hasPermissions.createOrUpdateAlerts(userPermissionRouter);
 
   // we're restricting editPageTemplate here instead of in checkUserPermissions
   //   because that function will be kept much simpler if we leave it
   //   intercepting unsafe methods (here we're intercepting
   //   GET /_pages/...?edit=true)
   hasPermissions.editPageTemplate(userPermissionRouter);
-
-  attachToLocals.updatePermissionsInfo(userPermissionRouter);
-  attachToLocals.stationsIHaveAccessTo(userPermissionRouter);
 
   return userPermissionRouter;
 }
@@ -206,10 +231,11 @@ async function checkComponentPermission(uri, req, locals, db) {
  */
 async function checkUserPermissions(uri, req, locals, db) {
   try {
-    const { user } = locals;
+    const { user } = locals,
+      { site_slug } = locals.stationForPermissions;
 
     // no matter the request, verify the user has can has the record for this site
-    if (!user.hasPermissionsTo('access').this('station').value) {
+    if (!locals.stationsIHaveAccessTo[site_slug]) {
       return false;
     }
 
@@ -224,12 +250,13 @@ async function checkUserPermissions(uri, req, locals, db) {
       && req.method === 'PUT'
     ) {
       const pageId = getPageInstance(uri),
-        canEditPageTemplate = user.can('update').a('templates').for(anyStation).value;
+        canEditPageTemplate = user.can('update').a('page-template').value;
 
       if (isPublished(uri)) {
         const pageType = getComponentName(await getComponentData(uri, 'main[0]'));
 
-        return pageTypesToCheck.has(pageType)
+        // only static-page has particular publish permissions at the moment
+        return pageType === 'static-page'
           ? user.can('publish').a(pageType).value
           : true;
       } else if (
@@ -245,9 +272,13 @@ async function checkUserPermissions(uri, req, locals, db) {
         pageData = await db.get(pageUri),
         pageType = getComponentName(pageData.main[0]);
 
-      return pageTypesToCheck.has(pageType)
-        ? user.can('unpublish').a(pageType).value
-        : true;
+      if (pageTypesToCheck.has(pageType)) {
+        return user.can('unpublish').a(pageType).value;
+      } else if (pageType === 'homepage') {
+        return user.can('unpublish').a(pageType).for(unityAppDomainName).value;
+      } else {
+        return true;
+      }
     }
 
     if (isList(uri) && req.method === 'PUT') {

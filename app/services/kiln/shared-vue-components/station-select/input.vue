@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div class="station-select">
     <div v-if="!hasManyStations"
-      class="station-select station-select-label">
+      class="station-select__label">
 
       Station: {{ selectedItem.label || '&lt;no station&gt;' }}
     </div>
 
     <ui-select v-else
-      class="station-select station-select-input"
+      class="station-select__input"
       has-search
       placeholder="Search a station"
       :options="items"
@@ -15,7 +15,7 @@
       @change="onChange"
       ref="stationSelect"
     ></ui-select>
-    <ui-button v-if="allowClear" 
+    <ui-button v-if="allowClear"
       @click="clearStation"
       ref="clearButton">Clear</ui-button>
   </div>
@@ -25,11 +25,10 @@
 import _ from 'lodash';
 import { mapGetters, mapState } from 'vuex';
 import { storeNs } from './index.js';
+import { DEFAULT_STATION } from '../../../universal/constants';
 
 const { UiButton, UiSelect } = window.kiln.utils.components,
-  // the national station doesn't have a slug
-  nationalSlug = '',
-  includes = (value, term) => value.toLowerCase().includes(term.toLowerCase());
+  nationalSlug = DEFAULT_STATION.site_slug;
 
 export default {
   name: 'station-select',
@@ -37,10 +36,12 @@ export default {
     allowClear: Boolean,
     onChange: Function,
     initialSelectedSlug: String,
-    initialSelectedCallsign: String
+    initialSelectedCallsign: String,
+    stations: Object
   },
   created() {
-    this.stationsBySlug = window.kiln.locals.stationsIHaveAccessTo;
+    this.stationsBySlug = this.stations
+      || window.kiln.locals.stationsIHaveAccessTo;
     this.initItems();
     this.initSelectedItem();
   },

@@ -40,7 +40,6 @@ import axios from 'axios';
 import { mapGetters } from 'vuex'
 import stationSelect from '../../shared-vue-components/station-select'
 import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
-import { anyStation } from '../../../universal/user-permissions'
 import {
   editExt,
   htmlExt,
@@ -57,7 +56,7 @@ export default {
   data() {
     const secondaryActions = [],
       { user } = window.kiln.locals,
-      canEditTemplate = user.can('update').a('templates').for(anyStation).value;
+      canEditTemplate = user.can('update').a('page-template').value;
 
     if (canEditTemplate) {
       secondaryActions.push({

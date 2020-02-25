@@ -84,16 +84,6 @@ function uriToUrl(uri, locals) {
 }
 
 /**
- * Replace https with http and removes query string
- *
- * @param {string} url
- * @returns {string}
- */
-function cleanUrl(url) {
-  return url.split('?')[0].replace('https://', 'http://');
-}
-
-/**
  * Remove extension from route / path.
  *
  * Note: copied from amphora@v7.3.2 lib/responses.js
@@ -118,6 +108,16 @@ function removeExtension(path) {
   }
 
   return path;
+}
+
+/**
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
 }
 
 /**
@@ -293,8 +293,10 @@ function urlToElasticSearch(url) {
 
 /**
  * Returns whether the request is for a content component.  A content component
- *   here just means a component that can be created via the kiln drawer e.g.
- *   article, gallery, etc.
+ *   usually means a component that can be created via the kiln drawer e.g.
+ *   article, gallery, etc.  More specifically it's a component that will be
+ *   listed under the 'main' property of a page, which is why 'homepage' is also
+ *   considered a content type.
  *
  * @param {string} url
  * @returns {boolean}
@@ -337,7 +339,7 @@ function removeFirstLine(str) {
   return str.split('\n').slice(1).join('\n');
 }
 
-Object.assign(module.exports, {
+module.exports = {
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
@@ -353,6 +355,7 @@ Object.assign(module.exports, {
   isUrl,
   removeFirstLine,
   prettyJSON,
+  removeFirstLine,
   replaceVersion,
   textToEncodedSlug,
   toTitleCase,
@@ -361,4 +364,4 @@ Object.assign(module.exports, {
   urlToElasticSearch,
   urlToUri,
   yesNo
-});
+};

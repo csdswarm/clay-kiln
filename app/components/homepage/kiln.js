@@ -1,12 +1,9 @@
 'use strict';
 
-const { enforcePublishRights } = require('../../services/kiln/permissions'),
-  handleEditModePlaceholders = require('../../services/kiln/handle-edit-mode-placeholders'),
-  KilnInput = window.kiln.kilnInput;
+const applyContentLogic = require('../../services/kiln/apply-content-logic');
 
 module.exports = (schema) => {
-  enforcePublishRights(schema);
-  handleEditModePlaceholders(new KilnInput(schema));
+  applyContentLogic(schema);
 
   return schema;
 };

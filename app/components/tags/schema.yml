@@ -31,7 +31,7 @@ items:
       allowCreate: false
   _list_permission:
     create: create
-    remove: update
+    remove: remove
 sectionFront:
   _subscribe: sectionFront
 featureRubric:
