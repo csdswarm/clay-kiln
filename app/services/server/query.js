@@ -112,7 +112,7 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
   //   And when locals doesn't exist there's no reason to dedupe.
   const shouldDedupe = locals && opts.shouldDedupeContent,
     loadedIds = shouldDedupe
-      ? locals.loadedIds
+      ? locals.loadedIds.filter(id => id)
       : [];
 
   getSearchInstance();

@@ -158,19 +158,25 @@ module.exports['9.0'] = async function (uri, data) {
   }
 };
 
-module.exports['10.0'] = function (uri, data) {
+module.exports['10.0'] = async function (uri, data) {
+  const { filterTags, filterSecondarySectionFronts, ...restOfData } = data;
+
+  return { ...restOfData, excludeTags: filterTags, excludeSecondarySectionFronts: filterSecondarySectionFronts };
+};
+
+module.exports['11.0'] = function (uri, data) {
   data.componentTitleVisible = false;
 
   return data;
 };
 
-module.exports['11.0'] = async (uri, data, locals) => {
+module.exports['12.0'] = async (uri, data, locals) => {
   await addUriToCuratedItems(uri, data.items, locals);
 
   return data;
 };
 
-module.exports['12.0'] = function (uri, data) {
+module.exports['13.0'] = function (uri, data) {
   return {
     ...data,
     enableSharethrough: true

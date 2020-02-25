@@ -1,9 +1,14 @@
 <section
-  class="component component--latest-recirc {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}{{#if (compare populateBy 'tag')}}component--tag{{/if}}{{#if (compare populateBy 'station')}}component--station{{/if}}{{#ifNone _computed.articles.length @root.locals.edit }} component--empty{{/ifNone}}{{#if _computed.isMultiColumn}} component--column{{/if}}"
+  class="component component--latest-recirc
+    {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}
+    {{#if (compare populateBy 'tag')}}component--tag{{/if}}
+    {{#if (compare populateBy 'station')}}component--station{{/if}}
+    {{#ifNone _computed.articles.length @root.locals.edit }} component--empty{{/ifNone}}
+    {{#if _computed.isMultiColumn}} component--column{{/if}}"
   data-uri="{{ default _ref _self }}"
   data-track-type="latest-recirculation"
   data-editable="latestRecirculationItems">
-  {{#if _computed.articles.length}}
+  {{#if _computed.articles.length  }}
     {{#unless _computed.isMultiColumn}}
       <h2 class="latest-recirc__title">LATEST
       {{#if (compare populateBy 'sectionFront')}}

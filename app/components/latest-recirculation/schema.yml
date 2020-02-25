@@ -1,20 +1,11 @@
-_version: 1.0
-_description: |
-  A dynamically created slider for promoting recirculation of latest articles and galleries within the same.
+_version: 4.0
 _confirmRemoval: true
 
-contentType:
-  _label: Content type
-  _has:
-    validate:
-      required: true
-    input: checkbox-group
-    options:
-      - article
-      - gallery
+_description: |
+  A list of five latest related articles by section front, secondary section front, tag, or manually populated.
 
 populateFrom:
-  _label: Populate content from?
+  _label: Populate articles by primary section front, secondary section front or tag?
   _has:
     validate:
       required: true
@@ -33,8 +24,22 @@ populateFrom:
       -
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
+      - manual
+
+contentType:
+  _label: Content type
+  _has:
+    validate:
+      required: true
+    input: checkbox-group
+    options:
+      - article
+      - gallery
 
 sectionFront:
+  _subscribe: sectionFront
+
+sectionFrontManual:
   _label: Section Front Category
   _publish: sectionFront
   _reveal:
@@ -66,10 +71,6 @@ secondarySectionFront:
 
 tag:
   _label: Tag
-  _placeholder:
-    height: 600px
-    text: Curated Category/Tag Page
-    required: true
   _reveal:
     field: populateFrom
     operator: ===
@@ -93,6 +94,22 @@ tag:
           - section-front-and-tag
           - section-front-or-tag
 
+excludeSectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+
+excludeSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
+
 excludeTags:
   _label: Exclude Tags
   _has:
@@ -103,29 +120,13 @@ excludeTags:
       allowCreate: true
     help: Exclude content from all tags
 
-excludeSectionFronts:
-  _label: Exclude Section Fronts
-  _has:
-    input: select
-    search: true
-    multiple: true
-    list: primary-section-fronts
-  
-excludeSecondarySectionFronts:
-  _label: Exclude Secondary Section Fronts
-  _has:
-    input: select
-    search: true
-    multiple: true
-    list: secondary-section-fronts
-
 items:
   _label: Items
   _has:
     input: complex-list
     enforceMaxlength: true
     validate:
-      max: 10
+      max: 5
     help: Manually choose articles to include
     props:
     -
@@ -162,14 +163,18 @@ items:
           required: true
 
 _groups:
-  settings:
-    _label: Latest Top Recirc
+  latestRecirculationItems:
     fields:
-      - contentType
       - populateFrom
-      - sectionFront
+      - contentType
+      - sectionFrontManual
       - secondarySectionFront
       - tag
-      - excludeTags
       - excludeSectionFronts
       - excludeSecondarySectionFronts
+      - excludeTags
+      - items
+    _placeholder:
+      ifEmpty: 'populateFrom'
+      height: 500px
+      text: Latest Story(s)
