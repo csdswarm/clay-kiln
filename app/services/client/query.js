@@ -150,31 +150,17 @@ function logCatch(e, ref) {
 }
 
 module.exports = newQueryWithLocals;
-module.exports.newQueryWithCount = newQueryWithCount;
-module.exports.searchByQuery = searchByQuery;
-module.exports.searchByQueryWithRawResult = searchByQueryWithRawResult;
-module.exports.getCount = getCount;
-module.exports.executeMultipleSearchRequests = executeMultipleSearchRequests;
-module.exports.updateByQuery = updateByQuery;
-module.exports.onePublishedArticleByUrl = onePublishedArticleByUrl;
-module.exports.logCatch = logCatch;
 
-module.exports.addAggregation = universalQuery.addAggregation;
-module.exports.addShould = universalQuery.addShould;
-module.exports.addFilter = universalQuery.addFilter;
-module.exports.addMust = universalQuery.addMust;
-module.exports.addMustNot = universalQuery.addMustNot;
-module.exports.addMinimumShould = universalQuery.addMinimumShould;
-module.exports.addSort = universalQuery.addSort;
-module.exports.addSize = universalQuery.addSize;
-module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
-module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
-module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
-module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
-module.exports.getFormatSearchResult = universalQuery.getFormatSearchResult;
-module.exports.moreLikeThis = universalQuery.moreLikeThis;
-module.exports.newNestedQuery = universalQuery.newNestedQuery;
-module.exports.addSearch = universalQuery.addSearch;
+Object.assign(module.exports, universalQuery, {
+  newQueryWithCount,
+  searchByQuery,
+  searchByQueryWithRawResult,
+  getCount,
+  executeMultipleSearchRequests,
+  updateByQuery,
+  onePublishedArticleByUrl,
+  logCatch,
 
-// For testing
-module.exports.post = universalRest.post;
+  // For testing
+  post: universalRest.post
+});

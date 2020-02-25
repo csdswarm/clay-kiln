@@ -2,7 +2,9 @@
 
 const _ = require('lodash'),
   utils = require('../universal/utils'),
-  protocol = process ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:` : window.location.protocol;
+  protocol = process
+    ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:`
+    : window.location.protocol;
 
 /**
  * SearchOpts - options which modify the behavior of elasticsearch
@@ -181,10 +183,9 @@ function addMustNot(query, item) {
  */
 function addFilter(query, item) {
   const key = `${getRoot(query)}.query.bool.filter`,
-    filter = _.get(query, key, undefined),
-    itemIsObject = _.isObject(item);
+    filter = _.get(query, key, undefined);
 
-  if (!itemIsObject) {
+  if (!_.isObject(item)) {
     throw new Error('Filter query required to be an object');
   }
 
@@ -463,7 +464,7 @@ function addSearch(query, searchTerm, fields) {
   const key = `${getRoot(query)}.query`,
     value = {
       query_string: {
-        query: searchTerm.replace(/([\/|:])/g, '\\$1'),
+        query: sanitizeSearchTerm(searchTerm),
         fields: _.isArray(fields) ? fields : [fields]
       }
     };
@@ -473,23 +474,40 @@ function addSearch(query, searchTerm, fields) {
   return query;
 }
 
+/**
+ * for now (for backwards compatibility) this just escapes colons and forward
+ *   slashes.  The full list of query special characters is found here:
+ *
+ *   https://www.elastic.co/guide/en/elasticsearch/reference/6.2/query-dsl-query-string-query.html#_reserved_characters
+ *
+ * @param {string} searchTerm
+ * @returns {string}
+ */
+function sanitizeSearchTerm(searchTerm) {
+  return searchTerm.replace(/([\/|:])/g, '\\$1');
+}
+
 module.exports = newQuery;
-module.exports.addAggregation = addAggregation;
-module.exports.addShould = addShould;
-module.exports.addFilter = addFilter;
-module.exports.addMust = addMust;
-module.exports.addMustNot = addMustNot;
-module.exports.addMinimumShould = addMinimumShould;
-module.exports.addSort = addSort;
-module.exports.addSize = addSize;
-module.exports.addOffset = addOffset;
-module.exports.onlyWithTheseFields = onlyWithTheseFields;
-module.exports.onlyWithinThisSite = onlyWithinThisSite;
-module.exports.withinThisSiteAndCrossposts = withinThisSiteAndCrossposts;
-module.exports.formatAggregationResults = formatAggregationResults;
-module.exports.getFormatSearchResult = getFormatSearchResult;
-module.exports.formatProtocol = formatProtocol;
-module.exports.moreLikeThis = moreLikeThis;
-module.exports.newNestedQuery = newNestedQuery;
-module.exports.searchByQuery = searchByQuery;
-module.exports.addSearch = addSearch;
+
+Object.assign(module.exports, {
+  addAggregation,
+  addShould,
+  addFilter,
+  addMust,
+  addMustNot,
+  addMinimumShould,
+  addSort,
+  addSize,
+  addOffset,
+  onlyWithTheseFields,
+  onlyWithinThisSite,
+  withinThisSiteAndCrossposts,
+  formatAggregationResults,
+  getFormatSearchResult,
+  formatProtocol,
+  moreLikeThis,
+  newNestedQuery,
+  searchByQuery,
+  addSearch,
+  sanitizeSearchTerm
+});

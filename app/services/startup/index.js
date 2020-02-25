@@ -23,6 +23,7 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
+  cognitoAuth = require('./cognito-auth'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
   addToLocals = require('./add-to-locals'),
@@ -95,6 +96,8 @@ function setupApp(app) {
   addInterceptor.cacheControl(app);
 
   radium.inject(app);
+
+  cognitoAuth.inject(app);
 
   app.use(canonicalJSON);
 

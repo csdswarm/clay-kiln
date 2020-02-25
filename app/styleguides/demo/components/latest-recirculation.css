@@ -13,7 +13,7 @@
   }
 
   @define-mixin latest-recirc-box $color {
-  	outline: em(1,16) solid $color;
+  	outline: em(1,16) solid theme(secondaryColor, $color);
   }
   @mixin latest-recirc-box $purple;
   &.component--music {

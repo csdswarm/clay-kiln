@@ -3,7 +3,7 @@
 @import "_global/mixins";
 
 .component--related {
-  border-top: em(5) solid $purple;
+  border-top: em(5) solid theme(primaryColor, $purple);
   padding-top: em(15);
   margin-bottom: em(40);
   display: flex;
@@ -66,7 +66,7 @@
     height: em(8, 14);
     margin-right: em(10, 14);
     display: inline-block;
-    background-color: $purple;
+    background-color: theme(primaryColor, $purple);
   }
 
   .related__media-icon {
@@ -125,12 +125,12 @@
 
 @define-mixin themed-related $class, $color {
   .component--related.component--$class {
-    border-color: $color;
+    border-color: theme(primaryColor, $color);
 
     .related__item {
       .related__bullet,
       .related__media-icon {
-        background-color: $color;
+        background-color: theme(primaryColor, $color);
       }
     }
   }
