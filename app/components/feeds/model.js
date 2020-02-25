@@ -187,18 +187,23 @@ module.exports.render = async (ref, data, locals) => {
 
   try {
     if (meta.rawQuery) {
-      const results = await queryService.searchByQueryWithRawResult(query);
+      const results = await queryService.searchByQueryWithRawResult(query, locals, { shouldDedupeContent: false });
 
       data.results = results.hits.hits; // Attach results and return data
-      return data;
     } else {
-      data.results = await queryService.searchByQuery(query); // Attach results and return data
-
-      return data;
+      // Attach results and return data
+      data.results = await queryService.searchByQuery(
+        query,
+        locals,
+        {
+          includeIdInResult: true,
+          shouldDedupeContent: false
+        }
+      );
     }
   } catch (e) {
     queryService.logCatch(e, 'feeds.model');
-    return data;
   }
 
+  return data;
 };
