@@ -43,6 +43,11 @@ const _get = require('lodash/get'),
 module.exports = recirculationData({
   contentKey: 'content',
   elasticFields,
+  mapDataToFilters: (uri, data, locals) => ({
+    pagination: {
+      page: _get(locals, 'page')
+    }
+  }),
   mapResultsToTemplate: (result, item = {}) => {
     return Object.assign(item, {
       primaryHeadline: item.overrideTitle || result.primaryHeadline,
