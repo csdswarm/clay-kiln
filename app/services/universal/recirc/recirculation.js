@@ -5,12 +5,15 @@
  * content
  */
 
-const _get = require('lodash/get'),
+const
+  _has = require('lodash/has'),
   _isPlainObject = require('lodash/isPlainObject'),
-  queryService = require('../server/query'),
-  logger = require('./log'),
-  log = logger.setup({ file: __filename }),
+  logger = require('../log'),
+  queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
+  { unityComponent } = require('../amphora'),
+
+  log = logger.setup({ file: __filename }),
   index = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -23,6 +26,10 @@ const _get = require('lodash/get'),
   returnData = (_, data) => data,
   // Maps defined query filters to correct elastic query formatting
   queryFilters = {
+    author: {
+      filterCondition: 'must',
+      createObj: author => ({ match: { 'authors.normalized': author } })
+    },
     sectionFronts: {
       filterCondition: 'must',
       unique: true,
@@ -74,12 +81,14 @@ const _get = require('lodash/get'),
    */
   addCondition = (query, key, valueObj, conditionOverride) => {
     if (!queryFilters[key]) {
-      log('error', `No filter current exists for ${key}`);
+      log('error', `No filter current exists for ${ key }`);
       return;
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = conditionOverride || filterCondition, value } = _isPlainObject(valueObj) ? valueObj : { value: valueObj };
+      { condition = conditionOverride || filterCondition, value } = _isPlainObject(valueObj)
+        ? valueObj
+        : { value: valueObj };
 
     if (Array.isArray(value)) {
       if (unique && value.length) {
@@ -97,14 +106,14 @@ const _get = require('lodash/get'),
   },
 
   /**
- * Use filters to query elastic for content
- *
- * @param {object} filter
- * @param {object} exclude
- * @param {array} fields
- * @param {Object} [locals]
- * @returns {array} elasticResults
- */
+   * Use filters to query elastic for content
+   *
+   * @param {object} filter
+   * @param {object} exclude
+   * @param {array} fields
+   * @param {Object} [locals]
+   * @returns {array} elasticResults
+   */
   fetchRecirculation = async (filter, exclude, fields = elasticFields, locals) => {
     const query = queryService(index, locals),
       searchOpts = { shouldDedupeContent: true };
@@ -114,13 +123,13 @@ const _get = require('lodash/get'),
     // add sorting
     queryService.addSort(query, { date: 'desc' });
 
-    Object.entries(filter).forEach(([key, value]) => addCondition(query, key, value));
-    Object.entries(exclude).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
+    Object.entries(filter).forEach(([ key, value ]) => addCondition(query, key, value));
+    Object.entries(exclude).forEach(([ key, value ]) => addCondition(query, key, value, 'mustNot'));
 
     queryService.onlyWithTheseFields(query, fields);
 
     // If there is a should query, there needs to be a minimum_should_match
-    if (_get(query, 'body.query.bool.should')) {
+    if (_has(query, 'body.query.bool.should[0]')) {
       query.body.query.bool.minimum_should_match = 1;
     }
 
@@ -143,8 +152,8 @@ const _get = require('lodash/get'),
    * @param {function} config.save
    * @returns {object}
    */
-  recirculationData = ({ contentKey = 'articles', maxItems = 10, mapDataToFilters = returnData, render = returnData, save = returnData }) => {
-    return {
+  recirculationData = ({ contentKey = 'articles', maxItems = 10, mapDataToFilters = returnData, render = returnData, save = returnData }) =>
+    unityComponent({
       async render(uri, data, locals) {
         const curatedIds = data.items.map(anItem => anItem.uri);
 
@@ -155,17 +164,19 @@ const _get = require('lodash/get'),
             content = await fetchRecirculation(filters, excludes, elasticFields, locals);
 
           data._computed = Object.assign(data._computed || {}, {
-            [contentKey]: [...curated, ...content].slice(0, maxItems)
+            [contentKey]: [ ...curated, ...content ].slice(0, maxItems)
           });
         } catch (e) {
-          log('error', `There was an error querying items from elastic - ${e.message}`, e);
+          log('error', `There was an error querying items from elastic - ${ e.message }`, e);
         }
         return render(uri, data, locals);
       },
       async save(uri, data, locals) {
+
         if (!data.items.length || !locals) {
           return data;
         }
+
         data.items = await Promise.all(data.items.map(async (item) => {
           item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
           const searchOpts = {
@@ -180,20 +191,19 @@ const _get = require('lodash/get'),
               searchOpts
             );
 
-          return  {
+          return {
             ...item,
             uri: result._id,
             primaryHeadline: item.overrideTitle || result.primaryHeadline,
             pageUri: result.pageUri,
             urlIsValid: result.urlIsValid,
             canonicalUrl: item.url || result.canonicalUrl,
-            feedImgUrl: item.overrideImage || result.feedImgUrl ,
+            feedImgUrl: item.overrideImage || result.feedImgUrl,
             sectionFront: result.sectionFront
           };
         }));
         return save(uri, data, locals);
       }
-    };
-  };
+    });
 
 module.exports.recirculationData = recirculationData;

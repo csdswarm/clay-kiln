@@ -2,7 +2,7 @@
 const queryService = require('../../services/server/query'),
   _get = require('lodash/get'),
   _capitalize = require('lodash/capitalize'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
   { sendError } = require('../../services/universal/cmpt-error'),
   { isComponent } = require('clayutils'),

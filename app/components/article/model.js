@@ -9,9 +9,9 @@ const _get = require('lodash/get'),
   };
 
 module.exports = unityComponent({
-  render: (uri, data, locals) => {
+  render: async (uri, data, locals) => {
     locals.loadedIds.push(uri);
-    autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);
+    await autoLink(data, ['sectionFront', 'secondarySectionFront'], locals);
     return createContent.render(uri, data, locals);
   },
   save: (uri, data, locals) => {
