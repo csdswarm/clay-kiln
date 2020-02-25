@@ -16,9 +16,15 @@ async function updateNewPages(host) {
   console.log('Adding Station Front to new pages list...');
 
   const data = await retrieveList(host, LIST),
-    existingItem = data.some(item => item.id === 'station-front');
+    existingStationFront = data.some(item => item.id === 'station-front'),
+    existingStationsIdx = data.findIndex(item => item.id === 'stations');
 
-  if (!existingItem) {
+  // delete existing station basic music entry
+  if (existingStationsIdx !== -1) {
+    data.splice(existingStationsIdx, 1);
+  }
+
+  if (!existingStationFront) {
     await updateList(host, LIST, [
       ...data,
       {
