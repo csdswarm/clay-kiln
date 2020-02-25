@@ -6,49 +6,18 @@ canonicalUrl:
   _has:
     help: Canonical URL of an article. Set when the article publishes.
 
-googleAdUnderStationsModule:
-  _component:
-    include:
-      - google-ad-manager
-
-googleAdUnderLatestModule:
-  _component:
-    include:
-      - google-ad-manager
-
-podcastList:
-  _component:
-    include:
-      - podcast-list
-
-twoColumnComponent:
-  _component:
-    include:
-      - two-column-component
-
-stationsCarousel:
-  _placeholder:
-    text: Stations Carousel
-    height: 300px
-  _componentList:
-    fuzzy: true # allows interactives, etc to add one-off components
-    include:
-      - stations-carousel
-
 mainContent:
   _placeholder:
     text: Main Content
     height: 100px
+    required: true
   _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
     include:
     - multi-column
-
-latestContent:
-  _component:
-    include:
-      - latest-content
-
-latestVideos:
-  _component:
-    include:
-      - latest-videos
+    - google-ad-manager
+    - podcast-list
+    - two-column-component
+    - stations-carousel
+    - latest-content
+    - latest-videos

@@ -10,11 +10,11 @@
       <div class="multi-column__editable" data-editable="col3">
         {{> component-list col3 }}
       </div>
-      <div class="multi-column__ad multi-column__ad--col3">
-        {{> google-ad-manager mediumRectangleTop }}
-      </div>
+      {{#if mediumRectangleTop }}
+        <div class="multi-column__ad multi-column__ad--col3">
+          {{> google-ad-manager mediumRectangleTop }}
+        </div>
+      {{/if}}
     </div>
   </div>
 </section>
-
-
