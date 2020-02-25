@@ -14,8 +14,8 @@ const
     'feedImgUrl',
     'canonicalUrl'
   ],
-  maxItems = 3,
-  pageLength = 3,
+  maxItems = 30,
+  pageLength = 10,
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   { isComponent } = require('clayutils'),
   utils = require('../../services/universal/utils'),
@@ -78,7 +78,16 @@ async function getEventDataFromElastic(event, locals) {
   * }[]>}
   */
 async function getRecentEventsFromElastic(uri, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
+
+
+  if (!data.numberToDisplay) {
+    data.numberToDisplay = maxItems;
+  }
+  if (!data.loadMoreAmount) {
+    data.loadMoreAmount = pageLength;
+  }
+
+  const query = queryService.newQueryWithCount(elasticIndex, data.numberToDisplay, locals);
 
   queryService.addFilter(query, { term: { contentType: 'event' } });
   // TODO: figure out a way to pass station if there is one from FE
@@ -108,19 +117,15 @@ async function getRecentEventsFromElastic(uri, data, locals) {
     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
     * we return N + 1 items so we can let the frontend know if we have more data.
     */
-    if (!data.pageLength) {
-      data.pageLength = pageLength;
-    }
-    // TODO: add setting for number of events to grab
-    const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
+
+    const skip = data.numberToDisplay + (parseInt(locals.page) - 1) * data.loadMoreAmount;
 
     queryService.addOffset(query, skip);
   } else {
-    data.pageLength = maxItems;
     data.initialLoad = true;
 
     // Default to loading 30 articles, which usually works out to 4 pages
-    data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
+    data.lazyLoads = Math.max(Math.ceil((30 - data.loadMoreAmount) / data.loadMoreAmount), 0);
   }
   // console.log('[query]', JSON.stringify(query, null, 2));
   return queryService.searchByQuery(query)
@@ -154,9 +159,9 @@ module.exports = unityComponent({
     // On initial load we need to append curated items onto the list, otherwise skip
     // Show a maximum of pageLength links
     if (data.initialLoad) {
-      data.events = curatedEvents.concat(recentEvents).slice(0, data.pageLength);
+      data.events = curatedEvents.concat(recentEvents).slice(0, data.loadMoreAmount);
     } else {
-      data.events = recentEvents.slice(0, data.pageLength);
+      data.events = recentEvents.slice(0, data.loadMoreAmount);
     }
     return data;
   },
@@ -167,6 +172,7 @@ module.exports = unityComponent({
         dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
       };
     });
+    // load more functionality
     // if there is a page number include more events with the page num as offset
     if (locals.page) {
       const moreEvents =  await getRecentEventsFromElastic(uri, data, locals);
@@ -177,9 +183,7 @@ module.exports = unityComponent({
           dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
         };
       });
-      return data;
-    } else {
-      return data;
     }
+    return data;
   }
 });
