@@ -131,7 +131,6 @@ module.exports['8.0'] = function (uri, data) {
   return data;
 };
 
-
 module.exports['9.0'] = async function (uri, data) {
   if (data.primarySectionFront) {
     return data;
@@ -169,4 +168,11 @@ module.exports['11.0'] = async (uri, data, locals) => {
   await addUriToCuratedItems(uri, data.items, locals);
 
   return data;
+};
+
+module.exports['12.0'] = function (uri, data) {
+  return {
+    ...data,
+    enableSharethrough: true
+  };
 };

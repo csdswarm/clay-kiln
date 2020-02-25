@@ -1,4 +1,4 @@
-_version: 11.0
+_version: 12.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -263,6 +263,11 @@ items:
         validate:
           required: true
 
+enableSharethrough:
+  _label: Enable Sharethrough
+  _has:
+    input: checkbox
+
 introComponents:
   _label: Intro Components
   _placeholder:
@@ -283,6 +288,7 @@ _groups:
     fields:
       - componentTitle
       - componentTitleVisible
+      - enableSharethrough
       - pageLength
       - maxLength
       - autoPopulatedContentHeader
