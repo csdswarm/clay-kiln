@@ -50,9 +50,14 @@
        * @returns {string}
        */
       async findExisting(path) {
-        const { host } = window.kiln.locals.site,
+        const { locals } = window.kiln,
+          { host } = locals.site,
           query = onePublishedArticleByUrl(`http://${host}${path}`, ['canonicalUrl'], window.kiln.locals),
-          results = await queryService.searchByQuery(query),
+          results = await queryService.searchByQuery(
+            query,
+            locals,
+            { shouldDedupeContent: false }
+          ),
           { canonicalUrl } = results[0] || {};
 
         return canonicalUrl
