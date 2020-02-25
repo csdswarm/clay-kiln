@@ -34,7 +34,7 @@ function buildAndExecuteQuery(routeParamValue, data, locals) {
   queryService.addMinimumShould(query, 1);
   queryService.addSort(query, { date: 'desc' });
 
-  return queryService.searchByQueryWithRawResult(query)
+  return queryService.searchByQueryWithRawResult(query, locals, { shouldDedupeContent: true })
     .then(function (results) {
       const { hits = {} } = results;
 

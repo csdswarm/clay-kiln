@@ -40,5 +40,6 @@ module.exports = {
   gnf: amphoraRss,
   html: amphoraHtml,
   rss: amphoraRss,
+  'smart-news': amphoraRss,
   anf: amphoraAppleNews
 };

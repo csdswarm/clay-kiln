@@ -2,6 +2,7 @@
 
 const { getComponentVersion } = require('clayutils'),
   { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+  addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items'),
   db = require('amphora-storage-postgres'),
   _get = require('lodash/get');
 
@@ -126,6 +127,7 @@ module.exports['8.0'] = function (uri, data) {
   return data;
 };
 
+
 module.exports['9.0'] = async function (uri, data) {
   if (data.primarySectionFront) {
     return data;
@@ -151,4 +153,16 @@ module.exports['9.0'] = async function (uri, data) {
     console.error('error upgrading', e.message);
     return data;
   }
+};
+
+module.exports['10.0'] = function (uri, data) {
+  data.componentTitleVisible = false;
+
+  return data;
+};
+
+module.exports['11.0'] = async (uri, data, locals) => {
+  await addUriToCuratedItems(uri, data.items, locals);
+
+  return data;
 };
