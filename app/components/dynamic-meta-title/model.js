@@ -6,6 +6,26 @@ const { hypensToSpaces } = require('../../services/universal/dynamic-route-param
   matcher = require('../../services/universal/url-matcher'),
   _get = require('lodash/get');
 
+/**
+ * Get the meta title based on metaLocalsKey or fallback to regular title
+ * @param {object} data
+ * @param {object} locals
+ * @param {string} title
+ * @return {string}
+ */
+const createMetaTitle = (data, locals, title) => {
+  const { metaLocalsKey } = data;
+
+  if (metaLocalsKey) {
+    return metaLocalsKey
+      .map(key => _get(locals, key))
+      .filter(val => !!val)
+      .join(' ') || title;
+  }
+
+  return title;
+};
+
 module.exports = unityComponent({
   render: (uri, data, locals) => {
     const urlMatch = data.urlMatches.find(({ urlString }) => matcher(urlString, locals.url));
@@ -24,19 +44,7 @@ module.exports = unityComponent({
 
       if (value) {
         paramValue = value;
-
-        if (data.metaLocalsKey) {
-          if (!Array.isArray(data.metaLocalsKey)) {
-            data.metaLocalsKey = [ data.metaLocalsKey ];
-          }
-
-          metaValue = data.metaLocalsKey
-            .map(key => _get(locals, key))
-            .filter(val => !!val)
-            .join(' ') || value;
-        } else {
-          metaValue = value;
-        }
+        metaValue = createMetaTitle(data, locals, value);
       }
     }
 
