@@ -1,7 +1,0 @@
-_components:
-  in-article-image-slideshow:
-    allSlides: []
-    slideshowWidth: 'medium'
-    autoPlay: false
-    arrowColor: 'black'
-    sass: ''

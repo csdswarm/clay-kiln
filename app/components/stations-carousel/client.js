@@ -60,21 +60,23 @@ class StationsCarousel {
     if (firstThumb) {
       this.imageSize = Number(getComputedStyle(firstThumb).width.replace('px','')) + this.gutterWidth;
     }
-    if (this.windowWidth >= this.windowSizes.large) {
-      this.stationsVisible = 7;
-    } else if (this.windowWidth >= this.windowSizes.medium) {
-      this.stationsVisible = 6;
+    if (this.windowWidth >= this.windowSizes.medium) {
+      this.stationsVisible = 8;
     } else {
       this.layoutWidth = '100%';
-      this.pageSize = 3;
-      this.stationsVisible = 3;
-      if (this.windowWidth < this.windowSizes.beforeMediumSmall) {
-        if (this.windowWidth < this.windowSizes.mediumSmall) {
-          this.pageSize = 2;
-          this.stationsVisible = 2;
+      this.pageSize = 1;
+      this.stationsVisible = 4;
+      if (this.windowWidth < this.windowSizes.mediumSmall) {
+        this.pageSize = 2;
+        this.stationsVisible = 2;
+      }
+      if (this.windowWidth < this.windowSizes.medium) {
+        
+        let calculatedImageSize = (document.body.clientWidth - 40 - this.gutterWidth * (this.stationsVisible - 1)) / this.stationsVisible;
+        
+        if (this.stationsVisible === 4 && calculatedImageSize > 160) {
+          calculatedImageSize = 160; // clamping per design
         }
-        const calculatedImageSize = (document.body.clientWidth - 40 - this.gutterWidth * (this.stationsVisible - 1)) / this.stationsVisible;
-
         this.imageSize = calculatedImageSize + this.gutterWidth;
         // set image size dependent on window size
         for (let i = 0; i < this.stationsNodes.length; i++) {
