@@ -1,6 +1,6 @@
 'use strict';
 const queryService = require('../../services/server/query'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
   { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
