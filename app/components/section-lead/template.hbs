@@ -24,7 +24,7 @@
               {{/if}}
               {{#unless @index}}
                 {{#unless ../_computed.useContentLabel}}
-                  <span class="details__primary-story-label">{{ ../primaryStoryLabel }}</span>
+                  <span class="details__primary-story-label">{{ default ../primaryStoryLabel article.label }}</span>
                 {{/unless}}
               {{/unless}}
               <h3 class="details__title">{{ article.primaryHeadline }}</h3>

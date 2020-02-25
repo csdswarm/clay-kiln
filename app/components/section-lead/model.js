@@ -82,8 +82,6 @@ module.exports.save = async (ref, data, locals) => {
     };
   }));
 
-  data.primaryStoryLabel = data.primaryStoryLabel || locals.sectionFront || locals.secondarySectionFront || data.tag;
-
   return data;
 };
 
