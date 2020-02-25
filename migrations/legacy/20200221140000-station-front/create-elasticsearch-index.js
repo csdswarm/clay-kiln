@@ -13,10 +13,20 @@ async function createElasticsearchIndex(host) {
       _doc: {
         dynamic: false,
         properties: {
-          stationCallsign: {
+          callsign: {
             type: 'keyword'
           },
-          stationSlug: {
+          slug: {
+            type: 'keyword'
+          },
+          dateModified: {
+            type: 'date'
+          },
+          pageUri: {
+            type: 'keyword',
+            store: true
+          },
+          site: {
             type: 'keyword'
           }
         }

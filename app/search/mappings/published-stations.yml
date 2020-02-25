@@ -1,0 +1,14 @@
+_doc:
+  dynamic: "false"
+  properties:
+    callsign:
+      type: "keyword"
+    dateModified:
+      type: "date"
+    pageUri:
+      type: "keyword"
+      store: true
+    site:
+      type: "keyword"
+    slug:
+      type: "keyword"
