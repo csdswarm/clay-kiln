@@ -1,7 +1,6 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
-  { unityAppDomainName } = require('../universal/urps'),
   log = require('../universal/log').setup({ file: __filename }),
   whenRightDrawerExists = require('./when-right-drawer-exists'),
   preloadTimeout = 5000,
@@ -140,19 +139,12 @@ const addPermissions = require('../universal/user-permissions'),
       const { locals } = await whenPreloadedPromise,
         { site_slug } = locals.stationForPermissions,
         hasAccess = !!locals.stationsIHaveAccessTo[site_slug],
-        getCan = publishOrUnpublish => {
-          // if a user doesn't have station access then the subsequent un/publish
-          //   checks will fail
-          if (checkStationAccessFor[publishOrUnpublish]) {
-            return hasAccess;
-          } else if (schemaName === 'homepage') {
-            return locals.user.can(publishOrUnpublish).a(schemaName).for(unityAppDomainName).value;
-          } else {
-            return locals.user.can(publishOrUnpublish).a(schemaName).value;
-          }
-        },
-        canPublish = getCan('publish'),
-        canUnpublish = getCan('unpublish');
+        canPublish = checkStationAccessFor.publish
+          ? hasAccess
+          : locals.user.can('publish').a(schemaName).value,
+        canUnpublish = checkStationAccessFor.unpublish
+          ? hasAccess
+          : locals.user.can('unpublish').a(schemaName).value;
 
       if (canPublish && canUnpublish) {
         return;

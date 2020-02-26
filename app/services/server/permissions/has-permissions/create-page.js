@@ -3,7 +3,6 @@
 const { getComponentName } = require('clayutils'),
   { pageTypesToCheck } = require('../utils'),
   { wrapInTryCatch } = require('../../../startup/middleware-utils'),
-  { unityAppDomainName } = require('../../../universal/urps'),
   { setStationForPermissions } = require('./utils');
 
 /**
@@ -28,8 +27,6 @@ module.exports = router => {
 
       if (pageTypesToCheck.has(pageType)) {
         hasAccess = user.can('create').a(pageType).value;
-      } else if (pageType === 'homepage') {
-        hasAccess = user.can('create').a(pageType).for(unityAppDomainName);
       } else {
         hasAccess = !!locals.stationsIHaveAccessTo[stationForPermissions.site_slug];
       }
