@@ -37,10 +37,15 @@ module.exports['4.0'] = async (uri, data, locals) => {
 };
 
 module.exports['5.0'] = (uri, data) => {
-  // not sure why I'm still seeing populateBy and no populateFrom on clay imports from prod, particularly considering
-  // the code in 3.0 above. I tried to fix it here, but no joy, so just setting it when I see it. - CSD
+
+  if (data.populateBy) {
+    data.populateFrom = data.populateBy;
+    delete data.populateBy;
+  }
+
   if (typeof data.populateFrom === 'string') {
     data.populateFrom = data.populateFrom.replace(/sectionFront/, 'section-front');
   }
+
   return data;
 };
