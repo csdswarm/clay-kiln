@@ -6,6 +6,7 @@ const
   calloutType = require('./callout'),
   dynamicImage = require('./dynamic-image'),
   ellipsisSubstring = require('./ellipsisSubstring'),
+  encodeURIHelper = require('./encodeURI'),
   reversibleOneBasedIndex = require('./reversibleOneBasedIndex'),
   truncate = require('./truncate'),
   {
@@ -36,6 +37,7 @@ module.exports = {
   calloutType,
   dynamicImage,
   ellipsisSubstring,
+  encodeURI: encodeURIHelper,
   formatDateRange,
   imgSize,
   imgSource,
