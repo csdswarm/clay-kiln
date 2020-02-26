@@ -4,10 +4,8 @@
  * Expose encodeURI to handlebars templates
  *
  * @param {String} text the string
- * @returns {String} The encodURI version of the string
+ * @returns {String} The encodeURI version of the string
  */
-const encodeURIHelper = (text) => {
-  return encodeURI(text);
-};
+const encodeURIHelper = (text) => encodeURI(text);
 
 module.exports = encodeURIHelper;
