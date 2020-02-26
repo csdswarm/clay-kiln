@@ -16,21 +16,25 @@ async function createNewPage(host) {
       _pages: {
         'station-front': {
           head: [
-            '/_components/meta-title/instances/general',
-            '/_components/meta-description/instances/general',
-            '/_components/meta-image/instances/general',
-            '/_components/meta-url/instances/general',
+            '/_components/meta-title/instances/station-basic-music',
+            '/_components/meta-description/instances/station-basic-music',
+            '/_components/meta-url/instances/station-basic-music',
             '/_components/meta-tags/instances/general'
           ],
           main: [
             '/_components/station-front/instances/new'
           ],
-          layout: '/_layouts/one-column-layout/instances/general',
-          pageHeader: [
-            '/_components/topic-page-header/instances/new'
+          layout: '/_layouts/one-column-layout/instances/station-basic-music',
+          secondary: [],
+          pageHeader: [],
+          topSection: [
+            '/_components/station-nav/instances/new'
           ],
           layoutHeader: [
             '/_components/google-ad-manager/instances/billboardTop'
+          ],
+          bottomSection: [
+            '/_components/station-footer/instances/new'
           ]
         }
       }

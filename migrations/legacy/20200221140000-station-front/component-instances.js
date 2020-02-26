@@ -3,12 +3,12 @@
 const { clayImport } = require('../migration-utils').v1;
 
 /**
- * Create "new" instance for "station-front" component
+ * Create required component instances
  *
  * @param {string} host - Clay host
  */
-async function createNewComponentInstance(host) {
-  console.log('Creating Station Front "new" instance...');
+async function createComponentInstances(host) {
+  console.log('Creating Station Front instances...');
 
   await clayImport({
     hostUrl: host,
@@ -21,10 +21,10 @@ async function createNewComponentInstance(host) {
               stationSlug: '',
               includePodcastModule: false,
               sectionLead: {
-                _ref: '/_components/section-lead'
+                _ref: '/_components/section-lead/instances/new'
               },
               googleAdUnderStationsModule: {
-                _ref: '/_components/google-ad-manager/instances/leaderboardBottom'
+                _ref: '/_components/google-ad-manager/instances/billboardBottom'
               },
               podcastList: {
                 _ref: '/_components/podcast-list/instances/new'
@@ -32,11 +32,7 @@ async function createNewComponentInstance(host) {
               twoColumnComponent: {
                 _ref: '/_components/two-column-component/instances/section-front'
               },
-              stationsCarousel: [
-                {
-                  _ref: '/_components/stations-carousel/instances/section-front'
-                }
-              ]
+              stationsCarousel: []
             }
           }
         }
@@ -44,7 +40,7 @@ async function createNewComponentInstance(host) {
     }
   });
 
-  console.log('Finished creating Station Front "new" instance.');
+  console.log('Finished creating Station Front instances.');
 }
 
-module.exports = createNewComponentInstance;
+module.exports = createComponentInstances;

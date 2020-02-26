@@ -110,7 +110,7 @@ function getStationFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.STATIONFRONT) {
-        return pubUtils.stationFrontSlugPattern(urlOptions);
+        return urlPatterns.stationFront(urlOptions);
       }
     });
 }

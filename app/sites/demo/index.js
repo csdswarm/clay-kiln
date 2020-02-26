@@ -61,8 +61,8 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
-  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs),
-  (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs)
+  (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];
 
 module.exports.modifyPublishedData = [
