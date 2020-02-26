@@ -19,7 +19,9 @@
 
 const
   _has = require('lodash/has'),
+  _get = require('lodash/get'),
   _isPlainObject = require('lodash/isPlainObject'),
+  _isEmpty = require('lodash/isEmpty'),
   _pick = require('lodash/pick'),
   logger = require('../log'),
   queryService = require('../../server/query'),
@@ -197,7 +199,7 @@ const
 
     // normalize tag array (based on simple list input)
     if (Array.isArray(tags)) {
-      tags = tags.map(tag => tag.text);
+      tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
 
     // split comma seperated tags (for load-more get queries)
@@ -272,7 +274,13 @@ const
     // add sorting
     queryService.addSort(query, { date: 'desc' });
 
-    Object.entries(filters).forEach(([key, value]) => addCondition(query, key, value));
+    // Don't search for primary section front if the secondary is selected
+    Object.entries(filters).forEach(([key, value]) => {
+      if (key == 'sectionFronts' && !_isEmpty(filters.secondarySectionFronts)) {
+        return;
+      }
+      addCondition(query, key, value);
+    });
     Object.entries(excludes).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
 
     queryService.onlyWithinThisSite(query, locals.site);
