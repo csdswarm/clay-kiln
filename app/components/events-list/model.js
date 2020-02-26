@@ -78,8 +78,6 @@ async function getEventDataFromElastic(event, locals) {
   * }[]>}
   */
 async function getRecentEventsFromElastic(uri, data, locals) {
-
-
   if (!data.numberToDisplay) {
     data.numberToDisplay = maxItems;
   }
@@ -89,13 +87,13 @@ async function getRecentEventsFromElastic(uri, data, locals) {
 
   const query = queryService.newQueryWithCount(elasticIndex, data.numberToDisplay, locals);
 
+  console.log(JSON.stringify('locals.station', locals.station));
+  console.log('[locals.defaultStation]', locals.defaultStation);
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  // TODO: figure out a way to pass station if there is one from FE
-  // if (locals.station.callsign !== locals.defaultStation.callsign) {
-  //   queryService.addMust(query, { match: { station: locals.station } });
-  // }
-  // console.log('[locals.station]', locals.station);
-  // console.log('[locals.defaultStation]', locals.defaultStation);
+  if (data.station) {
+    // queryService.addMust(query, { match: { station: data.station } });
+  }
+
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addSort(query, { date: 'desc' });
 
@@ -130,13 +128,12 @@ async function getRecentEventsFromElastic(uri, data, locals) {
   // console.log('[query]', JSON.stringify(query, null, 2));
   return queryService.searchByQuery(query)
     .then(function (results) {
-      results.forEach(result => {
+      return results.map(result => {
         return {
           ...result,
           url: result.canonicalUrl.replace(/^http:/, protocol)
         };
       });
-      return results;
     })
     .catch(e => {
       queryService.logCatch(e, uri);
@@ -172,6 +169,9 @@ module.exports = unityComponent({
         dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
       };
     });
+    // if (locals.station) {
+    //   data.station = locals.station;
+    // }
     // load more functionality
     // if there is a page number include more events with the page num as offset
     if (locals.page) {
