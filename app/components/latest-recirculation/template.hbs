@@ -1,8 +1,8 @@
 <section
   class="component component--latest-recirc
-    {{#if (compare populateBy 'sectionFront')}}component--{{sectionFront}}{{/if}}
-    {{#if (compare populateBy 'tag')}}component--tag{{/if}}
-    {{#if (compare populateBy 'station')}}component--station{{/if}}
+    {{#if (compare populateFrom 'section-front')}}component--{{sectionFront}}{{/if}}
+    {{#if (compare populateFrom 'tag')}}component--tag{{/if}}
+    {{#if (compare populateFrom 'station')}}component--station{{/if}}
     {{#ifNone _computed.articles.length @root.locals.edit }} component--empty{{/ifNone}}
     {{#if _computed.isMultiColumn}} component--column{{/if}}"
   data-uri="{{ default _ref _self }}"
@@ -11,13 +11,13 @@
   {{#if _computed.articles.length  }}
     {{#unless _computed.isMultiColumn}}
       <h2 class="latest-recirc__title">LATEST
-      {{#if (compare populateBy 'sectionFront')}}
+      {{#if (compare populateFrom 'section-front')}}
         in <span class="title">{{sectionFront}}</span>
       {{/if}}
-      {{#if (compare populateBy 'tag')}}
+      {{#if (compare populateFrom 'tag')}}
         in <span class="title">{{tag}}</span>
       {{/if}}
-      {{#if (compare populateBy 'station')}}
+      {{#if (compare populateFrom 'station')}}
         from <span class="title">{{_computed.station}}</span>
       {{/if}}
       </h2>

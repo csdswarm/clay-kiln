@@ -35,3 +35,17 @@ module.exports['4.0'] = async (uri, data, locals) => {
 
   return data;
 };
+
+module.exports['5.0'] = (uri, data) => {
+
+  if (data.populateBy) {
+    data.populateFrom = data.populateBy;
+    delete data.populateBy;
+  }
+
+  if (typeof data.populateFrom === 'string') {
+    data.populateFrom = data.populateFrom.replace(/sectionFront/, 'section-front');
+  }
+
+  return data;
+};
