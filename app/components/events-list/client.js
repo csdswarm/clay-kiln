@@ -151,11 +151,15 @@ class EventsListController {
     log('[MOUNT]', e);
     if (this.dom.loadMoreBtn) {
       this.dom.loadMoreBtn.addEventListener('click', this.onClick);
+      this.dom.hasListener = true;
     }
   }
 
   onDismount() {
     // remove the local listeners on Vue dismount
+    if (this.dom.hasListener) {
+      this.dom.loadMoreBtn.removeEventListener('click', this.onClick);
+    }
   }
 
   onClick() {
