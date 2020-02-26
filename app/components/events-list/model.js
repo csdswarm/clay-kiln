@@ -2,6 +2,7 @@
 
 const
   { unityComponent } = require('../../services/universal/amphora'),
+  { assignStationInfo } = require('../../services/universal/create-content.js'),
   moment = require('moment'),
   queryService = require('../../services/server/query'),
   elasticIndex = 'published-content',
@@ -25,6 +26,7 @@ const
  * Gets event data from elastic by querying with event url
  *
  * @param {Object} event
+ * @param {Object} data
  * @param {Object} locals
  * @returns {Promise<{
   *  url: string,
@@ -36,7 +38,7 @@ const
   *  feedImgUrl: string,
   * }[]>}
   */
-async function getEventDataFromElastic(event, locals) {
+async function getEventDataFromElastic(event, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, 1, locals),
     canonicalUrl = utils.urlToCanonicalUrl(
       urlToElasticSearch(event.url)
@@ -44,8 +46,8 @@ async function getEventDataFromElastic(event, locals) {
 
   queryService.addFilter(query, { term: { canonicalUrl } });
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (locals && locals.station.callsign !== locals.defaultStation.callsign) {
-    queryService.addMust(query, { match: { station: locals.station } });
+  if (data.stationSlug) {
+    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
   return queryService.searchByQuery(query)
@@ -81,11 +83,11 @@ async function getRecentEventsFromElastic(uri, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
 
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (locals.station.callsign !== locals.defaultStation.callsign) {
-    queryService.addMust(query, { match: { station: locals.station } });
+  if (data.stationSlug) {
+    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addSort(query, { date: 'desc' });
+  queryService.addSort(query, { startDate: 'desc' });
 
   // exclude the curated content from the results
   if (data.curatedEvents && !isComponent(locals.url)) {
@@ -122,13 +124,12 @@ async function getRecentEventsFromElastic(uri, data, locals) {
 
   return queryService.searchByQuery(query)
     .then(function (results) {
-      results.forEach(result => {
+      return results.map(result => {
         return {
           ...result,
           url: result.canonicalUrl.replace(/^http:/, protocol)
         };
       });
-      return results;
     })
     .catch(e => {
       queryService.logCatch(e, uri);
@@ -142,9 +143,11 @@ module.exports = unityComponent({
       return data;
     }
 
+    assignStationInfo(uri, data, locals);
+
     const
       curatedEvents = await Promise.all(data.curatedEvents.map(async (event) => {
-        return await getEventDataFromElastic(event, locals);
+        return await getEventDataFromElastic(event, data, locals);
       })),
       recentEvents = await getRecentEventsFromElastic(uri, data, locals);
 

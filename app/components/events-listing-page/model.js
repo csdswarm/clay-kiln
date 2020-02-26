@@ -13,7 +13,6 @@ module.exports = unityComponent({
     }
 
     assignStationInfo(uri, data, locals);
-
     return data;
   }
 });
