@@ -1,4 +1,4 @@
-_version: 4.0
+_version: 5.0
 _confirmRemoval: true
 
 _description: |
@@ -41,7 +41,7 @@ sectionFront:
 
 sectionFrontManual:
   _label: Section Front Category
-  _publish: sectionFront
+  _subscribe: sectionFront
   _reveal:
     field: populateFrom
     operator: ===
