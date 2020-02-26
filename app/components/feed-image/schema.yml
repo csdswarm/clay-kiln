@@ -1,0 +1,45 @@
+_description: |
+  This is the image component specific to New York Magazine.
+
+  * Only allows images from Mediaplay (our image server) to be added.
+  * This component automatically adjusts the width and height based on the size selected.
+  * Automatically pulls in credit from Mediaplay on save.
+
+url:
+  _label: Recirculation Image
+  _publish: feedImgUrl
+  _has:
+    input: advanced-image-upload
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    validate:
+      required: true
+credit:
+  _label: Credit
+  _has:
+    input: wysiwyg
+    buttons:
+      - link
+      - bold
+      - italic
+    help: Add in credit
+alt:
+  _label: Alt Text
+  _has:
+    input: text
+    help: Alternative text for screen readers
+    validate:
+      required: true
+
+_groups:
+  allFields:
+    _label: Recirculation Image
+    fields:
+      - url
+      - credit
+      - alt
+    _placeholder:
+      height: 50px
+      text: Recirculation Image
+      required: true
+      ifEmpty: url

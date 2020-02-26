@@ -26,7 +26,7 @@ module.exports = unityComponent({
 
     data.stationSlug = _get(locals, 'params.stationSlug');
     locals.podcast = await getPodcastShow(locals);
-    autoLink(data, ['stationSlug', '{podcasts}', `{${ locals.params.dynamicSlug }}`], locals.site.host);
+    autoLink(data, ['stationSlug', '{podcasts}', `{${ locals.params.dynamicSlug }}`], locals);
 
     return data;
   }
