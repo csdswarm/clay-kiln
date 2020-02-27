@@ -18,18 +18,6 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
   },
 
   /**
-   * Determines whether or not the desktop navigation menu is in the 'active' state.
-   * @function isDesktopNavActive
-   * @returns {boolean}
-   */
-  isDesktopNavActive = () => {
-    const navDrawers = Array.from(document.querySelectorAll('.nav-drawer:not(.nav-drawer--mobile)')),
-      activeClass = 'nav-drawer--active';
-
-    return navDrawers.reduce((isActive, nav) => isActive || nav.classList.contains(activeClass), false);// if any of the nav drawers are active, return true. Otherwise, return false.
-  },
-
-  /**
    * Toggles open or closed the mobile navigation menu, depending on its current state.
    * @function toggleMobileNavigation
    */
@@ -77,19 +65,6 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
     navDrawer.classList.remove(activeMobileNavClass);
 
     return true;
-  },
-
-  /**
-   * Toggle desktop navigation drawer.
-   * @function toggleDesktopNavigation
-   * @param {Object} event - Event from event listener. Used only when opening the menu, to determine which navigation menu to show.
-   * @returns {boolean} Whether the state was successfully set.
-   */
-  toggleDesktopNavigation = (event) => {
-    if (isDesktopNavActive())
-      return closeNavDrawers();
-    else
-      return openNavDrawer(event);
   },
 
   /**
@@ -171,7 +146,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
         navSection.addEventListener('mouseover', e => {
           openNavDrawer(e);
         });
-        navSection.addEventListener('mouseout', e => {
+        navSection.addEventListener('mouseout', () => {
           closeNavDrawers();
         });
       }
@@ -183,7 +158,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * This will prevent an open mobile nav bar from persisting when resizing to desktop, and vice versa.
    */
   closeNavOnResize = () => {
-    waitForResizeEnd(() => {
+    onResizeEnd(() => {
       closeMobileNavigation();
       closeNavDrawers();
     });
@@ -192,9 +167,9 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
   /**
    * Waits for the "end" of a resize event. The event must not reoccur for {delay} ms before being considered to "end".
    * @param {function} fn - The function to run after resizing.
-   * @param {number} [100] delay - the amount of time in ms to wait for event to reoccur before considering the resize event to "end".
+   * @param {number} [delay=100] - the amount of time in ms to wait for event to reoccur before considering the resize event to "end".
    */
-  waitForResizeEnd = (fn, delay=100) => {
+  onResizeEnd = (fn, delay = 100) => {
     let resizeTimer = null;
 
     window.addEventListener('resize', () => {
