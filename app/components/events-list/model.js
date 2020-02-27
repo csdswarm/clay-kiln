@@ -2,7 +2,7 @@
 
 const
   { unityComponent } = require('../../services/universal/amphora'),
-  { assignStationInfo } = require('../../services/universal/create-content.js'),
+  bluebird = require('bluebird'),
   moment = require('moment'),
   queryService = require('../../services/server/query'),
   elasticIndex = 'published-content',
@@ -46,8 +46,10 @@ async function getEventDataFromElastic(event, data, locals) {
 
   queryService.addFilter(query, { term: { canonicalUrl } });
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (data.stationSlug) {
-    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
+  if (data.station) {
+    queryService.addMust(query, { match: { stationSlug: data.station.site_slug } });
+  } else {
+    queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
   return queryService.searchByQuery(query)
@@ -83,8 +85,10 @@ async function getRecentEventsFromElastic(uri, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
 
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (data.stationSlug) {
-    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
+  if (data.station) {
+    queryService.addMust(query, { match: { stationSlug: data.station.site_slug } });
+  } else {
+    queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addSort(query, { startDate: 'desc' });
@@ -143,12 +147,15 @@ module.exports = unityComponent({
       return data;
     }
 
-    assignStationInfo(uri, data, locals);
+    data.station = locals.newPageStation;
 
-    const
-      curatedEvents = await Promise.all(data.curatedEvents.map(async (event) => {
-        return await getEventDataFromElastic(event, data, locals);
-      })),
+    const curatedEvents = await bluebird.map(
+        data.curatedEvents,
+        async event => {
+          return await getEventDataFromElastic(event, data, locals);
+        },
+        { concurrency: 10 }
+      ),
       recentEvents = await getRecentEventsFromElastic(uri, data, locals);
 
     // On initial load we need to append curated items onto the list, otherwise skip
