@@ -19,8 +19,10 @@ const AWS = require('aws-sdk'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
-  slugifyService = require('../services/universal/slugify'),
-  xml = require('xml');
+  validScripts = require('../services/server/valid-source'),
+  addEndpoints = require('./add-endpoints'),
+  siteMapStations = require('./sitemap-stations'),
+  siteMapGoogleNews = require('./sitemap-google-news');
 
 module.exports = router => {
 
@@ -143,55 +145,21 @@ module.exports = router => {
    */
   router.post('/import-content', importContent);
 
+  addEndpoints.sitemap(router);
+
   /**
    * Sitemap for stations directories and station detail pages
    */
-  router.get('/sitemap-stations.xml', async function (req, res) {
-    const baseUrl = `https://${req.headers.host}`,
-      urlset = [
-        { _attr: { xmlns: 'https://www.sitemaps.org/schemas/sitemap/0.9' } },
-        { url: [{ loc: `${baseUrl}/stations` }] },
-        { url: [{ loc: `${baseUrl}/stations/location` }] },
-        { url: [{ loc: `${baseUrl}/stations/music` }] },
-        { url: [{ loc: `${baseUrl}/stations/news-talk` }] },
-        { url: [{ loc: `${baseUrl}/stations/sports` }] }
-      ];
+  router.get('/sitemap-stations.xml', siteMapStations);
 
-    // Location station directory pages
-    await radioApi.get('markets', { page: { size: 1000 }, sort: 'name' }, null, {}, res.locals).then(function (markets) {
-      markets.data.forEach(market => {
-        urlset.push({ url:
-          [{ loc: `${baseUrl}/stations/location/${slugifyService(market.attributes.display_name)}` }]
-        });
-      });
-    });
-
-    // Music station directory pages
-    await radioApi.get('genres', { page: { size: 100 }, sort: 'name' }, null, {}, res.locals).then(function (genres) {
-      genres.data.forEach(genre => {
-        if (!['News & Talk', 'Sports'].includes(genre.attributes.name)) {
-          urlset.push({ url:
-            [{ loc: `${baseUrl}/stations/music/${slugifyService(genre.attributes.name)}` }]
-          });
-        }
-      });
-    });
-
-    // Station detail pages
-    await radioApi.get('stations', { page: { size: 1000 }, sort: '-popularity' }, null, {}, res.locals).then(function (stations) {
-      stations.data.forEach(station => {
-        if (station.attributes.site_slug || station.attributes.callsign || station.id) {
-          urlset.push({ url:
-            [{ loc: `${baseUrl}/${ station.attributes.site_slug || station.attributes.callsign || station.id }/listen` }]
-          });
-        }
-      });
-    });
-
-    res.type('application/xml');
-    return res.send( xml( { urlset }, { declaration: true } ) );
-  });
+  /**
+   * Sitemap for articles for google news
+   */
+  router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
+
+  addEndpoints.imageInfo(router, checkAuth);
+  validScripts.inject(router, checkAuth);
 };

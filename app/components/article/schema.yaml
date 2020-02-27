@@ -1,4 +1,4 @@
-_version: 9.0
+_version: 11.0
 _confirmRemoval: true
 
 primaryHeadline:
@@ -85,15 +85,12 @@ seoDescription:
       min: 140
       max: 250
 feedImgUrl:
+  _subscribe: feedImgUrl
+feedImg:
   _label: Recirculation Image
-  _publish: feedImgUrl
-  help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
-  _has:
-    input: advanced-image-upload
-    uploadLabel: Upload Image Attachment
-    uploadHelp: Choose an image file from your computer
-    validate:
-      required: true
+  _component:
+    include:
+      - feed-image
 slug:
   _label: Slug
   _has:
@@ -155,6 +152,7 @@ sources:
 stationLogoUrl:
   _has:
     input: advanced-image-upload
+    enableDelete: true
     webLabel: Station Logo via Web
     webHelp: Supply a valid HTTPS url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
@@ -260,17 +258,33 @@ feeds:
   _has:
     input: checkbox-group
     options:
-      - name: Site Maps and Google Search
-        value: sitemaps
       - name: RSS Feeds
         value: rss
-      - name: Most Popular
-        value: most-popular
-      - name: Latest News and Newsfeed
-        value: newsfeed
       - name: Apple News
         value: apple-news
+      - name: MSN
+        value: msn
+      - name: Smart News
+        value: smartNews
     help: By default, articles are included in all of our feeds. Uncheck these if you don't want this article to appear in them, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
+
+msnTitle:
+  _label: MSN Article Title
+  _has:
+    input: default-text-with-override
+    defaultField: headline
+    overrideCheckbox:
+      help: >-
+        By default the title will be the article's headline.  You will need to
+        override this if the headline doesn't meet MSN's title requirements.
+    validate:
+      # requirement found here
+      # https://partnerhub.msn.com/docs/spec/vcurrent/article-metadata/AAsCd
+      # this must be in sync with the query inside the 'msn' feeds instance and
+      #   msn-feed-utils/article-will-show-on-msn-feed.js
+      min: 21
+      required: true
+
 sectionFront:
   _label: Section Front
   _publish: sectionFront
@@ -374,9 +388,6 @@ _groups:
       text: Secondary Bylines
       height: 60px
       ifEmpty: secondaryAttribution
-  circFeeds:
-    fields:
-      - feedImgUrl
   circHeadlines:
     fields:
       - primaryHeadline
@@ -419,6 +430,10 @@ _groups:
       - genreSyndication
       - syndicationStatus
       - syndicatedUrl
+
+  msnFeedSettings:
+    fields:
+      - msnTitle
 
   leadSettings:
     _label: Lead Settings

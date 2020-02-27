@@ -294,7 +294,7 @@ function setCanonicalUrl(data, locals) {
   }
 }
 
-function getRollingStandoutArticles(locals) {
+function getRollingStandoutArticles(locals, searchOpts) {
   var rollingStandoutArticlesQuery = queryService(PUBLISHED_CONTENT_INDEX, locals),
     site = locals.site,
     uriPrefix = utils.uriToUrl(site.prefix, { site: { protocol: site.proto || 'http' } });
@@ -319,7 +319,7 @@ function getRollingStandoutArticles(locals) {
     }
   ]);
 
-  return queryService.searchByQuery(rollingStandoutArticlesQuery).catch(() => []);
+  return queryService.searchByQuery(rollingStandoutArticlesQuery, locals, searchOpts).catch(() => []);
 }
 
 function setGoogleStandoutHelpers(data, publishedData, rollingCount) {

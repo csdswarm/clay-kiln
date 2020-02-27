@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 5.0
 _description: |
   Latest videos module
 
@@ -12,9 +12,9 @@ items:
     props:
     -
       prop: url
-      _label: URL
+      _label: URL (page containing video in lede component)
       _has:
-        input: text
+        input: content-search
         type: url
         validate:
           required: true
@@ -30,6 +30,10 @@ items:
       _has:
         validate:
           required: true
+
+sectionFront:
+  _label: Section Front
+  _subscribe: sectionFront
 
 filterTags:
   _label: Exclude Tags
@@ -49,8 +53,23 @@ filterSecondarySectionFronts:
     multiple: true
     list: secondary-section-fronts
 
+title:
+  _label: Video Section Title
+  _has:
+    input: text
+
+primaryContentLabel:
+  _label: Label above the primary item
+  _has:
+    input: text
+    validate:
+      max: 30
+
 _groups:
   settings:
     fields:
+      - title
+      - primaryContentLabel
       - filterTags
       - filterSecondarySectionFronts
+

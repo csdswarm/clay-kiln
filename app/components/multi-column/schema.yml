@@ -1,0 +1,27 @@
+
+col1:
+  _placeholder:
+    height: 150px
+  _componentList:
+    include:
+      - section-lead # TODO: modify section-lead to be in multi-col component
+
+col2:
+  _placeholder:
+    height: 150px
+  _componentList:
+    include:
+      - latest-recirculation # TODO: modify latest-recirc to handle being on homepage
+
+col3:
+  _placeholder:
+    height: 150px
+  _componentList:
+    fuzzy: true
+    include:
+      - minified-content-feed
+
+mediumRectangleTop:
+  _component:
+    include:
+      - google-ad-manager

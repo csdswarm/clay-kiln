@@ -4,72 +4,89 @@ const expect = require('chai').expect,
   dirname = __dirname.split('/').pop(),
   { autoLink } = require('.');
 
-describe.only(dirname, function () {
-  describe('autoLink', function () {
+const getLocals = () => ({
+  site: {
+    host: 'somehost.com'
+  }
+});
 
-    it('creates one or more links based on property names in data', () => {
+describe(dirname, function () {
+  describe('autoLink', function () {
+    it('creates one or more links based on property names in data', async () => {
       const data = { a: 'ay', b: 'bee' },
         props = ['a'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      await autoLink(data, props, getLocals());
+
+      expect(data.breadcrumbs)
         .to.eql([
-          { text: 'ay', url: '//somehost.com/ay' }
+          { text: 'ay', url: '//somehost.com/ay', hidden: false }
         ]);
     });
 
-    it('extends each link with the slug before it', () => {
+    it('extends each link with the slug before it', async () => {
       const data = { a: 'ay', b: 'bee', c: 'cee' },
         props = ['a', 'b', 'c'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      await autoLink(data, props, getLocals());
+
+      expect(data.breadcrumbs)
         .to.eql([
-          { text: 'ay', url: '//somehost.com/ay' },
-          { text: 'bee', url: '//somehost.com/ay/bee' },
-          { text: 'cee', url: '//somehost.com/ay/bee/cee' }
+          { text: 'ay', url: '//somehost.com/ay', hidden: false },
+          { text: 'bee', url: '//somehost.com/ay/bee', hidden: false },
+          { text: 'cee', url: '//somehost.com/ay/bee/cee', hidden: false }
         ]);
     });
 
-    it('ignores properties that are missing', () => {
+    it('ignores properties that are missing', async () => {
       const data = { a: 'ay', b: 'bee', c: 'cee' },
         props = ['a', 'b', 'd'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      await autoLink(data, props, getLocals());
+
+      expect(data.breadcrumbs)
         .to.eql([
-          { text: 'ay', url: '//somehost.com/ay' },
-          { text: 'bee', url: '//somehost.com/ay/bee' }
+          { text: 'ay', url: '//somehost.com/ay', hidden: false },
+          { text: 'bee', url: '//somehost.com/ay/bee', hidden: false }
         ]);
     });
 
-    it('lower cases all letters in slugs', ()=>{
+    it('lower cases all letters in slugs', async () => {
       const data = { a: 'Ay', b: 'Bee' },
         props = ['a', 'b'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      await autoLink(data, props, getLocals());
+
+      expect(data.breadcrumbs)
         .to.eql([
-          { text: 'Ay', url: '//somehost.com/ay' },
-          { text: 'Bee', url: '//somehost.com/ay/bee' }
+          { text: 'Ay', url: '//somehost.com/ay', hidden: false },
+          { text: 'Bee', url: '//somehost.com/ay/bee', hidden: false }
         ]);
     });
 
-    it('hyphenates spaces', () => {
+    it('hyphenates spaces', async () => {
       const data = { a: 'Ay Thing', b: 'Bee Gone Foul Pirate' },
         props = ['a', 'b'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      await autoLink(data, props, getLocals());
+
+      expect(data.breadcrumbs)
         .to.eql([
-          { text: 'Ay Thing', url: '//somehost.com/ay-thing' },
-          { text: 'Bee Gone Foul Pirate', url: '//somehost.com/ay-thing/bee-gone-foul-pirate' }
+          { text: 'Ay Thing', url: '//somehost.com/ay-thing', hidden: false },
+          { text: 'Bee Gone Foul Pirate', url: '//somehost.com/ay-thing/bee-gone-foul-pirate', hidden: false }
         ]);
     });
 
-    it('url escapes special characters / and &', () => {
+    it('url escapes special characters / and &', async () => {
       const data = { a: 'Ay Thing/Whosiwatsit', b: 'Bee Gone & Leave Now' },
         props = ['a', 'b'];
 
-      expect(autoLink(data, props, 'somehost.com'))
+      await autoLink(data, props, getLocals());
+
+      expect(data.breadcrumbs)
         .to.eql([
-          { text: 'Ay Thing/Whosiwatsit', url: '//somehost.com/ay-thing%2Fwhosiwatsit' },
-          { text: 'Bee Gone & Leave Now', url: '//somehost.com/ay-thing%2Fwhosiwatsit/bee-gone-%26-leave-now' }
+          { text: 'Ay Thing/Whosiwatsit', url: '//somehost.com/ay-thing-whosiwatsit', hidden: false },
+          { text: 'Bee Gone & Leave Now', url: '//somehost.com/ay-thing-whosiwatsit/bee-gone-leave-now', hidden: false }
         ]);
     });
   });

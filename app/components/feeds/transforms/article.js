@@ -1,7 +1,11 @@
 'use strict';
 
+// note: rss is used loosely here because this feed adds a lot of elements
+//       needed by frequency that aren't valid per the rss spec.
+
 const format = require('date-fns/format'),
   parse = require('date-fns/parse'),
+  { getComponentInstance } = require('clayutils'),
   { addArrayOfProps, renderContent } = require('./utils');
 
 /**
@@ -14,8 +18,9 @@ const format = require('date-fns/format'),
  * @return {Array}
  */
 module.exports = function (data, locals) {
-  const { canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
+  const { _id, canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
+    itemId = getComponentInstance(_id),
     transform = [
       {
         title: { _cdata: headline }
@@ -27,7 +32,7 @@ module.exports = function (data, locals) {
         pubDate: format(parse(data.date), 'ddd, DD MMM YYYY HH:mm:ss ZZ') // Date format must be RFC 822 compliant
       },
       {
-        guid: [{ _attr: { isPermaLink: false } }, canonicalUrl]
+        guid: [{ _attr: { isPermaLink: false } }, itemId]
       },
       {
         syndicatedUrl
@@ -66,7 +71,7 @@ module.exports = function (data, locals) {
 
   if (data.lead) {
     transform.push({
-      lead: { _cdata: renderContent(data.lead, locals) }
+      lead: { _cdata: renderContent(data.lead, locals, null, { lead: true }) }
     });
   }
 
@@ -84,9 +89,6 @@ module.exports = function (data, locals) {
   addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
   addArrayOfProps(data.authors, 'dc:creator', transform);
-  // Add the image
-  // return addRssMediaImage(firstAndParse(dataContent, 'image'), transform)
-  //   .then(() => transform);
 
   if (data.editorialFeeds) {
     // Convert editorialFeeds object with terms as keys with boolean values into array of truthy terms

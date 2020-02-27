@@ -38,7 +38,7 @@ git clone git@bitbucket.org:entercom/clay-radio.git
 Within frequency-clay-translator run
 ```
 npm install
-``` 
+```
 Within the clay-radio folder run
 
 ```bash
@@ -116,7 +116,7 @@ make spa
 
 #### When do I need to run clay compile?
 
-If you change any files in the following (Pulled from `app/gulpfile.js`): 
+If you change any files in the following (Pulled from `app/gulpfile.js`):
 * `styleguides/**/*.css`
 * `global/js/**` (Not in `/global/js/editor` though)
 * `global/kiln/**/*.js`
@@ -200,6 +200,10 @@ http://clay.radio.com/_pages/index.html
 
 Anytime you change a `template.hbs` file  or modify the `spa` directory, run
 `npm run-script build -- --mode=none` from the `spa` directory.
+
+## Previewing an Apple News Feed component (local environment only)
+
+Whenever a component is fetched with the `.anf` extension it will write the output to **apple-news-format/preview/article.json**. You can drag this file over to the Apple News Preview app and it will hot-reload whenever the file is changed.
 
 ## Missed anything?
 That _should_ be it...if not, submit an issue or add something to this README.w

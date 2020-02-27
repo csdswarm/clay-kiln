@@ -13,13 +13,9 @@ down:
 rebuild:
 	docker-compose stop clay && cd app && npm run build && cd .. && cd spa && npm run-script build -- --mode=none && docker-compose up -d clay && cd .. && make clay-logs
 
-rm-all:
-	@echo "Removing all stopped containers..."
-	docker rm $$(docker ps -aq --filter name=^$$(basename $$(pwd)))
-
 burn:
 	@echo "Stopping and removing all containers..."
-	make down && make rm-all
+	docker-compose rm --stop --force -v # -v = associated volumes
 
 rmi-dangle:
 	@echo "Cleaning up all dangling Docker images..."
@@ -30,7 +26,10 @@ remove-images:
 	docker rmi -f $$(docker images -q)
 
 clay-logs:
-	docker-compose logs -f clay
+	docker-compose exec clay tail -f .pm2/logs/app_name-out.log --retry
+
+clear-logs:
+	echo -n > ./app/.pm2/logs/app_name-out.log
 
 enter-clay:
 	docker-compose exec clay bash
@@ -39,7 +38,7 @@ clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data && rm -rf ./postgres/data
 
 clear-app:
-	rm -rf app/node_modules && ls -d ./app/public/* | grep -v dist | xargs rm -rf && rm -rf app/browserify-cache.json
+	rm -rf app/node_modules && ls -d ./app/public/* | grep -v -E "(dist|sitemap)" | xargs rm -rf && rm -rf app/browserify-cache.json
 
 clear-spa:
 	rm -rf spa/node_modules  && rm -rf app/public/dist
@@ -48,7 +47,7 @@ reset:
 	make burn && make clear-data
 
 nuke:
-	make reset && make clear-app && make clear-spa
+	make reset && make clear-app && make clear-spa && make clear-logs
 
 bootstrap:
 	cd ./app &&  cat ./first-run/**/* | clay import -k demo -y clay.radio.com
