@@ -1,0 +1,13 @@
+<div class="component component--thumb thumb">
+  {{#if category}}
+    <span class="thumb__{{ category }}">{{{ category }}}</span>
+  {{/if}}
+  {{#each contentTypes}}
+    <span class="thumb__content-type thumb__content-type--{{ . }}">{{> graphic name=this _self=true }}</span>
+  {{/each}}
+  <img src="{{ imgSource images.[0] }}"
+       srcset="{{#each images}} {{ imgSource . }}{{#unless @last}},{{/unless}} {{/each}}"
+       sizes="{{#each images}}  {{ imgSize . }}{{#unless @last }},{{/unless}} {{/each}}"
+       class="thumb__image"
+  />
+</div>
