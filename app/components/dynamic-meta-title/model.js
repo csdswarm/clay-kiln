@@ -20,7 +20,7 @@ const createMetaTitle = (data, locals, title) => {
     return metaLocalsKey
       .map(key => _get(locals, key))
       .filter(val => !!val)
-      .join(' ') || title;
+      .join(' - ') || title;
   }
 
   return title;
