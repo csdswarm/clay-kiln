@@ -47,7 +47,7 @@ spec:
             httpGet:
               httpHeaders:
               - name: Host
-                value: {{ index .Values.ingress.staticDomains 0 }}
+                value: {{ .Values.ingress.healthCheckDomain }}
               path: /_components
               port: http
             initialDelaySeconds: 30
@@ -56,7 +56,7 @@ spec:
             httpGet:
               httpHeaders:
               - name: Host
-                value: {{ index .Values.ingress.staticDomains 0 }}
+                value: {{ .Values.ingress.healthCheckDomain }}
               path: /_components
               port: http
             initialDelaySeconds: 5

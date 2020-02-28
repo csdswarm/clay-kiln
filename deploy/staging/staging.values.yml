@@ -2,7 +2,12 @@ ingress:
   hostedZones:
     - cms.radio-stg.com
   staticDomains:
-    - stg-clay.radio.com
+  # using stg-clay-k8s for now, to run alongside existing staging. this will be switched out.
+    - stg-clay-k8s.radio-stg.com
+  # update to this when ready to cut over
+  #  - stg-clay.radio-stg.com
+  # verify the healthCheckDomain before cutting over
+  healthCheckDomain: "stg-clay-k8s.radio.com"
 configmap:
   data:
     IP_ADDRESS: "0.0.0.0"

@@ -44,15 +44,17 @@ hpa:
   min: 2
   max: 10
   metric: cpu
-  cpuTarget: 50
+  cpuTarget: 10
 
 ingress:
   enabled: True
   annotations:
     kubernetes.io/ingress.class: "nginx-ingress"
-    nginx.ingress.kubernetes.io/limit-connections: "5"
-    nginx.ingress.kubernetes.io/limit-rps: "10"
-    nginx.ingress.kubernetes.io/limit-rpm: "500"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  # disabling rate limiting because of Fastly
+  #  nginx.ingress.kubernetes.io/limit-connections: "5"
+  #  nginx.ingress.kubernetes.io/limit-rps: "10"
+  #  nginx.ingress.kubernetes.io/limit-rpm: "500"
   # The sanitizedBranch value is prefixed to the hostedZones as long as it isn't empty
   hostedZones: [cms.radio-dev.com]
   staticDomains: []

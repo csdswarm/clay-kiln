@@ -2,7 +2,12 @@ ingress:
   hostedZones:
     - cms.radio-dev.com
   staticDomains:
-    - dev-clay-k8s.radio.com
+  # using dev-clay-k8s for now, this will be switched out
+    - dev-clay-k8s.radio-dev.com
+  # update to this when ready to cut over
+  #  - dev-clay.radio-dev.com
+  # healthCheckDomain is used for manually specifying hostname in the header used in liveness probes
+  healthCheckDomain: "dev-clay-k8s.radio.com"
 configmap:
   data:
     IP_ADDRESS: "0.0.0.0"
