@@ -150,31 +150,34 @@ function logCatch(e, ref) {
 }
 
 module.exports = newQueryWithLocals;
+module.exports.executeMultipleSearchRequests = executeMultipleSearchRequests;
+module.exports.getCount = getCount;
+module.exports.logCatch = logCatch;
 module.exports.newQueryWithCount = newQueryWithCount;
+module.exports.onePublishedArticleByUrl = onePublishedArticleByUrl;
 module.exports.searchByQuery = searchByQuery;
 module.exports.searchByQueryWithRawResult = searchByQueryWithRawResult;
-module.exports.getCount = getCount;
-module.exports.executeMultipleSearchRequests = executeMultipleSearchRequests;
 module.exports.updateByQuery = updateByQuery;
-module.exports.onePublishedArticleByUrl = onePublishedArticleByUrl;
-module.exports.logCatch = logCatch;
 
 module.exports.addAggregation = universalQuery.addAggregation;
-module.exports.addShould = universalQuery.addShould;
 module.exports.addFilter = universalQuery.addFilter;
+module.exports.addMinimumShould = universalQuery.addMinimumShould;
 module.exports.addMust = universalQuery.addMust;
 module.exports.addMustNot = universalQuery.addMustNot;
-module.exports.addMinimumShould = universalQuery.addMinimumShould;
-module.exports.addSort = universalQuery.addSort;
+module.exports.addSearch = universalQuery.addSearch;
+module.exports.addShould = universalQuery.addShould;
 module.exports.addSize = universalQuery.addSize;
-module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
-module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
-module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
+module.exports.addSort = universalQuery.addSort;
 module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
 module.exports.getFormatSearchResult = universalQuery.getFormatSearchResult;
+module.exports.matchIgnoreCase = universalQuery.matchIgnoreCase;
+module.exports.matchSimple = universalQuery.matchSimple;
 module.exports.moreLikeThis = universalQuery.moreLikeThis;
 module.exports.newNestedQuery = universalQuery.newNestedQuery;
-module.exports.addSearch = universalQuery.addSearch;
+module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
+module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
+module.exports.terms = universalQuery.terms;
+module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
 
 // For testing
 module.exports.post = universalRest.post;

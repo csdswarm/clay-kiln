@@ -1,6 +1,6 @@
 'use strict';
 
-const recircCmpt = require('../../universal/recirc-cmpt'),
+const recircCmpt = require('../../universal/recirc/recirc-cmpt'),
   searchOpts = {
     includeIdInResult: true,
     shouldDedupeContent: false
