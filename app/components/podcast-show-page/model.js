@@ -11,7 +11,7 @@ const { unityComponent } = require('../../services/universal/amphora'),
  * @returns {Promise<object>}
  */
 function getPodcastShow(locals) {
-  const route = `podcasts/${ locals.params.dynamicSlug }`;
+  const route = `podcasts?filter[site_slug]=${ locals.params.dynamicSlug }`;
 
   return radioApiService.get(route, {}, null, {}, locals).then(response => {
     return response.data || {};
