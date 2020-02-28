@@ -2,6 +2,7 @@
 
 const KilnInput = window.kiln.kilnInput,
   { getComponentName } = require('clayutils'),
+  rest = require('../../../universal/rest'),
   _get = require('lodash/get');
 
 module.exports = (schema) => {
@@ -18,9 +19,9 @@ module.exports = (schema) => {
      * @param {String} leadImgUrl
      * @returns {Void}
      */
-    setToLeadImage = (articleRef, leadImgUrl) => kilnInput.saveComponent(
-      articleRef,
-      { feedImgUrl: leadImgUrl }
+    setToLeadImage = (refToUpdate, leadImgUrl) => kilnInput.saveComponent(
+      refToUpdate,
+      { url: leadImgUrl }
     ),
     /**
      * Sets the feed image url to the lead image url if it has not already been set
@@ -51,12 +52,19 @@ module.exports = (schema) => {
 
       // eslint-disable-next-line one-var
       const mainComponentData = components[mainComponentRef],
+        { feedImg } = mainComponentData,
         leadComponentRef = _get(mainComponentData, 'lead.0._ref'),
-        isLeadComponent = currentUri === leadComponentRef,
-        noFeedImageSet = !mainComponentData.feedImgUrl;
+        shouldCheckForEmptyFeedImg = currentUri === leadComponentRef;
 
-      if (isLeadComponent && noFeedImageSet) {
-        setToLeadImage(mainComponentRef, leadImgUrl);
+      if (shouldCheckForEmptyFeedImg) {
+        const feedImgData = await rest.get(`http://${feedImg._ref}`),
+          hasUrl = Boolean(feedImgData.url);
+
+        if (hasUrl) {
+          return;
+        }
+
+        setToLeadImage(feedImg._ref, leadImgUrl);
       }
     };
 
