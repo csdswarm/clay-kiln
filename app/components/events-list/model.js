@@ -91,8 +91,6 @@ async function getRecentEventsFromElastic(uri, data, locals) {
 
   const query = queryService.newQueryWithCount(elasticIndex, data.numberToDisplay, locals);
 
-  console.log(JSON.stringify('locals.station', locals.station));
-  console.log('[locals.defaultStation]', locals.defaultStation);
   queryService.addFilter(query, { term: { contentType: 'event' } });
   if (data.station) {
     queryService.addMust(query, { match: { stationSlug: data.station.site_slug } });
@@ -131,7 +129,6 @@ async function getRecentEventsFromElastic(uri, data, locals) {
     // Default to loading 30 articles, which usually works out to 4 pages
     data.lazyLoads = Math.max(Math.ceil((30 - data.loadMoreAmount) / data.loadMoreAmount), 0);
   }
-  // console.log('[query]', JSON.stringify(query, null, 2));
   return queryService.searchByQuery(query)
     .then(function (results) {
       return results.map(result => {
