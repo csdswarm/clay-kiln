@@ -38,7 +38,7 @@ function getEpisodesInShow(locals) {
   const route = 'episodes',
     { sort = 'newest', page = 1 } = locals.query,
     params = {
-      'filter[podcast_id]': locals.podcast.id,
+      'filter[podcast_site_slug]': locals.params.dynamicSlug,
       'page[size]': 20,
       'page[number]': page
     };
@@ -89,10 +89,10 @@ module.exports = unityComponent({
         addSeconds(startOfDay, durationInSeconds),
         getDurationFormat(durationInSeconds)
       );
-      
+
       return episodeData;
     });
-    
+
     return data;
   },
 
