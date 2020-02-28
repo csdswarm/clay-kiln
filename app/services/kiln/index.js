@@ -20,6 +20,7 @@ module.exports = () => {
   require('./plugins/stations')();
   require('./plugins/stores')();
   require('./plugins/subscriptions')();
+  require('./plugins/select-list')();
   require('./plugins/default-text-with-override')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();

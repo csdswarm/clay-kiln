@@ -28,6 +28,26 @@ const _get = require('lodash/get'),
     SECTIONFRONT: 'section-front'
   },
 
+  msnFeed = {
+    // values are in pixels.  image requirements found here:
+    // https://partnerhub.msn.com/docs/spec/vcurrent/feed-specifications/AAsCh
+    image: {
+      required: {
+        maxSide: 4000,
+        minSide: 150,
+        maxSizeMb: 14,
+        maxSizeB: 14e6
+      },
+      // we don't need all the recommended msn specs - just the important ones
+      recommended: {
+        ratio: {
+          min: 0.5,
+          max: 1.89
+        }
+      }
+    }
+  },
+
   // this should list the component names of the content types which may appear
   //   under the 'main' property of a page.  Usually you can think of this as
   //   a list of page types able to be created in the kiln drawer with the
@@ -90,6 +110,7 @@ module.exports = {
   YEAR,
   contentTypes,
   time,
+  msnFeed,
   SERVER_SIDE,
   DEFAULT_RADIOCOM_LOGO,
   PAGE_TYPES

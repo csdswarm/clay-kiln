@@ -114,7 +114,7 @@ function newQuery(index, query) {
  * @return {Object}
  */
 function createAction(query, item, action) {
-  const key = `${getRoot(query)}.query.bool.${action}`,
+  const key = `${ getRoot(query) }.query.bool.${ action }`,
     data = _.get(query, key, undefined),
     itemIsArray = _.isArray(item);
 
@@ -129,7 +129,7 @@ function createAction(query, item, action) {
     if (itemIsArray) {
       _.set(query, key, item);
     } else {
-      _.set(query, key, [item]);
+      _.set(query, key, [ item ]);
     }
   }
 
@@ -182,7 +182,7 @@ function addMustNot(query, item) {
  * @return {Object}
  */
 function addFilter(query, item) {
-  const key = `${getRoot(query)}.query.bool.filter`,
+  const key = `${ getRoot(query) }.query.bool.filter`,
     filter = _.get(query, key, undefined);
 
   if (!_.isObject(item)) {
@@ -194,7 +194,7 @@ function addFilter(query, item) {
       filter.push(item);
       _.set(query, key, filter);
     } else {
-      _.set(query, key, [ _.cloneDeep(filter), item ] );
+      _.set(query, key, [ _.cloneDeep(filter), item ]);
     }
   } else {
     _.set(query, key, item);
@@ -215,7 +215,7 @@ function addFilter(query, item) {
  * @return {Object}
  */
 function addMinimumShould(query, num) {
-  const key = `${getRoot(query)}.query.bool.minimum_should_match`;
+  const key = `${ getRoot(query) }.query.bool.minimum_should_match`;
 
   if (typeof num !== 'number') {
     throw new Error('A number is required as the second argument');
@@ -261,7 +261,7 @@ function addSize(query, size) {
   }
   size = parseInt(size);
   if (isNaN(size)) {
-    throw new Error(`Second argument must be a number: ${size}`);
+    throw new Error(`Second argument must be a number: ${ size }`);
   }
   return _.set(query, 'body.size', size);
 }
@@ -335,7 +335,7 @@ function withinThisSiteAndCrossposts(query, site) {
  */
 function moreLikeThis(query, id, opts) {
   const defaultOpts = {
-    fields: ['tags'],
+    fields: [ 'tags' ],
     like: {
       _index: query.index, // prefixed index name
       _type: '_doc',
@@ -386,7 +386,7 @@ function addAggregation(query = {}, options) {
  */
 function formatAggregationResults(aggregationName = '', field = '', skipEmpty = true) {
   return function (results = {}) {
-    let parsedData = _.get(results, `aggregations.${aggregationName}.buckets`, []);
+    let parsedData = _.get(results, `aggregations.${ aggregationName }.buckets`, []);
 
     if (skipEmpty) {
       parsedData = parsedData.filter(result => _.get(result, 'doc_count', 0) !== 0);
@@ -410,7 +410,7 @@ function newNestedQuery(path) {
   return {
     nested: {
       path,
-      query: { }
+      query: {}
     }
   };
 }
@@ -461,17 +461,59 @@ function searchByQuery(query, locals, opts, searchByQueryWithRawResult) {
  * @return {Object}
  */
 function addSearch(query, searchTerm, fields) {
-  const key = `${getRoot(query)}.query`,
+  const key = `${ getRoot(query) }.query`,
     value = {
       query_string: {
         query: sanitizeSearchTerm(searchTerm),
-        fields: _.isArray(fields) ? fields : [fields]
+        fields: _.isArray(fields) ? fields : [ fields ]
       }
     };
 
-  _.set(query, key,  value);
+  _.set(query, key, value);
 
   return query;
+}
+
+/**
+ * wraps a key and value in an elastic search match object that searches for both the initial value as well as lowercase
+ * @param {string} key
+ * @param {string} value
+ * @returns {{bool: {should: [{match: {}}, {match: {}}], minimum_should_match: number}}}
+ */
+function matchIgnoreCase(key, value) {
+  return {
+    bool: {
+      should: [
+        matchSimple(key, value),
+        matchSimple(key, value.toLowerCase())
+      ],
+      minimum_should_match: 1
+    }
+  };
+}
+
+/**
+ * wraps a key and value in an elastic search match object
+ * @param {string} key
+ * @param {string} value
+ * @returns {{match: {}}}
+ */
+function matchSimple(key, value) {
+  return { match: { [key]: value } };
+}
+
+/**
+ * wraps a key and set of values in an elastic search terms object
+ * @param {string} key
+ * @param {string[]} values
+ * @returns {{terms: {}}}
+ */
+function terms(key, values) {
+  return {
+    terms: {
+      [key]: values
+    }
+  };
 }
 
 /**
@@ -488,7 +530,6 @@ function sanitizeSearchTerm(searchTerm) {
 }
 
 module.exports = newQuery;
-
 Object.assign(module.exports, {
   addAggregation,
   addFilter,
@@ -503,11 +544,14 @@ Object.assign(module.exports, {
   formatAggregationResults,
   formatProtocol,
   getFormatSearchResult,
+  matchIgnoreCase,
+  matchSimple,
   moreLikeThis,
   newNestedQuery,
-  onlyWithinThisSite,
   onlyWithTheseFields,
+  onlyWithinThisSite,
   sanitizeSearchTerm,
   searchByQuery,
+  terms,
   withinThisSiteAndCrossposts
 });

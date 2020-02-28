@@ -157,6 +157,7 @@ module.exports = router => {
   stationTheming.inject(router, checkAuth);
   addEndpoints.alerts(router);
   addEndpoints.createPage(router);
+  addEndpoints.imageInfo(router, checkAuth);
   ensureStationOnCustomUrl(router);
   addEndpoints.validSource(router);
 };

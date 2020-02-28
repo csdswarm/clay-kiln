@@ -1,0 +1,27 @@
+{{#if onlyListItems }}
+  {{#each cards }}
+    <li>
+      {{> card _self=true }}
+    </li>
+  {{/each}}
+{{else if cards.length }}
+  <ul data-uri="{{ default _ref _self }}"
+      class="component component--cards-feed cards-feed"
+      data-editable="curatedItems"
+  >
+    {{#each cards }}
+      <li>
+        {{> card _self=true }}
+      </li>
+    {{/each}}
+  </ul>
+{{else if @root.locals.edit}}
+  <div class="cards-feed__placeholder kiln-placeholder" data-editable="curatedItems">
+    <div class="placeholder-label">
+      <span class="ui-icon placeholder-icon material-icons add">add</span>
+      <span class="placeholder-text">Content Feed</span>
+      <div class="ui-ripple-ink"></div>
+    </div>
+  </div>
+{{/if}}
+

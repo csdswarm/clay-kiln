@@ -27,9 +27,6 @@
   <div class="default-text-with-override">
     <h4 class="default-text-with-override__label">{{ schema._label }}</h4>
     <div class="default-text-with-override__value">{{ data }}</div>
-    <div class="ui-textbox__feedback" v-if="help">
-      <div class="ui-textbox__feedback-text">{{ help }}</div>
-    </div>
 
     <ui-checkbox v-if="canOverride"
       v-model="shouldOverride"
@@ -49,7 +46,6 @@
       :help="customTextHelp"
       :label="customTextLabel"
       :invalid="isInvalid"
-      :type="type"
       :value="customText"
       @input="updateCustomText"
       @keydown-enter="closeFormOnEnter"
@@ -75,10 +71,21 @@
     name: 'default-text-with-override',
     props: ['name', 'data', 'schema', 'args'],
     data() {
+      const { min, max, pattern } = this.args.validate,
+        validate = Object.assign(
+          {
+            requiredMessage: 'A value is required',
+            minMessage: `The value must be at least ${min} characters`,
+            maxMessage: `The value must be at most ${max} characters`,
+            patternMessage: `The value must match the pattern "/${pattern}/ig`
+          },
+          this.args.validate
+        );
+
       return {
         customText: this.getInternalState('customText', this.getDefaultText()),
-        help: this.args.help,
-        shouldOverride: this.getInternalState('shouldOverride', false)
+        shouldOverride: this.getInternalState('shouldOverride', false),
+        validate
       };
     },
     computed: {
