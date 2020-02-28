@@ -4,6 +4,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
   mobileNavSections = document.getElementsByClassName('nav-drawer__sub-nav'),
   isDesktop = require('../../services/client/isDesktop'),
   navIncludes = require('./nav-includes'),
+  _debounce = require('lodash/debounce'),
 
   /**
    * Determines whether or not the hamburger menu is in the 'active' state.
@@ -11,7 +12,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * @returns {boolean}
    */
   isHamburgerActive = () =>{
-    const bars = Array.from(document.getElementsByClassName('bar')),
+    const bars = Array.from(document.querySelectorAll('.bar')),
       activeHamburgerClass = 'active';
 
     return bars.reduce((isActive, bar) => isActive || bar.classList.contains(activeHamburgerClass), false);// if any of the bars are active, then return true. Otherwise, return false.
@@ -35,15 +36,18 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * @returns {boolean} Whether the state was successfully set.
    */
   openMobileNavigation = () =>{
-    if (isDesktop())
+    if (isDesktop()) {
       return false;// do not open hamburger menu on desktop
-    const bars = document.getElementsByClassName('bar'),
-      navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0],
+    }
+    const bars = document.querySelectorAll('.bar'),
+      navDrawer = document.querySelector('.nav-drawer--mobile'),
       activeHamburgerClass = 'active',
       activeMobileNavClass = 'nav-drawer--active';
 
     // Open mobile nav drawer & change hamburger styling
-    for (const bar of bars) bar.classList.add(activeHamburgerClass);
+    for (const bar of bars) {
+      bar.classList.add(activeHamburgerClass);
+    }
     navDrawer.classList.add(activeMobileNavClass);
 
     return true;
@@ -55,13 +59,15 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * @returns {boolean} Whether the state was successfully set.
    */
   closeMobileNavigation = () =>{
-    const bars = document.getElementsByClassName('bar'),
-      navDrawer = document.getElementsByClassName('nav-drawer--mobile')[0],
+    const bars = document.querySelectorAll('.bar'),
+      navDrawer = document.querySelector('.nav-drawer--mobile'),
       activeHamburgerClass = 'active',
       activeMobileNavClass = 'nav-drawer--active';
 
     // Close mobile nav drawer & change hamburger styling
-    for (const bar of bars) bar.classList.remove(activeHamburgerClass);
+    for (const bar of bars) {
+      bar.classList.remove(activeHamburgerClass);
+    }
     navDrawer.classList.remove(activeMobileNavClass);
 
     return true;
@@ -73,8 +79,9 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * @returns {boolean} Whether the navigation was successfully shown.
    */
   openNavDrawer = (event) => {
-    if (!isDesktop())
+    if (!isDesktop()) {
       return false;// do not open nav drawer on mobile
+    }
     // Toggle desktop nav drawer
     const navDrawer = event.currentTarget.querySelector('.nav-drawer');
 
@@ -88,7 +95,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * @function closeNavDrawers
    */
   closeNavDrawers = () => {
-    const navDrawers = document.getElementsByClassName('nav-drawer');
+    const navDrawers = document.querySelectorAll('.nav-drawer');
 
     for (const drawer of navDrawers) {
       drawer.classList.remove('nav-drawer--sub-nav-active');
@@ -122,7 +129,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    */
   toggleMobileOnClick = () => {
     document
-      .getElementById('hamburger')
+      .querySelector('#hamburger')
       .addEventListener('click', toggleMobileNavigation);
   },
 
@@ -158,25 +165,16 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
    * This will prevent an open mobile nav bar from persisting when resizing to desktop, and vice versa.
    */
   closeNavOnResize = () => {
-    onResizeEnd(() => {
-      closeMobileNavigation();
-      closeNavDrawers();
-    });
-  },
+    let width = window.innerWidth;
+    const debounced = _debounce(() => {
+      if (window.innerWidth !== width) {// ensure the width changes, so the event does not trigger when scrolling on mobile
+        width = window.innerWidth;
+        closeMobileNavigation();
+        closeNavDrawers();
+      }
+    }, 100);
 
-  /**
-   * Waits for the "end" of a resize event. The event must not reoccur for {delay} ms before being considered to "end".
-   * @param {function} fn - The function to run after resizing.
-   * @param {number} [delay=100] - the amount of time in ms to wait for event to reoccur before considering the resize event to "end".
-   */
-  onResizeEnd = (fn, delay = 100) => {
-    let resizeTimer = null;
-
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(fn, delay);
-      return true;
-    });
+    window.addEventListener('resize', debounced);
   },
   /**
    * Add event listeners to header elements to toggle drawers & images.
