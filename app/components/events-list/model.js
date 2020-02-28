@@ -2,6 +2,7 @@
 
 const
   { unityComponent } = require('../../services/universal/amphora'),
+  bluebird = require('bluebird'),
   moment = require('moment'),
   queryService = require('../../services/server/query'),
   elasticIndex = 'published-content',
@@ -25,6 +26,7 @@ const
  * Gets event data from elastic by querying with event url
  *
  * @param {Object} event
+ * @param {Object} data
  * @param {Object} locals
  * @returns {Promise<{
   *  url: string,
@@ -36,7 +38,7 @@ const
   *  feedImgUrl: string,
   * }[]>}
   */
-async function getEventDataFromElastic(event, locals) {
+async function getEventDataFromElastic(event, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, 1, locals),
     canonicalUrl = utils.urlToCanonicalUrl(
       urlToElasticSearch(event.url)
@@ -44,8 +46,10 @@ async function getEventDataFromElastic(event, locals) {
 
   queryService.addFilter(query, { term: { canonicalUrl } });
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (locals && locals.station.callsign !== locals.defaultStation.callsign) {
-    queryService.addMust(query, { match: { station: locals.station } });
+  if (data.station) {
+    queryService.addMust(query, { match: { stationSlug: data.station.site_slug } });
+  } else {
+    queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
   return queryService.searchByQuery(query)
@@ -91,11 +95,13 @@ async function getRecentEventsFromElastic(uri, data, locals) {
   console.log('[locals.defaultStation]', locals.defaultStation);
   queryService.addFilter(query, { term: { contentType: 'event' } });
   if (data.station) {
-    // queryService.addMust(query, { match: { station: data.station } });
+    queryService.addMust(query, { match: { stationSlug: data.station.site_slug } });
+  } else {
+    queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
 
   queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addSort(query, { date: 'desc' });
+  queryService.addSort(query, { startDate: 'desc' });
 
   // exclude the curated content from the results
   if (data.curatedEvents && !isComponent(locals.url)) {
@@ -147,10 +153,15 @@ module.exports = unityComponent({
       return data;
     }
 
-    const
-      curatedEvents = await Promise.all(data.curatedEvents.map(async (event) => {
-        return await getEventDataFromElastic(event, locals);
-      })),
+    data.station = locals.newPageStation;
+
+    const curatedEvents = await bluebird.map(
+        data.curatedEvents,
+        async event => {
+          return await getEventDataFromElastic(event, data, locals);
+        },
+        { concurrency: 10 }
+      ),
       recentEvents = await getRecentEventsFromElastic(uri, data, locals);
 
     // On initial load we need to append curated items onto the list, otherwise skip
