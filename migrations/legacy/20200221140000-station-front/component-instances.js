@@ -19,20 +19,7 @@ async function createComponentInstances(host) {
             new: {
               stationCallsign: '',
               stationSlug: '',
-              includePodcastModule: false,
-              sectionLead: {
-                _ref: '/_components/section-lead/instances/new'
-              },
-              googleAdUnderStationsModule: {
-                _ref: '/_components/google-ad-manager/instances/billboardBottom'
-              },
-              podcastList: {
-                _ref: '/_components/podcast-list/instances/new'
-              },
-              twoColumnComponent: {
-                _ref: '/_components/two-column-component/instances/section-front'
-              },
-              stationsCarousel: []
+              mainContent: []
             }
           }
         }
