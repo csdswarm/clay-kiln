@@ -17,7 +17,8 @@ const { unityComponent } = require('../../services/universal/amphora'),
   ],
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   utils = require('../../services/universal/utils'),
-  { urlToElasticSearch } = utils;
+  { urlToElasticSearch } = utils,
+  { assignStationInfo } = require('../../services/universal/create-content.js');
 
 /**
  * Gets event data from elastic by querying with event url
@@ -42,8 +43,8 @@ async function getEventDataFromElastic(data, locals) {
 
   queryService.addFilter(query, { term: { canonicalUrl } });
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (data.station) {
-    queryService.addMust(query, { match: { stationSlug: data.station.site_slug } });
+  if (data.stationSlug) {
+    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
   } else {
     queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
@@ -79,7 +80,7 @@ module.exports = unityComponent({
       return data;
     }
 
-    data.station = locals.newPageStation;
+    assignStationInfo(uri, data, locals);
     data.lede = await getEventDataFromElastic(data, locals);
 
     return data;

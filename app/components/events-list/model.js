@@ -20,7 +20,8 @@ const
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   { isComponent } = require('clayutils'),
   utils = require('../../services/universal/utils'),
-  { urlToElasticSearch } = utils;
+  { urlToElasticSearch } = utils,
+  { assignStationInfo } = require('../../services/universal/create-content.js');
 
 /**
  * Gets event data from elastic by querying with event url
@@ -46,8 +47,8 @@ async function getEventDataFromElastic(event, data, locals) {
 
   queryService.addFilter(query, { term: { canonicalUrl } });
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (data.station) {
-    queryService.addMust(query, { match: { stationSlug: data.station.site_slug } });
+  if (data.stationSlug) {
+    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
   } else {
     queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
@@ -85,8 +86,8 @@ async function getRecentEventsFromElastic(uri, data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
 
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (data.station) {
-    queryService.addMust(query, { match: { stationSlug: data.station.site_slug } });
+  if (data.stationSlug) {
+    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
   } else {
     queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
@@ -147,7 +148,7 @@ module.exports = unityComponent({
       return data;
     }
 
-    data.station = locals.newPageStation;
+    assignStationInfo(uri, data, locals);
 
     const curatedEvents = await bluebird.map(
         data.curatedEvents,
