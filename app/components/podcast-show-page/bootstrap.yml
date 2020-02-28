@@ -1,0 +1,8 @@
+_components:
+  podcast-show-page:
+    stationSlug: ''
+    podcast: {}
+    instances:
+      default:
+        stationSlug: ''
+        podcast: {}

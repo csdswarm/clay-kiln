@@ -1,4 +1,5 @@
 'use strict';
+const nonWhitespaceBtwnBrackets = /^\{(\S*)\}$/;
 
 /**
  * Takes a text value and converts it to a navigable slug
@@ -53,7 +54,7 @@ function concatValues(arr, prop, separator = '/') {
 function toLinkSegments(data) {
 
   return prop => {
-    const text = data[prop];
+    const text = data[prop] || prop.match(nonWhitespaceBtwnBrackets)[1];
 
     return { segment: slugify(text), text };
   };
@@ -97,10 +98,12 @@ module.exports = {
    * @param {string} host the hostname of the site
    */
   autoLink(data, props, host) {
-    const onlyExistingItems = prop => data[prop];
+    const onlyExistingItemsOrLiterals = prop => {
+      return data[prop] || nonWhitespaceBtwnBrackets.test(prop);
+    };
 
     data.breadcrumbs = props
-      .filter(onlyExistingItems)
+      .filter(onlyExistingItemsOrLiterals)
       .map(toLinkSegments(data))
       .map(toFullLinks(host));
   },
