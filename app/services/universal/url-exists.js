@@ -1,6 +1,6 @@
 'use strict';
 
-const { getArticleData } = require('../universal/recirc-cmpt'),
+const { getArticleData } = require('../universal/recirc/recirc-cmpt'),
   _get = require('lodash/get'),
   { PAGE_TYPES } = require('../universal/constants'),
   urlPatterns = require('../universal/url-patterns'),
