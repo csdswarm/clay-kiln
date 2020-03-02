@@ -1,5 +1,5 @@
 {{#*inline "item" }}
-  <a class="podcast-trending--item-link" href="{{ link }}">
+  <a class="podcast-trending--item-link" href="{{ url }}">
     <div class="podcast-trending--item-thumb">
       <img class="podcast-trending--thumb-img" src="{{ imageUrl }}" alt="{{ title }}">
     </div>
@@ -10,7 +10,7 @@
   </a>
 {{/inline}}
 
-<div class="component component--podcast-trending podcast-trending" data-uri="{{ default _ref _self }}">
+<div class="component component--podcast-trending podcast-trending" data-uri="{{ default _ref _self }}" data-editable="curatedItems">
   <div class="podcast-trending--title">Trending Podcasts</div>
   <ul class="podcast-trending--list-container">
     {{#each _computed.items as |podcast|}}
