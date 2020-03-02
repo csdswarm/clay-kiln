@@ -242,24 +242,19 @@ Whenever a component is fetched with the `.anf` extension it will write the outp
 ## Decrypt/Encrypt SOPS files
 If you don't have an up to date AWS token run the following first:
 ```bash
-token token [INSERT_TOKEN_FROM_MFA_DEVICE]
+token [INSERT_TOKEN_FROM_MFA_DEVICE]
 ```
 
-To decrypt the SOPS file for editing:
+Decrypt an environment file (env param is optional and defaults to the local env):
 ```bash
-token token [INSERT_TOKEN_FROM_MFA_DEVICE]
+make decrypt-env env=development
 ```
+Values can be `development`, `staging`, `production`, `local`. It matches to deploys directory/file naming for the associated env
 
 Encrypt an environment file (local can be changed to development/staging/production):
 ```bash
 make encrypt-local-env
 ```
-
-Dencrypt an environment file (env param is optional and defaults to the local env):
-```bash
-make decrypt-env env=development
-```
-Values can be `development`, `staging`, `production`, `local`. It matches to deploys directory/file naming for the associated env
 
 ## Missed anything?
 That _should_ be it...if not, submit an issue or add something to this README.w
