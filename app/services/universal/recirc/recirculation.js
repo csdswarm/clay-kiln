@@ -85,9 +85,27 @@ const
     sectionFronts: {
       filterCondition: 'must',
       unique: true,
-      createObj: sectionFront => ({ match: { sectionFront } })
+      createObj: sectionFront => ({
+        bool: {
+          should: [
+            { match: { sectionFront: sectionFront } },
+            { match: { sectionFront: sectionFront.toLowerCase() } }
+          ],
+          minimum_should_match: 1
+        }
+      })
     },
-    secondarySectionFronts: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
+    secondarySectionFronts: {
+      createObj: secondarySectionFront => ({
+        bool: {
+          should: [
+            { match: { secondarySectionFront: secondarySectionFront } },
+            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } }
+          ],
+          minimum_should_match: 1
+        }
+      })
+    },
     tags: {
       unique: true,
       createObj: tag => ({ match: { 'tags.normalized': tag } })
@@ -172,6 +190,9 @@ const
       author = locals.params.dynamicAuthor;
     }
 
+    // Used for load-more queries
+    data.author = author;
+
     return { author };
   },
   /**
@@ -202,10 +223,12 @@ const
       tags = tags.map(tag => _get(tag, 'text', tag)).filter(tag => tag);
     }
 
-    // split comma seperated tags (for load-more get queries)
     if (typeof tags == 'string' && tags.indexOf(',') > -1) {
       tags = tags.split(',');
     }
+
+    // split comma separated tags (for load-more get queries)
+    data.tag = tags;
 
     if (tags === '') {
       return [];
