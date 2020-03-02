@@ -1,17 +1,26 @@
 'use strict';
 
-const _get = require('lodash/get');
+const _get = require('lodash/get'),
+  { unityComponent } = require('../../services/universal/amphora');
 
-module.exports.render = (ref, data, locals) => {
-  if (data.routeParam && locals && locals.params && locals.params[data.routeParam]) {
-    data.imageUrl = data.dynamicImageUrl.replace('${paramValue}', locals.params[data.routeParam]);
-  } else if (data.localsKey && locals) {
-    const value = _get(locals, data.localsKey);
+module.exports = unityComponent({
+  render: (ref, data, locals) => {
+    const routeVal = data.routeParam
+        ? _get(locals, ['params', data.routeParam])
+        : undefined,
+      localsVal = data.localsPath
+        ? _get(locals, data.localsPath)
+        : undefined;
 
-    if (value) {
-      data.imageUrl = data.dynamicImageUrl.replace('${paramValue}', value);
+    if (routeVal || localsVal) {
+      data._computed.imageUrl = data.dynamicImageUrl.replace(
+        '${paramValue}',
+        routeVal || localsVal
+      );
+    } else {
+      data._computed.imageUrl = data.imageUrl;
     }
-  }
 
-  return data;
-};
+    return data;
+  }
+});

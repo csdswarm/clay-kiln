@@ -1,6 +1,7 @@
 <!-- data-uri="{{ default _ref _self }}" -->
-{{#if imageUrl}}
+{{#if _computed.imageUrl}}
     <meta name="twitter:card" content="summary_large_image">
-    <meta content="{{ imageUrl }}" name="twitter:image">
-    <meta property="og:image" content="{{ imageUrl }}">
+    <meta name="twitter:site" content="@radiodotcom">
+    <meta content="{{ _computed.imageUrl }}" name="twitter:image">
+    <meta property="og:image" content="{{ _computed.imageUrl }}">
 {{/if}}
