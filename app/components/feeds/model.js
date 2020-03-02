@@ -1,33 +1,12 @@
 'use strict';
 
-const _castArray = require('lodash/castArray'),
-  _get = require('lodash/get'),
-  _set = require('lodash/set'),
-  queryService = require('../../services/server/query'),
+const queryService = require('../../services/server/query'),
   { formatUTC } = require('../../services/universal/dateTime'),
   bluebird = require('bluebird'),
   log = require('../../services/universal/log').setup({
     file: __filename,
     component: 'feeds'
   });
-
-/**
- * for now we only want articles and galleries to be processed by feeds.  This
- *   is in prep to add more content types which the feeds may not support.  The
- *   plan will be to test each content type as support is added to each feed.
- *
- * @param {object} query - this parameter is mutated
- */
-function restrictFeedsToArticlesAndGalleries(query) {
-  const pathToFilter = 'body.query.bool.filter',
-    // if the current filter is an object then we need to put it inside an array
-    //   because we're adding an additional one
-    filter = _castArray(_get(query, pathToFilter, []));
-
-  _set(query, pathToFilter, filter);
-
-  filter.push({ terms: { contentType: ['article', 'gallery'] } });
-}
 
 /**
  * Make sure you have an index, transform and meta property on the
@@ -205,8 +184,6 @@ module.exports.render = async (ref, data, locals) => {
 
   // Loop through all the generic items and add any filter/exclude conditions that are needed
   Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
-
-  restrictFeedsToArticlesAndGalleries(query);
 
   try {
     if (meta.rawQuery) {

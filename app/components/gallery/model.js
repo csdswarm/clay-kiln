@@ -5,9 +5,9 @@ const { unityComponent } = require('../../services/universal/amphora'),
   { autoLink } = require('../breadcrumbs');
 
 module.exports = unityComponent({
-  render: async (uri, data, locals) => {
+  render: (uri, data, locals) => {
     locals.loadedIds.push(uri);
-    await autoLink(data, ['sectionFront', 'secondarySectionFront'], locals);
+    autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);
     return createContent.render(uri, data, locals);
   },
   save: (uri, data, locals) => {

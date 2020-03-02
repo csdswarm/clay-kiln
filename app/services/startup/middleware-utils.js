@@ -1,20 +1,19 @@
 'use strict';
 
-const onHeaders = require('on-headers'),
-  /**
-   * Adds headers to prevent fastly from caching the response.
-   *
-   * 'private' means fastly won't cache it
-   * 'no-store' means the browser won't cache it
-   * For more info:
-   *   https://docs.fastly.com/en/guides/cache-control-tutorial#do-not-cache
-   *
-   * Keep in mind fastly should only be caching GET requests, so don't use this
-   *   function on other http methods.
-   *
-   * @param {object} res - express response
-   */
-  preventFastlyCache = res => {
+/**
+ * Adds headers to prevent fastly from caching the response.
+ *
+ * 'private' means fastly won't cache it
+ * 'no-store' means the browser won't cache it
+ * For more info:
+ *   https://docs.fastly.com/en/guides/cache-control-tutorial#do-not-cache
+ *
+ * Keep in mind fastly should only be caching GET requests, so don't use this
+ *   function on other http methods.
+ *
+ * @param {object} res - express response
+ */
+const preventFastlyCache = res => {
     res.set('Cache-Control', 'private, no-store');
   },
   /**
@@ -40,23 +39,9 @@ const onHeaders = require('on-headers'),
         next(err);
       }
     };
-  },
-  /**
-   * removes the ETag header after express automatically creates it
-   *
-   * code (and context to why this is necessary) from here:
-   * https://github.com/expressjs/express/issues/2472#issuecomment-67186349
-   *
-   * @param {object} res - express response object
-   */
-  removeEtag = res => {
-    onHeaders(res, function () {
-      this.removeHeader('ETag');
-    });
   };
 
 module.exports = {
   preventFastlyCache,
-  removeEtag,
   wrapInTryCatch
 };

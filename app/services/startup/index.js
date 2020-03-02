@@ -25,7 +25,6 @@ const pkg = require('../../package.json'),
   radium = require('./radium'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
-  addEndpoints = require('./add-endpoints'),
   addToLocals = require('./add-to-locals'),
   addInterceptor = require('./add-interceptor');
 
@@ -94,8 +93,6 @@ function setupApp(app) {
   app.use(currentStation);
 
   addInterceptor.cacheControl(app);
-
-  addEndpoints.msnFeed(app);
 
   radium.inject(app);
 

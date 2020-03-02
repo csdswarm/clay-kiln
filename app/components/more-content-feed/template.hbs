@@ -1,4 +1,4 @@
-{{#if _computed.initialLoad}}
+{{#if initialLoad}}
   <section
     class="component component--more-content-feed
     {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}
@@ -7,7 +7,7 @@
     data-track-location="{{ locationOfContentFeed }}"
     data-uri="{{ default _ref _self }}"
     data-track-type="more-content-feed"
-    data-lazy-loads="{{ _computed.lazyLoads }}"
+    data-lazy-loads="{{ lazyLoads }}"
   >
     {{#if componentTitleVisible}}
       <h2 class="more-content-feed__title
@@ -26,7 +26,7 @@
             {{> component-list introComponents}}
           </div>
         {{/unless}}
-        {{#unless _computed.content.length}}
+        {{#unless content.length}}
           {{#if @root.locals.edit}}
             <div class="more-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
               <div class="placeholder-label">
@@ -37,11 +37,11 @@
             </div>
           {{/if}}
         {{/unless}}
-        {{#ifAny _computed.content.length @root.locals.edit}}
+        {{#ifAny content.length @root.locals.edit}}
           <ul class="more-content-feed__links" data-editable="contentFeed">
         {{/ifAny}}
 {{/if}}
-          {{#each _computed.content as |feedItem|}}
+          {{#each content as |feedItem|}}
             <li>
               <a class="links__link links__link--{{ feedItem.sectionFront }}" href="{{ feedItem.canonicalUrl }}"
                  data-track-type="feedItem-link"
@@ -96,16 +96,12 @@
                 </div>
               </a>
             </li>
-            {{!-- Add sharethrough every third item in list, except last item in list, if enabled --}}
-            {{#ifAll 
-              ../enableSharethrough
-              (modulo (add @index 1) 2 0) 
-              (compare ../feedItem.length "!==" (add @index 1))
-            }}
+            {{!-- Add sharethrough every third item in list, except last item in list --}}
+            {{#ifAll (modulo (add @index 1) 2 0) (compare ../feedItem.length "!==" (add @index 1))}}
               {{> google-ad-manager ../sharethroughTag}}
             {{/ifAll}}
           {{/each}}
-{{#if _computed.moreContent}}
+{{#if moreContent}}
     <li class="links__link--loadmore"
         {{#if tag}}data-tag="{{ tag}}"{{/if}}
         {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
@@ -115,7 +111,7 @@
       </button>
     </li>
 {{/if}}
-{{#if _computed.initialLoad}}
+{{#if initialLoad}}
           </ul>
         </div>
       </div>

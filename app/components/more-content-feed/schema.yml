@@ -1,4 +1,4 @@
-_version: 13.0
+_version: 11.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -67,11 +67,6 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
-  _reveal:
-    field: populateFrom
-    operator: '!=='
-    values:
-      - author
 
 curatedContentHeader:
   _label: Curated Content
@@ -173,7 +168,7 @@ tagManual:
           - section-front-and-tag
           - section-front-or-tag
 
-excludeTags:
+filterTags:
   _label: Exclude Tags
   _has:
     input: simple-list
@@ -183,15 +178,7 @@ excludeTags:
       allowCreate: true
     help: Exclude content from all tags
 
-excludeSectionFronts:
-  _label: Exclude Section Fronts
-  _has:
-    input: select
-    search: true
-    multiple: true
-    list: primary-section-fronts
-
-excludeSecondarySectionFronts:
+filterSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
     input: select
@@ -276,11 +263,6 @@ items:
         validate:
           required: true
 
-enableSharethrough:
-  _label: Enable Sharethrough
-  _has:
-    input: checkbox
-
 introComponents:
   _label: Intro Components
   _placeholder:
@@ -301,7 +283,6 @@ _groups:
     fields:
       - componentTitle
       - componentTitleVisible
-      - enableSharethrough
       - pageLength
       - maxLength
       - autoPopulatedContentHeader
@@ -310,9 +291,8 @@ _groups:
       - secondarySectionFrontManual
       - tagManual
       - contentType
-      - excludeTags
-      - excludeSectionFronts
-      - excludeSecondarySectionFronts
+      - filterTags
+      - filterSecondarySectionFronts
       - curatedContentHeader
       - items
     _placeholder:

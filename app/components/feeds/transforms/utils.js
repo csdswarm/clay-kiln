@@ -1,7 +1,6 @@
 'use strict';
 
-const _castArray = require('lodash/castArray'),
-  _forEach = require('lodash/forEach'),
+const _forEach = require('lodash/forEach'),
   _find = require('lodash/find'),
   _get = require('lodash/get'),
   _includes = require('lodash/includes'),
@@ -28,7 +27,7 @@ const _castArray = require('lodash/castArray'),
 async function renderContentAsync(content, locals, format, componentsToSkip = new Set()) {
   let res = '';
 
-  for (const cmpt of _castArray(content)) {
+  for (const cmpt of content) {
     const ref = _get(cmpt, '_ref', ''),
       cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
       cmptName = getComponentName(ref);

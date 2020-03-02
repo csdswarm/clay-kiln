@@ -112,7 +112,7 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
   //   And when locals doesn't exist there's no reason to dedupe.
   const shouldDedupe = locals && opts.shouldDedupeContent,
     loadedIds = shouldDedupe
-      ? locals.loadedIds.filter(id => id)
+      ? locals.loadedIds
       : [];
 
   getSearchInstance();
@@ -246,34 +246,32 @@ function logCatch(e, ref) {
 }
 
 module.exports = newQueryWithPrefix;
-module.exports.executeMultipleSearchRequests = executeMultipleSearchRequests;
-module.exports.getCount = getCount;
-module.exports.logCatch = logCatch;
+module.exports.searchInstance = null;
 module.exports.newQueryWithCount = newQueryWithCount;
-module.exports.onePublishedArticleByUrl = onePublishedArticleByUrl;
 module.exports.searchByQuery = searchByQuery;
 module.exports.searchByQueryWithRawResult = searchByQueryWithRawResult;
-module.exports.searchInstance = null;
+module.exports.getCount = getCount;
+module.exports.executeMultipleSearchRequests = executeMultipleSearchRequests;
 module.exports.updateByQuery = updateByQuery;
+module.exports.onePublishedArticleByUrl = onePublishedArticleByUrl;
+module.exports.logCatch = logCatch;
 
 module.exports.addAggregation = universalQuery.addAggregation;
+module.exports.addShould = universalQuery.addShould;
 module.exports.addFilter = universalQuery.addFilter;
-module.exports.addMinimumShould = universalQuery.addMinimumShould;
 module.exports.addMust = universalQuery.addMust;
 module.exports.addMustNot = universalQuery.addMustNot;
-module.exports.addOffset = universalQuery.addOffset;
-module.exports.addSearch = universalQuery.addSearch;
-module.exports.addShould = universalQuery.addShould;
-module.exports.addSize = universalQuery.addSize;
+module.exports.addMinimumShould = universalQuery.addMinimumShould;
 module.exports.addSort = universalQuery.addSort;
+module.exports.addSize = universalQuery.addSize;
+module.exports.addOffset = universalQuery.addOffset;
 module.exports.addSource = universalQuery.addSource;
-module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
-module.exports.formatSearchResult = universalQuery.formatSearchResult;
-module.exports.matchIgnoreCase = universalQuery.matchIgnoreCase;
-module.exports.matchSimple = universalQuery.matchSimple;
-module.exports.moreLikeThis = universalQuery.moreLikeThis;
-module.exports.newNestedQuery = universalQuery.newNestedQuery;
 module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
 module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
-module.exports.terms = universalQuery.terms;
 module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
+module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
+module.exports.formatSearchResult = universalQuery.formatSearchResult;
+module.exports.moreLikeThis = universalQuery.moreLikeThis;
+module.exports.moreLikeThis = universalQuery.moreLikeThis;
+module.exports.newNestedQuery = universalQuery.newNestedQuery;
+module.exports.addSearch = universalQuery.addSearch;

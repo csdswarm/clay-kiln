@@ -1,5 +1,4 @@
 'use strict';
-
 const clayExport = require('./clay-export').v1;
 const clayImport = require('./clay-import').v1;
 const { _get, clayutils } = require('./base');

@@ -1,28 +1,14 @@
 'use strict';
-const
-  _filter = require('lodash/filter'),
-  _get = require('lodash/get'),
-  _identity = require('lodash/identity'),
-  _isArray = require('lodash/isArray'),
-  _isEmpty = require('lodash/isEmpty'),
-  _isNull = require('lodash/isNull'),
+const _isArray = require('lodash/isArray'),
   _isObject = require('lodash/isObject'),
+  _isEmpty = require('lodash/isEmpty'),
   _isString = require('lodash/isString'),
+  _isNull = require('lodash/isNull'),
   _isUndefined = require('lodash/isUndefined'),
+  _get = require('lodash/get'),
   _parse = require('url-parse'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
-
-
-
-/**
- * returns a list of keys in the object that have a truthy value
- * @param {object} obj
- * @returns {string[]}
- */
-function boolKeys(obj) {
-  return Object.keys(obj || {}).filter(key => obj[key]);
-}
 
 /**
  * determine if a field is empty
@@ -227,28 +213,6 @@ function debugLog(...args) {
 }
 
 /**
- * prepends left to right
- *
- * meant to be used in a mapper function e.g.
- *
- * ```
- * const namespace = 'msn-feed:',
- *   msnRedisKeys = ['last-modified', 'urls-last-queried']
- *     .map(prepend(namespace))
- *
- * console.log(msnRedisKeys)
- * // outputs
- * // [ 'msn-feed:last-modified', 'msn-feed:urls-last-queried' ]
- * ```
- *
- * @param {string} left
- * @returns {function}
- */
-function prepend(left) {
-  return right => left + right;
-}
-
-/**
  * return yes/no dependent on val truthiness
  *
  * @param  {*}  val
@@ -279,60 +243,30 @@ function removeFirstLine(str) {
   return str.split('\n').slice(1).join('\n');
 }
 
-/**
- * can be used to get all _ref objects within an object.
- * Copied from amphora.references and modified for unity environment.
- * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
- * @param {object} obj
- * @param {Function|string} [filter=_identity]  Optional filter
- * @returns {array}
- */
-function listDeepObjects(obj, filter) {
-  let cursor, items,
-    list = [],
-    queue = [obj];
-
-  while (queue.length) {
-    cursor = queue.pop();
-    items = _filter(cursor, _isObject);
-    list = list.concat(_filter(items, filter || _identity));
-    queue = queue.concat(items);
-  }
-
-  return list;
-}
-
-/**
+Object.assign(module.exports, {
+  /**
    * Url queries to elastic search need to be `http` since that is
    * how it is indexed as.
- * @param {string} url
- * @returns {string}
+   * @param {String} url
+   * @returns {String}
    */
-function urlToElasticSearch(url) {
-  return url.replace('https', 'http');
-}
-
-module.exports = {
-  boolKeys,
-  cleanUrl,
-  debugLog,
-  ensurePublishedVersion,
-  formatStart,
-  getSiteBaseUrl,
-  has,
+  urlToElasticSearch: url => url.replace('https', 'http'),
   isFieldEmpty,
-  isInstance,
-  isPublishedVersion,
-  isUrl,
-  listDeepObjects,
-  prepend,
-  removeFirstLine,
+  has,
   replaceVersion,
-  textToEncodedSlug,
-  toTitleCase,
+  isUrl,
   uriToUrl,
-  urlToCanonicalUrl,
-  urlToElasticSearch,
   urlToUri,
-  yesNo
-};
+  cleanUrl,
+  formatStart,
+  toTitleCase,
+  getSiteBaseUrl,
+  isPublishedVersion,
+  ensurePublishedVersion,
+  isInstance,
+  urlToCanonicalUrl,
+  textToEncodedSlug,
+  debugLog,
+  yesNo,
+  removeFirstLine
+});

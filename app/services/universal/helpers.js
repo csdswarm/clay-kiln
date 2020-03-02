@@ -1,59 +1,33 @@
 'use strict';
 
-const
-  attachSpaPayloadToWindow = require('./attachSpaPayloadToWindow'),
-  byline = require('./byline'),
-  calloutType = require('./callout'),
-  dynamicImage = require('./dynamic-image'),
-  ellipsisSubstring = require('./ellipsisSubstring'),
-  encodeURIHelper = require('./encodeURI'),
-  reversibleOneBasedIndex = require('./reversibleOneBasedIndex'),
+const mediaplay = require('./media-play'),
+  responsiveImages = require('./responsive-images'),
+  formatTime = require('./format-time'),
+  dateTime = require('./dateTime'),
   truncate = require('./truncate'),
-  {
-    formatDateRange,
-    isPublished24HrsAgo,
-    secondsToISO,
-    timeAgoTimestamp
-  } = require('./format-time'),
-  {
-    getRendition,
-    getRenditionAspectRatio,
-    getDynamicRendition,
-    getRenditionHeight,
-    getRenditionWidth,
-    getRenditionWithoutPixelDensity
-  } = require('./media-play'),
-  { getSizes, getSourceSet } = require('./responsive-images'),
-  { userLocalDate } = require('./dateTime'),
-  { yesNo } = require('./utils'),
-
-  imgSize = ({ maxWidth, width }) => `${ maxWidth ? '(max-width: ' + maxWidth + '}px) ' : '' }${ width }px`,
-  imgSource = ({ url, width, crop, offset }) =>
-    `${ url }?width=${ width }&crop=${ crop }${ offset ? 'offset-' + offset : '' } ${ width }w`;
+  ellipsisSubstring = require('./ellipsisSubstring'),
+  { yesNo } = require('./utils');
 
 module.exports = {
-  attachSpaPayloadToWindow,
-  byline,
-  calloutType,
-  dynamicImage,
-  ellipsisSubstring,
-  encodeURI: encodeURIHelper,
-  formatDateRange,
-  imgSize,
-  imgSource,
-  isPublished24HrsAgo,
-  rendition: getRendition,
-  renditionAspectRatio: getRenditionAspectRatio,
-  renditionDynamic: getDynamicRendition,
-  renditionHeight: getRenditionHeight,
-  renditionSizes: getSizes,
-  renditionSourceSet: getSourceSet,
-  renditionWidth: getRenditionWidth,
-  reversibleOneBasedIndex,
-  secondsToISO,
-  timeAgoTimestamp,
+  byline: require('./byline'),
+  rendition: mediaplay.getRendition,
+  renditionDynamic: mediaplay.getDynamicRendition,
+  renditionAspectRatio: mediaplay.getRenditionAspectRatio,
+  renditionHeight: mediaplay.getRenditionHeight,
+  renditionSizes: responsiveImages.getSizes,
+  renditionSourceSet: responsiveImages.getSourceSet,
+  renditionWidth: mediaplay.getRenditionWidth,
+  withoutResolution: mediaplay.getRenditionWithoutPixelDensity,
+  dynamicImage: require('./dynamic-image'),
+  secondsToISO: formatTime.secondsToISO,
+  formatDateRange: formatTime.formatDateRange,
+  isPublished24HrsAgo: formatTime.isPublished24HrsAgo,
+  timeAgoTimestamp: formatTime.timeAgoTimestamp,
   truncateText: truncate,
-  userLocalDate,
-  withoutResolution: getRenditionWithoutPixelDensity,
-  yesNo
+  ellipsisSubstring: ellipsisSubstring,
+  calloutType: require('./callout'),
+  attachSpaPayloadToWindow: require('./attachSpaPayloadToWindow'),
+  reversibleOneBasedIndex: require('./reversibleOneBasedIndex'),
+  userLocalDate: dateTime.userLocalDate,
+  yesNo: yesNo
 };

@@ -1,7 +1,7 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
-  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { unityComponent } = require('../../services/universal/amphora'),
   elasticIndex = 'published-content',

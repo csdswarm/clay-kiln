@@ -3,8 +3,7 @@ _components:
     primaryHeadline: ''
     headline: ''
     subHeadline: ''
-    feedImg:
-      _ref: /_components/feed-image/instances/new
+    feedImgUrl: ''
     feedLayout: small
     teaser: ''
     slug: ''
@@ -35,7 +34,6 @@ _components:
       most-popular: true
       newsfeed: true
       apple-news: true
-      msn: true
     secondarySectionFront: ''
     showSocial: true
     authors: []

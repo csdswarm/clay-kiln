@@ -1,76 +1,98 @@
 'use strict';
-const db = require('../../services/server/db'),
-  { getComponentName } = require('clayutils'),
-  { recirculationData } = require('../../services/universal/recirc/recirculation'),
+const queryService = require('../../services/server/query'),
+  db = require('../../services/server/db'),
+  contentTypeService = require('../../services/universal/content-type'),
+  recircCmpt = require('../../services/universal/recirc-cmpt'),
   radioApiService = require('../../services/server/radioApi'),
   { uploadImage } = require('../../services/universal/s3'),
-  { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  { isComponent } = require('clayutils'),
+  tag = require('../tags/model.js'),
+  elasticIndex = 'published-content',
   elasticFields = [
-    'date',
     'primaryHeadline',
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'contentType',
-    'sectionFront'
+    'contentType'
   ],
+  maxItems = 5,
   /**
-   * Determine if latest-recirculation is within a multi-column
-   *
+   * @param {string} ref
    * @param {object} data
-   * @returns {boolean}
-   */
-  isMultiColumn = (data) => {
-    return data._computed.parents.some(ref => getComponentName(ref) === 'multi-column');
-  },
-  /**
-   * Gets the number of items to display
-   *
-   * @param {object} data
-   * @returns {number}
-   */
-  getMaxItems = (data) => isMultiColumn(data) ? 4 : 5,
-  /**
-   * latest-recirculation gets additional curated items from the trending-recirculation component
-   * This is different from other recirculation components, but has been in place for awhile.  It may be
-   * able to be changed
-   *
    * @param {object} locals
-   *
-   * @returns {array} items
+   * @param {object} query
+   * @returns {Promise}
    */
-  getItemsFromTrendingRecirculation = async (locals) => {
-    const trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`;
+  renderDefault = async (ref, data, locals, query) => {
+    const
+      trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`,
+      contentTypes = contentTypeService.parseFromData(data);
+    let cleanUrl, trendingRecircItems;
 
     try {
-      const trendingRecircData = await db.get(trendingRecircRef);
+      // Get array of trending recirculation items from db, default to empty array.
+      try {
+        const trendingRecircData = await db.get(trendingRecircRef);
 
-      return trendingRecircData.items;
-    } catch (e) {
-      if (e.message === `Key not found in database [${trendingRecircRef}]`) {
-        return [];
-      } else {
-        throw e;
+        trendingRecircItems = trendingRecircData.items;
+      } catch (e) {
+        if (e.message === `Key not found in database [${trendingRecircRef}]`) {
+          trendingRecircItems = [];
+        } else {
+          throw e;
+        }
       }
+
+      queryService.onlyWithinThisSite(query, locals.site);
+      queryService.onlyWithTheseFields(query, elasticFields);
+
+      queryService.addSort(query, { date: 'desc' });
+
+      if (contentTypes.length) {
+        queryService.addFilter(query, { terms: { contentType: contentTypes } });
+      }
+
+      // exclude the current page in results
+      if (locals.url && !isComponent(locals.url)) {
+        cleanUrl = locals.url.split('?')[0].replace('https://', 'http://');
+        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+      }
+
+      // exclude trending recirculation content from the results.
+      if (trendingRecircItems.length && !isComponent(locals.url)) {
+        trendingRecircItems.forEach(item => {
+          if (item.canonicalUrl) {
+            cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
+            queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
+          }
+        });
+      }
+
+      // hydrate item list.
+      const hydrationResults = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true });
+
+      data.articles = data.items.concat(hydrationResults);
+    } catch (e) {
+      queryService.logCatch(e, ref);
     }
+
+    return data;
   },
   /**
-   * Also existing functionality that may be able to be replaced.  This pulls articles from the station_feed
-   * provided by the radioApiService.  It can likely be updated to pull from elastic once stations are live
-   *
    * @param {object} data
    * @param {object} locals
    * @returns {Promise}
    */
   renderStation = async (data, locals) => {
+    data.articles = []; // Default to empty array so it's not undefined
     if (locals.station.id && locals.station.website) {
       const feedUrl = `${locals.station.website.replace(/\/$/, '')}/station_feed.json`,
         feed = await radioApiService.get(feedUrl, null, (response) => response.nodes, {}, locals),
         nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
         defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
-      data._computed.station = locals.station.name;
-      data._computed.articles = await Promise.all(nodes.map(async (item) => {
+      data.station = locals.station.name;
+      data.articles = await Promise.all(nodes.map(async (item) => {
         return {
           feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
           externalUrl: item.node.URL,
@@ -80,38 +102,79 @@ const db = require('../../services/server/db'),
     }
 
     return data;
-  },
-
-  /**
-   * @param {string} ref
-   * @param {object} data
-   * @param {object} locals
-   * @returns {Promise}
-   */
-  render = async function (ref, data, locals) {
-    if (data.populateFrom === 'station' && locals.params) {
-      return renderStation(data, locals);
-    }
-
-    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
-
-    if (data._computed.articles) {
-      data._computed.articles = data._computed.articles.map(item => ({
-        ...item,
-        label: getSectionFrontName(item.sectionFront, primarySectionFronts)
-      }));
-    }
-    data._computed.isMultiColumn = isMultiColumn(data);
-
-    return Promise.resolve(data);
   };
 
-module.exports = recirculationData({
-  elasticFields,
-  mapDataToFilters: async (uri, data, locals) => ({
-    curated: [...data.items, ...await getItemsFromTrendingRecirculation(locals)],
-    maxItems: getMaxItems(data)
-  }),
-  render,
-  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params
-});
+/**
+ * @param {string} ref
+ * @param {object} data
+ * @param {object} locals
+ * @returns {Promise}
+ */
+module.exports.save = async (ref, data, locals) => {
+  if (!data.items.length || !locals) {
+    return data;
+  }
+
+  data.items = await Promise.all(data.items.map(async (item) => {
+    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
+
+    return  {
+      ...item,
+      uri: result._id,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      pageUri: result.pageUri,
+      urlIsValid: result.urlIsValid,
+      canonicalUrl: item.url || result.canonicalUrl,
+      feedImgUrl: item.overrideImage || result.feedImgUrl
+    };
+  }));
+
+  return data;
+};
+
+/**
+ * @param {string} ref
+ * @param {object} data
+ * @param {object} locals
+ * @returns {Promise}
+ */
+module.exports.render = function (ref, data, locals) {
+  if (data.populateBy === 'station' && locals.params) {
+    return renderStation(data, locals);
+  }
+
+  const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
+    availableSlots = maxItems - data.items.length;
+
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
+
+  // if there are no available slots then there's no need to query
+  if (availableSlots <= 0) {
+    return data;
+  }
+
+  if (data.populateBy === 'tag' && data.tag && locals) {
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
+
+    // Clean based on tags and grab first as we only ever pass 1
+    data.tag = tag.clean([{ text: data.tag }])[0].text || '';
+    queryService.addMust(query, { match: { 'tags.normalized': data.tag } });
+
+    return renderDefault(ref, data, locals, query);
+  }
+
+  if (data.populateBy === 'sectionFront' && data.sectionFront && locals) {
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
+
+    queryService.addMust(query, { match: { sectionFront: data.sectionFront } });
+    return renderDefault(ref, data, locals, query);
+  }
+
+  return data;
+};
