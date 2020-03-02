@@ -99,10 +99,27 @@ function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
     .then(urlPatterns.author);
 }
 
+/**
+ * Return the url for a station front based on its station slug
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getStationFrontSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.STATIONFRONT) {
+        return urlPatterns.stationFront(urlOptions);
+      }
+    });
+}
+
 module.exports = {
   getYearMonthSlugUrl,
   getArticleSlugUrl,
   getGallerySlugUrl,
   getSectionFrontSlugUrl,
-  getAuthorPageSlugUrl
+  getAuthorPageSlugUrl,
+  getStationFrontSlugUrl
 };

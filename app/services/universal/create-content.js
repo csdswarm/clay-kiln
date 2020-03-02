@@ -523,7 +523,8 @@ function assignStationInfo(uri, data, locals) {
 
     Object.assign(data, {
       stationSlug: station.site_slug,
-      stationName: station.name
+      stationName: station.name,
+      stationCallsign: station.callsign
     });
 
     if (articleOrGallery.has(componentName)) {

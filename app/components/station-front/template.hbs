@@ -1,0 +1,17 @@
+<section
+  role="main"
+  class="component component--station-front{{ if @root.locals.edit ' editing' }}"
+  data-track-type="section"
+  data-uri="{{ default _ref _self }}"
+  data-station-slug="{{ stationSlug }}">
+  {{#if @root.locals.edit }}
+    <div class="station-front__settings" data-editable="settings">
+      <h1>Station Front Settings:</h1>
+      <span>Station Slug <span class="warn">*required</span> : {{ default stationSlug 'No Slug Set' }}</span>
+      {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
+    </div>
+  {{/if}}
+  <div class="station-front__main-content" data-editable="mainContent">
+    {{> component-list mainContent }}
+  </div>
+</section>

@@ -5,7 +5,8 @@ const publishing = require('../../services/publishing'),
     '/_components/article/instances',
     '/_components/gallery/instances',
     '/_components/section-front/instances',
-    '/_components/author-page-header/instances'
+    '/_components/author-page-header/instances',
+    '/_components/station-front/instances'
   ];
 
 module.exports.routes = [
@@ -60,6 +61,7 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];
 
