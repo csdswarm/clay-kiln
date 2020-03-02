@@ -15,7 +15,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
     const bars = Array.from(document.querySelectorAll('.bar')),
       activeHamburgerClass = 'active';
 
-    return bars.reduce((isActive, bar) => isActive || bar.classList.contains(activeHamburgerClass), false);// if any of the bars are active, then return true. Otherwise, return false.
+    return bars.some((bar) => bar.classList.contains(activeHamburgerClass));// if any of the bars are active, then return true. Otherwise, return false.
   },
 
   /**
@@ -172,7 +172,7 @@ const navSections = document.getElementsByClassName('radiocom-nav__category-butt
         closeMobileNavigation();
         closeNavDrawers();
       }
-    }, 100);
+    }, 100, { leading:true, trailing:false });// run the function only on the initial 'resize' event, instead of the last.
 
     window.addEventListener('resize', debounced);
   },
