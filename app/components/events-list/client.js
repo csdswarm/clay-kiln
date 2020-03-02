@@ -1,12 +1,7 @@
 'use strict';
 
 const
-  rest = require('../../services/universal/rest'),
-  // wish this was a build variable could make a util
-  debug = false,
-  log = (...args) => {
-    if (debug) console.log(args);
-  };
+  rest = require('../../services/universal/rest');
 
 
 
@@ -31,7 +26,6 @@ class EventsListDom {
   }
 
   getCard(eventData) {
-    log('[eventData]', eventData);
     const cardClone = this.cardElement.cloneNode(true);
 
     cardClone.setAttribute('data-height', this.cardElement.clientHeight + 'px');
@@ -146,9 +140,7 @@ class EventsListController {
     document.addEventListener('events-list-dismount', e => this.onDismount(e));
   }
 
-  onMount(e) {
-    //
-    log('[MOUNT]', e);
+  onMount() {
     if (this.dom.loadMoreBtn) {
       this.dom.loadMoreBtn.addEventListener('click', this.onClick);
       this.dom.hasListener = true;
@@ -163,14 +155,12 @@ class EventsListController {
   }
 
   onClick() {
-    log('[onLoadMore]', 'onLoadMore');
     // short circuit if currently loading
     if (this.model.isLoading) return;
     // now begin loading sequence
     this.model.isLoading = true;
     rest.get(`${this.model.moreContentUrl}?page=${this.model.pageNumber}`)
       .then(responseData => {
-        log('[responseData]', responseData);
         const moreEvents = responseData._computed.moreEvents;
 
         if (moreEvents.length < this.model.loadMoreAmount) {
