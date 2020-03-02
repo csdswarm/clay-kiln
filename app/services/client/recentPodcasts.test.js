@@ -31,4 +31,11 @@ describe(`${dirname}/${filename}`, () => {
       recentPodcasts.add(34)
     ).to.deep.equal([34, 12]);
   });
+
+  /**
+   * NOTE:
+   * This is necessary to prevent it from messing with
+   * the globals for downstream tests
+   */
+  delete global.window;
 });
