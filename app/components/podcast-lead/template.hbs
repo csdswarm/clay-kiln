@@ -1,19 +1,31 @@
 {{#*inline "shareSubscribe"}}
-  {{#if attributes}}
+  {{#if shares }}
     <div class="podcast-lead__share">
       <div class="podcast-lead__share-title">Share</div>
       <div class="podcast-lead__share-content">
-        {{> shareIcons attributes.shares }}
+        {{> shareIcons shares }}
       </div>
     </div>
   {{/if}}
-  {{#if attributes}}
+  {{#if subscriptions }}
     <div class="podcast-lead__subscribe">
       <div class="podcast-lead__subscribe-title">Subscribe</div>
       <div class="podcast-lead__subscribe-content">
-        {{{ read 'components/podcast-lead/media/US_UK_Apple_Podcasts_Listen_Badge_RGB.svg' }}}
-        {{{ read 'components/podcast-lead/media/google_podcasts_badge_svg.svg' }}}
-        {{{ read 'components/podcast-lead/media/RSS.svg' }}}
+        {{#if subscriptions.apple}}
+          <a href="{{ subscriptions.apple }}">
+            {{{ read 'components/podcast-lead/media/US_UK_Apple_Podcasts_Listen_Badge_RGB.svg' }}}
+          </a>
+        {{/if}}
+        {{#if subscriptions.google}}
+          <a href="{{ subscriptions.google }}">
+            {{{ read 'components/podcast-lead/media/google_podcasts_badge_svg.svg' }}}
+          </a>
+        {{/if}}
+        {{#if subscriptions.rss}}
+          <a href="{{ subscriptions.rss }}">
+            {{{ read 'components/podcast-lead/media/RSS.svg' }}}
+          </a>
+        {{/if}}
       </div>
     </div>
   {{/if}}
@@ -21,8 +33,8 @@
 
 {{#*inline "shareIcons"}}
   {{#each this as |socialMedia|}}
-    <a class="podcast-lead__share-icon podcast-lead__share-icon--{{ socialMedia }}" href="#">
-      {{{ read (concat 'components/podcast-lead/media/' socialMedia  '.svg') }}}
+    <a class="podcast-lead__share-icon podcast-lead__share-icon--{{ socialMedia.name }}" href="{{ socialMedia.link }}">
+      {{{ read (concat 'components/podcast-lead/media/' socialMedia.name  '.svg') }}}
     </a>
   {{/each}}
 {{/inline}}
@@ -40,12 +52,20 @@
   {{/if}}
 {{/inline}}
 
+{{#*inline "podcastImage"}}
+  {{#if image }}
+    <img class="podcast-lead__image" src="{{ image }}" alt="{{ title }}">
+  {{else}}
+    <img class="podcast-lead__image" src="{{ defaultImg }}?crop=1:1,offset-y0" alt="{{ title }}">
+  {{/if}}
+{{/inline}}
+
 <div class="component component--podcast-lead podcast-lead" data-uri="{{ default _ref _self }}">
   <div class="podcast-lead__info-container-outside-top">
     {{> titleDescription _computed.podcast.attributes }}
   </div>
   <div class="podcast-lead__image-container">
-    <img class="podcast-lead__image" src="{{ _computed.podcast.attributes.image }}" alt="{{ _computed.podcast.attributes.title }}">
+    {{> podcastImage _computed.podcast.attributes defaultImg=_computed.DEFAULT_RADIOCOM_LOGO }}
   </div>
   <div class="podcast-lead__info-container">
     <div class="podcast-lead__info-container-top">
@@ -53,10 +73,10 @@
       {{> category _computed.podcast.attributes}}
     </div>
     <div class="podcast-lead__info-container-bottom">
-      {{> shareSubscribe _computed.podcast }}
+      {{> shareSubscribe _computed }}
     </div>
   </div>
   <div class="podcast-lead__info-container-outside-bottom">
-    {{> shareSubscribe _computed.podcast }}
+    {{> shareSubscribe _computed }}
   </div>
 </div>
