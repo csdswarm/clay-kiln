@@ -3,7 +3,7 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
   _get = require('lodash/get'),
-  { autoLink } = require('../breadcrumbs');
+  { autoLink, addCrumb } = require('../breadcrumbs');
 
 /**
  * fetch podcast show data
@@ -11,11 +11,27 @@ const { unityComponent } = require('../../services/universal/amphora'),
  * @returns {Promise<object>}
  */
 function getPodcastShow(locals) {
-  const route = `podcasts/${ locals.params.dynamicSlug }`;
+  const route = `podcasts?filter[site_slug]=${ locals.params.dynamicSlug }`;
 
   return radioApiService.get(route, {}, null, {}, locals).then(response => {
-    return response.data || {};
+    return response.data[0] || {};
   });
+}
+
+/**
+ * add breadcrumbs data
+ * @param {object} data
+ * @param {object} locals
+ * @returns {Promise<object>}
+ */
+async function addBreadcrumbs(data, locals) {
+  await autoLink(data, ['stationSlug'], locals);
+  addCrumb(data, `//${ locals.site.host }/${ data.stationSlug }/podcasts`, 'podcasts');
+  if (locals.podcast) {
+    const { site_slug, title } = locals.podcast.attributes;
+
+    addCrumb(data, site_slug, title);
+  }
 }
 
 module.exports = unityComponent({
@@ -26,7 +42,7 @@ module.exports = unityComponent({
 
     data.stationSlug = _get(locals, 'params.stationSlug');
     locals.podcast = await getPodcastShow(locals);
-    autoLink(data, ['stationSlug', '{podcasts}', `{${ locals.params.dynamicSlug }}`], locals);
+    await addBreadcrumbs(data, locals);
 
     return data;
   }
