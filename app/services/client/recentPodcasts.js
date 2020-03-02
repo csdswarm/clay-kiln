@@ -21,27 +21,25 @@ function get() {
  * @returns {Object[]}
  */
 function add(podcastID) {
-  if (podcastID) {
-    const excludeCurrentId = recentpodcastID => {
-        return recentpodcastID !== podcastID;
-      },
-      recentPodcastIDs = this.get()
-        // if it is the current one, we want to skip it
-        // since we'll be moving it back to the front
-        // of the list
-        .filter(excludeCurrentId)
-        .slice(0, maxRecentPodcasts);
+  const excludeCurrentId = recentpodcastID => {
+      return recentpodcastID !== podcastID;
+    },
+    recentPodcastIDs = this.get()
+      // if it is the current one, we want to skip it
+      // since we'll be moving it back to the front
+      // of the list
+      .filter(excludeCurrentId)
+      .slice(0, maxRecentPodcasts);
 
-    // add to front of list
-    recentPodcastIDs.unshift(podcastID);
+  // add to front of list
+  recentPodcastIDs.unshift(podcastID);
 
-    localStorage.setItem(
-      recentPodcasts,
-      JSON.stringify(recentPodcastIDs),
-    );
+  localStorage.setItem(
+    recentPodcasts,
+    JSON.stringify(recentPodcastIDs),
+  );
 
-    return recentPodcastIDs;
-  }
+  return recentPodcastIDs;
 }
 
 module.exports = {
