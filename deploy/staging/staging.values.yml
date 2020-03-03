@@ -58,4 +58,4 @@ clayconfig:
       [keys]
         demo = accesskey
       [urls]
-        demosite = http://stg-clay.radio.com
+        demosite = http://stg-clay-k8s.radio.com
