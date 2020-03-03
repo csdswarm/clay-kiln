@@ -50,7 +50,15 @@ Install jq yq and golang
 brew install jq yq golang
 ```
 
+Install sops
+```bash
+pip install sops
+```
+
 Install `aws-cli` - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
+
+Setup profile - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cli-quick-configuration
+Use AWS credentials for your account and use the `default` profile. If you have multiple profiles update the below script accordingly.
 
 Add the following script to your local `~/.bashrc` file (UPDATE THE EMAIL ADDRESS TO BE YOURS): 
 ```bash
