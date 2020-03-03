@@ -22,8 +22,8 @@ function loadPageDataFromYaml(path) {
   return readFile({ path })
 }
 
-function importData(data) {
-  return clayImport({ payload: data, hostUrl });
+function importData(data, publish = false) {
+  return clayImport({ payload: data, hostUrl, publish });
 }
 
 function exportNewPages() {
@@ -41,9 +41,9 @@ async function insertNewEventPage(listData) {
   if(!generalContentPages) {
     throw new Error('New Pages data not found.')
   }
-  
+
   const newPagesChildren = _get(generalContentPages, 'children');
-  
+
   if(!newPagesChildren) {
     throw new Error('New Pages children data not found.')
   }
@@ -55,7 +55,7 @@ async function insertNewEventPage(listData) {
   if(!_find(newPagesChildren, newData)) {
     throw new Error('New data wasn\'t inserted.')
   }
-  
+
   return listData;
 }
 
@@ -69,7 +69,7 @@ logMigrationDivider('Begin Event Migration')
   .then( loadLayoutFileResponse => {
     logEventMigrationMsg('Importing event layout into clay...');
     const replacedHostYml = loadLayoutFileResponse.data.replace(/\${HOST_URL}/gi, hostUrl);
-    return importData(replacedHostYml);
+    return importData(replacedHostYml, true);
   })
   // load the page data from _pages.yml
   .then( _ => {
