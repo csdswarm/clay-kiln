@@ -39,13 +39,13 @@ spec:
               servicePort: http
     {{- end }}
 ## add the public-facing DNS name used for the application as an accepted hostname
-## this needs to match whatever Fastly is using for its custom header's hostname value  
-## for now, the healthCheckDomain of dev-clay-k8s.radio.com works. 
+## this needs to match whatever Fastly is using for its custom header's hostname value
+## for now, the healthCheckDomain of dev-clay-k8s.radio.com works.
 ## should likely be changed during cutover to dev-clay.radio-dev.com
-  - host: {{ .Values.ingress.healthCheckDomain }}
-    http:
-      paths:
-      - backend:
-          serviceName: {{ $fullName }}
-          servicePort: http
+    - host: {{ .Values.ingress.healthCheckDomain }}
+      http:
+        paths:
+        - backend:
+            serviceName: {{ $fullName }}
+            servicePort: http
 {{ end }}
