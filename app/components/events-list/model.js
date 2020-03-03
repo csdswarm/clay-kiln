@@ -177,9 +177,6 @@ module.exports = unityComponent({
         dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
       };
     });
-    // if (locals.station) {
-    //   data.station = locals.station;
-    // }
     // load more functionality
     // if there is a page number include more events with the page num as offset
     if (locals.page) {
