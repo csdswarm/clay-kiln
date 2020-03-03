@@ -55,3 +55,9 @@ clayconfig:
         demo = accesskey
       [urls]
         demosite = http://www.radio.com
+hpa:
+  enabled: True
+  min: 10
+  max: 24
+  metric: cpu
+  cpuTarget: 50
