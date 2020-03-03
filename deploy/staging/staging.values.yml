@@ -19,7 +19,7 @@ configmap:
     CLAY_LOG_PRETTY: "true"
     CLAY_PROVIDER: "google"
     CLAY_SCHEDULING_ENABLED: "true"
-    CLAY_SITE_HOST: "stg-clay.radio.com"
+    CLAY_SITE_HOST: "stg-clay-k8s.radio.com"
     CLAY_SITE_NAME: "Clay Demo"
     CLAY_SITE_PORT: "443"
     CLAY_SITE_PROTOCOL: "https"
