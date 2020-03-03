@@ -45,7 +45,7 @@ class EventsListDom {
       thumbPictureImgElement = cardClone.querySelector('.content-card-thumb--event picture img');
 
     for (const key in cardCloneDom) {
-      if (cardCloneDom.hasOwnProperty(key) && eventData.hasOwnProperty(key)) {
+      if (cardCloneDom[key] && eventData[key]) {
         const element = cardCloneDom[key];
 
         if (element) element.innerHTML = eventData[key];
