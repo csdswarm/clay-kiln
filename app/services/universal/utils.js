@@ -316,16 +316,6 @@ function getFullOriginalUrl(req) {
 }
 
 /**
- * Url queries to elastic search need to be `http` since that is
- * how it is indexed as.
- * @param {String} url
- * @returns {String}
- */
-function urlToElasticSearch(url) {
-  return url.replace('https', 'http');
-}
-
-/**
  * Returns whether the request is for a content component.  A content component
  *   usually means a component that can be created via the kiln drawer e.g.
  *   article, gallery, etc.  More specifically it's a component that will be
@@ -374,6 +364,16 @@ function removeFirstLine(str) {
 }
 
 /**
+ * returns the domain of the hostname
+ *
+ * @param {string} hostname
+ * @returns {string}
+ */
+function getDomainFromHostname(hostname) {
+  return hostname.split('.').reverse().slice(0, 2).reverse().join('.');
+}
+
+/**
  * can be used to get all _ref objects within an object.
  * Copied from amphora.references and modified for unity environment.
  * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
@@ -396,6 +396,16 @@ function listDeepObjects(obj, filter) {
   return list;
 }
 
+/**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {string} url
+ * @returns {string}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
 module.exports = {
   boolKeys,
   cleanUrl,
@@ -403,6 +413,7 @@ module.exports = {
   ensurePublishedVersion,
   ensureStartsWith,
   formatStart,
+  getDomainFromHostname,
   getFullOriginalUrl,
   getSiteBaseUrl,
   has,
