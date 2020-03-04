@@ -1,0 +1,60 @@
+image:
+  repository: 477779916141.dkr.ecr.us-east-1.amazonaws.com/k8s-entercom/clay-radio
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+
+resources:
+  limits:
+    cpu: 2
+    memory: 512Mi
+  requests:
+    cpu: 1
+    memory: 512Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+
+# rok8s replaces this with a branch name so we can deploy feature branches
+sanitizedBranch: master
+
+deploy:
+  strategy:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+service:
+  type: ClusterIP
+  port: 3001
+  targetPort: 3001
+
+configmap:
+  data: {}
+
+pdb:
+  maxUnavailable: 1
+  enabled: True
+
+hpa:
+  enabled: True
+  min: 2
+  max: 10
+  metric: cpu
+  cpuTarget: 10
+
+ingress:
+  enabled: True
+  annotations:
+    kubernetes.io/ingress.class: "nginx-ingress"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  # disabling rate limiting because of Fastly
+  #  nginx.ingress.kubernetes.io/limit-connections: "5"
+  #  nginx.ingress.kubernetes.io/limit-rps: "10"
+  #  nginx.ingress.kubernetes.io/limit-rpm: "500"
+  # The sanitizedBranch value is prefixed to the hostedZones as long as it isn't empty
+  hostedZones: [cms.radio-dev.com]
+  staticDomains: []
