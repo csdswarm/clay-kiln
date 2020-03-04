@@ -38,16 +38,15 @@ const radioApiService = require('../../services/server/radioApi'),
     category: ''
   },
   /**
-   * returns the slug of the site either from a subdomain or as the first element of the path
+   * returns the slug of the site from the first element of the path
    *
    * @param {object} req
    * @return {string}
    */
   getStationSlug = (req) => {
-    const [, stationPath] = req.originalUrl.split('/'),
-      stationHost = req.get('host').split('/').shift().split('.').shift().toLowerCase();
+    const [, stationPath] = req.originalUrl.split('/');
 
-    return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
+    return stationPath;
   },
   /**
    * determines if the path is valid for station information
