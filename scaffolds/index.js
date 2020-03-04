@@ -2,10 +2,10 @@
 
 module.exports = plop => {
 
-  require('./_helpers/index')(plop);
-  require('./_partials/index')(plop);
-  require('./_prompts/index')(plop);
-  require('./_actions/index')(plop);
+  require('./_helpers')(plop);
+  require('./_partials')(plop);
+  require('./_prompts')(plop);
+  require('./_actions')(plop);
 
   // generators:
 

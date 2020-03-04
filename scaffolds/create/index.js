@@ -27,6 +27,11 @@ module.exports = plop => {
         templateFile: 'create/template.hbs'
       },
       {
+        type: 'add',
+        path: 'scaffolds/{{kebabCase name}}/README.md',
+        templateFile: 'create/README.hbs'
+      },
+      {
         type: 'modify',
         path: 'scaffolds/index.js',
         transform: (fileContent, data) => {
@@ -48,6 +53,7 @@ module.exports = plop => {
         paths: [
           'scaffolds/{{kebabCase name}}/template.hbs',
           'scaffolds/{{kebabCase name}}/index.js',
+          'scaffolds/{{kebabCase name}}/README.md',
           'scaffolds/index.js'
         ]
       }
