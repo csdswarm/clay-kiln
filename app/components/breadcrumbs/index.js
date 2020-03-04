@@ -1,5 +1,4 @@
 'use strict';
-const nonWhitespaceBtwnBrackets = /^\{(\S*)\}$/;
 
 const { getSectionFrontName, retrieveList } = require('../../services/server/lists');
 
