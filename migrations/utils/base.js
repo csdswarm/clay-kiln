@@ -6,6 +6,22 @@ const DEFAULT_HEADERS = {
   'Authorization': 'token accesskey',
 };
 
+/**
+ * Ensures 'str' ends with 'suffix'
+ *
+ * This function is meant to be used in a mapper.  e.g.
+ *
+ * allUris = allUris.map(ensureEndsWith('@published'))
+ *
+ * @param {string} suffix - the string that should be at the end of 'str'
+ * @returns {function}
+ */
+const ensureEndsWith = suffix => str => {
+  return str.endsWith(suffix)
+    ? str
+    : str + suffix
+};
+
 // This library is designed to provide easy access to simple functions that have little to no
 // dependencies on anything else. Anything here should be either a wrapper for a 3rd party method
 // or a fairly simple, but common abstraction
@@ -20,10 +36,18 @@ module.exports = {
   _get: require('../../app/node_modules/lodash/get'),
   _has: require('../../app/node_modules/lodash/has'),
   _identity: require('../../app/node_modules/lodash/identity'),
+  _isEqual: require('../../app/node_modules/lodash/isEqual'),
   _set: require('../../app/node_modules/lodash/set'),
+  _unset: require('../../app/node_modules/lodash/unset'),
+  axios: require('../../app/node_modules/axios'),
   claycli: require('../../app/node_modules/claycli'),
   clayutils: require('../../app/node_modules/clayutils'),
   clone: obj => obj && JSON.parse(JSON.stringify(obj)),
+  ensureEndsWith,
   prettyJSON: obj => JSON.stringify(obj, null, 2),
   toYaml: obj => YAML.stringify(obj, 8, 2),
+  waitMs: ms => new Promise(resolve => {
+    setTimeout(resolve, ms)
+  }),
+  yamljs: YAML,
 };

@@ -20,6 +20,13 @@ class ClientStateIInterface {
   async getState(variable) {
     return await clientCommunicationBridge.sendMessage('SpaStateInterfaceState', variable);
   }
+
+  /**
+   * @param {string[]} loadedIds - the
+   */
+  setLoadedIds(loadedIds) {
+    clientCommunicationBridge.sendMessage('SpaStateInterface_SetLoadedIds', loadedIds);
+  }
 }
 
 // Export to factory to simplify standard import statements.

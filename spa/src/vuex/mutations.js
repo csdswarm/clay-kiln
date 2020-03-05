@@ -73,5 +73,11 @@ export default {
   [mutationTypes.ROUTER_PUSH]: (state, path) => { state.routerPush = path },
   [mutationTypes.SET_USER_STATIONS]: (state, stations) => {
     state.user = formatProfile({ ...state.user, favoriteStations: stations })
+  },
+  [mutationTypes.SET_LOADED_IDS]: (state, loadedIds) => {
+    state.spaPayloadLocals = {
+      ...state.spaPayloadLocals,
+      loadedIds
+    }
   }
 }
