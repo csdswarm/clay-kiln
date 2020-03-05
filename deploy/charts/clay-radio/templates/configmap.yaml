@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "clay-radio.fullname" . }}
+data:
+{{ toYaml .Values.configmap.data | indent 2 }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "clay-radio.fullname" . }}-clayconfig
+data:
+{{ toYaml .Values.clayconfig.data | indent 2 }}

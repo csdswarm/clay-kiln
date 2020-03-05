@@ -156,3 +156,25 @@ spa-dev:
 
 app-dev:
 	cd app && npm ci && npm run watch
+
+generate-local-env:
+	sops --decrypt app/clay-radio.secret.sops.yml > app/unencrypted.yml && yq r app/unencrypted.yml stringData > app/temp.yml && yq r app/local.values.yml configmap.data >> app/temp.yml && yq r -j app/temp.yml | jq . | yq r - --prettyPrint | sed 's/: /=/g' | cat > app/.env && rm app/temp.yml
+
+encrypt-local-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/4c93f4a2-4e95-4386-8796-c55df146b6a1 app/unencrypted.yml > app/clay-radio.secret.sops.yml
+
+encrypt-development-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/4c93f4a2-4e95-4386-8796-c55df146b6a1 deploy/development/unencrypted.yml > deploy/development/clay-radio.secret.sops.yml
+
+encrypt-staging-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/4c93f4a2-4e95-4386-8796-c55df146b6a1 deploy/staging/unencrypted.yml > deploy/staging/clay-radio.secret.sops.yml
+
+encrypt-production-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/df2d9bbc-3eb3-47cf-acc9-457cf1823b29 deploy/production/unencrypted.yml> deploy/production/clay-radio.secret.sops.yml
+
+decrypt-env:
+ifdef env
+	sops --decrypt deploy/$(env)/clay-radio.secret.sops.yml > deploy/$(env)/unencrypted.yml
+else
+	sops --decrypt app/clay-radio.secret.sops.yml > app/unencrypted.yml
+endif

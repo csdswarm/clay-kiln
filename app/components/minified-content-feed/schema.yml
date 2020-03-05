@@ -1,0 +1,246 @@
+_description: |
+  A content feed made up of primarily only headlines
+
+
+contentType:
+  _label: Content type
+  _has:
+    validate:
+      required: true
+    input: checkbox-group
+    options:
+      - article
+      - gallery
+
+componentTitle:
+  _label: Component's Title
+  _has:
+    validate:
+      required: true
+      min: 4
+      max: 80
+    help: The title displayed on the component's view
+    input: text
+
+componentTitleVisible:
+  _label: Show Component's Title
+  _has:
+    input: checkbox
+    help: Show or hide the title displayed on the component's view
+
+pageSize:
+  _label: Page Size
+  _has:
+    help: The number of combined curated and auto loaded articles to show
+    input: text
+    type: number
+
+autoPopulatedContentHeader:
+  _label: Auto-Populated Content
+  _has: static
+
+populateFrom:
+  _label: Populate content from?
+  _has:
+    validate:
+      required: true
+    input: radio
+    options:
+      -
+        name: All Content
+        value: all-content
+      -
+        name: Section Front
+        value: section-front
+      - tag
+      -
+        name: Contains Both Section Front and Tag
+        value: section-front-and-tag
+      -
+        name: Contains Either Section Front or Tag
+        value: section-front-or-tag
+      - manual
+
+curatedContentHeader:
+  _label: Curated Content
+  _has: static
+
+locationOfContentFeed:
+  _label: Content Feed location
+  _has:
+    help: Indicate the location of the feed to assist in auto populating based on location.
+    validate:
+      required: true
+    input: radio
+    options:
+      - homepage
+      - section-front
+      - topic-page
+
+station:
+  _subscribe: stationName
+
+sectionFront:
+  _subscribe: sectionFront
+  _label: Section Front Category
+  _has:
+    help: Section Front Category from which to pull content
+
+primarySectionFront:
+  _subscribe: primarySectionFront
+
+sectionFrontManual:
+  _label: Section Front Category
+  _publish: sectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: primary-section-fronts
+
+secondarySectionFront:
+  _subscribe: secondarySectionFront
+  _label: Secondary Section Front
+  _has:
+    help: Secondary Section Front from which to pull content
+
+secondarySectionFrontManual:
+  _label: Secondary Section Front Category
+  _publish: secondarySectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: secondary-section-fronts
+
+tag:
+  _subscribe: tag
+  _label: tag
+  _has:
+    help: Includes content from all tags inside the section set in the URL
+
+tagManual:
+  _label: Tag
+  _placeholder:
+    height: 600px
+    text: Curated Category/Tag Page
+    required: true
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - tag
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
+    help: Includes content from all tags inside the section set in the URL
+    validate:
+      required:
+        field: populateFrom
+        operator: ===
+        values:
+          - tag
+          - section-front-and-tag
+          - section-front-or-tag
+
+excludeTags:
+  _label: Exclude Tags
+  _has:
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
+    help: Exclude content from all tags
+
+excludeSectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+
+excludeSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
+
+items:
+  _label: Items
+  _has:
+    input: complex-list
+    help: Manually choose content to include
+    props:
+      -
+        prop: url
+        _label: URL
+        _has:
+          input: content-search
+          type: url
+          validate:
+            required: true
+      -
+        prop: overrideTitle
+        _label: Headline
+        _has:
+          input: text
+          validate:
+            max: 80
+      -
+        prop: ignoreValidation
+        _label: Bypass URL Validation?
+        _has:
+          input: checkbox
+          help: Use this field if the destination of the URL entered is not a Clay page. If checked, Headline and/or Image override must be set manually.
+      -
+        prop: urlIsValid
+        _has:
+          validate:
+            required: true
+
+_groups:
+  contentFeed:
+    _label: Minified Content Feed
+    fields:
+      - componentTitle
+      - componentTitleVisible
+      - autoPopulatedContentHeader
+      - populateFrom
+      - locationOfContentFeed
+      - sectionFrontManual
+      - secondarySectionFrontManual
+      - tagManual
+      - contentType
+      - filterTags
+      - filterSecondarySectionFronts
+      - curatedContentHeader
+      - items
+    _placeholder:
+      height: 100px
+      ifEmpty: populateFrom
+  header:
+    _label: Content Feed Title
+    fields:
+      - componentTitle
+      - componentTitleVisible
