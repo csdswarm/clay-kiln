@@ -36,6 +36,8 @@ $sunsetOrangeRGB: 255, 73, 64;
 /* Yellows */
 $lightningYellow: #FEC517; /* News */
 $lightningYellowRGB: 254, 197, 23;
+$keenUiYellow: rgba(255,152,0,.12);
+$keenUiAlertIconYellow: #ff9800;
 
 /* Greens */
 $fruitSalad: #50ae54;

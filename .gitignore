@@ -100,3 +100,7 @@ app/.config/configstore/*
 nginx/certs/
 #vscode settings
 .vscode
+
+#SOPS & .env files
+**/unencrypted.yml
+app/.env
