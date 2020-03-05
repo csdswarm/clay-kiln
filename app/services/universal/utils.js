@@ -403,16 +403,6 @@ function listDeepObjects(obj, filter) {
   return list;
 }
 
-/**
- * Url queries to elastic search need to be `http` since that is
- * how it is indexed as.
- * @param {string} url
- * @returns {string}
- */
-function urlToElasticSearch(url) {
-  return url.replace('https', 'http');
-}
-
 module.exports = {
   boolKeys,
   cleanUrl,
