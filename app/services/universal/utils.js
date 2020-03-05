@@ -280,6 +280,16 @@ function removeFirstLine(str) {
 }
 
 /**
+ * returns the domain of the hostname
+ *
+ * @param {string} hostname
+ * @returns {string}
+ */
+function getDomainFromHostname(hostname) {
+  return hostname.split('.').reverse().slice(0, 2).reverse().join('.');
+}
+
+/**
  * can be used to get all _ref objects within an object.
  * Copied from amphora.references and modified for unity environment.
  * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
@@ -303,11 +313,11 @@ function listDeepObjects(obj, filter) {
 }
 
 /**
-   * Url queries to elastic search need to be `http` since that is
-   * how it is indexed as.
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
  * @param {string} url
  * @returns {string}
-   */
+ */
 function urlToElasticSearch(url) {
   return url.replace('https', 'http');
 }
@@ -318,6 +328,7 @@ module.exports = {
   debugLog,
   ensurePublishedVersion,
   formatStart,
+  getDomainFromHostname,
   getSiteBaseUrl,
   has,
   isFieldEmpty,
