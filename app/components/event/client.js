@@ -20,7 +20,6 @@ class EventPage {
    */
   onMount() {
     this.rightRailElement = document.querySelector('.content__sidebar');
-    // if any element refs are missing log error and short circuit
     if (this.rightRailElement) {
       this.makeRightRailVisible();;
     }
