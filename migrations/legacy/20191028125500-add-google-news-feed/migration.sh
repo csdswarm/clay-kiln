@@ -26,7 +26,14 @@ else
 fi
 
 printf "\nCreating google news feed...\n\n"
+
+# we want to keep the old one so we can put it back after the migration.  This
+#   will avoid git from complaining about a file change we would rather ignore
+cp googleNewsFeed.json googleNewsFeed.old.json
+
 node migration.js
 
 curl -X PUT $http://$1/_components/feeds/instances/google-news-feed -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./googleNewsFeed.json -o /dev/null -s
 curl -X PUT $http://$1/_components/feeds/instances/google-news-feed@published -H 'Authorization: token accesskey' -o /dev/null -s
+
+mv googleNewsFeed.old.json googleNewsFeed.json

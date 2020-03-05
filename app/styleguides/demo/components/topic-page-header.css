@@ -45,10 +45,6 @@
    }
   }
 
-  .topic-page-header__banner {
-    height: em(110);
-  }
-
   .topic-page-header__banner--image {
     height: em(250);
     position: relative;
