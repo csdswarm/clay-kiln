@@ -7,8 +7,8 @@ if (!host) {
   throw new Error('Missing host');
 }
 
-stationMetaTitleJson.metaLocalsKey = 'station.metaTitle';
-stationMetaDescriptionJson.localsKey = 'station.metaDescription';
+stationMetaTitleJson.metaLocalsPath = 'station.metaTitle';
+stationMetaDescriptionJson.localsPath = 'station.metaDescription';
 
 fs.writeFile(`${__dirname}/stationMetaTitle.json`, JSON.stringify(stationMetaTitleJson), 'utf8', function(err) {
     if (err) throw err;
