@@ -1,14 +1,52 @@
 'use strict';
 
-const _forEach = require('lodash/forEach'),
+const _castArray = require('lodash/castArray'),
+  _forEach = require('lodash/forEach'),
   _find = require('lodash/find'),
   _get = require('lodash/get'),
-  _reduce = require('lodash/reduce'),
   _includes = require('lodash/includes'),
+  _reduce = require('lodash/reduce'),
   mime = require('mime'),
   { getComponentName } = require('clayutils'),
   { getRawMetadata, getRenditionUrl, cleanUrl } = require('../../../services/universal/media-play'),
-  { renderComponent } = require('../../../services/startup/feed-components');
+  { renderComponent, renderComponentAsync } = require('../../../services/startup/feed-components');
+
+/**
+ * takes in an array of content objects ({ data: JSON, _ref: componentUrl }) and creates the html for that component.
+ * finds the component type from parsing the componentUrl from _ref
+ *
+ * this is async because it eventually calls model.render which is necessary for
+ *   some feed formats.  I'm choosing to keep this async method separate in
+ *   order to prevent bad merges.
+ *
+ * @param {Array} content
+ * @param {Object} locals
+ * @param {string} format
+ * @param {Set<string>} [componentsToSkip = new Set()] - component names to skip rendering
+ * @returns {String}
+ */
+async function renderContentAsync(content, locals, format, componentsToSkip = new Set()) {
+  let res = '';
+
+  for (const cmpt of _castArray(content)) {
+    const ref = _get(cmpt, '_ref', ''),
+      cmptData = JSON.parse(_get(cmpt, 'data', '{}')),
+      cmptName = getComponentName(ref);
+
+    cmptData.locals = locals;
+    if (
+      cmptName
+      && cmptData
+      && cmptName !== 'inline-related'
+      && !componentsToSkip.has(cmptName)
+    ) {
+      // render the component and add it to the response
+      res += await renderComponentAsync(cmptName, cmptData, format, ref, locals);
+    }
+  }
+
+  return res;
+}
 
 /**
  * takes in an array of content objects ({ data: JSON, _ref: componentUrl }) and creates the html for that component.
@@ -192,5 +230,6 @@ module.exports = {
   getMimeType,
   parseComponentData,
   renderComponent,
-  renderContent
+  renderContent,
+  renderContentAsync
 };

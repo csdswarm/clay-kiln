@@ -1,4 +1,4 @@
-{{!-- Parent tag is 'li' when ad is Sharethrough since it is injected 
+{{!-- Parent tag is 'li' when ad is Sharethrough since it is injected
   as an item within more-content-feed's 'ul' --}}
 {{ set "tag" (if (compare adSize "sharethrough-tag") "li" else="div") }}
 
@@ -11,6 +11,9 @@
   data-doubleclick-banner-tag="{{ doubleclickBannerTag }}"
   data-environment="{{ environment }}"
   data-ad-refresh-interval="{{ adRefreshInterval }}"
+  data-aps-pub-id="{{ @root.locals.site.apsPubId }}"
+  data-aps-bid-timeout="{{ @root.locals.site.apsBidTimeout }}"
+  data-aps-load-timeout="{{ @root.locals.site.apsLoadTimeout }}"
   data-sharethrough-placement-key="{{ @root.locals.site.sharethroughPlacementKey }}"
   class="component component--google-ad-manager google-ad-manager--{{adSize}} {{#if sticky }}sticky{{/if}} {{#if (includes adSize "logo-sponsorship") }}google-ad-manager--logo-sponsorship{{/if}}"
 >

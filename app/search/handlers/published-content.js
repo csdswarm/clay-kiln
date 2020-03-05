@@ -80,7 +80,9 @@ function processContent(obj, components) {
     obj.value = getContent(obj.value, 'content', components);
   }
 
-  if (obj.key.includes(PAGE_TYPES.GALLERY)) {
+  if (obj.key.includes(PAGE_TYPES.ARTICLE)) {
+    obj.value = getContent(obj.value, 'feedImg', components);
+  } else if (obj.key.includes(PAGE_TYPES.GALLERY)) {
     obj.value = getContent(obj.value, 'slides', components);
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
 

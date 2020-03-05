@@ -20,6 +20,7 @@ module.exports = () => {
   require('./plugins/stations')();
   require('./plugins/select-list')();
   require('./plugins/stores')();
+  require('./plugins/default-text-with-override')();
   require('./plugins/valid-source')();
   require('./validators')();
   secureAllSchemas();

@@ -1,16 +1,28 @@
 'use strict';
-const _isArray = require('lodash/isArray'),
-  _isObject = require('lodash/isObject'),
-  _isEmpty = require('lodash/isEmpty'),
-  _isString = require('lodash/isString'),
-  _isNull = require('lodash/isNull'),
-  _isUndefined = require('lodash/isUndefined'),
+const
+  _filter = require('lodash/filter'),
   _get = require('lodash/get'),
+  _identity = require('lodash/identity'),
+  _isArray = require('lodash/isArray'),
+  _isEmpty = require('lodash/isEmpty'),
+  _isNull = require('lodash/isNull'),
+  _isObject = require('lodash/isObject'),
+  _isString = require('lodash/isString'),
+  _isUndefined = require('lodash/isUndefined'),
   parse = require('url-parse'),
   { getComponentName, isComponent } = require('clayutils'),
   { contentTypes } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
+
+/**
+ * returns a list of keys in the object that have a truthy value
+ * @param {object} obj
+ * @returns {string[]}
+ */
+function boolKeys(obj) {
+  return Object.keys(obj || {}).filter(key => obj[key]);
+}
 
 /**
  * determine if a field is empty
@@ -107,6 +119,16 @@ function removeExtension(path) {
     path = path.substr(0, leadingDot);
   }
   return path;
+}
+
+/*
+ * Replace https with http and removes query string
+ *
+ * @param {string} url
+ * @returns {string}
+ */
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
 }
 
 /**
@@ -296,6 +318,28 @@ function isContentComponent(url) {
 }
 
 /**
+ * prepends left to right
+ *
+ * meant to be used in a mapper function e.g.
+ *
+ * ```
+ * const namespace = 'msn-feed:',
+ *   msnRedisKeys = ['last-modified', 'urls-last-queried']
+ *     .map(prepend(namespace))
+ *
+ * console.log(msnRedisKeys)
+ * // outputs
+ * // [ 'msn-feed:last-modified', 'msn-feed:urls-last-queried' ]
+ * ```
+ *
+ * @param {string} left
+ * @returns {function}
+ */
+function prepend(left) {
+  return right => left + right;
+}
+
+/**
  * return yes/no dependent on val truthiness
  *
  * @param  {*}  val
@@ -309,26 +353,94 @@ function yesNo(val) {
   }
 }
 
+/**
+ * removes the first line in a string
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function removeFirstLine(str) {
+  if (typeof str !== 'string') {
+    throw new Error(
+      'you must provide a string'
+      + '\n  typeof str: ' + typeof str
+    );
+  }
+
+  return str.split('\n').slice(1).join('\n');
+}
+
+/**
+ * returns the domain of the hostname
+ *
+ * @param {string} hostname
+ * @returns {string}
+ */
+function getDomainFromHostname(hostname) {
+  return hostname.split('.').reverse().slice(0, 2).reverse().join('.');
+}
+
+/**
+ * can be used to get all _ref objects within an object.
+ * Copied from amphora.references and modified for unity environment.
+ * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
+ * @param {object} obj
+ * @param {Function|string} [filter=_identity]  Optional filter
+ * @returns {array}
+ */
+function listDeepObjects(obj, filter) {
+  let cursor, items,
+    list = [],
+    queue = [obj];
+
+  while (queue.length) {
+    cursor = queue.pop();
+    items = _filter(cursor, _isObject);
+    list = list.concat(_filter(items, filter || _identity));
+    queue = queue.concat(items);
+  }
+
+  return list;
+}
+
+/**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {string} url
+ * @returns {string}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
 module.exports = {
-  isFieldEmpty,
+  boolKeys,
+  cleanUrl,
+  debugLog,
+  ensurePublishedVersion,
+  ensureStartsWith,
+  formatStart,
+  getDomainFromHostname,
+  getFullOriginalUrl,
+  getSiteBaseUrl,
   has,
-  replaceVersion,
-  isUrl,
+  isContentComponent,
   uriToUrl,
   urlToUri,
-  formatStart,
-  toTitleCase,
-  getSiteBaseUrl,
-  isPublishedVersion,
-  ensurePublishedVersion,
+  isFieldEmpty,
   isInstance,
-  urlToCanonicalUrl,
-  textToEncodedSlug,
-  debugLog,
-  ensureStartsWith,
+  isPublishedVersion,
+  isUrl,
+  listDeepObjects,
+  prepend,
   prettyJSON,
-  getFullOriginalUrl,
+  removeFirstLine,
+  replaceVersion,
+  textToEncodedSlug,
+  toTitleCase,
+  uriToUrl,
+  urlToCanonicalUrl,
   urlToElasticSearch,
-  isContentComponent,
+  urlToUri,
   yesNo
 };

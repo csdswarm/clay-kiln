@@ -1,4 +1,4 @@
-#     Clay Starter
+# Clay Starter
 
 A repo that contains a basic site and the necessary files to provision AWS resources for hosting the site.
 
@@ -72,6 +72,48 @@ mkcert -install
 Then run 
 ```bash
 make install-dev
+```
+
+Install jq yq and golang
+```bash
+brew install jq yq golang
+```
+
+Install sops
+```bash
+pip install sops
+```
+
+Install `aws-cli` - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
+
+Setup profile - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cli-quick-configuration
+Use AWS credentials for your account and use the `default` profile. If you have multiple profiles update the below script accordingly.
+
+Add the following script to your local `~/.bashrc` file (UPDATE THE EMAIL ADDRESS TO BE YOURS): 
+```bash
+if [ -f ~/.aws_token ]; then
+    filemtime=$(stat -f%m ~/.aws_token)
+    currtime=$(date +%s)
+    diff=$(( currtime - filemtime ))
+    if (( diff < 43200 )); then
+        . ~/.aws_token
+    else
+        echo "AWS Token has expired, rerun 'token' to activate."
+    fi
+fi
+function token(){
+    token_info=$(aws sts get-session-token --serial-number arn:aws:iam::477779916141:mfa/[EMAIL_FOR_YOUR_AWS_ACCOUNT] --profile default --query Credentials --duration-seconds 129600 --token-code $1)
+    echo "export AWS_ACCESS_KEY_ID=$(echo $token_info | jq -r .AccessKeyId)" > ~/.aws_token
+    echo "export AWS_SECRET_ACCESS_KEY=$(echo $token_info | jq -r .SecretAccessKey)" >> ~/.aws_token
+    echo "export AWS_SESSION_TOKEN=$(echo $token_info | jq -r .SessionToken)" >> ~/.aws_token
+    source ~/.aws_token
+}
+```
+
+Create local .env file
+```bash
+token [INSERT_TOKEN_FROM_MFA_DEVICE]
+make generate-local-env
 ```
 
 This is to make sure your `public` directory exists. Without it the site won't run.
@@ -233,6 +275,23 @@ Anytime you change a `template.hbs` file  or modify the `spa` directory, run
 ## Previewing an Apple News Feed component (local environment only)
 
 Whenever a component is fetched with the `.anf` extension it will write the output to **apple-news-format/preview/article.json**. You can drag this file over to the Apple News Preview app and it will hot-reload whenever the file is changed.
+
+## Decrypt/Encrypt SOPS files
+If you don't have an up to date AWS token run the following first:
+```bash
+token [INSERT_TOKEN_FROM_MFA_DEVICE]
+```
+
+Decrypt an environment file (env param is optional and defaults to the local env):
+```bash
+make decrypt-env env=development
+```
+Values can be `development`, `staging`, `production`, `local`. It matches to deploys directory/file naming for the associated env
+
+Encrypt an environment file (local can be changed to development/staging/production):
+```bash
+make encrypt-local-env
+```
 
 ## Missed anything?
 That _should_ be it...if not, submit an issue or add something to this README.w
