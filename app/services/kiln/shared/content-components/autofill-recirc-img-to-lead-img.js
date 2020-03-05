@@ -3,7 +3,9 @@
 const KilnInput = window.kiln.kilnInput,
   { getComponentName } = require('clayutils'),
   rest = require('../../../universal/rest'),
-  _get = require('lodash/get');
+  _isUndef = require('lodash/isUndefined'),
+  _get = require('lodash/get'),
+  CLAY_SITE_PROTOCOL = process.env.CLAY_SITE_PROTOCOL;
 
 module.exports = (schema) => {
   const kilnInput = new KilnInput(schema),
@@ -14,13 +16,27 @@ module.exports = (schema) => {
       }
     },
     /**
-     * Save feedImgUrl to component model
+     * Sets the feedImgUrl to lead image url
      * @param {String} articleRef
      * @param {String} leadImgUrl
      * @returns {Void}
      */
-    setToLeadImage = (refToUpdate, leadImgUrl) => kilnInput.saveComponent(
-      refToUpdate,
+    setFeedImgUrlToLeadImage = (
+      articleRef, leadImgUrl
+    ) => kilnInput.saveComponent(
+      articleRef,
+      { feedImgUrl: leadImgUrl },
+    ),
+    /**
+     * Sets the feedImg component's url to lead img url
+     * @param {String} feedImgRef
+     * @param {String} leadImgUrl
+     * @returns {Void}
+     */
+    setToFeedImgComponentToLeadImage = (
+      feedImgRef, leadImgUrl
+    ) => kilnInput.saveComponent(
+      feedImgRef,
       { url: leadImgUrl }
     ),
     /**
@@ -52,19 +68,40 @@ module.exports = (schema) => {
 
       // eslint-disable-next-line one-var
       const mainComponentData = components[mainComponentRef],
-        { feedImg } = mainComponentData,
         leadComponentRef = _get(mainComponentData, 'lead.0._ref'),
         shouldCheckForEmptyFeedImg = currentUri === leadComponentRef;
 
+      /**
+       * NOTE:
+       * Not all content pages have the `feedImg` component, so we need
+       * to update depending on whether that component exists.
+       */
       if (shouldCheckForEmptyFeedImg) {
-        const feedImgData = await rest.get(`http://${feedImg._ref}`),
-          hasUrl = Boolean(feedImgData.url);
+        const { feedImg } = mainComponentData,
+          hasFeedImgComponent = !_isUndef(feedImg);
 
-        if (hasUrl) {
+        if (hasFeedImgComponent) {
+          const feedImgData = await rest.get(
+              `${CLAY_SITE_PROTOCOL}://${feedImg._ref}`
+            ),
+            hasUrl = Boolean(feedImgData.url);
+
+          if (!hasUrl) {
+            setToFeedImgComponentToLeadImage(
+              feedImg._ref, leadImgUrl
+            );
+          }
+
           return;
         }
 
-        setToLeadImage(feedImg._ref, leadImgUrl);
+        const { feedImgUrl } = mainComponentData;
+
+        if (!feedImgUrl) {
+          setFeedImgUrlToLeadImage(
+            mainComponentRef, leadImgUrl
+          );
+        }
       }
     };
 
