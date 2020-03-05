@@ -73,11 +73,11 @@
                   {{/unless}}
                   <img
                     src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0"
-                    srcset="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
-                              {{ feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
-                              {{ feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
-                              {{ feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
-                              {{ feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
+                    srcset="{{ sanitizeURI feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
                     sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, (max-width: 1279px) 300px, 380px"
                     class="link__thumb" />
                 </div>
@@ -97,9 +97,9 @@
               </a>
             </li>
             {{!-- Add sharethrough every third item in list, except last item in list, if enabled --}}
-            {{#ifAll 
+            {{#ifAll
               ../enableSharethrough
-              (modulo (add @index 1) 2 0) 
+              (modulo (add @index 1) 2 0)
               (compare ../feedItem.length "!==" (add @index 1))
             }}
               {{> google-ad-manager ../sharethroughTag}}
