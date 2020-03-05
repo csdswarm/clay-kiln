@@ -21,11 +21,9 @@ class EventPage {
   onMount() {
     this.rightRailElement = document.querySelector('.content__sidebar');
     // if any element refs are missing log error and short circuit
-    if (!this.rightRailElement) {
-      console.error('EventPage - can\'t find the necessary elements to continue.');
-      return;
+    if (this.rightRailElement) {
+      this.makeRightRailVisible();;
     }
-    this.makeRightRailVisible();
   }
   /**
    * remove the listeners
