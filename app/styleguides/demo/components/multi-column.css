@@ -1,0 +1,81 @@
+@import "_global/mixins";
+
+.component--multi-column {
+  margin-bottom: em(40);
+
+  .multi-column {
+    display: flex;
+    flex-wrap: wrap;
+
+    @mixin small-screen {
+      margin-bottom: em(20);
+    }
+  }
+
+  .multi-column__column {
+    display: flex;
+    flex-direction: column;
+
+    .multi-column__editable {
+      margin-bottom: em(20);
+      @mixin medium-screen {
+        margin-bottom: 0;
+      }
+    }
+
+    &--1 {
+      
+      @mixin default-screen {
+        flex: 0 0 widthOnGrid(6, 5);
+        margin-right: em(20);
+      }
+      @mixin large-screen {
+        flex: 0 0 widthOnGrid(4, 3);
+        margin-right: em(20);
+      }
+      @mixin medium-screen {
+        flex: 0 0 100%;
+        margin-right: 0;
+        margin-bottom: em(20);
+      }
+    }
+
+    &--2 {
+      @mixin default-screen {
+        flex: 0 0 widthOnGrid(4, 3);
+        margin-right: em(20);
+      }
+      @mixin large-screen {
+        flex: 0 0 widthOnGrid(4, 3);
+        margin-right: em(20);
+      }
+      @mixin medium-screen {
+        flex: 0 0 100%;
+        margin-right: 0;
+        margin-bottom: em(20);
+      }
+    }
+
+    &--3 {
+      @mixin default-screen {
+        flex: 0 0 widthOnGrid(4, 3);
+      }
+      @mixin large-screen {
+        flex: 0 0 widthOnGrid(4, 3);
+      }
+      @mixin medium-screen {
+        flex: 0 0 100%;
+        margin-right: 0;
+      }
+    }
+  }
+
+  .multi-column__ad--col3 {
+    @mixin medium-screen {
+      display: none;
+    }
+    .kiln-edit-mode .component--google-ad-manager, .component--google-ad-manager {
+      margin-bottom: 0;
+    }
+  }
+}

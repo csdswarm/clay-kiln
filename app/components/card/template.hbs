@@ -1,0 +1,30 @@
+<a
+    class="component component--card card card--{{ type }} {{ if category 'card__category--' }}{{category}} {{ if first 'card--first'}} {{ if last 'card--last'}}"
+    href="{{ url }}"
+  {{#each track}}
+    data-track-{{ @key }}="{{ this }}"
+  {{/each}}
+>
+  {{~#if thumb }}
+    {{> card-thumb thumb category=this.category _self=true }}
+  {{/if ~}}
+
+  <div class="card__info">
+    <div class="card__header">
+      <span class="card__title">{{{ title }}}</span>
+      {{~#if subTitle}}
+        <span class="card__sub-title">{{{ subTitle }}}</span>
+      {{/if~}}
+    </div>
+
+    {{~#if postedTime ~}}
+      <div class="card__datetime-posted">
+        {{~> date-posted date=postedTime _self=true ~}}
+      </div>
+    {{~/if~}}
+  </div>
+
+  {{~#each actions}}
+    <div class="card__action {{ cssClasses }}" data-action="{{ data }}">{{{ content }}}</div>
+  {{/each~}}
+</a>

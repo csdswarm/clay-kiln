@@ -1,7 +1,7 @@
 _components:
   more-content-feed:
     componentTitle: 'MORE from RADIO.COM'
-    componentTitleVisible: true
+    componentTitleVisible: false
     pageLength: 5
     maxLength: ''
     items: []
@@ -12,10 +12,12 @@ _components:
     sectionFrontManual: ''
     secondarySectionFront: ''
     secondarySectionFrontManual: ''
-    filterTags: []
-    filterSecondarySectionFronts: []
+    excludeTags: []
+    excludeSectionFronts: []
+    excludeSecondarySectionFronts: []
     populateFrom: ''
     locationOfContentFeed: ''
     sharethroughTag:
       _ref: /_components/google-ad-manager/instances/sharethroughTag
     introComponents: []
+    enableSharethrough: true

@@ -5,10 +5,12 @@
     <meta itemprop="position" content="1" />
   </span>
   {{#each breadcrumbs}}
-    <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
-      <span class="breadcrumbs__separator">/</span>
-      <a itemprop="item" href="{{ @root.locals.site.protocol }}:{{ url }}" class="breadcrumbs__link"><span itemprop="name">{{ text }}</span></a>
-      <meta itemprop="position" content="{{add @index 1}}" />
-    </span>
+      <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" class="{{if hidden 'hidden'}}">
+        <span class="breadcrumbs__separator">/</span>
+        <a itemprop="item" href="{{ @root.locals.site.protocol }}:{{ url }}" class="breadcrumbs__link">
+          <span itemprop="name">{{ text }}</span>
+        </a>
+        <meta itemprop="position" content="{{add @index 2}}" />
+      </span>
   {{/each}}
 </nav>
