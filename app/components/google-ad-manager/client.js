@@ -406,8 +406,6 @@ function getCurrentStation() {
  */
 function getAdTargeting(pageData) {
   const doubleclickBannerTag = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag') : null,
-    environment = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-environment') : null,
-    inProduction = environment === 'production',
     currentStation = getCurrentStation(),
     // this query selector should always succeed
     firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
@@ -433,9 +431,7 @@ function getAdTargeting(pageData) {
       adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${pageTypeTagStationsDirectory}`);
       break;
     case 'stationDetail':
-      const stationBannerTag = inProduction
-        ? currentStation.doubleclick_bannertag
-        : doubleclickBannerTag;
+      const stationBannerTag = doubleclickBannerTag;
 
       adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${pageTypeTagStationDetail}`;
       break;
