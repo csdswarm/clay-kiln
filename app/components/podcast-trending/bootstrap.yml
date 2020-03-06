@@ -1,2 +1,6 @@
 _components:
-  podcast-trending: {}
+  podcast-trending:
+    curatedItems: []
+    instances:
+      default:
+        curatedItems: []
