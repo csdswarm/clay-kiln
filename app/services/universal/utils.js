@@ -405,16 +405,6 @@ function getFullOriginalUrl(req) {
 }
 
 /**
- * Url queries to elastic search need to be `http` since that is
- * how it is indexed as.
- * @param {String} url
- * @returns {String}
- */
-function urlToElasticSearch(url) {
-  return url.replace('https', 'http');
-}
-
-/**
  * Returns whether the request is for a content component.  A content component
  *   usually means a component that can be created via the kiln drawer e.g.
  *   article, gallery, etc.  More specifically it's a component that will be
@@ -495,7 +485,15 @@ function listDeepObjects(obj, filter) {
   return list;
 }
 
-
+/**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {string} url
+ * @returns {string}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
 
 module.exports = {
   asInjectable,

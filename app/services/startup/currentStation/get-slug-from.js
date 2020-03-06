@@ -117,16 +117,15 @@ const _get = require('lodash/get'),
     }
   },
   /**
-   * returns the slug of the site either from a subdomain or as the first element of the path
+   * returns the potential slug of the site via the first element of the path
    *
    * @param {object} req
    * @return {string}
    */
   getPotentialStationSlugFromReq = req => {
-    const stationPath = req.originalUrl.split('/')[1],
-      stationHost = req.get('host').split('/')[0].split('.')[0].toLowerCase();
+    const stationPath = req.originalUrl.split('/')[1];
 
-    return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
+    return stationPath;
   },
   /**
    * returns whether the request
