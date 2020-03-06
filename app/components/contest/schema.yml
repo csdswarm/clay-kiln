@@ -259,6 +259,10 @@ _groups:
       - startTime
       - endDate
       - endTime
+    _placeholder:
+      text: Contest Date Range
+      height: 30px
+      ifEmpty: startDate or startTime or endDate or endTime
 
 
 # Non user editable. Set by model.js. Included in schema to use _publish functionality
