@@ -32,7 +32,7 @@
              data-track-page-uri="{{ article.pageUri }}"
              data-track-headline="{{ article.primaryHeadline }}"
              data-track-component-title="Latest Recirculation">
-            <div class="link__thumb" style="background-image:url('{{ encodeURI article.feedImgUrl }}?width={{if ../_computed.isMultiColumn 140 else=70}}&crop=1:1,offset-y0');"></div>
+            <div class="link__thumb" style="background-image:url('{{ article.feedImgUrl }}?width={{if ../_computed.isMultiColumn 140 else=70}}&crop=1:1,offset-y0');"></div>
             <div class="link__content">
               {{#if ../_computed.isMultiColumn }}
                 <span class="link__label">
