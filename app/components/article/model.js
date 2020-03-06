@@ -20,6 +20,8 @@ module.exports = unityComponent({
     defaultTextWithOverride.onModelSave.handleDefault('msnTitle', 'headline', data);
     data.msnTitleLength = _get(data.msnTitle, 'length', 0);
 
-    return createContent.save(uri, data, locals);
+    await createContent.save(uri, data, locals);
+
+    return data;
   }
 });

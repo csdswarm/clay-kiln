@@ -118,10 +118,11 @@ function removeExtension(path) {
   if (leadingDot > -1) {
     path = path.substr(0, leadingDot);
   }
+
   return path;
 }
 
-/*
+/**
  * Replace https with http and removes query string
  *
  * @param {string} url
@@ -258,6 +259,28 @@ function debugLog(...args) {
   }
 }
 
+/**
+ * prepends left to right
+ *
+ * meant to be used in a mapper function e.g.
+ *
+ * ```
+ * const namespace = 'msn-feed:',
+ *   msnRedisKeys = ['last-modified', 'urls-last-queried']
+ *     .map(prepend(namespace))
+ *
+ * console.log(msnRedisKeys)
+ * // outputs
+ * // [ 'msn-feed:last-modified', 'msn-feed:urls-last-queried' ]
+ * ```
+ *
+ * @param {string} left
+ * @returns {function}
+ */
+function prepend(left) {
+  return right => left + right;
+}
+
 /*
  * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
  *   begin with the prefix.
@@ -293,19 +316,11 @@ function getFullOriginalUrl(req) {
 }
 
 /**
- * Url queries to elastic search need to be `http` since that is
- * how it is indexed as.
- * @param {String} url
- * @returns {String}
- */
-function urlToElasticSearch(url) {
-  return url.replace('https', 'http');
-}
-
-/**
  * Returns whether the request is for a content component.  A content component
- *   here just means a component that can be created via the kiln drawer e.g.
- *   article, gallery, etc.
+ *   usually means a component that can be created via the kiln drawer e.g.
+ *   article, gallery, etc.  More specifically it's a component that will be
+ *   listed under the 'main' property of a page, which is why 'homepage' is also
+ *   considered a content type.
  *
  * @param {string} url
  * @returns {boolean}
@@ -315,28 +330,6 @@ function isContentComponent(url) {
 
   return isComponent(url)
     && contentTypes.has(componentName);
-}
-
-/**
- * prepends left to right
- *
- * meant to be used in a mapper function e.g.
- *
- * ```
- * const namespace = 'msn-feed:',
- *   msnRedisKeys = ['last-modified', 'urls-last-queried']
- *     .map(prepend(namespace))
- *
- * console.log(msnRedisKeys)
- * // outputs
- * // [ 'msn-feed:last-modified', 'msn-feed:urls-last-queried' ]
- * ```
- *
- * @param {string} left
- * @returns {function}
- */
-function prepend(left) {
-  return right => left + right;
 }
 
 /**
@@ -403,6 +396,16 @@ function listDeepObjects(obj, filter) {
   return list;
 }
 
+/**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {string} url
+ * @returns {string}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
 module.exports = {
   boolKeys,
   cleanUrl,
@@ -415,8 +418,6 @@ module.exports = {
   getSiteBaseUrl,
   has,
   isContentComponent,
-  uriToUrl,
-  urlToUri,
   isFieldEmpty,
   isInstance,
   isPublishedVersion,

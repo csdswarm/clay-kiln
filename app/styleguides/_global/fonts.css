@@ -586,27 +586,27 @@ em, i {
 }
 
 @define-mixin station-listen-nav-font1 {
-  @mixin font CircularStd-Black, 15px, $station-secondaryFontColor, -.24px, 18px;
+  @mixin font CircularStd-Black, 15px, $station-primaryFontColor, -.24px, 18px;
 }
 
 @define-mixin station-listen-nav-font1-1 {
-  @mixin font CircularStd-BlackItalic, 15px, $station-secondaryFontColor, .24px, 18px;
+  @mixin font CircularStd-BlackItalic, 15px, $station-primaryFontColor, .24px, 18px;
 }
 
 @define-mixin station-listen-nav-font2 {
-  @mixin font ProximaNova-Regular, 12px, $station-secondaryFontColor, -.23px, 14px;
+  @mixin font ProximaNova-Regular, 12px, $station-primaryFontColor, -.23px, 14px;
 }
 
 @define-mixin station-listen-nav-font3 {
-  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, -.23px, 28px;
+  @mixin font ProximaNova-Regular, 14px, $station-primaryFontColor, -.23px, 28px;
 }
 
 @define-mixin station-listen-nav-font4 {
-  @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.25px, 28px;
+  @mixin font ProximaNova-Regular, 15px, $station-primaryFontColor, -.25px, 28px;
 }
 
 @define-mixin station-listen-nav-font5 {
-  @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.24px, 18px;
+  @mixin font ProximaNova-Regular, 15px, $station-primaryFontColor, -.24px, 18px;
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -664,6 +664,7 @@ em, i {
   font-weight: 400;
   @mixin font Helvetica, Arial, em(14, 16), inherit, -.3, em(16, 14);
 }
+
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Alert Banner Fonts Styleguide |||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
@@ -742,6 +743,13 @@ em, i {
   @mixin font CircularStd-Book, 14px, $black, -.27px, 17px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Permissions Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin permissions-font1 {
+  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Latest Top Recirculation Slider Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -750,13 +758,6 @@ em, i {
 }
 @define-mixin latest-top-recirc-slider-font2 {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||| Permissions Fonts Styleguide ||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin permissions-font1 {
-  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
 }
 
 /*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<*/

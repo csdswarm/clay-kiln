@@ -55,7 +55,7 @@ const ensureStartsWith = (prefix, str) => {
  * })
  */
 const makeHttpEs_v1 = parsedHost => {
-  const { es, http: protocol } = parsedHost,
+  const { es, es: { http: protocol } } = parsedHost,
     validResponseTypes = new Set(['json', 'text']),
     validResponseTypesStr = Array.from(validResponseTypes).join(', '),
     esUrl = `${protocol}://${es.hostname}:9200`,

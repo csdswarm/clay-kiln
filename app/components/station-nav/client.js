@@ -1,7 +1,6 @@
 'use strict';
 
-let stationNav,
-  desktopNavItems,
+let desktopNavItems,
   navDrawersContainer,
   allDrawers,
   desktopNavDrawers,
@@ -218,7 +217,8 @@ const { getComponentInstance } = require('clayutils'),
 // mount listener for vue (optional)
 document.addEventListener('station-nav-mount', function () {
   // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
-  stationNav = document.querySelector('.component--station-nav');
+  const stationNav = document.querySelector('.component--station-nav');
+
   desktopNavItems = stationNav.querySelectorAll('.navigation__primary');
   navDrawersContainer = stationNav.querySelector('.station_nav__drawers');
   allDrawers = navDrawersContainer.querySelectorAll('.drawers__drawer');

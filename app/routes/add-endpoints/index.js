@@ -1,8 +1,12 @@
 'use strict';
 
 module.exports = {
-  imageInfo: require('./image-info'),
+  alerts: require('./alerts'),
   contestRules: require('./contest-rules'),
   createPage: require('./create-page'),
-  sitemap: require('./sitemap')
+  imageInfo: require('./image-info'),
+  importContent: require('./import-content'),
+  refreshPermissions: require('./refresh-permissions'),
+  sitemap: require('./sitemap'),
+  validSource: require('./valid-source')
 };

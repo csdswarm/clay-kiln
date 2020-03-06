@@ -4,12 +4,25 @@ const _get = require('lodash/get'),
   _isEmpty = require('lodash/isEmpty'),
   radioApi = require('./radioApi'),
   { URL } = require('url'),
+  { DEFAULT_STATION } = require('../universal/constants'),
   api = {},
   getEmptyAllStations = () => ({
-    asArray: [],
-    byCallsign: {},
-    byId: {},
-    bySlug: {}
+    asArray: {
+      stg: [],
+      prd: []
+    },
+    byCallsign: {
+      stg: {},
+      prd: {}
+    },
+    byId: {
+      stg: {},
+      prd: {}
+    },
+    bySlug: {
+      stg: {},
+      prd: {}
+    }
   }),
   _state = {
     allStations: getEmptyAllStations()
@@ -48,9 +61,10 @@ const _get = require('lodash/get'),
    */
   updateAllStations = async locals => {
     const [ stationsResp, marketsResp ] = await Promise.all([
-      radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
-      radioApi.get('markets', { page: { size: 100 } }, null, {}, locals)
-    ]);
+        radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
+        radioApi.get('markets', { page: { size: 100 } }, null, {}, locals)
+      ]),
+      apiEnvironment = getApiEnvironment(locals);
 
     if (stationsResp.response_cached === false && !_isEmpty(_state.allStations.asArray)) {
       return;
@@ -62,9 +76,9 @@ const _get = require('lodash/get'),
     // eslint-disable-next-line one-var
     const { allStations } = _state;
 
-    allStations.asArray = stationsResp.data.map(station => station.attributes);
+    allStations.asArray[apiEnvironment] = stationsResp.data.map(station => station.attributes);
 
-    allStations.asArray.forEach(station => {
+    allStations.asArray[apiEnvironment].forEach(station => {
       station.timezone = marketsResp.data ?
         getTimezoneFromMarketID(
           marketsResp.data,
@@ -72,9 +86,9 @@ const _get = require('lodash/get'),
         )
         : 'ET';
 
-      allStations.byId[station.id] = station;
-      allStations.bySlug[station.site_slug] = station;
-      allStations.byCallsign[station.callsign] = station;
+      allStations.byId[apiEnvironment][station.id] = station;
+      allStations.bySlug[apiEnvironment][station.site_slug] = station;
+      allStations.byCallsign[apiEnvironment][station.callsign] = station;
     });
   },
   /**
@@ -92,20 +106,40 @@ const _get = require('lodash/get'),
    *   undefined is returned.
    *
    * @param {string} url
+   * @param {object} locals
    * @returns {object|undefined}
    */
-  getStationFromUrl = ({ url }) => {
+  getStationFromUrl = ({ url, locals }) => {
     const slug = new URL(url).pathname.split('/')[1];
 
-    return _state.allStations.bySlug[slug];
+    return _state.allStations.bySlug[getApiEnvironment(locals)][slug];
+  },
+  /**
+   * Get the environment currently being used
+   *
+   * @param {object} locals
+   * @returns {string}
+   */
+  getApiEnvironment = (locals) => {
+    return radioApi.shouldUseStagingApi(locals) ? 'stg' : 'prd';
   };
 
 /**
  * Returns an up-to-date _state.allStations
  *
+ * @param {object} argObj
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  * @returns {object}
  */
-api.getAllStations = withUpdatedStations(() => _state.allStations);
+api.getAllStations = withUpdatedStations(({ locals }) =>  {
+  const returnData = {};
+
+  Object.keys(_state.allStations).forEach( key => {
+    returnData[key] = _state.allStations[key][getApiEnvironment(locals)];
+  });
+
+  return returnData;
+});
 
 /**
  * Exposes the allStations state, ensuring they are updated when accessed
@@ -114,12 +148,17 @@ api.getAllStations = withUpdatedStations(() => _state.allStations);
  *   should have just returned _state.allStations and let it be.  We can clean
  *   this up in the future but for now I don't want to break other
  *   people's code.
+ *
+ * Each call has the following params
+ *
+ * @param {object} argObj
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  */
 Object.assign(api.getAllStations, {
-  asArray: withUpdatedStations(() => _state.allStations.asArray),
-  byCallsign: withUpdatedStations(() => _state.allStations.byCallsign),
-  byId: withUpdatedStations(() => _state.allStations.byId),
-  bySlug: withUpdatedStations(() => _state.allStations.bySlug)
+  asArray: withUpdatedStations(({ locals }) => _state.allStations.asArray[getApiEnvironment(locals)]),
+  byCallsign: withUpdatedStations(({ locals }) => _state.allStations.byCallsign[getApiEnvironment(locals)]),
+  byId: withUpdatedStations(({ locals }) => _state.allStations.byId[getApiEnvironment(locals)]),
+  bySlug: withUpdatedStations(({ locals }) => _state.allStations.bySlug[getApiEnvironment(locals)])
 });
 
 /**
@@ -127,36 +166,60 @@ Object.assign(api.getAllStations, {
  *   slug at the beginning of the path in the url, or it doesn't which means the
  *   content belongs to the national station.
  *
- * @param {string} url
+ * @param {object} argObj
+ * @param {string} argObj.url
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  * @returns {Promise<string>}
  */
-api.getCallsignFromUrl = withUpdatedStations(({ url }) => {
-  return _get(getStationFromUrl({ url }), 'callsign', 'NATL-RC');
+api.getCallsignFromUrl = withUpdatedStations(({ url, locals }) => {
+  return _get(getStationFromUrl({ url, locals }), 'callsign', 'NATL-RC');
 });
 
 /**
  * Finds the station name from the slug
  *
- * @param {string} slug
- * @returns {Promise<string>}
+ * @param {object} argObj
+ * @param {string} argObj.slug
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  */
-api.getNameFromSlug = withUpdatedStations(({ slug }) => _state.allStations.bySlug[slug].name);
+api.getNameFromSlug = withUpdatedStations(({ slug, locals }) => _state.allStations.bySlug[getApiEnvironment(locals)][slug].name);
 
 /**
  * Finds the station callsign from the slug
  *
- * @param {string} slug
+ * @param {object} argObj
+ * @param {string} argObj.slug
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  * @returns {Promise<string>}
  */
-api.getCallsignFromSlug = withUpdatedStations(({ slug }) => _state.allStations.bySlug[slug].callsign);
+api.getCallsignFromSlug = withUpdatedStations(({ slug, locals }) => _state.allStations.bySlug[getApiEnvironment(locals)][slug].callsign);
 
 /**
  * If the url has a station slug then it returns that station.  Otherwise
  *   undefined is returned.
  *
- * @param {string} url
+ * @param {object} argObj
+ * @param {string} argObj.url
+ * @param {object} [argObj.locals] - used by withUpdatedStations
  * @returns {object|undefined}
  */
 api.getStationFromOriginalUrl = withUpdatedStations(getStationFromUrl);
+
+/**
+ * Get a list of all the station callsigns with NATL-RC as a station
+ *   optionally passing the default station callsign
+ *
+ * @param {boolean} addDefaultCallsign
+ * @returns {array}
+ */
+api.getAllStationsCallsigns = withUpdatedStations(({ locals, addDefaultCallsign = true }) => {
+  const callsigns = Object.keys(_state.allStations.byCallsign[getApiEnvironment(locals)]);
+
+  if (addDefaultCallsign) {
+    callsigns.push(DEFAULT_STATION.callsign);
+  }
+
+  return callsigns.sort();
+});
 
 module.exports = api;

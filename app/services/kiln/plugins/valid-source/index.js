@@ -1,14 +1,17 @@
 'use strict';
 
 // Require depedencies.
-const navButton = require('./nav-button.vue'),
-  navContent = require('./nav-content.vue');
+const _set = require('lodash/set'),
+  navButton = require('./nav-button.vue'),
+  navContent = require('./nav-content.vue'),
+  { unityAppDomainName: unityApp } = require('../../../universal/urps');
 
 // Register plugin.
 module.exports = () => {
-  window.kiln = window.kiln || {};
-  window.kiln.navButtons = window.kiln.navButtons || {};
-  window.kiln.navButtons['valid-source'] = navButton;
-  window.kiln.navContent = window.kiln.navContent || {};
-  window.kiln.navContent['valid-source'] = navContent;
+  const { user } = window.kiln.locals;
+
+  if (user.can('update').a('valid-script-source').for(unityApp).value) {
+    _set(window, 'kiln.navButtons.valid-source', navButton);
+    _set(window, 'kiln.navContent.valid-source', navContent);
+  }
 };

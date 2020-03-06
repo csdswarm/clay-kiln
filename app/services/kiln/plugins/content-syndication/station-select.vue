@@ -12,6 +12,7 @@
         :multiple="true"
         :options="stationOptions"
         :value="value"
+        :disabled="disabled"
         @input="updateSelectedStation"
       >
       </ui-select>
@@ -22,7 +23,7 @@
   const UiSelect = window.kiln.utils.components.UiSelect;
 
   export default {
-    props: ['name', 'data', 'schema', 'args'],
+    props: ['name', 'data', 'schema', 'args', 'disabled'],
     data() {
       return {
         selectedStation: this.data,
