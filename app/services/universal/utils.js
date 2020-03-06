@@ -463,6 +463,16 @@ function removeFirstLine(str) {
 }
 
 /**
+ * returns the domain of the hostname
+ *
+ * @param {string} hostname
+ * @returns {string}
+ */
+function getDomainFromHostname(hostname) {
+  return hostname.split('.').reverse().slice(0, 2).reverse().join('.');
+}
+
+/**
  * can be used to get all _ref objects within an object.
  * Copied from amphora.references and modified for unity environment.
  * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
@@ -495,6 +505,7 @@ module.exports = {
   ensurePublishedVersion,
   ensureStartsWith,
   formatStart,
+  getDomainFromHostname,
   getFullOriginalUrl,
   getSiteBaseUrl,
   has,
