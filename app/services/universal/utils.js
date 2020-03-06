@@ -10,10 +10,99 @@ const
   _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
   parse = require('url-parse'),
-  { getComponentName, isComponent } = require('clayutils'),
   { contentTypes } = require('./constants'),
+  { getComponentName, isComponent } = require('clayutils'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
+
+
+/**
+ * HOF for modules to make them injectable.
+ *
+ * Primary thinking is that this will facilitate testing without needing things like proxyquire
+ * or similar mock tools, and facilitate access to more than just dependencies, but also to things
+ * like internal functions and values.
+ *
+ * This will not work with primitive exports, only things like objects and functions in which an
+ * "injectable" method can be added to.
+ *
+ * Special care has been taken to make sure that when creating an injectable version, no changes to
+ * it will affect any default exports.
+ *
+ * @param {function} internals is a function that returns all overridable dependencies and internal functionality
+ * @param {function} cb The main part of your module. what is returned from this is what will be exported
+ * @returns {object} the result of the callback to be exported
+ * @example
+ * // in module file (e.g. my-utils.js)
+ * const { asInjectable } = require('./utils'),
+ *
+ * internals = () => {
+ *   const
+ *     utils = require('./utils'),
+ *     xyz = require('../../xyz),
+ *     { fn1, fn2, val3 } = require('something-else'),
+ *     _ = {
+ *        utils,
+ *        xyz,
+ *        fn1,
+ *        fn2,
+ *        fn3,
+ *
+ *        MAX_TIME: 100,
+ *
+ *        /**
+ *         * Does things
+ *         * /
+ *        myInternalFunction(stuff) {
+ *          const a = _.fn1(stuff),
+ *            b = _.fn2(a);
+ *          return _.fn3(b * _.MAX_TIME);
+ *        }
+ *   };
+ *
+ *   return _;
+ * }
+ *
+ * asInjectable(module, internals, _ => {
+ *   return {
+ *     mySpecialFunction(things) {
+ *       return _.myInternalFunction(things) * _.MAX_TIME;
+ *     }
+ *   };
+ * });
+ *
+ * // In other regular module
+ * const { mySpecialFunction } = require('../my-utils');
+ *
+ * // In test module
+ * const { internals: _, mySpecialFunction } = require('../my-utils').injectable();
+ *
+ * const spy = sinon.spy(_, 'myInternalFunction'),
+ *   stub = sinon.stub(_, 'fn2');
+ *
+ * _.MAX_TIME = 5;
+ * ...
+ */
+function asInjectable(internals, cb) {
+  const exports = cb(internals());
+
+  /**
+   * Creates a new instance of the original module, with new instances of the injectables that
+   * will be attached to the returned value as the property `internals`
+   *
+   * @returns {object} original export with `internals` property
+   */
+  exports.injectable = () => {
+    const _ = internals(),
+      injectableExport = cb(_);
+
+    injectableExport.internals = _;
+
+    return injectableExport;
+  };
+
+  return exports;
+}
 
 /**
  * returns a list of keys in the object that have a truthy value
@@ -396,7 +485,10 @@ function listDeepObjects(obj, filter) {
   return list;
 }
 
+
+
 module.exports = {
+  asInjectable,
   boolKeys,
   cleanUrl,
   debugLog,
