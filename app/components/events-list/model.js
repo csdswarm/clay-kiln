@@ -15,8 +15,6 @@ const
     'feedImgUrl',
     'canonicalUrl'
   ],
-  maxItems = 30,
-  pageLength = 10,
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   { isComponent } = require('clayutils'),
   utils = require('../../services/universal/utils'),
@@ -82,14 +80,8 @@ async function getEventDataFromElastic(event, data, locals) {
   * }[]>}
   */
 async function getRecentEventsFromElastic(uri, data, locals) {
-  if (!data.numberToDisplay) {
-    data.numberToDisplay = maxItems;
-  }
-  if (!data.loadMoreAmount) {
-    data.loadMoreAmount = pageLength;
-  }
 
-  const query = queryService.newQueryWithCount(elasticIndex, data.numberToDisplay, locals);
+  const query = queryService.newQueryWithCount(elasticIndex, data.loadMoreAmount, locals);
 
   queryService.addFilter(query, { term: { contentType: 'event' } });
   if (data.station) {
@@ -164,9 +156,9 @@ module.exports = unityComponent({
     // On initial load we need to append curated items onto the list, otherwise skip
     // Show a maximum of pageLength links
     if (data.initialLoad) {
-      data.events = curatedEvents.concat(recentEvents).slice(0, data.loadMoreAmount);
+      data.events = curatedEvents.concat(recentEvents).slice(0, data.numberToDisplay);
     } else {
-      data.events = recentEvents.slice(0, data.loadMoreAmount);
+      data.events = recentEvents.slice(0, data.numberToDisplay);
     }
     return data;
   },
