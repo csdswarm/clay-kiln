@@ -26,7 +26,9 @@ function getPodcastShow(locals) {
  */
 async function addBreadcrumbs(data, locals) {
   await autoLink(data, ['stationSlug'], locals);
-  addCrumb(data, `//${ locals.site.host }/${ data.stationSlug }/podcasts`, 'podcasts');
+  const url = `//${ locals.site.host }${ data.stationSlug ? `/${ data.stationSlug }/` : '' }/podcasts`;
+
+  addCrumb(data, url, 'podcasts');
   if (locals.podcast) {
     const { site_slug, title } = locals.podcast.attributes;
 
