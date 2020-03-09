@@ -22,9 +22,7 @@ const createContent = require('../../services/universal/create-content'),
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
     await autoLink(data, ['stationSlug'], locals);
-    const url = `//${ locals.site.host }
-      ${ data.stationSlug ? '/' + data.stationSlug : ''}
-      /contests`;
+    const url = `//${ locals.site.host }${ data.stationSlug ? '/' + data.stationSlug : ''}/contests`;
 
     addCrumb(data, url, 'contests');
     return createContent.render(uri, data, locals);
