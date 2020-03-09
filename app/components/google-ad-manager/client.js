@@ -407,6 +407,11 @@ function getCurrentStation() {
 function getAdTargeting(pageData) {
   const doubleclickBannerTag = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag') : null,
     currentStation = getCurrentStation(),
+    /**
+     * NOTE: This is a workaround to access process.env.NODE_ENV
+     * because it is not available in client.js.
+     */
+    env = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-environment') : '',
     // this query selector should always succeed
     firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
     hasNmcTags = !!firstNmcTag,
@@ -431,9 +436,11 @@ function getAdTargeting(pageData) {
       adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${pageTypeTagStationsDirectory}`);
       break;
     case 'stationDetail':
-      const stationBannerTag = doubleclickBannerTag;
+      const stationBannerTag = env === 'production'
+        ? doubleclickBannerTag
+        : currentStation.doubleclick_bannertag;
 
-      adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${pageTypeTagStationDetail}`;
+      adTargetingData.siteZone = siteZone.concat('/', stationBannerTag, pageTypeTagStationDetail);
       break;
     case 'topicPage':
       // Must remain tag for targeting in DFP unless a change is made in the future to update it there
