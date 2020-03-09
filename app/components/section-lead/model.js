@@ -5,11 +5,7 @@ const recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   { toPlainText } = require('../../services/universal/sanitize'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   qs = require('qs'),
-  { cleanUrl, boolKeys } = require('../../services/universal/utils'),
-  { getComponentName, isComponent } = require('clayutils'),
-  isValidUrl = url => url && !isComponent(url),
-  filteredSecondarySectionFronts = ({ filterSecondarySectionFronts }) => boolKeys(filterSecondarySectionFronts || {}),
-  filteredTags = ({ filterTags }) => (filterTags || []).map(({ text }) => text),
+  { getComponentName } = require('clayutils'),
   elasticFields = [
     'date',
     'primaryHeadline',
@@ -45,51 +41,21 @@ const recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
       media: MEDIA_SIZES[key],
       srcParams: asQuery(value)
     }));
-  },
+  };
+
+module.exports = recirculationData({
+  elasticFields,
+  mapDataToFilters: (uri, data) => ({
+    maxItems: getMaxItems(data)
+  }),
+
   /**
    * @param {string} ref
    * @param {object} data
    * @param {object} locals
    * @returns {Promise}
    */
-  save = async (ref, data, locals) => {
-    if (!data.items.length || !locals) {
-      return data;
-    }
-
-    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
-
-    data.items = await Promise.all(data.items.map(async (item) => {
-      item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-      const searchOpts = {
-          includeIdInResult: true,
-          shouldDedupeContent: false
-        },
-        result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
-
-      return {
-        ...item,
-        date: result.date,
-        uri: result._id,
-        primaryHeadline: item.overrideTitle || result.primaryHeadline,
-        pageUri: result.pageUri,
-        urlIsValid: result.urlIsValid,
-        canonicalUrl: item.url || result.canonicalUrl,
-        feedImgUrl: item.overrideImage || result.feedImgUrl,
-        label: item.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
-        plaintextTitle: toPlainText(item.title)
-      };
-    }));
-
-    return data;
-  },
-  /**
-   * @param {string} ref
-   * @param {object} data
-   * @param {object} locals
-   * @returns {Promise}
-   */
-  render = async (ref, data, locals) => {
+  render: async (ref, data, locals) => {
     const inMultiColumn = data._computed.parents.some(parent => getComponentName(parent) === 'multi-column'),
       squareCrop = '1:1,offset-y0',
       wideCrop = '8:5.1,offset-y0',
@@ -137,22 +103,43 @@ const recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
     data._computed.primaryStorySizeParams = asQuery(primaryImageSizes.default);
 
     return data;
-  };
+  },
 
-module.exports = recirculationData({
-  elasticFields,
-  mapDataToFilters: (uri, data, locals) => ({
-    curated: data.items,
-    maxItems: getMaxItems(data),
-    filters: { contentTypes: boolKeys(data.contentType) },
-    excludes: {
-      canonicalUrls: [locals.url, ...data.items.map(item => item.canonicalUrl)].filter(isValidUrl).map(cleanUrl),
-      ...{
-        secondarySectionFronts: filteredSecondarySectionFronts(data),
-        tags: filteredTags(data)
-      }
+  /**
+   * @param {string} ref
+   * @param {object} data
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  save: async (ref, data, locals) => {
+    if (!data.items.length || !locals) {
+      return data;
     }
-  }),
-  render,
-  save
+
+    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+
+    data.items = await Promise.all(data.items.map(async (item) => {
+      item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+      const searchOpts = {
+          includeIdInResult: true,
+          shouldDedupeContent: false
+        },
+        result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
+
+      return {
+        ...item,
+        date: result.date,
+        uri: result._id,
+        primaryHeadline: item.overrideTitle || result.primaryHeadline,
+        pageUri: result.pageUri,
+        urlIsValid: result.urlIsValid,
+        canonicalUrl: item.url || result.canonicalUrl,
+        feedImgUrl: item.overrideImage || result.feedImgUrl,
+        label: item.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
+        plaintextTitle: toPlainText(item.title)
+      };
+    }));
+
+    return data;
+  }
 });

@@ -1,4 +1,4 @@
-_version: 6.0
+_version: 7.0
 primaryStoryLabel:
   _label: Primary Lede Label
   _has:
@@ -71,7 +71,7 @@ items:
             required: true
 
 
-filterTags:
+excludeTags:
   _label: Exclude Tags
   _has:
     input: simple-list
@@ -81,7 +81,7 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondarySectionFronts:
+excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
     input: select
@@ -108,8 +108,8 @@ _groups:
     - primaryStoryLabel
     - contentType
     - items
-    - filterTags
-    - filterSecondarySectionFronts
+    - excludeTags
+    - excludeSecondarySectionFronts
     _placeholder:
       ifEmpty: contentType
       height: 400px
