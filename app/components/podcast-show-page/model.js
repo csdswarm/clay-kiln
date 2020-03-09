@@ -11,10 +11,10 @@ const { unityComponent } = require('../../services/universal/amphora'),
  * @returns {Promise<object>}
  */
 function getPodcastShow(locals) {
-  const route = `podcasts/${ locals.params.dynamicSlug }`;
+  const route = `podcasts?filter[site_slug]=${ locals.params.dynamicSlug }`;
 
   return radioApiService.get(route, {}, null, {}, locals).then(response => {
-    return response.data || {};
+    return response.data[0] || {};
   });
 }
 
@@ -27,7 +27,7 @@ module.exports = unityComponent({
     // Stored in data for breadcrumbs component
     data.stationSlug = _get(locals, 'params.stationSlug');
 
-    data.podcast = locals.podcast = await getPodcastShow(locals);
+    locals.podcast = await getPodcastShow(locals);
 
     // @TODO breadcrumbs to be done in ON-446
     // autoLink(data, ['stationSlug', '{podcasts}', 'podcast.slug'], locals.site.host);
