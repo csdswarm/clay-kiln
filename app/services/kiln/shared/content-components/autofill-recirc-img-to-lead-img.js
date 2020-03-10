@@ -63,8 +63,6 @@ module.exports = (schema) => {
         return;
       }
 
-      console.log(payload);
-
       // eslint-disable-next-line one-var
       const mainComponentData = components[mainComponentRef],
         leadComponentRef = _get(mainComponentData, 'lead.0._ref'),
