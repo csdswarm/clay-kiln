@@ -1,7 +1,8 @@
 'use strict';
 
 const
-  rest = require('../../services/universal/rest');
+  rest = require('../../services/universal/rest'),
+  visibility = require('../../services/client/visibility');
 
 
 
@@ -18,11 +19,12 @@ class EventsListDom {
    */
   constructor(containerElement, eventListController) {
     this.el = containerElement;
-    this.cardsElement = this.el.querySelector('.events-list__cards'),
+    this.cardsElement = this.el.querySelector('.events-list__cards');
     this.model = eventListController.model;
-    this.loadMoreBtn = containerElement.querySelector('#events-list-load-more-button'),
+    this.loadMoreBtn = containerElement.querySelector('#events-list-load-more-button');
     this.cardElement = containerElement.querySelector('.content-card--event');
     this.cssTransitionTime = 200;
+    this.initLazyLoad();
   }
 
   getCard(eventData) {
@@ -90,6 +92,20 @@ class EventsListDom {
   hideLoadMoreBtn() {
     this.loadMoreBtn.classList.add('events-list__load-more-btn--hidden');
   }
+
+  initLazyLoad() {
+    // this will basically load two pages of whatever the loadMoreAmount is set to in the component settings then remove the visibility listener
+    this.loadMoreVisibility = new visibility.Visible(this.loadMoreBtn, { shownThreshold: 0.05 });
+    this.loadMoreBtn.style.visibility = 'hidden';
+    this.loadMoreVisibility.on('shown', () => {
+      if (this.model.pageNumber <= this.model.maxLazyLoadedPages) {
+        this.loadMoreBtn.click();
+      } else {
+        this.loadMoreVisibility.destroy();
+        this.loadMoreBtn.style.visibility = 'visible';
+      }
+    });
+  }
 }
 
 
@@ -109,6 +125,7 @@ class EventsListModel {
   constructor(containerElement, eventListController) {
     this.ctrl = eventListController;
     this.pageNumber = 1;
+    this.maxLazyLoadedPages = 2;
     this.isLoading = false;
     this.moreContentUrl = '//' + containerElement.getAttribute('data-uri').replace('@published', '');
     this.loadMoreAmount = containerElement.getAttribute('data-load-more-amount');
@@ -155,6 +172,7 @@ class EventsListController {
   }
 
   onClick() {
+    console.log('[onClick]', this);
     // short circuit if currently loading
     if (this.model.isLoading) return;
     // now begin loading sequence
