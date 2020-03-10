@@ -3,7 +3,6 @@
 const KilnInput = window.kiln.kilnInput,
   { getComponentName } = require('clayutils'),
   rest = require('../../../universal/rest'),
-  _isUndef = require('lodash/isUndefined'),
   _get = require('lodash/get'),
   CLAY_SITE_PROTOCOL = process.env.CLAY_SITE_PROTOCOL;
 
@@ -33,11 +32,11 @@ module.exports = (schema) => {
      * @param {String} leadImgUrl
      * @returns {Void}
      */
-    setToFeedImgComponentToLeadImage = (
-      feedImgRef, leadImgUrl
+    setFeedImgComponentToLeadImage = (
+      feedImgRef, leadImgProps
     ) => kilnInput.saveComponent(
       feedImgRef,
-      { url: leadImgUrl }
+      leadImgProps
     ),
     /**
      * Sets the feed image url to the lead image url if it has not already been set
@@ -55,9 +54,7 @@ module.exports = (schema) => {
         } = pageState,
         {
           uri: currentUri,
-          data: {
-            url: leadImgUrl
-          }
+          data: leadImgProps
         } = payload,
         componentName = getComponentName(currentUri),
         isImageComponent = componentName === 'image';
@@ -65,6 +62,8 @@ module.exports = (schema) => {
       if (!isImageComponent) {
         return;
       }
+
+      console.log(payload);
 
       // eslint-disable-next-line one-var
       const mainComponentData = components[mainComponentRef],
@@ -77,8 +76,9 @@ module.exports = (schema) => {
        * to update depending on whether that component exists.
        */
       if (shouldCheckForEmptyFeedImg) {
-        const { feedImg } = mainComponentData,
-          hasFeedImgComponent = !_isUndef(feedImg);
+        const { leadImgUrl } = leadImgProps,
+          { feedImg } = mainComponentData,
+          hasFeedImgComponent = feedImg !== undefined;
 
         if (hasFeedImgComponent) {
           const feedImgData = await rest.get(
@@ -87,8 +87,8 @@ module.exports = (schema) => {
             hasUrl = Boolean(feedImgData.url);
 
           if (!hasUrl) {
-            setToFeedImgComponentToLeadImage(
-              feedImg._ref, leadImgUrl
+            setFeedImgComponentToLeadImage(
+              feedImg._ref, leadImgProps,
             );
           }
 
