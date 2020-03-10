@@ -7,7 +7,6 @@ titleLocked:
 stationSlug:
   _label: Station Slug
   _publish:
-    - sectionFront
     - ogTitle
     - pageListTitle
     - pageTitle
