@@ -1,7 +1,6 @@
 'use strict';
 
-const recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
-  { recirculationData } = require('../../services/universal/recirc/recirculation'),
+const { recirculationData } = require('../../services/universal/recirc/recirculation'),
   { toPlainText } = require('../../services/universal/sanitize'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   qs = require('qs'),
@@ -48,6 +47,31 @@ module.exports = recirculationData({
   mapDataToFilters: (uri, data) => ({
     maxItems: getMaxItems(data)
   }),
+
+  /**
+   * @param {object} locals
+   * @param {object} result The validated item
+   * @param {object} item
+   * @returns {object}
+   */
+  mapResultsToTemplate: async (locals, result, item = {}) => {
+    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+
+    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+
+    return {
+      ...item,
+      date: result.date,
+      uri: result._id,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      pageUri: result.pageUri,
+      urlIsValid: result.urlIsValid,
+      canonicalUrl: item.url || result.canonicalUrl,
+      feedImgUrl: item.overrideImage || result.feedImgUrl,
+      label: item.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
+      plaintextTitle: toPlainText(item.title)
+    };
+  },
 
   /**
    * @param {string} ref
@@ -101,44 +125,6 @@ module.exports = recirculationData({
     data._computed.storySizeParams = asQuery(defaultImageSizes.default);
     data._computed.primaryStorySizes = mapSizes(primaryImageSizes);
     data._computed.primaryStorySizeParams = asQuery(primaryImageSizes.default);
-
-    return data;
-  },
-
-  /**
-   * @param {string} ref
-   * @param {object} data
-   * @param {object} locals
-   * @returns {Promise}
-   */
-  save: async (ref, data, locals) => {
-    if (!data.items.length || !locals) {
-      return data;
-    }
-
-    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
-
-    data.items = await Promise.all(data.items.map(async (item) => {
-      item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-      const searchOpts = {
-          includeIdInResult: true,
-          shouldDedupeContent: false
-        },
-        result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
-
-      return {
-        ...item,
-        date: result.date,
-        uri: result._id,
-        primaryHeadline: item.overrideTitle || result.primaryHeadline,
-        pageUri: result.pageUri,
-        urlIsValid: result.urlIsValid,
-        canonicalUrl: item.url || result.canonicalUrl,
-        feedImgUrl: item.overrideImage || result.feedImgUrl,
-        label: item.overrideLabel || getSectionFrontName(result.sectionFront, primarySectionFronts),
-        plaintextTitle: toPlainText(item.title)
-      };
-    }));
 
     return data;
   }
