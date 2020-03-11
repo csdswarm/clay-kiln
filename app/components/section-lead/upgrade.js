@@ -74,8 +74,8 @@ module.exports['7.0'] = async (uri, data) => {
   data.excludeSecondarySectionFronts = data.filterSecondarySectionFronts || data.excludeSecondarySectionFronts;
   data.excludeTags = data.filterTags || data.excludeTags;
 
-  delete data.excludeSecondarySectionFronts;
-  delete data.excludeTags;
+  delete data.filterSecondarySectionFronts;
+  delete data.filterTags;
 
   return data;
 };
