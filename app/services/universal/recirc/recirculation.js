@@ -362,7 +362,7 @@ const
             content = await fetchRecirculation({ filters, excludes, elasticFields, pagination, maxItems }, locals);
 
           data._computed = Object.assign(data._computed || {}, {
-            [contentKey]: [...curated, ...content].slice(0, maxItems).map(item => mapResultsToTemplate(locals, item)),
+            [contentKey]: await Promise.all([...curated, ...content].slice(0, maxItems).map(async (item) => mapResultsToTemplate(locals, item))),
             initialLoad: !pagination.page,
             moreContent: content.length > maxItems
           });
