@@ -172,7 +172,6 @@ class EventsListController {
   }
 
   onClick() {
-    console.log('[onClick]', this);
     // short circuit if currently loading
     if (this.model.isLoading) return;
     // now begin loading sequence
