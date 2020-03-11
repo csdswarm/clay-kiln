@@ -27,7 +27,7 @@ mainContent:
     required: true
   _componentList:
     fuzzy: true
-    includes:
+    include:
       - section-lead
       - google-ad-manager
       - podcast-list
