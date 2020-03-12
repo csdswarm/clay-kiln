@@ -151,6 +151,17 @@ describe('server', () => {
 
       });
 
+      it('is station aware for some lists', async () => {
+        const localsCopy = { ...JSON.parse(JSON.stringify(locals)), stationForPermissions: { site_slug: 'kxyz' } };
+
+        sinon.spy(_, 'getFromCache');
+        sinon.stub(_, 'STATION_AWARE').value({ 'my-list': true });
+
+        const result = await retrieveList('my-list', localsCopy);
+
+        expect(result).to.eql(locals.lists['kxyz-my-list']);
+      });
+
     });
 
     describe('uncacheList', () => {
