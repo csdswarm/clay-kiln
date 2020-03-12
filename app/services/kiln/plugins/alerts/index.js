@@ -1,32 +1,26 @@
 'use strict';
 
-// Require depedencies.
-const alerts = require('./alerts.vue'),
+const _set = require('lodash/set'),
+  alerts = require('./alerts.vue'),
   alertsMain = require('./alerts-main.vue'),
-  { anyStation } = require('../../../universal/user-permissions');
+  { unityAppDomainName: unityApp } = require('../../../universal/urps'),
+  addPermissions = require('../../../universal/user-permissions');
 
-// Register plugin.
+function hasAlertsAccess() {
+  const { locals } = window.kiln,
+    { stationsIHaveAccessTo, user } = locals;
+
+  addPermissions(locals);
+
+  return user.can('create').a('global-alert').for(unityApp).value
+    || user.can('update').a('global-alert').for(unityApp).value
+    || Object.keys(stationsIHaveAccessTo || {}).length;
+}
+
 module.exports = () => {
-  window.kiln = window.kiln || {};
-  window.kiln.locals = window.kiln.locals || {};
-  window.kiln.navButtons = window.kiln.navButtons || {};
-
-  const hasAlertsAccess = () => {
-    const { stationsIHaveAccessTo, user } = window.kiln.locals;
-
-    if (user && user.can && stationsIHaveAccessTo) {
-      return user.can('create').an('alerts_global').for(anyStation).value ||
-        user.can('update').an('alerts_global').for(anyStation).value ||
-        Object.keys(stationsIHaveAccessTo).length;
-    }
-
-    return false;
-  };
-
   // Don't register if the user doesn't have permission
   if (hasAlertsAccess()) {
-    window.kiln.navButtons['alerts'] = alerts;
-    window.kiln.navContent = window.kiln.navContent || {};
-    window.kiln.navContent['alerts'] = alertsMain;
+    _set(window, 'kiln.navButtons.alerts', alerts);
+    _set(window.kiln, 'navContent.alerts', alertsMain);
   }
 };

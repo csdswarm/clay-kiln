@@ -112,13 +112,13 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
   //   And when locals doesn't exist there's no reason to dedupe.
   const shouldDedupe = locals && opts.shouldDedupeContent,
     loadedIds = shouldDedupe
-      ? locals.loadedIds
+      ? locals.loadedIds.filter(id => id)
       : [];
 
   getSearchInstance();
 
   if (!module.exports.searchInstance) {
-    return bluebird.reject('Search not instantiated.');
+    return bluebird.reject(new Error('Search not instantiated.'));
   }
 
   loadedIds.forEach(_id => universalQuery.addMustNot(query, { match: { _id } }));
@@ -248,13 +248,13 @@ function logCatch(e, ref) {
 module.exports = newQueryWithPrefix;
 
 Object.assign(module.exports, universalQuery, {
-  searchInstance: null,
+  executeMultipleSearchRequests,
+  getCount,
+  logCatch,
   newQueryWithCount,
+  onePublishedArticleByUrl,
   searchByQuery,
   searchByQueryWithRawResult,
-  getCount,
-  executeMultipleSearchRequests,
-  updateByQuery,
-  onePublishedArticleByUrl,
-  logCatch
+  searchInstance: null,
+  updateByQuery
 });

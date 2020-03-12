@@ -1,6 +1,7 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
+  { unityAppDomainName } = require('../universal/urps'),
   log = require('../universal/log').setup({ file: __filename }),
   whenRightDrawerExists = require('./when-right-drawer-exists'),
   preloadTimeout = 5000,
@@ -124,16 +125,34 @@ const addPermissions = require('../universal/user-permissions'),
    *   have permissions
    *
    * @param {object} schema
+   * @param {object} opts
+   * @param {boolean} opts.checkStationAccess - determines whether this method should
+   *   only enforce publish rights based off station access.  This makes sense
+   *   for content types which allow all roles to publish such as article
+   *   and gallery.
    **/
-  enforcePublishRights = schema => {
+  enforcePublishRights = (schema, { checkStationAccessFor }) => {
     const { schemaName } = schema,
       kilnInput = new KilnInput(schema),
       whenPreloadedPromise = whenPreloaded(kilnInput);
 
     whenRightDrawerExists(kilnInput, async rightDrawerEl => {
       const { locals } = await whenPreloadedPromise,
-        canPublish = locals.user.can('publish').a(schemaName).value,
-        canUnpublish = locals.user.can('unpublish').a(schemaName).value;
+        { site_slug } = locals.stationForPermissions,
+        hasAccess = !!locals.stationsIHaveAccessTo[site_slug],
+        getCan = publishOrUnpublish => {
+          // if a user doesn't have station access then the subsequent un/publish
+          //   checks will fail
+          if (checkStationAccessFor[publishOrUnpublish]) {
+            return hasAccess;
+          } else if (schemaName === 'homepage') {
+            return locals.user.can(publishOrUnpublish).a(schemaName).for(unityAppDomainName).value;
+          } else {
+            return locals.user.can(publishOrUnpublish).a(schemaName).value;
+          }
+        },
+        canPublish = getCan('publish'),
+        canUnpublish = getCan('unpublish');
 
       if (canPublish && canUnpublish) {
         return;

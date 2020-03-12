@@ -3,11 +3,17 @@
 /* eslint-disable one-var */
 
 const expect = require('chai').expect;
+const proxyquire = require('proxyquire');
+const noop = require('lodash/noop');
 const dirname = __dirname.split('/').pop();
 const filename = __filename.split('/').pop().split('.').shift();
 const sinon = require('sinon');
 const { isEmptyComponent } = require('../../services/universal/contentAppleNews/utils');
-const facebookPostAnfModel = require('./anf.model');
+const facebookPostAnfModel = proxyquire('./anf.model', {
+  '../../services/universal/log': {
+    setup: () => noop
+  }
+});
 const anfFacebookPost = (URL) => ({
   role: 'facebook_post',
   URL,

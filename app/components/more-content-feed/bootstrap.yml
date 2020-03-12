@@ -12,10 +12,12 @@ _components:
     sectionFrontManual: ''
     secondarySectionFront: ''
     secondarySectionFrontManual: ''
-    filterTags: []
-    filterSecondarySectionFronts: []
+    excludeTags: []
+    excludeSectionFronts: []
+    excludeSecondarySectionFronts: []
     populateFrom: ''
     locationOfContentFeed: ''
     sharethroughTag:
       _ref: /_components/google-ad-manager/instances/sharethroughTag
     introComponents: []
+    enableSharethrough: true

@@ -15,19 +15,15 @@ const AWS = require('aws-sdk'),
   }),
   uuidv4 = require('uuid/v4'),
   additionalDataTypes = require('../services/server/add-data-types'),
-  alerts = require('../services/server/alerts'),
-  importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
   addEndpoints = require('./add-endpoints'),
   ensureStationOnCustomUrl = require('./ensure-station-on-custom-url'),
-  validScripts = require('../services/server/valid-source'),
   siteMapStations = require('./sitemap-stations'),
   siteMapGoogleNews = require('./sitemap-google-news'),
   stationTheming = require('../services/server/stationThemingApi');
 
 module.exports = router => {
-
   // Auth Middleware
   // Add this middleware to a route if the route requires authentication.
   function checkAuth(req, res, next) {
@@ -37,6 +33,8 @@ module.exports = router => {
       return next();
     }
   }
+
+  addEndpoints.refreshPermissions(router, checkAuth);
 
   /**
    *
@@ -142,11 +140,7 @@ module.exports = router => {
     });
   });
 
-  /**
-   * Use import-content here to grab amphora user
-   */
-  router.post('/import-content', importContent);
-
+  addEndpoints.importContent(router);
   addEndpoints.sitemap(router);
 
   /**
@@ -161,8 +155,9 @@ module.exports = router => {
 
   additionalDataTypes.inject(router, checkAuth);
   stationTheming.inject(router, checkAuth);
-  alerts.inject(router, checkAuth);
+  addEndpoints.alerts(router);
   addEndpoints.createPage(router);
+  addEndpoints.imageInfo(router, checkAuth);
   ensureStationOnCustomUrl(router);
-  validScripts.inject(router, checkAuth);
+  addEndpoints.validSource(router);
 };
