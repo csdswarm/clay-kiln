@@ -8,3 +8,5 @@ title:
     text: Divider Title
   _has:
     input: inline
+    validate:
+      max: 50
