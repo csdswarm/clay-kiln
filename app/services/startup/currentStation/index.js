@@ -16,7 +16,7 @@ module.exports = wrapInTryCatch(async (req, res, next) => {
   const { locals } = res,
     allStations = await stationUtils.getAllStations({ locals });
 
-  await assignStationsToLocals(locals, req, allStations);
+  await assignStationsToLocals(locals, req, res, allStations);
 
   Object.assign(locals, {
     allStationsCallsigns: Object.keys(allStations.byCallsign),
