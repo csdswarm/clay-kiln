@@ -79,7 +79,7 @@ module.exports = recirculationData({
    * @param {object} locals
    * @returns {Promise}
    */
-  render: async (ref, data, locals) => {
+  render: (ref, data, locals) => {
     const inMultiColumn = data._computed.parents.some(parent => getComponentName(parent) === 'multi-column'),
       squareCrop = '1:1,offset-y0',
       wideCrop = '8:5.1,offset-y0',
