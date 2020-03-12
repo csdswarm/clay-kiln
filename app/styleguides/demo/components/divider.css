@@ -3,6 +3,9 @@
 @import "_global/colors";
 
 .divider {
+  min-height: 25px;
+  margin-bottom: em(30);
+
   .divider_title {
     @mixin more-content-feed-font1;
     width: 100%;
@@ -10,7 +13,6 @@
     z-index: 1;
     text-align: center;
     color: $parisM;
-    margin-bottom: em(30);
     &:before {
       border-top: em(1, 20) solid $parisM;
       content: "";

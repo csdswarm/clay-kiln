@@ -1,3 +1,6 @@
 _components:
   divider:
     title: ''
+    instances:
+      new:
+        title: ''
