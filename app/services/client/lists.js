@@ -23,8 +23,16 @@ const rest = require('../universal/rest'),
     return entry ? entry.name : slug;
   };
 
-module.exports.retrieveList = retrieveList;
-module.exports.getSectionFrontName = getSectionFrontName;
+module.exports = {
+  retrieveList,
+  getSectionFrontName,
 
-// Returns a resolved promise to ensure API compatibility with the server counterpart
-module.exports.uncacheList = () => Promise.resolve();
+  // Returns a resolved promise to ensure API compatibility with the server counterpart
+  addListItem:  () => Promise.resolve(),
+  deleteListItem: () => Promise.resolve(),
+  saveList: () => Promise.resolve(),
+  uncacheList: () => Promise.resolve(),
+  updateListItem: () => Promise.resolve()
+};
+
+
