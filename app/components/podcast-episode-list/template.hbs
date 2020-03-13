@@ -1,0 +1,50 @@
+{{#*inline "podcastListItem"}}
+  <li class="podcast-episode-list__item">
+    <div class="podcast-episode-list__item-thumb">
+      <img src="{{image_url}}" alt="" class="podcast-episode-list__image">
+    </div>
+    <div class="podcast-episode-list__item-info">
+      <div class="podcast-episode-list__info-meta">
+        <div class="podcast-episode-list__pub-date">{{published_date_formatted}}</div>
+        <div class="podcast-episode-list__duration">
+          <span class="podcast-episode-list__meta-icon">
+            {{{ read 'components/podcast-episode-list/media/ic_time.svg' }}}
+          </span>
+          {{duration_seconds_formatted}}
+        </div>
+        <a class="podcast-episode-list__download-link" href="{{audio_url}}">
+          <span class="podcast-episode-list__meta-icon">
+            {{{ read 'components/podcast-episode-list/media/ic_download.svg' }}}
+          </span>
+          Download
+        </a>
+      </div>
+      <div class="podcast-episode-list__title">{{title}}</div>
+      <div class="podcast-episode-list__description">{{truncate description 60}}</div>
+    </div>
+    <div class="podcast-episode-list__item-controls">
+      <button type="button" class="podcast-episode-list__play-btn podcast-episode-list__btn">
+        {{{ read 'components/podcast-episode-list/media/play_sm.svg' }}}
+      </button>
+    </div>
+  </li>
+{{/inline}}
+
+<div class="component component--podcast-episode-list podcast-episode-list" data-uri="{{ default _ref _self }}">
+  <div class="podcast-episode-list__controls">
+    <select name="episodesOrder" id="episodesOrder">
+      <option value="desc">Most Recent</option>
+      <option value="asc">Oldest</option>
+    </select>
+  </div>
+  <ul>
+    {{#each _computed.episodes as |podcast|}}
+      {{> podcastListItem podcast.attributes }}
+    {{/each}}
+  </ul>
+  {{#if _computed.loadMoreEnabled}}
+    <div class="podcast-episode-list__load-more">
+      <button class="podcast-episode-list__load-more-btn podcast-episode-list__btn">Load More</button>
+    </div>
+  {{/if}}
+</div>
