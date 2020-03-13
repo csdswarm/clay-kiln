@@ -35,7 +35,6 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
 		CROSS JOIN env
 		JOIN articles_and_galleries ag 
 			ON ag.lead = bc.id
-		WHERE bc.data ->> 'seoEmbedUrl' IS NOT NULL
 	),
 	_page_data AS (
 	  SELECT

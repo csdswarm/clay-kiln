@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require('amphora-storage-postgres'),
-  { createTable } = require('../services/server/db'),
+  { checkTableExists, createTable } = require('../services/server/db'),
   TABLE_NAME = 'environment_variables',
   { BRIGHTCOVE_ACCOUNT_ID } = process.env,
   /**
@@ -16,12 +16,14 @@ const db = require('amphora-storage-postgres'),
     `, values);
   },
   /**
-   * Drops the environment variable table
+   * Empty the environment variable table
    */
-  dropTable = async () => {
-    await db.raw(`
-        DROP TABLE IF EXISTS ${TABLE_NAME}
-    `);
+  truncateTable = async () => {
+    if (await checkTableExists(TABLE_NAME)) {
+      await db.raw(`
+        TRUNCATE TABLE ${TABLE_NAME}
+      `);
+    }
   };
 
 module.exports = async () => {
@@ -36,8 +38,8 @@ module.exports = async () => {
     throw new Error(`${missingVariables.join(',')} are required variables`);
   }
 
-  // Drop the table every time to ensure only the specific variables are available
-  await dropTable(TABLE_NAME);
+  // Drop the table every time to ensure only the specific variables
+  await truncateTable(TABLE_NAME);
   await createTable(TABLE_NAME, 'text');
 
   await Promise.all(Object.entries(variablesToStore).map(addEnvironmentVariable));

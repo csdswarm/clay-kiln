@@ -25,6 +25,7 @@ const utils = require('../universal/utils'),
    * Create table in Postgres if it doesn't exist
    *
    * @param {string} tableName
+   * @param {string} dataType
    * @returns {Promise}
    */
   createTable = async (tableName, dataType = 'jsonb') => {
@@ -178,6 +179,7 @@ module.exports.post = post;
 module.exports.put = put;
 module.exports.raw = db.raw;
 module.exports.uriToUrl = utils.uriToUrl;
+module.exports.checkTableExists = checkTableExists;
 module.exports.createTable = createTable;
 module.exports.ensureTableExists = ensureTableExists;
 module.exports.DATA_STRUCTURES = DATA_STRUCTURES;

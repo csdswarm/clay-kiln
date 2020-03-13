@@ -21,7 +21,6 @@ const AWS = require('aws-sdk'),
   environmentVariablesInDb = require('./environment-variables-in-db'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
-  refreshViews = require('./add-endpoints/sitemap').refreshViews,
   siteMapGoogleNews = require('./sitemap-google-news'),
   siteMapStations = require('./sitemap-stations'),
   validScripts = require('../services/server/valid-source');
