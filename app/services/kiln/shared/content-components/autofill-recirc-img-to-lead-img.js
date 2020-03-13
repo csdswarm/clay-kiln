@@ -29,7 +29,7 @@ module.exports = (schema) => {
     /**
      * Sets the feedImg component's url to lead img url
      * @param {String} feedImgRef
-     * @param {String} leadImgUrl
+     * @param {String} leadImgProps
      * @returns {Void}
      */
     setFeedImgComponentToLeadImage = (
