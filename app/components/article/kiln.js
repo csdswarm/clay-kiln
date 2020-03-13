@@ -1,10 +1,9 @@
 'use strict';
 
 const { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
-  handleEditModePlaceholders = require('../../services/kiln/handle-edit-mode-placeholders'),
-  KilnInput = window.kiln.kilnInput;
-  
+  applyContentLogic = require('../../services/kiln/apply-content-logic');
+
 module.exports = schema => {
-  handleEditModePlaceholders(new KilnInput(schema));
+  applyContentLogic(schema);
   return syncFields(schema, syncHeadlines('article'));
 };

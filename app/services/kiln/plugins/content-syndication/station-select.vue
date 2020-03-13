@@ -12,6 +12,7 @@
         :multiple="true"
         :options="stationOptions"
         :value="value"
+        :disabled="disabled"
         @input="updateSelectedStation"
       >
       </ui-select>
@@ -19,20 +20,15 @@
   </div>
 </template>
 <script>
-  const radioApi = require('../../../../services/client/radioApi'),
-    UiSelect = window.kiln.utils.components.UiSelect,
-    log = require('../../../../services/universal/log').setup({file: __filename});
+  const UiSelect = window.kiln.utils.components.UiSelect;
 
   export default {
-    props: ['name', 'data', 'schema', 'args'],
+    props: ['name', 'data', 'schema', 'args', 'disabled'],
     data() {
       return {
         selectedStation: this.data,
-        stationOptions: null
+        stationOptions: (window.kiln.locals.allStationsCallsigns || []).sort()
       };
-    },
-    mounted () {
-      this.populateStations()
     },
     computed: {
       value() {
@@ -40,22 +36,6 @@
       },
     },
     methods: {
-      /**
-       *  This function is called when the component is mounted.
-       *  It queries the api.radio.com for stations and sets them as selectable.
-       */
-      async populateStations() {
-        try {
-          const apiRequest = 'https://api.radio.com/v1/stations?page[size]=1000&sort=callsign',
-            stationsResponse = await radioApi.get(apiRequest);
-
-          if (stationsResponse) {
-            this.stationOptions = stationsResponse.data.map(station => {
-              return station.attributes.callsign;
-            });
-          }
-        } catch (e) {}
-      },
       /**
        *  This function is called when a station is selected from the dropdown. Sets it as currently selected.
        * @param {Object} input
