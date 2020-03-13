@@ -27,13 +27,13 @@ const utils = require('../universal/utils'),
    * @param {string} tableName
    * @returns {Promise}
    */
-  createTable = async (tableName) => {
+  createTable = async (tableName, dataType = 'jsonb') => {
     if (!await checkTableExists(tableName)) {
       try {
         await db.raw(`
           CREATE TABLE ${tableName} (
             id text PRIMARY KEY,
-            data jsonb
+            data ${dataType}
           )
         `);
       } catch (e) {
@@ -178,5 +178,6 @@ module.exports.post = post;
 module.exports.put = put;
 module.exports.raw = db.raw;
 module.exports.uriToUrl = utils.uriToUrl;
+module.exports.createTable = createTable;
 module.exports.ensureTableExists = ensureTableExists;
 module.exports.DATA_STRUCTURES = DATA_STRUCTURES;

@@ -14,15 +14,17 @@ const AWS = require('aws-sdk'),
     region: 'us-east-1'
   }),
   uuidv4 = require('uuid/v4'),
+  addEndpoints = require('./add-endpoints'),
   additionalDataTypes = require('../services/server/add-data-types'),
   alerts = require('../services/server/alerts'),
+  brightcoveApi = require('../services/universal/brightcoveApi'),
+  environmentVariablesInDb = require('./environment-variables-in-db'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
-  brightcoveApi = require('../services/universal/brightcoveApi'),
-  validScripts = require('../services/server/valid-source'),
-  addEndpoints = require('./add-endpoints'),
+  refreshViews = require('./add-endpoints/sitemap').refreshViews,
+  siteMapGoogleNews = require('./sitemap-google-news'),
   siteMapStations = require('./sitemap-stations'),
-  siteMapGoogleNews = require('./sitemap-google-news');
+  validScripts = require('../services/server/valid-source');
 
 module.exports = router => {
 
@@ -162,4 +164,6 @@ module.exports = router => {
 
   addEndpoints.imageInfo(router, checkAuth);
   validScripts.inject(router, checkAuth);
+
+  environmentVariablesInDb();
 };

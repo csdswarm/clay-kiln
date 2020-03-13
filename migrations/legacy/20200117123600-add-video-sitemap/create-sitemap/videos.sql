@@ -1,6 +1,12 @@
 DROP MATERIALIZED VIEW IF EXISTS sitemap_videos;
 
 CREATE MATERIALIZED VIEW sitemap_videos AS WITH
+	env as (
+		SELECT data ->> 'BRIGHTCOVE_PLAYER_ID' as BRIGHTCOVE_PLAYER_ID, data ->> 'BRIGHTCOVE_ACCOUNT_ID' as BRIGHTCOVE_ACCOUNT_ID
+			FROM (
+				SELECT json_object(array_agg(id), array_agg(data)) as data FROM public."environment_variables"
+			) as variables
+	),
     articles_and_galleries AS (
         SELECT id, data -> 'lead' -> 0 ->> '_ref' as lead 
 			FROM components.gallery g 
@@ -20,12 +26,13 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
 				xmlelement(name thumbnail_loc, bc.data ->> 'thumbnailUrl'),
 				xmlelement(name title, bc.data ->> 'name'),
 				xmlelement(name description, bc.data ->> 'seoDescription'),
-				xmlelement(name content_loc, bc.data ->> 'seoEmbedUrl'),
+				xmlelement(name content_loc, 'https://players.brightcove.net/' || env.BRIGHTCOVE_ACCOUNT_ID || '/' || env.BRIGHTCOVE_PLAYER_ID || '_default/index.html?videoId=' || (bc.data -> 'video' ->> 'id')),
 				xmlelement(name duration, bc.data ->> 'duration'),
 				xmlelement(name view_count, bc.data ->> 'views'),
 				xmlelement(name publication_date, bc.data ->> 'bcPublishedAt')
 			) as videoXML
 		FROM components.brightcove bc
+		CROSS JOIN env
 		JOIN articles_and_galleries ag 
 			ON ag.lead = bc.id
 		WHERE bc.data ->> 'seoEmbedUrl' IS NOT NULL
