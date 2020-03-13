@@ -165,4 +165,13 @@ body > .podcast-lead {
       }
     }
   }
+  &__subscribe-link-apple {
+    flex-basis: 132px;
+  }
+  &__subscribe-link-google {
+    flex-basis: 128px;
+  }
+  &__subscribe-link-rss {
+    flex-basis: 32px;
+  }
 }

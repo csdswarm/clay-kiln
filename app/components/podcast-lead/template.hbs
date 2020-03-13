@@ -12,17 +12,17 @@
       <div class="podcast-lead__subscribe-title">Subscribe</div>
       <div class="podcast-lead__subscribe-content">
         {{#if subscriptions.apple}}
-          <a href="{{ subscriptions.apple }}">
+          <a class="podcast-lead__subscribe-link-apple" href="{{ subscriptions.apple }}">
             {{{ read 'components/podcast-lead/media/US_UK_Apple_Podcasts_Listen_Badge_RGB.svg' }}}
           </a>
         {{/if}}
         {{#if subscriptions.google}}
-          <a href="{{ subscriptions.google }}">
+          <a class="podcast-lead__subscribe-link-google" href="{{ subscriptions.google }}">
             {{{ read 'components/podcast-lead/media/google_podcasts_badge_svg.svg' }}}
           </a>
         {{/if}}
         {{#if subscriptions.rss}}
-          <a href="{{ subscriptions.rss }}">
+          <a class="podcast-lead__subscribe-link-rss" href="{{ subscriptions.rss }}">
             {{{ read 'components/podcast-lead/media/RSS.svg' }}}
           </a>
         {{/if}}
