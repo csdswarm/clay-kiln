@@ -34,7 +34,7 @@ module.exports = router => {
       : await getTrimmedStationsViaUrps(
         req,
         locals,
-        urps.getStationDomainNamesIHaveAccessTo
+        urps.getDomainNamesIHaveAccessTo
       );
 
     next();

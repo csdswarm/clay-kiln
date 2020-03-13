@@ -3,18 +3,24 @@
 const getFromUrps = require('./get-from-urps'),
   { PERM_CHECK_INTERVAL } = require('./utils');
 
-const getStationDomainNamesIHaveAccessTo = makeCachedUrpsCall({
+// these are slight misnomers as it's only stations and markets, but I can't
+//   think of a good term to encompass both and the var names are already
+//   too long.
+//
+// also unfortunately we need the markets only for National (which we're using
+//   to represent RDC content).  We don't have an endpoint to get this
+//   information for a single domain and URPS is slammed at the moment with work
+//   so asking them to add another endpoint is unreasonable.
+const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
     urlPath: '/domains/by-type',
-    cachedPropName: 'stationDomainNamesIHaveAccessTo',
-    toResult: stations => stations.map(aStation => aStation.name),
-    urpsReqBody: { domainType: 'station' }
+    cachedPropName: 'domainNamesIHaveAccessTo',
+    toResult: domains => domains.map(aDomain => aDomain.name)
   }),
-  getStationDomainNamesICanImportContent = makeCachedUrpsCall({
+  getDomainNamesICanImportContent = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
-    cachedPropName: 'stationDomainNamesICanImportContent',
-    toResult: stations => stations.map(aStation => aStation.name),
+    cachedPropName: 'domainNamesICanImportContent',
+    toResult: domains => domains.map(aDomain => aDomain.name),
     urpsReqBody: {
-      domainType: 'station',
       action: 'import',
       // permissionCategory is the target as we think of it
       permissionCategory: 'content'
@@ -38,7 +44,7 @@ const getStationDomainNamesIHaveAccessTo = makeCachedUrpsCall({
  *   takes an 'isRefresh' option which refreshes the permissions if perm_check_interval hasn't passed yet.
  */
 function makeCachedUrpsCall(metaData) {
-  const { cachedPropName, toResult, urlPath, urpsReqBody } = metaData,
+  const { cachedPropName, toResult, urlPath, urpsReqBody = {} } = metaData,
     cachedCall = async (auth, opts = {}) => {
       const { isRefresh } = opts,
         currentTime = Date.now(),
@@ -51,16 +57,23 @@ function makeCachedUrpsCall(metaData) {
         || lastUpdated + PERM_CHECK_INTERVAL < currentTime
         || isRefresh
       ) {
-        const { data } = await getFromUrps(
-          urlPath,
-          urpsReqBody,
-          auth.token
-        );
+        const [{ data: stations }, { data: markets }] = await Promise.all([
+          getFromUrps(
+            urlPath,
+            Object.assign({ domainType: 'station' }, urpsReqBody),
+            auth.token
+          ),
+          getFromUrps(
+            urlPath,
+            Object.assign({ domainType: 'market' }, urpsReqBody),
+            auth.token
+          )
+        ]);
 
         lastUpdatedByUrlPath[urlPath] = currentTime;
 
         Object.assign(auth, {
-          [cachedPropName]: toResult(data),
+          [cachedPropName]: toResult(stations.concat(markets)),
           lastUpdatedByUrlPath
         });
       }
@@ -72,6 +85,6 @@ function makeCachedUrpsCall(metaData) {
 }
 
 module.exports = {
-  getStationDomainNamesICanImportContent,
-  getStationDomainNamesIHaveAccessTo
+  getDomainNamesICanImportContent,
+  getDomainNamesIHaveAccessTo
 };

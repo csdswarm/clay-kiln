@@ -1,11 +1,5 @@
 'use strict';
 
-/**
- * NOTE: ./constants needs access to getStationDomainName so if this file ends
- *   up needing a value from ./constants then we'll have to restructure the code
- *   to avoid a circular dependency
- */
-
 // Unity App encompasses permissions which don't belong to a station such as
 //   whether you can update a global alert or the homepage
 const unityAppDomainName = 'Unity App';
