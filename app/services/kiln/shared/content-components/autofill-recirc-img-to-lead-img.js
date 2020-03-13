@@ -15,7 +15,7 @@ module.exports = (schema) => {
     },
     /**
      * Save feedImgUrl to component model
-     * @param {String} articleRef
+     * @param {String} refToUpdate
      * @param {String} leadImgUrl
      * @returns {Void}
      */
