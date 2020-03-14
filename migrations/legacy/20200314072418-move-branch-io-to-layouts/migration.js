@@ -59,7 +59,7 @@ async function addBranchIoToLayouts() {
       (_, data) => {
         // remove old branch-io component references
         if (Array.isArray(data.head)) {
-          data.head = data.head.filter(ref => !ref.includes('/branch-io/'));
+          data.head = data.head.filter(ref => !ref.includes('/branch-io-head/'));
         }
       }
     );
