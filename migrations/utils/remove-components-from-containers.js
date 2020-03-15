@@ -71,6 +71,10 @@ async function removeComponentsFromContainers_v1(argObj) {
 
 /**
  * ensures all ids in 'remove' begin with the host
+ *
+ * @param {string} host
+ * @param {object} remove
+ * @returns {object} - updated remove
  */
 function sanitizeRemove({ host, remove }) {
   return _.chain(remove)
