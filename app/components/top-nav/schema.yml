@@ -2,6 +2,8 @@ _version: 1.0
 _description: |
   This is the site header at the top of every page. It displays the site logo, navigational links, account button, and search button.
 _confirmRemoval: true
+_permission:
+  update: navigation
 
 headerLinks:
   _label: Links

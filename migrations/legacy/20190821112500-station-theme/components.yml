@@ -1,0 +1,5 @@
+_components:
+  theme:
+    instances:
+      default:
+        allowed: true

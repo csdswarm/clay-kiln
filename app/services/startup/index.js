@@ -23,6 +23,7 @@ const pkg = require('../../package.json'),
   eventBusSubscribers = require('./event-bus-subscribers'),
   user = require('./user'),
   radium = require('./radium'),
+  cognitoAuth = require('./cognito-auth'),
   apiStg = require('./apiStg'),
   cookies = require('./cookies'),
   addEndpoints = require('./add-endpoints'),
@@ -98,6 +99,8 @@ function setupApp(app) {
   addEndpoints.msnFeed(app);
 
   radium.inject(app);
+
+  cognitoAuth.inject(app);
 
   app.use(canonicalJSON);
 

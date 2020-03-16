@@ -15,15 +15,11 @@ const { getArticleData } = require('../universal/recirc/recirc-cmpt'),
    */
   componentSlugUrl = (componentName = '', data = {}) => {
     if (componentName === PAGE_TYPES.ARTICLE) {
-      return data.secondarySectionFront
-        ? urlPatterns.articleSecondarySectionFrontSlugPattern(data)
-        : urlPatterns.articleSlugPattern(data);
+      return urlPatterns.article(data);
     }
 
     if (componentName === PAGE_TYPES.GALLERY) {
-      return data.secondarySectionFront
-        ? urlPatterns.gallerySecondarySectionFrontSlugPattern(data)
-        : urlPatterns.gallerySlugPattern;
+      return urlPatterns.gallery(data);
     }
 
     return '';
