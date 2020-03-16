@@ -18,7 +18,6 @@ const AWS = require('aws-sdk'),
   additionalDataTypes = require('../services/server/add-data-types'),
   alerts = require('../services/server/alerts'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
-  environmentVariablesInDb = require('./environment-variables-in-db'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   siteMapGoogleNews = require('./sitemap-google-news'),
@@ -163,6 +162,4 @@ module.exports = router => {
 
   addEndpoints.imageInfo(router, checkAuth);
   validScripts.inject(router, checkAuth);
-
-  environmentVariablesInDb();
 };

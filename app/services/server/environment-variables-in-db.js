@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require('amphora-storage-postgres'),
-  { checkTableExists, createTable } = require('../services/server/db'),
+  { checkTableExists, createTable } = require('./db'),
   TABLE_NAME = 'environment_variables',
   { BRIGHTCOVE_ACCOUNT_ID } = process.env,
   /**
