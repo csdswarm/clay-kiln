@@ -7,6 +7,7 @@ const
   queryService = require('../../services/server/query'),
   elasticIndex = 'published-content',
   elasticFields = [
+    'itemId',
     'headline',
     'startDate',
     'startTime',
@@ -43,7 +44,7 @@ async function getEventDataFromElastic(event, data, locals) {
       urlToElasticSearch(event.url)
     );
 
-  queryService.addFilter(query, { term: { canonicalUrl } });
+  queryService.addMust(query, { match: { canonicalUrl } });
   queryService.addFilter(query, { term: { contentType: 'event' } });
   if (data.stationSlug) {
     queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
@@ -51,6 +52,7 @@ async function getEventDataFromElastic(event, data, locals) {
     queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
+
   return queryService.searchByQuery(query)
     .then(function (result) {
       return {
@@ -105,23 +107,24 @@ async function getRecentEventsFromElastic(uri, data, locals) {
     });
   }
 
-  data.initialLoad = false;
-
   if (locals && locals.page) {
     /* after the first 10 items, show N more at a time (pageLength defaults to 5)
     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
     * we return N + 1 items so we can let the frontend know if we have more data.
     */
 
-    const skip = data.numberToDisplay + (parseInt(locals.page) - 1) * data.loadMoreAmount;
+    /**
+     * need to offset by 1 so we don't load the last item from
+     * previous load
+     */
+    const offset = 1,
+      skip = offset
+        + data.numberToDisplay
+        + (parseInt(locals.page) - 1) * data.loadMoreAmount;
 
     queryService.addOffset(query, skip);
-  } else {
-    data.initialLoad = true;
-
-    // Default to loading 30 articles, which usually works out to 4 pages
-    data.lazyLoads = Math.max(Math.ceil((30 - data.loadMoreAmount) / data.loadMoreAmount), 0);
   }
+
   return queryService.searchByQuery(query)
     .then(function (results) {
       return results.map(result => {
@@ -145,42 +148,35 @@ module.exports = unityComponent({
 
     assignStationInfo(uri, data, locals);
 
-    const curatedEvents = await bluebird.map(
-        data.curatedEvents,
-        async event => {
-          return await getEventDataFromElastic(event, data, locals);
-        },
-        { concurrency: 10 }
-      ),
-      recentEvents = await getRecentEventsFromElastic(uri, data, locals);
+    // setup curated events
+    data.curatedEventsData = await bluebird.map(
+      data.curatedEvents,
+      async event => {
+        return await getEventDataFromElastic(event, data, locals);
+      },
+      { concurrency: 10 }
+    );
 
-    // On initial load we need to append curated items onto the list, otherwise skip
-    // Show a maximum of pageLength links
-    if (data.initialLoad) {
-      data.events = curatedEvents.concat(recentEvents).slice(0, data.numberToDisplay);
-    } else {
-      data.events = recentEvents.slice(0, data.numberToDisplay);
-    }
     return data;
   },
   render: async (uri, data, locals) => {
-    data._computed.events = data.events.map(event => {
-      return {
-        ...event,
-        dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
+    const curatedEvents = data.curatedEventsData || [],
+      recentEvents = await getRecentEventsFromElastic(uri, data, locals),
+      events = curatedEvents.concat(recentEvents).slice(0, data.numberToDisplay),
+      prepareEvent = event => {
+        return {
+          ...event,
+          dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
+        };
       };
-    });
+
+    data._computed.events = events.map(prepareEvent);
     // load more functionality
     // if there is a page number include more events with the page num as offset
     if (locals.page) {
       const moreEvents =  await getRecentEventsFromElastic(uri, data, locals);
 
-      data._computed.moreEvents = moreEvents.map( event => {
-        return {
-          ...event,
-          dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
-        };
-      });
+      data._computed.moreEvents = moreEvents.map(prepareEvent);
     }
     return data;
   }
