@@ -3,10 +3,8 @@
   {{ if @root.locals.edit ' editing' }}"
 >
   {{!-- @TODO: ON-446 --}}
-  {{!-- {{> breadcrumbs this }} --}}
 
-  {{{ stringify podcast }}}
-  {{> podcast-lead this _self=true }}
+  {{> podcast-lead podcastLead }}
   <div class="podcast-show-page-body">
     <ul class="tabs">
       {{!-- @TODO: ON-1398 Tabbing --}}
