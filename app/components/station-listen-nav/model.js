@@ -1,6 +1,7 @@
 'use strict';
 
-const { playingClass } = require('../../services/universal/spaLocals'),
+const addSocialButtons = require('../../services/universal/add-social-buttons'),
+  { playingClass } = require('../../services/universal/spaLocals'),
   { getNowPlaying, getSchedule } = require('../../services/universal/station'),
 
   /**
@@ -20,13 +21,6 @@ const { playingClass } = require('../../services/universal/spaLocals'),
   };
 
 module.exports.render = async (ref, data, locals) => {
-  const buttons = {
-    facebook: (url) => url,
-    twitter: (id) => `https://twitter.com/${id}`,
-    youtube: (url) => url,
-    instagram: (url) => url
-  };
-
   if (!locals.station && !locals.station.id) {
     return data;
   }
@@ -54,16 +48,8 @@ module.exports.render = async (ref, data, locals) => {
   if (data.onAir) {
     data.onAir.image = appendParamsAmpOrQuery(data.onAir.image, locals);
   }
-  
-  data.socialButtons = [];
 
-  Object.keys(buttons).forEach(type => {
-    const url = data.station[type];
-
-    if (url) {
-      data.socialButtons.push({ type, url: buttons[type](url) });
-    }
-  });
+  addSocialButtons(data);
 
   return data;
 };

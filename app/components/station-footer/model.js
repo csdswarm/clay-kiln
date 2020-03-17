@@ -1,6 +1,7 @@
 'use strict';
 
 const { getStationPage, getStationFooter } = require('../../services/server/stationThemingApi'),
+  addSocialButtons = require('../../services/universal/add-social-buttons'),
   { unityComponent } = require('../../services/universal/amphora');
 
 module.exports = unityComponent({
@@ -8,13 +9,7 @@ module.exports = unityComponent({
     const { station, defaultStation } = locals,
       { site_slug } = station,
       isDefaultStation = site_slug === defaultStation.site_slug,
-      isDefaultRef = /instances\/default/.test(ref),
-      buttons = {
-        facebook: (url) => url,
-        twitter: (id) => `https://twitter.com/${id}`,
-        youtube: (url) => url,
-        instagram: (url) => url
-      };
+      isDefaultRef = /instances\/default/.test(ref);
 
     data._computed = {
       renderForStation: !isDefaultStation || !isDefaultRef
@@ -33,15 +28,7 @@ module.exports = unityComponent({
       }
     }
 
-    data.socialButtons = [];
-
-    Object.keys(buttons).forEach(type => {
-      const url = data.station[type];
-
-      if (url) {
-        data.socialButtons.push({ type, url: buttons[type](url) });
-      }
-    });
+    addSocialButtons(data);
 
     return data;
   }
