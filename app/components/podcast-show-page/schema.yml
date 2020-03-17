@@ -1,2 +1,7 @@
 _description: |
   Dynamic podcast show detail page
+
+podcastLead:
+  _component:
+    include:
+      - podcast-lead
