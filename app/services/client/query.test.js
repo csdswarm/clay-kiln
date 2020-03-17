@@ -1,14 +1,22 @@
 'use strict';
 
-var expect = require('chai').expect,
+var chai = require('chai'),
+  { expect } = chai,
+  chaiAsPromised = require('chai-as-promised'),
   dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
-  lib = require('./' + filename),
+  proxyquire = require('proxyquire'),
+  noop = require('lodash/noop'),
+  lib = proxyquire('./' + filename, {
+    '../universal/log': { setup: () => noop }
+  }),
   bluebird = require('bluebird'),
   sinon = require('sinon'),
   amphora = require('amphora'),
   siteService = amphora.sites,
-  db = amphora.db;
+  db = require('amphora-storage-postgres');
+
+chai.use(chaiAsPromised);
 
 const INDEX = 'pages',
   TYPE = '_doc';
@@ -39,7 +47,7 @@ describe(dirname, function () {
 
         expect(result.index).to.equal(INDEX);
         expect(result.type).to.equal(TYPE);
-        expect(result.body.query).to.eql({});
+        expect(result.body.query).to.deep.equal({});
       });
 
     });
@@ -52,7 +60,7 @@ describe(dirname, function () {
 
         expect(query.index).to.equal(INDEX);
         expect(query.type).to.equal(TYPE);
-        expect(query.body.query).to.eql({});
+        expect(query.body.query).to.deep.equal({});
         expect(query.body.size).to.equal(3);
       });
 
@@ -66,8 +74,9 @@ describe(dirname, function () {
         const respObj = { hits: { hits: ['hello'] } };
 
         lib.post.returns(Promise.resolve(respObj));
-        fn(query).then(function (result) {
-          expect(respObj).to.eql(result);
+
+        return fn(query).then(function (result) {
+          expect(respObj).to.equal(result);
         });
       });
 
@@ -78,19 +87,20 @@ describe(dirname, function () {
         query = lib(INDEX, locals);
 
       it('hits the search endpoint', function () {
-        const respObj = { hits: { hits: ['hello'] } };
+        const respObj = { hits: { hits: [{ _source: { some: 'prop' } }] } },
+          expectedResult = respObj.hits.hits.map(aHit => aHit._source);
 
-        lib.post.returns(Promise.resolve(respObj.hits.hits));
-        fn(query).then(function (result) {
-          expect(respObj.hits.hits).to.eql(result);
+        lib.post.returns(Promise.resolve(respObj));
+
+        return fn(query).then(function (result) {
+          expect(expectedResult).to.deep.equal(result);
         });
       });
 
       it('throw error if query fails', function () {
         lib.post.returns(Promise.reject());
-        fn(query).catch(function (result) {
-          expect(result).to.throw(Error);
-        });
+
+        return expect(fn(query)).to.be.rejected;
       });
 
     });
@@ -99,12 +109,15 @@ describe(dirname, function () {
       var fn = lib[this.title];
 
       it('returns number of results found', function () {
-        const respObj = { hits: { hits: ['hello'] } },
+        const respObj = { hits: {
+            hits: ['hello'],
+            total: 1
+          } },
           query = lib(INDEX, locals);
 
         lib.post.returns(Promise.resolve(respObj));
 
-        fn(query).catch(function (result) {
+        return fn(query).then(function (result) {
           expect(result).to.equal(1);
         });
       });
@@ -112,9 +125,9 @@ describe(dirname, function () {
       it('returns 0 if query returns an error', function () {
         const query = lib(INDEX, locals);
 
-        lib.post.returns(Promise.reject(0));
+        lib.post.returns(Promise.reject());
 
-        fn(query).catch(function (result) {
+        return fn(query).then(function (result) {
           expect(result).to.equal(0);
         });
       });
@@ -127,8 +140,9 @@ describe(dirname, function () {
 
       it('hits the search endpoint', function () {
         lib.post.returns(Promise.resolve(respObj));
-        fn(query).then(function (result) {
-          expect(result).to.eql(respObj);
+
+        return fn(query).then(function (result) {
+          expect(result).to.equal(respObj);
         });
       });
 

@@ -1,0 +1,25 @@
+@import "colors";
+@import "fonts";
+
+.warning {
+  background-color: $keenUiYellow;
+  padding: 20px;
+
+  &__icon {
+    color: $keenUiAlertIconYellow;
+    vertical-align: top;
+  }
+
+  &__header {
+    @mixin warning-font1;
+    display: inline-block;
+    height: 24px;
+    padding-left: 4px;
+    vertical-align: top;
+  }
+
+  &__content {
+    @mixin warning-font2;
+    padding-top: 8px;
+  }
+}

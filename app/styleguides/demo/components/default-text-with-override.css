@@ -1,0 +1,36 @@
+/* copied from clay-kiln */
+$kilnErrorRed: #f44336;
+
+/**
+ * need to override the .is-disabled from gray to red.  Personally I think this
+ *   style could apply to all inputs but I want to keep this change localized.
+ */
+.default-text-with-override {
+  padding-bottom: 10px;
+
+  + * {
+    padding-top: 10px;
+  }
+
+  &__label {
+    font-size: 20px;
+  }
+
+  &__value {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+
+  &__should-override.ui-checkbox {
+    margin-top: 20px;
+  }
+
+  &__custom-text.ui-textbox {
+    margin-top: 20px;
+  }
+
+  &__error-message {
+    margin-top: 20px;
+    color: $kilnErrorRed;
+  }
+}

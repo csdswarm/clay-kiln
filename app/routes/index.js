@@ -164,5 +164,7 @@ module.exports = router => {
   alerts.inject(router, checkAuth);
   addEndpoints.createPage(router);
   ensureStationOnCustomUrl(router);
+
+  addEndpoints.imageInfo(router, checkAuth);
   validScripts.inject(router, checkAuth);
 };

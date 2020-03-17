@@ -1,5 +1,6 @@
 @import "_global/fonts";
 @import "_global/colors";
+@import '_global/warning';
 
 .layout--no-permissions:before {
   content: ' ';
@@ -22,4 +23,16 @@
   width: 90vw;
   left: calc(5vw - em(10, 35));
   padding: em(10, 35);
+}
+
+/* editing template */
+.kiln-edit-mode--template:not(.kiln-edit-mode--layout) {
+  .kiln-placeholder,
+  .body__circulation {
+    background-color: $blue;
+  }
+}
+/* editing layout */
+.kiln-edit-mode--layout [data-uri*="/instances/default"] .kiln-placeholder {
+  background-color: $pizazz;
 }
