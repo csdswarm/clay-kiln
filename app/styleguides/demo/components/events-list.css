@@ -1,3 +1,42 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
 .events-list {
-  display: block;
+  margin-bottom: em(20);
+  &__load-more-btn {
+    @mixin events-lede-font5;
+    background-color: theme(primaryColor, $parisM);
+    color: $white;
+    width: 100%;
+    height: em(42, 14);
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    @mixin default-screen {
+      flex: 0 0 widthOnGrid(10, 9);
+    }
+    @mixin large-screen {
+      flex: 0 0 widthOnGrid(10, 9);
+    }
+    @mixin medium-screen {
+      flex: 0 0 widthOnGrid(6, 5, 'medium-screen');
+    }
+    @mixin medium-small-screen {
+      flex: 0 0 auto;
+    }
+    &--hidden {
+      display: none;
+    }
+  }
+  .content-card {
+    &.load-more {
+      opacity: 0;
+      height: 0;
+      transition: 200ms ease-out;
+      &--done {
+        opacity: 1;
+      }
+    }
+  }
 }

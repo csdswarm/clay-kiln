@@ -15,8 +15,6 @@ const
     'feedImgUrl',
     'canonicalUrl'
   ],
-  maxItems = 10,
-  pageLength = 5,
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   { isComponent } = require('clayutils'),
   utils = require('../../services/universal/utils'),
@@ -83,7 +81,8 @@ async function getEventDataFromElastic(event, data, locals) {
   * }[]>}
   */
 async function getRecentEventsFromElastic(uri, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems + 1, locals);
+
+  const query = queryService.newQueryWithCount(elasticIndex, data.loadMoreAmount, locals);
 
   queryService.addFilter(query, { term: { contentType: 'event' } });
   if (data.stationSlug) {
@@ -91,6 +90,7 @@ async function getRecentEventsFromElastic(uri, data, locals) {
   } else {
     queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
+
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addSort(query, { startDate: 'desc' });
 
@@ -112,21 +112,16 @@ async function getRecentEventsFromElastic(uri, data, locals) {
     * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
     * we return N + 1 items so we can let the frontend know if we have more data.
     */
-    if (!data.pageLength) {
-      data.pageLength = pageLength;
-    }
 
-    const skip = maxItems + (parseInt(locals.page) - 1) * data.pageLength;
+    const skip = data.numberToDisplay + (parseInt(locals.page) - 1) * data.loadMoreAmount;
 
     queryService.addOffset(query, skip);
   } else {
-    data.pageLength = maxItems;
     data.initialLoad = true;
 
     // Default to loading 30 articles, which usually works out to 4 pages
-    data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
+    data.lazyLoads = Math.max(Math.ceil((30 - data.loadMoreAmount) / data.loadMoreAmount), 0);
   }
-
   return queryService.searchByQuery(query)
     .then(function (results) {
       return results.map(result => {
@@ -162,19 +157,31 @@ module.exports = unityComponent({
     // On initial load we need to append curated items onto the list, otherwise skip
     // Show a maximum of pageLength links
     if (data.initialLoad) {
-      data.events = curatedEvents.concat(recentEvents).slice(0, data.pageLength);
+      data.events = curatedEvents.concat(recentEvents).slice(0, data.numberToDisplay);
     } else {
-      data.events = recentEvents.slice(0, data.pageLength);
+      data.events = recentEvents.slice(0, data.numberToDisplay);
     }
     return data;
   },
-  render: (ref, data) => {
+  render: async (uri, data, locals) => {
     data._computed.events = data.events.map(event => {
       return {
         ...event,
         dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
       };
     });
+    // load more functionality
+    // if there is a page number include more events with the page num as offset
+    if (locals.page) {
+      const moreEvents =  await getRecentEventsFromElastic(uri, data, locals);
+
+      data._computed.moreEvents = moreEvents.map( event => {
+        return {
+          ...event,
+          dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
+        };
+      });
+    }
     return data;
   }
 });
