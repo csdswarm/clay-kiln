@@ -33,9 +33,8 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: (uri, data, locals) => {
-    console.log('render lead', data, locals.podcast);
-    if (!locals) {
-      return;
+    if (!locals || !locals.podcast) {
+      return data;
     }
 
     data._computed.podcast = locals.podcast;
