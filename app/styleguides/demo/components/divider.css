@@ -1,4 +1,13 @@
+@import "_global/colors";
+
 .divider {
   border-bottom: 1px solid #000000;
   width: 100%;
+}
+
+.two-column-component__column--2 {
+  .divider {
+    border-bottom: 6px solid $parisPurple;
+    margin-bottom: em(30);
+  }
 }
