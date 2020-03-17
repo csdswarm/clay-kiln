@@ -38,15 +38,15 @@ body > .podcast-lead {
   &__info-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     @mixin default-screen {
       flex: 0 0 widthOnGrid(6, 5);
+      justify-content: space-between;
     }
     @mixin large-screen {
       flex: 0 0 widthOnGrid(5, 4);
     }
     @mixin medium-screen {
-      flex: 0 0 widthOnGrid(4, 3, medium-screen);
+      flex: 0 0 calc(100% - em(widthOnGrid(2, 2, medium-screen)));
     }
     @mixin medium-small-screen {
       flex: 0 0 widthOnGrid(2, 1, medium-small-screen);
