@@ -1,13 +1,15 @@
 'use strict';
 
-const _set = require('lodash/set'),
+const { DEFAULT_STATION } = require('../../../universal/constants'),
   getNationalSubcriptions = require('../../get-national-subscriptions');
 
 module.exports = router => {
   router.get('/*', async (req, res, next) => {
+    const { locals } = res,
+      { edit, stationForPermissions } = locals;
 
-    if (res.locals.edit) {
-      _set(res, 'locals.nationalSubscriptions', await getNationalSubcriptions());
+    if (edit && stationForPermissions !== DEFAULT_STATION) {
+      locals.nationalSubscriptions = await getNationalSubcriptions.byStationSlug(stationForPermissions.site_slug);
     }
 
     next();
