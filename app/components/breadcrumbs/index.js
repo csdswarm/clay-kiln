@@ -1,7 +1,7 @@
 'use strict';
-const nonWhitespaceBtwnBrackets = /^\{(\S*)\}$/;
 
-const { getSectionFrontName, retrieveList } = require('../../services/server/lists');
+const { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  nonWhitespaceBtwnBrackets = /^\{(\S*)\}$/;
 
 /**
  * Takes a text value and converts it to a navigable slug

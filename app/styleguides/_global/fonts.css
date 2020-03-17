@@ -691,7 +691,6 @@ em, i {
   @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -.32px, 24px;
 }
 
-
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||||||| Card Fonts Styleguide |||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -700,4 +699,17 @@ em, i {
 }
 @define-mixin card-font2 {
   @mixin font CircularStd-Medium, 20px, $black, -.33px, 24px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||| Podcast Episode List Fonts Styleguide |||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin podcast-episode-list-font1 {
+  @mixin font CircularStd-Black, 16px, $black, inherit, 19px;
+}
+@define-mixin podcast-episode-list-font2 {
+  @mixin font CircularStd-Book, 12px, $doveGray, inherit, 18px;
+}
+@define-mixin podcast-episode-list-font3 {
+  @mixin font CircularStd-Black, 14px, $white, -.55px, 17px;
 }
