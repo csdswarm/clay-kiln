@@ -1,11 +1,15 @@
 'use strict';
 // Stub out window, and locals
-const slugList = [ 'someValidSlug', 'anotherValidSlug' ];
+const slugList = [ 'someValidSlug', 'anotherValidSlug' ],
+  toStationsObject = (obj, slug) => {
+    obj[slug] = { slug };
+    return obj;
+  };
 
 global.window = {
   kiln: {
     locals: {
-      allStationsSlugs: slugList,
+      stationsIHaveAccessTo: slugList.reduce(toStationsObject, {}),
       site: {
         host: 'clay.radio.com',
         protocol: 'https'

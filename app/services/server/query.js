@@ -248,13 +248,13 @@ function logCatch(e, ref) {
 module.exports = newQueryWithPrefix;
 
 Object.assign(module.exports, universalQuery, {
-  searchInstance: null,
+  executeMultipleSearchRequests,
+  getCount,
+  logCatch,
   newQueryWithCount,
+  onePublishedArticleByUrl,
   searchByQuery,
   searchByQueryWithRawResult,
-  getCount,
-  executeMultipleSearchRequests,
-  updateByQuery,
-  onePublishedArticleByUrl,
-  logCatch
+  searchInstance: null,
+  updateByQuery
 });

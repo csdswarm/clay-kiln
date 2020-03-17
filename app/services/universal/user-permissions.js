@@ -26,7 +26,7 @@
 
 const pluralize = require('pluralize'),
   _get = require('lodash/get'),
-  anyStation = Symbol(),
+  { getStationDomainName } = require('./urps'),
   KEYS = {
     action: 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
     target: 'a,an,the,this,using,canUse,canModify'.split(','),
@@ -43,10 +43,7 @@ const pluralize = require('pluralize'),
       _methods = {}, // all of the chained methods
       _override = false; // override all permission checks
 
-    const _DEFAULT = {
-        action: 'access',
-        location: null
-      },
+    const _DEFAULT = { location: null },
       /**
        * make the string representing what the user does not have permissions to do
        *
@@ -86,9 +83,6 @@ const pluralize = require('pluralize'),
        *    },
        *    gallery:{
        *      update:{ station:{ KILTAM: 1, KLOLFM: 1} },
-       *    },
-       *    'alert-banner':{
-       *      access:{ station:{'NATL-RC': 1 } }
        *    }
        *  }
        *
@@ -100,51 +94,20 @@ const pluralize = require('pluralize'),
           message = '';
 
         const {
-          action = _DEFAULT.action,
+          action,
           target,
           location = _DEFAULT.location
         } = _condition;
 
-        if (target) {
+        if (action && target) {
           const {
             action: actionToCheck,
             target: targetToCheck,
-            location: locationToCheck
+            location: domainNameToCheck
           } = getCondition(action, target, location);
 
-          let stationPath;
-
-          // if no location was passed then that means we're not able to
-          //   verify the station.  This applies to server-side non-content
-          //   components and other contexts which would require a lot of work
-          //   in order to figure out the affected stations.  Here we only end
-          //   up checking the user has permissions to 'action' the 'target'.
-          //   If the user doesn't have permissions to do that for any station,
-          //   then the path won't exist.
-          //
-          // in the future we may create a ticket to attach a list of page
-          //   references to all components and other items which require
-          //   permissions.  This would help out when working with clay in
-          //   general, but specifically it would allow us to check the
-          //   stations a component lives on to determine whether the user is
-          //   allowed to 'action' it.
-          if (!locationToCheck) {
-            stationPath = '';
-            // for a sensible place to put comments
-            // eslint-disable-next-line brace-style
-          }
-          // if 'anyStation' was passed then, similar to no location, we only
-          //   need to check the user can 'action' the 'target'.  This applies
-          //   to permissions like being able to see the alerts and import kiln
-          //   drawer items.
-          else if (locationToCheck === anyStation) {
-            stationPath = '';
-          } else {
-            stationPath = `.station.${locationToCheck}`;
-          }
-
           hasPermission = _override
-            || !!_get(_permissions, `${targetToCheck}.${actionToCheck}${stationPath}`);
+            || !!_get(_permissions, [domainNameToCheck, actionToCheck, targetToCheck]);
 
           if (!hasPermission) {
             message = createMessage(actionToCheck, targetToCheck);
@@ -306,25 +269,23 @@ const pluralize = require('pluralize'),
      *
      * @param {object} locals
      */
-    return ({ user, permissions, stationForPermissions }) => {
-      if (user && !user.can) {
-        _permissions = permissions || {};
-        _override = false;
+    return locals => {
+      const { permissions, stationForPermissions, user } = locals;
 
-        // helper to not have to pass station
-        _DEFAULT.location = _get(
-          stationForPermissions,
-          'callsign',
-          null
-        );
-
-        addMethods(user);
+      if (!user || user.can) {
+        return;
       }
+
+      _permissions = permissions || {};
+      _override = user.provider === 'google'
+        && process.env.GOOGLE_OVERRIDES_PERMISSIONS === 'true';
+
+      // helper to not have to pass station which is the large majority of
+      //   permission checks
+      _DEFAULT.location = getStationDomainName(stationForPermissions);
+
+      addMethods(user);
     };
   };
 
 module.exports = userPermissions();
-
-Object.assign(module.exports, {
-  anyStation
-});

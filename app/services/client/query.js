@@ -152,14 +152,14 @@ function logCatch(e, ref) {
 module.exports = newQueryWithLocals;
 
 Object.assign(module.exports, universalQuery, {
+  executeMultipleSearchRequests,
+  getCount,
+  logCatch,
   newQueryWithCount,
+  onePublishedArticleByUrl,
   searchByQuery,
   searchByQueryWithRawResult,
-  getCount,
-  executeMultipleSearchRequests,
   updateByQuery,
-  onePublishedArticleByUrl,
-  logCatch,
 
   // For testing
   post: universalRest.post

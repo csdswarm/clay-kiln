@@ -2,7 +2,9 @@
 
 const _ = require('lodash'),
   utils = require('../universal/utils'),
-  protocol = process ? `${ _.get(process, 'env.CLAY_SITE_PROTOCOL', 'https') }:` : window.location.protocol;
+  protocol = process
+    ? `${_.get(process, 'env.CLAY_SITE_PROTOCOL', 'https')}:`
+    : window.location.protocol;
 
 /**
  * SearchOpts - options which modify the behavior of elasticsearch
@@ -463,7 +465,7 @@ function addSearch(query, searchTerm, fields) {
     value = {
       query_string: {
         query: sanitizeSearchTerm(searchTerm),
-        fields: _.isArray(fields) ? fields : [fields]
+        fields: _.isArray(fields) ? fields : [ fields ]
       }
     };
 

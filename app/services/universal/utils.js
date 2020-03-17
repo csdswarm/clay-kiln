@@ -118,6 +118,7 @@ function removeExtension(path) {
   if (leadingDot > -1) {
     path = path.substr(0, leadingDot);
   }
+
   return path;
 }
 
@@ -339,8 +340,10 @@ function getFullOriginalUrl(req) {
 
 /**
  * Returns whether the request is for a content component.  A content component
- *   here just means a component that can be created via the kiln drawer e.g.
- *   article, gallery, etc.
+ *   usually means a component that can be created via the kiln drawer e.g.
+ *   article, gallery, etc.  More specifically it's a component that will be
+ *   listed under the 'main' property of a page, which is why 'homepage' is also
+ *   considered a content type.
  *
  * @param {string} url
  * @returns {boolean}

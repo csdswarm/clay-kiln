@@ -1,6 +1,7 @@
 /* stylelint-disable */
 @import "_global/mixins";
 @import "_global/colors";
+@import "_global/fonts";
 
 $default-radium-width: em(150);
 $default-nav-height: em(60);

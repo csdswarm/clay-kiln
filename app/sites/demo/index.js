@@ -11,6 +11,7 @@ const publishing = require('../../services/publishing'),
   ];
 
 module.exports.routes = [
+  // Partially static
   { path: '/authors/:author' },
   { path: '/blogs/:author/:title' }, // Frequency URL pattern
   { path: '/blogs/:title' }, // Frequency URL pattern

@@ -713,6 +713,13 @@ em, i {
   @mixin font CircularStd-Book, 14px, $black, -.27px, 17px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Permissions Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin permissions-font1 {
+  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Latest Top Recirculation Slider Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -769,13 +776,6 @@ em, i {
 }
 @define-mixin events-lede-font4 {
   @mixin font ProximaNova-Regular, 18px, $black, -.29px, 28px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||| Permissions Fonts Styleguide ||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin permissions-font1 {
-  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
 }
 
 /*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<*/
