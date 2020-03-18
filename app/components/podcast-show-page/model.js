@@ -29,7 +29,8 @@ async function addBreadcrumbs(data, locals) {
   const url = `//${ locals.site.host }${ data.stationSlug ? `/${ data.stationSlug }/` : '' }/podcasts`;
 
   addCrumb(data, url, 'podcasts');
-  if (locals.podcast) {
+
+  if (locals.podcast.attributes) {
     const { site_slug, title } = locals.podcast.attributes;
 
     addCrumb(data, site_slug, title);
