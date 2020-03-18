@@ -24,9 +24,15 @@ const { _, axios, bluebird, clayutils } = require('./base');
  *   then that means I will remove the general meta-title component from the
  *   head of the station page.
  *
- *   note: none of the ids should have @published.  This method is intended to
- *   update containers then publish the result.  If this becomes a problem we
- *   can add verification logic at that time.
+ *   note 1: this method accounts for the differences between component lists in
+ *     pages and layouts, where in pages it is an array of strings while layouts
+ *     have arrays of objects with '_ref'.  The input in the remove object will
+ *     be the same for both i.e. you should not pass an array of objects with
+ *     ref properties.
+ *
+ *   note 2: none of the ids should have @published.  This method is intended to
+ *     update containers then publish the result.  If this becomes a problem we
+ *     can add verification logic at that time.
  */
 async function removeComponentsFromContainers_v1(argObj) {
   await usingDb(async db => {
@@ -131,7 +137,11 @@ async function updateContainers(containers, remove, db) {
       _.update(
         data,
         key,
-        componentIds => _.difference(componentIds, remove[id][key])
+        components => {
+          return clayutils.isPage(id)
+            ? _.difference(components, remove[id][key])
+            : components.filter(cmp => !remove[id][key].includes(cmp._ref));
+        }
       );
     }
 

@@ -39,9 +39,17 @@ async function getAllLayoutInstanceIdsWithoutHost(db, host) {
   `)
 
   return result.rows.map(({ id }) => id)
-    // there exists bad rows in the database which come from different hosts
-    //   so it's easiest if we skip over them
-    .filter(id => id.startsWith(host))
+    .filter(id => (
+      // there exists bad rows in the database which come from different hosts
+      //   so it's easiest if we skip over them
+      id.startsWith(host)
+      // we don't want the default instance because that causes an error on
+      //   publish.  We will rely on bootstrap.yml updating it.
+      && id.includes('/instances/')
+      // and finally we can exclude published instances since the latest
+      //   instances will get published
+      && !id.endsWith('@published')
+    ))
     // then remove the host from the beginning so it's compatible with
     //   addComponentToContainers' signature
     .map(id => id.slice((host + '/').length));
@@ -55,13 +63,7 @@ async function addBranchIoToLayouts() {
       host,
       layoutIds,
       '_components/branch-io-head/instances/default',
-      'headLayout',
-      (_, data) => {
-        // remove old branch-io component references
-        if (Array.isArray(data.head)) {
-          data.head = data.head.filter(ref => !ref.includes('/branch-io-head/'));
-        }
-      }
+      'headLayout'
     );
   })
 }

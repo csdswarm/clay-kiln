@@ -21,6 +21,7 @@
  *******************************************************************************************/
 const esQuery = require('./es-query'),
   parseHost = require('./parse-host'),
+  usingDb = require('./using-db'),
   v1 = {
     ...(require('./base')),
     ...(require('./execute-sql').v1),
@@ -37,11 +38,12 @@ const esQuery = require('./es-query'),
     parseHost: parseHost.v1,
     republish: require('./republish').v1,
     removeComponentsFromContainers: require('./remove-components-from-containers').v1,
-    usingDb: require('./using-db').v1,
+    usingDb: usingDb.v1,
   },
   v2 = {
     esQuery: esQuery.v2,
-    parseHost: parseHost.v2
+    parseHost: parseHost.v2,
+    usingDb: usingDb.v2
   };
 
 module.exports = {
