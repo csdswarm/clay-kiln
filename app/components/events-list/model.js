@@ -2,7 +2,7 @@
 
 const
   { unityComponent } = require('../../services/universal/amphora'),
-  bluebird = require('bluebird'),
+  _flat = require('lodash/flatten'),
   moment = require('moment'),
   queryService = require('../../services/server/query'),
   elasticIndex = 'published-content',
@@ -17,52 +17,80 @@ const
     'canonicalUrl'
   ],
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
-  { isComponent } = require('clayutils'),
   utils = require('../../services/universal/utils'),
   { urlToElasticSearch } = utils,
-  { assignStationInfo } = require('../../services/universal/create-content.js');
+  { assignStationInfo } = require('../../services/universal/create-content.js'),
+  /**
+   * Converts a url to be the format that was indexed
+   * @param {String} url
+   * @returns {String} url
+   */
+  toElasticCanonicalUrl = (url) => {
+    return utils.urlToCanonicalUrl(
+      urlToElasticSearch(url)
+    );
+  },
+  /**
+   * Converts event url so that their http protocol
+   * matches the protocol of the app.
+   * @param {Array} results
+   * @returns {Array}
+   */
+  prepareQueryResults = (results) =>
+    results.map(event => {
+      return {
+        ...event,
+        url: event.canonicalUrl.replace(/^http:/, protocol)
+      };
+    })
+
+  ;
 
 /**
  * Gets event data from elastic by querying with event url
  *
- * @param {Object} event
  * @param {Object} data
  * @param {Object} locals
- * @returns {Promise<{
-  *  url: string,
-  *  headline: string,
-  *  startDate: Date,
-  *  startTime: Date,
-  *  venueName: string,
-  *  venueAddress: string,
-  *  feedImgUrl: string,
-  * }[]>}
-  */
-async function getEventDataFromElastic(event, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, 1, locals),
-    canonicalUrl = utils.urlToCanonicalUrl(
-      urlToElasticSearch(event.url)
-    );
+ * @returns {Promise<Array
+ *  <
+ *    {
+ *      url: string,
+ *      headline: string,
+ *      startDate: Date,
+ *      startTime: Date,
+ *      venueName: string,
+ *      venueAddress: string,
+ *      feedImgUrl: string,
+ *   }
+ *  >
+ * >}
+ */
+async function getCuratedEventsFromElastic(data, locals) {
+  const {
+      curatedEvents,
+      stationSlug
+    } = data,
+    query = queryService.newQueryWithCount(elasticIndex, curatedEvents.length, locals),
+    urlsToMatch = curatedEvents.map(({ url }) => toElasticCanonicalUrl(url));
 
-  queryService.addMust(query, { match: { canonicalUrl } });
+  queryService.addMust(query, {
+    terms: {
+      canonicalUrl: urlsToMatch
+    }
+  });
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (data.stationSlug) {
-    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
+  if (stationSlug) {
+    queryService.addMust(query, { match: { stationSlug } });
   } else {
     queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
 
   return queryService.searchByQuery(query)
-    .then(function (result) {
-      return {
-        ...result[0],
-        url: event.url.replace(/^http:/, protocol)
-      };
-    })
+    .then(prepareQueryResults)
     .catch(e => {
-      queryService.logCatch(e, event.url);
-      return event;
+      queryService.logCatch(e, curatedEvents);
+      return [];
     });
 }
 
@@ -72,6 +100,8 @@ async function getEventDataFromElastic(event, data, locals) {
  * @param {string} uri
  * @param {Object} data
  * @param {Object} locals
+ * @param {Number} numItems
+ * @param {Number} skip
  * @returns {Promise<{
   *  url: string,
   *  headline: string,
@@ -82,10 +112,24 @@ async function getEventDataFromElastic(event, data, locals) {
   *  feedImgUrl: string,
   * }[]>}
   */
-async function getRecentEventsFromElastic(uri, data, locals) {
+async function getRecentEventsFromElastic(uri, data, locals, { numItems, skip }) {
+  const query = queryService.newQueryWithCount(elasticIndex, numItems, locals),
+    {
+      curatedEvents = [],
+      eventsLedeUrl = ''
+    } = data,
+    urlsToDedupe = [
+      eventsLedeUrl,
+      ...curatedEvents
+        .map(({ url }) => url)
+    ].map(toElasticCanonicalUrl);
 
-  const query = queryService.newQueryWithCount(elasticIndex, data.loadMoreAmount, locals);
-
+  // dedupe curated events
+  queryService.addMustNot(query, {
+    terms: {
+      canonicalUrl: urlsToDedupe
+    }
+  });
   queryService.addFilter(query, { term: { contentType: 'event' } });
   if (data.stationSlug) {
     queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
@@ -95,45 +139,10 @@ async function getRecentEventsFromElastic(uri, data, locals) {
 
   queryService.onlyWithTheseFields(query, elasticFields);
   queryService.addSort(query, { startDate: 'desc' });
-
-  // exclude the curated content from the results
-  if (data.curatedEvents && !isComponent(locals.url)) {
-    data.curatedEvents.forEach(event => {
-      const cleanUrl = utils.urlToCanonicalUrl(
-        urlToElasticSearch(event.url)
-      );
-
-      queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-    });
-  }
-
-  if (locals && locals.page) {
-    /* after the first 10 items, show N more at a time (pageLength defaults to 5)
-    * page = 1 would show items 10-15, page = 2 would show 15-20, page = 0 would show 1-10
-    * we return N + 1 items so we can let the frontend know if we have more data.
-    */
-
-    /**
-     * need to offset by 1 so we don't load the last item from
-     * previous load
-     */
-    const offset = 1,
-      skip = offset
-        + data.numberToDisplay
-        + (parseInt(locals.page) - 1) * data.loadMoreAmount;
-
-    queryService.addOffset(query, skip);
-  }
+  queryService.addOffset(query, skip);
 
   return queryService.searchByQuery(query)
-    .then(function (results) {
-      return results.map(result => {
-        return {
-          ...result,
-          url: result.canonicalUrl.replace(/^http:/, protocol)
-        };
-      });
-    })
+    .then(prepareQueryResults)
     .catch(e => {
       queryService.logCatch(e, uri);
       return [];
@@ -147,37 +156,48 @@ module.exports = unityComponent({
     }
 
     assignStationInfo(uri, data, locals);
-
-    // setup curated events
-    data.curatedEventsData = await bluebird.map(
-      data.curatedEvents,
-      async event => {
-        return await getEventDataFromElastic(event, data, locals);
-      },
-      { concurrency: 10 }
-    );
-
     return data;
   },
   render: async (uri, data, locals) => {
-    const curatedEvents = data.curatedEventsData || [],
-      recentEvents = await getRecentEventsFromElastic(uri, data, locals),
-      events = curatedEvents.concat(recentEvents).slice(0, data.numberToDisplay),
+    const { numberToDisplay, curatedEvents } = data,
+      initialNumItems = numberToDisplay - curatedEvents.length,
+      curatedEventsData = getCuratedEventsFromElastic(data, locals),
+      recentEventsData = getRecentEventsFromElastic(
+        uri, data, locals, {
+          numItems: initialNumItems,
+          skip: 0
+        }
+      ),
+      events = _flat(await Promise.all([
+        curatedEventsData,
+        recentEventsData
+      ])),
       prepareEvent = event => {
         return {
           ...event,
-          dateTime: event.startDate ? moment(`${event.startDate} ${event.startTime}`).format('LLLL') : 'none'
+          dateTime: event.startDate
+            ? moment(`${event.startDate} ${event.startTime}`).format('LLLL')
+            : 'none'
         };
       };
 
     data._computed.events = events.map(prepareEvent);
+
     // load more functionality
     // if there is a page number include more events with the page num as offset
     if (locals.page) {
-      const moreEvents =  await getRecentEventsFromElastic(uri, data, locals);
+      const skip = initialNumItems
+          + (parseInt(locals.page) - 1) * data.loadMoreAmount + 1,
+        moreEvents =  await getRecentEventsFromElastic(
+          uri, data, locals, {
+            numItems: data.loadMoreAmount,
+            skip
+          },
+        );
 
       data._computed.moreEvents = moreEvents.map(prepareEvent);
     }
+
     return data;
   }
 });

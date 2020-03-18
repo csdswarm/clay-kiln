@@ -18,6 +18,9 @@ curatedEvents:
     height: 60px
     required: true
 
+eventsLedeUrl:
+  _subscribe: eventsLedeUrl
+
 numberToDisplay:
   _label: Number of events to display
   _has:
