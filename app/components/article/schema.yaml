@@ -3,6 +3,7 @@ _confirmRemoval: true
 
 primaryHeadline:
   _label: Facebook Headline
+  _publish: ogTitle
   _has:
     input: wysiwyg
     buttons:
@@ -468,7 +469,6 @@ pageTitle:
     help: Plaintext page title, set by seoHeadline, shortHeadline, or primaryHeadline. Sponsored posts and certain sites will have extra sugar.
 plaintextPrimaryHeadline:
   _publish:
-    - ogTitle
     - pageListTitle
   _has:
     help: Plaintext title set by primaryHeadline. Used for facebook sharing.
