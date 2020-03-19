@@ -16,18 +16,6 @@ const
   kilnUrlParam = '&currentUrl=';
 
 /**
- * Adds a hidden (non-enumerable) property (one that won't appear in Object.keys, or for .. in statements and
- * won't be stringified) to the object
- * @param {object} obj The object to add the property to
- * @param {string} prop The name of the property to add
- * @param {*} [value] the initial value of the object
- * @returns {object}
- */
-function addHiddenProperty(obj, prop, value) {
-  return Object.defineProperty(obj, prop, { value, writable: true, configurable: true, enumerable: false });
-}
-
-/**
  * Adds a property getter to an object that will run the callback to return the value the first time the property is
  * requested, but will save that value as the property afterwards, so no additional calls are needed.
  *
@@ -461,7 +449,6 @@ function urlToElasticSearch(url) {
 }
 
 module.exports = {
-  addHiddenProperty,
   addLazyLoadProperty,
   boolKeys,
   cleanUrl,

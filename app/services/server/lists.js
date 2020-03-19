@@ -7,35 +7,33 @@ const
   _unset = require('lodash/unset'),
   db = require('./db'),
   logger = require('../universal/log'),
-  { addHiddenProperty, addLazyLoadProperty, postfix, prettyJSON } = require('../universal/utils'),
+  { addLazyLoadProperty, postfix, prettyJSON } = require('../universal/utils'),
   { STATION_LISTS } = require('../universal/constants'),
 
   HOUR_IN_SECONDS = 3600,
 
-  __ = {
+  ix = {
     CACHE_TTL: HOUR_IN_SECONDS,
     STATION_LISTS,
     cacheKeyPrefix: name => `list:${name}`,
     db,
     equals: value => other => _isEqual(value, other),
     get: _get,
-    getFromCache: name => __.redis.get(__.cacheKeyPrefix(name)).then(cached => cached && JSON.parse(cached)),
-    getFromDb: (name, host) => __.db.get(`${host}/_lists/${name}`),
-    getFromLocals: (name, locals) => __.get(locals, ['lists', name]),
-    getStationPrefix: locals => __.postfix(__.get(locals, 'stationForPermissions.site_slug', ''), '-'),
+    getFromCache: name => ix.redis.get(ix.cacheKeyPrefix(name)).then(cached => cached && JSON.parse(cached)),
+    getFromDb: (name, host) => ix.db.get(`${host}/_lists/${name}`),
+    getFromLocals: (name, locals) => ix.get(locals, ['lists', name]),
+    getStationPrefix: locals => ix.postfix(ix.get(locals, 'stationForPermissions.site_slug', ''), '-'),
     log: logger.setup({ file: __filename }),
-    prependStation: (name, locals) => __.STATION_LISTS[name] ? `${__.getStationPrefix(locals)}${name}` : name,
+    prependStation: (name, locals) => ix.STATION_LISTS[name] ? `${ix.getStationPrefix(locals)}${name}` : name,
     postfix,
-    remFromCache: name => __.redis.del(__.cacheKeyPrefix(name)),
-    remFromLocals: (name, locals) => __.unset(locals, ['lists', name]),
-    saveToCache: (name, data) => __.redis.set(__.cacheKeyPrefix(name), JSON.stringify(data), 'EX', __.CACHE_TTL),
-    saveToDb: (name, data, host) => __.db.put(`${host}/_lists/${name}`, JSON.stringify(data)),
-    saveToLocals: (name, locals, data) => Object.isExtensible(locals) && __.set(locals, ['lists', name], data),
+    saveToCache: (name, data) => ix.redis.set(ix.cacheKeyPrefix(name), JSON.stringify(data), 'EX', ix.CACHE_TTL),
+    saveToDb: (name, data, host) => ix.db.put(`${host}/_lists/${name}`, JSON.stringify(data)),
+    saveToLocals: (name, locals, data) => Object.isExtensible(locals) && ix.set(locals, ['lists', name], data),
     set: _set,
     unset: _unset
   };
 
-addLazyLoadProperty(__, 'redis', () => require('./redis'));
+addLazyLoadProperty(ix, 'redis', () => require('./redis'));
 
 /**
  * Saves a list and simultaneously updates the locals and cache
@@ -46,8 +44,8 @@ addLazyLoadProperty(__, 'redis', () => require('./redis'));
  * @param {string} [options.host] the host if locals.site.host is unavailable
  * @returns {object[]} the original data provided
  */
-__.saveList = async (name, data, options) => {
-  const { log, prependStation, saveToCache, saveToDb, saveToLocals } = __,
+async function saveList(name, data, options) {
+  const { log, prependStation, saveToCache, saveToDb, saveToLocals } = ix,
     locals = options.locals,
     host = _get(locals, 'site.host', options.host),
     list = prependStation(name, locals);
@@ -55,6 +53,7 @@ __.saveList = async (name, data, options) => {
   saveToLocals(list, locals, data);
 
   try {
+    debugger;
     await Promise.all([
       saveToDb(list, data, host),
       saveToCache(list, data)
@@ -64,10 +63,10 @@ __.saveList = async (name, data, options) => {
   }
 
   return data;
-};
+}
 
-const externals = {
-  /**
+
+/**
    * Adds a new list item to a list if it's not already there.
    * @param {string} name the name of the list
    * @param {object} item the item to add
@@ -76,23 +75,23 @@ const externals = {
    * @param {string} [options.host] the host name for db sets/gets to use if locals.site.host is unavailable or wrong
    * @return {object} the item being added to the list or undefined if it's already in the list
    */
-  async addListItem(name, item, options) {
-    const { equals, retrieveList, saveList } = { ...externals, ...__ },
-      list = await retrieveList(name, options),
-      alreadyInList = list.find(equals(item));
+async function addListItem(name, item, options) {
+  const { equals } = ix,
+    list = await retrieveList(name, options),
+    alreadyInList = list.find(equals(item));
 
-    if (alreadyInList) {
-      return;
-    }
+  if (alreadyInList) {
+    return;
+  }
 
-    list.push(item);
+  list.push(item);
 
-    await saveList(name, list, options);
+  await saveList(name, list, options);
 
-    return item;
-  },
+  return item;
+}
 
-  /**
+/**
    * deletes one or more targets from a list
    * @param {string} name the name of the list
    * @param {object|function} target an object that matches an existing item in the list or a function that returns true
@@ -102,38 +101,38 @@ const externals = {
    * @param {string} [options.host] the host name if locals.site.host is unavailable
    * @returns {object[]} any items that were removed from the list
    */
-  async deleteListItem(name, target, options) {
-    const { equals, retrieveList, saveList } = { ...externals, ...__ },
-      list = await retrieveList(name, options),
-      itemToRemove = typeof target === 'function' ? target : equals(target),
-      itemsToRemove = list.filter(itemToRemove);
+async function deleteListItem(name, target, options) {
+  const { equals } = ix,
+    list = await retrieveList(name, options),
+    itemToRemove = typeof target === 'function' ? target : equals(target),
+    itemsToRemove = list.filter(itemToRemove);
 
-    if (itemsToRemove.length) {
-      const itemsToKeep = item => !itemToRemove(item),
-        listWithoutTargets = list.filter(itemsToKeep);
+  if (itemsToRemove.length) {
+    const itemsToKeep = item => !itemToRemove(item),
+      listWithoutTargets = list.filter(itemsToKeep);
 
-      await saveList(name, listWithoutTargets, options);
+    await saveList(name, listWithoutTargets, options);
 
-      return itemsToRemove;
-    }
+    return itemsToRemove;
+  }
 
-    return [];
-  },
+  return [];
+}
 
-  /**
+/**
      * Gets the display name for a section front slug. Returns the slug if not found.
      *
      * @param {string} slug - The section front's ID
      * @param {object[]} data - The section front list
      * @returns {Promise<string>}
      */
-  getSectionFrontName(slug, data) {
-    const entry = data.find(entry => entry.value === slug);
+function getSectionFrontName(slug, data) {
+  const entry = data.find(entry => entry.value === slug);
 
-    return entry ? entry.name : slug;
-  },
+  return entry ? entry.name : slug;
+}
 
-  /**
+/**
    * Retrieves a Clay list, checking locals and Redis for cached results first.
    *
    * @param {string} name - The list name
@@ -142,34 +141,34 @@ const externals = {
    * @param {string} [options.host] the host name if locals.site.host is unavailable
    * @returns {Promise<any[]>}
    */
-  async retrieveList(name, options) {
-    const { getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = __,
-      locals = options.locals,
-      host = _get(locals, 'site.host', options.host),
-      list = prependStation(name, locals),
-      saved = getFromLocals(list, locals) || await getFromCache(list);
+async function retrieveList(name, options) {
+  const { getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = ix,
+    locals = options.locals,
+    host = _get(locals, 'site.host', options.host),
+    list = prependStation(name, locals),
+    saved = getFromLocals(list, locals) || await getFromCache(list);
 
-    if (saved) {
-      return saved;
+  if (saved) {
+    return saved;
+  }
+
+  try {
+    const data = await getFromDb(list, host);
+
+    await saveToCache(list, data);
+    saveToLocals(list, locals, data);
+
+    return data;
+  } catch (e) {
+    if (!(e.message.includes('Key not found in database') && list !== name)) {
+      log('error', 'Error retrieving list', e);
     }
+  }
 
-    try {
-      const data = await getFromDb(list, host);
+  return [];
+}
 
-      await saveToCache(list, data);
-      saveToLocals(list, locals, data);
-
-      return data;
-    } catch (e) {
-      if (!(e.message.includes('Key not found in database') && list !== name)) {
-        log('error', 'Error retrieving list', e);
-      }
-    }
-
-    return [];
-  },
-
-  /**
+/**
    * Updates an item in the list. If the item does not exist, it adds it to the list.
    *
    * - If the item is changed, the result will be an object with `from` and `to` properties indicating how the
@@ -186,34 +185,39 @@ const externals = {
    * @param {string} [options.host] the host name if locals.site.host is unavailable
    * @returns {Promise<object|undefined>}
    */
-  async updateListItem(name, item, key, options) {
-    const { addListItem, deleteListItem, equals, log, retrieveList } = { ...externals, ...__ },
-      keyValue = item[key],
-      list = await retrieveList(name, options),
-      itemsToUpdate = list.filter(item => item[key] === keyValue),
-      sameAsOrig = equals(item),
-      out = {};
+async function updateListItem(name, item, key, options) {
+  const { equals, log } = ix,
+    keyValue = item[key],
+    list = await retrieveList(name, options),
+    itemsToUpdate = list.filter(item => item[key] === keyValue),
+    sameAsOrig = equals(item),
+    out = {};
 
-    if (itemsToUpdate.length > 1) {
-      log('error', `Too many items contain the same key. Can\'t update.\n${prettyJSON({ itemsToUpdate })}`);
-      return;
-    }
-      
-    if (itemsToUpdate.length === 1 && !sameAsOrig(itemsToUpdate[0])) {
-      const oldItem = itemsToUpdate[0];
-
-      await deleteListItem(name, oldItem, options);
-        
-      out.from = oldItem;
-    }
-
-    if (await addListItem(name, item, options)) {
-      out.to = item;
-    }
-       
-    return out;
+  if (itemsToUpdate.length > 1) {
+    log('error', `Too many items contain the same key. Can\'t update.\n${prettyJSON({ itemsToUpdate })}`);
+    return;
   }
-};
+      
+  if (itemsToUpdate.length === 1 && !sameAsOrig(itemsToUpdate[0])) {
+    const oldItem = itemsToUpdate[0];
 
-module.exports = externals;
-addHiddenProperty(module.exports, '__', __);
+    await deleteListItem(name, oldItem, options);
+        
+    out.from = oldItem;
+  }
+
+  if (await addListItem(name, item, options)) {
+    out.to = item;
+  }
+       
+  return out;
+}
+
+
+module.exports = {
+  ix,
+  deleteListItem,
+  getSectionFrontName,
+  retrieveList,
+  updateListItem
+};

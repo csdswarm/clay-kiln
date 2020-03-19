@@ -28,9 +28,8 @@ module.exports = {
   getSectionFrontName,
 
   // Returns a rejected promise to ensure API compatibility and notify dev that there is no client support for these
-  addListItem:  () => Promise.reject('addListItem not available on client'),
-  deleteListItem: () => Promise.reject('deleteListItem not available on client'),
-  updateListItem: () => Promise.reject('updateListItem not available on client')
+  deleteListItem: () => Promise.reject(new Error('deleteListItem not available on client')),
+  updateListItem: () => Promise.reject(new Error('updateListItem not available on client'))
 };
 
 

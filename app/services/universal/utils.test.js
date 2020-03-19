@@ -17,50 +17,6 @@ describe('universal', () => {
       return { ...utils };
     }
 
-    describe('addHiddenProperty', () => {
-      function setup_addHiddenProperty() {
-        const { addHiddenProperty } = setup_utils();
-
-        return { addHiddenProperty };
-      }
-
-      it('adds a property that is not visible to Object.keys/entries, for..in, stringify or hasOwnProperty', () => {
-        const { addHiddenProperty } = setup_addHiddenProperty(),
-          obj = { prop1: 'Present', prop2: 'Here' };
-        let keys = Object.keys(obj);
-
-        expect(keys.length).to.equal(2);
-
-        obj.prop3 = 'Also here';
-        keys = Object.keys(obj);
-
-        expect(keys.length).to.equal(3);
-        expect(keys).to.include('prop3');
-
-        addHiddenProperty(obj, 'prop4', 'Here, but not obvious');
-
-        keys = Object.keys(obj);
-        expect(keys.length).to.equal(3);
-        expect(keys).not.to.include('prop4');
-
-        expect(Object.entries(obj)).to.deep.include(['prop3', 'Also here']);
-        expect(Object.entries(obj)).not.to.deep.include(['prop4', 'Here, but not obvious']);
-
-        // eslint-disable-next-line guard-for-in
-        for (const key in obj) {
-          expect(key).not.to.equal('prop4');
-        }
-
-        expect(JSON.stringify(obj)).to.equal('{"prop1":"Present","prop2":"Here","prop3":"Also here"}');
-        // hasOwnProperty won't get it
-        expect(Object.hasOwnProperty(obj, 'prop4')).to.be.false;
-
-        expect(obj.prop4).to.equal('Here, but not obvious');
-        // but getOwnPropertyNames should
-        expect(Object.getOwnPropertyNames(obj)).to.include('prop4');
-      });
-    });
-
     describe('addLazyLoadProperty', ()=> {
       function setup_addLazyLoadProperty() {
         const { addLazyLoadProperty } = setup_utils(),

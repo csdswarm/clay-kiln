@@ -18,7 +18,7 @@ describe('routes', () => {
     describe('station-lists', () => {
 
       function setup_stationLists(lists = { 'test-list': true }) {
-        const { __ } = stationLists,
+        const { ix } = stationLists,
           next = sinon.stub(),
           routes = {},
           router = sinon.spy({
@@ -27,8 +27,8 @@ describe('routes', () => {
             }
           });
 
-        sinon.stub(__, 'STATION_LISTS').value(lists);
-        sinon.stub(__, 'retrieveList').resolves([]);
+        sinon.stub(ix, 'STATION_LISTS').value(lists);
+        sinon.stub(ix, 'retrieveList').resolves([]);
 
         stationLists(router);
 
@@ -61,7 +61,7 @@ describe('routes', () => {
         await route(res);
 
         expect(next).to.have.been.called;
-        expect(stationLists.__.retrieveList).not.to.have.been.called;
+        expect(stationLists.ix.retrieveList).not.to.have.been.called;
       });
 
       it('requests json data from the specified list when a station slug exists', async () => {
@@ -75,7 +75,7 @@ describe('routes', () => {
         await route(res);
 
         expect(next).not.to.have.been.called;
-        expect(stationLists.__.retrieveList).to.have.been.calledWith('test-list', { locals });
+        expect(stationLists.ix.retrieveList).to.have.been.calledWith('test-list', { locals });
       });
 
       it('sends an error to next if route throws', async () => {
