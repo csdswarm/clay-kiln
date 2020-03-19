@@ -21,14 +21,15 @@ const { recirculationData } = require('../../services/universal/recirc/recircula
     large: 'max-width: 1279px',
     default: 'min-width: 1280px'
   },
+  isMultiColumn = data => data._computed.parents.some(parent => getComponentName(parent) === 'multi-column'),
   asQuery = value => qs.stringify(value, { encode: false }),
   /**
    * Gets the number of items to display
    *
-   * @param {boolean} multiColumn
+   * @param {object} data
    * @returns {number}
    */
-  getMaxItems = (multiColumn) => multiColumn ? 2 : 3,
+  getMaxItems = (data) => isMultiColumn(data) ? 2 : 3,
   /**
    * Takes an object with various sizes set and converts them to
    * an array of values for picture > source elements
@@ -80,8 +81,7 @@ module.exports = recirculationData({
    * @returns {Promise}
    */
   render: (ref, data, locals) => {
-    const inMultiColumn = data._computed.parents.some(parent => getComponentName(parent) === 'multi-column'),
-      squareCrop = '1:1,offset-y0',
+    const squareCrop = '1:1,offset-y0',
       wideCrop = '8:5.1,offset-y0',
       defaultImageSizes = {
         mediumSmall: { width: 440, crop: wideCrop },
@@ -101,7 +101,7 @@ module.exports = recirculationData({
       || locals.sectionFront
       || data.tag;
 
-    if (inMultiColumn) {
+    if (isMultiColumn(data)) {
       Object.assign(defaultImageSizes, {
         small: { width: 85, crop: squareCrop },
         mediumSmall: { width: 115, crop: squareCrop },
