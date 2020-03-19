@@ -1,4 +1,4 @@
-<div class="divider {{if @root.locals.edit ' editing'}}" data-uri="{{ default _ref self }}">
+<div class="divider {{if @root.locals.edit ' editing'}} {{#if @root.locals.sectionFront}}divider--{{@root.locals.sectionFront}}{{/if}}" data-uri="{{ default _ref self }}">
   <h2 class="divider_title">
     {{#ifAny title @root.locals.edit}}
       <span data-editable="title">
