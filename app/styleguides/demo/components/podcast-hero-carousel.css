@@ -2,8 +2,55 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--podcast-hero-carousel {
-  &.podcast-hero-carousel {
+.podcast-hero-carousel{
+  position: relative;
+  background: #eeeeee;
+  height: em(490);
 
+  &__controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+  }
+  &__macro-controls {
+    height: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    pointer-events: none;
+  }
+  &__macros {
+    display: flex;
+  }
+  &__macro {
+    /* needs styling also not sure the pointer events will trigger in JS */
+  }
+  &__control-button {
+    width: 32px;
+    height: 32px;
+    outline: 0;
+    border: none;
+    background: #333;
+    color: white;
+    cursor: pointer;
+    pointer-events: initial;
+  }
+
+  &__slides {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
