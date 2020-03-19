@@ -12,28 +12,28 @@ const
 
   HOUR_IN_SECONDS = 3600,
 
-  ix = {
+  __ = {
     CACHE_TTL: HOUR_IN_SECONDS,
     STATION_LISTS,
     cacheKeyPrefix: name => `list:${name}`,
     db,
     equals: value => other => _isEqual(value, other),
     get: _get,
-    getFromCache: name => ix.redis.get(ix.cacheKeyPrefix(name)).then(cached => cached && JSON.parse(cached)),
-    getFromDb: (name, host) => ix.db.get(`${host}/_lists/${name}`),
-    getFromLocals: (name, locals) => ix.get(locals, ['lists', name]),
-    getStationPrefix: locals => ix.postfix(ix.get(locals, 'stationForPermissions.site_slug', ''), '-'),
+    getFromCache: name => __.redis.get(__.cacheKeyPrefix(name)).then(cached => cached && JSON.parse(cached)),
+    getFromDb: (name, host) => __.db.get(`${host}/_lists/${name}`),
+    getFromLocals: (name, locals) => __.get(locals, ['lists', name]),
+    getStationPrefix: locals => __.postfix(__.get(locals, 'stationForPermissions.site_slug', ''), '-'),
     log: logger.setup({ file: __filename }),
-    prependStation: (name, locals) => ix.STATION_LISTS[name] ? `${ix.getStationPrefix(locals)}${name}` : name,
+    prependStation: (name, locals) => __.STATION_LISTS[name] ? `${__.getStationPrefix(locals)}${name}` : name,
     postfix,
-    saveToCache: (name, data) => ix.redis.set(ix.cacheKeyPrefix(name), JSON.stringify(data), 'EX', ix.CACHE_TTL),
-    saveToDb: (name, data, host) => ix.db.put(`${host}/_lists/${name}`, JSON.stringify(data)),
-    saveToLocals: (name, locals, data) => Object.isExtensible(locals) && ix.set(locals, ['lists', name], data),
+    saveToCache: (name, data) => __.redis.set(__.cacheKeyPrefix(name), JSON.stringify(data), 'EX', __.CACHE_TTL),
+    saveToDb: (name, data, host) => __.db.put(`${host}/_lists/${name}`, JSON.stringify(data)),
+    saveToLocals: (name, locals, data) => Object.isExtensible(locals) && __.set(locals, ['lists', name], data),
     set: _set,
     unset: _unset
   };
 
-addLazyLoadProperty(ix, 'redis', () => require('./redis'));
+addLazyLoadProperty(__, 'redis', () => require('./redis'));
 
 /**
  * Saves a list and simultaneously updates the locals and cache
@@ -45,7 +45,7 @@ addLazyLoadProperty(ix, 'redis', () => require('./redis'));
  * @returns {object[]} the original data provided
  */
 async function saveList(name, data, options) {
-  const { log, prependStation, saveToCache, saveToDb, saveToLocals } = ix,
+  const { log, prependStation, saveToCache, saveToDb, saveToLocals } = __,
     locals = options.locals,
     host = _get(locals, 'site.host', options.host),
     list = prependStation(name, locals);
@@ -76,7 +76,7 @@ async function saveList(name, data, options) {
    * @return {object} the item being added to the list or undefined if it's already in the list
    */
 async function addListItem(name, item, options) {
-  const { equals } = ix,
+  const { equals } = __,
     list = await retrieveList(name, options),
     alreadyInList = list.find(equals(item));
 
@@ -102,7 +102,7 @@ async function addListItem(name, item, options) {
    * @returns {object[]} any items that were removed from the list
    */
 async function deleteListItem(name, target, options) {
-  const { equals } = ix,
+  const { equals } = __,
     list = await retrieveList(name, options),
     itemToRemove = typeof target === 'function' ? target : equals(target),
     itemsToRemove = list.filter(itemToRemove);
@@ -142,7 +142,7 @@ function getSectionFrontName(slug, data) {
    * @returns {Promise<any[]>}
    */
 async function retrieveList(name, options) {
-  const { getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = ix,
+  const { getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = __,
     locals = options.locals,
     host = _get(locals, 'site.host', options.host),
     list = prependStation(name, locals),
@@ -186,7 +186,7 @@ async function retrieveList(name, options) {
    * @returns {Promise<object|undefined>}
    */
 async function updateListItem(name, item, key, options) {
-  const { equals, log } = ix,
+  const { equals, log } = __,
     keyValue = item[key],
     list = await retrieveList(name, options),
     itemsToUpdate = list.filter(item => item[key] === keyValue),
@@ -215,7 +215,7 @@ async function updateListItem(name, item, key, options) {
 
 
 module.exports = {
-  ix,
+  _internals: __,
   deleteListItem,
   getSectionFrontName,
   retrieveList,

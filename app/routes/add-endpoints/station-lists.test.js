@@ -18,7 +18,7 @@ describe('routes', () => {
     describe('station-lists', () => {
 
       function setup_stationLists(lists = { 'test-list': true }) {
-        const { ix } = stationLists,
+        const { _internals: __ } = stationLists,
           next = sinon.stub(),
           routes = {},
           router = sinon.spy({
@@ -27,12 +27,12 @@ describe('routes', () => {
             }
           });
 
-        sinon.stub(ix, 'STATION_LISTS').value(lists);
-        sinon.stub(ix, 'retrieveList').resolves([]);
+        sinon.stub(__, 'STATION_LISTS').value(lists);
+        sinon.stub(__, 'retrieveList').resolves([]);
 
         stationLists(router);
 
-        return { next, routes, router, stationLists };
+        return { next, routes, router, __ };
       }
 
       it('creates routes for each station list', () => {
@@ -54,18 +54,18 @@ describe('routes', () => {
       });
 
       it('does not send a station list if station slug permissions does not exist', async () => {
-        const { next, routes } = setup_stationLists(),
+        const { next, routes, __ } = setup_stationLists(),
           route = Object.values(routes)[0],
           res = { locals: {} };
 
         await route(res);
 
         expect(next).to.have.been.called;
-        expect(stationLists.ix.retrieveList).not.to.have.been.called;
+        expect(__.retrieveList).not.to.have.been.called;
       });
 
       it('requests json data from the specified list when a station slug exists', async () => {
-        const { next, routes } = setup_stationLists(),
+        const { next, routes, __ } = setup_stationLists(),
           route = Object.values(routes)[0],
           locals = { stationForPermissions: { site_slug: 'kxyz' } },
           res = { locals,json: JSON.stringify };
@@ -75,7 +75,7 @@ describe('routes', () => {
         await route(res);
 
         expect(next).not.to.have.been.called;
-        expect(stationLists.ix.retrieveList).to.have.been.calledWith('test-list', { locals });
+        expect(__.retrieveList).to.have.been.calledWith('test-list', { locals });
       });
 
       it('sends an error to next if route throws', async () => {

@@ -6,13 +6,13 @@ const
   { STATION_LISTS } = require('../../services/universal/constants'),
   { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
 
-  ix = {
+  __ = {
     retrieveList,
     STATION_LISTS
   };
 
 function stationLists(router) {
-  return Object.keys(ix.STATION_LISTS)
+  return Object.keys(__.STATION_LISTS)
     .forEach(listName => {
       router.get(`/_lists/${listName}`, wrapInTryCatch(async (req, res, next) => {
 
@@ -22,12 +22,12 @@ function stationLists(router) {
           return next();
         }
 
-        return res.json(await ix.retrieveList(listName, { locals: res.locals }));
+        return res.json(await __.retrieveList(listName, { locals: res.locals }));
       }));
     });
 }
 
-stationLists.ix = ix;
+stationLists._internals = __;
 
 module.exports = stationLists;
 
