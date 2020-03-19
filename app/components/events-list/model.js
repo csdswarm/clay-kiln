@@ -86,7 +86,10 @@ async function getCuratedEventsFromElastic(data, locals) {
   }
   queryService.onlyWithTheseFields(query, elasticFields);
 
-  return queryService.searchByQuery(query)
+  return queryService.searchByQuery(
+    query,
+    locals,
+    { shouldDedupeContent: false })
     .then(prepareQueryResults)
     .catch(e => {
       queryService.logCatch(e, curatedEvents);
@@ -141,7 +144,10 @@ async function getRecentEventsFromElastic(uri, data, locals, { numItems, skip })
   queryService.addSort(query, { startDate: 'desc' });
   queryService.addOffset(query, skip);
 
-  return queryService.searchByQuery(query)
+  return queryService.searchByQuery(
+    query,
+    locals,
+    { shouldDedupeContent: false })
     .then(prepareQueryResults)
     .catch(e => {
       queryService.logCatch(e, uri);
