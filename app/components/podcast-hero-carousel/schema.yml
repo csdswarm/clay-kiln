@@ -1,2 +1,46 @@
-_description: |
-  podcast hero carousel
+_description: The Podcast Front Page Hero Carousel
+_confirmRemoval: true
+
+# component properties
+slides:
+  _label: Carousel Slides
+  _has:
+    input: complex-list
+    collapse: title
+    enforceMaxlength: true
+    validate.min: 1
+    validate.max: 5
+    props:
+      -
+        prop: image
+        _label: Image
+        _has:
+          input: advanced-image-upload
+          webLabel: Insert Image via Web
+          webHelp: Supply a valid HTTPS url to an image file then click "done" button
+          uploadLabel: Upload Image Attachment
+          uploadHelp: Choose an image file from your computer
+      -
+        prop: title
+        _label: Title
+        _has:
+          help: the title of the slide
+          input: text
+      -
+        prop: description
+        _label: Description
+        _has:
+          help: the description of the slide
+          input: text
+      -
+        prop: backgroundColor
+        _label: Background Color
+        _has:
+          help: the background color of slide
+          input: text
+      -
+        prop: showListenNowButton
+        _label: Show Listen Now Button
+        _has:
+          help: hide/show Listen Now Button
+          input: checkbox
