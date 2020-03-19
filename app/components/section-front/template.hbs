@@ -8,16 +8,9 @@
       {{/unless}}
       <span>Title {{#unless primary}} (Secondary Section Front){{/unless}} <span class="warn">*required</span> : {{ default title 'No Title Set' }}</span>
       {{{ if titleLocked '<span class="warn">** Can not change title after page has been published. Unpublish if you need to do so. **</span>' }}}
-      <span>Include podcast module? : {{ default includePodcastModule 'False' }}</span>
     </div>
   {{/if}}
-  {{> section-lead sectionLead }}
-  <div class="stations-carousel-container" data-editable="stationsCarousel">
-    {{> component-list stationsCarousel }}
+  <div class="section-front__section-front-content" data-editable="sectionFrontContent">
+    {{> component-list sectionFrontContent }}
   </div>
-  {{> google-ad-manager googleAdUnderStationsModule}}
-  {{#if includePodcastModule }}
-    {{> podcast-list podcastList }}
-  {{/if}}
-  {{> two-column-component twoColumnComponent }}
 </section>

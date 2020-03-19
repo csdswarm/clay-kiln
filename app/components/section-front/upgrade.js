@@ -1,6 +1,10 @@
 'use strict';
 
-const { getComponentInstance } = require('../../services/server/publish-utils'),
+const CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
+  _pick = require('lodash/pick'),
+  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+  { getComponentInstance: getComponentInstanceName } = require('clayutils'),
+  publishedUri = uri => `${uri}@published`,
   moreContentFeedToTwoColumn = require('../../services/universal/component-upgrades/more-content-feed-to-two-column');
 
 module.exports['1.0'] = function (uri, data) {
@@ -12,3 +16,82 @@ module.exports['1.0'] = function (uri, data) {
 };
 
 module.exports['2.0'] = moreContentFeedToTwoColumn;
+
+module.exports['3.0'] = async function (uri, data) {
+  const {
+      googleAdUnderStationsModule,
+      podcastList,
+      sectionLead,
+      stationsCarousel,
+      twoColumnComponent,
+      includePodcastModule,
+      ...restOfData
+    } = data,
+    // Create new multi-column component, as well as the components to fill it
+    newMultiColumnComponent = await getComponentInstance(`${CLAY_SITE_HOST}/_components/multi-column/instances/new`),
+    newLatestRecirculationComponent = await getComponentInstance(`${CLAY_SITE_HOST}/_components/latest-recirculation/instances/new`),
+    newMinifiedContentFeedComponent = await getComponentInstance(`${CLAY_SITE_HOST}/_components/minified-content-feed/instances/new`),
+    // Get two-column component data
+    twoColumnComponentData = await getComponentInstance(twoColumnComponent._ref),
+    // Find more-content-feed in two-column-component
+    moreContentFeedRef = twoColumnComponentData.col1.find(({ _ref }) => _ref.includes('more-content-feed'))._ref.replace('@published', ''),
+    // Create readable refs for the new components
+    newMultiColumnComponentRef = uri.replace('section-front', 'multi-column').replace('@published', '').concat('-section-front'),
+    newLatestRecirculationRef = uri.replace('section-front', 'latest-recirculation').replace('@published', '').concat('-section-front'),
+    newMinifiedContentFeedRef = uri.replace('section-front', 'minified-content-feed').replace('@published', '').concat('-section-front'),
+    // Get actual more-content-feed data to have recirc data
+    moreContentFeedComponent = await getComponentInstance(moreContentFeedRef),
+    // Pull recirc data fields to set in new latest-recirculation and minified-content-feed components
+    recircComponent = _pick(moreContentFeedComponent, [
+      'contentType',
+      'populateFrom',
+      'sectionFront',
+      'secondarySectionFront',
+      'tag',
+      'excludeSectionFronts',
+      'excludeSecondarySectionFronts',
+      'excludeTags',
+      'locationOfContentFeed'
+    ]);
+
+  // Leave sectionFrontContent empty for new instance (excluding the google-ad-manager)
+  if (getComponentInstanceName(uri) === 'new') {
+    return {
+      sectionFrontContent: [
+        googleAdUnderStationsModule
+      ],
+      ...restOfData
+    };
+  }
+
+  //  Create new latest-recirculation component
+  await putComponentInstance(newLatestRecirculationRef, { ...newLatestRecirculationComponent, ...recircComponent });
+  await putComponentInstance(publishedUri(newLatestRecirculationRef), { ...newLatestRecirculationComponent, ...recircComponent });
+
+  // Create new minified-content-feed component
+  await putComponentInstance(newMinifiedContentFeedRef, { ...newMinifiedContentFeedComponent, ...recircComponent });
+  await putComponentInstance(publishedUri(newMinifiedContentFeedRef), { ...newMinifiedContentFeedComponent, ...recircComponent });
+
+  // Add current section-lead, and new latest-recirculation and minified-content-feed to the new multi-column component
+  newMultiColumnComponent.col1.push(sectionLead);
+  newMultiColumnComponent.col2.push({ _ref: newLatestRecirculationRef });
+  newMultiColumnComponent.col3.push({ _ref: newMinifiedContentFeedRef });
+
+  // Create multi-column component
+  await putComponentInstance(newMultiColumnComponentRef, newMultiColumnComponent);
+  await putComponentInstance(publishedUri(newMultiColumnComponentRef));
+
+  // Return the section front data in the new schema format
+  return {
+    sectionFrontContent: [
+      {
+        _ref: publishedUri(newMultiColumnComponentRef)
+      },
+      ...stationsCarousel,
+      googleAdUnderStationsModule,
+      ...(includePodcastModule ? [podcastList] : []),
+      twoColumnComponent
+    ],
+    ...restOfData
+  };
+};
