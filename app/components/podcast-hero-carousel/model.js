@@ -12,7 +12,7 @@ module.exports = unityComponent({
    *
    * @returns {object}
    */
-  render: (uri, data, locals) => {
+  render: (uri, data) => {
     return data;
   },
 
@@ -25,7 +25,7 @@ module.exports = unityComponent({
    *
    * @returns {object}
    */
-  save: (uri, data, locals) => {
+  save: (uri, data) => {
     return data;
   }
 });
