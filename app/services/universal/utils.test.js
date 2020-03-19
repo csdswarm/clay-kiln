@@ -17,6 +17,50 @@ describe('universal', () => {
       return { ...utils };
     }
 
+    describe('addHiddenProperty', () => {
+      function setup_addHiddenProperty() {
+        const { addHiddenProperty } = setup_utils();
+
+        return { addHiddenProperty };
+      }
+
+      it('adds a property that is not visible to Object.keys/entries, for..in, stringify or hasOwnProperty', () => {
+        const { addHiddenProperty } = setup_addHiddenProperty(),
+          obj = { prop1: 'Present', prop2: 'Here' };
+        let keys = Object.keys(obj);
+
+        expect(keys.length).to.equal(2);
+
+        obj.prop3 = 'Also here';
+        keys = Object.keys(obj);
+
+        expect(keys.length).to.equal(3);
+        expect(keys).to.include('prop3');
+
+        addHiddenProperty(obj, 'prop4', 'Here, but not obvious');
+
+        keys = Object.keys(obj);
+        expect(keys.length).to.equal(3);
+        expect(keys).not.to.include('prop4');
+
+        expect(Object.entries(obj)).to.deep.include(['prop3', 'Also here']);
+        expect(Object.entries(obj)).not.to.deep.include(['prop4', 'Here, but not obvious']);
+
+        // eslint-disable-next-line guard-for-in
+        for (const key in obj) {
+          expect(key).not.to.equal('prop4');
+        }
+
+        expect(JSON.stringify(obj)).to.equal('{"prop1":"Present","prop2":"Here","prop3":"Also here"}');
+        // hasOwnProperty won't get it
+        expect(Object.hasOwnProperty(obj, 'prop4')).to.be.false;
+
+        expect(obj.prop4).to.equal('Here, but not obvious');
+        // but getOwnPropertyNames should
+        expect(Object.getOwnPropertyNames(obj)).to.include('prop4');
+      });
+    });
+
     describe('addLazyLoadProperty', ()=> {
       function setup_addLazyLoadProperty() {
         const { addLazyLoadProperty } = setup_utils(),
@@ -67,120 +111,6 @@ describe('universal', () => {
         expect(bar).not.to.have.been.called;
       });
 
-    });
-
-    describe('asInjectable', () => {
-      function setup_asInjectable() {
-        const { asInjectable } = setup_utils();
-
-        return { asInjectable };
-      }
-
-      it('returns the value of a callback along with an injectable method', () => {
-        const { asInjectable } = setup_asInjectable(),
-          exports = asInjectable(() => '', () => {
-            return { message: 'hi' };
-          });
-
-        expect(exports).to.have.property('message').that.equals('hi');
-        expect(exports).to.respondTo('injectable');
-      });
-
-      it('injects internals into the callback but not expose them', () => {
-        const { asInjectable } = setup_asInjectable(),
-          internals = () => ({ stuff: 'Things' }),
-          exports = asInjectable(internals, _ => {
-            return { myStuff: `My ${_.stuff}` };
-          });
-
-        expect(exports).to.have.property('myStuff').that.equals('My Things');
-        expect(exports).not.to.have.property('internals');
-      });
-
-      describe('injectable', () => {
-        function setup_injectable() {
-          const { asInjectable } = setup_asInjectable(),
-            internals = () => {
-              const _ = {
-                SOME_VAL: 100,
-                someFn: num => num * _.SOME_VAL
-              };
-
-              return _;
-            },
-            exports = asInjectable(internals, _ => {
-              return {
-                times5k: num => _.someFn(num) * 50
-              };
-            }),
-            testableExports = exports.injectable();
-
-          return { asInjectable, exports, testableExports };
-        }
-
-        it('provides access to internals', () => {
-          const { testableExports } = setup_injectable();
-
-          expect(testableExports).to.have.property('internals');
-          expect(testableExports.internals).to.respondTo('someFn');
-          expect(testableExports.internals).to.have.property('SOME_VAL').that.eqls(100);
-        });
-
-        it('allows internals to be overriden', ()=> {
-          const { testableExports } = setup_injectable();
-
-          testableExports.internals.SOME_VAL = 10;
-          expect(testableExports.times5k(1)).to.equal(500);
-          testableExports.internals.SOME_VAL = 100;
-        });
-      
-        it('allows internals to be spied on', () => {
-          const { testableExports } = setup_injectable(),
-            spy = sinon.spy(testableExports.internals, 'someFn'),
-            result = testableExports.times5k(10);
-        
-          expect(result).to.equal(50000);
-          expect(spy).to.have.been.called;
-        });
-
-        it('allows internals to be stubbed, too', () => {
-          const { exports, testableExports } = setup_injectable();
-
-          let accessed = false;
-
-          sinon.stub(testableExports.internals, 'SOME_VAL').get(() => {
-            accessed = true;
-            return 1;
-          });
-
-          expect(testableExports.times5k(10)).to.equal(500);
-          expect(exports.times5k(10)).to.equal(50000);
-
-          expect(accessed).to.be.true;
-
-          sinon.restore();
-
-          const stub = sinon.stub(testableExports.internals, 'someFn').returns(1);
-
-          expect(testableExports.times5k(1234)).to.equal(50);
-          expect(stub).to.have.been.called;
-          sinon.restore();
-
-          expect(testableExports.times5k(1234)).to.equal(1234 * 5000);
-        });
-
-
-        it('does not interfere with existing exports', ()=>{
-          const { exports, testableExports } = setup_injectable();
-
-          sinon.stub(testableExports.internals, 'someFn').returns(1);
-
-          expect(testableExports.times5k(1234)).to.equal(50);
-          expect(exports.times5k(1234)).to.equal(5000 * 1234);
-          sinon.restore();
-        });
-      
-      });
     });
 
     describe('postfix', ()=> {

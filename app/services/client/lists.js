@@ -27,12 +27,10 @@ module.exports = {
   retrieveList,
   getSectionFrontName,
 
-  // Returns a resolved promise to ensure API compatibility with the server counterpart
-  addListItem:  () => Promise.resolve(),
-  deleteListItem: () => Promise.resolve(),
-  saveList: () => Promise.resolve(),
-  uncacheList: () => Promise.resolve(),
-  updateListItem: () => Promise.resolve()
+  // Returns a rejected promise to ensure API compatibility and notify dev that there is no client support for these
+  addListItem:  () => Promise.reject('addListItem not available on client'),
+  deleteListItem: () => Promise.reject('deleteListItem not available on client'),
+  updateListItem: () => Promise.reject('updateListItem not available on client')
 };
 
 

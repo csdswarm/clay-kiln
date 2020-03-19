@@ -7,6 +7,6 @@ module.exports = {
   importContent: require('./import-content'),
   refreshPermissions: require('./refresh-permissions'),
   sitemap: require('./sitemap'),
-  stationAwareLists: require('./station-aware-lists'),
+  stationLists: require('./station-lists'),
   validSource: require('./valid-source')
 };

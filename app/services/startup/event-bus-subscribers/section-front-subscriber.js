@@ -11,11 +11,11 @@ const
 
   log = require('../../universal/log').setup({ file: __filename }),
 
-  filterNonSectionFront = page => _get(page, 'data.main[0]', '').includes('/_components/section-front/instances/'),
-  isAPublishedArticle = op => filters.isPublished(op) && op.key.includes('/article/instances'),
+  onlySectionFronts = page => _get(page, 'data.main[0]', '').includes('/_components/section-front/instances/'),
+  onlyPublishedArticles = op => filters.isPublished(op) && op.key.includes('/article/instances'),
   listName = (station, { primary }) => `${postfix(station, '-')}${primary ? 'primary' : 'secondary'}-section-fronts`,
-  publishSectionFront = stream => stream.filter(filterNonSectionFront).each(handlePublishSectionFront),
-  unpublishSectionFront = stream => stream.filter(filterNonSectionFront).each(handleUnpublishSectionFront),
+  publishSectionFront = stream => stream.filter(onlySectionFronts).each(handlePublishSectionFront),
+  unpublishSectionFront = stream => stream.filter(onlySectionFronts).each(handleUnpublishSectionFront),
   updateTitleLock = (ref, data, titleLocked) => db.put(ref, JSON.stringify({ ...data, titleLocked }));
 
 
@@ -32,7 +32,7 @@ function handleMsnFeed(stream) {
   } = msnFeedUtils;
 
   stream.each(innerStream => innerStream.toArray(async ops => {
-    const publishedArticleStr = _get(ops.find(isAPublishedArticle), 'value');
+    const publishedArticleStr = _get(ops.find(onlyPublishedArticles), 'value');
 
     if (!publishedArticleStr) {
       return;
@@ -72,7 +72,7 @@ async function handlePublishSectionFront(page) {
     if (title && !titleLocked) {
       const
         sectionFront = { name: title, value: title.toLowerCase() },
-        addedItem = await updateListItem(listName(stationSlug, data), sectionFront, 'name', host);
+        addedItem = await updateListItem(listName(stationSlug, data), sectionFront, 'name', { host });
 
       if (addedItem === sectionFront) {
         await updateTitleLock(sectionFrontRef, data, true);
@@ -100,7 +100,7 @@ async function handleUnpublishSectionFront(page) {
       const
         titleVal = title.toLowerCase();
 
-      await deleteListItem(listName(stationSlug, data), ({ value }) => value === titleVal, host);
+      await deleteListItem(listName(stationSlug, data), ({ value }) => value === titleVal, { host });
       await updateTitleLock(sectionFrontRef, data, false);
     }
   } catch (e) {

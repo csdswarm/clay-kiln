@@ -21,7 +21,7 @@ const _get = require('lodash/get'),
 
   SERVER_SIDE = _get(process, 'release.name') === 'node',
 
-  STATION_AWARE_LISTS = {
+  STATION_LISTS = {
     'primary-section-fronts': true,
     'secondary-section-fronts': true
   },
@@ -117,7 +117,7 @@ module.exports = {
   PAGE_TYPES,
   SECOND,
   SERVER_SIDE,
-  STATION_AWARE_LISTS,
+  STATION_LISTS,
   time,
   WEEK,
   YEAR

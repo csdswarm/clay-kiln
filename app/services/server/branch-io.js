@@ -70,7 +70,7 @@ const
    */
   getSectionFrontEntry = async (locals, slug, isPrimary) => {
     const listName = isPrimary ? 'primary-section-fronts' : 'secondary-section-fronts',
-      data = await retrieveList(listName, locals);
+      data = await retrieveList(listName, { locals });
 
     return data.find(entry => entry.value === slug);
   };

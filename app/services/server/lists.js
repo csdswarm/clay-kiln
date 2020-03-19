@@ -7,210 +7,213 @@ const
   _unset = require('lodash/unset'),
   db = require('./db'),
   logger = require('../universal/log'),
-  { addLazyLoadProperty, asInjectable, postfix, prettyJSON } = require('../universal/utils'),
-  { STATION_AWARE_LISTS } = require('../universal/constants'),
+  { addHiddenProperty, addLazyLoadProperty, postfix, prettyJSON } = require('../universal/utils'),
+  { STATION_LISTS } = require('../universal/constants'),
 
-  HOUR_IN_SECONDS = 360,
+  HOUR_IN_SECONDS = 3600,
 
-  internals = () => {
-    const _ = {
-      CACHE_TTL: HOUR_IN_SECONDS,
-      STATION_AWARE: STATION_AWARE_LISTS,
-      cacheKeyPrefix: name => `list:${name}`,
-      db,
-      equals: value => other => _isEqual(value, other),
-      get: _get,
-      getFromCache: name => _.redis.get(_.cacheKeyPrefix(name)).then(cached => cached && JSON.parse(cached)),
-      getFromDb: (name, locals) => _.db.get(`${_.resolveHost(locals)}/_lists/${name}`),
-      getFromLocals: (name, locals) => _.get(locals, ['lists', name]),
-      getStationPrefix: locals => _.postfix(_.get(locals, 'stationForPermissions.site_slug', ''), '-'),
-      log: logger.setup({ file: __filename }),
-      prependStation: (name, locals) => _.STATION_AWARE[name] ? `${_.getStationPrefix(locals)}${name}` : name,
-      postfix,
-      remFromCache: name => _.redis.del(_.cacheKeyPrefix(name)),
-      remFromLocals: (name, locals) => _.unset(locals, ['lists', name]),
-      resolveHost: value => typeof value === 'string' ? value : value.site.host,
-      saveToCache: (name, data) => _.redis.set(_.cacheKeyPrefix(name), JSON.stringify(data), 'EX', _.CACHE_TTL),
-      saveToDb: (name, data, locals) => _.db.put(`${_.resolveHost(locals)}/_lists/${name}`, JSON.stringify(data)),
-      saveToLocals: (name, locals, data) => Object.isExtensible(locals) && _.set(locals, ['lists', name], data),
-      set: _set,
-      unset: _unset
-    };
-
-    addLazyLoadProperty(_, 'redis', () => require('./redis'));
-
-    return _;
+  __ = {
+    CACHE_TTL: HOUR_IN_SECONDS,
+    STATION_LISTS,
+    cacheKeyPrefix: name => `list:${name}`,
+    db,
+    equals: value => other => _isEqual(value, other),
+    get: _get,
+    getFromCache: name => __.redis.get(__.cacheKeyPrefix(name)).then(cached => cached && JSON.parse(cached)),
+    getFromDb: (name, host) => __.db.get(`${host}/_lists/${name}`),
+    getFromLocals: (name, locals) => __.get(locals, ['lists', name]),
+    getStationPrefix: locals => __.postfix(__.get(locals, 'stationForPermissions.site_slug', ''), '-'),
+    log: logger.setup({ file: __filename }),
+    prependStation: (name, locals) => __.STATION_LISTS[name] ? `${__.getStationPrefix(locals)}${name}` : name,
+    postfix,
+    remFromCache: name => __.redis.del(__.cacheKeyPrefix(name)),
+    remFromLocals: (name, locals) => __.unset(locals, ['lists', name]),
+    saveToCache: (name, data) => __.redis.set(__.cacheKeyPrefix(name), JSON.stringify(data), 'EX', __.CACHE_TTL),
+    saveToDb: (name, data, host) => __.db.put(`${host}/_lists/${name}`, JSON.stringify(data)),
+    saveToLocals: (name, locals, data) => Object.isExtensible(locals) && __.set(locals, ['lists', name], data),
+    set: _set,
+    unset: _unset
   };
 
-module.exports = asInjectable(internals, _ => {
-  const lists = {
-    /**
-     * Adds a new list item to a list if it's not already there.
-     * @param {string} name the name of the list
-     * @param {object} item the item to add
-     * @param {object|string} locals (if this is a string, it is assumed to be the host)
-     * @return {object} the item being added to the list or undefined if it's already in the list
-     */
-    async addListItem(name, item, locals) {
-      const { retrieveList, saveList } = lists,
-        list = await retrieveList(name, locals),
-        alreadyInList = list.find(_.equals(item));
+addLazyLoadProperty(__, 'redis', () => require('./redis'));
 
-      if (alreadyInList) {
-        return;
-      }
+/**
+ * Saves a list and simultaneously updates the locals and cache
+ * @param {string} name the name of the list
+ * @param {object[]} data the values to save in the list
+ * @param {object} options
+ * @param {object} [options.locals] the locals object
+ * @param {string} [options.host] the host if locals.site.host is unavailable
+ * @returns {object[]} the original data provided
+ */
+__.saveList = async (name, data, options) => {
+  const { log, prependStation, saveToCache, saveToDb, saveToLocals } = __,
+    locals = options.locals,
+    host = _get(locals, 'site.host', options.host),
+    list = prependStation(name, locals);
 
-      list.push(item);
+  saveToLocals(list, locals, data);
 
-      await saveList(name, list, locals);
+  try {
+    await Promise.all([
+      saveToDb(list, data, host),
+      saveToCache(list, data)
+    ]);
+  } catch (error) {
+    log('error', `There was a problem trying to save the list ${name}`, error);
+  }
 
-      return item;
-    },
+  return data;
+};
 
-    /**
-     * deletes one or more targets from a list
-     * @param {string} name the name of the list
-     * @param {object|function} target an object that matches an existing item in the list or a function that returns true
-     *       for any matching item in the list. The fn will be run through a filter receiving each item as a parameter
-     * @param {object|string} locals if this is a string, it is assumed to be the host
-     * @returns {object[]} any items that were removed from the list
-     */
-    async deleteListItem(name, target, locals) {
-      const { retrieveList, saveList } = lists,
-        list = await retrieveList(name, locals),
-        itemToRemove = typeof target === 'function' ? target : _.equals(target),
-        itemsToRemove = list.filter(itemToRemove);
+const externals = {
+  /**
+   * Adds a new list item to a list if it's not already there.
+   * @param {string} name the name of the list
+   * @param {object} item the item to add
+   * @param {object} options
+   * @param {object} [options.locals] the locals object
+   * @param {string} [options.host] the host name for db sets/gets to use if locals.site.host is unavailable or wrong
+   * @return {object} the item being added to the list or undefined if it's already in the list
+   */
+  async addListItem(name, item, options) {
+    const { equals, retrieveList, saveList } = { ...externals, ...__ },
+      list = await retrieveList(name, options),
+      alreadyInList = list.find(equals(item));
 
-      if (itemsToRemove.length) {
-        const itemsToKeep = item => !itemToRemove(item),
-          listWithoutTargets = list.filter(itemsToKeep);
+    if (alreadyInList) {
+      return;
+    }
 
-        await saveList(name, listWithoutTargets, locals);
+    list.push(item);
 
-        return itemsToRemove;
-      }
+    await saveList(name, list, options);
 
-      return [];
-    },
+    return item;
+  },
 
-    /**
+  /**
+   * deletes one or more targets from a list
+   * @param {string} name the name of the list
+   * @param {object|function} target an object that matches an existing item in the list or a function that returns true
+   *       for any matching item in the list. The fn will be run through a filter receiving each item as a parameter
+   * @param {object} options
+   * @param {object} [options.locals] the locals object
+   * @param {string} [options.host] the host name if locals.site.host is unavailable
+   * @returns {object[]} any items that were removed from the list
+   */
+  async deleteListItem(name, target, options) {
+    const { equals, retrieveList, saveList } = { ...externals, ...__ },
+      list = await retrieveList(name, options),
+      itemToRemove = typeof target === 'function' ? target : equals(target),
+      itemsToRemove = list.filter(itemToRemove);
+
+    if (itemsToRemove.length) {
+      const itemsToKeep = item => !itemToRemove(item),
+        listWithoutTargets = list.filter(itemsToKeep);
+
+      await saveList(name, listWithoutTargets, options);
+
+      return itemsToRemove;
+    }
+
+    return [];
+  },
+
+  /**
      * Gets the display name for a section front slug. Returns the slug if not found.
      *
      * @param {string} slug - The section front's ID
      * @param {object[]} data - The section front list
      * @returns {Promise<string>}
      */
-    getSectionFrontName(slug, data) {
-      const entry = data.find(entry => entry.value === slug);
+  getSectionFrontName(slug, data) {
+    const entry = data.find(entry => entry.value === slug);
 
-      return entry ? entry.name : slug;
-    },
+    return entry ? entry.name : slug;
+  },
 
-    /**
-     * Retrieves a Clay list, checking locals and Redis for cached results first.
-     *
-     * @param {string} name - The list name
-     * @param {object|string} locals if this is a string, it is assumed to be the host
-     * @returns {Promise<any[]>}
-     */
-    async retrieveList(name, locals) {
-      const list = _.prependStation(name, locals),
-        saved = _.getFromLocals(list, locals) || await _.getFromCache(list);
+  /**
+   * Retrieves a Clay list, checking locals and Redis for cached results first.
+   *
+   * @param {string} name - The list name
+   * @param {object} options
+   * @param {object} [options.locals] the locals object
+   * @param {string} [options.host] the host name if locals.site.host is unavailable
+   * @returns {Promise<any[]>}
+   */
+  async retrieveList(name, options) {
+    const { getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = __,
+      locals = options.locals,
+      host = _get(locals, 'site.host', options.host),
+      list = prependStation(name, locals),
+      saved = getFromLocals(list, locals) || await getFromCache(list);
 
-      if (saved) {
-        return saved;
-      }
+    if (saved) {
+      return saved;
+    }
 
-      try {
-        const data = await _.getFromDb(list, locals);
+    try {
+      const data = await getFromDb(list, host);
 
-        _.saveToCache(list, data);
-        _.saveToLocals(list, locals, data);
-
-        return data;
-      } catch (e) {
-        if (!(e.message.includes('Key not found in database') && list !== name)) {
-          _.log('error', 'Error retrieving list', e);
-        }
-      }
-
-      return [];
-    },
-
-    /**
-     * Saves a list and simultaneously updates the locals and cache
-     * @param {string} name the name of the list
-     * @param {object[]} data the values to save in the list
-     * @param {object|string} locals if this is a string, it is assumed to be the host
-     * @returns {object[]} the original data provided
-     */
-    async saveList(name, data, locals) {
-      const list = _.prependStation(name, locals);
-
-      await Promise.all([
-        _.saveToDb(list, data, locals),
-        _.saveToCache(list, data),
-        _.saveToLocals(list, locals, data)
-      ]);
+      await saveToCache(list, data);
+      saveToLocals(list, locals, data);
 
       return data;
-    },
-
-    /**
-     * Remove a list from Redis cache and locals
-     *
-     * @param {string} name
-     * @param {object|string} locals if this is a string it is assumed to be the host
-     * @returns {Promise<void>}
-     */
-    uncacheList(name, locals) {
-      _.remFromLocals(name, locals);
-      return _.remFromCache(name);
-    },
-
-    /**
-     * Updates an item in the list. If the item does not exist, it adds it to the list.
-     *
-     * - If the item is changed, the result will be an object with `from` and `to` properties indicating how the
-     * value changed.
-     * - If the item did not previously exist there will only be a `to` property
-     * - If there are more than one item already in the list with the same key value and error will be logged and there
-     * no value will be returned.
-     * - If the value does not change, then neither the `from` or `to` values will exist on the output.
-     * @param {string} name the name of the list
-     * @param {object} item the item to update in the list
-     * @param {string} key the property on the item to match to the property in the list
-     * @param {object|string} locals if this is a string, it is assumed to be the host
-     * @returns {Promise<object|undefined>}
-     */
-    async updateListItem(name, item, key, locals) {
-      const { addListItem, deleteListItem, retrieveList } = lists,
-        keyValue = item[key],
-        list = await retrieveList(name, locals),
-        itemsToUpdate = list.filter(item => item[key] === keyValue),
-        sameAsOrig = _.equals(item),
-        out = {};
-
-      if (itemsToUpdate.length > 1) {
-        _.log('error', `Too many items contain the same key. Can\'t update.\n${prettyJSON({ itemsToUpdate })}`);
-        return;
+    } catch (e) {
+      if (!(e.message.includes('Key not found in database') && list !== name)) {
+        log('error', 'Error retrieving list', e);
       }
-      
-      if (itemsToUpdate.length === 1 && !sameAsOrig(itemsToUpdate[0])) {
-        const oldItem = itemsToUpdate[0];
-
-        await deleteListItem(name, oldItem, locals);
-        
-        out.from = oldItem;
-      }
-
-      if (await addListItem(name, item, locals)) {
-        out.to = item;
-      }
-       
-      return out;
     }
-  };
 
-  return lists;
-});
+    return [];
+  },
+
+  /**
+   * Updates an item in the list. If the item does not exist, it adds it to the list.
+   *
+   * - If the item is changed, the result will be an object with `from` and `to` properties indicating how the
+   * value changed.
+   * - If the item did not previously exist there will only be a `to` property
+   * - If there are more than one item already in the list with the same key value and error will be logged and there
+   * no value will be returned.
+   * - If the value does not change, then neither the `from` or `to` values will exist on the output.
+   * @param {string} name the name of the list
+   * @param {object} item the item to update in the list
+   * @param {string} key the property on the item to match to the property in the list
+   * @param {object} options
+   * @param {object} [options.locals] the locals object
+   * @param {string} [options.host] the host name if locals.site.host is unavailable
+   * @returns {Promise<object|undefined>}
+   */
+  async updateListItem(name, item, key, options) {
+    const { addListItem, deleteListItem, equals, log, retrieveList } = { ...externals, ...__ },
+      keyValue = item[key],
+      list = await retrieveList(name, options),
+      itemsToUpdate = list.filter(item => item[key] === keyValue),
+      sameAsOrig = equals(item),
+      out = {};
+
+    if (itemsToUpdate.length > 1) {
+      log('error', `Too many items contain the same key. Can\'t update.\n${prettyJSON({ itemsToUpdate })}`);
+      return;
+    }
+      
+    if (itemsToUpdate.length === 1 && !sameAsOrig(itemsToUpdate[0])) {
+      const oldItem = itemsToUpdate[0];
+
+      await deleteListItem(name, oldItem, options);
+        
+      out.from = oldItem;
+    }
+
+    if (await addListItem(name, item, options)) {
+      out.to = item;
+    }
+       
+    return out;
+  }
+};
+
+module.exports = externals;
+addHiddenProperty(module.exports, '__', __);
