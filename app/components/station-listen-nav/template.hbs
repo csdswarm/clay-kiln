@@ -1,4 +1,6 @@
-<div class="component--station-listen-nav">
+<div class="component--station-listen-nav" 
+    data-uri="{{ default _ref _self }}"
+    data-station-id="{{ station.id }}">
   {{#ifAny nowPlaying onAir }}
     <section class="drawer__playing">
       <ul>

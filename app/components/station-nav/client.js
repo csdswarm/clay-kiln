@@ -9,9 +9,13 @@ let desktopNavItems,
   mobileNavItems,
   listenNavToggle,
   listenNavDrawer,
+  listenNavComponent,
+  stationId,
+  stationListenNavInstance,
   lastTarget;
 
-const { isMobileNavWidth } = require('../../services/client/mobile'),
+const { getComponentInstance } = require('clayutils'),
+  { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
   active = 'active',
   /**
@@ -19,7 +23,7 @@ const { isMobileNavWidth } = require('../../services/client/mobile'),
    * @returns {Promise}
    */
   refreshListenNav = async () => {
-    const doc = await fetchDOM('/_components/station-listen-nav/instances/new.html'),
+    const doc = await fetchDOM(`/_components/station-listen-nav/instances/${ stationListenNavInstance }@published.html?stationId=${stationId}`),
       oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
     listenNavDrawer.replaceChild(doc, oldChild);
@@ -225,6 +229,9 @@ document.addEventListener('station-nav-mount', function () {
   mobileNavItems = mobileNavDrawer.querySelectorAll('.drawer__item');
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
   listenNavDrawer = navDrawersContainer.querySelector('.drawer--listen');
+  listenNavComponent = document.querySelector('.component--station-listen-nav');
+  stationId = stationNav.getAttribute('data-station-id');
+  stationListenNavInstance = getComponentInstance(listenNavComponent.getAttribute('data-uri'));
 
   addEventListeners();
 });
