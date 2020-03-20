@@ -13,7 +13,8 @@ const _get = require('lodash/get'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
-  { getComponentName } = require('clayutils');
+  { getComponentName } = require('clayutils'),
+  slugify = require('../../services/universal/slugify');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -484,12 +485,42 @@ function addTwitterHandle(data, locals) {
   }
 }
 
+/**
+ * Adds computed fields for rendering station syndication info.
+ * @param {Object} data
+ */
+function renderStationSyndication(data) {
+  data._computed.stationSyndication = (data.stationSyndication || [])
+    .map(station => station.callsign)
+    .sort()
+    .join(', ');
+}
+
+/**
+ * Adds slug to each item in station syndication field.
+ * @param {Object} data
+ */
+function addStationSyndicationSlugs(data) {
+  data.stationSyndication = (data.stationSyndication || [])
+    .map(station => {
+      station.syndicatedArticleSlug = '/' + [
+        station.stationSlug,
+        slugify(station.sectionFront),
+        slugify(station.secondarySectionFront),
+        data.slug
+      ].filter(Boolean).join('/');
+
+      return station;
+    });
+}
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
+  renderStationSyndication(data);
 
   if (locals && !locals.edit) {
     return data;
@@ -560,6 +591,7 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+  addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image
