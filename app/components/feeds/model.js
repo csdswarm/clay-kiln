@@ -165,7 +165,11 @@ module.exports.render = async (ref, data, locals) => {
       },
       // stations (stationSyndication)
       station: {
-        createObj: station => ({ match: { 'stationSyndication.callsign': station } }),
+        createObj: station => [
+          { match: { 'stationSyndication.callsign': station } },
+          { match: { 'stationSyndication.callsign.normalized': station } }
+        ],
+        multiQuery: true,
         nested: 'stationSyndication'
       },
       // genres syndicated to (genreSyndication)

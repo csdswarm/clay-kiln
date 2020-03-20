@@ -21,7 +21,13 @@ const { _set, elasticsearch, parseHost } = require('../migration-utils').v1,
                 type: 'keyword'
               },
               callsign: {
-                type: 'keyword'
+                type: 'keyword',
+                fields: {
+                  normalized: {
+                    type: 'text',
+                    analyzer: 'station_analyzer'
+                  }
+                }
               },
               sectionFront: {
                 type: 'keyword'
