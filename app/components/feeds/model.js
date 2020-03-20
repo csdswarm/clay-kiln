@@ -125,6 +125,12 @@ module.exports.render = async (ref, data, locals) => {
             queryService.addMinimumShould(localQuery, 1);
           }
         });
+
+        // add nested queries back into the main query
+        if (nested) {
+          queryService.addShould(query, localQuery);
+          queryService.addMinimumShould(query, 1);
+        }
       }
     },
     /**
@@ -159,11 +165,8 @@ module.exports.render = async (ref, data, locals) => {
       },
       // stations (stationSyndication)
       station: {
-        createObj: station => [
-          { match: { stationSyndication: station } } ,
-          { match: { 'stationSyndication.normalized': station } }
-        ],
-        multiQuery: true
+        createObj: station => ({ match: { 'stationSyndication.callsign': station } }),
+        nested: 'stationSyndication'
       },
       // genres syndicated to (genreSyndication)
       genre: { createObj: genreSyndication => ({ match: { 'genreSyndication.normalized': genreSyndication } }) },
