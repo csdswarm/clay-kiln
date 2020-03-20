@@ -1,8 +1,6 @@
 <!-- Content Import Content -->
 <template>
     <div class="content-import">
-        <station-select class="content-import__station-select"
-          :stations="stations" />
         <div class="content-import__input">
             <ui-textbox
                     floating-label
@@ -28,9 +26,8 @@
   import rest from '../../../universal/rest';
   import urlParse from 'url-parse';
   import queryService, { onePublishedArticleByUrl } from '../../../client/query';
-  import stationSelect from '../../shared-vue-components/station-select'
-  import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
   import { mapGetters } from 'vuex'
+  import { DEFAULT_STATION } from '../../../universal/constants';
   import { ensureStartsWith } from '../../../universal/utils'
 
   const UiIconButton = window.kiln.utils.components.UiIconButton;
@@ -48,7 +45,11 @@
         stations: window.kiln.locals.stationsICanImportContent
       }
     },
-    computed: mapGetters(stationSelect.storeNs, ['selectedStation']),
+    computed: {
+      selectedStation() {
+        return window.kiln.locals.stationsIHaveAccessTo[DEFAULT_STATION.site_slug];
+      }
+    },
     methods: {
       /**
        * search for an existing url and return one if found
@@ -114,8 +115,7 @@
     components: {
       UiIconButton,
       UiProgressCircular,
-      UiTextbox,
-      'station-select': StationSelectInput
+      UiTextbox
     }
   }
 </script>
