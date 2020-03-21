@@ -8,14 +8,14 @@
   </div>
 {{/inline}}
 
-<div class="component component--podcast-hero-carousel podcast-hero-carousel {{ if @root.locals.edit 'editing' }}" data-uri="{{ default _ref _self }}">
+<div class="component component--podcast-hero-carousel podcast-hero-carousel {{ if @root.locals.edit 'editing' }}" data-uri="{{ default _ref _self }}" data-editable="slides">
   <div class="podcast-hero-carousel__slides">
     {{#each slides as |slide|}}
       {{> slideTemplate slide }}
     {{/each}}
   </div>
   <div class="podcast-hero-carousel__controls">
-    <button role="button" class="podcast-hero-carousel__control-button podcast-hero-carousel__control-button--left">L</button>
+    <button role="button" class="podcast-hero-carousel__control-button podcast-hero-carousel__control-button--left" data-direction="left">L</button>
     <div class="podcast-hero-carousel__macro-controls">
       <div class="podcast-hero-carousel__macros">
         {{#each slides}}
@@ -23,6 +23,6 @@
         {{/each}}
       </div>
     </div>
-    <button role="button" class="podcast-hero-carousel__control-button podcast-hero-carousel__control-button--right">R</button>
+    <button role="button" class="podcast-hero-carousel__control-button podcast-hero-carousel__control-button--right" data-direction="right">R</button>
   </div>
 </div>
