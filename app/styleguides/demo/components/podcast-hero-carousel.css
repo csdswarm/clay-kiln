@@ -2,10 +2,11 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.podcast-hero-carousel{
+.podcast-hero-carousel {
   position: relative;
   background: #eeeeee;
   height: em(490);
+  margin-bottom: em(60);
 
   &__controls {
     position: absolute;
@@ -49,8 +50,35 @@
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  }
+
+  &__slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    transition: left 0ms ease;
+  }
+
+}
+
+
+/* for directional slides */
+.podcast-hero-carousel {
+  &__slides&__slides--left {
+    .podcast-hero-carousel__slide {
+      left: -100%;
+    }
+  }
+  &__slides&__slides--right {
+    .podcast-hero-carousel__slide {
+      left: 100%;
+    }
+  }
+  &__slides&__slides--left, &__slides&__slides--right {
+    .podcast-hero-carousel__slide--active {
+      left: 0;
+      transition-duration: 150ms;
+    }
   }
 }
