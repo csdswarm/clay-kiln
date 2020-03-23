@@ -230,8 +230,8 @@ document.addEventListener('station-nav-mount', function () {
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
   listenNavDrawer = navDrawersContainer.querySelector('.drawer--listen');
   listenNavComponent = document.querySelector('.component--station-listen-nav');
-  stationId = stationNav.getAttribute('data-station-id');
-  stationListenNavInstance = getComponentInstance(listenNavComponent.getAttribute('data-uri'));
+  stationId = stationNav.dataset.stationId;
+  stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
 
   addEventListeners();
 });
