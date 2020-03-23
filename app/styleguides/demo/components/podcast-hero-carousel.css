@@ -8,6 +8,19 @@
   height: em(490);
   margin-bottom: em(60);
 
+  button {
+    outline: 0;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    svg {
+      pointer-events: none;
+    }
+  }
+
   &__controls {
     position: absolute;
     top: 0;
@@ -18,6 +31,7 @@
     justify-content: center;
     align-items: center;
     pointer-events: none;
+    z-index: 2;
   }
   &__macro-controls {
     height: 100%;
@@ -25,22 +39,28 @@
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    pointer-events: none;
   }
   &__macros {
     display: flex;
+    margin-bottom: em(20);
   }
   &__macro {
-    /* needs styling also not sure the pointer events will trigger in JS */
+    width: em(10);
+    height: em(10);
+    background-color: $white;
+    margin: 0 em(5);
+    border-radius: em(5);
+    opacity: 0.6;
+    pointer-events: initial;
+    &--active {
+      opacity: 1;
+    }
   }
   &__control-button {
-    width: 32px;
-    height: 32px;
-    outline: 0;
-    border: none;
-    background: #333;
+    width: em(39);
+    height: em(39);
+    background: white;
     color: white;
-    cursor: pointer;
     pointer-events: initial;
   }
 
@@ -50,6 +70,7 @@
     left: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden;
   }
 
   &__slide {
@@ -78,7 +99,11 @@
   &__slides&__slides--left, &__slides&__slides--right {
     .podcast-hero-carousel__slide--active {
       left: 0;
-      transition-duration: 150ms;
+      transition-duration: 600ms;
+      z-index: 1;
+    }
+    .zero-index {
+      z-index: 0;
     }
   }
 }

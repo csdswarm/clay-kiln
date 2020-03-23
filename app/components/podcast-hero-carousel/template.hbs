@@ -1,28 +1,33 @@
 {{#*inline "slideTemplate" }}
-  <div class="podcast-hero-carousel__slide" data-background-color="{{  this.backgroundColor }}">
-    <div class="podcast-hero-carousel__slide-image">{{  this.image }}</div>
-    <div class="podcast-hero-carousel__slide-title">{{  this.title }}</div>
-    <div class="podcast-hero-carousel__slide-description">{{  this.description }}</div>
-    <div class="{{ if this.showListenNowButton "podcast-hero-carousel__slide-listen-now-button" else="podcast-hero-carousel__slide-listen-now-button--hide" }}">{{  this.showListenNowButton }}</div>
+  <div class="podcast-hero-carousel__slide{{#unless @index}} podcast-hero-carousel__slide--active{{/unless}}" style="background-color: {{ if this.backgroundColor this.backgroundColor else= '#ffffff'}}">
+    <h1 style="font-size: 72px;">SLIDE: {{@index}}</h1>
+    <div class="podcast-hero-carousel__slide-image">{{ this.image }}</div>
+    <div class="podcast-hero-carousel__slide-title">{{ this.title }}</div>
+    <div class="podcast-hero-carousel__slide-description">{{ this.description }}</div>
+    <div class="{{ if this.showListenNowButton "podcast-hero-carousel__slide-listen-now-button" else="podcast-hero-carousel__slide-listen-now-button--hide" }}">{{ this.showListenNowButton }}</div>
 
   </div>
 {{/inline}}
 
 <div class="component component--podcast-hero-carousel podcast-hero-carousel {{ if @root.locals.edit 'editing' }}" data-uri="{{ default _ref _self }}" data-editable="slides">
-  <div class="podcast-hero-carousel__slides">
+  <div class="podcast-hero-carousel__slides podcast-hero-carousel__slides--right">
     {{#each slides as |slide|}}
       {{> slideTemplate slide }}
     {{/each}}
   </div>
   <div class="podcast-hero-carousel__controls">
-    <button role="button" class="podcast-hero-carousel__control-button podcast-hero-carousel__control-button--left" data-direction="left">L</button>
+    <button role="button" class="podcast-hero-carousel__control-button podcast-hero-carousel__control-button--left" data-direction="left">
+      {{{ read 'components/podcast-hero-carousel/media/arrow-left.svg' }}}
+    </button>
     <div class="podcast-hero-carousel__macro-controls">
       <div class="podcast-hero-carousel__macros">
         {{#each slides}}
-          <div class="podcast-hero-carousel__macro">.</div>
+          <button class="podcast-hero-carousel__macro{{#unless @index}} podcast-hero-carousel__macro--active{{/unless}}" data-slide-index="{{ @index }}"></button>
         {{/each}}
       </div>
     </div>
-    <button role="button" class="podcast-hero-carousel__control-button podcast-hero-carousel__control-button--right" data-direction="right">R</button>
+    <button role="button" class="podcast-hero-carousel__control-button podcast-hero-carousel__control-button--right" data-direction="right">
+      {{{ read 'components/podcast-hero-carousel/media/arrow-right.svg' }}}
+    </button>
   </div>
 </div>

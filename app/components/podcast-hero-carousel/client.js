@@ -1,14 +1,5 @@
 'use strict';
 
-// not going to be able to do this directly on the instance
-// left and right will control the direction -1 and +1
-// that will set the active index number
-// the active index slide will get a class that will have left: 0
-// setting left or right will also set the directional class on the sliders container
-// which will set the left to be neg or pos 100%
-// once the active slide is in place the one below it should have the active class removed
-// which will return it to the outside of the slides carousel's view window
-
 const
   componentClassName = 'podcast-hero-carousel',
   carouselDirectionalObjects = {
@@ -21,7 +12,8 @@ const
       className: `${componentClassName}__slides--right`
     }
   },
-  activeSlideModifierName = '--active';
+  activeSlideModifierName = '--active',
+  slideTransitionTime = 600;
 
 class PodcastHeroCarouselModel {
   constructor(controller) {
@@ -34,21 +26,10 @@ class PodcastHeroCarouselModel {
     if (this.slideIndex < 0) {
       this.slideIndex = this.numSlides - 1;
     }
-    if (this.slideIndex > this.numSlides) {
+    if (this.slideIndex > this.numSlides - 1) {
       this.slideIndex = 0;
     }
     console.log('[slideIndex]', this.slideIndex);
-  }
-  getPreviousIndex() {
-    let previousIndex;
-
-    if (this.slideIndex === 0) {
-      previousIndex = this.numSlides - 1;
-    } else {
-      previousIndex = this.slideIndex - 1;
-    }
-
-    return previousIndex;
   }
   onClickDirectionButton(carouselDirectionalObject) {
     this.setSlideIndex(carouselDirectionalObject.value);
@@ -60,26 +41,34 @@ class PodcastHeroCarouselView {
     this.el = el;
     this.slidesContainer = this.el.querySelector(`.${componentClassName}__slides`);
     this.slideElements = this.el.querySelectorAll(`.${componentClassName}__slide`);
+    this.isAnimating = false;
   }
   setDirectionalClassName(carouselDirectionalObject) {
-    for (const key in carouselDirectionalObjects) {
-      if (carouselDirectionalObjects.hasOwnProperty(key)) {
-        this.slidesContainer.classList.remove(carouselDirectionalObjects[key].className);
-      }
+    if (carouselDirectionalObject.value === 1) {
+      this.slidesContainer.classList.replace(carouselDirectionalObjects.left.className, carouselDirectionalObject.className);
+    } else {
+      this.slidesContainer.classList.replace(carouselDirectionalObjects.right.className, carouselDirectionalObject.className);
     }
-    this.slidesContainer.classList.add(carouselDirectionalObject.className);
   }
   onClickDirectionButton(carouselDirectionalObject) {
-    // console.log('[carouselDirectionalObject]', carouselDirectionalObject);
+    this.isAnimating = true;
+    const
+      activeSlideClassName = `${componentClassName}__slide${activeSlideModifierName}`,
+      currentActiveSlide = this.slidesContainer.querySelector(`.${activeSlideClassName}`);
+
     this.setDirectionalClassName(carouselDirectionalObject);
-    // add the active class to the slide by the index
-    this.slideElements[this.ctrl.model.slideIndex]
-      .classList.add(`${componentClassName}__slide${activeSlideModifierName}`);
-    // remove the active on the previous slide
+    // when switching the directional classes tokenList.replace seems to take longer and is not a promise so timeout is needed
     setTimeout(() => {
-      this.slideElements[this.ctrl.model.getPreviousIndex()]
-        .classList.remove(`${componentClassName}__slide${activeSlideModifierName}`);
-    }, 200);
+      currentActiveSlide.classList.add('zero-index'); // z-index to below the active;
+      // add the active class to the slide by the index
+      this.slideElements[this.ctrl.model.slideIndex]
+        .classList.add(activeSlideClassName);
+      // remove the active on the previous slide after the transition time from css
+      setTimeout(() => {
+        currentActiveSlide.classList.remove(activeSlideClassName, 'zero-index');
+        this.isAnimating = false;
+      }, slideTransitionTime + 10);
+    }, 10);
   }
 }
 
@@ -101,6 +90,7 @@ class PodcastHeroCarouselController {
   onComponentClick(e) {
     // console.log('[onComponentClick]', e.target);
     if (e.target.classList.contains(`${componentClassName}__control-button`)) {
+      if (this.view.isAnimating) return;  // short-circuit if currently animating
       const carouselDirectionalObject = carouselDirectionalObjects[e.target.dataset.direction];
 
       this.view.onClickDirectionButton(carouselDirectionalObject);
