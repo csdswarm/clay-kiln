@@ -9,15 +9,11 @@
     <ui-select v-else
       class="station-select__input"
       has-search
+      label="Select a station"
       placeholder="Search a station"
       :options="items"
       v-model="selectedItem"
-      @change="onChange"
-      ref="stationSelect"
     ></ui-select>
-    <ui-button v-if="allowClear"
-      @click="clearStation"
-      ref="clearButton">Clear</ui-button>
   </div>
 </template>
 
@@ -33,8 +29,6 @@ const { UiButton, UiSelect } = window.kiln.utils.components,
 export default {
   name: 'station-select',
   props: {
-    allowClear: Boolean,
-    onChange: Function,
     initialSelectedSlug: String,
     initialSelectedCallsign: String,
     stations: Object
@@ -51,13 +45,9 @@ export default {
     };
   },
   components: {
-    'ui-button': UiButton,
     'ui-select': UiSelect
   },
   methods: {
-    clearStation() {
-      this.$refs.stationSelect.setValue(null);
-    },
     initItems() {
       const items = _.chain(this.stationsBySlug)
         .map((station, slug) => {
