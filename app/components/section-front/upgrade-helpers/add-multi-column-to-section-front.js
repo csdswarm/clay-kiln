@@ -45,10 +45,10 @@ module.exports = async function (uri, data) {
       'locationOfContentFeed'
     ]);
 
-  // Leave sectionFrontContent empty for new instance (excluding the google-ad-manager)
+  // Leave mainContent empty for new instance (excluding the google-ad-manager)
   if (getComponentInstanceName(uri) === 'new') {
     return {
-      sectionFrontContent: [
+      mainContent: [
         googleAdUnderStationsModule
       ],
       ...restOfData
@@ -74,7 +74,7 @@ module.exports = async function (uri, data) {
 
   // Return the section front data in the new schema format
   return {
-    sectionFrontContent: [
+    mainContent: [
       {
         _ref: publishedUri(newMultiColumnComponentRef)
       },

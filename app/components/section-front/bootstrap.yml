@@ -5,6 +5,6 @@ _components:
     titleLocked: false
     primary: false
     primarySectionFront: ''
-    sectionFrontContent:
+    mainContent:
       - 
         _ref: '/_components/google-ad-manager/instances/billboardBottom'

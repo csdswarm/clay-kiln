@@ -7,7 +7,7 @@ const { v1: { _get, _set, clayExport, clayImport } } = require('../migration-uti
     fromEntries = arr => arr.reduce((obj, [key, value]) => _set(obj, key, value), {});
 
 // Since all migrations are run locally, and all upgrades are run on creation of a new component, there's a race condition
-// locally where the podcastList is added by a migration after the upgrade moving it to sectionFrontContent
+// locally where the podcastList is added by a migration after the upgrade moving it to mainContent
 // 
 // This migration will only be run locally to correct that difference
 if (host === 'clay.radio.com') {
@@ -19,9 +19,9 @@ if (host === 'clay.radio.com') {
                     const { includePodcastModule, podcastList, ...restOfData } = data;
 
                     if (includePodcastModule && podcastList) {
-                        const index = restOfData.sectionFrontContent.findIndex(({ _ref }) => _ref.includes('google-ad-manager'));
+                        const index = restOfData.mainContent.findIndex(({ _ref }) => _ref.includes('google-ad-manager'));
 
-                        restOfData.sectionFrontContent.splice(index + 1, 0, podcastList);
+                        restOfData.mainContent.splice(index + 1, 0, podcastList);
                     }
 
                     return [instance, restOfData];

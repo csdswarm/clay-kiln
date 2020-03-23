@@ -29,7 +29,7 @@ primary:
     field: titleLocked
     operator: falsy
 
-primarySectionFront:
+mainContent:
   _publish:
     - primarySectionFront
   _reveal:
@@ -51,7 +51,7 @@ canonicalUrl:
   _has:
     help: Canonical URL of an article. Set when the article publishes.
 
-sectionFrontContent:
+mainContent:
   _placeholder:
     text: Main Content
     height: 100px
