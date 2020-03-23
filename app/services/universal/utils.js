@@ -10,10 +10,42 @@ const
   _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
   parse = require('url-parse'),
-  { getComponentName, isComponent } = require('clayutils'),
   { contentTypes } = require('./constants'),
+  { getComponentName, isComponent } = require('clayutils'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
+
+/**
+ * Adds a property getter to an object that will run the callback to return the value the first time the property is
+ * requested, but will save that value as the property afterwards, so no additional calls are needed.
+ *
+ * Also adds a property setter to the object that will override any call to the callback.
+ *
+ * Once either a getter or setter is used, the property will be modified to a simple value property
+ *
+ * @param {object} obj object to add property to
+ * @param {string} prop name of property to add lazy loading for
+ * @param {function} cb callback to return the property value. The property name will be passed as the argument.
+ * @returns {object} the original object with the new property added.
+ */
+function addLazyLoadProperty(obj, prop, cb) {
+  const defaultOptions = { configurable: true, enumerable: true },
+    valueOptions = { ...defaultOptions, writable: true };
+
+  Object.defineProperty(obj, prop, { ...defaultOptions,
+    get() {
+      const value = cb(prop);
+
+      Object.defineProperty(obj, prop, { ...valueOptions, value });
+      return value;
+    },
+    set(value) {
+      Object.defineProperty(obj, prop, { ...valueOptions, value });
+      return value;
+    }
+  });
+  return obj;
+}
 
 /**
  * returns a list of keys in the object that have a truthy value
@@ -260,6 +292,16 @@ function debugLog(...args) {
 }
 
 /**
+ * Appends a suffix to a value only if it is not empty
+ * @param {string} value
+ * @param {string} suffix
+ * @returns {string} the new string with a suffix, or empty string
+ */
+function postfix(value, suffix) {
+  return value ? `${value}${suffix}` : '';
+}
+
+/**
  * prepends left to right
  *
  * meant to be used in a mapper function e.g.
@@ -407,6 +449,7 @@ function urlToElasticSearch(url) {
 }
 
 module.exports = {
+  addLazyLoadProperty,
   boolKeys,
   cleanUrl,
   debugLog,
@@ -423,6 +466,7 @@ module.exports = {
   isPublishedVersion,
   isUrl,
   listDeepObjects,
+  postfix,
   prepend,
   prettyJSON,
   removeFirstLine,
