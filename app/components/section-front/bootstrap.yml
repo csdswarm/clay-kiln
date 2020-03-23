@@ -7,4 +7,4 @@ _components:
     primarySectionFront: ''
     sectionFrontContent:
       - 
-        _ref: 'clay.radio.com/_components/google-ad-manager/instances/billboardBottom'
+        _ref: '/_components/google-ad-manager/instances/billboardBottom'
