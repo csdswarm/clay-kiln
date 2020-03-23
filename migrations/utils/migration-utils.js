@@ -33,6 +33,8 @@ const esQuery = require('./es-query'),
     httpRequest: require('./http-request').v1,
     parseHost: require('./parse-host').v1,
     republish: require('./republish').v1,
+    retrieveList: require('./list-retrieve').v1,
+    updateList: require('./list-update').v1,
     usingDb: require('./using-db').v1,
   },
   v2 = {
