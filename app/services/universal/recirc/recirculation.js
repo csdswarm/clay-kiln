@@ -300,7 +300,7 @@ const
       return results;
     }
 
-    const query = queryService.newQueryWithCount(index, maxItems + 1, locals),
+    const query = queryService.newQueryWithCount(index, maxItems, locals),
       searchOpts = {
         shouldDedupeContent: true,
         transformResult
