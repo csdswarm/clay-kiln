@@ -3,8 +3,9 @@
 // TODO:
 // cleanup / easy to read and dry
 // js docs
-// slide css
 // improve kiln view
+// responsive css
+// remove logs
 
 const
   componentClassName = 'podcast-hero-carousel',
@@ -22,6 +23,43 @@ const
   activeMacroClassName = `${componentClassName}__macro-button${activeSlideModifierName}`,
   slideTransitionTime = 600;
 
+class PodcastHeroCarouselTimer {
+  constructor(step = 1000) {
+    this.tick = this.tick.bind(this);
+    this.seconds = 0;
+    this.isPaused = false;
+    this.step = step;
+    this.subscription = {};
+  }
+  subscribe(seconds, cb) {
+    this.subscription = {
+      seconds,
+      cb
+    };
+  }
+  start() {
+    this.tmr = setInterval(this.tick, this.step);
+  }
+  tick() {
+    if (!this.isPaused) {
+      this.seconds++;
+      if (this.subscription.seconds === this.seconds) {
+        this.subscription.cb(this.seconds);
+        this.reset();
+      }
+      console.log('timer', this.seconds);
+    }
+  }
+  reset() {
+    this.seconds = 0;
+  }
+  pause() {
+    this.isPaused = true;
+  }
+  play() {
+    this.isPaused = false;
+  }
+}
 class PodcastHeroCarouselModel {
   constructor(controller) {
     this.ctrl = controller;
@@ -54,6 +92,10 @@ class PodcastHeroCarouselView {
     this.slidesContainer = this.el.querySelector(`.${componentClassName}__slides`);
     this.slideElements = this.el.querySelectorAll(`.${componentClassName}__slide`);
     this.macroElements = this.el.querySelectorAll(`.${componentClassName}__macro-button`);
+    this.directionalButtons = {
+      left: this.el.querySelector(`.${componentClassName}__control-button--left`),
+      right: this.el.querySelector(`.${componentClassName}__control-button--right`)
+    };
     this.isAnimating = false;
   }
   setDirectionalClassName(carouselDirectionalObject) {
@@ -96,16 +138,23 @@ class PodcastHeroCarouselController {
   constructor(el) {
     this.onMount = this.onMount.bind(this);
     this.onDismount = this.onDismount.bind(this);
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
     this.onComponentClick = this.onComponentClick.bind(this);
-    document.addEventListener('podcast-hero-carousel-mount', this.onMount);
-    this.init(el);
-  }
-  init(el) {
     // instantiate model/view classes
     this.view = new PodcastHeroCarouselView(this, el);
     this.model = new PodcastHeroCarouselModel(this);
+    this.timer = new PodcastHeroCarouselTimer();
+    document.addEventListener('podcast-hero-carousel-mount', this.onMount);
+  }
+  init() {
     // add listeners
     this.view.el.addEventListener('click', this.onComponentClick);
+    this.view.el.addEventListener('mouseenter', this.onMouseEnter);
+    this.view.el.addEventListener('mouseleave', this.onMouseLeave);
+    // start timer
+    this.timer.start();
+    this.timer.subscribe(8, () => this.view.directionalButtons.right.click());
   }
   onComponentClick(e) {
     // directional buttons
@@ -115,6 +164,7 @@ class PodcastHeroCarouselController {
 
       this.view.onClickDirectionButton(carouselDirectionalObject);
       this.model.onClickDirectionButton(carouselDirectionalObject);
+      this.view.setActiveMacro(this.model.slideIndex);
     }
     // macro (dots) click
     if (e.target.classList.contains(`${componentClassName}__macro-button`)) {
@@ -131,12 +181,24 @@ class PodcastHeroCarouselController {
       this.view.setActiveMacro(newSlideIndex);
     }
   }
-  onMount() {
+  onMouseEnter() {
+    console.log('[onMouseEnter]');
+    this.timer.pause();
+  }
+  onMouseLeave() {
+    console.log('[onMouseLeave]');
+    this.timer.reset();
+    this.timer.play();
+  }
+  onMount(el) {
     console.log('mounting PodcastHeroCarouselController');
+    this.init(el);
   }
   onDismount() {
     document.removeEventListener('podcast-hero-carousel-mount', this.onMount);
     this.view.el.removeEventListener('click', this.onComponentClick);
+    this.view.el.removeEventListener('mouseenter', this.onComponentClick);
+    this.view.el.removeEventListener('mouseleave', this.onComponentClick);
   }
 }
 module.exports = (el) => new PodcastHeroCarouselController(el);
