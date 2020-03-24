@@ -59,6 +59,9 @@ class PodcastHeroCarouselTimer {
   play() {
     this.isPaused = false;
   }
+  unsubscribe() {
+    clearInterval(this.tmr);
+  }
 }
 class PodcastHeroCarouselModel {
   constructor(controller) {
@@ -146,6 +149,7 @@ class PodcastHeroCarouselController {
     this.model = new PodcastHeroCarouselModel(this);
     this.timer = new PodcastHeroCarouselTimer();
     document.addEventListener('podcast-hero-carousel-mount', this.onMount);
+    document.addEventListener('podcast-hero-carousel-dismount', this.onDismount);
   }
   init() {
     // add listeners
@@ -196,9 +200,11 @@ class PodcastHeroCarouselController {
   }
   onDismount() {
     document.removeEventListener('podcast-hero-carousel-mount', this.onMount);
+    document.removeEventListener('podcast-hero-carousel-dismount', this.onDismount);
     this.view.el.removeEventListener('click', this.onComponentClick);
     this.view.el.removeEventListener('mouseenter', this.onComponentClick);
     this.view.el.removeEventListener('mouseleave', this.onComponentClick);
+    this.timer.unsubscribe();
   }
 }
 module.exports = (el) => new PodcastHeroCarouselController(el);
