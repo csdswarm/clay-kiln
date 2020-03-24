@@ -8,9 +8,9 @@ if (!host || !instance) {
 }
 
 layoutJSON.top = [
+  { _ref: `${ host }/_components/top-nav/instances/default` },
   { _ref: `${ host }/_components/theme/instances/default` },
   { _ref: `${ host }/_components/station-nav/instances/default` },
-  { _ref: `${ host }/_components/top-nav/instances/default` },
   { _ref: `${ host }/_components/google-ad-manager/instances/globalLogoSponsorship` }
 ];
 layoutJSON.head = 'head';
