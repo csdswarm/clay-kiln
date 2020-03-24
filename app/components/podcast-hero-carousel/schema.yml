@@ -38,6 +38,16 @@ slides:
         _has:
           help: the background color of slide
           input: text
+          validate:
+            required: true
+      -
+        prop: textColor
+        _label: Text Color
+        _has:
+          help: the text color of slide
+          input: text
+          validate:
+            required: true
       -
         prop: showListenNowButton
         _label: Show Listen Now Button
