@@ -1,5 +1,7 @@
 'use strict';
 
+const { updateStationSyndicationType } = require('../../universal/create-content');
+
 /**
  * Updates the stationSyndication type from being an array of strings to an array of objects.
  *
@@ -8,8 +10,7 @@
  * @returns {object}
  */
 module.exports = (uri, data) => {
-  data.stationSyndication = (data.stationSyndication || [])
-    .map(callsign => typeof callsign === 'string' ? { callsign } : callsign);
+  updateStationSyndicationType(data);
 
   return data;
 };

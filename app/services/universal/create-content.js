@@ -410,6 +410,15 @@ function upCaseRadioDotCom(data) {
 }
 
 /**
+ * Updates the stationSyndication property to be an array of objects from an array of strings
+ * @param {Object} data
+ */
+function updateStationSyndicationType(data) {
+  data.stationSyndication = (data.stationSyndication || [])
+    .map(callsign => typeof callsign === 'string' ? { callsign } : callsign);
+}
+
+/**
  * Set's noIndexNoFollow for meta tag based on information in the component
  * @param {Object} data
  * @returns {Object}
@@ -501,8 +510,9 @@ function renderStationSyndication(data) {
  * @param {Object} data
  */
 function addStationSyndicationSlugs(data) {
-  data.stationSyndication = (data.stationSyndication || [])
-    .map(callsign => typeof callsign === 'string' ? { callsign } : callsign) // keeping support for legacy array of callsign strings
+  updateStationSyndicationType(data);
+
+  data.stationSyndication = data.stationSyndication
     .map(station => {
       if (station.stationSlug) {
         station.syndicatedArticleSlug = '/' + [
@@ -610,6 +620,7 @@ async function save(uri, data, locals) {
 }
 
 module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
+module.exports.updateStationSyndicationType = updateStationSyndicationType;
 
 module.exports.render = render;
 module.exports.save = save;
