@@ -1,5 +1,11 @@
 'use strict';
 
+// TODO:
+// cleanup / easy to read and dry
+// js docs
+// slide css
+// improve kiln view
+
 const
   componentClassName = 'podcast-hero-carousel',
   carouselDirectionalObjects = {
@@ -13,6 +19,7 @@ const
     }
   },
   activeSlideModifierName = '--active',
+  activeMacroClassName = `${componentClassName}__macro-button${activeSlideModifierName}`,
   slideTransitionTime = 600;
 
 class PodcastHeroCarouselModel {
@@ -21,7 +28,12 @@ class PodcastHeroCarouselModel {
     this.slideIndex = 0;
     this.numSlides = this.ctrl.view.slideElements.length;
   }
-  setSlideIndex(value) {
+  setSlideIndex(value, overrideIndex) {
+    if (overrideIndex || overrideIndex === 0) {
+      this.slideIndex = overrideIndex;
+      console.log('[slideIndex overrideIndex]', this.slideIndex);
+      return;
+    }
     this.slideIndex += value;
     if (this.slideIndex < 0) {
       this.slideIndex = this.numSlides - 1;
@@ -31,8 +43,8 @@ class PodcastHeroCarouselModel {
     }
     console.log('[slideIndex]', this.slideIndex);
   }
-  onClickDirectionButton(carouselDirectionalObject) {
-    this.setSlideIndex(carouselDirectionalObject.value);
+  onClickDirectionButton(carouselDirectionalObject, overrideIndex) {
+    this.setSlideIndex(carouselDirectionalObject.value, overrideIndex);
   }
 }
 class PodcastHeroCarouselView {
@@ -41,6 +53,7 @@ class PodcastHeroCarouselView {
     this.el = el;
     this.slidesContainer = this.el.querySelector(`.${componentClassName}__slides`);
     this.slideElements = this.el.querySelectorAll(`.${componentClassName}__slide`);
+    this.macroElements = this.el.querySelectorAll(`.${componentClassName}__macro-button`);
     this.isAnimating = false;
   }
   setDirectionalClassName(carouselDirectionalObject) {
@@ -70,6 +83,13 @@ class PodcastHeroCarouselView {
       }, slideTransitionTime + 10);
     }, 10);
   }
+  setActiveMacro(newSlideIndex) {
+    const
+      activeMacroElement = this.el.querySelector(`.${activeMacroClassName}`);
+
+    activeMacroElement.classList.remove(activeMacroClassName);
+    this.macroElements[newSlideIndex].classList.add(activeMacroClassName);
+  }
 }
 
 class PodcastHeroCarouselController {
@@ -88,13 +108,27 @@ class PodcastHeroCarouselController {
     this.view.el.addEventListener('click', this.onComponentClick);
   }
   onComponentClick(e) {
-    // console.log('[onComponentClick]', e.target);
+    // directional buttons
     if (e.target.classList.contains(`${componentClassName}__control-button`)) {
       if (this.view.isAnimating) return;  // short-circuit if currently animating
       const carouselDirectionalObject = carouselDirectionalObjects[e.target.dataset.direction];
 
       this.view.onClickDirectionButton(carouselDirectionalObject);
       this.model.onClickDirectionButton(carouselDirectionalObject);
+    }
+    // macro (dots) click
+    if (e.target.classList.contains(`${componentClassName}__macro-button`)) {
+      if (this.view.isAnimating) return;  // short-circuit if currently animating
+      const
+        newSlideIndex = parseInt(e.target.dataset.slideIndex),
+        carouselDirectionalObject = carouselDirectionalObjects[
+          newSlideIndex < this.model.slideIndex ? 'left' : 'right'
+        ];
+
+      if (newSlideIndex === this.model.slideIndex) return;  // short-circuit if same as current slide
+      this.model.onClickDirectionButton(carouselDirectionalObject, newSlideIndex);
+      this.view.onClickDirectionButton(carouselDirectionalObject);
+      this.view.setActiveMacro(newSlideIndex);
     }
   }
   onMount() {
