@@ -2,6 +2,16 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin podcast-hero-carousel-font1 {
+  @mixin font CircularStd-Black, 50px, inherit, inherit, 60px;
+}
+@define-mixin podcast-hero-carousel-font2 {
+  @mixin font CircularStd-Book, 20px, inherit, inherit, 24px;
+}
+@define-mixin podcast-hero-carousel-font3 {
+  @mixin font CircularStd-Black, 18px, inherit, inherit, 22px;
+}
+
 .podcast-hero-carousel {
   position: relative;
   background: #eeeeee;
@@ -19,6 +29,10 @@
     svg {
       pointer-events: none;
     }
+  }
+
+  a {
+    text-decoration: none;
   }
 
   &__controls {
@@ -102,6 +116,26 @@
     flex: 0 0 widthOnGrid(8, 7);
     justify-content: center;
     flex-direction: column;
+  }
+
+  &__slide-title {
+    @mixin podcast-hero-carousel-font1;
+    margin-bottom: em(18, 50);
+  }
+
+  &__slide-description {
+    @mixin podcast-hero-carousel-font2;
+    margin-bottom: em(18, 20);
+  }
+
+  &__slide-listen-now-button {
+    display: inline-flex;
+    @mixin podcast-hero-carousel-font2;
+    width: widthOnGrid(3, 2);
+    height: em(60, 18);
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
   }
 
 }
