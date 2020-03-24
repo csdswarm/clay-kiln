@@ -9,9 +9,11 @@
       </picture>
     </div>
     <div class="podcast-hero-carousel__slide-info-wrap">
-      <div class="podcast-hero-carousel__slide-title">{{ this.title }}</div>
-      <div class="podcast-hero-carousel__slide-description">{{ this.description }}</div>
-      <div class="{{ if this.showListenNowButton "podcast-hero-carousel__slide-listen-now-button" else="podcast-hero-carousel__slide-listen-now-button--hide" }}">{{ this.showListenNowButton }}</div>
+      <h2 class="podcast-hero-carousel__slide-title">{{ this.title }}</h2>
+      <p class="podcast-hero-carousel__slide-description">{{ this.description }}</p>
+      {{#if this.showListenNowButton}}
+        <a href="#" class="podcast-hero-carousel__slide-listen-now-button" style="background-color: {{ this.textColor }}; color: {{ this.backgroundColor }};">Listen Now</a>
+      {{/if}}
     </div>
   </div>
 {{/inline}}
