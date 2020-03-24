@@ -5,7 +5,7 @@
 .podcast-hero-carousel {
   position: relative;
   background: #eeeeee;
-  height: em(490);
+  height: em(540);
   margin-bottom: em(60);
 
   button {
@@ -78,7 +78,30 @@
     width: 100%;
     height: 100%;
     top: 0;
+    display: flex;
+    justify-content: center;
     transition: left 0ms ease;
+  }
+
+  &__slide-image-wrap {
+    display: flex;
+    flex: 0 0 widthOnGrid(6, 5);
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: em(20);
+    padding-right: em(30);
+  }
+
+  &__slide-image {
+    box-shadow: 0 2px 4px 0 $blackRGBA-50;
+    max-height: em(430);
+  }
+
+  &__slide-info-wrap {
+    display: flex;
+    flex: 0 0 widthOnGrid(8, 7);
+    justify-content: center;
+    flex-direction: column;
   }
 
 }

@@ -1,11 +1,18 @@
 {{#*inline "slideTemplate" }}
-  <div class="podcast-hero-carousel__slide{{#unless @index}} podcast-hero-carousel__slide--active{{/unless}}" style="background-color: {{ if this.backgroundColor this.backgroundColor else= '#ffffff'}}">
-    <h1 style="font-size: 72px;">SLIDE: {{@index}}</h1>
-    <div class="podcast-hero-carousel__slide-image">{{ this.image }}</div>
-    <div class="podcast-hero-carousel__slide-title">{{ this.title }}</div>
-    <div class="podcast-hero-carousel__slide-description">{{ this.description }}</div>
-    <div class="{{ if this.showListenNowButton "podcast-hero-carousel__slide-listen-now-button" else="podcast-hero-carousel__slide-listen-now-button--hide" }}">{{ this.showListenNowButton }}</div>
-
+  <div class="podcast-hero-carousel__slide{{#unless @index}} podcast-hero-carousel__slide--active{{/unless}}" style="background-color: {{ this.backgroundColor }}; color: {{ this.textColor }}" data-text-color="{{ this.textColor }}" data-background-color="{{ this.backgroundColor }}">
+    <div class="podcast-hero-carousel__slide-image-wrap">
+      <picture class="podcast-hero-carousel__slide-image">
+        <source media="(min-width: 1024px)" srcset="{{ this.image }}?width=430&crop=1:1,offset-y0" />
+        <source media="(max-width: 1023px)" srcset="{{ this.image }}?width=380&crop=1:1,offset-y0" />
+        <source media="(max-width: 480px)" srcset="{{ this.image }}?width=429&crop=1:1,offset-y0" />
+        <img src="{{ this.image }}?width=430&crop=1:1,offset-y0" class="podcast-hero-carousel__slide-image" />
+      </picture>
+    </div>
+    <div class="podcast-hero-carousel__slide-info-wrap">
+      <div class="podcast-hero-carousel__slide-title">{{ this.title }}</div>
+      <div class="podcast-hero-carousel__slide-description">{{ this.description }}</div>
+      <div class="{{ if this.showListenNowButton "podcast-hero-carousel__slide-listen-now-button" else="podcast-hero-carousel__slide-listen-now-button--hide" }}">{{ this.showListenNowButton }}</div>
+    </div>
   </div>
 {{/inline}}
 
