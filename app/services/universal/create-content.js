@@ -502,14 +502,18 @@ function renderStationSyndication(data) {
  */
 function addStationSyndicationSlugs(data) {
   data.stationSyndication = (data.stationSyndication || [])
+    .map(callsign => typeof callsign === 'string' ? { callsign } : callsign) // keeping support for legacy array of callsign strings
     .map(station => {
-      station.syndicatedArticleSlug = '/' + [
-        station.stationSlug,
-        slugify(station.sectionFront),
-        slugify(station.secondarySectionFront),
-        data.slug
-      ].filter(Boolean).join('/');
-
+      if (station.stationSlug) {
+        station.syndicatedArticleSlug = '/' + [
+          station.stationSlug,
+          slugify(station.sectionFront),
+          slugify(station.secondarySectionFront),
+          data.slug
+        ].filter(Boolean).join('/');
+      } else {
+        station.syndicatedArticleSlug = undefined;
+      }
       return station;
     });
 }
