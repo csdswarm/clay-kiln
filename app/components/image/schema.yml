@@ -59,14 +59,12 @@ _groups:
       - rendition
       - caption
       - credit
+      - creditOverride
       - alt
       - borderToggle
+      - imageLink
     _label: Image
     _placeholder:
       text: New Image
       height: 250px
       ifEmpty: url
-  settings:
-    fields:
-      - imageLink
-      - creditOverride
