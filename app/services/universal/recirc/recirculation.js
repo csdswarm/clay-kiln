@@ -276,6 +276,8 @@ const
    */
   validUrl = url => url && !isComponent(url),
   boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
+  // Get both the results and the total number of results for the query
+  transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
 
   /**
  * Use filters to query elastic for content
@@ -289,10 +291,20 @@ const
  * @returns {array} elasticResults
  */
   fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems }, locals) => {
-    const query = queryService.newQueryWithCount(index, maxItems + 1, locals),
-      searchOpts = { shouldDedupeContent: true };
+    let results = {
+      content: [],
+      totalHits: 0
+    };
 
-    let results = [];
+    if (maxItems === 0) {
+      return results;
+    }
+
+    const query = queryService.newQueryWithCount(index, maxItems, locals),
+      searchOpts = {
+        shouldDedupeContent: true,
+        transformResult
+      };
 
     // add sorting
     queryService.addSort(query, { date: 'desc' });
@@ -359,12 +371,13 @@ const
               ...defaultMapDataToFilters(uri, data, locals),
               ...await mapDataToFilters(uri, data, locals)
             },
-            content = await fetchRecirculation({ filters, excludes, elasticFields, pagination, maxItems }, locals);
+            itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
+            { content, totalHits } = await fetchRecirculation({ filters, excludes, elasticFields, pagination, maxItems: itemsNeeded }, locals);
 
           data._computed = Object.assign(data._computed || {}, {
             [contentKey]: await Promise.all([...curated, ...content].slice(0, maxItems).map(async (item) => mapResultsToTemplate(locals, item))),
             initialLoad: !pagination.page,
-            moreContent: content.length > maxItems
+            moreContent: totalHits > maxItems
           });
         } catch (e) {
           log('error', `There was an error querying items from elastic - ${ e.message }`, e);
