@@ -41,7 +41,21 @@ const { _set, elasticsearch, parseHost } = require('../migration-utils').v1,
             }
           });
         }
-      }
+      },
+      // transform all data to adhere to the new mapping
+      `
+        ArrayList list = new ArrayList();
+        for (item in (ctx._source.stationSyndication ?: [])) {
+          if (item instanceof String) {
+            HashMap map = new HashMap();
+            map.put("callsign", item);
+            list.add(map);
+          } else {
+            list.add(item);
+          }
+        }
+        ctx._source.stationSyndication = list;
+      `
     );
 
     console.log('Mappings updated.');
