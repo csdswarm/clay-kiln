@@ -713,3 +713,22 @@ em, i {
 @define-mixin podcast-episode-list-font3 {
   @mixin font CircularStd-Black, 14px, $white, -.55px, 17px;
 }
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||||||| Podcast Lead Fonts Styleguide |||||||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin podcast-lead-font1 {
+  @mixin font CircularStd-Black, 35px, $black, -.58px, 42px;
+}
+@define-mixin podcast-lead-font2 {
+  @mixin font ProximaNova-Light, 18px, $black, inherit, 25px;
+}
+@define-mixin podcast-lead-font3 {
+  @mixin font CircularStd-Medium, 11px, $boulder, inherit, 14px;
+}
+@define-mixin podcast-lead-font4 {
+  @mixin font CircularStd-Medium, 11px, $boulder, inherit, 13px;
+}
+@define-mixin podcast-lead-font5 {
+  @mixin font CircularStd-Black, 24px, $black, -.58px, 29px;
+}

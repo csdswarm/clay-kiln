@@ -1,6 +1,7 @@
 'use strict';
 
-const { getSectionFrontName, retrieveList } = require('../../services/server/lists');
+const { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  nonWhitespaceBtwnBrackets = /^\{(\S*)\}$/;
 
 /**
  * Takes a text value and converts it to a navigable slug
@@ -139,7 +140,7 @@ module.exports = {
    * @param {Object} locals
    */
   async autoLink(data, props, locals) {
-    const onlyExistingItems = prop => data[prop],
+    const onlyExistingItems = prop => data[prop] || nonWhitespaceBtwnBrackets.test(prop),
       lists = await retrieveSectionFrontLists(props, locals);
 
     data.breadcrumbs = props

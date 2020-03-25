@@ -1,12 +1,10 @@
 _components:
   podcast-show-page:
     stationSlug: ''
-    podcast: {}
     podcastDiscover:
       _ref: /_components/podcast-discover/instances/default
     instances:
       default:
         stationSlug: ''
-        podcast: {}
         podcastDiscover:
           _ref: /_components/podcast-discover/instances/default
