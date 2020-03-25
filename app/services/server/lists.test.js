@@ -247,6 +247,58 @@ describe('server', () => {
 
     });
 
+    describe('saveList', () => {
+      function setup_saveList() {
+        const { saveList,__, locals } = setup_lists();
+
+        locals.lists = {
+          'existing-list': [
+            { name: 'a-key', value: 'a value' }
+          ]
+        };
+
+        __.db.get.resolves([]);
+        __.redis.get.resolves('[]');
+
+        return { saveList, __, locals };
+      }
+
+      it('saves over an existing list if it already exists', async () => {
+        const { saveList, __, locals } = setup_saveList(),
+          newList = [{ key: 'Stuff', value: 'Things' }, { key: 'Bozo', value: 'The Clown' }];
+
+        await saveList('existing-list', newList, { locals });
+
+        expect(locals.lists).to.have.property('existing-list').that.equals(newList);
+        expect(__.db.put).to.have.been.calledWith(
+          'http://domain.com/_lists/existing-list',
+          JSON.stringify(newList)
+        );
+        expect(__.redis.set).to.have.been.calledWith(
+          'list:existing-list',
+          JSON.stringify(newList),
+        );
+
+      });
+
+      it('adds and saves a new list if one does not already exist', async () => {
+        const { saveList, __, locals } = setup_saveList(),
+          listToSave = [{ key: 'Stuff', value: 'Things' }, { key: 'Bozo', value: 'The Clown' }];
+
+        await saveList('my-new-list', listToSave, { locals });
+
+        expect(locals.lists).to.have.property('my-new-list').that.equals(listToSave);
+        expect(__.db.put).to.have.been.calledWith(
+          'http://domain.com/_lists/my-new-list',
+          JSON.stringify(listToSave)
+        );
+        expect(__.redis.set).to.have.been.calledWith(
+          'list:my-new-list',
+          '[{"key":"Stuff","value":"Things"},{"key":"Bozo","value":"The Clown"}]',
+        );
+      });
+    });
+
     describe('updateListItem', () => {
       function standardSetup() {
         const { updateListItem, __, locals } = setup_lists();

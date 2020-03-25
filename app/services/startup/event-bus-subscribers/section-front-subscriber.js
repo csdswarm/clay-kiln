@@ -97,8 +97,7 @@ async function handleUnpublishSectionFront(page) {
       { stationSlug, title } = data;
 
     if (title) {
-      const
-        titleVal = title.toLowerCase();
+      const titleVal = title.toLowerCase();
 
       await deleteListItem(listName(stationSlug, data), ({ value }) => value === titleVal, { host });
       await updateTitleLock(sectionFrontRef, data, false);

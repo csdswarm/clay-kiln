@@ -45,6 +45,7 @@ addLazyLoadProperty(__, 'redis', () => require('./redis'));
  * @returns {object[]} the original data provided
  */
 async function saveList(name, data, options) {
+  console.log({ name, data, options });
   const { log, prependStation, saveToCache, saveToDb, saveToLocals } = __,
     locals = options.locals,
     host = _get(locals, 'site.host', options.host),
@@ -53,7 +54,6 @@ async function saveList(name, data, options) {
   saveToLocals(list, locals, data);
 
   try {
-    debugger;
     await Promise.all([
       saveToDb(list, data, host),
       saveToCache(list, data)
@@ -219,5 +219,6 @@ module.exports = {
   deleteListItem,
   getSectionFrontName,
   retrieveList,
+  saveList,
   updateListItem
 };
