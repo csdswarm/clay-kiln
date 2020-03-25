@@ -23,7 +23,6 @@
 
 .podcast-hero-carousel {
   position: relative;
-  background: #eeeeee;
   margin-bottom: em(60);
   @mixin default-screen {
     height: em(540);
@@ -174,7 +173,7 @@
   }
 
   &__slide-image {
-    box-shadow: 0 2px 4px 0 $blackRGBA-50;
+    box-shadow: 0 em(2) em(4) 0 $blackRGBA-50;
     width: 100%;
   }
 
