@@ -2,9 +2,18 @@
 
 A repo that contains a basic site and the necessary files to provision AWS resources for hosting the site.
 
+## Requirements
+
+Before starting the installation process, it's recommended to have the software below:
+
+- Homebrew
+- Nvm (node version manager)
+- Node.js version v10.16.3 and npm version 6.9.0 using nvm
+- Docker desktop
+
 ## To Start
 
-Make sure you have docker installed.
+Make sure you have docker installed and you're using Node.js version V10.16.3 and npm version 6.9.0.
 
 Edit your `/etc/hosts` file to include the following:
 
@@ -35,10 +44,26 @@ git clone git@bitbucket.org:entercom/frequency-clay-translator.git
 git clone git@bitbucket.org:entercom/clay-radio.git
 ```
 
+It is relevant to have both folders at the same level. The final folders structure should look like this:
+
+```
+├── root-folder
+│   ├── clay-radio
+│   └── frequency-clay-translator
+```
+
 Within frequency-clay-translator run
 ```
 npm install
 ```
+
+**Note:** prior to running the next command, consider if you are starting from scratch or not. **If not**, it is recommended to run at this point the `make nuke` command within the clay-radio folder. This will eventually:
+
+1. Installed dependencies.
+2. Docker images.
+3. Information created in the boostrap process.
+4. Log files.
+
 Within the clay-radio folder run
 
 ```bash
@@ -52,7 +77,7 @@ brew install jq yq golang
 
 Install sops
 ```bash
-pip install sops
+brew install sops
 ```
 
 Install `aws-cli` - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
@@ -81,7 +106,7 @@ function token(){
 }
 ```
 
-Create local .env file
+Create local .env file insde the `clay-radio/app` folder
 ```bash
 token [INSERT_TOKEN_FROM_MFA_DEVICE]
 make generate-local-env
@@ -138,6 +163,7 @@ If this the initial set up of clay you'll need to populate content by running th
     make bootstrap
     ```
 
+**Note:**  running `make bootstrap` multiple times will cause several issues. This command is meant to be executed just once.
 
 #### When do I need to restart?
 

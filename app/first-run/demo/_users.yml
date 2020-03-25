@@ -191,3 +191,31 @@ _users:
     username: jeremy.zevin@entercom.com
     provider: google
     auth: admin
+  -
+    username: juan.giraldo@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: jose.penagos@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: luis.bertel@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: ferney.pena@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: juan.restrepo@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: cristhiam.henao@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: julian.figueroa@gorillalogic.com
+    provider: google
+    auth: admin
