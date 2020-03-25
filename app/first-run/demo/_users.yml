@@ -191,7 +191,3 @@ _users:
     username: jeremy.zevin@entercom.com
     provider: google
     auth: admin
-  -
-    username: julian.figueroa@gorillalogic.com
-    provider: google
-    auth: admin

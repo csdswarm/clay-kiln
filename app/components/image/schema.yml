@@ -37,14 +37,6 @@ alt:
     help: Alternative text for screen readers
     validate:
       required: true
-creditOverride:
-  _label: Credit Override
-  _has:
-    input: wysiwyg
-    buttons:
-      - bold
-      - italic
-      - link
 imageLink:
   _label: URL
   _has:
@@ -62,7 +54,6 @@ _groups:
       - rendition
       - caption
       - credit
-      - creditOverride
       - alt
       - borderToggle
       - imageLink
