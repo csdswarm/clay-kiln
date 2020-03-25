@@ -36,7 +36,7 @@ slides:
         prop: backgroundColor
         _label: Background Color
         _has:
-          help: the background color of slide
+          help: the background color of slide i.e. #123456
           input: text
           validate:
             required: true
@@ -44,7 +44,15 @@ slides:
         prop: textColor
         _label: Text Color
         _has:
-          help: the text color of slide
+          help: the text color of slide i.e. #123456
+          input: text
+          validate:
+            required: true
+      -
+        prop: url
+        _label: URL
+        _has:
+          help: the URL for the Podcast
           input: text
           validate:
             required: true
