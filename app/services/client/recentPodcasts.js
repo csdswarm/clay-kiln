@@ -43,6 +43,6 @@ function add(podcastID) {
 }
 
 module.exports = {
-  get: get,
-  add: add
+  get,
+  add
 };

@@ -2,8 +2,8 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--podcast-recently-played {
-  &.podcast-recently-played {
+.component--podcast-set {
+  &.podcast-set {
 
     h2 {
       font-size: 18px;
@@ -29,7 +29,7 @@
           margin-right: 0;
         }
 
-        .podcast-recently-played-show {
+        .podcast-set-show {
           text-align: center;
         }
       }
