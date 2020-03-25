@@ -5,7 +5,6 @@
 // js docs
 // improve kiln view
 // responsive css
-// remove logs
 
 const
   componentClassName = 'podcast-hero-carousel',
@@ -47,7 +46,6 @@ class PodcastHeroCarouselTimer {
         this.subscription.cb(this.seconds);
         this.reset();
       }
-      console.log('timer', this.seconds);
     }
   }
   reset() {
@@ -72,7 +70,6 @@ class PodcastHeroCarouselModel {
   setSlideIndex(value, overrideIndex) {
     if (overrideIndex || overrideIndex === 0) {
       this.slideIndex = overrideIndex;
-      console.log('[slideIndex overrideIndex]', this.slideIndex);
       return;
     }
     this.slideIndex += value;
@@ -82,7 +79,6 @@ class PodcastHeroCarouselModel {
     if (this.slideIndex > this.numSlides - 1) {
       this.slideIndex = 0;
     }
-    console.log('[slideIndex]', this.slideIndex);
   }
   onClickDirectionButton(carouselDirectionalObject, overrideIndex) {
     this.setSlideIndex(carouselDirectionalObject.value, overrideIndex);
@@ -186,16 +182,13 @@ class PodcastHeroCarouselController {
     }
   }
   onMouseEnter() {
-    console.log('[onMouseEnter]');
     this.timer.pause();
   }
   onMouseLeave() {
-    console.log('[onMouseLeave]');
     this.timer.reset();
     this.timer.play();
   }
   onMount(el) {
-    console.log('mounting PodcastHeroCarouselController');
     this.init(el);
   }
   onDismount() {
