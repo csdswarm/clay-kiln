@@ -1,10 +1,5 @@
 'use strict';
 
-// TODO:
-// cleanup / easy to read and dry
-// js docs
-// improve kiln view
-
 const
   componentClassName = 'podcast-hero-carousel',
   carouselDirectionalObjects = {
@@ -21,7 +16,20 @@ const
   activeMacroClassName = `${componentClassName}__macro-button${activeSlideModifierName}`,
   slideTransitionTime = 600;
 
+
+
+/**
+ * Create a new timer that the component will use to automate slide progressions
+ *
+ * Call subscribe to clear upon dismount
+ * Call unsubscribe to clear upon dismount
+ * @class
+ */
 class PodcastHeroCarouselTimer {
+  /**
+   * Create a timer.
+   * @param {number} step - the milliseconds for when each step is fired.
+   */
   constructor(step = 1000) {
     this.tick = this.tick.bind(this);
     this.seconds = 0;
@@ -29,15 +37,30 @@ class PodcastHeroCarouselTimer {
     this.step = step;
     this.subscription = {};
   }
+
+  /**
+   *
+   * Subscribe to the timer.
+   * @param {number} seconds - The amount of seconds between each callback
+   * @param {Function} cb - The callback fired when seconds is reached.
+   */
   subscribe(seconds, cb) {
     this.subscription = {
       seconds,
       cb
     };
   }
+
+  /**
+   * Start the timer.
+   */
   start() {
     this.tmr = setInterval(this.tick, this.step);
   }
+
+  /**
+   * Fired each step.
+   */
   tick() {
     if (!this.isPaused) {
       this.seconds++;
@@ -47,25 +70,59 @@ class PodcastHeroCarouselTimer {
       }
     }
   }
+
+  /**
+   * Reset the timer.
+   */
   reset() {
     this.seconds = 0;
   }
+
+  /**
+   * Pause the timer.
+   */
   pause() {
     this.isPaused = true;
   }
+
+  /**
+   * Play the timer.
+   */
   play() {
     this.isPaused = false;
   }
+
+  /**
+   * Unsubscribe the timer.
+   */
   unsubscribe() {
     clearInterval(this.tmr);
   }
 }
+
+
+
+/**
+ * A model for the component
+ *
+ * @class
+ */
 class PodcastHeroCarouselModel {
+  /**
+   * Create a carousel model.
+   * @param {PodcastHeroCarouselController} controller - the component's controller.
+   */
   constructor(controller) {
     this.ctrl = controller;
     this.slideIndex = 0;
     this.numSlides = this.ctrl.view.slideElements.length;
   }
+
+  /**
+   * Set the slide index with the value of the carouselDirectionalObject.
+   * @param {number} value - the new value (-1,+1) for the slide index
+   * @param {number} overrideIndex - index can be explicitly set
+   */
   setSlideIndex(value, overrideIndex) {
     if (overrideIndex || overrideIndex === 0) {
       this.slideIndex = overrideIndex;
@@ -79,11 +136,30 @@ class PodcastHeroCarouselModel {
       this.slideIndex = 0;
     }
   }
+
+  /**
+   * Model method for clicking on the component.
+   * @param {carouselDirectionalObject} carouselDirectionalObject - the new carouselDirectionalObject
+   * @param {number} overrideIndex - index can be explicitly set
+   */
   onClickDirectionButton(carouselDirectionalObject, overrideIndex) {
     this.setSlideIndex(carouselDirectionalObject.value, overrideIndex);
   }
 }
+
+
+
+/**
+ * A view for the component
+ *
+ * @class
+ */
 class PodcastHeroCarouselView {
+  /**
+   * Create a carousel view.
+   * @param {PodcastHeroCarouselController} controller - the component's controller.
+   * @param {HTMLElement} el - the component's containing html element.
+   */
   constructor(controller, el) {
     this.ctrl = controller;
     this.el = el;
@@ -96,6 +172,11 @@ class PodcastHeroCarouselView {
     };
     this.isAnimating = false;
   }
+
+  /**
+   * View method for setting the corresponding directional class on the slides container
+   * @param {carouselDirectionalObject} carouselDirectionalObject - the new carouselDirectionalObject
+   */
   setDirectionalClassName(carouselDirectionalObject) {
     if (carouselDirectionalObject.value === 1) {
       this.slidesContainer.classList.replace(carouselDirectionalObjects.left.className, carouselDirectionalObject.className);
@@ -103,6 +184,11 @@ class PodcastHeroCarouselView {
       this.slidesContainer.classList.replace(carouselDirectionalObjects.right.className, carouselDirectionalObject.className);
     }
   }
+
+  /**
+   * View method for logic fired on clicking the directional buttons
+   * @param {carouselDirectionalObject} carouselDirectionalObject - the new carouselDirectionalObject
+   */
   onClickDirectionButton(carouselDirectionalObject) {
     this.isAnimating = true;
     const
@@ -123,6 +209,11 @@ class PodcastHeroCarouselView {
       }, slideTransitionTime + 10);
     }, 10);
   }
+
+  /**
+   * View method for changing which macro dot is active
+   * @param {number} newSlideIndex - the index number of the new slide
+   */
   setActiveMacro(newSlideIndex) {
     const
       activeMacroElement = this.el.querySelector(`.${activeMacroClassName}`);
@@ -131,8 +222,16 @@ class PodcastHeroCarouselView {
     this.macroElements[newSlideIndex].classList.add(activeMacroClassName);
   }
 }
-
+/**
+ * Create a new controller for the component
+ *
+ * @class
+ */
 class PodcastHeroCarouselController {
+  /**
+   * Create a carousel controller.
+   * @param {HTMLElement} el - the component's containing html element.
+   */
   constructor(el) {
     this.onMount = this.onMount.bind(this);
     this.onDismount = this.onDismount.bind(this);
@@ -146,15 +245,12 @@ class PodcastHeroCarouselController {
     document.addEventListener('podcast-hero-carousel-mount', this.onMount);
     document.addEventListener('podcast-hero-carousel-dismount', this.onDismount);
   }
-  init() {
-    // add listeners
-    this.view.el.addEventListener('click', this.onComponentClick);
-    this.view.el.addEventListener('mouseenter', this.onMouseEnter);
-    this.view.el.addEventListener('mouseleave', this.onMouseLeave);
-    // start timer
-    this.timer.start();
-    this.timer.subscribe(8, () => this.view.directionalButtons.right.click());
-  }
+
+  /**
+   * Controller method for clicking on the component and determining which elements were clicked
+   * and the corresponding logic.
+   * @param {Event} e - the event object
+   */
   onComponentClick(e) {
     // directional buttons
     if (e.target.classList.contains(`${componentClassName}__control-button`)) {
@@ -180,16 +276,38 @@ class PodcastHeroCarouselController {
       this.view.setActiveMacro(newSlideIndex);
     }
   }
+
+  /**
+   * Controller method for when the user's mouse enters the component
+   */
   onMouseEnter() {
     this.timer.pause();
   }
+
+  /**
+   * Controller method for when the user's mouse leaves the component
+   */
   onMouseLeave() {
     this.timer.reset();
     this.timer.play();
   }
-  onMount(el) {
-    this.init(el);
+
+  /**
+   * Controller method fired when the spa mounts the components
+   */
+  onMount() {
+    // add listeners
+    this.view.el.addEventListener('click', this.onComponentClick);
+    this.view.el.addEventListener('mouseenter', this.onMouseEnter);
+    this.view.el.addEventListener('mouseleave', this.onMouseLeave);
+    // start timer
+    this.timer.start();
+    this.timer.subscribe(8, () => this.view.directionalButtons.right.click());
   }
+
+  /**
+   * Controller method fired when the spa dismounts the components
+   */
   onDismount() {
     document.removeEventListener('podcast-hero-carousel-mount', this.onMount);
     document.removeEventListener('podcast-hero-carousel-dismount', this.onDismount);
@@ -199,4 +317,5 @@ class PodcastHeroCarouselController {
     this.timer.unsubscribe();
   }
 }
+
 module.exports = (el) => new PodcastHeroCarouselController(el);
