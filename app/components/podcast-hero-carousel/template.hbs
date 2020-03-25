@@ -2,12 +2,7 @@
   <div class="podcast-hero-carousel__slide{{#unless @index}} podcast-hero-carousel__slide--active{{/unless}}" style="background-color: {{ this.backgroundColor }}; color: {{ this.textColor }}">
     <div class="podcast-hero-carousel__slide-image-wrap">
       <a href="{{ this.url }}" class="podcast-hero-carousel__slide-image-link">
-        <picture class="podcast-hero-carousel__slide-image">
-          <source media="(min-width: 1024px)" srcset="{{ this.image }}?width=430&crop=1:1,offset-y0" />
-          <source media="(max-width: 1023px)" srcset="{{ this.image }}?width=380&crop=1:1,offset-y0" />
-          <source media="(max-width: 480px)" srcset="{{ this.image }}?width=429&crop=1:1,offset-y0" />
-          <img src="{{ this.image }}?width=430&crop=1:1,offset-y0" class="podcast-hero-carousel__slide-image" />
-        </picture>
+        <img src="{{ this.image }}?width=440&crop=1:1,offset-y0" class="podcast-hero-carousel__slide-image" />
       </a>
     </div>
     <div class="podcast-hero-carousel__slide-info-wrap">

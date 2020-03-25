@@ -4,7 +4,6 @@
 // cleanup / easy to read and dry
 // js docs
 // improve kiln view
-// responsive css
 
 const
   componentClassName = 'podcast-hero-carousel',

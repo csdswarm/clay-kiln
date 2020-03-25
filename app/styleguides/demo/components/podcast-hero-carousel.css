@@ -5,18 +5,38 @@
 @define-mixin podcast-hero-carousel-font1 {
   @mixin font CircularStd-Black, 50px, inherit, inherit, 60px;
 }
+@define-mixin podcast-hero-carousel-font1-1 {
+  @mixin font CircularStd-Black, 30px, inherit, inherit, 36px;
+}
 @define-mixin podcast-hero-carousel-font2 {
   @mixin font CircularStd-Book, 20px, inherit, inherit, 24px;
 }
+@define-mixin podcast-hero-carousel-font2-1 {
+  @mixin font CircularStd-Book, 14px, inherit, inherit, 17px;
+}
 @define-mixin podcast-hero-carousel-font3 {
   @mixin font CircularStd-Black, 18px, inherit, inherit, 22px;
+}
+@define-mixin podcast-hero-carousel-font3-1 {
+  @mixin font CircularStd-Black, 16px, inherit, inherit, 19px;
 }
 
 .podcast-hero-carousel {
   position: relative;
   background: #eeeeee;
-  height: em(540);
   margin-bottom: em(60);
+  @mixin default-screen {
+    height: em(540);
+  }
+  @mixin large-screen {
+    height: em(490);
+  }
+  @mixin medium-screen {
+    height: em(454);
+  }
+  @mixin medium-small-screen {
+    min-height: em(750);
+  }
 
   button {
     outline: 0;
@@ -24,8 +44,8 @@
     border: none;
     cursor: pointer;
     font-size: 16px;
-    display: flex;
     justify-content: center;
+    align-items: center;
     svg {
       pointer-events: none;
     }
@@ -48,6 +68,7 @@
     pointer-events: none;
     z-index: 2;
   }
+
   &__macro-controls {
     height: 100%;
     flex: 1;
@@ -55,10 +76,12 @@
     justify-content: center;
     align-items: flex-end;
   }
+
   &__macros {
     display: flex;
     margin-bottom: em(20);
   }
+
   &__macro-button {
     width: em(10);
     height: em(10);
@@ -71,12 +94,21 @@
       opacity: 1;
     }
   }
+
   &__control-button {
     width: em(39);
     height: em(39);
+    display: flex;
     background: white;
     color: white;
     pointer-events: initial;
+    @mixin large-screen {
+      width: em(29);
+      height: em(29);
+    }
+    @mixin medium-screen {
+      display: none;
+    }
   }
 
   &__slides {
@@ -96,30 +128,74 @@
     display: flex;
     justify-content: center;
     transition: left 0ms ease;
+    @mixin medium-small-screen {
+      flex-wrap: wrap;
+    }
   }
 
   &__slide-image-wrap {
     display: flex;
-    flex: 0 0 widthOnGrid(6, 5);
     justify-content: flex-end;
     align-items: center;
+    padding-right: 0;
     margin-right: em(20);
-    padding-right: em(30);
+    @mixin default-screen {
+      flex: 0 0 widthOnGrid(6, 5);
+      padding-right: em(30);
+    }
+    @mixin large-screen {
+      flex: 0 0 widthOnGrid(5, 4);
+    }
+    @mixin medium-screen {
+      flex: 0 0 widthOnGrid(3, 2, medium-screen);
+    }
+    @mixin medium-small-screen {
+      flex: 0 0 100%;
+      margin-right: 0;
+      justify-content: center;
+      padding: 0 em(20);
+    }
   }
 
   &__slide-image-link {
-    max-height: em(430);
-    box-shadow: 0 2px 4px 0 $blackRGBA-50;
+    @mixin default-screen {
+      max-height: em(430);
+    }
+    @mixin large-screen {
+      max-height: em(380);
+    }
+    @mixin medium-screen {
+      max-height: em(344);
+    }
+    @mixin medium-small-screen {
+      max-height: em(439);
+      width: 100%;
+    }
   }
 
   &__slide-image {
+    box-shadow: 0 2px 4px 0 $blackRGBA-50;
+    width: 100%;
   }
 
   &__slide-info-wrap {
     display: flex;
-    flex: 0 0 widthOnGrid(8, 7);
     justify-content: center;
     flex-direction: column;
+    @mixin default-screen {
+      flex: 0 0 widthOnGrid(8, 7);
+    }
+    @mixin large-screen {
+      flex: 0 0 widthOnGrid(7, 6);
+    }
+    @mixin medium-screen {
+      flex: 0 0 widthOnGrid(3, 2, medium-screen);
+    }
+    @mixin medium-small-screen {
+      flex: 0 0 100%;
+      padding: 0 em(20);
+      justify-content: flex-start;
+    }
   }
 
   &__slide-title {
@@ -128,11 +204,17 @@
     &:hover {
       text-decoration: underline;
     }
+    @mixin medium-screen {
+      @mixin podcast-hero-carousel-font1-1;
+    }
   }
 
   &__slide-description {
     @mixin podcast-hero-carousel-font2;
     margin-bottom: em(18, 20);
+    @mixin medium-screen {
+      @mixin podcast-hero-carousel-font2-1;
+    }
   }
 
   &__slide-listen-now-button {
@@ -143,6 +225,10 @@
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
+    @mixin medium-screen {
+      @mixin podcast-hero-carousel-font3-1;
+      height: em(55, 18);
+    }
   }
 
 }
@@ -155,11 +241,13 @@
       left: -100%;
     }
   }
+
   &__slides&__slides--right {
     .podcast-hero-carousel__slide {
       left: 100%;
     }
   }
+
   &__slides&__slides--left, &__slides&__slides--right {
     .podcast-hero-carousel__slide--active {
       left: 0;
