@@ -25,10 +25,10 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
 			xmlelement(name video, 
 				xmlelement(name thumbnail_loc, bc.data ->> 'thumbnailUrl'),
 				xmlelement(name title, bc.data ->> 'name'),
-				xmlelement(name description, bc.data ->> 'seoDescription'),
+				xmlelement(name description, COALESCE(bc.data ->> 'seoDescription', bc.data ->> 'longDescription', bc.data ->> 'shortDescription', bc.data ->> 'name')),
 				xmlelement(name content_loc, 'https://players.brightcove.net/' || env.BRIGHTCOVE_ACCOUNT_ID || '/' || env.BRIGHTCOVE_PLAYER_ID || '_default/index.html?videoId=' || (bc.data -> 'video' ->> 'id')),
 				xmlelement(name duration, bc.data ->> 'duration'),
-				xmlelement(name view_count, bc.data ->> 'views'),
+				xmlelement(name view_count, COALESCE(bc.data ->> 'views', 0),
 				xmlelement(name publication_date, bc.data ->> 'bcPublishedAt')
 			) as videoXML
 		FROM components.brightcove bc
@@ -36,6 +36,7 @@ CREATE MATERIALIZED VIEW sitemap_videos AS WITH
 		JOIN articles_and_galleries ag 
 			ON ag.lead = bc.id
 		WHERE bc.data -> 'video' -> 'id' IS NOT NULL
+			AND bc.data ->> 'name' IS NOT NULL
 	),
 	_page_data AS (
 	  SELECT
