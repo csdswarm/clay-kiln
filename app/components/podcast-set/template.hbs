@@ -10,8 +10,10 @@
     {{#each _computed.podcasts as |podcast|}}
       <li class="podcast-set-item">
         <div class="podcast-set-show">
-          <img src="{{podcast.attributes.image}}" alt="{{podcast.show.name}}" />
-          <div class="show__name">{{podcast.show.name}}</div>
+          <a href="{{podcast.attributes.url}}">
+            <img src="{{podcast.attributes.image}}" alt="{{podcast.attribues.title}}"/>
+          </a>
+          <div class="show__name">{{podcast.attributes.title}}</div>
           <div class="show__details">{{podcast.attributes.description}}</div>
         </div>
       </li>

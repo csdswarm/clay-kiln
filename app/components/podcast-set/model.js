@@ -1,7 +1,8 @@
 'use strict';
 
-const { unityComponent } = require('../../services/universal/amphora'),
-  radioApiService = require('../../services/server/radioApi');
+const {unityComponent} = require('../../services/universal/amphora'),
+  radioApiService = require('../../services/server/radioApi'),
+  podcastService = require('../../services/universal/podcast');
 
 module.exports = unityComponent({
   /**
@@ -24,8 +25,6 @@ module.exports = unityComponent({
         'filter[id]': podcastIds
       };
 
-    console.log('podcast ids:',podcastIds);
-
     if (!podcastIds) {
       data._computed.podcasts = [];
       return data;
@@ -37,7 +36,11 @@ module.exports = unityComponent({
 
         if (response.data) {
           podcasts = response.data;
+          for (let i = 0; i < podcasts.length; i++) {
+            const podcast = podcasts[i];
 
+            podcast.attributes.url = podcastService.createUrl(podcast.attributes.title);
+          }
         } else {
           console.log('RDC API no response data.');
         }

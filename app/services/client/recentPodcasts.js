@@ -9,9 +9,15 @@ const recentPodcasts = 'recentPodcasts',
  * @returns {Object[]}
  */
 function get() {
-  const fromStorage = localStorage.getItem(recentPodcasts);
+  try {
+    const fromStorage = localStorage.getItem(recentPodcasts);
 
-  return JSON.parse(fromStorage) || [];
+    return JSON.parse(fromStorage) || [];
+  } catch (e) {
+    console.error('Error parsing recentPodcasts from localStorage. Defaulting to empty array');
+    return [];
+  }
+
 }
 
 /**

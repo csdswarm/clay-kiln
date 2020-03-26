@@ -1,14 +1,15 @@
 'use strict';
 
 const recentPodcasts = require('../../services/client/recentPodcasts'),
-  radioApiService = require('../../services/client/radioApi');
+  radioApiService = require('../../services/client/radioApi'),
+  numberOfRecentPodcasts = 6;
 
 class PodcastSet {
   constructor(element) {
     this.el = element;
+    this.parentElement = element.parentElement;
     this.set = element.getAttribute('data-set');
 
-    console.log('constructing PodcastSet');
     this.updateDomForSet();
   }
 
@@ -19,29 +20,43 @@ class PodcastSet {
       queryParamString += `&podcastIds=${podcastIds.join(',')}`;
     }
 
-    return await radioApiService.fetchDOM(`//${window.location.hostname}/_components/podcast-set/instances/${set}.html${queryParamString}`);
+    const result = await radioApiService.fetchDOM(`//${window.location.hostname}/_components/podcast-set/instances/${set}.html${queryParamString}`)
+      .catch((rejected) => {
+        console.error('Failure to retrieve podcast DOM:', rejected);
+        return false;
+      });
+
+    if (result && result.classList.contains('component--podcast-set')) {
+      return result; // only return result if we retrieve a valid podcast-set component
+    }
+    return false;
   }
 
   async updateDomWithIds(podcastIds) {
-    const podcastTemplate = await this.getComponentTemplate(podcastIds);
+    const podcastTemplate = await this.getComponentTemplate(podcastIds),
+      parent = this.parentElement;
 
-    console.log('template:',podcastTemplate);
+    if (podcastTemplate) {
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+      parent.append(podcastTemplate);
+      this.el = podcastTemplate;
+    }
+    return !!podcastTemplate;
   }
 
   async updateRecent() {
     const podcastIds = recentPodcasts.get(),
-      mostRecent = podcastIds.slice(0, 6); // we only want up to 6 most recent podcasts.
-
-    console.log('most recent:', mostRecent);
+      mostRecent = podcastIds.slice(0, numberOfRecentPodcasts);
 
     if (mostRecent.length) {
-      this.updateDomWithIds(mostRecent);
+      return await this.updateDomWithIds(mostRecent);
     }
 
   }
 
   async updateDomForSet(set = this.set) {
-    console.log('update dom:',set);
     switch (set) {
       case 'recent':
         return this.updateRecent();
