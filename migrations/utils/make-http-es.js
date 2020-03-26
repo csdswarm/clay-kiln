@@ -47,7 +47,7 @@ const makeHttpEs_v1 = parsedHost => {
     validResponseTypesStr = Array.from(validResponseTypes).join(', '),
     esUrl = `${protocol}://${es.hostname}:9200`,
     get = restOfUrl => {
-      restOfUrl= ensureStartsWith('/', restOfUrl);
+      restOfUrl = ensureStartsWith('/')(restOfUrl);
 
       return httpGet({ url: esUrl + restOfUrl, http: protocol });
     },
@@ -58,7 +58,7 @@ const makeHttpEs_v1 = parsedHost => {
             body,
             headers
           } = argObj,
-          restOfUrl = ensureStartsWith('/', argObj.restOfUrl);
+          restOfUrl = ensureStartsWith('/')(argObj.restOfUrl);
 
         if (!validResponseTypes.has(responseType)) {
           throw new Error(
