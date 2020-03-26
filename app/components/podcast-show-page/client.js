@@ -83,7 +83,7 @@ class PodcastShowPage {
   async updateEpisodes(content) {
     await updateTab(content, this.podcastSiteSlug);
 
-    // @TODO: UNDO COMMENT when merging to envs that have ON-444 ON-1381
+    // @TODO: UNDO COMMENT when merging to envs that have ON-444 ON-1381 ON-1522
     // podcastEpisodeFactory(content.querySelector('.component--podcast-episode-list'));
   }
 
