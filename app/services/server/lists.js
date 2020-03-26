@@ -45,7 +45,6 @@ addLazyLoadProperty(__, 'redis', () => require('./redis'));
  * @returns {object[]} the original data provided
  */
 async function saveList(name, data, options) {
-  console.log({ name, data, options });
   const { log, prependStation, saveToCache, saveToDb, saveToLocals } = __,
     locals = options.locals,
     host = _get(locals, 'site.host', options.host),
