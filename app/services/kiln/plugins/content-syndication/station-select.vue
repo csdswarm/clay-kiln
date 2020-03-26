@@ -38,6 +38,7 @@
 <script>
   import _ from 'lodash';
   const { retrieveList } = require('../../../../services/client/lists');
+  const { setImmutable, updateImmutable } = require('../../../../services/universal/utils');
 
   const UiSelect = window.kiln.utils.components.UiSelect;
 
@@ -121,7 +122,9 @@
         try {
           this.selectedStations = input;
           this.commit();
-        } catch (e) {}
+        } catch (e) {
+          console.error('Error committing selected stations:', e);
+        }
       },
       /**
        * Updates the form data.
@@ -136,14 +139,7 @@
        * @param {any} value
        */
       updateSectionFront(stationSlug, property, value) {
-        console.log(this.stationSectionFronts);
-        this.stationSectionFronts = {
-          ...this.stationSectionFronts,
-          [stationSlug]: {
-            ...this.stationSectionFronts[stationSlug],
-            [property]: value
-          }
-        };
+        this.stationSectionFronts = setImmutable(this.stationSectionFronts, [stationSlug, property], value);
 
         this.commit();
       },
@@ -169,8 +165,8 @@
         const findSectionFrontOption = (value, options) => options.find(o => o.value === value);
 
         const [primarySectionFronts, secondarySectionFronts] = await Promise.all([
-          retrieveList(`${slug}-primary-section-fronts`),
-          retrieveList(`${slug}-secondary-section-fronts`),
+          retrieveList(`primary-section-fronts`),
+          retrieveList(`secondary-section-fronts`),
         ]);
 
         if (this.isStationSelected(slug)) {
@@ -188,13 +184,10 @@
             partial.selectedSecondary = findSectionFrontOption(selectedSecondary, partial.secondaryOptions);
           }
 
-          this.stationSectionFronts = {
-            ...this.stationSectionFronts,
-            [slug]: {
-              ...this.stationSectionFronts[slug],
-              ...partial
-            }
-          };
+          this.stationSectionFronts = updateImmutable(this.stationSectionFronts, slug, sf => ({
+            ...sf,
+            ...partial
+          }));
         }
       },
       /**

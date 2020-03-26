@@ -499,7 +499,7 @@ function addTwitterHandle(data, locals) {
  * @param {Object} data
  */
 function renderStationSyndication(data) {
-  data._computed.stationSyndication = (data.stationSyndication || [])
+  data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
     .map(station => station.callsign)
     .sort()
     .join(', ');
@@ -522,7 +522,7 @@ function addStationSyndicationSlugs(data) {
           data.slug
         ].filter(Boolean).join('/');
       } else {
-        station.syndicatedArticleSlug = undefined;
+        delete station.syndicatedArticleSlug;
       }
       return station;
     });
