@@ -1,7 +1,7 @@
 'use strict';
 
 const { fetchDOM } = require('../../services/client/radioApi');
-// @TODO: UNDO COMMENT when merging to envs that have ON-444 ON-1381
+// @TODO: UNDO COMMENT when merging to envs that have ON-444 ON-1381 ON-1522
 // podcastEpisodeFactory = require('../podcast-episode-list/client'),
 // @TODO: UNDO COMMENTS when merging to envs that have ON-1359 ON-1382
 // podcastDiscoverFactory = require('../podcast-discover/client'),
@@ -14,16 +14,18 @@ const { fetchDOM } = require('../../services/client/radioApi');
  * @param {String} podcastSiteSlug
  */
 async function updateTab(content, podcastSiteSlug) {
-  const component = content.querySelector('.component'),
-    uri = `//${component.getAttribute('data-uri').replace('@published', '')}.html`;
+  const component = content.querySelector('.component');
+  if (component) { // @TODO remove check after ON-1359 ON-1382 are done (discover tickets)
+    let uri = `//${component.getAttribute('data-uri').replace('@published', '')}.html`;
 
-  uri += '?api-stg=true'; // @TODO remove after site_slug is in prod API
+    uri += '?api-stg=true'; // @TODO remove after site_slug is in prod API
 
-  if (podcastSiteSlug) {
-    uri += `podcast-site-slug=${ podcastSiteSlug }`;
+    if (podcastSiteSlug) {
+      uri += `&podcast-site-slug=${ podcastSiteSlug }`;
+    }
+
+    component.parentNode.replaceChild(await fetchDOM(uri), component);
   }
-
-  component.parentNode.replaceChild(await fetchDOM(uri), component);
 }
 
 class PodcastShowPage {
@@ -34,7 +36,6 @@ class PodcastShowPage {
       hash = window.location.hash.replace('#', ''),
       firstTab = tabs[0].className.replace('tabs-tab tabs-tab--', '');
 
-    console.log('firstTab', firstTab);
     this.podcastSiteSlug = podcastShowPage.getAttribute('data-podcast-site-slug');
     this.updates = {
       episodes: this.updateEpisodes.bind(this),
@@ -108,20 +109,17 @@ class PodcastShowPage {
    * @param {boolean} [useHash]
    */
   async activateTab(e, tabs, content, useHash) {
-    console.log('activate tab', e, tabs, content, useHash);
     let contentLabel;
 
     if (e.currentTarget) {
       contentLabel = e.currentTarget.className.replace('tabs-tab tabs-tab--','');
 
-      console.log('content label', contentLabel);
       for (const tab of tabs) {
         tab.classList.remove('active');
       }
       e.currentTarget.classList.add('active');
     } else {
       contentLabel = e;
-      console.log('content label', contentLabel);
       for (const tab of tabs) {
         tab.classList.remove('active');
         if (tab.classList.contains(`tabs-tab--${contentLabel}`)) {
@@ -143,7 +141,7 @@ class PodcastShowPage {
     }
 
     if (useHash) {
-      history.pushState(null, null, `${window.location.origin}${window.location.pathname}#${contentLabel}`); // set hash without reloading page
+      history.pushState(null, null, `${window.location.origin}${window.location.pathname}${window.location.search}#${contentLabel}`); // set hash without reloading page
     }
   }
 }
