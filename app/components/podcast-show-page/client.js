@@ -15,6 +15,7 @@ const { fetchDOM } = require('../../services/client/radioApi');
  */
 async function updateTab(content, podcastSiteSlug) {
   const component = content.querySelector('.component');
+
   if (component) { // @TODO remove check after ON-1359 ON-1382 are done (discover tickets)
     let uri = `//${component.getAttribute('data-uri').replace('@published', '')}.html`;
 
