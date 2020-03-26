@@ -1,6 +1,6 @@
 'use strict';
 
-const {unityComponent} = require('../../services/universal/amphora'),
+const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
   podcastService = require('../../services/universal/podcast');
 
@@ -65,7 +65,7 @@ module.exports = unityComponent({
    *
    * @returns {object}
    */
-  save: (uri, data, locals) => {
+  save: (uri, data) => {
     return data;
   }
 });
