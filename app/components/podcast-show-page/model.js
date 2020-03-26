@@ -43,9 +43,14 @@ module.exports = unityComponent({
       return data;
     }
 
-    data.stationSlug = _get(locals, 'params.stationSlug');
     locals.podcast = await getPodcastShow(locals);
+    data.stationSlug = _get(locals, 'params.stationSlug');
     await addBreadcrumbs(data, locals);
+
+    data._computed = {
+      podcastSiteSlug: locals.params.dynamicSlug,
+      podcastCategorySlug: _get(locals.podcast, 'attributes.category[0].slug')
+    };
 
     return data;
   }
