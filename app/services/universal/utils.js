@@ -11,6 +11,7 @@ const
   _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
   _setWith = require('lodash/setWith'),
+  _updateWith = require('lodash/updateWith'),
   parse = require('url-parse'),
   { getComponentName, isComponent } = require('clayutils'),
   { contentTypes } = require('./constants'),
@@ -419,6 +420,17 @@ function setImmutable(object, path, value) {
   return _setWith(_clone(object), path, value, _clone);
 }
 
+/**
+ * Immutable version of Lodash's update. Returns a new object with all segments of the path shallowly cloned.
+ * @param {Object} object
+ * @param {Array|string} path
+ * @param {Function} updater
+ * @returns {Object}
+ */
+function updateImmutable(object, path, updater) {
+  return _updateWith(_clone(object), path, updater, _clone);
+}
+
 module.exports = {
   boolKeys,
   cleanUrl,
@@ -443,6 +455,7 @@ module.exports = {
   setImmutable,
   textToEncodedSlug,
   toTitleCase,
+  updateImmutable,
   uriToUrl,
   urlToCanonicalUrl,
   urlToElasticSearch,
