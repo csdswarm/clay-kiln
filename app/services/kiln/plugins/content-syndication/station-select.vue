@@ -121,7 +121,9 @@
         try {
           this.selectedStations = input;
           this.commit();
-        } catch (e) {}
+        } catch (e) {
+          console.error('Error committing selected stations:', e);
+        }
       },
       /**
        * Updates the form data.
