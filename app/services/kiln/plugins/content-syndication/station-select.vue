@@ -73,7 +73,7 @@
       transformFromSaveData() {
         return (this.data || [])
           .map(syndication => {
-            const station = window.kiln.locals.stationsIHaveAccessTo[syndication.stationSlug];
+            const station = Object.values(window.kiln.locals.stationsIHaveAccessTo).find(station => station.callsign === syndication.callsign);
 
             if (station) {
               const option = {
@@ -165,8 +165,8 @@
         const findSectionFrontOption = (value, options) => options.find(o => o.value === value);
 
         const [primarySectionFronts, secondarySectionFronts] = await Promise.all([
-          retrieveList(`primary-section-fronts`),
-          retrieveList(`secondary-section-fronts`),
+          retrieveList(`${slug}-primary-section-fronts`),
+          retrieveList(`${slug}-secondary-section-fronts`),
         ]);
 
         if (this.isStationSelected(slug)) {
