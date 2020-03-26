@@ -296,6 +296,10 @@ class PodcastHeroCarouselController {
    * Controller method fired when the spa mounts the components
    */
   onMount() {
+    if (this.view.slideElements.length < 2) {
+      // 1 or fewer slides short circuit
+      return;
+    }
     // add listeners
     this.view.el.addEventListener('click', this.onComponentClick);
     this.view.el.addEventListener('mouseenter', this.onMouseEnter);
@@ -309,6 +313,10 @@ class PodcastHeroCarouselController {
    * Controller method fired when the spa dismounts the components
    */
   onDismount() {
+    if (this.view.slideElements.length < 2) {
+      // 1 or fewer slides short circuit
+      return;
+    }
     document.removeEventListener('podcast-hero-carousel-mount', this.onMount);
     document.removeEventListener('podcast-hero-carousel-dismount', this.onDismount);
     this.view.el.removeEventListener('click', this.onComponentClick);
