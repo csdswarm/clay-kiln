@@ -136,7 +136,6 @@
        * @param {any} value
        */
       updateSectionFront(stationSlug, property, value) {
-        console.log(this.stationSectionFronts);
         this.stationSectionFronts = {
           ...this.stationSectionFronts,
           [stationSlug]: {
