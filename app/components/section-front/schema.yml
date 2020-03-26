@@ -29,7 +29,7 @@ primary:
     field: titleLocked
     operator: falsy
 
-mainContent:
+primarySectionFront:
   _publish:
     - primarySectionFront
   _reveal:
