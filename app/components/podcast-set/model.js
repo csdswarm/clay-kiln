@@ -16,7 +16,6 @@ module.exports = unityComponent({
    */
   render: async (uri, data, locals) => {
     const route = 'podcasts',
-      // get podcast IDs
       { podcastIds } = locals,
       params = {
         'filter[id]': podcastIds
