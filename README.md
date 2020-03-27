@@ -2,14 +2,19 @@
 
 A repo that contains a basic site and the necessary files to provision AWS resources for hosting the site.
 
-## Requirements
+## Prerequisites:
 
 Before starting the installation process, it's recommended to have the software below:
 
-- Homebrew
-- Nvm (node version manager)
-- Node.js version v10.16.3 and npm version 6.9.0 using nvm
-- Docker desktop
+* [Docker desktop](https://www.docker.com/products/docker-desktop)
+* [Homebrew](https://brew.sh/)
+    * quick install: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+* [mkcert](https://github.com/FiloSottile/mkcert)
+    * quick install: `brew install mkcert && brew install nss`
+* NVM
+    * quick install: `brew install nvm`
+* Node
+    * quick install: `nvm install 10.16.3`
 
 ## To Start
 
@@ -28,7 +33,7 @@ Add the following to the file and save
 [keys]
   demo = accesskey
 [urls]
-  demosite = http://clay.radio.com
+  demosite = https://clay.radio.com
 ```
 ## Local Development
 
@@ -66,6 +71,28 @@ npm install
 
 Within the clay-radio folder run
 
+```bash
+make gen-certs
+```
+
+This generates the TLS/SSL certs needed to access the site locally over https.
+
+Also run 
+
+```bash
+make up-nginx
+```
+
+To ensure that the nginx container gets the new certs.
+
+If you would like SSL to run with a local CA, so that you are not warned that the SSL might not be
+trustworthy, run the following command (it only needs to be run once on your machine):
+
+```bash
+mkcert -install
+```
+
+Then run 
 ```bash
 make install-dev
 ```
@@ -156,7 +183,7 @@ If this the initial set up of clay you'll need to populate content by running th
     [keys]
       demo = accesskey
     [urls]
-      demosite = http://clay.radio.com
+      demosite = https://clay.radio.com
     ```
 3. Now you can run `make bootstrap` which will put the `app/first-run` data into your local instance.
     ```
@@ -262,7 +289,7 @@ For further instructions please see README.md in ```frequency-clay-translator```
 
 Now you can visit the following URL to get a list of test pages you can visit.
 
-http://clay.radio.com/_pages/index.html
+https://clay.radio.com/_pages/index.html
 
 ## Rebuild the SPA
 
@@ -291,7 +318,7 @@ make encrypt-local-env
 ```
 
 ## Missed anything?
-That _should_ be it...if not, submit an issue or add something to this README.w
+That _should_ be it...if not, submit an issue or add something to this README.md
 
 ## TODO:
 - Demo user
