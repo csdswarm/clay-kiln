@@ -16,7 +16,6 @@ $thumbnail-continer-width: 70px;
         top: em(60, 16);
         left: 0;
         z-index: 99;
-        
         background: $white;
         height: em(71, 16);
         display: flex;
@@ -109,7 +108,7 @@ $thumbnail-continer-width: 70px;
     &__item-text {
         padding: em(10, 16) em(10, 16) em(10, 16) 0;
         @mixin medium-small-screen {
-            padding: em(10, 16); 
+            padding: em(10, 16);
         }
     }
     &__item-category {
@@ -136,6 +135,10 @@ $thumbnail-continer-width: 70px;
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+  &.empty {
+    display: none;
+  }
 }
 
 .editing .latest-top-recirc-slider {

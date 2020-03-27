@@ -1,4 +1,4 @@
-<div data-uri="{{ default _ref _self }}" class="component component--latest-top-recirc-slider latest-top-recirc-slider{{ if @root.locals.edit ' editing' }}" data-editable="items">
+<div data-uri="{{ default _ref _self }}" class="component component--latest-top-recirc-slider latest-top-recirc-slider{{ if @root.locals.edit ' editing' }} {{#if _computed.articles.length}} {{else}} empty {{/if}}" data-editable="items">
     <div class="latest-top-recirc-slider__slider-container">
         <ul class="latest-top-recirc-slider__items-container">
             {{#each _computed.articles }}
