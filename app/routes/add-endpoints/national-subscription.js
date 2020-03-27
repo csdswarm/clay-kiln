@@ -34,7 +34,7 @@ const db = require('amphora-storage-postgres'),
       res.status(500).send(`There was an error deleting subscription ${id}`);
     }
   },
-  upsertSubscription = async (req, res) => {
+  updateSubscription = async (req, res) => {
     const id = req.params.id,
       { shortDescription, stationSlug, filter } = req.body;
 
@@ -55,6 +55,6 @@ const db = require('amphora-storage-postgres'),
 
 module.exports = router => {
   router.post('/rdc/national-subscription', createSubscription);
-  router.put('/rdc/national-subscription/:id', upsertSubscription);
+  router.put('/rdc/national-subscription/:id', updateSubscription);
   router.delete('/rdc/national-subscription/:id', deleteSubscription);
 };
