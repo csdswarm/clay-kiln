@@ -21,6 +21,7 @@ module.exports = () => {
   require('./plugins/stores')();
   require('./plugins/subscriptions')();
   require('./plugins/select-list')();
+  require('./plugins/sign-out-override')();
   require('./plugins/default-text-with-override')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
