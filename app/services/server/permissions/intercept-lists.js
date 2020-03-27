@@ -54,22 +54,19 @@ module.exports = router => {
     // we should declare this after the short circuit
     // eslint-disable-next-line one-var
     const urlObj = new URL(req.protocol + '://' + req.get('host') + req.originalUrl),
-      { user } = res.locals,
+      { user, stationForPermissions } = res.locals,
       canCreateSectionFronts = user.can('create').a('section-front').value,
-      canCreateStaticPageMenuItem = menuItemChecker(res.locals, 'static-page', 'new-static-page');
+      canCreateStaticPageMenuItem = menuItemChecker(res.locals, 'static-page', 'new-static-page'),
+      station = stationForPermissions.site_slug,
+      options = typeof station === 'string' ? { headers: { Cookie: `station=${station};` } } : {};
 
     urlObj.searchParams.append('fromClay', 'true');
 
     // urlObj needs to be mutated before we can get the result
     // eslint-disable-next-line one-var
-    const { data: newPages } = await axios.get(urlObj.toString()),
-      filteredPages = newPages.filter(item => {
-        if (!canCreateSectionFronts && sectionFronts.has(item.id)) {
-          return false;
-        }
-
-        return true;
-      })
+    const { data: newPages } = await axios.get(urlObj.toString(), options),
+      filteredPages = newPages
+        .filter(item => !(!canCreateSectionFronts && sectionFronts.has(item.id)))
         .map(item => ({ ...item, children: item.children.filter(canCreateStaticPageMenuItem) }));
 
     res.send(filteredPages);
