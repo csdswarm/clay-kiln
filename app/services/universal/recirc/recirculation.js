@@ -48,7 +48,7 @@ const
     filters: {
       ...getAuthor(data, locals),
       contentTypes: boolObjectToArray(data.contentType),
-      ...locals.stationForPermissions.site_slug !== DEFAULT_STATION ? { stationSlug: locals.stationForPermissions.site_slug } : {},
+      ...locals.station.site_slug !== DEFAULT_STATION ? { stationSlug: locals.stationForPermissions.site_slug } : {},
       ..._pick({
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
@@ -84,6 +84,33 @@ const
       unique: true,
       createObj: contentType => ({ match: { contentType } })
     },
+    rdcStation: {
+      createObj: () => ({
+        bool: {
+          should:[
+            { match: { stationSlug: '' } },
+            { bool:
+                {
+                  must_not: [
+                    { exists: { field: 'stationSlug' } }
+                  ]
+                }
+            },
+            {
+              nested: {
+                path: 'stationSyndication',
+                query: {
+                  match: {
+                    'stationSyndication.stationSlug': ''
+                  }
+                }
+              }
+            }
+          ],
+          minimum_should_match: 1
+        }
+      })
+    },
     sectionFronts: {
       filterCondition: 'must',
       unique: true,
@@ -91,7 +118,21 @@ const
         bool: {
           should: [
             { match: { sectionFront: sectionFront } },
-            { match: { sectionFront: sectionFront.toLowerCase() } }
+            { match: { sectionFront: sectionFront.toLowerCase() } },
+            {
+              nested: {
+                path: 'stationSyndication',
+                query: {
+                  bool: {
+                    should: [
+                      { match: { 'stationSyndication.sectionFront': sectionFront } },
+                      { match: { 'stationSyndication.sectionFront': sectionFront.toLowerCase() } }
+                    ],
+                    minimum_should_match: 1
+                  }
+                }
+              }
+            }
           ],
           minimum_should_match: 1
         }
@@ -102,7 +143,21 @@ const
         bool: {
           should: [
             { match: { secondarySectionFront: secondarySectionFront } },
-            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } }
+            { match: { secondarySectionFront: secondarySectionFront.toLowerCase() } },
+            {
+              nested: {
+                path: 'stationSyndication',
+                query: {
+                  bool: {
+                    should: [
+                      { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront } },
+                      { match: { 'stationSyndication.secondarySectionFront': secondarySectionFront.toLowerCase() } }
+                    ],
+                    minimum_should_match: 1
+                  }
+                }
+              }
+            }
           ],
           minimum_should_match: 1
         }
@@ -115,25 +170,18 @@ const
           should: [
             { match: { stationSlug } },
             {
-              bool: {
-                must: [
-                  {
-                    nested: {
-                      path: 'stationSyndication',
-                      query: {
-                        match: {
-                          'stationSyndication.stationSlug': stationSlug
-                        }
-                      }
-                    }
+              nested: {
+                path: 'stationSyndication',
+                query: {
+                  match: {
+                    'stationSyndication.stationSlug': stationSlug
                   }
-                ]
+                }
               }
             }
           ],
           minimum_should_match: 1
         }
-
       })
     },
     tags: {
@@ -192,6 +240,9 @@ const
       }
     } else {
       if (!createObj || !value) {
+        if (key === 'stationSlug') {
+          queryService[getQueryType('must')](query, queryFilters.rdcStation.createObj());
+        }
         return;
       }
 
@@ -387,7 +438,9 @@ const
     save = returnData,
     skipRender = () => false } = {}) => unityComponent({
     async render(uri, data, locals) {
-      const curatedIds = (data.items || []).map(anItem => anItem.uri);
+      const curatedIds = (data.items || []).map(anItem => anItem.uri),
+        requiredSearchFields = ['stationSlug', 'stationSyndication'],
+        esFields = [...new Set([...elasticFields, ...requiredSearchFields])];
 
       locals.loadedIds = locals.loadedIds.concat(curatedIds);
 
@@ -401,10 +454,14 @@ const
             ...await mapDataToFilters(uri, data, locals)
           },
           itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
-          { content, totalHits } = await fetchRecirculation({ filters, excludes, elasticFields, pagination, maxItems: itemsNeeded }, locals);
+          { content, totalHits } = await fetchRecirculation({ filters, excludes, elasticFields: esFields, pagination, maxItems: itemsNeeded }, locals);
 
         data._computed = Object.assign(data._computed || {}, {
-          [contentKey]: await Promise.all([...curated, ...content].slice(0, maxItems).map(async (item) => mapResultsToTemplate(locals, item))),
+          [contentKey]: await Promise.all(
+            [...curated, ...content]
+              .slice(0, maxItems)
+              .map(syndicationUrlPremap(locals))
+              .map(async (item) => mapResultsToTemplate(locals, item))),
           initialLoad: !pagination.page,
           moreContent: totalHits > maxItems
         });
@@ -432,7 +489,30 @@ const
 
       return save(uri, data, locals);
     }
-  });
+
+  }),
+
+  /**
+   * for items that were retrieved through syndication/subscription, this replaces the canonicalUrl with
+   * the syndicationUrl, so hyperlinks stay on the current site.
+   *
+   * @param {object} locals
+   * @returns {function}
+   */
+  syndicationUrlPremap = locals => item => {
+    const { stationSlug = '', stationSyndication, ...newItem } = item;
+
+    if (!item.url && locals.station.site_slug !== stationSlug && stationSyndication) {
+      const { protocol, host } = new URL(item.canonicalUrl),
+        { syndicatedArticleSlug } = stationSyndication.find(({ stationSlug }) => stationSlug === locals.station.site_slug);
+
+      newItem.canonicalUrl = `${protocol}//${host}${syndicatedArticleSlug || ''}`;
+    }
+
+    return newItem;
+  }
+
+;
 
 module.exports = {
   recirculationData
