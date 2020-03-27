@@ -61,6 +61,10 @@ _users:
     auth: admin
   -
     username: cristhiam.henao@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: cristhiam.henao@gorillalogic.com
     provider: google
     auth: admin
   -
@@ -70,6 +74,10 @@ _users:
   -
     username: daniella.mordehai@entercom.com
     provider: google
+    auth: admin
+  -
+    username: ferney.pena@gorillalogic.com
+    provider: cognito
     auth: admin
   -
     username: ferney.pena@gorillalogic.com
@@ -109,7 +117,15 @@ _users:
     auth: admin
   -
     username: jose.penagos@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: jose.penagos@gorillalogic.com
     provider: google
+    auth: admin
+  -
+    username: juan.giraldo@gorillalogic.com
+    provider: cognito
     auth: admin
   -
     username: juan.giraldo@gorillalogic.com
@@ -117,7 +133,15 @@ _users:
     auth: admin
   -
     username: juan.restrepo@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: juan.restrepo@gorillalogic.com
     provider: google
+    auth: admin
+  -
+    username: julian.figueroa@gorillalogic.com
+    provider: cognito
     auth: admin
   -
     username: julian.figueroa@gorillalogic.com
@@ -138,6 +162,10 @@ _users:
   -
     username: Leland.Kwong@entercom.com
     provider: google
+    auth: admin
+  -
+    username: luis.bertel@gorillalogic.com
+    provider: cognito
     auth: admin
   -
     username: luis.bertel@gorillalogic.com

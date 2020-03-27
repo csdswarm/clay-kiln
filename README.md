@@ -8,13 +8,7 @@ Before starting the installation process, it's recommended to have the software 
 
 * [Docker desktop](https://www.docker.com/products/docker-desktop)
 * [Homebrew](https://brew.sh/)
-    * quick install: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 * [mkcert](https://github.com/FiloSottile/mkcert)
-    * quick install: `brew install mkcert && brew install nss`
-* NVM
-    * quick install: `brew install nvm`
-* Node
-    * quick install: `nvm install 10.16.3`
 
 ## To Start
 
@@ -133,7 +127,7 @@ function token(){
 }
 ```
 
-Create local .env file insde the `clay-radio/app` folder
+Create local .env file inside the `clay-radio/app` folder
 ```bash
 token [INSERT_TOKEN_FROM_MFA_DEVICE]
 make generate-local-env
