@@ -15,9 +15,6 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: async (uri, data, locals) => {
-    console.log('Render podcast-set...',uri);
-    // console.log('locals:',locals);
-    // console.log('data:',data);
     const route = 'podcasts',
       // get podcast IDs
       { podcastIds } = locals,
