@@ -1,16 +1,18 @@
 'use strict';
 
 // Require depedencies.
-const nationalSubscriptionsButton = require('./national-subscriptions-button.vue'),
-  nationalSubscriptions = require('./national-subscriptions.vue');
+const { DEFAULT_STATION } = require('../../../universal/constants'),
+  nationalSubscriptionsButton = require('./national-subscriptions-button.vue'),
+  nationalSubscriptions = require('./national-subscriptions.vue'),
+  _set = require('lodash/set'),
+  _get = require('lodash/get');
 
 // Register plugin.
 module.exports = () => {
-  window.kiln = window.kiln || {};
-  window.kiln.navButtons = window.kiln.navButtons || {};
-  window.kiln.navContent = window.kiln.navContent || {};
-  if (window.kiln.locals.station.id !== 0) {
-    window.kiln.navButtons['national-subscriptions'] = nationalSubscriptionsButton;
-    window.kiln.navContent['national-subscriptions'] = nationalSubscriptions;
+  const currentStationId = _get(window, 'kiln.locals.stationForPermissions.id', DEFAULT_STATION.id);
+
+  if ( currentStationId !== DEFAULT_STATION.id) {
+    _set(window, 'kiln.navButtons.national-subscriptions', nationalSubscriptionsButton);
+    _set(window, 'kiln.navContent.national-subscriptions', nationalSubscriptions);
   }
 };
