@@ -14,7 +14,8 @@ const
   },
   activeSlideModifierName = '--active',
   activeMacroClassName = `${componentClassName}__macro-button${activeSlideModifierName}`,
-  slideTransitionTime = 600;
+  slideTransitionTime = 600,
+  timerStepInterval = 1000;
 
 
 
@@ -30,9 +31,9 @@ class PodcastHeroCarouselTimer {
    * Create a timer.
    * @param {number} step - the milliseconds for when each step is fired.
    */
-  constructor(step = 1000) {
+  constructor(step = timerStepInterval) {
     this.tick = this.tick.bind(this);
-    this.seconds = 0;
+    this.stepsPassed = 0;
     this.isPaused = false;
     this.step = step;
     this.subscription = {};
@@ -41,12 +42,12 @@ class PodcastHeroCarouselTimer {
   /**
    *
    * Subscribe to the timer.
-   * @param {number} seconds - The amount of seconds between each callback
+   * @param {number} threshold - The amount of seconds between each callback
    * @param {Function} cb - The callback fired when seconds is reached.
    */
-  subscribe(seconds, cb) {
+  subscribe(threshold, cb) {
     this.subscription = {
-      seconds,
+      threshold,
       cb
     };
   }
@@ -63,9 +64,9 @@ class PodcastHeroCarouselTimer {
    */
   tick() {
     if (!this.isPaused) {
-      this.seconds++;
-      if (this.subscription.seconds === this.seconds) {
-        this.subscription.cb(this.seconds);
+      this.stepsPassed++;
+      if (this.subscription.threshold === this.stepsPassed) {
+        this.subscription.cb(this.stepsPassed);
         this.reset();
       }
     }
@@ -75,7 +76,7 @@ class PodcastHeroCarouselTimer {
    * Reset the timer.
    */
   reset() {
-    this.seconds = 0;
+    this.stepsPassed = 0;
   }
 
   /**
