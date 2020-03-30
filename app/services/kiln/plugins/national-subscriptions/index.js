@@ -9,7 +9,7 @@ module.exports = () => {
   window.kiln = window.kiln || {};
   window.kiln.navButtons = window.kiln.navButtons || {};
   window.kiln.navContent = window.kiln.navContent || {};
-  if (window.kiln.locals.station.id !== 0 || true) { // DEV NOTE: Don't commit this dummy
+  if (window.kiln.locals.station.id !== 0) {
     window.kiln.navButtons['national-subscriptions'] = nationalSubscriptionsButton;
     window.kiln.navContent['national-subscriptions'] = nationalSubscriptions;
   }
