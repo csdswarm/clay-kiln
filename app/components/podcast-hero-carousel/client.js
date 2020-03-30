@@ -66,7 +66,7 @@ class PodcastHeroCarouselTimer {
     if (!this.isPaused) {
       this.stepsPassed++;
       if (this.subscription.threshold === this.stepsPassed) {
-        this.subscription.cb(this.stepsPassed);
+        this.subscription.cb();
         this.reset();
       }
     }
