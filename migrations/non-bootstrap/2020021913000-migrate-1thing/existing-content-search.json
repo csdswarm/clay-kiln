@@ -1,0 +1,11 @@
+{
+    "size": 1000,
+    "query": {
+      "bool": {
+        "must": [
+          { "match": { "tags.normalized": "1thing" } }
+        ]
+      }
+    }
+  }
+  

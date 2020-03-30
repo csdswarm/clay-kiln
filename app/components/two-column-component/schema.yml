@@ -27,4 +27,6 @@ col2:
   _componentList:
     fuzzy: false # allows interactives, etc to add one-off components
     include:
+      - divider
       - google-ad-manager
+      - paragraph
