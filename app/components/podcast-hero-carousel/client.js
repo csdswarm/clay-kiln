@@ -144,7 +144,7 @@ class PodcastHeroCarouselModel {
    * @param {aCarouselDirectionalObject} aCarouselDirectionalObject - the new aCarouselDirectionalObject
    * @param {number} overrideIndex - index can be explicitly set
    */
-  onClickDirectionButton(aCarouselDirectionalObject, overrideIndex) {
+  updateSlideIndex(aCarouselDirectionalObject, overrideIndex) {
     this.setSlideIndex(aCarouselDirectionalObject.value, overrideIndex);
   }
 }
@@ -256,7 +256,7 @@ class PodcastHeroCarouselController {
       const aCarouselDirectionalObject = carouselDirectionalObjects[e.target.dataset.direction];
 
       this.view.onClickDirectionButton(aCarouselDirectionalObject);
-      this.model.onClickDirectionButton(aCarouselDirectionalObject);
+      this.model.updateSlideIndex(aCarouselDirectionalObject);
       this.view.setActiveMacro(this.model.slideIndex);
     }
     // macro (dots) click
@@ -269,7 +269,7 @@ class PodcastHeroCarouselController {
         ];
 
       if (newSlideIndex === this.model.slideIndex) return;  // short-circuit if same as current slide
-      this.model.onClickDirectionButton(carouselDirectionalObject, newSlideIndex);
+      this.model.updateSlideIndex(carouselDirectionalObject, newSlideIndex);
       this.view.onClickDirectionButton(carouselDirectionalObject);
       this.view.setActiveMacro(newSlideIndex);
     }
