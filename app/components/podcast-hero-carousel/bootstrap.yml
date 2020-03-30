@@ -1,8 +1,6 @@
 _components:
   podcast-hero-carousel:
-    allowed: true
     slides: []
     instances:
       new:
-        allowed: true
         slides: []
