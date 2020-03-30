@@ -147,7 +147,7 @@ module.exports = {
    * @param {Object} locals
    */
   async autoLink(data, props, locals) {
-    const onlyExistingItems = prop => data[prop] || prop.text,
+    const onlyExistingItems = prop => data[prop] || prop.text && prop.slug,
       lists = await retrieveSectionFrontLists(props, locals);
 
     data.breadcrumbs = props
