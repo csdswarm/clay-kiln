@@ -1,6 +1,7 @@
 'use strict';
 
 const
+  _bindAll = require('lodash/bindAll'),
   componentClassName = 'podcast-hero-carousel',
   carouselDirectionalObjects = {
     left: {
@@ -32,7 +33,7 @@ class PodcastHeroCarouselTimer {
    * @param {number} step - the milliseconds for when each step is fired.
    */
   constructor(step = timerStepInterval) {
-    this.tick = this.tick.bind(this);
+    _bindAll(this, ['tick']);
     this.stepsPassed = 0;
     this.isPaused = false;
     this.step = step;
@@ -234,11 +235,7 @@ class PodcastHeroCarouselController {
    * @param {HTMLElement} el - the component's containing html element.
    */
   constructor(el) {
-    this.onMount = this.onMount.bind(this);
-    this.onDismount = this.onDismount.bind(this);
-    this.onMouseEnter = this.onMouseEnter.bind(this);
-    this.onMouseLeave = this.onMouseLeave.bind(this);
-    this.onComponentClick = this.onComponentClick.bind(this);
+    _bindAll(this, ['onMount', 'onDismount', 'onMouseEnter', 'onMouseLeave', 'onComponentClick']);
     // instantiate model/view classes
     this.view = new PodcastHeroCarouselView(this, el);
     this.model = new PodcastHeroCarouselModel(this);
