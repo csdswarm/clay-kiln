@@ -42,16 +42,17 @@ function concatValues(arr, prop, separator = '/') {
 }
 
 /**
- * Returns the display name of section fronts for applicable props.
+ * Returns the display names for applicable props.
  *
  * @param {Object} data
  * @param {Object} lists
  * @returns {function(*): {id: *, text: *}}
  */
-function useSectionFrontName(data, lists) {
+function useDisplayName(data, lists) {
   return prop => {
-    const id = data[prop];
-    let text = id;
+    const id = data[prop],
+      slug = prop.slug;
+    let text = prop.text || id;
 
     const list = lists[prop];
 
@@ -59,7 +60,7 @@ function useSectionFrontName(data, lists) {
       text = getSectionFrontName(id, list);
     }
 
-    return { id, text };
+    return { id, text, slug };
   };
 }
 
@@ -75,8 +76,11 @@ function useSectionFrontName(data, lists) {
  * toSegments('myProp')
  */
 function toLinkSegments() {
-  return ({ id, text }) => ({ segment: slugify(id), text });
-}
+  return ({ id, text, slug }) => ({
+    segment: slug || slugify(id),
+    text
+  });
+};
 
 /**
  * Creates a single crumb object
@@ -132,19 +136,23 @@ async function retrieveSectionFrontLists(props, locals) {
 
 module.exports = {
   /**
-   * Automatically creates links based on data in the provided list of properties on the data context
+   * Automatically creates links based on data in the provided list of
+   * properties on the data context
+   * or based on object provided
    *
    * @param {Object} data the data context
-   * @param {string[]} props list of properties on data to generate links from
+   * @param {any[]} props list of properties on data or object to generate links from:
+   * @param {string} props[].slug
+   * @param {string} props[].text display name
    * @param {Object} locals
    */
   async autoLink(data, props, locals) {
-    const onlyExistingItems = prop => data[prop],
+    const onlyExistingItems = prop => data[prop] || prop.text,
       lists = await retrieveSectionFrontLists(props, locals);
 
     data.breadcrumbs = props
       .filter(onlyExistingItems)
-      .map(useSectionFrontName(data, lists))
+      .map(useDisplayName(data, lists))
       .map(toLinkSegments())
       .map(toFullLinks(locals));
 
