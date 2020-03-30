@@ -2,7 +2,6 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { unityAppDomainName } = require('../../universal/urps'),
   {
     getComponentName,
     getPageInstance,
@@ -272,13 +271,9 @@ async function checkUserPermissions(uri, req, locals, db) {
         pageData = await db.get(pageUri),
         pageType = getComponentName(pageData.main[0]);
 
-      if (pageTypesToCheck.has(pageType)) {
-        return user.can('unpublish').a(pageType).value;
-      } else if (pageType === 'homepage') {
-        return user.can('unpublish').a(pageType).for(unityAppDomainName).value;
-      } else {
-        return true;
-      }
+      return pageTypesToCheck.has(pageType)
+        ? user.can('unpublish').a(pageType).value
+        : true;
     }
 
     if (isList(uri) && req.method === 'PUT') {
