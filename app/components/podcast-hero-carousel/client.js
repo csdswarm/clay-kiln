@@ -120,7 +120,7 @@ class PodcastHeroCarouselModel {
   }
 
   /**
-   * Set the slide index with the value of the carouselDirectionalObject.
+   * Set the slide index with the value of the aCarouselDirectionalObject.
    * @param {number} value - the new value (-1,+1) for the slide index
    * @param {number} overrideIndex - index can be explicitly set
    */
@@ -140,11 +140,11 @@ class PodcastHeroCarouselModel {
 
   /**
    * Model method for clicking on the component.
-   * @param {carouselDirectionalObject} carouselDirectionalObject - the new carouselDirectionalObject
+   * @param {aCarouselDirectionalObject} aCarouselDirectionalObject - the new aCarouselDirectionalObject
    * @param {number} overrideIndex - index can be explicitly set
    */
-  onClickDirectionButton(carouselDirectionalObject, overrideIndex) {
-    this.setSlideIndex(carouselDirectionalObject.value, overrideIndex);
+  onClickDirectionButton(aCarouselDirectionalObject, overrideIndex) {
+    this.setSlideIndex(aCarouselDirectionalObject.value, overrideIndex);
   }
 }
 
@@ -176,27 +176,27 @@ class PodcastHeroCarouselView {
 
   /**
    * View method for setting the corresponding directional class on the slides container
-   * @param {carouselDirectionalObject} carouselDirectionalObject - the new carouselDirectionalObject
+   * @param {aCarouselDirectionalObject} aCarouselDirectionalObject - the new aCarouselDirectionalObject
    */
-  setDirectionalClassName(carouselDirectionalObject) {
-    if (carouselDirectionalObject.value === 1) {
-      this.slidesContainer.classList.replace(carouselDirectionalObjects.left.className, carouselDirectionalObject.className);
+  setDirectionalClassName(aCarouselDirectionalObject) {
+    if (aCarouselDirectionalObject.value === 1) {
+      this.slidesContainer.classList.replace(carouselDirectionalObjects.left.className, aCarouselDirectionalObject.className);
     } else {
-      this.slidesContainer.classList.replace(carouselDirectionalObjects.right.className, carouselDirectionalObject.className);
+      this.slidesContainer.classList.replace(carouselDirectionalObjects.right.className, aCarouselDirectionalObject.className);
     }
   }
 
   /**
    * View method for logic fired on clicking the directional buttons
-   * @param {carouselDirectionalObject} carouselDirectionalObject - the new carouselDirectionalObject
+   * @param {aCarouselDirectionalObject} aCarouselDirectionalObject - the new aCarouselDirectionalObject
    */
-  onClickDirectionButton(carouselDirectionalObject) {
+  onClickDirectionButton(aCarouselDirectionalObject) {
     this.isAnimating = true;
     const
       activeSlideClassName = `${componentClassName}__slide${activeSlideModifierName}`,
       currentActiveSlide = this.slidesContainer.querySelector(`.${activeSlideClassName}`);
 
-    this.setDirectionalClassName(carouselDirectionalObject);
+    this.setDirectionalClassName(aCarouselDirectionalObject);
     // when switching the directional classes tokenList.replace seems to take longer and is not a promise so timeout is needed
     setTimeout(() => {
       currentActiveSlide.classList.add('zero-index'); // z-index to below the active;
@@ -256,10 +256,10 @@ class PodcastHeroCarouselController {
     // directional buttons
     if (e.target.classList.contains(`${componentClassName}__control-button`)) {
       if (this.view.isAnimating) return;  // short-circuit if currently animating
-      const carouselDirectionalObject = carouselDirectionalObjects[e.target.dataset.direction];
+      const aCarouselDirectionalObject = carouselDirectionalObjects[e.target.dataset.direction];
 
-      this.view.onClickDirectionButton(carouselDirectionalObject);
-      this.model.onClickDirectionButton(carouselDirectionalObject);
+      this.view.onClickDirectionButton(aCarouselDirectionalObject);
+      this.model.onClickDirectionButton(aCarouselDirectionalObject);
       this.view.setActiveMacro(this.model.slideIndex);
     }
     // macro (dots) click
