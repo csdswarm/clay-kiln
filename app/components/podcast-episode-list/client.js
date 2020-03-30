@@ -6,7 +6,7 @@ const
   componentName = 'podcast-episode-list';
 
 let
-  $, $$;
+  $; // , $$;
 
 class PodcastListComponentModel {
   constructor(containerElement) {
@@ -55,6 +55,6 @@ class PodcastListComponent {
 
 module.exports = (el) => {
   $ = el.querySelector.bind(el);
-  $$ = el.querySelectorAll.bind(el);
+  // $$ = el.querySelectorAll.bind(el);
   return new PodcastListComponent(el);
 };
