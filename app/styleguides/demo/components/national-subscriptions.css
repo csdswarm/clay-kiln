@@ -1,0 +1,53 @@
+.national-subscriptions {
+
+    .national-subscriptions__header {
+        width: 900px;
+    }
+
+    .national-subscriptions__page-list-headers {
+        width: 900px;
+
+        &.page-list-headers {
+            &__description, &__updated {
+                flex: 1 1 em(225);
+                align-items: center;
+            }
+        }
+    }
+
+    .national-subscriptions__page-list-item {
+        &__description, &__updated {
+            flex: 1 1 em(225);
+            padding: em(5);
+        }
+
+        &__filter {
+            flex: 1 1 em(225);
+            padding: em(6);
+
+            > dt, dd {
+                display: inline-block;
+                padding: em(6);
+            }
+
+            > dt {
+                font-weight: bold;
+            }
+        }
+    }
+
+    .national-subscriptions-page-list-item__link {
+        font-size: em(14);
+
+        > a {
+            font-style: italic;
+            color: inherit;
+            text-decoration: inherit;
+        }
+    }
+
+}
+
+.national-subscriptions__button {
+    text-align: left;
+}
