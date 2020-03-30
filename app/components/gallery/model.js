@@ -2,15 +2,16 @@
 
 const { unityComponent } = require('../../services/universal/amphora'),
   createContent = require('../../services/universal/create-content'),
-  { autoLink, addCrumb } = require('../breadcrumbs');
+  { autoLink } = require('../breadcrumbs');
 
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
     locals.loadedIds.push(uri);
-    const url = `//${ locals.site.host }${ data.stationSlug ? '/' + data.stationSlug : ''}`;
-
-    addCrumb(data, url, data.stationSlug);
-    await autoLink(data, ['sectionFront', 'secondarySectionFront'], locals);
+    await autoLink(data, [
+      { slug: data.stationSlug, text: data.stationName },
+      'sectionFront',
+      'secondarySectionFront'
+    ], locals);
     return createContent.render(uri, data, locals);
   },
   save: async (uri, data, locals) => {
