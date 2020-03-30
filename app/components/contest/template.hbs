@@ -58,9 +58,9 @@
       {{!-- Second Street Embed --}}
       {{> html-embed embed }}
 
-      <div class="body__contest-dates" data-editable="dates">
+      <div class="body__contest-dates">
         <h3>Contest Dates:</h3>
-        <span>
+        <span data-editable="dates">
           {{ formatDateTimeRange startDateTime endDateTime (concat "MMMM D, YYYY [at] h:mma [" stationTimezone "]") ' through ' }}
         </span>
       </div>

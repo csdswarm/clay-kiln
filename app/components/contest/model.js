@@ -4,7 +4,7 @@ const createContent = require('../../services/universal/create-content'),
   { unityComponent } = require('../../services/universal/amphora'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
-  { autoLink } = require('../breadcrumbs'),
+  { autoLink, addCrumb } = require('../breadcrumbs'),
   /**
    * Format contest dates to include start date and time and end date and time
    *
@@ -20,8 +20,11 @@ const createContent = require('../../services/universal/create-content'),
   };
 
 module.exports = unityComponent({
-  render: (uri, data, locals) => {
-    autoLink(data, ['stationSlug', '{contests}'], locals.site.host);
+  render: async (uri, data, locals) => {
+    await autoLink(data, ['stationSlug'], locals);
+    const url = `//${ locals.site.host }${ data.stationSlug ? '/' + data.stationSlug : ''}/contests`;
+
+    addCrumb(data, url, 'contests');
     return createContent.render(uri, data, locals);
   },
   save: (uri, data, locals) => {
