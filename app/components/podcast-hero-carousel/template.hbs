@@ -1,5 +1,9 @@
 {{#*inline "slideTemplate" }}
-  <div class="podcast-hero-carousel__slide{{#unless @index}} podcast-hero-carousel__slide--active{{/unless}}" style="background-color: {{ if this.backgroundColor this.backgroundColor else=defaults.backgroundColor  }}; color: {{ if this.textColor this.textColor else=defaults.textColor  }}">
+  <div class="podcast-hero-carousel__slide
+    {{#unless @index}} podcast-hero-carousel__slide--active{{/unless}}"
+    style="background-color: {{ if this.backgroundColor this.backgroundColor else=defaults.backgroundColor  }};
+    color: {{ if this.textColor this.textColor else=defaults.textColor  }}"
+  >
     <div class="podcast-hero-carousel__slide-image-wrap">
       <a href="{{ this.url }}" class="podcast-hero-carousel__slide-image-link">
         <img src="{{ this.image }}?width=440&crop=1:1,offset-y0" class="podcast-hero-carousel__slide-image" />
@@ -11,13 +15,18 @@
       </h2>
       <p class="podcast-hero-carousel__slide-description">{{ this.description }}</p>
       {{#unless this.hideListenNowButton}}
-        <a href="{{ this.url }}" class="podcast-hero-carousel__slide-listen-now-button" style="background-color: {{ if this.textColor this.textColor else=defaults.textColor }}; color: {{ if this.backgroundColor this.backgroundColor else=defaults.backgroundColor }};">Listen Now</a>
+        <a href="{{ this.url }}" class="podcast-hero-carousel__slide-listen-now-button"
+          style="background-color: {{ if this.textColor this.textColor else=defaults.textColor }};
+          color: {{ if this.backgroundColor this.backgroundColor else=defaults.backgroundColor }};"
+        >Listen Now</a>
       {{/unless}}
     </div>
   </div>
 {{/inline}}
 
-<div class="component component--podcast-hero-carousel podcast-hero-carousel {{ if @root.locals.edit 'editing' }}" data-uri="{{ default _ref _self }}" data-editable="slides">
+<div class="component component--podcast-hero-carousel podcast-hero-carousel
+  {{ if @root.locals.edit 'editing' }}" data-uri="{{ default _ref _self }}" data-editable="slides"
+>
   <div class="podcast-hero-carousel__slides podcast-hero-carousel__slides--right">
     {{#each slides as |slide|}}
       {{> slideTemplate slide defaults=../_computed.defaults }}
@@ -31,7 +40,10 @@
       <div class="podcast-hero-carousel__macro-controls">
         <div class="podcast-hero-carousel__macros">
           {{#each slides}}
-            <button class="podcast-hero-carousel__macro-button{{#unless @index}} podcast-hero-carousel__macro-button--active{{/unless}}" data-slide-index="{{ @index }}"></button>
+            <button class="podcast-hero-carousel__macro-button
+              {{#unless @index}} podcast-hero-carousel__macro-button--active{{/unless}}"
+              data-slide-index="{{ @index }}"
+            ></button>
           {{/each}}
         </div>
       </div>
