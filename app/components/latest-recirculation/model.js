@@ -113,5 +113,15 @@ module.exports = recirculationData({
     maxItems: getMaxItems(data)
   }),
   render,
-  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params
+  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params,
+  mapResultsToTemplate: (locals, result, item = {}) => {
+    return Object.assign(item, {
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      canonicalUrl: item.url || result.canonicalUrl,
+      feedImgUrl: item.overrideImage || result.feedImgUrl,
+      sectionFront: item.overrideSectionFront || result.sectionFront,
+      date: item.overrideDate || result.date,
+      label: item.overrideDate || result.label
+    });
+  }
 });
