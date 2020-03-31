@@ -5,7 +5,8 @@ const
   format = require('date-fns/format'),
   addSeconds = require('date-fns/add_seconds'),
   parse = require('date-fns/parse'),
-  radioApiService = require('../../services/server/radioApi');
+  radioApiService = require('../../services/server/radioApi'),
+  _get = require('lodash/get');
 
 /**
  * returns a boolean for if the media is from omny
@@ -82,7 +83,7 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: async (uri, data, locals) => {
-    if (!locals || !locals.params) {
+    if (!locals) {
       return data;
     }
 
@@ -103,23 +104,12 @@ module.exports = unityComponent({
         addSeconds(startOfDay, durationInSeconds),
         getDurationFormat(durationInSeconds)
       );
+      // adding dynamic slug to get to the client js
+      data._computed.dynamicSlug = _get(locals, 'params.dynamicSlug', undefined);
 
       return episodeData;
     });
 
-    return data;
-  },
-
-  /**
-   * Makes any necessary modifications to data just prior to persisting it
-   *
-   * @param {string} uri - The uri of the component instance
-   * @param {object} data - persisted or bootstrapped data for this instance
-   * @param {object} locals - data that has been attached to express locals for the current page request
-   *
-   * @returns {object}
-   */
-  save: (uri, data) => {
     return data;
   }
 });
