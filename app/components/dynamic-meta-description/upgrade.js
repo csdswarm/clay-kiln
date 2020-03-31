@@ -6,3 +6,10 @@ module.exports['1.0'] = async (uri, data) => {
     urlMatches: data.urlMatches || []
   };
 };
+
+module.exports['1.0'] = async (uri, data) => {
+  return {
+    ...data,
+    routeParam: ''
+  };
+};

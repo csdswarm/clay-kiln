@@ -18,3 +18,10 @@ module.exports['2.0'] = (uri, data) => {
 
   return data;
 };
+
+module.exports['3.0'] = (uri, data) => {
+  return {
+    ...data,
+    routeParam: ''
+  };
+};
