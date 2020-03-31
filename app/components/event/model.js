@@ -135,10 +135,13 @@ module.exports = unityComponent({
     return createContent.save(ref, data, locals);
   },
 
-  render: (ref, data, locals) => {
+  render: async (ref, data, locals) => {
     data._computed.dateTime = getFormattedDate(data.startDate, data.startTime);
     data._computed.eventCirculationSettings = getSettingsConfigData();
-    autoLink(data, ['stationSlug', '{events}'], locals.site.host);
+    await autoLink(data, [
+      { slug: data.stationSlug, text: data.stationName },
+      { slug: 'events', text: 'events' }
+    ], locals);
     return createContent.render(ref, data, locals);
   }
 
