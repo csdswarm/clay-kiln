@@ -80,14 +80,14 @@ const db = require('./db'),
    * @param {string} stationSlug
    */
   getStationPage = async (stationSlug) => {
-    const pageUri = await db.raw(`
-      SELECT page.id as uri
-      FROM public.pages AS page
-      INNER JOIN components."section-front" AS sectionFront
-        ON page.data->'main'->>0 = sectionFront.id
-      WHERE sectionFront.data->>'stationSiteSlug' = '${stationSlug}'
-      AND sectionFront.id ~ 'published'
-    `).then(results => _get(results, 'rows[0].uri'));
+    const sql = `
+        SELECT  p.id as uri
+        FROM  pages p, 
+          LATERAL jsonb_array_elements_text(p.data->'main') m(id)
+            INNER JOIN components."station-front" sf ON m.id = sf.id
+        WHERE  sf.data@>'{"stationSlug": :stationSlug:}'  AND sf.id ~ '@published$'`,
+      result = await db.raw(sql, { stationSlug }),
+      pageUri = _get(result, 'rows[0].uri');
 
     if (pageUri) {
       return db.get(pageUri);
