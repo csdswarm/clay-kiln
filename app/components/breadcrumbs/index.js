@@ -1,6 +1,7 @@
 'use strict';
 
-const { getSectionFrontName, retrieveList } = require('../../services/server/lists');
+const { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  _isPlainObject = require('lodash/isPlainObject');
 
 /**
  * Takes a text value and converts it to a navigable slug
@@ -46,13 +47,12 @@ function concatValues(arr, prop, separator = '/') {
  *
  * @param {Object} data
  * @param {Object} lists
- * @returns {function(*): {id: *, text: *}}
+ * @returns {function(*): {id: *, text: *, slug: *}}
  */
 function useDisplayName(data, lists) {
-  return prop => {
-    const id = data[prop],
-      slug = prop.slug;
-    let text = prop.text || id;
+  const useSectionFrontName = prop => {
+    const id = data[prop];
+    let text = id;
 
     const list = lists[prop];
 
@@ -60,7 +60,17 @@ function useDisplayName(data, lists) {
       text = getSectionFrontName(id, list);
     }
 
-    return { id, text, slug };
+    return { id, text };
+  };
+
+  return prop => {
+    // if prop is an object then it should contain the data breadcrumbs needs
+    if (_isPlainObject(prop)) {
+      return prop;
+    } else {
+      // otherwise it will be a string indicating the section front type
+      return useSectionFrontName(prop);
+    }
   };
 }
 
