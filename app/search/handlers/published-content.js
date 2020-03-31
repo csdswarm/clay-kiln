@@ -81,9 +81,6 @@ function processContent(obj, components) {
   obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
 
   switch (getComponentName(obj.key)) {
-    case CONTENT.AUTHOR:
-    case CONTENT.CONTENT_COLLECTION:
-      break;
     case CONTENT.STATIC_PAGE:
       obj.value = getContent(obj.value, 'content', components);
       break;
@@ -92,10 +89,20 @@ function processContent(obj, components) {
       obj.value.slides = getSlideEmbed(obj.value.slides, components);
   
       obj.value = getContent(obj.value, 'footer', components);
-    default:
+
       obj.value = getContent(obj.value, 'lead', components);
       obj.value = getContent(obj.value, 'tags', components);
       obj.value = getContent(obj.value, 'content', components);
+      break;
+    case CONTENT.ARTICLE:
+      obj.value = getContent(obj.value, 'feedImg', components);
+
+      obj.value = getContent(obj.value, 'lead', components);
+      obj.value = getContent(obj.value, 'tags', components);
+      obj.value = getContent(obj.value, 'content', components);
+      break;
+    default:
+      break;
   }
 
   return obj;

@@ -2,8 +2,7 @@
 
 const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
   queryService = require('../../services/server/query'),
-  _ = require('lodash'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
   { isComponent } = require('clayutils'),
   tag = require('../tags/model.js'),
@@ -23,43 +22,43 @@ const { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
     return imgUrl;
   };
 
+
 /**
  * @param {string} ref
  * @param {object} data
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.save = (ref, data, locals) => {
+module.exports.save = async (ref, data, locals) => {
   if (!data.items.length || !locals) {
     return data;
   }
 
-  return Promise.all(_.map(data.items, (item) => {
+  await Promise.all(data.items.map(async item => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
-      .then((result) => {
-        const article = Object.assign(item, {
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: item.url || result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: item.url || result.canonicalUrl,
-          feedImgUrl: applyAspectRatio(item.overrideImage || result.feedImgUrl || DEFAULT_RADIOCOM_LOGO),
-          lead: result.leadComponent
-        });
+    const searchOpts = {
+        includeIdInResult: true,
+        shouldDedupeContent: false
+      },
+      result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
-        if (article.title) {
-          article.plaintextTitle = toPlainText(article.title);
-        }
-
-        return article;
-      });
-  }))
-    .then((items) => {
-      data.items = items;
-
-      return data;
+    Object.assign(item, {
+      uri: result._id,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      pageUri: item.url || result.pageUri,
+      urlIsValid: result.urlIsValid,
+      canonicalUrl: item.url || result.canonicalUrl,
+      feedImgUrl: applyAspectRatio(item.overrideImage || result.feedImgUrl || DEFAULT_RADIOCOM_LOGO),
+      lead: result.leadComponent
     });
+
+    if (item.title) {
+      item.plaintextTitle = toPlainText(item.title);
+    }
+  }));
+
+  return data;
 };
 
 /**
@@ -68,12 +67,25 @@ module.exports.save = (ref, data, locals) => {
  * @param {object} locals
  * @returns {Promise}
  */
-module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, data.fill, locals);
-  let cleanUrl;
+module.exports.render = async function (ref, data, locals) {
+  const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
+    availableSlots = maxItems - data.items.length;
 
+  locals.loadedIds = locals.loadedIds.concat(curatedIds);
   // items are saved from form, articles are used on FE
   data.articles = data.items;
+
+  // it shouldn't be less than 0, but just in case
+  if (availableSlots <= 0) {
+    return data;
+  }
+
+  // this shouldn't be declared above the short circuit
+  // eslint-disable-next-line one-var
+  const numItemsToQuery = Math.min(availableSlots, data.fill),
+    query = queryService.newQueryWithCount(elasticIndex, numItemsToQuery, locals);
+  let cleanUrl;
+
   data.missingItems = data.articles.some(item => {
     return typeof item.feedImgUrl === 'undefined';
   });
@@ -97,25 +109,13 @@ module.exports.render = function (ref, data, locals) {
     queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
   }
 
-  // exclude the curated content from the results
-  if (data.items && !isComponent(locals.url)) {
-    data.items.forEach(item => {
-      if (item.canonicalUrl) {
-        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-      }
-    });
+  try {
+    const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true });
+
+    data.articles = data.items.concat(results);
+  } catch (e) {
+    queryService.logCatch(e, ref);
   }
 
-  return queryService.searchByQuery(query)
-    .then(function (results) {
-      const limit = data.fill;
-
-      data.articles = data.items.concat(_.take(results, limit)).slice(0, maxItems); // show a maximum of maxItems links
-      return data;
-    })
-    .catch(e => {
-      queryService.logCatch(e, ref);
-      return data;
-    });
+  return data;
 };

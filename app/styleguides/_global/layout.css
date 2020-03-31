@@ -1,5 +1,8 @@
+@import '_global/colors';
+@import '_global/warning';
+
 /* editing template */
-.kiln-edit-mode--template:not(.kiln-edit-mode--layout) { 
+.kiln-edit-mode--template:not(.kiln-edit-mode--layout) {
   .kiln-placeholder,
   .body__circulation {
     background-color: $blue;

@@ -178,6 +178,18 @@
           </ul>
         </section>
 
+        {{#if feeds.msn}}
+          <section class="circulation__section" data-editable="msnFeedSettings">
+            <h3 class="subtitle circ-edit">MSN Feed Settings</h3>
+            <ul class="items">
+              <li class="item">
+                <h4 class="item-title">MSN Article Title</h4>
+                <p class="item-data">{{ msnTitle }}</p>
+              </li>
+            </ul>
+          </section>
+        {{/if}}
+
         <section class="circulation__section" data-editable="circSlug">
           {{#if slugLock}}
             <div class="alert alert-warning">
@@ -203,20 +215,9 @@
           </ul>
         </section>
 
-        <section class="circulation__section" data-editable="circFeeds">
-          <h3 class="subtitle circ-edit">Recirculation:</h3>
-          <ul class="items">
-            <li class="item">
-              <h4 class="item-title required">Recirculation Image</h4>
-            <p class="item-data">
-              {{#if feedImgUrl}}
-                <img class="feedimg" src="{{ feedImgUrl }}?width=300" alt="" />
-              {{else}}
-                <div class="empty-feedimg"></div>
-              {{/if}}
-              </p>
-            </li>
-          </ul>
+        <section class="circulation__section">
+          <h3 class="subtitle">Recirculation:</h3>
+          {{> feed-image feedImg }}
         </section>
 
         <section class="circulation__section" data-editable="circMetadata">

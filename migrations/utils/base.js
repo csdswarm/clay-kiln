@@ -39,6 +39,7 @@ module.exports = {
   _identity: require('../../app/node_modules/lodash/identity'),
   _isEqual: require('../../app/node_modules/lodash/isEqual'),
   _set: require('../../app/node_modules/lodash/set'),
+  _unset: require('../../app/node_modules/lodash/unset'),
   axios: require('../../app/node_modules/axios'),
   claycli: require('../../app/node_modules/claycli'),
   clayutils: require('../../app/node_modules/clayutils'),

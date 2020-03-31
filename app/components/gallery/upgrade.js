@@ -2,7 +2,7 @@
 
 const _isEmpty = require('lodash/isEmpty'),
   _get = require('lodash/get'),
-  addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
   cuid = require('cuid'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
   {

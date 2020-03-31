@@ -76,16 +76,21 @@
        * @returns {array}
        */
       async search() {
-        const query = queryService('published-content', window.kiln.locals),
-            // if there are no search text yet, pass in * to get the top 10 most recent
-            searchString = this.searchText || '*';
+        const { locals } = window.kiln,
+          query = queryService('published-content', locals),
+          // if there are no search text yet, pass in * to get the top 10 most recent
+          searchString = this.searchText || '*';
 
         queryService.addSize(query, 10);
         queryService.onlyWithTheseFields(query, ['date', 'canonicalUrl', 'seoHeadline']);
         queryService.addSearch(query, `*${ searchString.replace(/^https?:\/\//, '') }*`, ["authors", "canonicalUrl", "tags", "teaser"]);
         queryService.addSort(query, { date: { order: 'desc'} });
 
-        const results = await queryService.searchByQuery(query);
+        const results = await queryService.searchByQuery(
+          query,
+          locals,
+          { shouldDedupeContent: false }
+        );
 
         // format the date using the same format as clay-kiln
         return results.map(item => ({ ...item, date: kilnDateTimeFormat(item.date) }));

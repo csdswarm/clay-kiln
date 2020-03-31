@@ -1,10 +1,11 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  _includes = require('lodash/includes'),
   { unityComponent } = require('../../services/universal/amphora'),
   abTest = require('../../services/universal/a-b-test'),
   lyticsApi = require('../../services/universal/lyticsApi'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   queryService = require('../../services/server/query'),
   { isComponent } = require('clayutils'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
@@ -18,21 +19,52 @@ const _get = require('lodash/get'),
   elasticIndex = 'published-content',
   defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
   MAX_LYTICS = 10, // since lytics has bad data, get more than the required amount
-  MAX_ITEMS = 6;
+  MAX_ITEMS = 6,
+  searchOpts = {
+    includeIdInResult: true,
+    shouldDedupeContent: false
+  };
 
 module.exports = unityComponent({
-  /**
-   * @param {string} ref
-   * @param {object} data
-   * @param {object} locals
-   * @returns {Promise}
-   */
+  save: async (ref, data, locals) => {
+    if (!data.items.length || !locals) {
+      return data;
+    }
+
+    data.items = await Promise.all(data.items.map(async (item) => {
+      item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+
+      const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts),
+        article = {
+          ...item,
+          uri: result._id,
+          primaryHeadline: item.overrideTitle || result.primaryHeadline,
+          pageUri: result.pageUri,
+          urlIsValid: result.urlIsValid,
+          canonicalUrl: result.canonicalUrl,
+          feedImgUrl: result.feedImgUrl,
+          sectionFront: result.sectionFront
+        };
+
+      if (article.title) {
+        article.plaintextTitle = toPlainText(article.title);
+      }
+
+      return article;
+    }));
+
+    return data;
+  },
+
   render: async (ref, data, locals) => {
+    data._computed.articles = [];
+
     if (abTest() && !locals.edit) {
       const lyticsId = _get(locals, 'lytics.uid'),
         noUserParams = lyticsId ? {} : { url: locals.url },
         recommendations = await lyticsApi.recommend(lyticsId, { limit: MAX_LYTICS, contentsegment: 'recommended_for_you', ...noUserParams }),
         recommendedUrls = recommendations.map(upd => upd.url);
+
       let articles =
         // remove duplicates by checking the position of the urls and remove items that have no title
         recommendations.filter((item, index) => recommendedUrls.indexOf(item.url) === index && item.title)
@@ -47,8 +79,20 @@ module.exports = unityComponent({
             })
           ).splice(0, MAX_ITEMS);
 
+      // fetch the content uri for deduping purposes
+      articles = await Promise.all(articles.map(async anArticle => {
+        const result = await recircCmpt.getArticleDataAndValidate(ref, anArticle, locals, [], searchOpts);
+
+        anArticle.uri = result._id;
+
+        return anArticle;
+      }));
+
+      articles = articles.filter(anArticle => !_includes(locals.loadedIds, anArticle.uri));
+
       if (articles.length > 0) {
-        // backfill if there are missing items
+        // backfill with curated if lytics didn't provide MAX_ITEMS #
+        //  of articles
         if (articles.length !== MAX_ITEMS) {
           const urls = articles.map(item => item.canonicalUrl),
             availableItems = data.items.filter(item => !urls.includes(item.canonicalUrl));
@@ -56,75 +100,41 @@ module.exports = unityComponent({
           articles = articles.concat(availableItems.splice(0, MAX_ITEMS - articles.length));
         }
 
-        data.items = articles;
+        data._computed.articles = articles;
         data.lytics = true;
       }
+    } else {
+      // when we're either in edit mode or not using the lytics engine, we want
+      //   to start with the curated items
+      data._computed.articles = [...data.items];
     }
 
-    // leaving the lytics stuff above intact and seeing if we need to backfill
-    const numArticlesToBackFill = MAX_ITEMS - data.items.length;
+    locals.loadedIds = locals.loadedIds.concat(
+      data._computed.articles.map(item => item.uri)
+    );
+
+    // and finally backfill via elasticsearch if there are still available slots
+    const numArticlesToBackFill = MAX_ITEMS - data._computed.articles.length;
 
     if (!locals.edit && numArticlesToBackFill > 0) {
-      await buildAndRequestElasticSearch(numArticlesToBackFill, data.items, locals)
-        .then(responseItems => {
-          data._computed.articles = [...data.items, ...responseItems];
-        })
-        .catch(err => {
-          queryService.logCatch(err, ref);
-          // still send the curated items
-          data._computed.articles = [...data.items];
-        });
-    } else {
-      // no need to backfill
-      data._computed.articles = [...data.items];
+      const responseItems = await buildAndRequestElasticSearch(
+        numArticlesToBackFill,
+        locals
+      ).catch(err => {
+        queryService.logCatch(err, ref);
+        return [];
+      });
+
+      data._computed.articles = data._computed.articles.concat(responseItems);
     }
 
     data._computed.articles = addParamsAndHttps(data._computed.articles);
     return data;
-
-  },
-  /**
-   * @param {string} ref
-   * @param {object} data
-   * @param {object} locals
-   * @returns {Promise}
-   */
-  save: (ref, data, locals) => {
-    if (!data.items.length || !locals) {
-      return data;
-    }
-
-    return Promise.all(data.items.map(async (item) => {
-      item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-
-      const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
-        article = {
-          ...item,
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl,
-          sectionFront: result.sectionFront
-        };
-
-      if (article.title) {
-        article.plaintextTitle = toPlainText(article.title);
-      }
-
-      return article;
-    }))
-      .then((items) => {
-        data.items = items;
-
-        return data;
-      });
   }
 });
 
-
-async function buildAndRequestElasticSearch(numResults, curatedItems, locals) {
-  const elasticQuery = queryService.newQueryWithCount(elasticIndex, numResults);
+async function buildAndRequestElasticSearch(numResults, locals) {
+  const elasticQuery = queryService.newQueryWithCount(elasticIndex, numResults, locals);
 
   let cleanUrl;
 
@@ -135,18 +145,12 @@ async function buildAndRequestElasticSearch(numResults, curatedItems, locals) {
     queryService.addMustNot(elasticQuery, { match: { canonicalUrl: cleanUrl } });
   }
 
-  // exclude the curated content from the results
-  if (curatedItems.length > 0) {
-    curatedItems.forEach(item => {
-      if (item.canonicalUrl) {
-        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(elasticQuery, { match: { canonicalUrl: cleanUrl } });
-      }
-    });
-  }
-
   queryService.onlyWithTheseFields(elasticQuery, elasticFields);
-  return await queryService.searchByQuery(elasticQuery);
+  return queryService.searchByQuery(
+    elasticQuery,
+    locals,
+    { shouldDedupeContent: true }
+  );
 }
 
 function addParamsAndHttps(arr) {

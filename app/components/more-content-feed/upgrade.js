@@ -1,9 +1,10 @@
 'use strict';
 
-const { getComponentVersion } = require('clayutils'),
-  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+const _get = require('lodash/get'),
+  addUriToCuratedItems = require('../../services/server/component-upgrades/add-uri-to-curated-items'),
   db = require('amphora-storage-postgres'),
-  _get = require('lodash/get');
+  { getComponentInstance, putComponentInstance } = require('../../services/server/publish-utils'),
+  { getComponentVersion } = require('clayutils');
 
 module.exports['1.0'] = function (uri, data) {
   if (!data.contentType) {
@@ -88,6 +89,10 @@ module.exports['7.0'] = async function (uri, data) {
       uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag@published') :
       uri.replace(/\/more-content-feed\/instances\/.*/, '/google-ad-manager/instances/sharethroughTag');
 
+  if (sharethroughTagInstanceUri.includes('more-content-feed')) {
+    return data;
+  }
+
   try {
     const sharethroughTagInstance = await getComponentInstance(sharethroughTagInstanceUri);
 
@@ -151,4 +156,35 @@ module.exports['9.0'] = async function (uri, data) {
     console.error('error upgrading', e.message);
     return data;
   }
+};
+
+module.exports['10.0'] = async function (uri, data) {
+  const { filterTags, filterSecondarySectionFronts, ...restOfData } = data;
+
+  return { ...restOfData, excludeTags: filterTags, excludeSecondarySectionFronts: filterSecondarySectionFronts };
+};
+
+module.exports['11.0'] = function (uri, data) {
+  data.componentTitleVisible = false;
+
+  return data;
+};
+
+module.exports['12.0'] = async (uri, data, locals) => {
+  await addUriToCuratedItems(uri, data.items, locals);
+
+  return data;
+};
+
+module.exports['13.0'] = function (uri, data) {
+  return {
+    ...data,
+    enableSharethrough: true
+  };
+};
+
+module.exports['14.0'] = function (uri, data) {
+  delete data.tagInfo;
+
+  return data;
 };

@@ -1,36 +1,93 @@
-<div data-uri="{{ default _ref _self }}" class="component component--image {{ ./rendition }} {{if borderToggle 'image-borders'}}" itemscope itemtype="http://schema.org/ImageObject" data-editable="inlinestuff">
-    {{#if ratio}}
-    {{! if ratio is available, set height of image }}
-        <style>
-          [data-uri="{{ default _ref _self }}"] {
-            height: {{ratio}}%;
-          }
-        </style>
+<div data-uri="{{ default _ref _self }}"
+  class="component component--image {{ ./rendition }} {{if borderToggle 'image-borders'}}"
+  itemscope
+  itemtype="http://schema.org/ImageObject"
+  data-editable="inlinestuff">
+
+  {{#if ratio}}
+  {{! if ratio is available, set height of image }}
+      <style>
+        [data-uri="{{ default _ref _self }}"] {
+          height: {{ratio}}%;
+        }
+      </style>
+  {{/if}}
+
+  {{!
+    This partial should be in sync with the one in feed-image/template.hbs
+
+    Ideally this partial would be a separate component that both this and
+    feed-image references.  I'm running low on time to finish this ticket so I'm
+    punting that work for later.
+  }}
+  {{#* inline "warning"}}
+    {{#if showWhen}}
+      <div class="warning">
+        <i class="warning__icon material-icons">warning</i>
+        <h5 class="warning__header">
+          {{header}}
+        </h5>
+        <p class="warning__content">
+          {{>@partial-block}}
+        </p>
+      </div>
     {{/if}}
+  {{/inline}}
 
-    <div class="image-wrapper">
-      {{#if url}}
-        {{#if imageLink}}<a href="{{ imageLink }}" target="_blank">{{/if}}
-          <img src="{{ url }}?width=800" alt="{{ alt }}">
-        {{#if imageLink}}</a>{{/if}}
-      {{/if}}
-    </div>
-    {{#ifAny caption credit}}
-      <figcaption itemprop="caption" class="image-figcaption">
-        {{#if caption}}<span class="caption">{{{ caption }}}</span>{{/if}}
-        {{#ifAll caption credit}}<span class="buffer"></span>{{/ifAll}}
-        {{#if credit}}<cite class="credit">{{if imageType imageType else='Photo credit'}} {{{ credit }}}</cite>{{/if}}
-      </figcaption>
-    {{/ifAny}}
+  <div class="image-wrapper">
+    {{#if url}}
+      {{#>warning header='Bad Image'
+        showWhen=_computed.show404Message
+      }}
+        This image no longer exists.  Please upload a new one.
+      {{/warning}}
 
-    <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "ImageObject",
-      {{#if credit}}"author": "{{{ credit }}}",{{/if}}
-        {{#if caption}}"caption": "{{{ caption }}}",{{/if}}
-      "contentUrl": "{{ url }}"
-    }
+      {{#if imageLink}}<a href="{{ imageLink }}" target="_blank">{{/if}}
+        <img src="{{ url }}?width=800" alt="{{ alt }}">
+      {{#if imageLink}}</a>{{/if}}
+
+      {{#>warning header='Msn Feed Issue'
+        showWhen=_computed.msnFeed.showOutsideRecommendedRatio
+      }}
+        This image has a width/height ratio of {{ _computed.imageRatio }}.
+        For this image to show up on msn properly please use an image ratio
+        between {{ _computed.msnFeed.constants.minRatio }} and
+        {{ _computed.msnFeed.constants.maxRatio }}
+      {{/warning}}
+
+      {{#>warning header='Msn Feed Issue'
+        showWhen=_computed.msnFeed.showLargerThanMaxSize
+      }}
+        This image has a size of {{ _computed.sizeInMb }} which is larger
+        than msn's maximum size of {{ _computed.msnFeed.constants.maxSizeMb }} MB.
+        Please upload a smaller image so it appears in the msn feed.
+      {{/warning}}
+
+      {{#>warning header='Msn Feed Issue'
+        showWhen=_computed.msnFeed.showSmallerThanMinSide
+      }}
+        This image is {{ width }}px by {{ height }}px which is smaller than
+        what msn requires to display in its feed.  Please make sure both
+        width and height are at minimum {{ _computed.msnFeed.constants.minSide }} pixels.
+      {{/warning}}
+    {{/if}}
+  </div>
+  {{#ifAny caption credit}}
+    <figcaption itemprop="caption" class="image-figcaption">
+      {{#if caption}}<span class="caption">{{{ caption }}}</span>{{/if}}
+      {{#ifAll caption credit}}<span class="buffer"></span>{{/ifAll}}
+      {{#if credit}}<cite class="credit">{{if imageType imageType else='Photo credit'}} {{{ credit }}}</cite>{{/if}}
+    </figcaption>
+  {{/ifAny}}
+
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "ImageObject",
+    {{#if credit}}"author": "{{{ credit }}}",{{/if}}
+      {{#if caption}}"caption": "{{{ caption }}}",{{/if}}
+    "contentUrl": "{{ url }}"
+  }
   </script>
 </div>
 {{! todo: rename this file to .hbs after amphora is updated to support multiplex-templates v1.3.0 }}

@@ -5,7 +5,7 @@ module.exports.save = function (uri, data) {
     aTag.text = aTag.text.trim();
   }
 
-  data.normalizedAdTagsStr = data.items.map(i => i.text.replace(/ /g, '-')).join(',');
+  data.normalizedAdTagsStr = data.items.map(item => item.text.replace(/ /g, '-')).join(',');
 
   return data;
 };
