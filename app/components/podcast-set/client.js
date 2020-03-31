@@ -51,7 +51,11 @@ class PodcastSet {
       mostRecent = podcastIds.slice(0, numberOfRecentPodcasts);
 
     if (mostRecent.length) {
+      this.el.querySelector('.podcast-set-waiting').classList.remove('hidden');
       return await this.updateDomWithIds(mostRecent);
+    } else {
+      this.el.querySelector('.podcast-set-empty').classList.remove('hidden');
+      return false;
     }
 
   }

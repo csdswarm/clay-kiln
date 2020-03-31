@@ -2,7 +2,8 @@
 
 const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
-  podcastService = require('../../services/universal/podcast');
+  podcastService = require('../../services/universal/podcast'),
+  log = require('../../services/universal/log').setup({ file: __filename });
 
 module.exports = unityComponent({
   /**
@@ -37,16 +38,13 @@ module.exports = unityComponent({
 
             podcast.attributes.url = podcastService.createUrl(podcast.attributes.title);
           }
-        } else {
-          console.log('RDC API no response data.');
         }
 
         data._computed.podcasts = podcasts;
 
         return data;
       }).catch((rejected) => {
-        console.log('Error querying RDC API for podcast data:', rejected);
-
+        log('error', 'Error querying RDC API for podcast data:', { error: rejected });
         return data;
       });
 

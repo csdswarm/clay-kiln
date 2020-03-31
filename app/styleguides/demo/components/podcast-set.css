@@ -32,6 +32,14 @@
         .podcast-set-show {
           text-align: center;
         }
+
+        &.podcast-set-empty, &.podcast-set-waiting {
+          width: auto;
+        }
+
+        &.hidden {
+          display: none;
+        }
       }
     }
 
@@ -51,7 +59,6 @@
 
     .show__details {
       text-align: justify;
-      text-overflow: ellipsis;
       overflow: hidden;
       font-family: CircularStd-Medium;
       font-size: 11px;
@@ -59,6 +66,9 @@
       color: #777;
       max-height: 42px;
 
+      /* These properties will cause an ellipses to be displayed
+       when there is too much text to fit inside the box */
+      text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;

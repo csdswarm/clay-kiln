@@ -18,8 +18,15 @@
         </div>
       </li>
     {{else}}
-      <li class="podcast-set-item podcast-set-tbd">
-        TBD...
+      <li class="podcast-set-item podcast-set-waiting hidden">
+        <div class="show__name">
+          Retrieving your recent podcasts...
+        </div>
+      </li>
+      <li class="podcast-set-item podcast-set-empty hidden">
+        <div class="show__name">
+          You have no recently played podcasts.
+        </div>
       </li>
     {{/each}}
   </ul>
