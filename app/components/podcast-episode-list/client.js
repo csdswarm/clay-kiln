@@ -1,6 +1,5 @@
 'use strict';
 
-
 const
   _bindAll = require('lodash/bindAll'),
   rest = require('../../services/universal/rest'),
@@ -13,9 +12,19 @@ const
   loadMoreAmount = 20;
 
 let
-  $; // , $$;
+  $;
 
+
+
+
+/**
+ * model class for the client side component
+ */
 class PodcastListComponentModel {
+  /**
+   * Create a model
+   * @param {HTMLElement} containerElement - The HTMLElement of the component.
+   */
   constructor(containerElement) {
     this.isLoading = false;
     this.apiParams = {
@@ -25,12 +34,24 @@ class PodcastListComponentModel {
     };
     this.apiEndpoint = '//' + containerElement.getAttribute('data-uri').replace('@published', '');
   }
+  /**
+   * setter for pageNumber
+   * @param {Number} value - new value
+   */
   set pageNumber(value) {
     this.apiParams.pageNumber = value;
   }
+  /**
+   * getter for pageNumber
+   */
   get pageNumber() {
     return this.apiParams.pageNumber;
   }
+  /**
+   * get a new api url with serialized query params
+   * @param {Boolean} isLoadMoreRequest - is this coming from load more
+   * @return {String}
+   */
   getApiUrl(isLoadMoreRequest) {
     const serialized = qs.stringify({
       query: {
@@ -44,12 +65,21 @@ class PodcastListComponentModel {
 
     return `${this.apiEndpoint}?${serialized}`;
   }
+  /**
+   * get the opposite of the current drop down order for use with loading more
+   * @return {String} // sorting order
+   */
   getOppositeSortOrder() {
     if (this.apiParams.sortOrder === sortingValues[0]) {
       return sortingValues[1];
     }
     return sortingValues[0];
   }
+  /**
+   * get a new GET request to the api
+   * @param {Boolean} isLoadMoreRequest - is this coming from load more
+   * @return {Promise}
+   */
   getEpisodes(isLoadMoreRequest = false) {
     return rest.get(
       this.getApiUrl(isLoadMoreRequest)
@@ -57,16 +87,30 @@ class PodcastListComponentModel {
   }
 }
 
+
+
+
+/**
+ * view class for the client side component
+ */
 class PodcastListComponentView {
-  constructor(el) {
+  /**
+   * Create a view.
+   * @param {HTMLElement} containerElement - The HTMLElement of the component.
+   */
+  constructor(containerElement) {
     this.elements = {
-      container: el,
+      container: containerElement,
       sortDropdown: $('#episodesOrder'),
       episodesContainer: $(`.${componentClassName}__episodes`),
       loadMoreBtn: $(`.${componentClassName}__load-more-btn`)
     };
     this.itemTemplate = this.getHtmlTemplateFromClone();
   }
+  /**
+   * looks at the clone and identifies all the elements that need to get new data
+   * @return {Function} // function that will except episode data
+   */
   getHtmlTemplateFromClone() {
     const
       clone = this.elements.episodesContainer.children[0].cloneNode(true),
@@ -79,6 +123,7 @@ class PodcastListComponentView {
         description:                clone.querySelector(`.${componentClassName}__description`)
       };
 
+    // return function that excepts episode data and returns html with replaced data
     return (data) => {
       for (const key in cloneElements) {
         if (cloneElements.hasOwnProperty(key)) {
@@ -103,6 +148,11 @@ class PodcastListComponentView {
       return clone.outerHTML;
     };
   }
+  /**
+   * takes in array of episodes and adds them to the episodesContainer
+   * @param {Array} episodes // array of episodes
+   * @param {Boolean} clearContainer // do you want to clear the container's html content
+   */
   addMoreEpisodes(episodes, clearContainer = false) {
     const container = this.elements.episodesContainer;
 
@@ -114,67 +164,103 @@ class PodcastListComponentView {
       container.insertAdjacentHTML('beforeend', this.itemTemplate(episode));
     });
   }
+  /**
+   * method for hiding the load more btn
+   */
   hideLoadMoreBtn() {
     this.elements.loadMoreBtn.style.display = 'none';
   }
+  /**
+   * method for showing the load more btn
+   */
   showLoadMoreBtn() {
     this.elements.loadMoreBtn.style.display = 'block';
   }
 }
 
-class PodcastListComponent {
-  constructor(el) {
+
+
+
+/**
+ * controller class for the client side component
+ */
+class PodcastListComponentController {
+  /**
+   * Create a controller instantiate the view and model and add the mount listener
+   * @param {HTMLElement} containerElement - The HTMLElement of the component.
+   */
+  constructor(containerElement) {
     _bindAll(this, 'onMount', 'onDismount', 'onClick', 'onChange');
-    this.view = new PodcastListComponentView(el);
-    this.model = new PodcastListComponentModel(el);
+    this.view = new PodcastListComponentView(containerElement);
+    this.model = new PodcastListComponentModel(containerElement);
     doc.addEventListener(`${componentName}-mount`, this.onMount);
   }
+  /**
+   * mounting event handler
+   */
   onMount() {
-    console.log('[mount]', 'PodcastListComponent', this);
     this.view.elements.container.addEventListener('click' , this.onClick);
     this.view.elements.sortDropdown.addEventListener('change' , this.onChange);
   }
+  /**
+   * click event handler
+   * @param {Event} e // click event object
+   */
   onClick(e) {
     if (this.model.isLoading) {
       return;
     }
     if (e.target === this.view.elements.loadMoreBtn) {
-      console.log('MORE!');
       this.model.isLoading == true;
       this.model.getEpisodes()
         .then(response => {
           const episodes = response._computed.episodes;
 
-          console.log(episodes);
-          this.model.isLoading == false;
           this.model.pageNumber = this.model.pageNumber + 1;
           this.view.addMoreEpisodes(episodes);
           if (episodes.length < loadMoreAmount) {
             this.model.pageNumber = 2;
             this.view.hideLoadMoreBtn();
           }
-        });
+        })
+        .finally(()=> this.model.isLoading = false);
     }
   }
+  /**
+   * change event handler
+   * @param {Event} e // change event object
+   */
   onChange(e) {
+    if (this.model.isLoading) {
+      return;
+    }
+    // need to reset the page number before the loading then increment after so
+    // the load more will pick up in the right spot
     this.model.apiParams.sortOrder = sortingValues[e.target.value];
-    this.model.apiParams.pageNumber = 2;
+    this.model.apiParams.pageNumber = 1;
+    this.model.isLoading = true;
     this.model.getEpisodes()
       .then(response => {
-        console.log(response);
         this.view.addMoreEpisodes(response._computed.episodes, true);
+        this.model.apiParams.pageNumber = 2;
+      })
+      .finally(()=> {
+        this.model.isLoading = false;
         this.view.showLoadMoreBtn();
       });
   }
+  /**
+   * dismounting event handler
+   */
   onDismount() {
-    console.log('[dismount]', 'PodcastListComponent');
+    this.view.elements.container.removeEventListener('click' , this.onClick);
+    this.view.elements.sortDropdown.removeEventListener('change' , this.onChange);
+    doc.removeEventListener(`${componentName}-mount`, this.onMount);
   }
 }
 
 
-
 module.exports = (el) => {
-  $ = el.querySelector.bind(el);
-  // $$ = el.querySelectorAll.bind(el);
-  return new PodcastListComponent(el);
+  $ = el.querySelector.bind(el); // quick alias isolated to the container el
+  return new PodcastListComponentController(el);
 };
