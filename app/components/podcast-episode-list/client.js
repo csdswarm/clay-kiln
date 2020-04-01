@@ -28,7 +28,8 @@ class PodcastListComponentModel {
   constructor(containerElement) {
     this.isLoading = false;
     this.apiParams = {
-      dynamicSlug: containerElement.getAttribute('data-dynamic-slug'),
+      podcastSiteSlug: containerElement.getAttribute('data-podcast-site-slug'),
+      stationSiteSlug: containerElement.getAttribute('data-station-site-slug'),
       sortOrder: sortingValues[1],
       pageNumber: 2
     };
@@ -56,10 +57,9 @@ class PodcastListComponentModel {
     const serialized = qs.stringify({
       query: {
         page: this.apiParams.pageNumber,
-        sort: !isLoadMoreRequest ? this.apiParams.sortOrder : this.getOppositeSortOrder()
-      },
-      params: {
-        dynamicSlug: this.apiParams.dynamicSlug
+        sort: !isLoadMoreRequest ? this.apiParams.sortOrder : this.getOppositeSortOrder(),
+        'podcast-site-slug': this.apiParams.podcastSiteSlug,
+        'station-site-slug': this.apiParams.stationSiteSlug
       }
     });
 
@@ -117,6 +117,7 @@ class PodcastListComponentView {
       cloneElements = {
         image:                      clone.querySelector(`.${componentClassName}__image`),
         link:                       clone.querySelector(`.${componentClassName}__download-link`),
+        playBtn:                    clone.querySelector(`.${componentClassName}__play-btn`),
         published_date_formatted:   clone.querySelector(`.${componentClassName}__pub-date`),
         duration_seconds_formatted: clone.querySelector(`.${componentClassName}__duration span`),
         title:                      clone.querySelector(`.${componentClassName}__title`),
@@ -135,6 +136,9 @@ class PodcastListComponentView {
               break;
             case 'link':
               element.setAttribute('href', data.attributes.audio_url);
+              break;
+            case 'playBtn':
+              element.setAttribute('href', data.attributes.episode_detail_url);
               break;
             default:
               let value = data.attributes[key];
