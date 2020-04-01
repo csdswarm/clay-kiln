@@ -15,7 +15,7 @@ const radioApiService = require('../../services/server/radioApi'),
 function getAllMarkets(locals) {
   const route = 'markets',
     params = {
-      'page[size]': 100,
+      'page[size]': 1000,
       sort: 'name'
     };
 
