@@ -1,6 +1,6 @@
 'use strict';
 
-const { getComponentInstance } = require('../../services/server/publish-utils'),
+const { getComponentInstance } = require('clayutils'),
   moreContentFeedToTwoColumn = require('../../services/universal/component-upgrades/more-content-feed-to-two-column'),
   { addMultiColumnToSectionFront } = require('./upgrade-helpers');
 
