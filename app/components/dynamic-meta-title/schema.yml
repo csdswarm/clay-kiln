@@ -1,4 +1,4 @@
-_version: 2.0
+_version: 3.0
 _description: |
   Adds `<title>`, `twitter:title`, and `og:title` tags to the head.
 

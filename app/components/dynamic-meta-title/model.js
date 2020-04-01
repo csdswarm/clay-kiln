@@ -1,49 +1,56 @@
 'use strict';
 
-const { toTitleCase } = require('../../services/universal/utils'),
-  { hypensToSpaces } = require('../../services/universal/dynamic-route-param'),
+const { hypensToSpaces } = require('../../services/universal/dynamic-route-param'),
   { unityComponent } = require('../../services/universal/amphora'),
+  { toTitleCase } = require('../../services/universal/utils'),
   matcher = require('../../services/universal/url-matcher'),
   _get = require('lodash/get');
 
 /**
- * returns the metaValue, paramValue and suffix from either the component's data
- *   or url match entry.
- *
- * @param {object} dataOrMatch
+ * Get the meta title based on metaLocalsKey or fallback to regular title
+ * @param {object} data
  * @param {object} locals
- * @returns {object}
+ * @param {string} title
+ * @return {string}
  */
-function getValuesAndSuffix(dataOrMatch, locals) {
-  const { localsPath, metaLocalsPath, routeParam, suffix } = dataOrMatch,
-    localsVal = localsPath
-      ? _get(locals, localsPath)
-      : undefined;
-  let metaValue, paramValue;
+const createMetaTitle = (data, locals, title) => {
+  const { metaLocalsKey } = data;
 
-  if (routeParam && _get(locals, 'params')) {
-    metaValue = paramValue = hypensToSpaces(locals.params[routeParam]);
-  } else if (localsVal) {
-    paramValue = localsVal;
-    metaValue = metaLocalsPath
-      ? _get(locals, metaLocalsPath)
-      : localsVal;
+  if (metaLocalsKey) {
+    return metaLocalsKey
+      .map(key => _get(locals, key))
+      .filter(val => !!val)
+      .join(' - ') || title;
   }
 
-  return { metaValue, paramValue, suffix };
-}
+  return title;
+};
 
 module.exports = unityComponent({
   render: (uri, data, locals) => {
-    const urlMatch = data.urlMatches.find(
-        ({ urlString }) => matcher(urlString, locals.url)
-      ),
-      { paramValue, metaValue, suffix } = getValuesAndSuffix(urlMatch || data, locals),
-      computedSuffix = suffix || data.suffix || '';
+    const urlMatch = data.urlMatches.find(({ urlString }) => matcher(urlString, locals.url));
 
-    Object.assign(data._computed, {
-      title: `${toTitleCase(paramValue) || ''}${computedSuffix}`,
-      metaTitle: `${toTitleCase(metaValue) || ''}${computedSuffix}`
+    let paramValue, metaValue, suffix;
+
+    if (urlMatch) {
+      if (urlMatch.routeParam && locals && locals.params) {
+        paramValue = metaValue = hypensToSpaces(locals.params[urlMatch.routeParam]);
+      }
+      suffix = urlMatch.suffix;
+    } else if (data.routeParam && locals && locals.params) {
+      paramValue = metaValue = hypensToSpaces(locals.params[data.routeParam]);
+    } else if (data.localsKey && locals) {
+      const value = _get(locals, data.localsKey);
+
+      if (value) {
+        paramValue = value;
+        metaValue = createMetaTitle(data, locals, value);
+      }
+    }
+
+    data._computed = Object.assign(data._computed, {
+      title: `${toTitleCase(paramValue) || ''}${suffix || data.suffix}`,
+      metaTitle: `${toTitleCase(metaValue) || ''}${suffix || data.suffix}`
     });
 
     return data;
