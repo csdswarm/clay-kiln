@@ -85,8 +85,8 @@ const db = require('./db'),
         FROM  pages p, 
           LATERAL jsonb_array_elements_text(p.data->'main') m(id)
             INNER JOIN components."station-front" sf ON m.id = sf.id
-        WHERE  sf.data@>'{"stationSlug": :stationSlug:}'  AND sf.id ~ '@published$'`,
-      result = await db.raw(sql, { stationSlug }),
+        WHERE  sf.data@>?::jsonb  AND sf.id ~ '@published$'`,
+      result = await db.raw(sql, [{ stationSlug }]),
       pageUri = _get(result, 'rows[0].uri');
 
     if (pageUri) {
