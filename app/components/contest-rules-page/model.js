@@ -1,3 +1,9 @@
+/**
+ * const contestOverdue = currentTime - contestEndtTime
+ *
+ * return contestOverdue < 30days
+ */
+
 'use strict';
 /* eslint-disable one-var */
 
@@ -5,7 +11,7 @@ const { unityComponent } = require('../../services/universal/amphora');
 const db = require('amphora-storage-postgres');
 const defaultStation = require('../../services/startup/currentStation/default-station');
 const moment = require('moment');
-const queryDateRange = 30;
+const maxAgeInDays = 31;
 const url = require('url');
 const _get = require('lodash/get');
 
@@ -22,14 +28,11 @@ const getContestRules = async ({
     SELECT *
     FROM components."contest-rules"
 
-    -- make sure contest has already started
-    WHERE data->>'contestStartDate' <= '${startTime}'
-
-    -- show contests that are within 30 days from start time
-    AND DATE_PART(
+    -- show contests that are no more than X days old
+    WHERE DATE_PART(
       'day',
-      (data ->> 'contestEndDate')::timestamp - '${startTime}'::timestamp
-    ) <= ${queryDateRange}
+      '${startTime}'::timestamp - (data ->> 'contestEndDate')::timestamp
+    ) <= ${maxAgeInDays}
 
     AND id SIMILAR TO '%@published'
     ${stationQuery(stationCallsign)}
