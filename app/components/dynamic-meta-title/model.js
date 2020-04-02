@@ -6,26 +6,6 @@ const { hypensToSpaces } = require('../../services/universal/dynamic-route-param
   matcher = require('../../services/universal/url-matcher'),
   _get = require('lodash/get');
 
-/**
- * Get the meta title based on metaLocalsKey or fallback to regular title
- * @param {object} data
- * @param {object} locals
- * @param {string} title
- * @return {string}
- */
-const createMetaTitle = (data, locals, title) => {
-  const { metaLocalsKey } = data;
-
-  if (metaLocalsKey) {
-    return metaLocalsKey
-      .map(key => _get(locals, key))
-      .filter(val => !!val)
-      .join(' - ') || title;
-  }
-
-  return title;
-};
-
 module.exports = unityComponent({
   render: (uri, data, locals) => {
     const urlMatch = data.urlMatches.find(({ urlString }) => matcher(urlString, locals.url));
@@ -41,18 +21,18 @@ module.exports = unityComponent({
       paramValue = metaValue = hypensToSpaces(locals.params[data.routeParam]);
     } else if (data.localsKey && locals) {
       const value = _get(locals, data.localsKey);
-
+  
       if (value) {
         paramValue = value;
-        metaValue = createMetaTitle(data, locals, value);
+        metaValue = data.metaLocalsKey ? _get(locals, data.metaLocalsKey) : value;
       }
     }
-
+  
     data._computed = Object.assign(data._computed, {
       title: `${toTitleCase(paramValue) || ''}${suffix || data.suffix}`,
       metaTitle: `${toTitleCase(metaValue) || ''}${suffix || data.suffix}`
     });
-
+  
     return data;
   }
 });

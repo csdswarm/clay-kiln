@@ -92,7 +92,7 @@ class StagingHelperUI {
   getHtml() {
     return `
       <div class="staging-helper__container">
-        ${this.getStyles()}
+        ${this.getStyles()} 
         <div class="staging-helper__text">StagingAPI Active</div>
         <button class="staging-helper__clear-button">off</button>
       </div>
@@ -171,9 +171,6 @@ class StagingHelper {
    * method for when the dismount callback is invoked
    */
   onDismount() {
-    if (!this.ui) {
-      return;
-    }
     this.ui.onDismount();
   }
 }

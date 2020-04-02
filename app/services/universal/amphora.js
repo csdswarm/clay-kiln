@@ -55,12 +55,6 @@ function composeAncestry(myUri, data, { ancestry = {} }) {
 function unityComponent({ render = returnData, save = returnData }) {
   return {
     render(uri, data, locals) {
-      const isBootstrapping = !locals;
-
-      if (isBootstrapping) {
-        return data;
-      }
-
       locals.ancestry = composeAncestry(uri, data, locals);
 
       // add object to be used for any computed data that should not be saved, automatically include a parents reference
@@ -69,12 +63,6 @@ function unityComponent({ render = returnData, save = returnData }) {
       return render(uri, data, locals);
     },
     save(uri, data, locals) {
-      const isBootstrapping = !locals;
-
-      if (isBootstrapping) {
-        return data;
-      }
-
       // ensure computed data doesn't get saved to db
       delete data._computed;
 
