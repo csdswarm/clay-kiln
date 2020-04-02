@@ -61,7 +61,7 @@ const
     },
     curated: data.items || []
   }),
-  defaultTemplate = (locals, validatedItem, curatedItem = {}) => ({
+  defaultTemplate = (validatedItem, curatedItem = {}) => ({
     ...curatedItem,
     primaryHeadline: curatedItem.overrideTitle || validatedItem.primaryHeadline,
     pageUri: validatedItem.pageUri,
@@ -276,8 +276,6 @@ const
    */
   validUrl = url => url && !isComponent(url),
   boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
-  // Get both the results and the total number of results for the query
-  transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
 
   /**
  * Use filters to query elastic for content
@@ -291,20 +289,10 @@ const
  * @returns {array} elasticResults
  */
   fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems }, locals) => {
-    let results = {
-      content: [],
-      totalHits: 0
-    };
+    const query = queryService.newQueryWithCount(index, maxItems + 1, locals),
+      searchOpts = { shouldDedupeContent: true };
 
-    if (maxItems === 0) {
-      return results;
-    }
-
-    const query = queryService.newQueryWithCount(index, maxItems, locals),
-      searchOpts = {
-        shouldDedupeContent: true,
-        transformResult
-      };
+    let results = [];
 
     // add sorting
     queryService.addSort(query, { date: 'desc' });
@@ -371,13 +359,12 @@ const
               ...defaultMapDataToFilters(uri, data, locals),
               ...await mapDataToFilters(uri, data, locals)
             },
-            itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
-            { content, totalHits } = await fetchRecirculation({ filters, excludes, elasticFields, pagination, maxItems: itemsNeeded }, locals);
+            content = await fetchRecirculation({ filters, excludes, elasticFields, pagination, maxItems }, locals);
 
           data._computed = Object.assign(data._computed || {}, {
-            [contentKey]: await Promise.all([...curated, ...content].slice(0, maxItems).map(async (item) => mapResultsToTemplate(locals, item))),
+            [contentKey]: [...curated, ...content].slice(0, maxItems).map(item => mapResultsToTemplate(item)),
             initialLoad: !pagination.page,
-            moreContent: totalHits > maxItems
+            moreContent: content.length > maxItems
           });
         } catch (e) {
           log('error', `There was an error querying items from elastic - ${ e.message }`, e);
@@ -398,7 +385,7 @@ const
             },
             result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
 
-          return mapResultsToTemplate(locals, result, item);
+          return mapResultsToTemplate(result, item);
         }));
 
         return save(uri, data, locals);

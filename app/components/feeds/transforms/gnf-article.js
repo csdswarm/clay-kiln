@@ -44,8 +44,10 @@ module.exports = async (data, locals) => {
       }
     ];
 
+  // Add the tags
+  addArrayOfProps(data.tags, 'category', transform);
   // Add the authors
-  addArrayOfProps(data.authors, 'author', transform);
+  addArrayOfProps(data.authors, 'dc:creator', transform);
 
   return transform;
 };

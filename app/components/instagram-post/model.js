@@ -1,45 +1,31 @@
 'use strict';
 
 const rest = require('../../services/universal/rest'),
-  instagramApiBaseUrl = 'https://api.instagram.com/oembed/?omitscript=true&url=',
-  { unityComponent } = require('../../services/universal/amphora');
+  instagramApiBaseUrl = 'https://api.instagram.com/oembed/?omitscript=true&url=';
 
 /**
  * Determine if an instagram post should hide its caption
- * @param {bool} showCaption
+ * @param {object} data
  * @returns {string}
  */
-function hideCaption(showCaption) {
-  return showCaption === false ? '&hidecaption=true' : '';
+function hideCaption(data) {
+  return data.showCaption === false ? '&hidecaption=true' : '';
 }
 
-module.exports = unityComponent({
-  save: async function (uri, data) {
-    // reset html if no url is provided
-    if (!data.url) {
-      return {
-        ...data,
-        html: ''
-      };
-    }
-
+module.exports.save = function (uri, data) {
+  if (data.url) {
     // note: we're using the un-authenticated api endpoint. don't abuse this
-    const { showCaption, url } = data,
-      result = await rest.get(instagramApiBaseUrl + encodeURI(url) + hideCaption(showCaption))
-        .then(function (json) {
-          return {
-            html: json.html,
-            invalid: false
-          };
-        })
-        .catch(() => ({
-          html: '',
-          invalid: true
-        }));
+    return rest.get(instagramApiBaseUrl + encodeURI(data.url) + hideCaption(data))
+      .then(function (json) {
+        // get instagram oembed html
+        data.html = json.html;
 
-    return {
-      ...data,
-      ...result
-    };
+        return data;
+      })
+      .catch(() => data); // fail gracefully
+  } else {
+    data.html = ''; // clear the html if there's no url
+
+    return data;
   }
-});
+};

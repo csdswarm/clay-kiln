@@ -56,26 +56,15 @@ module.exports['5.0'] = function (uri, data) {
   const newData = Object.assign({}, data);
 
   newData.filterSecondarySectionFronts = data.filterSecondaryArticleTypes || {};
-
+  
   delete newData.filterSecondaryArticleTypes;
-
+  
   return newData;
 };
 
 
 module.exports['6.0'] = async (uri, data, locals) => {
   await addUriToCuratedItems(uri, data.items, locals);
-
-  return data;
-};
-
-
-module.exports['7.0'] = async (uri, data) => {
-  data.excludeSecondarySectionFronts = data.filterSecondarySectionFronts || data.excludeSecondarySectionFronts;
-  data.excludeTags = data.filterTags || data.excludeTags;
-
-  delete data.filterSecondarySectionFronts;
-  delete data.filterTags;
 
   return data;
 };
