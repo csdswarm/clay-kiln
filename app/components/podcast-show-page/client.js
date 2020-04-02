@@ -6,7 +6,23 @@ const { fetchDOM } = require('../../services/client/radioApi');
 // @TODO: UNDO COMMENTS when merging to envs that have ON-1359 ON-1382
 // podcastDiscoverFactory = require('../podcast-discover/client'),
 // podcastSetFactory = require('../podcast-set/client');
+let lastUpdated, updates;
 
+/**
+ * Add navigation listeners to tabs
+ * @function
+ * @param {NodeListOf} tabs
+ * @param {NodeListOf} content
+ */
+function addTabNavigationListeners(tabs, content) {
+  for (const tab of tabs) {
+    tab.addEventListener('click',
+      function (e) {
+        activateTab(e, tabs, content, true);
+      }
+    );
+  }
+}
 /**
  * Update tab content
  * @function
@@ -19,132 +35,117 @@ async function updateTab(content, podcastSiteSlug) {
   if (component) { // @TODO remove check after ON-1359 ON-1382 are done (discover tickets)
     let uri = `//${component.getAttribute('data-uri').replace('@published', '')}.html`;
 
-    uri += '?api-stg=true'; // @TODO remove after site_slug is in prod API
-
     if (podcastSiteSlug) {
-      uri += `&podcast-site-slug=${ podcastSiteSlug }`;
+      uri += `?podcast-site-slug=${ podcastSiteSlug }`;
     }
 
     component.parentNode.replaceChild(await fetchDOM(uri), component);
   }
 }
+/**
+ * Update podcast episodes tab
+ * @function
+ * @param {Node} content
+ * @param {string} podcastSiteSlug
+ */
+async function updateEpisodes(content, podcastSiteSlug) {
+  await updateTab(content, podcastSiteSlug);
 
-class PodcastShowPage {
-  constructor(podcastShowPage) {
-    const sidebar = document.querySelector('.content__sidebar'),
-      tabs = podcastShowPage.querySelectorAll('.tabs-tab'),
-      content = podcastShowPage.querySelectorAll('.tabbed-content-container'),
-      hash = window.location.hash.replace('#', ''),
-      firstTab = tabs[0].className.replace('tabs-tab tabs-tab--', '');
+  // @TODO: UNDO COMMENT when merging to envs that have ON-444 ON-1381 ON-1522
+  // podcastEpisodeFactory(content.querySelector('.component--podcast-episode-list'));
+}
 
-    this.podcastSiteSlug = podcastShowPage.getAttribute('data-podcast-site-slug');
-    this.updates = {
-      episodes: this.updateEpisodes.bind(this),
-      discover: this.updateDiscover.bind(this)
-    };
+/**
+ * Update discover tab
+ * @function
+ * @param {Node} content
+ * @param {string} podcastSiteSlug
+ */
+async function updateDiscover(content, podcastSiteSlug) {
+  await updateTab(content, podcastSiteSlug);
 
-    sidebar.style.visibility = 'visible';
-    this.addTabNavigationListeners(tabs, content);
+  // @TODO: UNDO COMMENTS when merging to envs that have ON-1359 ON-1382
+  // podcastDiscoverFactory(content.querySelector('.component--podcast-discover'));
+  // content.querySelectorAll('.component--podcast-set').forEach(podcastSetFactory);
+}
+/**
+ * Navigate between tabs
+ * @function
+ * @param {object} e event or tab name
+ * @param {NodeListOf} tabs
+ * @param {NodeListOf} content
+ * @param {boolean} [useHash]
+ */
+async function activateTab(e, tabs, content, useHash) {
+  let contentLabel;
 
-    if (hash) {
-      this.lastUpdated = hash;
-      this.activateTab(hash, tabs, content, true);
-      window.scrollTo(0, document.querySelector('.podcast-show-page-body').offsetTop);
-    } else {
-      this.lastUpdated = firstTab;
-      this.activateTab(firstTab, tabs, content);
-    }
+  if (e.currentTarget) {
+    contentLabel = e.currentTarget.className.replace('tabs-tab tabs-tab--','');
 
-    window.onpopstate = () => {
-      if (window.location.hash) {
-        this.activateTab(window.location.hash.replace('#', ''), tabs, content);
-      } else {
-        this.activateTab(firstTab, tabs, content);
-      }
-    };
-  }
-
-  /**
-   * Add navigation listeners to tabs
-   * @function
-   * @param {NodeListOf} tabs
-   * @param {NodeListOf} content
-   */
-  addTabNavigationListeners(tabs, content) {
     for (const tab of tabs) {
-      tab.addEventListener('click', function (e) { this.activateTab(e, tabs, content, true); }.bind(this));
+      tab.classList.remove('active');
+    }
+    e.currentTarget.classList.add('active');
+  } else {
+    contentLabel = e;
+    for (const tab of tabs) {
+      tab.classList.remove('active');
+      if (tab.classList.contains(`tabs-tab--${contentLabel}`)) {
+        tab.classList.add('active');
+      }
     }
   }
 
-  /**
-   * Update podcast episodes tab
-   * @function
-   * @param {Node} content
-   */
-  async updateEpisodes(content) {
-    await updateTab(content, this.podcastSiteSlug);
+  for (const c of content) {
+    c.classList.remove('active');
+    if (c.classList.contains(`tabbed-content-container--${contentLabel}`)) {
+      if (lastUpdated !== contentLabel) {
+        await updates[contentLabel](c);
+      }
 
-    // @TODO: UNDO COMMENT when merging to envs that have ON-444 ON-1381 ON-1522
-    // podcastEpisodeFactory(content.querySelector('.component--podcast-episode-list'));
+      lastUpdated = contentLabel;
+      c.classList.add('active');
+    }
   }
 
-  /**
-   * Update discover tab
-   * @function
-   * @param {Node} content
-   */
-  async updateDiscover(content) {
-    await updateTab(content, this.podcastSiteSlug);
-
-    // @TODO: UNDO COMMENTS when merging to envs that have ON-1359 ON-1382
-    // podcastDiscoverFactory(content.querySelector('.component--podcast-discover'));
-    // content.querySelectorAll('.component--podcast-set').forEach(podcastSetFactory);
-  }
-
-  /**
-   * Navigate between tabs
-   * @function
-   * @param {object} e event or tab name
-   * @param {NodeListOf} tabs
-   * @param {NodeListOf} content
-   * @param {boolean} [useHash]
-   */
-  async activateTab(e, tabs, content, useHash) {
-    let contentLabel;
-
-    if (e.currentTarget) {
-      contentLabel = e.currentTarget.className.replace('tabs-tab tabs-tab--','');
-
-      for (const tab of tabs) {
-        tab.classList.remove('active');
-      }
-      e.currentTarget.classList.add('active');
-    } else {
-      contentLabel = e;
-      for (const tab of tabs) {
-        tab.classList.remove('active');
-        if (tab.classList.contains(`tabs-tab--${contentLabel}`)) {
-          tab.classList.add('active');
-        }
-      }
-    }
-
-    for (const c of content) {
-      c.classList.remove('active');
-      if (c.classList.contains(`tabbed-content-container--${contentLabel}`)) {
-        if (this.lastUpdated !== contentLabel) {
-          await this.updates[contentLabel](c);
-        }
-
-        this.lastUpdated = contentLabel;
-        c.classList.add('active');
-      }
-    }
-
-    if (useHash) {
-      history.pushState(null, null, `${window.location.origin}${window.location.pathname}${window.location.search}#${contentLabel}`); // set hash without reloading page
-    }
+  if (useHash) {
+    history.pushState(null, null, `${window.location.origin}${window.location.pathname}${window.location.search}#${contentLabel}`); // set hash without reloading page
   }
 }
 
-module.exports = (element) => new PodcastShowPage(element);
+document.addEventListener('podcast-show-page-mount', (e) => {
+  const podcastShowPage = e.target.querySelector('.component--podcast-show-page'),
+    sidebar = e.target.querySelector('.content__sidebar'),
+    tabs = podcastShowPage.querySelectorAll('.tabs-tab'),
+    contentContainer = podcastShowPage.querySelector('.tabbed-content'),
+    content = podcastShowPage.querySelectorAll('.tabbed-content-container'),
+    firstTab = tabs[0].className.replace('tabs-tab tabs-tab--', ''),
+    podcastSiteSlug = podcastShowPage.getAttribute('data-podcast-site-slug'),
+    hash = window.location.hash.replace('#', '');
+
+  updates = {
+    episodes: () => updateEpisodes(contentContainer, podcastSiteSlug),
+    discover: () => updateDiscover(contentContainer, podcastSiteSlug)
+  };
+  sidebar.style.visibility = 'visible';
+  addTabNavigationListeners(tabs, content);
+
+  if (hash) {
+    lastUpdated = hash;
+    activateTab(lastUpdated, tabs, content, true);
+    window.scrollTo(0, document.querySelector('.podcast-show-page-body').offsetTop);
+  } else {
+    lastUpdated = firstTab;
+    activateTab(lastUpdated, tabs, content);
+  }
+
+  window.onpopstate = () => {
+    if (window.location.hash) {
+      lastUpdated = window.location.hash.replace('#', '');
+      activateTab(lastUpdated, tabs, content, true);
+    } else {
+      lastUpdated = firstTab;
+      activateTab(lastUpdated, tabs, content);
+    }
+  };
+});

@@ -5,6 +5,7 @@ const
   format = require('date-fns/format'),
   addSeconds = require('date-fns/add_seconds'),
   parse = require('date-fns/parse'),
+  _get = require('lodash/get'),
   radioApiService = require('../../services/server/radioApi');
 
 /**
@@ -56,7 +57,7 @@ function getEpisodesInShow(locals) {
       'podcast-site-slug': podcast_site_slug
     } = locals.query,
     params = {
-      'filter[podcast_site_slug]': locals.params.dynamicSlug || podcast_site_slug,
+      'filter[podcast_site_slug]': _get(locals, 'params.dynamicSlug') || podcast_site_slug,
       'page[size]': 20,
       'page[number]': page
     };
