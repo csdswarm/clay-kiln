@@ -677,19 +677,6 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||||||||| Podcast Episode List Fonts Styleguide |||||||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin podcast-episode-list-font1 {
-  @mixin font CircularStd-Black, 16px, $black, inherit, 19px;
-}
-@define-mixin podcast-episode-list-font2 {
-  @mixin font CircularStd-Book, 12px, $doveGray, inherit, 18px;
-}
-@define-mixin podcast-episode-list-font3 {
-  @mixin font CircularStd-Black, 14px, $white, -.55px, 17px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||||||||||| Podcast Lead Fonts Styleguide |||||||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin podcast-lead-font1 {
