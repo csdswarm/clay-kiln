@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 3.0
 _description: |
   Adds `<title>`, `twitter:title`, and `og:title` tags to the head.
 
@@ -8,6 +8,12 @@ routeParam:
     input: text
     help: Define the route param whose value used for the title
 
+localsPath:
+  _label: &localsPath-label Locals Path
+  _has: &localsPath-has
+    input: text
+    help: The path on locals to the value which should replace ${paramValue} in the description
+
 suffix:
   _label: Suffix
   _has:
@@ -16,7 +22,7 @@ suffix:
 
 urlMatches:
   _label: Add Url Matches
-  _has: 
+  _has:
     input: complex-list
     props:
       -
@@ -32,6 +38,10 @@ urlMatches:
           input: text
           help: Define the route param whose value used for the title
       -
+        prop: localsPath
+        _label: *localsPath-label
+        _has: *localsPath-has
+      -
         prop: suffix
         _label: Suffix
         _has:
@@ -44,5 +54,6 @@ _groups:
   settings:
     fields:
       - routeParam
+      - localsPath
       - suffix
       - urlMatches
