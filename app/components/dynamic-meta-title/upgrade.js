@@ -18,3 +18,13 @@ module.exports['2.0'] = (uri, data) => {
 
   return data;
 };
+
+// key is the wrong term because 'path' is the term lodash employs
+module.exports['3.0'] = async (uri, data) => {
+  data.localsPath = data.localsPath || data.localsKey;
+  data.metaLocalsPath = data.metaLocalsPath || data.metaLocalsPath;
+
+  delete data.localsKey;
+
+  return data;
+};
