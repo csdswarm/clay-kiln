@@ -2,9 +2,17 @@
 
 A repo that contains a basic site and the necessary files to provision AWS resources for hosting the site.
 
+## Prerequisites:
+
+Before starting the installation process, it's recommended to have the software below:
+
+* [Docker desktop](https://www.docker.com/products/docker-desktop)
+* [Homebrew](https://brew.sh/)
+* [mkcert](https://github.com/FiloSottile/mkcert)
+
 ## To Start
 
-Make sure you have docker installed.
+Make sure you have docker installed and you're using Node.js version V10.16.3 and npm version 6.9.0.
 
 Edit your `/etc/hosts` file to include the following:
 
@@ -19,7 +27,7 @@ Add the following to the file and save
 [keys]
   demo = accesskey
 [urls]
-  demosite = http://clay.radio.com
+  demosite = https://clay.radio.com
 ```
 ## Local Development
 
@@ -35,12 +43,50 @@ git clone git@bitbucket.org:entercom/frequency-clay-translator.git
 git clone git@bitbucket.org:entercom/clay-radio.git
 ```
 
+It is relevant to have both folders at the same level. The final folders structure should look like this:
+
+```
+├── root-folder
+│   ├── clay-radio
+│   └── frequency-clay-translator
+```
+
 Within frequency-clay-translator run
 ```
 npm install
 ```
+
+**Note:** prior to running the next command, consider if you are starting from scratch or not. **If not**, it is recommended to run at this point the `make nuke` command within the clay-radio folder. This will eventually:
+
+1. Installed dependencies.
+2. Docker images.
+3. Information created in the boostrap process.
+4. Log files.
+
 Within the clay-radio folder run
 
+```bash
+make gen-certs
+```
+
+This generates the TLS/SSL certs needed to access the site locally over https.
+
+Also run 
+
+```bash
+make up-nginx
+```
+
+To ensure that the nginx container gets the new certs.
+
+If you would like SSL to run with a local CA, so that you are not warned that the SSL might not be
+trustworthy, run the following command (it only needs to be run once on your machine):
+
+```bash
+mkcert -install
+```
+
+Then run 
 ```bash
 make install-dev
 ```
@@ -52,7 +98,7 @@ brew install jq yq golang
 
 Install sops
 ```bash
-pip install sops
+brew install sops
 ```
 
 Install `aws-cli` - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
@@ -81,7 +127,7 @@ function token(){
 }
 ```
 
-Create local .env file
+Create local .env file inside the `clay-radio/app` folder
 ```bash
 token [INSERT_TOKEN_FROM_MFA_DEVICE]
 make generate-local-env
@@ -131,13 +177,14 @@ If this the initial set up of clay you'll need to populate content by running th
     [keys]
       demo = accesskey
     [urls]
-      demosite = http://clay.radio.com
+      demosite = https://clay.radio.com
     ```
 3. Now you can run `make bootstrap` which will put the `app/first-run` data into your local instance.
     ```
     make bootstrap
     ```
 
+**Note:**  running `make bootstrap` multiple times will cause several issues. This command is meant to be executed just once.
 
 #### When do I need to restart?
 
@@ -236,7 +283,7 @@ For further instructions please see README.md in ```frequency-clay-translator```
 
 Now you can visit the following URL to get a list of test pages you can visit.
 
-http://clay.radio.com/_pages/index.html
+https://clay.radio.com/_pages/index.html
 
 ## Rebuild the SPA
 
@@ -265,7 +312,7 @@ make encrypt-local-env
 ```
 
 ## Missed anything?
-That _should_ be it...if not, submit an issue or add something to this README.w
+That _should_ be it...if not, submit an issue or add something to this README.md
 
 ## TODO:
 - Demo user
