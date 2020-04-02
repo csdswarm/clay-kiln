@@ -2,10 +2,11 @@ _pages:
   podcast-show:
     _dynamic: true
     head:
-      - /_components/dynamic-meta-title/instances/podcast-show
-      - /_components/dynamic-meta-description/instances/podcast-show
+      # @TODO ON-1377 SEO requirements
+      # - /_components/dynamic-meta-title/instances/podcast-show
+      # - /_components/dynamic-meta-description/instances/podcast-show
       - /_components/dynamic-meta-url/instances/general
-      - /_components/dynamic-meta-image/instances/podcast-show
+      # - /_components/meta-image/instances/podcast-show
     layoutHeader:
       - /_components/google-ad-manager/instances/billboardTop
     main:

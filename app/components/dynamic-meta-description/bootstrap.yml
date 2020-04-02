@@ -2,9 +2,5 @@ _components:
   dynamic-meta-description:
     description: ''
     routeParam: ''
-    localsPath: ''
+    localsKey: ''
     urlMatches: []
-    instances:
-      podcast-show:
-        description: '${paramValue}'
-        localsPath: 'podcast.attributes.description'
