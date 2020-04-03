@@ -12,6 +12,8 @@ const h = require('highland'),
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
     CONTENT_COLLECTION: 'topic-page-header',
+    CONTEST: 'contest',
+    EVENT: 'event',
     GALLERY: 'gallery',
     STATIC_PAGE: 'static-page'
   },
@@ -38,7 +40,9 @@ function getContent(obj, param, components, transform = (data) => data ) {
     addData = (component) => ({ ...component, data: transform(getData(component._ref)) });
 
   // add a key with the data to each ref object
-  obj[param] = Array.isArray(content) ? content.map(addData) : addData(content);
+  if (content && content._ref) {
+    obj[param] = Array.isArray(content) ? content.map(addData) : addData(content);
+  }
 
   // return a new copy
   return { ...obj };
@@ -77,33 +81,20 @@ function getSlideEmbed(slides, components) {
  * @returns {Object}
  */
 function processContent(obj, components) {
-  // ensure dateModified is always set
-  obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
+  const componentName = getComponentName(obj.key),
+    contentFields = ['lead', 'content', 'tags', 'feedImg', 'slides', 'footer', 'slides'];
 
-  switch (getComponentName(obj.key)) {
-    case CONTENT.STATIC_PAGE:
-      obj.value = getContent(obj.value, 'content', components);
-      break;
-    case CONTENT.GALLERY:
-      obj.value = getContent(obj.value, 'slides', components);
-      obj.value.slides = getSlideEmbed(obj.value.slides, components);
-  
-      obj.value = getContent(obj.value, 'footer', components);
+  contentFields.forEach(field => {
+    if (obj.value[field]) {
+      obj.value = getContent(obj.value, field, components);
+    }
+  });
 
-      obj.value = getContent(obj.value, 'lead', components);
-      obj.value = getContent(obj.value, 'tags', components);
-      obj.value = getContent(obj.value, 'content', components);
-      break;
-    case CONTENT.ARTICLE:
-      obj.value = getContent(obj.value, 'feedImg', components);
-
-      obj.value = getContent(obj.value, 'lead', components);
-      obj.value = getContent(obj.value, 'tags', components);
-      obj.value = getContent(obj.value, 'content', components);
-      break;
-    default:
-      break;
+  if (componentName === CONTENT.GALLERY) {
+    obj.value.slides = getSlideEmbed(obj.value.slides, components);
   }
+
+  obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
 
   return obj;
 }
@@ -154,7 +145,6 @@ function save(stream) {
     .map(param => { components.push(param); return param; })
     // only bring back articles and galleries
     .filter(CONTENT_FILTER)
-    .filter(isNotNewInstance)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
