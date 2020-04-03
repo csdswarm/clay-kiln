@@ -14,7 +14,7 @@
     {{#if showHeader}}
         <div class="contest-rules--default-view">
             <h2 class="contest-rules__contest-headline">
-                <a href="/contests/{{ contestSlug }}">{{ contestHeadline }}</a>
+                {{ contestHeadline }}
             </h2>
             <div class="contest-rules__date-range">
                 <p class="paragraph">
@@ -27,10 +27,6 @@
 {{/inline}}
 
 {{#*inline "presentationStyle"}}
-    {{#*inline "contestLink"}}
-        <a href="/contests/{{ slug }}">{{ text }}</a>
-    {{/inline}}
-
     <div class="contest-rules--presentation-view">
         <div class="contest-rules__image-container">
             <img
@@ -41,19 +37,20 @@
         </div>
         <div class="contest-rules__description-container">
             <h2 class="contest-rules__contest-headline">
-              {{> contestLink slug=contestSlug text=contestHeadline }}
+              {{ contestHeadline }}
             </h2>
             <p class="paragraph">{{ paragraphForMarketing }}</p>
-            {{> contestLink slug=contestSlug text="read more" }}
         </div>
     </div>
 {{/inline}}
 
 <div class="component component--contest-rules contest-rules{{ if @root.locals.edit ' editing' }}" data-uri="{{ default _ref self }}">
-    {{#if showPresentation}}
-        {{> presentationStyle}}
-    {{else}}
-        {{> defaultStyle}}
-    {{/if}}
+    <a href="/contests/{{ contestSlug }}" class="contest-rules__link">
+        {{#if showPresentation}}
+            {{> presentationStyle}}
+        {{else}}
+            {{> defaultStyle}}
+        {{/if}}
+    </a>
 </div>
 

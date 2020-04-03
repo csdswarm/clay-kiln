@@ -16,5 +16,7 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
+node migration.js $1
+
 clay import -k demo -y $1 < ./contest-rules-page.yml
-clay import -k demo -y -p $1 < ./migration.yml
+clay import -k demo -y -p $1 < ./pages.yml

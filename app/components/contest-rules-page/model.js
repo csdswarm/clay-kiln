@@ -62,10 +62,7 @@ module.exports = unityComponent({
     }));
 
     data._computed = {
-      contestRules,
-      pageTitle: isPresentationMode ?
-        'Contests' :
-        'Contest Rules'
+      contestRules
     };
 
     return data;

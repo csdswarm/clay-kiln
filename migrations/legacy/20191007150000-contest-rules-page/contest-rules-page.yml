@@ -1,4 +1,7 @@
 _components:
+  contest-rules-page-header:
+    instances:
+      new: {}
   contest-rules-page:
     instances:
       new:
