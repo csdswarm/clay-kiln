@@ -3,7 +3,7 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
   _get = require('lodash/get'),
-  { autoLink, addCrumb } = require('../breadcrumbs');
+  { autoLink } = require('../breadcrumbs');
 
 /**
  * fetch podcast show data
@@ -25,15 +25,14 @@ function getPodcastShow(locals) {
  * @returns {Promise<object>}
  */
 async function addBreadcrumbs(data, locals) {
-  await autoLink(data, ['stationSlug'], locals);
-  const url = `//${ locals.site.host }${ data.stationSlug ? `/${ data.stationSlug }/` : '' }/podcasts`;
-
-  addCrumb(data, url, 'podcasts');
-
   if (locals.podcast.attributes) {
-    const { site_slug, title } = locals.podcast.attributes;
+    const { site_slug, title, station } = locals.podcast.attributes;
 
-    addCrumb(data, site_slug, title);
+    await autoLink(data, [
+      { slug: data.stationSlug, text: station.length ? station[0].name : null },
+      { slug: 'podcasts', text: 'podcasts' },
+      { slug: site_slug, text: title }
+    ], locals);
   }
 }
 
