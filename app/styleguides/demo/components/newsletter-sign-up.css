@@ -1,0 +1,9 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.component--newsletter-sign-up {
+  &.newsletter-sign-up {
+
+  }
+}
