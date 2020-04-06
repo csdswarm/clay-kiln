@@ -5,9 +5,9 @@
     <meta itemprop="url" content="{{ @root.locals.url }}" />
     <meta itemprop="mainEntityOfPage" content="{{ @root.locals.url }}" />
     <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="{{ @root.locals.site.name }}" />
+      <meta itemprop="name" content="{{ toUpperCase @root.locals.site.name }}" />
       <meta itemprop="sameAs" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}" />
-      <div itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <div itemprop="logo" itemscope itemtype="http://schema.org/logo">
         <meta itemprop="url" content="http://{{ @root.locals.site.host }}{{ @root.locals.site.path }}/media/sites/{{ @root.locals.site.slug }}/logo.w600.h60.png" />
         <meta itemprop="height" content="60" />
         <meta itemprop="width" content="600" />
