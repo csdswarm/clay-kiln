@@ -21,6 +21,11 @@ const _get = require('lodash/get'),
 
   SERVER_SIDE = _get(process, 'release.name') === 'node',
 
+  STATION_LISTS = {
+    'primary-section-fronts': true,
+    'secondary-section-fronts': true
+  },
+
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
@@ -102,17 +107,18 @@ const _get = require('lodash/get'),
 DEFAULT_STATION.urpsDomainName = getStationDomainName(DEFAULT_STATION);
 
 module.exports = {
-  DEFAULT_STATION,
-  SECOND,
-  MINUTE,
-  HOUR,
-  DAY,
-  WEEK,
-  YEAR,
   contentTypes,
-  time,
-  msnFeed,
-  SERVER_SIDE,
+  DAY,
   DEFAULT_RADIOCOM_LOGO,
-  PAGE_TYPES
+  DEFAULT_STATION,
+  HOUR,
+  MINUTE,
+  msnFeed,
+  PAGE_TYPES,
+  SECOND,
+  SERVER_SIDE,
+  STATION_LISTS,
+  time,
+  WEEK,
+  YEAR
 };

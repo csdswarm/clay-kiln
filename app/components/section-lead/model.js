@@ -58,7 +58,7 @@ module.exports.save = async (ref, data, locals) => {
     return data;
   }
 
-  const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+  const primarySectionFronts = await retrieveList('primary-section-fronts', { locals });
 
   data.items = await Promise.all(data.items.map(async (item) => {
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
@@ -204,7 +204,7 @@ module.exports.render = async function (ref, data, locals) {
     });
   }
 
-  const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+  const primarySectionFronts = await retrieveList('primary-section-fronts', { locals });
 
   try {
     const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true }).then(items => items.map(item => ({
