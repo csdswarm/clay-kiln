@@ -1,6 +1,6 @@
 #! /bin/bash
 
-expectedDir="20191008103300-add-google-news-feed"
+expectedDir="20200212075500-republish-new-content-components"
 scriptdir="$(dirname "$0")"
 pwd="$(pwd "$0")"
 if [[ "$pwd" != *"$expectedDir" ]]
@@ -26,4 +26,4 @@ else
 fi
 
 printf "\nRepublishing author, static, and topic pages...\n\n"
-node migration.js
+node migration.js $1

@@ -305,14 +305,21 @@ function setSlugAndLock(data, prevData, publishedData) {
  * @param {string} componentName
  */
 function standardizePageData(data, componentName) {
-  if (componentName === PAGE_TYPES.AUTHOR) {
-    data.feedImgUrl = data.profileImage;
-    data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.author;
-    data.slug = sanitize.cleanSlug(data.author);
-  } else if (componentName === PAGE_TYPES.CONTENT_COLLECTION) {
-    data.feedImgUrl = data.image;
-    data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.tag;
-    data.slug = sanitize.cleanSlug(data.tag);
+  switch (componentName) {
+    case PAGE_TYPES.AUTHOR:
+      data.feedImgUrl = data.profileImage;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.author;
+      data.slug = sanitize.cleanSlug(data.author);
+      break;
+    case PAGE_TYPES.CONTENT_COLLECTION: 
+      data.feedImgUrl = data.image;
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.tag;
+      data.slug = sanitize.cleanSlug(data.tag);
+      break;
+    case PAGE_TYPES.STATIC_PAGES:
+      data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.pageTitle;
+      break;
+    default:
   }
 }
 

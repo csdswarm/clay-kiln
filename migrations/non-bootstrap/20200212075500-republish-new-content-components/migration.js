@@ -11,9 +11,11 @@ const { v1: {
     envInfo = parseHost(host);
 
 Promise.all([
-    fromPageHeaderComponent('author-page-header'), 
-    fromPageHeaderComponent('topic-page-header'), 
-    fromMainComponent('static-page')])
+        fromPageHeaderComponent('author-page-header'), 
+        fromPageHeaderComponent('topic-page-header'), 
+        fromMainComponent('static-page'),
+        fromMainComponent('event'),
+        fromMainComponent('contest')])
     .then(result => _flatMap(result))
     .then(uris => uris.filter(isPublished))
     .then(pageUris => republishPageUris(pageUris, envInfo));

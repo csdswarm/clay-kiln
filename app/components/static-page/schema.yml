@@ -39,9 +39,3 @@ plaintextPrimaryHeadline:
     - pageListTitle
   _has:
     help: Plaintext title set by headline.
-
-date:
-  _label: Published Date
-  _publish: publishDate
-  _has:
-    help: Date that is generated from the articleDate and articleTime fields
