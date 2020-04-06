@@ -302,6 +302,7 @@ function setSlugAndLock(data, prevData, publishedData) {
  * Ensure required data exists on certain page types
  *
  * @param {object} data
+ * @param {string} componentName
  */
 function standardizePageData(data, componentName) {
   if (componentName === PAGE_TYPES.AUTHOR) {

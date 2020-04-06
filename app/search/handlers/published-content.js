@@ -148,6 +148,7 @@ function save(stream) {
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
     .filter(filters.isPublished)
+    .filter(isNotNewInstance)
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
     .map(transformAuthorsAndTags)
