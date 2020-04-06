@@ -36,6 +36,7 @@ services:
     volumes:
       - ./app:/usr/src/app
       - /usr/src/app/node_modules
+      - ./app/node_modules/amphora:/usr/src/app/node_modules/amphora
 
   redis:
     image: redis
