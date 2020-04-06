@@ -61,7 +61,7 @@ const
     },
     curated: data.items || []
   }),
-  defaultTemplate = (validatedItem, curatedItem = {}) => ({
+  defaultTemplate = (locals, validatedItem, curatedItem = {}) => ({
     ...curatedItem,
     primaryHeadline: curatedItem.overrideTitle || validatedItem.primaryHeadline,
     pageUri: validatedItem.pageUri,
@@ -362,7 +362,7 @@ const
             content = await fetchRecirculation({ filters, excludes, elasticFields, pagination, maxItems }, locals);
 
           data._computed = Object.assign(data._computed || {}, {
-            [contentKey]: [...curated, ...content].slice(0, maxItems).map(item => mapResultsToTemplate(item)),
+            [contentKey]: await Promise.all([...curated, ...content].slice(0, maxItems).map(async (item) => mapResultsToTemplate(locals, item))),
             initialLoad: !pagination.page,
             moreContent: content.length > maxItems
           });
@@ -385,7 +385,7 @@ const
             },
             result = await recircCmpt.getArticleDataAndValidate(uri, item, locals, elasticFields, searchOpts);
 
-          return mapResultsToTemplate(result, item);
+          return mapResultsToTemplate(locals, result, item);
         }));
 
         return save(uri, data, locals);
