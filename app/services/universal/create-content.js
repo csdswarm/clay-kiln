@@ -13,7 +13,8 @@ const _get = require('lodash/get'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
-  { getComponentName } = require('clayutils');
+  { getComponentName } = require('clayutils'),
+  slugify = require('../../services/universal/slugify');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -409,6 +410,15 @@ function upCaseRadioDotCom(data) {
 }
 
 /**
+ * Updates the stationSyndication property to be an array of objects from an array of strings
+ * @param {Object} data
+ */
+function updateStationSyndicationType(data) {
+  data.stationSyndication = (data.stationSyndication || [])
+    .map(callsign => typeof callsign === 'string' ? { callsign } : callsign);
+}
+
+/**
  * Set's noIndexNoFollow for meta tag based on information in the component
  * @param {Object} data
  * @returns {Object}
@@ -484,12 +494,47 @@ function addTwitterHandle(data, locals) {
   }
 }
 
+/**
+ * Adds computed fields for rendering station syndication info.
+ * @param {Object} data
+ */
+function renderStationSyndication(data) {
+  data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
+    .map(station => station.callsign)
+    .sort()
+    .join(', ');
+}
+
+/**
+ * Adds slug to each item in station syndication field.
+ * @param {Object} data
+ */
+function addStationSyndicationSlugs(data) {
+  updateStationSyndicationType(data);
+
+  data.stationSyndication = data.stationSyndication
+    .map(station => {
+      if (station.stationSlug) {
+        station.syndicatedArticleSlug = '/' + [
+          station.stationSlug,
+          slugify(station.sectionFront),
+          slugify(station.secondarySectionFront),
+          data.slug
+        ].filter(Boolean).join('/');
+      } else {
+        delete station.syndicatedArticleSlug;
+      }
+      return station;
+    });
+}
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
+  renderStationSyndication(data);
 
   if (locals && !locals.edit) {
     return data;
@@ -560,6 +605,7 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+  addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image
@@ -574,6 +620,7 @@ async function save(uri, data, locals) {
 }
 
 module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
+module.exports.updateStationSyndicationType = updateStationSyndicationType;
 
 module.exports.render = render;
 module.exports.save = save;
