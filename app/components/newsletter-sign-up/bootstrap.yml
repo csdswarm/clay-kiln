@@ -1,3 +1,6 @@
 _components:
   newsletter-sign-up:
-    allowed: true
+    instances:
+      new:
+        title: Newsletter Sign Up
+        layoutType: horizontal

@@ -1,3 +1,49 @@
-<div class="component component--newsletter-sign-up newsletter-sign-up" data-uri="{{ default _ref _self }}">
+{{#*inline "newsletterInput"}}
+  <input
+    class="newsletter-sign-up__form-input {{ if modifier (concat 'newsletter-sign-up__form-input--' modifier) }}"
+    {{#if type}}
+      type="{{ type }}"
+    {{/if}}
+    {{#if size}}
+      size="{{ size }}"
+    {{/if}}
+    {{#if name}}
+      name="{{ name }}"
+    {{/if}}
+    {{#if placeholder}}
+      placeholder="{{ placeholder }}"
+    {{/if}}
+    {{#if value}}
+      value="{{ value }}"
+    {{/if}}
+  />
+{{/inline}}
 
+<div
+  class="component component--newsletter-sign-up newsletter-sign-up newsletter-sign-up--{{ layoutType }}"
+  data-uri="{{ default _ref _self }}"
+  >
+  <h3 class="newsletter-sign-up__title">
+    <span class="newsletter-sign-up__title-text">{{ title }}</span>
+  </h3>
+  <form method="POST" class="newsletter-sign-up__form" action="">
+    <div class="newsletter-sign-up__form-group">
+      {{> newsletterInput type="email" name="address" placeholder="Enter Your Email Address" modifier="foo" }}
+    </div>
+    <div class="newsletter-sign-up__form-group">
+      {{> newsletterInput type="text" name="PostalCode" size="50" placeholder="Postal Code" }}
+    </div>
+    <div class="newsletter-sign-up__form-group">
+      {{> newsletterInput type="date" size="50" name="Birthday" placeholder="Birthday - MM/DD/YYYY" }}
+    </div>
+    <div class="newsletter-sign-up__form-group">
+      {{> newsletterInput type="Submit" name="Subscribe" value="Submit" }}
+    </div>
+    <input type="hidden" name="importTemplateID" value="#"/>
+    <input type="hidden" name="redirectURL" value="/signup/thanks"/>
+    <input type="hidden" name="siteID" value="5007DAAF-DC98-4D3C-B09A-326B787D57A0"/> <!--optional-->
+  </form>
+  <div class="newsletter-sign-up__sign-up-terms">
+    <p>By signing up, I agree to the Terms of Use and acknowledge that I have read the <a href="">Privacy Policy</a>.</p>
+  </div>
 </div>

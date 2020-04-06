@@ -1,2 +1,12 @@
 _description: |
   newsletter sign up
+
+title:
+  _has:
+    input: text
+    help: i.e “Get [Station Newsletter Title] Delivered to your Inbox” | Get The Daily J Delivered to your Inbox
+
+layoutType:
+  _has:
+    input: inline
+    type: text

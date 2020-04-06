@@ -2,8 +2,52 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-.component--newsletter-sign-up {
-  &.newsletter-sign-up {
+@define-mixin newsletter-sign-up-font1 {
+  @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -0.32px, 19px;
+}
+@define-mixin newsletter-sign-up-font2 {
+  @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -.32px, 24px;
+}
 
+body > .newsletter-sign-up {
+  margin: 2em;
+}
+
+.newsletter-sign-up {
+  &__title {
+    @mixin newsletter-sign-up-font1;
+    position: relative;
+    z-index: 1;
+    margin-bottom: em(21, 20);
+    &:after {
+      content: '';
+      border-top: em(1) solid theme(primaryColor, $parisM);
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      z-index: -1;
+    }
+  }
+  &__title-text {
+    background: $white;
+    padding-right: em(8, 20);
+  }
+
+  &__form {
+    display: flex;
+    margin-bottom: em(15);
+  }
+  &__form-group {
+    flex: 0 0 25%;
+    padding-right: em(10);
+    &:last-of-type {
+      padding-right: 0;
+    }
+  }
+  &__form-input {
+    border: em(1) solid $dustyGray;
+    width: 100%;
+    height: 50px;
   }
 }
