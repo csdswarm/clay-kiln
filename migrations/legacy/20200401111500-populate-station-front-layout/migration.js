@@ -7,9 +7,6 @@ const
     { _ref: `${hostUrl}/_components/google-ad-manager/instances/billboardBottom` },
     { _ref: `${hostUrl}/_components/two-column-component/instances/station-front` }
   ],
-  stationFrontTwoCol = {
-
-  },
   stationFronts = [
     {
       componentUrl: `${hostUrl}/_components/station-front`,
