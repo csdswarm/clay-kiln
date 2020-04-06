@@ -311,7 +311,7 @@ function standardizePageData(data, componentName) {
       data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.author;
       data.slug = sanitize.cleanSlug(data.author);
       break;
-    case PAGE_TYPES.CONTENT_COLLECTION: 
+    case PAGE_TYPES.CONTENT_COLLECTION:
       data.feedImgUrl = data.image;
       data.primaryHeadline = data.plaintextPrimaryHeadline = data.seoHeadline = data.teaser = data.tag;
       data.slug = sanitize.cleanSlug(data.tag);
