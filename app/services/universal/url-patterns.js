@@ -8,3 +8,4 @@ module.exports.gallerySlugPattern = o => `${o.prefix}/${o.sectionFront}/gallery/
 module.exports.gallerySecondarySectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}/${o.secondarySectionFront}/gallery/${o.slug}`;
 module.exports.sectionFrontSlugPattern = o => `${o.prefix}/${o.sectionFront}`; // e.g. http://radio.com/music
 module.exports.secondarySectionFrontSlugPattern = o => `${o.prefix}/${o.primarySectionFront}/${o.sectionFront}`; // e.g. http://radio.com/music/pop
+module.exports.podcastFrontSlugPattern = o => `${o.prefix}/podcasts`; // e.g. http://radio.com/podcasts

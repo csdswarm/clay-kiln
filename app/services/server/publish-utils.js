@@ -218,6 +218,6 @@ module.exports.gallerySlugPattern = urlPatterns.gallerySlugPattern;
 module.exports.gallerySecondarySectionFrontSlugPattern = urlPatterns.gallerySecondarySectionFrontSlugPattern;
 module.exports.sectionFrontSlugPattern = urlPatterns.sectionFrontSlugPattern;
 module.exports.secondarySectionFrontSlugPattern = urlPatterns.secondarySectionFrontSlugPattern;
+module.exports.podcastFrontSlugPattern = urlPatterns.podcastFrontSlugPattern;
 
 module.exports.PAGE_TYPES = PAGE_TYPES;
-
