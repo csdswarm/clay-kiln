@@ -5,6 +5,7 @@ const
   componentName = 'newsletter-sign-up',
   formClass = `${componentName}__form`,
   formInputClass = `${componentName}__form-input`,
+  formInputLabelClass = `${componentName}__form-input-label`,
   formInputs = ['email', 'zip', 'birthday', 'submit'];
 
 let $;
@@ -20,10 +21,15 @@ class NewsletterSignUpView {
     };
   }
   onInputChange(e) {
-    this.toggleInputIsEmpty(e.target);
+    this.checkForEmptyInput(e.target);
   }
-  toggleInputIsEmpty(el) {
-    console.log(el);
+  checkForEmptyInput(el) {
+    if (!el.value.trim()) {
+      console.log('empty');
+      el.parentNode.classList.add(`${formInputLabelClass}--empty`);
+    } else {
+      el.parentNode.classList.remove(`${formInputLabelClass}--empty`);
+    }
   }
 }
 
@@ -32,23 +38,22 @@ class NewsletterSignUpCtrl {
     _bindAll(this, ['onMount', 'onDismount', 'onInputChange']);
     this.view = new NewsletterSignUpView(el);
     this.listeners = [];
-    this.addEventListener = this.getEventListener('add');
-    this.removeEventListener = this.getEventListener('remove');
-    console.log('[this]', this);
+    this.addEventListener = this.getEventListenerMethod('add');
+    this.removeEventListener = this.getEventListenerMethod('remove');
     this.addEventListener({
       el: document,
       type: `${componentName}-mount`,
       cb: this.onMount
     });
   }
-  getEventListener(action) {
+  getEventListenerMethod(action) {
     return (listenerDef) => {
-      this.listeners.push(listenerDef);
+      if (action === 'add') this.listeners.push(listenerDef);
       listenerDef.el[`${action}EventListener`](listenerDef.type, listenerDef.cb);
     };
   }
   onMount() {
-    console.log('lis', this.getEventListener('remove'));
+    console.log('mounting', this);
     this.addListeners();
   }
   addListeners() {
