@@ -25,6 +25,9 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
+      - 
+        name: External RSS Feed
+        value: rss-feed
 
 contentType:
   _label: Content type
@@ -35,6 +38,49 @@ contentType:
     options:
       - article
       - gallery
+
+rssFeed:
+  _label: RSS Feed URL
+  _has:
+    input: text
+    help: https://<site_slug>.radio.com/station_feed.json
+    required:
+        field: populateFrom
+        operator: ===
+        values:
+          - rss-feed
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
+
+customTitle:
+  _label: Custom Title
+  _has:
+    input: text
+    help: Override the default component title
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
+
+hyperlinkTitle:
+  _label: Link the title to an external source ?
+  _has:
+    input: checkbox
+  _reveal:
+    field: customTitle
+    operator: truthy
+
+hyperLinkUrl:
+  _label: External URL Title HyperLink
+  _has:
+    input: text
+  _reveal:
+    field: hyperlinkTitle
+    operator: truthy
 
 sectionFront:
   _subscribe: sectionFront
@@ -167,6 +213,10 @@ _groups:
     fields:
       - populateFrom
       - contentType
+      - rssFeed
+      - customTitle
+      - hyperlinkTitle
+      - hyperLinkUrl
       - sectionFrontManual
       - secondarySectionFront
       - tag

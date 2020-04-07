@@ -81,7 +81,43 @@ const db = require('../../services/server/db'),
 
     return data;
   },
+  /**
+   * Also existing functionality that may be able to be replaced.  This pulls articles from the station_feed
+   * provided by the radioApiService.  It can likely be updated to pull from elastic once stations are live
+   *
+   * @param {object} data
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  renderRssFeed = async (data, locals) => {
+    const feedUrl = `${data.rssFeed}`;
 
+    return fetchFeeds(data, feedUrl, locals);
+  },
+  /**
+   * Fetch feed from Frequency API
+   *
+   * @param {object} data
+   *  @param {string} feedUrl
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  fetchFeeds = async (data, feedUrl, locals) => {
+    // TODO: Ask about the await uploadImage(item.node['OG Image'].src) function, it requires aditional permissions with S3
+    const feed = await radioApiService.get(feedUrl, null, (response) => response.nodes, {}, locals),
+      nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
+      defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+
+    data._computed.station = locals.station.name;
+    data._computed.articles = await Promise.all(nodes.map(async (item) => {
+      return {
+        feedImgUrl: item.node['OG Image'] ? item.node['OG Image'].src : defaultImage,
+        externalUrl: item.node.URL,
+        primaryHeadline: item.node.field_engagement_title || item.node.title
+      };
+    }));
+    return data;
+  },
   /**
    * @param {string} ref
    * @param {object} data
@@ -91,6 +127,10 @@ const db = require('../../services/server/db'),
   render = async function (ref, data, locals) {
     if (data.populateFrom === 'station' && locals.params) {
       return renderStation(data, locals);
+    }
+
+    if (data.populateFrom === 'rss-feed' && data.rssFeed) {
+      return renderRssFeed(data, locals);
     }
 
     const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
@@ -113,5 +153,5 @@ module.exports = recirculationData({
     maxItems: getMaxItems(data)
   }),
   render,
-  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params
+  skipRender: (data, locals) => (data.populateFrom === 'station' && locals.params) || (data.populateFrom === 'rss-feed' && data.rssFeed !== '')
 });

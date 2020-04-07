@@ -4,6 +4,10 @@ _components:
     tag: ''
     populateFrom: section-front
     contentType: { article: true, gallery: true }
+    rssFeed: ''
+    customTitle: ''
+    hyperlinkTitle: false
+    hyperLinkUrl: ''
     sectionFront: ''
     sectionFrontManual: ''
     secondarySectionFront: ''
