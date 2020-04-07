@@ -39,5 +39,5 @@ logMigrationDivider('Begin Event Migration')
     return importData(replacedHostYml, true);
   })
   .catch(err => {
-    logMigrationMsg(`contest migration error`, err.stack)
+    logMigrationMsg(`[contest collection page] migration error`, err.stack)
   });
