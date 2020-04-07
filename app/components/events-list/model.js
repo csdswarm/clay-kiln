@@ -133,6 +133,16 @@ async function getRecentEventsFromElastic(uri, data, locals, { numItems, skip })
       canonicalUrl: urlsToDedupe
     }
   });
+
+  // items gte today
+  queryService.addMust(query, {
+    range: {
+      startDate: {
+        gte: new Date().toISOString()
+      }
+    }
+  });
+
   queryService.addFilter(query, { term: { contentType: 'event' } });
   if (data.stationSlug) {
     queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
@@ -141,7 +151,7 @@ async function getRecentEventsFromElastic(uri, data, locals, { numItems, skip })
   }
 
   queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addSort(query, { startDate: 'desc' });
+  queryService.addSort(query, { startDate: 'asc' });
   queryService.addOffset(query, skip);
 
   return queryService.searchByQuery(
