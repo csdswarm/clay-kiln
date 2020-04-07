@@ -1,14 +1,17 @@
 'use strict';
 
 // Require depedencies.
-const contentImport = require('./content-import.vue'),
+const _set = require('lodash/set'),
+  contentImport = require('./content-import.vue'),
   main = require('./main.vue');
 
 // Register plugin.
 module.exports = () => {
-  window.kiln = window.kiln || {};
-  window.kiln.navButtons = window.kiln.navButtons || {};
-  window.kiln.navButtons['content-import'] = contentImport;
-  window.kiln.navContent = window.kiln.navContent || {};
-  window.kiln.navContent['content-import'] = main;
+  const { stationsICanImportContent } = window.kiln.locals;
+
+  if (Object.keys(stationsICanImportContent).length) {
+    _set(window, 'kiln.navButtons.content-import', contentImport);
+    _set(window, 'kiln.navContent.content-import', main);
+  }
 };
+
