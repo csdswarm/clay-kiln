@@ -15,6 +15,9 @@
       width: em(780);
       height: em(50);
       align-self: center;
+      @mixin medium-screen {
+        width: 100%;
+      }
     }
     .all-podcasts-button {
       background: $purple;
