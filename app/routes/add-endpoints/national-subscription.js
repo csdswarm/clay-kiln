@@ -1,7 +1,9 @@
 'use strict';
 
 const db = require('amphora-storage-postgres'),
+  redis = require('../../services/server/redis'),
   log = require('../../services/universal/log').setup({ file: __filename }),
+  clearRedisCache = () => redis.del('national-subscriptions'),
   createSubscription = async (req, res) => {
     const { shortDescription, stationSlug, filter } = req.body;
 
@@ -14,6 +16,7 @@ const db = require('amphora-storage-postgres'),
         `, [shortDescription, stationSlug, filter]);
 
       res.status(200).send(result.rows[0]);
+      clearRedisCache();
     } catch (e) {
       log('error', e.message);
       res.status(500).send('There was an error updating this subscription');
@@ -29,6 +32,7 @@ const db = require('amphora-storage-postgres'),
         `, [id]);
 
       res.status(200).send(`Subscription ${id} deleted.`);
+      clearRedisCache();
     } catch (e) {
       log('error', e.message);
       res.status(500).send(`There was an error deleting subscription ${id}`);
@@ -47,6 +51,7 @@ const db = require('amphora-storage-postgres'),
         `, [shortDescription, stationSlug, filter, id]);
 
       res.status(200).send(result.rows[0]);
+      clearRedisCache();
     } catch (e) {
       log('error', e.message);
       res.status(500).send('There was an error creating this subscription');
