@@ -44,7 +44,8 @@ rssFeed:
   _has:
     input: text
     help: https://<site_slug>.radio.com/station_feed.json
-    required:
+    validate:
+      required:
         field: populateFrom
         operator: ===
         values:
@@ -78,6 +79,11 @@ hyperLinkUrl:
   _label: External URL Title HyperLink
   _has:
     input: text
+    validate:
+      required:
+        field: hyperlinkTitle
+        operator: truthy
+        # Ask for the pattern to be used. https://<site_slug>.radio.com/station_feed.json
   _reveal:
     field: hyperlinkTitle
     operator: truthy

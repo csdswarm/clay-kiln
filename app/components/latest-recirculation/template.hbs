@@ -10,17 +10,27 @@
   data-editable="latestRecirculationItems">
   {{#if _computed.articles.length  }}
     {{#unless _computed.isMultiColumn}}
-      <h2 class="latest-recirc__title">LATEST
-      {{#if (compare populateFrom 'section-front')}}
-        in <span class="title">{{sectionFront}}</span>
+      {{#if (compare customTitle '')}}
+        <h2 class="latest-recirc__title">LATEST
+          {{#if (compare populateFrom 'section-front')}}
+            in <span class="title">{{sectionFront}}</span>
+          {{/if}}
+          {{#if (compare populateFrom 'tag')}}
+            in <span class="title">{{tag}}</span>
+          {{/if}}
+          {{#if (compare populateFrom 'station')}}
+            from <span class="title">{{_computed.station}}</span>
+          {{/if}}
+        </h2>
+      {{else}}
+        {{#if hyperlinkTitle}}
+          {{#if hyperLinkUrl}}
+            <a href={{hyperLinkUrl}}><h2 class="latest-recirc__title">{{customTitle}}</h2></a>
+          {{/if}}
+        {{else}}
+          <h2 class="latest-recirc__title">{{customTitle}}</h2>
+        {{/if}}
       {{/if}}
-      {{#if (compare populateFrom 'tag')}}
-        in <span class="title">{{tag}}</span>
-      {{/if}}
-      {{#if (compare populateFrom 'station')}}
-        from <span class="title">{{_computed.station}}</span>
-      {{/if}}
-      </h2>
     {{/unless}}
     <ul class="latest-recirc__links">
       {{#each _computed.articles as |article|}}
