@@ -1,22 +1,31 @@
 {{#*inline "newsletterInput"}}
-  <input
-    class="newsletter-sign-up__form-input {{ if modifier (concat 'newsletter-sign-up__form-input--' modifier) }}"
-    {{#if type}}
-      type="{{ type }}"
+  <label class="newsletter-sign-up__form-input-label"
+    {{#if label}}
+      data-input-label="{{ label }}"
     {{/if}}
-    {{#if size}}
-      size="{{ size }}"
-    {{/if}}
-    {{#if name}}
-      name="{{ name }}"
-    {{/if}}
-    {{#if placeholder}}
-      placeholder="{{ placeholder }}"
-    {{/if}}
-    {{#if value}}
-      value="{{ value }}"
-    {{/if}}
-  />
+  >
+    <input
+      class="newsletter-sign-up__form-input {{ if modifier (concat 'newsletter-sign-up__form-input--' modifier) }}"
+      {{#if type}}
+        type="{{ type }}"
+      {{/if}}
+      {{#if size}}
+        size="{{ size }}"
+      {{/if}}
+      {{#if name}}
+        name="{{ name }}"
+      {{/if}}
+      {{#if placeholder}}
+        placeholder="{{ placeholder }}"
+      {{/if}}
+      {{#if value}}
+        value="{{ value }}"
+      {{/if}}
+      {{#if pattern}}
+        pattern="{{ pattern }}"
+      {{/if}}
+    />
+  </label>
 {{/inline}}
 
 <div
@@ -28,16 +37,21 @@
   </h3>
   <form method="POST" class="newsletter-sign-up__form" action="">
     <div class="newsletter-sign-up__form-group">
-      {{> newsletterInput type="email" name="address" placeholder="Enter Your Email Address" modifier="foo" }}
+      {{> newsletterInput type="email" name="Address" modifier="email" label="Email" }}
     </div>
     <div class="newsletter-sign-up__form-group">
-      {{> newsletterInput type="text" name="PostalCode" size="50" placeholder="Postal Code" }}
+      {{> newsletterInput type="text" name="PostalCode" size="50" label="Postal Code" modifier="zip" }}
     </div>
     <div class="newsletter-sign-up__form-group">
-      {{> newsletterInput type="date" size="50" name="Birthday" placeholder="Birthday - MM/DD/YYYY" }}
+      {{> newsletterInput
+        type="date" size="50"
+        name="Birthday" label="Birthday - MM/DD/YYYY"
+        modifier="birthday"
+        pattern="\d{1,2}/\d{1,2}/\d{4}"
+      }}
     </div>
     <div class="newsletter-sign-up__form-group">
-      {{> newsletterInput type="Submit" name="Subscribe" value="Submit" }}
+      {{> newsletterInput type="Submit" name="Subscribe" value="Submit" modifier="submit" }}
     </div>
     <input type="hidden" name="importTemplateID" value="#"/>
     <input type="hidden" name="redirectURL" value="/signup/thanks"/>
