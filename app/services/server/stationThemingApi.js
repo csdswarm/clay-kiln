@@ -95,25 +95,13 @@ const db = require('./db'),
   },
 
   /**
-   * Get the station-nav data for the station nav in the page
+   * Get the component data for the station specific instance of the component
    *
    * @param {object} pageData
+   * @param {string} componentName
    */
-  getStationNav = async pageData => {
-    const ref = findComponentRefInPage(pageData, 'station-nav');
-
-    if (ref) {
-      return await db.get(ref);
-    }
-  },
-
-  /**
-   * Get the station-footer data for the station-footer in the page
-   *
-   * @param {object} pageData
-   */
-  getStationFooter = async pageData => {
-    const ref = findComponentRefInPage(pageData, 'station-footer');
+  getStationSpecificComponent = async (pageData, componentName) => {
+    const ref = findComponentRefInPage(pageData, componentName);
 
     if (ref) {
       return await db.get(ref);
@@ -123,5 +111,4 @@ const db = require('./db'),
 module.exports.inject = inject;
 module.exports.get = get;
 module.exports.getStationPage = getStationPage;
-module.exports.getStationNav = getStationNav;
-module.exports.getStationFooter = getStationFooter;
+module.exports.getStationSpecificComponent = getStationSpecificComponent;

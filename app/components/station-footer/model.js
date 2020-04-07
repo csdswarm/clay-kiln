@@ -1,37 +1,16 @@
 'use strict';
 
-const { getStationPage, getStationFooter } = require('../../services/server/stationThemingApi'),
-  { unityComponent } = require('../../services/universal/amphora');
+const { stationizedComponent } = require('../../services/universal/stationize');
 
-module.exports = unityComponent({
-  render: async (ref, data, locals) => {
-    const { station, defaultStation } = locals,
-      { site_slug } = station,
-      isDefaultStation = site_slug === defaultStation.site_slug,
-      isDefaultRef = /instances\/default/.test(ref),
+module.exports = stationizedComponent({
+  render: async (ref, data) => {
+    const
       buttons = {
         facebook: (url) => url,
         twitter: (id) => `https://twitter.com/${id}`,
         youtube: (url) => url,
         instagram: (url) => url
       };
-
-    data._computed = {
-      renderForStation: !isDefaultStation || !isDefaultRef
-    };
-
-    data.station = station;
-
-    if (isDefaultRef && !isDefaultStation) {
-      const stationPageData = await getStationPage(site_slug);
-
-      if (stationPageData) {
-        Object.assign(data, await getStationFooter(stationPageData));
-      } else {
-        // If there's no published station page, don't render the default footer
-        data._computed.renderForStation = false;
-      }
-    }
 
     data.socialButtons = [];
 
