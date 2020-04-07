@@ -113,7 +113,6 @@ function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
 function getPodcastFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      console.log(urlOptions);
       if (urlOptions.pageType === PAGE_TYPES.PODCASTFRONT) {
         return urlPatterns.podcastFront(urlOptions);
       }

@@ -1,10 +1,11 @@
 'use strict';
 
-const { unityComponent } = require('../../services/universal/amphora');
+const { unityComponent } = require('../../services/universal/amphora'),
+  { assignStationInfo } = require('../../services/universal/create-content.js');
 
 module.exports = unityComponent({
   /**
-   * Updates the data for the template prior to render
+   * Makes any necessary modifications to data just prior to persisting it
    *
    * @param {string} uri - The uri of the component instance
    * @param {object} data - persisted or bootstrapped data for this instance
@@ -12,7 +13,8 @@ module.exports = unityComponent({
    *
    * @returns {object}
    */
-  render: (uri, data) => {
+  save: (uri, data, locals) => {
+    assignStationInfo(uri, data, locals);
     return data;
   }
 });
