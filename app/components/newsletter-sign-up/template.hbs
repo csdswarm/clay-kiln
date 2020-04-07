@@ -1,5 +1,5 @@
 {{#*inline "newsletterInput"}}
-  <label class="newsletter-sign-up__form-input-label"
+  <label class="newsletter-sign-up__form-input-label newsletter-sign-up__form-input-label--empty"
     {{#if label}}
       data-input-label="{{ label }}"
     {{/if}}
@@ -21,10 +21,14 @@
       {{#if value}}
         value="{{ value }}"
       {{/if}}
+      {{#if required}}
+        required="required"
+      {{/if}}
       {{#if pattern}}
         pattern="{{ pattern }}"
       {{/if}}
     />
+    <div class="newsletter-sign-up__form-input-msg">this is a test</div>
   </label>
 {{/inline}}
 
@@ -37,17 +41,31 @@
   </h3>
   <form method="POST" class="newsletter-sign-up__form" action="">
     <div class="newsletter-sign-up__form-group">
-      {{> newsletterInput type="email" name="Address" modifier="email" label="Email" }}
-    </div>
-    <div class="newsletter-sign-up__form-group">
-      {{> newsletterInput type="text" name="PostalCode" size="50" label="Postal Code" modifier="zip" }}
+      {{> newsletterInput
+        type="email"
+        name="Address"
+        modifier="email"
+        label="Email"
+        required=true
+      }}
     </div>
     <div class="newsletter-sign-up__form-group">
       {{> newsletterInput
-        type="date" size="50"
+        type="text"
+        name="PostalCode"
+        size="50"
+        label="Postal Code"
+        modifier="zip"
+        required=true
+      }}
+    </div>
+    <div class="newsletter-sign-up__form-group">
+      {{> newsletterInput
+        type="text" size="50"
         name="Birthday" label="Birthday - MM/DD/YYYY"
         modifier="birthday"
         pattern="\d{1,2}/\d{1,2}/\d{4}"
+        required=true
       }}
     </div>
     <div class="newsletter-sign-up__form-group">

@@ -20,6 +20,9 @@
 @define-mixin newsletter-sign-up-font-5 {
   @mixin font CircularStd-Book, 14px, $mineShaft, inherit, 17px;
 }
+@define-mixin newsletter-sign-up-font-6 {
+  @mixin font CircularStd-Book, 11px, $crimson, inherit, 13px;
+}
 
 body > .newsletter-sign-up {
   margin: 2em;
@@ -65,14 +68,19 @@ body > .newsletter-sign-up {
       @mixin newsletter-sign-up-font-4;
       position: absolute;
       content: attr(data-input-label);
-      top: calc(50% - em(7, 14));
+      top: em(7,14);
       left: em(10, 14);
-      transition: top 150ms ease;
+      transition: top 75ms ease;
     }
-    &:hover {
+    &:focus-within {
       &:after {
         @mixin newsletter-sign-up-font-4-1;
         top: em(7,14);
+      }
+    }
+    &--empty {
+      &:after {
+        top: calc(50% - em(7, 11));
       }
     }
   }
@@ -90,6 +98,33 @@ body > .newsletter-sign-up {
       outline: none;
       padding: 0;
       text-transform: uppercase;
+    }
+  }
+  &__form-input-msg {
+    @mixin newsletter-sign-up-font-6;
+    display: none;
+    position: absolute;
+    background: $white;
+    border: 1px solid $crimson;
+    padding: em(4, 11);
+    width: calc(100% + em(10, 11));
+    left: em(-5, 11);
+    color: $crimson;
+    top: calc(100% + em(3, 11));
+    text-align: center;
+    box-shadow: 0 em(-1, 11) em(6, 11) 0 $silverChalice;
+    text-align: center;
+    &--active {
+      display: block;
+    }
+    &:before {
+      content: '';
+      position: absolute;
+      top: em(-9, 11);
+      right: 10%;
+      background: url('/media/components/newsletter-sign-up/msg-pointer.svg') no-repeat;
+      width: em(12, 11);
+      height: em(10, 11);
     }
   }
 
