@@ -1,5 +1,6 @@
 /* stylelint-disable */
 @import "_global/mixins";
+@import "_global/fonts";
 @import "_global/colors";
 
 $default-screen-nav-width: em(1100);
@@ -302,7 +303,7 @@ $drawerSelector: nav-drawer;
           &:not(:last-of-type) {
             margin-right: em(80);
           }
-          
+
           ul {
             li {
               display: block;
