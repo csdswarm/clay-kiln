@@ -3,16 +3,9 @@
 @import "_global/colors";
 @import "_global/fonts";
 
-$default-screen-nav-width: em(1100);
-$large-screen-nav-width: em(940);
-$medium-screen-nav-width: em(728);
-$medium-small-screen-nav-width: em(440);
-$small-screen-nav-width: em(320);
 $default-radium-width: em(150);
-
 $default-nav-height: em(60);
 $mini-nav-height: em(46);
-
 $navButton: radiocom-nav__category-button;
 $drawerSelector: nav-drawer;
 
@@ -670,7 +663,7 @@ $drawerSelector: nav-drawer;
   }
 }
 
-@media only screen and (max-width: 788px) {
+@mixin nav-mobile-breakpoint {
   .radiocom-nav .container {
     width: 100%;
     padding: 0 em(20);

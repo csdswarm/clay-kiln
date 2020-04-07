@@ -1,0 +1,174 @@
+_description: |
+  This is the station header under the main header. It displays the station logo, top level navigational links, navigational drawers, listen button and listen drawer.
+_confirmRemoval: true
+
+stationLogo:
+  _label: Station Logo Image
+  _help: Upload image to override default station image
+  _has:
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment for Station Logo
+    uploadHelp: Choose an image file from your computer for station logo to override station default logo
+    validate:
+      required: false
+
+primaryLinks:
+  _label: Station Primary Nav
+  _placeholder:
+    text: Links
+    height: 100
+  _has:
+    input: complex-list
+    props:
+      -
+        prop: url
+        _label: Primary nav item URL
+        _has:
+          input: text
+          type: url
+          validate:
+            required:
+              field: drawer
+              operator: falsy
+            pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
+            patternMessage: e.g. http://domain.com/path or /path
+      -
+        prop: drawer
+        _label: Does this nav item have a drawer/tray/dropdown menu?
+        _has:
+          input: checkbox
+          validate:
+            required: true
+      -
+        prop: text
+        _label: Primary nav item text
+        _has:
+          input: text
+          enforceMaxlength: true
+          validate:
+            required: true
+            max: 20
+            maxMessage: This field must be 20 or fewer characters long
+      -
+        prop: secondaryLinks
+        _label: Station Drawer Nav -- Secondary Links
+        _reveal:
+          field: drawer
+          operator: truthy
+        _has:
+          input: complex-list
+          validate:
+            required:
+              field: drawer
+              operator: truthy
+          props:
+            -
+              prop: text
+              _label: Drawer nav item text
+              _has:
+                input: text
+                enforceMaxlength: true
+                validate:
+                  required: true
+            -
+              prop: url
+              _label: Drawer nav item URL
+              _has:
+                input: text
+                type: url
+                validate:
+                  required: true
+                  pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
+                  patternMessage: e.g. http://domain.com/path or /path
+
+featuredLinks:
+  _label: Featured Links in Listen Nav Drawer (Up to 2)
+  _placeholder:
+    text: Featured Links
+    height: 100
+  _publish: featuredLinks
+  _has:
+    help: Featured links
+    input: complex-list
+    enforceMaxlength: true
+    validate:
+      max: 2
+    props:
+      -
+        prop: type
+        _label: Featured piece page type
+        _has:
+          input: select
+          options:
+            - content
+            - audio
+            - contest
+            - events
+          validate:
+            required: true
+      -
+        prop: URL
+        _label: Featured audio/contest/events URL
+        _reveal:
+          field: type
+          operator: '!=='
+          value: content
+        _has:
+          input: text
+          type: url
+          validate:
+            required:
+              field: type
+              operator: '!=='
+              value: content
+            pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
+            patternMessage: e.g. http://domain.com/path or /path
+      -
+        prop: contentURL
+        _label: Featured content URL search
+        _reveal:
+          field: type
+          operator: ===
+          value: content
+        _has:
+          input: content-search
+          validate:
+            required:
+              field: type
+              operator: ===
+              value: content
+            pattern: ^(https?:\/\/(www\.)?[\w-@:%.+~#=]{2,}\.[a-z]{2,}|\/)([\w-@:%+.~#?&//=]*)$
+            patternMessage: e.g. http://domain.com/path or /path
+      -
+        prop: headline
+        _label: Featured piece headline
+        _has:
+          input: text
+          validate:
+            required: true
+      -
+        prop: image
+        _label: Featured piece thumbnail
+        _help: Upload image for content thumbnail
+        _has:
+          input: advanced-image-upload
+          webLabel: Insert Image via Web
+          webHelp: Supply a valid HTTPS url to an image file then click "done" button
+          uploadLabel: Upload Image Attachment for Content Thumbnail
+          uploadHelp: Choose an image file from your computer for content thumbnail
+          validate:
+            required: true
+
+listenNav:
+  _component:
+    include:
+      - station-listen-nav
+
+_groups:
+  settings:
+    fields:
+      - stationLogo (Main Nav & Drawer)
+      - primaryLinks (Main Nav & Drawer)
+      - featuredLinks (Listen Nav Drawer)

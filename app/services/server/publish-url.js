@@ -1,6 +1,7 @@
 'use strict';
 
 const pubUtils = require('./publish-utils'),
+  urlPatterns = require('../universal/url-patterns'),
   { PAGE_TYPES } = pubUtils;
 
 /**
@@ -34,7 +35,7 @@ function getUrlOptions(pageData, locals, mainComponentRefs) {
 function getYearMonthSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      return pubUtils.dateUrlPattern(urlOptions);
+      return urlPatterns.date(urlOptions);
     });
 }
 
@@ -49,10 +50,7 @@ function getArticleSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.contentType === PAGE_TYPES.ARTICLE) {
-        if (urlOptions.secondarySectionFront) {
-          return pubUtils.articleSecondarySectionFrontSlugPattern(urlOptions);
-        }
-        return pubUtils.articleSlugPattern(urlOptions);
+        return urlPatterns.article(urlOptions);
       }
     });
 }
@@ -68,10 +66,7 @@ function getGallerySlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.contentType === PAGE_TYPES.GALLERY) {
-        if (urlOptions.secondarySectionFront) {
-          return pubUtils.gallerySecondarySectionFrontSlugPattern(urlOptions);
-        }
-        return pubUtils.gallerySlugPattern(urlOptions);
+        return urlPatterns.gallery(urlOptions);
       }
     });
 }
@@ -87,20 +82,23 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
-        if (!urlOptions.primarySectionFront) {
-          return pubUtils.sectionFrontSlugPattern(urlOptions);
-        } else {
-          return pubUtils.secondarySectionFrontSlugPattern(urlOptions);
-        }
+        return urlPatterns.sectionFront(urlOptions);
       }
     });
 }
 
+/**
+ * Return the url for an author page
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
 function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
-        return pubUtils.authorPageSlugPattern(urlOptions);
+        return urlPatterns.author(urlOptions);
       }
     });
 }
@@ -115,15 +113,18 @@ function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
 function getPodcastFrontSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
+      console.log(urlOptions);
       if (urlOptions.pageType === PAGE_TYPES.PODCASTFRONT) {
-        return pubUtils.podcastFrontSlugPattern(urlOptions);
+        return urlPatterns.podcastFront(urlOptions);
       }
     });
 }
 
-module.exports.getYearMonthSlugUrl = getYearMonthSlugUrl;
-module.exports.getArticleSlugUrl = getArticleSlugUrl;
-module.exports.getGallerySlugUrl = getGallerySlugUrl;
-module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
-module.exports.getAuthorPageSlugUrl = getAuthorPageSlugUrl;
-module.exports.getPodcastFrontSlugUrl = getPodcastFrontSlugUrl;
+module.exports = {
+  getYearMonthSlugUrl,
+  getArticleSlugUrl,
+  getGallerySlugUrl,
+  getSectionFrontSlugUrl,
+  getAuthorPageSlugUrl,
+  getPodcastFrontSlugUrl
+};
