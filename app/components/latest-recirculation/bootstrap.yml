@@ -6,7 +6,7 @@ _components:
     contentType: { article: true, gallery: true }
     rssFeed: ''
     customTitle: ''
-    hyperlinkTitle: false
+    hyperLinkTitle: false
     hyperLinkUrl: ''
     sectionFront: ''
     sectionFrontManual: ''

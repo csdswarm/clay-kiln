@@ -38,6 +38,11 @@ contentType:
     options:
       - article
       - gallery
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 rssFeed:
   _label: RSS Feed URL
@@ -67,13 +72,15 @@ customTitle:
     values:
       - rss-feed
 
-hyperlinkTitle:
-  _label: Link the title to an external source ?
+hyperLinkTitle:
+  _label: Should the title link to an external source ?
   _has:
     input: checkbox
   _reveal:
-    field: customTitle
-    operator: truthy
+    field: populateFrom
+    operator: ===
+    values:
+      - rss-feed
 
 hyperLinkUrl:
   _label: External URL Title HyperLink
@@ -81,11 +88,11 @@ hyperLinkUrl:
     input: text
     validate:
       required:
-        field: hyperlinkTitle
+        field: hyperLinkTitle
         operator: truthy
         # Ask for the pattern to be used. https://<site_slug>.radio.com/station_feed.json
   _reveal:
-    field: hyperlinkTitle
+    field: hyperLinkTitle
     operator: truthy
 
 sectionFront:
@@ -153,6 +160,11 @@ excludeSectionFronts:
     search: true
     multiple: true
     list: primary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
@@ -161,6 +173,11 @@ excludeSecondarySectionFronts:
     search: true
     multiple: true
     list: secondary-section-fronts
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 excludeTags:
   _label: Exclude Tags
@@ -171,6 +188,11 @@ excludeTags:
       allowRemove: true
       allowCreate: true
     help: Exclude content from all tags
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 items:
   _label: Items
@@ -213,6 +235,11 @@ items:
       _has:
         validate:
           required: true
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - rss-feed
 
 _groups:
   latestRecirculationItems:
@@ -221,7 +248,7 @@ _groups:
       - contentType
       - rssFeed
       - customTitle
-      - hyperlinkTitle
+      - hyperLinkTitle
       - hyperLinkUrl
       - sectionFrontManual
       - secondarySectionFront
