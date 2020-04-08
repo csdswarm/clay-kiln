@@ -4,6 +4,9 @@ const { getComponentName } = require('clayutils'),
   { unityComponent } = require('./amphora'),
   { getStationPage, getStationSpecificComponent } = require('../server/stationThemingApi');
 
+// Use this wrapper for components that should be updated to a station-specific instance if
+// a station exists on locals.  This will set the station in data, and update the data with
+// the station specific version of that component if a station page exists.
 module.exports.stationizedComponent = ({ render, save }) => unityComponent({
   async render(ref, data, locals) {
     const { station, defaultStation } = locals,
