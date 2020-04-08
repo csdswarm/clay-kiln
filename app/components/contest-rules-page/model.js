@@ -15,11 +15,22 @@ const maxAgeInDays = 31;
 const url = require('url');
 const _get = require('lodash/get');
 
+
+/**
+ * Creates a conditional station operator for contest sql query
+ * @param {String} stationCallsign
+ * @returns {String}
+ */
 const stationQuery = stationCallsign =>
   stationCallsign === defaultStation.callsign ?
     'AND NOT data \\? \'stationCallsign\'' :
     `AND data->>'stationCallsign' = '${stationCallsign}'`;
 
+/**
+ * Queries the db for contest rules
+ * @param {String} param.startTime
+ * @param {String} param.stationCallsign
+ */
 const getContestRules = async ({
   startTime = '',
   stationCallsign = ''

@@ -18,5 +18,4 @@ fi
 
 node migration.js $1
 
-clay import -k demo -y $1 < ./contest-rules-page.yml
 clay import -k demo -y -p $1 < ./pages.yml

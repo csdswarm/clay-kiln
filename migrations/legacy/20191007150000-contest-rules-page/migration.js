@@ -26,7 +26,7 @@ function importData(data, publish = false) {
   return clayImport({ payload: data, hostUrl, publish });
 }
 
-logMigrationDivider('Begin Event Migration')
+logMigrationDivider('Begin contest migration')
   // load the layout data from _layouts.yml
   .then( _ => {
     logMigrationMsg('loading contest layout YAML...');
@@ -34,7 +34,7 @@ logMigrationDivider('Begin Event Migration')
   })
   // import layout YAML into clay
   .then( loadLayoutFileResponse => {
-    logMigrationMsg('Importing event layout into clay...');
+    logMigrationMsg('Importing contest layout into clay...');
     const replacedHostYml = loadLayoutFileResponse.data.replace(/\${HOST_URL}/gi, hostUrl);
     return importData(replacedHostYml, true);
   })

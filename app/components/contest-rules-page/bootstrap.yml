@@ -2,3 +2,7 @@ _components:
   contest-rules-page:
     headline: ''
     contestRules: []
+  instances:
+    new:
+      headline: ''
+      contestRules: []
