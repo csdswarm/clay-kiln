@@ -9,6 +9,8 @@
 const db = require('./db'),
   _get = require('lodash/get'),
   redis = require('./redis'),
+  isEmpty = require('lodash/isEmpty'),
+  
   /**
    * Generate relevant Branch.io meta tags for the page.
    * @param {Object} locals
@@ -23,7 +25,8 @@ const db = require('./db'),
           content
         });
       },
-      isStation = _get(locals, 'station.slug', 'www') !== 'www',
+      isPodcast = _get(locals, 'podcast'),
+      isStation = !isEmpty(isPodcast) ? false : _get(locals, 'station.slug', 'www')  !== 'www',
       timestamp = _get(locals, 'query.t');
 
     // primary section front
@@ -53,11 +56,26 @@ const db = require('./db'),
       addTag('page', 'station-detail');
     }
 
+    // podcast page
+    if (isPodcast) {
+      const { attributes } = isPodcast,
+        { partner } = attributes,
+        { name } = attributes.category[0];
+
+      addTag('type', isPodcast.type);
+      addTag('podcast_name', attributes.description);
+      addTag('podcast_id', isPodcast.id);
+      addTag('partner_id', partner.id);
+      addTag('partner_name', partner.name);
+      addTag('podcast_category', name);
+      addTag('podcast_logo', attributes.image);
+    }
+
     // timestamp
     if (timestamp) {
       addTag('timecode', timestamp);
     }
-
+    
     return tags;
   },
   /**

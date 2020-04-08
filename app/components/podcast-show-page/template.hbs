@@ -3,6 +3,12 @@
   {{ if @root.locals.edit ' editing' }}"
 >
   {{> breadcrumbs this }}
+  
+  {{#each metaTags}}
+    <meta
+      {{~#each this}} {{@key}}="{{this}}"{{/each~}}
+    >
+  {{/each}}
 
   <div class="podcast-show-page-lede">
     {{!-- @TODO: ON-1376 ON-1383 Podcast Show Lede --}}

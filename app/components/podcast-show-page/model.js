@@ -46,9 +46,9 @@ module.exports = unityComponent({
     data.stationSlug = _get(locals, 'params.stationSlug');
     locals.podcast = await getPodcastShow(locals);
     await addBreadcrumbs(data, locals);
-    const branchIo = await getBranchMetaTags(locals, data);
     
-    console.log('branchIo: ', branchIo);
+    // add branch io meta tags
+    data.metaTags = await getBranchMetaTags(locals, data);
 
     return data;
   }
