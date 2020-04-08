@@ -3,7 +3,8 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
   _get = require('lodash/get'),
-  { autoLink } = require('../breadcrumbs');
+  { autoLink } = require('../breadcrumbs'),
+  { getBranchMetaTags } = require('../../services/server/branch-io');
 
 /**
  * fetch podcast show data
@@ -45,6 +46,9 @@ module.exports = unityComponent({
     data.stationSlug = _get(locals, 'params.stationSlug');
     locals.podcast = await getPodcastShow(locals);
     await addBreadcrumbs(data, locals);
+    const branchIo = await getBranchMetaTags(locals, data);
+    
+    console.log('branchIo: ', branchIo);
 
     return data;
   }
