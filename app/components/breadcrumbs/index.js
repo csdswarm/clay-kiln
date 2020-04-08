@@ -139,20 +139,19 @@ module.exports = {
    * @param {Object} locals
    */
   async autoLink(data, props, locals) {
-    const onlyExistingItems = prop => data[prop],
+    const existingProp = (prop, dataObj) => dataObj[prop],
       lists = await retrieveSectionFrontLists(props, locals);
     
     let breadcrumbItems = props
-      .filter(onlyExistingItems)
+      .filter(prop => existingProp(prop, data))
       .map(useSectionFrontName(data, lists));
 
     if (locals.station.site_slug) {
       const syndication = data.stationSyndication.find(station => station.callsign === locals.station.callsign),
-        stationBreadcrumb = ['stationSlug', ...props],
-        existingSyndication = prop => syndication[prop];
+        breadcrumbProps = ['stationSlug', ...props];
         
-      breadcrumbItems = stationBreadcrumb
-        .filter(existingSyndication)
+      breadcrumbItems = breadcrumbProps
+        .filter(prop => existingProp(prop, syndication))
         .map(useSectionFrontName(syndication, lists));
     };
 

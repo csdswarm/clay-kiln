@@ -7,6 +7,9 @@ const expect = require('chai').expect,
 const getLocals = () => ({
   site: {
     host: 'somehost.com'
+  },
+  station: {
+    site_slug: ''
   }
 });
 
@@ -22,6 +25,26 @@ describe(dirname, function () {
         .to.eql([
           { text: 'ay', url: '//somehost.com/ay', hidden: false }
         ]);
+    });
+
+    it('should create breadcrumb based on the station', async () => {
+      const data = {
+          stationSyndication: [{
+            callsign: 'station-Y',
+            stationSlug: 'stationY',
+            primarySectionFront: 'primary',
+            secondarySectionFront: 'secondary'
+          }]
+        },
+        props = ['primarySectionFront', 'secondarySectionFront'];
+
+      await autoLink(data, props, { ...getLocals(), station: { site_slug:'stationY', callsign: 'station-Y' } });
+
+      expect(data.breadcrumbs).to.eql([
+        { text: 'stationY', url: '//somehost.com/stationy', hidden: false },
+        { text: 'primary', url: '//somehost.com/stationy/primary', hidden: false },
+        { text: 'secondary', url: '//somehost.com/stationy/primary/secondary', hidden: false }
+      ]);
     });
 
     it('extends each link with the slug before it', async () => {
