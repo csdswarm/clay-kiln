@@ -141,13 +141,25 @@ module.exports = {
   async autoLink(data, props, locals) {
     const onlyExistingItems = prop => data[prop],
       lists = await retrieveSectionFrontLists(props, locals);
-
-    data.breadcrumbs = props
+    
+    let breadcrumbItems = props
       .filter(onlyExistingItems)
-      .map(useSectionFrontName(data, lists))
+      .map(useSectionFrontName(data, lists));
+
+    if (locals.station.site_slug) {
+      const syndication = data.stationSyndication.find(station => station.callsign === locals.station.callsign),
+        stationBreadcrumb = ['stationSlug', ...props],
+        existingSyndication = prop => syndication[prop];
+        
+      breadcrumbItems = stationBreadcrumb
+        .filter(existingSyndication)
+        .map(useSectionFrontName(syndication, lists));
+    };
+
+    data.breadcrumbs = breadcrumbItems
       .map(toLinkSegments())
       .map(toFullLinks(locals));
-
+    
     // add hidden headline crumb for articles and galleries
     if (data.headline && data.canonicalUrl) {
       const url = data.canonicalUrl.replace('https:', '').replace('http:', '');
