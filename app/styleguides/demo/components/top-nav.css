@@ -296,7 +296,7 @@ $drawerSelector: nav-drawer;
           &:not(:last-of-type) {
             margin-right: em(80);
           }
-          
+
           ul {
             li {
               display: block;

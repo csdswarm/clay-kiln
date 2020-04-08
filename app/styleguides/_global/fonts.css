@@ -718,6 +718,19 @@ em, i {
   @mixin font CircularStd-Medium, 14px, $black, -.23px, 18px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||| Podcasts Trending Podcasts Fonts Styleguide |||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin trending-podcasts-font1 {
+  @mixin font CircularStd-Book, 12px, $boulder, inherit, 18px;
+}
+@define-mixin trending-podcasts-font2 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+@define-mixin trending-podcasts-font3 {
+  @mixin font CircularStd-Medium, 16px, theme(primaryColor, $robinsEggBlue), -.26px, 19px;
+}
+
 /*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<*/
 /* ||||| Warning Fonts Styleguide ||||| */
 /*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<*/
@@ -738,7 +751,6 @@ em, i {
   @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -.32px, 24px;
 }
 
-
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||||||| Card Fonts Styleguide |||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -754,4 +766,36 @@ em, i {
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin permissions-font1 {
   @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||| Podcast Episode List Fonts Styleguide |||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin podcast-episode-list-font1 {
+  @mixin font CircularStd-Black, 16px, $black, inherit, 19px;
+}
+@define-mixin podcast-episode-list-font2 {
+  @mixin font CircularStd-Book, 12px, $doveGray, inherit, 18px;
+}
+@define-mixin podcast-episode-list-font3 {
+  @mixin font CircularStd-Black, 14px, $white, -.55px, 17px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||||||||||||| Podcast Lead Fonts Styleguide |||||||||||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin podcast-lead-font1 {
+  @mixin font CircularStd-Black, 35px, $black, -.58px, 42px;
+}
+@define-mixin podcast-lead-font2 {
+  @mixin font ProximaNova-Light, 18px, $black, inherit, 25px;
+}
+@define-mixin podcast-lead-font3 {
+  @mixin font CircularStd-Medium, 11px, $boulder, inherit, 14px;
+}
+@define-mixin podcast-lead-font4 {
+  @mixin font CircularStd-Medium, 11px, $boulder, inherit, 13px;
+}
+@define-mixin podcast-lead-font5 {
+  @mixin font CircularStd-Black, 24px, $black, -.58px, 29px;
 }

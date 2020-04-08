@@ -60,11 +60,27 @@ _users:
     provider: google
     auth: admin
   -
+    username: cristhiam.henao@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: cristhiam.henao@gorillalogic.com
+    provider: google
+    auth: admin
+  -
     username: Cory.Calhoun@entercom.com
     provider: google
     auth: admin
   -
     username: daniella.mordehai@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: ferney.pena@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: ferney.pena@gorillalogic.com
     provider: google
     auth: admin
   -
@@ -100,11 +116,39 @@ _users:
     provider: google
     auth: admin
   -
-    username: kyle.mccann@entercom.com
+    username: jose.penagos@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: jose.penagos@gorillalogic.com
     provider: google
     auth: admin
   -
-    username: lauren.hoffman@entercom.com
+    username: juan.giraldo@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: juan.giraldo@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: juan.restrepo@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: juan.restrepo@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: julian.figueroa@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: julian.figueroa@gorillalogic.com
+    provider: google
+    auth: admin
+  -
+    username: kyle.mccann@entercom.com
     provider: google
     auth: admin
   -
@@ -113,6 +157,14 @@ _users:
     auth: admin
   -
     username: Leland.Kwong@entercom.com
+    provider: google
+    auth: admin
+  -
+    username: luis.bertel@gorillalogic.com
+    provider: cognito
+    auth: admin
+  -
+    username: luis.bertel@gorillalogic.com
     provider: google
     auth: admin
   -

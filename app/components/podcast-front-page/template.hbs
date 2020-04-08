@@ -1,0 +1,13 @@
+<div class="component component--podcast-front-page podcast-front-page" data-uri="{{ default _ref _self }}">
+  {{#ifAny hero.length @root.locals.edit }}
+  <div class="full-width" data-editable="hero">
+    {{> component-list hero }}
+  </div>
+  {{/ifAny}}
+  <div data-editable="content">
+    {{> component-list content }}
+  </div>
+  <a href="/podcasts/collection" class="all-podcasts">
+    <button class="all-podcasts-button">view all podcasts</button>
+  </a>
+</div>

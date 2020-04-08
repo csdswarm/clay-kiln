@@ -1,0 +1,17 @@
+_pages:
+  podcast-show:
+    _dynamic: true
+    head:
+      - /_components/dynamic-meta-title/instances/podcast-show
+      - /_components/dynamic-meta-description/instances/podcast-show
+      - /_components/dynamic-meta-url/instances/general
+      - /_components/dynamic-meta-image/instances/podcast-show
+    layoutHeader:
+      - /_components/google-ad-manager/instances/billboardTop
+    main:
+      - /_components/podcast-show-page/instances/default
+    tertiary:
+      - /_components/google-ad-manager/instances/mediumRectangleTop
+      # @TODO ON-1398 ON-1378 Trending Podcasts
+      # - /_components/podcast-trending/instances/default
+    layout: /_layouts/two-column-layout/instances/podcast-show

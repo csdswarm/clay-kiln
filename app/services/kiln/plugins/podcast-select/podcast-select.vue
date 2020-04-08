@@ -80,6 +80,7 @@
                                 title: podcast.attributes.title,
                                 url: utils.createUrl(podcast.attributes.title),
                                 imageUrl: utils.createImageUrl(podcast.attributes.image),
+                                description: podcast.attributes.description
                             }
                         });
                         self.cachedResults[self.filter] = self.podcastOptions
