@@ -91,6 +91,7 @@ body > .newsletter-sign-up {
     width: 100%;
     height: 100%;
     padding: em(7, 14) em(10, 14) 0 em(10, 14);
+    outline: none;
     &--submit {
       @mixin newsletter-sign-up-font-3;
       background: theme(primaryColor, $parisM);
@@ -114,10 +115,20 @@ body > .newsletter-sign-up {
     text-align: center;
     box-shadow: 0 em(-1, 11) em(6, 11) 0 $silverChalice;
     text-align: center;
-    &--active {
+    &[data-valid="false"] {
       display: block;
     }
     &:before {
+      content: '';
+      position: absolute;
+      top: em(-39, 11);
+      right: calc(10% - em(4,11));
+      background: url('/media/components/newsletter-sign-up/msg-icon-error.svg') no-repeat;
+      width: em(22, 11);
+      height: em(22, 11);
+      z-index: 1;
+    }
+    &:after {
       content: '';
       position: absolute;
       top: em(-9, 11);

@@ -39,11 +39,11 @@
   <h3 class="newsletter-sign-up__title">
     <span class="newsletter-sign-up__title-text">{{ title }}</span>
   </h3>
-  <form method="POST" class="newsletter-sign-up__form" action="">
+  <form method="POST" class="newsletter-sign-up__form" action="" novalidate>
     <div class="newsletter-sign-up__form-group">
       {{> newsletterInput
         type="email"
-        name="Address"
+        name="email"
         modifier="email"
         label="Email"
         required=true
@@ -52,8 +52,7 @@
     <div class="newsletter-sign-up__form-group">
       {{> newsletterInput
         type="text"
-        name="PostalCode"
-        size="50"
+        name="zip"
         label="Postal Code"
         modifier="zip"
         required=true
@@ -61,10 +60,10 @@
     </div>
     <div class="newsletter-sign-up__form-group">
       {{> newsletterInput
-        type="text" size="50"
-        name="Birthday" label="Birthday - MM/DD/YYYY"
+        type="text"
+        name="birthday"
+        label="Birthday - MM/DD/YYYY"
         modifier="birthday"
-        pattern="\d{1,2}/\d{1,2}/\d{4}"
         required=true
       }}
     </div>
