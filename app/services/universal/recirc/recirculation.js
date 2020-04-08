@@ -23,6 +23,7 @@ const
   _isEmpty = require('lodash/isEmpty'),
   _isPlainObject = require('lodash/isPlainObject'),
   _pick = require('lodash/pick'),
+  _set = require('lodash/set'),
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
@@ -48,7 +49,7 @@ const
     filters: {
       ...getAuthor(data, locals),
       contentTypes: boolObjectToArray(data.contentType),
-      ...locals.station.site_slug !== DEFAULT_STATION ? { stationSlug: locals.stationForPermissions.site_slug } : {},
+      ...locals.station.site_slug !== DEFAULT_STATION.site_slug ? { stationSlug: locals.station.site_slug } : {},
       ..._pick({
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
@@ -83,33 +84,6 @@ const
       filterCondition: 'must',
       unique: true,
       createObj: contentType => ({ match: { contentType } })
-    },
-    rdcStation: {
-      createObj: () => ({
-        bool: {
-          should:[
-            { match: { stationSlug: '' } },
-            { bool:
-                {
-                  must_not: [
-                    { exists: { field: 'stationSlug' } }
-                  ]
-                }
-            },
-            {
-              nested: {
-                path: 'stationSyndication',
-                query: {
-                  match: {
-                    'stationSyndication.stationSlug': ''
-                  }
-                }
-              }
-            }
-          ],
-          minimum_should_match: 1
-        }
-      })
     },
     sectionFronts: {
       filterCondition: 'must',
@@ -165,24 +139,31 @@ const
     },
     stationSlug: {
       filterCondition: 'must',
-      createObj: stationSlug => ({
-        bool: {
-          should: [
-            { match: { stationSlug } },
-            {
-              nested: {
-                path: 'stationSyndication',
-                query: {
-                  match: {
-                    'stationSyndication.stationSlug': stationSlug
+      createObj: stationSlug => {
+        const qs = {
+          bool: {
+            should: [
+              { match: { stationSlug } },
+              {
+                nested: {
+                  path: 'stationSyndication',
+                  query: {
+                    match: {
+                      'stationSyndication.stationSlug': stationSlug
+                    }
                   }
                 }
               }
-            }
-          ],
-          minimum_should_match: 1
+            ],
+            minimum_should_match: 1
+          }
+        };
+
+        if (stationSlug === '') {
+          _set(qs, 'bool.should[2].must_not.exists.field', 'stationSlug');
         }
-      })
+        return qs;
+      }
     },
     tags: {
       unique: true,
@@ -241,7 +222,7 @@ const
     } else {
       if (!createObj || !value) {
         if (key === 'stationSlug') {
-          queryService[getQueryType('must')](query, queryFilters.rdcStation.createObj());
+          queryService[getQueryType('must')](query, queryFilters.stationSlug.createObj(''));
         }
         return;
       }
