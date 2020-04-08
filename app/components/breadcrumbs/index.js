@@ -1,6 +1,9 @@
 'use strict';
 
-const { getSectionFrontName, retrieveList } = require('../../services/server/lists');
+const { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  __ = {
+    retrieveList
+  };
 
 /**
  * Takes a text value and converts it to a navigable slug
@@ -122,7 +125,7 @@ async function retrieveSectionFrontLists(props, locals) {
 
   await Promise.all(Object.keys(lists).map(listProp => {
     if (props.includes(listProp)) {
-      return retrieveList(lists[listProp], { locals })
+      return __.retrieveList(lists[listProp], { locals })
         .then(list => lists[listProp] = list);
     }
   }));
@@ -131,6 +134,7 @@ async function retrieveSectionFrontLists(props, locals) {
 }
 
 module.exports = {
+  _internals: __,
   /**
    * Automatically creates links based on data in the provided list of properties on the data context
    *
