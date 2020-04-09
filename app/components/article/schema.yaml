@@ -35,10 +35,10 @@ teaser:
       required: true
       max: 150
     help: Appears in feeds and newsletters
-# this is the headline that displays on the gallery itself
+# this is the headline that displays on the article itself
 headline:
   _label: Headline
-  _subscribe: galleryHeadline
+  _subscribe: articleHeadline
   _placeholder:
     height: 40px
     text: Headline
@@ -50,10 +50,10 @@ headline:
       - strike
     validate:
       required: true
-    help: Appears as gallery title
+    help: Appears as article title
 subHeadline:
   _label: Sub Headline
-  _subscribe: gallerySubHeadline
+  _subscribe: articleSubHeadline
   _placeholder:
     height: 40px
     text: Sub Headline
@@ -65,7 +65,7 @@ subHeadline:
       - strike
     validate:
       required: false
-    help: Appears under gallery title
+    help: Appears under article title
 seoHeadline:
   _label: SEO Headline
   _has:
@@ -86,15 +86,12 @@ seoDescription:
       min: 140
       max: 250
 feedImgUrl:
+  _subscribe: feedImgUrl
+feedImg:
   _label: Recirculation Image
-  _publish: feedImgUrl
-  help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
-  _has:
-    input: advanced-image-upload
-    uploadLabel: Upload Image Attachment
-    uploadHelp: Choose an image file from your computer
-    validate:
-      required: true
+  _component:
+    include:
+      - feed-image
 slug:
   _label: Slug
   _has:
@@ -103,7 +100,7 @@ slug:
       required: true
     attachedButton:
       name: magic-button
-      component: gallery
+      component: article
       transform: getComponentInstance
       url: $SITE_PREFIX
       property: shortHeadline
@@ -196,18 +193,18 @@ secondaryBylineText:
     input: text
     help: Text that appears before secondary bylines
 # note: date used to use datetime-local, which was deprecated in kiln 5.0
-# users edit the published date from the galleryDate and galleryTime fields
+# users edit the published date from the articleDate and articleTime fields
 date:
   _label: Published Date
   _publish: publishDate
   _has:
-    help: Date that is generated from the galleryDate and galleryTime fields
-galleryDate:
+    help: Date that is generated from the articleDate and articleTime fields
+articleDate:
   _label: First Published Date
   _has:
     input: datepicker
-    help: Custom published date, if it should be different than the actual date the gallery was first published
-galleryTime:
+    help: Custom published date, if it should be different than the actual date the article was first published
+articleTime:
   _label: First Published Time
   _has:
     input: timepicker
@@ -216,11 +213,11 @@ dateUpdated:
   _label: Display Updated Date
   _has:
     input: checkbox
-    help: Display "Updated On" in the gallery with the latest published date
+    help: Display "Updated On" in the article with the latest published date
 lead:
-  _label: Gallery Lead
+  _label: Article Lead
   _placeholder:
-    text: Gallery Lead
+    text: Article Lead
     height: 600px
   _componentList:
     fuzzy: false # allows interactives, etc to add one-off components
@@ -237,53 +234,26 @@ lead:
       max: 1
       required: true
 content:
-  _label: Gallery Content
+  _label: Article Content
   _placeholder:
-    text: Gallery Content
+    text: Article Content
     height: 600px
   _componentList:
     fuzzy: true # allows interactives, etc to add one-off components
     include:
       - paragraph
       - subheader
+      # - blockquote
+      - image
+      - tweet
+      - facebook-post
+      - instagram-post
+      - youtube
+      - html-embed
+      - brightcove
       - inline-related
-bulkImageUpload:
-  _label: Bulk Image Upload
-  _has:
-    input: bulk-image-upload
-    dest: slides
-  _placeholder:
-    text: Bulk Image Upload
-slides:
-  _label: Add slides to gallery
-  _componentList:
-    include:
-      - gallery-slide
-totalSlides:
-  _publish: totalSlides
-slidesNumbered:
-  _label: Number the slides
-  _publish: slidesNumbered
-  _has: checkbox
-reverseOrder:
-  _label: Reverse number order of slides? (Count down eg -- 5, 4, 3...)
-  _publish: reverseOrder
-  _has: checkbox
-  _reveal:
-    field: slidesNumbered
-    operator: ===
-    value: true
-includeInlineAds:
-  _label: Break up slides with inline ads
-  _has: checkbox
-inlineAd:
-  _component:
-    include:
-      - google-ad-manager
-rightRailStickyAd:
-  _component:
-    include:
-      - google-ad-manager
+      - omny
+      - verizon-media
 feeds:
   _label: Include in These Feeds
   _has:
@@ -293,8 +263,29 @@ feeds:
         value: rss
       - name: Apple News
         value: apple-news
+      - name: MSN
+        value: msn
       - name: Smart News
         value: smartNews
+    help: By default, articles are included in all of our feeds. Uncheck these if you don't want this article to appear in them, e.g. for sponsored posts, pop-up blogs, or content promoted exclusively on social media
+
+msnTitle:
+  _label: MSN Article Title
+  _has:
+    input: default-text-with-override
+    defaultField: headline
+    overrideCheckbox:
+      help: >-
+        By default the title will be the article's headline.  You will need to
+        override this if the headline doesn't meet MSN's title requirements.
+    validate:
+      # requirement found here
+      # https://partnerhub.msn.com/docs/spec/vcurrent/article-metadata/AAsCd
+      # this must be in sync with the query inside the 'msn' feeds instance and
+      #   msn-feed-utils/article-will-show-on-msn-feed.js
+      min: 21
+      required: true
+
 sectionFront:
   _label: Section Front
   _publish: sectionFront
@@ -321,7 +312,7 @@ showSocial:
   _label: Display Social Handle
   _has:
     input: checkbox
-    help: Author social handles are displayed by default. Unchecking this will hide handles on this gallery
+    help: Author social handles are displayed by default. Unchecking this will hide handles on this article
 fullWidthLead:
   _label: Full-Width Lead Component
   _has: checkbox
@@ -353,10 +344,10 @@ syndicatedUrl:
       pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
       patternMessage: Must be a valid URL
 featured:
-  _label: Is this a featured gallery?
+  _label: Is this a featured article?
   _has: checkbox
 editorialFeeds:
-  _label: Gallery Terms for Editorial Feeds
+  _label: Article terms for Editorial Feeds
   _has:
     input: select
     multiple: true
@@ -383,13 +374,13 @@ genreSyndication:
 _groups:
   publishedDate:
     fields:
-      - galleryDate
-      - galleryTime
+      - articleDate
+      - articleTime
       - dateUpdated
     _placeholder:
       text: Custom Published Date
       height: 30px
-      ifEmpty: galleryDate or galleryTime
+      ifEmpty: articleDate or articleTime
   secondaryBylines:
     fields:
       - secondaryBylineText
@@ -398,17 +389,6 @@ _groups:
       text: Secondary Bylines
       height: 60px
       ifEmpty: secondaryAttribution
-  stationSource:
-    fields:
-      - stationTitle
-      - stationURL
-    _placeholder:
-      text: Station Source
-      height: 30px
-      ifEmpty: stationTitle
-  circFeeds:
-    fields:
-      - feedImgUrl
   circHeadlines:
     fields:
       - primaryHeadline
@@ -426,28 +406,20 @@ _groups:
       - secondarySectionFront
   bylinesAndStationLogo:
     fields:
-    - byline
-    - stationLogoUrl
-    - stationURL
+      - byline
+      - stationLogoUrl
+      - stationURL
     _placeholder:
       text: Byline and Station Logo
       height: 60px
       ifEmpty: byline.names and byline.sources and stationLogoUrl
-  slidesSettings:
-    fields:
-      - slidesNumbered
-      - reverseOrder
-      - includeInlineAds
-      - toggleEditorCondensedSlidesView
+
   settings:
     fields:
       - feeds
       - showSocial
-      - hasSecondaryBylines
       - sectionFront
-      - slidesNumbered (Gallery Slides)
-      - reverseOrder (Gallery Slides)
-      - includeInlineAds (Gallery Slides)
+      - hasSecondaryBylines
       - apContent
       - noIndexNoFollow
   syndication:
@@ -460,6 +432,10 @@ _groups:
       - syndicationStatus
       - syndicatedUrl
 
+  msnFeedSettings:
+    fields:
+      - msnTitle
+
   leadSettings:
     _label: Lead Settings
     fields:
@@ -468,17 +444,17 @@ _groups:
 # non-user-editable fields, set by model.js and used for pubsub
 eligibleForGoogleStandout:
   _has:
-    help: Is this gallery eligible for the Google Standout tag
+    help: Is this article eligible for the Google Standout tag
 canBeMarkedGoogleStandout:
   _has:
-    help: Can this gallery be marked as Google Standout.
+    help: Can this article be marked as Google Standout.
 rollingStandoutCount:
   _has:
-    help: Rolling 7 day count of how many galleries have been marked Standout on this domain.
+    help: Rolling 7 day count of how many articles have been marked Standout on this domain.
 canonicalUrl:
   _publish: url
   _has:
-    help: Canonical URL of an gallery. Set when the gallery publishes.
+    help: Canonical URL of an article. Set when the article publishes.
 pageDescription:
   _publish: pageDescription
   _has:
@@ -500,23 +476,6 @@ plaintextShortHeadline:
   _publish: twitterTitle
   _has:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
-footer:
-  _label: Gallery Footer
-  _placeholder:
-    text: Component
-    height: 200px
-  _componentList:
-    fuzzy: true
-    include:
-      - paragraph
-      - image
-      - instagram-post
-      - brightcove
-      - youtube
-      - html-embed
-      - omny
-    validate:
-      max: 2
 
 # Component properties
 contentPageSponsorLogo:
@@ -553,8 +512,3 @@ noIndexNoFollow:
     field: isContentFromAP
     operator: ===
     value: false
-
-# toggle editing condensed list view
-toggleEditorCondensedSlidesView:
-  _label: Condensed Slide View On
-  _has: checkbox

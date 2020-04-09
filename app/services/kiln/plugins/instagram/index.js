@@ -1,7 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _set = require('lodash/set'),
   clayutils = require('clayutils'),
   rest = require('../../../universal/rest');
 
@@ -80,10 +79,10 @@ function updateOnSaveComplete(store) {
 }
 
 module.exports = () => {
-  _set(window, 'kiln.plugins.instagram', (store) => {
+  window.kiln.plugins.instagram = (store) => {
     store.subscribe(mutation => {
       if (!shouldUpdatePage(mutation)) return;
       updateOnSaveComplete(store);
     });
-  });
+  };
 };

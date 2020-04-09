@@ -30,14 +30,12 @@
       <script src="/dist/js/chunk-vendors.js"></script>
     {{/if}}
   {{/unless}}
+
 </head>
 <body>
 <div id="vue-app-mount-point">
-  <section class="layout layout--two-column{{#if @root.locals.showNoEditPermissionsBanner}} layout--no-permissions{{/if}}">
-    {{#if @root.locals.showNoEditPermissionsBanner}}
-      <h1 class="layout__no-permissions-message">Sorry, but you do not have permissions to edit {{ @root.locals.updateTarget }}.</h1>
-    {{/if}}
-    <section class="layout__top">{{> component-list top }}</section>
+  <section class="layout layout--two-column">
+    <section class="layout__top" data-editable="top">{{> component-list top }}</section>
     <header>
       <div class="layout__layout-header" data-editable="layoutHeader">{{> component-list layoutHeader }}</div>
       <div class="layout__page-header" data-editable="pageHeader">{{> component-list pageHeader }}</div>
@@ -49,7 +47,7 @@
       <section class="content__sidebar" data-editable="tertiary" data-track-zone="tertiary">{{> component-list tertiary }}</section>
       <section class="content__secondary" data-editable="secondary" data-track-zone="secondary">{{> component-list secondary }}</section>
     </section>
-    <footer class="layout__bottom">{{> component-list bottom }}</footer>
+    <footer class="layout__bottom" data-editable="bottom">{{> component-list bottom }}</footer>
   </section>
 </div>
 <div class="kiln-internals" data-editable="kilnInternals">{{> component-list kilnInternals }}</div>

@@ -113,10 +113,10 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	cd app && npm ci && cd ../spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm run build
+	cd spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm ci && npm run build
 
 install:
-	cd app && npm ci && cd ../spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm run build-production
+	cd spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm ci && npm run build-production
 
 lint:
 	cd app && npm run eslint; cd ../spa && npm run lint -- --no-fix
@@ -128,55 +128,24 @@ build-player:
 	cd ./radio-web-player/demo-site && npm i && npm run build
 	cp -r ./radio-web-player/demo-site/dist/* ./app/public/web-player/
 
-# function to wrap logic without exposing a target
-# https://coderwall.com/p/cezf6g/define-your-own-function-in-a-makefile
-#
-# the syntax is kinda goofy because the entire script needs to be a single line
-#   in order for it to be in the calling 'if' statement.  There may be a better
-#   way but we're already using Makefile.
-#
-# previously we didn't have named snapshots so to keep the code functionally
-#   equivalent we just move the files which existed at the root into the new
-#   snapshot named 'default'
-define migrate-snapshot-to-default
-	rm -rf ./.snapshot/default; \
-	mkdir ./.snapshot/default; \
-	mv ./.snapshot/elasticsearch ./.snapshot/default/elasticsearch; \
-	mv ./.snapshot/postgres ./.snapshot/default/postgres; \
-	mv ./.snapshot/redis ./.snapshot/default/redis; \
-	mv ./.snapshot/clay-radio_clay ./.snapshot/default/clay-radio_clay
-endef
-
 snapshot:
 	make down
-	if [ -d ./.snapshot/elasticsearch ]; then $(call migrate-snapshot-to-default); fi
-	if [ ! -d './.snapshot' ]; then mkdir ./.snapshot; fi
-	if [ -d './.snapshot/$(name)' ]; then rm -rf './.snapshot/$(name)'; fi
-	mkdir './.snapshot/$(name)';
-	docker save -o './.snapshot/$(name)/clay-radio_clay' clay-radio_clay
-	cp -R ./elasticsearch './.snapshot/$(name)/elasticsearch'
-	cp -R ./redis './.snapshot/$(name)/redis'
-	cp -R ./postgres './.snapshot/$(name)/postgres'
-
-snapshot: name = default
+	if [ -d './.snapshot' ]; then rm -rf ./.snapshot; fi
+	mkdir ./.snapshot;
+	docker save -o ./.snapshot/clay-radio_clay clay-radio_clay
+	cp -R ./elasticsearch ./.snapshot/elasticsearch
+	cp -R ./redis ./.snapshot/redis
+	cp -R ./postgres ./.snapshot/postgres
 
 restore:
 	make down
-	if [ -d ./.snapshot/elasticsearch ]; then $(call migrate-snapshot-to-default); fi
-	if [ ! -d './.snapshot/$(name)' ]; then echo "snapshot './.snapshot/$(name)' doesn't exist"; exit 1; fi
 	rm -rf ./elasticsearch
 	rm -rf ./redis
 	rm -rf ./postgres
-	cp -R './.snapshot/$(name)/elasticsearch' ./elasticsearch
-	cp -R './.snapshot/$(name)/redis' ./redis
-	cp -R './.snapshot/$(name)/postgres' ./postgres
-	docker load -i './.snapshot/$(name)/clay-radio_clay'
-
-restore: name = default
-
-gen-certs:
-	cd nginx &&	mkdir -p certs
-	cd nginx/certs && mkcert *.radio.com
+	cp -R ./.snapshot/elasticsearch ./elasticsearch
+	cp -R ./.snapshot/redis ./redis
+	cp -R ./.snapshot/postgres ./postgres
+	docker load -i ./.snapshot/clay-radio_clay
 
 .PHONY: spa
 spa:
