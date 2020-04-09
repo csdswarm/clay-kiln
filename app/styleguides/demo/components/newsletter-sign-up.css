@@ -31,7 +31,8 @@
 }
 
 body > .newsletter-sign-up {
-  margin: 2em;
+  margin: 1em;
+  max-width: 780px;
 }
 
 .newsletter-sign-up {
@@ -139,6 +140,7 @@ body > .newsletter-sign-up {
     text-align: center;
     box-shadow: 0 em(-1, 11) em(6, 11) 0 $silverChalice;
     text-align: center;
+    z-index: 1;
     &[data-valid="false"] {
       display: block;
     }
@@ -190,6 +192,8 @@ body > .newsletter-sign-up {
     align-items: center;
     background: $white;
     border: 1px solid theme(primaryColor, $parisM);
+    text-align: center;
+    padding: em(24);
     #success-icon-group {
       fill: theme(primaryColor, $parisM);
     }
@@ -203,5 +207,74 @@ body > .newsletter-sign-up {
   }
   &__success-msg-text {
     @mixin newsletter-sign-up-font-8;
+  }
+}
+
+
+
+.newsletter-sign-up--layout-horizontal {
+  @mixin large-screen {
+    .newsletter-sign-up__form {
+      flex-wrap: wrap;
+    }
+    .newsletter-sign-up__form-group {
+      &--email {
+        flex: 0 0 60%;
+        margin-bottom: em(15);
+      }
+      &--zip {
+        flex: 0 0 40%;
+        padding-right: 0;
+        margin-bottom: em(15);
+      }
+      &--birthday {
+        flex: 0 0 60%;
+      }
+      &--submit {
+        flex: 0 0 40%;
+      }
+    }
+    .newsletter-sign-up__form-input-msg {
+      width: 50%;
+      left: 52%;
+      &:before {
+      }
+      &:after {
+      }
+    }
+  }
+  @mixin medium-small-screen {
+    .newsletter-sign-up__form {
+      flex-wrap: wrap;
+    }
+    .newsletter-sign-up__form-group {
+      flex: 0 0 100%;
+      padding-right: 0;
+      margin-bottom: em(15);
+      &--submit {
+        margin-bottom: 0;
+      }
+    }
+    .newsletter-sign-up__form-input-msg {
+      top: -2.272727em;
+      width: 85%;
+      left: 13%;
+      &:before {
+        top: em(39, 11);
+        right: calc(5% - em(4, 11));
+      }
+      &:after {
+        top: calc(100% - em(1));
+        transform: rotate(180deg);
+        right: 5%;
+      }
+    }
+  }
+}
+
+
+.newsletter-sign-up.newsletter-sign-up--layout-vertical {
+  @mixin large-screen {
+    outline: 2px solid red;
   }
 }
