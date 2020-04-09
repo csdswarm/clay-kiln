@@ -30,6 +30,7 @@ const
   { cleanUrl } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
+  { syndicationUrlPremap } = require('../syndication-utils'),
   { unityComponent } = require('../amphora'),
 
   log = logger.setup({ file: __filename }),
@@ -439,9 +440,8 @@ const
 
         data._computed = Object.assign(data._computed || {}, {
           [contentKey]: await Promise.all(
-            [...curated, ...content]
+            [...curated, ...content.map(syndicationUrlPremap(locals))]
               .slice(0, maxItems)
-              .map(syndicationUrlPremap(locals))
               .map(async (item) => mapResultsToTemplate(locals, item))),
           initialLoad: !pagination.page,
           moreContent: totalHits > maxItems
@@ -471,29 +471,7 @@ const
       return save(uri, data, locals);
     }
 
-  }),
-
-  /**
-   * for items that were retrieved through syndication/subscription, this replaces the canonicalUrl with
-   * the syndicationUrl, so hyperlinks stay on the current site.
-   *
-   * @param {object} locals
-   * @returns {function}
-   */
-  syndicationUrlPremap = locals => item => {
-    const { stationSlug = '', stationSyndication, ...newItem } = item;
-
-    if (!item.url && locals.station.site_slug !== stationSlug && stationSyndication) {
-      const { protocol, host } = new URL(item.canonicalUrl),
-        { syndicatedArticleSlug } = stationSyndication.find(({ stationSlug }) => stationSlug === locals.station.site_slug);
-
-      newItem.canonicalUrl = `${protocol}//${host}${syndicatedArticleSlug || ''}`;
-    }
-
-    return newItem;
-  }
-
-;
+  });
 
 module.exports = {
   recirculationData
