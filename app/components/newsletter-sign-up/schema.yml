@@ -10,3 +10,12 @@ layoutType:
   _has:
     input: inline
     type: text
+
+successTitle:
+  _has:
+    input: inline
+    type: text
+successMsg:
+  _has:
+    input: inline
+    type: text

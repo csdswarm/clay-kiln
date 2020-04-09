@@ -4,3 +4,6 @@ _components:
       new:
         title: Newsletter Sign Up
         layoutType: horizontal
+        successTitle: Thank you for subscribing to our newsletter!
+        # temp will need to set in comp
+        successMsg: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel nisl tempor, vehicula ipsum at, tristique est.
