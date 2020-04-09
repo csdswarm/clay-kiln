@@ -59,6 +59,18 @@ body > .newsletter-sign-up {
     &:last-of-type {
       padding-right: 0;
     }
+    &--email {
+      flex: 0 0 55%;
+    }
+    &--zip {
+      flex: 0 0 15%;
+    }
+    &--birthday {
+      flex: 0 0 15%;
+    }
+    &--submit {
+      flex: 0 0 15%;
+    }
   }
   &__form-input-label {
     position: relative;
@@ -99,6 +111,12 @@ body > .newsletter-sign-up {
       outline: none;
       padding: 0;
       text-transform: uppercase;
+      opacity: 0.75;
+      cursor: not-allowed;
+      &[data-valid="true"] {
+        opacity: 1;
+        cursor: pointer;
+      }
     }
   }
   &__form-input-msg {

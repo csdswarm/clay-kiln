@@ -40,7 +40,7 @@
     <span class="newsletter-sign-up__title-text">{{ title }}</span>
   </h3>
   <form method="POST" class="newsletter-sign-up__form" action="" novalidate>
-    <div class="newsletter-sign-up__form-group">
+    <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--email">
       {{> newsletterInput
         type="email"
         name="email"
@@ -49,7 +49,7 @@
         required=true
       }}
     </div>
-    <div class="newsletter-sign-up__form-group">
+    <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--zip">
       {{> newsletterInput
         type="text"
         name="zip"
@@ -58,16 +58,16 @@
         required=true
       }}
     </div>
-    <div class="newsletter-sign-up__form-group">
+    <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--birthday">
       {{> newsletterInput
         type="text"
         name="birthday"
-        label="Birthday - MM/DD/YYYY"
+        label="Birthday - mm/dd/yyyy"
         modifier="birthday"
         required=true
       }}
     </div>
-    <div class="newsletter-sign-up__form-group">
+    <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--submit">
       {{> newsletterInput type="Submit" name="Subscribe" value="Submit" modifier="submit" }}
     </div>
     <input type="hidden" name="importTemplateID" value="#"/>
