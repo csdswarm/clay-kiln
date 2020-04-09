@@ -122,7 +122,7 @@ class NewsletterSignUpView {
 
 class NewsletterSignUpCtrl {
   constructor(el) {
-    _bindAll(this, ['onMount', 'onDismount', 'onInputChange']);
+    _bindAll(this, ['onMount', 'onDismount', 'onInputChange', 'onSubmit']);
     this.view = new NewsletterSignUpView(el);
     this.model = new NewsletterSignUpModel();
     this.listeners = [];
@@ -144,13 +144,24 @@ class NewsletterSignUpCtrl {
     this.addListeners();
   }
   addListeners() {
-    this.view.elements.form.inputs.forEach(el => {
+    const viewElements = this.view.elements;
+
+    viewElements.form.inputs.forEach(el => {
       this.addEventListener({
         el,
         type: 'change',
         cb: this.onInputChange
       });
     });
+    this.addEventListener({
+      el: viewElements.form.el,
+      type: 'submit',
+      cb: this.onSubmit
+    });
+  }
+  onSubmit(e) {
+    e.preventDefault();
+    this.view.elements.container.classList.toggle(`${componentName}--success`);
   }
   onInputChange(e) {
     const
