@@ -87,7 +87,8 @@ class NewsletterSignUpView {
       container: el,
       form: {
         el: $(`.${formClass}`),
-        inputs: formInputs.map(input => $(`.${formInputClass}--${input}`))
+        inputs: formInputs.map(input => $(`.${formInputClass}--${input}`)),
+        submit: $(`.${formInputClass}--submit`)
       }
     };
   }
@@ -113,6 +114,9 @@ class NewsletterSignUpView {
       }
     });
     msgEl.innerHTML = msgHtml;
+  }
+  setSubmitState(isFormValid) {
+    this.elements.form.submit.dataset.valid = isFormValid;
   }
 }
 
@@ -162,6 +166,7 @@ class NewsletterSignUpCtrl {
     console.table(this.model.form.inputs);
     this.view.addInvalidMessages(e.target, inputIsValid, validationResults);
     this.view.checkForEmptyInput(inputEl);
+    this.view.setSubmitState(this.model.form.isValid());
   }
   onDismount() {
     document.removeEventListener(`${componentName}-mount`, this.onMount);
