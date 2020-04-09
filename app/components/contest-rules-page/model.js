@@ -9,7 +9,7 @@
 
 const { unityComponent } = require('../../services/universal/amphora');
 const db = require('amphora-storage-postgres');
-const defaultStation = require('../../services/startup/currentStation/default-station');
+const { DEFAULT_STATION: defaultStation } = require('../../services/universal/constants');
 const moment = require('moment');
 const maxAgeInDays = 31;
 const url = require('url');
