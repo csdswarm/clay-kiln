@@ -1,9 +1,9 @@
 'use strict';
 
 const addPermissions = require('../universal/user-permissions'),
+  { unityAppDomainName } = require('../universal/urps'),
   log = require('../universal/log').setup({ file: __filename }),
   whenRightDrawerExists = require('./when-right-drawer-exists'),
-  { setEachToDisplayNone } = require('../client/dom-helpers'),
   preloadTimeout = 5000,
   KilnInput = window.kiln.kilnInput,
   PRELOAD_SUCCESS = 'PRELOAD_SUCCESS',
@@ -113,7 +113,6 @@ const addPermissions = require('../universal/user-permissions'),
   secureAllSchemas = () => {
     window.kiln = window.kiln || {};
     window.kiln.componentKilnjs = window.kiln.componentKilnjs || {};
-
     window.kiln.locals.components
       .forEach(component => {
         const kilnjs = getKilnJs(component);
@@ -125,26 +124,51 @@ const addPermissions = require('../universal/user-permissions'),
    * hides the 'publish' or 'unpublish' button if the user does not
    *   have permissions
    *
-   * @param {object} schema - only used because KilnInput requires it
+   * @param {object} schema
+   * @param {object} opts
+   * @param {boolean} opts.checkStationAccess - determines whether this method should
+   *   only enforce publish rights based off station access.  This makes sense
+   *   for content types which allow all roles to publish such as article
+   *   and gallery.
    **/
-  publishRights = (schema) => {
-    const subscriptions = new KilnInput(schema),
-      whenPreloadedPromise = whenPreloaded(subscriptions);
+  enforcePublishRights = (schema, { checkStationAccessFor }) => {
+    const { schemaName } = schema,
+      kilnInput = new KilnInput(schema),
+      whenPreloadedPromise = whenPreloaded(kilnInput);
 
-    whenRightDrawerExists(subscriptions, async rightDrawerEl => {
+    whenRightDrawerExists(kilnInput, async rightDrawerEl => {
       const { locals } = await whenPreloadedPromise,
-        hasAccess = locals.user.hasPermissionsTo('access').this('station');
+        { site_slug } = locals.stationForPermissions,
+        hasAccess = !!locals.stationsIHaveAccessTo[site_slug],
+        getCan = publishOrUnpublish => {
+          // if a user doesn't have station access then the subsequent un/publish
+          //   checks will fail
+          if (checkStationAccessFor[publishOrUnpublish]) {
+            return hasAccess;
+          } else if (schemaName === 'homepage') {
+            return locals.user.can(publishOrUnpublish).a(schemaName).for(unityAppDomainName).value;
+          } else {
+            return locals.user.can(publishOrUnpublish).a(schemaName).value;
+          }
+        },
+        canPublish = getCan('publish'),
+        canUnpublish = getCan('unpublish');
 
-      if (hasAccess) {
+      if (canPublish && canUnpublish) {
         return;
       }
 
-      // these shouldn't be declared above the short circuit
+      // shouldn't be declared above the short circuit
       // eslint-disable-next-line one-var
       const publishBtn = rightDrawerEl.querySelector('.publish-actions > button'),
         unpublishBtn = rightDrawerEl.querySelector('.publish-status > button');
 
-      setEachToDisplayNone([publishBtn, unpublishBtn]);
+      if (!canPublish && publishBtn) {
+        publishBtn.style.display = 'none';
+      }
+      if (!canUnpublish && unpublishBtn) {
+        unpublishBtn.style.display = 'none';
+      }
     });
   },
   /**
@@ -172,9 +196,9 @@ const addPermissions = require('../universal/user-permissions'),
 addPermissions(window.kiln.locals);
 
 module.exports = {
+  enforcePublishRights,
+  secureAllSchemas,
   secureField,
   secureSchema,
-  secureAllSchemas,
-  publishRights,
   simpleListRights
 };

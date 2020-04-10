@@ -4,13 +4,14 @@ const { join } = require('path'),
   { lstatSync, readdirSync } = require('fs'),
   { isComponent } = require('clayutils'),
   _get = require('lodash/get'),
-  defaultStation = require('./default-station'),
+  { DEFAULT_STATION } = require('../../universal/constants'),
   getSlugFrom = require('./get-slug-from'),
   { getFullOriginalUrl, isContentComponent } = require('../../universal/utils'),
   isDirectory = source => lstatSync(source).isDirectory(),
   getDirectories = source =>
     readdirSync(source).map(name => join(source, name)).filter(isDirectory),
   publicDirs = getDirectories('./public/').map(dir => dir.replace('public', '')),
+  rdcSlug = DEFAULT_STATION.site_slug,
   /**
    * determines if the path is valid for station information
    * invalid paths are as follows:
@@ -112,15 +113,15 @@ const { join } = require('path'),
       // this ternary accounts for the unlikely scenario 'null' is a
       //   station slug
       station = stationSlug.forCommonUse
-        ? _get(allStations, `bySlug[${stationSlug.forCommonUse}]`, defaultStation)
-        : defaultStation;
+        ? _get(allStations, `bySlug[${stationSlug.forCommonUse}]`, DEFAULT_STATION)
+        : DEFAULT_STATION;
 
     let stationForPermissions = null;
 
     if (stationSlug.forPermissions) {
       stationForPermissions = allStations.bySlug[stationSlug.forPermissions];
-    } else if (stationSlug.forPermissions === '') {
-      stationForPermissions = defaultStation;
+    } else if (stationSlug.forPermissions === rdcSlug) {
+      stationForPermissions = DEFAULT_STATION;
     }
 
     Object.assign(locals, {

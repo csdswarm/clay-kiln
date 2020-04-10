@@ -1,16 +1,11 @@
-<div class="component-events-list events-list"  data-uri="{{ default _ref _self }}">
+<div class="component component--events-list events-list"  data-uri="{{ default _ref _self }}" data-load-more-amount="{{ loadMoreAmount }}">
   {{#if @root.locals.edit}}
     <div data-editable="curatedEvents"></div>
   {{/if}}
-  {{#each _computed.events as |event|}}
-    {{> content-card event _self=true }}
-  {{/each}}
-  {{#if moreContent}}
-    {{!-- add load more button here, example: --}}
-    {{!-- <li class="links__link--loadmore"
-      <button class="more-content-feed__loadmore">
-        <div class="loadmore__text">Load More</div>
-      </button>
-    </li> --}}
-  {{/if}}
+  <div class="events-list__cards">
+    {{#each _computed.events as |event|}}
+      {{> content-card event _self=true }}
+    {{/each}}
+  </div>
+  <button class="events-list__load-more-btn" id="events-list-load-more-button">Load More</button>
 </div>

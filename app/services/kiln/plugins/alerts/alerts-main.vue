@@ -13,7 +13,11 @@
                 v-for="tab in tabs">
             </ui-tab>
             <div class="alerts-manager__toolbar">
-                <ui-button @click="newAlert">Add Alert</ui-button>
+                <ui-button class="alerts-manager__add-alert"
+                    @click="newAlert">
+
+                    Add Alert
+                </ui-button>
                 <station-select v-show="!global"
                     class="alerts-manager__station-select" />
             </div>
@@ -141,8 +145,10 @@
     const _get = require('lodash/get');
     const { mapGetters } = require('vuex');
     const { isUrl } = require('../../../universal/utils');
+    const { unityAppDomainName: unityApp } = require('../../../universal/urps');
     const stationSelect = require('../../shared-vue-components/station-select');
     const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
+    const { getAlerts } = require('../../../client/alerts');
     const {
         UiButton,
         UiCheckbox,
@@ -153,8 +159,7 @@
         UiTabs,
         UiTab,
         UiTextbox,
-        UiModal,
-        UiSelect } = window.kiln.utils.components;
+        UiModal } = window.kiln.utils.components;
 
     /**
      * Simple cache-buster value to append to rest URL's to ensure they get the latest version of data
@@ -181,18 +186,12 @@
                 errorMessage: '',
                 selectedAlert: {},
                 tab: 'global',
-                tabs: [{
-                    id: 'global',
-                    name: 'Global'
-                }, {
-                    id: 'station',
-                    name: 'Station'
-                }],
                 validLinkError: ''
             }
         },
-        /** Load current alerts when component is created */
-        created() {
+        /** Load current alerts, load callsigns, and set default tab when component is created */
+        async created() {
+            this.tab = this.tabs[0].id;
             this.loadAlerts();
         },
         watch: {
@@ -220,15 +219,21 @@
                 station() {
                     return this.global ? 'GLOBAL' : this.selectedStation.callsign;
                 },
-                stationCallsigns() {
-                    const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
+                tabs() {
+                    const { user, stationsIHaveAccessTo } = kiln.locals,
+                        tabs = [],
+                        hasGlobalAlertPermissions = user.can('create').a('global-alert').for(unityApp).value
+                            || user.can('update').a('global-alert').for(unityApp).value;
 
-                    return allStationCallsigns.concat('NATL-RC')
-                        .sort()
-                        .map(station => ({
-                            label: station === 'NATL-RC' ? 'Radio.com' : station,
-                            value: station
-                        }));
+                    if (hasGlobalAlertPermissions) {
+                        tabs.push({ id: 'global', name: 'Global' });
+                    }
+
+                    if (Object.keys(stationsIHaveAccessTo).length) {
+                        tabs.push({ id: 'station', name: 'Station' });
+                    }
+
+                    return tabs;
                 },
                 /** True if all required fields are entered */
                 validForm() {
@@ -340,7 +345,10 @@
                     this.alerts = [];
                 } else {
                     this.loading = true;
-                    const {data = []} = await axios.get('/alerts', {params: {station: this.station, ...cb()}});
+                    const data = await getAlerts({
+                        station: this.station,
+                        ...cb()
+                    });
 
                     this.loading = false;
                     this.alerts = data;
@@ -386,7 +394,6 @@
             UiTab,
             UiTextbox,
             UiModal,
-            UiSelect,
             'station-select': StationSelectInput
         }
     }

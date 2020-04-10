@@ -7,26 +7,42 @@ const _ = require('lodash'),
     : window.location.protocol;
 
 /**
-* Returns an item's id by extracting it from the uri
-*
-* @param {String} uri
-* @returns {String}
-*/
-function getItemId(uri) {
-  return uri.split('/').slice(-1)[0]
-    // clay appends this to published item uris so we want to exclude this
-    .replace('@published', '');
-};
+ * SearchOpts - options which modify the behavior of elasticsearch
+ *
+ * shouldDedupeContent determines whether elasticsearch should use
+ *   locals.loadedIds to filter out results.  A warning will be logged if this
+ *   property is not passed.  The reason for this is there's no great way to
+ *   determine whether content should be deduped without explicitly stating it.
+ *
+ * transformResult has the signature ({object} formattedResult, {object} rawResult) => {object} updatedFormattedResult
+ *   its purpose is to transform the formatted result into something you need.
+ *   I used it in more-content-feed/model.js to return whether more content existed.
+ *
+ * @typedef {object} SearchOpts
+ * @property {boolean} includeIdInResult - includes '_id' in the formatted result
+ * @property {boolean} shouldDedupeContent - see above for explanation
+ * @property {function} transformResult - see above for the signature and explanation
+ */
 
 /**
- * @param {object} result
- * @returns {Array}
+ * Returns a function which formats the search results based off the search
+ *   options.  Specifically if the option 'includeIdInResult' is truthy, then
+ *   each hit's '_id' is assigned to its '_source' object.
+ *
+ * @param {SearchOpts} [searchOpts] - see typedef above
+ * @returns {function}
  */
-function formatSearchResult(result) {
-  return result.hits.hits.map(({ _source, _id: uri }) => ({
-    ..._source,
-    itemId: getItemId(uri)
-  }));
+function getFormatSearchResult(searchOpts = {}) {
+  return result => {
+    if (!searchOpts.includeIdInResult) {
+      return _.map(result.hits.hits, '_source');
+    }
+
+    return result.hits.hits.map(hit => {
+      hit._source._id = hit._id;
+      return hit._source;
+    });
+  };
 }
 
 /**
@@ -98,7 +114,7 @@ function newQuery(index, query) {
  * @return {Object}
  */
 function createAction(query, item, action) {
-  const key = `${getRoot(query)}.query.bool.${action}`,
+  const key = `${ getRoot(query) }.query.bool.${ action }`,
     data = _.get(query, key, undefined),
     itemIsArray = _.isArray(item);
 
@@ -113,7 +129,7 @@ function createAction(query, item, action) {
     if (itemIsArray) {
       _.set(query, key, item);
     } else {
-      _.set(query, key, [item]);
+      _.set(query, key, [ item ]);
     }
   }
 
@@ -166,7 +182,7 @@ function addMustNot(query, item) {
  * @return {Object}
  */
 function addFilter(query, item) {
-  const key = `${getRoot(query)}.query.bool.filter`,
+  const key = `${ getRoot(query) }.query.bool.filter`,
     filter = _.get(query, key, undefined);
 
   if (!_.isObject(item)) {
@@ -178,7 +194,7 @@ function addFilter(query, item) {
       filter.push(item);
       _.set(query, key, filter);
     } else {
-      _.set(query, key, [ _.cloneDeep(filter), item ] );
+      _.set(query, key, [ _.cloneDeep(filter), item ]);
     }
   } else {
     _.set(query, key, item);
@@ -199,7 +215,7 @@ function addFilter(query, item) {
  * @return {Object}
  */
 function addMinimumShould(query, num) {
-  const key = `${getRoot(query)}.query.bool.minimum_should_match`;
+  const key = `${ getRoot(query) }.query.bool.minimum_should_match`;
 
   if (typeof num !== 'number') {
     throw new Error('A number is required as the second argument');
@@ -245,7 +261,7 @@ function addSize(query, size) {
   }
   size = parseInt(size);
   if (isNaN(size)) {
-    throw new Error(`Second argument must be a number: ${size}`);
+    throw new Error(`Second argument must be a number: ${ size }`);
   }
   return _.set(query, 'body.size', size);
 }
@@ -319,7 +335,7 @@ function withinThisSiteAndCrossposts(query, site) {
  */
 function moreLikeThis(query, id, opts) {
   const defaultOpts = {
-    fields: ['tags'],
+    fields: [ 'tags' ],
     like: {
       _index: query.index, // prefixed index name
       _type: '_doc',
@@ -370,7 +386,7 @@ function addAggregation(query = {}, options) {
  */
 function formatAggregationResults(aggregationName = '', field = '', skipEmpty = true) {
   return function (results = {}) {
-    let parsedData = _.get(results, `aggregations.${aggregationName}.buckets`, []);
+    let parsedData = _.get(results, `aggregations.${ aggregationName }.buckets`, []);
 
     if (skipEmpty) {
       parsedData = parsedData.filter(result => _.get(result, 'doc_count', 0) !== 0);
@@ -394,9 +410,45 @@ function newNestedQuery(path) {
   return {
     nested: {
       path,
-      query: { }
+      query: {}
     }
   };
+}
+
+/**
+ * This method exists because the only difference between the client and server
+ *   'searchByQuery' calls is the searchByQueryWithRawResult, which those now
+ *   pass in.
+ *
+ * @param  {Object} query
+ * @param  {Object} locals
+ * @param  {Object} opts - see server/query.js for opts description
+ * @param  {function} searchByQueryWithRawResult - a reference to the function
+ *   found in either client or server query.js
+ * @return {Promise}
+ */
+function searchByQuery(query, locals, opts, searchByQueryWithRawResult) {
+  const formatSearchResult = getFormatSearchResult(opts);
+
+  return searchByQueryWithRawResult(query, locals, opts)
+    .then(rawResult => {
+      let formattedResult = formatSearchResult(rawResult);
+
+      formattedResult = formatProtocol(formattedResult);
+
+      if (!opts.transformResult) {
+        return formattedResult;
+      }
+
+      return opts.transformResult(formattedResult, rawResult);
+    })
+    .catch(originalErr => {
+      const err = originalErr instanceof Error
+        ? originalErr
+        : new Error(originalErr);
+
+      return Promise.reject(err);
+    });
 }
 
 /**
@@ -409,15 +461,15 @@ function newNestedQuery(path) {
  * @return {Object}
  */
 function addSearch(query, searchTerm, fields) {
-  const key = `${getRoot(query)}.query`,
+  const key = `${ getRoot(query) }.query`,
     value = {
       query_string: {
         query: sanitizeSearchTerm(searchTerm),
-        fields: _.isArray(fields) ? fields : [fields]
+        fields: _.isArray(fields) ? fields : [ fields ]
       }
     };
 
-  _.set(query, key,  value);
+  _.set(query, key, value);
 
   return query;
 }
@@ -435,26 +487,72 @@ function sanitizeSearchTerm(searchTerm) {
   return searchTerm.replace(/([\/|:])/g, '\\$1');
 }
 
+/**
+ * wraps a key and value in an elastic search match object that searches for both the initial value as well as lowercase
+ * @param {string} key
+ * @param {string} value
+ * @returns {{bool: {should: [{match: {}}, {match: {}}], minimum_should_match: number}}}
+ */
+function matchIgnoreCase(key, value) {
+  return {
+    bool: {
+      should: [
+        matchSimple(key, value),
+        matchSimple(key, value.toLowerCase())
+      ],
+      minimum_should_match: 1
+    }
+  };
+}
+
+/**
+ * wraps a key and value in an elastic search match object
+ * @param {string} key
+ * @param {string} value
+ * @returns {{match: {}}}
+ */
+function matchSimple(key, value) {
+  return { match: { [key]: value } };
+}
+
+/**
+ * wraps a key and set of values in an elastic search terms object
+ * @param {string} key
+ * @param {string[]} values
+ * @returns {{terms: {}}}
+ */
+function terms(key, values) {
+  return {
+    terms: {
+      [key]: values
+    }
+  };
+}
+
 module.exports = newQuery;
 
 Object.assign(module.exports, {
   addAggregation,
-  addShould,
   addFilter,
+  addMinimumShould,
   addMust,
   addMustNot,
-  addMinimumShould,
-  addSort,
-  addSize,
   addOffset,
-  onlyWithTheseFields,
-  onlyWithinThisSite,
-  withinThisSiteAndCrossposts,
+  addSearch,
+  addShould,
+  addSize,
+  addSort,
   formatAggregationResults,
-  formatSearchResult,
   formatProtocol,
+  getFormatSearchResult,
+  matchIgnoreCase,
+  matchSimple,
   moreLikeThis,
   newNestedQuery,
-  addSearch,
-  sanitizeSearchTerm
+  onlyWithinThisSite,
+  onlyWithTheseFields,
+  sanitizeSearchTerm,
+  searchByQuery,
+  terms,
+  withinThisSiteAndCrossposts
 });

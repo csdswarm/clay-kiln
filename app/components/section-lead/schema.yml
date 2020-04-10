@@ -1,11 +1,15 @@
-_version: 5.0
+_version: 6.0
 primaryStoryLabel:
   _label: Primary Lede Label
   _has:
     input: text
     validate:
       max: 80
-    help: Label for the top lede story. Eg. 'Exclusive'
+    help: Label for the top lede story. Eg. 'Exclusive'. Overrides article label & section front of story if exists.
+  _reveal:
+    field: _computed.useContentLabel
+    operator: falsy
+
 
 contentType:
   _label: Content type
@@ -32,6 +36,14 @@ items:
           input: content-search
           validate:
             required: true
+      -
+        prop: overrideLabel
+        _label: Label Override
+        _has:
+          input: text
+          validate:
+            max: 80
+          help: Overrides section front of story if exists. If 'Primary Lede Label' field is filled, this label is ineffective.
       -
         prop: overrideTitle
         _label: Headline Override

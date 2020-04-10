@@ -1,7 +1,7 @@
 'use strict';
 
 const assignStationsToLocals = require('./assign-stations-to-locals'),
-  defaultStation = require('./default-station'),
+  { DEFAULT_STATION } = require('../../universal/constants'),
   stationUtils = require('../../server/station-utils'),
   { wrapInTryCatch } = require('../middleware-utils');
 
@@ -20,7 +20,7 @@ module.exports = wrapInTryCatch(async (req, res, next) => {
 
   Object.assign(locals, {
     allStationsCallsigns: Object.keys(allStations.byCallsign),
-    defaultStation
+    defaultStation: DEFAULT_STATION
   });
 
   return next();

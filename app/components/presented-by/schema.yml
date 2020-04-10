@@ -23,7 +23,7 @@ presenters:
         prop: name
         _label: Name of presenter
         _has:
-          help: Used for alt text on the logo image
+          help: Used for link text and/or alt text on the logo image
           input: text
           validate:
             required: true
@@ -32,11 +32,9 @@ presenters:
         _label: Presenter's Logo
         _has:
           input: advanced-image-upload
-          uploadLabel: Upload Image Attachment
+          uploadLabel: Upload Image Attachment (optional)
           uploadHelp: Choose an image file from your computer
           maxEditorDisplayHeight: 120px
-          validate:
-            required: true
       -
         prop: url
         _label: URL to link to the Presenter's website
@@ -44,7 +42,6 @@ presenters:
           input: text
           type: url
           validate:
-            required: true
             # Using pattern from article/stationURL
             pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
             patternMessage: Must be a valid URL including the "http://" or "https://"

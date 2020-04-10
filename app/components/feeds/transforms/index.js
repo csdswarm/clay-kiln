@@ -1,11 +1,14 @@
 'use strict';
 
-// module.exports['msn-article'] = require('./msn-article');
-// module.exports['msn-gallery'] = require('./msn-gallery');
-module.exports['rss-article'] = require('./article');
-// module.exports['atom-article'] = require('./atom-article');
-// module.exports['rss-google-newsstand-article'] = require('./google-newsstand-article');
-// module.exports['rss-lede-video'] = require('./lede-video');
-// module.exports['rss-amazon-article'] = require('./amazon-article');
-// module.exports['sailthru-article'] = require('./sailthru-article');
-// module.exports['rss-apple-homepod'] = require('./apple-homepod');
+/**
+ * note: some unused files and commented code was removed here.  Check the git
+ *   history if you want to know whether something was previuosly written that
+ *   you want to base your code off of.
+ */
+
+module.exports = {
+  'gnf-article': require('./gnf-article'),
+  'msn-article': require('./msn-article'),
+  'rss-article': require('./article'),
+  'smart-news-content': require('./smart-news-content')
+};

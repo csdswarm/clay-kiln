@@ -30,10 +30,11 @@ subscribe('unpublishPage').through(unpublishPage);
  */
 function getContent(obj, param, components, transform = (data) => data) {
   const content = obj[param],
-    getData = (ref) => components.find(item => item.key === ref).value;
+    getData = (ref) => components.find(item => item.key === ref).value,
+    addData = (component) => ({ ...component, data: transform(getData(component._ref)) });
 
-  // loop through all items and add a key with the value of the ref
-  obj[param] = content.map((component) => ({ ...component, data: transform(getData(component._ref)) }));
+  // add a key with the data to each ref object
+  obj[param] = Array.isArray(content) ? content.map(addData) : addData(content);
 
   // return a new copy
   return { ...obj };
@@ -74,8 +75,11 @@ function getSlideEmbed(slides, components) {
 function processContent(obj, components) {
   obj.value = getContent(obj.value, 'lead', components);
   obj.value = getContent(obj.value, 'content', components);
+  obj.value = getContent(obj.value, 'tags', components);
 
-  if (obj.key.includes('gallery')) {
+  if (obj.key.includes('article')) {
+    obj.value = getContent(obj.value, 'feedImg', components);
+  } else if (obj.key.includes('gallery')) {
     obj.value = getContent(obj.value, 'slides', components);
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
 
@@ -86,6 +90,31 @@ function processContent(obj, components) {
   obj.value.dateModified = obj.value.dateModified || (new Date()).toISOString();
 
   return obj;
+}
+
+/**
+ * Transforms authors and tags objects into display names.
+ * This must be done because ElasticSearch expects an array of strings for tags and authors, which should be their display names.
+ *
+ * @param {object} op
+ * @returns {object}
+ */
+function transformAuthorsAndTags(op) {
+  const extractText = obj => obj.text;
+
+  if (op.value.authors) {
+    op.value.authors = op.value.authors.map(extractText);
+  }
+
+  if (op.value.tags) {
+    const data = JSON.parse(op.value.tags.data);
+
+    if (data && data.items) {
+      op.value.tags = data.items.map(extractText);
+    }
+  }
+
+  return op;
 }
 
 function save(stream) {
@@ -106,6 +135,7 @@ function save(stream) {
     .map(helpers.parseOpValue) // resolveContent is going to parse, so let's just do that before hand
     .map(obj => processContent(obj, components))
     .map(stripPostProperties)
+    .map(transformAuthorsAndTags)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
     .tap(() => components = []) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()

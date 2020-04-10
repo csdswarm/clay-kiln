@@ -17,12 +17,13 @@ const { unityComponent } = require('../../services/universal/amphora'),
   ],
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   utils = require('../../services/universal/utils'),
-  { urlToElasticSearch } = utils;
+  { urlToElasticSearch } = utils,
+  { assignStationInfo } = require('../../services/universal/create-content.js');
 
 /**
  * Gets event data from elastic by querying with event url
  *
- * @param {Object} event
+ * @param {Object} data
  * @param {Object} locals
  * @returns {Promise<{
  *  url: string,
@@ -34,28 +35,30 @@ const { unityComponent } = require('../../services/universal/amphora'),
  *  feedImgUrl: string,
  * }[]>}
  */
-async function getEventDataFromElastic(event, locals) {
+async function getEventDataFromElastic(data, locals) {
   const query = queryService.newQueryWithCount(elasticIndex, 1, locals),
     canonicalUrl = utils.urlToCanonicalUrl(
-      urlToElasticSearch(event.url)
+      urlToElasticSearch(data.ledeUrl)
     );
 
   queryService.addFilter(query, { term: { canonicalUrl } });
   queryService.addFilter(query, { term: { contentType: 'event' } });
-  if (locals && locals.station.callsign !== locals.defaultStation.callsign) {
-    queryService.addMust(query, { match: { station: locals.station } });
+  if (data.stationSlug) {
+    queryService.addMust(query, { match: { stationSlug: data.stationSlug } });
+  } else {
+    queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
   }
   queryService.onlyWithTheseFields(query, elasticFields);
   return queryService.searchByQuery(query)
     .then(function (result) {
       return {
         ...result[0],
-        url: event.url.replace(/^http:/, protocol)
+        url: data.ledeUrl.replace(/^http:/, protocol)
       };
     })
     .catch(e => {
-      queryService.logCatch(e, event.url);
-      return event;
+      queryService.logCatch(e, data.ledeUrl);
+      return { url: data.ledeUrl };
     });
 }
 
@@ -77,7 +80,8 @@ module.exports = unityComponent({
       return data;
     }
 
-    data.lede = await getEventDataFromElastic({ url: data.ledeUrl }, locals);
+    assignStationInfo(uri, data, locals);
+    data.lede = await getEventDataFromElastic(data, locals);
 
     return data;
   }

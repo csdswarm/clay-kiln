@@ -1,7 +1,0 @@
-_components:
-  image-gallery:
-    images: []
-    hideGrid: false
-    desktopGridAd: {}
-    tabletAd: {}
-    mobileAd: {}

@@ -2,7 +2,11 @@ _components:
   events-list:
     events: []
     curatedEvents: []
+    numberToDisplay: 30
+    loadMoreAmount: 10
     instances:
       new:
         events: []
         curatedEvents: []
+        numberToDisplay: 30
+        loadMoreAmount: 10

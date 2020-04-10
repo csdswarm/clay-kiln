@@ -1,0 +1,7 @@
+_components:
+  multi-column:
+    col1: []
+    col2: []
+    col3: []
+    mediumRectangleTop:
+      _ref: /_components/google-ad-manager/instances/mediumRectangleTop

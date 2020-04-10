@@ -37,7 +37,7 @@ module.exports = {
       daysSincePublish = differenceInCalendarDays(dateFormat(now), dateFormat(firstPublishTime || now));
 
     if (daysSincePublish < 2 && hasTargetTag && googleStandout && !googleStandout.active) {
-      return circulationService.getRollingStandoutArticles(state.locals).then(function (queryResult) {
+      return circulationService.getRollingStandoutArticles(state.locals, { shouldDedupeContent: false }).then(function (queryResult) {
         if (queryResult.length < 7) {
           return [
             {

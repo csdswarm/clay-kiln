@@ -1,10 +1,9 @@
 'use strict';
 
-const addStationNoteToCustomUrl = require('../../services/kiln/add-station-note-to-custom-url'),
-  KilnInput = window.kiln.kilnInput;
+const applyContentLogic = require('../../services/kiln/apply-content-logic');
 
-module.exports = schema => {
-  addStationNoteToCustomUrl(new KilnInput(schema));
+module.exports = (schema) => {
+  applyContentLogic(schema);
 
   return schema;
 };

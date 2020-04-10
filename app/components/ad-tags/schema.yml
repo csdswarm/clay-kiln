@@ -21,3 +21,6 @@ items:
       list: ad-tags
       allowRemove: true
       allowCreate: true
+  _list_permission:
+    create: create
+    remove: remove

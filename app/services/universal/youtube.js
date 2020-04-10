@@ -32,7 +32,7 @@ function getVideoDetails(contentId, isPlaylist = false) {
       { duration: getDurationInSeconds(_get(res, 'items[0].contentDetails.duration', 0)) }
     ))
     .catch(err =>
-      log('error', `Error fetching details for video or playlist with id ${contentId}: ${err.message}`)
+      log('error', `Error fetching details for video or playlist with id ${contentId}: ${err.stack}`)
     );
 }
 

@@ -1,0 +1,51 @@
+{{- if .Values.ingress.enabled }}
+{{- $fullName := include "clay-radio.fullname" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "clay-radio.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "clay-radio.name" . }}
+    helm.sh/chart: {{ include "clay-radio.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+{{ toYaml .Values.ingress.annotations | indent 4 }}
+spec:
+  tls:
+    - secretName: {{ $fullName }}-cert
+      hosts:
+      {{- range .Values.ingress.hostedZones }}
+      - {{ include "clay-radio.sanitizedPrefix" $ }}{{ . }}
+      {{- end }}
+      {{- range .Values.ingress.staticDomains }}
+      - {{ . }}
+      {{- end }}
+  rules:
+    {{- range .Values.ingress.hostedZones }}
+    - host: {{ include "clay-radio.sanitizedPrefix" $ }}{{ . }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ $fullName }}
+              servicePort: http
+    {{- end }}
+    {{- range .Values.ingress.staticDomains }}
+    - host: {{ . }}
+      http:
+        paths:
+          - backend:
+              serviceName: {{ $fullName }}
+              servicePort: http
+    {{- end }}
+## add the public-facing DNS name used for the application as an accepted hostname
+## this needs to match whatever Fastly is using for its custom header's hostname value
+## for now, the healthCheckDomain of dev-clay-k8s.radio.com works.
+## should likely be changed during cutover to dev-clay.radio-dev.com
+    - host: {{ .Values.ingress.healthCheckDomain }}
+      http:
+        paths:
+        - backend:
+            serviceName: {{ $fullName }}
+            servicePort: http
+{{ end }}

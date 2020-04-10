@@ -2,6 +2,7 @@
 
 @import "_global/fonts";
 @import "_global/colors";
+@import "_global/mixins";
 
 .paragraph,
 .paragraph ol li,

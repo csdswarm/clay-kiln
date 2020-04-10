@@ -8,3 +8,4 @@ _components:
     contentType: { article: true, gallery: true }
     googleAdRightRail:
       _ref: /_components/google-ad-manager/instances/halfPageTop
+    primaryStoryLabel: ''

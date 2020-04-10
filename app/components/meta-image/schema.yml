@@ -2,18 +2,20 @@ _version: 1.0
 _description: |
   Receives an image and renders it in the head
 
-_permission:
-  update: section-front_meta-tags
-
-imageUrl:
-  _label: Image Url
+defaultImageUrl:
   _subscribe:
     - pageMetaImage
     - feedImgUrl
+
+imageUrl:
+  _label: Image Url
   _has:
-    input: text
+    input: default-text-with-override
     type: url
-    help: URL of an image to show in the feeds. Usually the first image in an article.
+    defaultField: defaultImageUrl
+    permissionToOverride:
+      update: meta-tags
+    help: This value will be the page's meta image or content's feed image.
 
 _groups:
   settings:

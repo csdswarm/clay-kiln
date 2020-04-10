@@ -75,7 +75,7 @@ async function handlePublishContentPg(page) {
         }
       }
     } catch (e) {
-      log('error', `Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);
+      log('error', `APPLE NEWS LOG -- Error hitting apple news api on pub: ${ e.message } ${ e.stack }`);
       if (e.message === '404: Not Found') {
         await db.del(appleNewsKey);
       }
@@ -117,7 +117,7 @@ async function handleUnpublishContentPg(page) {
 
     }
   } catch (e) {
-    log('error', `Error hitting apple news api on unpub: ${ e.message } ${ e.stack }`);
+    log('error', `APPLE NEWS LOG -- Error hitting apple news api on unpub: ${ e.message } ${ e.stack }`);
   }
 };
 

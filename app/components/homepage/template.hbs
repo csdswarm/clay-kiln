@@ -1,11 +1,5 @@
 <section role="main" data-track-type="homepage" data-uri="{{ default _ref _self }}" class="component component--homepage{{ if @root.locals.edit ' editing' }}">
-  {{> latest-content latestContent }}
-  <div class="stations-carousel-container" data-editable="stationsCarousel">
-    {{> component-list stationsCarousel }}
+  <div class="homepage__main-content" data-editable="mainContent">
+    {{> component-list mainContent }}
   </div>
-  {{> google-ad-manager googleAdUnderStationsModule }}
-  {{> podcast-list podcastList }}
-  {{> latest-videos latestVideos }}
-  {{> google-ad-manager googleAdUnderLatestModule }}
-  {{> more-content-feed moreContentFeed }}
 </section>

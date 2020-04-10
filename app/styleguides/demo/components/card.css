@@ -1,0 +1,30 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+
+.component--card.card {
+  @mixin card-font1;
+  display: block;
+  text-decoration: none;
+  padding: em(10, 14) 0;
+  border-bottom: 1px solid $60gray;
+  &--first {
+    padding-top: 0;
+  }
+  &--last {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  @mixin medium-screen {
+    @mixin card-font2;
+    padding: em(12, 20) 0;
+    &--first {
+      padding-top: 0;
+    }
+    &--last {
+      padding-bottom: 0;
+    }
+  }
+}

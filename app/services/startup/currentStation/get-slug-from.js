@@ -11,6 +11,7 @@ const _get = require('lodash/get'),
     isContentComponent,
     urlToUri
   } = require('../../universal/utils'),
+  { DEFAULT_STATION } = require('../../universal/constants'),
   rdcRoutes = rdcRouteObjs.map(obj => pathToRegexp(obj.path)),
   // these are a hardcoded version of amphora v7.5.2 lib/routes.js line 21
   //   also '_users' added.  There may be more but we can add them when
@@ -23,6 +24,7 @@ const _get = require('lodash/get'),
     '/_uris',
     '/_users'
   ],
+  rdcSlug = DEFAULT_STATION.site_slug,
   /**
    * a helper method which assigns uninitialized station slug properties in the
    *   to the slug which was found.
@@ -56,7 +58,7 @@ const _get = require('lodash/get'),
   },
   /**
    * fetches the main component from the page associated with the uri, and
-   *   returns its 'stationSlug' property or an empty string
+   *   returns its 'stationSlug' property or the rdc slug
    *
    * @param {string} uri - note this is a clay _uri i.e. an id of the 'uris' table
    * @returns {string}
@@ -67,19 +69,19 @@ const _get = require('lodash/get'),
         pageData = await db.get(pageUri),
         mainComponentData = await db.get(pageData.main[0]);
 
-      return mainComponentData.stationSlug || '';
+      return mainComponentData.stationSlug || rdcSlug;
     } catch (err) {
       logUnexpectedDbError(uri, err);
     }
 
     // if the uri, page or main component doesn't exist then there's not much
     //   we can do other than return the default station slug
-    return '';
+    return rdcSlug;
   },
   /**
    * fetches the main component's data in the page and returns the 'stationSlug'
-   *   property or an empty string.  If the page wasn't found or it didn't
-   *   contain main content 'null' is returned to indicate a station couldn't
+   *   property or the rdc slug.  If the page wasn't found or it didn't contain
+   *   main content 'null' is returned to indicate a station couldn't
    *   be determined.
    *
    * @param {string} uri - the page uri
@@ -89,7 +91,7 @@ const _get = require('lodash/get'),
     let mainComponentUri;
 
     try {
-      mainComponentUri = _get(await db.get(uri), 'main[0]', '');
+      mainComponentUri = _get(await db.get(uri), 'main[0]', rdcSlug);
     } catch (err) {
       logUnexpectedDbError(uri, err);
     }
@@ -99,33 +101,31 @@ const _get = require('lodash/get'),
       : null;
   },
   /**
-   * fetches the component data and returns the 'stationSlug' property or an
-   *   empty string.  If the component isn't found or an error occurrs fetching
-   *   the component we return 'null' to indicate a station couldn't
-   *   be determined.
+   * fetches the component data and returns the 'stationSlug' property or the
+   *   rdc slug.  If the component isn't found or an error occurrs fetching the
+   *   component we return 'null' to indicate a station couldn't be determined.
    *
    * @param {string} uri
    * @returns {string|null}
    */
   getStationSlugFromComponent = async uri => {
     try {
-      return _get(await db.get(uri), 'stationSlug', '');
+      return _get(await db.get(uri), 'stationSlug', rdcSlug);
     } catch (err) {
       logUnexpectedDbError(uri, err);
       return null;
     }
   },
   /**
-   * returns the slug of the site either from a subdomain or as the first element of the path
+   * returns the potential slug of the site via the first element of the path
    *
    * @param {object} req
    * @return {string}
    */
   getPotentialStationSlugFromReq = req => {
-    const stationPath = req.originalUrl.split('/')[1],
-      stationHost = req.get('host').split('/')[0].split('.')[0].toLowerCase();
+    const stationPath = req.originalUrl.split('/')[1];
 
-    return ['www', 'clay', 'dev-clay', 'stg-clay'].includes(stationHost) ? stationPath : stationHost;
+    return stationPath;
   },
   /**
    * returns whether the request
@@ -252,7 +252,7 @@ const _get = require('lodash/get'),
      */
     rdcRoute: async (stationSlugObj, { url }) => {
       if (isRdcRoute(urlParse(url).pathname)) {
-        initBothSlugsTo('', stationSlugObj);
+        initBothSlugsTo(rdcSlug, stationSlugObj);
       }
     }
   };

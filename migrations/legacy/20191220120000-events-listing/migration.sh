@@ -33,3 +33,5 @@ curl -X PUT $http://$1/$newPageList@published -H 'Authorization: token accesskey
 rm newPageList.json
 
 printf "\n\n\n\n"
+
+node addStartDateMapping.js $1
