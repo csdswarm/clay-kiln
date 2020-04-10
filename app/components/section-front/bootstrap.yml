@@ -1,10 +1,28 @@
 _components:
   section-front:
     _version: 3
+    instances:
+      new:
+        _version: 3
+        title: ''
+        titleLocked: false
+        primary: false
+        primarySectionFront: ''
+        mainContent:
+          -
+            _ref: '/_components/multi-column/instances/new'
+          -
+            _ref: '/_components/google-ad-manager/instances/billboardBottom'
+          -
+            _ref: '/_components/two-column-component/instances/section-front'
     title: ''
     titleLocked: false
     primary: false
     primarySectionFront: ''
     mainContent:
-      - 
+      -
+        _ref: '/_components/multi-column/instances/new'
+      -
         _ref: '/_components/google-ad-manager/instances/billboardBottom'
+      -
+        _ref: '/_components/two-column-component/instances/section-front'
