@@ -127,7 +127,7 @@ const _get = require('lodash/get'),
    * @return {string}
    */
     getPotentialStationSlugFromReq(req) {
-      return req.originalUrl.split('/')[1].split('?')[0];
+      return req.path.split('/')[1];
     },
     /**
    * returns whether the request

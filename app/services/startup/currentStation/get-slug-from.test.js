@@ -45,7 +45,7 @@ describe('startup', () => {
         it('gets the slug if it\'s in the request url', () => {
           const { requestUrl, allStations, stationSlugObj } = setup_requestUrl();
 
-          requestUrl(stationSlugObj, { allStations, req: { originalUrl: '/abc-123/music/stuff' } });
+          requestUrl(stationSlugObj, { allStations, req: { path: '/abc-123/music/stuff' } });
           expect(stationSlugObj.forPermissions).to.equal('abc-123');
           expect(stationSlugObj.forCommonUse).to.equal('abc-123');
         });
@@ -53,19 +53,11 @@ describe('startup', () => {
         it('gets the slug only if it is in the station list', () => {
           const { requestUrl, allStations, stationSlugObj } = setup_requestUrl();
 
-          requestUrl(stationSlugObj, { allStations, req: { originalUrl: '/not-a-real-station/music/stuff' } });
+          requestUrl(stationSlugObj, { allStations, req: { path: '/not-a-real-station/music/stuff' } });
           expect(stationSlugObj.forPermissions).to.equal(null);
           expect(stationSlugObj.forCommonUse).to.equal(null);
         });
 
-        it('gets the slug when it is a station front that is being edited', () => {
-          const { requestUrl, allStations, stationSlugObj } = setup_requestUrl();
-
-          requestUrl(stationSlugObj, { allStations, req: { originalUrl: '/xyz-the-z?edit=true' } });
-          expect(stationSlugObj.forPermissions).to.equal('xyz-the-z');
-          expect(stationSlugObj.forCommonUse).to.equal('xyz-the-z');
-
-        });
       });
     });
   });
