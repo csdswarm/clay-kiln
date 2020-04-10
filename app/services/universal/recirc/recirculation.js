@@ -50,7 +50,6 @@ const
     filters: {
       ...getAuthor(data, locals),
       contentTypes: boolObjectToArray(data.contentType),
-      ...locals.station.site_slug !== DEFAULT_STATION.site_slug ? { stationSlug: locals.station.site_slug } : {},
       ..._pick({
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
@@ -436,7 +435,18 @@ const
             ...await mapDataToFilters(uri, data, locals)
           },
           itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
-          { content, totalHits } = await fetchRecirculation({ filters, excludes, elasticFields: esFields, pagination, maxItems: itemsNeeded }, locals);
+          stationFilter = { ...locals.station.site_slug !== DEFAULT_STATION.site_slug
+            ? { stationSlug: locals.station.site_slug }
+            : {} },
+          { content, totalHits } = await fetchRecirculation(
+            {
+              filters: { ...stationFilter, ...filters },
+              excludes,
+              elasticFields: esFields,
+              pagination,
+              maxItems: itemsNeeded
+            },
+            locals);
 
         data._computed = Object.assign(data._computed || {}, {
           [contentKey]: await Promise.all(
