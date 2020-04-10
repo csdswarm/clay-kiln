@@ -21,6 +21,7 @@
           <ui-select
                   :placeholder="'Primary Section Front'"
                   :hasSearch="true"
+                  :invalid="!isPrimarySectionFrontValid(slug, sectionFronts.selectedPrimary)"
                   :options="sectionFronts.primaryOptions"
                   :value="sectionFronts.selectedPrimary"
                   @input="updateSectionFront(slug, 'selectedPrimary', ...arguments)"/>
@@ -116,7 +117,16 @@
           });
       },
       /**
-       *  This function is called when a station is selected from the dropdown. Sets it as currently selected.
+       * Tests if a primary section front input is valid.
+       * @param {string} slug
+       * @param {object} value
+       */
+      isPrimarySectionFrontValid(slug, value) {
+        // if national, primary section front is required
+        return slug !== DEFAULT_STATION.site_slug || value;
+      },
+      /**
+       * Called when a station is selected from the dropdown. Sets it as currently selected.
        * @param {Array<Object>} input
        */
       updateSelectedStation(input) {
