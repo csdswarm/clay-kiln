@@ -9,7 +9,10 @@
 
 const { unityComponent } = require('../../services/universal/amphora');
 const db = require('amphora-storage-postgres');
-const { DEFAULT_STATION: defaultStation } = require('../../services/universal/constants');
+const {
+  DEFAULT_STATION: defaultStation,
+  PRIVACY_POLICY
+} = require('../../services/universal/constants');
 const moment = require('moment');
 const maxAgeInDays = 31;
 const url = require('url');
@@ -56,6 +59,14 @@ const getContestRules = async ({
 };
 
 module.exports = unityComponent({
+  save: (ref, data) => {
+    return {
+      ...data,
+      _computed: {
+        privacyPolicyPath: PRIVACY_POLICY
+      }
+    };
+  },
   render: async (ref, data, locals = {}) => {
     // NOTE: locals is undefined during migration/bootstrap
     const callsign = _get(locals, 'stationForPermissions.callsign');

@@ -28,6 +28,8 @@ const SECOND = 1000,
     'contest'
   ]),
 
+  PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
+
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
@@ -38,6 +40,7 @@ const SECOND = 1000,
 
 
 module.exports = {
+  PRIVACY_POLICY,
   SECOND,
   MINUTE,
   HOUR,
