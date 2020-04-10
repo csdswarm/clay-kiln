@@ -59,11 +59,10 @@ const db = require('./db'),
         addTag('category', _get(locals, 'station.category'));
         _get(locals, 'station.genre', []).forEach(genre => addTag('genre', genre.name));
         addTag('station_id', _get(locals, 'station.id'));
-        addTag('station_name', _get(locals, 'station.name'));
         addTag('station_logo', _get(locals, 'station.square_logo_small'));
-      } else { // national page
-        addTag('station_name', _get(locals, 'station.name'));
       }
+      // both national & station pages
+      addTag('station_name', _get(locals, 'station.name'));
     }
 
     // timestamp
