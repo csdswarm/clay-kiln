@@ -1,6 +1,7 @@
 'use strict';
 
-const { stationizedComponent } = require('../../services/universal/stationize');
+const _get = require('lodash/get'),
+  { stationizedComponent } = require('../../services/universal/stationize');
 
 module.exports = stationizedComponent({
   render: async (ref, data) => {
@@ -12,13 +13,13 @@ module.exports = stationizedComponent({
         instagram: (url) => url
       };
 
-    data.socialButtons = [];
+    data._computed.socialButtons = [];
 
     Object.keys(buttons).forEach(type => {
-      const url = data.station[type];
+      const url = _get(data, `_computed.station[${type}]`);
 
       if (url) {
-        data.socialButtons.push({ type, url: buttons[type](url) });
+        data._computed.socialButtons.push({ type, url: buttons[type](url) });
       }
     });
 

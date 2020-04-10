@@ -1,6 +1,6 @@
 'use strict';
 
-const { getComponentName } = require('clayutils'),
+const { getComponentInstance, getComponentName } = require('clayutils'),
   { unityComponent } = require('./amphora'),
   { getStationPage, getStationSpecificComponent } = require('../server/stationThemingApi');
 
@@ -12,13 +12,12 @@ module.exports.stationizedComponent = ({ render, save }) => unityComponent({
     const { station, defaultStation } = locals,
       { site_slug } = station,
       isDefaultStation = site_slug === defaultStation.site_slug,
-      isDefaultRef = /instances\/default/.test(ref);
+      isDefaultRef = getComponentInstance(ref) === 'default';
 
     data._computed = {
-      renderForStation: !isDefaultStation || !isDefaultRef
+      renderForStation: !isDefaultStation || !isDefaultRef,
+      station
     };
-
-    data.station = station;
     
     if (isDefaultRef && !isDefaultStation && site_slug) {
       const stationPageData = await getStationPage(site_slug),

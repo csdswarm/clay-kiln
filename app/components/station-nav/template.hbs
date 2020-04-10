@@ -42,7 +42,7 @@
           </ul>
         {{/if }}
         <div class="menu__listen listen">
-          <button class="listen__button button {{ playingClass }}" data-play-station="{{ station.id }}">
+          <button class="listen__button button {{ _computed.playingClass }}" data-play-station="{{ _computed.station.id }}">
             <div class="button__icon">
               {{!-- stays static --}}
               {{{ read 'components/station-nav/media/play_button.svg' }}}

@@ -8,7 +8,7 @@ module.exports = stationizedComponent({
   render: async (ref, data, locals) => {
     const { defaultStation } = locals;
 
-    data.playingClass = playingClass(locals, locals.station.id);
+    data._computed.playingClass = playingClass(locals, locals.station.id);
 
     // Don't default to what's in locals.station unless it's not the default station
     if (_get(locals, 'station.slug', defaultStation.slug) === defaultStation.slug) {
