@@ -22,7 +22,6 @@ const createContent = require('../../services/universal/create-content'),
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
     await autoLink(data, [
-      { slug: data.stationSlug, text: data.stationName },
       { slug: 'contests', text: 'contests' }
     ], locals);
     return createContent.render(uri, data, locals);
