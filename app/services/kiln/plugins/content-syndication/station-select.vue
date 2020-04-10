@@ -39,6 +39,7 @@
   import _ from 'lodash';
   const { retrieveList } = require('../../../../services/client/lists');
   const { setImmutable, updateImmutable } = require('../../../../services/universal/utils');
+  const { DEFAULT_STATION } = require('../../../../services/universal/constants');
 
   const UiSelect = window.kiln.utils.components.UiSelect;
 
@@ -164,9 +165,15 @@
         }));
         const findSectionFrontOption = (value, options) => options.find(o => o.value === value);
 
+        let listPrefix = '';
+
+        if (slug !== DEFAULT_STATION.site_slug) {
+          listPrefix = `${slug}-`;
+        }
+
         const [primarySectionFronts, secondarySectionFronts] = await Promise.all([
-          retrieveList(`${slug}-primary-section-fronts`),
-          retrieveList(`${slug}-secondary-section-fronts`),
+          retrieveList(`${listPrefix}primary-section-fronts`, true),
+          retrieveList(`${listPrefix}secondary-section-fronts`, true),
         ]);
 
         if (this.isStationSelected(slug)) {
