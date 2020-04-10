@@ -26,7 +26,7 @@ describe(dirname, function () {
 
     function setup_autoLink() {
       sinon.stub(_internals, 'retrieveList');
- 
+
       return {
         autoLink,
         __: _internals
@@ -45,12 +45,13 @@ describe(dirname, function () {
         ]);
     });
 
-    it('should create breadcrumb based on the station', async () => {
+    it('should create breadcrumb based on the syndicated station', async () => {
       const { autoLink, __ } = setup_autoLink(),
         data = {
           stationSyndication: [{
-            callsign: 'station-Y',
-            stationSlug: 'stationY',
+            callsign: 'STATION-Y',
+            stationSlug: 'stationy',
+            stationName: 'Station Y',
             primarySectionFront: 'primary',
             secondarySectionFront: 'secondary'
           }]
@@ -64,10 +65,14 @@ describe(dirname, function () {
         { name: '1Thing', value: '1thing' }
       ]);
 
-      await autoLink(data, props, { ...getLocals(), station: { site_slug:'stationY', callsign: 'station-Y' } });
+      await autoLink(data, props, { ...getLocals(), station: {
+        site_slug:'stationy',
+        callsign: 'STATION-Y',
+        name: 'Station Y'
+      } });
 
       expect(data.breadcrumbs).to.eql([
-        { text: 'stationY', url: '//somehost.com/stationy', hidden: false },
+        { text: 'Station Y', url: '//somehost.com/stationy', hidden: false },
         { text: 'primary', url: '//somehost.com/stationy/primary', hidden: false },
         { text: 'secondary', url: '//somehost.com/stationy/primary/secondary', hidden: false }
       ]);

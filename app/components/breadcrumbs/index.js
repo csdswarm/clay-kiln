@@ -163,19 +163,35 @@ module.exports = {
   async autoLink(data, props, locals) {
     const existingProp = (prop, dataObj) => dataObj[prop] || prop.text && prop.slug,
       lists = await retrieveSectionFrontLists(props, locals);
-
     let breadcrumbItems = props
-      .filter(prop => existingProp(prop, data))
-      .map(useDisplayName(data, lists));
+        .filter(prop => existingProp(prop, data))
+        .map(useDisplayName(data, lists)),
+      breadcrumbProps = props;
 
-    if (locals.station.site_slug) {
-      const syndication = data.stationSyndication.find(station => station.callsign === locals.station.callsign),
-        breadcrumbProps = ['stationSlug', ...props];
-
+    if (data.stationSlug && data.stationName) {
+      breadcrumbProps = [
+        { slug: data.stationSlug, text: data.stationName },
+        ...props
+      ];
       breadcrumbItems = breadcrumbProps
-        .filter(prop => existingProp(prop, syndication))
-        .map(useDisplayName(syndication, lists));
-    };
+        .filter(prop => existingProp(prop, data))
+        .map(useDisplayName(data, lists));
+    }
+    if (locals.station.site_slug && data.stationSyndication) {
+      const syndication = data.stationSyndication.find(
+        station => station.callsign === locals.station.callsign
+      );
+
+      if (syndication) {
+        breadcrumbProps = [
+          { slug: syndication.stationSlug, text: syndication.stationName },
+          ...props
+        ];
+        breadcrumbItems = breadcrumbProps
+          .filter(prop => existingProp(prop, syndication))
+          .map(useDisplayName(syndication, lists));
+      }
+    }
 
     data.breadcrumbs = breadcrumbItems
       .map(toLinkSegments())
