@@ -159,9 +159,10 @@ const
           }
         };
 
-        if (stationSlug === '') {
-          _set(qs, 'bool.should[2].must_not.exists.field', 'stationSlug');
+        if (stationSlug === DEFAULT_STATION.site_slug) {
+          _set(qs, 'bool.should[2].bool.must_not.exists.field', 'stationSlug');
         }
+
         return qs;
       }
     },
@@ -435,9 +436,7 @@ const
             ...await mapDataToFilters(uri, data, locals)
           },
           itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
-          stationFilter = { ...locals.station.site_slug !== DEFAULT_STATION.site_slug
-            ? { stationSlug: locals.station.site_slug }
-            : {} },
+          stationFilter = { stationSlug: locals.station.site_slug },
           { content, totalHits } = await fetchRecirculation(
             {
               filters: { ...stationFilter, ...filters },
