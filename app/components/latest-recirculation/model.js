@@ -91,13 +91,12 @@ const db = require('../../services/server/db'),
    */
   renderRssFeed = async (data, locals) => {
     const feed = await fetchStationFeeds(data, locals),
-      nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
-      defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+      nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
 
     data._computed.station = locals.station.name;
     data._computed.articles = await Promise.all(nodes.map(async (item) => {
       return {
-        feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
+        feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : DEFAULT_RADIOCOM_LOGO,
         externalUrl: item.node.URL,
         primaryHeadline: item.node.field_engagement_title || item.node.title
       };

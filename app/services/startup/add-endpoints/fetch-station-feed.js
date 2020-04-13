@@ -12,7 +12,7 @@ const { wrapInTryCatch } = require('../middleware-utils'),
  */
 
 module.exports = router => {
-  router.get('/rdc/etch-station-feeds', wrapInTryCatch(async (req, res) => {
+  router.get('/rdc/fetch-station-feeds', wrapInTryCatch(async (req, res) => {
     const { feedURL } = req.query,
       resp = await axios.get(`${feedURL}`);
 
