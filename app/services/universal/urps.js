@@ -39,7 +39,7 @@ const unityAppDomainName = 'Unity App';
  * @returns {string}
  */
 function getStationDomainName(station) {
-  if (station === DEFAULT_STATION) {
+  if (station.id === DEFAULT_STATION.id) {
     return station.urpsDomainName;
   }
 
