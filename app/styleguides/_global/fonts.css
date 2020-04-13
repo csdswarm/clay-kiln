@@ -359,6 +359,16 @@ em, i {
 }
 
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||||| Page Header Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin page-header-font1 {
+  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 90px;
+}
+@define-mixin page-header-font2 {
+  @mixin font CircularStd-Black, 35px, $parisM, -.55px, 42px;
+}
+
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||| Stations Carousel Fonts Styleguide |||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 @define-mixin stations-carousel-font1 {
