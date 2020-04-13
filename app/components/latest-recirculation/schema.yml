@@ -55,6 +55,8 @@ rssFeed:
         operator: ===
         values:
           - rss-feed
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
   _reveal:
     field: populateFrom
     operator: ===
@@ -90,7 +92,9 @@ hyperLinkUrl:
       required:
         field: hyperLinkTitle
         operator: truthy
-        # Ask for the pattern to be used. https://<site_slug>.radio.com/station_feed.json
+      pattern: ^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$
+      patternMessage: Must be a valid URL
+      #TODO: Ask for the proper pattern to be used. So far this in an example https://<site_slug>.radio.com/station_feed.json
   _reveal:
     field: hyperLinkTitle
     operator: truthy
