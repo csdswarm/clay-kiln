@@ -14,6 +14,7 @@ const moment = require('moment');
 const maxAgeInDays = 31;
 const url = require('url');
 const _get = require('lodash/get');
+const log = require('../../services/universal/log').setup({ file: __filename });
 
 /**
  * Creates a conditional station operator for contest sql query
@@ -63,28 +64,36 @@ module.exports = unityComponent({
       return data;
     }
 
-    const { protocol, host } = locals.site;
-    const { callsign: defaultCallsign } = locals.defaultStation;
+    const { station, defaultStation, site } = locals;
+    const { callsign: defaultCallsign } = defaultStation;
+    const { protocol } = site;
     const callsign = _get(locals, 'stationForPermissions.callsign', defaultCallsign);
 
     const { pathname } = url.parse(locals.url);
     const isPresentationMode = pathname === '/contests';
     const startTime = moment().toISOString(true);
-    const contestRules = await Promise.all((await getContestRules({
-      startTime,
-      stationCallsign: callsign
-    })).map(async (ruleData) => ({
-      ...ruleData,
-      stationTimeZone: locals.station.timezone,
-      showHeader: true,
-      showPresentation: isPresentationMode,
-      description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
-      contestSlug: `${protocol}://${host}/contests/${ruleData.slug}`
-    })));
 
-    data._computed = {
-      contestRules
-    };
+    try {
+      const stationPath = station.website;
+      const contestRules = await Promise.all((await getContestRules({
+        startTime,
+        stationCallsign: callsign
+      })).map(async (ruleData) => ({
+        ...ruleData,
+        stationTimeZone: locals.station.timezone,
+        showHeader: true,
+        showPresentation: isPresentationMode,
+        description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
+        contestSlug: `${stationPath}/contests/${ruleData.slug}`
+      })));
+
+      data._computed = {
+        contestRules
+      };
+
+    } catch (error) {
+      log('error', '[contest rules failure]', error);
+    }
 
     return data;
   }
