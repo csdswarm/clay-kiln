@@ -92,6 +92,7 @@ module.exports = unityComponent({
       })));
 
       data._computed = {
+        stationPath,
         contestRules,
         privacyPolicyPath: PRIVACY_POLICY
       };
