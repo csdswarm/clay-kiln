@@ -1,3 +1,5 @@
+@import "_global/mixins";
+
 $baseFontSize: 16;
 
 .contest-rules-page__header {
@@ -6,4 +8,5 @@ $baseFontSize: 16;
 
 .contest-rules-page__legal {
   font-size: em(16);
+  margin-bottom: em(30, 18);
 }

@@ -40,14 +40,14 @@ const SECOND = 1000,
 
 
 module.exports = {
+  DAY,
+  HOUR,
+  MINUTE,
+  PAGE_TYPES,
   PRIVACY_POLICY,
   SECOND,
-  MINUTE,
-  HOUR,
-  DAY,
   WEEK,
   YEAR,
   contentTypes,
-  time,
-  PAGE_TYPES
+  time
 };

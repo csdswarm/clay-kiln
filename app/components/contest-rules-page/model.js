@@ -92,7 +92,8 @@ module.exports = unityComponent({
       })));
 
       data._computed = {
-        stationPath,
+        showPrivacyPolicy: !isPresentationMode,
+        generalContestRulesPath: `${stationPath}general-contest-rules`,
         contestRules,
         privacyPolicyPath: PRIVACY_POLICY
       };

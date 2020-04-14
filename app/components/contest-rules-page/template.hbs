@@ -19,7 +19,7 @@
     {{@root.locals.station.name}}
   {{/inline}}
 
-  <p>
+  <p class="contest-rules-page__legal">
     Unless otherwise indicated below, {{> stationName}}’s general contest rules apply to {{> stationName}} contests.
     For the specific terms and conditions applicable to a particular {{> stationName}} contest, please see below.
     You can also view {{> stationName}}'s {{> stationRules}} or review Entercom's {{> nationalPrivacyPolicy}}.
@@ -33,7 +33,9 @@
   itemtype="http://schema.org/Article">
 
   <section class="contest-rules-page__body">
-    {{> contestRulesLegal}}
+    {{#if _computed.showPrivacyPolicy}}
+      {{> contestRulesLegal}}
+    {{/if}}
     {{> contestRulesList }}
   </section>
 
