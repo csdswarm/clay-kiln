@@ -30,6 +30,21 @@
   @mixin font ProximaNova-Light, 16px, $black, -0.26px, 25px;
 }
 
+@define-mixin input-message-small-and-vertical $width: 98% {
+  top: -2.272727em;
+  width: $width;
+  left: calc(98% - $width);
+  &:before {
+    top: em(39, 11);
+    right: calc(5% - em(4, 11));
+  }
+  &:after {
+    top: calc(100% - em(1));
+    transform: rotate(180deg);
+    right: 5%;
+  }
+}
+
 body > .newsletter-sign-up {
   margin: 1em;
 }
@@ -162,6 +177,7 @@ body > .newsletter-sign-up {
       background: url('/media/components/newsletter-sign-up/msg-pointer.svg') no-repeat;
       width: em(12, 11);
       height: em(10, 11);
+      z-index: 1;
     }
   }
 
@@ -238,10 +254,6 @@ body > .newsletter-sign-up {
     .newsletter-sign-up__form-input-msg {
       width: 50%;
       left: 52%;
-      &:before {
-      }
-      &:after {
-      }
     }
   }
   @mixin medium-small-screen {
@@ -257,26 +269,22 @@ body > .newsletter-sign-up {
       }
     }
     .newsletter-sign-up__form-input-msg {
-      top: -2.272727em;
-      width: 85%;
-      left: 13%;
-      &:before {
-        top: em(39, 11);
-        right: calc(5% - em(4, 11));
-      }
-      &:after {
-        top: calc(100% - em(1));
-        transform: rotate(180deg);
-        right: 5%;
-      }
+      @mixin input-message-small-and-vertical 85%;
     }
   }
 }
 
-
 .newsletter-sign-up.newsletter-sign-up--layout-vertical {
   max-width: em(widthOnGrid(4, 3));
-  @mixin large-screen {
-    outline: 2px solid red;
+  .newsletter-sign-up__form {
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+  .newsletter-sign-up__form-group {
+    margin-bottom: em(15);
+    padding-right: 0;
+  }
+  .newsletter-sign-up__form-input-msg {
+    @mixin input-message-small-and-vertical 95%;
   }
 }
