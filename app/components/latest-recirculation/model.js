@@ -38,7 +38,6 @@ const db = require('../../services/server/db'),
    * able to be changed
    *
    * @param {object} locals
-   *
    * @returns {array} items
    */
   getItemsFromTrendingRecirculation = async (locals) => {
@@ -71,15 +70,14 @@ const db = require('../../services/server/db'),
         nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
 
       data._computed.station = locals.station.name;
-      data._computed.articles = await Promise.all(nodes.map(async (item) => {
-        return {
+      data._computed.articles = await Promise.all(
+        nodes.map(async (item) => ({
           feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : DEFAULT_RADIOCOM_LOGO,
           externalUrl: item.node.URL,
           primaryHeadline: item.node.field_engagement_title || item.node.title
-        };
-      }));
+        }))
+      );
     }
-
     return data;
   },
   /**
@@ -94,16 +92,14 @@ const db = require('../../services/server/db'),
       nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
 
     data._computed.station = locals.station.name;
-    data._computed.articles = await Promise.all(nodes.map(async (item) => {
-      return {
+    data._computed.articles = await Promise.all(
+      nodes.map(async (item) => ({
         feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : DEFAULT_RADIOCOM_LOGO,
         externalUrl: item.node.URL,
         primaryHeadline: item.node.field_engagement_title || item.node.title
-      };
-    }));
-
+      }))
+    );
     return data;
-
   },
   /**
    * @param {string} ref
@@ -112,6 +108,8 @@ const db = require('../../services/server/db'),
    * @returns {Promise}
    */
   render = async function (ref, data, locals) {
+    data._computed.isMultiColumn = isMultiColumn(data);
+
     if (data.populateFrom === 'station' && locals.params) {
       return renderStation(data, locals);
     }
@@ -128,8 +126,6 @@ const db = require('../../services/server/db'),
         label: getSectionFrontName(item.sectionFront, primarySectionFronts)
       }));
     }
-    data._computed.isMultiColumn = isMultiColumn(data);
-
     return data;
   };
 
