@@ -281,12 +281,13 @@ body > .newsletter-sign-up {
 .newsletter-sign-up.newsletter-sign-up--layout-vertical {
   max-width: em(widthOnGrid(4, 3));
   .newsletter-sign-up__form {
-    flex-direction: column;
+    flex-wrap: wrap;
     margin-bottom: 0;
   }
   .newsletter-sign-up__form-group {
     margin-bottom: em(15);
     padding-right: 0;
+    flex: 0 0 100%;
   }
   .newsletter-sign-up__form-input-msg {
     @mixin input-message-small-and-vertical 95%;
