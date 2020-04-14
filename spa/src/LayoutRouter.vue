@@ -190,7 +190,8 @@ export default {
       // remove the extension from preview pages
       const cleanDestination = destination.replace('.html', '')
       const queryString = query.length !== 0 ? Object.keys(query).map((key) => key + '=' + query[key]).join('&') : ''
-      const newSpaPayloadPath = `${cleanDestination}?json${queryString ? `&${queryString}` : ''}`
+      const ieCacheBuster = (new Date()).getTime() // force reload of app components on IE11
+      const newSpaPayloadPath = `${cleanDestination}?json${queryString ? `&${queryString}` : ''}&cb=${ieCacheBuster}`
       const newSpaPayloadPathNoJson = `${cleanDestination}${queryString ? `?${queryString}` : ''}`
 
       try {
