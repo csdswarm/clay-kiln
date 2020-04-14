@@ -1,7 +1,7 @@
 const { addComponentToContainers } = require('../migration-utils').v1;
 const hostUrl = process.argv[2] || 'clay.radio.com';
 
-// add branch-io-head script to article, gallery, and section-front pages
+// add branch-io-head script to podcast-show page
 async function addBranchHeadToPages() {
   await addComponentToContainers(
     hostUrl,

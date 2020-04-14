@@ -58,17 +58,13 @@ const db = require('./db'),
 
     // podcast page
     if (isPodcast) {
-      const { attributes } = isPodcast,
-        { partner } = attributes,
-        { name } = attributes.category[0];
-
-      addTag('type', isPodcast.type);
-      addTag('podcast_name', attributes.description);
-      addTag('podcast_id', isPodcast.id);
-      addTag('partner_id', partner.id);
-      addTag('partner_name', partner.name);
-      addTag('podcast_category', name);
-      addTag('podcast_logo', attributes.image);
+      addTag('type', _get(locals, 'podcast.type'));
+      addTag('podcast_name', _get(locals, 'podcast.attributes.description'));
+      addTag('podcast_id', _get(locals, 'podcast.id'));
+      addTag('partner_id', _get(locals, 'podcast.attributes.partner.id'));
+      addTag('partner_name', _get(locals, 'podcast.attributes.partner.name'));
+      addTag('podcast_category', _get(locals, 'podcast.attributes.category[0].name'));
+      addTag('podcast_logo', _get(locals, 'podcast.attributes.image'));
     }
 
     // timestamp
