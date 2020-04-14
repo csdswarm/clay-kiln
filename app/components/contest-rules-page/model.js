@@ -74,7 +74,8 @@ module.exports = unityComponent({
     const startTime = moment().toISOString(true);
 
     try {
-      const stationPath = station.website;
+      const stationSlugContext = station.site_slug ? `${station.site_slug}/` : '';
+      const stationPath = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/${stationSlugContext}`;
       const contestRules = await Promise.all((await getContestRules({
         startTime,
         stationCallsign: callsign
@@ -84,7 +85,7 @@ module.exports = unityComponent({
         showHeader: true,
         showPresentation: isPresentationMode,
         description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
-        contestSlug: `${stationPath}/contests/${ruleData.slug}`
+        contestSlug: `${stationPath}contests/${ruleData.slug}`
       })));
 
       data._computed = {
