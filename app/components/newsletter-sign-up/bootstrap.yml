@@ -1,9 +1,14 @@
 _components:
   newsletter-sign-up:
+    title: Newsletter Sign Up
+    layoutType: horizontal
+    successTitle: Thank you for subscribing to our newsletter!
+    successMsg: ''
+    privacyPolicyPath: https://entercom.com/privacy-policy
     instances:
       new:
         title: Newsletter Sign Up
         layoutType: horizontal
         successTitle: Thank you for subscribing to our newsletter!
-        # temp will need to set in comp
-        successMsg: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vel nisl tempor, vehicula ipsum at, tristique est.
+        successMsg: ''
+        postUpSiteID: ''

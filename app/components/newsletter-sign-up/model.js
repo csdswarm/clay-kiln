@@ -13,6 +13,7 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: (uri, data) => {
+    // NOTE: will use in ON-1625
     return data;
   },
 
@@ -26,6 +27,7 @@ module.exports = unityComponent({
    * @returns {object}
    */
   save: (uri, data) => {
+    // NOTE: will use in ON-1625
     return data;
   }
 });

@@ -32,10 +32,10 @@
 
 body > .newsletter-sign-up {
   margin: 1em;
-  max-width: 780px;
 }
 
 .newsletter-sign-up {
+  margin-bottom: em(20);
   &__title {
     @mixin newsletter-sign-up-font-1;
     position: relative;
@@ -213,6 +213,7 @@ body > .newsletter-sign-up {
 
 
 .newsletter-sign-up--layout-horizontal {
+  max-width: em(widthOnGrid(10, 9));
   @mixin large-screen {
     .newsletter-sign-up__form {
       flex-wrap: wrap;
@@ -274,6 +275,7 @@ body > .newsletter-sign-up {
 
 
 .newsletter-sign-up.newsletter-sign-up--layout-vertical {
+  max-width: em(widthOnGrid(4, 3));
   @mixin large-screen {
     outline: 2px solid red;
   }
