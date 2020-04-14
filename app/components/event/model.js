@@ -139,7 +139,6 @@ module.exports = unityComponent({
     data._computed.dateTime = getFormattedDate(data.startDate, data.startTime);
     data._computed.eventCirculationSettings = getSettingsConfigData();
     await autoLink(data, [
-      { slug: data.stationSlug, text: data.stationName },
       { slug: 'events', text: 'events' }
     ], locals);
     return createContent.render(ref, data, locals);
