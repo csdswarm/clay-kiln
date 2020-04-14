@@ -14,9 +14,11 @@ const { unityComponent } = require('../../services/universal/amphora'),
   protocol = `${process.env.CLAY_SITE_PROTOCOL}:`,
   utils = require('../../services/universal/utils'),
   { urlToElasticSearch } = utils,
-  dateFormat = require('date-fns/format'),
-  dateParse = require('date-fns/parse'),
-  dateFormatString = 'dddd[,] MMMM d [at] h:mm aa';
+  moment = require('moment');
+
+function getFormattedDate(date, time) {
+  return date && time ? moment(`${date} ${time}`).format('LLLL') : '';
+}
 
 module.exports = unityComponent({
   render: (uri, data, locals) => {
@@ -40,7 +42,7 @@ module.exports = unityComponent({
         };
 
         newData._computed = {
-          dateTime: newData.startDate && newData.startTime ? dateFormat(dateParse(newData.startDate + ' ' + newData.startTime), dateFormatString) : null,
+          dateTime: getFormattedDate(newData.startDate, newData.startTime),
           addressLink: `https://www.google.com/maps/dir//${ newData.venueAddress }`
         };
         return newData;
