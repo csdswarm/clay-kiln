@@ -11,4 +11,7 @@ async function addBranchHeadToPages() {
   );
 };
 
-addBranchHeadToPages();
+addBranchHeadToPages()
+  .catch(function (error) {
+    log('error', error);
+  });
