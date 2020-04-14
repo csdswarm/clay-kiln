@@ -59,14 +59,6 @@ const getContestRules = async ({
 };
 
 module.exports = unityComponent({
-  save: (ref, data) => {
-    return {
-      ...data,
-      _computed: {
-        privacyPolicyPath: PRIVACY_POLICY
-      }
-    };
-  },
   render: async (ref, data, locals = {}) => {
     // NOTE: locals is undefined during migration/bootstrap
     const isBootstrapping = locals === undefined;
@@ -99,7 +91,8 @@ module.exports = unityComponent({
       })));
 
       data._computed = {
-        contestRules
+        contestRules,
+        privacyPolicyPath: PRIVACY_POLICY
       };
 
     } catch (error) {
