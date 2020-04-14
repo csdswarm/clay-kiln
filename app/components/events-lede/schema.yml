@@ -1,0 +1,36 @@
+contentLabel:
+  _label: Lede Label
+  _has:
+    input: text
+    validate:
+      max: 80
+    help: Label for the lede event. Eg. 'Featured Event'
+
+url:
+  _label: URL
+  _has:
+    input: content-search
+    validate:
+      required: true
+
+# Component properties
+description:
+  _component:
+    include:
+      - paragraph
+
+googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
+
+_groups:
+  settings:
+    fields:
+      - contentLabel
+      - url
+      - description
+    _placeholder:
+      ifEmpty: url
+      height: 400px
+      text: Featured Event
