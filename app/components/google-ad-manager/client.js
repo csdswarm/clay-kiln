@@ -604,7 +604,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.querySelector('.layout__topSection') || document.querySelector('.layout__top'),
+    globalDiv = document.getElementsByClassName('layout__top')[0],
     resetElements = resizeForSkin();
 
   // Include our default bg color

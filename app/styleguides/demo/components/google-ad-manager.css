@@ -58,8 +58,7 @@
   }
 }
 
-.layout__bottom,
-.layout__bottomAd {
+.layout__bottom {
   .google-ad-manager--billboard,
   .google-ad-manager--super-leaderboard,
   .google-ad-manager--leaderboard,

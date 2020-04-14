@@ -35,7 +35,7 @@ describe(dirname, function () {
         expect(fn(state)).to.eql(undefined);
       });
 
-      it.skip('doesn\'t do anything if article content contains first component at end and does not contain second component', function () {
+      it('doesn\'t do anything if article content contains first component at end and does not contain second component', function () {
         var state = {
           components: {
             'www.url.com/_components/article/instances/foo': {
@@ -67,7 +67,7 @@ describe(dirname, function () {
         expect(fn(state)).to.eql([]);
       });
 
-      it.skip('doesn\'t do anything if article content contains first and second component in order at end', function () {
+      it('doesn\'t do anything if article content contains first and second component in order at end', function () {
         var state = {
           components: {
             'www.url.com/_components/article/instances/foo': {
@@ -84,7 +84,7 @@ describe(dirname, function () {
         expect(fn(state)).to.eql([]);
       });
 
-      it.skip('returns error if first component exists and isn\'t at bottom', function () {
+      it('returns error if first component exists and isn\'t at bottom', function () {
         var data = {
             content: [
               { _ref:  'www.url.com/_components/clay-paragraph/instances/a' },
@@ -128,7 +128,7 @@ describe(dirname, function () {
         }]);
       });
 
-      it.skip('returns error if first and second components exist and are out of order', function () {
+      it('returns error if first and second components exist and are out of order', function () {
         var data = {
             content: [
               { _ref:  'www.url.com/_components/clay-paragraph/instances/a' },

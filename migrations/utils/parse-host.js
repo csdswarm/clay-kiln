@@ -24,7 +24,7 @@ function getHostInfo(host) {
  * @param {string} host
  * @returns {Object}
  */
-function parseHost_v1(host) {
+function parseHost(host) {
   let data, url, message = '';
 
   if (!host) {
@@ -44,17 +44,6 @@ function parseHost_v1(host) {
   return { ...data, url, message };
 }
 
-/**
- * the same as parseHost_v1 but with a 'host' property
- *
- * @param {string} host,
- * @returns {object}
- */
-function parseHost_v2(host) {
-  return Object.assign({ host }, parseHost_v1(host));
-}
+const v1 = parseHost ;
 
-module.exports = {
-  v1: parseHost_v1,
-  v2: parseHost_v2,
-};
+module.exports = { v1 };

@@ -1,6 +1,5 @@
 'use strict';
 
-const { bluebird } = require('./base');
 const clayExport = require('./clay-export').v1;
 const clayImport = require('./clay-import').v1;
 const { _get, clayutils } = require('./base');
@@ -19,11 +18,8 @@ const { isPage } = clayutils;
  */
 async function addComponentToContainers_v1(host, containerRefs, componentRef, componentList, mutationCallback){
   // fetch all containers
-  const containers = await bluebird.map(
-    containerRefs,
-    ref => clayExport({componentUrl: `${host}/${ref}`}).then(data => [ref, data]),
-    { concurrency: 2 }
-  );
+  const containers = await Promise.all(containerRefs.map(ref =>
+    clayExport({componentUrl: `${host}/${ref}`}).then(data => [ref, data])));
 
   // add our component references
   const payloads = containers.map(([ref, container]) => {
@@ -66,15 +62,11 @@ async function addComponentToContainers_v1(host, containerRefs, componentRef, co
   }).filter(Boolean);
 
   // import all containers
-  await bluebird.map(
-    payloads,
-    payload => clayImport({
-      payload,
-      hostUrl: host,
-      publish: true
-    }),
-    { concurrency: 2 }
-  );
+  await Promise.all(payloads.map(payload => clayImport({
+    payload,
+    hostUrl: host,
+    publish: true
+  })));
 }
 
 module.exports = {
