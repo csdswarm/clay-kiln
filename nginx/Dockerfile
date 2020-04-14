@@ -11,7 +11,6 @@ RUN rm /usr/share/nginx/html/*
 # Copy over the custom nginx and default configs.
 COPY configs/nginx.conf /etc/nginx/nginx.conf
 COPY configs/default.conf /etc/nginx/conf.d/default.conf
-COPY certs/ /etc/nginx/certs
 
 # Allow us to customize the entrypoint of the image.
 COPY docker-entrypoint.sh /

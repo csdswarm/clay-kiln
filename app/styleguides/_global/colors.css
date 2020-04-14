@@ -10,7 +10,6 @@ $whiteRGB: 255, 255, 255;
 $alabaster: #F7F7F7; /* Ad Slot Container */
 $alto: #d8d8d8;
 $boulder: #777;
-$boulderRGB: 119, 119, 119;
 $concrete: #F3F3F3;
 $doveGray: #666;
 $dustyGray: #9B9B9B;
@@ -21,10 +20,8 @@ $tundora: #444;
 $wildSand: #F5F5F5;
 $rollingStone: #747577;
 $silver: #CCC;
-$mineShaft: #393939;
 $60gray: #999999;
 $91gray: #E8E8E8;
-$mineShaftLight: #393939;
 
 /* Reds */
 $red: #F00; /* Errors */
@@ -33,12 +30,15 @@ $crimsonRGB: 219, 17, 17;
 
 /* Oranges */
 $blazeOrange: #FF6E00; /* Ads Label */
+$pizazz: #FF9000;
 $sunsetOrange: #FF4940; /* Music */
 $sunsetOrangeRGB: 255, 73, 64;
 
 /* Yellows */
 $lightningYellow: #FEC517; /* News */
 $lightningYellowRGB: 254, 197, 23;
+$keenUiYellow: rgba(255,152,0,.12);
+$keenUiAlertIconYellow: #ff9800;
 
 /* Greens */
 $fruitSalad: #50ae54;
@@ -46,6 +46,7 @@ $fruitSalad: #50ae54;
 /* Blues */
 $azureRadience: #0099FF; /* Sports */
 $azureRadienceRGB: 0, 153, 255;
+$blue: #2A00FF;
 $cerulean: #05aeee; /* Twitter Blue */
 $chambray: #3b5998; /* Facebook Blue */
 $easternBlue: #1782a9;
@@ -64,16 +65,6 @@ $purpleRGB: 60, 0, 183;
 
 /* Pinks */
 $redViolet: #E60F8B;
-
-/* ---------------------------------------------------------- */
-/* ------           Station Front Colors               ------ */
-/* ---------------------------------------------------------- */
-$station-primaryColor: theme(primaryColor, $parisM);
-$station-secondaryColor: theme(secondaryColor, $purple);
-$station-tertiaryColor: theme(tertiaryColor, $mineShaftLight);
-$station-primaryFontColor: theme(primaryFontColor, $white);
-$station-secondaryFontColor: theme(secondaryFontColor, $black);
-
 
 /* ---------------------------------------------------------- */
 /* ------ OLD NAMING SYSTEM --- Remove once in staging ------ */

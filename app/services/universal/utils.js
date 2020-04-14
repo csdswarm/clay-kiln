@@ -1,16 +1,30 @@
 'use strict';
-const _isArray = require('lodash/isArray'),
-  _isObject = require('lodash/isObject'),
-  _isEmpty = require('lodash/isEmpty'),
-  _isString = require('lodash/isString'),
-  _isNull = require('lodash/isNull'),
-  _isUndefined = require('lodash/isUndefined'),
+const
+  _filter = require('lodash/filter'),
   _get = require('lodash/get'),
-  parse = require('url-parse'),
+  _identity = require('lodash/identity'),
+  _isArray = require('lodash/isArray'),
+  _isEmpty = require('lodash/isEmpty'),
+  _isNull = require('lodash/isNull'),
+  _isObject = require('lodash/isObject'),
+  _isString = require('lodash/isString'),
+  _isUndefined = require('lodash/isUndefined'),
+  _parse = require('url-parse'),
   { getComponentName, isComponent } = require('clayutils'),
   { contentTypes } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
+
+
+
+/**
+ * returns a list of keys in the object that have a truthy value
+ * @param {object} obj
+ * @returns {string[]}
+ */
+function boolKeys(obj) {
+  return Object.keys(obj || {}).filter(key => obj[key]);
+}
 
 /**
  * determine if a field is empty
@@ -78,35 +92,19 @@ function replaceVersion(uri, version) {
  */
 function uriToUrl(uri, locals) {
   const protocol = _get(locals, 'site.protocol') || 'http',
-    parsed = parse(`${protocol}://${uri}`);
+    parsed = _parse(`${protocol}://${uri}`);
 
   return parsed.href;
 }
 
 /**
- * Remove extension from route / path.
+ * Replace https with http and removes query string
  *
- * Note: copied from amphora@v7.3.2 lib/responses.js
- *   Ideally we'd use the uri provided by amphora but our currentStation module
- *   depends on this and its middleware occurrs before amphora.
- *
- * @param {string} path
+ * @param {string} url
  * @returns {string}
  */
-function removeExtension(path) {
-  const endSlash = path.lastIndexOf('/');
-  let leadingDot;
-
-  if (endSlash > -1) {
-    leadingDot = path.indexOf('.', endSlash);
-  } else {
-    leadingDot = path.indexOf('.');
-  }
-
-  if (leadingDot > -1) {
-    path = path.substr(0, leadingDot);
-  }
-  return path;
+function cleanUrl(url) {
+  return url.split('?')[0].replace('https://', 'http://');
 }
 
 /**
@@ -115,9 +113,9 @@ function removeExtension(path) {
  * @return {string}
  */
 function urlToUri(url) {
-  const parsed = parse(url);
+  const parsed = _parse(url);
 
-  return `${parsed.hostname}${removeExtension(parsed.pathname)}`;
+  return `${parsed.hostname}${parsed.pathname}`;
 }
 
 /**
@@ -224,12 +222,6 @@ function textToEncodedSlug(text) {
   );
 }
 
-/**
- * Copied over from the spa, allows us to log messages that should only show
- *   during development.
- *
- * @param {*} args
- */
 function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
@@ -237,17 +229,25 @@ function debugLog(...args) {
 }
 
 /**
- * return yes/no dependent on val truthiness
+ * prepends left to right
  *
- * @param  {*}  val
- * @returns {String}
+ * meant to be used in a mapper function e.g.
+ *
+ * ```
+ * const namespace = 'msn-feed:',
+ *   msnRedisKeys = ['last-modified', 'urls-last-queried']
+ *     .map(prepend(namespace))
+ *
+ * console.log(msnRedisKeys)
+ * // outputs
+ * // [ 'msn-feed:last-modified', 'msn-feed:urls-last-queried' ]
+ * ```
+ *
+ * @param {string} left
+ * @returns {function}
  */
-function yesNo(val) {
-  if (val) {
-    return 'Yes';
-  } else {
-    return 'No';
-  }
+function prepend(left) {
+  return right => left + right;
 }
 
 /*
@@ -285,19 +285,11 @@ function getFullOriginalUrl(req) {
 }
 
 /**
- * Url queries to elastic search need to be `http` since that is
- * how it is indexed as.
- * @param {String} url
- * @returns {String}
- */
-function urlToElasticSearch(url) {
-  return url.replace('https', 'http');
-}
-
-/**
  * Returns whether the request is for a content component.  A content component
- *   here just means a component that can be created via the kiln drawer e.g.
- *   article, gallery, etc.
+ *   usually means a component that can be created via the kiln drawer e.g.
+ *   article, gallery, etc.  More specifically it's a component that will be
+ *   listed under the 'main' property of a page, which is why 'homepage' is also
+ *   considered a content type.
  *
  * @param {string} url
  * @returns {boolean}
@@ -309,26 +301,108 @@ function isContentComponent(url) {
     && contentTypes.has(componentName);
 }
 
+/**
+ * return yes/no dependent on val truthiness
+ *
+ * @param  {*}  val
+ * @returns {String}
+ */
+function yesNo(val) {
+  if (val) {
+    return 'Yes';
+  } else {
+    return 'No';
+  }
+}
+
+/**
+ * removes the first line in a string
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function removeFirstLine(str) {
+  if (typeof str !== 'string') {
+    throw new Error(
+      'you must provide a string'
+      + '\n  typeof str: ' + typeof str
+    );
+  }
+
+  return str.split('\n').slice(1).join('\n');
+}
+
+/**
+ * returns the domain of the hostname
+ *
+ * @param {string} hostname
+ * @returns {string}
+ */
+function getDomainFromHostname(hostname) {
+  return hostname.split('.').reverse().slice(0, 2).reverse().join('.');
+}
+
+/**
+ * can be used to get all _ref objects within an object.
+ * Copied from amphora.references and modified for unity environment.
+ * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
+ * @param {object} obj
+ * @param {Function|string} [filter=_identity]  Optional filter
+ * @returns {array}
+ */
+function listDeepObjects(obj, filter) {
+  let cursor, items,
+    list = [],
+    queue = [obj];
+
+  while (queue.length) {
+    cursor = queue.pop();
+    items = _filter(cursor, _isObject);
+    list = list.concat(_filter(items, filter || _identity));
+    queue = queue.concat(items);
+  }
+
+  return list;
+}
+
+/**
+ * Url queries to elastic search need to be `http` since that is
+ * how it is indexed as.
+ * @param {string} url
+ * @returns {string}
+ */
+function urlToElasticSearch(url) {
+  return url.replace('https', 'http');
+}
+
+
+
 module.exports = {
-  isFieldEmpty,
-  has,
-  replaceVersion,
-  isUrl,
-  uriToUrl,
-  urlToUri,
-  formatStart,
-  toTitleCase,
-  getSiteBaseUrl,
-  isPublishedVersion,
-  ensurePublishedVersion,
-  isInstance,
-  urlToCanonicalUrl,
-  textToEncodedSlug,
+  boolKeys,
+  cleanUrl,
   debugLog,
-  yesNo,
+  ensurePublishedVersion,
   ensureStartsWith,
-  prettyJSON,
+  formatStart,
+  getDomainFromHostname,
   getFullOriginalUrl,
+  getSiteBaseUrl,
+  has,
+  isContentComponent,
+  isFieldEmpty,
+  isInstance,
+  isPublishedVersion,
+  isUrl,
+  listDeepObjects,
+  prepend,
+  prettyJSON,
+  removeFirstLine,
+  replaceVersion,
+  textToEncodedSlug,
+  toTitleCase,
+  uriToUrl,
+  urlToCanonicalUrl,
   urlToElasticSearch,
-  isContentComponent
+  urlToUri,
+  yesNo
 };

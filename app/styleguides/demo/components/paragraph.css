@@ -18,10 +18,12 @@
     margin: 0;
   }
   a {
-    @mixin anchor $sunsetOrangeRGB;
-
+    background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba($(sunsetOrangeRGB), .50) 80%, rgba($(sunsetOrangeRGB), .50) 100%);
     transition: all 300ms linear;
     padding: 0;
+    &:hover {
+      background: linear-gradient(to bottom, rgba($(sunsetOrangeRGB), .50) 0, rgba($(sunsetOrangeRGB), .50) 100%);
+    }
     &:link, &:visited, &:hover, &:active, &:focus, &:focus-within {
       color: $black;
       text-decoration: none;

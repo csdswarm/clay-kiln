@@ -39,7 +39,7 @@ module.exports.render = (ref, data, locals) => {
     ref
   });
 
-  return queryService.searchByQueryWithRawResult(query)
+  return queryService.searchByQueryWithRawResult(query, locals, { shouldDedupeContent: true })
     .then(function (results) {
       _assign(data, body);
       data.total = _get(results, 'hits.total');

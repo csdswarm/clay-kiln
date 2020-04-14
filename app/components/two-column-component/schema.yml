@@ -1,0 +1,32 @@
+_description:
+  Two column component
+
+col1:
+  _label: Column One
+  _placeholder:
+    text: Column One
+    height: 600px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      - image
+      - instagram-post
+      - brightcove
+      - brightcove-live
+      - youtube
+      - html-embed
+      - omny
+      - verizon-media
+      - more-content-feed
+
+col2:
+  _label: Column Two
+  _placeholder:
+    text: Column Two
+    height: 600px
+  _componentList:
+    fuzzy: false # allows interactives, etc to add one-off components
+    include:
+      - divider
+      - google-ad-manager
+      - paragraph

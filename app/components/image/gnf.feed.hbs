@@ -1,0 +1,11 @@
+<figure>
+    {{#if url}}
+      <img src="{{ url }}?width=800" alt="{{ alt }}">
+    {{/if}}
+    {{#ifAny caption credit}}
+      <figcaption itemprop="caption" class="image-figcaption">
+        {{#if caption}}<span class="caption">{{{ caption }}}</span>{{/if}}
+        {{#if credit}}<cite class="credit">{{if imageType imageType else='Photo credit'}} {{{ credit }}}</cite>{{/if}}
+      </figcaption>
+    {{/ifAny}}
+</figure>

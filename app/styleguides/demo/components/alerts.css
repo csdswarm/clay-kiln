@@ -11,38 +11,17 @@
 
         .ui-button {
             display: flex;
-            margin: em(5) em(30);
-
-            /*
-              originally flex-grow was 1 and .station-select-input had a flex
-                grow of 2, but something about the input options being different
-                widths caused horizontal movement upon selection.
-            */
-            flex-grow: 0;
-            flex-shrink: 0;
-            flex-basis: 30%;
-        }
-
-        .alerts-manager__station-select.station-select-input {
-            display: flex;
-            flex-grow: 1;
-        }
-
-        .alerts-manager__station-select.station-select-label {
-            display: flex;
             flex-grow: 1;
             margin: em(5) em(30);
+        }
 
-            /* the height of .ui-button */
-            height: 2.25rem;
+        .alerts-manager__station-select {
+            display: flex;
+            flex-grow: 2;
 
-            /*
-              this value is a little less than the height of .ui-button so the
-                text aligns decently.  There is probably a cleaner solution to
-                vertically align this with the button but I don't think it's
-                worth the effort right now.
-            */
-            line-height: 1.9rem;
+            .ui-select {
+                flex-grow: 1
+            }
         }
     }
 
@@ -108,7 +87,7 @@
 
     .alerts-manager-page-list-item__link {
         font-size: em(14);
-
+        
         > a {
             font-style: italic;
             color: inherit;

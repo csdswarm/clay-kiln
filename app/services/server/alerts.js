@@ -4,7 +4,6 @@ const db = require('../server/db'),
   uuidV4 = require('uuid/v4'),
   _pick = require('lodash/pick'),
   log = require('../universal/log').setup({ file: __filename }),
-  { prettyJSON } = require('../universal/utils'),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
   checkEndsBeforeStart = (start, end) => new Date(end) < new Date(start),
   checkEndsInPast = end => new Date(end) < Date.now(),
@@ -64,13 +63,7 @@ const db = require('../server/db'),
         return { failed: true, message: 'Cannot save this alert. Its start and end times overlap with another alert' };
       }
     } catch (error) {
-      log(
-        'error',
-        'There was a problem validating the alert'
-        + `\nalert: ${prettyJSON(alert)}`
-        + `\n${error.stack}`
-      );
-
+      log('error', 'There was a problem validating the alert', { alert, error });
       return {
         failed: true,
         message: 'An unanticipated error occurred while trying to validate the alert. Please try again.'
@@ -80,13 +73,50 @@ const db = require('../server/db'),
     return { failed: false };
   },
   /**
+   * Get the current alerts for a station directly from the db
+   *
+   * @param {Object} params
+   * @param {Bool} params.active
+   * @param {Bool} params.current
+   * @param {String} params.station
+   */
+  getAlerts = async (params) => {
+    await db.ensureTableExists('alert');
+
+    const dbQueryParams = {
+        active: true,
+        ...params
+      },
+      paramValues = [],
+      whereQuery = Object.entries(dbQueryParams)
+        .map(([key, value]) => {
+          switch (key) {
+            case 'current':
+              return "NOW() AT TIME ZONE 'UTC' <@ tsrange((data->>'start')::timestamp, (data->>'end')::timestamp)";
+            default:
+              paramValues.push(value);
+              return `data->>'${key}' = ?`;
+          }
+        }).join(' AND '),
+      query = `
+        SELECT id, data
+        FROM alert
+        WHERE (data->>'end')::timestamp > NOW() AT TIME ZONE 'UTC'
+          AND ${whereQuery}
+        ORDER BY data->>'start'
+      `,
+      alerts = db.raw(query, paramValues)
+        .then(pullDataFromResponse);
+
+    return alerts;
+  },
+  /**
    * Add routes for alerts
    *
    * @param {object} app
    * @param {function} checkAuth
    */
   inject = (app, checkAuth) => {
-    db.ensureTableExists('alert');
     /**
      * Get the current alerts for a station
      */
@@ -94,24 +124,8 @@ const db = require('../server/db'),
       const allowedParams = ['active', 'current', 'station'];
 
       try {
-        const params = _pick({ active: true, ...req.query }, allowedParams),
-          paramValues = [],
-          whereQuery = Object.keys(params).map(key => {
-            switch (key) {
-              case 'current':
-                return "NOW() AT TIME ZONE 'UTC' <@ tsrange((data->>'start')::timestamp, (data->>'end')::timestamp)";
-              default:
-                paramValues.push(params[key]);
-                return `data->>'${key}' = ?`;
-            }
-          }).join(' AND '),
-          alerts = await db.raw(`
-            SELECT id, data
-            FROM alert
-            WHERE (data->>'end')::timestamp > NOW() AT TIME ZONE 'UTC'
-              AND ${whereQuery}
-            ORDER BY data->>'start'
-          `, paramValues).then(pullDataFromResponse);
+        const params = _pick(req.query, allowedParams),
+          alerts = await getAlerts(params);
 
         res.status(200).send(alerts);
       } catch (e) {
@@ -166,3 +180,4 @@ const db = require('../server/db'),
   };
 
 module.exports.inject = inject;
+module.exports.getAlerts = getAlerts;

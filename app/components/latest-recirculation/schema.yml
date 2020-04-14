@@ -1,10 +1,10 @@
-_version: 2.0
+_version: 5.0
 _confirmRemoval: true
 
 _description: |
   A list of five latest related articles by section front, secondary section front, tag, or manually populated.
 
-populateBy:
+populateFrom:
   _label: Populate articles by primary section front, secondary section front or tag?
   _has:
     validate:
@@ -12,13 +12,19 @@ populateBy:
     input: radio
     options:
       -
+        name: All Content
+        value: all-content
+      -
         name: Section Front
-        value: sectionFront
+        value: section-front
       - tag
+      -
+        name: Contains Both Section Front and Tag
+        value: section-front-and-tag
+      -
+        name: Contains Either Section Front or Tag
+        value: section-front-or-tag
       - manual
-
-sectionFront:
-  _subscribe: sectionFront
 
 contentType:
   _label: Content type
@@ -30,20 +36,89 @@ contentType:
       - article
       - gallery
 
+sectionFront:
+  _subscribe: sectionFront
+
+sectionFrontManual:
+  _label: Section Front Category
+  _subscribe: sectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: primary-section-fronts
+
+secondarySectionFront:
+  _label: Secondary Section Front Category
+  _publish: secondarySectionFront
+  _reveal:
+    field: populateFrom
+    operator: ===
+    values:
+      - section-front
+      - section-front-and-tag
+      - section-front-or-tag
+  _has:
+    input: select
+    search: true
+    list: secondary-section-fronts
+
 tag:
   _label: Tag
   _reveal:
-    field: populateBy
+    field: populateFrom
     operator: ===
-    value: tag
+    values:
+      - tag
+      - section-front-and-tag
+      - section-front-or-tag
   _has:
-    input: text
-    help: Tag from which to pull articles
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
+    help: Includes content from all tags inside the section set in the URL
     validate:
       required:
-        field: populateBy
+        field: populateFrom
         operator: ===
-        value: tag
+        values:
+          - tag
+          - section-front-and-tag
+          - section-front-or-tag
+
+excludeSectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+
+excludeSecondarySectionFronts:
+  _label: Exclude Secondary Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: secondary-section-fronts
+
+excludeTags:
+  _label: Exclude Tags
+  _has:
+    input: simple-list
+    autocomplete:
+      list: tags
+      allowRemove: true
+      allowCreate: true
+    help: Exclude content from all tags
 
 items:
   _label: Items
@@ -90,11 +165,16 @@ items:
 _groups:
   latestRecirculationItems:
     fields:
-      - populateBy
+      - populateFrom
       - contentType
+      - sectionFrontManual
+      - secondarySectionFront
       - tag
+      - excludeSectionFronts
+      - excludeSecondarySectionFronts
+      - excludeTags
       - items
     _placeholder:
-      ifEmpty: 'populateBy'
+      ifEmpty: 'populateFrom'
       height: 500px
       text: Latest Story(s)

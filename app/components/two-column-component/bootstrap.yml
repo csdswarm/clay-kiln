@@ -1,0 +1,6 @@
+_components:
+  two-column-component:
+    instances:
+      new:
+        col1: []
+        col2: []

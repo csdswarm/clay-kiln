@@ -98,6 +98,9 @@ app/.config/configstore/*
 .snapshot
 
 nginx/certs/
-
 #vscode settings
 .vscode
+
+#SOPS & .env files
+**/unencrypted.yml
+app/.env

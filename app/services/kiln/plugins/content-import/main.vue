@@ -1,7 +1,6 @@
 <!-- Content Import Content -->
 <template>
     <div class="content-import">
-        <station-select class="content-import__station-select" />
         <div class="content-import__input">
             <ui-textbox
                     floating-label
@@ -27,10 +26,6 @@
   import rest from '../../../universal/rest';
   import urlParse from 'url-parse';
   import queryService, { onePublishedArticleByUrl } from '../../../client/query';
-  import stationSelect from '../../shared-vue-components/station-select'
-  import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
-  import { mapGetters } from 'vuex'
-  import { ensureStartsWith } from '../../../universal/utils'
 
   const UiIconButton = window.kiln.utils.components.UiIconButton;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
@@ -46,7 +41,6 @@
         loading: false
       }
     },
-    computed: mapGetters(stationSelect.storeNs, ['selectedStation']),
     methods: {
       /**
        * search for an existing url and return one if found
@@ -56,9 +50,14 @@
        * @returns {string}
        */
       async findExisting(path) {
-        const { host } = window.kiln.locals.site,
+        const { locals } = window.kiln,
+          { host } = locals.site,
           query = onePublishedArticleByUrl(`http://${host}${path}`, ['canonicalUrl'], window.kiln.locals),
-          results = await queryService.searchByQuery(query),
+          results = await queryService.searchByQuery(
+            query,
+            locals,
+            { shouldDedupeContent: false }
+          ),
           { canonicalUrl } = results[0] || {};
 
         return canonicalUrl
@@ -74,22 +73,17 @@
         // ensure a protocol and remove trailing slashes from url
         const url =  `${ includesProtocol ? '' : 'https://' }${ this.contentUrl.replace(/\/$/, '') }`;
         const { host, pathname } = urlParse(url, {});
-        const contentPath = ensureStartsWith('/', this.selectedStation.slug + pathname);
 
         try {
           //see if the item already exists
-          const existing = await this.findExisting(contentPath);
+          const existing = await this.findExisting(pathname);
 
           if (existing) {
             this.loading = false;
             this.error = 'This content already exists.';
             this.errorUrl = existing;
           } else {
-            const [result] = await rest.post('/import-content', {
-              stationSlug: this.selectedStation.slug,
-              domain: host,
-              filter: { slug: pathname }
-            });
+            const [result] = await rest.post('/import-content', { domain: host, filter: { slug: pathname } });
 
             if (result && result.success) {
               window.location.href = `${ location }${ result.url }?edit=true`;
@@ -107,8 +101,7 @@
     components: {
       UiIconButton,
       UiProgressCircular,
-      UiTextbox,
-      'station-select': StationSelectInput
+      UiTextbox
     }
   }
 </script>

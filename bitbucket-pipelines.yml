@@ -22,6 +22,10 @@ pipelines:
             name: Lint SPA
             script:
               - cd spa && npm run lint -- --no-fix
+        - step:
+            name: Tests
+            script:
+              - cd app && npm run test
   custom:
     security-audit:
       - step:

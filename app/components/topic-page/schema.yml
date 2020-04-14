@@ -1,5 +1,4 @@
-_version: 1.0
-
+_version: 2.0
 _description: |
   A dynamically created page containing a list of articles by tag.
 
@@ -26,10 +25,10 @@ content:
       - latest-videos
       - podcast-list
 
-moreContentFeed:
+twoColumnComponent:
   _component:
     include:
-      - more-content-feed
+      - two-column-component
 
 sectionFront:
   _label: Section Front

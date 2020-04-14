@@ -1,11 +1,59 @@
 'use strict';
 
-const db = require('../../../services/server/db'),
-  redis = require('../../../services/server/redis'),
-  log = require('../../../services/universal/log').setup({ file: __filename }),
+const _get = require('lodash/get'),
+  { filters, subscribe } = require('amphora-search'),
+  db = require('../../server/db'),
+  log = require('../../universal/log').setup({ file: __filename }),
+  redis = require('../../server/redis'),
+  msnFeedUtils = require('../../universal/msn-feed-utils'),
   primarySectionFrontsList = '/_lists/primary-section-fronts',
   secondarySectionFrontsList = '/_lists/secondary-section-fronts',
-  { subscribe } = require('amphora-search');
+  /**
+   * determines whether an operation is a published article
+   *
+   * @param {object} op
+   * @returns {boolean}
+   */
+  isAPublishedArticle = op => {
+    return filters.isPublished(op)
+      && op.key.includes('/article/instances');
+  };
+
+/**
+ * for now this just sets the redis key 'msn-feed:last-modified' to the current
+ *   timestamp if the saved page is an article.
+ *
+ * @param {object} stream
+ */
+function handleMsnFeed(stream) {
+  const {
+    articleWillShowOnMsnFeed,
+    redisKey
+  } = msnFeedUtils;
+
+  stream.each(innerStream => innerStream.toArray(async ops => {
+    const publishedArticleStr = _get(ops.find(isAPublishedArticle), 'value');
+
+    if (!publishedArticleStr) {
+      return;
+    }
+
+    const publishedArticleObj = JSON.parse(publishedArticleStr),
+      urlsLastQueriedStr = await redis.get(redisKey.urlsLastQueried),
+      urlsLastQueriedSet = new Set(
+        urlsLastQueriedStr
+          ? JSON.parse(urlsLastQueriedStr)
+          : []
+      );
+
+    if (
+      urlsLastQueriedSet.has(publishedArticleObj.canonicalUrl)
+      || articleWillShowOnMsnFeed(publishedArticleObj)
+    ) {
+      redis.set(redisKey.lastModified, new Date().toUTCString());
+    }
+  }));
+}
 
 /**
  * @param {Object} stream - publish page event payload
@@ -46,15 +94,15 @@ async function handlePublishSectionFront(page) {
       data = await db.get(sectionFrontRef),
       sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
 
-    if ((data.title || data.stationSiteSlug) && !data.titleLocked) {
+    if (data.title && !data.titleLocked) {
       const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
-        sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value),
-        name = data.stationFront ? data.stationSiteSlug : data.title,
-        value = name.toLowerCase();
+        sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value);
 
-      if (!sectionFrontValues.includes(value)) {
-        sectionFronts.push({ name, value });
-
+      if (!sectionFrontValues.includes(data.title.toLowerCase())) {
+        sectionFronts.push({
+          name: data.title,
+          value: data.title.toLowerCase()
+        });
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(sectionFronts));
         await db.put(sectionFrontRef, JSON.stringify({ ...data, titleLocked: true }));
 
@@ -81,13 +129,12 @@ async function handleUnpublishSectionFront(page) {
 
     if (mainRef.includes('/_components/section-front/instances/')) {
       const data = await db.get(mainRef),
-        sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList,
-        value = data.stationFront ? data.stationSiteSlug : data.title;
+        sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
 
-      if (value) {
+      if (data.title) {
         const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
           updatedSectionFronts = sectionFronts.filter(sectionFront => {
-            return sectionFront.value !== value.toLowerCase();
+            return sectionFront.value !== data.title.toLowerCase();
           });
 
         await db.put(`${host}${sectionFrontsList}`, JSON.stringify(updatedSectionFronts));
@@ -105,4 +152,5 @@ async function handleUnpublishSectionFront(page) {
 module.exports = () => {
   subscribe('publishPage').through(publishPage);
   subscribe('unpublishPage').through(unpublishPage);
+  subscribe('save').through(handleMsnFeed);
 };

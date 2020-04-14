@@ -1,0 +1,20 @@
+_components:
+  minified-content-feed:
+    componentTitle: 'TOP STORIES'
+    componentTitleVisible: true
+    contentType:
+      article: true
+      gallery: true
+    excludeSecondarySectionFronts: []
+    excludeSectionFronts: []
+    excludeTags: []
+    items: []
+    locationOfContentFeed: 'homepage'
+    pageSize: 6
+    populateFrom: 'all-content'
+    secondarySectionFront: ''
+    secondarySectionFrontManual: ''
+    sectionFront: ''
+    sectionFrontManual: ''
+    tag: ''
+    tagManual: ''

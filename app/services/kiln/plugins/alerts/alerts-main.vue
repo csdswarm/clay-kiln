@@ -14,8 +14,17 @@
             </ui-tab>
             <div class="alerts-manager__toolbar">
                 <ui-button @click="newAlert">Add Alert</ui-button>
-                <station-select v-show="!global"
-                    class="alerts-manager__station-select" />
+                <div class="alerts-manager__station-select">
+                    <ui-select
+                        label="Station"
+                        placeholder="Select a station"
+                        hasSearch=true
+                        :options="stationCallsigns"
+                        @select="loadAlerts"
+                        v-if="!global"
+                        v-model="selectedStation">
+                    </ui-select>
+                </div>
             </div>
             <div>
                 <div class="page-list-headers">
@@ -138,11 +147,8 @@
 <script>
     const axios = require('axios');
     const moment = require('moment');
-    const _get = require('lodash/get');
-    const { mapGetters } = require('vuex');
     const { isUrl } = require('../../../universal/utils');
-    const stationSelect = require('../../shared-vue-components/station-select');
-    const StationSelectInput = require('../../shared-vue-components/station-select/input.vue');
+    const { getAlerts } = require('../../../client/alerts');
     const {
         UiButton,
         UiCheckbox,
@@ -180,6 +186,7 @@
                 startTime: '',
                 errorMessage: '',
                 selectedAlert: {},
+                selectedStation: {},
                 tab: 'global',
                 tabs: [{
                     id: 'global',
@@ -195,63 +202,44 @@
         created() {
             this.loadAlerts();
         },
-        watch: {
-            selectedStation() {
-                this.loadAlerts();
+        computed: {
+            end() {
+                return this.combineDateAndTime(this.endDate, this.endTime);
+            },
+            start() {
+                return this.combineDateAndTime(this.startDate, this.startTime);
+            },
+            global() {
+                return this.tab === 'global';
+            },
+            heading() {
+                return `${this.editMode ? 'Edit' : 'Add New'} Alert` ;
+            },
+            /** Current station, or global station */
+            station() {
+                return this.global ? 'GLOBAL' : this.selectedStation.value;
+            },
+            stationCallsigns() {
+                const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
+
+                return allStationCallsigns.concat('NATL-RC').sort().map(station => ({
+                    label: station === 'NATL-RC' ? 'Radio.com' : station,
+                    value: station
+                }));
+            },
+            /** True if all required fields are entered */
+            validForm() {
+                return this.message && this.startDate && this.startTime && this.endDate && this.endTime && !moment(this.start).isSameOrAfter(this.end) && this.validLink;
+            },
+            validLink() {
+                if (this.link && !isUrl(this.link)) {
+                    this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
+                    return false;
+                }
+                this.validLinkError = '';
+                return true;
             }
         },
-        computed: Object.assign(
-            {},
-            mapGetters(stationSelect.storeNs, ['selectedStation']),
-            {
-                end() {
-                    return this.combineDateAndTime(this.endDate, this.endTime);
-                },
-                start() {
-                    return this.combineDateAndTime(this.startDate, this.startTime);
-                },
-                global() {
-                    return this.tab === 'global';
-                },
-                heading() {
-                    return `${this.editMode ? 'Edit' : 'Add New'} Alert`;
-                },
-                /** Current station, or global station */
-                station() {
-                    return this.global ? 'GLOBAL' : this.selectedStation.callsign;
-                },
-                stationCallsigns() {
-                    const allStationCallsigns = window.kiln.locals.allStationsCallsigns || [];
-
-                    return allStationCallsigns.concat('NATL-RC')
-                        .sort()
-                        .map(station => ({
-                            label: station === 'NATL-RC' ? 'Radio.com' : station,
-                            value: station
-                        }));
-                },
-                /** True if all required fields are entered */
-                validForm() {
-                    return (
-                        this.message
-                        && this.startDate
-                        && this.startTime
-                        && this.endDate
-                        && this.endTime
-                        && !moment(this.start).isSameOrAfter(this.end)
-                        && this.validLink
-                    );
-                },
-                validLink() {
-                    if (this.link && !isUrl(this.link)) {
-                        this.validLinkError = /(http|https):\/\//.test(this.link) ? 'Not a valid link' : 'Link must include http/https';
-                        return false;
-                    }
-                    this.validLinkError = '';
-                    return true;
-                }
-            }
-        ),
         methods: {
             /**
              * Adds or updates an alert based on if in editMode
@@ -336,11 +324,14 @@
             },
             /** Loads all current and future alerts globally or by station */
             async loadAlerts() {
-                if (!this.global && !this.selectedStation.callsign) {
+                if (!this.global && !this.selectedStation.value) {
                     this.alerts = [];
                 } else {
                     this.loading = true;
-                    const {data = []} = await axios.get('/alerts', {params: {station: this.station, ...cb()}});
+                    const data = await getAlerts({
+                        station: this.station,
+                        ...cb()
+                    });
 
                     this.loading = false;
                     this.alerts = data;
@@ -386,8 +377,8 @@
             UiTab,
             UiTextbox,
             UiModal,
-            UiSelect,
-            'station-select': StationSelectInput
+            UiSelect
         }
     }
 </script>
+

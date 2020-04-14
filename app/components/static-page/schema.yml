@@ -39,15 +39,3 @@ plaintextPrimaryHeadline:
     - pageListTitle
   _has:
     help: Plaintext title set by headline.
-
-_groups:
-  settings:
-    fields:
-      - stationName
-
-stationName:
-  _label: Station Name
-  _has: static
-  _reveal:
-    field: stationName
-    operator: truthy

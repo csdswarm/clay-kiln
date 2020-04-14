@@ -1,7 +1,6 @@
 'use strict';
 const queryService = require('../../services/server/query'),
-  _ = require('lodash'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   contentTypeService = require('../../services/universal/content-type'),
   { isComponent } = require('clayutils'),
   elasticIndex = 'published-content',
@@ -13,6 +12,7 @@ const queryService = require('../../services/server/query'),
     'contentType'
   ],
   maxItems = 3;
+
 /**
  * For each section's override items (0 through 3), look up the associated
  * articles and save them in redis.
@@ -22,7 +22,6 @@ const queryService = require('../../services/server/query'),
  * @param {object} locals
  * @returns {Promise}
  */
-
 module.exports.save = async function (ref, data, locals) {
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`];
@@ -32,23 +31,29 @@ module.exports.save = async function (ref, data, locals) {
     }
 
     // for each item, look up the associated article and save that.
-    data[`${section}Items`] = await Promise.all(items.map(async (item) => {
+    await Promise.all(items.map(async (item) => {
       item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-      const result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields),
-        article = Object.assign(item, {
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: item.url || result.canonicalUrl,
-          feedImgUrl: item.overrideImage || result.feedImgUrl
-        });
 
-      return article;
+      const searchOpts = {
+          includeIdInResult: true,
+          shouldDedupeContent: false
+        },
+        result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
+
+      Object.assign(item, {
+        uri: result._id,
+        primaryHeadline: item.overrideTitle || result.primaryHeadline,
+        pageUri: result.pageUri,
+        urlIsValid: result.urlIsValid,
+        canonicalUrl: item.url || result.canonicalUrl,
+        feedImgUrl: item.overrideImage || result.feedImgUrl
+      });
     }));
-
   }
+
   return data;
 };
+
 /**
  * @param {string} ref
  * @param {object} data
@@ -56,6 +61,13 @@ module.exports.save = async function (ref, data, locals) {
  * @returns {Promise}
  */
 module.exports.render = async function (ref, data, locals) {
+  for (const section of data.sectionFronts) {
+    const items = data[`${section}Items`],
+      curatedIds = items.filter(item => item.uri).map(item => item.uri);
+
+    locals.loadedIds = locals.loadedIds.concat(curatedIds);
+  }
+
   data.articles = [];
 
   const contentTypes = contentTypeService.parseFromData(data);
@@ -63,7 +75,14 @@ module.exports.render = async function (ref, data, locals) {
   for (const section of data.sectionFronts) {
     const items = data[`${section}Items`],
       cleanUrl = locals.url.split('?')[0].replace('https://', 'http://'),
-      query = queryService.newQueryWithCount(elasticIndex, maxItems, locals);
+      availableSlots = maxItems - items.length;
+
+    if (!availableSlots) {
+      data.articles.push({ section, articles: items });
+      continue;
+    }
+
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
 
     if (contentTypes.length) {
       queryService.addFilter(query, { terms: { contentType: contentTypes } });
@@ -98,22 +117,16 @@ module.exports.render = async function (ref, data, locals) {
       queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
     }
 
-    // exclude the curated content from the results
-    if (items && !isComponent(locals.url)) {
-      items.forEach(() => {
-        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-      });
-    }
-
     try {
-      const results = await queryService.searchByQuery(query),
+      const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true }),
         // combine the curated articles (musicItems, newsItems, sportsItems, etc.) with the query results
-        articles = items.concat(_.take(results, maxItems)).slice(0, maxItems); // show a maximum of maxItems links
+        articles = items.concat(results);
 
       data.articles.push({ section, articles });
     } catch (e) {
       queryService.logCatch(e, ref);
     }
   }
+
   return data;
 };
