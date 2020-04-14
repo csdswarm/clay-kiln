@@ -1,5 +1,3 @@
-@import "_global/mixins";
-
 .component--two-column-component {
   display: flex;
   flex-direction: row;

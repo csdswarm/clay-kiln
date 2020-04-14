@@ -10,10 +10,8 @@ module.exports = unityComponent({
     await autoLink(data, ['sectionFront', 'secondarySectionFront'], locals);
     return createContent.render(uri, data, locals);
   },
-  save: async (uri, data, locals) => {
+  save: (uri, data, locals) => {
     data.totalSlides = data.slides.length;
-    await createContent.save(uri, data, locals);
-
-    return data;
+    return createContent.save(uri, data, locals);
   }
 });

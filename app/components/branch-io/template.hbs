@@ -1,0 +1,8 @@
+<!-- data-uri="{{ default _ref _self }}" -->
+{{#unless @root.locals.edit}}
+    <script src="https://cdn.branch.io/branch-2.49.0.min.js"></script>
+    <script type="text/javascript">
+        // init Branch
+        branch.init("{{ _computed.branchIoKey }}");
+    </script>
+{{/unless}}

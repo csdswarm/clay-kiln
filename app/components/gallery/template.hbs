@@ -1,18 +1,4 @@
-<section role="main"
-  data-track-type="gallery-detail"
-  data-uri="{{ default _ref _self }}"
-  class="component component--gallery{{ if @root.locals.edit ' editing' }} gallery--{{sectionFront}}"
-  itemscope
-  itemtype="http://schema.org/CollectionPage"
-  data-section-front="{{ sectionFront }}"
-  data-syndication="{{ syndicationStatus }}"
-  data-headline="{{ striptags headline }}"
-  data-authors="{{ join (map authors (getProp "text")) }}"
-  data-sources="{{ join (map sources (getProp "text")) }}"
-  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
-  data-tags="{{ join (map tags.items (getProp "text")) }}"
-  data-station-slug="{{ stationSlug }}">
-
+<section role="main" data-track-type="gallery-detail" data-uri="{{ default _ref _self }}" class="component component--gallery{{ if @root.locals.edit ' editing' }} gallery--{{sectionFront}}" itemscope itemtype="http://schema.org/CollectionPage"  data-section-front="{{ sectionFront }}" data-syndication="{{ syndicationStatus }}"  data-headline="{{ striptags headline }}" data-authors="{{ join (map authors (getProp "text")) }}" data-sources="{{ join (map sources (getProp "text")) }}" data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" data-tags="{{ join (map tags.items (getProp "text")) }}">
   {{> breadcrumbs this }}
   <header class="gallery__header">
     {{! gallery microdata }}
