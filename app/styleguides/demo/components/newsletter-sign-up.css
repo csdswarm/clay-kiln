@@ -183,6 +183,10 @@ body > .newsletter-sign-up {
 
   &__sign-up-terms {
     @mixin newsletter-sign-up-font-2;
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
   }
 
   &--success {
