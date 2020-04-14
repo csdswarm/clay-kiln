@@ -14,11 +14,11 @@
     {{#if showHeader}}
         <div class="contest-rules--default-view">
             <h2 class="contest-rules__contest-headline">
-                {{ contestHeadline }}
+                {{ headline }}
             </h2>
             <div class="contest-rules__date-range">
                 <p class="paragraph">
-                    Contest Date Range: {{ formatDateTimeRange contestStartDate contestEndDate (concat "MMMM D, YYYY [at] h:mma [" stationTimeZone "]") ' through ' }}
+                    Contest Date Range: {{ formatDateTimeRange startDateTime endDateTime (concat "MMMM D, YYYY [at] h:mma [" stationTimeZone "]") ' through ' }}
                 </p>
             </div>
         </div>
@@ -37,15 +37,15 @@
         </div>
         <div class="contest-rules__description-container">
             <h2 class="contest-rules__contest-headline">
-              {{ contestHeadline }}
+              {{ headline }}
             </h2>
-            <p class="paragraph">{{ paragraphForMarketing }}</p>
+            <p class="paragraph">{{ description }}</p>
         </div>
     </div>
 {{/inline}}
 
-<div class="component component--contest-rules contest-rules{{ if @root.locals.edit ' editing' }}" data-uri="{{ default _ref self }}">
-    <a href="/contests/{{ contestSlug }}" class="contest-rules__link">
+<div class="component component--contest-rules contest-rules">
+    <a href="{{ contestSlug }}" class="contest-rules__link">
         {{#if showPresentation}}
             {{> presentationStyle}}
         {{else}}

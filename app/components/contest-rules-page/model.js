@@ -8,23 +8,19 @@
 /* eslint-disable one-var */
 
 const { unityComponent } = require('../../services/universal/amphora');
+const rest = require('../../services/universal/rest.js');
 const db = require('amphora-storage-postgres');
-const { DEFAULT_STATION: defaultStation } = require('../../services/universal/constants');
 const moment = require('moment');
 const maxAgeInDays = 31;
 const url = require('url');
 const _get = require('lodash/get');
-
 
 /**
  * Creates a conditional station operator for contest sql query
  * @param {String} stationCallsign
  * @returns {String}
  */
-const stationQuery = stationCallsign =>
-  stationCallsign === defaultStation.callsign ?
-    'AND NOT data \\? \'stationCallsign\'' :
-    `AND data->>'stationCallsign' = '${stationCallsign}'`;
+const stationQuery = stationCallsign => `AND data->>'stationCallsign' = '${stationCallsign}'`;
 
 /**
  * Queries the db for contest rules
@@ -37,12 +33,15 @@ const getContestRules = async ({
 }) => {
   const contestRulesQuery = /* sql */ `
     SELECT *
-    FROM components."contest-rules"
+    FROM components."contest"
 
-    -- show contests that are no more than X days old
-    WHERE DATE_PART(
+    -- make sure contest is active within current time
+    WHERE data->>'endDateTime' >= '${startTime}'
+
+    -- show contests that are active within 30 days from current time
+    AND DATE_PART(
       'day',
-      '${startTime}'::timestamp - (data ->> 'contestEndDate')::timestamp
+      (data ->> 'endDateTime')::timestamp - '${startTime}'::timestamp
     ) <= ${maxAgeInDays}
 
     AND id SIMILAR TO '%@published'
@@ -58,19 +57,30 @@ const getContestRules = async ({
 module.exports = unityComponent({
   render: async (ref, data, locals = {}) => {
     // NOTE: locals is undefined during migration/bootstrap
-    const callsign = _get(locals, 'stationForPermissions.callsign');
+    const isBootstrapping = locals === undefined;
+
+    if (isBootstrapping) {
+      return data;
+    }
+
+    const { protocol, host } = locals.site;
+    const { callsign: defaultCallsign } = locals.defaultStation;
+    const callsign = _get(locals, 'stationForPermissions.callsign', defaultCallsign);
+
     const { pathname } = url.parse(locals.url);
     const isPresentationMode = pathname === '/contests';
     const startTime = moment().toISOString(true);
-    const contestRules = (await getContestRules({
+    const contestRules = await Promise.all((await getContestRules({
       startTime,
       stationCallsign: callsign
-    })).map((ruleData) => ({
+    })).map(async (ruleData) => ({
       ...ruleData,
       stationTimeZone: locals.station.timezone,
       showHeader: true,
-      showPresentation: isPresentationMode
-    }));
+      showPresentation: isPresentationMode,
+      description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
+      contestSlug: `${protocol}://${host}/contests/${ruleData.slug}`
+    })));
 
     data._computed = {
       contestRules
