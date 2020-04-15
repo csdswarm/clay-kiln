@@ -25,7 +25,7 @@ const _get = require('lodash/get'),
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
     EVENT: 'event',
-    EVENTSLISTING: 'events-listing'
+    EVENTSLISTING: 'events-listing-page'
   },
 
   msnFeed = {
@@ -66,6 +66,17 @@ const _get = require('lodash/get'),
     },
     category: ''
   },
+  // this should list the component names of the content types which may be
+  //   created via the kiln drawer.
+  contentTypes = new Set([
+    'article',
+    'gallery',
+    'section-front',
+    'static-page',
+    'topic-page',
+    'event',
+    'events-listing-page'
+  ]),
 
   DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
@@ -82,5 +93,6 @@ module.exports = {
   SERVER_SIDE,
   PAGE_TYPES,
   DEFAULT_RADIOCOM_LOGO,
-  DEFAULT_STATION
+  DEFAULT_STATION,
+  contentTypes
 };

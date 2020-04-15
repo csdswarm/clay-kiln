@@ -1,0 +1,22 @@
+_components:
+  events-listing-page:
+    content:
+      - _ref: /_components/events-lede/instances/new
+      - _ref: /_components/events-list/instances/new
+    curatedEvents: []
+    events: []
+    lede: ''
+    ledeUrl: ''
+    pageDescription: ''
+    pageLength: ''
+    instances:
+      new:
+        content:
+          - _ref: /_components/events-lede/instances/new
+          - _ref: /_components/events-list/instances/new
+        curatedEvents: []
+        events: []
+        lede: ''
+        ledeUrl: ''
+        pageDescription: ''
+        pageLength: ''

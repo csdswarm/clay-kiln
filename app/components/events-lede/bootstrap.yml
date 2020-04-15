@@ -1,13 +1,7 @@
 _components:
   events-lede:
     contentLabel: 'Featured Event'
-    url: ''
-    headline: ''
-    startDate: ''
-    startTime: ''
-    venueName: ''
-    venueAddress: ''
-    feedImgUrl: ''
+    lede: {}
     description:
       _ref: /_components/paragraph/instances/new
     googleAdRightRail:
@@ -15,13 +9,7 @@ _components:
     instances:
       new:
         contentLabel: 'Featured Event'
-        url: ''
-        headline: ''
-        startDate: ''
-        startTime: ''
-        venueName: ''
-        venueAddress: ''
-        feedImgUrl: ''
+        lede: {}
         description:
           _ref: /_components/paragraph/instances/new
         googleAdRightRail:

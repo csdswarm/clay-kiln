@@ -1,14 +1,13 @@
-{{#*inline "event-lead" }}
-  <h1 style="margin-bottom:1em; padding:2em; border-bottom: 1px dashed #ccc; color: #bbb">replace with lead component</h1>
-{{/inline}}
-
-
 <div class="component-events-list events-list"  data-uri="{{ default _ref _self }}">
   {{#each _computed.events as |event|}}
-    {{#if (compare @index 0) }}
-      {{> event-lead event }}
-    {{else}}
-      {{> content-card event _self=true }}
-    {{/if}}
+    {{> content-card event _self=true }}
   {{/each}}
+  {{#if moreContent}}
+    {{!-- add load more button here, example: --}}
+    {{!-- <li class="links__link--loadmore"
+      <button class="more-content-feed__loadmore">
+        <div class="loadmore__text">Load More</div>
+      </button>
+    </li> --}}
+  {{/if}}
 </div>
