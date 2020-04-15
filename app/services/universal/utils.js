@@ -10,6 +10,8 @@ const
   _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
   _parse = require('url-parse'),
+  { getComponentName, isComponent } = require('clayutils'),
+  { contentTypes } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
 
@@ -248,6 +250,57 @@ function prepend(left) {
   return right => left + right;
 }
 
+/*
+ * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
+ *   begin with the prefix.
+ *
+ * @param {string} prefix
+ * @param {string} str
+ * @returns {string}
+ */
+function ensureStartsWith(prefix, str) {
+  return str.startsWith(prefix)
+    ? str
+    : prefix + str;
+}
+
+/**
+ * A tiny utility to format obj as a string
+ *
+ * @param {*} obj
+ * @returns {string}
+ */
+function prettyJSON(obj) {
+  return JSON.stringify(obj, null, 2);
+}
+
+/**
+ * Returns the full original url including the protocol and request's host
+ *
+ * @param {object} req
+ * @returns {string}
+ */
+function getFullOriginalUrl(req) {
+  return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
+}
+
+/**
+ * Returns whether the request is for a content component.  A content component
+ *   usually means a component that can be created via the kiln drawer e.g.
+ *   article, gallery, etc.  More specifically it's a component that will be
+ *   listed under the 'main' property of a page, which is why 'homepage' is also
+ *   considered a content type.
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+function isContentComponent(url) {
+  const componentName = getComponentName(url);
+
+  return isComponent(url)
+    && contentTypes.has(componentName);
+}
+
 /**
  * return yes/no dependent on val truthiness
  *
@@ -322,21 +375,27 @@ function urlToElasticSearch(url) {
   return url.replace('https', 'http');
 }
 
+
+
 module.exports = {
   boolKeys,
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
+  ensureStartsWith,
   formatStart,
   getDomainFromHostname,
+  getFullOriginalUrl,
   getSiteBaseUrl,
   has,
+  isContentComponent,
   isFieldEmpty,
   isInstance,
   isPublishedVersion,
   isUrl,
   listDeepObjects,
   prepend,
+  prettyJSON,
   removeFirstLine,
   replaceVersion,
   textToEncodedSlug,

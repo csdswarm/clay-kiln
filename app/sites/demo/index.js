@@ -6,7 +6,8 @@ const publishing = require('../../services/publishing'),
     '/_components/gallery/instances',
     '/_components/section-front/instances',
     '/_components/author-page-header/instances',
-    '/_components/event/instances'
+    '/_components/event/instances',
+    '/_components/events-listing/instances'
   ];
 
 module.exports.routes = [
@@ -62,6 +63,7 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getEventSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getEventsListingUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
   // NOTE: getAuthorPageSlugUrl will eat up anything after
   // it so I had to add getEventSlugUrl prior to it

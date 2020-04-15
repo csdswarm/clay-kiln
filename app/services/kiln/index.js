@@ -15,6 +15,8 @@ module.exports = () => {
   require('./plugins/instagram')();
   require('./plugins/subscriptions')();
   require('./plugins/select-list')();
+  require('./plugins/stores')();
+  require('./plugins/stations')();
   require('./plugins/default-text-with-override')();
   require('./plugins/valid-source')();
   require('./validators')();

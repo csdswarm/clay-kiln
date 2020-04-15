@@ -83,7 +83,6 @@ module.exports = {
             case 'small-screen': // 360px and below screen width
               width = columns * 65 + gutters * 20;
               break;
-            case 'large-screen': // 1023 to 1280px screen width
             default: // 1023px and above screen width
               width = columns * 60 + gutters * 20;
           }

@@ -3,6 +3,22 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin events-lede-font1 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin events-lede-font2 {
+  @mixin font CircularStd-Medium, 12px, $black, -.2px, 14px;
+}
+@define-mixin events-lede-font2-1 {
+  @mixin font CircularStd-Medium, 14px, $black, -.23px, 17px;
+}
+@define-mixin events-lede-font3 {
+  @mixin font ProximaNova-Regular, 18px, $black, -.29px, 22px;
+}
+@define-mixin events-lede-font4 {
+  @mixin font ProximaNova-Regular, 18px, $black, -.29px, 28px;
+}
+
 .component--events-lede {
   display: flex;
   flex-direction: row;

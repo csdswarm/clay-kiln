@@ -18,4 +18,5 @@ module.exports.getArticleSlugUrl = urlPub.getArticleSlugUrl;
 module.exports.getSectionFrontSlugUrl = urlPub.getSectionFrontSlugUrl;
 module.exports.getAuthorPageSlugUrl = urlPub.getAuthorPageSlugUrl;
 module.exports.getEventSlugUrl = urlPub.getEventSlugUrl;
+module.exports.getEventsListingUrl = urlPub.getEventsListingUrl;
 module.exports.addLastModified = addLastModified;

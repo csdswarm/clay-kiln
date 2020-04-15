@@ -2,6 +2,19 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin events-list-page-font1 {
+  @mixin font CircularStd-Black, 22px, $black, -.55px, 28px;
+}
+@define-mixin events-list-page-font2 {
+  @mixin font CircularStd-Black, 18px, $black, -.45px, 24px;
+}
+@define-mixin events-list-page-font3 {
+  @mixin font ProximaNova-Regular, 18px, $black, -.29px, 22px;
+}
+@define-mixin events-list-page-font4 {
+  @mixin font ProximaNova-Regular, 16px, $black, -.26px, 20px;
+}
+
 .content-card {
   display: flex;
   flex-direction: row;
