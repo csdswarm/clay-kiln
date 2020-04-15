@@ -33,7 +33,7 @@ module.exports = router => {
       : await getTrimmedStationsViaUrps(
         req,
         locals,
-        urps.getStationDomainNamesICanImportContent
+        urps.getDomainNamesICanImportContent
       );
 
     next();

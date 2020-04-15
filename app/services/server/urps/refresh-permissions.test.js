@@ -49,7 +49,7 @@ describe('cachedCalls', () => {
   });
 
   it('expired cachedCalls are not called', async () => {
-    const aCachedCall = cachedCalls.getStationDomainNamesIHaveAccessTo,
+    const aCachedCall = cachedCalls.getDomainNamesIHaveAccessTo,
       { urlPath } = aCachedCall.metaData.urlPath,
       auth = { lastUpdatedByUrlPath: {
         [urlPath]: getExpiredMs()
