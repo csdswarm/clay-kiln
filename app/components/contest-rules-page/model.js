@@ -13,8 +13,6 @@ const db = require('amphora-storage-postgres');
 const {
   PRIVACY_POLICY
 } = require('../../services/universal/constants');
-const moment = require('moment');
-const maxAgeInDays = 31;
 const url = require('url');
 const _get = require('lodash/get');
 const log = require('../../services/universal/log').setup({ file: __filename });
@@ -28,25 +26,35 @@ const stationQuery = stationCallsign => `AND data->>'stationCallsign' = '${stati
 
 /**
  * Queries the db for contest rules
- * @param {String} param.startTime
  * @param {String} param.stationCallsign
  */
 const getContestRules = async ({
-  startTime = '',
   stationCallsign = ''
 }) => {
   const contestRulesQuery = /* sql */ `
     SELECT *
     FROM components."contest"
 
-    -- make sure contest is active within current time
-    WHERE data->>'endDateTime' >= '${startTime}'
+    WHERE (
+      -- ending within 30 days from now or ended within 31 days ago
+      DATE_PART(
+        'day',
+        CURRENT_TIMESTAMP - (data ->> 'endDateTime')::timestamp
+      ) BETWEEN -30 and 31
 
-    -- show contests that are active within 30 days from current time
-    AND DATE_PART(
-      'day',
-      (data ->> 'endDateTime')::timestamp - '${startTime}'::timestamp
-    ) <= ${maxAgeInDays}
+      -- currently active
+      OR (
+        DATE_PART(
+          'day',
+          CURRENT_TIMESTAMP - (data ->> 'startDateTime')::timestamp
+        ) > 0
+        AND
+        DATE_PART(
+          'day',
+          (data ->> 'endDateTime')::timestamp - CURRENT_TIMESTAMP
+        ) > 0
+      )
+    )
 
     AND id SIMILAR TO '%@published'
     ${stationQuery(stationCallsign)}
@@ -74,13 +82,11 @@ module.exports = unityComponent({
 
     const { pathname } = url.parse(locals.url);
     const isPresentationMode = pathname === '/contests';
-    const startTime = moment().toISOString(true);
 
     try {
       const stationSlugContext = station.site_slug ? `${station.site_slug}/` : '';
       const stationPath = `${process.env.CLAY_SITE_PROTOCOL}://${process.env.CLAY_SITE_HOST}/${stationSlugContext}`;
       const contestRules = await Promise.all((await getContestRules({
-        startTime,
         stationCallsign: callsign
       })).map(async (ruleData) => ({
         ...ruleData,
