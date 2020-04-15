@@ -26,7 +26,8 @@ module.exports = {
     ],
     watch_delay: 3000,
     env: {
-      NODE_ENV: 'local'
+      NODE_ENV: 'local',
+      NODE_OPTIONS: '--max-http-header-size=100000'
     },
     max_memory_restart: '256M'
   }]
