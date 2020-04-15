@@ -22,6 +22,8 @@ module.exports = router => {
   router.get('/rdc/sign-out', (req, res) => {
     let redirectUri = `${protocol}://${host}/_auth/logout`;
 
+    delete req.session.auth;
+
     if (res.locals.user.provider === 'cognito') {
       const params = qs.stringify({
         client_id,
