@@ -82,7 +82,7 @@ class MoreContentFeed {
 
     // Recreate the listener for the new button
     this.loadMore = this.moreContentFeed.querySelector('.links__link--loadmore');
-    if (this.maxLazyLoadedPages + LOAD_MORE_LIMIT < this.currentPage) {
+    if (LOAD_MORE_LIMIT === this.currentPage) {
       this.loadMore.parentNode.removeChild(this.loadMore);
     } else if (this.loadMore) {
       this.loadMore.onclick = this.handleLoadMoreContent.bind(this);
