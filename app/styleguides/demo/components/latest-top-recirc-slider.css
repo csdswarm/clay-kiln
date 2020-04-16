@@ -136,12 +136,8 @@ $thumbnail-continer-width: 70px;
         text-overflow: ellipsis;
     }
 
-  &.empty {
+  &.empty:not(.editing) {
     display: none;
-
-    &.editing {
-      display: flex; /* we still need to show the component in edit mode */
-    }
   }
 }
 
