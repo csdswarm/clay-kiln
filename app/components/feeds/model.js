@@ -194,6 +194,11 @@ module.exports.render = async (ref, data, locals) => {
 
           return { range: { dateModified: { gte: dates[0], lte: dates[1] } } };
         }
+      },
+      // syndication by status
+      syndication_status: {
+        filterConditionType: 'addMust',
+        createObj: syndicationStatus => ({ match: { syndicationStatus } })
       }
     };
 
