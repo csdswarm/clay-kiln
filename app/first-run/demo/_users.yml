@@ -259,7 +259,3 @@ _users:
     username: victoriya.polyakova@entercom.com
     provider: google
     auth: admin
-  -
-    username: juan.restrepo@gorillalogic.com
-    provider: google
-    auth: admin
