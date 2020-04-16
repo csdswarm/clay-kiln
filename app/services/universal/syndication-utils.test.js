@@ -68,7 +68,7 @@ describe('universal', () => {
           expect(result).to.eql(testItem);
         });
 
-        it('throws if article is in different station, but has no stationSyndication', () => {
+        it('throws if article is in different station, and has no stationSyndication', () => {
           const { mapper, testItem } = setup_syndicationUrlPremap_mapper({
               localStationSlug: 'station-a',
               itemStationSlug: 'station-b',
@@ -76,10 +76,10 @@ describe('universal', () => {
             }),
             result = () => mapper(testItem);
 
-          expect(result).to.throw('Article is not in target station, but has no stationSyndication');
+          expect(result).to.throw('Article is not in target station, and has no stationSyndication');
         });
 
-        it('throws if article is in different station, but has no stationSyndication items', () => {
+        it('throws if article is in different station, and has no stationSyndication items', () => {
           const { mapper, testItem } = setup_syndicationUrlPremap_mapper({
               localStationSlug: 'station-a',
               itemStationSlug: 'station-b',
@@ -87,19 +87,7 @@ describe('universal', () => {
             }),
             result = () => mapper(testItem);
 
-          expect(result).to.throw('Article is not in target station, but has no stationSyndication');
-        });
-
-
-        it('throws if article syndication does not include target station', () => {
-          const { mapper, testItem } = setup_syndicationUrlPremap_mapper({
-              localStationSlug: 'station-a',
-              itemStationSlug: 'station-b',
-              syndicatedItemStationSlug: 'station-c'
-            }),
-            result = () => mapper(testItem);
-
-          expect(result).to.throw('Cannot destructure property `syndicatedArticleSlug`');
+          expect(result).to.throw('Article is not in target station, and has no stationSyndication');
         });
 
         it('updates the canonicalUrl for syndicated stations to the current station', ()=>{

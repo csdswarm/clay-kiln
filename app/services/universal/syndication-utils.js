@@ -28,9 +28,9 @@ function syndicationUrlPremap({ station }) {
 
     if (!isInStation(item)) {
       if (noContent(item.stationSyndication)) {
-        throw new Error('Article is not in target station, but has no stationSyndication', article);
+        throw new Error(`Article is not in target station, and has no stationSyndication: ${JSON.stringify(article)}`);
       } else {
-        const { syndicatedArticleSlug } = syndicatedStation(item.stationSyndication);
+        const { syndicatedArticleSlug } = syndicatedStation(item.stationSyndication) || {};
 
         item.canonicalUrl = `${getOrigin(item.canonicalUrl)}${syndicatedArticleSlug}`;
         delete item.stationSyndication;
