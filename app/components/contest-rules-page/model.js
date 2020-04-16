@@ -13,7 +13,7 @@ const db = require('amphora-storage-postgres');
 const {
   PRIVACY_POLICY
 } = require('../../services/universal/constants');
-const url = require('url');
+const { isPresentationMode } = require('../../services/universal/contest-rules-page');
 const _get = require('lodash/get');
 const log = require('../../services/universal/log').setup({ file: __filename });
 
@@ -79,9 +79,7 @@ module.exports = unityComponent({
     const { callsign: defaultCallsign } = defaultStation;
     const { protocol } = site;
     const callsign = _get(locals, 'stationForPermissions.callsign', defaultCallsign);
-
-    const { pathname } = url.parse(locals.url);
-    const isPresentationMode = pathname === '/contests';
+    const showPresentation = isPresentationMode(locals.url);
 
     try {
       const stationSlugContext = station.site_slug ? `${station.site_slug}/` : '';
@@ -92,13 +90,13 @@ module.exports = unityComponent({
         ...ruleData,
         stationTimeZone: locals.station.timezone,
         showHeader: true,
-        showPresentation: isPresentationMode,
+        showPresentation,
         description: (await rest.get(`${protocol}://${ruleData.description[0]._ref}`)).text,
         contestSlug: `${stationPath}contests/${ruleData.slug}`
       })));
 
       data._computed = {
-        showPrivacyPolicy: !isPresentationMode,
+        showPrivacyPolicy: !showPresentation,
         generalContestRulesPath: `${stationPath}general-contest-rules`,
         contestRules,
         privacyPolicyPath: PRIVACY_POLICY

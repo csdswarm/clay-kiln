@@ -1,14 +1,13 @@
 'use strict';
 
 const { unityComponent } = require('../../services/universal/amphora'),
-  url = require('url');
+  { isPresentationMode } = require('../../services/universal/contest-rules-page');
 
 module.exports = unityComponent({
   render(ref, data, locals) {
-    const { pathname } = url.parse(locals.url);
 
     data._computed = {
-      pageTitle: pathname === '/contests' ?
+      pageTitle: isPresentationMode(locals.url) ?
         'Contests' :
         'Contest Rules'
     };
