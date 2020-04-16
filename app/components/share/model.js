@@ -12,11 +12,12 @@ const _get = require('lodash/get'),
 
 module.exports.render = (ref, data, locals) => {
   const title = encodeURIComponent(striptags(data.shortTitle || data.title)),
-    domain = _get(locals, 'site.host'),
+    domain = _get(locals, 'site'),
+    stationTwitter = _get(locals, 'station.twitter'),
     stationCallSign = _get(locals, 'station.callsign');
 
-  data.twitterHandle = locals.shareTwitterHandle || data.twitterHandle;
-
+  data.twitterHandle = stationTwitter || data.twitterHandle;
+ 
   return {
     ...data,
     emailUrl: `mailto:?subject=${title}&body=${buildUTMUrl(locals.url, { utm_source: domain, utm_medium: 'email', utm_term: stationCallSign })}`,
