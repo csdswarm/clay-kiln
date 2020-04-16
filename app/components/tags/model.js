@@ -30,16 +30,18 @@ function clean(items) {
 }
 
 module.exports = unityComponent({
-  save: function (uri, data) {
-    data.items = clean(data.items); // first, make sure everything is lowercase and has trimmed whitespace
-    data.featureRubric = getRubric(data.items); // also grab the feature rubric
-    return data;
-  },
   render: function (uri, data, locals) {
-    console.log(JSON.stringify(locals.station, null, 2));
     data._computed.stationSlug = locals.station.id === DEFAULT_STATION.id
       ? ''
       : `/${locals.station.site_slug}`;
+    data._computed.strategistPath = locals.site.path === '/strategist'
+      ? locals.site.path
+      : '';
+    return data;
+  },
+  save: function (uri, data) {
+    data.items = clean(data.items); // first, make sure everything is lowercase and has trimmed whitespace
+    data.featureRubric = getRubric(data.items); // also grab the feature rubric
     return data;
   }
 });
