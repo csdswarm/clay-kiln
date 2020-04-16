@@ -21,7 +21,6 @@ const express = require('express'),
   amphoraFiles = require('amphora-fs'),
   path = require('path'),
   YAML = require('yamljs'),
-  interceptLists = require('./intercept-lists'),
   componentsToCheck = getComponentsWithPermissions(),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
@@ -113,9 +112,8 @@ function userPermissionRouter() {
     next();
   });
 
-  interceptLists(userPermissionRouter);
-
   addToLocals.stationsICanImportContent(userPermissionRouter);
+  addToLocals.stationsICanCreateContent(userPermissionRouter);
 
   // updatePermissionsInfo needs to go after stationsIHaveAccessTo
   addToLocals.updatePermissionsInfo(userPermissionRouter);

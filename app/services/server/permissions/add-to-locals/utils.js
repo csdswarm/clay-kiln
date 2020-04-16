@@ -13,6 +13,7 @@ const _ = require('lodash'),
  *
  * @typedef {object} TrimmedStation
  * @property {string} callsign
+ * @property {number} id
  * @property {string} name
  * @property {string} slug - (site_slug)
  */
@@ -26,6 +27,7 @@ function addRdcStation(stationsBySlug) {
   Object.assign(stationsBySlug, {
     [DEFAULT_STATION.site_slug]: {
       callsign: DEFAULT_STATION.callsign,
+      id: DEFAULT_STATION.id,
       name: DEFAULT_STATION.name,
       slug: DEFAULT_STATION.site_slug
     }
@@ -63,9 +65,10 @@ async function getTrimmedStationsViaUrps(req, locals, getStationDomainNames) {
     ),
     stationsBySlug = _.chain(stationsByDomainName)
       .mapKeys('site_slug')
-      .mapValues(({ callsign, name, site_slug }) => {
+      .mapValues(({ callsign, id, name, site_slug }) => {
         return {
           callsign,
+          id,
           name,
           slug: site_slug
         };
@@ -93,8 +96,9 @@ async function getAllTrimmedStations(locals) {
 
   stationsBySlug = _.mapValues(
     stationsBySlug,
-    ({ callsign, name, site_slug }) => ({
+    ({ callsign, id, name, site_slug }) => ({
       callsign,
+      id,
       name,
       slug: site_slug
     })

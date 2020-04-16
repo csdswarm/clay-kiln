@@ -49,6 +49,7 @@ import {
   sortPages,
   uriToUrl
 } from './clay-kiln-utils';
+import { getStationDomainName } from '../../../universal/urps';
 
 const { filterableList } = window.kiln.utils.components;
 
@@ -91,11 +92,47 @@ export default {
       pages() {
         let items = _.cloneDeep(_.get(this.$store, 'state.lists[new-pages].items', []));
 
+        const selectedStationName = _.get(this.selectedStation, 'name', '<none selected>');
+
+        if (this.selectedStation) {
+          items = items.filter(this.hasPermissionToCategory);
+          items = items.map(this.filterChildrenByPermissions);
+        }
+
         return sortPages(items);
       }
     }
   ),
   methods: {
+    filterChildrenByPermissions(item) {
+      const { stationsICanCreateStaticPages } = window.kiln.locals
+
+      if (item.id === 'General-content') {
+        item.children = item.children.filter(({ id: childId }) => {
+          if (childId === 'new-static-page') {
+            return stationsICanCreateStaticPages[this.selectedStation.slug]
+          }
+
+          return true
+        })
+      }
+
+      return item;
+    },
+    hasPermissionToCategory({ id }) {
+      const {
+        stationsICanCreateSectionFronts,
+        stationsICanCreateStationFronts,
+      } = window.kiln.locals
+
+      if (id === 'section-front') {
+        return stationsICanCreateSectionFronts[this.selectedStation.slug]
+      } else if (id === 'station-front') {
+        return stationsICanCreateStationFronts[this.selectedStation.slug]
+      }
+
+      return true;
+    },
     async itemClick(id, title) {
       const category = _.find(this.pages, category => _.find(category.children, child => child.id === id));
 

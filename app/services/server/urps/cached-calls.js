@@ -25,6 +25,44 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
       // permissionCategory is the target as we think of it
       permissionCategory: 'content'
     }
+  }),
+  // the following are a short term solution until we can either
+  //   1. figure out a good interface with urps to accomplish the same goal, or
+  //   2. change our UX so we don't need permissions from various domains on
+  //      every page
+  //
+  // the problem is that we need to filter the page templates based off user
+  //   permissions for each station.  Right now the endpoint allows us to get
+  //   the domains by a single permission, where we need urps to take multiple
+  getDomainNamesICanCreateSectionFronts = makeCachedUrpsCall({
+    urlPath: '/domains/by-type-and-permission',
+    cachedPropName: 'domainNamesICanCreateContent',
+    toResult: domains => domains.map(aDomain => aDomain.name),
+    urpsReqBody: {
+      action: 'create',
+      // permissionCategory is the target as we think of it
+      permissionCategory: 'section-front'
+    }
+  }),
+  getDomainNamesICanCreateStaticPages = makeCachedUrpsCall({
+    urlPath: '/domains/by-type-and-permission',
+    cachedPropName: 'domainNamesICanCreateContent',
+    toResult: domains => domains.map(aDomain => aDomain.name),
+    urpsReqBody: {
+      action: 'create',
+      // permissionCategory is the target as we think of it
+      permissionCategory: 'static-page'
+    }
+  }),
+  getDomainNamesICanCreateStationFronts = makeCachedUrpsCall({
+    urlPath: '/domains/by-type-and-permission',
+    cachedPropName: 'domainNamesICanCreateContent',
+    toResult: domains => domains.map(aDomain => aDomain.name),
+    urpsReqBody: {
+      action: 'create',
+      // permissionCategory is the target as we think of it
+      permissionCategory: 'station-front'
+    }
   });
 
 /**
@@ -85,6 +123,9 @@ function makeCachedUrpsCall(metaData) {
 }
 
 module.exports = {
+  getDomainNamesICanCreateSectionFronts,
+  getDomainNamesICanCreateStaticPages,
+  getDomainNamesICanCreateStationFronts,
   getDomainNamesICanImportContent,
   getDomainNamesIHaveAccessTo
 };
