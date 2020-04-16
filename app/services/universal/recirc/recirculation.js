@@ -439,7 +439,7 @@ const
           stationFilter = { stationSlug: locals.station.site_slug },
           { content, totalHits } = await fetchRecirculation(
             {
-              filters: { ...stationFilter, ...filters },
+              filters: { ...filters, ...stationFilter },
               excludes,
               elasticFields: esFields,
               pagination,
