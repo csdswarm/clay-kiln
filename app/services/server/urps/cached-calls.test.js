@@ -23,10 +23,15 @@ describe('cachedCalls', () => {
 
       await aCachedCall({ token: mockToken });
 
-      expect(getFromUrps.calledOnce).to.be.true;
+      expect(getFromUrps.calledTwice).to.be.true;
       expect(getFromUrps.firstCall.args).to.deep.equal([
         urlPath,
-        urpsReqBody,
+        Object.assign({ domainType: 'station' }, urpsReqBody),
+        mockToken
+      ]);
+      expect(getFromUrps.secondCall.args).to.deep.equal([
+        urlPath,
+        Object.assign({ domainType: 'market' }, urpsReqBody),
         mockToken
       ]);
 
@@ -46,7 +51,7 @@ describe('cachedCalls', () => {
 
       await aCachedCall(auth);
 
-      expect(getFromUrps.calledOnce).to.be.true;
+      expect(getFromUrps.calledTwice).to.be.true;
 
       getFromUrps.resetHistory();
     }
@@ -82,7 +87,7 @@ describe('cachedCalls', () => {
 
       await aCachedCall(auth, { isRefresh: true });
 
-      expect(getFromUrps.calledOnce).to.be.true;
+      expect(getFromUrps.calledTwice).to.be.true;
 
       getFromUrps.resetHistory();
     }
