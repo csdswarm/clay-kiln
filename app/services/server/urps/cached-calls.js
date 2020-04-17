@@ -36,7 +36,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   //   the domains by a single permission, where we need urps to take multiple
   getDomainNamesICanCreateSectionFronts = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
-    cachedPropName: 'domainNamesICanCreateContent',
+    cachedPropName: 'domainNamesICanCreateSectionFronts',
     toResult: domains => domains.map(aDomain => aDomain.name),
     urpsReqBody: {
       action: 'create',
@@ -46,7 +46,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   }),
   getDomainNamesICanCreateStaticPages = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
-    cachedPropName: 'domainNamesICanCreateContent',
+    cachedPropName: 'domainNamesICanCreateStaticPages',
     toResult: domains => domains.map(aDomain => aDomain.name),
     urpsReqBody: {
       action: 'create',
@@ -56,7 +56,7 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
   }),
   getDomainNamesICanCreateStationFronts = makeCachedUrpsCall({
     urlPath: '/domains/by-type-and-permission',
-    cachedPropName: 'domainNamesICanCreateContent',
+    cachedPropName: 'domainNamesICanCreateStationFronts',
     toResult: domains => domains.map(aDomain => aDomain.name),
     urpsReqBody: {
       action: 'create',
@@ -69,9 +69,9 @@ const getDomainNamesIHaveAccessTo = makeCachedUrpsCall({
  * returns a function which takes req.session.auth as a parameter and returns
  *   the results of the urps call - which is cached in session.
  *
- * also, because refresh-permissions needs to know the mapping from urlPath to
- *   the call being made, the function returned has the metaData attached as
- *   a property.
+ * also, because refresh-permissions needs to know the mapping from
+ *   cachedPropName to the call being made, the function returned has the
+ *   metaData attached as a property.
  *
  * @param {object} metaData
  * @param {string} metaData.cachedPropName - the property name which will hold the cached results and assigned to auth
@@ -86,8 +86,8 @@ function makeCachedUrpsCall(metaData) {
     cachedCall = async (auth, opts = {}) => {
       const { isRefresh } = opts,
         currentTime = Date.now(),
-        { lastUpdatedByUrlPath = {} } = auth,
-        lastUpdated = lastUpdatedByUrlPath[urlPath];
+        { lastUpdatedByCachedPropName = {} } = auth,
+        lastUpdated = lastUpdatedByCachedPropName[cachedPropName];
 
       if (
         !auth[cachedPropName]
@@ -108,11 +108,11 @@ function makeCachedUrpsCall(metaData) {
           )
         ]);
 
-        lastUpdatedByUrlPath[urlPath] = currentTime;
+        lastUpdatedByCachedPropName[cachedPropName] = currentTime;
 
         Object.assign(auth, {
           [cachedPropName]: toResult(stations.concat(markets)),
-          lastUpdatedByUrlPath
+          lastUpdatedByCachedPropName
         });
       }
 
