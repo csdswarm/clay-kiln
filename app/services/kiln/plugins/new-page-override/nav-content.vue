@@ -95,8 +95,8 @@ export default {
         const selectedStationName = _.get(this.selectedStation, 'name', '<none selected>');
 
         if (this.selectedStation) {
-          items = items.filter(this.hasPermissionToCategory);
-          items = items.map(this.filterChildrenByPermissions);
+          items = items.filter(this.hasPermissionToCategory)
+            .map(this.filterChildrenByPermissions);
         }
 
         return sortPages(items);
