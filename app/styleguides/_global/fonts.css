@@ -692,6 +692,49 @@ em, i {
   @mixin font ProximaNova-Bold, 14px, $black, 0, 16px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||   Station Theme Manager Styleguide     |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin station-theme-font1 {
+  @mixin font CircularStd-Black, 20px, inherit, -.23px, 25px;
+}
+@define-mixin station-theme-font2 {
+  @mixin font CircularStd-Black, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font3 {
+  @mixin font CircularStd-BlackItalic, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font4 {
+  @mixin font CircularStd-Book, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font5 {
+  @mixin font CircularStd-BookItalic, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font6 {
+  @mixin font CircularStd-Medium, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font7 {
+  @mixin font CircularStd-MediumItalic, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font8 {
+  @mixin font ProximaNova-Bold, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font9 {
+  @mixin font ProximaNova-BoldIt, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font10 {
+  @mixin font ProximaNova-Light, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font11 {
+  @mixin font ProximaNova-LightIt, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font12 {
+  @mixin font ProximaNova-Regular, 12px, inherit, 0px, 15px;
+}
+@define-mixin station-theme-font13 {
+  @mixin font ProximaNova-RegularIt, 12px, inherit, 0px, 15px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||| Author Page Header Fonts Styleguide  ||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/

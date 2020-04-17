@@ -8,8 +8,7 @@
         :invalid="!isColorHex(primaryColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: primaryColor }"
-        label="Primary Color"
+        label="Primary Color (Example: station nav, icons, hyperlink, etc)"
         v-model="primaryColor"
       ></ui-textbox>
       <ui-icon-button
@@ -30,8 +29,7 @@
         :invalid="!isColorHex(secondaryColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: secondaryColor }"
-        label="Secondary Color"
+        label="Secondary Color (Example: station nav dropdown)"
         v-model="secondaryColor"
       ></ui-textbox>
       <ui-icon-button
@@ -52,8 +50,7 @@
         :invalid="!isColorHex(tertiaryColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: tertiaryColor }"
-        label="Tertiary Color"
+        label="Tertiary Color (Example: Listen Live button)"
         v-model="tertiaryColor"
       ></ui-textbox>
       <ui-icon-button
@@ -74,8 +71,7 @@
         :invalid="!isColorHex(primaryFontColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: primaryFontColor }"
-        label="Primary Font Color"
+        label="Primary Font Color (Example: station nav text)"
         v-model="primaryFontColor"
       ></ui-textbox>
       <ui-icon-button
@@ -90,7 +86,7 @@
         </div>
       </ui-icon-button>
       <div class="station-theme-manager__color-preview"
-        v-bind:style="{ color: primaryFontColor }">
+        v-bind:style="{ color: primaryFontColor, 'background-color': primaryColor }">
         <span v-bind:key="font" v-for="font in fonts">
           Preview primary font color in {{ font }}
         </span>
@@ -102,8 +98,7 @@
         :invalid="!isColorHex(secondaryFontColor)"
         :error="colorHexError"
         floating-label
-        v-bind:style="{ color: secondaryFontColor }"
-        label="Secondary Font Color"
+        label="Secondary Font Color (Example: station nav dropdown text)"
         v-model="secondaryFontColor"
       ></ui-textbox>
       <ui-icon-button
@@ -118,7 +113,8 @@
         </div>
       </ui-icon-button>
       <div class="station-theme-manager__color-preview"
-        v-bind:style="{ color: secondaryFontColor }">
+        v-bind:style="{ color: secondaryFontColor, 'background-color': secondaryColor }">
+        <h3>Can be the same as primary font color. It can be different depending on how light or dark the primary, secondary and tertiary colors are</h3>
         <span v-bind:key="font" v-for="font in fonts">
           Preview secondary font color in {{ font }}
         </span>
@@ -130,13 +126,12 @@
         :loading="loading"
         @click="updateTheme"
         :disabled="!validForm"
-      >Update</ui-button>
+      >Save</ui-button>
       <ui-button
         size="large"
-        buttonType="reset"
         iconPosition="right"
-        @click="resetForm"
-      >Reset Fields</ui-button>
+        @click="undoChanges"
+      >Undo Changes</ui-button>
     </div>
     <ui-alert
       v-if="updateStatus.message"
@@ -266,9 +261,9 @@
         }
       },
       /**
-       * Resets all fields to previously stored colors or default
+       * Resets all fields to previously stored colors
       */
-      resetForm() {
+      undoChanges() {
         this.loading = false;
         this.updateStatus = {
           type: '',
@@ -279,7 +274,7 @@
         this.tertiaryColor = this.theme ? this.theme.tertiaryColor : '';
         this.primaryFontColor = this.theme ? this.theme.primaryFontColor : '';
         this.secondaryFontColor = this.theme ? this.theme.secondaryFontColor : '';
-      },
+      }
     },
     components: {
         UiButton,
