@@ -34,9 +34,6 @@ module.exports = unityComponent({
     data._computed.stationSlug = locals.station.id === DEFAULT_STATION.id
       ? ''
       : `/${locals.station.site_slug}`;
-    data._computed.strategistPath = locals.site.path === '/strategist'
-      ? locals.site.path
-      : '';
     return data;
   },
   save: function (uri, data) {
