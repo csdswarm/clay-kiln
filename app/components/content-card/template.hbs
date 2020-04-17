@@ -3,12 +3,16 @@
   <div class="content-card__info-container">
     <div class="content-card__info-headline">{{ headline }}</div>
     <div class="content-card__info-dateTime">
-      <div class="content-card__info-icon content-card__info-icon--date"></div>
-      <div>{{ dateTime }}</div>
+      <div class="content-card__info-icon content-card__info-icon--date">
+        {{{ read "components/content-card/media/icon-time-date.svg" }}}
+      </div>
+      <div class="content-card__info-dateTime-text">{{ dateTime }}</div>
     </div>
     <div class="content-card__info-venueName">
-      <div class="content-card__info-icon content-card__info-icon--location"></div>
-      <div>{{ venueName }}</div>
+      <div class="content-card__info-icon content-card__info-icon--location">
+        {{{ read "components/content-card/media/icon-location.svg" }}}
+      </div>
+      <div class="content-card__info-venueName-text">{{ venueName }}</div>
     </div>
   </div>
 </div>
