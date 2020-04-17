@@ -1,7 +1,8 @@
 'use strict';
 
-const { getComponentInstance } = require('../../services/server/publish-utils'),
-  moreContentFeedToTwoColumn = require('../../services/universal/component-upgrades/more-content-feed-to-two-column');
+const { getComponentInstance } = require('clayutils'),
+  moreContentFeedToTwoColumn = require('../../services/universal/component-upgrades/more-content-feed-to-two-column'),
+  { addMultiColumnToSectionFront } = require('./upgrade-helpers');
 
 module.exports['1.0'] = function (uri, data) {
   if (getComponentInstance(uri) !== 'new') {
@@ -12,3 +13,5 @@ module.exports['1.0'] = function (uri, data) {
 };
 
 module.exports['2.0'] = moreContentFeedToTwoColumn;
+
+module.exports['3.0'] = addMultiColumnToSectionFront;

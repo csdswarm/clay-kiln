@@ -40,7 +40,7 @@ const _get = require('lodash/get'),
 
       return data;
     } catch (e) {
-      log('Error retrieving list', e);
+      log('error', 'Error retrieving list', e);
     }
 
     return [];

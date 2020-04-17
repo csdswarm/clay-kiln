@@ -1,17 +1,10 @@
 _components:
   section-front:
+    _version: 3
     title: ''
     titleLocked: false
     primary: false
     primarySectionFront: ''
-    includePodcastModule: false
-    sectionLead:
-      _ref: /_components/section-lead
-    googleAdUnderStationsModule:
-        _ref: /_components/google-ad-manager/instances/leaderboardBottom
-    podcastList:
-      _ref: /_components/podcast-list/instances/new
-    moreContentFeed:
-      _ref: /_components/more-content-feed/instances/section-front
-    stationsCarousel:
-      _ref: /_components/stations-carousel/instances/section-front
+    mainContent:
+      - 
+        _ref: '/_components/google-ad-manager/instances/billboardBottom'
