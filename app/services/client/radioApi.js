@@ -76,10 +76,11 @@ const rest = require('../universal/rest'),
    * @param {object} opts
    * @param {object} opts.shouldDedupeContent - handles the x-loaded-ids request and response header.
    *   See 'loaded-ids.js' under startup/add-to-locals/ and add-interceptor/ for more details.
+   * @param {object} opts.bypassCache - adds random query parameter to bypass caching
    *
    * @returns {Promise} which returns {Node}
    */
-  fetchDOM = async (route, { shouldDedupeContent = false } = {}) => {
+  fetchDOM = async (route, { shouldDedupeContent = false, bypassCache = false } = {}) => {
     const state = (await clientStateInterface.getState())[0],
       separator = route.includes('?') ? '&' : '?',
       requestHeaders = { 'x-locals': JSON.stringify(getLocals(state)) };
@@ -98,7 +99,8 @@ const rest = require('../universal/rest'),
     }
 
     const options = { headers: new Headers(requestHeaders) },
-      url = `${route}${separator}ignore_resolve_media=true${loadedIdsHash}`,
+      bypass = bypassCache ? `&random=${Date.now()}` : '',
+      url = `${route}${separator}ignore_resolve_media=true${loadedIdsHash}${bypass}`,
       response = await fetch(url, options),
       loadedIdsStr = response.headers.get('x-loaded-ids');
 
