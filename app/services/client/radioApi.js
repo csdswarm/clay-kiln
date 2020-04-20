@@ -69,6 +69,10 @@ const rest = require('../universal/rest'),
   spaInterface = (doc) => {
     return spaFunctions.reduce((node, func) => func(node), doc);
   },
+  __ = {
+    clientStateInterface,
+    spaInterface
+  },
   /**
    * Client side AJAX call to get the specified route and returns a DOM object
    *
@@ -81,7 +85,7 @@ const rest = require('../universal/rest'),
    * @returns {Promise} which returns {Node}
    */
   fetchDOM = async (route, { shouldDedupeContent = false, bypassCache = false } = {}) => {
-    const state = (await clientStateInterface.getState())[0],
+    const state = (await __.clientStateInterface.getState())[0],
       separator = route.includes('?') ? '&' : '?',
       requestHeaders = { 'x-locals': JSON.stringify(getLocals(state)) };
 
@@ -105,7 +109,7 @@ const rest = require('../universal/rest'),
       loadedIdsStr = response.headers.get('x-loaded-ids');
 
     if (shouldDedupeContent && loadedIdsStr) {
-      clientStateInterface.setLoadedIds(JSON.parse(loadedIdsStr));
+      __.clientStateInterface.setLoadedIds(JSON.parse(loadedIdsStr));
     }
 
     const html = await response.text(),
@@ -115,10 +119,10 @@ const rest = require('../universal/rest'),
 
     if (Array.isArray(elements)) {
       elements.forEach((element) => frag.append(element));
-      return spaInterface(frag);
+      return __.spaInterface(frag);
     }
 
-    return spaInterface(elements);
+    return __.spaInterface(elements);
   },
   /**
    * Get data
@@ -138,3 +142,4 @@ const rest = require('../universal/rest'),
 module.exports.get = get;
 module.exports.fetchDOM = fetchDOM;
 module.exports.TTL = TTL;
+module.exports._internals = __;
