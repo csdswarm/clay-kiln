@@ -29,11 +29,14 @@
 {{#*inline "presentationStyle"}}
     <div class="contest-rules--presentation-view">
         <div class="contest-rules__image-container">
-            <img
-                class="contest-rules__image"
-                src="{{ feedImgUrl }}"
-                alt="contest image"
-            />
+            <picture>
+                <source media="(max-width: 360px)" srcset="{{ feedImgUrl }}?width=360&crop=16:9,offset-y0" />
+                <img
+                    src="{{ feedImgUrl }}?width=480&crop=16:9,offset-y0"
+                    class="contest-rules__image"
+                    alt="{{ headline }}"
+                />
+            </picture>
         </div>
         <div class="contest-rules__description-container">
             <h2 class="contest-rules__contest-headline">
