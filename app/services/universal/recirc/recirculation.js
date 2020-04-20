@@ -18,6 +18,7 @@
  */
 
 const
+  _merge = require('lodash/merge'),
   _get = require('lodash/get'),
   _has = require('lodash/has'),
   _isEmpty = require('lodash/isEmpty'),
@@ -139,21 +140,24 @@ const
     },
     stationSlug: {
       filterCondition: 'must',
-      createObj: stationSlug => {
+      createObj: (stationSlug, addNestedSyndicationCondition = true) => {
+
         const qs = {
           bool: {
             should: [
               { match: { stationSlug } },
-              {
-                nested: {
-                  path: 'stationSyndication',
-                  query: {
-                    match: {
-                      'stationSyndication.stationSlug': stationSlug
+              ... addNestedSyndicationCondition
+                ? [{
+                  nested: {
+                    path: 'stationSyndication',
+                    query: {
+                      match: {
+                        'stationSyndication.stationSlug': stationSlug
+                      }
                     }
                   }
-                }
-              }
+                }]
+                : []
             ],
             minimum_should_match: 1
           }
@@ -210,7 +214,7 @@ const
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = conditionOverride || filterCondition, value } = _isPlainObject(valueObj)
+      { condition = conditionOverride || filterCondition, value, additionalParameter } = _isPlainObject(valueObj)
         ? valueObj
         : { value: valueObj };
 
@@ -228,6 +232,10 @@ const
         return;
       }
 
+      if (typeof additionalParameter !== 'undefined') {
+        queryService[getQueryType(condition)](query, createObj(value, additionalParameter));
+        return;
+      }
       queryService[getQueryType(condition)](query, createObj(value));
     }
   },
@@ -377,10 +385,15 @@ const
       if (key === 'sectionFronts' && !_isEmpty(filters.secondarySectionFronts)) {
         return;
       }
+      if (key === 'addNestedSyndicationCondition') {
+        return;
+      }
+      if (key === 'stationSlug' && !filters.addNestedSyndicationCondition) {
+        value = Object.assign({ value }, { additionalParameter: filters.addNestedSyndicationCondition });
+      }
       addCondition(query, key, value);
     });
     Object.entries(excludes).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
-
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
 
@@ -431,15 +444,15 @@ const
       }
 
       try {
-        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = {
-            ...defaultMapDataToFilters(uri, data, locals),
-            ...await mapDataToFilters(uri, data, locals)
-          },
+        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = _merge(
+            defaultMapDataToFilters(uri, data, locals),
+            await mapDataToFilters(uri, data, locals)
+          ),
           itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
           stationFilter = { stationSlug: locals.station.site_slug },
           { content, totalHits } = await fetchRecirculation(
             {
-              filters: { ...filters, ...stationFilter },
+              filters: _merge(filters, stationFilter),
               excludes,
               elasticFields: esFields,
               pagination,
