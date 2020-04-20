@@ -41,6 +41,7 @@ configmap:
     LOG: "error"
     LYTICS_API_URL: "https://api.lytics.io/api"
     NODE_ENV: "production"
+    NODE_OPTIONS: "--max-http-header-size=100000"
     PORT: "3001"
     REDIS_HASH: "mydb:h"
     REDIS_HOST: "tcp://redis.radio-prd.com:6379"
