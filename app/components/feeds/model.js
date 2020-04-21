@@ -28,6 +28,28 @@ function restrictFeedsToArticlesAndGalleries(query) {
 
   filter.push({ terms: { contentType: ['article', 'gallery'] } });
 }
+/**
+ * This filters content that was created for RDC only, any content created with a station will be excluded.
+ * @param {object} query - this parameter is mutated
+ */
+function restrictToRDC(query) {
+  const pathToFilter = 'body.query.bool.must',
+    // if the current filter is an object then we need to put it inside an array
+    //   because we're adding an additional one
+    filter = _castArray(_get(query, pathToFilter, []));
+
+  _set(query, pathToFilter, filter);
+
+  filter.push({
+    bool: {
+      should: [
+        { match: { stationSlug: '' } },
+        { bool: { must_not: { exists: { field: 'stationSlug' } } } }
+      ],
+      minimum_should_match: 1
+    }
+  });
+}
 
 /**
  * Make sure you have an index, transform and meta property on the
@@ -194,11 +216,6 @@ module.exports.render = async (ref, data, locals) => {
 
           return { range: { dateModified: { gte: dates[0], lte: dates[1] } } };
         }
-      },
-      // syndication by status
-      syndication_status: {
-        filterConditionType: 'addMust',
-        createObj: syndicationStatus => ({ match: { syndicationStatus } })
       }
     };
 
@@ -212,6 +229,7 @@ module.exports.render = async (ref, data, locals) => {
   Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
 
   restrictFeedsToArticlesAndGalleries(query);
+  restrictToRDC(query);
 
   try {
     if (meta.rawQuery) {
