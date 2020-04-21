@@ -40,8 +40,8 @@ async function updateLayout(layoutInfo) {
   console.log(`\nUpdating ${layoutInfo.componentUrl}...`);
   const { componentUrl, path } = layoutInfo;
   console.log(`\nUpdating ${componentUrl}...`);
-  const { data: layout } = await clayExport({ componentUrl });
-  updatedLayout = _set(layout, path, addStationComponents(_get(layout, path)));
+  const { data: layout } = await clayExport({ componentUrl }),
+    updatedLayout = _set(layout, path, addStationComponents(_get(layout, path)));
   try {
     await clayImport({ hostUrl, payload: updatedLayout, publish: true });
     console.log("\nDone.\n");
