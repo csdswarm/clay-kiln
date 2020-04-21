@@ -22,7 +22,7 @@ clayImport({
               fileExtension: 'rss'
             },
             attr: {
-              'xmlns:coverImage': 'https://www.radio.com'
+              'xmlns:radio': 'https://www.radio.com'
             },
             index: 'published-content',
             query: {

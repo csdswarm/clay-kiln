@@ -11,6 +11,7 @@ const cheerio = require('cheerio'),
 /**
  * Sanitizes HTML by removing all script tags.
  *
+ * @param {string} htmlStr
  * @returns {function}
  */
 function removeScripts(htmlStr) {
@@ -54,7 +55,7 @@ module.exports = function (data, locals) {
       { stationTitle },
       { subHeadline },
       { seoHeadline: { _cdata: seoHeadline } },
-      { coverImage: feedImgUrl },
+      { 'radio:coverImage': feedImgUrl },
       { featured }
     ];
 
