@@ -46,7 +46,7 @@ async function updateLayout(layoutInfo) {
     await clayImport({ hostUrl, payload: updatedLayout, publish: true });
     console.log("\nDone.\n");
   } catch (e) {
-    console.error(error);
+    console.error(`Clay import error: ${e}`);
   }
   return;
 }
@@ -54,5 +54,9 @@ async function updateLayout(layoutInfo) {
 (async () => {
   console.log("Adding station components to content layout...\n");
   console.log("layout: ", layout);
-  await updateLayout(layout);
+  try {
+    await updateLayout(layout);
+  }catch(e) {
+    console.error(`Update layout error: ${e}`);
+  }
 })()
