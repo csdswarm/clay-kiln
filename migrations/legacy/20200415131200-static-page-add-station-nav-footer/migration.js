@@ -1,3 +1,5 @@
+'use strict';
+
 const { clayImport, clayExport, _get, _set } = require("../migration-utils").v1;
 const hostUrl = process.argv[2] || "clay.radio.com";
 const layout = {
@@ -40,20 +42,17 @@ async function updateLayout(layoutInfo) {
   console.log(`\nUpdating ${componentUrl}...`);
   const { data: layout } = await clayExport({ componentUrl });
   updatedLayout = _set(layout, path, addStationComponents(_get(layout, path)));
-
-  return await clayImport({ hostUrl, payload: updatedLayout, publish: true });
-}
-
-async function updateLayouts() {
-  console.log("Adding station components to content layout...\n");
-  console.log("layout: ", layout);
-
   try {
-    await updateLayout(layout);
-  } catch (error) {
+    await clayImport({ hostUrl, payload: updatedLayout, publish: true });
+    console.log("\nDone.\n");
+  } catch (e) {
     console.error(error);
   }
-  console.log("\nDone.\n");
+  return;
 }
 
-updateLayouts();
+(async () => {
+  console.log("Adding station components to content layout...\n");
+  console.log("layout: ", layout);
+  await updateLayout(layout);
+})()
