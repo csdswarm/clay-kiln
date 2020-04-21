@@ -5,7 +5,7 @@
 @import '_global/spa';
 @import "_global/colors";
 @import "_global/alert-banner";
-@import "_global/layouts";
+@import '_global/layout';
 
 .layout--two-column {
   margin: 0;

@@ -4,6 +4,7 @@ const _reduce = require('lodash/reduce'),
   helpers = require('./helpers'),
   blocked = {
     // component name: maximum number allowed
+    'single-related-story': 1,
     annotations: 1
   }; // add more components here
 

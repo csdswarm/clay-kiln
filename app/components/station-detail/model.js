@@ -1,6 +1,6 @@
 'use strict';
 const slugifyService = require('../../services/universal/slugify'),
-  { playingClass, favoriteModifier } = require('../../services/universal/spaLocals'),
+  { playingClass, favoriteModifier } = require('../../services/server/spaLocals'),
   { addCrumb } = require('../breadcrumbs'),
   { sendError } = require('../../services/universal/cmpt-error'),
   { getStationSlug } = require('../../services/universal/stations'),

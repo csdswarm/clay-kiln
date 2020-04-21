@@ -59,7 +59,7 @@
         padding: 0 em(20) 0 0;
         width: em(300);
         background: $white;
-        border-top: em(6) solid theme(primaryColor, $parisM);
+        border-top: em(6) solid $parisM;
       }
       .details__title {
         @mixin section-lead-font1;
@@ -338,10 +338,10 @@
     .section-lead__article {
       &.section-lead__article--first {
         .section-lead__details {
-          border-color: theme(primaryColor, $color);
+          border-color: $color;
         }
         .details__primary-story-label {
-          color: theme(primaryColor, $color);
+          color: $color;
         }
       }
     }
