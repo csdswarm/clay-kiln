@@ -145,26 +145,35 @@ const
         const qs = {
           bool: {
             should: [
-              { match: { stationSlug } },
-              ... includeSyndicated
-                ? [{
-                  nested: {
-                    path: 'stationSyndication',
-                    query: {
-                      match: {
-                        'stationSyndication.stationSlug': stationSlug
-                      }
-                    }
-                  }
-                }]
-                : []
+              { match: { stationSlug } }
             ],
             minimum_should_match: 1
           }
         };
 
+        if (includeSyndicated) {
+          qs.bool.should.push({
+            nested: {
+              path: 'stationSyndication',
+              query: {
+                match: {
+                  'stationSyndication.stationSlug': stationSlug
+                }
+              }
+            }
+          });
+        }
+
         if (stationSlug === DEFAULT_STATION.site_slug) {
-          _set(qs, 'bool.should[2].bool.must_not.exists.field', 'stationSlug');
+          qs.bool.should.push({
+            bool: {
+              must_not: {
+                exists: {
+                  field: 'stationSlug'
+                }
+              }
+            }
+          });
         }
 
         return qs;
