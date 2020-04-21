@@ -140,13 +140,13 @@ const
     },
     stationSlug: {
       filterCondition: 'must',
-      createObj: (stationSlug, addNestedSyndicationCondition = true) => {
+      createObj: (stationSlug, includeSyndicated = true) => {
 
         const qs = {
           bool: {
             should: [
               { match: { stationSlug } },
-              ... addNestedSyndicationCondition
+              ... includeSyndicated
                 ? [{
                   nested: {
                     path: 'stationSyndication',
@@ -214,7 +214,7 @@ const
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = conditionOverride || filterCondition, value, additionalParameter } = _isPlainObject(valueObj)
+      { condition = conditionOverride || filterCondition, value, includeSyndicated } = _isPlainObject(valueObj)
         ? valueObj
         : { value: valueObj };
 
@@ -232,8 +232,8 @@ const
         return;
       }
 
-      if (typeof additionalParameter !== 'undefined') {
-        queryService[getQueryType(condition)](query, createObj(value, additionalParameter));
+      if (typeof includeSyndicated !== 'undefined') {
+        queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
         return;
       }
       queryService[getQueryType(condition)](query, createObj(value));
@@ -385,11 +385,11 @@ const
       if (key === 'sectionFronts' && !_isEmpty(filters.secondarySectionFronts)) {
         return;
       }
-      if (key === 'addNestedSyndicationCondition') {
+      if (key === 'includeSyndicated') {
         return;
       }
-      if (key === 'stationSlug' && !filters.addNestedSyndicationCondition) {
-        value = Object.assign({ value }, { additionalParameter: filters.addNestedSyndicationCondition });
+      if (key === 'stationSlug' && !filters.includeSyndicated) {
+        value = Object.assign({ value }, { includeSyndicated: filters.includeSyndicated });
       }
       addCondition(query, key, value);
     });

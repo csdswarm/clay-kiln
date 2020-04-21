@@ -48,7 +48,7 @@ module.exports = recirculationData({
   mapDataToFilters: (uri, data) => ({
     maxItems: getMaxItems(data),
     filters: {
-      addNestedSyndicationCondition: false
+      includeSyndicated: false
     }
   }),
 
