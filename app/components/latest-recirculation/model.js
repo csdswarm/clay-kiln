@@ -126,6 +126,10 @@ const db = require('../../services/server/db'),
         label: getSectionFrontName(item.sectionFront, primarySectionFronts)
       }));
     }
+    // Reset value of customTitle to avoid an override inside the template when the rss option is not selected.
+    if (data.populateFrom !== 'rss-feed') {
+      data.customTitle = '';
+    }
     return data;
   };
 
