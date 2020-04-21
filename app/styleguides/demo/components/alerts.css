@@ -4,37 +4,25 @@
         width: 900px;
     }
 
-    &__add-alert {
-        display: flex;
-        margin: em(5) em(30);
-
-        /*
-          originally flex-grow was 1 and .station-select-input had a flex
-            grow of 2, but something about the input options being different
-            widths caused horizontal movement upon selection.
-        */
-        flex-grow: 0;
-        flex-shrink: 0;
-        flex-basis: 30%;
-    }
-
-    &__station-select {
-        display: flex;
-        flex-grow: 1;
-
-        /*
-          the height of .ui-button
-          https://github.com/JosephusPaye/Keen-UI/blob/v1.0.2/src/styles/variables.scss#L91
-        */
-        height: 2.25rem;
-
-        margin: em(5) em(30);
-    }
-
     &__toolbar {
         display: flex;
         justify-content: space-between;
         min-height: em(70);
+
+        .ui-button {
+            display: flex;
+            flex-grow: 1;
+            margin: em(5) em(30);
+        }
+
+        .alerts-manager__station-select {
+            display: flex;
+            flex-grow: 2;
+
+            .ui-select {
+                flex-grow: 1
+            }
+        }
     }
 
     &__save-alert {
@@ -99,7 +87,7 @@
 
     .alerts-manager-page-list-item__link {
         font-size: em(14);
-
+        
         > a {
             font-style: italic;
             color: inherit;

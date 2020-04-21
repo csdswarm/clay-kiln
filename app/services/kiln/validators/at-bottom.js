@@ -6,6 +6,7 @@ const _reduceRight = require('lodash/reduceRight'),
   _map = require('lodash/map'),
   helpers = require('./helpers'),
   shouldBeAtBottom = [ // ordered array of components at the bottom
+    'single-related-story', // penultimate
     'annotations' // last
   ];
 

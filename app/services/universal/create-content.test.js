@@ -95,6 +95,7 @@ const expect = require('chai').expect,
         },
         category: ''
       },
+      allStationsCallsigns: [],
       lytics: {
         uid: '1234'
       },

@@ -20,8 +20,6 @@
  *                                     Version 1.0                                         *
  *******************************************************************************************/
 const esQuery = require('./es-query'),
-  parseHost = require('./parse-host'),
-  usingDb = require('./using-db'),
   v1 = {
     ...(require('./base')),
     ...(require('./execute-sql').v1),
@@ -30,20 +28,15 @@ const esQuery = require('./es-query'),
     clayExport: require('./clay-export').v1,
     clayImport: require('./clay-import').v1,
     elasticsearch: require('./elasticsearch').v1,
-    ensureStartsWith: require('./ensure-starts-with').v1,
     esQuery: esQuery.v1,
-    formatAxiosError: require('./format-axios-error').v1,
     httpGet: require('./http-get').v1,
     httpRequest: require('./http-request').v1,
-    parseHost: parseHost.v1,
+    parseHost: require('./parse-host').v1,
     republish: require('./republish').v1,
-    removeComponentsFromContainers: require('./remove-components-from-containers').v1,
-    usingDb: usingDb.v1,
+    usingDb: require('./using-db').v1,
   },
   v2 = {
-    esQuery: esQuery.v2,
-    parseHost: parseHost.v2,
-    usingDb: usingDb.v2
+    esQuery: esQuery.v2
   };
 
 module.exports = {

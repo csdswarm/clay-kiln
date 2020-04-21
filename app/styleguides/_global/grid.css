@@ -1,19 +1,12 @@
 @import "colors";
-@import "mixins";
 
 .layout {
   .layout__top,
-  .layout__topSection,
-  .layout__topAd,
   .layout__bottom,
-  .layout__bottomSection,
-  .layout__bottomAd,
   .layout__page-header {
     width: 100%;
   }
-  .layout__bottom,
-  .layout__bottomSection,
-  .layout__bottomAd {
+  .layout__bottom {
     display: flex;
     flex-direction: column;
     position: relative;

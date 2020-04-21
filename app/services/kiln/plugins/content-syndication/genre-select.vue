@@ -12,7 +12,6 @@
         :multiple="true"
         :options="genreOptions"
         :value="value"
-        :disabled="disabled"
         @input="updateSelectedGenre"
       >
       </ui-select>
@@ -24,7 +23,7 @@
     UiSelect = window.kiln.utils.components.UiSelect;
 
   export default {
-      props: ['name', 'data', 'schema', 'args', 'disabled'],
+      props: ['name', 'data', 'schema', 'args'],
       data() {
         return {
           selectedGenre: this.data,

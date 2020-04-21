@@ -1,0 +1,23 @@
+_description: |
+  A component that handles tagging for ads.
+
+  * Ad Tags function as a simple-list that is only visible when editing.
+  *
+  * A user can add and remove tags.
+  *
+  * Suggested tags will populate based on alphabetical order and popularity.
+  *
+  * Users can create new tags when populating this component.
+
+items:
+  _placeholder:
+    text: Ad Tags
+    height: 40px
+  _display: inline
+  _has:
+    fn: simple-list
+    badge: FR
+    autocomplete:
+      list: ad-tags
+      allowRemove: true
+      allowCreate: true

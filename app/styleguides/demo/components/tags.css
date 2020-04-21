@@ -63,14 +63,14 @@
   .tags$(class) {
     .tags__link {
       border: em(2, 14) solid $color;
-      color: theme(primaryColor, $color);
+      color: $color;
 
       &:after {
         display: none;
       }
 
       &:hover {
-        background: theme(primaryColor, $color);
+        background: $color;
         color: $white;
       }
     }
