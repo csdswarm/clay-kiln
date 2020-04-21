@@ -6,21 +6,22 @@ const cheerio = require('cheerio'),
   format = require('date-fns/format'),
   parse = require('date-fns/parse'),
   { addArrayOfProps, renderContent } = require('./utils'),
-  { getComponentInstance } = require('clayutils');
+  { getComponentInstance } = require('clayutils'),
+  __ = {
+    /**
+     * Sanitizes HTML by removing all script tags.
+     *
+     * @param {string} htmlStr
+     * @returns {function}
+     */
+    removeScripts: htmlStr => {
+      const $ = cheerio.load(htmlStr);
 
-/**
- * Sanitizes HTML by removing all script tags.
- *
- * @param {string} htmlStr
- * @returns {function}
- */
-function removeScripts(htmlStr) {
-  const $ = cheerio.load(htmlStr);
+      $('script').remove();
 
-  $('script').remove();
-
-  return $('body').html();
-}
+      return $('body').html();
+    }
+  };
 
 /**
  * Create an array who represents one article's
@@ -40,7 +41,7 @@ module.exports = function (data, locals) {
 
       content = renderContent(content, locals, ...renderContentParams);
 
-      return removeScripts(content);
+      return __.removeScripts(content);
     },
     transform = [
       { title: { _cdata: headline } },
@@ -98,3 +99,5 @@ module.exports = function (data, locals) {
 
   return transform;
 };
+
+module.exports._internals = __;
