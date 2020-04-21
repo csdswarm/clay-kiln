@@ -93,7 +93,7 @@ const db = require('../../services/server/db'),
       return renderStation(data, locals);
     }
 
-    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+    const primarySectionFronts = await retrieveList('primary-section-fronts', { locals });
 
     if (data._computed.articles) {
       data._computed.articles = data._computed.articles.map(item => ({

@@ -56,7 +56,7 @@ module.exports = recirculationData({
    * @returns {object}
    */
   mapResultsToTemplate: async (locals, result, item = {}) => {
-    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+    const primarySectionFronts = await retrieveList('primary-section-fronts', { locals });
 
     item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 

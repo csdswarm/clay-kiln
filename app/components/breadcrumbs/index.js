@@ -136,7 +136,7 @@ async function retrieveSectionFrontLists(props, locals) {
 
   await Promise.all(Object.keys(lists).map(listProp => {
     if (props.includes(listProp)) {
-      return retrieveList(lists[listProp], locals)
+      return retrieveList(lists[listProp], { locals })
         .then(list => lists[listProp] = list);
     }
   }));

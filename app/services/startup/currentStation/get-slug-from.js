@@ -222,6 +222,19 @@ const _get = require('lodash/get'),
       }
     },
     /**
+     * Checks to see if the station was saved in a cookie and retrieves it from there
+     * @param {object} stationSlugObj
+     * @param {object} pipelineArgs
+     * @param {object} pipelineArgs.req
+     */
+    cookie: (stationSlugObj, { req }) => {
+      const stationSlug = req.cookies['station'];
+
+      if (typeof stationSlug === 'string') {
+        initBothSlugsTo(stationSlug, stationSlugObj);
+      }
+    },
+    /**
      * if the request url is for a published uri (exists in the 'uris' table)
      *   then return the station slug associated with its page's main component
      *
