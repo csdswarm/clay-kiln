@@ -62,13 +62,9 @@ const _get = require('lodash/get'),
     'topic-page'
   ]),
 
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
-
-  defaultStationName = 'Radio.com',
-
   DEFAULT_STATION = {
     id: 0,
-    name: defaultStationName,
+    name: 'Radio.com',
     callsign: 'NATL-RC',
     website: 'https://www.radio.com',
     square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
@@ -102,7 +98,10 @@ const _get = require('lodash/get'),
     //   decided to instead use the permissions from the 'National' market to
     //   cover national rdc content.
     urpsDomainName: 'National'
-  };
+  },
+
+  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+
 
 module.exports = {
   DEFAULT_STATION,
@@ -116,6 +115,7 @@ module.exports = {
   time,
   msnFeed,
   SERVER_SIDE,
+  PAGE_TYPES,
   DEFAULT_RADIOCOM_LOGO,
-  PAGE_TYPES
+  DEFAULT_STATION
 };
