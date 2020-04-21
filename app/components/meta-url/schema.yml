@@ -4,38 +4,35 @@ _description: |
 
   If an article is syndicated, the canonical link will point to the url of the original article.
 
+_permission:
+  update: meta-tags
+
 url:
   _label: Canonical URL
-  _display: settings
   _has:
-    -
-      fn: text
-      type: url
-    - label
-    -
-      fn: description
-      value: URL of the current page. For articles, this is generated from the canonical url.
+    input: text
+    type: url
+    help: URL of the current page. For articles, this is generated from the canonical url.
 
 syndicatedUrl:
   _label: Syndicated Url
-  _display: settings
   _subscribe: syndicatedUrl
   _has:
-    -
-      fn: text
-      type: url
-    - label
-    -
-      fn: description
-      value: Syndicated Url. For articles, this is set if you specify syndication in the article settings. Setting rel="canonical" tells search engines that this content has been syndicated from somewhere else.
+    input: text
+    type: url
+    help: Syndicated Url. For articles, this is set if you specify syndication in the article settings. Setting rel="canonical" tells search engines that this content has been syndicated from somewhere else.
 
 date:
   _label: Published Date
-  _display: settings
   _subscribe: publishDate
   _has:
-    - text
-    - label
-    -
-      fn: description
-      value: Published timestamp. For articles, this is set automatically.
+    input: text
+    help: Published timestamp. For articles, this is set automatically.
+
+_groups:
+  settings:
+    _label: Meta Url
+    fields:
+      - url
+      - syndicatedUrl
+      - date
