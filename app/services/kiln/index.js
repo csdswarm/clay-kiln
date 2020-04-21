@@ -7,6 +7,7 @@ module.exports = () => {
   window.kiln.helpers = require('../../services/universal/helpers');
   require('./plugins/advanced-image-upload')();
   require('./plugins/alerts')();
+  require('./plugins/all-page-override')();
   require('./plugins/brightcove')();
   require('./plugins/bulk-image-upload')();
   require('./plugins/content-import')();
