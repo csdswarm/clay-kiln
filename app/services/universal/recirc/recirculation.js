@@ -24,7 +24,6 @@ const
   _isEmpty = require('lodash/isEmpty'),
   _isPlainObject = require('lodash/isPlainObject'),
   _pick = require('lodash/pick'),
-  _set = require('lodash/set'),
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
