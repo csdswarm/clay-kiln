@@ -79,7 +79,7 @@ function setupApp(app) {
   }));
 
   // Set the static path here so all middleware gets skipped
-  // TODO: Reorder Middleware and shortcut for paths that do not need the logic, this is handled in amphora but too late
+  // TODO: ON-1788: Reorder Middleware and shortcut for paths that do not need the logic
   app.use(express.static('public'));
 
   app.use(cookieParser());
