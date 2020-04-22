@@ -50,7 +50,7 @@ module.exports['5.0'] = (uri, data) => {
   return data;
 };
 
-module.exports['5.1'] = (uri, data) => {
+module.exports['6.0'] = (uri, data) => {
   if (typeof data.customTitle === 'undefined') {
     data.customTitle = '';
   }
