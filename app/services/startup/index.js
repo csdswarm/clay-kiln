@@ -80,7 +80,7 @@ function setupApp(app) {
 
   // Set the static path here so all middleware gets skipped
   // TODO: Reorder Middleware and shortcut for paths that do not need the logic, this is handled in amphora but too late
-  app.use(express.static("public"));
+  app.use(express.static('public'));
 
   app.use(cookieParser());
 

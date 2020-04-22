@@ -14,7 +14,7 @@ const fs = require('fs'),
 /**
  * Check the path for static dirs
  *
- * @param path The path to check
+ * @param {string} path The path to check
  * @returns {boolean}
  */
 function isStaticAsset(path) {
