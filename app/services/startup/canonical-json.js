@@ -60,6 +60,9 @@ function middleware(req, res, next) {
 
   curatedOrDynamicRoutePrefixes.push('topic');
   curatedOrDynamicRoutePrefixes.push('authors');
+  if (res.locals.station && res.locals.station.site_slug && req.path.includes('/topic')) {
+    curatedOrDynamicRoutePrefixes.push(`${res.locals.station.site_slug}/topic`);
+  }
 
   // Define curated/dynamic routing logic
   const curatedOrDynamicRoutes = new RegExp(`^\\/(${curatedOrDynamicRoutePrefixes.join('|')})\\/`);
