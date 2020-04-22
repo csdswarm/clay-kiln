@@ -1,6 +1,7 @@
 'use strict';
 const { PODCASTS } = require('../../universal/constants'),
-  radioApiService = require('../../server/radioApi');
+  radioApiService = require('../../server/radioApi'),
+  { wrapInTryCatch } = require('../middleware-utils');
 
 /**
  * fetch podcast show data
@@ -22,7 +23,7 @@ const getPodcastShow = async (locals, dynamicSlug) => {
  * @param {object} app - the express app
  */
 module.exports = async app => {
-  app.use((req, res, next) => {
+  app.use(wrapInTryCatch(async (req, res, next) => {
     const params = req.originalUrl.split('/'),
       [,, isPodcast, slug] = params;
 
@@ -30,10 +31,8 @@ module.exports = async app => {
       const locals = res.locals,
         dynamicSlug = slug.split('?');
       
-      getPodcastShow(locals, dynamicSlug[0])
-        .then(podcast => res.locals.podcast = podcast)
-        .catch(err => console.log('Error: ', err));
+      res.locals.podcast = await getPodcastShow(locals, dynamicSlug[0]);
     }
     next();
-  });
+  }));
 };
