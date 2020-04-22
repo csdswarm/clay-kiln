@@ -19,7 +19,7 @@ const db = require('amphora-storage-postgres'),
       clearRedisCache();
     } catch (e) {
       log('error', e.message);
-      res.status(500).send('There was an error updating this subscription');
+      res.status(500).send('There was an error creating this subscription');
     }
   },
   deleteSubscription = async (req, res) => {
@@ -54,7 +54,7 @@ const db = require('amphora-storage-postgres'),
       clearRedisCache();
     } catch (e) {
       log('error', e.message);
-      res.status(500).send('There was an error creating this subscription');
+      res.status(500).send('There was an error updating this subscription');
     }
   };
 
