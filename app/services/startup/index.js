@@ -28,7 +28,8 @@ const pkg = require('../../package.json'),
   cookies = require('./cookies'),
   addEndpoints = require('./add-endpoints'),
   addToLocals = require('./add-to-locals'),
-  addInterceptor = require('./add-interceptor');
+  addInterceptor = require('./add-interceptor'),
+  express = require('express');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -76,6 +77,10 @@ function setupApp(app) {
     limit: '5mb',
     extended: true
   }));
+
+  // Set the static path here so all middleware gets skipped
+  // TODO: Reorder Middleware and shortcut for paths that do not need the logic, this is handled in amphora but too late
+  app.use(express.static("public"));
 
   app.use(cookieParser());
 
