@@ -67,8 +67,6 @@ const _get = require('lodash/get'),
     'topic-page'
   ]),
 
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
-
   defaultStationName = 'Radio.com',
 
   DEFAULT_STATION = {
@@ -107,7 +105,9 @@ const _get = require('lodash/get'),
     //   decided to instead use the permissions from the 'National' market to
     //   cover national rdc content.
     urpsDomainName: 'National'
-  };
+  },
+
+  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
   contentTypes,

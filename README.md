@@ -42,10 +42,26 @@ git clone git@bitbucket.org:entercom/frequency-clay-translator.git
 git clone git@bitbucket.org:entercom/clay-radio.git
 ```
 
+It is relevant to have both folders at the same level. The final folders structure should look like this:
+
+```
+├── root-folder
+│   ├── clay-radio
+│   └── frequency-clay-translator
+```
+
 Within frequency-clay-translator run
 ```
 npm install
 ```
+
+**Note:** prior to running the next command, consider if you are starting from scratch or not. **If not**, it is recommended to run at this point the `make nuke` command within the clay-radio folder. This will eventually:
+
+1. Installed dependencies.
+2. Docker images.
+3. Information created in the boostrap process.
+4. Log files.
+
 Within the clay-radio folder run
 
 ```bash
@@ -81,7 +97,7 @@ brew install jq yq golang
 
 Install sops
 ```bash
-pip install sops
+brew install sops
 ```
 
 Install `aws-cli` - https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
@@ -110,7 +126,7 @@ function token(){
 }
 ```
 
-Create local .env file
+Create local .env file inside the `clay-radio/app` folder
 ```bash
 token [INSERT_TOKEN_FROM_MFA_DEVICE]
 make generate-local-env
@@ -167,6 +183,7 @@ If this the initial set up of clay you'll need to populate content by running th
     make bootstrap
     ```
 
+**Note:**  running `make bootstrap` multiple times will cause several issues. This command is meant to be executed just once.
 
 #### When do I need to restart?
 
@@ -294,7 +311,7 @@ make encrypt-local-env
 ```
 
 ## Missed anything?
-That _should_ be it...if not, submit an issue or add something to this README.w
+That _should_ be it...if not, submit an issue or add something to this README.md
 
 ## TODO:
 - Demo user
