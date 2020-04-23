@@ -1,6 +1,7 @@
 'use strict';
 
 const db = require('./db'),
+  { addAmphoraRenderTime } = require('../universal/utils'),
   /**
    * Transform Postgres response into just data
    *
@@ -15,9 +16,33 @@ const db = require('./db'),
    * @param {Bool} params.active
    * @param {Bool} params.current
    * @param {String} params.station
+   * @param {object} [locals]
+   * @param {object} [argObj]
+   * @param {boolean} [argObj.shouldAddAmphoraTimings]
+   * @param {string} [argObj.amphoraTimingLabelPrefix]
    */
-  getAlerts = async (params) => {
-    await db.ensureTableExists('alert');
+  getAlerts = async (params, locals, argObj = {}) => {
+    const {
+        shouldAddAmphoraTimings = false,
+        amphoraTimingLabelPrefix
+      } = argObj,
+      beforeEnsureTable = new Date();
+
+    try {
+      await db.ensureTableExists('alert');
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          data:  { station: params.station },
+          label: 'alerts.js -> ensure table exists',
+          ms: new Date() - beforeEnsureTable
+        },
+        {
+          prefix: amphoraTimingLabelPrefix,
+          shouldAdd: shouldAddAmphoraTimings
+        });
+    }
 
     const dbQueryParams = {
         active: true,
@@ -41,8 +66,25 @@ const db = require('./db'),
           AND ${whereQuery}
         ORDER BY data->>'start'
       `,
-      alerts = db.raw(query, paramValues)
-        .then(pullDataFromResponse);
+      beforeQuery = new Date();
+
+    let alerts;
+    
+    try {
+      alerts = await db.raw(query, paramValues).then(pullDataFromResponse);
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          data:  { station: params.station },
+          label: 'alerts.js -> alerts query',
+          ms: new Date() - beforeQuery
+        },
+        {
+          prefix: amphoraTimingLabelPrefix,
+          shouldAdd: shouldAddAmphoraTimings
+        });
+    }
 
     return alerts;
   };
