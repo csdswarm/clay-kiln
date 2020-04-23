@@ -197,3 +197,10 @@ module.exports['11.0'] = async (uri, data) => {
 
   return data;
 };
+
+module.exports['12.0'] = (uri, data) => {
+  data.featuredSports = false;
+  data.featuredNews = false;
+
+  return data;
+};
