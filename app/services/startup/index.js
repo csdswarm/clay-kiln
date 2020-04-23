@@ -97,6 +97,7 @@ function setupApp(app) {
   addInterceptor.cacheControl(app);
 
   addEndpoints.msnFeed(app);
+  addEndpoints.s3StationFeedImgUrl(app);
 
   radium.inject(app);
 
