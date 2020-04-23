@@ -11,7 +11,7 @@ const
   _isUndefined = require('lodash/isUndefined'),
   parse = require('url-parse'),
   { getComponentName, isComponent } = require('clayutils'),
-  { contentTypes } = require('./constants'),
+  { contentTypes, SERVER_SIDE } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
 
@@ -406,7 +406,36 @@ function urlToElasticSearch(url) {
   return url.replace('https', 'http');
 }
 
+/**
+ * When on the server, pushes an time entry onto locals.amphoraRenderTimes
+ *
+ * @param {object} locals
+ * @param {object} timeEntry
+ * @param {object} [opts]
+ * @param {object} [opts.shouldAddAmphoraTimings]
+ * @param {object} [opts.prefix]
+ */
+function addAmphoraRenderTime(locals, timeEntry, opts = {}) {
+  const {
+    prefix = '',
+    shouldAdd = true
+  } = opts;
+
+  if (shouldAdd && SERVER_SIDE && locals.amphoraRenderTimes) {
+    const { label } = timeEntry;
+
+    if (prefix) {
+      timeEntry = Object.assign({}, timeEntry, {
+        label: `${prefix} - ${label}`
+      });
+    }
+
+    locals.amphoraRenderTimes.push(timeEntry);
+  }
+}
+
 module.exports = {
+  addAmphoraRenderTime,
   boolKeys,
   cleanUrl,
   debugLog,
