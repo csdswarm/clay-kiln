@@ -5,10 +5,12 @@ _components:
     successTitle: Thank you for subscribing to our newsletter!
     successMsg: ''
     privacyPolicyPath: https://entercom.com/privacy-policy
+    postUpSiteID: ''
     instances:
       new:
         title: Newsletter Sign Up
         layoutType: horizontal
         successTitle: Thank you for subscribing to our newsletter!
         successMsg: ''
+        privacyPolicyPath: https://entercom.com/privacy-policy
         postUpSiteID: ''
