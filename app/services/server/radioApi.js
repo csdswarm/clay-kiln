@@ -8,6 +8,7 @@ const rest = require('../universal/rest'),
   radioStgApi = 'api-stg.radio.com/v1/',
   qs = require('qs'),
   redis = require('./redis'),
+  { addAmphoraRenderTime } = require('../universal/utils'),
   TTL = {
     NONE: 0,
     DEFAULT: 300000,
@@ -86,13 +87,20 @@ const rest = require('../universal/rest'),
    */
   // eslint-disable-next-line max-params
   get = async (route, params, validate, options = {}, locals = {} ) => {
+    if (options.shouldAddAmphoraTimings === undefined) {
+      options.shouldAddAmphoraTimings = false;
+    }
+
     const dbKey = createKey(route, params),
       validateFn = validate || defaultValidation(route),
       requestEndpoint = createEndpoint(route, params, locals),
       getFreshData = async (apiTimeout = API_TIMEOUT, cachedData = {}) => {
         try {
           // return api response if it's fast enough. if not, it might still freshen the cache
-          const result = await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), apiTimeout);
+          const result = await promises.timeout(
+            getAndSave(requestEndpoint, dbKey, validateFn, options, locals),
+            apiTimeout
+          );
 
           result.from_cache = false;
           // Set expires at to now + ttl
@@ -123,15 +131,35 @@ const rest = require('../universal/rest'),
     try {
       // if there's no ttl, skip the cache miss and try to fetch new data
       if (!options.ttl) {
-        return await getFreshData();
+        return getFreshData();
       }
 
-      const cached = await redis.get(dbKey),
-        data = JSON.parse(cached);
+      const start = new Date();
+
+      let cached;
+
+      try {
+        cached = await redis.get(dbKey);
+      } finally {
+        addAmphoraRenderTime(
+          locals,
+          {
+            data: { dbKey },
+            label: 'get from cache',
+            ms: new Date() - start
+          },
+          {
+            prefix: options.amphoraTimingLabelPrefix,
+            shouldAdd: options.shouldAddAmphoraTimings
+          }
+        );
+      }
+
+      const data = JSON.parse(cached);
 
       // if there is no data in cache, wait on fresh data
       if (!cached) {
-        return await getFreshData();
+        return getFreshData();
       }
 
       if ((new Date() - new Date(data.updated_at) > options.ttl)) {
@@ -143,7 +171,7 @@ const rest = require('../universal/rest'),
       data.from_cache = true;
       return data;
     } catch (e) {
-      return await getFreshData();
+      return getFreshData();
     }
   },
   /**
@@ -156,13 +184,36 @@ const rest = require('../universal/rest'),
    * @param {string} dbKey
    * @param {function} validate
    * @param {object} options
+   * @param {object} locals
    * @return {Promise}
    * @throws {Error}
    */
-  getAndSave = async (endpoint, dbKey, validate, options) => {
+  // not worth refactoring right now, and the team agreed this lint rule should
+  //   probably be disabled anyway.
+  // eslint-disable-next-line max-params
+  getAndSave = async (endpoint, dbKey, validate, options, locals) => {
     const ttl = options.ttl,
       expire = options.expire || false,
+      start = new Date();
+
+    let response;
+
+    try {
       response = await rest.get(endpoint, options.headers);
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          data: { endpoint },
+          label: 'get and save',
+          ms: new Date() - start
+        },
+        {
+          prefix: options.amphoraTimingLabelPrefix,
+          shouldAdd: options.shouldAddAmphoraTimings
+        }
+      );
+    }
 
     if (validate(response)) {
       response.updated_at = new Date();
@@ -172,10 +223,20 @@ const rest = require('../universal/rest'),
         // use REDIS expire
         if (expire) {
           redis.set(dbKey, JSON.stringify(response), 'PX', expire)
-            .catch(() => {});
+            .catch(err => {
+              const msg = 'error when setting with expire'
+                + '\n  dbKey: ' + dbKey;
+
+              log('error', msg, err);
+            });
         } else {
           redis.set(dbKey, JSON.stringify(response))
-            .catch(() => {});
+            .catch(err => {
+              const msg = 'error when saving to redis without expire'
+                + '\n  dbKey: ' + dbKey;
+
+              log('error', msg, err);
+            });
         }
       }
 

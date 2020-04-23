@@ -1,8 +1,10 @@
 'use strict';
+
 const db = require('../../services/server/db'),
   { getComponentName } = require('clayutils'),
   { recirculationData } = require('../../services/universal/recirc/recirculation'),
   radioApiService = require('../../services/server/radioApi'),
+  { addAmphoraRenderTime } = require('../../services/universal/utils'),
   { uploadImage } = require('../../services/universal/s3'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
   elasticFields = [
@@ -40,7 +42,8 @@ const db = require('../../services/server/db'),
    * @returns {array} items
    */
   getItemsFromTrendingRecirculation = async (locals) => {
-    const trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`;
+    const trendingRecircRef = `${locals.site.host}/_components/trending-recirculation/instances/default@published`,
+      start = new Date();
 
     try {
       const trendingRecircData = await db.get(trendingRecircRef);
@@ -52,6 +55,11 @@ const db = require('../../services/server/db'),
       } else {
         throw e;
       }
+    } finally {
+      addAmphoraRenderTime(locals, {
+        label: 'db.get trendingRecircRef',
+        ms: new Date() - start
+      });
     }
   },
   /**
@@ -65,14 +73,39 @@ const db = require('../../services/server/db'),
   renderStation = async (data, locals) => {
     if (locals.station.id && locals.station.website) {
       const feedUrl = `${locals.station.website.replace(/\/$/, '')}/station_feed.json`,
-        feed = await radioApiService.get(feedUrl, null, (response) => response.nodes, {}, locals),
+        feed = await radioApiService.get(
+          feedUrl,
+          null,
+          response => response.nodes,
+          {
+            amphoraTimingLabelPrefix: 'render station',
+            shouldAddAmphoraTimings: true
+          },
+          locals
+        ),
         nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
         defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
       data._computed.station = locals.station.name;
       data._computed.articles = await Promise.all(nodes.map(async (item) => {
+        const start = new Date();
+
+        let feedImgUrl = defaultImage;
+
+        if (item.node['OG Image']) {
+          try {
+            feedImgUrl = await uploadImage(item.node['OG Image'].src);
+          } finally {
+            addAmphoraRenderTime(locals, {
+              data: { src: item.node['OG Image'].src || '<falsey>' },
+              label: 'renderStation -> upload image',
+              ms: new Date() - start
+            });
+          }
+        }
+
         return {
-          feedImgUrl: item.node['OG Image'] ? await uploadImage(item.node['OG Image'].src) : defaultImage,
+          feedImgUrl,
           externalUrl: item.node.URL,
           primaryHeadline: item.node.field_engagement_title || item.node.title
         };
@@ -93,7 +126,11 @@ const db = require('../../services/server/db'),
       return renderStation(data, locals);
     }
 
-    const primarySectionFronts = await retrieveList('primary-section-fronts', locals);
+    const primarySectionFronts = await retrieveList(
+      'primary-section-fronts',
+      locals,
+      { shouldAddAmphoraTimings: true }
+    );
 
     if (data._computed.articles) {
       data._computed.articles = data._computed.articles.map(item => ({
@@ -108,10 +145,13 @@ const db = require('../../services/server/db'),
 
 module.exports = recirculationData({
   elasticFields,
-  mapDataToFilters: async (uri, data, locals) => ({
-    curated: [...data.items, ...await getItemsFromTrendingRecirculation(locals)],
-    maxItems: getMaxItems(data)
-  }),
+  mapDataToFilters: async (uri, data, locals) => {
+    return {
+      curated: [...data.items, ...await getItemsFromTrendingRecirculation(locals)],
+      maxItems: getMaxItems(data)
+    };
+  },
   render,
+  shouldAddAmphoraTimings: true,
   skipRender: (data, locals) => data.populateFrom === 'station' && locals.params
 });
