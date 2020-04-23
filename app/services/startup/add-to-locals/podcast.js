@@ -9,7 +9,7 @@ const { PODCASTS } = require('../../universal/constants'),
  * @param {string} dynamicSlug
  * @returns {Promise<object>}
  */
-const getPodcastShow = async (locals, dynamicSlug) => {
+const getPodcastShow = (locals, dynamicSlug) => {
   const route = `podcasts?filter[site_slug]=${ dynamicSlug }`;
 
   return radioApiService.get(route, {}, null, {}, locals).then(response => {
