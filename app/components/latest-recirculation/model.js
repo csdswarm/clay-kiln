@@ -1,12 +1,14 @@
 'use strict';
 
 const db = require('../../services/server/db'),
+  _get = require('lodash/get'),
   { getComponentName } = require('clayutils'),
   { recirculationData } = require('../../services/universal/recirc/recirculation'),
   radioApiService = require('../../services/server/radioApi'),
   { addAmphoraRenderTime } = require('../../services/universal/utils'),
-  { uploadImage } = require('../../services/universal/s3'),
+  { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants'),
   { getSectionFrontName, retrieveList } = require('../../services/server/lists'),
+  getS3StationFeedImgUrl = require('../../services/server/get-s3-station-feed-img-url'),
   elasticFields = [
     'date',
     'primaryHeadline',
@@ -71,8 +73,10 @@ const db = require('../../services/server/db'),
    * @returns {Promise}
    */
   renderStation = async (data, locals) => {
-    if (locals.station.id && locals.station.website) {
-      const feedUrl = `${locals.station.website.replace(/\/$/, '')}/station_feed.json`,
+    const { station } = locals;
+
+    if (station.id && station.website) {
+      const feedUrl = `${station.website.replace(/\/$/, '')}/station_feed.json`,
         feed = await radioApiService.get(
           feedUrl,
           null,
@@ -83,29 +87,20 @@ const db = require('../../services/server/db'),
           },
           locals
         ),
-        nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [],
-        defaultImage = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+        nodes = feed.nodes ? feed.nodes.filter((item) => item.node).slice(0, 5) : [];
 
-      data._computed.station = locals.station.name;
+      data._computed.station = station.name;
       data._computed.articles = await Promise.all(nodes.map(async (item) => {
-        const start = new Date();
-
-        let feedImgUrl = defaultImage;
-
-        if (item.node['OG Image']) {
-          try {
-            feedImgUrl = await uploadImage(item.node['OG Image'].src);
-          } finally {
-            addAmphoraRenderTime(locals, {
-              data: { src: item.node['OG Image'].src || '<falsey>' },
-              label: 'renderStation -> upload image',
-              ms: new Date() - start
-            });
-          }
-        }
+        const feedImgUrl = _get(item, "node['OG Image'].src"),
+          s3FeedImgUrl = feedImgUrl
+            ? await getS3StationFeedImgUrl(feedImgUrl, locals, {
+              shouldAddAmphoraTimings: true,
+              amphoraTimingLabelPrefix: 'render station'
+            })
+            : DEFAULT_RADIOCOM_LOGO;
 
         return {
-          feedImgUrl,
+          feedImgUrl: s3FeedImgUrl,
           externalUrl: item.node.URL,
           primaryHeadline: item.node.field_engagement_title || item.node.title
         };
