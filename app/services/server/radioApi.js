@@ -94,15 +94,18 @@ const rest = require('../universal/rest'),
           // return api response if it's fast enough. if not, it might still freshen the cache
           const result = await promises.timeout(getAndSave(requestEndpoint, dbKey, validateFn, options), apiTimeout);
 
-          result.response_cached = false;
+          result.from_cache = false;
+          // Set expires at to now + ttl
+          result.expires_at = getExpiresAt(new Date(), options.ttl);
           return result;
         } catch (e) {
           // request failed, validation failed, or timeout. return empty object
-
-          log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
-
           if (!isEmpty(cachedData)) {
-            cachedData.response_cached = true;
+            log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
+            cachedData.from_cache = true;
+            cachedData.expires_at = getExpiresAt(new Date(cachedData.updated_at), options.ttl);
+          } else {
+            log('error', `Radio API error for endpoint ${requestEndpoint} without REDIS cache:`, e);
           }
           return cachedData;
         }
@@ -131,12 +134,13 @@ const rest = require('../universal/rest'),
         return await getFreshData();
       }
 
-      if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
+      if ((new Date() - new Date(data.updated_at) > options.ttl)) {
         // if the data is old, fire off a new api request to get it up to date, but don't wait on it
         return getFreshData(2000, data);
       }
 
-      data.response_cached = true;
+      data.expires_at = getExpiresAt(new Date(data.updated_at), options.ttl);
+      data.from_cache = true;
       return data;
     } catch (e) {
       return await getFreshData();
@@ -184,6 +188,15 @@ const rest = require('../universal/rest'),
       err.localError = true;
       throw err;
     }
+  },
+  /**
+   * Get the time in which the redis cache record will expire
+   * @param {date} date
+   * @param {number} ttl Milliseconds until cache expires
+   */
+  getExpiresAt = (date, ttl) => {
+    date.setMilliseconds(date.getMilliseconds() + ttl);
+    return date;
   };
 
 module.exports.get = get;

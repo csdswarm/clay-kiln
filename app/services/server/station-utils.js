@@ -25,7 +25,8 @@ const _get = require('lodash/get'),
     }
   }),
   _state = {
-    allStations: getEmptyAllStations()
+    allStations: getEmptyAllStations(),
+    redisExpiresAt: null
   },
   resetAllStations = () => {
     _state.allStations = getEmptyAllStations();
@@ -35,26 +36,30 @@ const _get = require('lodash/get'),
    * @param {object} locals
    */
   updateAllStations = async locals => {
-    const stationsResp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
-      apiEnvironment = getApiEnvironment(locals);
+    const apiEnvironment = getApiEnvironment(locals);
 
-    if (stationsResp.response_cached === false && !_isEmpty(_state.allStations.asArray)) {
-      return;
+    if (_isEmpty(_state.allStations.asArray[apiEnvironment]) || !_state.redisExpiresAt || (_state.redisExpiresAt && (new Date() > _state.redisExpiresAt))) {
+      const stationsResp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals);
+
+      if (stationsResp.from_cache === false) {
+        resetAllStations();
+      }
+
+      // Set the expires at timer based on return
+      _state.redisExpiresAt = stationsResp.expires_at;
+
+      // can't be declared above `resetAllStations`
+      // eslint-disable-next-line one-var
+      const { allStations } = _state;
+
+      allStations.asArray[apiEnvironment] = stationsResp.data.map(station => station.attributes);
+
+      allStations.asArray[apiEnvironment].forEach(station => {
+        allStations.byId[apiEnvironment][station.id] = station;
+        allStations.bySlug[apiEnvironment][station.site_slug] = station;
+        allStations.byCallsign[apiEnvironment][station.callsign] = station;
+      });
     }
-
-    resetAllStations();
-
-    // can't be declared above `resetAllStations`
-    // eslint-disable-next-line one-var
-    const { allStations } = _state;
-
-    allStations.asArray[apiEnvironment] = stationsResp.data.map(station => station.attributes);
-
-    allStations.asArray[apiEnvironment].forEach(station => {
-      allStations.byId[apiEnvironment][station.id] = station;
-      allStations.bySlug[apiEnvironment][station.site_slug] = station;
-      allStations.byCallsign[apiEnvironment][station.callsign] = station;
-    });
   },
   /**
    * Just a helper to avoid 'await updateAllStations()' boilerplate
