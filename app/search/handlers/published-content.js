@@ -37,12 +37,10 @@ subscribe('unpublishPage').through(unpublishPage);
 function getContent(obj, param, components, transform = (data) => data ) {
   const content = obj[param],
     getData = (ref) => components.find(item => item.key === ref).value,
-    addData = (component) => ({ ...component, data: transform(getData(component._ref)) });
+    addData = (component) => component._ref ? { ...component, data: transform(getData(component._ref)) } : component;
 
   // add a key with the data to each ref object
-  if (content && content._ref) {
-    obj[param] = Array.isArray(content) ? content.map(addData) : addData(content);
-  }
+  obj[param] = Array.isArray(content) ? content.map(addData) : addData(content);
 
   // return a new copy
   return { ...obj };
@@ -82,7 +80,7 @@ function getSlideEmbed(slides, components) {
  */
 function processContent(obj, components) {
   const componentName = getComponentName(obj.key),
-    contentFields = ['lead', 'content', 'tags', 'feedImg', 'slides', 'footer', 'slides'];
+    contentFields = ['lead', 'content', 'tags', 'feedImg', 'slides', 'footer'];
 
   contentFields.forEach(field => {
     if (obj.value[field]) {
