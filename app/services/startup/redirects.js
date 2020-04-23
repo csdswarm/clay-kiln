@@ -4,6 +4,8 @@ const db = require('../server/db'),
   redirectDataURL = '/_components/redirects/instances/default@published',
   querystring = require('querystring'),
   staticAssets = require('../server/static-assets'),
+  logger = require('../universal/logger'),
+  loggerDB = require('../universal/loggerDB'),
 
   /**
    * Removes variables that are passed by the spa from the query string
@@ -91,6 +93,7 @@ const db = require('../server/db'),
         redirectUrl = decode64Buffer.toString('utf8');
 
       if ((req.hostname + req.path) !== redirectUrl) {
+        logger(module, req, 'endAt');
         res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '') });
         return false;
       }
@@ -106,20 +109,31 @@ const db = require('../server/db'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
+  logger(module, req, 'startAt');
   const spaRequest = req.originalUrl.includes('?json');
   let runNext = true;
 
   try {
     if (!staticAssets.isStaticAsset(req.path) && possibleRedirect(req)) {
-      const data = await db.get(`${req.get('host')}${redirectDataURL}`).catch(() => { return { redirects: [] }; }),
+      console.log('DEBUG__________________________________________REDIRECTS');
+      let startTime = loggerDB(module);
+
+      const data = await db.get(`${req.get('host')}${redirectDataURL}`).catch(() => {
+          return { redirects: [] };
+        }),
         redirects = data.redirects.sort((first, second) => first.path.indexOf('*') - second.path.indexOf('*')),
         redirectTo = redirects ? redirects.find(item => testURL(item.path, req)) : null;
+
+      loggerDB(module,'endAt', startTime, `${req.get('host')}${redirectDataURL}`);
+      startTime = null;
 
       if (redirectTo) {
         // request coming from SPA, 301 and send new URL
         if (spaRequest) {
+          logger(module, req, 'endAt');
           res.status(301).json({ redirect: redirectTo.redirect });
         } else {
+          logger(module, req, 'endAt');
           return res.redirect(301, redirectTo.redirect);
         }
         runNext = false;
@@ -131,10 +145,12 @@ module.exports = async (req, res, next) => {
     }
 
   } catch (e) {
+    logger(module, req, 'endAt');
     console.log('Error in redirects middleware:', e);
   }
 
   if (runNext) {
+    logger(module, req, 'endAt');
     next();
   }
 };

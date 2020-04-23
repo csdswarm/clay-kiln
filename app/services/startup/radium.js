@@ -8,6 +8,7 @@ const axios = require('axios'),
   jwt = require('jsonwebtoken'),
   moment = require('moment'),
   ioredis = require('ioredis'),
+  logger = require('../universal/logger'),
   redis = new ioredis(process.env.REDIS_HOST),
   excludeKeys = {
     token: ['access_token', 'expires_in', 'refresh_token', 'id_token', 'device_key', 'token_type'],
@@ -450,13 +451,17 @@ const axios = require('axios'),
    */
   inject = (app) => {
     app.all('/radium/*', (req, res) => {
+      logger(module, req, 'startAt');
       apply(req, res).then((data) => {
+        logger(module, req, 'endAt');
         return res.json(data);
       }).catch(e => catchError(e, res));
     });
 
     app.use('/account/facebook-callback', (req, res) => {
+      logger(module, req, 'startAt');
       facebookCallback(req, res).catch(e => catchError(e, res));
+      logger(module, req, 'endAt');
     });
   };
 

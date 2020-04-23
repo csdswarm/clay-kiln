@@ -92,6 +92,7 @@
     "probe-image-size": "^5.0.0",
     "qs": "^6.6.0",
     "redisdown": "^0.1.12",
+    "response-time": "^2.3.2",
     "speakingurl": "^14.0.1",
     "striptags": "^3.1.1",
     "typogr": "^0.6.7",

@@ -12,12 +12,15 @@
  *
  * @param {object} app - the express app
  */
+const logger = require('../../universal/logger');
+
 module.exports = app => {
   app.use((req, res, next) => {
+    logger(module, req, 'startAt');
     const loadedIdsStr = req.get('x-loaded-ids') || '[]';
 
     res.locals.loadedIds = JSON.parse(loadedIdsStr);
-
+    logger(module, req, 'endAt');
     next();
   });
 };

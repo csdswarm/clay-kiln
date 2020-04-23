@@ -24,8 +24,12 @@ const log = require('../universal/log').setup({ file: __filename }),
  *   Assumption is that these will always have a /_ in them (e.g. /_components,
  *   /_pages, /_layouts, etc) - CSD
  */
+
+const logger = require('../universal/logger');
+
 module.exports = (req, res, next) => {
   try {
+    logger(module, req, 'startAt');
     const { path, originalUrl } = req;
 
     if (path.endsWith('/') && path.toString() !== '/' && !path.includes('/_')) {
@@ -36,5 +40,6 @@ module.exports = (req, res, next) => {
   } catch (e) {
     log('Error processing trailing slash', e);
   }
+  logger(module, req, 'endAt');
   next();
 };

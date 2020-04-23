@@ -2,7 +2,8 @@
 
 const log = require('../universal/log').setup({ file: __filename }),
   deepmerge = require('deepmerge'),
-  db = require('../server/db');
+  db = require('../server/db'),
+  logger = require('../universal/logger');
 
 let ENTERCOM_DOMAINS = null;
 
@@ -51,9 +52,10 @@ async function entercomDomains(req, res) {
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
+  logger(module, req, 'startAt');
   spaLocals(req, res);
   await entercomDomains(req, res);
-
+  logger(module, req, 'endAt');
   next();
 };
 

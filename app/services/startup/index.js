@@ -29,7 +29,8 @@ const pkg = require('../../package.json'),
   addEndpoints = require('./add-endpoints'),
   addToLocals = require('./add-to-locals'),
   addInterceptor = require('./add-interceptor'),
-  express = require('express');
+  express = require('express'),
+  responseTime = require('response-time');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -45,6 +46,13 @@ function createSessionStore() {
   return redisStore;
 }
 
+
+const logRequestTime = (req, res, time) => {
+  const msg = `REQUEST  ${req.method} - ${req.path} - ${res.statusCode} - ${time.toFixed(3)}ms`;
+
+  res.statusCode >= 400 ? log('error', msg) : log('info', msg);
+};
+
 function setupApp(app) {
   var sessionStore;
   // Enable GZIP
@@ -53,6 +61,9 @@ function setupApp(app) {
     app.use(compression());
   }
 
+  // TODO: use environment variable.
+  app.use(responseTime(logRequestTime));
+  
   // set app settings
   app.set('trust proxy', 1);
   app.set('strict routing', true);
