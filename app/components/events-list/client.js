@@ -54,8 +54,7 @@ class EventsListDom {
       }
     }
     // set the href
-    // NOTE: need to un-comment when Tiff adds to Elastic
-    // cardClone.setAttribute('href', eventData.url);
+    cardClone.setAttribute('href', eventData.url);
     // replace all the image refs
     if ( thumbPictureSourceElement && thumbPictureSourceElement) {
       thumbPictureSourceElement
