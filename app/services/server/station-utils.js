@@ -38,28 +38,29 @@ const _get = require('lodash/get'),
   updateAllStations = async locals => {
     const apiEnvironment = getApiEnvironment(locals);
 
-    if (_isEmpty(_state.allStations.asArray[apiEnvironment]) || !_state.redisExpiresAt || (_state.redisExpiresAt && (new Date() > _state.redisExpiresAt))) {
-      const stationsResp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals);
-
-      if (stationsResp.from_cache === false) {
-        resetAllStations();
-      }
-
-      // Set the expires at timer based on return
-      _state.redisExpiresAt = stationsResp.redis_expires_at;
-
-      // can't be declared above `resetAllStations`
-      // eslint-disable-next-line one-var
-      const { allStations } = _state;
-
-      allStations.asArray[apiEnvironment] = stationsResp.data.map(station => station.attributes);
-
-      allStations.asArray[apiEnvironment].forEach(station => {
-        allStations.byId[apiEnvironment][station.id] = station;
-        allStations.bySlug[apiEnvironment][station.site_slug] = station;
-        allStations.byCallsign[apiEnvironment][station.callsign] = station;
-      });
+    // Short circuit if we already have this data
+    if (!_isEmpty(_state.allStations.asArray[apiEnvironment]) && _state.redisExpiresAt && (new Date() < _state.redisExpiresAt)) {
+      return;
     }
+
+    resetAllStations();
+
+    const stationsResp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals);
+
+    // Set the expires at timer based on return
+    _state.redisExpiresAt = stationsResp.redis_expires_at;
+
+    // can't be declared above `resetAllStations`
+    // eslint-disable-next-line one-var
+    const { allStations } = _state;
+
+    allStations.asArray[apiEnvironment] = stationsResp.data.map(station => station.attributes);
+
+    allStations.asArray[apiEnvironment].forEach(station => {
+      allStations.byId[apiEnvironment][station.id] = station;
+      allStations.bySlug[apiEnvironment][station.site_slug] = station;
+      allStations.byCallsign[apiEnvironment][station.callsign] = station;
+    });
   },
   /**
    * Just a helper to avoid 'await updateAllStations()' boilerplate
