@@ -197,6 +197,7 @@ const rest = require('../universal/rest'),
     try {
       response = await rest.get(endpoint, options.headers);
     } finally {
+      log('error', 'Made REST call', { requestTime: (new Date() - start), endpoint });
       addAmphoraRenderTime(
         locals,
         {
