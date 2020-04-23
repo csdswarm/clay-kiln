@@ -26,13 +26,29 @@ module.exports.render = async (ref, data, locals) => {
   }
 
   await Promise.all([
-    getNowPlaying(locals.station.id, data),
-    getSchedule({
-      stationId: locals.station.id,
-      pageSize: 50,
-      pageNum: 1,
-      filterByDay: true
-    }, locals, data, true)
+    getNowPlaying(locals.station.id, data, locals, {
+      radioApiOpts: {
+        amphoraTimingLabelPrefix: 'get now playing',
+        shouldAddAmphoraTimings: true
+      }
+    }),
+    getSchedule(
+      {
+        stationId: locals.station.id,
+        pageSize: 50,
+        pageNum: 1,
+        filterByDay: true
+      },
+      locals,
+      {
+        data,
+        onAir: true,
+        radioApiOpts: {
+          amphoraTimingLabelPrefix: 'get schedule',
+          shouldAddAmphoraTimings: true
+        }
+      }
+    )
   ]);
 
   data.playingClass = playingClass(locals, locals.station.id);

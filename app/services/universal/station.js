@@ -1,7 +1,8 @@
 'use strict';
 
 const radioApi = require('../server/radioApi'),
-  { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('../universal/dateTime'),
+  { getTime, currentlyBetween, apiDayOfWeek, formatUTC } = require('./dateTime'),
+  log = require('./log').setup({ file: __filename }),
   _get = require('lodash/get'),
   _find = require('lodash/find'),
   _has = require('lodash/has'),
@@ -11,9 +12,22 @@ const radioApi = require('../server/radioApi'),
    *
    * @param {number} stationId
    * @param {Object} [data]
+   * @param {Object} [locals]
+   * @param {Object} [argObj]
+   * @param {Object} [argObj.radioApiOpts]
+   * @returns {object}
   */
-  getNowPlaying = async (stationId, data = null) => {
-    const now_playing = await radioApi.get(`/stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }).catch(() => {});
+  getNowPlaying = async (stationId, data = null, locals, argObj) => {
+    const { radioApiOpts = {} } = argObj,
+      now_playing = await radioApi.get(
+        `/stations/${ stationId }/now_playing`,
+        null,
+        null,
+        Object.assign({ ttl: radioApi.TTL.MIN * 3 }, radioApiOpts),
+        locals
+      ).catch(err => {
+        log('error', 'error when getting now_playing', err);
+      });
 
     if (data && _has(now_playing, 'data.event.current_event')) {
       const song = now_playing.data.event.current_event;
@@ -23,6 +37,7 @@ const radioApi = require('../server/radioApi'),
         artist: song.artist.replace(/-/g, ', ')
       };
     }
+
     return now_playing;
   },
   /**
@@ -35,11 +50,18 @@ const radioApi = require('../server/radioApi'),
    * @param {number} config.pageNum
    * @param {boolean} config.filterByDay
    * @param {Object} locals
-   * @param {Object} [data]
-   * @param {boolean} [onAir]
+   * @param {Object} [argObj]
+   * @param {Object} [argObj.data]
+   * @param {boolean} [argObj.onAir]
+   * @param {Object} [argObj.radioApiOpts]
   */
-  getSchedule = async (config, locals, data = null, onAir = false) => {
-    const { stationId, pageSize, pageNum, filterByDay } = config,
+  getSchedule = async (config, locals, argObj = {}) => {
+    const {
+        data = null,
+        onAir = false,
+        radioApiOpts = {}
+      } = argObj,
+      { stationId, pageSize, pageNum, filterByDay } = config,
       gmt_offset = locals.gmt_offset ? locals.gmt_offset : locals.station.gmt_offset,
       // using the station offset determine the current day 1 - 7 based
       stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
@@ -53,8 +75,14 @@ const radioApi = require('../server/radioApi'),
     if (filterByDay) {
       params['filter[day_of_week]'] = dayOfWeek;
     }
-    // eslint-disable-next-line one-var
-    const schedules = await radioApi.get('schedules', params);
+
+    const schedules = await radioApi.get(
+      'schedules',
+      params,
+      null,
+      radioApiOpts,
+      locals
+    );
 
     if (onAir && _has(schedules, 'data.length')) {
       const show = _find(schedules.data, schedule => {
