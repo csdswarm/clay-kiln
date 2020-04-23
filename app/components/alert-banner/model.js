@@ -60,10 +60,20 @@ async function prepareAlerts(locals) {
         station
       }),
       globalAlerts = getAlerts(
-        alertParams('GLOBAL')
+        alertParams('GLOBAL'),
+        locals,
+        {
+          amphoraTimingLabelPrefix: 'get global alerts',
+          shouldAddAmphoraTimings: true
+        },
       ),
       stationAlerts = callsign
-        ? getAlerts(alertParams(callsign))
+        ? getAlerts(alertParams(callsign),
+          locals,
+          {
+            amphoraTimingLabelPrefix: `get alerts for ${callsign}`,
+            shouldAddAmphoraTimings: true
+          })
         : [],
       messages = await Promise.all([globalAlerts, stationAlerts]);
 
