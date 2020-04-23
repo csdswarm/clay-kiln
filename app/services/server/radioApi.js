@@ -251,9 +251,11 @@ const rest = require('../universal/rest'),
     }
   },
   /**
-   * Get the time in which the redis cache record will expire
+   * Get the time in which the redis cache record will expire, the date object will be mutated
+   *
    * @param {date} date
    * @param {number} ttl Milliseconds until cache expires
+   * @return {date} date
    */
   getRedisExpiresAt = (date, ttl) => {
     date.setMilliseconds(date.getMilliseconds() + ttl);
