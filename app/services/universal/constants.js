@@ -67,8 +67,6 @@ const _get = require('lodash/get'),
     'topic-page'
   ]),
 
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
-
   defaultStationName = 'Radio.com',
 
   DEFAULT_STATION = {
@@ -87,7 +85,7 @@ const _get = require('lodash/get'),
       name: 'New York, NY'
     },
     category: '',
-
+  
     // the national station doesn't have a slug in the sense that national
     //   content is not stored underneath a slug like station content is.  For
     //   example national content will be at www.radio.com/my-article whereas
@@ -101,13 +99,14 @@ const _get = require('lodash/get'),
     //   believe the www is used anywhere
     slug: 'www',
     site_slug: '',
-
     // in an ideal world we could store our hardcoded station in URPS, but due
     //   to them keeping their stations in sync with the radio api, we've
     //   decided to instead use the permissions from the 'National' market to
     //   cover national rdc content.
     urpsDomainName: 'National'
-  };
+  },
+
+  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
 module.exports = {
   contentTypes,
