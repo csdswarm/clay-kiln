@@ -115,17 +115,16 @@ module.exports = async (req, res, next) => {
 
   try {
     if (!staticAssets.isStaticAsset(req.path) && possibleRedirect(req)) {
-      console.log('DEBUG__________________________________________REDIRECTS');
-      let startTime = loggerDB(module);
-
-      const data = await db.get(`${req.get('host')}${redirectDataURL}`).catch(() => {
+      const startTime = loggerDB(module),
+        data = await db.get(`${req.get('host')}${redirectDataURL}`).catch(() => {
+          loggerDB(module,'endAt', startTime, `${req.get('host')}${redirectDataURL}`);
           return { redirects: [] };
         }),
         redirects = data.redirects.sort((first, second) => first.path.indexOf('*') - second.path.indexOf('*')),
         redirectTo = redirects ? redirects.find(item => testURL(item.path, req)) : null;
 
       loggerDB(module,'endAt', startTime, `${req.get('host')}${redirectDataURL}`);
-      startTime = null;
+
 
       if (redirectTo) {
         // request coming from SPA, 301 and send new URL
