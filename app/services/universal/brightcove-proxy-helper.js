@@ -42,15 +42,12 @@ async function getVideoViews(videoId) {
   // but this initial call to the proxy should not be cached.
   const analyticsData = await radioApi.get(url, {
     api: 'analytics',
-    ttl: radioApi.TTL.MIN * 5,
-    params: {
-      dimensions: 'video',
-      where: `video==${videoId}`
-    }
-  }, null, { ttl });
+    route: videoId,
+    ttl: radioApi.TTL.MIN * 5
+  }, null, { ttl: radioApi.TTL.MIN * 5 });
 
-  if (analyticsData && analyticsData.items && analyticsData.items.length === 1) {
-    return analyticsData.items[0].video_view;
+  if (analyticsData && analyticsData.alltime_video_views) {
+    return analyticsData.alltime_video_views;
   } else {
     return null;
   }
