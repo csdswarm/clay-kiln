@@ -30,7 +30,7 @@ function handleErrors(error) {
   if (error && error.response && error.response.status === 404) {
     log('error', 'Could not get alert banners. Endpoint not found.');
   } else {
-    log('error', 'There was a problem attempting to get alert banners', { error });
+    log('error', 'There was a problem attempting to get alert banners', error);
   }
 }
 
@@ -62,9 +62,9 @@ async function prepareAlerts(locals) {
       globalAlerts = getAlerts(
         alertParams('GLOBAL')
       ),
-      stationAlerts = getAlerts(
-        alertParams(callsign)
-      ),
+      stationAlerts = callsign
+        ? getAlerts(alertParams(callsign))
+        : [],
       messages = await Promise.all([globalAlerts, stationAlerts]);
 
     return messages
