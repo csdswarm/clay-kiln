@@ -102,15 +102,18 @@ const rest = require('../universal/rest'),
             apiTimeout
           );
 
-          result.response_cached = false;
+          result.from_cache = false;
+          // Set expires at to now + ttl
+          result.redis_expires_at = getRedisExpiresAt(new Date(), options.ttl);
           return result;
         } catch (e) {
           // request failed, validation failed, or timeout. return empty object
-
-          log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
-
           if (!isEmpty(cachedData)) {
-            cachedData.response_cached = true;
+            log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
+            cachedData.from_cache = true;
+            cachedData.redis_expires_at = getRedisExpiresAt(new Date(cachedData.updated_at), options.ttl);
+          } else {
+            log('error', `Radio API error for endpoint ${requestEndpoint} without REDIS cache:`, e);
           }
           return cachedData;
         }
@@ -159,12 +162,13 @@ const rest = require('../universal/rest'),
         return getFreshData();
       }
 
-      if (data.updated_at && (new Date() - new Date(data.updated_at) > options.ttl)) {
+      if ((new Date() - new Date(data.updated_at) > options.ttl)) {
         // if the data is old, fire off a new api request to get it up to date, but don't wait on it
         return getFreshData(2000, data);
       }
 
-      data.response_cached = true;
+      data.redis_expires_at = getRedisExpiresAt(new Date(data.updated_at), options.ttl);
+      data.from_cache = true;
       return data;
     } catch (e) {
       return getFreshData();
@@ -245,6 +249,17 @@ const rest = require('../universal/rest'),
       err.localError = true;
       throw err;
     }
+  },
+  /**
+   * Get the time in which the redis cache record will expire, the date object will be mutated
+   *
+   * @param {date} date
+   * @param {number} ttl Milliseconds until cache expires
+   * @return {date} date
+   */
+  getRedisExpiresAt = (date, ttl) => {
+    date.setMilliseconds(date.getMilliseconds() + ttl);
+    return date;
   };
 
 module.exports.get = get;
