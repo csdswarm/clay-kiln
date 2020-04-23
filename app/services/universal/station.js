@@ -17,7 +17,7 @@ const radioApi = require('../server/radioApi'),
    * @param {Object} [argObj.radioApiOpts]
    * @returns {object}
   */
-  getNowPlaying = async (stationId, data = null, locals, argObj) => {
+  getNowPlaying = async (stationId, data = null, locals, argObj = {}) => {
     const { radioApiOpts = {} } = argObj,
       now_playing = await radioApi.get(
         `/stations/${ stationId }/now_playing`,
