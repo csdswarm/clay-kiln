@@ -123,9 +123,7 @@ const _get = require('lodash/get'),
    * @return {string}
    */
   getPotentialStationSlugFromReq = req => {
-    const stationPath = req.originalUrl.split('/')[1];
-
-    return stationPath;
+    return req.path.split('/')[1];
   },
   /**
    * returns whether the request
@@ -221,6 +219,19 @@ const _get = require('lodash/get'),
 
       if (typeof foundStationSlug === 'string') {
         initBothSlugsTo(foundStationSlug, stationSlugObj);
+      }
+    },
+    /**
+     * Checks to see if the station was saved in a cookie and retrieves it from there
+     * @param {object} stationSlugObj
+     * @param {object} pipelineArgs
+     * @param {object} pipelineArgs.req
+     */
+    cookie: (stationSlugObj, { req }) => {
+      const stationSlug = req.cookies['station'];
+
+      if (typeof stationSlug === 'string') {
+        initBothSlugsTo(stationSlug, stationSlugObj);
       }
     },
     /**

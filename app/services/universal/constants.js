@@ -1,7 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  { getStationDomainName } = require('./urps'),
   // Time Constants
   SECOND = 1000,
   MINUTE = 60 * SECOND,
@@ -21,11 +20,17 @@ const _get = require('lodash/get'),
 
   SERVER_SIDE = _get(process, 'release.name') === 'node',
 
+  STATION_LISTS = {
+    'primary-section-fronts': true,
+    'secondary-section-fronts': true
+  },
+
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
+    SECTIONFRONT: 'section-front',
+    STATIONFRONT: 'station-front'
   },
 
   msnFeed = {
@@ -80,7 +85,7 @@ const _get = require('lodash/get'),
       name: 'New York, NY'
     },
     category: '',
-  
+
     // the national station doesn't have a slug in the sense that national
     //   content is not stored underneath a slug like station content is.  For
     //   example national content will be at www.radio.com/my-article whereas
@@ -93,24 +98,30 @@ const _get = require('lodash/get'),
     //   it's something that could probably be removed/cleaned up as I don't
     //   believe the www is used anywhere
     slug: 'www',
-    site_slug: ''
-  },
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+    site_slug: '',
 
-DEFAULT_STATION.urpsDomainName = getStationDomainName(DEFAULT_STATION);
+    // in an ideal world we could store our hardcoded station in URPS, but due
+    //   to them keeping their stations in sync with the radio api, we've
+    //   decided to instead use the permissions from the 'National' market to
+    //   cover national rdc content.
+    urpsDomainName: 'National'
+  },
+
+  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
-  DEFAULT_STATION,
-  SECOND,
-  MINUTE,
-  HOUR,
-  DAY,
-  WEEK,
-  YEAR,
   contentTypes,
-  time,
-  msnFeed,
-  SERVER_SIDE,
+  DAY,
   DEFAULT_RADIOCOM_LOGO,
-  PAGE_TYPES
+  DEFAULT_STATION,
+  HOUR,
+  MINUTE,
+  msnFeed,
+  PAGE_TYPES,
+  SECOND,
+  SERVER_SIDE,
+  STATION_LISTS,
+  time,
+  WEEK,
+  YEAR
 };

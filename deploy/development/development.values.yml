@@ -30,7 +30,7 @@ configmap:
     CLAY_STORAGE_POSTGRES_HOST: "cmsdb.radio-dev.com"
     COGNITO_CONSUMER_DOMAIN: "https://dev-clay.radio.com"
     COGNITO_CONSUMER_REGION: "us-east-1"
-    COGNITO_SERVER: "https://etm.auth.us-east-1.amazoncognito.com"
+    COGNITO_SERVER: "https://admin.auth.us-east-1.amazoncognito.com"
     DOUBLECLICK_BANNER_TAG: "ENT.TEST"
     ELASTIC_HOST: "http://dev-es.radio-dev.com:9200"
     EMBEDLY_ENDPOINT: "NEED_TO_FILL_IN"
@@ -51,7 +51,7 @@ configmap:
     REDIS_SESSION_HOST: "redis://dev-redis.radio-dev.com:6379"
     SECTION_FRONTS: "music,news,sports"
     STATIC_ASSET_MAX_AGE: "0"
-    URPS_AUTHORIZATIONS_URL: "http://roc-urps-api-sbx.pcwpuime6w.us-west-1.elasticbeanstalk.com"
+    URPS_AUTHORIZATIONS_URL: "https://admin-api-dev.radio-sbx.com/urps"
     URPS_HAS_AUTH_LAYER: "false"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
 clayconfig:

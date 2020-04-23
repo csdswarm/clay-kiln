@@ -5,7 +5,8 @@ const publishing = require('../../services/publishing'),
     '/_components/article/instances',
     '/_components/gallery/instances',
     '/_components/section-front/instances',
-    '/_components/author-page-header/instances'
+    '/_components/author-page-header/instances',
+    '/_components/station-front/instances'
   ];
 
 module.exports.routes = [
@@ -22,10 +23,14 @@ module.exports.routes = [
   { path: '/music/gallery/:slug' },
   { path: '/news/gallery/:slug' },
   { path: '/sports/gallery/:slug' },
-  { path: '/topic/:tag' },
-  { path: '/music/:tag' },
-  { path: '/news/:tag' },
-  { path: '/sports/:tag' },
+  { path: '/topic/*' },
+  { path: '/music/*' },
+  { path: '/news/*' },
+  { path: '/sports/*' },
+  { path: '/:stationSlug/topic/*' },
+  { path: '/:stationSlug/music/*' },
+  { path: '/:stationSlug/news/*' },
+  { path: '/:stationSlug/sports/*' },
   { path: '/newsletter/subscribe' },
   { path: '/news/small-business-pulse' },
   { path: '/small-business-pulse/:slug' },
@@ -42,7 +47,11 @@ module.exports.routes = [
   { path: '/stations/news-talk', dynamicPage: 'stations-directory' },
   { path: '/stations/sports', dynamicPage: 'stations-directory' },
   { path: '/account/:dynamicPage', dynamicPage: 'home'  },
-  { path: '/account/:dynamicPage/:mode', dynamicPage: 'home'  },
+  { path: '/account/:dynamicPage/:mode', dynamicPage: 'home' },
+  { path: '/:stationSlug/topic/:dynamicTag', dynamicPage: 'topic' },
+  { path: '/:stationSlug/music/:dynamicTag', dynamicPage: 'topic' },
+  { path: '/:stationSlug/news/:dynamicTag', dynamicPage: 'topic' },
+  { path: '/:stationSlug/sports/:dynamicTag', dynamicPage: 'topic' },
   { path: '/topic/:dynamicTag', dynamicPage: 'topic' },
   { path: '/music/:dynamicTag', dynamicPage: 'topic' },
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
@@ -60,6 +69,7 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];
 
