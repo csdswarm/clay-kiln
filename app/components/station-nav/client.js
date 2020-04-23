@@ -156,9 +156,9 @@ const { getComponentInstance } = require('clayutils'),
    * Toggle secondary nav items dropdown for primary nav items
    * on mobile on click of primary nav item
    *
-   * @param {Object} event -- contains currentTarget
+   * @param {Object} currentTarget -- contains currentTarget
    */
-  toggleMobileSecondaryLinks = ({ currentTarget }) => {
+  toggleMobileSecondaryLinks = ( currentTarget ) => {
     if (!currentTarget.classList.contains(active)) {
       // Close dropdown of all categories
       for (const item of mobileNavItems) {
@@ -182,7 +182,7 @@ const { getComponentInstance } = require('clayutils'),
 
     // Toggle Dropdowns on Mobile Nav Categories
     mobileNavItems.forEach(item => {
-      item.addEventListener('click', toggleMobileSecondaryLinks);
+      item.querySelector('.label__menu-toggle').addEventListener('click', () => toggleMobileSecondaryLinks(item));
     });
 
     // Toggle Nav Desktop Drawers
