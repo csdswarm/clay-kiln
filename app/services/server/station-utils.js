@@ -46,7 +46,7 @@ const _get = require('lodash/get'),
       }
 
       // Set the expires at timer based on return
-      _state.redisExpiresAt = stationsResp.expires_at;
+      _state.redisExpiresAt = stationsResp.redis_expires_at;
 
       // can't be declared above `resetAllStations`
       // eslint-disable-next-line one-var

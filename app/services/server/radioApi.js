@@ -104,14 +104,14 @@ const rest = require('../universal/rest'),
 
           result.from_cache = false;
           // Set expires at to now + ttl
-          result.expires_at = getExpiresAt(new Date(), options.ttl);
+          result.redis_expires_at = getRedisExpiresAt(new Date(), options.ttl);
           return result;
         } catch (e) {
           // request failed, validation failed, or timeout. return empty object
           if (!isEmpty(cachedData)) {
             log('error', `Radio API error for endpoint ${requestEndpoint}:`, e);
             cachedData.from_cache = true;
-            cachedData.expires_at = getExpiresAt(new Date(cachedData.updated_at), options.ttl);
+            cachedData.redis_expires_at = getRedisExpiresAt(new Date(cachedData.updated_at), options.ttl);
           } else {
             log('error', `Radio API error for endpoint ${requestEndpoint} without REDIS cache:`, e);
           }
@@ -167,7 +167,7 @@ const rest = require('../universal/rest'),
         return getFreshData(2000, data);
       }
 
-      data.expires_at = getExpiresAt(new Date(data.updated_at), options.ttl);
+      data.redis_expires_at = getRedisExpiresAt(new Date(data.updated_at), options.ttl);
       data.from_cache = true;
       return data;
     } catch (e) {
@@ -255,7 +255,7 @@ const rest = require('../universal/rest'),
    * @param {date} date
    * @param {number} ttl Milliseconds until cache expires
    */
-  getExpiresAt = (date, ttl) => {
+  getRedisExpiresAt = (date, ttl) => {
     date.setMilliseconds(date.getMilliseconds() + ttl);
     return date;
   };
