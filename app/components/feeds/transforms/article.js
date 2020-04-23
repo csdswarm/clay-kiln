@@ -80,7 +80,7 @@ function makeSanitizeNoFollow(locals) {
  * @return {Array}
  */
 module.exports = function (data, locals) {
-  const { _id, canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured } = data,
+  const { _id, canonicalUrl, syndicatedUrl, headline, seoHeadline, feedImgUrl, seoDescription, stationURL, stationTitle, subHeadline, featured, featuredNews, featuredSports } = data,
     sanitizeNoFollow = makeSanitizeNoFollow(locals),
     link = `${canonicalUrl}`, // the `link` prop gets urlencoded elsewhere so no need to encode ampersands here
     itemId = getComponentInstance(_id),
@@ -105,7 +105,9 @@ module.exports = function (data, locals) {
       { subHeadline },
       { seoHeadline: { _cdata: seoHeadline } },
       { coverImage: feedImgUrl },
-      { featured }
+      { featured },
+      { featured_sports: featuredSports || false },
+      { featured_news: featuredNews || false }
     ];
 
   if (data.slides) {
