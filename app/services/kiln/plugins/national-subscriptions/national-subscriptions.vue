@@ -22,7 +22,10 @@
             <ui-textbox v-model="subscriptions[index].short_desc"></ui-textbox>
           </td>
           <td>{{ subscription.last_updated_utc | formatDate }}</td>
-          <td>{{ subscription.filter }}</td>
+          <td>
+            <SubcriptionFilter v-bind:filter-props="subscription.filter" />
+            <!-- {{ subscription.filter }}  -->
+          </td>
           <td>
             <ui-icon-button type="primary" color="default" icon="save" size="small" :loading="isLoading" v-on:click="onUpdate(index)"></ui-icon-button>
             <ui-icon-button type="primary" color="default" icon="delete" size="small" :loading="isLoading"  v-on:click="onDelete(subscription.id)"></ui-icon-button>
@@ -50,6 +53,7 @@
 
 <script>
   const { UiButton, UiTextbox, UiIconButton } = window.kiln.utils.components;
+  const SubcriptionFilter = require('./national-subscriptions-filter.vue');
   const moment = require('moment');
   const startCase = require('lodash/startCase');
   const axios = require('axios');
@@ -154,7 +158,8 @@
     components: {
       UiTextbox,
       UiButton,
-      UiIconButton
+      UiIconButton,
+      SubcriptionFilter
     },
     filters: {
       formatDate: utcDateStr => moment(utcDateStr).fromNow(),
