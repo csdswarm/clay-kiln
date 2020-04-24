@@ -47,7 +47,10 @@ async function getVideoViews(videoId) {
   }, null, { ttl: radioApi.TTL.MIN * 5 });
 
   if (analyticsData && analyticsData.alltime_video_views) {
-    return analyticsData.alltime_video_views;
+    return {
+      views: analyticsData.alltime_video_views,
+      redisExpiresAt: analyticsData.redis_expires_at
+    };
   } else {
     return null;
   }

@@ -69,6 +69,7 @@ services:
     networks:
       main:
     restart: always
+    command: ["postgres", "-c", "log_statement=all"]
     environment:
       POSTGRES_PASSWORD: example
     volumes:
