@@ -22,11 +22,10 @@ module.exports = {
       data.views = await apiHelper.getVideoViews(video.id);
       data.cacheExpiresAt = new Date(Date.now() + (radioApi.TTL.MIN * 5));
       // Update this component instance
-      try {
-        db.put(`${ref}`, data);
-      } catch (e) {
-        log('error', `Could not update Brightcove component video views: ${ref}`, e);
-      }
+      db.put(ref, data)
+        .catch(e => {
+          log('error', `Could not update Brightcove component video views: ${ref}`, e);
+        });
     }
 
     // for some reason, api returns null for link... if this happens, give the article url
