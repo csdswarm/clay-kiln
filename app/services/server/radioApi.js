@@ -254,11 +254,14 @@ const rest = require('../universal/rest'),
   /**
    * Get the time in which the redis cache record will expire, the date object will be mutated
    *
-   * @param {date} date
+   * @param {date|string} date
    * @param {number} ttl Milliseconds until cache expires
    * @return {date} date
    */
   getRedisExpiresAt = (date, ttl) => {
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
     date.setMilliseconds(date.getMilliseconds() + ttl);
     return date;
   };
@@ -266,3 +269,4 @@ const rest = require('../universal/rest'),
 module.exports.get = get;
 module.exports.TTL = TTL;
 module.exports.shouldUseStagingApi = shouldUseStagingApi;
+module.exports.getRedisExpiresAt = getRedisExpiresAt;
