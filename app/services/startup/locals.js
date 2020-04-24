@@ -2,8 +2,7 @@
 
 const log = require('../universal/log').setup({ file: __filename }),
   deepmerge = require('deepmerge'),
-  db = require('../server/db'),
-  logger = require('../universal/logger');
+  db = require('../server/db');
 
 let ENTERCOM_DOMAINS = null;
 
@@ -15,8 +14,10 @@ let ENTERCOM_DOMAINS = null;
  */
 function spaLocals(req, res) {
   try {
-    const header = req.header('x-locals'),
-      locals = header ? JSON.parse(header) : null,
+    const header = req.header('x-locals');
+
+    if (!header) return; // Short circuit.
+    const locals = header ? JSON.parse(header) : null,
       options = { arrayMerge: (destinationArray, sourceArray) => sourceArray };
 
     if (locals) {
@@ -52,10 +53,10 @@ async function entercomDomains(req, res) {
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  logger(module, req, 'startAt');
+
   spaLocals(req, res);
   await entercomDomains(req, res);
-  logger(module, req, 'endAt');
+
   next();
 };
 

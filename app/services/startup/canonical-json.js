@@ -4,8 +4,7 @@ const _ = require('lodash'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
   { sites, composer } = require('amphora'),
-  log = require('../universal/log').setup({ file: __filename }),
-  logger = require('../universal/logger');
+  log = require('../universal/log').setup({ file: __filename });
 
 /**
  * Pulled from inside Amphora to fake locals
@@ -46,7 +45,6 @@ function getPrefixAndKey(path) {
  * @returns {Promise}
  */
 function middleware(req, res, next) {
-  logger(module, req, 'startAt');
   const params = {},
     { routeParamKey, routePrefix } = getPrefixAndKey(req.path);
 
@@ -54,7 +52,6 @@ function middleware(req, res, next) {
 
   if (req.method !== 'GET' || !req.headers['x-amphora-page-json']) {
     return next();
-    logger(module, req, 'startAt');
   }
 
   // Define Curated/Dynamic routes.
@@ -92,7 +89,6 @@ function middleware(req, res, next) {
           params[`dynamic${_.capitalize(routeParamKey)}`] = req.path.match(dynamicParamExtractor)[1];
           return db.get(`${req.hostname}/_pages/${routePrefix}@published`);
         } else {
-          logger(module, req, 'endAt');
           throw error;
         }
       });
@@ -116,17 +112,14 @@ function middleware(req, res, next) {
     .then(data => {
       // Set locals
       fakeLocals(req, res, params);
-      logger(module, req, 'endAt');
       return composer.composePage(data, res.locals);
       
     })
     .then(composed => {
-      logger(module, req, 'startAt');
       return res.json(composed);
     })
     .catch(err => {
       log('error', '404', { stack: err.stack });
-      logger(module, req, 'endAt');
       res
         .status(404)
         .json({ status: 404, msg: err.message });

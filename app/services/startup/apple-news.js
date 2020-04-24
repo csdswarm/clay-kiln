@@ -10,7 +10,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
   ANF_CHANNEL_API = `${ ANF_API }channels/${ process.env.APPLE_NEWS_CHANNEL_ID }/`,
   moment = require('moment'),
   FormData = require('form-data'),
-  logger = require('../universal/logger'),
   /**
    * Handle request errors
    *
@@ -34,7 +33,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Function}
   */
   bootstrap = async (req, res, next) => {
-    logger(module, req, 'startAt');
     if (!res.locals.appleNewsSections) {
       const allSections = await getAllSections();
 
@@ -49,7 +47,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         };
       });
     }
-    logger(module, req, 'endAt');
     next();
   },
   /**
@@ -116,24 +113,18 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     const method = 'GET',
       requestURL = `${ ANF_CHANNEL_API }sections`;
 
-    logger(module, req, 'startAt');
     return rest.request(requestURL, {
       method,
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText, body: sections }) => {
       if (status === 200) {
-        logger(module, req, 'endAt');
         if (res) res.send(sections.data || []);
         else return sections.data || [];
       } else {
-        logger(module, req, 'endAt');
         if (res) res.status(status).send(statusText);
         else return [];
       }
-    }).catch(e => {
-      logger(module, req, 'endAt');
-      return handleReqErr(e, 'Error getting all apple news sections', res);
-    });
+    }).catch(e => handleReqErr(e, 'Error getting all apple news sections', res));
   },
   /**
    * Get data about section
@@ -144,7 +135,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Object}
    */
   readSection = async (req, res) => {
-    logger(module, req, 'startAt');
     const method = 'GET',
       requestURL = `${ ANF_API }sections/${ req.params.sectionID }`;
 
@@ -152,13 +142,9 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       method,
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText, body: section }) => {
-      logger(module, req, 'endAt');
       if (status === 200) res.send(section.data);
       else res.status(status).send(statusText);
-    }).catch(e => {
-      logger(module, req, 'endAt');
-      return handleReqErr(e, `Error getting data for apple news section ID ${ req.params.sectionID }`, res);
-    });
+    }).catch(e => handleReqErr(e, `Error getting data for apple news section ID ${ req.params.sectionID }`, res));
   },
   /**
    * Search for articles in section
@@ -176,7 +162,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Array}
    */
   searchArticlesInSection = async (req, res) => {
-    logger(module, req, 'startAt');
     const queryParams = qs.stringify(req.query),
       method = 'GET',
       requestURL = `${ ANF_API }sections/${ req.params.sectionID }/articles?${ queryParams }`;
@@ -185,13 +170,9 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       method,
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText, body: articleResults }) => {
-      logger(module, req, 'endAt');
       if (status === 200) res.send(articleResults.data);
       else res.status(status).send(statusText);
-    }).catch(e => {
-      logger(module, req, 'endAt');
-      return handleReqErr(e, `Error getting articles in section ID ${ req.params.sectionID } search`, res);
-    });
+    }).catch(e => handleReqErr(e, `Error getting articles in section ID ${ req.params.sectionID } search`, res));
   },
   /**
    * Set promoted articles in section
@@ -217,10 +198,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     }).then(({ status, statusText, body }) => {
       if (status === 200) res.send(body.data.promotedArticles);
       else res.status(status).send(statusText);
-    }).catch(e => {
-      logger(module, req, 'endAt');
-      return handleReqErr(e, `Error setting promoted articles in section ID ${ req.params.sectionID }`, res);
-    });
+    }).catch(e => handleReqErr(e, `Error setting promoted articles in section ID ${ req.params.sectionID }`, res));
   },
   /**
    * Search for articles in channel
@@ -246,10 +224,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
     }).then(({ status, statusText, body: searchResults }) => {
       if (status === 200) res.send(searchResults.data);
       else res.status(status).send(statusText);
-    }).catch(e => {
-      logger(module, req, 'endAt');
-      return handleReqErr(e, 'Error getting apple news search results for articles in channel', res);
-    });
+    }).catch(e => handleReqErr(e, 'Error getting apple news search results for articles in channel', res));
   },
   /**
    * Get article data
@@ -260,7 +235,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Object}
    */
   readArticle = async (req, res) => {
-    logger(module, req, 'startAt');
     const method = 'GET',
       requestURL = `${ ANF_API }articles/${ req.params.articleID }`;
 
@@ -268,7 +242,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       method,
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText, body: article }) => {
-      logger(module, req, 'endAt');
       if (status === 200) {
         if (res) res.send(article.data);
         else return article.data;
@@ -276,10 +249,7 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         if (res) res.status(status).send(statusText);
         else return statusText;
       }
-    }).catch(e => {
-      logger(module, req, 'endAt');
-      return handleReqErr(e, 'Error getting article data from apple news API', res);
-    });
+    }).catch(e => handleReqErr(e, 'Error getting article data from apple news API', res));
   },
   /**
    * Publish/update article to apple news by sending
@@ -295,7 +265,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise|Object}
   */
   articleRequest = async (req, res) => {
-    logger(module, req, 'startAt');
     // https://developer.apple.com/documentation/apple_news/create_an_article
     // https://developer.apple.com/documentation/apple_news/update_an_article
     try {
@@ -345,7 +314,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           },
           body: formData
         }).then(({ status, statusText, body: article }) => {
-          logger(module, req, 'endAt');
           if ([ 200, 201 ].includes(status)) {
             res.status(status).send(article.data);
           } else {
@@ -354,12 +322,10 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
           }
         }).catch(e => handleReqErr(e, 'Error publishing/updating article to apple news API', res));
       } else {
-        logger(module, req, 'endAt');
         log('info', `APPLE NEWS LOG -- ARTICLE NOT POSTED BECAUSE IT IS ${ sectionFront } SECTIONFRONT OR FAILED TO GET SECTIONS FROM APPLE NEWS API`);
         res.status(200).send('Article not posted to apple news feed');
       }
     } catch (e) {
-      logger(module, req, 'endAt');
       log('error', `APPLE NEWS LOG -- ${ e }`);
       res.status(500).send(e);
     }
@@ -393,7 +359,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
    * @returns {Promise}
    */
   deleteArticle = async (req, res) => {
-    logger(module, req, 'startAt');
     const method = 'DELETE',
       requestURL = `${ ANF_API }articles/${ req.params.articleID }`;
 
@@ -401,12 +366,8 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
       method,
       headers: createRequestHeader(method, requestURL)
     }).then(({ status, statusText }) => {
-      logger(module, req, 'endAt');
       res.status(status).send(statusText);
-    }).catch(e => {
-      logger(module, req, 'startAt');
-      return handleReqErr(e, 'Error deleting article with apple news API', res);
-    });
+    }).catch(e => handleReqErr(e, 'Error deleting article with apple news API', res));
   },
   /**
    * Add apple news routes to the express app

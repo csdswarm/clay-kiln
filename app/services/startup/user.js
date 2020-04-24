@@ -1,7 +1,6 @@
 'use strict';
 
-const { userFromCookie } = require('./radium'),
-  logger = require('../universal/logger');
+const { userFromCookie } = require('./radium');
 
 /**
  * adds the user object into locals if the user has the cookies set
@@ -11,9 +10,7 @@ const { userFromCookie } = require('./radium'),
  * @param {function} next
  */
 module.exports = (req, res, next) => {
-  logger(module, req, 'startAt');
   res.locals.radiumUser = userFromCookie(req);
-  logger(module, req, 'endAt');
   next();
 };
 

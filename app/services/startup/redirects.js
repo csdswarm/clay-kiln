@@ -5,7 +5,6 @@ const db = require('../server/db'),
   querystring = require('querystring'),
   staticAssets = require('../server/static-assets'),
   logger = require('../universal/logger'),
-  loggerDB = require('../universal/loggerDB'),
 
   /**
    * Removes variables that are passed by the spa from the query string
@@ -115,16 +114,11 @@ module.exports = async (req, res, next) => {
 
   try {
     if (!staticAssets.isStaticAsset(req.path) && possibleRedirect(req)) {
-      const startTime = loggerDB(module),
-        data = await db.get(`${req.get('host')}${redirectDataURL}`).catch(() => {
-          loggerDB(module,'endAt', startTime, `${req.get('host')}${redirectDataURL}`);
+      const data = await db.get(`${req.get('host')}${redirectDataURL}`).catch(() => {
           return { redirects: [] };
         }),
         redirects = data.redirects.sort((first, second) => first.path.indexOf('*') - second.path.indexOf('*')),
         redirectTo = redirects ? redirects.find(item => testURL(item.path, req)) : null;
-
-      loggerDB(module,'endAt', startTime, `${req.get('host')}${redirectDataURL}`);
-
 
       if (redirectTo) {
         // request coming from SPA, 301 and send new URL

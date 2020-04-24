@@ -7,7 +7,6 @@ const axios = require('axios'),
   cache = require('../server/cache'),
   { getUser } = require('../server/cognito'),
   { SECOND, HOUR } = require('../universal/constants').time,
-  logger = require('../universal/logger'),
   STORE_IN_CACHE_SECONDS = 4 * HOUR / SECOND,
 
   /**
@@ -18,13 +17,10 @@ const axios = require('axios'),
    */
   inject = (app) => {
     app.get('/oauth2/authorize', (req, res) => {
-      logger(module, req, 'startAt');
       res.redirect(301, `${process.env.COGNITO_SERVER}${req.url}`);
-      logger(module, req, 'endAt');
     });
 
     app.post('/oauth2/token', async (req, res) => {
-      logger(module, req, 'startAt');
       const options = {
         method: req.method,
         url: `${process.env.COGNITO_SERVER}${req.url}`,
@@ -48,12 +44,10 @@ const axios = require('axios'),
           }),
           STORE_IN_CACHE_SECONDS
         );
-        logger(module, req, 'endAt');
         res.send(response.data);
       } catch (e) {
         log('error', 'There was an error attempting to process the oAuth2 token for cognito', e);
 
-        logger(module, req, 'endAt');
         res.status(e.response.status).json(e.response.data);
       }
     });

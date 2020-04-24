@@ -107,13 +107,14 @@ function setupApp(app) {
 
   addToLocals.loadedIds(app);
   addInterceptor.loadedIds(app);
-
-  app.use(currentStation);
-
   addInterceptor.cacheControl(app);
+
+  // review ask markham
+  app.use(currentStation);
 
   addEndpoints.msnFeed(app);
 
+  // review ask markham
   radium.inject(app);
 
   cognitoAuth.inject(app);

@@ -1,6 +1,5 @@
 'use strict';
 const _toPairs = require('lodash/toPairs'),
-  logger = require('../universal/logger'),
 
   /**
    * add cookie values as needed to an express app
@@ -9,13 +8,13 @@ const _toPairs = require('lodash/toPairs'),
    */
   inject = app => {
     app.use((req, res, next) => {
-      logger(module, req, 'startAt');
+
       addLytics(req, res);
       
       addClosedAlerts(req, res);
 
       addStagingApi(req, res);
-      logger(module, req, 'endAt');
+
       next();
     });
   };

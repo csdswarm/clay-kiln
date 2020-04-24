@@ -1,11 +1,9 @@
 'use strict';
 
-const { preventFastlyCache } = require('../middleware-utils'),
-  logger = require('../../universal/logger');
+const { preventFastlyCache } = require('../middleware-utils');
 
 const interceptor = require('express-interceptor'),
   cacheControlInterceptor = interceptor((req, res) => {
-    logger(module, req, 'startAt');
     return {
       /**
        * Returns whether a request should be intercepted or not
@@ -21,7 +19,6 @@ const interceptor = require('express-interceptor'),
        */
       intercept(body, send) {
         preventFastlyCache(res);
-        logger(module, req, 'endAt');
         send(body);
       }
     };

@@ -12,17 +12,14 @@
  *  - note: in add-to-locals, 'x-loaded-ids' is used to
  *    initialize locals.loadedIds.
  */
-const logger = require('../../universal/logger');
-
 const interceptor = require('express-interceptor'),
   loadedIdsInterceptor = interceptor((req, res) => {
-    logger(module, req, 'startAt');
     return {
       /**
        * @returns {boolean}
        */
       isInterceptable() {
-        return req.get('x-loaded-ids');
+        return req.get('x-loaded-ids') && res.locals.loadedIds;
       },
       /**
        * @param {*} body
@@ -30,7 +27,6 @@ const interceptor = require('express-interceptor'),
        */
       intercept(body, send) {
         res.set('x-loaded-ids', JSON.stringify(res.locals.loadedIds.sort()));
-        logger(module, req, 'endAt');
         send(body);
       }
     };
