@@ -1,9 +1,11 @@
 'use strict';
 
 const _get = require('lodash/get'),
+  { SERVER_SIDE } = require('../../services/universal/constants'),
   apiHelper = require('../../services/universal/brightcove-proxy-helper'),
-  db = require('../../services/server/db'),                  // Only used server-side
-  radioApi = require('../../services/server/radioApi');      // Only used server-side
+  db = require('../../services/server/db'),                                         // Only used server-side
+  log = require('../../services/universal/log').setup({ file: __filename }),  // Only used server-side
+  radioApi = require('../../services/server/radioApi') ;                            // Only used server-side
 
 module.exports = {
   save: async (ref, data) => {
@@ -16,14 +18,15 @@ module.exports = {
     const { video } = data;
 
     // If we're server-side and redis cache is outdated, update the views
-    if (_get(video, 'id') && _get(process, ['versions', 'node']) && (!data.redisExpiresAt || Date.now() > new Date(data.redisExpiresAt))) {
-      const { views, redisExpiresAt } = await apiHelper.getVideoViews(video.id);
-
-      data.views = views;
-      data.redisExpiresAt = radioApi.getRedisExpiresAt(redisExpiresAt, radioApi.TTL.MIN * 5);
-      // Update the draft and published data
-      db.put(ref, data);
-      db.put(`${ref}@published`, data);
+    if (_get(video, 'id') && SERVER_SIDE && (!data.cacheExpiresAt || Date.now() > new Date(data.cacheExpiresAt))) {
+      data.views = await apiHelper.getVideoViews(video.id);
+      data.cacheExpiresAt = new Date(Date.now() + (radioApi.TTL.MIN * 5));
+      // Update this component instance
+      try {
+        db.put(`${ref}`, data);
+      } catch (e) {
+        log('error', `Could not update Brightcove component video views: ${ref}`, e);
+      }
     }
 
     // for some reason, api returns null for link... if this happens, give the article url
