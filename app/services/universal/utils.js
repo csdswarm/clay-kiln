@@ -1,5 +1,6 @@
 'use strict';
 const
+  _clone = require('lodash/clone'),
   _filter = require('lodash/filter'),
   _get = require('lodash/get'),
   _identity = require('lodash/identity'),
@@ -9,13 +10,13 @@ const
   _isObject = require('lodash/isObject'),
   _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
-  _parse = require('url-parse'),
+  _setWith = require('lodash/setWith'),
+  _updateWith = require('lodash/updateWith'),
+  parse = require('url-parse'),
   { getComponentName, isComponent } = require('clayutils'),
   { contentTypes } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
-
-
 
 /**
  * returns a list of keys in the object that have a truthy value
@@ -92,9 +93,36 @@ function replaceVersion(uri, version) {
  */
 function uriToUrl(uri, locals) {
   const protocol = _get(locals, 'site.protocol') || 'http',
-    parsed = _parse(`${protocol}://${uri}`);
+    parsed = parse(`${protocol}://${uri}`);
 
   return parsed.href;
+}
+
+/**
+ * Remove extension from route / path.
+ *
+ * Note: copied from amphora@v7.3.2 lib/responses.js
+ *   Ideally we'd use the uri provided by amphora but our currentStation module
+ *   depends on this and its middleware occurrs before amphora.
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+function removeExtension(path) {
+  const endSlash = path.lastIndexOf('/');
+  let leadingDot;
+
+  if (endSlash > -1) {
+    leadingDot = path.indexOf('.', endSlash);
+  } else {
+    leadingDot = path.indexOf('.');
+  }
+
+  if (leadingDot > -1) {
+    path = path.substr(0, leadingDot);
+  }
+
+  return path;
 }
 
 /**
@@ -113,9 +141,9 @@ function cleanUrl(url) {
  * @return {string}
  */
 function urlToUri(url) {
-  const parsed = _parse(url);
+  const parsed = parse(url);
 
-  return `${parsed.hostname}${parsed.pathname}`;
+  return `${parsed.hostname}${removeExtension(parsed.pathname)}`;
 }
 
 /**
@@ -222,6 +250,12 @@ function textToEncodedSlug(text) {
   );
 }
 
+/**
+ * Copied over from the spa, allows us to log messages that should only show
+ *   during development.
+ *
+ * @param {*} args
+ */
 function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
@@ -375,7 +409,27 @@ function urlToElasticSearch(url) {
   return url.replace('https', 'http');
 }
 
+/**
+ * Immutable version of Lodash's set. Returns a new object with all segments of the path shallowly cloned.
+ * @param {Object} object
+ * @param {Array|string} path
+ * @param {*} value
+ * @returns {Object}
+ */
+function setImmutable(object, path, value) {
+  return _setWith(_clone(object), path, value, _clone);
+}
 
+/**
+ * Immutable version of Lodash's update. Returns a new object with all segments of the path shallowly cloned.
+ * @param {Object} object
+ * @param {Array|string} path
+ * @param {Function} updater
+ * @returns {Object}
+ */
+function updateImmutable(object, path, updater) {
+  return _updateWith(_clone(object), path, updater, _clone);
+}
 
 module.exports = {
   boolKeys,
@@ -398,8 +452,10 @@ module.exports = {
   prettyJSON,
   removeFirstLine,
   replaceVersion,
+  setImmutable,
   textToEncodedSlug,
   toTitleCase,
+  updateImmutable,
   uriToUrl,
   urlToCanonicalUrl,
   urlToElasticSearch,
