@@ -28,7 +28,9 @@ const pkg = require('../../package.json'),
   cookies = require('./cookies'),
   addEndpoints = require('./add-endpoints'),
   addToLocals = require('./add-to-locals'),
-  addInterceptor = require('./add-interceptor');
+  addInterceptor = require('./add-interceptor'),
+  express = require('express'),
+  responseTime = require('response-time');
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -44,6 +46,19 @@ function createSessionStore() {
   return redisStore;
 }
 
+/**
+ * Log response time for each HTTP Request using the response-time middleware.
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {integer} time
+ */
+const logRequestTime = (req, res, time) => {
+  const msg = `REQUEST  ${req.method} - ${req.path} - ${res.statusCode} - ${time.toFixed(3)}ms`;
+
+  log('error', msg, { method: req.method , path: req.path, statusCode: res.statusCode, timeTaken: `${time.toFixed(3)}ms` });
+};
+
 function setupApp(app) {
   var sessionStore;
   // Enable GZIP
@@ -52,6 +67,8 @@ function setupApp(app) {
     app.use(compression());
   }
 
+  app.use(responseTime(logRequestTime));
+  
   // set app settings
   app.set('trust proxy', 1);
   app.set('strict routing', true);
@@ -76,6 +93,10 @@ function setupApp(app) {
     limit: '5mb',
     extended: true
   }));
+
+  // Set the static path here so all middleware gets skipped
+  // TODO: ON-1788: Reorder Middleware and shortcut for paths that do not need the logic
+  app.use(express.static('public'));
 
   app.use(cookieParser());
 

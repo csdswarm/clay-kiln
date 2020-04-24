@@ -12,12 +12,12 @@
  *
  * @param {object} app - the express app
  */
+
 module.exports = app => {
   app.use((req, res, next) => {
     const loadedIdsStr = req.get('x-loaded-ids') || '[]';
-
+        
     res.locals.loadedIds = JSON.parse(loadedIdsStr);
-
     next();
   });
 };
