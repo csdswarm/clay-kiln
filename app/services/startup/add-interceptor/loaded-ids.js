@@ -19,7 +19,7 @@ const interceptor = require('express-interceptor'),
        * @returns {boolean}
        */
       isInterceptable() {
-        return req.get('x-loaded-ids') && res.locals.loadedIds;
+        return req.get('x-loaded-ids');
       },
       /**
        * @param {*} body
