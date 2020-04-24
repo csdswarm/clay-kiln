@@ -14,10 +14,8 @@ let ENTERCOM_DOMAINS = null;
  */
 function spaLocals(req, res) {
   try {
-    const header = req.header('x-locals');
-
-    if (!header) return; // Short circuit.
-    const locals = header ? JSON.parse(header) : null,
+    const header = req.header('x-locals'),
+      locals = header ? JSON.parse(header) : null,
       options = { arrayMerge: (destinationArray, sourceArray) => sourceArray };
 
     if (locals) {

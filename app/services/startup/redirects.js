@@ -4,7 +4,7 @@ const db = require('../server/db'),
   redirectDataURL = '/_components/redirects/instances/default@published',
   querystring = require('querystring'),
   staticAssets = require('../server/static-assets'),
-  logger = require('../universal/logger'),
+  logTime = require('../universal/log-time'),
 
   /**
    * Removes variables that are passed by the spa from the query string
@@ -92,7 +92,7 @@ const db = require('../server/db'),
         redirectUrl = decode64Buffer.toString('utf8');
 
       if ((req.hostname + req.path) !== redirectUrl) {
-        logger(module, req, 'endAt');
+        logTime(module, req, 'endAt');
         res.status(301).json({ redirect: redirectUrl.replace(req.hostname, '') });
         return false;
       }
@@ -108,7 +108,7 @@ const db = require('../server/db'),
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
-  logger(module, req, 'startAt');
+  logTime(module, req, 'startAt');
   const spaRequest = req.originalUrl.includes('?json');
   let runNext = true;
 
@@ -123,10 +123,10 @@ module.exports = async (req, res, next) => {
       if (redirectTo) {
         // request coming from SPA, 301 and send new URL
         if (spaRequest) {
-          logger(module, req, 'endAt');
+          logTime(module, req, 'endAt');
           res.status(301).json({ redirect: redirectTo.redirect });
         } else {
-          logger(module, req, 'endAt');
+          logTime(module, req, 'endAt');
           return res.redirect(301, redirectTo.redirect);
         }
         runNext = false;
@@ -138,12 +138,12 @@ module.exports = async (req, res, next) => {
     }
 
   } catch (e) {
-    logger(module, req, 'endAt');
+    logTime(module, req, 'endAt');
     console.log('Error in redirects middleware:', e);
   }
 
   if (runNext) {
-    logger(module, req, 'endAt');
+    logTime(module, req, 'endAt');
     next();
   }
 };

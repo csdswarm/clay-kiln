@@ -115,9 +115,7 @@ function middleware(req, res, next) {
       return composer.composePage(data, res.locals);
       
     })
-    .then(composed => {
-      return res.json(composed);
-    })
+    .then(composed => res.json(composed))
     .catch(err => {
       log('error', '404', { stack: err.stack });
       res

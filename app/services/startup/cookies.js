@@ -10,7 +10,7 @@ const _toPairs = require('lodash/toPairs'),
     app.use((req, res, next) => {
 
       addLytics(req, res);
-      
+
       addClosedAlerts(req, res);
 
       addStagingApi(req, res);

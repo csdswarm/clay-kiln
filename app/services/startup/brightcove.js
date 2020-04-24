@@ -64,9 +64,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     try {
       await brightcoveApi.request('GET', 'videos', { q: buildQuery(req.query), limit: 10 })
         .then(async ({ body }) => await transformVideoResults(body))
-        .then(results => {
-          res.send(results);
-        });
+        .then(results => res.send(results));
     } catch (e) {
       log(e);
       res.status(500).send(e);

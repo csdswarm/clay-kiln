@@ -46,11 +46,17 @@ function createSessionStore() {
   return redisStore;
 }
 
-
+/**
+ * Log response time for each HTTP Request using the response-time middleware.
+ *
+ * @param {object} req
+ * @param {object} res
+ * @param {integer} time
+ */
 const logRequestTime = (req, res, time) => {
   const msg = `REQUEST  ${req.method} - ${req.path} - ${res.statusCode} - ${time.toFixed(3)}ms`;
 
-  res.statusCode >= 400 ? log('error', msg) : log('info', msg);
+  log('error', msg, { method: req.method , path: req.path, statusCode: res.statusCode, timeTaken: `${time.toFixed(3)}ms` });
 };
 
 function setupApp(app) {
@@ -61,7 +67,6 @@ function setupApp(app) {
     app.use(compression());
   }
 
-  // TODO: use environment variable.
   app.use(responseTime(logRequestTime));
   
   // set app settings
@@ -107,14 +112,13 @@ function setupApp(app) {
 
   addToLocals.loadedIds(app);
   addInterceptor.loadedIds(app);
-  addInterceptor.cacheControl(app);
 
-  // review ask markham
   app.use(currentStation);
+
+  addInterceptor.cacheControl(app);
 
   addEndpoints.msnFeed(app);
 
-  // review ask markham
   radium.inject(app);
 
   cognitoAuth.inject(app);
