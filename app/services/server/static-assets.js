@@ -18,15 +18,15 @@ const _isEmpty = require('lodash/isEmpty'),
 /**
  * Check the path for static dirs
  *
- * @param {string} path The path to check
- * @returns {boolean}
+ * @param {string} filepath The path to check
+ * @returns {boolean} If the filepath being checked is in the static dir
  */
 function isStaticAsset(filepath) {
   if (_isEmpty(_state.staticDirs)) {
     setStaticDirs();
   }
 
-  // If this is a static asset always return false
+  // If this is a static asset return true
   return _state.staticDirs.some(dirName => filepath.startsWith('/' + dirName));
 }
 
