@@ -1,25 +1,33 @@
 'use strict';
 
-const fs = require('fs'),
+const _isEmpty = require('lodash/isEmpty'),
+  _state = {
+    staticDirs: []
+  },
+  { readdirSync } = require('fs'),
   path = require('path'),
-  staticDirs = fs.readdirSync(path.resolve(__dirname , '../../public'), function (err, filesPath) {
-    if (err) throw err;
-    const result = filesPath.map(function (filePath) {
-      return filePath;
-    });
-
-    return result;
-  });
+  /**
+   * Set the list of static dirs onto state so all subsequent calls skip the load logic
+   */
+  setStaticDirs = () => {
+    _state.staticDirs = readdirSync(path.resolve(__dirname , '../../public'), { withFileTypes: true })
+      .filter(entry => entry.isDirectory())
+      .map(entry => entry.name);
+  };
 
 /**
  * Check the path for static dirs
  *
- * @param {string} path The path to check
- * @returns {boolean}
+ * @param {string} filepath The path to check
+ * @returns {boolean} If the filepath being checked is in the static dir
  */
-function isStaticAsset(path) {
-  // If this is a static asset always return false
-  return staticDirs.some(dirName => path.startsWith('/' + dirName));
+function isStaticAsset(filepath) {
+  if (_isEmpty(_state.staticDirs)) {
+    setStaticDirs();
+  }
+
+  // If this is a static asset return true
+  return _state.staticDirs.some(dirName => filepath.startsWith('/' + dirName));
 }
 
 module.exports = {
