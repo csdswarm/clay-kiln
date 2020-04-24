@@ -2,7 +2,8 @@
 
 const _get = require('lodash/get'),
   apiHelper = require('../../services/universal/brightcove-proxy-helper'),
-  db = require('../../services/server/db');
+  db = require('../../services/server/db'),                  // Only used server-side
+  radioApi = require('../../services/server/radioApi');      // Only used server-side
 
 module.exports = {
   save: async (ref, data) => {
@@ -19,7 +20,7 @@ module.exports = {
       const { views, redisExpiresAt } = await apiHelper.getVideoViews(video.id);
 
       data.views = views;
-      data.redisExpiresAt = redisExpiresAt;
+      data.redisExpiresAt = radioApi.getRedisExpiresAt(redisExpiresAt, radioApi.TTL.MIN * 5);
       // Update the draft and published data
       db.put(ref, data);
       db.put(`${ref}@published`, data);
