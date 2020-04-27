@@ -2,7 +2,7 @@
 {{#if @root.locals.edit}}
   <title>Editing: Dynamic Page</title>
 {{ else }}
-  <title>{{ _computed.title }}</title>
+  <title>{{ _computed.metaTitle }}</title>
 {{/if}}
 <meta property="og:title" content="{{ _computed.metaTitle }}">
 <meta name="twitter:title" content="{{ _computed.metaTitle }}">
