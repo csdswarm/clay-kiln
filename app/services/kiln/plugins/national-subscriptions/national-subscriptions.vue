@@ -106,7 +106,7 @@
       }
     }) {
       this.id = "#";
-      this.last_updated_utc =  new Date();
+      this.last_updated_utc =  'N/A';
       this.station_slug = options.station_slug;
       this.short_desc = options.short_desc;
       this.filter = {...options.filter};
@@ -161,7 +161,6 @@
           shortDescription: sub.short_desc,
           filter: sub.filter
         }
-        console.log(this.subscriptions[index]);
         axios.put(`/rdc/national-subscription/${sub.id}`, updatedSub)
           .then(response => {
             this.showSnack('Subscription Updated');
@@ -171,7 +170,6 @@
       },
       onDelete(id) {
         this.isLoading = true;
-        console.log(`Deleting subscription:id:${id}`);
         axios.delete(`/rdc/national-subscription/${id}`)
           .then(response => {
             this.subscriptions = this.subscriptions.filter(sub => sub.id !== id);
@@ -180,8 +178,8 @@
           .catch(this.handleError)
           .finally(()=>this.isLoading = false);
       },
+      // listeners for emission events on the row(s)
       onNewDataRow(data) {
-        console.log('creating...', data);
         this.onCreate();
       },
       onSaveDataRow(data) {
@@ -210,10 +208,7 @@
       formatDate: utcDateStr => moment(utcDateStr).fromNow(),
       startCase,
       valList: val => Array.isArray(val) ? val.join(', ') : val
-    },
-    created() {
-      console.log('created', this.subscriptions);
-    },
+    }
   }
 </script>
 

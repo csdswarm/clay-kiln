@@ -49,12 +49,6 @@ export default {
   props: [
     'data', 'rowConfig', "mode"
   ],
-  data() {
-    return {}
-  },
-  created() {
-    console.log('created', this.data)
-  },
   methods: {
     isString(value) {
       return (typeof value === 'string' || value instanceof String)
@@ -77,7 +71,6 @@ export default {
       array.splice(index, 1);
     },
     onNew(data) {
-      console.log('[this.$emit new]');
       this.$emit('onNewDataRow', data);
     },
     onSave(data) {
