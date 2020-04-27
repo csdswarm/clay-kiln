@@ -37,9 +37,10 @@ a header indicates such.
 <script>
 import _ from 'lodash';
 import axios from 'axios';
-import { mapGetters } from 'vuex'
-import stationSelect from '../../shared-vue-components/station-select'
-import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
+import { mapGetters } from 'vuex';
+import stationSelect from '../../shared-vue-components/station-select';
+import StationSelectInput from '../../shared-vue-components/station-select/input.vue';
+import queryService, { stationFrontFromSlug } from '../../../client/query';
 import {
   editExt,
   htmlExt,
@@ -66,7 +67,7 @@ export default {
       });
     }
 
-    return { secondaryActions };
+    return { secondaryActions, canAddStationFront: true };
   },
   computed: Object.assign(
     {},
@@ -91,11 +92,32 @@ export default {
       pages() {
         let items = _.cloneDeep(_.get(this.$store, 'state.lists[new-pages].items', []));
 
+        if(!this.canAddStationFront) {
+          items = _.filter(items, category => category.id !== 'station-front');
+          this.$store.commit('CHANGE_FAVORITE_PAGE_CATEGORY', _.last(items).id || '');
+        }
         return sortPages(items);
       }
     }
   ),
+  watch: {
+    selectedStation() {
+      this.findStationFront().then(result => this.canAddStationFront = result.length <= 0);
+    }
+  },
   methods: {
+    async findStationFront() {
+      const { locals } = window.kiln,
+        stationSlug = _.get(this.selectedStation, 'slug', ''),
+        query = stationFrontFromSlug(stationSlug, ['stationSlug'], locals),
+        results = await queryService.searchByQuery(
+          query,
+          locals,
+          { shouldDedupeContent: false }
+        );
+
+      return results;
+    },
     async itemClick(id, title) {
       const category = _.find(this.pages, category => _.find(category.children, child => child.id === id));
 
