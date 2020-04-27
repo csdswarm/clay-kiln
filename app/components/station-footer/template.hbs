@@ -2,11 +2,11 @@
   <div class="component component--station-footer" data-uri="{{ default _ref _self }}">
     <div class="station-footer">
       <div>
-        <span class="station-footer__name">{{ station.name }}</span>
-        <span class="station-footer__slogan">{{ station.slogan }}</span>
+        <span class="station-footer__name">{{ _computed.station.name }}</span>
+        <span class="station-footer__slogan">{{ _computed.station.slogan }}</span>
       </div>
       <div class="station-footer__social">
-        {{#each socialButtons as |button|}}
+        {{#each _computed.socialButtons as |button|}}
           <a href="{{button.url}}" title="{{ button.url }}">
             <object type="image/svg+xml" data="/media/components/station-footer/{{ button.type }}.svg">
               <img src="/media/components/station-footer/{{ button.type }}.svg">

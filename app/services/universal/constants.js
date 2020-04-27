@@ -20,6 +20,11 @@ const _get = require('lodash/get'),
 
   SERVER_SIDE = _get(process, 'release.name') === 'node',
 
+  STATION_LISTS = {
+    'primary-section-fronts': true,
+    'secondary-section-fronts': true
+  },
+
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
@@ -62,8 +67,6 @@ const _get = require('lodash/get'),
     'topic-page'
   ]),
 
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
-
   defaultStationName = 'Radio.com',
 
   DEFAULT_STATION = {
@@ -102,20 +105,23 @@ const _get = require('lodash/get'),
     //   decided to instead use the permissions from the 'National' market to
     //   cover national rdc content.
     urpsDomainName: 'National'
-  };
+  },
+
+  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
-  DEFAULT_STATION,
-  SECOND,
-  MINUTE,
-  HOUR,
-  DAY,
-  WEEK,
-  YEAR,
   contentTypes,
-  time,
-  msnFeed,
-  SERVER_SIDE,
+  DAY,
   DEFAULT_RADIOCOM_LOGO,
-  PAGE_TYPES
+  DEFAULT_STATION,
+  HOUR,
+  MINUTE,
+  msnFeed,
+  PAGE_TYPES,
+  SECOND,
+  SERVER_SIDE,
+  STATION_LISTS,
+  time,
+  WEEK,
+  YEAR
 };
