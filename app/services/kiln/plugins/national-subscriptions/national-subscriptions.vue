@@ -39,55 +39,55 @@
   const startCase = require('lodash/startCase');
   const axios = require('axios');
   const tableConfig = [
-  {
-    key: "id",
-    display: "id",
-    isHeader: true,
-    isDataProp: true,
-    isEditable: false,
-    dataType: Number
-  },
-  {
-    key: "station_slug",
-    display: "slug",
-    isHeader: true,
-    isDataProp: true,
-    isEditable: false,
-    dataType: String
-  },
-  {
-    key: "short_desc",
-    display: "description",
-    isHeader: true,
-    isDataProp: true,
-    isEditable: true,
-    dataType: String
-  },
-  {
-    key: "last_updated_utc",
-    display: "updated",
-    isHeader: true,
-    isDataProp: true,
-    isEditable: false,
-    dataType: Date
-  },
-  {
-    key: "filter",
-    display: "filter",
-    isHeader: true,
-    isDataProp: true,
-    isEditable: true,
-    dataType: Object
-  },
-  {
-    key: "actions",
-    display: "actions",
-    isHeader: true,
-    isDataProp: false,
-    isEditable: false,
-    dataType: null
-  }
-];
+    {
+      key: "id",
+      display: "id",
+      isHeader: true,
+      isDataProp: true,
+      isEditable: false,
+      dataType: Number
+    },
+    {
+      key: "station_slug",
+      display: "slug",
+      isHeader: true,
+      isDataProp: true,
+      isEditable: false,
+      dataType: String
+    },
+    {
+      key: "short_desc",
+      display: "description",
+      isHeader: true,
+      isDataProp: true,
+      isEditable: true,
+      dataType: String
+    },
+    {
+      key: "last_updated_utc",
+      display: "updated",
+      isHeader: true,
+      isDataProp: true,
+      isEditable: false,
+      dataType: Date
+    },
+    {
+      key: "filter",
+      display: "filter",
+      isHeader: true,
+      isDataProp: true,
+      isEditable: true,
+      dataType: Object
+    },
+    {
+      key: "actions",
+      display: "actions",
+      isHeader: true,
+      isDataProp: false,
+      isEditable: false,
+      dataType: null
+    }
+  ];
 
   class NationalSubscription {
     constructor(options={
