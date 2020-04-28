@@ -58,6 +58,14 @@ const exists = require('lodash/identity'),
       'events'
     ].filter(exists)
       .join('/');
+  },
+  stationFront = opts => {
+    // e.g. http://radio.com/weei
+    return [
+      opts.prefix,
+      opts.stationSlug
+    ].filter(exists)
+      .join('/');
   };
 
 module.exports = {
@@ -67,5 +75,6 @@ module.exports = {
   gallery,
   sectionFront,
   event,
-  eventsListing
+  eventsListing,
+  stationFront
 };
