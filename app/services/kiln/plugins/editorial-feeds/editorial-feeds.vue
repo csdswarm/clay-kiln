@@ -1,7 +1,7 @@
 <!-- Alerts Manager -->
 <template>
     <nav-menu-button :id="id" @nav-click="toggleDrawer">
-        <span>Editorial Groups</span>
+        <span>Editorial Feeds</span>
     </nav-menu-button>
 </template>
 
@@ -11,7 +11,7 @@ const navMenuButton = window.kiln.utils.components.navMenuButton;
 export default {
     data() {
         return {
-            id: 'editorial-mgmt'
+            id: 'editorial-feeds'
         }
     },
     methods: {
