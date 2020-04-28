@@ -75,7 +75,7 @@ module.exports = unityComponent({
        google: 'https://google.com',
        apple: 'https://apple.com',
        rss: computedPodcast.attributes.rss_feed
-    };*/ 
+    };*/
     data._computed.DEFAULT_RADIOCOM_LOGO = DEFAULT_RADIOCOM_LOGO;
     return data;
   }
