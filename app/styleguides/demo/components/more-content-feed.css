@@ -22,10 +22,10 @@
     position: relative;
     z-index: 1;
     text-align: center;
-    color: $parisM;
+    color: theme(primaryColor, $parisM);
     margin-bottom: em(30);
     &:before {
-      border-top: em(1, 20) solid $parisM;
+      border-top: em(1, 20) solid theme(primaryColor, $parisM);
       content: "";
       margin: 0 auto;
       position: absolute;
@@ -177,7 +177,7 @@
         &.links__link--$sectionFront {
           .thumb__section-front,
           .thumb__content-type {
-            background: $color;
+            background: theme(primaryColor, $color);
           }
         }
       }
@@ -192,7 +192,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        
+
         @mixin medium-small-screen {
           height: auto;
           padding: 0;
@@ -261,7 +261,7 @@
     height: em(50, 20);
     text-transform: uppercase;
     @mixin more-content-feed-font1;
-    background-color: $parisPurple;
+    background-color: theme(primaryColor, $parisPurple);
     display: flex;
     justify-content: center;
     align-items: center;

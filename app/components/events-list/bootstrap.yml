@@ -1,0 +1,6 @@
+_components:
+  events-list:
+    events: []
+    instances:
+      new:
+        events: []

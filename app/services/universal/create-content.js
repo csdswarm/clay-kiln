@@ -10,9 +10,11 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
+  articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
-  { getComponentName } = require('clayutils');
+  { getComponentName } = require('clayutils'),
+  slugify = require('../../services/universal/slugify');
 
 /**
  * only allow emphasis, italic, and strikethroughs in headlines
@@ -387,7 +389,7 @@ function addStationLogo(data, locals) {
   replaceDefaultKeyValue(data, 'stationLogoUrl', isStation ? locals.station.square_logo_small : '');
   replaceDefaultKeyValue(data, 'stationURL', isStation ? locals.station.website : '');
 
-  if (_get(data, 'byline[0].sources.length')) {
+  if ( _get(data,'byline[0].sources.length') ) {
     replaceDefaultKeyValue(data.byline[0].sources[0], 'text', isStation ? locals.station.name : '');
     if (data.byline[0].sources[0].text === '') {
       data.byline[0].sources.length = 0;
@@ -405,6 +407,15 @@ function upCaseRadioDotCom(data) {
   sources.length && sources.forEach(source => {
     source.text = source.text.replace(/radio\.com/gi, 'RADIO.COM');
   });
+}
+
+/**
+ * Updates the stationSyndication property to be an array of objects from an array of strings
+ * @param {Object} data
+ */
+function updateStationSyndicationType(data) {
+  data.stationSyndication = (data.stationSyndication || [])
+    .map(callsign => typeof callsign === 'string' ? { callsign } : callsign);
 }
 
 /**
@@ -483,12 +494,47 @@ function addTwitterHandle(data, locals) {
   }
 }
 
+/**
+ * Adds computed fields for rendering station syndication info.
+ * @param {Object} data
+ */
+function renderStationSyndication(data) {
+  data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
+    .map(station => station.callsign)
+    .sort()
+    .join(', ');
+}
+
+/**
+ * Adds slug to each item in station syndication field.
+ * @param {Object} data
+ */
+function addStationSyndicationSlugs(data) {
+  updateStationSyndicationType(data);
+
+  data.stationSyndication = data.stationSyndication
+    .map(station => {
+      if (station.stationSlug) {
+        station.syndicatedArticleSlug = '/' + [
+          station.stationSlug,
+          slugify(station.sectionFront),
+          slugify(station.secondarySectionFront),
+          data.slug
+        ].filter(Boolean).join('/');
+      } else {
+        delete station.syndicatedArticleSlug;
+      }
+      return station;
+    });
+}
+
 function render(ref, data, locals) {
   fixModifiedDate(data);
   addStationLogo(data, locals);
   upCaseRadioDotCom(data);
   renderFullWidthLead(data, locals);
   addTwitterHandle(data, locals);
+  renderStationSyndication(data);
 
   if (locals && !locals.edit) {
     return data;
@@ -503,20 +549,52 @@ function render(ref, data, locals) {
   });
 }
 
+/**
+ * Assigns 'stationSlug' and 'stationName' to data.
+ *
+ * newPageStation should only exist upon creating a new page.  The property is
+ *   attached to locals in `app/routes/add-endpoint/create-page.js`.  Its
+ *   purpose is to avoid creating a new content-type instance for every station
+ *   (article/gallery/section front/etc.)
+ *
+ * @param {string} uri
+ * @param {object} data
+ * @param {object} locals
+ */
+function assignStationInfo(uri, data, locals) {
+  if (locals.newPageStation !== undefined) {
+    const station = locals.newPageStation,
+      componentName = getComponentName(uri);
+
+    Object.assign(data, {
+      stationSlug: station.site_slug,
+      stationName: station.name,
+      stationCallsign: station.callsign
+    });
+
+    if (articleOrGallery.has(componentName)) {
+      Object.assign(data, {
+        stationLogoUrl: station.square_logo_small,
+        stationURL: station.website
+      });
+    }
+  }
+}
+
 async function save(uri, data, locals) {
-  const isClient = typeof window !== 'undefined',
-    urlAlreadyExists = await urlExists(uri, data, locals);
+  const isClient = typeof window !== 'undefined';
 
   /*
     kiln doesn't display custom error messages, so on the client-side we'll
     use the publishing drawer for validation errors.
   */
-  if (urlAlreadyExists && !isClient) {
+  if (!isClient && await urlExists(uri, data, locals)) {
     throw new Error('duplicate url');
   }
 
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
+  assignStationInfo(uri, data, locals);
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
@@ -527,6 +605,7 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+  addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
   // do the api calls necessary to update the page and authors list, slug, and feed image
@@ -541,6 +620,8 @@ async function save(uri, data, locals) {
 }
 
 module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
+module.exports.updateStationSyndicationType = updateStationSyndicationType;
 
 module.exports.render = render;
 module.exports.save = save;
+module.exports.assignStationInfo = assignStationInfo;

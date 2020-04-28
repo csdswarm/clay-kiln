@@ -1,0 +1,13 @@
+{{#if initialLoad }}
+<section
+  data-uri="{{ default _ref _self }}"
+  class="component component--events-listing-page{{ if @root.locals.edit ' editing' }}"
+  data-lazy-loads="{{ lazyLoads }}"
+>
+  <div data-editable="content">
+    {{> component-list content }}
+  </div>
+</section>
+{{else}}
+  {{> events-list eventsList }}
+{{/if}}

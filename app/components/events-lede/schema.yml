@@ -1,0 +1,28 @@
+contentLabel:
+  _label: Lede Label
+  _has:
+    input: text
+    validate:
+      max: 80
+    help: Label for the lede event. Eg. 'Featured Event'
+
+lede:
+  _subscribe: lede
+
+# Component properties
+description:
+  _component:
+    include:
+      - paragraph
+
+googleAdRightRail:
+  _component:
+    include:
+      - google-ad-manager
+
+_groups:
+  settings:
+    fields:
+      - contentLabel
+      - lede
+      - description

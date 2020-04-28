@@ -8,7 +8,7 @@
                 floating-label
                 :label="schema._label"
                 name="content-search"
-                :help="'Keyword search content or paste in a URL. ' + args.help"
+                :help="'Keyword search content or paste in a URL. ' + args.help || ''"
                 @input="inputOnchange"
                 v-model="searchText"
         ></ui-textbox>
@@ -31,14 +31,57 @@
 </template>
 <script>
 
+  import _ from 'lodash';
   import _debounce from 'lodash/debounce';
   import axios from 'axios';
   import queryService from '../../../client/query';
   import { isUrl } from '../../../../services/universal/utils';
   import { kilnDateTimeFormat } from '../../../../services/universal/dateTime';
+  import { DEFAULT_STATION } from '../../../../services/universal/constants';
 
   const { UiButton, UiTextbox }  = window.kiln.utils.components;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
+  const { sanitizeSearchTerm } = queryService;
+  const nationalStationSlug = DEFAULT_STATION.site_slug;
+  // this query says
+  //   "match if stationSlug doesn't exist or it's an empty slug"
+  //   currently I think national stations shouldn't have a stationSlug, but
+  //   because I'm setting stationSlug to an empty string as a national slug
+  //   identifier, I wanted to make sure we checked that as well.
+  const matchNationalStation = [
+    {
+      bool: {
+        must_not: { exists: { field: "stationSlug" } }
+      }
+    },
+    { match: { stationSlug: nationalStationSlug } }
+  ];
+
+  /**
+   * returns an array which will be put into an elasticsearch `should` array
+   *   meant to match any station we have access to.
+   *
+   * I'm pretty sure this needs to be a function because window.kiln.locals is
+   *
+   * @returns {object}
+   */
+  const getMatchStationsIHaveAccessTo = () => {
+    const { locals } = window.kiln;
+
+    const matchStations = _.chain(locals.stationsIHaveAccessTo)
+      // omit the national
+      .omit(nationalStationSlug)
+      .map(station => ({ match: { stationSlug: station.slug } }))
+      .value();
+
+    if (locals.stationsIHaveAccessTo[nationalStationSlug]) {
+      matchStations.push(...matchNationalStation)
+    }
+
+    return matchStations;
+  };
+
+  const matchStationsIHaveAccessTo = getMatchStationsIHaveAccessTo();
 
   export default {
     props: ['name', 'data', 'schema', 'args'],
@@ -83,7 +126,17 @@
 
         queryService.addSize(query, 10);
         queryService.onlyWithTheseFields(query, ['date', 'canonicalUrl', 'seoHeadline']);
-        queryService.addSearch(query, `*${ searchString.replace(/^https?:\/\//, '') }*`, ["authors", "canonicalUrl", "tags", "teaser"]);
+        queryService.addFilter(query, {
+          bool: {
+            must: [{
+              query_string: {
+                query: sanitizeSearchTerm(`*${ searchString.replace(/^https?:\/\//, '') }*`),
+                fields: ["authors", "canonicalUrl", "tags", "teaser"]
+              }
+            }],
+            should: matchStationsIHaveAccessTo
+          }
+        });
         queryService.addSort(query, { date: { order: 'desc'} });
 
         const results = await queryService.searchByQuery(
@@ -104,6 +157,7 @@
         try {
           this.searchResults = await this.search();
         } catch (e) {
+          console.error(e);
           this.searchResults = [];
         }
 
