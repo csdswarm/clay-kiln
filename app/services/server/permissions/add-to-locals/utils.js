@@ -112,10 +112,13 @@ async function getAllTrimmedStations(locals) {
 function shouldAddToLocals(locals) {
   const provider = _.get(locals, 'user.provider', '');
 
-  return provider === 'cognito'
-    || (
-      provider === 'google'
-      && googleOverridesPermissions
+  return locals.edit
+    && (
+      provider === 'cognito'
+      || (
+        provider === 'google'
+        && googleOverridesPermissions
+      )
     );
 }
 
