@@ -53,7 +53,7 @@ const db = require('./db'),
       addTag('station_logo', _get(locals, 'station.square_logo_small'));
       addTag('page', 'station-detail');
     } else {
-      // article, gallery, section front pages
+      // article, gallery, section front, event pages
       if (isStation) { // under a station
         addTag('market', _get(locals, 'station.market.display_name'));
         addTag('category', _get(locals, 'station.category'));

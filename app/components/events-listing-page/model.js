@@ -79,12 +79,16 @@ async function getRecentEventsFromElastic(uri, data, locals) {
     data.lazyLoads = Math.max(Math.ceil((30 - data.pageLength) / data.pageLength), 0);
   }
 
-  return queryService.searchByQuery(query)
+  return queryService.searchByQuery(query, locals, { shouldDedupeContent: false })
     .then(function (result) {
-      return {
-        ...result,
-        url: result.canonicalUrl.replace(/^http:/, protocol)
-      };
+      if (result) {
+        return {
+          ...result,
+          url: result.canonicalUrl ? result.canonicalUrl.replace(/^http:/, protocol) : ''
+        };
+      } else {
+        return {};
+      }
     })
     .catch(e => {
       queryService.logCatch(e, uri);
@@ -116,11 +120,11 @@ async function getEventDataFromElastic(urlsList, locals) {
 
     queryService.addFilter(query, { term: { canonicalUrl } });
     queryService.addFilter(query, { term: { contentType: 'event' } });
-    if (locals.station.callsign !== locals.defaultStation.callsign) {
+    if (locals.station && locals.station.callsign !== locals.defaultStation.callsign) {
       queryService.addMust(query, { match: { station: locals.station } });
     }
     queryService.onlyWithTheseFields(query, elasticFields);
-    return queryService.searchByQuery(query)
+    return queryService.searchByQuery(query, locals, { shouldDedupeContent: false })
       .then(function (result) {
         return {
           ...result,
@@ -136,10 +140,13 @@ async function getEventDataFromElastic(urlsList, locals) {
 
 module.exports = unityComponent({
   render: async (uri, data, locals) => {
+    if (!locals) {
+      return data;
+    }
     const curatedEvents = await getEventDataFromElastic(data.curatedEvents, locals),
       recentEvents = await getRecentEventsFromElastic(uri, data, locals);
 
-    data.lede = (await getEventDataFromElastic([data.ledeUrl]))[0];
+    data.lede = (await getEventDataFromElastic([data.ledeUrl], locals))[0];
 
     // "load more" button passes page query param - render more content and return it
     data.moreContent = recentEvents.length > data.pageLength;
