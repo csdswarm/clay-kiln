@@ -1,5 +1,10 @@
 #! /bin/bash
 
+# Script to migrate from one elasticsearch cluster to another
+# Examples:
+#   All data - ./migrate https://vpc-prdcms2-elasticsearch-nigdljt33pc6yi6rr4ijbheqbu.us-east-1.es.amazonaws.com http://localhost:9200
+#   Single index = ./migrate https://vpc-prdcms2-elasticsearch-nigdljt33pc6yi6rr4ijbheqbu.us-east-1.es.amazonaws.com http://localhost:9200 published-content_v14
+
 if [ -z $1 ] ; then
   echo "Must provide location of current Elasticsearch" && exit 1;
 fi

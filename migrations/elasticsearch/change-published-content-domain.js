@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * A script to go through Elasticsearch and convert domain names.
+ * Usage:
+ *    node change-published-content-domain.js http localhost:9200 www.radio.com clay.radio.com
+ *    node change-published-content-domain.js https vpc-prdcms2-elasticsearch-nigdljt33pc6yi6rr4ijbheqbu.us-east-1.es.amazonaws.com www.radio.com pre-prod.radio.com
+ */
+
 const headers = {
     'Content-Type': 'application/json'
   },
