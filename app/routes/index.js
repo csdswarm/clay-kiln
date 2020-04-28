@@ -145,6 +145,8 @@ module.exports = router => {
    */
   router.post('/import-content', importContent);
 
+  addEndpoints.editorialGroup(router);
+
   addEndpoints.sitemap(router);
 
   /**
