@@ -1,0 +1,6 @@
+_components:
+  podcast-lead:
+    allowed: true
+    instances:
+      default:
+        allowed: true

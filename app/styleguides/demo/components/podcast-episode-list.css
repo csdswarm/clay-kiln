@@ -1,0 +1,104 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+/* will remove on integration */
+body > .podcast-episode-list {
+  margin: 2em 1em;
+}
+
+.podcast-episode-list {
+  &__controls {
+    margin-bottom: em(32);
+  }
+  &__item {
+    display: flex;
+    align-items: center;
+    margin-bottom: em(14);
+  }
+  &__item-thumb {
+    display: flex;
+    flex: 0 0 widthOnGrid(1, 0);
+    margin-right: em(20);
+    @mixin medium-screen {
+      flex: 0 0 widthOnGrid(1, 0, medium-screen);
+    }
+    @mixin medium-small-screen {
+      display: none;
+    }
+  }
+  &__image {
+    max-width: 100%;
+    height: auto;
+  }
+
+  &__item-info {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 widthOnGrid(8, 7);
+    @mixin medium-screen {
+      flex: 0 0 widthOnGrid(5, 5, medium-screen);
+    }
+    @mixin medium-small-screen {
+      flex: 0 0 widthOnGrid(3, 3, medium-small-screen);
+    }
+    @mixin small-screen {
+      flex: 0 0 widthOnGrid(3, 3, small-screen);
+    }
+  }
+  &__title {
+    @mixin podcast-episode-list-font1;
+  }
+  &__description {
+    @mixin podcast-episode-list-font2;
+  }
+
+  &__info-meta {
+    display: flex;
+    @mixin podcast-episode-list-font2;
+  }
+  &__pub-date, &__duration {
+    margin-right: 1.5em;
+  }
+  &__download-link {
+    text-decoration: none;
+    color: theme(primaryColor, $purple);
+    .svg-download-icon {
+      fill: theme(primaryColor, $purple);
+    }
+  }
+
+  &__item-controls {
+    display: flex;
+    flex: 0 0 widthOnGrid(1, 0);
+  }
+  &__play-btn {
+    @mixin podcast-episode-list-font1;
+    width: em(32);
+    height: em(32);
+    .svg-play-symbol {
+      fill: theme(primaryColor, $purple);
+    }
+  }
+
+  &__btn {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  &__load-more {
+    width: widthOnGrid(10, 9);
+  }
+  &__load-more-btn {
+    @mixin podcast-episode-list-font3;
+    background-color: theme(primaryColor, $purple);
+    color: $white;
+    width: 100%;
+    height: em(42, 14);
+    text-transform: uppercase;
+  }
+
+}

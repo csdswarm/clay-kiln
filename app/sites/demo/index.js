@@ -33,6 +33,8 @@ module.exports.routes = [
   { path: '/small-business-pulse/:year/:month/:day/:name' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
+  { path: '/:stationSlug/podcasts/:dynamicSlug', dynamicPage: 'podcast-show' },
+  { path: '/podcasts/:dynamicSlug', dynamicPage: 'podcast-show' },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
   { path: '/stations', dynamicPage: 'stations-directory' },
   { path: '/stations/location', dynamicPage: 'stations-directory' },
