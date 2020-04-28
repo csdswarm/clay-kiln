@@ -10,6 +10,8 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
+  { PAGE_TYPES } = require('./../universal/constants'),
+  articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
   { getComponentName } = require('clayutils');
@@ -167,6 +169,8 @@ function formatDate(data, locals) {
     data.articleTime = has(data.articleTime) ? data.articleTime : dateFormat(new Date(), 'HH:mm');
     // generate the `date` data from these two fields
     data.date = dateFormat(dateParse(data.articleDate + ' ' + data.articleTime)); // ISO 8601 date string
+  } else {
+    data.date = dateFormat(new Date()); // ISO 8601 date string
   }
 }
 
@@ -485,10 +489,13 @@ function addTwitterHandle(data, locals) {
 
 function render(ref, data, locals) {
   fixModifiedDate(data);
-  addStationLogo(data, locals);
-  upCaseRadioDotCom(data);
-  renderFullWidthLead(data, locals);
-  addTwitterHandle(data, locals);
+
+  if (data.contentType !== PAGE_TYPES.CONTEST) {
+    addStationLogo(data, locals);
+    upCaseRadioDotCom(data);
+    renderFullWidthLead(data, locals);
+    addTwitterHandle(data, locals);
+  }
 
   if (locals && !locals.edit) {
     return data;
@@ -503,20 +510,60 @@ function render(ref, data, locals) {
   });
 }
 
+/**
+ * Assigns 'stationSlug' and 'stationName' to data.
+ *
+ * newPageStation should only exist upon creating a new page.  The property is
+ *   attached to locals in `app/routes/add-endpoint/create-page.js`.  Its
+ *   purpose is to avoid creating a new content-type instance for every station
+ *   (article/gallery/section front/etc.)
+ *
+ * @param {string} uri
+ * @param {object} data
+ * @param {object} locals
+ */
+function assignStationInfo(uri, data, locals) {
+  if (locals.newPageStation !== undefined) {
+    const station = locals.newPageStation,
+      componentName = getComponentName(uri);
+
+    Object.assign(data, {
+      stationSlug: station.site_slug,
+      stationName: station.name,
+      stationCallsign: station.callsign,
+      stationTimezone: station.timezone
+    });
+
+    if (articleOrGallery.has(componentName)) {
+      Object.assign(data, {
+        stationLogoUrl: station.square_logo_small,
+        stationURL: station.website
+      });
+    }
+  } else {
+    if (data.contentType === PAGE_TYPES.CONTEST) {
+      Object.assign(data, {
+        stationCallsign: _get(data, 'stationCallsign', 'NATL-RC'),
+        stationTimezone: _get(data, 'stationTimezone', 'ET')
+      });
+    }
+  }
+}
+
 async function save(uri, data, locals) {
-  const isClient = typeof window !== 'undefined',
-    urlAlreadyExists = await urlExists(uri, data, locals);
+  const isClient = typeof window !== 'undefined';
 
   /*
     kiln doesn't display custom error messages, so on the client-side we'll
     use the publishing drawer for validation errors.
   */
-  if (urlAlreadyExists && !isClient) {
+  if (!isClient && await urlExists(uri, data, locals)) {
     throw new Error('duplicate url');
   }
 
   // first, let's get all the synchronous stuff out of the way:
   // sanitizing inputs, setting fields, etc
+  assignStationInfo(uri, data, locals);
   sanitizeInputs(data); // do this before using any headline/teaser/etc data
   generatePrimaryHeadline(data);
   generatePageTitles(data, locals);
@@ -544,3 +591,4 @@ module.exports.setNoIndexNoFollow = setNoIndexNoFollow;
 
 module.exports.render = render;
 module.exports.save = save;
+module.exports.assignStationInfo = assignStationInfo;

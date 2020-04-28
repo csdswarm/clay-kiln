@@ -1,0 +1,70 @@
+<div class="component--station-listen-nav" data-uri="{{ default _ref _self }}">
+  {{#ifAny nowPlaying onAir }}
+    <section class="drawer__playing">
+      <ul>
+        {{#if nowPlaying }}
+          <li>
+            <h3>now playing</h3>
+            <div data-play-station="{{ station.id }}" class="{{ playingClass }}">
+              <img src="{{ nowPlaying.imageUrl }}width=100&height=100&crop=1:1,offset-y0" alt="{{ nowPlaying.title }}">
+              <div>
+                <h3>{{ nowPlaying.title }}</h3>
+                <span>{{ nowPlaying.artist }}</span>
+              </div>
+            </div>
+          </li>
+        {{/if }}
+        {{#if onAir }}
+          <li>
+            <h3>on-air</h3>
+            <div data-play-station="{{ station.id }}" class="{{ playingClass }}">
+              <img src="{{ onAir.image }}width=100&height=100&crop=1:1,offset-y0" alt="{{ onAir.name }}">
+              <div>
+                <h3>{{ onAir.name }}</h3>
+                <span>{{ onAir.scheduleDays }}: {{ userLocalDate onAir.startTime 'h:mm A' }}</span>
+              </div>
+            </div>
+          </li>
+        {{/if }}
+      </ul>
+    </section>
+  {{/ifAny }}
+  <section class="drawer__audio">
+    <ul>
+      <li>
+        <h3>audio from {{ station.name }}</h3>
+        <ul>
+          <li>
+            <span data-play-station="{{ station.id }}" class="{{ playingClass }}">Live</span>
+          </li>
+          <li>
+            <a href="/audio">
+              <span>Podcasts</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      {{#if station.phonetic_name }}
+        <li class="drawer__smart-speaker">
+          <span>Ask your smart speaker to play</span>
+          <h3>{{ station.phonetic_name }}</h3>
+        </li>
+      {{/if }}
+    </ul>
+  </section>
+  <section class="drawer__featured">
+    {{#if featuredLinks }}
+      <ul>
+        {{#each featuredLinks }}
+          <li>
+            <h3>featured {{ type }}</h3>
+            <a href="{{ url }}">
+              <img src="{{ image }}width=100&height=100&crop=1:1,offset-y0" alt="{{ headline }}">
+              <span>{{ headline }}</span>
+            </a>
+          </li>
+        {{/each }}
+      </ul>
+    {{/if }}
+  </section>
+</div>

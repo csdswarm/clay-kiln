@@ -15,17 +15,15 @@ const AWS = require('aws-sdk'),
   }),
   uuidv4 = require('uuid/v4'),
   additionalDataTypes = require('../services/server/add-data-types'),
-  alerts = require('../services/server/alerts'),
-  importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
-  validScripts = require('../services/server/valid-source'),
   addEndpoints = require('./add-endpoints'),
+  ensureStationOnCustomUrl = require('./ensure-station-on-custom-url'),
   siteMapStations = require('./sitemap-stations'),
-  siteMapGoogleNews = require('./sitemap-google-news');
+  siteMapGoogleNews = require('./sitemap-google-news'),
+  stationTheming = require('../services/server/stationThemingApi');
 
 module.exports = router => {
-
   // Auth Middleware
   // Add this middleware to a route if the route requires authentication.
   function checkAuth(req, res, next) {
@@ -35,6 +33,8 @@ module.exports = router => {
       return next();
     }
   }
+
+  addEndpoints.refreshPermissions(router, checkAuth);
 
   /**
    *
@@ -140,12 +140,9 @@ module.exports = router => {
     });
   });
 
-  /**
-   * Use import-content here to grab amphora user
-   */
-  router.post('/import-content', importContent);
-
+  addEndpoints.importContent(router);
   addEndpoints.sitemap(router);
+  addEndpoints.contestRules(router);
 
   /**
    * Sitemap for stations directories and station detail pages
@@ -158,8 +155,10 @@ module.exports = router => {
   router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
   additionalDataTypes.inject(router, checkAuth);
-  alerts.inject(router, checkAuth);
-
+  stationTheming.inject(router, checkAuth);
+  addEndpoints.alerts(router);
+  addEndpoints.createPage(router);
   addEndpoints.imageInfo(router, checkAuth);
-  validScripts.inject(router, checkAuth);
+  ensureStationOnCustomUrl(router);
+  addEndpoints.validSource(router);
 };

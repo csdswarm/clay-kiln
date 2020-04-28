@@ -1,0 +1,9 @@
+$baseFontSize: 16;
+
+.contest-rules-page__header {
+  margin-bottom: em(16);
+}
+
+.contest-rules-page__legal {
+  font-size: em(16);
+}

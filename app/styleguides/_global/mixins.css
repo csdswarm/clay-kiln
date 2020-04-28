@@ -39,6 +39,12 @@
   }
 }
 
+@define-mixin nav-mobile-breakpoint {
+  @media only screen and (max-width: 788px) {
+    @mixin-content;
+  }
+}
+
 /* Medium-Small Screen */
 @define-mixin medium-small-screen {
   @media only screen and (max-width: 480px) {
@@ -52,6 +58,13 @@
     @mixin-content;
   }
 }
+
+$default-screen-nav-width: em(1100); /* 1280+ desktop */
+$large-screen-nav-width: em(940); /* 1280-1024 desktop */
+$medium-screen-nav-width: em(728); /* 1023-481 tablet */
+$medium-small-screen-nav-width: em(440); /* 480-361 mobile */
+$small-screen-nav-width: em(320); /* 360- mobile */
+
 @define-mixin vertical-align $position: relative {
   position: $position;
   top: 50%;
@@ -94,19 +107,19 @@
   }
 }
 
-@define-mixin show__play {
+@define-mixin show__play $color: $purple {
   @mixin show__button;
 
   &:after {
      border-top: em(8) solid transparent;
      border-bottom: em(8) solid transparent;
-     border-left: em(12) solid $purple;
+     border-left: em(12) solid $color;
      margin-left: em(12);
      margin-top: em(8);
    }
 }
 
-@define-mixin show__pause {
+@define-mixin show__pause $color: $purple {
   @mixin show__button;
 
   &:after {
@@ -114,14 +127,14 @@
     margin-left: em(10);
     height: em(14);
     width: em(12);
-    border: em(5) solid $purple;
+    border: em(5) solid $color;
     border-top: 0;
     border-bottom: 0;
     border-radius: em(1);
   }
 }
 
-@define-mixin show__stop {
+@define-mixin show__stop $color: $purple {
   @mixin show__button;
 
   &:after {
@@ -129,7 +142,7 @@
      margin-left: em(10);
      height: em(12);
      width: em(12);
-     background-color: $purple;
+     background-color: $color;
    }
 }
 
@@ -159,3 +172,10 @@
   background-size: $size;
 }
 
+@define-mixin anchor $color {
+  background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba(theme(primaryColorRGB, '$color'), .50) 80%, rgba(theme(primaryColorRGB, '$color'), .50) 100%);
+
+  &:hover {
+    background: linear-gradient(to bottom, rgba(theme(primaryColorRGB, '$color'), .50) 0, rgba(theme(primaryColorRGB, '$color'), .50) 100%);
+  }
+}

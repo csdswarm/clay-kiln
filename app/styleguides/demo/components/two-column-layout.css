@@ -5,7 +5,7 @@
 @import '_global/spa';
 @import "_global/colors";
 @import "_global/alert-banner";
-@import '_global/layout';
+@import "_global/layouts";
 
 .layout--two-column {
   margin: 0;
@@ -89,9 +89,24 @@
 }
 
 .kiln-edit-mode .layout--two-column {
-  .content__sidebar {
-    visibility: visible;
-    margin-top: em(153);
+  &[data-main-component="article"],
+  &[data-main-component="gallery"] {
+    .content__sidebar {
+      visibility: visible;
+      margin-top: em(153);
+    }
+  },
+  &[data-main-component="contest"] {
+    .content__sidebar {
+      visibility: visible;
+    }
+  }
+}
+.layout--two-column[data-main-component="contest"] {
+  .layout__content {
+    .content__sidebar {
+      visibility: visible;
+    }
   }
 }
 

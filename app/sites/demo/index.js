@@ -5,7 +5,8 @@ const publishing = require('../../services/publishing'),
     '/_components/article/instances',
     '/_components/gallery/instances',
     '/_components/section-front/instances',
-    '/_components/author-page-header/instances'
+    '/_components/author-page-header/instances',
+    '/_components/contest/instances'
   ];
 
 module.exports.routes = [
@@ -48,6 +49,13 @@ module.exports.routes = [
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
+
+  { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/contests/:slug' },
+
   // Full dynamic paths
   { path: '/:sectionFront' },
   { path: '/:sectionFront/:secondarySectionFront' },
@@ -60,6 +68,7 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];
 
