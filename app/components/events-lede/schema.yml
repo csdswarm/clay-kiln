@@ -1,13 +1,21 @@
 contentLabel:
   _label: Lede Label
+  _placeholder:
+    text: Lede Label
+    height: 30px;
+    required: true
   _has:
     input: text
     validate:
       max: 80
     help: Label for the lede event. Eg. 'Featured Event'
 
-lede:
-  _subscribe: lede
+ledeUrl:
+  _label: Events Lede URL
+  _has:
+    input: content-search
+    validate:
+      required: true
 
 # Component properties
 description:
@@ -22,7 +30,10 @@ googleAdRightRail:
 
 _groups:
   settings:
+    _placeholder:
+      text: Events Lede Settings
+      height: 60px
+      ifEmpty: ledeUrl
     fields:
       - contentLabel
-      - lede
-      - description
+      - ledeUrl

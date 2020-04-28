@@ -1,9 +1,9 @@
-<section
-  data-uri="{{ default _ref _self }}"
-  data-editable="settings"
+<section data-uri="{{ default _ref _self }}"
   class="component component--events-lede{{ if @root.locals.edit ' editing' }}"
 >
-  <div class="events-lede__featured">
+  <div class="events-lede__featured"
+    data-editable="settings"
+  >
     {{#if lede.url }}
       <div class="events-lede__image-container">
         <a class="events-lede__anchor" href="{{ lede.url }}">
@@ -14,10 +14,11 @@
             <source media="(min-width: 1280px)" srcset="{{ lede.feedImgUrl }}?width=780&crop=16:9,offset-y0" />
             <img
               src="{{ lede.feedImgUrl }}?width=780&crop=16:9,offset-y0"
-              class="events-lede__image"
+              class="events-lead__image"
+              alt="{{ lede.headline }}"
             />
           </picture>
-          <div class="events-lede__image-overlay">
+          <div class="events-lede__image-overlay" data-editable="contentLabel">
             {{#if contentLabel }}
               <span class="events-lede__content-label">{{ contentLabel }}</span>
             {{/if}}

@@ -1,38 +1,4 @@
-# Properties
-curatedEvents:
-  _label: Add Event
-  _has:
-    input: complex-list
-    props:
-      -
-        prop: url
-        _label: URL
-        _has:
-          input: content-search
-          validate:
-            required: true
-  _placeholder:
-    text: Add Event
-    height: 200px
-
-events:
-  _publish: events
-
-lede:
-  _publish: lede
-
-ledeUrl:
-  _label: Events Lede URL
-  _has:
-    input: content-search
-    validate:
-      required: true
-  _placeholder:
-    text: Featured Event
-    height: 400px
-
-moreContent:
-  _publish: moreContent
+_description: Events listing page
 
 pageDescription:
   _publish: pageDescription
@@ -42,12 +8,10 @@ pageDescription:
     validate:
       required: true
 
-pageLength:
-  _label: Page Size
-  _has:
-    help: Number of events to load when "load more" is clicked
-    input: text
-    type: number
+eventsLede:
+  _component:
+    include:
+      - events-lede
 
 # Component
 eventsList:
@@ -55,23 +19,8 @@ eventsList:
     include:
       - events-list
 
-# Component Lists
-content:
-  _label: Events Listing Page Content
-  _placeholder:
-    text: Events Listing Content
-    height: 600px
-  _componentList:
-    fuzzy: true # allows interactives, etc to add one-off components
-    include:
-      - events-lede
-      - events-list
-
 # Groups
 _groups:
   settings:
     fields:
-      - ledeUrl
       - pageDescription
-      - curatedEvents
-      - pageLength

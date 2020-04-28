@@ -18,6 +18,9 @@
 @define-mixin events-lede-font4 {
   @mixin font ProximaNova-Regular, 18px, $black, -.29px, 28px;
 }
+@define-mixin events-lede-font5 {
+  @mixin font CircularStd-Black, 14px, $black, -.55px, 17px;
+}
 
 .component--events-lede {
   display: flex;
