@@ -17,6 +17,6 @@ module.exports = () => {
   require('./plugins/select-list')();
   require('./plugins/default-text-with-override')();
   require('./plugins/valid-source')();
-  require('./plugins/editorial-group-management')();
+  require('./plugins/editorial-feeds')();
   require('./validators')();
 };
