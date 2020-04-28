@@ -13,5 +13,5 @@ async function addBranchHeadToPages() {
 
 addBranchHeadToPages()
   .catch(function (error) {
-    log('error', error);
+    console.log('error', error);
   });
