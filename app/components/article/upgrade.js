@@ -199,6 +199,7 @@ module.exports['11.0'] = async (uri, data) => {
 };
 
 module.exports['12.0'] = (uri, data) => {
+  data.featured = data.featured || false;
   data.featuredSports = false;
   data.featuredNews = false;
 

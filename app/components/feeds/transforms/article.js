@@ -105,7 +105,7 @@ module.exports = function (data, locals) {
       { subHeadline },
       { seoHeadline: { _cdata: seoHeadline } },
       { coverImage: feedImgUrl },
-      { featured },
+      { featured: featured || false },
       { featured_sports: featuredSports || false },
       { featured_news: featuredNews || false }
     ];
