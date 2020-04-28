@@ -1,0 +1,63 @@
+.editorial-mgmt__wrapper {
+  overflow: auto !important;
+  font-family: 'Noto Sans', Arial, sans-serif;;
+  width: calc(70vw - 200px) !important;
+  border-right: 10px solid white;
+}
+
+.editorial-mgmt__main-title {
+  margin: 10px 0;
+  text-align: center;
+  font-size: 22px;
+}
+
+.editorial-mgmt__buttons {
+  padding: 10px;
+}
+
+.editorial-mgmt-table {
+  border-collapse: collapse;
+  border: 3px solid #44475C;
+  margin: 10px 10px 0 10px;
+  padding: 0px 20px 0px 20px;
+}
+
+.editorial-mgmt-table__head {
+  background: #44475C;
+  text-transform: uppercase;
+  text-align: left;
+  color: #FFF;
+  height: 40px;
+}
+
+.editorial-mgmt-table__title {
+  cursor: pointer;
+  padding: 0 16px;
+  height: 25px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.editorial-mgmt-table__title:hover {
+  background: #717699;
+}
+.editorial-mgmt-table__item {
+  text-align: left;
+  padding: 8px;
+  border-right: 2px solid #7D82A8;
+  vertical-align: middle;
+}
+
+.editorial-mgmt-table__item .ui-checkbox {
+  justify-content: center;  
+}
+.editorial-mgmt-table td:last-child {
+  border-right: none;
+}
+
+.editorial-mgmt-table__head th:first-child {
+  min-width: 80px;
+}
+.editorial-mgmt-table__body tr:nth-child(2n) td {
+  background: #D4D8F9;
+}
