@@ -15,6 +15,7 @@
           v-for="(subscription, index) in subscriptions"
           :data="subscription"
           :rowConfig="rowConfig"
+          :isLoading="isLoading"
           @onSaveDataRow="onSaveDataRow"
           @onDeleteDataRow="onDeleteDataRow"
         />
@@ -23,6 +24,7 @@
         <DataRow
           :data="newSub"
           :rowConfig="rowConfig"
+          :isLoading="isLoading"
           mode="create"
           @onNewDataRow="onNewDataRow"
         />

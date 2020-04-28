@@ -23,7 +23,7 @@
     padding: 0.5em;
   }
   table tfoot td {
-    background: rgba(96, 124, 138, 0.1);
+    background: #d3dbdf;
     padding: 0.5em;
   }
   table tfoot button {
@@ -32,69 +32,74 @@
   table tr {
     border-bottom: 1px solid #ddd;
   }
-}
-
-
-.national-subscriptions {
   .DataRow {
     background: #efefef;
-  }
-  .DataRow td {
-    padding: 1em;
-  }
-  .DataRow input[type='text'] {
-    padding: 0.5em;
-    border: 0;
-    width: 100%;
-  }
-  .DataRow .objRow {
-    display: flex;
-    margin-bottom: 3px;
-  }
-  .DataRow .objRow .objProp, .DataRow .objRow .objValue  {
-    display: flex;
-    font-size: 0.75em;
-  }
-  .DataRow .objRow .objProp {
-    flex: 0 0 50%;
-  }
-  .DataRow .objRow .objValue  {
-    flex: 0 0 50%;
-  }
-  .Array {
-    display: flex;
-    flex-wrap: wrap;
-    background: white;
-    flex: 0 0 100%;
-    padding-left: 0.25em
-  }
-  .ArrayItem, .ArrayAddItem  {
-    display: inline-flex;
-    padding: 0.25em 0 0.25em 0.5em;
-    margin: 0.25em 0.125em;
-    flex: 0 0 auto;
-    background: #cfcfcf;
-    color: #252525;
-    border-radius: 0.125em;
-  }
-  .ArrayItem button, .ArrayAddItem button {
-    border: 0;
-    font-size: 12px;
-    line-height: 12px;
-    padding: 0.125em 0.25em;
-    margin: 0 0.25em;
-    background: #b7b7b7;
-    border-radius: 0.25em;
-    cursor: pointer;
-  }
-  .ArrayItem button:hover, .ArrayAddItem button:hover {
-    background: #292929;
-    color: white;
-  }
-  .ArrayAddItem input[type="text"] {
-    padding: 0.125em 0.25em 0.125em 0;
-    width: 4em;
-    border: none;
-    border-radius: 0.125em;
+    .crud-button {
+        border: 0;
+        font-size: 14px;
+        padding: 0.25em 0.75em;
+        border-radius: 0.125em;
+        background: #333;
+        color: white;
+        cursor: pointer;
+    }
+    td {
+      padding: 1em;
+    }
+    input[type='text'] {
+      padding: 0.5em;
+      border: 0;
+      width: 100%;
+    }
+    .objRow {
+      display: flex;
+      margin-bottom: 3px;
+      .objProp, .objValue  {
+        display: flex;
+        font-size: 0.75em;
+      }
+      .objProp {
+        flex: 0 0 50%;
+      }
+      .objValue  {
+        flex: 0 0 50%;
+      }
+    }
+    .Array {
+      display: flex;
+      flex-wrap: wrap;
+      background: white;
+      flex: 0 0 100%;
+      padding-left: 0.25em;
+      .ArrayItem, .ArrayAddItem  {
+        display: inline-flex;
+        padding: 0.25em 0 0.25em 0.5em;
+        margin: 0.25em 0.125em;
+        flex: 0 0 auto;
+        background: #cfcfcf;
+        color: #252525;
+        border-radius: 0.125em;
+      }
+      .ArrayItem button, .ArrayAddItem button {
+        border: 0;
+        font-size: 12px;
+        line-height: 12px;
+        padding: 0.125em 0.25em;
+        margin: 0 0.25em;
+        background: #b7b7b7;
+        border-radius: 0.25em;
+        cursor: pointer;
+      }
+      .ArrayItem button:hover, .ArrayAddItem button:hover {
+        background: #292929;
+        color: white;
+      }
+      .ArrayAddItem input[type="text"] {
+        padding: 0.125em 0.25em 0.125em 0;
+        width: 4em;
+        border: none;
+        border-radius: 0.125em;
+      }
+    }
   }
 }

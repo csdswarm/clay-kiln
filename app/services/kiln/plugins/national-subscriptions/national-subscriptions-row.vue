@@ -18,8 +18,8 @@
                   <button @click="onRemoveArrayItem(itemIndex, value)">x</button>
                 </div>
                 <div class="ArrayAddItem">
-                  <input type="text" :ref="'newItemInput-'+propIndex" />
-                  <button @click="onAddArrayItem(value, propIndex, 'newItemInput-'+propIndex)">+</button>
+                  <input type="text" :ref="'newItemInput-'+propIndex" @keyup.enter="onAddArrayItem(value, 'newItemInput-'+propIndex)" />
+                  <button @click="onAddArrayItem(value, 'newItemInput-'+propIndex)">+</button>
                 </div>
               </div>
             </template>
@@ -33,11 +33,11 @@
     </td>
     <td>
       <template v-if="mode === 'create'">
-        <button @click="onNew(data)">Create</button>
+        <ui-button color="primary" icon="add" size="normal" @click="onNew(data)">Add</ui-button>
       </template>
       <template v-else="">
-        <button @click="onSave(data)">Save</button>
-        <button @click="onDelete(data)">Delete</button>
+        <ui-button type="primary" color="primary" icon="save" size="small" :loading="isLoading" @click="onSave(data)">Save</ui-button>
+        <ui-button type="primary" color="red" icon="delete" size="small" :loading="isLoading" @click="onDelete(data)">Delete</ui-button>
       </template>
     </td>
   </tr>
@@ -45,9 +45,10 @@
 
 
 <script>
+const { UiButton, UiIconButton } = window.kiln.utils.components;
 export default {
   props: [
-    'data', 'rowConfig', "mode"
+    'data', 'rowConfig', "isLoading", "mode"
   ],
   methods: {
     isString(value) {
@@ -62,7 +63,7 @@ export default {
     onChange(e, filter, filterKey) {
       filter[filterKey] = e.target.value;
     },
-    onAddArrayItem(array, propIndex, ref) {
+    onAddArrayItem(array, ref) {
       const input = this.$refs[ref][0];
       array.push(input.value);
       input.value = "";
@@ -79,6 +80,10 @@ export default {
     onDelete(data) {
       this.$emit('onDeleteDataRow', data);
     }
+  },
+  components: {
+    UiButton,
+    UiIconButton
   }
 }
 </script>
