@@ -4,6 +4,7 @@
     font-family: Helvetica, Arial, sans-serif;
     width: calc(90vw - em(200)) !important;
     border-right: em(10) solid white;
+    padding-bottom: em(10);
   }
 
   &__main-title {
@@ -35,8 +36,6 @@
       text-transform: uppercase;
       text-align: left;
       color: #fff;
-      height: em(40);
-
       th {
         &:first-child {
           min-width: em(80);
@@ -55,9 +54,13 @@
     }
 
     &__table--title {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: #44475c;
       cursor: pointer;
       padding: 0 em(16);
-      height: em(25);
+      height: em(50);
       white-space: nowrap;
       vertical-align: middle;
 

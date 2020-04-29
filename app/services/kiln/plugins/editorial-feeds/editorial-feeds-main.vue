@@ -6,18 +6,16 @@
     </div> -->
     <table class='editorial-feeds__table'>
       <thead class='editorial-feeds__table--head'>
-        <tr>
-          <th
-            nowrap
-            class="editorial-feeds__table--title"
-            v-for="(col, index) in columns"
-            :key="index"
-            v-on:click="sortTable(col)"
-          >
-            {{ col }}
-          </th>
-          <span v-if="columns.length === 0"> There is no information</span>
-        </tr>
+        <th
+          nowrap
+          class="editorial-feeds__table--title"
+          v-for="(col, index) in columns"
+          :key="index"
+          v-on:click="sortTable(col)"
+        >
+          {{ col }}
+        </th>
+        <span v-if="columns.length === 0"> There is no information</span>
       </thead>
       <tbody class="editorial-feeds__table--body">
         <tr v-for="station in stationEditorials" :key="station.id">
