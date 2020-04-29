@@ -13,31 +13,24 @@ a header indicates such.
 <template>
   <div class="new-page-override">
     <station-select class="new-page-override__station-select" />
-    <div v-if="anyPagesExist">
-      <filterable-list v-if="isAdmin"
-        class="new-page-nav"
-        :content="pages"
-        :secondaryActions="secondaryActions"
-        :initialExpanded="initialExpanded"
-        filterLabel="Search Page Templates"
-        :addTitle="addTitle"
-        :addIcon="addIcon"
-        header="Page Template"
-        @child-action="itemClick"
-        @add="addTemplate">
-      </filterable-list>
-      <filterable-list v-else
-        class="new-page-nav"
-        :content="pages"
-        :initialExpanded="initialExpanded"
-        filterLabel="Search Page Templates"
-        header="Page Template"
-        @child-action="itemClick">
-      </filterable-list>
-    </div>
-    <h3 class="new-page-override__no-permissions-notification" v-else>
-      You don't have permissions to create a&nbsp;page
-    </h3>
+    <filterable-list v-if="isAdmin"
+      class="new-page-nav"
+      :content="pages"
+      :secondaryActions="secondaryActions"
+      :initialExpanded="initialExpanded"
+      filterLabel="Search Page Templates"
+      :addIcon="addIcon"
+      header="Page Template"
+      @child-action="itemClick">
+    </filterable-list>
+    <filterable-list v-else
+      class="new-page-nav"
+      :content="pages"
+      :initialExpanded="initialExpanded"
+      filterLabel="Search Page Templates"
+      header="Page Template"
+      @child-action="itemClick">
+    </filterable-list>
   </div>
 </template>
 
@@ -45,7 +38,8 @@ a header indicates such.
 import _ from 'lodash';
 import axios from 'axios';
 import { mapGetters } from 'vuex'
-import StationSelect from '../../shared-vue-components/station-select.vue'
+import stationSelect from '../../shared-vue-components/station-select'
+import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
 import {
   editExt,
   htmlExt,
@@ -60,31 +54,26 @@ const { filterableList } = window.kiln.utils.components;
 
 export default {
   data() {
-    return {
-      stationSelectItems: [],
-      secondaryActions: [{
+    const secondaryActions = [],
+      { user } = window.kiln.locals,
+      canEditTemplate = user.can('update').a('page-template').value;
+
+    if (canEditTemplate) {
+      secondaryActions.push({
         icon: 'settings',
         tooltip: 'Edit Template',
         action: this.editTemplate
-      }, {
-        icon: 'delete',
-        tooltip: 'Remove Template',
-        action: this.removeTemplate
-      }]
-    };
+      });
+    }
+
+    return { secondaryActions };
   },
   computed: Object.assign(
     {},
-    mapGetters(StationSelect.storeNs, ['selectedStation']),
+    mapGetters(stationSelect.storeNs, ['selectedStation']),
     {
-      anyPagesExist() {
-        return !!(_.get(this.$store, 'state.lists[new-pages].items', []).length);
-      },
       isAdmin() {
         return _.get(this.$store, 'state.user.auth') === 'admin';
-      },
-      addTitle() {
-        return _.get(this.$store, 'state.ui.metaKey') ? 'Duplicate Current Page' : 'Add Current Page To List';
       },
       addIcon() {
         return _.get(this.$store, 'state.ui.metaKey') ? 'plus_one' : 'add';
@@ -183,28 +172,11 @@ export default {
           return items;
         }
       }).then(() => this.$store.commit('CHANGE_FAVORITE_PAGE_CATEGORY', currentCategoryID));
-    },
-    addTemplate() {
-      const isMetaKeyPressed = _.get(this.$store, 'state.ui.metaKey'),
-        uri = _.get(this.$store, 'state.page.uri'),
-        currentPageID = uri.match(/pages\/([A-Za-z0-9\-]+)/)[1];
-
-      if (isMetaKeyPressed) {
-        this.$store.commit('CREATE_PAGE', currentPageID);
-
-        return this.$store.dispatch('createPage', currentPageID)
-          .then(url => window.location.href = url);
-      } else {
-        this.$store.dispatch('openModal', {
-          title: 'Add Page Template',
-          type: 'add-page'
-        });
-      }
     }
   },
   components: {
-    'filterable-list': filterableList,
-    StationSelect
+    filterableList,
+    'station-select': StationSelectInput
   }
 };
 </script>

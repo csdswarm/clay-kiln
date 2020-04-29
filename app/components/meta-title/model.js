@@ -1,12 +1,23 @@
 'use strict';
 
-const sanitize = require('../../services/universal/sanitize');
+const _pick = require('lodash/pick'),
+  sanitize = require('../../services/universal/sanitize'),
+  { handleDefault } = require('../../services/kiln/plugins/default-text-with-override/on-model-save');
 
 module.exports.save = (ref, data) => {
-  data = sanitize.recursivelyStripSeperators(data);
+  const defaultProps = _pick(data, [
+    'defaultTitle',
+    'defaultOgTitle',
+    'defaultTwitterTitle',
+    'defaultKilnTitle'
+  ]);
 
-  data.kilnTitle = data.title;
-  data.ogTitle = data.title;
+  Object.assign(data, sanitize.recursivelyStripSeperators(defaultProps));
+
+  handleDefault('title', 'defaultTitle', data);
+  handleDefault('ogTitle', 'defaultOgTitle', data);
+  handleDefault('twitterTitle', 'defaultTwitterTitle', data);
+  handleDefault('kilnTitle', 'defaultKilnTitle', data);
 
   return data;
 };

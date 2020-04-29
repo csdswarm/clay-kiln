@@ -33,7 +33,7 @@
       <meta itemprop="width" content="{{ extractImgWidth feedImgUrl }}" />
     </div>
     <meta itemprop="dateModified" content="{{ dateModified }}" />
-    
+
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">{{{ headline }}}</h1>
     {{! subtitle }}
@@ -163,7 +163,7 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title">Featured</h4>
-              <p class="item-data">{{ if featured 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo featured }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Editorial Feeds Term(s)</h4>
@@ -175,7 +175,7 @@
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Station(s)</h4>
-              <p class="item-data">{{{ default (join stationSyndication) empty }}}</p>
+              <p class="item-data">{{{ default _computed.stationSyndicationCallsigns empty }}}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Genre(s)</h4>
@@ -191,6 +191,18 @@
             </li>
           </ul>
         </section>
+
+        {{#if feeds.msn}}
+          <section class="circulation__section" data-editable="msnFeedSettings">
+            <h3 class="subtitle circ-edit">MSN Feed Settings</h3>
+            <ul class="items">
+              <li class="item">
+                <h4 class="item-title">MSN Article Title</h4>
+                <p class="item-data">{{ msnTitle }}</p>
+              </li>
+            </ul>
+          </section>
+        {{/if}}
 
         <section class="circulation__section" data-editable="circSlug">
           {{#if slugLock}}
@@ -211,26 +223,15 @@
             <li class="item">
               <h4 class="item-title">Evergreen Treatment</h4>
               <p class="item-data">
-                {{ if evergreenSlug 'Yes' else='No' }}
+                {{ yesNo evergreenSlug }}
               </p>
             </li>
           </ul>
         </section>
 
-        <section class="circulation__section" data-editable="circFeeds">
-          <h3 class="subtitle circ-edit">Recirculation:</h3>
-          <ul class="items">
-            <li class="item">
-              <h4 class="item-title required">Recirculation Image</h4>
-            <p class="item-data">
-              {{#if feedImgUrl}}
-                <img class="feedimg" src="{{ feedImgUrl }}?width=300" alt="" />
-              {{else}}
-                <div class="empty-feedimg"></div>
-              {{/if}}
-              </p>
-            </li>
-          </ul>
+        <section class="circulation__section">
+          <h3 class="subtitle">Recirculation:</h3>
+          {{> feed-image feedImg }}
         </section>
 
         <section class="circulation__section" data-editable="circMetadata">

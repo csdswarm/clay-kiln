@@ -45,11 +45,12 @@ function init(version, browser) {
 function setup(meta) {
   meta = _defaults({}, meta, { file: 'File not specified! Please declare a file' });
 
-  if (sitesLogInstance) {
-    return clayLog.meta(meta, sitesLogInstance);
-  } else {
-    return console.log;
+  if (!sitesLogInstance) {
+    clayLog.init({ name: 'clay', pretty: true });
+    sitesLogInstance = clayLog.getLogger();
   }
+
+  return clayLog.meta(meta, sitesLogInstance);
 }
 
 // If we're in the browser, let's call initialize immediately

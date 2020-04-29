@@ -15,9 +15,12 @@ items:
     height: 40px
   _display: inline
   _has:
-    fn: simple-list
+    input: simple-list
     badge: FR
     autocomplete:
       list: ad-tags
       allowRemove: true
       allowCreate: true
+  _list_permission:
+    create: create
+    remove: remove

@@ -2,36 +2,41 @@
 
 const { getComponentName } = require('clayutils'),
   { pageTypesToCheck } = require('../utils'),
-  stationUtils = require('../../station-utils');
+  { wrapInTryCatch } = require('../../../startup/middleware-utils'),
+  { setStationForPermissions } = require('./utils');
 
+/**
+ * Checks whether the user has permissions to create the page they're attempting
+ *   to create.
+ *
+ * @param {object} router - the userPermissionsRouter passed from permissions/index.js
+ */
 module.exports = router => {
-  router.post('/create-page', async (req, res, next) => {
-    const { stationSlug } = req.body,
-      { user } = res.locals,
-      callsign = 'NATL-RC';
+  router.post(
+    '/create-page',
+    setStationForPermissions,
+    wrapInTryCatch(async (req, res, next) => {
+      const { locals } = res,
+        { stationForPermissions, user } = locals;
 
-    if (stationSlug) {
-      const callsign = await stationUtils.getCallsignFromSlug(stationSlug);
+      // these shouldn't be declared above the short circuit
+      // eslint-disable-next-line one-var
+      const pageType = getComponentName(req.body.pageBody.main[0]);
 
-      if (!callsign) {
-        res.status(400);
-        res.send({ error: `a station with site_slug '${stationSlug}' was not found` });
-        return;
+      let hasAccess;
+
+      if (pageTypesToCheck.has(pageType)) {
+        hasAccess = user.can('create').a(pageType).value;
+      } else {
+        hasAccess = !!locals.stationsIHaveAccessTo[stationForPermissions.site_slug];
       }
-    }
 
-    // these shouldn't be declared above the short circuit
-    // eslint-disable-next-line one-var
-    const pageType = getComponentName(req.body.main[0]),
-      hasAccess = pageTypesToCheck.has(pageType)
-        ? user.can('create').a(pageType).at(callsign)
-        : user.can('access').the('station').at(callsign);
-
-    if (hasAccess) {
-      next();
-    } else {
-      res.status(403);
-      res.send({ error: 'Permission Denied' });
-    }
-  });
+      if (hasAccess) {
+        next();
+      } else {
+        res.status(403);
+        res.send({ error: 'Permission Denied' });
+      }
+    })
+  );
 };

@@ -1,4 +1,5 @@
 @import "_global/colors";
+@import "_global/fonts";
 
 .component--brightcove {
   margin-bottom: em(20);
@@ -34,6 +35,71 @@
       margin-left: em(20);
       height: em(150);
       width: auto;
+    }
+  }
+
+  .rdc-overlay {
+    background-color: $parisM;
+    border: em(1, 16) solid $white;
+    box-shadow: 0 0 em(3, 16) 0 rgba(0, 0, 0, 0.5);
+    bottom: em(42, 16);
+    left: em(10, 16);
+    top: auto;
+    width: auto;
+    display: flex;
+    align-items: center;
+    transition: left 150ms ease-out;
+    @mixin overlay-font1;
+    &__close {
+      display: block;
+      background: url('/media/components/brightcove/close-btn.svg') no-repeat;
+      width: em(0, 16);
+      height: em(16, 16);
+      opacity: 0;
+      cursor: pointer;
+      transition: 75ms ease;
+    }
+    &__link {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    &__text {
+      display: flex;
+      align-items: center;
+    }
+    &__logo {
+      background: url('/media/components/brightcove/rdc-overlay-logo.svg') no-repeat;
+      background-size: contain;
+      width: em(21, 16);
+      height: em(22, 16);
+      margin-right: em(10, 16);
+    }
+    &__caret {
+      background: url('/media/components/brightcove/caret-right.svg') no-repeat center center;
+      width: em(12, 16);
+      height: em(12, 16);
+      margin-left: em(4, 16);
+      display: inline-block;
+    }
+    &:hover {
+      .rdc-overlay__close {
+        width: em(16, 16);
+        margin-left: em(14, 16);
+        opacity: 1;
+      }
+    }
+    &.vjs-hidden {
+      left: -100%;
+      transition: left 100ms ease-in;
+      /* needed to override BC important */
+      display: block !important; 
+      .rdc-overlay__close {
+        display: none;
+      }
     }
   }
 }

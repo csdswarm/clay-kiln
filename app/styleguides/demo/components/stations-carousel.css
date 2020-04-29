@@ -182,15 +182,23 @@ $medium-screen-nav-width: em(728);
           }
           &.station-card {
             img {
-              width: em(widthOnGrid(2,1));
-              height: em(widthOnGrid(2,1));
-              @mixin medium-screen {
-                width: em(widthOnGrid(2,1,medium-screen));
-                height: em(widthOnGrid(2,1,medium-screen));
+              width: em(150);
+              height: em(150);
+              @mixin default-screen {
+                width: em(120);
+                height: em(120);
               }
-              @media all and (max-width: 1023px) and (min-width: 788px) {
-                width: em(222);
-                height: em(222);
+              @mixin large-screen {
+                width: em(100);
+                height: em(100);
+              }
+              @mixin medium-screen {
+                width: em(160);
+                height: em(160);
+              }
+              @mixin medium-small-screen {
+                width: em(209);
+                height: em(209);
               }
             }
             .name {

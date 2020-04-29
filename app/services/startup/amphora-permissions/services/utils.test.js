@@ -1,18 +1,17 @@
 'use strict';
 
 const { assert, expect } = require('chai'),
-  { addMiddlewareToUnsafeMethods, isRobot, wrapInTryCatch } = require('./utils'),
-  express = require('express'),
-  getPort = require('get-port'),
-  axios = require('axios');
+  sinon = require('sinon'),
+  { addMiddlewareToUnsafeMethods, isEditor, wrapInTryCatch } = require('./utils'),
+  express = require('express');
 
-describe('utils', () => {
-  describe('isRobot', () => {
-    it('should return true if no username exists', () => {
-      expect(isRobot({})).to.be.true;
+describe('permissions utils', () => {
+  describe('isEditor', () => {
+    it('should return false if username exists', () => {
+      expect(isEditor({})).to.be.false;
     });
     it("should return false if 'username' exists", () => {
-      expect(isRobot({ username: 'mr robot' })).to.be.false;
+      expect(isEditor({ user: { username: 'not a robot' } })).to.be.true;
     });
   });
 
@@ -48,88 +47,33 @@ describe('utils', () => {
   });
 
   describe('wrapInTryCatch', () => {
-    it('should pass a failure to the application default error handler', function () {
-      // shouldn't take longer than 200ms
-      this.timeout(200);
+    it('calls next with the error', async () => {
+      const failedErr = new Error('failed !'),
+        failMiddleware = async () => {
+          throw failedErr;
+        },
+        middleware = wrapInTryCatch(failMiddleware),
+        req = {},
+        res = {},
+        next = sinon.fake();
 
-      // gotta return a promise because we can't await express' `listen`
-      return new Promise(async (resolve, reject) => {
-        try {
-          const app = express(),
-            port = await getPort(),
-            failedErr = new Error('failed !'),
-            failAsynchronously = () => new Promise((resolve, reject) => {
-              setTimeout(() => reject(failedErr), 0);
-            }),
-            failMiddleware = async () => {
-              await failAsynchronously();
-            },
-            // the error handler must have four arguments per Express
-            // eslint-disable-next-line no-unused-vars
-            defaultErrorHandler = (err, req, res, next) => {
-              try {
-                expect(err).to.equal(failedErr);
-                resolve();
-              } catch (testFailed) {
-                reject(testFailed);
-              }
-            };
-
-          app.use(wrapInTryCatch(failMiddleware), defaultErrorHandler)
-            .listen(port, async () => {
-              try {
-                await axios.get(`http://localhost:${port}`);
-              } catch (err) {
-                reject(err);
-              }
-            });
-        } catch (err) {
-          reject(err);
-        }
-      });
+      await middleware(req, res, next);
+      assert(next.calledOnce);
+      assert(next.calledWith(failedErr));
     });
 
-    it('should work just fine otherwise', function () {
-      // shouldn't take longer than 200ms
-      this.timeout(200);
+    it("doesn't call next on success", async () => {
+      const successMiddleware = sinon.fake(),
+        middleware = wrapInTryCatch(successMiddleware),
+        req = {},
+        res = {},
+        next = sinon.fake();
 
-      // gotta return a promise because we can't await express' `listen`
-      return new Promise(async (resolve, reject) => {
-        try {
-          const app = express(),
-            port = await getPort(),
-            passAsynchronously = () => new Promise(resolve => {
-              setTimeout(resolve, 0);
-            }),
-            middleware1 = async (req, res, next) => {
-              await passAsynchronously();
-              next();
-            },
-            middleware2 = () => {
-              resolve();
-            },
-            // the error handler must have four arguments per Express
-            // eslint-disable-next-line no-unused-vars, handle-callback-err
-            defaultErrorHandler = (err, req, res, next) => {
-              try {
-                assert.fail('the default error handler should not run');
-              } catch (testFailed) {
-                reject(testFailed);
-              }
-            };
+      await middleware(req, res, next);
 
-          app.use(wrapInTryCatch(middleware1), defaultErrorHandler, middleware2)
-            .listen(port, async () => {
-              try {
-                await axios.get(`http://localhost:${port}`);
-              } catch (err) {
-                reject(err);
-              }
-            });
-        } catch (err) {
-          reject(err);
-        }
-      });
+      assert(next.notCalled);
+      assert(successMiddleware.calledOnce);
+      assert(successMiddleware.calledWith(req, res, next));
     });
   });
 });

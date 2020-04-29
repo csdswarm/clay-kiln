@@ -1,7 +1,7 @@
 <div data-uri="{{ default _ref _self }}" class="component component--latest-top-recirc-slider latest-top-recirc-slider{{ if @root.locals.edit ' editing' }}" data-editable="items">
     <div class="latest-top-recirc-slider__slider-container">
         <ul class="latest-top-recirc-slider__items-container">
-            {{#each articles }}
+            {{#each _computed.articles }}
                 <li class="latest-top-recirc-slider__item-container">
                     <a class="latest-top-recirc-slider__item-link" href="{{ this.canonicalUrl }}">
                         <div class="latest-top-recirc-slider__item-img-container">

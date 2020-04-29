@@ -15,6 +15,7 @@ class LatestVideosViewController {
       componentEl,
       rail: {
         el: componentEl.querySelector('.latest-videos__rail'),
+        hasScrollListener: false,
         getItems: () => Array.from(this.dom.rail.el.querySelectorAll('.latest-videos__video')),
         getAllItemsHeight: () => this.dom.rail.getItems().reduce((p,c) => {
           return p += c.offsetHeight;
@@ -64,14 +65,24 @@ class LatestVideos {
    */
   onMount() {
     this.vc = new LatestVideosViewController(this.el);
-    this.vc.dom.rail.el.addEventListener('scroll', this.onScroll);
+    const rail = this.vc.dom.rail;
+
+    if (rail.el) {
+      rail.el.addEventListener('scroll', this.onScroll);
+      rail.hasScrollListener = true;
+    }
   }
 
   /**
    * callback method for the component's dismounting event
    */
   onDismount() {
-    this.vc.dom.rail.el.removeEventListener('scroll', this.onScroll);
+    const rail = this.vc.dom.rail;
+
+    if (rail.hasScrollListener) {
+      rail.el.removeEventListener('scroll', this.onScroll);
+      rail.hasScrollListener = false;
+    }
     document.removeEventListener('latest-videos-mount', this.onMount);
     document.removeEventListener('latest-videos-dismount', this.onDismount);
   }

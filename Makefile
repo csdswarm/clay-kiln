@@ -13,13 +13,9 @@ down:
 rebuild:
 	docker-compose stop clay && cd app && npm run build && cd .. && cd spa && npm run-script build -- --mode=none && docker-compose up -d clay && cd .. && make clay-logs
 
-rm-all:
-	@echo "Removing all stopped containers..."
-	docker rm $$(docker ps -aq --filter name=^$$(basename $$(pwd)))
-
 burn:
 	@echo "Stopping and removing all containers..."
-	make down && make rm-all
+	docker-compose rm --stop --force -v # -v = associated volumes
 
 rmi-dangle:
 	@echo "Cleaning up all dangling Docker images..."
@@ -30,7 +26,10 @@ remove-images:
 	docker rmi -f $$(docker images -q)
 
 clay-logs:
-	docker-compose logs -f clay
+	docker-compose exec clay tail -f .pm2/logs/app_name-out.log --retry
+
+clear-logs:
+	echo -n > ./app/.pm2/logs/app_name-out.log
 
 enter-clay:
 	docker-compose exec clay bash
@@ -39,7 +38,7 @@ clear-data:
 	rm -rf ./elasticsearch/data && rm -rf ./redis/data && rm -rf ./postgres/data
 
 clear-app:
-	rm -rf app/node_modules && ls -d ./app/public/* | grep -v dist | xargs rm -rf && rm -rf app/browserify-cache.json
+	rm -rf app/node_modules && ls -d ./app/public/* | grep -v -E "(dist|sitemap)" | xargs rm -rf && rm -rf app/browserify-cache.json
 
 clear-spa:
 	rm -rf spa/node_modules  && rm -rf app/public/dist
@@ -48,7 +47,7 @@ reset:
 	make burn && make clear-data
 
 nuke:
-	make reset && make clear-app && make clear-spa
+	make reset && make clear-app && make clear-spa && make clear-logs
 
 bootstrap:
 	cd ./app &&  cat ./first-run/**/* | clay import -k demo -y clay.radio.com
@@ -114,10 +113,10 @@ stg-bootstrap:
 	@echo "\r\n\r\n"
 
 install-dev:
-	cd spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm ci && npm run build
+	cd app && npm ci && cd ../spa && npm ci && npm run-script build -- --mode=none && cd ../app && npm run build
 
 install:
-	cd spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm ci && npm run build-production
+	cd app && npm ci && cd ../spa && npm ci && npm run-script build -- --mode=production && npm run-script production-config && cd ../app && npm run build-production
 
 lint:
 	cd app && npm run eslint; cd ../spa && npm run lint -- --no-fix
@@ -188,3 +187,25 @@ spa-dev:
 
 app-dev:
 	cd app && npm ci && npm run watch
+
+generate-local-env:
+	sops --decrypt app/clay-radio.secret.sops.yml > app/unencrypted.yml && yq r app/unencrypted.yml stringData > app/temp.yml && yq r app/local.values.yml configmap.data >> app/temp.yml && yq r -j app/temp.yml | jq . | yq r - --prettyPrint | sed 's/: /=/g' | cat > app/.env && rm app/temp.yml
+
+encrypt-local-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/4c93f4a2-4e95-4386-8796-c55df146b6a1 app/unencrypted.yml > app/clay-radio.secret.sops.yml
+
+encrypt-development-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/4c93f4a2-4e95-4386-8796-c55df146b6a1 deploy/development/unencrypted.yml > deploy/development/clay-radio.secret.sops.yml
+
+encrypt-staging-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/4c93f4a2-4e95-4386-8796-c55df146b6a1 deploy/staging/unencrypted.yml > deploy/staging/clay-radio.secret.sops.yml
+
+encrypt-production-env:
+	sops --encrypt --kms arn:aws:kms:us-east-1:477779916141:key/df2d9bbc-3eb3-47cf-acc9-457cf1823b29 deploy/production/unencrypted.yml> deploy/production/clay-radio.secret.sops.yml
+
+decrypt-env:
+ifdef env
+	sops --decrypt deploy/$(env)/clay-radio.secret.sops.yml > deploy/$(env)/unencrypted.yml
+else
+	sops --decrypt app/clay-radio.secret.sops.yml > app/unencrypted.yml
+endif

@@ -1,0 +1,75 @@
+<div data-uri="{{ default _ref _self }}"
+  class="component component--feed-image"
+  itemscope
+  itemtype="http://schema.org/ImageObject"
+  data-editable="allFields">
+
+  {{!
+    This partial should be in sync with the one in image/template.hbs
+
+    Ideally this partial would be a separate component that both this and
+    image references.  I'm running low on time to finish this ticket so I'm
+    punting that work for later.
+  }}
+  {{#* inline "warning"}}
+    {{#if showWhen}}
+      <div class="warning">
+        <i class="warning__icon material-icons">warning</i>
+        <h5 class="warning__header">
+          {{header}}
+        </h5>
+        <p class="warning__content">
+          {{>@partial-block}}
+        </p>
+      </div>
+    {{/if}}
+  {{/inline}}
+
+  <div class="image-wrapper">
+    {{#if url}}
+      {{#>warning header='Bad Image'
+        showWhen=_computed.show404Message
+      }}
+        This image no longer exists.  Please upload a new one.
+      {{/warning}}
+
+      <img src="{{ url }}?width=300" alt="{{ alt }}">
+
+      {{#>warning header='Msn Feed Issue'
+        showWhen=_computed.msnFeed.showOutsideRecommendedRatio
+      }}
+        This image has a width/height ratio of {{ _computed.imageRatio }}.
+        For this image to show up on msn properly please use an image ratio
+        between {{ _computed.msnFeed.constants.minRatio }} and
+        {{ _computed.msnFeed.constants.maxRatio }}
+      {{/warning}}
+
+      {{#>warning header='Msn Feed Issue'
+        showWhen=_computed.msnFeed.showLargerThanMaxSize
+      }}
+        This image has a size of {{ _computed.sizeInMb }} which is larger
+        than msn's maximum size of {{ _computed.msnFeed.constants.maxSizeMb }} MB.
+        Please upload a smaller image so it appears in the msn feed.
+      {{/warning}}
+
+      {{#>warning header='Msn Feed Issue'
+        showWhen=_computed.msnFeed.showSmallerThanMinSide
+      }}
+        This image is {{ width }}px by {{ height }}px which is smaller than
+        what msn requires to display in its feed.  Please make sure both
+        width and height are at minimum {{ _computed.msnFeed.constants.minSide }} pixels.
+      {{/warning}}
+    {{else}} {{! else no url }}
+      <div class="empty-feedimg"></div>
+    {{/if}}
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "ImageObject",
+    {{#if credit}}"author": "{{{ credit }}}",{{/if}}
+    "contentUrl": "{{ url }}"
+  }
+  </script>
+</div>

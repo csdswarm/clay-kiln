@@ -1,10 +1,9 @@
 'use strict';
 
 const queryService = require('../../services/server/query'),
-  _ = require('lodash'),
-  recircCmpt = require('../../services/universal/recirc-cmpt'),
+  recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   toPlainText = require('../../services/universal/sanitize').toPlainText,
-  { isComponent } = require('clayutils'),
+  { unityComponent } = require('../../services/universal/amphora'),
   elasticIndex = 'published-content',
   elasticFields = [
     'primaryHeadline',
@@ -16,110 +15,111 @@ const queryService = require('../../services/server/query'),
   ],
   maxItems = 6;
 
-/**
- * @param {string} ref
- * @param {object} data
- * @param {object} locals
- * @returns {Promise}
- */
-module.exports.save = (ref, data, locals) => {
-  if (!data.items.length || !locals) {
-    return data;
-  }
+module.exports = unityComponent({
+  /**
+   * @param {string} ref
+   * @param {object} data
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  save: async (ref, data, locals) => {
+    if (!data.items.length || !locals) {
+      return data;
+    }
 
-  return Promise.all(_.map(data.items, (item) => {
-    item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
+    await Promise.all(data.items.map(async item => {
+      item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
 
-    return recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields)
-      .then((result) => {
-        const article = Object.assign(item, {
-          primaryHeadline: item.overrideTitle || result.primaryHeadline,
-          pageUri: result.pageUri,
-          urlIsValid: result.urlIsValid,
-          canonicalUrl: result.canonicalUrl,
-          feedImgUrl: result.feedImgUrl,
-          sectionFront: result.sectionFront
-        });
+      const searchOpts = {
+          includeIdInResult: true,
+          shouldDedupeContent: false
+        },
+        result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
 
-        if (article.title) {
-          article.plaintextTitle = toPlainText(article.title);
-        }
-
-        return article;
+      Object.assign(item, {
+        uri: result._id,
+        primaryHeadline: item.overrideTitle || result.primaryHeadline,
+        pageUri: result.pageUri,
+        urlIsValid: result.urlIsValid,
+        canonicalUrl: result.canonicalUrl,
+        feedImgUrl: result.feedImgUrl,
+        sectionFront: result.sectionFront
       });
-  }))
-    .then((items) => {
-      data.items = items;
 
-      return data;
-    });
-};
+      if (item.title) {
+        item.plaintextTitle = toPlainText(item.title);
+      }
+    }));
 
-/**
- * @param {string} ref
- * @param {object} data
- * @param {object} locals
- * @returns {Promise}
- */
-module.exports.render = function (ref, data, locals) {
-  const query = queryService.newQueryWithCount(elasticIndex, maxItems);
-  let cleanUrl;
-
-  if (!locals) {
     return data;
-  }
+  },
 
-  queryService.onlyWithinThisSite(query, locals.site);
-  queryService.onlyWithTheseFields(query, elasticFields);
-  queryService.addMinimumShould(query, 1);
-  queryService.addSort(query, { date: 'desc' });
-  queryService.addShould(query, {
-    nested: {
-      path: 'lead',
-      query: {
-        regexp: {
-          'lead._ref': `${process.env.CLAY_SITE_HOST}\/_components\/brightcove\/instances.*`
+  /**
+   * @param {string} ref
+   * @param {object} data
+   * @param {object} locals
+   * @returns {Promise}
+   */
+  render: async (ref, data, locals) => {
+    const curatedIds = data.items.filter(item => item.uri).map(item => item.uri),
+      availableSlots = maxItems - data.items.length;
+
+    locals.loadedIds = locals.loadedIds.concat(curatedIds);
+
+    if (availableSlots <= 0) {
+      data.articles = data.items;
+      return data;
+    }
+
+    if (!locals) {
+      return data;
+    }
+
+    const query = queryService.newQueryWithCount(
+      elasticIndex,
+      availableSlots,
+      locals
+    );
+
+    queryService.onlyWithinThisSite(query, locals.site);
+    queryService.onlyWithTheseFields(query, elasticFields);
+    queryService.addMinimumShould(query, 1);
+    queryService.addSort(query, { date: 'desc' });
+    queryService.addShould(query, {
+      nested: {
+        path: 'lead',
+        query: {
+          regexp: {
+            'lead._ref': `${process.env.CLAY_SITE_HOST}\/_components\/brightcove\/instances.*`
+          }
+        }
+      }
+    });
+
+    // Filter out the following tags
+    if (data.filterTags) {
+      for (const tag of data.filterTags.map((tag) => tag.text)) {
+        queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
+      }
+    }
+
+    // Filter out the following secondary article type
+    if (data.filterSecondarySectionFronts) {
+      for (const [secondarySectionFrontFilter, filterOut] of Object.entries(data.filterSecondarySectionFronts)) {
+        if (filterOut) {
+          queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
         }
       }
     }
-  });
 
-  // Filter out the following tags
-  if (data.filterTags) {
-    for (const tag of data.filterTags.map((tag) => tag.text)) {
-      queryService.addMustNot(query, { match: { 'tags.normalized': tag } });
-    }
-  }
+    try {
+      const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true });
 
-  // Filter out the following secondary article type
-  if (data.filterSecondarySectionFronts) {
-    Object.entries(data.filterSecondarySectionFronts).forEach((secondarySectionFront) => {
-      const [ secondarySectionFrontFilter, filterOut ] = secondarySectionFront;
-
-      if (filterOut) {
-        queryService.addMustNot(query, { match: { secondarySectionFront: secondarySectionFrontFilter } });
-      }
-    });
-  }
-
-  // exclude the curated content from the results
-  if (data.items && !isComponent(locals.url)) {
-    data.items.forEach(item => {
-      if (item.canonicalUrl) {
-        cleanUrl = item.canonicalUrl.split('?')[0].replace('https://', 'http://');
-        queryService.addMustNot(query, { match: { canonicalUrl: cleanUrl } });
-      }
-    });
-  }
-
-  return queryService.searchByQuery(query)
-    .then(function (results) {
-      data.articles = data.items.concat(results).slice(0, maxItems); // show a maximum of maxItems links
-
-      return data;
-    })
-    .catch(e => {
+      data.articles = data.items.concat(results);
+    } catch (e) {
       queryService.logCatch(e, ref);
-      return data;
-    });
-};
+    }
+
+    return data;
+  }
+});

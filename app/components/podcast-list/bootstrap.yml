@@ -1,4 +1,9 @@
 _components:
   podcast-list:
     items: []
-
+    title: 'Podcasts'
+    primaryColor: ''
+    isTitleFontColorDark: false
+    showTitle: true
+    showCallToActions: true
+    backFillEnabled: true

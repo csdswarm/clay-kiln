@@ -92,6 +92,11 @@
       height: em(10, 12);
       width: em(10, 12);
     }
+    &--override-fill {
+      & .more__caret {
+        fill: inherit;
+      }
+    }
   }
 }
 
@@ -115,3 +120,32 @@
   }
 }
 
+
+@define-mixin section-front-colors $sectionTitle, $color {
+  .component--podcast-list.podcast-list--$(sectionTitle) {
+    .podcast-list__tag {
+      background: rgb($color);
+    }
+    .podcast-list__more {
+      color: rgb($color);
+      .more__caret {
+        fill: rgb($color);
+      }
+    }
+    .podcast-list__more.podcast-list__more--override-fill-section-front {
+      .more__caret {
+        fill: rgb($color);
+      }
+    }
+    .podcast-list__more.podcast-list__more--override-fill.podcast-list__more--override-fill-section-front {
+      .more__caret {
+        fill: inherit;
+      }
+    }
+  }
+}
+
+@mixin section-front-colors music, $sunsetOrangeRGB;
+@mixin section-front-colors news, $lightningYellowRGB;
+@mixin section-front-colors sports, $azureRadienceRGB;
+@mixin section-front-colors podcasts, $robinsEggBlueRGB;

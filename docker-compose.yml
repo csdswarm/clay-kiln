@@ -25,13 +25,15 @@ services:
       dockerfile: Dockerfile
     logging:
       driver: json-file
+    depends_on:
+      - elasticsearch
     links:
       - redis
       - elasticsearch
       - postgres
     networks:
       main:
-    command: "npm start"
+    command: "npm run dev"
     volumes:
       - ./app:/usr/src/app
       - /usr/src/app/node_modules

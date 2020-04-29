@@ -6,6 +6,10 @@
 .component--breadcrumbs {
   margin-bottom: em(20);
 
+  .hidden {
+    display: none;
+  }
+
   .breadcrumbs__link {
     display: inline-block;
     @mixin article-font12;

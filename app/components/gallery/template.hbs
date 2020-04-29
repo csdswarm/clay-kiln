@@ -116,6 +116,11 @@
       <div class="content__info" data-editable="content">
         {{> component-list content }}
       </div>
+      {{#if @root.locals.edit}}
+        <section class="component__bulk-image-upload">
+          <div class="content__bulk-image-upload" data-editable="bulkImageUpload"></div>
+        </section>
+      {{/if}}
       <div class="content__slides {{ if toggleEditorCondensedSlidesView 'content__slides--condensed' }}">
         {{#if @root.locals.edit}}
           {{! Adding slides components }}
@@ -235,7 +240,7 @@
           <ul class="items">
             <li class="item">
               <h4 class="item-title">Featured</h4>
-              <p class="item-data">{{ if featured 'Yes' else='No' }}</p>
+              <p class="item-data">{{ yesNo featured }}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Editorial Feeds Term(s)</h4>
@@ -247,7 +252,7 @@
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Station(s)</h4>
-              <p class="item-data">{{{ default (join stationSyndication) empty }}}</p>
+              <p class="item-data">{{{ default _computed.stationSyndicationCallsigns empty }}}</p>
             </li>
             <li class="item">
               <h4 class="item-title">Syndicate to Genre(s)</h4>
@@ -283,7 +288,7 @@
             <li class="item">
               <h4 class="item-title">Evergreen Treatment</h4>
               <p class="item-data">
-                {{ if evergreenSlug 'Yes' else='No' }}
+                {{ yesNo evergreenSlug }}
               </p>
             </li>
           </ul>

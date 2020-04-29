@@ -16,11 +16,10 @@ module.exports.render = (uri, data, locals) => {
 };
 
 module.exports.save = (uri, data, locals) => {
-  assignStationInfo(data, locals);
+  assignStationInfo(uri, data, locals);
 
   return {
     ...data,
-    revealSectionFrontControls: !data.stationFront && !data.titleLocked,
-    revealStationControls: data.stationFront && !data.titleLocked
+    revealSectionFrontControls: !data.stationFront && !data.titleLocked
   };
 };

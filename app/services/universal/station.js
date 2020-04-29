@@ -12,25 +12,20 @@ const radioApi = require('../server/radioApi'),
    * @param {number} stationId
    * @param {Object} [data]
    * @param {Object} locals
-   * @returns {Promise|Object}
   */
   getNowPlaying = async (stationId, data = null, locals) => {
-    if (stationId !== 0) {
-      const now_playing = await radioApi.get(`stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }, locals).catch(() => {});
+    const now_playing = await radioApi.get(`/stations/${ stationId }/now_playing`, null, null, { ttl: radioApi.TTL.MIN * 3 }, locals).catch(() => {});
 
-      if (data && _has(now_playing, 'data.event.current_event')) {
-        const song = now_playing.data.event.current_event;
+    if (data && _has(now_playing, 'data.event.current_event')) {
+      const song = now_playing.data.event.current_event;
 
-        data.nowPlaying = {
-          ...song,
-          artist: song.artist.replace(/-/g, ', ')
-        };
-      }
-
-      return now_playing;
+      data.nowPlaying = {
+        ...song,
+        artist: song.artist.replace(/-/g, ', ')
+      };
     }
 
-    return {};
+    return now_playing;
   },
   /**
    * Retrieve station show schedules from api and

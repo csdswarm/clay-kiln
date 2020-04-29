@@ -120,7 +120,7 @@
 </template>
 <script>
   import { transformVideoResults } from '../../../startup/brightcove.js';
-  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE, getAllCategoryOptions, 
+  import { AD_SUPPORTED, FREE, INFO, ERROR, SUCCESS, NEWS_LIFESTYLE,
   highLevelCategoryOptions, secondaryCategoryOptions, tertiaryCategoryOptions, getFetchResponse } from './brightcoveUtils.js';
 
   const { UiButton, UiTextbox, UiSelect, UiCheckbox, UiAlert } = window.kiln.utils.components;
@@ -158,7 +158,7 @@
     computed: {
       /**
        * Gets tags from combining secondary category, tertiary category and additional keywords
-       * 
+       *
        * @returns {Array}
        */
       tags() {
@@ -174,7 +174,7 @@
       },
       /**
        * Determines secondary category of video from its tags
-       * 
+       *
        * @returns {String}
        */
       derivedSecondaryCategory() {
@@ -184,7 +184,7 @@
       },
       /**
        * Determines tertiary category of video from its tags
-       * 
+       *
        * @returns {String}
        */
       derivedTertiaryCategory() {
@@ -194,7 +194,7 @@
       },
       /**
        * Determines keywords from tags by extracting out categories
-       * 
+       *
        * @returns {String}
        */
       derivedKeywords() {
@@ -204,7 +204,7 @@
       },
       /**
        * Checks form validity dependent on highLevelCategory
-       * 
+       *
        * @returns {boolean}
        */
       validForm() {
@@ -214,7 +214,7 @@
       },
       /**
        * Returns success of update if done loading and video is set
-       * 
+       *
        * @returns {boolean}
        */
       updateSuccess() {
@@ -223,9 +223,9 @@
     },
     watch: {
       /**
-       * Resets preview of video and updates form 
+       * Resets preview of video and updates form
        * with newly selected video data
-       * 
+       *
        * @param {string} newSelectedCategory
        */
       data(vid) {
@@ -235,7 +235,7 @@
       },
       /**
        * Gets updated secondary categories when high level category is changed
-       * 
+       *
        * @param {string} newSelectedCategory
        */
       async highLevelCategory(newSelectedCategory) {
@@ -244,7 +244,6 @@
     },
     async created() {
       if (this.data) {
-        await getAllCategoryOptions();
         this.tertiaryCategoryOptions = await tertiaryCategoryOptions();
         this.populateFormWithData(this.data);
       }
@@ -252,7 +251,7 @@
     methods: {
       /**
        * Set update status on FE
-       * 
+       *
        * @param {string} type
        * @param {string} message
        */
@@ -260,9 +259,9 @@
         this.updateStatus = { type, message };
       },
       /**
-       * Retrieves video object from brightcove with video ID and 
+       * Retrieves video object from brightcove with video ID and
        * populates update form fields with this data
-       * 
+       *
        * @param {Object} vid
        */
       async populateFormWithData(vid) {
@@ -291,7 +290,7 @@
       /**
        * Resets form fields back to the last values retrieved from api
        * and resets the loading status
-       * 
+       *
        */
       async resetForm() {
         this.videoName = this.updatedVideo.name;
@@ -311,7 +310,7 @@
       /**
        * When high level category is changed secondary and tertiary categories are reset
        * because the list of options changes dependent on high level category
-       * 
+       *
        */
       resetCategories() {
         this.secondaryCategory = '';
@@ -319,19 +318,19 @@
       },
       /**
        * Updates existing video in brightcove and sets video to updated video
-       * 
+       *
        * @param {Object} event
        */
       async updateVideo(event) {
         event.preventDefault();
-        const { updatedVideo: video, videoName, shortDescription, longDescription, station, 
+        const { updatedVideo: video, videoName, shortDescription, longDescription, station,
           highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported } = this;
 
         this.loading = true;
         try {
-          const { status, statusText, data: updateResponse } = await getFetchResponse('POST', '/brightcove/update', 
+          const { status, statusText, data: updateResponse } = await getFetchResponse('POST', '/brightcove/update',
             {
-              video, videoName, shortDescription, longDescription, station, 
+              video, videoName, shortDescription, longDescription, station,
               highLevelCategory, secondaryCategory, tertiaryCategory, tags, adSupported
             }, {'Content-Type': 'application/json'} );
 
@@ -339,7 +338,7 @@
 
           if (status === 200 && updateResponse.id) {
             this.updatedVideo = updateResponse;
-            this.transformedVideo = transformVideoResults([updateResponse])[0];
+            this.transformedVideo = await transformVideoResults([updateResponse])[0];
 
             this.$store.commit('UPDATE_FORMDATA', { path: this.name, data: this.transformedVideo });
             this.setUpdateStatus(SUCCESS, `Successfully updated video. Last Updated: ${ updateResponse.updated_at }`);

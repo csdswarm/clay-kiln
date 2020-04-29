@@ -2,6 +2,7 @@
 
 const brightcoveApi = require('../universal/brightcoveApi'),
   slugify = require('../universal/slugify'),
+  log = require('../universal/log').setup({ file: __filename }),
   _get = require('lodash/get'),
   moment = require('moment'),
   /**
@@ -24,15 +25,18 @@ const brightcoveApi = require('../universal/brightcoveApi'),
    * @param {Array} results array of video objects
    * @returns {Array} an array of video objects with only needed fields
    */
-  transformVideoResults = results => (results || []).map(({ name, images, id, updated_at, delivery_type }) => {
-    return {
-      name,
-      id,
-      imageUrl: _get(images, 'thumbnail.src', ''),
-      updated_at,
-      delivery_type
-    };
-  }),
+  transformVideoResults = async results => {
+    return await Promise.all( (results || [])
+      .map( async ({ name, images, id, updated_at, delivery_type }) => {
+        return {
+          name,
+          id,
+          imageUrl: _get(images, 'thumbnail.src', ''),
+          updated_at,
+          delivery_type
+        };
+      }));
+  },
   /**
    * Get video object from brightcove by ID
    *
@@ -58,10 +62,10 @@ const brightcoveApi = require('../universal/brightcoveApi'),
   search = async (req, res) => {
     try {
       await brightcoveApi.request('GET', 'videos', { q: buildQuery(req.query), limit: 10 })
-        .then(({ body }) => transformVideoResults(body))
+        .then(async ({ body }) => await transformVideoResults(body))
         .then(results => res.send(results));
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -113,7 +117,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -138,7 +142,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         const { status, statusText, video } = await getVideoObject(videoID);
 
         if (video && video.id) {
-          res.send({ video: transformVideoResults([video])[0], jobID: ingestResponse.id });
+          res.send({ video: await transformVideoResults([video])[0], jobID: ingestResponse.id });
         } else {
           res.status(status).send(statusText);
         }
@@ -146,7 +150,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -172,7 +176,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -215,7 +219,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
     }
   },
@@ -233,7 +237,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
 
       if (video && video.id) {
         if (!req.query.full_object) {
-          res.send(transformVideoResults([video])[0]);
+          res.send(await transformVideoResults([video])[0]);
         } else {
           res.send(video);
         }
@@ -241,8 +245,32 @@ const brightcoveApi = require('../universal/brightcoveApi'),
         res.status(status).send(statusText);
       }
     } catch (e) {
-      console.error(e);
+      log(e);
       res.status(500).send(e);
+    }
+  },
+  /**
+   * Api to get video source from brightcove by ID
+   *
+   * @param {object} req
+   * @param {String} req.params.id
+   * @param {object} res
+   */
+  getVideoSource = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const { body: videoSources } = await brightcoveApi.request('GET', `videos/${ id }/sources`),
+        sourceUrl = _get(videoSources.find(source => {
+          return source.type === 'application/x-mpegURL';
+        }), 'src', '');
+
+      res.send({ sourceUrl });
+    } catch (e) {
+      log(e);
+      res.status(500).send({
+        message: 'bc video source error'
+      });
     }
   },
   /**
@@ -257,6 +285,7 @@ const brightcoveApi = require('../universal/brightcoveApi'),
     app.use('/brightcove/ingestStatus', getIngestStatus);
     app.use('/brightcove/update', update);
     app.use('/brightcove/get', getVideoByID);
+    app.use('/brightcove/getVideoSource/:id', getVideoSource);
   };
 
 module.exports.inject = inject;

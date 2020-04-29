@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 2.0
 _description: |
   A list of one or more related stories
 
@@ -23,10 +23,13 @@ items:
       prop: url
       _label: URL
       _has:
-        input: text
-        type: url
+        input: content-search
         validate:
           required: true
+          # Using pattern from https://regex101.com/r/3eW1gH/4
+          pattern: ^(https?:\/\/[a-z0-9-]*?\.?radio\.com\/?.*?)?\s*$
+          patternMessage: Must be a valid Radio.com URL
+        help: Format should follow http(s)://{subdomain if any}.radio.com/{anything url-encoded}
     -
       prop: overrideTitle
       _label: Headline Override
@@ -34,6 +37,26 @@ items:
         input: text
         validate:
           max: 80
+          required:
+            field: ignoreValidation
+            operator: truthy
+    -
+      prop: overrideImage
+      _label: Image Override
+      _has:
+        input: advanced-image-upload
+        uploadLabel: Upload Image Attachment
+        uploadHelp: Choose an image file from your computer to override image
+        validate:
+          required:
+            field: ignoreValidation
+            operator: truthy
+    -
+      prop: ignoreValidation
+      _label: Bypass URL Validation?
+      _has:
+        input: checkbox
+        help: Use this field if the destination of the URL entered is not a Radio.com content page. If checked, Headline and Image Override must be set manually.
     -
       prop: urlIsValid
       _has:

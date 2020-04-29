@@ -10,3 +10,5 @@ text:
     input: text
     type: multi-line
     rows: 5
+    validate:
+      html: true

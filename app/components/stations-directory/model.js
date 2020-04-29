@@ -15,7 +15,7 @@ const radioApiService = require('../../services/server/radioApi'),
 function getAllMarkets(locals) {
   const route = 'markets',
     params = {
-      'page[size]': 100,
+      'page[size]': 1000,
       sort: 'name'
     };
 
@@ -34,7 +34,7 @@ function getAllMarkets(locals) {
  * fetch all music genres from
  * radio api into an array
  * @param {object} locals
- * @param {boolean} newsTalk
+ * @param {boolean} [newsTalk]
  * @returns {Promise<array>}
  */
 function getAllGenres(locals, newsTalk = false) {

@@ -2,7 +2,7 @@
 {{#if @root.locals.edit}}
   <title>Editing: Dynamic Page</title>
 {{ else }}
-  <title>{{ concat paramValue suffix }}</title>
+  <title>{{ _computed.title }}</title>
 {{/if}}
-<meta property="og:title" content="{{ concat metaValue suffix }}">
-<meta name="twitter:title" content="{{ concat metaValue suffix }}">
+<meta property="og:title" content="{{ _computed.metaTitle }}">
+<meta name="twitter:title" content="{{ _computed.metaTitle }}">

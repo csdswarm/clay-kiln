@@ -1,6 +1,6 @@
 <template>
   <section class="layout layout--one-column">
-    <section class="layout__top" data-editable="top" v-html="this.componentList('top')"></section>
+    <section class="layout__top" v-html="this.componentList('top')"></section>
     <section class="layout__topSection" data-editable="topSection" v-html="this.componentList('topSection')"></section>
     <section class="layout__topAd" data-editable="top" v-html="this.componentList('topAd')"></section>
     <header>
@@ -15,7 +15,7 @@
     <footer>
       <div class="layout__bottomAd" data-editable="bottomAd" v-html="this.componentList('bottomAd')"></div>
       <div class="layout__bottomSection" data-editable="bottomSection" v-html="this.componentList('bottomSection')"></div>
-      <div class="layout__bottom" data-editable="bottom" v-html="this.componentList('bottom')"></div>
+      <div class="layout__bottom" v-html="this.componentList('bottom')"></div>
     </footer>
   </section>
 </template>

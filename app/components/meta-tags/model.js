@@ -7,7 +7,8 @@ const _get = require('lodash/get'),
   getPageId = require('../../services/universal/analytics/get-page-id'),
   getTrackingData = require('../../services/universal/analytics/get-tracking-data'),
   getPageData = require('../../services/universal/analytics/get-page-data'),
-  { NMC, OG_TYPE } = require('../../services/universal/analytics/shared-tracking-vars');
+  { NMC, OG_TYPE } = require('../../services/universal/analytics/shared-tracking-vars'),
+  { getBranchMetaTags } = require('../../services/server/branch-io');
 
 /**
  * Returns properties for the Nielsen Marketing Cloud tags dependent on whether
@@ -47,7 +48,7 @@ function getNmcData(hasImportedNmcData, componentData, locals) {
   }
 }
 
-module.exports.render = (ref, data, locals) => {
+module.exports.render = async (ref, data, locals) => {
   const AUTHOR_NAME = 'article:author:name',
     PUB_TIME = 'article:published_time',
     CATEGORY = 'cXenseParse:recs:category',
@@ -164,6 +165,9 @@ module.exports.render = (ref, data, locals) => {
       data.unusedTags.push({ type: 'name', name: NMC[key] });
     }
   }
+
+  // add branch io meta tags
+  data.metaTags.push(...await getBranchMetaTags(locals, data));
 
   return data;
 };

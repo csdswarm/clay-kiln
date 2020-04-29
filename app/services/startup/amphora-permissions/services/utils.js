@@ -36,10 +36,10 @@ module.exports.addMiddlewareToUnsafeMethods = (router, path, middleware) => {
 };
 
 /**
- *  determines if the user is not an actual user
- *
- * @param {object} user
+ *  determines if the user is an actual user and not a robot
+ * @param {object} locals
+ * @param {object} locals.user
  *
  * @return {boolean}
  */
-module.exports.isRobot = (user) => !user.username;
+module.exports.isEditor = ({ user }) => !!(user && user.username);

@@ -3,6 +3,7 @@
 <script>
 'use strict';
 const { debugLog } = require('../../../universal/utils'),
+ { getComponentName } = require('clayutils'),
   PUBLISHED = 'publish',
   UNPUBLISHED = 'unpublish';
 
@@ -28,9 +29,13 @@ module.exports = {
             initialHistory = [];
           }
 
-          const historyHasChanged = initialHistory.length !== mutation.payload.history.length;
+          const historyHasChanged = initialHistory.length !==
+            mutation.payload.history.length,
+            isContentPage = ['article', 'gallery'].includes(
+              getComponentName(state.page.data.main[0]));
           if (
             historyHasChanged
+            && !isContentPage
             && [PUBLISHED, UNPUBLISHED].includes(mutation.payload.history[mutation.payload.history.length - 1].action)
           ) {
             setTimeout(() => { location.reload(); }, 200);

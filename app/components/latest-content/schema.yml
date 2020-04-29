@@ -1,6 +1,25 @@
-_version: 3.0
+_version: 5.0
 _description: |
   A list of five latest related articles by article type, tag, or manually populated.
+
+componentTitle:
+  _label: Component's Title
+  _has:
+    validate:
+      required:
+        field: componentTitleVisible
+        operator: truthy
+      min: 4
+      max: 80
+    help: The title displayed on the component's view
+    input: text
+
+componentTitleVisible:
+  _label: Show Component's Title
+  _has:
+    input: checkbox
+    help: Show or hide the title displayed on the component's view
+
 contentType:
   _label: Content type
   _has:
@@ -159,6 +178,8 @@ filterSecondarySectionFronts:
 _groups:
   settings:
     fields:
+      - componentTitle
+      - componentTitleVisible
       - contentType
       - filterTags
       - filterSecondarySectionFronts

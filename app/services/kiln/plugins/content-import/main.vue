@@ -1,7 +1,8 @@
 <!-- Content Import Content -->
 <template>
     <div class="content-import">
-        <station-select class="content-import__station-select" />
+        <station-select class="content-import__station-select"
+          :stations="stations" />
         <div class="content-import__input">
             <ui-textbox
                     floating-label
@@ -27,7 +28,8 @@
   import rest from '../../../universal/rest';
   import urlParse from 'url-parse';
   import queryService, { onePublishedArticleByUrl } from '../../../client/query';
-  import StationSelect from '../../shared-vue-components/station-select.vue'
+  import stationSelect from '../../shared-vue-components/station-select'
+  import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
   import { mapGetters } from 'vuex'
   import { ensureStartsWith } from '../../../universal/utils'
 
@@ -42,10 +44,11 @@
         contentUrl: '',
         error: '',
         errorUrl: '',
-        loading: false
+        loading: false,
+        stations: window.kiln.locals.stationsICanImportContent
       }
     },
-    computed: mapGetters(StationSelect.storeNs, ['selectedStation']),
+    computed: mapGetters(stationSelect.storeNs, ['selectedStation']),
     methods: {
       /**
        * search for an existing url and return one if found
@@ -55,9 +58,14 @@
        * @returns {string}
        */
       async findExisting(path) {
-        const { host } = window.kiln.locals.site,
+        const { locals } = window.kiln,
+          { host } = locals.site,
           query = onePublishedArticleByUrl(`http://${host}${path}`, ['canonicalUrl'], window.kiln.locals),
-          results = await queryService.searchByQuery(query),
+          results = await queryService.searchByQuery(
+            query,
+            locals,
+            { shouldDedupeContent: false }
+          ),
           { canonicalUrl } = results[0] || {};
 
         return canonicalUrl
@@ -107,7 +115,7 @@
       UiIconButton,
       UiProgressCircular,
       UiTextbox,
-      StationSelect
+      'station-select': StationSelectInput
     }
   }
 </script>

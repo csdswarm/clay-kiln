@@ -1,24 +1,30 @@
 'use strict';
 
 const h = require('highland'),
+  bluebird = require('bluebird'),
   transforms = require('./transforms'),
-  bluebird = require('bluebird');
+  log = require('../../services/universal/log').setup({ file: __filename });
 
 /**
  * Passes feed's query result through a transform pipeline.
- * @param {string} prefix
+ *
+ * @param {string} ref
  * @param {object} data
  * @param {object} locals
- * @param {function} entryMapper
- * @param {function} mapper
- * @param {function} errorHandler
+ * @param {string} prefix
  * @returns {*}
  */
-function rendererPipeline({ prefix, data, locals, mapper, entryMapper = (entry) => entry, errorHandler }) {
-  const { transform, results } = data;
+function rendererPipeline(ref, data, locals, prefix) {
+  const { meta, attr, transform, results } = data,
+    utmParams = { utmSource: meta.utmSource || 'nym', utmMedium: meta.utmMedium || 'f1' },
+    mapper = (feed) => ({ meta: data.meta, feed, attr }),
+    entryMapper = (entry) => Object.assign(entry, utmParams),
+    errorHandler = (error) => {
+      log('error', 'Error rendering feed data', error);
+    };
 
   return h(results)
-    .flatMap(entry => h(transforms[`${prefix}-${transform}`](entryMapper(entry), locals)))
+    .flatMap(entry => h(Promise.resolve(transforms[`${prefix}-${transform}`](entryMapper(entry), locals))))
     .compact() // Give transforms the option to strip a document from response by returning a falsy value (http://highlandjs.org/#compact)
     .collect()
     .map(mapper)
@@ -26,14 +32,6 @@ function rendererPipeline({ prefix, data, locals, mapper, entryMapper = (entry) 
     .catch(errorHandler);
 }
 
-/**
- * Passes in locals so we can strip the www and .com, grab the host and format an s3 url
- * @param {object} locals
- * @returns {String}
-*/
-function formatS3Path(locals) {
-  return `https://s3.amazonaws.com/${locals.site.host.replace('www.', '').replace('.com', '')}-html`;
-}
-
-module.exports.rendererPipeline = rendererPipeline;
-module.exports.formatS3Path = formatS3Path;
+module.exports = {
+  rendererPipeline
+};

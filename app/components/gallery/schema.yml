@@ -1,8 +1,9 @@
-_version: 10.0
+_version: 12.0
 _confirmRemoval: true
 
 primaryHeadline:
   _label: Facebook Headline
+  _publish: ogTitle
   _has:
     input: wysiwyg
     buttons:
@@ -155,6 +156,7 @@ sources:
 stationLogoUrl:
   _has:
     input: advanced-image-upload
+    enableDelete: true
     webLabel: Station Logo via Web
     webHelp: Supply a valid HTTPS url to an image file then click "done" button
     uploadLabel: Upload Image Attachment
@@ -245,6 +247,13 @@ content:
       - paragraph
       - subheader
       - inline-related
+bulkImageUpload:
+  _label: Bulk Image Upload
+  _has:
+    input: bulk-image-upload
+    dest: slides
+  _placeholder:
+    text: Bulk Image Upload
 slides:
   _label: Add slides to gallery
   _componentList:
@@ -275,6 +284,17 @@ rightRailStickyAd:
   _component:
     include:
       - google-ad-manager
+feeds:
+  _label: Include in These Feeds
+  _has:
+    input: checkbox-group
+    options:
+      - name: RSS Feeds
+        value: rss
+      - name: Apple News
+        value: apple-news
+      - name: Smart News
+        value: smartNews
 sectionFront:
   _label: Section Front
   _publish: sectionFront
@@ -343,6 +363,8 @@ editorialFeeds:
     search: true
     list: freq_editorial_feeds
     help: Select all editorial feeds terms for syndication
+  _permission:
+    distribute: vertical-level-content
 corporateSyndication:
   _label: Syndicate to corporate website(s)
   _has:
@@ -351,14 +373,20 @@ corporateSyndication:
     search: true
     list: corporate_websites
     help: Select all corporate websites for syndication
+  _permission:
+    distribute: market-level-content
 stationSyndication:
   _label: Syndicate to station(s)
   _has:
     input: station-select
+  _permission:
+    distribute: market-level-content
 genreSyndication:
   _label: Syndicate to genre(s)
   _has:
     input: genre-select
+  _permission:
+    distribute: vertical-level-content
 
 _groups:
   publishedDate:
@@ -422,6 +450,7 @@ _groups:
   settings:
     fields:
       - stationName
+      - feeds
       - showSocial
       - hasSecondaryBylines
       - sectionFront
@@ -473,7 +502,6 @@ pageTitle:
     help: Plaintext page title, set by seoHeadline, shortHeadline, or primaryHeadline. Sponsored posts and certain sites will have extra sugar.
 plaintextPrimaryHeadline:
   _publish:
-    - ogTitle
     - pageListTitle
   _has:
     help: Plaintext title set by primaryHeadline. Used for facebook sharing.

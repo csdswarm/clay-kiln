@@ -16,6 +16,18 @@
         {{{ read 'components/stations-carousel/media/radiocom-monogram-loader.svg' }}}
         <div class="thumb"></div>
       </li>
+      {{#unless @root.locals.edit }}
+        {{#each customItems}}
+          <li class="curated-item">
+            <a class="station-card" href="{{ url }}">
+              <div class="station__lede">
+                <img class="thumb" src="{{ image }}">
+              </div>
+              <span class="name">{{ name }}</span>
+            </a>
+          </li>
+        {{/each}}
+      {{/unless}}
     </ul>
     <div class='carousel__pagination-dots'></div>
   </div>

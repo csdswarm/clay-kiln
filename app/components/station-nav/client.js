@@ -1,7 +1,6 @@
 'use strict';
 
-let stationNav,
-  desktopNavItems,
+let desktopNavItems,
   navDrawersContainer,
   allDrawers,
   desktopNavDrawers,
@@ -11,6 +10,7 @@ let stationNav,
   listenNavToggle,
   listenNavDrawer,
   listenNavComponent,
+  stationId,
   stationListenNavInstance,
   lastTarget;
 
@@ -23,7 +23,7 @@ const { getComponentInstance } = require('clayutils'),
    * @returns {Promise}
    */
   refreshListenNav = async () => {
-    const doc = await fetchDOM(`/_components/station-listen-nav/instances/${ stationListenNavInstance }.html`),
+    const doc = await fetchDOM(`/_components/station-listen-nav/instances/${ stationListenNavInstance }@published.html?stationId=${stationId}`),
       oldChild = listenNavDrawer.querySelector('.component--station-listen-nav');
 
     listenNavDrawer.replaceChild(doc, oldChild);
@@ -218,7 +218,8 @@ const { getComponentInstance } = require('clayutils'),
 // mount listener for vue (optional)
 document.addEventListener('station-nav-mount', function () {
   // code to run when vue mounts/updates, aka after a new "pageview" has loaded.
-  stationNav = document.querySelector('.component--station-nav');
+  const stationNav = document.querySelector('.component--station-nav');
+
   desktopNavItems = stationNav.querySelectorAll('.navigation__primary');
   navDrawersContainer = stationNav.querySelector('.station_nav__drawers');
   allDrawers = navDrawersContainer.querySelectorAll('.drawers__drawer');
@@ -229,7 +230,8 @@ document.addEventListener('station-nav-mount', function () {
   listenNavToggle = stationNav.querySelector('.menu__listen-toggle');
   listenNavDrawer = navDrawersContainer.querySelector('.drawer--listen');
   listenNavComponent = document.querySelector('.component--station-listen-nav');
-  stationListenNavInstance = getComponentInstance(listenNavComponent.getAttribute('data-uri'));
+  stationId = stationNav.dataset.stationId;
+  stationListenNavInstance = getComponentInstance(listenNavComponent.dataset.uri);
 
   addEventListeners();
 });

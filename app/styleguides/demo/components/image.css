@@ -395,6 +395,10 @@
     .advanced-image-upload__attached-image {
       width: 100%;
       margin-top: em(16);
+      &--clamped-height {
+        width: inherit;
+        max-width: 100%;
+      }
     }
 
     .advanced-image-upload__image-placeholder {

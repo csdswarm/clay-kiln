@@ -1,4 +1,4 @@
-_version: 7.0
+_version: 14.0
 _description: |
   Use filters to auto-populate content or manually search and add curated content to the More Content Feed.
 
@@ -12,10 +12,33 @@ contentType:
       - article
       - gallery
 
+componentTitle:
+  _label: Component's Title
+  _has:
+    validate:
+      required: true
+      min: 4
+      max: 80
+    help: The title displayed on the component's view
+    input: text
+
+componentTitleVisible:
+  _label: Show Component's Title
+  _has:
+    input: checkbox
+    help: Show or hide the title displayed on the component's view
+
 pageLength:
   _label: Page Size
   _has:
     help: Number of articles to load when "load more" is clicked
+    input: text
+    type: number
+
+maxLength:
+  _label: Maximum Number of Content Items
+  _has:
+    help: Limit the number of content items
     input: text
     type: number
 
@@ -44,6 +67,11 @@ populateFrom:
         name: Contains Either Section Front or Tag
         value: section-front-or-tag
       - manual
+  _reveal:
+    field: populateFrom
+    operator: '!=='
+    values:
+      - author
 
 curatedContentHeader:
   _label: Curated Content
@@ -60,12 +88,19 @@ locationOfContentFeed:
       - homepage
       - section-front
       - topic-page
+      - author-page
+
+station:
+  _subscribe: stationName
 
 sectionFront:
   _subscribe: sectionFront
   _label: Section Front Category
   _has:
     help: Section Front Category from which to pull content
+
+primarySectionFront:
+  _subscribe: primarySectionFront
 
 sectionFrontManual:
   _label: Section Front Category
@@ -138,24 +173,7 @@ tagManual:
           - section-front-and-tag
           - section-front-or-tag
 
-tagInfo:
-  _label: Tag Info
-  _placeholder:
-    height: 274px
-    text: More Info on Tag
-    required: true
-  _reveal:
-    field: populateFrom
-    operator: ===
-    values:
-      - tag
-      - section-front-and-tag
-      - section-front-or-tag
-  _has:
-    input: text
-    help: Tag Description / More Info (Will be shown in right rail)
-
-filterTags:
+excludeTags:
   _label: Exclude Tags
   _has:
     input: simple-list
@@ -165,7 +183,15 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondarySectionFronts:
+excludeSectionFronts:
+  _label: Exclude Section Fronts
+  _has:
+    input: select
+    search: true
+    multiple: true
+    list: primary-section-fronts
+
+excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
     input: select
@@ -250,6 +276,11 @@ items:
         validate:
           required: true
 
+enableSharethrough:
+  _label: Enable Sharethrough
+  _has:
+    input: checkbox
+
 introComponents:
   _label: Intro Components
   _placeholder:
@@ -258,16 +289,6 @@ introComponents:
   _componentList:
     include:
     - html-embed
-
-contentCollectionLogoSponsorship:
-  _component:
-    include:
-      - google-ad-manager
-
-googleAdRightRail:
-  _component:
-    include:
-      - google-ad-manager
 
 sharethroughTag:
   _component:
@@ -278,18 +299,27 @@ _groups:
   contentFeed:
     _label: Content Feed
     fields:
+      - componentTitle
+      - componentTitleVisible
+      - enableSharethrough
       - pageLength
+      - maxLength
       - autoPopulatedContentHeader
       - populateFrom
       - sectionFrontManual
       - secondarySectionFrontManual
       - tagManual
-      - tagInfo
       - contentType
-      - filterTags
-      - filterSecondarySectionFronts
+      - excludeTags
+      - excludeSectionFronts
+      - excludeSecondarySectionFronts
       - curatedContentHeader
       - items
     _placeholder:
       height: 100px
       ifEmpty: populateFrom
+  header:
+    _label: Content Feed Title
+    fields:
+      - componentTitle
+      - componentTitleVisible

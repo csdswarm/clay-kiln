@@ -2,6 +2,8 @@ _description: |
   Global footer
 
 _confirmRemoval: true
+_permission:
+  update: footer
 
 socialButtonsShow:
   _label: Show social buttons?

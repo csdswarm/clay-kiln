@@ -26,6 +26,7 @@
 
 const pluralize = require('pluralize'),
   _get = require('lodash/get'),
+  { getStationDomainName } = require('./urps'),
   KEYS = {
     action: 'can,hasPermissionsTo,isAbleTo,may,will,to,include,allow'.split(','),
     target: 'a,an,the,this,using,canUse,canModify'.split(','),
@@ -42,10 +43,7 @@ const pluralize = require('pluralize'),
       _methods = {}, // all of the chained methods
       _override = false; // override all permission checks
 
-    const _DEFAULT = {
-        action: 'access',
-        location: 'NATL-RC'
-      },
+    const _DEFAULT = { location: null },
       /**
        * make the string representing what the user does not have permissions to do
        *
@@ -54,9 +52,7 @@ const pluralize = require('pluralize'),
        * @return {string}
        */
       createMessage = (action, target) => {
-        const perform = action === _DEFAULT.action ? '' : ` ${action}`;
-
-        return `You do not have permissions to${perform} ${pluralize(target.replace(/-/g, ' '))}.`;
+        return `You do not have permissions to ${action} ${pluralize(target.replace(/-/g, ' '))}.`;
       },
       /**
        * returns an the action, target, location given action, target, location
@@ -87,35 +83,38 @@ const pluralize = require('pluralize'),
        *    },
        *    gallery:{
        *      update:{ station:{ KILTAM: 1, KLOLFM: 1} },
-       *    },
-       *    'alert-banner':{
-       *      access:{ station:{'NATL-RC': 1 } }
        *    }
        *  }
        *
        * @param {string} type - value/message
        * @return {boolean|string}
        */
-      checkCondition = (type) => {
-        let value = false,
+      checkCondition = type => {
+        let hasPermission = false,
           message = '';
-        const { action = _DEFAULT.action, target, location = _DEFAULT.location } = _condition;
 
-        if (target) {
+        const {
+          action,
+          target,
+          location = _DEFAULT.location
+        } = _condition;
+
+        if (action && target) {
           const {
             action: actionToCheck,
             target: targetToCheck,
-            location: locationToCheck
+            location: domainNameToCheck
           } = getCondition(action, target, location);
 
-          value = Boolean(_override || _get(_permissions, `${targetToCheck}.${actionToCheck}.station.${locationToCheck}`));
+          hasPermission = _override
+            || !!_get(_permissions, [domainNameToCheck, actionToCheck, targetToCheck]);
 
-          if (!value) {
+          if (!hasPermission) {
             message = createMessage(actionToCheck, targetToCheck);
           }
         }
 
-        return type === 'message' ? message : value ;
+        return type === 'message' ? message : hasPermission ;
       },
       /**
        * updates the condition keys based on the type and arguments passed in.
@@ -270,18 +269,22 @@ const pluralize = require('pluralize'),
      *
      * @param {object} locals
      */
-    return ({ user, permissions, station }) => {
-      if (user && !user.can) {
-        _permissions = permissions || {};
-        _override = false;
+    return locals => {
+      const { permissions, stationForPermissions, user } = locals;
 
-        // helper to not have to pass station
-        if (station && station.callsign) {
-          _DEFAULT.location = station.callsign;
-        }
-
-        addMethods(user);
+      if (!user || user.can) {
+        return;
       }
+
+      _permissions = permissions || {};
+      _override = user.provider === 'google'
+        && process.env.GOOGLE_OVERRIDES_PERMISSIONS === 'true';
+
+      // helper to not have to pass station which is the large majority of
+      //   permission checks
+      _DEFAULT.location = getStationDomainName(stationForPermissions);
+
+      addMethods(user);
     };
   };
 
