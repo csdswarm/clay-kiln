@@ -4,29 +4,26 @@ const { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   db = require('../../services/server/db');
 
 module.exports = router => {
-  router.get('/editorial-group', wrapInTryCatch(async (req, res, next) => {
-
+  router.get('/editorial-group', wrapInTryCatch(async (req, res) => {
     const result = await db.raw(`
-    SELECT data
+    SELECT id, data
     FROM editorial_group
-    WHERE id = ${req.query.id}
     `);
     
-    if (!result.rows[0]) {
-      return next();
+    if (!result.rows) {
+      res.status(404).end();
     }
-    
-    res.send(result.rows[0].data);
+    res.send(result.rows);
   }));
   
   router.put('/editorial-group/:id', wrapInTryCatch(async (req, res) => {
-    const { body, query } = req;
+    const { body, params } = req;
     
-    if (_isEmpty(body) && _isEmpty(query)) {
-      return res.send('There is no data');
+    if (_isEmpty(body) && _isEmpty(params)) {
+      return res.status(400).send('a request body is required');
     }
-    const result = await db.raw('UPDATE editorial_group SET data = ? WHERE id = ?' , [body, query.id]);
+    await db.raw('UPDATE editorial_group SET data = ? WHERE id = ?' , [body, params.id]);
     
-    res.send('Record updated', result);
+    res.send(body);
   }));
 };
