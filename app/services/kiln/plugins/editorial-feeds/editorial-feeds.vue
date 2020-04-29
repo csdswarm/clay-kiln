@@ -1,4 +1,3 @@
-<!-- Alerts Manager -->
 <template>
     <nav-menu-button :id="id" @nav-click="toggleDrawer">
         <span>Editorial Feeds</span>
