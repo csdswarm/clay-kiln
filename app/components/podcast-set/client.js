@@ -29,7 +29,7 @@ class PodcastSet {
     }
 
     const result = await radioApiService.fetchDOM(`//${window.location.hostname}/_components/podcast-set/instances/${set}.html${queryParamString}`)
-      .catch((rejected) => {
+      .catch(() => {
         return false;
       });
 
