@@ -30,7 +30,6 @@ class PodcastSet {
 
     const result = await radioApiService.fetchDOM(`//${window.location.hostname}/_components/podcast-set/instances/${set}.html${queryParamString}`)
       .catch((rejected) => {
-        console.error('Failure to retrieve podcast DOM:', rejected);
         return false;
       });
 
