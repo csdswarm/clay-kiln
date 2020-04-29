@@ -1,9 +1,16 @@
 <template>
   <div class='editorial-feeds__wrapper'>
     <h2 class='editorial-feeds__main-title'>Subscriptions</h2>
-    <!-- <div class='editorial-feeds__buttons'>
-      <ui-button @click='addStation'>Add Station</ui-button>
-    </div> -->
+    <div class="editorial-feeds__buttons">
+      <ui-button
+        color="green"
+        :disabled="!enableUpdate"
+        v-on:click="updateChanges"
+        raised
+      >
+        Update Changes
+      </ui-button>
+    </div>
     <table class='editorial-feeds__table'>
       <thead class='editorial-feeds__table--head'>
         <th
@@ -22,15 +29,13 @@
           <td class="editorial-feeds__table--item">{{ station.callsign }}</td>
           <td
             class="editorial-feeds__table--item"
-            v-for="(val, name, index) in station.feeds"
-            :key="index"
+            v-for="(col, idx) in columnTitles"
+            :key="idx"
           >
-            <ui-checkbox :value="val" @change="updateFeed(station.id, name)"/>
-          </td>
-          <td class="editorial-feeds__table--item">
-            <ui-button color="green" v-on:click="updateStation(station)"
-              >Update</ui-button
-            >
+            <ui-checkbox
+              :value="station.feeds[col] ? true : false"
+              @change="updateFeed(station.id, col)"
+            />
           </td>
         </tr>
       </tbody>
@@ -41,15 +46,16 @@
 "use strict";
 
 const radioApi = require("../../../../services/client/radioApi"),
-  { editorials, newStationFeed } = require("./data");
+  { editorials, newStationFeed, columnTitles } = require("./data");
 
 const { UiButton, UiCheckbox } = window.kiln.utils.components;
 
 export default {
   name: "EditorialManagement",
   data: function () {
-    return {
+    return { 
       ascendable: false,
+      columnTitles: columnTitles,
       sortColumn: "",
       stationEditorials: []
     };
@@ -61,36 +67,44 @@ export default {
   computed: {
     columns: function () {
       if (this.stationEditorials.length === 0) return [];
-      return ['station', ...Object.keys(this.stationEditorials[0].feeds), ''];
+      return ['STATION', ...this.columnTitles];
+    },
+    enableUpdate: function() {
+      return this.stationEditorials.reduce((editable, station) => {
+        return editable || station.edited;
+      }, false);
     },
   },
   methods: {
     fetchEditorialFeeds: async function () {
       // TODO: Connect with backend API endpoint.
       this.stationEditorials = editorials;
-      console.log(this.stationEditorials);
     },
 
-    addStation: function () {
-      this.stationEditorials.push(newStationFeed);
+    updateChanges: function() {
+      // TODO: Connect with API.
+      // This is only for demostrating behavior. 
+      const updatedStations = this.stationEditorials.filter(station => {
+        if (station.edited) {
+          return station;
+        }
+        return false;
+      });
+
+      this.stationEditorials.map(station => {
+        this.$set(station, 'edited',false);
+      });
+
       console.log(
-        'A new station was added but not saved',
-        this.stationEditorials
+        'Attempting update the edited Station Feeds',
+        updatedStations
       );
     },
 
-    deleteStation: function (station) {
-      console.log('Attempting to remove an element....');
-      this.stationEditorials = this.stationEditorials.filter((elem) => {
-        if (station.id === elem.id) {
-          return false;
-        }
-        return elem;
-      });
-    },
     updateFeed: function (stationId, feed) {
       this.stationEditorials = this.stationEditorials.map((station) => {
         if (station.id === stationId) {
+          this.$set(station, 'edited', true);
           station.feeds[feed] = !station.feeds[feed];
         }
         return station;
@@ -112,13 +126,13 @@ export default {
 
       this.stationEditorials.sort(function (a, b) {
         if (
-          col === 'station'
+          col === 'STATION'
             ? a.callsign > b.callsign
             : a.feeds[col] > b.feeds[col]
         ) {
           return ascending ? 1 : -1;
         } else if (
-          col === 'station'
+          col === 'STATION'
             ? a.callsign < b.callsign
             : a.feeds[col] < b.feeds[col]
         ) {
@@ -129,8 +143,7 @@ export default {
     },
   },
   mounted() {
-    console.log('Fetching Saved Information...');
     this.fetchEditorialFeeds();
-  },
+  }
 };
 </script>

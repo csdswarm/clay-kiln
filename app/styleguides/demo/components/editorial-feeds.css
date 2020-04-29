@@ -9,12 +9,22 @@
 
   &__main-title {
     margin: em(10) 0;
+    position: sticky;
+    z-index: 999;
+    background: white;
+    left: 0;
+    top: 0;
     padding-left: em(10);
     text-align: left;
     font-size: em(22);
   }
 
   &__buttons {
+    position: sticky;
+    z-index: 998;
+    background: white;
+    left: 0;
+    top: em(21);
     padding: em(10);
   }
 
@@ -23,6 +33,7 @@
     border: em(3) solid #44475c;
     margin: em(10) em(10) 0 em(10);
     padding: 0 em(20) 0 em(20);
+    height: 50vh;
 
     td {
       &:last-child {
@@ -55,7 +66,7 @@
 
     &__table--title {
       position: sticky;
-      top: 0;
+      top: em(75);
       z-index: 999;
       background: #44475c;
       cursor: pointer;
