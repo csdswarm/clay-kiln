@@ -2,10 +2,18 @@
 
 const recentPodcasts = require('../../services/client/recentPodcasts'),
   radioApiService = require('../../services/client/radioApi'),
+  _bindAll = require('lodash/bindAll'),
+  componentName = 'podcast-set',
   numberOfRecentPodcasts = 6;
 
 class PodcastSet {
   constructor(element) {
+    _bindAll(this, ['onMount']);
+
+    document.addEventListener(`${componentName}-mount`, e => this.onMount(e,element));
+  }
+
+  onMount(e,element) {
     this.el = element;
     this.parentElement = element.parentElement;
     this.set = element.getAttribute('data-set');
