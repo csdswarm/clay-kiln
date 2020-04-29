@@ -740,6 +740,16 @@ em, i {
   @mixin font ProximaNova-Regular, 18px, $black, inherit, 22px;
 }
 
+/*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<*/
+/* ||||| Warning Fonts Styleguide ||||| */
+/*>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<*/
+@define-mixin warning-font1 {
+  @mixin font ProximaNova-Regular, 20px, $black, inherit, 24px;
+}
+@define-mixin warning-font2 {
+  @mixin font ProximaNova-Regular, 18px, $black, inherit, 22px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||||||| Mnified Content Feed Fonts Styleguide |||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/

@@ -152,6 +152,6 @@
   }
   .paragraph {
     @mixin events-lede-font4;
-    margin-bottom: 0;
+    margin-bottom: em(50, 18);
   }
 }
