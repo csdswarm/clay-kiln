@@ -92,6 +92,11 @@
   .content__sidebar {
     visibility: visible;
     margin-top: em(153);
+  },
+  &[data-main-component="podcast-show-page"] {
+    .content__sidebar {
+      visibility: visible;
+    }
   }
 }
 
