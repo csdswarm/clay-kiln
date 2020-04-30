@@ -62,7 +62,7 @@ const logRequestTime = (req, res, time) => {
       method: req.method,
       path: req.path,
       statusCode: res.statusCode,
-      timeTaken: `${time.toFixed(3)}ms`
+      timeTaken: `${timeTaken}ms`
     });
   }
 };
