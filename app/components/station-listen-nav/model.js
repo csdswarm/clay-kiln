@@ -28,7 +28,7 @@ module.exports = unityComponent({
     }
 
     await Promise.all([
-      getNowPlaying(locals.station.id, data),
+      getNowPlaying(locals, locals.station.id, data),
       getSchedule({
         stationId: locals.station.id,
         pageSize: 50,
