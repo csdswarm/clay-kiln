@@ -2,6 +2,7 @@
 
 const { unityComponent } = require('../../services/universal/amphora'),
   _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
   { autoLink } = require('../breadcrumbs');
 
 /**
@@ -11,7 +12,7 @@ const { unityComponent } = require('../../services/universal/amphora'),
  * @returns {Promise<object>}
  */
 async function addBreadcrumbs(data, locals) {
-  if (locals.podcast.attributes) {
+  if (!_isEmpty(locals.podcast) && locals.podcast.attributes) {
     const { site_slug, title, station } = locals.podcast.attributes;
 
     await autoLink(data, [
