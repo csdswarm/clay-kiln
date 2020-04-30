@@ -42,7 +42,7 @@ const redisKey = 'national-subscriptions',
         await db.raw(`
           select *
           from national_subscriptions
-          order by last_updated_utc desc
+          order by last_updated_utc asc
         `)
       ).rows;
 

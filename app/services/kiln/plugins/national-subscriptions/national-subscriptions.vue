@@ -37,15 +37,14 @@
 <script>
   const { UiButton, UiTextbox, UiIconButton } = window.kiln.utils.components;
   const DataRow = require('./national-subscriptions-row.vue');
-  const moment = require('moment');
   const startCase = require('lodash/startCase');
   const axios = require('axios');
   const tableConfig = [
     {
       key: "id",
       display: "id",
-      isHeader: true,
-      isDataProp: true,
+      isHeader: false,
+      isDataProp: false,
       isEditable: false,
       dataType: Number
     },
@@ -71,7 +70,8 @@
       isHeader: true,
       isDataProp: true,
       isEditable: false,
-      dataType: Date
+      dataType: Date,
+      useFilter: 'formatDate'
     },
     {
       key: "filter",
@@ -124,7 +124,7 @@
       return {
         isLoading: false,
         stationName,
-        subscriptions: [...window.kiln.locals.nationalSubscriptions].sort((a,b)=>a.id<b.id ? -1: 1),
+        subscriptions: [...window.kiln.locals.nationalSubscriptions],
         newSub: new NationalSubscription()
       }
     },
@@ -205,11 +205,6 @@
       UiButton,
       UiIconButton,
       DataRow
-    },
-    filters: {
-      formatDate: utcDateStr => moment(utcDateStr).fromNow(),
-      startCase,
-      valList: val => Array.isArray(val) ? val.join(', ') : val
     }
   }
 </script>
