@@ -30,7 +30,8 @@ const pkg = require('../../package.json'),
   addToLocals = require('./add-to-locals'),
   addInterceptor = require('./add-interceptor'),
   express = require('express'),
-  responseTime = require('response-time');
+  responseTime = require('response-time'),
+  SLOW_REQUEST_TIME = 2000;
 
 function createSessionStore() {
   var sessionPrefix = process.env.REDIS_DB ? `${process.env.REDIS_DB}-clay-session:` : 'clay-session:',
@@ -57,7 +58,7 @@ const logRequestTime = (req, res, time) => {
   const msg = `SLOW ${req.method} REQUEST`,
     timeTaken = time.toFixed(3);
 
-  if (timeTaken > 2000) {
+  if (timeTaken > SLOW_REQUEST_TIME) {
     log('error', msg, {
       method: req.method,
       path: req.path,
