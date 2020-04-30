@@ -9,7 +9,8 @@ const queryService = require('../../services/server/query'),
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'contentType'
+    'contentType',
+    'stationSlug'
   ],
   maxItems = 3;
 
@@ -93,7 +94,9 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, { date: 'desc' });
     queryService.addShould(query, { match: { sectionFront: section } });
-
+    queryService.addShould(query, { match: { stationSlug: locals.station.site_slug || '' } });
+    queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
+    
     // Filter out the following tags
     if (data.filterTags) {
       for (const tag of data.filterTags.map((tag) => tag.text)) {
