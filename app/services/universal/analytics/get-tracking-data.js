@@ -29,8 +29,6 @@ module.exports = function getTrackingData({ pathname, station, pageData, content
     market: fromPathname.isStationDetail()
       ? _get(station, 'market_name')
       : undefined,
-    station: fromPathname.isStationDetail()
-      ? _get(station, 'callsign', defaultCallsign)
-      : defaultCallsign
+    station: _get(station, 'callsign', defaultCallsign)
   };
 };
