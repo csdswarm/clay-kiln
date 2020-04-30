@@ -54,7 +54,7 @@ function createSessionStore() {
  * @param {integer} time
  */
 const logRequestTime = (req, res, time) => {
-  const msg = `REQUEST  ${req.method}`,
+  const msg = `SLOW ${req.method} REQUEST`,
     timeTaken = time.toFixed(3);
 
   if (timeTaken > 2000) {
