@@ -28,7 +28,7 @@ configmap:
     CLAY_STORAGE_POSTGRES_HOST: "cmsdb-write.radio-prd.com"
     COMPACT_BUILD: "1"
     DOUBLECLICK_BANNER_TAG: "NTL.RADIO"
-    ELASTIC_HOST: "http://es.radio-prd.com:9200"
+    ELASTIC_HOST: "https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com"
     EMBEDLY_ENDPOINT: "NEED_TO_FILL_IN"
     ENABLE_GZIP: "true"
     FACEBOOK_CALLBACK_URL: "https://radio.auth.us-east-1.amazoncognito.com/oauth2/token"
