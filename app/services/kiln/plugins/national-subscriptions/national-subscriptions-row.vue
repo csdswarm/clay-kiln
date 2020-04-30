@@ -29,7 +29,7 @@
           </div>
         </div>
       </div>
-      <div v-else-if="config.useFilter && mode !== 'create'">{{ data[config.key] | formatDate }}</div>
+      <div v-else-if="config.useFilter && mode !== 'create'">{{ $options.filters[config.useFilter](data[config.key]) }}</div>
       <div v-else>{{ data[config.key] }}</div>
     </td>
     <td>
@@ -82,14 +82,6 @@ export default {
     },
     onDelete(data) {
       this.$emit('onDeleteDataRow', data);
-    },
-    dynamicFilter(filter, value) {
-      // applying dynamic filters is apparently tricky and I could not figure out
-      // and can revist but the below doesn't work
-      // dynamicFilter(config.useFilter, data[config.key])
-      // nor does this work data[config.key] | config.useFilter
-      // nor filters[config.useFilter]
-      return this.filters[filter](value)
     }
   },
   filters: {
