@@ -140,7 +140,8 @@
         this.showSnack(`Error: ${err.message}`);
       },
       onCreate() {
-        if(!this.newSub.short_desc.trim()) return;
+        if(!this.newSub.short_desc.trim() || this.isLoading) return;
+        this.isLoading = true;
         const newSub = {
           stationSlug: this.newSub.station_slug,
           shortDescription: this.newSub.short_desc,
@@ -154,6 +155,7 @@
             this.newSub = new NationalSubscription();
           })
           .catch(this.handleError)
+          .finally(()=>this.isLoading = false);
       },
       onUpdate(index) {
         this.isLoading = true;
