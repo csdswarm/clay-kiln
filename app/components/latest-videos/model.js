@@ -52,7 +52,7 @@ const recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
    * @returns {Promise}
    */
   render = async (ref, data) => {
-    data.articles = data.articles.concat(data._computed.content);
+    data.articles = data._computed.content;
 
     return data;
   };

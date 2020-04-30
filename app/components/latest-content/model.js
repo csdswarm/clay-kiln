@@ -9,10 +9,10 @@ const queryService = require('../../services/server/query'),
     'pageUri',
     'canonicalUrl',
     'feedImgUrl',
-    'contentType',
-    'stationSlug'
+    'contentType'
   ],
-  maxItems = 3;
+  maxItems = 3,
+  { DEFAULT_STATION } = require('../../services/universal/constants');
 
 /**
  * For each section's override items (0 through 3), look up the associated
@@ -83,7 +83,8 @@ module.exports.render = async function (ref, data, locals) {
       continue;
     }
 
-    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals);
+    const query = queryService.newQueryWithCount(elasticIndex, availableSlots, locals),
+      station_slug = locals.station.site_slug || '';
 
     if (contentTypes.length) {
       queryService.addFilter(query, { terms: { contentType: contentTypes } });
@@ -94,8 +95,11 @@ module.exports.render = async function (ref, data, locals) {
     queryService.addMinimumShould(query, 1);
     queryService.addSort(query, { date: 'desc' });
     queryService.addShould(query, { match: { sectionFront: section } });
-    queryService.addShould(query, { match: { stationSlug: locals.station.site_slug || '' } });
-    queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
+    queryService.addShould(query, { match: { stationSlug: station_slug } });
+
+    if (station_slug === DEFAULT_STATION.site_slug) {
+      queryService.addMustNot(query, { exists: { field: 'stationSlug' } });
+    }
     
     // Filter out the following tags
     if (data.filterTags) {
