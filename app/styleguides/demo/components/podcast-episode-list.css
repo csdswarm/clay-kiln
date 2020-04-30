@@ -70,6 +70,7 @@ body > .podcast-episode-list {
 
   &__item-controls {
     display: flex;
+    padding-left: em(20);
     flex: 0 0 widthOnGrid(1, 0);
   }
   &__play-btn {
