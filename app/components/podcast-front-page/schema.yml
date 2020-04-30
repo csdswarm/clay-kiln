@@ -20,5 +20,5 @@ content:
   _componentList:
     fuzzy: true # allows interactives, etc to add one-off components
     include:
-      # @TODO ON-1566 ON-1564 featured strips, ON-1576 ON-1577 category strips
-      # - podcast-strip
+      # @TODO ON-1566 ON-1564 featured strips
+      - podcast-category-strip

@@ -1,0 +1,12 @@
+<div class="component component--podcast-category-strip podcast-category-strip" data-uri="{{ default _ref _self }}">
+
+{{!-- @TODO ON-1577 frontend ticket: 'see all' link --}}
+<a href="{{ _computed.seeAllLink }}">See All</a>
+
+{{!-- @TODO ON-1577 frontend ticket: podcast strip --}}
+{{#each _computed.items as podcast }}
+  {{!-- podcast.imageUrl --}}
+  {{!-- podcast.title --}}
+{{/each}}
+
+</div>
