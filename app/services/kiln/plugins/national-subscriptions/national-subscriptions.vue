@@ -41,32 +41,32 @@
   const axios = require('axios');
   const tableConfig = [
     {
-      key: "id",
-      display: "id",
+      key: 'id',
+      display: 'id',
       isHeader: false,
       isDataProp: false,
       isEditable: false,
       dataType: Number
     },
     {
-      key: "station_slug",
-      display: "slug",
+      key: 'station_slug',
+      display: 'slug',
       isHeader: true,
       isDataProp: true,
       isEditable: false,
       dataType: String
     },
     {
-      key: "short_desc",
-      display: "description",
+      key: 'short_desc',
+      display: 'description',
       isHeader: true,
       isDataProp: true,
       isEditable: true,
       dataType: String
     },
     {
-      key: "last_updated_utc",
-      display: "updated",
+      key: 'last_updated_utc',
+      display: 'updated',
       isHeader: true,
       isDataProp: true,
       isEditable: false,
@@ -74,16 +74,16 @@
       useFilter: 'formatDate'
     },
     {
-      key: "filter",
-      display: "filter",
+      key: 'filter',
+      display: 'filter',
       isHeader: true,
       isDataProp: true,
       isEditable: true,
       dataType: Object
     },
     {
-      key: "actions",
-      display: "actions",
+      key: 'actions',
+      display: 'actions',
       isHeader: true,
       isDataProp: false,
       isEditable: false,
@@ -107,7 +107,7 @@
         excludeTags: [], // {string[]}
       }
     }) {
-      this.id = "#";
+      this.id = '#';
       this.last_updated_utc =  'N/A';
       this.station_slug = options.station_slug;
       this.short_desc = options.short_desc;

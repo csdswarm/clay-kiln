@@ -51,7 +51,7 @@ const moment = require('moment');
 
 export default {
   props: [
-    'data', 'rowConfig', "isLoading", "mode"
+    'data', 'rowConfig', 'isLoading', 'mode'
   ],
   methods: {
     isString(value) {
@@ -69,7 +69,7 @@ export default {
     onAddArrayItem(array, ref) {
       const input = this.$refs[ref][0];
       array.push(input.value);
-      input.value = "";
+      input.value = '';
     },
     onRemoveArrayItem(index, array) {
       array.splice(index, 1);
