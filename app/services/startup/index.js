@@ -54,9 +54,17 @@ function createSessionStore() {
  * @param {integer} time
  */
 const logRequestTime = (req, res, time) => {
-  const msg = `REQUEST  ${req.method} - ${req.path} - ${res.statusCode} - ${time.toFixed(3)}ms`;
+  const msg = `REQUEST  ${req.method}`,
+    timeTaken = time.toFixed(3);
 
-  log('error', msg, { method: req.method , path: req.path, statusCode: res.statusCode, timeTaken: `${time.toFixed(3)}ms` });
+  if (timeTaken > 2000) {
+    log('error', msg, {
+      method: req.method,
+      path: req.path,
+      statusCode: res.statusCode,
+      timeTaken: `${time.toFixed(3)}ms`
+    });
+  }
 };
 
 function setupApp(app) {
@@ -68,7 +76,7 @@ function setupApp(app) {
   }
 
   app.use(responseTime(logRequestTime));
-  
+
   // set app settings
   app.set('trust proxy', 1);
   app.set('strict routing', true);
