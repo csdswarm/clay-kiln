@@ -28,7 +28,6 @@ configmap:
     CLAY_STORAGE_POSTGRES_HOST: "cmsdb-write.radio-prd.com"
     COGNITO_CONSUMER_DOMAIN: "https://www.radio.com"
     COGNITO_CONSUMER_REGION: "us-east-1"
-    COGNITO_CONSUMER_SECRET: ""
     COGNITO_SERVER: "https://etm.auth.us-east-1.amazoncognito.com"
     COMPACT_BUILD: "1"
     DOUBLECLICK_BANNER_TAG: "NTL.RADIO"
