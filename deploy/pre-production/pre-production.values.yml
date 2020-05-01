@@ -26,6 +26,10 @@ configmap:
     CLAY_SITE_SHORTKEY: "cd"
     CLAY_STORAGE_POSTGRES_DB: "cms"
     CLAY_STORAGE_POSTGRES_HOST: "prdcms-preprod-instance.cshzsblq8qo8.us-east-1.rds.amazonaws.com"
+    COGNITO_CONSUMER_DOMAIN: "https://www.radio.com"
+    COGNITO_CONSUMER_REGION: "us-east-1"
+    COGNITO_CONSUMER_SECRET: ""
+    COGNITO_SERVER: "https://etm.auth.us-east-1.amazoncognito.com"
     COMPACT_BUILD: "1"
     DOUBLECLICK_BANNER_TAG: "NTL.RADIO"
     ELASTIC_HOST: "https://vpc-prdcms-preprod-elasticsearch-5hmjmnw62ednm5mbfifwdnntdm.us-east-1.es.amazonaws.com"
@@ -33,6 +37,7 @@ configmap:
     ENABLE_GZIP: "true"
     FACEBOOK_CALLBACK_URL: "https://radio.auth.us-east-1.amazoncognito.com/oauth2/token"
     GOOGLE_AD_REFRESH_INTERVAL: "90000"
+    GOOGLE_OVERRIDES_PERMISSIONS: "true"
     GOOGLE_PROFILE_URL: "https://www.googleapis.com/oauth2/v3/userinfo"
     IMPORT_CONTENT_URL: "https://r9r8dfosjc.execute-api.us-east-1.amazonaws.com/prd/import-content"
     INLINE_EDIT_SCRIPTS: "true"
@@ -48,6 +53,8 @@ configmap:
     SECTION_FRONTS: "music,news,sports"
     STATIC_ASSET_MAX_AGE: "0"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
+    URPS_AUTHORIZATIONS_URL: "http://roc-urps-api-sbx.pcwpuime6w.us-west-1.elasticbeanstalk.com"
+    URPS_HAS_AUTH_LAYER: "false"
 clayconfig:
   data:
     .clayconfig: |

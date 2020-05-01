@@ -48,6 +48,13 @@ configmap:
     SECTION_FRONTS: "music,news,sports"
     STATIC_ASSET_MAX_AGE: "0"
     WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
+    COGNITO_CONSUMER_DOMAIN: "https://www.radio.com"
+    COGNITO_CONSUMER_REGION: "us-east-1"
+    COGNITO_CONSUMER_SECRET: ""
+    COGNITO_SERVER: "https://etm.auth.us-east-1.amazoncognito.com"
+    GOOGLE_OVERRIDES_PERMISSIONS: "true"
+    URPS_AUTHORIZATIONS_URL: "http://roc-urps-api-sbx.pcwpuime6w.us-west-1.elasticbeanstalk.com"
+    URPS_HAS_AUTH_LAYER: "false"
 clayconfig:
   data:
     .clayconfig: |
