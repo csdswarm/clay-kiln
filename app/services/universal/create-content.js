@@ -389,7 +389,7 @@ function addStationLogo(data, locals) {
   replaceDefaultKeyValue(data, 'stationLogoUrl', isStation ? locals.station.square_logo_small : '');
   replaceDefaultKeyValue(data, 'stationURL', isStation ? locals.station.website : '');
 
-  if ( _get(data,'byline[0].sources.length') ) {
+  if (_get(data, 'byline[0].sources.length')) {
     replaceDefaultKeyValue(data.byline[0].sources[0], 'text', isStation ? locals.station.name : '');
     if (data.byline[0].sources[0].text === '') {
       data.byline[0].sources.length = 0;

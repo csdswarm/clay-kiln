@@ -33,7 +33,6 @@
     </div>
 </template>
 <script>
-
   import _ from 'lodash';
   import _debounce from 'lodash/debounce';
   import axios from 'axios';
@@ -124,8 +123,8 @@
       async search() {
         const { locals } = window.kiln,
           query = queryService('published-content', locals),
-          // if there are no search text yet, pass in * to get the top 10 most recent
-          searchString = this.searchText || '*';
+            // if there are no search text yet, pass in * to get the top 10 most recent
+            searchString = this.searchText || '*';
 
         queryService.addSize(query, 10);
         queryService.onlyWithTheseFields(query, ['date', 'canonicalUrl', 'seoHeadline']);

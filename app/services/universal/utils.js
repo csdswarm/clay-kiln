@@ -263,6 +263,29 @@ function debugLog(...args) {
 }
 
 /**
+ * can be used to get all _ref objects within an object.
+ * Copied from amphora.references and modified for unity environment.
+ * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
+ * @param {object} obj
+ * @param {Function|string} [filter=_identity]  Optional filter
+ * @returns {array}
+ */
+function listDeepObjects(obj, filter) {
+  let cursor, items,
+    list = [],
+    queue = [obj];
+
+  while (queue.length) {
+    cursor = queue.pop();
+    items = _filter(cursor, _isObject);
+    list = list.concat(_filter(items, filter || _identity));
+    queue = queue.concat(items);
+  }
+
+  return list;
+}
+
+/**
  * prepends left to right
  *
  * meant to be used in a mapper function e.g.
@@ -284,7 +307,7 @@ function prepend(left) {
   return right => left + right;
 }
 
-/*
+/**
  * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
  *   begin with the prefix.
  *
@@ -374,29 +397,6 @@ function removeFirstLine(str) {
  */
 function getDomainFromHostname(hostname) {
   return hostname.split('.').reverse().slice(0, 2).reverse().join('.');
-}
-
-/**
- * can be used to get all _ref objects within an object.
- * Copied from amphora.references and modified for unity environment.
- * Why? Because amphora cannot be used in client or universal scripts without throwing errors.
- * @param {object} obj
- * @param {Function|string} [filter=_identity]  Optional filter
- * @returns {array}
- */
-function listDeepObjects(obj, filter) {
-  let cursor, items,
-    list = [],
-    queue = [obj];
-
-  while (queue.length) {
-    cursor = queue.pop();
-    items = _filter(cursor, _isObject);
-    list = list.concat(_filter(items, filter || _identity));
-    queue = queue.concat(items);
-  }
-
-  return list;
 }
 
 /**

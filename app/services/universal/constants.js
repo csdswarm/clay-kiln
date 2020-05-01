@@ -57,13 +57,13 @@ const _get = require('lodash/get'),
   contentTypes = new Set([
     'article',
     'author-page',
+    'event',
+    'events-listing-page',
     'gallery',
     'homepage',
     'section-front',
     'static-page',
-    'topic-page',
-    'event',
-    'events-listing-page'
+    'topic-page'
   ]),
 
   DEFAULT_STATION = {

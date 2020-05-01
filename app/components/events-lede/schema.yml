@@ -16,6 +16,7 @@ ledeUrl:
     input: content-search
     validate:
       required: true
+  _publish: eventsLedeUrl
 
 # Component properties
 description:
