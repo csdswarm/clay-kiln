@@ -1,6 +1,6 @@
 ingress:
   hostedZones:
-    - preprod-cms.radio-dev.com
+    - cms.radio-dev.com
   staticDomains:
     - preprod-clay.radio-dev.com
   # verify the healthCheckDomain before cutting over
