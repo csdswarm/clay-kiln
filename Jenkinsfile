@@ -21,7 +21,7 @@ pipeline {
       }
       agent {
         docker {
-          label 'docker && !php' 
+          label 'docker && !php'
           image 'quay.io/reactiveops/ci-images:v10-stretch'
           args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
         }
@@ -54,6 +54,20 @@ pipeline {
                 ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='dev'
                 sh '''prepare-awscli;
+                docker-pull -f deploy/build.config;
+                ROK8S_DOCKER_BUILD_EXTRAARGS="$BUILD_EXTRAARGS";
+                export ROK8S_DOCKER_BUILD_EXTRAARGS;
+                docker-build -f deploy/build.config;
+                docker-push -f deploy/build.config'''
+                break
+
+              case "preprod":
+                env.ROK8S_CONFIG='deploy/pre-production.config'
+                env.BUILD_EXTRAARGS='--build-arg mode=production --build-arg productionbuild=true'
+                ROK8S_CLUSTER='pre-production.k8s.radio-prd.com'
+                CRED_ID='prd'
+                sh '''#!/bin/bash -xe
+                prepare-awscli;
                 docker-pull -f deploy/build.config;
                 ROK8S_DOCKER_BUILD_EXTRAARGS="$BUILD_EXTRAARGS";
                 export ROK8S_DOCKER_BUILD_EXTRAARGS;
@@ -150,7 +164,7 @@ pipeline {
 
       when {
         expression {
-          return env.BRANCH_NAME == 'master'|| env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME ==~ /(.*\/)?feature-.*/
+          return env.BRANCH_NAME == 'master'|| env.BRANCH_NAME == 'staging' || env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'preprod' || env.BRANCH_NAME ==~ /(.*\/)?feature-.*/
         }
       }
 
@@ -160,7 +174,7 @@ pipeline {
           sh "kubectl config use-context ${ROK8S_CLUSTER}"
           sh 'helm-deploy -f ${ROK8S_CONFIG}'
         }
-      } 
+      }
     }
   }
 }
