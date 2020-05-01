@@ -82,7 +82,7 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: async (uri, data, locals) => {
-    if (!locals || !locals.params) {
+    if (!locals || !locals.query) {
       return data;
     }
 
