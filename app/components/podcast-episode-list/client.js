@@ -143,7 +143,8 @@ class PodcastListComponentView {
             default:
               let value = data.attributes[key];
 
-              if (key === 'description') value = utils.truncate(value, 60, { useSuffix: true });
+              if (key === 'title') value = utils.truncate(value, 52, { useSuffix: true });
+              if (key === 'description') value = utils.truncate(value, 210, { useSuffix: true });
               element.innerText = value;
               break;
           }
