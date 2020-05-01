@@ -1,6 +1,0 @@
-_components:
-  branch-io:
-    instances:
-      station:
-        allowed: true
-  
