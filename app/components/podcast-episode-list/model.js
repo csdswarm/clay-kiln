@@ -5,7 +5,8 @@ const
   format = require('date-fns/format'),
   addSeconds = require('date-fns/add_seconds'),
   parse = require('date-fns/parse'),
-  radioApiService = require('../../services/server/radioApi');
+  radioApiService = require('../../services/server/radioApi'),
+  _get = require('lodash/get');
 
 /**
  * returns a boolean for if the media is from omny
@@ -50,9 +51,12 @@ function getDurationFormat(durationInSeconds) {
  */
 function getEpisodesInShow(locals) {
   const route = 'episodes',
-    { sort = 'newest', page = 1 } = locals.query,
+    { sort = 'newest',
+      page = 1,
+      'podcast-site-slug': podcastSiteSlug
+    } = locals.query,
     params = {
-      'filter[podcast_site_slug]': locals.params.dynamicSlug,
+      'filter[podcast_site_slug]': _get(locals, 'params.dynamicSlug') || podcastSiteSlug,
       'page[size]': 20,
       'page[number]': page
     };
@@ -69,6 +73,26 @@ function getEpisodesInShow(locals) {
   return radioApiService.get(route, params, null, {}, locals).then(response => {
     return response.data || [];
   });
+}
+// NOTE: do js doc
+function buildEpisodeDetailLink(episode, locals) {
+  const {
+      site: { host, protocol },
+      query: {
+        'station-site-slug': stationSiteSlug,
+        'podcast-site-slug': podcastSiteSlug
+      }
+    } = locals,
+    station = stationSiteSlug || _get(locals, 'params.stationSlug'),
+    podcast = podcastSiteSlug || _get(locals, 'params.dynamicSlug');
+  let url = `${protocol}://${host}`;
+
+  if (station) {
+    url += `/${station}`;
+  }
+  url += `/podcasts/${podcast}/${episode.attributes.site_slug}`;
+
+  return url;
 }
 
 module.exports = unityComponent({
@@ -104,22 +128,14 @@ module.exports = unityComponent({
         getDurationFormat(durationInSeconds)
       );
 
+      attributes.episode_detail_url = buildEpisodeDetailLink(episodeData, locals);
+
       return episodeData;
     });
+    // adding dynamic slug to get to the client js
+    data._computed.podcastSiteSlug = _get(locals, 'params.dynamicSlug', undefined);
+    data._computed.stationSiteSlug = _get(locals, 'params.stationSlug', undefined);
 
-    return data;
-  },
-
-  /**
-   * Makes any necessary modifications to data just prior to persisting it
-   *
-   * @param {string} uri - The uri of the component instance
-   * @param {object} data - persisted or bootstrapped data for this instance
-   * @param {object} locals - data that has been attached to express locals for the current page request
-   *
-   * @returns {object}
-   */
-  save: (uri, data) => {
     return data;
   }
 });
