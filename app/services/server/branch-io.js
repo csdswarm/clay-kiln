@@ -9,13 +9,21 @@
 const db = require('./db'),
   _get = require('lodash/get'),
   redis = require('./redis'),
+  { addAmphoraRenderTime } = require('../universal/utils'),
   /**
    * Generate relevant Branch.io meta tags for the page.
    * @param {Object} locals
    * @param {Object} data
+   * @param {Object} [argObj]
+   * @param {boolean} [argObj.shouldAddAmphoraTimings]
+   * @param {string} [argObj.amphoraTimingLabelPrefix]
    * @returns {Promise<MetaTag[]>}
    */
-  getBranchMetaTags = async (locals, data) => {
+  getBranchMetaTags = async (locals, data, argObj = {}) => {
+    if (argObj.shouldAddAmphoraTimings === undefined) {
+      argObj.shouldAddAmphoraTimings = false;
+    }
+
     const tags = [],
       addTag = (name, content) => {
         tags.push({
@@ -28,7 +36,12 @@ const db = require('./db'),
 
     // primary section front
     if (data.sectionFront) {
-      const listEntry = await getSectionFrontEntry(locals, data.sectionFront, true),
+      const listEntry = await getSectionFrontEntry(
+          locals,
+          data.sectionFront,
+          true,
+          argObj
+        ),
         displayName = listEntry ? listEntry.name : data.sectionFront;
 
       addTag('unity_site_categories', displayName);
@@ -36,7 +49,12 @@ const db = require('./db'),
 
     // sports league
     if (data.sectionFront === 'sports' && data.secondarySectionFront) {
-      const listEntry = await getSectionFrontEntry(locals, data.secondarySectionFront, false),
+      const listEntry = await getSectionFrontEntry(
+          locals,
+          data.secondarySectionFront,
+          false,
+          argObj
+        ),
         displayName = listEntry ? listEntry.name : data.secondarySectionFront;
 
       addTag('unity_site_league', displayName);
@@ -65,11 +83,14 @@ const db = require('./db'),
    * @param {Object} locals
    * @param {string} slug
    * @param {boolean} isPrimary
+   * @param {Object} argObj
+   * @param {boolean} argObj.shouldAddAmphoraTimings
+   * @param {string} [argObj.amphoraTimingLabelPrefix]
    * @returns {Promise<Object>}
    */
-  getSectionFrontEntry = async (locals, slug, isPrimary) => {
+  getSectionFrontEntry = async (locals, slug, isPrimary, argObj) => {
     const listName = isPrimary ? 'primary-section-fronts' : 'secondary-section-fronts',
-      data = await retrieveList(locals, listName);
+      data = await retrieveList(locals, listName, argObj);
 
     return data.find(entry => entry.value === slug);
   },
@@ -77,17 +98,62 @@ const db = require('./db'),
    * Retrieves a list from cache or db
    * @param {Object} locals
    * @param {string} name
+   * @param {Object} argObj
+   * @param {boolean} argObj.shouldAddAmphoraTimings
+   * @param {string} [argObj.amphoraTimingLabelPrefix]
    * @returns {Promise<Array<Object>>}
    */
-  retrieveList = async (locals, name) => {
+  retrieveList = async (locals, name, argObj) => {
     const key = `list:${name}`,
+      beforeRedis = new Date();
+
+    let cached;
+
+    try {
       cached = await redis.get(key);
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          data: { key },
+          label: 'get from redis',
+          ms: new Date() - beforeRedis
+        },
+        {
+          prefix: argObj.amphoraTimingLabelPrefix,
+          shouldAdd: argObj.shouldAddAmphoraTimings
+        }
+      );
+    }
 
     if (cached) {
       return JSON.parse(cached);
     }
 
-    const data = await db.get(`${locals.site.host}/_lists/${name}`);
+    const uri = `${locals.site.host}/_lists/${name}`,
+      beforePostgres = new Date();
+
+    // we shouldn't declare this variable above the short circuit as it has no
+    //   context up there
+    // eslint-disable-next-line one-var
+    let data;
+
+    try {
+      data = await db.get(uri);
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          data: { uri },
+          label: 'get from postgres',
+          ms: new Date() - beforePostgres
+        },
+        {
+          prefix: argObj.amphoraTimingLabelPrefix,
+          shouldAdd: argObj.shouldAddAmphoraTimings
+        }
+      );
+    }
 
     redis.set(key, JSON.stringify(data), 'EX', 3600); // 1 hour
 
