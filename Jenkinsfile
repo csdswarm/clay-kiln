@@ -64,7 +64,7 @@ pipeline {
               case "preprod":
                 env.ROK8S_CONFIG='deploy/pre-production.config'
                 env.BUILD_EXTRAARGS='--build-arg mode=production --build-arg productionbuild=true'
-                ROK8S_CLUSTER='pre-production.k8s.radio-prd.com'
+                ROK8S_CLUSTER='working.k8s.radio-dev.com'
                 CRED_ID='prd'
                 sh '''#!/bin/bash -xe
                 prepare-awscli;
