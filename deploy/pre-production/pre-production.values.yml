@@ -3,11 +3,11 @@ ingress:
     - cms.radio-prd.com
   staticDomains:
   # using prd-clay-k8s for now, to run alongside existing prod. this will be switched out.
-    - prd-clay-k8s.radio-prd.com
+    - preprod-clay.radio-prd.com
   # update to this when ready to cut over
   #  - prd-clay.radio-prd.com DO NOT ENABLE UNTIL READY FOR PROD CUTOVER
   # verify the healthCheckDomain before cutting over
-  healthCheckDomain: "prd-clay-k8s.radio.com"
+  healthCheckDomain: "preprod-clay.radio.com"
 configmap:
   data:
     APPLE_NEWS_ENABLED: "TRUE"
