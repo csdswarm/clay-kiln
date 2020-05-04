@@ -229,7 +229,9 @@ module.exports.render = async (ref, data, locals) => {
   Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
 
   restrictFeedsToArticlesAndGalleries(query);
-  restrictToRDC(query);
+  if (!locals.filter) {
+    restrictToRDC(query);
+  }
 
   try {
     if (meta.rawQuery) {
