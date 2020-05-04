@@ -1,7 +1,7 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  _lowerCase = require('lodash/lowerCase'),
+  _toLower = require('lodash/toLower'),
   getPageId = require('./get-page-id'),
   makeFromPathname = require('./make-from-pathname');
 
@@ -28,6 +28,6 @@ module.exports = function getTrackingData({ pathname, station, pageData, content
     pid: getPageId({ pageData, pathname }),
     tag: fromPathname.getTags(pageData, contentTags),
     market: _get(station, 'market_name', undefined),
-    station: _lowerCase(_get(station, 'callsign', defaultCallsign))
+    station: _toLower(_get(station, 'callsign', defaultCallsign))
   };
 };
