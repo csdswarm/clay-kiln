@@ -1,7 +1,8 @@
 'use strict';
 const { PODCASTS } = require('../../universal/constants'),
   radioApiService = require('../../server/radioApi'),
-  { wrapInTryCatch } = require('../middleware-utils');
+  { wrapInTryCatch } = require('../middleware-utils'),
+  _last = require('lodash/last');
 
 /**
  * fetch podcast show data
@@ -13,6 +14,8 @@ const getPodcastShow = (locals, dynamicSlug) => {
   const route = `podcasts?filter[site_slug]=${ dynamicSlug }`;
 
   return radioApiService.get(route, {}, null, {}, locals).then(response => {
+    console.log('response.data[0]: ', response.data[0]);
+    
     return response.data[0] || {};
   });
 };
@@ -24,14 +27,16 @@ const getPodcastShow = (locals, dynamicSlug) => {
  */
 module.exports = async app => {
   app.use(wrapInTryCatch(async (req, res, next) => {
-    const params = req.originalUrl.split('/'),
-      [,, isPodcast, slug] = params;
+    if (req.originalUrl.includes(PODCASTS)) {
+      const params = req.originalUrl.split('/'),
+        slug = _last(params);
 
-    if (isPodcast === PODCASTS) {
-      const locals = res.locals,
-        dynamicSlug = slug.split('?');
-      
-      res.locals.podcast = await getPodcastShow(locals, dynamicSlug[0]);
+      if (slug !== PODCASTS) {
+        const locals = res.locals,
+          dynamicSlug = slug.split('?');
+        
+        res.locals.podcast = await getPodcastShow(locals, dynamicSlug[0]);
+      }
     }
     next();
   }));
