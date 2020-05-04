@@ -13,9 +13,7 @@ const { PODCASTS } = require('../../universal/constants'),
 const getPodcastShow = (locals, dynamicSlug) => {
   const route = `podcasts?filter[site_slug]=${ dynamicSlug }`;
 
-  return radioApiService.get(route, {}, null, {}, locals).then(response => {
-    console.log('response.data[0]: ', response.data[0]);
-    
+  return radioApiService.get(route, {}, null, {}, locals).then(response => {    
     return response.data[0] || {};
   });
 };
