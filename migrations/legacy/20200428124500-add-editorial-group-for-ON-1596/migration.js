@@ -45,11 +45,8 @@ async function filterStations() {
     const allStations = await stations.getAllStations();
     const filteredStations = _.map(allStations.data, (station) => {
       return {
-        id: station.attributes.id,
         callsign: station.attributes.callsign,
-        siteSlug: station.attributes.site_slug,
-        website: station.attributes.website,
-        market: station.attributes.market,
+        siteSlug: station.attributes.site_slug
       };
     });
 
@@ -124,7 +121,7 @@ async function createDMLFile(data) {
    * @param {string} value
    * @returns {String}
    */
-  const findInStations = async (findProperty, value) => {
+  const findInStations = (findProperty, value) => {
     return _.find(allTheStations, (station) => {
       if (station[findProperty] === value) {
         return station.siteSlug;
@@ -143,7 +140,7 @@ async function createDMLFile(data) {
     let callLetters = record["Call Letters"];
     // Removes special characters to match with RDC API
     callLetters = sanitizeCallLetters(callLetters);
-    const station = await findInStations("callsign", callLetters);
+    const station = findInStations("callsign", callLetters);
     let siteSlug = "";
 
     if (_.isEmpty(station)) {
@@ -206,6 +203,6 @@ async function createDMLFile(data) {
     \ `;
 
     // Send the insert DML to a file
-    generateFile(sql);
+    await generateFile(sql);
   }
 }
