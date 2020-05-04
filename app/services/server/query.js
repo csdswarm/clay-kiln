@@ -237,27 +237,6 @@ function onePublishedArticleByUrl(url, fields) {
 }
 
 /**
- * construct query to get published station-front from stationSlug
- * @param {string} stationSlug
- * @param {Array} fields you want returned
- * @param {Object} locals
- * @returns {Promise}
- */
-function stationFrontFromSlug(stationSlug, fields, locals) {
-  const query = newQueryWithCount('published-stations', null, locals);
-
-  universalQuery.addFilter(query, {
-    term: { stationSlug }
-  });
-  if (fields) {
-    universalQuery.onlyWithTheseFields(query, fields);
-  };
-
-  return query;
-}
-
-
-/**
  * Log error to console when a query fails
  * @param  {Error} e
  * @param  {String} ref
@@ -274,7 +253,6 @@ Object.assign(module.exports, universalQuery, {
   logCatch,
   newQueryWithCount,
   onePublishedArticleByUrl,
-  stationFrontFromSlug,
   searchByQuery,
   searchByQueryWithRawResult,
   searchInstance: null,
