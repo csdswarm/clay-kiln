@@ -3,6 +3,7 @@
 const
   { unityComponent } = require('../../services/universal/amphora'),
   format = require('date-fns/format'),
+  _get = require('lodash/get'),
   addSeconds = require('date-fns/add_seconds'),
   parse = require('date-fns/parse'),
   radioApiService = require('../../services/server/radioApi');
@@ -86,7 +87,8 @@ module.exports = unityComponent({
       return data;
     }
 
-    const episodes = await getEpisodesInShow(locals);
+    const episodes = await getEpisodesInShow(locals),
+      EPISODE_FALLBACK_IMAGE = _get(locals, 'podcast.attributes.image', '');
 
     data._computed.episodes = episodes.map(episodeData => {
       const startOfDay = new Date(0),
@@ -94,6 +96,7 @@ module.exports = unityComponent({
         durationInSeconds = parseFloat(attributes.duration_seconds);
 
       // NOTE: using snake case to stay consistent with api schema
+      attributes.image_url = attributes.image_url || EPISODE_FALLBACK_IMAGE; // Use this as a fallback when episodes do not have his own image.
       attributes.is_image_url_omny = isImageOmny(attributes.image_url);
       attributes.published_date_formatted = format(
         parse(attributes.published_date),
