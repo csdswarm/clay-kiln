@@ -5,6 +5,7 @@ const fs = require("fs");
 const util = require("util");
 const readFileAsync = util.promisify(fs.readFile);
 const appendFileAsync = util.promisify(fs.appendFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 const csv = require("../../../app/node_modules/csvtojson");
 const _ = require("../../../app/node_modules/lodash");
 const csvFile =
@@ -33,6 +34,8 @@ async function run() {
 
     await insertData();
 
+    await truncateDMLFile();
+
     console.log("Sucessfully !!!");
   } catch (err) {
     console.error(err.stack);
@@ -55,6 +58,18 @@ async function filterStations() {
   });
 
   return filteredStations;
+}
+
+/**
+ * Delete the DML records from the /create-editorial-group/dml_editorial_group.sql file
+ *
+ * @returns {Promise}
+ */
+function truncateDMLFile() {
+  writeFileAsync(
+    `${__dirname}/create-editorial-group/dml_editorial_group.sql`,
+    ""
+  );
 }
 
 /**
