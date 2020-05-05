@@ -66,8 +66,7 @@ export default {
   },
   computed: {
     columns: function () {
-      if (this.stationEditorials.length === 0) return [];
-      return ['STATION', ...this.columnTitles];
+      return this.stationEditorials.length ? ['STATION', ...this.columnTitles] : [];
     },
     enableUpdate: function() {
       return this.stationEditorials.reduce((editable, station) => {
@@ -84,15 +83,10 @@ export default {
     updateChanges: function() {
       // TODO: Connect with API.
       // This is only for demostrating behavior. 
-      const updatedStations = this.stationEditorials.filter(station => {
-        if (station.edited) {
-          return station;
-        }
-        return false;
-      });
+      const updatedStations = this.stationEditorials.filter(station => station.edited);
 
       this.stationEditorials.map(station => {
-        this.$set(station, 'edited',false);
+        this.$set(station, 'edited', false);
       });
 
       console.log(
