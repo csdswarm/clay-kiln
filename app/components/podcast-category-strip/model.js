@@ -70,7 +70,7 @@ module.exports = unityComponent({
    *
    * @returns {object}
    */
-  save: async (uri, data) => {
+  save: (uri, data) => {
     return data;
   }
 });

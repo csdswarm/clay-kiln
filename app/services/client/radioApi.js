@@ -163,7 +163,8 @@ const rest = require('../universal/rest'),
    * @param {object} [locals]
    * @return {Promise}
    */
-  get = (route, params, validate, options = {}, locals = {}) => {
+  // eslint-disable-next-line max-params
+  get = (route, params, validate, options, locals = {}) => {
     const endpoint = createEndpoint(route, params, locals);
 
     return rest.get(endpoint).then(data => {
