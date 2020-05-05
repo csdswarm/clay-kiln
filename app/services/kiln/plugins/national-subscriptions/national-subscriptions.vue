@@ -30,12 +30,23 @@
         />
       </tfoot>
     </table>
+    <ui-confirm
+      confirm-button-icon="delete"
+      confirm-button-text="Delete"
+      deny-button-text="Keep"
+      ref="deleteConfirm"
+      title="Delete Subscription?"
+      type="danger"
+
+      @confirm="onConfirmDelete"
+      @deny="onDenyDelete"
+    ></ui-confirm>
   </div>
 </template>
 
 
 <script>
-  const { UiButton, UiTextbox, UiIconButton } = window.kiln.utils.components;
+  const { UiButton, UiTextbox, UiIconButton, UiConfirm } = window.kiln.utils.components;
   const DataRow = require('./national-subscriptions-row.vue');
   const startCase = require('lodash/startCase');
   const axios = require('axios');
@@ -125,7 +136,8 @@
         isLoading: false,
         stationName,
         subscriptions: [...window.kiln.locals.nationalSubscriptions],
-        newSub: new NationalSubscription()
+        newSub: new NationalSubscription(),
+        deleteSub: null
       }
     },
     methods: {
@@ -191,7 +203,15 @@
         this.onUpdate(index);
       },
       onDeleteDataRow(data) {
-        this.onDelete(data.id);
+        this.$refs['deleteConfirm'].open();
+        this.deleteSub = data;
+      },
+      onConfirmDelete() {
+        this.onDelete(this.deleteSub.id);
+        this.deleteSub = null;
+      },
+      onDenyDelete() {
+        this.deleteSub = null;
       }
     },
     computed: {
@@ -206,6 +226,7 @@
       UiTextbox,
       UiButton,
       UiIconButton,
+      UiConfirm,
       DataRow
     }
   }
