@@ -34,11 +34,11 @@ async function run() {
 
     await insertData();
 
-    await truncateDMLFile();
-
     console.log("Sucessfully !!!");
   } catch (err) {
     console.error(err.stack);
+  } finally {
+    await truncateDMLFile();
   }
 }
 
