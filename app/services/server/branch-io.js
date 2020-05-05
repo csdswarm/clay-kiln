@@ -6,9 +6,10 @@
  * @property {string} content
  */
 
-const db = require('./db'),
+const
   _get = require('lodash/get'),
-  redis = require('./redis'),
+  { retrieveList } = require('./lists'),
+
   /**
    * Generate relevant Branch.io meta tags for the page.
    * @param {Object} locals
@@ -69,29 +70,9 @@ const db = require('./db'),
    */
   getSectionFrontEntry = async (locals, slug, isPrimary) => {
     const listName = isPrimary ? 'primary-section-fronts' : 'secondary-section-fronts',
-      data = await retrieveList(locals, listName);
+      data = await retrieveList(listName, { locals });
 
     return data.find(entry => entry.value === slug);
-  },
-  /**
-   * Retrieves a list from cache or db
-   * @param {Object} locals
-   * @param {string} name
-   * @returns {Promise<Array<Object>>}
-   */
-  retrieveList = async (locals, name) => {
-    const key = `list:${name}`,
-      cached = await redis.get(key);
-
-    if (cached) {
-      return JSON.parse(cached);
-    }
-
-    const data = await db.get(`${locals.site.host}/_lists/${name}`);
-
-    redis.set(key, JSON.stringify(data), 'EX', 3600); // 1 hour
-
-    return data;
   };
 
 module.exports.getBranchMetaTags = getBranchMetaTags;

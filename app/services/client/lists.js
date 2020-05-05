@@ -23,8 +23,13 @@ const rest = require('../universal/rest'),
     return entry ? entry.name : slug;
   };
 
-module.exports.retrieveList = retrieveList;
-module.exports.getSectionFrontName = getSectionFrontName;
+module.exports = {
+  retrieveList,
+  getSectionFrontName,
 
-// Returns a resolved promise to ensure API compatibility with the server counterpart
-module.exports.uncacheList = () => Promise.resolve();
+  // Returns a rejected promise to ensure API compatibility and notify dev that there is no client support for these
+  deleteListItem: () => Promise.reject(new Error('deleteListItem not available on client')),
+  updateListItem: () => Promise.reject(new Error('updateListItem not available on client'))
+};
+
+
