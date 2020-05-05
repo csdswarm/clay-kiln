@@ -11,9 +11,14 @@ const csvFile =
   "./create-editorial-group/Editorial Group - Editorial Group.csv";
 const dmlFile = "./create-editorial-group/dml_editorial_group.sql";
 const ddlFile = "./create-editorial-group/editorial_group.sql";
-const stations = require("../../utils/get-all-stations");
+const stations = require("../../utils/get-all-stations").v1;
 
 let allTheStations;
+
+const pgHost = process.env.PGHOST;
+
+// using-db.js defaults to 'localhost' for this environment variable
+const isLocal = !pgHost || pgHost === "localhost";
 
 run();
 
@@ -41,19 +46,15 @@ async function run() {
  * @returns {Promise}
  */
 async function filterStations() {
-  try {
-    const allStations = await stations.getAllStations();
-    const filteredStations = _.map(allStations.data, (station) => {
-      return {
-        callsign: station.attributes.callsign,
-        siteSlug: station.attributes.site_slug
-      };
-    });
+  const allStations = await stations();
+  const filteredStations = _.map(allStations.data, (station) => {
+    return {
+      callsign: station.attributes.callsign,
+      siteSlug: station.attributes.site_slug,
+    };
+  });
 
-    return filteredStations;
-  } catch (error) {
-    console.log(error);
-  }
+  return filteredStations;
 }
 
 /**
@@ -62,14 +63,10 @@ async function filterStations() {
  * @returns {Promise}
  */
 async function createTable() {
-  try {
-    const ddlEditorialGroup = await readFileAsync(ddlFile, "utf8");
-    await usingDb((db) => db.query(ddlEditorialGroup));
+  const ddlEditorialGroup = await readFileAsync(ddlFile, "utf8");
+  await usingDb((db) => db.query(ddlEditorialGroup));
 
-    console.log("successfully created the Postgres editorial_group table");
-  } catch (err) {
-    console.error(err);
-  }
+  console.log("successfully created the Postgres editorial_group table");
 }
 
 /**
@@ -143,13 +140,13 @@ async function createDMLFile(data) {
     const station = findInStations("callsign", callLetters);
     let siteSlug = "";
 
-    if (_.isEmpty(station)) {
+    if (station) {
+      siteSlug = station.siteSlug;
+    } else if (!isLocal) {
       console.error(
         `CSV record haven't been found in RDC API with this Call Letter/callsign ${record["Call Letters"]} \ 
-        Please update this record`
+          Please update this record`
       );
-    } else {
-      siteSlug = station.siteSlug;
     }
 
     return siteSlug;
@@ -188,6 +185,9 @@ async function createDMLFile(data) {
   for (const record of data) {
     // Extracts SIte Slug property
     const siteSlug = await getSiteSlug(record);
+    if (!siteSlug) {
+      continue;
+    }
     // Get the feeds with the "x" value
     const feeds = await buildFeeds(record);
     // // Generates the insert statememt

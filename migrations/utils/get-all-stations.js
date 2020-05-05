@@ -5,11 +5,11 @@ const url = "https://api.radio.com/v1/stations?page[size]=1000";
 /**
  * @returns {Array}
  */
-async function getAllStations() {
+async function getAllStations_v1() {
   const stations = await axios(url);
   return stations.data;
 }
 
 module.exports = {
-    getAllStations
+    v1: getAllStations_v1
 };

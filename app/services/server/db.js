@@ -3,7 +3,7 @@
 const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
-  DATA_STRUCTURES = ['alert', 'valid_source', 'apple_news', 'editorial_group'],
+  DATA_STRUCTURES = ['alert', 'apple_news', 'editorial_group', 'valid_source'],
   /**
    * Check Postgres to see if the table exists
    *
