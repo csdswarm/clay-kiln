@@ -4,9 +4,9 @@ _description: |
 category:
   _label: Category to filter podcasts by
   _has:
-    input: select
-    search: true
-    required: true
+    input: podcast-category-select
+    validate:
+      required: true
 
 categoryNameOverride:
   _label: Name to override category name for display purposes
@@ -21,9 +21,6 @@ disableBottomBorder:
 
 curatedPodcasts:
   _label: Podcasts
-  _placeholder:
-    height: 200px;
-    text: Podcast List -- Autofills upon publish if left empty or less than 7 items
   _has:
     input: complex-list
     enforceMaxlength: true

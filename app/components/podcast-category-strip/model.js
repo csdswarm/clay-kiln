@@ -3,11 +3,50 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
   utils = require('../../services/universal/podcast'),
-  logger = require('../../services/universal/log'),
-  log = logger.setup({ file: __filename }),
   _get = require('lodash/get'),
   _uniqBy = require('lodash/uniqBy'),
   _slice = require('lodash/slice');
+
+async function populatePodcasts(data, locals) {
+  if (data.category) {
+    return radioApiService.get(
+      'podcasts',
+      {
+        sort: '-popularity',
+        filter: { category_id: data.category.id },
+        page: { size: 7 }
+      },
+      null, {}, locals
+    ).then(response => {
+      const backfillPodcasts = (response.data || []).map(podcast => {
+          return {
+            id: podcast.id,
+            // creates url for small podcast image
+            imageUrl: utils.createImageUrl(_get(podcast, 'attributes.image')),
+            title: _get(podcast, 'attributes.title'),
+            url: `/podcasts/${ _get(podcast, 'attributes.site_slug') }`
+          };
+        }),
+        // curated podcasts should be pinned to front of list
+        curatedPodcasts = data.curatedPodcasts.map(podcast => podcast.podcast),
+        totalPodcasts = curatedPodcasts.concat(backfillPodcasts),
+        // filter out duplicates from backfill
+        uniquePodcasts = _uniqBy(totalPodcasts, 'id'),
+        // total deduped curated + backfill items should amount to exactly 7
+        podcasts = _slice(uniquePodcasts, 0, 7);
+
+      data._computed = {
+        podcasts,
+        seeAllLink: `/podcasts/collection/${ _get(data.category, 'slug') }`
+      };
+      return data;
+    }).catch(e => {
+      console.error('error getting podcast data from api', e);
+      return data;
+    });
+  }
+  return data;
+}
 
 module.exports = unityComponent({
   /**
@@ -20,45 +59,8 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: async (uri, data, locals) => {
-    try {
-      const { data: podcasts } = await radioApiService.get(
-        'podcasts',
-        {
-          sort: '-popularity',
-          filter: { category_id: data.category.id },
-          page: { size: 7 }
-        },
-        null, {}, locals
-      );
-
-      data.backfillPodcasts = podcasts;
-    } catch (e) {
-      log('error', 'Error backfilling podcasts: ', e);
-      data.backfillPodcasts = [];
-    }
-
-    // curated podcasts should be pinned to front of list
-    const totalPodcasts = data.curatedPodcasts.concat(data.backfillPodcasts),
-      // filter out duplicates from backfill
-      uniquePodcasts = _uniqBy(totalPodcasts, 'id'),
-      // total deduped curated + backfill items should amount to exactly 7
-      podcasts = _slice(uniquePodcasts, 0, 7);
-
-    data._computed = {
-      items: podcasts.map(podcast => {
-        return {
-          // creates url for small podcast image
-          imageUrl: utils.createImageUrl(podcast.attributes.image),
-          title: podcast.attributes.title,
-          url: `/podcasts/${podcast.attributes.site_slug}`
-        };
-      }),
-      seeAllLink: `/podcasts/collection/${ _get(data.category, 'attributes.slug') }`
-    };
-
-    return data;
+    return populatePodcasts(data, locals);
   },
-
   /**
    * Makes any necessary modifications to data just prior to persisting it
    *
@@ -68,16 +70,7 @@ module.exports = unityComponent({
    *
    * @returns {object}
    */
-  save: (uri, data, locals) => {
-    // mock category data
-    data.category = {
-      id: 5,
-      attributes: {
-        name: 'Arts',
-        slug: 'arts'
-      }
-    };
-
+  save: async (uri, data) => {
     return data;
   }
 });

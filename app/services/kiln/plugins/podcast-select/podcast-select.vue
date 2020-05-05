@@ -76,6 +76,7 @@
                     .then(podcastResponse => {
                         self.podcastOptions = podcastResponse.data.map((podcast) => {
                             return {
+                                id: podcast.id,
                                 label: podcast.attributes.title,
                                 title: podcast.attributes.title,
                                 url: utils.createUrl(podcast.attributes.title),

@@ -4,9 +4,13 @@
 <a href="{{ _computed.seeAllLink }}">See All</a>
 
 {{!-- @TODO ON-1577 frontend ticket: podcast strip --}}
-{{#each _computed.items as podcast }}
-  {{!-- podcast.imageUrl --}}
-  {{!-- podcast.title --}}
+{{#if _computed.podcasts}}
+{{#each _computed.podcasts as |podcast| }}
+  <div>
+    <img style="height:20px; width:20px;" src="{{podcast.imageUrl}}" alt="">
+    <h3>{{podcast.title}}</h3>
+  </div>
 {{/each}}
+{{/if}}
 
 </div>
