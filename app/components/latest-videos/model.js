@@ -1,8 +1,6 @@
 'use strict';
 
-const recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
-  toPlainText = require('../../services/universal/sanitize').toPlainText,
-  { recirculationData } = require('../../services/universal/recirc/recirculation'),
+const { recirculationData } = require('../../services/universal/recirc/recirculation'),
   elasticFields = [
     'primaryHeadline',
     'pageUri',
@@ -13,38 +11,6 @@ const recircCmpt = require('../../services/universal/recirc/recirc-cmpt'),
   ],
   maxItems = 6,
   excludedTags = ({ filterTags }) => (filterTags || []).map(({ text }) => text),
-  save = async (ref, data, locals) => {
-    if (!data.items.length || !locals) {
-      return data;
-    }
-
-    await Promise.all(data.items.map(async item => {
-      item.urlIsValid = item.ignoreValidation ? 'ignore' : null;
-
-      const searchOpts = {
-          includeIdInResult: true,
-          shouldDedupeContent: false
-        },
-        result = await recircCmpt.getArticleDataAndValidate(ref, item, locals, elasticFields, searchOpts);
-
-      Object.assign(item, {
-        uri: result._id,
-        primaryHeadline: item.overrideTitle || result.primaryHeadline,
-        pageUri: result.pageUri,
-        urlIsValid: result.urlIsValid,
-        canonicalUrl: result.canonicalUrl,
-        feedImgUrl: result.feedImgUrl,
-        sectionFront: result.sectionFront
-      });
-
-      if (item.title) {
-        item.plaintextTitle = toPlainText(item.title);
-      }
-    }));
-
-    return data;
-  },
-
   /**
    * @param {string} ref
    * @param {object} data
@@ -81,6 +47,5 @@ module.exports = recirculationData({
       date: item.overrideDate || result.date
     });
   },
-  render,
-  save
+  render
 });
