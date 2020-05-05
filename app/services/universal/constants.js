@@ -65,7 +65,9 @@ const _get = require('lodash/get'),
     category: ''
   },
 
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
+  
+  PODCASTS = 'podcasts';
 
 
 module.exports = {
@@ -80,5 +82,6 @@ module.exports = {
   SERVER_SIDE,
   PAGE_TYPES,
   DEFAULT_RADIOCOM_LOGO,
-  DEFAULT_STATION
+  DEFAULT_STATION,
+  PODCASTS
 };
