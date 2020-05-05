@@ -35,7 +35,7 @@ const db = require('../server/db'),
    * @param {object} req
    * @returns {boolean}
    */
-  testURL = (url, req) => createRegExp(url.replace(/^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,})/, '')).test(stripUrl(req.originalUrl)),
+  testURL = (url, req) => createRegExp(url.replace(/^(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,}\.[a-z]{2,})/, '')).test(stripUrl(req.path)),
   /**
    * converts a string into a regular expression * as a wildcard
    *
