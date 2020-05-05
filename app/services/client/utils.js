@@ -11,7 +11,11 @@ class Utils {
   truncate(str, limit, options = {}) {
     options.useSuffix = options.useSuffix || false;
     options.suffix = options.suffix || '...';
-    return `${str.slice(0, limit).trim()}${options.useSuffix ? options.suffix : ''}`;
+    if (str.length < limit) {
+      return str;
+    } else {
+      return `${str.slice(0, limit).trim()}${options.useSuffix ? options.suffix : ''}`;
+    }
   }
 };
 

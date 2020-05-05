@@ -119,7 +119,7 @@ class PodcastListComponentView {
         link:                       clone.querySelector(`.${componentClassName}__download-link`),
         playBtn:                    clone.querySelector(`.${componentClassName}__play-btn`),
         published_date_formatted:   clone.querySelector(`.${componentClassName}__pub-date`),
-        duration_seconds_formatted: clone.querySelector(`.${componentClassName}__duration span`),
+        duration_seconds_formatted: clone.querySelector(`.${componentClassName}__duration-text`),
         title:                      clone.querySelector(`.${componentClassName}__title`),
         description:                clone.querySelector(`.${componentClassName}__description`)
       };
