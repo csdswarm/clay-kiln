@@ -1,9 +1,13 @@
+/* eslint-disable max-nested-callbacks */
 'use strict';
 
-const { expect } = require('chai'),
+const chai = require('chai'),
+  { expect } = chai,
   dirname = __dirname.split('/').pop(),
   filename = __filename.split('/').pop().split('.').shift(),
   _uniq = require('lodash/uniq');
+
+chai.use(require('chai-sorted'));
 
 describe(dirname, () => {
   describe(filename, () => {
@@ -30,25 +34,41 @@ describe(dirname, () => {
         },
         locals = {};
 
-      it('should have 7 podcasts total in set', async () => {
-        const result = await render(ref, data, locals);
-
-        expect(result._computed.podcasts.length).to.eql(7);
+      it('should have 7 podcasts total in set', () => {
+        return render(ref, data, locals).then(result => {
+          expect(result._computed.podcasts).to.have.lengthOf(7);
+        });
       });
-      it('adds curated to front of podcast set', async () => {
-        const result = await render(ref, data, locals);
-
-        expect(result._computed.podcasts[0]).to.eql(data.curatedPodcasts[0].podcast);
+      it('adds curated to front of podcast set', () => {
+        return render(ref, data, locals).then(result => {
+          expect(result._computed.podcasts[0]).to.eql(data.curatedPodcasts[0].podcast);
+        });
       });
-      it('should contain no duplicates in podcast set', async () => {
-        const result = await render(ref, data, locals);
-
-        expect(_uniq(result._computed.podcasts).length === result._computed.podcasts.length).to.be.true;
+      it('should contain no duplicates in podcast set', () => {
+        return render(ref, data, locals).then(result => {
+          expect(_uniq(result._computed.podcasts).length === result._computed.podcasts.length).to.be.true;
+        });
       });
-      it('sets see all link if category slug exists', async () => {
-        const result = await render(ref, data, locals);
+      it('should sort backfill podcasts by most popular', () => {
+        return render(ref, data, locals).then(result => {
+          const backfillPodcastsPopularity = result.backfillPodcasts.map(podcast => podcast.attributes.popularity);
 
-        expect(result._computed.seeAllLink).to.eql('/podcasts/collection/sports');
+          expect(backfillPodcastsPopularity).to.be.sorted({ descending: true });
+        });
+      });
+      it('only backfills podcasts from selected category', () => {
+        return render(ref, data, locals).then(result => {
+          const podcastsCategories = result.backfillPodcasts.map(podcast => podcast.attributes.category);
+
+          podcastsCategories.forEach(categories => {
+            expect(categories).to.deep.include(data.category);
+          });
+        });
+      });
+      it('sets see all link if category slug exists', () => {
+        return render(ref, data, locals).then(result => {
+          expect(result._computed.seeAllLink).to.eql('/podcasts/collection/sports');
+        });
       });
     });
   });

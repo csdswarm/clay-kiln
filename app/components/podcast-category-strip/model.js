@@ -18,7 +18,9 @@ async function populatePodcasts(data, locals) {
       },
       null, {}, locals
     ).then(response => {
-      const backfillPodcasts = (response.data || []).map(podcast => {
+      data.backfillPodcasts = response.data || [];
+
+      const backfillPodcasts = data.backfillPodcasts.map(podcast => {
           return {
             id: podcast.id,
             // creates url for small podcast image
