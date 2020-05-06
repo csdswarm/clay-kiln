@@ -14,12 +14,11 @@ async function createBranchIoHead() {
 createBranchIoHead()
   .then(() => {
     // add branch-io-head script to station page and remove old refs
-    addComponentToContainers(hostUrl, [
-      '_pages/station'
-    ], '_components/branch-io-head/instances/default', 'head', (_, data) => {
-      // remove old branch-io component references
-      if (Array.isArray(data.head)) {
-        data.head = data.head.filter(ref => !ref.includes('/branch-io/'));
-      }
-    });
-  });
+    return addComponentToContainers(
+      hostUrl,
+      ['_pages/station'],
+      '_components/branch-io-head/instances/default',
+      'head'
+    );
+  })
+  .catch(console.error);
