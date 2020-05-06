@@ -88,15 +88,15 @@ module.exports = unityComponent({
     }
 
     const episodes = await getEpisodesInShow(locals),
-      EPISODE_FALLBACK_IMAGE = _get(locals, 'podcast.attributes.image', '');
+      PODCAST_FALLBACK_IMAGE = _get(locals, 'podcast.attributes.image', '');
 
     data._computed.episodes = episodes.map(episodeData => {
       const startOfDay = new Date(0),
         { attributes } = episodeData,
         durationInSeconds = parseFloat(attributes.duration_seconds);
 
+      attributes.image_url = attributes.image_url || PODCAST_FALLBACK_IMAGE; // Use this as a fallback when episodes do not have his own image.
       // NOTE: using snake case to stay consistent with api schema
-      attributes.image_url = attributes.image_url || EPISODE_FALLBACK_IMAGE; // Use this as a fallback when episodes do not have his own image.
       attributes.is_image_url_omny = isImageOmny(attributes.image_url);
       attributes.published_date_formatted = format(
         parse(attributes.published_date),
