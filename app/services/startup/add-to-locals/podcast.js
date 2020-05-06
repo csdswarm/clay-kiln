@@ -2,7 +2,8 @@
 const { PODCASTS } = require('../../universal/constants'),
   radioApiService = require('../../server/radioApi'),
   { wrapInTryCatch } = require('../middleware-utils'),
-  _last = require('lodash/last');
+  _last = require('lodash/last'),
+  _isEmpty = require('lodash/isEmpty');
 
 /**
  * fetch podcast show data
@@ -10,12 +11,15 @@ const { PODCASTS } = require('../../universal/constants'),
  * @param {string} dynamicSlug
  * @returns {Promise<object>}
  */
-const getPodcastShow = (locals, dynamicSlug) => {
-  const route = `podcasts?filter[site_slug]=${ dynamicSlug }`;
-
-  return radioApiService.get(route, {}, null, {}, locals).then(response => {
-    return response.data[0] || {};
-  });
+const getPodcastShow = async (locals, dynamicSlug) => {
+  const route = `podcasts?filter[site_slug]=${ dynamicSlug }`,
+    { data } = await radioApiService.get(route, {}, null, {}, locals);
+  
+  if (_isEmpty(data)) {
+    return {};
+  }
+  
+  return data[0];
 };
 
 /**
