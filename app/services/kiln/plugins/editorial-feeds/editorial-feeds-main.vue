@@ -73,8 +73,6 @@
 
 const radioApi = require("../../../../services/client/radioApi"),
   { editorials, newStationFeed, columnTitles } = require("./data");
-  const stationSelect = require('../content-syndication/station-select');
-
 const { UiButton, UiCheckbox, UiAutocomplete } = window.kiln.utils.components;
 
 export default {
