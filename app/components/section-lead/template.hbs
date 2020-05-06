@@ -10,7 +10,7 @@
               {{ set 'sizes' (if @index ../_computed.storySizes else=../_computed.primaryStorySizes) }}
               {{ set 'params' (if @index ../_computed.storySizeParams else=../_computed.primaryStorySizeParams) }}
               {{#each sizes}}
-                <source media="({{ media }})" srcset="{{ ../feedImgUrl }}?{{ srcParams }}"/>
+                <source media="({{ media }})" srcset="{{ sanitizeURI ../feedImgUrl }}?{{ srcParams }}"/>
               {{/each}}
               <img src="{{ feedImgUrl }}?{{ params }}"/>
               <div class="image__hover-overlay"></div>

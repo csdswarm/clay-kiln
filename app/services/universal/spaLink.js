@@ -1,6 +1,7 @@
 'use strict';
 
 const URL = require('url-parse'),
+  { getDomainFromHostname } = require('./utils'),
   domain = typeof window === 'undefined' ? process.env.CLAY_SITE_HOST : window.location.host,
   // https://regex101.com/r/gDfIxb/1
   spaLinkRegex = new RegExp(`^.*(?=${domain}).*$`);
@@ -66,9 +67,7 @@ function isSpaLink(uri) {
  * @return {boolean}
  */
 function isEntercomDomain(hostname) {
-  const domain = hostname.split('.').reverse().slice(0, 2).reverse().join('.');
-
-  return ENTERCOM_DOMAINS.includes(domain);
+  return ENTERCOM_DOMAINS.includes(getDomainFromHostname(hostname));
 }
 
 /**

@@ -118,7 +118,7 @@ async function searchByQueryWithRawResult(query, locals, opts = {}) {
   getSearchInstance();
 
   if (!module.exports.searchInstance) {
-    return bluebird.reject('Search not instantiated.');
+    return bluebird.reject(new Error('Search not instantiated.'));
   }
 
   loadedIds.forEach(_id => universalQuery.addMustNot(query, { match: { _id } }));

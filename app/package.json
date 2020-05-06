@@ -1,10 +1,10 @@
 {
   "name": "clay-starter",
-  "version": "0.0.45",
+  "version": "0.0.48",
   "description": "The started for Clay",
   "main": "app.js",
   "scripts": {
-    "test": "mocha \"./{,!(node_modules)/**}/*.test.js\" --recursive --exit",
+    "test": "LOG=warn mocha \"./{,!(node_modules)/**}/*.test.js\" --recursive --exit --forbid-only",
     "dev": "pm2 start local.config.js --no-daemon",
     "start": "npm run check-elastic && pm2 start app.js --instances max --log '/home/ubuntu/log.txt'",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
@@ -109,6 +109,7 @@
     "acorn": "^6.0.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^5.6.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-html": "^4.0.5",

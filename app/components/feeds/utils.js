@@ -24,7 +24,7 @@ function rendererPipeline(ref, data, locals, prefix) {
     };
 
   return h(results)
-    .flatMap(entry => h(transforms[`${prefix}-${transform}`](entryMapper(entry), locals)))
+    .flatMap(entry => h(Promise.resolve(transforms[`${prefix}-${transform}`](entryMapper(entry), locals))))
     .compact() // Give transforms the option to strip a document from response by returning a falsy value (http://highlandjs.org/#compact)
     .collect()
     .map(mapper)
