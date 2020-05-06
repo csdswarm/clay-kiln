@@ -90,7 +90,8 @@
       isHeader: true,
       isDataProp: true,
       isEditable: true,
-      dataType: Object
+      dataType: Object,
+      propOrder: ['populateFrom', 'contentType', 'sectionFront', 'secondarySectionFront', 'tags', 'excludeSectionFronts', 'excludeSecondarySectionFronts', 'excludeTags']
     },
     {
       key: 'actions',

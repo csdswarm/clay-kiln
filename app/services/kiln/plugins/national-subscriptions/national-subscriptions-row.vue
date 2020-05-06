@@ -5,7 +5,7 @@
         <input class="inputText" type="text" :value="data[config.key]" @change="onDescriptionChange($event, config.key)">
       </div>
       <div v-else-if="config.isEditable && config.dataType === Object">
-        <div class="objRow" :key="propIndex" v-for="(value, key, propIndex) in data[config.key]">
+        <div class="objRow" :key="propIndex" :set="value = data[config.key][key]" v-for="(key, propIndex) in config.propOrder">
           <div class="objProp">
             {{key}}
           </div>
