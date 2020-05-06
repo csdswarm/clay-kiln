@@ -10,7 +10,7 @@ const assignStationsToLocals = require('./assign-stations-to-locals'),
 
 
 stationUtils.getAllStations({ locals: { } })
-  .then(() => log('error', 'warm loaded stations (not really an error but need to see on prod)'))
+  .then(() => log('error', 'API Station Data Warmed (info as error for prod visibility)'))
   .catch(err => log('error', err));
 
 /**
