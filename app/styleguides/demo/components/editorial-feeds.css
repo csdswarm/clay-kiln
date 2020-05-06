@@ -37,7 +37,7 @@
     border: em(3) solid #44475c;
     margin: em(10) em(10) 0 em(10);
     padding: 0 em(20) 0 em(20);
-    height: 50vh;
+    height: auto;
     transform-style: preserve-3d;
     td {
       &:last-child {
