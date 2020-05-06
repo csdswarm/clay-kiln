@@ -10,18 +10,7 @@ const { recirculationData } = require('../../services/universal/recirc/recircula
     'contentType'
   ],
   maxItems = 6,
-  excludedTags = ({ filterTags }) => (filterTags || []).map(({ text }) => text),
-  /**
-   * @param {string} ref
-   * @param {object} data
-   * @param {object} locals
-   * @returns {Promise}
-   */
-  render = async (ref, data) => {
-    data.articles = data._computed.content;
-
-    return data;
-  };
+  excludedTags = ({ filterTags }) => (filterTags || []).map(({ text }) => text);
 
 module.exports = recirculationData({
   contentKey: 'content',
@@ -46,6 +35,5 @@ module.exports = recirculationData({
       sectionFront: item.overrideSectionFront || result.sectionFront,
       date: item.overrideDate || result.date
     });
-  },
-  render
+  }
 });
