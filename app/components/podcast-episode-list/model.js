@@ -3,9 +3,9 @@
 const
   { unityComponent } = require('../../services/universal/amphora'),
   format = require('date-fns/format'),
-  _get = require('lodash/get'),
   addSeconds = require('date-fns/add_seconds'),
   parse = require('date-fns/parse'),
+  _get = require('lodash/get'),
   radioApiService = require('../../services/server/radioApi');
 
 /**
