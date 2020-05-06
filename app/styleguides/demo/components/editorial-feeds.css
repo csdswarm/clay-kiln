@@ -28,13 +28,17 @@
     padding: em(10);
   }
 
+  &__filter-select {
+    padding-left: em(10);
+  }
+
   &__table {
     border-collapse: collapse;
     border: em(3) solid #44475c;
     margin: em(10) em(10) 0 em(10);
     padding: 0 em(20) 0 em(20);
     height: 50vh;
-
+    transform-style: preserve-3d;
     td {
       &:last-child {
         border-right: none;
