@@ -4,6 +4,102 @@
 
 .component--podcast-category-strip {
   &.podcast-category-strip {
+    max-width: em(widthOnGrid(14, 13));
+    margin: 0 auto em(30) auto;
 
+    .podcast-category-strip__header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: em(35);
+      margin-bottom: em(10);
+    }
+
+    .podcast-category-strip__category {
+      @mixin podcast-category-strip-font1;
+    }
+
+    .podcast-category-strip__all {
+      text-decoration: none;
+      @mixin podcast-category-strip-font2;
+      & .all__chevron_up {
+        fill: $black;
+        height: em(13);
+        width: em(7.5);
+      }
+    }
+
+    .podcast-category-strip__items {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin: 0;
+      margin-bottom: em(40);
+    }
+
+    .podcast-category-strip__item {
+      flex: 1 0 13%;
+
+      &:not(:last-child) {
+        margin-right: em(16);
+
+        @mixin medium-small-screen {
+          margin-right: 0;
+          margin-bottom: em(20em);
+        }
+      }
+
+      &:nth-child(even) {
+        @mixin medium-small-screen {
+          padding-left: em(10);
+        }
+      }
+
+      &:nth-child(odd) {
+        @mixin medium-small-screen {
+          padding-right: em(10);
+        }
+      }
+
+      &:last-child {
+        @mixin large-screen {
+          display: none;
+        }
+      }
+
+      @mixin only-large-screen {
+        flex: 1 0 15%;
+        &:nth-last-child(2) {
+          margin-right: 0;
+        }
+      }
+
+      @mixin only-medium-screen {
+        flex: 1 0 30%;
+        &:nth-child(3n) {
+          margin-right: 0;
+        }
+      }
+
+      @mixin medium-small-screen {
+        flex: 1 0 50%;
+      }
+    }
+
+    .podcast-category-strip__link {
+      text-decoration: none;
+    }
+
+    .podcast-category-strip__title {
+      @mixin podcast-category-strip-font3;
+      margin-top: em(10);
+    }
+
+    .podcast-category-strip__image {
+      object-fit: cover;
+      border: em(1) solid $mercury;
+      width: 100%;
+    }
   }
 }

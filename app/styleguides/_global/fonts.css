@@ -263,6 +263,18 @@ em, i {
   @mixin font CircularStd-Medium, 18px, $white, -.3px, 23px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* |||||| Podcast-Category-Strip Fonts Styleguide |||||| */
+/*>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin podcast-category-strip-font1 {
+  @mixin font CircularStd-Black, 18px, $black, -.43px, 22px;
+}
+@define-mixin podcast-category-strip-font2 {
+  @mixin font CircularStd-Medium, 12px, $black, -.34px, 14px;
+}
+@define-mixin podcast-category-strip-font3 {
+  @mixin font CircularStd-Black, 14px, $black, -.23px, 17px;
+}
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* |||||| More Content Feed Fonts Styleguide |||||| */

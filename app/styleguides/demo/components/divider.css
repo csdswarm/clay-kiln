@@ -11,3 +11,16 @@
     margin-bottom: em(30);
   }
 }
+
+.two-column-component__column--2 {
+  .divider {
+    border-bottom: 6px solid $parisPurple;
+    margin-bottom: em(30);
+  }
+}
+
+.component--podcast-category-strip {
+  .divider {
+    border-bottom: 1px solid $mercury;
+  }
+}
