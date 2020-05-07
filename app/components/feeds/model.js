@@ -1,12 +1,33 @@
 'use strict';
 
-const queryService = require('../../services/server/query'),
+const _castArray = require('lodash/castArray'),
+  _get = require('lodash/get'),
+  _set = require('lodash/set'),
+  queryService = require('../../services/server/query'),
   { formatUTC } = require('../../services/universal/dateTime'),
   bluebird = require('bluebird'),
   log = require('../../services/universal/log').setup({
     file: __filename,
     component: 'feeds'
   });
+
+/**
+ * for now we only want articles and galleries to be processed by feeds.  This
+ *   is in prep to add more content types which the feeds may not support.  The
+ *   plan will be to test each content type as support is added to each feed.
+ *
+ * @param {object} query - this parameter is mutated
+ */
+function restrictFeedsToArticlesAndGalleries(query) {
+  const pathToFilter = 'body.query.bool.filter',
+    // if the current filter is an object then we need to put it inside an array
+    //   because we're adding an additional one
+    filter = _castArray(_get(query, pathToFilter, []));
+
+  _set(query, pathToFilter, filter);
+
+  filter.push({ terms: { contentType: ['article', 'gallery'] } });
+}
 
 /**
  * Make sure you have an index, transform and meta property on the
@@ -104,6 +125,12 @@ module.exports.render = async (ref, data, locals) => {
             queryService.addMinimumShould(localQuery, 1);
           }
         });
+
+        // add nested queries back into the main query
+        if (nested) {
+          queryService.addShould(query, localQuery);
+          queryService.addMinimumShould(query, 1);
+        }
       }
     },
     /**
@@ -122,9 +149,16 @@ module.exports.render = async (ref, data, locals) => {
       // tags
       tag: { createObj: tag => ({ match: { 'tags.normalized': tag } }) },
       // subcategory (secondary article type)
-      subcategory: { createObj: secondarySectionFront => ({ match: { secondarySectionFront } }) },
+      subcategory: {
+        createObj: secondarySectionFront => ({ match: { 'secondarySectionFront.normalized': secondarySectionFront } })
+      },
       // editorial feed (grouped stations)
       editorial: { createObj: editorial => ({ match: { [`editorialFeeds.${editorial}`]: true } }) },
+      // contentType
+      type: {
+        filterConditionType: 'addMust',
+        createObj: contentType => ({ match: { contentType } })
+      },
       // corporate websites (corporateSyndication)
       corporate: {
         createObj: corporateSyndication => ({ match: { [`corporateSyndication.${corporateSyndication}`]: true } })
@@ -132,10 +166,11 @@ module.exports.render = async (ref, data, locals) => {
       // stations (stationSyndication)
       station: {
         createObj: station => [
-          { match: { stationSyndication: station } } ,
-          { match: { 'stationSyndication.normalized': station } }
+          { match: { 'stationSyndication.callsign': station } },
+          { match: { 'stationSyndication.callsign.normalized': station } }
         ],
-        multiQuery: true
+        multiQuery: true,
+        nested: 'stationSyndication'
       },
       // genres syndicated to (genreSyndication)
       genre: { createObj: genreSyndication => ({ match: { 'genreSyndication.normalized': genreSyndication } }) },
@@ -178,20 +213,27 @@ module.exports.render = async (ref, data, locals) => {
   // Loop through all the generic items and add any filter/exclude conditions that are needed
   Object.entries(queryFilters).forEach(([key, conditions]) => addFilterAndExclude(key, conditions));
 
+  restrictFeedsToArticlesAndGalleries(query);
+
   try {
     if (meta.rawQuery) {
-      const results = await queryService.searchByQueryWithRawResult(query);
+      const results = await queryService.searchByQueryWithRawResult(query, locals, { shouldDedupeContent: false });
 
       data.results = results.hits.hits; // Attach results and return data
-      return data;
     } else {
-      data.results = await queryService.searchByQuery(query); // Attach results and return data
-
-      return data;
+      // Attach results and return data
+      data.results = await queryService.searchByQuery(
+        query,
+        locals,
+        {
+          includeIdInResult: true,
+          shouldDedupeContent: false
+        }
+      );
     }
   } catch (e) {
     queryService.logCatch(e, 'feeds.model');
-    return data;
   }
 
+  return data;
 };

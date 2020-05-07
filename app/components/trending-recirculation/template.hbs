@@ -10,7 +10,7 @@
     {{/if}}
   </h2>
   <div class="trending__data">
-    {{#each items}}
+    {{#each _computed.articles}}
       <div class="trending__item">
         <a href="{{ concat canonicalUrl params}}"
            class="trending__item__link"
@@ -20,18 +20,18 @@
            data-track-headline="{{ primaryHeadline }}"
            data-track-component-title="Trending"
            data-track-lytics="{{ lytics }}">
-          {{#if sectionFront}}
-            <div class="trending__item__tag">{{ sectionFront }}</div>
-          {{/if}}
           <img
             onerror="this.onerror=null; this.src='https://images.radio.com/aiu-media/og_775x515_0.jpg'; this.srcset=this.srcset.replace(new RegExp(this.srcset.split('?')[0], 'g'), this.src);"
             src="{{ feedImgUrl }}width=300&height=169&crop=16:9,offset-y0"
-            srcset="{{ feedImgUrl }}width=300&height=169&&crop=16:9,offset-y0 300w,
-              {{ feedImgUrl }}width=320&height=180&crop=16:9,offset-y0 320w,
-              {{ feedImgUrl }}width=343&height=193&crop=16:9,offset-y0 343w,
-              {{ feedImgUrl }}width=440&height=248&crop=16:9,offset-y0 440w"
+            srcset="{{ sanitizeURI feedImgUrl }}width=300&height=169&&crop=16:9,offset-y0 300w,
+              {{ sanitizeURI feedImgUrl }}width=320&height=180&crop=16:9,offset-y0 320w,
+              {{ sanitizeURI feedImgUrl }}width=343&height=193&crop=16:9,offset-y0 343w,
+              {{ sanitizeURI feedImgUrl }}width=440&height=248&crop=16:9,offset-y0 440w"
             sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, 300px"
             class="trending__item__image" />
+          {{#if sectionFront}}
+            <div class="trending__item__tag">{{ sectionFront }}</div>
+          {{/if}}
           <div class="trending__item__label">{{ primaryHeadline }}</div>
         </a>
       </div>

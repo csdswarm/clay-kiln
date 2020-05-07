@@ -1,3 +1,4 @@
+_version: 2.0
 _description: |
   Adds `<title>`, `twitter:title`, and `og:title` tags to the head.
 
@@ -13,8 +14,35 @@ suffix:
     input: text
     help: Add text that should appear after the dynamic route parameter
 
+urlMatches:
+  _label: Add Url Matches
+  _has:
+    input: complex-list
+    props:
+      -
+        prop: urlString
+        _label: Url Match
+        _has:
+          help: Enter a url to Match
+          input: text
+      -
+        prop: routeParam
+        _label: Route Param
+        _has:
+          input: text
+          help: Define the route param whose value used for the title
+      -
+        prop: suffix
+        _label: Suffix
+        _has:
+          input: text
+          help: Add text that should appear after the dynamic route parameter
+  _placeholder:
+    text: Add Url Matches
+
 _groups:
   settings:
     fields:
       - routeParam
       - suffix
+      - urlMatches

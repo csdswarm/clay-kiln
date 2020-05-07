@@ -3,7 +3,8 @@
 const utils = require('../universal/utils'),
   log = require('../universal/log').setup({ file: __filename }),
   db = require('amphora-storage-postgres'),
-  DATA_STRUCTURES = ['alert'],
+  _get = require('lodash/get'),
+  DATA_STRUCTURES = ['alert', 'apple_news', 'station_themes', 'valid_source'],
   /**
    * Check Postgres to see if the table exists
    *
@@ -100,14 +101,16 @@ const utils = require('../universal/utils'),
    * If the table is not in DATA_STRUCTURES, the call is passed to the amphora-storage-postgres instance
    *
    * @param {string} key
+   * @param {object} [_locals] - unused, only here for api compatibility with client/db.js
+   * @param {any} [defaultValue]
    *
    * @returns {Promise}
    */
-  get = async (key, ...args) => {
+  get = async (key, _locals, defaultValue) => {
     const tableName = findSchemaAndTable(key);
 
     if (!tableName) {
-      return db.get(key, ...args);
+      return db.get(key);
     } else {
       await ensureTableExists(tableName);
       return db.raw(`
@@ -115,7 +118,9 @@ const utils = require('../universal/utils'),
         WHERE id = ?
       `, [key])
         .then(({ rows }) => {
-          if (!rows.length) return Promise.reject(`No result found in ${tableName} for ${key}`);
+          if (!rows.length) {
+            return defaultValue || Promise.reject(new Error(`No result found in ${ tableName } for ${ key }`));
+          }
 
           return rows[0].data;
         });
@@ -165,14 +170,30 @@ const utils = require('../universal/utils'),
         WHERE id = ?
       `, [value, key]);
     }
+  },
+  /**
+   * retrieves the data from the uri
+   *
+   * @param {string} uri
+   * @param {string} [key]
+   *
+   * @return {object}
+   */
+  getComponentData = async (uri, key) => {
+    const data = await db.get(uri.split('@')[0]) || {};
+
+    return key ? _get(data, key) : data;
   };
 
-module.exports.getUri = uri => db.get(uri);
-module.exports.del = del;
-module.exports.get = get;
-module.exports.post = post;
-module.exports.put = put;
-module.exports.raw = db.raw;
-module.exports.uriToUrl = utils.uriToUrl;
-module.exports.ensureTableExists = ensureTableExists;
-module.exports.DATA_STRUCTURES = DATA_STRUCTURES;
+module.exports = {
+  getUri: uri => db.get(uri),
+  del,
+  get,
+  post,
+  put,
+  raw: db.raw,
+  uriToUrl: utils.uriToUrl,
+  ensureTableExists,
+  DATA_STRUCTURES,
+  getComponentData
+};

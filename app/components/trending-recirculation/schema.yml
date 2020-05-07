@@ -1,3 +1,4 @@
+_version: 1.0
 _description: |
   A list of 6 trending stories
 
@@ -7,15 +8,11 @@ items:
     input: complex-list
     enforceMaxlength: true
     validate:
-      required:
-        field: fill
-        operator: falsy
-      min: 6
       max: 6
     props:
     -
       prop: url
-      _label: URL -- Requires 6 Entries
+      _label: URL
       _has:
         input: content-search
         validate:
@@ -39,6 +36,8 @@ _groups:
     _placeholder:
       ifEmpty: items.url and fill
       height: 100px
-      text: Trending Stories -- Requires 6 Entries
+      text: Trending Stories -- Anything less than 6 will be backfilled with the latest
     fields:
       - items
+
+_permission: update

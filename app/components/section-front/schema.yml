@@ -1,4 +1,4 @@
-_version: 1.0
+_version: 3.0
 _confirmRemoval: true
 
 title:
@@ -12,24 +12,35 @@ title:
     input: text
     validate:
       required:
-        field: titleLocked
-        operator: falsy
+        field: revealSectionFrontControls
+        operator: truthy
   _reveal:
-    field: titleLocked
-    operator: falsy
+    field: revealSectionFrontControls
+    operator: truthy
+
 
 titleLocked:
   _label: Is title locked?
   _has: checkbox
 
+stationSlug:
+  _label: Station Site Slug
+  _publish:
+    - sectionFront
+    - ogTitle
+    - pageListTitle
+    - pageTitle
+
 primary:
   _label: Is this a primary section front?
   _has: checkbox
   _reveal:
-    field: titleLocked
-    operator: falsy
+    field: revealSectionFrontControls
+    operator: truthy
 
 primarySectionFront:
+  _publish:
+    - primarySectionFront
   _reveal:
     field: primary
     operator: falsy
@@ -53,10 +64,10 @@ podcastList:
     include:
       - podcast-list
 
-moreContentFeed:
+twoColumnComponent:
   _component:
     include:
-      - more-content-feed
+      - two-column-component
 
 stationsCarousel:
   _placeholder:
@@ -91,7 +102,16 @@ googleAdRightRail:
 _groups:
   settings:
     fields:
+      - stationName
       - primary
       - primarySectionFront
       - title
       - includePodcastModule
+
+stationName:
+  _publish: stationName
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy

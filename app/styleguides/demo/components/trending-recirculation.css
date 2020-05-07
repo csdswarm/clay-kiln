@@ -72,11 +72,12 @@
 
     .trending__item__tag {
       @mixin trending-recirculation-font2;
-      height: em(26);
+      height: em(26, 14);
       position: absolute;
       background-color: $parisPurple;
-      margin: 0 em(6);
-      line-height: em(26);
+      line-height: em(26, 14);
+      padding: 0 em(6, 14);
+      top: 0;
 
       &:first-letter {
          text-transform: uppercase;
@@ -92,6 +93,7 @@
       text-decoration: none;
       display: inline-block;
       width: em(widthOnGrid(4, 3));
+      position: relative;
 
       @mixin medium-screen {
         width: 100%;

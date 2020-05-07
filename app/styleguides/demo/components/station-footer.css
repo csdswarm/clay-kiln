@@ -4,7 +4,7 @@
 
 .component--station-footer {
   width: 100%;
-  background: $boulder;
+  background: $station-primaryColor;
   position: relative;
   text-align: center;
   padding: em(40) em(20) 0 em(20);

@@ -1,21 +1,32 @@
-{{#if initialLoad}}
-  <section class="component component--more-content-feed {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}{{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
-           data-track-populate-from="{{ populateFrom }}"
-           data-track-location="{{ locationOfContentFeed }}"
-           data-uri="{{ default _ref _self }}"
-           data-track-type="more-content-feed"
-           data-lazy-loads="{{ lazyLoads }}">
-    {{#if (compare locationOfContentFeed 'homepage')}}
-        <h2 class="more-content-feed__title"><span>MORE from RADIO.COM</span></h2>
+{{#if _computed.initialLoad}}
+  <section
+    class="component component--more-content-feed
+    {{#if (compare populateFrom 'sectionFront')}}component--{{ sectionFront }}{{/if}}
+    {{#if (compare populateFrom 'tag')}}component--tag{{/if}}"
+    data-track-populate-from="{{ populateFrom }}"
+    data-track-location="{{ locationOfContentFeed }}"
+    data-uri="{{ default _ref _self }}"
+    data-track-type="more-content-feed"
+    data-lazy-loads="{{ _computed.lazyLoads }}"
+  >
+    {{#if componentTitleVisible}}
+      <h2 class="more-content-feed__title
+        {{#if sectionFront }}more-content-feed__title--{{ sectionFront }}{{/if}}
+        {{#if primarySectionFront }}more-content-feed__title--{{ primarySectionFront }}{{/if}}
+        {{#if station }}more-content-feed__title--station-front{{/if}}"
+        data-editable="header"
+      >
+        <span>{{ componentTitle }}</span>
+      </h2>
     {{/if}}
     <div class="more-content-feed__container">
-      <div class="more-content-feed__left-content">
+      <div class="more-content-feed__content">
         {{#unless dynamicTagPage}}
           <div class="more-content-feed__intro-components" data-editable="introComponents">
             {{> component-list introComponents}}
           </div>
         {{/unless}}
-        {{#unless content.length}}
+        {{#unless _computed.content.length}}
           {{#if @root.locals.edit}}
             <div class="more-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
               <div class="placeholder-label">
@@ -26,11 +37,11 @@
             </div>
           {{/if}}
         {{/unless}}
-        {{#ifAny content.length @root.locals.edit}}
+        {{#ifAny _computed.content.length @root.locals.edit}}
           <ul class="more-content-feed__links" data-editable="contentFeed">
         {{/ifAny}}
 {{/if}}
-          {{#each content as |feedItem|}}
+          {{#each _computed.content as |feedItem|}}
             <li>
               <a class="links__link links__link--{{ feedItem.sectionFront }}" href="{{ feedItem.canonicalUrl }}"
                  data-track-type="feedItem-link"
@@ -62,11 +73,11 @@
                   {{/unless}}
                   <img
                     src="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0"
-                    srcset="{{ feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
-                              {{ feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
-                              {{ feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
-                              {{ feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
-                              {{ feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
+                    srcset="{{ sanitizeURI feedItem.feedImgUrl }}?width=300&crop=16:9,offset-y0 300w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=320&crop=16:9,offset-y0 320w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=343&crop=16:9,offset-y0 343w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=380&crop=16:9,offset-y0 380w,
+                              {{ sanitizeURI feedItem.feedImgUrl }}?width=440&crop=16:9,offset-y0 440w"
                     sizes="(max-width: 360px) 320px, (max-width: 480px) 440px, (max-width: 1023px) 343px, (max-width: 1279px) 300px, 380px"
                     class="link__thumb" />
                 </div>
@@ -85,12 +96,16 @@
                 </div>
               </a>
             </li>
-            {{!-- Add sharethrough every third item in list, except last item in list --}}
-            {{#ifAll (modulo (add @index 1) 2 0) (compare ../feedItem.length "!==" (add @index 1))}}
+            {{!-- Add sharethrough every third item in list, except last item in list, if enabled --}}
+            {{#ifAll
+              ../enableSharethrough
+              (modulo (add @index 1) 2 0)
+              (compare ../feedItem.length "!==" (add @index 1))
+            }}
               {{> google-ad-manager ../sharethroughTag}}
             {{/ifAll}}
           {{/each}}
-{{#if moreContent}}
+{{#if _computed.moreContent}}
     <li class="links__link--loadmore"
         {{#if tag}}data-tag="{{ tag}}"{{/if}}
         {{#if sectionFront}}data-section="{{ sectionFront }}"{{/if}}
@@ -100,23 +115,8 @@
       </button>
     </li>
 {{/if}}
-{{#if initialLoad}}
+{{#if _computed.initialLoad}}
           </ul>
-        </div>
-        <div class="more-content-feed__right-rail more-content-feed__right-ad--desktop">
-          {{#ifAny (compare locationOfContentFeed 'topic-page') (compare locationOfContentFeed 'author-page')}}
-            {{> google-ad-manager contentCollectionLogoSponsorship}}
-          {{/ifAny}}
-          {{#if @root.locals.edit}}
-            {{#unless dynamicTagPage}}
-              <aside class="blurb" data-editable="tagInfo">{{ tagInfo }}</aside>
-            {{/unless}}
-          {{else}}
-            {{#ifAll tagInfo (compare dynamicTagPage false)}}
-              <aside class="blurb">{{ tagInfo }}</aside>
-            {{/ifAll}}
-          {{/if}}
-          {{> google-ad-manager googleAdRightRail}}
         </div>
       </div>
   </section>

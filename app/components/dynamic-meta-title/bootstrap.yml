@@ -3,3 +3,4 @@ _components:
     routeParam: ''
     suffix: ''
     localsKey: ''
+    urlMatches: []

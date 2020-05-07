@@ -1,0 +1,110 @@
+_version: 1.0
+_description: |
+  This is the site header at the top of every page. It displays the site logo, navigational links, account button, and search button.
+_confirmRemoval: true
+_permission:
+  update: navigation
+
+headerLinks:
+  _label: Links
+  _placeholder:
+    text: Links
+    height: 100
+  _has:
+    input: complex-list
+    props:
+      -
+        prop: url
+        _label: Nav Top Categories Url
+        _has:
+          input: text
+          type: url
+          validate:
+            required: false
+      -
+        prop: text
+        _label: Nav Top Categories Text
+        _has:
+          input: text
+          enforceMaxlength: true
+          validate:
+            required: true
+            max: 13
+            maxMessage: This field must be 13 or fewer characters long
+      -
+        prop: drawer
+        _label: Does this category have a drawer/tray/dropdown menu?
+        _has:
+          input: checkbox
+          validate:
+            required: true
+      -
+        prop: list
+        _label: Drawer Sub Nav
+        _has:
+          input: complex-list
+          validate:
+            required: false
+            max: 6
+          props:
+            - 
+              prop: hasHeader
+              _label: Does this column have a header?
+              _has:
+                input: checkbox
+            -
+              prop: text
+              _label: Sub Nav Column Header Text
+              _has:
+                input: text
+                enforceMaxlength: true
+                validate:
+                  max: 25
+                  maxMessage: This field must be 25 or fewer characters long
+              _reveal:
+                field: hasHeader
+                operator: ===
+                value: true
+            -
+              prop: url
+              _label: Sub Nav Column Header Url
+              _has:
+                input: text
+                type: url
+                validate:
+                  required: false
+              _reveal:
+                field: hasHeader
+                operator: ===
+                value: true
+            -
+              prop: list
+              _label: Sub Nav Column Links
+              _has:
+                input: complex-list
+                validate:
+                  required: false
+                props:
+                  -
+                    prop: url
+                    _label: Sub Nav Column Link Url
+                    _has:
+                      input: text
+                      type: url
+                      validate:
+                        required: true
+                  -
+                    prop: text
+                    _label: Sub Nav Column Link Text
+                    _has:
+                      input: text
+                      enforceMaxlength: true
+                      validate:
+                        required: true
+                        max: 25
+                        maxMessage: This field must be 25 or fewer characters long
+
+_groups:
+  settings:
+    fields:
+      - headerLinks

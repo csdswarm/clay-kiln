@@ -7,8 +7,7 @@ const rest = require('../universal/rest'),
   radioApi = 'api.radio.com/v1/',
   radioStgApi = 'api-stg.radio.com/v1/',
   qs = require('qs'),
-  ioredis = require('ioredis'),
-  redis = new ioredis(process.env.REDIS_HOST),
+  redis = require('./redis'),
   TTL = {
     NONE: 0,
     DEFAULT: 300000,
@@ -157,40 +156,36 @@ const rest = require('../universal/rest'),
    * @throws {Error}
    */
   getAndSave = async (endpoint, dbKey, validate, options) => {
-    try {
-      const ttl = options.ttl,
-        expire = options.expire || false,
-        response = await rest.get(endpoint, options.headers);
+    const ttl = options.ttl,
+      expire = options.expire || false,
+      response = await rest.get(endpoint, options.headers);
 
-      if (validate(response)) {
-        response.updated_at = new Date();
+    if (validate(response)) {
+      response.updated_at = new Date();
 
-        // added to allow cache to be bypassed
-        if (ttl > 0) {
-          // use REDIS expire
-          if (expire) {
-            redis.set(dbKey, JSON.stringify(response), 'PX', expire)
-              .catch(() => {});
-          } else {
-            redis.set(dbKey, JSON.stringify(response))
-              .catch(() => {});
-          }
+      // added to allow cache to be bypassed
+      if (ttl > 0) {
+        // use REDIS expire
+        if (expire) {
+          redis.set(dbKey, JSON.stringify(response), 'PX', expire)
+            .catch(() => {});
+        } else {
+          redis.set(dbKey, JSON.stringify(response))
+            .catch(() => {});
         }
-
-        return response;
-
-      } else {
-        // Throw an error if no data is returned in case there is stale data in redis that can be served
-        const err = new Error('Validation of data failed');
-
-        err.localError = true;
-        throw err;
       }
-    } catch (e) {
+
+      return response;
+
+    } else {
       // Throw an error if no data is returned in case there is stale data in redis that can be served
-      throw e.localError ? e : new Error('No data returned from endpoint');
+      const err = new Error('Validation of data failed');
+
+      err.localError = true;
+      throw err;
     }
   };
 
 module.exports.get = get;
 module.exports.TTL = TTL;
+module.exports.shouldUseStagingApi = shouldUseStagingApi;

@@ -13,7 +13,7 @@
   }
 
   @define-mixin latest-recirc-box $color {
-  	outline: em(1,16) solid $color;
+  	outline: em(1,16) solid theme(secondaryColor, $color);
   }
   @mixin latest-recirc-box $purple;
   &.component--music {
@@ -33,6 +33,11 @@
   }
   &.component--station {
   	@mixin latest-recirc-box $parisM;
+  }
+
+  &.component--column {
+    outline: none;
+    padding: 0;
   }
 }
 .latest-recirc {
@@ -75,22 +80,83 @@
 		li {
 			&:not(:last-of-type) {
 				margin-bottom: em(20);
+
+        .component--column & {
+          @mixin medium-small-screen {
+            margin-bottom: em(30);
+          }
+        }
 			}
 			height: em(70);
 			cursor: pointer;
+
+      .component--column & {
+        height: em(140);
+
+        @mixin medium-screen {
+          height: em(125);
+        }
+
+        @mixin medium-small-screen {
+          height: em(115);
+        }
+
+        @mixin small-screen {
+          height: em(85);
+        }
+      }
 			a {
 				height: 100%;
-				display: inline-flex;
+				display: flex;
 				text-decoration: none;
 				text-transform: capitalize;
-				align-items: center;
 				.link__thumb {
-					width: em(70);
-					height: em(70);
+					height: 100%;
+          flex: 0 0 em(70);
 					margin-right: em(15);
 					background-size: cover;
 					background-position: center;
+
+          .component--column & {
+            flex-basis: em(140);
+
+            @mixin medium-screen {
+              flex-basis: em(222);
+            }
+
+            @mixin medium-small-screen {
+              flex-basis: em(115);
+            }
+
+            @mixin small-screen {
+              flex-basis: em(85);
+            }
+          }
 				}
+        .link__content {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          flex: 1;
+        }
+        .link__label {
+          @mixin latest-recirc-font4;
+          margin-bottom: em(6, 12);
+
+          @mixin medium-screen {
+            order: 2;
+            margin-top: em(4, 12);
+          }
+        }
+        .link__date {
+          display: none;
+          color: $dustyGray;
+          margin-left: em(10);
+
+          @mixin medium-screen {
+            display: inline;
+          }
+        }
 				.link__headline {
 					@mixin latest-recirc-font2;
           max-width: em(185, 14);
@@ -100,6 +166,22 @@
           display: -webkit-box;
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
+
+          .component--column & {
+            @mixin latest-recirc-font3;
+            -webkit-line-clamp: 5;
+            max-height: em(90, 14);
+            max-width: none;
+
+            @mixin medium-screen {
+              @mixin latest-recirc-font5;
+            }
+
+            @mixin medium-small-screen {
+              -webkit-line-clamp: 3;
+              max-height: em(72, 16);
+            }
+          }
 
           /* backup using fade */
           html.no-line-clamp & {
@@ -115,9 +197,12 @@
               background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 90%);
             }
           }
-
 				}
 			}
 		}
 	}
+}
+
+.kiln-edit-mode .component--latest-recirc.component--empty {
+  display: block;
 }

@@ -21,6 +21,11 @@
     @mixin-content;
   }
 }
+@define-mixin only-large-screen {
+  @media only screen and (min-width: 1024px) and (max-width: 1279px) {
+    @mixin-content;
+  }
+}
 
 /* Medium Screen */
 @define-mixin medium-screen {
@@ -162,6 +167,13 @@ $small-screen-nav-width: em(320); /* 360- mobile */
   @mixin favorite-btn;
 }
 
+@define-mixin anchor $color {
+  background: linear-gradient(to bottom, transparent 0, transparent 80%, rgba(theme(primaryColorRGB, '$color'), .50) 80%, rgba(theme(primaryColorRGB, '$color'), .50) 100%);
+
+  &:hover {
+    background: linear-gradient(to bottom, rgba(theme(primaryColorRGB, '$color'), .50) 0, rgba(theme(primaryColorRGB, '$color'), .50) 100%);
+  }
+}
 @define-mixin x-btn-background $size: em(20), $color: $purpleRGB {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' style='isolation:isolate' viewBox='0 0 100 100' width='100pt' height='100pt'%3E%3Cdefs%3E%3CclipPath id='_x-btn'%3E%3Crect width='100' height='100'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23_x-btn)'%3E%3Cpath d=' M 50 37.807 L 12.193 0 L 0 12.193 L 37.807 50 L 0 87.807 L 12.193 100 L 50 62.193 L 87.807 100 L 100 87.807 L 62.193 50 L 100 12.193 L 87.807 0 L 50 37.807 Z ' fill='rgb($color)'/%3E%3C/g%3E%3C/svg%3E") no-repeat center;
   background-size: $size;

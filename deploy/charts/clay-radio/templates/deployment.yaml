@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "clay-radio.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "clay-radio.name" . }}
+    helm.sh/chart: {{ include "clay-radio.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: {{ .Values.deploy.strategy.maxSurge }}
+      maxUnavailable: {{ .Values.deploy.strategy.maxUnavailable }}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "clay-radio.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "clay-radio.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          env:
+            - name: DD_AGENT_HOST
+              value: datadog-apm.kube-system.svc.cluster.local
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          envFrom:
+            - configMapRef:
+                name: {{ include "clay-radio.fullname" . }}
+            - secretRef:
+                name: {{ include "clay-radio.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              httpHeaders:
+              - name: Host
+                value: {{ .Values.ingress.healthCheckDomain }}
+              path: /_components
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              httpHeaders:
+              - name: Host
+                value: {{ .Values.ingress.healthCheckDomain }}
+              path: /_components
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
+          volumeMounts:
+          - mountPath: /usr/src/app/.pm2
+            name: cache
+          - mountPath: /home/node/
+            name: clayconfig
+      volumes:
+      - name: cache
+        emptyDir: {}
+      - name: clayconfig
+        configMap:
+          name: {{ include "clay-radio.fullname" . }}-clayconfig
+          items:
+          - key: .clayconfig
+            path: .clayconfig
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

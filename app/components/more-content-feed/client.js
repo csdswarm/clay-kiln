@@ -68,7 +68,7 @@ class MoreContentFeed {
       moreContentUrl += `&sectionFront=${this.sectionFront}`;
     }
 
-    const links = await fetchDOM(moreContentUrl) ;
+    const links = await fetchDOM(moreContentUrl, { shouldDedupeContent: true }) ;
 
     // Remove the load more button as it's included in the returned result
     this.loadMore.parentNode.removeChild(this.loadMore);

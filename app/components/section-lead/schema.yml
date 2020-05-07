@@ -1,11 +1,15 @@
-_version: 5.0
+_version: 7.0
 primaryStoryLabel:
   _label: Primary Lede Label
   _has:
     input: text
     validate:
       max: 80
-    help: Label for the top lede story. Eg. 'Exclusive'
+    help: Label for the top lede story. Eg. 'Exclusive'. Overrides article label & section front of story if exists.
+  _reveal:
+    field: _computed.useContentLabel
+    operator: falsy
+
 
 contentType:
   _label: Content type
@@ -33,6 +37,14 @@ items:
           validate:
             required: true
       -
+        prop: overrideLabel
+        _label: Label Override
+        _has:
+          input: text
+          validate:
+            max: 80
+          help: Overrides section front of story if exists. If 'Primary Lede Label' field is filled, this label is ineffective.
+      -
         prop: overrideTitle
         _label: Headline Override
         _has:
@@ -59,7 +71,7 @@ items:
             required: true
 
 
-filterTags:
+excludeTags:
   _label: Exclude Tags
   _has:
     input: simple-list
@@ -69,7 +81,7 @@ filterTags:
       allowCreate: true
     help: Exclude content from all tags
 
-filterSecondarySectionFronts:
+excludeSecondarySectionFronts:
   _label: Exclude Secondary Section Fronts
   _has:
     input: select
@@ -96,8 +108,8 @@ _groups:
     - primaryStoryLabel
     - contentType
     - items
-    - filterTags
-    - filterSecondarySectionFronts
+    - excludeTags
+    - excludeSecondarySectionFronts
     _placeholder:
       ifEmpty: contentType
       height: 400px

@@ -1,0 +1,126 @@
+'use strict'
+
+const { Separator } = require('inquirer')
+
+module.exports = plop => {
+  plop.setGenerator('{{ name }}', {
+    description: '{{ description }}',
+    prompts: [
+      {
+        type: 'list',
+        name: 'valueFromList',
+        message: 'Pick from a list',
+        choices: async answers => [
+          'Can be straight text',
+          new Separator(),
+          { name: 'Some Name', value: 'some-val', short: 'name' },
+          { name: 'A disabled item', disabled: true },
+          1, 2, 3
+        ], // does not need to be a function and need not be async
+        default: answers => 'some-val', // can be async
+        pageSize: 3,
+        filter: input => input === 2 ? 'Two' : input
+      },
+      {
+        type: 'rawlist',
+        name: 'valueFromRawList',
+        message: 'Pick from a Raw List',
+        choices: ['One', 'Two', 'Three', 'Four'],
+        default: answers => 0 // for raw list it must be an index number not a value
+      },
+      {
+        type: 'expand',
+        name: 'valueFromExpand',
+        message: 'Type options to see what they mean',
+        choices: [
+          { key: 'a', name: 'Aaaaay', value: 1, short: 'A' },
+          { key: 'b', name: 'Beeeee', value: 2, short: 'B' },
+          { key: 'c', name: 'Ceeeee', value: 3, short: 'C' }
+        ], // For expand, key is required and it is a single lower case letter. This list can be returned by a function,
+        default: 1 // must be the index of the choice
+      },
+      {
+        type: 'checkbox',
+        name: 'valueFromCheckbox',
+        message: 'Check all the apply',
+        choices: answers => [
+          { name: 'Group 1:', disabled: true },
+          { name: 'First Item', value: 1, short: '1st', checked: true }, // This is one way to default values for checkboxes
+          { name: 'Second Item', value: 2, short: '2nd' },
+          { name: 'Group 2:', disabled: true },
+          { name: 'Third Item', value: 3, short: '3rd' },
+          {
+            name: 'Fourth Item',
+            value: 4,
+            short: '4th',
+            disabled: answers => answers.valueFromExpand === 1 ? 'Cannot select this if Aaaaay is the expand value' : false
+          },
+        ],
+        default: [2, 4], // this is another way to set the defaults
+        pageSize: 3,
+      },
+      {
+        type: 'confirm',
+        name: 'valueFromConfirm',
+        message: 'Please confirm',
+        default: false,
+        prefix: '>', // sets the value that precedes the message text (hint: you can use it to set a color for the text)
+        suffix: ':', // sets the text that follows the message text (I think default turns off text coloring)
+        when: answers => true || false
+      },
+      {
+        type: 'input',
+        name: 'valueFromInput',
+        message: 'Input something',
+        transformer: (input, answers, flags) => flags.isFinal ? `[${input}]` : input.toUpperCase(), // NOTE this is only for cosmetics
+        filter: input => input.toLowerCase(), // This is the one that actually changes the value,
+        validate: (input, answers) => true || false,
+        default: 'Enter some text',
+        when: answers => true || false
+      },
+      {
+        type: 'number',
+        name: 'valueFromNumber',
+        message: 'Enter a cash amount',
+        default: 0.00,
+        transformer: (input, answers, { isFinal }) => {
+          const num = Number.parseFloat(input || 0).toFixed(2)
+          return (isFinal && input < 0) ? `$(${num})` : `$${num}`
+        },
+        filter: input => +(Number.parseFloat(input || 0).toFixed(2)),
+        validate: (input, answers) => +(input) < 100 && +(input) > -100 || 'Must be between -100 and 100',
+        when: answers => true || false
+      },
+      {
+        type: 'password',
+        name: 'valueFromPassword',
+        message: 'Enter a password or some other hidden value',
+        mask: '^',
+        default: answers => 'R@nd0m $tr0n9 P@$$w0rd',
+        validate: (input, answers) => `${input}`.length > 12 && [/\W/, /[A-Z]/, /[a-z]/, /\d/].every(ex => ex.test(`${input}`)) || 'Must be at least 12 characters long and contain at least 1 upper case, 1 lower case, 1 number and 1 character that is anything else',
+        when: answers => true || false
+      },
+      {
+        type: 'editor',
+        name: 'valueFromEditor',
+        message: 'Enter some text in an editor. (Uses the editor specified in VISIBLE or EDITOR environment vars, or vi if those are not set)',
+        default: 'A default value', // Can be a function that returns a value and can be async
+        filter: input => `Transforms the value of the input:\n ${input}\n\n for the answer.`, // can be async
+        validate: (input, answers) => true || false, // false if invalid answer. Can be async,
+        when: answers => true || false, // if true this question will appear. Can be async
+      },
+    ],
+    actions: answers => [
+      {
+        type: 'add',
+        path: '\{{kebabCase valueFromInput}}/item.hbs',
+        templateFile: '{{ kebabCase name }}/template.hbs'
+      },
+      {
+        type: 'add',
+        path: '\{{kebabCase valueFromInput}}/inline.txt',
+        template: '{{ valueFromInput }} - {{{ valueFromPassword }}}'
+      }
+    ]
+  })
+}

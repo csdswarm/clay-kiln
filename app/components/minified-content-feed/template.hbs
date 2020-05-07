@@ -1,0 +1,47 @@
+<section
+    data-uri="{{ default _ref _self }}"
+    class="
+      component
+      component--minified-content-feed
+      minified-content-feed
+      {{ if (compare populateFrom 'sectionFront') (concat 'component--' sectionFront)}}
+      {{ if (compare populateFrom 'tag') 'component--tag' }}
+    "
+    data-track-populate-from="{{ populateFrom }}"
+    data-track-location="{{ locationOfContentFeed }}"
+    data-track-type="minified-content-feed"
+>
+  {{#if componentTitleVisible}}
+    <h2 class="
+      minified-content-feed__title
+      {{if sectionFront (concat 'minified-content-feed__title--' sectionFront) }}
+      {{if primarySectionFront (concat 'minified-content-feed__title--' primarySectionFront) }}
+      {{if station 'minified-content-feed__title--station-front' }}
+    "
+        data-editable="header"
+    >
+      <span>{{ componentTitle }}</span>
+    </h2>
+  {{/if}}
+  <div class="minified-content-feed__container">
+    {{#if _computed.cards.length }}
+      <ul data-editable="contentFeed">
+        {{#each _computed.cards }}
+          <li>
+            {{> card _self=true first=@first last=@last }}
+          </li>
+        {{/each}}
+      </ul>
+    {{else}}
+      {{#if @root.locals.edit}}
+        <div class="minified-content-feed__placeholder kiln-placeholder" data-editable="contentFeed">
+          <div class="placeholder-label">
+            <span class="ui-icon placeholder-icon material-icons add">add</span>
+            <span class="placeholder-text">Content Feed</span>
+            <div class="ui-ripple-ink"></div>
+          </div>
+        </div>
+      {{/if}}
+    {{/if}}
+  </div>
+</section>

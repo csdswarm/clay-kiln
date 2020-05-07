@@ -1,0 +1,12 @@
+{
+  "size": 50,
+  "query": {
+    "bool": {
+      "should": [
+        { "match": { "tags.normalized": "i'm listening" } },
+        { "match": { "tags.normalized": "i'm listening podcast" } },
+        { "match": { "tags.normalized": "im listening" } }
+      ]
+    }
+  }
+}

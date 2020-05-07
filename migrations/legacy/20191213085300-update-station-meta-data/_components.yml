@@ -1,0 +1,52 @@
+_components:
+    dynamic-meta-title:
+      instances:
+        stations-directory:
+          suffix: 'RADIO.COM: Listen to 500+ Live Radio Stations, Free'
+          urlMatches:
+            -
+              urlString: '/stations/location'
+              suffix: 'RADIO.COM: Free Online Radio Stations by City'
+            -
+              urlString: '/stations/location/:dynamicMarket'
+              routeParam: 'dynamicMarket'
+              suffix: ' Radio Stations – RADIO.COM'
+            -
+              urlString: '/stations/music'
+              suffix: 'Listen to Free Online Music Radio – RADIO.COM'
+            -
+              urlString: '/stations/music/:dynamicGenre'
+              routeParam: 'dynamicGenre'
+              suffix: ' Radio Stations – RADIO.COM'
+            -
+              urlString: '/stations/news-talk'
+              suffix: 'The Best Talk Radio Stations – RADIO.COM'
+            -
+              urlString: '/stations/sports'
+              suffix: 'The Best Sports Radio Stations – RADIO.COM'
+
+    dynamic-meta-description:
+      instances:
+        stations-directory:
+          description: "Play your favorite AM & FM station's live broadcast instantly on RADIO.COM. Works with any device. Discover the best music, sports and news talk radio stations."
+          urlMatches:
+            -
+              urlString: '/stations/location'
+              description: 'Play any RADIO.COM station from any city. Tune in to your station with our online radio player on your desktop PC, mobile phone or tablet, absolutely free.'
+            -
+              urlString: '/stations/location/:dynamicMarket'
+              routeParam: 'dynamicMarket'
+              description: "Find the best sports, music, and talk radio stations playing in ${paramValue}. Listen to what's playing in your city instantly with RADIO.COM's online player."
+            -
+              urlString: '/stations/music'
+              description: "Discover hundreds of music stations around the country and stream free online. Everything from classic hits, today’s pop, alternative rock, country & more."
+            -
+              urlString: '/stations/music/:dynamicGenre'
+              routeParam: 'dynamicGenre'
+              description: 'RADIO.COM includes the most popular stations in the country playing the best mix of ${paramValue}. Discover your new favorite station and listen anytime for free.'
+            -
+              urlString: '/stations/news-talk'
+              description: 'Hear the brightest and best personalities on RADIO.COM. Award-winning and nationally recognized talk radio including 1010Wins, CNN, KNX 1070 & WCBS 880.'
+            -
+              urlString: '/stations/sports'
+              description: 'Sports talk radio starts and ends here at RADIO.COM. Listen to the best in the business with Mike Francesca, WEEI, 94 WIP, WGR 550 & CBS Sports Radio.'

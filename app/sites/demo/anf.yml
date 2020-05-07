@@ -1,0 +1,115 @@
+---
+  version: "1.0"
+  language: "en"
+  layout:
+    columns: 12
+    width: 1024
+    margin: 70
+    gutter: 20
+  documentStyle:
+    backgroundColor: "#f6f6f6"
+  componentTextStyles:
+    default-body:
+      textAlignment: "left"
+      fontName: "Avenir-Book"
+      fontSize: 18
+      textColor: "#000"
+    titleStyle:
+      textAlignment: "left"
+      fontName: "AvenirNext-Bold"
+      fontSize: 45
+      lineHeight: 52
+      textColor: "#000"
+    introStyle:
+      textAlignment: "left"
+      fontName: "Avenir-Roman"
+      fontSize: 22
+      lineHeight: 30
+      textColor: "#000"
+    authorStyle:
+      textAlignment: "left"
+      fontName: "AvenirNext-Medium"
+      fontSize: 14
+      lineHeight: 17
+      textColor: "#000"
+    slideDescriptionStyle:
+      fontSize: 15
+      lineHeight: 20
+      fontName: "Avenir-Book"
+  componentStyles:
+    headerStyle: {}
+  textStyles:
+    default-tag-a:
+      fontName: "AvenirNext-Bold"
+      textColor: "#000"
+    # must be set separately for underline to work
+    hyperlinkStyle:
+      underline:
+        color: "#000"
+    metaStyle:
+      textColor: "#777"
+    category1Style:
+      textColor: "#FF4940"
+    category2Style:
+      textColor: "#0099FF"
+    category3Style:
+      textColor: "#0099FF"
+    category4Style:
+      textColor: "#00CCB7"
+    boldStyle:
+      fontName: "AvenirNext-Bold"
+    publishTimeStyle:
+      fontSize: 12
+      textColor: "#777"
+    footerCTAStyle:
+      fontName: "Avenir-Black"
+      textColor: "#1F055E"
+      fontSize: 14
+      lineHeight: 14
+  componentLayouts:
+    headerLayout:
+      columnStart: 0
+      ignoreDocumentMargin: true
+    headerImageLayout:
+      columnStart: 0
+      ignoreDocumentMargin: true
+      minimumWidth: "100vw"
+      minimumHeight: "56vw"
+      margin:
+        top: 15
+        bottom: 8
+    imageLayout:
+      columnStart: 0
+      margin:
+        top: 30
+    captionLayout:
+      margin:
+        top: 10
+    titleLayout:
+      columnStart: 0
+      margin:
+        top: 30
+        bottom: 10
+    introLayout:
+      columnStart: 0
+      margin:
+        top: 10
+        bottom: 10
+    authorLayout:
+      columnStart: 0
+      margin:
+        top: 10
+    bodyLayout:
+      columnStart: 0
+      margin:
+        top: 50
+        bottom: 15
+    bodyItemLayout:
+      margin:
+        bottom: 30
+    slideGalleryItemLayout:
+      margin:
+        bottom: 20
+    slideDescriptionLayout:
+      margin:
+        bottom: 10

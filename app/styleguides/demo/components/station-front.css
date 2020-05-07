@@ -1,0 +1,24 @@
+/* stylelint-disable */
+@import "_global/colors";
+@import "_global/fonts";
+@import "_global/mixins";
+
+.component--station-front {
+  margin-top: em(30);
+  .station-front__settings {
+    padding: em(20);
+    outline: 1px solid $boulder;
+    margin-bottom: em(30);
+    h1 {
+      @mixin font ProximaNova-Bold, 18px, $black, -0.36px, 30px;
+    }
+    span {
+      display: block;
+      @mixin font ProximaNova-Regular, 12px, $black, -0.3px, 16px;
+      .warn {
+        display: inline-block;
+        @mixin font ProximaNova-RegularIt, 11px, red, -0.3px, 16px;
+      }
+    }
+  }
+}

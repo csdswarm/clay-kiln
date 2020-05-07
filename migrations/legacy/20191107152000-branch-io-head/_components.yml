@@ -1,0 +1,5 @@
+_components:
+  branch-io-head:
+    instances:
+      default:
+        allowed: true

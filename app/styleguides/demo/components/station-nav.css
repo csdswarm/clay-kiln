@@ -2,6 +2,50 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin station-nav-font1 {
+  @mixin font CircularStd-Black, 15px, $station-primaryFontColor, .23px, 18px;
+}
+
+@define-mixin station-nav-font2 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, .23px, 17px;
+}
+
+@define-mixin station-nav-font3 {
+  @mixin font CircularStd-Black, 15px, $station-primaryFontColor, -.4px, 28px;
+}
+
+@define-mixin station-nav-font4 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, -.23px, 28px;
+}
+
+@define-mixin station-nav-font5 {
+  @mixin font CircularStd-Black, 16px, $station-primaryFontColor, .6px, 19px;
+}
+
+@define-mixin station-listen-nav-font1 {
+  @mixin font CircularStd-Black, 15px, $station-secondaryFontColor, -.24px, 18px;
+}
+
+@define-mixin station-listen-nav-font1-1 {
+  @mixin font CircularStd-BlackItalic, 15px, $station-secondaryFontColor, .24px, 18px;
+}
+
+@define-mixin station-listen-nav-font2 {
+  @mixin font ProximaNova-Regular, 12px, $station-secondaryFontColor, -.23px, 14px;
+}
+
+@define-mixin station-listen-nav-font3 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, -.23px, 28px;
+}
+
+@define-mixin station-listen-nav-font4 {
+  @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.25px, 28px;
+}
+
+@define-mixin station-listen-nav-font5 {
+  @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.24px, 18px;
+}
+
 $station-logo-width-height: em(100);
 $station-logo-width-height-med-screen: em(80);
 $logo-margin-right: em(40);
@@ -11,7 +55,7 @@ $caret-margin-right: em(25);
 @define-mixin triangle {
   width: 0;
   height: 0;
-  border-bottom: em(12) solid $dustyGray;
+  border-bottom: em(12) solid $station-tertiaryColor;
   border-left: em(9) solid transparent;
   border-right: em(9) solid transparent;
   margin-top: em(-12);
@@ -49,12 +93,12 @@ $caret-margin-right: em(25);
     align-items: center;
     position: fixed;
     width: 100%;
-    z-index: 4;
+    z-index: 100;
     @mixin medium-screen {
       position: relative;
     }
     .station-nav__menu {
-      background: $boulder;
+      background: $station-primaryColor;
       display: flex;
       align-items: flex-end;
       width: 100%;
@@ -155,7 +199,7 @@ $caret-margin-right: em(25);
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: $tundora;
+          background-color: $station-tertiaryColor;
           border: 0;
           height: em(50);
           width: em(110);
@@ -179,7 +223,7 @@ $caret-margin-right: em(25);
       }
 
       .menu__listen-toggle {
-        background-color: $tundora;
+        background-color: $station-tertiaryColor;
         width: em(30);
         height: em(50);
         display: flex;
@@ -208,6 +252,11 @@ $caret-margin-right: em(25);
           svg {
             width: 100%;
             height: auto;
+
+            .color {
+              fill: $station-primaryFontColor;
+              stroke: $station-primaryFontColor;
+            }
           }
         }
         .menu__triangle {
@@ -222,7 +271,7 @@ $caret-margin-right: em(25);
 
     .station_nav__drawers {
       display: none;
-      background-color: $dustyGray;
+      background-color: $station-secondaryColor;
       width: 100%;
       flex-direction: column;
       align-items: center;
