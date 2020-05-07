@@ -4,8 +4,16 @@
 
 .component--podcast-category-strip {
   &.podcast-category-strip {
-    max-width: em(widthOnGrid(14, 13));
-    margin: 0 auto em(30) auto;
+    max-width: em(widthOnGrid(12, 11));
+    margin: 0 auto;
+
+    &.show-border-bottom {
+      border-bottom: 1px solid $mercury;
+    }
+
+    &:last-child {
+      margin-bottom: em(20);
+    }
 
     .podcast-category-strip__header {
       display: flex;
@@ -35,18 +43,18 @@
       flex-direction: row;
       flex-wrap: wrap;
       margin: 0;
-      margin-bottom: em(40);
+      margin-bottom: em(20);
     }
 
     .podcast-category-strip__item {
       flex: 1 0 13%;
+      margin-bottom: em(20);
 
       &:not(:last-child) {
-        margin-right: em(16);
+        margin-right: em(14);
 
         @mixin medium-small-screen {
           margin-right: 0;
-          margin-bottom: em(20em);
         }
       }
 
