@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require('amphora-storage-postgres'),
-  { wrapInTryCatch } = require('../middleware-utils');
+  { preventFastlyCache, wrapInTryCatch } = require('../middleware-utils');
 
 /**
  * Adds an endpoint which returns data needed by the importer during station
@@ -12,6 +12,8 @@ const db = require('amphora-storage-postgres'),
  */
 module.exports = router => {
   router.get('/rdc/content-with-syndicated-url', wrapInTryCatch(async (req, res) => {
+    preventFastlyCache(res);
+
     const result = await db.raw(`
       select
         u.url as content_url,
