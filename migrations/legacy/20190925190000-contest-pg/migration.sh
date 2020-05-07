@@ -16,16 +16,7 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-# cat ./_layouts.yml | clay import -k demo -y $1
-instance="national-contest"
-layout="_layouts/two-column-layout/instances/$instance"
-printf "\n\Creating $layout...\n\n"
-node ./create-layout.js "$1" "$instance";
-curl -X PUT $http://$1/$layout -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./$instance-layout.json -o /dev/null -s
-curl -X PUT $http://$1/$layout@published -H 'Authorization: token accesskey' -o /dev/null -s
-rm ./$instance-layout.json
-
-instance="station-contest"
+instance="contest"
 layout="_layouts/two-column-layout/instances/$instance"
 printf "\n\Creating $layout...\n\n"
 node ./create-layout.js "$1" "$instance";
@@ -36,12 +27,12 @@ rm ./$instance-layout.json
 printf "\n\nCreating Tags 'contests-new' instance and Contest 'new' instance...\n\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
 
-printf "\n\nCreating 'station-contest' and 'national-contest' pages...\n\n\n"
+printf "\n\nCreating 'contest' page...\n\n\n"
 cat ./_pages.yml | clay import -k demo -y $1
 
 # _lists/new-pages
 listType="new-pages"
-printf "\nUpdating _lists instance $listType to add 'station-contest' and 'national-contest' pages...\n\n"
+printf "\nUpdating _lists instance $listType to add 'contest' page...\n\n"
 curl -X GET -H "Accept: application/json" $http://$1/_lists/$listType > ./lists-$listType.json
 node ./new-pages-update.js "$1" "$listType";
 cat ./lists-$listType.yml | clay import -k demo -y $1
@@ -52,7 +43,7 @@ printf "\n\n\n\n"
 # Updating existing field mappings
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#_updating_existing_field_mappings
 
-# find out which index is currently being used 
+# find out which index is currently being used
 printf "\nmaking curl GET to $es:9200/published-content/_alias\n";
 curl -X GET "$es:9200/published-content/_alias" > ./aliases.json;
 currentIndex=$(node alias "$1");

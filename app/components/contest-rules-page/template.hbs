@@ -1,10 +1,21 @@
-<section role="main">
-  <div class="contest-rules-page">
-    {{#each contestRules}}
-      <div class="contest-rules-page__rule">
-        <div>{{title}}</div>
-        <div>{{date}}</div>
-      </div>
-    {{/each}}
-  </div>
-</section>
+{{#*inline "contestRulesList"}}
+  {{#each _computed.contestRules as |ruleData| }}
+    {{> contest-rules ruleData }}
+  {{/each}}
+{{/inline}}
+
+<article role="main"
+  data-uri="{{ default _ref _self }}"
+  class="contest-rules-page component--static-page"
+  itemscope
+  itemtype="http://schema.org/Article">
+
+  <header class="contest-rules-page__header component__header">
+    <h1 itemprop="headline">{{ _computed.pageTitle }}</h1>
+  </header>
+
+  <section class="contest-rules-page__body">
+    {{> contestRulesList }}
+  </section>
+
+</article>

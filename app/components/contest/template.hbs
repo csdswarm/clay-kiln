@@ -1,13 +1,13 @@
-<article role="main" 
-  data-uri="{{ default _ref _self }}" 
-  class="component component--contest{{ if @root.locals.edit ' editing' }}" 
-  itemscope itemtype="http://schema.org/Article" 
-  data-headline="{{ striptags headline }}" 
-  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}" 
+<article role="main"
+  data-uri="{{ default _ref _self }}"
+  class="component component--contest{{ if @root.locals.edit ' editing' }}"
+  itemscope itemtype="http://schema.org/Article"
+  data-headline="{{ striptags headline }}"
+  data-publish-date="{{ formatLocalDate date 'YYYY-MM-DD' }}"
   data-tags="{{ join (map tags.items (getProp "text")) }}"
   data-station-slug="{{ stationSlug }}"
-  data-editable="settings"
 >
+  {{> breadcrumbs this }}
   <header class="contest__header">
     {{! article microdata }}
     <meta itemprop="url" content="{{ @root.locals.url }}" />
@@ -28,10 +28,6 @@
     </div>
     <meta itemprop="dateModified" content="{{ dateModified }}" />
 
-    {{! lede }}
-    <div class="lead" data-editable="lead">
-      {{> component-list lead }}
-    </div>
     {{! title }}
     <h1 class="header__primary" data-editable="headline" itemprop="headline">
       {{{ headline }}}
@@ -42,6 +38,10 @@
         {{{ subHeadline }}}
       </span>
     {{/ifAny}}
+    {{! lede }}
+    <div class="lead" data-editable="lead">
+      {{> component-list lead }}
+    </div>
   </header>
 
   <section class="contest__body">
@@ -58,15 +58,15 @@
       {{!-- Second Street Embed --}}
       {{> html-embed embed }}
 
-      <div class="body__contest-dates" data-editable="dates">
+      <div class="body__contest-dates">
         <h3>Contest Dates:</h3>
-        <span>
+        <span data-editable="dates">
           {{ formatDateTimeRange startDateTime endDateTime (concat "MMMM D, YYYY [at] h:mma [" stationTimezone "]") ' through ' }}
         </span>
       </div>
 
       {{!-- Contest Rules --}}
-      {{> contest-rules rules }}
+      {{> contest-rules this }}
 
       {{! Tags }}
       {{> tags tags}}

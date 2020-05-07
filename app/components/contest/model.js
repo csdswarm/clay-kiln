@@ -1,8 +1,10 @@
 'use strict';
 
 const createContent = require('../../services/universal/create-content'),
+  { unityComponent } = require('../../services/universal/amphora'),
   dateFormat = require('date-fns/format'),
   dateParse = require('date-fns/parse'),
+  { autoLink, addCrumb } = require('../breadcrumbs'),
   /**
    * Format contest dates to include start date and time and end date and time
    *
@@ -17,11 +19,16 @@ const createContent = require('../../services/universal/create-content'),
     }
   };
 
-module.exports.render = function (ref, data, locals) {
-  formatContestDate(data);
-  return createContent.render(ref, data, locals);
-};
+module.exports = unityComponent({
+  render: async (uri, data, locals) => {
+    await autoLink(data, ['stationSlug'], locals);
+    const url = `//${ locals.site.host }${ data.stationSlug ? '/' + data.stationSlug : ''}/contests`;
 
-module.exports.save = function (uri, data, locals) {
-  return createContent.save(uri, data, locals);
-};
+    addCrumb(data, url, 'contests');
+    return createContent.render(uri, data, locals);
+  },
+  save: (uri, data, locals) => {
+    formatContestDate(data);
+    return createContent.save(uri, data, locals);
+  }
+});

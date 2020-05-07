@@ -39,9 +39,14 @@ function formatDateRange(dateFrom = '', dateTo = '', format = 'MMMM D, YYYY') {
 function formatDateTimeRange(dateFrom, dateTo,
   format = 'MMMM D, YYYY [at] h:mma',
   separator = ' through ') {
-  return `${
-    moment(dateFrom).format(format)
-  }${ separator }${ moment(dateTo).format(format) }`;
+
+  if (dateFrom && dateTo) {
+    return `${
+      moment(dateFrom).format(format)
+    }${ separator }${ moment(dateTo).format(format) }`;
+  } else {
+    return '';
+  }
 }
 
 function secondsToISO(seconds) {

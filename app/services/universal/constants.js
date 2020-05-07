@@ -56,6 +56,7 @@ const _get = require('lodash/get'),
   contentTypes = new Set([
     'article',
     'author-page',
+    'contest',
     'gallery',
     'homepage',
     'section-front',

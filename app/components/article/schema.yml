@@ -254,7 +254,6 @@ content:
       - inline-related
       - omny
       - verizon-media
-      - contest-rules
 feeds:
   _label: Include in These Feeds
   _has:

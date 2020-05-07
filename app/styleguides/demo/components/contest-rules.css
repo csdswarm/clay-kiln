@@ -4,7 +4,7 @@
 
 .contest-rules {
     transition: 125ms ease;
-    &__rules-body-text {
+    &__rules-body-with-title {
         p:nth-child(1):before {
             content: "Contest Rules: ";
             @mixin rules-component-font-1;
@@ -15,6 +15,28 @@
         a {
             text-decoration: none;
         }
+    }
+    &--presentation-view {
+        display: flex;
+        margin-bottom: 2rem;
+
+        .contest-rules__contest-headline {
+            margin-bottom: 1rem;
+        }
+    }
+
+    &__image-container {
+        flex-shrink: 0;
+        width: 240px;
+        height: 160px;
+    }
+
+    &__image {
+        width: 100%;
+    }
+
+    &__description-container {
+        margin-left: 1rem;
     }
 }
 

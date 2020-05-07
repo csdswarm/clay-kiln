@@ -24,7 +24,6 @@ lead:
 headline:
   _label: Headline
   _subscribe: articleHeadline
-  _publish: contestHeadline
   _placeholder:
     height: 40px
     text: Headline
@@ -49,9 +48,8 @@ subHeadline:
     buttons:
       - italic
       - strike
-    validate:
-      required: false
     help: Appears under contest title
+  _publish: subHeadline
 
 primaryHeadline:
   _label: Facebook Headline
@@ -155,7 +153,6 @@ startTime:
 
 startDateTime:
   _label: Contest Start Date and Time
-  _publish: contestStartDate
 
 endDate:
   _label: Contest End Date
@@ -175,11 +172,9 @@ endTime:
 
 endDateTime:
   _label: Contest End Datetime
-  _publish: contestEndDate
 
 stationTimezone:
-  _label: Station or National Timezone
-  _publish: timezone
+  _label: Station Timezone
 
 stationSlug:
   _label: Station Slug
@@ -204,11 +199,6 @@ stationCallsign:
   _reveal:
     field: stationCallsign
     operator: truthy
-
-rules:
-  _component:
-    include:
-      - contest-rules
 
 tags:
   _component:
@@ -235,7 +225,6 @@ feedImgUrl:
 
 slug:
   _label: Slug
-  _publish: contestSlug
   _has:
     input: text
     validate:
@@ -251,14 +240,6 @@ slug:
       tooltip: Generate from Short Headline
 
 _groups:
-  settings:
-    fields:
-      - startDateTime
-      - endDateTime
-      - stationTimezone
-      - stationSlug
-      - stationName
-      - stationCallsign
   circHeadlines:
     fields:
       - primaryHeadline
@@ -278,6 +259,10 @@ _groups:
       - startTime
       - endDate
       - endTime
+    _placeholder:
+      text: Contest Date Range
+      height: 30px
+      ifEmpty: startDate or startTime or endDate or endTime
 
 
 # Non user editable. Set by model.js. Included in schema to use _publish functionality
@@ -313,3 +298,18 @@ plaintextShortHeadline:
   _publish: twitterTitle
   _has:
     help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
+
+rulesBodyText:
+  _label: Contest Rules
+  _placeholder:
+    height: 200px
+    text: New Contest Rules Body Text
+    required: true
+  _has:
+    input: inline
+    type: multi-line
+    buttons:
+      - bold
+      - italic
+      - strike
+      - link

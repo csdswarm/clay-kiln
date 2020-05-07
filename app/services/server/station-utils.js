@@ -31,11 +31,39 @@ const _get = require('lodash/get'),
     _state.allStations = getEmptyAllStations();
   },
   /**
+   * Get timezone from market api
+   *
+   * @param {Array} markets
+   * @param {Number} marketID
+   * @returns {String}
+   */
+  getTimezoneFromMarketID = (markets, marketID) => {
+    const market = markets.find(market => {
+      return market.id === marketID;
+    });
+
+    switch (_get(market, 'attributes.timezone', 'US/Eastern')) {
+      case 'US/Pacific':
+        return 'PT';
+      case 'US/Mountain':
+      case 'MT':
+        return 'MT';
+      case 'US/Central':
+        return 'CT';
+      case 'US/Eastern':
+      default:
+        return 'ET';
+    }
+  },
+  /**
    * ensures _state.allStations is up to date
    * @param {object} locals
    */
   updateAllStations = async locals => {
-    const stationsResp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
+    const [ stationsResp, marketsResp ] = await Promise.all([
+        radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
+        radioApi.get('markets', { page: { size: 100 } }, null, {}, locals)
+      ]),
       apiEnvironment = getApiEnvironment(locals);
 
     if (
@@ -54,6 +82,13 @@ const _get = require('lodash/get'),
     allStations.asArray[apiEnvironment] = stationsResp.data.map(station => station.attributes);
 
     allStations.asArray[apiEnvironment].forEach(station => {
+      station.timezone = marketsResp.data ?
+        getTimezoneFromMarketID(
+          marketsResp.data,
+          station.market_id || station.market.id
+        )
+        : 'ET';
+
       allStations.byId[apiEnvironment][station.id] = station;
       allStations.bySlug[apiEnvironment][station.site_slug] = station;
       allStations.byCallsign[apiEnvironment][station.callsign] = station;

@@ -11,6 +11,7 @@ contentType:
     options:
       - article
       - gallery
+      - contest
 
 componentTitle:
   _label: Component's Title

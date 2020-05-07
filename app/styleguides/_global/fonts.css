@@ -688,7 +688,6 @@ em, i {
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Contest Component Styleguide ||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<*/
-
 @define-mixin contest-font1 {
   @mixin font CircularStd-Black, 45px, $black, -0.74px, 54px;
 }
@@ -744,6 +743,13 @@ em, i {
   @mixin font CircularStd-Book, 14px, $black, -.27px, 17px;
 }
 
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+/* ||||||| Permissions Fonts Styleguide ||||||| */
+/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
+@define-mixin permissions-font1 {
+  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
+}
+
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||| Latest Top Recirculation Slider Fonts Styleguide ||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -774,7 +780,6 @@ em, i {
   @mixin font CircularStd-Black, 20px, theme(primaryColor, $parisM), -.32px, 24px;
 }
 
-
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
 /* ||||||||||||| Card Fonts Styleguide |||||||||||| */
 /*>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
@@ -783,11 +788,4 @@ em, i {
 }
 @define-mixin card-font2 {
   @mixin font CircularStd-Medium, 20px, $black, -.33px, 24px;
-}
-
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-/* ||||||| Permissions Fonts Styleguide ||||||| */
-/*>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<*/
-@define-mixin permissions-font1 {
-  @mixin font CircularStd-Black, 35px, $crimson, -.55px, 44px;
 }

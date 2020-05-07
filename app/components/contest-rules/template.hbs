@@ -1,15 +1,69 @@
-<div class="component component--contest-rules contest-rules{{ if @root.locals.edit ' editing' }}" data-uri="{{ default _ref self }}">
-    {{#if showHeader}}
-        <div class="contest-rules__list-view-container">
-            <h2 class="contest-rules__contest-headline">
-                <a href="/contests/{{ contestSlug }}">{{ contestHeadline }}</a>
-            </h2>
-            <div class="contest-rules__date-range">
-                <p class="paragraph">Contest Date Range: {{ formatDateTimeRange contestStartDate contestEndDate (concat "MMMM D, YYYY [at] h:mma [" stationTimeZone "]") ' through ' }}</p>
-            </div>
-        </div>    
+{{#*inline "contestRulesDate"}}
+  {{ formatDateTimeRange
+      startDateTime
+      endDateTime
+      (concat "MMMM D, YYYY [at] h:mma [" stationTimeZone "]")
+      ' through ' }}
+{{/inline}}
+
+{{#*inline "contestLink"}}
+  <a href="{{ contestLink }}">{{ text }}</a>
+{{/inline}}
+
+{{#*inline "rulesBody"}}
+  <div
+    class="
+    {{#if includeTitle}}
+      contest-rules__rules-body-with-title
     {{/if}}
-    <div class="contest-rules__rules-body-text paragraph" data-editable="rulesBodyText">
-        {{{ rulesBodyText }}}
+      paragraph
+    "
+    data-editable="rulesBodyText"
+  >
+    {{{ rulesBodyText }}}
+  </div>
+{{/inline}}
+
+{{#*inline "defaultStyle"}}
+  {{#if showHeader}}
+    <div class="contest-rules--default-view">
+      <h2 class="contest-rules__contest-headline">
+        {{> contestLink text=headline }}
+      </h2>
+      <div class="contest-rules__date-range">
+        <p class="paragraph">
+          Contest Date Range: {{> contestRulesDate }}
+        </p>
+      </div>
     </div>
+  {{/if}}
+  {{> rulesBody includeTitle=true }}
+{{/inline}}
+
+{{#*inline "presentationStyle"}}
+  <div class="contest-rules--presentation-view">
+    <div class="contest-rules__image-container">
+      <img
+        class="contest-rules__image"
+        src="{{ feedImgUrl }}"
+        alt="contest image"
+      />
+    </div>
+    <div class="contest-rules__description-container">
+      <h2 class="contest-rules__contest-headline">
+        {{> contestLink text=headline }}
+      </h2>
+      {{!-- paragraph for marketing --}}
+      <p class="paragraph">{{ seoHeadline }}</p>
+      {{> contestLink text="read more" }}
+    </div>
+  </div>
+{{/inline}}
+
+<div class="component--contest-rules">
+  {{#if showPresentation}}
+    {{> presentationStyle}}
+  {{else}}
+    {{> defaultStyle}}
+  {{/if}}
 </div>

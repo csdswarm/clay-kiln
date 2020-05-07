@@ -11,6 +11,7 @@ const
   truncate = require('./truncate'),
   {
     formatDateRange,
+    formatDateTimeRange,
     isPublished24HrsAgo,
     secondsToISO,
     timeAgoTimestamp
@@ -38,6 +39,7 @@ module.exports = {
   dynamicImage,
   ellipsisSubstring,
   formatDateRange,
+  formatDateTimeRange,
   imgSize,
   imgSource,
   isPublished24HrsAgo,

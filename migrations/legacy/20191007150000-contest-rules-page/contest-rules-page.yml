@@ -1,6 +1,0 @@
-_components:
-  contest-rules-page:
-    instances:
-      new:
-        headline: ''
-        contestRules: []

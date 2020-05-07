@@ -37,7 +37,6 @@ module.exports.routes = [
   { path: '/small-business-pulse/:slug' },
   { path: '/small-business-pulse/:year/:month/:name' },
   { path: '/small-business-pulse/:year/:month/:day/:name' },
-  { path: '/contests/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
@@ -59,8 +58,13 @@ module.exports.routes = [
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
+
   { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
   { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/contests/:slug' },
+
   // Full dynamic paths
   { path: '/:sectionFront' },
   { path: '/:sectionFront/:secondarySectionFront' },

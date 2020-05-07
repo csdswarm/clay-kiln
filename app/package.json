@@ -113,7 +113,7 @@
     "@babel/plugin-transform-async-to-generator": "^7.1.0",
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.2.3",
-    "acorn": "^6.0.0",
+    "acorn": "6.1.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",

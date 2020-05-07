@@ -10,6 +10,7 @@ const _get = require('lodash/get'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
   mediaplay = require('./media-play'),
+  { PAGE_TYPES } = require('./../universal/constants'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
   { urlToElasticSearch } = require('../../services/universal/utils'),
@@ -571,13 +572,21 @@ function assignStationInfo(uri, data, locals) {
     Object.assign(data, {
       stationSlug: station.site_slug,
       stationName: station.name,
-      stationCallsign: station.callsign
+      stationCallsign: station.callsign,
+      stationTimezone: station.timezone
     });
 
     if (articleOrGallery.has(componentName)) {
       Object.assign(data, {
         stationLogoUrl: station.square_logo_small,
         stationURL: station.website
+      });
+    }
+  } else {
+    if (data.contentType === PAGE_TYPES.CONTEST) {
+      Object.assign(data, {
+        stationCallsign: _get(data, 'stationCallsign', 'NATL-RC'),
+        stationTimezone: _get(data, 'stationTimezone', 'ET')
       });
     }
   }

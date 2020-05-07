@@ -87,7 +87,7 @@
           @mixin contest-font3;
           margin-bottom: em(10, 16);
           text-transform: uppercase;
-          color: $purple;
+          color: theme(primaryColor, $purple);
         }
         @mixin contest-font4;
         margin-bottom: em(30, 22);

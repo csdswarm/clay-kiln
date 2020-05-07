@@ -9,13 +9,10 @@ if (!host || !instance) {
 
 layoutJSON.top = [
   { _ref: `${ host }/_components/top-nav/instances/default` },
+  { _ref: `${ host }/_components/theme/instances/default` },
+  { _ref: `${ host }/_components/station-nav/instances/default` },
   { _ref: `${ host }/_components/google-ad-manager/instances/globalLogoSponsorship` }
 ];
-if (instance === 'station-contest') {
-  layoutJSON.top.splice(1, 0,
-    { _ref: `${ host }/_components/station-nav/instances/default` }
-  );
-}
 layoutJSON.head = 'head';
 layoutJSON.main = 'main';
 layoutJSON.bottom = [
@@ -23,14 +20,10 @@ layoutJSON.bottom = [
   { _ref: `${ host }/_components/google-ad-manager/instances/billboardBottom` },
   { _ref: `${ host }/_components/google-ad-manager/instances/mobileAdhesion` },
   { _ref: `${ host }/_components/google-ad-manager/instances/mobileInterstitial` },
+  { _ref: `${ host }/_components/station-footer/instances/default` },
   { _ref: `${ host }/_components/footer/instances/default` },
   { _ref: `${ host }/_components/nielsen/instances/default` }
 ];
-if (instance === 'station-contest') {
-  layoutJSON.bottom.splice(4, 0,
-    { _ref: `${ host }/_components/station-footer/instances/default` }
-  );
-}
 layoutJSON.static = [
   { _ref: `${ host }/_components/web-player/instances/default` },
   { _ref: `${ host }/_components/chartbeat/instances/default` }

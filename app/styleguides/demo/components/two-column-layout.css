@@ -102,6 +102,13 @@
     }
   }
 }
+.layout--two-column[data-main-component="contest"] {
+  .layout__content {
+    .content__sidebar {
+      visibility: visible;
+    }
+  }
+}
 
 @mixin default-screen {
   .layout--two-column {

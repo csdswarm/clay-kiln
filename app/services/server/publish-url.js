@@ -88,6 +88,22 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
 }
 
 /**
+ * Return the url for an author page
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
+        return urlPatterns.author(urlOptions);
+      }
+    });
+}
+
+/**
  * Return the url for a contest pg based on its slug, within the contests subdir
  * @param {object} pageData
  * @param {object} locals
@@ -98,21 +114,9 @@ function getContestSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
       if (urlOptions.pageType === PAGE_TYPES.CONTEST) {
-        return pubUtils.contestSlugPattern(urlOptions);
+        return urlPatterns.contest(urlOptions);
       }
     });
-}
-
-/**
- * Return the url for an author page
- * @param {object} pageData
- * @param {object} locals
- * @param {object} mainComponentRefs
- * @returns {Promise}
- */
-function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
-  return getUrlOptions(pageData, locals, mainComponentRefs)
-    .then(urlPatterns.author);
 }
 
 /**

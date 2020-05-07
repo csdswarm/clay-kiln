@@ -54,6 +54,16 @@ const exists = require('lodash/identity'),
       opts.stationSlug
     ].filter(exists)
       .join('/');
+  },
+  contest = opts => {
+    // e.g. http://radio.com/contests/mix-105-1-gatorland-tickets
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      'contests',
+      opts.slug
+    ].filter(exists)
+      .join('/');
   };
 
 module.exports = {
@@ -63,5 +73,6 @@ module.exports = {
   date,
   gallery,
   sectionFront,
-  stationFront
+  stationFront,
+  contest
 };
