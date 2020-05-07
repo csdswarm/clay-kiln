@@ -10,8 +10,8 @@ const _ = require('lodash'),
   bluebird = require('bluebird'),
   rest = require('../../services/universal/rest'),
   slugifyService = require('../../services/universal/slugify'),
-  urlPatterns = require('../universal/url-patterns'),
-  { PAGE_TYPES } = require('../universal/constants'),
+  { DEFAULT_STATION, PAGE_TYPES } = require('../universal/constants'),
+  rdcSlug = DEFAULT_STATION.site_slug,
   /**
    * returns a url to the server for a component
    *
@@ -169,18 +169,27 @@ function getUrlPrefix(site) {
  */
 function getUrlOptions(component, locals, pageType) {
   const urlOptions = {},
-    date = moment(locals.date);
+    date = moment(locals.date),
+    isStationFront = pageType === PAGE_TYPES.STATIONFRONT;
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = slugifyService(component.sectionFront || component.title) || null;
+  urlOptions.sectionFront = isStationFront ?
+    component.stationSlug || component.title :
+    slugifyService(component.sectionFront || component.title) || null;
   urlOptions.secondarySectionFront = slugifyService(component.secondarySectionFront) || null;
-  urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);
+  urlOptions.primarySectionFront = component.primary && component.primarySectionFront
+    ? null
+    : slugifyService(component.primarySectionFront);
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline)) || null;
+  urlOptions.slug = isStationFront ?
+    component.stationSlug :
+    component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline))
+    || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
+  urlOptions.stationSlug = component.stationSlug || rdcSlug;
 
   if ([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY].includes(urlOptions.pageType)) {
     if (!(locals.site && locals.date && urlOptions.slug)) {
@@ -188,9 +197,14 @@ function getUrlOptions(component, locals, pageType) {
         locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
     }
   } else if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
-    if (!(locals.site && urlOptions.sectionFront)) {
+    if (!(locals.site && (urlOptions.stationSlug || urlOptions.sectionFront))) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
+    }
+  } else if (isStationFront) {
+    if (!(locals.site && urlOptions.stationSlug)) {
+      throw new Error('Client: Cannot generate a canonical url at prefix: ' +
+        locals.site && locals.site.prefix + ' title: ' + urlOptions.stationSlug);
     }
   } else if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
     urlOptions.contentType = 'authors';
@@ -201,23 +215,13 @@ function getUrlOptions(component, locals, pageType) {
   return urlOptions;
 }
 
-module.exports.getComponentReference = getComponentReference;
-module.exports.getMainComponentFromRef = getMainComponentFromRef;
-module.exports.getUrlOptions = getUrlOptions;
-module.exports.getUrlPrefix = getUrlPrefix;
-module.exports.getPublishDate = getPublishDate;
-module.exports.putComponentInstance = putComponentInstance;
-module.exports.getComponentInstance = getComponentInstance;
-
-// URL patterns below need to be handled by the site's index.js
-module.exports.dateUrlPattern = urlPatterns.dateUrlPattern;
-module.exports.articleSlugPattern = urlPatterns.articleSlugPattern;
-module.exports.articleSecondarySectionFrontSlugPattern = urlPatterns.articleSecondarySectionFrontSlugPattern;
-module.exports.authorPageSlugPattern = o => `${o.prefix}/${o.contentType}/${o.authorSlug}`;
-module.exports.gallerySlugPattern = urlPatterns.gallerySlugPattern;
-module.exports.gallerySecondarySectionFrontSlugPattern = urlPatterns.gallerySecondarySectionFrontSlugPattern;
-module.exports.sectionFrontSlugPattern = urlPatterns.sectionFrontSlugPattern;
-module.exports.secondarySectionFrontSlugPattern = urlPatterns.secondarySectionFrontSlugPattern;
-
-module.exports.PAGE_TYPES = PAGE_TYPES;
-
+module.exports = {
+  getComponentReference,
+  getMainComponentFromRef,
+  getUrlOptions,
+  getUrlPrefix,
+  getPublishDate,
+  putComponentInstance,
+  getComponentInstance,
+  PAGE_TYPES
+};
