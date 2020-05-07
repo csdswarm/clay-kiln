@@ -1,0 +1,24 @@
+_description: |
+  landing page featuring podcasts
+
+hero:
+  _label: Podcast Front Hero
+  _placeholder:
+    text: Podcast Front Hero
+    height: 540px
+  _componentList:
+    include:
+      # - podcast-hero-carousel @TODO undo comment when merging to envs with ON-1563
+    validate:
+      max: 1
+
+content:
+  _label: Podcast Front Sections
+  _placeholder:
+    text: Podcast Front Section
+    height: 300px
+  _componentList:
+    fuzzy: true # allows interactives, etc to add one-off components
+    include:
+      # @TODO ON-1566 ON-1564 featured strips, ON-1576 ON-1577 category strips
+      # - podcast-strip

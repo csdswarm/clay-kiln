@@ -99,9 +99,25 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
 function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
     .then(urlOptions => {
-      const slug = pubUtils.authorPageSlugPattern(urlOptions);
-      
-      return slug;
+      if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
+        return pubUtils.authorPageSlugPattern(urlOptions);
+      }
+    });
+}
+
+/**
+ * Return the url for a podcast front based on its station site slug
+ * @param {object} pageData
+ * @param {object} locals
+ * @param {object} mainComponentRefs
+ * @returns {Promise}
+ */
+function getPodcastFrontSlugUrl(pageData, locals, mainComponentRefs) {
+  return getUrlOptions(pageData, locals, mainComponentRefs)
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.PODCASTFRONT) {
+        return pubUtils.podcastFrontSlugPattern(urlOptions);
+      }
     });
 }
 
@@ -110,3 +126,4 @@ module.exports.getArticleSlugUrl = getArticleSlugUrl;
 module.exports.getGallerySlugUrl = getGallerySlugUrl;
 module.exports.getSectionFrontSlugUrl = getSectionFrontSlugUrl;
 module.exports.getAuthorPageSlugUrl = getAuthorPageSlugUrl;
+module.exports.getPodcastFrontSlugUrl = getPodcastFrontSlugUrl;

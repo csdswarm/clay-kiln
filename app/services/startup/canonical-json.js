@@ -53,10 +53,18 @@ const routes = [
     getPageData: req => db.get(`${req.hostname}/_pages/station@published`)
   },
   { // podcast show page
-    testPath: req => req.path.includes('/podcasts'),
+    // https://regex101.com/r/OvdBmj/3/
+    testPath: req => new RegExp(/\/.*\/*podcasts\/[^\/]+\/?$/).test(req.path),
     getParams: (req, params) => {
-      params.stationSlug = req.path.match(/\/(.+)\/podcasts/)[1];
-      params.dynamicSlug = req.path.match(/\/podcasts\/(.+)/)[1];
+      const stationSlugMatch = req.path.match(/\/(.+)\/podcasts/),
+        dynamicSlugMatch = req.path.match(/\/podcasts\/(.+)/);
+
+      if (stationSlugMatch) {
+        params.stationSlug = stationSlugMatch[1];
+      }
+      if (dynamicSlugMatch) {
+        params.dynamicSlug = dynamicSlugMatch[1];
+      }
     },
     getPageData: req => db.get(`${req.hostname}/_pages/podcast-show@published`)
   },
