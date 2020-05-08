@@ -57,7 +57,7 @@ const makeHttpEs_v1 = parsedHost => {
   const { es, es: { http: protocol } } = parsedHost,
     validResponseTypes = new Set(['json', 'text']),
     validResponseTypesStr = Array.from(validResponseTypes).join(', '),
-    esUrl = `${protocol}://${es.hostname}:9200`,
+    esUrl = `${protocol}://${es.hostname}:${es.port}`,
     get = restOfUrl => {
       restOfUrl= ensureStartsWith('/', restOfUrl);
 
