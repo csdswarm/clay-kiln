@@ -34,7 +34,6 @@ configmap:
     LOG: "info"
     LYTICS_API_URL: "https://api.lytics.io/api"
     NODE_ENV: "local"
-    NODE_OPTIONS: '--max-http-header-size=100000'
     NODE_TLS_REJECT_UNAUTHORIZED: "0"
     PORT: "3001"
     REDIS_HASH: "mydb:h"
