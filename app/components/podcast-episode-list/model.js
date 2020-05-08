@@ -95,8 +95,9 @@ module.exports = unityComponent({
         { attributes } = episodeData,
         durationInSeconds = parseFloat(attributes.duration_seconds);
 
-      attributes.image_url = attributes.image_url || PODCAST_FALLBACK_IMAGE; // Use this as a fallback when episodes do not have his own image.
+      
       // NOTE: using snake case to stay consistent with api schema
+      attributes.image_url = attributes.image_url || PODCAST_FALLBACK_IMAGE; // Use this as a fallback when episodes do not have his own image.
       attributes.is_image_url_omny = isImageOmny(attributes.image_url);
       attributes.published_date_formatted = format(
         parse(attributes.published_date),
