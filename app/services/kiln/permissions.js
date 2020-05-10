@@ -177,7 +177,7 @@ const addPermissions = require('../universal/user-permissions'),
 
     subscriptions.subscribe(PRELOAD_SUCCESS, async ({ locals }) => {
       schema[field]._has.autocomplete.allowCreate = locals.user.isAbleTo('create').using(component).value;
-      schema[field]._has.autocomplete.allowRemove = locals.user.isAbleTo('update').using(component).value;
+      schema[field]._has.autocomplete.allowRemove = locals.user.isAbleTo('remove').using(component).value;
     });
 
     return schema;
