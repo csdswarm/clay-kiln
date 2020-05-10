@@ -56,6 +56,6 @@ async function loadStationsICanCreate(name, locals, req) {
     : await getTrimmedStationsViaUrps(
       req,
       locals,
-      urps.getDomainNamesICanImportContent
+      urps['getDomainNamesICanCreate' + name]
     );
 }
