@@ -92,8 +92,6 @@ export default {
       pages() {
         let items = _.cloneDeep(_.get(this.$store, 'state.lists[new-pages].items', []));
 
-        const selectedStationName = _.get(this.selectedStation, 'name', '<none selected>');
-
         if (this.selectedStation) {
           items = items.filter(this.hasPermissionToCategory)
             .map(this.filterChildrenByPermissions);
