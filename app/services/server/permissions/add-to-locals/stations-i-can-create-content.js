@@ -5,7 +5,6 @@ const { wrapInTryCatch } = require('../../../startup/middleware-utils'),
   {
     getAllTrimmedStations,
     getTrimmedStationsViaUrps,
-    isRefreshingPermissions,
     shouldAddToLocals
   } = require('./utils');
 
@@ -28,7 +27,7 @@ module.exports = router => {
   router.use('/', wrapInTryCatch(async (req, res, next) => {
     const { locals } = res;
 
-    if (!shouldAddToLocals(locals) || isRefreshingPermissions(req)) {
+    if (!shouldAddToLocals(req, locals)) {
       return next();
     }
 
