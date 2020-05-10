@@ -5,7 +5,13 @@ const _ = require('lodash'),
   urps = require('../../../universal/urps'),
   { DEFAULT_STATION } = require('../../../universal/constants'),
   { refreshPath } = require('../../../../routes/add-endpoints/refresh-permissions'),
-  googleOverridesPermissions = process.env.GOOGLE_OVERRIDES_PERMISSIONS === 'true';
+  googleOverridesPermissions = process.env.GOOGLE_OVERRIDES_PERMISSIONS === 'true',
+  unsafeMethods = new Set([
+    'DELETE',
+    'POST',
+    'PATCH',
+    'PUT'
+  ]);
 
 /**
  * 'trimmed' refers to the fact that we don't include all the station properties
@@ -110,16 +116,24 @@ async function getAllTrimmedStations(locals) {
 }
 
 /**
+ * @param {object} req
  * @param {object} locals
  * @returns {boolean}
  */
-function shouldAddToLocals(locals) {
+function shouldAddToLocals(req, locals) {
   const provider = _.get(locals, 'user.provider', '');
 
-  return provider === 'cognito'
-    || (
-      provider === 'google'
-      && googleOverridesPermissions
+  return !isRefreshingPermissions(req)
+    && (
+      locals.edit
+      || unsafeMethods.has(req.method)
+    )
+    && (
+      provider === 'cognito'
+      || (
+        provider === 'google'
+        && googleOverridesPermissions
+      )
     );
 }
 
@@ -136,6 +150,5 @@ function isRefreshingPermissions(req) {
 module.exports = {
   getAllTrimmedStations,
   getTrimmedStationsViaUrps,
-  isRefreshingPermissions,
   shouldAddToLocals
 };
