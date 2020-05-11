@@ -1,11 +1,11 @@
 _components:
   podcast-front-page:
     allowed: true
-    hero: []
+    hero:
       - _ref: /_components/podcast-hero-carousel/instances/default
     content: []
     instances:
       default:
-        hero: []
-        - _ref: /_components/podcast-hero-carousel/instances/default
+        hero:
+          - _ref: /_components/podcast-hero-carousel/instances/default
         content: []
