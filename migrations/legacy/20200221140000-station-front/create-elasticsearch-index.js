@@ -4,7 +4,7 @@ const { parseHost, httpRequest } = require('../migration-utils').v1;
 const INDEX = 'published-stations';
 
 async function createElasticsearchIndex(host) {
-  const { es: { http, hostname } } = parseHost(host);
+  const { es: { http, hostname, port } } = parseHost(host);
 
   console.log('Creating new Elasticsearch index...');
 
@@ -38,7 +38,7 @@ async function createElasticsearchIndex(host) {
     await httpRequest({
       http,
       method: 'PUT',
-      url: `${http}://${hostname}:9200/${INDEX}`,
+      url: `${http}://${hostname}:${port}/${INDEX}`,
       headers: {
         'Content-Type': 'application/json'
       },
