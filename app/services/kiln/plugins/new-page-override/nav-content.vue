@@ -12,6 +12,7 @@ a header indicates such.
 
 <template>
   <div class="new-page-override">
+    <station-select class="new-page-override__station-select" />
     <filterable-list v-if="isAdmin"
       class="new-page-nav"
       :content="pages"
@@ -37,7 +38,8 @@ a header indicates such.
 import _ from 'lodash';
 import axios from 'axios';
 import { mapGetters } from 'vuex'
-import { DEFAULT_STATION } from '../../../universal/constants';
+import stationSelect from '../../shared-vue-components/station-select'
+import StationSelectInput from '../../shared-vue-components/station-select/input.vue'
 import {
   editExt,
   htmlExt,
@@ -47,6 +49,7 @@ import {
   sortPages,
   uriToUrl
 } from './clay-kiln-utils';
+import { getStationDomainName } from '../../../universal/urps';
 
 const { filterableList } = window.kiln.utils.components;
 
@@ -66,33 +69,68 @@ export default {
 
     return { secondaryActions };
   },
-  computed: {
-    isAdmin() {
-      return _.get(this.$store, 'state.user.auth') === 'admin';
-    },
-    addIcon() {
-      return _.get(this.$store, 'state.ui.metaKey') ? 'plus_one' : 'add';
-    },
-    initialExpanded() {
-      // the page list will open to the last used category. this is:
-      // 1. the category that the last page was created from
-      // 2. the category that the last page was added to
-      // 3. the category that the last page was removed from
-      // this provides a more seamless edit experience with less clicking around
-      // for common actions, and allows users to immediately view the results
-      // of their (adding / removing) actions
-      return _.get(this.$store, 'state.ui.favoritePageCategory');
-    },
-    pages() {
-      let items = _.cloneDeep(_.get(this.$store, 'state.lists[new-pages].items', []));
+  computed: Object.assign(
+    {},
+    mapGetters(stationSelect.storeNs, ['selectedStation']),
+    {
+      isAdmin() {
+        return _.get(this.$store, 'state.user.auth') === 'admin';
+      },
+      addIcon() {
+        return _.get(this.$store, 'state.ui.metaKey') ? 'plus_one' : 'add';
+      },
+      initialExpanded() {
+        // the page list will open to the last used category. this is:
+        // 1. the category that the last page was created from
+        // 2. the category that the last page was added to
+        // 3. the category that the last page was removed from
+        // this provides a more seamless edit experience with less clicking around
+        // for common actions, and allows users to immediately view the results
+        // of their (adding / removing) actions
+        return _.get(this.$store, 'state.ui.favoritePageCategory');
+      },
+      pages() {
+        let items = _.cloneDeep(_.get(this.$store, 'state.lists[new-pages].items', []));
 
-      return sortPages(items);
-    },
-    selectedStation() {
-      return window.kiln.locals.stationsIHaveAccessTo[DEFAULT_STATION.site_slug];
+        if (this.selectedStation) {
+          items = items.filter(this.hasPermissionToCategory)
+            .map(this.filterChildrenByPermissions);
+        }
+
+        return sortPages(items);
+      }
     }
-  },
+  ),
   methods: {
+    filterChildrenByPermissions(item) {
+      const { stationsICanCreateStaticPages } = window.kiln.locals
+
+      if (item.id === 'General-content') {
+        item.children = item.children.filter(({ id: childId }) => {
+          if (childId === 'new-static-page') {
+            return stationsICanCreateStaticPages[this.selectedStation.slug]
+          }
+
+          return true
+        })
+      }
+
+      return item;
+    },
+    hasPermissionToCategory({ id }) {
+      const {
+        stationsICanCreateSectionFronts,
+        stationsICanCreateStationFronts,
+      } = window.kiln.locals
+
+      if (id === 'section-front') {
+        return stationsICanCreateSectionFronts[this.selectedStation.slug]
+      } else if (id === 'station-front') {
+        return stationsICanCreateStationFronts[this.selectedStation.slug]
+      }
+
+      return true;
+    },
     async itemClick(id, title) {
       const category = _.find(this.pages, category => _.find(category.children, child => child.id === id));
 
@@ -172,7 +210,8 @@ export default {
     }
   },
   components: {
-    filterableList
+    filterableList,
+    'station-select': StationSelectInput
   }
 };
 </script>

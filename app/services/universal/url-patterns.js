@@ -36,6 +36,14 @@ const exists = require('lodash/identity'),
       opts.sectionFront
     ].filter(exists)
       .join('/');
+  },
+  stationFront = opts => {
+    // e.g. http://radio.com/weei
+    return [
+      opts.prefix,
+      opts.stationSlug
+    ].filter(exists)
+      .join('/');
   };
 
 module.exports = {
@@ -43,5 +51,6 @@ module.exports = {
   author,
   date,
   gallery,
-  sectionFront
+  sectionFront,
+  stationFront
 };
