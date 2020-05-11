@@ -3,6 +3,7 @@
 const addSocialButtons = require('../../services/universal/add-social-buttons'),
   { playingClass } = require('../../services/universal/spaLocals'),
   { getNowPlaying, getSchedule } = require('../../services/universal/station'),
+  _get = require('lodash/get'),
 
   /**
    * Appends ? or & to end of img string
@@ -10,7 +11,7 @@ const addSocialButtons = require('../../services/universal/add-social-buttons'),
    * @param {string} img
    * @param {Object} locals -- includes site
    * @returns {string}
-  */
+   */
   appendParamsAmpOrQuery = (img, { site }) => {
     img = img || site.radiocomDefaultImg;
     img = img.includes('?') ?
@@ -21,18 +22,34 @@ const addSocialButtons = require('../../services/universal/add-social-buttons'),
   };
 
 module.exports.render = async (ref, data, locals) => {
-  if (!locals.station && !locals.station.id) {
+  if (!_get(locals, 'station.id')) {
     return data;
   }
 
   await Promise.all([
-    getNowPlaying(locals.station.id, data),
-    getSchedule({
-      stationId: locals.station.id,
-      pageSize: 50,
-      pageNum: 1,
-      filterByDay: true
-    }, locals, data, true)
+    getNowPlaying(locals.station.id, data, locals, {
+      radioApiOpts: {
+        amphoraTimingLabelPrefix: 'get now playing',
+        shouldAddAmphoraTimings: true
+      }
+    }),
+    getSchedule(
+      {
+        stationId: locals.station.id,
+        pageSize: 50,
+        pageNum: 1,
+        filterByDay: true
+      },
+      locals,
+      {
+        data,
+        onAir: true,
+        radioApiOpts: {
+          amphoraTimingLabelPrefix: 'get schedule',
+          shouldAddAmphoraTimings: true
+        }
+      }
+    )
   ]);
 
   data.playingClass = playingClass(locals, locals.station.id);
