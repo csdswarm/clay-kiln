@@ -13,8 +13,6 @@ A repo that contains a basic site and the necessary files to provision AWS resou
 
 ## To Start
 
-Make sure you have docker installed and you're using Node.js version V10.16.3 and npm version 6.9.0.
-
 Edit your `/etc/hosts` file to include the following:
 
 ```

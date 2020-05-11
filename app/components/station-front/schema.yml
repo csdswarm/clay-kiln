@@ -1,0 +1,58 @@
+_confirmRemoval: true
+
+titleLocked:
+  _label: Is title locked?
+  _has: checkbox
+
+stationSlug:
+  _label: Station Slug
+  _publish:
+    - ogTitle
+    - pageListTitle
+    - pageTitle
+  _has:
+    input: text
+    validate:
+      required: true
+
+canonicalUrl:
+  _publish: url
+  _has:
+    help: Canonical URL of an article. Set when the article publishes.
+
+mainContent:
+  _placeholder:
+    text: Main Content
+    height: 100px
+    required: true
+  _componentList:
+    fuzzy: true
+    include:
+      - section-lead
+      - google-ad-manager
+      - podcast-list
+      - two-column-component
+      - stations-carousel
+
+_groups:
+  settings:
+    fields:
+      - stationName
+      - stationCallsign
+      - stationSlug
+
+stationName:
+  _publish: stationName
+  _label: Station Name
+  _has: static
+  _reveal:
+    field: stationName
+    operator: truthy
+
+stationCallsign:
+  _publish: stationCallsign
+  _label: Station Callsign
+  _has: static
+  _reveal:
+    field: stationCallsign
+    operator: truthy

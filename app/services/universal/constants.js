@@ -26,7 +26,8 @@ const _get = require('lodash/get'),
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
-    PODCASTFRONT: 'podcast-front-page'
+    PODCASTFRONT: 'podcast-front-page',
+    STATIONFRONT: 'station-front'
   },
 
   msnFeed = {
