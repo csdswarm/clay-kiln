@@ -44,7 +44,6 @@ configmap:
     IP_ADDRESS: "0.0.0.0"
     LOG: "info"
     LYTICS_API_URL: "https://api.lytics.io/api"
-    NODE_OPTIONS: "--max-http-header-size=100000"
     PORT: "3001"
     REDIS_HASH: "mydb:h"
     REDIS_HOST: "redis://dev-redis.radio-dev.com:6379"

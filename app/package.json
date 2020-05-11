@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "LOG=warn mocha \"./{,!(node_modules)/**}/*.test.js\" --recursive --exit --forbid-only",
-    "dev": "pm2 start app.js --no-daemon --node-args=\"--max-http-header-size=100000\"",
+    "dev": "pm2 start local.config.js --no-daemon",
     "start": "npm run check-elastic && pm2 start app.js --instances max --log '/home/ubuntu/log.txt' --node-args='--max-http-header-size=100000'",
     "check-elastic": "while ! curl -sSI -o /dev/null http://elasticsearch:9200/_cat/indices; do sleep 5; done",
     "build": "CLAYCLI_COMPILE_MINIFIED_TEMPLATES=true LOG=info ./node_modules/.bin/clay compile --globs 'global/js/**/!(*.test).js' --reporter pretty && LOG=info ./node_modules/.bin/clay compile custom-tasks",
