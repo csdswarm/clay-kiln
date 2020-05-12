@@ -99,7 +99,7 @@ const db = require('../../services/server/db'),
     queryService.addMust(query, { match: { stationSlug } });
 
     try {
-      const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: true });
+      const results = await queryService.searchByQuery(query, locals, { shouldDedupeContent: false });
 
       return results.length > 0;
     } catch (e) {
@@ -115,19 +115,19 @@ const db = require('../../services/server/db'),
    * @returns {Promise}
    */
   render = async function (ref, data, locals) {
-    const slug = locals.station && locals.station.site_slug,
-      isMigrated = await isStationMigrated(slug);
-
     if (data.populateFrom === 'station' && locals.params) {
+      const slug = locals.station && locals.station.site_slug,
+        isMigrated = await isStationMigrated(slug);
+
       data._computed.station = locals.station.name;
       if (!isMigrated) {
         return renderStation(data, locals);// gets the articles from drupal and displays those instead
       }
     }
 
-    const primarySectionFronts = await retrieveList('primary-section-fronts', { locals });
-
     if (data._computed.articles) {
+      const primarySectionFronts = await retrieveList('primary-section-fronts', { locals });
+
       data._computed.articles = data._computed.articles.map(item => ({
         ...item,
         label: getSectionFrontName(item.sectionFront, primarySectionFronts)
