@@ -80,14 +80,14 @@ const db = require('./db'),
    * @param {string} stationSlug
    */
   getStationPage = async (stationSlug) => {
-    const pageUri = await db.raw(`
-      SELECT page.id as uri
-      FROM public.pages AS page
-      INNER JOIN components."section-front" AS sectionFront
-        ON page.data->'main'->>0 = sectionFront.id
-      WHERE sectionFront.data->>'stationSiteSlug' = '${stationSlug}'
-      AND sectionFront.id ~ 'published'
-    `).then(results => _get(results, 'rows[0].uri'));
+    const sql = `
+        SELECT  p.id as uri
+        FROM  pages p, 
+          LATERAL jsonb_array_elements_text(p.data->'main') m(id)
+            INNER JOIN components."station-front" sf ON m.id = sf.id
+        WHERE  sf.data@>?::jsonb  AND sf.id ~ '@published$'`,
+      result = await db.raw(sql, [{ stationSlug }]),
+      pageUri = _get(result, 'rows[0].uri');
 
     if (pageUri) {
       return db.get(pageUri);
@@ -95,25 +95,13 @@ const db = require('./db'),
   },
 
   /**
-   * Get the station-nav data for the station nav in the page
+   * Get the component data for the station specific instance of the component
    *
    * @param {object} pageData
+   * @param {string} componentName
    */
-  getStationNav = async pageData => {
-    const ref = findComponentRefInPage(pageData, 'station-nav');
-
-    if (ref) {
-      return await db.get(ref);
-    }
-  },
-
-  /**
-   * Get the station-footer data for the station-footer in the page
-   *
-   * @param {object} pageData
-   */
-  getStationFooter = async pageData => {
-    const ref = findComponentRefInPage(pageData, 'station-footer');
+  getStationSpecificComponent = async (pageData, componentName) => {
+    const ref = findComponentRefInPage(pageData, componentName);
 
     if (ref) {
       return await db.get(ref);
@@ -123,5 +111,4 @@ const db = require('./db'),
 module.exports.inject = inject;
 module.exports.get = get;
 module.exports.getStationPage = getStationPage;
-module.exports.getStationNav = getStationNav;
-module.exports.getStationFooter = getStationFooter;
+module.exports.getStationSpecificComponent = getStationSpecificComponent;

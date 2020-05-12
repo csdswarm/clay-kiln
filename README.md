@@ -8,7 +8,9 @@ Before starting the installation process, it's recommended to have the software 
 
 * [Docker desktop](https://www.docker.com/products/docker-desktop)
 * [Homebrew](https://brew.sh/)
+    * quick install: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
 * [mkcert](https://github.com/FiloSottile/mkcert)
+    * quick install: `brew install mkcert && brew install nss`
 
 ## To Start
 
