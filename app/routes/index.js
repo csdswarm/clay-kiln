@@ -22,7 +22,8 @@ const AWS = require('aws-sdk'),
   validScripts = require('../services/server/valid-source'),
   addEndpoints = require('./add-endpoints'),
   siteMapStations = require('./sitemap-stations'),
-  siteMapGoogleNews = require('./sitemap-google-news');
+  siteMapGoogleNews = require('./sitemap-google-news'),
+  siteMapPodcastShows = require('./sitemap-podcasts');
 
 module.exports = router => {
 
@@ -156,6 +157,11 @@ module.exports = router => {
    * Sitemap for articles for google news
    */
   router.get('/sitemap-google-news.xml', siteMapGoogleNews);
+
+  /**
+   * Sitemap for podcast show pages
+   */
+  router.get('/sitemap-podcasts.xml', siteMapPodcastShows);
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
