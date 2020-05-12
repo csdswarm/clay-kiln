@@ -1,0 +1,14 @@
+@import '_global/colors';
+@import '_global/warning';
+
+/* editing template */
+.kiln-edit-mode--template:not(.kiln-edit-mode--layout) {
+  .kiln-placeholder,
+  .body__circulation {
+    background-color: $blue;
+  }
+}
+/* editing layout */
+.kiln-edit-mode--layout [data-uri*="/instances/default"] .kiln-placeholder {
+  background-color: $pizazz;
+}

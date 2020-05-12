@@ -92,12 +92,12 @@
       function loadChartbeat() {
         const e = document.createElement('script');
         const n = document.getElementsByTagName('script')[0];
-        const mainContent = document.querySelector('[role="main"]') || {};
+        const mainContent = document.querySelector('[role="main"]');
         const data = mainContent ? mainContent.dataset : {};
         const component = getComponentName(data.uri);
         const sections = [
-          data.sectionFront && `national-${data.sectionFront}`, 
-          data.market, 
+          data.sectionFront && `national-${data.sectionFront}`,
+          data.market,
           data.category,
           data.genre,
           data.callsign ? updateCallsign(data.callsign) : data.callsign

@@ -1,13 +1,10 @@
 'use strict';
 
-const db = require('./db'),
+const db = require('../server/db'),
   uuidV4 = require('uuid/v4'),
   _pick = require('lodash/pick'),
   log = require('../universal/log').setup({ file: __filename }),
-  { anyStation } = require('../universal/user-permissions'),
-  { prettyJSON } = require('../universal/utils'),
   CLAY_SITE_HOST = process.env.CLAY_SITE_HOST,
-  { wrapInTryCatch } = require('../startup/middleware-utils'),
   checkEndsBeforeStart = (start, end) => new Date(end) < new Date(start),
   checkEndsInPast = end => new Date(end) < Date.now(),
   /**
@@ -66,13 +63,7 @@ const db = require('./db'),
         return { failed: true, message: 'Cannot save this alert. Its start and end times overlap with another alert' };
       }
     } catch (error) {
-      log(
-        'error',
-        'There was a problem validating the alert'
-        + `\nalert: ${prettyJSON(alert)}`
-        + `\n${error.stack}`
-      );
-
+      log('error', 'There was a problem validating the alert', { alert, error });
       return {
         failed: true,
         message: 'An unanticipated error occurred while trying to validate the alert. Please try again.'
@@ -186,40 +177,7 @@ const db = require('./db'),
         res.status(500).send('There was an error saving the alert');
       }
     });
-  },
-  /**
-   * Add permissions middleware for /alerts
-   *
-   * @param {object} router
-   */
-  addAlertsMiddleware = (router) => {
-    router.use('/alerts', wrapInTryCatch((req, res, next) => {
-      if (req.method === 'GET') {
-        return next();
-      }
-
-      const { station } = req.body,
-        { user } = res.locals,
-        action = req.method === 'POST' ? 'create' : 'update';
-
-      let permission;
-
-      if (station === 'GLOBAL') {
-        permission = user.can(action).an('alerts_global').for(anyStation);
-      } else {
-        permission = user.can('access').a('station').for(station);
-      }
-
-      if (permission.value) {
-        return next();
-      }
-
-      res.status(403).send(permission.message);
-    }));
   };
 
-module.exports = {
-  addAlertsMiddleware,
-  getAlerts,
-  inject
-};
+module.exports.inject = inject;
+module.exports.getAlerts = getAlerts;

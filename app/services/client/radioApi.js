@@ -2,8 +2,10 @@
 
 const rest = require('../universal/rest'),
   qs = require('qs'),
+  md5 = require('md5'),
+  _uniq = require('lodash'),
   { formatLocal } = require('../../services/universal/dateTime'),
-  { getLocals } = require('./spaLocals'),
+  { getLoadedIds, getLocals } = require('./spaLocals'),
   spaLinkService = require('../universal/spaLink'),
   clientPlayerInterface = require('./ClientPlayerInterface')(),
   clientUserInterface = require('./ClientUserInterface')(),
@@ -71,16 +73,40 @@ const rest = require('../universal/rest'),
    * Client side AJAX call to get the specified route and returns a DOM object
    *
    * @param {string} route
+   * @param {object} opts
+   * @param {object} opts.shouldDedupeContent - handles the x-loaded-ids request and response header.
+   *   See 'loaded-ids.js' under startup/add-to-locals/ and add-interceptor/ for more details.
+   *
    * @returns {Promise} which returns {Node}
    */
-  fetchDOM = async (route) => {
-    const state = await clientStateInterface.getState(),
+  fetchDOM = async (route, { shouldDedupeContent = false } = {}) => {
+    const state = (await clientStateInterface.getState())[0],
       separator = route.includes('?') ? '&' : '?',
-      options = {
-        headers: new Headers({ 'x-locals': JSON.stringify(getLocals(state)) })
-      },
-      response = await fetch(`${route}${separator}ignore_resolve_media=true`, options),
-      html = await response.text(),
+      requestHeaders = { 'x-locals': JSON.stringify(getLocals(state)) };
+
+    let loadedIdsHash = '';
+
+    if (shouldDedupeContent) {
+      // these are false positives because there is no chain
+      // eslint-disable-next-line lodash/prefer-thru,lodash/unwrap
+      const loadedIdsReqHeader = JSON.stringify(_uniq(getLoadedIds(state)).sort());
+
+      requestHeaders['x-loaded-ids'] = loadedIdsReqHeader;
+      // we need this hash to make sure the request is cached appropriately.
+      // if you know of a better way to accomplish this let me know :)
+      loadedIdsHash = `&loadedIdsHash=${md5(loadedIdsReqHeader)}`;
+    }
+
+    const options = { headers: new Headers(requestHeaders) },
+      url = `${route}${separator}ignore_resolve_media=true${loadedIdsHash}`,
+      response = await fetch(url, options),
+      loadedIdsStr = response.headers.get('x-loaded-ids');
+
+    if (shouldDedupeContent && loadedIdsStr) {
+      clientStateInterface.setLoadedIds(JSON.parse(loadedIdsStr));
+    }
+
+    const html = await response.text(),
       doc = new DOMParser().parseFromString(html, 'text/html'),
       elements = doc.body.childElementCount === 1 ? doc.body.children[0] : Array.from(doc.body.children),
       frag = document.createDocumentFragment();

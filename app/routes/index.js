@@ -19,12 +19,10 @@ const AWS = require('aws-sdk'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
-  addEndpoints = require('./add-endpoints'),
-  ensureStationOnCustomUrl = require('./ensure-station-on-custom-url'),
   validScripts = require('../services/server/valid-source'),
+  addEndpoints = require('./add-endpoints'),
   siteMapStations = require('./sitemap-stations'),
-  siteMapGoogleNews = require('./sitemap-google-news'),
-  stationTheming = require('../services/server/stationThemingApi');
+  siteMapGoogleNews = require('./sitemap-google-news');
 
 module.exports = router => {
 
@@ -160,9 +158,8 @@ module.exports = router => {
   router.get('/sitemap-google-news.xml', siteMapGoogleNews);
 
   additionalDataTypes.inject(router, checkAuth);
-  stationTheming.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
-  addEndpoints.createPage(router);
-  ensureStationOnCustomUrl(router);
+
+  addEndpoints.imageInfo(router, checkAuth);
   validScripts.inject(router, checkAuth);
 };

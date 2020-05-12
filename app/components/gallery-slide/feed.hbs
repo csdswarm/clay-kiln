@@ -1,7 +1,7 @@
 <div id="{{ hashLink }}" class="component component--gallery-slide">
   <div class="slideEmbed">
     {{#each slideEmbed~}}
-      {{~> (getComponentName _ref) this.data ~}}
+      {{~> (getComponentName _ref) this.data locals=../locals~}}
     {{~/each}}
   </div>
   <div class="slideText gallery-slide__text">
@@ -13,7 +13,7 @@
     {{#ifAll description description.length }}
       <p class="gallery-slide__description">
         {{#each description~}}
-          {{~> (getComponentName _ref) this.data ~}}
+          {{~> (getComponentName _ref) this.data locals=../locals~}}
         {{~/each}}
       </p>
     {{/ifAll}}

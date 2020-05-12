@@ -1,0 +1,63 @@
+ingress:
+  hostedZones:
+    - cms.radio-prd.com
+  staticDomains:
+  # using prd-clay-k8s for now, to run alongside existing prod. this will be switched out.
+    - prd-clay-k8s.radio-prd.com
+  # update to this when ready to cut over
+  #  - prd-clay.radio-prd.com DO NOT ENABLE UNTIL READY FOR PROD CUTOVER
+  # verify the healthCheckDomain before cutting over
+  healthCheckDomain: "prd-clay-k8s.radio.com"
+configmap:
+  data:
+    APPLE_NEWS_ENABLED: "TRUE"
+    APPLE_NEWS_PREVIEW_ONLY: "TRUE"
+    AWS_S3_BUCKET: "radioimg"
+    AWS_S3_CDN_HOST: "images.radio.com"
+    BRIGHTCOVE_ACCOUNT_ID: "5757251889001"
+    CLAY_BUS_HOST: "redis://redis.radio-prd.com:6379"
+    CLAY_LOG_PRETTY: "true"
+    CLAY_PROVIDER: "google"
+    CLAY_SCHEDULING_ENABLED: "true"
+    CLAY_SITE_HOST: "www.radio.com"
+    CLAY_SITE_NAME: "Radio.com"
+    CLAY_SITE_PORT: "443"
+    CLAY_SITE_PROTOCOL: "https"
+    CLAY_SITE_SHORTKEY: "cd"
+    CLAY_STORAGE_POSTGRES_DB: "cms"
+    CLAY_STORAGE_POSTGRES_HOST: "cmsdb-write.radio-prd.com"
+    COMPACT_BUILD: "1"
+    DOUBLECLICK_BANNER_TAG: "NTL.RADIO"
+    ELASTIC_HOST: "https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com"
+    EMBEDLY_ENDPOINT: "NEED_TO_FILL_IN"
+    ENABLE_GZIP: "true"
+    FACEBOOK_CALLBACK_URL: "https://radio.auth.us-east-1.amazoncognito.com/oauth2/token"
+    GOOGLE_AD_REFRESH_INTERVAL: "90000"
+    GOOGLE_PROFILE_URL: "https://www.googleapis.com/oauth2/v3/userinfo"
+    IMPORT_CONTENT_URL: "https://r9r8dfosjc.execute-api.us-east-1.amazonaws.com/prd/import-content"
+    INLINE_EDIT_SCRIPTS: "true"
+    INLINE_EDIT_STYLES: "true"
+    IP_ADDRESS: "0.0.0.0"
+    LOG: "error"
+    LYTICS_API_URL: "https://api.lytics.io/api"
+    NODE_ENV: "production"
+    PORT: "3001"
+    REDIS_HASH: "mydb:h"
+    REDIS_HOST: "tcp://redis.radio-prd.com:6379"
+    REDIS_SESSION_HOST: "redis://redisses.radio-prd.com:6379"
+    SECTION_FRONTS: "music,news,sports"
+    STATIC_ASSET_MAX_AGE: "0"
+    WEB_PLAYER_HOST: "https://assets.radio.com/webplayer"
+clayconfig:
+  data:
+    .clayconfig: |
+      [keys]
+        demo = accesskey
+      [urls]
+        demosite = http://www.radio.com
+hpa:
+  enabled: True
+  min: 10
+  max: 24
+  metric: cpu
+  cpuTarget: 50

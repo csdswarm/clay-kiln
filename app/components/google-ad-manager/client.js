@@ -18,8 +18,11 @@ const _get = require('lodash/get'),
   adSizes = adMapping.adSizes,
   doubleclickPrefix = '21674100491',
   rightRailAdSizes = ['medium-rectangle', 'half-page', 'half-page-topic'],
-  adRefreshInterval = googleAdManagerComponent.getAttribute('data-ad-refresh-interval'), // Time in ms for ad refresh
-  sharethroughPlacementKey = googleAdManagerComponent.getAttribute('data-sharethrough-placement-key'),
+  adRefreshInterval = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-ad-refresh-interval') : 120000, // Time in ms for ad refresh
+  apsPubId = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-aps-pub-id') : null,
+  apsLoadTimeout = parseInt(googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-aps-load-timeout') : 120000, 10),
+  apsBidTimeout = parseInt(googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-aps-bid-timeout') : 120000, 10),
+  sharethroughPlacementKey = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-sharethrough-placement-key') : null,
   urlParse = require('url-parse'),
   lazyLoadObserverConfig = {
     root: null,
@@ -27,6 +30,7 @@ const _get = require('lodash/get'),
     threshold: 0
   },
   observer = new IntersectionObserver(lazyLoadAd, lazyLoadObserverConfig),
+  amazonTam = require('./aps')(apsPubId, apsLoadTimeout, apsBidTimeout),
   disabledRefreshAds = new Set();
 let refreshCount = 0,
   allAdSlots = {},
@@ -43,7 +47,7 @@ let refreshCount = 0,
 adMapping.setupSizeMapping();
 
 /**
- * Add Sharethrough script on first page load
+ * Add Sharethrough on first page load
  * @function
  */
 (() => {
@@ -88,22 +92,30 @@ googletag.cmd.push(() => {
       adsRefreshing = true;
       googletag.pubads().setTargeting('refresh', (refreshCount++).toString());
       setTimeout(function () {
-        clearDfpTakeover();
-
         // Refresh ads
-        const adsToRefresh = Object.entries(allAdSlots).filter(([id]) => {
-          id = id.split('--')[1];
+        const filteredAds = Object.entries(allAdSlots).filter(([id]) => {
+            id = id.split('--')[1];
 
-          return !disabledRefreshAds.has(id);
-        }).map(([, slot]) => slot);
+            return !disabledRefreshAds.has(id);
+          }),
+          adsToRefresh = filteredAds.map(([, slot]) => slot),
+          adsToBid = filteredAds.reduce((refreshingAds, [id, slot]) => {
+            refreshingAds[id] = slot;
 
-        googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
+            return refreshingAds;
+          }, {});
 
-        // Remove the observers
-        [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
-          observer.unobserve(adSlot);
+        amazonTam.fetchAPSBids(adsToBid, () => {
+          clearDfpTakeover();
+
+          googletag.pubads().refresh(adsToRefresh, { changeCorrelator: false });
+
+          // Remove the observers
+          [...document.querySelectorAll('.google-ad-manager__slot')].forEach((adSlot) => {
+            observer.unobserve(adSlot);
+          });
+          adsRefreshing = false;
         });
-        adsRefreshing = false;
       }, adRefreshInterval);
     }
   });
@@ -393,10 +405,13 @@ function getCurrentStation() {
  * @returns {object} adTargetingData - Targeting Data for DFP
  */
 function getAdTargeting(pageData) {
-  const doubleclickBannerTag = googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag'),
-    environment = googleAdManagerComponent.getAttribute('data-environment'),
-    inProduction = environment === 'production',
+  const doubleclickBannerTag = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-doubleclick-banner-tag') : null,
     currentStation = getCurrentStation(),
+    /**
+     * NOTE: This is a workaround to access process.env.NODE_ENV
+     * because it is not available in client.js.
+     */
+    env = googleAdManagerComponent ? googleAdManagerComponent.getAttribute('data-environment') : '',
     // this query selector should always succeed
     firstNmcTag = document.querySelector('meta[name^="nmc:"]'),
     hasNmcTags = !!firstNmcTag,
@@ -421,11 +436,11 @@ function getAdTargeting(pageData) {
       adTargetingData.siteZone = siteZone.concat(`/${pageData.pageName}/${pageTypeTagStationsDirectory}`);
       break;
     case 'stationDetail':
-      const stationBannerTag = inProduction
-        ? currentStation.doubleclick_bannertag
-        : doubleclickBannerTag;
+      const stationBannerTag = env === 'production'
+        ? doubleclickBannerTag
+        : currentStation.doubleclick_bannertag;
 
-      adTargetingData.siteZone = `${doubleclickPrefix}/${stationBannerTag}/${pageTypeTagStationDetail}`;
+      adTargetingData.siteZone = siteZone.concat('/', stationBannerTag, pageTypeTagStationDetail);
       break;
     case 'topicPage':
       // Must remain tag for targeting in DFP unless a change is made in the future to update it there
@@ -448,7 +463,8 @@ function createAds(adSlots) {
   const queryParams = urlParse(window.location, true).query,
     contentType = getMetaTagContent('property', OG_TYPE),
     pageData = getPageData(window.location.pathname, contentType),
-    adTargetingData = getAdTargeting(pageData);
+    adTargetingData = getAdTargeting(pageData),
+    ads = [];
 
   googletag.cmd.push(function () {
     // Set refresh value on page level
@@ -511,20 +527,26 @@ function createAds(adSlots) {
 
       // Attach to the global ads array
       allAdSlots[ad.id] = slot;
-
-      googletag.display(ad.id);
-
-      // 'atf' ads need to be requested together on page load, do not observe
-      if (adLocation === 'atf') {
-        initialPageAdSlots.push(slot);
-      } else {
-        // Attach the observer for lazy loading
-        observer.observe(ad);
-      }
+      ads.push(ad);
     }
 
-    // Refresh all initial page slots
-    googletag.pubads().refresh(initialPageAdSlots);
+    amazonTam.fetchAPSBids(allAdSlots, () => {
+      ads.forEach(ad => {
+        const adSlot = allAdSlots[ad.id];
+
+        googletag.display(ad.id);
+
+        // 'atf' ads need to be requested together on page load, do not observe
+        if (adSlot.getTargeting('loc')[0] === 'atf') {
+          initialPageAdSlots.push(adSlot);
+        } else {
+          // Attach the observer for lazy loading
+          observer.observe(ad);
+        }
+      });
+
+      googletag.pubads().refresh(initialPageAdSlots);
+    });
   });
 }
 
@@ -582,7 +604,7 @@ window.freq_dfp_takeover = function (imageUrl, linkUrl, backgroundColor, positio
     skinClass = 'advertisement--full',
     adType = 'fullpageBanner',
     bgdiv = document.createElement('div'),
-    globalDiv = document.querySelector('.layout__topSection') || document.querySelector('.layout__top'),
+    globalDiv = document.getElementsByClassName('layout__top')[0],
     resetElements = resizeForSkin();
 
   // Include our default bg color

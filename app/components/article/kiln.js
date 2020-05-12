@@ -1,12 +1,12 @@
 'use strict';
 
 const { syncFields, syncHeadlines } = require('../../services/client/kiln-utils'),
-  addStationNoteToCustomUrl = require('../../services/kiln/add-station-note-to-custom-url'),
-  KilnInput = window.kiln.kilnInput;
+  handleEditModePlaceholders = require('../../services/kiln/handle-edit-mode-placeholders'),
+  KilnInput = window.kiln.kilnInput,
+  autoFillRecircImg = require('../../services/kiln/shared/content-components/autofill-recirc-img-to-lead-img');
 
-module.exports = schema => {
-  addStationNoteToCustomUrl(new KilnInput(schema));
-  syncFields(schema, syncHeadlines('article'));
-
-  return schema;
+module.exports = (schema) => {
+  autoFillRecircImg(schema);
+  handleEditModePlaceholders(new KilnInput(schema));
+  return syncFields(schema, syncHeadlines('article'));
 };

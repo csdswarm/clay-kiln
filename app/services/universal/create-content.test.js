@@ -6,6 +6,7 @@ const expect = require('chai').expect,
   uri = 'clay.radio.com/_components/article/instances/cjzbandlv000f3klg5krzbyyx',
   proxyquire = require('proxyquire'),
   { save } = proxyquire('./create-content', {
+    '../../services/universal/url-exists': () => false,
     './rest': {
       get: (uri) => {
         const isPublishedRequest = /@published/.test(uri);
@@ -94,6 +95,7 @@ const expect = require('chai').expect,
         },
         category: ''
       },
+      allStationsCallsigns: [],
       lytics: {
         uid: '1234'
       },

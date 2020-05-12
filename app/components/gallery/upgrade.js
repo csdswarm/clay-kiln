@@ -2,7 +2,7 @@
 
 const _isEmpty = require('lodash/isEmpty'),
   _get = require('lodash/get'),
-  addAdTags = require('../../services/universal/component-upgrades/add-ad-tags'),
+  addAdTags = require('../../services/server/component-upgrades/add-ad-tags'),
   cuid = require('cuid'),
   { getComponentInstance, getComponentVersion } = require('clayutils'),
   {
@@ -221,4 +221,14 @@ module.exports['10.0'] = function (uri, data) {
   newData.secondarySectionFront = data.secondarySectionFront === 'Small Business Pulse' ? data.secondarySectionFront.toLowerCase() : data.secondarySectionFront;
 
   return newData;
+};
+
+module.exports['11.0'] = (uri, data) => {
+  data.feeds = {
+    rss: true,
+    'apple-news': true,
+    smartNews: true
+  };
+
+  return data;
 };

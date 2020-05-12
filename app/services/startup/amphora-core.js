@@ -2,19 +2,16 @@
 
 const amphora = require('amphora'),
   renderers = require('./amphora-renderers'),
-  healthCheck = require('@nymdev/health-check'),
-  permissionsPlugin = require('./amphora-permissions'),
-  { checkUserPermissions, userPermissionRouter } = require('../server/permissions');
+  healthCheck = require('@nymdev/health-check');
 
 function initAmphora(app, search, sessionStore, routes) {
   return amphora({
     app,
     renderers,
-    providers: ['google', 'cognito'],
+    providers: ['apikey', 'google'],
     sessionStore,
     plugins: [
       search,
-      permissionsPlugin(checkUserPermissions, userPermissionRouter()),
       routes,
       require('amphora-schedule')
     ],

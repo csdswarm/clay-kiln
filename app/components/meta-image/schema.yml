@@ -2,21 +2,17 @@ _version: 1.0
 _description: |
   Receives an image and renders it in the head
 
-_permission:
-  update: section-front_meta-tags
-
 imageUrl:
   _label: Image Url
+  _display: settings
   _subscribe:
     - pageMetaImage
     - feedImgUrl
   _has:
-    input: text
-    type: url
-    help: URL of an image to show in the feeds. Usually the first image in an article.
-
-_groups:
-  settings:
-    _label: Meta Image
-    fields:
-      - imageUrl
+    -
+      fn: text
+      type: url
+    - label
+    -
+      fn: description
+      value: URL of an image to show in the feeds. Usually the first image in an article.

@@ -46,22 +46,14 @@ function newQueryWithCount(index, count, locals) {
  * Query Elastic and clean up raw result object
  * to only display array of results
  * @param  {Object} query
+ * @param  {Object} locals
+ * @param  {SearchOpts} [opts] - see universal/query.js for the SearchOpts type
  * @return {Promise}
  * @example searchByQuery({"index":"published-content","type":"_doc",
     "body":{"query":{"bool":{"filter":{"term":{"canonicalUrl":""}}}}}})
  */
-function searchByQuery(query) {
-  return searchByQueryWithRawResult(query)
-    .then(universalQuery.formatSearchResult)
-    .then(universalQuery.formatProtocol)
-    .catch(e => {
-      if (e instanceof Error) {
-        throw e;
-      } else {
-        throw new Error(e);
-      }
-    });
-
+function searchByQuery(query, locals, opts = {}) {
+  return universalQuery.searchByQuery(query, locals, opts, searchByQueryWithRawResult);
 }
 
 /**
@@ -70,10 +62,10 @@ function searchByQuery(query) {
  * @return {Object}
  */
 function searchByQueryWithRawResult(query) {
-  log('trace', 'performing elastic search', { query: query });
+  log('trace', 'performing elastic search', { query });
 
   return module.exports.post(SITE_ENDPOINT, query, true).then(function (results) {
-    log('trace', `got ${results.hits.hits.length} results`, { results: results });
+    log('trace', `got ${results.hits.hits.length} results`, { results });
     return results;
   });
 }
@@ -158,17 +150,34 @@ function logCatch(e, ref) {
 }
 
 module.exports = newQueryWithLocals;
+module.exports.executeMultipleSearchRequests = executeMultipleSearchRequests;
+module.exports.getCount = getCount;
+module.exports.logCatch = logCatch;
+module.exports.newQueryWithCount = newQueryWithCount;
+module.exports.onePublishedArticleByUrl = onePublishedArticleByUrl;
+module.exports.searchByQuery = searchByQuery;
+module.exports.searchByQueryWithRawResult = searchByQueryWithRawResult;
+module.exports.updateByQuery = updateByQuery;
 
-Object.assign(module.exports, universalQuery, {
-  newQueryWithCount,
-  searchByQuery,
-  searchByQueryWithRawResult,
-  getCount,
-  executeMultipleSearchRequests,
-  updateByQuery,
-  onePublishedArticleByUrl,
-  logCatch,
+module.exports.addAggregation = universalQuery.addAggregation;
+module.exports.addFilter = universalQuery.addFilter;
+module.exports.addMinimumShould = universalQuery.addMinimumShould;
+module.exports.addMust = universalQuery.addMust;
+module.exports.addMustNot = universalQuery.addMustNot;
+module.exports.addSearch = universalQuery.addSearch;
+module.exports.addShould = universalQuery.addShould;
+module.exports.addSize = universalQuery.addSize;
+module.exports.addSort = universalQuery.addSort;
+module.exports.formatAggregationResults = universalQuery.formatAggregationResults;
+module.exports.getFormatSearchResult = universalQuery.getFormatSearchResult;
+module.exports.matchIgnoreCase = universalQuery.matchIgnoreCase;
+module.exports.matchSimple = universalQuery.matchSimple;
+module.exports.moreLikeThis = universalQuery.moreLikeThis;
+module.exports.newNestedQuery = universalQuery.newNestedQuery;
+module.exports.onlyWithTheseFields = universalQuery.onlyWithTheseFields;
+module.exports.onlyWithinThisSite = universalQuery.onlyWithinThisSite;
+module.exports.terms = universalQuery.terms;
+module.exports.withinThisSiteAndCrossposts = universalQuery.withinThisSiteAndCrossposts;
 
-  // For testing
-  post: universalRest.post
-});
+// For testing
+module.exports.post = universalRest.post;

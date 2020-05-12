@@ -9,7 +9,6 @@
   .two-column-component__column--1 {
       width: calc(100% - em(300));
       padding-right: em(20);
-      min-height: em(900);
       position: relative;
       @mixin large-screen {
         margin-right: 0;
@@ -22,7 +21,6 @@
 
   .two-column-component__column--2 {
       width: em(300);
-      min-height: em(900);
       position: relative;
       @mixin large-screen {
         margin-right: 0;

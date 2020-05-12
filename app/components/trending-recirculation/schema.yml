@@ -1,3 +1,4 @@
+_version: 1.0
 _description: |
   A list of 6 trending stories
 
@@ -38,5 +39,3 @@ _groups:
       text: Trending Stories -- Anything less than 6 will be backfilled with the latest
     fields:
       - items
-
-_permission: update

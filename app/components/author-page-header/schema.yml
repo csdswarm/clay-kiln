@@ -29,7 +29,12 @@ scheduleTime:
 bio:
   _label: Biography
   _has:
-    input: text
+    input: wysiwyg
+    type: multi-line
+    buttons:
+      - bold
+      - italic
+      - link
     help: Enter the Author or Host’s professional biography
 
 facebook:

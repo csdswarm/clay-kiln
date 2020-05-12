@@ -1,0 +1,35 @@
+'use strict';
+
+const { expect } = require('chai');
+
+describe('{{kebabCase name}} component', () => {
+  const { save, render } = require('./model');
+  {{#if saveTestDescription}}
+
+  describe('save', () => {
+    it('{{saveTestDescription}}', async () => {
+      const
+        ref = '_components/{{kebabCase name}}/instances/1',
+        data = {},
+        locals = {},
+        result = await save(ref, data, locals);
+
+      expect(result).to.eql({});
+    });
+  });
+  {{/if}}
+  {{#if renderTestDescription}}
+
+  describe('render', () => {
+    it('{{renderTestDescription}}', async () => {
+      const
+        ref = '_components/{{kebabCase name}}/instances/1',
+        data = {},
+        locals = {},
+        result = await render(ref, data, locals);
+
+      expect(result).to.eql({ _computed: {}});
+    });
+  });
+  {{/if}}
+});

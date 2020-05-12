@@ -1,18 +1,25 @@
 'use strict';
 
-const { unityComponent } = require('../../services/universal/amphora'),
+const _get = require('lodash/get'),
+  { unityComponent } = require('../../services/universal/amphora'),
   createContent = require('../../services/universal/create-content'),
-  { autoLink } = require('../breadcrumbs');
+  { autoLink } = require('../breadcrumbs'),
+  defaultTextWithOverride = {
+    onModelSave: require('../../services/kiln/plugins/default-text-with-override/on-model-save')
+  };
 
 module.exports = unityComponent({
-  render: (uri, data, locals) => {
-    autoLink(data, ['sectionFront', 'secondarySectionFront'], locals.site.host);
+  render: async (uri, data, locals) => {
+    locals.loadedIds.push(uri);
+    await autoLink(data, ['sectionFront', 'secondarySectionFront'], locals);
     return createContent.render(uri, data, locals);
   },
-  save: async (uri, data, locals) => {
+  save: (uri, data, locals) => {
     data.dateModified = (new Date()).toISOString();
-    await createContent.save(uri, data, locals);
 
-    return data;
+    defaultTextWithOverride.onModelSave.handleDefault('msnTitle', 'headline', data);
+    data.msnTitleLength = _get(data.msnTitle, 'length', 0);
+
+    return createContent.save(uri, data, locals);
   }
 });

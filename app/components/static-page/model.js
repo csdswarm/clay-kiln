@@ -9,7 +9,7 @@ const createContent = require('../../services/universal/create-content');
  * @param {Object} locals
  * @returns {Object}
  */
-module.exports.save = async function (uri, data, locals) {
+module.exports.save = function (uri, data, locals) {
   if (!data.pageTitle) {
     data.pageTitle = data.headline;
   }
@@ -19,7 +19,5 @@ module.exports.save = async function (uri, data, locals) {
     primaryHeadline: data.pageTitle
   });
 
-  await createContent.save(uri, data, locals);
-
-  return data;
+  return createContent.save(uri, data, locals);
 };
