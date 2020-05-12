@@ -116,11 +116,8 @@ const db = require('../../services/server/db'),
    */
   render = async function (ref, data, locals) {
     if (data.populateFrom === 'station' && locals.params) {
-      const slug = locals.station && locals.station.site_slug,
-        isMigrated = await isStationMigrated(slug);
-
       data._computed.station = locals.station.name;
-      if (!isMigrated) {
+      if (!data._computed.isMigrated) {
         return renderStation(data, locals);// gets the articles from drupal and displays those instead
       }
     }
@@ -138,11 +135,21 @@ const db = require('../../services/server/db'),
     return Promise.resolve(data);
   };
 
+
 module.exports = recirculationData({
   elasticFields,
   mapDataToFilters: async (uri, data, locals) => ({
     curated: [...data.items, ...await getItemsFromTrendingRecirculation(locals)],
     maxItems: getMaxItems(data)
   }),
-  render
+  render,
+  skipRender: async (data, locals) => {
+    const isStation = data.populateFrom === 'station' && locals.params,
+      slug = locals.station && locals.station.site_slug,
+      isMigrated = await isStationMigrated(slug);
+
+    data._computed.isMigrated = isMigrated;
+
+    return isStation && !isMigrated;
+  }
 });
