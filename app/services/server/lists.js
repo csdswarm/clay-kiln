@@ -7,14 +7,44 @@ const
   _unset = require('lodash/unset'),
   db = require('./db'),
   logger = require('../universal/log'),
-  { addLazyLoadProperty, postfix, prettyJSON } = require('../universal/utils'),
+  { addAmphoraRenderTime, addLazyLoadProperty, postfix, prettyJSON } = require('../universal/utils'),
   { STATION_LISTS } = require('../universal/constants'),
 
   HOUR_IN_SECONDS = 3600,
 
+  /**
+   * Adds amphora timings for redis and postgres requests
+   * @param {string} label
+   * @param {object} data
+   * @param {object} options
+   * @returns {function(...[*]=)} function that takes a callback and runs it
+   */
+  addTimings = (label, data, options) => async cb => {
+    const start = new Date();
+
+    try {
+      // await is necessary for timings to work
+      return await cb();
+    } finally {
+      addAmphoraRenderTime(
+        options.locals,
+        {
+          label,
+          data,
+          ms: new Date() - start
+        },
+        {
+          prefix: options.amphoraTimingLabelPrefix,
+          shouldAdd: options.shouldAddAmphoraTimings
+        }
+      );
+    }
+  },
+
   __ = {
     CACHE_TTL: HOUR_IN_SECONDS,
     STATION_LISTS,
+    addTimings,
     cacheKeyPrefix: name => `list:${name}`,
     db,
     equals: value => other => _isEqual(value, other),
@@ -138,21 +168,26 @@ function getSectionFrontName(slug, data) {
    * @param {object} options
    * @param {object} [options.locals] the locals object
    * @param {string} [options.host] the host name if locals.site.host is unavailable
+   * @param {boolean} [options.shouldAddAmphoraTimings]
+   * @param {string} [options.amphoraTimingLabelPrefix]
    * @returns {Promise<any[]>}
    */
 async function retrieveList(name, options) {
-  const { getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = __,
+  const { addTimings, cacheKeyPrefix, getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = __,
     locals = options.locals,
     host = _get(locals, 'site.host', options.host),
     list = prependStation(name, locals),
-    saved = getFromLocals(list, locals) || await getFromCache(list);
+    redisTimings = addTimings('get from redis', { key: cacheKeyPrefix(list) }, options),
+    saved = getFromLocals(list, locals) || await redisTimings(() => getFromCache(list));
 
   if (saved) {
     return saved;
   }
 
   try {
-    const data = await getFromDb(list, host);
+    const
+      postgresTimings = addTimings('get from postgres', { uri: `${host}/_lists/${name}` }, options),
+      data = await postgresTimings(() => getFromDb(list, host));
 
     await saveToCache(list, data);
     saveToLocals(list, locals, data);
