@@ -3,6 +3,14 @@
 @import "_global/colors";
 
 .contest-rules {
+    &__link {
+      text-decoration: none;
+
+      &:hover .contest-rules__contest-headline {
+        text-decoration: underline;
+      }
+    }
+
     transition: 125ms ease;
     &__rules-body-with-title {
         p:nth-child(1):before {
@@ -10,12 +18,21 @@
             @mixin rules-component-font-1;
         }
     }
+
     &__contest-headline {
-        @mixin rules-component-font-2;
-        a {
-            text-decoration: none;
+        @mixin more-content-feed-font2;
+        display: block;
+        margin-bottom: em(10, 22);
+        @mixin large-screen {
+          @mixin more-content-feed-font6;
+          margin-bottom: em(10, 18);
+        }
+        @mixin medium-small-screen {
+          @mixin more-content-feed-font2;
+          margin-bottom: em(10, 22);
         }
     }
+
     &--presentation-view {
         display: flex;
         margin-bottom: 2rem;
@@ -26,9 +43,24 @@
     }
 
     &__image-container {
-        flex-shrink: 0;
-        width: 240px;
-        height: 160px;
+        /* crop large images */
+        overflow: hidden;
+        width: em(widthOnGrid(5,4));
+        height: em(214);
+        object-fit: cover;
+        @mixin large-screen {
+            width: em(widthOnGrid(4,3));
+            height: em(169);
+        }
+        @mixin medium-small-screen {
+            max-height: em(248);
+            max-width: em(440);
+            margin-bottom: em(15);
+        }
+        @mixin small-screen {
+            max-height: em(180);
+            max-width: em(320);
+        }
     }
 
     &__image {
@@ -37,6 +69,9 @@
 
     &__description-container {
         margin-left: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 }
 

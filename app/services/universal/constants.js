@@ -101,6 +101,7 @@ const _get = require('lodash/get'),
     //   cover national rdc content.
     urpsDomainName: 'National'
   },
+  PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
 
   DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
 
@@ -110,6 +111,11 @@ module.exports = {
   MINUTE,
   HOUR,
   DAY,
+  HOUR,
+  MINUTE,
+  PAGE_TYPES,
+  PRIVACY_POLICY,
+  SECOND,
   WEEK,
   YEAR,
   contentTypes,
