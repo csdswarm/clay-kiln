@@ -58,7 +58,7 @@
     }
 
     .show__details {
-      text-align: justify;
+      text-align: center;
       overflow: hidden;
       font-family: CircularStd-Medium;
       font-size: 11px;
@@ -74,6 +74,14 @@
       -webkit-box-orient: vertical;
     }
 
+
+    @mixin only-large-screen {
+      ul {
+        li {
+          height: 225px;
+        }
+      }
+    }
 
     @mixin medium-screen {
       h2 {

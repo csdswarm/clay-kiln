@@ -5,5 +5,5 @@ _components:
       default:
         allowed: true
       recent:
-        title: Recently Played
+        title: Recent Podcasts
         setType: recent
