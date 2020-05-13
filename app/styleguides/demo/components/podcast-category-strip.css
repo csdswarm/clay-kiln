@@ -2,6 +2,16 @@
 @import "_global/fonts";
 @import "_global/colors";
 
+@define-mixin podcast-category-strip-font1 {
+  @mixin font CircularStd-Black, 18px, $black, -.43px, 22px;
+}
+@define-mixin podcast-category-strip-font2 {
+  @mixin font CircularStd-Medium, 12px, $black, -.34px, 14px;
+}
+@define-mixin podcast-category-strip-font3 {
+  @mixin font CircularStd-Black, 14px, $black, -.23px, 17px;
+}
+
 .component--podcast-category-strip {
   &.podcast-category-strip {
     max-width: em(widthOnGrid(12, 11));
@@ -33,8 +43,8 @@
       @mixin podcast-category-strip-font2;
       & .all__chevron_up {
         fill: $black;
-        height: em(13);
-        width: em(7.5);
+        height: em(7, 12);
+        width: em(3.5, 12);
       }
     }
 
@@ -44,6 +54,7 @@
       flex-wrap: wrap;
       margin: 0;
       margin-bottom: em(20);
+      list-style-type: none;
     }
 
     .podcast-category-strip__item {
@@ -101,7 +112,7 @@
 
     .podcast-category-strip__title {
       @mixin podcast-category-strip-font3;
-      margin-top: em(10);
+      margin-top: em(10, 14);
     }
 
     .podcast-category-strip__image {
