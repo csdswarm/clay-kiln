@@ -8,6 +8,5 @@ module.exports = {
   refreshPermissions: require('./refresh-permissions'),
   signOut: require('./sign-out'),
   sitemap: require('./sitemap'),
-  stationLists: require('./station-lists'),
   validSource: require('./valid-source')
 };
