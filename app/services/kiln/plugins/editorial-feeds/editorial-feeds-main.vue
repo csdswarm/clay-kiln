@@ -17,7 +17,6 @@
       name="'Station'"
       placeholder="Station"
       :suggestions="editorialOptions"
-      :v-model="filteredStations"
       @input="selectStation"
       >
       </ui-autocomplete>
@@ -35,26 +34,11 @@
         </th>
         <span v-if="columns.length === 0"> There is no information</span>
       </thead>
-      <tbody v-if="!filteredStations" class="editorial-feeds-table__body">
-          <tr v-for="station in stationEditorials" :key="station.id">
-            <td class="editorial-feeds-table__item">{{ station.callsign }}</td>
-            <td
-              class="editorial-feeds-table__item"
-              v-for="(col, idx) in columnTitles"
-              :key="idx"
-            >
-              <ui-checkbox
-                :value="station.feeds[col] ? true : false"
-                @change="updateFeed(station.id, col)"
-              />
-            </td>
-          </tr>
-        </tbody>
-        <tbody v-else class="editorial-feeds-table__body">
+        <tbody class="editorial-feeds__table--body">
           <tr v-for="station in filteredStationEditorials" :key="station.id">
-            <td class="editorial-feeds-table__item">{{ station.callsign }}</td>
+            <td class="editorial-feeds__table--item">{{ station.callsign }}</td>
             <td
-              class="editorial-feeds-table__item"
+              class="editorial-feeds__table--item"
               v-for="(col, idx) in columnTitles"
               :key="idx"
             >
@@ -123,6 +107,7 @@ export default {
     fetchEditorialFeeds: async function () {
       // TODO: Connect with backend API endpoint.
       this.stationEditorials = editorials;
+      this.filteredStationEditorials = editorials;
     },
 
     updateChanges: function() {
@@ -153,8 +138,12 @@ export default {
       console.log(station)
     },
     selectStation: function (station) {
-      this.filteredStationEditorials = this.stationEditorials.filter(st => st.callsign.includes(station.toUpperCase()));
-      this.filteredStations = true;
+      if(station) {
+        console.log('Filtering sttions');
+        this.filteredStationEditorials = this.stationEditorials.filter(st => st.callsign.includes(station.toUpperCase()));
+      } else {
+        this.filteredStationEditorials = this.stationEditorials
+      }
     },
     sortTable: function (col) {
       console.log('Sorting by column... ', col);
