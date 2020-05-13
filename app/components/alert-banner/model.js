@@ -1,6 +1,8 @@
 'use strict';
 
 const { getAlerts } = require('../../services/server/alerts'),
+  { unityComponent } = require('../../services/universal/amphora'),
+  _get = require('lodash/get'),
   log = require('../../services/universal/log').setup({ file: __filename });
 
 /**
@@ -27,7 +29,7 @@ function hashId(id) {
  * @param {object} error
  */
 function handleErrors(error) {
-  if (error && error.response && error.response.status === 404) {
+  if (_get(error, 'response.status') === 404) {
     log('error', 'Could not get alert banners. Endpoint not found.');
   } else {
     log('error', 'There was a problem attempting to get alert banners', { error });
@@ -47,7 +49,9 @@ function handleErrors(error) {
  * @param {object} locals.defaultStation
  * @returns {Promise<{id: string, message: string, breaking: boolean}[]>}
  */
-async function prepareAlerts(locals) {
+async function getMessages(locals) {
+  let messages = [];
+
   try {
     const
       { callsign } = locals.station || {},
@@ -65,9 +69,9 @@ async function prepareAlerts(locals) {
       stationAlerts = getAlerts(
         alertParams(callsign)
       ),
-      messages = await Promise.all([globalAlerts, stationAlerts]);
+      potentialMessages = await Promise.all([globalAlerts, stationAlerts]);
 
-    return messages
+    messages = potentialMessages
       .filter(existingMessages)
       .map(([{ id, message, breaking, link }]) => ({
         id: hashId(id),
@@ -79,6 +83,8 @@ async function prepareAlerts(locals) {
   } catch (error) {
     handleErrors(error);
   }
+
+  return messages;
 }
 
 /**
@@ -89,10 +95,13 @@ async function prepareAlerts(locals) {
  * @param {object} locals data
  * @returns {object} - data
  */
-module.exports.render = (ref, data, locals) => {
-  return prepareAlerts(locals)
-    .then(messages => locals.messages = messages)
-    .then(() => data)
-    .catch(handleErrors);
-};
+
+
+module.exports = unityComponent({
+  render: async (ref, data, locals) => {
+    data._computed.messages = await getMessages(locals);
+
+    return data;
+  }
+});
 
