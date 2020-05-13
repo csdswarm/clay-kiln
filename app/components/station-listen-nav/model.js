@@ -1,6 +1,7 @@
 'use strict';
 
-const { playingClass } = require('../../services/universal/spaLocals'),
+const addSocialButtons = require('../../services/universal/add-social-buttons'),
+  { playingClass } = require('../../services/universal/spaLocals'),
   { getNowPlaying, getSchedule } = require('../../services/universal/station'),
 
   /**
@@ -47,6 +48,8 @@ module.exports.render = async (ref, data, locals) => {
   if (data.onAir) {
     data.onAir.image = appendParamsAmpOrQuery(data.onAir.image, locals);
   }
+
+  addSocialButtons(data);
 
   return data;
 };
