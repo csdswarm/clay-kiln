@@ -11,6 +11,17 @@
         Update Changes
       </ui-button>
     </div>
+    <div class="editorial-feeds__filter-select">
+      <ui-autocomplete
+      help="Search For a station"
+      name="'Station'"
+      placeholder="Station"
+      :suggestions="editorialOptions"
+      :v-model="filteredStations"
+      @input="selectStation"
+      >
+      </ui-autocomplete>
+    </div>
     <table class='editorial-feeds__table'>
       <thead class='editorial-feeds__table--head'>
         <th
@@ -24,21 +35,36 @@
         </th>
         <span v-if="columns.length === 0"> There is no information</span>
       </thead>
-      <tbody class="editorial-feeds__table--body">
-        <tr v-for="station in stationEditorials" :key="station.id">
-          <td class="editorial-feeds__table--item">{{ station.callsign }}</td>
-          <td
-            class="editorial-feeds__table--item"
-            v-for="(col, idx) in columnTitles"
-            :key="idx"
-          >
-            <ui-checkbox
-              :value="station.feeds[col] ? true : false"
-              @change="updateFeed(station.id, col)"
-            />
-          </td>
-        </tr>
-      </tbody>
+      <tbody v-if="!filteredStations" class="editorial-feeds-table__body">
+          <tr v-for="station in stationEditorials" :key="station.id">
+            <td class="editorial-feeds-table__item">{{ station.callsign }}</td>
+            <td
+              class="editorial-feeds-table__item"
+              v-for="(col, idx) in columnTitles"
+              :key="idx"
+            >
+              <ui-checkbox
+                :value="station.feeds[col] ? true : false"
+                @change="updateFeed(station.id, col)"
+              />
+            </td>
+          </tr>
+        </tbody>
+        <tbody v-else class="editorial-feeds-table__body">
+          <tr v-for="station in filteredStationEditorials" :key="station.id">
+            <td class="editorial-feeds-table__item">{{ station.callsign }}</td>
+            <td
+              class="editorial-feeds-table__item"
+              v-for="(col, idx) in columnTitles"
+              :key="idx"
+            >
+              <ui-checkbox
+                :value="station.feeds[col] ? true : false"
+                @change="updateFeed(station.id, col)"
+              />
+            </td>
+          </tr>
+        </tbody>
     </table>
   </div>
 </template>
@@ -47,8 +73,7 @@
 
 const radioApi = require("../../../../services/client/radioApi"),
   { editorials, newStationFeed, columnTitles } = require("./data");
-
-const { UiButton, UiCheckbox } = window.kiln.utils.components;
+const { UiButton, UiCheckbox, UiAutocomplete } = window.kiln.utils.components;
 
 export default {
   name: "EditorialManagement",
@@ -57,22 +82,42 @@ export default {
       ascendable: false,
       columnTitles: columnTitles,
       sortColumn: "",
-      stationEditorials: []
+      stationEditorials: [],
+      filteredStationEditorials: [],
+      filteredStations: false,
     };
   },
   components: {
     UiButton,
     UiCheckbox,
+    UiAutocomplete,
   },
   computed: {
     columns: function () {
       return this.stationEditorials.length ? ['STATION', ...this.columnTitles] : [];
+    },
+    editorialOptions: function () {
+      if (this.stationEditorials.length > 0) 
+        return this.stationEditorials.map(station => {
+          return station.callsign
+          });
+      return [];
     },
     enableUpdate: function() {
       return this.stationEditorials.reduce((editable, station) => {
         return editable || station.edited;
       }, false);
     },
+    editorialOptions: function () {
+      if (this.stationEditorials.length > 0) 
+        return this.stationEditorials.map(station => {
+          return station.callsign
+          });
+      return [];
+    },
+    value() {
+        return [];
+      },
   },
   methods: {
     fetchEditorialFeeds: async function () {
@@ -106,6 +151,10 @@ export default {
     },
     updateStation: function (station) {
       console.log(station)
+    },
+    selectStation: function (station) {
+      this.filteredStationEditorials = this.stationEditorials.filter(st => st.callsign.includes(station.toUpperCase()));
+      this.filteredStations = true;
     },
     sortTable: function (col) {
       console.log('Sorting by column... ', col);
