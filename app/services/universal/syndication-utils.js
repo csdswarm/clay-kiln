@@ -7,7 +7,7 @@ const
   __ =  {
     findSyndicatedStation: station => syndications => syndications.find(__.inStation(station)),
     getOrigin: uri => new URL(uri).origin,
-    inStation: station => ({ stationSlug = DEFAULT_STATION.site_slug }) => stationSlug === station.site_slug || stationSlug === '',
+    inStation: station => ({ stationSlug = DEFAULT_STATION.site_slug }) => stationSlug === station.site_slug,
     noContent: value => !Array.isArray(value) || !value.length
   };
 
