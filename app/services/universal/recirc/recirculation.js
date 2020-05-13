@@ -28,7 +28,6 @@ const
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
   { addAmphoraRenderTime, cleanUrl } = require('../utils'),
-  { cleanUrl } = require('../utils'),
   { DEFAULT_STATION } = require('../constants'),
   { isComponent } = require('clayutils'),
   { syndicationUrlPremap } = require('../syndication-utils'),

@@ -126,10 +126,10 @@ const _get = require('lodash/get'),
    * @param {object} req
    * @return {string}
    */
-  getPotentialStationSlugFromReq = req => {
-    return req.path.split('/')[1];
-  },
-  /**
+    getPotentialStationSlugFromReq(req) {
+      return req.path.split('/')[1];
+    },
+    /**
    * returns whether the request
    *   1. is not a reserved route
    *   2. matches a route defined in demo/index.js
