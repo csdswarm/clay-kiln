@@ -365,7 +365,7 @@ const
  * @param {Object} [locals]
  * @returns {array} elasticResults
  */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings}, locals) => {
+  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems, shouldAddAmphoraTimings }, locals) => {
     let results = {
       content: [],
       totalHits: 0
