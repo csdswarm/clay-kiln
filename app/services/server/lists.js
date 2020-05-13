@@ -87,13 +87,11 @@ async function saveList(name, data, options) {
       saveToDb(list, data, host),
       saveToCache(list, data)
     ]);
-  } catch (error) {
-    log('error', `There was a problem trying to save the list ${name}`, error);
+    return data;
+  } catch (e) {
+    log('error', 'Error retrieving list', e);
   }
-
-  return data;
 }
-
 
 /**
    * Adds a new list item to a list if it's not already there.
@@ -231,19 +229,19 @@ async function updateListItem(name, item, key, options) {
     log('error', `Too many items contain the same key. Can\'t update.\n${prettyJSON({ itemsToUpdate })}`);
     return;
   }
-      
+
   if (itemsToUpdate.length === 1 && !sameAsOrig(itemsToUpdate[0])) {
     const oldItem = itemsToUpdate[0];
 
     await deleteListItem(name, oldItem, options);
-        
+
     out.from = oldItem;
   }
 
   if (await addListItem(name, item, options)) {
     out.to = item;
   }
-       
+
   return out;
 }
 
