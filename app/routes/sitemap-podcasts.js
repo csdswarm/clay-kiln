@@ -18,7 +18,7 @@ module.exports = async function (req, res) {
       : '',
 
     urlsInXMLFormatSQL = `
-    SELECT id, xmlelement(name url,
+    SELECT data->>id as id, xmlelement(name url,
       xmlelement(name loc, '' + data->'attributes'->>'site_slug'
     ) as xml_data
     FROM podcasts

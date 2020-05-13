@@ -16,6 +16,7 @@ const AWS = require('aws-sdk'),
   uuidv4 = require('uuid/v4'),
   additionalDataTypes = require('../services/server/add-data-types'),
   alerts = require('../services/server/alerts'),
+  podcasts = require('../services/server/podcasts'),
   importContent = require('../services/server/contentSharing'),
   radioApi = require('../services/server/radioApi'),
   brightcoveApi = require('../services/universal/brightcoveApi'),
@@ -165,6 +166,7 @@ module.exports = router => {
 
   additionalDataTypes.inject(router, checkAuth);
   alerts.inject(router, checkAuth);
+  podcasts.inject(router);
 
   addEndpoints.imageInfo(router, checkAuth);
   validScripts.inject(router, checkAuth);
