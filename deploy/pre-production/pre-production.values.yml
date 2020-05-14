@@ -67,7 +67,7 @@ hpa:
 resources:
   limits:
     cpu: 2
-    memory: 512Mi
+    memory: 1G
   requests:
     cpu: 1
-    memory: 512Mi
+    memory: 1G
