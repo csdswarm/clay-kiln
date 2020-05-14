@@ -144,12 +144,17 @@ module.exports = recirculationData({
   }),
   render,
   skipRender: async (data, locals) => {
-    const isStation = data.populateFrom === 'station' && locals.params,
-      slug = locals.station && locals.station.site_slug,
-      isMigrated = await isStationMigrated(slug);
+    const isStation = data.populateFrom === 'station' && locals.params;
 
-    data._computed.isMigrated = isMigrated;
+    if (isStation) {
+      const slug = locals.station && locals.station.site_slug,
+        isMigrated = await isStationMigrated(slug);
 
-    return isStation && !isMigrated;
+      data._computed.isMigrated = isMigrated;
+
+      return !isMigrated;
+    }
+
+    return false;
   }
 });
