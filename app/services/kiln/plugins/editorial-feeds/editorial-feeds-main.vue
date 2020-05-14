@@ -56,31 +56,12 @@
 "use strict";
 
 const radioApi = require("../../../../services/client/radioApi"),
-const { UiButton, UiCheckbox, UiAutocomplete } = window.kiln.utils.components;
+ { UiButton, UiCheckbox, UiAutocomplete } = window.kiln.utils.components;
 
 export default {
   name: "EditorialManagement",
   data: function () {
     return { 
-      columnTitles: [
-        'Trending',
-        'AC',
-        'Adult Hits',
-        'Alternative',
-        'CHR / Top 40',
-        'Classic Hits',
-        'Classic Rock',
-        'Country',
-        'Hip Hop',
-        'Hot AC',
-        'Hot AC / Top 40 / CHR',
-        'News/Talk',
-        'R and B',
-        'Rock',
-        'Sports',
-        'Throwbacks',
-        'Urban'
-      ],
       sortColumn: "",
       stationEditorials: [],
       filteredStationEditorials: [],
@@ -106,7 +87,28 @@ export default {
     },
     value() {
         return [];
-      },
+    },
+    columnTitles() {
+      return [
+        'Trending',
+        'AC',
+        'Adult Hits',
+        'Alternative',
+        'CHR / Top 40',
+        'Classic Hits',
+        'Classic Rock',
+        'Country',
+        'Hip Hop',
+        'Hot AC',
+        'Hot AC / Top 40 / CHR',
+        'News/Talk',
+        'R and B',
+        'Rock',
+        'Sports',
+        'Throwbacks',
+        'Urban'
+      ]
+    },
   },
   methods: {
     fetchEditorialFeeds: async function () {
