@@ -31,7 +31,7 @@ module.exports = unityComponent({
 
     data.stationSlug = _get(locals, 'params.stationSlug');
     await addBreadcrumbs(data, locals);
-
+    
     return data;
   }
 });
