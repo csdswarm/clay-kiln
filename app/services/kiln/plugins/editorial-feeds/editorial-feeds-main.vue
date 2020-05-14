@@ -5,7 +5,7 @@
       <ui-button
         color="green"
         :disabled="!enableUpdate"
-        v-on:click="updateChanges"
+        v-on:click="submitChanges"
         raised
       >
         Update Changes
@@ -36,14 +36,14 @@
       </thead>
         <tbody class="editorial-feeds__table--body">
           <tr v-for="station in filteredStationEditorials" :key="station.id">
-            <td class="editorial-feeds__table--item">{{ station.callsign }}</td>
+            <td class="editorial-feeds__table--item">{{ station.data.siteSlug }}</td>
             <td
               class="editorial-feeds__table--item"
               v-for="(col, idx) in columnTitles"
               :key="idx"
             >
               <ui-checkbox
-                :value="station.feeds[col] ? true : false"
+                :value="station.data.feeds[col] ? true : false"
                 @change="updateFeed(station.id, col)"
               />
             </td>
@@ -56,7 +56,7 @@
 "use strict";
 
 const radioApi = require("../../../../services/client/radioApi"),
-  { editorials, newStationFeed, columnTitles } = require("./data");
+  { columnTitles } = require("./data");
 const { UiButton, UiCheckbox, UiAutocomplete } = window.kiln.utils.components;
 
 export default {
@@ -69,6 +69,7 @@ export default {
       stationEditorials: [],
       filteredStationEditorials: [],
       filteredStations: false,
+      enableUpdate: false
     };
   },
   components: {
@@ -83,19 +84,7 @@ export default {
     editorialOptions: function () {
       if (this.stationEditorials.length > 0) 
         return this.stationEditorials.map(station => {
-          return station.callsign
-          });
-      return [];
-    },
-    enableUpdate: function() {
-      return this.stationEditorials.reduce((editable, station) => {
-        return editable || station.edited;
-      }, false);
-    },
-    editorialOptions: function () {
-      if (this.stationEditorials.length > 0) 
-        return this.stationEditorials.map(station => {
-          return station.callsign
+          return station.data.siteSlug
           });
       return [];
     },
@@ -105,42 +94,47 @@ export default {
   },
   methods: {
     fetchEditorialFeeds: async function () {
-      // TODO: Connect with backend API endpoint.
-      this.stationEditorials = editorials;
-      this.filteredStationEditorials = editorials;
+       try {
+          const apiRequest = `${window.location.protocol}//${window.location.host}/rdc/editorial-group`,
+            editorials = await radioApi.get(apiRequest);
+
+          this.stationEditorials = editorials || [];
+          this.filteredStationEditorials = editorials || [];
+        } catch (e) {
+
+        }
     },
 
-    updateChanges: function() {
-      // TODO: Connect with API.
-      // This is only for demostrating behavior. 
+    submitChanges: async function() {
       const updatedStations = this.stationEditorials.filter(station => station.edited);
 
       this.stationEditorials.map(station => {
         this.$set(station, 'edited', false);
       });
+      this.enableUpdate = false;
 
-      console.log(
-        'Attempting update the edited Station Feeds',
-        updatedStations
-      );
+      for (const station of updatedStations) {
+         try {
+          const apiRequest = `${window.location.protocol}//${window.location.host}/rdc/editorial-group/${station.id}`,
+            stationsResponse = await radioApi.put(apiRequest, station.data);
+        } catch (e) {}
+      }
+     
     },
 
     updateFeed: function (stationId, feed) {
       this.stationEditorials = this.stationEditorials.map((station) => {
         if (station.id === stationId) {
           this.$set(station, 'edited', true);
-          station.feeds[feed] = !station.feeds[feed];
+          station.data.feeds[feed] = !station.data.feeds[feed];
         }
         return station;
       });
-    },
-    updateStation: function (station) {
-      console.log(station)
+      this.enableUpdate = true;
     },
     selectStation: function (station) {
       if(station) {
-        console.log('Filtering sttions');
-        this.filteredStationEditorials = this.stationEditorials.filter(st => st.callsign.includes(station.toUpperCase()));
+        this.filteredStationEditorials = this.stationEditorials.filter(st => st.data.siteSlug.includes(station));
       } else {
         this.filteredStationEditorials = this.stationEditorials
       }
@@ -159,14 +153,14 @@ export default {
       this.stationEditorials.sort(function (a, b) {
         if (
           col === 'STATION'
-            ? a.callsign > b.callsign
-            : a.feeds[col] > b.feeds[col]
+            ? a.data.siteSlug > b.data.siteSlug
+            : a.data.feeds[col] > b.data.feeds[col]
         ) {
           return ascending ? 1 : -1;
         } else if (
           col === 'STATION'
-            ? a.callsign < b.callsign
-            : a.feeds[col] < b.feeds[col]
+            ? a.data.siteSlug < b.data.siteSlug
+            : a.data.feeds[col] < b.data.feeds[col]
         ) {
           return ascending ? -1 : 1;
         }
