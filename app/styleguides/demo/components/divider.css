@@ -74,6 +74,10 @@
       &:before{
         border-top-width: 6px
       }
+
+      span {
+        display: none;
+      }
     }
   }
 }
