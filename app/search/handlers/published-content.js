@@ -7,7 +7,8 @@ const h = require('highland'),
   { isOpForComponents, stripPostProperties } = require('../filters'),
   db = require('../../services/server/db'),
   INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
-  CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
+  { PAGE_TYPES } = require('../../services/universal/constants'),
+  CONTENT_FILTER = isOpForComponents([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST]);
 
 // Subscribe to the save stream
 subscribe('save').through(save);
@@ -73,9 +74,15 @@ function processContent(obj, components) {
   obj.value = getContent(obj.value, 'content', components);
   obj.value = getContent(obj.value, 'tags', components);
 
-  if (obj.key.includes('article')) {
+  if (obj.key.includes(PAGE_TYPES.CONTEST)) {
+    obj.value = getContent(obj.value, 'description', components);
+  } else {
+    obj.value = getContent(obj.value, 'content', components);
+  }
+
+  if (obj.key.includes(PAGE_TYPES.ARTICLE)) {
     obj.value = getContent(obj.value, 'feedImg', components);
-  } else if (obj.key.includes('gallery')) {
+  } else if (obj.key.includes(PAGE_TYPES.GALLERY)) {
     obj.value = getContent(obj.value, 'slides', components);
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
 
@@ -120,7 +127,7 @@ function save(stream) {
     .parallel(1)
     // copy the data being saved so we can search it
     .map(param => { components.push(param); return param; })
-    // only bring back articles and galleries
+    // only bring back articles, galleries, and contest pages
     .filter(CONTENT_FILTER)
     .filter(filters.isInstanceOp)
     .filter(filters.isPutOp)
@@ -170,7 +177,7 @@ function getMain(op) {
 }
 
 /**
- * remove the published article/gallery from elasticsearch
+ * remove the published article/gallery/contest from elasticsearch
  *
  * @param {Stream} stream
  * @return {Stream}
@@ -183,7 +190,7 @@ function unpublishPage(stream) {
 }
 
 /**
- * Index articles/galleries on publish
+ * Index articles/galleries/contests on publish
  * @param  {Object} args
  * @returns {Promise}
  */

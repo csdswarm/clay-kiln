@@ -12,9 +12,7 @@ module.exports['1.0'] = function (uri, data) {
   return data;
 };
 
-module.exports['2.0'] = moreContentFeedToTwoColumn;
-
-module.exports['3.0'] = function (uri, data) {
+module.exports['2.0'] = function (uri, data) {
   if (!uri.includes('instances/new')) {
     return {
       ...data,
@@ -25,4 +23,5 @@ module.exports['3.0'] = function (uri, data) {
 
   return data;
 };
+module.exports['3.0'] = moreContentFeedToTwoColumn;
 module.exports['4.0'] = addMultiColumnToSectionFront;

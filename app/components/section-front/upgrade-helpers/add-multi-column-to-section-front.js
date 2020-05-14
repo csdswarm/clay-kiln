@@ -29,7 +29,7 @@ module.exports = async function (uri, data) {
       sectionLead,
       ...stationsCarousel,
       googleAdUnderStationsModule,
-      ...(includePodcastModule ? [podcastList] : []),
+      ...includePodcastModule ? [podcastList] : [],
       twoColumnComponent
     ],
     ...restOfData

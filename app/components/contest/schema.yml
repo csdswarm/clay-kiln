@@ -1,0 +1,315 @@
+_description: |
+  A contest page that includes headline, lede, description, embed, rules & tags.
+
+lead:
+  _label: Contest Lede
+  _placeholder:
+    text: Contest Lede
+    height: 600px
+  _componentList:
+    fuzzy: false # allows interactives, etc to add one-off components
+    include:
+      - image
+      - instagram-post
+      - brightcove
+      - youtube
+      - html-embed
+      - omny
+      - verizon-media
+    validate:
+      max: 1
+      required: true
+
+# this is the headline that displays on the article itself
+headline:
+  _label: Headline
+  _subscribe: articleHeadline
+  _placeholder:
+    height: 40px
+    text: Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+    help: Appears as contest title
+
+subHeadline:
+  _label: Sub headline
+  _placeholder:
+    height: 40px
+    text: Sub Headline
+    required: true
+  _has:
+    input: inline
+    buttons:
+      - italic
+      - strike
+    help: Appears under contest title
+  _publish: subHeadline
+
+primaryHeadline:
+  _label: Facebook Headline
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 280
+    help: Write your most shareable headline
+    attachedButton:
+      name: magic-button
+      component: contest
+      store: components
+      property: headline
+      tooltip: Use Contest Headline
+
+shortHeadline:
+  _label: Twitter/Short Headline
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 140
+    help: Also used for Related Stories and some homepages
+    attachedButton:
+      name: magic-button
+      field: primaryHeadline
+      tooltip: Use Contest Headline
+
+teaser:
+  _label: Teaser
+  _has:
+    input: wysiwyg
+    buttons:
+      - italic
+      - strike
+    validate:
+      required: true
+      max: 150
+    help: Appears in feeds and newsletters
+
+seoHeadline:
+  _label: SEO Headline
+  _has:
+    input: text
+    help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
+    validate:
+      max: 60
+      required: true
+
+seoDescription:
+  _label: SEO Description
+  _has:
+    input: text
+    type: multi-line
+    help: Focus on the keywords/phrases for search traffic. Try to get as close as possible to 200 characters
+    validate:
+      required: true
+
+sideShare:
+  _component:
+    include:
+      - share
+
+description:
+  _label: Contest Description
+  _componentList:
+    fuzzy: false # allows interactives, etc to add one-off components
+    include:
+      - paragraph
+    validate:
+      min: 1
+      required: true
+
+embed:
+  _component:
+    include:
+      - html-embed
+
+startDate:
+  _label: Contest Start Date
+  _has:
+    input: datepicker
+    help: Contest start date
+    validate:
+      required: true
+
+startTime:
+  _label: Contest Start Time
+  _has:
+    input: timepicker
+    help: Contest start time
+    validate:
+      required: true
+
+startDateTime:
+  _label: Contest Start Date and Time
+
+endDate:
+  _label: Contest End Date
+  _has:
+    input: datepicker
+    help: Contest end date
+    validate:
+      required: true
+
+endTime:
+  _label: Contest End Time
+  _has:
+    input: timepicker
+    help: Contest end time
+    validate:
+      required: true
+
+endDateTime:
+  _label: Contest End Datetime
+
+stationTimezone:
+  _label: Station Timezone
+
+stationSlug:
+  _label: Station Slug
+  _has: static
+  _publish: stationSlug
+  _reveal:
+    field: stationSlug
+    operator: truthy
+
+stationName:
+  _label: Station Name
+  _has: static
+  _publish: stationName
+  _reveal:
+    field: stationName
+    operator: truthy
+
+stationCallsign:
+  _label: Station Callsign
+  _has: static
+  _publish: stationCallsign
+  _reveal:
+    field: stationCallsign
+    operator: truthy
+
+tags:
+  _component:
+    include:
+      - tags
+
+adTags:
+  _component:
+    include:
+      - ad-tags
+
+feedImgUrl:
+  _label: Recirculation Image
+  _publish: feedImgUrl
+  help: Focus on the keywords/phrases for search traffic. Also used for the page title and the slug
+  _has:
+    input: advanced-image-upload
+    webLabel: Insert Image via Web
+    webHelp: Supply a valid HTTPS url to an image file then click "done" button
+    uploadLabel: Upload Image Attachment
+    uploadHelp: Choose an image file from your computer
+    validate:
+      required: true
+
+slug:
+  _label: Slug
+  _has:
+    input: text
+    validate:
+      required: true
+    attachedButton:
+      name: magic-button
+      component: contest
+      transform: getComponentInstance
+      url: $SITE_PREFIX
+      property: shortHeadline
+      moreMagic:
+        - transform: toSlug
+      tooltip: Generate from Short Headline
+
+_groups:
+  circHeadlines:
+    fields:
+      - primaryHeadline
+      - shortHeadline
+      - teaser
+      - seoHeadline
+      - seoDescription
+  circFeeds:
+    fields:
+      - feedImgUrl
+  circSlug:
+    fields:
+      - slug
+  dates:
+    fields:
+      - startDate
+      - startTime
+      - endDate
+      - endTime
+    _placeholder:
+      text: Contest Date Range
+      height: 30px
+      ifEmpty: startDate or startTime or endDate or endTime
+
+
+# Non user editable. Set by model.js. Included in schema to use _publish functionality
+contentType:
+  _label: Content Type
+  _publish: contentType
+  _has:
+    input: static
+    text: 'contest'
+canonicalUrl:
+  _publish: url
+  _has:
+    help: Canonical URL of an article. Set when the article publishes.
+pageDescription:
+  _publish: pageDescription
+  _has:
+    help: Plaintext description for search engines, set by seoDescription or teaser.
+socialDescription:
+  _publish: socialDescription
+  _has:
+    help: Plaintext description for social media, set by teaser.
+pageTitle:
+  _publish: pageTitle
+  _has:
+    help: Plaintext page title, set by seoHeadline, shortHeadline, or primaryHeadline. Sponsored posts and certain sites will have extra sugar.
+plaintextPrimaryHeadline:
+  _publish:
+    - ogTitle
+    - pageListTitle
+  _has:
+    help: Plaintext title set by primaryHeadline. Used for facebook sharing.
+plaintextShortHeadline:
+  _publish: twitterTitle
+  _has:
+    help: Plaintext title set by shortHeadline. Used for twitter sharing, and some feeds.
+
+rulesBodyText:
+  _label: Contest Rules
+  _placeholder:
+    height: 200px
+    text: New Contest Rules Body Text
+    required: true
+  _has:
+    input: inline
+    type: multi-line
+    buttons:
+      - bold
+      - italic
+      - strike
+      - link

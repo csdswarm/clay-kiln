@@ -14,6 +14,16 @@ const exists = require('lodash/identity'),
   },
   author = opts => `${opts.prefix}/${opts.contentType}/${opts.authorSlug}`,
   // e.g. http://vulture.com/music/x.html - modified re: ON-333
+  contestSlugPattern = opts => {
+    // e.g. http://radio.com/contests/mix-105-1-gatorland-tickets
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      'contests',
+      opts.slug
+    ].filter(exists)
+      .join('/');
+  },
   date = opts => `${opts.prefix}/${opts.sectionFront}/${opts.slug}.html`,
   gallery = opts => {
     // e.g. http://radio.com/music/gallery/grammies
@@ -44,13 +54,25 @@ const exists = require('lodash/identity'),
       opts.stationSlug
     ].filter(exists)
       .join('/');
+  },
+  contest = opts => {
+    // e.g. http://radio.com/contests/mix-105-1-gatorland-tickets
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      'contests',
+      opts.slug
+    ].filter(exists)
+      .join('/');
   };
 
 module.exports = {
   article,
   author,
+  contestSlugPattern,
   date,
   gallery,
   sectionFront,
-  stationFront
+  stationFront,
+  contest
 };

@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash'),
+  url = require('url'),
   db = require('../server/db'),
   buffer = require('../server/buffer'),
   { sites, composer } = require('amphora'),
@@ -34,6 +35,77 @@ function getPrefixAndKey(path) {
 
   return { routeParamKey, routePrefix };
 }
+
+/**
+ * Returns the pathname split into an array of parts.
+ *
+ * Example:
+ * ```
+ * const pathname = '/foo/bar/blah'
+ * pathParts(pathname) // ['foo', 'bar', 'blah']
+ * ```
+ *
+ * @param {string} pathname
+ * @returns {Array<string>}
+ */
+function parsePathParts(pathname) {
+  return pathname.match(/[^\/]+/g) || [];
+}
+
+const routes = [
+  // `/contest-rules` or `{stationSlug}/contest-rules`
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url),
+        basePath = 'contest-rules',
+        pathnameIndex = parsePathParts(pathname)
+          .indexOf(basePath);
+
+      return pathnameIndex === 0
+        || pathnameIndex === 1;
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/contest-rules/);
+
+      params.stationSlug = match ? match[1] : '';
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
+  },
+  // `/contests` or `{stationSlug}/contests`
+  {
+    testPath: req => {
+      const { pathname } = url.parse(req.url),
+        basePath = 'contests',
+        pathParts = parsePathParts(pathname),
+        pathnameIndex = pathParts
+          .indexOf(basePath),
+        // `/contests/{slug}` or `{stationSlug}/contests/{slug}`
+        isContestPage = /\/contests\/(.+)/.test(pathname);
+
+      if (isContestPage) {
+        return false;
+      }
+
+      return pathnameIndex === 0
+        || pathnameIndex === 1;
+    },
+    getParams: (req, params) => {
+      const { pathname } = url.parse(req.url),
+        match = pathname.match(/\/(.+)\/contests/);
+
+      params.stationSlug = match ? match[1] : '';
+    },
+    getPageData: req => db.get(`${req.hostname}/_pages/contest-rules-page@published`)
+  },
+  // [default route handler] resolve the uri and page instance
+  {
+    testPath: () => true,
+    getParams: () => null,
+    getPageData: req => db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`)
+      .then(data => db.get(`${data}@published`))
+  }
+];
 
 /**
  * If you add the `X-Amphora-Page-JSON` header to a request
@@ -106,8 +178,10 @@ function middleware(req, res, next) {
     params.dynamicStation = req.path.match(/\/(.+)\/listen$/)[1];
     promise = db.get(`${req.hostname}/_pages/station@published`);
   } else {
-    // Otherwise resolve the uri and page instance
-    promise = db.getUri(`${req.hostname}/_uris/${buffer.encode(`${req.hostname}${req.baseUrl}${req.path}`)}`).then(data => db.get(`${data}@published`));
+    const route = routes.find(r => r.testPath(req));
+
+    route.getParams(req, params);
+    promise = route.getPageData(req);
   }
 
   // Compose and respond

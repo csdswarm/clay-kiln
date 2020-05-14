@@ -30,6 +30,7 @@ const _get = require('lodash/get'),
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
     SECTIONFRONT: 'section-front',
+    CONTEST: 'contest',
     STATIONFRONT: 'station-front'
   },
 
@@ -60,6 +61,7 @@ const _get = require('lodash/get'),
   contentTypes = new Set([
     'article',
     'author-page',
+    'contest',
     'gallery',
     'homepage',
     'section-front',
@@ -104,6 +106,7 @@ const _get = require('lodash/get'),
     //   cover national rdc content.
     urpsDomainName: 'National'
   },
+  PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
 
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
@@ -116,6 +119,7 @@ module.exports = {
   MINUTE,
   msnFeed,
   PAGE_TYPES,
+  PRIVACY_POLICY,
   SECOND,
   SERVER_SIDE,
   STATION_LISTS,

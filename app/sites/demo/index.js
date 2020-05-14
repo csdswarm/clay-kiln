@@ -6,6 +6,7 @@ const publishing = require('../../services/publishing'),
     '/_components/gallery/instances',
     '/_components/section-front/instances',
     '/_components/author-page-header/instances',
+    '/_components/contest/instances',
     '/_components/station-front/instances'
   ];
 
@@ -36,6 +37,7 @@ module.exports.routes = [
   { path: '/small-business-pulse/:slug' },
   { path: '/small-business-pulse/:year/:month/:name' },
   { path: '/small-business-pulse/:year/:month/:day/:name' },
+  { path: '/:stationSlug/:sectionFront/:secondarySectionFront/gallery/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
@@ -57,7 +59,12 @@ module.exports.routes = [
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
   { path: '/authors/:dynamicAuthor', dynamicPage: 'author' },
-  { path: '/:stationSlug/:sectionFront/:secondarySectionFront/gallery/:slug' },
+  { path: '/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/:stationSlug/contest-rules', dynamicPage: 'contest-rules-page' },
+  { path: '/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/:stationSlug/contests', dynamicPage: 'contest-rules-page' },
+  { path: '/contests/:slug' },
+
   // Full dynamic paths
   { path: '/:sectionFront' },
   { path: '/:sectionFront/:secondarySectionFront' },
@@ -70,6 +77,7 @@ module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getAuthorPageSlugUrl(data, locals, mainComponentRefs)
 ];
