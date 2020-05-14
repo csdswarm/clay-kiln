@@ -1,35 +1,130 @@
 <template>
   <div class="national-subscriptions">
-    <header>
-      <h2 class="title">National Subscriptions</h2>
-    </header>
-    <table cellspacing="1">
+    <h1>
+      {{stationName}} NATIONAL SUBSCRIPTIONS:
+    <hr>
+    <ui-button class="add-subscription-btn" color="primary" @click="openModal('subscriptionModal')" icon="add" :loading="isLoading" size="large">Add Subscription</ui-button>
+    </h1>
+    <table class="subscriptions" cellspacing="1" v-if="subscriptions.length">
       <thead>
         <tr>
-          <th :key="index" v-for="(config, index) in tableHeaders">{{ config.display }}</th>
+          <th :key="index" v-for="(config, index) in tableHeaders" :class="config.display">{{ config.display }}</th>
         </tr>
       </thead>
       <tbody>
-        <DataRow
-          :key="index"
+        <SubscriptionRow
           v-for="(subscription, index) in subscriptions"
-          :data="subscription"
-          :rowConfig="rowConfig"
+          :key="index"
+          :subscription="subscription"
+          :config="subscriptionRowConfig"
           :isLoading="isLoading"
-          @onSaveDataRow="onSaveDataRow"
-          @onDeleteDataRow="onDeleteDataRow"
+          @editSubscriptionRow="onEditSubscriptionRow"
+          @deleteSubscriptionRow="onDeleteSubscriptionRow"
         />
       </tbody>
-      <tfoot>
-        <DataRow
-          :data="newSub"
-          :rowConfig="rowConfig"
-          :isLoading="isLoading"
-          mode="create"
-          @onNewDataRow="onNewDataRow"
-        />
-      </tfoot>
     </table>
+    <template v-if="!subscriptions.length">
+      <p>There are currently no subscriptions. Click the Add Subscription button to make one.</p>
+    </template>
+    <ui-modal ref="subscriptionModal" title="New National Subscription">
+        <form action="">
+          <ui-textbox
+              error="The short description may not be more than 50 characters"
+              help="Write a short description not more than 50 characters"
+              label="Short Description"
+              placeholder="Enter a short description"
+
+              :maxlength="50"
+              :invalid="workingSubscription.short_desc.length > 50"
+
+              v-model="workingSubscription.short_desc"
+          ></ui-textbox>
+          <ui-radio-group
+            name="populateFrom"
+            vertical
+            :options="workingSubscriptionOptions.populateFrom"
+            v-model="workingSubscription.filter.populateFrom"
+          >Populate content from?</ui-radio-group>
+          <hr>
+          <!-- pop from tag -->
+          <ui-select
+            v-if="includeSectionTags"
+            has-search
+            label="Tags"
+            placeholder="Select Tags"
+            multiple
+
+            :options="tags.map(t => t.text)"
+
+            v-model="workingSubscription.filter.tags"
+          ></ui-select>
+          <!-- pop from section front -->
+          <ui-select
+            v-if="includeSectionFronts"
+            has-search
+            label="Section Front"
+            placeholder="Select Primary Section Front to Include"
+
+            :options="primarySectionFronts.map(psf => psf.name)"
+
+            v-model="workingSubscription.filter.sectionFront"
+          ></ui-select>
+          <ui-select
+            v-if="workingSubscription.filter.populateFrom === 'sectionFront' || workingSubscription.filter.populateFrom === 'sectionFrontAndTag' || workingSubscription.filter.populateFrom === 'sectionFrontOrTag'"
+            has-search
+            label="Secondary Section Front"
+            placeholder="Select Secondary Section Front to Include"
+
+            :options="secondarySectionFronts.map(essf => essf.name)"
+
+            v-model="workingSubscription.filter.secondarySectionFront"
+          ></ui-select>
+          <!-- on all pop from choices -->
+          <ui-checkbox-group
+            :options="workingSubscriptionOptions.contentTypes"
+            v-model="workingSubscription.filter.contentType"
+          >Content Types</ui-checkbox-group>
+          <ui-select
+            has-search
+            label="Exclude Tags"
+            placeholder="Select Tags"
+            multiple
+
+            :options="tags.map(t => t.text)"
+
+            v-model="workingSubscription.filter.excludeTags"
+          ></ui-select>
+          <ui-select
+            has-search
+            label="Exclude Section Fronts"
+            placeholder="Select Primary Section Fronts to Exclude"
+            multiple
+
+            :options="primarySectionFronts.map(psf => psf.name)"
+
+            v-model="workingSubscription.filter.excludeSectionFronts"
+          ></ui-select>
+          <ui-select
+            has-search
+            label="Exclude Secondary Section Fronts"
+            placeholder="Select Secondary Section Fronts to Exclude"
+            multiple
+
+            :options="secondarySectionFronts.map(essf => essf.name)"
+
+            v-model="workingSubscription.filter.excludeSecondarySectionFronts"
+          ></ui-select>
+        </form>
+        <div slot="footer">
+          <template v-if="modalMode === 'new'">
+            <ui-button color="primary" @click="onCreate" :disabled="!workingSubscription.short_desc.trim().length">Add</ui-button>
+          </template>
+          <template v-else="">
+            <ui-button color="primary" @click="onUpdate" :disabled="!workingSubscription.short_desc.trim().length">Save</ui-button>
+          </template>
+          <ui-button @click="closeModal('subscriptionModal')">Close</ui-button>
+        </div>
+    </ui-modal>
     <ui-confirm
       confirm-button-icon="delete"
       confirm-button-text="Delete"
@@ -39,15 +134,16 @@
       type="danger"
 
       @confirm="onConfirmDelete"
-      @deny="onDenyDelete"
     ></ui-confirm>
   </div>
 </template>
 
 
+
 <script>
-  const { UiButton, UiTextbox, UiIconButton, UiConfirm } = window.kiln.utils.components;
-  const DataRow = require('./national-subscriptions-row.vue');
+  const { UiButton, UiTextbox, UiIconButton, UiConfirm, UiModal, UiRadioGroup, UiSelect, UiCheckboxGroup } = window.kiln.utils.components;
+  const SubscriptionRow = require('./national-subscriptions-row.vue');
+  const apiDomain = '/'
   const startCase = require('lodash/startCase');
   const axios = require('axios');
   const tableConfig = [
@@ -56,7 +152,6 @@
       display: 'id',
       isHeader: false,
       isDataProp: false,
-      isEditable: false,
       dataType: Number
     },
     {
@@ -64,7 +159,6 @@
       display: 'slug',
       isHeader: true,
       isDataProp: true,
-      isEditable: false,
       dataType: String
     },
     {
@@ -72,7 +166,6 @@
       display: 'description',
       isHeader: true,
       isDataProp: true,
-      isEditable: true,
       dataType: String
     },
     {
@@ -80,7 +173,6 @@
       display: 'updated',
       isHeader: true,
       isDataProp: true,
-      isEditable: false,
       dataType: Date,
       useFilter: 'formatDate'
     },
@@ -89,7 +181,6 @@
       display: 'filter',
       isHeader: true,
       isDataProp: true,
-      isEditable: true,
       dataType: Object,
       propOrder: ['populateFrom', 'contentType', 'sectionFront', 'secondarySectionFront', 'tags', 'excludeSectionFronts', 'excludeSecondarySectionFronts', 'excludeTags']
     },
@@ -98,32 +189,31 @@
       display: 'actions',
       isHeader: true,
       isDataProp: false,
-      isEditable: false,
       dataType: null
     }
-  ];
+  ]
 
   class NationalSubscription {
-    constructor(options={
+    constructor (options = {
       station_slug: window.kiln.locals.station.site_slug,
       short_desc: '',
       filter: {
         // as currently described in get-national-subscriptions.js
-        populateFrom: '', // {string}
-        contentType: '', // {string}
-        sectionFront: '' ,// {string}
+        populateFrom: 'allContent', // {string}
+        contentType: ['Article', 'Gallery'], // {string[]}
+        sectionFront: '', // {string}
         secondarySectionFront: '', // {string}
         tags: [], // {string[]}
         excludeSectionFronts: [], // {string[]}
         excludeSecondarySectionFronts: [], // {string[]}
-        excludeTags: [], // {string[]}
+        excludeTags: [] // {string[]}
       }
     }) {
-      this.id = '#';
-      this.last_updated_utc =  'N/A';
-      this.station_slug = options.station_slug;
-      this.short_desc = options.short_desc;
-      this.filter = {...options.filter};
+      this.id = '#'
+      this.last_updated_utc = 'N/A'
+      this.station_slug = options.station_slug
+      this.short_desc = options.short_desc
+      this.filter = { ...options.filter }
     }
   }
 
@@ -134,93 +224,162 @@
       } = window.kiln.locals
 
       return {
-        isLoading: false,
-        stationName,
         subscriptions: [...window.kiln.locals.nationalSubscriptions],
-        newSub: new NationalSubscription(),
-        deleteSub: null
+        workingSubscription: new NationalSubscription(),
+        tags: [],
+        primarySectionFronts: [],
+        secondarySectionFronts: [],
+        stationName,
+        isLoading: false,
+        modalMode: null
       }
     },
     methods: {
-      showSnack: function(message, duration=4000){
-        this.$store.dispatch('showSnackbar', {
-            message,
-            duration: 4000
-        });
-      },
-      handleError: function(err, duration=4000) {
-        console.error(err);
-        this.showSnack(`Error: ${err.message}`);
-      },
-      onCreate() {
-        if(!this.newSub.short_desc.trim() || this.isLoading) return;
-        this.isLoading = true;
-        const newSub = {
-          stationSlug: this.newSub.station_slug,
-          shortDescription: this.newSub.short_desc,
-          filter: {...this.newSub.filter}
-        };
-        axios.post(`/rdc/national-subscription`, newSub)
-          .then(response => {
-            this.subscriptions.push(response.data);
-            this.newSub.description = '';
-            this.showSnack('Subscription Added');
-            this.newSub = new NationalSubscription();
-          })
-          .catch(this.handleError)
-          .finally(()=>this.isLoading = false);
-      },
-      onUpdate(index) {
-        this.isLoading = true;
-        const sub = this.subscriptions[index];
-        const updatedSub = {
-          stationSlug: sub.station_slug,
-          shortDescription: sub.short_desc,
-          filter: sub.filter
+      openModal (ref, sub) {
+        this.$refs[ref].open()
+        if (!sub) {
+          this.modalMode = 'new'
+          this.workingSubscription = new NationalSubscription()
+        } else {
+          this.modalMode = 'edit'
+          this.workingSubscription = { ...sub }
         }
-        axios.put(`/rdc/national-subscription/${sub.id}`, updatedSub)
+      },
+      closeModal (ref) {
+        this.$refs[ref].close()
+      },
+      showSnack (message, duration = 4000) {
+        this.$store.dispatch('showSnackbar', {
+          message,
+          duration: 4000
+        })
+      },
+      handleError (err, duration = 4000) {
+        console.error(err)
+        this.showSnack(`Error: ${err.message}`)
+      },
+      onCreate () {
+        if (this.isLoading) return
+        this.isLoading = true
+        const newSub = {
+          stationSlug: this.workingSubscription.station_slug,
+          shortDescription: this.workingSubscription.short_desc,
+          filter: { ...this.workingSubscription.filter }
+        }
+        axios.post(`${apiDomain}rdc/national-subscription`, newSub)
           .then(response => {
-            this.showSnack('Subscription Updated');
+            this.subscriptions.push(response.data)
+            this.showSnack('Subscription Added')
+            this.workingSubscription = new NationalSubscription()
+            this.closeModal('subscriptionModal')
           })
           .catch(this.handleError)
-          .finally(()=>this.isLoading = false);
+          .finally(() => { this.isLoading = false })
       },
-      onDelete(id) {
-        this.isLoading = true;
-        axios.delete(`/rdc/national-subscription/${id}`)
+      onUpdate () {
+        if (this.isLoading) return
+        this.isLoading = true
+        const updatedSub = {
+          stationSlug: this.workingSubscription.station_slug,
+          shortDescription: this.workingSubscription.short_desc,
+          filter: { ...this.workingSubscription.filter }
+        }
+        axios.put(`${apiDomain}rdc/national-subscription/${this.workingSubscription.id}`, updatedSub)
           .then(response => {
-            this.subscriptions = this.subscriptions.filter(sub => sub.id !== id);
-            this.showSnack('Subscription Deleted');
+            this.subscriptions = this.subscriptions.map(sub => {
+              if (sub.id === response.data.id) {
+                return { ...response.data }
+              } else {
+                return sub
+              }
+            })
+            this.showSnack('Subscription Updated')
+            this.closeModal('subscriptionModal')
           })
           .catch(this.handleError)
-          .finally(()=>this.isLoading = false);
+          .finally(() => { this.isLoading = false })
       },
-      // listeners for emission events on the row(s)
-      onNewDataRow(data) {
-        this.onCreate();
+      onDelete (id) {
+        if (this.isLoading) return
+        this.isLoading = true
+        axios.delete(`${apiDomain}rdc/national-subscription/${id}`)
+          .then(response => {
+            this.subscriptions = this.subscriptions.filter(sub => sub.id !== id)
+            this.showSnack('Subscription Deleted')
+          })
+          .catch(this.handleError)
+          .finally(() => { this.isLoading = false })
       },
-      onSaveDataRow(data) {
-        const index = this.subscriptions.indexOf(data);
-        this.onUpdate(index);
+      onEditSubscriptionRow (subscription) {
+        this.openModal('subscriptionModal', subscription)
       },
-      onDeleteDataRow(data) {
-        this.$refs['deleteConfirm'].open();
-        this.deleteSub = data;
+      onDeleteSubscriptionRow (subscription) {
+        this.workingSubscription = subscription
+        this.$refs.deleteConfirm.open()
       },
-      onConfirmDelete() {
-        this.onDelete(this.deleteSub.id);
-        this.deleteSub = null;
+      onConfirmDelete () {
+        this.onDelete(this.workingSubscription.id)
       },
-      onDenyDelete() {
-        this.deleteSub = null;
+      getList (listName, dataKey) {
+        axios.get(`${apiDomain}_lists/${listName}`)
+          .then(r => {
+            this[dataKey] = [...r.data] // slicing for now to stay performant
+          })
       }
     },
+    mounted () {
+      this.getList('tags', 'tags')
+      this.getList('primary-section-fronts', 'primarySectionFronts')
+      this.getList('secondary-section-fronts', 'secondarySectionFronts')
+    },
     computed: {
-      tableHeaders() {
-        return tableConfig.filter(config => config.isHeader);
+      tableHeaders () {
+        return tableConfig.filter(config => config.isHeader)
       },
-      rowConfig() {
-        return tableConfig.filter(config => config.isDataProp);
+      subscriptionRowConfig () {
+        return tableConfig.filter(config => config.isDataProp)
+      },
+      workingSubscriptionOptions () {
+        return {
+          populateFrom: [
+            {
+              label: 'All Content',
+              value: 'allContent'
+            },
+            {
+              label: 'Section Front',
+              value: 'sectionFront'
+            },
+            {
+              label: 'Tag',
+              value: 'tag'
+            },
+            {
+              label: 'Contains Both Section Front and Tag',
+              value: 'sectionFrontAndTag'
+            },
+            {
+              label: 'Contains Either Section Front or Tag',
+              value: 'sectionFrontOrTag'
+            }
+          ],
+          contentTypes: [
+            {
+              label: 'Article',
+              value: 'Article'
+            },
+            {
+              label: 'Gallery',
+              value: 'Gallery'
+            }
+          ]
+        }
+      },
+      includeSectionFronts () {
+        return this.workingSubscription.filter.populateFrom === 'sectionFront' || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag' || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
+      },
+      includeSectionTags () {
+        return this.workingSubscription.filter.populateFrom === 'tag' || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag' || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
       }
     },
     components: {
@@ -228,7 +387,11 @@
       UiButton,
       UiIconButton,
       UiConfirm,
-      DataRow
+      UiModal,
+      UiRadioGroup,
+      UiSelect,
+      UiCheckboxGroup,
+      SubscriptionRow
     }
   }
 </script>

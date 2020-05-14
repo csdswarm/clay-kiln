@@ -1,6 +1,6 @@
 <!-- Station Theme Manager Button -->
 <template>
-    <nav-menu-button :id="id" @nav-click="toggleDrawer" class="national-subscriptions__button">
+    <nav-menu-button :id="id" @nav-click="toggleDrawer" style="text-align: left">
         <span>National Subscriptions</span>
     </nav-menu-button>
 </template>

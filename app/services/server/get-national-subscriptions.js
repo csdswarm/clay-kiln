@@ -18,7 +18,7 @@ const redisKey = 'national-subscriptions',
    *
    * {
    *   populateFrom {string}
-   *   contentType {string}
+   *   contentType {string[]}
    *   sectionFront {string}
    *   secondarySectionFront {string}
    *   tags {string[]}

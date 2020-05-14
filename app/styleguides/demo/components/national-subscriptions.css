@@ -1,105 +1,52 @@
 .national-subscriptions {
   min-width: calc(100vw - 200px);
-  padding: 1.5em;
+  padding: 1em;
   overflow-y: auto;
-  header {
-    display: flex;
-    justify-content: space-between;
+  .add-subscription-btn {
+    margin-bottom: 0.5em;
   }
-  header .title {
-    margin-bottom: 0;
-  }
-  table {
+  .subscriptions {
     width: 100%;
-  }
-  table th {
-    text-align: left;
-    background: #333;
-    color: #ccc;
-    text-transform: uppercase;
-  }
-  table th,
-  table td {
-    padding: 0.5em;
-  }
-  table tfoot td {
-    background: #d3dbdf;
-    padding: 0.5em;
-  }
-  table tfoot button {
-    width: 100%;
-  }
-  table tr {
-    border-bottom: 1px solid #ddd;
-  }
-  .DataRow {
-    background: #efefef;
-    .crud-button {
-        border: 0;
-        font-size: 14px;
-        padding: 0.25em 0.75em;
-        border-radius: 0.125em;
-        background: #333;
-        color: white;
-        cursor: pointer;
-    }
-    td {
-      padding: 1em;
-    }
-    input[type='text'] {
-      padding: 0.5em;
-      border: 0;
-      width: 100%;
-    }
-    .objRow {
-      display: flex;
-      margin-bottom: 3px;
-      .objProp, .objValue  {
-        display: flex;
-        font-size: 0.75em;
-      }
-      .objProp {
-        flex: 0 0 50%;
-      }
-      .objValue  {
-        flex: 0 0 50%;
+    thead {
+      background: #333;
+      color: white;
+      text-transform: uppercase;
+      th {
+        padding: 0.5em 1em;
+        &.filter, &.description {
+          width: 35%;
+        }
+        &.actions, &.slug {
+          width: 5%;
+        }
       }
     }
-    .Array {
-      display: flex;
-      flex-wrap: wrap;
-      background: white;
-      flex: 0 0 100%;
-      padding-left: 0.25em;
-      .ArrayItem, .ArrayAddItem  {
-        display: inline-flex;
-        padding: 0.25em 0 0.25em 0.5em;
-        margin: 0.25em 0.125em;
-        flex: 0 0 auto;
-        background: #cfcfcf;
-        color: #252525;
-        border-radius: 0.125em;
+    tbody {
+      tr {
+      background: #fff;
+      &:nth-of-type(odd) {
+        background: #f7f7f7;
       }
-      .ArrayItem button, .ArrayAddItem button {
-        border: 0;
-        font-size: 12px;
-        line-height: 12px;
-        padding: 0.125em 0.25em;
-        margin: 0 0.25em;
-        background: #b7b7b7;
-        border-radius: 0.25em;
-        cursor: pointer;
+      td {
+        padding: 0.5em 1em;
       }
-      .ArrayItem button:hover, .ArrayAddItem button:hover {
-        background: #292929;
-        color: white;
-      }
-      .ArrayAddItem input[type="text"] {
-        padding: 0.125em 0.25em 0.125em 0;
-        width: 4em;
-        border: none;
-        border-radius: 0.125em;
-      }
+    }
+    }
+    .filterList {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .filterList-item-key {
+      font-weight: bold;
+    }
+    .filterList-item-value {
+      padding-left: 0.5em;
+      color: #666;
+      font-weight: 300;
+    }
+    .edit-subscription-btn {
+      margin-bottom: 0.125em;
     }
   }
 }
