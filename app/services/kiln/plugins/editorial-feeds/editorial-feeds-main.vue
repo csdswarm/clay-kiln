@@ -111,7 +111,7 @@ export default {
     },
   },
   methods: {
-    async fetchEditorialFeeds () {
+    async fetchEditorialFeeds() {
        try {
           const apiRequest = `${window.location.protocol}//${window.location.host}/rdc/editorial-group`,
             editorials = await radioApi.get(apiRequest);
@@ -157,7 +157,7 @@ export default {
         this.filteredStationEditorials = this.stationEditorials
       }
     },
-    sortTable (col) {
+    sortTable(col) {
       if (this.sortColumn === col) {
         this.ascending = !this.ascending;
       } else {
