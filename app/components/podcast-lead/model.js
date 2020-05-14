@@ -3,6 +3,7 @@
 const
   { unityComponent } = require('../../services/universal/amphora'),
   _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
   qs = require('querystring'),
   { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants');
 
@@ -33,7 +34,7 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: (uri, data, locals) => {
-    if (!locals || !locals.podcast) {
+    if (!locals || _isEmpty(locals.podcast)) {
       return data;
     }
 
