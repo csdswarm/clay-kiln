@@ -56,15 +56,31 @@
 "use strict";
 
 const radioApi = require("../../../../services/client/radioApi"),
-  { columnTitles } = require("./data");
 const { UiButton, UiCheckbox, UiAutocomplete } = window.kiln.utils.components;
 
 export default {
   name: "EditorialManagement",
   data: function () {
     return { 
-      ascendable: false,
-      columnTitles: columnTitles,
+      columnTitles: [
+        'Trending',
+        'AC',
+        'Adult Hits',
+        'Alternative',
+        'CHR / Top 40',
+        'Classic Hits',
+        'Classic Rock',
+        'Country',
+        'Hip Hop',
+        'Hot AC',
+        'Hot AC / Top 40 / CHR',
+        'News/Talk',
+        'R and B',
+        'Rock',
+        'Sports',
+        'Throwbacks',
+        'Urban'
+      ],
       sortColumn: "",
       stationEditorials: [],
       filteredStationEditorials: [],
@@ -140,7 +156,6 @@ export default {
       }
     },
     sortTable: function (col) {
-      console.log('Sorting by column... ', col);
       if (this.sortColumn === col) {
         this.ascending = !this.ascending;
       } else {
