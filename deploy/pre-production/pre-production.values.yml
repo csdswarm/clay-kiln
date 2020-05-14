@@ -60,7 +60,7 @@ clayconfig:
         demosite = http://preprod-clay.radio.com
 hpa:
   enabled: True
-  min: 6
+  min: 8
   max: 10
   metric: cpu
   cpuTarget: 30
