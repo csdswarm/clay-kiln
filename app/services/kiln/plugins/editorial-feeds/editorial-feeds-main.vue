@@ -111,7 +111,7 @@ export default {
     },
   },
   methods: {
-    fetchEditorialFeeds: async function () {
+    async fetchEditorialFeeds () {
        try {
           const apiRequest = `${window.location.protocol}//${window.location.host}/rdc/editorial-group`,
             editorials = await radioApi.get(apiRequest);
@@ -123,7 +123,7 @@ export default {
         }
     },
 
-    submitChanges: async function() {
+    async submitChanges() {
       const updatedStations = this.stationEditorials.filter(station => station.edited);
 
       this.stationEditorials.map(station => {
@@ -140,7 +140,7 @@ export default {
      
     },
 
-    updateFeed: function (stationId, feed) {
+    updateFeed(stationId, feed) {
       this.stationEditorials = this.stationEditorials.map((station) => {
         if (station.id === stationId) {
           this.$set(station, 'edited', true);
@@ -150,14 +150,14 @@ export default {
       });
       this.enableUpdate = true;
     },
-    selectStation: function (station) {
+    selectStation(station) {
       if(station) {
         this.filteredStationEditorials = this.stationEditorials.filter(st => st.data.siteSlug.includes(station));
       } else {
         this.filteredStationEditorials = this.stationEditorials
       }
     },
-    sortTable: function (col) {
+    sortTable (col) {
       if (this.sortColumn === col) {
         this.ascending = !this.ascending;
       } else {
