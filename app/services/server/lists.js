@@ -89,7 +89,7 @@ async function saveList(name, data, options) {
     ]);
     return data;
   } catch (e) {
-    log('error', 'Error retrieving list', e);
+    log('error', `There was a problem trying to save the list ${name}`, e);
   }
 }
 
