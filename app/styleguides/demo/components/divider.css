@@ -72,7 +72,7 @@
 
     .divider_title{
       &:before{
-        border-top-width: 6px
+        border-top-width: em(6, 20)
       }
 
       span {
