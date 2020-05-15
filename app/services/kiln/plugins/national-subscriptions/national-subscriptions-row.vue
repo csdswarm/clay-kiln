@@ -22,14 +22,16 @@
     </td>
     <!-- actions -->
     <td>
-      <ui-button class="edit-subscription-btn" type="primary" color="primary" size="small" :loading="isLoading" @click="onEdit(subscription)">Edit</ui-button>
-      <ui-button class="delete-subscription-btn" type="primary" color="red" size="small" :loading="isLoading" @click="onDelete(subscription)">Delete</ui-button>
+      <div class="row-actions">
+        <ui-icon-button class="edit-subscription-btn" icon="edit" type="primary" color="primary" size="small" :loading="isLoading" @click="onEdit(subscription)" />
+        <ui-icon-button class="delete-subscription-btn" icon="delete" type="primary" color="red" size="small" :loading="isLoading" @click="onDelete(subscription)" />
+      </div>
     </td>
   </tr>
 </template>
 
 <script>
-const { UiButton, UiCollapsible } = window.kiln.utils.components
+const { UiCollapsible, UiIconButton } = window.kiln.utils.components
 const moment = require('moment')
 
 export default {
@@ -48,7 +50,7 @@ export default {
     formatDate: utcDateStr => moment(utcDateStr).format('llll')
   },
   components: {
-    UiButton,
+    UiIconButton,
     UiCollapsible
   }
 }

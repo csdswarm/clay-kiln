@@ -3,7 +3,7 @@
     <h1>
       {{stationName}} NATIONAL SUBSCRIPTIONS:
     <hr>
-    <ui-button class="add-subscription-btn" color="primary" @click="openModal('subscriptionModal')" icon="add" :loading="isLoading" size="large">Add Subscription</ui-button>
+    <ui-button class="add-subscription-btn" color="primary" @click="onCreate" icon="add" :loading="isLoading" size="large">Add Subscription</ui-button>
     </h1>
     <table class="subscriptions" cellspacing="1" v-if="subscriptions.length">
       <thead>
@@ -54,7 +54,7 @@
             placeholder="Select Tags"
             multiple
 
-            :options="tags.map(t => t.text)"
+            :options="this.tags.map(t => t.text)"
 
             v-model="workingSubscription.filter.tags"
           ></ui-select>
@@ -90,7 +90,7 @@
             placeholder="Select Tags"
             multiple
 
-            :options="tags.map(t => t.text)"
+            :options="this.tags.map(t => t.text)"
 
             v-model="workingSubscription.filter.excludeTags"
           ></ui-select>
@@ -117,10 +117,10 @@
         </form>
         <div slot="footer">
           <template v-if="modalMode === 'new'">
-            <ui-button color="primary" @click="onCreate" :disabled="!workingSubscription.short_desc.trim().length">Add</ui-button>
+            <ui-button color="primary" @click="createSubscription" :disabled="!workingSubscription.short_desc.trim().length">Add</ui-button>
           </template>
           <template v-else="">
-            <ui-button color="primary" @click="onUpdate" :disabled="!workingSubscription.short_desc.trim().length">Save</ui-button>
+            <ui-button color="primary" @click="updateSubscription" :disabled="!workingSubscription.short_desc.trim().length">Save</ui-button>
           </template>
           <ui-button @click="closeModal('subscriptionModal')">Close</ui-button>
         </div>
@@ -143,7 +143,6 @@
 <script>
   const { UiButton, UiTextbox, UiIconButton, UiConfirm, UiModal, UiRadioGroup, UiSelect, UiCheckboxGroup } = window.kiln.utils.components;
   const SubscriptionRow = require('./national-subscriptions-row.vue');
-  const apiDomain = '/'
   const startCase = require('lodash/startCase');
   const axios = require('axios');
   const tableConfig = [
@@ -235,15 +234,8 @@
       }
     },
     methods: {
-      openModal (ref, sub) {
+      openModal (ref) {
         this.$refs[ref].open()
-        if (!sub) {
-          this.modalMode = 'new'
-          this.workingSubscription = new NationalSubscription()
-        } else {
-          this.modalMode = 'edit'
-          this.workingSubscription = { ...sub }
-        }
       },
       closeModal (ref) {
         this.$refs[ref].close()
@@ -258,7 +250,7 @@
         console.error(err)
         this.showSnack(`Error: ${err.message}`)
       },
-      onCreate () {
+      createSubscription () {
         if (this.isLoading) return
         this.isLoading = true
         const newSub = {
@@ -266,7 +258,7 @@
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter }
         }
-        axios.post(`${apiDomain}rdc/national-subscription`, newSub)
+        axios.post(`/rdc/national-subscription`, newSub)
           .then(response => {
             this.subscriptions.push(response.data)
             this.showSnack('Subscription Added')
@@ -276,7 +268,7 @@
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
       },
-      onUpdate () {
+      updateSubscription () {
         if (this.isLoading) return
         this.isLoading = true
         const updatedSub = {
@@ -284,7 +276,7 @@
           shortDescription: this.workingSubscription.short_desc,
           filter: { ...this.workingSubscription.filter }
         }
-        axios.put(`${apiDomain}rdc/national-subscription/${this.workingSubscription.id}`, updatedSub)
+        axios.put(`/rdc/national-subscription/${this.workingSubscription.id}`, updatedSub)
           .then(response => {
             this.subscriptions = this.subscriptions.map(sub => {
               if (sub.id === response.data.id) {
@@ -292,17 +284,17 @@
               } else {
                 return sub
               }
-            })
+            }).sort((a,b) => a.last_updated_utc < b.last_updated_utc ? -1 : 1)
             this.showSnack('Subscription Updated')
             this.closeModal('subscriptionModal')
           })
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
       },
-      onDelete (id) {
+      deleteSubscription (id) {
         if (this.isLoading) return
         this.isLoading = true
-        axios.delete(`${apiDomain}rdc/national-subscription/${id}`)
+        axios.delete(`/rdc/national-subscription/${id}`)
           .then(response => {
             this.subscriptions = this.subscriptions.filter(sub => sub.id !== id)
             this.showSnack('Subscription Deleted')
@@ -310,20 +302,27 @@
           .catch(this.handleError)
           .finally(() => { this.isLoading = false })
       },
+      onCreate () {
+        this.modalMode = 'new'
+        this.workingSubscription = new NationalSubscription()
+        this.openModal('subscriptionModal')
+      },
       onEditSubscriptionRow (subscription) {
-        this.openModal('subscriptionModal', subscription)
+        this.modalMode = 'edit'
+        this.workingSubscription = { ...subscription }
+        this.openModal('subscriptionModal')
       },
       onDeleteSubscriptionRow (subscription) {
         this.workingSubscription = subscription
         this.$refs.deleteConfirm.open()
       },
       onConfirmDelete () {
-        this.onDelete(this.workingSubscription.id)
+        this.deleteSubscription(this.workingSubscription.id)
       },
       getList (listName, dataKey) {
-        axios.get(`${apiDomain}_lists/${listName}`)
+        axios.get(`/_lists/${listName}`)
           .then(r => {
-            this[dataKey] = [...r.data] // slicing for now to stay performant
+            this[dataKey] = [...r.data]
           })
       }
     },

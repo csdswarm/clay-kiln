@@ -46,7 +46,12 @@
       font-weight: 300;
     }
     .edit-subscription-btn {
-      margin-bottom: 0.125em;
+      margin-right: 0.35em;
+    }
+    .row-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 }
