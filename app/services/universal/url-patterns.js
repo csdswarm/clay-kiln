@@ -12,7 +12,15 @@ const exists = require('lodash/identity'),
     ].filter(exists)
       .join('/');
   },
-  author = opts => `${opts.prefix}/${opts.contentType}/${opts.authorSlug}`,
+  author = opts => {
+    return [
+      opts.prefix,
+      opts.stationSlug,
+      opts.contentType,
+      opts.authorSlug
+    ].filter(exists)
+      .join('/');
+  },
   // e.g. http://vulture.com/music/x.html - modified re: ON-333
   date = opts => `${opts.prefix}/${opts.sectionFront}/${opts.slug}.html`,
   gallery = opts => {

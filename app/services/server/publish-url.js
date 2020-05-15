@@ -96,7 +96,11 @@ function getSectionFrontSlugUrl(pageData, locals, mainComponentRefs) {
  */
 function getAuthorPageSlugUrl(pageData, locals, mainComponentRefs) {
   return getUrlOptions(pageData, locals, mainComponentRefs)
-    .then(urlPatterns.author);
+    .then(urlOptions => {
+      if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
+        return urlPatterns.author();
+      }
+    });
 }
 
 /**
