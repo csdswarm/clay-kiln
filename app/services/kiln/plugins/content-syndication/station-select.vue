@@ -101,13 +101,13 @@
 
             if (station) {
               const sectionFront = this.stationSectionFronts[value];
-
               return {
                 stationSlug: value,
                 stationName: station.name,
                 callsign: station.callsign,
                 sectionFront: _.get(sectionFront, 'selectedPrimary.value'),
-                secondarySectionFront: _.get(sectionFront, 'selectedSecondary.value')
+                secondarySectionFront: _.get(sectionFront, 'selectedSecondary.value'),
+                source: 'manual syndication'
               };
             } else {
               // if we dont have access to this station, it must have been set by someone else with permission. keep it as is.

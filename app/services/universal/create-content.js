@@ -9,6 +9,7 @@ const _get = require('lodash/get'),
   promises = require('./promises'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
+  editorialSyndication = require('./editorial-feed-syndication'),
   mediaplay = require('./media-play'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
@@ -500,8 +501,9 @@ function addTwitterHandle(data, locals) {
  */
 function renderStationSyndication(data) {
   data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
-    .map(station => station.callsign)
+    .map(station => station.source !== 'editorial feed' && station.callsign )
     .sort()
+    .filter(Boolean)
     .join(', ');
 }
 
@@ -582,6 +584,7 @@ function assignStationInfo(uri, data, locals) {
 }
 
 async function save(uri, data, locals) {
+  // console.log(JSON.stringify(data, null, 2));
   const isClient = typeof window !== 'undefined';
 
   /*
@@ -605,6 +608,8 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+
+  await editorialSyndication.addStationsByEditorialGroup(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),
