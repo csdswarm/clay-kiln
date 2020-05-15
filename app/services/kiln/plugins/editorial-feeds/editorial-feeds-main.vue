@@ -34,13 +34,13 @@
         </th>
         <span v-if="columns.length === 0"> There is no information</span>
       </thead>
-        <tbody class="editorial-feeds__table--body">
+        <tbody v-if="filteredStationEditorials.length !== 0" class="editorial-feeds__table--body">
           <tr v-for="station in filteredStationEditorials" :key="station.id">
             <td class="editorial-feeds__table--item">{{ station.data.siteSlug }}</td>
             <td
               class="editorial-feeds__table--item"
-              v-for="(col, idx) in columnTitles"
-              :key="idx"
+              v-for="col in columnTitles"
+              :key="computedKey(station.id, col)"
             >
               <ui-checkbox
                 :value="station.data.feeds[col] ? true : false"
@@ -55,7 +55,7 @@
 <script>
 "use strict";
 
-const radioApi = require("../../../../services/client/radioApi"),
+const rest = require('../../../universal/rest'),
  { UiButton, UiCheckbox, UiAutocomplete } = window.kiln.utils.components;
 
 export default {
@@ -111,33 +111,36 @@ export default {
     },
   },
   methods: {
-    async fetchEditorialFeeds() {
-       try {
-          const apiRequest = `${window.location.protocol}//${window.location.host}/rdc/editorial-group`,
-            editorials = await radioApi.get(apiRequest);
-
-          this.stationEditorials = editorials || [];
-          this.filteredStationEditorials = editorials || [];
-        } catch (e) {
-
-        }
+    computedKey(stationId, columnTitle){
+      return `${stationId}-${columnTitle}`;
     },
+    fetchEditorialFeeds() {
+          const apiRequest = `/rdc/editorial-group`;
 
-    async submitChanges() {
+          rest.get(apiRequest).then(editorials => {
+            this.stationEditorials = editorials || [];
+            this.filteredStationEditorials = editorials || [];
+            console.log('editorials feeds fetched');
+          }).catch (err => {
+            console.log('Err:', err);
+          })  
+    },
+    submitChanges() {
       const updatedStations = this.stationEditorials.filter(station => station.edited);
 
       this.stationEditorials.map(station => {
         this.$set(station, 'edited', false);
       });
-      this.enableUpdate = false;
 
       for (const station of updatedStations) {
-         try {
-          const apiRequest = `${window.location.protocol}//${window.location.host}/rdc/editorial-group/${station.id}`,
-            stationsResponse = await radioApi.put(apiRequest, station.data);
-        } catch (e) {}
+          const apiRequest = `/rdc/editorial-group/${station.id}`;
+          rest.put(apiRequest, station.data, true)
+            .then(stationsResponse => {})
+            .catch(err => {
+              console.log('Err', err);
+            });
       }
-     
+      this.enableUpdate = false;
     },
 
     updateFeed(stationId, feed) {
@@ -185,7 +188,7 @@ export default {
       });
     },
   },
-  mounted() {
+  created() {
     this.fetchEditorialFeeds();
   }
 };
