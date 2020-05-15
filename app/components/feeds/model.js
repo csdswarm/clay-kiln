@@ -179,13 +179,25 @@ module.exports.render = async (ref, data, locals) => {
       corporate: {
         createObj: corporateSyndication => ({ match: { [`corporateSyndication.${corporateSyndication}`]: true } })
       },
-      // stations (stationSyndication)
+      // stations (stationSyndication) - station content
       station: {
         createObj: station => [
-          { match: { stationSyndication: station } } ,
-          { match: { 'stationSyndication.normalized': station } }
-        ],
-        multiQuery: true
+          { match: { stationCallsign: station } },
+          {
+            nested: {
+              path: 'stationSyndication',
+              query: {
+                bool: {
+                  should: [
+                    { match: { 'stationSyndication.callsign': station } },
+                    { match: { 'stationSyndication.callsign.normalized': station } }
+                  ],
+                  minimum_should_match: 1
+                }
+              }
+            }
+          }
+        ]
       },
       // genres syndicated to (genreSyndication)
       genre: { createObj: genreSyndication => ({ match: { 'genreSyndication.normalized': genreSyndication } }) },
