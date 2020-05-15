@@ -6,12 +6,14 @@
     <div class="podcast-episode-list__item-info">
       <div class="podcast-episode-list__info-meta">
         <div class="podcast-episode-list__pub-date">{{published_date_formatted}}</div>
-        <div class="podcast-episode-list__duration">
-          <span class="podcast-episode-list__meta-icon">
-            {{{ read 'components/podcast-episode-list/media/ic_time.svg' }}}
-          </span>
-          {{duration_seconds_formatted}}
-        </div>
+        {{#if duration_seconds_formatted}}
+          <div class="podcast-episode-list__duration">
+            <span class="podcast-episode-list__meta-icon">
+              {{{ read 'components/podcast-episode-list/media/ic_time.svg' }}}
+            </span>
+            {{duration_seconds_formatted}}
+          </div>
+        {{/if}}
         <a class="podcast-episode-list__download-link" href="{{audio_url}}">
           <span class="podcast-episode-list__meta-icon">
             {{{ read 'components/podcast-episode-list/media/ic_download.svg' }}}

@@ -99,10 +99,10 @@ module.exports = unityComponent({
         parse(attributes.published_date),
         'MMMM DD, YYYY'
       );
-      attributes.duration_seconds_formatted = format(
+      attributes.duration_seconds_formatted = durationInSeconds ? format(
         addSeconds(startOfDay, durationInSeconds),
         getDurationFormat(durationInSeconds)
-      );
+      ) : null;
 
       return episodeData;
     });
