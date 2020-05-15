@@ -47,17 +47,13 @@
           >Populate content from?</ui-radio-group>
           <hr>
           <!-- pop from tag -->
-          <ui-select
+          <simple-list
             v-if="includeSectionTags"
-            has-search
-            label="Tags"
-            placeholder="Select Tags"
-            multiple
-
-            :options="this.tags.map(t => t.text)"
-
-            v-model="workingSubscription.filter.tags"
-          ></ui-select>
+            :data="workingTags"
+            name="tags"
+            :args="simpleListArgs"
+            :schema="{}"
+          ></simple-list>
           <!-- pop from section front -->
           <ui-select
             v-if="includeSectionFronts"
@@ -69,6 +65,7 @@
 
             v-model="workingSubscription.filter.sectionFront"
           ></ui-select>
+          <!-- secondary section fronts -->
           <ui-select
             v-if="workingSubscription.filter.populateFrom === 'sectionFront' || workingSubscription.filter.populateFrom === 'sectionFrontAndTag' || workingSubscription.filter.populateFrom === 'sectionFrontOrTag'"
             has-search
@@ -84,16 +81,14 @@
             :options="workingSubscriptionOptions.contentTypes"
             v-model="workingSubscription.filter.contentType"
           >Content Types</ui-checkbox-group>
-          <ui-select
-            has-search
-            label="Exclude Tags"
-            placeholder="Select Tags"
-            multiple
-
-            :options="this.tags.map(t => t.text)"
-
-            v-model="workingSubscription.filter.excludeTags"
-          ></ui-select>
+          <!-- exclude tags -->
+          <simple-list
+            :data="workingExcludeTags"
+            name="excludeTags"
+            :args="simpleListArgs"
+            :schema="{}"
+          ></simple-list>
+          <!-- exclude section fronts -->
           <ui-select
             has-search
             label="Exclude Section Fronts"
@@ -104,6 +99,7 @@
 
             v-model="workingSubscription.filter.excludeSectionFronts"
           ></ui-select>
+          <!-- exclude secondary section fronts -->
           <ui-select
             has-search
             label="Exclude Secondary Section Fronts"
@@ -142,9 +138,13 @@
 
 <script>
   const { UiButton, UiTextbox, UiIconButton, UiConfirm, UiModal, UiRadioGroup, UiSelect, UiCheckboxGroup } = window.kiln.utils.components;
-  const SubscriptionRow = require('./national-subscriptions-row.vue');
-  const startCase = require('lodash/startCase');
-  const axios = require('axios');
+  const _get = require('lodash/get')
+  const _set = require('lodash/set')
+  const _upperFirst = require('lodash/upperFirst')
+  const SimpleList = window.kiln.inputs['simple-list']
+  const SubscriptionRow = require('./national-subscriptions-row.vue')
+  const startCase = require('lodash/startCase')
+  const axios = require('axios')
   const tableConfig = [
     {
       key: 'id',
@@ -192,6 +192,15 @@
     }
   ]
 
+// needed for using simple-list outside of kiln
+_set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize() {
+  const style = _get(this, '$el.style')
+
+  if (style) {
+    style.height = 'auto';
+  }
+})
+
   class NationalSubscription {
     constructor (options = {
       station_slug: window.kiln.locals.station.site_slug,
@@ -225,7 +234,8 @@
       return {
         subscriptions: [...window.kiln.locals.nationalSubscriptions],
         workingSubscription: new NationalSubscription(),
-        tags: [],
+        workingTags: [],
+        workingExcludeTags: [],
         primarySectionFronts: [],
         secondarySectionFronts: [],
         stationName,
@@ -305,11 +315,15 @@
       onCreate () {
         this.modalMode = 'new'
         this.workingSubscription = new NationalSubscription()
+        this.workingTags = []
+        this.workingExcludeTags = []
         this.openModal('subscriptionModal')
       },
       onEditSubscriptionRow (subscription) {
         this.modalMode = 'edit'
         this.workingSubscription = { ...subscription }
+        this.workingTags = subscription.filter.tags.map(t => ({text: t}))
+        this.workingExcludeTags = subscription.filter.excludeTags.map(t => ({text: t}))
         this.openModal('subscriptionModal')
       },
       onDeleteSubscriptionRow (subscription) {
@@ -324,12 +338,30 @@
           .then(r => {
             this[dataKey] = [...r.data]
           })
+      },
+      hookDataToTags() {
+        // since we are using SimpleList outside kiln we need to hook into the
+        // mutation events on the store and we also need to to just return the
+        // value of the tags and not the whole object
+        this.$store.subscribe(mutation => {
+          const { payload, type } = mutation,
+            { path, data } = payload || {}
+
+          if (mutation.type !== 'UPDATE_FORMDATA' || path !== 'tags' && path !== 'excludeTags') {
+            return
+          }
+
+          this['working' + _upperFirst(path)] = data
+          this.workingSubscription.filter[path] = data.map(d => d.text)
+        })
       }
     },
     mounted () {
-      this.getList('tags', 'tags')
       this.getList('primary-section-fronts', 'primarySectionFronts')
       this.getList('secondary-section-fronts', 'secondarySectionFronts')
+    },
+    created () {
+      this.hookDataToTags()
     },
     computed: {
       tableHeaders () {
@@ -379,6 +411,16 @@
       },
       includeSectionTags () {
         return this.workingSubscription.filter.populateFrom === 'tag' || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag' || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
+      },
+      simpleListArgs() {
+        return {
+          badge: 'FR',
+          autocomplete: {
+            list: 'tags',
+            allowRemove: false,
+            allowCreate: false
+          }
+        }
       }
     },
     components: {
@@ -390,7 +432,8 @@
       UiRadioGroup,
       UiSelect,
       UiCheckboxGroup,
-      SubscriptionRow
+      SubscriptionRow,
+      SimpleList
     }
   }
 </script>
