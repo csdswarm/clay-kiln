@@ -210,9 +210,6 @@ const
     if (locals && locals.tag) {
       // This is from load more on a tag page
       tags = locals.tag;
-    } else if (locals && locals.params) {
-      // This is from a tag page but do not override a manually set tag
-      tags = data.tag;
     } else if (locals && locals.params && locals.params.dynamicTag) {
       // This is from a tag page
       tags = locals.params.dynamicTag;
