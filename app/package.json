@@ -90,6 +90,7 @@
     "postcss-csso": "^3.0.0",
     "postcss-safe-parser": "^3.0.1",
     "probe-image-size": "^5.0.0",
+    "postgres-migrations": "^3.0.2",
     "qs": "^6.6.0",
     "redisdown": "^0.1.12",
     "response-time": "^2.3.2",

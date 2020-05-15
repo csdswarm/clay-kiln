@@ -7,6 +7,8 @@ const publishing = require('../../services/publishing'),
     '/_components/section-front/instances',
     '/_components/author-page-header/instances',
     '/_components/contest/instances',
+    '/_components/event/instances',
+    '/_components/events-listing-page/instances',
     '/_components/station-front/instances'
   ];
 
@@ -38,6 +40,7 @@ module.exports.routes = [
   { path: '/small-business-pulse/:year/:month/:name' },
   { path: '/small-business-pulse/:year/:month/:day/:name' },
   { path: '/:stationSlug/:sectionFront/:secondarySectionFront/gallery/:slug' },
+  { path: '/events/:slug' },
   // Paths above here that match dynamic paths will throw an error for missing before landing in the proper path
   { path: '/' },
   { path: '/:dynamicStation/listen', dynamicPage: 'station' },
@@ -76,6 +79,8 @@ module.exports.routes = [
 module.exports.resolvePublishUrl = [
   (uri, data, locals) => publishing.getGallerySlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getArticleSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getEventSlugUrl(data, locals, mainComponentRefs),
+  (uri, data, locals) => publishing.getEventsListingUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getSectionFrontSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getContestSlugUrl(data, locals, mainComponentRefs),
   (uri, data, locals) => publishing.getStationFrontSlugUrl(data, locals, mainComponentRefs),
