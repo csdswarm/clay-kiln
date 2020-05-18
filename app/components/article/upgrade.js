@@ -200,3 +200,9 @@ module.exports['11.0'] = async (uri, data) => {
 };
 
 module.exports['12.0'] = updateStationSyndication;
+
+module.exports['13.0'] = (uri, data) => {
+  data.stationSyndication.map(syndication => syndication.source = syndication.source || 'manual syndication');
+
+  return data;
+};
