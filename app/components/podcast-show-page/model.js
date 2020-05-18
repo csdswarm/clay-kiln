@@ -31,7 +31,8 @@ module.exports = unityComponent({
 
     data.stationSlug = _get(locals, 'params.stationSlug');
     await addBreadcrumbs(data, locals);
-    
+    data._computed.podcastSiteSlug = locals.params.dynamicSlug;
+
     return data;
   }
 });
