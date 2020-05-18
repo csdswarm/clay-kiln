@@ -71,25 +71,31 @@
        * Called to transform our saved data into usable data for this component.
        */
       transformFromSaveData() {
-        return (this.data || [])
-          .map(syndication => {
-            const station = Object.values(window.kiln.locals.stationsIHaveAccessTo).find(station => station.callsign === syndication.callsign);
+        const syndicatedStations = (this.data || [])
+          .filter(syndication => !syndication.source || syndication.source === 'manual syndication');
 
-            if (station) {
-              const option = {
-                label: `${station.name} | ${station.callsign}`,
-                value: station.slug
-              };
+        return syndicatedStations.map(syndication => {
+          const station = Object.values(window.kiln.locals.stationsIHaveAccessTo)
+            .find(station => station.callsign === syndication.callsign);
 
-              // load section front info
-              this.renderSectionFronts(station.slug, option.label, syndication.sectionFront, syndication.secondarySectionFront);
+          if (station) {
+            const option = {
+              label: `${station.name} | ${station.callsign}`,
+              value: station.slug
+            };
 
-              return option;
-            } else {
-              // if we dont have access to this station, it must have been set by someone else with permission. keep it as is.
-              return syndication;
-            }
-          });
+            // load section front info
+            this.renderSectionFronts(station.slug, option.label, syndication.sectionFront, syndication.secondarySectionFront);
+
+            return option;
+          } else {
+            // if we dont have access to this station, it must have been set by someone else with permission. keep it as is.
+            // if callsign is not assigned we will be seeing an [Object object] value on station syndication selector
+            return syndication.callsign ?
+              { label: syndication.callsign, value: syndication }
+              : syndication;
+          }
+        });
       },
       /**
        * Called to transform our component's data in order to be properly saved.
