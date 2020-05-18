@@ -75,7 +75,7 @@
     }
 
 
-    @mixin only-large-screen {
+    @media only screen and (min-width: 1024px) {
       ul {
         li {
           height: 225px;
