@@ -59,7 +59,7 @@ const db = require('./db'),
     // podcast page
     if (isPodcast) {
       addTag('type', _get(locals, 'podcast.type'));
-      addTag('podcast_name', _get(locals, 'podcast.attributes.description'));
+      addTag('podcast_name', _get(locals, 'podcast.attributes.title'));
       addTag('podcast_id', _get(locals, 'podcast.id'));
       addTag('partner_id', _get(locals, 'podcast.attributes.partner.id'));
       addTag('partner_name', _get(locals, 'podcast.attributes.partner.name'));
