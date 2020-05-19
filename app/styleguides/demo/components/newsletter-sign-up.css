@@ -121,6 +121,7 @@ body > .newsletter-sign-up {
   &__form-input {
     @mixin newsletter-sign-up-font-5;
     position: relative;
+    background: $white;
     border: em(1, 14) solid $dustyGray;
     width: 100%;
     height: 100%;
@@ -139,6 +140,10 @@ body > .newsletter-sign-up {
         opacity: 1;
         cursor: pointer;
       }
+    }
+    &[data-valid="false"]:not([type="submit"]) {
+      background: $crimsonRGBA-20;
+      border: 1px solid $crimson;
     }
   }
   &__form-input-msg {

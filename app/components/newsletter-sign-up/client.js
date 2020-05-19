@@ -160,6 +160,7 @@ class NewsletterSignUpView {
       msgEl = el.parentNode.querySelector(`.${formInputMsgClass}`);
     let msgHtml = '';
 
+    el.dataset.valid = inputIsValid;
     msgEl.dataset.valid = inputIsValid;
     if (inputIsValid) return;
 
