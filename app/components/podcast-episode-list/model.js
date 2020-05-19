@@ -6,7 +6,8 @@ const
   addSeconds = require('date-fns/add_seconds'),
   parse = require('date-fns/parse'),
   _get = require('lodash/get'),
-  radioApiService = require('../../services/server/radioApi');
+  radioApiService = require('../../services/server/radioApi'),
+  { replaceWithString } = require('../../services/universal/sanitize');
 
 /**
  * returns a boolean for if the media is from omny
@@ -116,9 +117,10 @@ module.exports = unityComponent({
     data._computed.episodes = episodes.map(episodeData => {
       const startOfDay = new Date(0),
         { attributes } = episodeData,
-        durationInSeconds = parseFloat(attributes.duration_seconds);
+        durationInSeconds = parseFloat(attributes.duration_seconds),
+        replacePatterns = [/[\n\r]/g, /<.*?>/g];
 
-
+      attributes.description = attributes.description ? replaceWithString(attributes.description, replacePatterns, '') : '';
       // NOTE: using snake case to stay consistent with api schema
       attributes.image_url = attributes.image_url || PODCAST_FALLBACK_IMAGE; // Use this as a fallback when episodes do not have his own image.
       attributes.is_image_url_omny = isImageOmny(attributes.image_url);

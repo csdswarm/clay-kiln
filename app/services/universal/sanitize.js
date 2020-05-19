@@ -104,6 +104,30 @@ function recursivelyStripSeperators(data) {
   return data;
 }
 
+/**
+ * Replace text using elements from the array of patterns with the new provided string.
+ * @param {string} string
+ * @param {Array} patternArray
+ * @param {string} replaceString
+ * @returns {string} sanitized data
+ */
+function replaceWithString(string, patternArray, replaceString) {
+  if (!_isString(string)) {
+    return '';
+  }
+
+  if (!_isString(replaceString) || !_isArray(patternArray)) {
+    return string;
+  }
+
+  let replacedString = string;
+
+  for (let idx = 0; idx < patternArray.length; idx++) {
+    replacedString = replacedString.replace(patternArray[idx], replaceString);
+  }
+  return replacedString;
+}
+
 module.exports.toSmartHeadline = toSmartHeadline;
 module.exports.toSmartText = toSmartText;
 module.exports.stripUnicode = stripUnicode;
@@ -111,3 +135,4 @@ module.exports.toPlainText = toPlainText;
 module.exports.cleanSlug = cleanSlug;
 module.exports.validateTagContent = validateTagContent;
 module.exports.recursivelyStripSeperators = recursivelyStripSeperators;
+module.exports.replaceWithString = replaceWithString;
