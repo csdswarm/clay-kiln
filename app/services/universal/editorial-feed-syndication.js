@@ -1,17 +1,9 @@
 'use strict';
 
-let stationEditorialGroups = null;
-
-const rest = require('./rest'),
-  { boolObjectToArray } = require('./utils'),
+const { boolObjectToArray } = require('./utils'),
   _intersection = require('lodash/intersection'),
   filterSelectedStations = (stationSyndication) => stationSyndication.filter( ({ source }) => !source || source === 'manual syndication'),
-  setStationEditorialGroups = async () => {
-    // we set editorial group subscriptions once
-    if (!stationEditorialGroups) {
-      stationEditorialGroups = await rest.get(`${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }/rdc/editorial-group`);
-    }
-  };
+  getEditorialGroups = require('../server/get-editorial-groups');
 
 /**
  * Add syndication entries for stations subscribed to editorial groups
@@ -20,10 +12,8 @@ const rest = require('./rest'),
  */
 async function addStationsByEditorialGroup(data, locals) {
   if (['article', 'gallery'].includes(data.contentType) && locals.station) {
-    await setStationEditorialGroups();
-
     const selectedStations = filterSelectedStations(data.stationSyndication || []),
-      syndicatedStations = getSyndicatedStations(data);
+      syndicatedStations = await getSyndicatedStations(data);
 
     data.stationSyndication = [
       ...selectedStations,
@@ -37,8 +27,15 @@ async function addStationsByEditorialGroup(data, locals) {
  * @param {Object} data
  * @returns {array}
  */
-function getSyndicatedStations(data) {
-  return (stationEditorialGroups || []).map(({ data: station }) => {
+async function getSyndicatedStations(data) {
+  // when no editorial feed selected, we don't look for subscriptions
+  if (!data.editorialFeeds) {
+    return [];
+  }
+
+  const editorialGroups = await getEditorialGroups();
+
+  return (editorialGroups || []).map(({ data: station }) => {
     const stationSubscribedToAnyEditorialFeed = _intersection(
       boolObjectToArray(station.feeds),
       boolObjectToArray(data.editorialFeeds)

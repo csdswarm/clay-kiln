@@ -5,9 +5,7 @@ const expect = require('chai').expect,
   filename = __filename.split('/').pop().split('.').shift(),
   proxyquire = require('proxyquire'),
   { addStationsByEditorialGroup } = proxyquire('./editorial-feed-syndication', {
-    './rest': {
-      get: () => Promise.resolve(mockData.editorialGroups)
-    }
+    '../server/get-editorial-groups': () => Promise.resolve(mockData.editorialGroups)
   }),
   mockData = {
     data: {
@@ -54,6 +52,7 @@ const expect = require('chai').expect,
       plaintextPrimaryHeadline: '',
       sectionFront: '',
       contentType: 'article',
+      stationSlug: 'alt1037dfw',
       featured: false,
       editorialFeeds: {},
       isContentFromAP: false,
@@ -197,6 +196,7 @@ const expect = require('chai').expect,
         id: 5,
         data: {
           feeds: {
+            Alternative: true,
             'Hot AC': true,
             Trending: true,
             'Hot AC / Top 40 / CHR': true
@@ -205,6 +205,18 @@ const expect = require('chai').expect,
           callsign: 'KAMXFM',
           siteSlug: 'mix947',
           stationName: 'Mix 94.7'
+        }
+      },
+      {
+        id: 6,
+        data: {
+          feeds: {
+            Alternative: true
+          },
+          market: 'Dallas, TX',
+          callsign: 'KVILFM',
+          siteSlug: 'alt1037dfw',
+          stationName: 'ALT 103.7'
         }
       }
     ]
@@ -218,7 +230,7 @@ describe(`${dirname}/${filename}`, () => {
       await addStationsByEditorialGroup(data, locals);
       expect(data.stationSyndication).to.be.empty;
     });
-  
+
     it('editorial group assigned only to one station', async () => {
       const data = {
         ...mockData.data,
@@ -226,9 +238,9 @@ describe(`${dirname}/${filename}`, () => {
           'News/Talk': true
         }
       };
-  
+
       await addStationsByEditorialGroup(data, mockData.locals);
-  
+
       expect(data.stationSyndication).to.have.lengthOf(1);
       expect(data.stationSyndication[0].stationName).to.eql('News-Talk 1380 WAOK');
     });
@@ -240,9 +252,9 @@ describe(`${dirname}/${filename}`, () => {
           Trending: true
         }
       };
-  
+
       await addStationsByEditorialGroup(data, mockData.locals);
-  
+
       expect(data.stationSyndication).to.have.lengthOf(4);
     });
 
@@ -254,9 +266,9 @@ describe(`${dirname}/${filename}`, () => {
           'Hot AC': false
         }
       };
-  
+
       await addStationsByEditorialGroup(data, mockData.locals);
-  
+
       expect(data.stationSyndication).to.have.lengthOf(1);
       expect(data.stationSyndication[0].stationName).to.eql('92-9 The Game');
     });
@@ -266,15 +278,29 @@ describe(`${dirname}/${filename}`, () => {
         ...mockData.data,
         editorialFeeds: {
           Trending: true,
-          'Hot AC / Top 40 / CHR': false
+          'Hot AC / Top 40 / CHR': true
         }
       };
-  
+
       await addStationsByEditorialGroup(data, mockData.locals);
-  
+
       expect(data.stationSyndication).to.have.lengthOf(4);
       expect(data.stationSyndication[0].stationName).to.eql('Atlanta\'s Star 94.1');
       expect(data.stationSyndication[1].stationName).to.eql('V-103');
+    });
+
+    it('dont create a syndication entry for the originating site', async () => {
+      const data = {
+        ...mockData.data,
+        editorialFeeds: {
+          Alternative: true
+        }
+      };
+
+      await addStationsByEditorialGroup(data, mockData.locals);
+
+      expect(data.stationSyndication).to.have.lengthOf(1);
+      expect(data.stationSyndication[0].stationName).to.eql('Mix 94.7');
     });
   });
 });
