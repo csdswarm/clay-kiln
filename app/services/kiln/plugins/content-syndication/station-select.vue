@@ -72,7 +72,7 @@
        */
       transformFromSaveData() {
         const syndicatedStations = (this.data || [])
-          .filter(syndication => !syndication.source || syndication.source === 'manual syndication');
+          .filter(syndication => syndication.source === 'manual syndication');
 
         return syndicatedStations.map(syndication => {
           const station = Object.values(window.kiln.locals.stationsIHaveAccessTo)
@@ -90,10 +90,11 @@
             return option;
           } else {
             // if we dont have access to this station, it must have been set by someone else with permission. keep it as is.
-            // if callsign is not assigned we will be seeing an [Object object] value on station syndication selector
-            return syndication.callsign ?
-              { label: syndication.callsign, value: syndication }
-              : syndication;
+            // show station callsign as the label to prevent seeing an [Object object] value on station syndication selector
+            return {
+              label: syndication.callsign,
+              value: syndication
+            };
           }
         });
       },

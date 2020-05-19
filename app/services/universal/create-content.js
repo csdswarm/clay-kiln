@@ -501,12 +501,11 @@ function addTwitterHandle(data, locals) {
  */
 function renderStationSyndication(data) {
   const syndicatedStations = (data.stationSyndication || [])
-    .filter(syndication => !syndication.source || syndication.source === 'manual syndication');
+    .filter(syndication => syndication.source === 'manual syndication');
 
   data._computed.stationSyndicationCallsigns = syndicatedStations
     .map(station => station.callsign)
     .sort()
-    .filter(Boolean)
     .join(', ');
 }
 
@@ -611,7 +610,7 @@ async function save(uri, data, locals) {
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
 
-  // we need to get stations by editorial feeds before creating slugs for syndicated articles
+  // we need to get stations by editorial feeds before creating slugs for syndicated content
   await addStationsByEditorialGroup(data, locals);
   addStationSyndicationSlugs(data);
 

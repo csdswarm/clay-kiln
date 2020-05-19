@@ -3,7 +3,7 @@
 let stationEditorialGroups = null;
 
 const rest = require('./rest'),
-  boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
+  { boolObjectToArray } = require('./utils'),
   _intersection = require('lodash/intersection'),
   filterSelectedStations = (stationSyndication) => stationSyndication.filter( ({ source }) => !source || source === 'manual syndication'),
   setStationEditorialGroups = async () => {
