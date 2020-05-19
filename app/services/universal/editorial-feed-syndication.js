@@ -8,7 +8,6 @@ const rest = require('./rest'),
   filterSelectedStations = (stationSyndication) => stationSyndication.filter( ({ source }) => !source || source === 'manual syndication'),
   setStationEditorialGroups = async () => {
     // we set editorial group subscriptions once
-    console.log(`${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }/rdc/editorial-group`);
     if (!stationEditorialGroups) {
       stationEditorialGroups = await rest.get(`${ process.env.CLAY_SITE_PROTOCOL }://${ process.env.CLAY_SITE_HOST }/rdc/editorial-group`);
     }

@@ -24,7 +24,7 @@ const expect = require('chai').expect,
     },
     './editorial-feed-syndication': {
       addStationsByEditorialGroup: () => {
-        mockData.stationSyndication = [];
+        mockData.data.stationSyndication = [];
       }
     }
   }),
