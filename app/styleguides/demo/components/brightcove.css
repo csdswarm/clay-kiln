@@ -1,4 +1,5 @@
 @import "_global/colors";
+@import "_global/fonts";
 
 .component--brightcove {
   margin-bottom: em(20);

@@ -26,6 +26,9 @@
   import rest from '../../../universal/rest';
   import urlParse from 'url-parse';
   import queryService, { onePublishedArticleByUrl } from '../../../client/query';
+  import { mapGetters } from 'vuex'
+  import { DEFAULT_STATION } from '../../../universal/constants';
+  import { ensureStartsWith } from '../../../universal/utils'
 
   const UiIconButton = window.kiln.utils.components.UiIconButton;
   const UiProgressCircular = window.kiln.utils.components.UiProgressCircular;
@@ -38,7 +41,13 @@
         contentUrl: '',
         error: '',
         errorUrl: '',
-        loading: false
+        loading: false,
+        stations: window.kiln.locals.stationsICanImportContent
+      }
+    },
+    computed: {
+      selectedStation() {
+        return window.kiln.locals.stationsIHaveAccessTo[DEFAULT_STATION.site_slug];
       }
     },
     methods: {
@@ -73,17 +82,22 @@
         // ensure a protocol and remove trailing slashes from url
         const url =  `${ includesProtocol ? '' : 'https://' }${ this.contentUrl.replace(/\/$/, '') }`;
         const { host, pathname } = urlParse(url, {});
+        const contentPath = ensureStartsWith('/', this.selectedStation.slug + pathname);
 
         try {
           //see if the item already exists
-          const existing = await this.findExisting(pathname);
+          const existing = await this.findExisting(contentPath);
 
           if (existing) {
             this.loading = false;
             this.error = 'This content already exists.';
             this.errorUrl = existing;
           } else {
-            const [result] = await rest.post('/import-content', { domain: host, filter: { slug: pathname } });
+            const [result] = await rest.post('/import-content', {
+              stationSlug: this.selectedStation.slug,
+              domain: host,
+              filter: { slug: pathname }
+            });
 
             if (result && result.success) {
               window.location.href = `${ location }${ result.url }?edit=true`;

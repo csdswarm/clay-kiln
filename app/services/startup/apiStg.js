@@ -1,5 +1,4 @@
 'use strict';
-
 const QUERY_PARAMETER = 'api-stg',
 
   /**
@@ -13,7 +12,6 @@ const QUERY_PARAMETER = 'api-stg',
         res.cookie('api_stg', 1);
         res.locals.useStagingApi = true;
       }
-
       next();
     });
   };
