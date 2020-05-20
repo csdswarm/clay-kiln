@@ -31,6 +31,7 @@
       accept="image/*"
       @change="localFileAttached">
     </ui-fileupload>
+    <p v-if="failedFileCheck" class="advanced-image-upload__file-check-error">Image is too small and does not meet design requirements (must be at least 430 x 430 pixels)</p>
     <ui-button v-if="showDelete"
       icon="delete"
       buttonType="button"
@@ -72,13 +73,20 @@ export default {
   data() {
     return {
       imageUrl: this.data || '', // Set passed data "prop" as local data so it can be mutated. See https://vuejs.org/v2/guide/components-props.html#One-Way-Data-Flow
-      fileUploadButtonDisabled: false
+      fileUploadButtonDisabled: false,
+      image: {
+        size: '',
+        width: '',
+        height: ''
+      },
+      verifiedfile: false,
+      failedFileCheck: false
     };
   },
   computed: {
     showDelete() {
       return this.data && this.args.enableDelete;
-    }
+    },
   },
   methods: {
     /**
@@ -97,12 +105,11 @@ export default {
     localFileAttached(files) {
       // Disable file upload button while processing.
       this.fileUploadButtonDisabled = true;
-
-      const file = files[0];
-
+      const file = files[0]
+      this.getFileSize(file)
+      
       // If file attached, exec upload logic.
-      if (file) {
-
+      if (file && this.verifiedfile) {
         /*
         Send file name and type to backend so backend can generate aws pre-signed request url.
         This allows us to keep our aws secret on the backend, while still uploading directly
@@ -134,7 +141,36 @@ export default {
       this.$refs.fileUploadButton.$refs.input.value = null;
 
       this.setImageUrl('');
-    }
+    },
+    getFileSize(file) {
+      if(!file || file.type.indexOf('image/') !== 0) return;
+      
+      this.image.size = file.size;
+      
+      let reader = new FileReader();
+      
+      reader.readAsDataURL(file);
+      reader.onload = evt => {
+        let img = new Image();
+        img.onload = () => {
+          this.image.width = img.width;
+          this.image.height = img.height;
+        }
+        img.src = evt.target.result;
+        if(this.image.width < 430 || this.image.height < 430) {
+        }
+      }
+      reader.onerror = evt => {
+        console.error(evt);
+      }
+      if(this.image.width < 430 || this.image.height < 430) {
+        this.fileUploadButtonDisabled = false;
+        this.failedFileCheck = true;
+      } else {
+        this.verifiedfile = !this.verifiedfile;
+        this.failedFileCheck = false;
+      }
+    },
   },
   components: {
     UiFileupload,
@@ -142,3 +178,4 @@ export default {
   }
 }
 </script>
+
