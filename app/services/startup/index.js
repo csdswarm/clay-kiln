@@ -97,6 +97,7 @@ function setupApp(app) {
 
   addEndpoints.msnFeed(app);
   addEndpoints.contentWithSyndicatedUrl(app);
+  addEndpoints.contentAndPageInfo(app);
 
   radium.inject(app);
 
