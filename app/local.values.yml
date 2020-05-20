@@ -33,7 +33,6 @@ configmap:
     INLINE_EDIT_STYLES: "true"
     IP_ADDRESS: "0.0.0.0"
     LOG: "info"
-    LYTICS_API_URL: "https://api.lytics.io/api"
     NODE_ENV: "local"
     NODE_TLS_REJECT_UNAUTHORIZED: "0"
     PORT: "3001"

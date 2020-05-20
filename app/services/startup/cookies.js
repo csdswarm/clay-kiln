@@ -9,8 +9,6 @@ const _toPairs = require('lodash/toPairs'),
   inject = app => {
     app.use((req, res, next) => {
 
-      addLytics(req, res);
-
       addClosedAlerts(req, res);
 
       addStagingApi(req, res);
@@ -18,18 +16,6 @@ const _toPairs = require('lodash/toPairs'),
       next();
     });
   };
-
-/**
- * add lytics to locals
- *
- * @param {ClientRequest | {cookies: object}} req
- * @param {ServerResponse | {locals: object}} res
- */
-function addLytics(req, res) {
-  res.locals.lytics = {
-    uid: req.cookies.seerid
-  };
-}
 
 /**
  * add client closed alert id list to locals

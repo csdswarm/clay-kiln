@@ -39,7 +39,6 @@ configmap:
     INLINE_EDIT_STYLES: "true"
     IP_ADDRESS: "0.0.0.0"
     LOG: "error"
-    LYTICS_API_URL: "https://api.lytics.io/api"
     NODE_ENV: "production"
     PORT: "3001"
     REDIS_HASH: "mydb:h"
