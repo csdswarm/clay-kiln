@@ -23,28 +23,32 @@
       <div class="podcast-episode-list__description">{{truncate description 210}}</div>
     </div>
     <div class="podcast-episode-list__item-controls">
-      <button type="button" class="podcast-episode-list__play-btn podcast-episode-list__btn">
+      <a class="podcast-episode-list__play-btn podcast-episode-list__btn"
+        href="{{ episode_detail_url }}"
+      >
         {{{ read 'components/podcast-episode-list/media/play_sm.svg' }}}
-      </button>
+      </a>
     </div>
   </li>
 {{/inline}}
 
-<div class="component component--podcast-episode-list podcast-episode-list" data-uri="{{ default _ref _self }}">
+<div class="component component--podcast-episode-list podcast-episode-list"
+  data-uri="{{ default _ref _self }}"
+  data-podcast-site-slug="{{ _computed.podcastSiteSlug }}"
+  data-station-site-slug="{{ _computed.stationSiteSlug }}"
+>
   <div class="podcast-episode-list__controls">
     <select name="episodesOrder" id="episodesOrder">
-      <option value="desc">Most Recent</option>
-      <option value="asc">Oldest</option>
+      <option value="1">Most Recent</option>
+      <option value="0">Oldest</option>
     </select>
   </div>
-  <ul>
+  <ol class="podcast-episode-list__episodes">
     {{#each _computed.episodes as |podcast|}}
       {{> podcastListItem podcast.attributes }}
     {{/each}}
-  </ul>
-  {{#if _computed.loadMoreEnabled}}
-    <div class="podcast-episode-list__load-more">
-      <button class="podcast-episode-list__load-more-btn podcast-episode-list__btn">Load More</button>
-    </div>
-  {{/if}}
+  </ol>
+  <div class="podcast-episode-list__load-more">
+    <button class="podcast-episode-list__load-more-btn podcast-episode-list__btn">Load More</button>
+  </div>
 </div>
