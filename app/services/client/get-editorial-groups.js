@@ -1,7 +1,7 @@
 'use strict';
 
 let editorialGroups = null;
-const rest = require('./rest');
+const rest = require('../universal/rest');
 
 module.exports = async () => {
   // we set editorial group subscriptions once
