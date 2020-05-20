@@ -122,7 +122,7 @@ const { getComponentInstance } = require('clayutils'),
    */
   toggleListenDrawer = ({ currentTarget }) => {
     resetNavs();
-    /**
+    /*
      * ON-1889
      * resetNavs was causing problems toggling active on currentTarget
      * and didn't want to add lots of conditionals there
