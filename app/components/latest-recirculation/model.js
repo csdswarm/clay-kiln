@@ -148,5 +148,15 @@ module.exports = recirculationData({
   },
   render,
   shouldAddAmphoraTimings: true,
-  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params
+  skipRender: (data, locals) => data.populateFrom === 'station' && locals.params,
+  mapResultsToTemplate: (locals, result, item = {}) => {
+    return Object.assign(item, {
+      canonicalUrl: item.url || result.canonicalUrl,
+      date: item.overrideDate || result.date,
+      feedImgUrl: item.overrideImage || result.feedImgUrl,
+      label: item.overrideDate || result.label,
+      primaryHeadline: item.overrideTitle || result.primaryHeadline,
+      sectionFront: item.overrideSectionFront || result.sectionFront
+    });
+  }
 });
