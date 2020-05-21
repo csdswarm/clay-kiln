@@ -38,7 +38,10 @@ const _get = require('lodash/get'),
     const stationsResp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
       apiEnvironment = getApiEnvironment(locals);
 
-    if (stationsResp.response_cached === false && !_isEmpty(_state.allStations.asArray)) {
+    if (
+      stationsResp.response_cached
+      && !_isEmpty(_state.allStations.asArray[apiEnvironment])
+    ) {
       return;
     }
 

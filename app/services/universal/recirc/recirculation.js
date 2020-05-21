@@ -54,7 +54,8 @@ const
         sectionFronts: sectionOrTagCondition(data.populateFrom, data.sectionFrontManual || data.sectionFront),
         secondarySectionFronts: sectionOrTagCondition(data.populateFrom, data.secondarySectionFrontManual || data.secondarySectionFront),
         tags: sectionOrTagCondition(data.populateFrom, getTag(data, locals))
-      }, populateFilter(data.populateFrom))
+      }, populateFilter(data.populateFrom)),
+      ...{ stationSlug: getStationSlug(data, locals) }
     },
     excludes: {
       canonicalUrls: [locals.url, ...(data.items || []).map(item => item.canonicalUrl)].filter(validUrl).map(cleanUrl),
@@ -273,6 +274,17 @@ const
     data.author = author;
 
     return { author };
+  },
+  /**
+   * Pull stationSlug from local params if dynamic station page
+   *
+   * @param {object} data
+   * @param {object} locals
+   *
+   * @return {string} stationSlug
+   */
+  getStationSlug = (data, locals) => {
+    return _get(locals, 'params.stationSlug');
   },
   /**
    * Pull tags from locals or data whether a static or dynamic tag page

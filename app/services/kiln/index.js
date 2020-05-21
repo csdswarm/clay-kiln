@@ -20,6 +20,7 @@ module.exports = () => {
   require('./plugins/new-page-override')();
   require('./plugins/podcast-select')();
   require('./plugins/select-list')();
+  require('./plugins/sign-out-override')();
   require('./plugins/stations')();
   require('./plugins/stores')();
   require('./plugins/subscriptions')();

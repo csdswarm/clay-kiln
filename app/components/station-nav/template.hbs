@@ -1,5 +1,7 @@
 {{#if _computed.renderForStation }}
-  <div class="component component--station-nav" data-uri="{{ default _ref _self }}">
+  <div class="component component--station-nav" 
+    data-uri="{{ default _ref _self }}"
+    data-station-id="{{ _computed.station.id }}">
     <nav class="station-nav__fixed-container">
       <div class="station-nav__menu menu">
         <div class="menu__mobile-toggle">
@@ -42,7 +44,7 @@
           </ul>
         {{/if }}
         <div class="menu__listen listen">
-          <button class="listen__button button {{ playingClass }}" data-play-station="{{ station.id }}">
+          <button class="listen__button button {{ _computed.playingClass }}" data-play-station="{{ _computed.station.id }}">
             <div class="button__icon">
               {{!-- stays static --}}
               {{{ read 'components/station-nav/media/play_button.svg' }}}

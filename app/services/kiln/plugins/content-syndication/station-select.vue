@@ -104,6 +104,7 @@
 
               return {
                 stationSlug: value,
+                stationName: station.name,
                 callsign: station.callsign,
                 sectionFront: _.get(sectionFront, 'selectedPrimary.value'),
                 secondarySectionFront: _.get(sectionFront, 'selectedSecondary.value')
