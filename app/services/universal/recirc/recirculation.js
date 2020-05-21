@@ -18,6 +18,7 @@
  */
 
 const
+  _merge = require('lodash/merge'),
   _get = require('lodash/get'),
   _has = require('lodash/has'),
   _isEmpty = require('lodash/isEmpty'),
@@ -443,15 +444,15 @@ const
       }
 
       try {
-        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = {
-            ...defaultMapDataToFilters(uri, data, locals),
-            ...await mapDataToFilters(uri, data, locals)
-          },
+        const { filters = {}, excludes = {}, pagination = {}, curated, maxItems = DEFAULT_MAX_ITEMS } = _merge(
+            defaultMapDataToFilters(uri, data, locals),
+            await mapDataToFilters(uri, data, locals)
+          ),
           itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
           stationFilter = { stationSlug: locals.station.site_slug },
           { content, totalHits } = await fetchRecirculation(
             {
-              filters: { ...filters, ...stationFilter },
+              filters: _merge(filters, stationFilter),
               excludes,
               elasticFields: esFields,
               pagination,
