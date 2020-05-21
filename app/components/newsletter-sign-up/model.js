@@ -43,6 +43,9 @@ module.exports = unityComponent({
               errors = [];
 
             $('li.error').each((i,el) => errors.push($(el).text()));
+            errors.forEach(err => {
+              log('error', new Error(err), params);
+            });
             return { success: false, params, errors };
           }
         })
