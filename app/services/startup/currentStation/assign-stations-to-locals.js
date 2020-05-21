@@ -9,9 +9,9 @@ const { join } = require('path'),
   { getFullOriginalUrl, isContentComponent } = require('../../universal/utils'),
   isDirectory = source => lstatSync(source).isDirectory(),
   getDirectories = source => {
-    // @TODO: find a better to validate this public folder
+    // @TODO: find a better way to validate this public folder or faking the function
     try {
-      return readdirSync(source).map(name => join(source, name)).filter(isDirectory)
+      return readdirSync(source).map(name => join(source, name)).filter(isDirectory);
     } catch (e) {
       console.log('Warning, directory not found');
       return [];
