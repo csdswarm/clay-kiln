@@ -8,8 +8,15 @@ const { join } = require('path'),
   getSlugFrom = require('./get-slug-from'),
   { getFullOriginalUrl, isContentComponent } = require('../../universal/utils'),
   isDirectory = source => lstatSync(source).isDirectory(),
-  getDirectories = source =>
-    readdirSync(source).map(name => join(source, name)).filter(isDirectory),
+  getDirectories = source => {
+    // @TODO: find a better to validate this public folder
+    try {
+      return readdirSync(source).map(name => join(source, name)).filter(isDirectory)
+    } catch (e) {
+      console.log('Warning, directory not found');
+      return [];
+    }
+  },
   publicDirs = getDirectories('./public/').map(dir => dir.replace('public', '')),
   rdcSlug = DEFAULT_STATION.site_slug,
   /**
