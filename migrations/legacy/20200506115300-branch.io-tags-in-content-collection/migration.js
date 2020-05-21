@@ -6,6 +6,12 @@ async function addBranchHeadToPages() {
   await addComponentToContainers(
     hostUrl,
     [ '_pages/topic' ],
+    '_components/meta-tags/instances/general',
+    'head'
+  );
+  await addComponentToContainers(
+    hostUrl,
+    [ '_pages/topic' ],
     '_components/branch-io-head/instances/default',
     'head'
   );
