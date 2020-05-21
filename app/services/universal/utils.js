@@ -374,7 +374,7 @@ function isContentComponent(url) {
   const componentName = getComponentName(url);
 
   return isComponent(url)
-    && (contentTypes.has(componentName) || getComponentInstance(url) === 'home' || 'homepage');
+    && (contentTypes.has(componentName) || getComponentInstance(url) === 'homepage' || getComponentInstance(url) === 'home');
 }
 
 /**
