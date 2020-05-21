@@ -1,7 +1,7 @@
 'use strict';
 
 const { join } = require('path'),
-  { lstatSync, readdirSync } = require('fs'),
+  { lstatSync, readdirSync, existsSync } = require('fs'),
   { isComponent, isPage } = require('clayutils'),
   _get = require('lodash/get'),
   { DEFAULT_STATION } = require('../../universal/constants'),
@@ -9,10 +9,9 @@ const { join } = require('path'),
   { getFullOriginalUrl, isContentComponent } = require('../../universal/utils'),
   isDirectory = source => lstatSync(source).isDirectory(),
   getDirectories = source => {
-    // @TODO: find a better way to validate this public folder or faking the function
-    try {
+    if (existsSync(source)) {
       return readdirSync(source).map(name => join(source, name)).filter(isDirectory);
-    } catch (e) {
+    } else {
       console.log('Warning, directory not found');
       return [];
     }
