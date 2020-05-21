@@ -31,7 +31,13 @@ successMsg:
 postUpSiteID:
   _has:
     input: text
-    help: PostUp ID
+    help: PostUp SiteID
+postUpImportTemplateId:
+  _has:
+    input: text
+    validate:
+      required: true
+    help: PostUp ImportTemplateId
 
 # groups
 _groups:
@@ -43,3 +49,4 @@ _groups:
       - successTitle
       - successMsg
       - postUpSiteID
+      - postUpImportTemplateId
