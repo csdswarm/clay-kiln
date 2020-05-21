@@ -25,11 +25,10 @@ function addParamsAndHttps(arr) {
 
 module.exports = recirculationData({
   elasticFields,
-  mapDataToFilters: (uri, data) => ({
+  mapDataToFilters: () => ({
     filters: {
       contentTypes: ['article', 'gallery']
     },
-    curated: data.items,
     maxItems: MAX_ITEMS
   }),
   render: (ref, data) => {
