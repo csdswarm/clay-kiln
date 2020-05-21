@@ -18,7 +18,6 @@ const { getComponentInstance } = require('clayutils'),
   { isMobileNavWidth } = require('../../services/client/mobile'),
   { fetchDOM } = require('../../services/client/radioApi'),
   active = 'active',
-  listenActive = 'listen-active',
   /**
    * load in new data for listen nav from the api
    * @returns {Promise}
@@ -120,26 +119,16 @@ const { getComponentInstance } = require('clayutils'),
    *
    * @param {Object} event -- contains type and currentTarget
    */
-  toggleListenDrawer = ({ currentTarget }) => {
+  toggleListenDrawer = ({ type, currentTarget }) => {
     resetNavs();
-    /*
-     * ON-1889
-     * resetNavs was causing problems toggling active on currentTarget
-     * and didn't want to add lots of conditionals there
-     * so for these purposes, I'm using listenActive instead to track ui state
-     * while remaining unchanged and unaffected everywhere else
-     */
-    if (currentTarget.classList.contains(listenActive)) {
-      // remove
-      currentTarget.classList.remove(listenActive);
+
+    if (type === 'mouseleave') {
       currentTarget.classList.remove(active);
       listenNavDrawer.classList.remove(active);
       navDrawersContainer.classList.remove(active);
       lastTarget = currentTarget;
     } else {
-      // add
       refreshListenNav();
-      currentTarget.classList.add(listenActive);
       currentTarget.classList.add(active);
       listenNavDrawer.classList.add(active);
       navDrawersContainer.classList.add(active);
@@ -185,7 +174,8 @@ const { getComponentInstance } = require('clayutils'),
    */
   addEventListeners = () => {
     // Toggle Listen Nav
-    listenNavToggle.addEventListener('click', toggleListenDrawer);
+    listenNavToggle.addEventListener('mouseenter', toggleListenDrawer);
+    listenNavToggle.addEventListener('mouseleave', toggleListenDrawer);
 
     // Toggle Mobile Nav
     mobileNavToggle.addEventListener('click', toggleMobileDrawer);
