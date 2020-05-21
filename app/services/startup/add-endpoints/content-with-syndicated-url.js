@@ -4,9 +4,8 @@ const db = require('amphora-storage-postgres'),
   { preventFastlyCache, wrapInTryCatch } = require('../middleware-utils');
 
 /**
- * Adds an endpoint which returns data needed by the importer during station
- *   migrations.  For instance the importer takes different flows depending if
- *   the request url is already syndicated in unity.
+ * Returns info about content which has been marked as syndicated from the
+ *   passed url.  This is used by the importer.
  *
  * @param {object} router
  */
@@ -22,13 +21,13 @@ module.exports = router => {
         content.data as content_data
       from (
         select id,
-        data,
+          data,
           data->>'syndicatedUrl' as syndicatedUrl,
           data->>'syndicationStatus' as syndicationStatus
         from components.article
         union
         select id,
-        data,
+          data,
           data->>'syndicatedUrl' as syndicatedUrl,
           data->>'syndicationStatus' as syndicationStatus
         from components.gallery
