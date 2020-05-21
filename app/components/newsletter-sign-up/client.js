@@ -2,6 +2,8 @@
 
 const
   _bindAll = require('lodash/bindAll'),
+  qs = require('qs'),
+  rest = require('../../services/universal/rest'),
   componentName = 'newsletter-sign-up',
   formClass = `${componentName}__form`,
   formInputClass = `${componentName}__form-input`,
@@ -203,6 +205,7 @@ class NewsletterSignUpCtrl {
       type: `${componentName}-mount`,
       cb: this.onMount
     });
+    this.apiEndpoint = '//' + el.getAttribute('data-uri').replace('@published', '');
   }
   /**
    *
@@ -255,13 +258,42 @@ class NewsletterSignUpCtrl {
   /**
    *
    * when the user submits the form
+   * right now the PostUp endpoint can be called with a fetch however, only with 'no-cors'
+   * which, prevents parsing of the response - my solution is a proxy on the model
+   * that make the request and parses the returned html to determine the state
+   * of the response and forwards along a nice json object - right now the design
+   * only supports errors on the inputs and not with the importTemplateId
+   * so the errors will go to the console since universal log service doesn't seem
+   * to work in the client
    * @param {Event} e
    * @memberof NewsletterSignUpCtrl
    */
   onSubmit(e) {
-    // NOTE: this will be extended for ON-1625
     e.preventDefault();
-    this.view.elements.container.classList.toggle(`${componentName}--success`);
+
+    const currentForm = new FormData(e.target);
+    let getUrl = `${this.apiEndpoint}`;
+
+    const serialized = qs.stringify({
+      postup: {
+        address: currentForm.get('email'),
+        PostalCode: currentForm.get('zip'),
+        Birthday: currentForm.get('birthday')
+      }
+    });
+
+    getUrl += `?${serialized}`;
+    rest.get(getUrl)
+      .then((response) => {
+        if (response.success) {
+          this.view.elements.container.classList.toggle(`${componentName}--success`);
+        } else {
+          console.log(response);
+        }
+
+      })
+      .catch(err => console.log(err));
+
   }
   /**
    *

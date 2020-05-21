@@ -39,7 +39,7 @@
   <h3 class="newsletter-sign-up__title">
     <span class="newsletter-sign-up__title-text">{{ title }}</span>
   </h3>
-  <form method="POST" class="newsletter-sign-up__form" action="" novalidate>
+  <form method="POST" class="newsletter-sign-up__form" action="http://www.e.radio.com/Subscribe.do?action=easySignup" novalidate>
     <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--email">
       {{> newsletterInput
         type="email"
@@ -70,9 +70,6 @@
     <div class="newsletter-sign-up__form-group newsletter-sign-up__form-group--submit">
       {{> newsletterInput type="Submit" name="Subscribe" value="Submit" modifier="submit" }}
     </div>
-    {{!-- <input type="hidden" name="importTemplateID" value="#"/> --}}
-    {{!-- <input type="hidden" name="redirectURL" value="/signup/thanks"/> --}}
-    <input type="hidden" name="siteID" value="{{ postUpSiteID }}"/> <!--optional-->
   </form>
   <div class="newsletter-sign-up__sign-up-terms">
     <p>By clicking Submit, you acknowledge you have read and agree to <a href="{{ privacyTermsPath }}">Entercom’s Website and Digital Terms of Use</a> and <a href="{{ privacyPolicyPath }}">Privacy Policy</a>.</p>
