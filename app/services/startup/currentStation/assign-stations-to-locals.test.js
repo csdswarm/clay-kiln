@@ -46,7 +46,7 @@ describe('startup', () => {
       });
 
       it('assign stations to locals located outside homepage', async () => {
-        const { assignStationsToLocals, locals, options } = setup_assignStationsToLocals('/_components/more-content-feed/instances/nohome@published');
+        const { assignStationsToLocals, locals, options } = setup_assignStationsToLocals('/_components/more-content-feed/instances/article@published');
 
         await assignStationsToLocals(locals, options.req, {}, options.allStations);
         expect(locals.station).to.eql({});
