@@ -138,10 +138,8 @@ const { getComponentInstance } = require('clayutils'),
     isMobile = true;
 
     if (!currentTarget.classList.contains(active)) {
-      console.log('open');
       return openListenDrawer(currentTarget);
     }
-    console.log('close');
     closeListenDrawer(currentTarget);
   },
   /**
@@ -215,7 +213,7 @@ const { getComponentInstance } = require('clayutils'),
 
     // Toggle Dropdowns on Mobile Nav Categories
     mobileNavItems.forEach(item => {
-      if (item.querySelector('.item__label>.label__menu-toggle')) {
+      if (item.querySelectorAll('.item__label>.label__menu-toggle')) {
         item.addEventListener('click', () => toggleMobileSecondaryLinks(item));
       }
     });
