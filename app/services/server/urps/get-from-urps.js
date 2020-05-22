@@ -29,6 +29,7 @@ module.exports = async (path, reqBody, jwt) => {
       const { response } = err;
       let errMsg = 'Error in urps request'
         + '\n-------------------'
+        + `\nmessage: ${err.message}`
         + `\nurl: ${url}`
         + `\nreqBody: ${prettyJSON(reqBody)}`
         + `\njwt: ${jwt}`;

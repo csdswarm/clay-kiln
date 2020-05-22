@@ -1,13 +1,15 @@
 'use strict';
 
-const h = require('highland'),
-  { logSuccess, logError } = require('../helpers/log-events'),
-  { addSiteAndNormalize } = require('../helpers/transform'),
-  { filters, helpers, elastic, subscribe } = require('amphora-search'),
-  { isOpForComponents, stripPostProperties } = require('../filters'),
+const
   db = require('../../services/server/db'),
-  INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX),
-  CONTENT_FILTER = isOpForComponents(['article', 'gallery']);
+  h = require('highland'),
+  { PAGE_TYPES } = require('../../services/universal/constants'),
+  { addSiteAndNormalize } = require('../helpers/transform'),
+  { elastic, filters, helpers, subscribe } = require('amphora-search'),
+  { isOpForComponents, stripPostProperties } = require('../filters'),
+  { logError, logSuccess } = require('../helpers/log-events'),
+  CONTENT_FILTER = isOpForComponents([PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY, PAGE_TYPES.CONTEST, PAGE_TYPES.EVENT]),
+  INDEX = helpers.indexWithPrefix('published-content', process.env.ELASTIC_PREFIX);
 
 // Subscribe to the save stream
 subscribe('save').through(save);
@@ -24,7 +26,7 @@ subscribe('unpublishPage').through(unpublishPage);
  *
  * @returns {Object}
  */
-function getContent(obj, param, components, transform = (data) => data ) {
+function getContent(obj, param, components, transform = (data) => data) {
   const content = obj[param],
     getData = (ref) => components.find(item => item.key === ref).value,
     addData = (component) => ({ ...component, data: transform(getData(component._ref)) });
@@ -45,7 +47,7 @@ function getContent(obj, param, components, transform = (data) => data ) {
  * @returns {Object}
  */
 function getSlideEmbed(slides, components) {
-  slides.map( slide => {
+  slides.map(slide => {
     // helpers.parseOpValue created an object for each main key, but it does not do sub keys
     // which is why we need to parse this and then stringify it again
     const slideData = JSON.parse(slide.data),
@@ -73,9 +75,15 @@ function processContent(obj, components) {
   obj.value = getContent(obj.value, 'content', components);
   obj.value = getContent(obj.value, 'tags', components);
 
-  if (obj.key.includes('article')) {
+  if (obj.key.includes(PAGE_TYPES.CONTEST)) {
+    obj.value = getContent(obj.value, 'description', components);
+  } else {
+    obj.value = getContent(obj.value, 'content', components);
+  }
+
+  if (obj.key.includes(PAGE_TYPES.ARTICLE)) {
     obj.value = getContent(obj.value, 'feedImg', components);
-  } else if (obj.key.includes('gallery')) {
+  } else if (obj.key.includes(PAGE_TYPES.GALLERY)) {
     obj.value = getContent(obj.value, 'slides', components);
     obj.value.slides = getSlideEmbed(obj.value.slides, components);
 
@@ -119,7 +127,10 @@ function save(stream) {
   return stream
     .parallel(1)
     // copy the data being saved so we can search it
-    .map(param => { components.push(param); return param; })
+    .map(param => {
+      components.push(param);
+      return param;
+    })
     // only bring back articles and galleries
     .filter(CONTENT_FILTER)
     .filter(filters.isInstanceOp)
@@ -130,7 +141,7 @@ function save(stream) {
     .map(stripPostProperties)
     .map(transformAuthorsAndTags)
     .through(addSiteAndNormalize(INDEX)) // Run through a pipeline
-    .tap(() => { components = []; }) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
+    .tap(() => components = []) // Clear out the components array so subsequent/parallel running saves don't have reference to this data
     .flatten()
     .flatMap(send)
     .errors(logError)
@@ -166,11 +177,11 @@ function removePublished(key) {
  * @return {Stream<Promise<String>>}
  */
 function getMain(op) {
-  return h(db.get(op.uri).then( data => data.main[0]));
+  return h(db.get(op.uri).then(data => data.main[0]));
 }
 
 /**
- * remove the published article/gallery from elasticsearch
+ * remove the published article/gallery/contest from elasticsearch
  *
  * @param {Stream} stream
  * @return {Stream}
@@ -183,7 +194,7 @@ function unpublishPage(stream) {
 }
 
 /**
- * Index articles/galleries on publish
+ * Index articles/galleries/contests on publish
  * @param  {Object} args
  * @returns {Promise}
  */

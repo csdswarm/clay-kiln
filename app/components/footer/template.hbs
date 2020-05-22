@@ -1,5 +1,14 @@
 <div class="radiocom-footer" data-uri="{{ default _ref _self }}">
 	<div class="container">
+		{{#if _computed.shouldShowNationalLogo}}
+			<div class="radiocom-footer__rdc-logo">
+				<a class="radiocom-footer__rdc-logo-link"
+					href="//{{ concat @root.locals.site.host @root.locals.site.path (default siteHomepage '') }}"
+				>
+					{{{ read 'components/top-nav/media/radiocom_hz.svg' }}}
+				</a>
+			</div>
+		{{/if}}
 		{{#if socialButtonsShow}}
 			<div class="radiocom-footer__social">
 				{{#each socialButtonsURLs as |button|}}

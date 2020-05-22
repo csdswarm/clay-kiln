@@ -1,7 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  { getStationDomainName } = require('./urps'),
   // Time Constants
   SECOND = 1000,
   MINUTE = 60 * SECOND,
@@ -21,11 +20,20 @@ const _get = require('lodash/get'),
 
   SERVER_SIDE = _get(process, 'release.name') === 'node',
 
+  STATION_LISTS = {
+    'primary-section-fronts': true,
+    'secondary-section-fronts': true
+  },
+
   PAGE_TYPES = {
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
+    SECTIONFRONT: 'section-front',
+    CONTEST: 'contest',
+    EVENT: 'event',
+    EVENTSLISTING: 'events-listing-page',
+    STATIONFRONT: 'station-front'
   },
 
   msnFeed = {
@@ -55,6 +63,9 @@ const _get = require('lodash/get'),
   contentTypes = new Set([
     'article',
     'author-page',
+    'contest',
+    'event',
+    'events-listing-page',
     'gallery',
     'homepage',
     'section-front',
@@ -91,26 +102,32 @@ const _get = require('lodash/get'),
     //   it's something that could probably be removed/cleaned up as I don't
     //   believe the www is used anywhere
     slug: 'www',
-    site_slug: ''
+    site_slug: '',
+
+    // in an ideal world we could store our hardcoded station in URPS, but due
+    //   to them keeping their stations in sync with the radio api, we've
+    //   decided to instead use the permissions from the 'National' market to
+    //   cover national rdc content.
+    urpsDomainName: 'National'
   },
+  PRIVACY_POLICY = 'http://entercom.com/privacy-policy/',
 
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
-DEFAULT_STATION.urpsDomainName = getStationDomainName(DEFAULT_STATION);
-
 module.exports = {
-  DEFAULT_STATION,
-  SECOND,
-  MINUTE,
-  HOUR,
-  DAY,
-  WEEK,
-  YEAR,
   contentTypes,
-  time,
-  msnFeed,
-  SERVER_SIDE,
-  PAGE_TYPES,
+  DAY,
   DEFAULT_RADIOCOM_LOGO,
-  DEFAULT_STATION
+  DEFAULT_STATION,
+  HOUR,
+  MINUTE,
+  msnFeed,
+  PAGE_TYPES,
+  PRIVACY_POLICY,
+  SECOND,
+  SERVER_SIDE,
+  STATION_LISTS,
+  time,
+  WEEK,
+  YEAR
 };

@@ -52,7 +52,7 @@ const db = require('../../services/server/db'),
 
       return trendingRecircData.items;
     } catch (e) {
-      if (e.message === `Key not found in database [${trendingRecircRef}]`) {
+      if (e.name === 'NotFoundError') {
         return [];
       } else {
         throw e;
@@ -123,8 +123,7 @@ const db = require('../../services/server/db'),
 
     const primarySectionFronts = await retrieveList(
       'primary-section-fronts',
-      locals,
-      { shouldAddAmphoraTimings: true }
+      { locals, shouldAddAmphoraTimings: true }
     );
 
     if (data._computed.articles) {

@@ -3,3 +3,7 @@ _components:
     items: []
     articleRubric: []
     headTags: []
+    instances:
+      eventPage:
+        items:
+          - text: 'EVENTS'

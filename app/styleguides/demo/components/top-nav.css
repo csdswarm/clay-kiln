@@ -484,7 +484,7 @@ $drawerSelector: nav-drawer;
 
   .radium {
     &__text {
-     @mixin radium-font1;
+      @mixin radium-font1;
     }
 
     &__link--signed-out {

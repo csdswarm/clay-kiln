@@ -4,3 +4,22 @@
 .station-select__label {
   font-size: 20px;
 }
+.station-select__sectionfronts {
+  &--title {
+    margin-bottom: em(10);
+  }
+
+  &--group {
+    background: #eaeaea;
+    border-radius: 8px;
+    padding: em(10);
+
+    &:not(:last-child) {
+      margin-bottom: em(10);
+    }
+
+    .ui-select:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
