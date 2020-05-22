@@ -24,7 +24,6 @@ const
   _isEmpty = require('lodash/isEmpty'),
   _isPlainObject = require('lodash/isPlainObject'),
   _pick = require('lodash/pick'),
-  _set = require('lodash/set'),
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
@@ -141,28 +140,40 @@ const
     },
     stationSlug: {
       filterCondition: 'must',
-      createObj: stationSlug => {
+      createObj: (stationSlug, includeSyndicated = true) => {
+
         const qs = {
           bool: {
             should: [
-              { match: { stationSlug } },
-              {
-                nested: {
-                  path: 'stationSyndication',
-                  query: {
-                    match: {
-                      'stationSyndication.stationSlug': stationSlug
-                    }
-                  }
-                }
-              }
+              { match: { stationSlug } }
             ],
             minimum_should_match: 1
           }
         };
 
+        if (includeSyndicated) {
+          qs.bool.should.push({
+            nested: {
+              path: 'stationSyndication',
+              query: {
+                match: {
+                  'stationSyndication.stationSlug': stationSlug
+                }
+              }
+            }
+          });
+        }
+
         if (stationSlug === DEFAULT_STATION.site_slug) {
-          _set(qs, 'bool.should[2].bool.must_not.exists.field', 'stationSlug');
+          qs.bool.should.push({
+            bool: {
+              must_not: {
+                exists: {
+                  field: 'stationSlug'
+                }
+              }
+            }
+          });
         }
 
         return qs;
@@ -212,7 +223,7 @@ const
     }
 
     const { createObj, filterCondition, unique } = queryFilters[key],
-      { condition = conditionOverride || filterCondition, value } = _isPlainObject(valueObj)
+      { condition = conditionOverride || filterCondition, value, includeSyndicated } = _isPlainObject(valueObj)
         ? valueObj
         : { value: valueObj };
 
@@ -230,6 +241,10 @@ const
         return;
       }
 
+      if (typeof includeSyndicated !== 'undefined') {
+        queryService[getQueryType(condition)](query, createObj(value, includeSyndicated));
+        return;
+      }
       queryService[getQueryType(condition)](query, createObj(value));
     }
   },
@@ -390,10 +405,15 @@ const
       if (key === 'sectionFronts' && !_isEmpty(filters.secondarySectionFronts)) {
         return;
       }
+      if (key === 'includeSyndicated') {
+        return;
+      }
+      if (key === 'stationSlug' && !filters.includeSyndicated) {
+        value = Object.assign({ value }, { includeSyndicated: filters.includeSyndicated });
+      }
       addCondition(query, key, value);
     });
     Object.entries(excludes).forEach(([key, value]) => addCondition(query, key, value, 'mustNot'));
-
     queryService.onlyWithinThisSite(query, locals.site);
     queryService.onlyWithTheseFields(query, elasticFields);
 
