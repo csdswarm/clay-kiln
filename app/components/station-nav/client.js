@@ -12,7 +12,8 @@ let desktopNavItems,
   listenNavComponent,
   stationId,
   stationListenNavInstance,
-  lastTarget;
+  lastTarget,
+  isMobile = false;
 
 const { getComponentInstance } = require('clayutils'),
   { isMobileNavWidth } = require('../../services/client/mobile'),
@@ -120,19 +121,50 @@ const { getComponentInstance } = require('clayutils'),
    * @param {Object} event -- contains type and currentTarget
    */
   toggleListenDrawer = ({ type, currentTarget }) => {
-    resetNavs();
-
-    if (type === 'mouseleave') {
-      currentTarget.classList.remove(active);
-      listenNavDrawer.classList.remove(active);
-      navDrawersContainer.classList.remove(active);
-      lastTarget = currentTarget;
-    } else {
-      refreshListenNav();
-      currentTarget.classList.add(active);
-      listenNavDrawer.classList.add(active);
-      navDrawersContainer.classList.add(active);
+    if (!isMobile) {
+      resetNavs();
+      type === 'mouseleave'
+        ? closeListenDrawer(currentTarget)
+        : openListenDrawer(currentTarget);
     }
+  },
+  /**
+   * Toggle listen nav arrow direction & listen nav drawer on touch for mobile
+   *
+   * @param {Object} currentTarget -- currentTarget
+   * @return {void}
+   */
+  toggleListenDrawerInMobile = ({ currentTarget }) => {
+    isMobile = true;
+
+    if (!currentTarget.classList.contains(active)) {
+      console.log('open');
+      return openListenDrawer(currentTarget);
+    }
+    console.log('close');
+    closeListenDrawer(currentTarget);
+  },
+  /**
+   * Opens listen nav arrow direction & listen nav drawer
+   *
+   * @param {Object} target -- currentTarget
+   */
+  openListenDrawer = (target) => {
+    refreshListenNav();
+    target.classList.add(active);
+    listenNavDrawer.classList.add(active);
+    navDrawersContainer.classList.add(active);
+  },
+  /**
+   * Closes listen nav arrow direction & listen nav drawer
+   *
+   * @param {Object} target -- currentTarget
+   */
+  closeListenDrawer = (target) => {
+    target.classList.remove(active);
+    listenNavDrawer.classList.remove(active);
+    navDrawersContainer.classList.remove(active);
+    lastTarget = target;
   },
   /**
    * Toggle mobile nav arrow direction & mobile nav on click of caret
@@ -176,13 +208,16 @@ const { getComponentInstance } = require('clayutils'),
     // Toggle Listen Nav
     listenNavToggle.addEventListener('mouseenter', toggleListenDrawer);
     listenNavToggle.addEventListener('mouseleave', toggleListenDrawer);
+    listenNavToggle.addEventListener('touchstart', toggleListenDrawerInMobile, true);
 
     // Toggle Mobile Nav
     mobileNavToggle.addEventListener('click', toggleMobileDrawer);
 
     // Toggle Dropdowns on Mobile Nav Categories
     mobileNavItems.forEach(item => {
-      item.addEventListener('click', toggleMobileSecondaryLinks);
+      if (item.querySelector('.item__label>.label__menu-toggle')) {
+        item.addEventListener('click', () => toggleMobileSecondaryLinks(item));
+      }
     });
 
     // Toggle Nav Desktop Drawers
