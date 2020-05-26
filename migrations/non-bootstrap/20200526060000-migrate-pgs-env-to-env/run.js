@@ -73,24 +73,22 @@ UNION
     await bluebird.map(
       pageRecords.rows,
       async pageRecord => {
-        let { id } = pageRecord;
-        await clayExport({ componentUrl: id })
-          .then(async exportedPage => {
-            await clayImport({
+        const { id } = pageRecord;
+        try {
+          const exportedPage = await clayExport({ componentUrl: id });
+          if (exportedPage) {
+            const importResult = await clayImport({
               payload: exportedPage.data,
               hostUrl: toEnv === 'clay.radio.com' ?
                   `http://${toEnv}`
                 : `https://${toEnv}`,
               publish: true
             })
-              .then(result => {
-                if (result.result === 'fail') {
-                  console.log(result);
-                }
-              })
-              .catch(e => console.error(e));
-          })
-          .catch(e => console.error(e));
+            if (importResult.result === 'fail') {
+              console.log(result);
+            }
+          }
+        } catch(e) { console.error(e.stack) }
       },
       { concurrency: 2 }
     );
