@@ -1,0 +1,537 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+@define-mixin station-nav-font1 {
+  @mixin font CircularStd-Black, 15px, $station-primaryFontColor, .23px, 18px;
+}
+
+@define-mixin station-nav-font2 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, .23px, 17px;
+}
+
+@define-mixin station-nav-font3 {
+  @mixin font CircularStd-Black, 15px, $station-primaryFontColor, -.4px, 28px;
+}
+
+@define-mixin station-nav-font4 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, -.23px, 28px;
+}
+
+@define-mixin station-nav-font5 {
+  @mixin font CircularStd-Black, 16px, $station-primaryFontColor, .6px, 19px;
+}
+
+@define-mixin station-listen-nav-font1 {
+  @mixin font CircularStd-Black, 15px, $station-secondaryFontColor, -.24px, 18px;
+}
+
+@define-mixin station-listen-nav-font1-1 {
+  @mixin font CircularStd-BlackItalic, 15px, $station-secondaryFontColor, .24px, 18px;
+}
+
+@define-mixin station-listen-nav-font2 {
+  @mixin font ProximaNova-Regular, 12px, $station-secondaryFontColor, -.23px, 14px;
+}
+
+@define-mixin station-listen-nav-font3 {
+  @mixin font ProximaNova-Regular, 14px, $station-secondaryFontColor, -.23px, 28px;
+}
+
+@define-mixin station-listen-nav-font4 {
+  @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.25px, 28px;
+}
+
+@define-mixin station-listen-nav-font5 {
+  @mixin font ProximaNova-Regular, 15px, $station-secondaryFontColor, -.24px, 18px;
+}
+
+$station-logo-width-height: em(100);
+$station-logo-width-height-med-screen: em(80);
+$logo-margin-right: em(40);
+$caret-width: em(16);
+$caret-margin-right: em(25);
+
+@define-mixin triangle {
+  width: 0;
+  height: 0;
+  border-bottom: em(12) solid $station-tertiaryColor;
+  border-left: em(9) solid transparent;
+  border-right: em(9) solid transparent;
+  margin-top: em(-12);
+}
+
+@define-mixin button-reset {
+  background: none;
+  outline: none;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1;
+  text-transform: none;
+  cursor: pointer;
+}
+
+@define-mixin anchor-reset {
+  text-decoration: none
+}
+
+.component--station-nav {
+  display: block;
+  height: em(130);
+  *[data-play-station] {
+    cursor: pointer;
+  }
+
+  .station-nav__fixed-container {
+    background: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+    @mixin medium-screen {
+      position: relative;
+    }
+    .station-nav__menu {
+      background: $station-primaryColor;
+      display: flex;
+      align-items: flex-end;
+      width: 100%;
+      padding: 0 calc((100% - $default-screen-nav-width) / 2);
+      @mixin large-screen {
+        padding: 0 calc((100% - $large-screen-nav-width) / 2);
+      }
+      @mixin medium-screen {
+        padding: 0 calc((100% - $medium-screen-nav-width) / 2);
+      }
+      @mixin nav-mobile-breakpoint {
+        padding: 0 em(20);
+      }
+
+      .menu__mobile-toggle {
+        display: none;
+        align-self: center;
+        margin-right: $caret-margin-right;
+        @mixin medium-screen {
+          display: flex;
+        }
+        button {
+          @mixin button-reset;
+          width: $caret-width;
+          height: auto;
+          &.mobile-toggle--open {
+            display: none;
+          }
+          svg {
+            width: 100%;
+            height: auto;
+          }
+        }
+        &.active {
+          button.mobile-toggle--closed {
+            display: none;
+          }
+          button.mobile-toggle--open {
+            display: block;
+          }
+        }
+      }
+
+      .menu__image {
+        width: $station-logo-width-height;
+        height: $station-logo-width-height;
+        margin-right: $logo-margin-right;
+        margin-bottom: em(15);
+        margin-top: em(15);
+        @mixin medium-small-screen {
+          width: $station-logo-width-height-med-screen;
+          height: $station-logo-width-height-med-screen;
+        }
+      }
+
+      .menu__navigation {
+        display: flex;
+        margin-left: em(-15);
+        @mixin medium-screen {
+          display: none;
+        }
+
+        li.navigation__primary {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          a {
+            @mixin anchor-reset;
+          }
+          button {
+            @mixin button-reset;
+            padding: em(12) em(15);
+            span {
+              @mixin station-nav-font1;
+              text-transform: uppercase;
+            }
+          }
+          &.active {
+            .menu__triangle {
+              display: block;
+            }
+          }
+          .menu__triangle {
+            @mixin triangle;
+            display: none;
+          }
+        }
+      }
+
+      .menu__listen {
+        margin-left: auto;
+        margin-right: em(5);
+
+        .listen__button {
+          @mixin button-reset;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: $station-tertiaryColor;
+          border: 0;
+          height: em(50);
+          width: em(110);
+
+          .button__text {
+            @mixin station-nav-font5;
+            text-transform: uppercase;
+          }
+
+          .button__icon {
+            display: inline;
+            margin-right: em(10.3);
+            width: 19.4px;
+            height: 19.4px;
+            svg {
+              width: 100%;
+              height: auto;
+            }
+          }
+        }
+      }
+
+      .menu__listen-toggle {
+        background-color: $station-tertiaryColor;
+        width: em(30);
+        height: em(50);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        &.active {
+          button.listen-toggle--closed {
+            display: none;
+          }
+          button.listen-toggle--open {
+            display: inline-flex;
+          }
+          .menu__triangle {
+            display: block;
+          }
+        }
+        button {
+          @mixin button-reset;
+          display: inline-flex;
+          width: em(11);
+          height: em(6);
+          &.listen-toggle--open {
+            display: none;
+          }
+          svg {
+            width: 100%;
+            height: auto;
+
+            .color {
+              fill: $station-primaryFontColor;
+              stroke: $station-primaryFontColor;
+            }
+          }
+        }
+        .menu__triangle {
+          @mixin triangle;
+          margin: 0;
+          position: absolute;
+          bottom: 0;
+          display: none;
+        }
+      }
+    }
+
+    .station_nav__drawers {
+      display: none;
+      background-color: $station-secondaryColor;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      padding: 0;
+      z-index: -1;
+      @mixin medium-screen {
+        display: flex;
+        transform: translateY(-100%);
+        transition: all 100ms linear;
+      }
+
+      &.active {
+        display: flex;
+        padding: em(30) calc((100% - $default-screen-nav-width) / 2);
+        @mixin large-screen {
+          padding: em(30) calc((100% - $large-screen-nav-width) / 2);
+        }
+        @mixin medium-screen {
+          padding: em(30) 0;
+          transform: translateY(0);
+        }
+      }
+      .drawers__drawer {
+        display: none;
+        width: calc($default-screen-nav-width - $station-logo-width-height - $logo-margin-right);
+        @mixin large-screen {
+          width: calc($large-screen-nav-width - $station-logo-width-height - $logo-margin-right);
+        }
+        @mixin medium-screen {
+          width: 100%;
+          margin: 0;
+          flex-direction: column;
+        }
+        height: auto;
+        flex-wrap: wrap;
+        align-self: flex-end;
+        &.active {
+          display: flex;
+        }
+        &.drawer--desktop {
+          width: calc($default-screen-nav-width - $station-logo-width-height - $logo-margin-right + em(30));
+          @mixin large-screen {
+            width: calc($large-screen-nav-width - $station-logo-width-height - $logo-margin-right + em(30));
+          }
+          margin: em(-5) em(-15);
+          .drawer__item {
+            margin: em(5) em(15);
+            white-space: nowrap;
+            flex: 0 0 auto;
+            a {
+              @mixin anchor-reset;
+              span {
+                @mixin station-nav-font2;
+              }
+            }
+          }
+        }
+        &.drawer--mobile {
+          .drawer__item {
+            &.active {
+              .item__label {
+                background: $parisM;
+                .label__menu-toggle {
+                  button.menu-toggle--closed {
+                    display: none;
+                  }
+                  button.menu-toggle--open {
+                    display: inline-flex;
+                  }
+                }
+              }
+              ul {
+                display: flex;
+              }
+            }
+            .item__label {
+              display: flex;
+              padding-left: calc((100% - $medium-screen-nav-width) / 2 + $caret-width + $caret-margin-right);
+              @mixin nav-mobile-breakpoint {
+                padding-left: calc(em(20) + $caret-width + $caret-margin-right);
+              }
+              height: em(30);
+              align-items: center;
+              &:hover {
+                background: $parisM;
+              }
+              a {
+                @mixin anchor-reset;
+              }
+              button {
+                @mixin button-reset;
+                span {
+                  @mixin station-nav-font3;
+                  text-transform: uppercase;
+                }
+              }
+              .label__menu-toggle {
+                display: flex;
+                margin-left: em(8);
+                button {
+                  @mixin button-reset;
+                  width: 12px;
+                  height: auto;
+                  display: inline-flex;
+                  &.menu-toggle--open {
+                    display: none;
+                  }
+                  svg {
+                    width: 100%;
+                    height: auto;
+                  }
+                }
+              }
+            }
+            ul {
+              display: none;
+              padding-left: calc((100% - $medium-screen-nav-width) / 2 + $caret-width + $caret-margin-right);
+              @mixin nav-mobile-breakpoint {
+                padding-left: calc(em(20) + $caret-width + $caret-margin-right);
+              }
+              flex-direction: column;
+              li {
+                a {
+                  @mixin anchor-reset;
+                  button {
+                    @mixin button-reset;
+                    span {
+                      @mixin station-nav-font4;
+                      text-transform: capitalize;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        &.drawer--listen {
+          height: auto;
+          width: $default-screen-nav-width;
+          @mixin large-screen {
+            width: $large-screen-nav-width;
+          }
+          @mixin medium-screen {
+            width: calc($medium-screen-nav-width - $caret-width - $caret-margin-right);
+            margin: 0 calc((100% - $medium-screen-nav-width) / 2);
+          }
+          @mixin nav-mobile-breakpoint {
+            width: calc(100% - em(40) - $caret-width - $caret-margin-right);
+            margin: 0 em(20);
+          }
+          .component--station-listen-nav {
+            display: flex;
+            flex-direction: row;
+            @mixin medium-screen {
+              flex-direction: column;
+            }
+          }
+          section {/* 1100 total */
+            width: widthOnGrid(4,3); /* 300 */
+            &:not(:last-of-type) {
+              margin-right: widthOnGrid(1,2); /* 100 */
+            }
+            @mixin large-screen { /* 940 total */
+              &:not(:last-of-type) {
+                margin-right: widthOnGrid(0,1); /* 20 */
+              }
+            }
+            @mixin medium-screen {
+              width: 100%;
+              margin-right: 0;
+              &:not(:last-of-type) {
+                margin-bottom: em(30);
+              }
+            }
+          }
+          ul {
+            justify-content: space-between;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            ul {
+              height: auto;
+            }
+          }
+          li {
+            margin-bottom: em(30);
+            &:last-of-type,
+            li {
+              margin: 0;
+            }
+          }
+          a {
+            @mixin anchor-reset;
+          }
+          h3 {
+            @mixin station-listen-nav-font1;
+            text-transform: uppercase;
+            margin-bottom: em(5, 15);
+          }
+          img {
+            width: em(60);
+            height: em(60);
+            @mixin medium-screen {
+              width: em(100);
+              height: em(100);
+            }
+            @mixin medium-small-screen {
+              width: em(50);
+              height: em(50);
+            }
+          }
+          span {
+            @mixin station-listen-nav-font3;
+          }
+          li > div {
+            display: flex;
+            flex-direction: row;
+            div {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              margin-left: em(10);
+            }
+          }
+          .drawer__playing {
+            li > div {
+              div {
+                h3 {
+                  text-transform: none;
+                  margin-bottom: em(3.3, 15);
+                }
+                span {
+                  @mixin station-listen-nav-font2;
+                }
+              }
+            }
+          }
+          .drawer__smart-speaker h3 {
+            @mixin station-listen-nav-font1-1;
+            text-transform: none;
+            margin: 0;
+          }
+          .drawer__audio {
+            span {
+              @mixin medium-screen {
+                @mixin station-listen-nav-font4;
+              }
+            }
+          }
+          .drawer__featured {
+            a {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              span {
+                margin-left: em(10);
+                @mixin station-listen-nav-font5;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
