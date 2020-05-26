@@ -288,11 +288,11 @@ class NewsletterSignUpCtrl {
         if (response.success) {
           this.view.elements.container.classList.toggle(`${componentName}--success`);
         } else {
-          console.log(response);
+          console.error(response);
         }
 
       })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
 
   }
   /**
