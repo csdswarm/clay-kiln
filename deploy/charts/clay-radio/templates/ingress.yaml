@@ -9,6 +9,7 @@ metadata:
     helm.sh/chart: {{ include "clay-radio.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
 {{ toYaml .Values.ingress.annotations | indent 4 }}
 spec:
   tls:
