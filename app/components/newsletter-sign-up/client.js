@@ -288,7 +288,14 @@ class NewsletterSignUpCtrl {
         if (response.success) {
           this.view.elements.container.classList.toggle(`${componentName}--success`);
         } else {
-          response.errors.forEach(err => console.error(err));
+          if (response.error) {
+            console.error(response.error);
+          } else {
+            const tempEL = document.createElement('div');
+
+            tempEL.innerHTML = response.html;
+            tempEL.querySelectorAll('li.error').forEach((el) => console.error(new Error(el.innerText)));
+          }
         }
 
       })

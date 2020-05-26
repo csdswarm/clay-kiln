@@ -3,7 +3,6 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   _get = require('lodash/get'),
   axios = require('axios'),
-  cheerio = require('cheerio'),
   logger = require('../../services/universal/log'),
   log = logger.setup({ file: __filename });
 
@@ -45,19 +44,13 @@ module.exports = unityComponent({
           if (r.data.includes('success')) {
             return { success: true };
           } else {
-            const $ = cheerio.load(r.data),
-              errors = [];
-
-            $('li.error').each((i,el) => errors.push($(el).text()));
-            errors.forEach(err => {
-              log('error', new Error(err), params);
-            });
-            return { success: false, params, errors };
+            log('error', new Error('Error adding to PostUp:'), params);
+            return { success: false, params, html: r.data };
           }
         })
         .catch(err => {
           log(err);
-          return { success: false, params, errors: [err] };
+          return { success: false, params, error: err };
         });
     }
   }
