@@ -288,7 +288,7 @@ class NewsletterSignUpCtrl {
         if (response.success) {
           this.view.elements.container.classList.toggle(`${componentName}--success`);
         } else {
-          console.error(response);
+          response.errors.forEach(err => console.error(err));
         }
 
       })
