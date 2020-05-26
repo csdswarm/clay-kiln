@@ -113,11 +113,11 @@ function recursivelyStripSeperators(data) {
  */
 function replaceWithString(string, patternArray, replaceString) {
   if (!_isString(string)) {
-    return '';
+    throw new Error('Empty or null string', 'Input string cannot be empty or null');
   }
 
   if (!_isString(replaceString) || !_isArray(patternArray)) {
-    return string;
+    throw new Error('Invalid Pattern Array or replaceString', 'An array must be provided with valid patterns');
   }
 
   let replacedString = string;
