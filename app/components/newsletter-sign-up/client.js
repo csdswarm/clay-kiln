@@ -272,7 +272,7 @@ class NewsletterSignUpCtrl {
     e.preventDefault();
 
     const currentForm = new FormData(e.target);
-    let getUrl = `${this.apiEndpoint}`;
+    let getUrl = this.apiEndpoint;
 
     const serialized = qs.stringify({
       postup: {
