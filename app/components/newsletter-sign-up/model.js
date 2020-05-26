@@ -1,10 +1,11 @@
 'use strict';
 
 const { unityComponent } = require('../../services/universal/amphora'),
+  _get = require('lodash/get'),
   axios = require('axios'),
+  cheerio = require('cheerio'),
   logger = require('../../services/universal/log'),
-  log = logger.setup({ file: __filename }),
-  cheerio = require('cheerio');
+  log = logger.setup({ file: __filename });
 
 module.exports = unityComponent({
   /**
@@ -19,7 +20,12 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: (uri, data, locals) => {
-    if (locals && locals.postup) {
+
+    if (!_get(locals, 'postup')) {
+      return data;
+    }
+
+    if (_get(locals, 'postup')) {
       const params = {
         action: 'easySignup',
         ...locals.postup,
@@ -53,8 +59,6 @@ module.exports = unityComponent({
           log(err);
           return { success: false, params, errors: [err] };
         });
-    } else {
-      return data;
     }
   }
 });
