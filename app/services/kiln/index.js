@@ -21,10 +21,10 @@ module.exports = () => {
   require('./plugins/podcast-select')();
   require('./plugins/restrict-users')();
   require('./plugins/select-list')();
+  require('./plugins/sign-out-override')();
   require('./plugins/stations')();
   require('./plugins/stores')();
   require('./plugins/subscriptions')();
-  require('./plugins/sign-out-override')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
   require('./validators')();

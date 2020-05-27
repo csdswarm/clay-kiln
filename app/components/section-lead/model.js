@@ -46,7 +46,10 @@ const { recirculationData } = require('../../services/universal/recirc/recircula
 module.exports = recirculationData({
   elasticFields,
   mapDataToFilters: (uri, data) => ({
-    maxItems: getMaxItems(data)
+    maxItems: getMaxItems(data),
+    filters: {
+      includeSyndicated: false
+    }
   }),
 
   /**
