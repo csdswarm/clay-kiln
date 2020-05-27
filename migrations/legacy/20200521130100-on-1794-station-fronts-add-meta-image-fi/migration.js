@@ -15,7 +15,8 @@ const { _get, clayImport, clayExport, clayutils } = require('../migration-utils'
             instances: {
               'station-front': {
                 _version: 1,
-                imageUrl: '',
+                imageUrl: '${paramValue}',
+                localsKey: 'station.square_logo_small',
                 componentVariation: 'meta-image'
               }
             }
