@@ -10,7 +10,7 @@
  * PGPASSWORD=<> \
  * PGDATABASE=<> node run preprod-clay.radio.com www.radio.com wearechannelq
  */
-const { bluebird } = require('../../utils/base'),
+const{ bluebird, _ } = require('../../utils/base'),
   usingDb = require('../../utils/using-db').v2,
   clayExport = require('../../utils/clay-export').v1,
   clayImport = require('../../utils/clay-import').v1,
@@ -68,6 +68,19 @@ WHERE
     }).join(`
 UNION
 `);
+    const replaceHostDeep = object => {
+      const newObject = _.clone(object);
+
+      _.each(object, (value, key) => {
+        if (typeof value === 'string' && value.includes(fromEnv)) {
+          newObject[key] = value.replace(new RegExp(fromEnv, 'g'), toEnv);
+        } else if (typeof value === 'object') {
+          newObject[key] = replaceHostDeep(value);
+        }
+      });
+
+      return newObject;
+    }
 
     const pageRecords = await db.query(query);
     await bluebird.map(
@@ -77,8 +90,9 @@ UNION
         try {
           const exportedPage = await clayExport({ componentUrl: id });
           if (exportedPage) {
+            const pageData = replaceHostDeep(exportedPage.data._components);
             const importResult = await clayImport({
-              payload: exportedPage.data,
+              payload: pageData,
               hostUrl: toEnv === 'clay.radio.com' ?
                   `http://${toEnv}`
                 : `https://${toEnv}`,
