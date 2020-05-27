@@ -19,7 +19,8 @@ module.exports = recirculationData({
     filters: {
       videos: {
         value: `${locals.site.host}\/_components\/brightcove\/instances.*`
-      }
+      },
+      sectionFronts: ''
     },
     excludes: {
       tags: excludedTags(data)
