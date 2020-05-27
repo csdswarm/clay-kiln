@@ -90,7 +90,7 @@ UNION
         try {
           const exportedPage = await clayExport({ componentUrl: id });
           if (exportedPage) {
-            const pageData = replaceHostDeep(exportedPage.data._components);
+            const pageData = replaceHostDeep(exportedPage.data);
             const importResult = await clayImport({
               payload: pageData,
               hostUrl: toEnv === 'clay.radio.com' ?
