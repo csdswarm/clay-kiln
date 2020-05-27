@@ -27,7 +27,7 @@ const
       return await cb();
     } finally {
       addAmphoraRenderTime(
-        options.locals,
+        options.locals || {},
         {
           label,
           data,
