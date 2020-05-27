@@ -9,6 +9,7 @@ const _get = require('lodash/get'),
   promises = require('./promises'),
   rest = require('./rest'),
   circulationService = require('./circulation'),
+  { addStationsByEditorialGroup } = require('./editorial-feed-syndication'),
   mediaplay = require('./media-play'),
   articleOrGallery = new Set(['article', 'gallery']),
   urlExists = require('../../services/universal/url-exists'),
@@ -499,7 +500,10 @@ function addTwitterHandle(data, locals) {
  * @param {Object} data
  */
 function renderStationSyndication(data) {
-  data._computed.stationSyndicationCallsigns = (data.stationSyndication || [])
+  const syndicatedStations = (data.stationSyndication || [])
+    .filter(syndication => syndication.source === 'manual syndication');
+
+  data._computed.stationSyndicationCallsigns = syndicatedStations
     .map(station => station.callsign)
     .sort()
     .join(', ');
@@ -605,6 +609,9 @@ async function save(uri, data, locals) {
   bylineOperations(data);
   setNoIndexNoFollow(data);
   setFullWidthLead(data);
+
+  // we need to get stations by editorial feeds before creating slugs for syndicated content
+  await addStationsByEditorialGroup(data, locals);
   addStationSyndicationSlugs(data);
 
   // now that we have some initial data (and inputs are sanitized),

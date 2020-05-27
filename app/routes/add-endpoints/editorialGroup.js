@@ -1,20 +1,19 @@
 'use strict';
+
 const { wrapInTryCatch } = require('../../services/startup/middleware-utils'),
   _isEmpty = require('lodash/isEmpty'),
-  db = require('../../services/server/db');
+  db = require('../../services/server/db'),
+  getEditorialGroups = require('../../services/server/get-editorial-groups');
 
 module.exports = router => {
   router.get('/rdc/editorial-group', wrapInTryCatch(async (req, res) => {
-    const result = await db.raw(`
-    SELECT id, data
-    FROM editorial_group
-    `);
+    const result = await getEditorialGroups();
     
-    if (!result.rows) {
+    if (!result) {
       res.status(404).end();
       return;
     }
-    res.send(result.rows);
+    res.send(result);
   }));
   
   router.put('/rdc/editorial-group/:id', wrapInTryCatch(async (req, res) => {

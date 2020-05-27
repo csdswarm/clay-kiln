@@ -54,6 +54,7 @@ async function filterStations() {
     return {
       callsign: station.attributes.callsign,
       siteSlug: station.attributes.site_slug,
+      name: station.attributes.name
     };
   });
 
@@ -124,7 +125,16 @@ async function createDMLFile(data) {
    * @returns {String}
    */
   const sanitizeCallLetters = (callLetters) =>
-    callLetters.replace(/[^a-zA-Z]/g, "");
+    callLetters.replace(/[^a-zA-Z]/g, '');
+
+  /**
+   * Add double single quote to apostrophes for pg insertion
+   *
+   * @param {String} stationName
+   * @returns {String}
+   */
+  const sanitizeName = (stationName) =>
+    stationName.replace(/([\'])/g, '\'\'');
 
   /**
    * Find by property in all RDC API Stations
@@ -142,29 +152,25 @@ async function createDMLFile(data) {
   };
 
   /**
-   * Extract the site slug property
+   * Get station properties
    *
    * @param {Object} record - from csv
    * @returns {String}
    */
-  const getSiteSlug = async (record) => {
+  const getStationData = async (record) => {
     // Extract the Call Letters property
     let callLetters = record["Call Letters"];
     // Removes special characters to match with RDC API
     callLetters = sanitizeCallLetters(callLetters);
     const station = findInStations("callsign", callLetters);
-    let siteSlug = "";
 
-    if (station) {
-      siteSlug = station.siteSlug;
-    } else if (!isLocal) {
+    if (!station && !isLocal) {
       console.error(
         `CSV record haven't been found in RDC API with this Call Letter/callsign ${record["Call Letters"]} \ 
           Please update this record`
       );
     }
-
-    return siteSlug;
+    return station;
   };
 
   /**
@@ -198,22 +204,28 @@ async function createDMLFile(data) {
     );
 
   for (const record of data) {
-    // Extracts SIte Slug property
-    const siteSlug = await getSiteSlug(record);
+    // Extracts properties required from a station
+    const { name, siteSlug, callsign } = await getStationData(record) || {};
     if (!siteSlug) {
       continue;
     }
+
     // Get the feeds with the "x" value
     const feeds = await buildFeeds(record);
-    // // Generates the insert statememt
+
+    // String json data to be used on insert statement
+    const jsonData = JSON.stringify({
+      "market": record.Market,
+      "stationName": sanitizeName(name),
+      "siteSlug": siteSlug,
+      "callsign": callsign,
+      "feeds": feeds
+    });
+
+    // Generates the insert statememt
     const sql = `INSERT INTO editorial_group(data)
     VALUES (
-      '{
-        "market": "${record.Market}",
-        "siteSlug": "${siteSlug}",
-        "feeds": ${JSON.stringify(feeds)}
-
-      }'
+      '${jsonData}'
       );
     \ `;
 

@@ -473,9 +473,19 @@ function updateImmutable(object, path, updater) {
   return _updateWith(_clone(object), path, updater, _clone);
 }
 
+/**
+ * Maps a key: bool object into an array, returning truthy keys only
+ * @param {Object} object
+ * @returns {array}
+ */
+function boolObjectToArray(object) {
+  return Object.entries(object || {}).map(([key, bool]) => bool && key).filter(value => value);
+}
+
 module.exports = {
   addLazyLoadProperty,
   boolKeys,
+  boolObjectToArray,
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
