@@ -2,23 +2,38 @@
 
 const { unityComponent } = require('../../services/universal/amphora'),
   { autoLink } = require('../breadcrumbs'),
-  _get = require('lodash/get'),
-  classnames = require('classnames');
+  radioApiService = require('../../services/server/radioApi'),
+  _get = require('lodash/get');
 
 
 async function addBreadcrumbs(data, locals) {
   const { podcast, episode } = locals;
 
-  if (_get(podcast, 'attributes') && _get(episode, 'attributes')) {
+  if (podcast && podcast.attributes && episode && episode.attributes) {
     const { site_slug, title, station } = podcast.attributes,
+      episode_site_slug = episode.attributes.site_slug,
+      episode_title = episode.attributes.title,
       breadcrumbs = [
-        { slug: data._computed.stationSlug, text: station.length ? station[0].name : null },
+        { slug: data.stationSlug, text: station.length ? station[0].name : null },
         { slug: 'podcasts', text: 'podcasts' },
-        { slug: site_slug, text: title }
+        { slug: site_slug, text: title },
+        { slug: episode_site_slug, text: episode_title }
       ];
 
     await autoLink(data, breadcrumbs, locals);
   }
+}
+
+async function getPodcastShow(locals) {
+  const route = `podcasts?filter[site_slug]=${locals.params.dynamicSlug}`;
+
+  return await radioApiService.get(route, {}, null, {}, locals);
+}
+
+async function getPodcastEpisode(locals) {
+  const route = `episodes?filter[episode_site_slug]=${locals.params.dynamicEpisode}`;
+
+  return await radioApiService.get(route, {}, null, {}, locals);
 }
 
 module.exports = unityComponent({
@@ -35,19 +50,24 @@ module.exports = unityComponent({
     if (!locals || !locals.params) {
       return data;
     }
+    let componentClass = ' ';
 
-    const componentClass = classnames({
-      editing: locals.edit
-    });
+    if (locals.edit) {
+      componentClass += 'editing ';
+    }
+    const podcast = await getPodcastShow(locals),
+      episode = await getPodcastEpisode(locals);
 
-    // Setting data to be referenced on podcast episode lead
+    // Stored in data for breadcrumbs component
+    data.stationSlug = _get(locals, 'params.stationSlug');
+    locals.podcast = podcast.data[0];
+    locals.episode = episode.data[0];
     locals.contentType = 'episode';
 
-    data._computed = {
-      componentClass,
-      stationSlug: _get(locals, 'params.stationSlug')
-    };
     await addBreadcrumbs(data, locals);
+    data._computed = {
+      componentClass
+    };
     return data;
   }
 });
