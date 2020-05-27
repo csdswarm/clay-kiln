@@ -31,12 +31,13 @@ module.exports = router => {
     // instead of creating our own ETag header I thought it'd be easier to
     //   implement last-modified
     removeEtag(res);
-
-    const ifModifiedSinceStr = req.get('if-modified-since');
-
-    let lastModifiedStr = await redis.get(redisKey.lastModified),
+    const url = req.protocol + '://' + req.get('host') + req.originalUrl,
+      redisData = await redis.get(`msn-${url}`) || '',
+      { lastModified } = JSON.parse(redisData);
+    
+    let lastModifiedStr = lastModified,
       lastModifiedDate;
-
+    
     // if the value isn't in redis for some reason (value gets removed from the
     //   cache or on server initialization), then just set it to the
     //   current time.
@@ -47,8 +48,19 @@ module.exports = router => {
     } else {
       lastModifiedDate = new Date(lastModifiedStr);
     }
-
+        
     res.set('Last-Modified', lastModifiedStr);
+
+    const resp = await axios.get(`${protocol}://${host}/_components/feeds/instances/msn.msn`, {
+        params: req.query
+      }),
+      value = {
+        lastModified: new Date()
+      };
+      
+    redis.set(`msn-${url}`, JSON.stringify(value));
+    
+    const ifModifiedSinceStr = req.get('if-modified-since');
 
     if (ifModifiedSinceStr) {
       // apparently the http spec defines two obsolete date formats which
@@ -65,8 +77,6 @@ module.exports = router => {
         return;
       }
     }
-
-    const resp = await axios.get(`${protocol}://${host}/_components/feeds/instances/msn.msn`);
 
     res.send(resp.data);
   }));

@@ -80,6 +80,11 @@ module.exports.render = async (ref, data, locals) => {
     return data;
   }
 
+  // if the query param is a string, I will turn it into an object
+  if (typeof locals.filter === 'string') {
+    locals.filter = JSON.parse(locals.filter);
+  }
+
   const { meta } = data,
     filters = locals.filter || {},
     excludes = locals.exclude || {},
