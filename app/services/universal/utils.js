@@ -14,7 +14,7 @@ const
   _updateWith = require('lodash/updateWith'),
   parse = require('url-parse'),
   { contentTypes } = require('./constants'),
-  { getComponentName, isComponent, getComponentInstance } = require('clayutils'),
+  { getComponentName, isComponent } = require('clayutils'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
 
@@ -374,7 +374,7 @@ function isContentComponent(url) {
   const componentName = getComponentName(url);
 
   return isComponent(url)
-    && (contentTypes.has(componentName) || getComponentInstance(url) === 'homepage' || getComponentInstance(url) === 'home');
+    && contentTypes.has(componentName);
 }
 
 /**
