@@ -50,7 +50,7 @@ function getDurationFormat(durationInSeconds) {
  */
 function getEpisodesInShow(locals) {
   const route = 'episodes',
-    { sort = 'newest', page = 1 } = locals.query,
+    { sort = 'newest', page = 1 } = (locals && locals.query) || {},
     params = {
       'filter[podcast_site_slug]': locals.params.dynamicSlug,
       'page[size]': 20,
