@@ -183,11 +183,8 @@ const
       // This is from load more on an author page
       author = locals.author;
     } else if (locals && locals.params && locals.params.author) {
-      // This is from an author page
+      // This is from a curated & dynamic author page
       author = locals.params.author;
-    } else if (locals && locals.params && locals.params.dynamicAuthor) {
-      // This is from an dynamic author page
-      author = locals.params.dynamicAuthor;
     }
 
     // Used for load-more queries
