@@ -8,7 +8,7 @@
  * PGUSER=<> \
  * PGHOST=<> \
  * PGPASSWORD=<> \
- * PGDATABASE=<> node run preprod-clay.radio.com www.radio.com wearechannelq
+ * PGDATABASE=<> node migrate-content-env-to-env preprod-clay.radio.com www.radio.com wearechannelq
  */
 const{ bluebird, _ } = require('../../utils/base'),
   usingDb = require('../../utils/using-db').v2,
