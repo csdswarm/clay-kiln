@@ -58,11 +58,5 @@
 {{/inline}}
 
 <div class="component component--contest-rules contest-rules">
-    {{#if @root.locals.edit}}
-        {{> mainContent}}
-    {{else}}
-        <a href="{{ contestSlug }}" class="contest-rules__link">
-            {{> mainContent}}
-        </a>
-    {{/if}}
+    {{> mainContent}}
 </div>
