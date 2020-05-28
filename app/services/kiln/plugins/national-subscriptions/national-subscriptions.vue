@@ -145,6 +145,7 @@
   const SubscriptionRow = require('./national-subscriptions-row.vue')
   const startCase = require('lodash/startCase')
   const axios = require('axios')
+  const PAGE_TYPES = require('../../../universal/constants').PAGE_TYPES
   const tableConfig = [
     {
       key: 'id',
@@ -191,6 +192,7 @@
       dataType: null
     }
   ]
+  const capitalize = require('../../../client/dom-helpers').capitalize
 
 // needed for using simple-list outside of kiln
 _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize() {
@@ -208,7 +210,7 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
       filter: {
         // as currently described in get-national-subscriptions.js
         populateFrom: 'allContent', // {string}
-        contentType: ['Article', 'Gallery'], // {string[]}
+        contentType: [PAGE_TYPES.ARTICLE, PAGE_TYPES.GALLERY], // {string[]}
         sectionFront: '', // {string}
         secondarySectionFront: '', // {string}
         tags: [], // {string[]}
@@ -396,12 +398,12 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
           ],
           contentTypes: [
             {
-              label: 'Article',
-              value: 'Article'
+              label: capitalize(PAGE_TYPES.ARTICLE),
+              value: PAGE_TYPES.ARTICLE
             },
             {
-              label: 'Gallery',
-              value: 'Gallery'
+              label: capitalize(PAGE_TYPES.GALLERY),
+              value: PAGE_TYPES.GALLERY
             }
           ]
         }
