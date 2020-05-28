@@ -94,10 +94,10 @@ async function handlePublishSectionFront(page) {
       data = await db.get(sectionFrontRef),
       sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList;
 
-    if ((data.title || data.stationSiteSlug) && !data.titleLocked) {
+    if ((data.title || data.stationSlug) && !data.titleLocked) {
       const sectionFronts = await db.get(`${host}${sectionFrontsList}`),
         sectionFrontValues = sectionFronts.map(sectionFront => sectionFront.value),
-        name = data.stationFront ? data.stationSiteSlug : data.title,
+        name = data.stationFront ? data.stationSlug : data.title,
         value = name.toLowerCase();
 
       if (!sectionFrontValues.includes(value)) {
@@ -130,7 +130,7 @@ async function handleUnpublishSectionFront(page) {
     if (mainRef.includes('/_components/section-front/instances/')) {
       const data = await db.get(mainRef),
         sectionFrontsList = data.primary ? primarySectionFrontsList : secondarySectionFrontsList,
-        value = data.stationFront ? data.stationSiteSlug : data.title;
+        value = data.stationFront ? data.stationSlug : data.title;
 
       if (value) {
         const sectionFronts = await db.get(`${host}${sectionFrontsList}`),

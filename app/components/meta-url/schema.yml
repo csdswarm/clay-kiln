@@ -4,9 +4,6 @@ _description: |
 
   If an article is syndicated, the canonical link will point to the url of the original article.
 
-_permission:
-  update: meta-tags
-
 url:
   _label: Canonical URL
   _has:
