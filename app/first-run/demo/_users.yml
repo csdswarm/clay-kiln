@@ -1,3 +1,15 @@
+left: {"username":"cristhiam.henao@gorillalogic.com","provider":"google","auth":"admin"}
+left: {"username":"ferney.pena@gorillalogic.com","provider":"cognito","auth":"admin"}
+left: {"username":"jeremy.zevin@entercom.com","provider":"cognito","auth":"admin"}
+left: {"username":"tiffany.chow@entercom.com","provider":"cognito","auth":"admin"}
+left: {"username":"luis.bertel@gorillalogic.com","provider":"cognito","auth":"admin"}
+left: {"username":"Leland.Kwong@entercom.com","provider":"google","auth":"admin"}
+left: {"username":"julian.figueroa@gorillalogic.com","provider":"google","auth":"admin"}
+left: {"username":"juan.restrepo@gorillalogic.com","provider":"cognito","auth":"admin"}
+left: {"username":"juan.giraldo@gorillalogic.com","provider":"google","auth":"admin"}
+left: {"username":"jose.penagos@gorillalogic.com","provider":"cognito","auth":"admin"}
+left: {"username":"nicholas.booth@entercom.com","provider":"cognito","auth":"admin"}
+left: {"username":"nick.renford@entercom.com","provider":"cognito","auth":"admin"}
 _users:
   -
     username: aaron.m.ponce@gmail.com
@@ -60,15 +72,15 @@ _users:
     provider: google
     auth: admin
   -
+    username: Cory.Calhoun@entercom.com
+    provider: google
+    auth: admin
+  -
     username: cristhiam.henao@gorillalogic.com
     provider: cognito
     auth: admin
   -
     username: cristhiam.henao@gorillalogic.com
-    provider: google
-    auth: admin
-  -
-    username: Cory.Calhoun@entercom.com
     provider: google
     auth: admin
   -
@@ -152,11 +164,7 @@ _users:
     provider: google
     auth: admin
   -
-    username: micah.allen@entercom.com
-    provider: cognito
-    auth: admin
-  -
-    username: micah.allen@swarmsolutions.com
+    username: lauren.hoffman@entercom.com
     provider: google
     auth: admin
   -

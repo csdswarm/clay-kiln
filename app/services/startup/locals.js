@@ -51,6 +51,7 @@ async function entercomDomains(req, res) {
  * @param {function} next
  */
 module.exports = async (req, res, next) => {
+
   spaLocals(req, res);
   await entercomDomains(req, res);
 
