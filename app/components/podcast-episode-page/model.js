@@ -56,7 +56,9 @@ module.exports = unityComponent({
       componentClass += 'editing ';
     }
     const podcast = await getPodcastShow(locals),
-      episode = await getPodcastEpisode(locals);
+      episode = await getPodcastEpisode(locals),
+      podcastData = podcast.data[0],
+      episodeData = episode.data[0];
 
     // Stored in data for breadcrumbs component
     data.stationSlug = _get(locals, 'params.stationSlug');
@@ -66,7 +68,9 @@ module.exports = unityComponent({
 
     await addBreadcrumbs(data, locals);
     data._computed = {
-      componentClass
+      componentClass,
+      podcastDisplayData: JSON.stringify(podcastData, null , 4),
+      episodeDisplayData: JSON.stringify(episodeData, null, 4)
     };
     return data;
   }
