@@ -1,7 +1,13 @@
 #! /bin/bash
 
+expectedDir="20191008103300-add-branch-io"
 scriptdir="$(dirname "$0")"
-cd "$scriptdir"
+pwd="$(pwd "$0")"
+if [[ "$pwd" != *"$expectedDir" ]]
+then
+    echo "updating cd"
+    cd "$scriptdir"
+fi
 
 if [ "$1" != "" ]; then
   if [ "$1" == "clay.radio.com" ]; then
@@ -11,7 +17,7 @@ if [ "$1" != "" ]; then
   elif [ "$1" == "stg-clay.radio.com" ]; then
     es="http://es.radio-stg.com:9200" && http="https";
   elif [ "$1" == "www.radio.com" ]; then
-    es="https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com:443" && http="https";
+    es="http://es.radio-prd.com" && http="https";
   fi
   printf "Updating environment $http://$1\n"
 else
@@ -19,15 +25,15 @@ else
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
-printf "\nCreating dynamic-meta-image instance for stations...\n\n"
+printf "\nCreating branch io component...\n\n"
 cat ./_components.yml | clay import -k demo -y -p $1
 
-printf "\nUpdating stations page...\n\n"
-curl -X GET -H "Accept: application/json" $http://$1/_pages/station > ./station.json
+printf "\nUpdating stations-detail page...\n\n"
+curl -X GET -H "Accept: application/json" $http://$1/_pages/station > ./stationPage.json
 
 node migration.js $1
 
-curl -X PUT $http://$1/_pages/station -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./station.json -o /dev/null -s
+curl -X PUT $http://$1/_pages/station -H 'Authorization: token accesskey' -H 'Content-Type: application/json' -d @./stationPage.json -o /dev/null -s
 curl -X PUT $http://$1/_pages/station@published -H 'Authorization: token accesskey' -o /dev/null -s
 
-rm station.json
+rm ./stationPage.json

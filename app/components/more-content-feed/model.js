@@ -10,7 +10,7 @@ const _get = require('lodash/get'),
     'feedImgUrl',
     'sectionFront',
     'date',
-    'lead',
+    'lead._ref',
     'subHeadline',
     'contentType'
   ],
