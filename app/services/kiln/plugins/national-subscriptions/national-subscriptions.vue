@@ -407,10 +407,14 @@ _set(window.kiln.toolbarButtons, 'overlay.methods.onResize', function onResize()
         }
       },
       includeSectionFronts () {
-        return this.workingSubscription.filter.populateFrom === 'sectionFront' || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag' || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
+        return this.workingSubscription.filter.populateFrom === 'sectionFront'
+          || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag'
+          || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
       },
       includeSectionTags () {
-        return this.workingSubscription.filter.populateFrom === 'tag' || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag' || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
+        return this.workingSubscription.filter.populateFrom === 'tag'
+          || this.workingSubscription.filter.populateFrom === 'sectionFrontAndTag'
+          || this.workingSubscription.filter.populateFrom === 'sectionFrontOrTag'
       },
       simpleListArgs() {
         return {
