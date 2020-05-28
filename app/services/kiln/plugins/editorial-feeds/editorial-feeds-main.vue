@@ -184,7 +184,8 @@ export default {
         ) {
           return ascending ? -1 : 1;
         }
-        return 0;
+        return a.data.feeds[col] === b.data.feeds[col] ? 0 :
+                a.data.feeds[col] ? ascending ? -1 : 1 : ascending ? 1 : -1;
       });
     },
   },
