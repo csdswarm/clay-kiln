@@ -2,9 +2,14 @@
 @import "_global/fonts";
 @import "_global/colors";
 
-/* will remove on integration */
-body > .podcast-episode-list {
-  margin: 2em 1em;
+@define-mixin podcast-episode-list-font1 {
+  @mixin font CircularStd-Black, 16px, $black, inherit, 19px;
+}
+@define-mixin podcast-episode-list-font2 {
+  @mixin font CircularStd-Book, 12px, $doveGray, inherit, 18px;
+}
+@define-mixin podcast-episode-list-font3 {
+  @mixin font CircularStd-Black, 14px, $white, -.55px, 17px;
 }
 
 .podcast-episode-list {
@@ -20,6 +25,7 @@ body > .podcast-episode-list {
     display: flex;
     flex: 0 0 widthOnGrid(1, 0);
     margin-right: em(20);
+    align-items: center;
     @mixin medium-screen {
       flex: 0 0 widthOnGrid(1, 0, medium-screen);
     }
@@ -30,6 +36,7 @@ body > .podcast-episode-list {
   &__image {
     max-width: 100%;
     height: auto;
+    width: 100%; /*ie11*/
   }
 
   &__item-info {
@@ -70,6 +77,7 @@ body > .podcast-episode-list {
 
   &__item-controls {
     display: flex;
+    padding-left: em(20);
     flex: 0 0 widthOnGrid(1, 0);
   }
   &__play-btn {

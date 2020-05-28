@@ -6,9 +6,11 @@
  * @property {string} content
  */
 
-const db = require('./db'),
+const
   _get = require('lodash/get'),
-  redis = require('./redis'),
+  isEmpty = require('lodash/isEmpty'),
+  { retrieveList } = require('./lists'),
+
   /**
    * Generate relevant Branch.io meta tags for the page.
    * @param {Object} locals
@@ -23,7 +25,8 @@ const db = require('./db'),
           content
         });
       },
-      isStation = _get(locals, 'station.slug', 'www') !== 'www',
+      isPodcast = _get(locals, 'podcast'),
+      isStation = !isEmpty(isPodcast) ? false : _get(locals, 'station.slug', 'www')  !== 'www',
       timestamp = _get(locals, 'query.t');
 
     // primary section front
@@ -53,11 +56,22 @@ const db = require('./db'),
       addTag('page', 'station-detail');
     }
 
+    // podcast page
+    if (isPodcast) {
+      addTag('type', _get(locals, 'podcast.type'));
+      addTag('podcast_name', _get(locals, 'podcast.attributes.title'));
+      addTag('podcast_id', _get(locals, 'podcast.id'));
+      addTag('partner_id', _get(locals, 'podcast.attributes.partner.id'));
+      addTag('partner_name', _get(locals, 'podcast.attributes.partner.name'));
+      addTag('podcast_category', _get(locals, 'podcast.attributes.category[0].name'));
+      addTag('podcast_logo', _get(locals, 'podcast.attributes.image'));
+    }
+
     // timestamp
     if (timestamp) {
       addTag('timecode', timestamp);
     }
-
+    
     return tags;
   },
   /**
@@ -69,29 +83,9 @@ const db = require('./db'),
    */
   getSectionFrontEntry = async (locals, slug, isPrimary) => {
     const listName = isPrimary ? 'primary-section-fronts' : 'secondary-section-fronts',
-      data = await retrieveList(locals, listName);
+      data = await retrieveList(listName, { locals });
 
     return data.find(entry => entry.value === slug);
-  },
-  /**
-   * Retrieves a list from cache or db
-   * @param {Object} locals
-   * @param {string} name
-   * @returns {Promise<Array<Object>>}
-   */
-  retrieveList = async (locals, name) => {
-    const key = `list:${name}`,
-      cached = await redis.get(key);
-
-    if (cached) {
-      return JSON.parse(cached);
-    }
-
-    const data = await db.get(`${locals.site.host}/_lists/${name}`);
-
-    redis.set(key, JSON.stringify(data), 'EX', 3600); // 1 hour
-
-    return data;
   };
 
 module.exports.getBranchMetaTags = getBranchMetaTags;

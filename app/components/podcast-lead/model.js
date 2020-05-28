@@ -3,6 +3,7 @@
 const
   { unityComponent } = require('../../services/universal/amphora'),
   _get = require('lodash/get'),
+  _isEmpty = require('lodash/isEmpty'),
   qs = require('querystring'),
   { DEFAULT_RADIOCOM_LOGO } = require('../../services/universal/constants');
 
@@ -33,7 +34,7 @@ module.exports = unityComponent({
    * @returns {object}
    */
   render: (uri, data, locals) => {
-    if (!locals || !locals.podcast) {
+    if (!locals || _isEmpty(locals.podcast)) {
       return data;
     }
 
@@ -68,11 +69,14 @@ module.exports = unityComponent({
         })}`
       }
     ];
-    data._computed.subscriptions = {
-      google: 'https://google.com',
-      apple: 'https://apple.com',
-      rss: computedPodcast.attributes.rss_feed
-    };
+    /*
+    * [ON-1683] Awaiting API to define subscriptions data to be able to display or hide subscription buttons.
+    */
+    /* data._computed.subscriptions = {
+       google: 'https://google.com',
+       apple: 'https://apple.com',
+       rss: computedPodcast.attributes.rss_feed
+    };*/
     data._computed.DEFAULT_RADIOCOM_LOGO = DEFAULT_RADIOCOM_LOGO;
     return data;
   }
