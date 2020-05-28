@@ -1,3 +1,7 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
 .national-subscriptions {
   min-width: calc(100vw - 200px);
   padding: 1em;
@@ -8,8 +12,8 @@
   .subscriptions {
     width: 100%;
     thead {
-      background: #333;
-      color: white;
+      background: $mineShaft;
+      color: $white;
       text-transform: uppercase;
       th {
         padding: 0.5em 1em;
@@ -23,9 +27,9 @@
     }
     tbody {
       tr {
-      background: #fff;
+      background: $white;
       &:nth-of-type(odd) {
-        background: #f7f7f7;
+        background: $alabaster;
       }
       td {
         padding: 0.5em 1em;
@@ -42,7 +46,7 @@
     }
     .filterList-item-value {
       padding-left: 0.5em;
-      color: #666;
+      color: $doveGray;
       font-weight: 300;
     }
     .edit-subscription-btn {
