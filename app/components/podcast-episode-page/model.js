@@ -69,8 +69,8 @@ module.exports = unityComponent({
     await addBreadcrumbs(data, locals);
     data._computed = {
       componentClass,
-      podcastDisplayData: JSON.stringify(podcastData, null , 4),
-      episodeDisplayData: JSON.stringify(episodeData, null, 4)
+      podcastDisplayData: JSON.stringify(podcastData, null , 4),// remove this line when completing the front-end ticket for podcast episode pages
+      episodeDisplayData: JSON.stringify(episodeData, null, 4)// remove this line when completing the front-end ticket for podcast episode pages
     };
     return data;
   }
