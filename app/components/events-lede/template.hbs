@@ -1,20 +1,23 @@
-<section data-uri="{{ default _ref _self }}"
+<section
+  data-uri="{{ default _ref _self }}"
   class="component component--events-lede{{ if @root.locals.edit ' editing' }}"
 >
   <div class="events-lede__left-col">
-    <div class="events-lede__featured" data-editable="settings">
+    <div class="events-lede__featured"
+      data-editable="settings"
+    >
       {{#if lede.url }}
         <div class="events-lede__image-container">
-          <a href="{{ lede.url }}">
-            <picture>
+          <a class="events-lede__anchor" href="{{ lede.url }}">
+            <picture class="events-lede__picture">
               <source media="(max-width: 480px)" srcset="{{ lede.feedImgUrl }}?width=480&crop=16:9,offset-y0" />
               <source media="(max-width: 1023px)" srcset="{{ lede.feedImgUrl }}?width=1023&crop=16:9,offset-y0" />
               <source media="(max-width: 1279px)" srcset="{{ lede.feedImgUrl }}?width=620&crop=620:439,offset-y0" />
               <source media="(min-width: 1280px)" srcset="{{ lede.feedImgUrl }}?width=780&crop=16:9,offset-y0" />
               <img
                 src="{{ lede.feedImgUrl }}?width=780&crop=16:9,offset-y0"
-                class="section-lead__image"
-                alt="{{ lede.headline }}"
+                class="events-lede__image"
+                alt="{{ lede.headline }}
               />
             </picture>
             <div class="events-lede__image-overlay" data-editable="contentLabel">
@@ -25,15 +28,15 @@
             </div>
           </a>
         </div>
-        <div class="events-lede__info-container">
-          <span>
+        <div>
+          <span class="events-lede__info">
             {{{ read 'components/events-lede/media/clock.svg' }}}
             {{ _computed.lede.dateTime }}
           </span>
-          <span>
-            <a href="{{ _computed.lede.addressLink }}">
+          <span class="events-lede__info">
+            <a class="events-lede__info-anchor" href="{{ _computed.lede.addressLink }}">
               {{{ read 'components/events-lede/media/pin.svg' }}}
-              {{{ lede.venueName }}}
+              {{ lede.venueName }}
             </a>
           </span>
         </div>
