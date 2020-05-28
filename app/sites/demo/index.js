@@ -49,7 +49,7 @@ module.exports.routes = [
   { path: '/news/:dynamicTag', dynamicPage: 'topic' },
   { path: '/sports/:dynamicTag', dynamicPage: 'topic' },
   { path: '/authors/:author', dynamicPage: 'author' },
-  { path: '/:stationSlug/authors/:author', dynamicPage: 'author'},
+  { path: '/:stationSlug/authors/:author', dynamicPage: 'author' },
   // Full dynamic paths
   { path: '/:sectionFront' },
   { path: '/:sectionFront/:secondarySectionFront' },
