@@ -1,8 +1,4 @@
 _components:
-  contest-rules:
-    instances:
-      new:
-        rulesBodyText: ''
   latest-recirculation:
     instances:
       station:
