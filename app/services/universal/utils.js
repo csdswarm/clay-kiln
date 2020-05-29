@@ -1,5 +1,6 @@
 'use strict';
 const
+  _clone = require('lodash/clone'),
   _filter = require('lodash/filter'),
   _get = require('lodash/get'),
   _identity = require('lodash/identity'),
@@ -9,6 +10,8 @@ const
   _isObject = require('lodash/isObject'),
   _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
+  _setWith = require('lodash/setWith'),
+  _updateWith = require('lodash/updateWith'),
   parse = require('url-parse'),
   { getComponentName, isComponent } = require('clayutils'),
   { contentTypes, SERVER_SIDE } = require('./constants'),
@@ -407,6 +410,28 @@ function urlToElasticSearch(url) {
 }
 
 /**
+ * Immutable version of Lodash's set. Returns a new object with all segments of the path shallowly cloned.
+ * @param {Object} object
+ * @param {Array|string} path
+ * @param {*} value
+ * @returns {Object}
+ */
+function setImmutable(object, path, value) {
+  return _setWith(_clone(object), path, value, _clone);
+}
+
+/**
+ * Immutable version of Lodash's update. Returns a new object with all segments of the path shallowly cloned.
+ * @param {Object} object
+ * @param {Array|string} path
+ * @param {Function} updater
+ * @returns {Object}
+ */
+function updateImmutable(object, path, updater) {
+  return _updateWith(_clone(object), path, updater, _clone);
+}
+
+/**
  * When on the server, pushes an time entry onto locals.amphoraRenderTimes
  *
  * @param {object} locals
@@ -456,8 +481,10 @@ module.exports = {
   prettyJSON,
   removeFirstLine,
   replaceVersion,
+  setImmutable,
   textToEncodedSlug,
   toTitleCase,
+  updateImmutable,
   uriToUrl,
   urlToCanonicalUrl,
   urlToElasticSearch,

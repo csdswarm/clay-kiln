@@ -1,7 +1,6 @@
 'use strict';
 
 const _get = require('lodash/get'),
-  { getStationDomainName } = require('./urps'),
   // Time Constants
   SECOND = 1000,
   MINUTE = 60 * SECOND,
@@ -25,7 +24,8 @@ const _get = require('lodash/get'),
     ARTICLE: 'article',
     AUTHOR: 'author-page-header',
     GALLERY: 'gallery',
-    SECTIONFRONT: 'section-front'
+    SECTIONFRONT: 'section-front',
+    STATIONFRONT: 'station-front'
   },
 
   msnFeed = {
@@ -91,12 +91,17 @@ const _get = require('lodash/get'),
     //   it's something that could probably be removed/cleaned up as I don't
     //   believe the www is used anywhere
     slug: 'www',
-    site_slug: ''
+    site_slug: '',
+
+    // in an ideal world we could store our hardcoded station in URPS, but due
+    //   to them keeping their stations in sync with the radio api, we've
+    //   decided to instead use the permissions from the 'National' market to
+    //   cover national rdc content.
+    urpsDomainName: 'National'
   },
 
   DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
-DEFAULT_STATION.urpsDomainName = getStationDomainName(DEFAULT_STATION);
 
 module.exports = {
   DEFAULT_STATION,

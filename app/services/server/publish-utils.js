@@ -169,20 +169,24 @@ function getUrlPrefix(site) {
  */
 function getUrlOptions(component, locals, pageType) {
   const urlOptions = {},
-    date = moment(locals.date);
+    date = moment(locals.date),
+    isStationFront = pageType === PAGE_TYPES.STATIONFRONT;
 
   urlOptions.prefix = getUrlPrefix(locals.site);
-  urlOptions.sectionFront = component.stationFront ?
-    component.stationSiteSlug || component.title :
+  urlOptions.sectionFront = isStationFront ?
+    component.stationSlug || component.title :
     slugifyService(component.sectionFront || component.title) || null;
   urlOptions.secondarySectionFront = slugifyService(component.secondarySectionFront) || null;
-  urlOptions.primarySectionFront = component.primary && component.primarySectionFront ? null : slugifyService(component.primarySectionFront);
+  urlOptions.primarySectionFront = component.primary && component.primarySectionFront
+    ? null
+    : slugifyService(component.primarySectionFront);
   urlOptions.contentType = component.contentType || null;
   urlOptions.yyyy = date.format('YYYY') || null;
   urlOptions.mm = date.format('MM') || null;
-  urlOptions.slug = component.stationFront ?
-    component.stationSiteSlug :
-    component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline)) || null;
+  urlOptions.slug = isStationFront ?
+    component.stationSlug :
+    component.title || component.slug || (component.primaryHeadline && sanitize.cleanSlug(component.primaryHeadline))
+    || null;
   urlOptions.isEvergreen = component.evergreenSlug || null;
   urlOptions.pageType = pageType;
   urlOptions.stationSlug = component.stationSlug || rdcSlug;
@@ -193,9 +197,14 @@ function getUrlOptions(component, locals, pageType) {
         locals.site && locals.site.prefix + ' slug: ' + urlOptions.slug + ' date: ' + locals.date);
     }
   } else if (urlOptions.pageType === PAGE_TYPES.SECTIONFRONT) {
-    if (!(locals.site && urlOptions.sectionFront)) {
+    if (!(locals.site && (urlOptions.stationSlug || urlOptions.sectionFront))) {
       throw new Error('Client: Cannot generate a canonical url at prefix: ' +
         locals.site && locals.site.prefix + ' title: ' + urlOptions.sectionFront);
+    }
+  } else if (isStationFront) {
+    if (!(locals.site && urlOptions.stationSlug)) {
+      throw new Error('Client: Cannot generate a canonical url at prefix: ' +
+        locals.site && locals.site.prefix + ' title: ' + urlOptions.stationSlug);
     }
   } else if (urlOptions.pageType === PAGE_TYPES.AUTHOR) {
     urlOptions.contentType = 'authors';
