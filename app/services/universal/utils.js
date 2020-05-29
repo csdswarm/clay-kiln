@@ -9,11 +9,11 @@ const
   _isObject = require('lodash/isObject'),
   _isString = require('lodash/isString'),
   _isUndefined = require('lodash/isUndefined'),
-  _parse = require('url-parse'),
+  parse = require('url-parse'),
+  { getComponentName, isComponent } = require('clayutils'),
+  { contentTypes, SERVER_SIDE } = require('./constants'),
   publishedVersionSuffix = '@published',
   kilnUrlParam = '&currentUrl=';
-
-
 
 /**
  * returns a list of keys in the object that have a truthy value
@@ -90,9 +90,36 @@ function replaceVersion(uri, version) {
  */
 function uriToUrl(uri, locals) {
   const protocol = _get(locals, 'site.protocol') || 'http',
-    parsed = _parse(`${protocol}://${uri}`);
+    parsed = parse(`${protocol}://${uri}`);
 
   return parsed.href;
+}
+
+/**
+ * Remove extension from route / path.
+ *
+ * Note: copied from amphora@v7.3.2 lib/responses.js
+ *   Ideally we'd use the uri provided by amphora but our currentStation module
+ *   depends on this and its middleware occurrs before amphora.
+ *
+ * @param {string} path
+ * @returns {string}
+ */
+function removeExtension(path) {
+  const endSlash = path.lastIndexOf('/');
+  let leadingDot;
+
+  if (endSlash > -1) {
+    leadingDot = path.indexOf('.', endSlash);
+  } else {
+    leadingDot = path.indexOf('.');
+  }
+
+  if (leadingDot > -1) {
+    path = path.substr(0, leadingDot);
+  }
+
+  return path;
 }
 
 /**
@@ -111,9 +138,9 @@ function cleanUrl(url) {
  * @return {string}
  */
 function urlToUri(url) {
-  const parsed = _parse(url);
+  const parsed = parse(url);
 
-  return `${parsed.hostname}${parsed.pathname}`;
+  return `${parsed.hostname}${removeExtension(parsed.pathname)}`;
 }
 
 /**
@@ -220,6 +247,12 @@ function textToEncodedSlug(text) {
   );
 }
 
+/**
+ * Copied over from the spa, allows us to log messages that should only show
+ *   during development.
+ *
+ * @param {*} args
+ */
 function debugLog(...args) {
   if (process.env.NODE_ENV === 'local') {
     console.log(...args); // eslint-disable-line no-console
@@ -246,6 +279,57 @@ function debugLog(...args) {
  */
 function prepend(left) {
   return right => left + right;
+}
+
+/*
+ * A tiny utility that prepends the prefix to 'str' if 'str' doesn't already
+ *   begin with the prefix.
+ *
+ * @param {string} prefix
+ * @param {string} str
+ * @returns {string}
+ */
+function ensureStartsWith(prefix, str) {
+  return str.startsWith(prefix)
+    ? str
+    : prefix + str;
+}
+
+/**
+ * A tiny utility to format obj as a string
+ *
+ * @param {*} obj
+ * @returns {string}
+ */
+function prettyJSON(obj) {
+  return JSON.stringify(obj, null, 2);
+}
+
+/**
+ * Returns the full original url including the protocol and request's host
+ *
+ * @param {object} req
+ * @returns {string}
+ */
+function getFullOriginalUrl(req) {
+  return process.env.CLAY_SITE_PROTOCOL + '://' + req.get('host') + req.originalUrl;
+}
+
+/**
+ * Returns whether the request is for a content component.  A content component
+ *   usually means a component that can be created via the kiln drawer e.g.
+ *   article, gallery, etc.  More specifically it's a component that will be
+ *   listed under the 'main' property of a page, which is why 'homepage' is also
+ *   considered a content type.
+ *
+ * @param {string} url
+ * @returns {boolean}
+ */
+function isContentComponent(url) {
+  const componentName = getComponentName(url);
+
+  return isComponent(url)
+    && contentTypes.has(componentName);
 }
 
 /**
@@ -322,21 +406,54 @@ function urlToElasticSearch(url) {
   return url.replace('https', 'http');
 }
 
+/**
+ * When on the server, pushes an time entry onto locals.amphoraRenderTimes
+ *
+ * @param {object} locals
+ * @param {object} timeEntry
+ * @param {object} [opts]
+ * @param {object} [opts.shouldAddAmphoraTimings]
+ * @param {object} [opts.prefix]
+ */
+function addAmphoraRenderTime(locals, timeEntry, opts = {}) {
+  const {
+    prefix = '',
+    shouldAdd = true
+  } = opts;
+
+  if (shouldAdd && SERVER_SIDE && locals.amphoraRenderTimes) {
+    const { label } = timeEntry;
+
+    if (prefix) {
+      timeEntry = Object.assign({}, timeEntry, {
+        label: `${prefix} - ${label}`
+      });
+    }
+
+    locals.amphoraRenderTimes.push(timeEntry);
+  }
+}
+
 module.exports = {
+  addAmphoraRenderTime,
   boolKeys,
   cleanUrl,
   debugLog,
   ensurePublishedVersion,
+  ensureStartsWith,
   formatStart,
   getDomainFromHostname,
+  getFullOriginalUrl,
   getSiteBaseUrl,
   has,
+  isContentComponent,
   isFieldEmpty,
   isInstance,
   isPublishedVersion,
   isUrl,
   listDeepObjects,
   prepend,
+  prettyJSON,
   removeFirstLine,
   replaceVersion,
   textToEncodedSlug,

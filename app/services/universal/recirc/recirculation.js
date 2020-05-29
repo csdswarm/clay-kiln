@@ -26,7 +26,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { cleanUrl } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl } = require('../utils'),
   { isComponent } = require('clayutils'),
   { unityComponent } = require('../amphora'),
 
@@ -280,17 +280,26 @@ const
   transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
 
   /**
- * Use filters to query elastic for content
- *
- * @param {object} config.filter
- * @param {object} config.exclude
- * @param {array} config.fields
- * @param {object} config.pagination
- * @param {number} config.maxItems
- * @param {Object} [locals]
- * @returns {array} elasticResults
- */
-  fetchRecirculation = async ({ filters, excludes, elasticFields, maxItems }, locals) => {
+   * Use filters to query elastic for content
+   *
+   * @param {object} config
+   * @param {object} config.filters
+   * @param {object} config.excludes
+   * @param {array} config.elasticFields
+   * @param {number} config.maxItems
+   * @param {boolean} config.shouldAddAmphoraTimings
+   * @param {Object} locals
+   * @returns {array} elasticResults
+   */
+  fetchRecirculation = async (config, locals) => {
+    const {
+      filters,
+      excludes,
+      elasticFields,
+      maxItems,
+      shouldAddAmphoraTimings
+    } = config;
+
     let results = {
       content: [],
       totalHits: 0
@@ -326,11 +335,22 @@ const
       query.body.query.bool.minimum_should_match = 1;
     }
 
+    const start = new Date();
+
     try {
       results = await queryService.searchByQuery(query, locals, searchOpts);
     } catch (e) {
       queryService.logCatch(e, 'content-search');
       log('error', 'Error querying Elastic', e);
+    } finally {
+      addAmphoraRenderTime(
+        locals,
+        {
+          label: 'recirculation.js -> searchByQuery',
+          ms: new Date() - start
+        },
+        { shouldAdd: shouldAddAmphoraTimings }
+      );
     }
 
     return results;
@@ -355,6 +375,7 @@ const
     mapResultsToTemplate = defaultTemplate,
     render = returnData,
     save = returnData,
+    shouldAddAmphoraTimings = false,
     skipRender = () => false } = {}) => {
     return unityComponent({
       async render(uri, data, locals) {
@@ -372,7 +393,17 @@ const
               ...await mapDataToFilters(uri, data, locals)
             },
             itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
-            { content, totalHits } = await fetchRecirculation({ filters, excludes, elasticFields, pagination, maxItems: itemsNeeded }, locals);
+            { content, totalHits } = await fetchRecirculation(
+              {
+                filters,
+                excludes,
+                elasticFields,
+                pagination,
+                maxItems: itemsNeeded,
+                shouldAddAmphoraTimings
+              },
+              locals
+            );
 
           data._computed = Object.assign(data._computed || {}, {
             [contentKey]: await Promise.all([...curated, ...content].slice(0, maxItems).map(async (item) => mapResultsToTemplate(locals, item))),
