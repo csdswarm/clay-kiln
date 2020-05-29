@@ -62,13 +62,9 @@ const _get = require('lodash/get'),
     'topic-page'
   ]),
 
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
-
-  defaultStationName = 'Radio.com',
-
   DEFAULT_STATION = {
     id: 0,
-    name: defaultStationName,
+    name: 'Radio.com',
     callsign: 'NATL-RC',
     website: 'https://www.radio.com',
     square_logo_small: 'https://images.radio.com/aiu-media/og_775x515_0.jpg',
@@ -96,7 +92,9 @@ const _get = require('lodash/get'),
     //   believe the www is used anywhere
     slug: 'www',
     site_slug: ''
-  };
+  },
+
+  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 DEFAULT_STATION.urpsDomainName = getStationDomainName(DEFAULT_STATION);
 
@@ -112,6 +110,7 @@ module.exports = {
   time,
   msnFeed,
   SERVER_SIDE,
+  PAGE_TYPES,
   DEFAULT_RADIOCOM_LOGO,
-  PAGE_TYPES
+  DEFAULT_STATION
 };

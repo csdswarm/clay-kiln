@@ -47,7 +47,6 @@ const HMAC_SHA256 = require('crypto-js/hmac-sha256'),
         };
       });
     }
-
     next();
   },
   /**
