@@ -1,0 +1,124 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+@define-mixin podcast-category-strip-font1 {
+  @mixin font CircularStd-Black, 18px, $black, -.43px, 22px;
+}
+@define-mixin podcast-category-strip-font2 {
+  @mixin font CircularStd-Medium, 12px, $black, -.34px, 14px;
+}
+@define-mixin podcast-category-strip-font3 {
+  @mixin font CircularStd-Black, 14px, $black, -.23px, 17px;
+}
+
+.component--podcast-category-strip {
+  &.podcast-category-strip {
+    max-width: em(widthOnGrid(12, 11));
+    margin: 0 auto;
+
+    &.show-border-bottom {
+      border-bottom: 1px solid $mercury;
+    }
+
+    &:last-child {
+      margin-bottom: em(20);
+    }
+
+    .podcast-category-strip__header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: em(35);
+      margin-bottom: em(10);
+    }
+
+    .podcast-category-strip__category {
+      @mixin podcast-category-strip-font1;
+    }
+
+    .podcast-category-strip__all {
+      text-decoration: none;
+      @mixin podcast-category-strip-font2;
+      & .all__chevron_up {
+        fill: $black;
+        height: em(7, 12);
+        width: em(3.5, 12);
+      }
+    }
+
+    .podcast-category-strip__items {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin: 0;
+      margin-bottom: em(20);
+      list-style-type: none;
+    }
+
+    .podcast-category-strip__item {
+      flex: 1 0 13%;
+      margin-bottom: em(20);
+
+      &:not(:last-child) {
+        margin-right: em(14);
+
+        @mixin medium-small-screen {
+          margin-right: 0;
+        }
+      }
+
+      &:nth-child(even) {
+        @mixin medium-small-screen {
+          padding-left: em(10);
+        }
+      }
+
+      &:nth-child(odd) {
+        @mixin medium-small-screen {
+          padding-right: em(10);
+        }
+      }
+
+      &:last-child {
+        @mixin large-screen {
+          display: none;
+        }
+      }
+
+      @mixin only-large-screen {
+        flex: 1 0 15%;
+        &:nth-last-child(2) {
+          margin-right: 0;
+        }
+      }
+
+      @mixin only-medium-screen {
+        flex: 1 0 30%;
+        &:nth-child(3n) {
+          margin-right: 0;
+        }
+      }
+
+      @mixin medium-small-screen {
+        flex: 1 0 50%;
+      }
+    }
+
+    .podcast-category-strip__link {
+      text-decoration: none;
+    }
+
+    .podcast-category-strip__title {
+      @mixin podcast-category-strip-font3;
+      margin-top: em(10, 14);
+    }
+
+    .podcast-category-strip__image {
+      object-fit: cover;
+      border: em(1) solid $mercury;
+      width: 100%;
+    }
+  }
+}

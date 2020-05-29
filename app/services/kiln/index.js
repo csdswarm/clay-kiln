@@ -7,6 +7,7 @@ module.exports = () => {
   require('./plugins/word-count')();
   require('./plugins/advanced-image-upload')();
   require('./plugins/alerts')();
+  require('./plugins/podcast-category-select')();
   require('./plugins/podcast-select')();
   require('./plugins/brightcove')();
   require('./plugins/bulk-image-upload')();

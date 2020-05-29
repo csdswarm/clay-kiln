@@ -1,0 +1,37 @@
+<section class="component component--podcast-category-strip podcast-category-strip {{if disableBottomBorder '' else='show-border-bottom'}}" data-uri="{{ default _ref _self }}" data-editable="settings">
+
+{{#if category}}
+
+<div class="podcast-category-strip__header">
+  <span class="podcast-category-strip__category">
+    {{ default categoryNameOverride category.name }}
+  </span>
+  <a href="{{ _computed.seeAllLink }}" class="podcast-category-strip__all">
+    See all {{{ read 'components/podcast-category-strip/media/chevron_up.svg' }}}
+  </a>
+</div>
+
+<ul class="podcast-category-strip__items">
+  {{#each _computed.podcasts as |podcast| }}
+    <li class="podcast-category-strip__item">
+      <a class="podcast-category-strip__link outbound-link" href="{{ podcast.url }}">
+        <img
+          src="{{ podcast.imageUrl }}width=140&crop=1:1,offset-y0"
+          srcset="{{ podcast.imageUrl }}width=150&crop=1:1,offset-y0 150w,
+                  {{ podcast.imageUrl }}width=210&crop=1:1,offset-y0 210w,
+                  {{ podcast.imageUrl }}width=140&crop=1:1,offset-y0 140w,
+                  {{ podcast.imageUrl }}width=222&crop=1:1,offset-y0 222w"
+          sizes="(max-width: 360px) 150px, (max-width: 480px) 210px, (max-width: 1023px) 222px, 140px"
+          class="podcast-category-strip__image" />
+        <span class="podcast-category-strip__title">
+          {{ podcast.title }}
+        </span>
+      </a>
+    </li>
+  {{/each}}
+</ul>
+
+{{/if}}
+
+</section>
+
