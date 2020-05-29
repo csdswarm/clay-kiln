@@ -341,6 +341,10 @@ _users:
     auth: admin
   -
     username: phil.olson@swarmsolutions.com
+    provider: cognito
+    auth: admin
+  -
+    username: phil.olson@swarmsolutions.com
     provider: google
     auth: admin
   -

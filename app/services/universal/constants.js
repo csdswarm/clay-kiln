@@ -104,7 +104,7 @@ const _get = require('lodash/get'),
     urpsDomainName: 'National'
   },
 
-  DEFAULT_RADIOCOM_LOGO = 'https://images.radio.com/aiu-media/og_775x515_0.jpg';
+  DEFAULT_RADIOCOM_LOGO = DEFAULT_STATION.square_logo_large;
 
 module.exports = {
   DEFAULT_STATION,
