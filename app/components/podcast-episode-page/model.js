@@ -3,18 +3,19 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   { autoLink } = require('../breadcrumbs'),
   radioApiService = require('../../services/server/radioApi'),
-  _get = require('lodash/get');
+  _get = require('lodash/get'),
+  classnames = require('classnames');
 
 
 async function addBreadcrumbs(data, locals) {
   const { podcast, episode } = locals;
 
-  if (podcast && podcast.attributes && episode && episode.attributes) {
+  if (_get(podcast,'attributes') && _get(episode,'attributes')) {
     const { site_slug, title, station } = podcast.attributes,
       episode_site_slug = episode.attributes.site_slug,
       episode_title = episode.attributes.title,
       breadcrumbs = [
-        { slug: data.stationSlug, text: station.length ? station[0].name : null },
+        { slug: data._computed.stationSlug, text: station.length ? station[0].name : null },
         { slug: 'podcasts', text: 'podcasts' },
         { slug: site_slug, text: title },
         { slug: episode_site_slug, text: episode_title }
@@ -25,15 +26,19 @@ async function addBreadcrumbs(data, locals) {
 }
 
 async function getPodcastShow(locals) {
-  const route = `podcasts?filter[site_slug]=${locals.params.dynamicSlug}`;
+  const route = 'podcasts';
 
-  return await radioApiService.get(route, {}, null, {}, locals);
+  return await radioApiService.get(route, {
+    'filter[site_slug]':locals.params.dynamicSlug
+  }, null, {}, locals);
 }
 
 async function getPodcastEpisode(locals) {
-  const route = `episodes?filter[episode_site_slug]=${locals.params.dynamicEpisode}`;
+  const route = 'episodes';
 
-  return await radioApiService.get(route, {}, null, {}, locals);
+  return await radioApiService.get(route, {
+    'filter[episode_site_slug]':locals.params.dynamicEpisode
+  }, null, {}, locals);
 }
 
 module.exports = unityComponent({
@@ -50,28 +55,24 @@ module.exports = unityComponent({
     if (!locals || !locals.params) {
       return data;
     }
-    let componentClass = ' ';
-
-    if (locals.edit) {
-      componentClass += 'editing ';
-    }
-    const podcast = await getPodcastShow(locals),
-      episode = await getPodcastEpisode(locals),
+    const componentClass = classnames({
+        editing: locals.edit
+      }),
+      [podcast, episode] = await Promise.all([getPodcastShow(locals), getPodcastEpisode(locals)]),
       podcastData = podcast.data[0],
       episodeData = episode.data[0];
 
-    // Stored in data for breadcrumbs component
-    data.stationSlug = _get(locals, 'params.stationSlug');
     locals.podcast = podcast.data[0];
     locals.episode = episode.data[0];
     locals.contentType = 'episode';
 
-    await addBreadcrumbs(data, locals);
     data._computed = {
       componentClass,
+      stationSlug: _get(locals, 'params.stationSlug'),
       podcastDisplayData: JSON.stringify(podcastData, null , 4),// remove this line when completing the front-end ticket for podcast episode pages
       episodeDisplayData: JSON.stringify(episodeData, null, 4)// remove this line when completing the front-end ticket for podcast episode pages
     };
+    await addBreadcrumbs(data, locals);
     return data;
   }
 });
