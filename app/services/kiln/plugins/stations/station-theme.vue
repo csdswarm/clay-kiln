@@ -224,11 +224,12 @@
         this.loading = true;
 
         const { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor } = this;
+        const { site_slug } = window.kiln.locals.stationForPermissions;
 
         try {
           await axios({
             method: this.theme ? 'put' : 'post',
-            url: `/station-theme/${ window.kiln.locals.station.site_slug }`,
+            url: `/station-theme/${ site_slug }`,
             data: { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor }
           });
 
@@ -246,7 +247,8 @@
       async loadTheme() {
         this.loading = true;
         try {
-          const { data } = await axios.get(`/station-theme/${ window.kiln.locals.station.site_slug }`);
+          const { site_slug } = window.kiln.locals.stationForPermissions;
+          const { data } = await axios.get(`/station-theme/${ site_slug }`);
 
           this.loading = false;
           this.theme = data;

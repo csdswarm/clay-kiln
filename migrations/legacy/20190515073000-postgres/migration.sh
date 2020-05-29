@@ -2,17 +2,17 @@
 
 if [ "$1" != "" ]; then
   if [ "$1" == "clay.radio.com" ]; then
-    es="$1" && http="http";
+    es="$1:9200" && http="http";
   elif [ "$1" == "dev-clay.radio.com" ]; then
-    es="http://dev-es.radio-dev.com" && http="https";
+    es="http://dev-es.radio-dev.com:9200" && http="https";
   elif [ "$1" == "stg-clay.radio.com" ]; then
-    es="http://es.radio-stg.com" && http="https";
+    es="http://es.radio-stg.com:9200" && http="https";
   elif [ "$1" == "www.radio.com" ]; then
-    es="http://es.radio-prd.com" && http="https";
+    es="https://vpc-prdcms-elasticsearch-c5ksdsweai7rqr3zp4djn6j3oe.us-east-1.es.amazonaws.com:443" && http="https";
   fi
   printf "Updating environment $http://$1\n"
 else
-  set "clay.radio.com" && http="http" && es="$1";
+  set "clay.radio.com" && http="http" && es="$1:9200";
   printf "No environment specified. Updating environment $http://$1\n"
 fi
 
@@ -28,25 +28,25 @@ else
     ';
 fi
 
-printf "\nmaking curl GET to $es:9200/_cat/indices?pretty&s=index:desc\n";
-indices=$(curl -X GET "$es:9200/_cat/indices?pretty&s=index:desc" 2>/dev/null);
+printf "\nmaking curl GET to $es/_cat/indices?pretty&s=index:desc\n";
+indices=$(curl -X GET "$es/_cat/indices?pretty&s=index:desc" 2>/dev/null);
 # sometimes the currentIndex isn't necessarily the largest. and query brings back in alphabetical order, so 2 > 10
 largestIndex=$(node largest-index "$1" "$indices");
 
 printf "\n$largestIndex\n"
 
 # find out which index is currently being used
-printf "\nmaking curl GET to $es:9200/pages/_alias\n";
-curl -X GET "$es:9200/pages/_alias" > ./aliases.json;
+printf "\nmaking curl GET to $es/pages/_alias\n";
+curl -X GET "$es/pages/_alias" > ./aliases.json;
 currentIndex=$(node alias "$1");
 
 # get settings to be able to create new index with the same settings
-printf "\nmaking curl GET to $es:9200/$currentIndex/_settings\n";
-curl -X GET "$es:9200/$currentIndex/_settings" > ./settings.json;
+printf "\nmaking curl GET to $es/$currentIndex/_settings\n";
+curl -X GET "$es/$currentIndex/_settings" > ./settings.json;
 
 # get mappings to be able to update mappings,
-printf "\nMaking GET to $es:9200/$currentIndex/_mappings\n";
-curl -X GET "$es:9200/$currentIndex/_mappings" > ./mappings.json;
+printf "\nMaking GET to $es/$currentIndex/_mappings\n";
+curl -X GET "$es/$currentIndex/_mappings" > ./mappings.json;
 
 # create new index settings / mappings and save in new-index.json
 printf "\ncreating new index settings & mappings\n";
@@ -65,19 +65,19 @@ then
   printf "newIndex: $newIndex\n";
 
   # create new index and remove all temp files needed to create it
-  curl -X PUT "$es:9200/$newIndex" -H 'Content-Type: application/json' -d @./new-index.json;
+  curl -X PUT "$es/$newIndex" -H 'Content-Type: application/json' -d @./new-index.json;
 
   # reindex, converting lead from Array[String] to Array[{_ref, data}]
   reindex=$(sed s/currentIndex/$currentIndex/ ./reindex.json | sed s/newIndex/$newIndex/)
   printf "\nreindex: $reindex";
 
-  curl -X POST "$es:9200/_reindex" -H 'Content-Type: application/json' -d "$reindex"
+  curl -X POST "$es/_reindex" -H 'Content-Type: application/json' -d "$reindex"
 
   sleep 1;
 
   # update alias to make pages point to our new index
   printf "\n\nRemoving old alias and adding new (pages)...\n\n"
-  curl -X POST "$es:9200/_aliases" -H 'Content-Type: application/json' -d "
+  curl -X POST "$es/_aliases" -H 'Content-Type: application/json' -d "
       {
           \"actions\" : [
               { \"remove\" : { \"index\" : \"$currentIndex\", \"alias\" : \"pages\" } },

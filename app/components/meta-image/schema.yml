@@ -2,9 +2,6 @@ _version: 1.0
 _description: |
   Receives an image and renders it in the head
 
-_permission:
-  update: meta-tags
-
 imageUrl:
   _label: Image Url
   _subscribe:

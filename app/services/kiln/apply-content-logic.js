@@ -19,16 +19,27 @@ const addStationNoteToCustomUrl = require('./add-station-note-to-custom-url'),
   componentsToCheckUnpublishPermission = new Set([
     'homepage',
     'section-front',
-    'static-page'
+    'static-page',
+    'station-front'
+  ]),
+  componentsWithHardcodedUrls = new Set([
+    'homepage',
+    'station-front'
   ]);
 
 module.exports = schema => {
-  addStationNoteToCustomUrl(new KilnInput(schema));
+  const { schemaName } = schema;
+
+  if (!componentsWithHardcodedUrls.has(schemaName)) {
+    addStationNoteToCustomUrl(new KilnInput(schema));
+  }
+
   enforcePublishRights(schema, {
     checkStationAccessFor: {
-      publish: !componentsToCheckPublishPermission.has(schema.schemaName),
-      unpublish: !componentsToCheckUnpublishPermission.has(schema.schemaName)
+      publish: !componentsToCheckPublishPermission.has(schemaName),
+      unpublish: !componentsToCheckUnpublishPermission.has(schemaName)
     }
   });
+
   handleEditModePlaceholders(new KilnInput(schema));
 };

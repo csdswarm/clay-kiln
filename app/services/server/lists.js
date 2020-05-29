@@ -7,6 +7,7 @@ const
   _unset = require('lodash/unset'),
   db = require('./db'),
   logger = require('../universal/log'),
+  { addAmphoraRenderTime } = require('../universal/utils'),
   { addLazyLoadProperty, postfix, prettyJSON } = require('../universal/utils'),
   { STATION_LISTS } = require('../universal/constants'),
 
@@ -19,8 +20,8 @@ const
     db,
     equals: value => other => _isEqual(value, other),
     get: _get,
-    getFromCache: name => __.redis.get(__.cacheKeyPrefix(name)).then(cached => cached && JSON.parse(cached)),
-    getFromDb: (name, host) => __.db.get(`${host}/_lists/${name}`),
+    getFromCache,
+    getFromDb,
     getFromLocals: (name, locals) => __.get(locals, ['lists', name]),
     getStationPrefix: locals => __.postfix(__.get(locals, 'stationForPermissions.site_slug', ''), '-'),
     log: logger.setup({ file: __filename }),
@@ -142,17 +143,17 @@ function getSectionFrontName(slug, data) {
    */
 async function retrieveList(name, options) {
   const { getFromCache, getFromDb, getFromLocals, log, prependStation,  saveToCache,  saveToLocals } = __,
-    locals = options.locals,
+    { locals } = options,
     host = _get(locals, 'site.host', options.host),
     list = prependStation(name, locals),
-    saved = getFromLocals(list, locals) || await getFromCache(list);
+    saved = getFromLocals(list, locals) || await getFromCache(list, options);
 
   if (saved) {
     return saved;
   }
 
   try {
-    const data = await getFromDb(list, host);
+    const data = await getFromDb(list, host, options);
 
     await saveToCache(list, data);
     saveToLocals(list, locals, data);
@@ -182,6 +183,8 @@ async function retrieveList(name, options) {
    * @param {object} options
    * @param {object} [options.locals] the locals object
    * @param {string} [options.host] the host name if locals.site.host is unavailable
+   * @param {boolean} [options.shouldAddAmphoraTimings]
+   * @param {string} [options.amphoraTimingLabelPrefix]
    * @returns {Promise<object|undefined>}
    */
 async function updateListItem(name, item, key, options) {
@@ -196,22 +199,73 @@ async function updateListItem(name, item, key, options) {
     log('error', `Too many items contain the same key. Can\'t update.\n${prettyJSON({ itemsToUpdate })}`);
     return;
   }
-      
+
   if (itemsToUpdate.length === 1 && !sameAsOrig(itemsToUpdate[0])) {
     const oldItem = itemsToUpdate[0];
 
     await deleteListItem(name, oldItem, options);
-        
+
     out.from = oldItem;
   }
 
   if (await addListItem(name, item, options)) {
     out.to = item;
   }
-       
+
   return out;
 }
 
+function getPrefixAndShouldAdd(options) {
+  const {
+    amphoraTimingLabelPrefix,
+    shouldAddAmphoraTimings = false
+  } = options;
+
+  return {
+    prefix: amphoraTimingLabelPrefix,
+    shouldAdd: shouldAddAmphoraTimings
+  };
+}
+
+function getFromCache(name, options) {
+  const cacheKey = __.cacheKeyPrefix(name),
+    beforeRedis = new Date(),
+    { locals } = options;
+
+  try {
+    return __.redis.get(cacheKey).then(cached => cached && JSON.parse(cached));
+  } finally {
+    addAmphoraRenderTime(
+      locals,
+      {
+        data: { cacheKey },
+        label: 'get from redis',
+        ms: new Date() - beforeRedis
+      },
+      getPrefixAndShouldAdd(options)
+    );
+  }
+}
+
+function getFromDb(name, host, options) {
+  const beforePostgres = new Date(),
+    uri = `${host}/_lists/${name}`,
+    { locals } = options;
+
+  try {
+    return __.db.get(uri);
+  } finally {
+    addAmphoraRenderTime(
+      locals,
+      {
+        data: { uri },
+        label: 'get from postgres',
+        ms: new Date() - beforePostgres
+      },
+      getPrefixAndShouldAdd(options)
+    );
+  }
+}
 
 module.exports = {
   _internals: __,
