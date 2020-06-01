@@ -26,6 +26,7 @@ module.exports = () => {
   require('./plugins/default-text-with-override')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
+  require('./plugins/editorial-feeds')();
   require('./validators')();
   secureAllSchemas();
 };
