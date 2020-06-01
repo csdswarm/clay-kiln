@@ -32,8 +32,8 @@ const _capitalize = (str) => {
   ];
 
 module.exports.render = (ref, data, locals) => {
-  if (locals && locals.params && locals.params.dynamicAuthor) {
-    data.author = _capitalize(locals.params.dynamicAuthor.replace(/-/g, ' ').replace(/\//g,''));
+  if (locals && locals.params && locals.params.author) {
+    data.author = _capitalize(locals.params.author.replace(/-/g, ' ').replace(/\//g,''));
     data.dynamic = true;
   }
   
