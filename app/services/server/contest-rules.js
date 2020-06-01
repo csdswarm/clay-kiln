@@ -1,34 +1,47 @@
 'use strict';
 
 const db = require('../../services/server/db'),
-  dateRange = 30,
-  stationQuery = (stationCallsign) => {
-    const callsignUpper = stationCallsign.toUpperCase();
-
-    return /* sql */`
-    AND data @> '{"stationCallsign": "${callsignUpper}"}'
-`;
-  },
+  /**
+  * Creates a conditional station operator for contest sql query
+  * @param {String} stationCallsign
+  * @returns {String}
+  */
+  stationQuery = stationCallsign => `AND data->>'stationCallsign' = '${stationCallsign}'`,
+  /**
+  * Queries the db for contest rules
+  * @param {String} param.stationCallsign
+  */
   getContestRules = async ({
-    startTime = '',
     stationCallsign = ''
   }) => {
     const contestRulesQuery = /* sql */ `
-  SELECT *
-  FROM components."contest"
+      SELECT *
+      FROM components."contest"
 
-  -- make sure contest has already started
-  WHERE data->>'startDateTime' <= '${startTime}'
+      WHERE (
+        -- ending within 30 days from now or ended within 31 days ago
+        DATE_PART(
+          'day',
+          CURRENT_TIMESTAMP - (data ->> 'endDateTime')::timestamp
+        ) BETWEEN -30 and 31
 
-  -- show contests that are within 30 days from start time
-  AND DATE_PART(
-    'day',
-    (data ->> 'endDateTime')::timestamp - '${startTime}'::timestamp
-  ) <= ${dateRange}
+        -- currently active
+        OR (
+          DATE_PART(
+            'day',
+            CURRENT_TIMESTAMP - (data ->> 'startDateTime')::timestamp
+          ) > 0
+          AND
+          DATE_PART(
+            'day',
+            (data ->> 'endDateTime')::timestamp - CURRENT_TIMESTAMP
+          ) > 0
+        )
+      )
 
-  AND id ~ '@published$'
-  ${stationQuery(stationCallsign)}
-`,
+      AND id SIMILAR TO '%@published'
+      ${stationQuery(stationCallsign)}
+    `,
 
       { rows } = await db.raw(contestRulesQuery),
       pluckData = ({ data }) => data;

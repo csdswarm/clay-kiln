@@ -9,62 +9,13 @@
 
 const { unityComponent } = require('../../services/universal/amphora');
 const rest = require('../../services/universal/rest.js');
-const db = require('amphora-storage-postgres');
+const { getContestRules } = require('../../services/server/contest-rules');
 const {
   PRIVACY_POLICY
 } = require('../../services/universal/constants');
 const { isPresentationMode } = require('../../services/universal/contest-rules-page');
 const _get = require('lodash/get');
 const log = require('../../services/universal/log').setup({ file: __filename });
-
-/**
- * Creates a conditional station operator for contest sql query
- * @param {String} stationCallsign
- * @returns {String}
- */
-const stationQuery = stationCallsign => `AND data->>'stationCallsign' = '${stationCallsign}'`;
-
-/**
- * Queries the db for contest rules
- * @param {String} param.stationCallsign
- */
-const getContestRules = async ({
-  stationCallsign = ''
-}) => {
-  const contestRulesQuery = /* sql */ `
-    SELECT *
-    FROM components."contest"
-
-    WHERE (
-      -- ending within 30 days from now or ended within 31 days ago
-      DATE_PART(
-        'day',
-        CURRENT_TIMESTAMP - (data ->> 'endDateTime')::timestamp
-      ) BETWEEN -30 and 31
-
-      -- currently active
-      OR (
-        DATE_PART(
-          'day',
-          CURRENT_TIMESTAMP - (data ->> 'startDateTime')::timestamp
-        ) > 0
-        AND
-        DATE_PART(
-          'day',
-          (data ->> 'endDateTime')::timestamp - CURRENT_TIMESTAMP
-        ) > 0
-      )
-    )
-
-    AND id SIMILAR TO '%@published'
-    ${stationQuery(stationCallsign)}
-  `;
-
-  const { rows } = await db.raw(contestRulesQuery);
-  const pluckData = ({ data }) => data;
-
-  return rows.map(pluckData);
-};
 
 module.exports = unityComponent({
   render: async (ref, data, locals) => {
