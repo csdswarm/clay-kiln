@@ -474,6 +474,15 @@ function updateImmutable(object, path, updater) {
 }
 
 /**
+ * Maps a key: bool object into an array, returning truthy keys only
+ * @param {Object} object
+ * @returns {array}
+ */
+function boolObjectToArray(object) {
+  return Object.entries(object || {}).map(([key, bool]) => bool && key).filter(value => value);
+}
+
+/**
  * When on the server, pushes an time entry onto locals.amphoraRenderTimes
  *
  * @param {object} locals
@@ -505,6 +514,7 @@ module.exports = {
   addAmphoraRenderTime,
   addLazyLoadProperty,
   boolKeys,
+  boolObjectToArray,
   cleanUrl,
   debugLog,
   ensurePublishedVersion,

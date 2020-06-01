@@ -26,7 +26,7 @@ const
   logger = require('../log'),
   queryService = require('../../server/query'),
   recircCmpt = require('./recirc-cmpt'),
-  { addAmphoraRenderTime, cleanUrl } = require('../utils'),
+  { addAmphoraRenderTime, cleanUrl, boolObjectToArray } = require('../utils'),
   { isComponent } = require('clayutils'),
   { unityComponent } = require('../amphora'),
 
@@ -291,7 +291,6 @@ const
    * @returns {boolean}
    */
   validUrl = url => url && !isComponent(url),
-  boolObjectToArray = (obj) => Object.entries(obj || {}).map(([key, bool]) => bool && key).filter(value => value),
   // Get both the results and the total number of results for the query
   transformResult = (formattedResult, rawResult) => ({ content: formattedResult, totalHits: _get(rawResult, 'hits.total') }),
 
