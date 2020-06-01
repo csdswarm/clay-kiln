@@ -66,6 +66,7 @@
             self.cachedResults = self.categoryOptions;
           })
           .catch(e => {
+            console.error('error getting podcast data from api', e);
           })
       },
 
