@@ -3,6 +3,7 @@
 const { unityComponent } = require('../../services/universal/amphora'),
   radioApiService = require('../../services/server/radioApi'),
   utils = require('../../services/universal/podcast'),
+  log = require('../../services/universal/log').setup({ file: __filename }),
   _get = require('lodash/get'),
   _uniqBy = require('lodash/uniqBy'),
   _slice = require('lodash/slice');
@@ -62,7 +63,7 @@ function populatePodcasts(data, locals) {
         };
         return data;
       }).catch(e => {
-        console.error('error getting podcast data from api', e);
+        log('error', 'error getting podcast data from api', e);
         return data;
       });
   }
