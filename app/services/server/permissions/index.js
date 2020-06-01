@@ -21,7 +21,6 @@ const express = require('express'),
   amphoraFiles = require('amphora-fs'),
   path = require('path'),
   YAML = require('yamljs'),
-  interceptLists = require('./intercept-lists'),
   componentsToCheck = getComponentsWithPermissions(),
   { pageTypesToCheck } = require('./utils'),
   hasPermissions = require('./has-permissions'),
@@ -113,9 +112,8 @@ function userPermissionRouter() {
     next();
   });
 
-  interceptLists(userPermissionRouter);
-
   addToLocals.stationsICanImportContent(userPermissionRouter);
+  addToLocals.stationsICanCreateContent(userPermissionRouter);
 
   // updatePermissionsInfo needs to go after stationsIHaveAccessTo
   addToLocals.updatePermissionsInfo(userPermissionRouter);
@@ -138,6 +136,9 @@ function userPermissionRouter() {
 /**
  * determines if a user has permissions to perform an action on a list
  * @param {string} component
+ * @param {boolean} forList - 'true' if the permissions being tested is for a list rather
+ *  rather than component data. this is important because with lists we need to prevent
+ *  users from removing items but for components removing list items is fine.
  * @param {string} field
  * @param {object} data
  * @param {object} db
@@ -145,14 +146,14 @@ function userPermissionRouter() {
  *
  * @return {Promise<boolean>}
  */
-async function hasListPermissions({ component, field, data, db, locals }) {
+async function hasListPermissions({ forList, component, field, data, db, locals }) {
   const existingItems = (await db.get(`${process.env.CLAY_SITE_HOST}/_lists/${component}`))
       .map(item => item.text),
     permissions = componentsToCheck._lists[component].field[field],
     create = permissions.create,
     remove = permissions.remove,
     blockAdd = !locals.user.hasPermissionsTo(create).a(component).value,
-    blockRemove = !locals.user.hasPermissionsTo(remove).a(component).value,
+    blockRemove = forList && !locals.user.hasPermissionsTo(remove).a(component).value,
     listData = data.map(item => item.text),
     addedToList = () => Boolean(listData.find(item => !existingItems.includes(item))),
     removedFromList = () => Boolean(existingItems.find(item => !listData.includes(item)));
@@ -283,7 +284,14 @@ async function checkUserPermissions(uri, req, locals, db) {
         let allow = true;
 
         for (const field of Object.keys(componentsToCheck._lists[list].field)) {
-          const hasPermissions = await hasListPermissions({ component: list, field, data: req.body, db, locals });
+          const hasPermissions = await hasListPermissions({
+            forList: true,
+            component: list,
+            field,
+            data: req.body,
+            db,
+            locals
+          });
 
           allow = !hasPermissions ? false : allow;
         }

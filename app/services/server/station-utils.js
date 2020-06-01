@@ -25,7 +25,8 @@ const _get = require('lodash/get'),
     }
   }),
   _state = {
-    allStations: getEmptyAllStations()
+    allStations: getEmptyAllStations(),
+    redisExpiresAt: null
   },
   resetAllStations = () => {
     _state.allStations = getEmptyAllStations();
@@ -35,17 +36,19 @@ const _get = require('lodash/get'),
    * @param {object} locals
    */
   updateAllStations = async locals => {
-    const stationsResp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals),
-      apiEnvironment = getApiEnvironment(locals);
+    const apiEnvironment = getApiEnvironment(locals);
 
-    if (
-      stationsResp.response_cached
-      && !_isEmpty(_state.allStations.asArray[apiEnvironment])
-    ) {
+    // Short circuit if we already have this data
+    if (!_isEmpty(_state.allStations.asArray[apiEnvironment]) && _state.redisExpiresAt && (new Date() < _state.redisExpiresAt)) {
       return;
     }
 
     resetAllStations();
+
+    const stationsResp = await radioApi.get('stations', { page: { size: 1000 } }, null, {}, locals);
+
+    // Set the expires at timer based on return
+    _state.redisExpiresAt = stationsResp.redis_expires_at;
 
     // can't be declared above `resetAllStations`
     // eslint-disable-next-line one-var

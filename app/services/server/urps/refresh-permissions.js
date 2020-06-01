@@ -32,28 +32,28 @@ async function refreshPermissionsByDomain(auth) {
 }
 
 /**
- * a reducer which turns cachedCalls into a mapping of urlPath -> the call
- *   function and the cachedPropName
+ * a reducer which turns cachedCalls into a mapping of cachedPropName -> the
+ *   call function
  *
  * @param {object} res - result
  * @param {function} callFn - the actual function to call which has a property 'metaData'
  * @returns {object}
  */
-function toCallFnByUrlPath(res, callFn) {
-  return _set(res, callFn.metaData.urlPath, callFn);
+function toCallFnByCachedPropName(res, callFn) {
+  return _set(res, callFn.metaData.cachedPropName, callFn);
 }
 
 async function refreshCachedCalls(auth) {
-  const callFnByUrlPath = _reduce(cachedCalls, toCallFnByUrlPath, {}),
+  const callFnByCachedPropName = _reduce(cachedCalls, toCallFnByCachedPropName, {}),
     currentTime = Date.now(),
     isExpired = makeIsExpired(currentTime),
-    urlPathsToRefresh = Object.keys(_omitBy(
-      auth.lastUpdatedByUrlPath,
+    cachedPropNamesToRefresh = Object.keys(_omitBy(
+      auth.lastUpdatedByCachedPropName,
       isExpired
     ));
 
-  for (const urlPath of urlPathsToRefresh) {
-    const callFn = callFnByUrlPath[urlPath];
+  for (const cachedPropName of cachedPropNamesToRefresh) {
+    const callFn = callFnByCachedPropName[cachedPropName];
 
     await callFn(auth, { isRefresh: true });
   }

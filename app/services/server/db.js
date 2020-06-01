@@ -123,7 +123,6 @@ const utils = require('../universal/utils'),
           if (!rows.length) {
             return defaultValue || Promise.reject(new Error(`No result found in ${ tableName } for ${ key }`));
           }
-
           return rows[0].data;
         });
     }

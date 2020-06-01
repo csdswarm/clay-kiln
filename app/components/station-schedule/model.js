@@ -23,15 +23,39 @@ module.exports.render = async function (ref, data, locals) {
     // using the station offset determine the current day 1 - 7 based
     stationDayOfWeek = apiDayOfWeek(new Date(new Date().getTime() + gmt_offset * 60 * 1000).getDay()),
     dayOfWeek = locals.dayOfWeek ? parseInt(locals.dayOfWeek) : stationDayOfWeek,
-    json = await getSchedule({
-      stationId, pageSize: 50, pageNum: 1, filterByDay: true
-    }, locals);
+    json = await getSchedule(
+      {
+        stationId,
+        pageSize: 50,
+        pageNum: 1,
+        filterByDay: true
+      },
+      locals,
+      {
+        radioApiOpts: {
+          amphoraTimingLabelPrefix: 'get schedule filtered by day',
+          shouldAddAmphoraTimings: true
+        }
+      }
+    );
 
   // if there is no data for the current day, check to see if there is any data for this station
   if (json.data && !json.data.length) {
-    const anySchedule = await getSchedule({
-      stationId, pageSize: 1, pageNum: 1, filterByDay: false
-    }, locals);
+    const anySchedule = await getSchedule(
+      {
+        stationId,
+        pageSize: 1,
+        pageNum: 1,
+        filterByDay: false
+      },
+      locals,
+      {
+        radioApiOpts: {
+          amphoraTimingLabelPrefix: 'get schedule not filtered by day',
+          shouldAddAmphoraTimings: true
+        }
+      }
+    );
 
     if (anySchedule.data && !anySchedule.data.length) {
       return data;

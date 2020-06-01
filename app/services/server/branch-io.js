@@ -14,9 +14,16 @@ const
    * Generate relevant Branch.io meta tags for the page.
    * @param {Object} locals
    * @param {Object} data
+   * @param {Object} [argObj]
+   * @param {boolean} [argObj.shouldAddAmphoraTimings]
+   * @param {string} [argObj.amphoraTimingLabelPrefix]
    * @returns {Promise<MetaTag[]>}
    */
-  getBranchMetaTags = async (locals, data) => {
+  getBranchMetaTags = async (locals, data, argObj = {}) => {
+    if (argObj.shouldAddAmphoraTimings === undefined) {
+      argObj.shouldAddAmphoraTimings = false;
+    }
+
     const tags = [],
       addTag = (name, content) => {
         tags.push({
@@ -31,7 +38,12 @@ const
 
     // primary section front
     if (data.sectionFront) {
-      const listEntry = await getSectionFrontEntry(locals, data.sectionFront, true),
+      const listEntry = await getSectionFrontEntry(
+          locals,
+          data.sectionFront,
+          true,
+          argObj
+        ),
         displayName = listEntry ? listEntry.name : data.sectionFront;
 
       addTag('unity_site_categories', displayName);
@@ -39,7 +51,12 @@ const
 
     // sports league
     if (data.sectionFront === 'sports' && data.secondarySectionFront) {
-      const listEntry = await getSectionFrontEntry(locals, data.secondarySectionFront, false),
+      const listEntry = await getSectionFrontEntry(
+          locals,
+          data.secondarySectionFront,
+          false,
+          argObj
+        ),
         displayName = listEntry ? listEntry.name : data.secondarySectionFront;
 
       addTag('unity_site_league', displayName);
@@ -78,11 +95,14 @@ const
    * @param {Object} locals
    * @param {string} slug
    * @param {boolean} isPrimary
+   * @param {Object} argObj
+   * @param {boolean} argObj.shouldAddAmphoraTimings
+   * @param {string} [argObj.amphoraTimingLabelPrefix]
    * @returns {Promise<Object>}
    */
-  getSectionFrontEntry = async (locals, slug, isPrimary) => {
+  getSectionFrontEntry = async (locals, slug, isPrimary, argObj) => {
     const listName = isPrimary ? 'primary-section-fronts' : 'secondary-section-fronts',
-      data = await retrieveList(listName, { locals });
+      data = await retrieveList(listName, Object.assign({ locals }, argObj));
 
     return data.find(entry => entry.value === slug);
   };

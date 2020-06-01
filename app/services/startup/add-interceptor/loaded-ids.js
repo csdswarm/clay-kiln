@@ -12,7 +12,6 @@
  *  - note: in add-to-locals, 'x-loaded-ids' is used to
  *    initialize locals.loadedIds.
  */
-
 const interceptor = require('express-interceptor'),
   loadedIdsInterceptor = interceptor((req, res) => {
     return {
@@ -28,7 +27,6 @@ const interceptor = require('express-interceptor'),
        */
       intercept(body, send) {
         res.set('x-loaded-ids', JSON.stringify(res.locals.loadedIds.sort()));
-
         send(body);
       }
     };
