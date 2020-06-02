@@ -73,6 +73,6 @@ module.exports = {
   date,
   gallery,
   sectionFront,
-  stationFront,
-  contest
+  contest,
+  stationFront
 };

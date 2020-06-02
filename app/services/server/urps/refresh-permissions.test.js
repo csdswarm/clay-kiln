@@ -18,9 +18,9 @@ describe('cachedCalls', () => {
       './load-permissions': loadPermissions
     }),
     allSpies = [loadPermissions, ...Object.values(cachedCalls)],
-    urlPaths = Object.values(cachedCallsOrig).reduce(
+    cachedPropNames = Object.values(cachedCallsOrig).reduce(
       (res, aCachedCall) => {
-        res.push(aCachedCall.metaData.urlPath);
+        res.push(aCachedCall.metaData.cachedPropName);
         return res;
       },
       []
@@ -31,11 +31,11 @@ describe('cachedCalls', () => {
   });
 
   it('cachedCalls are called with the correct arguments', async () => {
-    const fresh = urlPaths.reduce(
-        (res, aUrlPath) => _set(res, aUrlPath, Date.now()),
+    const fresh = cachedPropNames.reduce(
+        (res, aCachedPropName) => _set(res, aCachedPropName, Date.now()),
         {}
       ),
-      auth = { lastUpdatedByUrlPath: fresh };
+      auth = { lastUpdatedByCachedPropName: fresh };
 
     await refreshPermissions(auth);
 
@@ -50,9 +50,9 @@ describe('cachedCalls', () => {
 
   it('expired cachedCalls are not called', async () => {
     const aCachedCall = cachedCalls.getDomainNamesIHaveAccessTo,
-      { urlPath } = aCachedCall.metaData.urlPath,
-      auth = { lastUpdatedByUrlPath: {
-        [urlPath]: getExpiredMs()
+      { cachedPropName } = aCachedCall.metaData,
+      auth = { lastUpdatedByCachedPropName: {
+        [cachedPropName]: getExpiredMs()
       } };
 
     await refreshPermissions(auth);

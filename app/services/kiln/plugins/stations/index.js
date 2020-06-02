@@ -1,17 +1,19 @@
 'use strict';
 
-// Require depedencies.
-const stationThemeButton = require('./station-theme-button.vue'),
-  stationTheme = require('./station-theme.vue');
+const _set = require('lodash/set'),
+  stationThemeButton = require('./station-theme-button.vue'),
+  stationTheme = require('./station-theme.vue'),
+  { DEFAULT_STATION } = require('../../../universal/constants');
 
-// Register plugin.
 module.exports = () => {
-  window.kiln = window.kiln || {};
-  window.kiln.navButtons = window.kiln.navButtons || {};
-  window.kiln.navContent = window.kiln.navContent || {};
+  const { stationForPermissions, user } = window.kiln.locals;
 
-  if (window.kiln.locals.station.id !== 0) {
-    window.kiln.navButtons['station-theme'] = stationThemeButton;
-    window.kiln.navContent['station-theme'] = stationTheme;
+  if (
+    stationForPermissions
+    && stationForPermissions.id !== DEFAULT_STATION.id
+    && user.can('update').a('station-theme').value
+  ) {
+    _set(window, "kiln.navButtons['station-theme']", stationThemeButton);
+    _set(window, "kiln.navContent['station-theme']", stationTheme);
   }
 };

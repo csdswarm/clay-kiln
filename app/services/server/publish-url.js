@@ -141,6 +141,6 @@ module.exports = {
   getGallerySlugUrl,
   getSectionFrontSlugUrl,
   getAuthorPageSlugUrl,
-  getStationFrontSlugUrl,
-  getContestSlugUrl
+  getContestSlugUrl,
+  getStationFrontSlugUrl
 };
