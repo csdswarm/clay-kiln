@@ -17,15 +17,14 @@ const
  * for items that were retrieved through syndication/subscription, this replaces the canonicalUrl with
  * the syndicationUrl, so hyperlinks stay on the current site.
  *
- * @param {object} locals
- * @param {object} locals.station
+ * @param {string} stationSlug
  * @returns {function}
  */
-function syndicationUrlPremap({ station }) {
+function syndicationUrlPremap(stationSlug) {
   const
     { findSyndicatedStation, getOrigin, inStation, noContent } = __,
-    isInStation = inStation(station),
-    syndicatedStation = findSyndicatedStation(station);
+    isInStation = inStation(stationSlug),
+    syndicatedStation = findSyndicatedStation(stationSlug);
 
   return article => {
     const item = { ...article };

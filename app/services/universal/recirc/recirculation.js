@@ -284,7 +284,20 @@ const
    * @return {string} stationSlug
    */
   getStationSlug = (data, locals) => {
-    return _get(locals, 'params.stationSlug');
+    let stationSlug;
+
+    if (locals && locals.stationSlug) {
+      // This is from load more on a station front
+      stationSlug = locals.stationSlug;
+    } else if (locals && locals.params && locals.params.stationSlug) {
+      stationSlug = locals.params.stationSlug;
+    } else if (locals && locals.station && locals.station.site_slug) {
+      stationSlug = locals.station.site_slug;
+    }
+
+    // used for load more queries
+    data.stationSlug = stationSlug;
+    return stationSlug;
   },
   /**
    * Pull tags from locals or data whether a static or dynamic tag page
@@ -469,10 +482,9 @@ const
             await mapDataToFilters(uri, data, locals)
           ),
           itemsNeeded = maxItems > curated.length ?  maxItems - curated.length : 0,
-          stationFilter = { stationSlug: locals.station.site_slug },
           { content, totalHits } = await fetchRecirculation(
             {
-              filters: _merge(filters, stationFilter),
+              filters,
               excludes,
               elasticFields: esFields,
               pagination,
@@ -482,7 +494,7 @@ const
 
         data._computed = Object.assign(data._computed || {}, {
           [contentKey]: await Promise.all(
-            [...curated, ...content.map(syndicationUrlPremap(locals))]
+            [...curated, ...content.map(syndicationUrlPremap(getStationSlug(data, locals)))]
               .slice(0, maxItems)
               .map(async (item) => mapResultsToTemplate(locals, item))),
           initialLoad: !pagination.page,
