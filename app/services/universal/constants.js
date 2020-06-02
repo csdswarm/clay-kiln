@@ -65,7 +65,8 @@ const _get = require('lodash/get'),
     'section-front',
     'static-page',
     'topic-page',
-    'latest-videos'
+    'latest-videos',
+    'more-content-feed' // this component is added because it's the way to avoid this error: Article is not in target station, and has no stationSyndication
   ]),
 
   DEFAULT_STATION = {
