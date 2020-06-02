@@ -4,7 +4,7 @@
  *  - This file creates a new list for the AP Media Entitlement.
  */
 
-const { clayImport, prettyJSON } = require('../migration-utils').v1,
+const { clayImport } = require('../migration-utils').v1,
   hostUrl = process.argv[2] || 'clay.radio.com',
   apMediaEntitlement = [
 	{"value": 42428, "name": "AP Top News - Business - Stories"},
@@ -36,7 +36,7 @@ async function run() {
     await clayImport({ payload, hostUrl });
     console.log('List ap-media-entitlements created successfully!');
   } catch (error) {
-    console.log(`An error occurred while trying to create the list`, prettyJSON({ error }));
+    console.error(`An error occurred while trying to create the list`, error);
   }
 }
 
