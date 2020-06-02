@@ -2,6 +2,7 @@
 
 const { playingClass } = require('../../services/universal/spaLocals'),
   { getNowPlaying, getSchedule } = require('../../services/universal/station'),
+  _get = require('lodash/get'),
 
   /**
    * Appends ? or & to end of img string
@@ -9,7 +10,7 @@ const { playingClass } = require('../../services/universal/spaLocals'),
    * @param {string} img
    * @param {Object} locals -- includes site
    * @returns {string}
-  */
+   */
   appendParamsAmpOrQuery = (img, { site }) => {
     img = img || site.radiocomDefaultImg;
     img = img.includes('?') ?
@@ -20,7 +21,7 @@ const { playingClass } = require('../../services/universal/spaLocals'),
   };
 
 module.exports.render = async (ref, data, locals) => {
-  if (!locals.station && !locals.station.id) {
+  if (!_get(locals, 'station.id')) {
     return data;
   }
 
