@@ -240,6 +240,7 @@
           this.loading = false;
           this.theme = { primaryColor, secondaryColor, tertiaryColor, primaryFontColor, secondaryFontColor };
           this.updateStatus = {type: 'success', message: 'Station theme updated.'};
+          window.location.reload();
         } catch({ response }) {
           this.loading = false;
           this.updateStatus = {type: 'error', message: `Could not update theme. ${ response.data }`};
@@ -251,7 +252,8 @@
       async loadTheme() {
         this.loading = true;
         try {
-          const { data } = await axios.get(`/station-theme/${ window.kiln.locals.station.site_slug }`);
+          const { data } = await axios.get(`/station-theme/${
+            window.kiln.locals.station.site_slug }`);
 
           this.loading = false;
           this.theme = data;

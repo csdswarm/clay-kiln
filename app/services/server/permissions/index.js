@@ -2,7 +2,6 @@
 
 const express = require('express'),
   log = require('../../universal/log').setup({ file: __filename }),
-  { unityAppDomainName } = require('../../universal/urps'),
   {
     getComponentName,
     getPageInstance,
@@ -238,7 +237,6 @@ async function checkUserPermissions(uri, req, locals, db) {
     if (!locals.stationsIHaveAccessTo[site_slug]) {
       return false;
     }
-
     if (isComponent(uri)) {
       await checkComponentPermission(uri, req, locals, db);
     }
@@ -266,19 +264,14 @@ async function checkUserPermissions(uri, req, locals, db) {
         return false;
       }
     }
-
     if (isUri(uri) && req.method === 'DELETE') {
       const pageUri = await db.get(req.uri),
         pageData = await db.get(pageUri),
         pageType = getComponentName(pageData.main[0]);
 
-      if (pageTypesToCheck.has(pageType)) {
-        return user.can('unpublish').a(pageType).value;
-      } else if (pageType === 'homepage') {
-        return user.can('unpublish').a(pageType).for(unityAppDomainName).value;
-      } else {
-        return true;
-      }
+      return pageTypesToCheck.has(pageType)
+        ? user.can('unpublish').a(pageType).value
+        : true;
     }
 
     if (isList(uri) && req.method === 'PUT') {

@@ -1,5 +1,6 @@
 <template>
-  <section class="layout layout--two-column">
+  <section class="layout layout--two-column"
+    :data-main-component="this.getMainCmpt()">
     <section class="layout__top" v-html="this.componentList('top')"></section>
     <header>
       <div class="layout__layout-header" data-editable="layoutHeader" v-html="this.componentList('layoutHeader')"></div>

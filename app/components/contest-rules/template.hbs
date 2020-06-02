@@ -1,0 +1,68 @@
+{{#*inline "rulesBody"}}
+  <div
+    class="
+    {{#if includeTitle}}
+      contest-rules__rules-body-with-title
+    {{/if}}
+      paragraph
+    "
+    data-editable="rulesBodyText"
+  >
+    {{{ rulesBodyText }}}
+  </div>
+{{/inline}}
+
+{{#*inline "defaultStyle"}}
+    {{#if showHeader}}
+        <div class="contest-rules--default-view">
+            <h2 class="contest-rules__contest-headline">
+                {{ headline }}
+            </h2>
+            <div class="contest-rules__date-range">
+                <p class="paragraph">
+                    Contest Date Range: {{ formatDateTimeRange startDateTime endDateTime (concat "MMMM D, YYYY [at] h:mma [" stationTimeZone "]") ' through ' }}
+                </p>
+            </div>
+        </div>
+    {{/if}}
+    {{> rulesBody includeTitle=true }}
+{{/inline}}
+
+{{#*inline "presentationStyle"}}
+    <div class="contest-rules--presentation-view">
+        <div class="contest-rules__image-container">
+            <picture>
+                <source media="(max-width: 360px)" srcset="{{ feedImgUrl }}?width=360&crop=16:9,offset-y0" />
+                <img
+                    src="{{ feedImgUrl }}?width=480&crop=16:9,offset-y0"
+                    class="contest-rules__image"
+                    alt="{{ headline }}"
+                />
+            </picture>
+        </div>
+        <div class="contest-rules__description-container">
+            <h2 class="contest-rules__contest-headline">
+              {{ headline }}
+            </h2>
+            <p class="paragraph">{{ description }}</p>
+        </div>
+    </div>
+{{/inline}}
+
+{{#* inline "mainContent"}}
+    {{#if showPresentation}}
+        {{> presentationStyle}}
+    {{else}}
+        {{> defaultStyle}}
+    {{/if}}
+{{/inline}}
+
+<div class="component component--contest-rules contest-rules">
+    {{#if @root.locals.edit}}
+        {{> mainContent}}
+    {{else}}
+        <a href="{{ contestSlug }}" class="contest-rules__link">
+            {{> mainContent}}
+        </a>
+    {{/if}}
+</div>

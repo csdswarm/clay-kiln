@@ -1,0 +1,81 @@
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+
+.contest-rules {
+    &__link {
+      text-decoration: none;
+
+      &:hover .contest-rules__contest-headline {
+        text-decoration: underline;
+      }
+    }
+
+    transition: 125ms ease;
+    &__rules-body-with-title {
+        p:nth-child(1):before {
+            content: "Contest Rules: ";
+            @mixin rules-component-font-1;
+        }
+    }
+
+    &__contest-headline {
+        @mixin more-content-feed-font2;
+        display: block;
+        margin-bottom: em(10, 22);
+        @mixin large-screen {
+          @mixin more-content-feed-font6;
+          margin-bottom: em(10, 18);
+        }
+        @mixin medium-small-screen {
+          @mixin more-content-feed-font2;
+          margin-bottom: em(10, 22);
+        }
+    }
+
+    &--presentation-view {
+        display: flex;
+        margin-bottom: 2rem;
+
+        @mixin medium-small-screen {
+            flex-wrap: wrap;
+        }
+        .contest-rules__contest-headline {
+            margin-bottom: 1rem;
+        }
+    }
+
+    &__image-container {
+        flex: 0 0 em(widthOnGrid(5,4));
+        @mixin large-screen {
+            flex: 0 0 em(widthOnGrid(4,3));
+        }
+        @mixin medium-screen {
+            flex: 0 0 em(widthOnGrid(2, 0, medium-screen));
+        }
+        @mixin medium-small-screen {
+            flex: 0 0 100%;
+            margin-bottom: em(15);
+        }
+    }
+
+    &__image {
+        width: 100%;
+    }
+
+    &__description-container {
+        margin-left: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        @mixin medium-small-screen {
+            margin-left: 0;
+            flex: 0 0 100%;
+        }
+    }
+}
+
+.editing .selected.contest-rules {
+    padding: em(18, 16);
+    border: 1px dashed $silver;
+}

@@ -1,0 +1,7 @@
+_components:
+  contest-rules-page:
+    contestRules: []
+    instances:
+      new:
+        contestRules: []
+

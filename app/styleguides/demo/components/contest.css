@@ -1,0 +1,100 @@
+/* stylelint-disable */
+@import "_global/mixins";
+@import "_global/fonts";
+@import "_global/colors";
+@import "_global/content-page";
+
+/* This file should only include contest-specific styles.
+   Any styling that is shared by other content page types should be included in the global content-page stylesheet. */
+
+.component--contest {
+  .contest__header {
+    .lead {
+      margin-bottom: em(34);
+    }
+    .header__primary {
+      @mixin contest-font1;
+      margin-bottom: em(10, 45);
+      @mixin medium-screen {
+        @mixin contest-font5;
+      }
+    }
+    .header__secondary {
+      @mixin contest-font2;
+      display: inline-block;
+      margin-bottom: em(40, 22);
+      @mixin large-screen {
+        margin-bottom: em(20, 22);
+      }
+      @mixin medium-screen {
+        @mixin contest-font6;
+        margin-bottom: em(13, 18);
+      }
+      @mixin medium-small-screen {
+        margin-bottom: em(30, 18);
+      }
+      @mixin small-screen {
+        margin-bottom: em(20, 18);
+      }
+    }
+  }
+  .contest__body {
+    display: flex;
+    flex-direction: row;
+    @mixin large-screen {
+      flex-direction: column;
+    }
+
+    .body__info {
+      width: auto;
+      margin-right: em(widthOnGrid(0, 2));
+      @mixin large-screen {
+        margin-right: 0;
+        margin-bottom: em(33);
+        align-self: flex-end;
+        .component--share {
+          margin-bottom: 0;
+        }
+      }
+      @mixin medium-screen {
+        margin-bottom: em(46);
+      }
+      @mixin medium-small-screen {
+        margin-bottom: em(40);
+      }
+      @mixin small-screen {
+        align-self: flex-start;
+        margin-bottom: em(30);
+      }
+    }
+    .body__content {
+      width: calc(100% - em(80));
+      display: flex;
+      flex-direction: column;
+      @mixin large-screen {
+        width: 100%;
+      }
+      .component--html-embed .iframe-container__padded-container {
+        padding-top: 0;
+        margin-bottom: em(40);
+        iframe {
+          position: relative;
+        }
+      }
+      .body__contest-dates {
+        h3 {
+          display: block;
+          @mixin contest-font3;
+          margin-bottom: em(10, 16);
+          text-transform: uppercase;
+          color: theme(primaryColor, $purple);
+        }
+        @mixin contest-font4;
+        margin-bottom: em(30, 22);
+        @mixin medium-small-screen {
+          @mixin contest-font7;
+        }
+      }
+    }
+  }
+}

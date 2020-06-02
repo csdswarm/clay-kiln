@@ -54,6 +54,7 @@ const radioApi = require('../server/radioApi'),
    * @param {Object} [argObj.data]
    * @param {boolean} [argObj.onAir]
    * @param {Object} [argObj.radioApiOpts]
+   * @returns {Promise}
   */
   getSchedule = async (config, locals, argObj = {}) => {
     const {

@@ -16,7 +16,7 @@ module.exports = unityComponent({
       renderForStation: !isDefaultStation || !isDefaultRef
     };
 
-    if (isDefaultRef && !isDefaultStation) {
+    if (isDefaultRef && !isDefaultStation && site_slug) {
       const stationPageData = await getStationPage(site_slug);
 
       if (stationPageData) {

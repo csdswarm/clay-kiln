@@ -4,30 +4,45 @@ _description: |
 
   If an article is syndicated, the canonical link will point to the url of the original article.
 
-_permission:
-  update: meta-tags
+defaultSyndicatedUrl:
+  _subscribe: syndicatedUrl
+
+defaultDate:
+  _subscribe: publishDate
 
 url:
   _label: Canonical URL
   _has:
-    input: text
+    input: default-text-with-override
     type: url
-    help: URL of the current page. For articles, this is generated from the canonical url.
+    # defaultUrl is set during model.save
+    defaultField: defaultUrl
+    permissionToOverride:
+      update: meta-tags
+    help: URL of the current page. For articles, this is the canonical url.
 
 syndicatedUrl:
   _label: Syndicated Url
-  _subscribe: syndicatedUrl
   _has:
-    input: text
+    input: default-text-with-override
     type: url
-    help: Syndicated Url. For articles, this is set if you specify syndication in the article settings. Setting rel="canonical" tells search engines that this content has been syndicated from somewhere else.
+    defaultField: defaultSyndicatedUrl
+    permissionToOverride:
+      update: meta-tags
+    help: >-
+      For articles, this is set if you specify syndication in the article
+      settings. Setting rel="canonical" tells search engines that this content
+      has been syndicated from somewhere else.  This value will be the page's
+      meta image or content's feed image.
 
 date:
   _label: Published Date
-  _subscribe: publishDate
   _has:
-    input: text
-    help: Published timestamp. For articles, this is set automatically.
+    input: default-text-with-override
+    defaultField: defaultDate
+    permissionToOverride:
+      update: meta-tags
+    help: The published timestamp.
 
 _groups:
   settings:
