@@ -77,7 +77,9 @@ function middleware(req, res, next) {
       .then(pageKey => {
         // Curated page found. Serve content collection.
         // Extract param keyword and set it to correct params key appropriately.
-        params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
+        if (routeParamKey === 'author') {
+          params[routeParamKey] = req.path.match(dynamicParamExtractor)[1];
+        }
         return db.get(`${pageKey}@published`);
       })
       .catch(error => {
