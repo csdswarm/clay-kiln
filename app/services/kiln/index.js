@@ -27,6 +27,7 @@ module.exports = () => {
   require('./plugins/subscriptions')();
   require('./plugins/valid-source')();
   require('./plugins/word-count')();
+  require('./plugins/ap-news')();
   require('./validators')();
   secureAllSchemas();
   addStationCheckToSelect();
